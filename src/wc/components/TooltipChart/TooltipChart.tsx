@@ -1,5 +1,10 @@
 import { Component, Prop, State, Element, Watch, h, Host } from '@stencil/core';
-import { resolveCssTimeMs, TOKEN_DEFAULTS } from '../../utils';
+import {
+  CONTROL_SUPPORTING_TEXT_VARIANT,
+  CONTROL_TEXT_VARIANT,
+  resolveCssTimeMs,
+  TOKEN_DEFAULTS,
+} from '../../utils';
 
 const CURSOR_OFFSET_PX = 12;
 const VIEWPORT_PAD_PX = 8;
@@ -135,7 +140,7 @@ export class TooltipChart {
           <ds-text
             class="tooltip-chart__heading"
             as="span"
-            variant="text-body-small"
+            variant={CONTROL_SUPPORTING_TEXT_VARIANT.md}
             emphasis
             color="var(--color-foreground-primary)"
           >
@@ -144,26 +149,27 @@ export class TooltipChart {
         )}
         <div class="tooltip-chart__items">
           {(this.items ?? [{ label: this.label, value: this.value }]).map((item, index) => (
-            <div class="tooltip-chart__item ds-control--md" key={`${item.label}-${index}`}>
+            <div class="tooltip-chart__item ds-control-frame ds-control--md" key={`${item.label}-${index}`}>
               {item.color && (
-                <span
-                  class="tooltip-chart__swatch"
-                  style={{ '--ds-tooltip-chart-swatch': item.color }}
-                  aria-hidden="true"
-                />
+                <span class="tooltip-chart__swatch-box ds-control-icon-box" aria-hidden="true">
+                  <span
+                    class="tooltip-chart__swatch"
+                    style={{ '--ds-tooltip-chart-swatch': item.color }}
+                  />
+                </span>
               )}
               <ds-text
-                class="tooltip-chart__label"
+                class="tooltip-chart__label ds-control-label-box"
                 as="span"
-                variant="text-body-small"
+                variant={CONTROL_TEXT_VARIANT.md}
                 color="var(--color-foreground-secondary)"
               >
                 {item.label}
               </ds-text>
               <ds-text
-                class="tooltip-chart__value"
+                class="tooltip-chart__value ds-control-label-box"
                 as="span"
-                variant="text-body-small"
+                variant={CONTROL_TEXT_VARIANT.md}
                 emphasis
                 color="var(--color-foreground-primary)"
               >

@@ -14,6 +14,8 @@ export interface ChartTheme {
   dotHaloWidth: number | string;
   focusDotRadius: number | string;
   areaOpacity: number;
+  boxFillOpacity: number;
+  boxMaxWidth: number;
   heatmapMinimumOpacity: number;
   heatmapMaximumOpacity: number;
   cellGap: number;
@@ -33,6 +35,8 @@ export const defaultChartTheme: ChartTheme = {
   dotHaloWidth: 'var(--dimension-stroke-width-012)',
   focusDotRadius: 'var(--dimension-stroke-width-037)',
   areaOpacity: 0.25,
+  boxFillOpacity: 0.25,
+  boxMaxWidth: 64,
   heatmapMinimumOpacity: 0.25,
   heatmapMaximumOpacity: 1,
   cellGap: 1,
@@ -62,6 +66,8 @@ export function resolveChartTheme(element?: Element): ChartTheme {
     stackGap: resolveCssLengthPx(TOKEN_DEFAULTS.strokeWidth012, 1),
     donutGap: resolveCssLengthPx(TOKEN_DEFAULTS.strokeWidth012, 1),
     areaOpacity: resolvedLowOpacity,
+    boxFillOpacity: resolvedLowOpacity,
+    boxMaxWidth: resolveCssLengthPx(TOKEN_DEFAULTS.size800, 64),
     heatmapMinimumOpacity: resolvedLowOpacity,
   };
 }

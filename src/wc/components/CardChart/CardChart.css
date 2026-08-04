@@ -1,44 +1,51 @@
-@import '../../utils/chrome-layout.css';
+@import '../../utils/chrome-header.css';
 @import '../../utils/forced-colors.css';
 
 :host {
+  position: relative;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   width: var(--_card-chart-width);
   min-height: var(--_card-chart-min-height);
   max-width: 100%;
-  overflow: hidden;
+  overflow: visible;
   border: none;
-  border-radius: var(--dimension-radius-025);
+  border-radius: var(--dimension-radius-125);
   background-color: var(--color-background-primary);
-  box-shadow: 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);
+  box-shadow: var(--effect-shadow-elevated-sm);
+}
+
+:host::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border-radius: inherit;
+  box-shadow: var(--effect-highlight-elevated-sm);
+  pointer-events: none;
 }
 
 .card-chart__header {
   flex-shrink: 0;
-  justify-content: space-between;
-  height: var(--dimension-size-600);
   border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
-  background-color: var(--color-background-secondary);
+  background-color: var(--color-background-primary);
+}
+
+.card-chart__copy {
+  align-items: center;
 }
 
 ds-text.card-chart__title {
-  display: flex;
-  flex: 1 1 auto;
-  align-items: center;
-  box-sizing: border-box;
-  min-width: 0;
-  padding: calc(var(--dimension-space-075) + var(--dimension-space-025));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   -webkit-user-select: none;
   user-select: none;
 }
 
 .card-chart__actions {
-  display: flex;
   flex-shrink: 0;
-  align-items: center;
-  gap: var(--dimension-space-100);
 }
 
 .card-chart__actions:empty {
@@ -55,7 +62,7 @@ ds-text.card-chart__title {
 }
 
 .card-chart__body {
-  border-radius: 0 0 var(--dimension-radius-025) var(--dimension-radius-025);
+  border-radius: 0 0 var(--dimension-radius-125) var(--dimension-radius-125);
   background-color: var(--color-background-primary);
 }
 
@@ -70,14 +77,18 @@ ds-text.card-chart__title {
   align-items: center;
   box-sizing: border-box;
   min-height: 0;
-  padding: var(--dimension-space-400) var(--dimension-space-400) 0
-    var(--dimension-space-400);
+  padding: var(--dimension-space-200) var(--dimension-space-200) 0
+    var(--dimension-space-200);
 }
 
 .card-chart__chart > * {
   width: 100%;
   min-width: 0;
   max-width: 100%;
+}
+
+.card-chart__chart > ds-chart {
+  --ds-chart-container-height: 100%;
 }
 
 .card-chart__legend {
@@ -92,5 +103,9 @@ ds-text.card-chart__title {
     box-shadow: none;
     outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
     outline-offset: calc(-1 * var(--dimension-stroke-width-012));
+  }
+
+  :host::after {
+    box-shadow: none;
   }
 }

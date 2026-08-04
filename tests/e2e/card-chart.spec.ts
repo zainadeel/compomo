@@ -10,6 +10,9 @@ test('owns chart heading, actions, body, and token-based dimensions', async ({ p
   await expect(shell.locator('.card-chart__actions ds-button-unfilled')).toHaveCount(1);
   await expect(shell.locator('.card-chart__body #viz-content')).toHaveText('Visualization content');
   await expect(shell).toHaveCSS('width', '400px');
+  await expect(shell).toHaveCSS('border-radius', '10px');
+  await expect(shell).toHaveCSS('overflow', 'visible');
+  await expect(shell).not.toHaveCSS('box-shadow', 'none');
 });
 
 test('polar definition retains the unified chart and static external legend composition', async ({ page }) => {
@@ -45,6 +48,43 @@ test('chart variant composes ds-chart with a static external legend', async ({ p
   expect(regionBox).not.toBeNull();
   expect(chartBox).not.toBeNull();
   expect(chartBox!.width).toBeLessThanOrEqual(regionBox!.width);
+  const chrome = await card.evaluate(element => {
+    const header = element.querySelector<HTMLElement>('.card-chart__header')!;
+    const chartRegion = element.querySelector<HTMLElement>('.card-chart__chart')!;
+    const cardStyle = getComputedStyle(element);
+    const regionStyle = getComputedStyle(chartRegion);
+    return {
+      cardBackground: cardStyle.backgroundColor,
+      headerBackground: getComputedStyle(header).backgroundColor,
+      paddingTop: regionStyle.paddingTop,
+      paddingRight: regionStyle.paddingRight,
+      paddingLeft: regionStyle.paddingLeft,
+    };
+  });
+  expect(chrome.headerBackground).toBe(chrome.cardBackground);
+  expect(chrome).toMatchObject({ paddingTop: '16px', paddingRight: '16px', paddingLeft: '16px' });
+});
+
+test('unconfigured charts fill the card region while explicit height remains authoritative', async ({ page }) => {
+  const fluidRegion = page.locator('#chart-card .card-chart__chart');
+  const fluidChart = fluidRegion.locator('ds-chart');
+  const explicitChart = page.locator('#donut-card ds-chart');
+
+  await expect.poll(() =>
+    fluidChart.locator('svg').evaluate(element => Number(element.getAttribute('height')))
+  ).toBeGreaterThan(240);
+  const geometry = await fluidRegion.evaluate(region => {
+    const regionBounds = region.getBoundingClientRect();
+    const chartBounds = region.querySelector('ds-chart')!.getBoundingClientRect();
+    const style = getComputedStyle(region);
+    return {
+      availableHeight: regionBounds.height - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom),
+      chartHeight: chartBounds.height,
+    };
+  });
+  expect(geometry.chartHeight).toBeCloseTo(geometry.availableHeight, 1);
+  await expect(explicitChart).toHaveCSS('height', '240px');
+  await expect(explicitChart.locator('svg')).toHaveAttribute('height', '240');
 });
 
 test('chart geometry grows with the card while visual primitives stay constant', async ({ page }) => {

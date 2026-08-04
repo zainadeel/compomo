@@ -63,7 +63,6 @@ export const Donut: Story = {
     <ds-card-chart heading=${args['heading']} card-width=${args['cardWidth']} variant="chart" show-filter>
       <ds-chart
         slot="chart"
-        height="240"
         label="Device status distribution"
         ${ref(element => {
           if (element) (element as HTMLElement & { definition: unknown }).definition = DONUT_DEFINITION;
@@ -84,7 +83,6 @@ export const Chart: Story = {
     <ds-card-chart heading=${args['heading']} card-width=${args['cardWidth']} variant="chart" show-filter>
       <ds-chart
         slot="chart"
-        height="240"
         label="Fuel score and idling by month"
         ${ref(element => {
           if (element) (element as HTMLElement & { definition: unknown }).definition = CHART_DEFINITION;

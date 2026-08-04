@@ -89,17 +89,20 @@ export class CardChart {
           '--_card-chart-min-height': CARD_HEIGHT_VARS[this.cardWidth],
         }}
       >
-        <header class="card-chart__header ds-chrome-row ds-chrome-space--md">
-          <ds-text
-            class="card-chart__title"
-            variant="text-title-small"
-            emphasis
-            color="primary"
-            as="h2"
-          >
-            {this.heading}
-          </ds-text>
-          <div class="card-chart__actions">
+        <header class="card-chart__header ds-chrome-header">
+          {/* eslint-disable-next-line local/prefer-direct-ds-text -- Shared header copy owns the control-density geometry around the semantic heading. */}
+          <div class="card-chart__copy ds-chrome-header__copy ds-control--md">
+            <ds-text
+              class="card-chart__title ds-chrome-header__heading"
+              variant="text-title-small"
+              emphasis
+              color="primary"
+              as="h2"
+            >
+              {this.heading}
+            </ds-text>
+          </div>
+          <div class="card-chart__actions ds-chrome-header__trailing">
             {this.showFilter ? (
               <ds-button-unfilled
                 variant="icon"

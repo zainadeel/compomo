@@ -159,6 +159,18 @@ export interface ChartScene {
   clip: boolean;
   focusDotCircleRadius: number | string;
   focusDotHaloWidth: number | string;
+  focusDotPointKeys: readonly string[];
+  arcHitRegions: readonly ChartArcHitRegion[];
+}
+
+interface ChartArcHitRegion {
+  sceneKey: string;
+  centerX: number;
+  centerY: number;
+  innerRadius: number;
+  outerRadius: number;
+  startAngle: number;
+  endAngle: number;
 }
 
 interface Observation {
@@ -644,9 +656,10 @@ function buildCartesianNodes(
   plot: ChartBounds,
   colorFor: (observation: Observation) => string,
   theme: ChartTheme,
-): { nodes: ChartSceneNode[]; points: ChartPoint[] } {
+): { nodes: ChartSceneNode[]; points: ChartPoint[]; focusDotPointKeys: string[] } {
   const nodes: ChartSceneNode[] = [];
   const points: ChartPoint[] = [];
+  const focusDotPointKeys = new Set<string>();
 
   marks.forEach((mark, markIndex) => {
     const observations = allObservations[markIndex];
@@ -683,7 +696,10 @@ function buildCartesianNodes(
           if (observation.x === undefined || observation.y === undefined) return;
           const x = scalePosition(xScale, observation.x);
           const y = scalePosition(yScale, observation.y);
-          if (mark.options.interactive !== false && x !== undefined && y !== undefined) points.push(pointFor(observation, x, y, color));
+          if (mark.options.interactive !== false && x !== undefined && y !== undefined) {
+            points.push(pointFor(observation, x, y, color));
+            focusDotPointKeys.add(observation.sceneKey);
+          }
         });
       });
       return;
@@ -699,6 +715,17 @@ function buildCartesianNodes(
       const seriesValues = distinct(observations.map(observation => observation.z).filter(validValue));
       const groupedScale = scaleBand<ChartValue>().domain(seriesValues.length > 0 ? seriesValues : ['series']).range([0, categoryBand]).padding(0.08);
       const stacks = new Map<string, { positive: number; negative: number }>();
+      const stackSigns = new Map<string, { positive: boolean; negative: boolean }>();
+      observations.forEach(observation => {
+        const category = vertical ? observation.x : observation.y;
+        const rawValue = vertical ? observation.y : observation.x;
+        if (category === undefined || !finiteNumber(rawValue) || rawValue === 0) return;
+        const stackKey = chartValueKey(category);
+        const signs = stackSigns.get(stackKey) ?? { positive: false, negative: false };
+        if (rawValue > 0) signs.positive = true;
+        else signs.negative = true;
+        stackSigns.set(stackKey, signs);
+      });
       observations.forEach(observation => {
         const category = vertical ? observation.x : observation.y;
         const rawValue = vertical ? observation.y : observation.x;
@@ -727,9 +754,14 @@ function buildCartesianNodes(
         const startPosition = scalePosition(valueScale, start);
         const endPosition = scalePosition(valueScale, end);
         if (startPosition === undefined || endPosition === undefined) return;
-        const renderedStartPosition = hasPriorStackSegment
-          ? startPosition + Math.sign(endPosition - startPosition) * Math.min(theme.stackGap, Math.abs(endPosition - startPosition))
-          : startPosition;
+        const signs = stackSigns.get(chartValueKey(category));
+        const zeroGap = layout === 'stacked' && signs?.positive && signs.negative
+          ? theme.stackGap / 2
+          : 0;
+        const segmentGap = hasPriorStackSegment ? theme.stackGap : zeroGap;
+        const renderedStartPosition = startPosition +
+          Math.sign(endPosition - startPosition) *
+          Math.min(segmentGap, Math.abs(endPosition - startPosition));
         const inset = visualValue(observation.datum, observation.index, observation.source, barOptions.inset, categoryBand * 0.1);
         let bandStart = categoryCenter - categoryBand / 2 + inset;
         let bandSize = Math.max(0, categoryBand - inset * 2);
@@ -765,10 +797,14 @@ function buildCartesianNodes(
         const center = scalePosition(xScale, first.x);
         if (!statistics || center === undefined) return;
         const categoryBand = xScale.scale.bandwidth?.() ?? Math.max(24, plot.width / Math.max(1, byCategory.size) * 0.6);
-        const inset = boxOptions.inset ?? categoryBand * 0.2;
-        const left = center - categoryBand / 2 + inset;
-        const right = center + categoryBand / 2 - inset;
-        const color = colorFor(first);
+        const boxWidth = boxOptions.inset === undefined
+          ? Math.min(categoryBand * 0.6, theme.boxMaxWidth)
+          : Math.max(0, categoryBand - boxOptions.inset * 2);
+        const left = center - boxWidth / 2;
+        const right = center + boxWidth / 2;
+        // Box categories share one data-intent treatment by default. A color
+        // channel remains the explicit escape hatch for semantic series color.
+        const color = first.color === undefined ? chartIntentColor() : colorFor(first);
         const yLower = scalePosition(yScale, statistics.lower);
         const yUpper = scalePosition(yScale, statistics.upper);
         const yQ1 = scalePosition(yScale, statistics.q1);
@@ -776,16 +812,16 @@ function buildCartesianNodes(
         const yMedian = scalePosition(yScale, statistics.median);
         if ([yLower, yUpper, yQ1, yQ3, yMedian].some(value => value === undefined)) return;
         const lineStyle = styleFor(first, mark, color, { fill: 'none', stroke: color, strokeWidth: theme.seriesStrokeWidth });
+        const boxNode = rectNode(first, mark, color, left, right, yQ3 as number, yQ1 as number, boxOptions.radius ?? theme.barRadius);
+        boxNode.style.fillOpacity = visualValue(first.datum, first.index, first.source, boxOptions.fillOpacity, theme.boxFillOpacity);
         nodes.push(
           { type: 'line', key: `${first.sceneKey}:whisker`, markId: first.markId, x1: center, x2: center, y1: yUpper as number, y2: yLower as number, style: lineStyle },
-          rectNode(first, mark, color, left, right, yQ3 as number, yQ1 as number, boxOptions.radius ?? theme.barRadius),
+          boxNode,
           { type: 'line', key: `${first.sceneKey}:median`, markId: first.markId, x1: left, x2: right, y1: yMedian as number, y2: yMedian as number, style: lineStyle },
-          { type: 'line', key: `${first.sceneKey}:lower`, markId: first.markId, x1: left, x2: right, y1: yLower as number, y2: yLower as number, style: lineStyle },
-          { type: 'line', key: `${first.sceneKey}:upper`, markId: first.markId, x1: left, x2: right, y1: yUpper as number, y2: yUpper as number, style: lineStyle },
         );
         statistics.outliers.forEach((value, index) => {
           const y = scalePosition(yScale, value);
-          if (y !== undefined) nodes.push({ type: 'circle', key: `${first.sceneKey}:outlier:${index}`, markId: first.markId, x: center, y, radius: dotCircleRadius(theme.dotRadius, theme.dotHaloWidth), clipToPlot: false, style: styleFor(first, mark, color, { fill: color, stroke: 'var(--color-background-primary)', strokeWidth: theme.dotHaloWidth }) });
+          if (y !== undefined) nodes.push({ type: 'circle', key: `${first.sceneKey}:outlier:${index}`, markId: first.markId, x: center, y, radius: dotCircleRadius(theme.dotRadius, theme.dotHaloWidth), clipToPlot: false, style: styleFor(first, mark, color, { fill: 'var(--color-background-primary)', stroke: color, strokeWidth: theme.dotHaloWidth }) });
         });
         const summaryObservation: Observation = { ...first, y: statistics.median, value: statistics.median, datumKey: chartValueKey(first.x), sceneKey: `${first.markId}:${chartValueKey(first.x)}` };
         if (mark.options.interactive !== false) points.push(pointFor(summaryObservation, center, yMedian as number, color));
@@ -886,10 +922,13 @@ function buildCartesianNodes(
           },
         });
       }
-      if (mark.options.interactive !== false) points.push(pointFor(observation, x, y, color));
+      if (mark.options.interactive !== false) {
+        points.push(pointFor(observation, x, y, color));
+        if (mark.kind === 'dot') focusDotPointKeys.add(observation.sceneKey);
+      }
     });
   });
-  return { nodes, points };
+  return { nodes, points, focusDotPointKeys: [...focusDotPointKeys] };
 }
 
 function polarAngle(coordinate: ChartPolarCoordinate, fraction: number): number {
@@ -916,8 +955,10 @@ function buildPolarScene(
   colorFor: (observation: Observation) => string,
   theme: ChartTheme,
   measurer: ChartTextMeasurer,
-): Pick<ChartScene, 'plot' | 'guides' | 'nodes' | 'points'> {
+): Pick<ChartScene, 'plot' | 'guides' | 'nodes' | 'points' | 'focusDotPointKeys' | 'arcHitRegions'> {
   const coordinate = spec.coordinate as ChartPolarCoordinate;
+  const focusDotPointKeys = new Set<string>();
+  const arcHitRegions: ChartArcHitRegion[] = [];
   const angleDomain = distinct([...(spec.angle?.domain ?? []), ...observations.flatMap(group => group.map(observation => observation.angle).filter(validValue))]);
   const angleFor = (value: ChartValue): number => {
     const index = Math.max(0, angleDomain.findIndex(candidate => chartValueKey(candidate) === chartValueKey(value)));
@@ -1014,6 +1055,15 @@ function buildPolarScene(
         if (!d) return;
         const color = colorFor(observation);
         nodes.push({ type: 'path', key: observation.sceneKey, markId: observation.markId, d, transform: `translate(${centerX} ${centerY})`, style: styleFor(observation, mark, color, { fill: color, stroke: 'var(--color-background-primary)', strokeWidth: 0 }) });
+        arcHitRegions.push({
+          sceneKey: observation.sceneKey,
+          centerX,
+          centerY,
+          innerRadius: Math.max(0, inner),
+          outerRadius: Math.max(0, outer),
+          startAngle: arcDatum.startAngle,
+          endAngle: arcDatum.endAngle,
+        });
         const [localX, localY] = generator.centroid(arcDatum);
         if (mark.options.interactive !== false) points.push(pointFor(observation, centerX + localX, centerY + localY, color, { xValue: observation.label ?? observation.datumKey, yValue: observation.value ?? observation.theta2 - observation.theta1, value: observation.value ?? observation.theta2 - observation.theta1 }));
       });
@@ -1040,7 +1090,10 @@ function buildPolarScene(
           const radialPosition = scalePosition(radiusScale, observation.radius as number);
           if (radialPosition === undefined || observation.angle === undefined) return;
           const position = polarPoint(centerX, centerY, angleFor(observation.angle), radialPosition);
-          if (mark.options.interactive !== false) points.push(pointFor(observation, position.x, position.y, color));
+          if (mark.options.interactive !== false) {
+            points.push(pointFor(observation, position.x, position.y, color));
+            focusDotPointKeys.add(observation.sceneKey);
+          }
         });
       });
       return;
@@ -1055,7 +1108,10 @@ function buildPolarScene(
         const color = colorFor(observation);
         const radius = 'r' in mark.options ? visualValue(observation.datum, observation.index, observation.source, mark.options.r, theme.dotRadius) : theme.dotRadius;
         nodes.push({ type: 'circle', key: observation.sceneKey, markId: observation.markId, x: position.x, y: position.y, radius: dotCircleRadius(radius, theme.dotHaloWidth), clipToPlot: false, style: styleFor(observation, mark, color, { fill: color, stroke: 'var(--color-background-primary)', strokeWidth: theme.dotHaloWidth }) });
-        if (mark.options.interactive !== false) points.push(pointFor(observation, position.x, position.y, color));
+        if (mark.options.interactive !== false) {
+          points.push(pointFor(observation, position.x, position.y, color));
+          focusDotPointKeys.add(observation.sceneKey);
+        }
       });
     }
   });
@@ -1087,7 +1143,7 @@ function buildPolarScene(
       });
     }
   }
-  return { plot, guides, nodes, points };
+  return { plot, guides, nodes, points, focusDotPointKeys: [...focusDotPointKeys], arcHitRegions };
 }
 
 export function compileChartScene(
@@ -1130,7 +1186,25 @@ export function compileChartScene(
     if (settled) break;
   }
   const built = buildCartesianNodes(marks, observations, xScale, yScale, plot, colorFor, theme);
-  return { width, height, coordinate: 'cartesian', plot, xAxis, yAxis, guides: [], nodes: built.nodes, points: built.points, center: spec.center, focus: spec.focus ?? 'nearest', maxFocusDistance: spec.maxFocusDistance, tooltip: spec.tooltip, clip: spec.clip ?? true, focusDotCircleRadius: dotCircleRadius(theme.focusDotRadius, theme.dotHaloWidth), focusDotHaloWidth: theme.dotHaloWidth };
+  return { width, height, coordinate: 'cartesian', plot, xAxis, yAxis, guides: [], nodes: built.nodes, points: built.points, focusDotPointKeys: built.focusDotPointKeys, arcHitRegions: [], center: spec.center, focus: spec.focus ?? 'nearest', maxFocusDistance: spec.maxFocusDistance, tooltip: spec.tooltip, clip: spec.clip ?? true, focusDotCircleRadius: dotCircleRadius(theme.focusDotRadius, theme.dotHaloWidth), focusDotHaloWidth: theme.dotHaloWidth };
+}
+
+const normalizeAngle = (angle: number): number => {
+  const turn = Math.PI * 2;
+  return ((angle % turn) + turn) % turn;
+};
+
+function arcContainsPoint(region: ChartArcHitRegion, x: number, y: number): boolean {
+  const dx = x - region.centerX;
+  const dy = y - region.centerY;
+  const radius = Math.hypot(dx, dy);
+  if (radius < region.innerRadius || radius > region.outerRadius) return false;
+  const sweep = region.endAngle - region.startAngle;
+  if (Math.abs(sweep) >= Math.PI * 2 - Number.EPSILON) return true;
+  const angle = Math.atan2(dx, -dy);
+  return sweep >= 0
+    ? normalizeAngle(angle - region.startAngle) <= sweep
+    : normalizeAngle(region.startAngle - angle) <= -sweep;
 }
 
 export function findChartFocus(
@@ -1139,8 +1213,13 @@ export function findChartFocus(
   x: number,
   y: number,
   maxDistance = Number.POSITIVE_INFINITY,
+  arcHitRegions: readonly ChartArcHitRegion[] = [],
 ): { primary: ChartPoint; points: ChartPoint[] } | undefined {
   if (mode === 'none' || points.length === 0) return undefined;
+  const hitRegion = [...arcHitRegions].reverse().find(region => arcContainsPoint(region, x, y));
+  const hitPoint = hitRegion && points.find(point => point.sceneKey === hitRegion.sceneKey);
+  if (hitPoint) return { primary: hitPoint, points: [hitPoint] };
+  if (arcHitRegions.length > 0) return undefined;
   const distance = (point: ChartPoint): number => {
     if (mode === 'nearest-x' || mode === 'group-x') return Math.abs(point.x - x);
     if (mode === 'nearest-y' || mode === 'group-y') return Math.abs(point.y - y);

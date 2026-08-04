@@ -51,7 +51,7 @@ export const GroupedRows: Story = {
         ${ref(element => {
           if (!element) return;
           (element as HTMLElement & { items: unknown[] }).items = [
-            { label: 'Driving', value: '445 min', color: 'var(--color-data-category-1)' },
+            { label: 'Driving', value: '4:45 min', color: 'var(--color-data-category-1)' },
             { label: 'Idling', value: '88 min', color: 'var(--color-data-category-2)' },
           ];
         })}

@@ -76,17 +76,17 @@ export const Review: Story = {
   render: () => html`
     <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(360px, 1fr));gap:var(--dimension-space-300);padding:var(--dimension-space-400);background:var(--color-background-secondary);font-family:var(--typography-font-family, system-ui)">
       <ds-card-chart heading="Availability status" card-width="lg" variant="chart">
-        <ds-chart slot="chart" ${assign('definition', AVAILABILITY_DEFINITION)} label="Availability status" height="240"></ds-chart>
+        <ds-chart slot="chart" ${assign('definition', AVAILABILITY_DEFINITION)} label="Availability status"></ds-chart>
         <ds-chart-legend slot="legend" ${assign('items', AVAILABILITY_STATUS)}></ds-chart-legend>
       </ds-card-chart>
 
       <ds-card-chart heading="Fuel trend" card-width="lg" variant="chart">
-        <ds-chart slot="chart" ${assign('definition', FUEL_TREND_DEFINITION)} label="Fuel score and idling trend" height="240"></ds-chart>
+        <ds-chart slot="chart" ${assign('definition', FUEL_TREND_DEFINITION)} label="Fuel score and idling trend"></ds-chart>
         <ds-chart-legend slot="legend" ${assign('items', FUEL_TREND_LEGEND)} direction="horizontal"></ds-chart-legend>
       </ds-card-chart>
 
       <ds-card-chart heading="Safety risk factors" card-width="lg" variant="chart">
-        <ds-chart slot="chart" ${assign('definition', SAFETY_DEFINITION)} label="Safety risk factors" height="200"></ds-chart>
+        <ds-chart slot="chart" ${assign('definition', SAFETY_DEFINITION)} label="Safety risk factors"></ds-chart>
       </ds-card-chart>
     </div>
   `,

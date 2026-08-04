@@ -43,7 +43,7 @@
   ],
   "responsiveBehavior": [
     "The sm, md, or lg width sets a matching token-based minimum height and remains constrained by its parent.",
-    "The body allocates remaining height to the chart while legends retain content height.",
+    "The body allocates remaining height to an unconfigured ds-chart while legends retain content height; authored chart height and aspectRatio remain authoritative.",
     "Parent layouts own wrapping, stacking, and breakpoint-dependent card width."
   ],
   "frameworkCaveats": {

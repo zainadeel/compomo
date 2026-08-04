@@ -1929,7 +1929,7 @@
           ],
           "responsiveBehavior": [
             "The sm, md, or lg width sets a matching token-based minimum height and remains constrained by its parent.",
-            "The body allocates remaining height to the chart while legends retain content height.",
+            "The body allocates remaining height to an unconfigured ds-chart while legends retain content height; authored chart height and aspectRatio remain authoritative.",
             "Parent layouts own wrapping, stacking, and breakpoint-dependent card width."
           ],
           "frameworkCaveats": {
@@ -2350,11 +2350,12 @@
             "Definition compilation is renderer-independent and regenerates when data, locale, width, or height changes.",
             "Stable mark and datum keys preserve focus across responsive recompilation and reordered data.",
             "Tooltip rows are chart-owned while legends remain external and static.",
+            "Pie and donut pointer tooltips require direct slice containment and follow the pointer; keyboard tooltips remain anchored to the semantic slice.",
             "Polar center content defaults to its authored total and may opt into focused content."
           ],
           "responsiveBehavior": [
             "The chart observes its container unless width is fixed and recompiles geometry at CSS pixel dimensions.",
-            "Height is product-owned through height, aspectRatio, or the 320px default.",
+            "Height uses an authored height or aspectRatio, fills the chart region supplied by CardChart, and otherwise defaults to 320px.",
             "Measured guide labels reserve margins and thin colliding ticks while retaining boundary ticks."
           ],
           "frameworkCaveats": {

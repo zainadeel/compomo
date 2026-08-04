@@ -62,6 +62,32 @@ test('pointer and keyboard resolve grouped points through one focus model', asyn
   await page.mouse.move(box!.x + box!.width / 2, box!.y + 2);
   await expect(chart.locator('ds-tooltip-chart')).toBeVisible();
   await expect(chart.locator('.tooltip-chart__item')).toHaveCount(2);
+  const tooltipGeometry = await chart.locator('ds-tooltip-chart').evaluate(element => {
+    const heading = element.querySelector<HTMLElement>('.tooltip-chart__heading')!;
+    const item = element.querySelector<HTMLElement>('.tooltip-chart__item')!;
+    const swatchBox = item.querySelector<HTMLElement>('.tooltip-chart__swatch-box')!;
+    const label = item.querySelector<HTMLElement>('.tooltip-chart__label')!.getBoundingClientRect();
+    const value = item.querySelector<HTMLElement>('.tooltip-chart__value')!.getBoundingClientRect();
+    const host = getComputedStyle(element);
+    return {
+      hostPadding: host.padding,
+      hostRadius: host.borderRadius,
+      headingHeight: heading.getBoundingClientRect().height,
+      itemHeight: item.getBoundingClientRect().height,
+      itemRadius: getComputedStyle(item).borderRadius,
+      swatchBoxWidth: swatchBox.getBoundingClientRect().width,
+      labelValueGap: value.left - label.right,
+    };
+  });
+  expect(tooltipGeometry).toEqual({
+    hostPadding: '4px',
+    hostRadius: '6px',
+    headingHeight: 32,
+    itemHeight: 32,
+    itemRadius: '2px',
+    swatchBoxWidth: 20,
+    labelValueGap: 8,
+  });
   const pointerKey = await page.evaluate(() => (window as unknown as { lastFocus: { primary: { key: string } } }).lastFocus.primary.key);
 
   await surface.focus();
@@ -154,6 +180,47 @@ test('polar recipes resize geometry without scaling center typography', async ({
   await chart.locator('svg').focus();
   await chart.locator('svg').press('Home');
   await expect(chart.locator('ds-tooltip-chart')).toBeVisible();
+});
+
+test('resolves donut hover from slice containment instead of centroid distance', async ({ page }) => {
+  const chart = page.locator('#polar-chart');
+  const hoverPoints = await chart.evaluate(element => {
+    const path = element.querySelector<SVGPathElement>('path.chart__mark')!;
+    const box = path.getBBox();
+    const contains = (x: number, y: number) => path.isPointInFill(new DOMPoint(x, y));
+    const points: Array<{ x: number; y: number }> = [];
+    for (let y = box.y; y <= box.y + box.height; y += 4) {
+      for (let x = box.x; x <= box.x + box.width; x += 4) {
+        if (
+          contains(x, y) &&
+          contains(x - 2, y) &&
+          contains(x + 2, y) &&
+          contains(x, y - 2) &&
+          contains(x, y + 2)
+        ) {
+          const screen = new DOMPoint(x, y).matrixTransform(path.getScreenCTM()!);
+          points.push({ x: screen.x, y: screen.y });
+        }
+      }
+    }
+    if (points.length < 2) throw new Error('Not enough interior points found for the first donut slice.');
+    const center = new DOMPoint(0, 0).matrixTransform(path.getScreenCTM()!);
+    return { first: points[0], last: points[points.length - 1], center: { x: center.x, y: center.y } };
+  });
+
+  await page.mouse.move(hoverPoints.first.x, hoverPoints.first.y);
+  await expect(chart.locator('ds-tooltip-chart')).toContainText('Online');
+  const firstAnchor = await chart.locator('ds-tooltip-chart').evaluate(element => ({
+    x: (element as HTMLElement & { x: number }).x,
+    y: (element as HTMLElement & { y: number }).y,
+  }));
+  await page.mouse.move(hoverPoints.last.x, hoverPoints.last.y);
+  await expect.poll(() => chart.locator('ds-tooltip-chart').evaluate(element => ({
+    x: (element as HTMLElement & { x: number }).x,
+    y: (element as HTMLElement & { y: number }).y,
+  }))).not.toEqual(firstAnchor);
+  await page.mouse.move(hoverPoints.center.x, hoverPoints.center.y);
+  await expect(chart.locator('ds-tooltip-chart')).toHaveCount(0);
 });
 
 test('heatmap uses continuous 25 to 100 percent data-intent opacity', async ({ page }) => {

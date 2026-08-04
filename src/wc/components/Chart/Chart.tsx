@@ -40,6 +40,11 @@ interface FocusState {
   source: ChartFocusSource;
 }
 
+interface PointerAnchor {
+  x: number;
+  y: number;
+}
+
 @Component({
   tag: 'ds-chart',
   styleUrl: 'Chart.css',
@@ -67,8 +72,10 @@ export class Chart {
   @Event() dsChartFocusChange!: EventEmitter<ChartFocusChangeDetail>;
 
   @State() private surfaceWidth = DEFAULT_WIDTH;
+  @State() private containerHeight?: number;
   @State() private scene?: ChartScene;
   @State() private focusState?: FocusState;
+  @State() private pointerAnchor?: PointerAnchor;
 
   private resizeObserver?: ResizeObserver;
   private resizeFrame?: number;
@@ -124,7 +131,7 @@ export class Chart {
     if (this.aspectRatio && this.aspectRatio > 0) {
       return Math.max(1, this.surfaceWidth / this.aspectRatio);
     }
-    return DEFAULT_HEIGHT;
+    return this.containerHeight ?? DEFAULT_HEIGHT;
   }
 
   private connectResizeObserver() {
@@ -132,11 +139,11 @@ export class Chart {
     if (typeof ResizeObserver === 'undefined') return;
     this.resizeObserver = new ResizeObserver(entries => {
       const entry = entries[0];
-      if (!entry || this.width) return;
+      if (!entry) return;
       if (this.resizeFrame) cancelAnimationFrame(this.resizeFrame);
       this.resizeFrame = requestAnimationFrame(() => {
         this.resizeFrame = undefined;
-        this.applyMeasuredWidth(entry.contentRect.width);
+        this.applyMeasuredSize(entry.contentRect.width, entry.contentRect.height);
       });
     });
     this.resizeObserver.observe(this.el);
@@ -144,15 +151,27 @@ export class Chart {
   }
 
   private measureHost() {
-    if (this.width) return;
-    this.applyMeasuredWidth(this.el.getBoundingClientRect().width);
+    const bounds = this.el.getBoundingClientRect();
+    this.applyMeasuredSize(bounds.width, bounds.height);
   }
 
-  private applyMeasuredWidth(width: number) {
-    if (!(width > 0)) return;
-    const next = Math.round(width * 100) / 100;
-    if (next !== this.surfaceWidth) {
-      this.surfaceWidth = next;
+  private applyMeasuredSize(width: number, height: number) {
+    let changed = false;
+    if (!this.width && width > 0) {
+      const nextWidth = Math.round(width * 100) / 100;
+      if (nextWidth !== this.surfaceWidth) {
+        this.surfaceWidth = nextWidth;
+        changed = true;
+      }
+    }
+    if (!this.height && !this.aspectRatio && height > 0) {
+      const nextHeight = Math.round(height * 100) / 100;
+      if (nextHeight !== this.containerHeight) {
+        this.containerHeight = nextHeight;
+        changed = true;
+      }
+    }
+    if (changed) {
       this.scheduleCompile();
     }
   }
@@ -180,7 +199,14 @@ export class Chart {
     if (previousKey) {
       const restored = scene.points.find(point => point.sceneKey === previousKey);
       if (restored && this.focusState) {
-        const grouped = findChartFocus(scene.points, scene.focus, restored.x, restored.y);
+        const grouped = findChartFocus(
+          scene.points,
+          scene.focus,
+          restored.x,
+          restored.y,
+          scene.maxFocusDistance,
+          scene.arcHitRegions,
+        );
         this.focusState = grouped
           ? { ...grouped, source: this.focusState.source }
           : undefined;
@@ -226,6 +252,7 @@ export class Chart {
       x,
       y,
       this.scene.maxFocusDistance,
+      this.scene.arcHitRegions,
     );
     if (!result) {
       this.clearFocus(source);
@@ -248,7 +275,15 @@ export class Chart {
   private onPointerMove = (event: PointerEvent) => {
     const svg = event.currentTarget as SVGSVGElement;
     const rect = svg.getBoundingClientRect();
-    this.resolveFocus(event.clientX - rect.left, event.clientY - rect.top, 'pointer');
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    this.pointerAnchor = this.scene?.arcHitRegions.length ? { x, y } : undefined;
+    this.resolveFocus(x, y, 'pointer');
+  };
+
+  private onPointerLeave = () => {
+    this.pointerAnchor = undefined;
+    this.clearFocus('pointer');
   };
 
   private keyboardPoints(): ChartPoint[] {
@@ -318,14 +353,10 @@ export class Chart {
     ));
   }
 
-  private focusedCirclePoints(scene: ChartScene): ChartPoint[] {
+  private focusedDotPoints(scene: ChartScene): ChartPoint[] {
     if (!this.focusState) return [];
-    const circleKeys = new Set(
-      scene.nodes
-        .filter(node => node.type === 'circle')
-        .map(node => node.key),
-    );
-    return this.focusState.points.filter(point => circleKeys.has(point.sceneKey));
+    const focusDotPointKeys = new Set(scene.focusDotPointKeys);
+    return this.focusState.points.filter(point => focusDotPointKeys.has(point.sceneKey));
   }
 
   private tooltipContent(): { heading?: string; items: ChartTooltipItem[] } | undefined {
@@ -368,10 +399,16 @@ export class Chart {
     const scene = this.scene;
     const tooltip = this.tooltipContent();
     const focus = this.focusState?.primary;
-    const focusedCirclePoints = scene ? this.focusedCirclePoints(scene) : [];
+    const tooltipAnchor = focus &&
+      this.focusState?.source === 'pointer' &&
+      scene?.arcHitRegions.length &&
+      this.pointerAnchor
+      ? this.pointerAnchor
+      : focus;
+    const focusedDotPoints = scene ? this.focusedDotPoints(scene) : [];
     const groupedPointFocus = scene?.coordinate === 'cartesian' &&
       scene.focus === 'group-x' &&
-      focusedCirclePoints.length > 1;
+      focusedDotPoints.length > 1;
     const center = focus && scene?.center?.focused
       ? scene.center.focused(focus, this.locale ?? document.documentElement.lang ?? 'en')
       : scene?.center;
@@ -380,7 +417,9 @@ export class Chart {
         class="chart"
         style={{
           '--ds-chart-width': this.width ? `${this.width}px` : '100%',
-          '--ds-chart-height': `${this.surfaceHeight}px`,
+          '--ds-chart-height': this.height || this.aspectRatio
+            ? `${this.surfaceHeight}px`
+            : 'var(--ds-chart-container-height, 320px)',
         }}
       >
         {this.description && <span id={this.descriptionId} class="chart__description">{this.description}</span>}
@@ -396,7 +435,7 @@ export class Chart {
             aria-describedby={this.description ? this.descriptionId : undefined}
             tabindex={0}
             onPointerMove={this.onPointerMove}
-            onPointerLeave={() => this.clearFocus('pointer')}
+            onPointerLeave={this.onPointerLeave}
             onKeyDown={this.onKeyDown}
           >
             <defs aria-hidden="true">
@@ -442,7 +481,7 @@ export class Chart {
                 aria-hidden="true"
               />
             )}
-            {focusedCirclePoints.map(point => (
+            {focusedDotPoints.map(point => (
               <circle
                 key={`focus-${point.sceneKey}`}
                 class="chart__focus-point"
@@ -455,7 +494,7 @@ export class Chart {
                 aria-hidden="true"
               />
             ))}
-            {focus && focusedCirclePoints.length === 0 && <circle class="chart__focus" cx={focus.x} cy={focus.y} r="6" aria-hidden="true" />}
+            {focus && focusedDotPoints.length === 0 && <circle class="chart__focus" cx={focus.x} cy={focus.y} r="6" aria-hidden="true" />}
             {center?.value && (
               <text
                 class="chart__center-value"
@@ -482,12 +521,12 @@ export class Chart {
             )}
           </svg>
         )}
-        {tooltip && focus && (
+        {tooltip && tooltipAnchor && (
           <ds-tooltip-chart
             heading={tooltip.heading}
             items={tooltip.items}
-            x={focus.x}
-            y={focus.y}
+            x={tooltipAnchor.x}
+            y={tooltipAnchor.y}
           />
         )}
         <span class="chart__status" aria-live="polite" aria-atomic="true">{this.statusText()}</span>

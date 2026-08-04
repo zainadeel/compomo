@@ -1,8 +1,7 @@
 @import '../../utils/control-density.css';
+@import '../../utils/control-parts.css';
 @import '../../utils/forced-colors.css';
 
-/* No padding here — the item div below owns all the spacing, so there's exactly one padding
-   box instead of stacking the host's padding on top of the item's. */
 :host {
   position: absolute;
   z-index: var(--dimension-z-index-tooltip);
@@ -11,35 +10,40 @@
   background-color: var(--color-translucent-translucent);
   backdrop-filter: blur(var(--effect-blur-md));
   -webkit-backdrop-filter: blur(var(--effect-blur-md));
-  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
+  border-radius: var(--dimension-radius-075);
   box-shadow: var(--effect-elevation-elevated-floating);
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
-  padding: var(--dimension-space-050) 0;
+  padding: var(--dimension-space-050);
 }
 
 :host(.tooltip-chart--visible) {
   animation: tooltip-chart-fade-in var(--effect-motion-short-2) forwards;
 }
 
-/* Density: md control recipe (height / pad / label inset) — non-interactive, no interaction-fill. */
 .tooltip-chart__item {
-  box-sizing: border-box;
-  height: var(--ds-control-height, var(--dimension-size-400));
-  display: flex;
-  align-items: center;
-  gap: var(--dimension-space-025);
-  padding: 0 var(--ds-control-padding-inline, var(--dimension-space-075));
+  width: 100%;
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
 }
 
 .tooltip-chart__heading {
-  display: block;
-  padding: var(--dimension-space-050) var(--dimension-space-100);
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: var(--ds-control-height, var(--dimension-size-400));
+  padding-inline: calc(
+    var(--ds-control-padding-inline, var(--dimension-space-075)) +
+      var(--ds-control-label-inset, var(--dimension-space-025))
+  );
 }
 
 .tooltip-chart__items {
   display: grid;
+}
+
+.tooltip-chart__swatch-box {
+  pointer-events: none;
 }
 
 .tooltip-chart__swatch {
@@ -50,13 +54,14 @@
   background: var(--ds-tooltip-chart-swatch);
 }
 
-.tooltip-chart__item:has(.tooltip-chart__swatch) .tooltip-chart__value {
+.tooltip-chart__value {
   margin-inline-start: auto;
+  text-align: end;
 }
 
 .tooltip-chart__label,
 .tooltip-chart__value {
-  padding: 0 var(--ds-control-label-inset, var(--dimension-space-025));
+  flex: none;
 }
 
 @keyframes tooltip-chart-fade-in {

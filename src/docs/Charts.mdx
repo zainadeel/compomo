@@ -48,7 +48,7 @@ The Cartesian marks are `lineY`, `areaY`, `barX`, `barY`, `boxY`, `dot`, `rect`,
 
 The chart observes its container and recompiles at current CSS-pixel dimensions. It does not scale a previously rendered SVG, so caption typography, 2px data lines, grid strokes, dots, and 2px bar and arc corners remain constant.
 
-Product layout owns available width. `ds-card-chart` owns card chrome, padding, title, and the external legend; `ds-chart` owns internal plot geometry, measured guide margins, tick thinning, and collision avoidance. Height comes from `height`, `aspectRatio`, or the 320px default.
+Product layout owns available width. `ds-card-chart` owns card chrome, padding, title, and the external legend; `ds-chart` owns internal plot geometry, measured guide margins, tick thinning, and collision avoidance. An unconfigured chart fills the chart region supplied by `ds-card-chart`. Outside that composition it defaults to 320px, while an authored `height` or `aspectRatio` remains authoritative everywhere.
 
 Responsive definitions may deliberately change authored content:
 

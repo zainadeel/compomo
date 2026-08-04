@@ -118,6 +118,8 @@ describe('chart scene compiler', () => {
     }), 480, 320);
     assert.match(scene.nodes[0]?.type === 'path' ? scene.nodes[0].d : '', /M.*M/);
     assert.deepEqual(scene.points.map(point => point.key), ['a', 'c']);
+    assert.deepEqual(scene.focusDotPointKeys, scene.points.map(point => point.sceneKey));
+    assert.equal(scene.nodes.some(node => node.type === 'circle'), false);
   });
 
   it('keeps explicit datum identity stable when rows reorder', () => {
@@ -172,6 +174,7 @@ describe('chart scene compiler', () => {
     assert.ok(negativeFirst?.type === 'rect' && negativeSecond?.type === 'rect');
     assert.equal(positiveFirst.y - (positiveSecond.y + positiveSecond.height), 1);
     assert.equal(negativeSecond.y - (negativeFirst.y + negativeFirst.height), 1);
+    assert.equal(negativeFirst.y - (positiveFirst.y + positiveFirst.height), 1);
   });
 
   it('re-solves plot margins and thins measured ticks for narrow surfaces', () => {
@@ -220,6 +223,40 @@ describe('chart scene compiler', () => {
     assert.notDeepEqual(wide.points.map(point => point.x), narrow.points.map(point => point.x));
     assert.equal(defaultChartTheme.donutGap, 1);
     assert.equal(resolveDonutPadAngle(1, 75, 100) * Math.hypot(75, 100), 1);
+    wide.arcHitRegions.forEach(region => {
+      const angle = (region.startAngle + region.endAngle) / 2;
+      const radius = (region.innerRadius + region.outerRadius) / 2;
+      const x = region.centerX + Math.sin(angle) * radius;
+      const y = region.centerY - Math.cos(angle) * radius;
+      assert.equal(
+        findChartFocus(wide.points, 'nearest', x, y, undefined, wide.arcHitRegions)?.primary.sceneKey,
+        region.sceneKey,
+      );
+    });
+    const firstRegion = wide.arcHitRegions[0];
+    assert.ok(firstRegion);
+    assert.equal(
+      findChartFocus(
+        wide.points,
+        'nearest',
+        firstRegion.centerX,
+        firstRegion.centerY,
+        undefined,
+        wide.arcHitRegions,
+      ),
+      undefined,
+    );
+    assert.equal(
+      findChartFocus(
+        wide.points,
+        'nearest',
+        firstRegion.centerX + firstRegion.outerRadius + 4,
+        firstRegion.centerY,
+        undefined,
+        wide.arcHitRegions,
+      ),
+      undefined,
+    );
   });
 
   it('maps heatmap intensity continuously from 25 to 100 percent data-intent opacity', () => {
@@ -256,11 +293,19 @@ describe('chart scene compiler', () => {
     assert.ok(scene.nodes.some(node => node.markId === 'range' && node.type === 'rect'));
     assert.ok(scene.nodes.some(node => node.markId === 'histogram' && node.type === 'rect'));
     const boxScene = compileChartScene(defineChart({
-      marks: [boxY(distribution, { id: 'box', key: 'id', x: 'group', y: 'value' })],
+      marks: [boxY(distribution, { id: 'box', key: 'id', x: 'group', y: 'value', z: 'group' })],
       x: { scale: scaleBand },
       y: { scale: scaleLinear },
     }), 480, 320);
     assert.ok(boxScene.nodes.some(node => node.markId === 'box'));
+    const box = boxScene.nodes.find(node => node.markId === 'box' && node.type === 'rect');
+    assert.equal(box?.style.fill, 'var(--color-data-intent-brand)');
+    assert.equal(box?.style.fillOpacity, 0.25);
+    assert.ok(box?.type === 'rect' && box.width <= defaultChartTheme.boxMaxWidth);
+    assert.ok(boxScene.nodes
+      .filter(node => node.markId === 'box' && node.type === 'line')
+      .every(node => node.style.stroke === 'var(--color-data-intent-brand)' && node.style.strokeOpacity === 1));
+    assert.equal(boxScene.nodes.some(node => node.key.endsWith(':lower') || node.key.endsWith(':upper')), false);
   });
 
   it('builds polygon radar guides and linear radial series', () => {

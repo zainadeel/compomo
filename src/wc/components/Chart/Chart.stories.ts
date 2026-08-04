@@ -193,7 +193,17 @@ const divergingRows = [
 ];
 
 const divergingDefinition = defineChart({
-  marks: [barY(divergingRows, { id: 'change', key: 'id', x: 'month', y: 'value', z: 'series', layout: 'stacked' })],
+  marks: [barY(divergingRows, {
+    id: 'change',
+    key: 'id',
+    x: 'month',
+    y: 'value',
+    z: 'series',
+    layout: 'stacked',
+    fill: row => row.value >= 0
+      ? 'var(--color-data-win-loss-win)'
+      : 'var(--color-data-win-loss-loss)',
+  })],
   x: { scale: scaleBand, axis: { label: 'Month' } },
   y: { scale: scaleLinear, nice: true, grid: true, axis: { label: 'Score change' } },
   focus: 'group-x',
@@ -325,9 +335,12 @@ const densityDefinition = defineChart({
 const boxRows = [
   ...[42, 45, 48, 51, 54, 60, 72].map((value, index) => ({ id: `north-${index}`, region: 'North', value })),
   ...[30, 46, 50, 52, 55, 58, 90].map((value, index) => ({ id: `south-${index}`, region: 'South', value })),
+  ...[38, 47, 49, 53, 56, 61, 64].map((value, index) => ({ id: `east-${index}`, region: 'East', value })),
+  ...[35, 44, 47, 50, 59, 65, 76].map((value, index) => ({ id: `west-${index}`, region: 'West', value })),
+  ...[40, 43, 46, 49, 52, 57, 63].map((value, index) => ({ id: `central-${index}`, region: 'Central', value })),
 ];
 const boxDefinition = defineChart({
-  marks: [boxY(boxRows, { id: 'distribution', key: 'id', x: 'region', y: 'value', z: 'region' })],
+  marks: [boxY(boxRows, { id: 'distribution', key: 'id', x: 'region', y: 'value' })],
   x: { scale: scaleBand },
   y: { scale: scaleLinear, nice: true, grid: true },
   focus: 'nearest',
@@ -400,7 +413,7 @@ export const Heatmap: Story = { render: () => renderChart(heatmapDefinition, { t
 export const Histogram: Story = { render: () => renderChart(histogramDefinition(), { title: 'Vehicle value distribution', description: 'Stable D3 bins are rendered as quantitative rectangles.', summary: 'Most observations fall between 48 and 60.' }) };
 export const CumulativeHistogram: Story = { render: () => renderChart(histogramDefinition(true), { title: 'Cumulative vehicle distribution', description: 'The same bins are transformed into running totals.', summary: `Final cumulative count: ${distributionRows.length}.` }) };
 export const Density: Story = { render: () => renderChart(densityDefinition, { title: 'Smoothed value density', description: 'A zero-inclusive density area and straight line share one semantic series.', summary: 'The highest density is near 52.' }) };
-export const BoxPlot: Story = { render: () => renderChart(boxDefinition, { title: 'Regional value spread', description: 'Quartiles, median, Tukey whiskers, and outliers compose one box mark.', summary: 'North median: 51. South median: 52.' }) };
+export const BoxPlot: Story = { render: () => renderChart(boxDefinition, { title: 'Regional value spread', description: 'Compact quartile boxes use 25% data-intent fill with full-strength medians, whiskers, and hollow outliers.', summary: 'North median: 51. South median: 52.' }) };
 export const Annotations: Story = { render: () => renderChart(annotatedDefinition, { title: 'Target attainment', description: 'A band, rule, line, and text annotation render in authored layer order.', summary: 'The score reaches the target range in April.' }) };
 export const NarrowCard: Story = {
   render: () => renderChart(defineChart(({ width }) => ({
