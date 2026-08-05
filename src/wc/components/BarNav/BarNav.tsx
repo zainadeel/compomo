@@ -840,7 +840,7 @@ export class BarNav {
                 class={{
                   'bar-nav__overflow-trigger': true,
                 }}
-                icon="Ellipses"
+                icon="ChevronDown"
                 activeFill={false}
                 hasBorder={false}
                 focusTabIndex={this.overflowRovingFocused ? 0 : -1}

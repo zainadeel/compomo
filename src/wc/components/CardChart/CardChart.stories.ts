@@ -46,7 +46,7 @@ const LEGEND_ITEMS: ChartLegendItem[] = [
 ];
 
 const meta: Meta = {
-  title: 'Charts/Card Chart',
+  title: 'Cards/CardChart',
   tags: ['autodocs'],
   argTypes: {
     heading: { control: 'text' },

@@ -48,7 +48,7 @@
     "The owner preserves focus and meaningful reading order when replacing placeholders with real content."
   ],
   "states": [
-    "Text, icon, and control variants are atomic metric canvases aligned to their corresponding design-system recipes; control atoms inherit the selected control density's default radius.",
+    "Text, icon, and control variants are atomic metric canvases aligned to their corresponding design-system recipes. Text bars occupy 75% of their line-height canvas, while icon shapes occupy 75% of their square canvas; both remain centered with a proportional 12.5% inset per applicable edge. Control atoms inherit the selected control density's default radius.",
     "Compose approximate line count, hierarchy, widths, and control placement without simulating actual values.",
     "Shimmer is on by default and may be disabled for a static placeholder. Reduced motion always produces the static final shape.",
     "Rounded is an optional visual treatment for icon and control atoms rather than a semantic state.",

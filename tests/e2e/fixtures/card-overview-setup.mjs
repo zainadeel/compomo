@@ -16,7 +16,7 @@ const rangeOptions = [
   { label: 'Jun 2–Jun 29', value: 'previous-4w' },
 ];
 
-for (const id of ['default-filter', 'range-filter', 'compact-filter']) {
+for (const id of ['default-filter', 'range-filter', 'compact-filter', 'loading-filter']) {
   const select = document.getElementById(id);
   select.options = comparisonOptions;
   select.value = '4w';
@@ -67,6 +67,7 @@ document.getElementById('excellent').score = score(81);
 document.getElementById('no-score').metrics = metrics.slice(0, 2);
 document.getElementById('no-trend').score = { label: 'Safety score', value: 87 };
 document.getElementById('score-error').metrics = metrics.slice(0, 2);
+document.getElementById('loading-with-metrics').metrics = metrics.slice(0, 3);
 
 await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 document.documentElement.dataset.ready = 'true';

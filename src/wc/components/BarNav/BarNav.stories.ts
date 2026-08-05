@@ -72,7 +72,7 @@ export const TabOverflow: Story = {
     docs: {
       description: {
         story:
-          'When tabs overflow the header width, remaining tabs move into the Ellipses overflow menu. ' +
+          'When tabs overflow the header width, remaining tabs move into the down-chevron overflow menu. ' +
           'Resize the dashed container to test collapse behavior.',
       },
     },

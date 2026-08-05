@@ -29,7 +29,6 @@
 .card-chart__header {
   flex-shrink: 0;
   border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
-  background-color: var(--color-background-primary);
 }
 
 .card-chart__copy {

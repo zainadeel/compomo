@@ -203,7 +203,7 @@
 .card-overview__score-value,
 .card-overview__score-figure {
   flex: 0 0 auto;
-  margin-block: calc(-1 * var(--dimension-space-150));
+  margin-block: calc(-1 * var(--dimension-space-100));
 }
 
 .card-overview__score-content--error {
@@ -228,6 +228,7 @@
 
 .card-overview__metric-content {
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
   justify-content: center;
   gap: var(--dimension-space-050);
