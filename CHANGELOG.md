@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.10.0](https://github.com/zainadeel/compomo/compare/v13.9.0...v13.10.0) (2026-08-05)
+
+
+### Added
+
+* **cards:** pack overview cells to fit and rework the safety score cell ([#428](https://github.com/zainadeel/compomo/issues/428)) ([79eadd8](https://github.com/zainadeel/compomo/commit/79eadd84f4b2bdbcc221e101002f621966b3ce08))
+
 ## [13.9.0](https://github.com/zainadeel/compomo/compare/v13.8.0...v13.9.0) (2026-08-05)
 
 
