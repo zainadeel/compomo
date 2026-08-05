@@ -12,31 +12,42 @@ export interface CardOverviewCollapseGeometry {
 }
 
 /**
- * Choose the densest column count that fits without leaving an incomplete row
- * for even cell totals. Odd totals retain the densest fitting layout and may
- * therefore leave an orphan in the final row.
+ * Choose the column count for the metric grid.
+ *
+ * Cells that all fit across one row stay on one row: a full row is already
+ * balanced, so there is nothing to distribute.
+ *
+ * Once the width forces a wrap, prefer equal rows — the widest column count
+ * that divides the total exactly. Eight cells therefore step 8 → 4+4 → 2+2+2+2
+ * as the width narrows, never trading an equal split for a shorter grid.
+ *
+ * Totals with no equal split available fall back to the fewest rows that fit,
+ * spread as evenly as possible, which leaves one short final row: five cells at
+ * a four-cell width are 3+2, seven are 4+3.
+ *
+ * Width is the only ceiling. There is deliberately no column cap: a wide card
+ * showing six cells that each clear `minCellWidth` renders all six across.
  */
 export function resolveOverviewGridColumns(options: {
   cellCount: number;
   availableWidth: number;
   minCellWidth: number;
-  maxColumns?: number;
 }): number {
   const cellCount = Math.max(1, Math.floor(options.cellCount));
   const minCellWidth = Math.max(1, options.minCellWidth);
-  const maxColumns = Math.max(1, Math.floor(options.maxColumns ?? 4));
   const fittingColumns = Math.max(
     1,
-    Math.min(cellCount, maxColumns, Math.floor(Math.max(0, options.availableWidth) / minCellWidth))
+    Math.floor(Math.max(0, options.availableWidth) / minCellWidth)
   );
 
-  if (cellCount % 2 !== 0) return fittingColumns;
+  if (fittingColumns >= cellCount) return cellCount;
 
-  for (let columns = fittingColumns; columns >= 1; columns -= 1) {
+  for (let columns = fittingColumns; columns >= 2; columns -= 1) {
     if (cellCount % columns === 0) return columns;
   }
 
-  return 1;
+  const rows = Math.ceil(cellCount / fittingColumns);
+  return Math.ceil(cellCount / rows);
 }
 
 export function resolveCardOverviewCollapseGeometry(options: {

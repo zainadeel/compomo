@@ -724,7 +724,7 @@ export namespace Components {
         "layout": CardOverviewLayout;
         /**
           * Width a metric cell may shrink to before the grid drops a column. The grid uses this threshold while choosing an evenly distributed column count.
-          * @default 'var(--dimension-menu-width-xs)'
+          * @default '200px'
          */
         "metricMinWidth": string;
         /**
@@ -4539,7 +4539,7 @@ declare namespace LocalJSX {
         "layout"?: CardOverviewLayout;
         /**
           * Width a metric cell may shrink to before the grid drops a column. The grid uses this threshold while choosing an evenly distributed column count.
-          * @default 'var(--dimension-menu-width-xs)'
+          * @default '200px'
          */
         "metricMinWidth"?: string;
         /**

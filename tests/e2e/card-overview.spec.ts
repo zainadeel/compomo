@@ -20,7 +20,7 @@ test('renders the safety score as the first equal-track, nonselectable grid cell
   await expect(card.locator('.card-overview__score-band')).toHaveCount(0);
 });
 
-test('chooses complete rows for even totals and dense rows for odd totals', async ({ page }) => {
+test('prefers equal rows, falling back to a short final row when none divide', async ({ page }) => {
   const card = page.locator('#default');
   const columnCount = () =>
     card.locator('.card-overview__metrics').evaluate(element =>
@@ -67,7 +67,7 @@ test('maps score boundaries to matching semantic background and foreground pairs
     ['good', 'good'],
     ['excellent', 'excellent'],
   ] as const) {
-    const colors = await page.locator(`#${id} .card-overview__score-content`).evaluate(
+    const colors = await page.locator(`#${id} .card-overview__score-badge`).evaluate(
       (element, resolvedLevel) => {
         const resolve = (property: string) => {
           const probe = document.createElement('span');
@@ -145,7 +145,7 @@ test('keeps equal-height cell content with the inset, content, and text balance 
       divider: getComputedStyle(metric).boxShadow,
       actionRadius: actionStyle.borderRadius,
       scoreRadius: getComputedStyle(
-        element.querySelector<HTMLElement>('.card-overview__score-content')!
+        element.querySelector<HTMLElement>('.card-overview__score-badge')!
       ).borderRadius,
       surfaceRadius: surfaceStyle.borderRadius,
     };
@@ -184,7 +184,10 @@ test('keeps loading placeholders in the resolved content geometry', async ({ pag
 
   const geometry = await card.evaluate(element => {
     const score = element.querySelector<HTMLElement>('.card-overview__score-content')!;
-    const scoreFigure = element.querySelector<HTMLElement>('.card-overview__score-figure')!;
+    // The figure placeholder now sits inside the level fill, which owns the crop.
+    const scoreFigure = element.querySelector<HTMLElement>(
+      '.card-overview__score-badge ds-skeleton'
+    )!;
     const metricAction = element.querySelector<HTMLElement>('.card-overview__metric-action')!;
     const metricContent = element.querySelector<HTMLElement>('.card-overview__metric-content')!;
     return {

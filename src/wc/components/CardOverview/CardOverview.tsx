@@ -1,4 +1,14 @@
-import { Component, Element, Event, EventEmitter, h, Host, Prop, State } from '@stencil/core';
+import {
+  Component,
+  Element,
+  Event,
+  EventEmitter,
+  forceUpdate,
+  h,
+  Host,
+  Prop,
+  State,
+} from '@stencil/core';
 import { resolveCssLengthPx, TOKEN_DEFAULTS } from '../../utils';
 import type { TextColor, TextVariant } from '../Text/text-types';
 import type { MetricTrend } from '../../utils/metric-change';
@@ -16,8 +26,16 @@ import {
   resolveSafetyScoreLevel,
 } from './card-overview-controller';
 
-/** Metric cells below this width drop a grid column rather than compress further. */
-const DEFAULT_METRIC_MIN_WIDTH = 'var(--dimension-menu-width-xs)';
+/**
+ * Metric cells below this width drop a grid column rather than compress further.
+ *
+ * A literal rather than a token: this is a layout threshold for a grid cell, and
+ * the dimension scale has no token for that. The 200px tokens it could borrow
+ * (`menu-width-xs`, `form-width-xs`, `panel-width-2xs`) all name other
+ * components, so binding to one would couple this grid to an unrelated contract.
+ * Consumers override with the `metricMinWidth` prop.
+ */
+const DEFAULT_METRIC_MIN_WIDTH = '200px';
 
 /** Skeleton cells rendered while loading with no metrics supplied yet. */
 const DEFAULT_LOADING_METRIC_COUNT = 5;
@@ -93,20 +111,30 @@ export class CardOverview {
 
   private layoutEl?: HTMLElement;
   private layoutResizeObserver: ResizeObserver | null = null;
+  /** The node the observer is bound to, which a later render can replace. */
+  private observedLayoutEl?: HTMLElement;
 
   componentDidLoad() {
     this.observeLayout();
   }
 
   componentDidRender() {
-    // Re-bind after HMR when DidLoad's observer was dropped.
-    if (!this.layoutResizeObserver) this.observeLayout();
-    else this.updateLayoutGeometry();
+    // Re-bind after HMR when DidLoad's observer was dropped, and whenever a
+    // render swapped the layout node out from under the observer: the ref points
+    // at the new node while the observer still watches the detached one, which
+    // never resizes again. The grid would then keep its first measured column
+    // count for the life of the component.
+    if (!this.layoutResizeObserver || this.observedLayoutEl !== this.layoutEl) {
+      this.observeLayout();
+    } else {
+      this.updateLayoutGeometry();
+    }
   }
 
   disconnectedCallback() {
     this.layoutResizeObserver?.disconnect();
     this.layoutResizeObserver = null;
+    this.observedLayoutEl = undefined;
   }
 
   private get visibleMetrics(): OverviewMetric[] {
@@ -152,6 +180,7 @@ export class CardOverview {
       if (rect) this.updateLayoutGeometry(rect.width, rect.height);
     });
     this.layoutResizeObserver.observe(layout);
+    this.observedLayoutEl = layout;
   }
 
   private updateLayoutGeometry(width?: number, height?: number) {
@@ -162,16 +191,35 @@ export class CardOverview {
     const resolvedWidth = width ?? bounds?.width ?? 0;
     const resolvedHeight = height ?? bounds?.height ?? 0;
 
+    let changed = false;
+
     if (resolvedHeight > 0 && Math.abs(resolvedHeight - this.expandedHeight) >= 0.5) {
       this.expandedHeight = resolvedHeight;
+      changed = true;
     }
 
     const columns = resolveOverviewGridColumns({
       cellCount: this.visibleCellCount,
       availableWidth: resolvedWidth,
-      minCellWidth: resolveCssLengthPx(this.metricMinWidth, TOKEN_DEFAULTS.menuWidthXs),
+      minCellWidth: resolveCssLengthPx(this.metricMinWidth, DEFAULT_METRIC_MIN_WIDTH),
     });
-    if (columns !== this.gridColumns) this.gridColumns = columns;
+    if (columns !== this.gridColumns) {
+      this.gridColumns = columns;
+      changed = true;
+    }
+
+    // The column count is written straight to the host rather than through the
+    // rendered style object. Measurement happens in `componentDidLoad` and in the
+    // ResizeObserver callback, both outside a render cycle, and the host's style
+    // is not patched again after the first render — so a rendered value would stay
+    // pinned to whatever the first paint produced, before any width was known.
+    if (this.gridColumns) {
+      this.el.style.setProperty('--ds-card-overview-grid-columns', String(this.gridColumns));
+    } else {
+      this.el.style.removeProperty('--ds-card-overview-grid-columns');
+    }
+
+    if (changed) forceUpdate(this);
   }
 
   /** Index of the roving tab stop, skipping inactive metrics. */
@@ -241,12 +289,7 @@ export class CardOverview {
    *
    * Tone is supplied by the caller and never inferred here.
    */
-  private renderTrend(
-    trend: MetricTrend | undefined,
-    variant: TextVariant,
-    emphasis = false,
-    color?: TextColor
-  ) {
+  private renderTrend(trend: MetricTrend | undefined, variant: TextVariant) {
     if (!trend) return null;
     return (
       <ds-text
@@ -257,8 +300,7 @@ export class CardOverview {
           [`card-overview__trend--${trend.tone}`]: true,
         }}
         variant={variant}
-        emphasis={emphasis}
-        color={color ?? TREND_COLORS[trend.tone]}
+        color={TREND_COLORS[trend.tone]}
         fontFeature="tabular-nums"
       >
         {trend.direction === 'up' ? '↑' : '↓'} {trend.value}
@@ -271,12 +313,12 @@ export class CardOverview {
       return (
         <div class="card-overview__score" part="score">
           <div class="card-overview__score-content">
+            <div class="card-overview__score-badge">
+              {this.bar('text-display-small', '40px')}
+            </div>
             <div class="card-overview__score-copy">
               {this.bar('text-body-small', '64px', 'card-overview__score-label')}
               {this.bar('text-body-medium', '28px')}
-            </div>
-            <div class="card-overview__score-figure">
-              {this.bar('text-display-medium', '56px')}
             </div>
           </div>
         </div>
@@ -308,33 +350,36 @@ export class CardOverview {
 
     return (
       <div class="card-overview__score" part="score">
-        <div
-          class={{
-            'card-overview__score-content': true,
-            [`card-overview__score-content--${level}`]: Boolean(level),
-          }}
-        >
+        <div class="card-overview__score-content">
+          {/* eslint-disable-next-line local/prefer-direct-ds-text -- The fill owns its own box: it pads out to 52px and crops the display line box, which the text element cannot do to itself. */}
+          <div
+            class={{
+              'card-overview__score-badge': true,
+              [`card-overview__score-badge--${level}`]: Boolean(level),
+            }}
+          >
+            <ds-text
+              as="span"
+              class="card-overview__score-value ds-control-label-box"
+              variant="text-display-small"
+              emphasis
+              color="inherit"
+              fontFeature="tabular-nums"
+            >
+              {score.value}
+            </ds-text>
+          </div>
           <div class="card-overview__score-copy">
             <ds-text
               as="span"
               class="card-overview__score-label ds-control-label-box"
               variant="text-body-small"
-              color="inherit"
+              color={ALWAYS_DARK_SECONDARY}
             >
               {score.label}
             </ds-text>
-            {this.renderTrend(score.trend, 'text-body-medium', false, 'inherit')}
+            {this.renderTrend(score.trend, 'text-body-medium')}
           </div>
-          <ds-text
-            as="span"
-            class="card-overview__score-value ds-control-label-box"
-            variant="text-display-medium"
-            emphasis
-            color="inherit"
-            fontFeature="tabular-nums"
-          >
-            {score.value}
-          </ds-text>
         </div>
       </div>
     );
@@ -430,6 +475,23 @@ export class CardOverview {
     const compact = this.variant === 'compact';
     const collapse = this.scrollCollapseGeometry;
 
+    // Omit absent custom properties rather than handing them an undefined value.
+    // Stencil serialises undefined to the string "undefined", which is invalid in
+    // `repeat()` and voids the whole grid-template-columns declaration — the grid
+    // then collapses to one implicit column instead of using the `auto-fit`
+    // fallback baked into the stylesheet.
+    const customProperties: Record<string, string> = {
+      '--ds-card-overview-metric-min': this.metricMinWidth,
+    };
+    if (this.gridColumns) {
+      customProperties['--ds-card-overview-grid-columns'] = String(this.gridColumns);
+    }
+    if (collapse.active) {
+      customProperties['--ds-card-overview-expanded-height'] = `${collapse.expandedHeight}px`;
+      customProperties['--ds-card-overview-visible-height'] = `${collapse.visibleHeight}px`;
+      customProperties['--ds-card-overview-content-offset'] = `${collapse.offset}px`;
+    }
+
     return (
       <Host
         class={{
@@ -441,21 +503,7 @@ export class CardOverview {
         role="region"
         aria-label={this.overviewLabel}
         aria-busy={this.isLoading ? 'true' : undefined}
-        style={{
-          '--ds-card-overview-metric-min': this.metricMinWidth,
-          '--ds-card-overview-grid-columns': this.gridColumns
-            ? String(this.gridColumns)
-            : undefined,
-          '--ds-card-overview-expanded-height': collapse.active
-            ? `${collapse.expandedHeight}px`
-            : undefined,
-          '--ds-card-overview-visible-height': collapse.active
-            ? `${collapse.visibleHeight}px`
-            : undefined,
-          '--ds-card-overview-content-offset': collapse.active
-            ? `${collapse.offset}px`
-            : undefined,
-        }}
+        style={customProperties}
       >
         <div
           class={{

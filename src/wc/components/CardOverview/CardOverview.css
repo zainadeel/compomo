@@ -170,38 +170,71 @@
 
 .card-overview__score-content {
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  /*
+   * Sits the fill 16px from the cell's left edge, on top of the 8px cell padding.
+   * Metric cells keep the shared inner inset because their content is text; the
+   * fill is a filled box and needs more room around it to read as inset.
+   */
+  padding-inline-start: var(--dimension-space-100);
   gap: var(--dimension-space-100);
+}
+
+/*
+ * The level fill wraps the score figure alone. Label and trend sit outside it so
+ * they keep the same colors and baselines as every other metric cell, and are
+ * never held to the fill's contrast.
+ */
+.card-overview__score-badge {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  /*
+   * The padding gives the fill its own breathing room around the figure, and the
+   * matching negative margin keeps that padding out of layout so the cell still
+   * measures the same as a metric cell.
+   */
+  margin-block: calc(-1 * var(--dimension-space-050));
+  padding: var(--dimension-space-050);
+  border-radius: var(--dimension-radius-025);
   background: var(--color-always-dark-interaction-active);
   color: var(--color-always-dark-foreground-primary);
 }
 
-.card-overview__score-content--fair {
+.card-overview__score-badge--fair {
   background: var(--color-safety-score-background-fair);
   color: var(--color-safety-score-foreground-on-fair);
 }
 
-.card-overview__score-content--good {
+.card-overview__score-badge--good {
   background: var(--color-safety-score-background-good);
   color: var(--color-safety-score-foreground-on-good);
 }
 
-.card-overview__score-content--excellent {
+.card-overview__score-badge--excellent {
   background: var(--color-safety-score-background-excellent);
   color: var(--color-safety-score-foreground-on-excellent);
 }
 
+/* Mirrors .card-overview__metric-content so labels and trends line up across cells. */
 .card-overview__score-copy {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
+  justify-content: center;
   align-items: flex-start;
-  gap: var(--dimension-space-025);
+  gap: var(--dimension-space-050);
   min-width: 0;
 }
 
+/*
+ * The display line box is taller than the figure needs, so it is cropped to keep
+ * the fill from driving the cell taller than a metric cell's label-plus-figure
+ * column.
+ */
 .card-overview__score-value,
-.card-overview__score-figure {
+.card-overview__score-badge ds-skeleton {
   flex: 0 0 auto;
   margin-block: calc(-1 * var(--dimension-space-100));
 }
@@ -209,6 +242,8 @@
 .card-overview__score-content--error {
   align-items: center;
   justify-content: center;
+  /* No fill to align, so this box keeps the metric cells' inner inset. */
+  padding-inline-start: var(--dimension-space-075);
   border: var(--ds-card-overview-divider-width) solid
     var(--color-always-dark-border-tertiary);
   background: transparent;
@@ -277,7 +312,8 @@
     background: var(--ds-forced-color-content);
   }
 
-  .card-overview__score-content {
+  .card-overview__score-badge,
+  .card-overview__score-content--error {
     border: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
     background: var(--ds-forced-color-surface);
     color: var(--ds-forced-color-content);
