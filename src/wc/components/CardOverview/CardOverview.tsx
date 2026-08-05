@@ -111,20 +111,30 @@ export class CardOverview {
 
   private layoutEl?: HTMLElement;
   private layoutResizeObserver: ResizeObserver | null = null;
+  /** The node the observer is bound to, which a later render can replace. */
+  private observedLayoutEl?: HTMLElement;
 
   componentDidLoad() {
     this.observeLayout();
   }
 
   componentDidRender() {
-    // Re-bind after HMR when DidLoad's observer was dropped.
-    if (!this.layoutResizeObserver) this.observeLayout();
-    else this.updateLayoutGeometry();
+    // Re-bind after HMR when DidLoad's observer was dropped, and whenever a
+    // render swapped the layout node out from under the observer: the ref points
+    // at the new node while the observer still watches the detached one, which
+    // never resizes again. The grid would then keep its first measured column
+    // count for the life of the component.
+    if (!this.layoutResizeObserver || this.observedLayoutEl !== this.layoutEl) {
+      this.observeLayout();
+    } else {
+      this.updateLayoutGeometry();
+    }
   }
 
   disconnectedCallback() {
     this.layoutResizeObserver?.disconnect();
     this.layoutResizeObserver = null;
+    this.observedLayoutEl = undefined;
   }
 
   private get visibleMetrics(): OverviewMetric[] {
@@ -170,6 +180,7 @@ export class CardOverview {
       if (rect) this.updateLayoutGeometry(rect.width, rect.height);
     });
     this.layoutResizeObserver.observe(layout);
+    this.observedLayoutEl = layout;
   }
 
   private updateLayoutGeometry(width?: number, height?: number) {
