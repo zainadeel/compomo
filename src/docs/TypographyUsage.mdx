@@ -7,6 +7,11 @@ import { Meta } from '@storybook/addon-docs/blocks';
 Use `ds-text` for product copy. A typography variant is an atomic recipe:
 font size, line height, weight, and letter spacing stay together.
 
+`@ds-mo/tokens` supplies only the primitives these recipes are built from
+(`--typography-fontsize-*`, `--typography-weight-*`, and so on). It does not ship
+`.text-*` utility classes, so `ds-text` is the only way to apply a complete text
+style — a bare `class="text-body-medium"` styles nothing at all.
+
 ## Choose a variant
 
 | Variant | Typical use |
@@ -125,7 +130,9 @@ whose digits need stable widths.
 
 ## Avoid
 
-- Raw typography utility classes in components when `ds-text` can express the
+- `text-*` class names in `class` attributes — these are `ds-text` variant values,
+  not CSS classes, and apply no styling on their own.
+- Assembling `--typography-*` primitives by hand when `ds-text` can express the
   recipe.
 - Overriding a variant's font size, line height, weight, or letter spacing.
 - Using display variants for ordinary headings.
