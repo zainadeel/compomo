@@ -195,8 +195,8 @@
    * matching negative margin keeps that padding out of layout so the cell still
    * measures the same as a metric cell.
    */
-  margin-block: calc(-1 * var(--dimension-space-075));
-  padding: var(--dimension-space-075);
+  margin-block: calc(-1 * var(--dimension-space-050));
+  padding: var(--dimension-space-050);
   border-radius: var(--dimension-radius-025);
   background: var(--color-always-dark-interaction-active);
   color: var(--color-always-dark-foreground-primary);
