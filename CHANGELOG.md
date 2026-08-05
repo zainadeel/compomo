@@ -1,5 +1,17 @@
 # Changelog
 
+## [13.9.0](https://github.com/zainadeel/compomo/compare/v13.8.0...v13.9.0) (2026-08-05)
+
+
+### Added
+
+* move to @ds-mo/tokens 6.0.0 ([#425](https://github.com/zainadeel/compomo/issues/425)) ([bc6d210](https://github.com/zainadeel/compomo/commit/bc6d210686b75d4c2e9b4826a4c0bcb3ac5eca90))
+
+
+### Documentation
+
+* clarify that text-* names are ds-text variants, not CSS classes ([#423](https://github.com/zainadeel/compomo/issues/423)) ([8df4ef0](https://github.com/zainadeel/compomo/commit/8df4ef0e090275e57455a1c3453663a6c91dd655))
+
 ## [13.8.0](https://github.com/zainadeel/compomo/compare/v13.7.0...v13.8.0) (2026-08-05)
 
 
