@@ -3,10 +3,18 @@
  * @type {import('eslint').ESLint.Plugin}
  */
 
+// `@ds-mo/tokens` used to ship these as real CSS utility classes. It no longer
+// does — it ships typography primitives (--typography-*) and leaves composite
+// text styles to `ds-text` here. So a class name matching this pattern is now a
+// silent no-op rather than merely the wrong way to style text, which makes the
+// rule more useful than it was, not less.
+//
+// The `*-emphasis` suffixes never mapped to anything in this library either;
+// emphasis is a boolean prop on every variant.
 const TOKOMO_TEXT_CLASS =
   /\btext-(?:display|title|body)-(?:medium|small|large)(?:-emphasis)?\b|\btext-caption(?:-emphasis)?\b/;
 
-/** Paths where TokoMo text utility classes (or variant name strings) are expected. */
+/** Paths where `ds-text` variant name strings are expected. */
 function isTextAllowlisted(filename) {
   const f = filename.replace(/\\/g, '/');
   return (
@@ -49,8 +57,10 @@ function reportTokomoText(context, node, snippet) {
   context.report({
     node,
     message:
-      `Prefer <ds-text variant="…"> over TokoMo utility class "${snippet}". ` +
-      `Use the emphasis prop instead of *-emphasis class names.`,
+      `"${snippet}" is not a real CSS class — @ds-mo/tokens ships typography ` +
+      `primitives only, so applying it silently styles nothing. ` +
+      `Use <ds-text variant="…"> instead, with the emphasis prop rather than an ` +
+      `*-emphasis name.`,
   });
 }
 
@@ -116,7 +126,8 @@ const preferDsText = {
     type: 'suggestion',
     docs: {
       description:
-        'Prefer ds-text over TokoMo typography utility classes (text-body-*, text-caption*, …).',
+        'Prefer ds-text over text-* utility class names, which no longer exist in '
+        + '@ds-mo/tokens and therefore apply no styling.',
     },
     schema: [],
     messages: {},
