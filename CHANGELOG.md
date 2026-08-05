@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.8.0](https://github.com/zainadeel/compomo/compare/v13.7.0...v13.8.0) (2026-08-05)
+
+
+### Added
+
+* **cards:** polish surfaces and loading states ([#421](https://github.com/zainadeel/compomo/issues/421)) ([a1ccfab](https://github.com/zainadeel/compomo/commit/a1ccfabe751b73fcb6f314d13d76c5b9a320d02e))
+
 ## [13.7.0](https://github.com/zainadeel/compomo/compare/v13.6.1...v13.7.0) (2026-08-04)
 
 
