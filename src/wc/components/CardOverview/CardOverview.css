@@ -172,11 +172,11 @@
   align-items: center;
   justify-content: flex-start;
   /*
-   * Dropped so the fill's inset from the cell's left edge matches its inset from
-   * the top and bottom. Metric cells keep the inner inset because their content
-   * is text, which needs it; the fill is a filled box and reads as misaligned.
+   * Sits the fill 16px from the cell's left edge, on top of the 8px cell padding.
+   * Metric cells keep the shared inner inset because their content is text; the
+   * fill is a filled box and needs more room around it to read as inset.
    */
-  padding-inline-start: 0;
+  padding-inline-start: var(--dimension-space-100);
   gap: var(--dimension-space-100);
 }
 
@@ -191,9 +191,9 @@
   align-items: center;
   justify-content: center;
   /*
-   * Keeps the fill the same 52px box it was when it spanned the whole cell. The
-   * padding restores that height and the matching negative margin keeps it out
-   * of layout, so the cell still measures the same as a metric cell.
+   * The padding gives the fill its own breathing room around the figure, and the
+   * matching negative margin keeps that padding out of layout so the cell still
+   * measures the same as a metric cell.
    */
   margin-block: calc(-1 * var(--dimension-space-075));
   padding: var(--dimension-space-075);
@@ -229,8 +229,9 @@
 }
 
 /*
- * The display line box is taller than the cell rhythm allows. Cropping it keeps
- * the badge the same height as a metric cell's label-plus-figure column.
+ * The display line box is taller than the figure needs, so it is cropped to keep
+ * the fill from driving the cell taller than a metric cell's label-plus-figure
+ * column.
  */
 .card-overview__score-value,
 .card-overview__score-badge ds-skeleton {

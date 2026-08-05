@@ -314,7 +314,7 @@ export class CardOverview {
         <div class="card-overview__score" part="score">
           <div class="card-overview__score-content">
             <div class="card-overview__score-badge">
-              {this.bar('text-display-medium', '56px')}
+              {this.bar('text-display-small', '40px')}
             </div>
             <div class="card-overview__score-copy">
               {this.bar('text-body-small', '64px', 'card-overview__score-label')}
@@ -361,7 +361,7 @@ export class CardOverview {
             <ds-text
               as="span"
               class="card-overview__score-value ds-control-label-box"
-              variant="text-display-medium"
+              variant="text-display-small"
               emphasis
               color="inherit"
               fontFeature="tabular-nums"
