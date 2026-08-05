@@ -85,7 +85,7 @@ describe('CardOverview controller', () => {
     assert.equal(columns(6, 9), 6);
   });
 
-  it('spreads cells evenly over the fewest rows once the width forces a wrap', () => {
+  it('prefers equal rows over a shorter grid once the width forces a wrap', () => {
     const columns = (cellCount: number, capacity: number) =>
       resolveOverviewGridColumns({
         cellCount,
@@ -94,14 +94,23 @@ describe('CardOverview controller', () => {
       });
 
     assert.equal(columns(4, 3), 2); // 2+2 beats 3+1
-    assert.equal(columns(6, 5), 3); // 3+3
-    assert.equal(columns(6, 4), 3); // 3+3
+    assert.equal(columns(6, 5), 3); // 3+3 beats 5+1
+    assert.equal(columns(6, 4), 3); // 3+3 beats 4+2
     assert.equal(columns(6, 2), 2); // 2+2+2
     assert.equal(columns(8, 4), 4); // 4+4
-    assert.equal(columns(8, 3), 3); // 3+3+2 — fewer rows than 2+2+2+2
+
+    // An equal split is worth an extra row: 2+2+2+2 beats 3+3+2.
+    assert.equal(columns(8, 3), 2);
+
+    // The full progression for eight cells as the width narrows.
+    assert.equal(columns(8, 8), 8);
+    assert.equal(columns(8, 5), 4);
+    assert.equal(columns(8, 4), 4);
+    assert.equal(columns(8, 3), 2);
+    assert.equal(columns(8, 2), 2);
   });
 
-  it('leaves a short final row where the total cannot divide evenly', () => {
+  it('leaves a short final row only when no equal split fits', () => {
     const columns = (cellCount: number, capacity: number) =>
       resolveOverviewGridColumns({
         cellCount,
@@ -109,6 +118,8 @@ describe('CardOverview controller', () => {
         minCellWidth: 180,
       });
 
+    // Five and seven have no divisor between 2 and the fitting count, so the
+    // fewest-rows spread applies instead of dropping all the way to 1 column.
     assert.equal(columns(5, 4), 3); // 3+2, not 4+1
     assert.equal(columns(7, 4), 4); // 4+3
     assert.equal(columns(7, 3), 3); // 3+3+1

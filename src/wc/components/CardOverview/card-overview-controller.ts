@@ -15,9 +15,15 @@ export interface CardOverviewCollapseGeometry {
  * Choose the column count for the metric grid.
  *
  * Cells that all fit across one row stay on one row: a full row is already
- * balanced, so there is nothing to distribute. Only once the width forces a
- * wrap does balancing apply — take the fewest rows that fit and spread cells
- * evenly over them, which leaves at most one short final row.
+ * balanced, so there is nothing to distribute.
+ *
+ * Once the width forces a wrap, prefer equal rows — the widest column count
+ * that divides the total exactly. Eight cells therefore step 8 → 4+4 → 2+2+2+2
+ * as the width narrows, never trading an equal split for a shorter grid.
+ *
+ * Totals with no equal split available fall back to the fewest rows that fit,
+ * spread as evenly as possible, which leaves one short final row: five cells at
+ * a four-cell width are 3+2, seven are 4+3.
  *
  * Width is the only ceiling. There is deliberately no column cap: a wide card
  * showing six cells that each clear `minCellWidth` renders all six across.
@@ -35,6 +41,10 @@ export function resolveOverviewGridColumns(options: {
   );
 
   if (fittingColumns >= cellCount) return cellCount;
+
+  for (let columns = fittingColumns; columns >= 2; columns -= 1) {
+    if (cellCount % columns === 0) return columns;
+  }
 
   const rows = Math.ceil(cellCount / fittingColumns);
   return Math.ceil(cellCount / rows);
