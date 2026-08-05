@@ -108,7 +108,7 @@
     "@angular/core": ">=19 <23",
     "@angular/forms": ">=19 <23",
     "@ds-mo/icons": "^6.4.0",
-    "@ds-mo/tokens": "^5.1.2",
+    "@ds-mo/tokens": "^6.0.0",
     "react": "^18 || ^19",
     "react-dom": "^18 || ^19",
     "rxjs": "^7.8.0"
@@ -137,7 +137,7 @@
     "@angular/forms": "^22.0.7",
     "@axe-core/playwright": "^4.12.1",
     "@ds-mo/icons": "^6.4.0",
-    "@ds-mo/tokens": "^5.1.2",
+    "@ds-mo/tokens": "^6.0.0",
     "@eslint/js": "^10.0.1",
     "@modelcontextprotocol/client": "^2.0.0",
     "@modelcontextprotocol/server": "^2.0.0",
