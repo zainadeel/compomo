@@ -4,16 +4,16 @@ export type PanelToolsToolId = string;
 /** Canonical Motive shell recipe used when item metadata is omitted. */
 export type CanonicalPanelToolsToolId =
   | 'search'
-  | 'agents'
   | 'messages'
+  | 'agents'
   | 'stacks'
   | 'activity'
   | 'help';
 
 export const PANEL_TOOLS_TOOL_IDS: CanonicalPanelToolsToolId[] = [
   'search',
-  'agents',
   'messages',
+  'agents',
   'stacks',
   'activity',
   'help',
@@ -55,8 +55,8 @@ export interface PanelToolsItem {
   order?: number;
   /** Optional shortcut label displayed by the tooltip. */
   shortcutKey?: string;
-  /** Mobile destination recipe; canonical ids retain their existing defaults. */
-  mobileDestination?: 'search' | 'agents' | 'inbox' | 'help';
+  /** Mobile destination recipe; canonical ids retain their explicit defaults. */
+  mobileDestination?: 'search' | 'inbox' | 'messages' | 'agents' | 'help';
   /** Whether this rail button is currently pressed/active. */
   selected?: boolean;
   /** Show a notification dot. */
@@ -77,20 +77,20 @@ export const PANEL_TOOLS_DEFAULT_ITEMS: PanelToolsItem[] = [
     mobileDestination: 'search',
   },
   {
-    id: 'agents',
-    icon: 'AI',
-    label: PANEL_TOOLS_LABELS.agents,
-    order: 1,
-    shortcutKey: PANEL_TOOLS_SHORTCUTS.agents,
-    mobileDestination: 'agents',
-  },
-  {
     id: 'messages',
     icon: 'MessageBubbleStack',
     label: PANEL_TOOLS_LABELS.messages,
-    order: 2,
+    order: 1,
     shortcutKey: PANEL_TOOLS_SHORTCUTS.messages,
-    mobileDestination: 'inbox',
+    mobileDestination: 'messages',
+  },
+  {
+    id: 'agents',
+    icon: 'AI',
+    label: PANEL_TOOLS_LABELS.agents,
+    order: 2,
+    shortcutKey: PANEL_TOOLS_SHORTCUTS.agents,
+    mobileDestination: 'agents',
   },
   {
     id: 'stacks',

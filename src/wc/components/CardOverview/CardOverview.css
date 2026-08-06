@@ -181,9 +181,9 @@
 }
 
 /*
- * The level fill wraps the score figure alone. Label and trend sit outside it so
- * they keep the same colors and baselines as every other metric cell, and are
- * never held to the fill's contrast.
+ * The level fill wraps the score figure alone. The trend sits outside it so it
+ * keeps the same color and baseline as every other metric cell, and is never
+ * held to the fill's contrast.
  */
 .card-overview__score-badge {
   display: flex;
@@ -226,6 +226,10 @@
   align-items: flex-start;
   gap: var(--dimension-space-050);
   min-width: 0;
+}
+
+.card-overview__score-label-spacer {
+  visibility: hidden;
 }
 
 /*
@@ -277,7 +281,7 @@
 .card-overview__metric-figure {
   display: flex;
   align-items: baseline;
-  gap: var(--dimension-space-100);
+  gap: var(--dimension-space-050);
   min-width: 0;
 }
 

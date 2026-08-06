@@ -41,17 +41,17 @@
       "accessibility": [
         "Only the active mobile tool view participates in focus or the accessibility tree.",
         "Header Back and application-owned header actions preserve the PanelTools event contract.",
-        "Inbox uses the MobileSectionSwitcher popup trigger for Messages, Stacks, and Activity and never relies on a gesture-only interaction."
+        "Inbox uses the MobileSectionSwitcher popup trigger for Stacks and Activity and never relies on a gesture-only interaction; Messages remains a direct mobile destination."
       ],
       "states": [
         "The application owns open and activeTool and replaces headers when tool depth changes.",
-        "Items with mobileDestination inbox map to one mobile Inbox destination while retaining the actual active tool id; the canonical recipe groups Messages, Stacks, and Activity.",
+        "Items with mobileDestination inbox map to one mobile Inbox destination while retaining the actual active tool id; the canonical recipe groups Stacks and Activity, while Messages remains a separate destination.",
         "Stable tool ids own named slots; label, order, rail placement, shortcut, and mobile destination are explicit item data.",
         "Switching responsive mode must not recreate application-owned slotted product elements."
       ],
       "responsiveBehavior": [
         "Desktop and tablet compose PanelTools-compatible rail and drawer chrome.",
-        "Mobile renders one centered MobileHeader for every tool and presents Messages, Stacks, and Activity directly as peer section titles without an additional Inbox heading."
+        "Mobile renders one centered MobileHeader for every tool; Stacks and Activity use Inbox section titles, while Messages remains a direct tool destination."
       ],
       "frameworkCaveats": {
         "customElements": [
@@ -391,7 +391,7 @@
       "peerDependencies": {
         "required": [
           "@ds-mo/tokens ^6.0.0",
-          "@ds-mo/icons ^6.4.0"
+          "@ds-mo/icons ^6.5.0"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
       }

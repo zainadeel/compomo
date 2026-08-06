@@ -59,18 +59,19 @@ test.describe('Responsive mobile shell foundation', () => {
   }) => {
     const primary = page.getByRole('navigation', { name: 'Primary' });
     const buttons = primary.getByRole('button');
-    await expect(buttons).toHaveCount(5);
-    await expect(buttons.allTextContents()).resolves.toEqual(['', '', '', '', '']);
+    await expect(buttons).toHaveCount(6);
+    await expect(buttons.allTextContents()).resolves.toEqual(['', '', '', '', '', '']);
     await expect(buttons.evaluateAll(items => items.map(item => item.getAttribute('aria-label'))))
       .resolves.toEqual([
       'Menu',
       'Tracking',
       'Search',
       'Inbox',
+      'Messages',
       'Agents',
     ]);
     await expect(page.locator('.mobile-bar-nav__group')).toHaveCount(2);
-    await expect(page.locator('.mobile-bar-nav__dot')).toHaveCount(2);
+    await expect(page.locator('.mobile-bar-nav__dot')).toHaveCount(3);
 
     const metrics = await page.locator('ds-mobile-bar-nav').evaluate(element => {
       const bar = element.querySelector('.mobile-bar-nav');
@@ -136,9 +137,9 @@ test.describe('Responsive mobile shell foundation', () => {
     expect(metrics.hostBackground).toBe(metrics.primaryBackground);
     expect(metrics.groupEdgeInsets).toEqual([8, 8]);
     expect(metrics.groupGaps).toEqual(['8px', '8px']);
-    expect(metrics.itemSizes).toEqual(Array.from({ length: 5 }, () => [40, 40]));
-    expect(metrics.itemRadii).toEqual(Array.from({ length: 5 }, () => '2px'));
-    expect(metrics.iconSizes).toEqual(Array.from({ length: 5 }, () => [24, 24]));
+    expect(metrics.itemSizes).toEqual(Array.from({ length: 6 }, () => [40, 40]));
+    expect(metrics.itemRadii).toEqual(Array.from({ length: 6 }, () => '2px'));
+    expect(metrics.iconSizes).toEqual(Array.from({ length: 6 }, () => [24, 24]));
     expect(metrics.dividerHeight).toBe(24);
     expect(metrics.selectedFill).toBe('rgba(0, 0, 0, 0)');
     expect(metrics.selectedForeground).toBe(metrics.primaryForeground);
@@ -527,7 +528,7 @@ test.describe('Responsive mobile shell foundation', () => {
     await expect(input).toHaveValue('brake inspection');
   });
 
-  test('stretches Search and Inbox across the stage and omits fullscreen actions', async ({
+  test('stretches Search, Inbox, and Messages across the stage and omits fullscreen actions', async ({
     page,
   }) => {
     const tools = page.locator('ds-shell-tools');
@@ -542,7 +543,14 @@ test.describe('Responsive mobile shell foundation', () => {
     await expectActiveToolToFillStage(page);
 
     await page.getByRole('button', { name: 'Inbox' }).click();
+    await expect(tools).toHaveAttribute('active-tool', 'activity');
     await expect(page.locator('.shell-tools__view--active')).toHaveCSS('width', '390px');
+    await expect(page.getByRole('button', { name: 'Enter fullscreen' })).toHaveCount(0);
+    await expectActiveToolToFillStage(page);
+
+    await page.getByRole('button', { name: 'Messages' }).click();
+    await expect(tools).toHaveAttribute('active-tool', 'messages');
+    await expect(page.locator('#messages-view')).toHaveCSS('width', '390px');
     await expect(page.getByRole('button', { name: 'Enter fullscreen' })).toHaveCount(0);
     await expectActiveToolToFillStage(page);
 

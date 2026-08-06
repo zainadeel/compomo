@@ -48,7 +48,7 @@
     },
     {
       "component": "component:ds-mobile-bar-nav",
-      "role": "Managed persistent mobile destinations for Menu, current area, Search, Agents, Inbox, and Help.",
+      "role": "Managed persistent mobile destinations for Menu, current area, Search, Inbox, Messages, Agents, and Help.",
       "required": false
     },
     {
@@ -71,7 +71,7 @@
     "Render exactly one managed ShellApp and one active routed main landmark.",
     "Provide visible labels and accessible names in navigation, pageChrome, and tool definitions before passing them to ShellApp.",
     "Handle ShellApp intent events without replacing focusable owners during responsive or fullscreen transitions.",
-    "Keep the canonical Search and Help tools available and preserve Inbox unread state when Messages, Stacks, and Activity are grouped on mobile.",
+    "Keep the canonical Search and Help tools available and preserve Inbox unread state when Stacks and Activity are grouped on mobile; Messages remains directly reachable.",
     "Do not override browser keyboard chords when enabling shell shortcuts."
   ],
   "responsiveBehavior": [
@@ -80,7 +80,7 @@
     "Mobile uses MobileSheetNav, MobileBarNav, MobileHeader, ShellTools mobile presentation, and the same routed content owner. MobileBarNav paints its primary surface through the bottom safe-area inset so light browser chrome and application chrome meet without a secondary-surface seam.",
     "An optional Banner spans the complete application above desktop navigation, workspace, tools, and mobile global surfaces while remaining below the operating-system top safe area.",
     "Switching breakpoints changes presentation and inert state without recreating route or tool elements.",
-    "Messages, Stacks, and Activity use explicit mobile grouping metadata and default to the canonical Inbox recipe."
+    "Messages uses its own mobile destination; Stacks and Activity use explicit mobile Inbox grouping metadata."
   ],
   "implementations": {
     "customElements": {

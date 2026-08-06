@@ -18,6 +18,7 @@ test('renders the safety score as the first equal-track, nonselectable grid cell
   await expect(card.locator('.card-overview__score [role="button"]')).toHaveCount(0);
   await expect(card.locator('.card-overview__score [tabindex]')).toHaveCount(0);
   await expect(card.locator('.card-overview__score-band')).toHaveCount(0);
+  await expect(card.locator('.card-overview__score-label-spacer')).toBeHidden();
 });
 
 test('prefers equal rows, falling back to a short final row when none divide', async ({ page }) => {
@@ -111,8 +112,15 @@ test('keeps equal-height cell content with the inset, content, and text balance 
     const scoreValueStyle = getComputedStyle(
       element.querySelector<HTMLElement>('.card-overview__score-value')!
     );
+    const scoreTrend = element.querySelector<HTMLElement>(
+      '.card-overview__score .card-overview__trend'
+    )!;
+    const metricTrend = element.querySelector<HTMLElement>(
+      '.card-overview__metric .card-overview__trend'
+    )!;
+    const metricFigure = element.querySelector<HTMLElement>('.card-overview__metric-figure')!;
     const balancedText = [
-      '.card-overview__score-label',
+      '.card-overview__score-label-spacer',
       '.card-overview__score-value',
       '.card-overview__metric-label',
       '.card-overview__metric-value',
@@ -141,6 +149,9 @@ test('keeps equal-height cell content with the inset, content, and text balance 
       cellHeights: cells.map(item => item.getBoundingClientRect().height),
       scoreValueMarginTop: scoreValueStyle.marginTop,
       scoreValueMarginBottom: scoreValueStyle.marginBottom,
+      scoreTrendTop: scoreTrend.getBoundingClientRect().top,
+      metricTrendTop: metricTrend.getBoundingClientRect().top,
+      metricFigureGap: getComputedStyle(metricFigure).columnGap,
       balancedText,
       divider: getComputedStyle(metric).boxShadow,
       actionRadius: actionStyle.borderRadius,
@@ -160,6 +171,8 @@ test('keeps equal-height cell content with the inset, content, and text balance 
   expect(Math.max(...geometry.cellHeights) - Math.min(...geometry.cellHeights)).toBeLessThan(0.1);
   expect(geometry.scoreValueMarginTop).toBe('-8px');
   expect(geometry.scoreValueMarginBottom).toBe('-8px');
+  expect(geometry.scoreTrendTop).toBeCloseTo(geometry.metricTrendTop, 1);
+  expect(geometry.metricFigureGap).toBe('4px');
   expect(geometry.divider).not.toBe('none');
   expect(geometry.actionRadius).toBe('2px');
   expect(geometry.scoreRadius).toBe('2px');
@@ -179,7 +192,7 @@ test('keeps loading placeholders in the resolved content geometry', async ({ pag
   const metricContent = metricAction.locator('.card-overview__metric-content');
 
   await expect(card.locator('.card-overview__header')).toContainText('Jul 27');
-  await expect(card.locator('.card-overview__header')).toContainText('Previous 4 weeks');
+  await expect(card.locator('.card-overview__header')).toContainText('Previous 4 periods');
   await expect(card.locator('.card-overview__metric-content')).toHaveCount(5);
 
   const geometry = await card.evaluate(element => {
@@ -229,10 +242,10 @@ test('supports fixed-date and selectable-range period compositions', async ({ pa
 
   await expect(date).toContainText('Jul 27');
   await expect(date).toContainText('vs.');
-  await expect(date).toContainText('Previous 4 weeks');
+  await expect(date).toContainText('Previous 4 periods');
   await expect(range.locator('[slot="period"]')).toHaveText('Jun 30–Jul 27');
   await expect(range).toContainText('vs.');
-  await expect(range.locator('[slot="filter"]')).toHaveText('Previous 4 weeks');
+  await expect(range.locator('[slot="filter"]')).toHaveText('Previous 4 periods');
 
   const geometry = await page.evaluate(() => {
     const measure = (cardId: string, selector: string) => {

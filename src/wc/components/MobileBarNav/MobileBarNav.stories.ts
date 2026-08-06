@@ -16,8 +16,9 @@ export const Foundation: Story = {
       <ds-mobile-bar-nav
         active-destination="area"
         .currentArea=${{ id: 'tracking', icon: 'MapPage', label: 'Tracking' }}
-        agents-dot
         inbox-dot
+        messages-dot
+        agents-dot
       ></ds-mobile-bar-nav>
     </div>
   `,

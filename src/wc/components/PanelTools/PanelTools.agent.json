@@ -55,7 +55,7 @@
   "states": [
     "Every tool has a stable explicit id and accessible label. The application filters definitions for authorization and entitlement.",
     "Tool order, header or footer rail placement, shortcut, and mobile grouping come from explicit item metadata rather than id-based layout assumptions.",
-    "PANEL_TOOLS_DEFAULT_ITEMS is the canonical Lab recipe: Search pinned first, Help pinned last, current shortcuts, and Messages, Stacks, and Activity grouped under mobile Inbox.",
+    "PANEL_TOOLS_DEFAULT_ITEMS is the canonical Lab recipe: Search pinned first, Messages before Agents, Help pinned last, current shortcuts, and only Stacks and Activity grouped under mobile Inbox.",
     "Only one drawer is open at a time; selecting another tool switches directly and selecting the active tool closes to rail-only mode.",
     "The drawer starts closed, remains open across ordinary route changes, and retains every mounted tool's independent conversation, query, scroll, and work state.",
     "When storageKey is set, persist only the last active tool in this browser and still restore the drawer closed after reload.",

@@ -18,8 +18,8 @@ import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 
 const RAIL_ITEMS: PanelToolsItem[] = [
   { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
-  { id: 'agents', icon: 'AI', ariaLabel: 'Agents' },
   { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages' },
+  { id: 'agents', icon: 'AI', ariaLabel: 'Agents' },
   { id: 'stacks', icon: 'ViewMenu', ariaLabel: 'Stacks' },
   { id: 'activity', icon: 'Bell', ariaLabel: 'Activity', dot: true },
   { id: 'help', icon: 'CircleQuestion', ariaLabel: 'Help & Support' },

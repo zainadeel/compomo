@@ -11,8 +11,6 @@ export type SafetyScoreLevel = 'fair' | 'good' | 'excellent';
  * product decision rather than a design-system one.
  */
 export interface OverviewScore {
-  /** Category before the trend and figure, for example `Safety score`. */
-  label: string;
   /** Display-ready headline figure. */
   value: string | number;
   /** Change against the comparison period. Omit when there is nothing to report. */

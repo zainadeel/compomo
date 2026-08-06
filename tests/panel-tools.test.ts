@@ -19,11 +19,11 @@ import {
 } from '../src/wc/components/PanelTools/panel-tools-utils';
 
 describe('PANEL_TOOLS_TOOL_IDS', () => {
-  it('lists search, agents, messages, stacks, activity, and help', () => {
+  it('lists search, messages, agents, stacks, activity, and help', () => {
     assert.deepEqual(PANEL_TOOLS_TOOL_IDS, [
       'search',
-      'agents',
       'messages',
+      'agents',
       'stacks',
       'activity',
       'help',
