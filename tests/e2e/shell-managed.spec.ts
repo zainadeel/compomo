@@ -79,6 +79,8 @@ test.describe('Managed application shell', () => {
     const stickyHeader = shellPage.locator('.shell-page__sticky-header');
     const barTitle = shellPage.locator('ds-bar-title');
     const titleSurface = barTitle.locator('.bar-title');
+    const mobileHeader = shellPage.locator('ds-mobile-header');
+    const mobileHeaderSurface = mobileHeader.locator('.mobile-header');
     const surfaces = await page.evaluate(() => {
       const probe = document.createElement('div');
       document.body.append(probe);
@@ -110,9 +112,9 @@ test.describe('Managed application shell', () => {
 
     await shell.getByRole('button', { name: 'Search' }).click();
     await expect(barTitle).toHaveClass(/bar-title-host--compact/);
-    await expect(stickyHeader).toHaveCSS('background-color', surfaces.primary);
-    await expect(barTitle).toHaveCSS('background-color', surfaces.primary);
-    await expect(titleSurface).toHaveCSS('background-color', surfaces.primary);
+    await expect(stickyHeader).toHaveCSS('background-color', surfaces.secondary);
+    await expect(barTitle).toHaveCSS('background-color', surfaces.secondary);
+    await expect(titleSurface).toHaveCSS('background-color', surfaces.secondary);
     await shell.getByRole('button', { name: 'Search' }).click();
     await expect(barTitle).toHaveClass(/bar-title-host--expanded/);
     await expect(titleSurface).toHaveCSS('background-color', surfaces.secondary);
@@ -122,12 +124,17 @@ test.describe('Managed application shell', () => {
     await expect(content).toHaveCSS('background-color', surfaces.secondary);
     await expect(content).toHaveCSS('padding-top', '16px');
     await expect(barTitle).toHaveClass(/bar-title-host--compact/);
-    await expect(titleSurface).toHaveCSS('background-color', surfaces.primary);
+    await expect(stickyHeader).toHaveCSS('background-color', surfaces.secondary);
+    await expect(titleSurface).toHaveCSS('background-color', surfaces.secondary);
 
     await page.setViewportSize({ width: 390, height: 760 });
     await expect(shell).toHaveAttribute('responsive-mode', 'mobile');
     await expect(content).toHaveCSS('background-color', surfaces.secondary);
     await expect(content).toHaveCSS('padding-top', '16px');
+    await expect(mobileHeader).toBeVisible();
+    await expect(stickyHeader).toHaveCSS('background-color', surfaces.primary);
+    await expect(mobileHeader).toHaveCSS('background-color', surfaces.primary);
+    await expect(mobileHeaderSurface).toHaveCSS('background-color', surfaces.primary);
 
     await shell.evaluate(element => {
       const managed = element as HTMLDsShellAppElement;
@@ -142,6 +149,8 @@ test.describe('Managed application shell', () => {
     const shellPage = shell.locator('ds-shell-page');
     const scroller = shell.locator('.shell-app__content');
     const barTitle = shellPage.locator('ds-bar-title');
+    const stickyHeader = shellPage.locator('.shell-page__sticky-header');
+    const titleSurface = barTitle.locator('.bar-title');
     const flowSpacer = shellPage.locator('.shell-page__flow-spacer');
     const content = shellPage.locator('.shell-page__content');
     const secondary = await page.evaluate(() => {
@@ -180,6 +189,8 @@ test.describe('Managed application shell', () => {
     }, snapScrollTop);
 
     await expect(barTitle).toHaveClass(/bar-title-host--compact/);
+    await expect(stickyHeader).toHaveCSS('background-color', secondary);
+    await expect(titleSurface).toHaveCSS('background-color', secondary);
     await expect(flowSpacer).not.toHaveCSS('height', '0px');
     await expect(flowSpacer).toHaveCSS('background-color', secondary);
     await expect(content).toHaveCSS('background-color', secondary);

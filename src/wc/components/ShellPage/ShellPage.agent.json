@@ -50,7 +50,7 @@
     "headerPresentation=auto selects the matching header variant from headerCapacity and scroll position.",
     "expanded, compact, and constrained are explicit overrides for exceptional layouts and deterministic examples.",
     "contentInset=default supplies standard page gutters; none permits maps, canvases, and other full-bleed content.",
-    "contentSurface=primary keeps the standard page canvas; secondary paints both the inset gutter and the canvas beneath routed content. On desktop, an expanded BarTitle matches the secondary canvas; compact, constrained, and mobile page-header chrome remains primary.",
+    "contentSurface=primary keeps the standard page canvas; secondary paints both the inset gutter and the canvas beneath routed content. Desktop and tablet BarTitle chrome matches that canvas in expanded, compact, and constrained presentations; MobileHeader remains primary.",
     "contentInset and contentSurface are independent: either surface supports standard responsive gutters or a full-bleed page-owned layout.",
     "The header slot accepts one desktop BarTitle or BarWorkflow; mobile-header accepts the corresponding MobileHeader presentation. The default slot owns router output and all page product content."
   ],
@@ -62,7 +62,7 @@
     "Update headerCapacity synchronously with shell layout state so opening tools or crossing application breakpoints cannot briefly render the wrong presentation.",
     "The default content inset is balanced on every side: 32px in desktop mode and 16px in tablet and mobile modes.",
     "The selected content surface persists unchanged across desktop, tablet, and mobile modes.",
-    "On a secondary desktop page, the expanded BarTitle matches the page canvas and returns to the primary chrome surface when capacity or scrolling compacts it.",
+    "On a secondary desktop or tablet page, BarTitle matches the page canvas across capacity and scroll-driven variant changes; the separate mobile-header presentation remains primary.",
     "The flow-preservation spacer follows contentSurface so compacting a secondary page cannot expose a primary strip before its content.",
     "On roomy pages, the expanded header scrolls upward until its title and action row reaches the compact row position, while its bottom divider progressively extends from the expanded inset to edge-to-edge; it then snaps variants without moving that shared visual anchor.",
     "Scroll compaction preserves the expanded page flow offset so content never jumps beneath the sticky header.",

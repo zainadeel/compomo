@@ -66,7 +66,7 @@
   "responsiveBehavior": [
     "BarTitle does not observe viewport, shell, scroll, or container state. Its owner selects an explicit variant.",
     "ShellPage is the standard owner for automatic expanded, compact, and constrained selection.",
-    "When ShellPage owns BarTitle on a secondary desktop page, the expanded title matches that canvas; compact and constrained title chrome remains primary.",
+    "When ShellPage owns BarTitle on a secondary desktop or tablet page, its expanded, compact, and constrained presentations all match that canvas; the separate MobileHeader component remains primary.",
     "Compact titles use the shared compact-header geometry and md control inset so top-level headings align with BarNav and inline Back geometry aligns with PanelToolHeader. Long headings and section labels truncate independently while Back and action controls retain complete hit targets and accessible names.",
     "A never-collapse primary action remains visible in constrained mode; the title and section label yield space first."
   ],

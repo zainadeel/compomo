@@ -13,9 +13,8 @@
   --_shell-page-content-background: var(--color-background-secondary);
 }
 
-:host(
-    .shell-page-host--surface-secondary.shell-page-host--header-expanded[responsive-mode='desktop']
-  ) {
+:host(.shell-page-host--surface-secondary[responsive-mode='desktop']),
+:host(.shell-page-host--surface-secondary[responsive-mode='tablet']) {
   --_shell-page-header-background: var(--color-background-secondary);
 }
 
