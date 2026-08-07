@@ -70,6 +70,53 @@ test.describe('Managed application shell', () => {
     await expect(shell.locator('ds-mobile-bar-nav')).toBeVisible();
   });
 
+  test('forwards the page canvas surface independently from responsive content inset', async ({
+    page,
+  }) => {
+    const shell = page.locator('#managed-shell');
+    const shellPage = shell.locator('ds-shell-page');
+    const content = shellPage.locator('.shell-page__content');
+    const secondary = await page.evaluate(() => {
+      const probe = document.createElement('div');
+      probe.style.backgroundColor = 'var(--color-background-secondary)';
+      document.body.append(probe);
+      const color = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return color;
+    });
+
+    await shell.evaluate(element => {
+      const managed = element as HTMLDsShellAppElement;
+      managed.pageChrome = {
+        ...managed.pageChrome,
+        contentInset: 'default',
+        contentSurface: 'secondary',
+      };
+    });
+
+    await expect(shellPage).toHaveJSProperty('contentSurface', 'secondary');
+    await expect(shellPage).toHaveCSS('background-color', secondary);
+    await expect(content).toHaveCSS('background-color', secondary);
+    await expect(content).toHaveCSS('padding-top', '32px');
+
+    await page.setViewportSize({ width: 1024, height: 760 });
+    await expect(shell).toHaveAttribute('responsive-mode', 'tablet');
+    await expect(content).toHaveCSS('background-color', secondary);
+    await expect(content).toHaveCSS('padding-top', '16px');
+
+    await page.setViewportSize({ width: 390, height: 760 });
+    await expect(shell).toHaveAttribute('responsive-mode', 'mobile');
+    await expect(content).toHaveCSS('background-color', secondary);
+    await expect(content).toHaveCSS('padding-top', '16px');
+
+    await shell.evaluate(element => {
+      const managed = element as HTMLDsShellAppElement;
+      managed.pageChrome = { ...managed.pageChrome, contentInset: 'none' };
+    });
+    await expect(content).toHaveCSS('background-color', secondary);
+    await expect(content).toHaveCSS('padding', '0px');
+  });
+
   test(
     'emits navigation intent without changing the application URL',
     chromiumOnly(

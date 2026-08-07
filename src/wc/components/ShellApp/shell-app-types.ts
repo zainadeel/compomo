@@ -16,6 +16,10 @@ import type {
   PanelToolsItem,
 } from '../PanelTools/panel-tools-types';
 import type { NavChromeStyle } from '../../shell/nav-chrome';
+import type {
+  ShellPageContentInset,
+  ShellPageContentSurface,
+} from '../ShellPage/shell-page-types';
 
 export type ShellAppComposition = 'managed' | 'slotted';
 
@@ -81,7 +85,9 @@ export interface ShellPageChromeConfig {
   mobileActions?: PanelToolsHeaderAction[];
   actionsAriaLabel?: string;
   tone?: MobileHeaderTone;
-  contentInset?: 'default' | 'none';
+  contentInset?: ShellPageContentInset;
+  /** Canvas surface painted by ShellPage around and beneath routed content. */
+  contentSurface?: ShellPageContentSurface;
 }
 
 /**

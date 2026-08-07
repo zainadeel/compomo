@@ -6,6 +6,7 @@ import { resolveShellPageHeaderVariant } from './shell-page-responsive';
 import type {
   ShellPageCapacity,
   ShellPageContentInset,
+  ShellPageContentSurface,
   ShellPageHeaderPresentation,
 } from './shell-page-types';
 
@@ -30,6 +31,9 @@ export class ShellPage {
 
   /** Standard page gutters, or no inset for full-bleed page content. */
   @Prop() contentInset: ShellPageContentInset = 'default';
+
+  /** Canvas surface painted around and beneath routed page content. */
+  @Prop() contentSurface: ShellPageContentSurface = 'primary';
 
   /** Explicit shell breakpoint presentation. Mobile uses the dedicated mobile-header slot. */
   @Prop({ attribute: 'responsive-mode', reflect: true })
@@ -423,6 +427,8 @@ export class ShellPage {
         class={{
           'shell-page-host--inset-default': this.contentInset === 'default',
           'shell-page-host--inset-none': this.contentInset === 'none',
+          'shell-page-host--surface-primary': this.contentSurface === 'primary',
+          'shell-page-host--surface-secondary': this.contentSurface === 'secondary',
           'shell-page-host--mobile': mobile,
           [`shell-page-host--header-${this.effectiveVariant}`]: true,
         }}

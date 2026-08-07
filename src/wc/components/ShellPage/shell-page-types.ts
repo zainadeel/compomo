@@ -4,4 +4,6 @@ export type ShellPageHeaderPresentation = 'auto' | BarTitleVariant;
 
 export type ShellPageContentInset = 'default' | 'none';
 
+export type ShellPageContentSurface = 'primary' | 'secondary';
+
 export type ShellPageCapacity = 'roomy' | 'compact' | 'constrained';

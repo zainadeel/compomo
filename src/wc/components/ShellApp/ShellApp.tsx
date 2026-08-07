@@ -994,6 +994,7 @@ export class ShellApp {
           this.managedToolsOpen
         )}
         contentInset={page.contentInset ?? 'default'}
+        contentSurface={page.contentSurface ?? 'primary'}
       >
         <ds-bar-title
           slot="header"

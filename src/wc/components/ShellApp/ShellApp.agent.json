@@ -55,6 +55,7 @@
     "Replace navigation and pageChrome together from one completed route state.",
     "When pageChrome.showBack marks a detail depth, mobile chrome keeps the page heading as its identity and presents only local subsections; peer route tabs remain in desktop BarNav rather than replacing the detail heading.",
     "Managed ShellApp keeps BarNav and ShellPage presentations present and owns page header stickiness and the content scroller.",
+    "Route-owned pageChrome selects ShellPage contentInset and contentSurface independently; ShellApp forwards both without making page-specific layout or surface decisions.",
     "The application filters unauthorized destinations, sections, and tools before passing them into shell components."
   ],
   "responsiveBehavior": [

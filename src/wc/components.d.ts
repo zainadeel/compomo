@@ -52,7 +52,7 @@ import { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOver
 import { SelectBackground, SelectOption, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
 import { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
 import { ShellGradientPreset } from "./shell/shell-gradient-presets";
-import { ShellPageCapacity, ShellPageContentInset, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
+import { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
 import { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 import { ControlSize } from "./utils/control-text";
@@ -111,7 +111,7 @@ export { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOver
 export { SelectBackground, SelectOption, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
 export { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
 export { ShellGradientPreset } from "./shell/shell-gradient-presets";
-export { ShellPageCapacity, ShellPageContentInset, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
+export { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
 export { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 export { ControlSize } from "./utils/control-text";
@@ -2156,6 +2156,11 @@ export namespace Components {
           * @default 'default'
          */
         "contentInset": ShellPageContentInset;
+        /**
+          * Canvas surface painted around and beneath routed page content.
+          * @default 'primary'
+         */
+        "contentSurface": ShellPageContentSurface;
         /**
           * Available page-header capacity supplied by the owning application shell.
          */
@@ -6145,6 +6150,11 @@ declare namespace LocalJSX {
          */
         "contentInset"?: ShellPageContentInset;
         /**
+          * Canvas surface painted around and beneath routed page content.
+          * @default 'primary'
+         */
+        "contentSurface"?: ShellPageContentSurface;
+        /**
           * Available page-header capacity supplied by the owning application shell.
          */
         "headerCapacity"?: ShellPageCapacity;
@@ -7209,6 +7219,7 @@ declare namespace LocalJSX {
         "headerPresentation": ShellPageHeaderPresentation;
         "headerCapacity": ShellPageCapacity;
         "contentInset": ShellPageContentInset;
+        "contentSurface": ShellPageContentSurface;
         "responsiveMode": ShellResponsiveMode;
     }
     interface DsShellToolsAttributes {

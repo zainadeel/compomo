@@ -1,10 +1,15 @@
 :host {
+  --_shell-page-content-background: var(--color-background-primary);
   display: block;
   position: relative;
   min-width: 0;
   min-height: 100%;
   box-sizing: border-box;
-  background: var(--color-background-primary);
+  background: var(--_shell-page-content-background);
+}
+
+:host(.shell-page-host--surface-secondary) {
+  --_shell-page-content-background: var(--color-background-secondary);
 }
 
 .shell-page__scroll-sentinel {
@@ -51,7 +56,7 @@
 .shell-page__content {
   min-width: 0;
   box-sizing: border-box;
-  background: var(--color-background-primary);
+  background: var(--_shell-page-content-background);
 }
 
 :host(.shell-page-host--inset-default) .shell-page__content {

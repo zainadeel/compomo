@@ -42,11 +42,13 @@ const meta: Meta = {
       options: ['roomy', 'compact', 'constrained'],
     },
     contentInset: { control: 'select', options: ['default', 'none'] },
+    contentSurface: { control: 'select', options: ['primary', 'secondary'] },
   },
   args: {
     headerPresentation: 'auto',
     headerCapacity: 'roomy',
     contentInset: 'default',
+    contentSurface: 'primary',
   },
 };
 
@@ -121,6 +123,7 @@ export const Playground: Story = {
         header-presentation=${args['headerPresentation']}
         header-capacity=${args['headerCapacity']}
         content-inset=${args['contentInset']}
+        content-surface=${args['contentSurface']}
       >
         <ds-bar-title
           slot="header"
@@ -245,6 +248,22 @@ export const FullBleed: Story = {
       <ds-shell-page header-capacity="roomy" content-inset="none">
         <ds-bar-title slot="header" heading="Live Map"></ds-bar-title>
         <div class="shell-page-demo__full-bleed"></div>
+      </ds-shell-page>
+    </div>
+  `,
+};
+
+export const SecondaryCanvas: Story = {
+  render: () => html`
+    ${demoStyles}
+    <div class="shell-page-demo">
+      <ds-shell-page
+        header-capacity="roomy"
+        content-inset="default"
+        content-surface="secondary"
+      >
+        <ds-bar-title slot="header" heading="Safety overview"></ds-bar-title>
+        ${pageContent}
       </ds-shell-page>
     </div>
   `,
