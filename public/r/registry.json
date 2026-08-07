@@ -1044,6 +1044,7 @@
           "responsiveBehavior": [
             "BarTitle does not observe viewport, shell, scroll, or container state. Its owner selects an explicit variant.",
             "ShellPage is the standard owner for automatic expanded, compact, and constrained selection.",
+            "When ShellPage owns BarTitle on a secondary desktop page, the expanded title matches that canvas; compact and constrained title chrome remains primary.",
             "Compact titles use the shared compact-header geometry and md control inset so top-level headings align with BarNav and inline Back geometry aligns with PanelToolHeader. Long headings and section labels truncate independently while Back and action controls retain complete hit targets and accessible names.",
             "A never-collapse primary action remains visible in constrained mode; the title and section label yield space first."
           ],
@@ -6987,7 +6988,7 @@
             "headerPresentation=auto selects the matching header variant from headerCapacity and scroll position.",
             "expanded, compact, and constrained are explicit overrides for exceptional layouts and deterministic examples.",
             "contentInset=default supplies standard page gutters; none permits maps, canvases, and other full-bleed content.",
-            "contentSurface=primary keeps the standard page canvas; secondary paints both the inset gutter and the canvas beneath routed content while leaving sticky page-header chrome primary.",
+            "contentSurface=primary keeps the standard page canvas; secondary paints both the inset gutter and the canvas beneath routed content. On desktop, an expanded BarTitle matches the secondary canvas; compact, constrained, and mobile page-header chrome remains primary.",
             "contentInset and contentSurface are independent: either surface supports standard responsive gutters or a full-bleed page-owned layout.",
             "The header slot accepts one desktop BarTitle or BarWorkflow; mobile-header accepts the corresponding MobileHeader presentation. The default slot owns router output and all page product content."
           ],
@@ -6997,8 +6998,10 @@
             "A ShellPage-managed BarTitle remains concealed until headerCapacity is available and its rendered variant matches the resolved presentation, preventing a default-variant flash during route activation.",
             "responsiveMode=mobile hides and inerts the desktop header, exposes mobile-header, and disables desktop scroll-compaction geometry.",
             "Update headerCapacity synchronously with shell layout state so opening tools or crossing application breakpoints cannot briefly render the wrong presentation.",
-            "The default content inset is 32px in desktop mode and 16px in tablet and mobile modes, while preserving the larger bottom scroll space.",
+            "The default content inset is balanced on every side: 32px in desktop mode and 16px in tablet and mobile modes.",
             "The selected content surface persists unchanged across desktop, tablet, and mobile modes.",
+            "On a secondary desktop page, the expanded BarTitle matches the page canvas and returns to the primary chrome surface when capacity or scrolling compacts it.",
+            "The flow-preservation spacer follows contentSurface so compacting a secondary page cannot expose a primary strip before its content.",
             "On roomy pages, the expanded header scrolls upward until its title and action row reaches the compact row position, while its bottom divider progressively extends from the expanded inset to edge-to-edge; it then snaps variants without moving that shared visual anchor.",
             "Scroll compaction preserves the expanded page flow offset so content never jumps beneath the sticky header.",
             "ShellPage relies on ShellApp's content scroller and never introduces nested scrolling.",

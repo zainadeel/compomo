@@ -76,13 +76,18 @@ test.describe('Managed application shell', () => {
     const shell = page.locator('#managed-shell');
     const shellPage = shell.locator('ds-shell-page');
     const content = shellPage.locator('.shell-page__content');
-    const secondary = await page.evaluate(() => {
+    const stickyHeader = shellPage.locator('.shell-page__sticky-header');
+    const barTitle = shellPage.locator('ds-bar-title');
+    const titleSurface = barTitle.locator('.bar-title');
+    const surfaces = await page.evaluate(() => {
       const probe = document.createElement('div');
-      probe.style.backgroundColor = 'var(--color-background-secondary)';
       document.body.append(probe);
-      const color = getComputedStyle(probe).backgroundColor;
+      probe.style.backgroundColor = 'var(--color-background-primary)';
+      const primary = getComputedStyle(probe).backgroundColor;
+      probe.style.backgroundColor = 'var(--color-background-secondary)';
+      const secondary = getComputedStyle(probe).backgroundColor;
       probe.remove();
-      return color;
+      return { primary, secondary };
     });
 
     await shell.evaluate(element => {
@@ -95,26 +100,98 @@ test.describe('Managed application shell', () => {
     });
 
     await expect(shellPage).toHaveJSProperty('contentSurface', 'secondary');
-    await expect(shellPage).toHaveCSS('background-color', secondary);
-    await expect(content).toHaveCSS('background-color', secondary);
+    await expect(shellPage).toHaveCSS('background-color', surfaces.secondary);
+    await expect(content).toHaveCSS('background-color', surfaces.secondary);
     await expect(content).toHaveCSS('padding-top', '32px');
+    await expect(barTitle).toHaveClass(/bar-title-host--expanded/);
+    await expect(stickyHeader).toHaveCSS('background-color', surfaces.secondary);
+    await expect(barTitle).toHaveCSS('background-color', surfaces.secondary);
+    await expect(titleSurface).toHaveCSS('background-color', surfaces.secondary);
+
+    await shell.getByRole('button', { name: 'Search' }).click();
+    await expect(barTitle).toHaveClass(/bar-title-host--compact/);
+    await expect(stickyHeader).toHaveCSS('background-color', surfaces.primary);
+    await expect(barTitle).toHaveCSS('background-color', surfaces.primary);
+    await expect(titleSurface).toHaveCSS('background-color', surfaces.primary);
+    await shell.getByRole('button', { name: 'Search' }).click();
+    await expect(barTitle).toHaveClass(/bar-title-host--expanded/);
+    await expect(titleSurface).toHaveCSS('background-color', surfaces.secondary);
 
     await page.setViewportSize({ width: 1024, height: 760 });
     await expect(shell).toHaveAttribute('responsive-mode', 'tablet');
-    await expect(content).toHaveCSS('background-color', secondary);
+    await expect(content).toHaveCSS('background-color', surfaces.secondary);
     await expect(content).toHaveCSS('padding-top', '16px');
+    await expect(barTitle).toHaveClass(/bar-title-host--compact/);
+    await expect(titleSurface).toHaveCSS('background-color', surfaces.primary);
 
     await page.setViewportSize({ width: 390, height: 760 });
     await expect(shell).toHaveAttribute('responsive-mode', 'mobile');
-    await expect(content).toHaveCSS('background-color', secondary);
+    await expect(content).toHaveCSS('background-color', surfaces.secondary);
     await expect(content).toHaveCSS('padding-top', '16px');
 
     await shell.evaluate(element => {
       const managed = element as HTMLDsShellAppElement;
       managed.pageChrome = { ...managed.pageChrome, contentInset: 'none' };
     });
-    await expect(content).toHaveCSS('background-color', secondary);
+    await expect(content).toHaveCSS('background-color', surfaces.secondary);
     await expect(content).toHaveCSS('padding', '0px');
+  });
+
+  test('keeps a secondary canvas continuous through scroll compaction', async ({ page }) => {
+    const shell = page.locator('#managed-shell');
+    const shellPage = shell.locator('ds-shell-page');
+    const scroller = shell.locator('.shell-app__content');
+    const barTitle = shellPage.locator('ds-bar-title');
+    const flowSpacer = shellPage.locator('.shell-page__flow-spacer');
+    const content = shellPage.locator('.shell-page__content');
+    const secondary = await page.evaluate(() => {
+      const probe = document.createElement('div');
+      probe.style.backgroundColor = 'var(--color-background-secondary)';
+      document.body.append(probe);
+      const color = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return color;
+    });
+
+    await shell.evaluate(element => {
+      const managed = element as HTMLDsShellAppElement;
+      managed.pageChrome = { ...managed.pageChrome, contentSurface: 'secondary' };
+    });
+    await expect(barTitle).toHaveClass(/bar-title-host--expanded/);
+    await expect
+      .poll(() =>
+        shellPage.evaluate(element =>
+          Number.parseFloat(
+            getComputedStyle(element).getPropertyValue('--ds-shell-page-header-travel')
+          )
+        )
+      )
+      .toBeGreaterThan(0);
+
+    const snapScrollTop = await shellPage.evaluate(element => {
+      const root = element.closest('ds-shell-app')?.querySelector<HTMLElement>('.shell-app__content');
+      const sentinel = element.querySelector<HTMLElement>('.shell-page__scroll-sentinel');
+      return root && sentinel
+        ? root.scrollTop + sentinel.getBoundingClientRect().top - root.getBoundingClientRect().top
+        : 0;
+    });
+    await scroller.evaluate((element: HTMLElement, distance) => {
+      element.scrollTop = distance + 1;
+    }, snapScrollTop);
+
+    await expect(barTitle).toHaveClass(/bar-title-host--compact/);
+    await expect(flowSpacer).not.toHaveCSS('height', '0px');
+    await expect(flowSpacer).toHaveCSS('background-color', secondary);
+    await expect(content).toHaveCSS('background-color', secondary);
+    const boundary = await shellPage.evaluate(element => {
+      const spacer = element.querySelector<HTMLElement>('.shell-page__flow-spacer');
+      const pageContent = element.querySelector<HTMLElement>('.shell-page__content');
+      return {
+        spacerBottom: spacer?.getBoundingClientRect().bottom ?? 0,
+        contentTop: pageContent?.getBoundingClientRect().top ?? 0,
+      };
+    });
+    expect(boundary.spacerBottom).toBeCloseTo(boundary.contentTop, 3);
   });
 
   test(

@@ -54,6 +54,8 @@
     "Route-level sections remain pageChrome tabs; subordinate local views use subsections.",
     "Use contentInset none only for deliberately full-bleed products such as maps and canvases.",
     "Choose contentSurface independently: primary and secondary canvases both support default responsive gutters or full-bleed content.",
+    "An expanded desktop BarTitle matches a secondary page canvas, then returns to primary chrome when it compacts.",
+    "ShellPage keeps its scroll-compaction spacer on the selected content surface so the routed canvas remains continuous.",
     "The routed content owner remains mounted while header presentation compacts or changes breakpoint."
   ],
   "implementations": {

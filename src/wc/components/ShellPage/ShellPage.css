@@ -1,5 +1,6 @@
 :host {
   --_shell-page-content-background: var(--color-background-primary);
+  --_shell-page-header-background: var(--color-background-primary);
   display: block;
   position: relative;
   min-width: 0;
@@ -10,6 +11,12 @@
 
 :host(.shell-page-host--surface-secondary) {
   --_shell-page-content-background: var(--color-background-secondary);
+}
+
+:host(
+    .shell-page-host--surface-secondary.shell-page-host--header-expanded[responsive-mode='desktop']
+  ) {
+  --_shell-page-header-background: var(--color-background-secondary);
 }
 
 .shell-page__scroll-sentinel {
@@ -26,7 +33,7 @@
   inset-block-start: var(--ds-shell-page-sticky-offset, 0);
   z-index: var(--dimension-z-index-raised);
   min-width: 0;
-  background: var(--color-background-primary);
+  background: var(--_shell-page-header-background);
   overflow: visible;
   overflow-anchor: none;
 }
@@ -50,7 +57,7 @@
 
 .shell-page__flow-spacer {
   height: var(--ds-shell-page-flow-spacer, 0);
-  background: var(--color-background-primary);
+  background: var(--_shell-page-content-background);
 }
 
 .shell-page__content {
@@ -60,12 +67,12 @@
 }
 
 :host(.shell-page-host--inset-default) .shell-page__content {
-  padding: var(--dimension-space-400) var(--dimension-space-400) var(--dimension-space-800);
+  padding: var(--dimension-space-400);
 }
 
 :host(.shell-page-host--inset-default[responsive-mode='tablet']) .shell-page__content,
 :host(.shell-page-host--inset-default[responsive-mode='mobile']) .shell-page__content {
-  padding: var(--dimension-space-200) var(--dimension-space-200) var(--dimension-space-800);
+  padding: var(--dimension-space-200);
 }
 
 :host(.shell-page-host--inset-none) .shell-page__content {
