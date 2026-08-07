@@ -44,7 +44,7 @@ describe('shellMobileDestinationForTool', () => {
     assert.equal(shellMobileDestinationForTool(false, 'agents'), 'area');
     assert.equal(shellMobileDestinationForTool(true, 'search'), 'search');
     assert.equal(shellMobileDestinationForTool(true, 'agents'), 'agents');
-    assert.equal(shellMobileDestinationForTool(true, 'messages'), 'inbox');
+    assert.equal(shellMobileDestinationForTool(true, 'messages'), 'messages');
     assert.equal(shellMobileDestinationForTool(true, 'stacks'), 'inbox');
     assert.equal(shellMobileDestinationForTool(true, 'activity'), 'inbox');
     assert.equal(shellMobileDestinationForTool(true, 'help'), 'help');
@@ -53,9 +53,9 @@ describe('shellMobileDestinationForTool', () => {
 
 describe('resolveAvailableInboxTool', () => {
   it('retains an available preferred segment and otherwise falls back predictably', () => {
-    assert.equal(resolveAvailableInboxTool('activity', ['messages', 'activity']), 'activity');
-    assert.equal(resolveAvailableInboxTool('activity', ['messages']), 'messages');
-    assert.equal(resolveAvailableInboxTool('messages', ['stacks', 'activity']), 'stacks');
+    assert.equal(resolveAvailableInboxTool('activity', ['stacks', 'activity']), 'activity');
+    assert.equal(resolveAvailableInboxTool('activity', ['stacks']), 'stacks');
+    assert.equal(resolveAvailableInboxTool('messages', ['stacks', 'activity']), 'activity');
     assert.equal(resolveAvailableInboxTool('messages', ['search', 'agents']), '');
   });
 });

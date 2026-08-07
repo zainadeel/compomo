@@ -24,7 +24,6 @@ export default meta;
 type Story = StoryObj;
 
 const SCORE: OverviewScore = {
-  label: 'Safety score',
   value: 87,
   trend: resolveMetricTrend(87, 83) ?? undefined,
 };
@@ -66,9 +65,9 @@ const METRICS: OverviewMetric[] = [
 
 const FRAME = 'padding:var(--dimension-space-200);max-width:100%;';
 const COMPARISON_OPTIONS = [
-  { label: 'Previous 1 week', value: '1w' },
-  { label: 'Previous 2 weeks', value: '2w' },
-  { label: 'Previous 4 weeks', value: '4w' },
+  { label: 'Previous 1 period', value: '1w' },
+  { label: 'Previous 2 periods', value: '2w' },
+  { label: 'Previous 4 periods', value: '4w' },
 ];
 const CURRENT_RANGE_OPTIONS = [
   { label: 'Jun 30–Jul 27', value: 'current-4w' },
@@ -155,7 +154,7 @@ export const ScorePalette: Story = {
           <ds-card-overview
             period-label="Jul 27"
             comparison-label="vs."
-            .score=${{ label: `${score.label} safety score`, value: score.value }}
+            .score=${{ value: score.value }}
           >
             ${comparisonSelect()}
           </ds-card-overview>
@@ -263,7 +262,7 @@ export const ScoreWithoutTrend: Story = {
       <ds-card-overview
         period-label="Jul 27"
         comparison-label="vs."
-        .score=${{ label: 'Safety score', value: 87 }}
+        .score=${{ value: 87 }}
         .metrics=${METRICS}
       >
         ${comparisonSelect()}

@@ -42,12 +42,14 @@ export class MobileBarNav {
   @Prop() sheetNavExpanded: boolean = false;
   @Prop() menuLabel: string = 'Menu';
   @Prop() searchLabel: string = 'Search';
-  @Prop() agentsLabel: string = 'Agents';
   @Prop() inboxLabel: string = 'Inbox';
+  @Prop() messagesLabel: string = 'Messages';
+  @Prop() agentsLabel: string = 'Agents';
   @Prop() helpLabel: string = 'Help & Support';
   @Prop() searchDot: boolean = false;
-  @Prop() agentsDot: boolean = false;
   @Prop() inboxDot: boolean = false;
+  @Prop() messagesDot: boolean = false;
+  @Prop() agentsDot: boolean = false;
 
   @State() private pressedItemId: string | null = null;
 
@@ -140,6 +142,12 @@ export class MobileBarNav {
       currentArea,
       { id: 'search', icon: 'MagnifyingGlass', label: this.searchLabel, dot: this.searchDot },
       { id: 'inbox', icon: 'Inbox', label: this.inboxLabel, dot: this.inboxDot },
+      {
+        id: 'messages',
+        icon: 'MessageBubbleStack',
+        label: this.messagesLabel,
+        dot: this.messagesDot,
+      },
       { id: 'agents', icon: 'AI', label: this.agentsLabel, dot: this.agentsDot },
     ];
   }

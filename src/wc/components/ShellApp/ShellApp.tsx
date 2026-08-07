@@ -898,14 +898,16 @@ export class ShellApp {
         currentArea={this.currentArea}
         sheetNavExpanded={this.managedMobileSheetNavOpen}
         searchLabel={this.tools.items?.find(item => item.id === 'search')?.ariaLabel ?? 'Search'}
-        agentsLabel={this.tools.items?.find(item => item.id === 'agents')?.ariaLabel ?? 'Agents'}
         inboxLabel={this.tools.inboxLabel ?? 'Inbox'}
+        messagesLabel={this.tools.items?.find(item => item.id === 'messages')?.ariaLabel ?? 'Messages'}
+        agentsLabel={this.tools.items?.find(item => item.id === 'agents')?.ariaLabel ?? 'Agents'}
         helpLabel={this.tools.items?.find(item => item.id === 'help')?.ariaLabel ?? 'Help & Support'}
         searchDot={this.toolDot('search')}
-        agentsDot={this.toolDot('agents')}
         inboxDot={
-          this.toolDot('messages') || this.toolDot('stacks') || this.toolDot('activity')
+          this.toolDot('stacks') || this.toolDot('activity')
         }
+        messagesDot={this.toolDot('messages')}
+        agentsDot={this.toolDot('agents')}
         onDsSheetNavToggle={this.handleManagedSheetToggle}
         onDsDestinationChange={this.handleManagedMobileDestination}
       />

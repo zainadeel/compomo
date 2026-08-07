@@ -1429,6 +1429,14 @@ export namespace Components {
         /**
           * @default false
          */
+        "messagesDot": boolean;
+        /**
+          * @default 'Messages'
+         */
+        "messagesLabel": string;
+        /**
+          * @default false
+         */
         "searchDot": boolean;
         /**
           * @default 'Search'
@@ -5286,6 +5294,14 @@ declare namespace LocalJSX {
           * @default 'Menu'
          */
         "menuLabel"?: string;
+        /**
+          * @default false
+         */
+        "messagesDot"?: boolean;
+        /**
+          * @default 'Messages'
+         */
+        "messagesLabel"?: string;
         "onDsDestinationChange"?: (event: DsMobileBarNavCustomEvent<MobileBarNavDestinationDetail>) => void;
         "onDsSheetNavToggle"?: (event: DsMobileBarNavCustomEvent<boolean>) => void;
         /**
@@ -7033,12 +7049,14 @@ declare namespace LocalJSX {
         "sheetNavExpanded": boolean;
         "menuLabel": string;
         "searchLabel": string;
-        "agentsLabel": string;
         "inboxLabel": string;
+        "messagesLabel": string;
+        "agentsLabel": string;
         "helpLabel": string;
         "searchDot": boolean;
-        "agentsDot": boolean;
         "inboxDot": boolean;
+        "messagesDot": boolean;
+        "agentsDot": boolean;
     }
     interface DsMobileHeaderAttributes {
         "heading": string;

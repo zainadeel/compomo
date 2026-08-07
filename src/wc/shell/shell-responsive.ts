@@ -1,12 +1,12 @@
 import type { PanelToolsToolId } from '../components/PanelTools/panel-tools-types';
 
 export type ShellResponsiveMode = 'desktop' | 'tablet' | 'mobile';
-export type MobileDestination = 'area' | 'search' | 'agents' | 'inbox' | 'help';
+export type MobileDestination = 'area' | 'search' | 'inbox' | 'messages' | 'agents' | 'help';
 export type ShellInboxToolId = PanelToolsToolId;
 
 export const SHELL_DESKTOP_BREAKPOINT = 1200;
 export const SHELL_MOBILE_BREAKPOINT = 768;
-export const SHELL_DEFAULT_INBOX_TOOL: ShellInboxToolId = 'messages';
+export const SHELL_DEFAULT_INBOX_TOOL: ShellInboxToolId = 'activity';
 
 export function resolveShellResponsiveMode(width: number): ShellResponsiveMode {
   if (width >= SHELL_DESKTOP_BREAKPOINT) return 'desktop';
@@ -29,12 +29,13 @@ export function shellMobileDestinationForTool(
   if (!open || !tool) return 'area';
   if (tool === 'help') return 'help';
   if (tool === 'search') return 'search';
+  if (tool === 'messages') return 'messages';
   if (tool === 'agents') return 'agents';
   return 'inbox';
 }
 
 export function isShellInboxTool(tool: string): tool is ShellInboxToolId {
-  return tool === 'messages' || tool === 'stacks' || tool === 'activity';
+  return tool === 'stacks' || tool === 'activity';
 }
 
 export function resolveAvailableInboxTool(

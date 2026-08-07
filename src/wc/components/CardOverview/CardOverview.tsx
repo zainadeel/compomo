@@ -317,7 +317,7 @@ export class CardOverview {
               {this.bar('text-display-small', '40px')}
             </div>
             <div class="card-overview__score-copy">
-              {this.bar('text-body-small', '64px', 'card-overview__score-label')}
+              {this.bar('text-body-small', '64px', 'card-overview__score-label-spacer')}
               {this.bar('text-body-medium', '28px')}
             </div>
           </div>
@@ -372,11 +372,12 @@ export class CardOverview {
           <div class="card-overview__score-copy">
             <ds-text
               as="span"
-              class="card-overview__score-label ds-control-label-box"
+              class="card-overview__score-label-spacer ds-control-label-box"
               variant="text-body-small"
               color={ALWAYS_DARK_SECONDARY}
+              aria-hidden="true"
             >
-              {score.label}
+              &nbsp;
             </ds-text>
             {this.renderTrend(score.trend, 'text-body-medium')}
           </div>

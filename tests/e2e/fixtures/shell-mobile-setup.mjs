@@ -40,8 +40,8 @@ const settingsGroups = [
 ];
 const toolItems = [
   { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search', dot: true },
-  { id: 'agents', icon: 'AI', ariaLabel: 'Agents' },
   { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages' },
+  { id: 'agents', icon: 'AI', ariaLabel: 'Agents' },
   { id: 'stacks', icon: 'ViewMenu', ariaLabel: 'Stacks' },
   { id: 'activity', icon: 'Bell', ariaLabel: 'Activity', dot: true },
   { id: 'help', icon: 'CircleQuestion', ariaLabel: 'Help & Support' },
@@ -84,6 +84,7 @@ mobileHeader.heading = 'Tracking';
 mobileBarNav.currentArea = { id: 'tracking', icon: 'MapPage', label: 'Tracking' };
 mobileBarNav.searchDot = true;
 mobileBarNav.inboxDot = true;
+mobileBarNav.messagesDot = true;
 tools.items = toolItems;
 tools.headers = {
   search: { title: 'Search' },
@@ -138,7 +139,7 @@ mobileBarNav.addEventListener('dsDestinationChange', event => {
     tools.open = false;
     return;
   }
-  const tool = destination === 'inbox' ? 'messages' : destination;
+  const tool = destination === 'inbox' ? 'activity' : destination;
   tools.activeTool = tool;
   tools.open = true;
 });
@@ -165,7 +166,7 @@ tools.addEventListener('dsToolChange', event => {
   const destination =
     !selected
       ? 'area'
-      : id === 'search' || id === 'agents' || id === 'help'
+      : id === 'search' || id === 'messages' || id === 'agents' || id === 'help'
         ? id
         : 'inbox';
   applyShellState(destination, false);

@@ -7,9 +7,9 @@ await Promise.all([
 ]);
 
 const comparisonOptions = [
-  { label: 'Previous 1 week', value: '1w' },
-  { label: 'Previous 2 weeks', value: '2w' },
-  { label: 'Previous 4 weeks', value: '4w' },
+  { label: 'Previous 1 period', value: '1w' },
+  { label: 'Previous 2 periods', value: '2w' },
+  { label: 'Previous 4 periods', value: '4w' },
 ];
 const rangeOptions = [
   { label: 'Jun 30–Jul 27', value: 'current-4w' },
@@ -47,7 +47,6 @@ const metrics = Array.from({ length: 7 }, (_, index) => ({
 }));
 
 const score = value => ({
-  label: 'Safety score',
   value,
   trend: { direction: 'up', value: '4', tone: 'positive' },
 });
@@ -65,7 +64,7 @@ document.getElementById('fair').score = score(50);
 document.getElementById('good').score = score(80);
 document.getElementById('excellent').score = score(81);
 document.getElementById('no-score').metrics = metrics.slice(0, 2);
-document.getElementById('no-trend').score = { label: 'Safety score', value: 87 };
+document.getElementById('no-trend').score = { value: 87 };
 document.getElementById('score-error').metrics = metrics.slice(0, 2);
 document.getElementById('loading-with-metrics').metrics = metrics.slice(0, 3);
 

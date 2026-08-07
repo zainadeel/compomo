@@ -13,7 +13,7 @@
     "peerDependencies": {
       "required": [
         "@ds-mo/tokens ^6.0.0",
-        "@ds-mo/icons ^6.4.0"
+        "@ds-mo/icons ^6.5.0"
       ],
       "optional": [],
       "frameworks": "None required for Custom Elements; generated React and Angular adapters are included."
@@ -4733,7 +4733,7 @@
     {
       "name": "mobile-bar-nav",
       "title": "MobileBarNav",
-      "description": "Persistent mobile shell navigation for Menu, the router-derived current area, Search, Agents, and Inbox.",
+      "description": "Persistent mobile shell navigation for Menu, the router-derived current area, Search, Inbox, Messages, and Agents.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -4744,7 +4744,7 @@
         "intent": {
           "audience": "specialized",
           "status": "experimental",
-          "summary": "Persistent mobile shell navigation for Menu, the router-derived current area, Search, Agents, and Inbox.",
+          "summary": "Persistent mobile shell navigation for Menu, the router-derived current area, Search, Inbox, Messages, and Agents.",
           "useWhen": [
             "ShellApp is rendering its dedicated below-768px application composition."
           ],
@@ -4763,7 +4763,7 @@
             "Only the active destination exposes aria-current; Menu exposes its controlled pane through aria-expanded."
           ],
           "states": [
-            "The fixed groups are Menu plus current area, followed by Search, Inbox, and Agents.",
+            "The fixed groups are Menu plus current area, followed by Search, Inbox, Messages, and Agents.",
             "Selection promotes foreground to primary without painting a selected fill; unselected destinations use tertiary foreground.",
             "Opening Mobile Sheet Nav replaces the Menu glyph with Cross while preserving its accessible name.",
             "Reselecting an active destination does not reset its nested state.",
@@ -4811,6 +4811,14 @@
             "required": false
           },
           "menuLabel": {
+            "type": "string",
+            "required": false
+          },
+          "messagesDot": {
+            "type": "boolean",
+            "required": false
+          },
+          "messagesLabel": {
             "type": "string",
             "required": false
           },
@@ -6040,7 +6048,7 @@
           "states": [
             "Every tool has a stable explicit id and accessible label. The application filters definitions for authorization and entitlement.",
             "Tool order, header or footer rail placement, shortcut, and mobile grouping come from explicit item metadata rather than id-based layout assumptions.",
-            "PANEL_TOOLS_DEFAULT_ITEMS is the canonical Lab recipe: Search pinned first, Help pinned last, current shortcuts, and Messages, Stacks, and Activity grouped under mobile Inbox.",
+            "PANEL_TOOLS_DEFAULT_ITEMS is the canonical Lab recipe: Search pinned first, Messages before Agents, Help pinned last, current shortcuts, and only Stacks and Activity grouped under mobile Inbox.",
             "Only one drawer is open at a time; selecting another tool switches directly and selecting the active tool closes to rail-only mode.",
             "The drawer starts closed, remains open across ordinary route changes, and retains every mounted tool's independent conversation, query, scroll, and work state.",
             "When storageKey is set, persist only the last active tool in this browser and still restore the drawer closed after reload.",
@@ -7094,17 +7102,17 @@
           "accessibility": [
             "Only the active mobile tool view participates in focus or the accessibility tree.",
             "Header Back and application-owned header actions preserve the PanelTools event contract.",
-            "Inbox uses the MobileSectionSwitcher popup trigger for Messages, Stacks, and Activity and never relies on a gesture-only interaction."
+            "Inbox uses the MobileSectionSwitcher popup trigger for Stacks and Activity and never relies on a gesture-only interaction; Messages remains a direct mobile destination."
           ],
           "states": [
             "The application owns open and activeTool and replaces headers when tool depth changes.",
-            "Items with mobileDestination inbox map to one mobile Inbox destination while retaining the actual active tool id; the canonical recipe groups Messages, Stacks, and Activity.",
+            "Items with mobileDestination inbox map to one mobile Inbox destination while retaining the actual active tool id; the canonical recipe groups Stacks and Activity, while Messages remains a separate destination.",
             "Stable tool ids own named slots; label, order, rail placement, shortcut, and mobile destination are explicit item data.",
             "Switching responsive mode must not recreate application-owned slotted product elements."
           ],
           "responsiveBehavior": [
             "Desktop and tablet compose PanelTools-compatible rail and drawer chrome.",
-            "Mobile renders one centered MobileHeader for every tool and presents Messages, Stacks, and Activity directly as peer section titles without an additional Inbox heading."
+            "Mobile renders one centered MobileHeader for every tool; Stacks and Activity use Inbox section titles, while Messages remains a direct tool destination."
           ],
           "frameworkCaveats": {
             "customElements": [
