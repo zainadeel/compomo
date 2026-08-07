@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.11.1](https://github.com/zainadeel/compomo/compare/v13.11.0...v13.11.1) (2026-08-07)
+
+
+### Fixed
+
+* stabilize shell chrome and page presentation ([#433](https://github.com/zainadeel/compomo/issues/433)) ([c520d9e](https://github.com/zainadeel/compomo/commit/c520d9ee892d7909df83be6ff9e9336d35c76851))
+
 ## [13.11.0](https://github.com/zainadeel/compomo/compare/v13.10.0...v13.11.0) (2026-08-07)
 
 
