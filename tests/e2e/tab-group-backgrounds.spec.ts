@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { expectDefiniteBounds } from './rendered-geometry';
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/tab-group-backgrounds.html');
@@ -129,6 +130,45 @@ test('renders one accessible label, icon, or icon-label variant across the group
   await setVariant('label');
   await expect(host.locator('.tab__icon')).toHaveCount(0);
   await expect(host.locator('.tab__label')).toHaveCount(3);
+});
+
+test('supports small, medium, and large density geometry', async ({ page }) => {
+  const host = page.locator('#tabs');
+  await host.evaluate(element => {
+    const group = element as HTMLElement & { tabs: unknown[] };
+    group.tabs = [
+      { id: 'overview', label: 'Overview', icon: 'Bookmark', variant: 'icon' },
+      { id: 'settings', label: 'Settings', icon: 'Bell', variant: 'icon' },
+    ];
+  });
+
+  const densities = [
+    { size: 'sm', track: 24, segment: 16, icon: 12 },
+    { size: 'md', track: 32, segment: 24, icon: 16 },
+    { size: 'lg', track: 40, segment: 32, icon: 24 },
+  ] as const;
+
+  for (const density of densities) {
+    await host.evaluate((element, size) => {
+      (element as HTMLElement & { size: string }).size = size;
+    }, density.size);
+
+    await expect(host).toHaveJSProperty('size', density.size);
+    await expect(host).toHaveClass(new RegExp(`tab-group-host--${density.size}`));
+    await expectDefiniteBounds(host.locator('.tab-list'), {
+      label: `${density.size} TabGroup track`,
+      height: density.track,
+    });
+    await expectDefiniteBounds(host.locator('.tab').first(), {
+      label: `${density.size} TabGroup segment`,
+      height: density.segment,
+    });
+    await expectDefiniteBounds(host.locator('.tab__icon').first(), {
+      label: `${density.size} TabGroup icon`,
+      width: density.icon,
+      height: density.icon,
+    });
+  }
 });
 
 test('keeps one enabled tab reachable when value is missing or points to an inactive tab', async ({ page }) => {

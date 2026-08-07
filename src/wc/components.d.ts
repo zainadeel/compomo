@@ -40,8 +40,9 @@ import { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
 import { ButtonFilledIntent as ButtonFilledIntent1 } from "./components/ButtonFilled/ButtonFilled";
 import { PanelNavGroup, PanelNavItem, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
 import { MobileBarNavDestinationDetail } from "./components/MobileBarNav/mobile-bar-nav-types";
-import { MobileHeaderHeadingLevel, MobileHeaderTone } from "./components/MobileHeader/mobile-header-types";
+import { MobileHeaderHeadingLevel, MobileHeaderSectionsPresentation, MobileHeaderTone } from "./components/MobileHeader/mobile-header-types";
 import { TabGroupItem, TabItem } from "./components/TabGroup/tab-item-utils";
+import { TabGroupSize } from "./components/TabGroup/TabGroup";
 import { ModalCloseDetail, ModalWidth } from "./components/Modal/Modal";
 import { ChromeTransitionDetail } from "./shell/chrome-transition";
 import { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
@@ -59,7 +60,7 @@ import { ControlSize } from "./utils/control-text";
 import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from "./components/Slider/Slider";
 import { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 import { SwitchSize } from "./components/Switch/Switch";
-import { TabBackground } from "./components/TabGroup/TabGroup";
+import { TabBackground, TabGroupSize as TabGroupSize1 } from "./components/TabGroup/TabGroup";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -99,8 +100,9 @@ export { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
 export { ButtonFilledIntent as ButtonFilledIntent1 } from "./components/ButtonFilled/ButtonFilled";
 export { PanelNavGroup, PanelNavItem, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
 export { MobileBarNavDestinationDetail } from "./components/MobileBarNav/mobile-bar-nav-types";
-export { MobileHeaderHeadingLevel, MobileHeaderTone } from "./components/MobileHeader/mobile-header-types";
+export { MobileHeaderHeadingLevel, MobileHeaderSectionsPresentation, MobileHeaderTone } from "./components/MobileHeader/mobile-header-types";
 export { TabGroupItem, TabItem } from "./components/TabGroup/tab-item-utils";
+export { TabGroupSize } from "./components/TabGroup/TabGroup";
 export { ModalCloseDetail, ModalWidth } from "./components/Modal/Modal";
 export { ChromeTransitionDetail } from "./shell/chrome-transition";
 export { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
@@ -118,7 +120,7 @@ export { ControlSize } from "./utils/control-text";
 export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from "./components/Slider/Slider";
 export { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 export { SwitchSize } from "./components/Switch/Switch";
-export { TabBackground } from "./components/TabGroup/TabGroup";
+export { TabBackground, TabGroupSize as TabGroupSize1 } from "./components/TabGroup/TabGroup";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -1462,12 +1464,22 @@ export namespace Components {
           * Controlled peer sections. Their selected label replaces the static title.
           * @default []
          */
-        "sections": TabItem[];
+        "sections": TabGroupItem[];
         /**
           * Accessible name for the section chooser.
           * @default 'Change page section'
          */
         "sectionsAriaLabel": string;
+        /**
+          * Popup switcher or an inline segmented TabGroup for peer sections.
+          * @default 'switcher'
+         */
+        "sectionsPresentation": MobileHeaderSectionsPresentation;
+        /**
+          * Density for the segmented sections presentation.
+          * @default 'md'
+         */
+        "sectionsSize": TabGroupSize;
         /**
           * Controlled child sections within the selected page or detail screen.
           * @default []
@@ -2475,6 +2487,11 @@ export namespace Components {
         "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
         "background": TabBackground | undefined;
+        /**
+          * Control density: 24px small, 32px medium, or 40px large track.
+          * @default 'md'
+         */
+        "size": TabGroupSize1;
         /**
           * @default []
          */
@@ -5345,12 +5362,22 @@ declare namespace LocalJSX {
           * Controlled peer sections. Their selected label replaces the static title.
           * @default []
          */
-        "sections"?: TabItem[];
+        "sections"?: TabGroupItem[];
         /**
           * Accessible name for the section chooser.
           * @default 'Change page section'
          */
         "sectionsAriaLabel"?: string;
+        /**
+          * Popup switcher or an inline segmented TabGroup for peer sections.
+          * @default 'switcher'
+         */
+        "sectionsPresentation"?: MobileHeaderSectionsPresentation;
+        /**
+          * Density for the segmented sections presentation.
+          * @default 'md'
+         */
+        "sectionsSize"?: TabGroupSize;
         /**
           * Controlled child sections within the selected page or detail screen.
           * @default []
@@ -6481,6 +6508,11 @@ declare namespace LocalJSX {
         "background"?: TabBackground | undefined;
         "onDsChange"?: (event: DsTabGroupCustomEvent<string>) => void;
         /**
+          * Control density: 24px small, 32px medium, or 40px large track.
+          * @default 'md'
+         */
+        "size"?: TabGroupSize1;
+        /**
           * @default []
          */
         "tabs"?: TabGroupItem[];
@@ -7073,6 +7105,8 @@ declare namespace LocalJSX {
         "headingLevel": MobileHeaderHeadingLevel;
         "value": string;
         "sectionsAriaLabel": string;
+        "sectionsPresentation": MobileHeaderSectionsPresentation;
+        "sectionsSize": TabGroupSize;
         "subvalue": string;
         "subsectionsAriaLabel": string;
         "tone": MobileHeaderTone;
@@ -7292,6 +7326,7 @@ declare namespace LocalJSX {
     }
     interface DsTabGroupAttributes {
         "value": string;
+        "size": TabGroupSize;
         "background": TabBackground | undefined;
         "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;

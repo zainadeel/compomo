@@ -179,6 +179,11 @@
   padding-block-start: env(safe-area-inset-top);
 }
 
+/* Refresh the Mobile WebKit stage layer without remounting app content. */
+:host(.shell-app--mobile.shell-app--foreground-refresh) .shell-app__main {
+  transform: translateZ(0);
+}
+
 :host(.shell-app--mobile) .shell-app__chrome,
 :host(.shell-app--mobile) .shell-app__panel,
 :host(.shell-app--mobile) .shell-app__bar {

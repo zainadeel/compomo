@@ -255,12 +255,18 @@ export class ShellTools {
     const configuredTitle = header.title?.trim();
     const title = configuredTitle || this.toolLabel(tool);
     const actions = (header.actions ?? []).filter(action => action.id !== 'fullscreen');
+    const inboxRoot = isShellInboxTool(tool) && !header.showBack;
     const sections =
-      isShellInboxTool(tool) && !header.showBack
-        ? this.availableInboxTools.map(id => ({
-            id,
-            label: this.toolLabel(id),
-          }))
+      inboxRoot
+        ? this.availableInboxTools.map(id => {
+            const item = this.resolvedItems.find(candidate => candidate.id === id);
+            return {
+              id,
+              label: this.toolLabel(id),
+              variant: 'label' as const,
+              dot: item?.dot,
+            };
+          })
         : [];
 
     return (
@@ -271,6 +277,8 @@ export class ShellTools {
         sections={sections}
         value={tool}
         sectionsAriaLabel={this.inboxNavigationLabel}
+        sectionsPresentation={inboxRoot ? 'segmented' : 'switcher'}
+        sectionsSize="lg"
         onDsSectionChange={this.selectInboxTool}
       >
         {header.showBack ? (

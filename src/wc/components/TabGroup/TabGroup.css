@@ -59,6 +59,14 @@
   box-sizing: border-box;
 }
 
+:host(.tab-group-host--sm) .tab-list {
+  height: var(--dimension-size-300);
+}
+
+:host(.tab-group-host--lg) .tab-list {
+  height: var(--dimension-size-500);
+}
+
 :host(.tab-group-host--surface) .tab-list {
   background-color: transparent;
 }
@@ -82,7 +90,7 @@
   min-width: var(--dimension-size-400);
   box-sizing: border-box;
   --_dot: var(--color-foreground-bold-brand);
-  /* Hover/press: `.ds-interaction-fill` — fills cover full 24px box (no layout border). */
+  /* Hover/press: `.ds-interaction-fill` fills cover the complete segment. */
 }
 
 .tab--selected {

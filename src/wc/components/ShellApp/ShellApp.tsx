@@ -82,6 +82,8 @@ import type {
   scoped: true,
 })
 export class ShellApp {
+  private static readonly FOREGROUND_REFRESH_MS = 50;
+
   /** Managed renders the complete responsive chrome; slotted exposes the advanced composition. */
   @Prop({ reflect: true }) composition: ShellAppComposition = 'managed';
 
@@ -171,6 +173,7 @@ export class ShellApp {
 
   private resizeObserver: ResizeObserver | null = null;
   private hasLoaded = false;
+  private foregroundRefreshTimer: number | null = null;
   private readonly panelNavTransition = new ChromeTransitionDepth();
   private readonly chromeSyncCoalescer = createRafCoalescer(() => this.syncChrome());
   private panelWidthTokens: PanelNavWidthTokens = { expandedPx: 0, collapsedPx: 0 };
@@ -235,6 +238,7 @@ export class ShellApp {
     this.syncSlottedMobileState();
     this.connectMetricsObserver();
     this.connectViewportListeners();
+    this.connectPageLifecycleListeners();
     this.el.addEventListener(CHROME_TRANSITION_START, this.onChromeTransitionStart);
     this.el.addEventListener(CHROME_TRANSITION_END, this.onChromeTransitionEnd);
     requestAnimationFrame(() => {
@@ -254,6 +258,8 @@ export class ShellApp {
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
     this.disconnectViewportListeners();
+    this.disconnectPageLifecycleListeners();
+    this.cancelForegroundRefresh();
     this.chromeSyncCoalescer.cancel();
     this.el.removeEventListener(CHROME_TRANSITION_START, this.onChromeTransitionStart);
     this.el.removeEventListener(CHROME_TRANSITION_END, this.onChromeTransitionEnd);
@@ -421,6 +427,59 @@ export class ShellApp {
       visual.removeEventListener('resize', this.onVisualViewportChange);
       visual.removeEventListener('scroll', this.onVisualViewportChange);
     }
+  }
+
+  private connectPageLifecycleListeners() {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+    document.addEventListener('visibilitychange', this.onDocumentVisibilityChange);
+    window.addEventListener('pageshow', this.onPageShow);
+  }
+
+  private disconnectPageLifecycleListeners() {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+    document.removeEventListener('visibilitychange', this.onDocumentVisibilityChange);
+    window.removeEventListener('pageshow', this.onPageShow);
+  }
+
+  private onDocumentVisibilityChange = () => {
+    if (!document.hidden) this.refreshAfterForegroundRestore();
+  };
+
+  private onPageShow = (event: PageTransitionEvent) => {
+    if (event.persisted) this.refreshAfterForegroundRestore();
+  };
+
+  private cancelForegroundRefresh() {
+    if (this.foregroundRefreshTimer !== null) {
+      window.clearTimeout(this.foregroundRefreshTimer);
+      this.foregroundRefreshTimer = null;
+    }
+    this.el.classList.remove('shell-app--foreground-refresh');
+  }
+
+  private refreshAfterForegroundRestore() {
+    this.updateResponsiveMode();
+    this.syncSlottedMobileState();
+    this.scheduleChromeSync();
+
+    if (this.resolvedMode !== 'mobile') return;
+
+    /*
+     * Mobile WebKit can restore a live, correctly sized DOM without repainting
+     * its suspended shell layer. Re-promote the complete mobile stage for one
+     * painted frame; routed and tool owners remain mounted and keep their state.
+     */
+    this.cancelForegroundRefresh();
+    this.el.classList.add('shell-app--foreground-refresh');
+    void this.el.offsetHeight;
+    // A short timer spans a real compositor commit; resumed WebKit may coalesce
+    // nested animation frames before presenting either one.
+    this.foregroundRefreshTimer = window.setTimeout(() => {
+      this.foregroundRefreshTimer = null;
+      this.el.classList.remove('shell-app--foreground-refresh');
+      // WebKit otherwise may keep presenting the retired composite layer.
+      void this.el.querySelector<HTMLElement>('.shell-app__main')?.offsetHeight;
+    }, ShellApp.FOREGROUND_REFRESH_MS);
   }
 
   private cachePanelWidthTokens() {
@@ -640,10 +699,6 @@ export class ShellApp {
   private handleManagedSheetToggle = (event: CustomEvent<boolean>) => {
     event.stopPropagation();
     this.managedMobileSheetNavOpen = event.detail;
-    if (event.detail) {
-      this.managedMobileDestination = 'area';
-      this.managedToolsOpen = false;
-    }
   };
 
   private handleManagedMobileDestination = (
@@ -682,6 +737,7 @@ export class ShellApp {
     event.stopPropagation();
     this.managedMobileSheetNavOpen = false;
     this.managedMobileDestination = 'area';
+    this.managedToolsOpen = false;
     this.dsNavSelect.emit(event.detail);
   };
 

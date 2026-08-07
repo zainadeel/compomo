@@ -4887,6 +4887,7 @@
           ],
           "commonlyComposedWith": [
             "component:ds-mobile-section-switcher",
+            "component:ds-tab-group",
             "component:ds-shell-page",
             "component:ds-shell-tools"
           ],
@@ -4895,19 +4896,19 @@
           ],
           "accessibility": [
             "Static screens render a real h1 or h2 according to headingLevel.",
-            "Section-switching screens expose an equivalent semantic heading alongside the accessible popup trigger.",
+            "Section-switching screens expose an equivalent semantic heading alongside the accessible popup trigger or named segmented TabGroup.",
             "Subsections use a separately named navigation landmark and never replace the semantic page identity.",
             "Leading and trailing slotted icon actions retain their own accessible names and tooltips."
           ],
           "states": [
             "Without multiple sections the center renders heading.",
-            "With multiple sections the center renders the controlled MobileSectionSwitcher.",
+            "With multiple sections the center renders the controlled MobileSectionSwitcher by default or an explicitly requested segmented TabGroup.",
             "Optional subsections render in a second row and emit dsSubsectionChange without changing the primary section.",
             "Sections represent peer destinations at the current navigation level; subsections represent local views beneath the selected page or detail identity.",
             "Brand tone changes surface and foreground without changing geometry or interaction ownership."
           ],
           "responsiveBehavior": [
-            "The primary 48px lane is dedicated to the below-768px presentation; optional subsections add one subordinate 48px lane.",
+            "The primary 56px lane matches the Mobile Sheet Nav header and Mobile Bar Nav; optional subsections add one subordinate 48px lane.",
             "Equal flexible side lanes keep the center mathematically aligned when actions are asymmetric."
           ],
           "references": [
@@ -4927,11 +4928,19 @@
             "required": false
           },
           "sections": {
-            "type": "TabItem[]",
+            "type": "TabGroupItem[]",
             "required": false
           },
           "sectionsAriaLabel": {
             "type": "string",
+            "required": false
+          },
+          "sectionsPresentation": {
+            "type": "MobileHeaderSectionsPresentation",
+            "required": false
+          },
+          "sectionsSize": {
+            "type": "TabGroupSize",
             "required": false
           },
           "subsections": {
@@ -4978,6 +4987,7 @@
       ],
       "registryDependencies": [
         "mobile-section-switcher",
+        "tab-group",
         "text"
       ]
     },
@@ -5106,7 +5116,7 @@
           ],
           "responsiveBehavior": [
             "The pane fills the mobile content stage while the bottom bar remains available.",
-            "The sheet header and scrollable navigation body each use the shared 8px chrome inset; large destination controls retain their independent 40px density.",
+            "The sheet header and scrollable navigation body each use the shared 8px chrome inset; the context TabGroup and primary controls share a 40px height and 24px icon scale.",
             "Dashboard and Settings preserve their supplied visual groups with an 8px gap between destinations inside a section and a 32px gap between sections."
           ],
           "references": [
@@ -6769,6 +6779,8 @@
             "On desktop, PanelNav defaults expanded, permits user collapse or expansion, and respects the locally persisted desktop preference.",
             "On tablet, ShellApp keeps PanelNav permanently collapsed and prevents user expansion without overwriting the desktop preference.",
             "On mobile, ShellApp hides and inerts desktop chrome, uses a solid primary stage, and composes MobileHeader, MobileSheetNav, ShellTools, and the persistent MobileBarNav around the same application-owned content.",
+            "Opening MobileSheetNav temporarily overlays the active routed page or global tool; closing it without selecting an area restores that same destination and its nested state.",
+            "When a suspended mobile document returns to the foreground, ShellApp refreshes the complete stage paint layer without remounting routed content or tool owners.",
             "When the application enables viewport-fit=cover, ShellApp reserves the shared top safe-area inset once for the complete mobile stage; nested routed, sheet, and tool headers must not add a second top inset.",
             "A slotted Banner remains below the top safe-area inset and above routed, navigation, fullscreen-tool, and mobile global-surface presentations.",
             "Mobile global surfaces conceal and inert the routed workspace without unmounting it, preserving nested routes and scroll state.",
@@ -7105,7 +7117,7 @@
             "component:ds-shell-app",
             "component:ds-panel-tool-header",
             "component:ds-mobile-header",
-            "component:ds-mobile-section-switcher",
+            "component:ds-tab-group",
             "component:ds-mobile-bar-nav"
           ],
           "patterns": [
@@ -7114,7 +7126,7 @@
           "accessibility": [
             "Only the active mobile tool view participates in focus or the accessibility tree.",
             "Header Back and application-owned header actions preserve the PanelTools event contract.",
-            "Inbox uses the MobileSectionSwitcher popup trigger for Stacks and Activity and never relies on a gesture-only interaction; Messages remains a direct mobile destination."
+            "Mobile Inbox uses a named label-only TabGroup for Stacks and Activity; Messages remains a direct mobile destination."
           ],
           "states": [
             "The application owns open and activeTool and replaces headers when tool depth changes.",
@@ -7124,7 +7136,7 @@
           ],
           "responsiveBehavior": [
             "Desktop and tablet compose PanelTools-compatible rail and drawer chrome.",
-            "Mobile renders one centered MobileHeader for every tool; Stacks and Activity use Inbox section titles, while Messages remains a direct tool destination."
+            "Mobile renders one centered MobileHeader for every tool; Stacks and Activity use the large segmented Inbox control, while Messages remains a direct tool destination."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -7940,6 +7952,7 @@
             "The parent owns the canonical selected value and adjacent view visibility, and should update both from dsChange.",
             "A missing, empty, inactive, or unknown selected value is invalid when enabled tabs exist; the component does not choose a fallback selection.",
             "Selection is singular and follows keyboard focus.",
+            "Small, medium, and large use 24px, 32px, and 40px tracks respectively; medium preserves the established default and large uses 24px icons for alignment with large mobile chrome.",
             "Use one consistent content variant across every selectable tab in a group.",
             "Omitted background is for primary and secondary surfaces; pass the faint context explicitly on faint surfaces.",
             "Only the omitted default context emphasizes visible selected label text and keeps the filled track; explicit faint follows the other surface contexts with a transparent track, stable text weight, surface border, and neutral active fill.",
@@ -7947,6 +7960,7 @@
           ],
           "responsiveBehavior": [
             "The component remains a single horizontal row and does not become vertical or wrap.",
+            "Use the large size when a mobile composition aligns the group with 40px shell controls; size does not change automatically at a breakpoint.",
             "The consuming layout owns narrow-width placement and overflow, or replaces the row with a more suitable navigation pattern."
           ],
           "frameworkCaveats": {
@@ -7979,6 +7993,10 @@
           },
           "background": {
             "type": "TabBackground | undefined",
+            "required": false
+          },
+          "size": {
+            "type": "TabGroupSize",
             "required": false
           },
           "tabs": {

@@ -26,14 +26,14 @@
     "component:ds-shell-app",
     "component:ds-panel-tool-header",
     "component:ds-mobile-header",
-    "component:ds-mobile-section-switcher",
+    "component:ds-tab-group",
     "component:ds-mobile-bar-nav"
   ],
   "patterns": ["pattern:application-shell"],
   "accessibility": [
     "Only the active mobile tool view participates in focus or the accessibility tree.",
     "Header Back and application-owned header actions preserve the PanelTools event contract.",
-    "Inbox uses the MobileSectionSwitcher popup trigger for Stacks and Activity and never relies on a gesture-only interaction; Messages remains a direct mobile destination."
+    "Mobile Inbox uses a named label-only TabGroup for Stacks and Activity; Messages remains a direct mobile destination."
   ],
   "states": [
     "The application owns open and activeTool and replaces headers when tool depth changes.",
@@ -43,7 +43,7 @@
   ],
   "responsiveBehavior": [
     "Desktop and tablet compose PanelTools-compatible rail and drawer chrome.",
-    "Mobile renders one centered MobileHeader for every tool; Stacks and Activity use Inbox section titles, while Messages remains a direct tool destination."
+    "Mobile renders one centered MobileHeader for every tool; Stacks and Activity use the large segmented Inbox control, while Messages remains a direct tool destination."
   ],
   "frameworkCaveats": {
     "customElements": [

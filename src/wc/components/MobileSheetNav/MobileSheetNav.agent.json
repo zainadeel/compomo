@@ -23,7 +23,7 @@
   ],
   "responsiveBehavior": [
     "The pane fills the mobile content stage while the bottom bar remains available.",
-    "The sheet header and scrollable navigation body each use the shared 8px chrome inset; large destination controls retain their independent 40px density.",
+    "The sheet header and scrollable navigation body each use the shared 8px chrome inset; the context TabGroup and primary controls share a 40px height and 24px icon scale.",
     "Dashboard and Settings preserve their supplied visual groups with an 8px gap between destinations inside a section and a 32px gap between sections."
   ],
   "references": [

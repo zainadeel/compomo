@@ -59,6 +59,7 @@
     "The parent owns the canonical selected value and adjacent view visibility, and should update both from dsChange.",
     "A missing, empty, inactive, or unknown selected value is invalid when enabled tabs exist; the component does not choose a fallback selection.",
     "Selection is singular and follows keyboard focus.",
+    "Small, medium, and large use 24px, 32px, and 40px tracks respectively; medium preserves the established default and large uses 24px icons for alignment with large mobile chrome.",
     "Use one consistent content variant across every selectable tab in a group.",
     "Omitted background is for primary and secondary surfaces; pass the faint context explicitly on faint surfaces.",
     "Only the omitted default context emphasizes visible selected label text and keeps the filled track; explicit faint follows the other surface contexts with a transparent track, stable text weight, surface border, and neutral active fill.",
@@ -66,6 +67,7 @@
   ],
   "responsiveBehavior": [
     "The component remains a single horizontal row and does not become vertical or wrap.",
+    "Use the large size when a mobile composition aligns the group with 40px shell controls; size does not change automatically at a breakpoint.",
     "The consuming layout owns narrow-width placement and overflow, or replaces the row with a more suitable navigation pattern."
   ],
   "frameworkCaveats": {
