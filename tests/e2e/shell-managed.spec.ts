@@ -155,6 +155,46 @@ test.describe('Managed application shell', () => {
     expect(identity).toEqual({ page: true, tool: true });
   });
 
+  test('preserves page chrome and routed content when tool items reorder after hydration', async ({
+    page,
+  }) => {
+    const shell = page.locator('#managed-shell');
+    const pageContent = page.locator('#managed-page-content');
+    const runtimeErrors: string[] = [];
+    page.on('console', message => {
+      if (message.type() === 'error') runtimeErrors.push(message.text());
+    });
+    page.on('pageerror', error => runtimeErrors.push(error.message));
+
+    await shell.evaluate(element => {
+      const managed = element as HTMLDsShellAppElement;
+      managed.tools = {
+        ...managed.tools,
+        items: [
+          { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
+          { id: 'agents', icon: 'AI', ariaLabel: 'Agents' },
+          { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages' },
+          { id: 'stacks', icon: 'ViewMenu', ariaLabel: 'Stacks' },
+          { id: 'activity', icon: 'Bell', ariaLabel: 'Activity' },
+          { id: 'help', icon: 'CircleQuestion', ariaLabel: 'Help & Support' },
+        ],
+      };
+    });
+
+    await expect(
+      shell.getByRole('heading', { level: 1, name: 'Fleet overview' })
+    ).toBeVisible();
+    await expect(pageContent).toContainText('Persistent routed content');
+
+    await page.setViewportSize({ width: 390, height: 760 });
+    await expect(shell).toHaveAttribute('responsive-mode', 'mobile');
+    await expect(
+      shell.getByRole('heading', { level: 1, name: 'Overview' })
+    ).toBeVisible();
+    await expect(pageContent).toContainText('Persistent routed content');
+    expect(runtimeErrors).toEqual([]);
+  });
+
   test('applies managed fullscreen presentation without replacing the tool owner', async ({
     page,
   }) => {

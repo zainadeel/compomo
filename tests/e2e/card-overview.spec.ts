@@ -247,6 +247,17 @@ test('supports fixed-date and selectable-range period compositions', async ({ pa
   await expect(range).toContainText('vs.');
   await expect(range.locator('[slot="filter"]')).toHaveText('Previous 4 periods');
 
+  for (const selector of ['#default-filter', '#range-period', '#range-filter']) {
+    const select = page.locator(selector);
+    const trigger = select.getByRole('combobox');
+    await expect(select).toHaveJSProperty('allowClear', false);
+    await trigger.click();
+    await expect(select.getByRole('listbox')).toBeVisible();
+    await expect(select.locator('.ds-choice-footer')).toHaveCount(0);
+    await expect(select.getByRole('button', { name: 'Clear' })).toHaveCount(0);
+    await trigger.press('Escape');
+  }
+
   const geometry = await page.evaluate(() => {
     const measure = (cardId: string, selector: string) => {
       const card = document.querySelector<HTMLElement>(cardId)!;
