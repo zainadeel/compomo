@@ -1044,6 +1044,7 @@
           "responsiveBehavior": [
             "BarTitle does not observe viewport, shell, scroll, or container state. Its owner selects an explicit variant.",
             "ShellPage is the standard owner for automatic expanded, compact, and constrained selection.",
+            "When ShellPage owns BarTitle on a secondary desktop or tablet page, its expanded, compact, and constrained presentations all match that canvas; the separate MobileHeader component remains primary.",
             "Compact titles use the shared compact-header geometry and md control inset so top-level headings align with BarNav and inline Back geometry aligns with PanelToolHeader. Long headings and section labels truncate independently while Back and action controls retain complete hit targets and accessible names.",
             "A never-collapse primary action remains visible in constrained mode; the title and section label yield space first."
           ],
@@ -2052,7 +2053,7 @@
             "Omit score to render a centered Score unavailable cell with a tertiary border and no score fill. Set scoreErrorMessage to replace that copy while the measures remain readable.",
             "Loading replaces the score and measures with skeletons and does not alter the slotted period control. When measures are already supplied, their count preserves the resolved grid shape; otherwise five measure placeholders join the score in the standard six-cell grid.",
             "At most seven measures are shown. Keep larger collections outside the summary bar rather than turning it into a dense dashboard.",
-            "The period and filter controls are slotted rather than owned. Use the period slot when the current range is selectable; otherwise periodLabel supplies fixed current copy in the same md control-frame and label-inset anatomy. Use the filter slot for the application-owned comparison-window control. Slotted Selects use hasBorder false so the 48px bar owns their surrounding boundary.",
+            "The period and filter controls are slotted rather than owned. Use the period slot when the current range is selectable; otherwise periodLabel supplies fixed current copy in the same md control-frame and label-inset anatomy. Use the filter slot for the application-owned comparison-window control. Slotted Selects use hasBorder false so the 48px bar owns their surrounding boundary and allowClear false because both controls always require one selected reporting period.",
             "A numeric safety score infers fair from 0–50, good from 51–80, and excellent from 81–100. The level can be supplied explicitly when the displayed value is not numeric. The deprecated band field is ignored.",
             "The safety score is the first grid cell and uses the same track, 8px outer inset, 6px inner padding, dividers, and responsive behavior as metric cells. The display value removes 8px from both block edges of its line box so it does not increase the shared row height. Score remains nonselectable and excluded from metric roving focus.",
             "During page-controlled scroll collapse, the component preserves its expanded flow height and stationary reporting bar while the metric grid moves and clips beneath it. Elevation remains fitted to the visible surface.",
@@ -6760,6 +6761,7 @@
             "Replace navigation and pageChrome together from one completed route state.",
             "When pageChrome.showBack marks a detail depth, mobile chrome keeps the page heading as its identity and presents only local subsections; peer route tabs remain in desktop BarNav rather than replacing the detail heading.",
             "Managed ShellApp keeps BarNav and ShellPage presentations present and owns page header stickiness and the content scroller.",
+            "Route-owned pageChrome selects ShellPage contentInset and contentSurface independently; ShellApp forwards both without making page-specific layout or surface decisions.",
             "The application filters unauthorized destinations, sections, and tools before passing them into shell components."
           ],
           "responsiveBehavior": [
@@ -6930,7 +6932,7 @@
     {
       "name": "shell-page",
       "title": "ShellPage",
-      "description": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle or BarWorkflow placement, application-supplied BarTitle capacity, stable scroll compaction, and optional page-content inset without creating a nested scroll container.",
+      "description": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle or BarWorkflow placement, application-supplied BarTitle capacity, stable scroll compaction, and independent page-content inset and canvas surface without creating a nested scroll container.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -6941,12 +6943,13 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle or BarWorkflow placement, application-supplied BarTitle capacity, stable scroll compaction, and optional page-content inset without creating a nested scroll container.",
+          "summary": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle or BarWorkflow placement, application-supplied BarTitle capacity, stable scroll compaction, and independent page-content inset and canvas surface without creating a nested scroll container.",
           "useWhen": [
             "Rendering a standard routed page inside ShellApp's default content region.",
             "BarTitle should expand at a roomy page top, compact after scroll, or use constrained action layout when the application shell reports reduced capacity.",
             "BarWorkflow needs sticky page-level placement while remaining compact.",
-            "Pages need consistent content gutters with an explicit full-bleed option."
+            "Pages need consistent content gutters with an explicit full-bleed option.",
+            "The page canvas surrounding routed content must use either the primary or secondary application surface."
           ],
           "avoidWhen": [
             "Building authentication, onboarding, public, modal, drawer, or intentionally focused fullscreen layouts outside the standard ShellApp page region.",
@@ -6985,6 +6988,8 @@
             "headerPresentation=auto selects the matching header variant from headerCapacity and scroll position.",
             "expanded, compact, and constrained are explicit overrides for exceptional layouts and deterministic examples.",
             "contentInset=default supplies standard page gutters; none permits maps, canvases, and other full-bleed content.",
+            "contentSurface=primary keeps the standard page canvas; secondary paints both the inset gutter and the canvas beneath routed content. Desktop and tablet BarTitle chrome matches that canvas in expanded, compact, and constrained presentations; MobileHeader remains primary.",
+            "contentInset and contentSurface are independent: either surface supports standard responsive gutters or a full-bleed page-owned layout.",
             "The header slot accepts one desktop BarTitle or BarWorkflow; mobile-header accepts the corresponding MobileHeader presentation. The default slot owns router output and all page product content."
           ],
           "responsiveBehavior": [
@@ -6993,7 +6998,10 @@
             "A ShellPage-managed BarTitle remains concealed until headerCapacity is available and its rendered variant matches the resolved presentation, preventing a default-variant flash during route activation.",
             "responsiveMode=mobile hides and inerts the desktop header, exposes mobile-header, and disables desktop scroll-compaction geometry.",
             "Update headerCapacity synchronously with shell layout state so opening tools or crossing application breakpoints cannot briefly render the wrong presentation.",
-            "The default content inset is 32px in desktop mode and 16px in tablet and mobile modes, while preserving the larger bottom scroll space.",
+            "The default content inset is balanced on every side: 32px in desktop mode and 16px in tablet and mobile modes.",
+            "The selected content surface persists unchanged across desktop, tablet, and mobile modes.",
+            "On a secondary desktop or tablet page, BarTitle matches the page canvas across capacity and scroll-driven variant changes; the separate mobile-header presentation remains primary.",
+            "The flow-preservation spacer follows contentSurface so compacting a secondary page cannot expose a primary strip before its content.",
             "On roomy pages, the expanded header scrolls upward until its title and action row reaches the compact row position, while its bottom divider progressively extends from the expanded inset to edge-to-edge; it then snaps variants without moving that shared visual anchor.",
             "Scroll compaction preserves the expanded page flow offset so content never jumps beneath the sticky header.",
             "ShellPage relies on ShellApp's content scroller and never introduces nested scrolling.",
@@ -7006,7 +7014,7 @@
             ],
             "react": [
               "Render the desktop header with slot=header and DsMobileHeader with slot=mobile-header inside DsShellPage.",
-              "Use contentInset none only for deliberately full-bleed page products."
+              "Use contentInset none only for deliberately full-bleed page products, and choose contentSurface independently from the page's spacing model."
             ],
             "angular": [
               "Import the generated standalone DsShellPage adapter with the desktop header and DsMobileHeader, preserve both header slots, and place router-outlet in the default slot.",
@@ -7031,6 +7039,10 @@
         "props": {
           "contentInset": {
             "type": "ShellPageContentInset",
+            "required": false
+          },
+          "contentSurface": {
+            "type": "ShellPageContentSurface",
             "required": false
           },
           "headerCapacity": {

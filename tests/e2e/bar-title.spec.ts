@@ -61,6 +61,9 @@ test('composes one page main and semantic h1 with the default content inset',
       contentOffset: content?.offsetTop ?? 0,
       headerHeight: header?.getBoundingClientRect().height ?? 0,
       paddingTop: content ? Number.parseFloat(getComputedStyle(content).paddingTop) : 0,
+      paddingRight: content ? Number.parseFloat(getComputedStyle(content).paddingRight) : 0,
+      paddingBottom: content ? Number.parseFloat(getComputedStyle(content).paddingBottom) : 0,
+      paddingLeft: content ? Number.parseFloat(getComputedStyle(content).paddingLeft) : 0,
       headingLeftInset:
         header && heading
           ? heading.getBoundingClientRect().left - header.getBoundingClientRect().left
@@ -88,6 +91,9 @@ test('composes one page main and semantic h1 with the default content inset',
 
   expect(geometry.contentOffset).toBe(geometry.headerHeight);
   expect(geometry.paddingTop).toBe(32);
+  expect(geometry.paddingRight).toBe(32);
+  expect(geometry.paddingBottom).toBe(32);
+  expect(geometry.paddingLeft).toBe(32);
   expect(geometry.headingLeftInset).toBe(32);
   expect(geometry.breadcrumbTop).toBe(32);
   expect(geometry.breadcrumbLeft).toBe(32);
@@ -109,7 +115,7 @@ test('reduces the default page inset for tablet and mobile modes',
   await expect(shell).toHaveAttribute('responsive-mode', 'tablet');
   await expect(content).toHaveCSS('padding-top', '16px');
   await expect(content).toHaveCSS('padding-right', '16px');
-  await expect(content).toHaveCSS('padding-bottom', '64px');
+  await expect(content).toHaveCSS('padding-bottom', '16px');
   await expect(content).toHaveCSS('padding-left', '16px');
 
   await shell.evaluate((element: HTMLDsShellPageElement) => {
@@ -118,7 +124,7 @@ test('reduces the default page inset for tablet and mobile modes',
   await expect(shell).toHaveAttribute('responsive-mode', 'mobile');
   await expect(content).toHaveCSS('padding-top', '16px');
   await expect(content).toHaveCSS('padding-right', '16px');
-  await expect(content).toHaveCSS('padding-bottom', '64px');
+  await expect(content).toHaveCSS('padding-bottom', '16px');
   await expect(content).toHaveCSS('padding-left', '16px');
 });
 

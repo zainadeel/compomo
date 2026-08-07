@@ -81,6 +81,7 @@ const comparisonSelect = () => html`
     background="always-dark"
     .activeFill=${false}
     .hasBorder=${false}
+    .allowClear=${false}
     aria-label="Comparison window"
     .options=${COMPARISON_OPTIONS}
     .value=${'4w'}
@@ -94,6 +95,7 @@ const currentRangeSelect = () => html`
     background="always-dark"
     .activeFill=${false}
     .hasBorder=${false}
+    .allowClear=${false}
     aria-label="Current date range"
     .options=${CURRENT_RANGE_OPTIONS}
     .value=${'current-4w'}

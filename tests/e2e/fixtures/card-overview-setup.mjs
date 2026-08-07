@@ -23,6 +23,7 @@ for (const id of ['default-filter', 'range-filter', 'compact-filter', 'loading-f
   select.background = 'always-dark';
   select.activeFill = false;
   select.hasBorder = false;
+  select.allowClear = false;
 }
 
 const rangeSelect = document.getElementById('range-period');
@@ -31,6 +32,7 @@ rangeSelect.value = 'current-4w';
 rangeSelect.background = 'always-dark';
 rangeSelect.activeFill = false;
 rangeSelect.hasBorder = false;
+rangeSelect.allowClear = false;
 
 const metrics = Array.from({ length: 7 }, (_, index) => ({
   id: `metric-${index + 1}`,

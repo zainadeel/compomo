@@ -837,10 +837,10 @@ export class ShellApp {
   }
 
   private renderManagedToolSlots() {
-    const ids = this.resolvedToolItems.map(item => item.id);
+    const ids = [...new Set(this.resolvedToolItems.map(item => item.id))].sort();
     return ids.flatMap(id => [
-      <slot name={id} slot={id} />,
-      <slot name={`${id}-view`} slot={`${id}-view`} />,
+      <slot key={`tool:${id}`} name={id} slot={id} />,
+      <slot key={`tool-view:${id}`} name={`${id}-view`} slot={`${id}-view`} />,
     ]);
   }
 
@@ -994,6 +994,7 @@ export class ShellApp {
           this.managedToolsOpen
         )}
         contentInset={page.contentInset ?? 'default'}
+        contentSurface={page.contentSurface ?? 'primary'}
       >
         <ds-bar-title
           slot="header"

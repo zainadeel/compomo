@@ -6,7 +6,7 @@
   "status": "stable",
   "summary": "Supply route-owned page chrome and content to managed ShellApp, which composes ShellPage, BarTitle, and MobileHeader without duplicate page state.",
   "useWhen": [
-    "A standard authenticated route needs a shared heading, sections, depth, actions, sticky compaction, and content inset.",
+    "A standard authenticated route needs a shared heading, sections, depth, actions, sticky compaction, content inset, and page canvas surface.",
     "The routed page must keep one content owner while desktop and mobile header presentations differ."
   ],
   "avoidWhen": [
@@ -37,7 +37,7 @@
     }
   ],
   "stateOwnership": [
-    "The router owns heading copy, selected section, depth, available actions, route data, and product outcomes.",
+    "The router owns heading copy, selected section, depth, available actions, content inset, content surface, route data, and product outcomes.",
     "The application replaces pageChrome from completed route state and handles ShellApp page intent events.",
     "ShellApp owns ShellPage, BarTitle, MobileHeader, the content scroller, sticky presentation, and responsive switching.",
     "The default slot contains application-owned routed content and is not recreated for header compaction or breakpoint changes.",
@@ -53,6 +53,9 @@
     "ShellApp derives the desktop BarTitle and mobile MobileHeader from the same pageChrome object.",
     "Route-level sections remain pageChrome tabs; subordinate local views use subsections.",
     "Use contentInset none only for deliberately full-bleed products such as maps and canvases.",
+    "Choose contentSurface independently: primary and secondary canvases both support default responsive gutters or full-bleed content.",
+    "Desktop and tablet BarTitle presentations match a secondary page canvas across expanded, compact, and constrained variants; the separate mobile header remains primary.",
+    "ShellPage keeps its scroll-compaction spacer on the selected content surface so the routed canvas remains continuous.",
     "The routed content owner remains mounted while header presentation compacts or changes breakpoint."
   ],
   "implementations": {

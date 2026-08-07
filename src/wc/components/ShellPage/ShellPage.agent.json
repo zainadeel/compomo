@@ -7,12 +7,13 @@
   "tag": "ds-shell-page",
   "audience": "general",
   "status": "stable",
-  "summary": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle or BarWorkflow placement, application-supplied BarTitle capacity, stable scroll compaction, and optional page-content inset without creating a nested scroll container.",
+  "summary": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle or BarWorkflow placement, application-supplied BarTitle capacity, stable scroll compaction, and independent page-content inset and canvas surface without creating a nested scroll container.",
   "useWhen": [
     "Rendering a standard routed page inside ShellApp's default content region.",
     "BarTitle should expand at a roomy page top, compact after scroll, or use constrained action layout when the application shell reports reduced capacity.",
     "BarWorkflow needs sticky page-level placement while remaining compact.",
-    "Pages need consistent content gutters with an explicit full-bleed option."
+    "Pages need consistent content gutters with an explicit full-bleed option.",
+    "The page canvas surrounding routed content must use either the primary or secondary application surface."
   ],
   "avoidWhen": [
     "Building authentication, onboarding, public, modal, drawer, or intentionally focused fullscreen layouts outside the standard ShellApp page region.",
@@ -49,6 +50,8 @@
     "headerPresentation=auto selects the matching header variant from headerCapacity and scroll position.",
     "expanded, compact, and constrained are explicit overrides for exceptional layouts and deterministic examples.",
     "contentInset=default supplies standard page gutters; none permits maps, canvases, and other full-bleed content.",
+    "contentSurface=primary keeps the standard page canvas; secondary paints both the inset gutter and the canvas beneath routed content. Desktop and tablet BarTitle chrome matches that canvas in expanded, compact, and constrained presentations; MobileHeader remains primary.",
+    "contentInset and contentSurface are independent: either surface supports standard responsive gutters or a full-bleed page-owned layout.",
     "The header slot accepts one desktop BarTitle or BarWorkflow; mobile-header accepts the corresponding MobileHeader presentation. The default slot owns router output and all page product content."
   ],
   "responsiveBehavior": [
@@ -57,7 +60,10 @@
     "A ShellPage-managed BarTitle remains concealed until headerCapacity is available and its rendered variant matches the resolved presentation, preventing a default-variant flash during route activation.",
     "responsiveMode=mobile hides and inerts the desktop header, exposes mobile-header, and disables desktop scroll-compaction geometry.",
     "Update headerCapacity synchronously with shell layout state so opening tools or crossing application breakpoints cannot briefly render the wrong presentation.",
-    "The default content inset is 32px in desktop mode and 16px in tablet and mobile modes, while preserving the larger bottom scroll space.",
+    "The default content inset is balanced on every side: 32px in desktop mode and 16px in tablet and mobile modes.",
+    "The selected content surface persists unchanged across desktop, tablet, and mobile modes.",
+    "On a secondary desktop or tablet page, BarTitle matches the page canvas across capacity and scroll-driven variant changes; the separate mobile-header presentation remains primary.",
+    "The flow-preservation spacer follows contentSurface so compacting a secondary page cannot expose a primary strip before its content.",
     "On roomy pages, the expanded header scrolls upward until its title and action row reaches the compact row position, while its bottom divider progressively extends from the expanded inset to edge-to-edge; it then snaps variants without moving that shared visual anchor.",
     "Scroll compaction preserves the expanded page flow offset so content never jumps beneath the sticky header.",
     "ShellPage relies on ShellApp's content scroller and never introduces nested scrolling.",
@@ -70,7 +76,7 @@
     ],
     "react": [
       "Render the desktop header with slot=header and DsMobileHeader with slot=mobile-header inside DsShellPage.",
-      "Use contentInset none only for deliberately full-bleed page products."
+      "Use contentInset none only for deliberately full-bleed page products, and choose contentSurface independently from the page's spacing model."
     ],
     "angular": [
       "Import the generated standalone DsShellPage adapter with the desktop header and DsMobileHeader, preserve both header slots, and place router-outlet in the default slot.",

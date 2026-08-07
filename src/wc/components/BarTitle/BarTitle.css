@@ -7,7 +7,7 @@
   display: block;
   min-width: 0;
   box-sizing: border-box;
-  background: var(--color-background-primary);
+  background: var(--_shell-page-header-background, var(--color-background-primary));
 }
 
 :host([data-shell-page-syncing]) {
@@ -18,7 +18,7 @@
   position: relative;
   min-width: 0;
   box-sizing: border-box;
-  background: var(--color-background-primary);
+  background: var(--_shell-page-header-background, var(--color-background-primary));
 }
 
 .bar-title::after {
