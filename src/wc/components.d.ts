@@ -61,6 +61,7 @@ import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 import { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 import { SwitchSize } from "./components/Switch/Switch";
 import { TabBackground, TabGroupSize as TabGroupSize1 } from "./components/TabGroup/TabGroup";
+import { TableCaptionVisibility, TableColumn, TableDensity, TableGroup, TableGroupingChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -121,6 +122,7 @@ export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 export { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 export { SwitchSize } from "./components/Switch/Switch";
 export { TabBackground, TabGroupSize as TabGroupSize1 } from "./components/TabGroup/TabGroup";
+export { TableCaptionVisibility, TableColumn, TableDensity, TableGroup, TableGroupingChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -2501,6 +2503,149 @@ export namespace Components {
          */
         "value": string;
     }
+    interface DsTable {
+        /**
+          * Required accessible table name, rendered as a native caption.
+         */
+        "caption": string;
+        /**
+          * @default 'hidden'
+         */
+        "captionVisibility": TableCaptionVisibility;
+        /**
+          * Stable column definitions. Assign through JavaScript.
+          * @default []
+         */
+        "columns": TableColumn[];
+        /**
+          * @default 'md'
+         */
+        "density": TableDensity;
+        /**
+          * @default 'No data is available.'
+         */
+        "emptyBody": string;
+        /**
+          * @default 'Not available'
+         */
+        "emptyCellLabel": string;
+        /**
+          * @default 'No results'
+         */
+        "emptyHeading": string;
+        /**
+          * @default 'All results loaded'
+         */
+        "endOfResultsLabel": string;
+        /**
+          * Initial error state. Existing rows stay visible; incremental failures use loadMoreError.
+          * @default false
+         */
+        "error": boolean;
+        /**
+          * @default 'The data could not be loaded.'
+         */
+        "errorBody": string;
+        /**
+          * @default 'Unable to load data'
+         */
+        "errorHeading": string;
+        /**
+          * Controlled grouping column and group-order direction.
+          * @default null
+         */
+        "grouping": TableGroupingState | null;
+        /**
+          * One level of application-owned grouped data. Assign through JavaScript.
+          * @default []
+         */
+        "groups": TableGroup[];
+        /**
+          * @default false
+         */
+        "hasMore": boolean;
+        /**
+          * Enable application-owned incremental loading without pagination.
+          * @default false
+         */
+        "lazyLoading": boolean;
+        /**
+          * Reset key for a new query/group/sort dataset.
+          * @default 'default'
+         */
+        "loadIdentity": string | number;
+        "loadMoreError": string | undefined;
+        /**
+          * @default 'Load more'
+         */
+        "loadMoreLabel": string;
+        /**
+          * @default 'auto'
+         */
+        "loadMoreMode": TableLoadMoreMode;
+        /**
+          * IntersectionObserver root margin in CSS pixels.
+          * @default 0
+         */
+        "loadMoreThreshold": number;
+        /**
+          * Initial loading state. Existing rows stay visible; incremental loading uses loadingMore.
+          * @default false
+         */
+        "loading": boolean;
+        /**
+          * @default false
+         */
+        "loadingMore": boolean;
+        /**
+          * @default 'Loading more results'
+         */
+        "loadingMoreLabel": string;
+        /**
+          * Maximum scroll-region height. Numbers resolve to CSS pixels.
+         */
+        "maxHeight": string | number | undefined;
+        /**
+          * @default 'Retry'
+         */
+        "retryLabel": string;
+        /**
+          * Ungrouped row data. Ignored while grouping is active. Assign through JavaScript.
+          * @default []
+         */
+        "rows": TableRow[];
+        /**
+          * Supports {count} and {total} placeholders.
+          * @default '{count} more rows loaded. {total} rows loaded.'
+         */
+        "rowsLoadedLabel": string;
+        /**
+          * Optional explicit label for the horizontal/vertical scroll region.
+         */
+        "scrollLabel": string | undefined;
+        /**
+          * Controlled selected row identities. IDs outside the loaded rows are preserved.
+          * @default []
+         */
+        "selectedRowIds": string[];
+        /**
+          * @default 'none'
+         */
+        "selectionMode": TableSelectionMode;
+        /**
+          * @default 5
+         */
+        "skeletonRows": number;
+        /**
+          * Controlled member-row sort state.
+          * @default null
+         */
+        "sort": TableSortState | null;
+        /**
+          * @default false
+         */
+        "stickyHeader": boolean;
+    }
     interface DsTag {
         /**
           * ID of the menu controlled by an interactive Tag.
@@ -2887,6 +3032,10 @@ export interface DsSwitchCustomEvent<T> extends CustomEvent<T> {
 export interface DsTabGroupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsTabGroupElement;
+}
+export interface DsTableCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsTableElement;
 }
 export interface DsTagCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -3769,6 +3918,26 @@ declare global {
         prototype: HTMLDsTabGroupElement;
         new (): HTMLDsTabGroupElement;
     };
+    interface HTMLDsTableElementEventMap {
+        "dsSortChange": TableSortChangeDetail;
+        "dsGroupingChange": TableGroupingChangeDetail;
+        "dsSelectionChange": TableSelectionChangeDetail;
+        "dsLoadMore": TableLoadMoreDetail;
+    }
+    interface HTMLDsTableElement extends Components.DsTable, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsTableElementEventMap>(type: K, listener: (this: HTMLDsTableElement, ev: DsTableCustomEvent<HTMLDsTableElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsTableElementEventMap>(type: K, listener: (this: HTMLDsTableElement, ev: DsTableCustomEvent<HTMLDsTableElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsTableElement: {
+        prototype: HTMLDsTableElement;
+        new (): HTMLDsTableElement;
+    };
     interface HTMLDsTagElementEventMap {
         "dsClick": MouseEvent;
     }
@@ -3909,6 +4078,7 @@ declare global {
         "ds-swatch-picker": HTMLDsSwatchPickerElement;
         "ds-switch": HTMLDsSwitchElement;
         "ds-tab-group": HTMLDsTabGroupElement;
+        "ds-table": HTMLDsTableElement;
         "ds-tag": HTMLDsTagElement;
         "ds-text": HTMLDsTextElement;
         "ds-toast": HTMLDsToastElement;
@@ -6521,6 +6691,153 @@ declare namespace LocalJSX {
          */
         "value"?: string;
     }
+    interface DsTable {
+        /**
+          * Required accessible table name, rendered as a native caption.
+         */
+        "caption": string;
+        /**
+          * @default 'hidden'
+         */
+        "captionVisibility"?: TableCaptionVisibility;
+        /**
+          * Stable column definitions. Assign through JavaScript.
+          * @default []
+         */
+        "columns"?: TableColumn[];
+        /**
+          * @default 'md'
+         */
+        "density"?: TableDensity;
+        /**
+          * @default 'No data is available.'
+         */
+        "emptyBody"?: string;
+        /**
+          * @default 'Not available'
+         */
+        "emptyCellLabel"?: string;
+        /**
+          * @default 'No results'
+         */
+        "emptyHeading"?: string;
+        /**
+          * @default 'All results loaded'
+         */
+        "endOfResultsLabel"?: string;
+        /**
+          * Initial error state. Existing rows stay visible; incremental failures use loadMoreError.
+          * @default false
+         */
+        "error"?: boolean;
+        /**
+          * @default 'The data could not be loaded.'
+         */
+        "errorBody"?: string;
+        /**
+          * @default 'Unable to load data'
+         */
+        "errorHeading"?: string;
+        /**
+          * Controlled grouping column and group-order direction.
+          * @default null
+         */
+        "grouping"?: TableGroupingState | null;
+        /**
+          * One level of application-owned grouped data. Assign through JavaScript.
+          * @default []
+         */
+        "groups"?: TableGroup[];
+        /**
+          * @default false
+         */
+        "hasMore"?: boolean;
+        /**
+          * Enable application-owned incremental loading without pagination.
+          * @default false
+         */
+        "lazyLoading"?: boolean;
+        /**
+          * Reset key for a new query/group/sort dataset.
+          * @default 'default'
+         */
+        "loadIdentity"?: string | number;
+        "loadMoreError"?: string | undefined;
+        /**
+          * @default 'Load more'
+         */
+        "loadMoreLabel"?: string;
+        /**
+          * @default 'auto'
+         */
+        "loadMoreMode"?: TableLoadMoreMode;
+        /**
+          * IntersectionObserver root margin in CSS pixels.
+          * @default 0
+         */
+        "loadMoreThreshold"?: number;
+        /**
+          * Initial loading state. Existing rows stay visible; incremental loading uses loadingMore.
+          * @default false
+         */
+        "loading"?: boolean;
+        /**
+          * @default false
+         */
+        "loadingMore"?: boolean;
+        /**
+          * @default 'Loading more results'
+         */
+        "loadingMoreLabel"?: string;
+        /**
+          * Maximum scroll-region height. Numbers resolve to CSS pixels.
+         */
+        "maxHeight"?: string | number | undefined;
+        "onDsGroupingChange"?: (event: DsTableCustomEvent<TableGroupingChangeDetail>) => void;
+        "onDsLoadMore"?: (event: DsTableCustomEvent<TableLoadMoreDetail>) => void;
+        "onDsSelectionChange"?: (event: DsTableCustomEvent<TableSelectionChangeDetail>) => void;
+        "onDsSortChange"?: (event: DsTableCustomEvent<TableSortChangeDetail>) => void;
+        /**
+          * @default 'Retry'
+         */
+        "retryLabel"?: string;
+        /**
+          * Ungrouped row data. Ignored while grouping is active. Assign through JavaScript.
+          * @default []
+         */
+        "rows"?: TableRow[];
+        /**
+          * Supports {count} and {total} placeholders.
+          * @default '{count} more rows loaded. {total} rows loaded.'
+         */
+        "rowsLoadedLabel"?: string;
+        /**
+          * Optional explicit label for the horizontal/vertical scroll region.
+         */
+        "scrollLabel"?: string | undefined;
+        /**
+          * Controlled selected row identities. IDs outside the loaded rows are preserved.
+          * @default []
+         */
+        "selectedRowIds"?: string[];
+        /**
+          * @default 'none'
+         */
+        "selectionMode"?: TableSelectionMode;
+        /**
+          * @default 5
+         */
+        "skeletonRows"?: number;
+        /**
+          * Controlled member-row sort state.
+          * @default null
+         */
+        "sort"?: TableSortState | null;
+        /**
+          * @default false
+         */
+        "stickyHeader"?: boolean;
+    }
     interface DsTag {
         /**
           * ID of the menu controlled by an interactive Tag.
@@ -7331,6 +7648,35 @@ declare namespace LocalJSX {
         "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
     }
+    interface DsTableAttributes {
+        "caption": string;
+        "captionVisibility": TableCaptionVisibility;
+        "density": TableDensity;
+        "stickyHeader": boolean;
+        "maxHeight": string;
+        "scrollLabel": string | undefined;
+        "selectionMode": TableSelectionMode;
+        "loading": boolean;
+        "skeletonRows": number;
+        "emptyHeading": string;
+        "emptyBody": string;
+        "error": boolean;
+        "errorHeading": string;
+        "errorBody": string;
+        "emptyCellLabel": string;
+        "lazyLoading": boolean;
+        "loadMoreMode": TableLoadMoreMode;
+        "hasMore": boolean;
+        "loadingMore": boolean;
+        "loadMoreError": string | undefined;
+        "loadIdentity": string;
+        "loadMoreThreshold": number;
+        "loadMoreLabel": string;
+        "retryLabel": string;
+        "loadingMoreLabel": string;
+        "endOfResultsLabel": string;
+        "rowsLoadedLabel": string;
+    }
     interface DsTagAttributes {
         "label": string;
         "icon": string;
@@ -7449,6 +7795,7 @@ declare namespace LocalJSX {
         "ds-swatch-picker": Omit<DsSwatchPicker, keyof DsSwatchPickerAttributes> & { [K in keyof DsSwatchPicker & keyof DsSwatchPickerAttributes]?: DsSwatchPicker[K] } & { [K in keyof DsSwatchPicker & keyof DsSwatchPickerAttributes as `attr:${K}`]?: DsSwatchPickerAttributes[K] } & { [K in keyof DsSwatchPicker & keyof DsSwatchPickerAttributes as `prop:${K}`]?: DsSwatchPicker[K] };
         "ds-switch": Omit<DsSwitch, keyof DsSwitchAttributes> & { [K in keyof DsSwitch & keyof DsSwitchAttributes]?: DsSwitch[K] } & { [K in keyof DsSwitch & keyof DsSwitchAttributes as `attr:${K}`]?: DsSwitchAttributes[K] } & { [K in keyof DsSwitch & keyof DsSwitchAttributes as `prop:${K}`]?: DsSwitch[K] };
         "ds-tab-group": Omit<DsTabGroup, keyof DsTabGroupAttributes> & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes]?: DsTabGroup[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `attr:${K}`]?: DsTabGroupAttributes[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `prop:${K}`]?: DsTabGroup[K] };
+        "ds-table": Omit<DsTable, keyof DsTableAttributes> & { [K in keyof DsTable & keyof DsTableAttributes]?: DsTable[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `attr:${K}`]?: DsTableAttributes[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `prop:${K}`]?: DsTable[K] } & OneOf<"caption", DsTable["caption"], DsTableAttributes["caption"]>;
         "ds-tag": Omit<DsTag, keyof DsTagAttributes> & { [K in keyof DsTag & keyof DsTagAttributes]?: DsTag[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `attr:${K}`]?: DsTagAttributes[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `prop:${K}`]?: DsTag[K] } & OneOf<"label", DsTag["label"], DsTagAttributes["label"]>;
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
         "ds-toast": Omit<DsToast, keyof DsToastAttributes> & { [K in keyof DsToast & keyof DsToastAttributes]?: DsToast[K] } & { [K in keyof DsToast & keyof DsToastAttributes as `attr:${K}`]?: DsToastAttributes[K] } & { [K in keyof DsToast & keyof DsToastAttributes as `prop:${K}`]?: DsToast[K] };
@@ -7536,6 +7883,7 @@ declare module "@stencil/core" {
             "ds-swatch-picker": LocalJSX.IntrinsicElements["ds-swatch-picker"] & JSXBase.HTMLAttributes<HTMLDsSwatchPickerElement>;
             "ds-switch": LocalJSX.IntrinsicElements["ds-switch"] & JSXBase.HTMLAttributes<HTMLDsSwitchElement>;
             "ds-tab-group": LocalJSX.IntrinsicElements["ds-tab-group"] & JSXBase.HTMLAttributes<HTMLDsTabGroupElement>;
+            "ds-table": LocalJSX.IntrinsicElements["ds-table"] & JSXBase.HTMLAttributes<HTMLDsTableElement>;
             "ds-tag": LocalJSX.IntrinsicElements["ds-tag"] & JSXBase.HTMLAttributes<HTMLDsTagElement>;
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
             "ds-toast": LocalJSX.IntrinsicElements["ds-toast"] & JSXBase.HTMLAttributes<HTMLDsToastElement>;

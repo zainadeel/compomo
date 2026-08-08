@@ -40,6 +40,26 @@ export type {
   AgentToolState,
   AgentResponsePart,
 } from '../types/components/conversation-types';
+export type {
+  TableCaptionVisibility,
+  TableCellAlign,
+  TableCellText,
+  TableCellValue,
+  TableColumn,
+  TableDensity,
+  TableGroup,
+  TableGroupingChangeDetail,
+  TableGroupingState,
+  TableLoadMoreDetail,
+  TableLoadMoreMode,
+  TableLoadMoreReason,
+  TableRow,
+  TableSelectionChangeDetail,
+  TableSelectionMode,
+  TableSortChangeDetail,
+  TableSortDirection,
+  TableSortState,
+} from '../types/components/Table/table-types';
 `;
 
 const existing = readFileSync(indexPath, 'utf8');

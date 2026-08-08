@@ -1,0 +1,21 @@
+export type {
+  TableCaptionVisibility,
+  TableCellAlign,
+  TableCellText,
+  TableCellValue,
+  TableColumn,
+  TableDensity,
+  TableGroup,
+  TableGroupingChangeDetail,
+  TableGroupingState,
+  TableLoadMoreDetail,
+  TableLoadMoreMode,
+  TableLoadMoreReason,
+  TableRow,
+  TableSelectionChangeDetail,
+  TableSelectionMode,
+  TableSortChangeDetail,
+  TableSortDirection,
+  TableSortState,
+} from './table-types';
+

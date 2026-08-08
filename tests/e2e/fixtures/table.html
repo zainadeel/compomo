@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Table test</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+    <style>
+      body { margin: 24px; }
+      main { display: grid; gap: 32px; }
+      #overflow-owner { width: 360px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <ds-table id="basic" caption="Workforce overview" caption-visibility="visible"></ds-table>
+      <ds-table id="grouped" caption="Grouped drivers"></ds-table>
+      <ds-table id="selectable" caption="Selectable drivers" selection-mode="multiple"></ds-table>
+      <ds-table id="lazy" caption="Lazy drivers" lazy-loading load-more-mode="manual" has-more></ds-table>
+      <ds-table id="lazy-guard" caption="Guarded lazy drivers" lazy-loading load-more-mode="manual" has-more></ds-table>
+      <ds-table id="lazy-retry" caption="Retry lazy drivers" lazy-loading load-more-mode="manual" has-more load-more-error="More rows failed to load."></ds-table>
+      <ds-table id="lazy-auto" caption="Automatic lazy drivers" lazy-loading load-more-mode="auto" has-more></ds-table>
+      <div id="overflow-owner">
+        <ds-table
+          id="overflow"
+          caption="Scrollable drivers"
+          scroll-label="Scrollable driver data"
+          sticky-header
+          max-height="220px"
+        ></ds-table>
+      </div>
+      <ds-table id="small" caption="Small density" density="sm"></ds-table>
+      <ds-table id="loading" caption="Loading drivers" loading></ds-table>
+      <ds-table id="empty" caption="Empty drivers" empty-heading="No matching drivers"></ds-table>
+      <ds-table id="error" caption="Unavailable drivers" error error-heading="Drivers unavailable"></ds-table>
+    </main>
+    <script type="module" src="/table-setup.mjs"></script>
+  </body>
+</html>

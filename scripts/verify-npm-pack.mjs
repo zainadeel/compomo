@@ -16,6 +16,7 @@ const REQUIRED_PATHS = [
   'dist/lib/utils/index.d.ts',
   'dist/styles/control-elevation.css',
   'dist/styles/prose.css',
+  'dist/styles/table.css',
   'dist/react/components.js',
   'dist/react/components.d.ts',
   'dist/react/react-runtime.js',

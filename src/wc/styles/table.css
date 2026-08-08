@@ -1,0 +1,474 @@
+/*
+ * Renderer-neutral table recipe.
+ *
+ * Import `@ds-mo/ui/table.css` when product-owned native table markup needs
+ * the same visual primitives as `<ds-table>`. Selectors intentionally use
+ * zero specificity so applications can restyle any layer without fighting
+ * the recipe. The component consumes this exact source internally.
+ */
+
+:where(.ds-table) {
+  --_table-density-header-min-block-size: var(--dimension-size-500);
+  --_table-density-row-min-block-size: var(--dimension-size-600);
+  --_table-density-cell-padding-block: var(--dimension-space-100);
+  --_table-density-cell-padding-inline: var(--dimension-space-150);
+  --_table-density-selection-column-inline-size: var(--dimension-size-500);
+  --_table-surface: var(--ds-table-surface, var(--color-background-primary));
+  --_table-header-surface: var(--ds-table-header-surface, var(--color-background-secondary));
+  --_table-group-surface: var(--ds-table-group-surface, var(--color-background-faint-neutral));
+  --_table-row-hover: var(--ds-table-row-hover, var(--color-interaction-hover));
+  --_table-row-pressed: var(--ds-table-row-pressed, var(--color-interaction-pressed));
+  --_table-row-selected: var(--ds-table-row-selected, var(--color-interaction-active));
+  --_table-selection-indicator: var(
+    --ds-table-selection-indicator,
+    var(--color-background-bold-brand)
+  );
+  --_table-border: var(--ds-table-border, var(--color-border-tertiary));
+  --_table-border-strong: var(--ds-table-border-strong, var(--color-border-secondary));
+  --_table-overflow-shadow: var(--ds-table-overflow-shadow, var(--color-border-secondary));
+  --_table-radius: var(--ds-table-radius, var(--dimension-radius-075));
+  --_table-header-min-block-size: var(
+    --ds-table-header-min-block-size,
+    var(--_table-density-header-min-block-size)
+  );
+  --_table-row-min-block-size: var(
+    --ds-table-row-min-block-size,
+    var(--_table-density-row-min-block-size)
+  );
+  --_table-cell-padding-block: var(
+    --ds-table-cell-padding-block,
+    var(--_table-density-cell-padding-block)
+  );
+  --_table-cell-padding-inline: var(
+    --ds-table-cell-padding-inline,
+    var(--_table-density-cell-padding-inline)
+  );
+  --_table-selection-column-inline-size: var(
+    --ds-table-selection-column-inline-size,
+    var(--_table-density-selection-column-inline-size)
+  );
+  --_table-selection-column-contribution: 0;
+  display: block;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  color: var(--color-foreground-primary);
+}
+
+:where(.ds-table--sm) {
+  --_table-density-header-min-block-size: var(--dimension-size-400);
+  --_table-density-row-min-block-size: var(--dimension-size-500);
+  --_table-density-cell-padding-block: var(--dimension-space-050);
+  --_table-density-cell-padding-inline: var(--dimension-space-100);
+  --_table-density-selection-column-inline-size: var(--dimension-size-400);
+}
+
+:where(.ds-table__frame) {
+  position: relative;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow: hidden;
+  border: var(--dimension-stroke-width-012) solid var(--_table-border-strong);
+  border-radius: var(--_table-radius);
+  background: var(--_table-surface);
+}
+
+:where(.ds-table__frame)::before,
+:where(.ds-table__frame)::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  z-index: 3;
+  inline-size: var(--dimension-space-200);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--effect-motion-short-2);
+}
+
+:where(.ds-table__frame)::before {
+  inset-inline-start: 0;
+  background: linear-gradient(to right, var(--_table-overflow-shadow), transparent);
+}
+
+:where(.ds-table__frame)::after {
+  inset-inline-end: 0;
+  background: linear-gradient(to left, var(--_table-overflow-shadow), transparent);
+}
+
+:where(.ds-table__frame--overflow-start)::before,
+:where(.ds-table__frame--overflow-end)::after {
+  opacity: var(--effect-opacity-low);
+}
+
+:where(.ds-table__viewport) {
+  box-sizing: border-box;
+  max-block-size: var(--ds-table-max-block-size, none);
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  outline: none;
+}
+
+:where(.ds-table__viewport:focus-visible) {
+  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
+  outline-offset: calc(-1 * var(--dimension-stroke-width-025));
+}
+
+:where(.ds-table__table) {
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-inline-size: max(100%, var(--ds-table-explicit-min-inline-size, 0));
+  border: 0;
+  border-spacing: 0;
+  border-collapse: separate;
+  table-layout: fixed;
+  background: var(--_table-surface);
+  color: inherit;
+}
+
+:where(.ds-table__table--selectable) {
+  --_table-selection-column-contribution: var(--_table-selection-column-inline-size);
+  min-inline-size: max(
+    100%,
+    calc(var(--ds-table-explicit-min-inline-size, 0) + var(--_table-selection-column-contribution))
+  );
+}
+
+:where(.ds-table__caption) {
+  padding: var(--_table-cell-padding-inline);
+  border-block-end: var(--dimension-stroke-width-012) solid var(--_table-border);
+  background: var(--_table-surface);
+  text-align: start;
+}
+
+:where(.ds-table__selection-column) {
+  inline-size: var(--_table-selection-column-inline-size);
+}
+
+:where(.ds-table__head) {
+  position: relative;
+  z-index: 1;
+}
+
+:where(.ds-table--sticky-header .ds-table__head) {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 2;
+}
+
+:where(.ds-table__header-row) {
+  min-block-size: var(--_table-header-min-block-size);
+  background: var(--_table-header-surface);
+}
+
+:where(.ds-table__header-cell),
+:where(.ds-table__cell),
+:where(.ds-table__group-cell),
+:where(.ds-table__load-cell),
+:where(.ds-table__state-cell) {
+  box-sizing: border-box;
+  border: 0;
+  border-block-end: var(--dimension-stroke-width-012) solid var(--_table-border);
+  text-align: start;
+  vertical-align: middle;
+}
+
+:where(.ds-table__header-cell) {
+  min-block-size: var(--_table-header-min-block-size);
+  block-size: var(--_table-header-min-block-size);
+  padding: 0;
+  background: var(--_table-header-surface);
+  color: var(--color-foreground-secondary);
+}
+
+:where(.ds-table__cell) {
+  min-block-size: var(--_table-row-min-block-size);
+  block-size: var(--_table-row-min-block-size);
+  padding: var(--_table-cell-padding-block) var(--_table-cell-padding-inline);
+  background: inherit;
+}
+
+:where(.ds-table__header-cell + .ds-table__header-cell),
+:where(.ds-table__cell + .ds-table__cell) {
+  border-inline-start: var(--dimension-stroke-width-012) solid var(--_table-border);
+}
+
+:where(.ds-table__header-static),
+:where(.ds-table__sort-trigger) {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  inline-size: 100%;
+  min-block-size: calc(
+    var(--_table-header-min-block-size) - var(--dimension-stroke-width-012)
+  );
+  padding: 0 var(--_table-cell-padding-inline);
+  color: inherit;
+  text-align: inherit;
+}
+
+:where(.ds-table__sort-trigger) {
+  appearance: none;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  cursor: default;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :where(.ds-table__sort-trigger:hover) {
+    background: var(--_table-row-hover);
+    color: var(--color-foreground-primary);
+  }
+
+  :where(.ds-table__row:not(.ds-table__row--disabled):hover) {
+    background: var(--_table-row-hover);
+  }
+}
+
+:where(.ds-table__sort-trigger:active) {
+  background: var(--_table-row-pressed);
+  color: var(--color-foreground-primary);
+}
+
+:where(.ds-table__sort-trigger:focus-visible),
+:where(.ds-table__selection-control:focus-visible) {
+  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
+  outline-offset: calc(-1 * var(--dimension-stroke-width-025));
+}
+
+:where(.ds-table__header-content),
+:where(.ds-table__sort-icons),
+:where(.ds-table__group-content),
+:where(.ds-table__load-content) {
+  display: inline-flex;
+  align-items: center;
+  min-inline-size: 0;
+}
+
+:where(.ds-table__header-content) {
+  inline-size: 100%;
+  gap: var(--dimension-space-050);
+}
+
+:where(.ds-table__sort-icons) {
+  flex: 0 0 auto;
+  gap: var(--dimension-space-025);
+  margin-inline-start: auto;
+}
+
+:where(.ds-table__cell-content),
+:where(.ds-table__cell-copy) {
+  display: flex;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+:where(.ds-table__cell-content) {
+  align-items: center;
+}
+
+:where(.ds-table__cell-copy) {
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+}
+
+:where(.ds-table__cell-primary),
+:where(.ds-table__cell-secondary) {
+  min-inline-size: 0;
+}
+
+:where(.ds-table__cell-copy--wrap) {
+  overflow-wrap: anywhere;
+}
+
+:where(.ds-table__cell--align-center),
+:where(.ds-table__cell--align-center .ds-table__header-static),
+:where(.ds-table__cell--align-center .ds-table__sort-trigger) {
+  text-align: center;
+  justify-content: center;
+}
+
+:where(.ds-table__cell--align-end),
+:where(.ds-table__cell--align-end .ds-table__header-static),
+:where(.ds-table__cell--align-end .ds-table__sort-trigger) {
+  text-align: end;
+  justify-content: flex-end;
+}
+
+:where(.ds-table__body) {
+  background: var(--_table-surface);
+}
+
+:where(.ds-table__row) {
+  min-block-size: var(--_table-row-min-block-size);
+  background: var(--_table-surface);
+  transition: background-color var(--effect-motion-short-2);
+}
+
+:where(.ds-table__row:active:not(.ds-table__row--disabled)) {
+  background: var(--_table-row-pressed);
+}
+
+:where(.ds-table__row--selected) {
+  background: var(--_table-row-selected);
+}
+
+:where(.ds-table__row--selected > .ds-table__cell:first-child) {
+  box-shadow: inset var(--dimension-stroke-width-025) 0 0 var(--_table-selection-indicator);
+}
+
+:where(.ds-table__row--disabled) {
+  color: var(--color-foreground-tertiary);
+  opacity: var(--effect-opacity-medium);
+}
+
+:where(.ds-table__selection-cell) {
+  inline-size: var(--_table-selection-column-inline-size);
+  padding: 0;
+  text-align: center;
+}
+
+:where(.ds-table__selection-control) {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: calc(
+    var(--_table-header-min-block-size) - var(--dimension-stroke-width-012)
+  );
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  cursor: default;
+  outline: none;
+}
+
+:where(.ds-table__cell.ds-table__selection-cell .ds-table__selection-control) {
+  min-block-size: calc(
+    var(--_table-row-min-block-size) - var(--dimension-stroke-width-012)
+  );
+}
+
+:where(.ds-table__selection-control:disabled) {
+  cursor: default;
+}
+
+:where(.ds-table__selection-control:disabled ds-checkbox) {
+  opacity: var(--effect-opacity-medium);
+}
+
+:where(.ds-table__group-cell) {
+  min-block-size: var(--_table-header-min-block-size);
+  padding: var(--dimension-space-075) var(--_table-cell-padding-inline);
+  background: var(--_table-group-surface);
+}
+
+:where(.ds-table__group-content) {
+  gap: var(--dimension-space-075);
+}
+
+:where(.ds-table__load-cell),
+:where(.ds-table__state-cell) {
+  padding: var(--dimension-space-200) var(--_table-cell-padding-inline);
+  background: var(--_table-surface);
+  text-align: center;
+}
+
+:where(.ds-table__load-content) {
+  justify-content: center;
+  gap: var(--dimension-space-100);
+}
+
+:where(.ds-table__load-content--error) {
+  flex-wrap: wrap;
+}
+
+:where(.ds-table__auto-sentinel) {
+  display: block;
+  min-block-size: var(--dimension-space-025);
+}
+
+:where(.ds-table__state-cell) {
+  block-size: calc(var(--dimension-size-800) * 2);
+}
+
+:where(.ds-table__skeleton-row) {
+  pointer-events: none;
+}
+
+:where(.ds-table__skeleton-row:last-child .ds-table__cell),
+:where(.ds-table__load-row:last-child .ds-table__load-cell),
+:where(.ds-table__state-row:last-child .ds-table__state-cell),
+:where(.ds-table__body:last-child .ds-table__row:last-child .ds-table__cell) {
+  border-block-end: 0;
+}
+
+:where(.ds-visually-hidden) {
+  position: absolute;
+  inline-size: var(--dimension-stroke-width-012);
+  block-size: var(--dimension-stroke-width-012);
+  padding: 0;
+  margin: calc(-1 * var(--dimension-stroke-width-012));
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(.ds-table__frame)::before,
+  :where(.ds-table__frame)::after,
+  :where(.ds-table__row) {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  :where(.ds-table) {
+    --_table-surface: var(--ds-forced-color-surface);
+    --_table-header-surface: var(--ds-forced-color-surface);
+    --_table-group-surface: var(--ds-forced-color-surface);
+    --_table-border: var(--ds-forced-color-control-boundary);
+    --_table-border-strong: var(--ds-forced-color-control-boundary);
+    --_table-selection-indicator: var(--ds-forced-color-selected);
+    color: var(--ds-forced-color-content);
+  }
+
+  :where(.ds-table__frame)::before,
+  :where(.ds-table__frame)::after {
+    display: none;
+  }
+
+  :where(.ds-table__row--selected > .ds-table__cell) {
+    background: var(--ds-forced-color-selected);
+    color: var(--ds-forced-color-on-selected);
+  }
+
+  :where(.ds-table__row--disabled) {
+    color: var(--ds-forced-color-disabled);
+    opacity: 1;
+  }
+
+  :where(.ds-table__selection-control:disabled ds-checkbox) {
+    --ds-forced-color-content: var(--ds-forced-color-disabled);
+    opacity: 1;
+  }
+
+  :where(.ds-table__sort-trigger:focus-visible),
+  :where(.ds-table__selection-control:focus-visible),
+  :where(.ds-table__viewport:focus-visible) {
+    outline-color: var(--ds-forced-color-selected);
+  }
+}

@@ -237,6 +237,10 @@ try {
       new URL(import.meta.resolve('@ds-mo/ui/control-elevation.css')),
       'utf8',
     );
+    const tableCss = readFileSync(
+      new URL(import.meta.resolve('@ds-mo/ui/table.css')),
+      'utf8',
+    );
     for (const [surface, value] of [
       ['native', native.DsButtonFilled],
       ['angular', angular.DsButtonFilled],
@@ -252,6 +256,7 @@ try {
         'control elevation stylesheet',
         controlElevationCss.includes('.ds-control-elevation--floating'),
       ],
+      ['table stylesheet', tableCss.includes('.ds-table__table')],
       ['agent manifest', agent.default?.entries?.length],
       ['agent pattern manifest', patterns.default?.entries?.length],
     ]) {

@@ -1,0 +1,9 @@
+@import '../../utils/forced-colors.css';
+@import '../../styles/table.css';
+
+:host {
+  display: block;
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+}
