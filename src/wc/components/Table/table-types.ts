@@ -4,6 +4,7 @@ import type { IconColor } from '../Icon/Icon';
 export type TableSortDirection = 'asc' | 'desc';
 export type TableSelectionMode = 'none' | 'multiple';
 export type TableCellAlign = 'start' | 'center' | 'end';
+export type TableColumnSticky = 'start' | 'end';
 export type TableCaptionVisibility = 'visible' | 'hidden';
 export type TableLoadMoreMode = 'auto' | 'manual';
 export type TableLoadMoreReason = 'auto' | 'manual' | 'retry';
@@ -152,7 +153,10 @@ export type TableCellValue =
 export interface TableColumn {
   /** Stable column identity. */
   id: string;
+  /** Visible column label. May be empty when headerLabel supplies a non-visual name. */
   header: string;
+  /** Screen-reader-only column name for an intentionally blank visual header. */
+  headerLabel?: string;
   /** Optional labels for columns that present and sort multiple related data points. */
   headerSegments?: TableHeaderSegment[];
   align?: TableCellAlign;
@@ -165,6 +169,8 @@ export interface TableColumn {
   maxSize?: number;
   /** Wrap cell text instead of truncating it to one line. */
   wrap?: boolean;
+  /** Pin one application column to either inline edge during horizontal scrolling. */
+  sticky?: TableColumnSticky;
 }
 
 export interface TableRow {
@@ -177,6 +183,8 @@ export interface TableRow {
   selectable?: boolean;
   /** Keep the row visible while disabling its selection control and styling it as inactive. */
   disabled?: boolean;
+  /** Make the complete row a keyboard- and pointer-activatable application target. */
+  interactive?: boolean;
 }
 
 export interface TableGroup {
@@ -216,4 +224,8 @@ export interface TableCellActionDetail {
   actionId: string;
   rowId: string;
   columnId: string;
+}
+
+export interface TableRowActivateDetail {
+  rowId: string;
 }

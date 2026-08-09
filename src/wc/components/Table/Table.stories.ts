@@ -118,13 +118,13 @@ const ALL_CELL_TYPE_COLUMNS: TableColumn[] = [
   { id: 'scalar', header: 'Scalar text', size: 'sm' },
   { id: 'primarySecondary', header: 'Primary + secondary', size: 'sm' },
   { id: 'primaryPair', header: 'Primary + primary', size: 'sm' },
-  { id: 'image', header: 'Image', size: 'sm' },
+  { id: 'image', header: 'Image', size: 105 },
   { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
   { id: 'tagOnly', header: 'Tag only', size: 'sm' },
   { id: 'tagWithText', header: 'Tag + text', size: 'sm' },
   { id: 'textWithTag', header: 'Text + tag', size: 'sm' },
-  { id: 'action', header: 'Action', align: 'center', size: 'xs' },
-  { id: 'borderedAction', header: 'Bordered action', align: 'center', size: 'xs' },
+  { id: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
+  { id: 'borderedAction', header: '', headerLabel: 'Bordered action', align: 'center', size: 40 },
   { id: 'empty', header: 'Empty', size: 'xs' },
   { id: 'blank', header: 'Blank', size: 'xs' },
 ];
@@ -176,7 +176,7 @@ const ALL_CELL_TYPE_ROWS: TableRow[] = [
 ];
 
 const SAFETY_EVENT_COLUMNS: TableColumn[] = [
-  { id: 'preview', header: 'Preview', size: 'sm' },
+  { id: 'preview', header: 'Preview', size: 105 },
   {
     id: 'behaviorDetails',
     header: 'Behavior / Severity',
@@ -195,7 +195,7 @@ const SAFETY_EVENT_COLUMNS: TableColumn[] = [
       { label: 'ID', sortKey: 'driverId' },
     ],
     sortable: true,
-    size: 'md',
+    size: 'sm',
   },
   {
     id: 'vehicleDetails',
@@ -217,16 +217,25 @@ const SAFETY_EVENT_COLUMNS: TableColumn[] = [
       { label: 'Location', sortKey: 'location' },
     ],
     sortable: true,
-    size: 'md',
+    size: 'sm',
   },
   { id: 'status', header: 'Status', sortable: true, size: 'sm' },
   { id: 'notes', header: 'Notes', align: 'center', sortable: true, size: 'xs' },
+  {
+    id: 'actions',
+    header: '',
+    headerLabel: 'Actions',
+    align: 'center',
+    size: 40,
+    sticky: 'end',
+  },
 ];
 
 const SAFETY_EVENT_ROWS: TableRow[] = [
   {
     id: 'safety-event-1048',
     selectionLabel: 'Close following event for John Smith',
+    interactive: true,
     cells: {
       preview: { kind: 'image', alt: 'Road-facing video preview unavailable' },
       behaviorDetails: { primary: 'Close following', secondary: 'Critical' },
@@ -251,11 +260,13 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
         label: 'Has notes',
         sortValue: true,
       },
+      actions: { kind: 'action', actionId: 'more', variant: 'icon', icon: 'Ellipses', ariaLabel: 'More actions for John Smith' },
     },
   },
   {
     id: 'safety-event-1047',
     selectionLabel: 'Lane cutoff event for Maria Garcia',
+    interactive: true,
     cells: {
       preview: { kind: 'image', alt: 'Dual-facing video preview unavailable' },
       behaviorDetails: { primary: 'Lane cutoff', secondary: 'High' },
@@ -280,11 +291,13 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
         label: 'No notes',
         sortValue: false,
       },
+      actions: { kind: 'action', actionId: 'more', variant: 'icon', icon: 'Ellipses', ariaLabel: 'More actions for Maria Garcia' },
     },
   },
   {
     id: 'safety-event-1046',
     selectionLabel: 'Distraction event for David Chen',
+    interactive: true,
     cells: {
       preview: { kind: 'image', alt: 'Driver-facing video preview unavailable' },
       behaviorDetails: { primary: 'Distraction', secondary: 'High' },
@@ -309,11 +322,13 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
         label: 'Has notes',
         sortValue: true,
       },
+      actions: { kind: 'action', actionId: 'more', variant: 'icon', icon: 'Ellipses', ariaLabel: 'More actions for David Chen' },
     },
   },
   {
     id: 'safety-event-1045',
     selectionLabel: 'Stop sign violation event for Sarah Williams',
+    interactive: true,
     cells: {
       preview: { kind: 'image', alt: 'Road-facing video preview unavailable' },
       behaviorDetails: { primary: 'Stop sign violation', secondary: 'Critical' },
@@ -338,11 +353,13 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
         label: 'No notes',
         sortValue: false,
       },
+      actions: { kind: 'action', actionId: 'more', variant: 'icon', icon: 'Ellipses', ariaLabel: 'More actions for Sarah Williams' },
     },
   },
   {
     id: 'safety-event-1044',
     selectionLabel: 'Unsafe lane change event for Noah Wilson',
+    interactive: true,
     cells: {
       preview: { kind: 'image', alt: 'Dual-facing video preview unavailable' },
       behaviorDetails: { primary: 'Unsafe lane change', secondary: 'Low' },
@@ -367,6 +384,7 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
         label: 'Has notes',
         sortValue: true,
       },
+      actions: { kind: 'action', actionId: 'more', variant: 'icon', icon: 'Ellipses', ariaLabel: 'More actions for Noah Wilson' },
     },
   },
 ];
@@ -533,7 +551,7 @@ export const SafetyEvents: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'A Motive Dashboard-inspired safety-events table. Its Preview column uses the standard 16:9 image placeholder while checkboxes, inset status Tags, and the first line of multi-track text cells share one top content track. Compound headers expose an independent, label-width sort target for every data point while the application retains ownership of row ordering.',
+        story: 'A Motive Dashboard-inspired safety-events table. The checkbox and blank action lanes stay pinned; each owns a fixed divider and a row-clipped shadow directed into the scrolling columns while more content remains. Rows opt into whole-row activation while nested selection and Ellipses actions remain independent.',
       },
     },
   },
@@ -548,6 +566,7 @@ export const SafetyEvents: Story = {
         .sort=${sort}
         .selectedRowIds=${selectedRowIds}
         selection-mode="multiple"
+        sticky-header
         caption="Safety events"
         caption-visibility="hidden"
         @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
@@ -555,6 +574,59 @@ export const SafetyEvents: Story = {
         @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>
           updateArgs({ selectedRowIds: event.detail.selectedRowIds })}
       ></ds-table>
+    `;
+  },
+};
+
+export const DocumentFlowStickyLanes: Story = {
+  name: 'Document flow with sticky lanes',
+  args: {
+    sort: { columnId: 'eventTime', direction: 'desc' },
+    selectedRowIds: [],
+    lastActivated: 'None',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'The table grows the Storybook document instead of creating a vertical scrollport. Its synchronized header sticks below the simulated compact page bar, while vertical wheel and trackpad input continues scrolling the page.',
+      },
+    },
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    const sort = (args['sort'] as TableSortState | null) ?? null;
+    const selectedRowIds = (args['selectedRowIds'] as string[]) ?? [];
+    const repeatedRows = Array.from({ length: 3 }, (_, copy) =>
+      SAFETY_EVENT_ROWS.map(row => ({ ...row, id: `${row.id}-${copy}` })),
+    ).flat();
+    return html`
+      <div style="max-inline-size:var(--dimension-panel-width-lg);">
+        <div
+          style="position:sticky;inset-block-start:0;z-index:var(--dimension-z-index-raised);display:flex;align-items:center;block-size:var(--dimension-size-600);background:var(--color-background-secondary);"
+        >
+          <ds-text as="span" variant="text-body-medium" emphasis color="primary">
+            Compact page bar · Last row: ${args['lastActivated']}
+          </ds-text>
+        </div>
+        <ds-table
+          style="--ds-table-sticky-header-offset:var(--dimension-size-600);"
+          .columns=${SAFETY_EVENT_COLUMNS}
+          .rows=${orderedRows(repeatedRows, sort)}
+          .sort=${sort}
+          .selectedRowIds=${selectedRowIds}
+          selection-mode="multiple"
+          sticky-header
+          caption="Document-flow safety events"
+          caption-visibility="hidden"
+          scroll-label="Scrollable safety event columns"
+          @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
+            updateArgs({ sort: event.detail.sort })}
+          @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>
+            updateArgs({ selectedRowIds: event.detail.selectedRowIds })}
+          @dsRowActivate=${(event: CustomEvent<{ rowId: string }>) =>
+            updateArgs({ lastActivated: event.detail.rowId })}
+        ></ds-table>
+      </div>
     `;
   },
 };

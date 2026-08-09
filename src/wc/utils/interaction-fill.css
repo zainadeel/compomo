@@ -35,15 +35,17 @@
  *
  * Override hooks: `--ds-interaction-hover`, `--ds-interaction-pressed`,
  * `--ds-interaction-active`, `--ds-interaction-border-color`,
- * `--ds-interaction-border-width`.
+ * `--ds-interaction-border-width`, `--ds-interaction-divider-color`, and
+ * `--ds-interaction-divider-width`, plus the corresponding inline-start/end
+ * divider hooks.
  *
  * @see AGENTS.md — "Interaction fill"
  */
 
 :host(.ds-interaction-fill),
 .ds-interaction-fill {
-  position: relative;
-  z-index: 0;
+  position: var(--ds-interaction-position, relative);
+  z-index: var(--ds-interaction-z-index, 0);
   cursor: default;
   --ds-interaction-hover: var(--color-interaction-hover);
   --ds-interaction-pressed: var(--color-interaction-pressed);
@@ -51,6 +53,12 @@
   /* Inset stroke on ::after — default off (transparent / zero width). */
   --ds-interaction-border-width: 0px;
   --ds-interaction-border-color: transparent;
+  --ds-interaction-divider-width: 0px;
+  --ds-interaction-divider-color: transparent;
+  --ds-interaction-divider-inline-start-width: 0px;
+  --ds-interaction-divider-inline-start-color: transparent;
+  --ds-interaction-divider-inline-end-width: 0px;
+  --ds-interaction-divider-inline-end-color: transparent;
 }
 
 :host(.ds-interaction-fill)::before,
@@ -77,7 +85,13 @@
 .ds-interaction-fill::after {
   z-index: 3;
   /* Border above selected (::before) and this pseudo’s own hover wash. */
-  box-shadow: inset 0 0 0 var(--ds-interaction-border-width) var(--ds-interaction-border-color);
+  box-shadow:
+    inset 0 calc(-1 * var(--ds-interaction-divider-width)) 0 var(--ds-interaction-divider-color),
+    inset var(--ds-interaction-divider-inline-start-width) 0 0
+      var(--ds-interaction-divider-inline-start-color),
+    inset calc(-1 * var(--ds-interaction-divider-inline-end-width)) 0 0
+      var(--ds-interaction-divider-inline-end-color),
+    inset 0 0 0 var(--ds-interaction-border-width) var(--ds-interaction-border-color);
 }
 
 /* Opt-in secondary inset border (override color via `--ds-interaction-border-color`). */
@@ -119,6 +133,38 @@
 :host(.ds-interaction-fill:active:not(:disabled))::after,
 .ds-interaction-fill:active:not(:disabled)::after {
   background: var(--ds-interaction-pressed);
+}
+
+/* A parent row/list may coordinate one fill across several sibling targets. */
+:host(.ds-interaction-fill--grouped)::after,
+.ds-interaction-fill--grouped::after,
+:host(.ds-interaction-fill--grouped:hover:not(:disabled))::after,
+.ds-interaction-fill--grouped:hover:not(:disabled)::after,
+:host(.ds-interaction-fill--grouped:active:not(:disabled))::after,
+.ds-interaction-fill--grouped:active:not(:disabled)::after {
+  background: var(--ds-interaction-group-fill, transparent);
+}
+
+:host(.ds-interaction-fill--grouped),
+.ds-interaction-fill--grouped {
+  --ds-interaction-divider-width: var(--ds-interaction-group-divider-width, 0px);
+  --ds-interaction-divider-color: var(--ds-interaction-group-divider-color, transparent);
+  --ds-interaction-divider-inline-start-width: var(
+    --ds-interaction-group-divider-inline-start-width,
+    0px
+  );
+  --ds-interaction-divider-inline-start-color: var(
+    --ds-interaction-group-divider-inline-start-color,
+    transparent
+  );
+  --ds-interaction-divider-inline-end-width: var(
+    --ds-interaction-group-divider-inline-end-width,
+    0px
+  );
+  --ds-interaction-divider-inline-end-color: var(
+    --ds-interaction-group-divider-inline-end-color,
+    transparent
+  );
 }
 
 /* Content under the hover wash (so badge dots are covered by ::after). */

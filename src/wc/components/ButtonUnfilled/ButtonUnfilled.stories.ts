@@ -19,6 +19,7 @@ const meta: Meta = {
   argTypes: {
     variant: { control: 'select', options: [...VARIANTS] },
     size: { control: 'select', options: [...SIZES] },
+    isInset: { control: 'boolean' },
     width: { control: 'select', options: [...WIDTHS] },
     label: { control: 'text' },
     icon: { control: 'text' },
@@ -52,6 +53,7 @@ const meta: Meta = {
   args: {
     variant: 'label',
     size: 'md',
+    isInset: false,
     width: 'hug',
     label: 'Action',
     icon: 'Bell',
@@ -98,6 +100,7 @@ export const Playground: Story = {
     <ds-button-unfilled
       variant=${args['variant']}
       size=${args['size']}
+      ?is-inset=${args['isInset']}
       width=${args['width']}
       label=${args['label']}
       icon=${args['icon']}
@@ -139,6 +142,21 @@ export const VariantsAndSizes: Story = {
           </div>
         `,
       )}
+    </div>
+  `,
+};
+
+export const InsetDensity: Story = {
+  render: () => html`
+    <div style="${COL}">
+      ${SIZES.map(size => html`
+        <div style="${ROW}">
+          <span style="${LABEL}">${size}</span>
+          <ds-button-unfilled size=${size} label="Default"></ds-button-unfilled>
+          <ds-button-unfilled size=${size} label="Inset" is-inset></ds-button-unfilled>
+          <ds-button-unfilled size=${size} variant="icon" icon="Bell" aria-label="Inset ${size}" is-inset></ds-button-unfilled>
+        </div>
+      `)}
     </div>
   `,
 };

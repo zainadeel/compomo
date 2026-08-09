@@ -26,8 +26,8 @@
   --_table-row-selected: var(--ds-table-row-selected, var(--color-interaction-active-brand));
   --_table-border: var(--ds-table-border, var(--color-border-secondary));
   --_table-column-border: var(--ds-table-column-border, var(--color-border-tertiary));
+  --_table-sticky-border: var(--ds-table-sticky-border, var(--color-border-secondary));
   --_table-border-strong: var(--ds-table-border-strong, var(--color-border-secondary));
-  --_table-overflow-shadow: var(--ds-table-overflow-shadow, var(--color-border-secondary));
   --_table-radius: var(--ds-table-radius, var(--dimension-radius-075));
   --_table-header-min-block-size: var(
     --ds-table-header-min-block-size,
@@ -50,6 +50,16 @@
     var(--dimension-size-500)
   );
   --_table-selection-column-contribution: 0;
+  --_table-sticky-start-shadow: var(
+    --ds-table-sticky-start-shadow,
+    inset var(--dimension-space-050) 0 var(--dimension-space-050)
+      calc(-1 * var(--dimension-space-050)) var(--color-elevation-shadow)
+  );
+  --_table-sticky-end-shadow: var(
+    --ds-table-sticky-end-shadow,
+    inset calc(-1 * var(--dimension-space-050)) 0 var(--dimension-space-050)
+      calc(-1 * var(--dimension-space-050)) var(--color-elevation-shadow)
+  );
   display: block;
   box-sizing: border-box;
   min-inline-size: 0;
@@ -61,40 +71,14 @@
 
 :where(.ds-table__frame) {
   position: relative;
+  timeline-scope: --ds-table-inline-scroll;
   box-sizing: border-box;
   min-inline-size: 0;
   max-inline-size: 100%;
-  overflow: hidden;
-  border: var(--dimension-stroke-width-012) solid var(--_table-border-strong);
+  overflow: visible;
+  border: 0;
   border-radius: var(--_table-radius);
   background: var(--_table-surface);
-}
-
-:where(.ds-table__frame)::before,
-:where(.ds-table__frame)::after {
-  content: '';
-  position: absolute;
-  inset-block: 0;
-  z-index: 3;
-  inline-size: var(--dimension-space-200);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity var(--effect-motion-short-2);
-}
-
-:where(.ds-table__frame)::before {
-  inset-inline-start: 0;
-  background: linear-gradient(to right, var(--_table-overflow-shadow), transparent);
-}
-
-:where(.ds-table__frame)::after {
-  inset-inline-end: 0;
-  background: linear-gradient(to left, var(--_table-overflow-shadow), transparent);
-}
-
-:where(.ds-table__frame--overflow-start)::before,
-:where(.ds-table__frame--overflow-end)::after {
-  opacity: var(--effect-opacity-low);
 }
 
 :where(.ds-table__viewport) {
@@ -103,9 +87,16 @@
   max-inline-size: 100%;
   min-inline-size: 0;
   overflow: auto;
-  overscroll-behavior: contain;
+  scroll-timeline: --ds-table-inline-scroll inline;
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: auto;
   scrollbar-gutter: stable;
+  border-radius: var(--_table-radius);
   outline: none;
+}
+
+:where(.ds-table--document-sticky-header .ds-table__viewport) {
+  scrollbar-gutter: auto;
 }
 
 :where(.ds-table__viewport:focus-visible) {
@@ -149,10 +140,104 @@
   z-index: 1;
 }
 
-:where(.ds-table--sticky-header .ds-table__head) {
+:where(.ds-table--contained-sticky-header .ds-table__head) {
   position: sticky;
   inset-block-start: 0;
   z-index: 2;
+}
+
+:where(.ds-table__document-sticky-header) {
+  position: sticky;
+  inset-block-start: var(--ds-table-sticky-header-offset, 0);
+  z-index: 3;
+  block-size: var(--_table-header-min-block-size);
+  margin-block-end: calc(-1 * var(--_table-header-min-block-size));
+  max-inline-size: 100%;
+  overflow: hidden;
+  border-radius: var(--_table-radius) var(--_table-radius) 0 0;
+  background: var(--_table-header-surface);
+}
+
+:where(.ds-table__sticky-header-table) {
+  block-size: var(--_table-header-min-block-size);
+  transform: translate3d(calc(-1 * var(--ds-table-inline-scroll-offset, 0px)), 0, 0);
+  will-change: transform;
+}
+
+/*
+ * The document-flow header is visually duplicated so it can stick to the page
+ * while the semantic table remains inside the horizontal scrollport. Keep the
+ * duplicate out of a second scroll container: its columns follow the body's
+ * scroll timeline and its pinned lanes counter that exact movement.
+ */
+:where(.ds-table__sticky-header-table .ds-table__cell--sticky-start) {
+  transform: translate3d(var(--ds-table-inline-scroll-offset, 0), 0, 0);
+}
+
+:where(.ds-table__sticky-header-table .ds-table__cell--sticky-end) {
+  transform: translate3d(
+    calc(
+      var(--ds-table-inline-scroll-offset, 0) -
+      var(--ds-table-inline-scroll-max-offset, 0)
+    ),
+    0,
+    0
+  );
+}
+
+@supports (animation-timeline: --ds-table-inline-scroll) {
+  :where(.ds-table__sticky-header-table) {
+    animation: ds-table-follow-inline-scroll var(--effect-motion-short-2) both;
+    animation-timeline: --ds-table-inline-scroll;
+    animation-range: 0% 100%;
+    animation-timing-function: linear;
+  }
+
+  :where(.ds-table__sticky-header-table .ds-table__cell--sticky-start) {
+    animation: ds-table-counter-inline-scroll-start var(--effect-motion-short-2) both;
+    animation-timeline: --ds-table-inline-scroll;
+    animation-range: 0% 100%;
+    animation-timing-function: linear;
+  }
+
+  :where(.ds-table__sticky-header-table .ds-table__cell--sticky-end) {
+    animation: ds-table-counter-inline-scroll-end var(--effect-motion-short-2) both;
+    animation-timeline: --ds-table-inline-scroll;
+    animation-range: 0% 100%;
+    animation-timing-function: linear;
+  }
+}
+
+@keyframes ds-table-follow-inline-scroll {
+  from { transform: translate3d(0, 0, 0); }
+  to {
+    transform: translate3d(
+      calc(-1 * var(--ds-table-inline-scroll-max-offset, 0)),
+      0,
+      0
+    );
+  }
+}
+
+@keyframes ds-table-counter-inline-scroll-start {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(var(--ds-table-inline-scroll-max-offset, 0), 0, 0); }
+}
+
+@keyframes ds-table-counter-inline-scroll-end {
+  from {
+    transform: translate3d(
+      calc(-1 * var(--ds-table-inline-scroll-max-offset, 0)),
+      0,
+      0
+    );
+  }
+  to { transform: translate3d(0, 0, 0); }
+}
+
+:where(.ds-table__head--semantic-copy) {
+  opacity: 0;
+  pointer-events: none;
 }
 
 :where(.ds-table__header-row) {
@@ -173,6 +258,7 @@
 }
 
 :where(.ds-table__header-cell) {
+  position: relative;
   min-block-size: calc(
     var(--_table-header-min-block-size) - var(--dimension-space-100) - var(--dimension-space-100)
   );
@@ -181,27 +267,48 @@
   );
   padding: var(--dimension-space-100);
   border-block-end: 0;
-  box-shadow: inset 0 calc(-1 * var(--dimension-stroke-width-012)) 0 var(--_table-border);
   background: var(--_table-header-surface);
   color: var(--color-foreground-secondary);
+}
+
+:where(.ds-table__header-cell)::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: 1;
+  block-size: var(--dimension-stroke-width-012);
+  background: var(--_table-border-strong);
+  pointer-events: none;
 }
 
 :where(.ds-table__cell) {
   min-block-size: var(--_table-row-min-block-size);
   block-size: var(--_table-row-min-block-size);
   padding: var(--_table-cell-padding-block) var(--_table-cell-padding-inline);
+  --ds-interaction-group-divider-width: var(--dimension-stroke-width-012);
+  --ds-interaction-group-divider-color: var(--_table-border);
   border-block-end: 0;
   background-color: inherit;
-  background-image: linear-gradient(var(--_table-border), var(--_table-border));
-  background-repeat: no-repeat;
-  background-position: bottom;
-  background-size: 100% var(--dimension-stroke-width-012);
   vertical-align: top;
 }
 
-:where(.ds-table__header-cell + .ds-table__header-cell),
+:where(.ds-table__header-cell + .ds-table__header-cell) {
+  border-inline-start: 0;
+}
+
+:where(.ds-table__header-cell + .ds-table__header-cell)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  box-shadow: inset var(--dimension-stroke-width-012) 0 0 var(--_table-column-border);
+  pointer-events: none;
+}
+
 :where(.ds-table__cell + .ds-table__cell) {
-  border-inline-start: var(--dimension-stroke-width-012) solid var(--_table-column-border);
+  --ds-interaction-group-divider-inline-start-width: var(--dimension-stroke-width-012);
+  --ds-interaction-group-divider-inline-start-color: var(--_table-column-border);
 }
 
 :where(.ds-table__header-labels),
@@ -252,9 +359,6 @@
     color: var(--color-foreground-primary);
   }
 
-  :where(.ds-table__row:not(.ds-table__row--disabled):hover) {
-    background: var(--_table-row-hover);
-  }
 }
 
 :where(.ds-table__header-label--interactive:active) {
@@ -469,11 +573,11 @@
 }
 
 :where(.ds-table__cell--action) {
-  padding: var(--dimension-space-100);
+  padding: var(--dimension-space-075);
 }
 
 :where(.ds-table__cell--action .ds-table__cell-content) {
-  min-block-size: var(--dimension-size-300);
+  min-block-size: var(--_table-cell-track-min-block-size);
 }
 
 :where(.ds-table__cell-primary),
@@ -512,15 +616,26 @@
 :where(.ds-table__row) {
   min-block-size: var(--_table-row-min-block-size);
   background: var(--_table-surface);
-  transition: background-color var(--effect-motion-short-2);
 }
 
-:where(.ds-table__row:active:not(.ds-table__row--disabled)) {
-  background: var(--_table-row-pressed);
+:where(.ds-table__row > .ds-table__cell.ds-interaction-fill) {
+  --ds-interaction-active: var(--_table-row-selected);
+  --ds-interaction-group-fill: transparent;
 }
 
-:where(.ds-table__row--selected) {
-  background: var(--_table-row-selected);
+@media (hover: hover) and (pointer: fine) {
+  :where(.ds-table__row--interactive:hover > .ds-table__cell.ds-interaction-fill) {
+    --ds-interaction-group-fill: var(--_table-row-hover);
+  }
+}
+
+:where(.ds-table__row--interactive:active > .ds-table__cell.ds-interaction-fill) {
+  --ds-interaction-group-fill: var(--_table-row-pressed);
+}
+
+:where(.ds-table__row--interactive:focus-visible) {
+  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
+  outline-offset: calc(-1 * var(--dimension-stroke-width-025));
 }
 
 :where(.ds-table__row--disabled) {
@@ -532,6 +647,94 @@
   inline-size: var(--_table-selection-column-inline-size);
   padding: 0;
   text-align: center;
+}
+
+:where(.ds-table__cell--sticky-start),
+:where(.ds-table__cell--sticky-end) {
+  --ds-interaction-position: sticky;
+  --ds-interaction-z-index: 2;
+  position: sticky;
+  z-index: 2;
+  background-color: var(--_table-surface);
+}
+
+:where(.ds-table__cell--sticky-start) {
+  inset-inline-start: 0;
+}
+
+:where(.ds-table__cell--sticky-end) {
+  inset-inline-end: 0;
+}
+
+:where(.ds-table__header-cell.ds-table__cell--sticky-start),
+:where(.ds-table__header-cell.ds-table__cell--sticky-end) {
+  z-index: 3;
+  background-color: var(--_table-header-surface);
+}
+
+:where(.ds-table__sticky-header-table .ds-table__cell--sticky-start),
+:where(.ds-table__sticky-header-table .ds-table__cell--sticky-end) {
+  position: relative;
+  inset-inline: auto;
+  will-change: transform;
+}
+
+:where(.ds-table__selection-cell.ds-table__cell--sticky-start) {
+  --ds-interaction-group-divider-inline-end-width: 0px;
+}
+
+:where(.ds-table__cell--sticky-start + .ds-table__cell) {
+  --ds-interaction-group-divider-inline-start-width: 0px;
+}
+
+:where(.ds-table__cell--sticky-end) {
+  --ds-interaction-group-divider-inline-start-width: 0px;
+}
+
+:where(.ds-table__header-cell.ds-table__cell--sticky-start + .ds-table__header-cell)::before,
+:where(.ds-table__header-cell.ds-table__cell--sticky-end)::before {
+  box-shadow: none;
+}
+
+:where(.ds-table__sticky-edge) {
+  position: absolute;
+  inset-block: 0 var(--dimension-stroke-width-012);
+  z-index: 4;
+  inline-size: var(--dimension-stroke-width-012);
+  background: var(--_table-sticky-border);
+  pointer-events: none;
+}
+
+:where(.ds-table__sticky-edge)::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inline-size: var(--dimension-space-050);
+  pointer-events: none;
+}
+
+:where(.ds-table__sticky-edge--start) {
+  inset-inline-end: 0;
+}
+
+:where(.ds-table__sticky-edge--start)::after {
+  inset-inline-start: 100%;
+}
+
+:where(.ds-table__sticky-edge--end) {
+  inset-inline-start: 0;
+}
+
+:where(.ds-table__sticky-edge--end)::after {
+  inset-inline-end: 100%;
+}
+
+:where(.ds-table__frame--overflow-start .ds-table__sticky-edge--start)::after {
+  box-shadow: var(--_table-sticky-start-shadow);
+}
+
+:where(.ds-table__frame--overflow-end .ds-table__sticky-edge--end)::after {
+  box-shadow: var(--_table-sticky-end-shadow);
 }
 
 :where(.ds-table__cell.ds-table__selection-cell) {
@@ -615,7 +818,7 @@
 :where(.ds-table__state-row:last-child .ds-table__state-cell),
 :where(.ds-table__body:last-child .ds-table__row:last-child .ds-table__cell) {
   border-block-end: 0;
-  background-image: none;
+  --ds-interaction-group-divider-width: 0px;
 }
 
 :where(.ds-visually-hidden) {
@@ -631,9 +834,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :where(.ds-table__frame)::before,
-  :where(.ds-table__frame)::after,
-  :where(.ds-table__row) {
+  :where(.ds-table__cell--sticky-start),
+  :where(.ds-table__cell--sticky-end) {
     transition: none;
   }
 }
@@ -649,14 +851,9 @@
     color: var(--ds-forced-color-content);
   }
 
-  :where(.ds-table__frame)::before,
-  :where(.ds-table__frame)::after {
-    display: none;
-  }
-
-  :where(.ds-table__row--selected > .ds-table__cell) {
-    background: var(--ds-forced-color-selected);
-    color: var(--ds-forced-color-on-selected);
+  :where(.ds-table__frame--overflow-start .ds-table__sticky-edge--start)::after,
+  :where(.ds-table__frame--overflow-end .ds-table__sticky-edge--end)::after {
+    box-shadow: none;
   }
 
   :where(.ds-table__row--disabled) {

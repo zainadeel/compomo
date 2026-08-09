@@ -41,6 +41,7 @@ import type {
   TableLoadMoreMode,
   TableLoadMoreReason,
   TableRow,
+  TableRowActivateDetail,
   TableSelectionChangeDetail,
   TableSelectionMode,
   TableSortChangeDetail,
@@ -49,7 +50,10 @@ import type {
 
 @Component({
   tag: 'ds-table',
-  styleUrl: 'Table.css',
+  styleUrls: [
+    '../../utils/interaction-fill.css',
+    'Table.css',
+  ],
   scoped: true,
 })
 export class Table {
@@ -110,6 +114,7 @@ export class Table {
   @Event() dsSelectionChange!: EventEmitter<TableSelectionChangeDetail>;
   @Event() dsLoadMore!: EventEmitter<TableLoadMoreDetail>;
   @Event() dsCellAction!: EventEmitter<TableCellActionDetail>;
+  @Event() dsRowActivate!: EventEmitter<TableRowActivateDetail>;
 
   @State() private overflowStart = false;
   @State() private overflowEnd = false;
@@ -118,6 +123,7 @@ export class Table {
   @State() private announcement = '';
 
   private viewportEl: HTMLElement | null = null;
+  private stickyHeaderTableEl: HTMLTableElement | null = null;
   private tableEl: HTMLTableElement | null = null;
   private sentinelEl: HTMLElement | null = null;
   private resizeObserver: ResizeObserver | null = null;
@@ -144,6 +150,7 @@ export class Table {
   }
 
   componentDidRender(): void {
+    this.syncStickyHeaderPosition();
     this.connectIntersectionObserver();
   }
 
@@ -243,6 +250,10 @@ export class Table {
     return this.selectionMode === 'multiple';
   }
 
+  private get documentStickyHeader(): boolean {
+    return this.stickyHeader && this.resolvedMaxHeight === undefined;
+  }
+
   private get loadedRows(): TableRow[] {
     return tableRows(this.rows, this.groups, this.grouped);
   }
@@ -288,6 +299,15 @@ export class Table {
     ) {
       issues.push(`Sorting references unknown column id: ${this.sort.columnId}`);
     }
+    const stickyStart = this.columns.filter(column => column.sticky === 'start');
+    const stickyEnd = this.columns.filter(column => column.sticky === 'end');
+    if (stickyStart.length > 1 || (this.selectable && stickyStart.length > 0)) {
+      issues.push('Only one sticky start column is supported, and row selection already owns that lane.');
+    }
+    if (stickyEnd.length > 1) issues.push('Only one sticky end column is supported.');
+    for (const column of [...stickyStart, ...stickyEnd]) {
+      if (!tableColumnSize(column)) issues.push(`Sticky column ${column.id} requires an explicit size.`);
+    }
     const message = issues.join(' ');
     if (!message || message === this.previousModelWarning) return;
     this.previousModelWarning = message;
@@ -316,7 +336,16 @@ export class Table {
     if (nextStart !== this.overflowStart) this.overflowStart = nextStart;
     if (nextEnd !== this.overflowEnd) this.overflowEnd = nextEnd;
     if (scrollable !== this.scrollable) this.scrollable = scrollable;
+    this.syncStickyHeaderPosition();
   };
+
+  private syncStickyHeaderPosition(): void {
+    if (!this.viewportEl || !this.stickyHeaderTableEl) return;
+    const offset = this.viewportEl.scrollLeft;
+    const maxOffset = Math.max(0, this.viewportEl.scrollWidth - this.viewportEl.clientWidth);
+    this.stickyHeaderTableEl.style.setProperty('--ds-table-inline-scroll-offset', `${offset}px`);
+    this.stickyHeaderTableEl.style.setProperty('--ds-table-inline-scroll-max-offset', `${maxOffset}px`);
+  }
 
   private resetLoadRequest(): void {
     this.requestPending = false;
@@ -355,7 +384,7 @@ export class Table {
         if (entries.some(entry => entry.isIntersecting)) this.requestLoadMore('auto');
       },
       {
-        root: this.viewportEl,
+        root: this.resolvedMaxHeight === undefined ? null : this.viewportEl,
         rootMargin: `0px 0px ${threshold}px 0px`,
       },
     );
@@ -421,6 +450,27 @@ export class Table {
     });
   }
 
+  private rowEventOwnsActivation(event: Event): boolean {
+    const currentTarget = event.currentTarget;
+    return !event.composedPath().some(target => {
+      if (!(target instanceof HTMLElement) || target === currentTarget) return false;
+      return target.matches(
+        'button, a, input, select, textarea, [role="button"], [role="checkbox"], ds-button-unfilled',
+      );
+    });
+  }
+
+  private emitRowActivation(row: TableRow, event: Event): void {
+    if (!row.interactive || row.disabled || !this.rowEventOwnsActivation(event)) return;
+    this.dsRowActivate.emit({ rowId: row.id });
+  }
+
+  private handleRowKeydown(row: TableRow, event: KeyboardEvent): void {
+    if (event.target !== event.currentTarget || (event.key !== 'Enter' && event.key !== ' ')) return;
+    event.preventDefault();
+    this.emitRowActivation(row, event);
+  }
+
   private renderSelectionControl(
     label: string,
     checked: boolean,
@@ -430,7 +480,7 @@ export class Table {
   ) {
     return (
       <button
-        class="ds-table__selection-control"
+        class="ds-table__selection-control ds-interaction-fill__content"
         type="button"
         role="checkbox"
         aria-label={label}
@@ -449,7 +499,21 @@ export class Table {
     );
   }
 
-  private renderColumnHeader(column: TableColumn) {
+  private renderStickyEdge(sticky: TableColumn['sticky']) {
+    if (!sticky) return null;
+    return (
+      <span
+        class={`ds-table__sticky-edge ds-table__sticky-edge--${sticky}`}
+        aria-hidden="true"
+      />
+    );
+  }
+
+  private renderColumnHeader(
+    column: TableColumn,
+    interactive = true,
+    presentational = false,
+  ) {
     const groupedColumn = this.grouping?.columnId === column.id;
     const headerSegments = column.headerSegments?.length
       ? column.headerSegments
@@ -475,7 +539,9 @@ export class Table {
           const segmentActive = groupedColumn
             ? headerSegments.length === 1
             : activeMemberSegment?.sortKey === segment.sortKey;
-          const segmentInteractive = !!column.sortable || (groupedColumn && segment.sortKey === column.id);
+          const segmentInteractive = interactive && (
+            !!column.sortable || (groupedColumn && segment.sortKey === column.id)
+          );
           const label = (
             <ds-text
               class="ds-table__header-label-box ds-control-label-box"
@@ -523,7 +589,7 @@ export class Table {
         })}
       </span>
     );
-    const sortControl = (
+    const sortControl = interactive ? (
       <span class="ds-table__sort-slot">
         {activeSort && (
           <ds-button-unfilled
@@ -545,18 +611,26 @@ export class Table {
           />
         )}
       </span>
-    );
+    ) : null;
 
     return (
       <th
         key={column.id}
-        class={`ds-table__header-cell ds-table__cell--align-${align}`}
-        scope="col"
-        aria-sort={memberAriaSort}
+        class={{
+          'ds-table__header-cell': true,
+          [`ds-table__cell--align-${align}`]: true,
+          'ds-table__cell--sticky-start': column.sticky === 'start',
+          'ds-table__cell--sticky-end': column.sticky === 'end',
+        }}
+        scope={presentational ? undefined : 'col'}
+        aria-sort={presentational ? undefined : memberAriaSort}
         data-column-id={column.id}
         data-grouped={groupedColumn ? 'true' : undefined}
         data-sort-active={activeSort ? 'true' : undefined}
       >
+        {!column.header.trim() && column.headerLabel?.trim() && (
+          <span class="ds-visually-hidden">{column.headerLabel}</span>
+        )}
         <span class="ds-table__header-content">
           {align === 'end' && sortControl}
           {align === 'center' && (
@@ -569,7 +643,53 @@ export class Table {
           {labelControl}
           {align !== 'end' && sortControl}
         </span>
+        {this.renderStickyEdge(column.sticky)}
       </th>
+    );
+  }
+
+  private renderColgroup() {
+    return (
+      <colgroup>
+        {this.selectable && <col class="ds-table__selection-column" />}
+        {this.columns.map(column => {
+          const width = tableColumnSize(column);
+          return <col key={column.id} style={width ? { width } : undefined} />;
+        })}
+      </colgroup>
+    );
+  }
+
+  private renderHeader(interactive = true, presentational = false) {
+    const selection = this.selectionState;
+    return (
+      <thead class={{
+        'ds-table__head': true,
+        'ds-table__head--semantic-copy': !interactive,
+      }}>
+        <tr class="ds-table__header-row">
+          {this.selectable && (
+            <th
+              class="ds-table__header-cell ds-table__selection-cell ds-table__cell--sticky-start"
+              scope={presentational ? undefined : 'col'}
+            >
+              {interactive ? this.renderSelectionControl(
+                selection.allSelected ? 'Deselect all loaded rows' : 'Select all loaded rows',
+                selection.allSelected,
+                selection.indeterminate,
+                selection.selectableRowIds.length === 0,
+                () => this.emitAllSelection(),
+              ) : (
+                <span class="ds-visually-hidden">Select rows</span>
+              )}
+              {this.renderStickyEdge('start')}
+            </th>
+          )}
+          {this.columns.map(column => (
+            this.renderColumnHeader(column, interactive, presentational)
+          ))}
+        </tr>
+      </thead>
     );
   }
 
@@ -621,7 +741,8 @@ export class Table {
       return (
         <ds-button-unfilled
           variant={value.variant ?? 'label'}
-          size="sm"
+          size="md"
+          isInset={true}
           label={value.label ?? ''}
           icon={value.icon ?? ''}
           aria-label={value.ariaLabel ?? null}
@@ -720,13 +841,24 @@ export class Table {
           'ds-table__row': true,
           'ds-table__row--selected': selected,
           'ds-table__row--disabled': !!row.disabled,
+          'ds-table__row--interactive': !!row.interactive && !row.disabled,
         }}
         data-row-id={row.id}
         data-selected={selected ? 'true' : undefined}
         aria-disabled={row.disabled ? 'true' : undefined}
+        tabIndex={row.interactive && !row.disabled ? 0 : undefined}
+        onClick={event => this.emitRowActivation(row, event)}
+        onKeyDown={event => this.handleRowKeydown(row, event)}
       >
         {this.selectable && (
-          <td class="ds-table__cell ds-table__selection-cell">
+          <td class={{
+            'ds-table__cell': true,
+            'ds-table__selection-cell': true,
+            'ds-table__cell--sticky-start': true,
+            'ds-interaction-fill': true,
+            'ds-interaction-fill--grouped': true,
+            'ds-interaction-fill--selected': selected,
+          }}>
             {this.renderSelectionControl(
               `${selected ? 'Deselect' : 'Select'} ${tableRowSelectionLabel(row, this.columns)}`,
               selected,
@@ -734,6 +866,7 @@ export class Table {
               !rowSelectable,
               () => this.emitRowSelection(row),
             )}
+            {this.renderStickyEdge('start')}
           </td>
         )}
         {this.columns.map(column => {
@@ -787,14 +920,20 @@ export class Table {
                 'ds-table__cell--text-multi': textCell && !singleTextCell,
                 'ds-table__cell--empty': emptyCell,
                 'ds-table__cell--blank': blankCell,
+                'ds-table__cell--sticky-start': column.sticky === 'start',
+                'ds-table__cell--sticky-end': column.sticky === 'end',
+                'ds-interaction-fill': true,
+                'ds-interaction-fill--grouped': true,
+                'ds-interaction-fill--selected': selected,
               }}
               data-column-id={column.id}
               data-cell-type={cellType}
               data-cell-variant={tagVariant ?? textVariant}
             >
-              <span class="ds-table__cell-content">
+              <span class="ds-table__cell-content ds-interaction-fill__content">
                 {this.renderCellValue(value, column, row)}
               </span>
+              {this.renderStickyEdge(column.sticky)}
             </td>
           );
         })}
@@ -838,15 +977,24 @@ export class Table {
         {Array.from({ length: count }, (_, index) => (
           <tr class="ds-table__row ds-table__skeleton-row" key={`skeleton-${index}`}>
             {this.selectable && (
-              <td class="ds-table__cell ds-table__selection-cell">
+              <td class="ds-table__cell ds-table__selection-cell ds-table__cell--sticky-start">
                 <ds-skeleton variant="icon" iconSize="md" />
+                {this.renderStickyEdge('start')}
               </td>
             )}
             {this.columns.map(column => (
-              <td class="ds-table__cell" key={`skeleton-${index}:${column.id}`}>
+              <td
+                class={{
+                  'ds-table__cell': true,
+                  'ds-table__cell--sticky-start': column.sticky === 'start',
+                  'ds-table__cell--sticky-end': column.sticky === 'end',
+                }}
+                key={`skeleton-${index}:${column.id}`}
+              >
                 <span class="ds-table__cell-content">
                   <ds-skeleton variant="text" textVariant="text-body-medium" width="100%" />
                 </span>
+                {this.renderStickyEdge(column.sticky)}
               </td>
             ))}
           </tr>
@@ -922,8 +1070,32 @@ export class Table {
     );
   }
 
+  private renderDocumentStickyHeader() {
+    if (!this.documentStickyHeader) return null;
+    return (
+      <div
+        class="ds-table__document-sticky-header"
+      >
+        <table
+          class={{
+            'ds-table__table': true,
+            'ds-table__sticky-header-table': true,
+            'ds-table__table--selectable': this.selectable,
+          }}
+          style={this.tableStyle}
+          role="presentation"
+          ref={element => {
+            this.stickyHeaderTableEl = element ?? null;
+          }}
+        >
+          {this.renderColgroup()}
+          {this.renderHeader(true, true)}
+        </table>
+      </div>
+    );
+  }
+
   render() {
-    const selection = this.selectionState;
     const regionLabel = this.scrollLabel?.trim() || `${this.caption} scroll area`;
     const initialLoading = this.loading && !this.hasData;
     const initialError = !this.hasData && this.error;
@@ -936,6 +1108,8 @@ export class Table {
         <div class={{
           'ds-table': true,
           'ds-table--sticky-header': this.stickyHeader,
+          'ds-table--document-sticky-header': this.documentStickyHeader,
+          'ds-table--contained-sticky-header': this.stickyHeader && !this.documentStickyHeader,
         }}>
           <div
             class={{
@@ -944,6 +1118,7 @@ export class Table {
               'ds-table__frame--overflow-end': this.overflowEnd,
             }}
           >
+            {this.renderDocumentStickyHeader()}
             <div
               class="ds-table__viewport"
               style={viewportStyle}
@@ -975,29 +1150,8 @@ export class Table {
                     {this.caption}
                   </ds-text>
                 </caption>
-                <colgroup>
-                  {this.selectable && <col class="ds-table__selection-column" />}
-                  {this.columns.map(column => {
-                    const width = tableColumnSize(column);
-                    return <col key={column.id} style={width ? { width } : undefined} />;
-                  })}
-                </colgroup>
-                <thead class="ds-table__head">
-                  <tr class="ds-table__header-row">
-                    {this.selectable && (
-                      <th class="ds-table__header-cell ds-table__selection-cell" scope="col">
-                        {this.renderSelectionControl(
-                          selection.allSelected ? 'Deselect all loaded rows' : 'Select all loaded rows',
-                          selection.allSelected,
-                          selection.indeterminate,
-                          selection.selectableRowIds.length === 0,
-                          () => this.emitAllSelection(),
-                        )}
-                      </th>
-                    )}
-                    {this.columns.map(column => this.renderColumnHeader(column))}
-                  </tr>
-                </thead>
+                {this.renderColgroup()}
+                {this.renderHeader(!this.documentStickyHeader)}
                 {initialLoading
                   ? this.renderSkeletonBody()
                   : initialError

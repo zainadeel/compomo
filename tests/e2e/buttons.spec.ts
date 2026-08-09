@@ -43,6 +43,19 @@ test('filled lg consumes the complete 40px control recipe', async ({ page }) => 
   });
 });
 
+test('filled and unfilled buttons opt into the inset density recipe', async ({ page }) => {
+  for (const id of ['filled-inset-md', 'unfilled-inset-md']) {
+    const host = page.locator(`#${id}`);
+    const button = host.locator('button');
+    await expect(host).toHaveJSProperty('isInset', true);
+    await expect(host).toHaveCSS('width', '28px');
+    await expect(host).toHaveCSS('height', '28px');
+    await expect(button).toHaveCSS('width', '28px');
+    await expect(button).toHaveCSS('height', '28px');
+    await expect(button).toHaveClass(/ds-control--inset/);
+  }
+});
+
 test('physical press scales only eligible filled and unfilled buttons', async ({ page }) => {
   for (const id of ['filled-label', 'unfilled-label']) {
     const button = page.locator(`#${id} button`);

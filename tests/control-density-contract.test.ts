@@ -77,6 +77,14 @@ test('inset density reduces only same-size outer geometry', () => {
   assert.match(tagSource, /@Prop\(\) isInset: boolean = false/);
   assert.match(tagSource, /['"]ds-control--inset['"]: this\.isInset/);
 
+  const buttonBaseCss = read('src/wc/utils/button-base.css');
+  assert.match(buttonBaseCss, /@import ['"]\.\/control-density-inset\.css['"];/);
+  for (const component of ['ButtonFilled', 'ButtonUnfilled']) {
+    const source = read(`src/wc/components/${component}/${component}.tsx`);
+    assert.match(source, /@Prop\(\) isInset: boolean = false/);
+    assert.equal(source.match(/['"]ds-control--inset['"]: this\.isInset/g)?.length, 2);
+  }
+
   const tabGroupCss = read('src/wc/components/TabGroup/TabGroup.css');
   const tabGroupSource = read('src/wc/components/TabGroup/TabGroup.tsx');
   assert.match(tabGroupCss, /@import ['"]\.\.\/\.\.\/utils\/control-density-inset\.css['"];/);

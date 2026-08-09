@@ -41,6 +41,9 @@ export class ButtonUnfilled {
   /** Control density (height, padding, icon, type). */
   @Prop() size: ButtonUnfilledSize = 'md';
 
+  /** Use reduced outer geometry when nested inside a control of the same size. */
+  @Prop() isInset: boolean = false;
+
   /** Width fit — hug content (default) or fill the parent. */
   @Prop() width: ButtonUnfilledWidth = 'hug';
 
@@ -199,6 +202,7 @@ export class ButtonUnfilled {
       'ds-control--md': this.size === 'md',
       'ds-control--sm': this.size === 'sm',
       'ds-control--xs': this.size === 'xs',
+      'ds-control--inset': this.isInset,
       'ds-control-frame': true,
       'button-unfilled--icon': this.variant === 'icon',
       'ds-button--icon': this.variant === 'icon',
@@ -224,6 +228,7 @@ export class ButtonUnfilled {
           'ds-control--md': this.size === 'md',
           'ds-control--sm': this.size === 'sm',
           'ds-control--xs': this.size === 'xs',
+          'ds-control--inset': this.isInset,
           ...controlWidthClass(this.width),
         }}
         tabIndex={-1}
