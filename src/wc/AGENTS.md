@@ -46,6 +46,7 @@ at the line where they occur.
 ## Internal recipes
 
 - `control-density.css`: lg/md/sm/xs control metrics.
+- `control-density-inset.css`: opt-in reduced outer geometry for same-density nested controls.
 - `control-parts.css`: frame, icon box, and label box anatomy.
 - `field-stack.css`: label/control/supporting-message flow.
 - `empty-region.css`: bounded empty-region centering.

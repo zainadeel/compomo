@@ -4887,6 +4887,7 @@
           ],
           "commonlyComposedWith": [
             "component:ds-mobile-section-switcher",
+            "component:ds-tab-group",
             "component:ds-shell-page",
             "component:ds-shell-tools"
           ],
@@ -4895,19 +4896,19 @@
           ],
           "accessibility": [
             "Static screens render a real h1 or h2 according to headingLevel.",
-            "Section-switching screens expose an equivalent semantic heading alongside the accessible popup trigger.",
+            "Section-switching screens expose an equivalent semantic heading alongside the accessible popup trigger or named segmented TabGroup.",
             "Subsections use a separately named navigation landmark and never replace the semantic page identity.",
             "Leading and trailing slotted icon actions retain their own accessible names and tooltips."
           ],
           "states": [
             "Without multiple sections the center renders heading.",
-            "With multiple sections the center renders the controlled MobileSectionSwitcher.",
+            "With multiple sections the center renders the controlled MobileSectionSwitcher by default or an explicitly requested segmented TabGroup.",
             "Optional subsections render in a second row and emit dsSubsectionChange without changing the primary section.",
             "Sections represent peer destinations at the current navigation level; subsections represent local views beneath the selected page or detail identity.",
             "Brand tone changes surface and foreground without changing geometry or interaction ownership."
           ],
           "responsiveBehavior": [
-            "The primary 48px lane is dedicated to the below-768px presentation; optional subsections add one subordinate 48px lane.",
+            "The primary 56px lane matches the Mobile Sheet Nav header and Mobile Bar Nav; optional subsections add one subordinate 48px lane.",
             "Equal flexible side lanes keep the center mathematically aligned when actions are asymmetric."
           ],
           "references": [
@@ -4927,11 +4928,19 @@
             "required": false
           },
           "sections": {
-            "type": "TabItem[]",
+            "type": "TabGroupItem[]",
             "required": false
           },
           "sectionsAriaLabel": {
             "type": "string",
+            "required": false
+          },
+          "sectionsPresentation": {
+            "type": "MobileHeaderSectionsPresentation",
+            "required": false
+          },
+          "sectionsSize": {
+            "type": "TabGroupSize",
             "required": false
           },
           "subsections": {
@@ -4978,6 +4987,7 @@
       ],
       "registryDependencies": [
         "mobile-section-switcher",
+        "tab-group",
         "text"
       ]
     },
@@ -5106,7 +5116,7 @@
           ],
           "responsiveBehavior": [
             "The pane fills the mobile content stage while the bottom bar remains available.",
-            "The sheet header and scrollable navigation body each use the shared 8px chrome inset; large destination controls retain their independent 40px density.",
+            "The sheet header and scrollable navigation body each use the shared 8px chrome inset; the context TabGroup and primary controls share a 40px height and 24px icon scale.",
             "Dashboard and Settings preserve their supplied visual groups with an 8px gap between destinations inside a section and a 32px gap between sections."
           ],
           "references": [
@@ -6769,6 +6779,8 @@
             "On desktop, PanelNav defaults expanded, permits user collapse or expansion, and respects the locally persisted desktop preference.",
             "On tablet, ShellApp keeps PanelNav permanently collapsed and prevents user expansion without overwriting the desktop preference.",
             "On mobile, ShellApp hides and inerts desktop chrome, uses a solid primary stage, and composes MobileHeader, MobileSheetNav, ShellTools, and the persistent MobileBarNav around the same application-owned content.",
+            "Opening MobileSheetNav temporarily overlays the active routed page or global tool; closing it without selecting an area restores that same destination and its nested state.",
+            "When a suspended mobile document returns to the foreground, ShellApp refreshes the complete stage paint layer without remounting routed content or tool owners.",
             "When the application enables viewport-fit=cover, ShellApp reserves the shared top safe-area inset once for the complete mobile stage; nested routed, sheet, and tool headers must not add a second top inset.",
             "A slotted Banner remains below the top safe-area inset and above routed, navigation, fullscreen-tool, and mobile global-surface presentations.",
             "Mobile global surfaces conceal and inert the routed workspace without unmounting it, preserving nested routes and scroll state.",
@@ -7105,7 +7117,7 @@
             "component:ds-shell-app",
             "component:ds-panel-tool-header",
             "component:ds-mobile-header",
-            "component:ds-mobile-section-switcher",
+            "component:ds-tab-group",
             "component:ds-mobile-bar-nav"
           ],
           "patterns": [
@@ -7114,7 +7126,7 @@
           "accessibility": [
             "Only the active mobile tool view participates in focus or the accessibility tree.",
             "Header Back and application-owned header actions preserve the PanelTools event contract.",
-            "Inbox uses the MobileSectionSwitcher popup trigger for Stacks and Activity and never relies on a gesture-only interaction; Messages remains a direct mobile destination."
+            "Mobile Inbox uses a named label-only TabGroup for Stacks and Activity; Messages remains a direct mobile destination."
           ],
           "states": [
             "The application owns open and activeTool and replaces headers when tool depth changes.",
@@ -7124,7 +7136,7 @@
           ],
           "responsiveBehavior": [
             "Desktop and tablet compose PanelTools-compatible rail and drawer chrome.",
-            "Mobile renders one centered MobileHeader for every tool; Stacks and Activity use Inbox section titles, while Messages remains a direct tool destination."
+            "Mobile renders one centered MobileHeader for every tool; Stacks and Activity use the large segmented Inbox control, while Messages remains a direct tool destination."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -7940,6 +7952,7 @@
             "The parent owns the canonical selected value and adjacent view visibility, and should update both from dsChange.",
             "A missing, empty, inactive, or unknown selected value is invalid when enabled tabs exist; the component does not choose a fallback selection.",
             "Selection is singular and follows keyboard focus.",
+            "Small, medium, and large use the shared 24px, 32px, and 40px control-density recipes for the outer track. Each segment uses the same-size inset recipe at 20px, 28px, and 36px while preserving that density's typography, icon, gap, and label metrics.",
             "Use one consistent content variant across every selectable tab in a group.",
             "Omitted background is for primary and secondary surfaces; pass the faint context explicitly on faint surfaces.",
             "Only the omitted default context emphasizes visible selected label text and keeps the filled track; explicit faint follows the other surface contexts with a transparent track, stable text weight, surface border, and neutral active fill.",
@@ -7947,6 +7960,7 @@
           ],
           "responsiveBehavior": [
             "The component remains a single horizontal row and does not become vertical or wrap.",
+            "Use the large size when a mobile composition aligns the group with 40px shell controls; size does not change automatically at a breakpoint.",
             "The consuming layout owns narrow-width placement and overflow, or replaces the row with a more suitable navigation pattern."
           ],
           "frameworkCaveats": {
@@ -7981,6 +7995,10 @@
             "type": "TabBackground | undefined",
             "required": false
           },
+          "size": {
+            "type": "TabGroupSize",
+            "required": false
+          },
           "tabs": {
             "type": "TabGroupItem[]",
             "required": false
@@ -8011,6 +8029,264 @@
       "registryDependencies": [
         "badge",
         "icon",
+        "text"
+      ]
+    },
+    {
+      "name": "table",
+      "title": "Table",
+      "description": "Semantic, controlled data table with durable visual primitives for cell geometry, column geometry, grouping, sorting, multi-selection, sticky overflow, and incremental loading.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/table",
+        "source": "src/wc/components/Table/Table.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Semantic, controlled data table with durable visual primitives for cell geometry, column geometry, grouping, sorting, multi-selection, sticky overflow, and incremental loading.",
+          "useWhen": [
+            "A structured dataset needs native row and column relationships, optional one-level grouping, or comparable values across records.",
+            "An application needs controlled sorting, loaded-row selection, or lazy loading while retaining ownership of the data query and transformations.",
+            "A product table needs a token-backed recipe whose individual header, group, row, cell, selection, state, and load-more layers remain easy to restyle."
+          ],
+          "avoidWhen": [
+            "Content is primarily editorial prose; use semantic product-owned markup with the prose recipe instead.",
+            "A small label/value set reads more clearly as a list, description list, or card.",
+            "The interface requires tree-grid behavior, nested grouping, inline cell editing, row reordering, column pinning, or virtualization; those are outside this first contract.",
+            "The application expects the component to fetch, paginate, sort, group, or mutate records internally."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-empty-state",
+            "component:ds-skeleton",
+            "component:ds-loader",
+            "component:ds-button-unfilled",
+            "component:ds-tag",
+            "component:ds-icon"
+          ],
+          "accessibility": [
+            "The rendered structure uses a native table, caption, column headers, row groups, and data cells; keep the caption non-empty even when it is visually hidden.",
+            "Sorting controls remain buttons inside column headers. Member-row sort uses aria-sort, while independent group order is described by the grouped header control.",
+            "Selection controls expose checkbox semantics and explicit row names; select-all affects selectable loaded rows only and preserves selected identities outside the loaded window.",
+            "Scrollable table regions become keyboard focusable and named only when overflow exists.",
+            "Incremental loading, newly appended row counts, failures, and end-of-results transitions are announced through a polite status region without replacing visible state."
+          ],
+          "states": [
+            "Columns, rows, groups, grouping, sorting, selected row IDs, and lazy-loading state are controlled inputs. Events communicate intent and never mutate those inputs.",
+            "Grouping supports one level. The application supplies ordered groups and ordered member rows; group order and member-row sort are independent controls.",
+            "An active member sort toggles only between ascending and descending; activating a different sortable label moves sorting to that key. Applications may still clear the controlled sort state explicitly. The grouped column toggles ascending and descending group order without clearing member sort.",
+            "Compound headers can expose multiple related labels with independent sort keys. Each label owns only its content-width interaction target while the active direction remains in the column's alignment-aware sort lane.",
+            "Initial loading uses row-shaped skeletons. Empty and initial error states remain inside the table. Incremental loading retains existing rows and supports automatic sentinel, manual load-more, retry, and terminal states.",
+            "Lazy loading replaces pagination. The application owns requests, cancellation, cursors, deduplication, appended records, and query identity; loadIdentity resets the component request guard.",
+            "Cells accept scalar content, standard primary-and-secondary or dual-primary text primitives, declarative Tag, icon-only, 16:9 Image, or ButtonUnfilled Action content, or explicit Empty and Blank absence values. Single-track text, selection, tag-only, icon-only, Action, Empty, and Blank cells resolve a 40px base contract while multi-track cells grow downward. Action cells primarily use an icon-only Ellipses treatment, render a 24px small ButtonUnfilled inside 8px padding, default to unbordered, and emit row, column, and action identities through dsCellAction. Image cells render a 52px-high bordered preview inside 6px outer padding, establishing a 64px row, and fall back to an accessible placeholder when no source is supplied. Empty means the data applies but has no value and renders an em dash with localized assistive text; Blank means the data is not applicable and renders no content. Nullish values remain backward-compatible Empty values. Stable type and variant hooks keep every cell family independently styleable.",
+            "The public @ds-mo/ui/table.css export is the authoritative zero-specificity visual recipe. Override its --ds-table-* properties or target its stable element classes for product-specific styling."
+          ],
+          "responsiveBehavior": [
+            "The table keeps native semantics at narrow widths and scrolls horizontally instead of transforming into cards.",
+            "Explicit column sizes establish the horizontal overflow width; unsized columns share remaining space.",
+            "Prefer the named xs through xl column sizes, which resolve through TokoMo's table-column width tokens; numeric pixel sizes remain an escape hatch for exceptional application-owned widths.",
+            "Column headers use one 32px geometry. Body rows use a 40px single-track minimum; cell-specific outer padding and track geometry align text, selection, Tag, icon, Action, Empty, Blank, and Image primitives while additional tracks grow downward.",
+            "Long content truncates by default and can opt into wrapping at the column or cell level."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign columns, rows, groups, grouping, sort, and selectedRowIds through JavaScript properties rather than HTML attribute strings.",
+              "Replace controlled property values in response to dsSortChange, dsGroupingChange, dsSelectionChange, and dsLoadMore."
+            ],
+            "react": [
+              "Pass new array and state-object references when the controlled data or query state changes.",
+              "Apply emitted sort, grouping, selection, action, or loading detail to application state and perform data transformations in the owning layer."
+            ],
+            "angular": [
+              "Bind complex table inputs as properties and update the controlled values from the corresponding output events.",
+              "Keep server cursor, query lifecycle, and cell-action handling in the owning service or container."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook review matrix",
+              "path": "src/wc/components/Table/Table.stories.ts"
+            },
+            {
+              "label": "Public visual recipe",
+              "path": "src/wc/styles/table.css"
+            }
+          ]
+        },
+        "props": {
+          "caption": {
+            "type": "string",
+            "required": true
+          },
+          "captionVisibility": {
+            "type": "TableCaptionVisibility",
+            "required": false
+          },
+          "columns": {
+            "type": "TableColumn[]",
+            "required": false
+          },
+          "emptyBody": {
+            "type": "string",
+            "required": false
+          },
+          "emptyCellLabel": {
+            "type": "string",
+            "required": false
+          },
+          "emptyHeading": {
+            "type": "string",
+            "required": false
+          },
+          "endOfResultsLabel": {
+            "type": "string",
+            "required": false
+          },
+          "error": {
+            "type": "boolean",
+            "required": false
+          },
+          "errorBody": {
+            "type": "string",
+            "required": false
+          },
+          "errorHeading": {
+            "type": "string",
+            "required": false
+          },
+          "grouping": {
+            "type": "TableGroupingState | null",
+            "required": false
+          },
+          "groups": {
+            "type": "TableGroup[]",
+            "required": false
+          },
+          "hasMore": {
+            "type": "boolean",
+            "required": false
+          },
+          "lazyLoading": {
+            "type": "boolean",
+            "required": false
+          },
+          "loadIdentity": {
+            "type": "string | number",
+            "required": false
+          },
+          "loadMoreError": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "loadMoreLabel": {
+            "type": "string",
+            "required": false
+          },
+          "loadMoreMode": {
+            "type": "TableLoadMoreMode",
+            "required": false
+          },
+          "loadMoreThreshold": {
+            "type": "number",
+            "required": false
+          },
+          "loading": {
+            "type": "boolean",
+            "required": false
+          },
+          "loadingMore": {
+            "type": "boolean",
+            "required": false
+          },
+          "loadingMoreLabel": {
+            "type": "string",
+            "required": false
+          },
+          "maxHeight": {
+            "type": "string | number | undefined",
+            "required": false
+          },
+          "retryLabel": {
+            "type": "string",
+            "required": false
+          },
+          "rows": {
+            "type": "TableRow[]",
+            "required": false
+          },
+          "rowsLoadedLabel": {
+            "type": "string",
+            "required": false
+          },
+          "scrollLabel": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "selectedRowIds": {
+            "type": "string[]",
+            "required": false
+          },
+          "selectionMode": {
+            "type": "TableSelectionMode",
+            "required": false
+          },
+          "skeletonRows": {
+            "type": "number",
+            "required": false
+          },
+          "sort": {
+            "type": "TableSortState | null",
+            "required": false
+          },
+          "stickyHeader": {
+            "type": "boolean",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsCellAction",
+            "detail": "TableCellActionDetail"
+          },
+          {
+            "name": "dsGroupingChange",
+            "detail": "TableGroupingChangeDetail"
+          },
+          {
+            "name": "dsLoadMore",
+            "detail": "TableLoadMoreDetail"
+          },
+          {
+            "name": "dsSelectionChange",
+            "detail": "TableSelectionChangeDetail"
+          },
+          {
+            "name": "dsSortChange",
+            "detail": "TableSortChangeDetail"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-table",
+          "react": "DsTable",
+          "angular": "DsTable"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "button-unfilled",
+        "checkbox",
+        "empty-state",
+        "icon",
+        "loader",
+        "skeleton",
+        "tag",
         "text"
       ]
     },
@@ -8078,12 +8354,13 @@
             "Warning signals higher urgency or risk than caution, which asks for attention before a possible issue.",
             "Contrast changes visual prominence without changing semantic intent or parent surface context.",
             "Rounded is an optional visual style with no semantic difference.",
+            "isInset opts into reduced outer geometry only when Tag is nested inside a control of the same density; semantic styling, typography, icons, gaps, radius, and interaction remain unchanged.",
             "Labels stay on one line and truncate only when the owner supplies a maximum width.",
             "Omitted interactive renders static metadata with no focus, event, or suffix. Interactive adds the fixed ChevronUpDown suffix and emits dsClick without toggling expanded internally.",
             "isInactive disables only the interactive button and applies the shared inactive treatment."
           ],
           "responsiveBehavior": [
-            "The owner selects md, sm, or xs density to match its local layout and owns collection wrapping, overflow, and condensation.",
+            "The owner selects md, sm, or xs density to match its local layout and owns collection wrapping, overflow, and condensation. Use isInset only for same-density control nesting.",
             "Tag does not change size or behavior automatically at breakpoints."
           ],
           "frameworkCaveats": {
@@ -8130,6 +8407,10 @@
             "required": false
           },
           "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "isInset": {
             "type": "boolean",
             "required": false
           },

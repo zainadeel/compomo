@@ -31,6 +31,59 @@ test('lg resolves one complete 40px control recipe', () => {
   assert.equal(CONTROL_TEXT_VARIANT.lg, 'text-body-large');
 });
 
+test('inset density reduces only same-size outer geometry', () => {
+  const css = read('src/wc/utils/control-density-inset.css');
+  const cases = [
+    {
+      size: 'lg',
+      height: '500',
+      padding: '100',
+    },
+    {
+      size: 'md',
+      height: '400',
+      padding: '075',
+    },
+    {
+      size: 'sm',
+      height: '300',
+      padding: '050',
+    },
+    {
+      size: 'xs',
+      height: '200',
+      padding: '025',
+    },
+  ];
+
+  for (const density of cases) {
+    assert.match(
+      css,
+      new RegExp(
+        `:host\\(\\.ds-control--${density.size}\\.ds-control--inset\\),[\\s\\S]*?` +
+        `--ds-control-height: calc\\(var\\(--dimension-size-${density.height}\\) - var\\(--dimension-space-050\\)\\);[\\s\\S]*?` +
+        `--ds-control-padding-inline: calc\\([\\s\\S]*?var\\(--dimension-space-${density.padding}\\) - var\\(--dimension-space-025\\)[\\s\\S]*?\\);`,
+      ),
+    );
+  }
+
+  assert.doesNotMatch(css, /--ds-control-(?:icon|label-inset|gap|radius):/);
+
+  const tagCss = read('src/wc/components/Tag/Tag.css');
+  const tagSource = read('src/wc/components/Tag/Tag.tsx');
+  const utilityStoryCss = read('src/wc/stories/Utility/utility-demo.css');
+  assert.match(tagCss, /@import ['"]\.\.\/\.\.\/utils\/control-density-inset\.css['"];/);
+  assert.match(utilityStoryCss, /@import ['"]\.\.\/\.\.\/utils\/control-density-inset\.css['"];/);
+  assert.match(tagSource, /@Prop\(\) isInset: boolean = false/);
+  assert.match(tagSource, /['"]ds-control--inset['"]: this\.isInset/);
+
+  const tabGroupCss = read('src/wc/components/TabGroup/TabGroup.css');
+  const tabGroupSource = read('src/wc/components/TabGroup/TabGroup.tsx');
+  assert.match(tabGroupCss, /@import ['"]\.\.\/\.\.\/utils\/control-density-inset\.css['"];/);
+  assert.match(tabGroupSource, /\[`ds-control--\$\{this\.size\}`\]: true/);
+  assert.match(tabGroupSource, /['"]ds-control--inset['"]: true/);
+});
+
 test('choice rows derive primary and supporting type from control density', () => {
   assert.deepEqual(CONTROL_TEXT_VARIANT, {
     lg: 'text-body-large',
@@ -60,10 +113,10 @@ test('shell navigation rows consume the shared control-density recipe', () => {
       sizeClass: /['"]ds-control--md['"]: true/,
     },
     {
-      name: 'TabGroup sm tabs',
+      name: 'TabGroup density-matched tabs',
       css: read('src/wc/components/TabGroup/TabGroup.css'),
       source: read('src/wc/components/TabGroup/TabGroup.tsx'),
-      sizeClass: /['"]ds-control--sm['"]: true/,
+      sizeClass: /\[`ds-control--\$\{this\.size\}`\]: true/,
     },
     {
       name: 'MobileSheetNav lg destinations',

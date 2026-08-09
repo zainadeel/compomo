@@ -1,4 +1,5 @@
 @import '../../utils/control-density.css';
+@import '../../utils/control-density-inset.css';
 @import '../../utils/focus-ring.css';
 @import '../../utils/interaction-fill.css';
 @import '../../utils/control-inactive.css';
@@ -47,12 +48,12 @@
 .tab-list {
   display: flex;
   align-items: center;
-  gap: var(--dimension-space-050);
+  gap: var(--ds-control-gap);
   position: relative;
   width: max-content;
   max-width: 100%;
-  height: var(--dimension-size-400);
-  padding: calc(var(--dimension-space-050) - var(--dimension-stroke-width-012));
+  height: var(--ds-control-height);
+  padding: calc(var(--dimension-space-025) - var(--dimension-stroke-width-012));
   background-color: var(--color-background-secondary);
   border: var(--dimension-stroke-width-012) solid var(--_tab-group-surface-border);
   border-radius: var(--dimension-radius-half);
@@ -79,10 +80,10 @@
   transition: color var(--effect-motion-short-2);
   flex-shrink: 0;
   height: var(--ds-control-height);
-  min-width: var(--dimension-size-400);
+  min-width: var(--ds-control-height);
   box-sizing: border-box;
   --_dot: var(--color-foreground-bold-brand);
-  /* Hover/press: `.ds-interaction-fill` — fills cover full 24px box (no layout border). */
+  /* Hover/press: `.ds-interaction-fill` fills cover the complete segment. */
 }
 
 .tab--selected {

@@ -89,6 +89,7 @@ const meta: Meta = {
   argTypes: {
     value: { control: 'select', options: tabs.map(t => t.id) },
     variant: { control: 'select', options: ['label', 'icon', 'icon-label'] },
+    size: { control: 'select', options: ['sm', 'md', 'lg'] },
     background: {
       control: 'select',
       options: [
@@ -104,7 +105,7 @@ const meta: Meta = {
       ],
     },
   },
-  args: { value: 'overview', variant: 'label' },
+  args: { value: 'overview', variant: 'label', size: 'md' },
 };
 
 export default meta;
@@ -124,12 +125,46 @@ export const Playground: Story = {
         <ds-tab-group
           .tabs=${playgroundTabs}
           value=${args['value'] ?? 'overview'}
+          size=${args['size'] ?? 'md'}
           background=${args['background'] ?? ''}
           aria-label="Playground tabs"
         ></ds-tab-group>
       </div>
     `;
   },
+};
+
+export const Sizes: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Small, medium, and large tracks consume the normal 24px, 32px, and 40px control-density recipes. Their nested segments consume the matching inset recipe at 20px, 28px, and 36px while retaining the same-size 16px, 20px, and 24px icon and typography scales.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="display:flex;flex-direction:column;gap:var(--dimension-space-150);align-items:flex-start;">
+      ${(['sm', 'md', 'lg'] as const).map(size => {
+        const sizeTabs = [
+          { id: `${size}-dashboard`, label: 'Dashboard', icon: 'MapPage', variant: 'icon' as const },
+          { id: `${size}-settings`, label: 'Settings', icon: 'Gear', variant: 'icon' as const },
+        ];
+        return html`
+          <div style="display:flex;align-items:center;gap:var(--dimension-space-100);">
+            <span style="min-width:var(--dimension-size-400);color:var(--color-foreground-tertiary);font:var(--typography-text-caption-font);">
+              ${size}
+            </span>
+            <ds-tab-group
+              .tabs=${sizeTabs}
+              value=${sizeTabs[0].id}
+              size=${size}
+              aria-label="${size} context tabs"
+            ></ds-tab-group>
+          </div>
+        `;
+      })}
+    </div>
+  `,
 };
 
 export const Variants: Story = {

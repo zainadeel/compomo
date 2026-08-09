@@ -1,4 +1,5 @@
 import { Component, Prop, Event, EventEmitter, Element, Listen, Watch, h, Host } from '@stencil/core';
+import { CONTROL_TEXT_VARIANT } from '../../utils';
 import {
   getSelectableTabs,
   isTabDivider,
@@ -16,6 +17,8 @@ export type TabBackground =
   | 'media'
   | 'always-dark';
 
+export type TabGroupSize = 'sm' | 'md' | 'lg';
+
 @Component({
   tag: 'ds-tab-group',
   styleUrl: 'TabGroup.css',
@@ -26,6 +29,8 @@ export class TabGroup {
 
   @Prop({ mutable: true }) value: string = '';
   @Prop() tabs: TabGroupItem[] = [];
+  /** Control density: 24px small, 32px medium, or 40px large track. */
+  @Prop() size: TabGroupSize = 'md';
   @Prop() background: TabBackground | undefined;
   @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;
   @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;
@@ -138,6 +143,8 @@ export class TabGroup {
       <Host
         class={{
           'tab-group-host': true,
+          [`tab-group-host--${this.size}`]: true,
+          [`ds-control--${this.size}`]: true,
           'tab-group-host--surface': !!bgClass,
           [`tab-group-host--${bgClass}`]: !!bgClass,
         }}
@@ -175,7 +182,8 @@ export class TabGroup {
                 class={{
                   tab: true,
                   'tab--selected': isSelected,
-                  'ds-control--sm': true,
+                  [`ds-control--${this.size}`]: true,
+                  'ds-control--inset': true,
                   'ds-focus-ring-inset': true,
                   'ds-interaction-fill': !tab.isInactive,
                   'ds-interaction-fill--on-faint': bgClass === 'on-faint',
@@ -206,7 +214,7 @@ export class TabGroup {
                     <ds-icon
                       class="tab__icon"
                       name={tab.icon}
-                      size="sm"
+                      size={this.size}
                       color="inherit"
                     />
                   )}
@@ -214,7 +222,7 @@ export class TabGroup {
                     <ds-text
                       class="tab__label"
                       as="span"
-                      variant="text-body-small"
+                      variant={CONTROL_TEXT_VARIANT[this.size]}
                       emphasis={emphasizeLabel}
                       color="inherit"
                     >

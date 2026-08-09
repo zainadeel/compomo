@@ -8,5 +8,6 @@ await copyFile(
   'dist/styles/control-elevation.css',
 );
 await copyFile('src/wc/styles/prose.css', 'dist/styles/prose.css');
+await copyFile('src/wc/styles/table.css', 'dist/styles/table.css');
 
-console.log('  Built dist/styles exports (control-elevation.css, prose.css)');
+console.log('  Built dist/styles exports (control-elevation.css, prose.css, table.css)');

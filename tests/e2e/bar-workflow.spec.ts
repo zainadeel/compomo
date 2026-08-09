@@ -119,6 +119,6 @@ test('uses symmetric mobile workflow chrome without changing the controlled step
       titleCenter: title ? title.left + title.width / 2 : 0,
     };
   });
-  expect(geometry.height).toBe(48);
+  expect(geometry.height).toBe(56);
   expect(Math.abs(geometry.hostCenter - geometry.titleCenter)).toBeLessThanOrEqual(1);
 });

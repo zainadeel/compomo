@@ -52,6 +52,46 @@ test.describe('Responsive mobile shell foundation', () => {
     await expect(page.locator('ds-shell-app')).toHaveAttribute('responsive-mode', 'mobile');
   });
 
+  test('repaints the mobile stage after foreground restore without remounting tool state', async ({
+    page,
+  }) => {
+    await page.getByRole('button', { name: 'Search' }).click();
+    const input = page.getByLabel('Persistent search value');
+    await input.fill('preserved across resume');
+
+    await page.locator('#shell').evaluate(element => {
+      const history: boolean[] = [];
+      (window as typeof window & { __foregroundRefreshHistory?: boolean[] })
+        .__foregroundRefreshHistory = history;
+      new MutationObserver(() => {
+        history.push(element.classList.contains('shell-app--foreground-refresh'));
+      }).observe(element, { attributes: true, attributeFilter: ['class'] });
+    });
+
+    await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () =>
+            (window as typeof window & { __foregroundRefreshHistory?: boolean[] })
+              .__foregroundRefreshHistory
+        )
+      )
+      .toEqual(expect.arrayContaining([true, false]));
+    await expect(page.locator('#shell')).not.toHaveClass(/shell-app--foreground-refresh/);
+    await expect(input).toHaveValue('preserved across resume');
+    await expect(input).toBeVisible();
+    await expect(
+      input.evaluate(
+        element =>
+          element ===
+          (window as typeof window & { __persistentSearchInput?: HTMLInputElement })
+            .__persistentSearchInput
+      )
+    ).resolves.toBe(true);
+  });
+
   test('renders two fixed icon-only groups without overflow and keeps status dots supplemental',
     chromiumOnly('layout-geometry', 'Fixed mobile-bar groups, icon sizing, and supplemental dots are static chrome recipes.'),
     async ({
@@ -238,6 +278,30 @@ test.describe('Responsive mobile shell foundation', () => {
       'false'
     );
     await expect(page.getByRole('button', { name: 'Search' })).toBeFocused();
+    await expect(page.locator('ds-shell-tools')).toHaveAttribute('active-tool', 'search');
+
+    await page.getByRole('button', { name: 'Menu' }).click();
+    await page.getByRole('button', { name: 'Menu' }).click();
+    await expect(page.getByRole('button', { name: 'Menu' })).toHaveAttribute(
+      'aria-expanded',
+      'false'
+    );
+    await expect(page.locator('ds-shell-tools')).toHaveAttribute('active-tool', 'search');
+    await expect(page.getByRole('button', { name: 'Search' })).toHaveAttribute(
+      'aria-current',
+      'page'
+    );
+    await expect(page.getByLabel('Persistent search value')).toBeVisible();
+
+    await page.getByRole('button', { name: 'Messages' }).click();
+    await page.getByRole('button', { name: 'Menu' }).click();
+    await page.getByRole('button', { name: 'Menu' }).click();
+    await expect(page.locator('ds-shell-tools')).toHaveAttribute('active-tool', 'messages');
+    await expect(page.getByRole('button', { name: 'Messages' })).toHaveAttribute(
+      'aria-current',
+      'page'
+    );
+    await expect(page.getByText('Messages view', { exact: true })).toBeVisible();
 
     await page.getByRole('button', { name: 'Menu' }).click();
     await page.getByRole('button', { name: 'Help & Support' }).click();
@@ -314,6 +378,9 @@ test.describe('Responsive mobile shell foundation', () => {
       const header = element.querySelector('.mobile-sheet-nav__header');
       const logo = element.querySelector('.mobile-sheet-nav__logo');
       const context = element.querySelector('.mobile-sheet-nav__context');
+      const contextTrack = context?.querySelector('.tab-list');
+      const contextTabs = Array.from(context?.querySelectorAll('.tab') ?? []);
+      const contextIcons = Array.from(context?.querySelectorAll('.tab__icon') ?? []);
       const actions = element.querySelector('.mobile-sheet-nav__actions');
       const logoMark = element.querySelector('.mobile-sheet-nav__logo-mark');
       const actionButtons = Array.from(
@@ -331,6 +398,16 @@ test.describe('Responsive mobile shell foundation', () => {
           ? [logoMark.getBoundingClientRect().width, logoMark.getBoundingClientRect().height]
           : [],
         contextCenter: rects[1] ? rects[1].left + rects[1].width / 2 : 0,
+        contextSize: (context as HTMLElement & { size?: string } | null)?.size,
+        contextTrackHeight: contextTrack?.getBoundingClientRect().height,
+        contextTabSizes: contextTabs.map(item => {
+          const rect = item.getBoundingClientRect();
+          return [rect.width, rect.height];
+        }),
+        contextIconSizes: contextIcons.map(item => {
+          const rect = item.getBoundingClientRect();
+          return [rect.width, rect.height];
+        }),
         actionsRight: rects[2]?.right,
         actionSizes: actionButtons.map(item => {
           const rect = item.getBoundingClientRect();
@@ -353,6 +430,10 @@ test.describe('Responsive mobile shell foundation', () => {
     expect(headerMetrics.centers[0]).toBeCloseTo(headerMetrics.centers[1], 0);
     expect(headerMetrics.centers[1]).toBeCloseTo(headerMetrics.centers[2], 0);
     expect(headerMetrics.contextCenter).toBeCloseTo(headerMetrics.headerCenter, 0);
+    expect(headerMetrics.contextSize).toBe('lg');
+    expect(headerMetrics.contextTrackHeight).toBe(40);
+    expect(headerMetrics.contextTabSizes.map(size => size[1])).toEqual([36, 36]);
+    expect(headerMetrics.contextIconSizes).toEqual([[24, 24], [24, 24]]);
     expect(headerMetrics.logoLeft).toBe(8);
     expect(headerMetrics.logoMarkLeft).toBe(16);
     expect(headerMetrics.logoMarkSize).toEqual([24, 24]);
@@ -548,6 +629,20 @@ test.describe('Responsive mobile shell foundation', () => {
     await expect(page.getByRole('button', { name: 'Enter fullscreen' })).toHaveCount(0);
     await expectActiveToolToFillStage(page);
 
+    const inboxTabs = tools.getByRole('tablist', { name: 'Inbox sections' });
+    await expect(inboxTabs.getByRole('tab')).toHaveCount(2);
+    await expect(inboxTabs.getByRole('tab').allTextContents()).resolves.toEqual([
+      'Stacks',
+      'Activity',
+    ]);
+    await expect(inboxTabs.locator('.tab__icon')).toHaveCount(0);
+    await expect(tools.locator('ds-mobile-header ds-tab-group')).toHaveJSProperty('size', 'lg');
+    await expect(tools.locator('ds-mobile-header .tab-list')).toHaveCSS('height', '40px');
+
+    await inboxTabs.getByRole('tab', { name: 'Stacks' }).click();
+    await expect(tools).toHaveAttribute('active-tool', 'stacks');
+    await expect(page.locator('.shell-tools__view--active')).toContainText('Stacks view');
+
     await page.getByRole('button', { name: 'Messages' }).click();
     await expect(tools).toHaveAttribute('active-tool', 'messages');
     await expect(page.locator('#messages-view')).toHaveCSS('width', '390px');
@@ -574,6 +669,27 @@ test.describe('Responsive mobile shell foundation', () => {
       'rgb(255, 255, 255)'
     );
     await expect(page.getByRole('button', { name: /Current section: Live Map/ })).toBeVisible();
+    await expect(page.locator('.shell-app__content .mobile-header__primary')).toHaveCSS(
+      'height',
+      '56px'
+    );
+    const bottomBarMetrics = await page.locator('.mobile-bar-nav').evaluate(element => {
+      const styles = getComputedStyle(element);
+      return {
+        height: element.getBoundingClientRect().height,
+        borderBlockStart: parseFloat(styles.borderBlockStartWidth),
+      };
+    });
+    expect(bottomBarMetrics.height - bottomBarMetrics.borderBlockStart).toBe(56);
+
+    await page.getByRole('button', { name: 'Search' }).click();
+    await expect(page.locator('ds-shell-tools .mobile-header__primary')).toHaveCSS(
+      'height',
+      '56px'
+    );
+
+    await page.getByRole('button', { name: 'Menu' }).click();
+    await expect(page.locator('.mobile-sheet-nav__header')).toHaveCSS('height', '56px');
   });
 });
 

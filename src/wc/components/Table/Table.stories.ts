@@ -1,0 +1,963 @@
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { html } from 'lit';
+import { useArgs } from 'storybook/preview-api';
+import '../../../../dist/components/ds-table.js';
+import '../../../../dist/components/ds-text.js';
+import '../../styles/table.css';
+import type {
+  TableColumn,
+  TableGroup,
+  TableGroupingState,
+  TableRow,
+  TableSortState,
+} from './table-types';
+
+const COLUMNS: TableColumn[] = [
+  { id: 'driver', header: 'Driver', sortable: true, size: 'sm' },
+  { id: 'status', header: 'Status', sortable: true, size: 'xs' },
+  { id: 'vehicle', header: 'Vehicle', sortable: true, size: 'xs' },
+  { id: 'location', header: 'Last known location', size: 'sm' },
+  { id: 'safetyScore', header: 'Safety score', sortable: true, align: 'end', size: 'xs' },
+  { id: 'driveTime', header: 'Drive time', sortable: true, align: 'end', size: 'xs' },
+];
+
+const ROWS: TableRow[] = [
+  {
+    id: 'driver-avery',
+    selectionLabel: 'Avery Chen',
+    cells: {
+      driver: { primary: 'Avery Chen', secondary: 'avery.chen@example.com' },
+      status: 'Driving',
+      vehicle: 'V-2048',
+      location: 'Burnaby, BC',
+      safetyScore: { primary: 98, fontFeature: 'tabular-nums' },
+      driveTime: { primary: '5h 42m', fontFeature: 'tabular-nums' },
+    },
+  },
+  {
+    id: 'driver-jordan',
+    selectionLabel: 'Jordan Patel',
+    cells: {
+      driver: { primary: 'Jordan Patel', secondary: 'jordan.patel@example.com' },
+      status: 'On duty',
+      vehicle: 'V-1822',
+      location: 'Richmond, BC',
+      safetyScore: { primary: 94, fontFeature: 'tabular-nums' },
+      driveTime: { primary: '3h 18m', fontFeature: 'tabular-nums' },
+    },
+  },
+  {
+    id: 'driver-morgan',
+    selectionLabel: 'Morgan Lee',
+    cells: {
+      driver: { primary: 'Morgan Lee', secondary: 'morgan.lee@example.com' },
+      status: 'Driving',
+      vehicle: 'V-2105',
+      location: 'Coquitlam, BC',
+      safetyScore: { primary: 91, fontFeature: 'tabular-nums' },
+      driveTime: { primary: '6h 05m', fontFeature: 'tabular-nums' },
+    },
+  },
+  {
+    id: 'driver-sam',
+    selectionLabel: 'Sam Rivera',
+    cells: {
+      driver: { primary: 'Sam Rivera', secondary: 'sam.rivera@example.com' },
+      status: 'Off duty',
+      vehicle: null,
+      location: 'Surrey, BC',
+      safetyScore: { primary: 89, fontFeature: 'tabular-nums' },
+      driveTime: { primary: '0h 00m', fontFeature: 'tabular-nums' },
+    },
+  },
+  {
+    id: 'driver-priya',
+    selectionLabel: 'Priya Shah',
+    cells: {
+      driver: { primary: 'Priya Shah', secondary: 'priya.shah@example.com' },
+      status: 'On duty',
+      vehicle: 'V-1974',
+      location: 'New Westminster, BC',
+      safetyScore: { primary: 87, fontFeature: 'tabular-nums' },
+      driveTime: { primary: '2h 51m', fontFeature: 'tabular-nums' },
+    },
+  },
+  {
+    id: 'driver-alex',
+    selectionLabel: 'Alex Thompson',
+    cells: {
+      driver: { primary: 'Alex Thompson', secondary: 'alex.thompson@example.com' },
+      status: 'Driving',
+      vehicle: 'V-2011',
+      location: 'Vancouver, BC',
+      safetyScore: { primary: 84, fontFeature: 'tabular-nums' },
+      driveTime: { primary: '7h 14m', fontFeature: 'tabular-nums' },
+    },
+  },
+];
+
+const ASYNC_COLUMNS: TableColumn[] = [
+  { id: 'driver', header: 'Driver', size: 'sm' },
+  { id: 'status', header: 'Status', size: 'xs' },
+  { id: 'vehicle', header: 'Vehicle', size: 'xs' },
+];
+
+const ALIGNMENT_COLUMNS: TableColumn[] = [
+  { id: 'driver', header: 'Start aligned', sortable: true, align: 'start', size: 'sm' },
+  { id: 'status', header: 'Center aligned', sortable: true, align: 'center', size: 'sm' },
+  { id: 'score', header: 'End aligned', sortable: true, align: 'end', size: 'sm' },
+];
+
+const ALIGNMENT_ROWS: TableRow[] = [
+  { id: 'alignment-one', cells: { driver: 'Avery Chen', status: 'Driving', score: 98 } },
+  { id: 'alignment-two', cells: { driver: 'Jordan Patel', status: 'On duty', score: 94 } },
+  { id: 'alignment-three', cells: { driver: 'Sam Rivera', status: 'Off duty', score: 89 } },
+];
+
+const ALL_CELL_TYPE_COLUMNS: TableColumn[] = [
+  { id: 'scalar', header: 'Scalar text', size: 'sm' },
+  { id: 'primarySecondary', header: 'Primary + secondary', size: 'sm' },
+  { id: 'primaryPair', header: 'Primary + primary', size: 'sm' },
+  { id: 'image', header: 'Image', size: 'sm' },
+  { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
+  { id: 'tagOnly', header: 'Tag only', size: 'sm' },
+  { id: 'tagWithText', header: 'Tag + text', size: 'sm' },
+  { id: 'textWithTag', header: 'Text + tag', size: 'sm' },
+  { id: 'action', header: 'Action', align: 'center', size: 'xs' },
+  { id: 'borderedAction', header: 'Bordered action', align: 'center', size: 'xs' },
+  { id: 'empty', header: 'Empty', size: 'xs' },
+  { id: 'blank', header: 'Blank', size: 'xs' },
+];
+
+const ALL_CELL_TYPE_ROWS: TableRow[] = [
+  {
+    id: 'all-cell-types-one',
+    selectionLabel: 'First all-cell-types example',
+    cells: {
+      scalar: 'Vehicle 2841',
+      primarySecondary: { primary: 'John Smith', secondary: 'DRV-1048' },
+      primaryPair: { kind: 'primary-text', primary: 'Vehicle', secondary: 'VH-2841' },
+      image: { kind: 'image', alt: 'Safety event preview unavailable' },
+      icon: { kind: 'icon', icon: 'DocumentInverted', color: 'secondary', label: 'Has notes' },
+      tagOnly: { kind: 'tag', label: 'Pending', intent: 'caution' },
+      tagWithText: {
+        kind: 'tag',
+        variant: 'tag-with-text',
+        label: 'Coachable',
+        intent: 'negative',
+        text: 'Needs review',
+      },
+      textWithTag: {
+        kind: 'tag',
+        variant: 'text-with-tag',
+        text: 'Review complete',
+        label: 'Coached',
+        intent: 'neutral',
+      },
+      action: {
+        kind: 'action',
+        actionId: 'more',
+        variant: 'icon',
+        icon: 'Ellipses',
+        ariaLabel: 'More actions',
+      },
+      borderedAction: {
+        kind: 'action',
+        actionId: 'more-bordered',
+        variant: 'icon',
+        icon: 'Ellipses',
+        ariaLabel: 'More actions with border',
+        hasBorder: true,
+      },
+      empty: { kind: 'empty' },
+      blank: { kind: 'blank' },
+    },
+  },
+];
+
+const SAFETY_EVENT_COLUMNS: TableColumn[] = [
+  { id: 'preview', header: 'Preview', size: 'sm' },
+  {
+    id: 'behaviorDetails',
+    header: 'Behavior / Severity',
+    headerSegments: [
+      { label: 'Behavior', sortKey: 'behavior', separator: '/' },
+      { label: 'Severity', sortKey: 'severity' },
+    ],
+    sortable: true,
+    size: 'sm',
+  },
+  {
+    id: 'driverDetails',
+    header: 'Driver name / ID',
+    headerSegments: [
+      { label: 'Driver name', sortKey: 'driverName', separator: '/' },
+      { label: 'ID', sortKey: 'driverId' },
+    ],
+    sortable: true,
+    size: 'md',
+  },
+  {
+    id: 'vehicleDetails',
+    header: 'Vehicle ID / Make · Model · Year',
+    headerSegments: [
+      { label: 'Vehicle ID', sortKey: 'vehicleId', separator: '/' },
+      { label: 'Make', sortKey: 'vehicleMake', separator: '·' },
+      { label: 'Model', sortKey: 'vehicleModel', separator: '·' },
+      { label: 'Year', sortKey: 'vehicleYear' },
+    ],
+    sortable: true,
+    size: 'md',
+  },
+  {
+    id: 'dateLocation',
+    header: 'Date-time (PT) / Location',
+    headerSegments: [
+      { label: 'Date-time (PT)', sortKey: 'eventTime', separator: '/' },
+      { label: 'Location', sortKey: 'location' },
+    ],
+    sortable: true,
+    size: 'md',
+  },
+  { id: 'status', header: 'Status', sortable: true, size: 'sm' },
+  { id: 'notes', header: 'Notes', align: 'center', sortable: true, size: 'xs' },
+];
+
+const SAFETY_EVENT_ROWS: TableRow[] = [
+  {
+    id: 'safety-event-1048',
+    selectionLabel: 'Close following event for John Smith',
+    cells: {
+      preview: { kind: 'image', alt: 'Road-facing video preview unavailable' },
+      behaviorDetails: { primary: 'Close following', secondary: 'Critical' },
+      behavior: 'Close following',
+      severity: 'Critical',
+      driverDetails: { primary: 'John Smith', secondary: 'DRV-1048' },
+      driverName: 'John Smith',
+      driverId: 'DRV-1048',
+      vehicleDetails: { primary: 'VH-2841', secondary: 'Freightliner Cascadia · 2024' },
+      vehicleId: 'VH-2841',
+      vehicleMake: 'Freightliner',
+      vehicleModel: 'Cascadia',
+      vehicleYear: 2024,
+      dateLocation: { primary: 'Aug 7, 2026 · 9:32 AM', secondary: 'Fresno, CA' },
+      eventTime: '2026-08-07T09:32:00-07:00',
+      location: 'Fresno, CA',
+      status: { kind: 'tag', label: 'Pending review', intent: 'caution' },
+      notes: {
+        kind: 'icon',
+        icon: 'DocumentInverted',
+        color: 'secondary',
+        label: 'Has notes',
+        sortValue: true,
+      },
+    },
+  },
+  {
+    id: 'safety-event-1047',
+    selectionLabel: 'Lane cutoff event for Maria Garcia',
+    cells: {
+      preview: { kind: 'image', alt: 'Dual-facing video preview unavailable' },
+      behaviorDetails: { primary: 'Lane cutoff', secondary: 'High' },
+      behavior: 'Lane cutoff',
+      severity: 'High',
+      driverDetails: { primary: 'Maria Garcia', secondary: 'DRV-2256' },
+      driverName: 'Maria Garcia',
+      driverId: 'DRV-2256',
+      vehicleDetails: { primary: 'VH-1904', secondary: 'Volvo VNL · 2023' },
+      vehicleId: 'VH-1904',
+      vehicleMake: 'Volvo',
+      vehicleModel: 'VNL',
+      vehicleYear: 2023,
+      dateLocation: { primary: 'Aug 7, 2026 · 8:14 AM', secondary: 'Oakland, CA' },
+      eventTime: '2026-08-07T08:14:00-07:00',
+      location: 'Oakland, CA',
+      status: { kind: 'tag', label: 'Coachable', intent: 'negative' },
+      notes: {
+        kind: 'icon',
+        icon: 'DocumentInverted',
+        color: 'quaternary',
+        label: 'No notes',
+        sortValue: false,
+      },
+    },
+  },
+  {
+    id: 'safety-event-1046',
+    selectionLabel: 'Distraction event for David Chen',
+    cells: {
+      preview: { kind: 'image', alt: 'Driver-facing video preview unavailable' },
+      behaviorDetails: { primary: 'Distraction', secondary: 'High' },
+      behavior: 'Distraction',
+      severity: 'High',
+      driverDetails: { primary: 'David Chen', secondary: 'DRV-0182' },
+      driverName: 'David Chen',
+      driverId: 'DRV-0182',
+      vehicleDetails: { primary: 'VH-3377', secondary: 'Kenworth T680 · 2022' },
+      vehicleId: 'VH-3377',
+      vehicleMake: 'Kenworth',
+      vehicleModel: 'T680',
+      vehicleYear: 2022,
+      dateLocation: { primary: 'Aug 6, 2026 · 4:48 PM', secondary: 'Reno, NV' },
+      eventTime: '2026-08-06T16:48:00-07:00',
+      location: 'Reno, NV',
+      status: { kind: 'tag', label: 'Coached', intent: 'neutral' },
+      notes: {
+        kind: 'icon',
+        icon: 'DocumentInverted',
+        color: 'secondary',
+        label: 'Has notes',
+        sortValue: true,
+      },
+    },
+  },
+  {
+    id: 'safety-event-1045',
+    selectionLabel: 'Stop sign violation event for Sarah Williams',
+    cells: {
+      preview: { kind: 'image', alt: 'Road-facing video preview unavailable' },
+      behaviorDetails: { primary: 'Stop sign violation', secondary: 'Critical' },
+      behavior: 'Stop sign violation',
+      severity: 'Critical',
+      driverDetails: { primary: 'Sarah Williams', secondary: 'DRV-3109' },
+      driverName: 'Sarah Williams',
+      driverId: 'DRV-3109',
+      vehicleDetails: { primary: 'VH-2216', secondary: 'Peterbilt 579 · 2024' },
+      vehicleId: 'VH-2216',
+      vehicleMake: 'Peterbilt',
+      vehicleModel: '579',
+      vehicleYear: 2024,
+      dateLocation: { primary: 'Aug 6, 2026 · 1:06 PM', secondary: 'Sacramento, CA' },
+      eventTime: '2026-08-06T13:06:00-07:00',
+      location: 'Sacramento, CA',
+      status: { kind: 'tag', label: 'Pending review', intent: 'caution' },
+      notes: {
+        kind: 'icon',
+        icon: 'DocumentInverted',
+        color: 'quaternary',
+        label: 'No notes',
+        sortValue: false,
+      },
+    },
+  },
+  {
+    id: 'safety-event-1044',
+    selectionLabel: 'Unsafe lane change event for Noah Wilson',
+    cells: {
+      preview: { kind: 'image', alt: 'Dual-facing video preview unavailable' },
+      behaviorDetails: { primary: 'Unsafe lane change', secondary: 'Low' },
+      behavior: 'Unsafe lane change',
+      severity: 'Low',
+      driverDetails: { primary: 'Noah Wilson', secondary: 'DRV-4420' },
+      driverName: 'Noah Wilson',
+      driverId: 'DRV-4420',
+      vehicleDetails: { primary: 'VH-1688', secondary: 'International LT · 2021' },
+      vehicleId: 'VH-1688',
+      vehicleMake: 'International',
+      vehicleModel: 'LT',
+      vehicleYear: 2021,
+      dateLocation: { primary: 'Aug 5, 2026 · 11:27 AM', secondary: 'Stockton, CA' },
+      eventTime: '2026-08-05T11:27:00-07:00',
+      location: 'Stockton, CA',
+      status: { kind: 'tag', label: 'Coachable', intent: 'negative' },
+      notes: {
+        kind: 'icon',
+        icon: 'DocumentInverted',
+        color: 'secondary',
+        label: 'Has notes',
+        sortValue: true,
+      },
+    },
+  },
+];
+
+const ADDED_ROWS: TableRow[] = [
+  {
+    id: 'driver-taylor',
+    selectionLabel: 'Taylor Brooks',
+    cells: { driver: 'Taylor Brooks', status: 'On duty', vehicle: 'V-2210' },
+  },
+  {
+    id: 'driver-cameron',
+    selectionLabel: 'Cameron Wilson',
+    cells: { driver: 'Cameron Wilson', status: 'Driving', vehicle: 'V-2164' },
+  },
+];
+
+function compareCell(a: TableRow, b: TableRow, columnId: string): number {
+  const primitive = (row: TableRow) => {
+    const value = row.cells[columnId];
+    if (!value || typeof value !== 'object') return value;
+    if ('primary' in value) return value.primary;
+    if (value.kind === 'tag') return value.label;
+    if (value.kind === 'icon') return value.sortValue ?? value.label ?? '';
+    return '';
+  };
+  return String(primitive(a) ?? '').localeCompare(String(primitive(b) ?? ''), undefined, {
+    numeric: true,
+    sensitivity: 'base',
+  });
+}
+
+function orderedRows(rows: TableRow[], sort: TableSortState | null): TableRow[] {
+  if (!sort) return rows;
+  const direction = sort.direction === 'asc' ? 1 : -1;
+  return [...rows].sort((a, b) => compareCell(a, b, sort.columnId) * direction);
+}
+
+function groupedRows(
+  rows: TableRow[],
+  grouping: TableGroupingState,
+  sort: TableSortState | null,
+): TableGroup[] {
+  const byStatus = new Map<string, TableRow[]>();
+  for (const row of rows) {
+    const status = String(row.cells[grouping.columnId] ?? 'Unassigned');
+    byStatus.set(status, [...(byStatus.get(status) ?? []), row]);
+  }
+
+  const direction = grouping.direction === 'asc' ? 1 : -1;
+  return [...byStatus]
+    .sort(([a], [b]) => a.localeCompare(b) * direction)
+    .map(([label, members]) => ({
+      id: label.toLowerCase().replaceAll(' ', '-'),
+      label,
+      rows: orderedRows(members, sort),
+      totalCount: members.length,
+    }));
+}
+
+const meta: Meta = {
+  title: 'Data display/Table',
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        component:
+          'A semantic, controlled data table. Applications own data transformation and loading; the component owns native table structure, interaction intent, status presentation, and a token-backed visual recipe.',
+      },
+    },
+  },
+  argTypes: {
+    captionVisibility: { control: 'select', options: ['visible', 'hidden'] },
+    stickyHeader: { control: 'boolean' },
+    selectionMode: { control: 'select', options: ['none', 'multiple'] },
+    loading: { control: 'boolean' },
+    lazyLoading: { control: 'boolean' },
+    loadMoreMode: { control: 'select', options: ['auto', 'manual'] },
+  },
+  args: {
+    captionVisibility: 'visible',
+    stickyHeader: false,
+    selectionMode: 'multiple',
+    loading: false,
+    lazyLoading: false,
+    loadMoreMode: 'manual',
+    selectedRowIds: [],
+    sort: null,
+  },
+};
+
+export default meta;
+type Story = StoryObj;
+
+export const Playground: Story = {
+  render: args => {
+    const [, updateArgs] = useArgs();
+    const sort = (args['sort'] as TableSortState | null) ?? null;
+    const selectedRowIds = (args['selectedRowIds'] as string[]) ?? [];
+    return html`
+      <ds-table
+        .columns=${COLUMNS}
+        .rows=${orderedRows(ROWS, sort)}
+        .sort=${sort}
+        .selectedRowIds=${selectedRowIds}
+        caption="Workforce overview"
+        caption-visibility=${args['captionVisibility']}
+        selection-mode=${args['selectionMode']}
+        .stickyHeader=${args['stickyHeader']}
+        .loading=${args['loading']}
+        .lazyLoading=${args['lazyLoading']}
+        load-more-mode=${args['loadMoreMode']}
+        .hasMore=${args['lazyLoading']}
+        @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
+          updateArgs({ sort: event.detail.sort })}
+        @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>
+          updateArgs({ selectedRowIds: event.detail.selectedRowIds })}
+      ></ds-table>
+    `;
+  },
+};
+
+export const ColumnHeaderAlignment: Story = {
+  name: 'Column header alignment',
+  args: {
+    grouping: { columnId: 'status', direction: 'asc' },
+    sort: { columnId: 'score', direction: 'desc' },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Start-aligned headers reserve the far-right sort lane. End-aligned headers place it at the far left. Center-aligned headers keep it inline immediately after the label.',
+      },
+    },
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    const grouping = args['grouping'] as TableGroupingState;
+    const sort = (args['sort'] as TableSortState | null) ?? null;
+    return html`
+      <ds-table
+        .columns=${ALIGNMENT_COLUMNS}
+        .groups=${groupedRows(ALIGNMENT_ROWS, grouping, sort)}
+        .grouping=${grouping}
+        .sort=${sort}
+        caption="Column header alignment"
+        caption-visibility="visible"
+        @dsGroupingChange=${(event: CustomEvent<{ grouping: TableGroupingState }>) =>
+          updateArgs({ grouping: event.detail.grouping })}
+        @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
+          updateArgs({ sort: event.detail.sort })}
+      ></ds-table>
+    `;
+  },
+};
+
+export const SafetyEvents: Story = {
+  name: 'Safety events',
+  args: {
+    sort: { columnId: 'eventTime', direction: 'desc' },
+    selectedRowIds: [],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'A Motive Dashboard-inspired safety-events table. Its Preview column uses the standard 16:9 image placeholder while checkboxes, inset status Tags, and the first line of multi-track text cells share one top content track. Compound headers expose an independent, label-width sort target for every data point while the application retains ownership of row ordering.',
+      },
+    },
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    const sort = (args['sort'] as TableSortState | null) ?? null;
+    const selectedRowIds = (args['selectedRowIds'] as string[]) ?? [];
+    return html`
+      <ds-table
+        .columns=${SAFETY_EVENT_COLUMNS}
+        .rows=${orderedRows(SAFETY_EVENT_ROWS, sort)}
+        .sort=${sort}
+        .selectedRowIds=${selectedRowIds}
+        selection-mode="multiple"
+        caption="Safety events"
+        caption-visibility="hidden"
+        @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
+          updateArgs({ sort: event.detail.sort })}
+        @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>
+          updateArgs({ selectedRowIds: event.detail.selectedRowIds })}
+      ></ds-table>
+    `;
+  },
+};
+
+export const GroupingAndIndependentSorting: Story = {
+  name: 'Grouping and independent sorting',
+  args: {
+    grouping: { columnId: 'status', direction: 'asc' },
+    sort: { columnId: 'safetyScore', direction: 'desc' },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'The Status header controls group order. Safety score controls member order inside each group. The story performs both transformations in application code, illustrating the controlled contract.',
+      },
+    },
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    const grouping = args['grouping'] as TableGroupingState;
+    const sort = (args['sort'] as TableSortState | null) ?? null;
+    return html`
+      <ds-table
+        .columns=${COLUMNS}
+        .groups=${groupedRows(ROWS, grouping, sort)}
+        .grouping=${grouping}
+        .sort=${sort}
+        caption="Drivers grouped by status"
+        caption-visibility="visible"
+        @dsGroupingChange=${(event: CustomEvent<{ grouping: TableGroupingState }>) =>
+          updateArgs({ grouping: event.detail.grouping })}
+        @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
+          updateArgs({ sort: event.detail.sort })}
+      ></ds-table>
+    `;
+  },
+};
+
+export const ControlledSelection: Story = {
+  args: { selectedRowIds: ['driver-jordan', 'driver-not-loaded'] },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Selection is row-ID controlled. Select all targets selectable loaded rows and preserves driver-not-loaded, demonstrating that lazy datasets do not lose off-window selection.',
+      },
+    },
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    const rows = ROWS.slice(0, 5).map(row =>
+      row.id === 'driver-sam' ? { ...row, selectable: false } : row,
+    );
+    return html`
+      <ds-table
+        .columns=${COLUMNS.slice(0, 4)}
+        .rows=${rows}
+        .selectedRowIds=${args['selectedRowIds'] as string[]}
+        selection-mode="multiple"
+        caption="Selectable drivers"
+        caption-visibility="visible"
+        @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>
+          updateArgs({ selectedRowIds: event.detail.selectedRowIds })}
+      ></ds-table>
+      <ds-text
+        as="p"
+        variant="text-body-small"
+        color="secondary"
+        style="display:block;margin-top:var(--dimension-space-100);"
+      >
+        Selected IDs: ${(args['selectedRowIds'] as string[]).join(', ')}
+      </ds-text>
+    `;
+  },
+};
+
+export const AllCellTypes: Story = {
+  name: 'All cell types',
+  parameters: {
+    docs: {
+      description: {
+        story: 'One review table for every standard cell primitive. Single-track text, selection, Tag, Action, Empty, and Blank cells share a 40px contract; two-track text and the 16:9 Image cell establish a 64px row. Action cells primarily use an icon-only Ellipses ButtonUnfilled; the examples show its default unbordered and optional bordered treatments. Empty means the data applies but has no value and renders an em dash; Blank means the data is not applicable and intentionally renders nothing.',
+      },
+    },
+  },
+  render: () => html`
+    <ds-table
+      data-a11y-fixture
+      .columns=${ALL_CELL_TYPE_COLUMNS}
+      .rows=${ALL_CELL_TYPE_ROWS}
+      selection-mode="multiple"
+      caption="All table cell types"
+      caption-visibility="visible"
+    ></ds-table>
+  `,
+};
+
+export const ContentPrimitives: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Scalar values, primary/secondary copy, null values, numeric alignment, truncation, and explicit wrapping share stable cell-layer classes for future styling.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="max-inline-size:var(--dimension-panel-width-sm);">
+      <ds-table
+        .columns=${[
+          { id: 'name', header: 'Primary and secondary', size: 'sm' },
+          { id: 'notes', header: 'Wrapping content', wrap: true, size: 'sm' },
+          { id: 'quantity', header: 'Quantity', align: 'end', size: 'xs' },
+        ] satisfies TableColumn[]}
+        .rows=${[
+          {
+            id: 'primitive-one',
+            cells: {
+              name: { primary: 'Reefer trailer', secondary: 'TR-1048' },
+              notes: 'Temperature check is due after the next delivery window.',
+              quantity: { primary: 12840, fontFeature: 'tabular-nums' },
+            },
+          },
+          {
+            id: 'primitive-two',
+            cells: {
+              name: 'Dry van',
+              notes: { primary: 'This individual cell wraps.', wrap: true },
+              quantity: null,
+            },
+          },
+        ] satisfies TableRow[]}
+        caption="Cell content primitives"
+        caption-visibility="visible"
+      ></ds-table>
+    </div>
+  `,
+};
+
+export const InitialAndOutcomeStates: Story = {
+  name: 'Initial and outcome states',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Initial loading, empty, and initial error keep the table caption and column relationships present while replacing only the body state.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(var(--dimension-panel-width-xs),1fr));gap:var(--dimension-space-200);">
+      <ds-table
+        data-a11y-fixture
+        .columns=${ASYNC_COLUMNS}
+        .loading=${true}
+        .skeletonRows=${3}
+        caption="Loading drivers"
+        caption-visibility="visible"
+      ></ds-table>
+      <ds-table
+        data-a11y-fixture
+        .columns=${ASYNC_COLUMNS}
+        caption="Empty driver result"
+        caption-visibility="visible"
+        empty-heading="No matching drivers"
+        empty-body="Try changing the active filters."
+      ></ds-table>
+      <ds-table
+        data-a11y-fixture
+        .columns=${ASYNC_COLUMNS}
+        error
+        caption="Unavailable drivers"
+        caption-visibility="visible"
+        error-heading="Drivers unavailable"
+        error-body="Check the connection and try again."
+      ></ds-table>
+    </div>
+  `,
+};
+
+export const IncrementalLoadingStates: Story = {
+  name: 'Incremental loading states',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Existing rows remain visible through manual ready, loading, retry, and terminal lazy-loading states. There is no pagination UI.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(var(--dimension-panel-width-xs),1fr));gap:var(--dimension-space-200);">
+      <ds-table
+        data-a11y-fixture
+        .columns=${ASYNC_COLUMNS}
+        .rows=${ROWS.slice(0, 2)}
+        lazy-loading
+        load-more-mode="manual"
+        has-more
+        caption="Ready to load more drivers"
+        caption-visibility="visible"
+      ></ds-table>
+      <ds-table
+        data-a11y-fixture
+        .columns=${ASYNC_COLUMNS}
+        .rows=${ROWS.slice(0, 2)}
+        lazy-loading
+        load-more-mode="manual"
+        has-more
+        loading-more
+        caption="Loading more drivers"
+        caption-visibility="visible"
+      ></ds-table>
+      <ds-table
+        data-a11y-fixture
+        .columns=${ASYNC_COLUMNS}
+        .rows=${ROWS.slice(0, 2)}
+        lazy-loading
+        load-more-mode="manual"
+        has-more
+        load-more-error="More drivers could not be loaded."
+        caption="Driver load-more error"
+        caption-visibility="visible"
+      ></ds-table>
+      <ds-table
+        data-a11y-fixture
+        .columns=${ASYNC_COLUMNS}
+        .rows=${ROWS.slice(0, 2)}
+        lazy-loading
+        load-more-mode="manual"
+        caption="All drivers loaded"
+        caption-visibility="visible"
+      ></ds-table>
+    </div>
+  `,
+};
+
+export const WorkingLazyLoading: Story = {
+  name: 'Working lazy loading',
+  args: {
+    lazyRows: ROWS.slice(0, 3),
+    loadingMore: false,
+    hasMore: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Activate Load more to see the application acknowledge the request, append stable rows, and finish the dataset. The component never owns a cursor or fetch.',
+      },
+    },
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    return html`
+      <ds-table
+        .columns=${ASYNC_COLUMNS}
+        .rows=${args['lazyRows'] as TableRow[]}
+        lazy-loading
+        load-more-mode="manual"
+        .hasMore=${args['hasMore']}
+        .loadingMore=${args['loadingMore']}
+        load-identity="workforce-demo"
+        caption="Lazy-loaded drivers"
+        caption-visibility="visible"
+        @dsLoadMore=${() => {
+          if (args['loadingMore'] || !args['hasMore']) return;
+          updateArgs({ loadingMore: true });
+          window.setTimeout(() => {
+            updateArgs({
+              lazyRows: [...(args['lazyRows'] as TableRow[]), ...ADDED_ROWS],
+              loadingMore: false,
+              hasMore: false,
+            });
+          }, 650);
+        }}
+      ></ds-table>
+    `;
+  },
+};
+
+export const StickyHeaderAndOverflow: Story = {
+  name: 'Sticky header and overflow',
+  parameters: {
+    docs: {
+      description: {
+        story: 'A constrained scroll region keeps the header visible, preserves native table semantics, and provides horizontal overflow cues and keyboard focus.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="max-inline-size:var(--dimension-panel-width-sm);">
+      <ds-table
+        .columns=${COLUMNS}
+        .rows=${[...ROWS, ...ROWS.map(row => ({ ...row, id: `${row.id}-copy` }))]}
+        caption="Scrollable workforce overview"
+        caption-visibility="hidden"
+        scroll-label="Scrollable workforce data"
+        sticky-header
+        max-height="var(--dimension-card-height-xs)"
+      ></ds-table>
+    </div>
+  `,
+};
+
+export const NarrowAndLongContent: Story = {
+  name: 'Narrow viewport and long content',
+  render: () => html`
+    <div style="max-inline-size:var(--dimension-panel-width-xs);">
+      <ds-table
+        .columns=${[
+          { id: 'driver', header: 'Driver', size: 'sm' },
+          { id: 'location', header: 'Last known location', size: 'md', wrap: true },
+          { id: 'event', header: 'Latest event', size: 'sm' },
+        ] satisfies TableColumn[]}
+        .rows=${[
+          {
+            id: 'long-content',
+            cells: {
+              driver: {
+                primary: 'Alexandria Montgomery-Wilson',
+                secondary: 'alexandria.montgomery-wilson@example.com',
+              },
+              location: 'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
+              event: 'Vehicle inspection completed successfully',
+            },
+          },
+        ] satisfies TableRow[]}
+        caption="Long-content behavior"
+        caption-visibility="visible"
+      ></ds-table>
+    </div>
+  `,
+};
+
+export const RestyledVisualPrimitives: Story = {
+  name: 'Restyled visual primitives',
+  parameters: {
+    docs: {
+      description: {
+        story: 'A product can reshape the visual recipe through public --ds-table-* properties without changing table behavior or semantic markup.',
+      },
+    },
+  },
+  render: () => html`
+    <ds-table
+      style="
+        --ds-table-header-surface:var(--color-background-faint-brand);
+        --ds-table-group-surface:var(--color-background-faint-positive);
+        --ds-table-row-selected:var(--color-background-faint-positive);
+        --ds-table-radius:var(--dimension-radius-150);
+        --ds-table-cell-padding-inline:var(--dimension-space-200);
+      "
+      .columns=${COLUMNS.slice(0, 4)}
+      .groups=${groupedRows(ROWS.slice(0, 5), { columnId: 'status', direction: 'asc' }, null)}
+      .grouping=${{ columnId: 'status', direction: 'asc' }}
+      .selectedRowIds=${['driver-jordan']}
+      selection-mode="multiple"
+      caption="Restyled grouped drivers"
+      caption-visibility="visible"
+    ></ds-table>
+  `,
+};
+
+export const NativeCssRecipe: Story = {
+  name: 'Native CSS recipe',
+  parameters: {
+    docs: {
+      description: {
+        story: 'The exported @ds-mo/ui/table.css recipe can style application-owned native markup with the same stable primitives when the component data model is not appropriate.',
+      },
+    },
+  },
+  render: () => html`
+    <div class="ds-table ds-table--md">
+      <div class="ds-table__frame">
+        <div class="ds-table__viewport">
+          <table class="ds-table__table">
+            <caption class="ds-table__caption">
+              <ds-text as="span" variant="text-title-small" emphasis>Application-owned audit log</ds-text>
+            </caption>
+            <thead class="ds-table__head">
+              <tr class="ds-table__header-row">
+                <th class="ds-table__header-cell" scope="col">
+                  <span class="ds-table__header-static">
+                    <ds-text as="span" variant="text-body-small" emphasis color="secondary">Event</ds-text>
+                  </span>
+                </th>
+                <th class="ds-table__header-cell" scope="col">
+                  <span class="ds-table__header-static">
+                    <ds-text as="span" variant="text-body-small" emphasis color="secondary">Time</ds-text>
+                  </span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="ds-table__body">
+              <tr class="ds-table__row">
+                <td class="ds-table__cell"><span class="ds-table__cell-content">Vehicle assigned</span></td>
+                <td class="ds-table__cell"><span class="ds-table__cell-content">09:42</span></td>
+              </tr>
+              <tr class="ds-table__row">
+                <td class="ds-table__cell"><span class="ds-table__cell-content">Driver acknowledged</span></td>
+                <td class="ds-table__cell"><span class="ds-table__cell-content">09:45</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `,
+};

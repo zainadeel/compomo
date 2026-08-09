@@ -1,7 +1,13 @@
 import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';
-import { getSelectableTabs, type TabItem } from '../TabGroup/tab-item-utils';
+import {
+  getSelectableTabs,
+  type TabGroupItem,
+  type TabItem,
+} from '../TabGroup/tab-item-utils';
+import type { TabGroupSize } from '../TabGroup/TabGroup';
 import type {
   MobileHeaderHeadingLevel,
+  MobileHeaderSectionsPresentation,
   MobileHeaderTone,
 } from './mobile-header-types';
 
@@ -16,11 +22,15 @@ export class MobileHeader {
   /** Semantic heading level for the active mobile screen. */
   @Prop() headingLevel: MobileHeaderHeadingLevel = 'h1';
   /** Controlled peer sections. Their selected label replaces the static title. */
-  @Prop() sections: TabItem[] = [];
+  @Prop() sections: TabGroupItem[] = [];
   /** Controlled selected section id. */
   @Prop() value: string = '';
   /** Accessible name for the section chooser. */
   @Prop() sectionsAriaLabel: string = 'Change page section';
+  /** Popup switcher or an inline segmented TabGroup for peer sections. */
+  @Prop() sectionsPresentation: MobileHeaderSectionsPresentation = 'switcher';
+  /** Density for the segmented sections presentation. */
+  @Prop() sectionsSize: TabGroupSize = 'md';
   /** Controlled child sections within the selected page or detail screen. */
   @Prop() subsections: TabItem[] = [];
   /** Controlled selected child-section id. */
@@ -35,7 +45,7 @@ export class MobileHeader {
   /** Child-section selection intent. */
   @Event() dsSubsectionChange!: EventEmitter<string>;
 
-  private get resolvedSections(): TabItem[] {
+  private get resolvedSections(): TabGroupItem[] {
     return this.sections ?? [];
   }
 
@@ -84,12 +94,22 @@ export class MobileHeader {
                   >
                     {this.selectedLabel}
                   </span>,
-                  <ds-mobile-section-switcher
-                    sections={this.resolvedSections}
-                    value={this.value}
-                    navigationLabel={this.sectionsAriaLabel}
-                    onDsChange={this.handleSectionChange}
-                  />,
+                  this.sectionsPresentation === 'segmented' ? (
+                    <ds-tab-group
+                      tabs={this.resolvedSections}
+                      value={this.value}
+                      size={this.sectionsSize}
+                      ariaLabel={this.sectionsAriaLabel}
+                      onDsChange={this.handleSectionChange}
+                    />
+                  ) : (
+                    <ds-mobile-section-switcher
+                      sections={this.resolvedSections}
+                      value={this.value}
+                      navigationLabel={this.sectionsAriaLabel}
+                      onDsChange={this.handleSectionChange}
+                    />
+                  ),
                 ]
               ) : (
                 <ds-text

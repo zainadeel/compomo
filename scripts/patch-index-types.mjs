@@ -40,6 +40,36 @@ export type {
   AgentToolState,
   AgentResponsePart,
 } from '../types/components/conversation-types';
+export type {
+  TableCaptionVisibility,
+  TableCellAlign,
+  TableCellAction,
+  TableCellActionDetail,
+  TableCellBlank,
+  TableCellEmpty,
+  TableCellIcon,
+  TableCellImage,
+  TableCellPrimaryText,
+  TableCellText,
+  TableCellTag,
+  TableCellTagVariant,
+  TableCellValue,
+  TableColumn,
+  TableColumnWidth,
+  TableGroup,
+  TableHeaderSegment,
+  TableGroupingChangeDetail,
+  TableGroupingState,
+  TableLoadMoreDetail,
+  TableLoadMoreMode,
+  TableLoadMoreReason,
+  TableRow,
+  TableSelectionChangeDetail,
+  TableSelectionMode,
+  TableSortChangeDetail,
+  TableSortDirection,
+  TableSortState,
+} from '../types/components/Table/table-types';
 `;
 
 const existing = readFileSync(indexPath, 'utf8');

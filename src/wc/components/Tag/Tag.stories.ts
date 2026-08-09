@@ -8,6 +8,11 @@ import '../../../../dist/components/ds-menu.js';
 const INTENTS   = ['neutral', 'brand', 'ai', 'negative', 'warning', 'caution', 'positive'];
 const CONTRASTS = ['strong', 'bold', 'medium', 'faint'];
 const SIZES     = ['md', 'sm', 'xs'] as const;
+const SIZE_HEIGHT = {
+  md: 'var(--dimension-size-400)',
+  sm: 'var(--dimension-size-300)',
+  xs: 'var(--dimension-size-200)',
+} as const;
 const STATUS_ITEMS = [
   { label: 'All vehicles', value: 'all' },
   { label: 'Active', value: 'active' },
@@ -24,6 +29,7 @@ const meta: Meta = {
     intent:   { control: 'select', options: INTENTS },
     contrast: { control: 'select', options: CONTRASTS },
     size:     { control: 'select', options: [...SIZES] },
+    isInset:  { control: 'boolean' },
     rounded:  { control: 'boolean' },
     maxWidth: { control: 'text' },
     interactive: { control: 'boolean' },
@@ -37,6 +43,7 @@ const meta: Meta = {
     intent:   'neutral',
     contrast: 'faint',
     size:     'md',
+    isInset:  false,
     rounded:  false,
     maxWidth: '',
     interactive: false,
@@ -57,6 +64,7 @@ export const Playground: Story = {
       intent=${args['intent']}
       contrast=${args['contrast']}
       size=${args['size']}
+      ?is-inset=${args['isInset']}
       max-width=${args['maxWidth'] || undefined}
       ?rounded=${args['rounded']}
       ?interactive=${args['interactive']}
@@ -91,6 +99,36 @@ export const Sizes: Story = {
         <div style="display: flex; flex-direction: column; align-items: center; gap: var(--dimension-space-075)">
           <ds-tag label=${size} intent="brand" contrast="faint" size=${size}></ds-tag>
           <span style="font-size: var(--typography-fontsize-xs); font-family: var(--typography-fontfamily-mono); color: var(--color-foreground-tertiary)">${size}</span>
+        </div>
+      `)}
+    </div>
+  `,
+};
+
+export const InsetDensity: Story = {
+  name: 'Inset density',
+  render: () => html`
+    <div style="display: flex; flex-direction: column; gap: var(--dimension-space-150)">
+      ${SIZES.map(size => html`
+        <div style="display: grid; grid-template-columns: minmax(var(--dimension-size-600), auto) auto auto; gap: var(--dimension-space-100); align-items: center">
+          <span style="font-size: var(--typography-fontsize-xs); font-family: var(--typography-fontfamily-mono); color: var(--color-foreground-tertiary)">${size}</span>
+          <ds-tag
+            label="Default"
+            intent="brand"
+            contrast="faint"
+            size=${size}
+          ></ds-tag>
+          <div
+            style="display: inline-flex; align-items: center; box-sizing: border-box; width: fit-content; height: ${SIZE_HEIGHT[size]}; padding: var(--dimension-space-025); border-radius: var(--dimension-radius-050); background: var(--color-background-secondary)"
+          >
+            <ds-tag
+              label="Inset"
+              intent="brand"
+              contrast="faint"
+              size=${size}
+              is-inset
+            ></ds-tag>
+          </div>
         </div>
       `)}
     </div>

@@ -1,0 +1,758 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "table",
+  "title": "Table",
+  "description": "Semantic, controlled data table with durable visual primitives for cell geometry, column geometry, grouping, sorting, multi-selection, sticky overflow, and incremental loading.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/table",
+    "source": "src/wc/components/Table/Table.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Semantic, controlled data table with durable visual primitives for cell geometry, column geometry, grouping, sorting, multi-selection, sticky overflow, and incremental loading.",
+      "useWhen": [
+        "A structured dataset needs native row and column relationships, optional one-level grouping, or comparable values across records.",
+        "An application needs controlled sorting, loaded-row selection, or lazy loading while retaining ownership of the data query and transformations.",
+        "A product table needs a token-backed recipe whose individual header, group, row, cell, selection, state, and load-more layers remain easy to restyle."
+      ],
+      "avoidWhen": [
+        "Content is primarily editorial prose; use semantic product-owned markup with the prose recipe instead.",
+        "A small label/value set reads more clearly as a list, description list, or card.",
+        "The interface requires tree-grid behavior, nested grouping, inline cell editing, row reordering, column pinning, or virtualization; those are outside this first contract.",
+        "The application expects the component to fetch, paginate, sort, group, or mutate records internally."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-empty-state",
+        "component:ds-skeleton",
+        "component:ds-loader",
+        "component:ds-button-unfilled",
+        "component:ds-tag",
+        "component:ds-icon"
+      ],
+      "accessibility": [
+        "The rendered structure uses a native table, caption, column headers, row groups, and data cells; keep the caption non-empty even when it is visually hidden.",
+        "Sorting controls remain buttons inside column headers. Member-row sort uses aria-sort, while independent group order is described by the grouped header control.",
+        "Selection controls expose checkbox semantics and explicit row names; select-all affects selectable loaded rows only and preserves selected identities outside the loaded window.",
+        "Scrollable table regions become keyboard focusable and named only when overflow exists.",
+        "Incremental loading, newly appended row counts, failures, and end-of-results transitions are announced through a polite status region without replacing visible state."
+      ],
+      "states": [
+        "Columns, rows, groups, grouping, sorting, selected row IDs, and lazy-loading state are controlled inputs. Events communicate intent and never mutate those inputs.",
+        "Grouping supports one level. The application supplies ordered groups and ordered member rows; group order and member-row sort are independent controls.",
+        "An active member sort toggles only between ascending and descending; activating a different sortable label moves sorting to that key. Applications may still clear the controlled sort state explicitly. The grouped column toggles ascending and descending group order without clearing member sort.",
+        "Compound headers can expose multiple related labels with independent sort keys. Each label owns only its content-width interaction target while the active direction remains in the column's alignment-aware sort lane.",
+        "Initial loading uses row-shaped skeletons. Empty and initial error states remain inside the table. Incremental loading retains existing rows and supports automatic sentinel, manual load-more, retry, and terminal states.",
+        "Lazy loading replaces pagination. The application owns requests, cancellation, cursors, deduplication, appended records, and query identity; loadIdentity resets the component request guard.",
+        "Cells accept scalar content, standard primary-and-secondary or dual-primary text primitives, declarative Tag, icon-only, 16:9 Image, or ButtonUnfilled Action content, or explicit Empty and Blank absence values. Single-track text, selection, tag-only, icon-only, Action, Empty, and Blank cells resolve a 40px base contract while multi-track cells grow downward. Action cells primarily use an icon-only Ellipses treatment, render a 24px small ButtonUnfilled inside 8px padding, default to unbordered, and emit row, column, and action identities through dsCellAction. Image cells render a 52px-high bordered preview inside 6px outer padding, establishing a 64px row, and fall back to an accessible placeholder when no source is supplied. Empty means the data applies but has no value and renders an em dash with localized assistive text; Blank means the data is not applicable and renders no content. Nullish values remain backward-compatible Empty values. Stable type and variant hooks keep every cell family independently styleable.",
+        "The public @ds-mo/ui/table.css export is the authoritative zero-specificity visual recipe. Override its --ds-table-* properties or target its stable element classes for product-specific styling."
+      ],
+      "responsiveBehavior": [
+        "The table keeps native semantics at narrow widths and scrolls horizontally instead of transforming into cards.",
+        "Explicit column sizes establish the horizontal overflow width; unsized columns share remaining space.",
+        "Prefer the named xs through xl column sizes, which resolve through TokoMo's table-column width tokens; numeric pixel sizes remain an escape hatch for exceptional application-owned widths.",
+        "Column headers use one 32px geometry. Body rows use a 40px single-track minimum; cell-specific outer padding and track geometry align text, selection, Tag, icon, Action, Empty, Blank, and Image primitives while additional tracks grow downward.",
+        "Long content truncates by default and can opt into wrapping at the column or cell level."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign columns, rows, groups, grouping, sort, and selectedRowIds through JavaScript properties rather than HTML attribute strings.",
+          "Replace controlled property values in response to dsSortChange, dsGroupingChange, dsSelectionChange, and dsLoadMore."
+        ],
+        "react": [
+          "Pass new array and state-object references when the controlled data or query state changes.",
+          "Apply emitted sort, grouping, selection, action, or loading detail to application state and perform data transformations in the owning layer."
+        ],
+        "angular": [
+          "Bind complex table inputs as properties and update the controlled values from the corresponding output events.",
+          "Keep server cursor, query lifecycle, and cell-action handling in the owning service or container."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook review matrix",
+          "path": "src/wc/components/Table/Table.stories.ts"
+        },
+        {
+          "label": "Public visual recipe",
+          "path": "src/wc/styles/table.css"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "caption": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "caption",
+          "required": true,
+          "mutable": false,
+          "description": "Required accessible table name, rendered as a native caption."
+        },
+        "captionVisibility": {
+          "type": "TableCaptionVisibility",
+          "resolvedType": "\"hidden\" | \"visible\"",
+          "attribute": "caption-visibility",
+          "default": "'hidden'",
+          "required": false,
+          "mutable": false
+        },
+        "columns": {
+          "type": "TableColumn[]",
+          "resolvedType": "TableColumn[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Stable column definitions. Assign through JavaScript."
+        },
+        "emptyBody": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "empty-body",
+          "default": "'No data is available.'",
+          "required": false,
+          "mutable": false
+        },
+        "emptyCellLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "empty-cell-label",
+          "default": "'Not available'",
+          "required": false,
+          "mutable": false
+        },
+        "emptyHeading": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "empty-heading",
+          "default": "'No results'",
+          "required": false,
+          "mutable": false
+        },
+        "endOfResultsLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "end-of-results-label",
+          "default": "'All results loaded'",
+          "required": false,
+          "mutable": false
+        },
+        "error": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "error",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Initial error state. Existing rows stay visible; incremental failures use loadMoreError."
+        },
+        "errorBody": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "error-body",
+          "default": "'The data could not be loaded.'",
+          "required": false,
+          "mutable": false
+        },
+        "errorHeading": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "error-heading",
+          "default": "'Unable to load data'",
+          "required": false,
+          "mutable": false
+        },
+        "grouping": {
+          "type": "TableGroupingState | null",
+          "resolvedType": "TableGroupingState | null",
+          "default": "null",
+          "required": false,
+          "mutable": false,
+          "description": "Controlled grouping column and group-order direction."
+        },
+        "groups": {
+          "type": "TableGroup[]",
+          "resolvedType": "TableGroup[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "One level of application-owned grouped data. Assign through JavaScript."
+        },
+        "hasMore": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "has-more",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "lazyLoading": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "lazy-loading",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Enable application-owned incremental loading without pagination."
+        },
+        "loadIdentity": {
+          "type": "string | number",
+          "resolvedType": "number | string",
+          "attribute": "load-identity",
+          "default": "'default'",
+          "required": false,
+          "mutable": false,
+          "description": "Reset key for a new query/group/sort dataset."
+        },
+        "loadMoreError": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "load-more-error",
+          "required": false,
+          "mutable": false
+        },
+        "loadMoreLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "load-more-label",
+          "default": "'Load more'",
+          "required": false,
+          "mutable": false
+        },
+        "loadMoreMode": {
+          "type": "TableLoadMoreMode",
+          "resolvedType": "\"auto\" | \"manual\"",
+          "attribute": "load-more-mode",
+          "default": "'auto'",
+          "required": false,
+          "mutable": false
+        },
+        "loadMoreThreshold": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "load-more-threshold",
+          "default": "0",
+          "required": false,
+          "mutable": false,
+          "description": "IntersectionObserver root margin in CSS pixels."
+        },
+        "loading": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "loading",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Initial loading state. Existing rows stay visible; incremental loading uses loadingMore."
+        },
+        "loadingMore": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "loading-more",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "loadingMoreLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "loading-more-label",
+          "default": "'Loading more results'",
+          "required": false,
+          "mutable": false
+        },
+        "maxHeight": {
+          "type": "string | number | undefined",
+          "resolvedType": "number | string | undefined",
+          "attribute": "max-height",
+          "required": false,
+          "mutable": false,
+          "description": "Maximum scroll-region height. Numbers resolve to CSS pixels."
+        },
+        "retryLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "retry-label",
+          "default": "'Retry'",
+          "required": false,
+          "mutable": false
+        },
+        "rows": {
+          "type": "TableRow[]",
+          "resolvedType": "TableRow[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Ungrouped row data. Ignored while grouping is active. Assign through JavaScript."
+        },
+        "rowsLoadedLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "rows-loaded-label",
+          "default": "'{count} more rows loaded. {total} rows loaded.'",
+          "required": false,
+          "mutable": false,
+          "description": "Supports {count} and {total} placeholders."
+        },
+        "scrollLabel": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "scroll-label",
+          "required": false,
+          "mutable": false,
+          "description": "Optional explicit label for the horizontal/vertical scroll region."
+        },
+        "selectedRowIds": {
+          "type": "string[]",
+          "resolvedType": "string[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Controlled selected row identities. IDs outside the loaded rows are preserved."
+        },
+        "selectionMode": {
+          "type": "TableSelectionMode",
+          "resolvedType": "\"multiple\" | \"none\"",
+          "attribute": "selection-mode",
+          "default": "'none'",
+          "required": false,
+          "mutable": false
+        },
+        "skeletonRows": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "skeleton-rows",
+          "default": "5",
+          "required": false,
+          "mutable": false
+        },
+        "sort": {
+          "type": "TableSortState | null",
+          "resolvedType": "TableSortState | null",
+          "default": "null",
+          "required": false,
+          "mutable": false,
+          "description": "Controlled member-row sort state."
+        },
+        "stickyHeader": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "sticky-header",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        }
+      },
+      "events": [
+        {
+          "name": "dsCellAction",
+          "detail": "TableCellActionDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsGroupingChange",
+          "detail": "TableGroupingChangeDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsLoadMore",
+          "detail": "TableLoadMoreDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsSelectionChange",
+          "detail": "TableSelectionChangeDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsSortChange",
+          "detail": "TableSortChangeDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "caption": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "caption",
+        "required": true,
+        "mutable": false,
+        "description": "Required accessible table name, rendered as a native caption."
+      },
+      "captionVisibility": {
+        "type": "TableCaptionVisibility",
+        "resolvedType": "\"hidden\" | \"visible\"",
+        "attribute": "caption-visibility",
+        "default": "'hidden'",
+        "required": false,
+        "mutable": false
+      },
+      "columns": {
+        "type": "TableColumn[]",
+        "resolvedType": "TableColumn[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Stable column definitions. Assign through JavaScript."
+      },
+      "emptyBody": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "empty-body",
+        "default": "'No data is available.'",
+        "required": false,
+        "mutable": false
+      },
+      "emptyCellLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "empty-cell-label",
+        "default": "'Not available'",
+        "required": false,
+        "mutable": false
+      },
+      "emptyHeading": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "empty-heading",
+        "default": "'No results'",
+        "required": false,
+        "mutable": false
+      },
+      "endOfResultsLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "end-of-results-label",
+        "default": "'All results loaded'",
+        "required": false,
+        "mutable": false
+      },
+      "error": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "error",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Initial error state. Existing rows stay visible; incremental failures use loadMoreError."
+      },
+      "errorBody": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "error-body",
+        "default": "'The data could not be loaded.'",
+        "required": false,
+        "mutable": false
+      },
+      "errorHeading": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "error-heading",
+        "default": "'Unable to load data'",
+        "required": false,
+        "mutable": false
+      },
+      "grouping": {
+        "type": "TableGroupingState | null",
+        "resolvedType": "TableGroupingState | null",
+        "default": "null",
+        "required": false,
+        "mutable": false,
+        "description": "Controlled grouping column and group-order direction."
+      },
+      "groups": {
+        "type": "TableGroup[]",
+        "resolvedType": "TableGroup[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "One level of application-owned grouped data. Assign through JavaScript."
+      },
+      "hasMore": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "has-more",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "lazyLoading": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "lazy-loading",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Enable application-owned incremental loading without pagination."
+      },
+      "loadIdentity": {
+        "type": "string | number",
+        "resolvedType": "number | string",
+        "attribute": "load-identity",
+        "default": "'default'",
+        "required": false,
+        "mutable": false,
+        "description": "Reset key for a new query/group/sort dataset."
+      },
+      "loadMoreError": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "load-more-error",
+        "required": false,
+        "mutable": false
+      },
+      "loadMoreLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "load-more-label",
+        "default": "'Load more'",
+        "required": false,
+        "mutable": false
+      },
+      "loadMoreMode": {
+        "type": "TableLoadMoreMode",
+        "resolvedType": "\"auto\" | \"manual\"",
+        "attribute": "load-more-mode",
+        "default": "'auto'",
+        "required": false,
+        "mutable": false
+      },
+      "loadMoreThreshold": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "load-more-threshold",
+        "default": "0",
+        "required": false,
+        "mutable": false,
+        "description": "IntersectionObserver root margin in CSS pixels."
+      },
+      "loading": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "loading",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Initial loading state. Existing rows stay visible; incremental loading uses loadingMore."
+      },
+      "loadingMore": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "loading-more",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "loadingMoreLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "loading-more-label",
+        "default": "'Loading more results'",
+        "required": false,
+        "mutable": false
+      },
+      "maxHeight": {
+        "type": "string | number | undefined",
+        "resolvedType": "number | string | undefined",
+        "attribute": "max-height",
+        "required": false,
+        "mutable": false,
+        "description": "Maximum scroll-region height. Numbers resolve to CSS pixels."
+      },
+      "retryLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "retry-label",
+        "default": "'Retry'",
+        "required": false,
+        "mutable": false
+      },
+      "rows": {
+        "type": "TableRow[]",
+        "resolvedType": "TableRow[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Ungrouped row data. Ignored while grouping is active. Assign through JavaScript."
+      },
+      "rowsLoadedLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "rows-loaded-label",
+        "default": "'{count} more rows loaded. {total} rows loaded.'",
+        "required": false,
+        "mutable": false,
+        "description": "Supports {count} and {total} placeholders."
+      },
+      "scrollLabel": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "scroll-label",
+        "required": false,
+        "mutable": false,
+        "description": "Optional explicit label for the horizontal/vertical scroll region."
+      },
+      "selectedRowIds": {
+        "type": "string[]",
+        "resolvedType": "string[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Controlled selected row identities. IDs outside the loaded rows are preserved."
+      },
+      "selectionMode": {
+        "type": "TableSelectionMode",
+        "resolvedType": "\"multiple\" | \"none\"",
+        "attribute": "selection-mode",
+        "default": "'none'",
+        "required": false,
+        "mutable": false
+      },
+      "skeletonRows": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "skeleton-rows",
+        "default": "5",
+        "required": false,
+        "mutable": false
+      },
+      "sort": {
+        "type": "TableSortState | null",
+        "resolvedType": "TableSortState | null",
+        "default": "null",
+        "required": false,
+        "mutable": false,
+        "description": "Controlled member-row sort state."
+      },
+      "stickyHeader": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "sticky-header",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      }
+    },
+    "events": [
+      {
+        "name": "dsCellAction",
+        "detail": "TableCellActionDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsGroupingChange",
+        "detail": "TableGroupingChangeDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsLoadMore",
+        "detail": "TableLoadMoreDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsSelectionChange",
+        "detail": "TableSelectionChangeDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsSortChange",
+        "detail": "TableSortChangeDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-table",
+      "react": "DsTable",
+      "angular": "DsTable"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-table.js';",
+        "example": "<ds-table></ds-table>"
+      },
+      "react": {
+        "import": "import { DsTable } from '@ds-mo/ui/react';",
+        "example": "<DsTable />"
+      },
+      "angular": {
+        "import": "import { DsTable } from '@ds-mo/ui/angular/ds-table';",
+        "example": "<ds-table></ds-table>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: columns, grouping, groups, rows, selectedRowIds, sort.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.0.0",
+          "@ds-mo/icons ^6.5.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "button-unfilled",
+    "checkbox",
+    "empty-state",
+    "icon",
+    "loader",
+    "skeleton",
+    "tag",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/Table/Table.css",
+      "content": "@import '../../styles/table.css';\n\n:host {\n  display: block;\n  box-sizing: border-box;\n  min-width: 0;\n  max-width: 100%;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/Table/Table.tsx",
+      "content": "import {\n  Component,\n  Event,\n  EventEmitter,\n  h,\n  Host,\n  Prop,\n  State,\n  Watch,\n} from '@stencil/core';\nimport {\n  deriveTableSelectionState,\n  isTableCellAction,\n  isTableCellBlank,\n  isTableCellEmpty,\n  isTableCellIcon,\n  isTableCellImage,\n  isTableCellPrimaryText,\n  isTableCellText,\n  isTableCellTag,\n  nextTableGroupOrder,\n  nextTableSortState,\n  resolvedTableGroupCount,\n  tableColumnSize,\n  tableExplicitMinWidth,\n  tableModelIssues,\n  tableRows,\n  tableRowSelectionLabel,\n  toggleAllLoadedTableRows,\n  toggleTableRowSelection,\n} from './table-model';\nimport type {\n  TableCaptionVisibility,\n  TableCellActionDetail,\n  TableCellValue,\n  TableColumn,\n  TableGroup,\n  TableGroupingChangeDetail,\n  TableGroupingState,\n  TableLoadMoreDetail,\n  TableLoadMoreMode,\n  TableLoadMoreReason,\n  TableRow,\n  TableSelectionChangeDetail,\n  TableSelectionMode,\n  TableSortChangeDetail,\n  TableSortState,\n} from './table-types';\n\n@Component({\n  tag: 'ds-table',\n  styleUrl: 'Table.css',\n  scoped: true,\n})\nexport class Table {\n  /** Stable column definitions. Assign through JavaScript. */\n  @Prop() columns: TableColumn[] = [];\n  /** Ungrouped row data. Ignored while grouping is active. Assign through JavaScript. */\n  @Prop() rows: TableRow[] = [];\n  /** One level of application-owned grouped data. Assign through JavaScript. */\n  @Prop() groups: TableGroup[] = [];\n  /** Controlled grouping column and group-order direction. */\n  @Prop() grouping: TableGroupingState | null = null;\n  /** Controlled member-row sort state. */\n  @Prop() sort: TableSortState | null = null;\n\n  /** Required accessible table name, rendered as a native caption. */\n  @Prop() caption!: string;\n  @Prop() captionVisibility: TableCaptionVisibility = 'hidden';\n  @Prop() stickyHeader: boolean = false;\n  /** Maximum scroll-region height. Numbers resolve to CSS pixels. */\n  @Prop() maxHeight: string | number | undefined;\n  /** Optional explicit label for the horizontal/vertical scroll region. */\n  @Prop() scrollLabel: string | undefined;\n\n  @Prop() selectionMode: TableSelectionMode = 'none';\n  /** Controlled selected row identities. IDs outside the loaded rows are preserved. */\n  @Prop() selectedRowIds: string[] = [];\n\n  /** Initial loading state. Existing rows stay visible; incremental loading uses loadingMore. */\n  @Prop() loading: boolean = false;\n  @Prop() skeletonRows: number = 5;\n  @Prop() emptyHeading: string = 'No results';\n  @Prop() emptyBody: string = 'No data is available.';\n  /** Initial error state. Existing rows stay visible; incremental failures use loadMoreError. */\n  @Prop() error: boolean = false;\n  @Prop() errorHeading: string = 'Unable to load data';\n  @Prop() errorBody: string = 'The data could not be loaded.';\n  @Prop() emptyCellLabel: string = 'Not available';\n\n  /** Enable application-owned incremental loading without pagination. */\n  @Prop() lazyLoading: boolean = false;\n  @Prop() loadMoreMode: TableLoadMoreMode = 'auto';\n  @Prop() hasMore: boolean = false;\n  @Prop() loadingMore: boolean = false;\n  @Prop() loadMoreError: string | undefined;\n  /** Reset key for a new query/group/sort dataset. */\n  @Prop() loadIdentity: string | number = 'default';\n  /** IntersectionObserver root margin in CSS pixels. */\n  @Prop() loadMoreThreshold: number = 0;\n  @Prop() loadMoreLabel: string = 'Load more';\n  @Prop() retryLabel: string = 'Retry';\n  @Prop() loadingMoreLabel: string = 'Loading more results';\n  @Prop() endOfResultsLabel: string = 'All results loaded';\n  /** Supports {count} and {total} placeholders. */\n  @Prop() rowsLoadedLabel: string = '{count} more rows loaded. {total} rows loaded.';\n\n  @Event() dsSortChange!: EventEmitter<TableSortChangeDetail>;\n  @Event() dsGroupingChange!: EventEmitter<TableGroupingChangeDetail>;\n  @Event() dsSelectionChange!: EventEmitter<TableSelectionChangeDetail>;\n  @Event() dsLoadMore!: EventEmitter<TableLoadMoreDetail>;\n  @Event() dsCellAction!: EventEmitter<TableCellActionDetail>;\n\n  @State() private overflowStart = false;\n  @State() private overflowEnd = false;\n  @State() private scrollable = false;\n  @State() private intersectionSupported = true;\n  @State() private announcement = '';\n\n  private viewportEl: HTMLElement | null = null;\n  private tableEl: HTMLTableElement | null = null;\n  private sentinelEl: HTMLElement | null = null;\n  private resizeObserver: ResizeObserver | null = null;\n  private intersectionObserver: IntersectionObserver | null = null;\n  private observedSentinel: HTMLElement | null = null;\n  private requestPending = false;\n  private requestedRowCount = 0;\n  private previousLoadedRowCount = 0;\n  private previousModelWarning = '';\n  private hasLoaded = false;\n  private reconnectFrame: number | null = null;\n\n  componentWillLoad(): void {\n    this.previousLoadedRowCount = this.loadedRows.length;\n    this.intersectionSupported = typeof IntersectionObserver !== 'undefined';\n    this.warnModelIssues();\n  }\n\n  componentDidLoad(): void {\n    this.hasLoaded = true;\n    this.connectViewportObserver();\n    this.syncOverflow();\n    this.connectIntersectionObserver();\n  }\n\n  componentDidRender(): void {\n    this.connectIntersectionObserver();\n  }\n\n  connectedCallback(): void {\n    if (!this.hasLoaded) return;\n    if (this.reconnectFrame !== null) cancelAnimationFrame(this.reconnectFrame);\n    this.reconnectFrame = requestAnimationFrame(() => {\n      this.reconnectFrame = null;\n      this.connectViewportObserver();\n      this.syncOverflow();\n      this.connectIntersectionObserver();\n    });\n  }\n\n  disconnectedCallback(): void {\n    if (this.reconnectFrame !== null) cancelAnimationFrame(this.reconnectFrame);\n    this.reconnectFrame = null;\n    this.viewportEl?.removeEventListener('scroll', this.syncOverflow);\n    this.resizeObserver?.disconnect();\n    this.resizeObserver = null;\n    this.disconnectIntersectionObserver();\n  }\n\n  @Watch('columns')\n  @Watch('grouping')\n  handleStructureChange(): void {\n    this.warnModelIssues();\n    this.resetLoadRequest();\n  }\n\n  @Watch('rows')\n  @Watch('groups')\n  handleDataChange(): void {\n    const nextCount = this.loadedRows.length;\n    if (nextCount > this.previousLoadedRowCount) {\n      const added = nextCount - this.previousLoadedRowCount;\n      this.announcement = this.rowsLoadedLabel\n        .replace('{count}', String(added))\n        .replace('{total}', String(nextCount));\n    }\n    if (nextCount > this.requestedRowCount) this.requestPending = false;\n    this.previousLoadedRowCount = nextCount;\n    this.warnModelIssues();\n    this.disconnectIntersectionObserver();\n  }\n\n  @Watch('loadIdentity')\n  handleLoadIdentityChange(): void {\n    this.previousLoadedRowCount = this.loadedRows.length;\n    this.resetLoadRequest();\n  }\n\n  @Watch('lazyLoading')\n  @Watch('loadMoreMode')\n  @Watch('loadMoreThreshold')\n  handleLazyConfigurationChange(): void {\n    this.disconnectIntersectionObserver();\n  }\n\n  @Watch('loadingMore')\n  handleLoadingMoreChange(loading: boolean): void {\n    if (loading) {\n      this.requestPending = true;\n      this.announcement = this.loadingMoreLabel;\n    } else if (this.loadMoreMode === 'manual') {\n      // A completed manual request may legitimately append no rows. Permit a\n      // deliberate follow-up activation; automatic mode stays guarded until\n      // the data shape or query identity changes.\n      this.requestPending = false;\n    }\n    this.disconnectIntersectionObserver();\n  }\n\n  @Watch('loadMoreError')\n  handleLoadMoreErrorChange(error: string | undefined): void {\n    if (error?.trim()) {\n      this.requestPending = false;\n      this.announcement = error;\n    }\n    this.disconnectIntersectionObserver();\n  }\n\n  @Watch('hasMore')\n  handleHasMoreChange(hasMore: boolean, hadMore: boolean): void {\n    if (!hasMore) {\n      this.requestPending = false;\n      if (hadMore) this.announcement = this.endOfResultsLabel;\n    }\n    this.disconnectIntersectionObserver();\n  }\n\n  private get grouped(): boolean {\n    return this.grouping !== null;\n  }\n\n  private get selectable(): boolean {\n    return this.selectionMode === 'multiple';\n  }\n\n  private get loadedRows(): TableRow[] {\n    return tableRows(this.rows, this.groups, this.grouped);\n  }\n\n  private get hasData(): boolean {\n    return this.loadedRows.length > 0;\n  }\n\n  private get totalColumns(): number {\n    return this.columns.length + (this.selectable ? 1 : 0);\n  }\n\n  private get selectedSet(): Set<string> {\n    return new Set(this.selectedRowIds);\n  }\n\n  private get selectionState() {\n    return deriveTableSelectionState(this.loadedRows, this.selectedRowIds);\n  }\n\n  private get resolvedMaxHeight(): string | undefined {\n    if (this.maxHeight == null || this.maxHeight === '') return undefined;\n    return typeof this.maxHeight === 'number' ? `${Math.max(0, this.maxHeight)}px` : this.maxHeight;\n  }\n\n  private get tableStyle(): Record<string, string> | undefined {\n    const width = tableExplicitMinWidth(this.columns);\n    return width == null ? undefined : { '--ds-table-explicit-min-inline-size': width };\n  }\n\n  private warnModelIssues(): void {\n    const issues = tableModelIssues(this.columns, this.rows, this.groups, this.grouped);\n    if (!this.caption?.trim()) issues.unshift('A non-empty caption is required.');\n    if (this.grouping && !this.columns.some(column => column.id === this.grouping!.columnId)) {\n      issues.push(`Grouping references unknown column id: ${this.grouping.columnId}`);\n    }\n    if (\n      this.sort &&\n      !this.columns.some(column =>\n        column.id === this.sort!.columnId ||\n        column.headerSegments?.some(segment => segment.sortKey === this.sort!.columnId),\n      )\n    ) {\n      issues.push(`Sorting references unknown column id: ${this.sort.columnId}`);\n    }\n    const message = issues.join(' ');\n    if (!message || message === this.previousModelWarning) return;\n    this.previousModelWarning = message;\n    console.warn(`[ds-table] ${message}`);\n  }\n\n  private connectViewportObserver(): void {\n    if (!this.viewportEl) return;\n    this.viewportEl.removeEventListener('scroll', this.syncOverflow);\n    this.viewportEl.addEventListener('scroll', this.syncOverflow, { passive: true });\n\n    this.resizeObserver?.disconnect();\n    if (typeof ResizeObserver === 'undefined') return;\n    this.resizeObserver = new ResizeObserver(this.syncOverflow);\n    this.resizeObserver.observe(this.viewportEl);\n    if (this.tableEl) this.resizeObserver.observe(this.tableEl);\n  }\n\n  private syncOverflow = (): void => {\n    const viewport = this.viewportEl;\n    if (!viewport) return;\n    const overflows = viewport.scrollWidth - viewport.clientWidth > 1;\n    const scrollable = overflows || viewport.scrollHeight - viewport.clientHeight > 1;\n    const nextStart = overflows && viewport.scrollLeft > 1;\n    const nextEnd = overflows && viewport.scrollLeft + viewport.clientWidth < viewport.scrollWidth - 1;\n    if (nextStart !== this.overflowStart) this.overflowStart = nextStart;\n    if (nextEnd !== this.overflowEnd) this.overflowEnd = nextEnd;\n    if (scrollable !== this.scrollable) this.scrollable = scrollable;\n  };\n\n  private resetLoadRequest(): void {\n    this.requestPending = false;\n    this.requestedRowCount = this.loadedRows.length;\n    this.disconnectIntersectionObserver();\n  }\n\n  private disconnectIntersectionObserver(): void {\n    this.intersectionObserver?.disconnect();\n    this.intersectionObserver = null;\n    this.observedSentinel = null;\n  }\n\n  private connectIntersectionObserver(): void {\n    if (\n      !this.lazyLoading ||\n      this.loadMoreMode !== 'auto' ||\n      !this.hasMore ||\n      !!this.loadMoreError?.trim() ||\n      !this.intersectionSupported ||\n      !this.viewportEl ||\n      !this.sentinelEl\n    ) {\n      this.disconnectIntersectionObserver();\n      return;\n    }\n\n    if (this.intersectionObserver && this.observedSentinel === this.sentinelEl) return;\n    this.disconnectIntersectionObserver();\n\n    const threshold = Number.isFinite(this.loadMoreThreshold)\n      ? Math.max(0, this.loadMoreThreshold)\n      : 0;\n    this.intersectionObserver = new IntersectionObserver(\n      entries => {\n        if (entries.some(entry => entry.isIntersecting)) this.requestLoadMore('auto');\n      },\n      {\n        root: this.viewportEl,\n        rootMargin: `0px 0px ${threshold}px 0px`,\n      },\n    );\n    this.observedSentinel = this.sentinelEl;\n    this.intersectionObserver.observe(this.sentinelEl);\n  }\n\n  private requestLoadMore(reason: TableLoadMoreReason): void {\n    if (\n      !this.lazyLoading ||\n      !this.hasMore ||\n      this.loadingMore ||\n      (reason !== 'retry' && !!this.loadMoreError?.trim()) ||\n      this.requestPending\n    ) return;\n\n    this.requestPending = true;\n    this.requestedRowCount = this.loadedRows.length;\n    this.announcement = this.loadingMoreLabel;\n    this.dsLoadMore.emit({\n      reason,\n      loadIdentity: this.loadIdentity,\n      loadedRowCount: this.requestedRowCount,\n    });\n  }\n\n  private emitSort(column: TableColumn, sortKey = column.id): void {\n    if (this.grouping?.columnId === column.id && sortKey === column.id) {\n      this.dsGroupingChange.emit({ grouping: nextTableGroupOrder(this.grouping) });\n      return;\n    }\n    if (!column.sortable) return;\n    this.dsSortChange.emit({ sort: nextTableSortState(this.sort, sortKey) });\n  }\n\n  private sortButtonLabel(column: TableColumn, sortKey = column.id, label = column.header): string {\n    if (this.grouping?.columnId === column.id && sortKey === column.id) {\n      const next = this.grouping.direction === 'asc' ? 'descending' : 'ascending';\n      return `Sort ${column.header} groups ${next}. Currently grouped ${this.grouping.direction === 'asc' ? 'ascending' : 'descending'}.`;\n    }\n\n    if (this.sort?.columnId !== sortKey) return `Sort ${label} ascending`;\n    if (this.sort.direction === 'asc') return `Sort ${label} descending. Currently ascending.`;\n    return `Sort ${label} ascending. Currently descending.`;\n  }\n\n  private emitRowSelection(row: TableRow): void {\n    const next = toggleTableRowSelection(this.selectedRowIds, row);\n    const selected = next.includes(row.id);\n    this.dsSelectionChange.emit({\n      selectedRowIds: next,\n      scope: 'row',\n      changedRowId: row.id,\n      selected,\n    });\n  }\n\n  private emitAllSelection(): void {\n    this.dsSelectionChange.emit({\n      selectedRowIds: toggleAllLoadedTableRows(this.selectedRowIds, this.loadedRows),\n      scope: 'all-loaded',\n      selected: !this.selectionState.allSelected,\n    });\n  }\n\n  private renderSelectionControl(\n    label: string,\n    checked: boolean,\n    indeterminate: boolean,\n    disabled: boolean,\n    onActivate: () => void,\n  ) {\n    return (\n      <button\n        class=\"ds-table__selection-control\"\n        type=\"button\"\n        role=\"checkbox\"\n        aria-label={label}\n        aria-checked={indeterminate ? 'mixed' : String(checked)}\n        disabled={disabled}\n        onClick={onActivate}\n      >\n        <ds-checkbox\n          label=\"\"\n          size=\"md\"\n          checked={checked}\n          indeterminate={indeterminate}\n          presentation={true}\n        />\n      </button>\n    );\n  }\n\n  private renderColumnHeader(column: TableColumn) {\n    const groupedColumn = this.grouping?.columnId === column.id;\n    const headerSegments = column.headerSegments?.length\n      ? column.headerSegments\n      : [{ label: column.header, sortKey: column.id }];\n    const activeMemberSegment = !groupedColumn\n      ? headerSegments.find(segment => segment.sortKey === this.sort?.columnId)\n      : undefined;\n    const activeMemberSort = !!activeMemberSegment;\n    const activeSort = groupedColumn || activeMemberSort;\n    const align = column.align ?? 'start';\n    const direction = groupedColumn\n      ? this.grouping!.direction\n      : activeMemberSort\n        ? this.sort!.direction\n        : undefined;\n    const memberAriaSort = activeMemberSort\n      ? (this.sort!.direction === 'asc' ? 'ascending' : 'descending')\n      : undefined;\n\n    const labelControl = (\n      <span class=\"ds-table__header-labels\">\n        {headerSegments.map((segment, index) => {\n          const segmentActive = groupedColumn\n            ? headerSegments.length === 1\n            : activeMemberSegment?.sortKey === segment.sortKey;\n          const segmentInteractive = !!column.sortable || (groupedColumn && segment.sortKey === column.id);\n          const label = (\n            <ds-text\n              class=\"ds-table__header-label-box ds-control-label-box\"\n              as=\"span\"\n              variant=\"text-caption\"\n              emphasis={segmentActive}\n              color=\"inherit\"\n              lineTruncation={1}\n            >\n              {segment.label}\n            </ds-text>\n          );\n          const control = segmentInteractive ? (\n            <button\n              class=\"ds-table__header-label ds-table__header-label--interactive\"\n              type=\"button\"\n              aria-label={this.sortButtonLabel(column, segment.sortKey, segment.label)}\n              data-sort-control=\"label\"\n              data-sort-key={segment.sortKey}\n              data-sort-active={segmentActive ? 'true' : undefined}\n              onClick={() => this.emitSort(column, segment.sortKey)}\n            >\n              {label}\n            </button>\n          ) : (\n            <span class=\"ds-table__header-label ds-table__header-static\">{label}</span>\n          );\n\n          return (\n            <span class=\"ds-table__header-segment\" key={segment.sortKey}>\n              {control}\n              {index < headerSegments.length - 1 && (\n                <ds-text\n                  class=\"ds-table__header-separator\"\n                  as=\"span\"\n                  variant=\"text-caption\"\n                  color=\"tertiary\"\n                  aria-hidden=\"true\"\n                >\n                  {segment.separator ?? '/'}\n                </ds-text>\n              )}\n            </span>\n          );\n        })}\n      </span>\n    );\n    const sortControl = (\n      <span class=\"ds-table__sort-slot\">\n        {activeSort && (\n          <ds-button-unfilled\n            class=\"ds-table__sort-direction\"\n            variant=\"icon\"\n            icon={direction === 'asc' ? 'ArrowUp' : 'ArrowDown'}\n            size=\"xs\"\n            aria-label={this.sortButtonLabel(\n              column,\n              activeMemberSegment?.sortKey ?? column.id,\n              activeMemberSegment?.label ?? column.header,\n            )}\n            hasBorder={false}\n            activeFill={false}\n            isActive={true}\n            pressScale={false}\n            data-sort-control=\"direction\"\n            onDsClick={() => this.emitSort(column, activeMemberSegment?.sortKey ?? column.id)}\n          />\n        )}\n      </span>\n    );\n\n    return (\n      <th\n        key={column.id}\n        class={`ds-table__header-cell ds-table__cell--align-${align}`}\n        scope=\"col\"\n        aria-sort={memberAriaSort}\n        data-column-id={column.id}\n        data-grouped={groupedColumn ? 'true' : undefined}\n        data-sort-active={activeSort ? 'true' : undefined}\n      >\n        <span class=\"ds-table__header-content\">\n          {align === 'end' && sortControl}\n          {align === 'center' && (\n            <span\n              class=\"ds-table__sort-slot ds-table__sort-slot--balance\"\n              data-sort-balance=\"true\"\n              aria-hidden=\"true\"\n            />\n          )}\n          {labelControl}\n          {align !== 'end' && sortControl}\n        </span>\n      </th>\n    );\n  }\n\n  private renderCellValue(value: TableCellValue, column: TableColumn, row: TableRow) {\n    if (isTableCellBlank(value)) return null;\n\n    if (value == null || isTableCellEmpty(value)) {\n      return (\n        <ds-text\n          class=\"ds-table__cell-track ds-table__cell-track--text\"\n          as=\"span\"\n          variant=\"text-body-medium\"\n          color=\"secondary\"\n        >\n          <span aria-hidden=\"true\">—</span>\n          <span class=\"ds-visually-hidden\">{this.emptyCellLabel}</span>\n        </ds-text>\n      );\n    }\n\n    if (isTableCellIcon(value)) {\n      return (\n        <ds-icon\n          name={value.icon}\n          size=\"md\"\n          color={value.color ?? 'secondary'}\n          label={value.label}\n        />\n      );\n    }\n\n    if (isTableCellImage(value)) {\n      return (\n        <span class=\"ds-table__cell-image\">\n          {value.src ? (\n            <img class=\"ds-table__cell-image-content\" src={value.src} alt={value.alt} loading=\"lazy\" />\n          ) : (\n            <span\n              class=\"ds-table__cell-image-placeholder\"\n              role=\"img\"\n              aria-label={value.alt}\n            />\n          )}\n        </span>\n      );\n    }\n\n    if (isTableCellAction(value)) {\n      return (\n        <ds-button-unfilled\n          variant={value.variant ?? 'label'}\n          size=\"sm\"\n          label={value.label ?? ''}\n          icon={value.icon ?? ''}\n          aria-label={value.ariaLabel ?? null}\n          hasBorder={value.hasBorder ?? false}\n          isInactive={value.isInactive ?? false}\n          isLoading={value.isLoading ?? false}\n          onDsClick={event => {\n            event.stopPropagation();\n            this.dsCellAction.emit({\n              actionId: value.actionId,\n              rowId: row.id,\n              columnId: column.id,\n            });\n          }}\n        />\n      );\n    }\n\n    if (isTableCellTag(value)) {\n      const variant = value.variant ?? 'tag-only';\n      const tag = (\n        <ds-tag\n          label={value.label}\n          intent={value.intent ?? 'neutral'}\n          contrast={value.contrast ?? 'faint'}\n          size={variant === 'text-with-tag' ? 'sm' : 'md'}\n          icon={value.icon ?? ''}\n          rounded={value.rounded ?? false}\n          isInset\n        />\n      );\n\n      if (variant === 'tag-only') return tag;\n\n      return (\n        <span class={`ds-table__cell-tag-stack ds-table__cell-tag-stack--${variant}`}>\n          {variant === 'tag-with-text' && tag}\n          <ds-text\n            class=\"ds-table__cell-tag-text ds-table__cell-track\"\n            as=\"span\"\n            variant={variant === 'tag-with-text' ? 'text-body-small' : 'text-body-medium'}\n            color=\"secondary\"\n            lineTruncation={1}\n          >\n            {value.text}\n          </ds-text>\n          {variant === 'text-with-tag' && (\n            <span class=\"ds-table__cell-tag-control-track\">{tag}</span>\n          )}\n        </span>\n      );\n    }\n\n    const primaryText = isTableCellPrimaryText(value);\n    const text = isTableCellText(value) || primaryText\n      ? value\n      : { primary: value, fontFeature: typeof value === 'number' ? 'tabular-nums' as const : 'normal' as const };\n    const wraps = text.wrap ?? column.wrap ?? false;\n\n    return (\n      <span class={{ 'ds-table__cell-copy': true, 'ds-table__cell-copy--wrap': wraps }}>\n        <ds-text\n          class=\"ds-table__cell-primary ds-table__cell-track ds-table__cell-track--text\"\n          as=\"span\"\n          variant=\"text-body-medium\"\n          color=\"primary\"\n          lineTruncation={wraps ? 'none' : 1}\n          wrap={wraps ? 'wrap' : 'nowrap'}\n          fontFeature={text.fontFeature ?? 'normal'}\n        >\n          {text.primary}\n        </ds-text>\n        {text.secondary !== undefined && text.secondary !== '' && (\n          <ds-text\n            class=\"ds-table__cell-secondary ds-table__cell-track ds-table__cell-track--text\"\n            as=\"span\"\n            variant={primaryText ? 'text-body-medium' : 'text-body-small'}\n            color={primaryText ? 'primary' : 'secondary'}\n            lineTruncation={wraps ? 'none' : 1}\n            wrap={wraps ? 'wrap' : 'nowrap'}\n          >\n            {text.secondary}\n          </ds-text>\n        )}\n      </span>\n    );\n  }\n\n  private renderRow(row: TableRow) {\n    const selected = this.selectedSet.has(row.id);\n    const rowSelectable = row.selectable !== false && !row.disabled;\n    return (\n      <tr\n        key={row.id}\n        class={{\n          'ds-table__row': true,\n          'ds-table__row--selected': selected,\n          'ds-table__row--disabled': !!row.disabled,\n        }}\n        data-row-id={row.id}\n        data-selected={selected ? 'true' : undefined}\n        aria-disabled={row.disabled ? 'true' : undefined}\n      >\n        {this.selectable && (\n          <td class=\"ds-table__cell ds-table__selection-cell\">\n            {this.renderSelectionControl(\n              `${selected ? 'Deselect' : 'Select'} ${tableRowSelectionLabel(row, this.columns)}`,\n              selected,\n              false,\n              !rowSelectable,\n              () => this.emitRowSelection(row),\n            )}\n          </td>\n        )}\n        {this.columns.map(column => {\n          const align = column.align ?? 'start';\n          const value = row.cells[column.id];\n          const tagCell = isTableCellTag(value);\n          const iconCell = isTableCellIcon(value);\n          const imageCell = isTableCellImage(value);\n          const actionCell = isTableCellAction(value);\n          const primaryTextCell = isTableCellPrimaryText(value);\n          const emptyCell = value == null || isTableCellEmpty(value);\n          const blankCell = isTableCellBlank(value);\n          const textCell = primaryTextCell || (!tagCell && !iconCell && !imageCell && !actionCell && !emptyCell && !blankCell);\n          const singleTextCell = textCell && !primaryTextCell && (!isTableCellText(value) || !value.secondary);\n          const tagVariant = tagCell ? value.variant ?? 'tag-only' : undefined;\n          const textVariant = textCell\n            ? primaryTextCell\n              ? 'primary-pair'\n              : singleTextCell\n                ? 'single'\n                : 'multi'\n            : undefined;\n          const cellType = tagCell\n            ? 'tag'\n            : iconCell\n              ? 'icon'\n              : imageCell\n                ? 'image'\n                : actionCell\n                  ? 'action'\n                  : primaryTextCell\n                    ? 'primary-text'\n                    : emptyCell\n                      ? 'empty'\n                      : blankCell\n                        ? 'blank'\n                        : 'text';\n          return (\n            <td\n              key={`${row.id}:${column.id}`}\n              class={{\n                'ds-table__cell': true,\n                [`ds-table__cell--align-${align}`]: true,\n                'ds-table__cell--tag': tagCell,\n                [`ds-table__cell--tag-${tagVariant}`]: tagCell,\n                'ds-table__cell--icon': iconCell,\n                'ds-table__cell--image': imageCell,\n                'ds-table__cell--action': actionCell,\n                'ds-table__cell--primary-text': primaryTextCell,\n                'ds-table__cell--text-single': singleTextCell,\n                'ds-table__cell--text-multi': textCell && !singleTextCell,\n                'ds-table__cell--empty': emptyCell,\n                'ds-table__cell--blank': blankCell,\n              }}\n              data-column-id={column.id}\n              data-cell-type={cellType}\n              data-cell-variant={tagVariant ?? textVariant}\n            >\n              <span class=\"ds-table__cell-content\">\n                {this.renderCellValue(value, column, row)}\n              </span>\n            </td>\n          );\n        })}\n      </tr>\n    );\n  }\n\n  private renderDataBodies() {\n    if (!this.grouped) {\n      return <tbody class=\"ds-table__body\">{this.rows.map(row => this.renderRow(row))}</tbody>;\n    }\n\n    return this.groups.map(group => {\n      const count = resolvedTableGroupCount(group);\n      const countLabel = group.countLabel ?? `${count} ${count === 1 ? 'item' : 'items'}`;\n      return (\n        <tbody class=\"ds-table__body ds-table__group\" data-group-id={group.id} key={group.id}>\n          <tr class=\"ds-table__group-row\">\n            <th class=\"ds-table__group-cell\" scope=\"rowgroup\" colSpan={this.totalColumns}>\n              <span class=\"ds-table__group-content\">\n                <ds-icon name=\"GroupBy\" size=\"sm\" color=\"secondary\" aria-hidden=\"true\" />\n                <ds-text as=\"span\" variant=\"text-body-small\" emphasis={true} color=\"primary\">\n                  {group.label}\n                </ds-text>\n                <ds-text as=\"span\" variant=\"text-body-small\" color=\"secondary\">\n                  {countLabel}\n                </ds-text>\n              </span>\n            </th>\n          </tr>\n          {group.rows.map(row => this.renderRow(row))}\n        </tbody>\n      );\n    });\n  }\n\n  private renderSkeletonBody() {\n    const count = Math.min(20, Math.max(1, Math.round(this.skeletonRows) || 1));\n    return (\n      <tbody class=\"ds-table__body ds-table__skeleton-body\">\n        {Array.from({ length: count }, (_, index) => (\n          <tr class=\"ds-table__row ds-table__skeleton-row\" key={`skeleton-${index}`}>\n            {this.selectable && (\n              <td class=\"ds-table__cell ds-table__selection-cell\">\n                <ds-skeleton variant=\"icon\" iconSize=\"md\" />\n              </td>\n            )}\n            {this.columns.map(column => (\n              <td class=\"ds-table__cell\" key={`skeleton-${index}:${column.id}`}>\n                <span class=\"ds-table__cell-content\">\n                  <ds-skeleton variant=\"text\" textVariant=\"text-body-medium\" width=\"100%\" />\n                </span>\n              </td>\n            ))}\n          </tr>\n        ))}\n      </tbody>\n    );\n  }\n\n  private renderStateBody(kind: 'empty' | 'error') {\n    const error = kind === 'error';\n    return (\n      <tbody class=\"ds-table__body ds-table__state-body\">\n        <tr class=\"ds-table__state-row\">\n          <td class=\"ds-table__state-cell\" colSpan={this.totalColumns}>\n            <ds-empty-state\n              icon={error ? 'ErrorTriangle' : 'Inbox'}\n              heading={error ? this.errorHeading : this.emptyHeading}\n              body={error ? this.errorBody : this.emptyBody}\n            />\n          </td>\n        </tr>\n      </tbody>\n    );\n  }\n\n  private renderLazyBody() {\n    if (!this.lazyLoading || !this.hasData) return null;\n    const error = this.loadMoreError?.trim();\n    const manualFallback = this.loadMoreMode === 'manual' || !this.intersectionSupported;\n\n    return (\n      <tbody class=\"ds-table__body ds-table__load-body\">\n        <tr\n          class=\"ds-table__load-row\"\n          ref={element => {\n            this.sentinelEl = element ?? null;\n          }}\n        >\n          <td class=\"ds-table__load-cell\" colSpan={this.totalColumns}>\n            {error ? (\n              <span class=\"ds-table__load-content ds-table__load-content--error\">\n                <ds-icon name=\"ErrorTriangle\" size=\"sm\" color=\"negative\" aria-hidden=\"true\" />\n                <ds-text as=\"span\" variant=\"text-body-small\" color=\"secondary\">{error}</ds-text>\n                <ds-button-unfilled\n                  label={this.retryLabel}\n                  size=\"sm\"\n                  onDsClick={() => this.requestLoadMore('retry')}\n                />\n              </span>\n            ) : this.loadingMore ? (\n              <span class=\"ds-table__load-content\">\n                <ds-loader size=\"sm\" color=\"secondary\" />\n                <ds-text as=\"span\" variant=\"text-body-small\" color=\"secondary\">\n                  {this.loadingMoreLabel}\n                </ds-text>\n              </span>\n            ) : this.hasMore && manualFallback ? (\n              <ds-button-unfilled\n                label={this.loadMoreLabel}\n                size=\"sm\"\n                onDsClick={() => this.requestLoadMore('manual')}\n              />\n            ) : this.hasMore ? (\n              <span class=\"ds-table__auto-sentinel\" aria-hidden=\"true\" />\n            ) : (\n              <ds-text as=\"span\" variant=\"text-body-small\" color=\"secondary\">\n                {this.endOfResultsLabel}\n              </ds-text>\n            )}\n          </td>\n        </tr>\n      </tbody>\n    );\n  }\n\n  render() {\n    const selection = this.selectionState;\n    const regionLabel = this.scrollLabel?.trim() || `${this.caption} scroll area`;\n    const initialLoading = this.loading && !this.hasData;\n    const initialError = !this.hasData && this.error;\n    const viewportStyle = this.resolvedMaxHeight\n      ? { '--ds-table-max-block-size': this.resolvedMaxHeight }\n      : undefined;\n\n    return (\n      <Host class=\"table-host\">\n        <div class={{\n          'ds-table': true,\n          'ds-table--sticky-header': this.stickyHeader,\n        }}>\n          <div\n            class={{\n              'ds-table__frame': true,\n              'ds-table__frame--overflow-start': this.overflowStart,\n              'ds-table__frame--overflow-end': this.overflowEnd,\n            }}\n          >\n            <div\n              class=\"ds-table__viewport\"\n              style={viewportStyle}\n              ref={element => {\n                this.viewportEl = element ?? null;\n              }}\n              role={this.scrollable ? 'region' : undefined}\n              aria-label={this.scrollable ? regionLabel : undefined}\n              tabIndex={this.scrollable ? 0 : undefined}\n            >\n              <table\n                class={{\n                  'ds-table__table': true,\n                  'ds-table__table--selectable': this.selectable,\n                }}\n                style={this.tableStyle}\n                aria-busy={initialLoading || this.loadingMore ? 'true' : undefined}\n                ref={element => {\n                  this.tableEl = element ?? null;\n                }}\n              >\n                <caption\n                  class={{\n                    'ds-table__caption': true,\n                    'ds-visually-hidden': this.captionVisibility === 'hidden',\n                  }}\n                >\n                  <ds-text as=\"span\" variant=\"text-title-small\" emphasis={true} color=\"primary\">\n                    {this.caption}\n                  </ds-text>\n                </caption>\n                <colgroup>\n                  {this.selectable && <col class=\"ds-table__selection-column\" />}\n                  {this.columns.map(column => {\n                    const width = tableColumnSize(column);\n                    return <col key={column.id} style={width ? { width } : undefined} />;\n                  })}\n                </colgroup>\n                <thead class=\"ds-table__head\">\n                  <tr class=\"ds-table__header-row\">\n                    {this.selectable && (\n                      <th class=\"ds-table__header-cell ds-table__selection-cell\" scope=\"col\">\n                        {this.renderSelectionControl(\n                          selection.allSelected ? 'Deselect all loaded rows' : 'Select all loaded rows',\n                          selection.allSelected,\n                          selection.indeterminate,\n                          selection.selectableRowIds.length === 0,\n                          () => this.emitAllSelection(),\n                        )}\n                      </th>\n                    )}\n                    {this.columns.map(column => this.renderColumnHeader(column))}\n                  </tr>\n                </thead>\n                {initialLoading\n                  ? this.renderSkeletonBody()\n                  : initialError\n                    ? this.renderStateBody('error')\n                    : this.hasData\n                      ? this.renderDataBodies()\n                      : this.renderStateBody('empty')}\n                {!initialLoading && !initialError && this.renderLazyBody()}\n              </table>\n            </div>\n          </div>\n          <div class=\"ds-visually-hidden\" role=\"status\" aria-live=\"polite\" aria-atomic=\"true\">\n            {this.announcement}\n          </div>\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/Table/table-model.ts",
+      "content": "import type {\n  TableCellBlank,\n  TableCellAction,\n  TableCellEmpty,\n  TableCellIcon,\n  TableCellImage,\n  TableCellPrimaryText,\n  TableCellText,\n  TableCellTag,\n  TableCellValue,\n  TableColumn,\n  TableGroup,\n  TableGroupingState,\n  TableRow,\n  TableSortState,\n} from './table-types';\n\nexport interface TableSelectionState {\n  selectableRowIds: string[];\n  selectedLoadedCount: number;\n  allSelected: boolean;\n  indeterminate: boolean;\n}\n\nconst TABLE_COLUMN_WIDTH_TOKENS = {\n  xs: '--dimension-table-column-width-xs',\n  sm: '--dimension-table-column-width-sm',\n  md: '--dimension-table-column-width-md',\n  lg: '--dimension-table-column-width-lg',\n  xl: '--dimension-table-column-width-xl',\n} as const;\n\nexport function isTableCellText(value: TableCellValue): value is TableCellText {\n  return typeof value === 'object' && value !== null && 'primary' in value && !('kind' in value);\n}\n\nexport function isTableCellPrimaryText(value: TableCellValue): value is TableCellPrimaryText {\n  return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'primary-text';\n}\n\nexport function isTableCellTag(value: TableCellValue): value is TableCellTag {\n  return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'tag';\n}\n\nexport function isTableCellIcon(value: TableCellValue): value is TableCellIcon {\n  return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'icon';\n}\n\nexport function isTableCellImage(value: TableCellValue): value is TableCellImage {\n  return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'image';\n}\n\nexport function isTableCellAction(value: TableCellValue): value is TableCellAction {\n  return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'action';\n}\n\nexport function isTableCellEmpty(value: TableCellValue): value is TableCellEmpty {\n  return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'empty';\n}\n\nexport function isTableCellBlank(value: TableCellValue): value is TableCellBlank {\n  return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'blank';\n}\n\nexport function tableCellPrimary(value: TableCellValue): string | number | null {\n  if (value == null) return null;\n  if (isTableCellTag(value)) return value.label;\n  if (isTableCellIcon(value)) return null;\n  if (isTableCellImage(value)) return value.alt;\n  if (isTableCellAction(value)) return value.label ?? value.ariaLabel;\n  if (isTableCellPrimaryText(value)) return value.primary;\n  if (isTableCellEmpty(value) || isTableCellBlank(value)) return null;\n  return isTableCellText(value) ? value.primary : value;\n}\n\nexport function tableRowSelectionLabel(row: TableRow, columns: TableColumn[]): string {\n  const explicit = row.selectionLabel?.trim();\n  if (explicit) return explicit;\n\n  for (const column of columns) {\n    const primary = tableCellPrimary(row.cells[column.id]);\n    if (primary != null && String(primary).trim()) return String(primary);\n  }\n\n  return row.id;\n}\n\nexport function nextTableSortState(\n  current: TableSortState | null | undefined,\n  columnId: string,\n): TableSortState {\n  if (current?.columnId !== columnId) return { columnId, direction: 'asc' };\n  if (current.direction === 'asc') return { columnId, direction: 'desc' };\n  return { columnId, direction: 'asc' };\n}\n\nexport function nextTableGroupOrder(grouping: TableGroupingState): TableGroupingState {\n  return {\n    ...grouping,\n    direction: grouping.direction === 'asc' ? 'desc' : 'asc',\n  };\n}\n\nexport function clampTableColumnSize(column: TableColumn): number | undefined {\n  if (typeof column.size !== 'number' || !Number.isFinite(column.size) || column.size <= 0) {\n    return undefined;\n  }\n\n  const minimum = Number.isFinite(column.minSize) && (column.minSize ?? 0) > 0\n    ? column.minSize!\n    : 0;\n  const maximum = Number.isFinite(column.maxSize) && (column.maxSize ?? 0) > 0\n    ? Math.max(column.maxSize!, minimum)\n    : Number.POSITIVE_INFINITY;\n\n  return Math.min(Math.max(column.size!, minimum), maximum);\n}\n\nexport function tableColumnSize(column: TableColumn): string | undefined {\n  if (typeof column.size === 'string') {\n    return `var(${TABLE_COLUMN_WIDTH_TOKENS[column.size]})`;\n  }\n  const width = clampTableColumnSize(column);\n  return width == null ? undefined : `${width}px`;\n}\n\nexport function tableExplicitMinWidth(columns: TableColumn[]): string | undefined {\n  const widths = columns.map(tableColumnSize).filter((width): width is string => !!width);\n  if (widths.length === 0) return undefined;\n  return widths.length === 1 ? widths[0] : `calc(${widths.join(' + ')})`;\n}\n\nexport function tableRows(rows: TableRow[], groups: TableGroup[], grouped: boolean): TableRow[] {\n  return grouped ? groups.flatMap(group => group.rows) : rows;\n}\n\nfunction canSelectRow(row: TableRow): boolean {\n  return row.selectable !== false && !row.disabled;\n}\n\nexport function deriveTableSelectionState(\n  rows: TableRow[],\n  selectedRowIds: readonly string[],\n): TableSelectionState {\n  const selected = new Set(selectedRowIds);\n  const selectableRowIds = rows.filter(canSelectRow).map(row => row.id);\n  const selectedLoadedCount = selectableRowIds.reduce(\n    (count, id) => count + (selected.has(id) ? 1 : 0),\n    0,\n  );\n\n  return {\n    selectableRowIds,\n    selectedLoadedCount,\n    allSelected: selectableRowIds.length > 0 && selectedLoadedCount === selectableRowIds.length,\n    indeterminate: selectedLoadedCount > 0 && selectedLoadedCount < selectableRowIds.length,\n  };\n}\n\nexport function toggleTableRowSelection(\n  selectedRowIds: readonly string[],\n  row: TableRow,\n): string[] {\n  if (!canSelectRow(row)) return [...selectedRowIds];\n  const selected = new Set(selectedRowIds);\n  if (selected.has(row.id)) selected.delete(row.id);\n  else selected.add(row.id);\n  return [...selected];\n}\n\nexport function toggleAllLoadedTableRows(\n  selectedRowIds: readonly string[],\n  loadedRows: TableRow[],\n): string[] {\n  const selected = new Set(selectedRowIds);\n  const state = deriveTableSelectionState(loadedRows, selectedRowIds);\n\n  for (const id of state.selectableRowIds) {\n    if (state.allSelected) selected.delete(id);\n    else selected.add(id);\n  }\n\n  return [...selected];\n}\n\nexport function resolvedTableGroupCount(group: TableGroup): number {\n  const total = Number.isFinite(group.totalCount) ? Math.max(0, group.totalCount!) : 0;\n  return Math.max(total, group.rows.length);\n}\n\nexport function tableModelIssues(\n  columns: TableColumn[],\n  rows: TableRow[],\n  groups: TableGroup[],\n  grouped: boolean,\n): string[] {\n  const issues: string[] = [];\n  const columnIds = new Set<string>();\n  for (const column of columns) {\n    if (!column.id.trim()) issues.push('Every column requires a non-empty id.');\n    else if (columnIds.has(column.id)) issues.push(`Duplicate column id: ${column.id}`);\n    columnIds.add(column.id);\n  }\n\n  const groupIds = new Set<string>();\n  if (grouped) {\n    for (const group of groups) {\n      if (!group.id.trim()) issues.push('Every group requires a non-empty id.');\n      else if (groupIds.has(group.id)) issues.push(`Duplicate group id: ${group.id}`);\n      groupIds.add(group.id);\n      if (group.totalCount != null && group.totalCount < group.rows.length) {\n        issues.push(`Group ${group.id} totalCount is smaller than its loaded row count.`);\n      }\n    }\n  }\n\n  const rowIds = new Set<string>();\n  for (const row of tableRows(rows, groups, grouped)) {\n    if (!row.id.trim()) issues.push('Every row requires a non-empty id.');\n    else if (rowIds.has(row.id)) issues.push(`Duplicate row id: ${row.id}`);\n    rowIds.add(row.id);\n  }\n\n  return [...new Set(issues)];\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/Table/table-types.ts",
+      "content": "import type { TagContrast, TagIntent } from '../Tag/Tag';\nimport type { IconColor } from '../Icon/Icon';\n\nexport type TableSortDirection = 'asc' | 'desc';\nexport type TableSelectionMode = 'none' | 'multiple';\nexport type TableCellAlign = 'start' | 'center' | 'end';\nexport type TableCaptionVisibility = 'visible' | 'hidden';\nexport type TableLoadMoreMode = 'auto' | 'manual';\nexport type TableLoadMoreReason = 'auto' | 'manual' | 'retry';\nexport type TableColumnWidth = 'xs' | 'sm' | 'md' | 'lg' | 'xl';\n\n/** Independently sortable label within a compound column header. */\nexport interface TableHeaderSegment {\n  label: string;\n  /** Stable key emitted through TableSortState.columnId. */\n  sortKey: string;\n  /** Visible separator rendered after this label when another segment follows. */\n  separator?: string;\n}\n\n/** Controlled member-row sort state. Group order is controlled separately. */\nexport interface TableSortState {\n  columnId: string;\n  direction: TableSortDirection;\n}\n\n/** One controlled grouping level plus the supplied group-order direction. */\nexport interface TableGroupingState {\n  columnId: string;\n  direction: TableSortDirection;\n}\n\n/** Standard two-line cell content owned by the table renderer. */\nexport interface TableCellText {\n  primary: string | number;\n  secondary?: string;\n  /** Allow this cell to wrap even when its column truncates by default. */\n  wrap?: boolean;\n  fontFeature?: 'normal' | 'tabular-nums';\n}\n\n/** Two-line text content where both tracks use primary body text. */\nexport interface TableCellPrimaryText {\n  kind: 'primary-text';\n  primary: string | number;\n  secondary: string | number;\n  /** Allow this cell to wrap even when its column truncates by default. */\n  wrap?: boolean;\n  fontFeature?: 'normal' | 'tabular-nums';\n}\n\n/** Applicable data point whose value is currently unavailable. */\nexport interface TableCellEmpty {\n  kind: 'empty';\n}\n\n/** Data point that is intentionally not applicable to this row. */\nexport interface TableCellBlank {\n  kind: 'blank';\n}\n\n/** Declarative icon-only content rendered by the table's standard cell primitive. */\nexport interface TableCellIcon {\n  kind: 'icon';\n  /** Exact canonical IcoMo export name. */\n  icon: string;\n  color?: IconColor;\n  /** Accessible label for informative icons. Omit only when the icon is decorative. */\n  label?: string;\n  /** Application-owned value used when this icon column participates in sorting. */\n  sortValue?: string | number | boolean;\n}\n\n/** Declarative 16:9 image preview rendered by the table's standard cell primitive. */\nexport interface TableCellImage {\n  kind: 'image';\n  /** Optional image source. Omit it to render the standard bordered placeholder. */\n  src?: string;\n  /** Accessible description for either the image or its placeholder. */\n  alt: string;\n}\n\ninterface TableCellActionBase {\n  kind: 'action';\n  /** Stable application-owned action identity emitted with dsCellAction. */\n  actionId: string;\n  /** Add the ButtonUnfilled resting border. Action cells are unbordered by default. */\n  hasBorder?: boolean;\n  isInactive?: boolean;\n  isLoading?: boolean;\n}\n\n/** Declarative ButtonUnfilled content rendered by the table's standard action cell. */\nexport type TableCellAction = TableCellActionBase & (\n  | {\n      variant?: 'label';\n      label: string;\n      icon?: never;\n      ariaLabel?: string;\n    }\n  | {\n      variant: 'icon-label';\n      label: string;\n      icon: string;\n      ariaLabel?: string;\n    }\n  | {\n      variant: 'icon';\n      label?: never;\n      icon: string;\n      ariaLabel: string;\n    }\n);\n\n/** Declarative Tag content rendered by the table's standard cell primitive. */\nexport type TableCellTagVariant = 'tag-only' | 'tag-with-text' | 'text-with-tag';\n\ninterface TableCellTagBase {\n  kind: 'tag';\n  label: string;\n  intent?: TagIntent;\n  contrast?: TagContrast;\n  icon?: string;\n  rounded?: boolean;\n}\n\nexport type TableCellTag = TableCellTagBase & (\n  | {\n      variant?: 'tag-only';\n      text?: never;\n    }\n  | {\n      variant: Exclude<TableCellTagVariant, 'tag-only'>;\n      text: string;\n    }\n);\n\nexport type TableCellValue =\n  | string\n  | number\n  | null\n  | undefined\n  | TableCellText\n  | TableCellPrimaryText\n  | TableCellTag\n  | TableCellIcon\n  | TableCellImage\n  | TableCellAction\n  | TableCellEmpty\n  | TableCellBlank;\n\nexport interface TableColumn {\n  /** Stable column identity. */\n  id: string;\n  header: string;\n  /** Optional labels for columns that present and sort multiple related data points. */\n  headerSegments?: TableHeaderSegment[];\n  align?: TableCellAlign;\n  sortable?: boolean;\n  /** Preferred TokoMo table-column width. Numbers remain available for exceptional custom pixel widths. */\n  size?: TableColumnWidth | number;\n  /** Minimum accepted preferred width in CSS pixels. */\n  minSize?: number;\n  /** Maximum accepted preferred width in CSS pixels. */\n  maxSize?: number;\n  /** Wrap cell text instead of truncating it to one line. */\n  wrap?: boolean;\n}\n\nexport interface TableRow {\n  /** Stable identity, unique across all groups. */\n  id: string;\n  cells: Record<string, TableCellValue>;\n  /** Accessible row name used by its selection control. Falls back to the first cell. */\n  selectionLabel?: string;\n  /** Exclude this row from selection without muting its content. */\n  selectable?: boolean;\n  /** Keep the row visible while disabling its selection control and styling it as inactive. */\n  disabled?: boolean;\n}\n\nexport interface TableGroup {\n  /** Stable group identity. */\n  id: string;\n  label: string;\n  value?: string | number;\n  /** Total server-side member count; may exceed the currently loaded row count. */\n  totalCount?: number;\n  /** Optional localized, display-ready count such as “18 vehicles”. */\n  countLabel?: string;\n  rows: TableRow[];\n}\n\nexport interface TableSortChangeDetail {\n  sort: TableSortState | null;\n}\n\nexport interface TableGroupingChangeDetail {\n  grouping: TableGroupingState;\n}\n\nexport interface TableSelectionChangeDetail {\n  selectedRowIds: string[];\n  scope: 'row' | 'all-loaded';\n  changedRowId?: string;\n  selected?: boolean;\n}\n\nexport interface TableLoadMoreDetail {\n  reason: TableLoadMoreReason;\n  loadIdentity: string | number;\n  loadedRowCount: number;\n}\n\nexport interface TableCellActionDetail {\n  actionId: string;\n  rowId: string;\n  columnId: string;\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

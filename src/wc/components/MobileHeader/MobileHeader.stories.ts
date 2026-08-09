@@ -9,6 +9,11 @@ const sections = [
   { id: 'trips', label: 'Trips' },
 ];
 
+const inboxSections = [
+  { id: 'stacks', label: 'Stacks', variant: 'label' as const },
+  { id: 'activity', label: 'Activity', variant: 'label' as const, dot: true },
+];
+
 const meta: Meta = {
   title: 'Navigation/MobileHeader',
   component: 'ds-mobile-header',
@@ -62,6 +67,19 @@ export const NestedPageSections: Story = {
       ]}
       subvalue="drivers"
       subsections-aria-label="Change People view"
+    ></ds-mobile-header>
+  `,
+};
+
+export const SegmentedToolSections: Story = {
+  render: () => html`
+    <ds-mobile-header
+      heading-level="h2"
+      .sections=${inboxSections}
+      value="activity"
+      sections-presentation="segmented"
+      sections-size="lg"
+      sections-aria-label="Inbox sections"
     ></ds-mobile-header>
   `,
 };

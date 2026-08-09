@@ -179,6 +179,7 @@ export class MobileSheetNav {
               class="mobile-sheet-nav__context"
               tabs={contextTabs}
               value={this.browseContext}
+              size="lg"
               aria-label="Browse context"
               onDsChange={this.handleContextChange}
             />

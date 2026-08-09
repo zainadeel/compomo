@@ -19,6 +19,12 @@ ConversationListItem use these parts. Components continue to own borders,
 surface treatment, interaction state, typography selection, and semantics.
 Never add typography metrics to a control part.
 
+`src/wc/utils/control-density-inset.css` is a narrow modifier for a control
+nested inside another control at the same density. It reduces only the nested
+control's outer box and outer inline padding. The base recipe continues to own
+its icon, text inset, gap, radius, and typography. Components must expose an
+intentional API before opting into this modifier; it is not a default density.
+
 ## Field flow
 
 `src/wc/utils/field-stack.css` owns the 4px vertical flow shared by a field
