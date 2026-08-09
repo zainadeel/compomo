@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.12.0](https://github.com/zainadeel/compomo/compare/v13.11.1...v13.12.0) (2026-08-09)
+
+
+### Added
+
+* add table system and refine mobile shell ([#437](https://github.com/zainadeel/compomo/issues/437)) ([17fda63](https://github.com/zainadeel/compomo/commit/17fda634be2ea1822e86711c2ea5bfff7212043c)), closes [#436](https://github.com/zainadeel/compomo/issues/436)
+
 ## [13.11.1](https://github.com/zainadeel/compomo/compare/v13.11.0...v13.11.1) (2026-08-07)
 
 
