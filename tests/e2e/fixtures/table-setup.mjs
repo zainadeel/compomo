@@ -3,10 +3,10 @@ import '/dist/components/ds-table.js';
 await customElements.whenDefined('ds-table');
 
 const columns = [
-  { id: 'name', header: 'Driver', sortable: true, size: 220 },
-  { id: 'status', header: 'Status', sortable: true, size: 140 },
-  { id: 'vehicle', header: 'Vehicle', size: 120 },
-  { id: 'score', header: 'Safety score', sortable: true, align: 'end', size: 130 },
+  { id: 'name', header: 'Driver', sortable: true, size: 'sm' },
+  { id: 'status', header: 'Status', sortable: true, align: 'center', size: 'sm' },
+  { id: 'vehicle', header: 'Vehicle', size: 'xs' },
+  { id: 'score', header: 'Safety score', sortable: true, align: 'end', size: 'xs' },
 ];
 const rows = [
   { id: 'avery', selectionLabel: 'Avery Chen', cells: { name: { primary: 'Avery Chen', secondary: 'avery@example.com' }, status: 'Driving', vehicle: 'V-2048', score: 98 } },
@@ -62,6 +62,102 @@ grouped.addEventListener('dsSortChange', event => {
   grouped.groups = event.detail.sort ? orderMembers(next) : next;
 });
 
+const compound = document.getElementById('compound');
+compound.columns = [
+  {
+    id: 'behaviorDetails',
+    header: 'Behavior / Severity',
+    headerSegments: [
+      { label: 'Behavior', sortKey: 'behavior', separator: '/' },
+      { label: 'Severity', sortKey: 'severity' },
+    ],
+    sortable: true,
+    size: 'sm',
+  },
+  { id: 'status', header: 'Status', size: 'sm' },
+];
+const compoundRows = [
+  { id: 'event-a', cells: { behaviorDetails: { primary: 'Close following', secondary: 'Critical' }, behavior: 'Close following', severity: 'Critical', status: { kind: 'tag', label: 'Pending review', intent: 'caution' } } },
+  { id: 'event-b', cells: { behaviorDetails: { primary: 'Distraction', secondary: 'High' }, behavior: 'Distraction', severity: 'High', status: { kind: 'tag', label: 'Coachable', intent: 'negative' } } },
+];
+compound.rows = compoundRows;
+compound.selectionMode = 'multiple';
+compound.addEventListener('dsSortChange', event => {
+  compound.sort = event.detail.sort;
+  if (!event.detail.sort) {
+    compound.rows = compoundRows;
+    return;
+  }
+  const { columnId, direction } = event.detail.sort;
+  compound.rows = [...compoundRows].sort((a, b) =>
+    String(a.cells[columnId]).localeCompare(String(b.cells[columnId])) * (direction === 'asc' ? 1 : -1));
+});
+
+const cellTypes = document.getElementById('cell-types');
+cellTypes.columns = [
+  { id: 'singleText', header: 'Single text', size: 'sm' },
+  { id: 'primarySecondary', header: 'Primary + secondary', size: 'sm' },
+  { id: 'primaryPair', header: 'Primary + primary', size: 'sm' },
+  { id: 'image', header: 'Image', size: 'sm' },
+  { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
+  { id: 'tagOnly', header: 'Tag only', size: 'sm' },
+  { id: 'tagWithText', header: 'Tag with text', size: 'sm' },
+  { id: 'textWithTag', header: 'Text with tag', size: 'sm' },
+  { id: 'action', header: 'Action', align: 'center', size: 'xs' },
+  { id: 'borderedAction', header: 'Bordered action', align: 'center', size: 'xs' },
+  { id: 'empty', header: 'Empty', size: 'xs' },
+  { id: 'blank', header: 'Blank', size: 'xs' },
+];
+cellTypes.rows = [
+  {
+    id: 'tag-variants',
+    selectionLabel: 'Tag cell variants',
+    cells: {
+      singleText: 'Vehicle 2841',
+      primarySecondary: { primary: 'John Smith', secondary: 'DRV-1048' },
+      primaryPair: { kind: 'primary-text', primary: 'Vehicle', secondary: 'VH-2841' },
+      image: { kind: 'image', alt: 'Safety event preview unavailable' },
+      icon: { kind: 'icon', icon: 'DocumentInverted', color: 'secondary', label: 'Has notes' },
+      tagOnly: { kind: 'tag', label: 'Pending', intent: 'caution' },
+      tagWithText: {
+        kind: 'tag',
+        variant: 'tag-with-text',
+        label: 'Coachable',
+        intent: 'negative',
+        text: 'Needs review',
+      },
+      textWithTag: {
+        kind: 'tag',
+        variant: 'text-with-tag',
+        text: 'Review complete',
+        label: 'Coached',
+        intent: 'neutral',
+      },
+      action: {
+        kind: 'action',
+        actionId: 'more',
+        variant: 'icon',
+        icon: 'Ellipses',
+        ariaLabel: 'More actions',
+      },
+      borderedAction: {
+        kind: 'action',
+        actionId: 'more-bordered',
+        variant: 'icon',
+        icon: 'Ellipses',
+        ariaLabel: 'More actions with border',
+        hasBorder: true,
+      },
+      empty: { kind: 'empty' },
+      blank: { kind: 'blank' },
+    },
+  },
+];
+window.__tableCellActionEvents = [];
+cellTypes.addEventListener('dsCellAction', event => {
+  window.__tableCellActionEvents.push(event.detail);
+});
+
 const selectable = setBase('selectable');
 selectable.selectedRowIds = ['jordan', 'not-loaded'];
 window.__tableSelectionEvents = [];
@@ -88,13 +184,13 @@ lazy.addEventListener('dsLoadMore', () => {
     lazy.rows = [...rows];
     lazy.loadingMore = false;
     lazy.hasMore = false;
-  }, 50);
+  }, 200);
 });
 
 const overflow = document.getElementById('overflow');
 overflow.columns = [
   ...columns,
-  { id: 'location', header: 'Last known location', size: 280 },
+  { id: 'location', header: 'Last known location', size: 'md' },
 ];
 overflow.rows = Array.from({ length: 12 }, (_, index) => ({
   ...rows[index % rows.length],
@@ -102,7 +198,7 @@ overflow.rows = Array.from({ length: 12 }, (_, index) => ({
   cells: { ...rows[index % rows.length].cells, location: `Location ${index + 1}, British Columbia` },
 }));
 
-setBase('small');
+setBase('standard');
 for (const id of ['loading', 'empty', 'error']) {
   document.getElementById(id).columns = columns.slice(0, 3);
 }

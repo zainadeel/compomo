@@ -61,7 +61,7 @@ import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 import { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 import { SwitchSize } from "./components/Switch/Switch";
 import { TabBackground, TabGroupSize as TabGroupSize1 } from "./components/TabGroup/TabGroup";
-import { TableCaptionVisibility, TableColumn, TableDensity, TableGroup, TableGroupingChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupingChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -122,7 +122,7 @@ export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 export { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 export { SwitchSize } from "./components/Switch/Switch";
 export { TabBackground, TabGroupSize as TabGroupSize1 } from "./components/TabGroup/TabGroup";
-export { TableCaptionVisibility, TableColumn, TableDensity, TableGroup, TableGroupingChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupingChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -2518,10 +2518,6 @@ export namespace Components {
          */
         "columns": TableColumn[];
         /**
-          * @default 'md'
-         */
-        "density": TableDensity;
-        /**
           * @default 'No data is available.'
          */
         "emptyBody": string;
@@ -2679,6 +2675,11 @@ export namespace Components {
           * @default false
          */
         "isInactive": boolean;
+        /**
+          * Use the reduced outer geometry when nested inside a control of the same size.
+          * @default false
+         */
+        "isInset": boolean;
         "label": string;
         "maxWidth": string | number | undefined;
         /**
@@ -3923,6 +3924,7 @@ declare global {
         "dsGroupingChange": TableGroupingChangeDetail;
         "dsSelectionChange": TableSelectionChangeDetail;
         "dsLoadMore": TableLoadMoreDetail;
+        "dsCellAction": TableCellActionDetail;
     }
     interface HTMLDsTableElement extends Components.DsTable, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsTableElementEventMap>(type: K, listener: (this: HTMLDsTableElement, ev: DsTableCustomEvent<HTMLDsTableElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -6706,10 +6708,6 @@ declare namespace LocalJSX {
          */
         "columns"?: TableColumn[];
         /**
-          * @default 'md'
-         */
-        "density"?: TableDensity;
-        /**
           * @default 'No data is available.'
          */
         "emptyBody"?: string;
@@ -6793,6 +6791,7 @@ declare namespace LocalJSX {
           * Maximum scroll-region height. Numbers resolve to CSS pixels.
          */
         "maxHeight"?: string | number | undefined;
+        "onDsCellAction"?: (event: DsTableCustomEvent<TableCellActionDetail>) => void;
         "onDsGroupingChange"?: (event: DsTableCustomEvent<TableGroupingChangeDetail>) => void;
         "onDsLoadMore"?: (event: DsTableCustomEvent<TableLoadMoreDetail>) => void;
         "onDsSelectionChange"?: (event: DsTableCustomEvent<TableSelectionChangeDetail>) => void;
@@ -6871,6 +6870,11 @@ declare namespace LocalJSX {
           * @default false
          */
         "isInactive"?: boolean;
+        /**
+          * Use the reduced outer geometry when nested inside a control of the same size.
+          * @default false
+         */
+        "isInset"?: boolean;
         "label": string;
         "maxWidth"?: string | number | undefined;
         /**
@@ -7651,7 +7655,6 @@ declare namespace LocalJSX {
     interface DsTableAttributes {
         "caption": string;
         "captionVisibility": TableCaptionVisibility;
-        "density": TableDensity;
         "stickyHeader": boolean;
         "maxHeight": string;
         "scrollLabel": string | undefined;
@@ -7683,6 +7686,7 @@ declare namespace LocalJSX {
         "intent": TagIntent;
         "contrast": TagContrast;
         "size": TagSize;
+        "isInset": boolean;
         "rounded": boolean;
         "maxWidth": string;
         "interactive": boolean;

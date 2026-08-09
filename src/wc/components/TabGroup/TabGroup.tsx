@@ -1,4 +1,5 @@
 import { Component, Prop, Event, EventEmitter, Element, Listen, Watch, h, Host } from '@stencil/core';
+import { CONTROL_TEXT_VARIANT } from '../../utils';
 import {
   getSelectableTabs,
   isTabDivider,
@@ -143,6 +144,7 @@ export class TabGroup {
         class={{
           'tab-group-host': true,
           [`tab-group-host--${this.size}`]: true,
+          [`ds-control--${this.size}`]: true,
           'tab-group-host--surface': !!bgClass,
           [`tab-group-host--${bgClass}`]: !!bgClass,
         }}
@@ -180,9 +182,8 @@ export class TabGroup {
                 class={{
                   tab: true,
                   'tab--selected': isSelected,
-                  'ds-control--xs': this.size === 'sm',
-                  'ds-control--sm': this.size === 'md',
-                  'ds-control--md': this.size === 'lg',
+                  [`ds-control--${this.size}`]: true,
+                  'ds-control--inset': true,
                   'ds-focus-ring-inset': true,
                   'ds-interaction-fill': !tab.isInactive,
                   'ds-interaction-fill--on-faint': bgClass === 'on-faint',
@@ -213,7 +214,7 @@ export class TabGroup {
                     <ds-icon
                       class="tab__icon"
                       name={tab.icon}
-                      size={this.size === 'lg' ? 'lg' : this.size === 'md' ? 'sm' : 'xs'}
+                      size={this.size}
                       color="inherit"
                     />
                   )}
@@ -221,13 +222,7 @@ export class TabGroup {
                     <ds-text
                       class="tab__label"
                       as="span"
-                      variant={
-                        this.size === 'lg'
-                          ? 'text-body-medium'
-                          : this.size === 'md'
-                            ? 'text-body-small'
-                            : 'text-caption'
-                      }
+                      variant={CONTROL_TEXT_VARIANT[this.size]}
                       emphasis={emphasizeLabel}
                       color="inherit"
                     >

@@ -7,6 +7,8 @@ import {
   nextTableGroupOrder,
   nextTableSortState,
   resolvedTableGroupCount,
+  tableCellPrimary,
+  tableColumnSize,
   tableExplicitMinWidth,
   tableModelIssues,
   tableRowSelectionLabel,
@@ -27,13 +29,16 @@ const rows: TableRow[] = [
   { id: 'd', cells: { name: 'Devon', score: 84 } },
 ];
 
-test('cycles controlled member sorting and keeps group order binary', () => {
+test('keeps controlled member sorting and group order binary', () => {
   assert.deepEqual(nextTableSortState(null, 'score'), { columnId: 'score', direction: 'asc' });
   assert.deepEqual(
     nextTableSortState({ columnId: 'score', direction: 'asc' }, 'score'),
     { columnId: 'score', direction: 'desc' },
   );
-  assert.equal(nextTableSortState({ columnId: 'score', direction: 'desc' }, 'score'), null);
+  assert.deepEqual(
+    nextTableSortState({ columnId: 'score', direction: 'desc' }, 'score'),
+    { columnId: 'score', direction: 'asc' },
+  );
   assert.deepEqual(
     nextTableSortState({ columnId: 'name', direction: 'desc' }, 'score'),
     { columnId: 'score', direction: 'asc' },
@@ -72,9 +77,27 @@ test('resolves labels, column constraints, and server group totals defensively',
   );
   assert.equal(clampTableColumnSize({ ...columns[0], size: 80 }), 120);
   assert.equal(clampTableColumnSize({ ...columns[0], size: 240 }), 200);
-  assert.equal(tableExplicitMinWidth(columns), 240);
+  assert.equal(tableColumnSize({ id: 'token', header: 'Token', size: 'sm' }), 'var(--dimension-table-column-width-sm)');
+  assert.equal(tableExplicitMinWidth(columns), 'calc(160px + 80px)');
+  assert.equal(
+    tableExplicitMinWidth([
+      { id: 'token-a', header: 'A', size: 'xs' },
+      { id: 'token-b', header: 'B', size: 'md' },
+    ]),
+    'calc(var(--dimension-table-column-width-xs) + var(--dimension-table-column-width-md))',
+  );
   assert.equal(resolvedTableGroupCount({ id: 'g', label: 'Group', totalCount: 8, rows }), 8);
   assert.equal(resolvedTableGroupCount({ id: 'g', label: 'Group', totalCount: 1, rows }), 4);
+  assert.equal(tableCellPrimary({ kind: 'tag', label: 'Pending review', intent: 'caution' }), 'Pending review');
+  assert.equal(tableCellPrimary({ kind: 'icon', icon: 'DocumentInverted', label: 'Has notes' }), null);
+  assert.equal(tableCellPrimary({ kind: 'image', alt: 'Road-facing preview' }), 'Road-facing preview');
+  assert.equal(
+    tableCellPrimary({ kind: 'primary-text', primary: 'Vehicle', secondary: 'VH-2841' }),
+    'Vehicle',
+  );
+  assert.equal(tableCellPrimary({ kind: 'action', actionId: 'view', label: 'View' }), 'View');
+  assert.equal(tableCellPrimary({ kind: 'empty' }), null);
+  assert.equal(tableCellPrimary({ kind: 'blank' }), null);
 });
 
 test('reports unstable model identities and impossible group counts', () => {

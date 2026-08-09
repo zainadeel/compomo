@@ -13,6 +13,7 @@ const meta: Meta = {
         component:
           'Single source of truth for shared lg / md / sm / xs control metrics (`src/wc/utils/control-density.css`). ' +
           'Apply `.ds-control--lg|md|sm|xs` to set `--ds-control-*` vars (height, padding, label inset, gap, icon, radius). ' +
+          'Same-density nested controls can opt into the narrower `control-density-inset.css` modifier. ' +
           'Components consume these vars instead of defining per-component optical-sizing classes. ' +
           'See AGENTS.md — Control density recipes for the maintained metric table.',
       },
@@ -28,6 +29,13 @@ const SIZES = [
   { cls: 'ds-control--md', label: 'md', text: 'text-body-medium', icon: 'md' },
   { cls: 'ds-control--sm', label: 'sm', text: 'text-body-small', icon: 'sm' },
   { cls: 'ds-control--xs', label: 'xs', text: 'text-caption', icon: 'xs' },
+] as const;
+
+const INSET_SIZES = [
+  { cls: 'ds-control--lg', label: 'lg', text: 'text-body-large', dimensions: '40 → 36' },
+  { cls: 'ds-control--md', label: 'md', text: 'text-body-medium', dimensions: '32 → 28' },
+  { cls: 'ds-control--sm', label: 'sm', text: 'text-body-small', dimensions: '24 → 20' },
+  { cls: 'ds-control--xs', label: 'xs', text: 'text-caption', dimensions: '16 → 12' },
 ] as const;
 
 export const Overview: Story = {
@@ -58,6 +66,39 @@ export const Overview: Story = {
               </div>
             `,
           )}
+        </div>
+      </div>
+    </div>
+  `,
+};
+
+export const Inset: Story = {
+  render: () => html`
+    <div class="util-demo-page">
+      <div class="util-demo-section">
+        <h2 class="util-demo-h2">Same-density nested controls</h2>
+        <p class="util-demo-sub">
+          The nested control loses one 2px outer inset on each edge while its inner density metrics stay unchanged.
+        </p>
+        <div class="util-demo-col">
+          ${INSET_SIZES.map(({ cls, label, text, dimensions }) => html`
+            <div class="util-demo-row">
+              <span class="util-demo-label">${label} · ${dimensions}</span>
+              <div class="util-demo-inset-frame ${cls}">
+                <button
+                  type="button"
+                  class="util-demo-control util-demo-control--inset-example ${cls} ds-control--inset"
+                >
+                  <ds-text
+                    class="util-demo-control__label"
+                    as="span"
+                    variant=${text}
+                    color="inherit"
+                  >Inset</ds-text>
+                </button>
+              </div>
+            </div>
+          `)}
         </div>
       </div>
     </div>

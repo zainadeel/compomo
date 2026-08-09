@@ -1,5 +1,12 @@
 import type {
+  TableCellBlank,
+  TableCellAction,
+  TableCellEmpty,
+  TableCellIcon,
+  TableCellImage,
+  TableCellPrimaryText,
   TableCellText,
+  TableCellTag,
   TableCellValue,
   TableColumn,
   TableGroup,
@@ -15,12 +22,54 @@ export interface TableSelectionState {
   indeterminate: boolean;
 }
 
+const TABLE_COLUMN_WIDTH_TOKENS = {
+  xs: '--dimension-table-column-width-xs',
+  sm: '--dimension-table-column-width-sm',
+  md: '--dimension-table-column-width-md',
+  lg: '--dimension-table-column-width-lg',
+  xl: '--dimension-table-column-width-xl',
+} as const;
+
 export function isTableCellText(value: TableCellValue): value is TableCellText {
-  return typeof value === 'object' && value !== null && 'primary' in value;
+  return typeof value === 'object' && value !== null && 'primary' in value && !('kind' in value);
+}
+
+export function isTableCellPrimaryText(value: TableCellValue): value is TableCellPrimaryText {
+  return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'primary-text';
+}
+
+export function isTableCellTag(value: TableCellValue): value is TableCellTag {
+  return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'tag';
+}
+
+export function isTableCellIcon(value: TableCellValue): value is TableCellIcon {
+  return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'icon';
+}
+
+export function isTableCellImage(value: TableCellValue): value is TableCellImage {
+  return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'image';
+}
+
+export function isTableCellAction(value: TableCellValue): value is TableCellAction {
+  return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'action';
+}
+
+export function isTableCellEmpty(value: TableCellValue): value is TableCellEmpty {
+  return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'empty';
+}
+
+export function isTableCellBlank(value: TableCellValue): value is TableCellBlank {
+  return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'blank';
 }
 
 export function tableCellPrimary(value: TableCellValue): string | number | null {
   if (value == null) return null;
+  if (isTableCellTag(value)) return value.label;
+  if (isTableCellIcon(value)) return null;
+  if (isTableCellImage(value)) return value.alt;
+  if (isTableCellAction(value)) return value.label ?? value.ariaLabel;
+  if (isTableCellPrimaryText(value)) return value.primary;
+  if (isTableCellEmpty(value) || isTableCellBlank(value)) return null;
   return isTableCellText(value) ? value.primary : value;
 }
 
@@ -39,10 +88,10 @@ export function tableRowSelectionLabel(row: TableRow, columns: TableColumn[]): s
 export function nextTableSortState(
   current: TableSortState | null | undefined,
   columnId: string,
-): TableSortState | null {
+): TableSortState {
   if (current?.columnId !== columnId) return { columnId, direction: 'asc' };
   if (current.direction === 'asc') return { columnId, direction: 'desc' };
-  return null;
+  return { columnId, direction: 'asc' };
 }
 
 export function nextTableGroupOrder(grouping: TableGroupingState): TableGroupingState {
@@ -53,7 +102,9 @@ export function nextTableGroupOrder(grouping: TableGroupingState): TableGrouping
 }
 
 export function clampTableColumnSize(column: TableColumn): number | undefined {
-  if (!Number.isFinite(column.size) || (column.size ?? 0) <= 0) return undefined;
+  if (typeof column.size !== 'number' || !Number.isFinite(column.size) || column.size <= 0) {
+    return undefined;
+  }
 
   const minimum = Number.isFinite(column.minSize) && (column.minSize ?? 0) > 0
     ? column.minSize!
@@ -65,10 +116,18 @@ export function clampTableColumnSize(column: TableColumn): number | undefined {
   return Math.min(Math.max(column.size!, minimum), maximum);
 }
 
-export function tableExplicitMinWidth(columns: TableColumn[]): number | undefined {
-  const widths = columns.map(clampTableColumnSize);
-  if (!widths.some(width => width !== undefined)) return undefined;
-  return widths.reduce<number>((total, width) => total + (width ?? 0), 0);
+export function tableColumnSize(column: TableColumn): string | undefined {
+  if (typeof column.size === 'string') {
+    return `var(${TABLE_COLUMN_WIDTH_TOKENS[column.size]})`;
+  }
+  const width = clampTableColumnSize(column);
+  return width == null ? undefined : `${width}px`;
+}
+
+export function tableExplicitMinWidth(columns: TableColumn[]): string | undefined {
+  const widths = columns.map(tableColumnSize).filter((width): width is string => !!width);
+  if (widths.length === 0) return undefined;
+  return widths.length === 1 ? widths[0] : `calc(${widths.join(' + ')})`;
 }
 
 export function tableRows(rows: TableRow[], groups: TableGroup[], grouped: boolean): TableRow[] {
@@ -164,4 +223,3 @@ export function tableModelIssues(
 
   return [...new Set(issues)];
 }
-

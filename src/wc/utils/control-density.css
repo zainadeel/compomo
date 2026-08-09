@@ -6,6 +6,8 @@
  * Apply `.ds-control--lg|md|sm|xs` on the control or presentational row (host or
  * inner element). Then use the `--ds-control-*` vars for height, padding, icon
  * box, label inset, gap, and radius.
+ * Controls nested inside another control may additionally import
+ * `control-density-inset.css` and apply its opt-in inset modifier.
  * Text line-height belongs exclusively to the selected `ds-text` variant.
  *
  * Both `:host(.ds-control--*)` and `.ds-control--*` are listed so Stencil scoped

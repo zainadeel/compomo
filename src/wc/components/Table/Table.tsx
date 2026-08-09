@@ -9,12 +9,19 @@ import {
   Watch,
 } from '@stencil/core';
 import {
-  clampTableColumnSize,
   deriveTableSelectionState,
+  isTableCellAction,
+  isTableCellBlank,
+  isTableCellEmpty,
+  isTableCellIcon,
+  isTableCellImage,
+  isTableCellPrimaryText,
   isTableCellText,
+  isTableCellTag,
   nextTableGroupOrder,
   nextTableSortState,
   resolvedTableGroupCount,
+  tableColumnSize,
   tableExplicitMinWidth,
   tableModelIssues,
   tableRows,
@@ -24,9 +31,9 @@ import {
 } from './table-model';
 import type {
   TableCaptionVisibility,
+  TableCellActionDetail,
   TableCellValue,
   TableColumn,
-  TableDensity,
   TableGroup,
   TableGroupingChangeDetail,
   TableGroupingState,
@@ -60,7 +67,6 @@ export class Table {
   /** Required accessible table name, rendered as a native caption. */
   @Prop() caption!: string;
   @Prop() captionVisibility: TableCaptionVisibility = 'hidden';
-  @Prop() density: TableDensity = 'md';
   @Prop() stickyHeader: boolean = false;
   /** Maximum scroll-region height. Numbers resolve to CSS pixels. */
   @Prop() maxHeight: string | number | undefined;
@@ -103,6 +109,7 @@ export class Table {
   @Event() dsGroupingChange!: EventEmitter<TableGroupingChangeDetail>;
   @Event() dsSelectionChange!: EventEmitter<TableSelectionChangeDetail>;
   @Event() dsLoadMore!: EventEmitter<TableLoadMoreDetail>;
+  @Event() dsCellAction!: EventEmitter<TableCellActionDetail>;
 
   @State() private overflowStart = false;
   @State() private overflowEnd = false;
@@ -263,7 +270,7 @@ export class Table {
 
   private get tableStyle(): Record<string, string> | undefined {
     const width = tableExplicitMinWidth(this.columns);
-    return width == null ? undefined : { '--ds-table-explicit-min-inline-size': `${width}px` };
+    return width == null ? undefined : { '--ds-table-explicit-min-inline-size': width };
   }
 
   private warnModelIssues(): void {
@@ -272,7 +279,13 @@ export class Table {
     if (this.grouping && !this.columns.some(column => column.id === this.grouping!.columnId)) {
       issues.push(`Grouping references unknown column id: ${this.grouping.columnId}`);
     }
-    if (this.sort && !this.columns.some(column => column.id === this.sort!.columnId)) {
+    if (
+      this.sort &&
+      !this.columns.some(column =>
+        column.id === this.sort!.columnId ||
+        column.headerSegments?.some(segment => segment.sortKey === this.sort!.columnId),
+      )
+    ) {
       issues.push(`Sorting references unknown column id: ${this.sort.columnId}`);
     }
     const message = issues.join(' ');
@@ -369,24 +382,24 @@ export class Table {
     });
   }
 
-  private emitSort(column: TableColumn): void {
-    if (this.grouping?.columnId === column.id) {
+  private emitSort(column: TableColumn, sortKey = column.id): void {
+    if (this.grouping?.columnId === column.id && sortKey === column.id) {
       this.dsGroupingChange.emit({ grouping: nextTableGroupOrder(this.grouping) });
       return;
     }
     if (!column.sortable) return;
-    this.dsSortChange.emit({ sort: nextTableSortState(this.sort, column.id) });
+    this.dsSortChange.emit({ sort: nextTableSortState(this.sort, sortKey) });
   }
 
-  private sortButtonLabel(column: TableColumn): string {
-    if (this.grouping?.columnId === column.id) {
+  private sortButtonLabel(column: TableColumn, sortKey = column.id, label = column.header): string {
+    if (this.grouping?.columnId === column.id && sortKey === column.id) {
       const next = this.grouping.direction === 'asc' ? 'descending' : 'ascending';
       return `Sort ${column.header} groups ${next}. Currently grouped ${this.grouping.direction === 'asc' ? 'ascending' : 'descending'}.`;
     }
 
-    if (this.sort?.columnId !== column.id) return `Sort ${column.header} ascending`;
-    if (this.sort.direction === 'asc') return `Sort ${column.header} descending. Currently ascending.`;
-    return `Clear ${column.header} sorting. Currently descending.`;
+    if (this.sort?.columnId !== sortKey) return `Sort ${label} ascending`;
+    if (this.sort.direction === 'asc') return `Sort ${label} descending. Currently ascending.`;
+    return `Sort ${label} ascending. Currently descending.`;
   }
 
   private emitRowSelection(row: TableRow): void {
@@ -427,7 +440,7 @@ export class Table {
       >
         <ds-checkbox
           label=""
-          size={this.density === 'sm' ? 'sm' : 'md'}
+          size="md"
           checked={checked}
           indeterminate={indeterminate}
           presentation={true}
@@ -438,33 +451,98 @@ export class Table {
 
   private renderColumnHeader(column: TableColumn) {
     const groupedColumn = this.grouping?.columnId === column.id;
-    const activeMemberSort = !groupedColumn && this.sort?.columnId === column.id;
-    const interactive = groupedColumn || column.sortable;
+    const headerSegments = column.headerSegments?.length
+      ? column.headerSegments
+      : [{ label: column.header, sortKey: column.id }];
+    const activeMemberSegment = !groupedColumn
+      ? headerSegments.find(segment => segment.sortKey === this.sort?.columnId)
+      : undefined;
+    const activeMemberSort = !!activeMemberSegment;
+    const activeSort = groupedColumn || activeMemberSort;
     const align = column.align ?? 'start';
+    const direction = groupedColumn
+      ? this.grouping!.direction
+      : activeMemberSort
+        ? this.sort!.direction
+        : undefined;
     const memberAriaSort = activeMemberSort
       ? (this.sort!.direction === 'asc' ? 'ascending' : 'descending')
       : undefined;
 
-    const content = (
-      <span class="ds-table__header-content">
-        <ds-text as="span" variant="text-body-small" emphasis={true} color="secondary" lineTruncation={1}>
-          {column.header}
-        </ds-text>
-        {interactive && (
-          <span class="ds-table__sort-icons" aria-hidden="true">
-            {groupedColumn && <ds-icon name="GroupBy" size="sm" color="inherit" />}
-            <ds-icon
-              name={
-                groupedColumn
-                  ? (this.grouping!.direction === 'asc' ? 'ArrowUp' : 'ArrowDown')
-                  : activeMemberSort
-                    ? (this.sort!.direction === 'asc' ? 'ArrowUp' : 'ArrowDown')
-                    : 'ChevronUpDown'
-              }
-              size="sm"
+    const labelControl = (
+      <span class="ds-table__header-labels">
+        {headerSegments.map((segment, index) => {
+          const segmentActive = groupedColumn
+            ? headerSegments.length === 1
+            : activeMemberSegment?.sortKey === segment.sortKey;
+          const segmentInteractive = !!column.sortable || (groupedColumn && segment.sortKey === column.id);
+          const label = (
+            <ds-text
+              class="ds-table__header-label-box ds-control-label-box"
+              as="span"
+              variant="text-caption"
+              emphasis={segmentActive}
               color="inherit"
-            />
-          </span>
+              lineTruncation={1}
+            >
+              {segment.label}
+            </ds-text>
+          );
+          const control = segmentInteractive ? (
+            <button
+              class="ds-table__header-label ds-table__header-label--interactive"
+              type="button"
+              aria-label={this.sortButtonLabel(column, segment.sortKey, segment.label)}
+              data-sort-control="label"
+              data-sort-key={segment.sortKey}
+              data-sort-active={segmentActive ? 'true' : undefined}
+              onClick={() => this.emitSort(column, segment.sortKey)}
+            >
+              {label}
+            </button>
+          ) : (
+            <span class="ds-table__header-label ds-table__header-static">{label}</span>
+          );
+
+          return (
+            <span class="ds-table__header-segment" key={segment.sortKey}>
+              {control}
+              {index < headerSegments.length - 1 && (
+                <ds-text
+                  class="ds-table__header-separator"
+                  as="span"
+                  variant="text-caption"
+                  color="tertiary"
+                  aria-hidden="true"
+                >
+                  {segment.separator ?? '/'}
+                </ds-text>
+              )}
+            </span>
+          );
+        })}
+      </span>
+    );
+    const sortControl = (
+      <span class="ds-table__sort-slot">
+        {activeSort && (
+          <ds-button-unfilled
+            class="ds-table__sort-direction"
+            variant="icon"
+            icon={direction === 'asc' ? 'ArrowUp' : 'ArrowDown'}
+            size="xs"
+            aria-label={this.sortButtonLabel(
+              column,
+              activeMemberSegment?.sortKey ?? column.id,
+              activeMemberSegment?.label ?? column.header,
+            )}
+            hasBorder={false}
+            activeFill={false}
+            isActive={true}
+            pressScale={false}
+            data-sort-control="direction"
+            onDsClick={() => this.emitSort(column, activeMemberSegment?.sortKey ?? column.id)}
+          />
         )}
       </span>
     );
@@ -477,34 +555,128 @@ export class Table {
         aria-sort={memberAriaSort}
         data-column-id={column.id}
         data-grouped={groupedColumn ? 'true' : undefined}
+        data-sort-active={activeSort ? 'true' : undefined}
       >
-        {interactive ? (
-          <button
-            class="ds-table__sort-trigger"
-            type="button"
-            aria-label={this.sortButtonLabel(column)}
-            onClick={() => this.emitSort(column)}
-          >
-            {content}
-          </button>
-        ) : (
-          <span class="ds-table__header-static">{content}</span>
-        )}
+        <span class="ds-table__header-content">
+          {align === 'end' && sortControl}
+          {align === 'center' && (
+            <span
+              class="ds-table__sort-slot ds-table__sort-slot--balance"
+              data-sort-balance="true"
+              aria-hidden="true"
+            />
+          )}
+          {labelControl}
+          {align !== 'end' && sortControl}
+        </span>
       </th>
     );
   }
 
-  private renderCellValue(value: TableCellValue, column: TableColumn) {
-    if (value == null) {
+  private renderCellValue(value: TableCellValue, column: TableColumn, row: TableRow) {
+    if (isTableCellBlank(value)) return null;
+
+    if (value == null || isTableCellEmpty(value)) {
       return (
-        <ds-text as="span" variant="text-body-medium" color="secondary">
+        <ds-text
+          class="ds-table__cell-track ds-table__cell-track--text"
+          as="span"
+          variant="text-body-medium"
+          color="secondary"
+        >
           <span aria-hidden="true">—</span>
           <span class="ds-visually-hidden">{this.emptyCellLabel}</span>
         </ds-text>
       );
     }
 
-    const text = isTableCellText(value)
+    if (isTableCellIcon(value)) {
+      return (
+        <ds-icon
+          name={value.icon}
+          size="md"
+          color={value.color ?? 'secondary'}
+          label={value.label}
+        />
+      );
+    }
+
+    if (isTableCellImage(value)) {
+      return (
+        <span class="ds-table__cell-image">
+          {value.src ? (
+            <img class="ds-table__cell-image-content" src={value.src} alt={value.alt} loading="lazy" />
+          ) : (
+            <span
+              class="ds-table__cell-image-placeholder"
+              role="img"
+              aria-label={value.alt}
+            />
+          )}
+        </span>
+      );
+    }
+
+    if (isTableCellAction(value)) {
+      return (
+        <ds-button-unfilled
+          variant={value.variant ?? 'label'}
+          size="sm"
+          label={value.label ?? ''}
+          icon={value.icon ?? ''}
+          aria-label={value.ariaLabel ?? null}
+          hasBorder={value.hasBorder ?? false}
+          isInactive={value.isInactive ?? false}
+          isLoading={value.isLoading ?? false}
+          onDsClick={event => {
+            event.stopPropagation();
+            this.dsCellAction.emit({
+              actionId: value.actionId,
+              rowId: row.id,
+              columnId: column.id,
+            });
+          }}
+        />
+      );
+    }
+
+    if (isTableCellTag(value)) {
+      const variant = value.variant ?? 'tag-only';
+      const tag = (
+        <ds-tag
+          label={value.label}
+          intent={value.intent ?? 'neutral'}
+          contrast={value.contrast ?? 'faint'}
+          size={variant === 'text-with-tag' ? 'sm' : 'md'}
+          icon={value.icon ?? ''}
+          rounded={value.rounded ?? false}
+          isInset
+        />
+      );
+
+      if (variant === 'tag-only') return tag;
+
+      return (
+        <span class={`ds-table__cell-tag-stack ds-table__cell-tag-stack--${variant}`}>
+          {variant === 'tag-with-text' && tag}
+          <ds-text
+            class="ds-table__cell-tag-text ds-table__cell-track"
+            as="span"
+            variant={variant === 'tag-with-text' ? 'text-body-small' : 'text-body-medium'}
+            color="secondary"
+            lineTruncation={1}
+          >
+            {value.text}
+          </ds-text>
+          {variant === 'text-with-tag' && (
+            <span class="ds-table__cell-tag-control-track">{tag}</span>
+          )}
+        </span>
+      );
+    }
+
+    const primaryText = isTableCellPrimaryText(value);
+    const text = isTableCellText(value) || primaryText
       ? value
       : { primary: value, fontFeature: typeof value === 'number' ? 'tabular-nums' as const : 'normal' as const };
     const wraps = text.wrap ?? column.wrap ?? false;
@@ -512,7 +684,7 @@ export class Table {
     return (
       <span class={{ 'ds-table__cell-copy': true, 'ds-table__cell-copy--wrap': wraps }}>
         <ds-text
-          class="ds-table__cell-primary"
+          class="ds-table__cell-primary ds-table__cell-track ds-table__cell-track--text"
           as="span"
           variant="text-body-medium"
           color="primary"
@@ -522,12 +694,12 @@ export class Table {
         >
           {text.primary}
         </ds-text>
-        {text.secondary && (
+        {text.secondary !== undefined && text.secondary !== '' && (
           <ds-text
-            class="ds-table__cell-secondary"
+            class="ds-table__cell-secondary ds-table__cell-track ds-table__cell-track--text"
             as="span"
-            variant="text-body-small"
-            color="secondary"
+            variant={primaryText ? 'text-body-medium' : 'text-body-small'}
+            color={primaryText ? 'primary' : 'secondary'}
             lineTruncation={wraps ? 'none' : 1}
             wrap={wraps ? 'wrap' : 'nowrap'}
           >
@@ -566,14 +738,62 @@ export class Table {
         )}
         {this.columns.map(column => {
           const align = column.align ?? 'start';
+          const value = row.cells[column.id];
+          const tagCell = isTableCellTag(value);
+          const iconCell = isTableCellIcon(value);
+          const imageCell = isTableCellImage(value);
+          const actionCell = isTableCellAction(value);
+          const primaryTextCell = isTableCellPrimaryText(value);
+          const emptyCell = value == null || isTableCellEmpty(value);
+          const blankCell = isTableCellBlank(value);
+          const textCell = primaryTextCell || (!tagCell && !iconCell && !imageCell && !actionCell && !emptyCell && !blankCell);
+          const singleTextCell = textCell && !primaryTextCell && (!isTableCellText(value) || !value.secondary);
+          const tagVariant = tagCell ? value.variant ?? 'tag-only' : undefined;
+          const textVariant = textCell
+            ? primaryTextCell
+              ? 'primary-pair'
+              : singleTextCell
+                ? 'single'
+                : 'multi'
+            : undefined;
+          const cellType = tagCell
+            ? 'tag'
+            : iconCell
+              ? 'icon'
+              : imageCell
+                ? 'image'
+                : actionCell
+                  ? 'action'
+                  : primaryTextCell
+                    ? 'primary-text'
+                    : emptyCell
+                      ? 'empty'
+                      : blankCell
+                        ? 'blank'
+                        : 'text';
           return (
             <td
               key={`${row.id}:${column.id}`}
-              class={`ds-table__cell ds-table__cell--align-${align}`}
+              class={{
+                'ds-table__cell': true,
+                [`ds-table__cell--align-${align}`]: true,
+                'ds-table__cell--tag': tagCell,
+                [`ds-table__cell--tag-${tagVariant}`]: tagCell,
+                'ds-table__cell--icon': iconCell,
+                'ds-table__cell--image': imageCell,
+                'ds-table__cell--action': actionCell,
+                'ds-table__cell--primary-text': primaryTextCell,
+                'ds-table__cell--text-single': singleTextCell,
+                'ds-table__cell--text-multi': textCell && !singleTextCell,
+                'ds-table__cell--empty': emptyCell,
+                'ds-table__cell--blank': blankCell,
+              }}
               data-column-id={column.id}
+              data-cell-type={cellType}
+              data-cell-variant={tagVariant ?? textVariant}
             >
               <span class="ds-table__cell-content">
-                {this.renderCellValue(row.cells[column.id], column)}
+                {this.renderCellValue(value, column, row)}
               </span>
             </td>
           );
@@ -619,7 +839,7 @@ export class Table {
           <tr class="ds-table__row ds-table__skeleton-row" key={`skeleton-${index}`}>
             {this.selectable && (
               <td class="ds-table__cell ds-table__selection-cell">
-                <ds-skeleton variant="icon" iconSize={this.density === 'sm' ? 'sm' : 'md'} />
+                <ds-skeleton variant="icon" iconSize="md" />
               </td>
             )}
             {this.columns.map(column => (
@@ -712,8 +932,11 @@ export class Table {
       : undefined;
 
     return (
-      <Host class={`table-host table-host--${this.density}`}>
-        <div class={`ds-table ds-table--${this.density} ${this.stickyHeader ? 'ds-table--sticky-header' : ''}`}>
+      <Host class="table-host">
+        <div class={{
+          'ds-table': true,
+          'ds-table--sticky-header': this.stickyHeader,
+        }}>
           <div
             class={{
               'ds-table__frame': true,
@@ -755,8 +978,8 @@ export class Table {
                 <colgroup>
                   {this.selectable && <col class="ds-table__selection-column" />}
                   {this.columns.map(column => {
-                    const width = clampTableColumnSize(column);
-                    return <col key={column.id} style={width ? { width: `${width}px` } : undefined} />;
+                    const width = tableColumnSize(column);
+                    return <col key={column.id} style={width ? { width } : undefined} />;
                   })}
                 </colgroup>
                 <thead class="ds-table__head">

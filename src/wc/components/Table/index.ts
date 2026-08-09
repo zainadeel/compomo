@@ -1,11 +1,21 @@
 export type {
   TableCaptionVisibility,
   TableCellAlign,
+  TableCellAction,
+  TableCellActionDetail,
+  TableCellBlank,
+  TableCellEmpty,
+  TableCellIcon,
+  TableCellImage,
+  TableCellPrimaryText,
   TableCellText,
+  TableCellTag,
+  TableCellTagVariant,
   TableCellValue,
   TableColumn,
-  TableDensity,
+  TableColumnWidth,
   TableGroup,
+  TableHeaderSegment,
   TableGroupingChangeDetail,
   TableGroupingState,
   TableLoadMoreDetail,
@@ -18,4 +28,3 @@ export type {
   TableSortDirection,
   TableSortState,
 } from './table-types';
-

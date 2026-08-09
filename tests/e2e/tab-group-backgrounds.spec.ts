@@ -137,15 +137,15 @@ test('supports small, medium, and large density geometry', async ({ page }) => {
   await host.evaluate(element => {
     const group = element as HTMLElement & { tabs: unknown[] };
     group.tabs = [
-      { id: 'overview', label: 'Overview', icon: 'Bookmark', variant: 'icon' },
-      { id: 'settings', label: 'Settings', icon: 'Bell', variant: 'icon' },
+      { id: 'overview', label: 'Overview', icon: 'Bookmark', variant: 'icon-label' },
+      { id: 'settings', label: 'Settings', icon: 'Bell', variant: 'icon-label' },
     ];
   });
 
   const densities = [
-    { size: 'sm', track: 24, segment: 16, icon: 12 },
-    { size: 'md', track: 32, segment: 24, icon: 16 },
-    { size: 'lg', track: 40, segment: 32, icon: 24 },
+    { size: 'sm', track: 24, segment: 20, icon: 16, text: 'text-body-small' },
+    { size: 'md', track: 32, segment: 28, icon: 20, text: 'text-body-medium' },
+    { size: 'lg', track: 40, segment: 36, icon: 24, text: 'text-body-large' },
   ] as const;
 
   for (const density of densities) {
@@ -155,6 +155,7 @@ test('supports small, medium, and large density geometry', async ({ page }) => {
 
     await expect(host).toHaveJSProperty('size', density.size);
     await expect(host).toHaveClass(new RegExp(`tab-group-host--${density.size}`));
+    await expect(host).toHaveClass(new RegExp(`ds-control--${density.size}`));
     await expectDefiniteBounds(host.locator('.tab-list'), {
       label: `${density.size} TabGroup track`,
       height: density.track,
@@ -163,11 +164,14 @@ test('supports small, medium, and large density geometry', async ({ page }) => {
       label: `${density.size} TabGroup segment`,
       height: density.segment,
     });
+    await expect(host.locator('.tab').first()).toHaveClass(new RegExp(`ds-control--${density.size}`));
+    await expect(host.locator('.tab').first()).toHaveClass(/ds-control--inset/);
     await expectDefiniteBounds(host.locator('.tab__icon').first(), {
       label: `${density.size} TabGroup icon`,
       width: density.icon,
       height: density.icon,
     });
+    await expect(host.locator('.tab__label').first()).toHaveJSProperty('variant', density.text);
   }
 });
 

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { chromiumOnly } from './browser-tier';
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/tag.html');
@@ -96,3 +97,40 @@ test('truncates one line only when constrained by maxWidth', async ({ page }) =>
     element => element.scrollWidth > element.clientWidth,
   )).toBe(true);
 });
+
+test('uses opt-in inset geometry without changing inner density metrics',
+  chromiumOnly('layout-geometry', 'Inset density is token-backed engine-neutral control geometry.'),
+  async ({ page }) => {
+    const cases = [
+      { size: 'md', defaultHeight: 32, insetHeight: 28, defaultPadding: 6, insetPadding: 4, icon: 20 },
+      { size: 'sm', defaultHeight: 24, insetHeight: 20, defaultPadding: 4, insetPadding: 2, icon: 16 },
+      { size: 'xs', defaultHeight: 16, insetHeight: 12, defaultPadding: 2, insetPadding: 0, icon: 12 },
+    ];
+
+    for (const density of cases) {
+      const defaultTag = page.locator(`#default-${density.size}`);
+      const insetTag = page.locator(`#inset-${density.size}`);
+      await expect(insetTag).toHaveClass(/ds-control--inset/);
+      await expect(defaultTag).toHaveCSS('height', `${density.defaultHeight}px`);
+      await expect(insetTag).toHaveCSS('height', `${density.insetHeight}px`);
+      await expect(defaultTag).toHaveCSS('padding-left', `${density.defaultPadding}px`);
+      await expect(insetTag).toHaveCSS('padding-left', `${density.insetPadding}px`);
+      await expect(insetTag).toHaveCSS('padding-right', `${density.insetPadding}px`);
+
+      const metrics = await page.locator(`#default-${density.size}, #inset-${density.size}`).evaluateAll(elements => elements.map(element => {
+        const style = getComputedStyle(element);
+        const iconStyle = getComputedStyle(element.querySelector('.tag__prefix-icon')!);
+        const labelStyle = getComputedStyle(element.querySelector('.tag__label')!);
+        return {
+          gap: style.columnGap,
+          radius: style.borderRadius,
+          icon: iconStyle.width,
+          labelInset: labelStyle.paddingLeft,
+        };
+      }));
+
+      expect(metrics).toHaveLength(2);
+      expect(metrics[1]).toEqual(metrics[0]);
+      expect(metrics[1].icon).toBe(`${density.icon}px`);
+    }
+  });

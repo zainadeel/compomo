@@ -138,7 +138,7 @@ export const Sizes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Small, medium, and large tracks are 24px, 32px, and 40px. Medium is the default; large icon tabs use the same 24px icon size as MobileBarNav.',
+        story: 'Small, medium, and large tracks consume the normal 24px, 32px, and 40px control-density recipes. Their nested segments consume the matching inset recipe at 20px, 28px, and 36px while retaining the same-size 16px, 20px, and 24px icon and typography scales.',
       },
     },
   },

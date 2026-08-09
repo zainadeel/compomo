@@ -57,12 +57,13 @@
     "Warning signals higher urgency or risk than caution, which asks for attention before a possible issue.",
     "Contrast changes visual prominence without changing semantic intent or parent surface context.",
     "Rounded is an optional visual style with no semantic difference.",
+    "isInset opts into reduced outer geometry only when Tag is nested inside a control of the same density; semantic styling, typography, icons, gaps, radius, and interaction remain unchanged.",
     "Labels stay on one line and truncate only when the owner supplies a maximum width.",
     "Omitted interactive renders static metadata with no focus, event, or suffix. Interactive adds the fixed ChevronUpDown suffix and emits dsClick without toggling expanded internally.",
     "isInactive disables only the interactive button and applies the shared inactive treatment."
   ],
   "responsiveBehavior": [
-    "The owner selects md, sm, or xs density to match its local layout and owns collection wrapping, overflow, and condensation.",
+    "The owner selects md, sm, or xs density to match its local layout and owns collection wrapping, overflow, and condensation. Use isInset only for same-density control nesting.",
     "Tag does not change size or behavior automatically at breakpoints."
   ],
   "frameworkCaveats": {

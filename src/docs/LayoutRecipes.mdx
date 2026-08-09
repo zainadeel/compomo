@@ -18,6 +18,11 @@ retaining their own semantics, borders, surfaces, and interaction behavior.
 Use each component's `size` property. Do not copy its internal padding onto a
 consumer wrapper.
 
+Some components may document an inset option for nesting inside a control of
+the same size. That option reduces only the nested control's outer geometry;
+it does not define a new typography or icon scale. Do not apply inset density
+to ordinary standalone controls.
+
 ## Fields
 
 Field, Input, Select, and Slider share a 4px vertical flow between

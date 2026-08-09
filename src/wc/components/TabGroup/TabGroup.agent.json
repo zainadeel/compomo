@@ -59,7 +59,7 @@
     "The parent owns the canonical selected value and adjacent view visibility, and should update both from dsChange.",
     "A missing, empty, inactive, or unknown selected value is invalid when enabled tabs exist; the component does not choose a fallback selection.",
     "Selection is singular and follows keyboard focus.",
-    "Small, medium, and large use 24px, 32px, and 40px tracks respectively; medium preserves the established default and large uses 24px icons for alignment with large mobile chrome.",
+    "Small, medium, and large use the shared 24px, 32px, and 40px control-density recipes for the outer track. Each segment uses the same-size inset recipe at 20px, 28px, and 36px while preserving that density's typography, icon, gap, and label metrics.",
     "Use one consistent content variant across every selectable tab in a group.",
     "Omitted background is for primary and secondary surfaces; pass the faint context explicitly on faint surfaces.",
     "Only the omitted default context emphasizes visible selected label text and keeps the filled track; explicit faint follows the other surface contexts with a transparent track, stable text weight, surface border, and neutral active fill.",

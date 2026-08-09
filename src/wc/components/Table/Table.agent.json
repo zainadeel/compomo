@@ -7,7 +7,7 @@
   "tag": "ds-table",
   "audience": "general",
   "status": "experimental",
-  "summary": "Semantic, controlled data table with durable visual primitives for density, column geometry, grouping, sorting, multi-selection, sticky overflow, and incremental loading.",
+  "summary": "Semantic, controlled data table with durable visual primitives for cell geometry, column geometry, grouping, sorting, multi-selection, sticky overflow, and incremental loading.",
   "useWhen": [
     "A structured dataset needs native row and column relationships, optional one-level grouping, or comparable values across records.",
     "An application needs controlled sorting, loaded-row selection, or lazy loading while retaining ownership of the data query and transformations.",
@@ -23,7 +23,9 @@
     "component:ds-empty-state",
     "component:ds-skeleton",
     "component:ds-loader",
-    "component:ds-tag"
+    "component:ds-button-unfilled",
+    "component:ds-tag",
+    "component:ds-icon"
   ],
   "accessibility": [
     "The rendered structure uses a native table, caption, column headers, row groups, and data cells; keep the caption non-empty even when it is visually hidden.",
@@ -35,16 +37,18 @@
   "states": [
     "Columns, rows, groups, grouping, sorting, selected row IDs, and lazy-loading state are controlled inputs. Events communicate intent and never mutate those inputs.",
     "Grouping supports one level. The application supplies ordered groups and ordered member rows; group order and member-row sort are independent controls.",
-    "Sort activation cycles ascending, descending, and clear for ordinary columns. The grouped column toggles ascending and descending group order without clearing member sort.",
+    "An active member sort toggles only between ascending and descending; activating a different sortable label moves sorting to that key. Applications may still clear the controlled sort state explicitly. The grouped column toggles ascending and descending group order without clearing member sort.",
+    "Compound headers can expose multiple related labels with independent sort keys. Each label owns only its content-width interaction target while the active direction remains in the column's alignment-aware sort lane.",
     "Initial loading uses row-shaped skeletons. Empty and initial error states remain inside the table. Incremental loading retains existing rows and supports automatic sentinel, manual load-more, retry, and terminal states.",
     "Lazy loading replaces pagination. The application owns requests, cancellation, cursors, deduplication, appended records, and query identity; loadIdentity resets the component request guard.",
-    "Cells accept scalar content or a standard primary-and-secondary text primitive. Nullish values render a visible em dash with localized assistive text.",
+    "Cells accept scalar content, standard primary-and-secondary or dual-primary text primitives, declarative Tag, icon-only, 16:9 Image, or ButtonUnfilled Action content, or explicit Empty and Blank absence values. Single-track text, selection, tag-only, icon-only, Action, Empty, and Blank cells resolve a 40px base contract while multi-track cells grow downward. Action cells primarily use an icon-only Ellipses treatment, render a 24px small ButtonUnfilled inside 8px padding, default to unbordered, and emit row, column, and action identities through dsCellAction. Image cells render a 52px-high bordered preview inside 6px outer padding, establishing a 64px row, and fall back to an accessible placeholder when no source is supplied. Empty means the data applies but has no value and renders an em dash with localized assistive text; Blank means the data is not applicable and renders no content. Nullish values remain backward-compatible Empty values. Stable type and variant hooks keep every cell family independently styleable.",
     "The public @ds-mo/ui/table.css export is the authoritative zero-specificity visual recipe. Override its --ds-table-* properties or target its stable element classes for product-specific styling."
   ],
   "responsiveBehavior": [
     "The table keeps native semantics at narrow widths and scrolls horizontally instead of transforming into cards.",
     "Explicit column sizes establish the horizontal overflow width; unsized columns share remaining space.",
-    "Medium and small density adjust header, row, padding, and selection geometry without changing behavior or content hierarchy.",
+    "Prefer the named xs through xl column sizes, which resolve through TokoMo's table-column width tokens; numeric pixel sizes remain an escape hatch for exceptional application-owned widths.",
+    "Column headers use one 32px geometry. Body rows use a 40px single-track minimum; cell-specific outer padding and track geometry align text, selection, Tag, icon, Action, Empty, Blank, and Image primitives while additional tracks grow downward.",
     "Long content truncates by default and can opt into wrapping at the column or cell level."
   ],
   "frameworkCaveats": {
@@ -54,11 +58,11 @@
     ],
     "react": [
       "Pass new array and state-object references when the controlled data or query state changes.",
-      "Apply the emitted detail to application state and perform sorting, grouping, or loading in the data layer."
+      "Apply emitted sort, grouping, selection, action, or loading detail to application state and perform data transformations in the owning layer."
     ],
     "angular": [
       "Bind complex table inputs as properties and update the controlled values from the corresponding output events.",
-      "Keep server cursor and query lifecycle state in the owning service or container."
+      "Keep server cursor, query lifecycle, and cell-action handling in the owning service or container."
     ]
   },
   "references": [

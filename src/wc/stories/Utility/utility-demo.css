@@ -8,6 +8,7 @@
 @import '../../utils/control-press.css';
 @import '../../utils/control-inactive.css';
 @import '../../utils/control-density.css';
+@import '../../utils/control-density-inset.css';
 @import '../../utils/chrome-layout.css';
 @import '../../utils/focus-ring.css';
 @import '../../utils/scroll-edge-fade.css';
@@ -217,6 +218,22 @@
   width: var(--ds-control-icon);
   height: var(--ds-control-icon);
   flex: 0 0 var(--ds-control-icon);
+}
+
+.util-demo-inset-frame {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: fit-content;
+  height: var(--ds-control-height);
+  padding: var(--dimension-space-025);
+  border-radius: var(--dimension-radius-050);
+  background: var(--color-background-secondary);
+}
+
+.util-demo-control--inset-example {
+  background: var(--color-background-faint-brand);
+  color: var(--color-foreground-bold-brand);
 }
 
 .util-demo-density-compositions {

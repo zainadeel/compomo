@@ -27,6 +27,8 @@ export class Tag {
   @Prop() intent: TagIntent = 'neutral';
   @Prop() contrast: TagContrast = 'faint';
   @Prop() size: TagSize = 'md';
+  /** Use the reduced outer geometry when nested inside a control of the same size. */
+  @Prop() isInset: boolean = false;
   @Prop() rounded: boolean = false;
   @Prop() maxWidth: string | number | undefined;
   /** Render a menu-trigger button with a fixed ChevronUpDown suffix. */
@@ -61,6 +63,7 @@ export class Tag {
       'ds-control--md': this.size === 'md',
       'ds-control--sm': this.size === 'sm',
       'ds-control--xs': this.size === 'xs',
+      'ds-control--inset': this.isInset,
       'tag--rounded': this.rounded,
       'tag--interactive': this.interactive,
       'ds-control-inactive': this.interactive && this.isInactive,
