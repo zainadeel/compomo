@@ -432,7 +432,7 @@ test.describe('Responsive mobile shell foundation', () => {
     expect(headerMetrics.contextCenter).toBeCloseTo(headerMetrics.headerCenter, 0);
     expect(headerMetrics.contextSize).toBe('lg');
     expect(headerMetrics.contextTrackHeight).toBe(40);
-    expect(headerMetrics.contextTabSizes.map(size => size[1])).toEqual([32, 32]);
+    expect(headerMetrics.contextTabSizes.map(size => size[1])).toEqual([36, 36]);
     expect(headerMetrics.contextIconSizes).toEqual([[24, 24], [24, 24]]);
     expect(headerMetrics.logoLeft).toBe(8);
     expect(headerMetrics.logoMarkLeft).toBe(16);
