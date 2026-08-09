@@ -4,12 +4,26 @@ import test from 'node:test';
 
 const css = fs.readFileSync('src/wc/styles/table.css', 'utf8');
 const componentCss = fs.readFileSync('src/wc/components/Table/Table.css', 'utf8');
+const componentTsx = fs.readFileSync('src/wc/components/Table/Table.tsx', 'utf8');
 const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 
 test('publishes one renderer-neutral table recipe consumed by the component', () => {
   assert.equal(packageJson.exports['./table.css'], './dist/styles/table.css');
   assert.doesNotMatch(componentCss, /interaction-fill\.css/);
   assert.match(componentCss, /@import '\.\.\/\.\.\/styles\/table\.css'/);
+  assert.match(componentTsx, /interaction-fill\.css/);
+  assert.doesNotMatch(componentTsx, /scroll-edge-fade\.css/);
+  assert.doesNotMatch(componentTsx, /ds-table__overflow-shadow/);
+  assert.match(css, /--ds-table-sticky-start-shadow/);
+  assert.match(css, /--ds-table-sticky-end-shadow/);
+  assert.match(css, /--_table-sticky-start-shadow:[\s\S]*?inset var\(--dimension-space-050\) 0 var\(--dimension-space-050\)/);
+  assert.match(css, /--_table-sticky-end-shadow:[\s\S]*?inset calc\(-1 \* var\(--dimension-space-050\)\) 0 var\(--dimension-space-050\)/);
+  assert.doesNotMatch(css, /--effect-shadow-elevated-panel-(?:left|right)/);
+  assert.match(css, /\.ds-table__frame--overflow-start \.ds-table__sticky-edge--start/);
+  assert.match(css, /\.ds-table__frame--overflow-end \.ds-table__sticky-edge--end/);
+  assert.match(css, /\.ds-table__sticky-edge--start/);
+  assert.match(css, /\.ds-table__sticky-edge--end/);
+  assert.doesNotMatch(css, /\.ds-table__overflow-shadow/);
   assert.match(css, /\.ds-table__header-cell/);
   assert.match(css, /\.ds-table__group-cell/);
   assert.match(css, /\.ds-table__load-cell/);
@@ -28,6 +42,8 @@ test('keeps public table selectors override-friendly', () => {
   assert.match(css, /var\(--ds-table-header-surface, var\(--color-background-primary\)\)/);
   assert.match(css, /var\(--ds-table-border, var\(--color-border-secondary\)\)/);
   assert.match(css, /var\(--ds-table-column-border, var\(--color-border-tertiary\)\)/);
+  assert.match(css, /var\(--ds-table-sticky-border, var\(--color-border-secondary\)\)/);
+  assert.match(css, /var\(--ds-table-border-strong, var\(--color-border-secondary\)\)/);
   assert.match(css, /user-select: none/);
   assert.match(css, /--_table-cell-track-min-block-size: calc\([\s\S]*?var\(--dimension-size-400\) - var\(--dimension-space-050\)/);
   assert.match(css, /--_table-cell-track-padding-inline: calc\([\s\S]*?var\(--dimension-space-075\) - var\(--dimension-space-025\)/);
@@ -53,8 +69,8 @@ test('keeps public table selectors override-friendly', () => {
   assert.match(css, /\.ds-table__cell-image\)[^{]*\{[^}]*block-size: var\(--_table-image-block-size\)[^}]*aspect-ratio: 16 \/ 9[^}]*border: var\(--dimension-stroke-width-012\) solid var\(--color-border-tertiary\)[^}]*border-radius: var\(--dimension-radius-025\)/s);
   assert.match(css, /\.ds-table__cell-image-content\)[^{]*\{[^}]*object-fit: cover/s);
   assert.match(css, /\.ds-table__cell--primary-text \.ds-table__cell-secondary\)[^{]*\{[^}]*padding-block: 0/s);
-  assert.match(css, /\.ds-table__cell--action\)[^{]*\{[^}]*padding: var\(--dimension-space-100\)/s);
-  assert.match(css, /\.ds-table__cell--action \.ds-table__cell-content\)[^{]*\{[^}]*min-block-size: var\(--dimension-size-300\)/s);
+  assert.match(css, /\.ds-table__cell--action\)[^{]*\{[^}]*padding: var\(--dimension-space-075\)/s);
+  assert.match(css, /\.ds-table__cell--action \.ds-table__cell-content\)[^{]*\{[^}]*min-block-size: var\(--_table-cell-track-min-block-size\)/s);
   assert.match(css, /\.ds-table__cell\.ds-table__selection-cell\)[^{]*\{[^}]*padding: var\(--dimension-space-125\)/s);
   assert.match(css, /\.ds-table__cell\.ds-table__selection-cell \.ds-table__selection-control\)[^{]*\{[^}]*inline-size: var\(--dimension-iconography-md\)[^}]*block-size: var\(--dimension-iconography-md\)/s);
   assert.match(css, /\.ds-table__cell--text-single\),[\s\S]*?\.ds-table__cell--text-multi\),[\s\S]*?\.ds-table__cell--empty\),[\s\S]*?\.ds-table__cell--blank\)[^{]*\{[^}]*padding: var\(--dimension-space-125\)/s);
@@ -69,9 +85,17 @@ test('keeps public table selectors override-friendly', () => {
   assert.match(css, /\.ds-table__header-label\)[^{]*\{[^}]*flex: 0 1 auto[^}]*inline-size: fit-content[^}]*padding-inline: var\(--dimension-space-025\)/s);
   assert.match(css, /\.ds-table__cell--align-end \.ds-table__header-labels\)[^{]*\{[^}]*margin-inline-start: auto/s);
   assert.match(css, /\.ds-table__cell--align-end \.ds-table__sort-slot/);
-  assert.match(css, /box-shadow: inset 0 calc\(-1 \* var\(--dimension-stroke-width-012\)\)/);
-  assert.match(css, /background-image: linear-gradient\(var\(--_table-border\), var\(--_table-border\)\)/);
-  assert.match(css, /background-size: 100% var\(--dimension-stroke-width-012\)/);
+  assert.match(css, /\.ds-table__header-cell\)\s*::after[^{]*\{[^}]*inset-block-end: 0[^}]*z-index: 1[^}]*block-size: var\(--dimension-stroke-width-012\)[^}]*background: var\(--_table-border-strong\)/s);
+  assert.match(css, /\.ds-table__header-cell \+ \.ds-table__header-cell\)\s*::before[^{]*\{[^}]*box-shadow: inset var\(--dimension-stroke-width-012\) 0 0 var\(--_table-column-border\)/s);
+  assert.match(css, /\.ds-table__cell\)[^{]*\{[^}]*--ds-interaction-group-divider-width: var\(--dimension-stroke-width-012\)[^}]*--ds-interaction-group-divider-color: var\(--_table-border\)/s);
+  assert.match(css, /\.ds-table__body:last-child \.ds-table__row:last-child \.ds-table__cell\)[^{]*\{[^}]*--ds-interaction-group-divider-width: 0px/s);
+  assert.doesNotMatch(css, /background-image: linear-gradient\(var\(--_table-border\)/);
+  assert.match(css, /\.ds-table__row--interactive:hover > \.ds-table__cell\.ds-interaction-fill\)/);
+  assert.match(css, /\.ds-table__row--interactive:active > \.ds-table__cell\.ds-interaction-fill\)/);
+  assert.match(css, /\.ds-table__cell--sticky-start/);
+  assert.match(css, /\.ds-table__cell--sticky-end/);
+  assert.match(css, /\.ds-table__document-sticky-header/);
+  assert.match(css, /border: 0/);
   assert.match(css, /\.ds-table__header-label--interactive:focus-visible/);
   assert.match(css, /\.ds-table__header-label--interactive:hover\)[^{]*\{[^}]*color: var\(--color-foreground-primary\)/s);
   assert.match(css, /\.ds-table__header-label--interactive:active\)[^{]*\{[^}]*color: var\(--color-foreground-primary\)/s);
@@ -86,6 +110,7 @@ test('exposes token-backed visual layers and responsive overflow behavior', () =
     '--ds-table-row-selected',
     '--ds-table-border',
     '--ds-table-column-border',
+    '--ds-table-sticky-border',
     '--ds-table-header-min-block-size',
     '--ds-table-row-min-block-size',
     '--ds-table-cell-padding-inline',
@@ -93,7 +118,8 @@ test('exposes token-backed visual layers and responsive overflow behavior', () =
     assert.match(css, new RegExp(property));
   }
   assert.match(css, /overflow: auto/);
+  assert.match(css, /overscroll-behavior-x: none/);
+  assert.match(css, /overscroll-behavior-y: auto/);
   assert.match(css, /position: sticky/);
   assert.match(css, /forced-colors: active/);
-  assert.match(css, /prefers-reduced-motion: reduce/);
 });

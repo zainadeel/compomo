@@ -199,6 +199,9 @@ export function tableModelIssues(
   for (const column of columns) {
     if (!column.id.trim()) issues.push('Every column requires a non-empty id.');
     else if (columnIds.has(column.id)) issues.push(`Duplicate column id: ${column.id}`);
+    if (!column.header.trim() && !column.headerLabel?.trim()) {
+      issues.push(`Column ${column.id || '(missing id)'} requires a visible header or headerLabel.`);
+    }
     columnIds.add(column.id);
   }
 

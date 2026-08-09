@@ -61,7 +61,7 @@ import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 import { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 import { SwitchSize } from "./components/Switch/Switch";
 import { TabBackground, TabGroupSize as TabGroupSize1 } from "./components/TabGroup/TabGroup";
-import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupingChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupingChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -122,7 +122,7 @@ export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 export { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 export { SwitchSize } from "./components/Switch/Switch";
 export { TabBackground, TabGroupSize as TabGroupSize1 } from "./components/TabGroup/TabGroup";
-export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupingChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupingChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -542,6 +542,11 @@ export namespace Components {
          */
         "isInactive": boolean;
         /**
+          * Use reduced outer geometry when nested inside a control of the same size.
+          * @default false
+         */
+        "isInset": boolean;
+        /**
           * Shows an inline loader and prevents interaction without applying inactive opacity.
           * @default false
          */
@@ -635,6 +640,11 @@ export namespace Components {
           * @default false
          */
         "isInactive": boolean;
+        /**
+          * Use reduced outer geometry when nested inside a control of the same size.
+          * @default false
+         */
+        "isInset": boolean;
         /**
           * Shows an inline loader and prevents interaction without applying inactive opacity.
           * @default false
@@ -3925,6 +3935,7 @@ declare global {
         "dsSelectionChange": TableSelectionChangeDetail;
         "dsLoadMore": TableLoadMoreDetail;
         "dsCellAction": TableCellActionDetail;
+        "dsRowActivate": TableRowActivateDetail;
     }
     interface HTMLDsTableElement extends Components.DsTable, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsTableElementEventMap>(type: K, listener: (this: HTMLDsTableElement, ev: DsTableCustomEvent<HTMLDsTableElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -4550,6 +4561,11 @@ declare namespace LocalJSX {
          */
         "isInactive"?: boolean;
         /**
+          * Use reduced outer geometry when nested inside a control of the same size.
+          * @default false
+         */
+        "isInset"?: boolean;
+        /**
           * Shows an inline loader and prevents interaction without applying inactive opacity.
           * @default false
          */
@@ -4643,6 +4659,11 @@ declare namespace LocalJSX {
           * @default false
          */
         "isInactive"?: boolean;
+        /**
+          * Use reduced outer geometry when nested inside a control of the same size.
+          * @default false
+         */
+        "isInset"?: boolean;
         /**
           * Shows an inline loader and prevents interaction without applying inactive opacity.
           * @default false
@@ -6794,6 +6815,7 @@ declare namespace LocalJSX {
         "onDsCellAction"?: (event: DsTableCustomEvent<TableCellActionDetail>) => void;
         "onDsGroupingChange"?: (event: DsTableCustomEvent<TableGroupingChangeDetail>) => void;
         "onDsLoadMore"?: (event: DsTableCustomEvent<TableLoadMoreDetail>) => void;
+        "onDsRowActivate"?: (event: DsTableCustomEvent<TableRowActivateDetail>) => void;
         "onDsSelectionChange"?: (event: DsTableCustomEvent<TableSelectionChangeDetail>) => void;
         "onDsSortChange"?: (event: DsTableCustomEvent<TableSortChangeDetail>) => void;
         /**
@@ -7168,6 +7190,7 @@ declare namespace LocalJSX {
     interface DsButtonFilledAttributes {
         "variant": ButtonFilledVariant;
         "size": ButtonFilledSize;
+        "isInset": boolean;
         "width": ButtonFilledWidth;
         "label": string;
         "icon": string;
@@ -7189,6 +7212,7 @@ declare namespace LocalJSX {
     interface DsButtonUnfilledAttributes {
         "variant": ButtonUnfilledVariant;
         "size": ButtonUnfilledSize;
+        "isInset": boolean;
         "width": ButtonUnfilledWidth;
         "label": string;
         "icon": string;

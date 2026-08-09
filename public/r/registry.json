@@ -1523,6 +1523,7 @@
           ],
           "states": [
             "Every size applies one complete control-density recipe across frame height, inline padding, icon zone, text-container inset, gap, and radius.",
+            "Set isInset only when the button is nested inside a same-size control; it reduces the outer geometry while preserving the size's icon, label inset, gap, radius, and typography.",
             "Use only one filled action per local decision area; render all secondary actions with ButtonUnfilled.",
             "Choose brand or neutral for general commands. Reserve positive, negative, warning, and caution for matching action consequences, and AI, guide, or walkthrough for actions that enter those feature experiences.",
             "Contrast serves both surface adaptation and hierarchy, but never permits a second filled action in the same decision area.",
@@ -1599,6 +1600,10 @@
             "required": false
           },
           "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "isInset": {
             "type": "boolean",
             "required": false
           },
@@ -1725,6 +1730,7 @@
           ],
           "states": [
             "Every size applies one complete control-density recipe across frame height, inline padding, icon zone, text-container inset, gap, and radius.",
+            "Set isInset only when the button is nested inside a same-size control; it reduces the outer geometry while preserving the size's icon, label inset, gap, radius, and typography.",
             "A true pressed toggle and owner-controlled isActive emphasis share the selected visual treatment, but only pressed supplies toggle semantics and dsChange.",
             "General content UI keeps the selected interaction fill and border for pressed or active emphasis.",
             "Shell, navigation, and tool-rail composites use isActive with foreground-only emphasis and no selected fill or border.",
@@ -1811,6 +1817,10 @@
             "required": false
           },
           "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "isInset": {
             "type": "boolean",
             "required": false
           },
@@ -8055,7 +8065,7 @@
           "avoidWhen": [
             "Content is primarily editorial prose; use semantic product-owned markup with the prose recipe instead.",
             "A small label/value set reads more clearly as a list, description list, or card.",
-            "The interface requires tree-grid behavior, nested grouping, inline cell editing, row reordering, column pinning, or virtualization; those are outside this first contract.",
+            "The interface requires tree-grid behavior, nested grouping, inline cell editing, row reordering, multiple pinned columns per edge, or virtualization; those are outside this first contract.",
             "The application expects the component to fetch, paginate, sort, group, or mutate records internally."
           ],
           "commonlyComposedWith": [
@@ -8070,6 +8080,7 @@
             "The rendered structure uses a native table, caption, column headers, row groups, and data cells; keep the caption non-empty even when it is visually hidden.",
             "Sorting controls remain buttons inside column headers. Member-row sort uses aria-sort, while independent group order is described by the grouped header control.",
             "Selection controls expose checkbox semantics and explicit row names; select-all affects selectable loaded rows only and preserves selected identities outside the loaded window.",
+            "Interactive rows are focusable as native rows, activate with Enter or Space, and do not steal activation from their nested selection or action controls.",
             "Scrollable table regions become keyboard focusable and named only when overflow exists.",
             "Incremental loading, newly appended row counts, failures, and end-of-results transitions are announced through a polite status region without replacing visible state."
           ],
@@ -8080,11 +8091,15 @@
             "Compound headers can expose multiple related labels with independent sort keys. Each label owns only its content-width interaction target while the active direction remains in the column's alignment-aware sort lane.",
             "Initial loading uses row-shaped skeletons. Empty and initial error states remain inside the table. Incremental loading retains existing rows and supports automatic sentinel, manual load-more, retry, and terminal states.",
             "Lazy loading replaces pagination. The application owns requests, cancellation, cursors, deduplication, appended records, and query identity; loadIdentity resets the component request guard.",
+            "Rows opt into complete-row activation with interactive and emit dsRowActivate without owning navigation. Selection paints through the shared selected ::before layer; interactive hover and press paint through the shared ::after layer.",
+            "Row selection owns the single sticky start lane. One explicitly sized application column can own the sticky end lane, or the start lane when selection is absent. Each sticky boundary owns one fixed divider and a row-clipped directional shadow that paints into the adjacent scrolling columns only while more inline content remains beyond that edge.",
             "Cells accept scalar content, standard primary-and-secondary or dual-primary text primitives, declarative Tag, icon-only, 16:9 Image, or ButtonUnfilled Action content, or explicit Empty and Blank absence values. Single-track text, selection, tag-only, icon-only, Action, Empty, and Blank cells resolve a 40px base contract while multi-track cells grow downward. Action cells primarily use an icon-only Ellipses treatment, render a 24px small ButtonUnfilled inside 8px padding, default to unbordered, and emit row, column, and action identities through dsCellAction. Image cells render a 52px-high bordered preview inside 6px outer padding, establishing a 64px row, and fall back to an accessible placeholder when no source is supplied. Empty means the data applies but has no value and renders an em dash with localized assistive text; Blank means the data is not applicable and renders no content. Nullish values remain backward-compatible Empty values. Stable type and variant hooks keep every cell family independently styleable.",
             "The public @ds-mo/ui/table.css export is the authoritative zero-specificity visual recipe. Override its --ds-table-* properties or target its stable element classes for product-specific styling."
           ],
           "responsiveBehavior": [
             "The table keeps native semantics at narrow widths and scrolls horizontally instead of transforming into cards.",
+            "stickyHeader follows the active vertical scroll owner: a maxHeight table keeps its native header inside the bounded table scrollport, while a document-flow table retains a semantic native header and renders a sticky control header whose columns follow the body's native inline scroll timeline. Consumers set --ds-table-sticky-header-offset when page chrome occupies the scrollport edge.",
+            "Without maxHeight the table grows the document and automatic lazy loading observes the browser viewport. Horizontal scrolling chains vertical wheel and trackpad movement to the page instead of trapping it.",
             "Explicit column sizes establish the horizontal overflow width; unsized columns share remaining space.",
             "Prefer the named xs through xl column sizes, which resolve through TokoMo's table-column width tokens; numeric pixel sizes remain an escape hatch for exceptional application-owned widths.",
             "Column headers use one 32px geometry. Body rows use a 40px single-track minimum; cell-specific outer padding and track geometry align text, selection, Tag, icon, Action, Empty, Blank, and Image primitives while additional tracks grow downward.",
@@ -8093,7 +8108,7 @@
           "frameworkCaveats": {
             "customElements": [
               "Assign columns, rows, groups, grouping, sort, and selectedRowIds through JavaScript properties rather than HTML attribute strings.",
-              "Replace controlled property values in response to dsSortChange, dsGroupingChange, dsSelectionChange, and dsLoadMore."
+              "Replace controlled property values in response to dsSortChange, dsGroupingChange, dsSelectionChange, and dsLoadMore; route dsRowActivate in the application owner."
             ],
             "react": [
               "Pass new array and state-object references when the controlled data or query state changes.",
@@ -8257,6 +8272,10 @@
           {
             "name": "dsLoadMore",
             "detail": "TableLoadMoreDetail"
+          },
+          {
+            "name": "dsRowActivate",
+            "detail": "TableRowActivateDetail"
           },
           {
             "name": "dsSelectionChange",

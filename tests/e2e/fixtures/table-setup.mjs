@@ -98,13 +98,13 @@ cellTypes.columns = [
   { id: 'singleText', header: 'Single text', size: 'sm' },
   { id: 'primarySecondary', header: 'Primary + secondary', size: 'sm' },
   { id: 'primaryPair', header: 'Primary + primary', size: 'sm' },
-  { id: 'image', header: 'Image', size: 'sm' },
+  { id: 'image', header: 'Image', size: 105 },
   { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
   { id: 'tagOnly', header: 'Tag only', size: 'sm' },
   { id: 'tagWithText', header: 'Tag with text', size: 'sm' },
   { id: 'textWithTag', header: 'Text with tag', size: 'sm' },
-  { id: 'action', header: 'Action', align: 'center', size: 'xs' },
-  { id: 'borderedAction', header: 'Bordered action', align: 'center', size: 'xs' },
+  { id: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
+  { id: 'borderedAction', header: '', headerLabel: 'Bordered action', align: 'center', size: 40 },
   { id: 'empty', header: 'Empty', size: 'xs' },
   { id: 'blank', header: 'Blank', size: 'xs' },
 ];
@@ -166,6 +166,37 @@ selectable.addEventListener('dsSelectionChange', event => {
   selectable.selectedRowIds = event.detail.selectedRowIds;
 });
 
+const interactive = document.getElementById('interactive');
+interactive.columns = [
+  ...columns,
+  {
+    id: 'actions',
+    header: '',
+    headerLabel: 'Actions',
+    align: 'center',
+    size: 40,
+    sticky: 'end',
+  },
+];
+interactive.rows = rows.slice(0, 2).map(row => ({
+  ...row,
+  interactive: true,
+  cells: {
+    ...row.cells,
+    actions: {
+      kind: 'action',
+      actionId: 'more',
+      variant: 'icon',
+      icon: 'Ellipses',
+      ariaLabel: `More actions for ${row.selectionLabel}`,
+    },
+  },
+}));
+window.__tableRowActivationEvents = [];
+interactive.addEventListener('dsRowActivate', event => {
+  window.__tableRowActivationEvents.push(event.detail.rowId);
+});
+
 for (const id of ['lazy', 'lazy-guard', 'lazy-retry', 'lazy-auto']) {
   const table = document.getElementById(id);
   table.columns = columns.slice(0, 3);
@@ -199,6 +230,13 @@ overflow.rows = Array.from({ length: 12 }, (_, index) => ({
 }));
 
 setBase('standard');
+const documentSticky = document.getElementById('document-sticky');
+documentSticky.columns = interactive.columns;
+documentSticky.sort = { columnId: 'name', direction: 'desc' };
+documentSticky.rows = Array.from({ length: 16 }, (_, index) => ({
+  ...interactive.rows[index % interactive.rows.length],
+  id: `document-row-${index}`,
+}));
 for (const id of ['loading', 'empty', 'error']) {
   document.getElementById(id).columns = columns.slice(0, 3);
 }

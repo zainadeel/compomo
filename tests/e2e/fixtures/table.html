@@ -18,6 +18,7 @@
       <ds-table id="compound" caption="Compound safety events"></ds-table>
       <ds-table id="cell-types" caption="Tag cell variants" selection-mode="multiple"></ds-table>
       <ds-table id="selectable" caption="Selectable drivers" selection-mode="multiple"></ds-table>
+      <ds-table id="interactive" caption="Interactive drivers" selection-mode="multiple"></ds-table>
       <ds-table id="lazy" caption="Lazy drivers" lazy-loading load-more-mode="manual" has-more></ds-table>
       <ds-table id="lazy-guard" caption="Guarded lazy drivers" lazy-loading load-more-mode="manual" has-more></ds-table>
       <ds-table id="lazy-retry" caption="Retry lazy drivers" lazy-loading load-more-mode="manual" has-more load-more-error="More rows failed to load."></ds-table>
@@ -32,6 +33,15 @@
         ></ds-table>
       </div>
       <ds-table id="standard" caption="Standard table geometry"></ds-table>
+      <div style="width: 360px;">
+        <ds-table
+          id="document-sticky"
+          caption="Document-flow drivers"
+          selection-mode="multiple"
+          sticky-header
+          style="--ds-table-sticky-header-offset: var(--dimension-size-600);"
+        ></ds-table>
+      </div>
       <ds-table id="loading" caption="Loading drivers" loading></ds-table>
       <ds-table id="empty" caption="Empty drivers" empty-heading="No matching drivers"></ds-table>
       <ds-table id="error" caption="Unavailable drivers" error error-heading="Drivers unavailable"></ds-table>

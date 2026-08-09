@@ -58,6 +58,7 @@
   ],
   "states": [
     "Every size applies one complete control-density recipe across frame height, inline padding, icon zone, text-container inset, gap, and radius.",
+    "Set isInset only when the button is nested inside a same-size control; it reduces the outer geometry while preserving the size's icon, label inset, gap, radius, and typography.",
     "A true pressed toggle and owner-controlled isActive emphasis share the selected visual treatment, but only pressed supplies toggle semantics and dsChange.",
     "General content UI keeps the selected interaction fill and border for pressed or active emphasis.",
     "Shell, navigation, and tool-rail composites use isActive with foreground-only emphasis and no selected fill or border.",

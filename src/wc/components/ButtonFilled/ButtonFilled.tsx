@@ -47,6 +47,9 @@ export class ButtonFilled {
   /** Control density (height, padding, icon, type). */
   @Prop() size: ButtonFilledSize = 'md';
 
+  /** Use reduced outer geometry when nested inside a control of the same size. */
+  @Prop() isInset: boolean = false;
+
   /** Width fit — hug content (default) or fill the parent. */
   @Prop() width: ButtonFilledWidth = 'hug';
 
@@ -169,6 +172,7 @@ export class ButtonFilled {
       'ds-control--md': this.size === 'md',
       'ds-control--sm': this.size === 'sm',
       'ds-control--xs': this.size === 'xs',
+      'ds-control--inset': this.isInset,
       'ds-control-frame': true,
       'button-filled--icon': this.variant === 'icon',
       'ds-button--icon': this.variant === 'icon',
@@ -191,6 +195,7 @@ export class ButtonFilled {
           'ds-control--md': this.size === 'md',
           'ds-control--sm': this.size === 'sm',
           'ds-control--xs': this.size === 'xs',
+          'ds-control--inset': this.isInset,
           ...controlWidthClass(this.width),
         }}
         tabIndex={-1}
