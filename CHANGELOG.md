@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.13.0](https://github.com/zainadeel/compomo/compare/v13.12.0...v13.13.0) (2026-08-09)
+
+
+### Added
+
+* refine table application behavior ([#439](https://github.com/zainadeel/compomo/issues/439)) ([73e2c00](https://github.com/zainadeel/compomo/commit/73e2c00ece079291e66d4318c54c4604aa9db26b))
+
 ## [13.12.0](https://github.com/zainadeel/compomo/compare/v13.11.1...v13.12.0) (2026-08-09)
 
 
