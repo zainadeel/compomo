@@ -31,6 +31,25 @@ test('renders native caption, header, row, and cell semantics', async ({ page })
   await expect(native.getByRole('row')).toHaveCount(5);
   await expect(native.getByRole('cell', { name: 'Avery Chen avery@example.com' })).toBeVisible();
   await expect(native.getByRole('cell', { name: 'Not available' })).toBeVisible();
+  await expect(table.locator('.ds-table__footer')).toHaveCount(0);
+});
+
+test('renders an optional result summary footer from controlled counts', async ({ page }) => {
+  const table = page.locator('#footer');
+  const footer = table.locator('.ds-table__footer');
+  await expect(footer).toBeVisible();
+  await expect(footer).toHaveText('Displaying 50 of 1,500');
+  await expect(footer.locator('ds-text')).toHaveJSProperty('variant', 'text-body-medium');
+  await expect(footer.locator('ds-text')).toHaveJSProperty('color', 'secondary');
+  await expect
+    .poll(() => footer.evaluate(element => getComputedStyle(element).blockSize))
+    .toBe('48px');
+  await expect(table.locator('caption')).toHaveClass(/ds-visually-hidden/);
+
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.displayedCount = undefined;
+  });
+  await expect(table.locator('.ds-table__footer')).toHaveCount(0);
 });
 
 test('toggles active sort direction and moves sorting only through another column', async ({ page }) => {
@@ -70,6 +89,50 @@ test('keeps group order and member-row sorting independent', async ({ page }) =>
   await expect(table.locator('th[scope="rowgroup"]')).toHaveCount(3);
   await expect(table.locator('tbody[data-group-id]').first()).toHaveAttribute('data-group-id', 'driving');
 
+  const firstGroupHeader = table.locator('th[scope="rowgroup"]').first();
+  await expect(firstGroupHeader.locator('.ds-table__group-copy ds-icon')).toHaveCount(0);
+  const groupTexts = firstGroupHeader.locator('.ds-table__group-copy ds-text');
+  await expect(groupTexts).toHaveCount(2);
+  await expect(groupTexts.nth(0)).toHaveJSProperty('variant', 'text-body-medium');
+  await expect(groupTexts.nth(0)).toHaveJSProperty('emphasis', true);
+  await expect(groupTexts.nth(1)).toHaveJSProperty('variant', 'text-body-medium');
+  await expect(groupTexts.nth(1)).toHaveJSProperty('emphasis', false);
+  await expect(groupTexts.nth(1)).toHaveText(/items?/);
+
+  const toggle = firstGroupHeader.locator('.ds-table__group-toggle');
+  await expect(toggle).toHaveJSProperty('variant', 'icon');
+  await expect(toggle).toHaveJSProperty('size', 'md');
+  await expect(toggle).toHaveJSProperty('isInset', true);
+  await expect(toggle).toHaveJSProperty('icon', 'ChevronUp');
+  await expect(toggle).toHaveJSProperty('hasBorder', false);
+  await expect(toggle).not.toHaveJSProperty('expanded', true);
+  await expect(table.locator('tbody[data-group-id="driving"] .ds-table__row')).toHaveCount(2);
+  await toggle.click();
+  await expect
+    .poll(() => table.evaluate((element: HTMLDsTableElement) => element.collapsedGroupIds))
+    .toEqual(['driving']);
+  await expect(table.locator('tbody[data-group-id="driving"]')).toHaveAttribute('data-collapsed', 'true');
+  await expect(toggle).toHaveJSProperty('icon', 'ChevronDown');
+  await expect(table.locator('tbody[data-group-id="driving"] .ds-table__row')).toHaveCount(0);
+
+  const collapseAll = table.locator('.ds-table__collapse-all');
+  await expect(collapseAll).toHaveJSProperty('variant', 'icon');
+  await expect(collapseAll).toHaveJSProperty('size', 'xs');
+  await expect(collapseAll).toHaveJSProperty('icon', 'ChevronDownUp');
+  await expect(collapseAll).toHaveJSProperty('hasBorder', false);
+  await expect(collapseAll).toHaveJSProperty('isActive', false);
+  await expect(table.locator('[data-column-id="score"] .ds-table__collapse-all')).toHaveCount(1);
+  await collapseAll.click();
+  await expect
+    .poll(() => table.evaluate((element: HTMLDsTableElement) => element.collapsedGroupIds?.slice().sort()))
+    .toEqual(['driving', 'off-duty', 'on-duty']);
+  await expect(table.locator('tbody[data-group-id] .ds-table__row')).toHaveCount(0);
+  await expect(table.locator('.ds-table__collapse-all')).toHaveCount(0);
+
+  await table.locator('tbody[data-group-id="driving"] .ds-table__group-toggle').click();
+  await expect(table.locator('.ds-table__collapse-all')).toHaveCount(1);
+  await expect(table.locator('tbody[data-group-id="driving"] .ds-table__row')).toHaveCount(2);
+
   await table
     .getByRole('columnheader', { name: /Status/ })
     .locator('[data-sort-control="direction"]')
@@ -84,6 +147,59 @@ test('keeps group order and member-row sorting independent', async ({ page }) =>
   await expect
     .poll(() => table.evaluate((element: HTMLDsTableElement) => element.grouping?.direction))
     .toBe('desc');
+});
+
+test('applies faint intent surfaces and bold titles to severity groups', async ({ page }) => {
+  const table = page.locator('#severity-grouped');
+  const expected = [
+    { id: 'critical', intent: 'negative', label: 'Critical' },
+    { id: 'high', intent: 'warning', label: 'High' },
+    { id: 'medium', intent: 'caution', label: 'Medium' },
+    { id: 'low', intent: 'neutral', label: 'Low' },
+  ] as const;
+
+  for (const group of expected) {
+    const body = table.locator(`tbody[data-group-id="${group.id}"]`);
+    await expect(body).toHaveAttribute('data-group-intent', group.intent);
+    const header = body.locator('th.ds-table__group-cell');
+    await expect(header).toHaveClass(new RegExp(`ds-table__group-cell--intent-${group.intent}`));
+    await expect
+      .poll(() =>
+        header.evaluate(element =>
+          getComputedStyle(element).getPropertyValue('--_table-group-surface').trim(),
+        ),
+      )
+      .toBe(`var(--color-background-faint-${group.intent})`);
+    const label = header.locator('.ds-table__group-label');
+    await expect(label).toHaveText(group.label);
+    if (group.intent === 'neutral') {
+      await expect(label).toHaveJSProperty('color', 'var(--color-foreground-bold-neutral)');
+    } else {
+      await expect(label).toHaveJSProperty('color', group.intent);
+    }
+  }
+});
+
+test('group section checkboxes select and clear group members when selectable', async ({ page }) => {
+  const table = page.locator('#severity-grouped');
+  const criticalBody = table.locator('tbody[data-group-id="critical"]');
+  const groupCheckbox = criticalBody.getByRole('checkbox', { name: 'Select Critical group' });
+  await expect(criticalBody.locator('.ds-table__group-selection')).toHaveCount(1);
+  await expect(groupCheckbox).toHaveAttribute('aria-checked', 'false');
+
+  await groupCheckbox.click();
+  await expect
+    .poll(() => table.evaluate((element: HTMLDsTableElement) => element.selectedRowIds?.slice().sort()))
+    .toEqual(['crit-1', 'crit-2']);
+  await expect(criticalBody.getByRole('checkbox', { name: 'Deselect Critical group' })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
+
+  await criticalBody.getByRole('checkbox', { name: 'Deselect Critical group' }).click();
+  await expect
+    .poll(() => table.evaluate((element: HTMLDsTableElement) => element.selectedRowIds))
+    .toEqual([]);
 });
 
 test('sorts compound columns by independent label-width controls', async ({ page }) => {
@@ -603,6 +719,7 @@ test('uses fixed cell tracks and focusable sticky overflow geometry',
     ).toHaveCSS('height', '40px');
     await expect(standard.locator('.ds-table__overflow-shadow')).toHaveCount(0);
 
+
     const inactiveLabel = firstHeader.locator('ds-text');
     await expect(inactiveLabel).toHaveJSProperty('variant', 'text-caption');
     await expect(inactiveLabel).toHaveJSProperty('color', 'inherit');
@@ -671,6 +788,29 @@ test('uses fixed cell tracks and focusable sticky overflow geometry',
     await expect(overflow.locator('.ds-table__head')).toHaveCSS('position', 'sticky');
     await viewport.evaluate(element => { element.scrollLeft = 120; });
     await expect(overflow.locator('.ds-table__frame')).toHaveClass(/ds-table__frame--overflow-start/);
+  });
+
+test('keeps selection and action columns fixed when the table grows',
+  chromiumOnly('layout-geometry', 'Chrome column max-width locks are rendered geometry contracts.'),
+  async ({ page }) => {
+    await page.setViewportSize({ width: 1600, height: 900 });
+    const interactive = page.locator('#interactive');
+    await expect(interactive.locator('.ds-table__row .ds-table__selection-cell').first()).toHaveCSS(
+      'width',
+      '40px',
+    );
+    await expect(
+      interactive.locator('.ds-table__row [data-column-id="actions"]').first(),
+    ).toHaveCSS('width', '40px');
+
+    const grouped = page.locator('#severity-grouped');
+    await expect(grouped.locator('.ds-table__row .ds-table__selection-cell').first()).toHaveCSS(
+      'width',
+      '40px',
+    );
+    await expect(grouped.locator('.ds-table__selection-column')).toHaveCSS('max-width', '40px');
+    await expect(grouped.locator('.ds-table__collapse-column')).toHaveCount(0);
+    await expect(grouped.locator('.ds-table__collapse-cell')).toHaveCount(0);
   });
 
 test('keeps a document-flow header and edge columns sticky while vertical input scrolls the page', async ({ page }) => {

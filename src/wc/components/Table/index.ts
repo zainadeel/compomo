@@ -16,6 +16,8 @@ export type {
   TableColumnSticky,
   TableColumnWidth,
   TableGroup,
+  TableGroupCollapseChangeDetail,
+  TableGroupIntent,
   TableHeaderSegment,
   TableGroupingChangeDetail,
   TableGroupingState,

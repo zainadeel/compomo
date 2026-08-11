@@ -13,7 +13,7 @@
     "peerDependencies": {
       "required": [
         "@ds-mo/tokens ^6.0.0",
-        "@ds-mo/icons ^6.5.0"
+        "@ds-mo/icons ^6.6.0"
       ],
       "optional": [],
       "frameworks": "None required for Custom Elements; generated React and Angular adapters are included."
@@ -8077,16 +8077,17 @@
             "component:ds-icon"
           ],
           "accessibility": [
-            "The rendered structure uses a native table, caption, column headers, row groups, and data cells; keep the caption non-empty even when it is visually hidden.",
+            "The rendered structure uses a native table, caption, column headers, row groups, and data cells; keep the caption non-empty even when it is visually hidden. Caption visibility is application-controlled.",
             "Sorting controls remain buttons inside column headers. Member-row sort uses aria-sort, while independent group order is described by the grouped header control.",
-            "Selection controls expose checkbox semantics and explicit row names; select-all affects selectable loaded rows only and preserves selected identities outside the loaded window.",
+            "Selection controls expose checkbox semantics and explicit row names; select-all affects selectable loaded rows only and preserves selected identities outside the loaded window. When grouping is active with multi-selection, each group section header also exposes a checkbox that selects or clears that group's selectable loaded rows.",
             "Interactive rows are focusable as native rows, activate with Enter or Space, and do not steal activation from their nested selection or action controls.",
             "Scrollable table regions become keyboard focusable and named only when overflow exists.",
-            "Incremental loading, newly appended row counts, failures, and end-of-results transitions are announced through a polite status region without replacing visible state."
+            "Incremental loading, newly appended row counts, failures, and end-of-results transitions are announced through a polite status region without replacing visible state.",
+            "An optional result summary footer appears below the table frame when both displayedCount and totalCount are finite, formatting Displaying {displayed} of {total} in text-body-medium secondary."
           ],
           "states": [
-            "Columns, rows, groups, grouping, sorting, selected row IDs, and lazy-loading state are controlled inputs. Events communicate intent and never mutate those inputs.",
-            "Grouping supports one level. The application supplies ordered groups and ordered member rows; group order and member-row sort are independent controls.",
+            "Columns, rows, groups, grouping, sorting, selected row IDs, collapsed group IDs, displayedCount, totalCount, and lazy-loading state are controlled inputs. Events communicate intent and never mutate those inputs.",
+            "Grouping supports one level. The application supplies ordered groups and ordered member rows; group order and member-row sort are independent controls. Group section headers show an emphasized text-body-medium label and a non-emphasized text-body-medium count with no leading icon. Groups may declare an optional intent (brand, neutral, negative, warning, caution, positive) that paints a faint intent background and bold intent title color while the count stays secondary. A trailing icon-only ButtonUnfilled matches the action-column recipe and toggles controlled collapsedGroupIds, showing ChevronUp while expanded and ChevronDown while collapsed. When grouping is active, the table reserves a far-right header column with an xs ButtonUnfilled that shows ChevronDownUp while any group is expanded (collapse all) and ChevronUpDown when every group is collapsed (expand all).",
             "An active member sort toggles only between ascending and descending; activating a different sortable label moves sorting to that key. Applications may still clear the controlled sort state explicitly. The grouped column toggles ascending and descending group order without clearing member sort.",
             "Compound headers can expose multiple related labels with independent sort keys. Each label owns only its content-width interaction target while the active direction remains in the column's alignment-aware sort lane.",
             "Initial loading uses row-shaped skeletons. Empty and initial error states remain inside the table. Incremental loading retains existing rows and supports automatic sentinel, manual load-more, retry, and terminal states.",
@@ -8107,12 +8108,12 @@
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Assign columns, rows, groups, grouping, sort, and selectedRowIds through JavaScript properties rather than HTML attribute strings.",
-              "Replace controlled property values in response to dsSortChange, dsGroupingChange, dsSelectionChange, and dsLoadMore; route dsRowActivate in the application owner."
+              "Assign columns, rows, groups, grouping, sort, selectedRowIds, collapsedGroupIds, displayedCount, and totalCount through JavaScript properties rather than HTML attribute strings.",
+              "Replace controlled property values in response to dsSortChange, dsGroupingChange, dsGroupCollapseChange, dsSelectionChange, and dsLoadMore; route dsRowActivate in the application owner."
             ],
             "react": [
               "Pass new array and state-object references when the controlled data or query state changes.",
-              "Apply emitted sort, grouping, selection, action, or loading detail to application state and perform data transformations in the owning layer."
+              "Apply emitted sort, grouping, collapse, selection, action, or loading detail to application state and perform data transformations in the owning layer."
             ],
             "angular": [
               "Bind complex table inputs as properties and update the controlled values from the corresponding output events.",
@@ -8139,8 +8140,16 @@
             "type": "TableCaptionVisibility",
             "required": false
           },
+          "collapsedGroupIds": {
+            "type": "string[]",
+            "required": false
+          },
           "columns": {
             "type": "TableColumn[]",
+            "required": false
+          },
+          "displayedCount": {
+            "type": "number | undefined",
             "required": false
           },
           "emptyBody": {
@@ -8223,6 +8232,10 @@
             "type": "string | number | undefined",
             "required": false
           },
+          "resultSummaryLabel": {
+            "type": "string",
+            "required": false
+          },
           "retryLabel": {
             "type": "string",
             "required": false
@@ -8258,12 +8271,20 @@
           "stickyHeader": {
             "type": "boolean",
             "required": false
+          },
+          "totalCount": {
+            "type": "number | undefined",
+            "required": false
           }
         },
         "events": [
           {
             "name": "dsCellAction",
             "detail": "TableCellActionDetail"
+          },
+          {
+            "name": "dsGroupCollapseChange",
+            "detail": "TableGroupCollapseChangeDetail"
           },
           {
             "name": "dsGroupingChange",

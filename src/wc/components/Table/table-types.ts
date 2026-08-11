@@ -9,6 +9,14 @@ export type TableCaptionVisibility = 'visible' | 'hidden';
 export type TableLoadMoreMode = 'auto' | 'manual';
 export type TableLoadMoreReason = 'auto' | 'manual' | 'retry';
 export type TableColumnWidth = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+/** Semantic color for a group section header (faint surface + bold title). */
+export type TableGroupIntent =
+  | 'brand'
+  | 'neutral'
+  | 'negative'
+  | 'warning'
+  | 'caution'
+  | 'positive';
 
 /** Independently sortable label within a compound column header. */
 export interface TableHeaderSegment {
@@ -196,6 +204,11 @@ export interface TableGroup {
   totalCount?: number;
   /** Optional localized, display-ready count such as “18 vehicles”. */
   countLabel?: string;
+  /**
+   * Optional semantic intent for the group section header. Applies a faint
+   * intent background and bold intent title color.
+   */
+  intent?: TableGroupIntent;
   rows: TableRow[];
 }
 
@@ -209,8 +222,10 @@ export interface TableGroupingChangeDetail {
 
 export interface TableSelectionChangeDetail {
   selectedRowIds: string[];
-  scope: 'row' | 'all-loaded';
+  scope: 'row' | 'all-loaded' | 'group';
   changedRowId?: string;
+  /** Present when scope is `group`. */
+  groupId?: string;
   selected?: boolean;
 }
 
@@ -224,6 +239,14 @@ export interface TableCellActionDetail {
   actionId: string;
   rowId: string;
   columnId: string;
+}
+
+export interface TableGroupCollapseChangeDetail {
+  scope: 'group' | 'all';
+  /** Present when a single group was toggled. */
+  groupId?: string;
+  collapsed: boolean;
+  collapsedGroupIds: string[];
 }
 
 export interface TableRowActivateDetail {

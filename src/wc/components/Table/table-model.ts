@@ -101,6 +101,62 @@ export function nextTableGroupOrder(grouping: TableGroupingState): TableGrouping
   };
 }
 
+export function toggleTableGroupCollapsed(
+  collapsedGroupIds: string[],
+  groupId: string,
+): string[] {
+  const next = new Set(collapsedGroupIds);
+  if (next.has(groupId)) next.delete(groupId);
+  else next.add(groupId);
+  return [...next];
+}
+
+export function nextTableGroupsCollapsed(
+  collapsedGroupIds: string[],
+  groupIds: string[],
+): string[] {
+  if (groupIds.length === 0) return [];
+  const collapsed = new Set(collapsedGroupIds);
+  const allCollapsed = groupIds.every(id => collapsed.has(id));
+  return allCollapsed ? [] : [...groupIds];
+}
+
+/**
+ * Host column for the grouped collapse-all control: prefer the trailing action
+ * column (every loaded cell is action or blank, with at least one action),
+ * otherwise the last data column.
+ */
+export type TableCollapseAllHost = {
+  columnId: string;
+  mode: 'action' | 'last';
+};
+
+export function tableCollapseAllHost(
+  columns: TableColumn[],
+  rows: TableRow[],
+): TableCollapseAllHost | undefined {
+  if (columns.length === 0) return undefined;
+
+  for (let index = columns.length - 1; index >= 0; index -= 1) {
+    const column = columns[index]!;
+    let sawAction = false;
+    let qualifies = rows.length > 0;
+    for (const row of rows) {
+      const value = row.cells[column.id];
+      if (isTableCellBlank(value)) continue;
+      if (isTableCellAction(value)) {
+        sawAction = true;
+        continue;
+      }
+      qualifies = false;
+      break;
+    }
+    if (qualifies && sawAction) return { columnId: column.id, mode: 'action' };
+  }
+
+  return { columnId: columns[columns.length - 1]!.id, mode: 'last' };
+}
+
 export function clampTableColumnSize(column: TableColumn): number | undefined {
   if (typeof column.size !== 'number' || !Number.isFinite(column.size) || column.size <= 0) {
     return undefined;
@@ -183,9 +239,64 @@ export function toggleAllLoadedTableRows(
   return [...selected];
 }
 
+/** Toggle every selectable loaded row that belongs to a group. */
+export function toggleTableGroupSelection(
+  selectedRowIds: readonly string[],
+  groupRows: TableRow[],
+): string[] {
+  return toggleAllLoadedTableRows(selectedRowIds, groupRows);
+}
+
 export function resolvedTableGroupCount(group: TableGroup): number {
   const total = Number.isFinite(group.totalCount) ? Math.max(0, group.totalCount!) : 0;
   return Math.max(total, group.rows.length);
+}
+
+export const TABLE_GROUP_INTENTS = [
+  'brand',
+  'neutral',
+  'negative',
+  'warning',
+  'caution',
+  'positive',
+] as const;
+
+export function isTableGroupIntent(
+  value: unknown,
+): value is (typeof TABLE_GROUP_INTENTS)[number] {
+  return (
+    typeof value === 'string' &&
+    (TABLE_GROUP_INTENTS as readonly string[]).includes(value)
+  );
+}
+
+export function tableGroupIntentClass(
+  intent: (typeof TABLE_GROUP_INTENTS)[number] | undefined,
+): string | undefined {
+  return isTableGroupIntent(intent) ? `ds-table__group-cell--intent-${intent}` : undefined;
+}
+
+/** Title color for an intentful group label; defaults to primary when unset. */
+export function tableGroupLabelColor(
+  intent: (typeof TABLE_GROUP_INTENTS)[number] | undefined,
+): 'primary' | 'brand' | 'negative' | 'warning' | 'caution' | 'positive' | `var(--${string})` {
+  if (!isTableGroupIntent(intent)) return 'primary';
+  if (intent === 'neutral') return 'var(--color-foreground-bold-neutral)';
+  return intent;
+}
+
+/** Formats the optional table result footer. Returns null when either count is missing. */
+export function formatTableResultSummary(
+  displayed: number | null | undefined,
+  total: number | null | undefined,
+  label = 'Displaying {displayed} of {total}',
+  locale?: string,
+): string | null {
+  if (!Number.isFinite(displayed) || !Number.isFinite(total)) return null;
+  const formatter = new Intl.NumberFormat(locale);
+  return label
+    .replace('{displayed}', formatter.format(displayed as number))
+    .replace('{total}', formatter.format(total as number));
 }
 
 export function tableModelIssues(
@@ -213,6 +324,9 @@ export function tableModelIssues(
       groupIds.add(group.id);
       if (group.totalCount != null && group.totalCount < group.rows.length) {
         issues.push(`Group ${group.id} totalCount is smaller than its loaded row count.`);
+      }
+      if (group.intent != null && !isTableGroupIntent(group.intent)) {
+        issues.push(`Group ${group.id} has an unsupported intent.`);
       }
     }
   }

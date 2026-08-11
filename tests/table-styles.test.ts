@@ -26,6 +26,90 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.doesNotMatch(css, /\.ds-table__overflow-shadow/);
   assert.match(css, /\.ds-table__header-cell/);
   assert.match(css, /\.ds-table__group-cell/);
+  assert.match(css, /\.ds-table__viewport\)[^{]*\{[^}]*container-type: inline-size/s);
+  assert.match(
+    css,
+    /\.ds-table__group-cell\)[^{]*\{[^}]*padding: 0[^}]*background: transparent/s,
+  );
+  assert.match(
+    css,
+    /\.ds-table__group-content\)[^{]*\{[^}]*position: sticky[^}]*inset-inline-start: 0[^}]*inline-size: 100cqi[^}]*padding: var\(--dimension-space-075\)[^}]*background: var\(--_table-group-surface\)/s,
+  );
+  assert.match(
+    css,
+    /\.ds-table__table--selectable \.ds-table__group-content\)[^{]*\{[^}]*gap: 0[^}]*padding-inline-start: 0/s,
+  );
+  assert.match(
+    css,
+    /\.ds-table__group-selection\)[^{]*\{[^}]*flex: 0 0 var\(--_table-selection-column-inline-size\)[^}]*padding: var\(--dimension-space-050\)/s,
+  );
+  assert.match(
+    css,
+    /\.ds-table__table--selectable \.ds-table__group-copy\)[^{]*\{[^}]*padding-inline-start: calc\(\s*var\(--dimension-space-125\) \+ var\(--_table-cell-track-label-inset\)\s*\)/s,
+  );
+  assert.match(
+    css,
+    /\.ds-table__group-content\)[^{]*\{[^}]*gap: var\(--dimension-space-100\)/s,
+  );
+  assert.match(
+    css,
+    /\.ds-table__group-copy\)[^{]*\{[^}]*gap: var\(--dimension-space-100\)[^}]*padding-block: var\(--dimension-space-025\)[^}]*padding-inline: var\(--dimension-space-075\)/s,
+  );
+  assert.match(css, /\.ds-table__group-toggle\)[^{]*\{[^}]*margin-inline-start: auto/s);
+  assert.doesNotMatch(
+    css,
+    /:where\(\.ds-table__group-content\),\s*\n:where\(\.ds-table__load-content\)/,
+  );
+  assert.match(
+    css,
+    /\.ds-table__load-content\)[^{]*\{[^}]*min-block-size: var\(--dimension-size-400\)/s,
+  );
+  assert.match(
+    css,
+    /\.ds-table__load-content--error\)[^{]*\{[^}]*gap: var\(--dimension-space-200\)/s,
+  );
+  assert.match(
+    css,
+    /\.ds-table__load-copy\)[^{]*\{[^}]*gap: var\(--dimension-space-100\)/s,
+  );
+  assert.match(
+    css,
+    /\.ds-table__group-cell--intent-negative\)[^{]*\{[^}]*--_table-group-surface: var\(--color-background-faint-negative\)/s,
+  );
+  assert.match(
+    css,
+    /\.ds-table__group-cell--intent-warning\)[^{]*\{[^}]*--_table-group-surface: var\(--color-background-faint-warning\)/s,
+  );
+  assert.match(
+    css,
+    /\.ds-table__group-cell--intent-caution\)[^{]*\{[^}]*--_table-group-surface: var\(--color-background-faint-caution\)/s,
+  );
+  assert.match(
+    css,
+    /\.ds-table__group-cell--intent-neutral\)[^{]*\{[^}]*--_table-group-surface: var\(--color-background-faint-neutral\)/s,
+  );
+  assert.doesNotMatch(css, /ds-table__collapse-column|ds-table__collapse-cell|--_table-collapse-column/);
+  assert.match(
+    css,
+    /\.ds-table__selection-column\)[^{]*\{[^}]*width: var\(--_table-selection-column-inline-size\)[^}]*max-width: var\(--_table-selection-column-inline-size\)/s,
+  );
+  assert.match(
+    css,
+    /\.ds-table__selection-cell\)[^{]*\{[^}]*width: var\(--_table-selection-column-inline-size\)[^}]*max-width: var\(--_table-selection-column-inline-size\)/s,
+  );
+  assert.match(
+    css,
+    /\.ds-table__sort-slot\),\s*\n:where\(\.ds-table__collapse-slot\)[^{]*\{[^}]*inline-size: var\(--dimension-size-200\)/s,
+  );
+  assert.match(
+    css,
+    /\.ds-table__sort-slot\)[^{]*\{[^}]*margin-inline-start: auto/s,
+  );
+  assert.match(css, /\.ds-table__caption/);
+  assert.match(
+    css,
+    /\.ds-table__footer\)[^{]*\{[^}]*block-size: var\(--dimension-size-600\)/s,
+  );
   assert.match(css, /\.ds-table__load-cell/);
 });
 
@@ -44,11 +128,13 @@ test('keeps public table selectors override-friendly', () => {
   assert.match(css, /var\(--ds-table-column-border, var\(--color-border-tertiary\)\)/);
   assert.match(css, /var\(--ds-table-sticky-border, var\(--color-border-secondary\)\)/);
   assert.match(css, /var\(--ds-table-border-strong, var\(--color-border-secondary\)\)/);
+  assert.match(css, /--_table-radius: var\(--ds-table-radius, var\(--dimension-radius-000\)\)/);
   assert.match(css, /user-select: none/);
   assert.match(css, /--_table-cell-track-min-block-size: calc\([\s\S]*?var\(--dimension-size-400\) - var\(--dimension-space-050\)/);
   assert.match(css, /--_table-cell-track-padding-inline: calc\([\s\S]*?var\(--dimension-space-075\) - var\(--dimension-space-025\)/);
   assert.match(css, /--ds-table-cell-padding-block,[\s\S]*?var\(--dimension-space-100\)/);
   assert.match(css, /--ds-table-cell-padding-inline,[\s\S]*?var\(--dimension-space-100\)/);
+  assert.match(css, /--_table-selection-column-contribution: 0px/);
   assert.match(css, /--ds-table-row-min-block-size,[\s\S]*?var\(--dimension-size-500\)/);
   assert.doesNotMatch(css, /ds-table--sm|table-density/);
   assert.match(css, /\.ds-table__cell\)[^{]*\{[^}]*vertical-align: top/s);

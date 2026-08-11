@@ -2,6 +2,9 @@
  * Allow fullscreen stories to fill the exact canvas height.
  * Without this, height: 100% inside story wrappers cannot resolve because
  * the html/body/storybook-root chain has no explicit height.
+ *
+ * Docs pages (`viewMode=docs`) should size to content so inline previews are
+ * not stretched by the canvas height chain.
  */
 html,
 body,
@@ -10,28 +13,38 @@ body,
   height: 100%;
 }
 
+html:has(.sbdocs),
+html:has(.sbdocs) body,
+html:has(.sbdocs) #storybook-root,
+html:has(.sbdocs) #root-inner {
+  height: auto;
+  min-height: 100%;
+}
+
 /* Storybook MDX docs — table styling
  * Storybook's default docs theme renders markdown tables without borders or
- * alternating row colors. These overrides make tables readable. */
-
-.sbdocs-content table {
+ * alternating row colors. These overrides make prose/API tables readable.
+ *
+ * Exclude component tables (ds-table is scoped/light-DOM) so Docs does not
+ * override the `@ds-mo/ui/table.css` recipe. */
+.sbdocs-content table:not(.ds-table__table) {
   width: 100%;
   border-collapse: collapse;
   margin: 16px 0;
 }
 
-.sbdocs-content th,
-.sbdocs-content td {
+.sbdocs-content table:not(.ds-table__table) th,
+.sbdocs-content table:not(.ds-table__table) td {
   border: 1px solid var(--color-border-tertiary, #e0e0e0);
   padding: 8px 12px;
   text-align: left;
 }
 
-.sbdocs-content th {
+.sbdocs-content table:not(.ds-table__table) th {
   background: var(--color-background-secondary, #f5f5f5);
   font-weight: 600;
 }
 
-.sbdocs-content tr:nth-child(even) td {
+.sbdocs-content table:not(.ds-table__table) tr:nth-child(even) td {
   background: var(--color-background-secondary, #fafafa);
 }

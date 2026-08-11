@@ -10,6 +10,7 @@ import {
 } from '@stencil/core';
 import {
   deriveTableSelectionState,
+  formatTableResultSummary,
   isTableCellAction,
   isTableCellBlank,
   isTableCellEmpty,
@@ -21,12 +22,18 @@ import {
   nextTableGroupOrder,
   nextTableSortState,
   resolvedTableGroupCount,
+  tableCollapseAllHost,
   tableColumnSize,
   tableExplicitMinWidth,
+  tableGroupIntentClass,
+  tableGroupLabelColor,
   tableModelIssues,
   tableRows,
   tableRowSelectionLabel,
   toggleAllLoadedTableRows,
+  toggleTableGroupCollapsed,
+  toggleTableGroupSelection,
+  nextTableGroupsCollapsed,
   toggleTableRowSelection,
 } from './table-model';
 import type {
@@ -35,6 +42,7 @@ import type {
   TableCellValue,
   TableColumn,
   TableGroup,
+  TableGroupCollapseChangeDetail,
   TableGroupingChangeDetail,
   TableGroupingState,
   TableLoadMoreDetail,
@@ -67,10 +75,20 @@ export class Table {
   @Prop() grouping: TableGroupingState | null = null;
   /** Controlled member-row sort state. */
   @Prop() sort: TableSortState | null = null;
+  /** Controlled collapsed group identities. Groups not listed remain expanded. */
+  @Prop() collapsedGroupIds: string[] = [];
 
   /** Required accessible table name, rendered as a native caption. */
   @Prop() caption!: string;
   @Prop() captionVisibility: TableCaptionVisibility = 'hidden';
+  /**
+   * Optional result summary footer. When both `displayedCount` and `totalCount`
+   * are finite numbers, the table shows “Displaying {displayed} of {total}”.
+   */
+  @Prop() displayedCount: number | undefined;
+  @Prop() totalCount: number | undefined;
+  /** Supports {displayed} and {total} placeholders. */
+  @Prop() resultSummaryLabel: string = 'Displaying {displayed} of {total}';
   @Prop() stickyHeader: boolean = false;
   /** Maximum scroll-region height. Numbers resolve to CSS pixels. */
   @Prop() maxHeight: string | number | undefined;
@@ -111,6 +129,7 @@ export class Table {
 
   @Event() dsSortChange!: EventEmitter<TableSortChangeDetail>;
   @Event() dsGroupingChange!: EventEmitter<TableGroupingChangeDetail>;
+  @Event() dsGroupCollapseChange!: EventEmitter<TableGroupCollapseChangeDetail>;
   @Event() dsSelectionChange!: EventEmitter<TableSelectionChangeDetail>;
   @Event() dsLoadMore!: EventEmitter<TableLoadMoreDetail>;
   @Event() dsCellAction!: EventEmitter<TableCellActionDetail>;
@@ -264,6 +283,21 @@ export class Table {
 
   private get totalColumns(): number {
     return this.columns.length + (this.selectable ? 1 : 0);
+  }
+
+  private get allGroupsCollapsed(): boolean {
+    if (!this.grouped || this.groups.length === 0) return false;
+    const collapsed = new Set(this.collapsedGroupIds);
+    return this.groups.every(group => collapsed.has(group.id));
+  }
+
+  private get showCollapseAll(): boolean {
+    return this.grouped && this.groups.length > 0 && !this.allGroupsCollapsed;
+  }
+
+  private get collapseAllHost() {
+    if (!this.showCollapseAll) return undefined;
+    return tableCollapseAllHost(this.columns, this.loadedRows);
   }
 
   private get selectedSet(): Set<string> {
@@ -450,6 +484,16 @@ export class Table {
     });
   }
 
+  private emitGroupSelection(group: TableGroup): void {
+    const state = deriveTableSelectionState(group.rows, this.selectedRowIds);
+    this.dsSelectionChange.emit({
+      selectedRowIds: toggleTableGroupSelection(this.selectedRowIds, group.rows),
+      scope: 'group',
+      groupId: group.id,
+      selected: !state.allSelected,
+    });
+  }
+
   private rowEventOwnsActivation(event: Event): boolean {
     const currentTarget = event.currentTarget;
     return !event.composedPath().some(target => {
@@ -612,6 +656,28 @@ export class Table {
         )}
       </span>
     ) : null;
+    const collapseHost = this.collapseAllHost;
+    const isCollapseHost = collapseHost?.columnId === column.id;
+    const actionCollapseHost = isCollapseHost && collapseHost?.mode === 'action';
+    const collapseControl =
+      interactive && isCollapseHost ? (
+        <span class="ds-table__collapse-slot">
+          <ds-button-unfilled
+            class="ds-table__collapse-all"
+            variant="icon"
+            icon="ChevronDownUp"
+            size="xs"
+            aria-label="Collapse all groups"
+            hasBorder={false}
+            activeFill={false}
+            pressScale={false}
+            onDsClick={event => {
+              event.stopPropagation();
+              this.emitAllGroupsCollapse();
+            }}
+          />
+        </span>
+      ) : null;
 
     return (
       <th
@@ -621,6 +687,7 @@ export class Table {
           [`ds-table__cell--align-${align}`]: true,
           'ds-table__cell--sticky-start': column.sticky === 'start',
           'ds-table__cell--sticky-end': column.sticky === 'end',
+          'ds-table__header-cell--collapse-all': isCollapseHost,
         }}
         scope={presentational ? undefined : 'col'}
         aria-sort={presentational ? undefined : memberAriaSort}
@@ -631,18 +698,26 @@ export class Table {
         {!column.header.trim() && column.headerLabel?.trim() && (
           <span class="ds-visually-hidden">{column.headerLabel}</span>
         )}
-        <span class="ds-table__header-content">
-          {align === 'end' && sortControl}
-          {align === 'center' && (
-            <span
-              class="ds-table__sort-slot ds-table__sort-slot--balance"
-              data-sort-balance="true"
-              aria-hidden="true"
-            />
-          )}
-          {labelControl}
-          {align !== 'end' && sortControl}
-        </span>
+        {actionCollapseHost ? (
+          <span class="ds-table__header-content ds-table__header-content--collapse-all">
+            {collapseControl}
+          </span>
+        ) : (
+          <span class="ds-table__header-content">
+            {align === 'end' && sortControl}
+            {align === 'end' && collapseControl}
+            {align === 'center' && (
+              <span
+                class="ds-table__sort-slot ds-table__sort-slot--balance"
+                data-sort-balance="true"
+                aria-hidden="true"
+              />
+            )}
+            {labelControl}
+            {align !== 'end' && sortControl}
+            {align !== 'end' && collapseControl}
+          </span>
+        )}
         {this.renderStickyEdge(column.sticky)}
       </th>
     );
@@ -654,7 +729,12 @@ export class Table {
         {this.selectable && <col class="ds-table__selection-column" />}
         {this.columns.map(column => {
           const width = tableColumnSize(column);
-          return <col key={column.id} style={width ? { width } : undefined} />;
+          return (
+            <col
+              key={column.id}
+              style={width ? { width, maxWidth: width } : undefined}
+            />
+          );
         })}
       </colgroup>
     );
@@ -941,30 +1021,107 @@ export class Table {
     );
   }
 
+  private emitGroupCollapse(group: TableGroup) {
+    const collapsedGroupIds = toggleTableGroupCollapsed(this.collapsedGroupIds, group.id);
+    this.dsGroupCollapseChange.emit({
+      scope: 'group',
+      groupId: group.id,
+      collapsed: collapsedGroupIds.includes(group.id),
+      collapsedGroupIds,
+    });
+  }
+
+  private emitAllGroupsCollapse() {
+    const groupIds = this.groups.map(group => group.id);
+    const collapsedGroupIds = nextTableGroupsCollapsed(this.collapsedGroupIds, groupIds);
+    this.dsGroupCollapseChange.emit({
+      scope: 'all',
+      collapsed: collapsedGroupIds.length > 0,
+      collapsedGroupIds,
+    });
+  }
+
   private renderDataBodies() {
     if (!this.grouped) {
       return <tbody class="ds-table__body">{this.rows.map(row => this.renderRow(row))}</tbody>;
     }
 
+    const collapsed = new Set(this.collapsedGroupIds);
     return this.groups.map(group => {
       const count = resolvedTableGroupCount(group);
       const countLabel = group.countLabel ?? `${count} ${count === 1 ? 'item' : 'items'}`;
+      const isCollapsed = collapsed.has(group.id);
+      const intentClass = tableGroupIntentClass(group.intent);
+      const labelColor = tableGroupLabelColor(group.intent);
+      const groupSelection = this.selectable
+        ? deriveTableSelectionState(group.rows, this.selectedRowIds)
+        : null;
       return (
-        <tbody class="ds-table__body ds-table__group" data-group-id={group.id} key={group.id}>
+        <tbody
+          class="ds-table__body ds-table__group"
+          data-group-id={group.id}
+          data-group-intent={intentClass ? group.intent : undefined}
+          data-collapsed={isCollapsed ? 'true' : undefined}
+          key={group.id}
+        >
           <tr class="ds-table__group-row">
-            <th class="ds-table__group-cell" scope="rowgroup" colSpan={this.totalColumns}>
+            <th
+              class={{
+                'ds-table__group-cell': true,
+                [intentClass ?? '']: !!intentClass,
+              }}
+              scope="rowgroup"
+              colSpan={this.totalColumns}
+            >
               <span class="ds-table__group-content">
-                <ds-icon name="GroupBy" size="sm" color="secondary" aria-hidden="true" />
-                <ds-text as="span" variant="text-body-small" emphasis={true} color="primary">
-                  {group.label}
-                </ds-text>
-                <ds-text as="span" variant="text-body-small" color="secondary">
-                  {countLabel}
-                </ds-text>
+                {groupSelection && (
+                  <span class="ds-table__group-selection">
+                    {this.renderSelectionControl(
+                      groupSelection.allSelected
+                        ? `Deselect ${group.label} group`
+                        : `Select ${group.label} group`,
+                      groupSelection.allSelected,
+                      groupSelection.indeterminate,
+                      groupSelection.selectableRowIds.length === 0,
+                      () => this.emitGroupSelection(group),
+                    )}
+                  </span>
+                )}
+                <span class="ds-table__group-copy">
+                  <ds-text
+                    class="ds-table__group-label"
+                    as="span"
+                    variant="text-body-medium"
+                    emphasis={true}
+                    color={labelColor}
+                  >
+                    {group.label}
+                  </ds-text>
+                  <ds-text as="span" variant="text-body-medium" color="secondary">
+                    {countLabel}
+                  </ds-text>
+                </span>
+                <ds-button-unfilled
+                  class="ds-table__group-toggle"
+                  variant="icon"
+                  size="md"
+                  isInset={true}
+                  icon={isCollapsed ? 'ChevronDown' : 'ChevronUp'}
+                  aria-label={
+                    isCollapsed
+                      ? `Expand ${group.label} group`
+                      : `Collapse ${group.label} group`
+                  }
+                  hasBorder={false}
+                  onDsClick={event => {
+                    event.stopPropagation();
+                    this.emitGroupCollapse(group);
+                  }}
+                />
               </span>
             </th>
           </tr>
-          {group.rows.map(row => this.renderRow(row))}
+          {!isCollapsed && group.rows.map(row => this.renderRow(row))}
         </tbody>
       );
     });
@@ -1036,33 +1193,39 @@ export class Table {
           <td class="ds-table__load-cell" colSpan={this.totalColumns}>
             {error ? (
               <span class="ds-table__load-content ds-table__load-content--error">
-                <ds-icon name="ErrorTriangle" size="sm" color="negative" aria-hidden="true" />
-                <ds-text as="span" variant="text-body-small" color="secondary">{error}</ds-text>
+                <span class="ds-table__load-copy">
+                  <ds-icon name="ErrorTriangle" size="md" color="secondary" aria-hidden="true" />
+                  <ds-text as="span" variant="text-body-medium" color="secondary">{error}</ds-text>
+                </span>
                 <ds-button-unfilled
                   label={this.retryLabel}
-                  size="sm"
+                  size="md"
                   onDsClick={() => this.requestLoadMore('retry')}
                 />
               </span>
             ) : this.loadingMore ? (
               <span class="ds-table__load-content">
-                <ds-loader size="sm" color="secondary" />
-                <ds-text as="span" variant="text-body-small" color="secondary">
+                <ds-loader size="md" color="secondary" />
+                <ds-text as="span" variant="text-body-medium" color="secondary">
                   {this.loadingMoreLabel}
                 </ds-text>
               </span>
             ) : this.hasMore && manualFallback ? (
-              <ds-button-unfilled
-                label={this.loadMoreLabel}
-                size="sm"
-                onDsClick={() => this.requestLoadMore('manual')}
-              />
+              <span class="ds-table__load-content">
+                <ds-button-unfilled
+                  label={this.loadMoreLabel}
+                  size="md"
+                  onDsClick={() => this.requestLoadMore('manual')}
+                />
+              </span>
             ) : this.hasMore ? (
               <span class="ds-table__auto-sentinel" aria-hidden="true" />
             ) : (
-              <ds-text as="span" variant="text-body-small" color="secondary">
-                {this.endOfResultsLabel}
-              </ds-text>
+              <span class="ds-table__load-content">
+                <ds-text as="span" variant="text-body-medium" color="secondary">
+                  {this.endOfResultsLabel}
+                </ds-text>
+              </span>
             )}
           </td>
         </tr>
@@ -1081,6 +1244,7 @@ export class Table {
             'ds-table__table': true,
             'ds-table__sticky-header-table': true,
             'ds-table__table--selectable': this.selectable,
+            'ds-table__table--grouped': this.grouped,
           }}
           style={this.tableStyle}
           role="presentation"
@@ -1091,6 +1255,26 @@ export class Table {
           {this.renderColgroup()}
           {this.renderHeader(true, true)}
         </table>
+      </div>
+    );
+  }
+
+  private get resultSummary(): string | null {
+    return formatTableResultSummary(
+      this.displayedCount,
+      this.totalCount,
+      this.resultSummaryLabel,
+    );
+  }
+
+  private renderResultFooter() {
+    const summary = this.resultSummary;
+    if (!summary) return null;
+    return (
+      <div class="ds-table__footer">
+        <ds-text as="span" variant="text-body-medium" color="secondary">
+          {summary}
+        </ds-text>
       </div>
     );
   }
@@ -1133,6 +1317,7 @@ export class Table {
                 class={{
                   'ds-table__table': true,
                   'ds-table__table--selectable': this.selectable,
+                  'ds-table__table--grouped': this.grouped,
                 }}
                 style={this.tableStyle}
                 aria-busy={initialLoading || this.loadingMore ? 'true' : undefined}
@@ -1163,6 +1348,7 @@ export class Table {
               </table>
             </div>
           </div>
+          {this.renderResultFooter()}
           <div class="ds-visually-hidden" role="status" aria-live="polite" aria-atomic="true">
             {this.announcement}
           </div>

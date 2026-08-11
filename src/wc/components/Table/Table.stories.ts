@@ -7,6 +7,7 @@ import '../../styles/table.css';
 import type {
   TableColumn,
   TableGroup,
+  TableGroupIntent,
   TableGroupingState,
   TableRow,
   TableSortState,
@@ -387,6 +388,37 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
       actions: { kind: 'action', actionId: 'more', variant: 'icon', icon: 'Ellipses', ariaLabel: 'More actions for Noah Wilson' },
     },
   },
+  {
+    id: 'safety-event-1043',
+    selectionLabel: 'Speeding event for Priya Nair',
+    interactive: true,
+    cells: {
+      preview: { kind: 'image', alt: 'Road-facing video preview unavailable' },
+      behaviorDetails: { primary: 'Speeding', secondary: 'Medium' },
+      behavior: 'Speeding',
+      severity: 'Medium',
+      driverDetails: { primary: 'Priya Nair', secondary: 'DRV-5512' },
+      driverName: 'Priya Nair',
+      driverId: 'DRV-5512',
+      vehicleDetails: { primary: 'VH-4021', secondary: 'Freightliner Cascadia · 2023' },
+      vehicleId: 'VH-4021',
+      vehicleMake: 'Freightliner',
+      vehicleModel: 'Cascadia',
+      vehicleYear: 2023,
+      dateLocation: { primary: 'Aug 5, 2026 · 3:12 PM', secondary: 'Modesto, CA' },
+      eventTime: '2026-08-05T15:12:00-07:00',
+      location: 'Modesto, CA',
+      status: { kind: 'tag', label: 'Pending review', intent: 'caution' },
+      notes: {
+        kind: 'icon',
+        icon: 'DocumentInverted',
+        color: 'quaternary',
+        label: 'No notes',
+        sortValue: false,
+      },
+      actions: { kind: 'action', actionId: 'more', variant: 'icon', icon: 'Ellipses', ariaLabel: 'More actions for Priya Nair' },
+    },
+  },
 ];
 
 const ADDED_ROWS: TableRow[] = [
@@ -445,6 +477,33 @@ function groupedRows(
     }));
 }
 
+const SEVERITY_GROUP_ORDER = ['Critical', 'High', 'Medium', 'Low'] as const;
+const SEVERITY_GROUP_INTENT: Record<(typeof SEVERITY_GROUP_ORDER)[number], TableGroupIntent> = {
+  Critical: 'negative',
+  High: 'warning',
+  Medium: 'caution',
+  Low: 'neutral',
+};
+
+function severityGroupedRows(rows: TableRow[], sort: TableSortState | null): TableGroup[] {
+  const bySeverity = new Map<string, TableRow[]>();
+  for (const row of rows) {
+    const severity = String(row.cells.severity ?? 'Unassigned');
+    bySeverity.set(severity, [...(bySeverity.get(severity) ?? []), row]);
+  }
+
+  return SEVERITY_GROUP_ORDER.filter(label => bySeverity.has(label)).map(label => {
+    const members = bySeverity.get(label) ?? [];
+    return {
+      id: label.toLowerCase(),
+      label,
+      intent: SEVERITY_GROUP_INTENT[label],
+      rows: orderedRows(members, sort),
+      totalCount: members.length,
+    };
+  });
+}
+
 const meta: Meta = {
   title: 'Data display/Table',
   tags: ['autodocs'],
@@ -464,6 +523,8 @@ const meta: Meta = {
     loading: { control: 'boolean' },
     lazyLoading: { control: 'boolean' },
     loadMoreMode: { control: 'select', options: ['auto', 'manual'] },
+    displayedCount: { control: 'number' },
+    totalCount: { control: 'number' },
   },
   args: {
     captionVisibility: 'visible',
@@ -474,6 +535,8 @@ const meta: Meta = {
     loadMoreMode: 'manual',
     selectedRowIds: [],
     sort: null,
+    displayedCount: 50,
+    totalCount: 1500,
   },
 };
 
@@ -494,6 +557,8 @@ export const Playground: Story = {
         caption="Workforce overview"
         caption-visibility=${args['captionVisibility']}
         selection-mode=${args['selectionMode']}
+        .displayedCount=${args['displayedCount']}
+        .totalCount=${args['totalCount']}
         .stickyHeader=${args['stickyHeader']}
         .loading=${args['loading']}
         .lazyLoading=${args['lazyLoading']}
@@ -513,6 +578,7 @@ export const ColumnHeaderAlignment: Story = {
   args: {
     grouping: { columnId: 'status', direction: 'asc' },
     sort: { columnId: 'score', direction: 'desc' },
+    collapsedGroupIds: [],
   },
   parameters: {
     docs: {
@@ -525,18 +591,23 @@ export const ColumnHeaderAlignment: Story = {
     const [, updateArgs] = useArgs();
     const grouping = args['grouping'] as TableGroupingState;
     const sort = (args['sort'] as TableSortState | null) ?? null;
+    const collapsedGroupIds = (args['collapsedGroupIds'] as string[]) ?? [];
     return html`
       <ds-table
         .columns=${ALIGNMENT_COLUMNS}
         .groups=${groupedRows(ALIGNMENT_ROWS, grouping, sort)}
         .grouping=${grouping}
         .sort=${sort}
+        .collapsedGroupIds=${collapsedGroupIds}
         caption="Column header alignment"
         caption-visibility="visible"
         @dsGroupingChange=${(event: CustomEvent<{ grouping: TableGroupingState }>) =>
           updateArgs({ grouping: event.detail.grouping })}
         @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
           updateArgs({ sort: event.detail.sort })}
+        @dsGroupCollapseChange=${(
+          event: CustomEvent<{ collapsedGroupIds: string[] }>,
+        ) => updateArgs({ collapsedGroupIds: event.detail.collapsedGroupIds })}
       ></ds-table>
     `;
   },
@@ -636,11 +707,12 @@ export const GroupingAndIndependentSorting: Story = {
   args: {
     grouping: { columnId: 'status', direction: 'asc' },
     sort: { columnId: 'safetyScore', direction: 'desc' },
+    collapsedGroupIds: [],
   },
   parameters: {
     docs: {
       description: {
-        story: 'The Status header controls group order. Safety score controls member order inside each group. The story performs both transformations in application code, illustrating the controlled contract.',
+        story: 'The Status header controls group order. Safety score controls member order inside each group. Group section headers expose a controlled collapse control matching the action-column ButtonUnfilled recipe. While any group is expanded, collapse-all appears in the last column header after the sort control. The story performs both transformations in application code, illustrating the controlled contract.',
       },
     },
   },
@@ -648,18 +720,75 @@ export const GroupingAndIndependentSorting: Story = {
     const [, updateArgs] = useArgs();
     const grouping = args['grouping'] as TableGroupingState;
     const sort = (args['sort'] as TableSortState | null) ?? null;
+    const collapsedGroupIds = (args['collapsedGroupIds'] as string[]) ?? [];
     return html`
       <ds-table
         .columns=${COLUMNS}
         .groups=${groupedRows(ROWS, grouping, sort)}
         .grouping=${grouping}
         .sort=${sort}
+        .collapsedGroupIds=${collapsedGroupIds}
+        .displayedCount=${ROWS.length}
+        .totalCount=${1500}
         caption="Drivers grouped by status"
         caption-visibility="visible"
         @dsGroupingChange=${(event: CustomEvent<{ grouping: TableGroupingState }>) =>
           updateArgs({ grouping: event.detail.grouping })}
         @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
           updateArgs({ sort: event.detail.sort })}
+        @dsGroupCollapseChange=${(
+          event: CustomEvent<{ collapsedGroupIds: string[] }>,
+        ) => updateArgs({ collapsedGroupIds: event.detail.collapsedGroupIds })}
+      ></ds-table>
+    `;
+  },
+};
+
+export const GroupingBySeverity: Story = {
+  name: 'Grouping by severity',
+  args: {
+    grouping: { columnId: 'severity', direction: 'asc' },
+    sort: { columnId: 'eventTime', direction: 'desc' },
+    collapsedGroupIds: [],
+    selectedRowIds: [],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Safety events grouped by severity with intentful section headers: Critical → negative, High → warning, Medium → caution, Low → neutral. Each group paints a faint intent background and bold intent title while the count stays secondary. With multi-selection enabled, each section also exposes a checkbox that selects or clears that group.',
+      },
+    },
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    const sort = (args['sort'] as TableSortState | null) ?? null;
+    const collapsedGroupIds = (args['collapsedGroupIds'] as string[]) ?? [];
+    const selectedRowIds = (args['selectedRowIds'] as string[]) ?? [];
+    const groups = severityGroupedRows(SAFETY_EVENT_ROWS, sort);
+    return html`
+      <ds-table
+        .columns=${SAFETY_EVENT_COLUMNS}
+        .groups=${groups}
+        .grouping=${args['grouping']}
+        .sort=${sort}
+        .collapsedGroupIds=${collapsedGroupIds}
+        .selectedRowIds=${selectedRowIds}
+        .displayedCount=${SAFETY_EVENT_ROWS.length}
+        .totalCount=${1500}
+        selection-mode="multiple"
+        sticky-header
+        caption="Safety events by severity"
+        caption-visibility="hidden"
+        @dsGroupingChange=${(event: CustomEvent<{ grouping: TableGroupingState }>) =>
+          updateArgs({ grouping: event.detail.grouping })}
+        @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
+          updateArgs({ sort: event.detail.sort })}
+        @dsGroupCollapseChange=${(
+          event: CustomEvent<{ collapsedGroupIds: string[] }>,
+        ) => updateArgs({ collapsedGroupIds: event.detail.collapsedGroupIds })}
+        @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>
+          updateArgs({ selectedRowIds: event.detail.selectedRowIds })}
       ></ds-table>
     `;
   },

@@ -28,7 +28,7 @@
   --_table-column-border: var(--ds-table-column-border, var(--color-border-tertiary));
   --_table-sticky-border: var(--ds-table-sticky-border, var(--color-border-secondary));
   --_table-border-strong: var(--ds-table-border-strong, var(--color-border-secondary));
-  --_table-radius: var(--ds-table-radius, var(--dimension-radius-075));
+  --_table-radius: var(--ds-table-radius, var(--dimension-radius-000));
   --_table-header-min-block-size: var(
     --ds-table-header-min-block-size,
     var(--dimension-size-400)
@@ -49,7 +49,7 @@
     --ds-table-selection-column-inline-size,
     var(--dimension-size-500)
   );
-  --_table-selection-column-contribution: 0;
+  --_table-selection-column-contribution: 0px;
   --_table-sticky-start-shadow: var(
     --ds-table-sticky-start-shadow,
     inset var(--dimension-space-050) 0 var(--dimension-space-050)
@@ -93,6 +93,8 @@
   scrollbar-gutter: stable;
   border-radius: var(--_table-radius);
   outline: none;
+  /* Group section headers size to this scrollport, not the overflowing table. */
+  container-type: inline-size;
 }
 
 :where(.ds-table--document-sticky-header .ds-table__viewport) {
@@ -107,7 +109,13 @@
 :where(.ds-table__table) {
   box-sizing: border-box;
   inline-size: 100%;
-  min-inline-size: max(100%, var(--ds-table-explicit-min-inline-size, 0));
+  min-inline-size: max(
+    100%,
+    calc(
+      var(--ds-table-explicit-min-inline-size, 0px) +
+        var(--_table-selection-column-contribution)
+    )
+  );
   border: 0;
   border-spacing: 0;
   border-collapse: separate;
@@ -118,10 +126,6 @@
 
 :where(.ds-table__table--selectable) {
   --_table-selection-column-contribution: var(--_table-selection-column-inline-size);
-  min-inline-size: max(
-    100%,
-    calc(var(--ds-table-explicit-min-inline-size, 0) + var(--_table-selection-column-contribution))
-  );
 }
 
 :where(.ds-table__caption) {
@@ -131,8 +135,25 @@
   text-align: start;
 }
 
+/* Optional controlled result summary — 48px control-bar height. */
+:where(.ds-table__footer) {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  min-block-size: var(--dimension-size-600);
+  block-size: var(--dimension-size-600);
+  padding-inline: var(--_table-cell-padding-inline);
+  border-block-start: var(--dimension-stroke-width-012) solid var(--_table-border);
+  background: var(--_table-surface);
+  color: var(--color-foreground-secondary);
+  text-align: start;
+}
+
 :where(.ds-table__selection-column) {
   inline-size: var(--_table-selection-column-inline-size);
+  width: var(--_table-selection-column-inline-size);
+  max-inline-size: var(--_table-selection-column-inline-size);
+  max-width: var(--_table-selection-column-inline-size);
 }
 
 :where(.ds-table__head) {
@@ -375,7 +396,7 @@
 :where(.ds-table__header-labels),
 :where(.ds-table__header-segment),
 :where(.ds-table__sort-slot),
-:where(.ds-table__group-content),
+:where(.ds-table__collapse-slot),
 :where(.ds-table__load-content) {
   display: inline-flex;
   align-items: center;
@@ -386,6 +407,10 @@
   display: flex;
   inline-size: 100%;
   gap: var(--dimension-space-050);
+}
+
+:where(.ds-table__header-content--collapse-all) {
+  justify-content: center;
 }
 
 :where(.ds-table__header-labels) {
@@ -402,11 +427,15 @@
   flex: 0 0 auto;
 }
 
-:where(.ds-table__sort-slot) {
+:where(.ds-table__sort-slot),
+:where(.ds-table__collapse-slot) {
   justify-content: center;
   flex: 0 0 auto;
   inline-size: var(--dimension-size-200);
   block-size: var(--dimension-size-200);
+}
+
+:where(.ds-table__sort-slot) {
   margin-inline-start: auto;
 }
 
@@ -645,6 +674,9 @@
 
 :where(.ds-table__selection-cell) {
   inline-size: var(--_table-selection-column-inline-size);
+  width: var(--_table-selection-column-inline-size);
+  max-inline-size: var(--_table-selection-column-inline-size);
+  max-width: var(--_table-selection-column-inline-size);
   padding: 0;
   text-align: center;
 }
@@ -775,13 +807,96 @@
 }
 
 :where(.ds-table__group-cell) {
-  min-block-size: var(--_table-header-min-block-size);
-  padding: var(--dimension-space-075) var(--_table-cell-padding-inline);
-  background: var(--_table-group-surface);
+  /* Surface + chrome live on `.ds-table__group-content` (viewport-width). The
+   * th only spans the table for row structure so body columns can scroll. */
+  min-block-size: var(--_table-row-min-block-size);
+  padding: 0;
+  background: transparent;
+}
+
+/* Intentful group headers mirror Tag faint: faint-* background + bold-* title. */
+:where(.ds-table__group-cell--intent-brand) {
+  --_table-group-surface: var(--color-background-faint-brand);
+}
+
+:where(.ds-table__group-cell--intent-neutral) {
+  --_table-group-surface: var(--color-background-faint-neutral);
+}
+
+:where(.ds-table__group-cell--intent-negative) {
+  --_table-group-surface: var(--color-background-faint-negative);
+}
+
+:where(.ds-table__group-cell--intent-warning) {
+  --_table-group-surface: var(--color-background-faint-warning);
+}
+
+:where(.ds-table__group-cell--intent-caution) {
+  --_table-group-surface: var(--color-background-faint-caution);
+}
+
+:where(.ds-table__group-cell--intent-positive) {
+  --_table-group-surface: var(--color-background-faint-positive);
 }
 
 :where(.ds-table__group-content) {
-  gap: var(--dimension-space-075);
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 1;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--dimension-space-100);
+  inline-size: 100cqi;
+  max-inline-size: 100cqi;
+  min-block-size: var(--_table-row-min-block-size);
+  padding: var(--dimension-space-075);
+  background: var(--_table-group-surface);
+}
+
+:where(.ds-table__table--selectable .ds-table__group-content) {
+  /* Selection lane is the real 40px column — don't add start pad or flex gap. */
+  gap: 0;
+  padding-inline-start: 0;
+}
+
+:where(.ds-table__group-selection) {
+  /* 40px column (same as body), checkbox in a 4px-padded box inside it. */
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: 0 0 var(--_table-selection-column-inline-size);
+  align-items: center;
+  justify-content: center;
+  padding: var(--dimension-space-050);
+}
+
+:where(.ds-table__group-selection .ds-table__selection-control) {
+  inline-size: var(--dimension-iconography-md);
+  min-block-size: var(--dimension-iconography-md);
+  block-size: var(--dimension-iconography-md);
+}
+
+:where(.ds-table__group-copy) {
+  /* Label + count box: 2px block, 6px inline (parallel to the selection box). */
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  min-inline-size: 0;
+  flex: 1 1 auto;
+  gap: var(--dimension-space-100);
+  padding-block: var(--dimension-space-025);
+  padding-inline: var(--dimension-space-075);
+}
+
+:where(.ds-table__table--selectable .ds-table__group-copy) {
+  padding-inline-start: calc(
+    var(--dimension-space-125) + var(--_table-cell-track-label-inset)
+  );
+}
+
+:where(.ds-table__group-toggle) {
+  flex: 0 0 auto;
+  margin-inline-start: auto;
 }
 
 :where(.ds-table__load-cell),
@@ -792,12 +907,23 @@
 }
 
 :where(.ds-table__load-content) {
+  /* Match md ButtonUnfilled height so text-only / loading / button states share one box. */
+  box-sizing: border-box;
   justify-content: center;
   gap: var(--dimension-space-100);
+  min-block-size: var(--dimension-size-400);
 }
 
 :where(.ds-table__load-content--error) {
   flex-wrap: wrap;
+  /* 16px between the icon/text cluster and the retry button. */
+  gap: var(--dimension-space-200);
+}
+
+:where(.ds-table__load-copy) {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dimension-space-100);
 }
 
 :where(.ds-table__auto-sentinel) {

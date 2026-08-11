@@ -61,7 +61,7 @@ import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 import { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 import { SwitchSize } from "./components/Switch/Switch";
 import { TabBackground, TabGroupSize as TabGroupSize1 } from "./components/TabGroup/TabGroup";
-import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupingChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupCollapseChangeDetail, TableGroupingChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -122,7 +122,7 @@ export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 export { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 export { SwitchSize } from "./components/Switch/Switch";
 export { TabBackground, TabGroupSize as TabGroupSize1 } from "./components/TabGroup/TabGroup";
-export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupingChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupCollapseChangeDetail, TableGroupingChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -2523,10 +2523,19 @@ export namespace Components {
          */
         "captionVisibility": TableCaptionVisibility;
         /**
+          * Controlled collapsed group identities. Groups not listed remain expanded.
+          * @default []
+         */
+        "collapsedGroupIds": string[];
+        /**
           * Stable column definitions. Assign through JavaScript.
           * @default []
          */
         "columns": TableColumn[];
+        /**
+          * Optional result summary footer. When both `displayedCount` and `totalCount` are finite numbers, the table shows “Displaying {displayed} of {total}”.
+         */
+        "displayedCount": number | undefined;
         /**
           * @default 'No data is available.'
          */
@@ -2612,6 +2621,11 @@ export namespace Components {
          */
         "maxHeight": string | number | undefined;
         /**
+          * Supports {displayed} and {total} placeholders.
+          * @default 'Displaying {displayed} of {total}'
+         */
+        "resultSummaryLabel": string;
+        /**
           * @default 'Retry'
          */
         "retryLabel": string;
@@ -2651,6 +2665,7 @@ export namespace Components {
           * @default false
          */
         "stickyHeader": boolean;
+        "totalCount": number | undefined;
     }
     interface DsTag {
         /**
@@ -3932,6 +3947,7 @@ declare global {
     interface HTMLDsTableElementEventMap {
         "dsSortChange": TableSortChangeDetail;
         "dsGroupingChange": TableGroupingChangeDetail;
+        "dsGroupCollapseChange": TableGroupCollapseChangeDetail;
         "dsSelectionChange": TableSelectionChangeDetail;
         "dsLoadMore": TableLoadMoreDetail;
         "dsCellAction": TableCellActionDetail;
@@ -6724,10 +6740,19 @@ declare namespace LocalJSX {
          */
         "captionVisibility"?: TableCaptionVisibility;
         /**
+          * Controlled collapsed group identities. Groups not listed remain expanded.
+          * @default []
+         */
+        "collapsedGroupIds"?: string[];
+        /**
           * Stable column definitions. Assign through JavaScript.
           * @default []
          */
         "columns"?: TableColumn[];
+        /**
+          * Optional result summary footer. When both `displayedCount` and `totalCount` are finite numbers, the table shows “Displaying {displayed} of {total}”.
+         */
+        "displayedCount"?: number | undefined;
         /**
           * @default 'No data is available.'
          */
@@ -6813,11 +6838,17 @@ declare namespace LocalJSX {
          */
         "maxHeight"?: string | number | undefined;
         "onDsCellAction"?: (event: DsTableCustomEvent<TableCellActionDetail>) => void;
+        "onDsGroupCollapseChange"?: (event: DsTableCustomEvent<TableGroupCollapseChangeDetail>) => void;
         "onDsGroupingChange"?: (event: DsTableCustomEvent<TableGroupingChangeDetail>) => void;
         "onDsLoadMore"?: (event: DsTableCustomEvent<TableLoadMoreDetail>) => void;
         "onDsRowActivate"?: (event: DsTableCustomEvent<TableRowActivateDetail>) => void;
         "onDsSelectionChange"?: (event: DsTableCustomEvent<TableSelectionChangeDetail>) => void;
         "onDsSortChange"?: (event: DsTableCustomEvent<TableSortChangeDetail>) => void;
+        /**
+          * Supports {displayed} and {total} placeholders.
+          * @default 'Displaying {displayed} of {total}'
+         */
+        "resultSummaryLabel"?: string;
         /**
           * @default 'Retry'
          */
@@ -6858,6 +6889,7 @@ declare namespace LocalJSX {
           * @default false
          */
         "stickyHeader"?: boolean;
+        "totalCount"?: number | undefined;
     }
     interface DsTag {
         /**
@@ -7679,6 +7711,9 @@ declare namespace LocalJSX {
     interface DsTableAttributes {
         "caption": string;
         "captionVisibility": TableCaptionVisibility;
+        "displayedCount": number | undefined;
+        "totalCount": number | undefined;
+        "resultSummaryLabel": string;
         "stickyHeader": boolean;
         "maxHeight": string;
         "scrollLabel": string | undefined;

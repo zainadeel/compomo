@@ -4,15 +4,23 @@ import test from 'node:test';
 import {
   clampTableColumnSize,
   deriveTableSelectionState,
+  formatTableResultSummary,
+  isTableGroupIntent,
   nextTableGroupOrder,
+  nextTableGroupsCollapsed,
   nextTableSortState,
   resolvedTableGroupCount,
   tableCellPrimary,
+  tableCollapseAllHost,
   tableColumnSize,
   tableExplicitMinWidth,
+  tableGroupIntentClass,
+  tableGroupLabelColor,
   tableModelIssues,
   tableRowSelectionLabel,
   toggleAllLoadedTableRows,
+  toggleTableGroupCollapsed,
+  toggleTableGroupSelection,
   toggleTableRowSelection,
 } from '../src/wc/components/Table/table-model';
 import type { TableColumn, TableRow } from '../src/wc/components/Table/table-types';
@@ -69,6 +77,101 @@ test('select-all preserves identities outside the loaded window', () => {
   assert.deepEqual(cleared, ['not-loaded']);
 });
 
+test('group selection toggles only the group members while preserving outsiders', () => {
+  const groupRows = [rows[0], rows[3]];
+  const selected = toggleTableGroupSelection(['not-loaded'], groupRows);
+  assert.deepEqual(new Set(selected), new Set(['a', 'd', 'not-loaded']));
+
+  const completed = toggleTableGroupSelection(['a', 'not-loaded'], groupRows);
+  assert.deepEqual(new Set(completed), new Set(['a', 'd', 'not-loaded']));
+
+  const cleared = toggleTableGroupSelection(selected, groupRows);
+  assert.deepEqual(cleared, ['not-loaded']);
+});
+
+test('toggles collapsed group identities without mutating the input array', () => {
+  const collapsed = toggleTableGroupCollapsed(['driving'], 'on-duty');
+  assert.deepEqual(collapsed, ['driving', 'on-duty']);
+  assert.deepEqual(toggleTableGroupCollapsed(collapsed, 'driving'), ['on-duty']);
+});
+
+test('collapses or expands every group from the current collapsed set', () => {
+  assert.deepEqual(nextTableGroupsCollapsed([], ['a', 'b']), ['a', 'b']);
+  assert.deepEqual(nextTableGroupsCollapsed(['a'], ['a', 'b']), ['a', 'b']);
+  assert.deepEqual(nextTableGroupsCollapsed(['a', 'b'], ['a', 'b']), []);
+  assert.deepEqual(nextTableGroupsCollapsed(['a', 'b', 'extra'], ['a', 'b']), []);
+});
+
+test('hosts collapse-all on the trailing action column or last data column', () => {
+  const actionColumns: TableColumn[] = [
+    { id: 'name', header: 'Name' },
+    { id: 'actions', header: '', headerLabel: 'Actions' },
+  ];
+  const actionRows: TableRow[] = [
+    {
+      id: 'one',
+      cells: {
+        name: 'Avery',
+        actions: { kind: 'action', actionId: 'more', variant: 'icon', icon: 'Ellipses', ariaLabel: 'More' },
+      },
+    },
+    {
+      id: 'two',
+      cells: {
+        name: 'Jordan',
+        actions: { kind: 'blank' },
+      },
+    },
+  ];
+  assert.deepEqual(tableCollapseAllHost(actionColumns, actionRows), {
+    columnId: 'actions',
+    mode: 'action',
+  });
+
+  const dualActionColumns: TableColumn[] = [
+    { id: 'name', header: 'Name' },
+    { id: 'action', header: '', headerLabel: 'Action' },
+    { id: 'borderedAction', header: '', headerLabel: 'Bordered action' },
+    { id: 'empty', header: 'Empty' },
+  ];
+  const dualActionRows: TableRow[] = [
+    {
+      id: 'one',
+      cells: {
+        name: 'Avery',
+        action: { kind: 'action', actionId: 'a', variant: 'icon', icon: 'Ellipses', ariaLabel: 'A' },
+        borderedAction: {
+          kind: 'action',
+          actionId: 'b',
+          variant: 'icon',
+          icon: 'Ellipses',
+          ariaLabel: 'B',
+          hasBorder: true,
+        },
+        empty: { kind: 'empty' },
+      },
+    },
+  ];
+  assert.deepEqual(tableCollapseAllHost(dualActionColumns, dualActionRows), {
+    columnId: 'borderedAction',
+    mode: 'action',
+  });
+
+  const plainColumns: TableColumn[] = [
+    { id: 'name', header: 'Name' },
+    { id: 'score', header: 'Score' },
+  ];
+  const plainRows: TableRow[] = [{ id: 'one', cells: { name: 'Avery', score: 98 } }];
+  assert.deepEqual(tableCollapseAllHost(plainColumns, plainRows), {
+    columnId: 'score',
+    mode: 'last',
+  });
+  assert.deepEqual(tableCollapseAllHost(plainColumns, []), {
+    columnId: 'score',
+    mode: 'last',
+  });
+});
+
 test('resolves labels, column constraints, and server group totals defensively', () => {
   assert.equal(tableRowSelectionLabel(rows[0], columns), 'Avery');
   assert.equal(
@@ -98,6 +201,29 @@ test('resolves labels, column constraints, and server group totals defensively',
   assert.equal(tableCellPrimary({ kind: 'action', actionId: 'view', label: 'View' }), 'View');
   assert.equal(tableCellPrimary({ kind: 'empty' }), null);
   assert.equal(tableCellPrimary({ kind: 'blank' }), null);
+});
+
+test('formats the optional result summary footer from controlled counts', () => {
+  assert.equal(formatTableResultSummary(50, 1500), 'Displaying 50 of 1,500');
+  assert.equal(formatTableResultSummary(0, 0), 'Displaying 0 of 0');
+  assert.equal(
+    formatTableResultSummary(12, 3400, 'Showing {displayed} / {total}', 'en-US'),
+    'Showing 12 / 3,400',
+  );
+  assert.equal(formatTableResultSummary(undefined, 1500), null);
+  assert.equal(formatTableResultSummary(50, undefined), null);
+  assert.equal(formatTableResultSummary(Number.NaN, 10), null);
+});
+
+test('maps optional group intents to class and title color recipes', () => {
+  assert.equal(isTableGroupIntent('negative'), true);
+  assert.equal(isTableGroupIntent('ai'), false);
+  assert.equal(tableGroupIntentClass('warning'), 'ds-table__group-cell--intent-warning');
+  assert.equal(tableGroupIntentClass(undefined), undefined);
+  assert.equal(tableGroupLabelColor(undefined), 'primary');
+  assert.equal(tableGroupLabelColor('neutral'), 'var(--color-foreground-bold-neutral)');
+  assert.equal(tableGroupLabelColor('negative'), 'negative');
+  assert.equal(tableGroupLabelColor('caution'), 'caution');
 });
 
 test('reports unstable model identities and impossible group counts', () => {
