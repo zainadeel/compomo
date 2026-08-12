@@ -3753,7 +3753,6 @@
           "responsiveBehavior": [
             "Form fields normally fill their parent; use hug width only in a compact toolbar or filter layout with an explicit width constraint.",
             "Choose density from the containing layout: md for ordinary forms, lg for a touch-primary layout, and sm or xs only where surrounding controls use the same compact recipe.",
-            "Below 768px the native editable value uses the complete body-large regular typography recipe regardless of density; desktop and tablet density typography remains unchanged, and an extra-small mobile frame grows only enough to contain the larger line box.",
             "The owner supplies layout constraints and decides when a compact field moves to its own row."
           ],
           "frameworkCaveats": {
@@ -4602,8 +4601,7 @@
             "The empty or otherwise inactive submit action is a disabled bordered ButtonUnfilled. Ready submit actions use submitIntent, while the streaming stop action remains a bold-brand ButtonFilled."
           ],
           "responsiveBehavior": [
-            "At 768px and wider the textarea begins at two body-medium lines, grows one line at a time through six lines, and then scrolls internally.",
-            "Below 768px the native textarea uses the complete body-large regular typography recipe and its two-to-six-line growth bounds follow the larger line height."
+            "The textarea begins at two body-medium lines, grows one line at a time through six lines, and then scrolls internally."
           ],
           "references": [
             {
@@ -5919,15 +5917,14 @@
             "When showFilter is enabled, provide stable filterTriggerId and filterControls values, synchronize filterExpanded with the controlled menu, and restore focus after selection; filterAriaLabel also labels its tooltip."
           ],
           "states": [
-            "The row is always 48px high with 8px outer padding and a complete md search recipe: 32px control, text-body-medium at 14px/20px at tablet and desktop widths, and a 20px md search icon.",
+            "The row is always 48px high with 8px outer padding and a complete md search recipe: 32px control, text-body-medium at 14px/20px, and a 20px md search icon.",
             "The search icon stays foreground-secondary at rest, hover, focus, active, and while the query is filled.",
             "The row and control surface remain transparent so the ShellApp chrome wash is visible behind them.",
             "The row divider remains the same tertiary 1px boundary while the input is focused because it belongs to the 48px container rather than the input control.",
             "With filtering enabled, the md search control, decorative vertical divider, and borderless md Filter action are separated by 8px; filterActive promotes only the trigger foreground without adding a selected fill."
           ],
           "responsiveBehavior": [
-            "The row fills the available drawer or fullscreen width, allows its search region to shrink inside a 300px drawer without pushing the filter trigger under the tool rail, and does not reduce its control below md density.",
-            "Below 768px the native search field uses the complete body-large regular typography recipe while the surrounding row and md control geometry remain unchanged."
+            "The row fills the available drawer or fullscreen width, allows its search region to shrink inside a 300px drawer without pushing the filter trigger under the tool rail, and does not reduce its control below md density."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -6555,7 +6552,6 @@
           "responsiveBehavior": [
             "Use width fill for form fields and width hug for compact filter bars. Override those defaults only when the owning layout has a clear constraint.",
             "The popup matches the trigger minimum width, may grow for content, and clamps to the viewport.",
-            "Below 768px the popup's native search input uses the complete body-large regular typography recipe at every Select density; desktop and tablet search typography remains density-mapped, and an extra-small mobile search row grows only enough to contain the larger line box.",
             "Long option collections scroll inside the popup; virtualization and remote search are not part of this component."
           ],
           "frameworkCaveats": {

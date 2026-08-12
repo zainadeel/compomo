@@ -31,8 +31,7 @@
     "The empty or otherwise inactive submit action is a disabled bordered ButtonUnfilled. Ready submit actions use submitIntent, while the streaming stop action remains a bold-brand ButtonFilled."
   ],
   "responsiveBehavior": [
-    "At 768px and wider the textarea begins at two body-medium lines, grows one line at a time through six lines, and then scrolls internally.",
-    "Below 768px the native textarea uses the complete body-large regular typography recipe and its two-to-six-line growth bounds follow the larger line height."
+    "The textarea begins at two body-medium lines, grows one line at a time through six lines, and then scrolls internally."
   ],
   "references": [
     {

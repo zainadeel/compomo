@@ -216,10 +216,7 @@ test('PanelTools search uses the shared Select search control at md density', ()
   const panelToolsCss = read('src/wc/components/PanelTools/PanelTools.css');
 
   assert.match(source, /<ChoiceSearch/);
-  assert.match(
-    searchParts,
-    /class={`select-search__control ds-mobile-text-entry-frame ds-control--\$\{size\}`}/,
-  );
+  assert.match(searchParts, /class={`select-search__control ds-control--\$\{size\}`}/);
   assert.match(searchParts, /onDsChange={event => event\.stopPropagation\(\)}/);
   assert.match(
     read('src/wc/utils/search-control.css'),
@@ -231,7 +228,6 @@ test('PanelTools search uses the shared Select search control at md density', ()
   assert.match(css, /@import ['"]\.\.\/\.\.\/utils\/control-density\.css['"];/);
   assert.match(css, /@import ['"]\.\.\/\.\.\/utils\/search-control\.css['"];/);
   assert.match(css, /@import ['"]\.\.\/\.\.\/utils\/typography\.css['"];/);
-  assert.match(css, /@import ['"]\.\.\/\.\.\/utils\/mobile-text-entry\.css['"];/);
   assert.match(
     css,
     /\.panel-tool-search::after\s*{[\s\S]*?height: var\(--dimension-stroke-width-012\);[\s\S]*?background-color: var\(--color-border-tertiary\);/,

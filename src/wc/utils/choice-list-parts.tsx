@@ -46,10 +46,10 @@ export const ChoiceSearch: FunctionalComponent<ChoiceSearchProps> = ({
 
   return (
     <div class="select-search">
-      <div class={`select-search__control ds-mobile-text-entry-frame ds-control--${size}`}>
+      <div class={`select-search__control ds-control--${size}`}>
         <ds-icon name="MagnifyingGlass" size={size} color="inherit" />
         <input
-          class={`ds-mobile-text-entry ds-text--${CONTROL_TEXT_VARIANT[size].replace('text-', '')} ds-text--regular`}
+          class={`ds-text--${CONTROL_TEXT_VARIANT[size].replace('text-', '')} ds-text--regular`}
           ref={element => {
             inputElement = (element as HTMLInputElement) ?? null;
             inputRef(inputElement);

@@ -4,7 +4,6 @@
 @import '../../utils/field-stack.css';
 @import '../../utils/search-control.css';
 @import '../../utils/typography.css';
-@import '../../utils/mobile-text-entry.css';
 
 :host(.select-host) {
   display: inline-flex;

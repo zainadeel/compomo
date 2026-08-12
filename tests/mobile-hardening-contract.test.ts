@@ -38,55 +38,6 @@ function fineHoverMediaRanges(css: string): Array<[number, number]> {
   return ranges;
 }
 
-test('shared mobile text-entry recipe is complete and reaches every editable native surface', () => {
-  const utility = read('src/wc/utils/mobile-text-entry.css');
-  assert.match(utility, /@media \(max-width: 767px\)/);
-  assert.match(
-    utility,
-    /\.ds-mobile-text-entry,[\s\S]*?\.ds-mobile-text-entry\[class\]\s*{[\s\S]*?font-size: var\(--typography-fontsize-lg\);[\s\S]*?line-height: var\(--typography-lineheight-lg\);[\s\S]*?font-weight: var\(--typography-weight-regular\);[\s\S]*?letter-spacing: var\(--typography-letterspacing-negative-half\);/,
-  );
-  assert.doesNotMatch(utility, /(?:font-size|line-height):\s*\d/);
-  assert.match(
-    utility,
-    /\.ds-mobile-text-entry-frame\s*{[\s\S]*?min-height: var\(--dimension-size-300\);/,
-  );
-
-  const editableSurfaces: Array<{ file: string; markup: string }> = [];
-  for (const file of filesBelow('src/wc', '.tsx')) {
-    const source = read(file);
-    for (const match of source.matchAll(/<(input|textarea)\b[\s\S]*?\/>/g)) {
-      const markup = match[0];
-      if (/type=["{](?:checkbox|range|button|hidden)/.test(markup)) continue;
-      editableSurfaces.push({ file, markup });
-    }
-  }
-
-  assert.deepEqual(
-    editableSurfaces.map(surface => surface.file).sort(),
-    [
-      'src/wc/components/Input/Input.tsx',
-      'src/wc/components/MessageComposer/MessageComposer.tsx',
-      'src/wc/utils/choice-list-parts.tsx',
-    ],
-  );
-  for (const surface of editableSurfaces) {
-    assert.match(
-      surface.markup,
-      /ds-mobile-text-entry/,
-      `${surface.file} must consume the shared mobile text-entry recipe`,
-    );
-  }
-
-  assert.match(
-    read('src/wc/components/Input/Input.tsx'),
-    /input-control[\s\S]*?ds-mobile-text-entry-frame/,
-  );
-  assert.match(
-    read('src/wc/utils/choice-list-parts.tsx'),
-    /select-search__control ds-mobile-text-entry-frame/,
-  );
-});
-
 test('every authored hover selector is limited to a hover-capable fine pointer', () => {
   for (const file of filesBelow('src/wc', '.css')) {
     const css = read(file).replace(/\/\*[\s\S]*?\*\//g, '');

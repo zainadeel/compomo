@@ -60,35 +60,15 @@ test('uses the input-field active border for mouse and keyboard focus', async ({
   expect(keyboardShadow).toBe(pointerShadow);
 });
 
-test('retains body-medium textarea metrics at 768px and above', async ({ page }) => {
-  const textarea = page.locator('#composer textarea');
-  await expect(textarea).toHaveCSS('font-size', '14px');
-  await expect(textarea).toHaveCSS('line-height', '20px');
-  await expect(textarea).toHaveCSS('font-weight', '400');
-});
-
 test.describe('direct-touch composer', () => {
   test.use({ hasTouch: true, viewport: { width: 390, height: 760 } });
 
-  test('uses the complete body-large recipe and larger growth bounds', async ({ page }) => {
+  test('preserves body-medium text metrics', async ({ page }) => {
     await page.goto('/message-composer.html');
     await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 
     const textarea = page.locator('#composer textarea');
-    await expect(textarea).toHaveCSS('font-size', '18px');
-    await expect(textarea).toHaveCSS('line-height', '24px');
-    await expect(textarea).toHaveCSS('font-weight', '400');
-    await expect(textarea).toHaveCSS('letter-spacing', '-0.15px');
-
-    const geometry = await textarea.evaluate(element => {
-      const style = getComputedStyle(element);
-      return {
-        minHeight: Number.parseFloat(style.minHeight),
-        maxHeight: Number.parseFloat(style.maxHeight),
-        lineHeight: Number.parseFloat(style.lineHeight),
-      };
-    });
-    expect(geometry.minHeight).toBeGreaterThan(geometry.lineHeight * 2);
-    expect(geometry.maxHeight).toBeGreaterThan(geometry.lineHeight * 6);
+    await expect(textarea).toHaveCSS('font-size', '14px');
+    await expect(textarea).toHaveCSS('line-height', '20px');
   });
 });

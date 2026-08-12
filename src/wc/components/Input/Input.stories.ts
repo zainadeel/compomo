@@ -94,30 +94,3 @@ export const SizesAndStates: Story = {
     </div>
   `,
 };
-
-export const MobileTextEntry: Story = {
-  name: 'Mobile text-entry floor',
-  parameters: {
-    viewport: { defaultViewport: 'mobile1' },
-    docs: {
-      description: {
-        story:
-          'Below 768px every editable density uses the complete body-large text recipe. Compact frames retain their density metrics except where the larger line box requires the shared mobile minimum height.',
-      },
-    },
-  },
-  render: () => html`
-    <div style="display:grid;gap:var(--dimension-space-100);width:min(100%,320px);">
-      ${(['lg', 'md', 'sm', 'xs'] as const).map(
-        size => html`
-          <ds-input
-            size=${size}
-            type=${size === 'xs' ? 'search' : 'text'}
-            value=${`${size} editable value`}
-            aria-label="${size} mobile input"
-          ></ds-input>
-        `,
-      )}
-    </div>
-  `,
-};

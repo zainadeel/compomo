@@ -66,26 +66,6 @@ export const SixLines: Story = {
     `),
 };
 
-export const MobileTextEntry: Story = {
-  name: 'Mobile text-entry floor',
-  parameters: {
-    viewport: { defaultViewport: 'mobile1' },
-    docs: {
-      description: {
-        story:
-          'Below 768px the native textarea uses the body-large text recipe while preserving its two-to-six-line auto-growth contract.',
-      },
-    },
-  },
-  render: () =>
-    composerFrame(
-      html`<ds-message-composer
-        label="Mobile message"
-        value="Body-large editable message"
-      ></ds-message-composer>`,
-    ),
-};
-
 export const Streaming: Story = {
   render: () =>
     composerFrame(html`

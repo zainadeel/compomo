@@ -738,45 +738,6 @@ test('has no detectable accessibility violations',
   expect(results.violations).toEqual([]);
 });
 
-test.describe('direct-touch searchable select', () => {
-  test.use({ hasTouch: true, viewport: { width: 390, height: 760 } });
-
-  test('uses the mobile body-large floor and restores xs typography at 768px', async ({
-    page,
-  }) => {
-    const select = page.locator('#searchable');
-    await select.evaluate((element: HTMLDsSelectElement) => {
-      element.size = 'xs';
-      element.open = true;
-    });
-    const search = select.getByRole('searchbox', { name: 'Search' });
-    const frame = select.locator('.select-search__control');
-
-    await expect(search).toHaveClass(/ds-mobile-text-entry/);
-    await expect(search).toHaveCSS('font-size', '18px');
-    await expect(search).toHaveCSS('line-height', '24px');
-    await expect(search).toHaveCSS('font-weight', '400');
-    await expect(search).toHaveCSS('letter-spacing', '-0.15px');
-    await expect(frame).toHaveCSS('height', '24px');
-
-    const mobileGeometry = await frame.evaluate(element => {
-      const input = element.querySelector<HTMLInputElement>('input')!;
-      return {
-        frameHeight: element.getBoundingClientRect().height,
-        inputHeight: input.getBoundingClientRect().height,
-        lineHeight: Number.parseFloat(getComputedStyle(input).lineHeight),
-      };
-    });
-    expect(mobileGeometry.frameHeight).toBeGreaterThanOrEqual(mobileGeometry.lineHeight);
-    expect(mobileGeometry.inputHeight).toBeGreaterThanOrEqual(mobileGeometry.lineHeight);
-
-    await page.setViewportSize({ width: 768, height: 760 });
-    await expect(search).toHaveCSS('font-size', '9px');
-    await expect(search).toHaveCSS('line-height', '12px');
-    await expect(frame).toHaveCSS('height', '16px');
-  });
-});
-
 declare global {
   interface Window {
     __selectClears: string[];

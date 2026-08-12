@@ -5,7 +5,6 @@
 @import '../../utils/control-width.css';
 @import '../../utils/field-stack.css';
 @import '../../utils/typography.css';
-@import '../../utils/mobile-text-entry.css';
 @import '../../utils/forced-colors.css';
 
 :host(.input-host) {
