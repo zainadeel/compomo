@@ -535,7 +535,7 @@ export class Menu {
               >
                 {section.header && (
                   <ds-text
-                    class={`section-header ds-choice-section__header ds-control--${this.size}`}
+                    class={`section-header ds-choice-section__header ds-control-section-heading ds-control--${this.size}`}
                     as="span"
                     variant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
                     emphasis

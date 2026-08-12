@@ -612,7 +612,7 @@ export class Select {
                   >
                     {section.header && (
                       <ds-text
-                        class={`ds-choice-section__header ds-control--${this.size}`}
+                        class={`ds-choice-section__header ds-control-section-heading ds-control--${this.size}`}
                         as="span"
                         variant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
                         emphasis

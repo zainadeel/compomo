@@ -11,13 +11,15 @@ events, and semantic ownership remain the public API.
 `control-density.css`:
 
 - `.ds-control-frame` owns density height, inline padding, gap, and radius.
+- `.ds-control-section-heading` aligns a section heading to the frame's label
+  inset at the selected density.
 - `.ds-control-icon-box` owns the fixed icon/adornment zone.
 - `.ds-control-label-box` owns density-specific text-container inset.
 
-ButtonFilled, ButtonUnfilled, Input, Select, Menu choice rows, and
-ConversationListItem use these parts. Components continue to own borders,
-surface treatment, interaction state, typography selection, and semantics.
-Never add typography metrics to a control part.
+ButtonFilled, ButtonUnfilled, Input, Select, Menu choice rows and section
+headings, TooltipChart, and ConversationListItem use these parts. Components
+continue to own borders, surface treatment, interaction state, typography
+selection, and semantics. Never add typography metrics to a control part.
 
 `src/wc/utils/control-density-inset.css` is a narrow modifier for a control
 nested inside another control at the same density. It reduces only the nested

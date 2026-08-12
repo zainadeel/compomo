@@ -245,6 +245,12 @@ test('preserves navigation and overlay boundaries without relying on fills or sh
   await expect(tooltip).toHaveCSS('outline-style', 'solid');
   await expect(tooltip).toHaveCSS('outline-color', colors.canvasText);
 
+  await openFixture(page, '/tooltip-chart.html', browserName);
+  const chartTooltip = page.locator('#mixed-tooltip');
+  await expect(chartTooltip).toBeVisible();
+  await expect(chartTooltip).toHaveCSS('outline-style', 'solid');
+  await expect(chartTooltip).toHaveCSS('outline-color', colors.canvasText);
+
   await openFixture(page, '/toast.html', browserName);
   await page.evaluate(() => {
     (

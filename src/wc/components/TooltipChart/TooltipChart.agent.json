@@ -43,6 +43,8 @@
     "The owning chart mounts the callout when a local interaction starts and unmounts it when that interaction ends.",
     "Coordinate updates track within one mounted interaction session without restarting the show delay.",
     "Placement flips horizontally or vertically when the rendered callout approaches a viewport edge.",
+    "The heading and rows use the same medium-density section-heading and control-frame anatomy as menu-style choice content.",
+    "When any grouped row supplies a swatch, every row reserves the shared leading icon zone so mixed-swatch labels and trailing values stay aligned.",
     "Placement is chosen as a quadrant rather than computed as coordinates: the component measures its own rendered rect and flips its side and align props, which CSS consumes. It therefore does not use the shared anchored-position utilities, which resolve an anchor element into x and y.",
     "This separation is deliberate. The callout follows the pointer instead of an element, so it has no anchor rect to resolve; adopting the shared geometry would mean rewriting its CSS to consume coordinates for no behavioral gain.",
     "Reduced motion preserves the final visible state without an opacity transition."

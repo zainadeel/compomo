@@ -127,18 +127,22 @@ export class TooltipChart {
   render() {
     const translateX = this.side === 'right' ? `${CURSOR_OFFSET_PX}px` : `calc(-100% - ${CURSOR_OFFSET_PX}px)`;
     const translateY = this.align === 'bottom' ? `${CURSOR_OFFSET_PX}px` : `calc(-100% - ${CURSOR_OFFSET_PX}px)`;
+    const rows = this.items ?? [{ label: this.label, value: this.value }];
+    const usesSwatches = rows.some(item => Boolean(item.color));
 
     return (
       <Host
         class={{
           'tooltip-chart': true,
           'tooltip-chart--visible': this.visible,
+          'ds-chrome-column': true,
+          'ds-chrome-space--sm': true,
         }}
         style={{ left: `${this.x}px`, top: `${this.y}px`, transform: `translate(${translateX}, ${translateY})` }}
       >
         {this.heading && (
           <ds-text
-            class="tooltip-chart__heading"
+            class="tooltip-chart__heading ds-control-section-heading ds-control--md"
             as="span"
             variant={CONTROL_SUPPORTING_TEXT_VARIANT.md}
             emphasis
@@ -148,14 +152,16 @@ export class TooltipChart {
           </ds-text>
         )}
         <div class="tooltip-chart__items">
-          {(this.items ?? [{ label: this.label, value: this.value }]).map((item, index) => (
+          {rows.map((item, index) => (
             <div class="tooltip-chart__item ds-control-frame ds-control--md" key={`${item.label}-${index}`}>
-              {item.color && (
+              {usesSwatches && (
                 <span class="tooltip-chart__swatch-box ds-control-icon-box" aria-hidden="true">
-                  <span
-                    class="tooltip-chart__swatch"
-                    style={{ '--ds-tooltip-chart-swatch': item.color }}
-                  />
+                  {item.color && (
+                    <span
+                      class="tooltip-chart__swatch"
+                      style={{ '--ds-tooltip-chart-swatch': item.color }}
+                    />
+                  )}
                 </span>
               )}
               <ds-text

@@ -78,14 +78,6 @@
 }
 
 ds-text.ds-choice-section__header {
-  display: flex;
-  align-items: center;
-  box-sizing: border-box;
-  height: var(--ds-control-height, var(--dimension-size-400));
-  padding: 0 calc(
-    var(--ds-control-padding-inline, var(--dimension-space-075)) +
-      var(--ds-control-label-inset, var(--dimension-space-025))
-  );
   text-align: start;
   -webkit-user-select: none;
   user-select: none;

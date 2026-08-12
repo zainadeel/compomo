@@ -87,7 +87,7 @@ test('pointer and keyboard resolve grouped points through one focus model', asyn
     itemRadius: '2px',
     swatchBoxWidth: 20,
   });
-  expect(tooltipGeometry.labelValueGap).toBeGreaterThanOrEqual(8);
+  expect(tooltipGeometry.labelValueGap).toBeCloseTo(4, 0);
   const pointerKey = await page.evaluate(() => (window as unknown as { lastFocus: { primary: { key: string } } }).lastFocus.primary.key);
 
   await surface.focus();
