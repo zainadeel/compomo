@@ -1,0 +1,25 @@
+/**
+ * Mobile native text-entry floor.
+ *
+ * Mobile browsers may zoom the page when focusing an editable surface whose
+ * rendered text is smaller than body-large. Apply `.ds-mobile-text-entry` to
+ * every native text/search input or textarea that can summon the software
+ * keyboard. Apply `.ds-mobile-text-entry-frame` to a fixed-height owner so the
+ * body-large line box cannot be clipped by compact control density.
+ */
+
+@media (max-width: 767px) {
+  .ds-mobile-text-entry,
+  .ds-mobile-text-entry[class] {
+    --ds-mobile-text-entry-line-height: var(--typography-lineheight-lg);
+
+    font-size: var(--typography-fontsize-lg);
+    line-height: var(--typography-lineheight-lg);
+    font-weight: var(--typography-weight-regular);
+    letter-spacing: var(--typography-letterspacing-negative-half);
+  }
+
+  .ds-mobile-text-entry-frame {
+    min-height: var(--dimension-size-300);
+  }
+}

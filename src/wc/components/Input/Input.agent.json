@@ -61,6 +61,7 @@
   "responsiveBehavior": [
     "Form fields normally fill their parent; use hug width only in a compact toolbar or filter layout with an explicit width constraint.",
     "Choose density from the containing layout: md for ordinary forms, lg for a touch-primary layout, and sm or xs only where surrounding controls use the same compact recipe.",
+    "Below 768px the native editable value uses the complete body-large regular typography recipe regardless of density; desktop and tablet density typography remains unchanged, and an extra-small mobile frame grows only enough to contain the larger line box.",
     "The owner supplies layout constraints and decides when a compact field moves to its own row."
   ],
   "frameworkCaveats": {

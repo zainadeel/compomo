@@ -185,9 +185,11 @@ ds-text.ds-choice-item__subtext {
   cursor: default;
 }
 
-.ds-choice-footer__clear:hover {
-  text-decoration: underline;
-  text-decoration-color: var(--color-foreground-tertiary);
+@media (hover: hover) and (pointer: fine) {
+  .ds-choice-footer__clear:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--color-foreground-tertiary);
+  }
 }
 
 @media (forced-colors: active) {

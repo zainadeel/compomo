@@ -135,8 +135,10 @@
   cursor: inherit;
 }
 
-.bar-nav__tab:hover::after {
-  background: var(--_bar-nav-hover);
+@media (hover: hover) and (pointer: fine) {
+  .bar-nav__tab:hover::after {
+    background: var(--_bar-nav-hover);
+  }
 }
 
 .bar-nav__tab:active::after {

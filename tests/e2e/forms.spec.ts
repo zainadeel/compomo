@@ -211,6 +211,85 @@ test('input follows shared control density, focus, and search-clear recipes', as
   await expect(search.locator('ds-button-unfilled')).toHaveCount(0);
 });
 
+test('mobile inputs use body-large metrics without changing tablet density typography', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 760 });
+
+  const mobileMetrics = await page.locator('#input-sizes').evaluate(element => {
+    const probe = document.createElement('span');
+    probe.style.cssText = [
+      'font-size:var(--typography-fontsize-lg)',
+      'line-height:var(--typography-lineheight-lg)',
+      'font-weight:var(--typography-weight-regular)',
+      'letter-spacing:var(--typography-letterspacing-negative-half)',
+    ].join(';');
+    document.body.append(probe);
+    const expectedStyle = getComputedStyle(probe);
+    const expected = {
+      fontSize: expectedStyle.fontSize,
+      lineHeight: expectedStyle.lineHeight,
+      fontWeight: expectedStyle.fontWeight,
+      letterSpacing: expectedStyle.letterSpacing,
+    };
+    probe.remove();
+
+    return Array.from(element.querySelectorAll('ds-input')).map(host => {
+      const input = host.querySelector('input')!;
+      const frame = host.querySelector<HTMLElement>('.input-control')!;
+      const style = getComputedStyle(input);
+      return {
+        id: host.id,
+        fontSize: style.fontSize,
+        lineHeight: style.lineHeight,
+        fontWeight: style.fontWeight,
+        letterSpacing: style.letterSpacing,
+        frameHeight: frame.getBoundingClientRect().height,
+        expected,
+      };
+    });
+  });
+
+  expect(mobileMetrics).toHaveLength(8);
+  for (const metric of mobileMetrics) {
+    expect(metric).toMatchObject(metric.expected);
+    expect(metric.frameHeight).toBeGreaterThanOrEqual(Number.parseFloat(metric.lineHeight));
+  }
+
+  await page.setViewportSize({ width: 768, height: 760 });
+  const tabletMetrics = await page.locator('#input-sizes').evaluate(element => {
+    const variants = {
+      'input-lg': 'lg',
+      'input-md': 'md',
+      'input-sm': 'sm',
+      'input-xs': 'xs',
+    } as const;
+    return Object.entries(variants).map(([id, token]) => {
+      const input = element.querySelector<HTMLInputElement>(`#${id} input`)!;
+      const probe = document.createElement('span');
+      probe.style.fontSize = `var(--typography-fontsize-${token})`;
+      probe.style.lineHeight = `var(--typography-lineheight-${token})`;
+      document.body.append(probe);
+      const expected = getComputedStyle(probe);
+      const actual = getComputedStyle(input);
+      const metrics = {
+        id,
+        fontSize: actual.fontSize,
+        lineHeight: actual.lineHeight,
+        expectedFontSize: expected.fontSize,
+        expectedLineHeight: expected.lineHeight,
+      };
+      probe.remove();
+      return metrics;
+    });
+  });
+
+  for (const metric of tabletMetrics) {
+    expect(metric.fontSize, metric.id).toBe(metric.expectedFontSize);
+    expect(metric.lineHeight, metric.id).toBe(metric.expectedLineHeight);
+  }
+});
+
 test('select, multi-select, and menu propagate density into choice rows',
   chromiumOnly('layout-geometry', 'Density propagation is deterministic and its token recipes have contract coverage.'),
   async ({ page }) => {

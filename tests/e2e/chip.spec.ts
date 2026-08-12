@@ -48,3 +48,69 @@ test('truncates one line only when constrained by maxWidth', async ({ page }) =>
     element => element.scrollWidth > element.clientWidth,
   )).toBe(true);
 });
+
+test('shows hover and active feedback for a fine pointer', async ({ page }) => {
+  const remove = page.locator('#chip .tag__remove');
+  const viewport = page.viewportSize();
+  if (!viewport) throw new Error('Chip interaction test requires a viewport');
+  await page.mouse.move(viewport.width - 1, viewport.height - 1);
+
+  await expect
+    .poll(() =>
+      remove.evaluate(element => getComputedStyle(element, '::before').backgroundColor),
+    )
+    .toBe('rgba(0, 0, 0, 0)');
+  await remove.hover();
+  await expect
+    .poll(() =>
+      remove.evaluate(element => getComputedStyle(element, '::before').backgroundColor),
+    )
+    .not.toBe('rgba(0, 0, 0, 0)');
+
+  await page.mouse.down();
+  await expect
+    .poll(() =>
+      remove.evaluate(element => {
+        const probe = document.createElement('span');
+        probe.style.backgroundColor = 'var(--color-interaction-pressed)';
+        document.body.append(probe);
+        const expected = getComputedStyle(probe).backgroundColor;
+        probe.remove();
+        return getComputedStyle(element, '::before').backgroundColor === expected;
+      }),
+    )
+    .toBe(true);
+  await page.mouse.up();
+});
+
+test.describe('direct-touch chip', () => {
+  test.use({ hasTouch: true, viewport: { width: 390, height: 760 } });
+
+  test('does not retain the host or dismiss hover wash after a tap', async ({ page }) => {
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () => matchMedia('(hover: none)').matches && matchMedia('(pointer: coarse)').matches,
+        ),
+      )
+      .toBe(true);
+
+    const chip = page.locator('#chip');
+    const remove = chip.locator('.tag__remove');
+    await remove.tap();
+    await expect
+      .poll(() =>
+        chip.evaluate(element => {
+          const action = element.querySelector('.tag__remove')!;
+          return {
+            host: getComputedStyle(element, '::after').backgroundColor,
+            action: getComputedStyle(action, '::before').backgroundColor,
+          };
+        }),
+      )
+      .toEqual({
+        host: 'rgba(0, 0, 0, 0)',
+        action: 'rgba(0, 0, 0, 0)',
+      });
+  });
+});

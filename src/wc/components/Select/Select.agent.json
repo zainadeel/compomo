@@ -76,6 +76,7 @@
   "responsiveBehavior": [
     "Use width fill for form fields and width hug for compact filter bars. Override those defaults only when the owning layout has a clear constraint.",
     "The popup matches the trigger minimum width, may grow for content, and clamps to the viewport.",
+    "Below 768px the popup's native search input uses the complete body-large regular typography recipe at every Select density; desktop and tablet search typography remains density-mapped, and an extra-small mobile search row grows only enough to contain the larger line box.",
     "Long option collections scroll inside the popup; virtualization and remote search are not part of this component."
   ],
   "frameworkCaveats": {

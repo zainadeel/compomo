@@ -169,8 +169,12 @@
   transition: background-color var(--effect-motion-short-2);
 }
 
-:host(:not(.slider--readonly):not(.ds-control-inactive)) .slider__thumb:hover .slider__thumb-wash {
-  background-color: var(--color-interaction-hover);
+@media (hover: hover) and (pointer: fine) {
+  :host(:not(.slider--readonly):not(.ds-control-inactive))
+    .slider__thumb:hover
+    .slider__thumb-wash {
+    background-color: var(--color-interaction-hover);
+  }
 }
 
 :host([data-dragging]:not(.slider--readonly):not(.ds-control-inactive))

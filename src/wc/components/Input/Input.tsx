@@ -184,6 +184,7 @@ export class Input {
           class={{
             'input-control': true,
             'ds-control-frame': true,
+            'ds-mobile-text-entry-frame': true,
             'input-control--bordered': this.hasBorder,
             'input-control--error': this.hasBorder && this.error,
             'ds-interaction-fill': true,
@@ -207,7 +208,7 @@ export class Input {
             autoComplete={this.autoComplete}
             inputMode={this.inputMode || undefined}
             enterKeyHint={this.enterKeyHint || undefined}
-            class={`native-input ds-control-label-box ds-text--${textVariant.replace('text-', '')} ds-text--regular ds-interaction-fill__content`}
+            class={`native-input ds-mobile-text-entry ds-control-label-box ds-text--${textVariant.replace('text-', '')} ds-text--regular ds-interaction-fill__content`}
             aria-label={this.ariaLabel}
             aria-labelledby={this.ariaLabelledby}
             aria-describedby={describedBy}

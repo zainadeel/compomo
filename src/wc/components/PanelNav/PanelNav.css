@@ -161,8 +161,19 @@
   pointer-events: none;
 }
 
-.panel-nav:not(.panel-nav--breakpoint-locked) .panel-nav__header-btn:hover .panel-nav__header-logo { opacity: 0; }
-.panel-nav:not(.panel-nav--breakpoint-locked) .panel-nav__header-btn:hover .panel-nav__header-toggle { opacity: 1; }
+@media (hover: hover) and (pointer: fine) {
+  .panel-nav:not(.panel-nav--breakpoint-locked)
+    .panel-nav__header-btn:hover
+    .panel-nav__header-logo {
+    opacity: 0;
+  }
+
+  .panel-nav:not(.panel-nav--breakpoint-locked)
+    .panel-nav__header-btn:hover
+    .panel-nav__header-toggle {
+    opacity: 1;
+  }
+}
 
 /* ── Scrollable body ─────────────────────────────────────────────────────── */
 
@@ -383,13 +394,13 @@ ds-text.panel-nav__group-label {
 }
 
 /* Popup-open state keeps the native footer trigger visibly pressed. */
-.panel-nav__footer-user--menu-expanded::after,
-.panel-nav__footer-user--menu-expanded:hover:not(:disabled)::after {
+.panel-nav__footer-user--menu-expanded::after {
   background: var(--_nav-pressed);
 }
 
 .panel-nav__footer-user--menu-expanded {
   color: var(--_nav-fg-primary);
+  --ds-interaction-hover: var(--_nav-pressed);
 }
 
 .panel-nav--collapsed .panel-nav__footer-user {

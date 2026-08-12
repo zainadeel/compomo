@@ -23,6 +23,23 @@ test('renders the complete md content recipe independently of inherited page tex
   expect(iconBox?.height).toBe(20);
 });
 
+test('uses body-large native search typography below 768px', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 760 });
+  const search = page.locator('#search');
+  const input = search.getByRole('searchbox', { name: 'Search chats' });
+  const control = search.locator('.select-search__control');
+
+  await expect(input).toHaveClass(/ds-mobile-text-entry/);
+  await expect(input).toHaveCSS('font-size', '18px');
+  await expect(input).toHaveCSS('line-height', '24px');
+  await expect(input).toHaveCSS('font-weight', '400');
+  await expect(control).toHaveCSS('height', '32px');
+
+  await page.setViewportSize({ width: 768, height: 760 });
+  await expect(input).toHaveCSS('font-size', '14px');
+  await expect(input).toHaveCSS('line-height', '20px');
+});
+
 test('keeps the search icon secondary while focused and filled', async ({ page }) => {
   const search = page.locator('#search');
   const input = search.getByRole('searchbox', { name: 'Search chats' });

@@ -76,8 +76,10 @@
     background-color 0s;
 }
 
-.swatch-picker__option:hover:not(:disabled) .swatch-picker__interaction {
-  background-color: var(--color-interaction-hover);
+@media (hover: hover) and (pointer: fine) {
+  .swatch-picker__option:hover:not(:disabled) .swatch-picker__interaction {
+    background-color: var(--color-interaction-hover);
+  }
 }
 
 .swatch-picker__option:active:not(:disabled) .swatch-picker__interaction {

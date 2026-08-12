@@ -115,6 +115,31 @@ export const RichOptions: Story = {
   `,
 };
 
+export const MobileSearch: Story = {
+  name: 'Mobile searchable density',
+  parameters: {
+    viewport: { defaultViewport: 'mobile1' },
+    docs: {
+      description: {
+        story:
+          'Below 768px the native search field uses the body-large text recipe even when the Select uses an extra-small density; the popup search frame grows enough to contain that line box.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="width:240px;min-height:260px;">
+      <ds-select
+        .options=${OPTIONS}
+        size="xs"
+        searchable
+        open
+        placeholder="Select fruit"
+        aria-label="Fruit"
+      ></ds-select>
+    </div>
+  `,
+};
+
 export const Multiple: Story = {
   name: 'Multiple values',
   render: () => html`

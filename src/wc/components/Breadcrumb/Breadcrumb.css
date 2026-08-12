@@ -61,11 +61,13 @@ a.breadcrumb__link {
   cursor: pointer;
 }
 
-.breadcrumb__link:hover .breadcrumb__label {
-  text-decoration: underline;
-  text-decoration-color: var(--color-foreground-quaternary);
-  text-underline-offset: var(--dimension-space-025);
-  text-decoration-thickness: var(--dimension-stroke-width-012);
+@media (hover: hover) and (pointer: fine) {
+  .breadcrumb__link:hover .breadcrumb__label {
+    text-decoration: underline;
+    text-decoration-color: var(--color-foreground-quaternary);
+    text-underline-offset: var(--dimension-space-025);
+    text-decoration-thickness: var(--dimension-stroke-width-012);
+  }
 }
 
 .breadcrumb__label {

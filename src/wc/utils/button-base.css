@@ -49,8 +49,11 @@
   --ds-control-radius: var(--dimension-radius-half);
 }
 
-.ds-button--expanded::after,
-.ds-button--expanded:hover:not(:disabled)::after {
+.ds-button--expanded {
+  --ds-interaction-hover: var(--ds-interaction-pressed);
+}
+
+.ds-button--expanded::after {
   background: var(--ds-interaction-pressed);
 }
 

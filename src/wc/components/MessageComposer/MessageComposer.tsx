@@ -98,6 +98,7 @@ export class MessageComposer {
           </div>
           <div class="message-composer__field">
             <textarea
+              class="ds-mobile-text-entry"
               ref={element => {
                 this.textarea = element;
               }}
