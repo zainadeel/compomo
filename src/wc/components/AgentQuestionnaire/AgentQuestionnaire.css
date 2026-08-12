@@ -90,7 +90,7 @@ ds-checkbox {
   outline: none;
   background: var(--color-background-primary);
   color: var(--color-foreground-primary);
-  font-family: var(--typography-font-family);
+  font-family: var(--typography-font-family-ui);
   font-size: var(--typography-fontsize-md);
   font-weight: var(--typography-weight-regular);
   line-height: var(--typography-lineheight-md);

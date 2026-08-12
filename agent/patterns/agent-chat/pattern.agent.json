@@ -68,6 +68,7 @@
     "Composer error actions are application-owned. The component presents failure above the editable box as one attached, measured support unit, and recovery never discards the participant draft.",
     "Prompt suggestions and model selection are optional product composition. Suggestion selection normally fills and focuses the draft; model selection remains an application-owned tool-region control.",
     "Markdown parsing and safe node creation belong to the renderer; the renderer-neutral public prose stylesheet owns semantic-tree styling and text measure without owning response ordering or streaming state.",
+    "TokoMo owns the semantic interface and code font-family tokens, CompoMo assigns text or diagnostic-code intent, and the application loads Inter and Fira Code assets once at its root; agent components never fetch font assets.",
     "Agent activity is concise user-safe progress and never reveals private model reasoning or chain-of-thought."
   ],
   "accessibility": [

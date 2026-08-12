@@ -99,6 +99,13 @@ pre {
   border-radius: var(--dimension-radius-050);
   background: var(--color-background-secondary);
   color: var(--color-foreground-primary);
+  font-family: var(
+    --typography-font-family-code,
+    'Fira Code', ui-monospace, 'SFMono-Regular', 'Cascadia Code', 'Roboto Mono',
+    Menlo, Monaco, Consolas, 'Liberation Mono', monospace
+  );
+  font-variant-ligatures: var(--ds-code-font-variant-ligatures, normal);
+  font-weight: var(--typography-weight-regular);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
@@ -109,7 +116,7 @@ pre {
 }
 
 .agent-tool__result--plain-text {
-  font-family: var(--typography-font-family);
+  font-family: var(--typography-font-family-ui);
   font-size: var(--typography-fontsize-md);
   font-weight: var(--typography-weight-regular);
   line-height: var(--typography-lineheight-md);
