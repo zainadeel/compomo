@@ -90,6 +90,13 @@ test('keeps group order and member-row sorting independent', async ({ page }) =>
   await expect(table.locator('tbody[data-group-id]').first()).toHaveAttribute('data-group-id', 'driving');
 
   const firstGroupHeader = table.locator('th[scope="rowgroup"]').first();
+  const singleLineRowHeight = await page
+    .locator('#basic tbody .ds-table__row[data-row-id="jordan"]')
+    .evaluate(element => element.getBoundingClientRect().height);
+  await expect(firstGroupHeader.locator('.ds-table__group-content')).toHaveCSS(
+    'height',
+    `${singleLineRowHeight}px`,
+  );
   await expect(firstGroupHeader.locator('.ds-table__group-copy ds-icon')).toHaveCount(0);
   const groupTexts = firstGroupHeader.locator('.ds-table__group-copy ds-text');
   await expect(groupTexts).toHaveCount(2);
@@ -219,10 +226,15 @@ test('applies faint intent surfaces and bold titles to severity groups', async (
     const toggleRect = toggle.getBoundingClientRect();
     const border = Number.parseFloat(getComputedStyle(content).borderBottomWidth);
     return {
+      height: contentRect.height,
       top: toggleRect.top - contentRect.top,
       bottomInsideBorder: contentRect.bottom - toggleRect.bottom - border,
     };
   });
+  const singleLineRowHeight = await page
+    .locator('#basic tbody .ds-table__row[data-row-id="jordan"]')
+    .evaluate(element => element.getBoundingClientRect().height);
+  expect(expandedGeometry.height).toBe(singleLineRowHeight);
   expect(expandedGeometry.top).toBeCloseTo(expandedGeometry.bottomInsideBorder, 0);
 
   await table.locator('.ds-table__collapse-all').click();
@@ -232,10 +244,11 @@ test('applies faint intent surfaces and bold titles to severity groups', async (
     const body = table.locator(`tbody[data-group-id="${expected[index].id}"]`);
     await expect(body.locator('.ds-table__group-cell')).toHaveCSS('border-bottom-width', '0px');
     await expect(collapsedContents.nth(index)).toHaveCSS('background-clip', 'border-box');
-    await expect(collapsedContents.nth(index)).toHaveCSS(
-      'border-bottom-width',
-      index === expected.length - 1 ? '0px' : '1px',
-    );
+    await expect(collapsedContents.nth(index)).toHaveCSS('border-bottom-width', '0px');
+    const separatorDisplay = await collapsedContents
+      .nth(index)
+      .evaluate(element => getComputedStyle(element, '::after').display);
+    expect(separatorDisplay).toBe(index === expected.length - 1 ? 'none' : 'block');
   }
 });
 

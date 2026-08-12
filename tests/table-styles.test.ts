@@ -16,8 +16,12 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.doesNotMatch(componentTsx, /ds-table__overflow-shadow/);
   assert.match(css, /--ds-table-sticky-start-shadow/);
   assert.match(css, /--ds-table-sticky-end-shadow/);
-  assert.match(css, /--_table-sticky-start-shadow:[\s\S]*?inset var\(--dimension-space-050\) 0 var\(--dimension-space-050\)/);
-  assert.match(css, /--_table-sticky-end-shadow:[\s\S]*?inset calc\(-1 \* var\(--dimension-space-050\)\) 0 var\(--dimension-space-050\)/);
+  assert.match(css, /--_table-sticky-start-shadow:[\s\S]*?inset var\(--dimension-space-100\) 0 var\(--dimension-space-100\)/);
+  assert.match(css, /--_table-sticky-end-shadow:[\s\S]*?inset calc\(-1 \* var\(--dimension-space-100\)\) 0 var\(--dimension-space-100\)/);
+  assert.match(
+    css,
+    /\.ds-table__sticky-edge\)::after[^{]*\{[^}]*inline-size: var\(--dimension-space-100\)/s,
+  );
   assert.doesNotMatch(css, /--effect-shadow-elevated-panel-(?:left|right)/);
   assert.match(css, /\.ds-table__frame--overflow-start \.ds-table__sticky-edge--start/);
   assert.match(css, /\.ds-table__frame--overflow-end \.ds-table__sticky-edge--end/);
@@ -34,11 +38,15 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   );
   assert.match(
     css,
-    /\.ds-table__group-content\)[^{]*\{[^}]*position: sticky[^}]*inset-inline-start: 0[^}]*inline-size: var\(--ds-table-visible-inline-size, 100%\)[^}]*padding: var\(--dimension-space-100\)[^}]*border-block-end: var\(--dimension-stroke-width-012\) solid var\(--_table-border\)[^}]*background: var\(--_table-group-surface\)[^}]*background-clip: border-box/s,
+    /\.ds-table__group-content\)[^{]*\{[^}]*position: sticky[^}]*inset-inline-start: 0[^}]*inline-size: var\(--ds-table-visible-inline-size, 100%\)[^}]*padding: var\(--dimension-space-100\)[^}]*border-block-end: 0[^}]*background: var\(--_table-group-surface\)[^}]*background-clip: border-box/s,
   );
   assert.match(
     css,
-    /\.ds-table__group:last-child\[data-collapsed='true'\] \.ds-table__group-content\)[^{]*\{[^}]*border-block-end: 0/s,
+    /\.ds-table__group-content\)::after[^{]*\{[^}]*block-size: var\(--dimension-stroke-width-012\)[^}]*background: var\(--_table-border\)/s,
+  );
+  assert.match(
+    css,
+    /\.ds-table__group:last-child\[data-collapsed='true'\] \.ds-table__group-content\)::after[^{]*\{[^}]*display: none/s,
   );
   assert.match(componentTsx, /class="ds-table__group-toggle"[\s\S]*?style=\{\{ alignSelf: 'center' \}\}/);
   assert.match(
@@ -47,7 +55,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   );
   assert.match(
     css,
-    /\.ds-table__group-selection\)[^{]*\{[^}]*flex: 0 0 var\(--_table-selection-column-inline-size\)[^}]*padding: var\(--dimension-space-050\)/s,
+    /\.ds-table__group-selection\)[^{]*\{[^}]*flex: 0 0 var\(--_table-selection-column-inline-size\)[^}]*padding-block: var\(--dimension-space-025\)[^}]*padding-inline: var\(--dimension-space-050\)/s,
   );
   assert.match(
     css,

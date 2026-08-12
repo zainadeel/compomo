@@ -52,13 +52,13 @@
   --_table-selection-column-contribution: 0px;
   --_table-sticky-start-shadow: var(
     --ds-table-sticky-start-shadow,
-    inset var(--dimension-space-050) 0 var(--dimension-space-050)
-      calc(-1 * var(--dimension-space-050)) var(--color-elevation-shadow)
+    inset var(--dimension-space-100) 0 var(--dimension-space-100)
+      calc(-1 * var(--dimension-space-100)) var(--color-elevation-shadow)
   );
   --_table-sticky-end-shadow: var(
     --ds-table-sticky-end-shadow,
-    inset calc(-1 * var(--dimension-space-050)) 0 var(--dimension-space-050)
-      calc(-1 * var(--dimension-space-050)) var(--color-elevation-shadow)
+    inset calc(-1 * var(--dimension-space-100)) 0 var(--dimension-space-100)
+      calc(-1 * var(--dimension-space-100)) var(--color-elevation-shadow)
   );
   display: block;
   box-sizing: border-box;
@@ -755,7 +755,7 @@
   content: '';
   position: absolute;
   inset-block: 0;
-  inline-size: var(--dimension-space-050);
+  inline-size: var(--dimension-space-100);
   pointer-events: none;
 }
 
@@ -868,13 +868,23 @@
   max-inline-size: var(--ds-table-visible-inline-size, 100%);
   min-block-size: var(--_table-row-min-block-size);
   padding: var(--dimension-space-100);
-  border-block-end: var(--dimension-stroke-width-012) solid var(--_table-border);
+  border-block-end: 0;
   background: var(--_table-group-surface);
   background-clip: border-box;
 }
 
-:where(.ds-table__group:last-child[data-collapsed='true'] .ds-table__group-content) {
-  border-block-end: 0;
+:where(.ds-table__group-content)::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  block-size: var(--dimension-stroke-width-012);
+  background: var(--_table-border);
+  pointer-events: none;
+}
+
+:where(.ds-table__group:last-child[data-collapsed='true'] .ds-table__group-content)::after {
+  display: none;
 }
 
 :where(.ds-table__table--selectable .ds-table__group-content) {
@@ -884,13 +894,14 @@
 }
 
 :where(.ds-table__group-selection) {
-  /* 40px column (same as body), checkbox in a 4px-padded box inside it. */
+  /* 40px column (same as body), with a 24px-tall checkbox lane. */
   box-sizing: border-box;
   display: inline-flex;
   flex: 0 0 var(--_table-selection-column-inline-size);
   align-items: center;
   justify-content: center;
-  padding: var(--dimension-space-050);
+  padding-block: var(--dimension-space-025);
+  padding-inline: var(--dimension-space-050);
 }
 
 :where(.ds-table__group-selection .ds-table__selection-control) {
