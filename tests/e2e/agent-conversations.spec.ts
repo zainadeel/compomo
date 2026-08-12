@@ -8,14 +8,19 @@ test.beforeEach(async ({ page }) => {
 test('preserves questionnaire drafts across steps and emits normalized ordered answers once', async ({ page }) => {
   const questionnaire = page.locator('#questionnaire');
   const battery = questionnaire.getByLabel('Repeated battery failures');
-  await battery.check();
+  await battery.click();
   expect(
     await page.locator('#questionnaire-owner-form').evaluate(form =>
       Array.from(new FormData(form as HTMLFormElement).entries()),
     ),
   ).toEqual([]);
   await questionnaire.getByRole('button', { name: 'Next' }).click();
-  await questionnaire.getByLabel('Executive summary').check();
+  await questionnaire.getByLabel('Executive summary').click();
+  expect(
+    await page.locator('#questionnaire-owner-form').evaluate(form =>
+      Array.from(new FormData(form as HTMLFormElement).entries()),
+    ),
+  ).toEqual([]);
   await questionnaire.getByRole('button', { name: 'Previous' }).click();
   await expect(battery).toBeChecked();
   await questionnaire.getByRole('button', { name: 'Next' }).click();
@@ -42,13 +47,71 @@ test('preserves questionnaire drafts across steps and emits normalized ordered a
   await expect(questionnaire.getByRole('button', { name: 'Answer' })).toBeDisabled();
 });
 
+test('composes questionnaire choices and actions from DS primitives with isolated form and keyboard behavior', async ({ page }) => {
+  const questionnaire = page.locator('#questionnaire');
+  const ownerForm = page.locator('#questionnaire-owner-form');
+  const radio = questionnaire.locator('ds-radio');
+  const battery = questionnaire.getByRole('radio', { name: 'Repeated battery failures' });
+  const tires = questionnaire.getByRole('radio', { name: 'Overdue tire inspections' });
+
+  await expect(radio).toHaveCount(1);
+  await expect(radio).toHaveJSProperty('size', 'lg');
+  await expect(battery).toHaveAccessibleDescription('Three matching visits.');
+  await battery.focus();
+  await battery.press('ArrowDown');
+  await expect(tires).toBeChecked();
+  await ownerForm.evaluate((form: HTMLFormElement) => form.reset());
+  await expect(tires).toBeChecked();
+  expect(
+    await ownerForm.evaluate((form: HTMLFormElement) =>
+      Array.from(new FormData(form).entries()),
+    ),
+  ).toEqual([]);
+  await expect(questionnaire.locator('input[type="radio"], input[type="checkbox"]')).toHaveCount(0);
+
+  const next = questionnaire.locator('ds-button-filled');
+  const cancel = questionnaire.locator('ds-button-unfilled').first();
+  const cancelTooltip = questionnaire.locator('ds-tooltip').first();
+  await expect(next).toHaveJSProperty('size', 'sm');
+  await expect(cancel).toHaveJSProperty('size', 'sm');
+  await expect(cancel).toHaveJSProperty('hasBorder', false);
+  await expect(cancelTooltip).toHaveJSProperty('size', 'sm');
+  await questionnaire.getByRole('button', { name: 'Next' }).click();
+
+  const summary = questionnaire.getByRole('checkbox', { name: 'Executive summary' });
+  await expect(summary).toHaveAccessibleDescription(
+    'Include affected vehicles and recommended next steps.',
+  );
+  await expect(questionnaire.locator('ds-checkbox')).toHaveCount(2);
+  await expect(questionnaire.locator('ds-checkbox').first()).toHaveJSProperty('size', 'lg');
+  await summary.click();
+  await questionnaire.getByRole('button', { name: 'Next' }).click();
+  await page.setViewportSize({ width: 420, height: 900 });
+  await page.locator('#questionnaire-frame').evaluate((element: HTMLElement) => {
+    element.style.width = '320px';
+  });
+  const actionNames = ['Previous', 'Skip', 'Answer'];
+  const actionBoxes = await Promise.all(
+    actionNames.map(name => questionnaire.getByRole('button', { name }).boundingBox()),
+  );
+  expect(
+    actionBoxes.every(
+      box => box && Math.abs(box.height - actionBoxes[0]!.height) <= 0.5,
+    ),
+  ).toBe(true);
+  expect(actionBoxes[0]!.y).toBeLessThan(actionBoxes[1]!.y);
+  expect(actionBoxes[1]!.y).toBeLessThan(actionBoxes[2]!.y);
+  expect(Math.abs(actionBoxes[0]!.x - actionBoxes[2]!.x)).toBeLessThanOrEqual(0.5);
+  expect(Math.abs(actionBoxes[0]!.width - actionBoxes[2]!.width)).toBeLessThanOrEqual(0.5);
+});
+
 test('announces questionnaire validation, retains error drafts, resets requests, and focuses explicitly', async ({ page }) => {
   const questionnaire = page.locator('#questionnaire');
   await questionnaire.getByRole('button', { name: 'Next' }).click();
   await expect(questionnaire.getByRole('alert')).toHaveText('Choose an answer before continuing.');
   await expect(questionnaire.getByLabel('Repeated battery failures')).toBeFocused();
 
-  await questionnaire.getByLabel('Repeated battery failures').check();
+  await questionnaire.getByLabel('Repeated battery failures').click();
   await questionnaire.evaluate((element: HTMLDsAgentQuestionnaireElement) => {
     element.status = 'error';
     element.errorMessage = 'Answers could not be sent.';
@@ -99,7 +162,7 @@ test('coalesces related questionnaire replacements and accepts later answer seed
 
 test('associates Other validation and focuses the invalid free-text input', async ({ page }) => {
   const questionnaire = page.locator('#questionnaire');
-  await questionnaire.getByRole('radio', { name: 'Other' }).check();
+  await questionnaire.getByRole('radio', { name: 'Other' }).click();
   const otherInput = questionnaire.locator('.questionnaire__other-input');
   await questionnaire.getByRole('button', { name: 'Next' }).click();
   const alert = questionnaire.getByRole('alert');
@@ -134,6 +197,23 @@ test('keeps compact tool rows non-disclosing and emits disclosure changes when d
   await expect(custom).not.toContainText('should');
 });
 
+test('defaults only plain custom tool results to body-medium typography', async ({ page }) => {
+  const typography = await page.evaluate(() => {
+    const plain = document.querySelector<HTMLElement>('#tool-custom [slot="result"]')!;
+    const structured = document.querySelector<HTMLElement>('#tool-structured ds-text')!;
+    const reference = document.querySelector<HTMLElement>('#tool-body-medium-reference')!;
+    return {
+      plain: getComputedStyle(plain).fontSize,
+      structured: getComputedStyle(structured).fontSize,
+      reference: getComputedStyle(reference).fontSize,
+    };
+  });
+  expect(typography.plain).toBe(typography.reference);
+  expect(Number.parseFloat(typography.structured)).toBeLessThan(
+    Number.parseFloat(typography.plain),
+  );
+});
+
 test('renders safe source hostnames, rejects unsafe links, and reports disclosure changes', async ({ page }) => {
   const sources = page.locator('#sources');
   await expect(sources.getByRole('link', { name: /Maintenance guide/ })).toHaveAttribute(
@@ -162,6 +242,21 @@ test('links visible composer error text to the editable draft and clears it on r
   await expect(textarea).toHaveAttribute('aria-describedby', errorId!);
   await expect(textarea).toHaveValue('Preserved draft');
   await expect(composer.getByRole('button', { name: 'Retry' })).toBeVisible();
+  const attachedGeometry = await composer.evaluate(element => {
+    const stack = element.querySelector('.message-composer__stack')!.getBoundingClientRect();
+    const support = element
+      .querySelector('.message-composer__error-support')!
+      .getBoundingClientRect();
+    const field = element.querySelector('.message-composer__field')!.getBoundingClientRect();
+    return {
+      supportAbove: support.top < field.top,
+      attachedGap: Math.abs(support.bottom - field.top),
+      contained: support.top >= stack.top && field.bottom <= stack.bottom,
+    };
+  });
+  expect(attachedGeometry.supportAbove).toBe(true);
+  expect(attachedGeometry.attachedGap).toBeLessThanOrEqual(0.5);
+  expect(attachedGeometry.contained).toBe(true);
 
   await composer.evaluate((element: HTMLDsMessageComposerElement) => {
     element.status = 'ready';
@@ -301,8 +396,11 @@ test('streams only while following and lets reader input release and restore the
   await page.evaluate(() => {
     const bubble = document.querySelector('ds-message-bubble');
     if (!bubble) return;
+    const selectionTarget = document.createElement('span');
+    selectionTarget.textContent = 'Reader-selected transcript text.';
+    bubble.append(selectionTarget);
     const range = document.createRange();
-    range.selectNodeContents(bubble);
+    range.selectNodeContents(selectionTarget);
     const selection = document.getSelection();
     selection?.removeAllRanges();
     selection?.addRange(range);

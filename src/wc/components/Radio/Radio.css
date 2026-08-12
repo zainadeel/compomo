@@ -51,6 +51,12 @@
   user-select: none;
 }
 
+.radio__item--described {
+  height: auto;
+  min-height: var(--ds-control-height);
+  padding-block: var(--dimension-space-075);
+}
+
 .radio__placement {
   display: inline-flex;
   align-items: center;
@@ -87,8 +93,10 @@
   background-color: var(--color-foreground-on-bold-background-primary);
 }
 
-.radio__label {
+.radio__copy {
+  display: grid;
   flex: 1;
+  gap: var(--dimension-space-025);
   min-width: 0;
   padding: 0 var(--ds-control-label-inset);
 }

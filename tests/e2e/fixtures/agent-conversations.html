@@ -29,6 +29,14 @@
           <div slot="result">Custom issue result</div>
           <div slot="details">Custom diagnostic detail</div>
         </ds-agent-tool-call>
+        <ds-agent-tool-call id="tool-structured" name="records.update" state="success">
+          <div slot="result">
+            <ds-text variant="text-body-small">Structured result keeps its own type.</ds-text>
+          </div>
+        </ds-agent-tool-call>
+        <ds-text id="tool-body-medium-reference" variant="text-body-medium">
+          Body medium reference
+        </ds-text>
       </section>
       <section id="source-frame">
         <ds-agent-source-list id="sources" open></ds-agent-source-list>

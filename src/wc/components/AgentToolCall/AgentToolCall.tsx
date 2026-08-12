@@ -38,6 +38,7 @@ export class AgentToolCall {
 
   @State() private hasSummary = false;
   @State() private hasResult = false;
+  @State() private hasPlainTextResult = false;
   @State() private hasDetails = false;
 
   private slotObserver?: MutationObserver;
@@ -63,7 +64,11 @@ export class AgentToolCall {
 
   private syncSlots() {
     this.hasSummary = Boolean(this.el.querySelector('[slot="summary"]'));
-    this.hasResult = Boolean(this.el.querySelector('[slot="result"]'));
+    const result = this.el.querySelector<HTMLElement>('[slot="result"]');
+    this.hasResult = Boolean(result);
+    this.hasPlainTextResult = Boolean(
+      result && result.childElementCount === 0 && result.textContent?.trim(),
+    );
     this.hasDetails = Boolean(this.el.querySelector('[slot="details"]'));
   }
 
@@ -181,7 +186,12 @@ export class AgentToolCall {
             <div class="agent-tool__row">{this.renderSummary(false)}</div>
           )}
           {this.hasResult ? (
-            <div class="agent-tool__result">
+            <div
+              class={{
+                'agent-tool__result': true,
+                'agent-tool__result--plain-text': this.hasPlainTextResult,
+              }}
+            >
               <slot name="result" />
             </div>
           ) : null}

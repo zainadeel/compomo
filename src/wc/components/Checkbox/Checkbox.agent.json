@@ -7,7 +7,7 @@
   "tag": "ds-checkbox",
   "audience": "general",
   "status": "stable",
-  "summary": "Form-associated checkbox for independent choices, acknowledgment, or consent, with checked, unchecked, mixed, and four density states.",
+  "summary": "Form-associated checkbox for independent choices, acknowledgment, or consent, with optional supporting description, checked, unchecked, mixed, and four density states.",
   "useWhen": [
     "A user may independently select zero or more choices.",
     "A form requires acknowledgment, consent, or an opt-in value before submission.",
@@ -41,7 +41,7 @@
     "component:ds-text"
   ],
   "accessibility": [
-    "Every interactive checkbox requires a visible label that provides its accessible name.",
+    "Every interactive checkbox requires a visible label that provides its accessible name; an optional visible description is associated as supporting context.",
     "Enter and Space activate the checkbox; checked and mixed state are exposed through aria-checked.",
     "Disabled and inactive checkboxes leave the tab order and are omitted from form submission.",
     "Use presentation mode only inside a composite option that owns selection semantics, focus, and interaction."
@@ -51,16 +51,17 @@
     "Activating an indeterminate checkbox clears the mixed state, toggles checked, and emits dsChange with the resulting boolean.",
     "The initial checked and indeterminate values are restored by native form reset; checked values submit under name and unchecked values submit nothing.",
     "Sizes are lg with a 20px box in a 24px placement, md with a 16px box in a 20px placement, sm with a 12px box in a 16px placement, and xs with an 8px box in a 12px placement.",
-    "Presentation mode removes checkbox semantics, focus, interaction, label rendering, and form submission while preserving the visual state."
+    "Presentation mode removes checkbox semantics, focus, interaction, label rendering, description rendering, and form submission while preserving the visual state.",
+    "Description-rich checkboxes grow beyond the fixed density height while retaining its minimum target size and primitive-owned selection anatomy."
   ],
   "responsiveBehavior": [
-    "Choose size from the density of the containing row; labels may wrap while the placement box stays fixed.",
+    "Choose size from the density of the containing row; labels and descriptions may wrap while the placement box stays fixed.",
     "Use the same density as the shared option icon zone in multi-select rows."
   ],
   "frameworkCaveats": {
     "customElements": [
       "Bind checked and indeterminate as properties for application state updates and listen for dsChange.",
-      "Use the form attribute on the host when associating a checkbox rendered outside its owning form."
+      "Use the form attribute on the host when associating a checkbox rendered outside its owning form or isolating it from an ancestor form."
     ],
     "react": [
       "Use DsCheckbox and handle onDsChange; checked and indeterminate are mutable and update after user activation."

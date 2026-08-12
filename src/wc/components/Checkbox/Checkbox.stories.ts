@@ -7,6 +7,7 @@ const meta: Meta = {
   tags: ['autodocs'],
   argTypes: {
     label: { control: 'text' },
+    description: { control: 'text' },
     size: { control: 'select', options: ['lg', 'md', 'sm', 'xs'] },
     checked: { control: 'boolean' },
     indeterminate: { control: 'boolean' },
@@ -16,6 +17,7 @@ const meta: Meta = {
   },
   args: {
     label: 'Checkbox label',
+    description: '',
     size: 'md',
     checked: false,
     indeterminate: false,
@@ -32,6 +34,7 @@ export const Playground: Story = {
   render: args => html`
     <ds-checkbox
       label=${args['label']}
+      description=${args['description'] || undefined}
       size=${args['size']}
       ?checked=${args['checked']}
       ?indeterminate=${args['indeterminate']}
@@ -39,6 +42,19 @@ export const Playground: Story = {
       ?disabled=${args['disabled']}
       ?required=${args['required']}
     ></ds-checkbox>
+  `,
+};
+
+export const WithDescription: Story = {
+  render: () => html`
+    <div style="width:min(420px, 90vw);">
+      <ds-checkbox
+        label="Executive summary"
+        description="Include the affected vehicles, findings, and recommended next steps."
+        size="lg"
+        checked
+      ></ds-checkbox>
+    </div>
   `,
 };
 

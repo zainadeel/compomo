@@ -120,7 +120,9 @@ export const OtherAnswer: Story = {
 export const RequiredValidation: Story = {
   render: () => frame(singleQuestion),
   play: async ({ canvasElement }) => {
-    (canvasElement.querySelector('.questionnaire__primary-action') as HTMLButtonElement)?.click();
+    canvasElement.querySelector('ds-agent-questionnaire ds-button-filled')?.dispatchEvent(
+      new CustomEvent('dsClick', { bubbles: true, composed: true }),
+    );
   },
 };
 

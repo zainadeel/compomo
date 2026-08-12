@@ -95,3 +95,19 @@ export const Error: Story = {
       </ds-message-composer>
     `),
 };
+
+export const NarrowErrorWithRecovery: Story = {
+  parameters: { viewport: { defaultViewport: 'mobile1' } },
+  render: () => html`
+    <div style="width:320px;padding:var(--dimension-space-100);">
+      <ds-message-composer
+        label="Message agent"
+        value="Create follow-up work orders for the affected vehicles."
+        status="error"
+        error-message="The message could not be sent. Your draft is still available."
+      >
+        <ds-button-unfilled slot="error-actions" label="Retry" size="sm"></ds-button-unfilled>
+      </ds-message-composer>
+    </div>
+  `,
+};

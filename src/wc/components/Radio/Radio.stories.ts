@@ -65,6 +65,30 @@ export const Horizontal: Story = {
   `,
 };
 
+export const DescriptiveOptions: Story = {
+  render: () => html`
+    <div style="width:min(420px, 90vw);">
+      <ds-radio
+        .options=${[
+          {
+            label: 'Repeated battery failures',
+            value: 'battery',
+            description: 'Three vehicles share the same charging-system signature.',
+          },
+          {
+            label: 'Overdue tire inspections',
+            value: 'tires',
+            description: 'Two vehicles are past the inspection interval.',
+          },
+        ]}
+        value="battery"
+        size="lg"
+        aria-label="Investigation priority"
+      ></ds-radio>
+    </div>
+  `,
+};
+
 export const WithInactiveItem: Story = {
   render: () => html`
     <ds-radio

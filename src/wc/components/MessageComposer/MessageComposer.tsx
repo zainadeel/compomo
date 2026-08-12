@@ -102,74 +102,76 @@ export class MessageComposer {
           <div class="message-composer__attachments">
             <slot name="attachments" />
           </div>
-          <div class="message-composer__field">
-            <textarea
-              ref={element => {
-                this.textarea = element;
-              }}
-              value={this.value}
-              placeholder={this.placeholder}
-              aria-label={this.label}
-              aria-invalid={error ? 'true' : undefined}
-              aria-describedby={error ? this.errorId : undefined}
-              disabled={this.isInactive}
-              rows={2}
-              onInput={this.handleInput}
-              onKeyDown={this.handleKeyDown}
-            />
-            <div class="message-composer__controls">
-              <div class="message-composer__tools">
-                <slot name="tools" />
+          <div class="message-composer__stack">
+            {error ? (
+              <div class="message-composer__error-support">
+                <div id={this.errorId} class="message-composer__error-message" role="alert">
+                  <ds-icon name="ErrorTriangle" size="xs" color="inherit" />
+                  <ds-text variant="text-body-small" color="negative">
+                    {visibleErrorMessage}
+                  </ds-text>
+                </div>
+                <div class="message-composer__error-actions">
+                  <slot name="error-actions" />
+                </div>
               </div>
-              <div class="message-composer__actions">
-                <slot name="actions" />
-                {actionInactive ? (
-                  <ds-tooltip label="Send message" side="top" size="sm">
-                    <ds-button-unfilled
-                      class="message-composer__action"
-                      variant="icon"
-                      icon="ArrowUp"
-                      size="md"
-                      aria-label="Send message"
-                      hasBorder
-                      isInactive
-                      onDsClick={this.handleAction}
-                    />
-                  </ds-tooltip>
-                ) : (
-                  <ds-tooltip
-                    label={this.streaming ? 'Stop response' : 'Send message'}
-                    side="top"
-                    size="sm"
-                  >
-                    <ds-button-filled
-                      class="message-composer__action"
-                      variant="icon"
-                      icon={this.streaming ? 'SquareFilled' : 'ArrowUp'}
-                      intent={this.streaming ? 'brand' : this.submitIntent}
-                      contrast="bold"
-                      size="md"
-                      aria-label={this.streaming ? 'Stop response' : 'Send message'}
-                      onDsClick={this.handleAction}
-                    />
-                  </ds-tooltip>
-                )}
+            ) : null}
+            <div class="message-composer__field">
+              <textarea
+                ref={element => {
+                  this.textarea = element;
+                }}
+                value={this.value}
+                placeholder={this.placeholder}
+                aria-label={this.label}
+                aria-invalid={error ? 'true' : undefined}
+                aria-describedby={error ? this.errorId : undefined}
+                disabled={this.isInactive}
+                rows={2}
+                onInput={this.handleInput}
+                onKeyDown={this.handleKeyDown}
+              />
+              <div class="message-composer__controls">
+                <div class="message-composer__tools">
+                  <slot name="tools" />
+                </div>
+                <div class="message-composer__actions">
+                  <slot name="actions" />
+                  {actionInactive ? (
+                    <ds-tooltip label="Send message" side="top" size="sm">
+                      <ds-button-unfilled
+                        class="message-composer__action"
+                        variant="icon"
+                        icon="ArrowUp"
+                        size="md"
+                        aria-label="Send message"
+                        hasBorder
+                        isInactive
+                        onDsClick={this.handleAction}
+                      />
+                    </ds-tooltip>
+                  ) : (
+                    <ds-tooltip
+                      label={this.streaming ? 'Stop response' : 'Send message'}
+                      side="top"
+                      size="sm"
+                    >
+                      <ds-button-filled
+                        class="message-composer__action"
+                        variant="icon"
+                        icon={this.streaming ? 'SquareFilled' : 'ArrowUp'}
+                        intent={this.streaming ? 'brand' : this.submitIntent}
+                        contrast="bold"
+                        size="md"
+                        aria-label={this.streaming ? 'Stop response' : 'Send message'}
+                        onDsClick={this.handleAction}
+                      />
+                    </ds-tooltip>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-          {error ? (
-            <div class="message-composer__error-support">
-              <div id={this.errorId} class="message-composer__error-message" role="alert">
-                <ds-icon name="ErrorTriangle" size="xs" color="inherit" />
-                <ds-text variant="text-body-small" color="negative">
-                  {visibleErrorMessage}
-                </ds-text>
-              </div>
-              <div class="message-composer__error-actions">
-                <slot name="error-actions" />
-              </div>
-            </div>
-          ) : null}
         </form>
       </Host>
     );

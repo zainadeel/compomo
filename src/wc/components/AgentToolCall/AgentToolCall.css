@@ -108,6 +108,14 @@ pre {
   padding-block: var(--dimension-space-050);
 }
 
+.agent-tool__result--plain-text {
+  font-family: var(--typography-font-family);
+  font-size: var(--typography-fontsize-md);
+  font-weight: var(--typography-weight-regular);
+  line-height: var(--typography-lineheight-md);
+  letter-spacing: var(--typography-letterspacing-negative-half);
+}
+
 summary:focus-visible {
   border-radius: var(--dimension-radius-025);
   outline: var(--dimension-stroke-width-025) solid var(--color-border-bold-brand);

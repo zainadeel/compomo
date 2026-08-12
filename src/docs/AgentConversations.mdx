@@ -10,6 +10,12 @@ tool execution, authorization, retries, and consequences. Normalize external
 states before they reach the component tree; never pass provider events or
 private model reasoning through as presentation data.
 
+Review the complete composition in Storybook under
+[Agent → Agent chat review: Completed response](?path=/story/agent-agent-chat-review--completed-response).
+The same category includes waiting-for-input, streaming/live-edge,
+composer-failure, and narrow/mobile states so the primitives can be evaluated
+in a realistic transcript rather than as isolated specimens.
+
 ## Compose the response lane
 
 Use `ds-agent-response` in its default parts mode when response content must be
@@ -103,10 +109,14 @@ the intended order. The source component derives hostnames, validates web URLs,
 and leaves malformed or unsafe schemes noninteractive; it does not own search
 lifecycle or a drawer.
 
-When composer transport fails, keep the draft and error status together. Supply
-visible error text and put application-owned recovery controls such as Retry in
-the error-actions surface. Leaving error status removes the announcement and
-its relationship to the editable control.
+When composer transport fails, keep the draft and error status together. The
+composer owns an attached negative support surface above its editable box, so
+the alert, application-owned recovery controls such as Retry, and preserved
+draft read as one measured stacked unit. Put recovery controls in the
+error-actions surface; do not recreate a separate error banner outside the
+composer. Leaving error status removes the announcement and its relationship
+to the editable control. Review this in
+[Agent → Agent chat review: Composer failure](?path=/story/agent-agent-chat-review--composer-failure).
 
 ## Optional product composition
 

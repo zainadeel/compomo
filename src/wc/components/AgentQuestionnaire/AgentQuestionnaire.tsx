@@ -67,6 +67,7 @@ export class AgentQuestionnaire {
   @State() private validation: Record<string, string> = {};
 
   private readonly instanceId = ++questionnaireId;
+  private readonly otherValue = `__ds-agent-questionnaire-other-${this.instanceId}`;
   private answerPending = false;
   private resetScheduled = false;
   private draftRequestId?: string;
@@ -138,12 +139,16 @@ export class AgentQuestionnaire {
         : null;
       const control = invalidControl ??
         this.el.querySelector<HTMLElement>(
-          '[data-question-control]:not([disabled])',
+          '[data-question-control]:not([disabled]):not([is-inactive])',
         );
       const action = this.el.querySelector<HTMLElement>(
-        '[data-question-action]:not([disabled])',
+        '[data-question-action]:not([is-inactive]):not([is-loading])',
       );
-      (control ?? action)?.focus();
+      const target = (control ?? action) as
+        | (HTMLElement & { setFocus?: () => Promise<void> })
+        | null;
+      if (target?.setFocus) void target.setFocus();
+      else target?.focus();
     };
     focus();
     requestAnimationFrame(focus);
@@ -237,114 +242,143 @@ export class AgentQuestionnaire {
       .join(String(this.questions.length));
   }
 
-  private renderChoice(
+  private selectSingle(question: AgentQuestion, value: string) {
+    const otherSelected = value === this.otherValue;
+    this.updateDraft(question.id, {
+      value: otherSelected ? '' : value,
+      otherSelected,
+    });
+    if (otherSelected) {
+      requestAnimationFrame(() =>
+        this.el.querySelector<HTMLInputElement>('[data-question-other-input]')?.focus(),
+      );
+    }
+  }
+
+  private renderSingleChoice(
     question: AgentQuestion,
-    choice: NonNullable<AgentQuestion['choices']>[number],
+    promptId: string,
+    errorId: string,
   ) {
     const draft = this.drafts[question.id];
-    const multiple = question.type === 'multiple';
-    const checked = multiple
-      ? Array.isArray(draft.value) && draft.value.includes(choice.value)
-      : draft.value === choice.value && !draft.otherSelected;
-    const inputId = `ds-agent-questionnaire-${this.instanceId}-${this.currentStep}-${choice.value}`;
+    const value = draft.otherSelected
+      ? this.otherValue
+      : typeof draft.value === 'string'
+        ? draft.value
+        : '';
+    const options = [
+      ...(question.choices ?? []),
+      ...(question.allowOther
+        ? [{ value: this.otherValue, label: this.copy.other }]
+        : []),
+    ];
     return (
-      <label class={{ questionnaire__choice: true, 'questionnaire__choice--selected': checked }} htmlFor={inputId}>
-        <input
-          id={inputId}
+      <div class="questionnaire__single-choice">
+        <ds-radio
           data-question-control
-          type={multiple ? 'checkbox' : 'radio'}
-          name={`ds-agent-question-${this.instanceId}-${question.id}`}
-          form={`ds-agent-questionnaire-detached-${this.instanceId}`}
-          value={choice.value}
-          checked={checked}
+          size="lg"
+          options={options}
+          value={value}
           disabled={this.disabled}
-          onChange={() => {
-            if (multiple) {
-              const values = Array.isArray(draft.value) ? draft.value : [];
-              this.updateDraft(question.id, {
-                value: checked
-                  ? values.filter(value => value !== choice.value)
-                  : [...values, choice.value],
-              });
-            } else {
-              this.updateDraft(question.id, {
-                value: choice.value,
-                otherSelected: false,
-              });
-            }
-          }}
+          form={`ds-agent-questionnaire-detached-${this.instanceId}`}
+          ariaLabelledby={promptId}
+          aria-describedby={this.validation[question.id] ? errorId : undefined}
+          onDsChange={(event: CustomEvent<string>) =>
+            this.selectSingle(question, event.detail)
+          }
         />
-        <span class="questionnaire__choice-copy">
-          <ds-text as="span" variant="text-body-medium" emphasis>{choice.label}</ds-text>
-          {choice.description ? (
-            <ds-text as="span" variant="text-body-small" color="secondary">
-              {choice.description}
-            </ds-text>
-          ) : null}
-        </span>
-      </label>
+        {draft.otherSelected ? this.renderOtherInput(question, errorId) : null}
+      </div>
     );
   }
 
-  private renderOther(question: AgentQuestion, errorId: string) {
-    if (!question.allowOther || question.type === 'text') return null;
+  private renderMultipleChoice(question: AgentQuestion, errorId: string) {
     const draft = this.drafts[question.id];
-    const inputId = `ds-agent-questionnaire-${this.instanceId}-${this.currentStep}-other`;
+    const values = Array.isArray(draft.value) ? draft.value : [];
+    const detachedForm = `ds-agent-questionnaire-detached-${this.instanceId}`;
     return (
-      <div class={{ questionnaire__other: true, 'questionnaire__choice--selected': draft.otherSelected }}>
-        <label class="questionnaire__choice questionnaire__choice--other" htmlFor={inputId}>
-          <input
-            id={inputId}
+      <div class="questionnaire__multiple-choice">
+        {question.choices?.map(choice => (
+          <ds-checkbox
+            key={choice.value}
             data-question-control
-            type={question.type === 'multiple' ? 'checkbox' : 'radio'}
-            name={`ds-agent-question-${this.instanceId}-${question.id}`}
-            form={`ds-agent-questionnaire-detached-${this.instanceId}`}
-            checked={draft.otherSelected}
+            size="lg"
+            label={choice.label}
+            description={choice.description}
+            value={choice.value}
+            checked={values.includes(choice.value)}
             disabled={this.disabled}
-            onChange={() => {
+            form={detachedForm}
+            onDsChange={(event: CustomEvent<boolean>) => {
               this.updateDraft(question.id, {
-                otherSelected:
-                  question.type === 'multiple' ? !draft.otherSelected : true,
-                value: question.type === 'single' ? '' : draft.value,
+                value: event.detail
+                  ? [...values, choice.value]
+                  : values.filter(value => value !== choice.value),
               });
-              requestAnimationFrame(() =>
-                this.el.querySelector<HTMLInputElement>(`#${inputId}-text`)?.focus(),
-              );
             }}
           />
-          <ds-text as="span" variant="text-body-medium" emphasis>{this.copy.other}</ds-text>
-        </label>
-        {draft.otherSelected ? (
-          <input
-            id={`${inputId}-text`}
-            class="questionnaire__other-input"
-            data-question-control
-            type="text"
-            form={`ds-agent-questionnaire-detached-${this.instanceId}`}
-            value={draft.otherText}
-            placeholder={this.copy.otherPlaceholder}
-            aria-label={this.copy.other}
-            aria-invalid={this.validation[question.id] ? 'true' : undefined}
-            aria-describedby={this.validation[question.id] ? errorId : undefined}
-            disabled={this.disabled}
-            onInput={(event: Event) =>
-              this.updateDraft(question.id, {
-                otherText: (event.target as HTMLInputElement).value,
-              })
-            }
-          />
+        ))}
+        {question.allowOther ? (
+          <div class="questionnaire__other-choice">
+            <ds-checkbox
+              data-question-control
+              size="lg"
+              label={this.copy.other}
+              checked={draft.otherSelected}
+              disabled={this.disabled}
+              form={detachedForm}
+              onDsChange={(event: CustomEvent<boolean>) => {
+                this.updateDraft(question.id, { otherSelected: event.detail });
+                if (event.detail) {
+                  requestAnimationFrame(() =>
+                    this.el
+                      .querySelector<HTMLInputElement>('[data-question-other-input]')
+                      ?.focus(),
+                  );
+                }
+              }}
+            />
+            {draft.otherSelected ? this.renderOtherInput(question, errorId) : null}
+          </div>
         ) : null}
       </div>
+    );
+  }
+
+  private renderOtherInput(question: AgentQuestion, errorId: string) {
+    const draft = this.drafts[question.id];
+    return (
+      <input
+        class="questionnaire__other-input"
+        data-question-control
+        data-question-other-input
+        type="text"
+        form={`ds-agent-questionnaire-detached-${this.instanceId}`}
+        value={draft.otherText}
+        placeholder={this.copy.otherPlaceholder}
+        aria-label={this.copy.other}
+        aria-invalid={this.validation[question.id] ? 'true' : undefined}
+        aria-describedby={this.validation[question.id] ? errorId : undefined}
+        disabled={this.disabled}
+        onInput={(event: Event) =>
+          this.updateDraft(question.id, {
+            otherText: (event.target as HTMLInputElement).value,
+          })
+        }
+      />
     );
   }
 
   private renderQuestion(question: AgentQuestion) {
     const draft = this.drafts[question.id];
     const errorId = `ds-agent-questionnaire-${this.instanceId}-${this.currentStep}-error`;
+    const promptId = `ds-agent-questionnaire-${this.instanceId}-${this.currentStep}-prompt`;
     return (
       <div class="questionnaire__body">
         <div class="questionnaire__prompt">
-          <ds-text as="h2" variant="text-title-small">{question.question}</ds-text>
+          <ds-text as="h2" variant="text-title-small" textId={promptId}>
+            {question.question}
+          </ds-text>
           {question.description ? (
             <ds-text variant="text-body-small" color="secondary">
               {question.description}
@@ -375,8 +409,9 @@ export class AgentQuestionnaire {
             aria-describedby={this.validation[question.id] ? errorId : undefined}
           >
             <legend class="ds-visually-hidden">{question.question}</legend>
-            {question.choices?.map(choice => this.renderChoice(question, choice))}
-            {this.renderOther(question, errorId)}
+            {question.type === 'single'
+              ? this.renderSingleChoice(question, promptId, errorId)
+              : this.renderMultipleChoice(question, errorId)}
           </fieldset>
         )}
         {this.validation[question.id] ? (
@@ -442,17 +477,18 @@ export class AgentQuestionnaire {
           <header class="questionnaire__header">
             <ds-text variant="text-caption" color="secondary">{this.progressLabel()}</ds-text>
             {this.allowCancel ? (
-              <button
-                class="questionnaire__quiet-action"
-                data-question-action
-                type="button"
-                disabled={this.disabled}
-                onClick={() => this.dsCancel.emit({ requestId: this.requestId })}
-              >
-                <ds-text as="span" variant="text-body-small" emphasis>
-                  {this.copy.cancel}
-                </ds-text>
-              </button>
+              <ds-tooltip label={this.copy.cancel} side="top" size="sm">
+                <ds-button-unfilled
+                  data-question-action
+                  variant="icon"
+                  icon="Cross"
+                  size="sm"
+                  aria-label={this.copy.cancel}
+                  hasBorder={false}
+                  isInactive={this.disabled}
+                  onDsClick={() => this.dsCancel.emit({ requestId: this.requestId })}
+                />
+              </ds-tooltip>
             ) : null}
           </header>
           {this.renderQuestion(question)}
@@ -465,44 +501,41 @@ export class AgentQuestionnaire {
           <footer class="questionnaire__actions">
             <div class="questionnaire__actions-leading">
               {this.currentStep > 0 ? (
-                <button
-                  class="questionnaire__secondary-action"
-                  data-question-action
-                  type="button"
-                  disabled={this.disabled}
-                  onClick={() => this.move(this.currentStep - 1)}
-                >
-                  <ds-text as="span" variant="text-body-small" emphasis>
-                    {this.copy.previous}
-                  </ds-text>
-                </button>
+                <div class="questionnaire__action-item">
+                  <ds-button-unfilled
+                    data-question-action
+                    label={this.copy.previous}
+                    size="sm"
+                    width="fill"
+                    isInactive={this.disabled}
+                    onDsClick={() => this.move(this.currentStep - 1)}
+                  />
+                </div>
               ) : null}
               {canSkip ? (
-                <button
-                  class="questionnaire__quiet-action"
-                  data-question-action
-                  type="button"
-                  disabled={this.disabled}
-                  onClick={() => this.skip(question)}
-                >
-                  <ds-text as="span" variant="text-body-small" emphasis>
-                    {this.copy.skip}
-                  </ds-text>
-                </button>
+                <div class="questionnaire__action-item">
+                  <ds-button-unfilled
+                    data-question-action
+                    label={this.copy.skip}
+                    size="sm"
+                    width="fill"
+                    hasBorder={false}
+                    isInactive={this.disabled}
+                    onDsClick={() => this.skip(question)}
+                  />
+                </div>
               ) : null}
             </div>
-            <button
-              class="questionnaire__primary-action"
-              data-question-action
-              type="button"
-              disabled={this.disabled}
-              onClick={() => (last ? this.submit() : this.next(question))}
-            >
-              {this.disabled ? <ds-loader size="xs" color="inherit" /> : null}
-              <ds-text as="span" variant="text-body-small" emphasis>
-                {last ? this.copy.answer : this.copy.next}
-              </ds-text>
-            </button>
+            <div class="questionnaire__action-item questionnaire__action-item--primary">
+              <ds-button-filled
+                data-question-action
+                label={last ? this.copy.answer : this.copy.next}
+                size="sm"
+                width="fill"
+                isLoading={this.disabled}
+                onDsClick={() => (last ? this.submit() : this.next(question))}
+              />
+            </div>
           </footer>
         </section>
       </Host>

@@ -34,7 +34,8 @@
   flex-wrap: wrap;
   gap: var(--dimension-space-075) var(--dimension-space-100);
   min-width: 0;
-  padding-inline: var(--dimension-space-100);
+  padding: var(--dimension-space-075) var(--dimension-space-100);
+  background: var(--color-background-faint-negative);
 }
 
 .message-composer__error-message {
@@ -48,6 +49,18 @@
   flex: 0 1 auto;
   flex-wrap: wrap;
   gap: var(--dimension-space-050);
+}
+
+.message-composer__stack {
+  min-width: 0;
+}
+
+.message-composer--error .message-composer__stack {
+  overflow: hidden;
+  border: var(--dimension-stroke-width-012) solid var(--color-border-bold-negative);
+  border-radius: var(--dimension-radius-125);
+  background: var(--color-background-primary);
+  box-shadow: var(--effect-elevation-elevated-md);
 }
 
 .message-composer__field {
@@ -67,8 +80,8 @@
 }
 
 .message-composer--error .message-composer__field {
-  box-shadow: var(--effect-elevation-elevated-md),
-    inset 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-negative);
+  border-radius: 0;
+  box-shadow: none;
 }
 
 textarea {
@@ -136,7 +149,17 @@ textarea:focus-visible {
   }
 
   .message-composer--error .message-composer__field {
-    outline: var(--dimension-stroke-width-025) dashed var(--ds-forced-color-content);
-    outline-offset: calc(-1 * var(--dimension-stroke-width-025));
+    border: 0;
+  }
+
+  .message-composer--error .message-composer__stack {
+    border: var(--dimension-stroke-width-025) dashed var(--ds-forced-color-content);
+    box-shadow: none;
+  }
+
+  .message-composer__error-support {
+    border-block-end: var(--dimension-stroke-width-012) solid
+      var(--ds-forced-color-content);
+    background: var(--ds-forced-color-surface);
   }
 }

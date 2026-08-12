@@ -917,6 +917,10 @@ export namespace Components {
          */
         "checked": boolean;
         /**
+          * Optional supporting description associated with the checkbox.
+         */
+        "description"?: string;
+        /**
           * Native disabled state.
           * @default false
          */
@@ -1977,6 +1981,10 @@ export namespace Components {
           * @default 'This field is required.'
          */
         "requiredMessage": string;
+        /**
+          * Focus the selected option, or the first active option when nothing is selected.
+         */
+        "setFocus": () => Promise<void>;
         /**
           * Visual and placement density for every option.
           * @default 'md'
@@ -5081,6 +5089,10 @@ declare namespace LocalJSX {
          */
         "checked"?: boolean;
         /**
+          * Optional supporting description associated with the checkbox.
+         */
+        "description"?: string;
+        /**
           * Native disabled state.
           * @default false
          */
@@ -7472,6 +7484,7 @@ declare namespace LocalJSX {
     }
     interface DsCheckboxAttributes {
         "label": string;
+        "description": string;
         "checked": boolean;
         "size": CheckboxSize;
         "name": string | undefined;

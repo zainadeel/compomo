@@ -36,7 +36,11 @@ const questions = [
     question: 'Which deliverables should I prepare?',
     required: true,
     choices: [
-      { value: 'summary', label: 'Executive summary' },
+      {
+        value: 'summary',
+        label: 'Executive summary',
+        description: 'Include affected vehicles and recommended next steps.',
+      },
       { value: 'orders', label: 'Draft work orders' },
     ],
   },

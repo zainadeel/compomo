@@ -85,9 +85,17 @@ export const CustomGitHubResult: Story = {
         <a
           slot="result"
           href="https://github.com/zainadeel/compomo/issues/443"
-          style="color:var(--color-foreground-primary);"
+          style="color:inherit;text-decoration:none;"
         >
-          #443 · Expand conversation UX
+          <ds-text
+            as="span"
+            variant="text-body-medium"
+            color="brand"
+            decoration="underline"
+            emphasis
+          >
+            #443 · Expand conversation UX
+          </ds-text>
         </a>
       </ds-agent-tool-call>
     `),
@@ -106,6 +114,15 @@ export const CustomResultWithGenericDiagnostics: Story = {
         <div slot="result">
           <ds-text variant="text-body-small" emphasis>#443 · Expand conversation UX</ds-text>
         </div>
+      </ds-agent-tool-call>
+    `),
+};
+
+export const PlainTextResult: Story = {
+  render: () =>
+    frame(html`
+      <ds-agent-tool-call name="records.update" label="Updated maintenance plan" state="success">
+        <span slot="result">The revised plan now includes three priority vehicles.</span>
       </ds-agent-tool-call>
     `),
 };
