@@ -147,7 +147,27 @@ test('keeps group order and member-row sorting independent', async ({ page }) =>
   await expect(collapseAll).toHaveJSProperty('icon', 'ChevronDownUp');
   await expect(collapseAll).toHaveJSProperty('hasBorder', false);
   await expect(collapseAll).toHaveJSProperty('isActive', false);
-  await expect(table.locator('[data-column-id="score"] .ds-table__collapse-all')).toHaveCount(1);
+  await expect(table.locator('th .ds-table__collapse-all')).toHaveCount(0);
+  const collapseOverlay = table.locator('.ds-table__collapse-all-overlay');
+  const collapseSurface = collapseOverlay.locator('.ds-table__collapse-all-surface');
+  await expect(collapseOverlay).toHaveCSS('width', '24px');
+  await expect(collapseOverlay).toHaveCSS('height', '16px');
+  await expect(collapseSurface).toHaveClass(/ds-control-elevation--md/);
+  await expect(collapseSurface).toHaveCSS('padding', '0px');
+  expect(await collapseSurface.evaluate(element => getComputedStyle(element).boxShadow)).not.toBe('none');
+  const collapseGeometry = await table.evaluate(element => {
+    const frame = element.querySelector<HTMLElement>('.ds-table__frame')!;
+    const header = element.querySelector<HTMLElement>('.ds-table__head')!;
+    const overlay = element.querySelector<HTMLElement>('.ds-table__collapse-all-overlay')!;
+    const frameRect = frame.getBoundingClientRect();
+    const headerRect = header.getBoundingClientRect();
+    const overlayRect = overlay.getBoundingClientRect();
+    return {
+      blockInset: overlayRect.top - headerRect.top,
+      inlineEndInset: frameRect.right - overlayRect.right,
+    };
+  });
+  expect(collapseGeometry).toEqual({ blockInset: 8, inlineEndInset: 8 });
   await collapseAll.click();
   await expect
     .poll(() => table.evaluate((element: HTMLDsTableElement) => element.collapsedGroupIds?.slice().sort()))
@@ -293,6 +313,9 @@ test('keeps group section chrome pinned to the visible horizontal scrollport', a
       tableWidth: tableRect.width,
       contentLeft: contentRect.left,
       contentWidth: contentRect.width,
+      collapseOverlayLeft: element
+        .querySelector<HTMLElement>('.ds-table__collapse-all-overlay')!
+        .getBoundingClientRect().left,
     };
   });
 
@@ -309,6 +332,7 @@ test('keeps group section chrome pinned to the visible horizontal scrollport', a
   const after = await measure();
   expect(after.contentWidth).toBeCloseTo(before.contentWidth, 0);
   expect(after.contentLeft).toBeCloseTo(after.viewportLeft, 0);
+  expect(after.collapseOverlayLeft).toBeCloseTo(before.collapseOverlayLeft, 0);
   await expect(groupContent).toBeVisible();
 });
 
@@ -328,6 +352,7 @@ test('uses declared action-column metadata without replacing a visible header', 
   });
   const actionHeader = table.locator('th[data-column-id="actions"]');
   await expect(actionHeader).toContainText('Row actions');
+  await expect(table.locator('.ds-table__collapse-all-overlay')).toHaveCount(0);
   await expect(actionHeader.locator('.ds-table__collapse-all')).toHaveCount(1);
 });
 
@@ -711,7 +736,18 @@ test('positions sort controls according to column alignment', async ({ page }) =
               : 'label'),
       };
     };
-    return { center: measure('status'), end: measure('score') };
+    const frameRect = element.querySelector<HTMLElement>('.ds-table__frame')!.getBoundingClientRect();
+    const collapseOverlayRect = element
+      .querySelector<HTMLElement>('.ds-table__collapse-all-overlay')!
+      .getBoundingClientRect();
+    return {
+      center: measure('status'),
+      end: measure('score'),
+      collapseOverlay: {
+        inlineEndInset: frameRect.right - collapseOverlayRect.right,
+        width: collapseOverlayRect.width,
+      },
+    };
   });
 
   expect(geometry.center.order).toEqual(['balance', 'label', 'sort']);
@@ -721,11 +757,11 @@ test('positions sort controls according to column alignment', async ({ page }) =
   expect(geometry.center.slotRight - geometry.center.slotLeft).toBeCloseTo(16, 0);
   expect(geometry.center.balanceRight! - geometry.center.balanceLeft!).toBeCloseTo(16, 0);
 
-  expect(geometry.end.order).toEqual(['sort', 'label', 'collapse']);
+  expect(geometry.end.order).toEqual(['sort', 'label']);
   expect(geometry.end.slotLeft - geometry.end.cellLeft).toBeCloseTo(geometry.end.contentInsetStart, 0);
   expect(geometry.end.labelsLeft).toBeGreaterThan(geometry.end.slotRight);
-  expect(geometry.end.collapseLeft!).toBeGreaterThan(geometry.end.labelsRight);
-  expect(geometry.end.cellRight - geometry.end.collapseRight!).toBeCloseTo(geometry.end.contentInsetEnd, 0);
+  expect(geometry.end.cellRight - geometry.end.labelsRight).toBeCloseTo(geometry.end.contentInsetEnd, 0);
+  expect(geometry.collapseOverlay).toEqual({ inlineEndInset: 8, width: 24 });
 });
 
 test('selects loaded rows while preserving off-window IDs', async ({ page }) => {

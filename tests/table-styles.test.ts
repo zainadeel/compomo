@@ -11,6 +11,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.equal(packageJson.exports['./table.css'], './dist/styles/table.css');
   assert.doesNotMatch(componentCss, /interaction-fill\.css/);
   assert.match(componentCss, /@import '\.\.\/\.\.\/styles\/table\.css'/);
+  assert.match(componentCss, /@import '\.\.\/\.\.\/styles\/control-elevation\.css'/);
   assert.match(componentTsx, /interaction-fill\.css/);
   assert.doesNotMatch(componentTsx, /scroll-edge-fade\.css/);
   assert.doesNotMatch(componentTsx, /ds-table__overflow-shadow/);
@@ -28,6 +29,16 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(css, /\.ds-table__sticky-edge--start/);
   assert.match(css, /\.ds-table__sticky-edge--end/);
   assert.doesNotMatch(css, /\.ds-table__overflow-shadow/);
+  assert.match(
+    css,
+    /\.ds-table__collapse-all-overlay\)[^{]*\{[^}]*position: absolute[^}]*inset-inline-end: var\(--dimension-space-100\)[^}]*inline-size: var\(--dimension-size-300\)[^}]*block-size: var\(--dimension-size-200\)/s,
+  );
+  assert.match(
+    css,
+    /\.ds-table__collapse-all-surface\)[^{]*\{[^}]*padding: 0[^}]*border-radius: var\(--dimension-radius-025\)[^}]*background: var\(--_table-header-surface\)/s,
+  );
+  assert.match(componentTsx, /ds-table__collapse-all-surface ds-control-elevation ds-control-elevation--md/);
+  assert.match(componentTsx, /collapseAllHost\?\.mode !== 'floating'/);
   assert.match(css, /\.ds-table__header-cell/);
   assert.match(css, /\.ds-table__group-cell/);
   assert.doesNotMatch(css, /container-type: inline-size/);

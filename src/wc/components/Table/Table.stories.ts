@@ -713,7 +713,7 @@ export const GroupingAndIndependentSorting: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'The Status header controls group order. Safety score controls member order inside each group. Group section headers expose a controlled collapse control matching the action-column ButtonUnfilled recipe. While any group is expanded, collapse-all appears in the last column header after the sort control. The story performs both transformations in application code, illustrating the controlled contract.',
+        story: 'The Status header controls group order. Safety score controls member order inside each group. Group section headers expose a controlled collapse control matching the action-column ButtonUnfilled recipe. While any group is expanded and no action column exists, collapse-all floats at the visible header edge on a medium-elevation surface so horizontal scrolling never hides it. The story performs both transformations in application code, illustrating the controlled contract.',
       },
     },
   },

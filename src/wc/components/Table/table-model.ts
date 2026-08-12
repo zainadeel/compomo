@@ -121,11 +121,10 @@ export function nextTableGroupsCollapsed(
   return allCollapsed ? [] : [...groupIds];
 }
 
-/** Host column for grouped collapse-all: the trailing declared action lane or last column. */
-export type TableCollapseAllHost = {
-  columnId: string;
-  mode: 'action' | 'last';
-};
+/** Host for grouped collapse-all: the trailing action lane or a scrollport-owned overlay. */
+export type TableCollapseAllHost =
+  | { columnId: string; mode: 'action' }
+  | { mode: 'floating' };
 
 export function tableCollapseAllHost(
   columns: TableColumn[],
@@ -135,7 +134,7 @@ export function tableCollapseAllHost(
     const column = columns[index]!;
     if (column.kind === 'action') return { columnId: column.id, mode: 'action' };
   }
-  return { columnId: columns[columns.length - 1]!.id, mode: 'last' };
+  return { mode: 'floating' };
 }
 
 export function clampTableColumnSize(column: TableColumn): number | undefined {

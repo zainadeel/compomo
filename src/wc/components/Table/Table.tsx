@@ -143,6 +143,9 @@ export class Table {
   @State() private announcement = '';
 
   private viewportEl: HTMLElement | null = null;
+  private frameEl: HTMLElement | null = null;
+  private interactiveHeadEl: HTMLTableSectionElement | null = null;
+  private collapseAllOverlayEl: HTMLElement | null = null;
   private stickyHeaderTableEl: HTMLTableElement | null = null;
   private tableEl: HTMLTableElement | null = null;
   private sentinelEl: HTMLElement | null = null;
@@ -172,6 +175,7 @@ export class Table {
 
   componentDidRender(): void {
     this.syncStickyHeaderPosition();
+    this.syncFloatingCollapseAllPosition();
     this.connectIntersectionObserver();
   }
 
@@ -393,6 +397,7 @@ export class Table {
     if (nextEnd !== this.overflowEnd) this.overflowEnd = nextEnd;
     if (scrollable !== this.scrollable) this.scrollable = scrollable;
     this.syncStickyHeaderPosition();
+    this.syncFloatingCollapseAllPosition();
   };
 
   private syncStickyHeaderPosition(): void {
@@ -401,6 +406,19 @@ export class Table {
     const maxOffset = Math.max(0, this.viewportEl.scrollWidth - this.viewportEl.clientWidth);
     this.stickyHeaderTableEl.style.setProperty('--ds-table-inline-scroll-offset', `${offset}px`);
     this.stickyHeaderTableEl.style.setProperty('--ds-table-inline-scroll-max-offset', `${maxOffset}px`);
+  }
+
+  private syncFloatingCollapseAllPosition(): void {
+    if (this.collapseAllHost?.mode !== 'floating' || this.documentStickyHeader) return;
+    const overlay = this.collapseAllOverlayEl;
+    const frame = this.frameEl;
+    const head = this.interactiveHeadEl;
+    if (!overlay || !frame || !head) return;
+    const blockOffset = Math.max(0, head.getBoundingClientRect().top - frame.getBoundingClientRect().top);
+    const value = `${blockOffset}px`;
+    if (overlay.style.getPropertyValue('--ds-table-collapse-all-block-offset') !== value) {
+      overlay.style.setProperty('--ds-table-collapse-all-block-offset', value);
+    }
   }
 
   private resetLoadRequest(): void {
@@ -575,6 +593,42 @@ export class Table {
     );
   }
 
+  private renderCollapseAllButton() {
+    return (
+      <ds-button-unfilled
+        class="ds-table__collapse-all"
+        variant="icon"
+        icon="ChevronDownUp"
+        size="xs"
+        style={{ width: 'var(--dimension-size-300)' }}
+        aria-label="Collapse all groups"
+        hasBorder={false}
+        activeFill={false}
+        pressScale={false}
+        onDsClick={event => {
+          event.stopPropagation();
+          this.emitAllGroupsCollapse();
+        }}
+      />
+    );
+  }
+
+  private renderFloatingCollapseAll() {
+    if (this.collapseAllHost?.mode !== 'floating') return null;
+    return (
+      <span
+        class="ds-table__collapse-all-overlay"
+        ref={element => {
+          this.collapseAllOverlayEl = element ?? null;
+        }}
+      >
+        <span class="ds-table__collapse-all-surface ds-control-elevation ds-control-elevation--md">
+          {this.renderCollapseAllButton()}
+        </span>
+      </span>
+    );
+  }
+
   private renderColumnHeader(
     column: TableColumn,
     interactive = true,
@@ -679,29 +733,14 @@ export class Table {
       </span>
     ) : null;
     const collapseHost = this.collapseAllHost;
-    const isCollapseHost = collapseHost?.columnId === column.id;
-    const actionCollapseHost = isCollapseHost && collapseHost?.mode === 'action';
+    const actionCollapseHost = collapseHost?.mode === 'action' && collapseHost.columnId === column.id;
     const blankActionCollapseHost = actionCollapseHost &&
       !column.header.trim() &&
       !column.headerSegments?.length;
     const collapseControl =
-      interactive && isCollapseHost ? (
+      interactive && actionCollapseHost ? (
         <span class="ds-table__collapse-slot">
-          <ds-button-unfilled
-            class="ds-table__collapse-all"
-            variant="icon"
-            icon="ChevronDownUp"
-            size="xs"
-            style={{ width: 'var(--dimension-size-300)' }}
-            aria-label="Collapse all groups"
-            hasBorder={false}
-            activeFill={false}
-            pressScale={false}
-            onDsClick={event => {
-              event.stopPropagation();
-              this.emitAllGroupsCollapse();
-            }}
-          />
+          {this.renderCollapseAllButton()}
         </span>
       ) : null;
 
@@ -713,7 +752,7 @@ export class Table {
           [`ds-table__cell--align-${align}`]: true,
           'ds-table__cell--sticky-start': column.sticky === 'start',
           'ds-table__cell--sticky-end': column.sticky === 'end',
-          'ds-table__header-cell--collapse-all': isCollapseHost,
+          'ds-table__header-cell--collapse-all': actionCollapseHost,
         }}
         scope={presentational ? undefined : 'col'}
         aria-sort={presentational ? undefined : memberAriaSort}
@@ -776,6 +815,8 @@ export class Table {
       <thead class={{
         'ds-table__head': true,
         'ds-table__head--semantic-copy': !interactive,
+      }} ref={element => {
+        if (interactive) this.interactiveHeadEl = element ?? null;
       }}>
         <tr class="ds-table__header-row">
           {this.selectable && (
@@ -1293,6 +1334,7 @@ export class Table {
           {this.renderColgroup()}
           {this.renderHeader(true, true)}
         </table>
+        {this.renderFloatingCollapseAll()}
       </div>
     );
   }
@@ -1342,8 +1384,12 @@ export class Table {
               'ds-table__frame--overflow-start': this.overflowStart,
               'ds-table__frame--overflow-end': this.overflowEnd,
             }}
+            ref={element => {
+              this.frameEl = element ?? null;
+            }}
           >
             {this.renderDocumentStickyHeader()}
+            {!this.documentStickyHeader && this.renderFloatingCollapseAll()}
             <div
               class="ds-table__viewport"
               style={viewportStyle}

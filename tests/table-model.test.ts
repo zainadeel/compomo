@@ -103,7 +103,7 @@ test('collapses or expands every group from the current collapsed set', () => {
   assert.deepEqual(nextTableGroupsCollapsed(['a', 'b', 'extra'], ['a', 'b']), []);
 });
 
-test('hosts collapse-all on the trailing action column or last data column', () => {
+test('hosts collapse-all on the trailing action column or a scrollport overlay', () => {
   const actionColumns: TableColumn[] = [
     { id: 'name', header: 'Name' },
     { id: 'actions', kind: 'action', header: '', headerLabel: 'Actions' },
@@ -128,10 +128,7 @@ test('hosts collapse-all on the trailing action column or last data column', () 
     { id: 'name', header: 'Name' },
     { id: 'score', header: 'Score' },
   ];
-  assert.deepEqual(tableCollapseAllHost(plainColumns), {
-    columnId: 'score',
-    mode: 'last',
-  });
+  assert.deepEqual(tableCollapseAllHost(plainColumns), { mode: 'floating' });
 });
 
 test('keeps fixed lanes stable by assigning spare width to one data column', () => {
