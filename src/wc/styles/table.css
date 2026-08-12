@@ -900,7 +900,7 @@
 }
 
 :where(.ds-table__group-copy) {
-  /* Label + count box: 2px block, 6px inline (parallel to the selection box). */
+  /* Label + count box: 2px block, 4px inline (parallel to the selection box). */
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;
@@ -908,12 +908,12 @@
   flex: 1 1 auto;
   gap: var(--dimension-space-100);
   padding-block: var(--dimension-space-025);
-  padding-inline: var(--dimension-space-075);
+  padding-inline: var(--dimension-space-050);
 }
 
 :where(.ds-table__table--selectable .ds-table__group-copy) {
   padding-inline-start: calc(
-    var(--dimension-space-125) + var(--_table-cell-track-label-inset)
+    var(--dimension-space-100) + var(--_table-cell-track-label-inset)
   );
 }
 

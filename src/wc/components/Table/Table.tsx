@@ -1139,6 +1139,7 @@ export class Table {
                   size="md"
                   isInset={true}
                   insetDepth="double"
+                  style={{ alignSelf: 'center' }}
                   icon={isCollapsed ? 'ChevronDown' : 'ChevronUp'}
                   expanded={!isCollapsed}
                   aria-label={

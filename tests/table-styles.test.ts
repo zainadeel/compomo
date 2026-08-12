@@ -40,6 +40,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
     css,
     /\.ds-table__group:last-child\[data-collapsed='true'\] \.ds-table__group-content\)[^{]*\{[^}]*border-block-end: 0/s,
   );
+  assert.match(componentTsx, /class="ds-table__group-toggle"[\s\S]*?style=\{\{ alignSelf: 'center' \}\}/);
   assert.match(
     css,
     /\.ds-table__table--selectable \.ds-table__group-content\)[^{]*\{[^}]*gap: 0[^}]*padding-inline-start: 0/s,
@@ -50,7 +51,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   );
   assert.match(
     css,
-    /\.ds-table__table--selectable \.ds-table__group-copy\)[^{]*\{[^}]*padding-inline-start: calc\(\s*var\(--dimension-space-125\) \+ var\(--_table-cell-track-label-inset\)\s*\)/s,
+    /\.ds-table__table--selectable \.ds-table__group-copy\)[^{]*\{[^}]*padding-inline-start: calc\(\s*var\(--dimension-space-100\) \+ var\(--_table-cell-track-label-inset\)\s*\)/s,
   );
   assert.match(
     css,
@@ -58,7 +59,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   );
   assert.match(
     css,
-    /\.ds-table__group-copy\)[^{]*\{[^}]*gap: var\(--dimension-space-100\)[^}]*padding-block: var\(--dimension-space-025\)[^}]*padding-inline: var\(--dimension-space-075\)/s,
+    /\.ds-table__group-copy\)[^{]*\{[^}]*gap: var\(--dimension-space-100\)[^}]*padding-block: var\(--dimension-space-025\)[^}]*padding-inline: var\(--dimension-space-050\)/s,
   );
   assert.match(css, /\.ds-table__group-toggle\)[^{]*\{[^}]*margin-inline-start: auto/s);
   assert.doesNotMatch(

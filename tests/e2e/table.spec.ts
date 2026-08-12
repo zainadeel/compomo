@@ -98,6 +98,14 @@ test('keeps group order and member-row sorting independent', async ({ page }) =>
   await expect(groupTexts.nth(1)).toHaveJSProperty('variant', 'text-body-medium');
   await expect(groupTexts.nth(1)).toHaveJSProperty('emphasis', false);
   await expect(groupTexts.nth(1)).toHaveText(/items?/);
+  const groupCopyInsets = await firstGroupHeader.locator('.ds-table__group-copy').evaluate(element => {
+    const styles = getComputedStyle(element);
+    return {
+      left: Number.parseFloat(styles.paddingLeft),
+      right: Number.parseFloat(styles.paddingRight),
+    };
+  });
+  expect(groupCopyInsets).toEqual({ left: 4, right: 4 });
 
   const toggle = firstGroupHeader.locator('.ds-table__group-toggle');
   await expect(toggle).toHaveJSProperty('variant', 'icon');
@@ -192,6 +200,30 @@ test('applies faint intent surfaces and bold titles to severity groups', async (
       await expect(label).toHaveJSProperty('color', group.intent);
     }
   }
+
+  const selectableGroupCopyInsets = await table
+    .locator('tbody[data-group-id="critical"] .ds-table__group-copy')
+    .evaluate(element => {
+      const styles = getComputedStyle(element);
+      return {
+        left: Number.parseFloat(styles.paddingLeft),
+        right: Number.parseFloat(styles.paddingRight),
+      };
+    });
+  expect(selectableGroupCopyInsets).toEqual({ left: 10, right: 4 });
+
+  const expandedGeometry = await table.locator('tbody[data-group-id="critical"]').evaluate(body => {
+    const content = body.querySelector<HTMLElement>('.ds-table__group-content')!;
+    const toggle = body.querySelector<HTMLElement>('.ds-table__group-toggle')!;
+    const contentRect = content.getBoundingClientRect();
+    const toggleRect = toggle.getBoundingClientRect();
+    const border = Number.parseFloat(getComputedStyle(content).borderBottomWidth);
+    return {
+      top: toggleRect.top - contentRect.top,
+      bottomInsideBorder: contentRect.bottom - toggleRect.bottom - border,
+    };
+  });
+  expect(expandedGeometry.top).toBeCloseTo(expandedGeometry.bottomInsideBorder, 0);
 
   await table.locator('.ds-table__collapse-all').click();
   const collapsedContents = table.locator('tbody[data-group-id] .ds-table__group-content');
