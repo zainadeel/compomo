@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.14.0](https://github.com/zainadeel/compomo/compare/v13.13.0...v13.14.0) (2026-08-12)
+
+
+### Added
+
+* refine table grouping chrome and load-more density ([#441](https://github.com/zainadeel/compomo/issues/441)) ([49819cb](https://github.com/zainadeel/compomo/commit/49819cb23d7dae29ef60ce49bc85b66b409a4c49))
+
 ## [13.13.0](https://github.com/zainadeel/compomo/compare/v13.12.0...v13.13.0) (2026-08-09)
 
 
