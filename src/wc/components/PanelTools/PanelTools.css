@@ -148,7 +148,7 @@
   box-sizing: border-box;
   padding: var(--dimension-space-200);
   color: var(--color-foreground-secondary);
-  font-family: var(--typography-font-family);
+  font-family: var(--typography-font-family-ui);
   font-size: var(--typography-fontsize-md);
   line-height: var(--typography-lineheight-md);
   font-weight: var(--typography-weight-regular);
@@ -158,7 +158,7 @@
 .panel-tools__view ::slotted(*) {
   margin: 0;
   color: var(--color-foreground-secondary);
-  font-family: var(--typography-font-family);
+  font-family: var(--typography-font-family-ui);
   font-size: var(--typography-fontsize-md);
   line-height: var(--typography-lineheight-md);
   font-weight: var(--typography-weight-regular);

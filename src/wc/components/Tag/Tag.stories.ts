@@ -83,7 +83,7 @@ export const IntentMatrix: Story = {
     <div style="display: flex; flex-direction: column; gap: var(--dimension-space-100)">
       ${CONTRASTS.map(contrast => html`
         <div>
-          <div style="font-size: var(--typography-fontsize-xs); font-family: var(--typography-font-family-code, ui-monospace, monospace); color: var(--color-foreground-tertiary); margin-bottom: var(--dimension-space-050)">${contrast}</div>
+          <div style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-tertiary); margin-bottom: var(--dimension-space-050)">${contrast}</div>
           <div style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap">
             ${INTENTS.map(intent => html`
               <ds-tag label=${intent} intent=${intent} contrast=${contrast}></ds-tag>
@@ -101,7 +101,7 @@ export const Sizes: Story = {
       ${SIZES.map(size => html`
         <div style="display: flex; flex-direction: column; align-items: center; gap: var(--dimension-space-075)">
           <ds-tag label=${size} intent="brand" contrast="faint" size=${size}></ds-tag>
-          <span style="font-size: var(--typography-fontsize-xs); font-family: var(--typography-font-family-code, ui-monospace, monospace); color: var(--color-foreground-tertiary)">${size}</span>
+          <span style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-tertiary)">${size}</span>
         </div>
       `)}
     </div>
@@ -114,7 +114,7 @@ export const InsetDensity: Story = {
     <div style="display: flex; flex-direction: column; gap: var(--dimension-space-150)">
       ${SIZES.map(size => html`
         <div style="display: grid; grid-template-columns: minmax(var(--dimension-size-600), auto) auto auto; gap: var(--dimension-space-100); align-items: center">
-          <span style="font-size: var(--typography-fontsize-xs); font-family: var(--typography-font-family-code, ui-monospace, monospace); color: var(--color-foreground-tertiary)">${size}</span>
+          <span style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-tertiary)">${size}</span>
           <ds-tag
             label="Default"
             intent="brand"

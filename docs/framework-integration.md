@@ -24,7 +24,7 @@ package remains a build dependency and is not required at application runtime.
 There is no published `@ds-mo/ui/loader` or global component bundle such as `@ds-mo/ui/css`. Import TokoMo via `@ds-mo/tokens` (or `@ds-mo/tokens/css`). Component CSS is scoped inside each custom-element bundle. Deliberate renderer-neutral exports include `@ds-mo/ui/prose.css` for safe semantic document trees and `@ds-mo/ui/control-elevation.css` for elevated wrappers around controls.
 
 Font files remain application-owned. Interface content consumes
-`--typography-font-family`; code surfaces consume
+`--typography-font-family-ui`; code surfaces consume
 `--typography-font-family-code` with a robust system-monospace fallback. Load
 Inter and Fira Code once at the application root rather than from a component
 or framework adapter. The Stencil source, Angular adapters, and React wrappers

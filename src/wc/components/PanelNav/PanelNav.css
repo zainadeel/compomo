@@ -86,7 +86,7 @@
     min-width var(--_nav-expand-motion),
     background-color var(--effect-motion-short-3, 200ms ease),
     border-color var(--effect-motion-short-3, 200ms ease);
-  font-family: var(--typography-font-family, system-ui);
+  font-family: var(--typography-font-family-ui, system-ui);
   isolation: isolate;
 }
 

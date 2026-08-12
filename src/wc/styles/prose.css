@@ -20,7 +20,7 @@
   :where(p, ul, ol, dl, blockquote, figure, figcaption, table):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
   margin: 0;
   color: inherit;
-  font-family: var(--typography-font-family);
+  font-family: var(--typography-font-family-ui);
   font-size: var(--typography-fontsize-md);
   font-weight: var(--typography-weight-regular);
   line-height: var(--typography-lineheight-md);
@@ -31,7 +31,7 @@
   :where(h1, h2, h3, h4, h5, h6):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
   margin: 0;
   color: var(--color-foreground-primary);
-  font-family: var(--typography-font-family);
+  font-family: var(--typography-font-family-ui);
   font-weight: var(--typography-weight-semibold);
 }
 

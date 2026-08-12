@@ -6,7 +6,7 @@
   width: var(--ds-chart-width, 100%);
   max-width: 100%;
   height: var(--ds-chart-height, 320px);
-  font-family: var(--typography-font-family);
+  font-family: var(--typography-font-family-ui);
 }
 
 .chart__surface {
@@ -53,7 +53,7 @@
 .chart__tick,
 .chart__text-mark {
   fill: var(--color-foreground-secondary);
-  font-family: var(--typography-font-family);
+  font-family: var(--typography-font-family-ui);
   font-size: var(--typography-fontsize-xs);
   font-weight: var(--typography-weight-medium);
   letter-spacing: var(--typography-letterspacing-positive);
@@ -62,7 +62,7 @@
 
 .chart__axis-title {
   fill: var(--color-foreground-primary);
-  font-family: var(--typography-font-family);
+  font-family: var(--typography-font-family-ui);
   font-size: var(--typography-fontsize-xs);
   font-weight: var(--typography-weight-semibold);
   letter-spacing: var(--typography-letterspacing-positive);
@@ -71,7 +71,7 @@
 
 .chart__center-value {
   fill: var(--color-foreground-primary);
-  font-family: var(--typography-font-family);
+  font-family: var(--typography-font-family-ui);
   font-size: var(--typography-fontsize-xl);
   font-weight: var(--typography-weight-semibold);
   letter-spacing: var(--typography-letterspacing-negative-double);
@@ -79,7 +79,7 @@
 
 .chart__center-caption {
   fill: var(--color-foreground-secondary);
-  font-family: var(--typography-font-family);
+  font-family: var(--typography-font-family-ui);
   font-size: var(--typography-fontsize-md);
   font-weight: var(--typography-weight-regular);
   letter-spacing: var(--typography-letterspacing-negative-half);

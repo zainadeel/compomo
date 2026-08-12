@@ -195,7 +195,7 @@ export const TokenSideOffsetRight: Story = {
           border-radius: var(--dimension-radius-075);
           background: var(--color-background-secondary);
           color: var(--color-foreground-primary);
-          font-family: var(--typography-font-family);
+          font-family: var(--typography-font-family-ui);
           text-align: left;
         "
       >

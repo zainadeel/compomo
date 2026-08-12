@@ -56,7 +56,7 @@ const availabilityDefinition = defineChart({
 const pageStyle =
   'box-sizing:border-box;min-height:100vh;padding:var(--dimension-space-400);' +
   'background:var(--color-background-secondary);color:var(--color-foreground-primary);' +
-  'font-family:var(--typography-font-family);';
+  'font-family:var(--typography-font-family-ui);';
 const gridStyle =
   'display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:var(--dimension-space-300);';
 const sectionStyle =

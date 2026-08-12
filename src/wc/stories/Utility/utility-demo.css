@@ -16,7 +16,7 @@
 @import '../../utils/scrollbar-hidden.css';
 
 .util-demo-page {
-  font-family: var(--typography-font-family);
+  font-family: var(--typography-font-family-ui);
   padding: var(--dimension-space-300);
   display: flex;
   flex-direction: column;

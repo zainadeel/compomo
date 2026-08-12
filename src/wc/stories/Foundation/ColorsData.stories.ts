@@ -8,7 +8,7 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-const PAGE = 'font-family: var(--typography-font-family); padding: var(--dimension-space-300); display: flex; flex-direction: column; gap: calc(var(--dimension-space-100) * 5); background: var(--color-background-primary); color: var(--color-foreground-primary); min-height: 100vh; box-sizing: border-box;';
+const PAGE = 'font-family: var(--typography-font-family-ui); padding: var(--dimension-space-300); display: flex; flex-direction: column; gap: calc(var(--dimension-space-100) * 5); background: var(--color-background-primary); color: var(--color-foreground-primary); min-height: 100vh; box-sizing: border-box;';
 const SECTION = 'display: flex; flex-direction: column; gap: var(--dimension-space-150);';
 const H2 = 'font-size: var(--typography-fontsize-lg); font-weight: var(--typography-weight-semibold); color: var(--color-foreground-primary); margin: 0; letter-spacing: var(--typography-letterspacing-negative-half);';
 const SUB = 'font-size: var(--typography-fontsize-sm); font-weight: var(--typography-weight-medium); color: var(--color-foreground-secondary); margin: var(--dimension-space-025) 0 0;';

@@ -5,7 +5,7 @@
 
 :host {
   display: block;
-  font-family: var(--typography-font-family);
+  font-family: var(--typography-font-family-ui);
   user-select: none;
 }
 

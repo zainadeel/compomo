@@ -15,7 +15,7 @@ consumers:
 | CompoMo | Interface-versus-code intent in component and prose recipes | Font files or automatic font loading |
 | Application | Font source, subsets, `@font-face`, preload policy, caching, CSP, and license distribution | Component-local font overrides |
 
-The interface family remains `--typography-font-family`. Code-oriented
+The canonical interface family is `--typography-font-family-ui`. Code-oriented
 surfaces consume `--typography-font-family-code`. CompoMo currently supplies
 the following usable fallback while the code-family token is absent:
 
@@ -110,10 +110,11 @@ adding a feature selector.
 This CompoMo change establishes the reusable hook but does not mutate the
 separately versioned repositories:
 
-1. **TokoMo:** publish `--typography-font-family-code` through its CSS, JSON,
-   TypeScript, and agent contracts; keep `--typography-font-family` for Inter;
-   remove the automatic Google Fonts `@import` from `globals.css` so tokens do
-   not create an undocumented remote request.
+1. **TokoMo:** publish `--typography-font-family-ui` for Inter and
+   `--typography-font-family-code` through its CSS, JSON, TypeScript, and agent
+   contracts without a compatibility alias; remove the automatic Google Fonts
+   `@import` from `globals.css` so tokens do not create an undocumented remote
+   request.
 2. **Lab:** add one self-hosted Fira Code Latin 400 asset and OFL copy, declare
    it at the application root, optionally preload only if Agents code is in the
    first view, and verify the Agents coding box at desktop and mobile widths.
