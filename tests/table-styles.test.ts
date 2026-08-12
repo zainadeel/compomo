@@ -34,7 +34,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   );
   assert.match(
     css,
-    /\.ds-table__group-content\)[^{]*\{[^}]*position: sticky[^}]*inset-inline-start: 0[^}]*inline-size: var\(--ds-table-visible-inline-size, 100%\)[^}]*padding: var\(--dimension-space-075\)[^}]*background: var\(--_table-group-surface\)/s,
+    /\.ds-table__group-content\)[^{]*\{[^}]*position: sticky[^}]*inset-inline-start: 0[^}]*inline-size: var\(--ds-table-visible-inline-size, 100%\)[^}]*padding: var\(--dimension-space-100\)[^}]*background: var\(--_table-group-surface\)/s,
   );
   assert.match(
     css,
@@ -104,7 +104,11 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   );
   assert.match(
     css,
-    /\.ds-table__sort-slot\),\s*\n:where\(\.ds-table__collapse-slot\)[^{]*\{[^}]*inline-size: var\(--dimension-size-200\)/s,
+    /\.ds-table__sort-slot\)[^{]*\{[^}]*inline-size: var\(--dimension-size-200\)/s,
+  );
+  assert.match(
+    css,
+    /\.ds-table__collapse-slot\)[^{]*\{[^}]*inline-size: var\(--dimension-size-300\)[^}]*margin-inline-start: auto/s,
   );
   assert.match(
     css,
@@ -160,8 +164,8 @@ test('keeps public table selectors override-friendly', () => {
   assert.match(css, /\.ds-table__cell-image\)[^{]*\{[^}]*block-size: var\(--_table-image-block-size\)[^}]*aspect-ratio: 16 \/ 9[^}]*border: var\(--dimension-stroke-width-012\) solid var\(--color-border-tertiary\)[^}]*border-radius: var\(--dimension-radius-025\)/s);
   assert.match(css, /\.ds-table__cell-image-content\)[^{]*\{[^}]*object-fit: cover/s);
   assert.match(css, /\.ds-table__cell--primary-text \.ds-table__cell-secondary\)[^{]*\{[^}]*padding-block: 0/s);
-  assert.match(css, /\.ds-table__cell--action\)[^{]*\{[^}]*padding: var\(--dimension-space-075\)/s);
-  assert.match(css, /\.ds-table__cell--action \.ds-table__cell-content\)[^{]*\{[^}]*min-block-size: var\(--_table-cell-track-min-block-size\)/s);
+  assert.match(css, /\.ds-table__cell--action\)[^{]*\{[^}]*padding: var\(--dimension-space-100\)/s);
+  assert.match(css, /\.ds-table__cell--action \.ds-table__cell-content\)[^{]*\{[^}]*min-block-size: var\(--dimension-size-300\)/s);
   assert.match(css, /\.ds-table__cell\.ds-table__selection-cell\)[^{]*\{[^}]*padding: var\(--dimension-space-125\)/s);
   assert.match(css, /\.ds-table__cell\.ds-table__selection-cell \.ds-table__selection-control\)[^{]*\{[^}]*inline-size: var\(--dimension-iconography-md\)[^}]*block-size: var\(--dimension-iconography-md\)/s);
   assert.match(css, /\.ds-table__cell--text-single\),[\s\S]*?\.ds-table__cell--text-multi\),[\s\S]*?\.ds-table__cell--empty\),[\s\S]*?\.ds-table__cell--blank\)[^{]*\{[^}]*padding: var\(--dimension-space-125\)/s);

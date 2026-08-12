@@ -103,9 +103,14 @@ test('keeps group order and member-row sorting independent', async ({ page }) =>
   await expect(toggle).toHaveJSProperty('variant', 'icon');
   await expect(toggle).toHaveJSProperty('size', 'md');
   await expect(toggle).toHaveJSProperty('isInset', true);
+  await expect(toggle).toHaveJSProperty('insetDepth', 'double');
+  await expect(toggle).toHaveCSS('width', '24px');
+  await expect(toggle).toHaveCSS('height', '24px');
   await expect(toggle).toHaveJSProperty('icon', 'ChevronUp');
   await expect(toggle).toHaveJSProperty('expanded', true);
   await expect(toggle.getByRole('button')).toHaveAttribute('aria-expanded', 'true');
+  await expect(toggle.getByRole('button')).not.toHaveClass(/button-unfilled--active/);
+  await expect(toggle.getByRole('button')).not.toHaveClass(/ds-button--expanded/);
   await expect(toggle).toHaveJSProperty('hasBorder', false);
   await expect(table.locator('tbody[data-group-id="driving"] .ds-table__row')).toHaveCount(2);
   await toggle.click();
@@ -120,7 +125,11 @@ test('keeps group order and member-row sorting independent', async ({ page }) =>
 
   const collapseAll = table.locator('.ds-table__collapse-all');
   await expect(collapseAll).toHaveJSProperty('variant', 'icon');
-  await expect(collapseAll).toHaveJSProperty('size', 'xs');
+  await expect(collapseAll).toHaveJSProperty('size', 'md');
+  await expect(collapseAll).toHaveJSProperty('isInset', true);
+  await expect(collapseAll).toHaveJSProperty('insetDepth', 'double');
+  await expect(collapseAll).toHaveCSS('width', '24px');
+  await expect(collapseAll).toHaveCSS('height', '24px');
   await expect(collapseAll).toHaveJSProperty('icon', 'ChevronDownUp');
   await expect(collapseAll).toHaveJSProperty('hasBorder', false);
   await expect(collapseAll).toHaveJSProperty('isActive', false);
@@ -481,14 +490,15 @@ test('renders independently styled standard cell types', async ({ page }) => {
   await expect(icon.locator('ds-icon')).toHaveCSS('height', '20px');
   for (const cell of [action, borderedAction]) {
     await expect(cell).toHaveCSS('width', '40px');
-    await expect(cell).toHaveCSS('padding-top', '6px');
-    await expect(cell).toHaveCSS('padding-right', '6px');
-    await expect(cell).toHaveCSS('padding-bottom', '6px');
-    await expect(cell).toHaveCSS('padding-left', '6px');
-    await expect(cell.locator('.ds-table__cell-content')).toHaveCSS('min-height', '28px');
+    await expect(cell).toHaveCSS('padding-top', '8px');
+    await expect(cell).toHaveCSS('padding-right', '8px');
+    await expect(cell).toHaveCSS('padding-bottom', '8px');
+    await expect(cell).toHaveCSS('padding-left', '8px');
+    await expect(cell.locator('.ds-table__cell-content')).toHaveCSS('min-height', '24px');
     await expect(cell.locator('ds-button-unfilled')).toHaveJSProperty('size', 'md');
     await expect(cell.locator('ds-button-unfilled')).toHaveJSProperty('isInset', true);
-    await expect(cell.locator('ds-button-unfilled')).toHaveCSS('height', '28px');
+    await expect(cell.locator('ds-button-unfilled')).toHaveJSProperty('insetDepth', 'double');
+    await expect(cell.locator('ds-button-unfilled')).toHaveCSS('height', '24px');
   }
   for (const header of [actionHeader, borderedActionHeader]) {
     await expect(header).toHaveCSS('width', '40px');
@@ -627,6 +637,8 @@ test('positions sort controls according to column alignment', async ({ page }) =
         labelCenter: labelsRect.left + labelsRect.width / 2,
         balanceLeft: balanceRect?.left,
         balanceRight: balanceRect?.right,
+        collapseLeft: cell.querySelector<HTMLElement>('.ds-table__collapse-slot')?.getBoundingClientRect().left,
+        collapseRight: cell.querySelector<HTMLElement>('.ds-table__collapse-slot')?.getBoundingClientRect().right,
         order: Array.from(content.children).map(child =>
           child.classList.contains('ds-table__sort-slot--balance')
             ? 'balance'
@@ -647,10 +659,11 @@ test('positions sort controls according to column alignment', async ({ page }) =
   expect(geometry.center.slotRight - geometry.center.slotLeft).toBeCloseTo(16, 0);
   expect(geometry.center.balanceRight! - geometry.center.balanceLeft!).toBeCloseTo(16, 0);
 
-  expect(geometry.end.order).toEqual(['sort', 'collapse', 'label']);
+  expect(geometry.end.order).toEqual(['sort', 'label', 'collapse']);
   expect(geometry.end.slotLeft - geometry.end.cellLeft).toBeCloseTo(geometry.end.contentInsetStart, 0);
-  expect(geometry.end.cellRight - geometry.end.labelsRight).toBeCloseTo(geometry.end.contentInsetEnd, 0);
   expect(geometry.end.labelsLeft).toBeGreaterThan(geometry.end.slotRight);
+  expect(geometry.end.collapseLeft!).toBeGreaterThan(geometry.end.labelsRight);
+  expect(geometry.end.cellRight - geometry.end.collapseRight!).toBeCloseTo(geometry.end.contentInsetEnd, 0);
 });
 
 test('selects loaded rows while preserving off-window IDs', async ({ page }) => {

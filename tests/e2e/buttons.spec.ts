@@ -54,6 +54,18 @@ test('filled and unfilled buttons opt into the inset density recipe', async ({ p
     await expect(button).toHaveCSS('height', '28px');
     await expect(button).toHaveClass(/ds-control--inset/);
   }
+
+  for (const id of ['filled-double-inset-md', 'unfilled-double-inset-md']) {
+    const host = page.locator(`#${id}`);
+    const button = host.locator('button');
+    await expect(host).toHaveJSProperty('isInset', true);
+    await expect(host).toHaveJSProperty('insetDepth', 'double');
+    await expect(host).toHaveCSS('width', '24px');
+    await expect(host).toHaveCSS('height', '24px');
+    await expect(button).toHaveCSS('width', '24px');
+    await expect(button).toHaveCSS('height', '24px');
+    await expect(button).toHaveClass(/ds-control--inset-double/);
+  }
 });
 
 test('physical press scales only eligible filled and unfilled buttons', async ({ page }) => {
@@ -390,8 +402,13 @@ test('keeps popup triggers visibly pressed when expanded without creating select
   });
 
   await host.evaluate(element => {
-    const control = element as HTMLElement & { activeFill: boolean; expanded: boolean };
+    const control = element as HTMLElement & {
+      activeFill: boolean;
+      expanded: boolean;
+      haspopup: 'menu';
+    };
     control.activeFill = false;
+    control.haspopup = 'menu';
     control.expanded = true;
   });
 
@@ -405,6 +422,20 @@ test('keeps popup triggers visibly pressed when expanded without creating select
   await expect.poll(() => button.evaluate(element => (
     getComputedStyle(element, '::after').backgroundColor
   ))).toBe(tokens.pressed);
+});
+
+test('keeps expanded disclosure buttons visually neutral', async ({ page }) => {
+  const host = page.locator('#unfilled-icon');
+  const button = host.locator('button');
+
+  await host.evaluate(element => {
+    (element as HTMLElement & { expanded: boolean }).expanded = true;
+  });
+
+  await expect(button).toHaveAttribute('aria-expanded', 'true');
+  await expect(button).not.toHaveClass(/button-unfilled--active/);
+  await expect(button).not.toHaveClass(/button-unfilled--expanded/);
+  await expect(button).not.toHaveClass(/ds-button--expanded/);
 });
 
 test('keeps inactive buttons disabled, styled, and non-activating', async ({ page }) => {

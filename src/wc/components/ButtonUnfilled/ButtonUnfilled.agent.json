@@ -47,7 +47,7 @@
   ],
   "accessibility": [
     "Provide an explicit accessible name for every icon-only action.",
-    "Set hasMenu when the button triggers a Menu; it implies aria-haspopup of menu. Pass controls with the Menu id and expanded from the same open state given to Menu.",
+    "Set hasMenu when the button triggers a Menu; it implies aria-haspopup of menu. Pass controls with the Menu id and expanded from the same open state given to Menu. Expanded popup triggers hold the pressed visual while open; expanded disclosure controls without popup semantics retain the normal resting appearance.",
     "Give an icon-only menu button an accessible name that states the role, such as More options, because no visible label or chevron carries it.",
     "Use haspopup directly for a non-menu popup such as a listbox or dialog; those cases get no chevron.",
     "Use pressed only for a genuine toggle button; it supplies aria-pressed and dsChange intent. Use isActive only for owner-controlled visual emphasis inside a composite whose selection semantics live on the owner.",
@@ -58,7 +58,7 @@
   ],
   "states": [
     "Every size applies one complete control-density recipe across frame height, inline padding, icon zone, text-container inset, gap, and radius.",
-    "Set isInset only when the button is nested inside a same-size control; it reduces the outer geometry while preserving the size's icon, label inset, gap, radius, and typography.",
+    "Set isInset only when the button is nested inside a same-size control. The default single inset removes 4px overall; insetDepth double removes 8px overall so the parent can add 4px per edge while preserving its outer alignment box. Double inset falls back to single at xs to protect minimum icon geometry.",
     "A true pressed toggle and owner-controlled isActive emphasis share the selected visual treatment, but only pressed supplies toggle semantics and dsChange.",
     "General content UI keeps the selected interaction fill and border for pressed or active emphasis.",
     "Shell, navigation, and tool-rail composites use isActive with foreground-only emphasis and no selected fill or border.",
@@ -70,7 +70,7 @@
     "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width.",
     "hasMenu covers two distinct menu-button shapes and the variant selects between them. With label or icon-label the action has a menu, and a trailing chevron carries the affordance. With icon the button is a menu, meaning the overflow or more-options control, and no chevron is added.",
     "Because the icon-only shape has no chevron, its glyph must convey the menu on its own; use Ellipses. Never pair hasMenu with an icon-only glyph that does not read as a menu.",
-    "An open popup is a transient pressed state rather than a selected one. While expanded is true the pressed wash is held for the popup's complete rendered lifecycle and survives hover, including when chrome opts out of selected fills with activeFill set to false."
+    "An open popup is a transient pressed state rather than a selected one. While expanded is true and haspopup or hasMenu identifies a popup, the pressed wash is held for the popup's complete rendered lifecycle and survives hover, including when chrome opts out of selected fills with activeFill set to false. Expanded disclosure buttons without popup semantics remain visually neutral."
   ],
   "responsiveBehavior": [
     "The consuming layout decides when an icon-label action becomes icon-only and must provide an explicit accessible name after changing variants.",

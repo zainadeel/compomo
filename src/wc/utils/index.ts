@@ -135,7 +135,7 @@ export type {
   NormalizeStackOptions,
 } from './chart-grammar';
 export { CONTROL_SUPPORTING_TEXT_VARIANT, CONTROL_TEXT_VARIANT } from './control-text';
-export type { ControlSize } from './control-text';
+export type { ControlInsetDepth, ControlSize } from './control-text';
 export {
   choicePopupMinWidth,
   resolveChoicePopupAlignOffset,

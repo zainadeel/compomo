@@ -8,6 +8,9 @@
  * radius, and typography remain owned by the base density recipe.
  *
  * Keep this utility opt-in. Most controls should use the default density.
+ * Double inset removes 4px from each edge (8px total). At xs it intentionally
+ * falls back to single inset because the 12px icon is already the minimum safe
+ * outer geometry.
  */
 
 :host(.ds-control--lg.ds-control--inset),
@@ -39,5 +42,29 @@
   --ds-control-height: calc(var(--dimension-size-200) - var(--dimension-space-050));
   --ds-control-padding-inline: calc(
     var(--dimension-space-025) - var(--dimension-space-025)
+  );
+}
+
+:host(.ds-control--lg.ds-control--inset-double),
+.ds-control--lg.ds-control--inset-double {
+  --ds-control-height: calc(var(--dimension-size-500) - var(--dimension-space-100));
+  --ds-control-padding-inline: calc(
+    var(--dimension-space-100) - var(--dimension-space-050)
+  );
+}
+
+:host(.ds-control--md.ds-control--inset-double),
+.ds-control--md.ds-control--inset-double {
+  --ds-control-height: calc(var(--dimension-size-400) - var(--dimension-space-100));
+  --ds-control-padding-inline: calc(
+    var(--dimension-space-075) - var(--dimension-space-050)
+  );
+}
+
+:host(.ds-control--sm.ds-control--inset-double),
+.ds-control--sm.ds-control--inset-double {
+  --ds-control-height: calc(var(--dimension-size-300) - var(--dimension-space-100));
+  --ds-control-padding-inline: calc(
+    var(--dimension-space-050) - var(--dimension-space-050)
   );
 }

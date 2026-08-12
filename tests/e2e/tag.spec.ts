@@ -133,4 +133,19 @@ test('uses opt-in inset geometry without changing inner density metrics',
       expect(metrics[1]).toEqual(metrics[0]);
       expect(metrics[1].icon).toBe(`${density.icon}px`);
     }
-  });
+});
+
+test('supports double inset geometry and safely falls back at xs', async ({ page }) => {
+  const cases = [
+    { size: 'md', height: 24, className: 'ds-control--inset-double' },
+    { size: 'sm', height: 16, className: 'ds-control--inset-double' },
+    { size: 'xs', height: 12, className: 'ds-control--inset' },
+  ];
+
+  for (const density of cases) {
+    const tag = page.locator(`#double-inset-${density.size}`);
+    await expect(tag).toHaveJSProperty('insetDepth', 'double');
+    await expect(tag).toHaveCSS('height', `${density.height}px`);
+    await expect(tag).toHaveClass(new RegExp(density.className));
+  }
+});

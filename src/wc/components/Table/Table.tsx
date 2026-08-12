@@ -691,7 +691,9 @@ export class Table {
             class="ds-table__collapse-all"
             variant="icon"
             icon="ChevronDownUp"
-            size="xs"
+            size="md"
+            isInset={true}
+            insetDepth="double"
             aria-label="Collapse all groups"
             hasBorder={false}
             activeFill={false}
@@ -730,7 +732,6 @@ export class Table {
         ) : (
           <span class="ds-table__header-content">
             {align === 'end' && sortControl}
-            {align === 'end' && collapseControl}
             {align === 'center' && (
               <span
                 class="ds-table__sort-slot ds-table__sort-slot--balance"
@@ -740,7 +741,7 @@ export class Table {
             )}
             {labelControl}
             {align !== 'end' && sortControl}
-            {align !== 'end' && collapseControl}
+            {collapseControl}
           </span>
         )}
         {this.renderStickyEdge(column.sticky)}
@@ -853,6 +854,7 @@ export class Table {
           variant={value.variant ?? 'label'}
           size="md"
           isInset={true}
+          insetDepth="double"
           label={value.label ?? ''}
           icon={value.icon ?? ''}
           aria-label={value.ariaLabel ?? null}
@@ -1136,6 +1138,7 @@ export class Table {
                   variant="icon"
                   size="md"
                   isInset={true}
+                  insetDepth="double"
                   icon={isCollapsed ? 'ChevronDown' : 'ChevronUp'}
                   expanded={!isCollapsed}
                   aria-label={

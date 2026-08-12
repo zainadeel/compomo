@@ -413,7 +413,7 @@
 }
 
 :where(.ds-table__header-content--collapse-all) {
-  justify-content: center;
+  justify-content: flex-end;
 }
 
 :where(.ds-table__header-labels) {
@@ -430,12 +430,19 @@
   flex: 0 0 auto;
 }
 
-:where(.ds-table__sort-slot),
-:where(.ds-table__collapse-slot) {
+:where(.ds-table__sort-slot) {
   justify-content: center;
   flex: 0 0 auto;
   inline-size: var(--dimension-size-200);
   block-size: var(--dimension-size-200);
+}
+
+:where(.ds-table__collapse-slot) {
+  justify-content: center;
+  flex: 0 0 auto;
+  inline-size: var(--dimension-size-300);
+  block-size: var(--dimension-size-300);
+  margin-inline-start: auto;
 }
 
 :where(.ds-table__sort-slot) {
@@ -605,11 +612,11 @@
 }
 
 :where(.ds-table__cell--action) {
-  padding: var(--dimension-space-075);
+  padding: var(--dimension-space-100);
 }
 
 :where(.ds-table__cell--action .ds-table__cell-content) {
-  min-block-size: var(--_table-cell-track-min-block-size);
+  min-block-size: var(--dimension-size-300);
 }
 
 :where(.ds-table__cell-primary),
@@ -855,7 +862,7 @@
   inline-size: var(--ds-table-visible-inline-size, 100%);
   max-inline-size: var(--ds-table-visible-inline-size, 100%);
   min-block-size: var(--_table-row-min-block-size);
-  padding: var(--dimension-space-075);
+  padding: var(--dimension-space-100);
   background: var(--_table-group-surface);
 }
 

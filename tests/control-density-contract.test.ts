@@ -69,20 +69,34 @@ test('inset density reduces only same-size outer geometry', () => {
 
   assert.doesNotMatch(css, /--ds-control-(?:icon|label-inset|gap|radius):/);
 
+  for (const density of cases.slice(0, 3)) {
+    assert.match(
+      css,
+      new RegExp(
+        `:host\\(\\.ds-control--${density.size}\\.ds-control--inset-double\\),[\\s\\S]*?` +
+        `--ds-control-height: calc\\(var\\(--dimension-size-${density.height}\\) - var\\(--dimension-space-100\\)\\);[\\s\\S]*?` +
+        `--ds-control-padding-inline: calc\\([\\s\\S]*?var\\(--dimension-space-${density.padding}\\) - var\\(--dimension-space-050\\)[\\s\\S]*?\\);`,
+      ),
+    );
+  }
+  assert.doesNotMatch(css, /ds-control--xs\.ds-control--inset-double/);
+
   const tagCss = read('src/wc/components/Tag/Tag.css');
   const tagSource = read('src/wc/components/Tag/Tag.tsx');
   const utilityStoryCss = read('src/wc/stories/Utility/utility-demo.css');
   assert.match(tagCss, /@import ['"]\.\.\/\.\.\/utils\/control-density-inset\.css['"];/);
   assert.match(utilityStoryCss, /@import ['"]\.\.\/\.\.\/utils\/control-density-inset\.css['"];/);
   assert.match(tagSource, /@Prop\(\) isInset: boolean = false/);
-  assert.match(tagSource, /['"]ds-control--inset['"]: this\.isInset/);
+  assert.match(tagSource, /['"]ds-control--inset['"]: this\.isInset && !doubleInset/);
+  assert.match(tagSource, /['"]ds-control--inset-double['"]: doubleInset/);
 
   const buttonBaseCss = read('src/wc/utils/button-base.css');
   assert.match(buttonBaseCss, /@import ['"]\.\/control-density-inset\.css['"];/);
   for (const component of ['ButtonFilled', 'ButtonUnfilled']) {
     const source = read(`src/wc/components/${component}/${component}.tsx`);
     assert.match(source, /@Prop\(\) isInset: boolean = false/);
-    assert.equal(source.match(/['"]ds-control--inset['"]: this\.isInset/g)?.length, 2);
+    assert.equal(source.match(/['"]ds-control--inset['"]: this\.isInset && !this\.doubleInset/g)?.length, 2);
+    assert.equal(source.match(/['"]ds-control--inset-double['"]: this\.doubleInset/g)?.length, 2);
   }
 
   const tabGroupCss = read('src/wc/components/TabGroup/TabGroup.css');

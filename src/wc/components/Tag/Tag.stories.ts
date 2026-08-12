@@ -30,6 +30,7 @@ const meta: Meta = {
     contrast: { control: 'select', options: CONTRASTS },
     size:     { control: 'select', options: [...SIZES] },
     isInset:  { control: 'boolean' },
+    insetDepth: { control: 'select', options: ['single', 'double'] },
     rounded:  { control: 'boolean' },
     maxWidth: { control: 'text' },
     interactive: { control: 'boolean' },
@@ -44,6 +45,7 @@ const meta: Meta = {
     contrast: 'faint',
     size:     'md',
     isInset:  false,
+    insetDepth: 'single',
     rounded:  false,
     maxWidth: '',
     interactive: false,
@@ -65,6 +67,7 @@ export const Playground: Story = {
       contrast=${args['contrast']}
       size=${args['size']}
       ?is-inset=${args['isInset']}
+      inset-depth=${args['insetDepth']}
       max-width=${args['maxWidth'] || undefined}
       ?rounded=${args['rounded']}
       ?interactive=${args['interactive']}
@@ -127,6 +130,14 @@ export const InsetDensity: Story = {
               contrast="faint"
               size=${size}
               is-inset
+            ></ds-tag>
+            <ds-tag
+              label="Double"
+              intent="brand"
+              contrast="faint"
+              size=${size}
+              is-inset
+              inset-depth="double"
             ></ds-tag>
           </div>
         </div>
