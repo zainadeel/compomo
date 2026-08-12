@@ -1,6 +1,6 @@
 // @storybook/manager-api was consolidated into the storybook package in v10
 import { addons } from 'storybook/manager-api';
-import { create } from 'storybook/theming';
+import { themes } from 'storybook/theming';
 import pkg from '../package.json';
 
 const SIDEBAR_INITIALISMS = new Map([
@@ -60,13 +60,13 @@ function setBrandTheme(name: string, version: string) {
   const brandTitle = `<img class="brand-favicon" src="./favicon.svg" alt="" />${packageLabel}`;
 
   addons.setConfig({
-    theme: create({
-      base: 'light',
+    theme: {
+      ...themes.normal,
       brandTitle,
       brandUrl: 'https://github.com/zainadeel/compomo',
       brandImage: null,
       brandTarget: '_self',
-    }),
+    },
     // Storybook 10 ships Controls in core; keep the panel visible for Playground stories.
     showPanel: true,
     panelPosition: 'bottom',
