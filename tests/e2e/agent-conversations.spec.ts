@@ -287,12 +287,21 @@ test('measures prose without narrowing tables or code', async ({ page }) => {
   await page.locator('#response-frame').evaluate((element: HTMLElement) => {
     element.style.width = '320px';
   });
-  const narrow = await response.evaluate(element => ({
-    paragraph: element.querySelector('p')!.getBoundingClientRect().width,
-    table: element.querySelector('.ds-prose__table-scroll')!.getBoundingClientRect().width,
-    scrollWidth: element.scrollWidth,
-    clientWidth: element.clientWidth,
-  }));
+  const narrow = await page.locator('#response-frame').evaluate(element => {
+    const responseElement = element.querySelector<HTMLElement>('#response')!;
+    return {
+      frameClientWidth: element.clientWidth,
+      responseClientWidth: responseElement.clientWidth,
+      paragraph: responseElement.querySelector('p')!.getBoundingClientRect().width,
+      table: responseElement
+        .querySelector('.ds-prose__table-scroll')!
+        .getBoundingClientRect().width,
+      scrollWidth: responseElement.scrollWidth,
+      clientWidth: responseElement.clientWidth,
+    };
+  });
+  expect(Math.abs(narrow.frameClientWidth - 320)).toBeLessThanOrEqual(1);
+  expect(Math.abs(narrow.responseClientWidth - narrow.frameClientWidth)).toBeLessThanOrEqual(1);
   expect(Math.abs(narrow.table - narrow.paragraph)).toBeLessThanOrEqual(1);
   expect(narrow.scrollWidth).toBeLessThanOrEqual(narrow.clientWidth);
 });
