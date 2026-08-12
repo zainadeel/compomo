@@ -151,6 +151,13 @@ export const Rounded: Story = {
     <div style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap; align-items: center">
       <ds-tag label="Default" intent="neutral" contrast="faint"></ds-tag>
       <ds-tag label="Rounded" intent="brand" contrast="faint" rounded></ds-tag>
+      ${SIZES.map(size => html`
+        <div style="display: inline-flex; gap: var(--dimension-space-050); align-items: center">
+          <ds-tag label="1" intent="brand" contrast="faint" size=${size} rounded></ds-tag>
+          <ds-tag label="1" intent="brand" contrast="faint" size=${size} rounded is-inset></ds-tag>
+          <ds-tag label="1" intent="brand" contrast="faint" size=${size} rounded is-inset inset-depth="double"></ds-tag>
+        </div>
+      `)}
     </div>
   `,
 };

@@ -149,3 +149,28 @@ test('supports double inset geometry and safely falls back at xs', async ({ page
     await expect(tag).toHaveClass(new RegExp(density.className));
   }
 });
+
+test('keeps one-character rounded Tags circular at every size and inset depth', async ({ page }) => {
+  const cases = [
+    { id: 'count-default-md', size: 32 },
+    { id: 'count-inset-md', size: 28 },
+    { id: 'count-double-md', size: 24 },
+    { id: 'count-default-sm', size: 24 },
+    { id: 'count-inset-sm', size: 20 },
+    { id: 'count-double-sm', size: 16 },
+    { id: 'count-default-xs', size: 16 },
+    { id: 'count-inset-xs', size: 12 },
+    { id: 'count-double-xs', size: 12 },
+  ];
+
+  for (const { id, size } of cases) {
+    const tag = page.locator(`#${id}`);
+    await expect(tag).toHaveCSS('min-width', `${size}px`);
+    const bounds = await tag.evaluate(element => {
+      const rect = element.getBoundingClientRect();
+      return { width: rect.width, height: rect.height };
+    });
+    expect(bounds.width).toBeCloseTo(size, 0);
+    expect(bounds.height).toBeCloseTo(size, 0);
+  }
+});
