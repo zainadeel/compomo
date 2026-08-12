@@ -64,9 +64,10 @@ export function resolveTableLayoutMetrics(input: TableLayoutMetricInput): TableL
 }
 
 /**
- * Owns table viewport observation and batches all geometry reads/writes into a
- * single animation frame. The component remains responsible only for refs and
- * reactive overflow state.
+ * Owns table viewport observation. It resolves newly connected geometry
+ * immediately so the first paint has the correct viewport-width chrome, then
+ * batches recurring scroll and resize reads/writes into one animation frame.
+ * The component remains responsible only for refs and reactive overflow state.
  */
 export class TableLayoutController {
   private connected = false;
@@ -98,7 +99,8 @@ export class TableLayoutController {
   refresh(): void {
     if (!this.connected) return;
     const { viewport, table } = this.options.elements();
-    if (viewport !== this.connectedViewport || table !== this.observedTable) {
+    const elementsChanged = viewport !== this.connectedViewport || table !== this.observedTable;
+    if (elementsChanged) {
       this.connectedViewport?.removeEventListener('scroll', this.schedule);
       this.resizeObserver?.disconnect();
       this.connectedViewport = viewport;
@@ -110,6 +112,10 @@ export class TableLayoutController {
         this.resizeObserver.observe(viewport);
         if (table) this.resizeObserver.observe(table);
       }
+    }
+    if (elementsChanged) {
+      this.sync();
+      return;
     }
     this.schedule();
   }

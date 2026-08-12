@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { resolveTableLayoutMetrics } from '../src/wc/components/Table/table-layout-controller';
+import {
+  resolveTableLayoutMetrics,
+  TableLayoutController,
+  type TableOverflowState,
+} from '../src/wc/components/Table/table-layout-controller';
 
 test('resolves viewport, sticky, and floating-control geometry in one snapshot', () => {
   assert.deepEqual(
@@ -42,4 +46,43 @@ test('does not report edge overflow or unmeasured overlay geometry', () => {
       collapseBlockOffset: null,
     },
   );
+});
+
+test('resolves first-paint geometry synchronously when layout elements connect', () => {
+  const properties = new Map<string, string>();
+  const viewport = {
+    clientWidth: 432,
+    clientHeight: 240,
+    scrollWidth: 1232,
+    scrollHeight: 240,
+    scrollLeft: 0,
+    style: {
+      getPropertyValue: (property: string) => properties.get(property) ?? '',
+      setProperty: (property: string, value: string) => properties.set(property, value),
+    },
+    addEventListener: () => undefined,
+    removeEventListener: () => undefined,
+  } as unknown as HTMLElement;
+  const table = {
+    getBoundingClientRect: () => ({ width: 1232 }),
+  } as unknown as HTMLTableElement;
+  let overflow: TableOverflowState | undefined;
+  const controller = new TableLayoutController({
+    elements: () => ({
+      viewport,
+      table,
+      stickyHeaderTable: null,
+      collapseAllOverlay: null,
+      frame: null,
+      interactiveHead: null,
+    }),
+    mode: () => ({ documentStickyHeader: false, floatingCollapseAll: false }),
+    overflowChanged: state => { overflow = state; },
+  });
+
+  controller.connect();
+
+  assert.equal(properties.get('--ds-table-visible-inline-size'), '432px');
+  assert.deepEqual(overflow, { start: false, end: true, scrollable: true });
+  controller.disconnect();
 });
