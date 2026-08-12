@@ -1,5 +1,19 @@
 # Changelog
 
+## [13.15.0](https://github.com/zainadeel/compomo/compare/v13.14.0...v13.15.0) (2026-08-12)
+
+
+### Added
+
+* adopt semantic code typography contract ([#445](https://github.com/zainadeel/compomo/issues/445)) ([0a8a256](https://github.com/zainadeel/compomo/commit/0a8a2565843e98a4a93e0b26f255e42c870f29ef)), closes [#403](https://github.com/zainadeel/compomo/issues/403)
+* **agent:** expand conversation UX for questions, tools, sources, and prose ([#448](https://github.com/zainadeel/compomo/issues/448)) ([9f9084b](https://github.com/zainadeel/compomo/commit/9f9084b6bd2aea2c689c8649aa5d10627a3461b7)), closes [#443](https://github.com/zainadeel/compomo/issues/443)
+
+
+### Fixed
+
+* align chart tooltip with menu geometry ([#447](https://github.com/zainadeel/compomo/issues/447)) ([6873fa3](https://github.com/zainadeel/compomo/commit/6873fa3f706f7d46a089f57b57e41857138085ec)), closes [#435](https://github.com/zainadeel/compomo/issues/435)
+* harden mobile interactions and shell hosting ([#446](https://github.com/zainadeel/compomo/issues/446)) ([b21e3c2](https://github.com/zainadeel/compomo/commit/b21e3c20d98e5bee0ccc4c3a25d8d095cd82c45f)), closes [#442](https://github.com/zainadeel/compomo/issues/442)
+
 ## [13.14.0](https://github.com/zainadeel/compomo/compare/v13.13.0...v13.14.0) (2026-08-12)
 
 
