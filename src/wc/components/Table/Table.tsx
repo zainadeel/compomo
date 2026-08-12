@@ -691,9 +691,8 @@ export class Table {
             class="ds-table__collapse-all"
             variant="icon"
             icon="ChevronDownUp"
-            size="md"
-            isInset={true}
-            insetDepth="double"
+            size="xs"
+            style={{ width: 'var(--dimension-size-300)' }}
             aria-label="Collapse all groups"
             hasBorder={false}
             activeFill={false}

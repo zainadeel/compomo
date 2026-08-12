@@ -125,11 +125,10 @@ test('keeps group order and member-row sorting independent', async ({ page }) =>
 
   const collapseAll = table.locator('.ds-table__collapse-all');
   await expect(collapseAll).toHaveJSProperty('variant', 'icon');
-  await expect(collapseAll).toHaveJSProperty('size', 'md');
-  await expect(collapseAll).toHaveJSProperty('isInset', true);
-  await expect(collapseAll).toHaveJSProperty('insetDepth', 'double');
+  await expect(collapseAll).toHaveJSProperty('size', 'xs');
+  await expect(collapseAll).toHaveJSProperty('isInset', false);
   await expect(collapseAll).toHaveCSS('width', '24px');
-  await expect(collapseAll).toHaveCSS('height', '24px');
+  await expect(collapseAll).toHaveCSS('height', '16px');
   await expect(collapseAll).toHaveJSProperty('icon', 'ChevronDownUp');
   await expect(collapseAll).toHaveJSProperty('hasBorder', false);
   await expect(collapseAll).toHaveJSProperty('isActive', false);

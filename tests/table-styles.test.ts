@@ -108,7 +108,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   );
   assert.match(
     css,
-    /\.ds-table__collapse-slot\)[^{]*\{[^}]*inline-size: var\(--dimension-size-300\)[^}]*margin-inline-start: auto/s,
+    /\.ds-table__collapse-slot\)[^{]*\{[^}]*inline-size: var\(--dimension-size-300\)[^}]*block-size: var\(--dimension-size-200\)[^}]*margin-inline-start: auto/s,
   );
   assert.match(
     css,

@@ -441,7 +441,7 @@
   justify-content: center;
   flex: 0 0 auto;
   inline-size: var(--dimension-size-300);
-  block-size: var(--dimension-size-300);
+  block-size: var(--dimension-size-200);
   margin-inline-start: auto;
 }
 
