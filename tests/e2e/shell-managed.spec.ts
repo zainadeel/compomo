@@ -70,6 +70,71 @@ test.describe('Managed application shell', () => {
     await expect(shell.locator('ds-mobile-bar-nav')).toBeVisible();
   });
 
+  test('supports a pinned roomy table-page header with flush content and optional divider', async ({
+    page,
+  }) => {
+    const shell = page.locator('#managed-shell');
+    const shellPage = shell.locator('ds-shell-page');
+    const barTitle = shellPage.locator('ds-bar-title');
+    const content = shellPage.locator('.shell-page__content');
+    const scroller = shell.locator('.shell-app__content');
+
+    await shell.evaluate(element => {
+      const managed = element as HTMLDsShellAppElement;
+      managed.pageChrome = {
+        ...managed.pageChrome,
+        scrollCompaction: false,
+        contentInsetBlockStart: 'default',
+        contentInsetBlockStartSize: 'var(--dimension-space-025)',
+        showHeaderDivider: false,
+        showCompactHeaderDivider: true,
+      };
+    });
+
+    await expect(shellPage).toHaveJSProperty('scrollCompaction', false);
+    await expect(shellPage).toHaveJSProperty('contentInsetBlockStart', 'default');
+    await expect(shellPage).toHaveJSProperty(
+      'contentInsetBlockStartSize',
+      'var(--dimension-space-025)'
+    );
+    await expect(barTitle).toHaveJSProperty('showDivider', false);
+    await expect(barTitle).toHaveJSProperty('showCompactDivider', true);
+    await expect(content).toHaveCSS('padding-top', '2px');
+    await expect(content).toHaveCSS('padding-right', '32px');
+    await expect(content).toHaveCSS('padding-bottom', '32px');
+    await expect(content).toHaveCSS('padding-left', '32px');
+    await expect(barTitle).toHaveClass(/bar-title-host--expanded/);
+    expect(
+      await barTitle.locator('.bar-title').evaluate(element => getComputedStyle(element, '::after').display)
+    ).toBe('none');
+
+    await expect.poll(() => shellPage.evaluate(element =>
+      Number.parseFloat(getComputedStyle(element).getPropertyValue('--ds-shell-page-sticky-header-block-size'))
+    )).toBeGreaterThan(48);
+    await scroller.evaluate((element: HTMLElement) => { element.scrollTop = 300; });
+    await expect(barTitle).toHaveClass(/bar-title-host--expanded/);
+    await expect(shellPage.locator('.shell-page__flow-spacer')).toHaveCSS('height', '0px');
+
+    await shell.getByRole('button', { name: 'Search' }).click();
+    await expect(barTitle).toHaveClass(/bar-title-host--compact/);
+    await expect(content).toHaveCSS('padding-top', '32px');
+    expect(
+      await barTitle.locator('.bar-title').evaluate(element => getComputedStyle(element, '::after').display)
+    ).not.toBe('none');
+    await expect.poll(() => shellPage.evaluate(element =>
+      Number.parseFloat(getComputedStyle(element).getPropertyValue('--ds-shell-page-sticky-header-block-size'))
+    )).toBe(48);
+
+    await shell.getByRole('button', { name: 'Search' }).click();
+    await page.setViewportSize({ width: 1024, height: 760 });
+    await expect(shell).toHaveAttribute('responsive-mode', 'tablet');
+    await expect(barTitle).toHaveClass(/bar-title-host--compact/);
+    await expect(content).toHaveCSS('padding-top', '16px');
+    await expect(content).toHaveCSS('padding-right', '16px');
+    await expect(content).toHaveCSS('padding-bottom', '16px');
+    await expect(content).toHaveCSS('padding-left', '16px');
+  });
+
   test('forwards the page canvas surface independently from responsive content inset', async ({
     page,
   }) => {

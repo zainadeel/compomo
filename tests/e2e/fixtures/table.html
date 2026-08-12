@@ -9,11 +9,24 @@
       body { margin: 24px; }
       main { display: grid; gap: 32px; }
       #overflow-owner { width: 360px; }
+      #viewport-fit-owner {
+        --fixture-table-fit-start: 80px;
+        height: 480px;
+        overflow: auto;
+        overscroll-behavior: none;
+      }
+      #viewport-fit-header { height: 120px; background: var(--color-background-secondary); }
+      #viewport-fit-content { padding: 32px; }
     </style>
   </head>
   <body>
     <main>
       <ds-table id="basic" caption="Workforce overview" caption-visibility="visible"></ds-table>
+      <ds-table id="composable" caption="Composable drivers" caption-visibility="visible">
+        <div slot="header" data-table-header>Filtered drivers</div>
+        <button slot="header-trailing" type="button">Filter drivers</button>
+        <button slot="footer-trailing" type="button">Export drivers</button>
+      </ds-table>
       <ds-table id="footer" caption="Drivers with result summary" caption-visibility="hidden"></ds-table>
       <ds-table id="grouped" caption="Grouped drivers"></ds-table>
       <ds-table id="severity-grouped" caption="Safety events by severity" caption-visibility="hidden"></ds-table>
@@ -34,6 +47,28 @@
           max-height="220px"
         ></ds-table>
       </div>
+      <ds-table
+        id="fixed-height"
+        caption="Fixed-height drivers"
+        caption-visibility="visible"
+        sticky-header
+        height="320px"
+      ></ds-table>
+      <div id="viewport-fit-owner">
+        <div id="viewport-fit-header">Expanded page header</div>
+        <div id="viewport-fit-content">
+          <ds-table
+            id="viewport-fit"
+            caption="Viewport-fitted drivers"
+            caption-visibility="visible"
+            selection-mode="multiple"
+            sticky-header
+            fit-viewport
+            viewport-inset-block-start="calc(var(--fixture-table-fit-start) + 0px)"
+            viewport-inset-block-end="32px"
+          ></ds-table>
+        </div>
+      </div>
       <ds-table id="standard" caption="Standard table geometry"></ds-table>
       <div style="width: 360px;">
         <ds-table
@@ -41,8 +76,11 @@
           caption="Document-flow drivers"
           selection-mode="multiple"
           sticky-header
+          caption-visibility="visible"
           style="--ds-table-sticky-header-offset: var(--dimension-size-600);"
-        ></ds-table>
+        >
+          <div slot="header" data-table-header>Driver controls</div>
+        </ds-table>
       </div>
       <ds-table id="loading" caption="Loading drivers" loading></ds-table>
       <ds-table id="empty" caption="Empty drivers" empty-heading="No matching drivers"></ds-table>

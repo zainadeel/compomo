@@ -19,10 +19,12 @@ import type {
   TableCellValue,
   TableColumn,
 } from './table-types';
+import type { TextColor } from '../Text/text-types';
 
 export interface ResolvedTableCellText {
   primary: string | number;
   secondary?: string | number;
+  secondaryColor?: TextColor;
   wrap?: boolean;
   fontFeature?: 'normal' | 'tabular-nums';
 }

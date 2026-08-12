@@ -3,6 +3,7 @@ import { html } from 'lit';
 import { useArgs } from 'storybook/preview-api';
 import '../../../../dist/components/ds-table.js';
 import '../../../../dist/components/ds-text.js';
+import '../../../../dist/components/ds-select.js';
 import '../../styles/table.css';
 import type {
   TableColumn,
@@ -240,7 +241,7 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
     interactive: true,
     cells: {
       preview: { kind: 'image', alt: 'Road-facing video preview unavailable' },
-      behaviorDetails: { primary: 'Close following', secondary: 'Critical' },
+      behaviorDetails: { primary: 'Close following', secondary: 'Critical', secondaryColor: 'negative' },
       behavior: 'Close following',
       severity: 'Critical',
       driverDetails: { primary: 'John Smith', secondary: 'DRV-1048' },
@@ -271,7 +272,7 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
     interactive: true,
     cells: {
       preview: { kind: 'image', alt: 'Dual-facing video preview unavailable' },
-      behaviorDetails: { primary: 'Lane cutoff', secondary: 'High' },
+      behaviorDetails: { primary: 'Lane cutoff', secondary: 'High', secondaryColor: 'warning' },
       behavior: 'Lane cutoff',
       severity: 'High',
       driverDetails: { primary: 'Maria Garcia', secondary: 'DRV-2256' },
@@ -302,7 +303,7 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
     interactive: true,
     cells: {
       preview: { kind: 'image', alt: 'Driver-facing video preview unavailable' },
-      behaviorDetails: { primary: 'Distraction', secondary: 'High' },
+      behaviorDetails: { primary: 'Distraction', secondary: 'High', secondaryColor: 'warning' },
       behavior: 'Distraction',
       severity: 'High',
       driverDetails: { primary: 'David Chen', secondary: 'DRV-0182' },
@@ -333,7 +334,7 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
     interactive: true,
     cells: {
       preview: { kind: 'image', alt: 'Road-facing video preview unavailable' },
-      behaviorDetails: { primary: 'Stop sign violation', secondary: 'Critical' },
+      behaviorDetails: { primary: 'Stop sign violation', secondary: 'Critical', secondaryColor: 'negative' },
       behavior: 'Stop sign violation',
       severity: 'Critical',
       driverDetails: { primary: 'Sarah Williams', secondary: 'DRV-3109' },
@@ -364,7 +365,11 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
     interactive: true,
     cells: {
       preview: { kind: 'image', alt: 'Dual-facing video preview unavailable' },
-      behaviorDetails: { primary: 'Unsafe lane change', secondary: 'Low' },
+      behaviorDetails: {
+        primary: 'Unsafe lane change',
+        secondary: 'Low',
+        secondaryColor: 'var(--color-foreground-bold-neutral)',
+      },
       behavior: 'Unsafe lane change',
       severity: 'Low',
       driverDetails: { primary: 'Noah Wilson', secondary: 'DRV-4420' },
@@ -619,11 +624,12 @@ export const SafetyEvents: Story = {
   args: {
     sort: { columnId: 'eventTime', direction: 'desc' },
     selectedRowIds: [],
+    grouping: null,
   },
   parameters: {
     docs: {
       description: {
-        story: 'A Motive Dashboard-inspired safety-events table. The checkbox and blank action lanes stay pinned; each owns a fixed divider and a row-clipped shadow directed into the scrolling columns while more content remains. Rows opt into whole-row activation while nested selection and Ellipses actions remain independent.',
+        story: 'A Motive Dashboard-inspired safety-events table. Its table-owned 48px header composes an application-owned grouping control through the header slot, while the controlled footer reports loaded results. The checkbox and blank action lanes stay pinned; each owns a fixed divider and a row-clipped shadow directed into the scrolling columns while more content remains.',
       },
     },
   },
@@ -631,21 +637,62 @@ export const SafetyEvents: Story = {
     const [, updateArgs] = useArgs();
     const sort = (args['sort'] as TableSortState | null) ?? null;
     const selectedRowIds = (args['selectedRowIds'] as string[]) ?? [];
+    const grouping = (args['grouping'] as TableGroupingState | null) ?? null;
+    const ordered = orderedRows(SAFETY_EVENT_ROWS, sort);
     return html`
       <ds-table
+        fit-viewport
+        viewport-inset-block-start="var(--dimension-space-200)"
+        viewport-inset-block-end="var(--dimension-space-200)"
         .columns=${SAFETY_EVENT_COLUMNS}
-        .rows=${orderedRows(SAFETY_EVENT_ROWS, sort)}
+        .rows=${grouping ? [] : ordered}
+        .groups=${grouping ? severityGroupedRows(ordered, sort) : []}
+        .grouping=${grouping}
         .sort=${sort}
         .selectedRowIds=${selectedRowIds}
+        .displayedCount=${SAFETY_EVENT_ROWS.length}
+        .totalCount=${500}
         selection-mode="multiple"
         sticky-header
         caption="Safety events"
-        caption-visibility="hidden"
+        caption-visibility="visible"
         @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
           updateArgs({ sort: event.detail.sort })}
         @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>
           updateArgs({ selectedRowIds: event.detail.selectedRowIds })}
-      ></ds-table>
+      >
+        <div
+          slot="header"
+          style="display:flex;align-items:center;gap:var(--dimension-space-100);"
+        >
+          <div style="display:flex;align-items:center;gap:var(--dimension-space-100);">
+            <ds-text as="span" variant="text-body-small" color="secondary">Group rows</ds-text>
+            <ds-select
+              size="md"
+              aria-label="Group safety events"
+              placeholder="No grouping"
+              .options=${[{ label: 'Severity', value: 'severity' }]}
+              .value=${grouping?.columnId ?? ''}
+              .allowClear=${grouping !== null}
+              @dsChange=${(event: CustomEvent<string | string[]>) => {
+                if (event.detail !== 'severity') return;
+                updateArgs({ grouping: { columnId: 'severity', direction: 'asc' } });
+              }}
+              @dsClear=${() => updateArgs({ grouping: null })}
+            ></ds-select>
+          </div>
+        </div>
+        ${selectedRowIds.length > 0
+          ? html`<ds-text
+            slot="header-trailing"
+            as="span"
+            variant="text-body-small"
+            color="secondary"
+          >
+            ${selectedRowIds.length} selected
+          </ds-text>`
+          : null}
+      </ds-table>
     `;
   },
 };

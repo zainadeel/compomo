@@ -15,6 +15,7 @@
     var(--dimension-space-075) - var(--dimension-space-025)
   );
   --_table-cell-track-label-inset: var(--dimension-space-025);
+  --_table-caption-bar-block-size: var(--dimension-size-600);
   --_table-image-block-size: calc(
     var(--dimension-size-800) - var(--dimension-space-200)
   );
@@ -69,6 +70,25 @@
   user-select: none;
 }
 
+:where(.ds-table--bounded) {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-block-size: 0;
+  block-size: 100%;
+}
+
+:where(.ds-table--viewport-fit) {
+  block-size: var(--_table-viewport-fit-current-block-size, 100%);
+  min-block-size: var(--_table-viewport-fit-current-block-size, 100%);
+}
+
+:where(.ds-table--bounded .ds-table__frame),
+:where(.ds-table--bounded .ds-table__viewport) {
+  min-block-size: 0;
+  block-size: 100%;
+  max-block-size: none;
+}
+
 :where(.ds-table__frame) {
   position: relative;
   timeline-scope: --ds-table-inline-scroll;
@@ -79,6 +99,15 @@
   border: 0;
   border-radius: var(--_table-radius);
   background: var(--_table-surface);
+}
+
+/*
+ * Contained tables own a hard visual viewport. Clip table-owned overlays and
+ * elastic-scroll paint to that frame without introducing another scrollport;
+ * the nested viewport remains the only element that scrolls.
+ */
+:where(.ds-table--contained-scroll .ds-table__frame) {
+  overflow: clip;
 }
 
 :where(.ds-table__viewport) {
@@ -102,6 +131,14 @@
 :where(.ds-table__viewport:focus-visible) {
   outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
   outline-offset: calc(-1 * var(--dimension-stroke-width-025));
+}
+
+:where(.ds-table--viewport-fit-pending .ds-table__viewport) {
+  overflow-y: hidden;
+}
+
+:where(.ds-table--viewport-fit-settled .ds-table__viewport) {
+  overscroll-behavior-y: none;
 }
 
 :where(.ds-table__table) {
@@ -132,22 +169,85 @@
   display: flex;
   align-items: center;
   inline-size: 100%;
-  min-block-size: var(--dimension-size-600);
-  block-size: var(--dimension-size-600);
-  padding-inline: var(--_table-cell-padding-inline);
+  min-block-size: var(--_table-caption-bar-block-size);
+  block-size: var(--_table-caption-bar-block-size);
+  padding: var(--dimension-space-100);
+  gap: var(--dimension-space-100);
   background: var(--_table-surface);
   text-align: start;
 }
 
 :where(.ds-table__caption-bar) {
-  border-block-end: var(--dimension-stroke-width-012) solid var(--_table-border);
+  border-start-start-radius: var(--_table-radius);
+  border-start-end-radius: var(--_table-radius);
+  border-block-end: var(--dimension-stroke-width-012) solid var(--_table-column-border);
   color: var(--color-foreground-primary);
+}
+
+:where(.ds-table--caption-visible .ds-table__frame),
+:where(.ds-table--caption-visible .ds-table__viewport) {
+  border-start-start-radius: 0;
+  border-start-end-radius: 0;
+}
+
+:where(.ds-table__bar-leading),
+:where(.ds-table__bar-trailing) {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-inline-size: 0;
+  gap: var(--dimension-space-100);
+}
+
+:where(.ds-table__bar-trailing) {
+  margin-inline-start: auto;
+}
+
+:where(.ds-table__bar-leading[hidden], .ds-table__bar-trailing[hidden]) {
+  display: none;
+}
+
+:where(.ds-table__bar-copy) {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  padding: var(--ds-control-padding-inline, var(--dimension-space-075));
+}
+
+:where(.ds-table__bar-copy > slot) {
+  display: contents;
+}
+
+:where(.ds-table__bar-copy > slot)::slotted(*) {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+:where(.ds-table__bar-text) {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  block-size: var(--ds-control-height, var(--dimension-size-400));
+  padding-inline: var(--ds-control-label-inset, var(--dimension-space-025));
 }
 
 /* Optional controlled result summary. */
 :where(.ds-table__footer) {
-  border-block-start: var(--dimension-stroke-width-012) solid var(--_table-border);
+  border-end-start-radius: var(--_table-radius);
+  border-end-end-radius: var(--_table-radius);
+  border-block-start: var(--dimension-stroke-width-012) solid var(--_table-column-border);
   color: var(--color-foreground-secondary);
+}
+
+:where(.ds-table--footer-visible .ds-table__frame),
+:where(.ds-table--footer-visible .ds-table__viewport) {
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
 }
 
 :where(.ds-table__selection-column) {
@@ -170,19 +270,51 @@
 :where(.ds-table--contained-sticky-header .ds-table__head) {
   position: sticky;
   inset-block-start: 0;
-  z-index: 2;
+  z-index: 6;
 }
 
 :where(.ds-table__document-sticky-header) {
   position: sticky;
   inset-block-start: var(--ds-table-sticky-header-offset, 0);
-  z-index: 3;
+  z-index: 6;
   block-size: var(--_table-header-min-block-size);
   margin-block-end: calc(-1 * var(--_table-header-min-block-size));
   max-inline-size: 100%;
   overflow: hidden;
   border-radius: var(--_table-radius) var(--_table-radius) 0 0;
   background: var(--_table-header-surface);
+}
+
+:where(.ds-table--document-sticky-header.ds-table--caption-visible > .ds-table__caption-bar) {
+  position: sticky;
+  inset-block-start: var(--ds-table-sticky-header-offset, 0);
+  z-index: 3;
+}
+
+:where(.ds-table--document-sticky-header.ds-table--caption-visible .ds-table__document-sticky-header) {
+  inset-block-start: calc(
+    var(--ds-table-sticky-header-offset, 0px) + var(--_table-caption-bar-block-size)
+  );
+}
+
+:where(.ds-table__sticky-group) {
+  position: absolute;
+  inset-block-start: var(--_table-sticky-group-top, 0);
+  inset-inline-start: 0;
+  z-index: 5;
+  box-sizing: border-box;
+  inline-size: 100%;
+  block-size: var(--_table-row-min-block-size);
+  overflow: hidden;
+  will-change: inset-block-start;
+}
+
+:where(.ds-table__sticky-group .ds-table__group-content) {
+  position: relative;
+}
+
+:where(.ds-table__group-cell--sticky-source-hidden) {
+  visibility: hidden;
 }
 
 :where(.ds-table__sticky-header-table) {
@@ -929,7 +1061,8 @@
   display: none;
 }
 
-:where(.ds-table__table--selectable .ds-table__group-content) {
+:where(.ds-table__table--selectable .ds-table__group-content),
+:where(.ds-table__sticky-group--selectable .ds-table__group-content) {
   /* Selection lane is the real 40px column — don't add start pad or flex gap. */
   gap: 0;
   padding-inline-start: 0;
@@ -965,7 +1098,8 @@
   padding-inline: var(--dimension-space-050);
 }
 
-:where(.ds-table__table--selectable .ds-table__group-copy) {
+:where(.ds-table__table--selectable .ds-table__group-copy),
+:where(.ds-table__sticky-group--selectable .ds-table__group-copy) {
   padding-inline-start: calc(
     var(--dimension-space-100) + var(--_table-cell-track-label-inset)
   );
@@ -985,9 +1119,22 @@
 
 :where(.ds-table__load-cell),
 :where(.ds-table__state-cell) {
-  padding: var(--dimension-space-200) var(--_table-cell-padding-inline);
+  padding: 0;
   background: var(--_table-surface);
   text-align: center;
+}
+
+:where(.ds-table__viewport-band) {
+  position: sticky;
+  inset-inline-start: 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--ds-table-visible-inline-size, 100%);
+  max-inline-size: var(--ds-table-visible-inline-size, 100%);
+  padding: var(--dimension-space-200) var(--_table-cell-padding-inline);
+  background: var(--_table-surface);
 }
 
 :where(.ds-table__load-content) {
@@ -1017,6 +1164,10 @@
 
 :where(.ds-table__state-cell) {
   block-size: calc(var(--dimension-size-800) * 2);
+}
+
+:where(.ds-table__state-band) {
+  min-block-size: calc(var(--dimension-size-800) * 2);
 }
 
 :where(.ds-table__skeleton-row) {

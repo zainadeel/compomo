@@ -1197,7 +1197,8 @@
             "Dividers in sections or actions create separate Menu groups without becoming selectable rows.",
             "The overflow trigger uses its bordered treatment whenever the primary action is visible beside it; overflow-only and auto-collapsed-primary presentations keep the trigger borderless.",
             "expanded renders the larger heading, optional description, inset divider, and a full-width caption breadcrumb row above the title. The breadcrumb begins after 32px top padding; the following title and right-side actions share one top alignment. Compact renders 48px chrome with the existing icon Back action; constrained uses compact chrome and moves an auto-collapse primary action into overflow.",
-            "primaryAction collapse defaults to auto. Use never for exceptional actions whose hierarchy must remain visible in constrained layouts."
+            "primaryAction collapse defaults to auto. Use never for exceptional actions whose hierarchy must remain visible in constrained layouts.",
+            "showDivider=false removes the bottom divider when the surrounding page composition supplies the boundary; showCompactDivider can independently restore or remove that boundary in compact and constrained variants."
           ],
           "responsiveBehavior": [
             "BarTitle does not observe viewport, shell, scroll, or container state. Its owner selects an explicit variant.",
@@ -1281,6 +1282,14 @@
             "required": false
           },
           "showBack": {
+            "type": "boolean",
+            "required": false
+          },
+          "showCompactDivider": {
+            "type": "boolean",
+            "required": false
+          },
+          "showDivider": {
             "type": "boolean",
             "required": false
           },
@@ -6974,7 +6983,7 @@
             "Replace navigation and pageChrome together from one completed route state.",
             "When pageChrome.showBack marks a detail depth, mobile chrome keeps the page heading as its identity and presents only local subsections; peer route tabs remain in desktop BarNav rather than replacing the detail heading.",
             "Managed ShellApp keeps BarNav and ShellPage presentations present and owns page header stickiness and the content scroller.",
-            "Route-owned pageChrome selects ShellPage contentInset and contentSurface independently; ShellApp forwards both without making page-specific layout or surface decisions.",
+            "Route-owned pageChrome independently selects ShellPage contentInset, roomy and compact top seams, scroll compaction, expanded and compact header-divider visibility, and contentSurface; ShellApp forwards them without making page-specific layout or surface decisions.",
             "The application filters unauthorized destinations, sections, and tools before passing them into shell components."
           ],
           "responsiveBehavior": [
@@ -7147,7 +7156,7 @@
     {
       "name": "shell-page",
       "title": "ShellPage",
-      "description": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle or BarWorkflow placement, application-supplied BarTitle capacity, stable scroll compaction, and independent page-content inset and canvas surface without creating a nested scroll container.",
+      "description": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle or BarWorkflow placement, application-supplied BarTitle capacity, optional scroll compaction, and independent page-content inset and canvas surface without creating a nested scroll container.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -7158,7 +7167,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle or BarWorkflow placement, application-supplied BarTitle capacity, stable scroll compaction, and independent page-content inset and canvas surface without creating a nested scroll container.",
+          "summary": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle or BarWorkflow placement, application-supplied BarTitle capacity, optional scroll compaction, and independent page-content inset and canvas surface without creating a nested scroll container.",
           "useWhen": [
             "Rendering a standard routed page inside ShellApp's default content region.",
             "BarTitle should expand at a roomy page top, compact after scroll, or use constrained action layout when the application shell reports reduced capacity.",
@@ -7203,6 +7212,9 @@
             "headerPresentation=auto selects the matching header variant from headerCapacity and scroll position.",
             "expanded, compact, and constrained are explicit overrides for exceptional layouts and deterministic examples.",
             "contentInset=default supplies standard page gutters; none permits maps, canvases, and other full-bleed content.",
+            "contentInsetBlockStart=none removes only the gutter adjacent to the page header while retaining the responsive inline and bottom gutters.",
+            "contentInsetBlockStartSize can provide an exact roomy top seam, while compactContentInsetBlockStartSize independently defines the compact and constrained seam. ShellPage exposes their resolved sticky-header offset through --ds-shell-page-content-block-start-offset for viewport-fitted descendants.",
+            "scrollCompaction=false keeps a roomy header expanded and pinned during page scrolling; capacity changes still select compact or constrained variants.",
             "contentSurface=primary keeps the standard page canvas; secondary paints both the inset gutter and the canvas beneath routed content. Desktop and tablet BarTitle chrome matches that canvas in expanded, compact, and constrained presentations; MobileHeader remains primary.",
             "contentInset and contentSurface are independent: either surface supports standard responsive gutters or a full-bleed page-owned layout.",
             "The header slot accepts one desktop BarTitle or BarWorkflow; mobile-header accepts the corresponding MobileHeader presentation. The default slot owns router output and all page product content."
@@ -7210,10 +7222,12 @@
           "responsiveBehavior": [
             "The owning application shell resolves viewport and persistent-chrome state into the explicit headerCapacity prop; ShellPage never guesses the cause of reduced width from its own rendered size.",
             "Roomy capacity expands at the top and compacts after scroll; compact capacity stays compact; constrained capacity uses the constrained action layout.",
+            "Pages with scrollCompaction=false keep roomy headers expanded while still responding to compact or constrained capacity from tools and breakpoints.",
             "A ShellPage-managed BarTitle remains concealed until headerCapacity is available and its rendered variant matches the resolved presentation, preventing a default-variant flash during route activation.",
             "responsiveMode=mobile hides and inerts the desktop header, exposes mobile-header, and disables desktop scroll-compaction geometry.",
             "Update headerCapacity synchronously with shell layout state so opening tools or crossing application breakpoints cannot briefly render the wrong presentation.",
             "The default content inset is balanced on every side: 32px in desktop mode and 16px in tablet and mobile modes.",
+            "contentInsetBlockStart can independently remove the top gutter for table and canvas pages that should meet the sticky header; exact roomy and compact block-start sizes support pages whose seam changes with header capacity.",
             "The selected content surface persists unchanged across desktop, tablet, and mobile modes.",
             "On a secondary desktop or tablet page, BarTitle matches the page canvas across capacity and scroll-driven variant changes; the separate mobile-header presentation remains primary.",
             "The flow-preservation spacer follows contentSurface so compacting a secondary page cannot expose a primary strip before its content.",
@@ -7252,8 +7266,20 @@
           ]
         },
         "props": {
+          "compactContentInsetBlockStartSize": {
+            "type": "string",
+            "required": false
+          },
           "contentInset": {
             "type": "ShellPageContentInset",
+            "required": false
+          },
+          "contentInsetBlockStart": {
+            "type": "ShellPageContentInset",
+            "required": false
+          },
+          "contentInsetBlockStartSize": {
+            "type": "string",
             "required": false
           },
           "contentSurface": {
@@ -7270,6 +7296,10 @@
           },
           "responsiveMode": {
             "type": "ShellResponsiveMode",
+            "required": false
+          },
+          "scrollCompaction": {
+            "type": "boolean",
             "required": false
           }
         },
@@ -8270,29 +8300,30 @@
             "component:ds-icon"
           ],
           "accessibility": [
-            "The rendered structure uses a native table, caption, column headers, row groups, and data cells; keep the caption non-empty. The native caption remains visually hidden as the table's accessible name. When caption visibility is enabled, a presentational title bar renders as component chrome outside the horizontal scrollport so it stays aligned with the table frame without duplicating the accessible name.",
+            "The rendered structure uses a native table, caption, column headers, row groups, and data cells; keep the caption non-empty. The native caption remains visually hidden as the table's accessible name. When caption visibility is enabled, a 48px header bar renders as component chrome outside the horizontal scrollport. It defaults to a presentational caption title that does not duplicate the accessible name; application-owned labeled controls supplied through the named header slot replace that fallback. header-leading and header-trailing place actions in the matching compact-bar zones without transferring ownership of the bar's outer or copy padding to the application. Their slot outlets remain mounted so dynamically shown selection and filtering summaries cannot briefly enter the table's outer flow or move its frame.",
             "Sorting controls remain buttons inside column headers. Member-row sort uses aria-sort, while independent group order is described by the grouped header control.",
             "Selection controls expose checkbox semantics and explicit row names; select-all affects selectable loaded rows only and preserves selected identities outside the loaded window. When grouping is active with multi-selection, each group section header also exposes a checkbox that selects or clears that group's selectable loaded rows.",
             "Interactive rows are focusable as native rows, activate with Enter or Space, and do not steal activation from their nested selection or action controls.",
             "Scrollable table regions become keyboard focusable and named only when overflow exists.",
             "Incremental loading, newly appended row counts, failures, and end-of-results transitions are announced through a polite status region without replacing visible state.",
-            "An optional result summary footer appears below the table frame when both displayedCount and totalCount are finite, formatting Displaying {displayed} of {total} in text-body-medium secondary."
+            "An optional result summary footer appears below the table frame when both displayedCount and totalCount are finite, formatting Displaying {displayed} of {total} in text-body-medium secondary. The footer slot can replace that copy, while footer-leading and footer-trailing compose actions into the same compact-bar anatomy. Authored footer content can also opt into the 48px footer without controlled counts."
           ],
           "states": [
-            "Columns, rows, groups, grouping, sorting, selected row IDs, collapsed group IDs, displayedCount, totalCount, and lazy-loading state are controlled inputs. Events communicate intent and never mutate those inputs.",
-            "Grouping supports one level. The application supplies ordered groups and ordered member rows; group order and member-row sort are independent controls. Group section headers show an emphasized text-body-medium label followed by a rounded sm Tag containing only the numeric count. The Tag uses the group's faint intent surface (neutral when intent is absent) and a small-elevation, button-hugging wrapper; a localized countLabel remains available to assistive technology. Groups may declare an optional intent (brand, neutral, negative, warning, caution, positive) that paints an LTR gradient from the faint intent surface at the label edge into faint neutral at the trailing edge, plus a bold intent title color. Neutral groups remain solid faint neutral. Section separators are painted inside that viewport-width surface so translucent border tokens composite with each intent background; the final collapsed section does not duplicate the terminal table edge. A trailing visually neutral icon-only ButtonUnfilled uses the 24px md double-inset action recipe and toggles controlled collapsedGroupIds, showing ChevronUp while expanded and ChevronDown while collapsed. While any group remains expanded, a ChevronDownUp action uses the xs sort-control recipe widened to a table-owned 24px lane and collapses every group. It appears at the inline-end edge of the trailing column declared with kind action when one exists; otherwise a button-hugging 24px by 16px medium-elevation surface floats at the visible scrollport's header edge so the action remains reachable while member columns scroll beneath it. The section header stays pinned to the visible horizontal scrollport and spans the smaller of the visible viewport or table width.",
+            "Columns, rows, groups, grouping, sorting, selected row IDs, collapsed group IDs, displayedCount, totalCount, and lazy-loading state are controlled inputs. Events communicate intent and never mutate those inputs. The optional header and footer slots are composable table-local bars: the component owns their 48px chrome, 8px outer inset, md copy-container padding, balanced text inset, action zones, and sticky placement while the application owns its controls, labels, filtering behavior, and action handling. Content-sized tables remain natural for sparse or fixed-count results. height bounds the complete header, frame, and footer composition. fitViewport reserves the compact-state composition height in the nearest vertical scrollport while growing the visible table into that reservation as surrounding page chrome collapses.",
+            "Grouping supports one level. The application supplies ordered groups and ordered member rows; group order and member-row sort are independent controls. Group section headers show an emphasized text-body-medium label followed by a rounded sm Tag containing only the numeric count. The Tag uses the group's faint intent surface (neutral when intent is absent) and a small-elevation, button-hugging wrapper; a localized countLabel remains available to assistive technology. Groups may declare an optional intent (brand, neutral, negative, warning, caution, positive) that paints an LTR gradient from the faint intent surface at the label edge into faint neutral at the trailing edge, plus a bold intent title color. Neutral groups remain solid faint neutral. Section separators are painted inside that viewport-width surface so translucent border tokens composite with each intent background; the final collapsed section does not duplicate the terminal table edge. A trailing visually neutral icon-only ButtonUnfilled uses the 24px md double-inset action recipe and toggles controlled collapsedGroupIds, showing ChevronUp while expanded and ChevronDown while collapsed. While any group remains expanded, a ChevronDownUp action uses the xs sort-control recipe widened to a table-owned 24px lane and collapses every group. It appears at the inline-end edge of the trailing column declared with kind action when one exists; otherwise a button-hugging 24px by 16px medium-elevation surface floats at the visible scrollport's header edge so the action remains reachable while member columns scroll beneath it. With stickyHeader enabled, each section header scrolls with its group, pins directly below the column header when reached, and yields when the next section arrives. It also stays pinned to the visible horizontal scrollport and spans the smaller of the visible viewport or table width.",
             "An active member sort toggles only between ascending and descending; activating a different sortable label moves sorting to that key. Applications may still clear the controlled sort state explicitly. The grouped column toggles ascending and descending group order without clearing member sort.",
             "Compound headers can expose multiple related labels with independent sort keys. Each label owns only its content-width interaction target while the active direction remains in the column's alignment-aware sort lane.",
-            "Initial loading uses row-shaped skeletons that preserve the standard single-line cell padding, row dividers, column dividers, selection lane, and sticky-lane boundaries. Empty and initial error states remain inside the table. Incremental loading retains existing rows and supports automatic sentinel, manual load-more, retry, and terminal states.",
+            "Initial loading uses row-shaped skeletons that preserve the standard single-line cell padding, row dividers, column dividers, selection lane, and sticky-lane boundaries. Empty, initial error, load-more, retry, loading-more, and terminal bands remain fixed to the visible table width while data columns scroll horizontally beneath them. Incremental loading retains existing rows and supports automatic sentinel, manual load-more, retry, and terminal states.",
             "Lazy loading replaces pagination. The application owns requests, cancellation, cursors, deduplication, appended records, and query identity; loadIdentity resets the component request guard.",
             "Rows opt into complete-row activation with interactive and emit dsRowActivate without owning navigation. Selection paints through the shared selected ::before layer; interactive hover and press paint through the shared ::after layer.",
             "Row selection owns the single sticky start lane. One explicitly sized application column can own the sticky end lane, or the start lane when selection is absent. Each sticky boundary owns one fixed divider and a row-clipped directional shadow that paints into the adjacent scrolling columns only while more inline content remains beyond that edge.",
-            "Cells accept scalar content, standard primary-and-secondary or dual-primary text primitives, declarative Tag, icon-only, 16:9 Image, or ButtonUnfilled Action content, or explicit Empty and Blank absence values. Single-track text, selection, tag-only, icon-only, Action, Empty, and Blank cells resolve a 40px base contract while multi-track cells grow downward. Tag cells use the double-inset Tag recipe; the md tag-only recipe is 24px inside 8px padding, while compound tag tracks preserve their peer text alignment. Action cells primarily use an icon-only Ellipses treatment, render a 24px small ButtonUnfilled inside 8px padding, default to unbordered, and emit row, column, and action identities through dsCellAction. Image cells render a 48px-high 16:9 bordered preview inside 8px outer padding, establishing a 64px row and a 102px column recipe, and fall back to an accessible placeholder when no source is supplied. Empty means the data applies but has no value and renders an em dash with localized assistive text; Blank means the data is not applicable and renders no content. Nullish values remain backward-compatible Empty values. Stable type and variant hooks keep every cell family independently styleable.",
+            "Cells accept scalar content, standard primary-and-secondary or dual-primary text primitives, declarative Tag, icon-only, 16:9 Image, or ButtonUnfilled Action content, or explicit Empty and Blank absence values. Standard secondary copy defaults to the secondary foreground and may declare a semantic Text color when the application data carries intent; dual-primary copy keeps both tracks primary unless explicitly colored. Single-track text, selection, tag-only, icon-only, Action, Empty, and Blank cells resolve a 40px base contract while multi-track cells grow downward. Tag cells use the double-inset Tag recipe; the md tag-only recipe is 24px inside 8px padding, while compound tag tracks preserve their peer text alignment. Action cells primarily use an icon-only Ellipses treatment, render a 24px small ButtonUnfilled inside 8px padding, default to unbordered, and emit row, column, and action identities through dsCellAction. Image cells render a 48px-high 16:9 bordered preview inside 8px outer padding, establishing a 64px row and a 102px column recipe, and fall back to an accessible placeholder when no source is supplied. Empty means the data applies but has no value and renders an em dash with localized assistive text; Blank means the data is not applicable and renders no content. Nullish values remain backward-compatible Empty values. Stable type and variant hooks keep every cell family independently styleable.",
             "The public @ds-mo/ui/table.css export is the authoritative zero-specificity visual recipe. Override its --ds-table-* properties or target its stable element classes for product-specific styling."
           ],
           "responsiveBehavior": [
             "The table keeps native semantics at narrow widths and scrolls horizontally instead of transforming into cards.",
-            "stickyHeader follows the active vertical scroll owner: a maxHeight table keeps its native header inside the bounded table scrollport, while a document-flow table retains a semantic native header and renders a sticky control header whose columns follow the body's native inline scroll timeline. Consumers set --ds-table-sticky-header-offset when page chrome occupies the scrollport edge.",
+            "stickyHeader follows the active vertical scroll owner: a maxHeight, height, or fitViewport table keeps its native header and group sections inside one bounded table scrollport, while a document-flow table retains a semantic native header and renders a sticky control header whose columns follow the body's native inline scroll timeline. Consumers set --ds-table-sticky-header-offset when page chrome occupies an unbounded document scrollport edge. When the 48px table header bar is visible, it sticks at that external offset and the column header stacks immediately below it.",
+            "fitViewport uses viewportInsetBlockStart and viewportInsetBlockEnd to describe compact surrounding chrome and page gutters relative to the nearest vertical scroll owner. Before the table reaches that compact position, its host reserves the eventual height while the visible composition grows and vertical input remains owned by the outer page. Once settled, the internal table viewport becomes the vertical scroll owner. In both bounded and document-flow modes, native row-group headers remain the semantic source while one table-owned visual sticky lane is clamped to the active row group's ending boundary, so each incoming section pushes the previous section away without duplicate overlap.",
             "Without maxHeight the table grows the document and automatic lazy loading observes the browser viewport. Horizontal scrolling chains vertical wheel and trackpad movement to the page instead of trapping it.",
             "Explicit column sizes establish the horizontal overflow width; unsized columns share remaining space.",
             "Prefer the named xs through xl column sizes, which resolve through TokoMo's table-column width tokens; numeric pixel sizes remain an escape hatch for exceptional application-owned widths.",
@@ -8373,6 +8404,10 @@
             "type": "string",
             "required": false
           },
+          "fitViewport": {
+            "type": "boolean",
+            "required": false
+          },
           "grouping": {
             "type": "TableGroupingState | null",
             "required": false
@@ -8383,6 +8418,10 @@
           },
           "hasMore": {
             "type": "boolean",
+            "required": false
+          },
+          "height": {
+            "type": "string | number | undefined",
             "required": false
           },
           "lazyLoading": {
@@ -8467,6 +8506,14 @@
           },
           "totalCount": {
             "type": "number | undefined",
+            "required": false
+          },
+          "viewportInsetBlockEnd": {
+            "type": "string | number",
+            "required": false
+          },
+          "viewportInsetBlockStart": {
+            "type": "string | number",
             "required": false
           }
         },

@@ -132,6 +132,8 @@ const meta: Meta = {
     showBack: { control: 'boolean' },
     backAriaLabel: { control: 'text' },
     backLabel: { control: 'text' },
+    showDivider: { control: 'boolean' },
+    showCompactDivider: { control: 'boolean' },
     variant: { control: 'select', options: ['expanded', 'compact', 'constrained'] },
   },
   args: {
@@ -140,6 +142,8 @@ const meta: Meta = {
     showBack: true,
     backAriaLabel: 'Back to Drivers',
     backLabel: 'Drivers',
+    showDivider: true,
+    showCompactDivider: undefined,
     variant: 'expanded',
   },
 };
@@ -303,6 +307,8 @@ export const Playground: Story = {
         .showBack=${args['showBack']}
         back-aria-label=${args['backAriaLabel']}
         back-label=${args['backLabel']}
+        .showDivider=${args['showDivider']}
+        .showCompactDivider=${args['showCompactDivider']}
         .breadcrumbs=${driverBreadcrumbs}
         variant=${args['variant']}
         .sections=${detailSections}

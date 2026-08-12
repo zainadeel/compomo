@@ -42,12 +42,20 @@ const meta: Meta = {
       options: ['roomy', 'compact', 'constrained'],
     },
     contentInset: { control: 'select', options: ['default', 'none'] },
+    contentInsetBlockStart: { control: 'select', options: ['default', 'none'] },
+    contentInsetBlockStartSize: { control: 'text' },
+    compactContentInsetBlockStartSize: { control: 'text' },
+    scrollCompaction: { control: 'boolean' },
     contentSurface: { control: 'select', options: ['primary', 'secondary'] },
   },
   args: {
     headerPresentation: 'auto',
     headerCapacity: 'roomy',
     contentInset: 'default',
+    contentInsetBlockStart: 'default',
+    contentInsetBlockStartSize: '',
+    compactContentInsetBlockStartSize: '',
+    scrollCompaction: true,
     contentSurface: 'primary',
   },
 };
@@ -123,6 +131,12 @@ export const Playground: Story = {
         header-presentation=${args['headerPresentation']}
         header-capacity=${args['headerCapacity']}
         content-inset=${args['contentInset']}
+        content-inset-block-start=${args['contentInsetBlockStart']}
+        .contentInsetBlockStartSize=${args['contentInsetBlockStartSize'] || undefined}
+        .compactContentInsetBlockStartSize=${
+          args['compactContentInsetBlockStartSize'] || undefined
+        }
+        .scrollCompaction=${args['scrollCompaction']}
         content-surface=${args['contentSurface']}
       >
         <ds-bar-title
@@ -264,6 +278,29 @@ export const SecondaryCanvas: Story = {
       >
         <ds-bar-title slot="header" heading="Safety overview"></ds-bar-title>
         ${pageContent}
+      </ds-shell-page>
+    </div>
+  `,
+};
+
+export const PinnedTablePage: Story = {
+  render: () => html`
+    ${demoStyles}
+    <div class="shell-page-demo">
+      <ds-shell-page
+        header-capacity="roomy"
+        content-inset-block-start="default"
+        content-inset-block-start-size="var(--dimension-space-025)"
+        .scrollCompaction=${false}
+      >
+        <ds-bar-title
+          slot="header"
+          heading="Safety events"
+          description="The roomy header stays pinned while table content scrolls."
+          .showDivider=${false}
+          .showCompactDivider=${true}
+        ></ds-bar-title>
+        <div class="shell-page-demo__full-bleed"></div>
       </ds-shell-page>
     </div>
   `,

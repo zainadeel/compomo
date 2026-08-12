@@ -9,19 +9,41 @@ const layoutController = fs.readFileSync(
   'src/wc/components/Table/table-layout-controller.ts',
   'utf8',
 );
+const viewportFitController = fs.readFileSync(
+  'src/wc/components/Table/table-viewport-fit-controller.ts',
+  'utf8',
+);
 const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 
 test('publishes one renderer-neutral table recipe consumed by the component', () => {
   assert.equal(packageJson.exports['./table.css'], './dist/styles/table.css');
   assert.match(componentCss, /@import '\.\.\/\.\.\/styles\/table\.css'/);
   assert.match(componentCss, /@import '\.\.\/\.\.\/styles\/control-elevation\.css'/);
+  assert.match(componentTsx, /focus-ring\.css/);
   assert.match(componentTsx, /interaction-fill\.css/);
   assert.match(componentTsx, /TableLayoutController/);
+  assert.match(componentTsx, /TableViewportFitController/);
   assert.match(componentTsx, /TableLoadController/);
   assert.match(componentTsx, /createTableRenderModel/);
   assert.match(componentTsx, /resolveTableCellPresentation/);
   assert.match(layoutController, /--ds-table-visible-inline-size/);
+  assert.match(viewportFitController, /--_table-viewport-fit-reserved-block-size/);
   assert.doesNotMatch(componentTsx, /scroll-edge-fade\.css|ds-table__overflow-shadow/);
+  assert.match(componentTsx, /ds-table__selection-control ds-focus-ring/);
+  assert.match(componentTsx, /ds-table__header-label--interactive ds-focus-ring/);
+  assert.match(componentTsx, /'ds-focus-ring': !!row\.interactive && !row\.disabled/);
+  assert.match(componentTsx, /'ds-focus-ring': this\.scrollable/);
+  assert.match(componentTsx, /<slot\s+name="header"/);
+  assert.match(componentTsx, /<slot\s+name="header-leading"/);
+  assert.match(componentTsx, /<slot\s+name="header-trailing"/);
+  assert.match(componentTsx, /<slot name="footer"/);
+  assert.match(componentTsx, /<slot name="footer-leading"/);
+  assert.match(componentTsx, /<slot name="footer-trailing"/);
+  assert.match(componentTsx, /'ds-table--caption-visible'/);
+  assert.match(css, /\.ds-table__bar-copy > slot/);
+  assert.match(css, /ds-table--document-sticky-header\.ds-table--caption-visible/);
+  assert.match(css, /\.ds-table__sticky-group/);
+  assert.match(css, /\.ds-table--contained-scroll \.ds-table__frame\)[\s\S]*?overflow: clip/);
 
   for (const selector of [
     'ds-table__header-cell',

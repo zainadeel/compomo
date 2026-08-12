@@ -1,5 +1,6 @@
 import type { TagContrast, TagIntent } from '../Tag/Tag';
 import type { IconColor } from '../Icon/Icon';
+import type { TextColor } from '../Text/text-types';
 
 export type TableSortDirection = 'asc' | 'desc';
 export type TableSelectionMode = 'none' | 'multiple';
@@ -43,6 +44,8 @@ export interface TableGroupingState {
 export interface TableCellText {
   primary: string | number;
   secondary?: string;
+  /** Optional semantic foreground for secondary copy; defaults to the standard secondary color. */
+  secondaryColor?: TextColor;
   /** Allow this cell to wrap even when its column truncates by default. */
   wrap?: boolean;
   fontFeature?: 'normal' | 'tabular-nums';

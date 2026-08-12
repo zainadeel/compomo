@@ -29,13 +29,64 @@ test('renders native caption, header, row, and cell semantics', async ({ page })
   await expect(native.locator('caption')).toHaveText('Workforce overview');
   await expect(native.locator('caption')).toHaveClass(/ds-visually-hidden/);
   await expect(table.locator('.ds-table__caption-bar')).toHaveText('Workforce overview');
-  await expect(table.locator('.ds-table__caption-bar')).toHaveAttribute('aria-hidden', 'true');
+  await expect(table.locator('.ds-table__caption-title')).toHaveAttribute('aria-hidden', 'true');
   await expect(table.locator('.ds-table__caption-bar')).toHaveCSS('height', '48px');
+  const captionDivider = await table.locator('.ds-table__caption-bar').evaluate(element => {
+    const probe = document.createElement('span');
+    probe.style.background = 'var(--color-border-tertiary)';
+    document.body.append(probe);
+    const tertiary = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return { actual: getComputedStyle(element).borderBlockEndColor, tertiary };
+  });
+  expect(captionDivider.actual).toBe(captionDivider.tertiary);
   await expect(native.getByRole('columnheader')).toHaveCount(4);
   await expect(native.getByRole('row')).toHaveCount(5);
   await expect(native.getByRole('cell', { name: 'Avery Chen avery@example.com' })).toBeVisible();
   await expect(native.getByRole('cell', { name: 'Not available' })).toBeVisible();
   await expect(table.locator('.ds-table__footer')).toHaveCount(0);
+});
+
+test('composes application controls inside table-owned header and footer chrome', async ({ page }) => {
+  const table = page.locator('#composable');
+  const header = table.locator('.ds-table__caption-bar');
+  const projected = table.locator('[data-table-header]');
+
+  await expect(header).toHaveCSS('height', '48px');
+  await expect(projected).toBeVisible();
+  await expect(projected).toHaveAttribute('data-table-header', '');
+  expect(await header.evaluate((element, child) => element.contains(child), await projected.elementHandle()))
+    .toBe(true);
+  await expect(table.locator('.ds-table__caption-title')).toBeHidden();
+  await header.getByRole('button', { name: 'Filter drivers' }).focus();
+  await expect(header.getByRole('button', { name: 'Filter drivers' })).toBeFocused();
+  await expect(table.locator('.ds-table__footer')).toHaveCSS('height', '48px');
+  await expect(table.locator('.ds-table__footer')).toContainText('Displaying 4 of 12');
+  await expect(table.locator('.ds-table__footer').getByRole('button', { name: 'Export drivers' }))
+    .toBeVisible();
+});
+
+test('keeps the table geometry stable when trailing header content mounts dynamically', async ({ page }) => {
+  const table = page.locator('#basic');
+
+  const positions = await table.evaluate(async element => {
+    const surface = element.querySelector<HTMLElement>('.ds-table')!;
+    const positions = [surface.getBoundingClientRect().top];
+    const trailing = document.createElement('span');
+    trailing.slot = 'header-trailing';
+    trailing.textContent = '1 selected';
+    element.append(trailing);
+    positions.push(surface.getBoundingClientRect().top);
+    for (let frame = 0; frame < 4; frame += 1) {
+      await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+      positions.push(surface.getBoundingClientRect().top);
+    }
+    return positions;
+  });
+
+  expect(new Set(positions).size).toBe(1);
+  await expect(table.locator('.ds-table__bar-trailing')).toBeVisible();
+  await expect(table.locator('.ds-table__bar-trailing')).toHaveText('1 selected');
 });
 
 test('keeps the visible caption bar outside horizontal table scrolling', async ({ page }) => {
@@ -69,15 +120,43 @@ test('keeps the visible caption bar outside horizontal table scrolling', async (
 });
 
 test('renders an optional result summary footer from controlled counts', async ({ page }) => {
+  await page.addStyleTag({
+    content: '.sc-ds-text-h { display: block; padding: 0; border: 0; }',
+  });
   const table = page.locator('#footer');
   const footer = table.locator('.ds-table__footer');
   await expect(footer).toBeVisible();
   await expect(footer).toHaveText('Displaying 50 of 1,500');
-  await expect(footer).toHaveJSProperty('variant', 'text-body-medium');
-  await expect(footer).toHaveJSProperty('color', 'secondary');
+  await expect(footer.locator('.ds-table__footer-summary')).toHaveJSProperty('variant', 'text-body-medium');
+  await expect(footer.locator('.ds-table__footer-summary')).toHaveJSProperty('color', 'secondary');
   await expect
     .poll(() => footer.evaluate(element => getComputedStyle(element).blockSize))
     .toBe('48px');
+  const footerChrome = await footer.evaluate(element => {
+    const style = getComputedStyle(element);
+    const probe = document.createElement('span');
+    probe.style.background = 'var(--color-border-tertiary)';
+    document.body.append(probe);
+    const tertiary = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return {
+      display: style.display,
+      alignItems: style.alignItems,
+      paddingInline: style.paddingInline,
+      borderBlockStartStyle: style.borderBlockStartStyle,
+      borderBlockStartWidth: Number.parseFloat(style.borderBlockStartWidth),
+      borderBlockStartColor: style.borderBlockStartColor,
+      tertiary,
+    };
+  });
+  expect(footerChrome).toMatchObject({
+    display: 'flex',
+    alignItems: 'center',
+    paddingInline: '8px',
+    borderBlockStartStyle: 'solid',
+  });
+  expect(footerChrome.borderBlockStartWidth).toBeGreaterThan(0);
+  expect(footerChrome.borderBlockStartColor).toBe(footerChrome.tertiary);
   await expect(table.locator('caption')).toHaveClass(/ds-visually-hidden/);
 
   await table.evaluate((element: HTMLDsTableElement) => {
@@ -464,6 +543,7 @@ test('sorts compound columns by independent label-width controls', async ({ page
   const secondaryTrack = firstRow.locator('.ds-table__cell-secondary');
   await expect(primaryTrack).toHaveJSProperty('variant', 'text-body-medium');
   await expect(secondaryTrack).toHaveJSProperty('variant', 'text-body-small');
+  await expect(secondaryTrack).toHaveJSProperty('color', 'negative');
 
   const trackGeometry = await firstRow.evaluate(row => {
     const bounds = (selector: string) => {
@@ -540,6 +620,10 @@ test('sorts compound columns by independent label-width controls', async ({ page
 });
 
 test('renders independently styled standard cell types', async ({ page }) => {
+  // Reproduce an application where nested ds-text styles hydrate after ds-table.
+  await page.addStyleTag({
+    content: '.sc-ds-text-h { display: block; padding: 0; border: 0; }',
+  });
   const table = page.locator('#cell-types');
   const selectionCell = table.locator('[data-row-id="tag-variants"] .ds-table__selection-cell');
   const singleText = table.locator('[data-column-id="singleText"][data-cell-variant="single"]');
@@ -558,6 +642,10 @@ test('renders independently styled standard cell types', async ({ page }) => {
   const borderedActionHeader = table.locator(
     '.ds-table__header-cell[data-column-id="borderedAction"]',
   );
+
+  const headerLabel = table.locator('.ds-table__header-label-box').first();
+  await expect(headerLabel).toHaveCSS('padding-left', '2px');
+  await expect(headerLabel).toHaveCSS('padding-right', '2px');
 
   for (const cell of [tagOnly, tagWithText, textWithTag]) {
     await expect(cell).toHaveAttribute('data-cell-type', 'tag');
@@ -911,6 +999,71 @@ test('activates interactive rows without stealing nested control intent', async 
   await expect.poll(() => page.evaluate(() => window.__tableRowActivationEvents)).toEqual(['avery']);
 });
 
+test('uses the shared focus-ring utility for every table-owned keyboard target', async ({ page }) => {
+  const targets = [
+    page.locator('#overflow .ds-table__viewport'),
+    page.locator('#basic .ds-table__header-label--interactive').first(),
+    page.locator('#selectable .ds-table__selection-control').first(),
+    page.locator('#interactive .ds-table__row--interactive').first(),
+  ];
+
+  for (const target of targets) {
+    await expect(target).toHaveClass(/ds-focus-ring/);
+    await target.focus();
+    const focus = await target.evaluate(element => {
+      const focusToken = getComputedStyle(element).getPropertyValue('--ds-focus-ring-color');
+      const probe = document.createElement('span');
+      probe.style.color = focusToken;
+      document.body.append(probe);
+      const focusColor = getComputedStyle(probe).color;
+      probe.remove();
+      const style = getComputedStyle(element);
+      return {
+        outlineColor: style.outlineColor,
+        outlineStyle: style.outlineStyle,
+        focusColor,
+      };
+    });
+    expect(focus).toEqual({
+      outlineColor: focus.focusColor,
+      outlineStyle: 'solid',
+      focusColor: focus.focusColor,
+    });
+  }
+
+  for (const control of [
+    page.locator('#interactive [data-column-id="actions"] ds-button-unfilled button').first(),
+    page.locator('#severity-grouped .ds-table__group-toggle button').first(),
+    page.locator('#severity-grouped .ds-table__collapse-all button').first(),
+    page.locator('#lazy .ds-table__load-cell ds-button-unfilled button').first(),
+  ]) {
+    await expect(control).toHaveClass(/ds-focus-ring-inset/);
+    await control.focus();
+    const focus = await control.evaluate(element => {
+      const focusToken = getComputedStyle(element).getPropertyValue('--ds-focus-ring-color');
+      const probe = document.createElement('span');
+      probe.style.color = focusToken;
+      document.body.append(probe);
+      const focusColor = getComputedStyle(probe).color;
+      probe.remove();
+      const style = getComputedStyle(element);
+      const insetStyle = getComputedStyle(element, '::after');
+      return {
+        outlineStyle: style.outlineStyle,
+        insetOutlineColor: insetStyle.outlineColor,
+        insetOutlineStyle: insetStyle.outlineStyle,
+        focusColor,
+      };
+    });
+    expect(focus).toEqual({
+      outlineStyle: 'none',
+      insetOutlineColor: focus.focusColor,
+      insetOutlineStyle: 'solid',
+      focusColor: focus.focusColor,
+    });
+  }
+});
+
 test('drives manual lazy loading and terminal state without pagination', async ({ page }) => {
   const table = page.locator('#lazy');
   await table.getByRole('button', { name: 'Load more' }).click();
@@ -927,6 +1080,34 @@ test('drives manual lazy loading and terminal state without pagination', async (
       },
     ]);
   await expect(table.getByText(/page/i)).toHaveCount(0);
+});
+
+test('keeps table-level outcome and incremental-loading bands fixed to the visible width', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 480, height: 900 });
+
+  for (const selector of ['#lazy', '#empty', '#error']) {
+    const table = page.locator(selector);
+    const viewport = table.locator('.ds-table__viewport');
+    const band = table.locator('.ds-table__viewport-band');
+    await expect(band).toBeVisible();
+    await expect.poll(() => viewport.evaluate(element => element.scrollWidth - element.clientWidth))
+      .toBeGreaterThan(0);
+
+    const before = await Promise.all([viewport.boundingBox(), band.boundingBox()]);
+    expect(before[0]).not.toBeNull();
+    expect(before[1]).not.toBeNull();
+    expect(before[1]!.x).toBeCloseTo(before[0]!.x, 0);
+    expect(before[1]!.width).toBeCloseTo(before[0]!.width, 0);
+
+    await viewport.evaluate((element: HTMLElement) => { element.scrollLeft = 120; });
+    await expect.poll(() => viewport.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
+    const after = await band.boundingBox();
+    expect(after).not.toBeNull();
+    expect(after!.x).toBeCloseTo(before[0]!.x, 0);
+    expect(after!.width).toBeCloseTo(before[0]!.width, 0);
+  }
 });
 
 test('guards duplicate requests and distinguishes retry intent', async ({ page }) => {
@@ -1073,11 +1254,185 @@ test('keeps selection and action columns fixed when the table grows',
     await expect(grouped.locator('.ds-table__collapse-cell')).toHaveCount(0);
   });
 
+test('bounds the complete header, frame, and footer composition with height', async ({ page }) => {
+  const table = page.locator('#fixed-height');
+  await expect(table).toHaveCSS('height', '320px');
+  await expect(table.locator('.ds-table')).toHaveCSS('height', '320px');
+  await expect(table.locator('.ds-table__caption-bar')).toHaveCSS('height', '48px');
+  await expect(table.locator('.ds-table__frame')).toHaveCSS('height', '224px');
+  await expect(table.locator('.ds-table__footer')).toHaveCSS('height', '48px');
+  await expect(table.locator('.ds-table__head')).toHaveCSS('position', 'sticky');
+  await expect(table.locator('.ds-table__frame')).toHaveCSS('border-radius', '0px');
+  await expect(table.locator('.ds-table__viewport')).toHaveCSS('border-radius', '0px');
+  await expect(table.locator('.ds-table__frame')).toHaveCSS('overflow', 'clip');
+
+  // Radius remains opt-in. When a consumer sets it, the outer bars own the
+  // corners and the frame is flat where those bars meet—no rounded notch.
+  await table.evaluate(element => element.style.setProperty('--ds-table-radius', '10px'));
+  await expect(table.locator('.ds-table__caption-bar')).toHaveCSS(
+    'border-start-start-radius',
+    '10px',
+  );
+  await expect(table.locator('.ds-table__frame')).toHaveCSS(
+    'border-start-start-radius',
+    '0px',
+  );
+  await expect(table.locator('.ds-table__frame')).toHaveCSS(
+    'border-end-start-radius',
+    '0px',
+  );
+  await expect(table.locator('.ds-table__footer')).toHaveCSS(
+    'border-end-start-radius',
+    '10px',
+  );
+});
+
+test('fits to a collapsing page scrollport before handing vertical scroll to native groups', async ({ page }) => {
+  const owner = page.locator('#viewport-fit-owner');
+  const table = page.locator('#viewport-fit');
+  const surface = table.locator('.ds-table');
+  const viewport = table.locator('.ds-table__viewport');
+  const footer = table.locator('.ds-table__footer');
+  await owner.scrollIntoViewIfNeeded();
+  await owner.evaluate(element => { element.scrollTop = 0; });
+
+  await expect(table).toHaveCSS('height', '368px');
+  await expect(surface).toHaveCSS('height', '296px');
+  await expect(surface).toHaveClass(/ds-table--viewport-fit-pending/);
+  await expect(viewport).toHaveCSS('overflow-y', 'hidden');
+  await expect.poll(() => table.evaluate(element => {
+    const owner = element.closest('#viewport-fit-owner')!.getBoundingClientRect();
+    const footer = element.querySelector<HTMLElement>('.ds-table__footer')!
+      .getBoundingClientRect();
+    return footer.bottom - (owner.bottom - 32);
+  })).toBeCloseTo(0, 1);
+
+  await owner.evaluate(element => { element.scrollTop = element.scrollHeight; });
+  await expect.poll(() => owner.evaluate(element => element.scrollTop)).toBeCloseTo(72, 0);
+  await expect(surface).toHaveCSS('height', '368px');
+  await expect(surface).toHaveClass(/ds-table--viewport-fit-settled/);
+  await expect(surface).toHaveClass(/ds-table--contained-scroll/);
+  await expect(table.locator('.ds-table__frame')).toHaveCSS('overflow', 'clip');
+  await expect(viewport).toHaveCSS('overflow-y', 'auto');
+  await expect(viewport).toHaveCSS('overscroll-behavior-y', 'none');
+  await expect.poll(() => table.evaluate(element => {
+    const owner = element.closest('#viewport-fit-owner')!.getBoundingClientRect();
+    const host = element.getBoundingClientRect();
+    const footer = element.querySelector<HTMLElement>('.ds-table__footer')!
+      .getBoundingClientRect();
+    return {
+      top: host.top - (owner.top + 80),
+      bottom: footer.bottom - (owner.bottom - 32),
+    };
+  })).toEqual({ top: 0, bottom: 0 });
+
+  await viewport.evaluate(element => { element.scrollTop = 96; });
+  const headerPaintOrder = await table.evaluate(element => {
+    const header = element.querySelector<HTMLElement>('.ds-table__head')!;
+    const selection = header.querySelector<HTMLElement>('.ds-table__selection-cell')!
+      .getBoundingClientRect();
+    const action = header.querySelector<HTMLElement>('[data-column-id="actions"]')!
+      .getBoundingClientRect();
+    const hitLane = (rect: DOMRect) => document
+      .elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)
+      ?.closest('.ds-table__head') === header;
+    return {
+      headerZIndex: getComputedStyle(header).zIndex,
+      stickyGroupZIndex: getComputedStyle(
+        element.querySelector<HTMLElement>('.ds-table__sticky-group')!,
+      ).zIndex,
+      bodyStickyZIndex: getComputedStyle(
+        element.querySelector<HTMLElement>('.ds-table__body .ds-table__selection-cell')!,
+      ).zIndex,
+      selectionHeaderWins: hitLane(selection),
+      actionHeaderWins: hitLane(action),
+    };
+  });
+  expect(headerPaintOrder).toEqual({
+    headerZIndex: '6',
+    stickyGroupZIndex: '5',
+    bodyStickyZIndex: '2',
+    selectionHeaderWins: true,
+    actionHeaderWins: true,
+  });
+
+  await viewport.evaluate(element => { element.scrollTop = 0; });
+  const upwardEdge = await viewport.evaluate(element => {
+    const owner = element.closest('#viewport-fit-owner') as HTMLElement;
+    const event = new WheelEvent('wheel', { deltaY: -40, cancelable: true });
+    element.dispatchEvent(event);
+    return { prevented: event.defaultPrevented, ownerScrollTop: owner.scrollTop };
+  });
+  expect(upwardEdge).toEqual({ prevented: true, ownerScrollTop: 32 });
+  await owner.evaluate(element => { element.scrollTop = element.scrollHeight; });
+  await expect(surface).toHaveClass(/ds-table--viewport-fit-settled/);
+
+  const downwardEdge = await viewport.evaluate(element => {
+    const owner = element.closest('#viewport-fit-owner') as HTMLElement;
+    element.scrollTop = element.scrollHeight;
+    const before = owner.scrollTop;
+    const event = new WheelEvent('wheel', { deltaY: 80, cancelable: true });
+    element.dispatchEvent(event);
+    return {
+      prevented: event.defaultPrevented,
+      ownerScrollTop: owner.scrollTop,
+      ownerScrollTopBefore: before,
+      viewportScrollTop: element.scrollTop,
+      viewportMax: element.scrollHeight - element.clientHeight,
+    };
+  });
+  expect(downwardEdge.prevented).toBe(true);
+  expect(downwardEdge.ownerScrollTop).toBe(downwardEdge.ownerScrollTopBefore);
+  expect(downwardEdge.viewportScrollTop).toBe(downwardEdge.viewportMax);
+
+  const firstGroup = table.locator('tbody[data-group-id="fit-first"] .ds-table__group-cell');
+  const secondGroup = table.locator('tbody[data-group-id="fit-second"] .ds-table__group-cell');
+  await viewport.evaluate((element, incoming) => {
+    const headerBottom = element.querySelector<HTMLElement>('.ds-table__head')!
+      .getBoundingClientRect().bottom;
+    const incomingTop = incoming.getBoundingClientRect().top;
+    element.scrollTop += incomingTop - headerBottom - 20;
+  }, await secondGroup.elementHandle());
+  await expect.poll(() => table.evaluate(element => {
+    const outgoing = element.querySelector<HTMLElement>('.ds-table__sticky-group')!
+      .getBoundingClientRect();
+    const incoming = element.querySelector<HTMLElement>(
+      'tbody[data-group-id="fit-second"] .ds-table__group-cell',
+    )!.getBoundingClientRect();
+    return outgoing.bottom - incoming.top;
+  })).toBeCloseTo(0, 1);
+  await expect(firstGroup).toHaveCSS('visibility', 'hidden');
+  await expect(table.locator('.ds-table__sticky-group')).toHaveCount(1);
+  await expect(footer).toBeVisible();
+
+  await table.evaluate(element => {
+    const fitted = element as HTMLDsTableElement;
+    fitted.groups = [{
+      id: 'fit-short',
+      label: 'Short fitted section',
+      rows: [fitted.groups[0].rows[0]],
+    }];
+    fitted.displayedCount = 1;
+    fitted.totalCount = 1;
+  });
+  await expect(table.locator('tbody[data-group-id="fit-short"] .ds-table__row')).toHaveCount(1);
+  await expect(surface).toHaveCSS('height', '368px');
+  await expect(surface).toHaveCSS('min-height', '368px');
+  await expect(table.locator('.ds-table__frame')).toHaveCSS('height', '272px');
+  await expect.poll(() => table.evaluate(element => {
+    const owner = element.closest('#viewport-fit-owner')!.getBoundingClientRect();
+    const footerRect = element.querySelector<HTMLElement>('.ds-table__footer')!
+      .getBoundingClientRect();
+    return footerRect.bottom - (owner.bottom - 32);
+  })).toBeCloseTo(0, 1);
+});
+
 test('keeps a document-flow header and edge columns sticky while vertical input scrolls the page', async ({ page }) => {
   const table = page.locator('#document-sticky');
   const frame = table.locator('.ds-table__frame');
   const viewport = table.locator('.ds-table__viewport');
   const stickyHeader = table.locator('.ds-table__document-sticky-header');
+  const captionBar = table.locator('.ds-table__caption-bar');
   await table.scrollIntoViewIfNeeded();
   await page.evaluate(element => {
     const top = element.getBoundingClientRect().top + window.scrollY;
@@ -1085,7 +1440,40 @@ test('keeps a document-flow header and edge columns sticky while vertical input 
   }, await frame.elementHandle());
 
   await expect(stickyHeader).toHaveCSS('position', 'sticky');
-  await expect.poll(() => stickyHeader.evaluate(element => element.getBoundingClientRect().top)).toBeCloseTo(48, 0);
+  await expect(captionBar).toHaveCSS('position', 'sticky');
+  await expect.poll(() => captionBar.evaluate(element => element.getBoundingClientRect().top)).toBeCloseTo(48, 0);
+  await expect.poll(() => stickyHeader.evaluate(element => element.getBoundingClientRect().top)).toBeCloseTo(96, 0);
+  const stickyGroup = table.locator('.ds-table__sticky-group');
+  const secondGroup = table.locator('tbody[data-group-id="second-section"] .ds-table__group-cell');
+  await page.evaluate(element => {
+    const top = element.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo(0, top + 280);
+  }, await frame.elementHandle());
+  await expect(stickyGroup).toHaveAttribute('data-group-id', 'first-section');
+  await expect.poll(() => stickyGroup.evaluate(element => element.getBoundingClientRect().top)).toBeCloseTo(128, 0);
+  await expect.poll(() => secondGroup.evaluate(element => element.getBoundingClientRect().top)).toBeGreaterThan(128);
+  await page.evaluate(element => {
+    const top = element.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo(0, top - 148);
+  }, await secondGroup.elementHandle());
+  await expect(stickyGroup).toHaveAttribute('data-group-id', 'first-section');
+  await expect.poll(() => table.evaluate(element => {
+    const outgoing = element.querySelector<HTMLElement>('.ds-table__sticky-group')!
+      .getBoundingClientRect();
+    const incoming = element.querySelector<HTMLElement>(
+      'tbody[data-group-id="second-section"] .ds-table__group-cell',
+    )!.getBoundingClientRect();
+    return {
+      overlap: outgoing.bottom - incoming.top,
+      pushedAboveStickyLane: outgoing.top < 128,
+    };
+  })).toEqual({ overlap: 0, pushedAboveStickyLane: true });
+  await page.evaluate(element => {
+    const top = element.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo(0, top - 108);
+  }, await secondGroup.elementHandle());
+  await expect(stickyGroup).toHaveAttribute('data-group-id', 'second-section');
+  await expect.poll(() => stickyGroup.evaluate(element => element.getBoundingClientRect().top)).toBeCloseTo(128, 0);
   await expect(table.locator('.ds-table__head--semantic-copy')).toHaveCSS('opacity', '0');
   await expect(stickyHeader.locator('th[aria-sort]')).toHaveCount(0);
   await expect(viewport.locator('th[aria-sort="descending"]')).toHaveCount(1);
@@ -1110,6 +1498,19 @@ test('keeps a document-flow header and edge columns sticky while vertical input 
     .not.toBe('none');
 
   await expect(viewport).toHaveCSS('overscroll-behavior-x', 'none');
+  const horizontalEdgeContainment = await viewport.evaluate(element => {
+    const dispatchAt = (scrollLeft: number, deltaX: number) => {
+      element.scrollLeft = scrollLeft;
+      const event = new WheelEvent('wheel', { deltaX, cancelable: true });
+      element.dispatchEvent(event);
+      return event.defaultPrevented;
+    };
+    return {
+      start: dispatchAt(0, -80),
+      end: dispatchAt(element.scrollWidth, 80),
+    };
+  });
+  expect(horizontalEdgeContainment).toEqual({ start: true, end: true });
   await viewport.evaluate(element => { element.scrollLeft = 240; });
   await expect(frame).toHaveClass(/ds-table__frame--overflow-start/);
   await expect(frame).toHaveClass(/ds-table__frame--overflow-end/);
@@ -1206,6 +1607,7 @@ test('keeps a document-flow header and edge columns sticky while vertical input 
   }
   await expect(table.locator('.ds-table__overflow-shadow')).toHaveCount(0);
 
+  await page.evaluate(() => window.scrollBy(0, -320));
   const before = await page.evaluate(() => window.scrollY);
   await viewport.hover({ position: { x: 200, y: 200 } });
   await page.mouse.wheel(0, 160);

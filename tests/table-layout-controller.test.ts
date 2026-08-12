@@ -76,7 +76,11 @@ test('resolves first-paint geometry synchronously when layout elements connect',
       frame: null,
       interactiveHead: null,
     }),
-    mode: () => ({ documentStickyHeader: false, floatingCollapseAll: false }),
+    mode: () => ({
+      documentStickyHeader: false,
+      floatingCollapseAll: false,
+      clampVerticalOverscroll: false,
+    }),
     overflowChanged: state => { overflow = state; },
   });
 
@@ -115,7 +119,11 @@ test('resolves intrinsic table-size changes synchronously after a render refresh
       frame: null,
       interactiveHead: null,
     }),
-    mode: () => ({ documentStickyHeader: false, floatingCollapseAll: false }),
+    mode: () => ({
+      documentStickyHeader: false,
+      floatingCollapseAll: false,
+      clampVerticalOverscroll: false,
+    }),
     overflowChanged: () => undefined,
   });
 
@@ -127,5 +135,74 @@ test('resolves intrinsic table-size changes synchronously after a render refresh
   controller.refresh();
 
   assert.equal(properties.get('--ds-table-visible-inline-size'), '432px');
+  controller.disconnect();
+});
+
+test('contains vertical wheel deltas at fitted viewport edges and transfers them outward', () => {
+  const listeners = new Map<string, EventListener>();
+  const viewport = {
+    clientWidth: 432,
+    clientHeight: 240,
+    scrollWidth: 432,
+    scrollHeight: 640,
+    scrollLeft: 0,
+    scrollTop: 0,
+    style: {
+      getPropertyValue: () => '',
+      setProperty: () => undefined,
+    },
+    addEventListener: (type: string, listener: EventListener) => listeners.set(type, listener),
+    removeEventListener: (type: string) => listeners.delete(type),
+  } as unknown as HTMLElement;
+  const deltas: number[] = [];
+  const controller = new TableLayoutController({
+    elements: () => ({
+      viewport,
+      table: null,
+      stickyHeaderTable: null,
+      collapseAllOverlay: null,
+      frame: null,
+      interactiveHead: null,
+    }),
+    mode: () => ({
+      documentStickyHeader: false,
+      floatingCollapseAll: false,
+      clampVerticalOverscroll: true,
+    }),
+    verticalEdgeWheel: delta => {
+      deltas.push(delta);
+      return true;
+    },
+    overflowChanged: () => undefined,
+  });
+  controller.connect();
+
+  let prevented = false;
+  listeners.get('wheel')?.({
+    deltaX: 0,
+    deltaY: -24,
+    preventDefault: () => { prevented = true; },
+  } as unknown as Event);
+  assert.equal(prevented, true);
+  assert.deepEqual(deltas, [-24]);
+
+  viewport.scrollTop = 120;
+  prevented = false;
+  listeners.get('wheel')?.({
+    deltaX: 0,
+    deltaY: 24,
+    preventDefault: () => { prevented = true; },
+  } as unknown as Event);
+  assert.equal(prevented, false);
+  assert.deepEqual(deltas, [-24]);
+
+  viewport.scrollTop = 400;
+  listeners.get('wheel')?.({
+    deltaX: 0,
+    deltaY: 24,
+    preventDefault: () => { prevented = true; },
+  } as unknown as Event);
+  assert.equal(prevented, true);
+  assert.deepEqual(deltas, [-24, 24]);
   controller.disconnect();
 });

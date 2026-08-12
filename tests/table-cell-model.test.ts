@@ -16,11 +16,14 @@ test('normalizes text cells once for markup and class recipes', () => {
     wraps: false,
   });
   assert.deepEqual(
-    resolveTableCellPresentation({ primary: 'Driver', secondary: 'Active' }, column),
+    resolveTableCellPresentation(
+      { primary: 'Driver', secondary: 'Active', secondaryColor: 'positive' },
+      column,
+    ),
     {
       kind: 'text',
       cellType: 'text',
-      value: { primary: 'Driver', secondary: 'Active' },
+      value: { primary: 'Driver', secondary: 'Active', secondaryColor: 'positive' },
       primaryText: false,
       singleLine: false,
       variant: 'multi',

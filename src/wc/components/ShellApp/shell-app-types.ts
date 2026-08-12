@@ -86,6 +86,18 @@ export interface ShellPageChromeConfig {
   actionsAriaLabel?: string;
   tone?: MobileHeaderTone;
   contentInset?: ShellPageContentInset;
+  /** Remove only the content gutter adjacent to the page header. */
+  contentInsetBlockStart?: ShellPageContentInset;
+  /** Exact roomy block-start content inset when the responsive default is not appropriate. */
+  contentInsetBlockStartSize?: string;
+  /** Exact block-start content inset while page-title capacity is compact or constrained. */
+  compactContentInsetBlockStartSize?: string;
+  /** Allow a roomy page title to compact in response to page scrolling. */
+  scrollCompaction?: boolean;
+  /** Draw the divider beneath the desktop/tablet page title. */
+  showHeaderDivider?: boolean;
+  /** Override divider visibility while the page title is compact or constrained. */
+  showCompactHeaderDivider?: boolean;
   /** Canvas surface painted by ShellPage around and beneath routed content. */
   contentSurface?: ShellPageContentSurface;
 }
