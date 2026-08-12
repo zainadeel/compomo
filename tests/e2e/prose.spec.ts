@@ -52,11 +52,14 @@ test.describe('renderer-neutral prose foundation', () => {
   });
 
   test('shares the semantic code-family and ligature contract across code surfaces', async ({ page }) => {
+    await expect(page.locator('#agent-tool-call pre')).toHaveCount(2);
+
     const readCodeStyles = () => page.evaluate(() => {
       const inline = getComputedStyle(document.querySelector('#semantic-prose code')!);
       const fenced = getComputedStyle(document.querySelector('#semantic-prose pre')!);
       const component = getComputedStyle(document.querySelector('#markdown-renderer ds-code-block pre')!);
-      return [inline, fenced, component].map(style => ({
+      const toolCall = getComputedStyle(document.querySelector('#agent-tool-call pre')!);
+      return [inline, fenced, component, toolCall].map(style => ({
         family: style.fontFamily,
         ligatures: style.fontVariantLigatures,
         weight: style.fontWeight,

@@ -21,6 +21,7 @@ pre {
     Menlo, Monaco, Consolas, 'Liberation Mono', monospace
   );
   font-variant-ligatures: var(--ds-code-font-variant-ligatures, normal);
+  font-weight: var(--typography-weight-regular);
   white-space: pre-wrap;
 }
 
