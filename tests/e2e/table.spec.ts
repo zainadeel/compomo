@@ -49,7 +49,7 @@ test('keeps the visible caption bar outside horizontal table scrolling', async (
     const nativeTable = element.querySelector<HTMLElement>('.ds-table__table')!;
     const caption = element.querySelector<HTMLElement>('.ds-table__caption-bar')!;
     return {
-      viewportWidth: viewportElement.clientWidth,
+      viewportWidth: viewportElement.getBoundingClientRect().width,
       tableWidth: nativeTable.getBoundingClientRect().width,
       captionLeft: caption.getBoundingClientRect().left,
       captionWidth: caption.getBoundingClientRect().width,
