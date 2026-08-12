@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Chart tooltip e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        font-family: var(--typography-font-family, system-ui);
+      }
+
+      .fixture {
+        position: relative;
+        width: 960px;
+        height: 160px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="fixture">
+      <ds-tooltip-chart id="single-tooltip" label="In service" value="185" x="8" y="8" delay="0"></ds-tooltip-chart>
+    </div>
+    <div class="fixture">
+      <ds-tooltip-chart id="grouped-tooltip" heading="March" x="8" y="8" delay="0"></ds-tooltip-chart>
+    </div>
+    <div class="fixture">
+      <ds-tooltip-chart id="mixed-tooltip" heading="Current period" x="8" y="8" delay="0"></ds-tooltip-chart>
+    </div>
+    <div class="fixture">
+      <ds-tooltip-chart id="long-tooltip" heading="Vehicle activity during the current reporting period" x="8" y="8" delay="0"></ds-tooltip-chart>
+    </div>
+    <script type="module" src="/tooltip-chart-setup.mjs"></script>
+  </body>
+</html>

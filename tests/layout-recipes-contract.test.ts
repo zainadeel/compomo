@@ -25,13 +25,21 @@ test('one chart card owns every chart body anatomy', () => {
 test('chart tooltip reuses menu section and medium control anatomy', () => {
   const css = read('src/wc/components/TooltipChart/TooltipChart.css');
   const source = read('src/wc/components/TooltipChart/TooltipChart.tsx');
+  const parts = read('src/wc/utils/control-parts.css');
   assert.match(source, /CONTROL_SUPPORTING_TEXT_VARIANT\.md/);
   assert.match(source, /CONTROL_TEXT_VARIANT\.md/);
   assert.match(source, /ds-control-frame ds-control--md/);
+  assert.match(source, /ds-control-section-heading ds-control--md/);
   assert.match(source, /ds-control-icon-box/);
   assert.match(source, /ds-control-label-box/);
-  assert.match(css, /padding: var\(--dimension-space-050\)/);
+  assert.match(source, /ds-chrome-column/);
+  assert.match(source, /ds-chrome-space--sm/);
+  assert.match(source, /usesSwatches/);
+  assert.match(css, /chrome-layout\.css/);
+  assert.match(css, /\.tooltip-chart__items\s*{\s*display: contents/);
   assert.match(css, /border-radius: var\(--dimension-radius-075\)/);
+  assert.match(parts, /\.ds-control-section-heading/);
+  assert.doesNotMatch(css, /\.tooltip-chart__heading\s*{/);
 });
 
 test('chart chrome lines use subordinate foreground roles', () => {
