@@ -179,6 +179,11 @@ export interface TableColumn {
   wrap?: boolean;
   /** Pin one application column to either inline edge during horizontal scrolling. */
   sticky?: TableColumnSticky;
+  /**
+   * Declare a trailing application-action lane. Action columns keep fixed
+   * geometry and may host grouped table-level controls in their header.
+   */
+  kind?: 'data' | 'action';
 }
 
 export interface TableRow {

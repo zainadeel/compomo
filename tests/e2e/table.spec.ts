@@ -39,8 +39,8 @@ test('renders an optional result summary footer from controlled counts', async (
   const footer = table.locator('.ds-table__footer');
   await expect(footer).toBeVisible();
   await expect(footer).toHaveText('Displaying 50 of 1,500');
-  await expect(footer.locator('ds-text')).toHaveJSProperty('variant', 'text-body-medium');
-  await expect(footer.locator('ds-text')).toHaveJSProperty('color', 'secondary');
+  await expect(footer).toHaveJSProperty('variant', 'text-body-medium');
+  await expect(footer).toHaveJSProperty('color', 'secondary');
   await expect
     .poll(() => footer.evaluate(element => getComputedStyle(element).blockSize))
     .toBe('48px');
@@ -104,8 +104,9 @@ test('keeps group order and member-row sorting independent', async ({ page }) =>
   await expect(toggle).toHaveJSProperty('size', 'md');
   await expect(toggle).toHaveJSProperty('isInset', true);
   await expect(toggle).toHaveJSProperty('icon', 'ChevronUp');
+  await expect(toggle).toHaveJSProperty('expanded', true);
+  await expect(toggle.getByRole('button')).toHaveAttribute('aria-expanded', 'true');
   await expect(toggle).toHaveJSProperty('hasBorder', false);
-  await expect(toggle).not.toHaveJSProperty('expanded', true);
   await expect(table.locator('tbody[data-group-id="driving"] .ds-table__row')).toHaveCount(2);
   await toggle.click();
   await expect
@@ -113,6 +114,8 @@ test('keeps group order and member-row sorting independent', async ({ page }) =>
     .toEqual(['driving']);
   await expect(table.locator('tbody[data-group-id="driving"]')).toHaveAttribute('data-collapsed', 'true');
   await expect(toggle).toHaveJSProperty('icon', 'ChevronDown');
+  await expect(toggle).toHaveJSProperty('expanded', false);
+  await expect(toggle.getByRole('button')).toHaveAttribute('aria-expanded', 'false');
   await expect(table.locator('tbody[data-group-id="driving"] .ds-table__row')).toHaveCount(0);
 
   const collapseAll = table.locator('.ds-table__collapse-all');
@@ -163,13 +166,16 @@ test('applies faint intent surfaces and bold titles to severity groups', async (
     await expect(body).toHaveAttribute('data-group-intent', group.intent);
     const header = body.locator('th.ds-table__group-cell');
     await expect(header).toHaveClass(new RegExp(`ds-table__group-cell--intent-${group.intent}`));
-    await expect
-      .poll(() =>
-        header.evaluate(element =>
-          getComputedStyle(element).getPropertyValue('--_table-group-surface').trim(),
-        ),
-      )
-      .toBe(`var(--color-background-faint-${group.intent})`);
+    const colors = await header.evaluate((element, intent) => {
+      const probe = document.createElement('span');
+      probe.style.background = `var(--color-background-faint-${intent})`;
+      document.body.append(probe);
+      const expected = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      const content = element.querySelector<HTMLElement>('.ds-table__group-content')!;
+      return { actual: getComputedStyle(content).backgroundColor, expected };
+    }, group.intent);
+    expect(colors.actual).toBe(colors.expected);
     const label = header.locator('.ds-table__group-label');
     await expect(label).toHaveText(group.label);
     if (group.intent === 'neutral') {
@@ -200,6 +206,63 @@ test('group section checkboxes select and clear group members when selectable', 
   await expect
     .poll(() => table.evaluate((element: HTMLDsTableElement) => element.selectedRowIds))
     .toEqual([]);
+});
+
+test('keeps group section chrome pinned to the visible horizontal scrollport', async ({ page }) => {
+  await page.setViewportSize({ width: 480, height: 900 });
+  const table = page.locator('#severity-grouped');
+  const viewport = table.locator('.ds-table__viewport');
+  const groupContent = table.locator('.ds-table__group-content').first();
+
+  const measure = () => table.evaluate(element => {
+    const viewportElement = element.querySelector<HTMLElement>('.ds-table__viewport')!;
+    const nativeTable = element.querySelector<HTMLElement>('.ds-table__table')!;
+    const content = element.querySelector<HTMLElement>('.ds-table__group-content')!;
+    const viewportRect = viewportElement.getBoundingClientRect();
+    const tableRect = nativeTable.getBoundingClientRect();
+    const contentRect = content.getBoundingClientRect();
+    return {
+      viewportClientWidth: viewportElement.clientWidth,
+      viewportLeft: viewportRect.left,
+      tableWidth: tableRect.width,
+      contentLeft: contentRect.left,
+      contentWidth: contentRect.width,
+    };
+  });
+
+  const before = await measure();
+  expect(before.tableWidth).toBeGreaterThan(before.viewportClientWidth);
+  expect(before.contentWidth).toBeCloseTo(
+    Math.min(before.tableWidth, before.viewportClientWidth),
+    0,
+  );
+  expect(before.contentLeft).toBeCloseTo(before.viewportLeft, 0);
+
+  await viewport.evaluate(element => { element.scrollLeft = 320; });
+  await expect.poll(() => viewport.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
+  const after = await measure();
+  expect(after.contentWidth).toBeCloseTo(before.contentWidth, 0);
+  expect(after.contentLeft).toBeCloseTo(after.viewportLeft, 0);
+  await expect(groupContent).toBeVisible();
+});
+
+test('uses declared action-column metadata without replacing a visible header', async ({ page }) => {
+  const table = page.locator('#grouped');
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.columns = [
+      ...element.columns,
+      {
+        id: 'actions',
+        kind: 'action',
+        header: 'Row actions',
+        align: 'center',
+        size: 120,
+      },
+    ];
+  });
+  const actionHeader = table.locator('th[data-column-id="actions"]');
+  await expect(actionHeader).toContainText('Row actions');
+  await expect(actionHeader.locator('.ds-table__collapse-all')).toHaveCount(1);
 });
 
 test('sorts compound columns by independent label-width controls', async ({ page }) => {
@@ -569,6 +632,8 @@ test('positions sort controls according to column alignment', async ({ page }) =
             ? 'balance'
             : child.classList.contains('ds-table__sort-slot')
               ? 'sort'
+              : child.classList.contains('ds-table__collapse-slot')
+                ? 'collapse'
               : 'label'),
       };
     };
@@ -582,7 +647,7 @@ test('positions sort controls according to column alignment', async ({ page }) =
   expect(geometry.center.slotRight - geometry.center.slotLeft).toBeCloseTo(16, 0);
   expect(geometry.center.balanceRight! - geometry.center.balanceLeft!).toBeCloseTo(16, 0);
 
-  expect(geometry.end.order).toEqual(['sort', 'label']);
+  expect(geometry.end.order).toEqual(['sort', 'collapse', 'label']);
   expect(geometry.end.slotLeft - geometry.end.cellLeft).toBeCloseTo(geometry.end.contentInsetStart, 0);
   expect(geometry.end.cellRight - geometry.end.labelsRight).toBeCloseTo(geometry.end.contentInsetEnd, 0);
   expect(geometry.end.labelsLeft).toBeGreaterThan(geometry.end.slotRight);

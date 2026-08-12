@@ -25,6 +25,7 @@ import {
   tableCollapseAllHost,
   tableColumnSize,
   tableExplicitMinWidth,
+  tableFlexibleColumnId,
   tableGroupIntentClass,
   tableGroupLabelColor,
   tableModelIssues,
@@ -297,7 +298,11 @@ export class Table {
 
   private get collapseAllHost() {
     if (!this.showCollapseAll) return undefined;
-    return tableCollapseAllHost(this.columns, this.loadedRows);
+    return tableCollapseAllHost(this.columns);
+  }
+
+  private get flexibleColumnId(): string | undefined {
+    return tableFlexibleColumnId(this.columns);
   }
 
   private get selectedSet(): Set<string> {
@@ -363,6 +368,7 @@ export class Table {
   private syncOverflow = (): void => {
     const viewport = this.viewportEl;
     if (!viewport) return;
+    viewport.style.setProperty('--ds-table-visible-inline-size', `${viewport.clientWidth}px`);
     const overflows = viewport.scrollWidth - viewport.clientWidth > 1;
     const scrollable = overflows || viewport.scrollHeight - viewport.clientHeight > 1;
     const nextStart = overflows && viewport.scrollLeft > 1;
@@ -659,6 +665,9 @@ export class Table {
     const collapseHost = this.collapseAllHost;
     const isCollapseHost = collapseHost?.columnId === column.id;
     const actionCollapseHost = isCollapseHost && collapseHost?.mode === 'action';
+    const blankActionCollapseHost = actionCollapseHost &&
+      !column.header.trim() &&
+      !column.headerSegments?.length;
     const collapseControl =
       interactive && isCollapseHost ? (
         <span class="ds-table__collapse-slot">
@@ -698,7 +707,7 @@ export class Table {
         {!column.header.trim() && column.headerLabel?.trim() && (
           <span class="ds-visually-hidden">{column.headerLabel}</span>
         )}
-        {actionCollapseHost ? (
+        {blankActionCollapseHost ? (
           <span class="ds-table__header-content ds-table__header-content--collapse-all">
             {collapseControl}
           </span>
@@ -729,10 +738,15 @@ export class Table {
         {this.selectable && <col class="ds-table__selection-column" />}
         {this.columns.map(column => {
           const width = tableColumnSize(column);
+          const flexible = column.id === this.flexibleColumnId;
           return (
             <col
               key={column.id}
-              style={width ? { width, maxWidth: width } : undefined}
+              class={{
+                'ds-table__action-column': column.kind === 'action',
+                'ds-table__flexible-column': flexible,
+              }}
+              style={width && !flexible ? { width } : undefined}
             />
           );
         })}
@@ -1107,6 +1121,7 @@ export class Table {
                   size="md"
                   isInset={true}
                   icon={isCollapsed ? 'ChevronDown' : 'ChevronUp'}
+                  expanded={!isCollapsed}
                   aria-label={
                     isCollapsed
                       ? `Expand ${group.label} group`
@@ -1221,11 +1236,14 @@ export class Table {
             ) : this.hasMore ? (
               <span class="ds-table__auto-sentinel" aria-hidden="true" />
             ) : (
-              <span class="ds-table__load-content">
-                <ds-text as="span" variant="text-body-medium" color="secondary">
-                  {this.endOfResultsLabel}
-                </ds-text>
-              </span>
+              <ds-text
+                class="ds-table__load-content"
+                as="span"
+                variant="text-body-medium"
+                color="secondary"
+              >
+                {this.endOfResultsLabel}
+              </ds-text>
             )}
           </td>
         </tr>
@@ -1271,11 +1289,14 @@ export class Table {
     const summary = this.resultSummary;
     if (!summary) return null;
     return (
-      <div class="ds-table__footer">
-        <ds-text as="span" variant="text-body-medium" color="secondary">
-          {summary}
-        </ds-text>
-      </div>
+      <ds-text
+        class="ds-table__footer"
+        as="div"
+        variant="text-body-medium"
+        color="secondary"
+      >
+        {summary}
+      </ds-text>
     );
   }
 

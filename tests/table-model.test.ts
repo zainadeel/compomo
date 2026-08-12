@@ -14,6 +14,7 @@ import {
   tableCollapseAllHost,
   tableColumnSize,
   tableExplicitMinWidth,
+  tableFlexibleColumnId,
   tableGroupIntentClass,
   tableGroupLabelColor,
   tableModelIssues,
@@ -105,54 +106,20 @@ test('collapses or expands every group from the current collapsed set', () => {
 test('hosts collapse-all on the trailing action column or last data column', () => {
   const actionColumns: TableColumn[] = [
     { id: 'name', header: 'Name' },
-    { id: 'actions', header: '', headerLabel: 'Actions' },
+    { id: 'actions', kind: 'action', header: '', headerLabel: 'Actions' },
   ];
-  const actionRows: TableRow[] = [
-    {
-      id: 'one',
-      cells: {
-        name: 'Avery',
-        actions: { kind: 'action', actionId: 'more', variant: 'icon', icon: 'Ellipses', ariaLabel: 'More' },
-      },
-    },
-    {
-      id: 'two',
-      cells: {
-        name: 'Jordan',
-        actions: { kind: 'blank' },
-      },
-    },
-  ];
-  assert.deepEqual(tableCollapseAllHost(actionColumns, actionRows), {
+  assert.deepEqual(tableCollapseAllHost(actionColumns), {
     columnId: 'actions',
     mode: 'action',
   });
 
   const dualActionColumns: TableColumn[] = [
     { id: 'name', header: 'Name' },
-    { id: 'action', header: '', headerLabel: 'Action' },
-    { id: 'borderedAction', header: '', headerLabel: 'Bordered action' },
+    { id: 'action', kind: 'action', header: '', headerLabel: 'Action' },
+    { id: 'borderedAction', kind: 'action', header: '', headerLabel: 'Bordered action' },
     { id: 'empty', header: 'Empty' },
   ];
-  const dualActionRows: TableRow[] = [
-    {
-      id: 'one',
-      cells: {
-        name: 'Avery',
-        action: { kind: 'action', actionId: 'a', variant: 'icon', icon: 'Ellipses', ariaLabel: 'A' },
-        borderedAction: {
-          kind: 'action',
-          actionId: 'b',
-          variant: 'icon',
-          icon: 'Ellipses',
-          ariaLabel: 'B',
-          hasBorder: true,
-        },
-        empty: { kind: 'empty' },
-      },
-    },
-  ];
-  assert.deepEqual(tableCollapseAllHost(dualActionColumns, dualActionRows), {
+  assert.deepEqual(tableCollapseAllHost(dualActionColumns), {
     columnId: 'borderedAction',
     mode: 'action',
   });
@@ -161,15 +128,35 @@ test('hosts collapse-all on the trailing action column or last data column', () 
     { id: 'name', header: 'Name' },
     { id: 'score', header: 'Score' },
   ];
-  const plainRows: TableRow[] = [{ id: 'one', cells: { name: 'Avery', score: 98 } }];
-  assert.deepEqual(tableCollapseAllHost(plainColumns, plainRows), {
+  assert.deepEqual(tableCollapseAllHost(plainColumns), {
     columnId: 'score',
     mode: 'last',
   });
-  assert.deepEqual(tableCollapseAllHost(plainColumns, []), {
-    columnId: 'score',
-    mode: 'last',
-  });
+});
+
+test('keeps fixed lanes stable by assigning spare width to one data column', () => {
+  assert.equal(tableFlexibleColumnId(columns), 'score');
+  assert.equal(
+    tableFlexibleColumnId([
+      { id: 'name', header: 'Name', size: 160 },
+      { id: 'notes', header: 'Notes' },
+      { id: 'actions', kind: 'action', header: '', headerLabel: 'Actions' },
+    ]),
+    undefined,
+  );
+  assert.equal(
+    tableFlexibleColumnId([
+      { id: 'name', header: 'Name', size: 160 },
+      { id: 'status', header: 'Status', size: 120 },
+      { id: 'identifier', header: 'Identifier', size: 140, sticky: true },
+      { id: 'actions', kind: 'action', header: '', headerLabel: 'Actions' },
+    ]),
+    'status',
+  );
+  assert.equal(
+    tableColumnSize({ id: 'actions', kind: 'action', header: '', headerLabel: 'Actions' }),
+    'var(--dimension-size-500)',
+  );
 });
 
 test('resolves labels, column constraints, and server group totals defensively', () => {

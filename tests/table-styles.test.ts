@@ -26,14 +26,15 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.doesNotMatch(css, /\.ds-table__overflow-shadow/);
   assert.match(css, /\.ds-table__header-cell/);
   assert.match(css, /\.ds-table__group-cell/);
-  assert.match(css, /\.ds-table__viewport\)[^{]*\{[^}]*container-type: inline-size/s);
+  assert.doesNotMatch(css, /container-type: inline-size/);
+  assert.match(componentTsx, /--ds-table-visible-inline-size/);
   assert.match(
     css,
     /\.ds-table__group-cell\)[^{]*\{[^}]*padding: 0[^}]*background: transparent/s,
   );
   assert.match(
     css,
-    /\.ds-table__group-content\)[^{]*\{[^}]*position: sticky[^}]*inset-inline-start: 0[^}]*inline-size: 100cqi[^}]*padding: var\(--dimension-space-075\)[^}]*background: var\(--_table-group-surface\)/s,
+    /\.ds-table__group-content\)[^{]*\{[^}]*position: sticky[^}]*inset-inline-start: 0[^}]*inline-size: min\(100%, var\(--ds-table-visible-inline-size, 100%\)\)[^}]*padding: var\(--dimension-space-075\)[^}]*background: var\(--_table-group-surface\)/s,
   );
   assert.match(
     css,
@@ -92,6 +93,10 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(
     css,
     /\.ds-table__selection-column\)[^{]*\{[^}]*width: var\(--_table-selection-column-inline-size\)[^}]*max-width: var\(--_table-selection-column-inline-size\)/s,
+  );
+  assert.match(
+    css,
+    /\.ds-table__action-column\)[^{]*\{[^}]*width: var\(--dimension-size-500\)/s,
   );
   assert.match(
     css,

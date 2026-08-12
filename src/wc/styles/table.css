@@ -93,8 +93,6 @@
   scrollbar-gutter: stable;
   border-radius: var(--_table-radius);
   outline: none;
-  /* Group section headers size to this scrollport, not the overflowing table. */
-  container-type: inline-size;
 }
 
 :where(.ds-table--document-sticky-header .ds-table__viewport) {
@@ -154,6 +152,11 @@
   width: var(--_table-selection-column-inline-size);
   max-inline-size: var(--_table-selection-column-inline-size);
   max-width: var(--_table-selection-column-inline-size);
+}
+
+:where(.ds-table__action-column) {
+  inline-size: var(--dimension-size-500);
+  width: var(--dimension-size-500);
 }
 
 :where(.ds-table__head) {
@@ -847,8 +850,9 @@
   display: flex;
   align-items: center;
   gap: var(--dimension-space-100);
-  inline-size: 100cqi;
-  max-inline-size: 100cqi;
+  /* Pin to the visible scrollport; never grow to the overflowing table width. */
+  inline-size: min(100%, var(--ds-table-visible-inline-size, 100%));
+  max-inline-size: min(100%, var(--ds-table-visible-inline-size, 100%));
   min-block-size: var(--_table-row-min-block-size);
   padding: var(--dimension-space-075);
   background: var(--_table-group-surface);

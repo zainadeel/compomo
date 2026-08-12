@@ -121,11 +121,7 @@ export function nextTableGroupsCollapsed(
   return allCollapsed ? [] : [...groupIds];
 }
 
-/**
- * Host column for the grouped collapse-all control: prefer the trailing action
- * column (every loaded cell is action or blank, with at least one action),
- * otherwise the last data column.
- */
+/** Host column for grouped collapse-all: the trailing declared action lane or last column. */
 export type TableCollapseAllHost = {
   columnId: string;
   mode: 'action' | 'last';
@@ -133,27 +129,12 @@ export type TableCollapseAllHost = {
 
 export function tableCollapseAllHost(
   columns: TableColumn[],
-  rows: TableRow[],
 ): TableCollapseAllHost | undefined {
   if (columns.length === 0) return undefined;
-
   for (let index = columns.length - 1; index >= 0; index -= 1) {
     const column = columns[index]!;
-    let sawAction = false;
-    let qualifies = rows.length > 0;
-    for (const row of rows) {
-      const value = row.cells[column.id];
-      if (isTableCellBlank(value)) continue;
-      if (isTableCellAction(value)) {
-        sawAction = true;
-        continue;
-      }
-      qualifies = false;
-      break;
-    }
-    if (qualifies && sawAction) return { columnId: column.id, mode: 'action' };
+    if (column.kind === 'action') return { columnId: column.id, mode: 'action' };
   }
-
   return { columnId: columns[columns.length - 1]!.id, mode: 'last' };
 }
 
@@ -177,7 +158,26 @@ export function tableColumnSize(column: TableColumn): string | undefined {
     return `var(${TABLE_COLUMN_WIDTH_TOKENS[column.size]})`;
   }
   const width = clampTableColumnSize(column);
-  return width == null ? undefined : `${width}px`;
+  if (width != null) return `${width}px`;
+  return column.kind === 'action' ? 'var(--dimension-size-500)' : undefined;
+}
+
+/**
+ * When every column has an explicit width, one ordinary lane must absorb spare
+ * table width so fixed selection and action lanes are not expanded by the
+ * native fixed-table layout algorithm.
+ */
+export function tableFlexibleColumnId(columns: TableColumn[]): string | undefined {
+  if (columns.some(column => !tableColumnSize(column))) return undefined;
+  for (let index = columns.length - 1; index >= 0; index -= 1) {
+    const column = columns[index]!;
+    if (column.kind !== 'action' && !column.sticky) return column.id;
+  }
+  for (let index = columns.length - 1; index >= 0; index -= 1) {
+    const column = columns[index]!;
+    if (column.kind !== 'action') return column.id;
+  }
+  return columns[columns.length - 1]?.id;
 }
 
 export function tableExplicitMinWidth(columns: TableColumn[]): string | undefined {

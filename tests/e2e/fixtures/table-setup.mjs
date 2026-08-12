@@ -149,8 +149,8 @@ cellTypes.columns = [
   { id: 'tagOnly', header: 'Tag only', size: 'sm' },
   { id: 'tagWithText', header: 'Tag with text', size: 'sm' },
   { id: 'textWithTag', header: 'Text with tag', size: 'sm' },
-  { id: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
-  { id: 'borderedAction', header: '', headerLabel: 'Bordered action', align: 'center', size: 40 },
+  { id: 'action', kind: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
+  { id: 'borderedAction', kind: 'action', header: '', headerLabel: 'Bordered action', align: 'center', size: 40 },
   { id: 'empty', header: 'Empty', size: 'xs' },
   { id: 'blank', header: 'Blank', size: 'xs' },
 ];
@@ -217,6 +217,7 @@ interactive.columns = [
   ...columns,
   {
     id: 'actions',
+    kind: 'action',
     header: '',
     headerLabel: 'Actions',
     align: 'center',

@@ -124,8 +124,8 @@ const ALL_CELL_TYPE_COLUMNS: TableColumn[] = [
   { id: 'tagOnly', header: 'Tag only', size: 'sm' },
   { id: 'tagWithText', header: 'Tag + text', size: 'sm' },
   { id: 'textWithTag', header: 'Text + tag', size: 'sm' },
-  { id: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
-  { id: 'borderedAction', header: '', headerLabel: 'Bordered action', align: 'center', size: 40 },
+  { id: 'action', kind: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
+  { id: 'borderedAction', kind: 'action', header: '', headerLabel: 'Bordered action', align: 'center', size: 40 },
   { id: 'empty', header: 'Empty', size: 'xs' },
   { id: 'blank', header: 'Blank', size: 'xs' },
 ];
@@ -224,6 +224,7 @@ const SAFETY_EVENT_COLUMNS: TableColumn[] = [
   { id: 'notes', header: 'Notes', align: 'center', sortable: true, size: 'xs' },
   {
     id: 'actions',
+    kind: 'action',
     header: '',
     headerLabel: 'Actions',
     align: 'center',
