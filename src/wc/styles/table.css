@@ -975,6 +975,7 @@
 }
 
 :where(.ds-table__group-toggle) {
+  align-self: center;
   flex: 0 0 auto;
   margin-inline-start: auto;
 }

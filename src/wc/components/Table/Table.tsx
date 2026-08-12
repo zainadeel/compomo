@@ -11,23 +11,9 @@ import {
 import {
   deriveTableSelectionState,
   formatTableResultSummary,
-  isTableCellAction,
-  isTableCellBlank,
-  isTableCellEmpty,
-  isTableCellIcon,
-  isTableCellImage,
-  isTableCellPrimaryText,
-  isTableCellText,
-  isTableCellTag,
   nextTableGroupOrder,
   nextTableSortState,
-  resolvedTableGroupCount,
-  tableCollapseAllHost,
   tableColumnSize,
-  tableExplicitMinWidth,
-  tableFlexibleColumnId,
-  tableGroupIntentClass,
-  tableGroupLabelColor,
   tableModelIssues,
   tableRows,
   tableRowSelectionLabel,
@@ -37,10 +23,19 @@ import {
   nextTableGroupsCollapsed,
   toggleTableRowSelection,
 } from './table-model';
+import {
+  resolveTableCellPresentation,
+  type TableCellPresentation,
+} from './table-cell-model';
+import {
+  createTableRenderModel,
+  type TableRenderModel,
+} from './table-render-model';
+import { TableLayoutController } from './table-layout-controller';
+import { TableLoadController } from './table-load-controller';
 import type {
   TableCaptionVisibility,
   TableCellActionDetail,
-  TableCellValue,
   TableColumn,
   TableGroup,
   TableGroupCollapseChangeDetail,
@@ -48,7 +43,6 @@ import type {
   TableGroupingState,
   TableLoadMoreDetail,
   TableLoadMoreMode,
-  TableLoadMoreReason,
   TableRow,
   TableRowActivateDetail,
   TableSelectionChangeDetail,
@@ -139,7 +133,6 @@ export class Table {
   @State() private overflowStart = false;
   @State() private overflowEnd = false;
   @State() private scrollable = false;
-  @State() private intersectionSupported = true;
   @State() private announcement = '';
 
   private viewportEl: HTMLElement | null = null;
@@ -149,124 +142,119 @@ export class Table {
   private stickyHeaderTableEl: HTMLTableElement | null = null;
   private tableEl: HTMLTableElement | null = null;
   private sentinelEl: HTMLElement | null = null;
-  private resizeObserver: ResizeObserver | null = null;
-  private intersectionObserver: IntersectionObserver | null = null;
-  private observedSentinel: HTMLElement | null = null;
-  private requestPending = false;
-  private requestedRowCount = 0;
-  private previousLoadedRowCount = 0;
   private previousModelWarning = '';
   private hasLoaded = false;
-  private reconnectFrame: number | null = null;
-  private overflowSyncFrame: number | null = null;
+  private renderedModel: TableRenderModel | null = null;
+  private readonly layoutController = new TableLayoutController({
+    elements: () => ({
+      viewport: this.viewportEl,
+      table: this.tableEl,
+      stickyHeaderTable: this.stickyHeaderTableEl,
+      collapseAllOverlay: this.collapseAllOverlayEl,
+      frame: this.frameEl,
+      interactiveHead: this.interactiveHeadEl,
+    }),
+    mode: () => ({
+      documentStickyHeader: this.documentStickyHeader,
+      floatingCollapseAll: this.renderedModel?.collapseAllHost?.mode === 'floating',
+    }),
+    overflowChanged: state => {
+      if (state.start !== this.overflowStart) this.overflowStart = state.start;
+      if (state.end !== this.overflowEnd) this.overflowEnd = state.end;
+      if (state.scrollable !== this.scrollable) this.scrollable = state.scrollable;
+    },
+  });
+  private readonly loadController = new TableLoadController({
+    state: () => ({
+      lazyLoading: this.lazyLoading,
+      loadMoreMode: this.loadMoreMode,
+      hasMore: this.hasMore,
+      loadingMore: this.loadingMore,
+      loadMoreError: this.loadMoreError,
+      loadIdentity: this.loadIdentity,
+      loadMoreThreshold: this.loadMoreThreshold,
+      containedScroll: this.resolvedMaxHeight !== undefined,
+      loadingMoreLabel: this.loadingMoreLabel,
+      endOfResultsLabel: this.endOfResultsLabel,
+      rowsLoadedLabel: this.rowsLoadedLabel,
+      loadedRowCount: this.currentLoadedRowCount(),
+      viewport: this.viewportEl,
+      sentinel: this.sentinelEl,
+    }),
+    announce: message => {
+      this.announcement = message;
+    },
+    request: detail => {
+      this.dsLoadMore.emit(detail);
+    },
+  });
 
   componentWillLoad(): void {
-    this.previousLoadedRowCount = this.loadedRows.length;
-    this.intersectionSupported = typeof IntersectionObserver !== 'undefined';
+    this.loadController.initialize();
     this.warnModelIssues();
   }
 
   componentDidLoad(): void {
     this.hasLoaded = true;
-    this.connectViewportObserver();
-    this.syncOverflow();
-    this.connectIntersectionObserver();
+    this.layoutController.connect();
+    this.loadController.connect();
   }
 
   componentDidRender(): void {
-    this.syncStickyHeaderPosition();
-    this.syncFloatingCollapseAllPosition();
-    this.connectIntersectionObserver();
+    this.layoutController.refresh();
+    this.loadController.refresh();
   }
 
   connectedCallback(): void {
     if (!this.hasLoaded) return;
-    if (this.reconnectFrame !== null) cancelAnimationFrame(this.reconnectFrame);
-    this.reconnectFrame = requestAnimationFrame(() => {
-      this.reconnectFrame = null;
-      this.connectViewportObserver();
-      this.syncOverflow();
-      this.connectIntersectionObserver();
-    });
+    this.layoutController.connect();
+    this.loadController.connect();
   }
 
   disconnectedCallback(): void {
-    if (this.reconnectFrame !== null) cancelAnimationFrame(this.reconnectFrame);
-    this.reconnectFrame = null;
-    if (this.overflowSyncFrame !== null) cancelAnimationFrame(this.overflowSyncFrame);
-    this.overflowSyncFrame = null;
-    this.viewportEl?.removeEventListener('scroll', this.syncOverflow);
-    this.resizeObserver?.disconnect();
-    this.resizeObserver = null;
-    this.disconnectIntersectionObserver();
+    this.layoutController.disconnect();
+    this.loadController.disconnect();
   }
 
   @Watch('columns')
   @Watch('grouping')
   handleStructureChange(): void {
     this.warnModelIssues();
-    this.resetLoadRequest();
+    this.loadController.structureChanged();
   }
 
   @Watch('rows')
   @Watch('groups')
   handleDataChange(): void {
-    const nextCount = this.loadedRows.length;
-    if (nextCount > this.previousLoadedRowCount) {
-      const added = nextCount - this.previousLoadedRowCount;
-      this.announcement = this.rowsLoadedLabel
-        .replace('{count}', String(added))
-        .replace('{total}', String(nextCount));
-    }
-    if (nextCount > this.requestedRowCount) this.requestPending = false;
-    this.previousLoadedRowCount = nextCount;
+    this.loadController.dataChanged();
     this.warnModelIssues();
-    this.disconnectIntersectionObserver();
   }
 
   @Watch('loadIdentity')
   handleLoadIdentityChange(): void {
-    this.previousLoadedRowCount = this.loadedRows.length;
-    this.resetLoadRequest();
+    this.loadController.identityChanged();
   }
 
   @Watch('lazyLoading')
   @Watch('loadMoreMode')
   @Watch('loadMoreThreshold')
   handleLazyConfigurationChange(): void {
-    this.disconnectIntersectionObserver();
+    this.loadController.configurationChanged();
   }
 
   @Watch('loadingMore')
   handleLoadingMoreChange(loading: boolean): void {
-    if (loading) {
-      this.requestPending = true;
-      this.announcement = this.loadingMoreLabel;
-    } else if (this.loadMoreMode === 'manual') {
-      // A completed manual request may legitimately append no rows. Permit a
-      // deliberate follow-up activation; automatic mode stays guarded until
-      // the data shape or query identity changes.
-      this.requestPending = false;
-    }
-    this.disconnectIntersectionObserver();
+    this.loadController.loadingChanged(loading);
   }
 
   @Watch('loadMoreError')
   handleLoadMoreErrorChange(error: string | undefined): void {
-    if (error?.trim()) {
-      this.requestPending = false;
-      this.announcement = error;
-    }
-    this.disconnectIntersectionObserver();
+    this.loadController.errorChanged(error);
   }
 
   @Watch('hasMore')
   handleHasMoreChange(hasMore: boolean, hadMore: boolean): void {
-    if (!hasMore) {
-      this.requestPending = false;
-      if (hadMore) this.announcement = this.endOfResultsLabel;
-    }
-    this.disconnectIntersectionObserver();
+    this.loadController.hasMoreChanged(hasMore, hadMore);
   }
 
   private get grouped(): boolean {
@@ -281,53 +269,31 @@ export class Table {
     return this.stickyHeader && this.resolvedMaxHeight === undefined;
   }
 
-  private get loadedRows(): TableRow[] {
+  private currentLoadedRows(): TableRow[] {
     return tableRows(this.rows, this.groups, this.grouped);
   }
 
-  private get hasData(): boolean {
-    return this.loadedRows.length > 0;
+  private currentLoadedRowCount(): number {
+    return this.grouped
+      ? this.groups.reduce((count, group) => count + group.rows.length, 0)
+      : this.rows.length;
   }
 
-  private get totalColumns(): number {
-    return this.columns.length + (this.selectable ? 1 : 0);
-  }
-
-  private get allGroupsCollapsed(): boolean {
-    if (!this.grouped || this.groups.length === 0) return false;
-    const collapsed = new Set(this.collapsedGroupIds);
-    return this.groups.every(group => collapsed.has(group.id));
-  }
-
-  private get showCollapseAll(): boolean {
-    return this.grouped && this.groups.length > 0 && !this.allGroupsCollapsed;
-  }
-
-  private get collapseAllHost() {
-    if (!this.showCollapseAll) return undefined;
-    return tableCollapseAllHost(this.columns);
-  }
-
-  private get flexibleColumnId(): string | undefined {
-    return tableFlexibleColumnId(this.columns);
-  }
-
-  private get selectedSet(): Set<string> {
-    return new Set(this.selectedRowIds);
-  }
-
-  private get selectionState() {
-    return deriveTableSelectionState(this.loadedRows, this.selectedRowIds);
+  private createRenderModel(): TableRenderModel {
+    return createTableRenderModel({
+      columns: this.columns,
+      rows: this.rows,
+      groups: this.groups,
+      grouped: this.grouped,
+      selectionMode: this.selectionMode,
+      selectedRowIds: this.selectedRowIds,
+      collapsedGroupIds: this.collapsedGroupIds,
+    });
   }
 
   private get resolvedMaxHeight(): string | undefined {
     if (this.maxHeight == null || this.maxHeight === '') return undefined;
     return typeof this.maxHeight === 'number' ? `${Math.max(0, this.maxHeight)}px` : this.maxHeight;
-  }
-
-  private get tableStyle(): Record<string, string> | undefined {
-    const width = tableExplicitMinWidth(this.columns);
-    return width == null ? undefined : { '--ds-table-explicit-min-inline-size': width };
   }
 
   private warnModelIssues(): void {
@@ -358,131 +324,6 @@ export class Table {
     if (!message || message === this.previousModelWarning) return;
     this.previousModelWarning = message;
     console.warn(`[ds-table] ${message}`);
-  }
-
-  private connectViewportObserver(): void {
-    if (!this.viewportEl) return;
-    this.viewportEl.removeEventListener('scroll', this.syncOverflow);
-    this.viewportEl.addEventListener('scroll', this.syncOverflow, { passive: true });
-
-    this.resizeObserver?.disconnect();
-    if (typeof ResizeObserver === 'undefined') return;
-    this.resizeObserver = new ResizeObserver(this.scheduleOverflowSync);
-    this.resizeObserver.observe(this.viewportEl);
-    if (this.tableEl) this.resizeObserver.observe(this.tableEl);
-  }
-
-  private scheduleOverflowSync = (): void => {
-    if (this.overflowSyncFrame !== null) return;
-    this.overflowSyncFrame = requestAnimationFrame(() => {
-      this.overflowSyncFrame = null;
-      this.syncOverflow();
-    });
-  };
-
-  private syncOverflow = (): void => {
-    const viewport = this.viewportEl;
-    if (!viewport) return;
-    const tableInlineSize = this.tableEl?.getBoundingClientRect().width ?? viewport.clientWidth;
-    const visibleInlineSize = Math.min(viewport.clientWidth, tableInlineSize);
-    const visibleInlineSizeValue = `${visibleInlineSize}px`;
-    if (viewport.style.getPropertyValue('--ds-table-visible-inline-size') !== visibleInlineSizeValue) {
-      viewport.style.setProperty('--ds-table-visible-inline-size', visibleInlineSizeValue);
-    }
-    const overflows = viewport.scrollWidth - viewport.clientWidth > 1;
-    const scrollable = overflows || viewport.scrollHeight - viewport.clientHeight > 1;
-    const nextStart = overflows && viewport.scrollLeft > 1;
-    const nextEnd = overflows && viewport.scrollLeft + viewport.clientWidth < viewport.scrollWidth - 1;
-    if (nextStart !== this.overflowStart) this.overflowStart = nextStart;
-    if (nextEnd !== this.overflowEnd) this.overflowEnd = nextEnd;
-    if (scrollable !== this.scrollable) this.scrollable = scrollable;
-    this.syncStickyHeaderPosition();
-    this.syncFloatingCollapseAllPosition();
-  };
-
-  private syncStickyHeaderPosition(): void {
-    if (!this.viewportEl || !this.stickyHeaderTableEl) return;
-    const offset = this.viewportEl.scrollLeft;
-    const maxOffset = Math.max(0, this.viewportEl.scrollWidth - this.viewportEl.clientWidth);
-    this.stickyHeaderTableEl.style.setProperty('--ds-table-inline-scroll-offset', `${offset}px`);
-    this.stickyHeaderTableEl.style.setProperty('--ds-table-inline-scroll-max-offset', `${maxOffset}px`);
-  }
-
-  private syncFloatingCollapseAllPosition(): void {
-    if (this.collapseAllHost?.mode !== 'floating' || this.documentStickyHeader) return;
-    const overlay = this.collapseAllOverlayEl;
-    const frame = this.frameEl;
-    const head = this.interactiveHeadEl;
-    if (!overlay || !frame || !head) return;
-    const blockOffset = Math.max(0, head.getBoundingClientRect().top - frame.getBoundingClientRect().top);
-    const value = `${blockOffset}px`;
-    if (overlay.style.getPropertyValue('--ds-table-collapse-all-block-offset') !== value) {
-      overlay.style.setProperty('--ds-table-collapse-all-block-offset', value);
-    }
-  }
-
-  private resetLoadRequest(): void {
-    this.requestPending = false;
-    this.requestedRowCount = this.loadedRows.length;
-    this.disconnectIntersectionObserver();
-  }
-
-  private disconnectIntersectionObserver(): void {
-    this.intersectionObserver?.disconnect();
-    this.intersectionObserver = null;
-    this.observedSentinel = null;
-  }
-
-  private connectIntersectionObserver(): void {
-    if (
-      !this.lazyLoading ||
-      this.loadMoreMode !== 'auto' ||
-      !this.hasMore ||
-      !!this.loadMoreError?.trim() ||
-      !this.intersectionSupported ||
-      !this.viewportEl ||
-      !this.sentinelEl
-    ) {
-      this.disconnectIntersectionObserver();
-      return;
-    }
-
-    if (this.intersectionObserver && this.observedSentinel === this.sentinelEl) return;
-    this.disconnectIntersectionObserver();
-
-    const threshold = Number.isFinite(this.loadMoreThreshold)
-      ? Math.max(0, this.loadMoreThreshold)
-      : 0;
-    this.intersectionObserver = new IntersectionObserver(
-      entries => {
-        if (entries.some(entry => entry.isIntersecting)) this.requestLoadMore('auto');
-      },
-      {
-        root: this.resolvedMaxHeight === undefined ? null : this.viewportEl,
-        rootMargin: `0px 0px ${threshold}px 0px`,
-      },
-    );
-    this.observedSentinel = this.sentinelEl;
-    this.intersectionObserver.observe(this.sentinelEl);
-  }
-
-  private requestLoadMore(reason: TableLoadMoreReason): void {
-    if (
-      !this.lazyLoading ||
-      !this.hasMore ||
-      this.loadingMore ||
-      (reason !== 'retry' && !!this.loadMoreError?.trim()) ||
-      this.requestPending
-    ) return;
-
-    this.requestPending = true;
-    this.requestedRowCount = this.loadedRows.length;
-    this.announcement = this.loadingMoreLabel;
-    this.dsLoadMore.emit({
-      reason,
-      loadIdentity: this.loadIdentity,
-      loadedRowCount: this.requestedRowCount,
-    });
   }
 
   private emitSort(column: TableColumn, sortKey = column.id): void {
@@ -517,10 +358,12 @@ export class Table {
   }
 
   private emitAllSelection(): void {
+    const loadedRows = this.currentLoadedRows();
+    const selection = deriveTableSelectionState(loadedRows, this.selectedRowIds);
     this.dsSelectionChange.emit({
-      selectedRowIds: toggleAllLoadedTableRows(this.selectedRowIds, this.loadedRows),
+      selectedRowIds: toggleAllLoadedTableRows(this.selectedRowIds, loadedRows),
       scope: 'all-loaded',
-      selected: !this.selectionState.allSelected,
+      selected: !selection.allSelected,
     });
   }
 
@@ -613,8 +456,8 @@ export class Table {
     );
   }
 
-  private renderFloatingCollapseAll() {
-    if (this.collapseAllHost?.mode !== 'floating') return null;
+  private renderFloatingCollapseAll(model: TableRenderModel) {
+    if (model.collapseAllHost?.mode !== 'floating') return null;
     return (
       <span
         class="ds-table__collapse-all-overlay"
@@ -631,6 +474,7 @@ export class Table {
 
   private renderColumnHeader(
     column: TableColumn,
+    model: TableRenderModel,
     interactive = true,
     presentational = false,
   ) {
@@ -732,7 +576,7 @@ export class Table {
         )}
       </span>
     ) : null;
-    const collapseHost = this.collapseAllHost;
+    const collapseHost = model.collapseAllHost;
     const actionCollapseHost = collapseHost?.mode === 'action' && collapseHost.columnId === column.id;
     const blankActionCollapseHost = actionCollapseHost &&
       !column.header.trim() &&
@@ -787,13 +631,13 @@ export class Table {
     );
   }
 
-  private renderColgroup() {
+  private renderColgroup(model: TableRenderModel) {
     return (
       <colgroup>
-        {this.selectable && <col class="ds-table__selection-column" />}
+        {model.selectable && <col class="ds-table__selection-column" />}
         {this.columns.map(column => {
           const width = tableColumnSize(column);
-          const flexible = column.id === this.flexibleColumnId;
+          const flexible = column.id === model.flexibleColumnId;
           return (
             <col
               key={column.id}
@@ -809,8 +653,12 @@ export class Table {
     );
   }
 
-  private renderHeader(interactive = true, presentational = false) {
-    const selection = this.selectionState;
+  private renderHeader(
+    model: TableRenderModel,
+    interactive = true,
+    presentational = false,
+  ) {
+    const selection = model.selection;
     return (
       <thead class={{
         'ds-table__head': true,
@@ -819,7 +667,7 @@ export class Table {
         if (interactive) this.interactiveHeadEl = element ?? null;
       }}>
         <tr class="ds-table__header-row">
-          {this.selectable && (
+          {model.selectable && (
             <th
               class="ds-table__header-cell ds-table__selection-cell ds-table__cell--sticky-start"
               scope={presentational ? undefined : 'col'}
@@ -837,17 +685,21 @@ export class Table {
             </th>
           )}
           {this.columns.map(column => (
-            this.renderColumnHeader(column, interactive, presentational)
+            this.renderColumnHeader(column, model, interactive, presentational)
           ))}
         </tr>
       </thead>
     );
   }
 
-  private renderCellValue(value: TableCellValue, column: TableColumn, row: TableRow) {
-    if (isTableCellBlank(value)) return null;
+  private renderCellValue(
+    cell: TableCellPresentation,
+    column: TableColumn,
+    row: TableRow,
+  ) {
+    if (cell.kind === 'blank') return null;
 
-    if (value == null || isTableCellEmpty(value)) {
+    if (cell.kind === 'empty') {
       return (
         <ds-text
           class="ds-table__cell-track ds-table__cell-track--text"
@@ -861,7 +713,8 @@ export class Table {
       );
     }
 
-    if (isTableCellIcon(value)) {
+    if (cell.kind === 'icon') {
+      const value = cell.value;
       return (
         <ds-icon
           name={value.icon}
@@ -872,7 +725,8 @@ export class Table {
       );
     }
 
-    if (isTableCellImage(value)) {
+    if (cell.kind === 'image') {
+      const value = cell.value;
       return (
         <span class="ds-table__cell-image">
           {value.src ? (
@@ -888,7 +742,8 @@ export class Table {
       );
     }
 
-    if (isTableCellAction(value)) {
+    if (cell.kind === 'action') {
+      const value = cell.value;
       return (
         <ds-button-unfilled
           variant={value.variant ?? 'label'}
@@ -913,8 +768,9 @@ export class Table {
       );
     }
 
-    if (isTableCellTag(value)) {
-      const variant = value.variant ?? 'tag-only';
+    if (cell.kind === 'tag') {
+      const value = cell.value;
+      const variant = cell.variant;
       const tag = (
         <ds-tag
           label={value.label}
@@ -949,11 +805,8 @@ export class Table {
       );
     }
 
-    const primaryText = isTableCellPrimaryText(value);
-    const text = isTableCellText(value) || primaryText
-      ? value
-      : { primary: value, fontFeature: typeof value === 'number' ? 'tabular-nums' as const : 'normal' as const };
-    const wraps = text.wrap ?? column.wrap ?? false;
+    const text = cell.value;
+    const wraps = cell.wraps;
 
     return (
       <span class={{ 'ds-table__cell-copy': true, 'ds-table__cell-copy--wrap': wraps }}>
@@ -972,8 +825,8 @@ export class Table {
           <ds-text
             class="ds-table__cell-secondary ds-table__cell-track ds-table__cell-track--text"
             as="span"
-            variant={primaryText ? 'text-body-medium' : 'text-body-small'}
-            color={primaryText ? 'primary' : 'secondary'}
+            variant={cell.primaryText ? 'text-body-medium' : 'text-body-small'}
+            color={cell.primaryText ? 'primary' : 'secondary'}
             lineTruncation={wraps ? 'none' : 1}
             wrap={wraps ? 'wrap' : 'nowrap'}
           >
@@ -984,8 +837,8 @@ export class Table {
     );
   }
 
-  private renderRow(row: TableRow) {
-    const selected = this.selectedSet.has(row.id);
+  private renderRow(row: TableRow, model: TableRenderModel) {
+    const selected = model.selectedRowIds.has(row.id);
     const rowSelectable = row.selectable !== false && !row.disabled;
     return (
       <tr
@@ -1003,7 +856,7 @@ export class Table {
         onClick={event => this.emitRowActivation(row, event)}
         onKeyDown={event => this.handleRowKeydown(row, event)}
       >
-        {this.selectable && (
+        {model.selectable && (
           <td class={{
             'ds-table__cell': true,
             'ds-table__selection-cell': true,
@@ -1024,39 +877,18 @@ export class Table {
         )}
         {this.columns.map(column => {
           const align = column.align ?? 'start';
-          const value = row.cells[column.id];
-          const tagCell = isTableCellTag(value);
-          const iconCell = isTableCellIcon(value);
-          const imageCell = isTableCellImage(value);
-          const actionCell = isTableCellAction(value);
-          const primaryTextCell = isTableCellPrimaryText(value);
-          const emptyCell = value == null || isTableCellEmpty(value);
-          const blankCell = isTableCellBlank(value);
-          const textCell = primaryTextCell || (!tagCell && !iconCell && !imageCell && !actionCell && !emptyCell && !blankCell);
-          const singleTextCell = textCell && !primaryTextCell && (!isTableCellText(value) || !value.secondary);
-          const tagVariant = tagCell ? value.variant ?? 'tag-only' : undefined;
-          const textVariant = textCell
-            ? primaryTextCell
-              ? 'primary-pair'
-              : singleTextCell
-                ? 'single'
-                : 'multi'
-            : undefined;
-          const cellType = tagCell
-            ? 'tag'
-            : iconCell
-              ? 'icon'
-              : imageCell
-                ? 'image'
-                : actionCell
-                  ? 'action'
-                  : primaryTextCell
-                    ? 'primary-text'
-                    : emptyCell
-                      ? 'empty'
-                      : blankCell
-                        ? 'blank'
-                        : 'text';
+          const cell = resolveTableCellPresentation(row.cells[column.id], column);
+          const tagCell = cell.kind === 'tag';
+          const iconCell = cell.kind === 'icon';
+          const imageCell = cell.kind === 'image';
+          const actionCell = cell.kind === 'action';
+          const textCell = cell.kind === 'text';
+          const primaryTextCell = textCell && cell.primaryText;
+          const singleTextCell = textCell && cell.singleLine;
+          const emptyCell = cell.kind === 'empty';
+          const blankCell = cell.kind === 'blank';
+          const tagVariant = tagCell ? cell.variant : undefined;
+          const textVariant = textCell ? cell.variant : undefined;
           return (
             <td
               key={`${row.id}:${column.id}`}
@@ -1080,11 +912,11 @@ export class Table {
                 'ds-interaction-fill--selected': selected,
               }}
               data-column-id={column.id}
-              data-cell-type={cellType}
+              data-cell-type={cell.cellType}
               data-cell-variant={tagVariant ?? textVariant}
             >
               <span class="ds-table__cell-content ds-interaction-fill__content">
-                {this.renderCellValue(value, column, row)}
+                {this.renderCellValue(cell, column, row)}
               </span>
               {this.renderStickyEdge(column.sticky)}
             </td>
@@ -1114,27 +946,32 @@ export class Table {
     });
   }
 
-  private renderDataBodies() {
-    if (!this.grouped) {
-      return <tbody class="ds-table__body">{this.rows.map(row => this.renderRow(row))}</tbody>;
+  private renderDataBodies(model: TableRenderModel) {
+    if (!model.grouped) {
+      return (
+        <tbody class="ds-table__body">
+          {this.rows.map(row => this.renderRow(row, model))}
+        </tbody>
+      );
     }
 
-    const collapsed = new Set(this.collapsedGroupIds);
-    return this.groups.map(group => {
-      const count = resolvedTableGroupCount(group);
-      const countLabel = group.countLabel ?? `${count} ${count === 1 ? 'item' : 'items'}`;
-      const countIntent = group.intent ?? 'neutral';
-      const isCollapsed = collapsed.has(group.id);
-      const intentClass = tableGroupIntentClass(group.intent);
-      const labelColor = tableGroupLabelColor(group.intent);
-      const groupSelection = this.selectable
-        ? deriveTableSelectionState(group.rows, this.selectedRowIds)
-        : null;
+    return model.groups.map(groupModel => {
+      const {
+        group,
+        count,
+        countLabel,
+        countIntent,
+        collapsed: isCollapsed,
+        intent,
+        intentClass,
+        labelColor,
+        selection: groupSelection,
+      } = groupModel;
       return (
         <tbody
           class="ds-table__body ds-table__group"
           data-group-id={group.id}
-          data-group-intent={intentClass ? group.intent : undefined}
+          data-group-intent={intent}
           data-collapsed={isCollapsed ? 'true' : undefined}
           key={group.id}
         >
@@ -1145,7 +982,7 @@ export class Table {
                 [intentClass ?? '']: !!intentClass,
               }}
               scope="rowgroup"
-              colSpan={this.totalColumns}
+              colSpan={model.totalColumns}
             >
               <span class="ds-table__group-content">
                 {groupSelection && (
@@ -1191,7 +1028,6 @@ export class Table {
                   size="md"
                   isInset={true}
                   insetDepth="double"
-                  style={{ alignSelf: 'center' }}
                   icon={isCollapsed ? 'ChevronDown' : 'ChevronUp'}
                   expanded={!isCollapsed}
                   aria-label={
@@ -1208,21 +1044,23 @@ export class Table {
               </span>
             </th>
           </tr>
-          {!isCollapsed && group.rows.map(row => this.renderRow(row))}
+          {!isCollapsed && group.rows.map(row => this.renderRow(row, model))}
         </tbody>
       );
     });
   }
 
-  private renderSkeletonBody() {
+  private renderSkeletonBody(model: TableRenderModel) {
     const count = Math.min(20, Math.max(1, Math.round(this.skeletonRows) || 1));
     return (
       <tbody class="ds-table__body ds-table__skeleton-body">
         {Array.from({ length: count }, (_, index) => (
           <tr class="ds-table__row ds-table__skeleton-row" key={`skeleton-${index}`}>
-            {this.selectable && (
-              <td class="ds-table__cell ds-table__selection-cell ds-table__cell--sticky-start">
-                <ds-skeleton variant="icon" iconSize="md" />
+            {model.selectable && (
+              <td class="ds-table__cell ds-table__selection-cell ds-table__cell--sticky-start ds-table__skeleton-cell ds-interaction-fill ds-interaction-fill--grouped">
+                <span class="ds-interaction-fill__content">
+                  <ds-skeleton variant="icon" iconSize="md" />
+                </span>
                 {this.renderStickyEdge('start')}
               </td>
             )}
@@ -1230,12 +1068,16 @@ export class Table {
               <td
                 class={{
                   'ds-table__cell': true,
+                  'ds-table__cell--text-single': true,
+                  'ds-table__skeleton-cell': true,
                   'ds-table__cell--sticky-start': column.sticky === 'start',
                   'ds-table__cell--sticky-end': column.sticky === 'end',
+                  'ds-interaction-fill': true,
+                  'ds-interaction-fill--grouped': true,
                 }}
                 key={`skeleton-${index}:${column.id}`}
               >
-                <span class="ds-table__cell-content">
+                <span class="ds-table__cell-content ds-interaction-fill__content">
                   <ds-skeleton variant="text" textVariant="text-body-medium" width="100%" />
                 </span>
                 {this.renderStickyEdge(column.sticky)}
@@ -1247,12 +1089,12 @@ export class Table {
     );
   }
 
-  private renderStateBody(kind: 'empty' | 'error') {
+  private renderStateBody(kind: 'empty' | 'error', totalColumns: number) {
     const error = kind === 'error';
     return (
       <tbody class="ds-table__body ds-table__state-body">
         <tr class="ds-table__state-row">
-          <td class="ds-table__state-cell" colSpan={this.totalColumns}>
+          <td class="ds-table__state-cell" colSpan={totalColumns}>
             <ds-empty-state
               icon={error ? 'ErrorTriangle' : 'Inbox'}
               heading={error ? this.errorHeading : this.emptyHeading}
@@ -1264,10 +1106,11 @@ export class Table {
     );
   }
 
-  private renderLazyBody() {
-    if (!this.lazyLoading || !this.hasData) return null;
+  private renderLazyBody(model: TableRenderModel) {
+    if (!this.lazyLoading || !model.hasData) return null;
     const error = this.loadMoreError?.trim();
-    const manualFallback = this.loadMoreMode === 'manual' || !this.intersectionSupported;
+    const manualFallback = this.loadMoreMode === 'manual' ||
+      !this.loadController.intersectionSupported;
 
     return (
       <tbody class="ds-table__body ds-table__load-body">
@@ -1277,7 +1120,7 @@ export class Table {
             this.sentinelEl = element ?? null;
           }}
         >
-          <td class="ds-table__load-cell" colSpan={this.totalColumns}>
+          <td class="ds-table__load-cell" colSpan={model.totalColumns}>
             {error ? (
               <span class="ds-table__load-content ds-table__load-content--error">
                 <span class="ds-table__load-copy">
@@ -1287,7 +1130,7 @@ export class Table {
                 <ds-button-unfilled
                   label={this.retryLabel}
                   size="md"
-                  onDsClick={() => this.requestLoadMore('retry')}
+                  onDsClick={() => this.loadController.request('retry')}
                 />
               </span>
             ) : this.loadingMore ? (
@@ -1302,7 +1145,7 @@ export class Table {
                 <ds-button-unfilled
                   label={this.loadMoreLabel}
                   size="md"
-                  onDsClick={() => this.requestLoadMore('manual')}
+                  onDsClick={() => this.loadController.request('manual')}
                 />
               </span>
             ) : this.hasMore ? (
@@ -1323,7 +1166,7 @@ export class Table {
     );
   }
 
-  private renderDocumentStickyHeader() {
+  private renderDocumentStickyHeader(model: TableRenderModel) {
     if (!this.documentStickyHeader) return null;
     return (
       <div
@@ -1333,19 +1176,19 @@ export class Table {
           class={{
             'ds-table__table': true,
             'ds-table__sticky-header-table': true,
-            'ds-table__table--selectable': this.selectable,
-            'ds-table__table--grouped': this.grouped,
+            'ds-table__table--selectable': model.selectable,
+            'ds-table__table--grouped': model.grouped,
           }}
-          style={this.tableStyle}
+          style={model.tableStyle}
           role="presentation"
           ref={element => {
             this.stickyHeaderTableEl = element ?? null;
           }}
         >
-          {this.renderColgroup()}
-          {this.renderHeader(true, true)}
+          {this.renderColgroup(model)}
+          {this.renderHeader(model, true, true)}
         </table>
-        {this.renderFloatingCollapseAll()}
+        {this.renderFloatingCollapseAll(model)}
       </div>
     );
   }
@@ -1374,9 +1217,11 @@ export class Table {
   }
 
   render() {
+    const model = this.createRenderModel();
+    this.renderedModel = model;
     const regionLabel = this.scrollLabel?.trim() || `${this.caption} scroll area`;
-    const initialLoading = this.loading && !this.hasData;
-    const initialError = !this.hasData && this.error;
+    const initialLoading = this.loading && !model.hasData;
+    const initialError = !model.hasData && this.error;
     const viewportStyle = this.resolvedMaxHeight
       ? { '--ds-table-max-block-size': this.resolvedMaxHeight }
       : undefined;
@@ -1399,8 +1244,8 @@ export class Table {
               this.frameEl = element ?? null;
             }}
           >
-            {this.renderDocumentStickyHeader()}
-            {!this.documentStickyHeader && this.renderFloatingCollapseAll()}
+            {this.renderDocumentStickyHeader(model)}
+            {!this.documentStickyHeader && this.renderFloatingCollapseAll(model)}
             <div
               class="ds-table__viewport"
               style={viewportStyle}
@@ -1414,10 +1259,10 @@ export class Table {
               <table
                 class={{
                   'ds-table__table': true,
-                  'ds-table__table--selectable': this.selectable,
-                  'ds-table__table--grouped': this.grouped,
+                  'ds-table__table--selectable': model.selectable,
+                  'ds-table__table--grouped': model.grouped,
                 }}
-                style={this.tableStyle}
+                style={model.tableStyle}
                 aria-busy={initialLoading || this.loadingMore ? 'true' : undefined}
                 ref={element => {
                   this.tableEl = element ?? null;
@@ -1433,16 +1278,16 @@ export class Table {
                     {this.caption}
                   </ds-text>
                 </caption>
-                {this.renderColgroup()}
-                {this.renderHeader(!this.documentStickyHeader)}
+                {this.renderColgroup(model)}
+                {this.renderHeader(model, !this.documentStickyHeader)}
                 {initialLoading
-                  ? this.renderSkeletonBody()
+                  ? this.renderSkeletonBody(model)
                   : initialError
-                    ? this.renderStateBody('error')
-                    : this.hasData
-                      ? this.renderDataBodies()
-                      : this.renderStateBody('empty')}
-                {!initialLoading && !initialError && this.renderLazyBody()}
+                    ? this.renderStateBody('error', model.totalColumns)
+                    : model.hasData
+                      ? this.renderDataBodies(model)
+                      : this.renderStateBody('empty', model.totalColumns)}
+                {!initialLoading && !initialError && this.renderLazyBody(model)}
               </table>
             </div>
           </div>

@@ -899,7 +899,7 @@ export const InitialAndOutcomeStates: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Initial loading, empty, and initial error keep the table caption and column relationships present while replacing only the body state.',
+        story: 'Initial loading preserves the real table grid, single-line cell geometry, and column relationships with row-shaped skeletons. Empty and initial error keep the table caption and columns present while replacing only the body state.',
       },
     },
   },
