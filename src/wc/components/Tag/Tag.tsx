@@ -1,5 +1,5 @@
 import { Component, Event, EventEmitter, Prop, h, Host } from '@stencil/core';
-import { CONTROL_TEXT_VARIANT } from '../../utils';
+import { CONTROL_TEXT_VARIANT, type ControlInsetDepth } from '../../utils';
 
 export type TagIntent   = 'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive';
 export type TagContrast = 'strong' | 'bold' | 'medium' | 'faint';
@@ -29,6 +29,8 @@ export class Tag {
   @Prop() size: TagSize = 'md';
   /** Use the reduced outer geometry when nested inside a control of the same size. */
   @Prop() isInset: boolean = false;
+  /** Single removes 4px overall; double removes 8px overall (xs stays single). */
+  @Prop() insetDepth: ControlInsetDepth = 'single';
   @Prop() rounded: boolean = false;
   @Prop() maxWidth: string | number | undefined;
   /** Render a menu-trigger button with a fixed ChevronUpDown suffix. */
@@ -51,6 +53,7 @@ export class Tag {
   render() {
     const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const iconSize = ICON_SIZE[this.size];
+    const doubleInset = this.isInset && this.insetDepth === 'double' && this.size !== 'xs';
 
     const maxWidthStyle = this.maxWidth != null
       ? { maxWidth: typeof this.maxWidth === 'number' ? `${this.maxWidth}px` : this.maxWidth }
@@ -63,7 +66,8 @@ export class Tag {
       'ds-control--md': this.size === 'md',
       'ds-control--sm': this.size === 'sm',
       'ds-control--xs': this.size === 'xs',
-      'ds-control--inset': this.isInset,
+      'ds-control--inset': this.isInset && !doubleInset,
+      'ds-control--inset-double': doubleInset,
       'tag--rounded': this.rounded,
       'tag--interactive': this.interactive,
       'ds-control-inactive': this.interactive && this.isInactive,

@@ -10,36 +10,39 @@ import {
 } from '@stencil/core';
 import {
   deriveTableSelectionState,
-  isTableCellAction,
-  isTableCellBlank,
-  isTableCellEmpty,
-  isTableCellIcon,
-  isTableCellImage,
-  isTableCellPrimaryText,
-  isTableCellText,
-  isTableCellTag,
+  formatTableResultSummary,
   nextTableGroupOrder,
   nextTableSortState,
-  resolvedTableGroupCount,
   tableColumnSize,
-  tableExplicitMinWidth,
   tableModelIssues,
   tableRows,
   tableRowSelectionLabel,
   toggleAllLoadedTableRows,
+  toggleTableGroupCollapsed,
+  toggleTableGroupSelection,
+  nextTableGroupsCollapsed,
   toggleTableRowSelection,
 } from './table-model';
+import {
+  resolveTableCellPresentation,
+  type TableCellPresentation,
+} from './table-cell-model';
+import {
+  createTableRenderModel,
+  type TableRenderModel,
+} from './table-render-model';
+import { TableLayoutController } from './table-layout-controller';
+import { TableLoadController } from './table-load-controller';
 import type {
   TableCaptionVisibility,
   TableCellActionDetail,
-  TableCellValue,
   TableColumn,
   TableGroup,
+  TableGroupCollapseChangeDetail,
   TableGroupingChangeDetail,
   TableGroupingState,
   TableLoadMoreDetail,
   TableLoadMoreMode,
-  TableLoadMoreReason,
   TableRow,
   TableRowActivateDetail,
   TableSelectionChangeDetail,
@@ -67,10 +70,21 @@ export class Table {
   @Prop() grouping: TableGroupingState | null = null;
   /** Controlled member-row sort state. */
   @Prop() sort: TableSortState | null = null;
+  /** Controlled collapsed group identities. Groups not listed remain expanded. */
+  @Prop() collapsedGroupIds: string[] = [];
 
-  /** Required accessible table name, rendered as a native caption. */
+  /** Required accessible table name, retained as a native caption. */
   @Prop() caption!: string;
+  /** Shows a matching presentational title bar above the native table frame. */
   @Prop() captionVisibility: TableCaptionVisibility = 'hidden';
+  /**
+   * Optional result summary footer. When both `displayedCount` and `totalCount`
+   * are finite numbers, the table shows “Displaying {displayed} of {total}”.
+   */
+  @Prop() displayedCount: number | undefined;
+  @Prop() totalCount: number | undefined;
+  /** Supports {displayed} and {total} placeholders. */
+  @Prop() resultSummaryLabel: string = 'Displaying {displayed} of {total}';
   @Prop() stickyHeader: boolean = false;
   /** Maximum scroll-region height. Numbers resolve to CSS pixels. */
   @Prop() maxHeight: string | number | undefined;
@@ -111,6 +125,7 @@ export class Table {
 
   @Event() dsSortChange!: EventEmitter<TableSortChangeDetail>;
   @Event() dsGroupingChange!: EventEmitter<TableGroupingChangeDetail>;
+  @Event() dsGroupCollapseChange!: EventEmitter<TableGroupCollapseChangeDetail>;
   @Event() dsSelectionChange!: EventEmitter<TableSelectionChangeDetail>;
   @Event() dsLoadMore!: EventEmitter<TableLoadMoreDetail>;
   @Event() dsCellAction!: EventEmitter<TableCellActionDetail>;
@@ -119,127 +134,128 @@ export class Table {
   @State() private overflowStart = false;
   @State() private overflowEnd = false;
   @State() private scrollable = false;
-  @State() private intersectionSupported = true;
   @State() private announcement = '';
 
   private viewportEl: HTMLElement | null = null;
+  private frameEl: HTMLElement | null = null;
+  private interactiveHeadEl: HTMLTableSectionElement | null = null;
+  private collapseAllOverlayEl: HTMLElement | null = null;
   private stickyHeaderTableEl: HTMLTableElement | null = null;
   private tableEl: HTMLTableElement | null = null;
   private sentinelEl: HTMLElement | null = null;
-  private resizeObserver: ResizeObserver | null = null;
-  private intersectionObserver: IntersectionObserver | null = null;
-  private observedSentinel: HTMLElement | null = null;
-  private requestPending = false;
-  private requestedRowCount = 0;
-  private previousLoadedRowCount = 0;
   private previousModelWarning = '';
   private hasLoaded = false;
-  private reconnectFrame: number | null = null;
+  private renderedModel: TableRenderModel | null = null;
+  private readonly layoutController = new TableLayoutController({
+    elements: () => ({
+      viewport: this.viewportEl,
+      table: this.tableEl,
+      stickyHeaderTable: this.stickyHeaderTableEl,
+      collapseAllOverlay: this.collapseAllOverlayEl,
+      frame: this.frameEl,
+      interactiveHead: this.interactiveHeadEl,
+    }),
+    mode: () => ({
+      documentStickyHeader: this.documentStickyHeader,
+      floatingCollapseAll: this.renderedModel?.collapseAllHost?.mode === 'floating',
+    }),
+    overflowChanged: state => {
+      if (state.start !== this.overflowStart) this.overflowStart = state.start;
+      if (state.end !== this.overflowEnd) this.overflowEnd = state.end;
+      if (state.scrollable !== this.scrollable) this.scrollable = state.scrollable;
+    },
+  });
+  private readonly loadController = new TableLoadController({
+    state: () => ({
+      lazyLoading: this.lazyLoading,
+      loadMoreMode: this.loadMoreMode,
+      hasMore: this.hasMore,
+      loadingMore: this.loadingMore,
+      loadMoreError: this.loadMoreError,
+      loadIdentity: this.loadIdentity,
+      loadMoreThreshold: this.loadMoreThreshold,
+      containedScroll: this.resolvedMaxHeight !== undefined,
+      loadingMoreLabel: this.loadingMoreLabel,
+      endOfResultsLabel: this.endOfResultsLabel,
+      rowsLoadedLabel: this.rowsLoadedLabel,
+      loadedRowCount: this.currentLoadedRowCount(),
+      viewport: this.viewportEl,
+      sentinel: this.sentinelEl,
+    }),
+    announce: message => {
+      this.announcement = message;
+    },
+    request: detail => {
+      this.dsLoadMore.emit(detail);
+    },
+  });
 
   componentWillLoad(): void {
-    this.previousLoadedRowCount = this.loadedRows.length;
-    this.intersectionSupported = typeof IntersectionObserver !== 'undefined';
+    this.loadController.initialize();
     this.warnModelIssues();
   }
 
   componentDidLoad(): void {
     this.hasLoaded = true;
-    this.connectViewportObserver();
-    this.syncOverflow();
-    this.connectIntersectionObserver();
+    this.layoutController.connect();
+    this.loadController.connect();
   }
 
   componentDidRender(): void {
-    this.syncStickyHeaderPosition();
-    this.connectIntersectionObserver();
+    this.layoutController.refresh();
+    this.loadController.refresh();
   }
 
   connectedCallback(): void {
     if (!this.hasLoaded) return;
-    if (this.reconnectFrame !== null) cancelAnimationFrame(this.reconnectFrame);
-    this.reconnectFrame = requestAnimationFrame(() => {
-      this.reconnectFrame = null;
-      this.connectViewportObserver();
-      this.syncOverflow();
-      this.connectIntersectionObserver();
-    });
+    this.layoutController.connect();
+    this.loadController.connect();
   }
 
   disconnectedCallback(): void {
-    if (this.reconnectFrame !== null) cancelAnimationFrame(this.reconnectFrame);
-    this.reconnectFrame = null;
-    this.viewportEl?.removeEventListener('scroll', this.syncOverflow);
-    this.resizeObserver?.disconnect();
-    this.resizeObserver = null;
-    this.disconnectIntersectionObserver();
+    this.layoutController.disconnect();
+    this.loadController.disconnect();
   }
 
   @Watch('columns')
   @Watch('grouping')
   handleStructureChange(): void {
     this.warnModelIssues();
-    this.resetLoadRequest();
+    this.loadController.structureChanged();
   }
 
   @Watch('rows')
   @Watch('groups')
   handleDataChange(): void {
-    const nextCount = this.loadedRows.length;
-    if (nextCount > this.previousLoadedRowCount) {
-      const added = nextCount - this.previousLoadedRowCount;
-      this.announcement = this.rowsLoadedLabel
-        .replace('{count}', String(added))
-        .replace('{total}', String(nextCount));
-    }
-    if (nextCount > this.requestedRowCount) this.requestPending = false;
-    this.previousLoadedRowCount = nextCount;
+    this.loadController.dataChanged();
     this.warnModelIssues();
-    this.disconnectIntersectionObserver();
   }
 
   @Watch('loadIdentity')
   handleLoadIdentityChange(): void {
-    this.previousLoadedRowCount = this.loadedRows.length;
-    this.resetLoadRequest();
+    this.loadController.identityChanged();
   }
 
   @Watch('lazyLoading')
   @Watch('loadMoreMode')
   @Watch('loadMoreThreshold')
   handleLazyConfigurationChange(): void {
-    this.disconnectIntersectionObserver();
+    this.loadController.configurationChanged();
   }
 
   @Watch('loadingMore')
   handleLoadingMoreChange(loading: boolean): void {
-    if (loading) {
-      this.requestPending = true;
-      this.announcement = this.loadingMoreLabel;
-    } else if (this.loadMoreMode === 'manual') {
-      // A completed manual request may legitimately append no rows. Permit a
-      // deliberate follow-up activation; automatic mode stays guarded until
-      // the data shape or query identity changes.
-      this.requestPending = false;
-    }
-    this.disconnectIntersectionObserver();
+    this.loadController.loadingChanged(loading);
   }
 
   @Watch('loadMoreError')
   handleLoadMoreErrorChange(error: string | undefined): void {
-    if (error?.trim()) {
-      this.requestPending = false;
-      this.announcement = error;
-    }
-    this.disconnectIntersectionObserver();
+    this.loadController.errorChanged(error);
   }
 
   @Watch('hasMore')
   handleHasMoreChange(hasMore: boolean, hadMore: boolean): void {
-    if (!hasMore) {
-      this.requestPending = false;
-      if (hadMore) this.announcement = this.endOfResultsLabel;
-    }
-    this.disconnectIntersectionObserver();
+    this.loadController.hasMoreChanged(hasMore, hadMore);
   }
 
   private get grouped(): boolean {
@@ -254,34 +270,31 @@ export class Table {
     return this.stickyHeader && this.resolvedMaxHeight === undefined;
   }
 
-  private get loadedRows(): TableRow[] {
+  private currentLoadedRows(): TableRow[] {
     return tableRows(this.rows, this.groups, this.grouped);
   }
 
-  private get hasData(): boolean {
-    return this.loadedRows.length > 0;
+  private currentLoadedRowCount(): number {
+    return this.grouped
+      ? this.groups.reduce((count, group) => count + group.rows.length, 0)
+      : this.rows.length;
   }
 
-  private get totalColumns(): number {
-    return this.columns.length + (this.selectable ? 1 : 0);
-  }
-
-  private get selectedSet(): Set<string> {
-    return new Set(this.selectedRowIds);
-  }
-
-  private get selectionState() {
-    return deriveTableSelectionState(this.loadedRows, this.selectedRowIds);
+  private createRenderModel(): TableRenderModel {
+    return createTableRenderModel({
+      columns: this.columns,
+      rows: this.rows,
+      groups: this.groups,
+      grouped: this.grouped,
+      selectionMode: this.selectionMode,
+      selectedRowIds: this.selectedRowIds,
+      collapsedGroupIds: this.collapsedGroupIds,
+    });
   }
 
   private get resolvedMaxHeight(): string | undefined {
     if (this.maxHeight == null || this.maxHeight === '') return undefined;
     return typeof this.maxHeight === 'number' ? `${Math.max(0, this.maxHeight)}px` : this.maxHeight;
-  }
-
-  private get tableStyle(): Record<string, string> | undefined {
-    const width = tableExplicitMinWidth(this.columns);
-    return width == null ? undefined : { '--ds-table-explicit-min-inline-size': width };
   }
 
   private warnModelIssues(): void {
@@ -312,103 +325,6 @@ export class Table {
     if (!message || message === this.previousModelWarning) return;
     this.previousModelWarning = message;
     console.warn(`[ds-table] ${message}`);
-  }
-
-  private connectViewportObserver(): void {
-    if (!this.viewportEl) return;
-    this.viewportEl.removeEventListener('scroll', this.syncOverflow);
-    this.viewportEl.addEventListener('scroll', this.syncOverflow, { passive: true });
-
-    this.resizeObserver?.disconnect();
-    if (typeof ResizeObserver === 'undefined') return;
-    this.resizeObserver = new ResizeObserver(this.syncOverflow);
-    this.resizeObserver.observe(this.viewportEl);
-    if (this.tableEl) this.resizeObserver.observe(this.tableEl);
-  }
-
-  private syncOverflow = (): void => {
-    const viewport = this.viewportEl;
-    if (!viewport) return;
-    const overflows = viewport.scrollWidth - viewport.clientWidth > 1;
-    const scrollable = overflows || viewport.scrollHeight - viewport.clientHeight > 1;
-    const nextStart = overflows && viewport.scrollLeft > 1;
-    const nextEnd = overflows && viewport.scrollLeft + viewport.clientWidth < viewport.scrollWidth - 1;
-    if (nextStart !== this.overflowStart) this.overflowStart = nextStart;
-    if (nextEnd !== this.overflowEnd) this.overflowEnd = nextEnd;
-    if (scrollable !== this.scrollable) this.scrollable = scrollable;
-    this.syncStickyHeaderPosition();
-  };
-
-  private syncStickyHeaderPosition(): void {
-    if (!this.viewportEl || !this.stickyHeaderTableEl) return;
-    const offset = this.viewportEl.scrollLeft;
-    const maxOffset = Math.max(0, this.viewportEl.scrollWidth - this.viewportEl.clientWidth);
-    this.stickyHeaderTableEl.style.setProperty('--ds-table-inline-scroll-offset', `${offset}px`);
-    this.stickyHeaderTableEl.style.setProperty('--ds-table-inline-scroll-max-offset', `${maxOffset}px`);
-  }
-
-  private resetLoadRequest(): void {
-    this.requestPending = false;
-    this.requestedRowCount = this.loadedRows.length;
-    this.disconnectIntersectionObserver();
-  }
-
-  private disconnectIntersectionObserver(): void {
-    this.intersectionObserver?.disconnect();
-    this.intersectionObserver = null;
-    this.observedSentinel = null;
-  }
-
-  private connectIntersectionObserver(): void {
-    if (
-      !this.lazyLoading ||
-      this.loadMoreMode !== 'auto' ||
-      !this.hasMore ||
-      !!this.loadMoreError?.trim() ||
-      !this.intersectionSupported ||
-      !this.viewportEl ||
-      !this.sentinelEl
-    ) {
-      this.disconnectIntersectionObserver();
-      return;
-    }
-
-    if (this.intersectionObserver && this.observedSentinel === this.sentinelEl) return;
-    this.disconnectIntersectionObserver();
-
-    const threshold = Number.isFinite(this.loadMoreThreshold)
-      ? Math.max(0, this.loadMoreThreshold)
-      : 0;
-    this.intersectionObserver = new IntersectionObserver(
-      entries => {
-        if (entries.some(entry => entry.isIntersecting)) this.requestLoadMore('auto');
-      },
-      {
-        root: this.resolvedMaxHeight === undefined ? null : this.viewportEl,
-        rootMargin: `0px 0px ${threshold}px 0px`,
-      },
-    );
-    this.observedSentinel = this.sentinelEl;
-    this.intersectionObserver.observe(this.sentinelEl);
-  }
-
-  private requestLoadMore(reason: TableLoadMoreReason): void {
-    if (
-      !this.lazyLoading ||
-      !this.hasMore ||
-      this.loadingMore ||
-      (reason !== 'retry' && !!this.loadMoreError?.trim()) ||
-      this.requestPending
-    ) return;
-
-    this.requestPending = true;
-    this.requestedRowCount = this.loadedRows.length;
-    this.announcement = this.loadingMoreLabel;
-    this.dsLoadMore.emit({
-      reason,
-      loadIdentity: this.loadIdentity,
-      loadedRowCount: this.requestedRowCount,
-    });
   }
 
   private emitSort(column: TableColumn, sortKey = column.id): void {
@@ -443,10 +359,22 @@ export class Table {
   }
 
   private emitAllSelection(): void {
+    const loadedRows = this.currentLoadedRows();
+    const selection = deriveTableSelectionState(loadedRows, this.selectedRowIds);
     this.dsSelectionChange.emit({
-      selectedRowIds: toggleAllLoadedTableRows(this.selectedRowIds, this.loadedRows),
+      selectedRowIds: toggleAllLoadedTableRows(this.selectedRowIds, loadedRows),
       scope: 'all-loaded',
-      selected: !this.selectionState.allSelected,
+      selected: !selection.allSelected,
+    });
+  }
+
+  private emitGroupSelection(group: TableGroup): void {
+    const state = deriveTableSelectionState(group.rows, this.selectedRowIds);
+    this.dsSelectionChange.emit({
+      selectedRowIds: toggleTableGroupSelection(this.selectedRowIds, group.rows),
+      scope: 'group',
+      groupId: group.id,
+      selected: !state.allSelected,
     });
   }
 
@@ -509,8 +437,45 @@ export class Table {
     );
   }
 
+  private renderCollapseAllButton() {
+    return (
+      <ds-button-unfilled
+        class="ds-table__collapse-all"
+        variant="icon"
+        icon="ChevronDownUp"
+        size="xs"
+        style={{ width: 'var(--dimension-size-300)' }}
+        aria-label="Collapse all groups"
+        hasBorder={false}
+        activeFill={false}
+        pressScale={false}
+        onDsClick={event => {
+          event.stopPropagation();
+          this.emitAllGroupsCollapse();
+        }}
+      />
+    );
+  }
+
+  private renderFloatingCollapseAll(model: TableRenderModel) {
+    if (model.collapseAllHost?.mode !== 'floating') return null;
+    return (
+      <span
+        class="ds-table__collapse-all-overlay"
+        ref={element => {
+          this.collapseAllOverlayEl = element ?? null;
+        }}
+      >
+        <span class="ds-table__collapse-all-surface ds-control-elevation ds-control-elevation--md">
+          {this.renderCollapseAllButton()}
+        </span>
+      </span>
+    );
+  }
+
   private renderColumnHeader(
     column: TableColumn,
+    model: TableRenderModel,
     interactive = true,
     presentational = false,
   ) {
@@ -612,6 +577,17 @@ export class Table {
         )}
       </span>
     ) : null;
+    const collapseHost = model.collapseAllHost;
+    const actionCollapseHost = collapseHost?.mode === 'action' && collapseHost.columnId === column.id;
+    const blankActionCollapseHost = actionCollapseHost &&
+      !column.header.trim() &&
+      !column.headerSegments?.length;
+    const collapseControl =
+      interactive && actionCollapseHost ? (
+        <span class="ds-table__collapse-slot">
+          {this.renderCollapseAllButton()}
+        </span>
+      ) : null;
 
     return (
       <th
@@ -621,6 +597,7 @@ export class Table {
           [`ds-table__cell--align-${align}`]: true,
           'ds-table__cell--sticky-start': column.sticky === 'start',
           'ds-table__cell--sticky-end': column.sticky === 'end',
+          'ds-table__header-cell--collapse-all': actionCollapseHost,
         }}
         scope={presentational ? undefined : 'col'}
         aria-sort={presentational ? undefined : memberAriaSort}
@@ -631,44 +608,67 @@ export class Table {
         {!column.header.trim() && column.headerLabel?.trim() && (
           <span class="ds-visually-hidden">{column.headerLabel}</span>
         )}
-        <span class="ds-table__header-content">
-          {align === 'end' && sortControl}
-          {align === 'center' && (
-            <span
-              class="ds-table__sort-slot ds-table__sort-slot--balance"
-              data-sort-balance="true"
-              aria-hidden="true"
-            />
-          )}
-          {labelControl}
-          {align !== 'end' && sortControl}
-        </span>
+        {blankActionCollapseHost ? (
+          <span class="ds-table__header-content ds-table__header-content--collapse-all">
+            {collapseControl}
+          </span>
+        ) : (
+          <span class="ds-table__header-content">
+            {align === 'end' && sortControl}
+            {align === 'center' && (
+              <span
+                class="ds-table__sort-slot ds-table__sort-slot--balance"
+                data-sort-balance="true"
+                aria-hidden="true"
+              />
+            )}
+            {labelControl}
+            {align !== 'end' && sortControl}
+            {collapseControl}
+          </span>
+        )}
         {this.renderStickyEdge(column.sticky)}
       </th>
     );
   }
 
-  private renderColgroup() {
+  private renderColgroup(model: TableRenderModel) {
     return (
       <colgroup>
-        {this.selectable && <col class="ds-table__selection-column" />}
+        {model.selectable && <col class="ds-table__selection-column" />}
         {this.columns.map(column => {
           const width = tableColumnSize(column);
-          return <col key={column.id} style={width ? { width } : undefined} />;
+          const flexible = column.id === model.flexibleColumnId;
+          return (
+            <col
+              key={column.id}
+              class={{
+                'ds-table__action-column': column.kind === 'action',
+                'ds-table__flexible-column': flexible,
+              }}
+              style={width && !flexible ? { width } : undefined}
+            />
+          );
         })}
       </colgroup>
     );
   }
 
-  private renderHeader(interactive = true, presentational = false) {
-    const selection = this.selectionState;
+  private renderHeader(
+    model: TableRenderModel,
+    interactive = true,
+    presentational = false,
+  ) {
+    const selection = model.selection;
     return (
       <thead class={{
         'ds-table__head': true,
         'ds-table__head--semantic-copy': !interactive,
+      }} ref={element => {
+        if (interactive) this.interactiveHeadEl = element ?? null;
       }}>
         <tr class="ds-table__header-row">
-          {this.selectable && (
+          {model.selectable && (
             <th
               class="ds-table__header-cell ds-table__selection-cell ds-table__cell--sticky-start"
               scope={presentational ? undefined : 'col'}
@@ -686,17 +686,21 @@ export class Table {
             </th>
           )}
           {this.columns.map(column => (
-            this.renderColumnHeader(column, interactive, presentational)
+            this.renderColumnHeader(column, model, interactive, presentational)
           ))}
         </tr>
       </thead>
     );
   }
 
-  private renderCellValue(value: TableCellValue, column: TableColumn, row: TableRow) {
-    if (isTableCellBlank(value)) return null;
+  private renderCellValue(
+    cell: TableCellPresentation,
+    column: TableColumn,
+    row: TableRow,
+  ) {
+    if (cell.kind === 'blank') return null;
 
-    if (value == null || isTableCellEmpty(value)) {
+    if (cell.kind === 'empty') {
       return (
         <ds-text
           class="ds-table__cell-track ds-table__cell-track--text"
@@ -710,7 +714,8 @@ export class Table {
       );
     }
 
-    if (isTableCellIcon(value)) {
+    if (cell.kind === 'icon') {
+      const value = cell.value;
       return (
         <ds-icon
           name={value.icon}
@@ -721,7 +726,8 @@ export class Table {
       );
     }
 
-    if (isTableCellImage(value)) {
+    if (cell.kind === 'image') {
+      const value = cell.value;
       return (
         <span class="ds-table__cell-image">
           {value.src ? (
@@ -737,12 +743,14 @@ export class Table {
       );
     }
 
-    if (isTableCellAction(value)) {
+    if (cell.kind === 'action') {
+      const value = cell.value;
       return (
         <ds-button-unfilled
           variant={value.variant ?? 'label'}
           size="md"
           isInset={true}
+          insetDepth="double"
           label={value.label ?? ''}
           icon={value.icon ?? ''}
           aria-label={value.ariaLabel ?? null}
@@ -761,8 +769,9 @@ export class Table {
       );
     }
 
-    if (isTableCellTag(value)) {
-      const variant = value.variant ?? 'tag-only';
+    if (cell.kind === 'tag') {
+      const value = cell.value;
+      const variant = cell.variant;
       const tag = (
         <ds-tag
           label={value.label}
@@ -772,6 +781,7 @@ export class Table {
           icon={value.icon ?? ''}
           rounded={value.rounded ?? false}
           isInset
+          insetDepth="double"
         />
       );
 
@@ -796,11 +806,8 @@ export class Table {
       );
     }
 
-    const primaryText = isTableCellPrimaryText(value);
-    const text = isTableCellText(value) || primaryText
-      ? value
-      : { primary: value, fontFeature: typeof value === 'number' ? 'tabular-nums' as const : 'normal' as const };
-    const wraps = text.wrap ?? column.wrap ?? false;
+    const text = cell.value;
+    const wraps = cell.wraps;
 
     return (
       <span class={{ 'ds-table__cell-copy': true, 'ds-table__cell-copy--wrap': wraps }}>
@@ -819,8 +826,8 @@ export class Table {
           <ds-text
             class="ds-table__cell-secondary ds-table__cell-track ds-table__cell-track--text"
             as="span"
-            variant={primaryText ? 'text-body-medium' : 'text-body-small'}
-            color={primaryText ? 'primary' : 'secondary'}
+            variant={cell.primaryText ? 'text-body-medium' : 'text-body-small'}
+            color={cell.primaryText ? 'primary' : 'secondary'}
             lineTruncation={wraps ? 'none' : 1}
             wrap={wraps ? 'wrap' : 'nowrap'}
           >
@@ -831,8 +838,8 @@ export class Table {
     );
   }
 
-  private renderRow(row: TableRow) {
-    const selected = this.selectedSet.has(row.id);
+  private renderRow(row: TableRow, model: TableRenderModel) {
+    const selected = model.selectedRowIds.has(row.id);
     const rowSelectable = row.selectable !== false && !row.disabled;
     return (
       <tr
@@ -850,7 +857,7 @@ export class Table {
         onClick={event => this.emitRowActivation(row, event)}
         onKeyDown={event => this.handleRowKeydown(row, event)}
       >
-        {this.selectable && (
+        {model.selectable && (
           <td class={{
             'ds-table__cell': true,
             'ds-table__selection-cell': true,
@@ -871,39 +878,18 @@ export class Table {
         )}
         {this.columns.map(column => {
           const align = column.align ?? 'start';
-          const value = row.cells[column.id];
-          const tagCell = isTableCellTag(value);
-          const iconCell = isTableCellIcon(value);
-          const imageCell = isTableCellImage(value);
-          const actionCell = isTableCellAction(value);
-          const primaryTextCell = isTableCellPrimaryText(value);
-          const emptyCell = value == null || isTableCellEmpty(value);
-          const blankCell = isTableCellBlank(value);
-          const textCell = primaryTextCell || (!tagCell && !iconCell && !imageCell && !actionCell && !emptyCell && !blankCell);
-          const singleTextCell = textCell && !primaryTextCell && (!isTableCellText(value) || !value.secondary);
-          const tagVariant = tagCell ? value.variant ?? 'tag-only' : undefined;
-          const textVariant = textCell
-            ? primaryTextCell
-              ? 'primary-pair'
-              : singleTextCell
-                ? 'single'
-                : 'multi'
-            : undefined;
-          const cellType = tagCell
-            ? 'tag'
-            : iconCell
-              ? 'icon'
-              : imageCell
-                ? 'image'
-                : actionCell
-                  ? 'action'
-                  : primaryTextCell
-                    ? 'primary-text'
-                    : emptyCell
-                      ? 'empty'
-                      : blankCell
-                        ? 'blank'
-                        : 'text';
+          const cell = resolveTableCellPresentation(row.cells[column.id], column);
+          const tagCell = cell.kind === 'tag';
+          const iconCell = cell.kind === 'icon';
+          const imageCell = cell.kind === 'image';
+          const actionCell = cell.kind === 'action';
+          const textCell = cell.kind === 'text';
+          const primaryTextCell = textCell && cell.primaryText;
+          const singleTextCell = textCell && cell.singleLine;
+          const emptyCell = cell.kind === 'empty';
+          const blankCell = cell.kind === 'blank';
+          const tagVariant = tagCell ? cell.variant : undefined;
+          const textVariant = textCell ? cell.variant : undefined;
           return (
             <td
               key={`${row.id}:${column.id}`}
@@ -927,11 +913,11 @@ export class Table {
                 'ds-interaction-fill--selected': selected,
               }}
               data-column-id={column.id}
-              data-cell-type={cellType}
+              data-cell-type={cell.cellType}
               data-cell-variant={tagVariant ?? textVariant}
             >
               <span class="ds-table__cell-content ds-interaction-fill__content">
-                {this.renderCellValue(value, column, row)}
+                {this.renderCellValue(cell, column, row)}
               </span>
               {this.renderStickyEdge(column.sticky)}
             </td>
@@ -941,44 +927,141 @@ export class Table {
     );
   }
 
-  private renderDataBodies() {
-    if (!this.grouped) {
-      return <tbody class="ds-table__body">{this.rows.map(row => this.renderRow(row))}</tbody>;
+  private emitGroupCollapse(group: TableGroup) {
+    const collapsedGroupIds = toggleTableGroupCollapsed(this.collapsedGroupIds, group.id);
+    this.dsGroupCollapseChange.emit({
+      scope: 'group',
+      groupId: group.id,
+      collapsed: collapsedGroupIds.includes(group.id),
+      collapsedGroupIds,
+    });
+  }
+
+  private emitAllGroupsCollapse() {
+    const groupIds = this.groups.map(group => group.id);
+    const collapsedGroupIds = nextTableGroupsCollapsed(this.collapsedGroupIds, groupIds);
+    this.dsGroupCollapseChange.emit({
+      scope: 'all',
+      collapsed: collapsedGroupIds.length > 0,
+      collapsedGroupIds,
+    });
+  }
+
+  private renderDataBodies(model: TableRenderModel) {
+    if (!model.grouped) {
+      return (
+        <tbody class="ds-table__body">
+          {this.rows.map(row => this.renderRow(row, model))}
+        </tbody>
+      );
     }
 
-    return this.groups.map(group => {
-      const count = resolvedTableGroupCount(group);
-      const countLabel = group.countLabel ?? `${count} ${count === 1 ? 'item' : 'items'}`;
+    return model.groups.map(groupModel => {
+      const {
+        group,
+        count,
+        countLabel,
+        countIntent,
+        collapsed: isCollapsed,
+        intent,
+        intentClass,
+        labelColor,
+        selection: groupSelection,
+      } = groupModel;
       return (
-        <tbody class="ds-table__body ds-table__group" data-group-id={group.id} key={group.id}>
+        <tbody
+          class="ds-table__body ds-table__group"
+          data-group-id={group.id}
+          data-group-intent={intent}
+          data-collapsed={isCollapsed ? 'true' : undefined}
+          key={group.id}
+        >
           <tr class="ds-table__group-row">
-            <th class="ds-table__group-cell" scope="rowgroup" colSpan={this.totalColumns}>
+            <th
+              class={{
+                'ds-table__group-cell': true,
+                [intentClass ?? '']: !!intentClass,
+              }}
+              scope="rowgroup"
+              colSpan={model.totalColumns}
+            >
               <span class="ds-table__group-content">
-                <ds-icon name="GroupBy" size="sm" color="secondary" aria-hidden="true" />
-                <ds-text as="span" variant="text-body-small" emphasis={true} color="primary">
-                  {group.label}
-                </ds-text>
-                <ds-text as="span" variant="text-body-small" color="secondary">
-                  {countLabel}
-                </ds-text>
+                {groupSelection && (
+                  <span class="ds-table__group-selection">
+                    {this.renderSelectionControl(
+                      groupSelection.allSelected
+                        ? `Deselect ${group.label} group`
+                        : `Select ${group.label} group`,
+                      groupSelection.allSelected,
+                      groupSelection.indeterminate,
+                      groupSelection.selectableRowIds.length === 0,
+                      () => this.emitGroupSelection(group),
+                    )}
+                  </span>
+                )}
+                <span class="ds-table__group-copy">
+                  <ds-text
+                    class="ds-table__group-label"
+                    as="span"
+                    variant="text-body-medium"
+                    emphasis={true}
+                    color={labelColor}
+                  >
+                    {group.label}
+                  </ds-text>
+                  <span
+                    class="ds-table__group-count ds-control-elevation ds-control-elevation--sm"
+                    aria-hidden="true"
+                  >
+                    <ds-tag
+                      label={String(count)}
+                      intent={countIntent}
+                      contrast="faint"
+                      size="sm"
+                      rounded={true}
+                    ></ds-tag>
+                  </span>
+                  <span class="ds-visually-hidden">{countLabel}</span>
+                </span>
+                <ds-button-unfilled
+                  class="ds-table__group-toggle"
+                  variant="icon"
+                  size="md"
+                  isInset={true}
+                  insetDepth="double"
+                  icon={isCollapsed ? 'ChevronDown' : 'ChevronUp'}
+                  expanded={!isCollapsed}
+                  aria-label={
+                    isCollapsed
+                      ? `Expand ${group.label} group`
+                      : `Collapse ${group.label} group`
+                  }
+                  hasBorder={false}
+                  onDsClick={event => {
+                    event.stopPropagation();
+                    this.emitGroupCollapse(group);
+                  }}
+                />
               </span>
             </th>
           </tr>
-          {group.rows.map(row => this.renderRow(row))}
+          {!isCollapsed && group.rows.map(row => this.renderRow(row, model))}
         </tbody>
       );
     });
   }
 
-  private renderSkeletonBody() {
+  private renderSkeletonBody(model: TableRenderModel) {
     const count = Math.min(20, Math.max(1, Math.round(this.skeletonRows) || 1));
     return (
       <tbody class="ds-table__body ds-table__skeleton-body">
         {Array.from({ length: count }, (_, index) => (
           <tr class="ds-table__row ds-table__skeleton-row" key={`skeleton-${index}`}>
-            {this.selectable && (
-              <td class="ds-table__cell ds-table__selection-cell ds-table__cell--sticky-start">
-                <ds-skeleton variant="icon" iconSize="md" />
+            {model.selectable && (
+              <td class="ds-table__cell ds-table__selection-cell ds-table__cell--sticky-start ds-table__skeleton-cell ds-interaction-fill ds-interaction-fill--grouped">
+                <span class="ds-interaction-fill__content">
+                  <ds-skeleton variant="icon" iconSize="md" />
+                </span>
                 {this.renderStickyEdge('start')}
               </td>
             )}
@@ -986,12 +1069,16 @@ export class Table {
               <td
                 class={{
                   'ds-table__cell': true,
+                  'ds-table__cell--text-single': true,
+                  'ds-table__skeleton-cell': true,
                   'ds-table__cell--sticky-start': column.sticky === 'start',
                   'ds-table__cell--sticky-end': column.sticky === 'end',
+                  'ds-interaction-fill': true,
+                  'ds-interaction-fill--grouped': true,
                 }}
                 key={`skeleton-${index}:${column.id}`}
               >
-                <span class="ds-table__cell-content">
+                <span class="ds-table__cell-content ds-interaction-fill__content">
                   <ds-skeleton variant="text" textVariant="text-body-medium" width="100%" />
                 </span>
                 {this.renderStickyEdge(column.sticky)}
@@ -1003,12 +1090,12 @@ export class Table {
     );
   }
 
-  private renderStateBody(kind: 'empty' | 'error') {
+  private renderStateBody(kind: 'empty' | 'error', totalColumns: number) {
     const error = kind === 'error';
     return (
       <tbody class="ds-table__body ds-table__state-body">
         <tr class="ds-table__state-row">
-          <td class="ds-table__state-cell" colSpan={this.totalColumns}>
+          <td class="ds-table__state-cell" colSpan={totalColumns}>
             <ds-empty-state
               icon={error ? 'ErrorTriangle' : 'Inbox'}
               heading={error ? this.errorHeading : this.emptyHeading}
@@ -1020,10 +1107,11 @@ export class Table {
     );
   }
 
-  private renderLazyBody() {
-    if (!this.lazyLoading || !this.hasData) return null;
+  private renderLazyBody(model: TableRenderModel) {
+    if (!this.lazyLoading || !model.hasData) return null;
     const error = this.loadMoreError?.trim();
-    const manualFallback = this.loadMoreMode === 'manual' || !this.intersectionSupported;
+    const manualFallback = this.loadMoreMode === 'manual' ||
+      !this.loadController.intersectionSupported;
 
     return (
       <tbody class="ds-table__body ds-table__load-body">
@@ -1033,34 +1121,43 @@ export class Table {
             this.sentinelEl = element ?? null;
           }}
         >
-          <td class="ds-table__load-cell" colSpan={this.totalColumns}>
+          <td class="ds-table__load-cell" colSpan={model.totalColumns}>
             {error ? (
               <span class="ds-table__load-content ds-table__load-content--error">
-                <ds-icon name="ErrorTriangle" size="sm" color="negative" aria-hidden="true" />
-                <ds-text as="span" variant="text-body-small" color="secondary">{error}</ds-text>
+                <span class="ds-table__load-copy">
+                  <ds-icon name="ErrorTriangle" size="md" color="secondary" aria-hidden="true" />
+                  <ds-text as="span" variant="text-body-medium" color="secondary">{error}</ds-text>
+                </span>
                 <ds-button-unfilled
                   label={this.retryLabel}
-                  size="sm"
-                  onDsClick={() => this.requestLoadMore('retry')}
+                  size="md"
+                  onDsClick={() => this.loadController.request('retry')}
                 />
               </span>
             ) : this.loadingMore ? (
               <span class="ds-table__load-content">
-                <ds-loader size="sm" color="secondary" />
-                <ds-text as="span" variant="text-body-small" color="secondary">
+                <ds-loader size="md" color="secondary" />
+                <ds-text as="span" variant="text-body-medium" color="secondary">
                   {this.loadingMoreLabel}
                 </ds-text>
               </span>
             ) : this.hasMore && manualFallback ? (
-              <ds-button-unfilled
-                label={this.loadMoreLabel}
-                size="sm"
-                onDsClick={() => this.requestLoadMore('manual')}
-              />
+              <span class="ds-table__load-content">
+                <ds-button-unfilled
+                  label={this.loadMoreLabel}
+                  size="md"
+                  onDsClick={() => this.loadController.request('manual')}
+                />
+              </span>
             ) : this.hasMore ? (
               <span class="ds-table__auto-sentinel" aria-hidden="true" />
             ) : (
-              <ds-text as="span" variant="text-body-small" color="secondary">
+              <ds-text
+                class="ds-table__load-content"
+                as="span"
+                variant="text-body-medium"
+                color="secondary"
+              >
                 {this.endOfResultsLabel}
               </ds-text>
             )}
@@ -1070,7 +1167,7 @@ export class Table {
     );
   }
 
-  private renderDocumentStickyHeader() {
+  private renderDocumentStickyHeader(model: TableRenderModel) {
     if (!this.documentStickyHeader) return null;
     return (
       <div
@@ -1080,25 +1177,68 @@ export class Table {
           class={{
             'ds-table__table': true,
             'ds-table__sticky-header-table': true,
-            'ds-table__table--selectable': this.selectable,
+            'ds-table__table--selectable': model.selectable,
+            'ds-table__table--grouped': model.grouped,
           }}
-          style={this.tableStyle}
+          style={model.tableStyle}
           role="presentation"
           ref={element => {
             this.stickyHeaderTableEl = element ?? null;
           }}
         >
-          {this.renderColgroup()}
-          {this.renderHeader(true, true)}
+          {this.renderColgroup(model)}
+          {this.renderHeader(model, true, true)}
         </table>
+        {this.renderFloatingCollapseAll(model)}
       </div>
     );
   }
 
+  private get resultSummary(): string | null {
+    return formatTableResultSummary(
+      this.displayedCount,
+      this.totalCount,
+      this.resultSummaryLabel,
+    );
+  }
+
+  private renderResultFooter() {
+    const summary = this.resultSummary;
+    if (!summary) return null;
+    return (
+      <ds-text
+        class="ds-table__footer"
+        as="div"
+        variant="text-body-medium"
+        color="secondary"
+      >
+        {summary}
+      </ds-text>
+    );
+  }
+
+  private renderCaptionBar() {
+    if (this.captionVisibility !== 'visible') return null;
+    return (
+      <ds-text
+        class="ds-table__caption-bar"
+        as="div"
+        variant="text-title-small"
+        emphasis={true}
+        color="primary"
+        aria-hidden="true"
+      >
+        {this.caption}
+      </ds-text>
+    );
+  }
+
   render() {
+    const model = this.createRenderModel();
+    this.renderedModel = model;
     const regionLabel = this.scrollLabel?.trim() || `${this.caption} scroll area`;
-    const initialLoading = this.loading && !this.hasData;
-    const initialError = !this.hasData && this.error;
+    const initialLoading = this.loading && !model.hasData;
+    const initialError = !model.hasData && this.error;
     const viewportStyle = this.resolvedMaxHeight
       ? { '--ds-table-max-block-size': this.resolvedMaxHeight }
       : undefined;
@@ -1111,14 +1251,19 @@ export class Table {
           'ds-table--document-sticky-header': this.documentStickyHeader,
           'ds-table--contained-sticky-header': this.stickyHeader && !this.documentStickyHeader,
         }}>
+          {this.renderCaptionBar()}
           <div
             class={{
               'ds-table__frame': true,
               'ds-table__frame--overflow-start': this.overflowStart,
               'ds-table__frame--overflow-end': this.overflowEnd,
             }}
+            ref={element => {
+              this.frameEl = element ?? null;
+            }}
           >
-            {this.renderDocumentStickyHeader()}
+            {this.renderDocumentStickyHeader(model)}
+            {!this.documentStickyHeader && this.renderFloatingCollapseAll(model)}
             <div
               class="ds-table__viewport"
               style={viewportStyle}
@@ -1132,37 +1277,34 @@ export class Table {
               <table
                 class={{
                   'ds-table__table': true,
-                  'ds-table__table--selectable': this.selectable,
+                  'ds-table__table--selectable': model.selectable,
+                  'ds-table__table--grouped': model.grouped,
                 }}
-                style={this.tableStyle}
+                style={model.tableStyle}
                 aria-busy={initialLoading || this.loadingMore ? 'true' : undefined}
                 ref={element => {
                   this.tableEl = element ?? null;
                 }}
               >
-                <caption
-                  class={{
-                    'ds-table__caption': true,
-                    'ds-visually-hidden': this.captionVisibility === 'hidden',
-                  }}
-                >
+                <caption class="ds-table__caption ds-visually-hidden">
                   <ds-text as="span" variant="text-title-small" emphasis={true} color="primary">
                     {this.caption}
                   </ds-text>
                 </caption>
-                {this.renderColgroup()}
-                {this.renderHeader(!this.documentStickyHeader)}
+                {this.renderColgroup(model)}
+                {this.renderHeader(model, !this.documentStickyHeader)}
                 {initialLoading
-                  ? this.renderSkeletonBody()
+                  ? this.renderSkeletonBody(model)
                   : initialError
-                    ? this.renderStateBody('error')
-                    : this.hasData
-                      ? this.renderDataBodies()
-                      : this.renderStateBody('empty')}
-                {!initialLoading && !initialError && this.renderLazyBody()}
+                    ? this.renderStateBody('error', model.totalColumns)
+                    : model.hasData
+                      ? this.renderDataBodies(model)
+                      : this.renderStateBody('empty', model.totalColumns)}
+                {!initialLoading && !initialError && this.renderLazyBody(model)}
               </table>
             </div>
           </div>
+          {this.renderResultFooter()}
           <div class="ds-visually-hidden" role="status" aria-live="polite" aria-atomic="true">
             {this.announcement}
           </div>

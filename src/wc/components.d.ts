@@ -17,6 +17,7 @@ import { BarTitleActionItem, BarTitlePrimaryAction, BarTitleSectionItem, BarTitl
 import { BarWorkflowStep, BarWorkflowSubmitAction } from "./components/BarWorkflow/bar-workflow-types";
 import { MobileDestination, ShellResponsiveMode } from "./shell/shell-responsive";
 import { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledPopup, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
+import { ControlInsetDepth, ControlSize } from "./utils/control-text";
 import { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 import { CardChartVariant, CardChartWidth } from "./components/CardChart/CardChart";
 import { CardOverviewLayout, CardOverviewVariant, OverviewMetric, OverviewScore } from "./components/CardOverview/card-overview-types";
@@ -35,7 +36,7 @@ import { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 import { MenuItemData, MenuSection } from "./components/Menu/menu-types";
 import { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
 import { MenuAlign, MenuSide } from "./components/Menu/menu-position";
-import { ChoicePopupAnchorAlignment } from "./utils";
+import { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
 import { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
 import { ButtonFilledIntent as ButtonFilledIntent1 } from "./components/ButtonFilled/ButtonFilled";
 import { PanelNavGroup, PanelNavItem, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
@@ -56,12 +57,11 @@ import { ShellGradientPreset } from "./shell/shell-gradient-presets";
 import { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
 import { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
-import { ControlSize } from "./utils/control-text";
 import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from "./components/Slider/Slider";
 import { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 import { SwitchSize } from "./components/Switch/Switch";
 import { TabBackground, TabGroupSize as TabGroupSize1 } from "./components/TabGroup/TabGroup";
-import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupingChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupCollapseChangeDetail, TableGroupingChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -78,6 +78,7 @@ export { BarTitleActionItem, BarTitlePrimaryAction, BarTitleSectionItem, BarTitl
 export { BarWorkflowStep, BarWorkflowSubmitAction } from "./components/BarWorkflow/bar-workflow-types";
 export { MobileDestination, ShellResponsiveMode } from "./shell/shell-responsive";
 export { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledPopup, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
+export { ControlInsetDepth, ControlSize } from "./utils/control-text";
 export { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 export { CardChartVariant, CardChartWidth } from "./components/CardChart/CardChart";
 export { CardOverviewLayout, CardOverviewVariant, OverviewMetric, OverviewScore } from "./components/CardOverview/card-overview-types";
@@ -96,7 +97,7 @@ export { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 export { MenuItemData, MenuSection } from "./components/Menu/menu-types";
 export { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
 export { MenuAlign, MenuSide } from "./components/Menu/menu-position";
-export { ChoicePopupAnchorAlignment } from "./utils";
+export { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
 export { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
 export { ButtonFilledIntent as ButtonFilledIntent1 } from "./components/ButtonFilled/ButtonFilled";
 export { PanelNavGroup, PanelNavItem, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
@@ -117,12 +118,11 @@ export { ShellGradientPreset } from "./shell/shell-gradient-presets";
 export { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
 export { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
-export { ControlSize } from "./utils/control-text";
 export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from "./components/Slider/Slider";
 export { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 export { SwitchSize } from "./components/Switch/Switch";
 export { TabBackground, TabGroupSize as TabGroupSize1 } from "./components/TabGroup/TabGroup";
-export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupingChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupCollapseChangeDetail, TableGroupingChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -532,6 +532,11 @@ export namespace Components {
          */
         "icon": string;
         /**
+          * Single removes 4px overall; double removes 8px overall (xs stays single).
+          * @default 'single'
+         */
+        "insetDepth": ControlInsetDepth;
+        /**
           * Semantic colour intent.
           * @default 'brand'
          */
@@ -609,6 +614,9 @@ export namespace Components {
           * @default false
          */
         "dot": boolean;
+        /**
+          * Controlled disclosure or popup state forwarded to `aria-expanded`. Popup triggers hold a pressed visual while open; ordinary disclosures retain the normal resting appearance.
+         */
         "expanded": boolean | undefined;
         /**
           * Native `tabindex` for roving keyboard groups in shell chrome. Omit for the default button tab stop (`0`).
@@ -630,6 +638,11 @@ export namespace Components {
           * @default ''
          */
         "icon": string;
+        /**
+          * Single removes 4px overall; double removes 8px overall (xs stays single).
+          * @default 'single'
+         */
+        "insetDepth": ControlInsetDepth;
         /**
           * Owner-controlled visual emphasis inside a composite. This does not add toggle semantics and does not emit dsChange.
           * @default false
@@ -2515,18 +2528,28 @@ export namespace Components {
     }
     interface DsTable {
         /**
-          * Required accessible table name, rendered as a native caption.
+          * Required accessible table name, retained as a native caption.
          */
         "caption": string;
         /**
+          * Shows a matching presentational title bar above the native table frame.
           * @default 'hidden'
          */
         "captionVisibility": TableCaptionVisibility;
+        /**
+          * Controlled collapsed group identities. Groups not listed remain expanded.
+          * @default []
+         */
+        "collapsedGroupIds": string[];
         /**
           * Stable column definitions. Assign through JavaScript.
           * @default []
          */
         "columns": TableColumn[];
+        /**
+          * Optional result summary footer. When both `displayedCount` and `totalCount` are finite numbers, the table shows “Displaying {displayed} of {total}”.
+         */
+        "displayedCount": number | undefined;
         /**
           * @default 'No data is available.'
          */
@@ -2612,6 +2635,11 @@ export namespace Components {
          */
         "maxHeight": string | number | undefined;
         /**
+          * Supports {displayed} and {total} placeholders.
+          * @default 'Displaying {displayed} of {total}'
+         */
+        "resultSummaryLabel": string;
+        /**
           * @default 'Retry'
          */
         "retryLabel": string;
@@ -2651,6 +2679,7 @@ export namespace Components {
           * @default false
          */
         "stickyHeader": boolean;
+        "totalCount": number | undefined;
     }
     interface DsTag {
         /**
@@ -2671,6 +2700,11 @@ export namespace Components {
           * @default ''
          */
         "icon": string;
+        /**
+          * Single removes 4px overall; double removes 8px overall (xs stays single).
+          * @default 'single'
+         */
+        "insetDepth": ControlInsetDepth1;
         /**
           * @default 'neutral'
          */
@@ -3932,6 +3966,7 @@ declare global {
     interface HTMLDsTableElementEventMap {
         "dsSortChange": TableSortChangeDetail;
         "dsGroupingChange": TableGroupingChangeDetail;
+        "dsGroupCollapseChange": TableGroupCollapseChangeDetail;
         "dsSelectionChange": TableSelectionChangeDetail;
         "dsLoadMore": TableLoadMoreDetail;
         "dsCellAction": TableCellActionDetail;
@@ -4551,6 +4586,11 @@ declare namespace LocalJSX {
          */
         "icon"?: string;
         /**
+          * Single removes 4px overall; double removes 8px overall (xs stays single).
+          * @default 'single'
+         */
+        "insetDepth"?: ControlInsetDepth;
+        /**
           * Semantic colour intent.
           * @default 'brand'
          */
@@ -4628,6 +4668,9 @@ declare namespace LocalJSX {
           * @default false
          */
         "dot"?: boolean;
+        /**
+          * Controlled disclosure or popup state forwarded to `aria-expanded`. Popup triggers hold a pressed visual while open; ordinary disclosures retain the normal resting appearance.
+         */
         "expanded"?: boolean | undefined;
         /**
           * Native `tabindex` for roving keyboard groups in shell chrome. Omit for the default button tab stop (`0`).
@@ -4649,6 +4692,11 @@ declare namespace LocalJSX {
           * @default ''
          */
         "icon"?: string;
+        /**
+          * Single removes 4px overall; double removes 8px overall (xs stays single).
+          * @default 'single'
+         */
+        "insetDepth"?: ControlInsetDepth;
         /**
           * Owner-controlled visual emphasis inside a composite. This does not add toggle semantics and does not emit dsChange.
           * @default false
@@ -6716,18 +6764,28 @@ declare namespace LocalJSX {
     }
     interface DsTable {
         /**
-          * Required accessible table name, rendered as a native caption.
+          * Required accessible table name, retained as a native caption.
          */
         "caption": string;
         /**
+          * Shows a matching presentational title bar above the native table frame.
           * @default 'hidden'
          */
         "captionVisibility"?: TableCaptionVisibility;
+        /**
+          * Controlled collapsed group identities. Groups not listed remain expanded.
+          * @default []
+         */
+        "collapsedGroupIds"?: string[];
         /**
           * Stable column definitions. Assign through JavaScript.
           * @default []
          */
         "columns"?: TableColumn[];
+        /**
+          * Optional result summary footer. When both `displayedCount` and `totalCount` are finite numbers, the table shows “Displaying {displayed} of {total}”.
+         */
+        "displayedCount"?: number | undefined;
         /**
           * @default 'No data is available.'
          */
@@ -6813,11 +6871,17 @@ declare namespace LocalJSX {
          */
         "maxHeight"?: string | number | undefined;
         "onDsCellAction"?: (event: DsTableCustomEvent<TableCellActionDetail>) => void;
+        "onDsGroupCollapseChange"?: (event: DsTableCustomEvent<TableGroupCollapseChangeDetail>) => void;
         "onDsGroupingChange"?: (event: DsTableCustomEvent<TableGroupingChangeDetail>) => void;
         "onDsLoadMore"?: (event: DsTableCustomEvent<TableLoadMoreDetail>) => void;
         "onDsRowActivate"?: (event: DsTableCustomEvent<TableRowActivateDetail>) => void;
         "onDsSelectionChange"?: (event: DsTableCustomEvent<TableSelectionChangeDetail>) => void;
         "onDsSortChange"?: (event: DsTableCustomEvent<TableSortChangeDetail>) => void;
+        /**
+          * Supports {displayed} and {total} placeholders.
+          * @default 'Displaying {displayed} of {total}'
+         */
+        "resultSummaryLabel"?: string;
         /**
           * @default 'Retry'
          */
@@ -6858,6 +6922,7 @@ declare namespace LocalJSX {
           * @default false
          */
         "stickyHeader"?: boolean;
+        "totalCount"?: number | undefined;
     }
     interface DsTag {
         /**
@@ -6878,6 +6943,11 @@ declare namespace LocalJSX {
           * @default ''
          */
         "icon"?: string;
+        /**
+          * Single removes 4px overall; double removes 8px overall (xs stays single).
+          * @default 'single'
+         */
+        "insetDepth"?: ControlInsetDepth1;
         /**
           * @default 'neutral'
          */
@@ -7191,6 +7261,7 @@ declare namespace LocalJSX {
         "variant": ButtonFilledVariant;
         "size": ButtonFilledSize;
         "isInset": boolean;
+        "insetDepth": ControlInsetDepth;
         "width": ButtonFilledWidth;
         "label": string;
         "icon": string;
@@ -7213,6 +7284,7 @@ declare namespace LocalJSX {
         "variant": ButtonUnfilledVariant;
         "size": ButtonUnfilledSize;
         "isInset": boolean;
+        "insetDepth": ControlInsetDepth;
         "width": ButtonUnfilledWidth;
         "label": string;
         "icon": string;
@@ -7679,6 +7751,9 @@ declare namespace LocalJSX {
     interface DsTableAttributes {
         "caption": string;
         "captionVisibility": TableCaptionVisibility;
+        "displayedCount": number | undefined;
+        "totalCount": number | undefined;
+        "resultSummaryLabel": string;
         "stickyHeader": boolean;
         "maxHeight": string;
         "scrollLabel": string | undefined;
@@ -7711,6 +7786,7 @@ declare namespace LocalJSX {
         "contrast": TagContrast;
         "size": TagSize;
         "isInset": boolean;
+        "insetDepth": ControlInsetDepth;
         "rounded": boolean;
         "maxWidth": string;
         "interactive": boolean;

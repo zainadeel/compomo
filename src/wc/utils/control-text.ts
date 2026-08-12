@@ -3,6 +3,9 @@ import type { TextVariant } from '../components/Text/text-types';
 /** Shared public control sizes. Typography is derived; it is not a separate density API. */
 export type ControlSize = 'lg' | 'md' | 'sm' | 'xs';
 
+/** Outer-density reduction used when a control is nested inside a same-size frame. */
+export type ControlInsetDepth = 'single' | 'double';
+
 /** Complete text variant selected internally by each control size. */
 export const CONTROL_TEXT_VARIANT: Record<ControlSize, TextVariant> = {
   lg: 'text-body-large',

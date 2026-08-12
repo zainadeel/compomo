@@ -1,6 +1,11 @@
 @import '../../utils/tag-chip.css';
 @import '../../utils/control-density-inset.css';
 
+/* A one-character rounded Tag resolves to a circle at every density. */
+:host {
+  min-inline-size: var(--ds-control-height);
+}
+
 /* ── Intent × Contrast — strong ─────────────────────────────────────────── */
 
 :host(.tag--intent-neutral.tag--contrast-strong)  { background-color: var(--color-background-strong-neutral);  color: var(--color-foreground-medium-neutral);  }

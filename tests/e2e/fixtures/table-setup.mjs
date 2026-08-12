@@ -37,6 +37,10 @@ basic.addEventListener('dsSortChange', event => {
   });
 });
 
+const footer = setBase('footer');
+footer.displayedCount = 50;
+footer.totalCount = 1500;
+
 const grouped = document.getElementById('grouped');
 grouped.columns = columns;
 grouped.grouping = { columnId: 'status', direction: 'asc' };
@@ -51,6 +55,10 @@ const orderMembers = groups => groups.map(group => ({
   rows: [...group.rows].sort((a, b) => (b.cells.score - a.cells.score) * (grouped.sort?.direction === 'asc' ? -1 : 1)),
 }));
 grouped.groups = orderMembers(ascendingGroups);
+grouped.collapsedGroupIds = [];
+grouped.addEventListener('dsGroupCollapseChange', event => {
+  grouped.collapsedGroupIds = event.detail.collapsedGroupIds;
+});
 grouped.addEventListener('dsGroupingChange', event => {
   grouped.grouping = event.detail.grouping;
   const next = event.detail.grouping.direction === 'asc' ? ascendingGroups : [...ascendingGroups].reverse();
@@ -60,6 +68,44 @@ grouped.addEventListener('dsSortChange', event => {
   grouped.sort = event.detail.sort;
   const next = grouped.grouping.direction === 'asc' ? ascendingGroups : [...ascendingGroups].reverse();
   grouped.groups = event.detail.sort ? orderMembers(next) : next;
+});
+
+const severityGrouped = document.getElementById('severity-grouped');
+severityGrouped.columns = [
+  { id: 'behavior', header: 'Behavior', size: 'sm' },
+  { id: 'severity', header: 'Severity', sortable: true, size: 'xs' },
+  { id: 'driver', header: 'Driver', size: 'sm' },
+];
+const severityRows = [
+  { id: 'crit-1', selectionLabel: 'Close following Critical', cells: { behavior: 'Close following', severity: 'Critical', driver: 'John Smith' } },
+  { id: 'crit-2', selectionLabel: 'Stop sign Critical', cells: { behavior: 'Stop sign violation', severity: 'Critical', driver: 'Sarah Williams' } },
+  { id: 'high-1', selectionLabel: 'Lane cutoff High', cells: { behavior: 'Lane cutoff', severity: 'High', driver: 'Maria Garcia' } },
+  { id: 'high-2', selectionLabel: 'Distraction High', cells: { behavior: 'Distraction', severity: 'High', driver: 'David Chen' } },
+  { id: 'med-1', selectionLabel: 'Speeding Medium', cells: { behavior: 'Speeding', severity: 'Medium', driver: 'Priya Nair' } },
+  { id: 'low-1', selectionLabel: 'Unsafe lane Low', cells: { behavior: 'Unsafe lane change', severity: 'Low', driver: 'Noah Wilson' } },
+];
+const severityIntent = {
+  Critical: 'negative',
+  High: 'warning',
+  Medium: 'caution',
+  Low: 'neutral',
+};
+severityGrouped.selectionMode = 'multiple';
+severityGrouped.selectedRowIds = [];
+severityGrouped.grouping = { columnId: 'severity', direction: 'asc' };
+severityGrouped.groups = ['Critical', 'High', 'Medium', 'Low'].map(label => ({
+  id: label.toLowerCase(),
+  label,
+  intent: severityIntent[label],
+  rows: severityRows.filter(row => row.cells.severity === label),
+  totalCount: severityRows.filter(row => row.cells.severity === label).length,
+}));
+severityGrouped.collapsedGroupIds = [];
+severityGrouped.addEventListener('dsGroupCollapseChange', event => {
+  severityGrouped.collapsedGroupIds = event.detail.collapsedGroupIds;
+});
+severityGrouped.addEventListener('dsSelectionChange', event => {
+  severityGrouped.selectedRowIds = event.detail.selectedRowIds;
 });
 
 const compound = document.getElementById('compound');
@@ -98,13 +144,13 @@ cellTypes.columns = [
   { id: 'singleText', header: 'Single text', size: 'sm' },
   { id: 'primarySecondary', header: 'Primary + secondary', size: 'sm' },
   { id: 'primaryPair', header: 'Primary + primary', size: 'sm' },
-  { id: 'image', header: 'Image', size: 105 },
+  { id: 'image', header: 'Image', size: 102 },
   { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
   { id: 'tagOnly', header: 'Tag only', size: 'sm' },
   { id: 'tagWithText', header: 'Tag with text', size: 'sm' },
   { id: 'textWithTag', header: 'Text with tag', size: 'sm' },
-  { id: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
-  { id: 'borderedAction', header: '', headerLabel: 'Bordered action', align: 'center', size: 40 },
+  { id: 'action', kind: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
+  { id: 'borderedAction', kind: 'action', header: '', headerLabel: 'Bordered action', align: 'center', size: 40 },
   { id: 'empty', header: 'Empty', size: 'xs' },
   { id: 'blank', header: 'Blank', size: 'xs' },
 ];
@@ -171,6 +217,7 @@ interactive.columns = [
   ...columns,
   {
     id: 'actions',
+    kind: 'action',
     header: '',
     headerLabel: 'Actions',
     align: 'center',

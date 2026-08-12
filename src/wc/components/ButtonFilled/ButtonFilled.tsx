@@ -3,6 +3,7 @@ import { controlWidthClass } from '../../utils';
 import type { ChoiceBackground } from '../../utils/choice-list';
 import { beginElevatedControlPress } from '../../utils/control-press';
 import { renderButtonContent } from '../../utils/button-render';
+import type { ControlInsetDepth } from '../../utils/control-text';
 import type {
   ButtonPopup,
   ButtonSize,
@@ -49,6 +50,9 @@ export class ButtonFilled {
 
   /** Use reduced outer geometry when nested inside a control of the same size. */
   @Prop() isInset: boolean = false;
+
+  /** Single removes 4px overall; double removes 8px overall (xs stays single). */
+  @Prop() insetDepth: ControlInsetDepth = 'single';
 
   /** Width fit — hug content (default) or fill the parent. */
   @Prop() width: ButtonFilledWidth = 'hug';
@@ -151,6 +155,10 @@ export class ButtonFilled {
     return undefined;
   }
 
+  private get doubleInset(): boolean {
+    return this.isInset && this.insetDepth === 'double' && this.size !== 'xs';
+  }
+
   render() {
     const cls: Record<string, boolean> = {
       'button-filled': true,
@@ -172,7 +180,8 @@ export class ButtonFilled {
       'ds-control--md': this.size === 'md',
       'ds-control--sm': this.size === 'sm',
       'ds-control--xs': this.size === 'xs',
-      'ds-control--inset': this.isInset,
+      'ds-control--inset': this.isInset && !this.doubleInset,
+      'ds-control--inset-double': this.doubleInset,
       'ds-control-frame': true,
       'button-filled--icon': this.variant === 'icon',
       'ds-button--icon': this.variant === 'icon',
@@ -195,7 +204,8 @@ export class ButtonFilled {
           'ds-control--md': this.size === 'md',
           'ds-control--sm': this.size === 'sm',
           'ds-control--xs': this.size === 'xs',
-          'ds-control--inset': this.isInset,
+          'ds-control--inset': this.isInset && !this.doubleInset,
+          'ds-control--inset-double': this.doubleInset,
           ...controlWidthClass(this.width),
         }}
         tabIndex={-1}

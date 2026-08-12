@@ -2,6 +2,7 @@ import { Component, Element, Event, EventEmitter, h, Host, Method, Prop } from '
 import { controlWidthClass } from '../../utils';
 import { beginElevatedControlPress } from '../../utils/control-press';
 import { renderButtonContent } from '../../utils/button-render';
+import type { ControlInsetDepth } from '../../utils/control-text';
 import type {
   ButtonPopup,
   ButtonSize,
@@ -43,6 +44,9 @@ export class ButtonUnfilled {
 
   /** Use reduced outer geometry when nested inside a control of the same size. */
   @Prop() isInset: boolean = false;
+
+  /** Single removes 4px overall; double removes 8px overall (xs stays single). */
+  @Prop() insetDepth: ControlInsetDepth = 'single';
 
   /** Width fit — hug content (default) or fill the parent. */
   @Prop() width: ButtonUnfilledWidth = 'hug';
@@ -96,6 +100,11 @@ export class ButtonUnfilled {
   /** Accessible name override. Required for icon-only buttons. */
   @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;
   @Prop() controls: string | undefined;
+  /**
+   * Controlled disclosure or popup state forwarded to `aria-expanded`.
+   * Popup triggers hold a pressed visual while open; ordinary disclosures
+   * retain the normal resting appearance.
+   */
   @Prop() expanded: boolean | undefined;
   @Prop() haspopup: ButtonUnfilledPopup | undefined;
   /**
@@ -151,9 +160,17 @@ export class ButtonUnfilled {
     return this.haspopup ?? (this.hasMenu ? 'menu' : undefined);
   }
 
-  /** An expanded popup trigger is visually active even when selection is controlled separately. */
+  private get doubleInset(): boolean {
+    return this.isInset && this.insetDepth === 'double' && this.size !== 'xs';
+  }
+
+  /** Only popup triggers hold a pressed visual while expanded. */
+  private get expandedPopup(): boolean {
+    return this.expanded === true && this.resolvedHaspopup !== undefined && !this.isInactive;
+  }
+
   private get visuallyActive(): boolean {
-    return this.isActive || this.pressed === true || this.expanded === true;
+    return this.isActive || this.pressed === true || this.expandedPopup;
   }
 
   /** Knock-out ring: selected fill → active wash; otherwise surface token. */
@@ -191,8 +208,8 @@ export class ButtonUnfilled {
       'ds-interaction-fill--on-media': bg === 'media',
       'ds-interaction-fill--on-always-dark': bg === 'always-dark',
       'button-unfilled--active': this.visuallyActive,
-      'button-unfilled--expanded': this.expanded === true && !this.isInactive,
-      'ds-button--expanded': this.expanded === true && !this.isInactive,
+      'button-unfilled--expanded': this.expandedPopup,
+      'ds-button--expanded': this.expandedPopup,
       'button-unfilled--bordered': this.hasBorder,
       'ds-button--bordered': this.hasBorder,
       'button-unfilled--rounded': this.rounded,
@@ -202,7 +219,8 @@ export class ButtonUnfilled {
       'ds-control--md': this.size === 'md',
       'ds-control--sm': this.size === 'sm',
       'ds-control--xs': this.size === 'xs',
-      'ds-control--inset': this.isInset,
+      'ds-control--inset': this.isInset && !this.doubleInset,
+      'ds-control--inset-double': this.doubleInset,
       'ds-control-frame': true,
       'button-unfilled--icon': this.variant === 'icon',
       'ds-button--icon': this.variant === 'icon',
@@ -228,7 +246,8 @@ export class ButtonUnfilled {
           'ds-control--md': this.size === 'md',
           'ds-control--sm': this.size === 'sm',
           'ds-control--xs': this.size === 'xs',
-          'ds-control--inset': this.isInset,
+          'ds-control--inset': this.isInset && !this.doubleInset,
+          'ds-control--inset-double': this.doubleInset,
           ...controlWidthClass(this.width),
         }}
         tabIndex={-1}

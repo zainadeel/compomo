@@ -1,4 +1,5 @@
 @import '../../styles/table.css';
+@import '../../styles/control-elevation.css';
 
 :host {
   display: block;
