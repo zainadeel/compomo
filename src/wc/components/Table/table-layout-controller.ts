@@ -64,9 +64,9 @@ export function resolveTableLayoutMetrics(input: TableLayoutMetricInput): TableL
 }
 
 /**
- * Owns table viewport observation. It resolves newly connected geometry
+ * Owns table viewport observation. It resolves newly rendered geometry
  * immediately so the first paint has the correct viewport-width chrome, then
- * batches recurring scroll and resize reads/writes into one animation frame.
+ * batches observer-driven scroll and resize reads/writes into one animation frame.
  * The component remains responsible only for refs and reactive overflow state.
  */
 export class TableLayoutController {
@@ -113,11 +113,10 @@ export class TableLayoutController {
         if (table) this.resizeObserver.observe(table);
       }
     }
-    if (elementsChanged) {
-      this.sync();
-      return;
-    }
-    this.schedule();
+    // Rendering can change the table's intrinsic width without replacing either
+    // element. Resolve that geometry before componentDidRender returns so WebKit
+    // cannot paint or expose one frame using the full spanning-cell width.
+    this.sync();
   }
 
   private schedule = (): void => {

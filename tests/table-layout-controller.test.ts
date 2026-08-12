@@ -86,3 +86,46 @@ test('resolves first-paint geometry synchronously when layout elements connect',
   assert.deepEqual(overflow, { start: false, end: true, scrollable: true });
   controller.disconnect();
 });
+
+test('resolves intrinsic table-size changes synchronously after a render refresh', () => {
+  const properties = new Map<string, string>();
+  let tableWidth = 320;
+  const viewport = {
+    clientWidth: 432,
+    clientHeight: 240,
+    scrollWidth: 432,
+    scrollHeight: 240,
+    scrollLeft: 0,
+    style: {
+      getPropertyValue: (property: string) => properties.get(property) ?? '',
+      setProperty: (property: string, value: string) => properties.set(property, value),
+    },
+    addEventListener: () => undefined,
+    removeEventListener: () => undefined,
+  } as unknown as HTMLElement;
+  const table = {
+    getBoundingClientRect: () => ({ width: tableWidth }),
+  } as unknown as HTMLTableElement;
+  const controller = new TableLayoutController({
+    elements: () => ({
+      viewport,
+      table,
+      stickyHeaderTable: null,
+      collapseAllOverlay: null,
+      frame: null,
+      interactiveHead: null,
+    }),
+    mode: () => ({ documentStickyHeader: false, floatingCollapseAll: false }),
+    overflowChanged: () => undefined,
+  });
+
+  controller.connect();
+  assert.equal(properties.get('--ds-table-visible-inline-size'), '320px');
+
+  tableWidth = 1232;
+  Object.defineProperty(viewport, 'scrollWidth', { value: 1232 });
+  controller.refresh();
+
+  assert.equal(properties.get('--ds-table-visible-inline-size'), '432px');
+  controller.disconnect();
+});
