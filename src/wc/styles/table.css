@@ -453,6 +453,7 @@
   inset-inline-end: var(--dimension-space-100);
   z-index: var(--dimension-z-index-floating);
   box-sizing: border-box;
+  display: flex;
   inline-size: var(--dimension-size-300);
   block-size: var(--dimension-size-200);
   pointer-events: none;
@@ -855,9 +856,21 @@
   background: transparent;
 }
 
-/* Intentful group headers mirror Tag faint: faint-* background + bold-* title. */
+/* Intentful groups resolve from their faint signal into neutral at the trailing edge. */
+:where(.ds-table__group-cell--intent-brand),
+:where(.ds-table__group-cell--intent-negative),
+:where(.ds-table__group-cell--intent-warning),
+:where(.ds-table__group-cell--intent-caution),
+:where(.ds-table__group-cell--intent-positive) {
+  --_table-group-surface: linear-gradient(
+    to right,
+    var(--_table-group-intent-surface),
+    var(--color-background-faint-neutral)
+  );
+}
+
 :where(.ds-table__group-cell--intent-brand) {
-  --_table-group-surface: var(--color-background-faint-brand);
+  --_table-group-intent-surface: var(--color-background-faint-brand);
 }
 
 :where(.ds-table__group-cell--intent-neutral) {
@@ -865,19 +878,19 @@
 }
 
 :where(.ds-table__group-cell--intent-negative) {
-  --_table-group-surface: var(--color-background-faint-negative);
+  --_table-group-intent-surface: var(--color-background-faint-negative);
 }
 
 :where(.ds-table__group-cell--intent-warning) {
-  --_table-group-surface: var(--color-background-faint-warning);
+  --_table-group-intent-surface: var(--color-background-faint-warning);
 }
 
 :where(.ds-table__group-cell--intent-caution) {
-  --_table-group-surface: var(--color-background-faint-caution);
+  --_table-group-intent-surface: var(--color-background-faint-caution);
 }
 
 :where(.ds-table__group-cell--intent-positive) {
-  --_table-group-surface: var(--color-background-faint-positive);
+  --_table-group-intent-surface: var(--color-background-faint-positive);
 }
 
 :where(.ds-table__group-content) {
@@ -937,14 +950,15 @@
 }
 
 :where(.ds-table__group-copy) {
-  /* Label + count box: 2px block, 4px inline (parallel to the selection box). */
+  /* The full-size sm count tag owns the 24px content height; inline padding
+   * preserves the shared text track without making the 40px section row grow. */
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   min-inline-size: 0;
   flex: 1 1 auto;
   gap: var(--dimension-space-100);
-  padding-block: var(--dimension-space-025);
+  padding-block: 0;
   padding-inline: var(--dimension-space-050);
 }
 
@@ -952,6 +966,12 @@
   padding-inline-start: calc(
     var(--dimension-space-100) + var(--_table-cell-track-label-inset)
   );
+}
+
+:where(.ds-table__group-count) {
+  display: inline-flex;
+  flex: 0 0 auto;
+  border-radius: var(--dimension-radius-half);
 }
 
 :where(.ds-table__group-toggle) {

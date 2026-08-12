@@ -757,7 +757,7 @@ export const GroupingBySeverity: Story = {
     docs: {
       description: {
         story:
-          'Safety events grouped by severity with intentful section headers: Critical → negative, High → warning, Medium → caution, Low → neutral. Each group paints a faint intent background and bold intent title while the count stays secondary. With multi-selection enabled, each section also exposes a checkbox that selects or clears that group.',
+          'Safety events grouped by severity with intentful section headers: Critical → negative, High → warning, Medium → caution, Low → neutral. Each colored group transitions from its faint intent surface at the label edge into faint neutral at the trailing edge, with a bold intent title and a rounded, elevated sm Tag showing the numeric count in the same intent. With multi-selection enabled, each section also exposes a checkbox that selects or clears that group.',
       },
     },
   },

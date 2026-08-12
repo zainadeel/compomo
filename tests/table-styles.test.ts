@@ -31,7 +31,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.doesNotMatch(css, /\.ds-table__overflow-shadow/);
   assert.match(
     css,
-    /\.ds-table__collapse-all-overlay\)[^{]*\{[^}]*position: absolute[^}]*inset-inline-end: var\(--dimension-space-100\)[^}]*inline-size: var\(--dimension-size-300\)[^}]*block-size: var\(--dimension-size-200\)/s,
+    /\.ds-table__collapse-all-overlay\)[^{]*\{[^}]*position: absolute[^}]*inset-inline-end: var\(--dimension-space-100\)[^}]*display: flex[^}]*inline-size: var\(--dimension-size-300\)[^}]*block-size: var\(--dimension-size-200\)/s,
   );
   assert.match(
     css,
@@ -78,7 +78,11 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   );
   assert.match(
     css,
-    /\.ds-table__group-copy\)[^{]*\{[^}]*gap: var\(--dimension-space-100\)[^}]*padding-block: var\(--dimension-space-025\)[^}]*padding-inline: var\(--dimension-space-050\)/s,
+    /\.ds-table__group-copy\)[^{]*\{[^}]*gap: var\(--dimension-space-100\)[^}]*padding-block: 0[^}]*padding-inline: var\(--dimension-space-050\)/s,
+  );
+  assert.match(
+    css,
+    /\.ds-table__group-count\)[^{]*\{[^}]*display: inline-flex[^}]*border-radius: var\(--dimension-radius-half\)/s,
   );
   assert.match(css, /\.ds-table__group-toggle\)[^{]*\{[^}]*margin-inline-start: auto/s);
   assert.doesNotMatch(
@@ -99,15 +103,19 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   );
   assert.match(
     css,
-    /\.ds-table__group-cell--intent-negative\)[^{]*\{[^}]*--_table-group-surface: var\(--color-background-faint-negative\)/s,
+    /--_table-group-surface: linear-gradient\(\s*to right,\s*var\(--_table-group-intent-surface\),\s*var\(--color-background-faint-neutral\)\s*\)/s,
   );
   assert.match(
     css,
-    /\.ds-table__group-cell--intent-warning\)[^{]*\{[^}]*--_table-group-surface: var\(--color-background-faint-warning\)/s,
+    /\.ds-table__group-cell--intent-negative\)[^{]*\{[^}]*--_table-group-intent-surface: var\(--color-background-faint-negative\)/s,
   );
   assert.match(
     css,
-    /\.ds-table__group-cell--intent-caution\)[^{]*\{[^}]*--_table-group-surface: var\(--color-background-faint-caution\)/s,
+    /\.ds-table__group-cell--intent-warning\)[^{]*\{[^}]*--_table-group-intent-surface: var\(--color-background-faint-warning\)/s,
+  );
+  assert.match(
+    css,
+    /\.ds-table__group-cell--intent-caution\)[^{]*\{[^}]*--_table-group-intent-surface: var\(--color-background-faint-caution\)/s,
   );
   assert.match(
     css,

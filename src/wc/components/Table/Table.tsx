@@ -1123,6 +1123,7 @@ export class Table {
     return this.groups.map(group => {
       const count = resolvedTableGroupCount(group);
       const countLabel = group.countLabel ?? `${count} ${count === 1 ? 'item' : 'items'}`;
+      const countIntent = group.intent ?? 'neutral';
       const isCollapsed = collapsed.has(group.id);
       const intentClass = tableGroupIntentClass(group.intent);
       const labelColor = tableGroupLabelColor(group.intent);
@@ -1170,9 +1171,19 @@ export class Table {
                   >
                     {group.label}
                   </ds-text>
-                  <ds-text as="span" variant="text-body-medium" color="secondary">
-                    {countLabel}
-                  </ds-text>
+                  <span
+                    class="ds-table__group-count ds-control-elevation ds-control-elevation--sm"
+                    aria-hidden="true"
+                  >
+                    <ds-tag
+                      label={String(count)}
+                      intent={countIntent}
+                      contrast="faint"
+                      size="sm"
+                      rounded={true}
+                    ></ds-tag>
+                  </span>
+                  <span class="ds-visually-hidden">{countLabel}</span>
                 </span>
                 <ds-button-unfilled
                   class="ds-table__group-toggle"

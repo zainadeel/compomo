@@ -98,13 +98,15 @@ test('keeps group order and member-row sorting independent', async ({ page }) =>
     `${singleLineRowHeight}px`,
   );
   await expect(firstGroupHeader.locator('.ds-table__group-copy ds-icon')).toHaveCount(0);
-  const groupTexts = firstGroupHeader.locator('.ds-table__group-copy ds-text');
-  await expect(groupTexts).toHaveCount(2);
-  await expect(groupTexts.nth(0)).toHaveJSProperty('variant', 'text-body-medium');
-  await expect(groupTexts.nth(0)).toHaveJSProperty('emphasis', true);
-  await expect(groupTexts.nth(1)).toHaveJSProperty('variant', 'text-body-medium');
-  await expect(groupTexts.nth(1)).toHaveJSProperty('emphasis', false);
-  await expect(groupTexts.nth(1)).toHaveText(/items?/);
+  const groupLabel = firstGroupHeader.locator('.ds-table__group-label');
+  await expect(groupLabel).toHaveJSProperty('variant', 'text-body-medium');
+  await expect(groupLabel).toHaveJSProperty('emphasis', true);
+  const countTag = firstGroupHeader.locator('.ds-table__group-count ds-tag');
+  await expect(countTag).toHaveJSProperty('label', '3');
+  await expect(countTag).toHaveJSProperty('size', 'sm');
+  await expect(countTag).toHaveJSProperty('intent', 'neutral');
+  await expect(countTag).toHaveJSProperty('rounded', true);
+  await expect(firstGroupHeader.locator('.ds-visually-hidden')).toHaveText('3 items');
   const groupCopyInsets = await firstGroupHeader.locator('.ds-table__group-copy').evaluate(element => {
     const styles = getComputedStyle(element);
     return {
@@ -159,15 +161,24 @@ test('keeps group order and member-row sorting independent', async ({ page }) =>
     const frame = element.querySelector<HTMLElement>('.ds-table__frame')!;
     const header = element.querySelector<HTMLElement>('.ds-table__head')!;
     const overlay = element.querySelector<HTMLElement>('.ds-table__collapse-all-overlay')!;
+    const surface = element.querySelector<HTMLElement>('.ds-table__collapse-all-surface')!;
     const frameRect = frame.getBoundingClientRect();
     const headerRect = header.getBoundingClientRect();
     const overlayRect = overlay.getBoundingClientRect();
+    const surfaceRect = surface.getBoundingClientRect();
     return {
-      blockInset: overlayRect.top - headerRect.top,
+      overlayBlockInset: overlayRect.top - headerRect.top,
+      surfaceBlockStartInset: surfaceRect.top - headerRect.top,
+      surfaceBlockEndInset: headerRect.bottom - surfaceRect.bottom,
       inlineEndInset: frameRect.right - overlayRect.right,
     };
   });
-  expect(collapseGeometry).toEqual({ blockInset: 8, inlineEndInset: 8 });
+  expect(collapseGeometry).toEqual({
+    overlayBlockInset: 8,
+    surfaceBlockStartInset: 8,
+    surfaceBlockEndInset: 8,
+    inlineEndInset: 8,
+  });
   await collapseAll.click();
   await expect
     .poll(() => table.evaluate((element: HTMLDsTableElement) => element.collapsedGroupIds?.slice().sort()))
@@ -195,13 +206,13 @@ test('keeps group order and member-row sorting independent', async ({ page }) =>
     .toBe('desc');
 });
 
-test('applies faint intent surfaces and bold titles to severity groups', async ({ page }) => {
+test('applies faint intent-to-neutral surfaces and bold titles to severity groups', async ({ page }) => {
   const table = page.locator('#severity-grouped');
   const expected = [
-    { id: 'critical', intent: 'negative', label: 'Critical' },
-    { id: 'high', intent: 'warning', label: 'High' },
-    { id: 'medium', intent: 'caution', label: 'Medium' },
-    { id: 'low', intent: 'neutral', label: 'Low' },
+    { id: 'critical', intent: 'negative', label: 'Critical', count: 2 },
+    { id: 'high', intent: 'warning', label: 'High', count: 2 },
+    { id: 'medium', intent: 'caution', label: 'Medium', count: 1 },
+    { id: 'low', intent: 'neutral', label: 'Low', count: 1 },
   ] as const;
 
   for (const group of expected) {
@@ -211,14 +222,30 @@ test('applies faint intent surfaces and bold titles to severity groups', async (
     await expect(header).toHaveClass(new RegExp(`ds-table__group-cell--intent-${group.intent}`));
     const colors = await header.evaluate((element, intent) => {
       const probe = document.createElement('span');
-      probe.style.background = `var(--color-background-faint-${intent})`;
       document.body.append(probe);
-      const expected = getComputedStyle(probe).backgroundColor;
+      const resolveToken = (token: string) => {
+        probe.style.background = `var(${token})`;
+        return getComputedStyle(probe).backgroundColor;
+      };
+      const intentColor = resolveToken(`--color-background-faint-${intent}`);
+      const neutralColor = resolveToken('--color-background-faint-neutral');
       probe.remove();
       const content = element.querySelector<HTMLElement>('.ds-table__group-content')!;
-      return { actual: getComputedStyle(content).backgroundColor, expected };
+      const styles = getComputedStyle(content);
+      return {
+        backgroundColor: styles.backgroundColor,
+        backgroundImage: styles.backgroundImage,
+        intentColor,
+        neutralColor,
+      };
     }, group.intent);
-    expect(colors.actual).toBe(colors.expected);
+    if (group.intent === 'neutral') {
+      expect(colors.backgroundImage).toBe('none');
+      expect(colors.backgroundColor).toBe(colors.neutralColor);
+    } else {
+      expect(colors.backgroundImage).toContain(colors.intentColor);
+      expect(colors.backgroundImage).toContain(colors.neutralColor);
+    }
     const label = header.locator('.ds-table__group-label');
     await expect(label).toHaveText(group.label);
     if (group.intent === 'neutral') {
@@ -226,6 +253,19 @@ test('applies faint intent surfaces and bold titles to severity groups', async (
     } else {
       await expect(label).toHaveJSProperty('color', group.intent);
     }
+    const countSurface = header.locator('.ds-table__group-count');
+    const countTag = countSurface.locator('ds-tag');
+    await expect(countSurface).toHaveClass(/ds-control-elevation--sm/);
+    await expect(countSurface).toHaveAttribute('aria-hidden', 'true');
+    await expect(countTag).toHaveJSProperty('label', String(group.count));
+    await expect(countTag).toHaveJSProperty('size', 'sm');
+    await expect(countTag).toHaveJSProperty('intent', group.intent);
+    await expect(countTag).toHaveJSProperty('contrast', 'faint');
+    await expect(countTag).toHaveJSProperty('rounded', true);
+    await expect(header.locator('.ds-visually-hidden')).toHaveText(
+      `${group.count} ${group.count === 1 ? 'item' : 'items'}`,
+    );
+    await expect(countSurface).not.toHaveCSS('box-shadow', 'none');
   }
 
   const selectableGroupCopyInsets = await table
