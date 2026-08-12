@@ -34,7 +34,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   );
   assert.match(
     css,
-    /\.ds-table__group-content\)[^{]*\{[^}]*position: sticky[^}]*inset-inline-start: 0[^}]*inline-size: min\(100%, var\(--ds-table-visible-inline-size, 100%\)\)[^}]*padding: var\(--dimension-space-075\)[^}]*background: var\(--_table-group-surface\)/s,
+    /\.ds-table__group-content\)[^{]*\{[^}]*position: sticky[^}]*inset-inline-start: 0[^}]*inline-size: var\(--ds-table-visible-inline-size, 100%\)[^}]*padding: var\(--dimension-space-075\)[^}]*background: var\(--_table-group-surface\)/s,
   );
   assert.match(
     css,

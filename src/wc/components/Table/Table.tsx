@@ -155,6 +155,7 @@ export class Table {
   private previousModelWarning = '';
   private hasLoaded = false;
   private reconnectFrame: number | null = null;
+  private overflowSyncFrame: number | null = null;
 
   componentWillLoad(): void {
     this.previousLoadedRowCount = this.loadedRows.length;
@@ -188,6 +189,8 @@ export class Table {
   disconnectedCallback(): void {
     if (this.reconnectFrame !== null) cancelAnimationFrame(this.reconnectFrame);
     this.reconnectFrame = null;
+    if (this.overflowSyncFrame !== null) cancelAnimationFrame(this.overflowSyncFrame);
+    this.overflowSyncFrame = null;
     this.viewportEl?.removeEventListener('scroll', this.syncOverflow);
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
@@ -360,15 +363,28 @@ export class Table {
 
     this.resizeObserver?.disconnect();
     if (typeof ResizeObserver === 'undefined') return;
-    this.resizeObserver = new ResizeObserver(this.syncOverflow);
+    this.resizeObserver = new ResizeObserver(this.scheduleOverflowSync);
     this.resizeObserver.observe(this.viewportEl);
     if (this.tableEl) this.resizeObserver.observe(this.tableEl);
   }
 
+  private scheduleOverflowSync = (): void => {
+    if (this.overflowSyncFrame !== null) return;
+    this.overflowSyncFrame = requestAnimationFrame(() => {
+      this.overflowSyncFrame = null;
+      this.syncOverflow();
+    });
+  };
+
   private syncOverflow = (): void => {
     const viewport = this.viewportEl;
     if (!viewport) return;
-    viewport.style.setProperty('--ds-table-visible-inline-size', `${viewport.clientWidth}px`);
+    const tableInlineSize = this.tableEl?.getBoundingClientRect().width ?? viewport.clientWidth;
+    const visibleInlineSize = Math.min(viewport.clientWidth, tableInlineSize);
+    const visibleInlineSizeValue = `${visibleInlineSize}px`;
+    if (viewport.style.getPropertyValue('--ds-table-visible-inline-size') !== visibleInlineSizeValue) {
+      viewport.style.setProperty('--ds-table-visible-inline-size', visibleInlineSizeValue);
+    }
     const overflows = viewport.scrollWidth - viewport.clientWidth > 1;
     const scrollable = overflows || viewport.scrollHeight - viewport.clientHeight > 1;
     const nextStart = overflows && viewport.scrollLeft > 1;

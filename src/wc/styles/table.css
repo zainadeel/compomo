@@ -850,9 +850,10 @@
   display: flex;
   align-items: center;
   gap: var(--dimension-space-100);
-  /* Pin to the visible scrollport; never grow to the overflowing table width. */
-  inline-size: min(100%, var(--ds-table-visible-inline-size, 100%));
-  max-inline-size: min(100%, var(--ds-table-visible-inline-size, 100%));
+  /* Use a measured length because WebKit expands min()/percentage widths to
+   * the spanning table cell instead of honoring the visible scrollport. */
+  inline-size: var(--ds-table-visible-inline-size, 100%);
+  max-inline-size: var(--ds-table-visible-inline-size, 100%);
   min-block-size: var(--_table-row-min-block-size);
   padding: var(--dimension-space-075);
   background: var(--_table-group-surface);
