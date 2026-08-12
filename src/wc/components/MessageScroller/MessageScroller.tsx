@@ -51,6 +51,7 @@ export class MessageScroller {
   private activeTurnAnchor?: HTMLElement;
   private activeTurnAnchorViewportTop?: number;
   private turnClearance = 0;
+  private prependReconciliation = 0;
 
   componentDidLoad() {
     this.transcriptChildren = this.getTranscriptChildren();
@@ -67,6 +68,7 @@ export class MessageScroller {
   }
 
   disconnectedCallback() {
+    this.prependReconciliation += 1;
     this.scrollOverlayController?.disconnect();
     this.mutationObserver?.disconnect();
     if (this.programmaticTimer) clearTimeout(this.programmaticTimer);
@@ -235,7 +237,6 @@ export class MessageScroller {
     this.transcriptChildren = current;
     if (prepended) {
       if (this.viewport) {
-        const viewportTop = this.viewport.getBoundingClientRect().top;
         const preservedElement = this.activeTurnAnchor?.isConnected
           ? this.activeTurnAnchor
           : previous[0];
@@ -243,8 +244,12 @@ export class MessageScroller {
           ? this.activeTurnAnchorViewportTop
           : this.firstChildViewportTop;
         if (preservedElement && preservedTop !== undefined) {
-          const nextTop = preservedElement.getBoundingClientRect().top - viewportTop;
-          this.viewport.scrollTop += nextTop - preservedTop;
+          this.reconcilePrependPosition(preservedElement, preservedTop);
+          this.schedulePrependReconciliation(
+            preservedElement,
+            preservedTop,
+            newTranscript,
+          );
         }
       }
       this.rememberFirstChildTop();
@@ -256,6 +261,46 @@ export class MessageScroller {
       requestAnimationFrame(() => this.positionNewTurn(appendedAnchor));
     }
   };
+
+  private reconcilePrependPosition(element: HTMLElement, viewportTop: number) {
+    if (!this.viewport || !element.isConnected) return;
+    const nextTop =
+      element.getBoundingClientRect().top - this.viewport.getBoundingClientRect().top;
+    this.viewport.scrollTop += nextTop - viewportTop;
+  }
+
+  private schedulePrependReconciliation(
+    element: HTMLElement,
+    viewportTop: number,
+    prepended: HTMLElement[],
+  ) {
+    const generation = ++this.prependReconciliation;
+    // Prepended custom elements can gain height after their child-list mutation.
+    // Reconcile against the original coordinate after their layouts settle.
+    const pending = prepended
+      .flatMap(item => [item, ...Array.from(item.querySelectorAll<HTMLElement>('*'))])
+      .map(item => {
+        const componentOnReady = (
+          item as HTMLElement & { componentOnReady?: () => Promise<unknown> }
+        ).componentOnReady;
+        return componentOnReady ? componentOnReady.call(item).catch(() => undefined) : null;
+      })
+      .filter((promise): promise is Promise<unknown> => Boolean(promise));
+
+    void Promise.all(pending).then(() => {
+      requestAnimationFrame(() => {
+        if (generation !== this.prependReconciliation) return;
+        this.reconcilePrependPosition(element, viewportTop);
+        requestAnimationFrame(() => {
+          if (generation !== this.prependReconciliation) return;
+          this.reconcilePrependPosition(element, viewportTop);
+          this.rememberFirstChildTop();
+          this.rememberActiveTurnAnchorTop();
+          this.scrollOverlayController?.sync();
+        });
+      });
+    });
+  }
 
   private handleTranscriptSlotChange = () => this.handleTranscriptChange();
 
@@ -373,6 +418,7 @@ export class MessageScroller {
   };
 
   private releaseFollow = () => {
+    this.prependReconciliation += 1;
     this.following = false;
     this.followReleased = true;
     this.showScrollToLatest = true;

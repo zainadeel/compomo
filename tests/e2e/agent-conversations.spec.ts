@@ -268,6 +268,8 @@ test('links visible composer error text to the editable draft and clears it on r
 
 test('measures prose without narrowing tables or code', async ({ page }) => {
   const response = page.locator('#response');
+  await response.scrollIntoViewIfNeeded();
+  await expect(response).toBeInViewport();
   const paragraph = response.locator('ds-markdown p').first();
   await expect(paragraph).toContainText('measured paragraph');
   const geometry = await response.evaluate(element => {

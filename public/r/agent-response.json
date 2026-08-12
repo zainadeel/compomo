@@ -246,7 +246,7 @@
   "files": [
     {
       "path": "src/wc/components/AgentResponse/AgentResponse.css",
-      "content": ":host {\n  display: block;\n  width: 100%;\n  --ds-prose-text-max-inline-size: var(--dimension-panel-width-lg);\n  -webkit-user-select: none;\n  user-select: none;\n}\n.agent-response {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr);\n  gap: var(--dimension-space-150);\n  min-width: 0;\n  width: 100%;\n  -webkit-user-select: none;\n  user-select: none;\n}\n",
+      "content": ":host {\n  display: block;\n  width: 100%;\n  --ds-prose-text-max-inline-size: var(--dimension-panel-width-lg);\n  -webkit-user-select: none;\n  user-select: none;\n}\n.agent-response {\n  display: grid;\n  gap: var(--dimension-space-150);\n  min-width: 0;\n  width: 100%;\n  -webkit-user-select: none;\n  user-select: none;\n}\n",
       "type": "registry:ui"
     },
     {

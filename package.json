@@ -83,6 +83,7 @@
     "verify:pack": "node scripts/verify-framework-proxies.mjs && node scripts/verify-npm-pack.mjs && node scripts/verify-package-imports.mjs",
     "test": "node --import tsx/esm --test tests/*.test.ts",
     "test:e2e": "npm run build && playwright test",
+    "test:e2e:firefox:local": "node scripts/test-firefox-local.mjs",
     "test:e2e:install": "playwright install chromium firefox webkit",
     "prebuild:docs": "npm run clean:framework-proxies",
     "build:docs": "stencil build --docs",

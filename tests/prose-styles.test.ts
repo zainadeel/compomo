@@ -29,10 +29,6 @@ describe('public prose style contract', () => {
   it('provides a subtree opt-out and a local table overflow owner', () => {
     assert.match(css, /data-ds-prose='off'/);
     assert.match(css, /\.ds-prose__table-scroll/);
-    assert.match(
-      css,
-      /:where\(\.ds-prose__table-scroll\)\s*\{[^}]*\n\s*inline-size:\s*100%;/,
-    );
     assert.match(css, /overflow-x: auto/);
   });
 

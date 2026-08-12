@@ -20,6 +20,22 @@ measurement, popup positioning, form association, scrolling, or animation
 lifecycle. Chromium-only is appropriate for a narrow local geometry check when
 cross-browser behavior is unaffected.
 
+### Local Firefox on macOS
+
+When the Playwright Firefox build cannot launch on the host macOS version, run
+Firefox in the pinned Playwright Linux image:
+
+```bash
+npm run test:e2e:firefox:local -- tests/e2e/example.spec.ts
+```
+
+The helper resolves the Playwright image version from `package-lock.json`, uses
+an isolated Docker volume for Linux dependencies, and forwards additional
+Playwright arguments. On macOS, install and start a lightweight Docker runtime
+once with `brew install colima docker` and `colima start --cpu 4 --memory 8`.
+Worktrees outside Colima's default `/Users` mount must be added explicitly; the
+helper prints the exact scoped restart command when that is required.
+
 ## Browser tiers and ownership
 
 Rendered tests remain cross-browser by default. A reviewed assertion may use
