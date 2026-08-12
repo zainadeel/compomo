@@ -361,6 +361,8 @@ export class MessageScroller {
   private handleScroll = () => {
     if (!this.viewport) return;
     this.scrollOverlayController?.sync();
+    this.rememberFirstChildTop();
+    this.rememberActiveTurnAnchorTop();
     if (this.programmatic) return;
     this.following = this.isAtLiveEdge();
     this.followReleased = !this.following;
@@ -368,7 +370,6 @@ export class MessageScroller {
     const nextAtStart = this.viewport.scrollTop <= LIVE_EDGE_THRESHOLD;
     if (nextAtStart && !this.atStart) this.dsReachStart.emit();
     this.atStart = nextAtStart;
-    this.rememberFirstChildTop();
   };
 
   private releaseFollow = () => {

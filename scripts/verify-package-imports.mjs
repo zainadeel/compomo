@@ -211,6 +211,7 @@ try {
       '@ds-mo/ui': `file:${tarballPath}`,
       react: pkg.devDependencies.react,
       'react-dom': pkg.devDependencies['react-dom'],
+      typescript: pkg.devDependencies.typescript,
     },
   }, null, 2));
   execFileSync('npm', ['install', '--ignore-scripts', '--no-audit', '--no-fund'], {
@@ -267,6 +268,67 @@ try {
     cwd: smokeDir,
     stdio: 'inherit',
   });
+  const typeSmokeSource = `
+    import type {
+      AgentQuestionType,
+      AgentQuestionChoice,
+      AgentQuestion,
+      AgentQuestionAnswer,
+      AgentQuestionnaireStatus,
+      AgentQuestionnaireLabels,
+      AgentQuestionnaireAnswerEventDetail,
+      AgentQuestionnaireCancelEventDetail,
+      AgentQuestionnaireResponsePart,
+    } from '@ds-mo/ui';
+    import type {
+      AgentQuestionType as EntryQuestionType,
+      AgentQuestionChoice as EntryQuestionChoice,
+      AgentQuestionnaireResponsePart as EntryQuestionnaireResponsePart,
+    } from '@ds-mo/ui/components/ds-agent-questionnaire.js';
+
+    const questionType: AgentQuestionType & EntryQuestionType = 'single';
+    const choice: AgentQuestionChoice & EntryQuestionChoice = {
+      value: 'fleet',
+      label: 'Fleet',
+    };
+    const question: AgentQuestion = {
+      id: 'scope',
+      type: questionType,
+      question: 'Which scope?',
+      choices: [choice],
+    };
+    const answer: AgentQuestionAnswer = { questionId: question.id, value: choice.value };
+    const status: AgentQuestionnaireStatus = 'answered';
+    const labels = {} as AgentQuestionnaireLabels;
+    const answerDetail = {} as AgentQuestionnaireAnswerEventDetail;
+    const cancelDetail = {} as AgentQuestionnaireCancelEventDetail;
+    const part: AgentQuestionnaireResponsePart & EntryQuestionnaireResponsePart = {
+      id: 'questionnaire',
+      type: 'questionnaire',
+      requestId: 'request-1',
+      questions: [question],
+      answers: [answer],
+      status,
+    };
+    void [labels, answerDetail, cancelDetail, part];
+  `;
+  writeFileSync(join(smokeDir, 'type-smoke.ts'), typeSmokeSource);
+  execFileSync(
+    join(smokeDir, 'node_modules', '.bin', 'tsc'),
+    [
+      '--noEmit',
+      '--strict',
+      '--skipLibCheck',
+      '--target',
+      'ES2022',
+      '--module',
+      'NodeNext',
+      '--moduleResolution',
+      'NodeNext',
+      'type-smoke.ts',
+    ],
+    { cwd: smokeDir, stdio: 'inherit' },
+  );
   await verifyPackagedMcp(smokeDir, {
     clientOptions: { versionNegotiation: { mode: 'auto' } },
     expectedEra: 'modern',

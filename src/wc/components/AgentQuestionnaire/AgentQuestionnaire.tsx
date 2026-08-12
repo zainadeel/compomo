@@ -68,19 +68,22 @@ export class AgentQuestionnaire {
 
   private readonly instanceId = ++questionnaireId;
   private answerPending = false;
+  private resetScheduled = false;
+  private draftRequestId?: string;
+  private answersSnapshot: AgentQuestionAnswer[] = [];
+  private waitingForRequestAnswers = false;
 
   componentWillLoad() {
+    this.draftRequestId = this.requestId;
+    this.answersSnapshot = this.answers;
     this.resetDraft();
   }
 
   @Watch('requestId')
-  handleRequestChange() {
-    this.resetDraft();
-  }
-
   @Watch('questions')
-  handleQuestionsChange() {
-    this.resetDraft();
+  @Watch('answers')
+  handleQuestionnaireInputChange() {
+    this.scheduleDraftReset();
   }
 
   @Watch('status')
@@ -101,18 +104,42 @@ export class AgentQuestionnaire {
     return this.status === 'submitting';
   }
 
-  private resetDraft() {
+  private resetDraft(answers = this.answers) {
     this.currentStep = 0;
-    this.drafts = createQuestionnaireDrafts(this.questions ?? [], this.answers ?? []);
+    this.drafts = createQuestionnaireDrafts(this.questions ?? [], answers ?? []);
     this.validation = {};
     this.answerPending = false;
   }
 
-  private focusCurrentControl() {
+  private scheduleDraftReset() {
+    if (this.resetScheduled) return;
+    this.resetScheduled = true;
+    queueMicrotask(() => {
+      this.resetScheduled = false;
+      const requestChanged = this.requestId !== this.draftRequestId;
+      const answersChanged = this.answers !== this.answersSnapshot;
+      if (requestChanged && !answersChanged) {
+        this.waitingForRequestAnswers = true;
+      } else if (answersChanged) {
+        this.waitingForRequestAnswers = false;
+      }
+      this.resetDraft(this.waitingForRequestAnswers ? [] : this.answers);
+      this.draftRequestId = this.requestId;
+      this.answersSnapshot = this.answers;
+    });
+  }
+
+  private focusCurrentControl(preferInvalid = false) {
     const focus = () => {
-      const control = this.el.querySelector<HTMLElement>(
-        '[data-question-control]:not([disabled])',
-      );
+      const invalidControl = preferInvalid
+        ? this.el.querySelector<HTMLElement>(
+            '[data-question-control][aria-invalid="true"]:not([disabled])',
+          )
+        : null;
+      const control = invalidControl ??
+        this.el.querySelector<HTMLElement>(
+          '[data-question-control]:not([disabled])',
+        );
       const action = this.el.querySelector<HTMLElement>(
         '[data-question-action]:not([disabled])',
       );
@@ -144,7 +171,7 @@ export class AgentQuestionnaire {
     const message = validateQuestionDraft(question, this.drafts[question.id]);
     if (!message) return true;
     this.validation = { ...this.validation, [question.id]: message };
-    this.focusCurrentControl();
+    this.focusCurrentControl(true);
     return false;
   }
 
@@ -182,7 +209,7 @@ export class AgentQuestionnaire {
     );
     if (invalidIndex >= 0) {
       this.currentStep = invalidIndex;
-      this.focusCurrentControl();
+      this.focusCurrentControl(true);
       return;
     }
 
@@ -259,7 +286,7 @@ export class AgentQuestionnaire {
     );
   }
 
-  private renderOther(question: AgentQuestion) {
+  private renderOther(question: AgentQuestion, errorId: string) {
     if (!question.allowOther || question.type === 'text') return null;
     const draft = this.drafts[question.id];
     const inputId = `ds-agent-questionnaire-${this.instanceId}-${this.currentStep}-other`;
@@ -298,7 +325,7 @@ export class AgentQuestionnaire {
             placeholder={this.copy.otherPlaceholder}
             aria-label={this.copy.other}
             aria-invalid={this.validation[question.id] ? 'true' : undefined}
-            aria-describedby={this.validation[question.id] ? `${inputId}-error` : undefined}
+            aria-describedby={this.validation[question.id] ? errorId : undefined}
             disabled={this.disabled}
             onInput={(event: Event) =>
               this.updateDraft(question.id, {
@@ -349,7 +376,7 @@ export class AgentQuestionnaire {
           >
             <legend class="ds-visually-hidden">{question.question}</legend>
             {question.choices?.map(choice => this.renderChoice(question, choice))}
-            {this.renderOther(question)}
+            {this.renderOther(question, errorId)}
           </fieldset>
         )}
         {this.validation[question.id] ? (

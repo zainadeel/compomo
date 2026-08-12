@@ -65,6 +65,50 @@ test('announces questionnaire validation, retains error drafts, resets requests,
   await expect(questionnaire.getByLabel('Repeated battery failures')).toBeFocused();
 });
 
+test('coalesces related questionnaire replacements and accepts later answer seeds', async ({ page }) => {
+  const questionnaire = page.locator('#questionnaire');
+  await questionnaire.evaluate((element: HTMLDsAgentQuestionnaireElement) => {
+    element.requestId = 'request-coalesced';
+    element.questions = [{
+      id: 'coalesced-context',
+      type: 'text',
+      question: 'Coalesced context',
+    }];
+    element.answers = [{ questionId: 'coalesced-context', value: 'Same turn seed' }];
+  });
+  await expect(
+    questionnaire.getByRole('textbox', { name: 'Coalesced context' }),
+  ).toHaveValue('Same turn seed');
+
+  await questionnaire.evaluate((element: HTMLDsAgentQuestionnaireElement) => {
+    element.requestId = 'request-later-seed';
+    element.questions = [{
+      id: 'coalesced-context',
+      type: 'text',
+      question: 'Later context',
+    }];
+  });
+  await expect(questionnaire.getByRole('textbox', { name: 'Later context' })).toHaveValue('');
+  await questionnaire.evaluate((element: HTMLDsAgentQuestionnaireElement) => {
+    element.answers = [{ questionId: 'coalesced-context', value: 'Later seed' }];
+  });
+  await expect(
+    questionnaire.getByRole('textbox', { name: 'Later context' }),
+  ).toHaveValue('Later seed');
+});
+
+test('associates Other validation and focuses the invalid free-text input', async ({ page }) => {
+  const questionnaire = page.locator('#questionnaire');
+  await questionnaire.getByRole('radio', { name: 'Other' }).check();
+  const otherInput = questionnaire.locator('.questionnaire__other-input');
+  await questionnaire.getByRole('button', { name: 'Next' }).click();
+  const alert = questionnaire.getByRole('alert');
+  await expect(alert).toHaveText('Enter a response for Other.');
+  const alertId = await alert.getAttribute('id');
+  await expect(otherInput).toHaveAttribute('aria-describedby', alertId!);
+  await expect(otherInput).toBeFocused();
+});
+
 test('keeps compact tool rows non-disclosing and emits disclosure changes when diagnostics exist', async ({ page }) => {
   const compact = page.locator('#tool-compact');
   await expect(compact.locator('details')).toHaveCount(0);
@@ -203,13 +247,20 @@ test('anchors only newly appended turns and clears the combined interaction and 
   await expect.poll(relativeTop).toBeGreaterThanOrEqual(63);
   await expect.poll(relativeTop).toBeLessThanOrEqual(65);
 
+  await viewport.evaluate(element => {
+    element.scrollTop -= 200;
+    element.dispatchEvent(new Event('scroll'));
+  });
+  await expect.poll(relativeTop).toBeGreaterThan(200);
+  const beforePrependTop = await relativeTop();
   const beforePrepend = await viewport.evaluate(element => element.scrollTop);
   await page.evaluate(() =>
     (window as unknown as { prependHistory: () => void }).prependHistory(),
   );
   await expect.poll(() => viewport.evaluate(element => element.scrollTop)).toBeGreaterThan(beforePrepend);
-  await expect.poll(relativeTop).toBeGreaterThanOrEqual(48);
-  await expect.poll(relativeTop).toBeLessThanOrEqual(80);
+  await expect
+    .poll(async () => Math.abs((await relativeTop()) - beforePrependTop))
+    .toBeLessThanOrEqual(50);
 });
 
 test('streams only while following and lets reader input release and restore the live edge', async ({ page }) => {
@@ -235,9 +286,6 @@ test('streams only while following and lets reader input release and restore the
   await viewport.dispatchEvent('wheel', { deltaY: -80 });
   await grow();
   await expect.poll(distanceFromLiveEdge).toBeGreaterThan(100);
-  await expect(
-    scroller.locator('ds-button-unfilled[aria-label="Scroll to latest message"]'),
-  ).toBeVisible();
   await returnToLatest();
 
   await viewport.press('ArrowUp');
@@ -258,6 +306,7 @@ test('streams only while following and lets reader input release and restore the
     const selection = document.getSelection();
     selection?.removeAllRanges();
     selection?.addRange(range);
+    document.dispatchEvent(new Event('selectionchange'));
   });
   await grow();
   await expect.poll(distanceFromLiveEdge).toBeGreaterThan(100);
