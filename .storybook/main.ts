@@ -68,7 +68,10 @@ const config: StorybookConfig = {
     '../src/wc/**/*.mdx',
     '../src/wc/**/*.stories.@(ts|tsx)',
   ],
-  staticDirs: ['./static'],
+  staticDirs: [
+    './static',
+    { from: '../docs/licenses', to: '/licenses' },
+  ],
   addons: ['@storybook/addon-docs', '@storybook/addon-a11y', '@storybook/addon-vitest'],
   framework: {
     name: '@storybook/web-components-vite',

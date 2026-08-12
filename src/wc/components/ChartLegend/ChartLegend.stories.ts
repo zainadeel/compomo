@@ -72,7 +72,7 @@ const TRUNCATE_ITEMS: ChartLegendItem[] = [
  */
 export const TruncateAndFormat: Story = {
   render: () => html`
-    <div style="display:flex;gap:var(--dimension-space-400);align-items:flex-start;font-family:var(--typography-font-family, system-ui)">
+    <div style="display:flex;gap:var(--dimension-space-400);align-items:flex-start;font-family:var(--typography-font-family-ui, system-ui)">
       <div style="display:flex;flex-direction:column;gap:var(--dimension-space-150);width:220px">
         <p style="color:var(--color-foreground-tertiary);font-size:var(--typography-fontsize-xs);margin:0">
           Number formatting with percentages fixed to 2 decimal places

@@ -128,6 +128,28 @@ to it rather than adding a neutral wrapper.
 Use `font-feature="tabular-nums"` for columns, counters, or changing values
 whose digits need stable widths.
 
+## Interface and code families
+
+Inter is the normal interface family through
+`--typography-font-family-ui`. Code-oriented content such as `ds-code-block`,
+inline prose code, fenced prose code, and structured agent tool details uses
+`--typography-font-family-code` with a system-monospace fallback.
+
+Applications own the actual font assets. Load Fira Code 400 once at the
+application root to opt in; CompoMo does not bundle a font or request a CDN.
+Storybook follows the same contract by importing a self-hosted development
+asset in its preview rather than hiding a loader inside the component.
+Its redistributed asset includes the full
+[Fira Code SIL Open Font License 1.1](./licenses/FiraCode-OFL-1.1.txt).
+
+Programming ligatures are enabled by default. Set
+`--ds-code-font-variant-ligatures: none` at an application or subtree boundary
+when the product needs literal glyph separation.
+
+See the [font ownership and loading decision](https://github.com/zainadeel/compomo/blob/main/docs/font-ownership.md)
+for native, Angular, and React setup; subsets, preloads, caching, CSP, offline
+fallbacks, licensing, and measured network impact.
+
 ## Avoid
 
 - `text-*` class names in `class` attributes — these are `ds-text` variant values,
@@ -135,6 +157,7 @@ whose digits need stable widths.
 - Assembling `--typography-*` primitives by hand when `ds-text` can express the
   recipe.
 - Overriding a variant's font size, line height, weight, or letter spacing.
+- Loading Inter or Fira Code from component CSS or a feature-local selector.
 - Using display variants for ordinary headings.
 - Using title variants for paragraph copy.
 - Using underline styles as decoration.

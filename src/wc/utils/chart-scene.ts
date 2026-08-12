@@ -915,7 +915,7 @@ function buildCartesianNodes(
           dy: 'dy' in options ? visualValue(observation.datum, observation.index, observation.source, options.dy, 0) : 0,
           style: {
             ...styleFor(observation, mark, 'var(--color-foreground-primary)', { fill: 'var(--color-foreground-primary)', stroke: 'none' }),
-            fontFamily: 'fontFamily' in options ? visualValue(observation.datum, observation.index, observation.source, options.fontFamily, 'var(--typography-font-family)') : undefined,
+            fontFamily: 'fontFamily' in options ? visualValue(observation.datum, observation.index, observation.source, options.fontFamily, 'var(--typography-font-family-ui)') : undefined,
             fontSize: 'fontSize' in options ? visualValue(observation.datum, observation.index, observation.source, options.fontSize, 'var(--typography-fontsize-xs)') : undefined,
             fontWeight: 'fontWeight' in options ? visualValue(observation.datum, observation.index, observation.source, options.fontWeight, 'var(--typography-weight-medium)') : undefined,
             textAnchor: 'textAnchor' in options ? visualValue(observation.datum, observation.index, observation.source, options.textAnchor, 'middle') : 'middle',
@@ -1031,7 +1031,7 @@ function buildPolarScene(
       const localY = -Math.cos(angle);
       guides.push(
         { type: 'line', key: `polar-spoke:${index}`, markId: 'polar-guide', className: 'chart__grid chart__polar-guide', x1: centerX, y1: centerY, x2: end.x, y2: end.y, style: { fill: 'none', stroke: 'var(--color-foreground-quaternary)', strokeWidth: theme.gridStrokeWidth } },
-        { type: 'text', key: `polar-label:${index}`, markId: 'polar-guide', className: 'chart__tick chart__polar-label', measure: true, x: label.x, y: label.y, text: spec.angle?.ticks?.format?.(angleValue, locale) ?? formatTick(angleValue, locale), dominantBaseline: localY < -0.01 ? 'auto' : localY > 0.01 ? 'hanging' : 'middle', style: { fill: 'var(--color-foreground-secondary)', stroke: 'none', textAnchor: localX < -0.01 ? 'end' : localX > 0.01 ? 'start' : 'middle', fontFamily: 'var(--typography-font-family)', fontSize: 'var(--typography-fontsize-xs)', fontWeight: 'var(--typography-weight-medium)' } },
+        { type: 'text', key: `polar-label:${index}`, markId: 'polar-guide', className: 'chart__tick chart__polar-label', measure: true, x: label.x, y: label.y, text: spec.angle?.ticks?.format?.(angleValue, locale) ?? formatTick(angleValue, locale), dominantBaseline: localY < -0.01 ? 'auto' : localY > 0.01 ? 'hanging' : 'middle', style: { fill: 'var(--color-foreground-secondary)', stroke: 'none', textAnchor: localX < -0.01 ? 'end' : localX > 0.01 ? 'start' : 'middle', fontFamily: 'var(--typography-font-family-ui)', fontSize: 'var(--typography-fontsize-xs)', fontWeight: 'var(--typography-weight-medium)' } },
       );
     });
   }

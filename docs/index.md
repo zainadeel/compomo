@@ -11,6 +11,7 @@ live in source, package manifests, compiler output, and generated registries.
 | Angular, React, routing, forms, or first paint | [Framework integration](framework-integration.md)                              |
 | Color                                          | [Color usage](../src/docs/ColorUsage.mdx)                                      |
 | Typography                                     | [Typography usage](../src/docs/TypographyUsage.mdx)                            |
+| Font ownership and loading                     | [Font ownership](font-ownership.md)                                             |
 | Elevation                                      | [Elevation usage](../src/docs/ElevationUsage.mdx)                              |
 | Shared layout recipes                          | [Layout recipes](../src/docs/LayoutRecipes.mdx)                                |
 | Selection composition                          | [Selection patterns](../src/docs/SelectionPatterns.mdx)                        |

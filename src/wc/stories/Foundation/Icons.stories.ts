@@ -10,7 +10,7 @@ type SvgRecord = Record<string, string>;
 const ALL_ICONS: string[] = Object.keys(SvgIcons as SvgRecord).sort();
 const ALL_FLAGS: string[] = Object.keys(SvgFlags as SvgRecord).sort();
 
-const PAGE = 'font-family: var(--typography-font-family); padding: var(--dimension-space-300); background: var(--color-background-primary); color: var(--color-foreground-primary); min-height: 100vh; box-sizing: border-box;';
+const PAGE = 'font-family: var(--typography-font-family-ui); padding: var(--dimension-space-300); background: var(--color-background-primary); color: var(--color-foreground-primary); min-height: 100vh; box-sizing: border-box;';
 const GRID = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: var(--dimension-space-050);';
 const CELL = 'display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--dimension-space-100); padding: var(--dimension-space-150) var(--dimension-space-100); border-radius: var(--dimension-radius-100); text-align: center;';
 const NAME = 'font-size: var(--typography-fontsize-xs); line-height: var(--typography-lineheight-xs); color: var(--color-foreground-secondary); word-break: break-word; max-width: 100%;';

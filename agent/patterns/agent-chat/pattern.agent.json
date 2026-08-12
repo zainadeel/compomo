@@ -21,6 +21,7 @@
     "AgentResponse renders directly in Message without a MessageBubble surface, owns ordered display only, and never reveals private reasoning.",
     "MessageActions may copy application-authored response text and emit controlled feedback intent; the application owns serialization, persistence, submission, permissions, analytics, and model consequences.",
     "Markdown parsing and safe node creation belong to the renderer; the renderer-neutral @ds-mo/ui/prose.css surface owns only semantic-tree styling.",
+    "TokoMo owns the semantic interface and code font-family tokens, CompoMo assigns code intent, and the application loads Inter and Fira Code assets once at its root; agent components never fetch font assets.",
     "Tool-call components display execution state but do not request participant approval."
   ],
   "accessibility": [

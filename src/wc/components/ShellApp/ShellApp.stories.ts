@@ -86,7 +86,7 @@ function shellLayout(gradientPreset: ShellGradientPreset) {
       style="
         height: 100vh;
         background: var(--color-background-primary);
-        font-family: var(--typography-font-family, system-ui);
+        font-family: var(--typography-font-family-ui, system-ui);
       "
     >
       <ds-shell-app

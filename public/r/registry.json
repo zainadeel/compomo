@@ -12,7 +12,7 @@
     "themeSetup": "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     "peerDependencies": {
       "required": [
-        "@ds-mo/tokens ^6.0.0",
+        "@ds-mo/tokens ^6.2.1",
         "@ds-mo/icons ^6.6.0"
       ],
       "optional": [],
@@ -311,10 +311,12 @@
           ],
           "accessibility": [
             "Queued, running, success, error, and denied states are available as text.",
-            "The disclosure uses native keyboard and expanded-state semantics."
+            "The disclosure uses native keyboard and expanded-state semantics.",
+            "Structured input, output, and error details share the semantic code-family fallback and optional ligature override."
           ],
           "states": [
-            "This component presents state but never executes a tool or owns approval policy."
+            "This component presents state but never executes a tool or owns approval policy.",
+            "Applications load font assets once at their root; tool details never fetch or package a font."
           ],
           "responsiveBehavior": [
             "Structured detail wraps and scrolls without widening the transcript."
@@ -323,6 +325,10 @@
             {
               "label": "Storybook examples",
               "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+            },
+            {
+              "label": "Font ownership and loading",
+              "path": "docs/font-ownership.md"
             }
           ]
         },
@@ -2878,7 +2884,7 @@
     {
       "name": "code-block",
       "title": "CodeBlock",
-      "description": "Scrollable monospace code surface with optional language or filename context and copy action.",
+      "description": "Scrollable code surface with optional language or filename context and copy action.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -2889,7 +2895,7 @@
         "intent": {
           "audience": "general",
           "status": "experimental",
-          "summary": "Scrollable monospace code surface with optional language or filename context and copy action.",
+          "summary": "Scrollable code surface with optional language or filename context and copy action.",
           "useWhen": [
             "A message or document displays fenced code that readers may copy."
           ],
@@ -2902,7 +2908,11 @@
           ],
           "accessibility": [
             "The copy action has matching accessible-name and visible-tooltip status wording, and the code remains selectable text.",
-            "Language and filename labels supplement rather than replace the code content."
+            "Language and filename labels supplement rather than replace the code content.",
+            "The semantic code-family token retains a system-monospace fallback when an application does not load Fira Code; applications may disable programming ligatures through the shared code-surface custom property."
+          ],
+          "states": [
+            "Applications load font assets once at their root. The component consumes --typography-font-family-code and never fetches or packages a font."
           ],
           "responsiveBehavior": [
             "Long lines scroll horizontally and do not widen the owning transcript."
@@ -2910,7 +2920,11 @@
           "references": [
             {
               "label": "Storybook examples",
-              "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+              "path": "src/wc/components/CodeBlock/CodeBlock.stories.ts"
+            },
+            {
+              "label": "Font ownership and loading",
+              "path": "docs/font-ownership.md"
             }
           ]
         },

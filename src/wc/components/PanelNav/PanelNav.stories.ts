@@ -110,7 +110,7 @@ function interactiveDashboard(activeId = 'area-a', collapsed = false, breakpoint
       display: flex;
       height: 100vh;
       background: var(--color-background-primary);
-      font-family: var(--typography-font-family, system-ui);
+      font-family: var(--typography-font-family-ui, system-ui);
     ">
       <ds-panel-nav
         id="dash-nav"
@@ -145,7 +145,7 @@ function interactiveSettings(activeId = 'item-1', collapsed = false): TemplateRe
       display: flex;
       height: 100vh;
       background: var(--color-background-primary);
-      font-family: var(--typography-font-family, system-ui);
+      font-family: var(--typography-font-family-ui, system-ui);
     ">
       <ds-panel-nav
         id="settings-nav"
@@ -184,7 +184,7 @@ function sideBySide(): TemplateResult {
       padding: 32px;
       min-height: 100%;
       background: var(--color-background-secondary);
-      font-family: var(--typography-font-family, system-ui);
+      font-family: var(--typography-font-family-ui, system-ui);
       flex-wrap: wrap;
       box-sizing: border-box;
     ">
@@ -372,7 +372,7 @@ export const AngularHostTiming: Story = {
         display: flex;
         height: 100vh;
         background: var(--color-background-primary);
-        font-family: var(--typography-font-family, system-ui);
+        font-family: var(--typography-font-family-ui, system-ui);
       ">
         <ds-panel-nav
           id="angular-timing-nav"
@@ -412,7 +412,7 @@ export const RouterModeEvent: Story = {
         display: flex;
         height: 100vh;
         background: var(--color-background-primary);
-        font-family: var(--typography-font-family, system-ui);
+        font-family: var(--typography-font-family-ui, system-ui);
       ">
         <ds-panel-nav
           id="router-nav"
@@ -457,7 +457,7 @@ export const LiveSwitch: Story = {
         flex-direction: column;
         height: 100vh;
         background: var(--color-background-primary);
-        font-family: var(--typography-font-family, system-ui);
+        font-family: var(--typography-font-family-ui, system-ui);
       " id="live-wrap">
         <div style="padding: 12px 16px; display: flex; align-items: center; gap: 12px; background: var(--color-background-secondary); border-bottom: 1px solid var(--color-border-tertiary);">
           <button

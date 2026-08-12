@@ -57,7 +57,7 @@ function toolsShell(open: boolean, activeTool: PanelToolsToolId) {
         display: flex;
         height: 100vh;
         background: var(--color-background-primary);
-        font-family: var(--typography-font-family, system-ui);
+        font-family: var(--typography-font-family-ui, system-ui);
       "
     >
       <div
@@ -302,7 +302,7 @@ export const Interactive: Story = {
         display: flex;
         height: 100vh;
         background: var(--color-background-primary);
-        font-family: var(--typography-font-family, system-ui);
+        font-family: var(--typography-font-family-ui, system-ui);
       "
       ${ref(root => {
         if (!root) return;
@@ -365,7 +365,7 @@ export const InGradientShell: Story = {
       style="
         height: 100vh;
         background: var(--color-background-primary);
-        font-family: var(--typography-font-family, system-ui);
+        font-family: var(--typography-font-family-ui, system-ui);
       "
       ${ref(root => {
         if (!root || wiredGradientTools.has(root)) return;

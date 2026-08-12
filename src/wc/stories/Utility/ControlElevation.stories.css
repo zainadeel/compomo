@@ -39,7 +39,7 @@
 .control-elevation-demo__label {
   margin: 0;
   color: var(--color-foreground-secondary);
-  font-family: var(--typography-font-family);
+  font-family: var(--typography-font-family-ui);
   font-size: var(--typography-fontsize-sm);
   font-weight: var(--typography-weight-regular);
   line-height: var(--typography-lineheight-sm);

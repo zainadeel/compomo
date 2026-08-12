@@ -58,7 +58,7 @@ export const Sizes: Story = {
       ${SIZES.map(size => html`
         <div style="display: flex; flex-direction: column; align-items: center; gap: var(--dimension-space-075)">
           <ds-chip label=${size} state="active" size=${size}></ds-chip>
-          <span style="font-size: var(--typography-fontsize-xs); font-family: var(--typography-fontfamily-mono); color: var(--color-foreground-tertiary)">${size}</span>
+          <span style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-tertiary)">${size}</span>
         </div>
       `)}
     </div>

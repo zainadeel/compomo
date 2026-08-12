@@ -74,7 +74,7 @@ const assign = (property: 'items' | 'definition', value: unknown) =>
 
 export const Review: Story = {
   render: () => html`
-    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(360px, 1fr));gap:var(--dimension-space-300);padding:var(--dimension-space-400);background:var(--color-background-secondary);font-family:var(--typography-font-family, system-ui)">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(360px, 1fr));gap:var(--dimension-space-300);padding:var(--dimension-space-400);background:var(--color-background-secondary);font-family:var(--typography-font-family-ui, system-ui)">
       <ds-card-chart heading="Availability status" card-width="lg" variant="chart">
         <ds-chart slot="chart" ${assign('definition', AVAILABILITY_DEFINITION)} label="Availability status"></ds-chart>
         <ds-chart-legend slot="legend" ${assign('items', AVAILABILITY_STATUS)}></ds-chart-legend>

@@ -51,6 +51,44 @@ test.describe('renderer-neutral prose foundation', () => {
     await expect(page.locator('#semantic-prose > h2')).toHaveCSS('margin-block-start', '0px');
   });
 
+  test('shares the semantic code-family and ligature contract across code surfaces', async ({ page }) => {
+    await expect(page.locator('#agent-tool-call pre')).toHaveCount(2);
+
+    const readCodeStyles = () => page.evaluate(() => {
+      const inline = getComputedStyle(document.querySelector('#semantic-prose code')!);
+      const fenced = getComputedStyle(document.querySelector('#semantic-prose pre')!);
+      const component = getComputedStyle(document.querySelector('#markdown-renderer ds-code-block pre')!);
+      const toolCall = getComputedStyle(document.querySelector('#agent-tool-call pre')!);
+      return [inline, fenced, component, toolCall].map(style => ({
+        family: style.fontFamily,
+        ligatures: style.fontVariantLigatures,
+        weight: style.fontWeight,
+      }));
+    });
+
+    const defaults = await readCodeStyles();
+    for (const style of defaults) {
+      expect(style.family).toContain('Fira Code');
+      expect(style.ligatures).toBe('normal');
+      expect(style.weight).toBe('400');
+    }
+
+    await page.evaluate(() => {
+      document.documentElement.style.setProperty(
+        '--typography-font-family-code',
+        "'Configured Code Face', monospace",
+      );
+      document.documentElement.style.setProperty('--ds-code-font-variant-ligatures', 'none');
+    });
+
+    const configured = await readCodeStyles();
+    for (const style of configured) {
+      expect(style.family).toContain('Configured Code Face');
+      expect(style.ligatures).toBe('none');
+      expect(style.weight).toBe('400');
+    }
+  });
+
   test('allows ordinary consumer overrides and opts product UI out as a subtree', async ({ page }) => {
     const result = await page.evaluate(() => {
       const root = getComputedStyle(document.documentElement);
@@ -109,14 +147,22 @@ test.describe('renderer-neutral prose foundation', () => {
       return {
         wrapperClientWidth: wrapper.clientWidth,
         wrapperScrollWidth: wrapper.scrollWidth,
+        codeClientWidth: elementWidth('#semantic-prose pre', 'client'),
+        codeScrollWidth: elementWidth('#semantic-prose pre', 'scroll'),
         longClientWidth: longContent.clientWidth,
         longScrollWidth: longContent.scrollWidth,
         pageClientWidth: document.documentElement.clientWidth,
         pageScrollWidth: document.documentElement.scrollWidth,
       };
+
+      function elementWidth(selector: string, kind: 'client' | 'scroll') {
+        const element = document.querySelector(selector)!;
+        return kind === 'client' ? element.clientWidth : element.scrollWidth;
+      }
     });
 
     expect(geometry.wrapperScrollWidth).toBeGreaterThan(geometry.wrapperClientWidth);
+    expect(geometry.codeScrollWidth).toBeGreaterThan(geometry.codeClientWidth);
     expect(geometry.longScrollWidth).toBeLessThanOrEqual(geometry.longClientWidth);
     expect(geometry.pageScrollWidth).toBeLessThanOrEqual(geometry.pageClientWidth);
   });

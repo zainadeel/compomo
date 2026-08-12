@@ -20,7 +20,7 @@
   :where(p, ul, ol, dl, blockquote, figure, figcaption, table):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
   margin: 0;
   color: inherit;
-  font-family: var(--typography-font-family);
+  font-family: var(--typography-font-family-ui);
   font-size: var(--typography-fontsize-md);
   font-weight: var(--typography-weight-regular);
   line-height: var(--typography-lineheight-md);
@@ -31,7 +31,7 @@
   :where(h1, h2, h3, h4, h5, h6):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
   margin: 0;
   color: var(--color-foreground-primary);
-  font-family: var(--typography-font-family);
+  font-family: var(--typography-font-family-ui);
   font-weight: var(--typography-weight-semibold);
 }
 
@@ -130,8 +130,14 @@
   padding: var(--dimension-space-012) var(--dimension-space-025);
   border-radius: var(--dimension-radius-025);
   background: var(--color-background-secondary);
-  font-family: var(--typography-fontfamily-mono);
+  font-family: var(
+    --typography-font-family-code,
+    'Fira Code', ui-monospace, 'SFMono-Regular', 'Cascadia Code', 'Roboto Mono',
+    Menlo, Monaco, Consolas, 'Liberation Mono', monospace
+  );
   font-size: var(--typography-fontsize-sm);
+  font-variant-ligatures: var(--ds-code-font-variant-ligatures, normal);
+  font-weight: var(--typography-weight-regular);
   line-height: var(--typography-lineheight-sm);
   letter-spacing: var(--typography-letterspacing-none);
 }
@@ -147,8 +153,14 @@
   border-radius: var(--dimension-radius-050);
   background: var(--color-background-strong-neutral);
   color: var(--color-foreground-faint-neutral);
-  font-family: var(--typography-fontfamily-mono);
+  font-family: var(
+    --typography-font-family-code,
+    'Fira Code', ui-monospace, 'SFMono-Regular', 'Cascadia Code', 'Roboto Mono',
+    Menlo, Monaco, Consolas, 'Liberation Mono', monospace
+  );
   font-size: var(--typography-fontsize-sm);
+  font-variant-ligatures: var(--ds-code-font-variant-ligatures, normal);
+  font-weight: var(--typography-weight-regular);
   line-height: var(--typography-lineheight-sm);
   letter-spacing: var(--typography-letterspacing-none);
   tab-size: 2;

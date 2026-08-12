@@ -1,0 +1,11 @@
+/*
+ * Fira Code copyright 2014-2020 The Fira Code Project Authors.
+ * SIL Open Font License 1.1: /licenses/FiraCode-OFL-1.1.txt
+ */
+@font-face {
+  font-family: 'Fira Code';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('@fontsource/fira-code/files/fira-code-latin-400-normal.woff2') format('woff2');
+}

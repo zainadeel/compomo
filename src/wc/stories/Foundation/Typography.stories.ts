@@ -13,9 +13,9 @@ type Story = StoryObj;
 
 // ── Shared layout helpers ──────────────────────────────────────────────────
 
-const PAGE    = 'font-family: var(--typography-font-family); padding: var(--dimension-space-400); display: flex; flex-direction: column; gap: calc(var(--dimension-space-100) * 5); background: var(--color-background-primary); color: var(--color-foreground-primary); min-height: 100vh; box-sizing: border-box;';
+const PAGE    = 'font-family: var(--typography-font-family-ui); padding: var(--dimension-space-400); display: flex; flex-direction: column; gap: calc(var(--dimension-space-100) * 5); background: var(--color-background-primary); color: var(--color-foreground-primary); min-height: 100vh; box-sizing: border-box;';
 const SECTION = 'display: flex; flex-direction: column; gap: var(--dimension-space-050);';
-const H2      = 'font-size: var(--typography-fontsize-lg); font-weight: var(--typography-weight-semibold); color: var(--color-foreground-primary); margin: 0 0 var(--dimension-space-200); letter-spacing: var(--typography-letterspacing-negative-half); font-family: var(--typography-font-family);';
+const H2      = 'font-size: var(--typography-fontsize-lg); font-weight: var(--typography-weight-semibold); color: var(--color-foreground-primary); margin: 0 0 var(--dimension-space-200); letter-spacing: var(--typography-letterspacing-negative-half); font-family: var(--typography-font-family-ui);';
 const ROW     = 'display: flex; align-items: baseline; gap: var(--dimension-space-200); padding: var(--dimension-space-125) 0; border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);';
 const LBL     = 'font-size: var(--typography-fontsize-xs); color: var(--color-foreground-secondary); min-width: 220px; flex-shrink: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; padding-top: var(--dimension-space-025);';
 const SPEC    = 'font-size: var(--typography-fontsize-xs); color: var(--color-foreground-tertiary); min-width: 140px; flex-shrink: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;';

@@ -8,7 +8,7 @@
   box-sizing: border-box;
   overflow: hidden;
   overscroll-behavior: none;
-  font-family: var(--typography-font-family, system-ui);
+  font-family: var(--typography-font-family-ui, system-ui);
   --ds-shell-panel-tools-width: var(--dimension-panel-width-xs);
 }
 

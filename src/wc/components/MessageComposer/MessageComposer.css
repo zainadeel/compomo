@@ -52,7 +52,7 @@ textarea {
   box-sizing: border-box;
   background: transparent;
   color: var(--color-foreground-primary);
-  font-family: var(--typography-font-family);
+  font-family: var(--typography-font-family-ui);
   font-size: var(--typography-fontsize-md);
   line-height: var(--typography-lineheight-md);
   font-weight: var(--typography-weight-regular);

@@ -34,7 +34,7 @@
   display: inline-flex;
   width: max-content;
   min-width: max-content;
-  font-family: var(--typography-font-family);
+  font-family: var(--typography-font-family-ui);
   font-size: var(--typography-fontsize-xs);
   line-height: 1;
   font-weight: var(--typography-weight-regular);
