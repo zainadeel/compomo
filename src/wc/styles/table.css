@@ -825,6 +825,7 @@
    * th only spans the table for row structure so body columns can scroll. */
   min-block-size: var(--_table-row-min-block-size);
   padding: 0;
+  border-block-end: 0;
   background: transparent;
 }
 
@@ -867,7 +868,13 @@
   max-inline-size: var(--ds-table-visible-inline-size, 100%);
   min-block-size: var(--_table-row-min-block-size);
   padding: var(--dimension-space-100);
+  border-block-end: var(--dimension-stroke-width-012) solid var(--_table-border);
   background: var(--_table-group-surface);
+  background-clip: border-box;
+}
+
+:where(.ds-table__group:last-child[data-collapsed='true'] .ds-table__group-content) {
+  border-block-end: 0;
 }
 
 :where(.ds-table__table--selectable .ds-table__group-content) {

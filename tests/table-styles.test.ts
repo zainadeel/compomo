@@ -30,11 +30,15 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(componentTsx, /--ds-table-visible-inline-size/);
   assert.match(
     css,
-    /\.ds-table__group-cell\)[^{]*\{[^}]*padding: 0[^}]*background: transparent/s,
+    /\.ds-table__group-cell\)[^{]*\{[^}]*padding: 0[^}]*border-block-end: 0[^}]*background: transparent/s,
   );
   assert.match(
     css,
-    /\.ds-table__group-content\)[^{]*\{[^}]*position: sticky[^}]*inset-inline-start: 0[^}]*inline-size: var\(--ds-table-visible-inline-size, 100%\)[^}]*padding: var\(--dimension-space-100\)[^}]*background: var\(--_table-group-surface\)/s,
+    /\.ds-table__group-content\)[^{]*\{[^}]*position: sticky[^}]*inset-inline-start: 0[^}]*inline-size: var\(--ds-table-visible-inline-size, 100%\)[^}]*padding: var\(--dimension-space-100\)[^}]*border-block-end: var\(--dimension-stroke-width-012\) solid var\(--_table-border\)[^}]*background: var\(--_table-group-surface\)[^}]*background-clip: border-box/s,
+  );
+  assert.match(
+    css,
+    /\.ds-table__group:last-child\[data-collapsed='true'\] \.ds-table__group-content\)[^{]*\{[^}]*border-block-end: 0/s,
   );
   assert.match(
     css,

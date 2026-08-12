@@ -192,6 +192,19 @@ test('applies faint intent surfaces and bold titles to severity groups', async (
       await expect(label).toHaveJSProperty('color', group.intent);
     }
   }
+
+  await table.locator('.ds-table__collapse-all').click();
+  const collapsedContents = table.locator('tbody[data-group-id] .ds-table__group-content');
+  await expect(table.locator('tbody[data-group-id] .ds-table__row')).toHaveCount(0);
+  for (let index = 0; index < expected.length; index += 1) {
+    const body = table.locator(`tbody[data-group-id="${expected[index].id}"]`);
+    await expect(body.locator('.ds-table__group-cell')).toHaveCSS('border-bottom-width', '0px');
+    await expect(collapsedContents.nth(index)).toHaveCSS('background-clip', 'border-box');
+    await expect(collapsedContents.nth(index)).toHaveCSS(
+      'border-bottom-width',
+      index === expected.length - 1 ? '0px' : '1px',
+    );
+  }
 });
 
 test('group section checkboxes select and clear group members when selectable', async ({ page }) => {
