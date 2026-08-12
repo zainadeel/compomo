@@ -884,6 +884,7 @@ export class Table {
           icon={value.icon ?? ''}
           rounded={value.rounded ?? false}
           isInset
+          insetDepth="double"
         />
       );
 

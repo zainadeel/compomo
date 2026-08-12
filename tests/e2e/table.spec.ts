@@ -285,7 +285,8 @@ test('sorts compound columns by independent label-width controls', async ({ page
   await expect(table.locator('ds-tag').first()).toHaveJSProperty('intent', 'caution');
   await expect(table.locator('ds-tag').first()).toHaveJSProperty('size', 'md');
   await expect(table.locator('ds-tag').first()).toHaveJSProperty('isInset', true);
-  await expect(table.locator('ds-tag').first()).toHaveCSS('height', '28px');
+  await expect(table.locator('ds-tag').first()).toHaveJSProperty('insetDepth', 'double');
+  await expect(table.locator('ds-tag').first()).toHaveCSS('height', '24px');
 
   const firstRow = table.locator('tbody .ds-table__row').first();
   const firstDataCell = firstRow.locator('.ds-table__cell:not(.ds-table__selection-cell)').first();
@@ -311,10 +312,10 @@ test('sorts compound columns by independent label-width controls', async ({ page
     };
   });
   expect(trackGeometry.checkbox.top).toBeCloseTo(trackGeometry.primary.top, 0);
-  expect(trackGeometry.tag.top).toBeCloseTo(trackGeometry.primary.top - 4, 0);
+  expect(trackGeometry.tag.top).toBeCloseTo(trackGeometry.primary.top - 2, 0);
   expect(trackGeometry.checkbox.height).toBeCloseTo(20, 0);
   expect(trackGeometry.primary.height).toBeCloseTo(20, 0);
-  expect(trackGeometry.tag.height).toBeCloseTo(28, 0);
+  expect(trackGeometry.tag.height).toBeCloseTo(24, 0);
   expect(trackGeometry.secondary.top - trackGeometry.primary.bottom).toBeCloseTo(4, 0);
   expect(trackGeometry.secondary.height).toBeCloseTo(20, 0);
 
@@ -450,15 +451,15 @@ test('renders independently styled standard cell types', async ({ page }) => {
     await expect(track).toHaveCSS('padding-bottom', '0px');
   }
   await expect(image).toHaveClass(/ds-table__cell--image/);
-  await expect(image).toHaveCSS('padding-top', '6px');
-  await expect(image).toHaveCSS('padding-right', '6px');
-  await expect(image).toHaveCSS('padding-bottom', '6px');
-  await expect(image).toHaveCSS('padding-left', '6px');
-  await expect(image).toHaveCSS('width', '105px');
+  await expect(image).toHaveCSS('padding-top', '8px');
+  await expect(image).toHaveCSS('padding-right', '8px');
+  await expect(image).toHaveCSS('padding-bottom', '8px');
+  await expect(image).toHaveCSS('padding-left', '8px');
+  await expect(image).toHaveCSS('width', '102px');
   await expect(image).toHaveCSS('height', '64px');
   const imagePlaceholder = image.getByRole('img', { name: 'Safety event preview unavailable' });
   await expect(imagePlaceholder).toBeVisible();
-  await expect(imagePlaceholder.locator('..')).toHaveCSS('height', '52px');
+  await expect(imagePlaceholder.locator('..')).toHaveCSS('height', '48px');
   await expect(imagePlaceholder.locator('..')).toHaveCSS('border-radius', '2px');
   const imageGeometry = await image.locator('.ds-table__cell-image').evaluate(element => {
     const style = getComputedStyle(element);
@@ -520,22 +521,25 @@ test('renders independently styled standard cell types', async ({ page }) => {
   await expect(blank.locator('.ds-table__cell-content')).toBeEmpty();
 
   await expect(tagOnly).toHaveClass(/ds-table__cell--tag-tag-only/);
-  await expect(tagOnly).toHaveCSS('padding-top', '6px');
-  await expect(tagOnly).toHaveCSS('padding-right', '6px');
-  await expect(tagOnly).toHaveCSS('padding-bottom', '6px');
-  await expect(tagOnly).toHaveCSS('padding-left', '6px');
+  await expect(tagOnly).toHaveCSS('padding-top', '8px');
+  await expect(tagOnly).toHaveCSS('padding-right', '8px');
+  await expect(tagOnly).toHaveCSS('padding-bottom', '8px');
+  await expect(tagOnly).toHaveCSS('padding-left', '8px');
   await expect(tagOnly.locator('ds-tag')).toHaveJSProperty('size', 'md');
   await expect(tagOnly.locator('ds-tag')).toHaveJSProperty('isInset', true);
-  await expect(tagOnly.locator('ds-tag')).toHaveCSS('height', '28px');
+  await expect(tagOnly.locator('ds-tag')).toHaveJSProperty('insetDepth', 'double');
+  await expect(tagOnly.locator('ds-tag')).toHaveCSS('height', '24px');
 
   await expect(tagWithText).toHaveClass(/ds-table__cell--tag-tag-with-text/);
-  await expect(tagWithText).toHaveCSS('padding-top', '6px');
-  await expect(tagWithText).toHaveCSS('padding-right', '6px');
-  await expect(tagWithText).toHaveCSS('padding-bottom', '6px');
-  await expect(tagWithText).toHaveCSS('padding-left', '6px');
+  await expect(tagWithText).toHaveCSS('padding-top', '8px');
+  await expect(tagWithText).toHaveCSS('padding-right', '8px');
+  await expect(tagWithText).toHaveCSS('padding-bottom', '8px');
+  await expect(tagWithText).toHaveCSS('padding-left', '8px');
+  await expect(tagWithText.locator('.ds-table__cell-tag-stack')).toHaveCSS('gap', '2px');
   await expect(tagWithText.locator('ds-tag')).toHaveJSProperty('size', 'md');
   await expect(tagWithText.locator('ds-tag')).toHaveJSProperty('isInset', true);
-  await expect(tagWithText.locator('ds-tag')).toHaveCSS('height', '28px');
+  await expect(tagWithText.locator('ds-tag')).toHaveJSProperty('insetDepth', 'double');
+  await expect(tagWithText.locator('ds-tag')).toHaveCSS('height', '24px');
   await expect(tagWithText.locator('.ds-table__cell-tag-text')).toHaveJSProperty('variant', 'text-body-small');
   await expect(tagWithText.locator('.ds-table__cell-tag-text')).toHaveJSProperty('color', 'secondary');
   await expect(tagWithText.locator('.ds-table__cell-tag-text')).toHaveCSS('padding-top', '2px');
@@ -555,7 +559,8 @@ test('renders independently styled standard cell types', async ({ page }) => {
   await expect(textWithTag.locator('.ds-table__cell-tag-text')).toHaveCSS('min-height', '0px');
   await expect(textWithTag.locator('ds-tag')).toHaveJSProperty('size', 'sm');
   await expect(textWithTag.locator('ds-tag')).toHaveJSProperty('isInset', true);
-  await expect(textWithTag.locator('ds-tag')).toHaveCSS('height', '20px');
+  await expect(textWithTag.locator('ds-tag')).toHaveJSProperty('insetDepth', 'double');
+  await expect(textWithTag.locator('ds-tag')).toHaveCSS('height', '16px');
   await expect(textWithTag.locator('.ds-table__cell-tag-control-track')).toHaveCSS('height', '20px');
 
   const orderAndTracks = await table.locator('[data-row-id="tag-variants"]').evaluate(row => {
@@ -578,9 +583,9 @@ test('renders independently styled standard cell types', async ({ page }) => {
   });
 
   expect(orderAndTracks.tagWithText.children).toEqual(['tag', 'text']);
-  expect(orderAndTracks.tagWithText.text!.top).toBeCloseTo(orderAndTracks.tagWithText.tag.bottom, 0);
+  expect(orderAndTracks.tagWithText.text!.top - orderAndTracks.tagWithText.tag.bottom).toBeCloseTo(2, 0);
   expect(orderAndTracks.textWithTag.children).toEqual(['text', 'tag-track']);
-  expect(orderAndTracks.textWithTag.tag.top - orderAndTracks.textWithTag.text!.bottom).toBeCloseTo(4, 0);
+  expect(orderAndTracks.textWithTag.tag.top - orderAndTracks.textWithTag.text!.bottom).toBeCloseTo(6, 0);
 
   const crossCellAlignment = await table.locator('[data-row-id="tag-variants"]').evaluate(row => {
     const bounds = (selector: string) => {
@@ -601,8 +606,8 @@ test('renders independently styled standard cell types', async ({ page }) => {
   expect(crossCellAlignment.tagText.height).toBeCloseTo(crossCellAlignment.secondary.height, 0);
   expect(crossCellAlignment.textWithTagText.top).toBeCloseTo(crossCellAlignment.singleText.top, 0);
   expect(crossCellAlignment.textWithTagText.height).toBeCloseTo(crossCellAlignment.singleText.height, 0);
-  expect(crossCellAlignment.textWithTagTag.top).toBeCloseTo(crossCellAlignment.secondary.top, 0);
-  expect(crossCellAlignment.textWithTagTag.height).toBeCloseTo(crossCellAlignment.secondary.height, 0);
+  expect(crossCellAlignment.textWithTagTag.top).toBeCloseTo(crossCellAlignment.secondary.top + 2, 0);
+  expect(crossCellAlignment.textWithTagTag.height).toBeCloseTo(16, 0);
   const iconCenter = (crossCellAlignment.icon.left + crossCellAlignment.icon.right) / 2;
   const iconCellCenter = (crossCellAlignment.iconCell.left + crossCellAlignment.iconCell.right) / 2;
   expect(Math.abs(iconCenter - iconCellCenter)).toBeLessThanOrEqual(0.5);

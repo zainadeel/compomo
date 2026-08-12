@@ -144,7 +144,7 @@ cellTypes.columns = [
   { id: 'singleText', header: 'Single text', size: 'sm' },
   { id: 'primarySecondary', header: 'Primary + secondary', size: 'sm' },
   { id: 'primaryPair', header: 'Primary + primary', size: 'sm' },
-  { id: 'image', header: 'Image', size: 105 },
+  { id: 'image', header: 'Image', size: 102 },
   { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
   { id: 'tagOnly', header: 'Tag only', size: 'sm' },
   { id: 'tagWithText', header: 'Tag with text', size: 'sm' },
