@@ -198,3 +198,30 @@ test('reveals the action for keyboard focus without selecting the conversation',
   );
   expect(selectCount).toBe(0);
 });
+
+test.describe('direct-touch conversation action', () => {
+  test.use({ hasTouch: true, viewport: { width: 390, height: 760 } });
+
+  test('keeps the explicit action path visible without retaining a row hover wash', async ({
+    page,
+  }) => {
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () => matchMedia('(hover: none)').matches && matchMedia('(pointer: coarse)').matches,
+        ),
+      )
+      .toBe(true);
+
+    const item = page.locator('#conversation');
+    const row = item.getByRole('button', { name: /Plan a service route/ });
+    await expect(item.locator('.conversation-list-item__actions')).toHaveCSS('opacity', '1');
+    await row.tap();
+    await expect
+      .poll(() =>
+        row.evaluate(element => getComputedStyle(element, '::after').backgroundColor),
+      )
+      .toBe('rgba(0, 0, 0, 0)');
+    await expect(item.getByRole('button', { name: 'Chat options' })).toBeVisible();
+  });
+});

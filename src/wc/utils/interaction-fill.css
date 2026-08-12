@@ -138,11 +138,16 @@
 /* A parent row/list may coordinate one fill across several sibling targets. */
 :host(.ds-interaction-fill--grouped)::after,
 .ds-interaction-fill--grouped::after,
-:host(.ds-interaction-fill--grouped:hover:not(:disabled))::after,
-.ds-interaction-fill--grouped:hover:not(:disabled)::after,
 :host(.ds-interaction-fill--grouped:active:not(:disabled))::after,
 .ds-interaction-fill--grouped:active:not(:disabled)::after {
   background: var(--ds-interaction-group-fill, transparent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :host(.ds-interaction-fill--grouped:hover:not(:disabled))::after,
+  .ds-interaction-fill--grouped:hover:not(:disabled)::after {
+    background: var(--ds-interaction-group-fill, transparent);
+  }
 }
 
 :host(.ds-interaction-fill--grouped),

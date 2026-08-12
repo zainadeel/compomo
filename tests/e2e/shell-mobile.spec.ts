@@ -52,6 +52,57 @@ test.describe('Responsive mobile shell foundation', () => {
     await expect(page.locator('ds-shell-app')).toHaveAttribute('responsive-mode', 'mobile');
   });
 
+  test('fills the dynamic host stage without body scroll and keeps routed scrolling local', async ({
+    page,
+  }) => {
+    await expect(page.locator('meta[name="viewport"]')).toHaveAttribute(
+      'content',
+      'width=device-width, initial-scale=1, viewport-fit=cover',
+    );
+    await expect(page.locator('meta[name="theme-color"]')).toHaveCount(2);
+
+    for (const height of [640, 820]) {
+      await page.setViewportSize({ width: 390, height });
+      await expect(page.locator('#shell')).toHaveAttribute('responsive-mode', 'mobile');
+      await expect
+        .poll(() =>
+          page.evaluate(() => {
+            const root = document.querySelector<HTMLElement>('#app-root')!;
+            const shell = document.querySelector<HTMLElement>('#shell')!;
+            return {
+              viewportHeight: window.innerHeight,
+              rootHeight: root.getBoundingClientRect().height,
+              shellHeight: shell.getBoundingClientRect().height,
+              documentClientHeight: document.documentElement.clientHeight,
+              documentScrollHeight: document.documentElement.scrollHeight,
+              bodyClientHeight: document.body.clientHeight,
+              bodyScrollHeight: document.body.scrollHeight,
+            };
+          }),
+        )
+        .toEqual({
+          viewportHeight: height,
+          rootHeight: height,
+          shellHeight: height,
+          documentClientHeight: height,
+          documentScrollHeight: height,
+          bodyClientHeight: height,
+          bodyScrollHeight: height,
+        });
+    }
+
+    await expect(page.locator('html')).toHaveCSS('overscroll-behavior', 'none');
+    await expect(page.locator('body')).toHaveCSS('overscroll-behavior', 'none');
+    await expect(page.locator('body')).toHaveCSS('overflow', 'hidden');
+
+    const content = page.locator('.shell-app__content');
+    await content.evaluate(element => {
+      element.scrollTop = 160;
+    });
+    await expect.poll(() => content.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
+    await expect(content).toHaveCSS('overscroll-behavior', 'none');
+  });
+
   test('repaints the mobile stage after foreground restore without remounting tool state', async ({
     page,
   }) => {

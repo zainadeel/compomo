@@ -2,6 +2,12 @@
 <html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#17191c" media="(prefers-color-scheme: dark)" />
     <title>Mobile shell e2e</title>
     <link rel="stylesheet" href="/tokens/index.css" />
     <style>
@@ -10,10 +16,27 @@
         width: 100%;
         height: 100%;
         margin: 0;
+        overflow: hidden;
+        overscroll-behavior: none;
       }
       body {
         font-family: var(--typography-font-family-ui, system-ui);
         background: var(--color-background-primary);
+      }
+      #app-root {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+      }
+      @media (max-width: 767px) {
+        #app-root {
+          height: 100vh;
+        }
+        @supports (height: 100dvh) {
+          #app-root {
+            height: 100dvh;
+          }
+        }
       }
       ds-shell-app {
         display: block;
@@ -28,36 +51,38 @@
     </style>
   </head>
   <body>
-    <ds-shell-app
-      id="shell"
-      composition="slotted"
-      nav-style="dashboard"
-      gradient-preset="warm"
-      mobile-destination="area"
-    >
-      <ds-panel-nav slot="panel" id="panel"></ds-panel-nav>
-      <ds-mobile-sheet-nav slot="mobile-sheet-nav" id="mobile-sheet-nav"></ds-mobile-sheet-nav>
-      <ds-bar-nav slot="bar" id="bar"></ds-bar-nav>
-      <ds-shell-tools slot="tools" id="tools">
-        <section slot="search-view" id="search-view" class="fixture-view">
-          <label for="persistent-value">Persistent search value</label>
-          <input id="persistent-value" />
-        </section>
-        <section slot="agents-view" class="fixture-view">Agents view</section>
-        <section slot="messages-view" id="messages-view" class="fixture-view">Messages view</section>
-        <section slot="stacks-view" class="fixture-view">Stacks view</section>
-        <section slot="activity-view" class="fixture-view">Activity view</section>
-        <section slot="help-view" class="fixture-view">Help view</section>
-      </ds-shell-tools>
-      <ds-shell-page id="workspace-page">
-        <ds-bar-title slot="header" heading="Tracking"></ds-bar-title>
-        <ds-mobile-header slot="mobile-header" id="mobile-header"></ds-mobile-header>
-        <main id="workspace" class="fixture-view">
-          <div style="height: 1200px;">Scrollable routed content</div>
-        </main>
-      </ds-shell-page>
-      <ds-mobile-bar-nav slot="mobile-bar-nav" id="mobile-bar-nav"></ds-mobile-bar-nav>
-    </ds-shell-app>
+    <div id="app-root">
+      <ds-shell-app
+        id="shell"
+        composition="slotted"
+        nav-style="dashboard"
+        gradient-preset="warm"
+        mobile-destination="area"
+      >
+        <ds-panel-nav slot="panel" id="panel"></ds-panel-nav>
+        <ds-mobile-sheet-nav slot="mobile-sheet-nav" id="mobile-sheet-nav"></ds-mobile-sheet-nav>
+        <ds-bar-nav slot="bar" id="bar"></ds-bar-nav>
+        <ds-shell-tools slot="tools" id="tools">
+          <section slot="search-view" id="search-view" class="fixture-view">
+            <label for="persistent-value">Persistent search value</label>
+            <input id="persistent-value" />
+          </section>
+          <section slot="agents-view" class="fixture-view">Agents view</section>
+          <section slot="messages-view" id="messages-view" class="fixture-view">Messages view</section>
+          <section slot="stacks-view" class="fixture-view">Stacks view</section>
+          <section slot="activity-view" class="fixture-view">Activity view</section>
+          <section slot="help-view" class="fixture-view">Help view</section>
+        </ds-shell-tools>
+        <ds-shell-page id="workspace-page">
+          <ds-bar-title slot="header" heading="Tracking"></ds-bar-title>
+          <ds-mobile-header slot="mobile-header" id="mobile-header"></ds-mobile-header>
+          <main id="workspace" class="fixture-view">
+            <div style="height: 1200px;">Scrollable routed content</div>
+          </main>
+        </ds-shell-page>
+        <ds-mobile-bar-nav slot="mobile-bar-nav" id="mobile-bar-nav"></ds-mobile-bar-nav>
+      </ds-shell-app>
+    </div>
     <script type="module" src="/shell-mobile-setup.mjs"></script>
   </body>
 </html>

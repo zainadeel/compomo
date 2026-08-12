@@ -97,9 +97,11 @@
   pointer-events: none;
 }
 
-:host(:hover:not(:disabled):not(.ds-control-inactive):not(.switch--readonly):not(.switch--presentation))
-  .thumb::after {
-  background: var(--ds-switch-thumb-hover);
+@media (hover: hover) and (pointer: fine) {
+  :host(:hover:not(:disabled):not(.ds-control-inactive):not(.switch--readonly):not(.switch--presentation))
+    .thumb::after {
+    background: var(--ds-switch-thumb-hover);
+  }
 }
 
 :host(:active:not(:disabled):not(.ds-control-inactive):not(.switch--readonly):not(.switch--presentation))

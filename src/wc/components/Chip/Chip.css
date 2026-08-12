@@ -54,8 +54,10 @@
   pointer-events: none;
 }
 
-.tag__remove:hover::before {
-  background-color: var(--color-interaction-hover);
+@media (hover: hover) and (pointer: fine) {
+  .tag__remove:hover::before {
+    background-color: var(--color-interaction-hover);
+  }
 }
 
 .tag__remove:active::before {

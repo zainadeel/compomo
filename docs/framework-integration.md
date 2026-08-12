@@ -149,7 +149,133 @@ Built-in radial wash: `100% 100% at 0% 0%` — transparent → intent stop (`coo
 
 Nav chrome is not a single static bitmap behind the app. Transparent components (`ds-panel-nav`, `ds-bar-nav`, tools drawer under shell chrome) each composite the **same** `background-image` with per-surface `background-position` / `background-size` so scroll fades, badge rings, and bar offsets align during panel resize. `ds-shell-app` coalesces layout reads to one pass per frame and pauses `ResizeObserver`-driven sync during **panel-nav** width transitions.
 
-**Viewport sizing:** the shared chrome layer uses `background-attachment: fixed`, so `--ds-shell-gradient-size` is derived from **`window.visualViewport` / `innerWidth` × `innerHeight`**, not `ds-shell-app.getBoundingClientRect()`. Host apps must still fill the viewport (`html, body, app-root, shell host { height: 100% }`) so the chrome clip rect covers nav surfaces; the wash bitmap itself is always viewport-sized. `ds-shell-app` also listens to `window` `resize` and `visualViewport` `resize`/`scroll` so mobile browser chrome changes re-sync the wash.
+**Chrome-wash measurement:** the shared chrome layer uses
+`background-attachment: fixed`, so `--ds-shell-gradient-size` is derived from
+**`window.visualViewport` / `innerWidth` × `innerHeight`**, not
+`ds-shell-app.getBoundingClientRect()`. This JavaScript measurement sizes and
+re-synchronizes only the wash bitmap when browser chrome changes. It does not
+own ShellApp layout height; the application root owns the bounded viewport
+stage described below, and `ds-shell-app` fills that owner with `height: 100%`.
+
+## Mobile document and root contract
+
+The consuming application owns document metadata and the viewport-sized root.
+CompoMo does not mutate `<head>`, turn the document body into an application
+scroller, or independently apply viewport units to nested shell sections.
+
+### Document metadata
+
+Enable safe-area resolution with the production viewport declaration:
+
+```html
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, viewport-fit=cover"
+/>
+```
+
+The application also owns the browser-chrome color. For a system-selected
+theme, provide one value for each supported color scheme using actual colors
+that match the application's first-painted root surface; CSS custom properties
+cannot be resolved inside metadata:
+
+```html
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#17191c" media="(prefers-color-scheme: dark)" />
+```
+
+If the application lets a person select a theme independently of the system,
+render one unqualified `theme-color` entry for the initial selection and update
+it whenever that controlled theme changes:
+
+```html
+<meta name="theme-color" content="#ffffff" />
+```
+
+```ts
+const applicationThemeColors = {
+  light: '#ffffff',
+  dark: '#17191c',
+} as const;
+
+function synchronizeThemeColor(theme: keyof typeof applicationThemeColors) {
+  document
+    .querySelector<HTMLMetaElement>('meta[name="theme-color"]:not([media])')
+    ?.setAttribute('content', applicationThemeColors[theme]);
+}
+```
+
+Keep this synchronization in application theme state. A web component must not
+select or rewrite document-level metadata.
+
+### Dynamic viewport stage and scroll ownership
+
+Use the framework application root as the single viewport-height owner. The
+`100vh` declaration is the fallback; browsers that support dynamic viewport
+units use `100dvh` below the mobile breakpoint. Do not use `100svh` for this
+fixed authenticated stage because it would leave unused space when browser
+chrome retracts.
+
+```css
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+/* Use the selector owned by the host framework: app-root, #root, and so on. */
+app-root {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+@media (max-width: 767px) {
+  app-root {
+    height: 100vh;
+  }
+
+  @supports (height: 100dvh) {
+    app-root {
+      height: 100dvh;
+    }
+  }
+}
+
+app-root > ds-shell-app {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+```
+
+This prevents `body` from becoming a second scroll owner and contains root
+overscroll so pull-to-refresh or viewport bounce cannot reveal a surface behind
+the shell. ShellApp remains the bounded application stage. Routed content,
+choice lists, sheets, tools, and other intentionally scrollable component
+surfaces retain their existing local scrollers and overscroll behavior. Do not
+use a blanket descendant selector such as `app-root * { overflow: hidden; }`.
+
+### Safe-area ownership
+
+`viewport-fit=cover` activates the safe-area contract already implemented by
+CompoMo:
+
+- ShellApp consumes the shared top inset once for the complete mobile stage.
+- MobileBarNav consumes the persistent bottom inset.
+- Routed pages, sheets, tools, and consumer headers inside ShellApp must not add
+  duplicate top or bottom safe-area padding.
+- An application-owned full-screen overlay rendered outside ShellApp is a new
+  stage and must define its own safe-area ownership.
+
+The shell's internal top and bottom owners remain singular as the dynamic
+viewport changes; nested sections continue to size against ShellApp rather than
+the viewport.
 
 `ds-panel-tools` emits `dsChromeTransitionStart` with `phase: 'opening' | 'closing'`. On **opening**, `ds-bar-nav` lets tab overflow follow layout as the drawer animates (no synchronous collapse). On **closing**, it pauses overflow measurement until the drawer `max-width` transition ends so tabs do not flicker.
 
