@@ -393,6 +393,16 @@ test('keeps group section chrome pinned to the visible horizontal scrollport', a
     };
   });
 
+  // ResizeObserver delivery is asynchronous. In particular, WebKit can expose
+  // the previous viewport measurement until the controller's next animation
+  // frame after Playwright changes the page viewport.
+  await expect.poll(async () => {
+    const current = await measure();
+    return Math.round(
+      current.contentWidth - Math.min(current.tableWidth, current.viewportClientWidth),
+    );
+  }).toBe(0);
+
   const before = await measure();
   expect(before.tableWidth).toBeGreaterThan(before.viewportClientWidth);
   expect(before.contentWidth).toBeCloseTo(
