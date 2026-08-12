@@ -1095,18 +1095,22 @@ test('keeps table-level outcome and incremental-loading bands fixed to the visib
     await expect.poll(() => viewport.evaluate(element => element.scrollWidth - element.clientWidth))
       .toBeGreaterThan(0);
 
-    const before = await Promise.all([viewport.boundingBox(), band.boundingBox()]);
-    expect(before[0]).not.toBeNull();
-    expect(before[1]).not.toBeNull();
-    expect(before[1]!.x).toBeCloseTo(before[0]!.x, 0);
-    expect(before[1]!.width).toBeCloseTo(before[0]!.width, 0);
+    const [viewportBox, visibleInlineSize, bandBox] = await Promise.all([
+      viewport.boundingBox(),
+      viewport.evaluate(element => element.clientWidth),
+      band.boundingBox(),
+    ]);
+    expect(viewportBox).not.toBeNull();
+    expect(bandBox).not.toBeNull();
+    expect(bandBox!.x).toBeCloseTo(viewportBox!.x, 0);
+    expect(bandBox!.width).toBeCloseTo(visibleInlineSize, 0);
 
     await viewport.evaluate((element: HTMLElement) => { element.scrollLeft = 120; });
     await expect.poll(() => viewport.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
     const after = await band.boundingBox();
     expect(after).not.toBeNull();
-    expect(after!.x).toBeCloseTo(before[0]!.x, 0);
-    expect(after!.width).toBeCloseTo(before[0]!.width, 0);
+    expect(after!.x).toBeCloseTo(viewportBox!.x, 0);
+    expect(after!.width).toBeCloseTo(visibleInlineSize, 0);
   }
 });
 
