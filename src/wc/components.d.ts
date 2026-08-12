@@ -2528,10 +2528,11 @@ export namespace Components {
     }
     interface DsTable {
         /**
-          * Required accessible table name, rendered as a native caption.
+          * Required accessible table name, retained as a native caption.
          */
         "caption": string;
         /**
+          * Shows a matching presentational title bar above the native table frame.
           * @default 'hidden'
          */
         "captionVisibility": TableCaptionVisibility;
@@ -6763,10 +6764,11 @@ declare namespace LocalJSX {
     }
     interface DsTable {
         /**
-          * Required accessible table name, rendered as a native caption.
+          * Required accessible table name, retained as a native caption.
          */
         "caption": string;
         /**
+          * Shows a matching presentational title bar above the native table frame.
           * @default 'hidden'
          */
         "captionVisibility"?: TableCaptionVisibility;

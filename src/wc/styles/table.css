@@ -126,25 +126,28 @@
   --_table-selection-column-contribution: var(--_table-selection-column-inline-size);
 }
 
-:where(.ds-table__caption) {
-  padding: var(--_table-cell-padding-inline);
-  border-block-end: var(--dimension-stroke-width-012) solid var(--_table-border);
-  background: var(--_table-surface);
-  text-align: start;
-}
-
-/* Optional controlled result summary — 48px control-bar height. */
+:where(.ds-table__caption-bar),
 :where(.ds-table__footer) {
   box-sizing: border-box;
   display: flex;
   align-items: center;
+  inline-size: 100%;
   min-block-size: var(--dimension-size-600);
   block-size: var(--dimension-size-600);
   padding-inline: var(--_table-cell-padding-inline);
-  border-block-start: var(--dimension-stroke-width-012) solid var(--_table-border);
   background: var(--_table-surface);
-  color: var(--color-foreground-secondary);
   text-align: start;
+}
+
+:where(.ds-table__caption-bar) {
+  border-block-end: var(--dimension-stroke-width-012) solid var(--_table-border);
+  color: var(--color-foreground-primary);
+}
+
+/* Optional controlled result summary. */
+:where(.ds-table__footer) {
+  border-block-start: var(--dimension-stroke-width-012) solid var(--_table-border);
+  color: var(--color-foreground-secondary);
 }
 
 :where(.ds-table__selection-column) {

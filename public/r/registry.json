@@ -8085,7 +8085,7 @@
             "component:ds-icon"
           ],
           "accessibility": [
-            "The rendered structure uses a native table, caption, column headers, row groups, and data cells; keep the caption non-empty even when it is visually hidden. Caption visibility is application-controlled.",
+            "The rendered structure uses a native table, caption, column headers, row groups, and data cells; keep the caption non-empty. The native caption remains visually hidden as the table's accessible name. When caption visibility is enabled, a presentational title bar renders as component chrome outside the horizontal scrollport so it stays aligned with the table frame without duplicating the accessible name.",
             "Sorting controls remain buttons inside column headers. Member-row sort uses aria-sort, while independent group order is described by the grouped header control.",
             "Selection controls expose checkbox semantics and explicit row names; select-all affects selectable loaded rows only and preserves selected identities outside the loaded window. When grouping is active with multi-selection, each group section header also exposes a checkbox that selects or clears that group's selectable loaded rows.",
             "Interactive rows are focusable as native rows, activate with Enter or Space, and do not steal activation from their nested selection or action controls.",

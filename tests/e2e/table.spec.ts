@@ -27,11 +27,45 @@ test('renders native caption, header, row, and cell semantics', async ({ page })
   const native = table.getByRole('table', { name: 'Workforce overview' });
   await expect(native).toBeVisible();
   await expect(native.locator('caption')).toHaveText('Workforce overview');
+  await expect(native.locator('caption')).toHaveClass(/ds-visually-hidden/);
+  await expect(table.locator('.ds-table__caption-bar')).toHaveText('Workforce overview');
+  await expect(table.locator('.ds-table__caption-bar')).toHaveAttribute('aria-hidden', 'true');
+  await expect(table.locator('.ds-table__caption-bar')).toHaveCSS('height', '48px');
   await expect(native.getByRole('columnheader')).toHaveCount(4);
   await expect(native.getByRole('row')).toHaveCount(5);
   await expect(native.getByRole('cell', { name: 'Avery Chen avery@example.com' })).toBeVisible();
   await expect(native.getByRole('cell', { name: 'Not available' })).toBeVisible();
   await expect(table.locator('.ds-table__footer')).toHaveCount(0);
+});
+
+test('keeps the visible caption bar outside horizontal table scrolling', async ({ page }) => {
+  await page.setViewportSize({ width: 480, height: 900 });
+  const table = page.locator('#basic');
+  const viewport = table.locator('.ds-table__viewport');
+  const captionBar = table.locator('.ds-table__caption-bar');
+
+  const before = await table.evaluate(element => {
+    const viewportElement = element.querySelector<HTMLElement>('.ds-table__viewport')!;
+    const nativeTable = element.querySelector<HTMLElement>('.ds-table__table')!;
+    const caption = element.querySelector<HTMLElement>('.ds-table__caption-bar')!;
+    return {
+      viewportWidth: viewportElement.clientWidth,
+      tableWidth: nativeTable.getBoundingClientRect().width,
+      captionLeft: caption.getBoundingClientRect().left,
+      captionWidth: caption.getBoundingClientRect().width,
+    };
+  });
+  expect(before.tableWidth).toBeGreaterThan(before.viewportWidth);
+  expect(before.captionWidth).toBeCloseTo(before.viewportWidth, 0);
+
+  await viewport.evaluate(element => { element.scrollLeft = 320; });
+  await expect.poll(() => viewport.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
+  const after = await captionBar.evaluate(element => ({
+    left: element.getBoundingClientRect().left,
+    width: element.getBoundingClientRect().width,
+  }));
+  expect(after.left).toBeCloseTo(before.captionLeft, 0);
+  expect(after.width).toBeCloseTo(before.captionWidth, 0);
 });
 
 test('renders an optional result summary footer from controlled counts', async ({ page }) => {

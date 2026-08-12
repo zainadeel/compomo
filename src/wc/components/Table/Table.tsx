@@ -73,8 +73,9 @@ export class Table {
   /** Controlled collapsed group identities. Groups not listed remain expanded. */
   @Prop() collapsedGroupIds: string[] = [];
 
-  /** Required accessible table name, rendered as a native caption. */
+  /** Required accessible table name, retained as a native caption. */
   @Prop() caption!: string;
+  /** Shows a matching presentational title bar above the native table frame. */
   @Prop() captionVisibility: TableCaptionVisibility = 'hidden';
   /**
    * Optional result summary footer. When both `displayedCount` and `totalCount`
@@ -1216,6 +1217,22 @@ export class Table {
     );
   }
 
+  private renderCaptionBar() {
+    if (this.captionVisibility !== 'visible') return null;
+    return (
+      <ds-text
+        class="ds-table__caption-bar"
+        as="div"
+        variant="text-title-small"
+        emphasis={true}
+        color="primary"
+        aria-hidden="true"
+      >
+        {this.caption}
+      </ds-text>
+    );
+  }
+
   render() {
     const model = this.createRenderModel();
     this.renderedModel = model;
@@ -1234,6 +1251,7 @@ export class Table {
           'ds-table--document-sticky-header': this.documentStickyHeader,
           'ds-table--contained-sticky-header': this.stickyHeader && !this.documentStickyHeader,
         }}>
+          {this.renderCaptionBar()}
           <div
             class={{
               'ds-table__frame': true,
@@ -1268,12 +1286,7 @@ export class Table {
                   this.tableEl = element ?? null;
                 }}
               >
-                <caption
-                  class={{
-                    'ds-table__caption': true,
-                    'ds-visually-hidden': this.captionVisibility === 'hidden',
-                  }}
-                >
+                <caption class="ds-table__caption ds-visually-hidden">
                   <ds-text as="span" variant="text-title-small" emphasis={true} color="primary">
                     {this.caption}
                   </ds-text>

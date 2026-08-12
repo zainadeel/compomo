@@ -25,6 +25,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
 
   for (const selector of [
     'ds-table__header-cell',
+    'ds-table__caption-bar',
     'ds-table__cell',
     'ds-table__group-content',
     'ds-table__collapse-all-overlay',
