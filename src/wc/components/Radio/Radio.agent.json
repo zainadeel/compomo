@@ -7,7 +7,7 @@
   "tag": "ds-radio",
   "audience": "general",
   "status": "stable",
-  "summary": "Form-associated one-of-many radio selection set with vertical or horizontal layout, four densities, per-option inactive state, and roving keyboard focus.",
+  "summary": "Form-associated one-of-many radio selection set with vertical or horizontal layout, optional per-option descriptions, four densities, per-option inactive state, and roving keyboard focus.",
   "useWhen": [
     "A user must select exactly one visible option from a small set.",
     "All available choices should remain visible for comparison.",
@@ -41,19 +41,20 @@
   ],
   "accessibility": [
     "The host exposes radiogroup semantics and requires an accessible group name from aria-label or aria-labelledby.",
-    "Each visible option exposes radio semantics, its checked state, its label text, and any inactive state.",
+    "Each visible option exposes radio semantics, its checked state, its label text, optional supporting description, and any inactive state.",
     "Arrow keys move and select through active options; Home and End select the first and last active options; Space and Enter select the focused option.",
-    "Roving tabindex keeps one active option in the tab order, preferring the selected option."
+    "Roving tabindex keeps one active option in the tab order, preferring the selected option; setFocus uses that same public focus target."
   ],
   "states": [
     "Unchecked circles use a tertiary-foreground inset stroke: 1.5px at lg, 1.25px at md, 1px at sm, and 0.75px at xs.",
     "Selected circles remove the border, use a brand fill, and draw a centered on-bold foreground dot sized 10px at lg, 8px at md, 6px at sm, and 4px at xs.",
     "Sizes are lg with a 20px circle in a 24px placement, md with a 16px circle in a 20px placement, sm with a 12px circle in a 16px placement, and xs with an 8px circle in a 12px placement.",
-    "The initial value is restored by native form reset; the selected value submits under name and a required set is invalid until one active option is selected."
+    "The initial value is restored by native form reset; the selected value submits under name and a required set is invalid until one active option is selected.",
+    "Description-rich options grow beyond the fixed density height while retaining its minimum target size and primitive-owned selection anatomy."
   ],
   "responsiveBehavior": [
     "Choose size from the density of the containing form or settings row.",
-    "Prefer vertical layout when labels may wrap or horizontal space is constrained; horizontal layout is appropriate for short labels in a small set."
+    "Prefer vertical layout when labels or descriptions may wrap or horizontal space is constrained; horizontal layout is appropriate for short labels in a small set."
   ],
   "frameworkCaveats": {
     "customElements": [

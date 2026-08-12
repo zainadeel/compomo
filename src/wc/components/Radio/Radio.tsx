@@ -1,5 +1,6 @@
-import { AttachInternals, Component, Prop, State, Event, EventEmitter, Element, Listen, Watch, h, Host } from '@stencil/core';
+import { AttachInternals, Component, Prop, State, Event, EventEmitter, Element, Listen, Method, Watch, h, Host } from '@stencil/core';
 import {
+  CONTROL_SUPPORTING_TEXT_VARIANT,
   CONTROL_TEXT_VARIANT,
   DEFAULT_REQUIRED_MESSAGE,
   restoreStringFormState,
@@ -10,10 +11,13 @@ import {
 export interface RadioOption {
   label: string;
   value: string;
+  description?: string;
   isInactive?: boolean;
 }
 
 export type RadioSize = 'lg' | 'md' | 'sm' | 'xs';
+
+let radioIdCounter = 0;
 
 @Component({
   tag: 'ds-radio',
@@ -24,6 +28,8 @@ export type RadioSize = 'lg' | 'md' | 'sm' | 'xs';
 export class Radio {
   @Element() el!: HTMLElement;
   @AttachInternals() internals!: ElementInternals;
+
+  private readonly instanceId = ++radioIdCounter;
 
   /** Visible choices in this one-of-many set. */
   @Prop() options: RadioOption[] = [];
@@ -83,6 +89,12 @@ export class Radio {
 
   formStateRestoreCallback(state: string | File | FormData | null) {
     this.value = restoreStringFormState(state);
+  }
+
+  /** Focus the selected option, or the first active option when nothing is selected. */
+  @Method()
+  async setFocus() {
+    this.activeItems.find(item => item.tabIndex === 0)?.focus();
   }
 
   private get activeItems(): HTMLElement[] {
@@ -165,6 +177,8 @@ export class Radio {
           const isItemInactive = inactive || !!option.isInactive;
           const isChecked = option.value === this.value;
           const tabIdx = isItemInactive ? -1 : index === focusableIdx ? 0 : -1;
+          const labelId = `ds-radio-${this.instanceId}-label-${index}`;
+          const descriptionId = `ds-radio-${this.instanceId}-description-${index}`;
 
           return (
             <div
@@ -172,12 +186,15 @@ export class Radio {
               role="radio"
               aria-checked={String(isChecked)}
               aria-disabled={isItemInactive ? 'true' : undefined}
+              aria-labelledby={labelId}
+              aria-describedby={option.description ? descriptionId : undefined}
               tabIndex={tabIdx}
               data-radio-item
               data-value={option.value}
               data-inactive={isItemInactive || undefined}
               class={{
                 radio__item: true,
+                'radio__item--described': Boolean(option.description),
                 [`ds-control--${this.size}`]: true,
                 'ds-control-inactive': isItemInactive,
                 'ds-focus-ring-inset': !isItemInactive,
@@ -196,13 +213,26 @@ export class Radio {
                   {isChecked && <span class="radio__dot" />}
                 </span>
               </span>
-              <ds-text
-                class="radio__label ds-interaction-fill__content"
-                as="span"
-                variant={CONTROL_TEXT_VARIANT[this.size]}
-              >
-                {option.label}
-              </ds-text>
+              <span class="radio__copy ds-interaction-fill__content">
+                <ds-text
+                  class="radio__label"
+                  as="span"
+                  variant={CONTROL_TEXT_VARIANT[this.size]}
+                  textId={labelId}
+                >
+                  {option.label}
+                </ds-text>
+                {option.description ? (
+                  <ds-text
+                    as="span"
+                    variant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
+                    color="secondary"
+                    textId={descriptionId}
+                  >
+                    {option.description}
+                  </ds-text>
+                ) : null}
+              </span>
             </div>
           );
         })}

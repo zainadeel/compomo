@@ -1,5 +1,6 @@
 import { AttachInternals, Component, Prop, State, Event, EventEmitter, Watch, h, Host } from '@stencil/core';
 import {
+  CONTROL_SUPPORTING_TEXT_VARIANT,
   CONTROL_TEXT_VARIANT,
   DEFAULT_REQUIRED_MESSAGE,
   setFormControlValue,
@@ -19,9 +20,12 @@ let idCounter = 0;
 export class Checkbox {
   @AttachInternals() internals!: ElementInternals;
   private labelId = `ds-checkbox-label-${++idCounter}`;
+  private descriptionId = `${this.labelId}-description`;
 
   /** Visible label and accessible name. Omitted only in presentation mode. */
   @Prop() label!: string;
+  /** Optional supporting description associated with the checkbox. */
+  @Prop() description?: string;
   /** Current checked state. */
   @Prop({ mutable: true }) checked: boolean = false;
   /** Visual and placement density. */
@@ -106,11 +110,15 @@ export class Checkbox {
         aria-required={!this.presentation && this.required ? 'true' : undefined}
         aria-invalid={!this.presentation && invalid ? 'true' : undefined}
         aria-labelledby={this.presentation ? undefined : this.labelId}
+        aria-describedby={
+          !this.presentation && this.description ? this.descriptionId : undefined
+        }
         aria-hidden={this.presentation ? 'true' : undefined}
         tabIndex={this.presentation || inactive ? -1 : 0}
         class={{
           checkbox: true,
           'checkbox--presentation': this.presentation,
+          'checkbox--described': Boolean(this.description),
           [`checkbox--${this.size}`]: true,
           [`ds-control--${this.size}`]: true,
           'ds-control-inactive': inactive && !this.presentation,
@@ -142,14 +150,26 @@ export class Checkbox {
           </span>
         </span>
         {!this.presentation && (
-          <ds-text
-            class="checkbox__label ds-interaction-fill__content"
-            as="span"
-            variant={CONTROL_TEXT_VARIANT[this.size]}
-            textId={this.labelId}
-          >
-            {this.label}
-          </ds-text>
+          <span class="checkbox__copy ds-interaction-fill__content">
+            <ds-text
+              class="checkbox__label"
+              as="span"
+              variant={CONTROL_TEXT_VARIANT[this.size]}
+              textId={this.labelId}
+            >
+              {this.label}
+            </ds-text>
+            {this.description ? (
+              <ds-text
+                as="span"
+                variant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
+                color="secondary"
+                textId={this.descriptionId}
+              >
+                {this.description}
+              </ds-text>
+            ) : null}
+          </span>
         )}
       </Host>
     );

@@ -100,9 +100,131 @@
       ]
     },
     {
+      "name": "agent-questionnaire",
+      "title": "AgentQuestionnaire",
+      "description": "Temporary multi-step work surface for provider-neutral agent clarification questions and durable read-only answer records.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/agent-questionnaire",
+        "source": "src/wc/components/AgentQuestionnaire/AgentQuestionnaire.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "experimental",
+          "summary": "Temporary multi-step work surface for provider-neutral agent clarification questions and durable read-only answer records.",
+          "useWhen": [
+            "An agent turn pauses for one or more structured single-choice, multiple-choice, or free-text answers."
+          ],
+          "avoidWhen": [
+            "The interaction is a conventional application form, a tool authorization policy, or an application-owned approval with consequences beyond collecting answers."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-message-scroller",
+            "component:ds-message-composer",
+            "component:ds-agent-response",
+            "component:ds-radio",
+            "component:ds-checkbox",
+            "component:ds-button-filled",
+            "component:ds-button-unfilled"
+          ],
+          "patterns": [
+            "pattern:agent-chat"
+          ],
+          "accessibility": [
+            "Radio and checkbox primitives own choice semantics, target density, keyboard interaction, and selected or disabled presentation; progress, validation relationships, static answered summaries, and every action remain available without relying on color or visual position.",
+            "The component never takes focus when it mounts; the application calls setFocus only when shifting focus is appropriate.",
+            "Choice rows use large Radio and Checkbox targets, while every navigation action uses a small Button primitive and Cancel is an icon-only Cross with localized tooltip and accessible name.",
+            "Selection primitives preserve focus, selected, invalid, and disabled distinctions in forced colors."
+          ],
+          "states": [
+            "The component owns only the current step, validation, and unsaved in-progress draft; the application owns the request, submission, transport, resume operation, persistence, and transcript replacement.",
+            "Preparing communicates that questions are being assembled, submitting locks editing without clearing the draft, error retains it with application feedback, and answered is a quiet noninteractive record.",
+            "A changed request identifier resets to the first question and seeds a fresh local draft from the supplied answers.",
+            "Questionnaire selection primitives are isolated from ancestor forms; only dsAnswer emits the normalized ordered answer collection."
+          ],
+          "responsiveBehavior": [
+            "Descriptive choices remain full-row targets, while actions collapse into a single-column layout at narrow widths."
+          ],
+          "references": [
+            {
+              "label": "Questionnaire state stories",
+              "path": "src/wc/components/AgentQuestionnaire/AgentQuestionnaire.stories.ts"
+            },
+            {
+              "label": "Agent chat composition",
+              "path": "agent/patterns/agent-chat/pattern.agent.json"
+            }
+          ]
+        },
+        "props": {
+          "allowCancel": {
+            "type": "boolean",
+            "required": false
+          },
+          "answers": {
+            "type": "AgentQuestionAnswer[]",
+            "required": false
+          },
+          "errorMessage": {
+            "type": "string",
+            "required": false
+          },
+          "labels": {
+            "type": "Partial<AgentQuestionnaireLabels>",
+            "required": false
+          },
+          "questions": {
+            "type": "AgentQuestion[]",
+            "required": true
+          },
+          "requestId": {
+            "type": "string",
+            "required": true
+          },
+          "status": {
+            "type": "AgentQuestionnaireStatus",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsAnswer",
+            "detail": "AgentQuestionnaireAnswerEventDetail"
+          },
+          {
+            "name": "dsCancel",
+            "detail": "AgentQuestionnaireCancelEventDetail"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-agent-questionnaire",
+          "react": "DsAgentQuestionnaire",
+          "angular": "DsAgentQuestionnaire"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "button-filled",
+        "button-unfilled",
+        "checkbox",
+        "icon",
+        "loader",
+        "radio",
+        "text",
+        "tooltip"
+      ]
+    },
+    {
       "name": "agent-response",
       "title": "AgentResponse",
-      "description": "Ordered renderer for normalized immutable agent response parts inside a generic incoming message.",
+      "description": "Ordered renderer for normalized immutable agent response parts or an application-composed response body inside a generic incoming message.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -113,9 +235,9 @@
         "intent": {
           "audience": "specialized",
           "status": "experimental",
-          "summary": "Ordered renderer for normalized immutable agent response parts inside a generic incoming message.",
+          "summary": "Ordered renderer for normalized immutable agent response parts or an application-composed response body inside a generic incoming message.",
           "useWhen": [
-            "An agent response combines Markdown, user-safe activity, display-only tools, attachments, and sources in authored order."
+            "An agent response combines Markdown, user-safe activity, display-only tools, attachments, answered questionnaires, sources, or application-specific content in authored order."
           ],
           "avoidWhen": [
             "The component would be expected to own a model, transport, persistence, title generation, approval policy, or private reasoning."
@@ -126,28 +248,30 @@
             "component:ds-markdown",
             "component:ds-agent-activity",
             "component:ds-agent-tool-call",
-            "component:ds-agent-source-list"
+            "component:ds-agent-source-list",
+            "component:ds-agent-questionnaire"
           ],
           "patterns": [
             "pattern:agent-chat"
           ],
           "accessibility": [
-            "Part order matches authored reading order and remains inside generic message semantics.",
+            "Part or composed-slot order matches authored reading order and remains inside generic message semantics.",
             "Streaming state supplements rather than replaces meaningful textual status.",
             "Forwarded metadata actions retain Message ordering, keyboard reveal, and touch visibility."
           ],
           "states": [
             "The owner replaces immutable part arrays as scripted or live output changes.",
+            "Parts mode remains the compatibility default for serializable content; composed mode ignores parts and gives the default slot ownership of the complete ordered response body.",
             "AgentResponse renders directly in Message without borrowing a plain MessageBubble surface.",
-            "Markdown parts use the optional safe renderer; prose CSS owns only semantic-tree styling and never response ordering or streaming state.",
+            "Markdown parts use the optional safe renderer; the response sets the public prose text measure while code, tables, tools, sources, attachments, and other structured parts retain the full lane.",
             "The application may compose MessageActions for completed-response Copy and controlled feedback while retaining persistent retry or recovery controls in the separate actions slot."
           ],
           "responsiveBehavior": [
-            "Rich content uses the available transcript width while respecting readable measure and local overflow constraints."
+            "Direct prose blocks use a readable text measure within the available transcript width, while narrow lanes and structured content retain their available width and local overflow constraints."
           ],
           "references": [
             {
-              "label": "Representative streamed response",
+              "label": "Response modes and representative flow",
               "path": "src/wc/components/AgentResponse/AgentResponse.stories.ts"
             },
             {
@@ -171,6 +295,10 @@
           },
           "parts": {
             "type": "AgentResponsePart[]",
+            "required": false
+          },
+          "renderMode": {
+            "type": "AgentResponseRenderMode",
             "required": false
           },
           "showAuthor": {
@@ -200,6 +328,7 @@
       ],
       "registryDependencies": [
         "agent-activity",
+        "agent-questionnaire",
         "agent-source-list",
         "agent-tool-call",
         "attachment-list",
@@ -210,7 +339,7 @@
     {
       "name": "agent-source-list",
       "title": "AgentSourceList",
-      "description": "Collapsible list of agent response sources with title, description, and validated external links.",
+      "description": "Inline collapsible agent-source list with safe external links, derived hostnames, optional descriptions, and observable disclosure state.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -221,12 +350,12 @@
         "intent": {
           "audience": "specialized",
           "status": "experimental",
-          "summary": "Collapsible list of agent response sources with title, description, and validated external links.",
+          "summary": "Inline collapsible agent-source list with safe external links, derived hostnames, optional descriptions, and observable disclosure state.",
           "useWhen": [
-            "An agent response cites external material readers may inspect."
+            "A stable agent response cites external material readers may inspect inline."
           ],
           "avoidWhen": [
-            "The links are ordinary body links or are not sources for the response."
+            "The links are ordinary body links, source discovery is still active, or the application expects a source drawer or deduplication behavior."
           ],
           "commonlyComposedWith": [
             "component:ds-agent-response",
@@ -236,16 +365,20 @@
             "pattern:agent-chat"
           ],
           "accessibility": [
-            "Each source uses descriptive linked text and visible supporting context.",
-            "Unsafe link schemes remain non-interactive text."
+            "Each interactive source uses descriptive linked text, a visible hostname, supporting context, and an external-link indication.",
+            "Malformed and unsafe schemes remain non-interactive text rather than producing executable links.",
+            "The native disclosure exposes keyboard and expanded-state semantics, while open-change events let applications observe participant intent."
+          ],
+          "states": [
+            "Applications collect and deduplicate sources, then append the stable list once; active discovery remains an activity or tool state."
           ],
           "responsiveBehavior": [
-            "Source titles and descriptions wrap within the response width."
+            "Source titles, hostnames, and descriptions wrap within the response width."
           ],
           "references": [
             {
-              "label": "Storybook examples",
-              "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+              "label": "Source safety and disclosure stories",
+              "path": "src/wc/components/AgentSourceList/AgentSourceList.stories.ts"
             }
           ]
         },
@@ -263,7 +396,12 @@
             "required": false
           }
         },
-        "events": [],
+        "events": [
+          {
+            "name": "dsOpenChange",
+            "detail": "{ open: boolean }"
+          }
+        ],
         "slots": [],
         "exports": {
           "customElement": "ds-agent-source-list",
@@ -284,7 +422,7 @@
     {
       "name": "agent-tool-call",
       "title": "AgentToolCall",
-      "description": "Display-only disclosure for an agent tool call, its safe input or output, and execution status.",
+      "description": "Compact display-only status row for a provider-neutral agent tool lifecycle with optional custom result and diagnostic disclosure surfaces.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -295,36 +433,41 @@
         "intent": {
           "audience": "specialized",
           "status": "experimental",
-          "summary": "Display-only disclosure for an agent tool call, its safe input or output, and execution status.",
+          "summary": "Compact display-only status row for a provider-neutral agent tool lifecycle with optional custom result and diagnostic disclosure surfaces.",
           "useWhen": [
-            "A prototype or agent product needs to expose user-safe tool execution detail."
+            "An agent product needs to expose user-safe tool preparation, queueing, execution, participant wait, completion, failure, denial, or cancellation state."
           ],
           "avoidWhen": [
-            "A participant must approve, deny, edit, or retry the tool call; those are product controls outside this component."
+            "A participant must approve, deny, edit, retry, or execute the tool call; those product controls and consequences remain outside this component."
           ],
           "commonlyComposedWith": [
             "component:ds-agent-response",
-            "component:ds-code-block"
+            "component:ds-code-block",
+            "component:ds-text"
           ],
           "patterns": [
             "pattern:agent-chat"
           ],
           "accessibility": [
-            "Queued, running, success, error, and denied states are available as text.",
-            "The disclosure uses native keyboard and expanded-state semantics.",
-            "Structured input, output, and error details share the semantic code-family fallback and optional ligature override."
+            "Every lifecycle state remains visible as text and error or denied meaning does not depend on color.",
+            "A disclosure is rendered only when details exist and uses native keyboard and expanded-state semantics.",
+            "Structured input, output, and error details use the semantic code-family fallback and optional ligature override."
           ],
           "states": [
-            "This component presents state but never executes a tool or owns approval policy.",
-            "Applications load font assets once at their root; tool details never fetch or package a font."
+            "Applications normalize provider-specific tool states and may localize the visible status label before rendering.",
+            "A custom summary replaces the generated name, a custom result owns the primary result surface, and custom details replace generic input, output, and error diagnostics.",
+            "An ordinary text-only custom result inherits the body-medium interface-text baseline; structured result components retain ownership of their own layout and typography.",
+            "Compose semantic links around ds-text when a custom result is navigational so anchor semantics and design-system typography each have one owner.",
+            "Applications load font assets once at their root; tool details and results never fetch or package a font.",
+            "This component presents state but never executes a tool or owns approval, retry, authorization, transport, or consequence policy."
           ],
           "responsiveBehavior": [
-            "Structured detail wraps and scrolls without widening the transcript."
+            "Long names and state labels wrap inside the compact row while custom results and structured diagnostics remain within the transcript lane without widening it."
           ],
           "references": [
             {
-              "label": "Storybook examples",
-              "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+              "label": "Lifecycle and slot stories",
+              "path": "src/wc/components/AgentToolCall/AgentToolCall.stories.ts"
             },
             {
               "label": "Font ownership and loading",
@@ -360,9 +503,18 @@
           "state": {
             "type": "AgentToolState",
             "required": false
+          },
+          "statusLabel": {
+            "type": "string",
+            "required": false
           }
         },
-        "events": [],
+        "events": [
+          {
+            "name": "dsOpenChange",
+            "detail": "{ open: boolean }"
+          }
+        ],
         "slots": [],
         "exports": {
           "customElement": "ds-agent-tool-call",
@@ -2595,7 +2747,7 @@
     {
       "name": "checkbox",
       "title": "Checkbox",
-      "description": "Form-associated checkbox for independent choices, acknowledgment, or consent, with checked, unchecked, mixed, and four density states.",
+      "description": "Form-associated checkbox for independent choices, acknowledgment, or consent, with optional supporting description, checked, unchecked, mixed, and four density states.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -2606,7 +2758,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Form-associated checkbox for independent choices, acknowledgment, or consent, with checked, unchecked, mixed, and four density states.",
+          "summary": "Form-associated checkbox for independent choices, acknowledgment, or consent, with optional supporting description, checked, unchecked, mixed, and four density states.",
           "useWhen": [
             "A user may independently select zero or more choices.",
             "A form requires acknowledgment, consent, or an opt-in value before submission.",
@@ -2640,7 +2792,7 @@
             "component:ds-text"
           ],
           "accessibility": [
-            "Every interactive checkbox requires a visible label that provides its accessible name.",
+            "Every interactive checkbox requires a visible label that provides its accessible name; an optional visible description is associated as supporting context.",
             "Enter and Space activate the checkbox; checked and mixed state are exposed through aria-checked.",
             "Disabled and inactive checkboxes leave the tab order and are omitted from form submission.",
             "Use presentation mode only inside a composite option that owns selection semantics, focus, and interaction."
@@ -2650,16 +2802,17 @@
             "Activating an indeterminate checkbox clears the mixed state, toggles checked, and emits dsChange with the resulting boolean.",
             "The initial checked and indeterminate values are restored by native form reset; checked values submit under name and unchecked values submit nothing.",
             "Sizes are lg with a 20px box in a 24px placement, md with a 16px box in a 20px placement, sm with a 12px box in a 16px placement, and xs with an 8px box in a 12px placement.",
-            "Presentation mode removes checkbox semantics, focus, interaction, label rendering, and form submission while preserving the visual state."
+            "Presentation mode removes checkbox semantics, focus, interaction, label rendering, description rendering, and form submission while preserving the visual state.",
+            "Description-rich checkboxes grow beyond the fixed density height while retaining its minimum target size and primitive-owned selection anatomy."
           ],
           "responsiveBehavior": [
-            "Choose size from the density of the containing row; labels may wrap while the placement box stays fixed.",
+            "Choose size from the density of the containing row; labels and descriptions may wrap while the placement box stays fixed.",
             "Use the same density as the shared option icon zone in multi-select rows."
           ],
           "frameworkCaveats": {
             "customElements": [
               "Bind checked and indeterminate as properties for application state updates and listen for dsChange.",
-              "Use the form attribute on the host when associating a checkbox rendered outside its owning form."
+              "Use the form attribute on the host when associating a checkbox rendered outside its owning form or isolating it from an ancestor form."
             ],
             "react": [
               "Use DsCheckbox and handle onDsChange; checked and indeterminate are mutable and update after user activation."
@@ -2682,6 +2835,10 @@
         "props": {
           "checked": {
             "type": "boolean",
+            "required": false
+          },
+          "description": {
+            "type": "string",
             "required": false
           },
           "disabled": {
@@ -4562,7 +4719,7 @@
     {
       "name": "message-composer",
       "title": "MessageComposer",
-      "description": "Two-line auto-growing conversation textarea with submit, stop, error, and extensible leading-tool or trailing-action regions.",
+      "description": "Two-line auto-growing conversation textarea with submit, stop, an attached submission-error support surface, and extensible tool, action, and error-recovery regions.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -4573,7 +4730,7 @@
         "intent": {
           "audience": "general",
           "status": "experimental",
-          "summary": "Two-line auto-growing conversation textarea with submit, stop, error, and extensible leading-tool or trailing-action regions.",
+          "summary": "Two-line auto-growing conversation textarea with submit, stop, an attached submission-error support surface, and extensible tool, action, and error-recovery regions.",
           "useWhen": [
             "A conversation accepts multi-line text and needs Enter-to-submit with a streaming stop action."
           ],
@@ -4591,14 +4748,17 @@
           "accessibility": [
             "Always provide a localized textarea label and submit or stop action names; the built-in icon action exposes the same name in its tooltip.",
             "Shift plus Enter inserts a newline while Enter submits non-empty content.",
-            "Streaming and error states remain perceivable without relying on icon shape alone."
+            "Submission errors remain visible and announced above the editable box as part of one attached composer unit, and the editable control references their text while the error state is active.",
+            "Streaming and error states remain perceivable without relying on icon shape or color alone."
           ],
           "states": [
             "The owner controls draft value and transport state; the composer emits intent without performing transport.",
+            "Error status never clears or disables the draft; the application supplies recovery actions through error-actions and owns retry semantics. The negative support surface appears above and attached to the composer box, within the component's measured ownership.",
             "Use the tools slot for leading actions such as add and the actions slot for trailing actions such as dictation; the built-in submit or stop action remains last with an 8px gap from the preceding action. These icon buttons use the standard non-rounded control radius, and the application supplies tooltips for slotted icon actions.",
             "The composer surface uses the 10px --dimension-radius-125 token.",
             "Mouse or keyboard focus on the textarea gives the complete composer surface the same bold-brand inset stroke width and color as an active Input; the native textarea never draws a separate outline.",
-            "The empty or otherwise inactive submit action is a disabled bordered ButtonUnfilled. Ready submit actions use submitIntent, while the streaming stop action remains a bold-brand ButtonFilled."
+            "The empty or otherwise inactive submit action is a disabled bordered ButtonUnfilled. Ready submit actions use submitIntent, while the streaming stop action remains a bold-brand ButtonFilled.",
+            "The attached error unit keeps a real boundary in forced colors and lets message text and application-owned recovery actions wrap at narrow widths."
           ],
           "responsiveBehavior": [
             "The textarea begins at two body-medium lines, grows one line at a time through six lines, and then scrolls internally."
@@ -4615,6 +4775,10 @@
           ]
         },
         "props": {
+          "errorMessage": {
+            "type": "string",
+            "required": false
+          },
           "isInactive": {
             "type": "boolean",
             "required": false
@@ -4663,18 +4827,21 @@
       },
       "dependencies": [
         "@ds-mo/ui",
-        "@ds-mo/tokens"
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
       ],
       "registryDependencies": [
         "button-filled",
         "button-unfilled",
+        "icon",
+        "text",
         "tooltip"
       ]
     },
     {
       "name": "message-scroller",
       "title": "MessageScroller",
-      "description": "Focusable transcript scroller that follows the live edge only while the reader remains there.",
+      "description": "Focusable transcript scroller with turn anchoring, reader-controlled live-edge following, and a measured interaction-plus-composer overlay stack.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -4685,7 +4852,7 @@
         "intent": {
           "audience": "general",
           "status": "experimental",
-          "summary": "Focusable transcript scroller that follows the live edge only while the reader remains there.",
+          "summary": "Focusable transcript scroller with turn anchoring, reader-controlled live-edge following, and a measured interaction-plus-composer overlay stack.",
           "useWhen": [
             "Messages can append or stream and transcript position must remain respectful of reader intent."
           ],
@@ -4694,10 +4861,12 @@
           ],
           "commonlyComposedWith": [
             "component:ds-message",
-            "component:ds-message-composer"
+            "component:ds-message-composer",
+            "component:ds-agent-questionnaire"
           ],
           "patterns": [
-            "pattern:conversation"
+            "pattern:conversation",
+            "pattern:agent-chat"
           ],
           "accessibility": [
             "Give each transcript a concise localized label.",
@@ -4705,11 +4874,12 @@
             "The scroll-to-latest control remains keyboard accessible when follow behavior is released and exposes its action name in a tooltip."
           ],
           "states": [
-            "Selection and transcript interaction release automatic following.",
+            "Wheel, touch, keyboard navigation, selection, and transcript interaction release automatic following; Scroll to latest explicitly restores it.",
+            "A newly appended outgoing Message marked scroll-anchor starts a turn near the top with the configurable previous-turn peek; mutations inside existing messages and prepended history do not re-anchor.",
             "Opening saved history, message jumps, and prepended history preserve deliberate position.",
             "The scroll-to-latest action is absent at the live edge, appears only after the reader moves away, and disappears again after returning to the newest message.",
             "Scroll to latest uses the shared md control-elevation wrapper with a pointer-transparent top highlight, preserving its transparent backdrop blur and borderless unfilled action while the press-scale modifier moves the complete elevated surface.",
-            "Place a composer container with 8px padding on every side in the overlay slot so messages scroll behind it; the shared scroll-overlay controller tracks every composer growth step, reserves matching transcript clearance, begins the fade 8px before the visible composer, and keeps scroll-to-latest above it."
+            "Place a pending human-input surface in interaction and a composer container with 8px padding on every side in overlay; the shared scroll-overlay controller measures them as one stack, tracks every growth step, reserves matching transcript clearance, begins the fade before the stack, and keeps scroll-to-latest above it."
           ],
           "responsiveBehavior": [
             "Transcript width is readable while the scroll region fills available height.",
@@ -6234,7 +6404,7 @@
     {
       "name": "radio",
       "title": "Radio",
-      "description": "Form-associated one-of-many radio selection set with vertical or horizontal layout, four densities, per-option inactive state, and roving keyboard focus.",
+      "description": "Form-associated one-of-many radio selection set with vertical or horizontal layout, optional per-option descriptions, four densities, per-option inactive state, and roving keyboard focus.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -6245,7 +6415,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Form-associated one-of-many radio selection set with vertical or horizontal layout, four densities, per-option inactive state, and roving keyboard focus.",
+          "summary": "Form-associated one-of-many radio selection set with vertical or horizontal layout, optional per-option descriptions, four densities, per-option inactive state, and roving keyboard focus.",
           "useWhen": [
             "A user must select exactly one visible option from a small set.",
             "All available choices should remain visible for comparison.",
@@ -6279,19 +6449,20 @@
           ],
           "accessibility": [
             "The host exposes radiogroup semantics and requires an accessible group name from aria-label or aria-labelledby.",
-            "Each visible option exposes radio semantics, its checked state, its label text, and any inactive state.",
+            "Each visible option exposes radio semantics, its checked state, its label text, optional supporting description, and any inactive state.",
             "Arrow keys move and select through active options; Home and End select the first and last active options; Space and Enter select the focused option.",
-            "Roving tabindex keeps one active option in the tab order, preferring the selected option."
+            "Roving tabindex keeps one active option in the tab order, preferring the selected option; setFocus uses that same public focus target."
           ],
           "states": [
             "Unchecked circles use a tertiary-foreground inset stroke: 1.5px at lg, 1.25px at md, 1px at sm, and 0.75px at xs.",
             "Selected circles remove the border, use a brand fill, and draw a centered on-bold foreground dot sized 10px at lg, 8px at md, 6px at sm, and 4px at xs.",
             "Sizes are lg with a 20px circle in a 24px placement, md with a 16px circle in a 20px placement, sm with a 12px circle in a 16px placement, and xs with an 8px circle in a 12px placement.",
-            "The initial value is restored by native form reset; the selected value submits under name and a required set is invalid until one active option is selected."
+            "The initial value is restored by native form reset; the selected value submits under name and a required set is invalid until one active option is selected.",
+            "Description-rich options grow beyond the fixed density height while retaining its minimum target size and primitive-owned selection anatomy."
           ],
           "responsiveBehavior": [
             "Choose size from the density of the containing form or settings row.",
-            "Prefer vertical layout when labels may wrap or horizontal space is constrained; horizontal layout is appropriate for short labels in a small set."
+            "Prefer vertical layout when labels or descriptions may wrap or horizontal space is constrained; horizontal layout is appropriate for short labels in a small set."
           ],
           "frameworkCaveats": {
             "customElements": [

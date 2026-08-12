@@ -1,14 +1,16 @@
 #!/usr/bin/env node
-/**
- * Appends nav type re-exports to Stencil's generated dist/components/index.d.ts
- * so consumers can `import type { BarNavTab, PanelNavGroup } from '@ds-mo/ui'`.
- */
+/** Add authored public type exports that Stencil cannot infer from component props. */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const indexPath = join(root, 'dist/components/index.d.ts');
+const packageTypesPath = join(root, 'dist/types/components.d.ts');
+const questionnaireEntryPath = join(
+  root,
+  'dist/components/ds-agent-questionnaire.d.ts',
+);
 
 const marker = '// --- nav type re-exports (patch-index-types.mjs) ---';
 const patch = `
@@ -37,7 +39,17 @@ export type {
   AgentActivityState,
   AgentActivityItem,
   AgentSource,
+  AgentQuestionType,
+  AgentQuestionChoice,
+  AgentQuestion,
+  AgentQuestionAnswer,
+  AgentQuestionnaireStatus,
+  AgentQuestionnaireLabels,
+  AgentQuestionnaireAnswerEventDetail,
+  AgentQuestionnaireCancelEventDetail,
   AgentToolState,
+  AgentResponseRenderMode,
+  AgentQuestionnaireResponsePart,
   AgentResponsePart,
 } from '../types/components/conversation-types';
 export type {
@@ -72,9 +84,49 @@ export type {
 } from '../types/components/Table/table-types';
 `;
 
-const existing = readFileSync(indexPath, 'utf8');
-if (existing.includes(marker)) {
-  process.exit(0);
+const questionnaireTypesMarker =
+  '// --- questionnaire type re-exports (patch-index-types.mjs) ---';
+const packageTypesPatch = `
+${questionnaireTypesMarker}
+export type {
+  AgentQuestionType,
+  AgentQuestionChoice,
+  AgentQuestionnaireResponsePart,
+} from './components/conversation-types';
+`;
+const questionnaireEntryPatch = `
+${questionnaireTypesMarker}
+export type {
+  AgentQuestionType,
+  AgentQuestionChoice,
+  AgentQuestion,
+  AgentQuestionAnswer,
+  AgentQuestionnaireStatus,
+  AgentQuestionnaireLabels,
+  AgentQuestionnaireAnswerEventDetail,
+  AgentQuestionnaireCancelEventDetail,
+  AgentQuestionnaireResponsePart,
+} from '../types/components/conversation-types';
+`;
+
+function appendPatch(path, patchMarker, content) {
+  const existing = readFileSync(path, 'utf8');
+  if (existing.includes(patchMarker)) return;
+  writeFileSync(path, existing.trimEnd() + content + '\n');
 }
 
-writeFileSync(indexPath, existing.trimEnd() + patch + '\n');
+function patchQuestionnaireEntry() {
+  let existing = readFileSync(questionnaireEntryPath, 'utf8');
+  existing = existing.replace(
+    'interface DsAgentQuestionnaire extends Components.DsAgentQuestionnaire, HTMLElement {}',
+    'export interface DsAgentQuestionnaire extends Components.DsAgentQuestionnaire, HTMLElement {}',
+  );
+  if (!existing.includes(questionnaireTypesMarker)) {
+    existing = existing.trimEnd() + questionnaireEntryPatch + '\n';
+  }
+  writeFileSync(questionnaireEntryPath, existing);
+}
+
+appendPatch(indexPath, marker, patch);
+appendPatch(packageTypesPath, questionnaireTypesMarker, packageTypesPatch);
+patchQuestionnaireEntry();

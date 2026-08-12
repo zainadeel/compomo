@@ -7,24 +7,25 @@
   "tag": "ds-message-scroller",
   "audience": "general",
   "status": "experimental",
-  "summary": "Focusable transcript scroller that follows the live edge only while the reader remains there.",
+  "summary": "Focusable transcript scroller with turn anchoring, reader-controlled live-edge following, and a measured interaction-plus-composer overlay stack.",
   "useWhen": [
     "Messages can append or stream and transcript position must remain respectful of reader intent."
   ],
   "avoidWhen": ["Content is static prose without message navigation or live updates."],
-  "commonlyComposedWith": ["component:ds-message", "component:ds-message-composer"],
-  "patterns": ["pattern:conversation"],
+  "commonlyComposedWith": ["component:ds-message", "component:ds-message-composer", "component:ds-agent-questionnaire"],
+  "patterns": ["pattern:conversation", "pattern:agent-chat"],
   "accessibility": [
     "Give each transcript a concise localized label.",
     "New content is exposed through log semantics without stealing focus.",
     "The scroll-to-latest control remains keyboard accessible when follow behavior is released and exposes its action name in a tooltip."
   ],
   "states": [
-    "Selection and transcript interaction release automatic following.",
+    "Wheel, touch, keyboard navigation, selection, and transcript interaction release automatic following; Scroll to latest explicitly restores it.",
+    "A newly appended outgoing Message marked scroll-anchor starts a turn near the top with the configurable previous-turn peek; mutations inside existing messages and prepended history do not re-anchor.",
     "Opening saved history, message jumps, and prepended history preserve deliberate position.",
     "The scroll-to-latest action is absent at the live edge, appears only after the reader moves away, and disappears again after returning to the newest message.",
     "Scroll to latest uses the shared md control-elevation wrapper with a pointer-transparent top highlight, preserving its transparent backdrop blur and borderless unfilled action while the press-scale modifier moves the complete elevated surface.",
-    "Place a composer container with 8px padding on every side in the overlay slot so messages scroll behind it; the shared scroll-overlay controller tracks every composer growth step, reserves matching transcript clearance, begins the fade 8px before the visible composer, and keeps scroll-to-latest above it."
+    "Place a pending human-input surface in interaction and a composer container with 8px padding on every side in overlay; the shared scroll-overlay controller measures them as one stack, tracks every growth step, reserves matching transcript clearance, begins the fade before the stack, and keeps scroll-to-latest above it."
   ],
   "responsiveBehavior": [
     "Transcript width is readable while the scroll region fills available height.",

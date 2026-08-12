@@ -8,6 +8,10 @@ import '../../../../dist/components/ds-message-bubble.js';
 import '../../../../dist/components/ds-message-composer.js';
 import '../../../../dist/components/ds-button-unfilled.js';
 import '../../../../dist/components/ds-message-actions.js';
+import '../../../../dist/components/ds-markdown.js';
+import '../../../../dist/components/ds-agent-tool-call.js';
+import '../../../../dist/components/ds-agent-source-list.js';
+import '../../../../dist/components/ds-agent-questionnaire.js';
 
 export default { title: 'Agent/Response', tags: ['autodocs'] } satisfies Meta;
 type Story = StoryObj;
@@ -25,6 +29,98 @@ export const Playground: Story = {
         },
       ]}
     ></ds-agent-response>`,
+};
+
+export const ComposedResponse: Story = {
+  render: () => html`
+    <div style="width:min(800px, 90vw);">
+      <ds-agent-response author="Agent" .showAuthor=${false} render-mode="composed">
+        <ds-markdown
+          content="## Investigation complete\n\nThe repeated failures share one charging-system signature."
+        ></ds-markdown>
+        <ds-agent-tool-call
+          name="records.search"
+          label="Searched 12 service records"
+          state="success"
+        ></ds-agent-tool-call>
+        <div data-ds-prose="off">
+          <ds-text variant="text-body-small" emphasis>Application-owned result</ds-text>
+          <ds-text variant="text-body-small" color="secondary">
+            A composed response can interleave domain-specific components.
+          </ds-text>
+        </div>
+        <ds-agent-source-list
+          .items=${[
+            {
+              id: 'guide',
+              title: 'Preventive maintenance guide',
+              url: 'https://example.com/maintenance',
+            },
+          ]}
+        ></ds-agent-source-list>
+      </ds-agent-response>
+    </div>
+  `,
+};
+
+export const AnsweredQuestionnairePart: Story = {
+  render: () => html`
+    <div style="width:min(800px, 90vw);">
+      <ds-agent-response
+        author="Agent"
+        .showAuthor=${false}
+        .parts=${[
+          {
+            id: 'questionnaire-record',
+            type: 'questionnaire',
+            requestId: 'request-42',
+            status: 'answered',
+            questions: [
+              {
+                id: 'priority',
+                type: 'single',
+                question: 'Which issue should I investigate first?',
+                choices: [
+                  { value: 'battery', label: 'Repeated battery failures' },
+                  { value: 'tires', label: 'Overdue tire inspections' },
+                ],
+              },
+            ],
+            answers: [{ questionId: 'priority', value: 'battery' }],
+          },
+        ] satisfies AgentResponsePart[]}
+      ></ds-agent-response>
+    </div>
+  `,
+};
+
+export const MeasuredProseAndFullWidthStructures: Story = {
+  render: () => html`
+    <div style="width:min(800px, 90vw);">
+      <ds-agent-response
+        author="Agent"
+        .showAuthor=${false}
+        .parts=${[
+          {
+            id: 'measure',
+            type: 'markdown',
+            state: 'complete',
+            content: `## Findings
+
+This paragraph uses the response's readable text measure while remaining start-aligned. The prose foundation keeps the streaming rhythm stable and safely wraps https://example.com/a/very/long/path/that/does/not/need/to/widen/the/conversation/lane.
+
+| Vehicle | Finding | Recommendation |
+| --- | --- | --- |
+| Unit 104 | Repeated battery drain | Run a complete charging-system test and inspect service history |
+
+\`\`\`ts
+const affected = records.filter(record => record.issue === 'battery')
+\`\`\``,
+          },
+        ] satisfies AgentResponsePart[]}
+      ></ds-agent-response>
+    </div>
+  `,
 };
 
 export const WithMetadataActions: Story = {

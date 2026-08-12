@@ -16,6 +16,12 @@
   user-select: none;
 }
 
+:host(.checkbox--described) {
+  height: auto;
+  min-height: var(--ds-control-height);
+  padding-block: var(--dimension-space-075);
+}
+
 :host(.checkbox--presentation) {
   width: var(--ds-control-icon);
   height: var(--ds-control-icon);
@@ -90,8 +96,10 @@
   transform: translateY(-0.5px);
 }
 
-.checkbox__label {
+.checkbox__copy {
+  display: grid;
   flex: 1;
+  gap: var(--dimension-space-025);
   min-width: 0;
   padding: 0 var(--ds-control-label-inset);
 }

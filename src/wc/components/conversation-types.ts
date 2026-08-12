@@ -42,7 +42,79 @@ export interface AgentSource {
   description?: string;
 }
 
-export type AgentToolState = 'queued' | 'running' | 'success' | 'error' | 'denied';
+export type AgentQuestionType = 'single' | 'multiple' | 'text';
+
+export interface AgentQuestionChoice {
+  value: string;
+  label: string;
+  description?: string;
+}
+
+export interface AgentQuestion {
+  id: string;
+  type: AgentQuestionType;
+  question: string;
+  description?: string;
+  choices?: AgentQuestionChoice[];
+  required?: boolean;
+  skippable?: boolean;
+  allowOther?: boolean;
+  placeholder?: string;
+}
+
+export interface AgentQuestionAnswer {
+  questionId: string;
+  value: string | string[] | null;
+}
+
+export type AgentQuestionnaireStatus =
+  | 'preparing'
+  | 'ready'
+  | 'submitting'
+  | 'error'
+  | 'answered';
+
+export interface AgentQuestionnaireLabels {
+  progress: string;
+  previous: string;
+  next: string;
+  answer: string;
+  skip: string;
+  cancel: string;
+  other: string;
+  otherPlaceholder: string;
+  preparing: string;
+}
+
+export interface AgentQuestionnaireAnswerEventDetail {
+  requestId: string;
+  answers: AgentQuestionAnswer[];
+}
+
+export interface AgentQuestionnaireCancelEventDetail {
+  requestId: string;
+}
+
+export type AgentToolState =
+  | 'preparing'
+  | 'queued'
+  | 'running'
+  | 'waiting-for-user'
+  | 'success'
+  | 'error'
+  | 'denied'
+  | 'canceled';
+
+export type AgentResponseRenderMode = 'parts' | 'composed';
+
+export interface AgentQuestionnaireResponsePart {
+  id: string;
+  type: 'questionnaire';
+  requestId: string;
+  questions: AgentQuestion[];
+  answers: AgentQuestionAnswer[];
+  status: 'answered';
+}
 
 export type AgentResponsePart =
   | {
@@ -75,4 +147,5 @@ export type AgentResponsePart =
       id: string;
       type: 'sources';
       items: AgentSource[];
-    };
+    }
+  | AgentQuestionnaireResponsePart;

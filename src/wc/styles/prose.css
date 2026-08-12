@@ -17,6 +17,11 @@
 }
 
 :where(.ds-prose)
+  > :where(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  max-inline-size: var(--ds-prose-text-max-inline-size, 100%);
+}
+
+:where(.ds-prose)
   :where(p, ul, ol, dl, blockquote, figure, figcaption, table):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
   margin: 0;
   color: inherit;

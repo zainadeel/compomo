@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-message-composer.js';
 import '../../../../dist/components/ds-button-unfilled.js';
+import '../../../../dist/components/ds-button-filled.js';
 import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 
 const meta = {
@@ -84,6 +85,29 @@ export const Error: Story = {
         label="Message"
         value="A message that could not be sent"
         status="error"
-      ></ds-message-composer>
+        error-message="The message could not be sent. Check your connection and try again."
+      >
+        <ds-button-unfilled
+          slot="error-actions"
+          label="Retry"
+          size="sm"
+        ></ds-button-unfilled>
+      </ds-message-composer>
     `),
+};
+
+export const NarrowErrorWithRecovery: Story = {
+  parameters: { viewport: { defaultViewport: 'mobile1' } },
+  render: () => html`
+    <div style="width:320px;padding:var(--dimension-space-100);">
+      <ds-message-composer
+        label="Message agent"
+        value="Create follow-up work orders for the affected vehicles."
+        status="error"
+        error-message="The message could not be sent. Your draft is still available."
+      >
+        <ds-button-unfilled slot="error-actions" label="Retry" size="sm"></ds-button-unfilled>
+      </ds-message-composer>
+    </div>
+  `,
 };
