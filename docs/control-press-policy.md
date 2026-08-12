@@ -32,6 +32,7 @@ activation remains native and is not promised an equivalent held frame.
 | Component and exact target | Existing pressed/state paint | Transform ownership | Rationale and composition |
 | --- | --- | --- | --- |
 | `AgentActivity` — native `summary` | Native disclosure feedback | Chevron rotation | Disclosure geometry/state must remain stable. |
+| `AgentQuestionnaire` — choice inputs, text input, and native action buttons | Native choice, focus, selected, and pressed feedback | None | Multi-step form choices and navigation remain geometrically stable; the component does not borrow momentary action-button scale. |
 | `AgentSourceList` — native `summary` and source anchors | Native disclosure/link feedback | Chevron rotation | Disclosures and links do not scale. |
 | `AgentToolCall` — native `summary` | Native disclosure feedback | Chevron rotation | Disclosure state owns the chevron transform. |
 | `AttachmentList` — attachment anchors | Native link feedback | None | Links retain stable text and hit geometry. |

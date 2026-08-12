@@ -1,4 +1,4 @@
-import { Component, Prop, h, Host } from '@stencil/core';
+import { Component, Event, EventEmitter, Prop, h, Host } from '@stencil/core';
 import { resolveSafeUrl } from '../../utils';
 import type { AgentSource } from '../conversation-types';
 
@@ -8,11 +8,29 @@ export class AgentSourceList {
   @Prop() heading: string = 'Sources';
   @Prop() open: boolean = false;
 
+  @Event() dsOpenChange!: EventEmitter<{ open: boolean }>;
+
+  private hostname(href: string): string {
+    try {
+      return new URL(href).hostname;
+    } catch {
+      return '';
+    }
+  }
+
   render() {
     if (!this.items.length) return null;
     return (
       <Host>
-        <details class="agent-sources" open={this.open}>
+        <details
+          class="agent-sources"
+          open={this.open}
+          onToggle={(event: Event) =>
+            this.dsOpenChange.emit({
+              open: (event.currentTarget as HTMLDetailsElement).open,
+            })
+          }
+        >
           <summary>
             <ds-icon name="ChevronRight" size="xs" color="inherit" />
             <ds-text variant="text-body-small" emphasis>{this.heading} · {this.items.length}</ds-text>
@@ -20,11 +38,18 @@ export class AgentSourceList {
           <ol>
             {this.items.map(source => {
               const href = resolveSafeUrl(source.url);
+              const hostname = href ? this.hostname(href) : '';
               return <li>
                 {href
-                  ? <a href={href} target="_blank" rel="noopener noreferrer"><ds-text variant="text-body-small" emphasis>{source.title}</ds-text><ds-icon name="ExternalLink" size="xs" color="inherit" /></a>
+                  ? <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${source.title} (${hostname}, opens in a new tab)`}
+                    ><ds-text variant="text-body-small" emphasis>{source.title}</ds-text><ds-icon name="ExternalLink" size="xs" color="inherit" /></a>
                   : <ds-text variant="text-body-small" emphasis>{source.title}</ds-text>}
-                {source.description ? <ds-text variant="text-caption" color="secondary">{source.description}</ds-text> : null}
+                {hostname ? <ds-text variant="text-caption" color="secondary">{hostname}</ds-text> : null}
+                {source.description ? <ds-text variant="text-body-small" color="secondary">{source.description}</ds-text> : null}
               </li>;
             })}
           </ol>

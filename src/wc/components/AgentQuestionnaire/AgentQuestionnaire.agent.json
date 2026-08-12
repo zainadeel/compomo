@@ -1,0 +1,46 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-agent-questionnaire",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-agent-questionnaire",
+  "audience": "specialized",
+  "status": "experimental",
+  "summary": "Temporary multi-step work surface for provider-neutral agent clarification questions and durable read-only answer records.",
+  "useWhen": [
+    "An agent turn pauses for one or more structured single-choice, multiple-choice, or free-text answers."
+  ],
+  "avoidWhen": [
+    "The interaction is a conventional application form, a tool authorization policy, or an application-owned approval with consequences beyond collecting answers."
+  ],
+  "commonlyComposedWith": [
+    "component:ds-message-scroller",
+    "component:ds-message-composer",
+    "component:ds-agent-response"
+  ],
+  "patterns": ["pattern:agent-chat"],
+  "accessibility": [
+    "Choice semantics, progress, validation relationships, static answered summaries, and every action remain available without relying on color or visual position.",
+    "The component never takes focus when it mounts; the application calls setFocus only when shifting focus is appropriate.",
+    "Choice rows meet the shared minimum touch-target size and preserve focus, selected, invalid, and disabled distinctions in forced colors."
+  ],
+  "states": [
+    "The component owns only the current step, validation, and unsaved in-progress draft; the application owns the request, submission, transport, resume operation, persistence, and transcript replacement.",
+    "Preparing communicates that questions are being assembled, submitting locks editing without clearing the draft, error retains it with application feedback, and answered is a quiet noninteractive record.",
+    "A changed request identifier resets to the first question and seeds a fresh local draft from the supplied answers."
+  ],
+  "responsiveBehavior": [
+    "Descriptive choices remain full-row targets, while actions collapse into a single-column layout at narrow widths."
+  ],
+  "references": [
+    {
+      "label": "Questionnaire state stories",
+      "path": "src/wc/components/AgentQuestionnaire/AgentQuestionnaire.stories.ts"
+    },
+    {
+      "label": "Agent chat composition",
+      "path": "agent/patterns/agent-chat/pattern.agent.json"
+    }
+  ]
+}

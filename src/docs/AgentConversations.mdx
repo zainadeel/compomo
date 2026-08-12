@@ -1,0 +1,118 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Docs/Agent Conversations" />
+
+# Agent conversations
+
+CompoMo provides provider-neutral presentation and interaction primitives. The
+application still owns its model or provider adapter, transport, persistence,
+tool execution, authorization, retries, and consequences. Normalize external
+states before they reach the component tree; never pass provider events or
+private model reasoning through as presentation data.
+
+## Compose the response lane
+
+Use `ds-agent-response` in its default parts mode when response content must be
+serializable, persisted, or reconstructed from a registry-friendly transcript.
+The ordered part collection can include Markdown, safe activity, tool calls,
+attachments, sources, and answered questionnaires.
+
+Use composed mode when application-specific results need to interleave with
+CompoMo components. In that mode the default slot owns the complete ordered
+response body and the parts collection is ignored. Footer, metadata-action, and
+message-action composition remains available in either mode.
+
+```html
+<ds-agent-response render-mode="composed">
+  <ds-markdown content="The preview is ready."></ds-markdown>
+  <ds-agent-tool-call
+    name="deploy.preview"
+    label="Created preview"
+    state="success"
+  >
+    <product-preview slot="result"></product-preview>
+  </ds-agent-tool-call>
+  <ds-agent-source-list></ds-agent-source-list>
+</ds-agent-response>
+```
+
+The response sets the public prose text measure for direct headings,
+paragraphs, lists, description lists, and quotations. Code, tables, tools,
+attachments, sources, and other structured content retain the full response
+lane. Streaming should append stable semantic blocks without entrance or
+height animation.
+
+## Normalize tool lifecycle
+
+Map provider-specific states to preparing, queued, running, waiting for user,
+success, error, denied, or canceled before rendering. Supply a localized
+status label when the built-in copy is not appropriate.
+
+Routine success should remain a compact event row. Add input, output, or error
+data only when generic diagnostics are useful. A custom summary replaces the
+generated name, a custom result owns the primary result surface, and custom
+details replace the generic diagnostic body. A disclosure and chevron appear
+only when details exist. Tool calls remain presentation-only: approval,
+execution, retry, and authorization policy belong to the application.
+
+## Pause for human input
+
+Render a pending `ds-agent-questionnaire` in the message scroller's interaction
+surface, immediately above the composer. The scroller measures both surfaces
+as one overlay stack so the final transcript content can clear them.
+
+```html
+<div slot="interaction">
+  <ds-agent-questionnaire request-id="request-42"></ds-agent-questionnaire>
+</div>
+<div slot="overlay">
+  <ds-message-composer label="Message agent"></ds-message-composer>
+</div>
+```
+
+The questionnaire owns only its unsaved draft, step navigation, and local
+validation. The application owns the durable request and this sequence:
+
+1. Normalize the provider request into questionnaire questions and set the
+   relevant tool state to waiting for user.
+2. Listen for answer or cancel intent, set submitting, and send the normalized
+   answer collection through application transport.
+3. On failure, set error and provide a message. The local draft remains intact.
+4. On success, remove the pending surface, resume the agent, and append an
+   answered questionnaire part to durable response history.
+
+The component never moves focus because it mounted. Call its focus method only
+when the product has determined that moving focus from the transcript or
+composer is appropriate.
+
+## Keep reader control
+
+Mark only an outgoing prompt that begins a new turn with `scroll-anchor`. The
+scroller positions a newly appended turn with a small peek of the previous turn
+and does not re-anchor for streaming mutations or prepended history. Wheel,
+touch, keyboard navigation, selection, and message jumps release live-edge
+following. The reader explicitly restores it with Scroll to latest. Saved
+transcript entry points may continue to use the last stored anchor as their
+initial position.
+
+## Finish sources and failures
+
+Represent active retrieval as activity or tool state. The application collects
+and deduplicates source records, then appends one stable inline source list in
+the intended order. The source component derives hostnames, validates web URLs,
+and leaves malformed or unsafe schemes noninteractive; it does not own search
+lifecycle or a drawer.
+
+When composer transport fails, keep the draft and error status together. Supply
+visible error text and put application-owned recovery controls such as Retry in
+the error-actions surface. Leaving error status removes the announcement and
+its relationship to the editable control.
+
+## Optional product composition
+
+First-use prompt suggestions and model selection are product decisions, not
+agent contracts. Compose suggestions from ordinary text and button primitives.
+Selecting a suggestion should normally fill and focus the draft unless the
+product explicitly chooses immediate submission. If model selection is useful,
+place an application-owned control in the composer's tools area and keep model
+identity and routing outside CompoMo.

@@ -12,6 +12,8 @@ import {
 import type { ButtonFilledIntent } from '../ButtonFilled/ButtonFilled';
 import type { MessageComposerStatus } from '../conversation-types';
 
+let composerId = 0;
+
 @Component({
   tag: 'ds-message-composer',
   styleUrl: 'MessageComposer.css',
@@ -24,6 +26,8 @@ export class MessageComposer {
   @Prop() placeholder: string = 'Write a message';
   @Prop() label: string = 'Message';
   @Prop() status: MessageComposerStatus = 'ready';
+  /** Submission failure shown while status is error. */
+  @Prop() errorMessage?: string;
   @Prop() isInactive: boolean = false;
   @Prop() submitIntent: ButtonFilledIntent = 'brand';
 
@@ -32,6 +36,7 @@ export class MessageComposer {
   @Event() dsStop!: EventEmitter<void>;
 
   private textarea?: HTMLTextAreaElement;
+  private readonly errorId = `ds-message-composer-error-${++composerId}`;
 
   componentDidLoad() {
     this.resize();
@@ -82,6 +87,7 @@ export class MessageComposer {
 
   render() {
     const error = this.status === 'error';
+    const visibleErrorMessage = this.errorMessage || 'Message could not be sent.';
     const actionInactive = !this.streaming && (this.isInactive || !this.value.trim());
     return (
       <Host>
@@ -105,6 +111,7 @@ export class MessageComposer {
               placeholder={this.placeholder}
               aria-label={this.label}
               aria-invalid={error ? 'true' : undefined}
+              aria-describedby={error ? this.errorId : undefined}
               disabled={this.isInactive}
               rows={2}
               onInput={this.handleInput}
@@ -150,6 +157,19 @@ export class MessageComposer {
               </div>
             </div>
           </div>
+          {error ? (
+            <div class="message-composer__error-support">
+              <div id={this.errorId} class="message-composer__error-message" role="alert">
+                <ds-icon name="ErrorTriangle" size="xs" color="inherit" />
+                <ds-text variant="text-body-small" color="negative">
+                  {visibleErrorMessage}
+                </ds-text>
+              </div>
+              <div class="message-composer__error-actions">
+                <slot name="error-actions" />
+              </div>
+            </div>
+          ) : null}
         </form>
       </Host>
     );

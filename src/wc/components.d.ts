@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { AgentActivityItem, AgentResponsePart, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageCopyResultEventDetail, MessageDeliveryState, MessageDirection, MessageFeedback, MessageGroupPosition, MessageMetadataVisibility, MessageScrollerPosition } from "./components/conversation-types";
+import { AgentActivityItem, AgentQuestion, AgentQuestionAnswer, AgentQuestionnaireAnswerEventDetail, AgentQuestionnaireCancelEventDetail, AgentQuestionnaireLabels, AgentQuestionnaireStatus, AgentResponsePart, AgentResponseRenderMode, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageCopyResultEventDetail, MessageDeliveryState, MessageDirection, MessageFeedback, MessageGroupPosition, MessageMetadataVisibility, MessageScrollerPosition } from "./components/conversation-types";
 import { IconColor, IconSize as IconSize1 } from "./components/Icon/Icon";
 import { AvatarSize } from "./components/Avatar/Avatar";
 import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
@@ -66,7 +66,7 @@ import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
 import { TooltipChartItem } from "./components/TooltipChart/TooltipChart";
-export { AgentActivityItem, AgentResponsePart, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageCopyResultEventDetail, MessageDeliveryState, MessageDirection, MessageFeedback, MessageGroupPosition, MessageMetadataVisibility, MessageScrollerPosition } from "./components/conversation-types";
+export { AgentActivityItem, AgentQuestion, AgentQuestionAnswer, AgentQuestionnaireAnswerEventDetail, AgentQuestionnaireCancelEventDetail, AgentQuestionnaireLabels, AgentQuestionnaireStatus, AgentResponsePart, AgentResponseRenderMode, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageCopyResultEventDetail, MessageDeliveryState, MessageDirection, MessageFeedback, MessageGroupPosition, MessageMetadataVisibility, MessageScrollerPosition } from "./components/conversation-types";
 export { IconColor, IconSize as IconSize1 } from "./components/Icon/Icon";
 export { AvatarSize } from "./components/Avatar/Avatar";
 export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
@@ -142,6 +142,25 @@ export namespace Components {
          */
         "open": boolean;
     }
+    interface DsAgentQuestionnaire {
+        /**
+          * @default false
+         */
+        "allowCancel": boolean;
+        /**
+          * @default []
+         */
+        "answers": AgentQuestionAnswer[];
+        "errorMessage"?: string;
+        "labels"?: Partial<AgentQuestionnaireLabels>;
+        "questions": AgentQuestion[];
+        "requestId": string;
+        "setFocus": () => Promise<void>;
+        /**
+          * @default 'ready'
+         */
+        "status": AgentQuestionnaireStatus;
+    }
     interface DsAgentResponse {
         /**
           * @default ''
@@ -160,6 +179,11 @@ export namespace Components {
           * @default []
          */
         "parts": AgentResponsePart[];
+        /**
+          * Renders serializable ordered parts or lets the default slot own the complete ordered body.
+          * @default 'parts'
+         */
+        "renderMode": AgentResponseRenderMode;
         /**
           * @default true
          */
@@ -207,6 +231,7 @@ export namespace Components {
           * @default 'queued'
          */
         "state": AgentToolState;
+        "statusLabel"?: string;
     }
     interface DsAttachmentList {
         /**
@@ -1372,6 +1397,10 @@ export namespace Components {
         "variant": MessageBubbleVariant;
     }
     interface DsMessageComposer {
+        /**
+          * Submission failure shown while status is error.
+         */
+        "errorMessage"?: string;
         /**
           * @default false
          */
@@ -2922,6 +2951,18 @@ export namespace Components {
         "label": string;
     }
 }
+export interface DsAgentQuestionnaireCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsAgentQuestionnaireElement;
+}
+export interface DsAgentSourceListCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsAgentSourceListElement;
+}
+export interface DsAgentToolCallCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsAgentToolCallElement;
+}
 export interface DsBannerCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsBannerElement;
@@ -3097,19 +3138,59 @@ declare global {
         prototype: HTMLDsAgentActivityElement;
         new (): HTMLDsAgentActivityElement;
     };
+    interface HTMLDsAgentQuestionnaireElementEventMap {
+        "dsAnswer": AgentQuestionnaireAnswerEventDetail;
+        "dsCancel": AgentQuestionnaireCancelEventDetail;
+    }
+    interface HTMLDsAgentQuestionnaireElement extends Components.DsAgentQuestionnaire, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsAgentQuestionnaireElementEventMap>(type: K, listener: (this: HTMLDsAgentQuestionnaireElement, ev: DsAgentQuestionnaireCustomEvent<HTMLDsAgentQuestionnaireElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsAgentQuestionnaireElementEventMap>(type: K, listener: (this: HTMLDsAgentQuestionnaireElement, ev: DsAgentQuestionnaireCustomEvent<HTMLDsAgentQuestionnaireElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsAgentQuestionnaireElement: {
+        prototype: HTMLDsAgentQuestionnaireElement;
+        new (): HTMLDsAgentQuestionnaireElement;
+    };
     interface HTMLDsAgentResponseElement extends Components.DsAgentResponse, HTMLStencilElement {
     }
     var HTMLDsAgentResponseElement: {
         prototype: HTMLDsAgentResponseElement;
         new (): HTMLDsAgentResponseElement;
     };
+    interface HTMLDsAgentSourceListElementEventMap {
+        "dsOpenChange": { open: boolean };
+    }
     interface HTMLDsAgentSourceListElement extends Components.DsAgentSourceList, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsAgentSourceListElementEventMap>(type: K, listener: (this: HTMLDsAgentSourceListElement, ev: DsAgentSourceListCustomEvent<HTMLDsAgentSourceListElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsAgentSourceListElementEventMap>(type: K, listener: (this: HTMLDsAgentSourceListElement, ev: DsAgentSourceListCustomEvent<HTMLDsAgentSourceListElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
     var HTMLDsAgentSourceListElement: {
         prototype: HTMLDsAgentSourceListElement;
         new (): HTMLDsAgentSourceListElement;
     };
+    interface HTMLDsAgentToolCallElementEventMap {
+        "dsOpenChange": { open: boolean };
+    }
     interface HTMLDsAgentToolCallElement extends Components.DsAgentToolCall, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsAgentToolCallElementEventMap>(type: K, listener: (this: HTMLDsAgentToolCallElement, ev: DsAgentToolCallCustomEvent<HTMLDsAgentToolCallElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsAgentToolCallElementEventMap>(type: K, listener: (this: HTMLDsAgentToolCallElement, ev: DsAgentToolCallCustomEvent<HTMLDsAgentToolCallElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
     var HTMLDsAgentToolCallElement: {
         prototype: HTMLDsAgentToolCallElement;
@@ -4068,6 +4149,7 @@ declare global {
     };
     interface HTMLElementTagNameMap {
         "ds-agent-activity": HTMLDsAgentActivityElement;
+        "ds-agent-questionnaire": HTMLDsAgentQuestionnaireElement;
         "ds-agent-response": HTMLDsAgentResponseElement;
         "ds-agent-source-list": HTMLDsAgentSourceListElement;
         "ds-agent-tool-call": HTMLDsAgentToolCallElement;
@@ -4152,6 +4234,26 @@ declare namespace LocalJSX {
          */
         "open"?: boolean;
     }
+    interface DsAgentQuestionnaire {
+        /**
+          * @default false
+         */
+        "allowCancel"?: boolean;
+        /**
+          * @default []
+         */
+        "answers"?: AgentQuestionAnswer[];
+        "errorMessage"?: string;
+        "labels"?: Partial<AgentQuestionnaireLabels>;
+        "onDsAnswer"?: (event: DsAgentQuestionnaireCustomEvent<AgentQuestionnaireAnswerEventDetail>) => void;
+        "onDsCancel"?: (event: DsAgentQuestionnaireCustomEvent<AgentQuestionnaireCancelEventDetail>) => void;
+        "questions": AgentQuestion[];
+        "requestId": string;
+        /**
+          * @default 'ready'
+         */
+        "status"?: AgentQuestionnaireStatus;
+    }
     interface DsAgentResponse {
         /**
           * @default ''
@@ -4170,6 +4272,11 @@ declare namespace LocalJSX {
           * @default []
          */
         "parts"?: AgentResponsePart[];
+        /**
+          * Renders serializable ordered parts or lets the default slot own the complete ordered body.
+          * @default 'parts'
+         */
+        "renderMode"?: AgentResponseRenderMode;
         /**
           * @default true
          */
@@ -4192,6 +4299,7 @@ declare namespace LocalJSX {
           * @default []
          */
         "items"?: AgentSource[];
+        "onDsOpenChange"?: (event: DsAgentSourceListCustomEvent<{ open: boolean }>) => void;
         /**
           * @default false
          */
@@ -4208,6 +4316,7 @@ declare namespace LocalJSX {
           * @default ''
          */
         "name"?: string;
+        "onDsOpenChange"?: (event: DsAgentToolCallCustomEvent<{ open: boolean }>) => void;
         /**
           * @default false
          */
@@ -4217,6 +4326,7 @@ declare namespace LocalJSX {
           * @default 'queued'
          */
         "state"?: AgentToolState;
+        "statusLabel"?: string;
     }
     interface DsAttachmentList {
         /**
@@ -5477,6 +5587,10 @@ declare namespace LocalJSX {
         "variant"?: MessageBubbleVariant;
     }
     interface DsMessageComposer {
+        /**
+          * Submission failure shown while status is error.
+         */
+        "errorMessage"?: string;
         /**
           * @default false
          */
@@ -7176,11 +7290,18 @@ declare namespace LocalJSX {
         "heading": string;
         "open": boolean;
     }
+    interface DsAgentQuestionnaireAttributes {
+        "requestId": string;
+        "status": AgentQuestionnaireStatus;
+        "errorMessage": string;
+        "allowCancel": boolean;
+    }
     interface DsAgentResponseAttributes {
         "messageId": string;
         "author": string;
         "showAuthor": boolean;
         "timestamp": string;
+        "renderMode": AgentResponseRenderMode;
         "streaming": boolean;
         "metadataVisibility": MessageMetadataVisibility;
     }
@@ -7192,6 +7313,7 @@ declare namespace LocalJSX {
         "name": string;
         "label": string;
         "state": AgentToolState;
+        "statusLabel": string;
         "error": string;
         "open": boolean;
     }
@@ -7494,6 +7616,7 @@ declare namespace LocalJSX {
         "placeholder": string;
         "label": string;
         "status": MessageComposerStatus;
+        "errorMessage": string;
         "isInactive": boolean;
         "submitIntent": ButtonFilledIntent;
     }
@@ -7841,6 +7964,7 @@ declare namespace LocalJSX {
 
     interface IntrinsicElements {
         "ds-agent-activity": Omit<DsAgentActivity, keyof DsAgentActivityAttributes> & { [K in keyof DsAgentActivity & keyof DsAgentActivityAttributes]?: DsAgentActivity[K] } & { [K in keyof DsAgentActivity & keyof DsAgentActivityAttributes as `attr:${K}`]?: DsAgentActivityAttributes[K] } & { [K in keyof DsAgentActivity & keyof DsAgentActivityAttributes as `prop:${K}`]?: DsAgentActivity[K] };
+        "ds-agent-questionnaire": Omit<DsAgentQuestionnaire, keyof DsAgentQuestionnaireAttributes> & { [K in keyof DsAgentQuestionnaire & keyof DsAgentQuestionnaireAttributes]?: DsAgentQuestionnaire[K] } & { [K in keyof DsAgentQuestionnaire & keyof DsAgentQuestionnaireAttributes as `attr:${K}`]?: DsAgentQuestionnaireAttributes[K] } & { [K in keyof DsAgentQuestionnaire & keyof DsAgentQuestionnaireAttributes as `prop:${K}`]?: DsAgentQuestionnaire[K] } & OneOf<"requestId", DsAgentQuestionnaire["requestId"], DsAgentQuestionnaireAttributes["requestId"]>;
         "ds-agent-response": Omit<DsAgentResponse, keyof DsAgentResponseAttributes> & { [K in keyof DsAgentResponse & keyof DsAgentResponseAttributes]?: DsAgentResponse[K] } & { [K in keyof DsAgentResponse & keyof DsAgentResponseAttributes as `attr:${K}`]?: DsAgentResponseAttributes[K] } & { [K in keyof DsAgentResponse & keyof DsAgentResponseAttributes as `prop:${K}`]?: DsAgentResponse[K] };
         "ds-agent-source-list": Omit<DsAgentSourceList, keyof DsAgentSourceListAttributes> & { [K in keyof DsAgentSourceList & keyof DsAgentSourceListAttributes]?: DsAgentSourceList[K] } & { [K in keyof DsAgentSourceList & keyof DsAgentSourceListAttributes as `attr:${K}`]?: DsAgentSourceListAttributes[K] } & { [K in keyof DsAgentSourceList & keyof DsAgentSourceListAttributes as `prop:${K}`]?: DsAgentSourceList[K] };
         "ds-agent-tool-call": Omit<DsAgentToolCall, keyof DsAgentToolCallAttributes> & { [K in keyof DsAgentToolCall & keyof DsAgentToolCallAttributes]?: DsAgentToolCall[K] } & { [K in keyof DsAgentToolCall & keyof DsAgentToolCallAttributes as `attr:${K}`]?: DsAgentToolCallAttributes[K] } & { [K in keyof DsAgentToolCall & keyof DsAgentToolCallAttributes as `prop:${K}`]?: DsAgentToolCall[K] };
@@ -7913,6 +8037,7 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "ds-agent-activity": LocalJSX.IntrinsicElements["ds-agent-activity"] & JSXBase.HTMLAttributes<HTMLDsAgentActivityElement>;
+            "ds-agent-questionnaire": LocalJSX.IntrinsicElements["ds-agent-questionnaire"] & JSXBase.HTMLAttributes<HTMLDsAgentQuestionnaireElement>;
             "ds-agent-response": LocalJSX.IntrinsicElements["ds-agent-response"] & JSXBase.HTMLAttributes<HTMLDsAgentResponseElement>;
             "ds-agent-source-list": LocalJSX.IntrinsicElements["ds-agent-source-list"] & JSXBase.HTMLAttributes<HTMLDsAgentSourceListElement>;
             "ds-agent-tool-call": LocalJSX.IntrinsicElements["ds-agent-tool-call"] & JSXBase.HTMLAttributes<HTMLDsAgentToolCallElement>;

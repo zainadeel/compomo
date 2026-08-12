@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/tokens/index.css">
+    <style>
+      body { margin: 0; padding: 24px; }
+      main { display: grid; gap: 32px; }
+      #questionnaire-frame, #tool-frame, #source-frame, #composer-frame { width: 600px; max-width: 100%; }
+      #response-frame { width: 800px; max-width: 100%; }
+      #scroller-frame { width: 700px; height: 420px; }
+      #interaction-wrap { padding: 8px 8px 0; }
+      #overlay-wrap { padding: 8px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section id="questionnaire-frame">
+        <form id="questionnaire-owner-form">
+          <ds-agent-questionnaire id="questionnaire" request-id="request-one" allow-cancel></ds-agent-questionnaire>
+        </form>
+      </section>
+      <section id="tool-frame">
+        <ds-agent-tool-call id="tool-compact" name="records.search" label="Searched 8 sources" state="success"></ds-agent-tool-call>
+        <ds-agent-tool-call id="tool-details" name="records.search" label="Searched records" state="success" open></ds-agent-tool-call>
+        <ds-agent-tool-call id="tool-custom" name="github.create" state="success" open>
+          <span slot="summary">Created issue #443</span>
+          <div slot="result">Custom issue result</div>
+          <div slot="details">Custom diagnostic detail</div>
+        </ds-agent-tool-call>
+      </section>
+      <section id="source-frame">
+        <ds-agent-source-list id="sources" open></ds-agent-source-list>
+      </section>
+      <section id="composer-frame">
+        <ds-message-composer id="composer" value="Preserved draft" status="error" error-message="The message could not be sent.">
+          <ds-button-unfilled slot="error-actions" label="Retry" size="sm"></ds-button-unfilled>
+        </ds-message-composer>
+      </section>
+      <section id="response-frame">
+        <ds-agent-response id="response" author="Agent"></ds-agent-response>
+        <ds-agent-response id="response-composed" author="Agent" render-mode="composed">
+          <div id="composed-marker">Application-composed result</div>
+        </ds-agent-response>
+        <ds-agent-response id="response-history" author="Agent"></ds-agent-response>
+      </section>
+      <section id="scroller-frame">
+        <ds-message-scroller id="scroller" messages-label="Anchored conversation" default-position="end">
+          <div id="interaction-wrap" slot="interaction">
+            <div id="interaction-surface" style="height:96px; background:var(--color-background-secondary);"></div>
+          </div>
+          <div id="overlay-wrap" slot="overlay">
+            <ds-message-composer label="Message agent"></ds-message-composer>
+          </div>
+        </ds-message-scroller>
+      </section>
+    </main>
+    <script type="module" src="/agent-conversations-setup.mjs"></script>
+  </body>
+</html>

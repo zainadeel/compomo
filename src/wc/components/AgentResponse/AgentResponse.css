@@ -1,6 +1,7 @@
 :host {
   display: block;
   width: 100%;
+  --ds-prose-text-max-inline-size: var(--dimension-panel-width-lg);
   -webkit-user-select: none;
   user-select: none;
 }

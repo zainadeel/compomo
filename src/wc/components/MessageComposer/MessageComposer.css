@@ -1,3 +1,5 @@
+@import '../../utils/forced-colors.css';
+
 :host {
   display: block;
   width: 100%;
@@ -15,8 +17,37 @@
 }
 
 .message-composer__attachments:empty,
-.message-composer__tools:empty {
+.message-composer__tools:empty,
+.message-composer__error-actions:empty {
   display: none;
+}
+
+.message-composer__error-support,
+.message-composer__error-message,
+.message-composer__error-actions {
+  display: flex;
+  align-items: center;
+}
+
+.message-composer__error-support {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--dimension-space-075) var(--dimension-space-100);
+  min-width: 0;
+  padding-inline: var(--dimension-space-100);
+}
+
+.message-composer__error-message {
+  flex: 1 1 var(--dimension-panel-width-xs);
+  gap: var(--dimension-space-050);
+  min-width: 0;
+  color: var(--color-foreground-bold-negative);
+}
+
+.message-composer__error-actions {
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  gap: var(--dimension-space-050);
 }
 
 .message-composer__field {
@@ -96,4 +127,16 @@ textarea:focus-visible {
   gap: var(--dimension-space-100);
   flex: 0 0 auto;
   margin-inline-start: auto;
+}
+
+@media (forced-colors: active) {
+  .message-composer__field {
+    border: var(--dimension-stroke-width-012) solid var(--ds-forced-color-control-boundary);
+    box-shadow: none;
+  }
+
+  .message-composer--error .message-composer__field {
+    outline: var(--dimension-stroke-width-025) dashed var(--ds-forced-color-content);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-025));
+  }
 }

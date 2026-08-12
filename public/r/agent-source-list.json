@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "agent-source-list",
   "title": "AgentSourceList",
-  "description": "Collapsible list of agent response sources with title, description, and validated external links.",
+  "description": "Inline collapsible agent-source list with safe external links, derived hostnames, optional descriptions, and observable disclosure state.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
@@ -13,12 +13,12 @@
     "intent": {
       "audience": "specialized",
       "status": "experimental",
-      "summary": "Collapsible list of agent response sources with title, description, and validated external links.",
+      "summary": "Inline collapsible agent-source list with safe external links, derived hostnames, optional descriptions, and observable disclosure state.",
       "useWhen": [
-        "An agent response cites external material readers may inspect."
+        "A stable agent response cites external material readers may inspect inline."
       ],
       "avoidWhen": [
-        "The links are ordinary body links or are not sources for the response."
+        "The links are ordinary body links, source discovery is still active, or the application expects a source drawer or deduplication behavior."
       ],
       "commonlyComposedWith": [
         "component:ds-agent-response",
@@ -28,16 +28,20 @@
         "pattern:agent-chat"
       ],
       "accessibility": [
-        "Each source uses descriptive linked text and visible supporting context.",
-        "Unsafe link schemes remain non-interactive text."
+        "Each interactive source uses descriptive linked text, a visible hostname, supporting context, and an external-link indication.",
+        "Malformed and unsafe schemes remain non-interactive text rather than producing executable links.",
+        "The native disclosure exposes keyboard and expanded-state semantics, while open-change events let applications observe participant intent."
+      ],
+      "states": [
+        "Applications collect and deduplicate sources, then append the stable list once; active discovery remains an activity or tool state."
       ],
       "responsiveBehavior": [
-        "Source titles and descriptions wrap within the response width."
+        "Source titles, hostnames, and descriptions wrap within the response width."
       ],
       "references": [
         {
-          "label": "Storybook examples",
-          "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+          "label": "Source safety and disclosure stories",
+          "path": "src/wc/components/AgentSourceList/AgentSourceList.stories.ts"
         }
       ]
     },
@@ -67,7 +71,15 @@
           "mutable": false
         }
       },
-      "events": [],
+      "events": [
+        {
+          "name": "dsOpenChange",
+          "detail": "{ open: boolean }",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
       "methods": [],
       "slots": []
     },
@@ -96,7 +108,15 @@
         "mutable": false
       }
     },
-    "events": [],
+    "events": [
+      {
+        "name": "dsOpenChange",
+        "detail": "{ open: boolean }",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
     "methods": [],
     "slots": [],
     "exports": {
@@ -146,7 +166,7 @@
     },
     {
       "path": "src/wc/components/AgentSourceList/AgentSourceList.tsx",
-      "content": "import { Component, Prop, h, Host } from '@stencil/core';\nimport { resolveSafeUrl } from '../../utils';\nimport type { AgentSource } from '../conversation-types';\n\n@Component({ tag: 'ds-agent-source-list', styleUrl: 'AgentSourceList.css', scoped: true })\nexport class AgentSourceList {\n  @Prop() items: AgentSource[] = [];\n  @Prop() heading: string = 'Sources';\n  @Prop() open: boolean = false;\n\n  render() {\n    if (!this.items.length) return null;\n    return (\n      <Host>\n        <details class=\"agent-sources\" open={this.open}>\n          <summary>\n            <ds-icon name=\"ChevronRight\" size=\"xs\" color=\"inherit\" />\n            <ds-text variant=\"text-body-small\" emphasis>{this.heading} · {this.items.length}</ds-text>\n          </summary>\n          <ol>\n            {this.items.map(source => {\n              const href = resolveSafeUrl(source.url);\n              return <li>\n                {href\n                  ? <a href={href} target=\"_blank\" rel=\"noopener noreferrer\"><ds-text variant=\"text-body-small\" emphasis>{source.title}</ds-text><ds-icon name=\"ExternalLink\" size=\"xs\" color=\"inherit\" /></a>\n                  : <ds-text variant=\"text-body-small\" emphasis>{source.title}</ds-text>}\n                {source.description ? <ds-text variant=\"text-caption\" color=\"secondary\">{source.description}</ds-text> : null}\n              </li>;\n            })}\n          </ol>\n        </details>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Event, EventEmitter, Prop, h, Host } from '@stencil/core';\nimport { resolveSafeUrl } from '../../utils';\nimport type { AgentSource } from '../conversation-types';\n\n@Component({ tag: 'ds-agent-source-list', styleUrl: 'AgentSourceList.css', scoped: true })\nexport class AgentSourceList {\n  @Prop() items: AgentSource[] = [];\n  @Prop() heading: string = 'Sources';\n  @Prop() open: boolean = false;\n\n  @Event() dsOpenChange!: EventEmitter<{ open: boolean }>;\n\n  private hostname(href: string): string {\n    try {\n      return new URL(href).hostname;\n    } catch {\n      return '';\n    }\n  }\n\n  render() {\n    if (!this.items.length) return null;\n    return (\n      <Host>\n        <details\n          class=\"agent-sources\"\n          open={this.open}\n          onToggle={(event: Event) =>\n            this.dsOpenChange.emit({\n              open: (event.currentTarget as HTMLDetailsElement).open,\n            })\n          }\n        >\n          <summary>\n            <ds-icon name=\"ChevronRight\" size=\"xs\" color=\"inherit\" />\n            <ds-text variant=\"text-body-small\" emphasis>{this.heading} · {this.items.length}</ds-text>\n          </summary>\n          <ol>\n            {this.items.map(source => {\n              const href = resolveSafeUrl(source.url);\n              const hostname = href ? this.hostname(href) : '';\n              return <li>\n                {href\n                  ? <a\n                      href={href}\n                      target=\"_blank\"\n                      rel=\"noopener noreferrer\"\n                      aria-label={`${source.title} (${hostname}, opens in a new tab)`}\n                    ><ds-text variant=\"text-body-small\" emphasis>{source.title}</ds-text><ds-icon name=\"ExternalLink\" size=\"xs\" color=\"inherit\" /></a>\n                  : <ds-text variant=\"text-body-small\" emphasis>{source.title}</ds-text>}\n                {hostname ? <ds-text variant=\"text-caption\" color=\"secondary\">{hostname}</ds-text> : null}\n                {source.description ? <ds-text variant=\"text-body-small\" color=\"secondary\">{source.description}</ds-text> : null}\n              </li>;\n            })}\n          </ol>\n        </details>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

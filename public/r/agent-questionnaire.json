@@ -1,0 +1,262 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "agent-questionnaire",
+  "title": "AgentQuestionnaire",
+  "description": "Temporary multi-step work surface for provider-neutral agent clarification questions and durable read-only answer records.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/agent-questionnaire",
+    "source": "src/wc/components/AgentQuestionnaire/AgentQuestionnaire.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "specialized",
+      "status": "experimental",
+      "summary": "Temporary multi-step work surface for provider-neutral agent clarification questions and durable read-only answer records.",
+      "useWhen": [
+        "An agent turn pauses for one or more structured single-choice, multiple-choice, or free-text answers."
+      ],
+      "avoidWhen": [
+        "The interaction is a conventional application form, a tool authorization policy, or an application-owned approval with consequences beyond collecting answers."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-message-scroller",
+        "component:ds-message-composer",
+        "component:ds-agent-response"
+      ],
+      "patterns": [
+        "pattern:agent-chat"
+      ],
+      "accessibility": [
+        "Choice semantics, progress, validation relationships, static answered summaries, and every action remain available without relying on color or visual position.",
+        "The component never takes focus when it mounts; the application calls setFocus only when shifting focus is appropriate.",
+        "Choice rows meet the shared minimum touch-target size and preserve focus, selected, invalid, and disabled distinctions in forced colors."
+      ],
+      "states": [
+        "The component owns only the current step, validation, and unsaved in-progress draft; the application owns the request, submission, transport, resume operation, persistence, and transcript replacement.",
+        "Preparing communicates that questions are being assembled, submitting locks editing without clearing the draft, error retains it with application feedback, and answered is a quiet noninteractive record.",
+        "A changed request identifier resets to the first question and seeds a fresh local draft from the supplied answers."
+      ],
+      "responsiveBehavior": [
+        "Descriptive choices remain full-row targets, while actions collapse into a single-column layout at narrow widths."
+      ],
+      "references": [
+        {
+          "label": "Questionnaire state stories",
+          "path": "src/wc/components/AgentQuestionnaire/AgentQuestionnaire.stories.ts"
+        },
+        {
+          "label": "Agent chat composition",
+          "path": "agent/patterns/agent-chat/pattern.agent.json"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "allowCancel": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "allow-cancel",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "answers": {
+          "type": "AgentQuestionAnswer[]",
+          "resolvedType": "AgentQuestionAnswer[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false
+        },
+        "errorMessage": {
+          "type": "string",
+          "resolvedType": "string | undefined",
+          "attribute": "error-message",
+          "required": false,
+          "mutable": false
+        },
+        "labels": {
+          "type": "Partial<AgentQuestionnaireLabels>",
+          "resolvedType": "AgentQuestionnaireLabels | undefined",
+          "required": false,
+          "mutable": false
+        },
+        "questions": {
+          "type": "AgentQuestion[]",
+          "resolvedType": "AgentQuestion[]",
+          "required": true,
+          "mutable": false
+        },
+        "requestId": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "request-id",
+          "required": true,
+          "mutable": false
+        },
+        "status": {
+          "type": "AgentQuestionnaireStatus",
+          "resolvedType": "\"answered\" | \"error\" | \"preparing\" | \"ready\" | \"submitting\"",
+          "attribute": "status",
+          "default": "'ready'",
+          "required": false,
+          "mutable": false
+        }
+      },
+      "events": [
+        {
+          "name": "dsAnswer",
+          "detail": "AgentQuestionnaireAnswerEventDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsCancel",
+          "detail": "AgentQuestionnaireCancelEventDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [
+        {
+          "name": "setFocus",
+          "signature": "setFocus() => Promise<void>"
+        }
+      ],
+      "slots": []
+    },
+    "props": {
+      "allowCancel": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "allow-cancel",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "answers": {
+        "type": "AgentQuestionAnswer[]",
+        "resolvedType": "AgentQuestionAnswer[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false
+      },
+      "errorMessage": {
+        "type": "string",
+        "resolvedType": "string | undefined",
+        "attribute": "error-message",
+        "required": false,
+        "mutable": false
+      },
+      "labels": {
+        "type": "Partial<AgentQuestionnaireLabels>",
+        "resolvedType": "AgentQuestionnaireLabels | undefined",
+        "required": false,
+        "mutable": false
+      },
+      "questions": {
+        "type": "AgentQuestion[]",
+        "resolvedType": "AgentQuestion[]",
+        "required": true,
+        "mutable": false
+      },
+      "requestId": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "request-id",
+        "required": true,
+        "mutable": false
+      },
+      "status": {
+        "type": "AgentQuestionnaireStatus",
+        "resolvedType": "\"answered\" | \"error\" | \"preparing\" | \"ready\" | \"submitting\"",
+        "attribute": "status",
+        "default": "'ready'",
+        "required": false,
+        "mutable": false
+      }
+    },
+    "events": [
+      {
+        "name": "dsAnswer",
+        "detail": "AgentQuestionnaireAnswerEventDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsCancel",
+        "detail": "AgentQuestionnaireCancelEventDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [
+      {
+        "name": "setFocus",
+        "signature": "setFocus() => Promise<void>"
+      }
+    ],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-agent-questionnaire",
+      "react": "DsAgentQuestionnaire",
+      "angular": "DsAgentQuestionnaire"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-agent-questionnaire.js';",
+        "example": "<ds-agent-questionnaire></ds-agent-questionnaire>"
+      },
+      "react": {
+        "import": "import { DsAgentQuestionnaire } from '@ds-mo/ui/react';",
+        "example": "<DsAgentQuestionnaire />"
+      },
+      "angular": {
+        "import": "import { DsAgentQuestionnaire } from '@ds-mo/ui/angular/ds-agent-questionnaire';",
+        "example": "<ds-agent-questionnaire></ds-agent-questionnaire>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: answers, labels, questions.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.0.0",
+          "@ds-mo/icons ^6.6.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "icon",
+    "loader",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/AgentQuestionnaire/AgentQuestionnaire.css",
+      "content": "@import '../../utils/forced-colors.css';\n@import '../../utils/visually-hidden.css';\n\n:host {\n  display: block;\n  width: 100%;\n  min-width: 0;\n  box-sizing: border-box;\n  -webkit-user-select: none;\n  user-select: none;\n}\n\n.questionnaire {\n  display: grid;\n  gap: var(--dimension-space-150);\n  width: 100%;\n  padding: var(--dimension-space-200);\n  border-radius: var(--dimension-radius-125);\n  background: var(--color-background-primary);\n  box-shadow: var(--effect-elevation-elevated-md);\n  box-sizing: border-box;\n}\n\n.questionnaire--answered {\n  gap: var(--dimension-space-100);\n  padding: var(--dimension-space-150);\n  background: var(--color-background-secondary);\n  box-shadow: none;\n}\n\n.questionnaire--preparing {\n  align-items: center;\n  grid-template-columns: auto minmax(0, 1fr);\n}\n\n.questionnaire__header,\n.questionnaire__actions,\n.questionnaire__actions-leading,\n.questionnaire__error,\n.questionnaire__submission-error {\n  display: flex;\n  align-items: center;\n}\n\n.questionnaire__header,\n.questionnaire__actions {\n  justify-content: space-between;\n  gap: var(--dimension-space-100);\n}\n\n.questionnaire__body,\n.questionnaire__prompt,\n.questionnaire__choices,\n.questionnaire__choice-copy,\n.questionnaire__summary,\n.questionnaire__summary li {\n  display: grid;\n}\n\n.questionnaire__body,\n.questionnaire__prompt,\n.questionnaire__choices {\n  gap: var(--dimension-space-100);\n}\n\n.questionnaire__choices {\n  min-width: 0;\n  margin: 0;\n  padding: 0;\n  border: 0;\n}\n\n.questionnaire__choice,\n.questionnaire__other {\n  min-width: 0;\n  border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);\n  border-radius: var(--dimension-radius-075);\n  background: var(--color-background-primary);\n}\n\n.questionnaire__choice {\n  display: grid;\n  align-items: center;\n  grid-template-columns: auto minmax(0, 1fr);\n  gap: var(--dimension-space-100);\n  min-height: var(--dimension-size-600);\n  padding: var(--dimension-space-075) var(--dimension-space-100);\n  box-sizing: border-box;\n  cursor: pointer;\n}\n\n.questionnaire__choice:hover {\n  background: var(--color-background-secondary);\n}\n\n.questionnaire__choice--selected {\n  border-color: var(--color-border-bold-brand);\n}\n\n.questionnaire__choice:has(input:focus-visible),\n.questionnaire__other:has(input:focus-visible) {\n  outline: var(--dimension-stroke-width-025) solid var(--color-border-bold-brand);\n  outline-offset: var(--dimension-space-025);\n}\n\n.questionnaire__choice input {\n  width: var(--dimension-size-200);\n  height: var(--dimension-size-200);\n  margin: 0;\n  accent-color: var(--color-background-bold-brand);\n}\n\n.questionnaire__choice-copy {\n  gap: var(--dimension-space-025);\n}\n\n.questionnaire__other {\n  display: grid;\n}\n\n.questionnaire__choice--other {\n  border: 0;\n  border-radius: inherit;\n}\n\n.questionnaire__other-input,\n.questionnaire__text-input {\n  width: 100%;\n  padding: var(--dimension-space-100);\n  border: var(--dimension-stroke-width-012) solid var(--color-border-secondary);\n  border-radius: var(--dimension-radius-050);\n  outline: none;\n  background: var(--color-background-primary);\n  color: var(--color-foreground-primary);\n  font-family: var(--typography-font-family);\n  font-size: var(--typography-fontsize-md);\n  font-weight: var(--typography-weight-regular);\n  line-height: var(--typography-lineheight-md);\n  letter-spacing: var(--typography-letterspacing-negative-half);\n  box-sizing: border-box;\n  -webkit-user-select: text;\n  user-select: text;\n}\n\n.questionnaire__other-input {\n  width: auto;\n  margin: 0 var(--dimension-space-100) var(--dimension-space-100)\n    calc(var(--dimension-size-200) + var(--dimension-space-200));\n}\n\n.questionnaire__text-input {\n  min-height: calc(var(--typography-lineheight-md) * 4 + var(--dimension-space-200));\n  resize: vertical;\n}\n\n.questionnaire__other-input:focus,\n.questionnaire__text-input:focus {\n  border-color: var(--color-border-bold-brand);\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-018)\n    var(--color-border-bold-brand);\n}\n\n.questionnaire__other-input[aria-invalid='true'],\n.questionnaire__text-input[aria-invalid='true'] {\n  border-color: var(--color-border-bold-negative);\n}\n\n.questionnaire__error,\n.questionnaire__submission-error {\n  gap: var(--dimension-space-050);\n  color: var(--color-foreground-bold-negative);\n}\n\n.questionnaire__submission-error {\n  padding: var(--dimension-space-075);\n  border-radius: var(--dimension-radius-050);\n  background: var(--color-background-faint-negative);\n}\n\n.questionnaire__actions-leading {\n  flex-wrap: wrap;\n  gap: var(--dimension-space-075);\n}\n\n.questionnaire__primary-action,\n.questionnaire__secondary-action,\n.questionnaire__quiet-action {\n  min-height: var(--dimension-size-400);\n  padding: var(--dimension-space-075) var(--dimension-space-150);\n  border-radius: var(--dimension-radius-025);\n  color: var(--color-foreground-primary);\n  cursor: pointer;\n  box-sizing: border-box;\n}\n\n.questionnaire__primary-action {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: var(--dimension-space-050);\n  border: var(--dimension-stroke-width-012) solid var(--color-border-bold-brand);\n  background: var(--color-background-bold-brand);\n  color: var(--color-foreground-on-bold-background-primary);\n}\n\n.questionnaire__secondary-action {\n  border: var(--dimension-stroke-width-012) solid var(--color-border-secondary);\n  background: var(--color-background-primary);\n}\n\n.questionnaire__quiet-action {\n  border: var(--dimension-stroke-width-012) solid transparent;\n  background: transparent;\n}\n\n.questionnaire__primary-action:focus-visible,\n.questionnaire__secondary-action:focus-visible,\n.questionnaire__quiet-action:focus-visible {\n  outline: var(--dimension-stroke-width-025) solid var(--color-border-bold-brand);\n  outline-offset: var(--dimension-space-025);\n}\n\n.questionnaire button:disabled,\n.questionnaire input:disabled,\n.questionnaire textarea:disabled {\n  color: var(--color-foreground-tertiary);\n  cursor: default;\n  opacity: 1;\n}\n\n.questionnaire__summary {\n  gap: var(--dimension-space-100);\n  margin: 0;\n  padding: 0;\n  list-style: none;\n}\n\n.questionnaire__summary li {\n  gap: var(--dimension-space-025);\n}\n\n@media (max-width: 480px) {\n  .questionnaire {\n    padding: var(--dimension-space-150);\n  }\n\n  .questionnaire__actions {\n    align-items: stretch;\n    flex-direction: column;\n  }\n\n  .questionnaire__actions-leading {\n    display: grid;\n    grid-template-columns: repeat(auto-fit, minmax(var(--dimension-size-800), 1fr));\n  }\n\n  .questionnaire__primary-action,\n  .questionnaire__secondary-action,\n  .questionnaire__quiet-action {\n    width: 100%;\n  }\n}\n\n@media (forced-colors: active) {\n  .questionnaire,\n  .questionnaire__choice,\n  .questionnaire__other {\n    border: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);\n    box-shadow: none;\n  }\n\n  .questionnaire__choice--selected {\n    outline: var(--dimension-stroke-width-025) solid var(--ds-forced-color-selected);\n    outline-offset: calc(-1 * var(--dimension-stroke-width-025));\n  }\n\n  .questionnaire__other-input[aria-invalid='true'],\n  .questionnaire__text-input[aria-invalid='true'] {\n    outline: var(--dimension-stroke-width-025) dashed var(--ds-forced-color-content);\n  }\n\n  .questionnaire__submission-error {\n    border: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);\n    background: var(--ds-forced-color-surface);\n  }\n\n  .questionnaire button:disabled,\n  .questionnaire input:disabled,\n  .questionnaire textarea:disabled {\n    color: var(--ds-forced-color-disabled);\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/AgentQuestionnaire/AgentQuestionnaire.tsx",
+      "content": "import {\n  Component,\n  Element,\n  Event,\n  EventEmitter,\n  h,\n  Host,\n  Method,\n  Prop,\n  State,\n  Watch,\n} from '@stencil/core';\nimport type {\n  AgentQuestion,\n  AgentQuestionAnswer,\n  AgentQuestionnaireAnswerEventDetail,\n  AgentQuestionnaireCancelEventDetail,\n  AgentQuestionnaireLabels,\n  AgentQuestionnaireStatus,\n} from '../conversation-types';\nimport {\n  createQuestionnaireDrafts,\n  formatQuestionAnswer,\n  normalizeQuestionAnswer,\n  validateQuestionDraft,\n} from './agent-questionnaire-model';\nimport type {\n  AgentQuestionDraft,\n  AgentQuestionDrafts,\n} from './agent-questionnaire-model';\n\nconst DEFAULT_LABELS: AgentQuestionnaireLabels = {\n  progress: 'Question {current} of {total}',\n  previous: 'Previous',\n  next: 'Next',\n  answer: 'Answer',\n  skip: 'Skip',\n  cancel: 'Cancel',\n  other: 'Other',\n  otherPlaceholder: 'Enter another answer',\n  preparing: 'Preparing questions…',\n};\n\nlet questionnaireId = 0;\n\n@Component({\n  tag: 'ds-agent-questionnaire',\n  styleUrl: 'AgentQuestionnaire.css',\n  scoped: true,\n})\nexport class AgentQuestionnaire {\n  @Element() el!: HTMLElement;\n\n  @Prop() requestId!: string;\n  @Prop() questions!: AgentQuestion[];\n  @Prop() answers: AgentQuestionAnswer[] = [];\n  @Prop() status: AgentQuestionnaireStatus = 'ready';\n  @Prop() errorMessage?: string;\n  @Prop() allowCancel: boolean = false;\n  @Prop() labels?: Partial<AgentQuestionnaireLabels>;\n\n  @Event() dsAnswer!: EventEmitter<AgentQuestionnaireAnswerEventDetail>;\n  @Event() dsCancel!: EventEmitter<AgentQuestionnaireCancelEventDetail>;\n\n  @State() private currentStep = 0;\n  @State() private drafts: AgentQuestionDrafts = {};\n  @State() private validation: Record<string, string> = {};\n\n  private readonly instanceId = ++questionnaireId;\n  private answerPending = false;\n\n  componentWillLoad() {\n    this.resetDraft();\n  }\n\n  @Watch('requestId')\n  handleRequestChange() {\n    this.resetDraft();\n  }\n\n  @Watch('questions')\n  handleQuestionsChange() {\n    this.resetDraft();\n  }\n\n  @Watch('status')\n  handleStatusChange(status: AgentQuestionnaireStatus) {\n    if (status !== 'submitting') this.answerPending = false;\n  }\n\n  @Method()\n  async setFocus(): Promise<void> {\n    this.focusCurrentControl();\n  }\n\n  private get copy(): AgentQuestionnaireLabels {\n    return { ...DEFAULT_LABELS, ...this.labels };\n  }\n\n  private get disabled(): boolean {\n    return this.status === 'submitting';\n  }\n\n  private resetDraft() {\n    this.currentStep = 0;\n    this.drafts = createQuestionnaireDrafts(this.questions ?? [], this.answers ?? []);\n    this.validation = {};\n    this.answerPending = false;\n  }\n\n  private focusCurrentControl() {\n    const focus = () => {\n      const control = this.el.querySelector<HTMLElement>(\n        '[data-question-control]:not([disabled])',\n      );\n      const action = this.el.querySelector<HTMLElement>(\n        '[data-question-action]:not([disabled])',\n      );\n      (control ?? action)?.focus();\n    };\n    focus();\n    requestAnimationFrame(focus);\n    setTimeout(focus, 0);\n  }\n\n  private updateDraft(questionId: string, update: Partial<AgentQuestionDraft>) {\n    const previous = this.drafts[questionId] ?? {\n      value: '',\n      otherSelected: false,\n      otherText: '',\n      skipped: false,\n    };\n    this.drafts = {\n      ...this.drafts,\n      [questionId]: { ...previous, ...update, skipped: false },\n    };\n    if (this.validation[questionId]) {\n      const { [questionId]: _removed, ...rest } = this.validation;\n      this.validation = rest;\n    }\n  }\n\n  private validate(question: AgentQuestion): boolean {\n    const message = validateQuestionDraft(question, this.drafts[question.id]);\n    if (!message) return true;\n    this.validation = { ...this.validation, [question.id]: message };\n    this.focusCurrentControl();\n    return false;\n  }\n\n  private move(step: number) {\n    this.currentStep = Math.min(Math.max(step, 0), this.questions.length - 1);\n    this.focusCurrentControl();\n  }\n\n  private next(question: AgentQuestion) {\n    if (!this.validate(question)) return;\n    this.move(this.currentStep + 1);\n  }\n\n  private skip(question: AgentQuestion) {\n    if (question.required) return;\n    this.drafts = {\n      ...this.drafts,\n      [question.id]: {\n        ...(this.drafts[question.id] ?? {\n          value: '',\n          otherSelected: false,\n          otherText: '',\n        }),\n        skipped: true,\n      },\n    };\n    if (this.currentStep < this.questions.length - 1) this.move(this.currentStep + 1);\n    else this.submit();\n  }\n\n  private submit() {\n    if (this.disabled || this.answerPending) return;\n    const invalidIndex = this.questions.findIndex(\n      question => !this.validateWithoutFocus(question),\n    );\n    if (invalidIndex >= 0) {\n      this.currentStep = invalidIndex;\n      this.focusCurrentControl();\n      return;\n    }\n\n    this.answerPending = true;\n    this.dsAnswer.emit({\n      requestId: this.requestId,\n      answers: this.questions.map(question =>\n        normalizeQuestionAnswer(question, this.drafts[question.id]),\n      ),\n    });\n  }\n\n  private validateWithoutFocus(question: AgentQuestion): boolean {\n    const message = validateQuestionDraft(question, this.drafts[question.id]);\n    if (!message) return true;\n    this.validation = { ...this.validation, [question.id]: message };\n    return false;\n  }\n\n  private progressLabel(): string {\n    return this.copy.progress\n      .split('{current}')\n      .join(String(this.currentStep + 1))\n      .split('{total}')\n      .join(String(this.questions.length));\n  }\n\n  private renderChoice(\n    question: AgentQuestion,\n    choice: NonNullable<AgentQuestion['choices']>[number],\n  ) {\n    const draft = this.drafts[question.id];\n    const multiple = question.type === 'multiple';\n    const checked = multiple\n      ? Array.isArray(draft.value) && draft.value.includes(choice.value)\n      : draft.value === choice.value && !draft.otherSelected;\n    const inputId = `ds-agent-questionnaire-${this.instanceId}-${this.currentStep}-${choice.value}`;\n    return (\n      <label class={{ questionnaire__choice: true, 'questionnaire__choice--selected': checked }} htmlFor={inputId}>\n        <input\n          id={inputId}\n          data-question-control\n          type={multiple ? 'checkbox' : 'radio'}\n          name={`ds-agent-question-${this.instanceId}-${question.id}`}\n          form={`ds-agent-questionnaire-detached-${this.instanceId}`}\n          value={choice.value}\n          checked={checked}\n          disabled={this.disabled}\n          onChange={() => {\n            if (multiple) {\n              const values = Array.isArray(draft.value) ? draft.value : [];\n              this.updateDraft(question.id, {\n                value: checked\n                  ? values.filter(value => value !== choice.value)\n                  : [...values, choice.value],\n              });\n            } else {\n              this.updateDraft(question.id, {\n                value: choice.value,\n                otherSelected: false,\n              });\n            }\n          }}\n        />\n        <span class=\"questionnaire__choice-copy\">\n          <ds-text as=\"span\" variant=\"text-body-medium\" emphasis>{choice.label}</ds-text>\n          {choice.description ? (\n            <ds-text as=\"span\" variant=\"text-body-small\" color=\"secondary\">\n              {choice.description}\n            </ds-text>\n          ) : null}\n        </span>\n      </label>\n    );\n  }\n\n  private renderOther(question: AgentQuestion) {\n    if (!question.allowOther || question.type === 'text') return null;\n    const draft = this.drafts[question.id];\n    const inputId = `ds-agent-questionnaire-${this.instanceId}-${this.currentStep}-other`;\n    return (\n      <div class={{ questionnaire__other: true, 'questionnaire__choice--selected': draft.otherSelected }}>\n        <label class=\"questionnaire__choice questionnaire__choice--other\" htmlFor={inputId}>\n          <input\n            id={inputId}\n            data-question-control\n            type={question.type === 'multiple' ? 'checkbox' : 'radio'}\n            name={`ds-agent-question-${this.instanceId}-${question.id}`}\n            form={`ds-agent-questionnaire-detached-${this.instanceId}`}\n            checked={draft.otherSelected}\n            disabled={this.disabled}\n            onChange={() => {\n              this.updateDraft(question.id, {\n                otherSelected:\n                  question.type === 'multiple' ? !draft.otherSelected : true,\n                value: question.type === 'single' ? '' : draft.value,\n              });\n              requestAnimationFrame(() =>\n                this.el.querySelector<HTMLInputElement>(`#${inputId}-text`)?.focus(),\n              );\n            }}\n          />\n          <ds-text as=\"span\" variant=\"text-body-medium\" emphasis>{this.copy.other}</ds-text>\n        </label>\n        {draft.otherSelected ? (\n          <input\n            id={`${inputId}-text`}\n            class=\"questionnaire__other-input\"\n            data-question-control\n            type=\"text\"\n            form={`ds-agent-questionnaire-detached-${this.instanceId}`}\n            value={draft.otherText}\n            placeholder={this.copy.otherPlaceholder}\n            aria-label={this.copy.other}\n            aria-invalid={this.validation[question.id] ? 'true' : undefined}\n            aria-describedby={this.validation[question.id] ? `${inputId}-error` : undefined}\n            disabled={this.disabled}\n            onInput={(event: Event) =>\n              this.updateDraft(question.id, {\n                otherText: (event.target as HTMLInputElement).value,\n              })\n            }\n          />\n        ) : null}\n      </div>\n    );\n  }\n\n  private renderQuestion(question: AgentQuestion) {\n    const draft = this.drafts[question.id];\n    const errorId = `ds-agent-questionnaire-${this.instanceId}-${this.currentStep}-error`;\n    return (\n      <div class=\"questionnaire__body\">\n        <div class=\"questionnaire__prompt\">\n          <ds-text as=\"h2\" variant=\"text-title-small\">{question.question}</ds-text>\n          {question.description ? (\n            <ds-text variant=\"text-body-small\" color=\"secondary\">\n              {question.description}\n            </ds-text>\n          ) : null}\n        </div>\n        {question.type === 'text' ? (\n          <textarea\n            class=\"questionnaire__text-input\"\n            data-question-control\n            value={typeof draft.value === 'string' ? draft.value : ''}\n            form={`ds-agent-questionnaire-detached-${this.instanceId}`}\n            placeholder={question.placeholder}\n            aria-label={question.question}\n            aria-invalid={this.validation[question.id] ? 'true' : undefined}\n            aria-describedby={this.validation[question.id] ? errorId : undefined}\n            disabled={this.disabled}\n            rows={4}\n            onInput={(event: Event) =>\n              this.updateDraft(question.id, {\n                value: (event.target as HTMLTextAreaElement).value,\n              })\n            }\n          />\n        ) : (\n          <fieldset\n            class=\"questionnaire__choices\"\n            aria-describedby={this.validation[question.id] ? errorId : undefined}\n          >\n            <legend class=\"ds-visually-hidden\">{question.question}</legend>\n            {question.choices?.map(choice => this.renderChoice(question, choice))}\n            {this.renderOther(question)}\n          </fieldset>\n        )}\n        {this.validation[question.id] ? (\n          <div id={errorId} class=\"questionnaire__error\" role=\"alert\">\n            <ds-icon name=\"ErrorTriangle\" size=\"xs\" color=\"inherit\" />\n            <ds-text variant=\"text-body-small\" color=\"negative\">\n              {this.validation[question.id]}\n            </ds-text>\n          </div>\n        ) : null}\n      </div>\n    );\n  }\n\n  private renderAnswered() {\n    return (\n      <div class=\"questionnaire questionnaire--answered\">\n        <ol class=\"questionnaire__summary\">\n          {this.questions.map(question => (\n            <li>\n              <ds-text variant=\"text-body-small\" emphasis>{question.question}</ds-text>\n              <ds-text variant=\"text-body-small\" color=\"secondary\">\n                {formatQuestionAnswer(\n                  question,\n                  this.answers.find(answer => answer.questionId === question.id),\n                )}\n              </ds-text>\n            </li>\n          ))}\n        </ol>\n      </div>\n    );\n  }\n\n  render() {\n    if (this.status === 'preparing') {\n      return (\n        <Host>\n          <div class=\"questionnaire questionnaire--preparing\" role=\"status\">\n            <ds-loader size=\"sm\" />\n            <ds-text variant=\"text-body-medium\">{this.copy.preparing}</ds-text>\n          </div>\n        </Host>\n      );\n    }\n    if (!this.questions?.length) return null;\n    if (this.status === 'answered') return <Host>{this.renderAnswered()}</Host>;\n\n    const question = this.questions[this.currentStep];\n    const last = this.currentStep === this.questions.length - 1;\n    const canSkip = Boolean(question.skippable && !question.required);\n    return (\n      <Host>\n        <section\n          class={{\n            questionnaire: true,\n            'questionnaire--submitting': this.disabled,\n            'questionnaire--error': this.status === 'error',\n          }}\n          aria-busy={this.disabled ? 'true' : undefined}\n          aria-label={question.question}\n        >\n          <header class=\"questionnaire__header\">\n            <ds-text variant=\"text-caption\" color=\"secondary\">{this.progressLabel()}</ds-text>\n            {this.allowCancel ? (\n              <button\n                class=\"questionnaire__quiet-action\"\n                data-question-action\n                type=\"button\"\n                disabled={this.disabled}\n                onClick={() => this.dsCancel.emit({ requestId: this.requestId })}\n              >\n                <ds-text as=\"span\" variant=\"text-body-small\" emphasis>\n                  {this.copy.cancel}\n                </ds-text>\n              </button>\n            ) : null}\n          </header>\n          {this.renderQuestion(question)}\n          {this.status === 'error' && this.errorMessage ? (\n            <div class=\"questionnaire__submission-error\" role=\"alert\">\n              <ds-icon name=\"ErrorTriangle\" size=\"xs\" color=\"inherit\" />\n              <ds-text variant=\"text-body-small\" color=\"negative\">{this.errorMessage}</ds-text>\n            </div>\n          ) : null}\n          <footer class=\"questionnaire__actions\">\n            <div class=\"questionnaire__actions-leading\">\n              {this.currentStep > 0 ? (\n                <button\n                  class=\"questionnaire__secondary-action\"\n                  data-question-action\n                  type=\"button\"\n                  disabled={this.disabled}\n                  onClick={() => this.move(this.currentStep - 1)}\n                >\n                  <ds-text as=\"span\" variant=\"text-body-small\" emphasis>\n                    {this.copy.previous}\n                  </ds-text>\n                </button>\n              ) : null}\n              {canSkip ? (\n                <button\n                  class=\"questionnaire__quiet-action\"\n                  data-question-action\n                  type=\"button\"\n                  disabled={this.disabled}\n                  onClick={() => this.skip(question)}\n                >\n                  <ds-text as=\"span\" variant=\"text-body-small\" emphasis>\n                    {this.copy.skip}\n                  </ds-text>\n                </button>\n              ) : null}\n            </div>\n            <button\n              class=\"questionnaire__primary-action\"\n              data-question-action\n              type=\"button\"\n              disabled={this.disabled}\n              onClick={() => (last ? this.submit() : this.next(question))}\n            >\n              {this.disabled ? <ds-loader size=\"xs\" color=\"inherit\" /> : null}\n              <ds-text as=\"span\" variant=\"text-body-small\" emphasis>\n                {last ? this.copy.answer : this.copy.next}\n              </ds-text>\n            </button>\n          </footer>\n        </section>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/AgentQuestionnaire/agent-questionnaire-model.ts",
+      "content": "import type {\n  AgentQuestion,\n  AgentQuestionAnswer,\n} from '../conversation-types';\n\nexport interface AgentQuestionDraft {\n  value: string | string[];\n  otherSelected: boolean;\n  otherText: string;\n  skipped: boolean;\n}\n\nexport type AgentQuestionDrafts = Record<string, AgentQuestionDraft>;\n\nfunction answerFor(\n  answers: AgentQuestionAnswer[],\n  questionId: string,\n): AgentQuestionAnswer | undefined {\n  return answers.find(answer => answer.questionId === questionId);\n}\n\nexport function createQuestionnaireDrafts(\n  questions: AgentQuestion[],\n  answers: AgentQuestionAnswer[],\n): AgentQuestionDrafts {\n  return Object.fromEntries(\n    questions.map(question => {\n      const answer = answerFor(answers, question.id);\n      const choiceValues = new Set(question.choices?.map(choice => choice.value) ?? []);\n\n      if (question.type === 'multiple') {\n        const values = Array.isArray(answer?.value) ? answer.value : [];\n        const known = values.filter(value => choiceValues.has(value));\n        const other = values.find(value => !choiceValues.has(value)) ?? '';\n        return [\n          question.id,\n          {\n            value: known,\n            otherSelected: Boolean(question.allowOther && other),\n            otherText: question.allowOther ? other : '',\n            skipped: answer?.value === null,\n          },\n        ];\n      }\n\n      const value = typeof answer?.value === 'string' ? answer.value : '';\n      const isKnownChoice = question.type === 'single' && choiceValues.has(value);\n      return [\n        question.id,\n        {\n          value: question.type === 'single' && !isKnownChoice ? '' : value,\n          otherSelected: Boolean(\n            question.type === 'single' && question.allowOther && value && !isKnownChoice,\n          ),\n          otherText:\n            question.type === 'single' && question.allowOther && value && !isKnownChoice\n              ? value\n              : '',\n          skipped: answer?.value === null,\n        },\n      ];\n    }),\n  );\n}\n\nexport function normalizeQuestionAnswer(\n  question: AgentQuestion,\n  draft: AgentQuestionDraft,\n): AgentQuestionAnswer {\n  if (draft.skipped) return { questionId: question.id, value: null };\n\n  if (question.type === 'multiple') {\n    const values = Array.isArray(draft.value) ? [...draft.value] : [];\n    if (draft.otherSelected && draft.otherText.trim()) values.push(draft.otherText.trim());\n    return {\n      questionId: question.id,\n      value: values.length || question.required ? values : null,\n    };\n  }\n\n  if (draft.otherSelected) {\n    const other = draft.otherText.trim();\n    return { questionId: question.id, value: other || null };\n  }\n\n  const value = typeof draft.value === 'string' ? draft.value.trim() : '';\n  return { questionId: question.id, value: value || null };\n}\n\nexport function validateQuestionDraft(\n  question: AgentQuestion,\n  draft: AgentQuestionDraft,\n): string | undefined {\n  if (\n    (question.type === 'single' || question.type === 'multiple') &&\n    !question.choices?.length\n  ) {\n    return 'This question has no available choices.';\n  }\n\n  if (draft.otherSelected && !draft.otherText.trim()) {\n    return 'Enter a response for Other.';\n  }\n\n  if (!question.required || draft.skipped) return undefined;\n  const answer = normalizeQuestionAnswer(question, draft).value;\n  const missing = answer === null || (Array.isArray(answer) && answer.length === 0);\n  if (!missing) return undefined;\n  return question.type === 'text'\n    ? 'Enter an answer before continuing.'\n    : 'Choose an answer before continuing.';\n}\n\nexport function formatQuestionAnswer(\n  question: AgentQuestion,\n  answer: AgentQuestionAnswer | undefined,\n): string {\n  if (!answer || answer.value === null) return 'Skipped';\n  const values = Array.isArray(answer.value) ? answer.value : [answer.value];\n  const labels = new Map(question.choices?.map(choice => [choice.value, choice.label]) ?? []);\n  return values.map(value => labels.get(value) ?? value).join(', ');\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

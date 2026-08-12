@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "agent-tool-call",
   "title": "AgentToolCall",
-  "description": "Display-only disclosure for an agent tool call, its safe input or output, and execution status.",
+  "description": "Compact display-only status row for a provider-neutral agent tool lifecycle with optional custom result and diagnostic disclosure surfaces.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
@@ -13,12 +13,12 @@
     "intent": {
       "audience": "specialized",
       "status": "experimental",
-      "summary": "Display-only disclosure for an agent tool call, its safe input or output, and execution status.",
+      "summary": "Compact display-only status row for a provider-neutral agent tool lifecycle with optional custom result and diagnostic disclosure surfaces.",
       "useWhen": [
-        "A prototype or agent product needs to expose user-safe tool execution detail."
+        "An agent product needs to expose user-safe tool preparation, queueing, execution, participant wait, completion, failure, denial, or cancellation state."
       ],
       "avoidWhen": [
-        "A participant must approve, deny, edit, or retry the tool call; those are product controls outside this component."
+        "A participant must approve, deny, edit, retry, or execute the tool call; those product controls and consequences remain outside this component."
       ],
       "commonlyComposedWith": [
         "component:ds-agent-response",
@@ -28,25 +28,21 @@
         "pattern:agent-chat"
       ],
       "accessibility": [
-        "Queued, running, success, error, and denied states are available as text.",
-        "The disclosure uses native keyboard and expanded-state semantics.",
-        "Structured input, output, and error details share the semantic code-family fallback and optional ligature override."
+        "Every lifecycle state remains visible as text and error or denied meaning does not depend on color.",
+        "A disclosure is rendered only when details exist and uses native keyboard and expanded-state semantics."
       ],
       "states": [
-        "This component presents state but never executes a tool or owns approval policy.",
-        "Applications load font assets once at their root; tool details never fetch or package a font."
+        "Applications normalize provider-specific tool states and may localize the visible status label before rendering.",
+        "A custom summary replaces the generated name, a custom result owns the primary result surface, and custom details replace generic input, output, and error diagnostics.",
+        "This component presents state but never executes a tool or owns approval, retry, authorization, transport, or consequence policy."
       ],
       "responsiveBehavior": [
-        "Structured detail wraps and scrolls without widening the transcript."
+        "Long names and state labels wrap inside the compact row while structured diagnostics scroll without widening the transcript."
       ],
       "references": [
         {
-          "label": "Storybook examples",
-          "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
-        },
-        {
-          "label": "Font ownership and loading",
-          "path": "docs/font-ownership.md"
+          "label": "Lifecycle and slot stories",
+          "path": "src/wc/components/AgentToolCall/AgentToolCall.stories.ts"
         }
       ]
     },
@@ -97,14 +93,29 @@
         },
         "state": {
           "type": "AgentToolState",
-          "resolvedType": "\"denied\" | \"error\" | \"queued\" | \"running\" | \"success\"",
+          "resolvedType": "\"canceled\" | \"denied\" | \"error\" | \"preparing\" | \"queued\" | \"running\" | \"success\" | \"waiting-for-user\"",
           "attribute": "state",
           "default": "'queued'",
           "required": false,
           "mutable": false
+        },
+        "statusLabel": {
+          "type": "string",
+          "resolvedType": "string | undefined",
+          "attribute": "status-label",
+          "required": false,
+          "mutable": false
         }
       },
-      "events": [],
+      "events": [
+        {
+          "name": "dsOpenChange",
+          "detail": "{ open: boolean }",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
       "methods": [],
       "slots": []
     },
@@ -154,14 +165,29 @@
       },
       "state": {
         "type": "AgentToolState",
-        "resolvedType": "\"denied\" | \"error\" | \"queued\" | \"running\" | \"success\"",
+        "resolvedType": "\"canceled\" | \"denied\" | \"error\" | \"preparing\" | \"queued\" | \"running\" | \"success\" | \"waiting-for-user\"",
         "attribute": "state",
         "default": "'queued'",
         "required": false,
         "mutable": false
+      },
+      "statusLabel": {
+        "type": "string",
+        "resolvedType": "string | undefined",
+        "attribute": "status-label",
+        "required": false,
+        "mutable": false
       }
     },
-    "events": [],
+    "events": [
+      {
+        "name": "dsOpenChange",
+        "detail": "{ open: boolean }",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
     "methods": [],
     "slots": [],
     "exports": {
@@ -187,7 +213,7 @@
       "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: input, output.",
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens ^6.2.1",
+          "@ds-mo/tokens ^6.0.0",
           "@ds-mo/icons ^6.6.0"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
@@ -207,12 +233,12 @@
   "files": [
     {
       "path": "src/wc/components/AgentToolCall/AgentToolCall.css",
-      "content": ":host { display: block; }\n.agent-tool { border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary); border-radius: var(--dimension-radius-050); }\nsummary { align-items: center; cursor: default; display: grid; gap: var(--dimension-space-050); grid-template-columns: auto minmax(0, 1fr) auto; list-style: none; padding: var(--dimension-space-075) var(--dimension-space-100); }\nsummary::-webkit-details-marker { display: none; }\n.agent-tool__status { align-items: center; color: var(--color-foreground-faint-neutral); display: flex; }\n.agent-tool--running .agent-tool__status, .agent-tool--queued .agent-tool__status { color: var(--color-foreground-faint-brand); }\n.agent-tool--error .agent-tool__status, .agent-tool--denied .agent-tool__status { color: var(--color-foreground-bold-negative); }\n.agent-tool__title { display: grid; gap: var(--dimension-space-025); }\ndetails[open] .agent-tool__chevron { transform: rotate(90deg); }\n.agent-tool__details { display: grid; gap: var(--dimension-space-075); padding: 0 var(--dimension-space-100) var(--dimension-space-100); }\nsection { display: grid; gap: var(--dimension-space-025); }\npre {\n  margin: 0;\n  padding: var(--dimension-space-075);\n  overflow: auto;\n  border-radius: var(--dimension-radius-050);\n  background: var(--color-background-secondary);\n  font-family: var(\n    --typography-font-family-code,\n    'Fira Code', ui-monospace, 'SFMono-Regular', 'Cascadia Code', 'Roboto Mono',\n    Menlo, Monaco, Consolas, 'Liberation Mono', monospace\n  );\n  font-variant-ligatures: var(--ds-code-font-variant-ligatures, normal);\n  font-weight: var(--typography-weight-regular);\n  white-space: pre-wrap;\n}\n\n@media (prefers-reduced-motion: no-preference) { .agent-tool__chevron { transition: transform var(--effect-motion-short-2); } }\n",
+      "content": "@import '../../utils/forced-colors.css';\n\n:host {\n  display: block;\n  min-width: 0;\n}\n\n.agent-tool {\n  min-width: 0;\n  color: var(--color-foreground-secondary);\n}\n\ndetails {\n  margin: 0;\n}\n\nsummary,\n.agent-tool__row {\n  min-width: 0;\n  padding: var(--dimension-space-050) 0;\n}\n\nsummary {\n  cursor: pointer;\n  list-style: none;\n}\n\nsummary::-webkit-details-marker {\n  display: none;\n}\n\n.agent-tool__summary-content {\n  display: grid;\n  align-items: center;\n  grid-template-columns: auto minmax(0, 1fr) auto;\n  gap: var(--dimension-space-075);\n  min-width: 0;\n}\n\n.agent-tool__status-icon {\n  display: flex;\n  align-items: center;\n  color: var(--color-foreground-faint-neutral);\n}\n\n.agent-tool--preparing .agent-tool__status-icon,\n.agent-tool--queued .agent-tool__status-icon,\n.agent-tool--running .agent-tool__status-icon {\n  color: var(--color-foreground-faint-brand);\n}\n\n.agent-tool--waiting-for-user .agent-tool__status-icon {\n  color: var(--color-foreground-bold-warning);\n}\n\n.agent-tool--error .agent-tool__status-icon,\n.agent-tool--denied .agent-tool__status-icon {\n  color: var(--color-foreground-bold-negative);\n}\n\n.agent-tool__title {\n  display: flex;\n  align-items: baseline;\n  flex-wrap: wrap;\n  gap: var(--dimension-space-025) var(--dimension-space-075);\n  min-width: 0;\n  overflow-wrap: anywhere;\n}\n\n.agent-tool__chevron {\n  transition: none;\n}\n\ndetails[open] .agent-tool__chevron {\n  transform: rotate(90deg);\n}\n\n.agent-tool__details,\n.agent-tool__diagnostics {\n  display: grid;\n  gap: var(--dimension-space-075);\n}\n\n.agent-tool__details {\n  padding: var(--dimension-space-050) 0 var(--dimension-space-100)\n    calc(var(--dimension-size-200) + var(--dimension-space-075));\n}\n\n.agent-tool__diagnostics section {\n  display: grid;\n  gap: var(--dimension-space-025);\n}\n\npre {\n  max-width: 100%;\n  margin: 0;\n  padding: var(--dimension-space-075);\n  overflow: auto;\n  border-radius: var(--dimension-radius-050);\n  background: var(--color-background-secondary);\n  color: var(--color-foreground-primary);\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n}\n\n.agent-tool__result {\n  min-width: 0;\n  padding-block: var(--dimension-space-050);\n}\n\nsummary:focus-visible {\n  border-radius: var(--dimension-radius-025);\n  outline: var(--dimension-stroke-width-025) solid var(--color-border-bold-brand);\n  outline-offset: var(--dimension-space-025);\n}\n\n@media (prefers-reduced-motion: no-preference) {\n  .agent-tool__chevron {\n    transition: transform var(--effect-motion-short-2);\n  }\n}\n\n@media (forced-colors: active) {\n  summary:focus-visible {\n    outline-color: var(--ds-forced-color-selected);\n  }\n\n  .agent-tool--error .agent-tool__summary-content,\n  .agent-tool--denied .agent-tool__summary-content {\n    border-inline-start: var(--dimension-stroke-width-025) solid\n      var(--ds-forced-color-content);\n    padding-inline-start: var(--dimension-space-050);\n  }\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/AgentToolCall/AgentToolCall.tsx",
-      "content": "import { Component, Prop, h, Host } from '@stencil/core';\nimport type { AgentToolState } from '../conversation-types';\n\n@Component({ tag: 'ds-agent-tool-call', styleUrl: 'AgentToolCall.css', scoped: true })\nexport class AgentToolCall {\n  @Prop() name: string = '';\n  @Prop() label: string = '';\n  @Prop() state: AgentToolState = 'queued';\n  @Prop() input?: unknown;\n  @Prop() output?: unknown;\n  @Prop() error?: string;\n  @Prop() open: boolean = false;\n\n  private serialize(value: unknown) {\n    if (value === undefined) return '';\n    if (typeof value === 'string') return value;\n    try { return JSON.stringify(value, null, 2); } catch { return String(value); }\n  }\n\n  render() {\n    const active = this.state === 'queued' || this.state === 'running';\n    const status = this.state.charAt(0).toUpperCase() + this.state.slice(1);\n    return (\n      <Host>\n        <details class={`agent-tool agent-tool--${this.state}`} open={this.open}>\n          <summary>\n            <span class=\"agent-tool__status\" aria-hidden=\"true\">\n              {active ? <ds-loader size=\"xs\" color=\"inherit\" /> : <ds-icon name={this.state === 'success' ? 'Check' : 'ErrorTriangle'} size=\"xs\" color=\"inherit\" />}\n            </span>\n            <span class=\"agent-tool__title\">\n              <ds-text variant=\"text-body-small\" emphasis>{this.label || this.name}</ds-text>\n              <ds-text variant=\"text-caption\" color=\"secondary\">{status}</ds-text>\n            </span>\n            <ds-icon class=\"agent-tool__chevron\" name=\"ChevronRight\" size=\"xs\" color=\"inherit\" />\n          </summary>\n          <div class=\"agent-tool__details\">\n            {this.input !== undefined ? <section><ds-text variant=\"text-caption\" emphasis>Input</ds-text><pre>{this.serialize(this.input)}</pre></section> : null}\n            {this.output !== undefined ? <section><ds-text variant=\"text-caption\" emphasis>Output</ds-text><pre>{this.serialize(this.output)}</pre></section> : null}\n            {this.error ? <section><ds-text variant=\"text-caption\" emphasis>Error</ds-text><pre>{this.error}</pre></section> : null}\n          </div>\n        </details>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import {\n  Component,\n  Element,\n  Event,\n  EventEmitter,\n  h,\n  Host,\n  Prop,\n  State,\n} from '@stencil/core';\nimport type { AgentToolState } from '../conversation-types';\n\nconst STATUS_LABELS: Record<AgentToolState, string> = {\n  preparing: 'Preparing',\n  queued: 'Queued',\n  running: 'Running',\n  'waiting-for-user': 'Waiting for your response',\n  success: 'Completed',\n  error: 'Failed',\n  denied: 'Permission denied',\n  canceled: 'Canceled',\n};\n\n@Component({ tag: 'ds-agent-tool-call', styleUrl: 'AgentToolCall.css', scoped: true })\nexport class AgentToolCall {\n  @Element() el!: HTMLElement;\n\n  @Prop() name: string = '';\n  @Prop() label: string = '';\n  @Prop() state: AgentToolState = 'queued';\n  @Prop() statusLabel?: string;\n  @Prop() input?: unknown;\n  @Prop() output?: unknown;\n  @Prop() error?: string;\n  @Prop() open: boolean = false;\n\n  @Event() dsOpenChange!: EventEmitter<{ open: boolean }>;\n\n  @State() private hasSummary = false;\n  @State() private hasResult = false;\n  @State() private hasDetails = false;\n\n  private slotObserver?: MutationObserver;\n\n  componentWillLoad() {\n    this.syncSlots();\n  }\n\n  componentDidLoad() {\n    this.syncSlots();\n    this.slotObserver = new MutationObserver(() => this.syncSlots());\n    this.slotObserver.observe(this.el, {\n      childList: true,\n      subtree: false,\n      attributes: true,\n      attributeFilter: ['slot'],\n    });\n  }\n\n  disconnectedCallback() {\n    this.slotObserver?.disconnect();\n  }\n\n  private syncSlots() {\n    this.hasSummary = Boolean(this.el.querySelector('[slot=\"summary\"]'));\n    this.hasResult = Boolean(this.el.querySelector('[slot=\"result\"]'));\n    this.hasDetails = Boolean(this.el.querySelector('[slot=\"details\"]'));\n  }\n\n  private serialize(value: unknown) {\n    if (value === undefined) return '';\n    if (typeof value === 'string') return value;\n    try {\n      return JSON.stringify(value, null, 2);\n    } catch {\n      return String(value);\n    }\n  }\n\n  private get active(): boolean {\n    return ['preparing', 'queued', 'running'].includes(this.state);\n  }\n\n  private get expandable(): boolean {\n    return (\n      this.hasDetails ||\n      this.input !== undefined ||\n      this.output !== undefined ||\n      Boolean(this.error)\n    );\n  }\n\n  private renderStatusIcon() {\n    if (this.active) return <ds-loader size=\"xs\" color=\"inherit\" />;\n    if (this.state === 'success') {\n      return <ds-icon name=\"Check\" size=\"xs\" color=\"inherit\" />;\n    }\n    if (this.state === 'waiting-for-user') {\n      return <ds-icon name=\"Clock\" size=\"xs\" color=\"inherit\" />;\n    }\n    return <ds-icon name=\"ErrorTriangle\" size=\"xs\" color=\"inherit\" />;\n  }\n\n  private renderSummary(expandable: boolean) {\n    return (\n      <span class=\"agent-tool__summary-content\">\n        <span class=\"agent-tool__status-icon\" aria-hidden=\"true\">\n          {this.renderStatusIcon()}\n        </span>\n        <span class=\"agent-tool__title\">\n          {this.hasSummary ? (\n            <slot name=\"summary\" />\n          ) : (\n            <ds-text as=\"span\" variant=\"text-body-small\" emphasis>\n              {this.label || this.name}\n            </ds-text>\n          )}\n          <ds-text\n            class=\"agent-tool__state-label\"\n            as=\"span\"\n            variant=\"text-caption\"\n            color={['error', 'denied'].includes(this.state) ? 'negative' : 'secondary'}\n          >\n            {this.statusLabel ?? STATUS_LABELS[this.state]}\n          </ds-text>\n        </span>\n        {expandable ? (\n          <ds-icon\n            class=\"agent-tool__chevron\"\n            name=\"ChevronRight\"\n            size=\"xs\"\n            color=\"inherit\"\n          />\n        ) : null}\n      </span>\n    );\n  }\n\n  private renderGenericDetails() {\n    return (\n      <div class=\"agent-tool__diagnostics\">\n        {this.input !== undefined ? (\n          <section>\n            <ds-text variant=\"text-caption\" emphasis>Input</ds-text>\n            <pre>{this.serialize(this.input)}</pre>\n          </section>\n        ) : null}\n        {this.output !== undefined ? (\n          <section>\n            <ds-text variant=\"text-caption\" emphasis>Output</ds-text>\n            <pre>{this.serialize(this.output)}</pre>\n          </section>\n        ) : null}\n        {this.error ? (\n          <section>\n            <ds-text variant=\"text-caption\" emphasis>Error</ds-text>\n            <pre>{this.error}</pre>\n          </section>\n        ) : null}\n      </div>\n    );\n  }\n\n  private handleToggle = (event: Event) => {\n    this.dsOpenChange.emit({ open: (event.currentTarget as HTMLDetailsElement).open });\n  };\n\n  render() {\n    const expandable = this.expandable;\n    return (\n      <Host>\n        <div class={`agent-tool agent-tool--${this.state}`}>\n          {expandable ? (\n            <details open={this.open} onToggle={this.handleToggle}>\n              <summary>{this.renderSummary(true)}</summary>\n              <div class=\"agent-tool__details\">\n                {this.hasDetails ? <slot name=\"details\" /> : this.renderGenericDetails()}\n              </div>\n            </details>\n          ) : (\n            <div class=\"agent-tool__row\">{this.renderSummary(false)}</div>\n          )}\n          {this.hasResult ? (\n            <div class=\"agent-tool__result\">\n              <slot name=\"result\" />\n            </div>\n          ) : null}\n        </div>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

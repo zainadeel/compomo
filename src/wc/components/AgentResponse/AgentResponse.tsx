@@ -1,5 +1,6 @@
 import { Component, Prop, h, Host } from '@stencil/core';
 import type {
+  AgentResponseRenderMode,
   AgentResponsePart,
   MessageMetadataVisibility,
 } from '../conversation-types';
@@ -11,6 +12,8 @@ export class AgentResponse {
   @Prop() showAuthor: boolean = true;
   @Prop() timestamp: string = '';
   @Prop() parts: AgentResponsePart[] = [];
+  /** Renders serializable ordered parts or lets the default slot own the complete ordered body. */
+  @Prop() renderMode: AgentResponseRenderMode = 'parts';
   @Prop() streaming: boolean = false;
   /** Controls whether the complete message metadata footer is persistent or revealed through hover/focus. */
   @Prop() metadataVisibility: MessageMetadataVisibility = 'always';
@@ -43,6 +46,16 @@ export class AgentResponse {
         return <ds-attachment-list key={part.id} items={part.items} />;
       case 'sources':
         return <ds-agent-source-list key={part.id} items={part.items} />;
+      case 'questionnaire':
+        return (
+          <ds-agent-questionnaire
+            key={part.id}
+            requestId={part.requestId}
+            questions={part.questions}
+            answers={part.answers}
+            status="answered"
+          />
+        );
     }
   }
 
@@ -58,7 +71,13 @@ export class AgentResponse {
           streaming={this.streaming}
           metadataVisibility={this.metadataVisibility}
         >
-          <div class="agent-response">{this.parts.map(part => this.renderPart(part))}</div>
+          <div class="agent-response">
+            {this.renderMode === 'composed' ? (
+              <slot />
+            ) : (
+              this.parts.map(part => this.renderPart(part))
+            )}
+          </div>
           <slot name="footer" slot="footer" />
           <slot name="metadata-actions" slot="metadata-actions" />
           <slot name="actions" slot="actions" />

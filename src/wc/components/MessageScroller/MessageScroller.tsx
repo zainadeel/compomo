@@ -11,6 +11,7 @@ import {
 } from '@stencil/core';
 import type { MessageScrollerPosition } from '../conversation-types';
 import { ScrollOverlayController } from '../../utils/scroll-overlay-controller';
+import { resolveCssLengthPx } from '../../utils/resolve-css-length-px';
 
 const LIVE_EDGE_THRESHOLD = 24;
 
@@ -35,14 +36,31 @@ export class MessageScroller {
   private viewport?: HTMLElement;
   private content?: HTMLElement;
   private overlay?: HTMLElement;
+  private transcriptSlot?: HTMLSlotElement;
   private scrollOverlayController?: ScrollOverlayController;
   private mutationObserver?: MutationObserver;
   private following = true;
+  private followReleased = false;
   private atStart = false;
   private programmatic = false;
-  private previousScrollHeight = 0;
+  private programmaticTimer?: ReturnType<typeof setTimeout>;
+  private transcriptChildren: HTMLElement[] = [];
+  private knownTranscriptElements = new Set<HTMLElement>();
+  private knownTurnAnchors = new Set<HTMLElement>();
+  private firstChildViewportTop?: number;
+  private activeTurnAnchor?: HTMLElement;
+  private activeTurnAnchorViewportTop?: number;
+  private turnClearance = 0;
 
   componentDidLoad() {
+    this.transcriptChildren = this.getTranscriptChildren();
+    this.transcriptChildren.forEach(element => {
+      this.knownTranscriptElements.add(element);
+      if (element.matches('ds-message[scroll-anchor]')) {
+        this.knownTurnAnchors.add(element);
+      }
+    });
+    this.rememberFirstChildTop();
     this.connectObservers();
     requestAnimationFrame(() => this.applyDefaultPosition());
     document.addEventListener('selectionchange', this.handleSelectionChange);
@@ -51,6 +69,7 @@ export class MessageScroller {
   disconnectedCallback() {
     this.scrollOverlayController?.disconnect();
     this.mutationObserver?.disconnect();
+    if (this.programmaticTimer) clearTimeout(this.programmaticTimer);
     document.removeEventListener('selectionchange', this.handleSelectionChange);
   }
 
@@ -61,6 +80,7 @@ export class MessageScroller {
     ).find(item => item.messageId === id || item.getAttribute('message-id') === id);
     if (!message) return false;
     this.following = false;
+    this.followReleased = true;
     this.showScrollToLatest = true;
     message.scrollIntoView({ block: 'start', behavior: this.motionBehavior() });
     return true;
@@ -70,6 +90,7 @@ export class MessageScroller {
   async scrollToStart() {
     this.scrollTo(0);
     this.following = false;
+    this.followReleased = true;
     this.showScrollToLatest = Boolean(
       this.viewport && this.viewport.scrollHeight > this.viewport.clientHeight
     );
@@ -78,6 +99,7 @@ export class MessageScroller {
   @Method()
   async scrollToEnd() {
     this.following = true;
+    this.followReleased = false;
     this.showScrollToLatest = false;
     this.scrollTo(this.viewport?.scrollHeight ?? 0);
   }
@@ -89,25 +111,35 @@ export class MessageScroller {
   private scrollTo(top: number) {
     if (!this.viewport) return;
     this.programmatic = true;
-    this.viewport.scrollTo({ top, behavior: this.motionBehavior() });
-    requestAnimationFrame(() => {
+    const behavior = this.motionBehavior();
+    this.viewport.scrollTo({ top, behavior });
+    if (this.programmaticTimer) clearTimeout(this.programmaticTimer);
+    this.programmaticTimer = setTimeout(() => {
       this.programmatic = false;
-    });
+      this.programmaticTimer = undefined;
+      if (this.following) {
+        this.viewport!.scrollTop = top;
+        this.showScrollToLatest = false;
+      }
+    }, behavior === 'smooth' ? 600 : 0);
   }
 
   private connectObservers() {
     if (!this.viewport || !this.content || !this.overlay) return;
-    this.previousScrollHeight = this.viewport.scrollHeight;
     this.scrollOverlayController = new ScrollOverlayController({
       host: this.el,
       viewport: this.viewport,
       content: this.content,
       overlay: this.overlay,
+      overlayContentSelector: '.message-scroller__overlay-stack',
       onGeometryChange: () => this.handleContentGrowth(),
     });
     this.scrollOverlayController.connect();
-    this.mutationObserver = new MutationObserver(() => this.handleContentGrowth());
-    this.mutationObserver.observe(this.content, {
+    this.mutationObserver = new MutationObserver(() => {
+      this.handleTranscriptChange();
+      this.handleContentGrowth();
+    });
+    this.mutationObserver.observe(this.el, {
       childList: true,
       subtree: true,
       characterData: true,
@@ -116,16 +148,177 @@ export class MessageScroller {
 
   private handleContentGrowth() {
     if (!this.viewport) return;
+    this.syncTurnClearance();
     const nextHeight = this.viewport.scrollHeight;
-    const delta = nextHeight - this.previousScrollHeight;
-    if (delta > 0 && this.viewport.scrollTop <= LIVE_EDGE_THRESHOLD && !this.following) {
-      this.viewport.scrollTop += delta;
-    } else if (this.autoFollow && this.following) {
+    if (this.autoFollow && this.following && !this.followReleased) {
       this.viewport.scrollTop = nextHeight;
     }
-    this.previousScrollHeight = nextHeight;
     this.showScrollToLatest = !this.following && !this.isAtLiveEdge();
     this.scrollOverlayController?.sync();
+  }
+
+  private rememberFirstChildTop() {
+    if (!this.viewport) return;
+    const first = this.getTranscriptChildren()[0];
+    this.firstChildViewportTop = first
+      ? first.getBoundingClientRect().top - this.viewport.getBoundingClientRect().top
+      : undefined;
+  }
+
+  private getTranscriptChildren(): HTMLElement[] {
+    const assigned = this.transcriptSlot?.assignedElements() ?? [];
+    const assignedTranscript = assigned.filter(
+      (element): element is HTMLElement =>
+        element instanceof HTMLElement &&
+        (element.matches('ds-message') || element.matches('ds-agent-response')),
+    );
+    const queriedTranscript = Array.from(
+      this.el.querySelectorAll<HTMLElement>('ds-message, ds-agent-response'),
+    ).filter(element => {
+      if (
+        element.closest(
+          '.message-scroller__interaction, .message-scroller__overlay-content',
+        )
+      ) {
+        return false;
+      }
+      if (element.matches('ds-agent-response')) return true;
+      return !element.closest('ds-agent-response');
+    });
+    return queriedTranscript.length > assignedTranscript.length
+      ? queriedTranscript
+      : assignedTranscript;
+  }
+
+  private handleTranscriptChange = () => {
+    const current = this.getTranscriptChildren();
+    const previous = this.transcriptChildren;
+    const hadKnownTranscript = this.knownTranscriptElements.size > 0;
+    const previouslyKnown = new Set(this.knownTranscriptElements);
+    const appendedAnchor = [...current].reverse().find((element, reverseIndex) => {
+      if (
+        !element.matches('ds-message[scroll-anchor]') ||
+        this.knownTurnAnchors.has(element)
+      ) {
+        return false;
+      }
+      const index = current.length - reverseIndex - 1;
+      return current
+        .slice(index + 1)
+        .every(next => !this.knownTranscriptElements.has(next));
+    });
+    current.forEach(element => {
+      this.knownTranscriptElements.add(element);
+      if (element.matches('ds-message[scroll-anchor]')) {
+        this.knownTurnAnchors.add(element);
+      }
+    });
+    if (!previous.length) {
+      this.transcriptChildren = current;
+      if (appendedAnchor && hadKnownTranscript) {
+        requestAnimationFrame(() => this.positionNewTurn(appendedAnchor));
+      }
+      return;
+    }
+
+    const firstKnownIndex = current.findIndex(element => previouslyKnown.has(element));
+    const newTranscript = current.filter(element => !previouslyKnown.has(element));
+    const prepended =
+      (current.length > previous.length && previous.every(
+        (element, index) => current[current.length - previous.length + index] === element,
+      )) ||
+      (!appendedAnchor &&
+        newTranscript.length > 0 &&
+        firstKnownIndex > 0 &&
+        newTranscript.every(element => current.indexOf(element) < firstKnownIndex));
+
+    this.transcriptChildren = current;
+    if (prepended) {
+      if (this.viewport) {
+        const viewportTop = this.viewport.getBoundingClientRect().top;
+        const preservedElement = this.activeTurnAnchor?.isConnected
+          ? this.activeTurnAnchor
+          : previous[0];
+        const preservedTop = this.activeTurnAnchor?.isConnected
+          ? this.activeTurnAnchorViewportTop
+          : this.firstChildViewportTop;
+        if (preservedElement && preservedTop !== undefined) {
+          const nextTop = preservedElement.getBoundingClientRect().top - viewportTop;
+          this.viewport.scrollTop += nextTop - preservedTop;
+        }
+      }
+      this.rememberFirstChildTop();
+      this.rememberActiveTurnAnchorTop();
+      this.scrollOverlayController?.sync();
+      return;
+    }
+    if (appendedAnchor) {
+      requestAnimationFrame(() => this.positionNewTurn(appendedAnchor));
+    }
+  };
+
+  private handleTranscriptSlotChange = () => this.handleTranscriptChange();
+
+  private positionNewTurn(anchor: HTMLElement) {
+    if (!this.viewport) return;
+    this.activeTurnAnchor = anchor;
+    this.syncTurnClearance();
+    requestAnimationFrame(() => this.finishPositionNewTurn(anchor));
+  }
+
+  private finishPositionNewTurn(anchor: HTMLElement) {
+    if (!this.viewport || !anchor.isConnected) return;
+    const viewportRect = this.viewport.getBoundingClientRect();
+    const anchorTop =
+      anchor.getBoundingClientRect().top - viewportRect.top + this.viewport.scrollTop;
+    const customOffset = getComputedStyle(this.el)
+      .getPropertyValue('--ds-message-scroller-anchor-offset')
+      .trim();
+    const offset = resolveCssLengthPx(customOffset, 'var(--dimension-space-800)');
+    const max = Math.max(this.viewport.scrollHeight - this.viewport.clientHeight, 0);
+    const target = Math.min(Math.max(anchorTop - offset, 0), max);
+    this.following = max - target <= LIVE_EDGE_THRESHOLD;
+    this.followReleased = !this.following;
+    this.showScrollToLatest = !this.following;
+    this.programmatic = true;
+    this.viewport.scrollTop = target;
+    requestAnimationFrame(() => {
+      this.programmatic = false;
+      this.following = this.isAtLiveEdge();
+      this.followReleased = !this.following;
+      this.showScrollToLatest = !this.following;
+      this.rememberFirstChildTop();
+      this.rememberActiveTurnAnchorTop();
+    });
+    this.scrollOverlayController?.sync();
+  }
+
+  private rememberActiveTurnAnchorTop() {
+    if (!this.viewport || !this.activeTurnAnchor?.isConnected) return;
+    this.activeTurnAnchorViewportTop =
+      this.activeTurnAnchor.getBoundingClientRect().top -
+      this.viewport.getBoundingClientRect().top;
+  }
+
+  private syncTurnClearance() {
+    if (!this.viewport || !this.activeTurnAnchor?.isConnected) return;
+    const children = this.getTranscriptChildren();
+    const last = children[children.length - 1];
+    if (!last) return;
+    const anchorRect = this.activeTurnAnchor.getBoundingClientRect();
+    const lastRect = last.getBoundingClientRect();
+    const customOffset = getComputedStyle(this.el)
+      .getPropertyValue('--ds-message-scroller-anchor-offset')
+      .trim();
+    const offset = resolveCssLengthPx(customOffset, 'var(--dimension-space-800)');
+    const contentAfterAnchor = Math.max(lastRect.bottom - anchorRect.top, 0);
+    const clearance = Math.max(
+      Math.ceil(this.viewport.clientHeight - offset - contentAfterAnchor),
+      0,
+    );
+    if (clearance === this.turnClearance) return;
+    this.turnClearance = clearance;
+    this.el.style.setProperty('--ds-message-scroller-turn-clearance', `${clearance}px`);
   }
 
   private applyDefaultPosition() {
@@ -133,6 +326,7 @@ export class MessageScroller {
     if (this.defaultPosition === 'start') {
       this.viewport.scrollTop = 0;
       this.following = false;
+      this.followReleased = true;
       this.showScrollToLatest = this.viewport.scrollHeight > this.viewport.clientHeight;
       this.scrollOverlayController?.sync();
       return;
@@ -143,6 +337,7 @@ export class MessageScroller {
       if (last) {
         last.scrollIntoView({ block: 'start' });
         this.following = this.isAtLiveEdge();
+        this.followReleased = !this.following;
         this.showScrollToLatest = !this.following;
         this.scrollOverlayController?.sync();
         return;
@@ -150,6 +345,7 @@ export class MessageScroller {
     }
     this.viewport.scrollTop = this.viewport.scrollHeight;
     this.following = true;
+    this.followReleased = false;
     this.showScrollToLatest = false;
     this.scrollOverlayController?.sync();
   }
@@ -167,15 +363,18 @@ export class MessageScroller {
     this.scrollOverlayController?.sync();
     if (this.programmatic) return;
     this.following = this.isAtLiveEdge();
+    this.followReleased = !this.following;
     this.showScrollToLatest = !this.following;
     const nextAtStart = this.viewport.scrollTop <= LIVE_EDGE_THRESHOLD;
     if (nextAtStart && !this.atStart) this.dsReachStart.emit();
     this.atStart = nextAtStart;
+    this.rememberFirstChildTop();
   };
 
   private releaseFollow = () => {
     this.following = false;
-    this.showScrollToLatest = !this.isAtLiveEdge();
+    this.followReleased = true;
+    this.showScrollToLatest = true;
   };
 
   private handleSelectionChange = () => {
@@ -187,6 +386,7 @@ export class MessageScroller {
       this.el.contains(selection.anchorNode)
     ) {
       this.following = false;
+      this.followReleased = true;
       this.showScrollToLatest = !this.isAtLiveEdge();
     }
   };
@@ -204,9 +404,18 @@ export class MessageScroller {
             aria-label={this.messagesLabel}
             tabIndex={0}
             onScroll={this.handleScroll}
-            onPointerDown={this.releaseFollow}
+            onPointerDown={(event: PointerEvent) => {
+              if (event.pointerType === 'touch') this.releaseFollow();
+            }}
+            onWheel={this.releaseFollow}
             onKeyDown={(event: KeyboardEvent) => {
-              if (['ArrowUp', 'PageUp', 'Home'].includes(event.key)) this.releaseFollow();
+              if (
+                ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(
+                  event.key,
+                )
+              ) {
+                this.releaseFollow();
+              }
             }}
           >
             <div
@@ -219,7 +428,12 @@ export class MessageScroller {
               aria-relevant="additions"
               aria-busy={this.busy ? 'true' : undefined}
             >
-              <slot />
+              <slot
+                ref={element => {
+                  this.transcriptSlot = element;
+                }}
+                onSlotchange={this.handleTranscriptSlotChange}
+              />
             </div>
           </div>
           <div
@@ -228,7 +442,14 @@ export class MessageScroller {
               this.overlay = element;
             }}
           >
-            <slot name="overlay" />
+            <div class="message-scroller__overlay-stack">
+              <div class="message-scroller__interaction">
+                <slot name="interaction" />
+              </div>
+              <div class="message-scroller__overlay-content">
+                <slot name="overlay" />
+              </div>
+            </div>
           </div>
           {this.showScrollToLatest ? (
             <div class="message-scroller__control ds-control-elevation ds-control-elevation--md ds-control-elevation--press-scale">
