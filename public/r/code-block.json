@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "code-block",
   "title": "CodeBlock",
-  "description": "Scrollable monospace code surface with optional language or filename context and copy action.",
+  "description": "Scrollable code surface with optional language or filename context and copy action.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
@@ -13,7 +13,7 @@
     "intent": {
       "audience": "general",
       "status": "experimental",
-      "summary": "Scrollable monospace code surface with optional language or filename context and copy action.",
+      "summary": "Scrollable code surface with optional language or filename context and copy action.",
       "useWhen": [
         "A message or document displays fenced code that readers may copy."
       ],
@@ -26,7 +26,11 @@
       ],
       "accessibility": [
         "The copy action has matching accessible-name and visible-tooltip status wording, and the code remains selectable text.",
-        "Language and filename labels supplement rather than replace the code content."
+        "Language and filename labels supplement rather than replace the code content.",
+        "The semantic code-family token retains a system-monospace fallback when an application does not load Fira Code; applications may disable programming ligatures through the shared code-surface custom property."
+      ],
+      "states": [
+        "Applications load font assets once at their root. The component consumes --typography-font-family-code and never fetches or packages a font."
       ],
       "responsiveBehavior": [
         "Long lines scroll horizontally and do not widen the owning transcript."
@@ -34,7 +38,11 @@
       "references": [
         {
           "label": "Storybook examples",
-          "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+          "path": "src/wc/components/CodeBlock/CodeBlock.stories.ts"
+        },
+        {
+          "label": "Font ownership and loading",
+          "path": "docs/font-ownership.md"
         }
       ]
     },
@@ -139,7 +147,7 @@
   "files": [
     {
       "path": "src/wc/components/CodeBlock/CodeBlock.css",
-      "content": ":host {\n  display: block;\n  width: 100%;\n  min-width: 0;\n  box-sizing: border-box;\n  -webkit-user-select: none;\n  user-select: none;\n}\n\n.code-block {\n  width: 100%;\n  min-width: 0;\n  margin: 0;\n  overflow: hidden;\n  border-radius: var(--dimension-radius-050);\n  background: var(--color-background-strong-neutral);\n  color: var(--color-foreground-faint-neutral);\n  box-sizing: border-box;\n}\n\n.code-block__header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--dimension-space-100);\n  min-height: var(--dimension-size-400);\n  padding: var(--dimension-space-050) var(--dimension-space-100);\n  background: var(--color-background-strong-neutral);\n  box-sizing: border-box;\n}\n\npre {\n  margin: 0;\n  padding: var(--dimension-space-150);\n  overflow: auto;\n  font-family: var(--typography-fontfamily-mono);\n  font-size: var(--typography-fontsize-sm);\n  line-height: var(--typography-lineheight-sm);\n  tab-size: 2;\n  -webkit-user-select: text;\n  user-select: text;\n}\n\ncode {\n  font: inherit;\n  white-space: pre;\n}\n",
+      "content": ":host {\n  display: block;\n  width: 100%;\n  min-width: 0;\n  box-sizing: border-box;\n  -webkit-user-select: none;\n  user-select: none;\n}\n\n.code-block {\n  width: 100%;\n  min-width: 0;\n  margin: 0;\n  overflow: hidden;\n  border-radius: var(--dimension-radius-050);\n  background: var(--color-background-strong-neutral);\n  color: var(--color-foreground-faint-neutral);\n  box-sizing: border-box;\n}\n\n.code-block__header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--dimension-space-100);\n  min-height: var(--dimension-size-400);\n  padding: var(--dimension-space-050) var(--dimension-space-100);\n  background: var(--color-background-strong-neutral);\n  box-sizing: border-box;\n}\n\npre {\n  margin: 0;\n  padding: var(--dimension-space-150);\n  overflow: auto;\n  font-family: var(\n    --typography-font-family-code,\n    'Fira Code', ui-monospace, 'SFMono-Regular', 'Cascadia Code', 'Roboto Mono',\n    Menlo, Monaco, Consolas, 'Liberation Mono', monospace\n  );\n  font-size: var(--typography-fontsize-sm);\n  font-variant-ligatures: var(--ds-code-font-variant-ligatures, normal);\n  font-weight: var(--typography-weight-regular);\n  line-height: var(--typography-lineheight-sm);\n  letter-spacing: var(--typography-letterspacing-none);\n  tab-size: 2;\n  -webkit-user-select: text;\n  user-select: text;\n}\n\ncode {\n  font: inherit;\n  white-space: pre;\n}\n",
       "type": "registry:ui"
     },
     {

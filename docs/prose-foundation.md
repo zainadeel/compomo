@@ -60,6 +60,9 @@ This model:
 - Nested `.ds-prose` containers use the same recipe and do not compound typography values.
 - New blocks own `margin-block-start`. There are no `:last-child`, `:empty`, or forward-looking `:has()` rules, so appending content does not restyle earlier blocks.
 - Typography, spacing, colors, borders, and radii come only from TokoMo tokens.
+- Inline and fenced code consume the shared semantic code-family hook; the
+  application still owns font loading. See the
+  [font ownership decision](font-ownership.md).
 
 ## Ownership boundary
 

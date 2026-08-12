@@ -33,9 +33,16 @@ pre {
   margin: 0;
   padding: var(--dimension-space-150);
   overflow: auto;
-  font-family: var(--typography-fontfamily-mono);
+  font-family: var(
+    --typography-font-family-code,
+    'Fira Code', ui-monospace, 'SFMono-Regular', 'Cascadia Code', 'Roboto Mono',
+    Menlo, Monaco, Consolas, 'Liberation Mono', monospace
+  );
   font-size: var(--typography-fontsize-sm);
+  font-variant-ligatures: var(--ds-code-font-variant-ligatures, normal);
+  font-weight: var(--typography-weight-regular);
   line-height: var(--typography-lineheight-sm);
+  letter-spacing: var(--typography-letterspacing-none);
   tab-size: 2;
   -webkit-user-select: text;
   user-select: text;

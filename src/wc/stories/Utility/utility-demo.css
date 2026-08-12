@@ -47,7 +47,7 @@
 }
 
 .util-demo-code {
-  font-family: var(--typography-fontfamily-mono);
+  font-family: var(--typography-font-family-code, ui-monospace, monospace);
   font-size: var(--typography-fontsize-xs);
   color: var(--color-foreground-tertiary);
 }
@@ -100,7 +100,7 @@
 }
 
 .util-demo-surface__token {
-  font-family: var(--typography-fontfamily-mono);
+  font-family: var(--typography-font-family-code, ui-monospace, monospace);
   font-size: var(--typography-fontsize-xs);
   line-height: var(--typography-lineheight-xs);
   color: var(--color-foreground-on-medium-background-secondary);
