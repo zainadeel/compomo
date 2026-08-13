@@ -266,7 +266,7 @@ lazy.addEventListener('dsLoadMore', () => {
     lazy.rows = [...rows];
     lazy.loadingMore = false;
     lazy.hasMore = false;
-  }, 200);
+  }, 1000);
 });
 
 const overflow = document.getElementById('overflow');
