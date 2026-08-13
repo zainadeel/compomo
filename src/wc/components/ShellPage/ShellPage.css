@@ -1,6 +1,16 @@
 :host {
   --_shell-page-content-background: var(--color-background-primary);
   --_shell-page-header-background: var(--color-background-primary);
+  --_shell-page-responsive-content-block-start-inset: var(--dimension-space-400);
+  --_shell-page-content-block-start-inset: var(
+    --ds-shell-page-content-block-start-inset,
+    var(--_shell-page-responsive-content-block-start-inset)
+  );
+  --ds-shell-page-sticky-header-block-size: var(--dimension-size-600);
+  --ds-shell-page-content-block-start-offset: calc(
+    var(--ds-shell-page-sticky-header-block-size) +
+      var(--_shell-page-content-block-start-inset)
+  );
   display: block;
   position: relative;
   min-width: 0;
@@ -16,6 +26,24 @@
 :host(.shell-page-host--surface-secondary[responsive-mode='desktop']),
 :host(.shell-page-host--surface-secondary[responsive-mode='tablet']) {
   --_shell-page-header-background: var(--color-background-secondary);
+}
+
+:host([responsive-mode='tablet']),
+:host([responsive-mode='mobile']) {
+  --_shell-page-responsive-content-block-start-inset: var(--dimension-space-200);
+}
+
+:host(.shell-page-host--header-compact),
+:host(.shell-page-host--header-constrained) {
+  --_shell-page-content-block-start-inset: var(
+    --ds-shell-page-compact-content-block-start-inset,
+    var(--_shell-page-responsive-content-block-start-inset)
+  );
+}
+
+:host(.shell-page-host--inset-none),
+:host(.shell-page-host--block-start-inset-none) {
+  --_shell-page-content-block-start-inset: 0px;
 }
 
 .shell-page__scroll-sentinel {
@@ -67,11 +95,13 @@
 
 :host(.shell-page-host--inset-default) .shell-page__content {
   padding: var(--dimension-space-400);
+  padding-block-start: var(--_shell-page-content-block-start-inset);
 }
 
 :host(.shell-page-host--inset-default[responsive-mode='tablet']) .shell-page__content,
 :host(.shell-page-host--inset-default[responsive-mode='mobile']) .shell-page__content {
   padding: var(--dimension-space-200);
+  padding-block-start: var(--_shell-page-content-block-start-inset);
 }
 
 :host(.shell-page-host--inset-none) .shell-page__content {

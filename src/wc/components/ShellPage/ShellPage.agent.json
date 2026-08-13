@@ -7,7 +7,7 @@
   "tag": "ds-shell-page",
   "audience": "general",
   "status": "stable",
-  "summary": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle or BarWorkflow placement, application-supplied BarTitle capacity, stable scroll compaction, and independent page-content inset and canvas surface without creating a nested scroll container.",
+  "summary": "The standard routed-page boundary inside ShellApp, owning sticky BarTitle or BarWorkflow placement, application-supplied BarTitle capacity, optional scroll compaction, and independent page-content inset and canvas surface without creating a nested scroll container.",
   "useWhen": [
     "Rendering a standard routed page inside ShellApp's default content region.",
     "BarTitle should expand at a roomy page top, compact after scroll, or use constrained action layout when the application shell reports reduced capacity.",
@@ -50,6 +50,9 @@
     "headerPresentation=auto selects the matching header variant from headerCapacity and scroll position.",
     "expanded, compact, and constrained are explicit overrides for exceptional layouts and deterministic examples.",
     "contentInset=default supplies standard page gutters; none permits maps, canvases, and other full-bleed content.",
+    "contentInsetBlockStart=none removes only the gutter adjacent to the page header while retaining the responsive inline and bottom gutters.",
+    "contentInsetBlockStartSize can provide an exact roomy top seam, while compactContentInsetBlockStartSize independently defines the compact and constrained seam. ShellPage exposes their resolved sticky-header offset through --ds-shell-page-content-block-start-offset for viewport-fitted descendants.",
+    "scrollCompaction=false keeps a roomy header expanded and pinned during page scrolling; capacity changes still select compact or constrained variants.",
     "contentSurface=primary keeps the standard page canvas; secondary paints both the inset gutter and the canvas beneath routed content. Desktop and tablet BarTitle chrome matches that canvas in expanded, compact, and constrained presentations; MobileHeader remains primary.",
     "contentInset and contentSurface are independent: either surface supports standard responsive gutters or a full-bleed page-owned layout.",
     "The header slot accepts one desktop BarTitle or BarWorkflow; mobile-header accepts the corresponding MobileHeader presentation. The default slot owns router output and all page product content."
@@ -57,10 +60,12 @@
   "responsiveBehavior": [
     "The owning application shell resolves viewport and persistent-chrome state into the explicit headerCapacity prop; ShellPage never guesses the cause of reduced width from its own rendered size.",
     "Roomy capacity expands at the top and compacts after scroll; compact capacity stays compact; constrained capacity uses the constrained action layout.",
+    "Pages with scrollCompaction=false keep roomy headers expanded while still responding to compact or constrained capacity from tools and breakpoints.",
     "A ShellPage-managed BarTitle remains concealed until headerCapacity is available and its rendered variant matches the resolved presentation, preventing a default-variant flash during route activation.",
     "responsiveMode=mobile hides and inerts the desktop header, exposes mobile-header, and disables desktop scroll-compaction geometry.",
     "Update headerCapacity synchronously with shell layout state so opening tools or crossing application breakpoints cannot briefly render the wrong presentation.",
     "The default content inset is balanced on every side: 32px in desktop mode and 16px in tablet and mobile modes.",
+    "contentInsetBlockStart can independently remove the top gutter for table and canvas pages that should meet the sticky header; exact roomy and compact block-start sizes support pages whose seam changes with header capacity.",
     "The selected content surface persists unchanged across desktop, tablet, and mobile modes.",
     "On a secondary desktop or tablet page, BarTitle matches the page canvas across capacity and scroll-driven variant changes; the separate mobile-header presentation remains primary.",
     "The flow-preservation spacer follows contentSurface so compacting a secondary page cannot expose a primary strip before its content.",

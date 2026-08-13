@@ -1,5 +1,6 @@
 import {
   Component,
+  Element,
   Event,
   EventEmitter,
   h,
@@ -33,6 +34,10 @@ import {
 } from './table-render-model';
 import { TableLayoutController } from './table-layout-controller';
 import { TableLoadController } from './table-load-controller';
+import {
+  TableViewportFitController,
+  type TableViewportFitMetrics,
+} from './table-viewport-fit-controller';
 import type {
   TableCaptionVisibility,
   TableCellActionDetail,
@@ -54,12 +59,14 @@ import type {
 @Component({
   tag: 'ds-table',
   styleUrls: [
+    '../../utils/focus-ring.css',
     '../../utils/interaction-fill.css',
     'Table.css',
   ],
   scoped: true,
 })
 export class Table {
+  @Element() el!: HTMLElement;
   /** Stable column definitions. Assign through JavaScript. */
   @Prop() columns: TableColumn[] = [];
   /** Ungrouped row data. Ignored while grouping is active. Assign through JavaScript. */
@@ -88,6 +95,14 @@ export class Table {
   @Prop() stickyHeader: boolean = false;
   /** Maximum scroll-region height. Numbers resolve to CSS pixels. */
   @Prop() maxHeight: string | number | undefined;
+  /** Fixed height for the complete header, table frame, and footer composition. */
+  @Prop() height: string | number | undefined;
+  /** Fit the complete table composition to its nearest vertical scrollport. */
+  @Prop() fitViewport: boolean = false;
+  /** Reserved space above a viewport-fitted table once surrounding chrome is compact. */
+  @Prop() viewportInsetBlockStart: string | number = 0;
+  /** Reserved space below a viewport-fitted table. */
+  @Prop() viewportInsetBlockEnd: string | number = 0;
   /** Optional explicit label for the horizontal/vertical scroll region. */
   @Prop() scrollLabel: string | undefined;
 
@@ -135,7 +150,13 @@ export class Table {
   @State() private overflowEnd = false;
   @State() private scrollable = false;
   @State() private announcement = '';
+  @State() private activeStickyGroupId: string | null = null;
+  @State() private viewportFitSettled = false;
+  @State() private headerLeadingPresent = false;
+  @State() private headerCopyPresent = false;
+  @State() private headerTrailingPresent = false;
 
+  private rootEl: HTMLElement | null = null;
   private viewportEl: HTMLElement | null = null;
   private frameEl: HTMLElement | null = null;
   private interactiveHeadEl: HTMLTableSectionElement | null = null;
@@ -146,6 +167,8 @@ export class Table {
   private previousModelWarning = '';
   private hasLoaded = false;
   private renderedModel: TableRenderModel | null = null;
+  private stickyGroupConnected = false;
+  private headerSlotObserver: MutationObserver | null = null;
   private readonly layoutController = new TableLayoutController({
     elements: () => ({
       viewport: this.viewportEl,
@@ -158,7 +181,9 @@ export class Table {
     mode: () => ({
       documentStickyHeader: this.documentStickyHeader,
       floatingCollapseAll: this.renderedModel?.collapseAllHost?.mode === 'floating',
+      clampVerticalOverscroll: this.fitViewport && this.viewportFitSettled,
     }),
+    verticalEdgeWheel: deltaY => this.viewportFitController.scrollOuterBy(deltaY),
     overflowChanged: state => {
       if (state.start !== this.overflowStart) this.overflowStart = state.start;
       if (state.end !== this.overflowEnd) this.overflowEnd = state.end;
@@ -174,7 +199,7 @@ export class Table {
       loadMoreError: this.loadMoreError,
       loadIdentity: this.loadIdentity,
       loadMoreThreshold: this.loadMoreThreshold,
-      containedScroll: this.resolvedMaxHeight !== undefined,
+      containedScroll: this.containedScroll,
       loadingMoreLabel: this.loadingMoreLabel,
       endOfResultsLabel: this.endOfResultsLabel,
       rowsLoadedLabel: this.rowsLoadedLabel,
@@ -189,8 +214,21 @@ export class Table {
       this.dsLoadMore.emit(detail);
     },
   });
+  private readonly viewportFitController = new TableViewportFitController({
+    enabled: () => this.fitViewport,
+    elements: () => ({ host: this.el, surface: this.rootEl }),
+    insets: () => ({
+      blockStart: this.viewportInsetBlockStart,
+      blockEnd: this.viewportInsetBlockEnd,
+    }),
+    fitChanged: (metrics: TableViewportFitMetrics | null) => {
+      const settled = metrics?.settled ?? false;
+      if (settled !== this.viewportFitSettled) this.viewportFitSettled = settled;
+    },
+  });
 
   componentWillLoad(): void {
+    this.syncHeaderSlotPresence();
     this.loadController.initialize();
     this.warnModelIssues();
   }
@@ -199,23 +237,105 @@ export class Table {
     this.hasLoaded = true;
     this.layoutController.connect();
     this.loadController.connect();
+    this.viewportFitController.connect();
+    this.connectStickyGroup();
+    this.connectHeaderSlotObserver();
   }
 
   componentDidRender(): void {
     this.layoutController.refresh();
     this.loadController.refresh();
+    this.viewportFitController.refresh();
+    this.updateStickyGroup();
   }
 
   connectedCallback(): void {
     if (!this.hasLoaded) return;
     this.layoutController.connect();
     this.loadController.connect();
+    this.viewportFitController.connect();
+    this.connectStickyGroup();
+    this.connectHeaderSlotObserver();
   }
 
   disconnectedCallback(): void {
     this.layoutController.disconnect();
     this.loadController.disconnect();
+    this.viewportFitController.disconnect();
+    this.disconnectStickyGroup();
+    this.headerSlotObserver?.disconnect();
+    this.headerSlotObserver = null;
   }
+
+  private syncHeaderSlotPresence = () => {
+    this.headerLeadingPresent = !!this.el.querySelector('[slot="header-leading"]');
+    this.headerCopyPresent = !!this.el.querySelector('[slot="header"]');
+    this.headerTrailingPresent = !!this.el.querySelector('[slot="header-trailing"]');
+  };
+
+  private connectHeaderSlotObserver(): void {
+    if (this.headerSlotObserver || typeof MutationObserver === 'undefined') return;
+    this.headerSlotObserver = new MutationObserver(this.syncHeaderSlotPresence);
+    this.headerSlotObserver.observe(this.el, { childList: true });
+    this.syncHeaderSlotPresence();
+  }
+
+  private connectStickyGroup(): void {
+    if (this.stickyGroupConnected || typeof window === 'undefined') return;
+    this.stickyGroupConnected = true;
+    document.addEventListener('scroll', this.updateStickyGroup, {
+      capture: true,
+      passive: true,
+    });
+    window.addEventListener('resize', this.updateStickyGroup, { passive: true });
+    this.updateStickyGroup();
+  }
+
+  private disconnectStickyGroup(): void {
+    if (!this.stickyGroupConnected || typeof window === 'undefined') return;
+    this.stickyGroupConnected = false;
+    document.removeEventListener('scroll', this.updateStickyGroup, true);
+    window.removeEventListener('resize', this.updateStickyGroup);
+  }
+
+  private readonly updateStickyGroup = (): void => {
+    if (!this.stickyHeader || !this.grouped || !this.frameEl || !this.tableEl) {
+      if (this.activeStickyGroupId !== null) this.activeStickyGroupId = null;
+      return;
+    }
+
+    const stickyHeader = this.documentStickyHeader
+      ? this.frameEl.querySelector<HTMLElement>('.ds-table__document-sticky-header')
+      : this.interactiveHeadEl;
+    if (!stickyHeader) return;
+    const threshold = stickyHeader.getBoundingClientRect().bottom;
+    let activeGroupId: string | null = null;
+    let activeGroupTop = threshold;
+    for (const body of this.tableEl.querySelectorAll<HTMLElement>('tbody[data-group-id]')) {
+      const source = body.querySelector<HTMLElement>('.ds-table__group-cell');
+      if (!source) continue;
+      const sourceRect = source.getBoundingClientRect();
+      const bodyRect = body.getBoundingClientRect();
+      if (sourceRect.top <= threshold && bodyRect.bottom > threshold) {
+        activeGroupId = body.dataset.groupId ?? null;
+        // A sticky section is bounded by its own row group. As that boundary
+        // approaches the sticky lane, move the outgoing section bar with it so
+        // the incoming source bar pushes it away instead of rendering beneath it.
+        activeGroupTop = Math.min(threshold, bodyRect.bottom - sourceRect.height);
+      }
+    }
+
+    const frameRect = this.frameEl.getBoundingClientRect();
+    this.frameEl.style.setProperty(
+      '--_table-sticky-group-top',
+      `${activeGroupTop - frameRect.top}px`,
+    );
+
+    if (activeGroupId !== this.activeStickyGroupId) {
+      this.activeStickyGroupId = activeGroupId;
+      return;
+    }
+  };
 
   @Watch('columns')
   @Watch('grouping')
@@ -267,7 +387,19 @@ export class Table {
   }
 
   private get documentStickyHeader(): boolean {
-    return this.stickyHeader && this.resolvedMaxHeight === undefined;
+    return this.stickyHeader && !this.containedScroll;
+  }
+
+  private get fixedHeight(): boolean {
+    return !this.fitViewport && this.resolvedHeight !== undefined;
+  }
+
+  private get boundedComposition(): boolean {
+    return this.fitViewport || this.fixedHeight;
+  }
+
+  private get containedScroll(): boolean {
+    return this.boundedComposition || this.resolvedMaxHeight !== undefined;
   }
 
   private currentLoadedRows(): TableRow[] {
@@ -295,6 +427,11 @@ export class Table {
   private get resolvedMaxHeight(): string | undefined {
     if (this.maxHeight == null || this.maxHeight === '') return undefined;
     return typeof this.maxHeight === 'number' ? `${Math.max(0, this.maxHeight)}px` : this.maxHeight;
+  }
+
+  private get resolvedHeight(): string | undefined {
+    if (this.height == null || this.height === '') return undefined;
+    return typeof this.height === 'number' ? `${Math.max(0, this.height)}px` : this.height;
   }
 
   private warnModelIssues(): void {
@@ -408,7 +545,7 @@ export class Table {
   ) {
     return (
       <button
-        class="ds-table__selection-control ds-interaction-fill__content"
+        class="ds-table__selection-control ds-focus-ring ds-interaction-fill__content"
         type="button"
         role="checkbox"
         aria-label={label}
@@ -521,7 +658,7 @@ export class Table {
           );
           const control = segmentInteractive ? (
             <button
-              class="ds-table__header-label ds-table__header-label--interactive"
+              class="ds-table__header-label ds-table__header-label--interactive ds-focus-ring"
               type="button"
               aria-label={this.sortButtonLabel(column, segment.sortKey, segment.label)}
               data-sort-control="label"
@@ -827,7 +964,7 @@ export class Table {
             class="ds-table__cell-secondary ds-table__cell-track ds-table__cell-track--text"
             as="span"
             variant={cell.primaryText ? 'text-body-medium' : 'text-body-small'}
-            color={cell.primaryText ? 'primary' : 'secondary'}
+            color={text.secondaryColor ?? (cell.primaryText ? 'primary' : 'secondary')}
             lineTruncation={wraps ? 'none' : 1}
             wrap={wraps ? 'wrap' : 'nowrap'}
           >
@@ -849,6 +986,7 @@ export class Table {
           'ds-table__row--selected': selected,
           'ds-table__row--disabled': !!row.disabled,
           'ds-table__row--interactive': !!row.interactive && !row.disabled,
+          'ds-focus-ring': !!row.interactive && !row.disabled,
         }}
         data-row-id={row.id}
         data-selected={selected ? 'true' : undefined}
@@ -947,6 +1085,97 @@ export class Table {
     });
   }
 
+  private renderGroupContent(groupModel: TableRenderModel['groups'][number]) {
+    const {
+      group,
+      count,
+      countLabel,
+      countIntent,
+      collapsed: isCollapsed,
+      labelColor,
+      selection: groupSelection,
+    } = groupModel;
+    return (
+      <span class="ds-table__group-content">
+        {groupSelection && (
+          <span class="ds-table__group-selection">
+            {this.renderSelectionControl(
+              groupSelection.allSelected
+                ? `Deselect ${group.label} group`
+                : `Select ${group.label} group`,
+              groupSelection.allSelected,
+              groupSelection.indeterminate,
+              groupSelection.selectableRowIds.length === 0,
+              () => this.emitGroupSelection(group),
+            )}
+          </span>
+        )}
+        <span class="ds-table__group-copy">
+          <ds-text
+            class="ds-table__group-label"
+            as="span"
+            variant="text-body-medium"
+            emphasis={true}
+            color={labelColor}
+          >
+            {group.label}
+          </ds-text>
+          <span
+            class="ds-table__group-count ds-control-elevation ds-control-elevation--sm"
+            aria-hidden="true"
+          >
+            <ds-tag
+              label={String(count)}
+              intent={countIntent}
+              contrast="faint"
+              size="sm"
+              rounded={true}
+            ></ds-tag>
+          </span>
+          <span class="ds-visually-hidden">{countLabel}</span>
+        </span>
+        <ds-button-unfilled
+          class="ds-table__group-toggle"
+          variant="icon"
+          size="md"
+          isInset={true}
+          insetDepth="double"
+          icon={isCollapsed ? 'ChevronDown' : 'ChevronUp'}
+          expanded={!isCollapsed}
+          aria-label={
+            isCollapsed
+              ? `Expand ${group.label} group`
+              : `Collapse ${group.label} group`
+          }
+          hasBorder={false}
+          onDsClick={event => {
+            event.stopPropagation();
+            this.emitGroupCollapse(group);
+          }}
+        />
+      </span>
+    );
+  }
+
+  private renderStickyGroup(model: TableRenderModel) {
+    if (!this.stickyHeader || !this.activeStickyGroupId) return null;
+    const groupModel = model.groups.find(item => item.group.id === this.activeStickyGroupId);
+    if (!groupModel) return null;
+    return (
+      <div
+        class={{
+          'ds-table__sticky-group': true,
+          'ds-table__sticky-group--selectable': model.selectable,
+          [groupModel.intentClass ?? '']: !!groupModel.intentClass,
+        }}
+        data-group-id={groupModel.group.id}
+        data-group-intent={groupModel.intent}
+      >
+        {this.renderGroupContent(groupModel)}
+      </div>
+    );
+  }
+
   private renderDataBodies(model: TableRenderModel) {
     if (!model.grouped) {
       return (
@@ -957,17 +1186,8 @@ export class Table {
     }
 
     return model.groups.map(groupModel => {
-      const {
-        group,
-        count,
-        countLabel,
-        countIntent,
-        collapsed: isCollapsed,
-        intent,
-        intentClass,
-        labelColor,
-        selection: groupSelection,
-      } = groupModel;
+      const { group, collapsed: isCollapsed, intent, intentClass } = groupModel;
+      const stickySourceHidden = this.stickyHeader && this.activeStickyGroupId === group.id;
       return (
         <tbody
           class="ds-table__body ds-table__group"
@@ -980,69 +1200,14 @@ export class Table {
             <th
               class={{
                 'ds-table__group-cell': true,
+                'ds-table__group-cell--sticky-source-hidden': stickySourceHidden,
                 [intentClass ?? '']: !!intentClass,
               }}
+              aria-hidden={stickySourceHidden ? 'true' : undefined}
               scope="rowgroup"
               colSpan={model.totalColumns}
             >
-              <span class="ds-table__group-content">
-                {groupSelection && (
-                  <span class="ds-table__group-selection">
-                    {this.renderSelectionControl(
-                      groupSelection.allSelected
-                        ? `Deselect ${group.label} group`
-                        : `Select ${group.label} group`,
-                      groupSelection.allSelected,
-                      groupSelection.indeterminate,
-                      groupSelection.selectableRowIds.length === 0,
-                      () => this.emitGroupSelection(group),
-                    )}
-                  </span>
-                )}
-                <span class="ds-table__group-copy">
-                  <ds-text
-                    class="ds-table__group-label"
-                    as="span"
-                    variant="text-body-medium"
-                    emphasis={true}
-                    color={labelColor}
-                  >
-                    {group.label}
-                  </ds-text>
-                  <span
-                    class="ds-table__group-count ds-control-elevation ds-control-elevation--sm"
-                    aria-hidden="true"
-                  >
-                    <ds-tag
-                      label={String(count)}
-                      intent={countIntent}
-                      contrast="faint"
-                      size="sm"
-                      rounded={true}
-                    ></ds-tag>
-                  </span>
-                  <span class="ds-visually-hidden">{countLabel}</span>
-                </span>
-                <ds-button-unfilled
-                  class="ds-table__group-toggle"
-                  variant="icon"
-                  size="md"
-                  isInset={true}
-                  insetDepth="double"
-                  icon={isCollapsed ? 'ChevronDown' : 'ChevronUp'}
-                  expanded={!isCollapsed}
-                  aria-label={
-                    isCollapsed
-                      ? `Expand ${group.label} group`
-                      : `Collapse ${group.label} group`
-                  }
-                  hasBorder={false}
-                  onDsClick={event => {
-                    event.stopPropagation();
-                    this.emitGroupCollapse(group);
-                  }}
-                />
-              </span>
+              {this.renderGroupContent(groupModel)}
             </th>
           </tr>
           {!isCollapsed && group.rows.map(row => this.renderRow(row, model))}
@@ -1096,11 +1261,13 @@ export class Table {
       <tbody class="ds-table__body ds-table__state-body">
         <tr class="ds-table__state-row">
           <td class="ds-table__state-cell" colSpan={totalColumns}>
-            <ds-empty-state
-              icon={error ? 'ErrorTriangle' : 'Inbox'}
-              heading={error ? this.errorHeading : this.emptyHeading}
-              body={error ? this.errorBody : this.emptyBody}
-            />
+            <div class="ds-table__viewport-band ds-table__state-band">
+              <ds-empty-state
+                icon={error ? 'ErrorTriangle' : 'Inbox'}
+                heading={error ? this.errorHeading : this.emptyHeading}
+                body={error ? this.errorBody : this.emptyBody}
+              />
+            </div>
           </td>
         </tr>
       </tbody>
@@ -1122,45 +1289,47 @@ export class Table {
           }}
         >
           <td class="ds-table__load-cell" colSpan={model.totalColumns}>
-            {error ? (
-              <span class="ds-table__load-content ds-table__load-content--error">
-                <span class="ds-table__load-copy">
-                  <ds-icon name="ErrorTriangle" size="md" color="secondary" aria-hidden="true" />
-                  <ds-text as="span" variant="text-body-medium" color="secondary">{error}</ds-text>
+            <div class="ds-table__viewport-band ds-table__load-band">
+              {error ? (
+                <span class="ds-table__load-content ds-table__load-content--error">
+                  <span class="ds-table__load-copy">
+                    <ds-icon name="ErrorTriangle" size="md" color="secondary" aria-hidden="true" />
+                    <ds-text as="span" variant="text-body-medium" color="secondary">{error}</ds-text>
+                  </span>
+                  <ds-button-unfilled
+                    label={this.retryLabel}
+                    size="md"
+                    onDsClick={() => this.loadController.request('retry')}
+                  />
                 </span>
-                <ds-button-unfilled
-                  label={this.retryLabel}
-                  size="md"
-                  onDsClick={() => this.loadController.request('retry')}
-                />
-              </span>
-            ) : this.loadingMore ? (
-              <span class="ds-table__load-content">
-                <ds-loader size="md" color="secondary" />
-                <ds-text as="span" variant="text-body-medium" color="secondary">
-                  {this.loadingMoreLabel}
+              ) : this.loadingMore ? (
+                <span class="ds-table__load-content">
+                  <ds-loader size="md" color="secondary" />
+                  <ds-text as="span" variant="text-body-medium" color="secondary">
+                    {this.loadingMoreLabel}
+                  </ds-text>
+                </span>
+              ) : this.hasMore && manualFallback ? (
+                <span class="ds-table__load-content">
+                  <ds-button-unfilled
+                    label={this.loadMoreLabel}
+                    size="md"
+                    onDsClick={() => this.loadController.request('manual')}
+                  />
+                </span>
+              ) : this.hasMore ? (
+                <span class="ds-table__auto-sentinel" aria-hidden="true" />
+              ) : (
+                <ds-text
+                  class="ds-table__load-content"
+                  as="span"
+                  variant="text-body-medium"
+                  color="secondary"
+                >
+                  {this.endOfResultsLabel}
                 </ds-text>
-              </span>
-            ) : this.hasMore && manualFallback ? (
-              <span class="ds-table__load-content">
-                <ds-button-unfilled
-                  label={this.loadMoreLabel}
-                  size="md"
-                  onDsClick={() => this.loadController.request('manual')}
-                />
-              </span>
-            ) : this.hasMore ? (
-              <span class="ds-table__auto-sentinel" aria-hidden="true" />
-            ) : (
-              <ds-text
-                class="ds-table__load-content"
-                as="span"
-                variant="text-body-medium"
-                color="secondary"
-              >
-                {this.endOfResultsLabel}
-              </ds-text>
-            )}
+              )}
+            </div>
           </td>
         </tr>
       </tbody>
@@ -1202,34 +1371,83 @@ export class Table {
     );
   }
 
+  private get hasResultFooter(): boolean {
+    return !!this.resultSummary || !!this.el.querySelector(
+      '[slot="footer-leading"], [slot="footer"], [slot="footer-trailing"]',
+    );
+  }
+
   private renderResultFooter() {
     const summary = this.resultSummary;
-    if (!summary) return null;
+    const hasLeading = !!this.el.querySelector('[slot="footer-leading"]');
+    const hasCopy = !!this.el.querySelector('[slot="footer"]');
+    const hasTrailing = !!this.el.querySelector('[slot="footer-trailing"]');
+    if (!this.hasResultFooter) return null;
     return (
-      <ds-text
-        class="ds-table__footer"
-        as="div"
-        variant="text-body-medium"
-        color="secondary"
-      >
-        {summary}
-      </ds-text>
+      <div class="ds-table__footer ds-table__bar ds-control--md">
+        {hasLeading && (
+          <div class="ds-table__bar-leading">
+            <slot name="footer-leading" />
+          </div>
+        )}
+        <div class="ds-table__bar-copy">
+          {hasCopy ? (
+            <slot name="footer" />
+          ) : summary ? (
+            <ds-text
+              class="ds-table__footer-summary ds-table__bar-text"
+              as="div"
+              variant="text-body-medium"
+              color="secondary"
+            >
+              {summary}
+            </ds-text>
+          ) : null}
+        </div>
+        {hasTrailing && (
+          <div class="ds-table__bar-trailing">
+            <slot name="footer-trailing" />
+          </div>
+        )}
+      </div>
     );
   }
 
   private renderCaptionBar() {
     if (this.captionVisibility !== 'visible') return null;
     return (
-      <ds-text
-        class="ds-table__caption-bar"
-        as="div"
-        variant="text-title-small"
-        emphasis={true}
-        color="primary"
-        aria-hidden="true"
-      >
-        {this.caption}
-      </ds-text>
+      <div class="ds-table__caption-bar ds-table__bar ds-control--md">
+        <div class="ds-table__bar-leading" hidden={!this.headerLeadingPresent}>
+          <slot
+            name="header-leading"
+            onSlotchange={this.syncHeaderSlotPresence}
+          />
+        </div>
+        <div class="ds-table__bar-copy">
+          <slot
+            name="header"
+            onSlotchange={this.syncHeaderSlotPresence}
+          />
+          {!this.headerCopyPresent ? (
+            <ds-text
+              class="ds-table__caption-title ds-table__bar-text"
+              as="div"
+              variant="text-title-small"
+              emphasis={true}
+              color="primary"
+              aria-hidden="true"
+            >
+              {this.caption}
+            </ds-text>
+          ) : null}
+        </div>
+        <div class="ds-table__bar-trailing" hidden={!this.headerTrailingPresent}>
+          <slot
+            name="header-trailing"
+            onSlotchange={this.syncHeaderSlotPresence}
+          />
+        </div>
+      </div>
     );
   }
 
@@ -1239,17 +1457,38 @@ export class Table {
     const regionLabel = this.scrollLabel?.trim() || `${this.caption} scroll area`;
     const initialLoading = this.loading && !model.hasData;
     const initialError = !model.hasData && this.error;
-    const viewportStyle = this.resolvedMaxHeight
+    const viewportStyle = !this.boundedComposition && this.resolvedMaxHeight
       ? { '--ds-table-max-block-size': this.resolvedMaxHeight }
+      : undefined;
+    const hostStyle = this.fixedHeight
+      ? { '--_table-fixed-block-size': this.resolvedHeight }
       : undefined;
 
     return (
-      <Host class="table-host">
+      <Host
+        class={{
+          'table-host': true,
+          'table-host--bounded': this.boundedComposition,
+          'table-host--fixed-height': this.fixedHeight,
+          'table-host--viewport-fit': this.fitViewport,
+        }}
+        style={hostStyle}
+      >
         <div class={{
           'ds-table': true,
+          'ds-table--bounded': this.boundedComposition,
+          'ds-table--contained-scroll': this.containedScroll,
+          'ds-table--fixed-height': this.fixedHeight,
+          'ds-table--viewport-fit': this.fitViewport,
+          'ds-table--viewport-fit-pending': this.fitViewport && !this.viewportFitSettled,
+          'ds-table--viewport-fit-settled': this.fitViewport && this.viewportFitSettled,
           'ds-table--sticky-header': this.stickyHeader,
           'ds-table--document-sticky-header': this.documentStickyHeader,
           'ds-table--contained-sticky-header': this.stickyHeader && !this.documentStickyHeader,
+          'ds-table--caption-visible': this.captionVisibility === 'visible',
+          'ds-table--footer-visible': this.hasResultFooter,
+        }} ref={element => {
+          this.rootEl = element ?? null;
         }}>
           {this.renderCaptionBar()}
           <div
@@ -1263,9 +1502,13 @@ export class Table {
             }}
           >
             {this.renderDocumentStickyHeader(model)}
+            {this.renderStickyGroup(model)}
             {!this.documentStickyHeader && this.renderFloatingCollapseAll(model)}
             <div
-              class="ds-table__viewport"
+              class={{
+                'ds-table__viewport': true,
+                'ds-focus-ring': this.scrollable,
+              }}
               style={viewportStyle}
               ref={element => {
                 this.viewportEl = element ?? null;

@@ -1,9 +1,70 @@
 @import '../../styles/table.css';
 @import '../../styles/control-elevation.css';
+@import '../../utils/control-density.css';
 
 :host {
   display: block;
   box-sizing: border-box;
   min-width: 0;
   max-width: 100%;
+}
+
+:host(.table-host--bounded) {
+  min-block-size: 0;
+}
+
+:host(.table-host--fixed-height) {
+  block-size: var(--_table-fixed-block-size);
+}
+
+:host(.table-host--viewport-fit) {
+  block-size: var(--_table-viewport-fit-reserved-block-size, auto);
+  min-block-size: var(--_table-viewport-fit-reserved-block-size, auto);
+}
+
+/*
+ * The public table recipe stays at zero specificity for product-owned native
+ * markup. Inside the component, these classes sit on ds-text hosts whose reset
+ * intentionally owns display, padding, and border with higher specificity.
+ * Reassert only those collided properties so component geometry cannot depend
+ * on whether ds-text or ds-table happens to hydrate first.
+ */
+ds-text.ds-table__header-label-box {
+  padding-inline: var(--dimension-space-025);
+}
+
+ds-text.ds-table__cell-track {
+  display: flex;
+}
+
+ds-text.ds-table__cell-track--text {
+  padding-inline: var(--_table-cell-track-label-inset);
+}
+
+ds-text.ds-table__cell-secondary {
+  padding-block: var(--dimension-space-025);
+}
+
+.ds-table__cell--primary-text ds-text.ds-table__cell-secondary {
+  padding-block: 0;
+}
+
+.ds-table__cell-tag-stack--tag-with-text ds-text.ds-table__cell-tag-text {
+  padding-inline: calc(
+    var(--_table-cell-track-padding-inline) + var(--_table-cell-track-label-inset)
+  );
+  padding-block: var(--dimension-space-025);
+}
+
+.ds-table__cell-tag-stack--text-with-tag ds-text.ds-table__cell-tag-text {
+  padding-inline: var(--_table-cell-track-label-inset);
+}
+
+ds-text.ds-table__load-content {
+  display: inline-flex;
+}
+
+ds-text.ds-table__bar-text {
+  display: inline-flex;
+  padding-inline: var(--ds-control-label-inset, var(--dimension-space-025));
 }

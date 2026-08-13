@@ -30,6 +30,10 @@
   pointer-events: none;
 }
 
+.bar-title--divider-hidden::after {
+  display: none;
+}
+
 .bar-title__inner {
   position: relative;
   display: flex;

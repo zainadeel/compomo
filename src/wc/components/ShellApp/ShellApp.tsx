@@ -1050,6 +1050,10 @@ export class ShellApp {
           this.managedToolsOpen
         )}
         contentInset={page.contentInset ?? 'default'}
+        contentInsetBlockStart={page.contentInsetBlockStart ?? 'default'}
+        contentInsetBlockStartSize={page.contentInsetBlockStartSize}
+        compactContentInsetBlockStartSize={page.compactContentInsetBlockStartSize}
+        scrollCompaction={page.scrollCompaction ?? true}
         contentSurface={page.contentSurface ?? 'primary'}
       >
         <ds-bar-title
@@ -1067,6 +1071,8 @@ export class ShellApp {
           primaryAction={page.primaryAction ?? null}
           actions={page.actions ?? []}
           actionsAriaLabel={page.actionsAriaLabel ?? 'More page actions'}
+          showDivider={page.showHeaderDivider ?? true}
+          showCompactDivider={page.showCompactHeaderDivider}
           onDsBack={this.handleManagedPageBack}
           onDsBreadcrumbSelect={this.handleManagedBreadcrumbSelect}
           onDsSectionChange={this.handleManagedSubsectionChange}

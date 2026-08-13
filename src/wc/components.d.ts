@@ -441,6 +441,15 @@ export namespace Components {
          */
         "showBack": boolean;
         /**
+          * Override divider visibility for compact and constrained variants.
+         */
+        "showCompactDivider"?: boolean;
+        /**
+          * Draw the page-title divider beneath the header.
+          * @default true
+         */
+        "showDivider": boolean;
+        /**
           * Id of the active page section.
           * @default ''
          */
@@ -2226,10 +2235,23 @@ export namespace Components {
     }
     interface DsShellPage {
         /**
+          * Exact block-start content inset while the header is compact or constrained.
+         */
+        "compactContentInsetBlockStartSize"?: string;
+        /**
           * Standard page gutters, or no inset for full-bleed page content.
           * @default 'default'
          */
         "contentInset": ShellPageContentInset;
+        /**
+          * Preserve the responsive side/end gutters while allowing content to meet the header.
+          * @default 'default'
+         */
+        "contentInsetBlockStart": ShellPageContentInset;
+        /**
+          * Exact block-start content inset, overriding the responsive default when provided.
+         */
+        "contentInsetBlockStartSize"?: string;
         /**
           * Canvas surface painted around and beneath routed page content.
           * @default 'primary'
@@ -2249,6 +2271,11 @@ export namespace Components {
           * @default 'desktop'
          */
         "responsiveMode": ShellResponsiveMode;
+        /**
+          * Allow roomy automatic headers to compact as the page scrolls.
+          * @default true
+         */
+        "scrollCompaction": boolean;
     }
     interface DsShellTools {
         /**
@@ -2617,6 +2644,11 @@ export namespace Components {
          */
         "errorHeading": string;
         /**
+          * Fit the complete table composition to its nearest vertical scrollport.
+          * @default false
+         */
+        "fitViewport": boolean;
+        /**
           * Controlled grouping column and group-order direction.
           * @default null
          */
@@ -2630,6 +2662,10 @@ export namespace Components {
           * @default false
          */
         "hasMore": boolean;
+        /**
+          * Fixed height for the complete header, table frame, and footer composition.
+         */
+        "height": string | number | undefined;
         /**
           * Enable application-owned incremental loading without pagination.
           * @default false
@@ -2717,6 +2753,16 @@ export namespace Components {
          */
         "stickyHeader": boolean;
         "totalCount": number | undefined;
+        /**
+          * Reserved space below a viewport-fitted table.
+          * @default 0
+         */
+        "viewportInsetBlockEnd": string | number;
+        /**
+          * Reserved space above a viewport-fitted table once surrounding chrome is compact.
+          * @default 0
+         */
+        "viewportInsetBlockStart": string | number;
     }
     interface DsTag {
         /**
@@ -4571,6 +4617,15 @@ declare namespace LocalJSX {
           * @default false
          */
         "showBack"?: boolean;
+        /**
+          * Override divider visibility for compact and constrained variants.
+         */
+        "showCompactDivider"?: boolean;
+        /**
+          * Draw the page-title divider beneath the header.
+          * @default true
+         */
+        "showDivider"?: boolean;
         /**
           * Id of the active page section.
           * @default ''
@@ -6539,10 +6594,23 @@ declare namespace LocalJSX {
     }
     interface DsShellPage {
         /**
+          * Exact block-start content inset while the header is compact or constrained.
+         */
+        "compactContentInsetBlockStartSize"?: string;
+        /**
           * Standard page gutters, or no inset for full-bleed page content.
           * @default 'default'
          */
         "contentInset"?: ShellPageContentInset;
+        /**
+          * Preserve the responsive side/end gutters while allowing content to meet the header.
+          * @default 'default'
+         */
+        "contentInsetBlockStart"?: ShellPageContentInset;
+        /**
+          * Exact block-start content inset, overriding the responsive default when provided.
+         */
+        "contentInsetBlockStartSize"?: string;
         /**
           * Canvas surface painted around and beneath routed page content.
           * @default 'primary'
@@ -6562,6 +6630,11 @@ declare namespace LocalJSX {
           * @default 'desktop'
          */
         "responsiveMode"?: ShellResponsiveMode;
+        /**
+          * Allow roomy automatic headers to compact as the page scrolls.
+          * @default true
+         */
+        "scrollCompaction"?: boolean;
     }
     interface DsShellTools {
         /**
@@ -6942,6 +7015,11 @@ declare namespace LocalJSX {
          */
         "errorHeading"?: string;
         /**
+          * Fit the complete table composition to its nearest vertical scrollport.
+          * @default false
+         */
+        "fitViewport"?: boolean;
+        /**
           * Controlled grouping column and group-order direction.
           * @default null
          */
@@ -6955,6 +7033,10 @@ declare namespace LocalJSX {
           * @default false
          */
         "hasMore"?: boolean;
+        /**
+          * Fixed height for the complete header, table frame, and footer composition.
+         */
+        "height"?: string | number | undefined;
         /**
           * Enable application-owned incremental loading without pagination.
           * @default false
@@ -7049,6 +7131,16 @@ declare namespace LocalJSX {
          */
         "stickyHeader"?: boolean;
         "totalCount"?: number | undefined;
+        /**
+          * Reserved space below a viewport-fitted table.
+          * @default 0
+         */
+        "viewportInsetBlockEnd"?: string | number;
+        /**
+          * Reserved space above a viewport-fitted table once surrounding chrome is compact.
+          * @default 0
+         */
+        "viewportInsetBlockStart"?: string | number;
     }
     interface DsTag {
         /**
@@ -7377,6 +7469,8 @@ declare namespace LocalJSX {
         "sectionsAriaLabel": string;
         "actionsAriaLabel": string;
         "variant": BarTitleVariant;
+        "showDivider": boolean;
+        "showCompactDivider": boolean;
     }
     interface DsBarWorkflowAttributes {
         "heading": string;
@@ -7806,6 +7900,10 @@ declare namespace LocalJSX {
         "headerPresentation": ShellPageHeaderPresentation;
         "headerCapacity": ShellPageCapacity;
         "contentInset": ShellPageContentInset;
+        "contentInsetBlockStart": ShellPageContentInset;
+        "contentInsetBlockStartSize": string;
+        "compactContentInsetBlockStartSize": string;
+        "scrollCompaction": boolean;
         "contentSurface": ShellPageContentSurface;
         "responsiveMode": ShellResponsiveMode;
     }
@@ -7892,6 +7990,10 @@ declare namespace LocalJSX {
         "resultSummaryLabel": string;
         "stickyHeader": boolean;
         "maxHeight": string;
+        "height": string;
+        "fitViewport": boolean;
+        "viewportInsetBlockStart": string;
+        "viewportInsetBlockEnd": string;
         "scrollLabel": string | undefined;
         "selectionMode": TableSelectionMode;
         "loading": boolean;

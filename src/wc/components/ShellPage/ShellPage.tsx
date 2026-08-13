@@ -32,6 +32,18 @@ export class ShellPage {
   /** Standard page gutters, or no inset for full-bleed page content. */
   @Prop() contentInset: ShellPageContentInset = 'default';
 
+  /** Preserve the responsive side/end gutters while allowing content to meet the header. */
+  @Prop() contentInsetBlockStart: ShellPageContentInset = 'default';
+
+  /** Exact block-start content inset, overriding the responsive default when provided. */
+  @Prop() contentInsetBlockStartSize?: string;
+
+  /** Exact block-start content inset while the header is compact or constrained. */
+  @Prop() compactContentInsetBlockStartSize?: string;
+
+  /** Allow roomy automatic headers to compact as the page scrolls. */
+  @Prop() scrollCompaction: boolean = true;
+
   /** Canvas surface painted around and beneath routed page content. */
   @Prop() contentSurface: ShellPageContentSurface = 'primary';
 
@@ -58,6 +70,7 @@ export class ShellPage {
 
   @Watch('headerCapacity')
   @Watch('headerPresentation')
+  @Watch('scrollCompaction')
   handleHeaderContractChange() {
     this.syncHeaderVariant(true);
   }
@@ -108,7 +121,7 @@ export class ShellPage {
     return resolveShellPageHeaderVariant(
       this.headerPresentation,
       this.headerCapacity ?? 'roomy',
-      this.pageTopVisible
+      this.scrollCompaction ? this.pageTopVisible : true
     );
   }
 
@@ -118,8 +131,20 @@ export class ShellPage {
 
   private get isScrollCompacted(): boolean {
     return (
-      this.headerPresentation === 'auto' && this.headerCapacity === 'roomy' && !this.pageTopVisible
+      this.scrollCompaction &&
+      this.headerPresentation === 'auto' &&
+      this.headerCapacity === 'roomy' &&
+      !this.pageTopVisible
     );
+  }
+
+  private get contentInsetStyles(): { [name: string]: string } {
+    const styles: { [name: string]: string } = {};
+    const expanded = this.contentInsetBlockStartSize?.trim();
+    const compact = this.compactContentInsetBlockStartSize?.trim();
+    if (expanded) styles['--ds-shell-page-content-block-start-inset'] = expanded;
+    if (compact) styles['--ds-shell-page-compact-content-block-start-inset'] = compact;
+    return styles;
   }
 
   private composedParent(element: Element): Element | null {
@@ -161,6 +186,7 @@ export class ShellPage {
     this.syncHeaderDividerInset(rootTop);
     const nextPageTopVisible = this.sentinelEl.getBoundingClientRect().top >= rootTop;
     if (
+      this.scrollCompaction &&
       !nextPageTopVisible &&
       this.pageTopVisible &&
       this.headerEl?.classList.contains(this.variantClass('expanded'))
@@ -194,7 +220,9 @@ export class ShellPage {
     if (!header) return;
 
     const ownsScrollTransition =
-      this.headerPresentation === 'auto' && this.headerCapacity === 'roomy';
+      this.scrollCompaction &&
+      this.headerPresentation === 'auto' &&
+      this.headerCapacity === 'roomy';
     const expandedInset = resolveCssLengthPx('--dimension-space-400', 0);
     if (
       !ownsScrollTransition ||
@@ -240,7 +268,14 @@ export class ShellPage {
   }
 
   private captureExpandedHeaderGeometry(header: BarTitleElement) {
-    this.expandedHeaderHeight = header.getBoundingClientRect().height;
+    // Keep the largest observed expanded geometry for this header instance.
+    // During a variant handoff Chromium can briefly report the compact box
+    // before the child host class mutation is delivered; that transient must
+    // not erase the flow reservation captured at the roomy page top.
+    this.expandedHeaderHeight = Math.max(
+      this.expandedHeaderHeight,
+      header.getBoundingClientRect().height
+    );
     this.measureHeaderTravel(header);
   }
 
@@ -257,6 +292,7 @@ export class ShellPage {
     this.stickyHeaderEl?.style.setProperty(
       '--ds-shell-page-sticky-offset',
       renderedVariant === 'expanded' &&
+        this.scrollCompaction &&
         this.headerPresentation === 'auto' &&
         this.headerCapacity === 'roomy'
         ? `${-this.headerTravel}px`
@@ -267,6 +303,11 @@ export class ShellPage {
   private syncRenderedHeaderGeometry(header: BarTitleElement) {
     const renderedVariant = this.effectiveVariant;
     if (!header.classList.contains(this.variantClass(renderedVariant))) return;
+
+    const renderedHeight = header.getBoundingClientRect().height;
+    if (renderedHeight > 0) {
+      this.el.style.setProperty('--ds-shell-page-sticky-header-block-size', `${renderedHeight}px`);
+    }
 
     // Update both flow-preservation pieces before reading layout. Otherwise a
     // reverse compact → expanded render can briefly contain the tall header and
@@ -360,11 +401,24 @@ export class ShellPage {
     const next = this.effectiveVariant;
     const renderedVariantIsStale = !header.classList.contains(this.variantClass(next));
     if (!renderedVariantIsStale) this.syncRenderedHeaderGeometry(header);
+    if (renderedVariantIsStale && this.isScrollCompacted) {
+      // Preserve the expanded flow before asking BarTitle to become compact.
+      // This prevents the sentinel from moving back into view during the
+      // parent/child render handoff and keeps the variant transition stable.
+      this.setSpacerHeight(this.expandedHeaderHeight - this.compactHeaderHeight);
+      this.setStickyHeaderOffset(next);
+    }
     if (concealUntilSynced) {
       this.cancelHeaderReveal();
       header.setAttribute('data-shell-page-syncing', '');
     }
-    if (header.variant !== next) header.variant = next;
+    if (header.variant !== next) {
+      header.variant = next;
+      // The child update and its MutationObserver callback can land in
+      // different phases across engines. Poll the rendered class as the
+      // authoritative handoff before committing sticky/spacer geometry.
+      this.scheduleHeaderGeometrySync(header);
+    }
     if (concealUntilSynced) {
       this.revealHeaderWhenSynced(header, next);
     }
@@ -424,9 +478,11 @@ export class ShellPage {
     return (
       <Host
         role="main"
+        style={this.contentInsetStyles}
         class={{
           'shell-page-host--inset-default': this.contentInset === 'default',
           'shell-page-host--inset-none': this.contentInset === 'none',
+          'shell-page-host--block-start-inset-none': this.contentInsetBlockStart === 'none',
           'shell-page-host--surface-primary': this.contentSurface === 'primary',
           'shell-page-host--surface-secondary': this.contentSurface === 'secondary',
           'shell-page-host--mobile': mobile,

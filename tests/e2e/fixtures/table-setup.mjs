@@ -37,6 +37,10 @@ basic.addEventListener('dsSortChange', event => {
   });
 });
 
+const composable = setBase('composable');
+composable.displayedCount = rows.length;
+composable.totalCount = 12;
+
 const footer = setBase('footer');
 footer.displayedCount = 50;
 footer.totalCount = 1500;
@@ -123,8 +127,8 @@ compound.columns = [
   { id: 'status', header: 'Status', size: 'sm' },
 ];
 const compoundRows = [
-  { id: 'event-a', cells: { behaviorDetails: { primary: 'Close following', secondary: 'Critical' }, behavior: 'Close following', severity: 'Critical', status: { kind: 'tag', label: 'Pending review', intent: 'caution' } } },
-  { id: 'event-b', cells: { behaviorDetails: { primary: 'Distraction', secondary: 'High' }, behavior: 'Distraction', severity: 'High', status: { kind: 'tag', label: 'Coachable', intent: 'negative' } } },
+  { id: 'event-a', cells: { behaviorDetails: { primary: 'Close following', secondary: 'Critical', secondaryColor: 'negative' }, behavior: 'Close following', severity: 'Critical', status: { kind: 'tag', label: 'Pending review', intent: 'caution' } } },
+  { id: 'event-b', cells: { behaviorDetails: { primary: 'Distraction', secondary: 'High', secondaryColor: 'warning' }, behavior: 'Distraction', severity: 'High', status: { kind: 'tag', label: 'Coachable', intent: 'negative' } } },
 ];
 compound.rows = compoundRows;
 compound.selectionMode = 'multiple';
@@ -262,7 +266,7 @@ lazy.addEventListener('dsLoadMore', () => {
     lazy.rows = [...rows];
     lazy.loadingMore = false;
     lazy.hasMore = false;
-  }, 200);
+  }, 1000);
 });
 
 const overflow = document.getElementById('overflow');
@@ -276,14 +280,53 @@ overflow.rows = Array.from({ length: 12 }, (_, index) => ({
   cells: { ...rows[index % rows.length].cells, location: `Location ${index + 1}, British Columbia` },
 }));
 
+const fixedHeight = document.getElementById('fixed-height');
+fixedHeight.columns = columns;
+fixedHeight.rows = Array.from({ length: 12 }, (_, index) => ({
+  ...rows[index % rows.length],
+  id: `fixed-row-${index}`,
+}));
+fixedHeight.displayedCount = 12;
+fixedHeight.totalCount = 40;
+
+const viewportFit = document.getElementById('viewport-fit');
+viewportFit.columns = interactive.columns;
+viewportFit.grouping = { columnId: 'status', direction: 'asc' };
+viewportFit.groups = [
+  {
+    id: 'fit-first',
+    label: 'First fitted section',
+    rows: Array.from({ length: 8 }, (_, index) => ({
+      ...interactive.rows[index % interactive.rows.length],
+      id: `fit-first-${index}`,
+    })),
+  },
+  {
+    id: 'fit-second',
+    label: 'Second fitted section',
+    rows: Array.from({ length: 8 }, (_, index) => ({
+      ...interactive.rows[index % interactive.rows.length],
+      id: `fit-second-${index}`,
+    })),
+  },
+];
+viewportFit.displayedCount = 16;
+viewportFit.totalCount = 40;
+
 setBase('standard');
 const documentSticky = document.getElementById('document-sticky');
 documentSticky.columns = interactive.columns;
 documentSticky.sort = { columnId: 'name', direction: 'desc' };
-documentSticky.rows = Array.from({ length: 16 }, (_, index) => ({
+const documentRows = Array.from({ length: 16 }, (_, index) => ({
   ...interactive.rows[index % interactive.rows.length],
   id: `document-row-${index}`,
 }));
+documentSticky.grouping = { columnId: 'status', direction: 'asc' };
+documentSticky.groups = [
+  { id: 'first-section', label: 'First section', rows: documentRows.slice(0, 8) },
+  { id: 'second-section', label: 'Second section', rows: documentRows.slice(8) },
+];
+documentSticky.rows = [];
 for (const id of ['loading', 'empty', 'error']) {
   document.getElementById(id).columns = columns.slice(0, 3);
 }

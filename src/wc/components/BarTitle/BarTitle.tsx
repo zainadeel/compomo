@@ -75,6 +75,12 @@ export class BarTitle {
   /** Explicit visual/capacity variant. ShellPage owns automatic selection. */
   @Prop() variant: BarTitleVariant = 'expanded';
 
+  /** Draw the page-title divider beneath the header. */
+  @Prop() showDivider: boolean = true;
+
+  /** Override divider visibility for compact and constrained variants. */
+  @Prop() showCompactDivider?: boolean;
+
   /** Emitted when the leading Back action is activated. */
   @Event() dsBack!: EventEmitter<MouseEvent>;
 
@@ -119,6 +125,10 @@ export class BarTitle {
 
   private get compact(): boolean {
     return this.variant !== 'expanded';
+  }
+
+  private get dividerVisible(): boolean {
+    return this.compact ? (this.showCompactDivider ?? this.showDivider) : this.showDivider;
   }
 
   private get expandedBreadcrumbItems(): BreadcrumbItem[] {
@@ -418,6 +428,7 @@ export class BarTitle {
         <div
           class={{
             'bar-title': true,
+            'bar-title--divider-hidden': !this.dividerVisible,
             'ds-chrome-header': compact,
           }}
         >
