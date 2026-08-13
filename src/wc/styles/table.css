@@ -244,6 +244,20 @@
   color: var(--color-foreground-primary);
 }
 
+:where(.ds-table__caption-content) {
+  display: grid;
+  flex: 1 1 auto;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+:where(.ds-table__caption-content > slot) {
+  display: contents;
+}
+
 :where(.ds-table--caption-visible .ds-table__frame),
 :where(.ds-table--caption-visible .ds-table__viewport) {
   border-start-start-radius: 0;

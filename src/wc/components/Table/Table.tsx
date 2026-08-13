@@ -152,9 +152,7 @@ export class Table {
   @State() private announcement = '';
   @State() private activeStickyGroupId: string | null = null;
   @State() private viewportFitSettled = false;
-  @State() private headerLeadingPresent = false;
-  @State() private headerCopyPresent = false;
-  @State() private headerTrailingPresent = false;
+  @State() private headerPresent = false;
 
   private rootEl: HTMLElement | null = null;
   private viewportEl: HTMLElement | null = null;
@@ -268,9 +266,7 @@ export class Table {
   }
 
   private syncHeaderSlotPresence = () => {
-    this.headerLeadingPresent = !!this.el.querySelector('[slot="header-leading"]');
-    this.headerCopyPresent = !!this.el.querySelector('[slot="header"]');
-    this.headerTrailingPresent = !!this.el.querySelector('[slot="header-trailing"]');
+    this.headerPresent = !!this.el.querySelector('[slot="header"]');
   };
 
   private connectHeaderSlotObserver(): void {
@@ -1435,18 +1431,12 @@ export class Table {
     if (this.captionVisibility !== 'visible') return null;
     return (
       <div class="ds-table__caption-bar ds-table__bar ds-control--md">
-        <div class="ds-table__bar-leading" hidden={!this.headerLeadingPresent}>
-          <slot
-            name="header-leading"
-            onSlotchange={this.syncHeaderSlotPresence}
-          />
-        </div>
-        <div class="ds-table__bar-copy">
+        <div class="ds-table__caption-content">
           <slot
             name="header"
             onSlotchange={this.syncHeaderSlotPresence}
           />
-          {!this.headerCopyPresent ? (
+          {!this.headerPresent ? (
             <ds-text
               class="ds-table__caption-title ds-table__bar-text"
               as="div"
@@ -1458,12 +1448,6 @@ export class Table {
               {this.caption}
             </ds-text>
           ) : null}
-        </div>
-        <div class="ds-table__bar-trailing" hidden={!this.headerTrailingPresent}>
-          <slot
-            name="header-trailing"
-            onSlotchange={this.syncHeaderSlotPresence}
-          />
         </div>
       </div>
     );

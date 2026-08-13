@@ -37,12 +37,13 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(componentTsx, /'ds-focus-ring': !!row\.interactive && !row\.disabled/);
   assert.match(componentTsx, /'ds-focus-ring': this\.scrollable/);
   assert.match(componentTsx, /<slot\s+name="header"/);
-  assert.match(componentTsx, /<slot\s+name="header-leading"/);
-  assert.match(componentTsx, /<slot\s+name="header-trailing"/);
+  assert.doesNotMatch(componentTsx, /<slot\s+name="header-leading"/);
+  assert.doesNotMatch(componentTsx, /<slot\s+name="header-trailing"/);
   assert.match(componentTsx, /<slot name="footer"/);
   assert.match(componentTsx, /<slot name="footer-leading"/);
   assert.match(componentTsx, /<slot name="footer-trailing"/);
   assert.match(componentTsx, /'ds-table--caption-visible'/);
+  assert.match(css, /\.ds-table__caption-content/);
   assert.match(css, /\.ds-table__bar-copy > slot/);
   assert.match(css, /ds-table--document-sticky-header\.ds-table--caption-visible/);
   assert.match(css, /\.ds-table__sticky-group/);

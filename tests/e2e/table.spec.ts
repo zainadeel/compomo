@@ -58,6 +58,27 @@ test('composes application controls inside table-owned header and footer chrome'
   await expect(projected).toHaveAttribute('data-table-header', '');
   expect(await header.evaluate((element, child) => element.contains(child), await projected.elementHandle()))
     .toBe(true);
+  const headerGeometry = await header.evaluate((element, projectedElement) => {
+    const headerRect = element.getBoundingClientRect();
+    const projectedRect = (projectedElement as HTMLElement).getBoundingClientRect();
+    const styles = getComputedStyle(element);
+    return {
+      paddingBlockStart: styles.paddingBlockStart,
+      paddingInlineEnd: styles.paddingInlineEnd,
+      paddingBlockEnd: styles.paddingBlockEnd,
+      paddingInlineStart: styles.paddingInlineStart,
+      projectedInsetStart: projectedRect.left - headerRect.left,
+      projectedInsetEnd: headerRect.right - projectedRect.right,
+    };
+  }, await projected.elementHandle());
+  expect(headerGeometry).toEqual({
+    paddingBlockStart: '8px',
+    paddingInlineEnd: '8px',
+    paddingBlockEnd: '8px',
+    paddingInlineStart: '8px',
+    projectedInsetStart: 8,
+    projectedInsetEnd: 8,
+  });
   await expect(table.locator('.ds-table__caption-title')).toBeHidden();
   await header.getByRole('button', { name: 'Filter drivers' }).focus();
   await expect(header.getByRole('button', { name: 'Filter drivers' })).toBeFocused();
@@ -67,16 +88,16 @@ test('composes application controls inside table-owned header and footer chrome'
     .toBeVisible();
 });
 
-test('keeps the table geometry stable when trailing header content mounts dynamically', async ({ page }) => {
-  const table = page.locator('#basic');
+test('keeps the table geometry stable when composed header content mounts dynamically', async ({ page }) => {
+  const table = page.locator('#composable');
 
   const positions = await table.evaluate(async element => {
     const surface = element.querySelector<HTMLElement>('.ds-table')!;
     const positions = [surface.getBoundingClientRect().top];
-    const trailing = document.createElement('span');
-    trailing.slot = 'header-trailing';
-    trailing.textContent = '1 selected';
-    element.append(trailing);
+    const header = element.querySelector<HTMLElement>('[slot="header"]')!;
+    const selectionSummary = document.createElement('span');
+    selectionSummary.textContent = '1 selected';
+    header.append(selectionSummary);
     positions.push(surface.getBoundingClientRect().top);
     for (let frame = 0; frame < 4; frame += 1) {
       await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
@@ -86,8 +107,7 @@ test('keeps the table geometry stable when trailing header content mounts dynami
   });
 
   expect(new Set(positions).size).toBe(1);
-  await expect(table.locator('.ds-table__bar-trailing')).toBeVisible();
-  await expect(table.locator('.ds-table__bar-trailing')).toHaveText('1 selected');
+  await expect(table.locator('[slot="header"]')).toContainText('1 selected');
 });
 
 test('keeps the visible caption bar outside horizontal table scrolling', async ({ page }) => {

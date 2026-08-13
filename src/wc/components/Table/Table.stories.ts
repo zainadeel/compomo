@@ -629,7 +629,7 @@ export const SafetyEvents: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'A Motive Dashboard-inspired safety-events table. Its table-owned 48px header composes an application-owned grouping control through the header slot, while the controlled footer reports loaded results. The checkbox and blank action lanes stay pinned; each owns a fixed divider and a row-clipped shadow directed into the scrolling columns while more content remains.',
+        story: 'A Motive Dashboard-inspired safety-events table. Its table-owned 48px header gives one full-width, 8px-inset surface to the application through the header slot, while the controlled footer reports loaded results. The checkbox and blank action lanes stay pinned; each owns a fixed divider and a row-clipped shadow directed into the scrolling columns while more content remains.',
       },
     },
   },
@@ -663,7 +663,7 @@ export const SafetyEvents: Story = {
       >
         <div
           slot="header"
-          style="display:flex;align-items:center;gap:var(--dimension-space-100);"
+          style="display:flex;align-items:center;min-width:0;gap:var(--dimension-space-100);"
         >
           <div style="display:flex;align-items:center;gap:var(--dimension-space-100);">
             <ds-text as="span" variant="text-body-small" color="secondary">Group rows</ds-text>
@@ -681,10 +681,9 @@ export const SafetyEvents: Story = {
               @dsClear=${() => updateArgs({ grouping: null })}
             ></ds-select>
           </div>
-        </div>
-        ${selectedRowIds.length > 0
+          ${selectedRowIds.length > 0
           ? html`<ds-text
-            slot="header-trailing"
+            style="margin-inline-start:auto;"
             as="span"
             variant="text-body-small"
             color="secondary"
@@ -692,6 +691,7 @@ export const SafetyEvents: Story = {
             ${selectedRowIds.length} selected
           </ds-text>`
           : null}
+        </div>
       </ds-table>
     `;
   },

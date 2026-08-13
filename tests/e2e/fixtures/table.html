@@ -23,8 +23,14 @@
     <main>
       <ds-table id="basic" caption="Workforce overview" caption-visibility="visible"></ds-table>
       <ds-table id="composable" caption="Composable drivers" caption-visibility="visible">
-        <div slot="header" data-table-header>Filtered drivers</div>
-        <button slot="header-trailing" type="button">Filter drivers</button>
+        <div
+          slot="header"
+          data-table-header
+          style="display: flex; align-items: center; justify-content: space-between; min-width: 0;"
+        >
+          <span>Filtered drivers</span>
+          <button type="button">Filter drivers</button>
+        </div>
         <button slot="footer-trailing" type="button">Export drivers</button>
       </ds-table>
       <ds-table id="footer" caption="Drivers with result summary" caption-visibility="hidden"></ds-table>
