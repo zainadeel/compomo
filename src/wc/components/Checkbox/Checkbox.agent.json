@@ -47,7 +47,7 @@
     "Use presentation mode only inside a composite option that owns selection semantics, focus, and interaction."
   ],
   "states": [
-    "Unchecked boxes use a tertiary-foreground inset stroke: 1.5px at lg, 1.25px at md, 1px at sm, and 0.75px at xs. Selected and mixed boxes remove the border, use a brand fill, and draw a component-owned check or subtract mark at the same density-specific stroke width.",
+    "Unchecked boxes use a tertiary-foreground inset stroke: 1.5px at lg, 1.25px at md, 1px at sm, and 0.75px at xs. Selected and mixed boxes remove the border, use a brand fill, and draw a component-owned filled check or subtract outline that scales with the box.",
     "Activating an indeterminate checkbox clears the mixed state, toggles checked, and emits dsChange with the resulting boolean.",
     "The initial checked and indeterminate values are restored by native form reset; checked values submit under name and unchecked values submit nothing.",
     "Sizes are lg with a 20px box in a 24px placement, md with a 16px box in a 20px placement, sm with a 12px box in a 16px placement, and xs with an 8px box in a 12px placement.",

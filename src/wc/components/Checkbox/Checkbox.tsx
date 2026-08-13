@@ -131,19 +131,19 @@ export class Checkbox {
         <span class="checkbox__placement ds-interaction-fill__content" aria-hidden="true">
           <span class={{ box: true, 'box--marked': isMarked }}>
             {isMarked && (
-              // eslint-disable-next-line local/prefer-ds-icon -- Checkbox owns this density-specific state mark and its optical stroke.
+              // eslint-disable-next-line local/prefer-ds-icon -- Checkbox owns this fixed state-mark geometry.
               <svg
-                class={{
-                  checkbox__mark: true,
-                  'checkbox__mark--checked': !this.indeterminate,
-                }}
+                class="checkbox__mark"
                 viewBox="0 0 16 16"
-                fill="none"
+                fill="currentColor"
                 focusable="false"
               >
                 <path
-                  d={this.indeterminate ? 'M4 8H12' : 'M3.5 8.25L6.75 11.5L12.5 4.75'}
-                  vector-effect="non-scaling-stroke"
+                  d={
+                    this.indeterminate
+                      ? 'M12 7.375V8.625H4V7.375H12Z'
+                      : 'M12.9756 4.65527L7.22559 11.4053C7.11258 11.5379 6.94946 11.6169 6.77539 11.624C6.60111 11.631 6.43095 11.5657 6.30762 11.4424L3.05762 8.19238L3.94238 7.30762L6.71289 10.0781L12.0244 3.84473L12.9756 4.65527Z'
+                  }
                 />
               </svg>
             )}
