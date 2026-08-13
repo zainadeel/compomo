@@ -33,6 +33,7 @@ import {
   CHROME_TRANSITION_START,
   ChromeTransitionDepth,
   createRafCoalescer,
+  readChromeTransitionPhase,
   readChromeTransitionSource,
 } from '../../shell/chrome-transition';
 import {
@@ -164,6 +165,8 @@ export class ShellApp {
   @State() private toolsFullscreen = false;
   @State() private resolvedMode: ShellResponsiveMode = 'desktop';
   @State() private managedToolsOpen = false;
+  /** Keep page capacity aligned with the drawer until its closing clip reaches zero. */
+  @State() private managedToolsClosing = false;
   @State() private managedActiveTool: PanelToolsToolId | '' = '';
   @State() private managedToolPresentation: 'drawer' | 'fullscreen' = 'drawer';
   @State() private managedMobileDestination: MobileDestination = 'area';
@@ -332,7 +335,14 @@ export class ShellApp {
   }
 
   private onChromeTransitionStart = (event: Event) => {
-    if (readChromeTransitionSource(event) !== 'panel-nav') return;
+    const source = readChromeTransitionSource(event);
+    if (source === 'panel-tools') {
+      if (readChromeTransitionPhase(event) === 'closing') {
+        this.managedToolsClosing = true;
+      }
+      return;
+    }
+    if (source !== 'panel-nav') return;
 
     this.panelNavTransition.enter();
     const viewport = readShellViewportDimensions();
@@ -342,7 +352,12 @@ export class ShellApp {
   };
 
   private onChromeTransitionEnd = (event: Event) => {
-    if (readChromeTransitionSource(event) !== 'panel-nav') return;
+    const source = readChromeTransitionSource(event);
+    if (source === 'panel-tools') {
+      this.managedToolsClosing = false;
+      return;
+    }
+    if (source !== 'panel-nav') return;
 
     this.panelNavTransition.exit();
     if (!this.panelNavTransition.isActive) {
@@ -1047,7 +1062,7 @@ export class ShellApp {
         responsiveMode={this.resolvedMode}
         headerCapacity={resolveManagedShellPageCapacity(
           this.resolvedMode,
-          this.managedToolsOpen
+          this.managedToolsOpen || this.managedToolsClosing
         )}
         contentInset={page.contentInset ?? 'default'}
         contentInsetBlockStart={page.contentInsetBlockStart ?? 'default'}
