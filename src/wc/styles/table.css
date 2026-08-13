@@ -521,6 +521,21 @@
   vertical-align: top;
 }
 
+/*
+ * Native table cells add their block padding outside the declared content
+ * height and grow together with their row. Grid items use border-box sizing,
+ * so restore intrinsic sizing and grid-track stretch for the grouped-sticky
+ * renderer instead of turning the native recipe's base sizes into hard caps.
+ */
+:where(.ds-table__table--native-group-sticky .ds-table__header-cell) {
+  min-block-size: var(--_table-header-min-block-size);
+  block-size: auto;
+}
+
+:where(.ds-table__table--native-group-sticky .ds-table__cell) {
+  block-size: auto;
+}
+
 :where(.ds-table__header-cell + .ds-table__header-cell) {
   border-inline-start: 0;
 }

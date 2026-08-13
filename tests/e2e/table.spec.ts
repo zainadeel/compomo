@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { chromiumOnly } from './browser-tier';
-import { COMPOSITED_EDGE_CEILING_PX } from './rendered-geometry';
+import { COMPOSITED_EDGE_CEILING_PX, expectGeometryClose } from './rendered-geometry';
 
 declare global {
   interface Window {
@@ -1461,6 +1461,17 @@ test('keeps native group push-off gapless through continuous scroll and resize f
   await expect(table.locator('.ds-table')).toHaveClass(/ds-table--viewport-fit-settled/);
   await expect(table.locator('.ds-table__sticky-group')).toHaveCount(0);
   await expect(table.locator('.ds-table__group-row--native-sticky')).toHaveCount(2);
+  await expect(table.locator('.ds-table__header-cell').first()).toHaveCSS('height', '32px');
+  const intrinsicRowGeometry = await table.locator('[data-row-id="fit-first-0"]').evaluate(row => {
+    const rowHeight = row.getBoundingClientRect().height;
+    const cellHeights = Array.from(row.querySelectorAll<HTMLElement>('.ds-table__cell'))
+      .map(cell => cell.getBoundingClientRect().height);
+    return { rowHeight, cellHeights };
+  });
+  expect(intrinsicRowGeometry.rowHeight).toBeGreaterThan(40);
+  for (const [index, cellHeight] of intrinsicRowGeometry.cellHeights.entries()) {
+    expectGeometryClose(cellHeight, intrinsicRowGeometry.rowHeight, `grouped grid cell ${index} height`);
+  }
   await expect(table.getByRole('rowheader', { name: /First fitted section/ })).toBeVisible();
   await expect(table.getByRole('rowheader', { name: /Second fitted section/ })).toBeVisible();
 
