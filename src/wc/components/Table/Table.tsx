@@ -1206,17 +1206,20 @@ export class Table {
           data-collapsed={isCollapsed ? 'true' : undefined}
           key={group.id}
         >
-          <tr role="row" class={{
-            'ds-table__group-row': true,
-            'ds-table__group-row--native-sticky': this.stickyHeader && !this.documentStickyHeader,
-          }}>
+          <tr
+            role="row"
+            aria-hidden={stickySourceHidden ? 'true' : undefined}
+            class={{
+              'ds-table__group-row': true,
+              'ds-table__group-row--native-sticky': this.stickyHeader && !this.documentStickyHeader,
+            }}
+          >
             <th
               class={{
                 'ds-table__group-cell': true,
                 'ds-table__group-cell--sticky-source-hidden': stickySourceHidden,
                 [intentClass ?? '']: !!intentClass,
               }}
-              aria-hidden={stickySourceHidden ? 'true' : undefined}
               role="rowheader"
               scope="rowgroup"
               colSpan={model.totalColumns}

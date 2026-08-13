@@ -1584,6 +1584,14 @@ test('keeps a document-flow header and edge columns sticky while vertical input 
     window.scrollTo(0, top + 280);
   }, await frame.elementHandle());
   await expect(stickyGroup).toHaveAttribute('data-group-id', 'first-section');
+  const firstGroupRow = table.locator(
+    'tbody[data-group-id="first-section"] .ds-table__group-row',
+  );
+  await expect(firstGroupRow).toHaveAttribute('aria-hidden', 'true');
+  await expect(firstGroupRow.locator('.ds-table__group-cell')).not.toHaveAttribute(
+    'aria-hidden',
+    'true',
+  );
   await expect.poll(() => stickyGroup.evaluate(element => element.getBoundingClientRect().top)).toBeCloseTo(128, 0);
   await expect.poll(() => secondGroup.evaluate(element => element.getBoundingClientRect().top)).toBeGreaterThan(128);
   await page.evaluate(element => {
@@ -1607,6 +1615,10 @@ test('keeps a document-flow header and edge columns sticky while vertical input 
     window.scrollTo(0, top - 108);
   }, await secondGroup.elementHandle());
   await expect(stickyGroup).toHaveAttribute('data-group-id', 'second-section');
+  await expect(firstGroupRow).not.toHaveAttribute('aria-hidden', 'true');
+  await expect(
+    table.locator('tbody[data-group-id="second-section"] .ds-table__group-row'),
+  ).toHaveAttribute('aria-hidden', 'true');
   await expect.poll(() => stickyGroup.evaluate(element => element.getBoundingClientRect().top)).toBeCloseTo(128, 0);
   await expect(table.locator('.ds-table__head--semantic-copy')).toHaveCSS('opacity', '0');
   await expect(stickyHeader.locator('th[aria-sort]')).toHaveCount(0);
