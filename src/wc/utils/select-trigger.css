@@ -1,0 +1,123 @@
+/**
+ * Shared select-trigger anatomy. Select and Filter Menu share the compact
+ * combobox control while retaining their own popup semantics and behavior.
+ */
+
+:host(.ds-select-trigger-host) {
+  display: inline-flex;
+  position: relative;
+  outline: none;
+  --ds-select-fg: var(--color-foreground-secondary);
+  --ds-select-fg-active: var(--color-foreground-primary);
+  --ds-select-prefix-fg: var(--ds-select-fg);
+  --ds-select-chevron-fg: var(--ds-select-fg);
+  --ds-select-border: var(--color-border-secondary);
+}
+
+:host(.ds-control-width--fill) .trigger {
+  width: 100%;
+}
+
+.trigger {
+  justify-content: flex-start;
+  background: transparent;
+  border: none;
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
+  color: var(--ds-select-fg);
+  cursor: default;
+  font-family: inherit;
+  -webkit-user-select: none;
+  user-select: none;
+  overflow: hidden;
+  transition: color var(--effect-motion-short-2);
+}
+
+.trigger--bordered {
+  --ds-interaction-border-width: var(--dimension-stroke-width-012);
+  --ds-interaction-border-color: var(--ds-select-border);
+}
+
+.trigger--has-value .trigger__label-box {
+  color: var(--ds-select-fg-active);
+}
+
+.trigger--label-placeholder .trigger__label-box {
+  color: var(--ds-select-fg);
+}
+
+.trigger__prefix,
+.trigger__chevron {
+  position: relative;
+  z-index: 2;
+}
+
+.trigger__prefix {
+  color: var(--ds-select-prefix-fg);
+}
+
+.trigger__chevron {
+  color: var(--ds-select-chevron-fg);
+}
+
+.trigger__label-box {
+  position: relative;
+  z-index: 2;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-align: left;
+  color: inherit;
+  transition: color var(--effect-motion-short-2);
+}
+
+.trigger__label-content {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.trigger__label {
+  min-width: 0;
+}
+
+:host(.ds-select-trigger-host--background-medium) {
+  --ds-select-fg: var(--color-foreground-on-medium-background-secondary);
+  --ds-select-fg-active: var(--color-foreground-on-medium-background-primary);
+  --ds-select-border: var(--color-border-on-medium-background-secondary);
+}
+
+:host(.ds-select-trigger-host--background-bold) {
+  --ds-select-fg: var(--color-foreground-on-bold-background-secondary);
+  --ds-select-fg-active: var(--color-foreground-on-bold-background-primary);
+  --ds-select-border: var(--color-border-on-bold-background-secondary);
+}
+
+:host(.ds-select-trigger-host--background-strong) {
+  --ds-select-fg: var(--color-foreground-on-strong-background-secondary);
+  --ds-select-fg-active: var(--color-foreground-on-strong-background-primary);
+  --ds-select-border: var(--color-border-on-strong-background-secondary);
+}
+
+:host(.ds-select-trigger-host--background-translucent) {
+  --ds-select-fg: var(--color-translucent-foreground-secondary);
+  --ds-select-fg-active: var(--color-translucent-foreground-primary);
+  --ds-select-border: var(--color-translucent-border-secondary);
+}
+
+:host(.ds-select-trigger-host--background-inverted) {
+  --ds-select-fg: var(--color-inverted-foreground-secondary);
+  --ds-select-fg-active: var(--color-inverted-foreground-primary);
+  --ds-select-border: var(--color-inverted-border-secondary);
+}
+
+:host(.ds-select-trigger-host--background-media) {
+  --ds-select-fg: var(--color-media-foreground-secondary);
+  --ds-select-fg-active: var(--color-media-foreground-primary);
+  --ds-select-border: var(--color-media-border-secondary);
+}
+
+:host(.ds-select-trigger-host--background-always-dark) {
+  --ds-select-fg: var(--color-always-dark-foreground-secondary);
+  --ds-select-fg-active: var(--color-always-dark-foreground-primary);
+  --ds-select-border: var(--color-always-dark-border-secondary);
+}

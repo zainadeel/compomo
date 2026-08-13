@@ -41,6 +41,7 @@
   text-transform: inherit;
   text-align: inherit;
   text-decoration: inherit;
+  text-underline-offset: inherit;
   font-style: inherit;
   font-variant-numeric: inherit;
   font-feature-settings: inherit;
@@ -130,18 +131,20 @@
 
 /* ── Decorations ─────────────────────────────────────────────────────────── */
 
+:host(.ds-text--decoration-underline),
+:host(.ds-text--decoration-dotted-underline) {
+  text-decoration-color: var(--ds-text-decoration-color, var(--color-foreground-tertiary));
+  text-decoration-thickness: var(--ds-text-decoration-thickness, var(--dimension-stroke-width-012));
+  text-underline-offset: var(--ds-text-decoration-offset, var(--dimension-space-025));
+}
+
 :host(.ds-text--decoration-underline) {
-  text-decoration: underline;
-  text-decoration-color: var(--color-foreground-tertiary);
-  text-underline-offset: 2px;
-  text-decoration-thickness: 1px;
+  text-decoration-line: underline;
 }
 
 :host(.ds-text--decoration-dotted-underline) {
-  text-decoration: underline dotted;
-  text-decoration-color: var(--color-foreground-tertiary);
-  text-underline-offset: 2px;
-  text-decoration-thickness: 1px;
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
 }
 
 /* ── Style ──────────────────────────────────────────────────────────────── */

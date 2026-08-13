@@ -85,6 +85,19 @@ test.describe('BarNav responsive overflow', () => {
     await expect(page.locator('.bar-nav__overflow-trigger')).toHaveCount(0);
   });
 
+  test('visible tab dots use the shared control-label offset recipe', async ({ page }) => {
+    await page.evaluate(() => window.__setShellWidth(900));
+    const dottedLabel = page
+      .getByRole('tab', { name: 'Events' })
+      .locator('.bar-nav__tab-label--dot');
+    const dot = dottedLabel.locator('.bar-nav__tab-dot');
+
+    await expect(dottedLabel).toHaveClass(/ds-control-label-dot/);
+    await expect(dot).toHaveClass(/ds-control-label-dot__badge/);
+    await expect(dot).toHaveCSS('top', '0px');
+    await expect(dot).toHaveCSS('right', '0px');
+  });
+
   test('internal tab row uses manual horizontal roving focus', async ({ page }) => {
     await page.evaluate(() => window.__setShellWidth(900));
     await page.evaluate(() => {

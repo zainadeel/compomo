@@ -6,6 +6,7 @@
 @import './chrome-layout.css';
 @import './control-parts.css';
 @import './empty-region.css';
+@import './text-decoration.css';
 
 .ds-choice-popup {
   box-sizing: border-box;
@@ -83,6 +84,11 @@ ds-text.ds-choice-section__header {
   user-select: none;
 }
 
+.ds-choice-section__header-label {
+  display: block;
+  transform: translateY(var(--dimension-space-050));
+}
+
 .ds-choice-item {
   width: 100%;
   border: none;
@@ -135,6 +141,11 @@ ds-text.ds-choice-item__subtext {
   pointer-events: none;
 }
 
+.ds-choice-item__tag {
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
 .ds-choice-empty,
 .ds-choice-loading {
   min-height: var(--dimension-size-600);
@@ -160,12 +171,15 @@ ds-text.ds-choice-item__subtext {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  column-gap: var(--dimension-space-050);
   box-sizing: border-box;
   height: var(--ds-control-height, var(--dimension-size-400));
 }
 
 .ds-choice-footer__summary,
-.ds-choice-footer__clear ds-text {
+.ds-choice-footer__summary-measure,
+.ds-choice-footer__clear ds-text,
+.ds-choice-footer__action ds-text {
   padding-inline: calc(
     var(--dimension-space-050) +
       var(--ds-control-padding-inline, var(--dimension-space-075)) +
@@ -173,7 +187,21 @@ ds-text.ds-choice-item__subtext {
   );
 }
 
-.ds-choice-footer__clear {
+.ds-choice-footer__summary,
+.ds-choice-footer__summary-measure,
+.ds-choice-footer__clear,
+.ds-choice-footer__action {
+  white-space: nowrap;
+}
+
+.ds-choice-footer__summary-measure {
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.ds-choice-footer__clear,
+.ds-choice-footer__action {
   appearance: none;
   display: inline-flex;
   align-items: center;
@@ -181,15 +209,7 @@ ds-text.ds-choice-item__subtext {
   border: 0;
   border-radius: var(--dimension-radius-025);
   background: transparent;
-  color: var(--color-foreground-bold-brand);
   cursor: default;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .ds-choice-footer__clear:hover {
-    text-decoration: underline;
-    text-decoration-color: var(--color-foreground-tertiary);
-  }
 }
 
 @media (forced-colors: active) {

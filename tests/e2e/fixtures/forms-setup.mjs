@@ -3,13 +3,14 @@ import '/dist/components/ds-field.js';
 import '/dist/components/ds-checkbox.js';
 import '/dist/components/ds-select.js';
 import '/dist/components/ds-menu.js';
+import '/dist/components/ds-tag.js';
 import '/dist/components/ds-radio.js';
 import '/dist/components/ds-switch.js';
 import '/dist/components/ds-slider.js';
 import '/dist/components/ds-swatch-picker.js';
 
 await Promise.all([
-  'ds-input', 'ds-field', 'ds-checkbox', 'ds-select', 'ds-menu',
+  'ds-input', 'ds-field', 'ds-checkbox', 'ds-select', 'ds-menu', 'ds-tag',
   'ds-radio', 'ds-switch', 'ds-slider', 'ds-swatch-picker',
 ].map(tag => customElements.whenDefined(tag)));
 
@@ -25,6 +26,13 @@ const densityOptions = [
 document.getElementById('select-lg').options = densityOptions;
 document.getElementById('select-multi-lg').options = densityOptions;
 document.getElementById('menu-xs').items = densityOptions;
+document.getElementById('menu-tag').items = [
+  {
+    label: 'Severity',
+    value: 'severity',
+    tag: { label: '2', intent: 'brand', contrast: 'bold', rounded: true },
+  },
+];
 document.getElementById('tier').options = [
   { label: 'Standard', value: 'standard' },
   { label: 'Premium', value: 'premium' },

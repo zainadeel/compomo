@@ -1,0 +1,14 @@
+/*
+ * Inter copyright 2016 The Inter Project Authors.
+ * SIL Open Font License 1.1: /licenses/Inter-OFL-1.1.txt
+ *
+ * Storybook is an application consumer, so it owns this font face while
+ * TokoMo continues to provide only the semantic font-family token.
+ */
+@font-face {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('@fontsource-variable/inter/files/inter-latin-wght-normal.woff2') format('woff2-variations');
+}

@@ -23,7 +23,12 @@ import {
   setRequiredValidity,
   type ControlWidth,
 } from '../../utils';
-import { ChoiceFooter, ChoiceOptionRow, ChoiceSearch } from '../../utils/choice-list-parts';
+import {
+  ChoiceActionFooter,
+  ChoiceFooter,
+  ChoiceOptionRow,
+  ChoiceSearch,
+} from '../../utils/choice-list-parts';
 import {
   choiceBackgroundClassMap,
   choiceListUsesIcons,
@@ -43,12 +48,26 @@ export type SelectSection = ChoiceSection;
 export type SelectBackground = ChoiceBackground;
 export type SelectSize = 'lg' | 'md' | 'sm' | 'xs';
 export type SelectWidth = ControlWidth;
+export type SelectPopupAlign = 'start' | 'end';
 export type SelectValue = string | string[];
+
+export interface SelectOptionActionDetail {
+  value: string;
+  anchorId: string;
+  originalEvent: MouseEvent;
+}
 
 const ICON_SIZE: Record<SelectSize, 'lg' | 'md' | 'sm' | 'xs'> = {
   lg: 'lg',
   md: 'md',
   sm: 'sm',
+  xs: 'xs',
+};
+
+const OPTION_ACTION_SIZE: Record<SelectSize, 'md' | 'sm' | 'xs'> = {
+  lg: 'md',
+  md: 'sm',
+  sm: 'xs',
   xs: 'xs',
 };
 
@@ -84,10 +103,18 @@ export class Select {
   @Prop() requiredMessage: string = DEFAULT_REQUIRED_MESSAGE;
   /** Trigger text shown when no valid value is selected. */
   @Prop() placeholder: string = 'Select';
+  /** Optional scalar-mode trigger text that does not change the selected option label. */
+  @Prop() triggerLabel: string | undefined;
+  /** Present triggerLabel with placeholder emphasis while preserving the selected value. */
+  @Prop() triggerLabelPlaceholder: boolean = false;
+  /** Show a supplemental notification dot beside the trigger label. */
+  @Prop() dot: boolean = false;
   /** Control density. */
   @Prop() size: SelectSize = 'md';
   /** Width fit — hug content (default) or fill the parent. */
   @Prop() width: SelectWidth = 'hug';
+  /** Align the popup's choice edge to the trigger start or end edge. */
+  @Prop() popupAlign: SelectPopupAlign = 'start';
   /** Shared inactive treatment; removes interaction and form submission. */
   @Prop() isInactive: boolean = false;
   /** Replace the prefix with a loader and disable option interaction. */
@@ -104,6 +131,8 @@ export class Select {
   @Prop() clearLabel: string = 'Clear';
   /** Localized noun displayed after the selected count in multiple mode. */
   @Prop() selectedLabel: string = 'selected';
+  /** Optional text action shown in the popup footer instead of the clear action. */
+  @Prop() footerActionLabel: string | undefined;
   /** Show immediate local filtering over option labels, subtext, and section headings. */
   @Prop() searchable: boolean = false;
   /** Localized search-field placeholder and accessible name. */
@@ -133,6 +162,10 @@ export class Select {
   @Event() dsClear!: EventEmitter<void>;
   /** Emitted whenever popup visibility changes. */
   @Event() dsOpenChange!: EventEmitter<boolean>;
+  /** Emitted when the optional popup footer action is activated. */
+  @Event() dsFooterAction!: EventEmitter<void>;
+  /** Emitted when an option's contextual ellipsis action is activated. */
+  @Event() dsOptionAction!: EventEmitter<SelectOptionActionDetail>;
 
   @State() private activeIndex = -1;
   @State() private searchTerm = '';
@@ -140,12 +173,19 @@ export class Select {
   @State() private position = { x: 0, y: 0 };
   @State() private positionReady = false;
   @State() private focusRingVisible = false;
+  @State() private compactFooterSummary = false;
 
   private readonly generatedId = `ds-select-${++selectId}`;
   private readonly listboxId = `${this.generatedId}-listbox`;
   private readonly errorId = `${this.generatedId}-error`;
   private initialValue: SelectValue = '';
   private readonly controller = this.createController();
+  private footerContentElement?: HTMLDivElement;
+  private footerSummaryMeasureElement?: HTMLElement;
+  private footerClearElement?: HTMLButtonElement;
+  private footerResizeObserver?: ResizeObserver;
+  private observedFooterContentElement?: HTMLDivElement;
+  private footerMeasurementFrame?: number;
 
   private createController() {
     // eslint-disable-next-line @typescript-eslint/no-this-alias -- adapter getters preserve reactive component ownership without inheritance.
@@ -172,6 +212,9 @@ export class Select {
         return owner.visibleOptions.findIndex(
           option => option.value === owner.scalarValue && !option.isInactive
         );
+      },
+      get popupAlign() {
+        return owner.popupAlign;
       },
       get open() {
         return owner.open;
@@ -221,10 +264,21 @@ export class Select {
 
   componentDidLoad() {
     this.controller.connect();
+    this.observeFooterContent();
+  }
+
+  componentDidRender() {
+    this.observeFooterContent();
+    this.scheduleFooterSummaryMeasurement();
   }
 
   disconnectedCallback() {
     this.controller.disconnect();
+    this.footerResizeObserver?.disconnect();
+    this.observedFooterContentElement = undefined;
+    if (this.footerMeasurementFrame !== undefined) {
+      cancelAnimationFrame(this.footerMeasurementFrame);
+    }
   }
 
   @Watch('value')
@@ -258,6 +312,11 @@ export class Select {
   @Watch('isLoading')
   onLoadingChange() {
     this.controller.loadingChanged();
+  }
+
+  @Watch('popupAlign')
+  onPopupAlignChange() {
+    this.controller.positionChanged();
   }
 
   @Watch('open')
@@ -351,6 +410,64 @@ export class Select {
     return this.controller.activeOptionId;
   }
 
+  private observeFooterContent() {
+    const content =
+      this.open && this.multiple && this.hasSelection
+        ? this.footerContentElement
+        : undefined;
+    if (!content?.isConnected) {
+      this.footerResizeObserver?.disconnect();
+      this.observedFooterContentElement = undefined;
+      return;
+    }
+    if (this.observedFooterContentElement === content) return;
+
+    this.footerResizeObserver?.disconnect();
+    if (typeof ResizeObserver !== 'undefined') {
+      this.footerResizeObserver = new ResizeObserver(() =>
+        this.scheduleFooterSummaryMeasurement()
+      );
+      this.footerResizeObserver.observe(content);
+    }
+    this.observedFooterContentElement = content;
+  }
+
+  private scheduleFooterSummaryMeasurement() {
+    if (
+      !this.open ||
+      !this.multiple ||
+      !this.hasSelection ||
+      this.footerMeasurementFrame !== undefined
+    ) {
+      return;
+    }
+    this.footerMeasurementFrame = requestAnimationFrame(() => {
+      this.footerMeasurementFrame = undefined;
+      this.measureFooterSummary();
+    });
+  }
+
+  private measureFooterSummary() {
+    const content = this.footerContentElement;
+    const summary = this.footerSummaryMeasureElement;
+    const clear = this.footerClearElement;
+    if (!content?.isConnected || !summary?.isConnected || !clear?.isConnected) return;
+
+    const styles = getComputedStyle(content);
+    const innerWidth =
+      content.clientWidth -
+      Number.parseFloat(styles.paddingInlineStart || '0') -
+      Number.parseFloat(styles.paddingInlineEnd || '0');
+    const requiredWidth =
+      summary.getBoundingClientRect().width +
+      clear.getBoundingClientRect().width +
+      Number.parseFloat(styles.columnGap || '0');
+    const nextCompact = requiredWidth > innerWidth + 0.5;
+    if (nextCompact !== this.compactFooterSummary) {
+      this.compactFooterSummary = nextCompact;
+    }
+  }
+
   private closePopup(restoreFocus = false) {
     this.controller.closePopup(restoreFocus);
   }
@@ -388,6 +505,13 @@ export class Select {
     this.controller.focusSearchOrTrigger();
   };
 
+  private activateFooterAction = (event: MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    this.dsFooterAction.emit();
+    this.closePopup();
+  };
+
   private readonly handleListKeyDown = this.controller.handleListKeyDown;
   private readonly handleTriggerKeyDown = this.controller.handleTriggerKeyDown;
 
@@ -401,6 +525,7 @@ export class Select {
       ? this.resolvedValues.includes(option.value)
       : option.value === this.scalarValue;
     const active = index === this.activeIndex;
+    const actionId = `${this.generatedId}-option-action-${index}`;
     return (
       <ChoiceOptionRow
         size={this.size}
@@ -410,6 +535,7 @@ export class Select {
         active={active}
         focusRingVisible={this.focusRingVisible}
         usesSubtext={usesSubtext}
+        actionOpen={option.action?.expanded}
         leading={
           this.multiple ? (
             <span
@@ -433,6 +559,41 @@ export class Select {
             </span>
           ) : undefined
         }
+        action={
+          option.action ? (
+            <ds-tooltip label={option.action.label} side="left" size="sm">
+              <ds-button-unfilled
+                id={actionId}
+                variant="icon"
+                size={OPTION_ACTION_SIZE[this.size]}
+                icon="Ellipses"
+                rounded
+                hasBorder={false}
+                activeFill={false}
+                isActive={option.action.expanded}
+                ariaLabel={option.action.label}
+                haspopup="menu"
+                controls={option.action.controls}
+                expanded={option.action.expanded}
+                onKeyDown={event => {
+                  event.stopPropagation();
+                  if (event.key === 'Escape' || event.key === 'ArrowLeft') {
+                    event.preventDefault();
+                    this.controller.focusSearchOrTrigger();
+                  }
+                }}
+                onDsClick={(event: CustomEvent<MouseEvent>) => {
+                  event.stopPropagation();
+                  this.dsOptionAction.emit({
+                    value: option.value,
+                    anchorId: actionId,
+                    originalEvent: event.detail,
+                  });
+                }}
+              />
+            </ds-tooltip>
+          ) : undefined
+        }
         onHover={() => {
           this.focusRingVisible = false;
           this.activeIndex = index;
@@ -450,7 +611,7 @@ export class Select {
       ? `${this.placeholder}${count > 0 ? ` · ${count}` : ''}`
       : showPlaceholder
         ? this.placeholder
-        : this.selectedOption?.label;
+        : (this.triggerLabel ?? this.selectedOption?.label);
     const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const iconSize = ICON_SIZE[this.size];
     const usesOptionIcons = !this.multiple && choiceListUsesIcons(this.allOptions);
@@ -473,12 +634,14 @@ export class Select {
       <Host
         class={{
           'select-host': true,
+          'ds-select-trigger-host': true,
           'select-host--multiple': this.multiple,
           'ds-field-stack': true,
           'ds-control-inactive': inactive,
           [`ds-control--${this.size}`]: true,
           ...controlWidthClass(this.width),
           [`select-host--background-${this.background}`]: !!this.background,
+          [`ds-select-trigger-host--background-${this.background}`]: !!this.background,
         }}
       >
         <button
@@ -496,6 +659,8 @@ export class Select {
             'trigger--bordered': this.hasBorder,
             'trigger--placeholder': showPlaceholder && !this.multiple,
             'trigger--has-value': this.hasSelection,
+            'trigger--label-placeholder':
+              !this.multiple && Boolean(this.triggerLabel) && this.triggerLabelPlaceholder,
             'wrapper--error': this.hasBorder && this.error,
             [`ds-control--${this.size}`]: true,
             ...choiceBackgroundClassMap(this.background),
@@ -513,7 +678,22 @@ export class Select {
           aria-required={this.required || undefined}
           aria-busy={this.isLoading ? 'true' : undefined}
           onClick={() => (this.open ? this.closePopup() : this.openPopup(false))}
-          onKeyDown={this.handleTriggerKeyDown}
+          onKeyDown={event => {
+            const action = this.visibleOptions[this.activeIndex]?.action;
+            if (
+              this.open &&
+              action &&
+              (event.key === 'ArrowRight' || (event.key === 'F10' && event.shiftKey))
+            ) {
+              event.preventDefault();
+              document
+                .getElementById(`${this.generatedId}-option-action-${this.activeIndex}`)
+                ?.querySelector<HTMLElement>('button')
+                ?.focus();
+              return;
+            }
+            this.handleTriggerKeyDown(event);
+          }}
         >
           {(this.icon || this.isLoading) && (
             <span
@@ -527,15 +707,40 @@ export class Select {
               )}
             </span>
           )}
-          <ds-text
-            class="trigger__label ds-control-label-box ds-interaction-fill__content"
-            as="span"
-            variant={textVariant}
-            color="inherit"
-            lineTruncation={1}
+          <span
+            class={{
+              'trigger__label-box': true,
+              'ds-interaction-fill__content': true,
+            }}
           >
-            {label}
-          </ds-text>
+            <span
+              class={{
+                'trigger__label-content': true,
+                'ds-control-label-box': true,
+                'ds-control-label-dot': this.dot,
+                'trigger__label-content--dot': this.dot,
+              }}
+            >
+              <ds-text
+                class="trigger__label"
+                as="span"
+                variant={textVariant}
+                color="inherit"
+                lineTruncation={1}
+              >
+                {label}
+              </ds-text>
+              {this.dot && (
+                <ds-badge
+                  class="trigger__dot ds-control-label-dot__badge"
+                  variant="dot"
+                  hasRing={false}
+                  label=""
+                  aria-hidden="true"
+                />
+              )}
+            </span>
+          </span>
           <span
             class="trigger__chevron ds-control-icon-box ds-interaction-fill__content"
             aria-hidden="true"
@@ -619,7 +824,7 @@ export class Select {
                         color="primary"
                         aria-hidden="true"
                       >
-                        {section.header}
+                        <span class="ds-choice-section__header-label">{section.header}</span>
                       </ds-text>
                     )}
                     {section.options.map(option =>
@@ -629,16 +834,33 @@ export class Select {
                 ))
               )}
             </div>
-            {this.allowClear && this.hasSelection && !this.isLoading && (
+            {this.footerActionLabel && !this.isLoading ? (
+              <ChoiceActionFooter
+                size={this.size}
+                label={this.footerActionLabel}
+                onAction={this.activateFooterAction}
+              />
+            ) : this.allowClear && this.hasSelection && !this.isLoading ? (
               <ChoiceFooter
                 size={this.size}
                 summary={
                   this.multiple ? `${count} ${this.selectedLabel}` : undefined
                 }
+                compactSummary={this.multiple ? String(count) : undefined}
+                useCompactSummary={this.compactFooterSummary}
+                contentRef={element => {
+                  this.footerContentElement = element ?? undefined;
+                }}
+                summaryMeasureRef={element => {
+                  this.footerSummaryMeasureElement = element ?? undefined;
+                }}
+                clearRef={element => {
+                  this.footerClearElement = element ?? undefined;
+                }}
                 clearLabel={this.clearLabel}
                 onClear={this.clearSelection}
               />
-            )}
+            ) : null}
           </div>
         )}
 

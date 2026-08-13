@@ -141,7 +141,7 @@ export class Breadcrumb {
     const label = (
       [
         <ds-text
-          class="breadcrumb__label"
+          class="breadcrumb__label ds-text-decoration"
           as="span"
           variant="text-caption"
           color="inherit"

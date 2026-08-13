@@ -4,6 +4,7 @@ import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-menu.js';
 import '../../../../dist/components/ds-switch.js';
 import '../../../../dist/components/ds-swatch-picker.js';
+import '../../../../dist/components/ds-tag.js';
 import { TOKEN_CSS_LENGTHS } from '../../utils/token-defaults';
 import { PANEL_NAV_USER_MENU_PLACEMENT } from './menu-placement';
 import { shellGradientPickerSections } from '../../shell/shell-gradient-presets';
@@ -165,6 +166,31 @@ export const WithNotificationDot: Story = {
           { label: 'Archive', value: 'archive' },
         ]}
         anchor-id="menu-anchor-dot"
+      ></ds-menu>
+    </div>
+  `,
+};
+
+export const WithTrailingTags: Story = {
+  name: 'With trailing tags',
+  render: () => html`
+    <div style="padding: 16px; height: 240px">
+      <span id="menu-anchor-tags" style="display: inline-block; width: 1px; height: 1px"></span>
+      <ds-menu
+        ?open=${true}
+        .items=${[
+          {
+            label: 'Severity',
+            value: 'severity',
+            tag: { label: '2', intent: 'brand', contrast: 'bold', rounded: true },
+          },
+          {
+            label: 'Status',
+            value: 'status',
+            tag: { label: 'New', intent: 'neutral', contrast: 'faint' },
+          },
+        ]}
+        anchor-id="menu-anchor-tags"
       ></ds-menu>
     </div>
   `,

@@ -2,6 +2,7 @@ import {
   dimensionIconographyMd,
   dimensionIconographySm,
   dimensionIconographyXs,
+  dimensionMenuWidthLg,
   dimensionMenuWidthXs,
   dimensionPanelWidth2xs,
   dimensionPanelWidthLg,
@@ -59,6 +60,7 @@ export const TOKEN_DEFAULTS = {
   panelWidthMd: dimensionPanelWidthMd,
   panelWidthLg: dimensionPanelWidthLg,
   menuWidthXs: dimensionMenuWidthXs,
+  menuWidthLg: dimensionMenuWidthLg,
   lineheightLg: typographyLineheightLg,
   lineheightMd: typographyLineheightMd,
   lineheightSm: typographyLineheightSm,
@@ -90,4 +92,5 @@ export const TOKEN_CSS_LENGTHS = {
   space050: `var(${dimensionSpace050})`,
   space200: `var(${dimensionSpace200})`,
   menuWidthXs: `var(${dimensionMenuWidthXs})`,
+  menuWidthLg: `var(${dimensionMenuWidthLg})`,
 } as const;

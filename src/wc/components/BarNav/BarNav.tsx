@@ -747,6 +747,8 @@ export class BarNav {
               <span
                 class={{
                   'bar-nav__tab-label': true,
+                  'ds-control-label-box': true,
+                  'ds-control-label-dot': !!tab.dot,
                   'bar-nav__tab-label--dot': !!tab.dot,
                 }}
               >
@@ -755,7 +757,7 @@ export class BarNav {
                 </ds-text>
                 {tab.dot && (
                   <ds-badge
-                    class="bar-nav__tab-dot"
+                    class="bar-nav__tab-dot ds-control-label-dot__badge"
                     variant="dot"
                     hasRing={false}
                     label=""

@@ -51,6 +51,38 @@ test.describe('renderer-neutral prose foundation', () => {
     await expect(page.locator('#semantic-prose > h2')).toHaveCSS('margin-block-start', '0px');
   });
 
+  test('uses the shared brand hover underline and decoration geometry for prose links', async ({ page }) => {
+    const link = page.locator('#semantic-prose a');
+    const styles = await link.evaluate(element => {
+      const probe = document.createElement('span');
+      probe.style.color = 'var(--color-foreground-bold-brand)';
+      probe.style.textDecorationThickness = 'var(--dimension-stroke-width-012)';
+      probe.style.textUnderlineOffset = 'var(--dimension-space-025)';
+      document.body.append(probe);
+      const actual = getComputedStyle(element);
+      const expected = getComputedStyle(probe);
+      const result = {
+        color: actual.color,
+        expectedColor: expected.color,
+        underlineColor: actual.textDecorationColor,
+        thickness: actual.textDecorationThickness,
+        expectedThickness: expected.textDecorationThickness,
+        offset: actual.textUnderlineOffset,
+        expectedOffset: expected.textUnderlineOffset,
+      };
+      probe.remove();
+      return result;
+    });
+
+    await expect(link).toHaveCSS('text-decoration-line', 'none');
+    expect(styles.color).toBe(styles.expectedColor);
+    expect(styles.underlineColor).toBe(styles.expectedColor);
+    expect(styles.thickness).toBe(styles.expectedThickness);
+    expect(styles.offset).toBe(styles.expectedOffset);
+    await link.hover();
+    await expect(link).toHaveCSS('text-decoration-line', 'underline');
+  });
+
   test('shares the semantic code-family and ligature contract across code surfaces', async ({ page }) => {
     await expect(page.locator('#agent-tool-call pre')).toHaveCount(2);
 

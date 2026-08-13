@@ -1,0 +1,71 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-filter-menu",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-filter-menu",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Controlled two-pane filter select with menu-recipe category navigation, single- and multiple-choice, boolean, and date filters, selected counts, and a clear action.",
+  "useWhen": [
+    "A compact trigger must expose several filter families without turning the toolbar into many separate controls.",
+    "Users need to move between persistent filter categories while editing the selected category in a second pane."
+  ],
+  "avoidWhen": [
+    "The user is selecting one form value; use Select.",
+    "The popup contains contextual commands rather than filtering controls; use Menu.",
+    "The workflow requires confirmation or several ordered steps; use Modal."
+  ],
+  "alternatives": [
+    {
+      "when": "One known value is selected for a form field.",
+      "component": "component:ds-select",
+      "reason": "Select owns compact form-value and listbox semantics."
+    },
+    {
+      "when": "A trigger reveals commands or row actions.",
+      "component": "component:ds-menu",
+      "reason": "Menu provides the appropriate action-menu semantics and keyboard model."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-select",
+    "component:ds-table",
+    "component:ds-checkbox"
+  ],
+  "accessibility": [
+    "The built-in select trigger exposes combobox semantics with a dialog popup, synchronizes expanded state, and restores focus after dismissal.",
+    "The category pane is a vertical tab list. Arrow Up and Arrow Down wrap, Home and End jump, Arrow Right enters the option pane, and Arrow Left returns to the active category.",
+    "Escape and outside activation close the popup and restore trigger focus. Tab moves through option controls and closes only when it leaves the popup boundary.",
+    "The trigger count reports active filter categories. Category counts and the footer report individual selected criteria; none replace visible selected-state indication."
+  ],
+  "states": [
+    "The application owns filters, values, activeFilterId, and open. Replace controlled objects and arrays after dsChange, dsActiveFilterChange, dsClear, or dsClose.",
+    "Single filters return a string, multiple filters return ordered string arrays, boolean filters return a boolean, and date filters return a YYYY-MM-DD string.",
+    "Selection applies immediately and does not close the popup.",
+    "The trigger reports how many filter categories have selections, while the footer appears when values are selected and reports the total selected criteria."
+  ],
+  "responsiveBehavior": [
+    "The popup defaults to the large menu-width token and clamps to the viewport.",
+    "Both panes remain visible at narrow widths, with a smaller category minimum and reduced option-pane padding.",
+    "Treat side as preferred placement; the popup flips and clamps when viewport collision requires it."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign filters and values as JavaScript properties after the element is defined."
+    ],
+    "react": [
+      "Pass filters and values as controlled props and handle onDsChange, onDsActiveFilterChange, onDsClear, and onDsClose."
+    ],
+    "angular": [
+      "Use property bindings for filters and values and event bindings for dsChange, dsActiveFilterChange, dsClear, and dsClose."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook example",
+      "path": "src/wc/components/FilterMenu/FilterMenu.stories.ts"
+    }
+  ]
+}

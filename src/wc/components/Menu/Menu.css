@@ -20,6 +20,10 @@
 
 /* ── Switch suffix ───────────────────────────────────────────────────────── */
 
+.menu-item--switch {
+  gap: var(--dimension-space-100);
+}
+
 .menu-item__switch {
   flex-shrink: 0;
 }

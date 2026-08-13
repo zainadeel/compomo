@@ -252,6 +252,25 @@ test('select, multi-select, and menu propagate density into choice rows',
   await expect(menuRow).toHaveClass(/ds-control--xs/);
   await expect(menuRow.locator('.menu-item__label')).toHaveJSProperty('variant', 'text-caption');
   await expect(menuRow.locator('.menu-item__subtext')).toHaveJSProperty('variant', 'text-caption');
+
+  await page.locator('#menu-tag').evaluate((element: HTMLDsMenuElement) => {
+    element.open = true;
+  });
+  const taggedMenuRow = page.locator('#menu-tag .menu-item');
+  const trailingTag = taggedMenuRow.locator('ds-tag');
+  await expect(trailingTag).toHaveJSProperty('size', 'sm');
+  await expect(trailingTag).toHaveJSProperty('intent', 'brand');
+  await expect(trailingTag).toHaveJSProperty('contrast', 'bold');
+  await expect(trailingTag).toHaveJSProperty('rounded', true);
+  await expect
+    .poll(() =>
+      taggedMenuRow.evaluate(row => {
+        const rowRect = row.getBoundingClientRect();
+        const tagRect = row.querySelector('ds-tag')!.getBoundingClientRect();
+        return { rowHeight: rowRect.height, tagWidth: tagRect.width, tagHeight: tagRect.height };
+      })
+    )
+    .toEqual({ rowHeight: 32, tagWidth: 24, tagHeight: 24 });
 });
 
 test('checkbox sizes center owned filled marks without SVG strokes',

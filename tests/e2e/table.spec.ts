@@ -643,7 +643,7 @@ test('sorts compound columns by independent label-width controls', async ({ page
 test('renders independently styled standard cell types', async ({ page }) => {
   // Reproduce an application where nested ds-text styles hydrate after ds-table.
   await page.addStyleTag({
-    content: '.sc-ds-text-h { display: block; padding: 0; border: 0; }',
+    content: '.sc-ds-text-h:not(.tag__label) { display: block; padding: 0; border: 0; }',
   });
   const table = page.locator('#cell-types');
   const selectionCell = table.locator('[data-row-id="tag-variants"] .ds-table__selection-cell');
@@ -792,6 +792,7 @@ test('renders independently styled standard cell types', async ({ page }) => {
   ]);
   await expect(empty).toContainText('—');
   await expect(empty).toContainText('Not available');
+  await expect(empty.locator('ds-text')).toHaveJSProperty('color', 'tertiary');
   await expect(blank).toHaveText('');
   await expect(blank.locator('.ds-table__cell-content')).toBeEmpty();
 
@@ -817,6 +818,8 @@ test('renders independently styled standard cell types', async ({ page }) => {
   await expect(tagWithText.locator('ds-tag')).toHaveCSS('height', '24px');
   await expect(tagWithText.locator('.ds-table__cell-tag-text')).toHaveJSProperty('variant', 'text-body-small');
   await expect(tagWithText.locator('.ds-table__cell-tag-text')).toHaveJSProperty('color', 'secondary');
+  await expect(tagWithText.locator('.ds-table__cell-tag-text')).toHaveCSS('padding-left', '4px');
+  await expect(tagWithText.locator('.ds-table__cell-tag-text')).toHaveCSS('padding-right', '4px');
   await expect(tagWithText.locator('.ds-table__cell-tag-text')).toHaveCSS('padding-top', '2px');
   await expect(tagWithText.locator('.ds-table__cell-tag-text')).toHaveCSS('padding-bottom', '2px');
   await expect(tagWithText.locator('.ds-table__cell-tag-text')).toHaveCSS('min-height', '0px');
@@ -871,6 +874,8 @@ test('renders independently styled standard cell types', async ({ page }) => {
       secondary: bounds('[data-column-id="primarySecondary"] .ds-table__cell-secondary'),
       singleText: bounds('[data-column-id="singleText"] .ds-table__cell-track'),
       tagText: bounds('[data-cell-variant="tag-with-text"] .ds-table__cell-tag-text'),
+      tagTextLabel: bounds('[data-cell-variant="tag-with-text"] .ds-table__cell-tag-text .ds-text__element'),
+      tagLabel: bounds('[data-cell-variant="tag-with-text"] ds-tag .tag__label .ds-text__element'),
       textWithTagText: bounds('[data-cell-variant="text-with-tag"] .ds-table__cell-tag-text'),
       textWithTagTag: bounds('[data-cell-variant="text-with-tag"] ds-tag'),
       iconCell: bounds('[data-column-id="icon"]'),
@@ -879,6 +884,7 @@ test('renders independently styled standard cell types', async ({ page }) => {
   });
   expect(crossCellAlignment.tagText.top).toBeCloseTo(crossCellAlignment.secondary.top, 0);
   expect(crossCellAlignment.tagText.height).toBeCloseTo(crossCellAlignment.secondary.height, 0);
+  expect(crossCellAlignment.tagTextLabel.left).toBeCloseTo(crossCellAlignment.tagLabel.left, 0);
   expect(crossCellAlignment.textWithTagText.top).toBeCloseTo(crossCellAlignment.singleText.top, 0);
   expect(crossCellAlignment.textWithTagText.height).toBeCloseTo(crossCellAlignment.singleText.height, 0);
   expect(crossCellAlignment.textWithTagTag.top).toBeCloseTo(crossCellAlignment.secondary.top + 2, 0);

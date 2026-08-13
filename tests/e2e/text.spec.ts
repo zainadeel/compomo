@@ -70,16 +70,26 @@ test('uses solid underline for links and dotted underline for hidden interaction
   const decorationColors = await linkText.evaluate(element => {
     const probe = document.createElement('span');
     probe.style.color = 'var(--color-foreground-tertiary)';
+    probe.style.textDecorationThickness = 'var(--dimension-stroke-width-012)';
+    probe.style.textUnderlineOffset = 'var(--dimension-space-025)';
     document.body.append(probe);
+    const actual = getComputedStyle(element);
+    const expected = getComputedStyle(probe);
     const result = {
-      solid: getComputedStyle(element).textDecorationColor,
-      tertiary: getComputedStyle(probe).color,
+      solid: actual.textDecorationColor,
+      tertiary: expected.color,
+      thickness: actual.textDecorationThickness,
+      expectedThickness: expected.textDecorationThickness,
+      offset: actual.textUnderlineOffset,
+      expectedOffset: expected.textUnderlineOffset,
     };
     probe.remove();
     return result;
   });
   await expect(tooltipText).toHaveCSS('text-decoration-color', decorationColors.tertiary);
   expect(decorationColors.solid).toBe(decorationColors.tertiary);
+  expect(decorationColors.thickness).toBe(decorationColors.expectedThickness);
+  expect(decorationColors.offset).toBe(decorationColors.expectedOffset);
 });
 
 test('keeps generating text readable and static under reduced motion', async ({ page }) => {

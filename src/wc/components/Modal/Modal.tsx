@@ -171,7 +171,7 @@ export class Modal {
   }
 
   private get closeAnimationMs(): number {
-    return resolveMotionTimeMs(TOKEN_DEFAULTS.motionShort3, TOKEN_DEFAULTS.animationDurationShort3);
+    return resolveMotionTimeMs(TOKEN_DEFAULTS.motionShort2, TOKEN_DEFAULTS.animationDurationShort3);
   }
 
   private finishClose() {

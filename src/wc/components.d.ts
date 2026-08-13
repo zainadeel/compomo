@@ -30,6 +30,8 @@ import { CheckboxSize } from "./components/Checkbox/Checkbox";
 import { ChipSize, ChipState } from "./components/Chip/Chip";
 import { ConversationListActionLayout } from "./components/ConversationList/ConversationList";
 import { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
+import { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuSize, FilterMenuValues, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
+import { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
 import { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
 import { InputSize, InputType, InputWidth } from "./components/Input/Input";
 import { LoaderColor, LoaderSize } from "./components/Loader/Loader";
@@ -51,7 +53,7 @@ import { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 import { PanelToolsHeaderAction, PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { RadioOption, RadioSize } from "./components/Radio/Radio";
 import { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
-import { SelectBackground, SelectOption, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
+import { SelectBackground, SelectOption, SelectOptionActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
 import { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
 import { ShellGradientPreset } from "./shell/shell-gradient-presets";
 import { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
@@ -91,6 +93,8 @@ export { CheckboxSize } from "./components/Checkbox/Checkbox";
 export { ChipSize, ChipState } from "./components/Chip/Chip";
 export { ConversationListActionLayout } from "./components/ConversationList/ConversationList";
 export { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
+export { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuSize, FilterMenuValues, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
+export { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
 export { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
 export { InputSize, InputType, InputWidth } from "./components/Input/Input";
 export { LoaderColor, LoaderSize } from "./components/Loader/Loader";
@@ -112,7 +116,7 @@ export { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 export { PanelToolsHeaderAction, PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { RadioOption, RadioSize } from "./components/Radio/Radio";
 export { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
-export { SelectBackground, SelectOption, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
+export { SelectBackground, SelectOption, SelectOptionActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
 export { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
 export { ShellGradientPreset } from "./shell/shell-gradient-presets";
 export { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
@@ -1147,6 +1151,119 @@ export namespace Components {
          */
         "label": string;
     }
+    interface DsFilterMenu {
+        /**
+          * Show selected interaction fill when one or more criteria are active.
+          * @default false
+         */
+        "activeFill": boolean;
+        /**
+          * Controlled category shown in the option pane.
+         */
+        "activeFilterId": string | undefined;
+        /**
+          * Cross-axis alignment against the trigger.
+          * @default 'end'
+         */
+        "align": AnchoredAlign;
+        /**
+          * Cross-axis offset — number in px or a TokoMo length.
+          * @default 0
+         */
+        "alignOffset": number | string;
+        /**
+          * External trigger element to position against.
+         */
+        "anchor": HTMLElement | undefined;
+        /**
+          * ID of the external trigger element used for positioning and focus return.
+         */
+        "anchorId": string | undefined;
+        /**
+          * Direct accessible name for the internal select trigger.
+          * @default null
+         */
+        "ariaLabel": string | null;
+        /**
+          * Accessible name for the category tab list.
+          * @default 'Filter categories'
+         */
+        "categoriesLabel": string;
+        /**
+          * Footer action and date-clear accessible label.
+          * @default 'Clear'
+         */
+        "clearLabel": string;
+        /**
+          * Product-owned filter categories and option definitions.
+          * @default []
+         */
+        "filters": FilterMenuFilter[];
+        /**
+          * Show the surface-aware inset border around the select trigger.
+          * @default true
+         */
+        "hasBorder": boolean;
+        /**
+          * Optional select trigger prefix icon name.
+          * @default 'Filters'
+         */
+        "icon": string | undefined;
+        /**
+          * Show a visible focus ring on initial entry after keyboard activation.
+          * @default false
+         */
+        "initialFocusVisible": boolean;
+        /**
+          * ID applied to the internal select trigger.
+         */
+        "inputId": string | undefined;
+        /**
+          * Accessible name for the non-modal filter dialog.
+          * @default 'Filters'
+         */
+        "menuLabel": string;
+        /**
+          * Popup width. It remains clamped to the viewport by the component recipe.
+          * @default TOKEN_CSS_LENGTHS.menuWidthLg
+         */
+        "menuWidth": string;
+        /**
+          * Controlled popup visibility.
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * Preferred popup side; collision handling may flip it.
+          * @default 'bottom'
+         */
+        "side": AnchoredSide;
+        /**
+          * Gap between trigger and popup — number in px or a TokoMo length.
+          * @default TOKEN_CSS_LENGTHS.space050
+         */
+        "sideOffset": number | string;
+        /**
+          * Select trigger density.
+          * @default 'md'
+         */
+        "size": FilterMenuSize;
+        /**
+          * Select trigger text. The selected count is appended automatically.
+          * @default 'Filters'
+         */
+        "triggerLabel": string;
+        /**
+          * Controlled values keyed by filter id.
+          * @default {}
+         */
+        "values": FilterMenuValues;
+        /**
+          * Select trigger width fit.
+          * @default 'hug'
+         */
+        "width": FilterMenuWidth;
+    }
     interface DsIcon {
         /**
           * Semantic foreground color token, or a raw CSS var reference. `tertiary` and the still-fainter `quaternary` are restricted to icons inside genuinely inactive/disabled UI or to purely decorative icons; informative icons must retain sufficient contrast.
@@ -2062,6 +2179,11 @@ export namespace Components {
          */
         "disabled": boolean;
         /**
+          * Show a supplemental notification dot beside the trigger label.
+          * @default false
+         */
+        "dot": boolean;
+        /**
           * Show invalid visual state.
           * @default false
          */
@@ -2070,6 +2192,10 @@ export namespace Components {
           * Error text rendered below the trigger when error is true.
          */
         "errorMessage": string | undefined;
+        /**
+          * Optional text action shown in the popup footer instead of the clear action.
+         */
+        "footerActionLabel": string | undefined;
         /**
           * Show the surface-aware inset border, including focused and invalid strokes.
           * @default true
@@ -2128,6 +2254,11 @@ export namespace Components {
          */
         "placeholder": string;
         /**
+          * Align the popup's choice edge to the trigger start or end edge.
+          * @default 'start'
+         */
+        "popupAlign": SelectPopupAlign;
+        /**
           * Require one valid selected value.
           * @default false
          */
@@ -2163,6 +2294,15 @@ export namespace Components {
           * @default 'md'
          */
         "size": SelectSize;
+        /**
+          * Optional scalar-mode trigger text that does not change the selected option label.
+         */
+        "triggerLabel": string | undefined;
+        /**
+          * Present triggerLabel with placeholder emphasis while preserving the selected value.
+          * @default false
+         */
+        "triggerLabelPlaceholder": boolean;
         /**
           * Selected scalar or array value according to `multiple`.
           * @default ''
@@ -3077,6 +3217,10 @@ export interface DsConversationListItemCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsConversationListItemElement;
 }
+export interface DsFilterMenuCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsFilterMenuElement;
+}
 export interface DsInputCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsInputElement;
@@ -3583,6 +3727,28 @@ declare global {
         prototype: HTMLDsFieldElement;
         new (): HTMLDsFieldElement;
     };
+    interface HTMLDsFilterMenuElementEventMap {
+        "dsChange": FilterMenuChangeDetail;
+        "dsClear": void;
+        "dsActiveFilterChange": string;
+        "dsClose": void;
+        "dsOpenChange": boolean;
+        "dsAfterClose": void;
+    }
+    interface HTMLDsFilterMenuElement extends Components.DsFilterMenu, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsFilterMenuElementEventMap>(type: K, listener: (this: HTMLDsFilterMenuElement, ev: DsFilterMenuCustomEvent<HTMLDsFilterMenuElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsFilterMenuElementEventMap>(type: K, listener: (this: HTMLDsFilterMenuElement, ev: DsFilterMenuCustomEvent<HTMLDsFilterMenuElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsFilterMenuElement: {
+        prototype: HTMLDsFilterMenuElement;
+        new (): HTMLDsFilterMenuElement;
+    };
     interface HTMLDsIconElement extends Components.DsIcon, HTMLStencilElement {
     }
     var HTMLDsIconElement: {
@@ -3942,6 +4108,8 @@ declare global {
         "dsChange": SelectValue;
         "dsClear": void;
         "dsOpenChange": boolean;
+        "dsFooterAction": void;
+        "dsOptionAction": SelectOptionActionDetail;
     }
     interface HTMLDsSelectElement extends Components.DsSelect, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsSelectElementEventMap>(type: K, listener: (this: HTMLDsSelectElement, ev: DsSelectCustomEvent<HTMLDsSelectElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -4231,6 +4399,7 @@ declare global {
         "ds-divider": HTMLDsDividerElement;
         "ds-empty-state": HTMLDsEmptyStateElement;
         "ds-field": HTMLDsFieldElement;
+        "ds-filter-menu": HTMLDsFilterMenuElement;
         "ds-icon": HTMLDsIconElement;
         "ds-input": HTMLDsInputElement;
         "ds-loader": HTMLDsLoaderElement;
@@ -5378,6 +5547,143 @@ declare namespace LocalJSX {
          */
         "label": string;
     }
+    interface DsFilterMenu {
+        /**
+          * Show selected interaction fill when one or more criteria are active.
+          * @default false
+         */
+        "activeFill"?: boolean;
+        /**
+          * Controlled category shown in the option pane.
+         */
+        "activeFilterId"?: string | undefined;
+        /**
+          * Cross-axis alignment against the trigger.
+          * @default 'end'
+         */
+        "align"?: AnchoredAlign;
+        /**
+          * Cross-axis offset — number in px or a TokoMo length.
+          * @default 0
+         */
+        "alignOffset"?: number | string;
+        /**
+          * External trigger element to position against.
+         */
+        "anchor"?: HTMLElement | undefined;
+        /**
+          * ID of the external trigger element used for positioning and focus return.
+         */
+        "anchorId"?: string | undefined;
+        /**
+          * Direct accessible name for the internal select trigger.
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        /**
+          * Accessible name for the category tab list.
+          * @default 'Filter categories'
+         */
+        "categoriesLabel"?: string;
+        /**
+          * Footer action and date-clear accessible label.
+          * @default 'Clear'
+         */
+        "clearLabel"?: string;
+        /**
+          * Product-owned filter categories and option definitions.
+          * @default []
+         */
+        "filters"?: FilterMenuFilter[];
+        /**
+          * Show the surface-aware inset border around the select trigger.
+          * @default true
+         */
+        "hasBorder"?: boolean;
+        /**
+          * Optional select trigger prefix icon name.
+          * @default 'Filters'
+         */
+        "icon"?: string | undefined;
+        /**
+          * Show a visible focus ring on initial entry after keyboard activation.
+          * @default false
+         */
+        "initialFocusVisible"?: boolean;
+        /**
+          * ID applied to the internal select trigger.
+         */
+        "inputId"?: string | undefined;
+        /**
+          * Accessible name for the non-modal filter dialog.
+          * @default 'Filters'
+         */
+        "menuLabel"?: string;
+        /**
+          * Popup width. It remains clamped to the viewport by the component recipe.
+          * @default TOKEN_CSS_LENGTHS.menuWidthLg
+         */
+        "menuWidth"?: string;
+        /**
+          * Requests a controlled active-category replacement.
+         */
+        "onDsActiveFilterChange"?: (event: DsFilterMenuCustomEvent<string>) => void;
+        /**
+          * Emitted after exit motion and rendered popup removal complete.
+         */
+        "onDsAfterClose"?: (event: DsFilterMenuCustomEvent<void>) => void;
+        /**
+          * Requests a controlled value replacement without closing the popup.
+         */
+        "onDsChange"?: (event: DsFilterMenuCustomEvent<FilterMenuChangeDetail>) => void;
+        /**
+          * Requests that the consumer clear every filter value.
+         */
+        "onDsClear"?: (event: DsFilterMenuCustomEvent<void>) => void;
+        /**
+          * Requests that the controlled popup close.
+         */
+        "onDsClose"?: (event: DsFilterMenuCustomEvent<void>) => void;
+        /**
+          * Emitted whenever internal select-trigger activation changes popup visibility.
+         */
+        "onDsOpenChange"?: (event: DsFilterMenuCustomEvent<boolean>) => void;
+        /**
+          * Controlled popup visibility.
+          * @default false
+         */
+        "open"?: boolean;
+        /**
+          * Preferred popup side; collision handling may flip it.
+          * @default 'bottom'
+         */
+        "side"?: AnchoredSide;
+        /**
+          * Gap between trigger and popup — number in px or a TokoMo length.
+          * @default TOKEN_CSS_LENGTHS.space050
+         */
+        "sideOffset"?: number | string;
+        /**
+          * Select trigger density.
+          * @default 'md'
+         */
+        "size"?: FilterMenuSize;
+        /**
+          * Select trigger text. The selected count is appended automatically.
+          * @default 'Filters'
+         */
+        "triggerLabel"?: string;
+        /**
+          * Controlled values keyed by filter id.
+          * @default {}
+         */
+        "values"?: FilterMenuValues;
+        /**
+          * Select trigger width fit.
+          * @default 'hug'
+         */
+        "width"?: FilterMenuWidth;
+    }
     interface DsIcon {
         /**
           * Semantic foreground color token, or a raw CSS var reference. `tertiary` and the still-fainter `quaternary` are restricted to icons inside genuinely inactive/disabled UI or to purely decorative icons; informative icons must retain sufficient contrast.
@@ -6362,6 +6668,11 @@ declare namespace LocalJSX {
          */
         "disabled"?: boolean;
         /**
+          * Show a supplemental notification dot beside the trigger label.
+          * @default false
+         */
+        "dot"?: boolean;
+        /**
           * Show invalid visual state.
           * @default false
          */
@@ -6370,6 +6681,10 @@ declare namespace LocalJSX {
           * Error text rendered below the trigger when error is true.
          */
         "errorMessage"?: string | undefined;
+        /**
+          * Optional text action shown in the popup footer instead of the clear action.
+         */
+        "footerActionLabel"?: string | undefined;
         /**
           * The `id` of a `<form>` element to associate this element with.
          */
@@ -6425,9 +6740,17 @@ declare namespace LocalJSX {
          */
         "onDsClear"?: (event: DsSelectCustomEvent<void>) => void;
         /**
+          * Emitted when the optional popup footer action is activated.
+         */
+        "onDsFooterAction"?: (event: DsSelectCustomEvent<void>) => void;
+        /**
           * Emitted whenever popup visibility changes.
          */
         "onDsOpenChange"?: (event: DsSelectCustomEvent<boolean>) => void;
+        /**
+          * Emitted when an option's contextual ellipsis action is activated.
+         */
+        "onDsOptionAction"?: (event: DsSelectCustomEvent<SelectOptionActionDetail>) => void;
         /**
           * Controlled popup visibility.
           * @default false
@@ -6443,6 +6766,11 @@ declare namespace LocalJSX {
           * @default 'Select'
          */
         "placeholder"?: string;
+        /**
+          * Align the popup's choice edge to the trigger start or end edge.
+          * @default 'start'
+         */
+        "popupAlign"?: SelectPopupAlign;
         /**
           * Require one valid selected value.
           * @default false
@@ -6478,6 +6806,15 @@ declare namespace LocalJSX {
           * @default 'md'
          */
         "size"?: SelectSize;
+        /**
+          * Optional scalar-mode trigger text that does not change the selected option label.
+         */
+        "triggerLabel"?: string | undefined;
+        /**
+          * Present triggerLabel with placeholder emphasis while preserving the selected value.
+          * @default false
+         */
+        "triggerLabelPlaceholder"?: boolean;
         /**
           * Selected scalar or array value according to `multiple`.
           * @default ''
@@ -7641,6 +7978,28 @@ declare namespace LocalJSX {
         "error": boolean;
         "errorMessage": string | undefined;
     }
+    interface DsFilterMenuAttributes {
+        "open": boolean;
+        "triggerLabel": string;
+        "icon": string | undefined;
+        "size": FilterMenuSize;
+        "width": FilterMenuWidth;
+        "hasBorder": boolean;
+        "activeFill": boolean;
+        "inputId": string | undefined;
+        "ariaLabel": string | null;
+        "activeFilterId": string | undefined;
+        "anchorId": string | undefined;
+        "side": AnchoredSide;
+        "align": AnchoredAlign;
+        "sideOffset": string;
+        "alignOffset": string;
+        "menuWidth": string;
+        "menuLabel": string;
+        "categoriesLabel": string;
+        "clearLabel": string;
+        "initialFocusVisible": boolean;
+    }
     interface DsIconAttributes {
         "name": string;
         "size": IconSize;
@@ -7866,8 +8225,12 @@ declare namespace LocalJSX {
         "required": boolean;
         "requiredMessage": string;
         "placeholder": string;
+        "triggerLabel": string | undefined;
+        "triggerLabelPlaceholder": boolean;
+        "dot": boolean;
         "size": SelectSize;
         "width": SelectWidth;
+        "popupAlign": SelectPopupAlign;
         "isInactive": boolean;
         "isLoading": boolean;
         "activeFill": boolean;
@@ -7876,6 +8239,7 @@ declare namespace LocalJSX {
         "allowClear": boolean;
         "clearLabel": string;
         "selectedLabel": string;
+        "footerActionLabel": string | undefined;
         "searchable": boolean;
         "searchPlaceholder": string;
         "noResultsText": string;
@@ -8107,6 +8471,7 @@ declare namespace LocalJSX {
         "ds-divider": Omit<DsDivider, keyof DsDividerAttributes> & { [K in keyof DsDivider & keyof DsDividerAttributes]?: DsDivider[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `attr:${K}`]?: DsDividerAttributes[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `prop:${K}`]?: DsDivider[K] };
         "ds-empty-state": Omit<DsEmptyState, keyof DsEmptyStateAttributes> & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes]?: DsEmptyState[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `attr:${K}`]?: DsEmptyStateAttributes[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `prop:${K}`]?: DsEmptyState[K] };
         "ds-field": Omit<DsField, keyof DsFieldAttributes> & { [K in keyof DsField & keyof DsFieldAttributes]?: DsField[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `attr:${K}`]?: DsFieldAttributes[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `prop:${K}`]?: DsField[K] } & OneOf<"label", DsField["label"], DsFieldAttributes["label"]>;
+        "ds-filter-menu": Omit<DsFilterMenu, keyof DsFilterMenuAttributes> & { [K in keyof DsFilterMenu & keyof DsFilterMenuAttributes]?: DsFilterMenu[K] } & { [K in keyof DsFilterMenu & keyof DsFilterMenuAttributes as `attr:${K}`]?: DsFilterMenuAttributes[K] } & { [K in keyof DsFilterMenu & keyof DsFilterMenuAttributes as `prop:${K}`]?: DsFilterMenu[K] };
         "ds-icon": Omit<DsIcon, keyof DsIconAttributes> & { [K in keyof DsIcon & keyof DsIconAttributes]?: DsIcon[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `attr:${K}`]?: DsIconAttributes[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `prop:${K}`]?: DsIcon[K] };
         "ds-input": Omit<DsInput, keyof DsInputAttributes> & { [K in keyof DsInput & keyof DsInputAttributes]?: DsInput[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `attr:${K}`]?: DsInputAttributes[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `prop:${K}`]?: DsInput[K] };
         "ds-loader": Omit<DsLoader, keyof DsLoaderAttributes> & { [K in keyof DsLoader & keyof DsLoaderAttributes]?: DsLoader[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `attr:${K}`]?: DsLoaderAttributes[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `prop:${K}`]?: DsLoader[K] };
@@ -8196,6 +8561,7 @@ declare module "@stencil/core" {
             "ds-divider": LocalJSX.IntrinsicElements["ds-divider"] & JSXBase.HTMLAttributes<HTMLDsDividerElement>;
             "ds-empty-state": LocalJSX.IntrinsicElements["ds-empty-state"] & JSXBase.HTMLAttributes<HTMLDsEmptyStateElement>;
             "ds-field": LocalJSX.IntrinsicElements["ds-field"] & JSXBase.HTMLAttributes<HTMLDsFieldElement>;
+            "ds-filter-menu": LocalJSX.IntrinsicElements["ds-filter-menu"] & JSXBase.HTMLAttributes<HTMLDsFilterMenuElement>;
             "ds-icon": LocalJSX.IntrinsicElements["ds-icon"] & JSXBase.HTMLAttributes<HTMLDsIconElement>;
             "ds-input": LocalJSX.IntrinsicElements["ds-input"] & JSXBase.HTMLAttributes<HTMLDsInputElement>;
             "ds-loader": LocalJSX.IntrinsicElements["ds-loader"] & JSXBase.HTMLAttributes<HTMLDsLoaderElement>;

@@ -24,15 +24,22 @@ import {
 } from '../../utils';
 import { AnchoredPositionController } from '../../utils/anchored-position-controller';
 import type { MenuAlign, MenuSide } from './menu-position';
-import type { MenuItemData, MenuSection } from './menu-types';
+import {
+  isMenuPickerSection,
+  isMenuSwatchPickerSection,
+  type MenuItemData,
+  type MenuSection,
+} from './menu-types';
 import { snapshotMenuSections } from './menu-sections';
 
 export type MenuSelectionMode = 'none' | 'single';
 export type MenuSize = ControlSize;
-import {
-  isMenuPickerSection,
-  isMenuSwatchPickerSection,
-} from './menu-types';
+const MENU_ITEM_TAG_SIZE: Record<MenuSize, 'md' | 'sm' | 'xs'> = {
+  lg: 'md',
+  md: 'sm',
+  sm: 'xs',
+  xs: 'xs',
+};
 
 const MENU_FOCUSABLE_SELECTOR = [
   'a[href]',
@@ -542,7 +549,7 @@ export class Menu {
                     color="primary"
                     aria-hidden="true"
                   >
-                    {section.header}
+                    <span class="ds-choice-section__header-label">{section.header}</span>
                   </ds-text>
                 )}
                 {isMenuSwatchPickerSection(section) ? (
@@ -576,6 +583,7 @@ export class Menu {
                           'ds-interaction-fill': !item.isInactive,
                           'ds-interaction-fill--selected': !!item.isSelected && !item.isInactive,
                           'menu-item--selected': !!item.isSelected,
+                          'menu-item--switch': !!item.showSwitch,
                           'ds-control-inactive': !!item.isInactive,
                           'menu-item--destructive': !!item.isDestructive,
                           'menu-item--focused': isFocused,
@@ -639,6 +647,16 @@ export class Menu {
                             </ds-text>
                           )}
                         </div>
+                        {item.tag && (
+                          <ds-tag
+                            class="ds-choice-item__tag ds-interaction-fill__content"
+                            label={item.tag.label}
+                            size={MENU_ITEM_TAG_SIZE[this.size]}
+                            intent={item.tag.intent ?? 'neutral'}
+                            contrast={item.tag.contrast ?? 'faint'}
+                            rounded={item.tag.rounded ?? false}
+                          />
+                        )}
                         {item.dot && (
                           <span
                             class="menu-item__dot-box ds-interaction-fill__content"

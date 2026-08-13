@@ -20,6 +20,7 @@ export interface SelectControllerState<T extends ChoiceOption> {
   readonly isLoading: boolean;
   readonly isDisabled: boolean;
   readonly preferredIndex: number;
+  readonly popupAlign: 'start' | 'end';
   open: boolean;
   activeIndex: number;
   searchTerm: string;
@@ -56,15 +57,16 @@ export class SelectController<T extends ChoiceOption> {
         const sectionPadding = resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050);
         popup.style.minWidth = `${choicePopupMinWidth(trigger.offsetWidth, sectionPadding)}px`;
 
+        const align = this.state.popupAlign;
         return {
           anchorRect: trigger.getBoundingClientRect(),
           popupWidth: popup.offsetWidth,
           popupHeight: popup.offsetHeight,
           side: 'bottom',
-          align: 'start',
+          align,
           sideOffsetPx: sectionPadding,
           alignOffsetPx: resolveChoicePopupAlignOffset({
-            align: 'start',
+            align,
             alignOffsetPx: 0,
             sectionInsetPx: sectionPadding,
           }),
@@ -121,6 +123,10 @@ export class SelectController<T extends ChoiceOption> {
   }
 
   loadingChanged() {
+    if (this.state.open) requestAnimationFrame(() => this.updatePosition());
+  }
+
+  positionChanged() {
     if (this.state.open) requestAnimationFrame(() => this.updatePosition());
   }
 

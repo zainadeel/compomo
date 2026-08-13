@@ -7,7 +7,7 @@ import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 const OPTIONS = [
   { label: 'Apple', value: 'apple', icon: 'Chart' },
   { label: 'Banana', value: 'banana', icon: 'Bell', subtext: 'Unavailable for this account', isInactive: true },
-  { label: 'Cherry', value: 'cherry', icon: 'Bell' },
+  { label: 'Cherry', value: 'cherry', icon: 'Bell', action: { label: 'Cherry options', controls: 'cherry-menu' } },
   { label: 'Date', value: 'date', icon: 'Chart', subtext: 'A longer secondary description' },
 ];
 
@@ -44,8 +44,13 @@ const meta: Meta = {
   argTypes: {
     value: { control: 'select', options: ['', 'apple', 'cherry', 'date'] },
     placeholder: { control: 'text' },
+    triggerLabel: { control: 'text' },
+    triggerLabelPlaceholder: { control: 'boolean' },
+    dot: { control: 'boolean' },
+    footerActionLabel: { control: 'text' },
     size: { control: 'select', options: ['lg', 'md', 'sm', 'xs'] },
     width: { control: 'select', options: ['fill', 'hug'] },
+    popupAlign: { control: 'select', options: ['start', 'end'] },
     icon: { control: 'text' },
     hasBorder: { control: 'boolean' },
     searchable: { control: 'boolean' },
@@ -60,8 +65,11 @@ const meta: Meta = {
   args: {
     value: '',
     placeholder: 'Select fruit',
+    dot: false,
+    triggerLabelPlaceholder: false,
     size: 'md',
     width: 'hug',
+    popupAlign: 'start',
     icon: 'Chart',
     hasBorder: true,
     searchable: false,
@@ -83,8 +91,13 @@ export const Playground: Story = {
           .options=${OPTIONS}
           value=${args['value']}
           placeholder=${args['placeholder']}
+          .triggerLabel=${args['triggerLabel'] || undefined}
+          .triggerLabelPlaceholder=${args['triggerLabelPlaceholder']}
+          .dot=${args['dot']}
+          .footerActionLabel=${args['footerActionLabel'] || undefined}
           size=${args['size']}
           width=${args['width']}
+          popup-align=${args['popupAlign']}
           icon=${args['icon']}
           .hasBorder=${args['hasBorder']}
           background=${args['background']}
@@ -189,6 +202,37 @@ export const ClearFooter: Story = {
         open
         placeholder="Select fruit"
         aria-label="Fruit"
+      ></ds-select>
+    </div>
+  `,
+};
+
+export const ActionFooter: Story = {
+  render: () => html`
+    <div style="width:240px;min-height:260px;">
+      <ds-select
+        .options=${OPTIONS}
+        value="apple"
+        trigger-label="Fruit"
+        footer-action-label="Save view"
+        open
+        aria-label="Fruit"
+      ></ds-select>
+    </div>
+  `,
+};
+
+export const OptionAction: Story = {
+  render: () => html`
+    <div style="width:240px;min-height:260px;">
+      <ds-select
+        .options=${OPTIONS}
+        value="cherry"
+        open
+        placeholder="Select fruit"
+        aria-label="Fruit"
+        @dsOptionAction=${(event: CustomEvent<{ value: string }>) =>
+          console.info(`Open actions for ${event.detail.value}`)}
       ></ds-select>
     </div>
   `,

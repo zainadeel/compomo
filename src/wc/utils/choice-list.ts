@@ -5,6 +5,17 @@ export interface ChoiceOption {
   /** Rendered only when every option in the complete list supplies an icon. */
   icon?: string;
   isInactive?: boolean;
+  /** Optional contextual action shown at the trailing edge of this option. */
+  action?: ChoiceOptionAction;
+}
+
+export interface ChoiceOptionAction {
+  /** Accessible name for the fixed ellipsis action. */
+  label: string;
+  /** ID of the popup controlled by the action. */
+  controls?: string;
+  /** Keep the action visible and expose its controlled popup state. */
+  expanded?: boolean;
 }
 
 export interface ChoiceSection {

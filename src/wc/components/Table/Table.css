@@ -50,9 +50,7 @@ ds-text.ds-table__cell-secondary {
 }
 
 .ds-table__cell-tag-stack--tag-with-text ds-text.ds-table__cell-tag-text {
-  padding-inline: calc(
-    var(--_table-cell-track-padding-inline) + var(--_table-cell-track-label-inset)
-  );
+  padding-inline: var(--_table-cell-track-padding-inline);
   padding-block: var(--dimension-space-025);
 }
 
