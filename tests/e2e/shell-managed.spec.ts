@@ -31,7 +31,22 @@ test.describe('Managed application shell', () => {
       'headerCapacity',
       'compact'
     );
+    await expect(shell.locator('ds-panel-tools')).not.toHaveClass(
+      /panel-tools--motion-opening/,
+      { timeout: 5000 }
+    );
     await shell.getByRole('button', { name: 'Search' }).click();
+    await expect(shell.locator('ds-panel-tools')).toHaveClass(
+      /panel-tools--motion-closing/
+    );
+    await expect(shell.locator('ds-shell-page')).toHaveJSProperty(
+      'headerCapacity',
+      'compact'
+    );
+    await expect(shell.locator('ds-panel-tools')).not.toHaveClass(
+      /panel-tools--motion-closing/,
+      { timeout: 5000 }
+    );
     await expect(shell.locator('ds-shell-page')).toHaveJSProperty(
       'headerCapacity',
       'roomy'

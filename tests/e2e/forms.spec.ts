@@ -254,14 +254,14 @@ test('select, multi-select, and menu propagate density into choice rows',
   await expect(menuRow.locator('.menu-item__subtext')).toHaveJSProperty('variant', 'text-caption');
 });
 
-test('checkbox sizes center owned marks with density-specific strokes',
+test('checkbox sizes center owned filled marks without SVG strokes',
   chromiumOnly('layout-geometry', 'Density-specific mark sizing is static token-backed geometry.'),
   async ({ page }) => {
   const expected = {
-    lg: { height: 40, placement: 24, box: 20, mark: 20, stroke: '1.5px' },
-    md: { height: 32, placement: 20, box: 16, mark: 16, stroke: '1.25px' },
-    sm: { height: 24, placement: 16, box: 12, mark: 12, stroke: '1px' },
-    xs: { height: 16, placement: 12, box: 8, mark: 8, stroke: '0.75px' },
+    lg: { height: 40, placement: 24, box: 20, mark: 20 },
+    md: { height: 32, placement: 20, box: 16, mark: 16 },
+    sm: { height: 24, placement: 16, box: 12, mark: 12 },
+    xs: { height: 16, placement: 12, box: 8, mark: 8 },
   } as const;
 
   for (const [size, dimensions] of Object.entries(expected)) {
@@ -279,14 +279,19 @@ test('checkbox sizes center owned marks with density-specific strokes',
         placement: Math.round(placement.width),
         box: Math.round(box.width),
         mark: Math.round(mark.width),
-        stroke: getComputedStyle(markElement).strokeWidth,
+        fill: getComputedStyle(markElement).fill,
         border: getComputedStyle(element.querySelector('.box')!).boxShadow,
       };
     });
 
     expect(actual).toMatchObject(dimensions);
+    expect(actual.fill).not.toBe('none');
     expect(actual.border).toBe('none');
-    await expect(checkbox.locator('.checkbox__mark path')).toHaveAttribute('d', 'M3.5 8.25L6.75 11.5L12.5 4.75');
+    await expect(checkbox.locator('.checkbox__mark path')).not.toHaveAttribute('vector-effect', /.+/);
+    await expect(checkbox.locator('.checkbox__mark path')).toHaveAttribute(
+      'd',
+      'M12.9756 4.65527L7.22559 11.4053C7.11258 11.5379 6.94946 11.6169 6.77539 11.624C6.60111 11.631 6.43095 11.5657 6.30762 11.4424L3.05762 8.19238L3.94238 7.30762L6.71289 10.0781L12.0244 3.84473L12.9756 4.65527Z'
+    );
   }
 });
 
@@ -299,11 +304,14 @@ test('checkbox supports Enter and Space activation with mixed-state and presenta
 
   const mixed = page.locator('#checkbox-mixed');
   await expect(mixed).toHaveAttribute('aria-checked', 'mixed');
-  await expect(mixed.locator('.checkbox__mark path')).toHaveAttribute('d', 'M4 8H12');
+  await expect(mixed.locator('.checkbox__mark path')).toHaveAttribute('d', 'M12 7.375V8.625H4V7.375H12Z');
 
   await mixed.press('Enter');
   await expect(mixed).toHaveAttribute('aria-checked', 'true');
-  await expect(mixed.locator('.checkbox__mark path')).toHaveAttribute('d', 'M3.5 8.25L6.75 11.5L12.5 4.75');
+  await expect(mixed.locator('.checkbox__mark path')).toHaveAttribute(
+    'd',
+    'M12.9756 4.65527L7.22559 11.4053C7.11258 11.5379 6.94946 11.6169 6.77539 11.624C6.60111 11.631 6.43095 11.5657 6.30762 11.4424L3.05762 8.19238L3.94238 7.30762L6.71289 10.0781L12.0244 3.84473L12.9756 4.65527Z'
+  );
   await mixed.press('Space');
   await expect(mixed).toHaveAttribute('aria-checked', 'false');
   await expect(mixed.locator('.checkbox__mark')).toHaveCount(0);
