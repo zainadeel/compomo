@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.16.0](https://github.com/zainadeel/compomo/compare/v13.15.0...v13.16.0) (2026-08-13)
+
+
+### Added
+
+* **table:** improve composable viewport tables ([#451](https://github.com/zainadeel/compomo/issues/451)) ([ee35d47](https://github.com/zainadeel/compomo/commit/ee35d4726bb6f1ff71a69b88b6386a9d2e1b54c3))
+
 ## [13.15.0](https://github.com/zainadeel/compomo/compare/v13.14.0...v13.15.0) (2026-08-12)
 
 
