@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.16.1](https://github.com/zainadeel/compomo/compare/v13.16.0...v13.16.1) (2026-08-13)
+
+
+### Fixed
+
+* stabilize shell transitions and checkbox marks ([#453](https://github.com/zainadeel/compomo/issues/453)) ([60dc602](https://github.com/zainadeel/compomo/commit/60dc6021dbd2e64aebd75eb5e4f3389d7d03370a))
+
 ## [13.16.0](https://github.com/zainadeel/compomo/compare/v13.15.0...v13.16.0) (2026-08-13)
 
 
