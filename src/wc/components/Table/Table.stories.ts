@@ -629,7 +629,7 @@ export const SafetyEvents: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'A Motive Dashboard-inspired safety-events table. Its table-owned 48px header composes an application-owned grouping control through the header slot, while the controlled footer reports loaded results. The checkbox and blank action lanes stay pinned; each owns a fixed divider and a row-clipped shadow directed into the scrolling columns while more content remains.',
+        story: 'A Motive Dashboard-inspired safety-events table. Its table-owned 48px header gives one full-width, 8px-inset surface to the application through the header slot, while the controlled footer reports loaded results. The checkbox and blank action lanes stay pinned; each owns a fixed divider and a row-clipped shadow directed into the scrolling columns while more content remains.',
       },
     },
   },
@@ -663,7 +663,7 @@ export const SafetyEvents: Story = {
       >
         <div
           slot="header"
-          style="display:flex;align-items:center;gap:var(--dimension-space-100);"
+          style="display:flex;align-items:center;min-width:0;gap:var(--dimension-space-100);"
         >
           <div style="display:flex;align-items:center;gap:var(--dimension-space-100);">
             <ds-text as="span" variant="text-body-small" color="secondary">Group rows</ds-text>
@@ -681,10 +681,9 @@ export const SafetyEvents: Story = {
               @dsClear=${() => updateArgs({ grouping: null })}
             ></ds-select>
           </div>
-        </div>
-        ${selectedRowIds.length > 0
+          ${selectedRowIds.length > 0
           ? html`<ds-text
-            slot="header-trailing"
+            style="margin-inline-start:auto;"
             as="span"
             variant="text-body-small"
             color="secondary"
@@ -692,6 +691,7 @@ export const SafetyEvents: Story = {
             ${selectedRowIds.length} selected
           </ds-text>`
           : null}
+        </div>
       </ds-table>
     `;
   },
@@ -1102,6 +1102,48 @@ export const StickyHeaderAndOverflow: Story = {
       ></ds-table>
     </div>
   `,
+};
+
+export const NativeGroupedStickyPerformance: Story = {
+  name: 'Native grouped sticky performance',
+  parameters: {
+    docs: {
+      description: {
+        story: 'A 1,000-row contained table for reviewing section push-off and surrounding panel-resize animation. Every section uses its real row-group header as the native sticky element; scrolling and resizing do not select, duplicate, measure, or transform an active section in JavaScript.',
+      },
+    },
+  },
+  render: () => {
+    const groupLabels = ['Driving', 'On duty', 'Off duty', 'Unavailable'];
+    const groups = groupLabels.map((label, groupIndex) => ({
+      id: `performance-${groupIndex}`,
+      label,
+      rows: Array.from({ length: 250 }, (_, rowIndex) => {
+        const source = ROWS[(groupIndex * 250 + rowIndex) % ROWS.length]!;
+        return {
+          ...source,
+          id: `${source.id}-performance-${groupIndex}-${rowIndex}`,
+          selectionLabel: `${source.selectionLabel ?? source.id} ${rowIndex + 1}`,
+        };
+      }),
+      totalCount: 250,
+    } satisfies TableGroup));
+
+    return html`
+      <div style="max-inline-size:var(--dimension-panel-width-lg);">
+        <ds-table
+          .columns=${COLUMNS}
+          .groups=${groups}
+          .grouping=${{ columnId: 'status', direction: 'asc' }}
+          selection-mode="multiple"
+          sticky-header
+          height="var(--dimension-card-height-lg)"
+          caption="Large grouped workforce overview"
+          caption-visibility="visible"
+        ></ds-table>
+      </div>
+    `;
+  },
 };
 
 export const NarrowAndLongContent: Story = {

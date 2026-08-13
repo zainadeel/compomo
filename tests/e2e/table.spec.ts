@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { chromiumOnly } from './browser-tier';
+import { COMPOSITED_EDGE_CEILING_PX, expectGeometryClose } from './rendered-geometry';
 
 declare global {
   interface Window {
@@ -57,6 +58,27 @@ test('composes application controls inside table-owned header and footer chrome'
   await expect(projected).toHaveAttribute('data-table-header', '');
   expect(await header.evaluate((element, child) => element.contains(child), await projected.elementHandle()))
     .toBe(true);
+  const headerGeometry = await header.evaluate((element, projectedElement) => {
+    const headerRect = element.getBoundingClientRect();
+    const projectedRect = (projectedElement as HTMLElement).getBoundingClientRect();
+    const styles = getComputedStyle(element);
+    return {
+      paddingBlockStart: styles.paddingBlockStart,
+      paddingInlineEnd: styles.paddingInlineEnd,
+      paddingBlockEnd: styles.paddingBlockEnd,
+      paddingInlineStart: styles.paddingInlineStart,
+      projectedInsetStart: projectedRect.left - headerRect.left,
+      projectedInsetEnd: headerRect.right - projectedRect.right,
+    };
+  }, await projected.elementHandle());
+  expect(headerGeometry).toEqual({
+    paddingBlockStart: '8px',
+    paddingInlineEnd: '8px',
+    paddingBlockEnd: '8px',
+    paddingInlineStart: '8px',
+    projectedInsetStart: 8,
+    projectedInsetEnd: 8,
+  });
   await expect(table.locator('.ds-table__caption-title')).toBeHidden();
   await header.getByRole('button', { name: 'Filter drivers' }).focus();
   await expect(header.getByRole('button', { name: 'Filter drivers' })).toBeFocused();
@@ -66,16 +88,16 @@ test('composes application controls inside table-owned header and footer chrome'
     .toBeVisible();
 });
 
-test('keeps the table geometry stable when trailing header content mounts dynamically', async ({ page }) => {
-  const table = page.locator('#basic');
+test('keeps the table geometry stable when composed header content mounts dynamically', async ({ page }) => {
+  const table = page.locator('#composable');
 
   const positions = await table.evaluate(async element => {
     const surface = element.querySelector<HTMLElement>('.ds-table')!;
     const positions = [surface.getBoundingClientRect().top];
-    const trailing = document.createElement('span');
-    trailing.slot = 'header-trailing';
-    trailing.textContent = '1 selected';
-    element.append(trailing);
+    const header = element.querySelector<HTMLElement>('[slot="header"]')!;
+    const selectionSummary = document.createElement('span');
+    selectionSummary.textContent = '1 selected';
+    header.append(selectionSummary);
     positions.push(surface.getBoundingClientRect().top);
     for (let frame = 0; frame < 4; frame += 1) {
       await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
@@ -85,8 +107,7 @@ test('keeps the table geometry stable when trailing header content mounts dynami
   });
 
   expect(new Set(positions).size).toBe(1);
-  await expect(table.locator('.ds-table__bar-trailing')).toBeVisible();
-  await expect(table.locator('.ds-table__bar-trailing')).toHaveText('1 selected');
+  await expect(table.locator('[slot="header"]')).toContainText('1 selected');
 });
 
 test('keeps the visible caption bar outside horizontal table scrolling', async ({ page }) => {
@@ -1343,7 +1364,7 @@ test('fits to a collapsing page scrollport before handing vertical scroll to nat
     return {
       headerZIndex: getComputedStyle(header).zIndex,
       stickyGroupZIndex: getComputedStyle(
-        element.querySelector<HTMLElement>('.ds-table__sticky-group')!,
+        element.querySelector<HTMLElement>('.ds-table__group-row--native-sticky')!,
       ).zIndex,
       bodyStickyZIndex: getComputedStyle(
         element.querySelector<HTMLElement>('.ds-table__body .ds-table__selection-cell')!,
@@ -1391,6 +1412,8 @@ test('fits to a collapsing page scrollport before handing vertical scroll to nat
 
   const firstGroup = table.locator('tbody[data-group-id="fit-first"] .ds-table__group-cell');
   const secondGroup = table.locator('tbody[data-group-id="fit-second"] .ds-table__group-cell');
+  await viewport.evaluate(element => { element.scrollTop = 0; });
+  await expect.poll(() => viewport.evaluate(element => element.scrollTop)).toBe(0);
   await viewport.evaluate((element, incoming) => {
     const headerBottom = element.querySelector<HTMLElement>('.ds-table__head')!
       .getBoundingClientRect().bottom;
@@ -1398,15 +1421,32 @@ test('fits to a collapsing page scrollport before handing vertical scroll to nat
     element.scrollTop += incomingTop - headerBottom - 20;
   }, await secondGroup.elementHandle());
   await expect.poll(() => table.evaluate(element => {
-    const outgoing = element.querySelector<HTMLElement>('.ds-table__sticky-group')!
+    const outgoing = element.querySelector<HTMLElement>(
+      'tbody[data-group-id="fit-first"] .ds-table__group-cell',
+    )!
       .getBoundingClientRect();
     const incoming = element.querySelector<HTMLElement>(
       'tbody[data-group-id="fit-second"] .ds-table__group-cell',
     )!.getBoundingClientRect();
     return outgoing.bottom - incoming.top;
   })).toBeCloseTo(0, 1);
-  await expect(firstGroup).toHaveCSS('visibility', 'hidden');
-  await expect(table.locator('.ds-table__sticky-group')).toHaveCount(1);
+  await expect(firstGroup.locator('xpath=..')).toHaveCSS('position', 'sticky');
+  await expect(firstGroup).toHaveCSS('visibility', 'visible');
+  await viewport.evaluate((element, incoming) => {
+    const headerBottom = element.querySelector<HTMLElement>('.ds-table__head')!
+      .getBoundingClientRect().bottom;
+    const incomingTop = incoming.getBoundingClientRect().top;
+    element.scrollTop += incomingTop - headerBottom + 1;
+  }, await secondGroup.elementHandle());
+  await expect.poll(() => table.evaluate(element => {
+    const headerBottom = element.querySelector<HTMLElement>('.ds-table__head')!
+      .getBoundingClientRect().bottom;
+    const incoming = element.querySelector<HTMLElement>(
+      'tbody[data-group-id="fit-second"] .ds-table__group-cell',
+    )!.getBoundingClientRect();
+    return incoming.top - headerBottom;
+  })).toBeCloseTo(0, 1);
+  await expect(secondGroup.locator('xpath=..')).toHaveCSS('position', 'sticky');
   await expect(footer).toBeVisible();
 
   await table.evaluate(element => {
@@ -1429,6 +1469,96 @@ test('fits to a collapsing page scrollport before handing vertical scroll to nat
       .getBoundingClientRect();
     return footerRect.bottom - (owner.bottom - 32);
   })).toBeCloseTo(0, 1);
+});
+
+test('keeps native group push-off gapless through continuous scroll and resize frames', async ({ page }) => {
+  await page.setViewportSize({ width: 1600, height: 900 });
+  const owner = page.locator('#viewport-fit-owner');
+  const table = page.locator('#viewport-fit');
+  const viewport = table.locator('.ds-table__viewport');
+  await owner.scrollIntoViewIfNeeded();
+  await owner.evaluate(element => { element.scrollTop = element.scrollHeight; });
+  await expect(table.locator('.ds-table')).toHaveClass(/ds-table--viewport-fit-settled/);
+  await expect(table.locator('.ds-table__sticky-group')).toHaveCount(0);
+  await expect(table.locator('.ds-table__group-row--native-sticky')).toHaveCount(2);
+  await expect(table.locator('.ds-table__header-cell').first()).toHaveCSS('height', '32px');
+  const intrinsicRowGeometry = await table.locator('[data-row-id="fit-first-0"]').evaluate(row => {
+    const rowHeight = row.getBoundingClientRect().height;
+    const cellHeights = Array.from(row.querySelectorAll<HTMLElement>('.ds-table__cell'))
+      .map(cell => cell.getBoundingClientRect().height);
+    return { rowHeight, cellHeights };
+  });
+  expect(intrinsicRowGeometry.rowHeight).toBeGreaterThan(40);
+  for (const [index, cellHeight] of intrinsicRowGeometry.cellHeights.entries()) {
+    expectGeometryClose(cellHeight, intrinsicRowGeometry.rowHeight, `grouped grid cell ${index} height`);
+  }
+  await expect(table.getByRole('rowheader', { name: /First fitted section/ })).toBeVisible();
+  await expect(table.getByRole('rowheader', { name: /Second fitted section/ })).toBeVisible();
+
+  const result = await table.evaluate(async element => {
+    const scrollport = element.querySelector<HTMLElement>('.ds-table__viewport')!;
+    const header = element.querySelector<HTMLElement>('.ds-table__head')!;
+    const sectionRows = Array.from(
+      element.querySelectorAll<HTMLElement>('.ds-table__group-row--native-sticky'),
+    );
+    const nextFrame = () => new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    scrollport.scrollTop = 0;
+    await nextFrame();
+
+    const headerBottom = header.getBoundingClientRect().bottom;
+    const incomingTop = sectionRows[1]!.getBoundingClientRect().top;
+    const transition = scrollport.scrollTop + incomingTop - headerBottom;
+    const start = Math.max(0, transition - 64);
+    const end = transition + 24;
+    const frames = 44;
+    let uncoveredFrames = 0;
+    let maxOverlap = 0;
+
+    for (let index = 0; index <= frames; index += 1) {
+      scrollport.scrollTop = start + ((end - start) * index) / frames;
+      await nextFrame();
+      const lane = header.getBoundingClientRect().bottom + 1;
+      const rectangles = sectionRows.map(row => row.getBoundingClientRect());
+      if (!rectangles.some(rect => rect.top <= lane && rect.bottom >= lane)) {
+        uncoveredFrames += 1;
+      }
+      const overlap = Math.max(
+        0,
+        Math.min(rectangles[0]!.bottom, rectangles[1]!.bottom) -
+          Math.max(rectangles[0]!.top, rectangles[1]!.top),
+      );
+      maxOverlap = Math.max(maxOverlap, overlap);
+    }
+
+    const mutations: MutationRecord[] = [];
+    const observer = new MutationObserver(records => mutations.push(...records));
+    observer.observe(element, { childList: true, subtree: true });
+    const initialRows = element.querySelectorAll('.ds-table__group-row--native-sticky').length;
+    const initialInlineSize = element.getBoundingClientRect().width;
+    for (let index = 0; index < 12; index += 1) {
+      element.style.inlineSize = `${initialInlineSize - index * 16}px`;
+      await nextFrame();
+    }
+    element.style.removeProperty('inline-size');
+    await nextFrame();
+    observer.disconnect();
+
+    return {
+      uncoveredFrames,
+      maxOverlap,
+      childListMutations: mutations.filter(record => record.type === 'childList').length,
+      initialRows,
+      finalRows: element.querySelectorAll('.ds-table__group-row--native-sticky').length,
+      hiddenSources: element.querySelectorAll('.ds-table__group-cell--sticky-source-hidden').length,
+    };
+  });
+
+  expect(result.uncoveredFrames).toBe(0);
+  expect(result.maxOverlap).toBeLessThanOrEqual(COMPOSITED_EDGE_CEILING_PX);
+  expect(result.childListMutations).toBe(0);
+  expect(result.finalRows).toBe(result.initialRows);
+  expect(result.hiddenSources).toBe(0);
+  await expect(viewport).toHaveCSS('overflow-y', 'auto');
 });
 
 test('keeps a document-flow header and edge columns sticky while vertical input scrolls the page', async ({ page }) => {
@@ -1454,6 +1584,14 @@ test('keeps a document-flow header and edge columns sticky while vertical input 
     window.scrollTo(0, top + 280);
   }, await frame.elementHandle());
   await expect(stickyGroup).toHaveAttribute('data-group-id', 'first-section');
+  const firstGroupRow = table.locator(
+    'tbody[data-group-id="first-section"] .ds-table__group-row',
+  );
+  await expect(firstGroupRow).toHaveAttribute('aria-hidden', 'true');
+  await expect(firstGroupRow.locator('.ds-table__group-cell')).not.toHaveAttribute(
+    'aria-hidden',
+    'true',
+  );
   await expect.poll(() => stickyGroup.evaluate(element => element.getBoundingClientRect().top)).toBeCloseTo(128, 0);
   await expect.poll(() => secondGroup.evaluate(element => element.getBoundingClientRect().top)).toBeGreaterThan(128);
   await page.evaluate(element => {
@@ -1477,6 +1615,10 @@ test('keeps a document-flow header and edge columns sticky while vertical input 
     window.scrollTo(0, top - 108);
   }, await secondGroup.elementHandle());
   await expect(stickyGroup).toHaveAttribute('data-group-id', 'second-section');
+  await expect(firstGroupRow).not.toHaveAttribute('aria-hidden', 'true');
+  await expect(
+    table.locator('tbody[data-group-id="second-section"] .ds-table__group-row'),
+  ).toHaveAttribute('aria-hidden', 'true');
   await expect.poll(() => stickyGroup.evaluate(element => element.getBoundingClientRect().top)).toBeCloseTo(128, 0);
   await expect(table.locator('.ds-table__head--semantic-copy')).toHaveCSS('opacity', '0');
   await expect(stickyHeader.locator('th[aria-sort]')).toHaveCount(0);

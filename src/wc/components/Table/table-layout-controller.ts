@@ -1,6 +1,5 @@
 export interface TableLayoutElements {
   viewport: HTMLElement | null;
-  table: HTMLTableElement | null;
   stickyHeaderTable: HTMLTableElement | null;
   collapseAllOverlay: HTMLElement | null;
   frame: HTMLElement | null;
@@ -32,7 +31,6 @@ export interface TableLayoutMetricInput {
   scrollInlineSize: number;
   scrollBlockSize: number;
   scrollInlineOffset: number;
-  tableInlineSize: number;
   collapseHeadBlockStart?: number;
   collapseFrameBlockStart?: number;
 }
@@ -49,7 +47,7 @@ export interface TableLayoutMetrics {
 export function resolveTableLayoutMetrics(input: TableLayoutMetricInput): TableLayoutMetrics {
   const horizontalOverflow = input.scrollInlineSize - input.viewportInlineSize > 1;
   return {
-    visibleInlineSize: Math.min(input.viewportInlineSize, input.tableInlineSize),
+    visibleInlineSize: input.viewportInlineSize,
     overflow: {
       start: horizontalOverflow && input.scrollInlineOffset > 1,
       end: horizontalOverflow &&
@@ -74,7 +72,6 @@ export function resolveTableLayoutMetrics(input: TableLayoutMetricInput): TableL
 export class TableLayoutController {
   private connected = false;
   private connectedViewport: HTMLElement | null = null;
-  private observedTable: HTMLTableElement | null = null;
   private resizeObserver: ResizeObserver | null = null;
   private frame: number | null = null;
   private overflow: TableOverflowState | null = null;
@@ -93,7 +90,6 @@ export class TableLayoutController {
     this.connectedViewport?.removeEventListener('scroll', this.handleScroll);
     this.connectedViewport?.removeEventListener('wheel', this.handleWheel);
     this.connectedViewport = null;
-    this.observedTable = null;
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
   }
@@ -101,26 +97,23 @@ export class TableLayoutController {
   /** Reconcile newly rendered refs, observers, and pending geometry. */
   refresh(): void {
     if (!this.connected) return;
-    const { viewport, table } = this.options.elements();
-    const elementsChanged = viewport !== this.connectedViewport || table !== this.observedTable;
+    const { viewport } = this.options.elements();
+    const elementsChanged = viewport !== this.connectedViewport;
     if (elementsChanged) {
       this.connectedViewport?.removeEventListener('scroll', this.handleScroll);
       this.connectedViewport?.removeEventListener('wheel', this.handleWheel);
       this.resizeObserver?.disconnect();
       this.connectedViewport = viewport;
-      this.observedTable = table;
       viewport?.addEventListener('scroll', this.handleScroll, { passive: true });
       viewport?.addEventListener('wheel', this.handleWheel, { passive: false });
 
       if (typeof ResizeObserver !== 'undefined' && viewport) {
         this.resizeObserver ??= new ResizeObserver(this.schedule);
         this.resizeObserver.observe(viewport);
-        if (table) this.resizeObserver.observe(table);
       }
     }
-    // Rendering can change the table's intrinsic width without replacing either
-    // element. Resolve that geometry before componentDidRender returns so WebKit
-    // cannot paint or expose one frame using the full spanning-cell width.
+    // Resolve before componentDidRender returns so WebKit cannot paint or expose
+    // one frame using the full spanning-cell width.
     this.sync();
   }
 
@@ -191,7 +184,6 @@ export class TableLayoutController {
       scrollInlineSize: viewport.scrollWidth,
       scrollBlockSize: viewport.scrollHeight,
       scrollInlineOffset: viewport.scrollLeft,
-      tableInlineSize: elements.table?.getBoundingClientRect().width ?? viewport.clientWidth,
       collapseHeadBlockStart: measureCollapse
         ? elements.interactiveHead!.getBoundingClientRect().top
         : undefined,

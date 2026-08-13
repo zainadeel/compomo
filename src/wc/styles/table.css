@@ -163,6 +163,66 @@
   --_table-selection-column-contribution: var(--_table-selection-column-inline-size);
 }
 
+/*
+ * A contained grouped table uses native sticky positioning without a scroll
+ * listener or duplicated section lane. Turning its table formatting boxes into
+ * explicit blocks makes every real tbody a section boundary; shared grid tracks
+ * retain exact header/body alignment while the browser performs push-off in the
+ * same layout pass as scrolling and container resize.
+ */
+:where(.ds-table__table--native-group-sticky) {
+  display: block;
+}
+
+:where(.ds-table__table--native-group-sticky > colgroup) {
+  display: none;
+}
+
+:where(.ds-table__table--native-group-sticky > .ds-table__head),
+:where(.ds-table__table--native-group-sticky > .ds-table__body) {
+  display: block;
+  inline-size: 100%;
+}
+
+:where(.ds-table__table--native-group-sticky > .ds-table__group) {
+  position: relative;
+  contain: layout style;
+}
+
+:where(.ds-table__table--native-group-sticky .ds-table__header-row),
+:where(.ds-table__table--native-group-sticky .ds-table__row),
+:where(.ds-table__table--native-group-sticky .ds-table__skeleton-row) {
+  display: grid;
+  grid-template-columns: var(--_table-grid-template-columns);
+  inline-size: 100%;
+}
+
+:where(.ds-table__table--native-group-sticky .ds-table__group-row),
+:where(.ds-table__table--native-group-sticky .ds-table__state-row),
+:where(.ds-table__table--native-group-sticky .ds-table__load-row) {
+  display: block;
+  inline-size: 100%;
+}
+
+:where(.ds-table__table--native-group-sticky .ds-table__header-cell),
+:where(.ds-table__table--native-group-sticky .ds-table__cell),
+:where(.ds-table__table--native-group-sticky .ds-table__group-cell),
+:where(.ds-table__table--native-group-sticky .ds-table__state-cell),
+:where(.ds-table__table--native-group-sticky .ds-table__load-cell) {
+  display: block;
+  inline-size: auto;
+  width: auto;
+  max-inline-size: none;
+  max-width: none;
+}
+
+:where(.ds-table__table--native-group-sticky .ds-table__group-cell),
+:where(.ds-table__table--native-group-sticky .ds-table__state-cell),
+:where(.ds-table__table--native-group-sticky .ds-table__load-cell) {
+  inline-size: 100%;
+  width: 100%;
+}
+
 :where(.ds-table__caption-bar),
 :where(.ds-table__footer) {
   box-sizing: border-box;
@@ -182,6 +242,20 @@
   border-start-end-radius: var(--_table-radius);
   border-block-end: var(--dimension-stroke-width-012) solid var(--_table-column-border);
   color: var(--color-foreground-primary);
+}
+
+:where(.ds-table__caption-content) {
+  display: grid;
+  flex: 1 1 auto;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+:where(.ds-table__caption-content > slot) {
+  display: contents;
 }
 
 :where(.ds-table--caption-visible .ds-table__frame),
@@ -306,7 +380,16 @@
   inline-size: 100%;
   block-size: var(--_table-row-min-block-size);
   overflow: hidden;
+}
+
+:where(.ds-table--document-sticky-header .ds-table__sticky-group) {
   will-change: inset-block-start;
+}
+
+:where(.ds-table--contained-sticky-header .ds-table__sticky-group) {
+  inset-block-start: var(--_table-header-min-block-size);
+  transform: translateY(var(--_table-sticky-group-push, 0));
+  will-change: transform;
 }
 
 :where(.ds-table__sticky-group .ds-table__group-content) {
@@ -450,6 +533,21 @@
   border-block-end: 0;
   background-color: inherit;
   vertical-align: top;
+}
+
+/*
+ * Native table cells add their block padding outside the declared content
+ * height and grow together with their row. Grid items use border-box sizing,
+ * so restore intrinsic sizing and grid-track stretch for the grouped-sticky
+ * renderer instead of turning the native recipe's base sizes into hard caps.
+ */
+:where(.ds-table__table--native-group-sticky .ds-table__header-cell) {
+  min-block-size: var(--_table-header-min-block-size);
+  block-size: auto;
+}
+
+:where(.ds-table__table--native-group-sticky .ds-table__cell) {
+  block-size: auto;
 }
 
 :where(.ds-table__header-cell + .ds-table__header-cell) {
@@ -989,6 +1087,13 @@
   padding: 0;
   border-block-end: 0;
   background: transparent;
+}
+
+/* Each real section owns one sticky row and its own push-off boundary. */
+:where(.ds-table--contained-sticky-header .ds-table__group-row--native-sticky) {
+  position: sticky;
+  inset-block-start: var(--_table-header-min-block-size);
+  z-index: 5;
 }
 
 /* Intentful groups resolve from their faint signal into neutral at the trailing edge. */

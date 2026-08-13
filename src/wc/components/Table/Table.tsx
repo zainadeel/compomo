@@ -152,9 +152,7 @@ export class Table {
   @State() private announcement = '';
   @State() private activeStickyGroupId: string | null = null;
   @State() private viewportFitSettled = false;
-  @State() private headerLeadingPresent = false;
-  @State() private headerCopyPresent = false;
-  @State() private headerTrailingPresent = false;
+  @State() private headerPresent = false;
 
   private rootEl: HTMLElement | null = null;
   private viewportEl: HTMLElement | null = null;
@@ -172,7 +170,6 @@ export class Table {
   private readonly layoutController = new TableLayoutController({
     elements: () => ({
       viewport: this.viewportEl,
-      table: this.tableEl,
       stickyHeaderTable: this.stickyHeaderTableEl,
       collapseAllOverlay: this.collapseAllOverlayEl,
       frame: this.frameEl,
@@ -238,7 +235,7 @@ export class Table {
     this.layoutController.connect();
     this.loadController.connect();
     this.viewportFitController.connect();
-    this.connectStickyGroup();
+    this.syncStickyGroupConnection();
     this.connectHeaderSlotObserver();
   }
 
@@ -246,7 +243,8 @@ export class Table {
     this.layoutController.refresh();
     this.loadController.refresh();
     this.viewportFitController.refresh();
-    this.updateStickyGroup();
+    this.syncStickyGroupConnection();
+    if (this.stickyGroupConnected) this.updateStickyGroup();
   }
 
   connectedCallback(): void {
@@ -254,7 +252,7 @@ export class Table {
     this.layoutController.connect();
     this.loadController.connect();
     this.viewportFitController.connect();
-    this.connectStickyGroup();
+    this.syncStickyGroupConnection();
     this.connectHeaderSlotObserver();
   }
 
@@ -268,9 +266,7 @@ export class Table {
   }
 
   private syncHeaderSlotPresence = () => {
-    this.headerLeadingPresent = !!this.el.querySelector('[slot="header-leading"]');
-    this.headerCopyPresent = !!this.el.querySelector('[slot="header"]');
-    this.headerTrailingPresent = !!this.el.querySelector('[slot="header-trailing"]');
+    this.headerPresent = !!this.el.querySelector('[slot="header"]');
   };
 
   private connectHeaderSlotObserver(): void {
@@ -291,6 +287,19 @@ export class Table {
     this.updateStickyGroup();
   }
 
+  private syncStickyGroupConnection(): void {
+    if (this.documentStickyHeader && this.grouped) {
+      this.connectStickyGroup();
+      return;
+    }
+
+    this.disconnectStickyGroup();
+    this.frameEl?.style.removeProperty('--_table-sticky-group-top');
+    if (this.activeStickyGroupId !== null) {
+      this.activeStickyGroupId = null;
+    }
+  }
+
   private disconnectStickyGroup(): void {
     if (!this.stickyGroupConnected || typeof window === 'undefined') return;
     this.stickyGroupConnected = false;
@@ -299,14 +308,14 @@ export class Table {
   }
 
   private readonly updateStickyGroup = (): void => {
-    if (!this.stickyHeader || !this.grouped || !this.frameEl || !this.tableEl) {
+    if (!this.documentStickyHeader || !this.grouped || !this.frameEl || !this.tableEl) {
       if (this.activeStickyGroupId !== null) this.activeStickyGroupId = null;
       return;
     }
 
-    const stickyHeader = this.documentStickyHeader
-      ? this.frameEl.querySelector<HTMLElement>('.ds-table__document-sticky-header')
-      : this.interactiveHeadEl;
+    const stickyHeader = this.frameEl.querySelector<HTMLElement>(
+      '.ds-table__document-sticky-header',
+    );
     if (!stickyHeader) return;
     const threshold = stickyHeader.getBoundingClientRect().bottom;
     let activeGroupId: string | null = null;
@@ -1158,7 +1167,7 @@ export class Table {
   }
 
   private renderStickyGroup(model: TableRenderModel) {
-    if (!this.stickyHeader || !this.activeStickyGroupId) return null;
+    if (!this.documentStickyHeader || !this.activeStickyGroupId) return null;
     const groupModel = model.groups.find(item => item.group.id === this.activeStickyGroupId);
     if (!groupModel) return null;
     return (
@@ -1187,23 +1196,31 @@ export class Table {
 
     return model.groups.map(groupModel => {
       const { group, collapsed: isCollapsed, intent, intentClass } = groupModel;
-      const stickySourceHidden = this.stickyHeader && this.activeStickyGroupId === group.id;
+      const stickySourceHidden = this.documentStickyHeader && this.activeStickyGroupId === group.id;
       return (
         <tbody
           class="ds-table__body ds-table__group"
+          role="rowgroup"
           data-group-id={group.id}
           data-group-intent={intent}
           data-collapsed={isCollapsed ? 'true' : undefined}
           key={group.id}
         >
-          <tr class="ds-table__group-row">
+          <tr
+            role="row"
+            aria-hidden={stickySourceHidden ? 'true' : undefined}
+            class={{
+              'ds-table__group-row': true,
+              'ds-table__group-row--native-sticky': this.stickyHeader && !this.documentStickyHeader,
+            }}
+          >
             <th
               class={{
                 'ds-table__group-cell': true,
                 'ds-table__group-cell--sticky-source-hidden': stickySourceHidden,
                 [intentClass ?? '']: !!intentClass,
               }}
-              aria-hidden={stickySourceHidden ? 'true' : undefined}
+              role="rowheader"
               scope="rowgroup"
               colSpan={model.totalColumns}
             >
@@ -1417,18 +1434,12 @@ export class Table {
     if (this.captionVisibility !== 'visible') return null;
     return (
       <div class="ds-table__caption-bar ds-table__bar ds-control--md">
-        <div class="ds-table__bar-leading" hidden={!this.headerLeadingPresent}>
-          <slot
-            name="header-leading"
-            onSlotchange={this.syncHeaderSlotPresence}
-          />
-        </div>
-        <div class="ds-table__bar-copy">
+        <div class="ds-table__caption-content">
           <slot
             name="header"
             onSlotchange={this.syncHeaderSlotPresence}
           />
-          {!this.headerCopyPresent ? (
+          {!this.headerPresent ? (
             <ds-text
               class="ds-table__caption-title ds-table__bar-text"
               as="div"
@@ -1440,12 +1451,6 @@ export class Table {
               {this.caption}
             </ds-text>
           ) : null}
-        </div>
-        <div class="ds-table__bar-trailing" hidden={!this.headerTrailingPresent}>
-          <slot
-            name="header-trailing"
-            onSlotchange={this.syncHeaderSlotPresence}
-          />
         </div>
       </div>
     );
@@ -1522,6 +1527,8 @@ export class Table {
                   'ds-table__table': true,
                   'ds-table__table--selectable': model.selectable,
                   'ds-table__table--grouped': model.grouped,
+                  'ds-table__table--native-group-sticky': model.grouped &&
+                    this.stickyHeader && !this.documentStickyHeader,
                 }}
                 style={model.tableStyle}
                 aria-busy={initialLoading || this.loadingMore ? 'true' : undefined}
