@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.17.0](https://github.com/zainadeel/compomo/compare/v13.16.1...v13.17.0) (2026-08-13)
+
+
+### Added
+
+* **table:** improve sticky groups and composable header ([#455](https://github.com/zainadeel/compomo/issues/455)) ([7986dd9](https://github.com/zainadeel/compomo/commit/7986dd9878c64ef358b80bcc3acbb023dd86fb2f))
+
 ## [13.16.1](https://github.com/zainadeel/compomo/compare/v13.16.0...v13.16.1) (2026-08-13)
 
 
