@@ -35,6 +35,7 @@ test('creates one complete derived snapshot for an ungrouped render', () => {
   assert.equal(model.collapseAllHost, undefined);
   assert.equal(model.flexibleColumnId, 'name');
   assert.deepEqual(model.tableStyle, {
+    '--_table-grid-template-columns': 'var(--_table-selection-column-inline-size) minmax(160px, 1fr) var(--dimension-size-500)',
     '--ds-table-explicit-min-inline-size': 'calc(160px + var(--dimension-size-500))',
   });
 });

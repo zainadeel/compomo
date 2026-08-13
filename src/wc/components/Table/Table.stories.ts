@@ -1104,6 +1104,48 @@ export const StickyHeaderAndOverflow: Story = {
   `,
 };
 
+export const NativeGroupedStickyPerformance: Story = {
+  name: 'Native grouped sticky performance',
+  parameters: {
+    docs: {
+      description: {
+        story: 'A 1,000-row contained table for reviewing section push-off and surrounding panel-resize animation. Every section uses its real row-group header as the native sticky element; scrolling and resizing do not select, duplicate, measure, or transform an active section in JavaScript.',
+      },
+    },
+  },
+  render: () => {
+    const groupLabels = ['Driving', 'On duty', 'Off duty', 'Unavailable'];
+    const groups = groupLabels.map((label, groupIndex) => ({
+      id: `performance-${groupIndex}`,
+      label,
+      rows: Array.from({ length: 250 }, (_, rowIndex) => {
+        const source = ROWS[(groupIndex * 250 + rowIndex) % ROWS.length]!;
+        return {
+          ...source,
+          id: `${source.id}-performance-${groupIndex}-${rowIndex}`,
+          selectionLabel: `${source.selectionLabel ?? source.id} ${rowIndex + 1}`,
+        };
+      }),
+      totalCount: 250,
+    } satisfies TableGroup));
+
+    return html`
+      <div style="max-inline-size:var(--dimension-panel-width-lg);">
+        <ds-table
+          .columns=${COLUMNS}
+          .groups=${groups}
+          .grouping=${{ columnId: 'status', direction: 'asc' }}
+          selection-mode="multiple"
+          sticky-header
+          height="var(--dimension-card-height-lg)"
+          caption="Large grouped workforce overview"
+          caption-visibility="visible"
+        ></ds-table>
+      </div>
+    `;
+  },
+};
+
 export const NarrowAndLongContent: Story = {
   name: 'Narrow viewport and long content',
   render: () => html`

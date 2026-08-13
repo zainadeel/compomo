@@ -14,7 +14,6 @@ test('resolves viewport, sticky, and floating-control geometry in one snapshot',
       scrollInlineSize: 800,
       scrollBlockSize: 500,
       scrollInlineOffset: 120,
-      tableInlineSize: 800,
       collapseHeadBlockStart: 72,
       collapseFrameBlockStart: 40,
     }),
@@ -36,10 +35,9 @@ test('does not report edge overflow or unmeasured overlay geometry', () => {
       scrollInlineSize: 480,
       scrollBlockSize: 240,
       scrollInlineOffset: 0,
-      tableInlineSize: 320,
     }),
     {
-      visibleInlineSize: 320,
+      visibleInlineSize: 480,
       overflow: { start: false, end: false, scrollable: false },
       inlineOffset: 0,
       maxInlineOffset: 0,
@@ -63,14 +61,10 @@ test('resolves first-paint geometry synchronously when layout elements connect',
     addEventListener: () => undefined,
     removeEventListener: () => undefined,
   } as unknown as HTMLElement;
-  const table = {
-    getBoundingClientRect: () => ({ width: 1232 }),
-  } as unknown as HTMLTableElement;
   let overflow: TableOverflowState | undefined;
   const controller = new TableLayoutController({
     elements: () => ({
       viewport,
-      table,
       stickyHeaderTable: null,
       collapseAllOverlay: null,
       frame: null,
@@ -91,11 +85,11 @@ test('resolves first-paint geometry synchronously when layout elements connect',
   controller.disconnect();
 });
 
-test('resolves intrinsic table-size changes synchronously after a render refresh', () => {
+test('resolves viewport-size changes synchronously after a render refresh', () => {
   const properties = new Map<string, string>();
-  let tableWidth = 320;
+  let viewportWidth = 320;
   const viewport = {
-    clientWidth: 432,
+    get clientWidth() { return viewportWidth; },
     clientHeight: 240,
     scrollWidth: 432,
     scrollHeight: 240,
@@ -107,13 +101,9 @@ test('resolves intrinsic table-size changes synchronously after a render refresh
     addEventListener: () => undefined,
     removeEventListener: () => undefined,
   } as unknown as HTMLElement;
-  const table = {
-    getBoundingClientRect: () => ({ width: tableWidth }),
-  } as unknown as HTMLTableElement;
   const controller = new TableLayoutController({
     elements: () => ({
       viewport,
-      table,
       stickyHeaderTable: null,
       collapseAllOverlay: null,
       frame: null,
@@ -130,7 +120,7 @@ test('resolves intrinsic table-size changes synchronously after a render refresh
   controller.connect();
   assert.equal(properties.get('--ds-table-visible-inline-size'), '320px');
 
-  tableWidth = 1232;
+  viewportWidth = 432;
   Object.defineProperty(viewport, 'scrollWidth', { value: 1232 });
   controller.refresh();
 
@@ -158,7 +148,6 @@ test('contains vertical wheel deltas at fitted viewport edges and transfers them
   const controller = new TableLayoutController({
     elements: () => ({
       viewport,
-      table: null,
       stickyHeaderTable: null,
       collapseAllOverlay: null,
       frame: null,

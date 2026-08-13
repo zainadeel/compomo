@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { chromiumOnly } from './browser-tier';
+import { COMPOSITED_EDGE_CEILING_PX } from './rendered-geometry';
 
 declare global {
   interface Window {
@@ -1343,7 +1344,7 @@ test('fits to a collapsing page scrollport before handing vertical scroll to nat
     return {
       headerZIndex: getComputedStyle(header).zIndex,
       stickyGroupZIndex: getComputedStyle(
-        element.querySelector<HTMLElement>('.ds-table__sticky-group')!,
+        element.querySelector<HTMLElement>('.ds-table__group-row--native-sticky')!,
       ).zIndex,
       bodyStickyZIndex: getComputedStyle(
         element.querySelector<HTMLElement>('.ds-table__body .ds-table__selection-cell')!,
@@ -1391,6 +1392,8 @@ test('fits to a collapsing page scrollport before handing vertical scroll to nat
 
   const firstGroup = table.locator('tbody[data-group-id="fit-first"] .ds-table__group-cell');
   const secondGroup = table.locator('tbody[data-group-id="fit-second"] .ds-table__group-cell');
+  await viewport.evaluate(element => { element.scrollTop = 0; });
+  await expect.poll(() => viewport.evaluate(element => element.scrollTop)).toBe(0);
   await viewport.evaluate((element, incoming) => {
     const headerBottom = element.querySelector<HTMLElement>('.ds-table__head')!
       .getBoundingClientRect().bottom;
@@ -1398,15 +1401,32 @@ test('fits to a collapsing page scrollport before handing vertical scroll to nat
     element.scrollTop += incomingTop - headerBottom - 20;
   }, await secondGroup.elementHandle());
   await expect.poll(() => table.evaluate(element => {
-    const outgoing = element.querySelector<HTMLElement>('.ds-table__sticky-group')!
+    const outgoing = element.querySelector<HTMLElement>(
+      'tbody[data-group-id="fit-first"] .ds-table__group-cell',
+    )!
       .getBoundingClientRect();
     const incoming = element.querySelector<HTMLElement>(
       'tbody[data-group-id="fit-second"] .ds-table__group-cell',
     )!.getBoundingClientRect();
     return outgoing.bottom - incoming.top;
   })).toBeCloseTo(0, 1);
-  await expect(firstGroup).toHaveCSS('visibility', 'hidden');
-  await expect(table.locator('.ds-table__sticky-group')).toHaveCount(1);
+  await expect(firstGroup.locator('xpath=..')).toHaveCSS('position', 'sticky');
+  await expect(firstGroup).toHaveCSS('visibility', 'visible');
+  await viewport.evaluate((element, incoming) => {
+    const headerBottom = element.querySelector<HTMLElement>('.ds-table__head')!
+      .getBoundingClientRect().bottom;
+    const incomingTop = incoming.getBoundingClientRect().top;
+    element.scrollTop += incomingTop - headerBottom + 1;
+  }, await secondGroup.elementHandle());
+  await expect.poll(() => table.evaluate(element => {
+    const headerBottom = element.querySelector<HTMLElement>('.ds-table__head')!
+      .getBoundingClientRect().bottom;
+    const incoming = element.querySelector<HTMLElement>(
+      'tbody[data-group-id="fit-second"] .ds-table__group-cell',
+    )!.getBoundingClientRect();
+    return incoming.top - headerBottom;
+  })).toBeCloseTo(0, 1);
+  await expect(secondGroup.locator('xpath=..')).toHaveCSS('position', 'sticky');
   await expect(footer).toBeVisible();
 
   await table.evaluate(element => {
@@ -1429,6 +1449,85 @@ test('fits to a collapsing page scrollport before handing vertical scroll to nat
       .getBoundingClientRect();
     return footerRect.bottom - (owner.bottom - 32);
   })).toBeCloseTo(0, 1);
+});
+
+test('keeps native group push-off gapless through continuous scroll and resize frames', async ({ page }) => {
+  await page.setViewportSize({ width: 1600, height: 900 });
+  const owner = page.locator('#viewport-fit-owner');
+  const table = page.locator('#viewport-fit');
+  const viewport = table.locator('.ds-table__viewport');
+  await owner.scrollIntoViewIfNeeded();
+  await owner.evaluate(element => { element.scrollTop = element.scrollHeight; });
+  await expect(table.locator('.ds-table')).toHaveClass(/ds-table--viewport-fit-settled/);
+  await expect(table.locator('.ds-table__sticky-group')).toHaveCount(0);
+  await expect(table.locator('.ds-table__group-row--native-sticky')).toHaveCount(2);
+  await expect(table.getByRole('rowheader', { name: /First fitted section/ })).toBeVisible();
+  await expect(table.getByRole('rowheader', { name: /Second fitted section/ })).toBeVisible();
+
+  const result = await table.evaluate(async element => {
+    const scrollport = element.querySelector<HTMLElement>('.ds-table__viewport')!;
+    const header = element.querySelector<HTMLElement>('.ds-table__head')!;
+    const sectionRows = Array.from(
+      element.querySelectorAll<HTMLElement>('.ds-table__group-row--native-sticky'),
+    );
+    const nextFrame = () => new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    scrollport.scrollTop = 0;
+    await nextFrame();
+
+    const headerBottom = header.getBoundingClientRect().bottom;
+    const incomingTop = sectionRows[1]!.getBoundingClientRect().top;
+    const transition = scrollport.scrollTop + incomingTop - headerBottom;
+    const start = Math.max(0, transition - 64);
+    const end = transition + 24;
+    const frames = 44;
+    let uncoveredFrames = 0;
+    let maxOverlap = 0;
+
+    for (let index = 0; index <= frames; index += 1) {
+      scrollport.scrollTop = start + ((end - start) * index) / frames;
+      await nextFrame();
+      const lane = header.getBoundingClientRect().bottom + 1;
+      const rectangles = sectionRows.map(row => row.getBoundingClientRect());
+      if (!rectangles.some(rect => rect.top <= lane && rect.bottom >= lane)) {
+        uncoveredFrames += 1;
+      }
+      const overlap = Math.max(
+        0,
+        Math.min(rectangles[0]!.bottom, rectangles[1]!.bottom) -
+          Math.max(rectangles[0]!.top, rectangles[1]!.top),
+      );
+      maxOverlap = Math.max(maxOverlap, overlap);
+    }
+
+    const mutations: MutationRecord[] = [];
+    const observer = new MutationObserver(records => mutations.push(...records));
+    observer.observe(element, { childList: true, subtree: true });
+    const initialRows = element.querySelectorAll('.ds-table__group-row--native-sticky').length;
+    const initialInlineSize = element.getBoundingClientRect().width;
+    for (let index = 0; index < 12; index += 1) {
+      element.style.inlineSize = `${initialInlineSize - index * 16}px`;
+      await nextFrame();
+    }
+    element.style.removeProperty('inline-size');
+    await nextFrame();
+    observer.disconnect();
+
+    return {
+      uncoveredFrames,
+      maxOverlap,
+      childListMutations: mutations.filter(record => record.type === 'childList').length,
+      initialRows,
+      finalRows: element.querySelectorAll('.ds-table__group-row--native-sticky').length,
+      hiddenSources: element.querySelectorAll('.ds-table__group-cell--sticky-source-hidden').length,
+    };
+  });
+
+  expect(result.uncoveredFrames).toBe(0);
+  expect(result.maxOverlap).toBeLessThanOrEqual(COMPOSITED_EDGE_CEILING_PX);
+  expect(result.childListMutations).toBe(0);
+  expect(result.finalRows).toBe(result.initialRows);
+  expect(result.hiddenSources).toBe(0);
+  await expect(viewport).toHaveCSS('overflow-y', 'auto');
 });
 
 test('keeps a document-flow header and edge columns sticky while vertical input scrolls the page', async ({ page }) => {

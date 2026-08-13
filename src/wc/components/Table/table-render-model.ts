@@ -3,6 +3,7 @@ import {
   isTableGroupIntent,
   resolvedTableGroupCount,
   tableCollapseAllHost,
+  tableColumnSize,
   tableExplicitMinWidth,
   tableFlexibleColumnId,
   tableGroupIntentClass,
@@ -68,6 +69,21 @@ export function createTableRenderModel(input: TableRenderModelInput): TableRende
     input.groups.every(group => collapsedGroupIds.has(group.id));
   const showCollapseAll = input.grouped && input.groups.length > 0 && !allGroupsCollapsed;
   const explicitMinWidth = tableExplicitMinWidth(input.columns);
+  const flexibleColumnId = tableFlexibleColumnId(input.columns);
+  const gridTracks = [
+    ...(selectable ? ['var(--_table-selection-column-inline-size)'] : []),
+    ...input.columns.map(column => {
+      const width = tableColumnSize(column);
+      if (!width) return 'minmax(0, 1fr)';
+      return column.id === flexibleColumnId ? `minmax(${width}, 1fr)` : width;
+    }),
+  ].join(' ');
+  const tableStyle: Record<string, string> = {
+    '--_table-grid-template-columns': gridTracks || 'minmax(0, 1fr)',
+  };
+  if (explicitMinWidth != null) {
+    tableStyle['--ds-table-explicit-min-inline-size'] = explicitMinWidth;
+  }
 
   return {
     grouped: input.grouped,
@@ -98,9 +114,7 @@ export function createTableRenderModel(input: TableRenderModelInput): TableRende
     allGroupsCollapsed,
     showCollapseAll,
     collapseAllHost: showCollapseAll ? tableCollapseAllHost(input.columns) : undefined,
-    flexibleColumnId: tableFlexibleColumnId(input.columns),
-    tableStyle: explicitMinWidth == null
-      ? undefined
-      : { '--ds-table-explicit-min-inline-size': explicitMinWidth },
+    flexibleColumnId,
+    tableStyle,
   };
 }

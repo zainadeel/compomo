@@ -22,11 +22,14 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(componentTsx, /focus-ring\.css/);
   assert.match(componentTsx, /interaction-fill\.css/);
   assert.match(componentTsx, /TableLayoutController/);
+  assert.doesNotMatch(componentTsx, /TableStickyGroupController/);
   assert.match(componentTsx, /TableViewportFitController/);
   assert.match(componentTsx, /TableLoadController/);
   assert.match(componentTsx, /createTableRenderModel/);
   assert.match(componentTsx, /resolveTableCellPresentation/);
   assert.match(layoutController, /--ds-table-visible-inline-size/);
+  assert.doesNotMatch(layoutController, /elements\.table|observe\(table\)/);
+  assert.match(componentTsx, /ds-table__table--native-group-sticky/);
   assert.match(viewportFitController, /--_table-viewport-fit-reserved-block-size/);
   assert.doesNotMatch(componentTsx, /scroll-edge-fade\.css|ds-table__overflow-shadow/);
   assert.match(componentTsx, /ds-table__selection-control ds-focus-ring/);
@@ -43,6 +46,10 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(css, /\.ds-table__bar-copy > slot/);
   assert.match(css, /ds-table--document-sticky-header\.ds-table--caption-visible/);
   assert.match(css, /\.ds-table__sticky-group/);
+  assert.match(css, /\.ds-table__table--native-group-sticky/);
+  assert.match(css, /grid-template-columns: var\(--_table-grid-template-columns\)/);
+  assert.match(css, /\.ds-table__group-row--native-sticky/);
+  assert.doesNotMatch(css, /ds-table__group-cell--sticky-backstop/);
   assert.match(css, /\.ds-table--contained-scroll \.ds-table__frame\)[\s\S]*?overflow: clip/);
 
   for (const selector of [
