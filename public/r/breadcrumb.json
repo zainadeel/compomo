@@ -171,7 +171,7 @@
       "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: items.",
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens ^6.2.1",
+          "@ds-mo/tokens ^6.2.2",
           "@ds-mo/icons ^7.0.0"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
