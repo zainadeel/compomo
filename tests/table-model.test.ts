@@ -6,7 +6,6 @@ import {
   deriveTableSelectionState,
   formatTableResultSummary,
   isTableGroupIntent,
-  nextTableGroupOrder,
   nextTableGroupsCollapsed,
   nextTableSortState,
   resolvedTableGroupCount,
@@ -38,7 +37,7 @@ const rows: TableRow[] = [
   { id: 'd', cells: { name: 'Devon', score: 84 } },
 ];
 
-test('keeps controlled member sorting and group order binary', () => {
+test('keeps controlled member sorting binary', () => {
   assert.deepEqual(nextTableSortState(null, 'score'), { columnId: 'score', direction: 'asc' });
   assert.deepEqual(
     nextTableSortState({ columnId: 'score', direction: 'asc' }, 'score'),
@@ -51,10 +50,6 @@ test('keeps controlled member sorting and group order binary', () => {
   assert.deepEqual(
     nextTableSortState({ columnId: 'name', direction: 'desc' }, 'score'),
     { columnId: 'score', direction: 'asc' },
-  );
-  assert.deepEqual(
-    nextTableGroupOrder({ columnId: 'status', direction: 'asc' }),
-    { columnId: 'status', direction: 'desc' },
   );
 });
 

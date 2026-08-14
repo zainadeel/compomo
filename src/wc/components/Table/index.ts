@@ -19,7 +19,6 @@ export type {
   TableGroupCollapseChangeDetail,
   TableGroupIntent,
   TableHeaderSegment,
-  TableGroupingChangeDetail,
   TableGroupingState,
   TableLoadMoreDetail,
   TableLoadMoreMode,

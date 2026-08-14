@@ -107,7 +107,6 @@ export class PanelToolHeader {
                   controls={action.controls}
                   expanded={action.expanded}
                   pressed={action.pressed}
-                  isActive={!!action.expanded}
                   isInactive={action.isInactive}
                   activeFill={false}
                   hasBorder={false}

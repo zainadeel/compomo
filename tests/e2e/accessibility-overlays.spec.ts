@@ -112,12 +112,12 @@ test('rich preference popup exposes dialog and radio-group semantics without ste
   expect(results.violations).toEqual([]);
 });
 
-test('menu section headers use the shared 4px text nudge', menuGeometry, async ({ page }) => {
+test('menu adds 4px only above headed sections after the first', menuGeometry, async ({ page }) => {
   await page.locator('#rich-anchor').click();
-  const heading = page
+  const sections = page
     .getByRole('dialog', { name: 'Appearance' })
-    .locator('.ds-choice-section__header')
-    .first();
+    .locator('.ds-choice-section');
+  const heading = sections.first().locator('.ds-choice-section__header');
 
   const geometry = await heading.evaluate(element => {
     const label = element.querySelector<HTMLElement>('.ds-choice-section__header-label')!;
@@ -132,8 +132,13 @@ test('menu section headers use the shared 4px text nudge', menuGeometry, async (
   expect(geometry).toEqual({
     height: '32px',
     paddingInline: '8px',
-    labelOffset: 4,
+    labelOffset: 0,
   });
+  await expect
+    .poll(() => sections.evaluateAll(elements =>
+      elements.map(element => getComputedStyle(element).marginBlockStart)
+    ))
+    .toEqual(['0px', '4px']);
 });
 
 test('modal surface and backdrop animate together when entering and exiting', async ({ page }) => {

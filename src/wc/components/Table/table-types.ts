@@ -34,7 +34,7 @@ export interface TableSortState {
   direction: TableSortDirection;
 }
 
-/** One controlled grouping level plus the supplied group-order direction. */
+/** One controlled grouping level. Applications supply groups in their final fixed order. */
 export interface TableGroupingState {
   columnId: string;
   direction: TableSortDirection;
@@ -222,10 +222,6 @@ export interface TableGroup {
 
 export interface TableSortChangeDetail {
   sort: TableSortState | null;
-}
-
-export interface TableGroupingChangeDetail {
-  grouping: TableGroupingState;
 }
 
 export interface TableSelectionChangeDetail {

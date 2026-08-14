@@ -35,7 +35,7 @@
     "component:ds-checkbox"
   ],
   "accessibility": [
-    "The built-in select trigger exposes combobox semantics with a dialog popup, synchronizes expanded state, and restores focus after dismissal.",
+    "The built-in select trigger exposes combobox semantics with a dialog popup, synchronizes expanded state, holds the pressed interaction wash without changing resting foreground while open, and restores focus after dismissal.",
     "The category pane is a vertical tab list. Arrow Up and Arrow Down wrap, Home and End jump, Arrow Right enters the option pane, and Arrow Left returns to the active category.",
     "Escape and outside activation close the popup and restore trigger focus. Tab moves through option controls and closes only when it leaves the popup boundary.",
     "The trigger count reports active filter categories. Category counts and the footer report individual selected criteria; none replace visible selected-state indication."
@@ -44,6 +44,7 @@
     "The application owns filters, values, activeFilterId, and open. Replace controlled objects and arrays after dsChange, dsActiveFilterChange, dsClear, or dsClose.",
     "Single filters return a string, multiple filters return ordered string arrays, boolean filters return a boolean, and date filters return a YYYY-MM-DD string.",
     "Selection applies immediately and does not close the popup.",
+    "Changing category replaces the option-pane subtree so checkbox and other option visuals mount in their new state instead of transitioning from the previous category's row state.",
     "The trigger reports how many filter categories have selections, while the footer appears when values are selected and reports the total selected criteria."
   ],
   "responsiveBehavior": [

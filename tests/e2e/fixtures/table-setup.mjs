@@ -63,15 +63,9 @@ grouped.collapsedGroupIds = [];
 grouped.addEventListener('dsGroupCollapseChange', event => {
   grouped.collapsedGroupIds = event.detail.collapsedGroupIds;
 });
-grouped.addEventListener('dsGroupingChange', event => {
-  grouped.grouping = event.detail.grouping;
-  const next = event.detail.grouping.direction === 'asc' ? ascendingGroups : [...ascendingGroups].reverse();
-  grouped.groups = orderMembers(next);
-});
 grouped.addEventListener('dsSortChange', event => {
   grouped.sort = event.detail.sort;
-  const next = grouped.grouping.direction === 'asc' ? ascendingGroups : [...ascendingGroups].reverse();
-  grouped.groups = event.detail.sort ? orderMembers(next) : next;
+  grouped.groups = event.detail.sort ? orderMembers(ascendingGroups) : ascendingGroups;
 });
 
 const severityGrouped = document.getElementById('severity-grouped');

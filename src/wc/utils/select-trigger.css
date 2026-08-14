@@ -37,6 +37,15 @@
   --ds-interaction-border-color: var(--ds-select-border);
 }
 
+/* Popup-open is a held physical press, not selected or active foreground. */
+.trigger--expanded {
+  --ds-interaction-hover: var(--ds-interaction-pressed);
+}
+
+.trigger--expanded::after {
+  background: var(--ds-interaction-pressed);
+}
+
 .trigger--has-value .trigger__label-box {
   color: var(--ds-select-fg-active);
 }

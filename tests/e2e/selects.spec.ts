@@ -145,8 +145,54 @@ test('uses combobox and listbox semantics with disabled-option keyboard skipping
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
 });
 
+test('holds the pressed wash without changing select-trigger foreground while open', async ({
+  page,
+}) => {
+  const pressed = await page.evaluate(() => {
+    const probe = document.createElement('div');
+    probe.style.backgroundColor = 'var(--color-interaction-pressed)';
+    document.body.append(probe);
+    const value = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return value;
+  });
+
+  for (const selector of ['#single', '#multi', '#filters']) {
+    const trigger = page.locator(selector).getByRole('combobox');
+    const foreground = await trigger.evaluate(element => getComputedStyle(element).color);
+    await trigger.click();
+    await expect(trigger).toHaveClass(/trigger--expanded/);
+    await expect(trigger).toHaveCSS('color', foreground);
+    await expect
+      .poll(() =>
+        trigger.evaluate(element => getComputedStyle(element, '::after').backgroundColor)
+      )
+      .toBe(pressed);
+    await trigger.press('Escape');
+  }
+});
+
+test('remounts the filter option pane when its active category changes', async ({ page }) => {
+  const filterMenu = page.locator('#filters');
+  await filterMenu.getByRole('combobox').click();
+  const optionPane = filterMenu.locator('.filter-menu__option-list');
+
+  await optionPane.evaluate(element => {
+    const checkbox = element.querySelector('ds-checkbox');
+    if (checkbox) checkbox.setAttribute('data-previous-pane', '');
+  });
+  await filterMenu.getByRole('tab', { name: 'Status' }).click();
+
+  await expect(filterMenu.getByRole('tabpanel')).toHaveAttribute(
+    'aria-labelledby',
+    /-status-tab$/
+  );
+  await expect(optionPane.locator('[data-previous-pane]')).toHaveCount(0);
+  await expect(optionPane.locator('ds-checkbox').first()).toHaveJSProperty('checked', false);
+});
+
 test(
-  'keeps grouped select header geometry while nudging only its text down 4px',
+  'keeps header text aligned and adds 4px only above headed sections after the first',
   chromiumOnly(
     'layout-geometry',
     'The shared token-backed section-heading construction is engine-neutral.'
@@ -154,24 +200,29 @@ test(
   async ({ page }) => {
     const select = page.locator('#multi');
     await select.getByRole('combobox').click();
-    const heading = select.locator('.ds-choice-section__header').first();
+    const sections = select.locator('.ds-choice-section');
+    const heading = sections.first().locator('.ds-choice-section__header');
 
     const geometry = await heading.evaluate(element => {
       const label = element.querySelector<HTMLElement>('.ds-choice-section__header-label')!;
       const style = getComputedStyle(element);
-      const labelTransform = new DOMMatrix(getComputedStyle(label).transform);
       return {
         height: style.height,
         paddingInline: style.paddingInline,
-        labelOffset: labelTransform.m42,
+        labelOffset: new DOMMatrix(getComputedStyle(label).transform).m42,
       };
     });
+
+    const sectionSpacing = await sections.evaluateAll(elements =>
+      elements.map(element => getComputedStyle(element).marginBlockStart)
+    );
 
     expect(geometry).toEqual({
       height: '32px',
       paddingInline: '8px',
-      labelOffset: 4,
+      labelOffset: 0,
     });
+    expect(sectionSpacing).toEqual(['0px', '4px']);
   }
 );
 

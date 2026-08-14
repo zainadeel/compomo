@@ -10,7 +10,6 @@ import type {
   TableCellValue,
   TableColumn,
   TableGroup,
-  TableGroupingState,
   TableRow,
   TableSortState,
 } from './table-types';
@@ -92,13 +91,6 @@ export function nextTableSortState(
   if (current?.columnId !== columnId) return { columnId, direction: 'asc' };
   if (current.direction === 'asc') return { columnId, direction: 'desc' };
   return { columnId, direction: 'asc' };
-}
-
-export function nextTableGroupOrder(grouping: TableGroupingState): TableGroupingState {
-  return {
-    ...grouping,
-    direction: grouping.direction === 'asc' ? 'desc' : 'asc',
-  };
 }
 
 export function toggleTableGroupCollapsed(

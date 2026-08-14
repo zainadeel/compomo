@@ -536,6 +536,7 @@ export class Menu {
                   'ds-chrome-column': true,
                   'ds-chrome-space--sm': true,
                   'ds-choice-section--divided': si < sections.length - 1,
+                  'ds-choice-section--headed-after-first': si > 0 && Boolean(section.header),
                 }}
                 role={section.header ? 'group' : undefined}
                 aria-label={section.header}

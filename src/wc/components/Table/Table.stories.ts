@@ -472,9 +472,8 @@ function groupedRows(
     byStatus.set(status, [...(byStatus.get(status) ?? []), row]);
   }
 
-  const direction = grouping.direction === 'asc' ? 1 : -1;
   return [...byStatus]
-    .sort(([a], [b]) => a.localeCompare(b) * direction)
+    .sort(([a], [b]) => a.localeCompare(b))
     .map(([label, members]) => ({
       id: label.toLowerCase().replaceAll(' ', '-'),
       label,
@@ -607,8 +606,6 @@ export const ColumnHeaderAlignment: Story = {
         .collapsedGroupIds=${collapsedGroupIds}
         caption="Column header alignment"
         caption-visibility="visible"
-        @dsGroupingChange=${(event: CustomEvent<{ grouping: TableGroupingState }>) =>
-          updateArgs({ grouping: event.detail.grouping })}
         @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
           updateArgs({ sort: event.detail.sort })}
         @dsGroupCollapseChange=${(
@@ -629,7 +626,7 @@ export const SafetyEvents: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'A Motive Dashboard-inspired safety-events table. Its table-owned 48px header gives one full-width, 8px-inset surface to the application through the header slot, while the controlled footer reports loaded results. The checkbox and blank action lanes stay pinned; each owns a fixed divider and a row-clipped shadow directed into the scrolling columns while more content remains.',
+        story: 'A Motive Dashboard-inspired safety-events table. Its table-owned 48px header gives one full-width, 8px-inset surface to the application through the header slot. The footer pairs an application-owned last-updated label on the left with the controlled result summary on the right. The checkbox and blank action lanes stay pinned; each owns a fixed divider and a row-clipped shadow directed into the scrolling columns while more content remains.',
       },
     },
   },
@@ -692,6 +689,9 @@ export const SafetyEvents: Story = {
           </ds-text>`
           : null}
         </div>
+        <ds-text slot="footer-leading" as="div" variant="text-body-medium" color="secondary">
+          Last updated: Aug 13, 2026  7:00 PM PT
+        </ds-text>
       </ds-table>
     `;
   },
@@ -750,8 +750,8 @@ export const DocumentFlowStickyLanes: Story = {
   },
 };
 
-export const GroupingAndIndependentSorting: Story = {
-  name: 'Grouping and independent sorting',
+export const GroupingAndMemberSorting: Story = {
+  name: 'Grouping and member sorting',
   args: {
     grouping: { columnId: 'status', direction: 'asc' },
     sort: { columnId: 'safetyScore', direction: 'desc' },
@@ -760,7 +760,7 @@ export const GroupingAndIndependentSorting: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'The Status header controls group order. Safety score controls member order inside each group. Group section headers expose a controlled collapse control matching the action-column ButtonUnfilled recipe. While any group is expanded and no action column exists, collapse-all floats at the visible header edge on a medium-elevation surface so horizontal scrolling never hides it. The story performs both transformations in application code, illustrating the controlled contract.',
+        story: 'The application supplies Status groups in its fixed order while Safety score remains the table\'s one interactive member-row sort. Group section headers expose a controlled collapse control matching the action-column ButtonUnfilled recipe. While any group is expanded and no action column exists, collapse-all floats at the visible header edge on a medium-elevation surface so horizontal scrolling never hides it.',
       },
     },
   },
@@ -780,8 +780,6 @@ export const GroupingAndIndependentSorting: Story = {
         .totalCount=${1500}
         caption="Drivers grouped by status"
         caption-visibility="visible"
-        @dsGroupingChange=${(event: CustomEvent<{ grouping: TableGroupingState }>) =>
-          updateArgs({ grouping: event.detail.grouping })}
         @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
           updateArgs({ sort: event.detail.sort })}
         @dsGroupCollapseChange=${(
@@ -828,8 +826,6 @@ export const GroupingBySeverity: Story = {
         sticky-header
         caption="Safety events by severity"
         caption-visibility="hidden"
-        @dsGroupingChange=${(event: CustomEvent<{ grouping: TableGroupingState }>) =>
-          updateArgs({ grouping: event.detail.grouping })}
         @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
           updateArgs({ sort: event.detail.sort })}
         @dsGroupCollapseChange=${(

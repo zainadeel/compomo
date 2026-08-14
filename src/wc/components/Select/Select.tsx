@@ -575,7 +575,6 @@ export class Select {
                 rounded
                 hasBorder={false}
                 activeFill={false}
-                isActive={option.action.expanded}
                 ariaLabel={option.action.label}
                 haspopup="menu"
                 controls={option.action.controls}
@@ -661,6 +660,7 @@ export class Select {
             'ds-focus-ring-inset': true,
             'ds-interaction-fill': true,
             'ds-interaction-fill--selected': !inactive && this.activeFill && this.hasSelection,
+            'trigger--expanded': !inactive && this.open,
             'trigger--bordered': this.hasBorder,
             'trigger--placeholder': showPlaceholder && !this.multiple,
             'trigger--has-value': this.hasSelection,
@@ -821,13 +821,15 @@ export class Select {
                   )}
                 </div>
               ) : (
-                this.visibleSections.map(section => (
+                this.visibleSections.map((section, sectionIndex) => (
                   <div
                     class={{
                       'ds-choice-section': true,
                       'ds-chrome-column': true,
                       'ds-chrome-space--sm': true,
                       'ds-choice-section--divided': !!section.divider,
+                      'ds-choice-section--headed-after-first':
+                        sectionIndex > 0 && Boolean(section.header),
                     }}
                     role={
                       this.popupRole === 'grid'
