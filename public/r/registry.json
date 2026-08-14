@@ -1014,32 +1014,32 @@
           ],
           "patterns": [],
           "accessibility": [
-            "Provide a toolbar accessible name that describes the selected-set commands.",
-            "Keep Clear as a real button. The selected count updates through a polite live region without stealing focus.",
+            "Provide a group accessible name that describes the selected-set commands.",
+            "Keep Clear as a real button. A persistent polite live region announces valid selected-count updates without stealing focus.",
             "Name every slotted action. Icon-only commands still need an explicit accessible name.",
-            "The application updates the selected identities after dsClear; the bar never mutates selection itself."
+            "The application updates the selected identities after dsClear, then moves focus to a stable collection control before the empty bar disappears; the bar never mutates selection or guesses a focus target."
           ],
           "states": [
             "The bar is hidden while the selected count is below one and appears as the compact bold-brand elevated surface once at least one item is selected.",
             "Clear reports intent only. The application replaces the controlled selected identities.",
             "Slotted actions stay application-owned. Pass background matching the bold parent surface so those controls remain readable.",
-            "The host owns medium control-elevation. Overlay inset, footer clearance, and stacking remain application layout."
+            "The component-owned visible surface owns medium control-elevation and removes the empty actions lane. Overlay inset, footer clearance, and stacking remain application layout."
           ],
           "responsiveBehavior": [
-            "The count truncates before Clear and trailing actions lose their complete hit targets.",
+            "The count truncates before Clear or trailing actions lose their complete hit targets.",
             "The bar fills its owner's inline size. Overlay inset, footer clearance, and stacking against a table remain the consuming layout."
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Bind count from the current selected set and replace that set after dsClear.",
+              "Bind count from the current selected set, replace that set after dsClear, and return focus to a stable collection control.",
               "Project command controls through slot=actions with background matching the bold parent surface."
             ],
             "react": [
-              "Pass count from selected row or item state and clear that state from onDsClear.",
+              "Pass count from selected row or item state, clear that state from onDsClear, and return focus to a stable collection control.",
               "Place DsBarAction in the same positioned owner as the table when overlaying the table footer."
             ],
             "angular": [
-              "Bind count from the controlled selected identities and handle dsClear in the collection owner.",
+              "Bind count from the controlled selected identities, handle dsClear in the collection owner, and return focus to a stable collection control.",
               "Project ds-button-unfilled or ds-button-filled into slot=actions with background matching the bold parent surface."
             ]
           },

@@ -690,7 +690,15 @@ export const SafetyEvents: Story = {
           style="position:absolute;inset-inline:var(--dimension-space-100);inset-block-end:calc(var(--dimension-size-600) + var(--dimension-space-100));z-index:var(--dimension-z-index-floating);"
           .count=${selectedRowIds.length}
           label="Selected safety event actions"
-          @dsClear=${() => updateArgs({ selectedRowIds: [] })}
+          @dsClear=${(event: CustomEvent<MouseEvent>) => {
+            const owner = (event.currentTarget as HTMLElement).parentElement;
+            updateArgs({ selectedRowIds: [] });
+            requestAnimationFrame(() => {
+              owner
+                ?.querySelector<HTMLButtonElement>('ds-table .ds-table__selection-control')
+                ?.focus();
+            });
+          }}
         >
           <ds-button-unfilled
             slot="actions"

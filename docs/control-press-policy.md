@@ -37,6 +37,7 @@ activation remains native and is not promised an equivalent held frame.
 | `AgentToolCall` — native `summary` | Native disclosure feedback | Chevron rotation | Disclosure state owns the chevron transform. |
 | `AttachmentList` — attachment anchors | Native link feedback | None | Links retain stable text and hit geometry. |
 | `BarNav` — `.bar-nav__tab` and overflow trigger composition | Local active wash; selected tab state | None on tabs | Navigation tabs do not scale. The overflow trigger inherits scale only because it is a composed `ButtonUnfilled`. |
+| `BarAction` — native Clear button and slotted actions | Underlined on-bold text action and focus ring; slotted controls own their interaction paint | None | The selected-set surface stays geometrically stable when Clear is pressed. Slotted `ButtonFilled` and `ButtonUnfilled` controls retain their primitive press policy. |
 | `BarTitle` — native back button and composed action/menu buttons | `interaction-fill` wash | None | The back/navigation target stays stable; composed button primitives follow their own policy. |
 | `Breadcrumb` — item anchors and buttons | Link underline/focus feedback | None | Hierarchical navigation does not scale. |
 | `CardOverview` — selectable `.card-overview__metric` cells | `interaction-fill` wash; roving focus state | None | Summary measures are selection targets in a shared grid; every column must stay aligned, so cell geometry cannot move. |

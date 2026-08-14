@@ -3,8 +3,20 @@
 @import '../../utils/focus-ring.css';
 @import '../../utils/forced-colors.css';
 @import '../../utils/text-decoration.css';
+@import '../../utils/visually-hidden.css';
 
 :host {
+  display: block;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.bar-action {
+  width: 100%;
   min-width: 0;
   box-sizing: border-box;
   height: var(--dimension-size-600);
@@ -14,7 +26,8 @@
   --ds-focus-ring-color: var(--color-interaction-on-bold-background-focus);
 }
 
-:host([hidden]) {
+.bar-action[hidden],
+.bar-action__actions--empty {
   display: none;
 }
 
@@ -46,6 +59,10 @@
   margin-inline-start: auto;
 }
 
+.bar-action__actions slot {
+  display: contents;
+}
+
 .bar-action__clear {
   appearance: none;
   display: inline-flex;
@@ -61,7 +78,7 @@
 }
 
 @media (forced-colors: active) {
-  :host {
+  .bar-action {
     --ds-control-elevation-shadow: none;
     --ds-control-elevation-highlight: none;
     outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-control-boundary);

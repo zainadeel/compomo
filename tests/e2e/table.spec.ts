@@ -1771,7 +1771,7 @@ test('keeps a document-flow header and edge columns sticky while vertical input 
     .locator('.ds-table__body:last-child .ds-table__row:last-child .ds-table__cell')
     .nth(2)
     .evaluate(element => getComputedStyle(element, '::after').boxShadow);
-  expect(terminalColumnDivider).toContain(stickyEdgeColors.rowDivider);
+  expect(terminalColumnDivider).toContain(stickyEdgeColors.stickyDivider);
 
   const lanes = await table.locator('[data-row-id="document-row-2"]').evaluate(row => {
     const viewport = row.closest('.ds-table__viewport')!.getBoundingClientRect();

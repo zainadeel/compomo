@@ -23,7 +23,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'Selection-action chrome for a selected set. The application owns selected identities and command consequences. Overlay inset against a table is application layout; see the Table Safety events story.',
+          'Selection-action chrome for a selected set. The application owns selected identities, command consequences, and focus return after Clear. Overlay inset against a table is application layout; see the Table Safety events story.',
       },
     },
   },

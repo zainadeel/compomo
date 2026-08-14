@@ -361,7 +361,7 @@ export namespace Components {
          */
         "count": number;
         /**
-          * Accessible name for the toolbar.
+          * Accessible name for the selected-set action group.
           * @default 'Selected item actions'
          */
         "label": string;
@@ -4726,7 +4726,7 @@ declare namespace LocalJSX {
          */
         "count"?: number;
         /**
-          * Accessible name for the toolbar.
+          * Accessible name for the selected-set action group.
           * @default 'Selected item actions'
          */
         "label"?: string;
