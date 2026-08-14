@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.18.1](https://github.com/zainadeel/compomo/compare/v13.18.0...v13.18.1) (2026-08-14)
+
+
+### Fixed
+
+* polish menu and table states ([#460](https://github.com/zainadeel/compomo/issues/460)) ([8c088d4](https://github.com/zainadeel/compomo/commit/8c088d46e7660b560fe941beadad6ff95fd67648))
+
 ## [13.18.0](https://github.com/zainadeel/compomo/compare/v13.17.0...v13.18.0) (2026-08-14)
 
 
