@@ -6872,7 +6872,7 @@
     {
       "name": "select",
       "title": "Select",
-      "description": "Form-associated select for one value or several independent values through the multiple mode, with listbox semantics, local search, grouped sections, optional contextual option actions, loading, clearing, and surface-aware trigger chrome.",
+      "description": "Form-associated select for one value or several independent values through the multiple mode, with listbox semantics for ordinary choices, grid semantics for choices with contextual actions, local search, grouped sections, loading, clearing, and surface-aware trigger chrome.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -6883,7 +6883,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Form-associated select for one value or several independent values through the multiple mode, with listbox semantics, local search, grouped sections, optional contextual option actions, loading, clearing, and surface-aware trigger chrome.",
+          "summary": "Form-associated select for one value or several independent values through the multiple mode, with listbox semantics for ordinary choices, grid semantics for choices with contextual actions, local search, grouped sections, loading, clearing, and surface-aware trigger chrome.",
           "useWhen": [
             "The user must choose one value from a finite set.",
             "The user may choose several independent values when multiple is enabled.",
@@ -6915,12 +6915,12 @@
           ],
           "accessibility": [
             "In forms, provide a persistent visible external field label; placeholder text is guidance and must not be the field's only label. In a compact filter bar, the trigger's visible text may supply the accessible name.",
-            "The trigger uses combobox semantics and the popup uses listbox and option semantics; do not replace them with menu roles.",
+            "The trigger uses combobox semantics. Ordinary choices use a listbox with options; when any choice has a contextual action, the popup promotes to a grid with selectable rows, a choice cell, and an action cell. Do not replace either popup with menu roles.",
             "Multiple mode adds aria-multiselectable, exposes independent aria-selected state, and uses presentation-only checkbox indicators while each option remains the sole interaction target.",
             "Disabled options remain visible, expose aria-disabled, and are skipped by keyboard navigation and typeahead.",
             "Keyboard navigation keeps the aria-activedescendant option scrolled into the visible listbox viewport.",
             "Selected options rely on active fill and foreground treatment without a redundant trailing check icon.",
-            "A contextual option action is a sibling of the option rather than an interactive descendant. Pointer hover, focus, ArrowRight, and Shift+F10 make the ellipsis action reachable without changing the selected value.",
+            "A contextual option action is a sibling gridcell rather than an interactive descendant of the selectable choice cell. Pointer hover, focus, ArrowRight, and Shift+F10 make the ellipsis action reachable without changing the selected value.",
             "Local search moves focus into the search field while preserving the active option through aria-activedescendant.",
             "Use errorMessage with error so the trigger is described by the rendered alert."
           ],

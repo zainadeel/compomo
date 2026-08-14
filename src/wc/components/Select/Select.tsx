@@ -410,6 +410,10 @@ export class Select {
     return this.controller.activeOptionId;
   }
 
+  private get popupRole(): 'listbox' | 'grid' {
+    return this.allOptions.some(option => Boolean(option.action)) ? 'grid' : 'listbox';
+  }
+
   private observeFooterContent() {
     const content =
       this.open && this.multiple && this.hasSelection
@@ -536,6 +540,7 @@ export class Select {
         focusRingVisible={this.focusRingVisible}
         usesSubtext={usesSubtext}
         actionOpen={option.action?.expanded}
+        popupRole={this.popupRole}
         leading={
           this.multiple ? (
             <span
@@ -667,7 +672,7 @@ export class Select {
           }}
           disabled={inactive}
           role="combobox"
-          aria-haspopup="listbox"
+          aria-haspopup={this.popupRole}
           aria-expanded={String(this.open)}
           aria-controls={this.open ? this.listboxId : undefined}
           aria-activedescendant={this.open && !this.searchable ? this.activeOptionId : undefined}
@@ -776,7 +781,7 @@ export class Select {
             <div
               id={this.listboxId}
               class="ds-choice-list"
-              role="listbox"
+              role={this.popupRole}
               aria-multiselectable={this.multiple ? 'true' : undefined}
               aria-label={this.ariaLabel ?? this.placeholder}
               aria-busy={this.isLoading ? 'true' : undefined}
@@ -784,24 +789,36 @@ export class Select {
               {this.isLoading ? (
                 <div
                   class="ds-choice-loading ds-empty-region"
-                  role="option"
+                  role={this.popupRole === 'grid' ? 'row' : 'option'}
                   aria-selected="false"
                   aria-disabled="true"
                   aria-label={this.loadingLabel}
                   aria-live="polite"
                 >
-                  <ds-loader size={this.size} color="inherit" />
+                  {this.popupRole === 'grid' ? (
+                    <span role="gridcell">
+                      <ds-loader size={this.size} color="inherit" />
+                    </span>
+                  ) : (
+                    <ds-loader size={this.size} color="inherit" />
+                  )}
                 </div>
               ) : this.visibleOptions.length === 0 ? (
                 <div
                   class="ds-choice-empty ds-empty-region"
-                  role="option"
+                  role={this.popupRole === 'grid' ? 'row' : 'option'}
                   aria-selected="false"
                   aria-disabled="true"
                   aria-label={this.noResultsText}
                   aria-live="polite"
                 >
-                  <ds-empty-state body={this.noResultsText} />
+                  {this.popupRole === 'grid' ? (
+                    <span role="gridcell">
+                      <ds-empty-state body={this.noResultsText} />
+                    </span>
+                  ) : (
+                    <ds-empty-state body={this.noResultsText} />
+                  )}
                 </div>
               ) : (
                 this.visibleSections.map(section => (
@@ -812,10 +829,32 @@ export class Select {
                       'ds-chrome-space--sm': true,
                       'ds-choice-section--divided': !!section.divider,
                     }}
-                    role={section.header ? 'group' : undefined}
+                    role={
+                      this.popupRole === 'grid'
+                        ? 'rowgroup'
+                        : section.header
+                          ? 'group'
+                          : undefined
+                    }
                     aria-label={section.header}
                   >
-                    {section.header && (
+                    {section.header && this.popupRole === 'grid' ? (
+                      <ds-text
+                        class={`ds-choice-section__header ds-control-section-heading ds-control--${this.size}`}
+                        as="span"
+                        variant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
+                        emphasis
+                        color="primary"
+                        role="row"
+                      >
+                        <span
+                          class="ds-choice-section__header-label"
+                          role="gridcell"
+                        >
+                          {section.header}
+                        </span>
+                      </ds-text>
+                    ) : section.header ? (
                       <ds-text
                         class={`ds-choice-section__header ds-control-section-heading ds-control--${this.size}`}
                         as="span"
@@ -826,7 +865,7 @@ export class Select {
                       >
                         <span class="ds-choice-section__header-label">{section.header}</span>
                       </ds-text>
-                    )}
+                    ) : null}
                     {section.options.map(option =>
                       this.renderOption(option, flatIndex++, usesOptionIcons, usesOptionSubtext)
                     )}

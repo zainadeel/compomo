@@ -194,6 +194,7 @@ interface ChoiceOptionRowProps {
   leading?: VNode;
   action?: VNode;
   actionOpen?: boolean;
+  popupRole?: 'listbox' | 'grid';
   tabIndex?: number;
   onFocus?: () => void;
   onKeyDown?: (event: KeyboardEvent) => void;
@@ -212,67 +213,83 @@ export const ChoiceOptionRow: FunctionalComponent<ChoiceOptionRowProps> = ({
   leading,
   action,
   actionOpen = false,
+  popupRole = 'listbox',
   tabIndex,
   onFocus,
   onKeyDown,
   onHover,
   onSelect,
-}) => (
-  <div
-    class={{
-      'select-option-row': true,
-      'select-option-row--has-action': !!action,
-      'select-option-row--action-open': actionOpen,
-      'select-option-row--keyboard-active': !!action && active && focusRingVisible,
-    }}
-  >
+}) => {
+  const grid = popupRole === 'grid';
+  return (
     <div
-      id={id}
+      id={grid ? id : undefined}
+      role={grid ? 'row' : undefined}
+      aria-selected={grid ? String(selected) : undefined}
+      aria-disabled={grid && option.isInactive ? 'true' : undefined}
       class={{
-        'select-option': true,
-        'ds-choice-item': true,
-        'ds-control-frame': true,
-        [`ds-control--${size}`]: true,
-        'ds-focus-ring-inset': true,
-        'ds-focus-ring--visible': active && focusRingVisible,
-        'ds-interaction-fill': !option.isInactive,
-        'ds-interaction-fill--selected': selected && !option.isInactive,
-        'ds-control-inactive': !!option.isInactive,
-        'select-option--active': active,
+        'select-option-row': true,
+        'select-option-row--has-action': !!action,
+        'select-option-row--action-open': actionOpen,
+        'select-option-row--keyboard-active': !!action && active && focusRingVisible,
       }}
-      role="option"
-      tabIndex={tabIndex}
-      aria-selected={String(selected)}
-      aria-disabled={option.isInactive ? 'true' : undefined}
-      onMouseDown={event => event.preventDefault()}
-      onFocus={onFocus}
-      onKeyDown={onKeyDown}
-      onMouseMove={() => {
-        if (!option.isInactive) onHover();
-      }}
-      onClick={onSelect}
     >
-      {leading}
-      <div class="ds-choice-item__content ds-interaction-fill__content">
-        <ds-text
-          class="ds-choice-item__label ds-control-label-box"
-          as="span"
-          variant={CONTROL_TEXT_VARIANT[size]}
-          color={selected ? 'primary' : 'secondary'}
-        >
-          {option.label}
-        </ds-text>
-        {usesSubtext && (
-          <ds-text class="ds-choice-item__subtext ds-control-label-box" as="span" variant={CONTROL_SUPPORTING_TEXT_VARIANT[size]} color="secondary">
-            {option.subtext?.trim() || '—'}
+      <div
+        id={grid ? undefined : id}
+        class={{
+          'select-option': true,
+          'ds-choice-item': true,
+          'ds-control-frame': true,
+          [`ds-control--${size}`]: true,
+          'ds-focus-ring-inset': true,
+          'ds-focus-ring--visible': active && focusRingVisible,
+          'ds-interaction-fill': !option.isInactive,
+          'ds-interaction-fill--selected': selected && !option.isInactive,
+          'ds-control-inactive': !!option.isInactive,
+          'select-option--active': active,
+        }}
+        role={grid ? 'gridcell' : 'option'}
+        tabIndex={tabIndex}
+        aria-selected={grid ? undefined : String(selected)}
+        aria-disabled={!grid && option.isInactive ? 'true' : undefined}
+        onMouseDown={event => event.preventDefault()}
+        onFocus={onFocus}
+        onKeyDown={onKeyDown}
+        onMouseMove={() => {
+          if (!option.isInactive) onHover();
+        }}
+        onClick={onSelect}
+      >
+        {leading}
+        <div class="ds-choice-item__content ds-interaction-fill__content">
+          <ds-text
+            class="ds-choice-item__label ds-control-label-box"
+            as="span"
+            variant={CONTROL_TEXT_VARIANT[size]}
+            color={selected ? 'primary' : 'secondary'}
+          >
+            {option.label}
           </ds-text>
-        )}
+          {usesSubtext && (
+            <ds-text
+              class="ds-choice-item__subtext ds-control-label-box"
+              as="span"
+              variant={CONTROL_SUPPORTING_TEXT_VARIANT[size]}
+              color="secondary"
+            >
+              {option.subtext?.trim() || '—'}
+            </ds-text>
+          )}
+        </div>
       </div>
+      {action && (
+        <div
+          class="select-option-row__action ds-control-elevation ds-control-elevation--md ds-control-elevation--press-scale"
+          role={grid ? 'gridcell' : undefined}
+        >
+          {action}
+        </div>
+      )}
     </div>
-    {action && (
-      <div class="select-option-row__action ds-control-elevation ds-control-elevation--md ds-control-elevation--press-scale">
-        {action}
-      </div>
-    )}
-  </div>
-);
+  );
+};

@@ -261,8 +261,10 @@ test('exposes contextual option actions without changing selection', async ({ pa
   });
 
   await trigger.click();
-  const defaultOption = select.getByRole('option', { name: 'Default' });
-  const userOption = select.getByRole('option', { name: 'My view' });
+  await expect(trigger).toHaveAttribute('aria-haspopup', 'grid');
+  const grid = select.getByRole('grid');
+  const defaultOption = grid.getByRole('gridcell', { name: 'Default', exact: true });
+  const userOption = grid.getByRole('gridcell', { name: 'My view', exact: true });
   const action = select.getByRole('button', { name: 'Options for My view' });
   const actionSurface = select.locator('.select-option-row__action');
 
