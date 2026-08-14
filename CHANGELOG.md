@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.18.0](https://github.com/zainadeel/compomo/compare/v13.17.0...v13.18.0) (2026-08-14)
+
+
+### Added
+
+* expand filtering and menu controls ([#458](https://github.com/zainadeel/compomo/issues/458)) ([c1c3d3e](https://github.com/zainadeel/compomo/commit/c1c3d3e2bfc724653ff37e325136aebbd7fa2879))
+
 ## [13.17.0](https://github.com/zainadeel/compomo/compare/v13.16.1...v13.17.0) (2026-08-13)
 
 
