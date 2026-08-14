@@ -1,0 +1,70 @@
+@import '../../styles/control-elevation.css';
+@import '../../utils/chrome-layout.css';
+@import '../../utils/focus-ring.css';
+@import '../../utils/forced-colors.css';
+@import '../../utils/text-decoration.css';
+
+:host {
+  min-width: 0;
+  box-sizing: border-box;
+  height: var(--dimension-size-600);
+  border-radius: var(--dimension-radius-125);
+  background: var(--color-background-bold-brand);
+  color: var(--color-foreground-on-bold-background-secondary);
+  --ds-focus-ring-color: var(--color-interaction-on-bold-background-focus);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.bar-action__copy,
+.bar-action__actions {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: var(--dimension-space-050);
+}
+
+.bar-action__copy {
+  flex: 1 1 auto;
+  padding-inline: var(--dimension-space-100);
+}
+
+.bar-action__count {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.bar-action__separator,
+.bar-action__clear,
+.bar-action__actions {
+  flex: 0 0 auto;
+}
+
+.bar-action__actions {
+  margin-inline-start: auto;
+}
+
+.bar-action__clear {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--dimension-size-400);
+  margin: 0;
+  padding: var(--dimension-space-025);
+  border: 0;
+  border-radius: var(--dimension-radius-050);
+  background: transparent;
+  cursor: pointer;
+}
+
+@media (forced-colors: active) {
+  :host {
+    --ds-control-elevation-shadow: none;
+    --ds-control-elevation-highlight: none;
+    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-control-boundary);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-012));
+  }
+}

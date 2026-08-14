@@ -12,7 +12,7 @@
     "intentStatus": "complete",
     "intent": {
       "audience": "general",
-      "status": "experimental",
+      "status": "stable",
       "summary": "Semantic, controlled data table with durable visual primitives for cell geometry, column geometry, grouping, sorting, multi-selection, sticky overflow, and incremental loading.",
       "useWhen": [
         "A structured dataset needs native row and column relationships, optional one-level grouping, or comparable values across records.",
@@ -29,6 +29,7 @@
         "component:ds-empty-state",
         "component:ds-skeleton",
         "component:ds-loader",
+        "component:ds-bar-action",
         "component:ds-button-unfilled",
         "component:ds-tag",
         "component:ds-icon"
@@ -869,7 +870,7 @@
       "peerDependencies": {
         "required": [
           "@ds-mo/tokens ^6.2.1",
-          "@ds-mo/icons ^6.6.0"
+          "@ds-mo/icons ^7.0.0"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
       }

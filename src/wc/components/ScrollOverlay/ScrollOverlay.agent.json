@@ -6,7 +6,7 @@
   "package": "@ds-mo/ui",
   "tag": "ds-scroll-overlay",
   "audience": "general",
-  "status": "experimental",
+  "status": "stable",
   "summary": "Generic scroll owner for content that moves behind a persistent footer action or composer with an always-active alpha fade.",
   "useWhen": [
     "A bounded region owns scrolling while footer actions remain overlaid and continuously visible.",

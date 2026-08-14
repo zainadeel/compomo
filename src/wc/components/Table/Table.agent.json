@@ -6,7 +6,7 @@
   "package": "@ds-mo/ui",
   "tag": "ds-table",
   "audience": "general",
-  "status": "experimental",
+  "status": "stable",
   "summary": "Semantic, controlled data table with durable visual primitives for cell geometry, column geometry, grouping, sorting, multi-selection, sticky overflow, and incremental loading.",
   "useWhen": [
     "A structured dataset needs native row and column relationships, optional one-level grouping, or comparable values across records.",
@@ -23,6 +23,7 @@
     "component:ds-empty-state",
     "component:ds-skeleton",
     "component:ds-loader",
+    "component:ds-bar-action",
     "component:ds-button-unfilled",
     "component:ds-tag",
     "component:ds-icon"

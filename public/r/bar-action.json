@@ -1,0 +1,237 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "bar-action",
+  "title": "BarAction",
+  "description": "Compact bold-brand selection-action chrome that reports a selected count, offers Clear, and hosts application commands on a medium-elevation surface.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/bar-action",
+    "source": "src/wc/components/BarAction/BarAction.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Compact bold-brand selection-action chrome that reports a selected count, offers Clear, and hosts application commands on a medium-elevation surface.",
+      "useWhen": [
+        "A multi-select table or similar collection needs a persistent bar of commands for the current selected set.",
+        "The application owns selected identities and must keep bulk actions visually consistent across surfaces."
+      ],
+      "avoidWhen": [
+        "The message is an application-wide announcement rather than a selected-set command surface; use Banner.",
+        "A single row or card needs local overflow commands; use ButtonUnfilled with Menu.",
+        "The chrome is a table result summary or footer; compose Table's footer instead."
+      ],
+      "alternatives": [
+        {
+          "when": "The message is a persistent application announcement.",
+          "component": "component:ds-banner",
+          "reason": "Banner owns shell-level messaging and does not represent a selected set."
+        },
+        {
+          "when": "A single row or card needs local overflow commands.",
+          "component": "component:ds-button-unfilled",
+          "reason": "ButtonUnfilled with Menu owns local item commands rather than selected-set bulk actions."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-table",
+        "component:ds-button-unfilled",
+        "component:ds-button-filled",
+        "component:ds-menu",
+        "component:ds-text"
+      ],
+      "patterns": [],
+      "accessibility": [
+        "Provide a toolbar accessible name that describes the selected-set commands.",
+        "Keep Clear as a real button. The selected count updates through a polite live region without stealing focus.",
+        "Name every slotted action. Icon-only commands still need an explicit accessible name.",
+        "The application updates the selected identities after dsClear; the bar never mutates selection itself."
+      ],
+      "states": [
+        "The bar is hidden while the selected count is below one and appears as the compact bold-brand elevated surface once at least one item is selected.",
+        "Clear reports intent only. The application replaces the controlled selected identities.",
+        "Slotted actions stay application-owned. Pass background matching the bold parent surface so those controls remain readable.",
+        "The host owns medium control-elevation. Overlay inset, footer clearance, and stacking remain application layout."
+      ],
+      "responsiveBehavior": [
+        "The count truncates before Clear and trailing actions lose their complete hit targets.",
+        "The bar fills its owner's inline size. Overlay inset, footer clearance, and stacking against a table remain the consuming layout."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Bind count from the current selected set and replace that set after dsClear.",
+          "Project command controls through slot=actions with background matching the bold parent surface."
+        ],
+        "react": [
+          "Pass count from selected row or item state and clear that state from onDsClear.",
+          "Place DsBarAction in the same positioned owner as the table when overlaying the table footer."
+        ],
+        "angular": [
+          "Bind count from the controlled selected identities and handle dsClear in the collection owner.",
+          "Project ds-button-unfilled or ds-button-filled into slot=actions with background matching the bold parent surface."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook review matrix",
+          "path": "src/wc/components/BarAction/BarAction.stories.ts"
+        },
+        {
+          "label": "Rendered behavior coverage",
+          "path": "tests/e2e/bar-action.spec.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "clearLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "clear-label",
+          "default": "'Clear'",
+          "required": false,
+          "mutable": false,
+          "description": "Visible Clear control label."
+        },
+        "count": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "count",
+          "default": "0",
+          "required": false,
+          "mutable": false,
+          "description": "Number of selected items. The bar is hidden while this is below one."
+        },
+        "label": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "label",
+          "default": "'Selected item actions'",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name for the toolbar."
+        },
+        "selectedLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "selected-label",
+          "default": "'selected'",
+          "required": false,
+          "mutable": false,
+          "description": "Localized noun shown after the count."
+        }
+      },
+      "events": [
+        {
+          "name": "dsClear",
+          "detail": "MouseEvent",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emitted when Clear is activated. The application owns the selected identities."
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "clearLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "clear-label",
+        "default": "'Clear'",
+        "required": false,
+        "mutable": false,
+        "description": "Visible Clear control label."
+      },
+      "count": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "count",
+        "default": "0",
+        "required": false,
+        "mutable": false,
+        "description": "Number of selected items. The bar is hidden while this is below one."
+      },
+      "label": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "label",
+        "default": "'Selected item actions'",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name for the toolbar."
+      },
+      "selectedLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "selected-label",
+        "default": "'selected'",
+        "required": false,
+        "mutable": false,
+        "description": "Localized noun shown after the count."
+      }
+    },
+    "events": [
+      {
+        "name": "dsClear",
+        "detail": "MouseEvent",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emitted when Clear is activated. The application owns the selected identities."
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-bar-action",
+      "react": "DsBarAction",
+      "angular": "DsBarAction"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-bar-action.js';",
+        "example": "<ds-bar-action></ds-bar-action>"
+      },
+      "react": {
+        "import": "import { DsBarAction } from '@ds-mo/ui/react';",
+        "example": "<DsBarAction />"
+      },
+      "angular": {
+        "import": "import { DsBarAction } from '@ds-mo/ui/angular/ds-bar-action';",
+        "example": "<ds-bar-action></ds-bar-action>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.2.1",
+          "@ds-mo/icons ^7.0.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/BarAction/BarAction.css",
+      "content": "@import '../../styles/control-elevation.css';\n@import '../../utils/chrome-layout.css';\n@import '../../utils/focus-ring.css';\n@import '../../utils/forced-colors.css';\n@import '../../utils/text-decoration.css';\n\n:host {\n  min-width: 0;\n  box-sizing: border-box;\n  height: var(--dimension-size-600);\n  border-radius: var(--dimension-radius-125);\n  background: var(--color-background-bold-brand);\n  color: var(--color-foreground-on-bold-background-secondary);\n  --ds-focus-ring-color: var(--color-interaction-on-bold-background-focus);\n}\n\n:host([hidden]) {\n  display: none;\n}\n\n.bar-action__copy,\n.bar-action__actions {\n  display: flex;\n  align-items: center;\n  min-width: 0;\n  gap: var(--dimension-space-050);\n}\n\n.bar-action__copy {\n  flex: 1 1 auto;\n  padding-inline: var(--dimension-space-100);\n}\n\n.bar-action__count {\n  flex: 0 1 auto;\n  min-width: 0;\n}\n\n.bar-action__separator,\n.bar-action__clear,\n.bar-action__actions {\n  flex: 0 0 auto;\n}\n\n.bar-action__actions {\n  margin-inline-start: auto;\n}\n\n.bar-action__clear {\n  appearance: none;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  min-block-size: var(--dimension-size-400);\n  margin: 0;\n  padding: var(--dimension-space-025);\n  border: 0;\n  border-radius: var(--dimension-radius-050);\n  background: transparent;\n  cursor: pointer;\n}\n\n@media (forced-colors: active) {\n  :host {\n    --ds-control-elevation-shadow: none;\n    --ds-control-elevation-highlight: none;\n    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-control-boundary);\n    outline-offset: calc(-1 * var(--dimension-stroke-width-012));\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/BarAction/BarAction.tsx",
+      "content": "import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\n\n@Component({\n  tag: 'ds-bar-action',\n  styleUrl: 'BarAction.css',\n  scoped: true,\n})\nexport class BarAction {\n  /** Number of selected items. The bar is hidden while this is below one. */\n  @Prop() count: number = 0;\n\n  /** Localized noun shown after the count. */\n  @Prop() selectedLabel: string = 'selected';\n\n  /** Visible Clear control label. */\n  @Prop() clearLabel: string = 'Clear';\n\n  /** Accessible name for the toolbar. */\n  @Prop() label: string = 'Selected item actions';\n\n  /** Emitted when Clear is activated. The application owns the selected identities. */\n  @Event() dsClear!: EventEmitter<MouseEvent>;\n\n  private get isVisible(): boolean {\n    return this.count >= 1;\n  }\n\n  private handleClear = (event: MouseEvent) => {\n    this.dsClear.emit(event);\n  };\n\n  render() {\n    return (\n      <Host\n        class=\"ds-chrome-row ds-chrome-space--md ds-control-elevation ds-control-elevation--md\"\n        hidden={!this.isVisible || undefined}\n        role=\"toolbar\"\n        aria-label={this.label}\n      >\n        <div class=\"bar-action__copy\">\n          <ds-text\n            class=\"bar-action__count\"\n            as=\"span\"\n            variant=\"text-body-medium\"\n            color=\"inherit\"\n            fontFeature=\"tabular-nums\"\n            lineTruncation={1}\n            aria-live=\"polite\"\n          >\n            {this.count} {this.selectedLabel}\n          </ds-text>\n          <ds-text\n            class=\"bar-action__separator\"\n            as=\"span\"\n            variant=\"text-body-medium\"\n            color=\"inherit\"\n            aria-hidden=\"true\"\n          >\n            ·\n          </ds-text>\n          <button\n            class=\"bar-action__clear ds-text-action ds-text-action--on-bold ds-focus-ring\"\n            type=\"button\"\n            onClick={this.handleClear}\n          >\n            <ds-text as=\"span\" variant=\"text-body-medium\" color=\"inherit\">\n              {this.clearLabel}\n            </ds-text>\n          </button>\n        </div>\n        <div class=\"bar-action__actions\">\n          <slot name=\"actions\" />\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

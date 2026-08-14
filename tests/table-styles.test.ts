@@ -45,6 +45,8 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(componentTsx, /'ds-table--caption-visible'/);
   assert.match(css, /\.ds-table__caption-content/);
   assert.match(css, /\.ds-table__bar-copy > slot/);
+  assert.match(css, /\.ds-table__bar-status/);
+  assert.match(css, /\.ds-table__footer-summary/);
   assert.match(css, /ds-table--document-sticky-header\.ds-table--caption-visible/);
   assert.match(css, /\.ds-table__sticky-group/);
   assert.match(css, /\.ds-table__table--native-group-sticky/);
@@ -96,6 +98,11 @@ test('keeps public table selectors and custom properties override-friendly', () 
   ]) {
     assert.match(css, new RegExp(property));
   }
+
+  assert.match(
+    css,
+    /--_table-sticky-border: var\(--ds-table-sticky-border, var\(--color-border-tertiary\)\)/,
+  );
 });
 
 test('retains the structural and accessibility fallbacks rendered tests depend on', () => {

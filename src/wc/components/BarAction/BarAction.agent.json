@@ -1,0 +1,80 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-bar-action",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-bar-action",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Compact bold-brand selection-action chrome that reports a selected count, offers Clear, and hosts application commands on a medium-elevation surface.",
+  "useWhen": [
+    "A multi-select table or similar collection needs a persistent bar of commands for the current selected set.",
+    "The application owns selected identities and must keep bulk actions visually consistent across surfaces."
+  ],
+  "avoidWhen": [
+    "The message is an application-wide announcement rather than a selected-set command surface; use Banner.",
+    "A single row or card needs local overflow commands; use ButtonUnfilled with Menu.",
+    "The chrome is a table result summary or footer; compose Table's footer instead."
+  ],
+  "alternatives": [
+    {
+      "when": "The message is a persistent application announcement.",
+      "component": "component:ds-banner",
+      "reason": "Banner owns shell-level messaging and does not represent a selected set."
+    },
+    {
+      "when": "A single row or card needs local overflow commands.",
+      "component": "component:ds-button-unfilled",
+      "reason": "ButtonUnfilled with Menu owns local item commands rather than selected-set bulk actions."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-table",
+    "component:ds-button-unfilled",
+    "component:ds-button-filled",
+    "component:ds-menu",
+    "component:ds-text"
+  ],
+  "patterns": [],
+  "accessibility": [
+    "Provide a toolbar accessible name that describes the selected-set commands.",
+    "Keep Clear as a real button. The selected count updates through a polite live region without stealing focus.",
+    "Name every slotted action. Icon-only commands still need an explicit accessible name.",
+    "The application updates the selected identities after dsClear; the bar never mutates selection itself."
+  ],
+  "states": [
+    "The bar is hidden while the selected count is below one and appears as the compact bold-brand elevated surface once at least one item is selected.",
+    "Clear reports intent only. The application replaces the controlled selected identities.",
+    "Slotted actions stay application-owned. Pass background matching the bold parent surface so those controls remain readable.",
+    "The host owns medium control-elevation. Overlay inset, footer clearance, and stacking remain application layout."
+  ],
+  "responsiveBehavior": [
+    "The count truncates before Clear and trailing actions lose their complete hit targets.",
+    "The bar fills its owner's inline size. Overlay inset, footer clearance, and stacking against a table remain the consuming layout."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Bind count from the current selected set and replace that set after dsClear.",
+      "Project command controls through slot=actions with background matching the bold parent surface."
+    ],
+    "react": [
+      "Pass count from selected row or item state and clear that state from onDsClear.",
+      "Place DsBarAction in the same positioned owner as the table when overlaying the table footer."
+    ],
+    "angular": [
+      "Bind count from the controlled selected identities and handle dsClear in the collection owner.",
+      "Project ds-button-unfilled or ds-button-filled into slot=actions with background matching the bold parent surface."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook review matrix",
+      "path": "src/wc/components/BarAction/BarAction.stories.ts"
+    },
+    {
+      "label": "Rendered behavior coverage",
+      "path": "tests/e2e/bar-action.spec.ts"
+    }
+  ]
+}

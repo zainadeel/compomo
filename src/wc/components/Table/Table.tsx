@@ -1381,24 +1381,19 @@ export class Table {
     const hasTrailing = !!this.el.querySelector('[slot="footer-trailing"]');
     if (!this.hasResultFooter) return null;
     return (
-      <div class="ds-table__footer ds-table__bar ds-control--md">
-        {hasLeading && (
-          <div class="ds-table__bar-leading">
-            <slot name="footer-leading" />
-          </div>
-        )}
-        <div
-          class={{
-            'ds-table__bar-copy': true,
-            'ds-table__bar-copy--summary': !hasCopy && !!summary,
-          }}
-        >
+      <div class="ds-table__footer ds-table__bar ds-chrome-header ds-control--md">
+        <div class="ds-table__bar-copy ds-chrome-header__copy ds-control--md">
+          {hasLeading && (
+            <div class="ds-table__bar-status ds-chrome-header__heading">
+              <slot name="footer-leading" />
+            </div>
+          )}
           {hasCopy ? (
             <slot name="footer" />
           ) : summary ? (
             <ds-text
               class="ds-table__footer-summary ds-table__bar-text"
-              as="div"
+              as="span"
               variant="text-body-medium"
               color="secondary"
             >
@@ -1407,7 +1402,7 @@ export class Table {
           ) : null}
         </div>
         {hasTrailing && (
-          <div class="ds-table__bar-trailing">
+          <div class="ds-table__bar-trailing ds-chrome-header__trailing">
             <slot name="footer-trailing" />
           </div>
         )}
