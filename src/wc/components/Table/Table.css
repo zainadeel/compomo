@@ -1,5 +1,6 @@
 @import '../../styles/table.css';
 @import '../../styles/control-elevation.css';
+@import '../../utils/chrome-header.css';
 @import '../../utils/control-density.css';
 
 :host {
@@ -64,5 +65,17 @@ ds-text.ds-table__load-content {
 
 ds-text.ds-table__bar-text {
   display: inline-flex;
+  width: auto;
+  max-width: 100%;
   padding-inline: var(--ds-control-label-inset, var(--dimension-space-025));
+}
+
+ds-text.ds-table__footer-summary {
+  margin-inline-start: auto;
+}
+
+.ds-table__bar-status slot::slotted(*) {
+  width: auto;
+  max-width: 100%;
+  min-width: 0;
 }

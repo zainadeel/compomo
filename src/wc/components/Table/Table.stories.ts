@@ -4,6 +4,8 @@ import { useArgs } from 'storybook/preview-api';
 import '../../../../dist/components/ds-table.js';
 import '../../../../dist/components/ds-text.js';
 import '../../../../dist/components/ds-select.js';
+import '../../../../dist/components/ds-bar-action.js';
+import '../../../../dist/components/ds-button-unfilled.js';
 import '../../styles/table.css';
 import type {
   TableColumn,
@@ -626,7 +628,7 @@ export const SafetyEvents: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'A Motive Dashboard-inspired safety-events table. Its table-owned 48px header gives one full-width, 8px-inset surface to the application through the header slot. The footer pairs an application-owned last-updated label on the left with the controlled result summary on the right. The checkbox and blank action lanes stay pinned; each owns a fixed divider and a row-clipped shadow directed into the scrolling columns while more content remains.',
+        story: 'A Motive Dashboard-inspired safety-events table. Its table-owned 48px header gives one full-width, 8px-inset surface to the application through the header slot. Selecting rows overlays ds-bar-action above the footer; that overlay inset is application layout, not table chrome. The footer pairs an application-owned last-updated label on the left with the controlled result summary on the right. The checkbox and blank action lanes stay pinned; each owns a fixed divider and a row-clipped shadow directed into the scrolling columns while more content remains.',
       },
     },
   },
@@ -637,62 +639,75 @@ export const SafetyEvents: Story = {
     const grouping = (args['grouping'] as TableGroupingState | null) ?? null;
     const ordered = orderedRows(SAFETY_EVENT_ROWS, sort);
     return html`
-      <ds-table
-        fit-viewport
-        viewport-inset-block-start="var(--dimension-space-200)"
-        viewport-inset-block-end="var(--dimension-space-200)"
-        .columns=${SAFETY_EVENT_COLUMNS}
-        .rows=${grouping ? [] : ordered}
-        .groups=${grouping ? severityGroupedRows(ordered, sort) : []}
-        .grouping=${grouping}
-        .sort=${sort}
-        .selectedRowIds=${selectedRowIds}
-        .displayedCount=${SAFETY_EVENT_ROWS.length}
-        .totalCount=${500}
-        selection-mode="multiple"
-        sticky-header
-        caption="Safety events"
-        caption-visibility="visible"
-        @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
-          updateArgs({ sort: event.detail.sort })}
-        @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>
-          updateArgs({ selectedRowIds: event.detail.selectedRowIds })}
-      >
-        <div
-          slot="header"
-          style="display:flex;align-items:center;min-width:0;gap:var(--dimension-space-100);"
+      <div style="position:relative;min-width:0;">
+        <ds-table
+          fit-viewport
+          viewport-inset-block-start="var(--dimension-space-200)"
+          viewport-inset-block-end="var(--dimension-space-200)"
+          .columns=${SAFETY_EVENT_COLUMNS}
+          .rows=${grouping ? [] : ordered}
+          .groups=${grouping ? severityGroupedRows(ordered, sort) : []}
+          .grouping=${grouping}
+          .sort=${sort}
+          .selectedRowIds=${selectedRowIds}
+          .displayedCount=${SAFETY_EVENT_ROWS.length}
+          .totalCount=${500}
+          selection-mode="multiple"
+          sticky-header
+          caption="Safety events"
+          caption-visibility="visible"
+          @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
+            updateArgs({ sort: event.detail.sort })}
+          @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>
+            updateArgs({ selectedRowIds: event.detail.selectedRowIds })}
         >
-          <div style="display:flex;align-items:center;gap:var(--dimension-space-100);">
-            <ds-text as="span" variant="text-body-small" color="secondary">Group rows</ds-text>
-            <ds-select
-              size="md"
-              aria-label="Group safety events"
-              placeholder="No grouping"
-              .options=${[{ label: 'Severity', value: 'severity' }]}
-              .value=${grouping?.columnId ?? ''}
-              .allowClear=${grouping !== null}
-              @dsChange=${(event: CustomEvent<string | string[]>) => {
-                if (event.detail !== 'severity') return;
-                updateArgs({ grouping: { columnId: 'severity', direction: 'asc' } });
-              }}
-              @dsClear=${() => updateArgs({ grouping: null })}
-            ></ds-select>
-          </div>
-          ${selectedRowIds.length > 0
-          ? html`<ds-text
-            style="margin-inline-start:auto;"
-            as="span"
-            variant="text-body-small"
-            color="secondary"
+          <div
+            slot="header"
+            style="display:flex;align-items:center;min-width:0;gap:var(--dimension-space-100);"
           >
-            ${selectedRowIds.length} selected
-          </ds-text>`
-          : null}
-        </div>
-        <ds-text slot="footer-leading" as="div" variant="text-body-medium" color="secondary">
-          Last updated: Aug 13, 2026  7:00 PM PT
-        </ds-text>
-      </ds-table>
+            <div style="display:flex;align-items:center;gap:var(--dimension-space-100);">
+              <ds-text as="span" variant="text-body-small" color="secondary">Group rows</ds-text>
+              <ds-select
+                size="md"
+                aria-label="Group safety events"
+                placeholder="No grouping"
+                .options=${[{ label: 'Severity', value: 'severity' }]}
+                .value=${grouping?.columnId ?? ''}
+                .allowClear=${grouping !== null}
+                @dsChange=${(event: CustomEvent<string | string[]>) => {
+                  if (event.detail !== 'severity') return;
+                  updateArgs({ grouping: { columnId: 'severity', direction: 'asc' } });
+                }}
+                @dsClear=${() => updateArgs({ grouping: null })}
+              ></ds-select>
+            </div>
+          </div>
+          <ds-text slot="footer-leading" as="span" variant="text-body-medium" color="secondary">
+            Last updated: Aug 13, 2026  7:00 PM PT
+          </ds-text>
+        </ds-table>
+        <ds-bar-action
+          style="position:absolute;inset-inline:var(--dimension-space-100);inset-block-end:calc(var(--dimension-size-600) + var(--dimension-space-100));z-index:var(--dimension-z-index-floating);"
+          .count=${selectedRowIds.length}
+          label="Selected safety event actions"
+          @dsClear=${(event: CustomEvent<MouseEvent>) => {
+            const owner = (event.currentTarget as HTMLElement).parentElement;
+            updateArgs({ selectedRowIds: [] });
+            requestAnimationFrame(() => {
+              owner
+                ?.querySelector<HTMLButtonElement>('ds-table .ds-table__selection-control')
+                ?.focus();
+            });
+          }}
+        >
+          <ds-button-unfilled
+            slot="actions"
+            label="Coaching status"
+            size="md"
+            background="bold"
+          ></ds-button-unfilled>
+        </ds-bar-action>
+      </div>
     `;
   },
 };

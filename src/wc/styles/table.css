@@ -27,7 +27,7 @@
   --_table-row-selected: var(--ds-table-row-selected, var(--color-interaction-active-brand));
   --_table-border: var(--ds-table-border, var(--color-border-secondary));
   --_table-column-border: var(--ds-table-column-border, var(--color-border-tertiary));
-  --_table-sticky-border: var(--ds-table-sticky-border, var(--color-border-secondary));
+  --_table-sticky-border: var(--ds-table-sticky-border, var(--color-border-tertiary));
   --_table-border-strong: var(--ds-table-border-strong, var(--color-border-secondary));
   --_table-radius: var(--ds-table-radius, var(--dimension-radius-000));
   --_table-header-min-block-size: var(
@@ -291,18 +291,26 @@
   padding: var(--ds-control-padding-inline, var(--dimension-space-075));
 }
 
-:where(.ds-table__bar-copy--summary) {
-  justify-content: flex-end;
+:where(.ds-table__bar-status) {
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+  min-inline-size: 0;
+  padding-inline: var(--ds-control-label-inset, var(--dimension-space-025));
 }
 
 :where(.ds-table__bar-copy > slot) {
   display: contents;
 }
 
-:where(.ds-table__bar-copy > slot)::slotted(*) {
+:where(.ds-table__bar-copy > slot[name='footer'])::slotted(*) {
   flex: 1 1 auto;
   min-inline-size: 0;
   max-inline-size: 100%;
+}
+
+:where(.ds-table__footer-summary) {
+  margin-inline-start: auto;
 }
 
 :where(.ds-table__bar-text) {

@@ -6,7 +6,7 @@
   "package": "@ds-mo/ui",
   "audience": "general",
   "tag": "ds-card-overview",
-  "status": "experimental",
+  "status": "stable",
   "summary": "Page-level summary with a persistent 48px reporting bar above an equal-track grid of an optional safety score and comparable measures, plus an elevated page-controlled collapse surface.",
   "useWhen": [
     "A page opens with one headline figure that the surrounding measures explain.",

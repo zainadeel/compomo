@@ -12,7 +12,7 @@
     "intentStatus": "complete",
     "intent": {
       "audience": "general",
-      "status": "experimental",
+      "status": "stable",
       "summary": "Page-level summary with a persistent 48px reporting bar above an equal-track grid of an optional safety score and comparable measures, plus an elevated page-controlled collapse surface.",
       "useWhen": [
         "A page opens with one headline figure that the surrounding measures explain.",
@@ -345,8 +345,8 @@
       "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: metrics, score.",
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens ^6.2.1",
-          "@ds-mo/icons ^6.6.0"
+          "@ds-mo/tokens ^6.2.2",
+          "@ds-mo/icons ^7.0.0"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
       }

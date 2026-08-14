@@ -59,6 +59,7 @@ test('compact headers share one geometry and copy-zone anatomy', () => {
     BarTitle: /'ds-chrome-header': compact/,
     CardChart: /card-chart__header ds-chrome-header/,
     CardSetting: /card-setting__header ds-chrome-header/,
+    Table: /ds-table__footer ds-table__bar ds-chrome-header ds-control--md/,
   } as const;
 
   for (const [component, contract] of Object.entries(consumers)) {
@@ -75,6 +76,7 @@ test('compact headers share one geometry and copy-zone anatomy', () => {
 test('migrated chrome consumes shared recipes while retaining nested rhythms', () => {
   const migrations = [
     ['src/wc/components/BarWorkflow/BarWorkflow.tsx', /bar-workflow ds-chrome-row ds-chrome-space--md/],
+    ['src/wc/components/BarAction/BarAction.tsx', /ds-chrome-row ds-chrome-space--md ds-control-elevation ds-control-elevation--md/],
     ['src/wc/components/PanelToolSearch/PanelToolSearch.tsx', /panel-tool-search ds-chrome-row ds-chrome-space--md/],
     ['src/wc/components/MobileHeader/MobileHeader.tsx', /mobile-header__primary ds-chrome-grid ds-chrome-space--md/],
     ['src/wc/components/MobileSheetNav/MobileSheetNav.tsx', /mobile-sheet-nav__header ds-chrome-grid ds-chrome-space--md/],

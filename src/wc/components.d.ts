@@ -349,6 +349,28 @@ export namespace Components {
          */
         "orientation": BannerOrientation;
     }
+    interface DsBarAction {
+        /**
+          * Visible Clear control label.
+          * @default 'Clear'
+         */
+        "clearLabel": string;
+        /**
+          * Number of selected items. The bar is hidden while this is below one.
+          * @default 0
+         */
+        "count": number;
+        /**
+          * Accessible name for the selected-set action group.
+          * @default 'Selected item actions'
+         */
+        "label": string;
+        /**
+          * Localized noun shown after the count.
+          * @default 'selected'
+         */
+        "selectedLabel": string;
+    }
     interface DsBarNav {
         /**
           * Section base path (e.g. `/dashboard/safety`). Used with `currentUrl` to derive `value`.
@@ -3161,6 +3183,10 @@ export interface DsBannerCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsBannerElement;
 }
+export interface DsBarActionCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsBarActionElement;
+}
 export interface DsBarNavCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsBarNavElement;
@@ -3429,6 +3455,23 @@ declare global {
     var HTMLDsBannerElement: {
         prototype: HTMLDsBannerElement;
         new (): HTMLDsBannerElement;
+    };
+    interface HTMLDsBarActionElementEventMap {
+        "dsClear": MouseEvent;
+    }
+    interface HTMLDsBarActionElement extends Components.DsBarAction, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsBarActionElementEventMap>(type: K, listener: (this: HTMLDsBarActionElement, ev: DsBarActionCustomEvent<HTMLDsBarActionElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsBarActionElementEventMap>(type: K, listener: (this: HTMLDsBarActionElement, ev: DsBarActionCustomEvent<HTMLDsBarActionElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsBarActionElement: {
+        prototype: HTMLDsBarActionElement;
+        new (): HTMLDsBarActionElement;
     };
     interface HTMLDsBarNavElementEventMap {
         "dsTabChange": string;
@@ -4378,6 +4421,7 @@ declare global {
         "ds-avatar": HTMLDsAvatarElement;
         "ds-badge": HTMLDsBadgeElement;
         "ds-banner": HTMLDsBannerElement;
+        "ds-bar-action": HTMLDsBarActionElement;
         "ds-bar-nav": HTMLDsBarNavElement;
         "ds-bar-title": HTMLDsBarTitleElement;
         "ds-bar-workflow": HTMLDsBarWorkflowElement;
@@ -4669,6 +4713,32 @@ declare namespace LocalJSX {
           * @default 'horizontal'
          */
         "orientation"?: BannerOrientation;
+    }
+    interface DsBarAction {
+        /**
+          * Visible Clear control label.
+          * @default 'Clear'
+         */
+        "clearLabel"?: string;
+        /**
+          * Number of selected items. The bar is hidden while this is below one.
+          * @default 0
+         */
+        "count"?: number;
+        /**
+          * Accessible name for the selected-set action group.
+          * @default 'Selected item actions'
+         */
+        "label"?: string;
+        /**
+          * Emitted when Clear is activated. The application owns the selected identities.
+         */
+        "onDsClear"?: (event: DsBarActionCustomEvent<MouseEvent>) => void;
+        /**
+          * Localized noun shown after the count.
+          * @default 'selected'
+         */
+        "selectedLabel"?: string;
     }
     interface DsBarNav {
         /**
@@ -7785,6 +7855,12 @@ declare namespace LocalJSX {
         "dismissLabel": string;
         "announcement": BannerAnnouncement;
     }
+    interface DsBarActionAttributes {
+        "count": number;
+        "selectedLabel": string;
+        "clearLabel": string;
+        "label": string;
+    }
     interface DsBarNavAttributes {
         "navStyle": NavChromeStyle;
         "value": string;
@@ -8449,6 +8525,7 @@ declare namespace LocalJSX {
         "ds-avatar": Omit<DsAvatar, keyof DsAvatarAttributes> & { [K in keyof DsAvatar & keyof DsAvatarAttributes]?: DsAvatar[K] } & { [K in keyof DsAvatar & keyof DsAvatarAttributes as `attr:${K}`]?: DsAvatarAttributes[K] } & { [K in keyof DsAvatar & keyof DsAvatarAttributes as `prop:${K}`]?: DsAvatar[K] };
         "ds-badge": Omit<DsBadge, keyof DsBadgeAttributes> & { [K in keyof DsBadge & keyof DsBadgeAttributes]?: DsBadge[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `attr:${K}`]?: DsBadgeAttributes[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `prop:${K}`]?: DsBadge[K] };
         "ds-banner": Omit<DsBanner, keyof DsBannerAttributes> & { [K in keyof DsBanner & keyof DsBannerAttributes]?: DsBanner[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `attr:${K}`]?: DsBannerAttributes[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `prop:${K}`]?: DsBanner[K] } & OneOf<"description", DsBanner["description"], DsBannerAttributes["description"]>;
+        "ds-bar-action": Omit<DsBarAction, keyof DsBarActionAttributes> & { [K in keyof DsBarAction & keyof DsBarActionAttributes]?: DsBarAction[K] } & { [K in keyof DsBarAction & keyof DsBarActionAttributes as `attr:${K}`]?: DsBarActionAttributes[K] } & { [K in keyof DsBarAction & keyof DsBarActionAttributes as `prop:${K}`]?: DsBarAction[K] };
         "ds-bar-nav": Omit<DsBarNav, keyof DsBarNavAttributes> & { [K in keyof DsBarNav & keyof DsBarNavAttributes]?: DsBarNav[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `attr:${K}`]?: DsBarNavAttributes[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `prop:${K}`]?: DsBarNav[K] };
         "ds-bar-title": Omit<DsBarTitle, keyof DsBarTitleAttributes> & { [K in keyof DsBarTitle & keyof DsBarTitleAttributes]?: DsBarTitle[K] } & { [K in keyof DsBarTitle & keyof DsBarTitleAttributes as `attr:${K}`]?: DsBarTitleAttributes[K] } & { [K in keyof DsBarTitle & keyof DsBarTitleAttributes as `prop:${K}`]?: DsBarTitle[K] } & OneOf<"heading", DsBarTitle["heading"], DsBarTitleAttributes["heading"]>;
         "ds-bar-workflow": Omit<DsBarWorkflow, keyof DsBarWorkflowAttributes> & { [K in keyof DsBarWorkflow & keyof DsBarWorkflowAttributes]?: DsBarWorkflow[K] } & { [K in keyof DsBarWorkflow & keyof DsBarWorkflowAttributes as `attr:${K}`]?: DsBarWorkflowAttributes[K] } & { [K in keyof DsBarWorkflow & keyof DsBarWorkflowAttributes as `prop:${K}`]?: DsBarWorkflow[K] } & OneOf<"heading", DsBarWorkflow["heading"], DsBarWorkflowAttributes["heading"]>;
@@ -8523,6 +8600,7 @@ declare module "@stencil/core" {
             "ds-avatar": LocalJSX.IntrinsicElements["ds-avatar"] & JSXBase.HTMLAttributes<HTMLDsAvatarElement>;
             "ds-badge": LocalJSX.IntrinsicElements["ds-badge"] & JSXBase.HTMLAttributes<HTMLDsBadgeElement>;
             "ds-banner": LocalJSX.IntrinsicElements["ds-banner"] & JSXBase.HTMLAttributes<HTMLDsBannerElement>;
+            "ds-bar-action": LocalJSX.IntrinsicElements["ds-bar-action"] & JSXBase.HTMLAttributes<HTMLDsBarActionElement>;
             "ds-bar-nav": LocalJSX.IntrinsicElements["ds-bar-nav"] & JSXBase.HTMLAttributes<HTMLDsBarNavElement>;
             "ds-bar-title": LocalJSX.IntrinsicElements["ds-bar-title"] & JSXBase.HTMLAttributes<HTMLDsBarTitleElement>;
             "ds-bar-workflow": LocalJSX.IntrinsicElements["ds-bar-workflow"] & JSXBase.HTMLAttributes<HTMLDsBarWorkflowElement>;

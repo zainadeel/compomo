@@ -141,9 +141,6 @@ test('keeps the visible caption bar outside horizontal table scrolling', async (
 });
 
 test('renders an optional result summary footer from controlled counts', async ({ page }) => {
-  await page.addStyleTag({
-    content: '.sc-ds-text-h { display: block; padding: 0; border: 0; }',
-  });
   const table = page.locator('#footer');
   const footer = table.locator('.ds-table__footer');
   await expect(footer).toBeVisible();
@@ -180,25 +177,28 @@ test('renders an optional result summary footer from controlled counts', async (
   expect(footerChrome.borderBlockStartWidth).toBeGreaterThan(0);
   expect(footerChrome.borderBlockStartColor).toBe(footerChrome.secondary);
   const footerCopyGeometry = await footer.evaluate(element => {
-    const leading = element.querySelector<HTMLElement>('.ds-table__bar-leading')!;
     const copy = element.querySelector<HTMLElement>('.ds-table__bar-copy')!;
+    const status = element.querySelector<HTMLElement>('[slot="footer-leading"]')!;
     const summary = element.querySelector<HTMLElement>('.ds-table__footer-summary')!;
+    const statusText = status.querySelector<HTMLElement>('.ds-text__element') ?? status;
+    const summaryText = summary.querySelector<HTMLElement>('.ds-text__element') ?? summary;
     const footerRect = element.getBoundingClientRect();
-    const footerStyle = getComputedStyle(element);
-    const copyStyle = getComputedStyle(copy);
     return {
-      leadingStart: leading.getBoundingClientRect().left - footerRect.left,
-      summaryEnd: footerRect.right - summary.getBoundingClientRect().right,
-      expectedSummaryEnd:
-        Number.parseFloat(footerStyle.paddingInlineEnd) +
-        Number.parseFloat(copyStyle.paddingInlineEnd),
+      copyPaddingInline: getComputedStyle(copy).paddingInline,
+      statusPaddingInline: getComputedStyle(status.parentElement!).paddingInline,
+      summaryPaddingInline: getComputedStyle(summary).paddingInline,
+      leadingStart: statusText.getBoundingClientRect().left - footerRect.left,
+      summaryEnd: footerRect.right - summaryText.getBoundingClientRect().right,
+      leadingRight: statusText.getBoundingClientRect().right,
+      summaryLeft: summaryText.getBoundingClientRect().left,
     };
   });
-  expect(footerCopyGeometry.leadingStart).toBeCloseTo(8, 0);
-  expect(footerCopyGeometry.summaryEnd).toBeCloseTo(
-    footerCopyGeometry.expectedSummaryEnd,
-    0,
-  );
+  expect(footerCopyGeometry.copyPaddingInline).toBe('6px');
+  expect(footerCopyGeometry.statusPaddingInline).toBe('2px');
+  expect(footerCopyGeometry.summaryPaddingInline).toBe('2px');
+  expect(footerCopyGeometry.leadingStart).toBeCloseTo(16, 0);
+  expect(footerCopyGeometry.summaryEnd).toBeCloseTo(16, 0);
+  expect(footerCopyGeometry.summaryLeft).toBeGreaterThan(footerCopyGeometry.leadingRight);
   await expect(table.locator('caption')).toHaveClass(/ds-visually-hidden/);
 
   await table.evaluate((element: HTMLDsTableElement) => {
@@ -1675,16 +1675,14 @@ test('keeps a document-flow header and edge columns sticky while vertical input 
   const stickyEdgeColors = await firstStartEdge.evaluate(element => {
     const probe = document.createElement('span');
     document.body.append(probe);
-    const resolveToken = (token: string) => {
-      probe.style.background = `var(${token})`;
-      return getComputedStyle(probe).backgroundColor;
-    };
-    const stickyDivider = resolveToken('--color-border-secondary');
-    const rowDivider = resolveToken('--color-border-tertiary');
+    probe.style.background = 'var(--color-border-tertiary)';
+    const stickyDivider = getComputedStyle(probe).backgroundColor;
     probe.remove();
-    return { edge: getComputedStyle(element).backgroundColor, stickyDivider, rowDivider };
+    return { start: getComputedStyle(element).backgroundColor, stickyDivider };
   });
-  expect(stickyEdgeColors.edge).toBe(stickyEdgeColors.stickyDivider);
+  const stickyEndColor = await firstEndEdge.evaluate(element => getComputedStyle(element).backgroundColor);
+  expect(stickyEdgeColors.start).toBe(stickyEdgeColors.stickyDivider);
+  expect(stickyEndColor).toBe(stickyEdgeColors.stickyDivider);
   expect(await firstStartEdge.evaluate(element => getComputedStyle(element, '::after').boxShadow))
     .toBe('none');
   expect(await firstEndEdge.evaluate(element => getComputedStyle(element, '::after').boxShadow))
@@ -1773,7 +1771,7 @@ test('keeps a document-flow header and edge columns sticky while vertical input 
     .locator('.ds-table__body:last-child .ds-table__row:last-child .ds-table__cell')
     .nth(2)
     .evaluate(element => getComputedStyle(element, '::after').boxShadow);
-  expect(terminalColumnDivider).toContain(stickyEdgeColors.rowDivider);
+  expect(terminalColumnDivider).toContain(stickyEdgeColors.stickyDivider);
 
   const lanes = await table.locator('[data-row-id="document-row-2"]').evaluate(row => {
     const viewport = row.closest('.ds-table__viewport')!.getBoundingClientRect();

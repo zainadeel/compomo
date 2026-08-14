@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <title>Selection action bar</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+    <style>
+      html,
+      body {
+        width: 100%;
+        margin: 0;
+        font-family: var(--typography-font-family-ui, system-ui);
+        background: var(--color-background-primary);
+      }
+
+      #bar-action-frame {
+        width: min(100%, var(--dimension-panel-width-2xl));
+        padding: var(--dimension-space-200);
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="bar-action-frame">
+      <ds-bar-action id="bar-action" count="3" label="Selected item actions">
+        <ds-button-unfilled
+          slot="actions"
+          label="Coaching status"
+          size="md"
+          background="bold"
+        ></ds-button-unfilled>
+      </ds-bar-action>
+    </div>
+    <script type="module" src="/bar-action-setup.mjs"></script>
+  </body>
+</html>
