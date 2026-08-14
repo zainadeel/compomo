@@ -1,5 +1,16 @@
 # Changelog
 
+## [14.0.0](https://github.com/zainadeel/compomo/compare/v13.18.1...v14.0.0) (2026-08-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* add ds-bar-action and align table footer chrome ([#463](https://github.com/zainadeel/compomo/issues/463))
+
+### Added
+
+* add ds-bar-action and align table footer chrome ([#463](https://github.com/zainadeel/compomo/issues/463)) ([baa9941](https://github.com/zainadeel/compomo/commit/baa99413dfd3f6e362fb6bf80b2b7541ea45e568))
+
 ## [13.18.1](https://github.com/zainadeel/compomo/compare/v13.18.0...v13.18.1) (2026-08-14)
 
 
