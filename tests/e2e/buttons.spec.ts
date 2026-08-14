@@ -394,7 +394,7 @@ test('keeps popup triggers visibly pressed when expanded without creating select
       return getComputedStyle(probe).getPropertyValue(property);
     };
     const result = {
-      primary: resolve('color', '--color-foreground-primary'),
+      secondary: resolve('color', '--color-foreground-secondary'),
       pressed: resolve('background-color', '--color-interaction-pressed'),
     };
     probe.remove();
@@ -414,11 +414,12 @@ test('keeps popup triggers visibly pressed when expanded without creating select
 
   await expect(button).toHaveAttribute('aria-expanded', 'true');
   await expect(button).toHaveClass(/button-unfilled--expanded/);
+  await expect(button).not.toHaveClass(/button-unfilled--active/);
   await expect(button).not.toHaveClass(/ds-interaction-fill--selected/);
   await expect
     .poll(() => button.evaluate(element => getComputedStyle(element).transitionProperty))
     .not.toContain('color');
-  await expect(button).toHaveCSS('color', tokens.primary);
+  await expect(button).toHaveCSS('color', tokens.secondary);
   await expect.poll(() => button.evaluate(element => (
     getComputedStyle(element, '::after').backgroundColor
   ))).toBe(tokens.pressed);

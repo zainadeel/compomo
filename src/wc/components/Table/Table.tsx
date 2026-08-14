@@ -12,7 +12,6 @@ import {
 import {
   deriveTableSelectionState,
   formatTableResultSummary,
-  nextTableGroupOrder,
   nextTableSortState,
   tableColumnSize,
   tableModelIssues,
@@ -44,7 +43,6 @@ import type {
   TableColumn,
   TableGroup,
   TableGroupCollapseChangeDetail,
-  TableGroupingChangeDetail,
   TableGroupingState,
   TableLoadMoreDetail,
   TableLoadMoreMode,
@@ -73,7 +71,7 @@ export class Table {
   @Prop() rows: TableRow[] = [];
   /** One level of application-owned grouped data. Assign through JavaScript. */
   @Prop() groups: TableGroup[] = [];
-  /** Controlled grouping column and group-order direction. */
+  /** Controlled grouping column. Applications supply groups in their final fixed order. */
   @Prop() grouping: TableGroupingState | null = null;
   /** Controlled member-row sort state. */
   @Prop() sort: TableSortState | null = null;
@@ -139,7 +137,6 @@ export class Table {
   @Prop() rowsLoadedLabel: string = '{count} more rows loaded. {total} rows loaded.';
 
   @Event() dsSortChange!: EventEmitter<TableSortChangeDetail>;
-  @Event() dsGroupingChange!: EventEmitter<TableGroupingChangeDetail>;
   @Event() dsGroupCollapseChange!: EventEmitter<TableGroupCollapseChangeDetail>;
   @Event() dsSelectionChange!: EventEmitter<TableSelectionChangeDetail>;
   @Event() dsLoadMore!: EventEmitter<TableLoadMoreDetail>;
@@ -474,20 +471,11 @@ export class Table {
   }
 
   private emitSort(column: TableColumn, sortKey = column.id): void {
-    if (this.grouping?.columnId === column.id && sortKey === column.id) {
-      this.dsGroupingChange.emit({ grouping: nextTableGroupOrder(this.grouping) });
-      return;
-    }
     if (!column.sortable) return;
     this.dsSortChange.emit({ sort: nextTableSortState(this.sort, sortKey) });
   }
 
   private sortButtonLabel(column: TableColumn, sortKey = column.id, label = column.header): string {
-    if (this.grouping?.columnId === column.id && sortKey === column.id) {
-      const next = this.grouping.direction === 'asc' ? 'descending' : 'ascending';
-      return `Sort ${column.header} groups ${next}. Currently grouped ${this.grouping.direction === 'asc' ? 'ascending' : 'descending'}.`;
-    }
-
     if (this.sort?.columnId !== sortKey) return `Sort ${label} ascending`;
     if (this.sort.direction === 'asc') return `Sort ${label} descending. Currently ascending.`;
     return `Sort ${label} ascending. Currently descending.`;
@@ -629,17 +617,13 @@ export class Table {
     const headerSegments = column.headerSegments?.length
       ? column.headerSegments
       : [{ label: column.header, sortKey: column.id }];
-    const activeMemberSegment = !groupedColumn
-      ? headerSegments.find(segment => segment.sortKey === this.sort?.columnId)
-      : undefined;
+    const activeMemberSegment = headerSegments.find(
+      segment => segment.sortKey === this.sort?.columnId,
+    );
     const activeMemberSort = !!activeMemberSegment;
-    const activeSort = groupedColumn || activeMemberSort;
+    const activeSort = activeMemberSort;
     const align = column.align ?? 'start';
-    const direction = groupedColumn
-      ? this.grouping!.direction
-      : activeMemberSort
-        ? this.sort!.direction
-        : undefined;
+    const direction = activeMemberSort ? this.sort!.direction : undefined;
     const memberAriaSort = activeMemberSort
       ? (this.sort!.direction === 'asc' ? 'ascending' : 'descending')
       : undefined;
@@ -647,12 +631,8 @@ export class Table {
     const labelControl = (
       <span class="ds-table__header-labels">
         {headerSegments.map((segment, index) => {
-          const segmentActive = groupedColumn
-            ? headerSegments.length === 1
-            : activeMemberSegment?.sortKey === segment.sortKey;
-          const segmentInteractive = interactive && (
-            !!column.sortable || (groupedColumn && segment.sortKey === column.id)
-          );
+          const segmentActive = activeMemberSegment?.sortKey === segment.sortKey;
+          const segmentInteractive = interactive && !!column.sortable;
           const label = (
             <ds-text
               class="ds-table__header-label-box ds-control-label-box"
@@ -1407,7 +1387,12 @@ export class Table {
             <slot name="footer-leading" />
           </div>
         )}
-        <div class="ds-table__bar-copy">
+        <div
+          class={{
+            'ds-table__bar-copy': true,
+            'ds-table__bar-copy--summary': !hasCopy && !!summary,
+          }}
+        >
           {hasCopy ? (
             <slot name="footer" />
           ) : summary ? (

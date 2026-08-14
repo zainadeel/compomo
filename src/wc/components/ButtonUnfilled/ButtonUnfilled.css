@@ -11,7 +11,7 @@
   background: transparent;
   color: var(--ds-button-unfilled-fg);
   /* Hover/press/selected fill: `.ds-interaction-fill` (+ `--selected` / `--on-*`).
-     Active and popup-open foreground changes resolve atomically with the fill. */
+     Active foreground changes remain independent from popup-open pressed paint. */
 }
 
 .button-unfilled--active {
@@ -20,8 +20,8 @@
 
 /*
  * An open popup is a transient pressed state, not a selected state. Keep the
- * pressed wash visible for the popup's complete rendered lifecycle even when
- * shell chrome opts out of selected fills with `activeFill=false`.
+ * pressed wash visible for the popup's complete rendered lifecycle without
+ * promoting the resting foreground or selected fill.
  */
 /* Inset stroke via interaction-fill ::after (above selected / hover washes). */
 .button-unfilled--bordered {

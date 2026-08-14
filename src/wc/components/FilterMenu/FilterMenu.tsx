@@ -745,6 +745,7 @@ export class FilterMenu {
               'ds-focus-ring-inset': true,
               'ds-interaction-fill': true,
               'ds-interaction-fill--selected': this.activeFill && hasActiveFilters,
+              'trigger--expanded': this.open || this.closing,
               'trigger--bordered': this.hasBorder,
               'trigger--has-value': hasActiveFilters,
               [`ds-control--${this.size}`]: true,
@@ -875,6 +876,7 @@ export class FilterMenu {
                   aria-labelledby={`${this.generatedId}-${activeFilter.id}-tab`}
                 >
                   <div
+                    key={activeFilter.id}
                     class="filter-menu__option-list ds-choice-list ds-chrome-column ds-chrome-space--sm"
                     role="listbox"
                     aria-label={activeFilter.label}

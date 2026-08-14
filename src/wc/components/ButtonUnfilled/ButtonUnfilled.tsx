@@ -102,8 +102,8 @@ export class ButtonUnfilled {
   @Prop() controls: string | undefined;
   /**
    * Controlled disclosure or popup state forwarded to `aria-expanded`.
-   * Popup triggers hold a pressed visual while open; ordinary disclosures
-   * retain the normal resting appearance.
+   * Popup triggers hold only the pressed wash while open; their resting
+   * foreground is unchanged. Ordinary disclosures remain visually neutral.
    */
   @Prop() expanded: boolean | undefined;
   @Prop() haspopup: ButtonUnfilledPopup | undefined;
@@ -170,7 +170,7 @@ export class ButtonUnfilled {
   }
 
   private get visuallyActive(): boolean {
-    return this.isActive || this.pressed === true || this.expandedPopup;
+    return this.isActive || this.pressed === true;
   }
 
   /** Knock-out ring: selected fill → active wash; otherwise surface token. */

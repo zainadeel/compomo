@@ -36,7 +36,7 @@
   "stateOwnership": [
     "The application owns the selected command or view value and derives the trigger label and each item's isSelected state from it.",
     "The application synchronizes one open boolean to the trigger's expanded prop and Menu.open.",
-    "An open popup is a transient pressed state, not a selected one. The trigger holds its pressed wash for the popup's rendered lifecycle from expanded alone, so never also set isActive to represent an open menu.",
+    "An open popup is a transient pressed state, not a selected one. The trigger holds only its pressed wash for the popup's rendered lifecycle from expanded alone, without changing foreground, so never also set isActive to represent an open menu.",
     "Menu owns popup placement and keyboard navigation; the application never calculates popup coordinates or applies positional CSS.",
     "On dsSelect, update the selected value, close the Menu, and restore focus to the trigger.",
     "On dsClose, synchronize the application open state to false."

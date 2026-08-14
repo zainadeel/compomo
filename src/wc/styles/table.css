@@ -291,6 +291,10 @@
   padding: var(--ds-control-padding-inline, var(--dimension-space-075));
 }
 
+:where(.ds-table__bar-copy--summary) {
+  justify-content: flex-end;
+}
+
 :where(.ds-table__bar-copy > slot) {
   display: contents;
 }
@@ -314,7 +318,7 @@
 :where(.ds-table__footer) {
   border-end-start-radius: var(--_table-radius);
   border-end-end-radius: var(--_table-radius);
-  border-block-start: var(--dimension-stroke-width-012) solid var(--_table-column-border);
+  border-block-start: var(--dimension-stroke-width-012) solid var(--_table-border);
   color: var(--color-foreground-secondary);
 }
 
@@ -529,7 +533,7 @@
   block-size: var(--_table-row-min-block-size);
   padding: var(--_table-cell-padding-block) var(--_table-cell-padding-inline);
   --ds-interaction-group-divider-width: var(--dimension-stroke-width-012);
-  --ds-interaction-group-divider-color: var(--_table-border);
+  --ds-interaction-group-divider-color: var(--_table-column-border);
   border-block-end: 0;
   background-color: inherit;
   vertical-align: top;

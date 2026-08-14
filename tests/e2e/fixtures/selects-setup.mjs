@@ -1,6 +1,10 @@
 import '/dist/components/ds-select.js';
+import '/dist/components/ds-filter-menu.js';
 
-await customElements.whenDefined('ds-select');
+await Promise.all([
+  customElements.whenDefined('ds-select'),
+  customElements.whenDefined('ds-filter-menu'),
+]);
 
 const options = [
   { label: 'Apple', value: 'apple', icon: 'Chart' },
@@ -31,6 +35,33 @@ for (const id of ['multi', 'multi-search', 'required-multi', 'contained-multi'])
 document.getElementById('single').value = 'cherry';
 document.getElementById('borderless-error').hasBorder = false;
 document.getElementById('multi').value = ['apple', 'cherry'];
+
+const filterMenu = document.getElementById('filters');
+filterMenu.filters = [
+  {
+    id: 'severity',
+    label: 'Severity',
+    kind: 'multiple',
+    options: [
+      { label: 'Low', value: 'low' },
+      { label: 'Critical', value: 'critical' },
+    ],
+  },
+  {
+    id: 'status',
+    label: 'Status',
+    kind: 'multiple',
+    options: [
+      { label: 'Pending review', value: 'pending' },
+      { label: 'Coached', value: 'coached' },
+    ],
+  },
+];
+filterMenu.values = { severity: ['low'], status: [] };
+filterMenu.activeFilterId = 'severity';
+filterMenu.addEventListener('dsActiveFilterChange', event => {
+  filterMenu.activeFilterId = event.detail;
+});
 
 window.__selectChanges = [];
 window.__selectClears = [];

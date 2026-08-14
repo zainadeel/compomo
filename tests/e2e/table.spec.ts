@@ -147,7 +147,8 @@ test('renders an optional result summary footer from controlled counts', async (
   const table = page.locator('#footer');
   const footer = table.locator('.ds-table__footer');
   await expect(footer).toBeVisible();
-  await expect(footer).toHaveText('Displaying 50 of 1,500');
+  await expect(footer).toContainText('Last updated: Aug 13, 2026  7:00 PM PT');
+  await expect(footer).toContainText('Displaying 50 of 1,500');
   await expect(footer.locator('.ds-table__footer-summary')).toHaveJSProperty('variant', 'text-body-medium');
   await expect(footer.locator('.ds-table__footer-summary')).toHaveJSProperty('color', 'secondary');
   await expect
@@ -156,9 +157,9 @@ test('renders an optional result summary footer from controlled counts', async (
   const footerChrome = await footer.evaluate(element => {
     const style = getComputedStyle(element);
     const probe = document.createElement('span');
-    probe.style.background = 'var(--color-border-tertiary)';
+    probe.style.background = 'var(--color-border-secondary)';
     document.body.append(probe);
-    const tertiary = getComputedStyle(probe).backgroundColor;
+    const secondary = getComputedStyle(probe).backgroundColor;
     probe.remove();
     return {
       display: style.display,
@@ -167,7 +168,7 @@ test('renders an optional result summary footer from controlled counts', async (
       borderBlockStartStyle: style.borderBlockStartStyle,
       borderBlockStartWidth: Number.parseFloat(style.borderBlockStartWidth),
       borderBlockStartColor: style.borderBlockStartColor,
-      tertiary,
+      secondary,
     };
   });
   expect(footerChrome).toMatchObject({
@@ -177,13 +178,35 @@ test('renders an optional result summary footer from controlled counts', async (
     borderBlockStartStyle: 'solid',
   });
   expect(footerChrome.borderBlockStartWidth).toBeGreaterThan(0);
-  expect(footerChrome.borderBlockStartColor).toBe(footerChrome.tertiary);
+  expect(footerChrome.borderBlockStartColor).toBe(footerChrome.secondary);
+  const footerCopyGeometry = await footer.evaluate(element => {
+    const leading = element.querySelector<HTMLElement>('.ds-table__bar-leading')!;
+    const copy = element.querySelector<HTMLElement>('.ds-table__bar-copy')!;
+    const summary = element.querySelector<HTMLElement>('.ds-table__footer-summary')!;
+    const footerRect = element.getBoundingClientRect();
+    const footerStyle = getComputedStyle(element);
+    const copyStyle = getComputedStyle(copy);
+    return {
+      leadingStart: leading.getBoundingClientRect().left - footerRect.left,
+      summaryEnd: footerRect.right - summary.getBoundingClientRect().right,
+      expectedSummaryEnd:
+        Number.parseFloat(footerStyle.paddingInlineEnd) +
+        Number.parseFloat(copyStyle.paddingInlineEnd),
+    };
+  });
+  expect(footerCopyGeometry.leadingStart).toBeCloseTo(8, 0);
+  expect(footerCopyGeometry.summaryEnd).toBeCloseTo(
+    footerCopyGeometry.expectedSummaryEnd,
+    0,
+  );
   await expect(table.locator('caption')).toHaveClass(/ds-visually-hidden/);
 
   await table.evaluate((element: HTMLDsTableElement) => {
     element.displayedCount = undefined;
   });
-  await expect(table.locator('.ds-table__footer')).toHaveCount(0);
+  await expect(footer).toBeVisible();
+  await expect(footer.locator('.ds-table__footer-summary')).toHaveCount(0);
+  await expect(footer).toContainText('Last updated: Aug 13, 2026  7:00 PM PT');
 });
 
 test('toggles active sort direction and moves sorting only through another column', async ({ page }) => {
@@ -217,7 +240,7 @@ test('toggles active sort direction and moves sorting only through another colum
   await expect(table.getByRole('columnheader', { name: /Status/ })).toHaveAttribute('aria-sort', 'ascending');
 });
 
-test('keeps group order and member-row sorting independent', async ({ page }) => {
+test('keeps application group order fixed and exposes only member-row sorting', async ({ page }) => {
   const table = page.locator('#grouped');
   await expect(table.locator('tbody[data-group-id]')).toHaveCount(3);
   await expect(table.locator('th[scope="rowgroup"]')).toHaveCount(3);
@@ -324,20 +347,19 @@ test('keeps group order and member-row sorting independent', async ({ page }) =>
   await expect(table.locator('.ds-table__collapse-all')).toHaveCount(1);
   await expect(table.locator('tbody[data-group-id="driving"] .ds-table__row')).toHaveCount(2);
 
-  await table
-    .getByRole('columnheader', { name: /Status/ })
-    .locator('[data-sort-control="direction"]')
-    .getByRole('button')
-    .click();
-  await expect(table.locator('tbody[data-group-id]').first()).toHaveAttribute('data-group-id', 'on-duty');
-  await expect(table.getByRole('columnheader', { name: /Safety score/ })).toHaveAttribute('aria-sort', 'descending');
+  const statusHeader = table.getByRole('columnheader', { name: /Status/ });
+  await expect(statusHeader.locator('[data-sort-control="direction"]')).toHaveCount(0);
+  await expect(statusHeader).not.toHaveAttribute('aria-sort');
+  await expect(table.locator('tbody[data-group-id]').first()).toHaveAttribute('data-group-id', 'driving');
+  await expect(table.getByRole('columnheader', { name: /Safety score/ })).toHaveAttribute(
+    'aria-sort',
+    'descending',
+  );
 
   const scoreHeader = table.getByRole('columnheader', { name: /Safety score/ });
   await scoreHeader.locator('[data-sort-control="label"]').click();
   await expect(scoreHeader).toHaveAttribute('aria-sort', 'ascending');
-  await expect
-    .poll(() => table.evaluate((element: HTMLDsTableElement) => element.grouping?.direction))
-    .toBe('desc');
+  await expect(table.locator('tbody[data-group-id]').first()).toHaveAttribute('data-group-id', 'driving');
 });
 
 test('applies faint intent-to-neutral surfaces and bold titles to severity groups', async ({ page }) => {
@@ -430,6 +452,21 @@ test('applies faint intent-to-neutral surfaces and bold titles to severity group
     .evaluate(element => element.getBoundingClientRect().height);
   expect(expandedGeometry.height).toBe(singleLineRowHeight);
   expect(expandedGeometry.top).toBeCloseTo(expandedGeometry.bottomInsideBorder, 0);
+
+  const sectionDivider = await table
+    .locator('tbody[data-group-id="critical"] .ds-table__group-content')
+    .evaluate(element => {
+      const probe = document.createElement('span');
+      probe.style.background = 'var(--color-border-secondary)';
+      document.body.append(probe);
+      const secondary = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return {
+        actual: getComputedStyle(element, '::after').backgroundColor,
+        secondary,
+      };
+    });
+  expect(sectionDivider.actual).toBe(sectionDivider.secondary);
 
   await table.locator('.ds-table__collapse-all').click();
   const collapsedContents = table.locator('tbody[data-group-id] .ds-table__group-content');
@@ -1227,7 +1264,7 @@ test('uses fixed cell tracks and focusable sticky overflow geometry',
     });
     expect(dividerColors.verticalDivider).toContain(dividerColors.tertiary);
     expect(dividerColors.verticalBorderWidth).toBe('0px');
-    expect(dividerColors.horizontalDivider).toContain(dividerColors.secondary);
+    expect(dividerColors.horizontalDivider).toContain(dividerColors.tertiary);
     expect(dividerColors.headerBottomDivider).toBe(dividerColors.secondary);
     expect(dividerColors.headerVerticalDivider).toContain(dividerColors.tertiary);
 
@@ -1637,13 +1674,17 @@ test('keeps a document-flow header and edge columns sticky while vertical input 
   await expect(firstActionCell).toHaveCSS('box-shadow', 'none');
   const stickyEdgeColors = await firstStartEdge.evaluate(element => {
     const probe = document.createElement('span');
-    probe.style.background = 'var(--color-border-secondary)';
     document.body.append(probe);
-    const divider = getComputedStyle(probe).backgroundColor;
+    const resolveToken = (token: string) => {
+      probe.style.background = `var(${token})`;
+      return getComputedStyle(probe).backgroundColor;
+    };
+    const stickyDivider = resolveToken('--color-border-secondary');
+    const rowDivider = resolveToken('--color-border-tertiary');
     probe.remove();
-    return { edge: getComputedStyle(element).backgroundColor, divider };
+    return { edge: getComputedStyle(element).backgroundColor, stickyDivider, rowDivider };
   });
-  expect(stickyEdgeColors.edge).toBe(stickyEdgeColors.divider);
+  expect(stickyEdgeColors.edge).toBe(stickyEdgeColors.stickyDivider);
   expect(await firstStartEdge.evaluate(element => getComputedStyle(element, '::after').boxShadow))
     .toBe('none');
   expect(await firstEndEdge.evaluate(element => getComputedStyle(element, '::after').boxShadow))
@@ -1732,7 +1773,7 @@ test('keeps a document-flow header and edge columns sticky while vertical input 
     .locator('.ds-table__body:last-child .ds-table__row:last-child .ds-table__cell')
     .nth(2)
     .evaluate(element => getComputedStyle(element, '::after').boxShadow);
-  expect(terminalColumnDivider).toContain(stickyEdgeColors.divider);
+  expect(terminalColumnDivider).toContain(stickyEdgeColors.rowDivider);
 
   const lanes = await table.locator('[data-row-id="document-row-2"]').evaluate(row => {
     const viewport = row.closest('.ds-table__viewport')!.getBoundingClientRect();

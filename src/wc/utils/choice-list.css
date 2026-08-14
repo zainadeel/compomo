@@ -84,9 +84,8 @@ ds-text.ds-choice-section__header {
   user-select: none;
 }
 
-.ds-choice-section__header-label {
-  display: block;
-  transform: translateY(var(--dimension-space-050));
+.ds-choice-section--headed-after-first {
+  margin-block-start: var(--dimension-space-050);
 }
 
 .ds-choice-item {

@@ -63,7 +63,7 @@ import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 import { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 import { SwitchSize } from "./components/Switch/Switch";
 import { TabBackground, TabGroupSize as TabGroupSize1 } from "./components/TabGroup/TabGroup";
-import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupCollapseChangeDetail, TableGroupingChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -126,7 +126,7 @@ export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 export { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 export { SwitchSize } from "./components/Switch/Switch";
 export { TabBackground, TabGroupSize as TabGroupSize1 } from "./components/TabGroup/TabGroup";
-export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupCollapseChangeDetail, TableGroupingChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -653,7 +653,7 @@ export namespace Components {
          */
         "dot": boolean;
         /**
-          * Controlled disclosure or popup state forwarded to `aria-expanded`. Popup triggers hold a pressed visual while open; ordinary disclosures retain the normal resting appearance.
+          * Controlled disclosure or popup state forwarded to `aria-expanded`. Popup triggers hold only the pressed wash while open; their resting foreground is unchanged. Ordinary disclosures remain visually neutral.
          */
         "expanded": boolean | undefined;
         /**
@@ -2789,7 +2789,7 @@ export namespace Components {
          */
         "fitViewport": boolean;
         /**
-          * Controlled grouping column and group-order direction.
+          * Controlled grouping column. Applications supply groups in their final fixed order.
           * @default null
          */
         "grouping": TableGroupingState | null;
@@ -4268,7 +4268,6 @@ declare global {
     };
     interface HTMLDsTableElementEventMap {
         "dsSortChange": TableSortChangeDetail;
-        "dsGroupingChange": TableGroupingChangeDetail;
         "dsGroupCollapseChange": TableGroupCollapseChangeDetail;
         "dsSelectionChange": TableSelectionChangeDetail;
         "dsLoadMore": TableLoadMoreDetail;
@@ -5011,7 +5010,7 @@ declare namespace LocalJSX {
          */
         "dot"?: boolean;
         /**
-          * Controlled disclosure or popup state forwarded to `aria-expanded`. Popup triggers hold a pressed visual while open; ordinary disclosures retain the normal resting appearance.
+          * Controlled disclosure or popup state forwarded to `aria-expanded`. Popup triggers hold only the pressed wash while open; their resting foreground is unchanged. Ordinary disclosures remain visually neutral.
          */
         "expanded"?: boolean | undefined;
         /**
@@ -7357,7 +7356,7 @@ declare namespace LocalJSX {
          */
         "fitViewport"?: boolean;
         /**
-          * Controlled grouping column and group-order direction.
+          * Controlled grouping column. Applications supply groups in their final fixed order.
           * @default null
          */
         "grouping"?: TableGroupingState | null;
@@ -7417,7 +7416,6 @@ declare namespace LocalJSX {
         "maxHeight"?: string | number | undefined;
         "onDsCellAction"?: (event: DsTableCustomEvent<TableCellActionDetail>) => void;
         "onDsGroupCollapseChange"?: (event: DsTableCustomEvent<TableGroupCollapseChangeDetail>) => void;
-        "onDsGroupingChange"?: (event: DsTableCustomEvent<TableGroupingChangeDetail>) => void;
         "onDsLoadMore"?: (event: DsTableCustomEvent<TableLoadMoreDetail>) => void;
         "onDsRowActivate"?: (event: DsTableCustomEvent<TableRowActivateDetail>) => void;
         "onDsSelectionChange"?: (event: DsTableCustomEvent<TableSelectionChangeDetail>) => void;

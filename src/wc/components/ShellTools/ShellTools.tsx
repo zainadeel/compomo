@@ -318,7 +318,6 @@ export class ShellTools {
               controls={action.controls}
               expanded={action.expanded}
               pressed={action.pressed}
-              isActive={!!action.expanded}
               isInactive={action.isInactive}
               activeFill={false}
               hasBorder={false}
