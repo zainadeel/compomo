@@ -10,6 +10,10 @@ const openModalAxe = chromiumOnly(
   'accessibility',
   'Axe audits the integrated open modal in Chromium; top-layer, focus, and dismissal behavior remain cross-browser elsewhere.',
 );
+const menuGeometry = chromiumOnly(
+  'layout-geometry',
+  'Token-backed menu spacing is engine-neutral and Chromium is authoritative for its computed geometry.',
+);
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/accessibility-overlays.html');
@@ -54,6 +58,16 @@ test('single-selection menu uses selected row styling without a radio glyph', as
   expect(colors[0]).not.toBe(colors[1]);
 });
 
+test('switch menu rows keep an 8px label-to-control gap', menuGeometry, async ({ page }) => {
+  await page.locator('#switch-anchor').click();
+  const row = page.getByRole('menuitemcheckbox', {
+    name: 'Vehicle ID / Make · Model · Year',
+  });
+
+  await expect(row).toBeVisible();
+  await expect(row).toHaveCSS('gap', '8px');
+});
+
 test('menu flips above a bottom-edge trigger instead of overlapping the viewport edge', async ({ page }) => {
   const anchor = page.locator('#collision-anchor');
   await anchor.click();
@@ -96,6 +110,66 @@ test('rich preference popup exposes dialog and radio-group semantics without ste
     .disableRules(['color-contrast'])
     .analyze();
   expect(results.violations).toEqual([]);
+});
+
+test('menu section headers use the shared 4px text nudge', menuGeometry, async ({ page }) => {
+  await page.locator('#rich-anchor').click();
+  const heading = page
+    .getByRole('dialog', { name: 'Appearance' })
+    .locator('.ds-choice-section__header')
+    .first();
+
+  const geometry = await heading.evaluate(element => {
+    const label = element.querySelector<HTMLElement>('.ds-choice-section__header-label')!;
+    const style = getComputedStyle(element);
+    return {
+      height: style.height,
+      paddingInline: style.paddingInline,
+      labelOffset: new DOMMatrix(getComputedStyle(label).transform).m42,
+    };
+  });
+
+  expect(geometry).toEqual({
+    height: '32px',
+    paddingInline: '8px',
+    labelOffset: 4,
+  });
+});
+
+test('modal surface and backdrop animate together when entering and exiting', async ({ page }) => {
+  const modal = page.locator('#modal');
+  const dialog = page.getByRole('dialog', { name: 'Confirm changes' });
+  const readMotion = () => dialog.evaluate(element => {
+    const surface = getComputedStyle(element);
+    const backdrop = getComputedStyle(element, '::backdrop');
+    return {
+      surfaceName: surface.animationName,
+      surfaceDuration: surface.animationDuration,
+      backdropName: backdrop.animationName,
+      backdropDuration: backdrop.animationDuration,
+    };
+  });
+
+  await modal.evaluate((element: HTMLDsModalElement) => { element.open = true; });
+  await expect(dialog).toBeVisible();
+  const openingMotion = await readMotion();
+  expect(openingMotion).toMatchObject({
+    surfaceName: 'modalDialogIn',
+    backdropName: 'modalBackdropIn',
+  });
+  expect(openingMotion.surfaceDuration).not.toBe('0s');
+  expect(openingMotion.backdropDuration).toBe(openingMotion.surfaceDuration);
+
+  await modal.evaluate((element: HTMLDsModalElement) => { element.open = false; });
+  await expect(dialog).toHaveClass(/modal-dialog--closing/);
+  const closingMotion = await readMotion();
+  expect(closingMotion).toMatchObject({
+    surfaceName: 'modalDialogOut',
+    backdropName: 'modalBackdropOut',
+    surfaceDuration: openingMotion.surfaceDuration,
+    backdropDuration: openingMotion.backdropDuration,
+  });
+  await expect(dialog).toBeHidden();
 });
 
 test('modal uses the top layer, reports dismissal reasons, and restores its trigger', openModalAxe, async ({ page }) => {

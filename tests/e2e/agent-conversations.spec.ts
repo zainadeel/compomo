@@ -216,10 +216,33 @@ test('defaults only plain custom tool results to body-medium typography', async 
 
 test('renders safe source hostnames, rejects unsafe links, and reports disclosure changes', async ({ page }) => {
   const sources = page.locator('#sources');
-  await expect(sources.getByRole('link', { name: /Maintenance guide/ })).toHaveAttribute(
+  const sourceLink = sources.getByRole('link', { name: /Maintenance guide/ });
+  await expect(sourceLink).toHaveAttribute(
     'href',
     'https://docs.example.com/guide',
   );
+  const decoration = await sourceLink.evaluate(element => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--color-foreground-tertiary)';
+    probe.style.textDecorationThickness = 'var(--dimension-stroke-width-012)';
+    probe.style.textUnderlineOffset = 'var(--dimension-space-025)';
+    document.body.append(probe);
+    const actual = getComputedStyle(element);
+    const expected = getComputedStyle(probe);
+    const result = {
+      color: actual.textDecorationColor,
+      expectedColor: expected.color,
+      thickness: actual.textDecorationThickness,
+      expectedThickness: expected.textDecorationThickness,
+      offset: actual.textUnderlineOffset,
+      expectedOffset: expected.textUnderlineOffset,
+    };
+    probe.remove();
+    return result;
+  });
+  expect(decoration.color).toBe(decoration.expectedColor);
+  expect(decoration.thickness).toBe(decoration.expectedThickness);
+  expect(decoration.offset).toBe(decoration.expectedOffset);
   await expect(sources).toContainText('docs.example.com');
   await expect(sources.getByText('Unsafe source')).not.toHaveAttribute('href');
   await expect(sources.getByText('Malformed source')).not.toHaveAttribute('href');

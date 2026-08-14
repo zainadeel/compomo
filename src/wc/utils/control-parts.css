@@ -39,3 +39,19 @@
   min-width: 0;
   padding-inline: var(--ds-control-label-inset, var(--dimension-space-025));
 }
+
+/* Supplemental status dot geometry shared by compact control labels and tabs. */
+.ds-control-label-dot {
+  position: relative;
+  padding-inline-end: calc(
+    var(--ds-control-label-inset, var(--dimension-space-025)) +
+      var(--ds-control-gap, var(--dimension-space-050))
+  );
+}
+
+.ds-control-label-dot__badge {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  pointer-events: none;
+}

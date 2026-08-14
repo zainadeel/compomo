@@ -44,6 +44,7 @@ activation remains native and is not promised an equivalent held frame.
 | `Checkbox` — host ARIA checkbox target | `interaction-fill`, mark, and checked/mixed state | None | Choice controls do not scale. |
 | `Chip` — root action and `.tag__remove` button | Root interaction wash; remove action has a local active wash | None | Selection/removal affordances keep stable chip geometry. |
 | `ConversationListItem` — `.conversation-list-item__row` button | Local active wash and selected state | None | Large selectable/navigation rows do not scale. |
+| `FilterMenu` — select trigger, category tabs, option rows, date input, and Clear action | Expanded, selected, checked, and interaction-fill states | Popup positioning and choice-list enter animation are container-owned | Popup anchors, filter choices, editable dates, and text actions remain geometrically stable; the composed date-clear `ButtonUnfilled` follows its primitive policy. |
 | `Input` — native input and optional clear action composition | Focus/error/filled state | None | Editable fields do not scale; a composed button action follows the button policy. |
 | `Markdown` — rendered anchors, checklist inputs, and scrollable regions | Native link/choice feedback | None | Renderer-owned semantic content does not scale. |
 | `Menu` — menu item buttons and choice rows | `interaction-fill`, selected/checked state | Choice-list enter animation is container-owned | Popup choice rows do not scale. |

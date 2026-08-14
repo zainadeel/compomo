@@ -42,6 +42,7 @@ export class AgentSourceList {
               return <li>
                 {href
                   ? <a
+                      class="ds-text-decoration"
                       href={href}
                       target="_blank"
                       rel="noopener noreferrer"

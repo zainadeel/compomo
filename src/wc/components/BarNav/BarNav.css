@@ -1,4 +1,5 @@
 @import '../../utils/control-density.css';
+@import '../../utils/control-parts.css';
 @import '../../utils/chrome-layout.css';
 @import '../../utils/focus-ring.css';
 @import '../../utils/control-inactive.css';
@@ -150,22 +151,9 @@
 }
 
 .bar-nav__tab-label {
-  position: relative;
   display: inline-flex;
   align-items: center;
-  padding: 0 var(--ds-control-label-inset);
   white-space: nowrap;
-}
-
-.bar-nav__tab-label--dot {
-  padding-right: calc(var(--ds-control-label-inset) + var(--ds-control-gap));
-}
-
-.bar-nav__tab-dot {
-  position: absolute;
-  top: 0;
-  right: 0;
-  pointer-events: none;
 }
 
 .bar-nav__tab-divider {

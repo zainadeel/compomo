@@ -1,0 +1,55 @@
+/*
+ * Shared underline geometry and surface-aware text-action treatment.
+ *
+ * Owners keep native link/button semantics and decide where this recipe is
+ * applied. The utility owns only decoration geometry, foreground mapping, and
+ * whether a text action is underlined at rest or on hover.
+ */
+
+:where(.ds-text-decoration, .ds-text-action) {
+  text-decoration-color: var(--ds-text-decoration-color, var(--color-foreground-tertiary));
+  text-decoration-thickness: var(--ds-text-decoration-thickness, var(--dimension-stroke-width-012));
+  text-underline-offset: var(--ds-text-decoration-offset, var(--dimension-space-025));
+}
+
+.ds-text-action {
+  --ds-text-action-foreground: var(--color-foreground-bold-brand);
+  --ds-text-decoration-color: var(--ds-text-action-foreground);
+
+  color: var(--ds-text-action-foreground);
+  text-decoration-line: none;
+}
+
+.ds-text-action--on-medium {
+  --ds-text-action-foreground: var(--color-foreground-on-medium-background-primary);
+  --ds-text-decoration-color: var(--color-foreground-on-medium-background-secondary);
+
+  text-decoration-line: underline;
+}
+
+.ds-text-action--on-strong {
+  --ds-text-action-foreground: var(--color-foreground-on-strong-background-primary);
+  --ds-text-decoration-color: var(--color-foreground-on-strong-background-secondary);
+
+  text-decoration-line: underline;
+}
+
+.ds-text-action--on-bold {
+  --ds-text-action-foreground: var(--color-foreground-on-bold-background-primary);
+  --ds-text-decoration-color: var(--color-foreground-on-bold-background-secondary);
+
+  text-decoration-line: underline;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ds-text-action:hover {
+    text-decoration-line: underline;
+  }
+}
+
+@media (forced-colors: active) {
+  .ds-text-action {
+    text-decoration-line: underline;
+    text-decoration-color: currentcolor;
+  }
+}

@@ -25,7 +25,7 @@ test('defaults both select triggers to hug width and supports explicit fill',
     });
     await expect(select).toHaveClass(/ds-control-width--fill/);
     const alignment = await select.getByRole('combobox').evaluate(trigger => {
-      const label = trigger.querySelector<HTMLElement>('.trigger__label');
+      const label = trigger.querySelector<HTMLElement>('.trigger__label-box');
       const triggerRect = trigger.getBoundingClientRect();
       const labelRect = label?.getBoundingClientRect();
       return {
@@ -145,6 +145,177 @@ test('uses combobox and listbox semantics with disabled-option keyboard skipping
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
 });
 
+test(
+  'keeps grouped select header geometry while nudging only its text down 4px',
+  chromiumOnly(
+    'layout-geometry',
+    'The shared token-backed section-heading construction is engine-neutral.'
+  ),
+  async ({ page }) => {
+    const select = page.locator('#multi');
+    await select.getByRole('combobox').click();
+    const heading = select.locator('.ds-choice-section__header').first();
+
+    const geometry = await heading.evaluate(element => {
+      const label = element.querySelector<HTMLElement>('.ds-choice-section__header-label')!;
+      const style = getComputedStyle(element);
+      const labelTransform = new DOMMatrix(getComputedStyle(label).transform);
+      return {
+        height: style.height,
+        paddingInline: style.paddingInline,
+        labelOffset: labelTransform.m42,
+      };
+    });
+
+    expect(geometry).toEqual({
+      height: '32px',
+      paddingInline: '8px',
+      labelOffset: 4,
+    });
+  }
+);
+
+test('keeps a scalar trigger label override while the popup shows the selected option label', async ({
+  page,
+}) => {
+  const select = page.locator('#single');
+  const trigger = select.getByRole('combobox');
+
+  await select.evaluate((element: HTMLDsSelectElement) => {
+    element.value = 'apple';
+    element.triggerLabel = 'Fruit';
+    element.triggerLabelPlaceholder = true;
+    element.dot = true;
+    element.footerActionLabel = 'Save view';
+    (window as typeof window & { __selectFooterActions?: number }).__selectFooterActions = 0;
+    element.addEventListener('dsFooterAction', () => {
+      (window as typeof window & { __selectFooterActions: number }).__selectFooterActions += 1;
+    });
+  });
+  await expect(trigger.locator('.trigger__label')).toHaveText('Fruit');
+  await expect(trigger).toHaveClass(/trigger--label-placeholder/);
+  const placeholderColor = await page.evaluate(() => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--color-foreground-secondary)';
+    document.body.append(probe);
+    const color = getComputedStyle(probe).color;
+    probe.remove();
+    return color;
+  });
+  const labelBox = trigger.locator('.trigger__label-box');
+  const dottedLabel = trigger.locator('.trigger__label-content');
+  const triggerDot = trigger.locator('.trigger__dot');
+  await expect(labelBox).toHaveCSS('color', placeholderColor);
+  await expect(dottedLabel).toHaveClass(/ds-control-label-dot/);
+  await expect(triggerDot).toHaveClass(/ds-control-label-dot__badge/);
+  await expect(triggerDot).toHaveCSS('top', '0px');
+  await expect(triggerDot).toHaveCSS('right', '0px');
+  const dotTextAlignment = await dottedLabel.evaluate(label => {
+    const text = label.querySelector('ds-text')!.getBoundingClientRect();
+    const dot = label.querySelector('ds-badge')!.getBoundingClientRect();
+    return dot.top - text.top;
+  });
+  expect(dotTextAlignment).toBeCloseTo(0, 3);
+  await expect(triggerDot).toBeVisible();
+
+  await trigger.click();
+  await expect(trigger.locator('.trigger__label')).toHaveText('Fruit');
+  await expect(trigger.locator('.trigger__dot')).toBeVisible();
+  await expect(select.getByRole('option', { name: 'Apple', selected: true })).toBeVisible();
+  await select.getByRole('button', { name: 'Save view' }).click();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  await expect.poll(() => page.evaluate(() =>
+    (window as typeof window & { __selectFooterActions: number }).__selectFooterActions
+  )).toBe(1);
+});
+
+test('exposes contextual option actions without changing selection', async ({ page }) => {
+  const select = page.locator('#single');
+  const trigger = select.getByRole('combobox');
+  await select.evaluate((element: HTMLDsSelectElement) => {
+    element.options = [
+      { label: 'Default', value: 'default' },
+      {
+        label: 'My view',
+        value: 'my-view',
+        action: {
+          label: 'Options for My view',
+          controls: 'my-view-menu',
+        },
+      },
+    ];
+    element.value = 'default';
+    (window as typeof window & { __selectOptionAction?: unknown }).__selectOptionAction = null;
+    element.addEventListener('dsOptionAction', event => {
+      const detail = (event as CustomEvent<{
+        value: string;
+        anchorId: string;
+        originalEvent: MouseEvent;
+      }>).detail;
+      (window as typeof window & { __selectOptionAction?: unknown }).__selectOptionAction = {
+        value: detail.value,
+        anchorId: detail.anchorId,
+        keyboard: detail.originalEvent.detail === 0,
+      };
+    });
+  });
+
+  await trigger.click();
+  await expect(trigger).toHaveAttribute('aria-haspopup', 'grid');
+  const grid = select.getByRole('grid');
+  const defaultOption = grid.getByRole('gridcell', { name: 'Default', exact: true });
+  const userOption = grid.getByRole('gridcell', { name: 'My view', exact: true });
+  const action = select.getByRole('button', { name: 'Options for My view' });
+  const actionSurface = select.locator('.select-option-row__action');
+
+  await expect(defaultOption.locator('xpath=..').locator('.select-option-row__action')).toHaveCount(0);
+  await expect(action).toHaveAttribute('aria-haspopup', 'menu');
+  await expect(action).toHaveAttribute('aria-controls', 'my-view-menu');
+  await expect(actionSurface).toHaveCSS('opacity', '0');
+
+  await userOption.hover();
+  await expect(actionSurface).toHaveCSS('opacity', '1');
+  const actionInsets = await userOption.locator('xpath=..').evaluate(row => {
+    const rowRect = row.getBoundingClientRect();
+    const buttonRect = row.querySelector('ds-button-unfilled')?.getBoundingClientRect();
+    return {
+      top: (buttonRect?.top ?? 0) - rowRect.top,
+      right: rowRect.right - (buttonRect?.right ?? 0),
+      bottom: rowRect.bottom - (buttonRect?.bottom ?? 0),
+    };
+  });
+  expect(actionInsets.right).toBeCloseTo(actionInsets.top, 3);
+  expect(actionInsets.right).toBeCloseTo(actionInsets.bottom, 3);
+  await action.click();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  await expect
+    .poll(() => select.evaluate((element: HTMLDsSelectElement) => element.value))
+    .toBe('default');
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        (window as typeof window & { __selectOptionAction?: unknown }).__selectOptionAction
+      )
+    )
+    .toMatchObject({ value: 'my-view', keyboard: false });
+
+  await trigger.focus();
+  await trigger.press('End');
+  await trigger.press('ArrowRight');
+  await expect(action).toBeFocused();
+  await action.press('Enter');
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        (window as typeof window & { __selectOptionAction?: unknown }).__selectOptionAction
+      )
+    )
+    .toMatchObject({ value: 'my-view', keyboard: true });
+  await expect
+    .poll(() => select.evaluate((element: HTMLDsSelectElement) => element.value))
+    .toBe('default');
+});
+
 test('keeps single and multi popups visible and pointer-usable after repeated reopen cycles', async ({
   page,
 }) => {
@@ -215,6 +386,27 @@ test('keeps single and multi popups viewport-anchored inside contained clipping 
     await trigger.press('Escape');
     await expect(trigger).toHaveAttribute('aria-expanded', 'false');
   }
+});
+
+test('aligns the popup choice edge to the trigger end when requested', async ({ page }) => {
+  const select = page.locator('#single');
+  const trigger = select.getByRole('combobox');
+  await select.evaluate((element: HTMLDsSelectElement) => {
+    element.popupAlign = 'end';
+    element.style.marginInlineStart = '240px';
+  });
+  await trigger.click();
+  const popup = select.locator('.select-popup');
+  await expect(popup).toBeVisible();
+  const geometry = await trigger.evaluate((element, popupSelector) => {
+    const triggerRect = element.getBoundingClientRect();
+    const popupRect = document.querySelector<HTMLElement>(popupSelector)!.getBoundingClientRect();
+    return {
+      triggerRight: triggerRect.right,
+      popupRight: popupRect.right,
+    };
+  }, '#single > .select-popup');
+  expect(geometry.popupRight).toBeCloseTo(geometry.triggerRight + 4, 0);
 });
 
 test('falls back to one text-only option layout when icon data is mixed',
@@ -578,7 +770,10 @@ test('keeps the multi trigger label and inline count, repeated selection, and cl
   await expect(footerContent).toHaveCSS('padding-right', '0px');
   await expect(footerContent).toHaveCSS('padding-left', '0px');
   await expect(summary).toHaveClass(/ds-text--body-medium/);
+  await expect(summary).toHaveCSS('white-space', 'nowrap');
+  await expect(summary).toHaveText('3 selected');
   await expect(clear.locator('ds-text')).toHaveClass(/ds-text--body-medium/);
+  await expect(clear).toHaveCSS('white-space', 'nowrap');
   const labelPadding = await footer.evaluate(element => {
     const summaryElement = element.querySelector('.ds-choice-footer__summary');
     const clearElement = element.querySelector('.ds-choice-footer__clear ds-text');
@@ -605,6 +800,103 @@ test('keeps the multi trigger label and inline count, repeated selection, and cl
     };
   });
   expect(insets.left).toBeCloseTo(insets.right, 3);
+
+  const popup = select.locator('.select-popup');
+  await popup.evaluate(element => {
+    element.style.minWidth = '0px';
+    element.style.width = '110px';
+  });
+  await expect(summary).toHaveText('3');
+  const compactLayout = await footer.evaluate(element => {
+    const summaryRect = element
+      .querySelector('.ds-choice-footer__summary')
+      ?.getBoundingClientRect();
+    const clearRect = element
+      .querySelector('.ds-choice-footer__clear')
+      ?.getBoundingClientRect();
+    return {
+      summaryRight: summaryRect?.right ?? 0,
+      clearLeft: clearRect?.left ?? 0,
+      clearHeight: clearRect?.height ?? 0,
+      footerHeight: element.getBoundingClientRect().height,
+    };
+  });
+  expect(compactLayout.summaryRight).toBeLessThanOrEqual(compactLayout.clearLeft);
+  expect(compactLayout.clearHeight).toBeLessThanOrEqual(compactLayout.footerHeight);
+
+  await popup.evaluate(element => {
+    element.style.width = '240px';
+  });
+  await expect(summary).toHaveText('3 selected');
+
+  const readTextActionStyles = (
+    foregroundToken: string,
+    underlineToken: string,
+  ) => clear.evaluate((element, tokens) => {
+    const foregroundProbe = document.createElement('span');
+    const underlineProbe = document.createElement('span');
+    const geometryProbe = document.createElement('span');
+    foregroundProbe.style.color = `var(${tokens.foregroundToken})`;
+    underlineProbe.style.color = `var(${tokens.underlineToken})`;
+    geometryProbe.style.textDecorationThickness = 'var(--dimension-stroke-width-012)';
+    geometryProbe.style.textUnderlineOffset = 'var(--dimension-space-025)';
+    document.body.append(foregroundProbe, underlineProbe, geometryProbe);
+    const actual = getComputedStyle(element);
+    const geometry = getComputedStyle(geometryProbe);
+    const result = {
+      color: actual.color,
+      expectedColor: getComputedStyle(foregroundProbe).color,
+      underlineColor: actual.textDecorationColor,
+      expectedUnderlineColor: getComputedStyle(underlineProbe).color,
+      thickness: actual.textDecorationThickness,
+      expectedThickness: geometry.textDecorationThickness,
+      offset: actual.textUnderlineOffset,
+      expectedOffset: geometry.textUnderlineOffset,
+    };
+    foregroundProbe.remove();
+    underlineProbe.remove();
+    geometryProbe.remove();
+    return result;
+  }, { foregroundToken, underlineToken });
+
+  const brandStyles = await readTextActionStyles(
+    '--color-foreground-bold-brand',
+    '--color-foreground-bold-brand',
+  );
+  expect(brandStyles.color).toBe(brandStyles.expectedColor);
+  expect(brandStyles.underlineColor).toBe(brandStyles.expectedUnderlineColor);
+  expect(brandStyles.thickness).toBe(brandStyles.expectedThickness);
+  expect(brandStyles.offset).toBe(brandStyles.expectedOffset);
+  await expect(clear).toHaveCSS('text-decoration-line', 'none');
+
+  const surfaceContexts = ['medium', 'strong', 'bold'] as const;
+  for (const context of surfaceContexts) {
+    await clear.evaluate((element, nextContext) => {
+      element.classList.remove(
+        'ds-text-action--on-medium',
+        'ds-text-action--on-strong',
+        'ds-text-action--on-bold',
+      );
+      element.classList.add(`ds-text-action--on-${nextContext}`);
+    }, context);
+    const surfaceStyles = await readTextActionStyles(
+      `--color-foreground-on-${context}-background-primary`,
+      `--color-foreground-on-${context}-background-secondary`,
+    );
+    await expect(clear).toHaveCSS('text-decoration-line', 'underline');
+    expect(surfaceStyles.color).toBe(surfaceStyles.expectedColor);
+    expect(surfaceStyles.underlineColor).toBe(surfaceStyles.expectedUnderlineColor);
+    expect(surfaceStyles.thickness).toBe(surfaceStyles.expectedThickness);
+    expect(surfaceStyles.offset).toBe(surfaceStyles.expectedOffset);
+  }
+
+  await clear.evaluate(element => {
+    element.classList.remove(
+      'ds-text-action--on-medium',
+      'ds-text-action--on-strong',
+      'ds-text-action--on-bold',
+    );
+  });
   await expect(clear).toHaveCSS('text-decoration-line', 'none');
   await clear.hover();
   await expect(clear).toHaveCSS('text-decoration-line', 'underline');

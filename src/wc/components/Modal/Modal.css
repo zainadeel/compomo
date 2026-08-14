@@ -21,11 +21,11 @@
   box-shadow: var(--effect-elevation-elevated-floating);
   outline: none;
   box-sizing: border-box;
+  animation: modalDialogIn var(--effect-motion-short-2) forwards;
 }
 
 .modal-dialog[open] {
   display: flex;
-  animation: modalDialogIn var(--effect-motion-short-2) forwards;
 }
 
 .modal-dialog::backdrop {
@@ -34,11 +34,11 @@
 }
 
 .modal-dialog--closing {
-  animation: modalDialogOut var(--effect-motion-short-3) forwards;
+  animation: modalDialogOut var(--effect-motion-short-2) forwards;
 }
 
 .modal-dialog--closing::backdrop {
-  animation: modalBackdropOut var(--effect-motion-short-3) forwards;
+  animation: modalBackdropOut var(--effect-motion-short-2) forwards;
 }
 
 @keyframes modalBackdropIn {

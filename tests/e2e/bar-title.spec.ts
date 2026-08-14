@@ -215,15 +215,25 @@ test('supports multi-level expanded breadcrumbs without changing compact Back',
   const underlineColors = await workforceLabel.evaluate(element => {
     const probe = document.createElement('span');
     probe.style.color = 'var(--color-foreground-quaternary)';
+    probe.style.textDecorationThickness = 'var(--dimension-stroke-width-012)';
+    probe.style.textUnderlineOffset = 'var(--dimension-space-025)';
     document.body.append(probe);
+    const actual = getComputedStyle(element);
+    const expected = getComputedStyle(probe);
     const result = {
-      underline: getComputedStyle(element).textDecorationColor,
-      quaternary: getComputedStyle(probe).color,
+      underline: actual.textDecorationColor,
+      quaternary: expected.color,
+      thickness: actual.textDecorationThickness,
+      expectedThickness: expected.textDecorationThickness,
+      offset: actual.textUnderlineOffset,
+      expectedOffset: expected.textUnderlineOffset,
     };
     probe.remove();
     return result;
   });
   expect(underlineColors.underline).toBe(underlineColors.quaternary);
+  expect(underlineColors.thickness).toBe(underlineColors.expectedThickness);
+  expect(underlineColors.offset).toBe(underlineColors.expectedOffset);
   await expect(breadcrumb.locator('[aria-current="page"]')).toHaveText('John Smith');
   await expect(breadcrumb.locator('.breadcrumb__separator')).toHaveCount(2);
 

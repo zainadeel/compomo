@@ -3728,6 +3728,223 @@
       ]
     },
     {
+      "name": "filter-menu",
+      "title": "FilterMenu",
+      "description": "Controlled two-pane filter select with menu-recipe category navigation, single- and multiple-choice, boolean, and date filters, selected counts, and a clear action.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/filter-menu",
+        "source": "src/wc/components/FilterMenu/FilterMenu.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Controlled two-pane filter select with menu-recipe category navigation, single- and multiple-choice, boolean, and date filters, selected counts, and a clear action.",
+          "useWhen": [
+            "A compact trigger must expose several filter families without turning the toolbar into many separate controls.",
+            "Users need to move between persistent filter categories while editing the selected category in a second pane."
+          ],
+          "avoidWhen": [
+            "The user is selecting one form value; use Select.",
+            "The popup contains contextual commands rather than filtering controls; use Menu.",
+            "The workflow requires confirmation or several ordered steps; use Modal."
+          ],
+          "alternatives": [
+            {
+              "when": "One known value is selected for a form field.",
+              "component": "component:ds-select",
+              "reason": "Select owns compact form-value and listbox semantics."
+            },
+            {
+              "when": "A trigger reveals commands or row actions.",
+              "component": "component:ds-menu",
+              "reason": "Menu provides the appropriate action-menu semantics and keyboard model."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-select",
+            "component:ds-table",
+            "component:ds-checkbox"
+          ],
+          "accessibility": [
+            "The built-in select trigger exposes combobox semantics with a dialog popup, synchronizes expanded state, and restores focus after dismissal.",
+            "The category pane is a vertical tab list. Arrow Up and Arrow Down wrap, Home and End jump, Arrow Right enters the option pane, and Arrow Left returns to the active category.",
+            "Escape and outside activation close the popup and restore trigger focus. Tab moves through option controls and closes only when it leaves the popup boundary.",
+            "The trigger count reports active filter categories. Category counts and the footer report individual selected criteria; none replace visible selected-state indication."
+          ],
+          "states": [
+            "The application owns filters, values, activeFilterId, and open. Replace controlled objects and arrays after dsChange, dsActiveFilterChange, dsClear, or dsClose.",
+            "Single filters return a string, multiple filters return ordered string arrays, boolean filters return a boolean, and date filters return a YYYY-MM-DD string.",
+            "Selection applies immediately and does not close the popup.",
+            "The trigger reports how many filter categories have selections, while the footer appears when values are selected and reports the total selected criteria."
+          ],
+          "responsiveBehavior": [
+            "The popup defaults to the large menu-width token and clamps to the viewport.",
+            "Both panes remain visible at narrow widths, with a smaller category minimum and reduced option-pane padding.",
+            "Treat side as preferred placement; the popup flips and clamps when viewport collision requires it."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign filters and values as JavaScript properties after the element is defined."
+            ],
+            "react": [
+              "Pass filters and values as controlled props and handle onDsChange, onDsActiveFilterChange, onDsClear, and onDsClose."
+            ],
+            "angular": [
+              "Use property bindings for filters and values and event bindings for dsChange, dsActiveFilterChange, dsClear, and dsClose."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook example",
+              "path": "src/wc/components/FilterMenu/FilterMenu.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "activeFill": {
+            "type": "boolean",
+            "required": false
+          },
+          "activeFilterId": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "align": {
+            "type": "AnchoredAlign",
+            "required": false
+          },
+          "alignOffset": {
+            "type": "number | string",
+            "required": false
+          },
+          "anchor": {
+            "type": "HTMLElement | undefined",
+            "required": false
+          },
+          "anchorId": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "categoriesLabel": {
+            "type": "string",
+            "required": false
+          },
+          "clearLabel": {
+            "type": "string",
+            "required": false
+          },
+          "filters": {
+            "type": "FilterMenuFilter[]",
+            "required": false
+          },
+          "hasBorder": {
+            "type": "boolean",
+            "required": false
+          },
+          "icon": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "initialFocusVisible": {
+            "type": "boolean",
+            "required": false
+          },
+          "inputId": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "menuLabel": {
+            "type": "string",
+            "required": false
+          },
+          "menuWidth": {
+            "type": "string",
+            "required": false
+          },
+          "open": {
+            "type": "boolean",
+            "required": false
+          },
+          "side": {
+            "type": "AnchoredSide",
+            "required": false
+          },
+          "sideOffset": {
+            "type": "number | string",
+            "required": false
+          },
+          "size": {
+            "type": "FilterMenuSize",
+            "required": false
+          },
+          "triggerLabel": {
+            "type": "string",
+            "required": false
+          },
+          "values": {
+            "type": "FilterMenuValues",
+            "required": false
+          },
+          "width": {
+            "type": "FilterMenuWidth",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsActiveFilterChange",
+            "detail": "string"
+          },
+          {
+            "name": "dsAfterClose",
+            "detail": "void"
+          },
+          {
+            "name": "dsChange",
+            "detail": "FilterMenuChangeDetail"
+          },
+          {
+            "name": "dsClear",
+            "detail": "void"
+          },
+          {
+            "name": "dsClose",
+            "detail": "void"
+          },
+          {
+            "name": "dsOpenChange",
+            "detail": "boolean"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-filter-menu",
+          "react": "DsFilterMenu",
+          "angular": "DsFilterMenu"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "button-unfilled",
+        "checkbox",
+        "icon",
+        "tag",
+        "text",
+        "tooltip"
+      ]
+    },
+    {
       "name": "icon",
       "title": "Icon",
       "description": "Secure, lazily loaded renderer for canonical IcoMo system and flag glyphs, decorative by default with optional graphic semantics.",
@@ -4263,7 +4480,7 @@
     {
       "name": "menu",
       "title": "Menu",
-      "description": "Anchored action menu with flat commands, grouped sections, single-selection choices, supplemental notification dots, switches, and destructive actions.",
+      "description": "Anchored action menu with flat commands, grouped sections, single-selection choices, supplemental notification dots or trailing tags, switches, and destructive actions.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -4274,10 +4491,10 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Anchored action menu with flat commands, grouped sections, single-selection choices, supplemental notification dots, switches, and destructive actions.",
+          "summary": "Anchored action menu with flat commands, grouped sections, single-selection choices, supplemental notification dots or trailing tags, switches, and destructive actions.",
           "useWhen": [
             "A trigger reveals a short contextual list of commands or state-changing actions.",
-            "Actions need grouping, mutually exclusive selected state, supplemental notification dots, switch rows, or destructive treatment."
+            "Actions need grouping, mutually exclusive selected state, supplemental notification dots or trailing tags, switch rows, or destructive treatment."
           ],
           "avoidWhen": [
             "The user is selecting a value for a form field.",
@@ -4317,7 +4534,8 @@
             "Switch rows use menuitemcheckbox semantics on the row; the nested ds-switch is an aria-hidden presentation indicator at the same density as the menu.",
             "Single-selection menus use menuitemradio semantics and aria-checked on each row, but render no nested radio control; selected interaction fill and primary foreground provide the visual state.",
             "A swatch-picker section changes the popup to a non-modal dialog so its radio group and ordinary preference buttons keep valid nested semantics; Tab moves between its controls, then leaves and closes at the popup boundary.",
-            "Use notification dots only as supplemental status and not as the sole indication of important information."
+            "Use notification dots only as supplemental status and not as the sole indication of important information.",
+            "Trailing tags are non-interactive supplemental content; their visible label remains part of the menu item's accessible name."
           ],
           "states": [
             "The host owns open state and responds to selection and close events.",
@@ -4326,7 +4544,8 @@
             "For selectionMode single, keep exactly one item isSelected and replace the items or sections array after dsSelect; Menu never mutates consumer-owned selection data.",
             "Arrays, objects, and element anchors must be assigned as JavaScript properties.",
             "Use a swatch-picker section for a small curated visual preference and apply dsSwatchSelect immediately without closing the popup.",
-            "Ordinary rows, section headings, and supporting text consume the Menu size. At xs, both the primary label and supporting text use caption metrics."
+            "Ordinary rows, section headings, and supporting text consume the Menu size. At xs, both the primary label and supporting text use caption metrics.",
+            "A trailing tag resolves one density smaller than its menu row so it nests without changing row height. Do not combine tag, dot, and switch suffixes on one item."
           ],
           "responsiveBehavior": [
             "Keep the default choice-cell anchor alignment so the first or last interactive row edge aligns with its trigger, matching Select; use popup-frame only for deliberate custom frame geometry.",
@@ -4454,6 +4673,7 @@
         "badge",
         "swatch-picker",
         "switch",
+        "tag",
         "text"
       ]
     },
@@ -5477,7 +5697,7 @@
           ],
           "states": [
             "The owner opens the modal through the open property and responds to the typed dsClose detail for application state synchronization or dismissal analytics.",
-            "The component mutates open to false for Close, Escape, and backdrop dismissal while retaining its rendered surface through exit motion.",
+            "The component mutates open to false for Close, Escape, and backdrop dismissal while retaining its rendered surface through exit motion. The close timer begins only after the closing class has rendered, so the dialog surface and backdrop enter together and exit together before the native top layer closes across browsers.",
             "The default slot owns task content; the named footer slot is optional and is hidden when no actions are assigned.",
             "The optional header description remains stacked beneath the title with the shared compact-header rhythm; longer task content belongs in the default slot.",
             "Primary actions use a bold filled button with semantic intent. Secondary and cancel actions use bordered label-only unfilled buttons.",
@@ -6652,7 +6872,7 @@
     {
       "name": "select",
       "title": "Select",
-      "description": "Form-associated select for one value or several independent values through the multiple mode, with listbox semantics, local search, grouped sections, loading, clearing, and surface-aware trigger chrome.",
+      "description": "Form-associated select for one value or several independent values through the multiple mode, with listbox semantics for ordinary choices, grid semantics for choices with contextual actions, local search, grouped sections, loading, clearing, and surface-aware trigger chrome.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -6663,7 +6883,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Form-associated select for one value or several independent values through the multiple mode, with listbox semantics, local search, grouped sections, loading, clearing, and surface-aware trigger chrome.",
+          "summary": "Form-associated select for one value or several independent values through the multiple mode, with listbox semantics for ordinary choices, grid semantics for choices with contextual actions, local search, grouped sections, loading, clearing, and surface-aware trigger chrome.",
           "useWhen": [
             "The user must choose one value from a finite set.",
             "The user may choose several independent values when multiple is enabled.",
@@ -6695,11 +6915,12 @@
           ],
           "accessibility": [
             "In forms, provide a persistent visible external field label; placeholder text is guidance and must not be the field's only label. In a compact filter bar, the trigger's visible text may supply the accessible name.",
-            "The trigger uses combobox semantics and the popup uses listbox and option semantics; do not replace them with menu roles.",
+            "The trigger uses combobox semantics. Ordinary choices use a listbox with options; when any choice has a contextual action, the popup promotes to a grid with selectable rows, a choice cell, and an action cell. Do not replace either popup with menu roles.",
             "Multiple mode adds aria-multiselectable, exposes independent aria-selected state, and uses presentation-only checkbox indicators while each option remains the sole interaction target.",
             "Disabled options remain visible, expose aria-disabled, and are skipped by keyboard navigation and typeahead.",
             "Keyboard navigation keeps the aria-activedescendant option scrolled into the visible listbox viewport.",
             "Selected options rely on active fill and foreground treatment without a redundant trailing check icon.",
+            "A contextual option action is a sibling gridcell rather than an interactive descendant of the selectable choice cell. Pointer hover, focus, ArrowRight, and Shift+F10 make the ellipsis action reachable without changing the selected value.",
             "Local search moves focus into the search field while preserving the active option through aria-activedescendant.",
             "Use errorMessage with error so the trigger is described by the rendered alert."
           ],
@@ -6713,14 +6934,17 @@
             "Clearing emits dsChange with an empty string or empty array according to mode plus dsClear, keeps the popup open, and restores useful focus.",
             "Loading keeps the trigger visible, replaces its prefix icon, marks the control busy, and makes selection interaction temporarily unavailable without presenting the control as inactive. When the popup is open, its single loader is centered vertically and horizontally within the loading region.",
             "The trigger label stays left-aligned at every width. The default size is md in both forms and filter bars; smaller sizes require an explicit density need.",
+            "In scalar mode, triggerLabel may provide compact trigger-only copy while the popup continues to show the selected option's full label. Set triggerLabelPlaceholder when that copy represents the default or browse state and should retain secondary placeholder emphasis despite a real selected value. Use dot for a supplemental changed or attention state without appending status prose to the label.",
             "Use option icons only when they help users differentiate choices. Icons render only when every option in the complete list provides one; mixed icon data falls back to the text-only row layout.",
             "Create sections only for categories that are meaningful to customers, not merely to break a long list into arbitrary chunks.",
             "When any option supplies subtext, every row uses the same subtext structure and missing values render an em dash. Subtext should disambiguate or add decision-helpful information.",
             "Option labels and the selected trigger label stay on one line and truncate when constrained. Option subtext may wrap to at most two lines.",
+            "Use an option action only for a contextual menu about that user-managed option. The fixed ellipsis action appears on hover, keyboard activity, focus, and touch; expanded keeps it visible while its controlled menu is open. Activating it emits dsOptionAction without selecting the option or closing the Select popup.",
             "The optional prefix icon and chevron always use the parent surface's secondary foreground color, including when a selected value promotes the label to primary.",
             "The shared popup search control follows the Select density, using the same text, icon, and internal spacing as a borderless trigger. Its container uses menu-item padding on every side and owns a 1px bottom divider that becomes a 1.5px bold-brand stroke while search has focus. Search placeholder text is secondary at rest and quaternary while focused because it becomes decorative once the editable field is active.",
             "When search contains text, the shared control shows a rounded icon-only ButtonUnfilled with the CrossCircle icon and no border, sized to remain inset within the current row density. It clears the local term, stays hidden for an empty term, and returns focus to search.",
-            "The shared clear footer mirrors the owning density: menu-item padding surrounds a borderless density row, and the Clear label uses the same row and label insets as option text. The outer footer owns a 1px top divider.",
+            "The shared clear footer mirrors the owning density: menu-item padding surrounds a borderless density row, and the Clear label uses the same row and label insets as option text. The clear action never wraps. In multiple mode, the selected summary stays on one line and collapses to its numeric count when the full localized phrase would compete with the clear action. The outer footer owns a 1px top divider.",
+            "Use footerActionLabel for one product-owned text action beneath the option list. It replaces the clear affordance, stays aligned with option labels, uses the shared brand text-action treatment with a matching brand underline on hover, emits dsFooterAction, and closes the popup when activated.",
             "An empty filtered list composes the message-only body variant of EmptyState. Keep the default neutral no-results message unless localized product guidance makes the outcome clearer.",
             "Enable searchable for more than roughly 20 options, user-managed listings, large domains such as addresses, or sets users cannot efficiently scan. Local matching includes option labels, subtext, and section headings; the owner resolves remote data before assigning options.",
             "Validation timing belongs to the form owner and may be immediate or deferred until blur or submit; the Select exposes validity and error presentation without imposing that policy.",
@@ -6732,6 +6956,7 @@
           "responsiveBehavior": [
             "Use width fill for form fields and width hug for compact filter bars. Override those defaults only when the owning layout has a clear constraint.",
             "The popup matches the trigger minimum width, may grow for content, and clamps to the viewport.",
+            "Keep popupAlign at start for ordinary fields and filters. Use end when a control sits against a right layout edge and the popup should grow inward.",
             "Long option collections scroll inside the popup; virtualization and remote search are not part of this component."
           ],
           "frameworkCaveats": {
@@ -6739,7 +6964,7 @@
               "Assign options, sections, and multiple-mode array values through JavaScript properties because arrays and objects cannot be represented safely as attributes."
             ],
             "react": [
-              "Pass options or sections as wrapper props, set multiple for array values, and handle onDsChange, onDsClear, and onDsOpenChange."
+              "Pass options or sections as wrapper props, set multiple for array values, and handle onDsChange, onDsClear, onDsOpenChange, onDsFooterAction, and onDsOptionAction."
             ],
             "angular": [
               "Import DsSelect and SelectValueAccessor when integrating with Angular Forms; bind options and sections as properties."
@@ -6789,11 +7014,19 @@
             "type": "boolean",
             "required": false
           },
+          "dot": {
+            "type": "boolean",
+            "required": false
+          },
           "error": {
             "type": "boolean",
             "required": false
           },
           "errorMessage": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "footerActionLabel": {
             "type": "string | undefined",
             "required": false
           },
@@ -6845,6 +7078,10 @@
             "type": "string",
             "required": false
           },
+          "popupAlign": {
+            "type": "SelectPopupAlign",
+            "required": false
+          },
           "required": {
             "type": "boolean",
             "required": false
@@ -6873,6 +7110,14 @@
             "type": "SelectSize",
             "required": false
           },
+          "triggerLabel": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "triggerLabelPlaceholder": {
+            "type": "boolean",
+            "required": false
+          },
           "value": {
             "type": "SelectValue",
             "required": false
@@ -6892,8 +7137,16 @@
             "detail": "void"
           },
           {
+            "name": "dsFooterAction",
+            "detail": "void"
+          },
+          {
             "name": "dsOpenChange",
             "detail": "boolean"
+          },
+          {
+            "name": "dsOptionAction",
+            "detail": "SelectOptionActionDetail"
           }
         ],
         "slots": [],
@@ -6909,6 +7162,7 @@
         "@ds-mo/icons"
       ],
       "registryDependencies": [
+        "badge",
         "button-unfilled",
         "checkbox",
         "empty-state",
@@ -8800,7 +9054,7 @@
             "Omitted color inherits currentColor without imposing a host color declaration, so an owning component may apply its semantic foreground directly without depending on stylesheet order. Explicit semantic aliases or CSS-variable references are used when Text has an independent color role.",
             "Prefer the owning control's isInactive or native disabled state over manually selecting tertiary or quaternary so visual treatment and inactive semantics remain synchronized.",
             "Line truncation and wrapping require an owner-supplied width constraint and content-aware composition decision.",
-            "Solid underline is the default link affordance; brand-blue links may omit it at rest. Dotted underline communicates hidden or supplemental interaction such as a tooltip. Decoration does not make Text interactive by itself.",
+            "Solid underline is the default link affordance; brand-blue links may omit it at rest. Solid and dotted underlines share the tokenized decoration thickness and offset. Dotted underline communicates hidden or supplemental interaction such as a tooltip. Decoration does not make Text interactive by itself.",
             "Tabular numbers are for changing numeric values or aligned numeric columns where stable glyph width matters.",
             "Shimmer is reserved for visible generating/loading status text whose owner provides status semantics; reduced motion keeps static readable text."
           ],

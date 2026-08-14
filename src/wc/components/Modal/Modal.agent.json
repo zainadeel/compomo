@@ -56,7 +56,7 @@
   ],
   "states": [
     "The owner opens the modal through the open property and responds to the typed dsClose detail for application state synchronization or dismissal analytics.",
-    "The component mutates open to false for Close, Escape, and backdrop dismissal while retaining its rendered surface through exit motion.",
+    "The component mutates open to false for Close, Escape, and backdrop dismissal while retaining its rendered surface through exit motion. The close timer begins only after the closing class has rendered, so the dialog surface and backdrop enter together and exit together before the native top layer closes across browsers.",
     "The default slot owns task content; the named footer slot is optional and is hidden when no actions are assigned.",
     "The optional header description remains stacked beneath the title with the shared compact-header rhythm; longer task content belongs in the default slot.",
     "Primary actions use a bold filled button with semantic intent. Secondary and cancel actions use bordered label-only unfilled buttons.",

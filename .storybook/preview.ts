@@ -4,7 +4,8 @@ import '@ds-mo/tokens/dimensions';
 import '@ds-mo/tokens/reset';
 import '@ds-mo/tokens/globals';
 import '@ds-mo/tokens/utilities';
-// Storybook is a consumer: it opts into its own self-hosted code font asset.
+// Storybook is a consumer: it opts into its own self-hosted font assets.
+import './interface-font.css';
 import './code-font.css';
 import './docs.css';
 

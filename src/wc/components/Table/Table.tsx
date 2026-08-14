@@ -852,7 +852,7 @@ export class Table {
           class="ds-table__cell-track ds-table__cell-track--text"
           as="span"
           variant="text-body-medium"
-          color="secondary"
+          color="tertiary"
         >
           <span aria-hidden="true">—</span>
           <span class="ds-visually-hidden">{this.emptyCellLabel}</span>

@@ -125,9 +125,25 @@
 
 :where(.ds-prose)
   :where(a):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
-  color: var(--color-foreground-brand);
-  text-decoration: underline;
-  text-decoration-color: var(--color-foreground-tertiary);
+  color: var(--color-foreground-bold-brand);
+  text-decoration-line: none;
+  text-decoration-color: currentcolor;
+  text-decoration-thickness: var(--ds-text-decoration-thickness, var(--dimension-stroke-width-012));
+  text-underline-offset: var(--ds-text-decoration-offset, var(--dimension-space-025));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :where(.ds-prose)
+    :where(a):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)):hover {
+    text-decoration-line: underline;
+  }
+}
+
+@media (forced-colors: active) {
+  :where(.ds-prose)
+    :where(a):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+    text-decoration-line: underline;
+  }
 }
 
 :where(.ds-prose)

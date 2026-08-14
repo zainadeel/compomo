@@ -1,4 +1,5 @@
 import type { SwatchPickerOption, SwatchPickerSection } from '../SwatchPicker/swatch-picker-types';
+import type { TagContrast, TagIntent } from '../Tag/Tag';
 
 export type { MenuAlign, MenuSide } from './menu-position';
 export {
@@ -7,12 +8,21 @@ export {
   type MenuPlacement,
 } from './menu-placement';
 
+export interface MenuItemTagData {
+  label: string;
+  intent?: TagIntent;
+  contrast?: TagContrast;
+  rounded?: boolean;
+}
+
 export interface MenuItemData {
   label: string;
   value?: string;
   subtext?: string;
   /** Show a supplemental brand notification dot. */
   dot?: boolean;
+  /** Show a non-interactive tag at the trailing edge of the row. */
+  tag?: MenuItemTagData;
   isSelected?: boolean;
   isInactive?: boolean;
   isDestructive?: boolean;

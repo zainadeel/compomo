@@ -3,6 +3,7 @@ import '/dist/components/ds-modal.js';
 import '/dist/components/ds-button-filled.js';
 import '/dist/components/ds-button-unfilled.js';
 import '/dist/components/ds-swatch-picker.js';
+import '/dist/components/ds-switch.js';
 
 await Promise.all([
   customElements.whenDefined('ds-menu'),
@@ -10,6 +11,7 @@ await Promise.all([
   customElements.whenDefined('ds-button-filled'),
   customElements.whenDefined('ds-button-unfilled'),
   customElements.whenDefined('ds-swatch-picker'),
+  customElements.whenDefined('ds-switch'),
 ]);
 
 const actionAnchor = document.getElementById('menu-anchor');
@@ -36,6 +38,17 @@ filterAnchor.addEventListener('click', () => {
   filterAnchor.setAttribute('aria-expanded', 'true');
 });
 filterMenu.addEventListener('dsClose', () => filterAnchor.setAttribute('aria-expanded', 'false'));
+
+const switchAnchor = document.getElementById('switch-anchor');
+const switchMenu = document.getElementById('switch-menu');
+switchMenu.items = [
+  { label: 'Vehicle ID / Make · Model · Year', value: 'vehicle', showSwitch: true, switchValue: true },
+];
+switchAnchor.addEventListener('click', () => {
+  switchMenu.open = true;
+  switchAnchor.setAttribute('aria-expanded', 'true');
+});
+switchMenu.addEventListener('dsClose', () => switchAnchor.setAttribute('aria-expanded', 'false'));
 
 const richAnchor = document.getElementById('rich-anchor');
 const richMenu = document.getElementById('rich-menu');

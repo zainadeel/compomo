@@ -65,6 +65,19 @@ export class Modal {
     if (this.open) this.onOpenChange(true);
   }
 
+  componentDidRender() {
+    if (!this.closing || !this.dialogEl?.open || this.closeTimer) return;
+    const closeAnimationMs = this.closeAnimationMs;
+    if (closeAnimationMs <= 0) {
+      this.finishClose();
+      return;
+    }
+    this.closeTimer = setTimeout(() => {
+      this.closeTimer = null;
+      this.finishClose();
+    }, closeAnimationMs);
+  }
+
   disconnectedCallback() {
     this.clearCloseTimer();
     if (this.dialogEl?.open) this.dialogEl.close();
@@ -84,15 +97,6 @@ export class Modal {
       });
     } else if (this.dialogEl?.open) {
       this.closing = true;
-      const closeAnimationMs = this.closeAnimationMs;
-      if (closeAnimationMs <= 0) {
-        this.finishClose();
-        return;
-      }
-      this.closeTimer = setTimeout(() => {
-        this.closeTimer = null;
-        this.finishClose();
-      }, closeAnimationMs);
     }
   }
 
@@ -171,7 +175,7 @@ export class Modal {
   }
 
   private get closeAnimationMs(): number {
-    return resolveMotionTimeMs(TOKEN_DEFAULTS.motionShort3, TOKEN_DEFAULTS.animationDurationShort3);
+    return resolveMotionTimeMs(TOKEN_DEFAULTS.motionShort2, TOKEN_DEFAULTS.animationDurationShort3);
   }
 
   private finishClose() {

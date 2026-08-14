@@ -87,18 +87,19 @@ generated React wrappers because all three render the canonical Stencil CSS.
 ## Storybook contract and measured impact
 
 Storybook acts as a consumer instead of receiving a private component
-exception. Its preview imports the self-hosted `@fontsource/fira-code` Latin
-400 stylesheet once, then the normal semantic token/fallback selects the font.
-This makes the setup visible in application-root code and keeps component
-bundles honest when the consumer import is removed.
+exception. Its preview declares the self-hosted `@fontsource-variable/inter`
+Latin variable face and `@fontsource/fira-code` Latin 400 face once, then the
+normal semantic tokens select the fonts. This makes the setup visible in
+application-root code and keeps component bundles honest when either consumer
+import is removed.
 
-The selected Fira Code Latin 400 WOFF2 asset is **23,312 bytes**. The Storybook
-production build emits that one font asset and no WOFF duplicate. It is a
-development-only dependency and `@ds-mo/ui` publishes only `dist/`, so the npm
-package and application initial network payload gain **0 font bytes**. An
-application that adopts the same Latin subset incurs one 23,312-byte font
-response when code content first needs it, or at initial load only if it
-chooses to preload it.
+The selected Inter Latin variable WOFF2 asset is **48,256 bytes**, and the Fira
+Code Latin 400 WOFF2 asset is **23,312 bytes**. The Storybook production build
+emits one copy of each font asset and no WOFF duplicates. Both are
+development-only dependencies and `@ds-mo/ui` publishes only `dist/`, so the
+npm package and application initial network payload gain **0 font bytes**. An
+application that adopts the same subsets incurs each response only when its
+content needs that family, or at initial load only if it chooses to preload it.
 
 The current Lab already self-hosts Inter as a 48,432-byte Latin variable font
 and an 85,272-byte lazy Latin-ext subset. Its Fira Code follow-up should reuse

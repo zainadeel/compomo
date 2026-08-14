@@ -1,5 +1,6 @@
 @import '../../utils/focus-ring.css';
 @import '../../utils/visually-hidden.css';
+@import '../../utils/text-decoration.css';
 
 :host {
   position: relative;
@@ -63,14 +64,13 @@ a.breadcrumb__link {
 
 @media (hover: hover) and (pointer: fine) {
   .breadcrumb__link:hover .breadcrumb__label {
-    text-decoration: underline;
-    text-decoration-color: var(--color-foreground-quaternary);
-    text-underline-offset: var(--dimension-space-025);
-    text-decoration-thickness: var(--dimension-stroke-width-012);
+    text-decoration-line: underline;
   }
 }
 
 .breadcrumb__label {
+  --ds-text-decoration-color: var(--color-foreground-quaternary);
+
   display: inline-block;
   inline-size: var(--breadcrumb-label-width, auto);
   min-width: 0;
