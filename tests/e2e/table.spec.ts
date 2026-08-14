@@ -1674,13 +1674,17 @@ test('keeps a document-flow header and edge columns sticky while vertical input 
   await expect(firstActionCell).toHaveCSS('box-shadow', 'none');
   const stickyEdgeColors = await firstStartEdge.evaluate(element => {
     const probe = document.createElement('span');
-    probe.style.background = 'var(--color-border-secondary)';
     document.body.append(probe);
-    const divider = getComputedStyle(probe).backgroundColor;
+    const resolveToken = (token: string) => {
+      probe.style.background = `var(${token})`;
+      return getComputedStyle(probe).backgroundColor;
+    };
+    const stickyDivider = resolveToken('--color-border-secondary');
+    const rowDivider = resolveToken('--color-border-tertiary');
     probe.remove();
-    return { edge: getComputedStyle(element).backgroundColor, divider };
+    return { edge: getComputedStyle(element).backgroundColor, stickyDivider, rowDivider };
   });
-  expect(stickyEdgeColors.edge).toBe(stickyEdgeColors.divider);
+  expect(stickyEdgeColors.edge).toBe(stickyEdgeColors.stickyDivider);
   expect(await firstStartEdge.evaluate(element => getComputedStyle(element, '::after').boxShadow))
     .toBe('none');
   expect(await firstEndEdge.evaluate(element => getComputedStyle(element, '::after').boxShadow))
@@ -1769,7 +1773,7 @@ test('keeps a document-flow header and edge columns sticky while vertical input 
     .locator('.ds-table__body:last-child .ds-table__row:last-child .ds-table__cell')
     .nth(2)
     .evaluate(element => getComputedStyle(element, '::after').boxShadow);
-  expect(terminalColumnDivider).toContain(stickyEdgeColors.divider);
+  expect(terminalColumnDivider).toContain(stickyEdgeColors.rowDivider);
 
   const lanes = await table.locator('[data-row-id="document-row-2"]').evaluate(row => {
     const viewport = row.closest('.ds-table__viewport')!.getBoundingClientRect();
