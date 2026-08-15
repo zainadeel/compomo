@@ -96,7 +96,9 @@
   display: none;
 }
 
-.input-control__clear {
+/* Keep this more specific than ButtonUnfilled's host-level hug alignment so
+   component stylesheet hydration order cannot move the nested action. */
+.input-control > .input-control__clear {
   position: relative;
   z-index: 2;
   flex-shrink: 0;

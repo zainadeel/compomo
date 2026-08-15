@@ -41,6 +41,7 @@ export class MessageScroller {
   private mutationObserver?: MutationObserver;
   private following = true;
   private followReleased = false;
+  private releasePendingAtLiveEdge = false;
   private atStart = false;
   private programmatic = false;
   private programmaticTimer?: ReturnType<typeof setTimeout>;
@@ -81,6 +82,7 @@ export class MessageScroller {
       this.el.querySelectorAll<HTMLElement & { messageId?: string }>('ds-message')
     ).find(item => item.messageId === id || item.getAttribute('message-id') === id);
     if (!message) return false;
+    this.releasePendingAtLiveEdge = false;
     this.following = false;
     this.followReleased = true;
     this.showScrollToLatest = true;
@@ -90,6 +92,7 @@ export class MessageScroller {
 
   @Method()
   async scrollToStart() {
+    this.releasePendingAtLiveEdge = false;
     this.scrollTo(0);
     this.following = false;
     this.followReleased = true;
@@ -100,6 +103,7 @@ export class MessageScroller {
 
   @Method()
   async scrollToEnd() {
+    this.releasePendingAtLiveEdge = false;
     this.following = true;
     this.followReleased = false;
     this.showScrollToLatest = false;
@@ -154,6 +158,9 @@ export class MessageScroller {
     const nextHeight = this.viewport.scrollHeight;
     if (this.autoFollow && this.following && !this.followReleased) {
       this.viewport.scrollTop = nextHeight;
+    }
+    if (this.releasePendingAtLiveEdge && !this.isAtLiveEdge()) {
+      this.releasePendingAtLiveEdge = false;
     }
     this.showScrollToLatest = !this.following && !this.isAtLiveEdge();
     this.scrollOverlayController?.sync();
@@ -368,6 +375,7 @@ export class MessageScroller {
 
   private applyDefaultPosition() {
     if (!this.viewport) return;
+    this.releasePendingAtLiveEdge = false;
     if (this.defaultPosition === 'start') {
       this.viewport.scrollTop = 0;
       this.following = false;
@@ -409,7 +417,17 @@ export class MessageScroller {
     this.rememberFirstChildTop();
     this.rememberActiveTurnAnchorTop();
     if (this.programmatic) return;
-    this.following = this.isAtLiveEdge();
+    const atLiveEdge = this.isAtLiveEdge();
+    if (this.releasePendingAtLiveEdge && atLiveEdge) {
+      // A scroll event queued by the previous auto-follow can arrive after
+      // reader input. Keep that stale event from restoring follow mode.
+      this.following = false;
+      this.followReleased = true;
+      this.showScrollToLatest = false;
+      return;
+    }
+    this.releasePendingAtLiveEdge = false;
+    this.following = atLiveEdge;
     this.followReleased = !this.following;
     this.showScrollToLatest = !this.following;
     const nextAtStart = this.viewport.scrollTop <= LIVE_EDGE_THRESHOLD;
@@ -419,9 +437,10 @@ export class MessageScroller {
 
   private releaseFollow = () => {
     this.prependReconciliation += 1;
+    this.releasePendingAtLiveEdge = this.isAtLiveEdge();
     this.following = false;
     this.followReleased = true;
-    this.showScrollToLatest = true;
+    this.showScrollToLatest = !this.releasePendingAtLiveEdge;
   };
 
   private handleSelectionChange = () => {
@@ -432,9 +451,7 @@ export class MessageScroller {
       selection.anchorNode &&
       this.el.contains(selection.anchorNode)
     ) {
-      this.following = false;
-      this.followReleased = true;
-      this.showScrollToLatest = !this.isAtLiveEdge();
+      this.releaseFollow();
     }
   };
 

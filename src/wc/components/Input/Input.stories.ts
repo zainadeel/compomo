@@ -94,3 +94,19 @@ export const SizesAndStates: Story = {
     </div>
   `,
 };
+
+export const SearchClearAlignment: Story = {
+  name: 'Search clear alignment',
+  render: () => html`
+    <div style="display:grid;grid-template-columns:max-content var(--dimension-panel-width-xs);align-items:center;gap:var(--dimension-space-100) var(--dimension-space-200);">
+      <ds-text variant="text-body-small" color="secondary">Large</ds-text>
+      <ds-input type="search" size="lg" value="Search query" icon="MagnifyingGlass" aria-label="Large search input"></ds-input>
+      <ds-text variant="text-body-small" color="secondary">Medium</ds-text>
+      <ds-input type="search" size="md" value="Search query" icon="MagnifyingGlass" aria-label="Medium search input"></ds-input>
+      <ds-text variant="text-body-small" color="secondary">Small</ds-text>
+      <ds-input type="search" size="sm" value="Search query" icon="MagnifyingGlass" aria-label="Small search input"></ds-input>
+      <ds-text variant="text-body-small" color="secondary">Extra small</ds-text>
+      <ds-input type="search" size="xs" value="Search query" icon="MagnifyingGlass" aria-label="Extra-small search input"></ds-input>
+    </div>
+  `,
+};

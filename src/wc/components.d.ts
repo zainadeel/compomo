@@ -1801,7 +1801,7 @@ export namespace Components {
          */
         "accountLabel": string;
         /**
-          * Keep the account-menu trigger visually active while its popup is open or closing.
+          * Keep the account-menu trigger visually pressed while its popup is open or closing.
           * @default false
          */
         "accountMenuExpanded": boolean;
@@ -6305,7 +6305,7 @@ declare namespace LocalJSX {
          */
         "accountLabel"?: string;
         /**
-          * Keep the account-menu trigger visually active while its popup is open or closing.
+          * Keep the account-menu trigger visually pressed while its popup is open or closing.
           * @default false
          */
         "accountMenuExpanded"?: boolean;
