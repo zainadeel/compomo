@@ -314,6 +314,48 @@ export const SideBySide: Story = {
   render: () => sideBySide(),
 };
 
+const ACCOUNT_MENU_GROUPS: PanelNavGroup[] = [
+  {
+    items: [
+      { id: 'overview', icon: 'MapPage', label: 'Overview' },
+      { id: 'activity', icon: 'Bell', label: 'Activity' },
+    ],
+  },
+];
+
+function accountMenuReviewPanel(collapsed: boolean, expanded: boolean): TemplateResult {
+  return html`
+    <div style="display:flex;flex-direction:column;gap:var(--dimension-space-100);min-height:100vh;">
+      <ds-text as="div" variant="text-body-small" color="secondary">
+        ${collapsed ? 'Collapsed' : 'Expanded'} · menu ${expanded ? 'open' : 'closed'}
+      </ds-text>
+      <div style="display:flex;flex:1;min-height:0;">
+        <ds-panel-nav
+          nav-style="dashboard"
+          .groups=${ACCOUNT_MENU_GROUPS}
+          active-id="overview"
+          user-name="User Name"
+          user-initial="U"
+          ?collapsed=${collapsed}
+          ?account-menu-expanded=${expanded}
+        ></ds-panel-nav>
+      </div>
+    </div>
+  `;
+}
+
+export const AccountMenuStates: Story = {
+  name: 'Account menu states',
+  render: () => html`
+    <div style="display:flex;gap:var(--dimension-space-200);min-width:max-content;padding:var(--dimension-space-200);background:var(--color-background-primary);">
+      ${accountMenuReviewPanel(false, false)}
+      ${accountMenuReviewPanel(false, true)}
+      ${accountMenuReviewPanel(true, false)}
+      ${accountMenuReviewPanel(true, true)}
+    </div>
+  `,
+};
+
 const ROUTER_GROUPS: PanelNavGroup[] = DASHBOARD_GROUPS.map(g => ({
   ...g,
   items: g.items.map(item => ({

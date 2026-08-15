@@ -399,7 +399,6 @@ ds-text.panel-nav__group-label {
 }
 
 .panel-nav__footer-user--menu-expanded {
-  color: var(--_nav-fg-primary);
   --ds-interaction-hover: var(--_nav-pressed);
 }
 

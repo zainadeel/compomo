@@ -509,27 +509,88 @@ test.describe('App shell chrome', () => {
     expect(Math.abs(geometry.inkCenterDeltaY)).toBeLessThanOrEqual(0.5);
   });
 
-  test('collapsed account trigger promotes its initial immediately while its menu is expanded',
-    chromiumOnly('controlled-behavior', 'Expanded state deterministically promotes the existing initial without browser APIs.'),
+  test('account menu expansion keeps its resting foreground and pressed overlay in both panel modes',
+    chromiumOnly('controlled-behavior', 'Controlled popup state and token-backed paint are deterministic without browser APIs.'),
     async ({
     page,
   }) => {
-    await page.getByRole('button', { name: 'Collapse navigation' }).click();
     const panel = page.locator('#panel');
     const account = page.getByRole('button', { name: 'Account' });
-    const initial = page.locator('.panel-nav__user-initial');
 
-    await panel.evaluate(element => {
-      (element as HTMLElement & { accountMenuExpanded: boolean }).accountMenuExpanded = true;
-    });
+    for (const theme of ['light', 'dark']) {
+      await page.locator('html').evaluate((element, nextTheme) => {
+        element.dataset['theme'] = nextTheme;
+      }, theme);
 
-    await expect(account).toHaveAttribute('aria-expanded', 'true');
-    await expect.poll(() => initial.evaluate(element => getComputedStyle(element).color))
-      .toBe(await account.evaluate(element => getComputedStyle(element).color));
-    await expect.poll(() => initial.evaluate(element => getComputedStyle(element).transitionDuration))
-      .toBe('0s');
-    await expect.poll(() => account.evaluate(element => getComputedStyle(element).transitionProperty))
-      .not.toContain('color');
+      for (const collapsed of [false, true]) {
+        await panel.evaluate((element, nextCollapsed) => {
+          const control = element as HTMLElement & {
+            accountMenuExpanded: boolean;
+            collapsed: boolean;
+          };
+          control.accountMenuExpanded = false;
+          control.collapsed = nextCollapsed;
+        }, collapsed);
+        await expect(account).toHaveAttribute('aria-expanded', 'false');
+
+        const resting = await account.evaluate(element => {
+          const selected = document.querySelector<HTMLElement>(
+            '.panel-nav__body .panel-nav__item--active'
+          )!;
+          return {
+            foreground: getComputedStyle(element).color,
+            label: getComputedStyle(
+              element.querySelector<HTMLElement>('.panel-nav__footer-user-label')!
+            ).color,
+            expandedIcon: getComputedStyle(
+              element.querySelector<HTMLElement>('.panel-nav__footer-icon-expanded')!
+            ).color,
+            collapsedIcon: getComputedStyle(
+              element.querySelector<HTMLElement>('.panel-nav__footer-icon-collapsed')!
+            ).color,
+            selectedForeground: getComputedStyle(selected).color,
+          };
+        });
+
+        await panel.evaluate(element => {
+          (element as HTMLElement & { accountMenuExpanded: boolean }).accountMenuExpanded = true;
+        });
+        await expect(account).toHaveAttribute('aria-expanded', 'true');
+        await expect(account).toHaveClass(/panel-nav__footer-user--menu-expanded/);
+        await expect(account).not.toHaveClass(/panel-nav__item--active/);
+
+        const expanded = await account.evaluate(element => {
+          const probe = document.createElement('span');
+          probe.style.backgroundColor = 'var(--color-interaction-pressed)';
+          document.body.append(probe);
+          const pressed = getComputedStyle(probe).backgroundColor;
+          probe.remove();
+          return {
+            foreground: getComputedStyle(element).color,
+            label: getComputedStyle(
+              element.querySelector<HTMLElement>('.panel-nav__footer-user-label')!
+            ).color,
+            expandedIcon: getComputedStyle(
+              element.querySelector<HTMLElement>('.panel-nav__footer-icon-expanded')!
+            ).color,
+            collapsedIcon: getComputedStyle(
+              element.querySelector<HTMLElement>('.panel-nav__footer-icon-collapsed')!
+            ).color,
+            wash: getComputedStyle(element, '::after').backgroundColor,
+            pressed,
+          };
+        });
+
+        expect(expanded).toMatchObject({
+          foreground: resting.foreground,
+          label: resting.label,
+          expandedIcon: resting.expandedIcon,
+          collapsedIcon: resting.collapsedIcon,
+        });
+        expect(expanded.foreground).not.toBe(resting.selectedForeground);
+        expect(expanded.wash).toBe(expanded.pressed);
+      }
+    }
   });
 
   test('keeps balanced panel insets, an 8px expanded footer gap, and the same animated user node', async ({

@@ -181,6 +181,16 @@ test('input follows shared control density, focus, and search-clear recipes', as
   const search = page.locator('#input-search');
   await expect(search.locator('ds-button-unfilled')).toHaveCount(1);
   await expect(search.locator('ds-button-unfilled')).toHaveJSProperty('icon', 'CrossCircle');
+  await page.evaluate(() => {
+    const buttonStyles = [...document.querySelectorAll('style')].find(style =>
+      style.textContent?.includes('.ds-button-host--icon')
+    );
+    if (!buttonStyles) throw new Error('ButtonUnfilled styles were not rendered');
+
+    // Consumer bundles can hydrate ButtonUnfilled after Input. Keep the nested
+    // clear action centered even when the generic hug alignment cascades last.
+    document.head.append(buttonStyles);
+  });
   for (const id of ['input-search', 'input-search-sm', 'input-search-xs']) {
     const clearAlignment = await page.locator(`#${id}`).evaluate(element => {
       const control = element.querySelector<HTMLElement>('.input-control')!.getBoundingClientRect();
@@ -188,6 +198,7 @@ test('input follows shared control density, focus, and search-clear recipes', as
       const clear = clearAction.getBoundingClientRect();
       const glyph = clearAction.querySelector<HTMLElement>('ds-icon')!.getBoundingClientRect();
       return {
+        alignSelf: getComputedStyle(clearAction).alignSelf,
         action: {
           top: clear.top - control.top,
           right: control.right - clear.right,
@@ -200,6 +211,7 @@ test('input follows shared control density, focus, and search-clear recipes', as
         },
       };
     });
+    expect(clearAlignment.alignSelf).toBe('center');
     expect(clearAlignment.action.right).toBe(clearAlignment.action.top);
     expect(clearAlignment.action.right).toBe(clearAlignment.action.bottom);
     expect(clearAlignment.glyph.right).toBe(clearAlignment.glyph.top);

@@ -270,6 +270,38 @@ test('preserves navigation and overlay boundaries without relying on fills or sh
   await expect(toast).toHaveCSS('outline-color', colors.canvasText);
 });
 
+test('keeps the panel account trigger legible without selected foreground while expanded', async ({
+  page,
+  browserName,
+}) => {
+  await openFixture(page, '/shell-app-chrome.html', browserName);
+  const colors = await systemColors(page);
+  const panel = page.locator('#panel');
+  const account = page.getByRole('button', { name: 'Account' });
+
+  for (const collapsed of [false, true]) {
+    await panel.evaluate((element, nextCollapsed) => {
+      const control = element as HTMLElement & {
+        accountMenuExpanded: boolean;
+        collapsed: boolean;
+      };
+      control.accountMenuExpanded = false;
+      control.collapsed = nextCollapsed;
+    }, collapsed);
+    await expect(account).toHaveAttribute('aria-expanded', 'false');
+    const restingForeground = await account.evaluate(element => getComputedStyle(element).color);
+
+    await panel.evaluate(element => {
+      (element as HTMLElement & { accountMenuExpanded: boolean }).accountMenuExpanded = true;
+    });
+
+    await expect(account).toHaveAttribute('aria-expanded', 'true');
+    await expect(account).not.toHaveClass(/panel-nav__item--active/);
+    await expect(account).toHaveCSS('color', restingForeground);
+    expect([colors.canvasText, colors.buttonText]).toContain(restingForeground);
+  }
+});
+
 test('keeps loading states visible and removes decorative shimmer motion', async ({
   page,
   browserName,
