@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.0.1](https://github.com/zainadeel/compomo/compare/v14.0.0...v14.0.1) (2026-08-15)
+
+
+### Fixed
+
+* stabilize input clear and account menu states ([#466](https://github.com/zainadeel/compomo/issues/466)) ([bc17139](https://github.com/zainadeel/compomo/commit/bc17139027a53a01152266d07daa4fdb6a684215)), closes [#462](https://github.com/zainadeel/compomo/issues/462)
+
 ## [14.0.0](https://github.com/zainadeel/compomo/compare/v13.18.1...v14.0.0) (2026-08-14)
 
 
