@@ -413,6 +413,9 @@ test('streams only while following and lets reader input release and restore the
   await expect.poll(distanceFromLiveEdge).toBeLessThanOrEqual(24);
 
   await viewport.dispatchEvent('wheel', { deltaY: -80 });
+  // A scroll event queued by the preceding auto-follow must not overwrite the
+  // newer reader intent while the viewport is still at the live edge.
+  await viewport.dispatchEvent('scroll');
   await grow();
   await expect.poll(distanceFromLiveEdge).toBeGreaterThan(100);
   await returnToLatest();

@@ -165,9 +165,31 @@ test('modal surface and backdrop animate together when entering and exiting', as
   expect(openingMotion.surfaceDuration).not.toBe('0s');
   expect(openingMotion.backdropDuration).toBe(openingMotion.surfaceDuration);
 
-  await modal.evaluate((element: HTMLDsModalElement) => { element.open = false; });
-  await expect(dialog).toHaveClass(/modal-dialog--closing/);
-  const closingMotion = await readMotion();
+  const closingMotion = await dialog.evaluate(element =>
+    new Promise<{
+      surfaceName: string;
+      surfaceDuration: string;
+      backdropName: string;
+      backdropDuration: string;
+    }>(resolve => {
+      const captureClosingMotion = () => {
+        if (!element.classList.contains('modal-dialog--closing')) return;
+        observer.disconnect();
+        const surface = getComputedStyle(element);
+        const backdrop = getComputedStyle(element, '::backdrop');
+        resolve({
+          surfaceName: surface.animationName,
+          surfaceDuration: surface.animationDuration,
+          backdropName: backdrop.animationName,
+          backdropDuration: backdrop.animationDuration,
+        });
+      };
+      const observer = new MutationObserver(captureClosingMotion);
+      observer.observe(element, { attributes: true, attributeFilter: ['class'] });
+      (element.closest('ds-modal') as HTMLDsModalElement).open = false;
+      captureClosingMotion();
+    })
+  );
   expect(closingMotion).toMatchObject({
     surfaceName: 'modalDialogOut',
     backdropName: 'modalBackdropOut',
