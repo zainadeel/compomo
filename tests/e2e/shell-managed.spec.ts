@@ -85,6 +85,33 @@ test.describe('Managed application shell', () => {
     await expect(shell.locator('ds-mobile-bar-nav')).toBeVisible();
   });
 
+  test('reports the active mobile header height to viewport-fitted page content', async ({
+    page,
+  }) => {
+    const shell = page.locator('#managed-shell');
+    const shellPage = shell.locator('ds-shell-page');
+
+    await page.setViewportSize({ width: 390, height: 760 });
+    await expect(shell).toHaveAttribute('responsive-mode', 'mobile');
+    await expect(shellPage.locator('ds-mobile-header')).toBeVisible();
+
+    await expect
+      .poll(() =>
+        shellPage.evaluate(element => {
+          const mobileHeader = element.querySelector<HTMLElement>('.shell-page__mobile-header');
+          const reportedHeight = Number.parseFloat(
+            getComputedStyle(element).getPropertyValue(
+              '--ds-shell-page-sticky-header-block-size'
+            )
+          );
+          return Math.abs(
+            reportedHeight - (mobileHeader?.getBoundingClientRect().height ?? 0)
+          );
+        })
+      )
+      .toBeLessThan(0.5);
+  });
+
   test('supports a pinned roomy table-page header with flush content and optional divider', async ({
     page,
   }) => {

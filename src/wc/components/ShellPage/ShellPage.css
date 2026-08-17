@@ -33,6 +33,12 @@
   --_shell-page-responsive-content-block-start-inset: var(--dimension-space-200);
 }
 
+:host([responsive-mode='mobile']) {
+  --ds-shell-page-sticky-header-block-size: calc(
+    var(--dimension-size-500) + var(--dimension-space-200)
+  );
+}
+
 :host(.shell-page-host--header-compact),
 :host(.shell-page-host--header-constrained) {
   --_shell-page-content-block-start-inset: var(
