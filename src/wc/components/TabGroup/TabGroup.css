@@ -119,6 +119,11 @@
   background-color: var(--ds-interaction-active);
 }
 
+/* Preserve text contrast on the mid-tone bold surface in both color schemes. */
+:host(.tab-group-host--on-bold) .tab--selected {
+  background-color: var(--color-interaction-active);
+}
+
 .tab--selected:not(.ds-interaction-fill) {
   box-shadow: inset 0 0 0 var(--ds-interaction-border-width) var(--ds-interaction-border-color);
 }

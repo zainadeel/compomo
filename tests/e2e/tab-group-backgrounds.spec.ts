@@ -49,7 +49,7 @@ test('keeps default styling and uses surface borders with active selected fills 
     },
     {
       value: 'bold',
-      active: '--color-interaction-on-bold-background-active',
+      active: '--color-interaction-active',
       border: '--color-border-on-bold-background-tertiary',
     },
     {
