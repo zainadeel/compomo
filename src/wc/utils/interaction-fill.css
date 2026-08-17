@@ -216,7 +216,7 @@
 .ds-interaction-fill--on-translucent {
   --ds-interaction-hover: var(--color-translucent-interaction-hover);
   --ds-interaction-pressed: var(--color-translucent-interaction-pressed);
-  --ds-interaction-active: var(--color-translucent-interaction-active);
+  --ds-interaction-active: var(--color-translucent-interaction-active-brand);
   --ds-focus-ring-color: var(--color-translucent-interaction-focus);
 }
 
@@ -224,7 +224,7 @@
 .ds-interaction-fill--on-inverted {
   --ds-interaction-hover: var(--color-inverted-interaction-hover);
   --ds-interaction-pressed: var(--color-inverted-interaction-pressed);
-  --ds-interaction-active: var(--color-inverted-interaction-active);
+  --ds-interaction-active: var(--color-inverted-interaction-active-brand);
   --ds-focus-ring-color: var(--color-inverted-interaction-focus);
 }
 
@@ -240,7 +240,7 @@
 .ds-interaction-fill--on-always-dark {
   --ds-interaction-hover: var(--color-always-dark-interaction-hover);
   --ds-interaction-pressed: var(--color-always-dark-interaction-pressed);
-  --ds-interaction-active: var(--color-always-dark-interaction-active);
+  --ds-interaction-active: var(--color-always-dark-interaction-active-brand);
   --ds-focus-ring-color: var(--color-always-dark-interaction-focus);
 }
 

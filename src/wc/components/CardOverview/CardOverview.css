@@ -198,7 +198,7 @@
   margin-block: calc(-1 * var(--dimension-space-050));
   padding: var(--dimension-space-050);
   border-radius: var(--dimension-radius-025);
-  background: var(--color-always-dark-interaction-active);
+  background: var(--color-always-dark-interaction-active-brand);
   color: var(--color-always-dark-foreground-primary);
 }
 

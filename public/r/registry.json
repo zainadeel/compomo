@@ -5459,13 +5459,14 @@
           "states": [
             "Without multiple sections the center renders heading.",
             "With multiple sections the center renders the controlled MobileSectionSwitcher by default or an explicitly requested segmented TabGroup.",
+            "The segmented presentation uses the shared fill-width TabGroup contract and divides its centered two-thirds top-bar lane equally between options.",
             "Optional subsections render in a second row and emit dsSubsectionChange without changing the primary section.",
             "Sections represent peer destinations at the current navigation level; subsections represent local views beneath the selected page or detail identity.",
             "Brand tone changes surface and foreground without changing geometry or interaction ownership."
           ],
           "responsiveBehavior": [
             "The primary 56px lane matches the Mobile Sheet Nav header and Mobile Bar Nav; optional subsections add one subordinate 48px lane.",
-            "Equal flexible side lanes keep the center mathematically aligned when actions are asymmetric."
+            "Equal flexible side lanes keep the center mathematically aligned when actions are asymmetric; segmented headers allocate the usable lane in a 1:4:1 ratio."
           ],
           "references": [
             {
@@ -5663,16 +5664,19 @@
           ],
           "accessibility": [
             "The sheet is a named navigation landmark and retains visible labels for every primary destination.",
-            "Dashboard and Settings use icon-only tabs with localized accessible names; Help and Account use icon-only actions with matching tooltips.",
+            "Dashboard and Settings use icon-only tabs with localized accessible names; Help and the optional Account shortcut use icon-only actions with matching tooltips.",
             "Escape requests dismissal and opening moves focus to the selected or first available area."
           ],
           "states": [
             "Dashboard and Settings change only the flat destination collection being browsed.",
-            "Area, Help, and Account events express intent while the application owns navigation and product behavior."
+            "Area, Help, and Account events express intent while the application owns navigation and product behavior.",
+            "Set routeSelectionActive to false while a global tool owns the mobile stage so the underlying router URL remains available without marking its area current.",
+            "Set showAccount to false when account and user preferences already live in the supplied Settings navigation."
           ],
           "responsiveBehavior": [
             "The pane fills the mobile content stage while the bottom bar remains available.",
             "The sheet header and scrollable navigation body each use the shared 8px chrome inset; the context TabGroup and primary controls share a 40px height and 24px icon scale.",
+            "When the optional Account shortcut is hidden, the Dashboard and Settings TabGroup fills the centered two-thirds top-bar lane and gives both context options equal width.",
             "Dashboard and Settings preserve their supplied visual groups with an 8px gap between destinations inside a section and a 32px gap between sections."
           ],
           "references": [
@@ -5715,12 +5719,20 @@
             "type": "boolean",
             "required": false
           },
+          "routeSelectionActive": {
+            "type": "boolean",
+            "required": false
+          },
           "settingsGroups": {
             "type": "PanelNavGroup[]",
             "required": false
           },
           "settingsLabel": {
             "type": "string",
+            "required": false
+          },
+          "showAccount": {
+            "type": "boolean",
             "required": false
           }
         },
@@ -7372,7 +7384,9 @@
             "On desktop, PanelNav defaults expanded, permits user collapse or expansion, and respects the locally persisted desktop preference.",
             "On tablet, ShellApp keeps PanelNav permanently collapsed and prevents user expansion without overwriting the desktop preference.",
             "On mobile, ShellApp hides and inerts desktop chrome, uses a solid primary stage, and composes MobileHeader, MobileSheetNav, ShellTools, and the persistent MobileBarNav around the same application-owned content.",
-            "Opening MobileSheetNav temporarily overlays the active routed page or global tool; closing it without selecting an area restores that same destination and its nested state.",
+            "Opening MobileSheetNav temporarily overlays the active routed page or global tool; closing it without selecting an area restores that same destination and its nested state. The sheet exposes the router-derived current area only while the routed area owns the mobile stage, so a global tool never leaves an underlying route highlighted.",
+            "Selecting Help from the managed mobile sheet activates the configured Help tool and promotes Help to the primary mobile destination instead of forwarding it as route navigation.",
+            "Set navigation.showMobileAccount to false when the Settings destination collection already includes account and user preferences.",
             "When a suspended mobile document returns to the foreground, ShellApp refreshes the complete stage paint layer without remounting routed content or tool owners.",
             "When the application enables viewport-fit=cover, ShellApp reserves the shared top safe-area inset once for the complete mobile stage; nested routed, sheet, and tool headers must not add a second top inset.",
             "A slotted Banner remains below the top safe-area inset and above routed, navigation, fullscreen-tool, and mobile global-surface presentations.",
@@ -8567,6 +8581,7 @@
             "The parent owns the canonical selected value and adjacent view visibility, and should update both from dsChange.",
             "A missing, empty, inactive, or unknown selected value is invalid when enabled tabs exist; the component does not choose a fallback selection.",
             "Selection is singular and follows keyboard focus.",
+            "Width follows the shared control contract: hug keeps the track content-sized, while fill occupies the parent width and distributes available space equally across selectable segments; dividers remain fixed-width separators.",
             "Small, medium, and large use the shared 24px, 32px, and 40px control-density recipes for the outer track. Each segment uses the same-size inset recipe at 20px, 28px, and 36px while preserving that density's typography, icon, gap, and label metrics.",
             "Use one consistent content variant across every selectable tab in a group.",
             "Omitted background is for primary and secondary surfaces; pass the faint context explicitly on faint surfaces.",
@@ -8576,7 +8591,7 @@
           "responsiveBehavior": [
             "The component remains a single horizontal row and does not become vertical or wrap.",
             "Use the large size when a mobile composition aligns the group with 40px shell controls; size does not change automatically at a breakpoint.",
-            "The consuming layout owns narrow-width placement and overflow, or replaces the row with a more suitable navigation pattern."
+            "The consuming layout owns the available width; use fill only inside a definite bounded width and replace the row with a more suitable navigation pattern when labels cannot remain usable."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -8620,6 +8635,10 @@
           },
           "value": {
             "type": "string",
+            "required": false
+          },
+          "width": {
+            "type": "TabGroupWidth",
             "required": false
           }
         },

@@ -62,6 +62,7 @@ shell.navigation = {
   routerMode: 'event',
   userName: 'Zain Adeel',
   userInitial: 'Z',
+  showMobileAccount: false,
 };
 shell.pageChrome = {
   heading: 'Fleet overview',

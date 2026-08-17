@@ -716,6 +716,28 @@ export class ShellApp {
     this.managedMobileSheetNavOpen = event.detail;
   };
 
+  private activateManagedMobileTool(destination: Exclude<MobileDestination, 'area'>): boolean {
+    const canonicalId =
+      destination === 'inbox'
+        ? resolveAvailableInboxTool(this.managedInboxTool, this.availableInboxTools)
+        : destination;
+    if (!canonicalId) return false;
+
+    const item = this.resolvedToolItems.find(
+      candidate =>
+        candidate.id === canonicalId ||
+        (destination !== 'inbox' && candidate.mobileDestination === destination)
+    );
+    if (!item || item.isInactive) return false;
+
+    const id = item.id;
+    this.managedActiveTool = id;
+    this.managedToolsOpen = true;
+    if (isShellInboxTool(id)) this.managedInboxTool = id;
+    this.dsToolChange.emit({ id: id as PanelToolsToolId, selected: true });
+    return true;
+  }
+
   private handleManagedMobileDestination = (
     event: CustomEvent<MobileBarNavDestinationDetail>
   ) => {
@@ -729,27 +751,17 @@ export class ShellApp {
       return;
     }
 
-    const canonicalId =
-      destination === 'inbox'
-        ? resolveAvailableInboxTool(this.managedInboxTool, this.availableInboxTools)
-        : destination;
-    if (!canonicalId) return;
-
-    const item = this.resolvedToolItems.find(
-      candidate =>
-        candidate.id === canonicalId ||
-        (destination !== 'inbox' && candidate.mobileDestination === destination)
-    );
-    if (!item || item.isInactive) return;
-    const id = item.id;
-    this.managedActiveTool = id;
-    this.managedToolsOpen = true;
-    if (isShellInboxTool(id)) this.managedInboxTool = id;
-    this.dsToolChange.emit({ id: id as PanelToolsToolId, selected: true });
+    this.activateManagedMobileTool(destination);
   };
 
   private handleManagedAreaSelect = (event: CustomEvent<string>) => {
     event.stopPropagation();
+    if (event.detail === 'help') {
+      this.managedMobileSheetNavOpen = false;
+      this.managedMobileDestination = 'help';
+      if (this.activateManagedMobileTool('help')) return;
+    }
+
     this.managedMobileSheetNavOpen = false;
     this.managedMobileDestination = 'area';
     this.managedToolsOpen = false;
@@ -950,10 +962,12 @@ export class ShellApp {
         dashboardGroups={navigation.dashboardGroups ?? navigation.groups ?? []}
         settingsGroups={navigation.settingsGroups ?? []}
         currentUrl={navigation.currentUrl ?? this.pageChrome.currentUrl ?? ''}
+        routeSelectionActive={this.managedMobileDestination === 'area'}
         navigationLabel={navigation.navigationLabel ?? 'Application navigation'}
         dashboardLabel={navigation.dashboardLabel ?? 'Dashboard'}
         settingsLabel={navigation.settingsLabel ?? 'Settings'}
         accountLabel={navigation.accountLabel ?? 'Account'}
+        showAccount={navigation.showMobileAccount ?? true}
         onDsAreaSelect={this.handleManagedAreaSelect}
         onDsBrowseContextChange={this.handleManagedBrowseContext}
         onDsClose={this.handleManagedSheetClose}

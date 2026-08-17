@@ -90,6 +90,7 @@ const meta: Meta = {
     value: { control: 'select', options: tabs.map(t => t.id) },
     variant: { control: 'select', options: ['label', 'icon', 'icon-label'] },
     size: { control: 'select', options: ['sm', 'md', 'lg'] },
+    width: { control: 'select', options: ['hug', 'fill'] },
     background: {
       control: 'select',
       options: [
@@ -105,7 +106,7 @@ const meta: Meta = {
       ],
     },
   },
-  args: { value: 'overview', variant: 'label', size: 'md' },
+  args: { value: 'overview', variant: 'label', size: 'md', width: 'hug' },
 };
 
 export default meta;
@@ -126,12 +127,39 @@ export const Playground: Story = {
           .tabs=${playgroundTabs}
           value=${args['value'] ?? 'overview'}
           size=${args['size'] ?? 'md'}
+          width=${args['width'] ?? 'hug'}
           background=${args['background'] ?? ''}
           aria-label="Playground tabs"
         ></ds-tab-group>
       </div>
     `;
   },
+};
+
+export const Widths: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Use width="hug" for content-sized segments or width="fill" inside a bounded parent to distribute the available track equally across every selectable segment.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="display:flex;flex-direction:column;gap:var(--dimension-space-150);width:360px;">
+      <ds-tab-group
+        .tabs=${tabs.slice(0, 3)}
+        value="overview"
+        width="hug"
+        aria-label="Content-sized tabs"
+      ></ds-tab-group>
+      <ds-tab-group
+        .tabs=${tabs.slice(0, 3)}
+        value="overview"
+        width="fill"
+        aria-label="Equal-width tabs"
+      ></ds-tab-group>
+    </div>
+  `,
 };
 
 export const Sizes: Story = {

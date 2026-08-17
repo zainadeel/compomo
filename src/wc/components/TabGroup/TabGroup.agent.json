@@ -59,6 +59,7 @@
     "The parent owns the canonical selected value and adjacent view visibility, and should update both from dsChange.",
     "A missing, empty, inactive, or unknown selected value is invalid when enabled tabs exist; the component does not choose a fallback selection.",
     "Selection is singular and follows keyboard focus.",
+    "Width follows the shared control contract: hug keeps the track content-sized, while fill occupies the parent width and distributes available space equally across selectable segments; dividers remain fixed-width separators.",
     "Small, medium, and large use the shared 24px, 32px, and 40px control-density recipes for the outer track. Each segment uses the same-size inset recipe at 20px, 28px, and 36px while preserving that density's typography, icon, gap, and label metrics.",
     "Use one consistent content variant across every selectable tab in a group.",
     "Omitted background is for primary and secondary surfaces; pass the faint context explicitly on faint surfaces.",
@@ -68,7 +69,7 @@
   "responsiveBehavior": [
     "The component remains a single horizontal row and does not become vertical or wrap.",
     "Use the large size when a mobile composition aligns the group with 40px shell controls; size does not change automatically at a breakpoint.",
-    "The consuming layout owns narrow-width placement and overflow, or replaces the row with a more suitable navigation pattern."
+    "The consuming layout owns the available width; use fill only inside a definite bounded width and replace the row with a more suitable navigation pattern when labels cannot remain usable."
   ],
   "frameworkCaveats": {
     "customElements": [

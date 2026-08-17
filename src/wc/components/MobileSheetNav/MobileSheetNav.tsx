@@ -33,11 +33,15 @@ export class MobileSheetNav {
   @Prop() dashboardGroups: PanelNavGroup[] = [];
   @Prop() settingsGroups: PanelNavGroup[] = [];
   @Prop() currentUrl: string = '';
+  /** Whether the router-derived current area owns the active mobile stage. */
+  @Prop() routeSelectionActive: boolean = true;
   @Prop() navigationLabel: string = 'Application navigation';
   @Prop() dashboardLabel: string = 'Dashboard';
   @Prop() settingsLabel: string = 'Settings';
   @Prop() accountLabel: string = 'Account';
   @Prop() helpLabel: string = 'Help & Support';
+  /** Show the optional Account shortcut in the sheet header. */
+  @Prop() showAccount: boolean = true;
 
   @Event() dsAreaSelect!: EventEmitter<string>;
   @Event() dsBrowseContextChange!: EventEmitter<NavChromeStyle>;
@@ -48,6 +52,7 @@ export class MobileSheetNav {
   }
 
   private get activeId(): string {
+    if (!this.routeSelectionActive) return '';
     return deriveActiveIdFromUrl(this.currentUrl, [
       ...this.dashboardGroups.flatMap(group => group.items),
       ...this.settingsGroups.flatMap(group => group.items),
@@ -173,19 +178,29 @@ export class MobileSheetNav {
           id="ds-mobile-sheet-nav"
           class="mobile-sheet-nav"
         >
-          <header class="mobile-sheet-nav__header ds-chrome-grid ds-chrome-space--md">
+          <header
+            class={{
+              'mobile-sheet-nav__header': true,
+              'mobile-sheet-nav__header--expanded-context': !this.showAccount,
+              'ds-chrome-grid': true,
+              'ds-chrome-space--md': true,
+            }}
+          >
             <div class="mobile-sheet-nav__brand">{this.renderLogo()}</div>
             <ds-tab-group
               class="mobile-sheet-nav__context"
               tabs={contextTabs}
               value={this.browseContext}
               size="lg"
+              width={this.showAccount ? 'hug' : 'fill'}
               aria-label="Browse context"
               onDsChange={this.handleContextChange}
             />
             <div class="mobile-sheet-nav__actions">
               {this.renderHeaderDestination('help', 'CircleQuestion', this.helpLabel)}
-              {this.renderHeaderDestination('account', 'Avatar', this.accountLabel)}
+              {this.showAccount
+                ? this.renderHeaderDestination('account', 'Avatar', this.accountLabel)
+                : null}
             </div>
           </header>
 

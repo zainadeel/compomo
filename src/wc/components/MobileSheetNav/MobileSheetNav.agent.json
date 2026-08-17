@@ -14,16 +14,19 @@
   "patterns": ["pattern:application-shell"],
   "accessibility": [
     "The sheet is a named navigation landmark and retains visible labels for every primary destination.",
-    "Dashboard and Settings use icon-only tabs with localized accessible names; Help and Account use icon-only actions with matching tooltips.",
+    "Dashboard and Settings use icon-only tabs with localized accessible names; Help and the optional Account shortcut use icon-only actions with matching tooltips.",
     "Escape requests dismissal and opening moves focus to the selected or first available area."
   ],
   "states": [
     "Dashboard and Settings change only the flat destination collection being browsed.",
-    "Area, Help, and Account events express intent while the application owns navigation and product behavior."
+    "Area, Help, and Account events express intent while the application owns navigation and product behavior.",
+    "Set routeSelectionActive to false while a global tool owns the mobile stage so the underlying router URL remains available without marking its area current.",
+    "Set showAccount to false when account and user preferences already live in the supplied Settings navigation."
   ],
   "responsiveBehavior": [
     "The pane fills the mobile content stage while the bottom bar remains available.",
     "The sheet header and scrollable navigation body each use the shared 8px chrome inset; the context TabGroup and primary controls share a 40px height and 24px icon scale.",
+    "When the optional Account shortcut is hidden, the Dashboard and Settings TabGroup fills the centered two-thirds top-bar lane and gives both context options equal width.",
     "Dashboard and Settings preserve their supplied visual groups with an 8px gap between destinations inside a section and a 32px gap between sections."
   ],
   "references": [

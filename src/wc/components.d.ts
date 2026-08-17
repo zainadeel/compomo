@@ -62,7 +62,7 @@ import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, Text
 import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from "./components/Slider/Slider";
 import { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 import { SwitchSize } from "./components/Switch/Switch";
-import { TabBackground, TabGroupSize as TabGroupSize1 } from "./components/TabGroup/TabGroup";
+import { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
 import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
@@ -125,7 +125,7 @@ export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, Text
 export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from "./components/Slider/Slider";
 export { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 export { SwitchSize } from "./components/Switch/Switch";
-export { TabBackground, TabGroupSize as TabGroupSize1 } from "./components/TabGroup/TabGroup";
+export { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
 export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
@@ -1763,6 +1763,11 @@ export namespace Components {
          */
         "open": boolean;
         /**
+          * Whether the router-derived current area owns the active mobile stage.
+          * @default true
+         */
+        "routeSelectionActive": boolean;
+        /**
           * @default []
          */
         "settingsGroups": PanelNavGroup[];
@@ -1770,6 +1775,11 @@ export namespace Components {
           * @default 'Settings'
          */
         "settingsLabel": string;
+        /**
+          * Show the optional Account shortcut in the sheet header.
+          * @default true
+         */
+        "showAccount": boolean;
     }
     interface DsModal {
         /**
@@ -2751,6 +2761,11 @@ export namespace Components {
           * @default ''
          */
         "value": string;
+        /**
+          * Width fit — hug content (default) or fill the parent with equal-width segments.
+          * @default 'hug'
+         */
+        "width": TabGroupWidth;
     }
     interface DsTable {
         /**
@@ -6259,6 +6274,11 @@ declare namespace LocalJSX {
          */
         "open"?: boolean;
         /**
+          * Whether the router-derived current area owns the active mobile stage.
+          * @default true
+         */
+        "routeSelectionActive"?: boolean;
+        /**
           * @default []
          */
         "settingsGroups"?: PanelNavGroup[];
@@ -6266,6 +6286,11 @@ declare namespace LocalJSX {
           * @default 'Settings'
          */
         "settingsLabel"?: string;
+        /**
+          * Show the optional Account shortcut in the sheet header.
+          * @default true
+         */
+        "showAccount"?: boolean;
     }
     interface DsModal {
         /**
@@ -7366,6 +7391,11 @@ declare namespace LocalJSX {
           * @default ''
          */
         "value"?: string;
+        /**
+          * Width fit — hug content (default) or fill the parent with equal-width segments.
+          * @default 'hug'
+         */
+        "width"?: TabGroupWidth;
     }
     interface DsTable {
         /**
@@ -8199,11 +8229,13 @@ declare namespace LocalJSX {
         "open": boolean;
         "browseContext": NavChromeStyle;
         "currentUrl": string;
+        "routeSelectionActive": boolean;
         "navigationLabel": string;
         "dashboardLabel": string;
         "settingsLabel": string;
         "accountLabel": string;
         "helpLabel": string;
+        "showAccount": boolean;
     }
     interface DsModalAttributes {
         "open": boolean;
@@ -8416,6 +8448,7 @@ declare namespace LocalJSX {
     interface DsTabGroupAttributes {
         "value": string;
         "size": TabGroupSize;
+        "width": TabGroupWidth;
         "background": TabBackground | undefined;
         "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;

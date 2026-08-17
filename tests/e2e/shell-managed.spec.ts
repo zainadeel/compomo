@@ -112,6 +112,66 @@ test.describe('Managed application shell', () => {
       .toBeLessThan(0.5);
   });
 
+  test('opens Help from the managed mobile sheet and omits the optional Account shortcut', async ({
+    page,
+  }) => {
+    const shell = page.locator('#managed-shell');
+    await page.setViewportSize({ width: 390, height: 760 });
+    await expect(shell).toHaveAttribute('responsive-mode', 'mobile');
+
+    await shell.getByRole('button', { name: 'Menu' }).click();
+    await expect(shell.getByRole('button', { name: 'Account' })).toHaveCount(0);
+    const sheetHeader = shell.locator('.mobile-sheet-nav__header');
+    const contextTabs = sheetHeader.locator('ds-tab-group');
+    await expect(contextTabs).toHaveJSProperty('width', 'fill');
+    const contextMetrics = await sheetHeader.evaluate(element => {
+      const styles = getComputedStyle(element);
+      const context = element.querySelector('ds-tab-group');
+      const tabs = Array.from(element.querySelectorAll('.tab'));
+      const usableWidth =
+        element.getBoundingClientRect().width -
+        parseFloat(styles.paddingLeft) -
+        parseFloat(styles.paddingRight) -
+        parseFloat(styles.columnGap) * 2;
+      return {
+        ratio: (context?.getBoundingClientRect().width ?? 0) / usableWidth,
+        tabWidths: tabs.map(tab => tab.getBoundingClientRect().width),
+      };
+    });
+    expect(contextMetrics.ratio).toBeCloseTo(2 / 3, 2);
+    expect(Math.max(...contextMetrics.tabWidths) - Math.min(...contextMetrics.tabWidths))
+      .toBeLessThanOrEqual(0.5);
+    await shell.getByRole('button', { name: 'Help & Support' }).click();
+
+    await expect(shell.locator('ds-shell-tools')).toHaveAttribute('active-tool', 'help');
+    await expect(shell.locator('ds-shell-tools')).toHaveAttribute('open');
+    await expect(shell.getByText('Help view', { exact: true })).toBeVisible();
+    await expect(shell.getByRole('button', { name: 'Help & Support' })).toHaveAttribute(
+      'aria-current',
+      'page'
+    );
+    await expect(shell.getByRole('button', { name: 'Menu' })).toHaveAttribute(
+      'aria-expanded',
+      'false'
+    );
+    await expect(page.locator('html')).toHaveAttribute(
+      'data-last-event',
+      JSON.stringify({ type: 'dsToolChange', detail: { id: 'help', selected: true } })
+    );
+
+    await shell.getByRole('button', { name: 'Menu' }).click();
+    const trackingDestination = shell
+      .locator('ds-mobile-sheet-nav')
+      .getByRole('button', { name: 'Tracking' });
+    await expect(trackingDestination).not.toHaveAttribute('aria-current', 'page');
+    await trackingDestination.click();
+    await expect(shell.getByText('Help view', { exact: true })).toBeHidden();
+    await expect(shell.getByRole('button', { name: 'Tracking' })).toHaveAttribute(
+      'aria-current',
+      'page'
+    );
+  });
+
   test('supports a pinned roomy table-page header with flush content and optional divider', async ({
     page,
   }) => {

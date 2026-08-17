@@ -72,15 +72,24 @@ export const NestedPageSections: Story = {
 };
 
 export const SegmentedToolSections: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Segmented mobile tool sections fill the centered two-thirds top-bar lane and divide that space equally between options.',
+      },
+    },
+  },
   render: () => html`
-    <ds-mobile-header
-      heading-level="h2"
-      .sections=${inboxSections}
-      value="activity"
-      sections-presentation="segmented"
-      sections-size="lg"
-      sections-aria-label="Inbox sections"
-    ></ds-mobile-header>
+    <div style="width:390px;max-width:100%;">
+      <ds-mobile-header
+        heading-level="h2"
+        .sections=${inboxSections}
+        value="activity"
+        sections-presentation="segmented"
+        sections-size="lg"
+        sections-aria-label="Inbox sections"
+      ></ds-mobile-header>
+    </div>
   `,
 };
 
