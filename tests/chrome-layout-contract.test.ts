@@ -78,13 +78,23 @@ test('migrated chrome consumes shared recipes while retaining nested rhythms', (
     ['src/wc/components/BarWorkflow/BarWorkflow.tsx', /bar-workflow ds-chrome-row ds-chrome-space--md/],
     ['src/wc/components/BarAction/BarAction.tsx', /ds-chrome-row ds-chrome-space--md ds-control-elevation ds-control-elevation--md/],
     ['src/wc/components/PanelToolSearch/PanelToolSearch.tsx', /panel-tool-search ds-chrome-row ds-chrome-space--md/],
-    ['src/wc/components/MobileHeader/MobileHeader.tsx', /mobile-header__primary ds-chrome-grid ds-chrome-space--md/],
-    ['src/wc/components/MobileSheetNav/MobileSheetNav.tsx', /mobile-sheet-nav__header ds-chrome-grid ds-chrome-space--md/],
     ['src/wc/components/MobileBarNav/MobileBarNav.tsx', /mobile-bar-nav ds-chrome-row ds-chrome-space--md/],
   ] as const;
 
   for (const [sourcePath, contract] of migrations) {
     assert.match(read(sourcePath), contract, sourcePath);
+  }
+
+  const conditionalMigrations = {
+    MobileHeader: ['mobile-header__primary', 'ds-chrome-grid', 'ds-chrome-space--md'],
+    MobileSheetNav: ['mobile-sheet-nav__header', 'ds-chrome-grid', 'ds-chrome-space--md'],
+  } as const;
+
+  for (const [component, classes] of Object.entries(conditionalMigrations)) {
+    const source = read(`src/wc/components/${component}/${component}.tsx`);
+    for (const className of classes) {
+      assert.match(source, new RegExp(`'${className}': true`), `${component}: ${className}`);
+    }
   }
 
   const panelTools = read('src/wc/components/PanelTools/PanelTools.tsx');
