@@ -63,7 +63,7 @@
     "Small, medium, and large use the shared 24px, 32px, and 40px control-density recipes for the outer track. Each segment uses the same-size inset recipe at 20px, 28px, and 36px while preserving that density's typography, icon, gap, and label metrics.",
     "Use one consistent content variant across every selectable tab in a group.",
     "Omitted background is for primary and secondary surfaces; pass the faint context explicitly on faint surfaces.",
-    "Only the omitted default context emphasizes visible selected label text and keeps the filled track; explicit faint follows the other surface contexts with a transparent track, stable text weight, surface border, and neutral active fill.",
+    "Only the omitted default context emphasizes visible selected label text and keeps the filled track; every explicit surface context uses a transparent track, stable text weight, surface border, and its context-matched neutral active fill rather than a brand active fill.",
     "Dividers visually separate related subsets inside one tab list but do not create nested navigation or independent selection groups."
   ],
   "responsiveBehavior": [
