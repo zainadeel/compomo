@@ -33,6 +33,7 @@ import {
 } from './table-render-model';
 import { TableLayoutController } from './table-layout-controller';
 import { TableLoadController } from './table-load-controller';
+import { TableGroupLoadController } from './table-group-load-controller';
 import {
   TableViewportFitController,
   type TableViewportFitMetrics,
@@ -43,6 +44,7 @@ import type {
   TableColumn,
   TableGroup,
   TableGroupCollapseChangeDetail,
+  TableGroupLoadMoreDetail,
   TableGroupingState,
   TableLoadMoreDetail,
   TableLoadMoreMode,
@@ -131,15 +133,27 @@ export class Table {
   @Prop() loadMoreThreshold: number = 0;
   @Prop() loadMoreLabel: string = 'Load more';
   @Prop() retryLabel: string = 'Retry';
-  @Prop() loadingMoreLabel: string = 'Loading more results';
+  @Prop() loadingMoreLabel: string = 'Loading more items';
   @Prop() endOfResultsLabel: string = 'All results loaded';
   /** Supports {count} and {total} placeholders. */
   @Prop() rowsLoadedLabel: string = '{count} more rows loaded. {total} rows loaded.';
+  @Prop() groupLoadMoreLabel: string = 'Load more';
+  /** Supports the {group} placeholder. */
+  @Prop() groupLoadMoreAriaLabel: string = 'Load more {group} results';
+  /** Supports the {group} placeholder. */
+  @Prop() groupRetryLabel: string = 'Retry loading {group} results';
+  /** Supports the {group} placeholder. */
+  @Prop() groupLoadingMoreLabel: string = 'Loading more items';
+  /** Supports the {group} placeholder. */
+  @Prop() groupEndOfResultsLabel: string = 'All {group} results loaded';
+  /** Supports {group}, {count}, {loaded}, and {total} placeholders. */
+  @Prop() groupRowsLoadedLabel: string = '{count} more rows loaded in {group}. {loaded} of {total} rows loaded.';
 
   @Event() dsSortChange!: EventEmitter<TableSortChangeDetail>;
   @Event() dsGroupCollapseChange!: EventEmitter<TableGroupCollapseChangeDetail>;
   @Event() dsSelectionChange!: EventEmitter<TableSelectionChangeDetail>;
   @Event() dsLoadMore!: EventEmitter<TableLoadMoreDetail>;
+  @Event() dsGroupLoadMore!: EventEmitter<TableGroupLoadMoreDetail>;
   @Event() dsCellAction!: EventEmitter<TableCellActionDetail>;
   @Event() dsRowActivate!: EventEmitter<TableRowActivateDetail>;
 
@@ -159,6 +173,7 @@ export class Table {
   private stickyHeaderTableEl: HTMLTableElement | null = null;
   private tableEl: HTMLTableElement | null = null;
   private sentinelEl: HTMLElement | null = null;
+  private readonly groupSentinelEls = new Map<string, HTMLElement>();
   private previousModelWarning = '';
   private hasLoaded = false;
   private renderedModel: TableRenderModel | null = null;
@@ -186,7 +201,7 @@ export class Table {
   });
   private readonly loadController = new TableLoadController({
     state: () => ({
-      lazyLoading: this.lazyLoading,
+      lazyLoading: this.lazyLoading && !this.grouped,
       loadMoreMode: this.loadMoreMode,
       hasMore: this.hasMore,
       loadingMore: this.loadingMore,
@@ -208,6 +223,26 @@ export class Table {
       this.dsLoadMore.emit(detail);
     },
   });
+  private readonly groupLoadController = new TableGroupLoadController({
+    state: () => ({
+      enabled: this.grouped && this.lazyLoading,
+      loadMoreMode: this.loadMoreMode,
+      loadMoreThreshold: this.loadMoreThreshold,
+      containedScroll: this.containedScroll,
+      groups: this.groups,
+      viewport: this.viewportEl,
+      sentinels: this.groupSentinelEls,
+      loadingMoreLabel: this.groupLoadingMoreLabel,
+      endOfResultsLabel: this.groupEndOfResultsLabel,
+      rowsLoadedLabel: this.groupRowsLoadedLabel,
+    }),
+    announce: message => {
+      this.announcement = message;
+    },
+    request: detail => {
+      this.dsGroupLoadMore.emit(detail);
+    },
+  });
   private readonly viewportFitController = new TableViewportFitController({
     enabled: () => this.fitViewport,
     elements: () => ({ host: this.el, surface: this.rootEl }),
@@ -224,6 +259,7 @@ export class Table {
   componentWillLoad(): void {
     this.syncHeaderSlotPresence();
     this.loadController.initialize();
+    this.groupLoadController.initialize();
     this.warnModelIssues();
   }
 
@@ -231,6 +267,7 @@ export class Table {
     this.hasLoaded = true;
     this.layoutController.connect();
     this.loadController.connect();
+    this.groupLoadController.connect();
     this.viewportFitController.connect();
     this.syncStickyGroupConnection();
     this.connectHeaderSlotObserver();
@@ -239,6 +276,7 @@ export class Table {
   componentDidRender(): void {
     this.layoutController.refresh();
     this.loadController.refresh();
+    this.groupLoadController.refresh();
     this.viewportFitController.refresh();
     this.syncStickyGroupConnection();
     if (this.stickyGroupConnected) this.updateStickyGroup();
@@ -248,6 +286,7 @@ export class Table {
     if (!this.hasLoaded) return;
     this.layoutController.connect();
     this.loadController.connect();
+    this.groupLoadController.connect();
     this.viewportFitController.connect();
     this.syncStickyGroupConnection();
     this.connectHeaderSlotObserver();
@@ -256,6 +295,7 @@ export class Table {
   disconnectedCallback(): void {
     this.layoutController.disconnect();
     this.loadController.disconnect();
+    this.groupLoadController.disconnect();
     this.viewportFitController.disconnect();
     this.disconnectStickyGroup();
     this.headerSlotObserver?.disconnect();
@@ -348,12 +388,14 @@ export class Table {
   handleStructureChange(): void {
     this.warnModelIssues();
     this.loadController.structureChanged();
+    this.groupLoadController.structureChanged();
   }
 
   @Watch('rows')
   @Watch('groups')
   handleDataChange(): void {
-    this.loadController.dataChanged();
+    if (this.grouped) this.groupLoadController.dataChanged();
+    else this.loadController.dataChanged();
     this.warnModelIssues();
   }
 
@@ -367,21 +409,22 @@ export class Table {
   @Watch('loadMoreThreshold')
   handleLazyConfigurationChange(): void {
     this.loadController.configurationChanged();
+    this.groupLoadController.configurationChanged();
   }
 
   @Watch('loadingMore')
   handleLoadingMoreChange(loading: boolean): void {
-    this.loadController.loadingChanged(loading);
+    if (!this.grouped) this.loadController.loadingChanged(loading);
   }
 
   @Watch('loadMoreError')
   handleLoadMoreErrorChange(error: string | undefined): void {
-    this.loadController.errorChanged(error);
+    if (!this.grouped) this.loadController.errorChanged(error);
   }
 
   @Watch('hasMore')
   handleHasMoreChange(hasMore: boolean, hadMore: boolean): void {
-    this.loadController.hasMoreChanged(hasMore, hadMore);
+    if (!this.grouped) this.loadController.hasMoreChanged(hasMore, hadMore);
   }
 
   private get grouped(): boolean {
@@ -1090,8 +1133,8 @@ export class Table {
           <span class="ds-table__group-selection">
             {this.renderSelectionControl(
               groupSelection.allSelected
-                ? `Deselect ${group.label} group`
-                : `Select ${group.label} group`,
+                ? `Deselect loaded rows in ${group.label} group`
+                : `Select loaded rows in ${group.label} group`,
               groupSelection.allSelected,
               groupSelection.indeterminate,
               groupSelection.selectableRowIds.length === 0,
@@ -1146,6 +1189,65 @@ export class Table {
     );
   }
 
+  private formatGroupLoadLabel(template: string, group: TableGroup): string {
+    return template.split('{group}').join(group.label);
+  }
+
+  private renderGroupLoadRow(group: TableGroup, totalColumns: number) {
+    if (!this.lazyLoading) return null;
+    const error = group.loadMoreError?.trim();
+    if (!error && !group.loadingMore && !group.hasMore) return null;
+    const manualFallback = this.loadMoreMode === 'manual' ||
+      !this.groupLoadController.intersectionSupported;
+
+    return (
+      <tr
+        class="ds-table__load-row ds-table__group-load-row"
+        data-group-id={group.id}
+        ref={element => {
+          if (element) this.groupSentinelEls.set(group.id, element);
+          else this.groupSentinelEls.delete(group.id);
+        }}
+      >
+        <td class="ds-table__load-cell" colSpan={totalColumns}>
+          <div class="ds-table__viewport-band ds-table__load-band">
+            {error ? (
+              <span class="ds-table__load-content ds-table__load-content--error">
+                <span class="ds-table__load-copy">
+                  <ds-icon name="ErrorTriangle" size="md" color="secondary" aria-hidden="true" />
+                  <ds-text as="span" variant="text-body-medium" color="secondary">{error}</ds-text>
+                </span>
+                <ds-button-unfilled
+                  label={this.formatGroupLoadLabel(this.groupRetryLabel, group)}
+                  size="md"
+                  onDsClick={() => this.groupLoadController.request(group.id, 'retry')}
+                />
+              </span>
+            ) : group.loadingMore ? (
+              <span class="ds-table__load-content">
+                <ds-loader size="md" color="secondary" />
+                <ds-text as="span" variant="text-body-medium" color="secondary">
+                  {this.formatGroupLoadLabel(this.groupLoadingMoreLabel, group)}
+                </ds-text>
+              </span>
+            ) : group.hasMore && manualFallback ? (
+              <span class="ds-table__load-content">
+                <ds-button-unfilled
+                  label={this.groupLoadMoreLabel}
+                  aria-label={this.formatGroupLoadLabel(this.groupLoadMoreAriaLabel, group)}
+                  size="md"
+                  onDsClick={() => this.groupLoadController.request(group.id, 'manual')}
+                />
+              </span>
+            ) : (
+              <span class="ds-table__auto-sentinel" aria-hidden="true" />
+            )}
+          </div>
+        </td>
+      </tr>
+    );
+  }
+
   private renderStickyGroup(model: TableRenderModel) {
     if (!this.documentStickyHeader || !this.activeStickyGroupId) return null;
     const groupModel = model.groups.find(item => item.group.id === this.activeStickyGroupId);
@@ -1184,6 +1286,7 @@ export class Table {
           data-group-id={group.id}
           data-group-intent={intent}
           data-collapsed={isCollapsed ? 'true' : undefined}
+          aria-busy={!isCollapsed && group.loadingMore ? 'true' : undefined}
           key={group.id}
         >
           <tr
@@ -1208,6 +1311,7 @@ export class Table {
             </th>
           </tr>
           {!isCollapsed && group.rows.map(row => this.renderRow(row, model))}
+          {!isCollapsed && this.renderGroupLoadRow(group, model.totalColumns)}
         </tbody>
       );
     });
@@ -1272,7 +1376,7 @@ export class Table {
   }
 
   private renderLazyBody(model: TableRenderModel) {
-    if (!this.lazyLoading || !model.hasData) return null;
+    if (!this.lazyLoading || !model.hasData || model.grouped) return null;
     const error = this.loadMoreError?.trim();
     const manualFallback = this.loadMoreMode === 'manual' ||
       !this.loadController.intersectionSupported;
@@ -1437,11 +1541,14 @@ export class Table {
   }
 
   render() {
+    this.groupSentinelEls.clear();
     const model = this.createRenderModel();
     this.renderedModel = model;
     const regionLabel = this.scrollLabel?.trim() || `${this.caption} scroll area`;
     const initialLoading = this.loading && !model.hasData;
     const initialError = !model.hasData && this.error;
+    const hasGroupedStructure = model.grouped && this.lazyLoading && model.groups.length > 0;
+    const groupLoadingMore = hasGroupedStructure && this.groups.some(group => group.loadingMore);
     const viewportStyle = !this.boundedComposition && this.resolvedMaxHeight
       ? { '--ds-table-max-block-size': this.resolvedMaxHeight }
       : undefined;
@@ -1511,7 +1618,7 @@ export class Table {
                     this.stickyHeader && !this.documentStickyHeader,
                 }}
                 style={model.tableStyle}
-                aria-busy={initialLoading || this.loadingMore ? 'true' : undefined}
+                aria-busy={initialLoading || this.loadingMore || groupLoadingMore ? 'true' : undefined}
                 ref={element => {
                   this.tableEl = element ?? null;
                 }}
@@ -1527,7 +1634,7 @@ export class Table {
                   ? this.renderSkeletonBody(model)
                   : initialError
                     ? this.renderStateBody('error', model.totalColumns)
-                    : model.hasData
+                    : model.hasData || hasGroupedStructure
                       ? this.renderDataBodies(model)
                       : this.renderStateBody('empty', model.totalColumns)}
                 {!initialLoading && !initialError && this.renderLazyBody(model)}

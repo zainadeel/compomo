@@ -71,3 +71,23 @@ test('announces appended rows, failures, and the terminal transition', () => {
     'All results loaded',
   ]);
 });
+
+test('does not announce global transitions while global loading is disabled', () => {
+  const current = state();
+  current.lazyLoading = false;
+  const announcements: string[] = [];
+  const controller = new TableLoadController({
+    state: () => current,
+    announce: message => announcements.push(message),
+    request: () => undefined,
+  });
+  controller.initialize();
+
+  current.loadedRowCount = 5;
+  controller.dataChanged();
+  controller.loadingChanged(true);
+  controller.errorChanged('More rows failed.');
+  controller.hasMoreChanged(false, true);
+
+  assert.deepEqual(announcements, []);
+});

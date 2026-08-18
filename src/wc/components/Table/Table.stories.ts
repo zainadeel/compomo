@@ -511,6 +511,26 @@ function severityGroupedRows(rows: TableRow[], sort: TableSortState | null): Tab
   });
 }
 
+function lazySeverityGroups(
+  loadedByGroup: Record<string, number>,
+  loadingGroupId: string | null,
+  sort: TableSortState | null,
+): TableGroup[] {
+  return severityGroupedRows(SAFETY_EVENT_ROWS, sort).map(group => {
+    const totalCount = group.rows.length;
+    const loadedCount = Math.min(loadedByGroup[group.id] ?? 1, totalCount);
+    return {
+      ...group,
+      rows: group.rows.slice(0, loadedCount),
+      totalCount,
+      countLabel: `${totalCount} ${totalCount === 1 ? 'event' : 'events'}`,
+      hasMore: loadedCount < totalCount,
+      loadingMore: loadingGroupId === group.id,
+      loadIdentity: `severity:${group.id}`,
+    };
+  });
+}
+
 const meta: Meta = {
   title: 'Data display/Table',
   tags: ['autodocs'],
@@ -1083,6 +1103,68 @@ export const WorkingLazyLoading: Story = {
               lazyRows: [...(args['lazyRows'] as TableRow[]), ...ADDED_ROWS],
               loadingMore: false,
               hasMore: false,
+            });
+          }, 650);
+        }}
+      ></ds-table>
+    `;
+  },
+};
+
+export const WorkingGroupedLazyLoading: Story = {
+  name: 'Working grouped lazy loading',
+  args: {
+    loadedByGroup: {},
+    loadingGroupId: null,
+    grouping: { columnId: 'severity', direction: 'asc' },
+    sort: { columnId: 'eventTime', direction: 'desc' },
+    collapsedGroupIds: [],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Every severity keeps its authoritative total and independently loaded member window. Loading one section appends rows only within that section; grouped tables never emit the global bottom-of-table request.',
+      },
+    },
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    const loadedByGroup = args['loadedByGroup'] as Record<string, number>;
+    const loadingGroupId = (args['loadingGroupId'] as string | null) ?? null;
+    const sort = (args['sort'] as TableSortState | null) ?? null;
+    const collapsedGroupIds = (args['collapsedGroupIds'] as string[]) ?? [];
+    const groups = lazySeverityGroups(loadedByGroup, loadingGroupId, sort);
+    return html`
+      <ds-table
+        .columns=${SAFETY_EVENT_COLUMNS}
+        .groups=${groups}
+        .grouping=${args['grouping']}
+        .sort=${sort}
+        .collapsedGroupIds=${collapsedGroupIds}
+        .displayedCount=${groups.reduce((count, group) => count + group.rows.length, 0)}
+        .totalCount=${SAFETY_EVENT_ROWS.length}
+        lazy-loading
+        load-more-mode="manual"
+        sticky-header
+        max-height="520px"
+        caption="Lazy-loaded safety events by severity"
+        caption-visibility="visible"
+        @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
+          updateArgs({ sort: event.detail.sort, loadedByGroup: {} })}
+        @dsGroupCollapseChange=${(
+          event: CustomEvent<{ collapsedGroupIds: string[] }>,
+        ) => updateArgs({ collapsedGroupIds: event.detail.collapsedGroupIds })}
+        @dsGroupLoadMore=${(event: CustomEvent<{ groupId: string }>) => {
+          const groupId = event.detail.groupId;
+          if (loadingGroupId) return;
+          updateArgs({ loadingGroupId: groupId });
+          window.setTimeout(() => {
+            updateArgs({
+              loadingGroupId: null,
+              loadedByGroup: {
+                ...loadedByGroup,
+                [groupId]: (loadedByGroup[groupId] ?? 1) + 1,
+              },
             });
           }, 650);
         }}

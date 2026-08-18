@@ -63,7 +63,7 @@ import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 import { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 import { SwitchSize } from "./components/Switch/Switch";
 import { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
-import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -126,7 +126,7 @@ export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 export { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 export { SwitchSize } from "./components/Switch/Switch";
 export { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
-export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -2826,6 +2826,35 @@ export namespace Components {
          */
         "fitViewport": boolean;
         /**
+          * Supports the {group} placeholder.
+          * @default 'All {group} results loaded'
+         */
+        "groupEndOfResultsLabel": string;
+        /**
+          * Supports the {group} placeholder.
+          * @default 'Load more {group} results'
+         */
+        "groupLoadMoreAriaLabel": string;
+        /**
+          * @default 'Load more'
+         */
+        "groupLoadMoreLabel": string;
+        /**
+          * Supports the {group} placeholder.
+          * @default 'Loading more items'
+         */
+        "groupLoadingMoreLabel": string;
+        /**
+          * Supports the {group} placeholder.
+          * @default 'Retry loading {group} results'
+         */
+        "groupRetryLabel": string;
+        /**
+          * Supports {group}, {count}, {loaded}, and {total} placeholders.
+          * @default '{count} more rows loaded in {group}. {loaded} of {total} rows loaded.'
+         */
+        "groupRowsLoadedLabel": string;
+        /**
           * Controlled grouping column. Applications supply groups in their final fixed order.
           * @default null
          */
@@ -2877,7 +2906,7 @@ export namespace Components {
          */
         "loadingMore": boolean;
         /**
-          * @default 'Loading more results'
+          * @default 'Loading more items'
          */
         "loadingMoreLabel": string;
         /**
@@ -4329,6 +4358,7 @@ declare global {
         "dsGroupCollapseChange": TableGroupCollapseChangeDetail;
         "dsSelectionChange": TableSelectionChangeDetail;
         "dsLoadMore": TableLoadMoreDetail;
+        "dsGroupLoadMore": TableGroupLoadMoreDetail;
         "dsCellAction": TableCellActionDetail;
         "dsRowActivate": TableRowActivateDetail;
     }
@@ -7456,6 +7486,35 @@ declare namespace LocalJSX {
          */
         "fitViewport"?: boolean;
         /**
+          * Supports the {group} placeholder.
+          * @default 'All {group} results loaded'
+         */
+        "groupEndOfResultsLabel"?: string;
+        /**
+          * Supports the {group} placeholder.
+          * @default 'Load more {group} results'
+         */
+        "groupLoadMoreAriaLabel"?: string;
+        /**
+          * @default 'Load more'
+         */
+        "groupLoadMoreLabel"?: string;
+        /**
+          * Supports the {group} placeholder.
+          * @default 'Loading more items'
+         */
+        "groupLoadingMoreLabel"?: string;
+        /**
+          * Supports the {group} placeholder.
+          * @default 'Retry loading {group} results'
+         */
+        "groupRetryLabel"?: string;
+        /**
+          * Supports {group}, {count}, {loaded}, and {total} placeholders.
+          * @default '{count} more rows loaded in {group}. {loaded} of {total} rows loaded.'
+         */
+        "groupRowsLoadedLabel"?: string;
+        /**
           * Controlled grouping column. Applications supply groups in their final fixed order.
           * @default null
          */
@@ -7507,7 +7566,7 @@ declare namespace LocalJSX {
          */
         "loadingMore"?: boolean;
         /**
-          * @default 'Loading more results'
+          * @default 'Loading more items'
          */
         "loadingMoreLabel"?: string;
         /**
@@ -7516,6 +7575,7 @@ declare namespace LocalJSX {
         "maxHeight"?: string | number | undefined;
         "onDsCellAction"?: (event: DsTableCustomEvent<TableCellActionDetail>) => void;
         "onDsGroupCollapseChange"?: (event: DsTableCustomEvent<TableGroupCollapseChangeDetail>) => void;
+        "onDsGroupLoadMore"?: (event: DsTableCustomEvent<TableGroupLoadMoreDetail>) => void;
         "onDsLoadMore"?: (event: DsTableCustomEvent<TableLoadMoreDetail>) => void;
         "onDsRowActivate"?: (event: DsTableCustomEvent<TableRowActivateDetail>) => void;
         "onDsSelectionChange"?: (event: DsTableCustomEvent<TableSelectionChangeDetail>) => void;
@@ -8487,6 +8547,12 @@ declare namespace LocalJSX {
         "loadingMoreLabel": string;
         "endOfResultsLabel": string;
         "rowsLoadedLabel": string;
+        "groupLoadMoreLabel": string;
+        "groupLoadMoreAriaLabel": string;
+        "groupRetryLabel": string;
+        "groupLoadingMoreLabel": string;
+        "groupEndOfResultsLabel": string;
+        "groupRowsLoadedLabel": string;
     }
     interface DsTagAttributes {
         "label": string;

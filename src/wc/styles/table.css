@@ -1172,10 +1172,6 @@
   pointer-events: none;
 }
 
-:where(.ds-table__group:last-child[data-collapsed='true'] .ds-table__group-content)::after {
-  display: none;
-}
-
 :where(.ds-table__table--selectable .ds-table__group-content),
 :where(.ds-table__sticky-group--selectable .ds-table__group-content) {
   /* Selection lane is the real 40px column — don't add start pad or flex gap. */
@@ -1290,7 +1286,7 @@
 }
 
 :where(.ds-table__skeleton-row:last-child .ds-table__cell),
-:where(.ds-table__load-row:last-child .ds-table__load-cell),
+:where(.ds-table__load-body .ds-table__load-row:last-child .ds-table__load-cell),
 :where(.ds-table__state-row:last-child .ds-table__state-cell),
 :where(.ds-table__body:last-child .ds-table__row:last-child .ds-table__cell) {
   border-block-end: 0;

@@ -11,39 +11,50 @@
   --_tab-group-divider: var(--color-border-secondary);
 }
 
+:host(.tab-group-host--on-faint) {
+  --_tab-group-selected-fill: var(--color-interaction-active);
+}
+
 :host(.tab-group-host--on-medium) {
   --_tab-group-surface-border: var(--color-border-on-medium-background-tertiary);
   --_tab-group-divider: var(--color-border-on-medium-background-secondary);
+  --_tab-group-selected-fill: var(--color-interaction-on-medium-background-active);
 }
 
 :host(.tab-group-host--on-bold) {
   --_tab-group-surface-border: var(--color-border-on-bold-background-tertiary);
   --_tab-group-divider: var(--color-border-on-bold-background-secondary);
+  --_tab-group-selected-fill: var(--color-interaction-on-bold-background-active);
 }
 
 :host(.tab-group-host--on-strong) {
   --_tab-group-surface-border: var(--color-border-on-strong-background-tertiary);
   --_tab-group-divider: var(--color-border-on-strong-background-secondary);
+  --_tab-group-selected-fill: var(--color-interaction-on-strong-background-active);
 }
 
 :host(.tab-group-host--on-translucent) {
   --_tab-group-surface-border: var(--color-translucent-border-tertiary);
   --_tab-group-divider: var(--color-translucent-border-secondary);
+  --_tab-group-selected-fill: var(--color-translucent-interaction-active);
 }
 
 :host(.tab-group-host--on-inverted) {
   --_tab-group-surface-border: var(--color-inverted-border-tertiary);
   --_tab-group-divider: var(--color-inverted-border-secondary);
+  --_tab-group-selected-fill: var(--color-inverted-interaction-active);
 }
 
 :host(.tab-group-host--on-media) {
   --_tab-group-surface-border: var(--color-media-border-tertiary);
   --_tab-group-divider: var(--color-media-border-secondary);
+  --_tab-group-selected-fill: var(--color-media-interaction-active);
 }
 
 :host(.tab-group-host--on-always-dark) {
   --_tab-group-surface-border: var(--color-always-dark-border-tertiary);
   --_tab-group-divider: var(--color-always-dark-border-secondary);
+  --_tab-group-selected-fill: var(--color-always-dark-interaction-active);
 }
 
 .tab-list {
@@ -116,12 +127,7 @@
 }
 
 :host(.tab-group-host--surface) .tab--selected {
-  background-color: var(--ds-interaction-active);
-}
-
-/* Preserve text contrast on the mid-tone bold surface in both color schemes. */
-:host(.tab-group-host--on-bold) .tab--selected {
-  background-color: var(--color-interaction-active);
+  background-color: var(--_tab-group-selected-fill);
 }
 
 .tab--selected:not(.ds-interaction-fill) {

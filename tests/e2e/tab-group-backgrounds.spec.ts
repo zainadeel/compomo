@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('keeps default styling and uses surface borders with active selected fills elsewhere', async ({ page }) => {
+test('keeps default styling and uses surface borders with neutral selected fills elsewhere', async ({ page }) => {
   const host = page.locator('#tabs');
   const track = host.locator('.tab-list');
   const selected = host.locator('.tab--selected');
@@ -49,7 +49,7 @@ test('keeps default styling and uses surface borders with active selected fills 
     },
     {
       value: 'bold',
-      active: '--color-interaction-active',
+      active: '--color-interaction-on-bold-background-active',
       border: '--color-border-on-bold-background-tertiary',
     },
     {
@@ -59,12 +59,12 @@ test('keeps default styling and uses surface borders with active selected fills 
     },
     {
       value: 'translucent',
-      active: '--color-translucent-interaction-active-brand',
+      active: '--color-translucent-interaction-active',
       border: '--color-translucent-border-tertiary',
     },
     {
       value: 'inverted',
-      active: '--color-inverted-interaction-active-brand',
+      active: '--color-inverted-interaction-active',
       border: '--color-inverted-border-tertiary',
     },
     {
@@ -74,7 +74,7 @@ test('keeps default styling and uses surface borders with active selected fills 
     },
     {
       value: 'always-dark',
-      active: '--color-always-dark-interaction-active-brand',
+      active: '--color-always-dark-interaction-active',
       border: '--color-always-dark-border-tertiary',
     },
   ] as const;
