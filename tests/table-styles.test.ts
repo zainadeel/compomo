@@ -122,8 +122,12 @@ test('retains the structural and accessibility fallbacks rendered tests depend o
     /\.ds-table__load-body \.ds-table__load-row:last-child \.ds-table__load-cell/,
   );
   assert.doesNotMatch(css, /:where\(\.ds-table__load-row:last-child \.ds-table__load-cell\)/);
-  assert.doesNotMatch(
+  assert.match(
     css,
-    /\.ds-table__group:last-child\[data-collapsed='true'\] \.ds-table__group-content/,
+    /\.ds-table__group:last-child > \.ds-table__group-row:last-child[\s\S]*?\.ds-table__group-content/,
+  );
+  assert.match(
+    css,
+    /\.ds-table__group:last-child > \.ds-table__group-load-row:last-child[\s\S]*?\.ds-table__load-cell/,
   );
 });

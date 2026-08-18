@@ -1121,8 +1121,8 @@ export class Table {
     const {
       group,
       count,
+      loadedCount,
       countLabel,
-      countIntent,
       collapsed: isCollapsed,
       labelColor,
       selection: groupSelection,
@@ -1152,18 +1152,24 @@ export class Table {
           >
             {group.label}
           </ds-text>
-          <span
-            class="ds-table__group-count ds-control-elevation ds-control-elevation--sm"
+          <ds-text
+            class="ds-table__group-separator"
+            as="span"
+            variant="text-body-medium"
+            color="secondary"
             aria-hidden="true"
           >
-            <ds-tag
-              label={String(count)}
-              intent={countIntent}
-              contrast="faint"
-              size="sm"
-              rounded={true}
-            ></ds-tag>
-          </span>
+            ·
+          </ds-text>
+          <ds-text
+            class="ds-table__group-count"
+            as="span"
+            variant="text-body-medium"
+            color="secondary"
+            aria-hidden="true"
+          >
+            {loadedCount} of {count}
+          </ds-text>
           <span class="ds-visually-hidden">{countLabel}</span>
         </span>
         <ds-button-unfilled
