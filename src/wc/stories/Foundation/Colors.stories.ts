@@ -445,7 +445,7 @@ function ColorIntentColors(): TemplateResult {
           ${intentInteractionCtx.map(ctx => html`
             <div style="display: flex; flex-direction: column; gap: 6px;">
               <span style="${LABEL} font-weight: 600;">${ctx}</span>
-              ${(['hover', 'pressed', 'focus'] as const).map(state => html`
+              ${STATES.map(state => html`
                 <div style="display: flex; flex-direction: column; gap: 2px;">
                   <div style="height: 32px; border-radius: 6px; background-color: var(--color-color-intent-interaction-${ctx}-${state}); border: 1px solid var(--color-border-tertiary);"></div>
                   <span style="${LABEL}">${state}</span>
@@ -461,30 +461,35 @@ const driverStatuses    = ['driving', 'on-duty', 'off-duty', 'personal-conveyanc
 const entityStatuses    = ['in-motion', 'idling', 'stationary', 'stale', 'immobilized'] as const;
 const locationIntents   = ['brand', 'neutral', 'positive', 'negative', 'warning', 'caution'] as const;
 const safetyGrades      = ['excellent', 'good', 'fair'] as const;
-const markerInteraction = ['hover', 'pressed', 'focus'] as const;
+const markerInteraction = STATES;
 
 function DriverStatusColors(): TemplateResult {
   return html`
     <div style="${PAGE}">
-      ${section('Driver Status', 'HOS duty-cycle backgrounds and foreground', html`
+      ${section('Driver Status', 'HOS duty-cycle backgrounds with matching foreground and state tokens', html`
         <div style="${GRID}">
-          ${driverStatuses.map(status => swatch(`color-driver-status-background-${status}`, status))}
-          <div style="${SWATCH}">
-            <div style="${COLOR} display: flex; align-items: center; justify-content: center; background-color: var(--color-driver-status-background-driving);">
-              <span style="color: var(--color-driver-status-foreground); font-weight: 600; font-size: 14px;">Aa</span>
-            </div>
-            <span style="${LABEL}">foreground</span>
-          </div>
-        </div>
-        <div style="${GRID} margin-top: 4px;">
-          ${markerInteraction.map(state => html`
+          ${driverStatuses.map(status => html`
             <div style="${SWATCH}">
-              <div style="${COLOR} position: relative; background-color: var(--color-driver-status-background-driving); overflow: hidden;">
-                <div style="position: absolute; inset: 0; background-color: var(--color-driver-status-interaction-${state});"></div>
+              <div style="${COLOR} display: flex; align-items: center; justify-content: center; background-color: var(--color-driver-status-background-${status});">
+                <span style="color: var(--color-driver-status-foreground-${status}); font-weight: var(--typography-weight-bold); font-size: var(--typography-fontsize-xl);">Aa</span>
               </div>
-              <span style="${LABEL}">interaction-${state}</span>
+              <span style="${LABEL}">${status}</span>
             </div>`)}
-        </div>`)}
+        </div>
+        ${driverStatuses.map(status => html`
+          <div style="${SECTION}">
+            <span style="${LABEL} font-weight: 600;">${status} interactions</span>
+            <div style="${GRID}">
+              ${markerInteraction.map(state => html`
+                <div style="${SWATCH}">
+                  <div style="${COLOR} position: relative; background-color: var(--color-driver-status-background-${status}); overflow: hidden;">
+                    <div style="position: absolute; inset: 0; background-color: var(--color-driver-status-interaction-on-${status}-${state});"></div>
+                  </div>
+                  <span style="${LABEL}">${state}</span>
+                </div>`)}
+            </div>
+          </div>`)}
+      `)}
     </div>`;
 }
 

@@ -176,6 +176,12 @@ Families such as driver status, entity markers, location markers, safety
 scores, and settings profiles are semantic product language. Use them only for
 their named domain meaning; they are not substitute chart palettes.
 
+Driver-status colors are status-specific recipes. Keep the status name aligned
+across `--color-driver-status-background-*`,
+`--color-driver-status-foreground-*`, and
+`--color-driver-status-interaction-on-*-*`; do not mix parts from different
+statuses.
+
 ## Accessibility
 
 - Do not communicate status through color alone.
@@ -186,6 +192,10 @@ their named domain meaning; they are not substitute chart palettes.
   forced colors.
 - Verify text and essential icon contrast against the rendered surface in both
   themes.
+- Use driver-status surfaces only for their documented large/bold text or
+  non-text roles. The same restriction applies to literal color-intent
+  foregrounds while selected. Choose a core semantic surface when a selected
+  container must carry normal body text.
 - Restrict tertiary and quaternary foregrounds to genuinely inactive/disabled
   UI content or purely decorative content; never use them to quiet active
   information. Component-owned non-text contrast recipes are the documented,
