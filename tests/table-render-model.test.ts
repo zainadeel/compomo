@@ -47,6 +47,7 @@ test('normalizes group presentation and selection without mutating inputs', () =
       label: 'Critical',
       intent: 'negative',
       totalCount: 3,
+      countLabel: '3 events',
       rows,
     },
     {
@@ -68,13 +69,14 @@ test('normalizes group presentation and selection without mutating inputs', () =
 
   assert.equal(model.loadedRows.length, 2);
   assert.equal(model.groups[0].count, 3);
-  assert.equal(model.groups[0].countLabel, '3 items');
-  assert.equal(model.groups[0].countIntent, 'negative');
+  assert.equal(model.groups[0].loadedCount, 2);
+  assert.equal(model.groups[0].countLabel, '2 of 3 events loaded');
   assert.equal(model.groups[0].selection?.indeterminate, true);
   assert.equal(model.groups[1].intent, undefined);
   assert.equal(model.groups[1].intentClass, undefined);
   assert.equal(model.groups[1].labelColor, 'primary');
-  assert.equal(model.groups[1].countIntent, 'neutral');
+  assert.equal(model.groups[1].loadedCount, 0);
+  assert.equal(model.groups[1].countLabel, '0 of 0 items loaded');
   assert.equal(model.groups[1].collapsed, true);
   assert.deepEqual(model.collapseAllHost, { columnId: 'action', mode: 'action' });
   assert.equal(model.allGroupsCollapsed, false);

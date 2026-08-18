@@ -111,6 +111,7 @@ export class Tooltip {
   private anchor: HTMLElement | null = null;
   private popupEl: HTMLElement | null = null;
   private anchorObserver: MutationObserver | null = null;
+  private didLoad = false;
   private readonly position = new AnchoredPositionController({
     getAnchor: () => this.anchor,
     getPopup: () => this.popupEl,
@@ -168,8 +169,19 @@ export class Tooltip {
     this.hide();
   };
 
+  connectedCallback() {
+    if (!this.didLoad) return;
+    this.connectAnchor();
+  }
+
   componentDidLoad() {
+    this.didLoad = true;
+    this.connectAnchor();
+  }
+
+  private connectAnchor() {
     this.bindAnchor();
+    if (this.anchorObserver) return;
     this.anchorObserver = new MutationObserver(() => this.handleSlotChange());
     this.anchorObserver.observe(this.el, { childList: true });
   }

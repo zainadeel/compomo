@@ -210,7 +210,7 @@ export interface TableGroup {
   value?: string | number;
   /** Total server-side member count; may exceed the currently loaded row count. */
   totalCount?: number;
-  /** Optional localized accessible count phrase such as “18 vehicles”; the visible tag remains numeric. */
+  /** Optional localized total-count phrase such as “166 events” for accessible loaded progress. */
   countLabel?: string;
   /**
    * Optional semantic intent for the group section header. Applies a faint

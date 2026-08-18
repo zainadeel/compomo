@@ -837,7 +837,7 @@ export const GroupingBySeverity: Story = {
     docs: {
       description: {
         story:
-          'Safety events grouped by severity with intentful section headers: Critical → negative, High → warning, Medium → caution, Low → neutral. Each colored group transitions from its faint intent surface at the label edge into faint neutral at the trailing edge, with a bold intent title and a rounded, elevated sm Tag showing the numeric count in the same intent. With multi-selection enabled, each section also exposes a checkbox that selects or clears that group.',
+          'Safety events grouped by severity with intentful section headers: Critical → negative, High → warning, Medium → caution, Low → neutral. Each colored group transitions from its faint intent surface at the label edge into faint neutral at the trailing edge, with a bold intent title followed by plain loaded progress such as “Critical · 2 of 2”. With multi-selection enabled, each section also exposes a checkbox that selects or clears that group.',
       },
     },
   },
@@ -1123,7 +1123,7 @@ export const WorkingGroupedLazyLoading: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Every severity keeps its authoritative total and independently loaded member window. Loading one section appends rows only within that section; grouped tables never emit the global bottom-of-table request.',
+        story: 'Every severity keeps its authoritative total and independently loaded member window. Section headers show that progress directly as “loaded of total” and update when rows append. Grouped tables never emit the global bottom-of-table request. Internal section rows keep their dividers, while only the final rendered item yields its divider to the table edge or footer.',
       },
     },
   },

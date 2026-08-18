@@ -82,6 +82,18 @@ test('rebinds when the slotted trigger is replaced', async ({ page }) => {
   expect(popupBox?.x).toBeGreaterThan(anchorBox?.right ?? 0);
 });
 
+test('rebinds after the tooltip host is disconnected and reinserted', async ({ page }) => {
+  const tooltip = page.locator('#dynamic-tooltip');
+  await tooltip.evaluate(element => {
+    const parent = element.parentElement;
+    element.remove();
+    parent?.append(element);
+  });
+
+  await page.locator('#dynamic-anchor-a').hover();
+  await expect(page.getByRole('tooltip', { name: 'Dynamic label' })).toBeVisible();
+});
+
 test('uses instant warm handoff between adjacent triggers', async ({ page }) => {
   await page.locator('#warm-one').hover();
   await expect(page.getByRole('tooltip', { name: 'Warm one' })).toBeVisible();

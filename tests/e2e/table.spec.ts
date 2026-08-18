@@ -258,12 +258,15 @@ test('keeps application group order fixed and exposes only member-row sorting', 
   const groupLabel = firstGroupHeader.locator('.ds-table__group-label');
   await expect(groupLabel).toHaveJSProperty('variant', 'text-body-medium');
   await expect(groupLabel).toHaveJSProperty('emphasis', true);
-  const countTag = firstGroupHeader.locator('.ds-table__group-count ds-tag');
-  await expect(countTag).toHaveJSProperty('label', '3');
-  await expect(countTag).toHaveJSProperty('size', 'sm');
-  await expect(countTag).toHaveJSProperty('intent', 'neutral');
-  await expect(countTag).toHaveJSProperty('rounded', true);
-  await expect(firstGroupHeader.locator('.ds-visually-hidden')).toHaveText('3 items');
+  await expect(firstGroupHeader.locator('.ds-table__group-separator')).toHaveText('·');
+  const countText = firstGroupHeader.locator('.ds-table__group-count');
+  await expect(countText).toHaveText('2 of 3');
+  await expect(countText).toHaveJSProperty('variant', 'text-body-medium');
+  await expect(countText).toHaveJSProperty('color', 'secondary');
+  await expect(firstGroupHeader.locator('.ds-table__group-copy ds-tag')).toHaveCount(0);
+  await expect(firstGroupHeader.locator('.ds-visually-hidden')).toHaveText(
+    '2 of 3 items loaded',
+  );
   const groupCopyInsets = await firstGroupHeader.locator('.ds-table__group-copy').evaluate(element => {
     const styles = getComputedStyle(element);
     return {
@@ -409,19 +412,16 @@ test('applies faint intent-to-neutral surfaces and bold titles to severity group
     } else {
       await expect(label).toHaveJSProperty('color', group.intent);
     }
-    const countSurface = header.locator('.ds-table__group-count');
-    const countTag = countSurface.locator('ds-tag');
-    await expect(countSurface).toHaveClass(/ds-control-elevation--sm/);
-    await expect(countSurface).toHaveAttribute('aria-hidden', 'true');
-    await expect(countTag).toHaveJSProperty('label', String(group.count));
-    await expect(countTag).toHaveJSProperty('size', 'sm');
-    await expect(countTag).toHaveJSProperty('intent', group.intent);
-    await expect(countTag).toHaveJSProperty('contrast', 'faint');
-    await expect(countTag).toHaveJSProperty('rounded', true);
+    await expect(header.locator('.ds-table__group-separator')).toHaveText('·');
+    const countText = header.locator('.ds-table__group-count');
+    await expect(countText).toHaveText(`${group.count} of ${group.count}`);
+    await expect(countText).toHaveJSProperty('variant', 'text-body-medium');
+    await expect(countText).toHaveJSProperty('color', 'secondary');
+    await expect(countText).toHaveAttribute('aria-hidden', 'true');
+    await expect(header.locator('.ds-table__group-copy ds-tag')).toHaveCount(0);
     await expect(header.locator('.ds-visually-hidden')).toHaveText(
-      `${group.count} ${group.count === 1 ? 'item' : 'items'}`,
+      `${group.count} of ${group.count} ${group.count === 1 ? 'item' : 'items'} loaded`,
     );
-    await expect(countSurface).not.toHaveCSS('box-shadow', 'none');
   }
 
   const selectableGroupCopyInsets = await table
@@ -479,8 +479,57 @@ test('applies faint intent-to-neutral surfaces and bold titles to severity group
     const separatorDisplay = await collapsedContents
       .nth(index)
       .evaluate(element => getComputedStyle(element, '::after').display);
-    expect(separatorDisplay).toBe('block');
+    expect(separatorDisplay).toBe(index === expected.length - 1 ? 'none' : 'block');
   }
+});
+
+test('yields the grouped load divider only at the terminal table edge', async ({ page }) => {
+  const table = page.locator('#severity-grouped');
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.lazyLoading = true;
+    element.loadMoreMode = 'manual';
+    element.displayedCount = element.groups.reduce(
+      (count, group) => count + group.rows.length,
+      0,
+    );
+    element.totalCount = element.displayedCount + element.groups.length;
+    element.groups = element.groups.map(group => ({
+      ...group,
+      totalCount: group.rows.length + 1,
+      hasMore: true,
+    }));
+  });
+
+  const loadCells = table.locator('.ds-table__group-load-row .ds-table__load-cell');
+  const criticalProgress = table.locator(
+    'tbody[data-group-id="critical"] .ds-table__group-count',
+  );
+  await expect(loadCells).toHaveCount(4);
+  await expect(table.locator('.ds-table__footer')).toBeVisible();
+  await expect(criticalProgress).toHaveText('2 of 3');
+  await expect(loadCells.first()).not.toHaveCSS('border-bottom-width', '0px');
+  await expect(loadCells.last()).toHaveCSS('border-bottom-width', '0px');
+
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.groups = element.groups.map((group, index) => index === 0
+      ? {
+          ...group,
+          rows: [
+            ...group.rows,
+            {
+              id: 'crit-3',
+              cells: {
+                behavior: 'Hard braking',
+                severity: 'Critical',
+                driver: 'Avery Chen',
+              },
+            },
+          ],
+          hasMore: false,
+        }
+      : group);
+  });
+  await expect(criticalProgress).toHaveText('3 of 3');
 });
 
 test('group section checkboxes select and clear group members when selectable', async ({ page }) => {

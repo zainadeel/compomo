@@ -51,6 +51,7 @@
     "The first hover or keyboard focus waits for delay; moving to another tooltip shortly after dismissal opens it immediately.",
     "An empty or whitespace-only label suppresses the popup while preserving the wrapper.",
     "Only one tooltip remains active globally; warm handoff removes the previous popup before showing the next.",
+    "Disconnecting and reinserting the tooltip host rebinds the current slotted trigger.",
     "The preferred side flips when it cannot fit, then alignment is clamped to viewport padding.",
     "Reduced motion removes enter and exit fades while retaining the final visible or hidden state."
   ],

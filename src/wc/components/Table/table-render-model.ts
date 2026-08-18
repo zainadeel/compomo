@@ -23,8 +23,8 @@ import type {
 export interface TableGroupRenderModel {
   group: TableGroup;
   count: number;
+  loadedCount: number;
   countLabel: string;
-  countIntent: TableGroupIntent;
   intent: TableGroupIntent | undefined;
   intentClass: string | undefined;
   labelColor: ReturnType<typeof tableGroupLabelColor>;
@@ -95,12 +95,14 @@ export function createTableRenderModel(input: TableRenderModelInput): TableRende
     collapsedGroupIds,
     groups: input.groups.map(group => {
       const count = resolvedTableGroupCount(group);
+      const loadedCount = group.rows.length;
+      const totalLabel = group.countLabel ?? `${count} ${count === 1 ? 'item' : 'items'}`;
       const intent = isTableGroupIntent(group.intent) ? group.intent : undefined;
       return {
         group,
         count,
-        countLabel: group.countLabel ?? `${count} ${count === 1 ? 'item' : 'items'}`,
-        countIntent: intent ?? 'neutral',
+        loadedCount,
+        countLabel: `${loadedCount} of ${totalLabel} loaded`,
         intent,
         intentClass: tableGroupIntentClass(intent),
         labelColor: tableGroupLabelColor(intent),
