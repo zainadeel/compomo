@@ -479,14 +479,16 @@ test('applies faint intent-to-neutral surfaces and bold titles to severity group
     const separatorDisplay = await collapsedContents
       .nth(index)
       .evaluate(element => getComputedStyle(element, '::after').display);
-    expect(separatorDisplay).toBe(index === expected.length - 1 ? 'none' : 'block');
+    expect(separatorDisplay).toBe('block');
   }
 });
 
 test('group section checkboxes select and clear group members when selectable', async ({ page }) => {
   const table = page.locator('#severity-grouped');
   const criticalBody = table.locator('tbody[data-group-id="critical"]');
-  const groupCheckbox = criticalBody.getByRole('checkbox', { name: 'Select Critical group' });
+  const groupCheckbox = criticalBody.getByRole('checkbox', {
+    name: 'Select loaded rows in Critical group',
+  });
   await expect(criticalBody.locator('.ds-table__group-selection')).toHaveCount(1);
   await expect(groupCheckbox).toHaveAttribute('aria-checked', 'false');
 
@@ -494,12 +496,13 @@ test('group section checkboxes select and clear group members when selectable', 
   await expect
     .poll(() => table.evaluate((element: HTMLDsTableElement) => element.selectedRowIds?.slice().sort()))
     .toEqual(['crit-1', 'crit-2']);
-  await expect(criticalBody.getByRole('checkbox', { name: 'Deselect Critical group' })).toHaveAttribute(
-    'aria-checked',
-    'true',
-  );
+  await expect(
+    criticalBody.getByRole('checkbox', { name: 'Deselect loaded rows in Critical group' }),
+  ).toHaveAttribute('aria-checked', 'true');
 
-  await criticalBody.getByRole('checkbox', { name: 'Deselect Critical group' }).click();
+  await criticalBody
+    .getByRole('checkbox', { name: 'Deselect loaded rows in Critical group' })
+    .click();
   await expect
     .poll(() => table.evaluate((element: HTMLDsTableElement) => element.selectedRowIds))
     .toEqual([]);
@@ -1131,7 +1134,7 @@ test('uses the shared focus-ring utility for every table-owned keyboard target',
 test('drives manual lazy loading and terminal state without pagination', async ({ page }) => {
   const table = page.locator('#lazy');
   await table.getByRole('button', { name: 'Load more' }).click();
-  await expect(table.locator('.ds-table__load-cell').getByText('Loading more results')).toBeVisible();
+  await expect(table.locator('.ds-table__load-cell').getByText('Loading more items')).toBeVisible();
   await expect(table.locator('tbody .ds-table__row')).toHaveCount(4);
   await expect(table.locator('.ds-table__load-cell').getByText('All results loaded')).toBeVisible();
   await expect(table).toHaveJSProperty('hasMore', false);
