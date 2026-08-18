@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.1.0](https://github.com/zainadeel/compomo/compare/v14.0.1...v14.1.0) (2026-08-18)
+
+
+### Added
+
+* refine mobile shell navigation and responsive controls ([#468](https://github.com/zainadeel/compomo/issues/468)) ([97032e2](https://github.com/zainadeel/compomo/commit/97032e29ea240ac75a348e20b6ecd7231de102c7))
+
 ## [14.0.1](https://github.com/zainadeel/compomo/compare/v14.0.0...v14.0.1) (2026-08-15)
 
 
