@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.2.1](https://github.com/zainadeel/compomo/compare/v14.2.0...v14.2.1) (2026-08-18)
+
+
+### Fixed
+
+* refine grouped table progress and tooltip reconnects ([#472](https://github.com/zainadeel/compomo/issues/472)) ([d55c60d](https://github.com/zainadeel/compomo/commit/d55c60d4d3521b7b5b22cfd76e5bb0cfc9c6ba2d))
+
 ## [14.2.0](https://github.com/zainadeel/compomo/compare/v14.1.0...v14.2.0) (2026-08-18)
 
 
