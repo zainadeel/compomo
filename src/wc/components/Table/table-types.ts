@@ -217,6 +217,14 @@ export interface TableGroup {
    * intent background and bold intent title color.
    */
   intent?: TableGroupIntent;
+  /** Whether this group has more member rows available to load. */
+  hasMore?: boolean;
+  /** Controlled incremental loading state for this group's member rows. */
+  loadingMore?: boolean;
+  /** Controlled incremental loading failure for this group's member rows. */
+  loadMoreError?: string;
+  /** Reset key for this group's query, sort, or filter state. Defaults to the group ID. */
+  loadIdentity?: string | number;
   rows: TableRow[];
 }
 
@@ -237,6 +245,10 @@ export interface TableLoadMoreDetail {
   reason: TableLoadMoreReason;
   loadIdentity: string | number;
   loadedRowCount: number;
+}
+
+export interface TableGroupLoadMoreDetail extends TableLoadMoreDetail {
+  groupId: string;
 }
 
 export interface TableCellActionDetail {

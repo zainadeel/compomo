@@ -95,6 +95,11 @@ export class TableLoadController {
   dataChanged(): void {
     const state = this.options.state();
     const nextCount = state.loadedRowCount;
+    if (!state.lazyLoading) {
+      this.previousLoadedRowCount = nextCount;
+      this.resetRequest();
+      return;
+    }
     if (nextCount > this.previousLoadedRowCount) {
       const added = nextCount - this.previousLoadedRowCount;
       this.options.announce(
@@ -119,6 +124,10 @@ export class TableLoadController {
 
   loadingChanged(loading: boolean): void {
     const state = this.options.state();
+    if (!state.lazyLoading) {
+      this.resetRequest();
+      return;
+    }
     if (loading) {
       this.requestPending = true;
       this.options.announce(state.loadingMoreLabel);
@@ -130,6 +139,10 @@ export class TableLoadController {
   }
 
   errorChanged(error: string | undefined): void {
+    if (!this.options.state().lazyLoading) {
+      this.resetRequest();
+      return;
+    }
     if (error?.trim()) {
       this.requestPending = false;
       this.options.announce(error);
@@ -138,6 +151,10 @@ export class TableLoadController {
   }
 
   hasMoreChanged(hasMore: boolean, hadMore: boolean): void {
+    if (!this.options.state().lazyLoading) {
+      this.resetRequest();
+      return;
+    }
     if (!hasMore) {
       this.requestPending = false;
       if (hadMore) this.options.announce(this.options.state().endOfResultsLabel);

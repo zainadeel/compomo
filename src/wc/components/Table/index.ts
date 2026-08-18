@@ -17,6 +17,7 @@ export type {
   TableColumnWidth,
   TableGroup,
   TableGroupCollapseChangeDetail,
+  TableGroupLoadMoreDetail,
   TableGroupIntent,
   TableHeaderSegment,
   TableGroupingState,

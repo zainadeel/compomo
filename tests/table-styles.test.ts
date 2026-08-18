@@ -25,6 +25,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.doesNotMatch(componentTsx, /TableStickyGroupController/);
   assert.match(componentTsx, /TableViewportFitController/);
   assert.match(componentTsx, /TableLoadController/);
+  assert.match(componentTsx, /TableGroupLoadController/);
   assert.match(componentTsx, /createTableRenderModel/);
   assert.match(componentTsx, /resolveTableCellPresentation/);
   assert.match(layoutController, /--ds-table-visible-inline-size/);
@@ -116,4 +117,13 @@ test('retains the structural and accessibility fallbacks rendered tests depend o
   assert.doesNotMatch(css, /container-type: inline-size/);
   assert.doesNotMatch(css, /--effect-shadow-elevated-panel-(?:left|right)/);
   assert.doesNotMatch(css, /ds-table__collapse-column|ds-table__collapse-cell/);
+  assert.match(
+    css,
+    /\.ds-table__load-body \.ds-table__load-row:last-child \.ds-table__load-cell/,
+  );
+  assert.doesNotMatch(css, /:where\(\.ds-table__load-row:last-child \.ds-table__load-cell\)/);
+  assert.doesNotMatch(
+    css,
+    /\.ds-table__group:last-child\[data-collapsed='true'\] \.ds-table__group-content/,
+  );
 });
