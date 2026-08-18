@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.2.0](https://github.com/zainadeel/compomo/compare/v14.1.0...v14.2.0) (2026-08-18)
+
+
+### Added
+
+* add group-aware table loading ([#470](https://github.com/zainadeel/compomo/issues/470)) ([feebadd](https://github.com/zainadeel/compomo/commit/feebadd4c8a137479aafc1b69c5931031ca580e3))
+
 ## [14.1.0](https://github.com/zainadeel/compomo/compare/v14.0.1...v14.1.0) (2026-08-18)
 
 
