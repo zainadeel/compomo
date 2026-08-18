@@ -687,8 +687,27 @@ test.describe('Responsive mobile shell foundation', () => {
       'Activity',
     ]);
     await expect(inboxTabs.locator('.tab__icon')).toHaveCount(0);
-    await expect(tools.locator('ds-mobile-header ds-tab-group')).toHaveJSProperty('size', 'lg');
+    const inboxTabGroup = tools.locator('ds-mobile-header ds-tab-group');
+    await expect(inboxTabGroup).toHaveJSProperty('size', 'lg');
+    await expect(inboxTabGroup).toHaveJSProperty('width', 'fill');
     await expect(tools.locator('ds-mobile-header .tab-list')).toHaveCSS('height', '40px');
+    const inboxHeaderMetrics = await tools.locator('.mobile-header__primary').evaluate(element => {
+      const styles = getComputedStyle(element);
+      const tabGroup = element.querySelector('ds-tab-group');
+      const tabs = Array.from(element.querySelectorAll('.tab'));
+      const usableWidth =
+        element.getBoundingClientRect().width -
+        parseFloat(styles.paddingLeft) -
+        parseFloat(styles.paddingRight) -
+        parseFloat(styles.columnGap) * 2;
+      return {
+        ratio: (tabGroup?.getBoundingClientRect().width ?? 0) / usableWidth,
+        tabWidths: tabs.map(tab => tab.getBoundingClientRect().width),
+      };
+    });
+    expect(inboxHeaderMetrics.ratio).toBeCloseTo(2 / 3, 2);
+    expect(Math.max(...inboxHeaderMetrics.tabWidths) - Math.min(...inboxHeaderMetrics.tabWidths))
+      .toBeLessThanOrEqual(0.5);
 
     await inboxTabs.getByRole('tab', { name: 'Stacks' }).click();
     await expect(tools).toHaveAttribute('active-tool', 'stacks');

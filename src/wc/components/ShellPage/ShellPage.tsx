@@ -60,6 +60,7 @@ export class ShellPage {
   private expandedHeaderHeight = 0;
   private headerTravel = 0;
   private expandedGeometryFrozen = false;
+  private pageHeaderResizeObserver: ResizeObserver | null = null;
   private headerResizeObserver: ResizeObserver | null = null;
   private headerMutationObserver: MutationObserver | null = null;
   private headerRevealFrame: number | null = null;
@@ -77,6 +78,7 @@ export class ShellPage {
 
   @Watch('responsiveMode')
   handleResponsiveModeChange() {
+    this.el.style.removeProperty('--ds-shell-page-sticky-header-block-size');
     this.observeHeader(this.responsiveMode === 'mobile' ? null : this.findHeader());
   }
 
@@ -103,6 +105,8 @@ export class ShellPage {
     this.reconnectFrame = null;
     this.headerResizeObserver?.disconnect();
     this.headerResizeObserver = null;
+    this.pageHeaderResizeObserver?.disconnect();
+    this.pageHeaderResizeObserver = null;
     this.headerMutationObserver?.disconnect();
     this.headerMutationObserver = null;
     this.cancelHeaderReveal();
@@ -113,6 +117,7 @@ export class ShellPage {
   }
 
   private connectRuntime() {
+    this.observePageHeaderGeometry();
     this.observeHeader(this.responsiveMode === 'mobile' ? null : this.findHeader());
     this.connectScrollRoot();
   }
@@ -300,14 +305,30 @@ export class ShellPage {
     );
   }
 
+  private syncPageHeaderBlockSize() {
+    const renderedHeight = this.stickyHeaderEl?.getBoundingClientRect().height ?? 0;
+    if (renderedHeight > 0) {
+      this.el.style.setProperty('--ds-shell-page-sticky-header-block-size', `${renderedHeight}px`);
+    }
+  }
+
+  private observePageHeaderGeometry() {
+    this.pageHeaderResizeObserver?.disconnect();
+    this.pageHeaderResizeObserver = null;
+    this.syncPageHeaderBlockSize();
+
+    if (!this.stickyHeaderEl || typeof ResizeObserver === 'undefined') return;
+    this.pageHeaderResizeObserver = new ResizeObserver(() => {
+      this.syncPageHeaderBlockSize();
+    });
+    this.pageHeaderResizeObserver.observe(this.stickyHeaderEl);
+  }
+
   private syncRenderedHeaderGeometry(header: BarTitleElement) {
     const renderedVariant = this.effectiveVariant;
     if (!header.classList.contains(this.variantClass(renderedVariant))) return;
 
-    const renderedHeight = header.getBoundingClientRect().height;
-    if (renderedHeight > 0) {
-      this.el.style.setProperty('--ds-shell-page-sticky-header-block-size', `${renderedHeight}px`);
-    }
+    this.syncPageHeaderBlockSize();
 
     // Update both flow-preservation pieces before reading layout. Otherwise a
     // reverse compact → expanded render can briefly contain the tall header and

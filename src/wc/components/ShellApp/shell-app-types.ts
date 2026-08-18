@@ -50,6 +50,8 @@ export interface ShellNavigationConfig {
   dashboardLabel?: string;
   settingsLabel?: string;
   accountLabel?: string;
+  /** Hide the mobile-sheet Account shortcut when Settings already owns that destination. */
+  showMobileAccount?: boolean;
   navigationLabel?: string;
   dashboardNavigationLabel?: string;
   settingsNavigationLabel?: string;

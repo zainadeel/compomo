@@ -75,12 +75,20 @@ export class MobileHeader {
     const selectable = getSelectableTabs(this.resolvedSections);
     const hasSwitcher = selectable.length > 1;
     const hasSubsections = getSelectableTabs(this.resolvedSubsections).length > 1;
+    const hasSegmentedSections = hasSwitcher && this.sectionsPresentation === 'segmented';
     const foreground = this.tone === 'brand' ? 'on-bold' : 'primary';
 
     return (
       <Host>
         <header class="mobile-header">
-          <div class="mobile-header__primary ds-chrome-grid ds-chrome-space--md">
+          <div
+            class={{
+              'mobile-header__primary': true,
+              'mobile-header__primary--segmented': hasSegmentedSections,
+              'ds-chrome-grid': true,
+              'ds-chrome-space--md': true,
+            }}
+          >
             <div class="mobile-header__lane mobile-header__lane--leading">
               <slot name="leading" />
             </div>
@@ -99,6 +107,7 @@ export class MobileHeader {
                       tabs={this.resolvedSections}
                       value={this.value}
                       size={this.sectionsSize}
+                      width="fill"
                       ariaLabel={this.sectionsAriaLabel}
                       onDsChange={this.handleSectionChange}
                     />

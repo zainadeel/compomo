@@ -21,13 +21,14 @@
   "states": [
     "Without multiple sections the center renders heading.",
     "With multiple sections the center renders the controlled MobileSectionSwitcher by default or an explicitly requested segmented TabGroup.",
+    "The segmented presentation uses the shared fill-width TabGroup contract and divides its centered two-thirds top-bar lane equally between options.",
     "Optional subsections render in a second row and emit dsSubsectionChange without changing the primary section.",
     "Sections represent peer destinations at the current navigation level; subsections represent local views beneath the selected page or detail identity.",
     "Brand tone changes surface and foreground without changing geometry or interaction ownership."
   ],
   "responsiveBehavior": [
     "The primary 56px lane matches the Mobile Sheet Nav header and Mobile Bar Nav; optional subsections add one subordinate 48px lane.",
-    "Equal flexible side lanes keep the center mathematically aligned when actions are asymmetric."
+    "Equal flexible side lanes keep the center mathematically aligned when actions are asymmetric; segmented headers allocate the usable lane in a 1:4:1 ratio."
   ],
   "references": [
     {

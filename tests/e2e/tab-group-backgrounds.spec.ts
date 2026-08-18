@@ -49,7 +49,7 @@ test('keeps default styling and uses surface borders with active selected fills 
     },
     {
       value: 'bold',
-      active: '--color-interaction-on-bold-background-active',
+      active: '--color-interaction-active',
       border: '--color-border-on-bold-background-tertiary',
     },
     {
@@ -59,12 +59,12 @@ test('keeps default styling and uses surface borders with active selected fills 
     },
     {
       value: 'translucent',
-      active: '--color-translucent-interaction-active',
+      active: '--color-translucent-interaction-active-brand',
       border: '--color-translucent-border-tertiary',
     },
     {
       value: 'inverted',
-      active: '--color-inverted-interaction-active',
+      active: '--color-inverted-interaction-active-brand',
       border: '--color-inverted-border-tertiary',
     },
     {
@@ -74,7 +74,7 @@ test('keeps default styling and uses surface borders with active selected fills 
     },
     {
       value: 'always-dark',
-      active: '--color-always-dark-interaction-active',
+      active: '--color-always-dark-interaction-active-brand',
       border: '--color-always-dark-border-tertiary',
     },
   ] as const;
@@ -173,6 +173,31 @@ test('supports small, medium, and large density geometry', async ({ page }) => {
     });
     await expect(host.locator('.tab__label').first()).toHaveJSProperty('variant', density.text);
   }
+});
+
+test('shares the hug and fill width contract and gives fill segments equal space', async ({ page }) => {
+  const host = page.locator('#tabs');
+  const track = host.locator('.tab-list');
+  const tabs = host.getByRole('tab');
+
+  await expect(host).toHaveJSProperty('width', 'hug');
+  await expect(host).toHaveClass(/ds-control-width--hug/);
+
+  await host.evaluate(element => {
+    const group = element as HTMLElement & { width: string };
+    group.style.width = '360px';
+    group.width = 'fill';
+  });
+
+  await expect(host).toHaveClass(/ds-control-width--fill/);
+  await expectDefiniteBounds(host, { label: 'filled TabGroup host', width: 360 });
+  await expectDefiniteBounds(track, { label: 'filled TabGroup track', width: 360 });
+
+  const segmentWidths = await tabs.evaluateAll(elements =>
+    elements.map(element => element.getBoundingClientRect().width)
+  );
+  expect(segmentWidths).toHaveLength(3);
+  expect(Math.max(...segmentWidths) - Math.min(...segmentWidths)).toBeLessThanOrEqual(0.5);
 });
 
 test('keeps one enabled tab reachable when value is missing or points to an inactive tab', async ({ page }) => {

@@ -110,9 +110,10 @@ export const Overview: Story = {
         <p class="util-demo-sub">
           Hover and press paint on <code class="util-demo-code">::after</code>; selected uses
           <code class="util-demo-code">::before</code> with the surface’s
-          <code class="util-demo-code">--color-*-interaction-active</code> token. Default primary and
-          secondary surfaces use <code class="util-demo-code">--color-interaction-active-brand</code>;
-          explicit faint surfaces use <code class="util-demo-code">--color-interaction-active</code>.
+          matching interaction active token. Default primary and secondary surfaces use
+          <code class="util-demo-code">--color-interaction-active-brand</code>; translucent, inverted,
+          and always-dark surfaces use their <code class="util-demo-code">*-active-brand</code> token;
+          other explicit surfaces use their neutral <code class="util-demo-code">*-active</code> wash.
           Demo controls are transparent so the wash composites over the parent surface.
         </p>
         <div class="util-demo-row">

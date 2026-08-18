@@ -28,6 +28,17 @@
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
 }
 
+.mobile-sheet-nav__header--expanded-context {
+  grid-template-columns:
+    minmax(var(--dimension-size-500), 1fr)
+    minmax(0, 4fr)
+    minmax(var(--dimension-size-500), 1fr);
+}
+
+.mobile-sheet-nav__header--expanded-context .mobile-sheet-nav__context {
+  width: 100%;
+}
+
 .mobile-sheet-nav__header::after {
   content: '';
   position: absolute;

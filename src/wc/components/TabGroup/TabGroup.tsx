@@ -1,5 +1,5 @@
 import { Component, Prop, Event, EventEmitter, Element, Listen, Watch, h, Host } from '@stencil/core';
-import { CONTROL_TEXT_VARIANT } from '../../utils';
+import { controlWidthClass, CONTROL_TEXT_VARIANT, type ControlWidth } from '../../utils';
 import {
   getSelectableTabs,
   isTabDivider,
@@ -18,6 +18,7 @@ export type TabBackground =
   | 'always-dark';
 
 export type TabGroupSize = 'sm' | 'md' | 'lg';
+export type TabGroupWidth = ControlWidth;
 
 @Component({
   tag: 'ds-tab-group',
@@ -31,6 +32,8 @@ export class TabGroup {
   @Prop() tabs: TabGroupItem[] = [];
   /** Control density: 24px small, 32px medium, or 40px large track. */
   @Prop() size: TabGroupSize = 'md';
+  /** Width fit — hug content (default) or fill the parent with equal-width segments. */
+  @Prop() width: TabGroupWidth = 'hug';
   @Prop() background: TabBackground | undefined;
   @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;
   @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;
@@ -147,6 +150,7 @@ export class TabGroup {
           [`ds-control--${this.size}`]: true,
           'tab-group-host--surface': !!bgClass,
           [`tab-group-host--${bgClass}`]: !!bgClass,
+          ...controlWidthClass(this.width),
         }}
       >
         <div

@@ -56,3 +56,31 @@ export const Foundation: Story = {
     </div>
   `,
 };
+
+export const WithoutAccount: Story = {
+  render: () => html`
+    <div style="height: 720px; max-width: 430px; margin: 0 auto;">
+      <ds-mobile-sheet-nav
+        open
+        .showAccount=${false}
+        current-url="/dashboard/tracking/live-map"
+        .dashboardGroups=${dashboardGroups}
+        .settingsGroups=${settingsGroups}
+      ></ds-mobile-sheet-nav>
+    </div>
+  `,
+};
+
+export const OverGlobalTool: Story = {
+  render: () => html`
+    <div style="height: 720px; max-width: 430px; margin: 0 auto;">
+      <ds-mobile-sheet-nav
+        open
+        .routeSelectionActive=${false}
+        current-url="/dashboard/tracking/live-map"
+        .dashboardGroups=${dashboardGroups}
+        .settingsGroups=${settingsGroups}
+      ></ds-mobile-sheet-nav>
+    </div>
+  `,
+};

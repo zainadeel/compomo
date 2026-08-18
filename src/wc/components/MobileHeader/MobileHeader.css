@@ -33,6 +33,18 @@
   color: inherit;
 }
 
+.mobile-header__primary--segmented {
+  grid-template-columns:
+    minmax(var(--dimension-size-500), 1fr)
+    minmax(0, 4fr)
+    minmax(var(--dimension-size-500), 1fr);
+}
+
+.mobile-header__primary--segmented .mobile-header__center,
+.mobile-header__primary--segmented ds-tab-group {
+  width: 100%;
+}
+
 :host(:not([tone='brand'])) .mobile-header::after {
   content: '';
   position: absolute;

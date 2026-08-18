@@ -125,12 +125,12 @@ test('uses surface-aware interaction fills and foregrounds', async ({ page }) =>
     },
     {
       value: 'translucent',
-      active: '--color-translucent-interaction-active',
+      active: '--color-translucent-interaction-active-brand',
       foreground: '--color-translucent-foreground-primary',
     },
     {
       value: 'inverted',
-      active: '--color-inverted-interaction-active',
+      active: '--color-inverted-interaction-active-brand',
       foreground: '--color-inverted-foreground-primary',
     },
     {
@@ -140,7 +140,7 @@ test('uses surface-aware interaction fills and foregrounds', async ({ page }) =>
     },
     {
       value: 'always-dark',
-      active: '--color-always-dark-interaction-active',
+      active: '--color-always-dark-interaction-active-brand',
       foreground: '--color-always-dark-foreground-primary',
     },
   ] as const;
