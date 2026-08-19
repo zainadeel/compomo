@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.4.1](https://github.com/zainadeel/compomo/compare/v14.4.0...v14.4.1) (2026-08-19)
+
+
+### Fixed
+
+* refine table pagination behavior ([#480](https://github.com/zainadeel/compomo/issues/480)) ([774c9d1](https://github.com/zainadeel/compomo/commit/774c9d1711c8c1a37da805eebd1c54acc412ec6b))
+
 ## [14.4.0](https://github.com/zainadeel/compomo/compare/v14.3.0...v14.4.0) (2026-08-19)
 
 
