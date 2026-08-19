@@ -34,6 +34,7 @@ import {
 import { TableLayoutController } from './table-layout-controller';
 import { TableLoadController } from './table-load-controller';
 import { TableGroupLoadController } from './table-group-load-controller';
+import type { PaginationChangeDetail } from '../Pagination/pagination-types';
 import {
   TableViewportFitController,
   type TableViewportFitMetrics,
@@ -42,12 +43,14 @@ import type {
   TableCaptionVisibility,
   TableCellActionDetail,
   TableColumn,
+  TableDataMode,
   TableGroup,
   TableGroupCollapseChangeDetail,
   TableGroupLoadMoreDetail,
   TableGroupingState,
   TableLoadMoreDetail,
   TableLoadMoreMode,
+  TablePaginationState,
   TableRow,
   TableRowActivateDetail,
   TableSelectionChangeDetail,
@@ -121,8 +124,10 @@ export class Table {
   @Prop() errorBody: string = 'The data could not be loaded.';
   @Prop() emptyCellLabel: string = 'Not available';
 
-  /** Enable application-owned incremental loading without pagination. */
-  @Prop() lazyLoading: boolean = false;
+  /** Top-level data-window strategy. Group member loading remains group-owned. */
+  @Prop() dataMode: TableDataMode = 'infinite';
+  /** Controlled top-level pagination state. Required when dataMode is pagination. */
+  @Prop() pagination: TablePaginationState | null = null;
   @Prop() loadMoreMode: TableLoadMoreMode = 'auto';
   @Prop() hasMore: boolean = false;
   @Prop() loadingMore: boolean = false;
@@ -154,6 +159,7 @@ export class Table {
   @Event() dsSelectionChange!: EventEmitter<TableSelectionChangeDetail>;
   @Event() dsLoadMore!: EventEmitter<TableLoadMoreDetail>;
   @Event() dsGroupLoadMore!: EventEmitter<TableGroupLoadMoreDetail>;
+  @Event() dsPaginationChange!: EventEmitter<PaginationChangeDetail>;
   @Event() dsCellAction!: EventEmitter<TableCellActionDetail>;
   @Event() dsRowActivate!: EventEmitter<TableRowActivateDetail>;
 
@@ -173,6 +179,7 @@ export class Table {
   private stickyHeaderTableEl: HTMLTableElement | null = null;
   private tableEl: HTMLTableElement | null = null;
   private sentinelEl: HTMLElement | null = null;
+  private incrementalWindowActive = false;
   private readonly groupSentinelEls = new Map<string, HTMLElement>();
   private previousModelWarning = '';
   private hasLoaded = false;
@@ -201,7 +208,7 @@ export class Table {
   });
   private readonly loadController = new TableLoadController({
     state: () => ({
-      lazyLoading: this.lazyLoading && !this.grouped,
+      lazyLoading: this.dataMode === 'infinite' && !this.grouped,
       loadMoreMode: this.loadMoreMode,
       hasMore: this.hasMore,
       loadingMore: this.loadingMore,
@@ -225,7 +232,7 @@ export class Table {
   });
   private readonly groupLoadController = new TableGroupLoadController({
     state: () => ({
-      enabled: this.grouped && this.lazyLoading,
+      enabled: this.grouped,
       loadMoreMode: this.loadMoreMode,
       loadMoreThreshold: this.loadMoreThreshold,
       containedScroll: this.containedScroll,
@@ -257,6 +264,7 @@ export class Table {
   });
 
   componentWillLoad(): void {
+    this.incrementalWindowActive = this.hasIncrementalState;
     this.syncHeaderSlotPresence();
     this.loadController.initialize();
     this.groupLoadController.initialize();
@@ -401,10 +409,10 @@ export class Table {
 
   @Watch('loadIdentity')
   handleLoadIdentityChange(): void {
+    this.incrementalWindowActive = this.hasIncrementalState;
     this.loadController.identityChanged();
   }
 
-  @Watch('lazyLoading')
   @Watch('loadMoreMode')
   @Watch('loadMoreThreshold')
   handleLazyConfigurationChange(): void {
@@ -412,23 +420,37 @@ export class Table {
     this.groupLoadController.configurationChanged();
   }
 
+  @Watch('dataMode')
+  handleDataModeChange(): void {
+    this.incrementalWindowActive = this.hasIncrementalState;
+    this.handleLazyConfigurationChange();
+  }
+
   @Watch('loadingMore')
   handleLoadingMoreChange(loading: boolean): void {
+    if (loading) this.incrementalWindowActive = true;
     if (!this.grouped) this.loadController.loadingChanged(loading);
   }
 
   @Watch('loadMoreError')
   handleLoadMoreErrorChange(error: string | undefined): void {
+    if (error?.trim()) this.incrementalWindowActive = true;
     if (!this.grouped) this.loadController.errorChanged(error);
   }
 
   @Watch('hasMore')
   handleHasMoreChange(hasMore: boolean, hadMore: boolean): void {
+    if (hasMore) this.incrementalWindowActive = true;
     if (!this.grouped) this.loadController.hasMoreChanged(hasMore, hadMore);
   }
 
   private get grouped(): boolean {
     return this.grouping !== null;
+  }
+
+  private get hasIncrementalState(): boolean {
+    return this.dataMode === 'infinite' &&
+      (this.hasMore || this.loadingMore || !!this.loadMoreError?.trim());
   }
 
   private get selectable(): boolean {
@@ -1200,7 +1222,6 @@ export class Table {
   }
 
   private renderGroupLoadRow(group: TableGroup, totalColumns: number) {
-    if (!this.lazyLoading) return null;
     const error = group.loadMoreError?.trim();
     if (!error && !group.loadingMore && !group.hasMore) return null;
     const manualFallback = this.loadMoreMode === 'manual' ||
@@ -1382,7 +1403,12 @@ export class Table {
   }
 
   private renderLazyBody(model: TableRenderModel) {
-    if (!this.lazyLoading || !model.hasData || model.grouped) return null;
+    if (
+      this.dataMode !== 'infinite' ||
+      !this.incrementalWindowActive ||
+      !model.hasData ||
+      model.grouped
+    ) return null;
     const error = this.loadMoreError?.trim();
     const manualFallback = this.loadMoreMode === 'manual' ||
       !this.loadController.intersectionSupported;
@@ -1471,6 +1497,7 @@ export class Table {
   }
 
   private get resultSummary(): string | null {
+    if (this.dataMode === 'pagination') return null;
     return formatTableResultSummary(
       this.displayedCount,
       this.totalCount,
@@ -1479,7 +1506,8 @@ export class Table {
   }
 
   private get hasResultFooter(): boolean {
-    return !!this.resultSummary || !!this.el.querySelector(
+    return (this.dataMode === 'pagination' && !!this.pagination) ||
+      !!this.resultSummary || !!this.el.querySelector(
       '[slot="footer-leading"], [slot="footer"], [slot="footer-trailing"]',
     );
   }
@@ -1489,6 +1517,7 @@ export class Table {
     const hasLeading = !!this.el.querySelector('[slot="footer-leading"]');
     const hasCopy = !!this.el.querySelector('[slot="footer"]');
     const hasTrailing = !!this.el.querySelector('[slot="footer-trailing"]');
+    const pagination = this.dataMode === 'pagination' ? this.pagination : null;
     if (!this.hasResultFooter) return null;
     return (
       <div class="ds-table__footer ds-table__bar ds-chrome-header ds-control--md">
@@ -1511,8 +1540,22 @@ export class Table {
             </ds-text>
           ) : null}
         </div>
-        {hasTrailing && (
+        {(pagination || hasTrailing) && (
           <div class="ds-table__bar-trailing ds-chrome-header__trailing">
+            {pagination && (
+              <ds-pagination
+                pageIndex={pagination.pageIndex}
+                pageSize={pagination.pageSize}
+                totalItems={pagination.totalItems}
+                pageSizeOptions={pagination.pageSizeOptions ?? [25, 50, 100, 200]}
+                itemLabel={pagination.itemLabel ?? 'items'}
+                pageSizeLabel={pagination.pageSizeLabel ?? 'Items per page'}
+                label={pagination.ariaLabel ?? `${this.caption} pagination`}
+                loading={this.loading}
+                onDsChange={(event: CustomEvent<PaginationChangeDetail>) =>
+                  this.dsPaginationChange.emit(event.detail)}
+              />
+            )}
             <slot name="footer-trailing" />
           </div>
         )}
@@ -1553,7 +1596,7 @@ export class Table {
     const regionLabel = this.scrollLabel?.trim() || `${this.caption} scroll area`;
     const initialLoading = this.loading && !model.hasData;
     const initialError = !model.hasData && this.error;
-    const hasGroupedStructure = model.grouped && this.lazyLoading && model.groups.length > 0;
+    const hasGroupedStructure = model.grouped && model.groups.length > 0;
     const groupLoadingMore = hasGroupedStructure && this.groups.some(group => group.loadingMore);
     const viewportStyle = !this.boundedComposition && this.resolvedMaxHeight
       ? { '--ds-table-max-block-size': this.resolvedMaxHeight }

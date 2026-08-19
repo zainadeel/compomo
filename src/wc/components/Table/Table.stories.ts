@@ -6,6 +6,7 @@ import '../../../../dist/components/ds-text.js';
 import '../../../../dist/components/ds-select.js';
 import '../../../../dist/components/ds-bar-action.js';
 import '../../../../dist/components/ds-button-unfilled.js';
+import '../../../../dist/components/ds-pagination.js';
 import '../../styles/table.css';
 import type {
   TableColumn,
@@ -15,6 +16,7 @@ import type {
   TableRow,
   TableSortState,
 } from './table-types';
+import type { PaginationChangeDetail } from '../Pagination/pagination-types';
 
 const COLUMNS: TableColumn[] = [
   { id: 'driver', header: 'Driver', sortable: true, size: 'sm' },
@@ -442,6 +444,29 @@ const ADDED_ROWS: TableRow[] = [
   },
 ];
 
+const PAGINATED_ROWS: TableRow[] = Array.from({ length: 63 }, (_, index) => {
+  const source = ROWS[index % ROWS.length]!;
+  return {
+    ...source,
+    id: `${source.id}-page-${index + 1}`,
+    selectionLabel: `${source.selectionLabel ?? source.id} ${index + 1}`,
+  };
+});
+
+const PAGINATED_GROUP_SOURCE: TableGroup[] = Array.from({ length: 30 }, (_, groupIndex) => ({
+  id: `fleet-${groupIndex + 1}`,
+  label: `Fleet ${String(groupIndex + 1).padStart(2, '0')}`,
+  totalCount: 6,
+  rows: Array.from({ length: 6 }, (_, rowIndex) => {
+    const source = ROWS[(groupIndex + rowIndex) % ROWS.length]!;
+    return {
+      ...source,
+      id: `${source.id}-fleet-${groupIndex + 1}-${rowIndex + 1}`,
+      selectionLabel: `${source.selectionLabel ?? source.id} in fleet ${groupIndex + 1}`,
+    };
+  }),
+}));
+
 function compareCell(a: TableRow, b: TableRow, columnId: string): number {
   const primitive = (row: TableRow) => {
     const value = row.cells[columnId];
@@ -548,7 +573,7 @@ const meta: Meta = {
     stickyHeader: { control: 'boolean' },
     selectionMode: { control: 'select', options: ['none', 'multiple'] },
     loading: { control: 'boolean' },
-    lazyLoading: { control: 'boolean' },
+    dataMode: { control: 'select', options: ['infinite', 'pagination'] },
     loadMoreMode: { control: 'select', options: ['auto', 'manual'] },
     displayedCount: { control: 'number' },
     totalCount: { control: 'number' },
@@ -558,7 +583,7 @@ const meta: Meta = {
     stickyHeader: false,
     selectionMode: 'multiple',
     loading: false,
-    lazyLoading: false,
+    dataMode: 'infinite',
     loadMoreMode: 'manual',
     selectedRowIds: [],
     sort: null,
@@ -588,9 +613,9 @@ export const Playground: Story = {
         .totalCount=${args['totalCount']}
         .stickyHeader=${args['stickyHeader']}
         .loading=${args['loading']}
-        .lazyLoading=${args['lazyLoading']}
+        data-mode=${args['dataMode']}
         load-more-mode=${args['loadMoreMode']}
-        .hasMore=${args['lazyLoading']}
+        .hasMore=${args['dataMode'] === 'infinite'}
         @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
           updateArgs({ sort: event.detail.sort })}
         @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>
@@ -1027,7 +1052,7 @@ export const IncrementalLoadingStates: Story = {
         data-a11y-fixture
         .columns=${ASYNC_COLUMNS}
         .rows=${ROWS.slice(0, 2)}
-        lazy-loading
+        data-mode="infinite"
         load-more-mode="manual"
         has-more
         caption="Ready to load more drivers"
@@ -1037,7 +1062,7 @@ export const IncrementalLoadingStates: Story = {
         data-a11y-fixture
         .columns=${ASYNC_COLUMNS}
         .rows=${ROWS.slice(0, 2)}
-        lazy-loading
+        data-mode="infinite"
         load-more-mode="manual"
         has-more
         loading-more
@@ -1048,7 +1073,7 @@ export const IncrementalLoadingStates: Story = {
         data-a11y-fixture
         .columns=${ASYNC_COLUMNS}
         .rows=${ROWS.slice(0, 2)}
-        lazy-loading
+        data-mode="infinite"
         load-more-mode="manual"
         has-more
         load-more-error="More drivers could not be loaded."
@@ -1059,7 +1084,7 @@ export const IncrementalLoadingStates: Story = {
         data-a11y-fixture
         .columns=${ASYNC_COLUMNS}
         .rows=${ROWS.slice(0, 2)}
-        lazy-loading
+        data-mode="infinite"
         load-more-mode="manual"
         caption="All drivers loaded"
         caption-visibility="visible"
@@ -1088,7 +1113,7 @@ export const WorkingLazyLoading: Story = {
       <ds-table
         .columns=${ASYNC_COLUMNS}
         .rows=${args['lazyRows'] as TableRow[]}
-        lazy-loading
+        data-mode="infinite"
         load-more-mode="manual"
         .hasMore=${args['hasMore']}
         .loadingMore=${args['loadingMore']}
@@ -1105,6 +1130,126 @@ export const WorkingLazyLoading: Story = {
               hasMore: false,
             });
           }, 650);
+        }}
+      ></ds-table>
+    `;
+  },
+};
+
+export const WorkingPagination: Story = {
+  name: 'Working pagination',
+  args: {
+    pageIndex: 0,
+    pageSize: 25,
+    selectedRowIds: [],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'The application supplies only the active page. The table keeps off-page selection IDs controlled, replaces the result summary with Pagination, and forwards page intent without slicing records itself.',
+      },
+    },
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    const pageIndex = Number(args['pageIndex']);
+    const pageSize = Number(args['pageSize']);
+    const selectedRowIds = (args['selectedRowIds'] as string[]) ?? [];
+    const rows = PAGINATED_ROWS.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize);
+    return html`
+      <ds-table
+        .columns=${COLUMNS}
+        .rows=${rows}
+        .selectedRowIds=${selectedRowIds}
+        .pagination=${{
+          pageIndex,
+          pageSize,
+          totalItems: PAGINATED_ROWS.length,
+          pageSizeOptions: [25, 50, 100, 200],
+          itemLabel: 'rows',
+          pageSizeLabel: 'Rows per page',
+        }}
+        data-mode="pagination"
+        selection-mode="multiple"
+        caption="Paginated workforce overview"
+        caption-visibility="visible"
+        @dsPaginationChange=${(event: CustomEvent<PaginationChangeDetail>) =>
+          updateArgs({ pageIndex: event.detail.pageIndex, pageSize: event.detail.pageSize })}
+        @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>
+          updateArgs({ selectedRowIds: event.detail.selectedRowIds })}
+      >
+        <ds-text slot="footer-leading" as="span" variant="text-body-medium" color="secondary">
+          Last updated: just now
+        </ds-text>
+      </ds-table>
+    `;
+  },
+};
+
+export const GroupParentPagination: Story = {
+  name: 'Group-parent pagination',
+  args: {
+    pageIndex: 0,
+    pageSize: 25,
+    loadedByGroup: {},
+    grouping: { columnId: 'status', direction: 'asc' },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Pagination counts only parent groups. Every visible group retains its own member total and incremental load control; appending children never moves the parent to another page.',
+      },
+    },
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    const pageIndex = Number(args['pageIndex']);
+    const pageSize = Number(args['pageSize']);
+    const loadedByGroup = args['loadedByGroup'] as Record<string, number>;
+    const pageGroups = PAGINATED_GROUP_SOURCE
+      .slice(pageIndex * pageSize, (pageIndex + 1) * pageSize)
+      .map(group => {
+        const loadedCount = Math.min(loadedByGroup[group.id] ?? 1, group.rows.length);
+        return {
+          ...group,
+          rows: group.rows.slice(0, loadedCount),
+          hasMore: loadedCount < group.rows.length,
+          loadIdentity: `group-page:${pageIndex}:${group.id}`,
+        };
+      });
+    return html`
+      <ds-table
+        .columns=${COLUMNS}
+        .groups=${pageGroups}
+        .grouping=${args['grouping']}
+        .pagination=${{
+          pageIndex,
+          pageSize,
+          totalItems: PAGINATED_GROUP_SOURCE.length,
+          pageSizeOptions: [25, 50, 100, 200],
+          itemLabel: 'groups',
+          pageSizeLabel: 'Groups per page',
+        }}
+        data-mode="pagination"
+        load-more-mode="manual"
+        sticky-header
+        max-height="520px"
+        caption="Paginated fleet groups"
+        caption-visibility="visible"
+        @dsPaginationChange=${(event: CustomEvent<PaginationChangeDetail>) =>
+          updateArgs({
+            pageIndex: event.detail.pageIndex,
+            pageSize: event.detail.pageSize,
+            loadedByGroup: {},
+          })}
+        @dsGroupLoadMore=${(event: CustomEvent<{ groupId: string }>) => {
+          const groupId = event.detail.groupId;
+          updateArgs({
+            loadedByGroup: {
+              ...loadedByGroup,
+              [groupId]: (loadedByGroup[groupId] ?? 1) + 2,
+            },
+          });
         }}
       ></ds-table>
     `;
@@ -1143,7 +1288,7 @@ export const WorkingGroupedLazyLoading: Story = {
         .collapsedGroupIds=${collapsedGroupIds}
         .displayedCount=${groups.reduce((count, group) => count + group.rows.length, 0)}
         .totalCount=${SAFETY_EVENT_ROWS.length}
-        lazy-loading
+        data-mode="infinite"
         load-more-mode="manual"
         sticky-header
         max-height="520px"

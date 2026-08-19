@@ -47,6 +47,7 @@ import { MobileHeaderHeadingLevel, MobileHeaderSectionsPresentation, MobileHeade
 import { TabGroupItem, TabItem } from "./components/TabGroup/tab-item-utils";
 import { TabGroupSize } from "./components/TabGroup/TabGroup";
 import { ModalCloseDetail, ModalWidth } from "./components/Modal/Modal";
+import { PaginationChangeDetail } from "./components/Pagination/pagination-types";
 import { ChromeTransitionDetail } from "./shell/chrome-transition";
 import { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 import { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
@@ -63,7 +64,7 @@ import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 import { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 import { SwitchSize } from "./components/Switch/Switch";
 import { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
-import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableDataMode, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -110,6 +111,7 @@ export { MobileHeaderHeadingLevel, MobileHeaderSectionsPresentation, MobileHeade
 export { TabGroupItem, TabItem } from "./components/TabGroup/tab-item-utils";
 export { TabGroupSize } from "./components/TabGroup/TabGroup";
 export { ModalCloseDetail, ModalWidth } from "./components/Modal/Modal";
+export { PaginationChangeDetail } from "./components/Pagination/pagination-types";
 export { ChromeTransitionDetail } from "./shell/chrome-transition";
 export { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 export { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
@@ -126,7 +128,7 @@ export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 export { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 export { SwitchSize } from "./components/Switch/Switch";
 export { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
-export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableDataMode, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -1805,6 +1807,48 @@ export namespace Components {
          */
         "open": boolean;
     }
+    interface DsPagination {
+        /**
+          * Localized plural noun used by assistive range announcements.
+          * @default 'items'
+         */
+        "itemLabel": string;
+        /**
+          * Accessible name for the pagination navigation region.
+          * @default 'Pagination'
+         */
+        "label": string;
+        /**
+          * Prevent interaction while the owner replaces the current data page.
+          * @default false
+         */
+        "loading": boolean;
+        /**
+          * Controlled zero-based page index.
+          * @default 0
+         */
+        "pageIndex": number;
+        /**
+          * Controlled number of top-level items on a full page.
+          * @default 25
+         */
+        "pageSize": number;
+        /**
+          * Visible page-size control label.
+          * @default 'Items per page'
+         */
+        "pageSizeLabel": string;
+        /**
+          * Available page sizes. Assign arrays through JavaScript.
+          * @default [25, 50, 100, 200]
+         */
+        "pageSizeOptions": number[];
+        /**
+          * Controlled total number of top-level items across every page.
+          * @default 0
+         */
+        "totalItems": number;
+    }
     interface DsPanelNav {
         /**
           * @default 'Account'
@@ -2788,6 +2832,11 @@ export namespace Components {
          */
         "columns": TableColumn[];
         /**
+          * Top-level data-window strategy. Group member loading remains group-owned.
+          * @default 'infinite'
+         */
+        "dataMode": TableDataMode;
+        /**
           * Optional result summary footer. When both `displayedCount` and `totalCount` are finite numbers, the table shows “Displaying {displayed} of {total}”.
          */
         "displayedCount": number | undefined;
@@ -2873,11 +2922,6 @@ export namespace Components {
          */
         "height": string | number | undefined;
         /**
-          * Enable application-owned incremental loading without pagination.
-          * @default false
-         */
-        "lazyLoading": boolean;
-        /**
           * Reset key for a new query/group/sort dataset.
           * @default 'default'
          */
@@ -2913,6 +2957,11 @@ export namespace Components {
           * Maximum scroll-region height. Numbers resolve to CSS pixels.
          */
         "maxHeight": string | number | undefined;
+        /**
+          * Controlled top-level pagination state. Required when dataMode is pagination.
+          * @default null
+         */
+        "pagination": TablePaginationState | null;
         /**
           * Supports {displayed} and {total} placeholders.
           * @default 'Displaying {displayed} of {total}'
@@ -3330,6 +3379,10 @@ export interface DsMobileSheetNavCustomEvent<T> extends CustomEvent<T> {
 export interface DsModalCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsModalElement;
+}
+export interface DsPaginationCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsPaginationElement;
 }
 export interface DsPanelNavCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -4048,6 +4101,23 @@ declare global {
         prototype: HTMLDsModalElement;
         new (): HTMLDsModalElement;
     };
+    interface HTMLDsPaginationElementEventMap {
+        "dsChange": PaginationChangeDetail;
+    }
+    interface HTMLDsPaginationElement extends Components.DsPagination, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsPaginationElementEventMap>(type: K, listener: (this: HTMLDsPaginationElement, ev: DsPaginationCustomEvent<HTMLDsPaginationElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsPaginationElementEventMap>(type: K, listener: (this: HTMLDsPaginationElement, ev: DsPaginationCustomEvent<HTMLDsPaginationElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsPaginationElement: {
+        prototype: HTMLDsPaginationElement;
+        new (): HTMLDsPaginationElement;
+    };
     interface HTMLDsPanelNavElementEventMap {
         "dsNavSelect": string;
         "dsNavToggle": boolean;
@@ -4359,6 +4429,7 @@ declare global {
         "dsSelectionChange": TableSelectionChangeDetail;
         "dsLoadMore": TableLoadMoreDetail;
         "dsGroupLoadMore": TableGroupLoadMoreDetail;
+        "dsPaginationChange": PaginationChangeDetail;
         "dsCellAction": TableCellActionDetail;
         "dsRowActivate": TableRowActivateDetail;
     }
@@ -4503,6 +4574,7 @@ declare global {
         "ds-mobile-section-switcher": HTMLDsMobileSectionSwitcherElement;
         "ds-mobile-sheet-nav": HTMLDsMobileSheetNavElement;
         "ds-modal": HTMLDsModalElement;
+        "ds-pagination": HTMLDsPaginationElement;
         "ds-panel-nav": HTMLDsPanelNavElement;
         "ds-panel-sub-nav": HTMLDsPanelSubNavElement;
         "ds-panel-tool-header": HTMLDsPanelToolHeaderElement;
@@ -6354,6 +6426,52 @@ declare namespace LocalJSX {
          */
         "open"?: boolean;
     }
+    interface DsPagination {
+        /**
+          * Localized plural noun used by assistive range announcements.
+          * @default 'items'
+         */
+        "itemLabel"?: string;
+        /**
+          * Accessible name for the pagination navigation region.
+          * @default 'Pagination'
+         */
+        "label"?: string;
+        /**
+          * Prevent interaction while the owner replaces the current data page.
+          * @default false
+         */
+        "loading"?: boolean;
+        /**
+          * Emits the complete next controlled state after a page or page-size request.
+         */
+        "onDsChange"?: (event: DsPaginationCustomEvent<PaginationChangeDetail>) => void;
+        /**
+          * Controlled zero-based page index.
+          * @default 0
+         */
+        "pageIndex"?: number;
+        /**
+          * Controlled number of top-level items on a full page.
+          * @default 25
+         */
+        "pageSize"?: number;
+        /**
+          * Visible page-size control label.
+          * @default 'Items per page'
+         */
+        "pageSizeLabel"?: string;
+        /**
+          * Available page sizes. Assign arrays through JavaScript.
+          * @default [25, 50, 100, 200]
+         */
+        "pageSizeOptions"?: number[];
+        /**
+          * Controlled total number of top-level items across every page.
+          * @default 0
+         */
+        "totalItems"?: number;
+    }
     interface DsPanelNav {
         /**
           * @default 'Account'
@@ -7448,6 +7566,11 @@ declare namespace LocalJSX {
          */
         "columns"?: TableColumn[];
         /**
+          * Top-level data-window strategy. Group member loading remains group-owned.
+          * @default 'infinite'
+         */
+        "dataMode"?: TableDataMode;
+        /**
           * Optional result summary footer. When both `displayedCount` and `totalCount` are finite numbers, the table shows “Displaying {displayed} of {total}”.
          */
         "displayedCount"?: number | undefined;
@@ -7533,11 +7656,6 @@ declare namespace LocalJSX {
          */
         "height"?: string | number | undefined;
         /**
-          * Enable application-owned incremental loading without pagination.
-          * @default false
-         */
-        "lazyLoading"?: boolean;
-        /**
           * Reset key for a new query/group/sort dataset.
           * @default 'default'
          */
@@ -7577,9 +7695,15 @@ declare namespace LocalJSX {
         "onDsGroupCollapseChange"?: (event: DsTableCustomEvent<TableGroupCollapseChangeDetail>) => void;
         "onDsGroupLoadMore"?: (event: DsTableCustomEvent<TableGroupLoadMoreDetail>) => void;
         "onDsLoadMore"?: (event: DsTableCustomEvent<TableLoadMoreDetail>) => void;
+        "onDsPaginationChange"?: (event: DsTableCustomEvent<PaginationChangeDetail>) => void;
         "onDsRowActivate"?: (event: DsTableCustomEvent<TableRowActivateDetail>) => void;
         "onDsSelectionChange"?: (event: DsTableCustomEvent<TableSelectionChangeDetail>) => void;
         "onDsSortChange"?: (event: DsTableCustomEvent<TableSortChangeDetail>) => void;
+        /**
+          * Controlled top-level pagination state. Required when dataMode is pagination.
+          * @default null
+         */
+        "pagination"?: TablePaginationState | null;
         /**
           * Supports {displayed} and {total} placeholders.
           * @default 'Displaying {displayed} of {total}'
@@ -8305,6 +8429,15 @@ declare namespace LocalJSX {
         "modalWidth": ModalWidth | string;
         "ariaDescribedby": string | undefined;
     }
+    interface DsPaginationAttributes {
+        "pageIndex": number;
+        "pageSize": number;
+        "totalItems": number;
+        "itemLabel": string;
+        "pageSizeLabel": string;
+        "label": string;
+        "loading": boolean;
+    }
     interface DsPanelNavAttributes {
         "navStyle": NavChromeStyle;
         "disableViewTransition": boolean;
@@ -8535,7 +8668,7 @@ declare namespace LocalJSX {
         "errorHeading": string;
         "errorBody": string;
         "emptyCellLabel": string;
-        "lazyLoading": boolean;
+        "dataMode": TableDataMode;
         "loadMoreMode": TableLoadMoreMode;
         "hasMore": boolean;
         "loadingMore": boolean;
@@ -8661,6 +8794,7 @@ declare namespace LocalJSX {
         "ds-mobile-section-switcher": Omit<DsMobileSectionSwitcher, keyof DsMobileSectionSwitcherAttributes> & { [K in keyof DsMobileSectionSwitcher & keyof DsMobileSectionSwitcherAttributes]?: DsMobileSectionSwitcher[K] } & { [K in keyof DsMobileSectionSwitcher & keyof DsMobileSectionSwitcherAttributes as `attr:${K}`]?: DsMobileSectionSwitcherAttributes[K] } & { [K in keyof DsMobileSectionSwitcher & keyof DsMobileSectionSwitcherAttributes as `prop:${K}`]?: DsMobileSectionSwitcher[K] };
         "ds-mobile-sheet-nav": Omit<DsMobileSheetNav, keyof DsMobileSheetNavAttributes> & { [K in keyof DsMobileSheetNav & keyof DsMobileSheetNavAttributes]?: DsMobileSheetNav[K] } & { [K in keyof DsMobileSheetNav & keyof DsMobileSheetNavAttributes as `attr:${K}`]?: DsMobileSheetNavAttributes[K] } & { [K in keyof DsMobileSheetNav & keyof DsMobileSheetNavAttributes as `prop:${K}`]?: DsMobileSheetNav[K] };
         "ds-modal": Omit<DsModal, keyof DsModalAttributes> & { [K in keyof DsModal & keyof DsModalAttributes]?: DsModal[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `attr:${K}`]?: DsModalAttributes[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `prop:${K}`]?: DsModal[K] } & OneOf<"heading", DsModal["heading"], DsModalAttributes["heading"]>;
+        "ds-pagination": Omit<DsPagination, keyof DsPaginationAttributes> & { [K in keyof DsPagination & keyof DsPaginationAttributes]?: DsPagination[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `attr:${K}`]?: DsPaginationAttributes[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `prop:${K}`]?: DsPagination[K] };
         "ds-panel-nav": Omit<DsPanelNav, keyof DsPanelNavAttributes> & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes]?: DsPanelNav[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `attr:${K}`]?: DsPanelNavAttributes[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `prop:${K}`]?: DsPanelNav[K] };
         "ds-panel-sub-nav": Omit<DsPanelSubNav, keyof DsPanelSubNavAttributes> & { [K in keyof DsPanelSubNav & keyof DsPanelSubNavAttributes]?: DsPanelSubNav[K] } & { [K in keyof DsPanelSubNav & keyof DsPanelSubNavAttributes as `attr:${K}`]?: DsPanelSubNavAttributes[K] } & { [K in keyof DsPanelSubNav & keyof DsPanelSubNavAttributes as `prop:${K}`]?: DsPanelSubNav[K] };
         "ds-panel-tool-header": Omit<DsPanelToolHeader, keyof DsPanelToolHeaderAttributes> & { [K in keyof DsPanelToolHeader & keyof DsPanelToolHeaderAttributes]?: DsPanelToolHeader[K] } & { [K in keyof DsPanelToolHeader & keyof DsPanelToolHeaderAttributes as `attr:${K}`]?: DsPanelToolHeaderAttributes[K] } & { [K in keyof DsPanelToolHeader & keyof DsPanelToolHeaderAttributes as `prop:${K}`]?: DsPanelToolHeader[K] };
@@ -8752,6 +8886,7 @@ declare module "@stencil/core" {
             "ds-mobile-section-switcher": LocalJSX.IntrinsicElements["ds-mobile-section-switcher"] & JSXBase.HTMLAttributes<HTMLDsMobileSectionSwitcherElement>;
             "ds-mobile-sheet-nav": LocalJSX.IntrinsicElements["ds-mobile-sheet-nav"] & JSXBase.HTMLAttributes<HTMLDsMobileSheetNavElement>;
             "ds-modal": LocalJSX.IntrinsicElements["ds-modal"] & JSXBase.HTMLAttributes<HTMLDsModalElement>;
+            "ds-pagination": LocalJSX.IntrinsicElements["ds-pagination"] & JSXBase.HTMLAttributes<HTMLDsPaginationElement>;
             "ds-panel-nav": LocalJSX.IntrinsicElements["ds-panel-nav"] & JSXBase.HTMLAttributes<HTMLDsPanelNavElement>;
             "ds-panel-sub-nav": LocalJSX.IntrinsicElements["ds-panel-sub-nav"] & JSXBase.HTMLAttributes<HTMLDsPanelSubNavElement>;
             "ds-panel-tool-header": LocalJSX.IntrinsicElements["ds-panel-tool-header"] & JSXBase.HTMLAttributes<HTMLDsPanelToolHeaderElement>;

@@ -74,6 +74,10 @@ ds-text.ds-table__footer-summary {
   margin-inline-start: auto;
 }
 
+.ds-table__bar-trailing ds-pagination {
+  max-inline-size: 100%;
+}
+
 .ds-table__bar-status slot::slotted(*) {
   width: auto;
   max-width: 100%;
