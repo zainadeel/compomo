@@ -79,7 +79,7 @@ ds-text.ds-table__footer-summary {
 }
 
 .ds-table__bar-status slot::slotted(*) {
-  width: auto;
+  width: 100%;
   max-width: 100%;
   min-width: 0;
 }
@@ -89,4 +89,16 @@ ds-skeleton.ds-table__skeleton-image-shape {
   width: 100%;
   height: 100%;
   --ds-control-height: 100%;
+}
+
+ds-skeleton.ds-table__skeleton-checkbox {
+  --ds-control-height: var(--dimension-iconography-sm);
+}
+
+.ds-table__skeleton-checkbox-canvas {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--dimension-iconography-md);
+  block-size: var(--dimension-iconography-md);
 }
