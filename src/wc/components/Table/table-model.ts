@@ -3,6 +3,7 @@ import type {
   TableCellAction,
   TableCellEmpty,
   TableCellIcon,
+  TableCellIconText,
   TableCellImage,
   TableCellPrimaryText,
   TableCellText,
@@ -45,6 +46,10 @@ export function isTableCellIcon(value: TableCellValue): value is TableCellIcon {
   return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'icon';
 }
 
+export function isTableCellIconText(value: TableCellValue): value is TableCellIconText {
+  return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'icon-text';
+}
+
 export function isTableCellImage(value: TableCellValue): value is TableCellImage {
   return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'image';
 }
@@ -65,6 +70,7 @@ export function tableCellPrimary(value: TableCellValue): string | number | null 
   if (value == null) return null;
   if (isTableCellTag(value)) return value.label;
   if (isTableCellIcon(value)) return null;
+  if (isTableCellIconText(value)) return value.primary;
   if (isTableCellImage(value)) return value.alt;
   if (isTableCellAction(value)) return value.label ?? value.ariaLabel;
   if (isTableCellPrimaryText(value)) return value.primary;

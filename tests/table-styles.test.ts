@@ -19,6 +19,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.equal(packageJson.exports['./table.css'], './dist/styles/table.css');
   assert.match(componentCss, /@import '\.\.\/\.\.\/styles\/table\.css'/);
   assert.match(componentCss, /@import '\.\.\/\.\.\/styles\/control-elevation\.css'/);
+  assert.match(componentCss, /@import '\.\.\/\.\.\/utils\/text-decoration\.css'/);
   assert.match(componentTsx, /focus-ring\.css/);
   assert.match(componentTsx, /interaction-fill\.css/);
   assert.match(componentTsx, /TableLayoutController/);
@@ -43,6 +44,8 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(componentTsx, /<slot name="footer"/);
   assert.match(componentTsx, /<slot name="footer-leading"/);
   assert.match(componentTsx, /<slot name="footer-trailing"/);
+  assert.match(componentTsx, /variant === 'text-with-tag' \? 'sm' : 'md'/);
+  assert.match(componentTsx, /variant === 'text-with-tag' \? 'single' : 'double'/);
   assert.match(componentTsx, /'ds-table--caption-visible'/);
   assert.match(css, /\.ds-table__caption-content/);
   assert.match(css, /\.ds-table__bar-copy > slot/);
@@ -60,6 +63,10 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
     'ds-table__header-cell',
     'ds-table__caption-bar',
     'ds-table__cell',
+    'ds-table__cell-link',
+    'ds-table__cell-icon-text',
+    'ds-table__cell-tertiary',
+    'ds-table__cell-track--runs',
     'ds-table__group-content',
     'ds-table__collapse-all-overlay',
     'ds-table__sticky-edge',
@@ -69,6 +76,28 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   ]) {
     assert.match(css, new RegExp(`\\.${selector}`));
   }
+
+  assert.match(css, /--_table-cell-track-min-block-size: var\(--dimension-size-300\)/);
+  assert.match(css, /\.ds-table__cell-icon-text\)[\s\S]*?gap: var\(--dimension-space-025\)/);
+  assert.match(css, /\.ds-table__cell-icon-text-icon\)[\s\S]*?padding: var\(--dimension-space-025\)/);
+  assert.match(css, /\.ds-table__cell-image[\s\S]*?aspect-ratio: 16 \/ 9/);
+  assert.match(css, /--_table-image-block-size: var\(--_table-cell-track-min-block-size\)/);
+  assert.match(css, /\.ds-table__cell--image-multi \.ds-table__cell-image\)[\s\S]*?--_table-image-block-size-multi/);
+  assert.match(css, /\.ds-table__cell--image-triple \.ds-table__cell-image\)[\s\S]*?--_table-image-block-size-triple/);
+  assert.match(css, /\.ds-table__cell-track--text[\s\S]*?padding-inline: var\(--_table-cell-track-padding-inline\)/);
+  assert.match(css, /\.ds-table__cell-primary[\s\S]*?padding-block: var\(--dimension-space-025\)/);
+  assert.match(
+    css,
+    /\.ds-table__cell--text-multi \.ds-table__cell-copy\)[\s\S]*?gap: var\(--dimension-space-025\)/,
+  );
+  assert.match(
+    componentCss,
+    /ds-text\.ds-table__cell-track--text[\s\S]*?padding-inline: var\(--_table-cell-track-padding-inline\)/,
+  );
+  assert.match(
+    css,
+    /\.ds-table__cell\.ds-table__selection-cell\)[\s\S]*?--_table-cell-padding-block/,
+  );
 });
 
 test('keeps public table selectors and custom properties override-friendly', () => {

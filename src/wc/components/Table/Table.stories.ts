@@ -18,6 +18,9 @@ import type {
 } from './table-types';
 import type { PaginationChangeDetail } from '../Pagination/pagination-types';
 
+/** 8px cell chrome on both sides plus a 16:9 preview at the matching track stack. */
+const IMAGE_COLUMN_SIZE = { 1: 59, 2: 98, 3: 137 } as const;
+
 const COLUMNS: TableColumn[] = [
   { id: 'driver', header: 'Driver', sortable: true, size: 'sm' },
   { id: 'status', header: 'Status', sortable: true, size: 'xs' },
@@ -109,7 +112,7 @@ const ASYNC_COLUMNS: TableColumn[] = [
 ];
 
 const COMPOSED_SKELETON_COLUMNS: TableColumn[] = [
-  { id: 'preview', header: 'Preview', size: 102, skeleton: { kind: 'image' } },
+  { id: 'preview', header: 'Preview', size: IMAGE_COLUMN_SIZE[2], skeleton: { kind: 'image', tracks: 2 } },
   {
     id: 'event',
     header: 'Event',
@@ -144,9 +147,12 @@ const ALIGNMENT_ROWS: TableRow[] = [
 const ALL_CELL_TYPE_COLUMNS: TableColumn[] = [
   { id: 'scalar', header: 'Scalar text', size: 'sm' },
   { id: 'primarySecondary', header: 'Primary + secondary', size: 'sm' },
+  { id: 'linkedText', header: 'Linked text', size: 'sm' },
   { id: 'primaryPair', header: 'Primary + primary', size: 'sm' },
-  { id: 'image', header: 'Image', size: 102 },
+  { id: 'event', header: 'Event', size: 'sm' },
+  { id: 'image', header: 'Image', size: IMAGE_COLUMN_SIZE[2] },
   { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
+  { id: 'iconText', header: 'Icon + text', size: 'sm' },
   { id: 'tagOnly', header: 'Tag only', size: 'sm' },
   { id: 'tagWithText', header: 'Tag + text', size: 'sm' },
   { id: 'textWithTag', header: 'Text + tag', size: 'sm' },
@@ -156,6 +162,86 @@ const ALL_CELL_TYPE_COLUMNS: TableColumn[] = [
   { id: 'blank', header: 'Blank', size: 'xs' },
 ];
 
+const SINGLE_TRACK_COLUMNS: TableColumn[] = [
+  { id: 'scalar', header: 'Scalar text', size: 'sm' },
+  { id: 'linkedText', header: 'Linked text', size: 'sm' },
+  { id: 'image', header: 'Image', size: IMAGE_COLUMN_SIZE[1] },
+  { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
+  { id: 'iconText', header: 'Icon + text', size: 'sm' },
+  { id: 'tagOnly', header: 'Tag only', size: 'sm' },
+  { id: 'action', kind: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
+  { id: 'borderedAction', kind: 'action', header: '', headerLabel: 'Bordered action', align: 'center', size: 40 },
+  { id: 'empty', header: 'Empty', size: 'xs' },
+  { id: 'blank', header: 'Blank', size: 'xs' },
+];
+
+const SINGLE_TRACK_ROWS: TableRow[] = [
+  {
+    id: 'single-track-one',
+    selectionLabel: 'Vehicle 2841',
+    cells: {
+      scalar: 'Vehicle 2841',
+      linkedText: {
+        primary: 'Freightliner Cascadia',
+        href: '/vehicles/VEH-1042',
+      },
+      image: { kind: 'image', alt: 'Vehicle preview unavailable' },
+      icon: { kind: 'icon', icon: 'DocumentInverted', color: 'secondary', label: 'Has notes' },
+      iconText: { kind: 'icon-text', icon: 'VehicleTruck', primary: 'Freightliner Cascadia' },
+      tagOnly: { kind: 'tag', label: 'Pending', intent: 'caution' },
+      action: {
+        kind: 'action',
+        actionId: 'more',
+        variant: 'icon',
+        icon: 'Ellipses',
+        ariaLabel: 'More actions',
+      },
+      borderedAction: {
+        kind: 'action',
+        actionId: 'more-bordered',
+        variant: 'icon',
+        icon: 'Ellipses',
+        ariaLabel: 'More actions with border',
+        hasBorder: true,
+      },
+      empty: { kind: 'empty' },
+      blank: { kind: 'blank' },
+    },
+  },
+  {
+    id: 'single-track-two',
+    selectionLabel: 'Vehicle 1904',
+    cells: {
+      scalar: 'Vehicle 1904',
+      linkedText: {
+        primary: 'Volvo VNL',
+        href: '/vehicles/VEH-1904',
+      },
+      image: { kind: 'image', alt: 'Vehicle preview unavailable' },
+      icon: { kind: 'icon', icon: 'DocumentInverted', color: 'secondary', label: 'Has notes' },
+      iconText: { kind: 'icon-text', icon: 'VehicleTruck', primary: 'Volvo VNL' },
+      tagOnly: { kind: 'tag', label: 'Active', intent: 'positive' },
+      action: {
+        kind: 'action',
+        actionId: 'more',
+        variant: 'icon',
+        icon: 'Ellipses',
+        ariaLabel: 'More actions',
+      },
+      borderedAction: {
+        kind: 'action',
+        actionId: 'more-bordered',
+        variant: 'icon',
+        icon: 'Ellipses',
+        ariaLabel: 'More actions with border',
+        hasBorder: true,
+      },
+      empty: { kind: 'empty' },
+      blank: { kind: 'blank' },
+    },
+  },
+];
+
 const ALL_CELL_TYPE_ROWS: TableRow[] = [
   {
     id: 'all-cell-types-one',
@@ -163,9 +249,31 @@ const ALL_CELL_TYPE_ROWS: TableRow[] = [
     cells: {
       scalar: 'Vehicle 2841',
       primarySecondary: { primary: 'John Smith', secondary: 'DRV-1048' },
+      linkedText: {
+        primary: 'Freightliner Cascadia',
+        secondary: 'VEH-1042',
+        href: '/vehicles/VEH-1042',
+      },
       primaryPair: { kind: 'primary-text', primary: 'Vehicle', secondary: 'VH-2841' },
-      image: { kind: 'image', alt: 'Safety event preview unavailable' },
+      event: {
+        primary: 'Speeding',
+        secondary: [
+          { text: 'High', color: 'negative' },
+          { text: '45 mph over' },
+        ],
+      },
+      image: { kind: 'image', tracks: 2, alt: 'Safety event preview unavailable' },
       icon: { kind: 'icon', icon: 'DocumentInverted', color: 'secondary', label: 'Has notes' },
+      iconText: {
+        kind: 'icon-text',
+        icon: 'VehicleTruck',
+        primary: 'Freightliner Cascadia',
+        href: '/vehicles/VEH-1042',
+        secondary: [
+          { text: 'VEH-1042' },
+          { text: 'Class 8' },
+        ],
+      },
       tagOnly: { kind: 'tag', label: 'Pending', intent: 'caution' },
       tagWithText: {
         kind: 'tag',
@@ -202,8 +310,81 @@ const ALL_CELL_TYPE_ROWS: TableRow[] = [
   },
 ];
 
+const THREE_TRACK_COLUMNS: TableColumn[] = [
+  { id: 'image', header: 'Image', size: IMAGE_COLUMN_SIZE[3] },
+  { id: 'iconText', header: 'Icon + text', size: 'sm' },
+  { id: 'driver', header: 'Driver', size: 'sm' },
+  { id: 'vehicle', header: 'Vehicle', size: 'sm' },
+  { id: 'event', header: 'Event', size: 'sm' },
+];
+
+const THREE_TRACK_ROWS: TableRow[] = [
+  {
+    id: 'three-track-avery',
+    selectionLabel: 'Avery Chen',
+    cells: {
+      driver: {
+        primary: 'Avery Chen',
+        secondary: 'DRV-1048',
+        tertiary: 'Dallas, TX',
+      },
+      vehicle: {
+        primary: 'Freightliner Cascadia',
+        href: '/vehicles/VEH-1042',
+        secondary: 'VEH-1042',
+        tertiary: 'Class 8',
+      },
+      event: {
+        primary: 'Speeding',
+        secondary: 'High',
+        secondaryColor: 'negative',
+        tertiary: '45 mph over',
+      },
+      image: { kind: 'image', tracks: 3, alt: 'Safety event preview unavailable' },
+      iconText: {
+        kind: 'icon-text',
+        icon: 'Person',
+        primary: 'Avery Chen',
+        secondary: 'DRV-1048',
+        tertiary: 'Dallas, TX',
+      },
+    },
+  },
+  {
+    id: 'three-track-jordan',
+    selectionLabel: 'Jordan Patel',
+    cells: {
+      driver: {
+        primary: 'Jordan Patel',
+        secondary: 'DRV-2210',
+        tertiary: 'Oakland, CA',
+      },
+      vehicle: {
+        primary: 'Volvo VNL',
+        href: '/vehicles/VEH-1904',
+        secondary: 'VEH-1904',
+        tertiary: 'Class 8',
+      },
+      event: {
+        primary: 'Lane cutoff',
+        secondary: 'High',
+        secondaryColor: 'negative',
+        tertiary: '12 ft',
+      },
+      image: { kind: 'image', tracks: 3, alt: 'Safety event preview unavailable' },
+      iconText: {
+        kind: 'icon-text',
+        icon: 'Person',
+        primary: 'Jordan Patel',
+        secondary: 'DRV-2210',
+        tertiary: 'Oakland, CA',
+      },
+    },
+  },
+];
+
 const SAFETY_EVENT_COLUMNS: TableColumn[] = [
-  { id: 'preview', header: 'Preview', size: 102 },
+  { id: 'preview', header: 'Preview', size: IMAGE_COLUMN_SIZE[2] },
   {
     id: 'behaviorDetails',
     header: 'Behavior / Severity',
@@ -265,7 +446,7 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
     selectionLabel: 'Close following event for John Smith',
     interactive: true,
     cells: {
-      preview: { kind: 'image', alt: 'Road-facing video preview unavailable' },
+      preview: { kind: 'image', tracks: 2, alt: 'Road-facing video preview unavailable' },
       behaviorDetails: { primary: 'Close following', secondary: 'Critical', secondaryColor: 'negative' },
       behavior: 'Close following',
       severity: 'Critical',
@@ -296,7 +477,7 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
     selectionLabel: 'Lane cutoff event for Maria Garcia',
     interactive: true,
     cells: {
-      preview: { kind: 'image', alt: 'Dual-facing video preview unavailable' },
+      preview: { kind: 'image', tracks: 2, alt: 'Dual-facing video preview unavailable' },
       behaviorDetails: { primary: 'Lane cutoff', secondary: 'High', secondaryColor: 'warning' },
       behavior: 'Lane cutoff',
       severity: 'High',
@@ -327,7 +508,7 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
     selectionLabel: 'Distraction event for David Chen',
     interactive: true,
     cells: {
-      preview: { kind: 'image', alt: 'Driver-facing video preview unavailable' },
+      preview: { kind: 'image', tracks: 2, alt: 'Driver-facing video preview unavailable' },
       behaviorDetails: { primary: 'Distraction', secondary: 'High', secondaryColor: 'warning' },
       behavior: 'Distraction',
       severity: 'High',
@@ -358,7 +539,7 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
     selectionLabel: 'Stop sign violation event for Sarah Williams',
     interactive: true,
     cells: {
-      preview: { kind: 'image', alt: 'Road-facing video preview unavailable' },
+      preview: { kind: 'image', tracks: 2, alt: 'Road-facing video preview unavailable' },
       behaviorDetails: { primary: 'Stop sign violation', secondary: 'Critical', secondaryColor: 'negative' },
       behavior: 'Stop sign violation',
       severity: 'Critical',
@@ -389,7 +570,7 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
     selectionLabel: 'Unsafe lane change event for Noah Wilson',
     interactive: true,
     cells: {
-      preview: { kind: 'image', alt: 'Dual-facing video preview unavailable' },
+      preview: { kind: 'image', tracks: 2, alt: 'Dual-facing video preview unavailable' },
       behaviorDetails: {
         primary: 'Unsafe lane change',
         secondary: 'Low',
@@ -424,7 +605,7 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
     selectionLabel: 'Speeding event for Priya Nair',
     interactive: true,
     cells: {
-      preview: { kind: 'image', alt: 'Road-facing video preview unavailable' },
+      preview: { kind: 'image', tracks: 2, alt: 'Road-facing video preview unavailable' },
       behaviorDetails: { primary: 'Speeding', secondary: 'Medium' },
       behavior: 'Speeding',
       severity: 'Medium',
@@ -961,19 +1142,37 @@ export const AllCellTypes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'One review table for every standard cell primitive. Single-track text, selection, Tag, Action, Empty, and Blank cells share a 40px contract; two-track text and the 16:9 Image cell establish a 64px row. Action cells primarily use an icon-only Ellipses ButtonUnfilled; the examples show its default unbordered and optional bordered treatments. Empty means the data applies but has no value and renders an em dash; Blank means the data is not applicable and intentionally renders nothing.',
+        story: 'Three review tables, one height each. Image cells declare tracks 1, 2, or 3 so the 16:9 preview fills the matching content box (cell height minus 8px padding). Icon-and-text cells (`kind: icon-text`) place one md prefix icon beside the copy stack: 2px padding on every side of the icon, a 2px flex gap before the copy, and text-track padding staying on the copy. Single-track cells, including the 1-track image and icon-and-text, stay on a 40px row. Two-track text, 2-track image, and 2-track icon-and-text share a 62px row. Event in that table shows a two-line cell with middle-dot runs. Three-track text, 3-track image, and 3-track icon-and-text stay on an 84px row. Body cells share 8px outer padding; 20px content sits in a 24px track; later tracks are 20px with a 2px stack gap. Linked primary text uses a native anchor and the shared brand text-action treatment; secondary copy stays unlinked. Secondary tracks may split into middle-dot-separated runs. The third line uses the same subdued track recipe as the second. Action cells primarily use an icon-only Ellipses ButtonUnfilled; the examples show its default unbordered and optional bordered treatments. Empty means the data applies but has no value and renders an em dash; Blank means the data is not applicable and intentionally renders nothing.',
       },
     },
   },
   render: () => html`
-    <ds-table
-      data-a11y-fixture
-      .columns=${ALL_CELL_TYPE_COLUMNS}
-      .rows=${ALL_CELL_TYPE_ROWS}
-      selection-mode="multiple"
-      caption="All table cell types"
-      caption-visibility="visible"
-    ></ds-table>
+    <div style="display:grid;gap:var(--dimension-space-400);">
+      <ds-table
+        data-a11y-fixture
+        .columns=${SINGLE_TRACK_COLUMNS}
+        .rows=${SINGLE_TRACK_ROWS}
+        selection-mode="multiple"
+        caption="Single-track cells"
+        caption-visibility="visible"
+      ></ds-table>
+      <ds-table
+        data-a11y-fixture
+        .columns=${ALL_CELL_TYPE_COLUMNS}
+        .rows=${ALL_CELL_TYPE_ROWS}
+        selection-mode="multiple"
+        caption="All table cell types"
+        caption-visibility="visible"
+      ></ds-table>
+      <ds-table
+        data-a11y-fixture
+        .columns=${THREE_TRACK_COLUMNS}
+        .rows=${THREE_TRACK_ROWS}
+        selection-mode="multiple"
+        caption="Three-track cells"
+        caption-visibility="visible"
+      ></ds-table>
+    </div>
   `,
 };
 

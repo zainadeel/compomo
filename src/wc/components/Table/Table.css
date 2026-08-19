@@ -2,6 +2,7 @@
 @import '../../styles/control-elevation.css';
 @import '../../utils/chrome-header.css';
 @import '../../utils/control-density.css';
+@import '../../utils/text-decoration.css';
 
 :host {
   display: block;
@@ -39,15 +40,26 @@ ds-text.ds-table__cell-track {
 }
 
 ds-text.ds-table__cell-track--text {
-  padding-inline: var(--_table-cell-track-label-inset);
+  padding-inline: var(--_table-cell-track-padding-inline);
 }
 
-ds-text.ds-table__cell-secondary {
+ds-text.ds-table__cell-primary,
+.ds-table__cell--empty ds-text.ds-table__cell-track {
+  padding-block: var(--dimension-space-025);
+}
+
+ds-text.ds-table__cell-secondary,
+ds-text.ds-table__cell-tertiary {
   padding-block: var(--dimension-space-025);
 }
 
 .ds-table__cell--primary-text ds-text.ds-table__cell-secondary {
   padding-block: 0;
+}
+
+ds-text.ds-table__cell-run,
+ds-text.ds-table__cell-run-separator {
+  display: flex;
 }
 
 .ds-table__cell-tag-stack--tag-with-text ds-text.ds-table__cell-tag-text {
@@ -56,7 +68,8 @@ ds-text.ds-table__cell-secondary {
 }
 
 .ds-table__cell-tag-stack--text-with-tag ds-text.ds-table__cell-tag-text {
-  padding-inline: var(--_table-cell-track-label-inset);
+  padding-inline: var(--_table-cell-track-padding-inline);
+  padding-block: var(--dimension-space-025);
 }
 
 ds-text.ds-table__load-content {
@@ -99,6 +112,6 @@ ds-skeleton.ds-table__skeleton-checkbox {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  inline-size: var(--dimension-iconography-md);
-  block-size: var(--dimension-iconography-md);
+  inline-size: var(--dimension-size-300);
+  block-size: var(--dimension-size-300);
 }

@@ -141,9 +141,12 @@ const cellTypes = document.getElementById('cell-types');
 cellTypes.columns = [
   { id: 'singleText', header: 'Single text', size: 'sm' },
   { id: 'primarySecondary', header: 'Primary + secondary', size: 'sm' },
+  { id: 'linkedText', header: 'Linked text', size: 'sm' },
   { id: 'primaryPair', header: 'Primary + primary', size: 'sm' },
-  { id: 'image', header: 'Image', size: 102 },
+  { id: 'event', header: 'Event', size: 'sm' },
+  { id: 'image', header: 'Image', size: 98 },
   { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
+  { id: 'iconText', header: 'Icon + text', size: 'sm' },
   { id: 'tagOnly', header: 'Tag only', size: 'sm' },
   { id: 'tagWithText', header: 'Tag with text', size: 'sm' },
   { id: 'textWithTag', header: 'Text with tag', size: 'sm' },
@@ -159,9 +162,31 @@ cellTypes.rows = [
     cells: {
       singleText: 'Vehicle 2841',
       primarySecondary: { primary: 'John Smith', secondary: 'DRV-1048' },
+      linkedText: {
+        primary: 'Freightliner Cascadia',
+        secondary: 'VEH-1042',
+        href: '/vehicles/VEH-1042',
+      },
       primaryPair: { kind: 'primary-text', primary: 'Vehicle', secondary: 'VH-2841' },
-      image: { kind: 'image', alt: 'Safety event preview unavailable' },
+      event: {
+        primary: 'Speeding',
+        secondary: [
+          { text: 'High', color: 'negative' },
+          { text: '45 mph over' },
+        ],
+      },
+      image: { kind: 'image', tracks: 2, alt: 'Safety event preview unavailable' },
       icon: { kind: 'icon', icon: 'DocumentInverted', color: 'secondary', label: 'Has notes' },
+      iconText: {
+        kind: 'icon-text',
+        icon: 'VehicleTruck',
+        primary: 'Freightliner Cascadia',
+        href: '/vehicles/VEH-1042',
+        secondary: [
+          { text: 'VEH-1042' },
+          { text: 'Class 8' },
+        ],
+      },
       tagOnly: { kind: 'tag', label: 'Pending', intent: 'caution' },
       tagWithText: {
         kind: 'tag',
@@ -202,6 +227,109 @@ cellTypes.addEventListener('dsCellAction', event => {
   window.__tableCellActionEvents.push(event.detail);
 });
 
+const threeTrack = document.getElementById('three-track');
+threeTrack.columns = [
+  { id: 'image', header: 'Image', size: 137 },
+  { id: 'iconText', header: 'Icon + text', size: 'sm' },
+  { id: 'driver', header: 'Driver', size: 'sm' },
+  { id: 'vehicle', header: 'Vehicle', size: 'sm' },
+  { id: 'event', header: 'Event', size: 'sm' },
+];
+threeTrack.rows = [
+  {
+    id: 'three-track-avery',
+    selectionLabel: 'Avery Chen',
+    cells: {
+      driver: {
+        primary: 'Avery Chen',
+        secondary: 'DRV-1048',
+        tertiary: 'Dallas, TX',
+      },
+      vehicle: {
+        primary: 'Freightliner Cascadia',
+        href: '/vehicles/VEH-1042',
+        secondary: 'VEH-1042',
+        tertiary: 'Class 8',
+      },
+      event: {
+        primary: 'Speeding',
+        secondary: 'High',
+        secondaryColor: 'negative',
+        tertiary: '45 mph over',
+      },
+      image: { kind: 'image', tracks: 3, alt: 'Safety event preview unavailable' },
+      iconText: {
+        kind: 'icon-text',
+        icon: 'Person',
+        primary: 'Avery Chen',
+        secondary: 'DRV-1048',
+        tertiary: 'Dallas, TX',
+      },
+    },
+  },
+  {
+    id: 'three-track-jordan',
+    selectionLabel: 'Jordan Patel',
+    cells: {
+      driver: {
+        primary: 'Jordan Patel',
+        secondary: 'DRV-2210',
+        tertiary: 'Oakland, CA',
+      },
+      vehicle: {
+        primary: 'Volvo VNL',
+        href: '/vehicles/VEH-1904',
+        secondary: 'VEH-1904',
+        tertiary: 'Class 8',
+      },
+      event: {
+        primary: 'Lane cutoff',
+        secondary: 'High',
+        secondaryColor: 'negative',
+        tertiary: '12 ft',
+      },
+      image: { kind: 'image', tracks: 3, alt: 'Safety event preview unavailable' },
+      iconText: {
+        kind: 'icon-text',
+        icon: 'Person',
+        primary: 'Jordan Patel',
+        secondary: 'DRV-2210',
+        tertiary: 'Oakland, CA',
+      },
+    },
+  },
+];
+
+const singleTrack = document.getElementById('single-track');
+singleTrack.columns = [
+  { id: 'scalar', header: 'Scalar text', size: 'sm' },
+  { id: 'image', header: 'Image', size: 59 },
+  { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
+  { id: 'iconText', header: 'Icon + text', size: 'sm' },
+  { id: 'tagOnly', header: 'Tag only', size: 'sm' },
+  { id: 'action', kind: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
+];
+singleTrack.rows = [
+  {
+    id: 'single-track-one',
+    selectionLabel: 'Vehicle 2841',
+    cells: {
+      scalar: 'Vehicle 2841',
+      image: { kind: 'image', alt: 'Vehicle preview unavailable' },
+      icon: { kind: 'icon', icon: 'DocumentInverted', color: 'secondary', label: 'Has notes' },
+      iconText: { kind: 'icon-text', icon: 'VehicleTruck', primary: 'Freightliner Cascadia' },
+      tagOnly: { kind: 'tag', label: 'Pending', intent: 'caution' },
+      action: {
+        kind: 'action',
+        actionId: 'more',
+        variant: 'icon',
+        icon: 'Ellipses',
+        ariaLabel: 'More actions',
+      },
+    },
+  },
+];
+
 const selectable = setBase('selectable');
 selectable.selectedRowIds = ['jordan', 'not-loaded'];
 window.__tableSelectionEvents = [];
@@ -239,6 +367,55 @@ interactive.rows = rows.slice(0, 2).map(row => ({
 }));
 window.__tableRowActivationEvents = [];
 interactive.addEventListener('dsRowActivate', event => {
+  window.__tableRowActivationEvents.push(event.detail.rowId);
+});
+
+const linkedText = document.getElementById('linked-text');
+linkedText.columns = [
+  { id: 'vehicle', header: 'Vehicle', size: 'sm' },
+  { id: 'status', header: 'Status', size: 'xs' },
+];
+linkedText.rows = [
+  {
+    id: 'veh-1042',
+    interactive: true,
+    selectionLabel: 'Freightliner Cascadia',
+    cells: {
+      vehicle: {
+        primary: 'Freightliner Cascadia',
+        secondary: 'VEH-1042',
+        href: '/vehicles/VEH-1042',
+      },
+      status: 'Active',
+    },
+  },
+  {
+    id: 'veh-external',
+    interactive: true,
+    selectionLabel: 'External spec',
+    cells: {
+      vehicle: {
+        primary: 'Maintenance manual',
+        href: 'https://example.test/manual',
+        target: '_blank',
+      },
+      status: 'Document',
+    },
+  },
+  {
+    id: 'veh-unsafe',
+    interactive: true,
+    selectionLabel: 'Unsafe href',
+    cells: {
+      vehicle: {
+        primary: 'Rejected script',
+        href: 'javascript:alert(1)',
+      },
+      status: 'Blocked',
+    },
+  },
+];
+linkedText.addEventListener('dsRowActivate', event => {
   window.__tableRowActivationEvents.push(event.detail.rowId);
 });
 
@@ -403,7 +580,7 @@ for (const id of ['loading', 'empty', 'error']) {
 const loading = document.getElementById('loading');
 loading.selectionMode = 'multiple';
 loading.columns = [
-  { id: 'preview', header: 'Preview', size: 102, skeleton: { kind: 'image' } },
+  { id: 'preview', header: 'Preview', size: 98, skeleton: { kind: 'image', tracks: 2 } },
   {
     id: 'details',
     header: 'Details',

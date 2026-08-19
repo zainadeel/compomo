@@ -24,7 +24,9 @@ import {
   toggleTableRowSelection,
 } from './table-model';
 import {
+  resolveTableCellImageTracks,
   resolveTableCellPresentation,
+  tableCellImageVariant,
   type TableCellPresentation,
 } from './table-cell-model';
 import {
@@ -37,6 +39,7 @@ import { TableGroupLoadController } from './table-group-load-controller';
 import type { PaginationChangeDetail } from '../Pagination/pagination-types';
 import { resolvePaginationState } from '../Pagination/pagination-model';
 import { resolveCssLengthPx } from '../../utils/resolve-css-length-px';
+import { resolveSafeUrl } from '../../utils/safe-url';
 import { resolveTableFitPageSize } from './table-pagination-fit';
 import {
   TableViewportFitController,
@@ -46,6 +49,7 @@ import type {
   TableCaptionVisibility,
   TableCellActionDetail,
   TableCellSkeleton,
+  TableCellTextRun,
   TableColumn,
   TableDataMode,
   TableGroup,
@@ -1064,6 +1068,22 @@ export class Table {
       );
     }
 
+    if (cell.kind === 'icon-text') {
+      return (
+        <span class="ds-table__cell-icon-text">
+          <span class="ds-table__cell-icon-text-icon">
+            <ds-icon
+              name={cell.icon}
+              size="md"
+              color={cell.iconColor ?? 'secondary'}
+              label={cell.iconLabel}
+            />
+          </span>
+          {this.renderTextCopy(cell)}
+        </span>
+      );
+    }
+
     if (cell.kind === 'image') {
       const value = cell.value;
       return (
@@ -1119,7 +1139,7 @@ export class Table {
           icon={value.icon ?? ''}
           rounded={value.rounded ?? false}
           isInset
-          insetDepth="double"
+          insetDepth={variant === 'text-with-tag' ? 'single' : 'double'}
         />
       );
 
@@ -1144,34 +1164,117 @@ export class Table {
       );
     }
 
+    if (cell.kind !== 'text') return null;
+    return this.renderTextCopy(cell);
+  }
+
+  private renderTextCopy(
+    cell: Extract<TableCellPresentation, { kind: 'text' | 'icon-text' }>,
+  ) {
     const text = cell.value;
     const wraps = cell.wraps;
+    const primaryText = cell.kind === 'text' && cell.primaryText;
+    const href = resolveSafeUrl(text.href);
+    const primary = (
+      <ds-text
+        class="ds-table__cell-primary ds-table__cell-track ds-table__cell-track--text"
+        as="span"
+        variant="text-body-medium"
+        color={href ? 'inherit' : 'primary'}
+        lineTruncation={wraps ? 'none' : 1}
+        wrap={wraps ? 'wrap' : 'nowrap'}
+        fontFeature={text.fontFeature ?? 'normal'}
+      >
+        {text.primary}
+      </ds-text>
+    );
 
     return (
       <span class={{ 'ds-table__cell-copy': true, 'ds-table__cell-copy--wrap': wraps }}>
-        <ds-text
-          class="ds-table__cell-primary ds-table__cell-track ds-table__cell-track--text"
-          as="span"
-          variant="text-body-medium"
-          color="primary"
-          lineTruncation={wraps ? 'none' : 1}
-          wrap={wraps ? 'wrap' : 'nowrap'}
-          fontFeature={text.fontFeature ?? 'normal'}
-        >
-          {text.primary}
-        </ds-text>
-        {text.secondary !== undefined && text.secondary !== '' && (
-          <ds-text
-            class="ds-table__cell-secondary ds-table__cell-track ds-table__cell-track--text"
-            as="span"
-            variant={cell.primaryText ? 'text-body-medium' : 'text-body-small'}
-            color={text.secondaryColor ?? (cell.primaryText ? 'primary' : 'secondary')}
-            lineTruncation={wraps ? 'none' : 1}
-            wrap={wraps ? 'wrap' : 'nowrap'}
+        {href ? (
+          <a
+            class="ds-table__cell-link ds-text-action ds-focus-ring"
+            href={href}
+            target={text.target === '_blank' ? '_blank' : undefined}
+            rel={text.target === '_blank' ? 'noopener noreferrer' : undefined}
           >
-            {text.secondary}
-          </ds-text>
-        )}
+            {primary}
+          </a>
+        ) : primary}
+        {this.renderTextTrack(text.secondary, {
+          track: 'secondary',
+          variant: primaryText ? 'text-body-medium' : 'text-body-small',
+          defaultColor: primaryText ? 'primary' : 'secondary',
+          wholeColor: text.secondaryColor,
+          wraps,
+        })}
+        {this.renderTextTrack(text.tertiary, {
+          track: 'tertiary',
+          variant: 'text-body-small',
+          defaultColor: 'secondary',
+          wholeColor: text.tertiaryColor,
+          wraps,
+        })}
+      </span>
+    );
+  }
+
+  private renderTextTrack(
+    runs: TableCellTextRun[] | undefined,
+    options: {
+      track: 'secondary' | 'tertiary';
+      variant: 'text-body-medium' | 'text-body-small';
+      defaultColor: 'primary' | 'secondary';
+      wholeColor?: TableCellTextRun['color'];
+      wraps: boolean;
+    },
+  ) {
+    if (!runs?.length) return null;
+    const trackClass = `ds-table__cell-${options.track} ds-table__cell-track ds-table__cell-track--text`;
+    const colorFor = (run: TableCellTextRun) =>
+      run.color ?? options.wholeColor ?? options.defaultColor;
+    if (runs.length === 1) {
+      return (
+        <ds-text
+          class={trackClass}
+          as="span"
+          variant={options.variant}
+          color={colorFor(runs[0])}
+          lineTruncation={options.wraps ? 'none' : 1}
+          wrap={options.wraps ? 'wrap' : 'nowrap'}
+        >
+          {runs[0].text}
+        </ds-text>
+      );
+    }
+
+    return (
+      <span class={`${trackClass} ds-table__cell-track--runs`}>
+        {runs.map((run, index) => [
+          index > 0 && (
+            <ds-text
+              key={`${options.track}-sep-${index}`}
+              class="ds-table__cell-run-separator"
+              as="span"
+              variant={options.variant}
+              color="secondary"
+              aria-hidden="true"
+            >
+              ·
+            </ds-text>
+          ),
+          <ds-text
+            key={`${options.track}-run-${index}`}
+            class="ds-table__cell-run"
+            as="span"
+            variant={options.variant}
+            color={colorFor(run)}
+            lineTruncation={options.wraps ? 'none' : 1}
+            wrap={options.wraps ? 'wrap' : 'nowrap'}
+          >
+            {run.text}
+          </ds-text>,
+        ])}
       </span>
     );
   }
@@ -1220,6 +1323,7 @@ export class Table {
           const cell = resolveTableCellPresentation(row.cells[column.id], column);
           const tagCell = cell.kind === 'tag';
           const iconCell = cell.kind === 'icon';
+          const iconTextCell = cell.kind === 'icon-text';
           const imageCell = cell.kind === 'image';
           const actionCell = cell.kind === 'action';
           const textCell = cell.kind === 'text';
@@ -1229,6 +1333,8 @@ export class Table {
           const blankCell = cell.kind === 'blank';
           const tagVariant = tagCell ? cell.variant : undefined;
           const textVariant = textCell ? cell.variant : undefined;
+          const imageVariant = cell.kind === 'image' ? cell.variant : undefined;
+          const iconTextVariant = iconTextCell ? cell.variant : undefined;
           return (
             <td
               key={`${row.id}:${column.id}`}
@@ -1238,11 +1344,15 @@ export class Table {
                 'ds-table__cell--tag': tagCell,
                 [`ds-table__cell--tag-${tagVariant}`]: tagCell,
                 'ds-table__cell--icon': iconCell,
+                'ds-table__cell--icon-text': iconTextCell,
+                [`ds-table__cell--icon-text-${iconTextVariant}`]: iconTextCell,
                 'ds-table__cell--image': imageCell,
+                [`ds-table__cell--image-${imageVariant}`]: imageCell,
                 'ds-table__cell--action': actionCell,
                 'ds-table__cell--primary-text': primaryTextCell,
                 'ds-table__cell--text-single': singleTextCell,
-                'ds-table__cell--text-multi': textCell && !singleTextCell,
+                'ds-table__cell--text-multi': textCell && !singleTextCell && textVariant !== 'triple',
+                'ds-table__cell--text-triple': textVariant === 'triple',
                 'ds-table__cell--empty': emptyCell,
                 'ds-table__cell--blank': blankCell,
                 'ds-table__cell--sticky-start': column.sticky === 'start',
@@ -1253,7 +1363,7 @@ export class Table {
               }}
               data-column-id={column.id}
               data-cell-type={cell.cellType}
-              data-cell-variant={tagVariant ?? textVariant}
+              data-cell-variant={tagVariant ?? textVariant ?? imageVariant ?? iconTextVariant}
             >
               <span class="ds-table__cell-content ds-interaction-fill__content">
                 {this.renderCellValue(cell, column, row)}
@@ -1528,10 +1638,17 @@ export class Table {
     ) satisfies TableCellSkeleton;
     const align = column.align ?? 'start';
     const text = skeleton.kind === 'text';
-    const lines = text ? skeleton.lines ?? 1 : 1;
+    const iconText = skeleton.kind === 'icon-text';
+    const lines = text || iconText ? skeleton.lines ?? 1 : 1;
     const tag = skeleton.kind === 'tag';
     const icon = skeleton.kind === 'icon';
     const image = skeleton.kind === 'image';
+    const imageVariant = image
+      ? tableCellImageVariant(resolveTableCellImageTracks(skeleton.tracks))
+      : undefined;
+    const iconTextVariant = iconText
+      ? lines === 3 ? 'triple' : lines === 2 ? 'multi' : 'single'
+      : undefined;
     const action = skeleton.kind === 'action';
     const blank = skeleton.kind === 'blank';
 
@@ -1543,10 +1660,14 @@ export class Table {
           'ds-table__skeleton-cell': true,
           'ds-table__cell--text-single': text && lines === 1,
           'ds-table__cell--text-multi': text && lines === 2,
+          'ds-table__cell--text-triple': text && lines === 3,
           'ds-table__cell--tag': tag,
           'ds-table__cell--tag-tag-only': tag,
           'ds-table__cell--icon': icon,
+          'ds-table__cell--icon-text': iconText,
+          [`ds-table__cell--icon-text-${iconTextVariant}`]: iconText,
           'ds-table__cell--image': image,
+          [`ds-table__cell--image-${imageVariant}`]: image,
           'ds-table__cell--action': action,
           'ds-table__cell--blank': blank,
           'ds-table__cell--sticky-start': column.sticky === 'start',
@@ -1556,6 +1677,7 @@ export class Table {
         }}
         data-column-id={column.id}
         data-skeleton-kind={skeleton.kind}
+        data-cell-variant={imageVariant ?? iconTextVariant}
         key={`skeleton-${rowIndex}:${column.id}`}
       >
         <span class="ds-table__cell-content ds-interaction-fill__content">
@@ -1608,16 +1730,16 @@ export class Table {
     }
 
     const lines = skeleton.lines ?? 1;
-    return (
+    const copy = (
       <span class="ds-table__cell-copy">
-        <span class="ds-table__cell-track ds-table__cell-track--text">
+        <span class="ds-table__cell-primary ds-table__cell-track ds-table__cell-track--text">
           <ds-skeleton
             variant="text"
             textVariant="text-body-medium"
             width={skeleton.primaryWidth ?? '100%'}
           />
         </span>
-        {lines === 2 && (
+        {lines >= 2 && (
           <span class="ds-table__cell-secondary ds-table__cell-track ds-table__cell-track--text">
             <ds-skeleton
               variant="text"
@@ -1626,8 +1748,28 @@ export class Table {
             />
           </span>
         )}
+        {lines === 3 && (
+          <span class="ds-table__cell-tertiary ds-table__cell-track ds-table__cell-track--text">
+            <ds-skeleton
+              variant="text"
+              textVariant="text-body-small"
+              width={skeleton.tertiaryWidth ?? '56%'}
+            />
+          </span>
+        )}
       </span>
     );
+    if (skeleton.kind === 'icon-text') {
+      return (
+        <span class="ds-table__cell-icon-text">
+          <span class="ds-table__cell-icon-text-icon">
+            <ds-skeleton variant="icon" iconSize="md" />
+          </span>
+          {copy}
+        </span>
+      );
+    }
+    return copy;
   }
 
   private renderStateBody(kind: 'empty' | 'error', totalColumns: number) {

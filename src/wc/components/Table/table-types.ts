@@ -6,6 +6,7 @@ import type { PaginationState } from '../Pagination/pagination-types';
 export type TableSortDirection = 'asc' | 'desc';
 export type TableSelectionMode = 'none' | 'multiple';
 export type TableCellAlign = 'start' | 'center' | 'end';
+export type TableCellLinkTarget = '_self' | '_blank';
 export type TableColumnSticky = 'start' | 'end';
 export type TableCaptionVisibility = 'visible' | 'hidden';
 export type TableLoadMoreMode = 'auto' | 'manual';
@@ -42,12 +43,30 @@ export interface TableGroupingState {
   direction: TableSortDirection;
 }
 
-/** Standard two-line cell content owned by the table renderer. */
+/** One independently colored run inside a secondary or tertiary track. */
+export interface TableCellTextRun {
+  text: string;
+  /** Defaults to the track’s standard color. */
+  color?: TextColor;
+}
+
+/** A secondary or tertiary track: one string, or up to three colorable runs. */
+export type TableCellTextTrack = string | TableCellTextRun[];
+
+/** Standard two- or three-line cell content owned by the table renderer. */
 export interface TableCellText {
   primary: string | number;
-  secondary?: string;
-  /** Optional semantic foreground for secondary copy; defaults to the standard secondary color. */
+  secondary?: TableCellTextTrack;
+  /** Third subdued track; ignored on dual-primary cells. */
+  tertiary?: TableCellTextTrack;
+  /** Optional semantic foreground for a string secondary track. */
   secondaryColor?: TextColor;
+  /** Optional semantic foreground for a string tertiary track. */
+  tertiaryColor?: TextColor;
+  /** Application-owned URL for the primary track only. Scalars stay unlinked. */
+  href?: string;
+  /** Native anchor target for a resolved primary link. */
+  target?: TableCellLinkTarget;
   /** Allow this cell to wrap even when its column truncates by default. */
   wrap?: boolean;
   fontFeature?: 'normal' | 'tabular-nums';
@@ -58,6 +77,10 @@ export interface TableCellPrimaryText {
   kind: 'primary-text';
   primary: string | number;
   secondary: string | number;
+  /** Application-owned URL for the primary track only. */
+  href?: string;
+  /** Native anchor target for a resolved primary link. */
+  target?: TableCellLinkTarget;
   /** Allow this cell to wrap even when its column truncates by default. */
   wrap?: boolean;
   fontFeature?: 'normal' | 'tabular-nums';
@@ -85,6 +108,31 @@ export interface TableCellIcon {
   sortValue?: string | number | boolean;
 }
 
+/**
+ * Prefix icon beside a text copy stack. Independent of icon-only and plain
+ * text cells so those recipes stay unchanged.
+ */
+export interface TableCellIconText {
+  kind: 'icon-text';
+  /** Exact canonical IcoMo export name. */
+  icon: string;
+  iconColor?: IconColor;
+  /** Accessible name. Omit when the glyph is decorative. */
+  iconLabel?: string;
+  primary: string | number;
+  secondary?: TableCellTextTrack;
+  tertiary?: TableCellTextTrack;
+  secondaryColor?: TextColor;
+  tertiaryColor?: TextColor;
+  href?: string;
+  target?: TableCellLinkTarget;
+  wrap?: boolean;
+  fontFeature?: 'normal' | 'tabular-nums';
+}
+
+/** Body-row track stack an image preview occupies. */
+export type TableCellImageTracks = 1 | 2 | 3;
+
 /** Declarative 16:9 image preview rendered by the table's standard cell primitive. */
 export interface TableCellImage {
   kind: 'image';
@@ -92,6 +140,11 @@ export interface TableCellImage {
   src?: string;
   /** Accessible description for either the image or its placeholder. */
   alt: string;
+  /**
+   * Which body-row contract the preview fills. The thumbnail height is that
+   * cell height minus 8px padding; width follows 16:9. Defaults to 1.
+   */
+  tracks?: TableCellImageTracks;
 }
 
 interface TableCellActionBase {
@@ -158,6 +211,7 @@ export type TableCellValue =
   | TableCellPrimaryText
   | TableCellTag
   | TableCellIcon
+  | TableCellIconText
   | TableCellImage
   | TableCellAction
   | TableCellEmpty
@@ -169,13 +223,16 @@ export type TableSkeletonWidth = string | number;
 export type TableCellSkeleton =
   | {
       kind: 'text';
-      /** One track for scalar content, two for primary and secondary copy. */
-      lines?: 1 | 2;
+      /** One track for scalar content, two for primary and secondary, three when tertiary is present. */
+      lines?: 1 | 2 | 3;
       primaryWidth?: TableSkeletonWidth;
       secondaryWidth?: TableSkeletonWidth;
+      tertiaryWidth?: TableSkeletonWidth;
   }
   | {
       kind: 'image';
+      /** Match the loaded image cell's track stack. Defaults to 1. */
+      tracks?: TableCellImageTracks;
   }
   | {
       kind: 'tag';
@@ -184,6 +241,13 @@ export type TableCellSkeleton =
   | {
       kind: 'icon';
       rounded?: boolean;
+  }
+  | {
+      kind: 'icon-text';
+      lines?: 1 | 2 | 3;
+      primaryWidth?: TableSkeletonWidth;
+      secondaryWidth?: TableSkeletonWidth;
+      tertiaryWidth?: TableSkeletonWidth;
   }
   | {
       kind: 'action';
