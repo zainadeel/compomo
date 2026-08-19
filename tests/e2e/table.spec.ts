@@ -1344,7 +1344,7 @@ test('keeps pagination stable and inactive while replacement rows load', async (
   await expect(pagination).toHaveJSProperty('loading', true);
   await expect(pagination.getByRole('navigation')).toHaveAttribute('aria-busy', 'true');
   await expect(pagination.getByRole('button', { name: 'Next page' })).toBeDisabled();
-  await expect(table.locator('.ds-table__skeleton-row')).toHaveCount(5);
+  await expect(table.locator('.ds-table__skeleton-row')).toHaveCount(10);
   await expect(table.locator('.ds-table__footer')).toContainText('Last updated: just now');
 });
 
@@ -2043,35 +2043,41 @@ test('keeps a document-flow header and edge columns sticky while vertical input 
 test('renders initial state bodies and passes an accessibility scan', async ({ page }) => {
   const loading = page.locator('#loading');
   await expect(loading.getByRole('table')).toHaveAttribute('aria-busy', 'true');
-  await expect(loading.locator('ds-skeleton')).toHaveCount(15);
+  await expect(loading.locator('ds-skeleton')).toHaveCount(70);
   const skeletonRows = loading.locator('.ds-table__skeleton-row');
-  await expect(skeletonRows).toHaveCount(5);
+  await expect(skeletonRows).toHaveCount(10);
   const skeletonCells = skeletonRows.first().locator('.ds-table__skeleton-cell');
-  await expect(skeletonCells).toHaveCount(3);
-  await expect(skeletonCells.first()).toHaveClass(/ds-table__cell--text-single/);
+  await expect(skeletonCells).toHaveCount(6);
+  await expect(skeletonCells.nth(1)).toHaveAttribute('data-skeleton-kind', 'image');
+  await expect(skeletonCells.nth(2)).toHaveAttribute('data-skeleton-kind', 'text');
+  await expect(skeletonCells.nth(2)).toHaveClass(/ds-table__cell--text-multi/);
+  await expect(skeletonCells.nth(3)).toHaveAttribute('data-skeleton-kind', 'tag');
+  await expect(skeletonCells.nth(4)).toHaveAttribute('data-skeleton-kind', 'icon');
+  await expect(skeletonCells.nth(5)).toHaveAttribute('data-skeleton-kind', 'action');
   await expect(skeletonCells.first()).toHaveClass(/ds-interaction-fill--grouped/);
+  await expect(skeletonRows.first()).toHaveCSS('height', '64px');
+  await expect(skeletonCells.nth(1).locator('.ds-table__skeleton-image')).toHaveCSS('height', '48px');
   const dividerShadows = async (row: ReturnType<typeof page.locator>) =>
     row.locator('.ds-table__cell').evaluateAll(cells =>
       cells.slice(0, 3).map(cell => getComputedStyle(cell, '::after').boxShadow),
     );
   expect(await dividerShadows(skeletonRows.first())).toEqual(
-    await dividerShadows(page.locator('#basic .ds-table__row').first()),
+    await dividerShadows(page.locator('#interactive .ds-table__row').first()),
   );
   expect(await dividerShadows(skeletonRows.last())).toEqual(
-    await dividerShadows(page.locator('#basic .ds-table__row').last()),
+    await dividerShadows(page.locator('#interactive .ds-table__row').last()),
   );
   const skeletonInsets = await skeletonCells.first().evaluate(cell => {
     const styles = getComputedStyle(cell);
     return { top: styles.paddingTop, right: styles.paddingRight, bottom: styles.paddingBottom };
   });
-  const singleLineInsets = await page
-    .locator('#basic .ds-table__row[data-row-id="jordan"] .ds-table__cell')
-    .first()
+  const selectionInsets = await page
+    .locator('#selectable .ds-table__row[data-row-id="avery"] .ds-table__selection-cell')
     .evaluate(cell => {
       const styles = getComputedStyle(cell);
       return { top: styles.paddingTop, right: styles.paddingRight, bottom: styles.paddingBottom };
     });
-  expect(skeletonInsets).toEqual(singleLineInsets);
+  expect(skeletonInsets).toEqual(selectionInsets);
   await expect(page.locator('#empty').getByText('No matching drivers')).toBeVisible();
   await expect(page.locator('#error').getByText('Drivers unavailable')).toBeVisible();
 

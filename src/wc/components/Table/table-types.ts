@@ -163,6 +163,38 @@ export type TableCellValue =
   | TableCellEmpty
   | TableCellBlank;
 
+export type TableSkeletonWidth = string | number;
+
+/** Representative loading geometry for one table column. */
+export type TableCellSkeleton =
+  | {
+      kind: 'text';
+      /** One track for scalar content, two for primary and secondary copy. */
+      lines?: 1 | 2;
+      primaryWidth?: TableSkeletonWidth;
+      secondaryWidth?: TableSkeletonWidth;
+  }
+  | {
+      kind: 'image';
+  }
+  | {
+      kind: 'tag';
+      width?: TableSkeletonWidth;
+  }
+  | {
+      kind: 'icon';
+      rounded?: boolean;
+  }
+  | {
+      kind: 'action';
+      /** Icon actions use a square control canvas; labeled actions may provide a wider width. */
+      variant?: 'icon' | 'label' | 'icon-label';
+      width?: TableSkeletonWidth;
+  }
+  | {
+      kind: 'blank';
+  };
+
 export interface TableColumn {
   /** Stable column identity. */
   id: string;
@@ -189,6 +221,8 @@ export interface TableColumn {
    * geometry and may host grouped table-level controls in their header.
    */
   kind?: 'data' | 'action';
+  /** Representative loading geometry for this column. Defaults to one text line. */
+  skeleton?: TableCellSkeleton;
 }
 
 export interface TableRow {

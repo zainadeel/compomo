@@ -1290,6 +1290,17 @@
   pointer-events: none;
 }
 
+:where(.ds-table__skeleton-image) {
+  border: 0;
+}
+
+:where(.ds-table__skeleton-image-shape) {
+  display: flex;
+  inline-size: 100%;
+  block-size: 100%;
+  --ds-control-height: 100%;
+}
+
 :where(.ds-table__skeleton-row:last-child .ds-table__cell),
 :where(.ds-table__load-body .ds-table__load-row:last-child .ds-table__load-cell),
 :where(.ds-table__group:last-child > .ds-table__group-load-row:last-child .ds-table__load-cell),

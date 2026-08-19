@@ -400,4 +400,28 @@ for (const id of ['loading', 'empty', 'error']) {
   document.getElementById(id).columns = columns.slice(0, 3);
 }
 
+const loading = document.getElementById('loading');
+loading.selectionMode = 'multiple';
+loading.columns = [
+  { id: 'preview', header: 'Preview', size: 102, skeleton: { kind: 'image' } },
+  {
+    id: 'details',
+    header: 'Details',
+    size: 'sm',
+    skeleton: { kind: 'text', lines: 2, primaryWidth: '76%', secondaryWidth: '48%' },
+  },
+  { id: 'status', header: 'Status', size: 'xs', skeleton: { kind: 'tag', width: '64%' } },
+  { id: 'notes', header: 'Notes', size: 'xs', align: 'center', skeleton: { kind: 'icon' } },
+  {
+    id: 'actions',
+    header: '',
+    headerLabel: 'Actions',
+    kind: 'action',
+    size: 40,
+    align: 'center',
+    sticky: 'end',
+    skeleton: { kind: 'action', variant: 'icon' },
+  },
+];
+
 document.documentElement.dataset.ready = 'true';
