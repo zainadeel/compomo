@@ -17,6 +17,7 @@ import type {
   TableCellTag,
   TableCellTagVariant,
   TableCellValue,
+  TableCellLinkTarget,
   TableColumn,
 } from './table-types';
 import type { TextColor } from '../Text/text-types';
@@ -25,6 +26,8 @@ export interface ResolvedTableCellText {
   primary: string | number;
   secondary?: string | number;
   secondaryColor?: TextColor;
+  href?: string;
+  target?: TableCellLinkTarget;
   wrap?: boolean;
   fontFeature?: 'normal' | 'tabular-nums';
 }

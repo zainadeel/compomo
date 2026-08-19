@@ -744,6 +744,7 @@ test('renders independently styled standard cell types', async ({ page }) => {
   const selectionCell = table.locator('[data-row-id="tag-variants"] .ds-table__selection-cell');
   const singleText = table.locator('[data-column-id="singleText"][data-cell-variant="single"]');
   const primarySecondary = table.locator('[data-column-id="primarySecondary"][data-cell-variant="multi"]');
+  const linkedText = table.locator('[data-column-id="linkedText"][data-cell-variant="multi"]');
   const primaryPair = table.locator('[data-column-id="primaryPair"][data-cell-variant="primary-pair"]');
   const image = table.locator('[data-column-id="image"][data-cell-type="image"]');
   const icon = table.locator('[data-column-id="icon"][data-cell-type="icon"]');
@@ -803,6 +804,12 @@ test('renders independently styled standard cell types', async ({ page }) => {
   }
   await expect(primarySecondary.locator('.ds-table__cell-secondary')).toHaveCSS('padding-top', '2px');
   await expect(primarySecondary.locator('.ds-table__cell-secondary')).toHaveCSS('padding-bottom', '2px');
+  await expect(linkedText).toHaveClass(/ds-table__cell--text-multi/);
+  await expect(linkedText.locator('a.ds-table__cell-link')).toHaveClass(/ds-text-action/);
+  await expect(linkedText.locator('a.ds-table__cell-link')).toHaveClass(/ds-focus-ring/);
+  await expect(linkedText.locator('a.ds-table__cell-link .ds-table__cell-primary')).toBeVisible();
+  await expect(linkedText.locator('a .ds-table__cell-secondary')).toHaveCount(0);
+  await expect(linkedText.locator('.ds-table__cell-secondary')).toHaveText('VEH-1042');
   await expect(primaryPair).toHaveClass(/ds-table__cell--primary-text/);
   await expect(primaryPair).toHaveCSS('padding-top', '10px');
   await expect(primaryPair).toHaveCSS('padding-right', '10px');
@@ -1119,6 +1126,59 @@ test('activates interactive rows without stealing nested control intent', async 
 
   await row.getByRole('button', { name: 'More actions for Avery Chen' }).click();
   await expect.poll(() => page.evaluate(() => window.__tableRowActivationEvents)).toEqual(['avery']);
+});
+
+test('links primary text without stealing interactive row activation', async ({ page }) => {
+  const table = page.locator('#linked-text');
+  const relative = table.locator('[data-row-id="veh-1042"] [data-column-id="vehicle"] a');
+  const external = table.locator('[data-row-id="veh-external"] [data-column-id="vehicle"] a');
+  const unsafe = table.locator('[data-row-id="veh-unsafe"] [data-column-id="vehicle"]');
+
+  await expect(relative).toHaveClass(/ds-table__cell-link/);
+  await expect(relative).toHaveClass(/ds-text-action/);
+  await expect(relative).toHaveClass(/ds-focus-ring/);
+  await expect(relative).toHaveJSProperty('pathname', '/vehicles/VEH-1042');
+  await expect(relative).not.toHaveAttribute('target', '_blank');
+
+  await expect(external).toHaveAttribute('href', 'https://example.test/manual');
+  await expect(external).toHaveAttribute('target', '_blank');
+  await expect(external).toHaveAttribute('rel', 'noopener noreferrer');
+
+  await expect(unsafe.locator('a')).toHaveCount(0);
+  await expect(unsafe.locator('.ds-table__cell-primary')).toHaveText('Rejected script');
+  await expect(unsafe.locator('.ds-table__cell-primary')).toHaveJSProperty('color', 'primary');
+
+  const brand = await relative.evaluate(element => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--color-foreground-bold-brand)';
+    document.body.append(probe);
+    const token = getComputedStyle(probe).color;
+    probe.remove();
+    return { color: getComputedStyle(element).color, token };
+  });
+  expect(brand.color).toBe(brand.token);
+  await expect(relative).toHaveCSS('text-decoration-line', 'none');
+  await relative.hover();
+  await expect(relative).toHaveCSS('text-decoration-line', 'underline');
+
+  await page.evaluate(() => {
+    window.__tableRowActivationEvents = [];
+    document.addEventListener(
+      'click',
+      event => {
+        const node = event.target as Node | null;
+        const element = node instanceof Element ? node : node?.parentElement;
+        if (element?.closest('a')) event.preventDefault();
+      },
+      true,
+    );
+  });
+
+  await relative.click();
+  await expect.poll(() => page.evaluate(() => window.__tableRowActivationEvents)).toEqual([]);
+
+  await table.locator('[data-row-id="veh-1042"] [data-column-id="status"]').click();
+  await expect.poll(() => page.evaluate(() => window.__tableRowActivationEvents)).toEqual(['veh-1042']);
 });
 
 test('uses the shared focus-ring utility for every table-owned keyboard target', async ({ page }) => {

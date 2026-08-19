@@ -19,6 +19,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.equal(packageJson.exports['./table.css'], './dist/styles/table.css');
   assert.match(componentCss, /@import '\.\.\/\.\.\/styles\/table\.css'/);
   assert.match(componentCss, /@import '\.\.\/\.\.\/styles\/control-elevation\.css'/);
+  assert.match(componentCss, /@import '\.\.\/\.\.\/utils\/text-decoration\.css'/);
   assert.match(componentTsx, /focus-ring\.css/);
   assert.match(componentTsx, /interaction-fill\.css/);
   assert.match(componentTsx, /TableLayoutController/);
@@ -60,6 +61,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
     'ds-table__header-cell',
     'ds-table__caption-bar',
     'ds-table__cell',
+    'ds-table__cell-link',
     'ds-table__group-content',
     'ds-table__collapse-all-overlay',
     'ds-table__sticky-edge',

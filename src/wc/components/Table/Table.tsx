@@ -37,6 +37,7 @@ import { TableGroupLoadController } from './table-group-load-controller';
 import type { PaginationChangeDetail } from '../Pagination/pagination-types';
 import { resolvePaginationState } from '../Pagination/pagination-model';
 import { resolveCssLengthPx } from '../../utils/resolve-css-length-px';
+import { resolveSafeUrl } from '../../utils/safe-url';
 import { resolveTableFitPageSize } from './table-pagination-fit';
 import {
   TableViewportFitController,
@@ -1146,20 +1147,33 @@ export class Table {
 
     const text = cell.value;
     const wraps = cell.wraps;
+    const href = resolveSafeUrl(text.href);
+    const primary = (
+      <ds-text
+        class="ds-table__cell-primary ds-table__cell-track ds-table__cell-track--text"
+        as="span"
+        variant="text-body-medium"
+        color={href ? 'inherit' : 'primary'}
+        lineTruncation={wraps ? 'none' : 1}
+        wrap={wraps ? 'wrap' : 'nowrap'}
+        fontFeature={text.fontFeature ?? 'normal'}
+      >
+        {text.primary}
+      </ds-text>
+    );
 
     return (
       <span class={{ 'ds-table__cell-copy': true, 'ds-table__cell-copy--wrap': wraps }}>
-        <ds-text
-          class="ds-table__cell-primary ds-table__cell-track ds-table__cell-track--text"
-          as="span"
-          variant="text-body-medium"
-          color="primary"
-          lineTruncation={wraps ? 'none' : 1}
-          wrap={wraps ? 'wrap' : 'nowrap'}
-          fontFeature={text.fontFeature ?? 'normal'}
-        >
-          {text.primary}
-        </ds-text>
+        {href ? (
+          <a
+            class="ds-table__cell-link ds-text-action ds-focus-ring"
+            href={href}
+            target={text.target === '_blank' ? '_blank' : undefined}
+            rel={text.target === '_blank' ? 'noopener noreferrer' : undefined}
+          >
+            {primary}
+          </a>
+        ) : primary}
         {text.secondary !== undefined && text.secondary !== '' && (
           <ds-text
             class="ds-table__cell-secondary ds-table__cell-track ds-table__cell-track--text"

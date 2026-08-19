@@ -894,8 +894,15 @@
 }
 
 :where(.ds-table__cell-primary),
-:where(.ds-table__cell-secondary) {
+:where(.ds-table__cell-secondary),
+:where(.ds-table__cell-link) {
   min-inline-size: 0;
+}
+
+:where(.ds-table__cell-link) {
+  display: flex;
+  max-inline-size: 100%;
+  inline-size: 100%;
 }
 
 :where(.ds-table__cell-copy--wrap) {
@@ -905,6 +912,7 @@
 :where(.ds-table__cell--align-center),
 :where(.ds-table__cell--align-center .ds-table__cell-content),
 :where(.ds-table__cell--align-center .ds-table__cell-track),
+:where(.ds-table__cell--align-center .ds-table__cell-link),
 :where(.ds-table__cell--align-center .ds-table__header-static),
 :where(.ds-table__cell--align-center .ds-table__header-labels),
 :where(.ds-table__cell--align-center .ds-table__header-label) {
@@ -915,6 +923,7 @@
 :where(.ds-table__cell--align-end),
 :where(.ds-table__cell--align-end .ds-table__cell-content),
 :where(.ds-table__cell--align-end .ds-table__cell-track),
+:where(.ds-table__cell--align-end .ds-table__cell-link),
 :where(.ds-table__cell--align-end .ds-table__header-static),
 :where(.ds-table__cell--align-end .ds-table__header-labels),
 :where(.ds-table__cell--align-end .ds-table__header-label) {

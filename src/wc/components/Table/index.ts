@@ -5,6 +5,7 @@ export type {
   TableCellActionDetail,
   TableCellBlank,
   TableCellEmpty,
+  TableCellLinkTarget,
   TableCellIcon,
   TableCellImage,
   TableCellPrimaryText,

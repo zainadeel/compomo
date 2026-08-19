@@ -144,6 +144,7 @@ const ALIGNMENT_ROWS: TableRow[] = [
 const ALL_CELL_TYPE_COLUMNS: TableColumn[] = [
   { id: 'scalar', header: 'Scalar text', size: 'sm' },
   { id: 'primarySecondary', header: 'Primary + secondary', size: 'sm' },
+  { id: 'linkedText', header: 'Linked text', size: 'sm' },
   { id: 'primaryPair', header: 'Primary + primary', size: 'sm' },
   { id: 'image', header: 'Image', size: 102 },
   { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
@@ -163,6 +164,11 @@ const ALL_CELL_TYPE_ROWS: TableRow[] = [
     cells: {
       scalar: 'Vehicle 2841',
       primarySecondary: { primary: 'John Smith', secondary: 'DRV-1048' },
+      linkedText: {
+        primary: 'Freightliner Cascadia',
+        secondary: 'VEH-1042',
+        href: '/vehicles/VEH-1042',
+      },
       primaryPair: { kind: 'primary-text', primary: 'Vehicle', secondary: 'VH-2841' },
       image: { kind: 'image', alt: 'Safety event preview unavailable' },
       icon: { kind: 'icon', icon: 'DocumentInverted', color: 'secondary', label: 'Has notes' },
@@ -961,7 +967,7 @@ export const AllCellTypes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'One review table for every standard cell primitive. Single-track text, selection, Tag, Action, Empty, and Blank cells share a 40px contract; two-track text and the 16:9 Image cell establish a 64px row. Action cells primarily use an icon-only Ellipses ButtonUnfilled; the examples show its default unbordered and optional bordered treatments. Empty means the data applies but has no value and renders an em dash; Blank means the data is not applicable and intentionally renders nothing.',
+        story: 'One review table for every standard cell primitive. Linked primary text uses a native anchor and the shared brand text-action treatment; secondary copy stays unlinked. Single-track text, selection, Tag, Action, Empty, and Blank cells share a 40px contract; two-track text and the 16:9 Image cell establish a 64px row. Action cells primarily use an icon-only Ellipses ButtonUnfilled; the examples show its default unbordered and optional bordered treatments. Empty means the data applies but has no value and renders an em dash; Blank means the data is not applicable and intentionally renders nothing.',
       },
     },
   },

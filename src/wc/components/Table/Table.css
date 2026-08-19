@@ -2,6 +2,7 @@
 @import '../../styles/control-elevation.css';
 @import '../../utils/chrome-header.css';
 @import '../../utils/control-density.css';
+@import '../../utils/text-decoration.css';
 
 :host {
   display: block;

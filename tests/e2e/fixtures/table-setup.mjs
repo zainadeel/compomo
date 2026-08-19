@@ -141,6 +141,7 @@ const cellTypes = document.getElementById('cell-types');
 cellTypes.columns = [
   { id: 'singleText', header: 'Single text', size: 'sm' },
   { id: 'primarySecondary', header: 'Primary + secondary', size: 'sm' },
+  { id: 'linkedText', header: 'Linked text', size: 'sm' },
   { id: 'primaryPair', header: 'Primary + primary', size: 'sm' },
   { id: 'image', header: 'Image', size: 102 },
   { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
@@ -159,6 +160,11 @@ cellTypes.rows = [
     cells: {
       singleText: 'Vehicle 2841',
       primarySecondary: { primary: 'John Smith', secondary: 'DRV-1048' },
+      linkedText: {
+        primary: 'Freightliner Cascadia',
+        secondary: 'VEH-1042',
+        href: '/vehicles/VEH-1042',
+      },
       primaryPair: { kind: 'primary-text', primary: 'Vehicle', secondary: 'VH-2841' },
       image: { kind: 'image', alt: 'Safety event preview unavailable' },
       icon: { kind: 'icon', icon: 'DocumentInverted', color: 'secondary', label: 'Has notes' },
@@ -239,6 +245,55 @@ interactive.rows = rows.slice(0, 2).map(row => ({
 }));
 window.__tableRowActivationEvents = [];
 interactive.addEventListener('dsRowActivate', event => {
+  window.__tableRowActivationEvents.push(event.detail.rowId);
+});
+
+const linkedText = document.getElementById('linked-text');
+linkedText.columns = [
+  { id: 'vehicle', header: 'Vehicle', size: 'sm' },
+  { id: 'status', header: 'Status', size: 'xs' },
+];
+linkedText.rows = [
+  {
+    id: 'veh-1042',
+    interactive: true,
+    selectionLabel: 'Freightliner Cascadia',
+    cells: {
+      vehicle: {
+        primary: 'Freightliner Cascadia',
+        secondary: 'VEH-1042',
+        href: '/vehicles/VEH-1042',
+      },
+      status: 'Active',
+    },
+  },
+  {
+    id: 'veh-external',
+    interactive: true,
+    selectionLabel: 'External spec',
+    cells: {
+      vehicle: {
+        primary: 'Maintenance manual',
+        href: 'https://example.test/manual',
+        target: '_blank',
+      },
+      status: 'Document',
+    },
+  },
+  {
+    id: 'veh-unsafe',
+    interactive: true,
+    selectionLabel: 'Unsafe href',
+    cells: {
+      vehicle: {
+        primary: 'Rejected script',
+        href: 'javascript:alert(1)',
+      },
+      status: 'Blocked',
+    },
+  },
+];
+linkedText.addEventListener('dsRowActivate', event => {
   window.__tableRowActivationEvents.push(event.detail.rowId);
 });
 

@@ -30,6 +30,23 @@ test('normalizes text cells once for markup and class recipes', () => {
       wraps: false,
     },
   );
+  assert.deepEqual(
+    resolveTableCellPresentation(
+      {
+        primary: 'Freightliner Cascadia',
+        secondary: 'VEH-1042',
+        href: '/vehicles/VEH-1042',
+        target: '_blank',
+      },
+      column,
+    ).value,
+    {
+      primary: 'Freightliner Cascadia',
+      secondary: 'VEH-1042',
+      href: '/vehicles/VEH-1042',
+      target: '_blank',
+    },
+  );
   assert.equal(
     resolveTableCellPresentation(
       { kind: 'primary-text', primary: 'Driver', secondary: 42 },

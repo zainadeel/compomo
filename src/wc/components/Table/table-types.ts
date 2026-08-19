@@ -6,6 +6,7 @@ import type { PaginationState } from '../Pagination/pagination-types';
 export type TableSortDirection = 'asc' | 'desc';
 export type TableSelectionMode = 'none' | 'multiple';
 export type TableCellAlign = 'start' | 'center' | 'end';
+export type TableCellLinkTarget = '_self' | '_blank';
 export type TableColumnSticky = 'start' | 'end';
 export type TableCaptionVisibility = 'visible' | 'hidden';
 export type TableLoadMoreMode = 'auto' | 'manual';
@@ -48,6 +49,10 @@ export interface TableCellText {
   secondary?: string;
   /** Optional semantic foreground for secondary copy; defaults to the standard secondary color. */
   secondaryColor?: TextColor;
+  /** Application-owned URL for the primary track only. Scalars stay unlinked. */
+  href?: string;
+  /** Native anchor target for a resolved primary link. */
+  target?: TableCellLinkTarget;
   /** Allow this cell to wrap even when its column truncates by default. */
   wrap?: boolean;
   fontFeature?: 'normal' | 'tabular-nums';
@@ -58,6 +63,10 @@ export interface TableCellPrimaryText {
   kind: 'primary-text';
   primary: string | number;
   secondary: string | number;
+  /** Application-owned URL for the primary track only. */
+  href?: string;
+  /** Native anchor target for a resolved primary link. */
+  target?: TableCellLinkTarget;
   /** Allow this cell to wrap even when its column truncates by default. */
   wrap?: boolean;
   fontFeature?: 'normal' | 'tabular-nums';
