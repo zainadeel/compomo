@@ -108,6 +108,27 @@ const ASYNC_COLUMNS: TableColumn[] = [
   { id: 'vehicle', header: 'Vehicle', size: 'xs' },
 ];
 
+const COMPOSED_SKELETON_COLUMNS: TableColumn[] = [
+  { id: 'preview', header: 'Preview', size: 102, skeleton: { kind: 'image' } },
+  {
+    id: 'event',
+    header: 'Event',
+    size: 'sm',
+    skeleton: { kind: 'text', lines: 2, primaryWidth: '78%', secondaryWidth: '42%' },
+  },
+  { id: 'status', header: 'Status', size: 'xs', skeleton: { kind: 'tag', width: '64%' } },
+  { id: 'notes', header: 'Notes', size: 'xs', align: 'center', skeleton: { kind: 'icon' } },
+  {
+    id: 'actions',
+    header: '',
+    headerLabel: 'Actions',
+    kind: 'action',
+    size: 40,
+    align: 'center',
+    skeleton: { kind: 'action', variant: 'icon' },
+  },
+];
+
 const ALIGNMENT_COLUMNS: TableColumn[] = [
   { id: 'driver', header: 'Start aligned', sortable: true, align: 'start', size: 'sm' },
   { id: 'status', header: 'Center aligned', sortable: true, align: 'center', size: 'sm' },
@@ -1002,7 +1023,7 @@ export const InitialAndOutcomeStates: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Initial loading preserves the real table grid, single-line cell geometry, and column relationships with row-shaped skeletons. Empty and initial error keep the table caption and columns present while replacing only the body state.',
+        story: 'Initial loading preserves the real table grid and uses each column’s representative image, multiline text, Tag, icon, or action geometry. Ten rows fill a useful default viewport. Empty and initial error keep the table caption and columns present while replacing only the body state.',
       },
     },
   },
@@ -1010,9 +1031,9 @@ export const InitialAndOutcomeStates: Story = {
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(var(--dimension-panel-width-xs),1fr));gap:var(--dimension-space-200);">
       <ds-table
         data-a11y-fixture
-        .columns=${ASYNC_COLUMNS}
+        .columns=${COMPOSED_SKELETON_COLUMNS}
         .loading=${true}
-        .skeletonRows=${3}
+        selection-mode="multiple"
         caption="Loading drivers"
         caption-visibility="visible"
       ></ds-table>

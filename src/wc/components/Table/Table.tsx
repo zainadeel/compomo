@@ -44,6 +44,7 @@ import {
 import type {
   TableCaptionVisibility,
   TableCellActionDetail,
+  TableCellSkeleton,
   TableColumn,
   TableDataMode,
   TableGroup,
@@ -117,7 +118,8 @@ export class Table {
 
   /** Initial loading state. Existing rows stay visible; incremental loading uses loadingMore. */
   @Prop() loading: boolean = false;
-  @Prop() skeletonRows: number = 5;
+  /** Initial-loading rows. Defaults to ten so bounded tables retain a useful filled viewport. */
+  @Prop() skeletonRows: number = 10;
   @Prop() emptyHeading: string = 'No results';
   @Prop() emptyBody: string = 'No data is available.';
   /** Initial error state. Existing rows stay visible; incremental failures use loadMoreError. */
@@ -1453,28 +1455,120 @@ export class Table {
                 {this.renderStickyEdge('start')}
               </td>
             )}
-            {this.columns.map(column => (
-              <td
-                class={{
-                  'ds-table__cell': true,
-                  'ds-table__cell--text-single': true,
-                  'ds-table__skeleton-cell': true,
-                  'ds-table__cell--sticky-start': column.sticky === 'start',
-                  'ds-table__cell--sticky-end': column.sticky === 'end',
-                  'ds-interaction-fill': true,
-                  'ds-interaction-fill--grouped': true,
-                }}
-                key={`skeleton-${index}:${column.id}`}
-              >
-                <span class="ds-table__cell-content ds-interaction-fill__content">
-                  <ds-skeleton variant="text" textVariant="text-body-medium" width="100%" />
-                </span>
-                {this.renderStickyEdge(column.sticky)}
-              </td>
-            ))}
+            {this.columns.map(column => this.renderSkeletonCell(column, index))}
           </tr>
         ))}
       </tbody>
+    );
+  }
+
+  private renderSkeletonCell(column: TableColumn, rowIndex: number) {
+    const skeleton = column.skeleton ?? (
+      column.kind === 'action'
+        ? { kind: 'action', variant: 'icon' }
+        : { kind: 'text', lines: 1 }
+    ) satisfies TableCellSkeleton;
+    const align = column.align ?? 'start';
+    const text = skeleton.kind === 'text';
+    const lines = text ? skeleton.lines ?? 1 : 1;
+    const tag = skeleton.kind === 'tag';
+    const icon = skeleton.kind === 'icon';
+    const image = skeleton.kind === 'image';
+    const action = skeleton.kind === 'action';
+    const blank = skeleton.kind === 'blank';
+
+    return (
+      <td
+        class={{
+          'ds-table__cell': true,
+          [`ds-table__cell--align-${align}`]: true,
+          'ds-table__skeleton-cell': true,
+          'ds-table__cell--text-single': text && lines === 1,
+          'ds-table__cell--text-multi': text && lines === 2,
+          'ds-table__cell--tag': tag,
+          'ds-table__cell--tag-tag-only': tag,
+          'ds-table__cell--icon': icon,
+          'ds-table__cell--image': image,
+          'ds-table__cell--action': action,
+          'ds-table__cell--blank': blank,
+          'ds-table__cell--sticky-start': column.sticky === 'start',
+          'ds-table__cell--sticky-end': column.sticky === 'end',
+          'ds-interaction-fill': true,
+          'ds-interaction-fill--grouped': true,
+        }}
+        data-column-id={column.id}
+        data-skeleton-kind={skeleton.kind}
+        key={`skeleton-${rowIndex}:${column.id}`}
+      >
+        <span class="ds-table__cell-content ds-interaction-fill__content">
+          {this.renderSkeletonCellContent(skeleton)}
+        </span>
+        {this.renderStickyEdge(column.sticky)}
+      </td>
+    );
+  }
+
+  private renderSkeletonCellContent(skeleton: TableCellSkeleton) {
+    if (skeleton.kind === 'blank') return null;
+
+    if (skeleton.kind === 'image') {
+      return (
+        <span class="ds-table__cell-image ds-table__skeleton-image">
+          <ds-skeleton
+            class="ds-table__skeleton-image-shape"
+            variant="control"
+            controlSize="md"
+            width="100%"
+          />
+        </span>
+      );
+    }
+
+    if (skeleton.kind === 'icon') {
+      return <ds-skeleton variant="icon" iconSize="md" rounded={skeleton.rounded ?? false} />;
+    }
+
+    if (skeleton.kind === 'tag') {
+      return (
+        <ds-skeleton
+          variant="control"
+          controlSize="sm"
+          width={skeleton.width ?? '64%'}
+        />
+      );
+    }
+
+    if (skeleton.kind === 'action') {
+      const iconOnly = (skeleton.variant ?? 'icon') === 'icon';
+      return (
+        <ds-skeleton
+          variant="control"
+          controlSize="sm"
+          width={skeleton.width ?? (iconOnly ? '24px' : '72%')}
+        />
+      );
+    }
+
+    const lines = skeleton.lines ?? 1;
+    return (
+      <span class="ds-table__cell-copy">
+        <span class="ds-table__cell-track ds-table__cell-track--text">
+          <ds-skeleton
+            variant="text"
+            textVariant="text-body-medium"
+            width={skeleton.primaryWidth ?? '100%'}
+          />
+        </span>
+        {lines === 2 && (
+          <span class="ds-table__cell-secondary ds-table__cell-track ds-table__cell-track--text">
+            <ds-skeleton
+              variant="text"
+              textVariant="text-body-small"
+              width={skeleton.secondaryWidth ?? '72%'}
+            />
+          </span>
+        )}
+      </span>
     );
   }
 

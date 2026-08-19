@@ -3028,7 +3028,8 @@ export namespace Components {
          */
         "selectionMode": TableSelectionMode;
         /**
-          * @default 5
+          * Initial-loading rows. Defaults to ten so bounded tables retain a useful filled viewport.
+          * @default 10
          */
         "skeletonRows": number;
         /**
@@ -7803,7 +7804,8 @@ declare namespace LocalJSX {
          */
         "selectionMode"?: TableSelectionMode;
         /**
-          * @default 5
+          * Initial-loading rows. Defaults to ten so bounded tables retain a useful filled viewport.
+          * @default 10
          */
         "skeletonRows"?: number;
         /**
