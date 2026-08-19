@@ -1,5 +1,13 @@
 # Changelog
 
+## [14.4.0](https://github.com/zainadeel/compomo/compare/v14.3.0...v14.4.0) (2026-08-19)
+
+
+### Added
+
+* **table:** compose loading skeletons ([#479](https://github.com/zainadeel/compomo/issues/479)) ([4f9fb3a](https://github.com/zainadeel/compomo/commit/4f9fb3a0369d53ee717163c0bb48f62089a2f2a6))
+* **table:** refine pagination controls ([#477](https://github.com/zainadeel/compomo/issues/477)) ([02b676a](https://github.com/zainadeel/compomo/commit/02b676a8e7110fa7a8423c71614d50b096d45cbb))
+
 ## [14.3.0](https://github.com/zainadeel/compomo/compare/v14.2.1...v14.3.0) (2026-08-19)
 
 
