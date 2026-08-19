@@ -36,7 +36,9 @@ export const Playground: Story = {
         .pageSize=${args['pageSize']}
         .totalItems=${args['totalItems']}
         .loading=${args['loading']}
-        page-size-label="Rows per page"
+        page-size-label="Rows"
+        fit-to-page
+        fit-page-size="8"
         item-label="rows"
         label="Table pagination"
         @dsChange=${(event: CustomEvent<PaginationChangeDetail>) =>
@@ -56,9 +58,9 @@ export const Outcomes: Story = {
   },
   render: () => html`
     <div style="display:grid;gap:var(--dimension-space-300);">
-      <ds-pagination total-items="0" page-size-label="Rows per page" item-label="rows"></ds-pagination>
-      <ds-pagination page-index="2" page-size="25" total-items="63" page-size-label="Rows per page" item-label="rows"></ds-pagination>
-      <ds-pagination page-index="1" page-size="25" total-items="500" loading page-size-label="Groups per page" item-label="groups"></ds-pagination>
+      <ds-pagination total-items="0" page-size-label="Rows" item-label="rows"></ds-pagination>
+      <ds-pagination page-index="2" page-size="25" total-items="63" page-size-label="Rows" item-label="rows"></ds-pagination>
+      <ds-pagination page-index="1" page-size="25" total-items="500" loading page-size-label="Groups" item-label="groups"></ds-pagination>
     </div>
   `,
 };

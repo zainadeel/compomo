@@ -52,6 +52,7 @@ const meta: Meta = {
     width: { control: 'select', options: ['fill', 'hug'] },
     popupAlign: { control: 'select', options: ['start', 'end'] },
     icon: { control: 'text' },
+    indicator: { control: 'select', options: ['down', 'up-down'] },
     hasBorder: { control: 'boolean' },
     searchable: { control: 'boolean' },
     isLoading: { control: 'boolean' },
@@ -71,6 +72,7 @@ const meta: Meta = {
     width: 'hug',
     popupAlign: 'start',
     icon: 'Chart',
+    indicator: 'down',
     hasBorder: true,
     searchable: false,
     isLoading: false,
@@ -99,6 +101,7 @@ export const Playground: Story = {
           width=${args['width']}
           popup-align=${args['popupAlign']}
           icon=${args['icon']}
+          indicator=${args['indicator']}
           .hasBorder=${args['hasBorder']}
           background=${args['background']}
           ?searchable=${args['searchable']}

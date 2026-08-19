@@ -5934,7 +5934,7 @@
     {
       "name": "pagination",
       "title": "Pagination",
-      "description": "Controlled page-size, range, and first/previous/next/last navigation for application-owned data windows.",
+      "description": "Controlled fixed or fitted page-size, compact range, and first/previous/next/last navigation for application-owned data windows.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -5945,7 +5945,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Controlled page-size, range, and first/previous/next/last navigation for application-owned data windows.",
+          "summary": "Controlled fixed or fitted page-size, compact range, and first/previous/next/last navigation for application-owned data windows.",
           "useWhen": [
             "A result set is divided into discrete pages and the application owns fetching or slicing each page.",
             "A table or list needs a compact page-size selector, result range, and boundary-aware navigation."
@@ -5960,18 +5960,20 @@
             "component:ds-button-unfilled"
           ],
           "accessibility": [
-            "The component renders a named navigation region, labels its page-size combobox, and gives every icon-only boundary control an explicit page action name.",
-            "The visible range and page position use tabular numerals and are repeated in a polite atomic status update with the localized item noun.",
+            "The component renders a named navigation region, gives its compact page-size noun a complete accessible label, and gives every icon-only boundary control an explicit page action name.",
+            "The visible range and page position use compact slash notation with tabular numerals. A polite atomic status update retains complete ‘of’ and ‘Page’ phrasing with the localized item noun.",
+            "Left and Right Arrow request the adjacent page while focus is within pagination navigation controls. The page-size combobox retains its own arrow-key behavior.",
             "Inactive boundary controls and every control during loading remain non-interactive while retaining their accessible names."
           ],
           "states": [
-            "pageIndex, pageSize, totalItems, and pageSizeOptions are controlled inputs. dsChange reports the complete next pagination state, previous index and size, and whether the request changed the page or page size; it never mutates controlled inputs.",
+            "pageIndex, numeric effective pageSize, pageSizeMode, totalItems, and pageSizeOptions are controlled inputs. dsChange reports the complete next pagination state, previous index, size, and mode, and whether the request changed the page, page size, or fitted capacity; it never mutates controlled inputs.",
             "Page-size changes request the first page. Out-of-range page indexes and invalid numeric inputs normalize only for presentation; the owner remains authoritative.",
             "Zero results display 0–0 of 0 and Page 1 of 1. A partial final page caps the visible range at totalItems.",
-            "loading preserves the full pagination surface, applies aria-busy to the navigation region, and prevents page or page-size requests."
+            "loading preserves the full pagination surface, applies aria-busy to the navigation region, and prevents page or page-size requests.",
+            "fitToPage appends a Fit to page choice. fitPageSize supplies its effective whole-item capacity; the closed trigger says Fit while the range continues to expose the resulting count. Pagination does not measure layouts itself."
           ],
           "responsiveBehavior": [
-            "The compact controls remain on one line. When inline space is insufficient, the pagination surface scrolls horizontally rather than wrapping labels away from their controls."
+            "The compact controls remain on one line with noun, range, and page slash notation. When inline space is still insufficient, the pagination surface scrolls horizontally rather than wrapping labels away from their controls."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -5992,6 +5994,22 @@
           ]
         },
         "props": {
+          "fitPageSize": {
+            "type": "number | undefined",
+            "required": false
+          },
+          "fitPageSizeLabel": {
+            "type": "string",
+            "required": false
+          },
+          "fitPageSizeTriggerLabel": {
+            "type": "string",
+            "required": false
+          },
+          "fitToPage": {
+            "type": "boolean",
+            "required": false
+          },
           "itemLabel": {
             "type": "string",
             "required": false
@@ -6012,8 +6030,16 @@
             "type": "number",
             "required": false
           },
+          "pageSizeAriaLabel": {
+            "type": "string | undefined",
+            "required": false
+          },
           "pageSizeLabel": {
             "type": "string",
+            "required": false
+          },
+          "pageSizeMode": {
+            "type": "PaginationPageSizeMode",
             "required": false
           },
           "pageSizeOptions": {
@@ -7195,7 +7221,7 @@
             "When any option supplies subtext, every row uses the same subtext structure and missing values render an em dash. Subtext should disambiguate or add decision-helpful information.",
             "Option labels and the selected trigger label stay on one line and truncate when constrained. Option subtext may wrap to at most two lines.",
             "Use an option action only for a contextual menu about that user-managed option. The fixed ellipsis action appears on hover, keyboard activity, focus, and touch; expanded keeps it visible while its controlled menu is open. Activating it emits dsOptionAction without selecting the option or closing the Select popup.",
-            "The optional prefix icon and chevron always use the parent surface's secondary foreground color, including when a selected value promotes the label to primary.",
+            "The optional prefix icon and trailing indicator always use the parent surface's secondary foreground color, including when a selected value promotes the label to primary. The default down indicator communicates disclosure; up-down is reserved for compact value steppers such as pagination page size.",
             "While the popup is open, the trigger holds the pressed interaction wash without changing its resting foreground or selected-value treatment.",
             "The shared popup search control follows the Select density, using the same text, icon, and internal spacing as a borderless trigger. Its container uses menu-item padding on every side and owns a 1px bottom divider that becomes a 1.5px bold-brand stroke while search has focus. Search placeholder text is secondary at rest and quaternary while focused because it becomes decorative once the editable field is active.",
             "When search contains text, the shared control shows a rounded icon-only ButtonUnfilled with the CrossCircle icon and no border, sized to remain inset within the current row density. It clears the local term, stays hidden for an empty term, and returns focus to search.",
@@ -7292,6 +7318,10 @@
           },
           "icon": {
             "type": "string | undefined",
+            "required": false
+          },
+          "indicator": {
+            "type": "SelectIndicator",
             "required": false
           },
           "inputId": {
@@ -8826,7 +8856,7 @@
             "Interactive rows are focusable as native rows, activate with Enter or Space, and do not steal activation from their nested selection or action controls.",
             "Scrollable table regions become keyboard focusable and named only when overflow exists.",
             "Incremental loading, newly appended row counts, failures, and end-of-results transitions are announced through a polite status region without replacing visible state. In grouped tables, announcements name the independently loading group.",
-            "Static and infinite tables may show an optional result summary footer when displayedCount and totalCount are finite. Pagination mode instead renders a named Pagination control, whose range changes are announced independently. The footer slot can replace summary copy, while footer-leading and footer-trailing remain available in the same compact-bar anatomy."
+            "Static and infinite tables may show an optional result summary footer when displayedCount and totalCount are finite. Pagination mode instead renders a named Pagination control with compact slash notation, whose range changes are announced independently with complete phrasing. The footer slot can replace summary copy, while footer-leading and footer-trailing remain available in the same compact-bar anatomy."
           ],
           "states": [
             "Columns, rows, groups, grouping, sorting, selected row IDs, collapsed group IDs, dataMode, pagination, displayedCount, totalCount, and incremental-loading state are controlled inputs. Events communicate intent and never mutate those inputs. The optional header is one full-width composable table-local surface: the component owns its 48px chrome, 8px inset on every side, and sticky placement while the application owns all internal layout, controls, labels, filtering behavior, and action handling. The footer retains its compact-bar composition: application-owned leading status sits left while a controlled result summary or Pagination aligns right, before any trailing action. Content-sized tables remain natural for sparse or fixed-count results. height bounds the complete header, frame, and footer composition. fitViewport reserves the compact-state composition height in the nearest vertical scrollport while growing the visible table into that reservation as surrounding page chrome collapses.",
@@ -8835,6 +8865,7 @@
             "Compound headers can expose multiple related labels with independent sort keys. Each label owns only its content-width interaction target while the active direction remains in the column's alignment-aware sort lane.",
             "Initial loading uses row-shaped skeletons that preserve the standard single-line cell padding, row dividers, column dividers, selection lane, and sticky-lane boundaries. Empty, initial error, load-more, retry, loading-more, and terminal bands remain fixed to the visible table width while data columns scroll horizontally beneath them. Incremental loading retains existing rows and supports automatic sentinel, manual load-more, retry, and terminal states. When grouping is active, each expanded group owns its load band at the end of its member rows; internal group load bands keep their bottom divider, while a terminal group load band yields it to the table edge or footer. The global bottom-of-table loader is not rendered.",
             "dataMode selects the top-level window: infinite appends ungrouped rows through dsLoadMore when hasMore is true, and pagination renders the controlled page supplied by the application and emits dsPaginationChange. Infinite mode also covers fixed result sets by leaving hasMore false. In a grouped paginated table, pagination counts and windows only parent groups; each expanded parent can still append its own members through dsGroupLoadMore. The application owns requests, cancellation, cursors, deduplication, slicing, and query identity.",
+            "When pagination enables Fit to page on a bounded table, the table proposes the number of complete top-level rows that fit below its column header. Grouped tables count group headers only; member rows never affect capacity. Selecting Fit captures that numeric snapshot. A changed fitIdentity requests one fresh snapshot for a new query shape, while viewport resizing alone does not change the active controlled page size.",
             "Rows opt into complete-row activation with interactive and emit dsRowActivate without owning navigation. Selection paints through the shared selected ::before layer; interactive hover and press paint through the shared ::after layer.",
             "Row selection owns the single sticky start lane. One explicitly sized application column can own the sticky end lane, or the start lane when selection is absent. Each sticky boundary owns one fixed divider and a row-clipped directional shadow that paints into the adjacent scrolling columns only while more inline content remains beyond that edge.",
             "Cells accept scalar content, standard primary-and-secondary or dual-primary text primitives, declarative Tag, icon-only, 16:9 Image, or ButtonUnfilled Action content, or explicit Empty and Blank absence values. Standard secondary copy defaults to the secondary foreground and may declare a semantic Text color when the application data carries intent; dual-primary copy keeps both tracks primary unless explicitly colored. Single-track text, selection, tag-only, icon-only, Action, Empty, and Blank cells resolve a 40px base contract while multi-track cells grow downward. Tag cells use the double-inset Tag recipe; the md tag-only recipe is 24px inside 8px padding, while compound tag tracks preserve their peer text alignment. Action cells primarily use an icon-only Ellipses treatment, render a 24px small ButtonUnfilled inside 8px padding, default to unbordered, and emit row, column, and action identities through dsCellAction. Image cells render a 48px-high 16:9 bordered preview inside 8px outer padding, establishing a 64px row and a 102px column recipe, and fall back to an accessible placeholder when no source is supplied. Empty means the data applies but has no value and renders an em dash with localized assistive text; Blank means the data is not applicable and renders no content. Nullish values remain backward-compatible Empty values. Stable type and variant hooks keep every cell family independently styleable.",

@@ -1141,6 +1141,7 @@ export const WorkingPagination: Story = {
   args: {
     pageIndex: 0,
     pageSize: 25,
+    pageSizeMode: 'fixed',
     selectedRowIds: [],
   },
   parameters: {
@@ -1164,17 +1165,23 @@ export const WorkingPagination: Story = {
         .pagination=${{
           pageIndex,
           pageSize,
+          pageSizeMode: args['pageSizeMode'] ?? 'fixed',
           totalItems: PAGINATED_ROWS.length,
           pageSizeOptions: [25, 50, 100, 200],
+          fitToPage: true,
           itemLabel: 'rows',
-          pageSizeLabel: 'Rows per page',
+          pageSizeLabel: 'Rows',
         }}
         data-mode="pagination"
         selection-mode="multiple"
         caption="Paginated workforce overview"
         caption-visibility="visible"
         @dsPaginationChange=${(event: CustomEvent<PaginationChangeDetail>) =>
-          updateArgs({ pageIndex: event.detail.pageIndex, pageSize: event.detail.pageSize })}
+          updateArgs({
+            pageIndex: event.detail.pageIndex,
+            pageSize: event.detail.pageSize,
+            pageSizeMode: event.detail.pageSizeMode,
+          })}
         @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>
           updateArgs({ selectedRowIds: event.detail.selectedRowIds })}
       >
@@ -1191,6 +1198,7 @@ export const GroupParentPagination: Story = {
   args: {
     pageIndex: 0,
     pageSize: 25,
+    pageSizeMode: 'fixed',
     loadedByGroup: {},
     grouping: { columnId: 'status', direction: 'asc' },
   },
@@ -1225,10 +1233,12 @@ export const GroupParentPagination: Story = {
         .pagination=${{
           pageIndex,
           pageSize,
+          pageSizeMode: args['pageSizeMode'] ?? 'fixed',
           totalItems: PAGINATED_GROUP_SOURCE.length,
           pageSizeOptions: [25, 50, 100, 200],
+          fitToPage: true,
           itemLabel: 'groups',
-          pageSizeLabel: 'Groups per page',
+          pageSizeLabel: 'Groups',
         }}
         data-mode="pagination"
         load-more-mode="manual"
@@ -1240,6 +1250,7 @@ export const GroupParentPagination: Story = {
           updateArgs({
             pageIndex: event.detail.pageIndex,
             pageSize: event.detail.pageSize,
+            pageSizeMode: event.detail.pageSizeMode,
             loadedByGroup: {},
           })}
         @dsGroupLoadMore=${(event: CustomEvent<{ groupId: string }>) => {

@@ -272,4 +272,7 @@ export interface TableRowActivateDetail {
 }
 
 /** Controlled top-level pagination state. Rows or groups contain only the active page. */
-export type TablePaginationState = PaginationState;
+export interface TablePaginationState extends PaginationState {
+  /** Change to request one fresh fitted-capacity snapshot for the current query shape. */
+  fitIdentity?: string | number;
+}

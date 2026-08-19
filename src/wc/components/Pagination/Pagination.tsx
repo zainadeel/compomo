@@ -1,6 +1,9 @@
 import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';
 import { resolvePaginationState } from './pagination-model';
-import type { PaginationChangeDetail } from './pagination-types';
+import type {
+  PaginationChangeDetail,
+  PaginationPageSizeMode,
+} from './pagination-types';
 
 let paginationId = 0;
 
@@ -14,14 +17,26 @@ export class Pagination {
   @Prop() pageIndex: number = 0;
   /** Controlled number of top-level items on a full page. */
   @Prop() pageSize: number = 25;
+  /** Whether pageSize is a fixed choice or a measured Fit snapshot. */
+  @Prop() pageSizeMode: PaginationPageSizeMode = 'fixed';
   /** Controlled total number of top-level items across every page. */
   @Prop() totalItems: number = 0;
   /** Available page sizes. Assign arrays through JavaScript. */
   @Prop() pageSizeOptions: number[] = [25, 50, 100, 200];
+  /** Include the Fit to page choice. */
+  @Prop() fitToPage: boolean = false;
+  /** Effective whole-item capacity to request when Fit is selected. */
+  @Prop() fitPageSize: number | undefined;
+  /** Full choice-list label for Fit. */
+  @Prop() fitPageSizeLabel: string = 'Fit to page';
+  /** Compact closed-trigger label while Fit is selected. */
+  @Prop() fitPageSizeTriggerLabel: string = 'Fit';
   /** Localized plural noun used by assistive range announcements. */
   @Prop() itemLabel: string = 'items';
   /** Visible page-size control label. */
-  @Prop() pageSizeLabel: string = 'Items per page';
+  @Prop() pageSizeLabel: string = 'Items';
+  /** Accessible page-size control label. Defaults to “{pageSizeLabel} per page”. */
+  @Prop() pageSizeAriaLabel: string | undefined;
   /** Accessible name for the pagination navigation region. */
   @Prop() label: string = 'Pagination';
   /** Prevent interaction while the owner replaces the current data page. */
@@ -40,40 +55,76 @@ export class Pagination {
     this.dsChange.emit({
       pageIndex,
       pageSize: state.pageSize,
+      pageSizeMode: state.pageSizeMode,
       totalItems: state.totalItems,
       pageSizeOptions: state.pageSizeOptions,
+      fitToPage: this.fitToPage,
+      fitPageSize: this.resolvedFitPageSize,
+      fitPageSizeLabel: this.fitPageSizeLabel,
+      fitPageSizeTriggerLabel: this.fitPageSizeTriggerLabel,
       itemLabel: this.itemLabel,
       pageSizeLabel: this.pageSizeLabel,
       ariaLabel: this.label,
       previousPageIndex: state.pageIndex,
       previousPageSize: state.pageSize,
+      previousPageSizeMode: state.pageSizeMode,
       reason: 'page',
     });
   }
 
   private requestPageSize(value: string | string[]): void {
     if (this.loading || typeof value !== 'string') return;
-    const pageSize = Number(value);
     const state = this.resolvedState;
-    if (!Number.isFinite(pageSize) || pageSize <= 0 || pageSize === state.pageSize) return;
+    const nextMode: PaginationPageSizeMode = value === 'fit' ? 'fit' : 'fixed';
+    const pageSize = nextMode === 'fit' ? this.resolvedFitPageSize : Number(value);
+    if (!pageSize || (pageSize === state.pageSize && nextMode === state.pageSizeMode)) return;
     this.dsChange.emit({
       pageIndex: 0,
       pageSize: Math.trunc(pageSize),
+      pageSizeMode: nextMode,
       totalItems: state.totalItems,
       pageSizeOptions: state.pageSizeOptions,
+      fitToPage: this.fitToPage,
+      fitPageSize: this.resolvedFitPageSize,
+      fitPageSizeLabel: this.fitPageSizeLabel,
+      fitPageSizeTriggerLabel: this.fitPageSizeTriggerLabel,
       itemLabel: this.itemLabel,
       pageSizeLabel: this.pageSizeLabel,
       ariaLabel: this.label,
       previousPageIndex: state.pageIndex,
       previousPageSize: state.pageSize,
+      previousPageSizeMode: state.pageSizeMode,
       reason: 'page-size',
     });
+  }
+
+  private handleKeyDown(event: KeyboardEvent): void {
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
+      return;
+    }
+    const fromChoiceControl = event.composedPath().some(node =>
+      node instanceof HTMLElement &&
+      (node.tagName === 'DS-SELECT' || ['INPUT', 'SELECT', 'TEXTAREA'].includes(node.tagName)),
+    );
+    if (fromChoiceControl || (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight')) return;
+    const state = this.resolvedState;
+    const pageIndex = event.key === 'ArrowLeft' ? state.pageIndex - 1 : state.pageIndex + 1;
+    if (this.loading || pageIndex < 0 || pageIndex >= state.totalPages) return;
+    event.preventDefault();
+    this.requestPage(pageIndex);
+  }
+
+  private get resolvedFitPageSize(): number | undefined {
+    return Number.isFinite(this.fitPageSize) && Number(this.fitPageSize) > 0
+      ? Math.trunc(Number(this.fitPageSize))
+      : undefined;
   }
 
   private get resolvedState() {
     return resolvePaginationState({
       pageIndex: this.pageIndex,
       pageSize: this.pageSize,
+      pageSizeMode: this.pageSizeMode,
       totalItems: this.totalItems,
       pageSizeOptions: this.pageSizeOptions,
     });
@@ -83,28 +134,50 @@ export class Pagination {
     const state = this.resolvedState;
     const atStart = state.pageIndex === 0;
     const atEnd = state.pageIndex === state.totalPages - 1;
-    const range = `${state.firstItem}–${state.lastItem} of ${state.totalItems}`;
-    const page = `Page ${state.pageIndex + 1} of ${state.totalPages}`;
+    const range = `${state.firstItem}–${state.lastItem} / ${state.totalItems}`;
+    const page = `${state.pageIndex + 1} / ${state.totalPages}`;
+    const announcedRange = `${state.firstItem}–${state.lastItem} of ${state.totalItems}`;
+    const announcedPage = `Page ${state.pageIndex + 1} of ${state.totalPages}`;
+    const pageSizeAriaLabel = this.pageSizeAriaLabel ?? `${this.pageSizeLabel} per page`;
+    const options: Array<{ label: string; value: string; isInactive?: boolean }> =
+      state.pageSizeOptions.map(value => ({ label: String(value), value: String(value) }));
+    if (this.fitToPage) {
+      options.push({
+        label: this.fitPageSizeLabel,
+        value: 'fit',
+        isInactive: this.resolvedFitPageSize === undefined,
+      });
+    }
 
     return (
       <Host>
-        <nav class="pagination" aria-label={this.label} aria-busy={this.loading ? 'true' : undefined}>
+        <nav
+          class="pagination"
+          aria-label={this.label}
+          aria-busy={this.loading ? 'true' : undefined}
+          onKeyDown={event => this.handleKeyDown(event)}
+        >
           <div class="pagination__page-size">
             <ds-text
-              id={`${this.pageSizeControlId}-label`}
               class="pagination__label"
               as="span"
               variant="text-body-medium"
               color="secondary"
+              aria-hidden="true"
             >
-              {this.pageSizeLabel}
+              {this.pageSizeLabel}:
             </ds-text>
+            <span id={`${this.pageSizeControlId}-label`} class="ds-visually-hidden">
+              {pageSizeAriaLabel}
+            </span>
             <ds-select
               size="md"
               inputId={this.pageSizeControlId}
               ariaLabelledby={`${this.pageSizeControlId}-label`}
-              options={state.pageSizeOptions.map(value => ({ label: String(value), value: String(value) }))}
-              value={String(state.pageSize)}
+              options={options}
+              value={state.pageSizeMode === 'fit' ? 'fit' : String(state.pageSize)}
+              triggerLabel={state.pageSizeMode === 'fit' ? this.fitPageSizeTriggerLabel : undefined}
+              indicator="up-down"
               allowClear={false}
               activeFill={false}
               isInactive={this.loading}
@@ -171,7 +244,7 @@ export class Pagination {
             />
           </div>
           <span class="ds-visually-hidden" role="status" aria-live="polite" aria-atomic="true">
-            {range} {this.itemLabel}. {page}.
+            {announcedRange} {this.itemLabel}. {announcedPage}.
           </span>
         </nav>
       </Host>
