@@ -1068,6 +1068,22 @@ export class Table {
       );
     }
 
+    if (cell.kind === 'icon-text') {
+      return (
+        <span class="ds-table__cell-icon-text">
+          <span class="ds-table__cell-icon-text-icon">
+            <ds-icon
+              name={cell.icon}
+              size="md"
+              color={cell.iconColor ?? 'secondary'}
+              label={cell.iconLabel}
+            />
+          </span>
+          {this.renderTextCopy(cell)}
+        </span>
+      );
+    }
+
     if (cell.kind === 'image') {
       const value = cell.value;
       return (
@@ -1148,8 +1164,16 @@ export class Table {
       );
     }
 
+    if (cell.kind !== 'text') return null;
+    return this.renderTextCopy(cell);
+  }
+
+  private renderTextCopy(
+    cell: Extract<TableCellPresentation, { kind: 'text' | 'icon-text' }>,
+  ) {
     const text = cell.value;
     const wraps = cell.wraps;
+    const primaryText = cell.kind === 'text' && cell.primaryText;
     const href = resolveSafeUrl(text.href);
     const primary = (
       <ds-text
@@ -1179,8 +1203,8 @@ export class Table {
         ) : primary}
         {this.renderTextTrack(text.secondary, {
           track: 'secondary',
-          variant: cell.primaryText ? 'text-body-medium' : 'text-body-small',
-          defaultColor: cell.primaryText ? 'primary' : 'secondary',
+          variant: primaryText ? 'text-body-medium' : 'text-body-small',
+          defaultColor: primaryText ? 'primary' : 'secondary',
           wholeColor: text.secondaryColor,
           wraps,
         })}
@@ -1299,6 +1323,7 @@ export class Table {
           const cell = resolveTableCellPresentation(row.cells[column.id], column);
           const tagCell = cell.kind === 'tag';
           const iconCell = cell.kind === 'icon';
+          const iconTextCell = cell.kind === 'icon-text';
           const imageCell = cell.kind === 'image';
           const actionCell = cell.kind === 'action';
           const textCell = cell.kind === 'text';
@@ -1309,6 +1334,7 @@ export class Table {
           const tagVariant = tagCell ? cell.variant : undefined;
           const textVariant = textCell ? cell.variant : undefined;
           const imageVariant = cell.kind === 'image' ? cell.variant : undefined;
+          const iconTextVariant = iconTextCell ? cell.variant : undefined;
           return (
             <td
               key={`${row.id}:${column.id}`}
@@ -1318,6 +1344,8 @@ export class Table {
                 'ds-table__cell--tag': tagCell,
                 [`ds-table__cell--tag-${tagVariant}`]: tagCell,
                 'ds-table__cell--icon': iconCell,
+                'ds-table__cell--icon-text': iconTextCell,
+                [`ds-table__cell--icon-text-${iconTextVariant}`]: iconTextCell,
                 'ds-table__cell--image': imageCell,
                 [`ds-table__cell--image-${imageVariant}`]: imageCell,
                 'ds-table__cell--action': actionCell,
@@ -1335,7 +1363,7 @@ export class Table {
               }}
               data-column-id={column.id}
               data-cell-type={cell.cellType}
-              data-cell-variant={tagVariant ?? textVariant ?? imageVariant}
+              data-cell-variant={tagVariant ?? textVariant ?? imageVariant ?? iconTextVariant}
             >
               <span class="ds-table__cell-content ds-interaction-fill__content">
                 {this.renderCellValue(cell, column, row)}
@@ -1610,12 +1638,16 @@ export class Table {
     ) satisfies TableCellSkeleton;
     const align = column.align ?? 'start';
     const text = skeleton.kind === 'text';
-    const lines = text ? skeleton.lines ?? 1 : 1;
+    const iconText = skeleton.kind === 'icon-text';
+    const lines = text || iconText ? skeleton.lines ?? 1 : 1;
     const tag = skeleton.kind === 'tag';
     const icon = skeleton.kind === 'icon';
     const image = skeleton.kind === 'image';
     const imageVariant = image
       ? tableCellImageVariant(resolveTableCellImageTracks(skeleton.tracks))
+      : undefined;
+    const iconTextVariant = iconText
+      ? lines === 3 ? 'triple' : lines === 2 ? 'multi' : 'single'
       : undefined;
     const action = skeleton.kind === 'action';
     const blank = skeleton.kind === 'blank';
@@ -1632,6 +1664,8 @@ export class Table {
           'ds-table__cell--tag': tag,
           'ds-table__cell--tag-tag-only': tag,
           'ds-table__cell--icon': icon,
+          'ds-table__cell--icon-text': iconText,
+          [`ds-table__cell--icon-text-${iconTextVariant}`]: iconText,
           'ds-table__cell--image': image,
           [`ds-table__cell--image-${imageVariant}`]: image,
           'ds-table__cell--action': action,
@@ -1643,7 +1677,7 @@ export class Table {
         }}
         data-column-id={column.id}
         data-skeleton-kind={skeleton.kind}
-        data-cell-variant={imageVariant}
+        data-cell-variant={imageVariant ?? iconTextVariant}
         key={`skeleton-${rowIndex}:${column.id}`}
       >
         <span class="ds-table__cell-content ds-interaction-fill__content">
@@ -1696,7 +1730,7 @@ export class Table {
     }
 
     const lines = skeleton.lines ?? 1;
-    return (
+    const copy = (
       <span class="ds-table__cell-copy">
         <span class="ds-table__cell-primary ds-table__cell-track ds-table__cell-track--text">
           <ds-skeleton
@@ -1725,6 +1759,17 @@ export class Table {
         )}
       </span>
     );
+    if (skeleton.kind === 'icon-text') {
+      return (
+        <span class="ds-table__cell-icon-text">
+          <span class="ds-table__cell-icon-text-icon">
+            <ds-skeleton variant="icon" iconSize="md" />
+          </span>
+          {copy}
+        </span>
+      );
+    }
+    return copy;
   }
 
   private renderStateBody(kind: 'empty' | 'error', totalColumns: number) {

@@ -152,6 +152,7 @@ const ALL_CELL_TYPE_COLUMNS: TableColumn[] = [
   { id: 'event', header: 'Event', size: 'sm' },
   { id: 'image', header: 'Image', size: IMAGE_COLUMN_SIZE[2] },
   { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
+  { id: 'iconText', header: 'Icon + text', size: 'sm' },
   { id: 'tagOnly', header: 'Tag only', size: 'sm' },
   { id: 'tagWithText', header: 'Tag + text', size: 'sm' },
   { id: 'textWithTag', header: 'Text + tag', size: 'sm' },
@@ -166,6 +167,7 @@ const SINGLE_TRACK_COLUMNS: TableColumn[] = [
   { id: 'linkedText', header: 'Linked text', size: 'sm' },
   { id: 'image', header: 'Image', size: IMAGE_COLUMN_SIZE[1] },
   { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
+  { id: 'iconText', header: 'Icon + text', size: 'sm' },
   { id: 'tagOnly', header: 'Tag only', size: 'sm' },
   { id: 'action', kind: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
   { id: 'borderedAction', kind: 'action', header: '', headerLabel: 'Bordered action', align: 'center', size: 40 },
@@ -185,6 +187,7 @@ const SINGLE_TRACK_ROWS: TableRow[] = [
       },
       image: { kind: 'image', alt: 'Vehicle preview unavailable' },
       icon: { kind: 'icon', icon: 'DocumentInverted', color: 'secondary', label: 'Has notes' },
+      iconText: { kind: 'icon-text', icon: 'VehicleTruck', primary: 'Freightliner Cascadia' },
       tagOnly: { kind: 'tag', label: 'Pending', intent: 'caution' },
       action: {
         kind: 'action',
@@ -216,6 +219,7 @@ const SINGLE_TRACK_ROWS: TableRow[] = [
       },
       image: { kind: 'image', alt: 'Vehicle preview unavailable' },
       icon: { kind: 'icon', icon: 'DocumentInverted', color: 'secondary', label: 'Has notes' },
+      iconText: { kind: 'icon-text', icon: 'VehicleTruck', primary: 'Volvo VNL' },
       tagOnly: { kind: 'tag', label: 'Active', intent: 'positive' },
       action: {
         kind: 'action',
@@ -260,6 +264,16 @@ const ALL_CELL_TYPE_ROWS: TableRow[] = [
       },
       image: { kind: 'image', tracks: 2, alt: 'Safety event preview unavailable' },
       icon: { kind: 'icon', icon: 'DocumentInverted', color: 'secondary', label: 'Has notes' },
+      iconText: {
+        kind: 'icon-text',
+        icon: 'VehicleTruck',
+        primary: 'Freightliner Cascadia',
+        href: '/vehicles/VEH-1042',
+        secondary: [
+          { text: 'VEH-1042' },
+          { text: 'Class 8' },
+        ],
+      },
       tagOnly: { kind: 'tag', label: 'Pending', intent: 'caution' },
       tagWithText: {
         kind: 'tag',
@@ -298,6 +312,7 @@ const ALL_CELL_TYPE_ROWS: TableRow[] = [
 
 const THREE_TRACK_COLUMNS: TableColumn[] = [
   { id: 'image', header: 'Image', size: IMAGE_COLUMN_SIZE[3] },
+  { id: 'iconText', header: 'Icon + text', size: 'sm' },
   { id: 'driver', header: 'Driver', size: 'sm' },
   { id: 'vehicle', header: 'Vehicle', size: 'sm' },
   { id: 'event', header: 'Event', size: 'sm' },
@@ -326,6 +341,13 @@ const THREE_TRACK_ROWS: TableRow[] = [
         tertiary: '45 mph over',
       },
       image: { kind: 'image', tracks: 3, alt: 'Safety event preview unavailable' },
+      iconText: {
+        kind: 'icon-text',
+        icon: 'Person',
+        primary: 'Avery Chen',
+        secondary: 'DRV-1048',
+        tertiary: 'Dallas, TX',
+      },
     },
   },
   {
@@ -350,6 +372,13 @@ const THREE_TRACK_ROWS: TableRow[] = [
         tertiary: '12 ft',
       },
       image: { kind: 'image', tracks: 3, alt: 'Safety event preview unavailable' },
+      iconText: {
+        kind: 'icon-text',
+        icon: 'Person',
+        primary: 'Jordan Patel',
+        secondary: 'DRV-2210',
+        tertiary: 'Oakland, CA',
+      },
     },
   },
 ];
@@ -1113,7 +1142,7 @@ export const AllCellTypes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Three review tables, one height each. Image cells declare tracks 1, 2, or 3 so the 16:9 preview fills the matching content box (cell height minus 8px padding). Single-track cells, including the 1-track image, stay on a 40px row. Two-track text and the 2-track image share a 62px row. Event in that table shows a two-line cell with middle-dot runs. Three-track text and the 3-track image stay on an 84px row. Body cells share 8px outer padding; 20px content sits in a 24px track; later tracks are 20px with a 2px stack gap. Linked primary text uses a native anchor and the shared brand text-action treatment; secondary copy stays unlinked. Secondary tracks may split into middle-dot-separated runs. The third line uses the same subdued track recipe as the second. Action cells primarily use an icon-only Ellipses ButtonUnfilled; the examples show its default unbordered and optional bordered treatments. Empty means the data applies but has no value and renders an em dash; Blank means the data is not applicable and intentionally renders nothing.',
+        story: 'Three review tables, one height each. Image cells declare tracks 1, 2, or 3 so the 16:9 preview fills the matching content box (cell height minus 8px padding). Icon-and-text cells (`kind: icon-text`) place one md prefix icon beside the copy stack: 2px padding on every side of the icon, a 2px flex gap before the copy, and text-track padding staying on the copy. Single-track cells, including the 1-track image and icon-and-text, stay on a 40px row. Two-track text, 2-track image, and 2-track icon-and-text share a 62px row. Event in that table shows a two-line cell with middle-dot runs. Three-track text, 3-track image, and 3-track icon-and-text stay on an 84px row. Body cells share 8px outer padding; 20px content sits in a 24px track; later tracks are 20px with a 2px stack gap. Linked primary text uses a native anchor and the shared brand text-action treatment; secondary copy stays unlinked. Secondary tracks may split into middle-dot-separated runs. The third line uses the same subdued track recipe as the second. Action cells primarily use an icon-only Ellipses ButtonUnfilled; the examples show its default unbordered and optional bordered treatments. Empty means the data applies but has no value and renders an em dash; Blank means the data is not applicable and intentionally renders nothing.',
       },
     },
   },

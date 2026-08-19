@@ -122,6 +122,63 @@ test('preserves declarative non-text cell kinds and variants', () => {
     'icon',
   );
   assert.deepEqual(
+    resolveTableCellPresentation(
+      {
+        kind: 'icon-text',
+        icon: 'VehicleTruck',
+        primary: 'Freightliner Cascadia',
+      },
+      column,
+    ),
+    {
+      kind: 'icon-text',
+      cellType: 'icon-text',
+      icon: 'VehicleTruck',
+      value: { primary: 'Freightliner Cascadia' },
+      variant: 'single',
+      wraps: false,
+    },
+  );
+  assert.deepEqual(
+    resolveTableCellPresentation(
+      {
+        kind: 'icon-text',
+        icon: 'VehicleTruck',
+        iconLabel: 'Vehicle',
+        primary: 'Freightliner Cascadia',
+        secondary: [{ text: 'VEH-1042' }, { text: 'Class 8' }],
+        href: '/vehicles/VEH-1042',
+      },
+      column,
+    ),
+    {
+      kind: 'icon-text',
+      cellType: 'icon-text',
+      icon: 'VehicleTruck',
+      iconLabel: 'Vehicle',
+      value: {
+        primary: 'Freightliner Cascadia',
+        secondary: [{ text: 'VEH-1042' }, { text: 'Class 8' }],
+        href: '/vehicles/VEH-1042',
+      },
+      variant: 'multi',
+      wraps: false,
+    },
+  );
+  assert.equal(
+    resolveTableCellPresentation(
+      {
+        kind: 'icon-text',
+        icon: 'Person',
+        primary: 'Avery Chen',
+        secondary: 'DRV-1048',
+        tertiary: 'Dallas, TX',
+      },
+      column,
+    ).variant,
+    'triple',
+  );
+  assert.deepEqual(
     resolveTableCellPresentation({ kind: 'image', alt: 'Vehicle' }, column),
     {
       kind: 'image',

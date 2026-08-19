@@ -7,6 +7,7 @@ export type {
   TableCellEmpty,
   TableCellLinkTarget,
   TableCellIcon,
+  TableCellIconText,
   TableCellImage,
   TableCellImageTracks,
   TableCellPrimaryText,

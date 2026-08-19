@@ -64,6 +64,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
     'ds-table__caption-bar',
     'ds-table__cell',
     'ds-table__cell-link',
+    'ds-table__cell-icon-text',
     'ds-table__cell-tertiary',
     'ds-table__cell-track--runs',
     'ds-table__group-content',
@@ -77,6 +78,8 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   }
 
   assert.match(css, /--_table-cell-track-min-block-size: var\(--dimension-size-300\)/);
+  assert.match(css, /\.ds-table__cell-icon-text\)[\s\S]*?gap: var\(--dimension-space-025\)/);
+  assert.match(css, /\.ds-table__cell-icon-text-icon\)[\s\S]*?padding: var\(--dimension-space-025\)/);
   assert.match(css, /\.ds-table__cell-image[\s\S]*?aspect-ratio: 16 \/ 9/);
   assert.match(css, /--_table-image-block-size: var\(--_table-cell-track-min-block-size\)/);
   assert.match(css, /\.ds-table__cell--image-multi \.ds-table__cell-image\)[\s\S]*?--_table-image-block-size-multi/);

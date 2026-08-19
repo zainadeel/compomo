@@ -108,6 +108,28 @@ export interface TableCellIcon {
   sortValue?: string | number | boolean;
 }
 
+/**
+ * Prefix icon beside a text copy stack. Independent of icon-only and plain
+ * text cells so those recipes stay unchanged.
+ */
+export interface TableCellIconText {
+  kind: 'icon-text';
+  /** Exact canonical IcoMo export name. */
+  icon: string;
+  iconColor?: IconColor;
+  /** Accessible name. Omit when the glyph is decorative. */
+  iconLabel?: string;
+  primary: string | number;
+  secondary?: TableCellTextTrack;
+  tertiary?: TableCellTextTrack;
+  secondaryColor?: TextColor;
+  tertiaryColor?: TextColor;
+  href?: string;
+  target?: TableCellLinkTarget;
+  wrap?: boolean;
+  fontFeature?: 'normal' | 'tabular-nums';
+}
+
 /** Body-row track stack an image preview occupies. */
 export type TableCellImageTracks = 1 | 2 | 3;
 
@@ -189,6 +211,7 @@ export type TableCellValue =
   | TableCellPrimaryText
   | TableCellTag
   | TableCellIcon
+  | TableCellIconText
   | TableCellImage
   | TableCellAction
   | TableCellEmpty
@@ -218,6 +241,13 @@ export type TableCellSkeleton =
   | {
       kind: 'icon';
       rounded?: boolean;
+  }
+  | {
+      kind: 'icon-text';
+      lines?: 1 | 2 | 3;
+      primaryWidth?: TableSkeletonWidth;
+      secondaryWidth?: TableSkeletonWidth;
+      tertiaryWidth?: TableSkeletonWidth;
   }
   | {
       kind: 'action';

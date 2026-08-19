@@ -5,6 +5,8 @@ import {
   clampTableColumnSize,
   deriveTableSelectionState,
   formatTableResultSummary,
+  isTableCellIcon,
+  isTableCellIconText,
   isTableGroupIntent,
   nextTableGroupsCollapsed,
   nextTableSortState,
@@ -172,6 +174,13 @@ test('resolves labels, column constraints, and server group totals defensively',
   assert.equal(resolvedTableGroupCount({ id: 'g', label: 'Group', totalCount: 1, rows }), 4);
   assert.equal(tableCellPrimary({ kind: 'tag', label: 'Pending review', intent: 'caution' }), 'Pending review');
   assert.equal(tableCellPrimary({ kind: 'icon', icon: 'DocumentInverted', label: 'Has notes' }), null);
+  assert.equal(isTableCellIcon({ kind: 'icon', icon: 'DocumentInverted' }), true);
+  assert.equal(isTableCellIcon({ kind: 'icon-text', icon: 'VehicleTruck', primary: 'Freightliner Cascadia' }), false);
+  assert.equal(isTableCellIconText({ kind: 'icon-text', icon: 'VehicleTruck', primary: 'Freightliner Cascadia' }), true);
+  assert.equal(
+    tableCellPrimary({ kind: 'icon-text', icon: 'VehicleTruck', primary: 'Freightliner Cascadia' }),
+    'Freightliner Cascadia',
+  );
   assert.equal(tableCellPrimary({ kind: 'image', alt: 'Road-facing preview' }), 'Road-facing preview');
   assert.equal(
     tableCellPrimary({ kind: 'primary-text', primary: 'Vehicle', secondary: 'VH-2841' }),

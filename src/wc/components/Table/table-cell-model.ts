@@ -3,6 +3,7 @@ import {
   isTableCellBlank,
   isTableCellEmpty,
   isTableCellIcon,
+  isTableCellIconText,
   isTableCellImage,
   isTableCellPrimaryText,
   isTableCellTag,
@@ -23,6 +24,7 @@ import type {
   TableCellLinkTarget,
   TableColumn,
 } from './table-types';
+import type { IconColor } from '../Icon/Icon';
 import type { TextColor } from '../Text/text-types';
 
 /** Maximum independently colored runs on one secondary or tertiary track. */
@@ -44,6 +46,16 @@ export type TableCellPresentation =
   | { kind: 'blank'; cellType: 'blank'; value: TableCellBlank }
   | { kind: 'empty'; cellType: 'empty'; value: TableCellEmpty | null | undefined }
   | { kind: 'icon'; cellType: 'icon'; value: TableCellIcon }
+  | {
+      kind: 'icon-text';
+      cellType: 'icon-text';
+      icon: string;
+      iconColor?: IconColor;
+      iconLabel?: string;
+      value: ResolvedTableCellText;
+      variant: 'single' | 'multi' | 'triple';
+      wraps: boolean;
+    }
   | {
       kind: 'image';
       cellType: 'image';
@@ -110,6 +122,56 @@ export function normalizeTableCellTextTrack(
   return runs.length ? runs : undefined;
 }
 
+function resolveTextPresentation(
+  source: {
+    primary: string | number;
+    secondary?: TableCellTextTrack | number;
+    tertiary?: TableCellTextTrack;
+    secondaryColor?: TextColor;
+    tertiaryColor?: TextColor;
+    href?: string;
+    target?: TableCellLinkTarget;
+    wrap?: boolean;
+    fontFeature?: 'normal' | 'tabular-nums';
+  },
+  column: TableColumn,
+  options: { primaryText: boolean; allowTertiary: boolean },
+): {
+  value: ResolvedTableCellText;
+  singleLine: boolean;
+  variant: 'single' | 'multi' | 'triple' | 'primary-pair';
+  wraps: boolean;
+} {
+  const secondary = normalizeTableCellTextTrack(source.secondary);
+  const tertiary = options.allowTertiary
+    ? normalizeTableCellTextTrack(source.tertiary)
+    : undefined;
+  const value: ResolvedTableCellText = {
+    primary: source.primary,
+    ...(secondary ? { secondary } : {}),
+    ...(tertiary ? { tertiary } : {}),
+    ...(source.secondaryColor ? { secondaryColor: source.secondaryColor } : {}),
+    ...(source.tertiaryColor ? { tertiaryColor: source.tertiaryColor } : {}),
+    ...(source.href ? { href: source.href } : {}),
+    ...(source.target ? { target: source.target } : {}),
+    ...(source.wrap ? { wrap: source.wrap } : {}),
+    ...(source.fontFeature ? { fontFeature: source.fontFeature } : {}),
+  };
+  const singleLine = !options.primaryText && !secondary && !tertiary;
+  return {
+    value,
+    singleLine,
+    variant: options.primaryText
+      ? 'primary-pair'
+      : tertiary
+        ? 'triple'
+        : singleLine
+          ? 'single'
+          : 'multi',
+    wraps: value.wrap ?? column.wrap ?? false,
+  };
+}
+
 /** Resolve a cell's semantic and visual recipe once for both markup and classes. */
 export function resolveTableCellPresentation(
   value: TableCellValue,
@@ -120,6 +182,22 @@ export function resolveTableCellPresentation(
     return { kind: 'empty', cellType: 'empty', value };
   }
   if (isTableCellIcon(value)) return { kind: 'icon', cellType: 'icon', value };
+  if (isTableCellIconText(value)) {
+    const text = resolveTextPresentation(value, column, {
+      primaryText: false,
+      allowTertiary: true,
+    });
+    return {
+      kind: 'icon-text',
+      cellType: 'icon-text',
+      icon: value.icon,
+      ...(value.iconColor ? { iconColor: value.iconColor } : {}),
+      ...(value.iconLabel ? { iconLabel: value.iconLabel } : {}),
+      value: text.value,
+      variant: text.variant === 'primary-pair' ? 'single' : text.variant,
+      wraps: text.wraps,
+    };
+  }
   if (isTableCellImage(value)) {
     return {
       kind: 'image',
@@ -139,46 +217,26 @@ export function resolveTableCellPresentation(
   }
 
   const primaryText = isTableCellPrimaryText(value);
-  const source: {
-    primary: string | number;
-    secondary?: TableCellTextTrack | number;
-    wrap?: boolean;
-    href?: string;
-    target?: TableCellLinkTarget;
-    fontFeature?: 'normal' | 'tabular-nums';
-  } = isTableCellText(value) || primaryText
+  const source = isTableCellText(value) || primaryText
     ? value
     : {
         primary: value,
-        fontFeature: typeof value === 'number' ? 'tabular-nums' : 'normal',
+        fontFeature: typeof value === 'number' ? 'tabular-nums' as const : 'normal' as const,
       };
-  const secondary = normalizeTableCellTextTrack(source.secondary);
-  const tertiary = primaryText || !isTableCellText(value)
-    ? undefined
-    : normalizeTableCellTextTrack(value.tertiary);
-  const text: ResolvedTableCellText = {
-    primary: source.primary,
-    ...(secondary ? { secondary } : {}),
-    ...(tertiary ? { tertiary } : {}),
-    ...(isTableCellText(value) && value.secondaryColor
-      ? { secondaryColor: value.secondaryColor }
-      : {}),
-    ...(isTableCellText(value) && value.tertiaryColor
-      ? { tertiaryColor: value.tertiaryColor }
-      : {}),
-    ...('href' in source && source.href ? { href: source.href } : {}),
-    ...('target' in source && source.target ? { target: source.target } : {}),
-    ...(source.wrap ? { wrap: source.wrap } : {}),
-    ...(source.fontFeature ? { fontFeature: source.fontFeature } : {}),
-  };
-  const singleLine = !primaryText && !secondary && !tertiary;
+  const text = resolveTextPresentation(
+    isTableCellText(value)
+      ? value
+      : source,
+    column,
+    { primaryText, allowTertiary: isTableCellText(value) },
+  );
   return {
     kind: 'text',
     cellType: primaryText ? 'primary-text' : 'text',
-    value: text,
+    value: text.value,
     primaryText,
-    singleLine,
-    variant: primaryText ? 'primary-pair' : tertiary ? 'triple' : singleLine ? 'single' : 'multi',
-    wraps: text.wrap ?? column.wrap ?? false,
+    singleLine: text.singleLine,
+    variant: text.variant,
+    wraps: text.wraps,
   };
 }

@@ -867,6 +867,44 @@
 }
 
 /*
+ * Icon-and-text: md prefix in a 24px slot (2px padding on every side), then a
+ * 2px flex gap. Text tracks keep their own 4px inline and 2px block padding.
+ */
+:where(.ds-table__cell-icon-text) {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--dimension-space-025);
+  inline-size: 100%;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+:where(.ds-table__cell-icon-text-icon) {
+  box-sizing: border-box;
+  display: flex;
+  flex: none;
+  align-items: flex-start;
+  min-block-size: var(--_table-cell-track-min-block-size);
+  padding: var(--dimension-space-025);
+}
+
+:where(.ds-table__cell--icon-text .ds-table__cell-content),
+:where(.ds-table__cell--icon-text .ds-table__cell-track) {
+  min-block-size: 0;
+}
+
+:where(.ds-table__cell--icon-text-multi .ds-table__cell-copy),
+:where(.ds-table__cell--icon-text-triple .ds-table__cell-copy) {
+  gap: var(--dimension-space-025);
+}
+
+:where(.ds-table__cell--icon-text-multi .ds-table__cell-secondary),
+:where(.ds-table__cell--icon-text-triple .ds-table__cell-secondary),
+:where(.ds-table__cell--icon-text-triple .ds-table__cell-tertiary) {
+  padding-block: var(--dimension-space-025);
+}
+
+/*
  * Image previews fill the matching body-row content box (cell height minus
  * 8px padding) at 16:9. Track 1 is the 24px first-track stack; tracks 2 and
  * 3 add the same 20px later-track and 2px gap as text.

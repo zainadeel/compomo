@@ -146,6 +146,7 @@ cellTypes.columns = [
   { id: 'event', header: 'Event', size: 'sm' },
   { id: 'image', header: 'Image', size: 98 },
   { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
+  { id: 'iconText', header: 'Icon + text', size: 'sm' },
   { id: 'tagOnly', header: 'Tag only', size: 'sm' },
   { id: 'tagWithText', header: 'Tag with text', size: 'sm' },
   { id: 'textWithTag', header: 'Text with tag', size: 'sm' },
@@ -176,6 +177,16 @@ cellTypes.rows = [
       },
       image: { kind: 'image', tracks: 2, alt: 'Safety event preview unavailable' },
       icon: { kind: 'icon', icon: 'DocumentInverted', color: 'secondary', label: 'Has notes' },
+      iconText: {
+        kind: 'icon-text',
+        icon: 'VehicleTruck',
+        primary: 'Freightliner Cascadia',
+        href: '/vehicles/VEH-1042',
+        secondary: [
+          { text: 'VEH-1042' },
+          { text: 'Class 8' },
+        ],
+      },
       tagOnly: { kind: 'tag', label: 'Pending', intent: 'caution' },
       tagWithText: {
         kind: 'tag',
@@ -219,6 +230,7 @@ cellTypes.addEventListener('dsCellAction', event => {
 const threeTrack = document.getElementById('three-track');
 threeTrack.columns = [
   { id: 'image', header: 'Image', size: 137 },
+  { id: 'iconText', header: 'Icon + text', size: 'sm' },
   { id: 'driver', header: 'Driver', size: 'sm' },
   { id: 'vehicle', header: 'Vehicle', size: 'sm' },
   { id: 'event', header: 'Event', size: 'sm' },
@@ -246,6 +258,13 @@ threeTrack.rows = [
         tertiary: '45 mph over',
       },
       image: { kind: 'image', tracks: 3, alt: 'Safety event preview unavailable' },
+      iconText: {
+        kind: 'icon-text',
+        icon: 'Person',
+        primary: 'Avery Chen',
+        secondary: 'DRV-1048',
+        tertiary: 'Dallas, TX',
+      },
     },
   },
   {
@@ -270,6 +289,13 @@ threeTrack.rows = [
         tertiary: '12 ft',
       },
       image: { kind: 'image', tracks: 3, alt: 'Safety event preview unavailable' },
+      iconText: {
+        kind: 'icon-text',
+        icon: 'Person',
+        primary: 'Jordan Patel',
+        secondary: 'DRV-2210',
+        tertiary: 'Oakland, CA',
+      },
     },
   },
 ];
@@ -279,6 +305,7 @@ singleTrack.columns = [
   { id: 'scalar', header: 'Scalar text', size: 'sm' },
   { id: 'image', header: 'Image', size: 59 },
   { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
+  { id: 'iconText', header: 'Icon + text', size: 'sm' },
   { id: 'tagOnly', header: 'Tag only', size: 'sm' },
   { id: 'action', kind: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
 ];
@@ -290,6 +317,7 @@ singleTrack.rows = [
       scalar: 'Vehicle 2841',
       image: { kind: 'image', alt: 'Vehicle preview unavailable' },
       icon: { kind: 'icon', icon: 'DocumentInverted', color: 'secondary', label: 'Has notes' },
+      iconText: { kind: 'icon-text', icon: 'VehicleTruck', primary: 'Freightliner Cascadia' },
       tagOnly: { kind: 'tag', label: 'Pending', intent: 'caution' },
       action: {
         kind: 'action',
