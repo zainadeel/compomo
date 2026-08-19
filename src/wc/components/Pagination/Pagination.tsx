@@ -134,8 +134,8 @@ export class Pagination {
     const state = this.resolvedState;
     const atStart = state.pageIndex === 0;
     const atEnd = state.pageIndex === state.totalPages - 1;
-    const range = `${state.firstItem}–${state.lastItem} / ${state.totalItems}`;
-    const page = `${state.pageIndex + 1} / ${state.totalPages}`;
+    const total = `of ${state.totalItems}`;
+    const page = `${state.pageIndex + 1} of ${state.totalPages}`;
     const announcedRange = `${state.firstItem}–${state.lastItem} of ${state.totalItems}`;
     const announcedPage = `Page ${state.pageIndex + 1} of ${state.totalPages}`;
     const pageSizeAriaLabel = this.pageSizeAriaLabel ?? `${this.pageSizeLabel} per page`;
@@ -186,16 +186,17 @@ export class Pagination {
                 this.requestPageSize(event.detail);
               }}
             />
+            <ds-text
+              class="pagination__total"
+              as="span"
+              variant="text-body-medium"
+              color="secondary"
+              fontFeature="tabular-nums"
+            >
+              {total}
+            </ds-text>
           </div>
-          <ds-text
-            class="pagination__range"
-            as="span"
-            variant="text-body-medium"
-            color="secondary"
-            fontFeature="tabular-nums"
-          >
-            {range}
-          </ds-text>
+          <ds-divider class="pagination__divider" orientation="vertical" length="24px" />
           <div class="pagination__navigation">
             <ds-button-unfilled
               variant="icon"

@@ -34,13 +34,14 @@
 
 .pagination__page-size {
   gap: var(--dimension-space-100);
+  padding-inline-end: var(--dimension-space-100);
 }
 
 .pagination__navigation {
   gap: var(--dimension-space-050);
 }
 
-.pagination__range,
+.pagination__total,
 .pagination__page,
 .pagination__label {
   display: inline-flex;
@@ -51,6 +52,6 @@
 
 .pagination__page {
   justify-content: center;
-  min-inline-size: calc(var(--dimension-size-800) + var(--dimension-space-200));
-  padding-inline: var(--dimension-space-050);
+  min-inline-size: 0;
+  padding-inline: var(--dimension-space-100);
 }

@@ -35,6 +35,7 @@ import { TableLayoutController } from './table-layout-controller';
 import { TableLoadController } from './table-load-controller';
 import { TableGroupLoadController } from './table-group-load-controller';
 import type { PaginationChangeDetail } from '../Pagination/pagination-types';
+import { resolvePaginationState } from '../Pagination/pagination-model';
 import { resolveCssLengthPx } from '../../utils/resolve-css-length-px';
 import { resolveTableFitPageSize } from './table-pagination-fit';
 import {
@@ -569,6 +570,55 @@ export class Table {
       reason: 'fit',
     });
   };
+
+  private handlePaginationKeyDown(event: KeyboardEvent): void {
+    const pagination = this.dataMode === 'pagination' ? this.pagination : null;
+    if (
+      !pagination ||
+      this.loading ||
+      event.defaultPrevented ||
+      event.altKey ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.shiftKey ||
+      (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight')
+    ) {
+      return;
+    }
+
+    const fromDirectionalControl = event.composedPath().some(node => {
+      if (!(node instanceof HTMLElement)) return false;
+      return node.tagName === 'DS-SELECT' ||
+        ['INPUT', 'SELECT', 'TEXTAREA'].includes(node.tagName) ||
+        node.isContentEditable ||
+        node.getAttribute('role') === 'slider';
+    });
+    if (fromDirectionalControl) return;
+
+    const state = resolvePaginationState(pagination);
+    const pageIndex = event.key === 'ArrowLeft' ? state.pageIndex - 1 : state.pageIndex + 1;
+    if (pageIndex < 0 || pageIndex >= state.totalPages) return;
+
+    event.preventDefault();
+    this.dsPaginationChange.emit({
+      pageIndex,
+      pageSize: state.pageSize,
+      pageSizeMode: state.pageSizeMode,
+      totalItems: state.totalItems,
+      pageSizeOptions: state.pageSizeOptions,
+      fitToPage: pagination.fitToPage ?? false,
+      fitPageSize: this.fitPageSize ?? pagination.fitPageSize,
+      fitPageSizeLabel: pagination.fitPageSizeLabel ?? 'Fit to page',
+      fitPageSizeTriggerLabel: pagination.fitPageSizeTriggerLabel ?? 'Fit',
+      itemLabel: pagination.itemLabel ?? 'items',
+      pageSizeLabel: pagination.pageSizeLabel ?? 'Items',
+      ariaLabel: pagination.ariaLabel ?? `${this.caption} pagination`,
+      previousPageIndex: state.pageIndex,
+      previousPageSize: state.pageSize,
+      previousPageSizeMode: state.pageSizeMode,
+      reason: 'page',
+    });
+  }
 
   private currentLoadedRows(): TableRow[] {
     return tableRows(this.rows, this.groups, this.grouped);
@@ -1448,9 +1498,17 @@ export class Table {
         {Array.from({ length: count }, (_, index) => (
           <tr class="ds-table__row ds-table__skeleton-row" key={`skeleton-${index}`}>
             {model.selectable && (
-              <td class="ds-table__cell ds-table__selection-cell ds-table__cell--sticky-start ds-table__skeleton-cell ds-interaction-fill ds-interaction-fill--grouped">
-                <span class="ds-interaction-fill__content">
-                  <ds-skeleton variant="icon" iconSize="md" />
+              <td
+                class="ds-table__cell ds-table__selection-cell ds-table__cell--sticky-start ds-table__skeleton-cell ds-interaction-fill ds-interaction-fill--grouped"
+                data-skeleton-kind="checkbox"
+              >
+                <span class="ds-table__skeleton-checkbox-canvas ds-interaction-fill__content">
+                  <ds-skeleton
+                    class="ds-table__skeleton-checkbox"
+                    variant="control"
+                    controlSize="xs"
+                    width="var(--dimension-iconography-sm)"
+                  />
                 </span>
                 {this.renderStickyEdge('start')}
               </td>
@@ -1808,6 +1866,7 @@ export class Table {
           'table-host--viewport-fit': this.fitViewport,
         }}
         style={hostStyle}
+        onKeyDown={(event: KeyboardEvent) => this.handlePaginationKeyDown(event)}
       >
         <div class={{
           'ds-table': true,

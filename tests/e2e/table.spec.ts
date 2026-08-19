@@ -1210,8 +1210,13 @@ test('forwards controlled pagination while preserving off-page selection', async
 
   await expect(table.locator('.ds-table__footer-summary')).toHaveCount(0);
   await expect(pagination).toContainText('Rows:');
-  await expect(pagination).toContainText('1–25 / 63');
-  await expect(pagination).toContainText('1 / 3');
+  await expect(pagination.locator('.pagination__total')).toHaveText('of 63');
+  await expect(pagination.locator('.pagination__page')).toHaveText('1 of 3');
+  await expect(pagination.locator('ds-divider')).toHaveJSProperty('orientation', 'vertical');
+  await expect(pagination.locator('ds-divider')).toHaveCSS('height', '24px');
+  await expect(pagination.locator('.pagination__page')).toHaveCSS('min-width', '0px');
+  await expect(pagination.locator('.pagination__page')).toHaveCSS('padding-left', '8px');
+  await expect(pagination.locator('.pagination__page')).toHaveCSS('padding-right', '8px');
   const [labelBox, selectBox] = await Promise.all([
     pagination.locator('.pagination__label').boundingBox(),
     pagination.locator('ds-select').boundingBox(),
@@ -1225,8 +1230,8 @@ test('forwards controlled pagination while preserving off-page selection', async
   await expect(pagination.getByRole('button', { name: 'Previous page' })).toBeDisabled();
 
   await pagination.getByRole('button', { name: 'Next page' }).click();
-  await expect(pagination).toContainText('26–50 / 63');
-  await expect(pagination).toContainText('2 / 3');
+  await expect(pagination.locator('.pagination__total')).toHaveText('of 63');
+  await expect(pagination.locator('.pagination__page')).toHaveText('2 of 3');
   await expect(table.locator('tbody .ds-table__row').first()).toHaveAttribute(
     'data-row-id',
     'paginated-row-26',
@@ -1264,8 +1269,8 @@ test('resets to page one after a controlled page-size request', async ({ page })
   await pagination.getByRole('combobox', { name: 'Rows per page' }).click();
   await page.getByRole('option', { name: '50', exact: true }).click();
 
-  await expect(pagination).toContainText('1–50 / 63');
-  await expect(pagination).toContainText('1 / 2');
+  await expect(pagination.locator('.pagination__total')).toHaveText('of 63');
+  await expect(pagination.locator('.pagination__page')).toHaveText('1 of 2');
   await expect.poll(() => page.evaluate(() => window.__tablePaginationEvents.at(-1))).toMatchObject({
     pageIndex: 0,
     pageSize: 50,
@@ -1283,22 +1288,35 @@ test('resets to page one after a controlled page-size request', async ({ page })
 });
 
 test('supports keyboard focus and terminal page boundaries', async ({ page }) => {
+  const table = page.locator('#paginated');
   const pagination = page.locator('#paginated ds-pagination');
   const pageSize = pagination.getByRole('combobox', { name: 'Rows per page' });
+
+  const selectAll = table.getByRole('checkbox', { name: 'Select all loaded rows' });
+  await selectAll.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(pagination.locator('.pagination__page')).toHaveText('2 of 3');
+
   await pageSize.focus();
   await expect(pageSize).toBeFocused();
+  await page.keyboard.press('ArrowRight');
+  await expect(pagination.locator('.pagination__page')).toHaveText('2 of 3');
 
-  await page.keyboard.press('Tab');
   const next = pagination.getByRole('button', { name: 'Next page' });
+  await next.focus();
   await expect(next).toBeFocused();
   await page.keyboard.press('ArrowRight');
-  await expect(pagination).toContainText('2 / 3');
+  await expect(pagination.locator('.pagination__page')).toHaveText('3 of 3');
+
+  await selectAll.focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect(pagination.locator('.pagination__page')).toHaveText('2 of 3');
 
   const last = pagination.getByRole('button', { name: 'Last page' });
   await last.focus();
   await page.keyboard.press('Enter');
-  await expect(pagination).toContainText('51–63 / 63');
-  await expect(pagination).toContainText('3 / 3');
+  await expect(pagination.locator('.pagination__total')).toHaveText('of 63');
+  await expect(pagination.locator('.pagination__page')).toHaveText('3 of 3');
   await expect(next).toBeDisabled();
   await expect(last).toBeDisabled();
 });
@@ -1354,7 +1372,8 @@ test('paginates parent groups while each group loads members independently', asy
 
   await expect(table.locator('tbody[data-group-id]')).toHaveCount(25);
   await expect(pagination).toContainText('Groups:');
-  await expect(pagination).toContainText('1–25 / 30');
+  await expect(pagination.locator('.pagination__total')).toHaveText('of 30');
+  await expect(pagination.locator('.pagination__page')).toHaveText('1 of 2');
   await expect(table.locator('.ds-table__load-body')).toHaveCount(0);
 
   const firstGroup = table.locator('tbody[data-group-id="group-1"]');
@@ -1365,7 +1384,8 @@ test('paginates parent groups while each group loads members independently', asy
 
   await pagination.getByRole('button', { name: 'Next page' }).click();
   await expect(table.locator('tbody[data-group-id]')).toHaveCount(5);
-  await expect(pagination).toContainText('26–30 / 30');
+  await expect(pagination.locator('.pagination__total')).toHaveText('of 30');
+  await expect(pagination.locator('.pagination__page')).toHaveText('2 of 2');
   await pagination.getByRole('button', { name: 'Previous page' }).click();
   await expect(table.locator('tbody[data-group-id="group-1"] .ds-table__row')).toHaveCount(1);
 
@@ -2048,6 +2068,36 @@ test('renders initial state bodies and passes an accessibility scan', async ({ p
   await expect(skeletonRows).toHaveCount(10);
   const skeletonCells = skeletonRows.first().locator('.ds-table__skeleton-cell');
   await expect(skeletonCells).toHaveCount(6);
+  const selectionSkeleton = skeletonRows.first().locator('.ds-table__selection-cell');
+  await expect(selectionSkeleton).toHaveAttribute('data-skeleton-kind', 'checkbox');
+  const selectionSkeletonGeometry = await selectionSkeleton
+    .locator('ds-skeleton')
+    .evaluate(element => {
+      const cell = element.closest<HTMLElement>('.ds-table__selection-cell')!;
+      const cellRect = cell.getBoundingClientRect();
+      const rect = element.getBoundingClientRect();
+      return {
+        width: rect.width,
+        height: rect.height,
+        inlineOffset: rect.left - cellRect.left,
+        blockOffset: rect.top - cellRect.top,
+      };
+    });
+  const checkboxGeometry = await page
+    .locator('#selectable .ds-table__row .ds-table__selection-cell ds-checkbox .box')
+    .first()
+    .evaluate(element => {
+      const cell = element.closest<HTMLElement>('.ds-table__selection-cell')!;
+      const cellRect = cell.getBoundingClientRect();
+      const rect = element.getBoundingClientRect();
+      return {
+        width: rect.width,
+        height: rect.height,
+        inlineOffset: rect.left - cellRect.left,
+        blockOffset: rect.top - cellRect.top,
+      };
+    });
+  expect(selectionSkeletonGeometry).toEqual(checkboxGeometry);
   await expect(skeletonCells.nth(1)).toHaveAttribute('data-skeleton-kind', 'image');
   await expect(skeletonCells.nth(2)).toHaveAttribute('data-skeleton-kind', 'text');
   await expect(skeletonCells.nth(2)).toHaveClass(/ds-table__cell--text-multi/);
