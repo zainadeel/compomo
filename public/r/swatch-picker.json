@@ -199,7 +199,7 @@
       "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: options, sections.",
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens ^6.2.2",
+          "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
