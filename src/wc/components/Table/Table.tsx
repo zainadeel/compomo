@@ -24,7 +24,9 @@ import {
   toggleTableRowSelection,
 } from './table-model';
 import {
+  resolveTableCellImageTracks,
   resolveTableCellPresentation,
+  tableCellImageVariant,
   type TableCellPresentation,
 } from './table-cell-model';
 import {
@@ -47,6 +49,7 @@ import type {
   TableCaptionVisibility,
   TableCellActionDetail,
   TableCellSkeleton,
+  TableCellTextRun,
   TableColumn,
   TableDataMode,
   TableGroup,
@@ -1120,7 +1123,7 @@ export class Table {
           icon={value.icon ?? ''}
           rounded={value.rounded ?? false}
           isInset
-          insetDepth="double"
+          insetDepth={variant === 'text-with-tag' ? 'single' : 'double'}
         />
       );
 
@@ -1174,18 +1177,80 @@ export class Table {
             {primary}
           </a>
         ) : primary}
-        {text.secondary !== undefined && text.secondary !== '' && (
+        {this.renderTextTrack(text.secondary, {
+          track: 'secondary',
+          variant: cell.primaryText ? 'text-body-medium' : 'text-body-small',
+          defaultColor: cell.primaryText ? 'primary' : 'secondary',
+          wholeColor: text.secondaryColor,
+          wraps,
+        })}
+        {this.renderTextTrack(text.tertiary, {
+          track: 'tertiary',
+          variant: 'text-body-small',
+          defaultColor: 'secondary',
+          wholeColor: text.tertiaryColor,
+          wraps,
+        })}
+      </span>
+    );
+  }
+
+  private renderTextTrack(
+    runs: TableCellTextRun[] | undefined,
+    options: {
+      track: 'secondary' | 'tertiary';
+      variant: 'text-body-medium' | 'text-body-small';
+      defaultColor: 'primary' | 'secondary';
+      wholeColor?: TableCellTextRun['color'];
+      wraps: boolean;
+    },
+  ) {
+    if (!runs?.length) return null;
+    const trackClass = `ds-table__cell-${options.track} ds-table__cell-track ds-table__cell-track--text`;
+    const colorFor = (run: TableCellTextRun) =>
+      run.color ?? options.wholeColor ?? options.defaultColor;
+    if (runs.length === 1) {
+      return (
+        <ds-text
+          class={trackClass}
+          as="span"
+          variant={options.variant}
+          color={colorFor(runs[0])}
+          lineTruncation={options.wraps ? 'none' : 1}
+          wrap={options.wraps ? 'wrap' : 'nowrap'}
+        >
+          {runs[0].text}
+        </ds-text>
+      );
+    }
+
+    return (
+      <span class={`${trackClass} ds-table__cell-track--runs`}>
+        {runs.map((run, index) => [
+          index > 0 && (
+            <ds-text
+              key={`${options.track}-sep-${index}`}
+              class="ds-table__cell-run-separator"
+              as="span"
+              variant={options.variant}
+              color="secondary"
+              aria-hidden="true"
+            >
+              ·
+            </ds-text>
+          ),
           <ds-text
-            class="ds-table__cell-secondary ds-table__cell-track ds-table__cell-track--text"
+            key={`${options.track}-run-${index}`}
+            class="ds-table__cell-run"
             as="span"
-            variant={cell.primaryText ? 'text-body-medium' : 'text-body-small'}
-            color={text.secondaryColor ?? (cell.primaryText ? 'primary' : 'secondary')}
-            lineTruncation={wraps ? 'none' : 1}
-            wrap={wraps ? 'wrap' : 'nowrap'}
+            variant={options.variant}
+            color={colorFor(run)}
+            lineTruncation={options.wraps ? 'none' : 1}
+            wrap={options.wraps ? 'wrap' : 'nowrap'}
           >
-            {text.secondary}
-          </ds-text>
-        )}
+            {run.text}
+          </ds-text>,
+        ])}
       </span>
     );
   }
@@ -1243,6 +1308,7 @@ export class Table {
           const blankCell = cell.kind === 'blank';
           const tagVariant = tagCell ? cell.variant : undefined;
           const textVariant = textCell ? cell.variant : undefined;
+          const imageVariant = cell.kind === 'image' ? cell.variant : undefined;
           return (
             <td
               key={`${row.id}:${column.id}`}
@@ -1253,10 +1319,12 @@ export class Table {
                 [`ds-table__cell--tag-${tagVariant}`]: tagCell,
                 'ds-table__cell--icon': iconCell,
                 'ds-table__cell--image': imageCell,
+                [`ds-table__cell--image-${imageVariant}`]: imageCell,
                 'ds-table__cell--action': actionCell,
                 'ds-table__cell--primary-text': primaryTextCell,
                 'ds-table__cell--text-single': singleTextCell,
-                'ds-table__cell--text-multi': textCell && !singleTextCell,
+                'ds-table__cell--text-multi': textCell && !singleTextCell && textVariant !== 'triple',
+                'ds-table__cell--text-triple': textVariant === 'triple',
                 'ds-table__cell--empty': emptyCell,
                 'ds-table__cell--blank': blankCell,
                 'ds-table__cell--sticky-start': column.sticky === 'start',
@@ -1267,7 +1335,7 @@ export class Table {
               }}
               data-column-id={column.id}
               data-cell-type={cell.cellType}
-              data-cell-variant={tagVariant ?? textVariant}
+              data-cell-variant={tagVariant ?? textVariant ?? imageVariant}
             >
               <span class="ds-table__cell-content ds-interaction-fill__content">
                 {this.renderCellValue(cell, column, row)}
@@ -1546,6 +1614,9 @@ export class Table {
     const tag = skeleton.kind === 'tag';
     const icon = skeleton.kind === 'icon';
     const image = skeleton.kind === 'image';
+    const imageVariant = image
+      ? tableCellImageVariant(resolveTableCellImageTracks(skeleton.tracks))
+      : undefined;
     const action = skeleton.kind === 'action';
     const blank = skeleton.kind === 'blank';
 
@@ -1557,10 +1628,12 @@ export class Table {
           'ds-table__skeleton-cell': true,
           'ds-table__cell--text-single': text && lines === 1,
           'ds-table__cell--text-multi': text && lines === 2,
+          'ds-table__cell--text-triple': text && lines === 3,
           'ds-table__cell--tag': tag,
           'ds-table__cell--tag-tag-only': tag,
           'ds-table__cell--icon': icon,
           'ds-table__cell--image': image,
+          [`ds-table__cell--image-${imageVariant}`]: image,
           'ds-table__cell--action': action,
           'ds-table__cell--blank': blank,
           'ds-table__cell--sticky-start': column.sticky === 'start',
@@ -1570,6 +1643,7 @@ export class Table {
         }}
         data-column-id={column.id}
         data-skeleton-kind={skeleton.kind}
+        data-cell-variant={imageVariant}
         key={`skeleton-${rowIndex}:${column.id}`}
       >
         <span class="ds-table__cell-content ds-interaction-fill__content">
@@ -1624,19 +1698,28 @@ export class Table {
     const lines = skeleton.lines ?? 1;
     return (
       <span class="ds-table__cell-copy">
-        <span class="ds-table__cell-track ds-table__cell-track--text">
+        <span class="ds-table__cell-primary ds-table__cell-track ds-table__cell-track--text">
           <ds-skeleton
             variant="text"
             textVariant="text-body-medium"
             width={skeleton.primaryWidth ?? '100%'}
           />
         </span>
-        {lines === 2 && (
+        {lines >= 2 && (
           <span class="ds-table__cell-secondary ds-table__cell-track ds-table__cell-track--text">
             <ds-skeleton
               variant="text"
               textVariant="text-body-small"
               width={skeleton.secondaryWidth ?? '72%'}
+            />
+          </span>
+        )}
+        {lines === 3 && (
+          <span class="ds-table__cell-tertiary ds-table__cell-track ds-table__cell-track--text">
+            <ds-skeleton
+              variant="text"
+              textVariant="text-body-small"
+              width={skeleton.tertiaryWidth ?? '56%'}
             />
           </span>
         )}

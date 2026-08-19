@@ -143,7 +143,8 @@ cellTypes.columns = [
   { id: 'primarySecondary', header: 'Primary + secondary', size: 'sm' },
   { id: 'linkedText', header: 'Linked text', size: 'sm' },
   { id: 'primaryPair', header: 'Primary + primary', size: 'sm' },
-  { id: 'image', header: 'Image', size: 102 },
+  { id: 'event', header: 'Event', size: 'sm' },
+  { id: 'image', header: 'Image', size: 98 },
   { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
   { id: 'tagOnly', header: 'Tag only', size: 'sm' },
   { id: 'tagWithText', header: 'Tag with text', size: 'sm' },
@@ -166,7 +167,14 @@ cellTypes.rows = [
         href: '/vehicles/VEH-1042',
       },
       primaryPair: { kind: 'primary-text', primary: 'Vehicle', secondary: 'VH-2841' },
-      image: { kind: 'image', alt: 'Safety event preview unavailable' },
+      event: {
+        primary: 'Speeding',
+        secondary: [
+          { text: 'High', color: 'negative' },
+          { text: '45 mph over' },
+        ],
+      },
+      image: { kind: 'image', tracks: 2, alt: 'Safety event preview unavailable' },
       icon: { kind: 'icon', icon: 'DocumentInverted', color: 'secondary', label: 'Has notes' },
       tagOnly: { kind: 'tag', label: 'Pending', intent: 'caution' },
       tagWithText: {
@@ -207,6 +215,92 @@ window.__tableCellActionEvents = [];
 cellTypes.addEventListener('dsCellAction', event => {
   window.__tableCellActionEvents.push(event.detail);
 });
+
+const threeTrack = document.getElementById('three-track');
+threeTrack.columns = [
+  { id: 'image', header: 'Image', size: 137 },
+  { id: 'driver', header: 'Driver', size: 'sm' },
+  { id: 'vehicle', header: 'Vehicle', size: 'sm' },
+  { id: 'event', header: 'Event', size: 'sm' },
+];
+threeTrack.rows = [
+  {
+    id: 'three-track-avery',
+    selectionLabel: 'Avery Chen',
+    cells: {
+      driver: {
+        primary: 'Avery Chen',
+        secondary: 'DRV-1048',
+        tertiary: 'Dallas, TX',
+      },
+      vehicle: {
+        primary: 'Freightliner Cascadia',
+        href: '/vehicles/VEH-1042',
+        secondary: 'VEH-1042',
+        tertiary: 'Class 8',
+      },
+      event: {
+        primary: 'Speeding',
+        secondary: 'High',
+        secondaryColor: 'negative',
+        tertiary: '45 mph over',
+      },
+      image: { kind: 'image', tracks: 3, alt: 'Safety event preview unavailable' },
+    },
+  },
+  {
+    id: 'three-track-jordan',
+    selectionLabel: 'Jordan Patel',
+    cells: {
+      driver: {
+        primary: 'Jordan Patel',
+        secondary: 'DRV-2210',
+        tertiary: 'Oakland, CA',
+      },
+      vehicle: {
+        primary: 'Volvo VNL',
+        href: '/vehicles/VEH-1904',
+        secondary: 'VEH-1904',
+        tertiary: 'Class 8',
+      },
+      event: {
+        primary: 'Lane cutoff',
+        secondary: 'High',
+        secondaryColor: 'negative',
+        tertiary: '12 ft',
+      },
+      image: { kind: 'image', tracks: 3, alt: 'Safety event preview unavailable' },
+    },
+  },
+];
+
+const singleTrack = document.getElementById('single-track');
+singleTrack.columns = [
+  { id: 'scalar', header: 'Scalar text', size: 'sm' },
+  { id: 'image', header: 'Image', size: 59 },
+  { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
+  { id: 'tagOnly', header: 'Tag only', size: 'sm' },
+  { id: 'action', kind: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
+];
+singleTrack.rows = [
+  {
+    id: 'single-track-one',
+    selectionLabel: 'Vehicle 2841',
+    cells: {
+      scalar: 'Vehicle 2841',
+      image: { kind: 'image', alt: 'Vehicle preview unavailable' },
+      icon: { kind: 'icon', icon: 'DocumentInverted', color: 'secondary', label: 'Has notes' },
+      tagOnly: { kind: 'tag', label: 'Pending', intent: 'caution' },
+      action: {
+        kind: 'action',
+        actionId: 'more',
+        variant: 'icon',
+        icon: 'Ellipses',
+        ariaLabel: 'More actions',
+      },
+    },
+  },
+];
 
 const selectable = setBase('selectable');
 selectable.selectedRowIds = ['jordan', 'not-loaded'];
@@ -458,7 +552,7 @@ for (const id of ['loading', 'empty', 'error']) {
 const loading = document.getElementById('loading');
 loading.selectionMode = 'multiple';
 loading.columns = [
-  { id: 'preview', header: 'Preview', size: 102, skeleton: { kind: 'image' } },
+  { id: 'preview', header: 'Preview', size: 98, skeleton: { kind: 'image', tracks: 2 } },
   {
     id: 'details',
     header: 'Details',

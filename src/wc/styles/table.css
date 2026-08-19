@@ -8,16 +8,22 @@
  */
 
 :where(.ds-table) {
-  --_table-cell-track-min-block-size: calc(
-    var(--dimension-size-400) - var(--dimension-space-050)
-  );
+  --_table-cell-track-min-block-size: var(--dimension-size-300);
   --_table-cell-track-padding-inline: calc(
     var(--dimension-space-075) - var(--dimension-space-025)
   );
   --_table-cell-track-label-inset: var(--dimension-space-025);
   --_table-caption-bar-block-size: var(--dimension-size-600);
-  --_table-image-block-size: calc(
-    var(--dimension-size-800) - var(--dimension-space-200)
+  --_table-image-block-size: var(--_table-cell-track-min-block-size);
+  --_table-image-block-size-multi: calc(
+    var(--_table-cell-track-min-block-size)
+    + var(--dimension-space-025)
+    + var(--dimension-size-250)
+  );
+  --_table-image-block-size-triple: calc(
+    var(--_table-image-block-size-multi)
+    + var(--dimension-space-025)
+    + var(--dimension-size-250)
   );
   --_table-surface: var(--ds-table-surface, var(--color-background-primary));
   --_table-header-surface: var(--ds-table-header-surface, var(--color-background-primary));
@@ -762,34 +768,43 @@
 
 :where(.ds-table__cell-track--text) {
   inline-size: 100%;
-  padding-inline: var(--_table-cell-track-label-inset);
-}
-
-:where(.ds-table__cell--text-single),
-:where(.ds-table__cell--text-multi),
-:where(.ds-table__cell--primary-text),
-:where(.ds-table__cell--empty),
-:where(.ds-table__cell--blank) {
-  padding: var(--dimension-space-125);
+  padding-inline: var(--_table-cell-track-padding-inline);
 }
 
 :where(.ds-table__cell--text-single .ds-table__cell-content),
 :where(.ds-table__cell--text-multi .ds-table__cell-content),
+:where(.ds-table__cell--text-triple .ds-table__cell-content),
 :where(.ds-table__cell--primary-text .ds-table__cell-content),
 :where(.ds-table__cell--empty .ds-table__cell-content),
 :where(.ds-table__cell--blank .ds-table__cell-content),
 :where(.ds-table__cell--text-single .ds-table__cell-track),
 :where(.ds-table__cell--text-multi .ds-table__cell-track),
+:where(.ds-table__cell--text-triple .ds-table__cell-track),
 :where(.ds-table__cell--primary-text .ds-table__cell-track),
 :where(.ds-table__cell--empty .ds-table__cell-track) {
   min-block-size: 0;
 }
 
-:where(.ds-table__cell--text-multi .ds-table__cell-copy) {
-  gap: var(--dimension-space-050);
+:where(.ds-table__cell--text-multi .ds-table__cell-copy),
+:where(.ds-table__cell--text-triple .ds-table__cell-copy) {
+  gap: var(--dimension-space-025);
 }
 
-:where(.ds-table__cell--text-multi .ds-table__cell-secondary) {
+/*
+ * Body cells share 8px chrome. 20px content (body-medium text, md icon,
+ * checkbox) sits in a 24px track (2px block inset). Text tracks keep that
+ * 2px plus the 2px label inset, so padding-inline is 4px and copy lines up
+ * with column-header labels. Later body-small tracks stay 20px, stacked with
+ * a 2px gap. Header and group rows keep their own recipes.
+ */
+:where(.ds-table__cell-primary),
+:where(.ds-table__cell--empty .ds-table__cell-track) {
+  padding-block: var(--dimension-space-025);
+}
+
+:where(.ds-table__cell--text-multi .ds-table__cell-secondary),
+:where(.ds-table__cell--text-triple .ds-table__cell-secondary),
+:where(.ds-table__cell--text-triple .ds-table__cell-tertiary) {
   padding-block: var(--dimension-space-025);
 }
 
@@ -797,13 +812,8 @@
   padding-block: 0;
 }
 
-:where(.ds-table__cell--tag-tag-only),
-:where(.ds-table__cell--tag-tag-with-text) {
-  padding: var(--dimension-space-100);
-}
-
-:where(.ds-table__cell--tag-text-with-tag) {
-  padding: var(--dimension-space-125);
+:where(.ds-table__cell--tag-tag-only .ds-table__cell-content) {
+  min-block-size: 0;
 }
 
 :where(.ds-table__cell-tag-stack) {
@@ -830,12 +840,13 @@
 }
 
 :where(.ds-table__cell-tag-stack--text-with-tag .ds-table__cell-tag-text) {
-  padding-inline: var(--_table-cell-track-label-inset);
+  padding-inline: var(--_table-cell-track-padding-inline);
+  padding-block: var(--dimension-space-025);
   min-block-size: 0;
 }
 
 :where(.ds-table__cell-tag-stack--text-with-tag) {
-  gap: var(--dimension-space-050);
+  gap: var(--dimension-space-025);
 }
 
 :where(.ds-table__cell-tag-control-track) {
@@ -848,21 +859,18 @@
   min-block-size: var(--dimension-size-250);
 }
 
-:where(.ds-table__cell--icon) {
-  padding: var(--dimension-space-125);
-}
-
 :where(.ds-table__cell--icon .ds-table__cell-content) {
   align-items: center;
   justify-content: center;
   inline-size: 100%;
-  min-block-size: var(--dimension-iconography-md);
+  min-block-size: var(--dimension-size-300);
 }
 
-:where(.ds-table__cell--image) {
-  padding: var(--dimension-space-100);
-}
-
+/*
+ * Image previews fill the matching body-row content box (cell height minus
+ * 8px padding) at 16:9. Track 1 is the 24px first-track stack; tracks 2 and
+ * 3 add the same 20px later-track and 2px gap as text.
+ */
 :where(.ds-table__cell-image) {
   display: block;
   box-sizing: border-box;
@@ -872,6 +880,14 @@
   overflow: hidden;
   border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
   border-radius: var(--dimension-radius-025);
+}
+
+:where(.ds-table__cell--image-multi .ds-table__cell-image) {
+  block-size: var(--_table-image-block-size-multi);
+}
+
+:where(.ds-table__cell--image-triple .ds-table__cell-image) {
+  block-size: var(--_table-image-block-size-triple);
 }
 
 :where(.ds-table__cell-image-content),
@@ -885,18 +901,25 @@
   object-fit: cover;
 }
 
-:where(.ds-table__cell--action) {
-  padding: var(--dimension-space-100);
-}
-
 :where(.ds-table__cell--action .ds-table__cell-content) {
   min-block-size: var(--dimension-size-300);
 }
 
 :where(.ds-table__cell-primary),
 :where(.ds-table__cell-secondary),
+:where(.ds-table__cell-tertiary),
+:where(.ds-table__cell-run),
 :where(.ds-table__cell-link) {
   min-inline-size: 0;
+}
+
+:where(.ds-table__cell-track--runs) {
+  overflow: hidden;
+  gap: var(--dimension-space-050);
+}
+
+:where(.ds-table__cell-run-separator) {
+  flex: none;
 }
 
 :where(.ds-table__cell-link) {
@@ -1063,7 +1086,7 @@
 }
 
 :where(.ds-table__cell.ds-table__selection-cell) {
-  padding: var(--dimension-space-125);
+  padding: var(--_table-cell-padding-block) var(--_table-cell-padding-inline);
 }
 
 :where(.ds-table__selection-control) {
@@ -1086,9 +1109,9 @@
 }
 
 :where(.ds-table__cell.ds-table__selection-cell .ds-table__selection-control) {
-  inline-size: var(--dimension-iconography-md);
-  min-block-size: var(--dimension-iconography-md);
-  block-size: var(--dimension-iconography-md);
+  inline-size: var(--dimension-size-300);
+  min-block-size: var(--dimension-size-300);
+  block-size: var(--dimension-size-300);
 }
 
 :where(.ds-table__selection-control:disabled) {

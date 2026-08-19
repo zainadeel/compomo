@@ -43,12 +43,26 @@ export interface TableGroupingState {
   direction: TableSortDirection;
 }
 
-/** Standard two-line cell content owned by the table renderer. */
+/** One independently colored run inside a secondary or tertiary track. */
+export interface TableCellTextRun {
+  text: string;
+  /** Defaults to the track’s standard color. */
+  color?: TextColor;
+}
+
+/** A secondary or tertiary track: one string, or up to three colorable runs. */
+export type TableCellTextTrack = string | TableCellTextRun[];
+
+/** Standard two- or three-line cell content owned by the table renderer. */
 export interface TableCellText {
   primary: string | number;
-  secondary?: string;
-  /** Optional semantic foreground for secondary copy; defaults to the standard secondary color. */
+  secondary?: TableCellTextTrack;
+  /** Third subdued track; ignored on dual-primary cells. */
+  tertiary?: TableCellTextTrack;
+  /** Optional semantic foreground for a string secondary track. */
   secondaryColor?: TextColor;
+  /** Optional semantic foreground for a string tertiary track. */
+  tertiaryColor?: TextColor;
   /** Application-owned URL for the primary track only. Scalars stay unlinked. */
   href?: string;
   /** Native anchor target for a resolved primary link. */
@@ -94,6 +108,9 @@ export interface TableCellIcon {
   sortValue?: string | number | boolean;
 }
 
+/** Body-row track stack an image preview occupies. */
+export type TableCellImageTracks = 1 | 2 | 3;
+
 /** Declarative 16:9 image preview rendered by the table's standard cell primitive. */
 export interface TableCellImage {
   kind: 'image';
@@ -101,6 +118,11 @@ export interface TableCellImage {
   src?: string;
   /** Accessible description for either the image or its placeholder. */
   alt: string;
+  /**
+   * Which body-row contract the preview fills. The thumbnail height is that
+   * cell height minus 8px padding; width follows 16:9. Defaults to 1.
+   */
+  tracks?: TableCellImageTracks;
 }
 
 interface TableCellActionBase {
@@ -178,13 +200,16 @@ export type TableSkeletonWidth = string | number;
 export type TableCellSkeleton =
   | {
       kind: 'text';
-      /** One track for scalar content, two for primary and secondary copy. */
-      lines?: 1 | 2;
+      /** One track for scalar content, two for primary and secondary, three when tertiary is present. */
+      lines?: 1 | 2 | 3;
       primaryWidth?: TableSkeletonWidth;
       secondaryWidth?: TableSkeletonWidth;
+      tertiaryWidth?: TableSkeletonWidth;
   }
   | {
       kind: 'image';
+      /** Match the loaded image cell's track stack. Defaults to 1. */
+      tracks?: TableCellImageTracks;
   }
   | {
       kind: 'tag';
