@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.3.0](https://github.com/zainadeel/compomo/compare/v14.2.1...v14.3.0) (2026-08-19)
+
+
+### Added
+
+* add table pagination mode ([#474](https://github.com/zainadeel/compomo/issues/474)) ([f1d4b70](https://github.com/zainadeel/compomo/commit/f1d4b70a99695d3bc3584f56f3a802a7e715e81a))
+
 ## [14.2.1](https://github.com/zainadeel/compomo/compare/v14.2.0...v14.2.1) (2026-08-18)
 
 
