@@ -68,6 +68,7 @@ export type {
   TableCellValue,
   TableColumn,
   TableColumnWidth,
+  TableDataMode,
   TableGroup,
   TableHeaderSegment,
   TableGroupingChangeDetail,
@@ -75,6 +76,7 @@ export type {
   TableLoadMoreDetail,
   TableLoadMoreMode,
   TableLoadMoreReason,
+  TablePaginationState,
   TableRow,
   TableSelectionChangeDetail,
   TableSelectionMode,
@@ -82,6 +84,11 @@ export type {
   TableSortDirection,
   TableSortState,
 } from '../types/components/Table/table-types';
+export type {
+  PaginationChangeDetail,
+  PaginationChangeReason,
+  PaginationState,
+} from '../types/components/Pagination/pagination-types';
 `;
 
 const questionnaireTypesMarker =

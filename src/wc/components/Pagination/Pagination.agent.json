@@ -1,0 +1,55 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-pagination",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-pagination",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Controlled page-size, range, and first/previous/next/last navigation for application-owned data windows.",
+  "useWhen": [
+    "A result set is divided into discrete pages and the application owns fetching or slicing each page.",
+    "A table or list needs a compact page-size selector, result range, and boundary-aware navigation."
+  ],
+  "avoidWhen": [
+    "More results append to one continuous list; use the owning component's incremental-loading behavior instead.",
+    "Only previous and next navigation is meaningful and the total result count is unknown."
+  ],
+  "commonlyComposedWith": [
+    "component:ds-table",
+    "component:ds-select",
+    "component:ds-button-unfilled"
+  ],
+  "accessibility": [
+    "The component renders a named navigation region, labels its page-size combobox, and gives every icon-only boundary control an explicit page action name.",
+    "The visible range and page position use tabular numerals and are repeated in a polite atomic status update with the localized item noun.",
+    "Inactive boundary controls and every control during loading remain non-interactive while retaining their accessible names."
+  ],
+  "states": [
+    "pageIndex, pageSize, totalItems, and pageSizeOptions are controlled inputs. dsChange reports the complete next pagination state, previous index and size, and whether the request changed the page or page size; it never mutates controlled inputs.",
+    "Page-size changes request the first page. Out-of-range page indexes and invalid numeric inputs normalize only for presentation; the owner remains authoritative.",
+    "Zero results display 0–0 of 0 and Page 1 of 1. A partial final page caps the visible range at totalItems.",
+    "loading preserves the full pagination surface, applies aria-busy to the navigation region, and prevents page or page-size requests."
+  ],
+  "responsiveBehavior": [
+    "The compact controls remain on one line. When inline space is insufficient, the pagination surface scrolls horizontally rather than wrapping labels away from their controls."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign pageSizeOptions through the JavaScript property and replace controlled values in response to dsChange."
+    ],
+    "react": [
+      "Replace pageIndex and pageSize from the emitted detail before supplying the requested data window."
+    ],
+    "angular": [
+      "Bind numeric inputs as properties and update the owning signals from the dsChange output."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook review states",
+      "path": "src/wc/components/Pagination/Pagination.stories.ts"
+    }
+  ]
+}

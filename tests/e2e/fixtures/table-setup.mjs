@@ -263,6 +263,77 @@ lazy.addEventListener('dsLoadMore', () => {
   }, 1000);
 });
 
+const paginated = document.getElementById('paginated');
+const paginatedRows = Array.from({ length: 63 }, (_, index) => ({
+  ...rows[index % rows.length],
+  id: `paginated-row-${index + 1}`,
+  selectable: true,
+  disabled: false,
+}));
+paginated.columns = columns;
+paginated.rows = paginatedRows.slice(0, 25);
+paginated.selectedRowIds = ['paginated-row-60'];
+paginated.pagination = {
+  pageIndex: 0,
+  pageSize: 25,
+  totalItems: paginatedRows.length,
+  pageSizeOptions: [25, 50, 100, 200],
+  itemLabel: 'rows',
+  pageSizeLabel: 'Rows per page',
+};
+window.__tablePaginationEvents = [];
+paginated.addEventListener('dsPaginationChange', event => {
+  window.__tablePaginationEvents.push(event.detail);
+  const { pageIndex, pageSize } = event.detail;
+  paginated.pagination = { ...paginated.pagination, pageIndex, pageSize };
+  paginated.rows = paginatedRows.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize);
+});
+paginated.addEventListener('dsSelectionChange', event => {
+  paginated.selectedRowIds = event.detail.selectedRowIds;
+});
+
+const groupedPaginated = document.getElementById('grouped-paginated');
+const groupedPageSource = Array.from({ length: 30 }, (_, groupIndex) => ({
+  id: `group-${groupIndex + 1}`,
+  label: `Group ${groupIndex + 1}`,
+  totalCount: 3,
+  rows: Array.from({ length: 3 }, (_, rowIndex) => ({
+    ...rows[(groupIndex + rowIndex) % rows.length],
+    id: `group-${groupIndex + 1}-row-${rowIndex + 1}`,
+  })),
+}));
+const renderGroupedPage = (pageIndex, pageSize) => {
+  groupedPaginated.groups = groupedPageSource
+    .slice(pageIndex * pageSize, (pageIndex + 1) * pageSize)
+    .map(group => ({
+      ...group,
+      rows: group.rows.slice(0, 1),
+      hasMore: true,
+      loadIdentity: `group-page:${pageIndex}:${group.id}`,
+    }));
+};
+groupedPaginated.columns = columns;
+groupedPaginated.grouping = { columnId: 'status', direction: 'asc' };
+groupedPaginated.pagination = {
+  pageIndex: 0,
+  pageSize: 25,
+  totalItems: groupedPageSource.length,
+  pageSizeOptions: [25, 50, 100, 200],
+  itemLabel: 'groups',
+  pageSizeLabel: 'Groups per page',
+};
+renderGroupedPage(0, 25);
+groupedPaginated.addEventListener('dsPaginationChange', event => {
+  const { pageIndex, pageSize } = event.detail;
+  groupedPaginated.pagination = { ...groupedPaginated.pagination, pageIndex, pageSize };
+  renderGroupedPage(pageIndex, pageSize);
+});
+groupedPaginated.addEventListener('dsGroupLoadMore', event => {
+  groupedPaginated.groups = groupedPaginated.groups.map(group => group.id === event.detail.groupId
+    ? { ...group, rows: groupedPageSource.find(source => source.id === group.id).rows, hasMore: false }
+    : group);
+});
+
 const overflow = document.getElementById('overflow');
 overflow.columns = [
   ...columns,

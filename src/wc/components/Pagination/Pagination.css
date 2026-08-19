@@ -1,0 +1,49 @@
+@import '../../utils/visually-hidden.css';
+
+:host {
+  display: block;
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+:host::-webkit-scrollbar {
+  display: none;
+}
+
+.pagination,
+.pagination__page-size,
+.pagination__navigation {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.pagination {
+  width: max-content;
+  min-width: 100%;
+  gap: var(--dimension-space-200);
+}
+
+.pagination__page-size,
+.pagination__navigation {
+  flex: 0 0 auto;
+  gap: var(--dimension-space-050);
+}
+
+.pagination__range,
+.pagination__page,
+.pagination__label {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.pagination__page {
+  justify-content: center;
+  min-inline-size: calc(var(--dimension-size-800) + var(--dimension-space-200));
+  padding-inline: var(--dimension-space-050);
+}

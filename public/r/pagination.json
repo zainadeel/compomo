@@ -1,0 +1,295 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "pagination",
+  "title": "Pagination",
+  "description": "Controlled page-size, range, and first/previous/next/last navigation for application-owned data windows.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/pagination",
+    "source": "src/wc/components/Pagination/Pagination.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Controlled page-size, range, and first/previous/next/last navigation for application-owned data windows.",
+      "useWhen": [
+        "A result set is divided into discrete pages and the application owns fetching or slicing each page.",
+        "A table or list needs a compact page-size selector, result range, and boundary-aware navigation."
+      ],
+      "avoidWhen": [
+        "More results append to one continuous list; use the owning component's incremental-loading behavior instead.",
+        "Only previous and next navigation is meaningful and the total result count is unknown."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-table",
+        "component:ds-select",
+        "component:ds-button-unfilled"
+      ],
+      "accessibility": [
+        "The component renders a named navigation region, labels its page-size combobox, and gives every icon-only boundary control an explicit page action name.",
+        "The visible range and page position use tabular numerals and are repeated in a polite atomic status update with the localized item noun.",
+        "Inactive boundary controls and every control during loading remain non-interactive while retaining their accessible names."
+      ],
+      "states": [
+        "pageIndex, pageSize, totalItems, and pageSizeOptions are controlled inputs. dsChange reports the complete next pagination state, previous index and size, and whether the request changed the page or page size; it never mutates controlled inputs.",
+        "Page-size changes request the first page. Out-of-range page indexes and invalid numeric inputs normalize only for presentation; the owner remains authoritative.",
+        "Zero results display 0–0 of 0 and Page 1 of 1. A partial final page caps the visible range at totalItems.",
+        "loading preserves the full pagination surface, applies aria-busy to the navigation region, and prevents page or page-size requests."
+      ],
+      "responsiveBehavior": [
+        "The compact controls remain on one line. When inline space is insufficient, the pagination surface scrolls horizontally rather than wrapping labels away from their controls."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign pageSizeOptions through the JavaScript property and replace controlled values in response to dsChange."
+        ],
+        "react": [
+          "Replace pageIndex and pageSize from the emitted detail before supplying the requested data window."
+        ],
+        "angular": [
+          "Bind numeric inputs as properties and update the owning signals from the dsChange output."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook review states",
+          "path": "src/wc/components/Pagination/Pagination.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "itemLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "item-label",
+          "default": "'items'",
+          "required": false,
+          "mutable": false,
+          "description": "Localized plural noun used by assistive range announcements."
+        },
+        "label": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "label",
+          "default": "'Pagination'",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name for the pagination navigation region."
+        },
+        "loading": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "loading",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Prevent interaction while the owner replaces the current data page."
+        },
+        "pageIndex": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "page-index",
+          "default": "0",
+          "required": false,
+          "mutable": false,
+          "description": "Controlled zero-based page index."
+        },
+        "pageSize": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "page-size",
+          "default": "25",
+          "required": false,
+          "mutable": false,
+          "description": "Controlled number of top-level items on a full page."
+        },
+        "pageSizeLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "page-size-label",
+          "default": "'Items per page'",
+          "required": false,
+          "mutable": false,
+          "description": "Visible page-size control label."
+        },
+        "pageSizeOptions": {
+          "type": "number[]",
+          "resolvedType": "number[]",
+          "default": "[25, 50, 100, 200]",
+          "required": false,
+          "mutable": false,
+          "description": "Available page sizes. Assign arrays through JavaScript."
+        },
+        "totalItems": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "total-items",
+          "default": "0",
+          "required": false,
+          "mutable": false,
+          "description": "Controlled total number of top-level items across every page."
+        }
+      },
+      "events": [
+        {
+          "name": "dsChange",
+          "detail": "PaginationChangeDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emits the complete next controlled state after a page or page-size request."
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "itemLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "item-label",
+        "default": "'items'",
+        "required": false,
+        "mutable": false,
+        "description": "Localized plural noun used by assistive range announcements."
+      },
+      "label": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "label",
+        "default": "'Pagination'",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name for the pagination navigation region."
+      },
+      "loading": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "loading",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Prevent interaction while the owner replaces the current data page."
+      },
+      "pageIndex": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "page-index",
+        "default": "0",
+        "required": false,
+        "mutable": false,
+        "description": "Controlled zero-based page index."
+      },
+      "pageSize": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "page-size",
+        "default": "25",
+        "required": false,
+        "mutable": false,
+        "description": "Controlled number of top-level items on a full page."
+      },
+      "pageSizeLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "page-size-label",
+        "default": "'Items per page'",
+        "required": false,
+        "mutable": false,
+        "description": "Visible page-size control label."
+      },
+      "pageSizeOptions": {
+        "type": "number[]",
+        "resolvedType": "number[]",
+        "default": "[25, 50, 100, 200]",
+        "required": false,
+        "mutable": false,
+        "description": "Available page sizes. Assign arrays through JavaScript."
+      },
+      "totalItems": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "total-items",
+        "default": "0",
+        "required": false,
+        "mutable": false,
+        "description": "Controlled total number of top-level items across every page."
+      }
+    },
+    "events": [
+      {
+        "name": "dsChange",
+        "detail": "PaginationChangeDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emits the complete next controlled state after a page or page-size request."
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-pagination",
+      "react": "DsPagination",
+      "angular": "DsPagination"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-pagination.js';",
+        "example": "<ds-pagination></ds-pagination>"
+      },
+      "react": {
+        "import": "import { DsPagination } from '@ds-mo/ui/react';",
+        "example": "<DsPagination />"
+      },
+      "angular": {
+        "import": "import { DsPagination } from '@ds-mo/ui/angular/ds-pagination';",
+        "example": "<ds-pagination></ds-pagination>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: pageSizeOptions.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.2.2",
+          "@ds-mo/icons ^7.0.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "button-unfilled",
+    "select",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/Pagination/Pagination.css",
+      "content": "@import '../../utils/visually-hidden.css';\n\n:host {\n  display: block;\n  box-sizing: border-box;\n  min-width: 0;\n  max-width: 100%;\n  overflow-x: auto;\n  scrollbar-width: none;\n}\n\n:host::-webkit-scrollbar {\n  display: none;\n}\n\n.pagination,\n.pagination__page-size,\n.pagination__navigation {\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n}\n\n.pagination {\n  width: max-content;\n  min-width: 100%;\n  gap: var(--dimension-space-200);\n}\n\n.pagination__page-size,\n.pagination__navigation {\n  flex: 0 0 auto;\n  gap: var(--dimension-space-050);\n}\n\n.pagination__range,\n.pagination__page,\n.pagination__label {\n  display: inline-flex;\n  align-items: center;\n  flex: 0 0 auto;\n  white-space: nowrap;\n}\n\n.pagination__page {\n  justify-content: center;\n  min-inline-size: calc(var(--dimension-size-800) + var(--dimension-space-200));\n  padding-inline: var(--dimension-space-050);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/Pagination/Pagination.tsx",
+      "content": "import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\nimport { resolvePaginationState } from './pagination-model';\nimport type { PaginationChangeDetail } from './pagination-types';\n\nlet paginationId = 0;\n\n@Component({\n  tag: 'ds-pagination',\n  styleUrl: 'Pagination.css',\n  scoped: true,\n})\nexport class Pagination {\n  /** Controlled zero-based page index. */\n  @Prop() pageIndex: number = 0;\n  /** Controlled number of top-level items on a full page. */\n  @Prop() pageSize: number = 25;\n  /** Controlled total number of top-level items across every page. */\n  @Prop() totalItems: number = 0;\n  /** Available page sizes. Assign arrays through JavaScript. */\n  @Prop() pageSizeOptions: number[] = [25, 50, 100, 200];\n  /** Localized plural noun used by assistive range announcements. */\n  @Prop() itemLabel: string = 'items';\n  /** Visible page-size control label. */\n  @Prop() pageSizeLabel: string = 'Items per page';\n  /** Accessible name for the pagination navigation region. */\n  @Prop() label: string = 'Pagination';\n  /** Prevent interaction while the owner replaces the current data page. */\n  @Prop() loading: boolean = false;\n\n  /** Emits the complete next controlled state after a page or page-size request. */\n  @Event() dsChange!: EventEmitter<PaginationChangeDetail>;\n\n  private readonly pageSizeControlId = `ds-pagination-${++paginationId}-page-size`;\n\n  private requestPage(pageIndex: number): void {\n    const state = this.resolvedState;\n    if (this.loading || pageIndex === state.pageIndex || pageIndex < 0 || pageIndex >= state.totalPages) {\n      return;\n    }\n    this.dsChange.emit({\n      pageIndex,\n      pageSize: state.pageSize,\n      totalItems: state.totalItems,\n      pageSizeOptions: state.pageSizeOptions,\n      itemLabel: this.itemLabel,\n      pageSizeLabel: this.pageSizeLabel,\n      ariaLabel: this.label,\n      previousPageIndex: state.pageIndex,\n      previousPageSize: state.pageSize,\n      reason: 'page',\n    });\n  }\n\n  private requestPageSize(value: string | string[]): void {\n    if (this.loading || typeof value !== 'string') return;\n    const pageSize = Number(value);\n    const state = this.resolvedState;\n    if (!Number.isFinite(pageSize) || pageSize <= 0 || pageSize === state.pageSize) return;\n    this.dsChange.emit({\n      pageIndex: 0,\n      pageSize: Math.trunc(pageSize),\n      totalItems: state.totalItems,\n      pageSizeOptions: state.pageSizeOptions,\n      itemLabel: this.itemLabel,\n      pageSizeLabel: this.pageSizeLabel,\n      ariaLabel: this.label,\n      previousPageIndex: state.pageIndex,\n      previousPageSize: state.pageSize,\n      reason: 'page-size',\n    });\n  }\n\n  private get resolvedState() {\n    return resolvePaginationState({\n      pageIndex: this.pageIndex,\n      pageSize: this.pageSize,\n      totalItems: this.totalItems,\n      pageSizeOptions: this.pageSizeOptions,\n    });\n  }\n\n  render() {\n    const state = this.resolvedState;\n    const atStart = state.pageIndex === 0;\n    const atEnd = state.pageIndex === state.totalPages - 1;\n    const range = `${state.firstItem}–${state.lastItem} of ${state.totalItems}`;\n    const page = `Page ${state.pageIndex + 1} of ${state.totalPages}`;\n\n    return (\n      <Host>\n        <nav class=\"pagination\" aria-label={this.label} aria-busy={this.loading ? 'true' : undefined}>\n          <div class=\"pagination__page-size\">\n            <ds-text\n              id={`${this.pageSizeControlId}-label`}\n              class=\"pagination__label\"\n              as=\"span\"\n              variant=\"text-body-medium\"\n              color=\"secondary\"\n            >\n              {this.pageSizeLabel}\n            </ds-text>\n            <ds-select\n              size=\"md\"\n              inputId={this.pageSizeControlId}\n              ariaLabelledby={`${this.pageSizeControlId}-label`}\n              options={state.pageSizeOptions.map(value => ({ label: String(value), value: String(value) }))}\n              value={String(state.pageSize)}\n              allowClear={false}\n              activeFill={false}\n              isInactive={this.loading}\n              onDsChange={event => {\n                event.stopPropagation();\n                this.requestPageSize(event.detail);\n              }}\n            />\n          </div>\n          <ds-text\n            class=\"pagination__range\"\n            as=\"span\"\n            variant=\"text-body-medium\"\n            color=\"secondary\"\n            fontFeature=\"tabular-nums\"\n          >\n            {range}\n          </ds-text>\n          <div class=\"pagination__navigation\">\n            <ds-button-unfilled\n              variant=\"icon\"\n              size=\"md\"\n              icon=\"ChevronLeftDouble\"\n              ariaLabel=\"First page\"\n              hasBorder={false}\n              isInactive={this.loading || atStart}\n              onDsClick={() => this.requestPage(0)}\n            />\n            <ds-button-unfilled\n              variant=\"icon\"\n              size=\"md\"\n              icon=\"ChevronLeft\"\n              ariaLabel=\"Previous page\"\n              hasBorder={false}\n              isInactive={this.loading || atStart}\n              onDsClick={() => this.requestPage(state.pageIndex - 1)}\n            />\n            <ds-text\n              class=\"pagination__page\"\n              as=\"span\"\n              variant=\"text-body-medium\"\n              color=\"secondary\"\n              fontFeature=\"tabular-nums\"\n            >\n              {page}\n            </ds-text>\n            <ds-button-unfilled\n              variant=\"icon\"\n              size=\"md\"\n              icon=\"ChevronRight\"\n              ariaLabel=\"Next page\"\n              hasBorder={false}\n              isInactive={this.loading || atEnd}\n              onDsClick={() => this.requestPage(state.pageIndex + 1)}\n            />\n            <ds-button-unfilled\n              variant=\"icon\"\n              size=\"md\"\n              icon=\"ChevronRightDouble\"\n              ariaLabel=\"Last page\"\n              hasBorder={false}\n              isInactive={this.loading || atEnd}\n              onDsClick={() => this.requestPage(state.totalPages - 1)}\n            />\n          </div>\n          <span class=\"ds-visually-hidden\" role=\"status\" aria-live=\"polite\" aria-atomic=\"true\">\n            {range} {this.itemLabel}. {page}.\n          </span>\n        </nav>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/Pagination/pagination-model.ts",
+      "content": "import type { PaginationState } from './pagination-types';\n\nexport const DEFAULT_PAGE_SIZE_OPTIONS = [25, 50, 100, 200] as const;\n\nexport interface ResolvedPaginationState {\n  pageIndex: number;\n  pageSize: number;\n  totalItems: number;\n  totalPages: number;\n  firstItem: number;\n  lastItem: number;\n  pageSizeOptions: number[];\n}\n\nfunction nonNegativeInteger(value: number): number {\n  return Number.isFinite(value) ? Math.max(0, Math.trunc(value)) : 0;\n}\n\nfunction positiveInteger(value: number, fallback: number): number {\n  return Number.isFinite(value) && value > 0 ? Math.trunc(value) : fallback;\n}\n\nexport function resolvePaginationState(\n  state: Pick<PaginationState, 'pageIndex' | 'pageSize' | 'totalItems' | 'pageSizeOptions'>,\n): ResolvedPaginationState {\n  const pageSize = positiveInteger(state.pageSize, DEFAULT_PAGE_SIZE_OPTIONS[0]);\n  const totalItems = nonNegativeInteger(state.totalItems);\n  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));\n  const pageIndex = Math.min(nonNegativeInteger(state.pageIndex), totalPages - 1);\n  const options = (state.pageSizeOptions?.length\n    ? state.pageSizeOptions\n    : DEFAULT_PAGE_SIZE_OPTIONS\n  )\n    .map(value => positiveInteger(value, 0))\n    .filter(value => value > 0);\n  const pageSizeOptions = [...new Set([...options, pageSize])].sort((left, right) => left - right);\n  const firstItem = totalItems === 0 ? 0 : pageIndex * pageSize + 1;\n  const lastItem = totalItems === 0 ? 0 : Math.min(totalItems, firstItem + pageSize - 1);\n\n  return {\n    pageIndex,\n    pageSize,\n    totalItems,\n    totalPages,\n    firstItem,\n    lastItem,\n    pageSizeOptions,\n  };\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/Pagination/pagination-types.ts",
+      "content": "export type PaginationChangeReason = 'page' | 'page-size';\n\n/** Controlled pagination state shared by Pagination and pagination-aware consumers. */\nexport interface PaginationState {\n  /** Zero-based page index. */\n  pageIndex: number;\n  /** Number of top-level items on a full page. */\n  pageSize: number;\n  /** Total number of top-level items across every page. */\n  totalItems: number;\n  /** Available page sizes. Defaults to 25, 50, 100, and 200. */\n  pageSizeOptions?: number[];\n  /** Localized plural noun used by assistive range announcements. */\n  itemLabel?: string;\n  /** Visible label for the page-size selector. */\n  pageSizeLabel?: string;\n  /** Accessible name for the pagination navigation region. */\n  ariaLabel?: string;\n}\n\n/** Complete next controlled state emitted for a page or page-size request. */\nexport interface PaginationChangeDetail extends PaginationState {\n  previousPageIndex: number;\n  previousPageSize: number;\n  reason: PaginationChangeReason;\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

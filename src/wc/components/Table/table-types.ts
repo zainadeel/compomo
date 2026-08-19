@@ -1,6 +1,7 @@
 import type { TagContrast, TagIntent } from '../Tag/Tag';
 import type { IconColor } from '../Icon/Icon';
 import type { TextColor } from '../Text/text-types';
+import type { PaginationState } from '../Pagination/pagination-types';
 
 export type TableSortDirection = 'asc' | 'desc';
 export type TableSelectionMode = 'none' | 'multiple';
@@ -8,6 +9,7 @@ export type TableCellAlign = 'start' | 'center' | 'end';
 export type TableColumnSticky = 'start' | 'end';
 export type TableCaptionVisibility = 'visible' | 'hidden';
 export type TableLoadMoreMode = 'auto' | 'manual';
+export type TableDataMode = 'infinite' | 'pagination';
 export type TableLoadMoreReason = 'auto' | 'manual' | 'retry';
 export type TableColumnWidth = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 /** Semantic color for a group section header (faint surface + bold title). */
@@ -268,3 +270,6 @@ export interface TableGroupCollapseChangeDetail {
 export interface TableRowActivateDetail {
   rowId: string;
 }
+
+/** Controlled top-level pagination state. Rows or groups contain only the active page. */
+export type TablePaginationState = PaginationState;
