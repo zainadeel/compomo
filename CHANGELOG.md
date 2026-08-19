@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.4.2](https://github.com/zainadeel/compomo/compare/v14.4.1...v14.4.2) (2026-08-19)
+
+
+### Fixed
+
+* sync typography story specs and TokoMo peer baseline ([#482](https://github.com/zainadeel/compomo/issues/482)) ([3038e8f](https://github.com/zainadeel/compomo/commit/3038e8fe4f47e0a4f9d330c57a7c896f4e8e369b))
+
 ## [14.4.1](https://github.com/zainadeel/compomo/compare/v14.4.0...v14.4.1) (2026-08-19)
 
 
