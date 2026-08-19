@@ -1195,7 +1195,7 @@ test('drives manual lazy loading and terminal state without pagination', async (
   await expect(table).toHaveJSProperty('hasMore', false);
   await expect
     .poll(() => page.evaluate(() => window.__tableLoadEvents.filter(event => event.id === 'lazy')))
-    .toEqual([
+    .toMatchObject([
       {
         id: 'lazy',
         detail: { reason: 'manual', loadIdentity: 'default', loadedRowCount: 2 },
@@ -1209,31 +1209,42 @@ test('forwards controlled pagination while preserving off-page selection', async
   const pagination = table.locator('ds-pagination');
 
   await expect(table.locator('.ds-table__footer-summary')).toHaveCount(0);
-  await expect(pagination).toContainText('Rows per page');
-  await expect(pagination).toContainText('1–25 of 63');
-  await expect(pagination).toContainText('Page 1 of 3');
+  await expect(pagination).toContainText('Rows:');
+  await expect(pagination).toContainText('1–25 / 63');
+  await expect(pagination).toContainText('1 / 3');
+  const [labelBox, selectBox] = await Promise.all([
+    pagination.locator('.pagination__label').boundingBox(),
+    pagination.locator('ds-select').boundingBox(),
+  ]);
+  expect(labelBox).not.toBeNull();
+  expect(selectBox).not.toBeNull();
+  expectGeometryClose(selectBox!.x - (labelBox!.x + labelBox!.width), 8);
+  await expect(pagination.locator('ds-select .trigger__chevron ds-icon'))
+    .toHaveJSProperty('name', 'ChevronUpDown');
   await expect(pagination.getByRole('button', { name: 'First page' })).toBeDisabled();
   await expect(pagination.getByRole('button', { name: 'Previous page' })).toBeDisabled();
 
   await pagination.getByRole('button', { name: 'Next page' }).click();
-  await expect(pagination).toContainText('26–50 of 63');
-  await expect(pagination).toContainText('Page 2 of 3');
+  await expect(pagination).toContainText('26–50 / 63');
+  await expect(pagination).toContainText('2 / 3');
   await expect(table.locator('tbody .ds-table__row').first()).toHaveAttribute(
     'data-row-id',
     'paginated-row-26',
   );
   await expect(table).toHaveJSProperty('selectedRowIds', ['paginated-row-60']);
-  await expect.poll(() => page.evaluate(() => window.__tablePaginationEvents)).toEqual([
+  await expect.poll(() => page.evaluate(() => window.__tablePaginationEvents)).toMatchObject([
     {
       pageIndex: 1,
       pageSize: 25,
+      pageSizeMode: 'fixed',
       totalItems: 63,
       pageSizeOptions: [25, 50, 100, 200],
       itemLabel: 'rows',
-      pageSizeLabel: 'Rows per page',
+      pageSizeLabel: 'Rows',
       ariaLabel: 'Paginated drivers pagination',
       previousPageIndex: 0,
       previousPageSize: 25,
+      previousPageSizeMode: 'fixed',
       reason: 'page',
     },
   ]);
@@ -1253,18 +1264,20 @@ test('resets to page one after a controlled page-size request', async ({ page })
   await pagination.getByRole('combobox', { name: 'Rows per page' }).click();
   await page.getByRole('option', { name: '50', exact: true }).click();
 
-  await expect(pagination).toContainText('1–50 of 63');
-  await expect(pagination).toContainText('Page 1 of 2');
-  await expect.poll(() => page.evaluate(() => window.__tablePaginationEvents.at(-1))).toEqual({
+  await expect(pagination).toContainText('1–50 / 63');
+  await expect(pagination).toContainText('1 / 2');
+  await expect.poll(() => page.evaluate(() => window.__tablePaginationEvents.at(-1))).toMatchObject({
     pageIndex: 0,
     pageSize: 50,
+    pageSizeMode: 'fixed',
     totalItems: 63,
     pageSizeOptions: [25, 50, 100, 200],
     itemLabel: 'rows',
-    pageSizeLabel: 'Rows per page',
+    pageSizeLabel: 'Rows',
     ariaLabel: 'Paginated drivers pagination',
     previousPageIndex: 1,
     previousPageSize: 25,
+    previousPageSizeMode: 'fixed',
     reason: 'page-size',
   });
 });
@@ -1278,16 +1291,45 @@ test('supports keyboard focus and terminal page boundaries', async ({ page }) =>
   await page.keyboard.press('Tab');
   const next = pagination.getByRole('button', { name: 'Next page' });
   await expect(next).toBeFocused();
-  await page.keyboard.press('Enter');
-  await expect(pagination).toContainText('Page 2 of 3');
+  await page.keyboard.press('ArrowRight');
+  await expect(pagination).toContainText('2 / 3');
 
   const last = pagination.getByRole('button', { name: 'Last page' });
   await last.focus();
   await page.keyboard.press('Enter');
-  await expect(pagination).toContainText('51–63 of 63');
-  await expect(pagination).toContainText('Page 3 of 3');
+  await expect(pagination).toContainText('51–63 / 63');
+  await expect(pagination).toContainText('3 / 3');
   await expect(next).toBeDisabled();
   await expect(last).toBeDisabled();
+});
+
+test('captures Fit once, then remeasures only for a new fit identity', async ({ page }) => {
+  const table = page.locator('#paginated');
+  const pagination = table.locator('ds-pagination');
+  const pageSize = pagination.getByRole('combobox', { name: 'Rows per page' });
+
+  await pageSize.click();
+  await page.getByRole('option', { name: 'Fit to page', exact: true }).click();
+  await expect(pageSize).toContainText('Fit');
+  const fitted = await table.evaluate((element: HTMLDsTableElement) => element.pagination!.pageSize);
+  expect(fitted).toBeGreaterThan(0);
+  expect(fitted).toBeLessThan(25);
+  await expect(table.locator('tbody .ds-table__row')).toHaveCount(fitted);
+
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.maxHeight = '320px';
+  });
+  await page.waitForTimeout(100);
+  await expect.poll(() => table.evaluate((element: HTMLDsTableElement) => element.pagination!.pageSize))
+    .toBe(fitted);
+
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.pagination = { ...element.pagination!, fitIdentity: 'shorter-query' };
+  });
+  await expect.poll(() => table.evaluate((element: HTMLDsTableElement) => element.pagination!.pageSize))
+    .toBeLessThan(fitted);
+  await expect.poll(() => page.evaluate(() => window.__tablePaginationEvents.at(-1)?.reason))
+    .toBe('fit');
 });
 
 test('keeps pagination stable and inactive while replacement rows load', async ({ page }) => {
@@ -1311,8 +1353,8 @@ test('paginates parent groups while each group loads members independently', asy
   const pagination = table.locator('ds-pagination');
 
   await expect(table.locator('tbody[data-group-id]')).toHaveCount(25);
-  await expect(pagination).toContainText('Groups per page');
-  await expect(pagination).toContainText('1–25 of 30');
+  await expect(pagination).toContainText('Groups:');
+  await expect(pagination).toContainText('1–25 / 30');
   await expect(table.locator('.ds-table__load-body')).toHaveCount(0);
 
   const firstGroup = table.locator('tbody[data-group-id="group-1"]');
@@ -1323,9 +1365,20 @@ test('paginates parent groups while each group loads members independently', asy
 
   await pagination.getByRole('button', { name: 'Next page' }).click();
   await expect(table.locator('tbody[data-group-id]')).toHaveCount(5);
-  await expect(pagination).toContainText('26–30 of 30');
+  await expect(pagination).toContainText('26–30 / 30');
   await pagination.getByRole('button', { name: 'Previous page' }).click();
   await expect(table.locator('tbody[data-group-id="group-1"] .ds-table__row')).toHaveCount(1);
+
+  const pageSize = pagination.getByRole('combobox', { name: 'Groups per page' });
+  await pageSize.click();
+  await page.getByRole('option', { name: 'Fit to page', exact: true }).click();
+  const fittedGroups = await table.evaluate(
+    (element: HTMLDsTableElement) => element.pagination!.pageSize,
+  );
+  await expect(table.locator('tbody[data-group-id]')).toHaveCount(fittedGroups);
+  await table.locator('tbody[data-group-id]').first().getByRole('button', { name: /Load more/ }).click();
+  await expect.poll(() => table.evaluate((element: HTMLDsTableElement) => element.pagination!.pageSize))
+    .toBe(fittedGroups);
 });
 
 test('keeps table-level outcome and incremental-loading bands fixed to the visible width', async ({

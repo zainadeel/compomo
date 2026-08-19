@@ -30,6 +30,13 @@
 .pagination__page-size,
 .pagination__navigation {
   flex: 0 0 auto;
+}
+
+.pagination__page-size {
+  gap: var(--dimension-space-100);
+}
+
+.pagination__navigation {
   gap: var(--dimension-space-050);
 }
 

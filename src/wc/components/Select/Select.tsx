@@ -50,6 +50,7 @@ export type SelectSize = 'lg' | 'md' | 'sm' | 'xs';
 export type SelectWidth = ControlWidth;
 export type SelectPopupAlign = 'start' | 'end';
 export type SelectValue = string | string[];
+export type SelectIndicator = 'down' | 'up-down';
 
 export interface SelectOptionActionDetail {
   value: string;
@@ -125,6 +126,8 @@ export class Select {
   @Prop() hasBorder: boolean = true;
   /** Optional trigger prefix icon name. */
   @Prop() icon: string | undefined;
+  /** Trailing choice indicator. Use up-down for compact value steppers such as page size. */
+  @Prop() indicator: SelectIndicator = 'down';
   /** Show the clear footer action when a value exists. */
   @Prop() allowClear: boolean = true;
   /** Localized clear action label. */
@@ -750,7 +753,11 @@ export class Select {
             class="trigger__chevron ds-control-icon-box ds-interaction-fill__content"
             aria-hidden="true"
           >
-            <ds-icon name="ChevronDown" size={iconSize} color="inherit" />
+            <ds-icon
+              name={this.indicator === 'up-down' ? 'ChevronUpDown' : 'ChevronDown'}
+              size={iconSize}
+              color="inherit"
+            />
           </span>
         </button>
 

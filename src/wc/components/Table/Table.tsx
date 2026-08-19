@@ -35,6 +35,8 @@ import { TableLayoutController } from './table-layout-controller';
 import { TableLoadController } from './table-load-controller';
 import { TableGroupLoadController } from './table-group-load-controller';
 import type { PaginationChangeDetail } from '../Pagination/pagination-types';
+import { resolveCssLengthPx } from '../../utils/resolve-css-length-px';
+import { resolveTableFitPageSize } from './table-pagination-fit';
 import {
   TableViewportFitController,
   type TableViewportFitMetrics,
@@ -170,6 +172,7 @@ export class Table {
   @State() private activeStickyGroupId: string | null = null;
   @State() private viewportFitSettled = false;
   @State() private headerPresent = false;
+  @State() private fitPageSize: number | undefined;
 
   private rootEl: HTMLElement | null = null;
   private viewportEl: HTMLElement | null = null;
@@ -186,6 +189,10 @@ export class Table {
   private renderedModel: TableRenderModel | null = null;
   private stickyGroupConnected = false;
   private headerSlotObserver: MutationObserver | null = null;
+  private fitResizeObserver: ResizeObserver | null = null;
+  private fitObservedViewport: HTMLElement | null = null;
+  private fitObservedTable: HTMLTableElement | null = null;
+  private fitMeasurementPending = false;
   private readonly layoutController = new TableLayoutController({
     elements: () => ({
       viewport: this.viewportEl,
@@ -279,6 +286,8 @@ export class Table {
     this.viewportFitController.connect();
     this.syncStickyGroupConnection();
     this.connectHeaderSlotObserver();
+    this.connectFitObserver();
+    this.syncFitPageSize();
   }
 
   componentDidRender(): void {
@@ -287,6 +296,8 @@ export class Table {
     this.groupLoadController.refresh();
     this.viewportFitController.refresh();
     this.syncStickyGroupConnection();
+    this.connectFitObserver();
+    this.syncFitPageSize();
     if (this.stickyGroupConnected) this.updateStickyGroup();
   }
 
@@ -298,6 +309,7 @@ export class Table {
     this.viewportFitController.connect();
     this.syncStickyGroupConnection();
     this.connectHeaderSlotObserver();
+    this.connectFitObserver();
   }
 
   disconnectedCallback(): void {
@@ -308,6 +320,7 @@ export class Table {
     this.disconnectStickyGroup();
     this.headerSlotObserver?.disconnect();
     this.headerSlotObserver = null;
+    this.disconnectFitObserver();
   }
 
   private syncHeaderSlotPresence = () => {
@@ -426,6 +439,19 @@ export class Table {
     this.handleLazyConfigurationChange();
   }
 
+  @Watch('pagination')
+  handlePaginationChange(
+    pagination: TablePaginationState | null,
+    previous: TablePaginationState | null,
+  ): void {
+    if (
+      pagination?.pageSizeMode === 'fit' &&
+      pagination.fitIdentity !== previous?.fitIdentity
+    ) {
+      this.fitMeasurementPending = true;
+    }
+  }
+
   @Watch('loadingMore')
   handleLoadingMoreChange(loading: boolean): void {
     if (loading) this.incrementalWindowActive = true;
@@ -472,6 +498,75 @@ export class Table {
   private get containedScroll(): boolean {
     return this.boundedComposition || this.resolvedMaxHeight !== undefined;
   }
+
+  private connectFitObserver(): void {
+    if (typeof ResizeObserver === 'undefined') return;
+    if (this.fitObservedViewport === this.viewportEl && this.fitObservedTable === this.tableEl) {
+      return;
+    }
+    this.disconnectFitObserver();
+    this.fitObservedViewport = this.viewportEl;
+    this.fitObservedTable = this.tableEl;
+    this.fitResizeObserver = new ResizeObserver(this.syncFitPageSize);
+    if (this.fitObservedViewport) this.fitResizeObserver.observe(this.fitObservedViewport);
+    if (this.fitObservedTable) this.fitResizeObserver.observe(this.fitObservedTable);
+  }
+
+  private disconnectFitObserver(): void {
+    this.fitResizeObserver?.disconnect();
+    this.fitResizeObserver = null;
+    this.fitObservedViewport = null;
+    this.fitObservedTable = null;
+  }
+
+  private readonly syncFitPageSize = (): void => {
+    const pagination = this.dataMode === 'pagination' ? this.pagination : null;
+    if (!pagination?.fitToPage || !this.containedScroll || !this.viewportEl || !this.tableEl) {
+      if (this.fitPageSize !== undefined) this.fitPageSize = undefined;
+      this.fitMeasurementPending = false;
+      return;
+    }
+    const header = this.tableEl.querySelector<HTMLElement>(
+      '.ds-table__head .ds-table__header-row',
+    );
+    const item = this.tableEl.querySelector<HTMLElement>(
+      this.grouped ? '.ds-table__group-row' : '.ds-table__body .ds-table__row',
+    );
+    const itemBlockSize = item?.getBoundingClientRect().height || resolveCssLengthPx(
+      'var(--ds-table-row-min-block-size, var(--dimension-size-500))',
+      0,
+      this.rootEl ?? this.el,
+    );
+    const next = resolveTableFitPageSize({
+      viewportBlockSize: this.viewportEl.clientHeight,
+      headerBlockSize: header?.getBoundingClientRect().height ?? 0,
+      itemBlockSize,
+    });
+    if (next !== this.fitPageSize) this.fitPageSize = next;
+    if (!this.fitMeasurementPending || pagination.pageSizeMode !== 'fit' || next === undefined) {
+      return;
+    }
+    this.fitMeasurementPending = false;
+    if (next === pagination.pageSize && pagination.pageIndex === 0) return;
+    this.dsPaginationChange.emit({
+      pageIndex: 0,
+      pageSize: next,
+      pageSizeMode: 'fit',
+      totalItems: pagination.totalItems,
+      pageSizeOptions: pagination.pageSizeOptions ?? [25, 50, 100, 200],
+      fitToPage: true,
+      fitPageSize: next,
+      fitPageSizeLabel: pagination.fitPageSizeLabel ?? 'Fit to page',
+      fitPageSizeTriggerLabel: pagination.fitPageSizeTriggerLabel ?? 'Fit',
+      itemLabel: pagination.itemLabel ?? 'items',
+      pageSizeLabel: pagination.pageSizeLabel ?? 'Items',
+      ariaLabel: pagination.ariaLabel ?? `${this.caption} pagination`,
+      previousPageIndex: pagination.pageIndex,
+      previousPageSize: pagination.pageSize,
+      previousPageSizeMode: 'fit',
+      reason: 'fit',
+    });
+  };
 
   private currentLoadedRows(): TableRow[] {
     return tableRows(this.rows, this.groups, this.grouped);
@@ -1546,10 +1641,15 @@ export class Table {
               <ds-pagination
                 pageIndex={pagination.pageIndex}
                 pageSize={pagination.pageSize}
+                pageSizeMode={pagination.pageSizeMode ?? 'fixed'}
                 totalItems={pagination.totalItems}
                 pageSizeOptions={pagination.pageSizeOptions ?? [25, 50, 100, 200]}
+                fitToPage={pagination.fitToPage ?? false}
+                fitPageSize={this.fitPageSize ?? pagination.fitPageSize}
+                fitPageSizeLabel={pagination.fitPageSizeLabel ?? 'Fit to page'}
+                fitPageSizeTriggerLabel={pagination.fitPageSizeTriggerLabel ?? 'Fit'}
                 itemLabel={pagination.itemLabel ?? 'items'}
-                pageSizeLabel={pagination.pageSizeLabel ?? 'Items per page'}
+                pageSizeLabel={pagination.pageSizeLabel ?? 'Items'}
                 label={pagination.ariaLabel ?? `${this.caption} pagination`}
                 loading={this.loading}
                 onDsChange={(event: CustomEvent<PaginationChangeDetail>) =>

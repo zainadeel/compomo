@@ -276,16 +276,18 @@ paginated.selectedRowIds = ['paginated-row-60'];
 paginated.pagination = {
   pageIndex: 0,
   pageSize: 25,
+  pageSizeMode: 'fixed',
   totalItems: paginatedRows.length,
   pageSizeOptions: [25, 50, 100, 200],
+  fitToPage: true,
   itemLabel: 'rows',
-  pageSizeLabel: 'Rows per page',
+  pageSizeLabel: 'Rows',
 };
 window.__tablePaginationEvents = [];
 paginated.addEventListener('dsPaginationChange', event => {
   window.__tablePaginationEvents.push(event.detail);
-  const { pageIndex, pageSize } = event.detail;
-  paginated.pagination = { ...paginated.pagination, pageIndex, pageSize };
+  const { pageIndex, pageSize, pageSizeMode } = event.detail;
+  paginated.pagination = { ...paginated.pagination, pageIndex, pageSize, pageSizeMode };
   paginated.rows = paginatedRows.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize);
 });
 paginated.addEventListener('dsSelectionChange', event => {
@@ -317,15 +319,17 @@ groupedPaginated.grouping = { columnId: 'status', direction: 'asc' };
 groupedPaginated.pagination = {
   pageIndex: 0,
   pageSize: 25,
+  pageSizeMode: 'fixed',
   totalItems: groupedPageSource.length,
   pageSizeOptions: [25, 50, 100, 200],
+  fitToPage: true,
   itemLabel: 'groups',
-  pageSizeLabel: 'Groups per page',
+  pageSizeLabel: 'Groups',
 };
 renderGroupedPage(0, 25);
 groupedPaginated.addEventListener('dsPaginationChange', event => {
-  const { pageIndex, pageSize } = event.detail;
-  groupedPaginated.pagination = { ...groupedPaginated.pagination, pageIndex, pageSize };
+  const { pageIndex, pageSize, pageSizeMode } = event.detail;
+  groupedPaginated.pagination = { ...groupedPaginated.pagination, pageIndex, pageSize, pageSizeMode };
   renderGroupedPage(pageIndex, pageSize);
 });
 groupedPaginated.addEventListener('dsGroupLoadMore', event => {

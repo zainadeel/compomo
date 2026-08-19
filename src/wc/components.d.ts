@@ -47,14 +47,14 @@ import { MobileHeaderHeadingLevel, MobileHeaderSectionsPresentation, MobileHeade
 import { TabGroupItem, TabItem } from "./components/TabGroup/tab-item-utils";
 import { TabGroupSize } from "./components/TabGroup/TabGroup";
 import { ModalCloseDetail, ModalWidth } from "./components/Modal/Modal";
-import { PaginationChangeDetail } from "./components/Pagination/pagination-types";
+import { PaginationChangeDetail, PaginationPageSizeMode } from "./components/Pagination/pagination-types";
 import { ChromeTransitionDetail } from "./shell/chrome-transition";
 import { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 import { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 import { PanelToolsHeaderAction, PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { RadioOption, RadioSize } from "./components/Radio/Radio";
 import { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
-import { SelectBackground, SelectOption, SelectOptionActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
+import { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
 import { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
 import { ShellGradientPreset } from "./shell/shell-gradient-presets";
 import { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
@@ -111,14 +111,14 @@ export { MobileHeaderHeadingLevel, MobileHeaderSectionsPresentation, MobileHeade
 export { TabGroupItem, TabItem } from "./components/TabGroup/tab-item-utils";
 export { TabGroupSize } from "./components/TabGroup/TabGroup";
 export { ModalCloseDetail, ModalWidth } from "./components/Modal/Modal";
-export { PaginationChangeDetail } from "./components/Pagination/pagination-types";
+export { PaginationChangeDetail, PaginationPageSizeMode } from "./components/Pagination/pagination-types";
 export { ChromeTransitionDetail } from "./shell/chrome-transition";
 export { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 export { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 export { PanelToolsHeaderAction, PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { RadioOption, RadioSize } from "./components/Radio/Radio";
 export { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
-export { SelectBackground, SelectOption, SelectOptionActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
+export { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
 export { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
 export { ShellGradientPreset } from "./shell/shell-gradient-presets";
 export { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
@@ -1809,6 +1809,25 @@ export namespace Components {
     }
     interface DsPagination {
         /**
+          * Effective whole-item capacity to request when Fit is selected.
+         */
+        "fitPageSize": number | undefined;
+        /**
+          * Full choice-list label for Fit.
+          * @default 'Fit to page'
+         */
+        "fitPageSizeLabel": string;
+        /**
+          * Compact closed-trigger label while Fit is selected.
+          * @default 'Fit'
+         */
+        "fitPageSizeTriggerLabel": string;
+        /**
+          * Include the Fit to page choice.
+          * @default false
+         */
+        "fitToPage": boolean;
+        /**
           * Localized plural noun used by assistive range announcements.
           * @default 'items'
          */
@@ -1834,10 +1853,19 @@ export namespace Components {
          */
         "pageSize": number;
         /**
+          * Accessible page-size control label. Defaults to “{pageSizeLabel} per page”.
+         */
+        "pageSizeAriaLabel": string | undefined;
+        /**
           * Visible page-size control label.
-          * @default 'Items per page'
+          * @default 'Items'
          */
         "pageSizeLabel": string;
+        /**
+          * Whether pageSize is a fixed choice or a measured Fit snapshot.
+          * @default 'fixed'
+         */
+        "pageSizeMode": PaginationPageSizeMode;
         /**
           * Available page sizes. Assign arrays through JavaScript.
           * @default [25, 50, 100, 200]
@@ -2281,6 +2309,11 @@ export namespace Components {
           * Optional trigger prefix icon name.
          */
         "icon": string | undefined;
+        /**
+          * Trailing choice indicator. Use up-down for compact value steppers such as page size.
+          * @default 'down'
+         */
+        "indicator": SelectIndicator;
         /**
           * ID applied to the internal combobox trigger for external labels.
          */
@@ -6428,6 +6461,25 @@ declare namespace LocalJSX {
     }
     interface DsPagination {
         /**
+          * Effective whole-item capacity to request when Fit is selected.
+         */
+        "fitPageSize"?: number | undefined;
+        /**
+          * Full choice-list label for Fit.
+          * @default 'Fit to page'
+         */
+        "fitPageSizeLabel"?: string;
+        /**
+          * Compact closed-trigger label while Fit is selected.
+          * @default 'Fit'
+         */
+        "fitPageSizeTriggerLabel"?: string;
+        /**
+          * Include the Fit to page choice.
+          * @default false
+         */
+        "fitToPage"?: boolean;
+        /**
           * Localized plural noun used by assistive range announcements.
           * @default 'items'
          */
@@ -6457,10 +6509,19 @@ declare namespace LocalJSX {
          */
         "pageSize"?: number;
         /**
+          * Accessible page-size control label. Defaults to “{pageSizeLabel} per page”.
+         */
+        "pageSizeAriaLabel"?: string | undefined;
+        /**
           * Visible page-size control label.
-          * @default 'Items per page'
+          * @default 'Items'
          */
         "pageSizeLabel"?: string;
+        /**
+          * Whether pageSize is a fixed choice or a measured Fit snapshot.
+          * @default 'fixed'
+         */
+        "pageSizeMode"?: PaginationPageSizeMode;
         /**
           * Available page sizes. Assign arrays through JavaScript.
           * @default [25, 50, 100, 200]
@@ -6940,6 +7001,11 @@ declare namespace LocalJSX {
           * Optional trigger prefix icon name.
          */
         "icon"?: string | undefined;
+        /**
+          * Trailing choice indicator. Use up-down for compact value steppers such as page size.
+          * @default 'down'
+         */
+        "indicator"?: SelectIndicator;
         /**
           * ID applied to the internal combobox trigger for external labels.
          */
@@ -8432,9 +8498,15 @@ declare namespace LocalJSX {
     interface DsPaginationAttributes {
         "pageIndex": number;
         "pageSize": number;
+        "pageSizeMode": PaginationPageSizeMode;
         "totalItems": number;
+        "fitToPage": boolean;
+        "fitPageSize": number | undefined;
+        "fitPageSizeLabel": string;
+        "fitPageSizeTriggerLabel": string;
         "itemLabel": string;
         "pageSizeLabel": string;
+        "pageSizeAriaLabel": string | undefined;
         "label": string;
         "loading": boolean;
     }
@@ -8535,6 +8607,7 @@ declare namespace LocalJSX {
         "activeFill": boolean;
         "hasBorder": boolean;
         "icon": string | undefined;
+        "indicator": SelectIndicator;
         "allowClear": boolean;
         "clearLabel": string;
         "selectedLabel": string;

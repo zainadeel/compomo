@@ -6,12 +6,27 @@ test('resolves the first full page', () => {
   assert.deepEqual(resolvePaginationState({ pageIndex: 0, pageSize: 25, totalItems: 500 }), {
     pageIndex: 0,
     pageSize: 25,
+    pageSizeMode: 'fixed',
     totalItems: 500,
     totalPages: 20,
     firstItem: 1,
     lastItem: 25,
     pageSizeOptions: [25, 50, 100, 200],
   });
+});
+
+test('retains a controlled fitted page-size snapshot', () => {
+  const state = resolvePaginationState({
+    pageIndex: 2,
+    pageSize: 8,
+    pageSizeMode: 'fit',
+    totalItems: 80,
+  });
+  assert.equal(state.pageSize, 8);
+  assert.equal(state.pageSizeMode, 'fit');
+  assert.deepEqual(state.pageSizeOptions, [25, 50, 100, 200]);
+  assert.equal(state.firstItem, 17);
+  assert.equal(state.totalPages, 10);
 });
 
 test('caps a partial final page and clamps an out-of-range index', () => {
