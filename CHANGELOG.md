@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.5.0](https://github.com/zainadeel/compomo/compare/v14.4.2...v14.5.0) (2026-08-19)
+
+
+### Added
+
+* **table:** add linked text, tertiary tracks, and icon-and-text cells ([#485](https://github.com/zainadeel/compomo/issues/485)) ([4781d1f](https://github.com/zainadeel/compomo/commit/4781d1fbac3fddc9cef6059c0eda2c7eaad31ec1))
+
 ## [14.4.2](https://github.com/zainadeel/compomo/compare/v14.4.1...v14.4.2) (2026-08-19)
 
 
