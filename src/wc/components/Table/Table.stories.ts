@@ -6,9 +6,12 @@ import '../../../../dist/components/ds-text.js';
 import '../../../../dist/components/ds-select.js';
 import '../../../../dist/components/ds-bar-action.js';
 import '../../../../dist/components/ds-button-unfilled.js';
+import '../../../../dist/components/ds-menu.js';
 import '../../../../dist/components/ds-pagination.js';
 import '../../styles/table.css';
 import type {
+  TableCellAction,
+  TableCellActionMenuEntry,
   TableColumn,
   TableGroup,
   TableGroupIntent,
@@ -20,6 +23,22 @@ import type { PaginationChangeDetail } from '../Pagination/pagination-types';
 
 /** 8px cell chrome on both sides plus a 16:9 preview at the matching track stack. */
 const IMAGE_COLUMN_SIZE = { 1: 59, 2: 98, 3: 137 } as const;
+
+const OVERFLOW_ACTION_ITEMS: TableCellActionMenuEntry[] = [
+  { actionId: 'view', label: 'View details' },
+  { actionId: 'edit', label: 'Edit' },
+  { actionId: 'download', label: 'Download report', isInactive: true },
+  { kind: 'divider' },
+  { actionId: 'delete', label: 'Delete', isDestructive: true },
+];
+
+function overflowAction(name: string): TableCellAction {
+  return {
+    kind: 'action',
+    ariaLabel: `More actions for ${name}`,
+    items: OVERFLOW_ACTION_ITEMS,
+  };
+}
 
 const COLUMNS: TableColumn[] = [
   { id: 'driver', header: 'Driver', sortable: true, size: 'sm' },
@@ -189,13 +208,7 @@ const SINGLE_TRACK_ROWS: TableRow[] = [
       icon: { kind: 'icon', icon: 'DocumentInverted', color: 'secondary', label: 'Has notes' },
       iconText: { kind: 'icon-text', icon: 'VehicleTruck', primary: 'Freightliner Cascadia' },
       tagOnly: { kind: 'tag', label: 'Pending', intent: 'caution' },
-      action: {
-        kind: 'action',
-        actionId: 'more',
-        variant: 'icon',
-        icon: 'Ellipses',
-        ariaLabel: 'More actions',
-      },
+      action: overflowAction('Vehicle 2841'),
       borderedAction: {
         kind: 'action',
         actionId: 'more-bordered',
@@ -221,13 +234,7 @@ const SINGLE_TRACK_ROWS: TableRow[] = [
       icon: { kind: 'icon', icon: 'DocumentInverted', color: 'secondary', label: 'Has notes' },
       iconText: { kind: 'icon-text', icon: 'VehicleTruck', primary: 'Volvo VNL' },
       tagOnly: { kind: 'tag', label: 'Active', intent: 'positive' },
-      action: {
-        kind: 'action',
-        actionId: 'more',
-        variant: 'icon',
-        icon: 'Ellipses',
-        ariaLabel: 'More actions',
-      },
+      action: overflowAction('Vehicle 1904'),
       borderedAction: {
         kind: 'action',
         actionId: 'more-bordered',
@@ -289,13 +296,7 @@ const ALL_CELL_TYPE_ROWS: TableRow[] = [
         label: 'Coached',
         intent: 'neutral',
       },
-      action: {
-        kind: 'action',
-        actionId: 'more',
-        variant: 'icon',
-        icon: 'Ellipses',
-        ariaLabel: 'More actions',
-      },
+      action: overflowAction('Vehicle 2841'),
       borderedAction: {
         kind: 'action',
         actionId: 'more-bordered',
@@ -469,7 +470,7 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
         label: 'Has notes',
         sortValue: true,
       },
-      actions: { kind: 'action', actionId: 'more', variant: 'icon', icon: 'Ellipses', ariaLabel: 'More actions for John Smith' },
+      actions: overflowAction('John Smith'),
     },
   },
   {
@@ -500,7 +501,7 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
         label: 'No notes',
         sortValue: false,
       },
-      actions: { kind: 'action', actionId: 'more', variant: 'icon', icon: 'Ellipses', ariaLabel: 'More actions for Maria Garcia' },
+      actions: overflowAction('Maria Garcia'),
     },
   },
   {
@@ -531,7 +532,7 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
         label: 'Has notes',
         sortValue: true,
       },
-      actions: { kind: 'action', actionId: 'more', variant: 'icon', icon: 'Ellipses', ariaLabel: 'More actions for David Chen' },
+      actions: overflowAction('David Chen'),
     },
   },
   {
@@ -562,7 +563,7 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
         label: 'No notes',
         sortValue: false,
       },
-      actions: { kind: 'action', actionId: 'more', variant: 'icon', icon: 'Ellipses', ariaLabel: 'More actions for Sarah Williams' },
+      actions: overflowAction('Sarah Williams'),
     },
   },
   {
@@ -597,7 +598,7 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
         label: 'Has notes',
         sortValue: true,
       },
-      actions: { kind: 'action', actionId: 'more', variant: 'icon', icon: 'Ellipses', ariaLabel: 'More actions for Noah Wilson' },
+      actions: overflowAction('Noah Wilson'),
     },
   },
   {
@@ -628,7 +629,7 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
         label: 'No notes',
         sortValue: false,
       },
-      actions: { kind: 'action', actionId: 'more', variant: 'icon', icon: 'Ellipses', ariaLabel: 'More actions for Priya Nair' },
+      actions: overflowAction('Priya Nair'),
     },
   },
 ];
@@ -1142,7 +1143,7 @@ export const AllCellTypes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Three review tables, one height each. Image cells declare tracks 1, 2, or 3 so the 16:9 preview fills the matching content box (cell height minus 8px padding). Icon-and-text cells (`kind: icon-text`) place one md prefix icon beside the copy stack: 2px padding on every side of the icon, a 2px flex gap before the copy, and text-track padding staying on the copy. Single-track cells, including the 1-track image and icon-and-text, stay on a 40px row. Two-track text, 2-track image, and 2-track icon-and-text share a 62px row. Event in that table shows a two-line cell with middle-dot runs. Three-track text, 3-track image, and 3-track icon-and-text stay on an 84px row. Body cells share 8px outer padding; 20px content sits in a 24px track; later tracks are 20px with a 2px stack gap. Linked primary text uses a native anchor and the shared brand text-action treatment; secondary copy stays unlinked. Secondary tracks may split into middle-dot-separated runs. The third line uses the same subdued track recipe as the second. Action cells primarily use an icon-only Ellipses ButtonUnfilled; the examples show its default unbordered and optional bordered treatments. Empty means the data applies but has no value and renders an em dash; Blank means the data is not applicable and intentionally renders nothing.',
+        story: 'Three review tables, one height each. Image cells declare tracks 1, 2, or 3 so the 16:9 preview fills the matching content box (cell height minus 8px padding). Icon-and-text cells (`kind: icon-text`) place one md prefix icon beside the copy stack: 2px padding on every side of the icon, a 2px flex gap before the copy, and text-track padding staying on the copy. Single-track cells, including the 1-track image and icon-and-text, stay on a 40px row. Two-track text, 2-track image, and 2-track icon-and-text share a 62px row. Event in that table shows a two-line cell with middle-dot runs. Three-track text, 3-track image, and 3-track icon-and-text stay on an 84px row. Body cells share 8px outer padding; 20px content sits in a 24px track; later tracks are 20px with a 2px stack gap. Linked primary text uses a native anchor and the shared brand text-action treatment; secondary copy stays unlinked. Secondary tracks may split into middle-dot-separated runs. The third line uses the same subdued track recipe as the second. Unbordered action cells open the shared overflow ds-menu from the Ellipses trigger; the bordered column stays a single-shot control. Empty means the data applies but has no value and renders an em dash; Blank means the data is not applicable and intentionally renders nothing.',
       },
     },
   },
@@ -1174,6 +1175,70 @@ export const AllCellTypes: Story = {
       ></ds-table>
     </div>
   `,
+};
+
+export const OverflowActionMenu: Story = {
+  name: 'Overflow action menu',
+  args: {
+    lastAction: 'None yet',
+  },
+  argTypes: {
+    lastAction: { table: { disable: true } },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'A trailing unbordered Ellipses column opens one shared ds-menu for the table. Opening or closing the menu does not emit; choosing a command emits dsCellAction with that item\'s actionId, rowId, and columnId. Inactive commands stay in the list, destructive commands keep the Menu treatment, and the popup is not clipped by the sticky-end viewport.',
+      },
+    },
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    const rows = ROWS.slice(0, 4).map(row => ({
+      ...row,
+      interactive: true,
+      cells: {
+        ...row.cells,
+        action: overflowAction(row.selectionLabel ?? row.id),
+      },
+    }));
+    return html`
+      <ds-table
+        data-a11y-fixture
+        .columns=${[
+          { id: 'driver', header: 'Driver', sortable: true, size: 'sm' },
+          { id: 'status', header: 'Status', size: 'xs' },
+          { id: 'vehicle', header: 'Vehicle', size: 'xs' },
+          { id: 'location', header: 'Last known location', size: 'sm' },
+          {
+            id: 'action',
+            kind: 'action',
+            header: '',
+            headerLabel: 'Action',
+            align: 'center',
+            size: 40,
+            sticky: 'end',
+          },
+        ] satisfies TableColumn[]}
+        .rows=${rows}
+        selection-mode="multiple"
+        caption="Driver overflow actions"
+        caption-visibility="visible"
+        @dsCellAction=${(event: CustomEvent<{ actionId: string; rowId: string; columnId: string }>) =>
+          updateArgs({
+            lastAction: `${event.detail.actionId} · ${event.detail.rowId} · ${event.detail.columnId}`,
+          })}
+      ></ds-table>
+      <ds-text
+        as="p"
+        variant="text-body-small"
+        color="secondary"
+        style="display:block;margin-top:var(--dimension-space-100);"
+      >
+        Last dsCellAction: ${String(args['lastAction'])}
+      </ds-text>
+    `;
+  },
 };
 
 export const ContentPrimitives: Story = {

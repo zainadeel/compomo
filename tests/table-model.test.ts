@@ -187,6 +187,14 @@ test('resolves labels, column constraints, and server group totals defensively',
     'Vehicle',
   );
   assert.equal(tableCellPrimary({ kind: 'action', actionId: 'view', label: 'View' }), 'View');
+  assert.equal(
+    tableCellPrimary({
+      kind: 'action',
+      ariaLabel: 'More actions for Avery Chen',
+      items: [{ actionId: 'view', label: 'View details' }],
+    }),
+    'More actions for Avery Chen',
+  );
   assert.equal(tableCellPrimary({ kind: 'empty' }), null);
   assert.equal(tableCellPrimary({ kind: 'blank' }), null);
 });

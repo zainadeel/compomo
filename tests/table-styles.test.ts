@@ -44,6 +44,9 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(componentTsx, /<slot name="footer"/);
   assert.match(componentTsx, /<slot name="footer-leading"/);
   assert.match(componentTsx, /<slot name="footer-trailing"/);
+  assert.match(componentTsx, /ds-table__cell--action-menu/);
+  assert.match(componentTsx, /renderOverflowActionMenu/);
+  assert.match(componentTsx, /<ds-menu/);
   assert.match(componentTsx, /variant === 'text-with-tag' \? 'sm' : 'md'/);
   assert.match(componentTsx, /variant === 'text-with-tag' \? 'single' : 'double'/);
   assert.match(componentTsx, /'ds-table--caption-visible'/);

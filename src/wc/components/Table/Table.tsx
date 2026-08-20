@@ -12,6 +12,7 @@ import {
 import {
   deriveTableSelectionState,
   formatTableResultSummary,
+  isTableCellAction,
   nextTableSortState,
   tableColumnSize,
   tableModelIssues,
@@ -33,10 +34,18 @@ import {
   createTableRenderModel,
   type TableRenderModel,
 } from './table-render-model';
+import {
+  isRenderableTableActionMenu,
+  isTableCellActionMenu,
+  nextTableActionMenuElementId,
+  tableActionMenuSections,
+  tableActionTriggerId,
+} from './table-action-menu';
 import { TableLayoutController } from './table-layout-controller';
 import { TableLoadController } from './table-load-controller';
 import { TableGroupLoadController } from './table-group-load-controller';
 import type { PaginationChangeDetail } from '../Pagination/pagination-types';
+import type { MenuItemData } from '../Menu/menu-types';
 import { resolvePaginationState } from '../Pagination/pagination-model';
 import { resolveCssLengthPx } from '../../utils/resolve-css-length-px';
 import { resolveSafeUrl } from '../../utils/safe-url';
@@ -180,6 +189,10 @@ export class Table {
   @State() private viewportFitSettled = false;
   @State() private headerPresent = false;
   @State() private fitPageSize: number | undefined;
+  @State() private actionMenu: { rowId: string; columnId: string } | null = null;
+  @State() private actionMenuInitialFocusVisible = false;
+
+  private readonly actionMenuElementId = nextTableActionMenuElementId();
 
   private rootEl: HTMLElement | null = null;
   private viewportEl: HTMLElement | null = null;
@@ -425,6 +438,7 @@ export class Table {
     if (this.grouped) this.groupLoadController.dataChanged();
     else this.loadController.dataChanged();
     this.warnModelIssues();
+    this.syncActionMenu();
   }
 
   @Watch('loadIdentity')
@@ -733,7 +747,7 @@ export class Table {
     return !event.composedPath().some(target => {
       if (!(target instanceof HTMLElement) || target === currentTarget) return false;
       return target.matches(
-        'button, a, input, select, textarea, [role="button"], [role="checkbox"], ds-button-unfilled',
+        'button, a, input, select, textarea, [role="button"], [role="checkbox"], [popover], ds-button-unfilled, ds-menu',
       );
     });
   }
@@ -741,6 +755,76 @@ export class Table {
   private emitRowActivation(row: TableRow, event: Event): void {
     if (!row.interactive || row.disabled || !this.rowEventOwnsActivation(event)) return;
     this.dsRowActivate.emit({ rowId: row.id });
+  }
+
+  private syncActionMenu(): void {
+    if (!this.actionMenu) return;
+    const row = tableRows(this.rows, this.groups, this.grouped).find(
+      candidate => candidate.id === this.actionMenu?.rowId,
+    );
+    const value = row && !row.disabled ? row.cells[this.actionMenu.columnId] : undefined;
+    if (!isTableCellAction(value) || !isRenderableTableActionMenu(value)) {
+      this.actionMenu = null;
+    }
+  }
+
+  private closeActionMenu(): void {
+    this.actionMenu = null;
+  }
+
+  private handleActionMenuSelect(item: MenuItemData): void {
+    const open = this.actionMenu;
+    const actionId = item.value;
+    if (!open || !actionId || item.isInactive) return;
+    this.dsCellAction.emit({
+      actionId,
+      rowId: open.rowId,
+      columnId: open.columnId,
+    });
+    const triggerId = tableActionTriggerId(this.actionMenuElementId, open.rowId, open.columnId);
+    this.closeActionMenu();
+    requestAnimationFrame(() => {
+      const trigger = this.el.querySelector<HTMLElement & { setFocus?: () => void }>(
+        `#${CSS.escape(triggerId)}`,
+      );
+      trigger?.setFocus?.();
+    });
+  }
+
+  private toggleActionMenu(row: TableRow, column: TableColumn, event: MouseEvent): void {
+    if (row.disabled) return;
+    const open =
+      this.actionMenu?.rowId === row.id && this.actionMenu?.columnId === column.id;
+    this.actionMenuInitialFocusVisible = event.detail === 0;
+    this.actionMenu = open ? null : { rowId: row.id, columnId: column.id };
+  }
+
+  private renderOverflowActionMenu() {
+    const open = this.actionMenu;
+    const row = open
+      ? tableRows(this.rows, this.groups, this.grouped).find(candidate => candidate.id === open.rowId)
+      : undefined;
+    const value = row && open ? row.cells[open.columnId] : undefined;
+    const menu = isTableCellAction(value) && isRenderableTableActionMenu(value) ? value : undefined;
+    const sections = menu ? tableActionMenuSections(menu.items) : [];
+    const triggerId = open
+      ? tableActionTriggerId(this.actionMenuElementId, open.rowId, open.columnId)
+      : undefined;
+
+    return (
+      <ds-menu
+        id={this.actionMenuElementId}
+        open={Boolean(open && sections.length)}
+        anchorId={triggerId}
+        align="end"
+        side="bottom"
+        menuLabel={menu?.ariaLabel ?? 'More actions'}
+        initialFocusVisible={this.actionMenuInitialFocusVisible}
+        sections={sections}
+        onDsClose={() => this.closeActionMenu()}
+        onDsSelect={event => this.handleActionMenuSelect(event.detail)}
+      />
+    );
   }
 
   private handleRowKeydown(row: TableRow, event: KeyboardEvent): void {
@@ -1103,20 +1187,34 @@ export class Table {
 
     if (cell.kind === 'action') {
       const value = cell.value;
+      const menu = isRenderableTableActionMenu(value);
+      const triggerId = tableActionTriggerId(this.actionMenuElementId, row.id, column.id);
+      const expanded = menu &&
+        this.actionMenu?.rowId === row.id &&
+        this.actionMenu?.columnId === column.id;
       return (
         <ds-button-unfilled
-          variant={value.variant ?? 'label'}
+          id={menu ? triggerId : undefined}
+          variant={menu ? 'icon' : value.variant ?? 'label'}
           size="md"
           isInset={true}
           insetDepth="double"
           label={value.label ?? ''}
-          icon={value.icon ?? ''}
+          icon={value.icon ?? (menu ? 'Ellipses' : '')}
           aria-label={value.ariaLabel ?? null}
           hasBorder={value.hasBorder ?? false}
           isInactive={value.isInactive ?? false}
           isLoading={value.isLoading ?? false}
+          hasMenu={menu}
+          expanded={menu ? expanded : undefined}
+          controls={menu ? this.actionMenuElementId : undefined}
           onDsClick={event => {
             event.stopPropagation();
+            if (menu) {
+              this.toggleActionMenu(row, column, event.detail);
+              return;
+            }
+            if (isTableCellActionMenu(value)) return;
             this.dsCellAction.emit({
               actionId: value.actionId,
               rowId: row.id,
@@ -1326,6 +1424,7 @@ export class Table {
           const iconTextCell = cell.kind === 'icon-text';
           const imageCell = cell.kind === 'image';
           const actionCell = cell.kind === 'action';
+          const actionMenuCell = actionCell && isRenderableTableActionMenu(cell.value);
           const textCell = cell.kind === 'text';
           const primaryTextCell = textCell && cell.primaryText;
           const singleTextCell = textCell && cell.singleLine;
@@ -1349,6 +1448,7 @@ export class Table {
                 'ds-table__cell--image': imageCell,
                 [`ds-table__cell--image-${imageVariant}`]: imageCell,
                 'ds-table__cell--action': actionCell,
+                'ds-table__cell--action-menu': actionMenuCell,
                 'ds-table__cell--primary-text': primaryTextCell,
                 'ds-table__cell--text-single': singleTextCell,
                 'ds-table__cell--text-multi': textCell && !singleTextCell && textVariant !== 'triple',
@@ -2086,6 +2186,7 @@ export class Table {
             </div>
           </div>
           {this.renderResultFooter()}
+          {this.renderOverflowActionMenu()}
           <div class="ds-visually-hidden" role="status" aria-live="polite" aria-atomic="true">
             {this.announcement}
           </div>

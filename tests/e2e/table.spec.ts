@@ -936,13 +936,20 @@ test('renders independently styled standard cell types', async ({ page }) => {
   }
   await expect(action.locator('ds-button-unfilled')).toHaveJSProperty('hasBorder', false);
   await expect(borderedAction.locator('ds-button-unfilled')).toHaveJSProperty('hasBorder', true);
+  await expect(action).toHaveClass(/ds-table__cell--action-menu/);
+  await expect(borderedAction).not.toHaveClass(/ds-table__cell--action-menu/);
   for (const cell of [action, borderedAction]) {
     await expect(cell.locator('ds-button-unfilled')).toHaveJSProperty('variant', 'icon');
     await expect(cell.locator('ds-button-unfilled')).toHaveJSProperty('icon', 'Ellipses');
   }
-  await action.getByRole('button', { name: 'More actions' }).click();
+  await expect(action.locator('ds-button-unfilled')).toHaveJSProperty('hasMenu', true);
+  await expect(borderedAction.locator('ds-button-unfilled')).toHaveJSProperty('hasMenu', false);
+  await page.evaluate(() => {
+    window.__tableCellActionEvents = [];
+  });
+  await borderedAction.getByRole('button', { name: 'More actions with border' }).click();
   await expect.poll(() => page.evaluate(() => window.__tableCellActionEvents)).toEqual([
-    { actionId: 'more', rowId: 'tag-variants', columnId: 'action' },
+    { actionId: 'more-bordered', rowId: 'tag-variants', columnId: 'borderedAction' },
   ]);
   await expect(empty).toContainText('—');
   await expect(empty).toContainText('Not available');
@@ -1048,6 +1055,48 @@ test('renders independently styled standard cell types', async ({ page }) => {
   const iconCenter = (crossCellAlignment.icon.left + crossCellAlignment.icon.right) / 2;
   const iconCellCenter = (crossCellAlignment.iconCell.left + crossCellAlignment.iconCell.right) / 2;
   expect(Math.abs(iconCenter - iconCellCenter)).toBeLessThanOrEqual(0.5);
+});
+
+test('opens a shared overflow action menu and emits only on command select', async ({ page }) => {
+  const table = page.locator('#cell-types');
+  const trigger = table.getByRole('button', { name: 'More actions' });
+  await page.evaluate(() => {
+    window.__tableCellActionEvents = [];
+    window.__tableRowActivationEvents = [];
+  });
+
+  await expect(table.locator('ds-menu')).toHaveCount(1);
+  expect(
+    await table.evaluate(element => {
+      const viewport = element.querySelector('.ds-table__viewport');
+      const menu = element.querySelector('ds-menu');
+      return Boolean(viewport && menu && viewport.contains(menu));
+    }),
+  ).toBe(false);
+  await trigger.click();
+  await expect.poll(() => page.evaluate(() => window.__tableCellActionEvents)).toEqual([]);
+  await expect.poll(() => page.evaluate(() => window.__tableRowActivationEvents)).toEqual([]);
+
+  const menu = page.getByRole('menu', { name: 'More actions' });
+  await expect(menu).toBeVisible();
+  await expect(menu).toHaveJSProperty('popover', 'manual');
+  expect(await menu.evaluate(element => element.matches(':popover-open'))).toBe(true);
+  await expect(menu.getByRole('menuitem', { name: 'Download report' })).toBeDisabled();
+  await expect(menu.getByRole('menuitem', { name: 'Delete' })).toHaveClass(/menu-item--destructive/);
+
+  await page.keyboard.press('Escape');
+  await expect(menu).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+  await expect.poll(() => page.evaluate(() => window.__tableCellActionEvents)).toEqual([]);
+
+  await trigger.click();
+  await page.getByRole('menuitem', { name: 'View details' }).click();
+  await expect.poll(() => page.evaluate(() => window.__tableCellActionEvents)).toEqual([
+    { actionId: 'view', rowId: 'tag-variants', columnId: 'action' },
+  ]);
+  await expect.poll(() => page.evaluate(() => window.__tableRowActivationEvents)).toEqual([]);
+  await expect(page.getByRole('menu', { name: 'More actions' })).toHaveCount(0);
+  await expect(trigger).toBeFocused();
 });
 
 test('keeps single-track rows at 40px including tag-only cells',

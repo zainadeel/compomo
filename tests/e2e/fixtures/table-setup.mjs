@@ -1,6 +1,15 @@
 import '/dist/components/ds-table.js';
+import '/dist/components/ds-menu.js';
 
 await customElements.whenDefined('ds-table');
+
+const overflowActionItems = [
+  { actionId: 'view', label: 'View details' },
+  { actionId: 'edit', label: 'Edit' },
+  { actionId: 'download', label: 'Download report', isInactive: true },
+  { kind: 'divider' },
+  { actionId: 'delete', label: 'Delete', isDestructive: true },
+];
 
 const columns = [
   { id: 'name', header: 'Driver', sortable: true, size: 'sm' },
@@ -159,6 +168,7 @@ cellTypes.rows = [
   {
     id: 'tag-variants',
     selectionLabel: 'Tag cell variants',
+    interactive: true,
     cells: {
       singleText: 'Vehicle 2841',
       primarySecondary: { primary: 'John Smith', secondary: 'DRV-1048' },
@@ -204,10 +214,8 @@ cellTypes.rows = [
       },
       action: {
         kind: 'action',
-        actionId: 'more',
-        variant: 'icon',
-        icon: 'Ellipses',
         ariaLabel: 'More actions',
+        items: overflowActionItems,
       },
       borderedAction: {
         kind: 'action',
@@ -223,8 +231,12 @@ cellTypes.rows = [
   },
 ];
 window.__tableCellActionEvents = [];
+window.__tableRowActivationEvents = [];
 cellTypes.addEventListener('dsCellAction', event => {
   window.__tableCellActionEvents.push(event.detail);
+});
+cellTypes.addEventListener('dsRowActivate', event => {
+  window.__tableRowActivationEvents.push(event.detail.rowId);
 });
 
 const threeTrack = document.getElementById('three-track');

@@ -149,33 +149,63 @@ export interface TableCellImage {
 
 interface TableCellActionBase {
   kind: 'action';
-  /** Stable application-owned action identity emitted with dsCellAction. */
-  actionId: string;
   /** Add the ButtonUnfilled resting border. Action cells are unbordered by default. */
   hasBorder?: boolean;
   isInactive?: boolean;
   isLoading?: boolean;
 }
 
+/** One command inside an overflow action menu. */
+export interface TableCellActionMenuItem {
+  /** Stable application-owned action identity emitted with dsCellAction. */
+  actionId: string;
+  label: string;
+  isInactive?: boolean;
+  isDestructive?: boolean;
+}
+
+/** Visual separator between overflow action-menu commands. */
+export interface TableCellActionDivider {
+  kind: 'divider';
+}
+
+export type TableCellActionMenuEntry = TableCellActionMenuItem | TableCellActionDivider;
+
 /** Declarative ButtonUnfilled content rendered by the table's standard action cell. */
 export type TableCellAction = TableCellActionBase & (
   | {
       variant?: 'label';
+      /** Stable application-owned action identity emitted with dsCellAction. */
+      actionId: string;
       label: string;
       icon?: never;
       ariaLabel?: string;
+      items?: never;
     }
   | {
       variant: 'icon-label';
+      actionId: string;
       label: string;
       icon: string;
       ariaLabel?: string;
+      items?: never;
     }
   | {
       variant: 'icon';
+      actionId: string;
       label?: never;
       icon: string;
       ariaLabel: string;
+      items?: never;
+    }
+  | {
+      variant?: 'icon';
+      /** Overflow commands. The Ellipses trigger opens ds-menu instead of emitting on click. */
+      items: TableCellActionMenuEntry[];
+      ariaLabel: string;
+      icon?: string;
+      actionId?: never;
+      label?: never;
     }
 );
 
