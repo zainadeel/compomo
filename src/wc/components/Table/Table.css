@@ -39,6 +39,11 @@ ds-text.ds-table__cell-track {
   display: flex;
 }
 
+.ds-table__cell--text-wrap ds-text.ds-table__cell-track--text,
+.ds-table__cell--icon-text-wrap ds-text.ds-table__cell-track--text {
+  display: block;
+}
+
 ds-text.ds-table__cell-track--text {
   padding-inline: var(--_table-cell-track-padding-inline);
 }
@@ -46,6 +51,30 @@ ds-text.ds-table__cell-track--text {
 ds-text.ds-table__cell-primary,
 .ds-table__cell--empty ds-text.ds-table__cell-track {
   padding-block: var(--dimension-space-025);
+}
+
+/*
+ * The public :where() wrap recipe has zero specificity, so ds-text's
+ * variant line-height would win inside the component. Reassert on wrapping
+ * cell layout classes so extra primary and secondary lines occupy later tracks.
+ */
+.ds-table__cell--text-wrap.ds-table__cell--text-single .ds-table__cell-primary,
+.ds-table__cell--text-wrap.ds-table__cell--text-multi .ds-table__cell-primary,
+.ds-table__cell--icon-text-wrap.ds-table__cell--icon-text-single .ds-table__cell-primary,
+.ds-table__cell--icon-text-wrap.ds-table__cell--icon-text-multi .ds-table__cell-primary {
+  line-height: var(--_table-wrap-primary-line-height);
+  padding-block: var(--_table-wrap-primary-padding-block);
+}
+
+.ds-table__cell--text-wrap.ds-table__cell--text-multi .ds-table__cell-copy,
+.ds-table__cell--icon-text-wrap.ds-table__cell--icon-text-multi .ds-table__cell-copy {
+  gap: 0;
+}
+
+.ds-table__cell--text-wrap.ds-table__cell--text-multi .ds-table__cell-secondary,
+.ds-table__cell--icon-text-wrap.ds-table__cell--icon-text-multi .ds-table__cell-secondary {
+  line-height: var(--_table-wrap-secondary-line-height);
+  padding-block: var(--_table-wrap-secondary-padding-block);
 }
 
 ds-text.ds-table__cell-secondary,

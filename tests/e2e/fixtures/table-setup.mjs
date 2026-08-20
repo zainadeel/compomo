@@ -1,6 +1,16 @@
 import '/dist/components/ds-table.js';
+import '/dist/components/ds-menu.js';
+import '/dist/components/ds-tooltip.js';
 
 await customElements.whenDefined('ds-table');
+
+const overflowActionItems = [
+  { actionId: 'view', label: 'View details' },
+  { actionId: 'edit', label: 'Edit' },
+  { actionId: 'download', label: 'Download report', isInactive: true },
+  { kind: 'divider' },
+  { actionId: 'delete', label: 'Delete', isDestructive: true },
+];
 
 const columns = [
   { id: 'name', header: 'Driver', sortable: true, size: 'sm' },
@@ -159,6 +169,7 @@ cellTypes.rows = [
   {
     id: 'tag-variants',
     selectionLabel: 'Tag cell variants',
+    interactive: true,
     cells: {
       singleText: 'Vehicle 2841',
       primarySecondary: { primary: 'John Smith', secondary: 'DRV-1048' },
@@ -204,10 +215,8 @@ cellTypes.rows = [
       },
       action: {
         kind: 'action',
-        actionId: 'more',
-        variant: 'icon',
-        icon: 'Ellipses',
         ariaLabel: 'More actions',
+        items: overflowActionItems,
       },
       borderedAction: {
         kind: 'action',
@@ -223,8 +232,12 @@ cellTypes.rows = [
   },
 ];
 window.__tableCellActionEvents = [];
+window.__tableRowActivationEvents = [];
 cellTypes.addEventListener('dsCellAction', event => {
   window.__tableCellActionEvents.push(event.detail);
+});
+cellTypes.addEventListener('dsRowActivate', event => {
+  window.__tableRowActivationEvents.push(event.detail.rowId);
 });
 
 const threeTrack = document.getElementById('three-track');
@@ -296,6 +309,143 @@ threeTrack.rows = [
         secondary: 'DRV-2210',
         tertiary: 'Oakland, CA',
       },
+    },
+  },
+];
+
+const wrapTwo = document.getElementById('wrap-two');
+wrapTwo.columns = [
+  { id: 'name', header: 'Tracks' },
+  { id: 'notes', header: 'Wrapping primary', wrap: true, size: 140 },
+];
+wrapTwo.rows = [
+  {
+    id: 'wrap-one-line',
+    cells: {
+      name: 'Dry van',
+      notes: 'Fleet',
+    },
+  },
+  {
+    id: 'wrap-two-line',
+    cells: {
+      name: 'Dry van',
+      notes: 'This individual cell wraps.',
+    },
+  },
+];
+
+const wrapThree = document.getElementById('wrap-three');
+wrapThree.columns = [
+  { id: 'name', header: 'Tracks' },
+  { id: 'notes', header: 'Wrapping primary', wrap: true, size: 200 },
+];
+wrapThree.rows = [
+  {
+    id: 'wrap-three-line',
+    cells: {
+      name: {
+        primary: 'Reefer trailer',
+        secondary: 'TR-1048',
+        tertiary: 'Active reefer',
+      },
+      notes: 'Temperature check is due after the next delivery window.',
+    },
+  },
+];
+
+const wrapSecondaryTwo = document.getElementById('wrap-secondary-two');
+wrapSecondaryTwo.columns = [
+  { id: 'name', header: 'Tracks' },
+  { id: 'notes', header: 'Wrapping secondary', wrap: true, size: 180 },
+];
+wrapSecondaryTwo.rows = [
+  {
+    id: 'wrap-secondary-one-line',
+    cells: {
+      name: { primary: 'Reefer trailer', secondary: 'TR-1048' },
+      notes: { primary: 'Reefer trailer', secondary: 'TR-1048' },
+    },
+  },
+  {
+    id: 'wrap-secondary-two-line',
+    cells: {
+      name: {
+        primary: 'Reefer trailer',
+        secondary: 'TR-1048',
+        tertiary: 'Active reefer',
+      },
+      notes: {
+        primary: 'Reefer trailer',
+        secondary: 'Due after the next delivery window.',
+      },
+    },
+  },
+];
+
+const wrapSecondaryThree = document.getElementById('wrap-secondary-three');
+wrapSecondaryThree.columns = [
+  { id: 'name', header: 'Tracks' },
+  { id: 'notes', header: 'Wrapping secondary', wrap: true, size: 140 },
+];
+wrapSecondaryThree.rows = [
+  {
+    id: 'wrap-secondary-three-line',
+    cells: {
+      name: {
+        primary: 'Reefer trailer',
+        secondary: 'TR-1048',
+        tertiary: 'Active reefer',
+      },
+      notes: {
+        primary: 'Reefer trailer',
+        secondary:
+          'Temperature check is due after the next delivery window. Confirm the reefer setpoint before departure and after every stop on this route.',
+        maxLines: 3,
+      },
+    },
+  },
+];
+
+const LONG_LOCATION =
+  'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia';
+
+const truncateTooltip = document.getElementById('truncate-tooltip');
+truncateTooltip.columns = [
+  { id: 'case', header: 'Case' },
+  { id: 'notes', header: 'Notes', size: 140 },
+];
+truncateTooltip.rows = [
+  {
+    id: 'truncate-one',
+    cells: { case: '1 line', notes: LONG_LOCATION },
+  },
+  {
+    id: 'truncate-two',
+    cells: { case: '2 lines', notes: { primary: LONG_LOCATION, maxLines: 2 } },
+  },
+  {
+    id: 'truncate-three',
+    cells: { case: '3 lines', notes: { primary: LONG_LOCATION, maxLines: 3 } },
+  },
+  {
+    id: 'truncate-wrap',
+    cells: { case: 'Wrap', notes: { primary: LONG_LOCATION, wrap: true } },
+  },
+  {
+    id: 'truncate-short',
+    cells: { case: 'Fits', notes: 'Fleet' },
+  },
+  {
+    id: 'truncate-disabled',
+    disabled: true,
+    cells: { case: 'Disabled', notes: LONG_LOCATION },
+  },
+  {
+    id: 'truncate-link',
+    cells: {
+      case: 'Link',
+      notes: { primary: LONG_LOCATION, href: '/routes/highway-99' },
     },
   },
 ];

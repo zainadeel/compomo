@@ -39,12 +39,13 @@
     "component:ds-button-filled",
     "component:ds-button-unfilled",
     "component:ds-panel-nav",
-    "component:ds-panel-tools"
+    "component:ds-panel-tools",
+    "component:ds-table"
   ],
   "accessibility": [
     "The slotted trigger must have its own accessible name, usually an aria-label that closely matches the visual tooltip label.",
     "Tooltip content is supplementary and non-essential; touch input intentionally does not open it.",
-    "While open, the trigger is linked to the role=tooltip popup with aria-describedby; the relationship is removed when the popup leaves the DOM without disturbing consumer description IDs.",
+    "While open, the trigger is linked to the role=tooltip popup with aria-describedby by default; the relationship is removed when the popup leaves the DOM without disturbing consumer description IDs. Hosts that already expose the full string, such as a truncated table cell, disable that relationship.",
     "Keyboard focus opens the tooltip and Escape dismisses it without moving focus."
   ],
   "states": [
@@ -52,18 +53,20 @@
     "An empty or whitespace-only label suppresses the popup while preserving the wrapper.",
     "Only one tooltip remains active globally; warm handoff removes the previous popup before showing the next.",
     "Disconnecting and reinserting the tooltip host rebinds the current slotted trigger.",
+    "A host may present the popup against an external anchor it already owns, without wrapping that trigger or binding hover on it.",
     "The preferred side flips when it cannot fit, then alignment is clamped to viewport padding.",
     "Reduced motion removes enter and exit fades while retaining the final visible or hidden state."
   ],
   "responsiveBehavior": [
     "The portaled popup follows trigger and popup resize, viewport resize, and nested scrolling while open.",
     "Touch users rely on the trigger's accessible and visible context rather than tooltip disclosure.",
-    "Keep labels concise and non-wrapping; use inline text or a larger disclosure component for essential explanation."
+    "Keep labels concise and non-wrapping by default; omitted table cell values may wrap at panel-xs."
   ],
   "frameworkCaveats": {
     "customElements": [
       "Place exactly one trigger element as the component's light-DOM child.",
       "Replacing the slotted trigger rebinds pointer and focus behavior automatically.",
+      "A table or similar host can present the popup against an overflowing text node instead of wrapping that node.",
       "sideOffset, alignOffset, and delay accept numbers or TokoMo CSS values."
     ],
     "react": [

@@ -101,6 +101,7 @@ export class Menu {
 
   private clickOutsideHandler: ((e: MouseEvent) => void) | null = null;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
+  private positionReadyCallback: (() => void) | undefined;
   /**
    * Anchored placement. The choice-cell measurement stays here on purpose: the
    * inner-cell align offset and the `--dimension-menu-width-xs` floor are Menu
@@ -183,6 +184,7 @@ export class Menu {
         this.focusInitialItem();
       });
     } else if (this.shouldRender) {
+      this.positionReadyCallback = undefined;
       this.cancelPositionRetry();
       this.captureClosingSections();
       this.closing = true;
@@ -344,7 +346,16 @@ export class Menu {
   private schedulePositionUpdate(onReady?: () => void) {
     if (!this.open) return;
     this.positionReady = false;
-    this.position.schedule(onReady);
+    // Opening often sets `open` and `anchorId` together. Each Watch reschedules
+    // placement; keep the open-path ready callback so initial focus is not dropped.
+    if (onReady) this.positionReadyCallback = onReady;
+    const callback = this.positionReadyCallback;
+    this.position.schedule(() => {
+      if (this.positionReadyCallback === callback) {
+        this.positionReadyCallback = undefined;
+      }
+      callback?.();
+    });
   }
 
   /** @returns `true` when anchor and popup were found and `pos` was updated. */

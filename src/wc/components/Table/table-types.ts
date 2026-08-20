@@ -13,6 +13,10 @@ export type TableLoadMoreMode = 'auto' | 'manual';
 export type TableDataMode = 'infinite' | 'pagination';
 export type TableLoadMoreReason = 'auto' | 'manual' | 'retry';
 export type TableColumnWidth = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+/** Visible line budget before a text track ellipsizes. */
+export type TableCellMaxLines = 1 | 2 | 3;
+/** Resolved clamp, including unlimited wrapping. */
+export type TableCellLineClamp = TableCellMaxLines | 'none';
 /** Semantic color for a group section header (faint surface + bold title). */
 export type TableGroupIntent =
   | 'brand'
@@ -69,6 +73,8 @@ export interface TableCellText {
   target?: TableCellLinkTarget;
   /** Allow this cell to wrap even when its column truncates by default. */
   wrap?: boolean;
+  /** Clamp wrapping text after 1, 2, or 3 lines. Overrides column wrap. */
+  maxLines?: TableCellMaxLines;
   fontFeature?: 'normal' | 'tabular-nums';
 }
 
@@ -83,6 +89,8 @@ export interface TableCellPrimaryText {
   target?: TableCellLinkTarget;
   /** Allow this cell to wrap even when its column truncates by default. */
   wrap?: boolean;
+  /** Clamp wrapping text after 1, 2, or 3 lines. Overrides column wrap. */
+  maxLines?: TableCellMaxLines;
   fontFeature?: 'normal' | 'tabular-nums';
 }
 
@@ -127,6 +135,7 @@ export interface TableCellIconText {
   href?: string;
   target?: TableCellLinkTarget;
   wrap?: boolean;
+  maxLines?: TableCellMaxLines;
   fontFeature?: 'normal' | 'tabular-nums';
 }
 
@@ -149,33 +158,63 @@ export interface TableCellImage {
 
 interface TableCellActionBase {
   kind: 'action';
-  /** Stable application-owned action identity emitted with dsCellAction. */
-  actionId: string;
   /** Add the ButtonUnfilled resting border. Action cells are unbordered by default. */
   hasBorder?: boolean;
   isInactive?: boolean;
   isLoading?: boolean;
 }
 
+/** One command inside an overflow action menu. */
+export interface TableCellActionMenuItem {
+  /** Stable application-owned action identity emitted with dsCellAction. */
+  actionId: string;
+  label: string;
+  isInactive?: boolean;
+  isDestructive?: boolean;
+}
+
+/** Visual separator between overflow action-menu commands. */
+export interface TableCellActionDivider {
+  kind: 'divider';
+}
+
+export type TableCellActionMenuEntry = TableCellActionMenuItem | TableCellActionDivider;
+
 /** Declarative ButtonUnfilled content rendered by the table's standard action cell. */
 export type TableCellAction = TableCellActionBase & (
   | {
       variant?: 'label';
+      /** Stable application-owned action identity emitted with dsCellAction. */
+      actionId: string;
       label: string;
       icon?: never;
       ariaLabel?: string;
+      items?: never;
     }
   | {
       variant: 'icon-label';
+      actionId: string;
       label: string;
       icon: string;
       ariaLabel?: string;
+      items?: never;
     }
   | {
       variant: 'icon';
+      actionId: string;
       label?: never;
       icon: string;
       ariaLabel: string;
+      items?: never;
+    }
+  | {
+      variant?: 'icon';
+      /** Overflow commands. The Ellipses trigger opens ds-menu instead of emitting on click. */
+      items: TableCellActionMenuEntry[];
+      ariaLabel: string;
+      icon?: string;
+      actionId?: never;
+      label?: never;
     }
 );
 
@@ -278,6 +317,8 @@ export interface TableColumn {
   maxSize?: number;
   /** Wrap cell text instead of truncating it to one line. */
   wrap?: boolean;
+  /** Clamp wrapping text after 1, 2, or 3 lines. Omit with wrap for unlimited wrap. */
+  maxLines?: TableCellMaxLines;
   /** Pin one application column to either inline edge during horizontal scrolling. */
   sticky?: TableColumnSticky;
   /**

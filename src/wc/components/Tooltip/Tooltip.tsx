@@ -1,4 +1,4 @@
-import { Component, Prop, Element, Watch, h, Host } from '@stencil/core';
+import { Component, Prop, Element, Method, Watch, h, Host } from '@stencil/core';
 import {
   CONTROL_TEXT_VARIANT,
   resolveCssLengthPx,
@@ -58,10 +58,11 @@ function createDsText(opts: {
  * Scoped CSS requires `sc-ds-tooltip` on the host, but Text's `<Host class>`
  * overwrites imperative className — so these must be inline to stick.
  */
-function styleTooltipLabel(el: HTMLElement) {
-  el.style.flexShrink = '0';
-  el.style.minWidth = 'max-content';
-  el.style.maxWidth = 'none';
+function styleTooltipLabel(el: HTMLElement, wrapLabel = false) {
+  el.style.flexShrink = wrapLabel ? '1' : '0';
+  el.style.minWidth = wrapLabel ? '0' : 'max-content';
+  el.style.maxWidth = wrapLabel ? '100%' : 'none';
+  el.style.whiteSpace = wrapLabel ? 'normal' : '';
   el.style.padding = '0 var(--ds-control-label-inset, var(--dimension-space-025))';
   el.style.color = 'var(--color-foreground-primary)';
 }
@@ -104,6 +105,13 @@ export class Tooltip {
   @Prop() delay: number | string = TOKEN_DEFAULTS.animationDelayMedium3;
   @Prop() shortcutKey: string | undefined;
   @Prop() shortcutKeyPosition: 'start' | 'end' = 'end';
+  /**
+   * Link the trigger with aria-describedby while the popup is open. Disable when
+   * the label is already in the DOM, such as a truncated table cell.
+   */
+  @Prop() describedBy = true;
+  /** Allow the label to wrap at a panel-xs max width instead of a single line. */
+  @Prop() wrapLabel = false;
 
   private tooltipId = `ds-tooltip-${++tooltipIdCounter}`;
   private delayTimer: ReturnType<typeof setTimeout> | null = null;
@@ -138,6 +146,7 @@ export class Tooltip {
   });
   private skipEnterAnimation = false;
   private isOpen = false;
+  private programmaticAnchor = false;
   private lastInteractionWasKeyboard = false;
   private pointerEnterHandler = (event: PointerEvent) => {
     if (event.pointerType === 'touch') return;
@@ -203,6 +212,7 @@ export class Tooltip {
   @Watch('alignOffset')
   @Watch('shortcutKey')
   @Watch('shortcutKeyPosition')
+  @Watch('wrapLabel')
   onContentOrPositionChange() {
     if (!this.label?.trim()) {
       if (this.isOpen || this.popupEl) this.hideInstant();
@@ -249,11 +259,45 @@ export class Tooltip {
     return resolveCssLengthPx(token, token);
   }
 
+  /**
+   * Present against an external anchor the host already measured.
+   * Does not bind hover or focus on that anchor — the owner drives show/hide.
+   */
+  @Method()
+  async presentFrom(anchor: HTMLElement, label?: string) {
+    if (label != null) this.label = label;
+    if (!this.label?.trim()) {
+      this.hide();
+      return;
+    }
+    const sameAnchor = this.anchor === anchor;
+    if (!sameAnchor) {
+      this.unbindAnchor();
+      this.anchor = anchor;
+      this.programmaticAnchor = true;
+      if (this.popupEl && this.describedBy) this.linkDescribedBy();
+    }
+    if (this.popupEl) {
+      this.renderPopupContent();
+      this.schedulePosition();
+      return;
+    }
+    if (this.delayTimer && sameAnchor) return;
+    this.show();
+  }
+
+  /** Dismiss a popup opened through presentFrom or the slotted trigger. */
+  @Method()
+  async dismiss() {
+    this.hide();
+  }
+
   private bindAnchor() {
+    if (this.programmaticAnchor) return;
     const slot = this.el.querySelector('slot') as HTMLSlotElement | null;
     const slotted = slot?.assignedElements?.() ?? [];
     const child = (slotted[0] ?? this.el.firstElementChild) as HTMLElement | null;
-    if (!child || child === this.anchor) return;
+    if (!child || child.tagName === 'SLOT' || child === this.anchor) return;
     this.anchor = child;
     child.addEventListener('pointerenter', this.pointerEnterHandler);
     child.addEventListener('pointerleave', this.pointerLeaveHandler);
@@ -266,17 +310,20 @@ export class Tooltip {
   private unbindAnchor() {
     if (!this.anchor) return;
     this.unlinkDescribedBy();
-    this.anchor.removeEventListener('pointerenter', this.pointerEnterHandler);
-    this.anchor.removeEventListener('pointerleave', this.pointerLeaveHandler);
-    this.anchor.removeEventListener('pointerdown', this.pointerDownHandler);
-    this.anchor.removeEventListener('keydown', this.keyDownHandler);
-    this.anchor.removeEventListener('focusin', this.focusHandler);
-    this.anchor.removeEventListener('focusout', this.blurHandler);
+    if (!this.programmaticAnchor) {
+      this.anchor.removeEventListener('pointerenter', this.pointerEnterHandler);
+      this.anchor.removeEventListener('pointerleave', this.pointerLeaveHandler);
+      this.anchor.removeEventListener('pointerdown', this.pointerDownHandler);
+      this.anchor.removeEventListener('keydown', this.keyDownHandler);
+      this.anchor.removeEventListener('focusin', this.focusHandler);
+      this.anchor.removeEventListener('focusout', this.blurHandler);
+    }
     this.anchor = null;
+    this.programmaticAnchor = false;
   }
 
   private linkDescribedBy() {
-    if (!this.anchor || !this.popupEl) return;
+    if (!this.describedBy || !this.anchor || !this.popupEl) return;
     const ids = new Set((this.anchor.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(Boolean));
     ids.add(this.tooltipId);
     this.anchor.setAttribute('aria-describedby', Array.from(ids).join(' '));
@@ -292,9 +339,10 @@ export class Tooltip {
   }
 
   private handleSlotChange = () => {
+    if (this.programmaticAnchor) return;
     const slot = this.el.querySelector('slot') as HTMLSlotElement | null;
     const next = (slot?.assignedElements?.()[0] ?? this.el.firstElementChild) as HTMLElement | null;
-    if (next === this.anchor) return;
+    if (next === this.anchor || next?.tagName === 'SLOT') return;
     if (this.isOpen || this.popupEl) this.hideInstant();
     this.unbindAnchor();
     this.bindAnchor();
@@ -334,7 +382,7 @@ export class Tooltip {
 
     const reapplyLabelStyles = () => {
       const label = this.popupEl?.querySelector(':scope > .tooltip-inner > ds-text');
-      if (label instanceof HTMLElement) styleTooltipLabel(label);
+      if (label instanceof HTMLElement) styleTooltipLabel(label, this.wrapLabel);
     };
 
     requestAnimationFrame(() => {
@@ -430,7 +478,8 @@ export class Tooltip {
 
     this.setupOpenListeners();
     this.linkDescribedBy();
-    this.popupEl.classList.toggle('tooltip-popup--instant', this.skipEnterAnimation);
+      this.popupEl.classList.toggle('tooltip-popup--instant', this.skipEnterAnimation);
+    this.popupEl.classList.toggle('tooltip-popup--wrap', this.wrapLabel);
     this.popupEl.classList.remove('tooltip-popup--closing');
     this.renderPopupContent();
     this.schedulePosition();
@@ -439,6 +488,7 @@ export class Tooltip {
 
   private renderPopupContent() {
     if (!this.popupEl) return;
+    this.popupEl.classList.toggle('tooltip-popup--wrap', this.wrapLabel);
     const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const density =
       this.size === 'md' ? 'ds-control--md' : this.size === 'sm' ? 'ds-control--sm' : 'ds-control--xs';
@@ -471,8 +521,12 @@ export class Tooltip {
 
     // ds-text is the layout box (metric-box + 2px control label-inset).
     // Inline styles required — see styleTooltipLabel.
-    const label = createDsText({ variant: textVariant, wrap: 'nowrap', text: this.label });
-    styleTooltipLabel(label);
+    const label = createDsText({
+      variant: textVariant,
+      wrap: this.wrapLabel ? 'wrap' : 'nowrap',
+      text: this.label,
+    });
+    styleTooltipLabel(label, this.wrapLabel);
     inner.appendChild(label);
 
     appendShortcut('end');

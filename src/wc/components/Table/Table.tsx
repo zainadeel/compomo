@@ -12,6 +12,7 @@ import {
 import {
   deriveTableSelectionState,
   formatTableResultSummary,
+  isTableCellAction,
   nextTableSortState,
   tableColumnSize,
   tableModelIssues,
@@ -27,18 +28,32 @@ import {
   resolveTableCellImageTracks,
   resolveTableCellPresentation,
   tableCellImageVariant,
+  tableCellTextOverflowProps,
   type TableCellPresentation,
 } from './table-cell-model';
 import {
   createTableRenderModel,
   type TableRenderModel,
 } from './table-render-model';
+import {
+  isRenderableTableActionMenu,
+  isTableCellActionMenu,
+  nextTableActionMenuElementId,
+  tableActionMenuSections,
+  tableActionTriggerId,
+} from './table-action-menu';
+import {
+  resolveTableTruncateTrack,
+  tableTruncateLabel,
+} from './table-truncate';
 import { TableLayoutController } from './table-layout-controller';
 import { TableLoadController } from './table-load-controller';
 import { TableGroupLoadController } from './table-group-load-controller';
 import type { PaginationChangeDetail } from '../Pagination/pagination-types';
+import type { MenuItemData } from '../Menu/menu-types';
 import { resolvePaginationState } from '../Pagination/pagination-model';
 import { resolveCssLengthPx } from '../../utils/resolve-css-length-px';
+import { isElementTruncated } from '../../utils/is-element-truncated';
 import { resolveSafeUrl } from '../../utils/safe-url';
 import { resolveTableFitPageSize } from './table-pagination-fit';
 import {
@@ -48,6 +63,7 @@ import {
 import type {
   TableCaptionVisibility,
   TableCellActionDetail,
+  TableCellLineClamp,
   TableCellSkeleton,
   TableCellTextRun,
   TableColumn,
@@ -180,6 +196,14 @@ export class Table {
   @State() private viewportFitSettled = false;
   @State() private headerPresent = false;
   @State() private fitPageSize: number | undefined;
+  @State() private actionMenu: { rowId: string; columnId: string } | null = null;
+  @State() private actionMenuInitialFocusVisible = false;
+  @State() private truncateTooltipLabel = '';
+
+  private readonly actionMenuElementId = nextTableActionMenuElementId();
+  private truncateTooltipEl?: HTMLDsTooltipElement;
+  private truncateAnchor: HTMLElement | null = null;
+  private truncateTooltipBound = false;
 
   private rootEl: HTMLElement | null = null;
   private viewportEl: HTMLElement | null = null;
@@ -295,6 +319,7 @@ export class Table {
     this.connectHeaderSlotObserver();
     this.connectFitObserver();
     this.syncFitPageSize();
+    this.connectTruncateTooltip();
   }
 
   componentDidRender(): void {
@@ -317,6 +342,7 @@ export class Table {
     this.syncStickyGroupConnection();
     this.connectHeaderSlotObserver();
     this.connectFitObserver();
+    this.connectTruncateTooltip();
   }
 
   disconnectedCallback(): void {
@@ -328,6 +354,7 @@ export class Table {
     this.headerSlotObserver?.disconnect();
     this.headerSlotObserver = null;
     this.disconnectFitObserver();
+    this.disconnectTruncateTooltip();
   }
 
   private syncHeaderSlotPresence = () => {
@@ -425,6 +452,7 @@ export class Table {
     if (this.grouped) this.groupLoadController.dataChanged();
     else this.loadController.dataChanged();
     this.warnModelIssues();
+    this.syncActionMenu();
   }
 
   @Watch('loadIdentity')
@@ -733,7 +761,7 @@ export class Table {
     return !event.composedPath().some(target => {
       if (!(target instanceof HTMLElement) || target === currentTarget) return false;
       return target.matches(
-        'button, a, input, select, textarea, [role="button"], [role="checkbox"], ds-button-unfilled',
+        'button, a, input, select, textarea, [role="button"], [role="checkbox"], [popover], ds-button-unfilled, ds-menu',
       );
     });
   }
@@ -741,6 +769,167 @@ export class Table {
   private emitRowActivation(row: TableRow, event: Event): void {
     if (!row.interactive || row.disabled || !this.rowEventOwnsActivation(event)) return;
     this.dsRowActivate.emit({ rowId: row.id });
+  }
+
+  private syncActionMenu(): void {
+    if (!this.actionMenu) return;
+    const row = tableRows(this.rows, this.groups, this.grouped).find(
+      candidate => candidate.id === this.actionMenu?.rowId,
+    );
+    const value = row && !row.disabled ? row.cells[this.actionMenu.columnId] : undefined;
+    if (!isTableCellAction(value) || !isRenderableTableActionMenu(value)) {
+      this.actionMenu = null;
+    }
+  }
+
+  private closeActionMenu(): void {
+    this.actionMenu = null;
+  }
+
+  private handleActionMenuSelect(item: MenuItemData): void {
+    const open = this.actionMenu;
+    const actionId = item.value;
+    if (!open || !actionId || item.isInactive) return;
+    this.dsCellAction.emit({
+      actionId,
+      rowId: open.rowId,
+      columnId: open.columnId,
+    });
+    const triggerId = tableActionTriggerId(this.actionMenuElementId, open.rowId, open.columnId);
+    this.closeActionMenu();
+    requestAnimationFrame(() => {
+      const trigger = this.el.querySelector<HTMLElement & { setFocus?: () => void }>(
+        `#${CSS.escape(triggerId)}`,
+      );
+      trigger?.setFocus?.();
+    });
+  }
+
+  private toggleActionMenu(row: TableRow, column: TableColumn, event: MouseEvent): void {
+    if (row.disabled) return;
+    const open =
+      this.actionMenu?.rowId === row.id && this.actionMenu?.columnId === column.id;
+    this.actionMenuInitialFocusVisible = event.detail === 0;
+    this.actionMenu = open ? null : { rowId: row.id, columnId: column.id };
+  }
+
+  private renderOverflowActionMenu() {
+    const open = this.actionMenu;
+    const row = open
+      ? tableRows(this.rows, this.groups, this.grouped).find(candidate => candidate.id === open.rowId)
+      : undefined;
+    const value = row && open ? row.cells[open.columnId] : undefined;
+    const menu = isTableCellAction(value) && isRenderableTableActionMenu(value) ? value : undefined;
+    const sections = menu ? tableActionMenuSections(menu.items) : [];
+    const triggerId = open
+      ? tableActionTriggerId(this.actionMenuElementId, open.rowId, open.columnId)
+      : undefined;
+
+    return (
+      <ds-menu
+        id={this.actionMenuElementId}
+        open={Boolean(open && sections.length)}
+        anchorId={triggerId}
+        align="end"
+        side="bottom"
+        menuLabel={menu?.ariaLabel ?? 'More actions'}
+        initialFocusVisible={this.actionMenuInitialFocusVisible}
+        sections={sections}
+        onDsClose={() => this.closeActionMenu()}
+        onDsSelect={event => this.handleActionMenuSelect(event.detail)}
+      />
+    );
+  }
+
+  private connectTruncateTooltip(): void {
+    if (this.truncateTooltipBound) return;
+    this.el.addEventListener('pointerover', this.onTruncatePointerOver);
+    this.el.addEventListener('pointerout', this.onTruncatePointerOut);
+    this.el.addEventListener('focusin', this.onTruncateFocusIn);
+    this.el.addEventListener('focusout', this.onTruncateFocusOut);
+    this.truncateTooltipBound = true;
+  }
+
+  private disconnectTruncateTooltip(): void {
+    if (!this.truncateTooltipBound) return;
+    this.el.removeEventListener('pointerover', this.onTruncatePointerOver);
+    this.el.removeEventListener('pointerout', this.onTruncatePointerOut);
+    this.el.removeEventListener('focusin', this.onTruncateFocusIn);
+    this.el.removeEventListener('focusout', this.onTruncateFocusOut);
+    this.truncateTooltipBound = false;
+    this.dismissTruncateTooltip();
+  }
+
+  private onTruncatePointerOver = (event: PointerEvent) => {
+    if (event.pointerType === 'touch') return;
+    const track = resolveTableTruncateTrack(event.target);
+    if (!track) return;
+    this.presentOrDismissTruncateTrack(track);
+  };
+
+  private onTruncatePointerOut = (event: PointerEvent) => {
+    if (event.pointerType === 'touch') return;
+    if (resolveTableTruncateTrack(event.relatedTarget)) return;
+    const next = event.relatedTarget;
+    const cell = this.truncateAnchor?.closest('.ds-table__cell');
+    if (cell && next instanceof Node && cell.contains(next)) return;
+    this.dismissTruncateTooltip();
+  };
+
+  private onTruncateFocusIn = (event: FocusEvent) => {
+    const track = resolveTableTruncateTrack(event.target);
+    if (!track) {
+      this.dismissTruncateTooltip();
+      return;
+    }
+    this.presentOrDismissTruncateTrack(track);
+  };
+
+  private onTruncateFocusOut = (event: FocusEvent) => {
+    if (resolveTableTruncateTrack(event.relatedTarget)) return;
+    this.dismissTruncateTooltip();
+  };
+
+  private presentOrDismissTruncateTrack(track: HTMLElement): void {
+    if (!isElementTruncated(track)) {
+      this.dismissTruncateTooltip();
+      return;
+    }
+    const label = tableTruncateLabel(track);
+    if (!label) {
+      this.dismissTruncateTooltip();
+      return;
+    }
+    this.truncateAnchor = track;
+    this.truncateTooltipLabel = label;
+    void this.truncateTooltipEl?.presentFrom(track, label);
+  }
+
+  private dismissTruncateTooltip(): void {
+    this.truncateAnchor = null;
+    if (!this.truncateTooltipLabel && !this.truncateTooltipEl) return;
+    this.truncateTooltipLabel = '';
+    void this.truncateTooltipEl?.dismiss();
+  }
+
+  private renderTruncateTooltip() {
+    return (
+      <ds-tooltip
+        ref={element => {
+          this.truncateTooltipEl = element;
+        }}
+        label={this.truncateTooltipLabel}
+        describedBy={false}
+        wrapLabel={true}
+        size="sm"
+        delay={0}
+        side="top"
+      />
+    );
+  }
+
+  private truncateAttr(lineClamp: TableCellLineClamp) {
+    return lineClamp === 'none' ? undefined : '';
   }
 
   private handleRowKeydown(row: TableRow, event: KeyboardEvent): void {
@@ -1103,20 +1292,34 @@ export class Table {
 
     if (cell.kind === 'action') {
       const value = cell.value;
+      const menu = isRenderableTableActionMenu(value);
+      const triggerId = tableActionTriggerId(this.actionMenuElementId, row.id, column.id);
+      const expanded = menu &&
+        this.actionMenu?.rowId === row.id &&
+        this.actionMenu?.columnId === column.id;
       return (
         <ds-button-unfilled
-          variant={value.variant ?? 'label'}
+          id={menu ? triggerId : undefined}
+          variant={menu ? 'icon' : value.variant ?? 'label'}
           size="md"
           isInset={true}
           insetDepth="double"
           label={value.label ?? ''}
-          icon={value.icon ?? ''}
+          icon={value.icon ?? (menu ? 'Ellipses' : '')}
           aria-label={value.ariaLabel ?? null}
           hasBorder={value.hasBorder ?? false}
           isInactive={value.isInactive ?? false}
           isLoading={value.isLoading ?? false}
+          hasMenu={menu}
+          expanded={menu ? expanded : undefined}
+          controls={menu ? this.actionMenuElementId : undefined}
           onDsClick={event => {
             event.stopPropagation();
+            if (menu) {
+              this.toggleActionMenu(row, column, event.detail);
+              return;
+            }
+            if (isTableCellActionMenu(value)) return;
             this.dsCellAction.emit({
               actionId: value.actionId,
               rowId: row.id,
@@ -1154,6 +1357,7 @@ export class Table {
             variant={variant === 'tag-with-text' ? 'text-body-small' : 'text-body-medium'}
             color="secondary"
             lineTruncation={1}
+            data-table-truncate=""
           >
             {value.text}
           </ds-text>
@@ -1173,6 +1377,8 @@ export class Table {
   ) {
     const text = cell.value;
     const wraps = cell.wraps;
+    const overflow = tableCellTextOverflowProps(cell.lineClamp);
+    const truncate = this.truncateAttr(cell.lineClamp);
     const primaryText = cell.kind === 'text' && cell.primaryText;
     const href = resolveSafeUrl(text.href);
     const primary = (
@@ -1181,9 +1387,10 @@ export class Table {
         as="span"
         variant="text-body-medium"
         color={href ? 'inherit' : 'primary'}
-        lineTruncation={wraps ? 'none' : 1}
-        wrap={wraps ? 'wrap' : 'nowrap'}
+        lineTruncation={overflow.lineTruncation}
+        wrap={overflow.wrap}
         fontFeature={text.fontFeature ?? 'normal'}
+        data-table-truncate={truncate}
       >
         {text.primary}
       </ds-text>
@@ -1206,14 +1413,14 @@ export class Table {
           variant: primaryText ? 'text-body-medium' : 'text-body-small',
           defaultColor: primaryText ? 'primary' : 'secondary',
           wholeColor: text.secondaryColor,
-          wraps,
+          lineClamp: cell.lineClamp,
         })}
         {this.renderTextTrack(text.tertiary, {
           track: 'tertiary',
           variant: 'text-body-small',
           defaultColor: 'secondary',
           wholeColor: text.tertiaryColor,
-          wraps,
+          lineClamp: cell.lineClamp,
         })}
       </span>
     );
@@ -1226,11 +1433,13 @@ export class Table {
       variant: 'text-body-medium' | 'text-body-small';
       defaultColor: 'primary' | 'secondary';
       wholeColor?: TableCellTextRun['color'];
-      wraps: boolean;
+      lineClamp: TableCellLineClamp;
     },
   ) {
     if (!runs?.length) return null;
     const trackClass = `ds-table__cell-${options.track} ds-table__cell-track ds-table__cell-track--text`;
+    const overflow = tableCellTextOverflowProps(options.lineClamp);
+    const truncate = this.truncateAttr(options.lineClamp);
     const colorFor = (run: TableCellTextRun) =>
       run.color ?? options.wholeColor ?? options.defaultColor;
     if (runs.length === 1) {
@@ -1240,8 +1449,9 @@ export class Table {
           as="span"
           variant={options.variant}
           color={colorFor(runs[0])}
-          lineTruncation={options.wraps ? 'none' : 1}
-          wrap={options.wraps ? 'wrap' : 'nowrap'}
+          lineTruncation={overflow.lineTruncation}
+          wrap={overflow.wrap}
+          data-table-truncate={truncate}
         >
           {runs[0].text}
         </ds-text>
@@ -1269,8 +1479,9 @@ export class Table {
             as="span"
             variant={options.variant}
             color={colorFor(run)}
-            lineTruncation={options.wraps ? 'none' : 1}
-            wrap={options.wraps ? 'wrap' : 'nowrap'}
+            lineTruncation={overflow.lineTruncation}
+            wrap={overflow.wrap}
+            data-table-truncate={truncate}
           >
             {run.text}
           </ds-text>,
@@ -1326,6 +1537,7 @@ export class Table {
           const iconTextCell = cell.kind === 'icon-text';
           const imageCell = cell.kind === 'image';
           const actionCell = cell.kind === 'action';
+          const actionMenuCell = actionCell && isRenderableTableActionMenu(cell.value);
           const textCell = cell.kind === 'text';
           const primaryTextCell = textCell && cell.primaryText;
           const singleTextCell = textCell && cell.singleLine;
@@ -1335,6 +1547,7 @@ export class Table {
           const textVariant = textCell ? cell.variant : undefined;
           const imageVariant = cell.kind === 'image' ? cell.variant : undefined;
           const iconTextVariant = iconTextCell ? cell.variant : undefined;
+          const wraps = (cell.kind === 'text' || cell.kind === 'icon-text') && cell.wraps;
           return (
             <td
               key={`${row.id}:${column.id}`}
@@ -1346,13 +1559,16 @@ export class Table {
                 'ds-table__cell--icon': iconCell,
                 'ds-table__cell--icon-text': iconTextCell,
                 [`ds-table__cell--icon-text-${iconTextVariant}`]: iconTextCell,
+                'ds-table__cell--icon-text-wrap': iconTextCell && wraps,
                 'ds-table__cell--image': imageCell,
                 [`ds-table__cell--image-${imageVariant}`]: imageCell,
                 'ds-table__cell--action': actionCell,
+                'ds-table__cell--action-menu': actionMenuCell,
                 'ds-table__cell--primary-text': primaryTextCell,
                 'ds-table__cell--text-single': singleTextCell,
                 'ds-table__cell--text-multi': textCell && !singleTextCell && textVariant !== 'triple',
                 'ds-table__cell--text-triple': textVariant === 'triple',
+                'ds-table__cell--text-wrap': textCell && wraps,
                 'ds-table__cell--empty': emptyCell,
                 'ds-table__cell--blank': blankCell,
                 'ds-table__cell--sticky-start': column.sticky === 'start',
@@ -2086,6 +2302,8 @@ export class Table {
             </div>
           </div>
           {this.renderResultFooter()}
+          {this.renderOverflowActionMenu()}
+          {this.renderTruncateTooltip()}
           <div class="ds-visually-hidden" role="status" aria-live="polite" aria-atomic="true">
             {this.announcement}
           </div>

@@ -3217,9 +3217,22 @@ export namespace Components {
          */
         "delay": number | string;
         /**
+          * Link the trigger with aria-describedby while the popup is open. Disable when the label is already in the DOM, such as a truncated table cell.
+          * @default true
+         */
+        "describedBy": boolean;
+        /**
+          * Dismiss a popup opened through presentFrom or the slotted trigger.
+         */
+        "dismiss": () => Promise<void>;
+        /**
           * Tooltip text. Empty/whitespace skips show — useful when the wrapper must stay mounted for layout/animation stability (e.g. PanelNav expand/collapse).
          */
         "label": string;
+        /**
+          * Present against an external anchor the host already measured. Does not bind hover or focus on that anchor — the owner drives show/hide.
+         */
+        "presentFrom": (anchor: HTMLElement, label?: string) => Promise<void>;
         "shortcutKey": string | undefined;
         /**
           * @default 'end'
@@ -3239,6 +3252,11 @@ export namespace Components {
           * @default 'md'
          */
         "size": TooltipSize;
+        /**
+          * Allow the label to wrap at a panel-xs max width instead of a single line.
+          * @default false
+         */
+        "wrapLabel": boolean;
     }
     /**
      * Positioned value/label callout for chart hover interactions (bar, line point,
@@ -8000,6 +8018,11 @@ declare namespace LocalJSX {
          */
         "delay"?: number | string;
         /**
+          * Link the trigger with aria-describedby while the popup is open. Disable when the label is already in the DOM, such as a truncated table cell.
+          * @default true
+         */
+        "describedBy"?: boolean;
+        /**
           * Tooltip text. Empty/whitespace skips show — useful when the wrapper must stay mounted for layout/animation stability (e.g. PanelNav expand/collapse).
          */
         "label": string;
@@ -8022,6 +8045,11 @@ declare namespace LocalJSX {
           * @default 'md'
          */
         "size"?: TooltipSize;
+        /**
+          * Allow the label to wrap at a panel-xs max width instead of a single line.
+          * @default false
+         */
+        "wrapLabel"?: boolean;
     }
     /**
      * Positioned value/label callout for chart hover interactions (bar, line point,
@@ -8809,6 +8837,8 @@ declare namespace LocalJSX {
         "delay": string;
         "shortcutKey": string | undefined;
         "shortcutKeyPosition": 'start' | 'end';
+        "describedBy": boolean;
+        "wrapLabel": boolean;
     }
     interface DsTooltipChartAttributes {
         "value": string;
