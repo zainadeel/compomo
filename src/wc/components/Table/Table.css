@@ -48,6 +48,18 @@ ds-text.ds-table__cell-primary,
   padding-block: var(--dimension-space-025);
 }
 
+/*
+ * The public :where() wrap recipe has zero specificity, so ds-text's
+ * body-medium line-height would win inside the component. Reassert on the
+ * table layout class (not a ds-text metric selector) so extra primary lines
+ * occupy the 2px stack gap rather than a private 20px cadence.
+ */
+.ds-table__cell--text-single .ds-table__cell-copy--wrap .ds-table__cell-primary,
+.ds-table__cell--icon-text-single .ds-table__cell-copy--wrap .ds-table__cell-primary {
+  line-height: var(--_table-wrap-primary-line-height);
+  padding-block: var(--_table-wrap-primary-padding-block);
+}
+
 ds-text.ds-table__cell-secondary,
 ds-text.ds-table__cell-tertiary {
   padding-block: var(--dimension-space-025);

@@ -81,6 +81,18 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   }
 
   assert.match(css, /--_table-cell-track-min-block-size: var\(--dimension-size-300\)/);
+  assert.match(
+    css,
+    /--_table-wrap-primary-line-height: calc\(\s*var\(--typography-lineheight-md\) \+ var\(--dimension-space-025\)\s*\)/,
+  );
+  assert.match(
+    css,
+    /\.ds-table__cell--text-single \.ds-table__cell-copy--wrap \.ds-table__cell-primary\)[\s\S]*?line-height: var\(--_table-wrap-primary-line-height\)/,
+  );
+  assert.match(
+    componentCss,
+    /\.ds-table__cell--text-single \.ds-table__cell-copy--wrap \.ds-table__cell-primary[\s\S]*?line-height: var\(--_table-wrap-primary-line-height\)/,
+  );
   assert.match(css, /\.ds-table__cell-icon-text\)[\s\S]*?gap: var\(--dimension-space-025\)/);
   assert.match(css, /\.ds-table__cell-icon-text-icon\)[\s\S]*?padding: var\(--dimension-space-025\)/);
   assert.match(css, /\.ds-table__cell-image[\s\S]*?aspect-ratio: 16 \/ 9/);

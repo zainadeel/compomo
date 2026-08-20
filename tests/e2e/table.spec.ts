@@ -1201,6 +1201,46 @@ test('renders three-track text cells with a uniform 84px row', async ({ page }) 
   await expect(averyIconText.locator('.ds-table__cell-tertiary')).toHaveText('Dallas, TX');
 });
 
+test('wrapping primary occupies 2-track and 3-track row heights', async ({ page }) => {
+  const two = page.locator('#wrap-two');
+  const three = page.locator('#wrap-three');
+  const oneLine = two.locator('[data-row-id="wrap-one-line"] [data-column-id="notes"]');
+  const twoLine = two.locator('[data-row-id="wrap-two-line"] [data-column-id="notes"]');
+  const threeLine = three.locator('[data-row-id="wrap-three-line"] [data-column-id="notes"]');
+  const threeTrack = three.locator('[data-row-id="wrap-three-line"] [data-column-id="name"]');
+
+  const lineCount = (cell: ReturnType<typeof two.locator>) =>
+    cell.locator('.ds-text__element').evaluate(element => {
+      const lineHeight = parseFloat(getComputedStyle(element).lineHeight);
+      return Math.round(element.getBoundingClientRect().height / lineHeight);
+    });
+
+  await expect(oneLine).toHaveClass(/ds-table__cell--text-single/);
+  await expect(twoLine).toHaveClass(/ds-table__cell--text-single/);
+  await expect(threeLine).toHaveClass(/ds-table__cell--text-single/);
+  await expect(oneLine).toHaveCSS('width', '140px');
+  await expect(twoLine).toHaveCSS('width', '140px');
+  await expect(threeLine).toHaveCSS('width', '200px');
+  expect(await lineCount(oneLine)).toBe(1);
+  expect(await lineCount(twoLine)).toBe(2);
+  expect(await lineCount(threeLine)).toBe(3);
+
+  for (const cell of [oneLine, twoLine, threeLine]) {
+    await expect(cell.locator('.ds-table__cell-primary')).toHaveCSS('line-height', '22px');
+    await expect(cell.locator('.ds-table__cell-primary')).toHaveCSS('padding-top', '1px');
+    await expect(cell.locator('.ds-table__cell-primary')).toHaveCSS('padding-bottom', '1px');
+  }
+
+  await expect(oneLine).toHaveCSS('height', '40px');
+  await expect(oneLine.locator('.ds-table__cell-primary')).toHaveCSS('height', '24px');
+  await expect(twoLine).toHaveCSS('height', '62px');
+  await expect(twoLine.locator('.ds-table__cell-primary')).toHaveCSS('height', '46px');
+  await expect(threeLine).toHaveCSS('height', '84px');
+  await expect(threeLine.locator('.ds-table__cell-primary')).toHaveCSS('height', '68px');
+  await expect(threeTrack).toHaveClass(/ds-table__cell--text-triple/);
+  await expect(threeTrack).toHaveCSS('height', '84px');
+});
+
 test('positions sort controls according to column alignment', async ({ page }) => {
   const geometry = await page.locator('#grouped').evaluate(element => {
     const measure = (columnId: string) => {

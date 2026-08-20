@@ -312,6 +312,47 @@ threeTrack.rows = [
   },
 ];
 
+const wrapTwo = document.getElementById('wrap-two');
+wrapTwo.columns = [
+  { id: 'name', header: 'Tracks' },
+  { id: 'notes', header: 'Wrapping primary', wrap: true, size: 140 },
+];
+wrapTwo.rows = [
+  {
+    id: 'wrap-one-line',
+    cells: {
+      name: 'Dry van',
+      notes: 'Fleet',
+    },
+  },
+  {
+    id: 'wrap-two-line',
+    cells: {
+      name: 'Dry van',
+      notes: 'This individual cell wraps.',
+    },
+  },
+];
+
+const wrapThree = document.getElementById('wrap-three');
+wrapThree.columns = [
+  { id: 'name', header: 'Tracks' },
+  { id: 'notes', header: 'Wrapping primary', wrap: true, size: 200 },
+];
+wrapThree.rows = [
+  {
+    id: 'wrap-three-line',
+    cells: {
+      name: {
+        primary: 'Reefer trailer',
+        secondary: 'TR-1048',
+        tertiary: 'Active reefer',
+      },
+      notes: 'Temperature check is due after the next delivery window.',
+    },
+  },
+];
+
 const singleTrack = document.getElementById('single-track');
 singleTrack.columns = [
   { id: 'scalar', header: 'Scalar text', size: 'sm' },

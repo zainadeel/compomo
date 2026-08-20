@@ -1245,7 +1245,7 @@ export const ContentPrimitives: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Scalar values, primary/secondary copy, null values, numeric alignment, truncation, and explicit wrapping share stable cell-layer classes for future styling.',
+        story: 'Scalar values, primary/secondary copy, null values, numeric alignment, truncation, and explicit wrapping share stable cell-layer classes. Wrapping 1-track primary occupies the same 62px and 84px rows as 2-track and 3-track cells.',
       },
     },
   },
@@ -1261,7 +1261,11 @@ export const ContentPrimitives: Story = {
           {
             id: 'primitive-one',
             cells: {
-              name: { primary: 'Reefer trailer', secondary: 'TR-1048' },
+              name: {
+                primary: 'Reefer trailer',
+                secondary: 'TR-1048',
+                tertiary: 'Active reefer',
+              },
               notes: 'Temperature check is due after the next delivery window.',
               quantity: { primary: 12840, fontFeature: 'tabular-nums' },
             },
@@ -1269,8 +1273,8 @@ export const ContentPrimitives: Story = {
           {
             id: 'primitive-two',
             cells: {
-              name: 'Dry van',
-              notes: { primary: 'This individual cell wraps.', wrap: true },
+              name: { primary: 'Dry van', secondary: 'TR-2201' },
+              notes: { primary: 'This individual cell wraps onto the second track.', wrap: true },
               quantity: null,
             },
           },
