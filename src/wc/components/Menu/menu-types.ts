@@ -19,6 +19,8 @@ export interface MenuItemData {
   label: string;
   value?: string;
   subtext?: string;
+  /** Leading decorative icon. Ignored when `reorderable` is true. */
+  icon?: string;
   /** Show a supplemental brand notification dot. */
   dot?: boolean;
   /** Show a non-interactive tag at the trailing edge of the row. */
@@ -29,6 +31,17 @@ export interface MenuItemData {
   /** Render a compact switch indicator; the menu row owns interaction. */
   showSwitch?: boolean;
   switchValue?: boolean;
+  /** Prefix a drag handle and allow pointer and keyboard reorder within the contiguous reorderable run. */
+  reorderable?: boolean;
+}
+
+/** Next section item order after a pointer or keyboard reorder. */
+export interface MenuReorderDetail {
+  item: MenuItemData;
+  fromIndex: number;
+  toIndex: number;
+  sectionIndex: number;
+  items: MenuItemData[];
 }
 
 export interface MenuItemsSection {

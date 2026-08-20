@@ -47,6 +47,12 @@ export interface TableGroupingState {
   direction: TableSortDirection;
 }
 
+/** Choice for the optional table-owned Group by select. */
+export interface TableGroupingOption {
+  label: string;
+  value: string;
+}
+
 /** One independently colored run inside a secondary or tertiary track. */
 export interface TableCellTextRun {
   text: string;
@@ -408,6 +414,12 @@ export interface TableGroupCollapseChangeDetail {
 
 export interface TableRowActivateDetail {
   rowId: string;
+}
+
+/** Controlled show/hide and data-column order for the table-owned customizer. */
+export interface TableColumnsConfigChangeDetail {
+  hiddenColumnIds: string[];
+  columnOrder: string[];
 }
 
 /** Controlled top-level pagination state. Rows or groups contain only the active page. */

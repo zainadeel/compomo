@@ -271,6 +271,7 @@ test('select, multi-select, and menu propagate density into choice rows',
   const taggedMenuRow = page.locator('#menu-tag .menu-item');
   const trailingTag = taggedMenuRow.locator('ds-tag');
   await expect(trailingTag).toHaveJSProperty('size', 'sm');
+  await expect(trailingTag).toHaveJSProperty('isInset', true);
   await expect(trailingTag).toHaveJSProperty('intent', 'brand');
   await expect(trailingTag).toHaveJSProperty('contrast', 'bold');
   await expect(trailingTag).toHaveJSProperty('rounded', true);
@@ -282,7 +283,7 @@ test('select, multi-select, and menu propagate density into choice rows',
         return { rowHeight: rowRect.height, tagWidth: tagRect.width, tagHeight: tagRect.height };
       })
     )
-    .toEqual({ rowHeight: 32, tagWidth: 24, tagHeight: 24 });
+    .toEqual({ rowHeight: 32, tagWidth: 20, tagHeight: 20 });
 });
 
 test('checkbox sizes center owned filled marks without SVG strokes',

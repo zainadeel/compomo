@@ -4,6 +4,7 @@ import '/dist/components/ds-button-filled.js';
 import '/dist/components/ds-button-unfilled.js';
 import '/dist/components/ds-swatch-picker.js';
 import '/dist/components/ds-switch.js';
+import '/dist/components/ds-icon.js';
 
 await Promise.all([
   customElements.whenDefined('ds-menu'),
@@ -12,6 +13,7 @@ await Promise.all([
   customElements.whenDefined('ds-button-unfilled'),
   customElements.whenDefined('ds-swatch-picker'),
   customElements.whenDefined('ds-switch'),
+  customElements.whenDefined('ds-icon'),
 ]);
 
 const actionAnchor = document.getElementById('menu-anchor');
@@ -49,6 +51,44 @@ switchAnchor.addEventListener('click', () => {
   switchAnchor.setAttribute('aria-expanded', 'true');
 });
 switchMenu.addEventListener('dsClose', () => switchAnchor.setAttribute('aria-expanded', 'false'));
+
+const prefixAnchor = document.getElementById('prefix-anchor');
+const prefixMenu = document.getElementById('prefix-menu');
+prefixMenu.items = [
+  { label: 'Edit', value: 'edit', icon: 'Pencil' },
+  { label: 'Copy', value: 'copy', icon: 'Copy' },
+  { label: 'Share', value: 'share' },
+];
+prefixAnchor.addEventListener('click', () => {
+  prefixMenu.open = true;
+  prefixAnchor.setAttribute('aria-expanded', 'true');
+});
+prefixMenu.addEventListener('dsClose', () => prefixAnchor.setAttribute('aria-expanded', 'false'));
+
+const reorderAnchor = document.getElementById('reorder-anchor');
+const reorderMenu = document.getElementById('reorder-menu');
+reorderMenu.items = [
+  { label: 'Driver', value: 'driver', showSwitch: true, switchValue: true, reorderable: true },
+  { label: 'Status', value: 'status', showSwitch: true, switchValue: true, reorderable: true },
+  { label: 'Vehicle', value: 'vehicle', showSwitch: true, switchValue: true, reorderable: true },
+  { label: 'Action', value: 'action', showSwitch: true, switchValue: true, isInactive: true },
+];
+reorderAnchor.addEventListener('click', () => {
+  reorderMenu.open = true;
+  reorderAnchor.setAttribute('aria-expanded', 'true');
+});
+reorderMenu.addEventListener('dsClose', () => reorderAnchor.setAttribute('aria-expanded', 'false'));
+reorderMenu.addEventListener('dsReorder', event => {
+  reorderMenu.items = event.detail.items;
+});
+reorderMenu.addEventListener('dsSelect', event => {
+  const value = event.detail.value;
+  reorderMenu.items = reorderMenu.items.map(item =>
+    item.value === value && !item.isInactive
+      ? { ...item, switchValue: !item.switchValue }
+      : item,
+  );
+});
 
 const richAnchor = document.getElementById('rich-anchor');
 const richMenu = document.getElementById('rich-menu');

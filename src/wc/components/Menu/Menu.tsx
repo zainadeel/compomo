@@ -28,9 +28,17 @@ import {
   isMenuPickerSection,
   isMenuSwatchPickerSection,
   type MenuItemData,
+  type MenuReorderDetail,
   type MenuSection,
 } from './menu-types';
 import { snapshotMenuSections } from './menu-sections';
+import {
+  createMenuReorderDetail,
+  locateMenuItem,
+  menuReorderableRange,
+  moveReorderableMenuItemBefore,
+  moveReorderableMenuItemBy,
+} from './menu-reorder';
 
 export type MenuSelectionMode = 'none' | 'single';
 export type MenuSize = ControlSize;
@@ -91,6 +99,9 @@ export class Menu {
   @State() private focusedIndex: number = 0;
   @State() private positionReady: boolean = false;
   @State() private focusRingVisible: boolean = false;
+  @State() private reorderFromFlat: number | null = null;
+  @State() private reorderInsertBefore: number | null = null;
+  @State() private reorderAnnouncement = '';
 
   @Event() dsClose!: EventEmitter<void>;
   /** Emitted after the popup's exit motion is complete and its rendered content is removed. */
@@ -98,10 +109,21 @@ export class Menu {
   @Event() dsSelect!: EventEmitter<MenuItemData>;
   /** Emitted when a generic `swatch-picker` section option is chosen. */
   @Event() dsSwatchSelect!: EventEmitter<string>;
+  /** Emitted after a pointer drop or keyboard move; Menu never mutates item order. */
+  @Event() dsReorder!: EventEmitter<MenuReorderDetail>;
 
   private clickOutsideHandler: ((e: MouseEvent) => void) | null = null;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
   private positionReadyCallback: (() => void) | undefined;
+  private suppressItemClick = false;
+  private reorderPointer:
+    | {
+        pointerId: number;
+        sectionIndex: number;
+        fromIndex: number;
+        flatFrom: number;
+      }
+    | null = null;
   /**
    * Anchored placement. The choice-cell measurement stays here on purpose: the
    * inner-cell align offset and the `--dimension-menu-width-xs` floor are Menu
@@ -167,6 +189,7 @@ export class Menu {
   disconnectedCallback() {
     this.cancelPositionRetry();
     this.cancelLivePositionUpdate();
+    this.clearReorderPointer();
     this.teardownListeners();
   }
 
@@ -247,6 +270,8 @@ export class Menu {
     this.closing = false;
     this.lastRenderedSections = [];
     this.closingSections = null;
+    this.clearReorderPointer();
+    this.reorderAnnouncement = '';
     this.dsAfterClose.emit();
   }
 
@@ -374,7 +399,7 @@ export class Menu {
 
     const flat = this.flatItems;
     const selectedIdx = flat.findIndex(it => it.isSelected && !it.isInactive);
-    const firstEnabledIdx = flat.findIndex(it => !it.isInactive);
+    const firstEnabledIdx = flat.findIndex(it => !it.isInactive || !!it.reorderable);
     this.focusedIndex = selectedIdx >= 0 ? selectedIdx : firstEnabledIdx >= 0 ? firstEnabledIdx : 0;
 
     requestAnimationFrame(() => {
@@ -436,10 +461,20 @@ export class Menu {
 
     if (this.hasCompositeSections) return;
 
+    if (
+      (e.key === 'ArrowUp' || e.key === 'ArrowDown') &&
+      (e.altKey || e.metaKey) &&
+      !e.ctrlKey &&
+      !e.shiftKey
+    ) {
+      this.handleReorderKey(e);
+      return;
+    }
+
     const flat = this.flatItems;
     const enabled = flat
       .map((it, i) => ({ it, i }))
-      .filter(({ it }) => !it.isInactive)
+      .filter(({ it }) => !it.isInactive || !!it.reorderable)
       .map(({ i }) => i);
     if (!enabled.length) return;
 
@@ -484,6 +519,10 @@ export class Menu {
   }
 
   private handleItemClick(item: MenuItemData) {
+    if (this.suppressItemClick) {
+      this.suppressItemClick = false;
+      return;
+    }
     if (item.isInactive) return;
     // Consumers commonly change the item source while handling selection.
     // Capture first so the exit animation never paints the next menu context.
@@ -493,6 +532,154 @@ export class Menu {
 
   private handleSwatchSelect(value: string) {
     this.dsSwatchSelect.emit(value);
+  }
+
+  private handleReorderKey(event: KeyboardEvent): void {
+    const located = locateMenuItem(this.activeSections, this.focusedIndex);
+    if (!located || !located.items[located.itemIndex]?.reorderable) return;
+
+    const nextItems = moveReorderableMenuItemBy(
+      located.items,
+      located.itemIndex,
+      event.key === 'ArrowUp' ? -1 : 1,
+    );
+    if (!nextItems) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    this.emitReorder(located.items, located.itemIndex, nextItems, located.sectionIndex);
+  }
+
+  private emitReorder(
+    items: MenuItemData[],
+    fromIndex: number,
+    nextItems: MenuItemData[],
+    sectionIndex: number,
+  ): void {
+    const detail = createMenuReorderDetail(items, fromIndex, nextItems, sectionIndex);
+    if (!detail) return;
+    this.focusedIndex = this.flatIndexFor(sectionIndex, detail.toIndex);
+    this.announceReorder(detail);
+    this.dsReorder.emit(detail);
+  }
+
+  private flatIndexFor(sectionIndex: number, itemIndex: number): number {
+    let flat = 0;
+    for (let index = 0; index < this.activeSections.length; index += 1) {
+      const section = this.activeSections[index];
+      if (isMenuPickerSection(section)) continue;
+      if (index === sectionIndex) return flat + itemIndex;
+      flat += section.items.length;
+    }
+    return itemIndex;
+  }
+
+  private announceReorder(detail: MenuReorderDetail): void {
+    const range = menuReorderableRange(detail.items, detail.toIndex);
+    const count = range ? range.end - range.start + 1 : detail.items.length;
+    const position = range ? detail.toIndex - range.start + 1 : detail.toIndex + 1;
+    this.reorderAnnouncement = `${detail.item.label} moved to position ${position} of ${count}`;
+  }
+
+  private onReorderPointerDown(
+    event: PointerEvent,
+    sectionIndex: number,
+    itemIndex: number,
+    flatIndex: number,
+  ): void {
+    if (event.button !== 0) return;
+    const section = this.activeSections[sectionIndex];
+    if (!section || isMenuPickerSection(section)) return;
+    if (!section.items[itemIndex]?.reorderable) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    this.suppressItemClick = true;
+    this.focusRingVisible = false;
+    this.focusedIndex = flatIndex;
+    this.focusItem(flatIndex);
+    this.reorderPointer = {
+      pointerId: event.pointerId,
+      sectionIndex,
+      fromIndex: itemIndex,
+      flatFrom: flatIndex,
+    };
+    this.reorderFromFlat = flatIndex;
+    this.reorderInsertBefore = itemIndex;
+    window.addEventListener('pointermove', this.onReorderPointerMove);
+    window.addEventListener('pointerup', this.onReorderPointerUp);
+    window.addEventListener('pointercancel', this.onReorderPointerUp);
+  }
+
+  private onReorderPointerMove = (event: PointerEvent) => {
+    const drag = this.reorderPointer;
+    if (!drag || event.pointerId !== drag.pointerId) return;
+    const section = this.activeSections[drag.sectionIndex];
+    if (!section || isMenuPickerSection(section)) return;
+
+    const insertBefore = this.resolveReorderInsertBefore(
+      event.clientY,
+      drag.sectionIndex,
+      drag.fromIndex,
+      section.items,
+    );
+    if (insertBefore !== this.reorderInsertBefore) this.reorderInsertBefore = insertBefore;
+  };
+
+  private onReorderPointerUp = (event: PointerEvent) => {
+    const drag = this.reorderPointer;
+    if (!drag || event.pointerId !== drag.pointerId) return;
+
+    const section = this.activeSections[drag.sectionIndex];
+    const insertBefore = this.reorderInsertBefore;
+    this.clearReorderPointer();
+    queueMicrotask(() => {
+      this.suppressItemClick = false;
+    });
+    if (!section || isMenuPickerSection(section) || insertBefore === null) return;
+
+    const nextItems = moveReorderableMenuItemBefore(
+      section.items,
+      drag.fromIndex,
+      insertBefore,
+    );
+    if (!nextItems) return;
+    this.emitReorder(section.items, drag.fromIndex, nextItems, drag.sectionIndex);
+  };
+
+  private resolveReorderInsertBefore(
+    clientY: number,
+    sectionIndex: number,
+    fromIndex: number,
+    items: MenuItemData[],
+  ): number {
+    const range = menuReorderableRange(items, fromIndex);
+    if (!range) return fromIndex;
+
+    const buttons = [...this.el.querySelectorAll<HTMLElement>('.menu-item')];
+    const sectionStart = this.flatIndexFor(sectionIndex, 0);
+    let insertBefore = range.end + 1;
+    for (let itemIndex = range.start; itemIndex <= range.end; itemIndex += 1) {
+      const row = buttons[sectionStart + itemIndex];
+      if (!row) continue;
+      const rect = row.getBoundingClientRect();
+      if (clientY < rect.top + rect.height / 2) {
+        insertBefore = itemIndex;
+        break;
+      }
+    }
+    return Math.min(Math.max(insertBefore, range.start), range.end + 1);
+  }
+
+  private clearReorderPointer(): void {
+    if (this.reorderPointer) {
+      window.removeEventListener('pointermove', this.onReorderPointerMove);
+      window.removeEventListener('pointerup', this.onReorderPointerUp);
+      window.removeEventListener('pointercancel', this.onReorderPointerUp);
+    }
+    this.reorderPointer = null;
+    this.reorderFromFlat = null;
+    this.reorderInsertBefore = null;
   }
 
   render() {
@@ -507,6 +694,12 @@ export class Menu {
       this.closingSections = null;
     }
     let flatIdx = 0;
+    const dragLocated = this.reorderFromFlat === null
+      ? null
+      : locateMenuItem(sections, this.reorderFromFlat);
+    const dragRange = dragLocated
+      ? menuReorderableRange(dragLocated.items, dragLocated.itemIndex)
+      : null;
 
     const popupStyle: Record<string, string> = {
       position: 'fixed',
@@ -535,6 +728,9 @@ export class Menu {
           aria-label={this.menuLabel}
           aria-orientation={hasCompositeSections ? undefined : 'vertical'}
         >
+          <div class="ds-visually-hidden" role="status" aria-live="polite">
+            {this.reorderAnnouncement}
+          </div>
           <div class="ds-choice-list">
             {sections.map((section, si) => (
               <div
@@ -576,14 +772,27 @@ export class Menu {
                     }}
                   />
                 ) : (
-                  section.items.map(item => {
+                  section.items.map((item, itemIndex) => {
                     const idx = flatIdx++;
                     const isFocused = this.focusedIndex === idx;
                     const isSingleSelectionItem =
                       !hasCompositeSections && this.selectionMode === 'single' && !item.showSwitch;
+                    const usesLeading = section.items.some(
+                      candidate => candidate.reorderable || !!candidate.icon,
+                    );
+                    const locked = !!item.isInactive && !item.reorderable;
+                    const dragging = this.reorderFromFlat === idx;
+                    const dropBefore =
+                      dragLocated?.sectionIndex === si &&
+                      this.reorderInsertBefore === itemIndex;
+                    const dropAfter =
+                      dragLocated?.sectionIndex === si &&
+                      dragRange !== null &&
+                      this.reorderInsertBefore === dragRange.end + 1 &&
+                      itemIndex === dragRange.end;
                     return (
                       <button
-                        key={idx}
+                        key={item.value ?? `${si}-${item.label}`}
                         type="button"
                         class={{
                           'menu-item': true,
@@ -592,13 +801,16 @@ export class Menu {
                           [`ds-control--${this.size}`]: true,
                           'ds-focus-ring-inset': true,
                           'ds-focus-ring--visible': isFocused && this.focusRingVisible,
-                          'ds-interaction-fill': !item.isInactive,
-                          'ds-interaction-fill--selected': !!item.isSelected && !item.isInactive,
+                          'ds-interaction-fill': !locked,
+                          'ds-interaction-fill--selected': !!item.isSelected && !locked,
                           'menu-item--selected': !!item.isSelected,
                           'menu-item--switch': !!item.showSwitch,
-                          'ds-control-inactive': !!item.isInactive,
+                          'ds-control-inactive': locked,
                           'menu-item--destructive': !!item.isDestructive,
                           'menu-item--focused': isFocused,
+                          'menu-item--dragging': dragging,
+                          'menu-item--drop-before': dropBefore,
+                          'menu-item--drop-after': dropAfter,
                         }}
                         role={
                           hasCompositeSections
@@ -629,7 +841,12 @@ export class Menu {
                             ? 'true'
                             : undefined
                         }
-                        disabled={item.isInactive}
+                        aria-description={
+                          item.reorderable
+                            ? 'Drag to reorder. Alt + Arrow Up or Alt + Arrow Down moves this row.'
+                            : undefined
+                        }
+                        disabled={locked}
                         tabIndex={hasCompositeSections ? 0 : isFocused ? 0 : -1}
                         onMouseDown={() => {
                           this.focusRingVisible = false;
@@ -639,6 +856,34 @@ export class Menu {
                           this.focusedIndex = idx;
                         }}
                       >
+                        {item.reorderable ? (
+                          <span
+                            class="menu-item__handle ds-choice-item__icon ds-control-icon-box ds-interaction-fill__content"
+                            data-menu-handle
+                            aria-hidden="true"
+                            onPointerDown={event =>
+                              this.onReorderPointerDown(event, si, itemIndex, idx)
+                            }
+                            onClick={event => {
+                              event.preventDefault();
+                              event.stopPropagation();
+                            }}
+                          >
+                            <ds-icon name="Drag" size={this.size} color="inherit" />
+                          </span>
+                        ) : usesLeading && item.icon ? (
+                          <span
+                            class="menu-item__icon ds-choice-item__icon ds-control-icon-box ds-interaction-fill__content"
+                            aria-hidden="true"
+                          >
+                            <ds-icon name={item.icon} size={this.size} color="inherit" />
+                          </span>
+                        ) : usesLeading ? (
+                          <span
+                            class="menu-item__icon-spacer ds-choice-item__icon ds-control-icon-box"
+                            aria-hidden="true"
+                          />
+                        ) : null}
                         <div class="menu-item__content ds-choice-item__content ds-interaction-fill__content">
                           <ds-text
                             class="menu-item__label ds-choice-item__label ds-control-label-box"
@@ -667,6 +912,7 @@ export class Menu {
                             intent={item.tag.intent ?? 'neutral'}
                             contrast={item.tag.contrast ?? 'faint'}
                             rounded={item.tag.rounded ?? false}
+                            isInset
                           />
                         )}
                         {item.dot && (
@@ -687,6 +933,7 @@ export class Menu {
                             class="menu-item__switch ds-interaction-fill__content"
                             size={this.size}
                             checked={!!item.switchValue}
+                            isInactive={!!item.isInactive}
                             presentation
                           />
                         )}

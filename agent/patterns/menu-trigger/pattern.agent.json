@@ -38,16 +38,16 @@
     "The application synchronizes one open boolean to the trigger's expanded prop and Menu.open.",
     "An open popup is a transient pressed state, not a selected one. The trigger holds only its pressed wash for the popup's rendered lifecycle from expanded alone, without changing foreground, so never also set isActive to represent an open menu.",
     "Menu owns popup placement and keyboard navigation; the application never calculates popup coordinates or applies positional CSS.",
-    "On dsSelect, update the selected value, close the Menu, and restore focus to the trigger.",
+    "On dsSelect from a command or single-selection row, update the selected value, close the Menu, and restore focus to the trigger.",
+    "Switch rows and reorderable rows report dsSelect or dsReorder without closing; replace the items array from those events.",
     "On dsClose, synchronize the application open state to false."
   ],
   "accessibility": [
     "A button either has a menu or is a menu, and the trigger's variant selects between the two shapes.",
     "Has a menu: a label or icon-label action that opens a menu. Set hasMenu, which implies aria-haspopup of menu and renders the trailing chevron that communicates the popup. Both button primitives support this shape.",
-    "Is a menu: an icon-only overflow or more-options control. Set hasMenu, which adds no chevron, so the glyph must convey the menu alone; use Ellipses. Only ButtonUnfilled carries this shape, because the role is chrome rather than a primary action.",
-    "Never pair hasMenu with an icon-only glyph that does not read as a menu on its own; there is no chevron to fall back on.",
+    "Is a menu: an icon-only control. Set hasMenu, which adds no chevron, so the glyph must convey the menu alone. Use Ellipses for generic more-options or overflow. Use a specific icon when the menu has a named purpose, such as Preferences for Customize table. Only ButtonUnfilled carries this shape, because the role is chrome rather than a primary action.",
     "Set controls to the Menu id and expanded from the same open state passed to Menu.",
-    "Give an icon-only trigger an accessible name that states the role, such as More options, because no visible label or chevron carries it.",
+    "Give an icon-only trigger an accessible name that states the role, such as More options or Customize table, because no visible label or chevron carries it.",
     "Use haspopup directly instead of hasMenu for a non-menu popup such as a listbox or dialog; those cases get no chevron.",
     "Give Menu a concise menuLabel describing the available commands or views.",
     "Set Menu.initialFocusVisible only when the trigger MouseEvent detail is zero, indicating keyboard activation.",
@@ -71,7 +71,7 @@
             {
               "path": "view-menu.html",
               "language": "html",
-              "content": "<ds-button-unfilled\n  id=\"view-menu-trigger\"\n  label=\"View · Overview\"\n  has-menu\n  controls=\"view-menu\"\n></ds-button-unfilled>\n<ds-menu\n  id=\"view-menu\"\n  anchor-id=\"view-menu-trigger\"\n  menu-label=\"Choose view\"\n></ds-menu>\n\n<!-- Overflow shape: the Ellipses glyph conveys the menu, so no chevron is added. -->\n<ds-button-unfilled\n  id=\"row-menu-trigger\"\n  variant=\"icon\"\n  icon=\"Ellipses\"\n  aria-label=\"More options\"\n  has-menu\n  controls=\"row-menu\"\n></ds-button-unfilled>\n<ds-menu\n  id=\"row-menu\"\n  anchor-id=\"row-menu-trigger\"\n  menu-label=\"More options\"\n  align=\"end\"\n></ds-menu>"
+              "content": "<ds-button-unfilled\n  id=\"view-menu-trigger\"\n  label=\"View · Overview\"\n  has-menu\n  controls=\"view-menu\"\n></ds-button-unfilled>\n<ds-menu\n  id=\"view-menu\"\n  anchor-id=\"view-menu-trigger\"\n  menu-label=\"Choose view\"\n></ds-menu>\n\n<!-- Overflow shape: Ellipses means more options, so no chevron is added. -->\n<ds-button-unfilled\n  id=\"row-menu-trigger\"\n  variant=\"icon\"\n  icon=\"Ellipses\"\n  aria-label=\"More options\"\n  has-menu\n  controls=\"row-menu\"\n></ds-button-unfilled>\n<ds-menu\n  id=\"row-menu\"\n  anchor-id=\"row-menu-trigger\"\n  menu-label=\"More options\"\n  align=\"end\"\n></ds-menu>\n\n<!-- Named menu: a specific glyph when the menu is not generic overflow. -->\n<ds-button-unfilled\n  id=\"customize-menu-trigger\"\n  variant=\"icon\"\n  icon=\"Preferences\"\n  aria-label=\"Customize table\"\n  has-menu\n  controls=\"customize-menu\"\n></ds-button-unfilled>\n<ds-menu\n  id=\"customize-menu\"\n  anchor-id=\"customize-menu-trigger\"\n  menu-label=\"Customize table\"\n  align=\"end\"\n></ds-menu>"
             },
             {
               "path": "view-menu.ts",

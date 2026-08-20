@@ -2536,3 +2536,57 @@ test('renders initial state bodies and passes an accessibility scan', async ({ p
     .analyze();
   expect(results.violations).toEqual([]);
 });
+
+test('owns a caption-bar column customizer menu for live show/hide and reorder', async ({ page }) => {
+  const table = page.locator('#column-customizer');
+  const trigger = table.getByRole('button', { name: 'Customize table' });
+  await expect(trigger).toBeVisible();
+  await expect(table.getByRole('combobox', { name: 'Group by' })).toBeVisible();
+  await expect(table.getByRole('checkbox', { name: /Select all loaded rows/ })).toBeVisible();
+  await expect(table.getByRole('columnheader', { name: /Driver/ })).toBeVisible();
+  await expect(table.getByRole('columnheader', { name: 'Action' })).toBeVisible();
+
+  await trigger.click();
+  const menu = page.getByRole('menu', { name: 'Customize table' });
+  await expect(menu).toBeVisible();
+  await expect(menu.getByRole('menuitemcheckbox', { name: 'Driver' })).toBeVisible();
+  await expect(menu.getByRole('menuitemcheckbox', { name: 'Action' })).toBeDisabled();
+  await expect(menu.getByRole('menuitemcheckbox', { name: 'Action' })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
+  await expect(menu.getByRole('menuitemcheckbox', { name: /Select/ })).toHaveCount(0);
+  await expect(
+    menu.getByRole('menuitemcheckbox', { name: 'Driver' }).locator('[data-menu-handle]'),
+  ).toBeVisible();
+  await expect(
+    menu.getByRole('menuitemcheckbox', { name: 'Action' }).locator('[data-menu-handle]'),
+  ).toHaveCount(0);
+
+  await menu.getByRole('menuitemcheckbox', { name: 'Status' }).press('Alt+ArrowUp');
+  await expect
+    .poll(() =>
+      table
+        .locator('.ds-table__head .ds-table__header-cell[data-column-id]')
+        .evaluateAll(cells => cells.map(cell => cell.getAttribute('data-column-id'))),
+    )
+    .toEqual(['status', 'name', 'vehicle', 'score', 'action']);
+  await expect(menu).toBeVisible();
+
+  await menu.getByRole('menuitemcheckbox', { name: 'Status' }).click();
+  await expect(table.getByRole('columnheader', { name: /Status/ })).toHaveCount(0);
+  await expect(menu).toBeVisible();
+
+  await menu.getByRole('menuitemcheckbox', { name: 'Driver' }).click();
+  await menu.getByRole('menuitemcheckbox', { name: 'Vehicle' }).click();
+  const lastVisible = menu.getByRole('menuitemcheckbox', { name: 'Safety score' });
+  await expect(lastVisible).toBeEnabled();
+  await expect(lastVisible).toHaveAttribute('aria-checked', 'true');
+  await lastVisible.click();
+  await expect(lastVisible).toHaveAttribute('aria-checked', 'true');
+  await expect(table.getByRole('columnheader', { name: /Safety score/ })).toBeVisible();
+
+  await page.keyboard.press('Escape');
+  await expect(menu).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+});

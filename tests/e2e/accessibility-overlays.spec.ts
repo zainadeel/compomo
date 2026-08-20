@@ -65,7 +65,98 @@ test('switch menu rows keep an 8px label-to-control gap', menuGeometry, async ({
   });
 
   await expect(row).toBeVisible();
-  await expect(row).toHaveCSS('gap', '8px');
+  await expect
+    .poll(() =>
+      row.evaluate(element => {
+        const content = element.querySelector('.menu-item__content');
+        const control = element.querySelector('.menu-item__switch');
+        if (!content || !control) return null;
+        return Math.round(
+          control.getBoundingClientRect().left - content.getBoundingClientRect().right,
+        );
+      }),
+    )
+    .toBe(8);
+});
+
+test('menu prefix and drag handles share Select choice-row density and secondary color', menuGeometry, async ({ page }) => {
+  const leadingMetrics = (row: ReturnType<typeof page.locator>) =>
+    row.evaluate(element => {
+      const icon = element.querySelector<HTMLElement>('.ds-choice-item__icon');
+      const content = element.querySelector<HTMLElement>('.ds-choice-item__content');
+      const glyph = element.querySelector<HTMLElement>('.ds-choice-item__icon ds-icon');
+      if (!icon || !content || !glyph) return null;
+      const rowRect = element.getBoundingClientRect();
+      const iconRect = icon.getBoundingClientRect();
+      const contentRect = content.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      const probe = document.createElement('span');
+      probe.style.color = 'var(--color-foreground-secondary)';
+      document.body.append(probe);
+      const expectedSecondary = getComputedStyle(probe).color;
+      probe.remove();
+      return {
+        paddingInline: style.paddingInline,
+        gap: style.gap,
+        iconWidth: Math.round(iconRect.width),
+        iconHeight: Math.round(iconRect.height),
+        leadingInset: Math.round(iconRect.left - rowRect.left),
+        iconToContent: Math.round(contentRect.left - iconRect.right),
+        colorMatches: getComputedStyle(glyph).color === expectedSecondary,
+      };
+    });
+
+  const expected = {
+    paddingInline: '6px',
+    gap: '4px',
+    iconWidth: 20,
+    iconHeight: 20,
+    leadingInset: 6,
+    iconToContent: 4,
+    colorMatches: true,
+  };
+
+  await page.locator('#prefix-anchor').click();
+  const prefixRow = page.getByRole('menu', { name: 'File actions' }).getByRole('menuitem', {
+    name: 'Edit',
+  });
+  await expect(prefixRow).toBeVisible();
+  await expect.poll(() => leadingMetrics(prefixRow)).toEqual(expected);
+
+  await page.keyboard.press('Escape');
+  await page.locator('#reorder-anchor').click();
+  const handleRow = page
+    .getByRole('menu', { name: 'Customize columns' })
+    .getByRole('menuitemcheckbox', { name: 'Driver' });
+  await expect(handleRow).toBeVisible();
+  await expect.poll(() => leadingMetrics(handleRow)).toEqual(expected);
+});
+
+test('reorderable switch rows move with keyboard and pointer without closing', async ({ page }) => {
+  await page.locator('#reorder-anchor').click();
+  const menu = page.getByRole('menu', { name: 'Customize columns' });
+  const status = menu.getByRole('menuitemcheckbox', { name: 'Status' });
+  await expect(status).toBeVisible();
+  await expect(status).toHaveAccessibleDescription(/Drag to reorder/);
+  await expect(menu.getByRole('menuitemcheckbox', { name: 'Action' })).toBeDisabled();
+  await expect(
+    menu.getByRole('menuitemcheckbox', { name: 'Action' }).locator('[data-menu-handle]'),
+  ).toHaveCount(0);
+
+  await status.press('Alt+ArrowUp');
+  await expect(menu.getByRole('menuitemcheckbox').nth(0)).toHaveAccessibleName('Status');
+  await expect(menu.getByRole('menuitemcheckbox').nth(1)).toHaveAccessibleName('Driver');
+  await expect(menu).toBeVisible();
+
+  const vehicleHandle = menu
+    .getByRole('menuitemcheckbox', { name: 'Vehicle' })
+    .locator('[data-menu-handle]');
+  await vehicleHandle.dragTo(menu.getByRole('menuitemcheckbox', { name: 'Status' }), {
+    targetPosition: { x: 16, y: 4 },
+  });
+  await expect(menu.getByRole('menuitemcheckbox').nth(0)).toHaveAccessibleName('Vehicle');
+  await expect(menu.getByRole('menuitemcheckbox').nth(1)).toHaveAccessibleName('Status');
+  await expect(menu).toBeVisible();
 });
 
 test('menu flips above a bottom-edge trigger instead of overlapping the viewport edge', async ({ page }) => {

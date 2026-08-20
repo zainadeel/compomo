@@ -7,10 +7,10 @@
   "tag": "ds-menu",
   "audience": "general",
   "status": "stable",
-  "summary": "Anchored action menu with flat commands, grouped sections, single-selection choices, supplemental notification dots or trailing tags, switches, and destructive actions.",
+  "summary": "Anchored action menu with flat commands, grouped sections, single-selection choices, supplemental notification dots or trailing tags, prefix icons, reorderable rows, switches, and destructive actions.",
   "useWhen": [
     "A trigger reveals a short contextual list of commands or state-changing actions.",
-    "Actions need grouping, mutually exclusive selected state, supplemental notification dots or trailing tags, switch rows, or destructive treatment."
+    "Actions need grouping, mutually exclusive selected state, supplemental notification dots or trailing tags, prefix icons, reorderable switch or command rows, or destructive treatment."
   ],
   "avoidWhen": [
     "The user is selecting a value for a form field.",
@@ -49,17 +49,21 @@
     "Single-selection menus use menuitemradio semantics and aria-checked on each row, but render no nested radio control; selected interaction fill and primary foreground provide the visual state.",
     "A swatch-picker section changes the popup to a non-modal dialog so its radio group and ordinary preference buttons keep valid nested semantics; Tab moves between its controls, then leaves and closes at the popup boundary.",
     "Use notification dots only as supplemental status and not as the sole indication of important information.",
-    "Trailing tags are non-interactive supplemental content; their visible label remains part of the menu item's accessible name."
+    "Trailing tags are non-interactive supplemental content; their visible label remains part of the menu item's accessible name.",
+    "Reorderable rows keep a presentation Drag handle. Pointer drag on the handle and Alt+Arrow Up or Down emit dsReorder without closing. Hide-locked reorderable rows stay focusable so they can move; fully locked rows stay out of the contiguous reorderable run.",
+    "Announce the new position through a polite live region after reorder."
   ],
   "states": [
     "The host owns open state and responds to selection and close events.",
     "Use either flat items or sections, not both.",
     "After dsSelect from a switch row, replace the items or sections array with updated switchValue data so the controlled indicator reflects the new state.",
+    "After dsReorder, replace items or the affected section with the emitted items array. Menu never mutates order and does not close.",
     "For selectionMode single, keep exactly one item isSelected and replace the items or sections array after dsSelect; Menu never mutates consumer-owned selection data.",
     "Arrays, objects, and element anchors must be assigned as JavaScript properties.",
     "Use a swatch-picker section for a small curated visual preference and apply dsSwatchSelect immediately without closing the popup.",
     "Ordinary rows, section headings, and supporting text consume the Menu size. At xs, both the primary label and supporting text use caption metrics.",
-    "A trailing tag resolves one density smaller than its menu row so it nests without changing row height. Do not combine tag, dot, and switch suffixes on one item."
+    "A trailing tag resolves one density smaller than its menu row and uses the inset recipe so it nests without changing row height. Do not combine tag, dot, and switch suffixes on one item.",
+    "Reorderable rows use the Drag prefix and ignore icon. Prefix and drag-handle icons inherit the choice-popup secondary foreground, matching Select. When any row in a section has an icon or is reorderable, the remaining rows get a spacer so labels align."
   ],
   "responsiveBehavior": [
     "Keep the default choice-cell anchor alignment so the first or last interactive row edge aligns with its trigger, matching Select; use popup-frame only for deliberate custom frame geometry.",
@@ -68,13 +72,14 @@
   ],
   "frameworkCaveats": {
     "customElements": [
-      "Assign items, sections, and HTMLElement anchors as properties after the element is defined."
+      "Assign items, sections, and HTMLElement anchors as properties after the element is defined.",
+      "Handle dsReorder by replacing the items or section items with the emitted items array; Menu never mutates order."
     ],
     "react": [
-      "Pass arrays and objects as wrapper props and handle generated onDsSelect and onDsClose event props."
+      "Pass arrays and objects as wrapper props and handle generated onDsSelect, onDsReorder, and onDsClose event props."
     ],
     "angular": [
-      "Use property bindings for arrays, objects, and anchors and event bindings for dsSelect and dsClose."
+      "Use property bindings for arrays, objects, and anchors and event bindings for dsSelect, dsReorder, and dsClose."
     ]
   },
   "references": [
