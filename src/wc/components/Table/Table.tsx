@@ -80,7 +80,6 @@ import type {
   TableGroup,
   TableGroupCollapseChangeDetail,
   TableGroupLoadMoreDetail,
-  TableGroupingOption,
   TableGroupingState,
   TableLoadMoreDetail,
   TableLoadMoreMode,
@@ -112,11 +111,6 @@ export class Table {
   @Prop() groups: TableGroup[] = [];
   /** Controlled grouping column. Applications supply groups in their final fixed order. */
   @Prop() grouping: TableGroupingState | null = null;
-  /**
-   * Opt-in Group by choices for the caption-bar select. Empty hides the control.
-   * Assign through JavaScript.
-   */
-  @Prop() groupingOptions: TableGroupingOption[] = [];
   /** Controlled member-row sort state. */
   @Prop() sort: TableSortState | null = null;
   /** Controlled collapsed group identities. Groups not listed remain expanded. */
@@ -213,7 +207,6 @@ export class Table {
   @Event() dsCellAction!: EventEmitter<TableCellActionDetail>;
   @Event() dsRowActivate!: EventEmitter<TableRowActivateDetail>;
   @Event() dsColumnsConfigChange!: EventEmitter<TableColumnsConfigChangeDetail>;
-  @Event() dsGroupingChange!: EventEmitter<TableGroupingState | null>;
 
   @State() private overflowStart = false;
   @State() private overflowEnd = false;
@@ -471,6 +464,9 @@ export class Table {
 
   @Watch('columns')
   @Watch('grouping')
+  @Watch('hiddenColumnIds')
+  @Watch('columnOrder')
+  @Watch('columnCustomizer')
   handleStructureChange(): void {
     this.warnModelIssues();
     this.loadController.structureChanged();
@@ -567,12 +563,8 @@ export class Table {
     return this.columnCustomizer && this.captionVisibility === 'visible';
   }
 
-  private get showsGroupingControl(): boolean {
-    return this.captionVisibility === 'visible' && this.groupingOptions.length > 0;
-  }
-
   private get showsCaptionTrailing(): boolean {
-    return this.showsColumnCustomizer || this.showsGroupingControl;
+    return this.showsColumnCustomizer;
   }
 
   private get documentStickyHeader(): boolean {
@@ -744,21 +736,29 @@ export class Table {
 
   private warnModelIssues(): void {
     const issues = tableModelIssues(this.columns, this.rows, this.groups, this.grouped);
+    const visibleColumns = this.visibleColumns;
     if (!this.caption?.trim()) issues.unshift('A non-empty caption is required.');
-    if (this.grouping && !this.columns.some(column => column.id === this.grouping!.columnId)) {
-      issues.push(`Grouping references unknown column id: ${this.grouping.columnId}`);
+    if (this.grouping) {
+      const groupingColumn = this.columns.find(column => column.id === this.grouping!.columnId);
+      if (!groupingColumn) {
+        issues.push(`Grouping references unknown column id: ${this.grouping.columnId}`);
+      } else if (!visibleColumns.some(column => column.id === groupingColumn.id)) {
+        issues.push(`Grouping references hidden column id: ${this.grouping.columnId}`);
+      }
     }
-    if (
-      this.sort &&
-      !this.columns.some(column =>
+    if (this.sort) {
+      const sortColumn = this.columns.find(column =>
         column.id === this.sort!.columnId ||
         column.headerSegments?.some(segment => segment.sortKey === this.sort!.columnId),
-      )
-    ) {
-      issues.push(`Sorting references unknown column id: ${this.sort.columnId}`);
+      );
+      if (!sortColumn) {
+        issues.push(`Sorting references unknown column id: ${this.sort.columnId}`);
+      } else if (!visibleColumns.some(column => column.id === sortColumn.id)) {
+        issues.push(`Sorting references hidden column id: ${this.sort.columnId}`);
+      }
     }
-    const stickyStart = this.visibleColumns.filter(column => column.sticky === 'start');
-    const stickyEnd = this.visibleColumns.filter(column => column.sticky === 'end');
+    const stickyStart = visibleColumns.filter(column => column.sticky === 'start');
+    const stickyEnd = visibleColumns.filter(column => column.sticky === 'end');
     if (stickyStart.length > 1 || (this.selectable && stickyStart.length > 0)) {
       issues.push('Only one sticky start column is supported, and row selection already owns that lane.');
     }
@@ -2198,6 +2198,7 @@ export class Table {
               as="span"
               variant="text-body-medium"
               color="secondary"
+              lineTruncation={1}
             >
               {summary}
             </ds-text>
@@ -2267,43 +2268,9 @@ export class Table {
     if (!this.showsCaptionTrailing) return null;
     return (
       <div class="ds-table__caption-trailing">
-        {this.renderGroupingControl()}
         {this.renderColumnCustomizerTrigger()}
       </div>
     );
-  }
-
-  private renderGroupingControl() {
-    if (!this.showsGroupingControl) return null;
-    return (
-      <ds-select
-        class="ds-table__grouping-control"
-        size="md"
-        icon="SectionList"
-        placeholder="Group by"
-        popupAlign="end"
-        activeFill={false}
-        allowClear={this.grouping !== null}
-        aria-label="Group by"
-        options={this.groupingOptions}
-        value={this.grouping?.columnId ?? ''}
-        onDsChange={(event: CustomEvent<string | string[]>) => {
-          this.emitGroupingChange(event.detail);
-        }}
-        onDsClear={() => this.dsGroupingChange.emit(null)}
-      />
-    );
-  }
-
-  private emitGroupingChange(value: string | string[]): void {
-    if (typeof value !== 'string' || !value) {
-      this.dsGroupingChange.emit(null);
-      return;
-    }
-    this.dsGroupingChange.emit({
-      columnId: value,
-      direction: this.grouping?.direction ?? 'asc',
-    });
   }
 
   private renderColumnCustomizerTrigger() {

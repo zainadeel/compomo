@@ -932,7 +932,7 @@ export const SafetyEvents: Story = {
               ></ds-select>
             </div>
           </div>
-          <ds-text slot="footer-leading" as="span" variant="text-body-medium" color="secondary">
+          <ds-text slot="footer-leading" as="span" variant="text-body-medium" color="secondary" line-truncation="1">
             Last updated: Aug 13, 2026  7:00 PM PT
           </ds-text>
         </ds-table>
@@ -1025,7 +1025,7 @@ export const GroupingAndMemberSorting: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'The application supplies Status groups in its fixed order while Safety score remains the table\'s one interactive member-row sort. groupingOptions shows the table-owned Group by select; clearing it returns ungrouped rows. Group section headers expose a controlled collapse control matching the action-column ButtonUnfilled recipe. While any group is expanded and no action column exists, collapse-all floats at the visible header edge on a medium-elevation surface so horizontal scrolling never hides it.',
+        story: 'The application supplies Status groups in its fixed order while Safety score remains the table\'s one interactive member-row sort. Group section headers expose a controlled collapse control matching the action-column ButtonUnfilled recipe. While any group is expanded and no action column exists, collapse-all floats at the visible header edge on a medium-elevation surface so horizontal scrolling never hides it.',
       },
     },
   },
@@ -1040,7 +1040,6 @@ export const GroupingAndMemberSorting: Story = {
         .rows=${grouping ? [] : ROWS}
         .groups=${grouping ? groupedRows(ROWS, grouping, sort) : []}
         .grouping=${grouping}
-        .groupingOptions=${[{ label: 'Status', value: 'status' }]}
         .sort=${sort}
         .collapsedGroupIds=${collapsedGroupIds}
         .displayedCount=${ROWS.length}
@@ -1049,8 +1048,6 @@ export const GroupingAndMemberSorting: Story = {
         caption-visibility="visible"
         @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
           updateArgs({ sort: event.detail.sort })}
-        @dsGroupingChange=${(event: CustomEvent<TableGroupingState | null>) =>
-          updateArgs({ grouping: event.detail, collapsedGroupIds: [] })}
         @dsGroupCollapseChange=${(
           event: CustomEvent<{ collapsedGroupIds: string[] }>,
         ) => updateArgs({ collapsedGroupIds: event.detail.collapsedGroupIds })}
@@ -1252,23 +1249,20 @@ export const ColumnCustomizer: Story = {
   args: {
     hiddenColumnIds: [] as string[],
     columnOrder: [] as string[],
-    grouping: null as TableGroupingState | null,
   },
   argTypes: {
     hiddenColumnIds: { table: { disable: true } },
     columnOrder: { table: { disable: true } },
-    grouping: { table: { disable: true } },
   },
   parameters: {
     docs: {
       description: {
-        story: 'Opt-in columnCustomizer keeps columns as the catalog. hiddenColumnIds and columnOrder are controlled; dsColumnsConfigChange reports live show/hide and data-column reorder. The trailing Preferences control opens the shared Menu of reorderable switch rows and stays open while toggling or dragging. groupingOptions shows the table-owned Group by select. Selection is omitted from the menu, action columns stay last with inactive switches, and the last remaining visible data column cannot be hidden. Persistence stays in the application.',
+        story: 'Opt-in columnCustomizer keeps columns as the catalog. hiddenColumnIds and columnOrder are controlled; dsColumnsConfigChange reports live show/hide and data-column reorder. The trailing Preferences control opens the shared Menu of reorderable switch rows and stays open while toggling or dragging. Selection is omitted from the menu, action columns stay last with inactive switches, and the last remaining visible data column cannot be hidden. Persistence stays in the application.',
       },
     },
   },
   render: args => {
     const [, updateArgs] = useArgs();
-    const grouping = (args['grouping'] as TableGroupingState | null) ?? null;
     const rows = ROWS.slice(0, 4).map(row => ({
       ...row,
       cells: {
@@ -1294,13 +1288,7 @@ export const ColumnCustomizer: Story = {
             sticky: 'end',
           },
         ] satisfies TableColumn[]}
-        .rows=${grouping ? [] : rows}
-        .groups=${grouping ? groupedRows(rows, grouping, null) : []}
-        .grouping=${grouping}
-        .groupingOptions=${[
-          { label: 'Status', value: 'status' },
-          { label: 'Vehicle', value: 'vehicle' },
-        ]}
+        .rows=${rows}
         .hiddenColumnIds=${args['hiddenColumnIds'] as string[]}
         .columnOrder=${args['columnOrder'] as string[]}
         column-customizer
@@ -1312,8 +1300,6 @@ export const ColumnCustomizer: Story = {
             hiddenColumnIds: event.detail.hiddenColumnIds,
             columnOrder: event.detail.columnOrder,
           })}
-        @dsGroupingChange=${(event: CustomEvent<TableGroupingState | null>) =>
-          updateArgs({ grouping: event.detail })}
       ></ds-table>
     `;
   },
@@ -1578,7 +1564,7 @@ export const WorkingPagination: Story = {
         @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>
           updateArgs({ selectedRowIds: event.detail.selectedRowIds })}
       >
-        <ds-text slot="footer-leading" as="span" variant="text-body-medium" color="secondary">
+        <ds-text slot="footer-leading" as="span" variant="text-body-medium" color="secondary" line-truncation="1">
           Last updated: just now
         </ds-text>
       </ds-table>

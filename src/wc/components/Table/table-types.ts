@@ -47,12 +47,6 @@ export interface TableGroupingState {
   direction: TableSortDirection;
 }
 
-/** Choice for the optional table-owned Group by select. */
-export interface TableGroupingOption {
-  label: string;
-  value: string;
-}
-
 /** One independently colored run inside a secondary or tertiary track. */
 export interface TableCellTextRun {
   text: string;

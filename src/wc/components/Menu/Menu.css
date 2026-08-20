@@ -43,7 +43,7 @@
 }
 
 .menu-item--dragging {
-  opacity: 0.5;
+  opacity: var(--effect-opacity-medium);
 }
 
 .menu-item--drop-before {

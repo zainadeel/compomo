@@ -143,6 +143,37 @@ test('reorderable switch rows move with keyboard and pointer without closing', a
     menu.getByRole('menuitemcheckbox', { name: 'Action' }).locator('[data-menu-handle]'),
   ).toHaveCount(0);
 
+  const driverHandle = menu
+    .getByRole('menuitemcheckbox', { name: 'Driver' })
+    .locator('[data-menu-handle]');
+  const vehicleBox = await menu
+    .getByRole('menuitemcheckbox', { name: 'Vehicle' })
+    .boundingBox();
+  expect(vehicleBox).not.toBeNull();
+  await driverHandle.dispatchEvent('pointerdown', {
+    button: 0,
+    pointerId: 42,
+    clientY: vehicleBox!.y,
+  });
+  await page.evaluate(y => {
+    window.dispatchEvent(new PointerEvent('pointermove', { pointerId: 42, clientY: y }));
+    window.dispatchEvent(new PointerEvent('pointercancel', { pointerId: 42, clientY: y }));
+  }, vehicleBox!.y + vehicleBox!.height);
+  await expect(menu.getByRole('menuitemcheckbox')).toHaveText([
+    'Driver',
+    'Status',
+    'Vehicle',
+    'Action',
+  ]);
+
+  await status.press('Meta+ArrowUp');
+  await expect(menu.getByRole('menuitemcheckbox')).toHaveText([
+    'Driver',
+    'Status',
+    'Vehicle',
+    'Action',
+  ]);
+
   await status.press('Alt+ArrowUp');
   await expect(menu.getByRole('menuitemcheckbox').nth(0)).toHaveAccessibleName('Status');
   await expect(menu.getByRole('menuitemcheckbox').nth(1)).toHaveAccessibleName('Driver');
@@ -157,6 +188,20 @@ test('reorderable switch rows move with keyboard and pointer without closing', a
   await expect(menu.getByRole('menuitemcheckbox').nth(0)).toHaveAccessibleName('Vehicle');
   await expect(menu.getByRole('menuitemcheckbox').nth(1)).toHaveAccessibleName('Status');
   await expect(menu).toBeVisible();
+});
+
+test('reorderable menu keeps status announcements outside the menu role', openPopupAxe, async ({ page }) => {
+  await page.locator('#reorder-anchor').click();
+  const menu = page.getByRole('menu', { name: 'Customize columns' });
+  await expect(menu).toBeVisible();
+  await expect(menu.getByRole('status')).toHaveCount(0);
+  await expect(page.locator('#reorder-menu').getByRole('status')).toHaveCount(1);
+
+  const results = await new AxeBuilder({ page })
+    .include('#reorder-menu')
+    .disableRules(['color-contrast'])
+    .analyze();
+  expect(results.violations).toEqual([]);
 });
 
 test('menu flips above a bottom-edge trigger instead of overlapping the viewport edge', async ({ page }) => {

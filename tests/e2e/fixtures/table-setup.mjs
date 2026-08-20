@@ -744,35 +744,9 @@ const customizerRows = rows.map(row => ({
 customizer.rows = customizerRows;
 customizer.hiddenColumnIds = [];
 customizer.columnOrder = [];
-customizer.groupingOptions = [
-  { label: 'Status', value: 'status' },
-  { label: 'Vehicle', value: 'vehicle' },
-];
 customizer.addEventListener('dsColumnsConfigChange', event => {
   customizer.hiddenColumnIds = event.detail.hiddenColumnIds;
   customizer.columnOrder = event.detail.columnOrder;
-});
-customizer.addEventListener('dsGroupingChange', event => {
-  const grouping = event.detail;
-  customizer.grouping = grouping;
-  customizer.collapsedGroupIds = [];
-  if (!grouping) {
-    customizer.groups = [];
-    customizer.rows = customizerRows;
-    return;
-  }
-  const byValue = new Map();
-  for (const row of customizerRows) {
-    const label = String(row.cells[grouping.columnId] ?? 'Unassigned');
-    byValue.set(label, [...(byValue.get(label) ?? []), row]);
-  }
-  customizer.groups = [...byValue].map(([label, members]) => ({
-    id: label.toLowerCase().replaceAll(' ', '-'),
-    label,
-    rows: members,
-    totalCount: members.length,
-  }));
-  customizer.rows = [];
 });
 
 for (const id of ['loading', 'empty', 'error']) {

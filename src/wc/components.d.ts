@@ -64,7 +64,7 @@ import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 import { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 import { SwitchSize } from "./components/Switch/Switch";
 import { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
-import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableColumnsConfigChangeDetail, TableDataMode, TableGroup, TableGroupCollapseChangeDetail, TableGroupingOption, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableColumnsConfigChangeDetail, TableDataMode, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -128,7 +128,7 @@ export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 export { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 export { SwitchSize } from "./components/Switch/Switch";
 export { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
-export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableColumnsConfigChangeDetail, TableDataMode, TableGroup, TableGroupCollapseChangeDetail, TableGroupingOption, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableColumnsConfigChangeDetail, TableDataMode, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -2952,11 +2952,6 @@ export namespace Components {
          */
         "grouping": TableGroupingState | null;
         /**
-          * Opt-in Group by choices for the caption-bar select. Empty hides the control. Assign through JavaScript.
-          * @default []
-         */
-        "groupingOptions": TableGroupingOption[];
-        /**
           * One level of application-owned grouped data. Assign through JavaScript.
           * @default []
          */
@@ -4506,7 +4501,6 @@ declare global {
         "dsCellAction": TableCellActionDetail;
         "dsRowActivate": TableRowActivateDetail;
         "dsColumnsConfigChange": TableColumnsConfigChangeDetail;
-        "dsGroupingChange": TableGroupingState | null;
     }
     interface HTMLDsTableElement extends Components.DsTable, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsTableElementEventMap>(type: K, listener: (this: HTMLDsTableElement, ev: DsTableCustomEvent<HTMLDsTableElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -7765,11 +7759,6 @@ declare namespace LocalJSX {
          */
         "grouping"?: TableGroupingState | null;
         /**
-          * Opt-in Group by choices for the caption-bar select. Empty hides the control. Assign through JavaScript.
-          * @default []
-         */
-        "groupingOptions"?: TableGroupingOption[];
-        /**
           * One level of application-owned grouped data. Assign through JavaScript.
           * @default []
          */
@@ -7827,7 +7816,6 @@ declare namespace LocalJSX {
         "onDsColumnsConfigChange"?: (event: DsTableCustomEvent<TableColumnsConfigChangeDetail>) => void;
         "onDsGroupCollapseChange"?: (event: DsTableCustomEvent<TableGroupCollapseChangeDetail>) => void;
         "onDsGroupLoadMore"?: (event: DsTableCustomEvent<TableGroupLoadMoreDetail>) => void;
-        "onDsGroupingChange"?: (event: DsTableCustomEvent<TableGroupingState | null>) => void;
         "onDsLoadMore"?: (event: DsTableCustomEvent<TableLoadMoreDetail>) => void;
         "onDsPaginationChange"?: (event: DsTableCustomEvent<PaginationChangeDetail>) => void;
         "onDsRowActivate"?: (event: DsTableCustomEvent<TableRowActivateDetail>) => void;

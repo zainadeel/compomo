@@ -1,6 +1,7 @@
 /**
  * CompoMo CSS lint — TokoMo token category coverage + high-signal disallows.
- * All findings are warnings (exit 0) so CI stays green while we burn down backlog.
+ * Token-coverage findings remain warnings while backlog burns down. Narrow,
+ * regression-safe policy rules may opt into error severity to block new slips.
  *
  * @type {import('stylelint').Config}
  */
@@ -19,6 +20,7 @@ export default {
   extends: ['stylelint-config-standard'],
   plugins: [
     './stylelint-plugin-local/index.js',
+    './stylelint-plugin-local/no-raw-opacity.js',
     './stylelint-plugin-local/require-reduced-motion.js',
   ],
   defaultSeverity: 'warning',
@@ -30,6 +32,7 @@ export default {
   ],
   rules: {
     'local/no-ds-text-metric-overrides': true,
+    'local/no-raw-opacity': [true, { severity: 'error' }],
     'local/require-reduced-motion': true,
     // ── Turn off stylistic / browser-compat noise (not token coverage) ──
     'alpha-value-notation': null,

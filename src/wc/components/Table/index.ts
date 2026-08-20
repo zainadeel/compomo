@@ -32,7 +32,6 @@ export type {
   TableGroupLoadMoreDetail,
   TableGroupIntent,
   TableHeaderSegment,
-  TableGroupingOption,
   TableGroupingState,
   TableLoadMoreDetail,
   TableLoadMoreMode,

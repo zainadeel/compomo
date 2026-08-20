@@ -50,8 +50,8 @@
     "A swatch-picker section changes the popup to a non-modal dialog so its radio group and ordinary preference buttons keep valid nested semantics; Tab moves between its controls, then leaves and closes at the popup boundary.",
     "Use notification dots only as supplemental status and not as the sole indication of important information.",
     "Trailing tags are non-interactive supplemental content; their visible label remains part of the menu item's accessible name.",
-    "Reorderable rows keep a presentation Drag handle. Pointer drag on the handle and Alt+Arrow Up or Down emit dsReorder without closing. Hide-locked reorderable rows stay focusable so they can move; fully locked rows stay out of the contiguous reorderable run.",
-    "Announce the new position through a polite live region after reorder."
+    "Reorderable rows keep a presentation Drag handle. Pointer drag on the handle and Alt+Arrow Up or Down emit dsReorder without closing. Pointer cancellation abandons the pending move. Hide-locked reorderable rows expose aria-disabled for the unavailable toggle but stay focusable so they can move; fully locked rows stay out of the contiguous reorderable run.",
+    "Announce the new position through a polite live region that is a sibling of the role=menu popup, so the menu retains only permitted descendants."
   ],
   "states": [
     "The host owns open state and responds to selection and close events.",

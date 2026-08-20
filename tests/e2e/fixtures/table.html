@@ -34,7 +34,7 @@
         <button slot="footer-trailing" type="button">Export drivers</button>
       </ds-table>
       <ds-table id="footer" caption="Drivers with result summary" caption-visibility="hidden">
-        <ds-text slot="footer-leading" as="span" variant="text-body-medium" color="secondary">
+        <ds-text slot="footer-leading" as="span" variant="text-body-medium" color="secondary" line-truncation="1">
           Last updated: Aug 13, 2026  7:00 PM PT
         </ds-text>
       </ds-table>
@@ -59,7 +59,7 @@
       <ds-table id="lazy-retry" caption="Retry lazy drivers" data-mode="infinite" load-more-mode="manual" has-more load-more-error="More rows failed to load."></ds-table>
       <ds-table id="lazy-auto" caption="Automatic lazy drivers" data-mode="infinite" load-more-mode="auto" has-more></ds-table>
       <ds-table id="paginated" caption="Paginated drivers" data-mode="pagination" selection-mode="multiple" max-height="480px">
-        <ds-text slot="footer-leading" as="span" variant="text-body-medium" color="secondary">
+        <ds-text slot="footer-leading" as="span" variant="text-body-medium" color="secondary" line-truncation="1">
           Last updated: just now
         </ds-text>
       </ds-table>

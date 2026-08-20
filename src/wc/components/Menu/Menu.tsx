@@ -121,7 +121,6 @@ export class Menu {
         pointerId: number;
         sectionIndex: number;
         fromIndex: number;
-        flatFrom: number;
       }
     | null = null;
   /**
@@ -463,7 +462,7 @@ export class Menu {
 
     if (
       (e.key === 'ArrowUp' || e.key === 'ArrowDown') &&
-      (e.altKey || e.metaKey) &&
+      e.altKey &&
       !e.ctrlKey &&
       !e.shiftKey
     ) {
@@ -602,13 +601,12 @@ export class Menu {
       pointerId: event.pointerId,
       sectionIndex,
       fromIndex: itemIndex,
-      flatFrom: flatIndex,
     };
     this.reorderFromFlat = flatIndex;
     this.reorderInsertBefore = itemIndex;
     window.addEventListener('pointermove', this.onReorderPointerMove);
     window.addEventListener('pointerup', this.onReorderPointerUp);
-    window.addEventListener('pointercancel', this.onReorderPointerUp);
+    window.addEventListener('pointercancel', this.onReorderPointerCancel);
   }
 
   private onReorderPointerMove = (event: PointerEvent) => {
@@ -647,6 +645,14 @@ export class Menu {
     this.emitReorder(section.items, drag.fromIndex, nextItems, drag.sectionIndex);
   };
 
+  private onReorderPointerCancel = (event: PointerEvent) => {
+    if (!this.reorderPointer || event.pointerId !== this.reorderPointer.pointerId) return;
+    this.clearReorderPointer();
+    queueMicrotask(() => {
+      this.suppressItemClick = false;
+    });
+  };
+
   private resolveReorderInsertBefore(
     clientY: number,
     sectionIndex: number,
@@ -675,7 +681,7 @@ export class Menu {
     if (this.reorderPointer) {
       window.removeEventListener('pointermove', this.onReorderPointerMove);
       window.removeEventListener('pointerup', this.onReorderPointerUp);
-      window.removeEventListener('pointercancel', this.onReorderPointerUp);
+      window.removeEventListener('pointercancel', this.onReorderPointerCancel);
     }
     this.reorderPointer = null;
     this.reorderFromFlat = null;
@@ -728,9 +734,6 @@ export class Menu {
           aria-label={this.menuLabel}
           aria-orientation={hasCompositeSections ? undefined : 'vertical'}
         >
-          <div class="ds-visually-hidden" role="status" aria-live="polite">
-            {this.reorderAnnouncement}
-          </div>
           <div class="ds-choice-list">
             {sections.map((section, si) => (
               <div
@@ -843,9 +846,12 @@ export class Menu {
                         }
                         aria-description={
                           item.reorderable
-                            ? 'Drag to reorder. Alt + Arrow Up or Alt + Arrow Down moves this row.'
+                            ? item.isInactive
+                              ? 'Visibility cannot be changed. Alt + Arrow Up or Alt + Arrow Down moves this row.'
+                              : 'Drag to reorder. Alt + Arrow Up or Alt + Arrow Down moves this row.'
                             : undefined
                         }
+                        aria-disabled={item.isInactive ? 'true' : undefined}
                         disabled={locked}
                         tabIndex={hasCompositeSections ? 0 : isFocused ? 0 : -1}
                         onMouseDown={() => {
@@ -944,6 +950,9 @@ export class Menu {
               </div>
             ))}
           </div>
+        </div>
+        <div class="ds-visually-hidden" role="status" aria-live="polite">
+          {this.reorderAnnouncement}
         </div>
       </Host>
     );
