@@ -22,6 +22,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(componentCss, /@import '\.\.\/\.\.\/utils\/text-decoration\.css'/);
   assert.match(componentTsx, /focus-ring\.css/);
   assert.match(componentTsx, /interaction-fill\.css/);
+  assert.doesNotMatch(componentTsx, /choice-list\.css/);
   assert.match(componentTsx, /TableLayoutController/);
   assert.doesNotMatch(componentTsx, /TableStickyGroupController/);
   assert.match(componentTsx, /TableViewportFitController/);
@@ -39,6 +40,11 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(componentTsx, /'ds-focus-ring': !!row\.interactive && !row\.disabled/);
   assert.match(componentTsx, /'ds-focus-ring': this\.scrollable/);
   assert.match(componentTsx, /<slot\s+name="header"/);
+  assert.match(componentTsx, /ds-table__caption-leading/);
+  assert.match(componentTsx, /renderColumnCustomizerMenu/);
+  assert.match(componentTsx, /ds-table__caption-trailing/);
+  assert.match(componentTsx, /menuLabel="Customize table"/);
+  assert.doesNotMatch(componentTsx, /role="dialog"/);
   assert.doesNotMatch(componentTsx, /<slot\s+name="header-leading"/);
   assert.doesNotMatch(componentTsx, /<slot\s+name="header-trailing"/);
   assert.match(componentTsx, /<slot name="footer"/);
@@ -61,6 +67,9 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(componentTsx, /variant === 'text-with-tag' \? 'single' : 'double'/);
   assert.match(componentTsx, /'ds-table--caption-visible'/);
   assert.match(css, /\.ds-table__caption-content/);
+  assert.match(css, /\.ds-table__caption-content--trailing/);
+  assert.match(css, /\.ds-table__caption-trailing/);
+  assert.match(css, /\.ds-table__caption-leading > slot/);
   assert.match(css, /\.ds-table__bar-copy > slot/);
   assert.match(css, /\.ds-table__bar-status/);
   assert.match(css, /\.ds-table__footer-summary/);
@@ -87,6 +96,8 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
     'ds-table__skeleton-row',
     'ds-table__load-cell',
     'ds-table__footer',
+    'ds-table__caption-leading',
+    'ds-table__caption-trailing',
   ]) {
     assert.match(css, new RegExp(`\\.${selector}`));
   }
@@ -112,7 +123,6 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
     css,
     /\.ds-table__cell--text-wrap\.ds-table__cell--text-multi \.ds-table__cell-secondary\)[\s\S]*?line-height: var\(--_table-wrap-secondary-line-height\)/,
   );
-  assert.match(componentTsx, /ds-table__cell--text-wrap/);
   assert.match(css, /\.ds-table__cell-icon-text\)[\s\S]*?gap: var\(--dimension-space-025\)/);
   assert.match(css, /\.ds-table__cell-icon-text-icon\)[\s\S]*?padding: var\(--dimension-space-025\)/);
   assert.match(css, /\.ds-table__cell-image[\s\S]*?aspect-ratio: 16 \/ 9/);

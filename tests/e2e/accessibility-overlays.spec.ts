@@ -65,7 +65,225 @@ test('switch menu rows keep an 8px label-to-control gap', menuGeometry, async ({
   });
 
   await expect(row).toBeVisible();
-  await expect(row).toHaveCSS('gap', '8px');
+  await expect
+    .poll(() =>
+      row.evaluate(element => {
+        const content = element.querySelector('.menu-item__content');
+        const control = element.querySelector('.menu-item__switch');
+        if (!content || !control) return null;
+        return Math.round(
+          control.getBoundingClientRect().left - content.getBoundingClientRect().right,
+        );
+      }),
+    )
+    .toBe(8);
+});
+
+test('menu prefix and drag handles share Select choice-row density and secondary color', menuGeometry, async ({ page }) => {
+  const leadingMetrics = (row: ReturnType<typeof page.locator>) =>
+    row.evaluate(element => {
+      const icon = element.querySelector<HTMLElement>('.ds-choice-item__icon');
+      const content = element.querySelector<HTMLElement>('.ds-choice-item__content');
+      const glyph = element.querySelector<HTMLElement>('.ds-choice-item__icon ds-icon');
+      if (!icon || !content || !glyph) return null;
+      const rowRect = element.getBoundingClientRect();
+      const iconRect = icon.getBoundingClientRect();
+      const contentRect = content.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      const probe = document.createElement('span');
+      probe.style.color = 'var(--color-foreground-secondary)';
+      document.body.append(probe);
+      const expectedSecondary = getComputedStyle(probe).color;
+      probe.remove();
+      return {
+        paddingInline: style.paddingInline,
+        gap: style.gap,
+        iconWidth: Math.round(iconRect.width),
+        iconHeight: Math.round(iconRect.height),
+        leadingInset: Math.round(iconRect.left - rowRect.left),
+        iconToContent: Math.round(contentRect.left - iconRect.right),
+        colorMatches: getComputedStyle(glyph).color === expectedSecondary,
+      };
+    });
+
+  const expected = {
+    paddingInline: '6px',
+    gap: '4px',
+    iconWidth: 20,
+    iconHeight: 20,
+    leadingInset: 6,
+    iconToContent: 4,
+    colorMatches: true,
+  };
+
+  await page.locator('#prefix-anchor').click();
+  const prefixRow = page.getByRole('menu', { name: 'File actions' }).getByRole('menuitem', {
+    name: 'Edit',
+  });
+  await expect(prefixRow).toBeVisible();
+  await expect.poll(() => leadingMetrics(prefixRow)).toEqual(expected);
+
+  await page.keyboard.press('Escape');
+  await page.locator('#reorder-anchor').click();
+  const handleRow = page
+    .getByRole('menu', { name: 'Customize columns' })
+    .getByRole('menuitemcheckbox', { name: 'Driver' });
+  await expect(handleRow).toBeVisible();
+  await expect(handleRow.locator('[data-menu-handle]')).toHaveCSS('cursor', 'grab');
+  await expect.poll(() => leadingMetrics(handleRow)).toEqual(expected);
+});
+
+test(
+  'reorder drop rail stays centered between rows at every boundary',
+  menuGeometry,
+  async ({ page }) => {
+    await page.locator('#reorder-anchor').click();
+    const menu = page.getByRole('menu', { name: 'Customize columns' });
+    const rows = menu
+      .getByRole('menuitemcheckbox')
+      .filter({ has: page.locator('[data-menu-handle]') });
+    const driverHandle = rows.nth(0).locator('[data-menu-handle]');
+    const boxes = await Promise.all([
+      rows.nth(0).boundingBox(),
+      rows.nth(1).boundingBox(),
+      rows.nth(2).boundingBox(),
+    ]);
+    expect(boxes.every(Boolean)).toBe(true);
+    const [firstBox, middleBox, lastBox] = boxes as [
+      NonNullable<(typeof boxes)[number]>,
+      NonNullable<(typeof boxes)[number]>,
+      NonNullable<(typeof boxes)[number]>,
+    ];
+    const rowGap = middleBox.y - (firstBox.y + firstBox.height);
+    expect(rowGap).toBeGreaterThan(0);
+
+    await driverHandle.dispatchEvent('pointerdown', {
+      button: 0,
+      pointerId: 51,
+      clientY: firstBox.y + firstBox.height / 2,
+    });
+
+    const railCenter = () =>
+      menu.locator('[data-menu-drop-rail]').evaluate(element => {
+        const rect = element.getBoundingClientRect();
+        return rect.y + rect.height / 2;
+      });
+    const movePointer = (clientY: number) =>
+      page.evaluate(y => {
+        window.dispatchEvent(new PointerEvent('pointermove', { pointerId: 51, clientY: y }));
+      }, clientY);
+
+    const middleGapCenter = (middleBox.y + middleBox.height + lastBox.y) / 2;
+    await movePointer(middleGapCenter);
+    await expect.poll(railCenter).toBeCloseTo(middleGapCenter, 5);
+
+    await movePointer(firstBox.y);
+    await expect.poll(railCenter).toBeCloseTo(firstBox.y - rowGap / 2, 5);
+
+    await movePointer(lastBox.y + lastBox.height);
+    await expect(menu.locator('[data-menu-drop-rail]')).toHaveCount(1);
+    await expect
+      .poll(railCenter)
+      .toBeCloseTo(lastBox.y + lastBox.height + rowGap / 2, 5);
+
+    await page.evaluate(() => {
+      window.dispatchEvent(new PointerEvent('pointercancel', { pointerId: 51 }));
+    });
+    await expect(menu.locator('[data-menu-drop-rail]')).toHaveCount(0);
+  },
+);
+
+test('reorderable switch rows move with keyboard and pointer without closing', async ({ page }) => {
+  await page.locator('#reorder-anchor').click();
+  const menu = page.getByRole('menu', { name: 'Customize columns' });
+  const status = menu.getByRole('menuitemcheckbox', { name: 'Status' });
+  await expect(status).toBeVisible();
+  await expect(status).toHaveAccessibleDescription(/Drag to reorder/);
+  await expect(menu.getByRole('menuitemcheckbox', { name: 'Action' })).toBeDisabled();
+  await expect(
+    menu.getByRole('menuitemcheckbox', { name: 'Action' }).locator('[data-menu-handle]'),
+  ).toHaveCount(0);
+
+  const driverHandle = menu
+    .getByRole('menuitemcheckbox', { name: 'Driver' })
+    .locator('[data-menu-handle]');
+  const vehicleBox = await menu
+    .getByRole('menuitemcheckbox', { name: 'Vehicle' })
+    .boundingBox();
+  expect(vehicleBox).not.toBeNull();
+  await driverHandle.dispatchEvent('pointerdown', {
+    button: 0,
+    pointerId: 42,
+    clientY: vehicleBox!.y,
+  });
+  await page.evaluate(y => {
+    window.dispatchEvent(new PointerEvent('pointermove', { pointerId: 42, clientY: y }));
+    window.dispatchEvent(new PointerEvent('pointercancel', { pointerId: 42, clientY: y }));
+  }, vehicleBox!.y + vehicleBox!.height);
+  await expect(menu.getByRole('menuitemcheckbox')).toHaveText([
+    'Driver',
+    'Status',
+    'Vehicle',
+    'Action',
+  ]);
+
+  await status.press('Meta+ArrowUp');
+  await expect(menu.getByRole('menuitemcheckbox')).toHaveText([
+    'Driver',
+    'Status',
+    'Vehicle',
+    'Action',
+  ]);
+
+  await status.press('Alt+ArrowUp');
+  await expect(menu.getByRole('menuitemcheckbox').nth(0)).toHaveAccessibleName('Status');
+  await expect(menu.getByRole('menuitemcheckbox').nth(1)).toHaveAccessibleName('Driver');
+  await expect(menu).toBeVisible();
+
+  const vehicleHandle = menu
+    .getByRole('menuitemcheckbox', { name: 'Vehicle' })
+    .locator('[data-menu-handle]');
+  await vehicleHandle.dragTo(menu.getByRole('menuitemcheckbox', { name: 'Status' }), {
+    targetPosition: { x: 16, y: 4 },
+  });
+  await expect(menu.getByRole('menuitemcheckbox').nth(0)).toHaveAccessibleName('Vehicle');
+  await expect(menu.getByRole('menuitemcheckbox').nth(1)).toHaveAccessibleName('Status');
+  await expect(menu).toBeVisible();
+
+  const driverTargetBox = await menu
+    .getByRole('menuitemcheckbox', { name: 'Driver' })
+    .boundingBox();
+  expect(driverTargetBox).not.toBeNull();
+  await menu
+    .getByRole('menuitemcheckbox', { name: 'Vehicle' })
+    .locator('[data-menu-handle]')
+    .dragTo(menu.getByRole('menuitemcheckbox', { name: 'Driver' }), {
+      targetPosition: { x: 16, y: driverTargetBox!.height - 1 },
+    });
+  await expect(menu.getByRole('menuitemcheckbox').nth(2)).toHaveAccessibleName('Vehicle');
+
+  await menu
+    .getByRole('menuitemcheckbox', { name: 'Vehicle' })
+    .locator('[data-menu-handle]')
+    .dragTo(menu.getByRole('menuitemcheckbox', { name: 'Status' }), {
+      targetPosition: { x: 16, y: 1 },
+    });
+  await expect(menu.getByRole('menuitemcheckbox').nth(0)).toHaveAccessibleName('Vehicle');
+  await expect(menu).toBeVisible();
+});
+
+test('reorderable menu keeps status announcements outside the menu role', openPopupAxe, async ({ page }) => {
+  await page.locator('#reorder-anchor').click();
+  const menu = page.getByRole('menu', { name: 'Customize columns' });
+  await expect(menu).toBeVisible();
+  await expect(menu.getByRole('status')).toHaveCount(0);
+  await expect(page.locator('#reorder-menu').getByRole('status')).toHaveCount(1);
+
+  const results = await new AxeBuilder({ page })
+    .include('#reorder-menu')
+    .disableRules(['color-contrast'])
+    .analyze();
+  expect(results.violations).toEqual([]);
 });
 
 test('menu flips above a bottom-edge trigger instead of overlapping the viewport edge', async ({ page }) => {

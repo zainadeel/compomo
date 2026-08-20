@@ -155,6 +155,7 @@ test('renders an optional result summary footer from controlled counts', async (
   await expect(footer).toContainText('Displaying 50 of 1,500');
   await expect(footer.locator('.ds-table__footer-summary')).toHaveJSProperty('variant', 'text-body-medium');
   await expect(footer.locator('.ds-table__footer-summary')).toHaveJSProperty('color', 'secondary');
+  await expect(footer.locator('.ds-table__footer-summary')).toHaveJSProperty('lineTruncation', 1);
   await expect
     .poll(() => footer.evaluate(element => getComputedStyle(element).blockSize))
     .toBe('48px');
@@ -207,6 +208,28 @@ test('renders an optional result summary footer from controlled counts', async (
   expect(footerCopyGeometry.summaryEnd).toBeCloseTo(16, 0);
   expect(footerCopyGeometry.summaryLeft).toBeGreaterThan(footerCopyGeometry.leadingRight);
   await expect(table.locator('caption')).toHaveClass(/ds-visually-hidden/);
+
+  await table.evaluate(element => {
+    element.style.inlineSize = '320px';
+  });
+  await expect.poll(() => footer.evaluate(element => getComputedStyle(element).blockSize)).toBe('48px');
+  const narrowSummary = await footer.locator('.ds-table__footer-summary').evaluate(element => {
+    const text = element.querySelector<HTMLElement>('.ds-text__element')!;
+    const style = getComputedStyle(text);
+    return {
+      whiteSpace: style.whiteSpace,
+      textOverflow: style.textOverflow,
+      overflow: style.overflow,
+      clientWidth: text.clientWidth,
+      scrollWidth: text.scrollWidth,
+    };
+  });
+  expect(narrowSummary).toMatchObject({
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+  });
+  expect(narrowSummary.scrollWidth).toBeGreaterThan(narrowSummary.clientWidth);
 
   await table.evaluate((element: HTMLDsTableElement) => {
     element.displayedCount = undefined;
@@ -1622,6 +1645,18 @@ test('forwards controlled pagination while preserving off-page selection', async
   expectGeometryClose(selectBox!.x - (labelBox!.x + labelBox!.width), 8);
   await expect(pagination.locator('ds-select .trigger__chevron ds-icon'))
     .toHaveJSProperty('name', 'ChevronUpDown');
+
+  for (const [label, iconName] of [
+    ['First page', 'ChevronLeftDouble'],
+    ['Previous page', 'ChevronLeft'],
+    ['Next page', 'ChevronRight'],
+    ['Last page', 'ChevronRightDouble'],
+  ] as const) {
+    const button = pagination.getByRole('button', { name: label });
+    await expect(button.locator('ds-icon')).toHaveJSProperty('name', iconName);
+    await expect(button.locator('ds-icon svg')).toHaveCount(1);
+  }
+
   await expect(pagination.getByRole('button', { name: 'First page' })).toBeDisabled();
   await expect(pagination.getByRole('button', { name: 'Previous page' })).toBeDisabled();
 
@@ -2535,4 +2570,62 @@ test('renders initial state bodies and passes an accessibility scan', async ({ p
     .include('#document-sticky')
     .analyze();
   expect(results.violations).toEqual([]);
+});
+
+test('owns a caption-bar column customizer menu for live show/hide and reorder', async ({ page }) => {
+  const table = page.locator('#column-customizer');
+  const trigger = table.getByRole('button', { name: 'Customize table' });
+  await expect(trigger).toBeVisible();
+  await expect(table.getByRole('combobox', { name: 'Group by' })).toHaveCount(0);
+  await expect(table.getByRole('checkbox', { name: /Select all loaded rows/ })).toBeVisible();
+  await expect(table.getByRole('columnheader', { name: /Driver/ })).toBeVisible();
+  await expect(table.getByRole('columnheader', { name: 'Action' })).toBeVisible();
+
+  await trigger.click();
+  const menu = page.getByRole('menu', { name: 'Customize table' });
+  await expect(menu).toBeVisible();
+  await expect(menu.getByRole('menuitemcheckbox', { name: 'Driver' })).toBeVisible();
+  await expect(menu.getByRole('menuitemcheckbox', { name: 'Action' })).toBeDisabled();
+  await expect(menu.getByRole('menuitemcheckbox', { name: 'Action' })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
+  await expect(menu.getByRole('menuitemcheckbox', { name: /Select/ })).toHaveCount(0);
+  await expect(
+    menu.getByRole('menuitemcheckbox', { name: 'Driver' }).locator('[data-menu-handle]'),
+  ).toBeVisible();
+  await expect(
+    menu.getByRole('menuitemcheckbox', { name: 'Action' }).locator('[data-menu-handle]'),
+  ).toHaveCount(0);
+
+  await menu.getByRole('menuitemcheckbox', { name: 'Status' }).press('Alt+ArrowUp');
+  await expect
+    .poll(() =>
+      table
+        .locator('.ds-table__head .ds-table__header-cell[data-column-id]')
+        .evaluateAll(cells => cells.map(cell => cell.getAttribute('data-column-id'))),
+    )
+    .toEqual(['status', 'name', 'vehicle', 'score', 'action']);
+  await expect(menu).toBeVisible();
+
+  await menu.getByRole('menuitemcheckbox', { name: 'Status' }).click();
+  await expect(table.getByRole('columnheader', { name: /Status/ })).toHaveCount(0);
+  await expect(menu).toBeVisible();
+
+  await menu.getByRole('menuitemcheckbox', { name: 'Driver' }).click();
+  await menu.getByRole('menuitemcheckbox', { name: 'Vehicle' }).click();
+  const lastVisible = menu.getByRole('menuitemcheckbox', { name: 'Safety score' });
+  await expect(lastVisible).toHaveAttribute('aria-disabled', 'true');
+  await expect(lastVisible).toHaveAttribute('aria-checked', 'true');
+  await expect(table.getByRole('columnheader', { name: /Safety score/ })).toBeVisible();
+  await lastVisible.focus();
+  await expect(lastVisible).toBeFocused();
+  await page.keyboard.press('Alt+ArrowUp');
+  await expect(table.locator('ds-menu').getByRole('status')).toContainText(
+    'Safety score moved to position',
+  );
+
+  await page.keyboard.press('Escape');
+  await expect(menu).toHaveCount(0);
+  await expect(trigger).toBeFocused();
 });

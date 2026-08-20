@@ -119,8 +119,10 @@ export class ButtonUnfilled {
    *
    * - `label` / `icon-label` — the action *has* a menu; a trailing chevron carries
    *   the affordance.
-   * - `icon` — the button *is* a menu, i.e. the overflow / more-options control.
-   *   No chevron is added, so the glyph must convey it on its own; use `Ellipses`.
+   * - `icon` — the button *is* a menu. No chevron is added, so the glyph must
+   *   convey the menu on its own. Use `Ellipses` for generic more-options;
+   *   use a specific icon when the menu has a named purpose, such as
+   *   `Preferences` for Customize table.
    *
    * Use `haspopup` directly for non-menu popups.
    */

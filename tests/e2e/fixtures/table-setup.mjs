@@ -1,5 +1,6 @@
 import '/dist/components/ds-table.js';
 import '/dist/components/ds-menu.js';
+import '/dist/components/ds-select.js';
 import '/dist/components/ds-tooltip.js';
 
 await customElements.whenDefined('ds-table');
@@ -723,6 +724,31 @@ documentSticky.groups = [
   { id: 'second-section', label: 'Second section', rows: documentRows.slice(8) },
 ];
 documentSticky.rows = [];
+
+const customizer = document.getElementById('column-customizer');
+customizer.columns = [
+  ...columns,
+  { id: 'action', kind: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40, sticky: 'end' },
+];
+const customizerRows = rows.map(row => ({
+  ...row,
+  cells: {
+    ...row.cells,
+    action: {
+      kind: 'action',
+      ariaLabel: `More actions for ${row.selectionLabel}`,
+      items: overflowActionItems,
+    },
+  },
+}));
+customizer.rows = customizerRows;
+customizer.hiddenColumnIds = [];
+customizer.columnOrder = [];
+customizer.addEventListener('dsColumnsConfigChange', event => {
+  customizer.hiddenColumnIds = event.detail.hiddenColumnIds;
+  customizer.columnOrder = event.detail.columnOrder;
+});
+
 for (const id of ['loading', 'empty', 'error']) {
   document.getElementById(id).columns = columns.slice(0, 3);
 }

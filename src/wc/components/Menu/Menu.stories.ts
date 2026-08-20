@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { ref } from 'lit/directives/ref.js';
+import { useArgs } from 'storybook/preview-api';
 import '../../../../dist/components/ds-menu.js';
+import '../../../../dist/components/ds-icon.js';
 import '../../../../dist/components/ds-switch.js';
 import '../../../../dist/components/ds-swatch-picker.js';
 import '../../../../dist/components/ds-tag.js';
@@ -9,6 +11,7 @@ import { TOKEN_CSS_LENGTHS } from '../../utils/token-defaults';
 import { PANEL_NAV_USER_MENU_PLACEMENT } from './menu-placement';
 import { shellGradientPickerSections } from '../../shell/shell-gradient-presets';
 import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
+import type { MenuItemData, MenuReorderDetail } from './menu-types';
 
 const items = [
   { label: 'Edit', value: 'edit' },
@@ -25,8 +28,8 @@ const meta: Meta = {
       ...isolatedOverlayDocs('420px'),
       description: {
         component:
-          'Controlled anchored action menu. The application owns open and item state: dsSelect reports intent ' +
-          'without mutating selection or closing automatically, while dsAfterClose marks the end of exit rendering. ' +
+          'Controlled anchored action menu. The application owns open and item state: dsSelect and dsReorder report intent ' +
+          'without mutating selection or order, or closing automatically, while dsAfterClose marks the end of exit rendering. ' +
           'The requested side is preferred and flips to its opposite when collision space is better there.',
       },
     },
@@ -135,6 +138,75 @@ export const WithSwitch: Story = {
   `,
 };
 
+export const WithPrefixIcons: Story = {
+  name: 'With prefix icons',
+  render: () => html`
+    <div style="padding: 16px; height: 240px">
+      <span id="menu-anchor-icons" style="display: inline-block; width: 1px; height: 1px"></span>
+      <ds-menu
+        ?open=${true}
+        menu-label="File actions"
+        .items=${[
+          { label: 'Edit', value: 'edit', icon: 'Pencil' },
+          { label: 'Copy', value: 'copy', icon: 'Copy' },
+          { label: 'Share', value: 'share' },
+        ]}
+        anchor-id="menu-anchor-icons"
+      ></ds-menu>
+    </div>
+  `,
+};
+
+const reorderableItems: MenuItemData[] = [
+  { label: 'Driver', value: 'driver', showSwitch: true, switchValue: true, reorderable: true },
+  { label: 'Status', value: 'status', showSwitch: true, switchValue: true, reorderable: true },
+  { label: 'Vehicle', value: 'vehicle', showSwitch: true, switchValue: false, reorderable: true },
+  { label: 'Action', value: 'action', showSwitch: true, switchValue: true, isInactive: true },
+];
+
+export const ReorderableSwitches: Story = {
+  name: 'Reorderable switch rows',
+  args: {
+    items: reorderableItems,
+  },
+  argTypes: {
+    items: { table: { disable: true } },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Reorderable rows prefix a Drag handle. Pointer drag and Alt+Arrow Up/Down emit dsReorder without closing or mutating items. Locked rows stay last.',
+      },
+    },
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    const items = (args['items'] as MenuItemData[]) ?? reorderableItems;
+    return html`
+      <div style="padding: 16px; height: 320px">
+        <span id="menu-anchor-reorder" style="display: inline-block; width: 1px; height: 1px"></span>
+        <ds-menu
+          ?open=${true}
+          menu-label="Customize table"
+          .items=${items}
+          anchor-id="menu-anchor-reorder"
+          @dsReorder=${(event: CustomEvent<MenuReorderDetail>) =>
+            updateArgs({ items: event.detail.items })}
+          @dsSelect=${(event: CustomEvent<MenuItemData>) =>
+            updateArgs({
+              items: items.map(item =>
+                item.value === event.detail.value && !item.isInactive
+                  ? { ...item, switchValue: !item.switchValue }
+                  : item,
+              ),
+            })}
+        ></ds-menu>
+      </div>
+    `;
+  },
+};
+
 export const SingleSelection: Story = {
   name: 'Single-selection menu',
   render: () => html`
@@ -173,6 +245,14 @@ export const WithNotificationDot: Story = {
 
 export const WithTrailingTags: Story = {
   name: 'With trailing tags',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Trailing tags use the inset recipe at one density smaller than the menu row, so a count or status pill nests without changing row height.',
+      },
+    },
+  },
   render: () => html`
     <div style="padding: 16px; height: 240px">
       <span id="menu-anchor-tags" style="display: inline-block; width: 1px; height: 1px"></span>

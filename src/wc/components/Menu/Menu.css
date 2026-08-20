@@ -1,4 +1,6 @@
 @import '../../utils/choice-list.css';
+@import '../../utils/visually-hidden.css';
+@import '../../utils/forced-colors.css';
 
 /* Inactive: `.ds-control-inactive` (50% opacity). */
 
@@ -18,12 +20,54 @@
   pointer-events: none;
 }
 
-/* ── Switch suffix ───────────────────────────────────────────────────────── */
-
-.menu-item--switch {
-  gap: var(--dimension-space-100);
-}
-
+/* Switch suffix keeps an 8px label-to-control gap without changing the
+   density gap between a prefix icon or drag handle and the label. */
 .menu-item__switch {
   flex-shrink: 0;
+  margin-inline-start: calc(
+    var(--dimension-space-100) - var(--ds-control-gap, var(--dimension-space-050))
+  );
+}
+
+/* ── Prefix icon / reorder handle ────────────────────────────────────────── */
+
+.menu-item > .menu-item__handle {
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: none;
+}
+
+.menu-item > .menu-item__handle:active,
+.menu-item--dragging > .menu-item__handle {
+  cursor: grabbing;
+}
+
+.menu-item--dragging {
+  opacity: var(--effect-opacity-medium);
+}
+
+.menu-item__drop-rail {
+  position: absolute;
+  z-index: var(--dimension-z-index-raised);
+  inset-inline: var(--dimension-space-050);
+  block-size: var(--dimension-stroke-width-025);
+  border-radius: var(--dimension-radius-half);
+  background: var(--color-border-bold-brand);
+  pointer-events: none;
+}
+
+.menu-item__drop-rail--before {
+  inset-block-start: calc(-1 * var(--dimension-space-025));
+  transform: translateY(-50%);
+}
+
+.menu-item__drop-rail--after {
+  inset-block-end: calc(-1 * var(--dimension-space-025));
+  transform: translateY(50%);
+}
+
+@media (forced-colors: active) {
+  .menu-item__drop-rail {
+    background: var(--ds-forced-color-selected);
+  }
 }

@@ -35,7 +35,7 @@ import { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
 import { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
 import { InputSize, InputType, InputWidth } from "./components/Input/Input";
 import { LoaderColor, LoaderSize } from "./components/Loader/Loader";
-import { MenuItemData, MenuSection } from "./components/Menu/menu-types";
+import { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
 import { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
 import { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 import { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
@@ -64,7 +64,7 @@ import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 import { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 import { SwitchSize } from "./components/Switch/Switch";
 import { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
-import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableDataMode, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableColumnsConfigChangeDetail, TableDataMode, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -99,7 +99,7 @@ export { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
 export { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
 export { InputSize, InputType, InputWidth } from "./components/Input/Input";
 export { LoaderColor, LoaderSize } from "./components/Loader/Loader";
-export { MenuItemData, MenuSection } from "./components/Menu/menu-types";
+export { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
 export { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
 export { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 export { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
@@ -128,7 +128,7 @@ export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 export { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 export { SwitchSize } from "./components/Switch/Switch";
 export { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
-export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableDataMode, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableColumnsConfigChangeDetail, TableDataMode, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -690,7 +690,7 @@ export namespace Components {
          */
         "hasBorder": boolean;
         /**
-          * Mark the button as a Menu trigger. Implies `aria-haspopup="menu"` and covers both menu-button shapes:  - `label` / `icon-label` — the action *has* a menu; a trailing chevron carries   the affordance. - `icon` — the button *is* a menu, i.e. the overflow / more-options control.   No chevron is added, so the glyph must convey it on its own; use `Ellipses`.  Use `haspopup` directly for non-menu popups.
+          * Mark the button as a Menu trigger. Implies `aria-haspopup="menu"` and covers both menu-button shapes:  - `label` / `icon-label` — the action *has* a menu; a trailing chevron carries   the affordance. - `icon` — the button *is* a menu. No chevron is added, so the glyph must   convey the menu on its own. Use `Ellipses` for generic more-options;   use a specific icon when the menu has a named purpose, such as   `Preferences` for Customize table.  Use `haspopup` directly for non-menu popups.
           * @default false
          */
         "hasMenu": boolean;
@@ -2860,6 +2860,16 @@ export namespace Components {
          */
         "collapsedGroupIds": string[];
         /**
+          * Opt in to the table-owned column customizer. The `columns` prop remains the catalog; hidden and ordered columns are controlled separately. The trigger opens the shared Menu of live show/hide switch rows.
+          * @default false
+         */
+        "columnCustomizer": boolean;
+        /**
+          * Controlled data-column identities in display order. Omitted ids append in catalog order.
+          * @default []
+         */
+        "columnOrder": string[];
+        /**
           * Stable column definitions. Assign through JavaScript.
           * @default []
          */
@@ -2954,6 +2964,11 @@ export namespace Components {
           * Fixed height for the complete header, table frame, and footer composition.
          */
         "height": string | number | undefined;
+        /**
+          * Controlled hidden data-column identities. Action ids are ignored.
+          * @default []
+         */
+        "hiddenColumnIds": string[];
         /**
           * Reset key for a new query/group/sort dataset.
           * @default 'default'
@@ -3982,6 +3997,7 @@ declare global {
         "dsAfterClose": void;
         "dsSelect": MenuItemData;
         "dsSwatchSelect": string;
+        "dsReorder": MenuReorderDetail;
     }
     interface HTMLDsMenuElement extends Components.DsMenu, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsMenuElementEventMap>(type: K, listener: (this: HTMLDsMenuElement, ev: DsMenuCustomEvent<HTMLDsMenuElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -4484,6 +4500,7 @@ declare global {
         "dsPaginationChange": PaginationChangeDetail;
         "dsCellAction": TableCellActionDetail;
         "dsRowActivate": TableRowActivateDetail;
+        "dsColumnsConfigChange": TableColumnsConfigChangeDetail;
     }
     interface HTMLDsTableElement extends Components.DsTable, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsTableElementEventMap>(type: K, listener: (this: HTMLDsTableElement, ev: DsTableCustomEvent<HTMLDsTableElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -5262,7 +5279,7 @@ declare namespace LocalJSX {
          */
         "hasBorder"?: boolean;
         /**
-          * Mark the button as a Menu trigger. Implies `aria-haspopup="menu"` and covers both menu-button shapes:  - `label` / `icon-label` — the action *has* a menu; a trailing chevron carries   the affordance. - `icon` — the button *is* a menu, i.e. the overflow / more-options control.   No chevron is added, so the glyph must convey it on its own; use `Ellipses`.  Use `haspopup` directly for non-menu popups.
+          * Mark the button as a Menu trigger. Implies `aria-haspopup="menu"` and covers both menu-button shapes:  - `label` / `icon-label` — the action *has* a menu; a trailing chevron carries   the affordance. - `icon` — the button *is* a menu. No chevron is added, so the glyph must   convey the menu on its own. Use `Ellipses` for generic more-options;   use a specific icon when the menu has a named purpose, such as   `Preferences` for Customize table.  Use `haspopup` directly for non-menu popups.
           * @default false
          */
         "hasMenu"?: boolean;
@@ -6105,6 +6122,10 @@ declare namespace LocalJSX {
          */
         "onDsAfterClose"?: (event: DsMenuCustomEvent<void>) => void;
         "onDsClose"?: (event: DsMenuCustomEvent<void>) => void;
+        /**
+          * Emitted after a pointer drop or keyboard move; Menu never mutates item order.
+         */
+        "onDsReorder"?: (event: DsMenuCustomEvent<MenuReorderDetail>) => void;
         "onDsSelect"?: (event: DsMenuCustomEvent<MenuItemData>) => void;
         /**
           * Emitted when a generic `swatch-picker` section option is chosen.
@@ -7646,6 +7667,16 @@ declare namespace LocalJSX {
          */
         "collapsedGroupIds"?: string[];
         /**
+          * Opt in to the table-owned column customizer. The `columns` prop remains the catalog; hidden and ordered columns are controlled separately. The trigger opens the shared Menu of live show/hide switch rows.
+          * @default false
+         */
+        "columnCustomizer"?: boolean;
+        /**
+          * Controlled data-column identities in display order. Omitted ids append in catalog order.
+          * @default []
+         */
+        "columnOrder"?: string[];
+        /**
           * Stable column definitions. Assign through JavaScript.
           * @default []
          */
@@ -7741,6 +7772,11 @@ declare namespace LocalJSX {
          */
         "height"?: string | number | undefined;
         /**
+          * Controlled hidden data-column identities. Action ids are ignored.
+          * @default []
+         */
+        "hiddenColumnIds"?: string[];
+        /**
           * Reset key for a new query/group/sort dataset.
           * @default 'default'
          */
@@ -7777,6 +7813,7 @@ declare namespace LocalJSX {
          */
         "maxHeight"?: string | number | undefined;
         "onDsCellAction"?: (event: DsTableCustomEvent<TableCellActionDetail>) => void;
+        "onDsColumnsConfigChange"?: (event: DsTableCustomEvent<TableColumnsConfigChangeDetail>) => void;
         "onDsGroupCollapseChange"?: (event: DsTableCustomEvent<TableGroupCollapseChangeDetail>) => void;
         "onDsGroupLoadMore"?: (event: DsTableCustomEvent<TableGroupLoadMoreDetail>) => void;
         "onDsLoadMore"?: (event: DsTableCustomEvent<TableLoadMoreDetail>) => void;
@@ -8752,6 +8789,7 @@ declare namespace LocalJSX {
     interface DsTableAttributes {
         "caption": string;
         "captionVisibility": TableCaptionVisibility;
+        "columnCustomizer": boolean;
         "displayedCount": number | undefined;
         "totalCount": number | undefined;
         "resultSummaryLabel": string;

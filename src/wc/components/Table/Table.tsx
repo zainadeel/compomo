@@ -43,6 +43,14 @@ import {
   tableActionTriggerId,
 } from './table-action-menu';
 import {
+  nextTableColumnCustomizerElementId,
+  resolveTableColumnOrder,
+  resolveTableHiddenColumnIds,
+  resolveTableVisibleColumns,
+  tableColumnCustomizerMenuItems,
+  toggleTableColumnHidden,
+} from './table-column-customizer';
+import {
   resolveTableTruncateTrack,
   tableTruncateLabel,
 } from './table-truncate';
@@ -50,7 +58,7 @@ import { TableLayoutController } from './table-layout-controller';
 import { TableLoadController } from './table-load-controller';
 import { TableGroupLoadController } from './table-group-load-controller';
 import type { PaginationChangeDetail } from '../Pagination/pagination-types';
-import type { MenuItemData } from '../Menu/menu-types';
+import type { MenuItemData, MenuReorderDetail } from '../Menu/menu-types';
 import { resolvePaginationState } from '../Pagination/pagination-model';
 import { resolveCssLengthPx } from '../../utils/resolve-css-length-px';
 import { isElementTruncated } from '../../utils/is-element-truncated';
@@ -67,6 +75,7 @@ import type {
   TableCellSkeleton,
   TableCellTextRun,
   TableColumn,
+  TableColumnsConfigChangeDetail,
   TableDataMode,
   TableGroup,
   TableGroupCollapseChangeDetail,
@@ -111,6 +120,16 @@ export class Table {
   @Prop() caption!: string;
   /** Shows a matching presentational title bar above the native table frame. */
   @Prop() captionVisibility: TableCaptionVisibility = 'hidden';
+  /**
+   * Opt in to the table-owned column customizer. The `columns` prop remains the
+   * catalog; hidden and ordered columns are controlled separately. The trigger
+   * opens the shared Menu of live show/hide switch rows.
+   */
+  @Prop() columnCustomizer: boolean = false;
+  /** Controlled hidden data-column identities. Action ids are ignored. */
+  @Prop() hiddenColumnIds: string[] = [];
+  /** Controlled data-column identities in display order. Omitted ids append in catalog order. */
+  @Prop() columnOrder: string[] = [];
   /**
    * Optional result summary footer. When both `displayedCount` and `totalCount`
    * are finite numbers, the table shows “Displaying {displayed} of {total}”.
@@ -187,6 +206,7 @@ export class Table {
   @Event() dsPaginationChange!: EventEmitter<PaginationChangeDetail>;
   @Event() dsCellAction!: EventEmitter<TableCellActionDetail>;
   @Event() dsRowActivate!: EventEmitter<TableRowActivateDetail>;
+  @Event() dsColumnsConfigChange!: EventEmitter<TableColumnsConfigChangeDetail>;
 
   @State() private overflowStart = false;
   @State() private overflowEnd = false;
@@ -199,8 +219,11 @@ export class Table {
   @State() private actionMenu: { rowId: string; columnId: string } | null = null;
   @State() private actionMenuInitialFocusVisible = false;
   @State() private truncateTooltipLabel = '';
+  @State() private columnCustomizerOpen = false;
+  @State() private columnCustomizerInitialFocusVisible = false;
 
   private readonly actionMenuElementId = nextTableActionMenuElementId();
+  private readonly columnCustomizerElementId = nextTableColumnCustomizerElementId();
   private truncateTooltipEl?: HTMLDsTooltipElement;
   private truncateAnchor: HTMLElement | null = null;
   private truncateTooltipBound = false;
@@ -355,6 +378,7 @@ export class Table {
     this.headerSlotObserver = null;
     this.disconnectFitObserver();
     this.disconnectTruncateTooltip();
+    this.closeColumnCustomizer();
   }
 
   private syncHeaderSlotPresence = () => {
@@ -440,6 +464,9 @@ export class Table {
 
   @Watch('columns')
   @Watch('grouping')
+  @Watch('hiddenColumnIds')
+  @Watch('columnOrder')
+  @Watch('columnCustomizer')
   handleStructureChange(): void {
     this.warnModelIssues();
     this.loadController.structureChanged();
@@ -505,6 +532,12 @@ export class Table {
     if (!this.grouped) this.loadController.hasMoreChanged(hasMore, hadMore);
   }
 
+  @Watch('columnCustomizer')
+  @Watch('captionVisibility')
+  handleColumnCustomizerAvailability(): void {
+    if (!this.showsColumnCustomizer) this.closeColumnCustomizer();
+  }
+
   private get grouped(): boolean {
     return this.grouping !== null;
   }
@@ -516,6 +549,22 @@ export class Table {
 
   private get selectable(): boolean {
     return this.selectionMode === 'multiple';
+  }
+
+  private get visibleColumns(): TableColumn[] {
+    return resolveTableVisibleColumns(this.columns, {
+      columnCustomizer: this.columnCustomizer,
+      hiddenColumnIds: this.hiddenColumnIds,
+      columnOrder: this.columnOrder,
+    });
+  }
+
+  private get showsColumnCustomizer(): boolean {
+    return this.columnCustomizer && this.captionVisibility === 'visible';
+  }
+
+  private get showsCaptionTrailing(): boolean {
+    return this.showsColumnCustomizer;
   }
 
   private get documentStickyHeader(): boolean {
@@ -621,6 +670,7 @@ export class Table {
     const fromDirectionalControl = event.composedPath().some(node => {
       if (!(node instanceof HTMLElement)) return false;
       return node.tagName === 'DS-SELECT' ||
+        node.tagName === 'DS-MENU' ||
         ['INPUT', 'SELECT', 'TEXTAREA'].includes(node.tagName) ||
         node.isContentEditable ||
         node.getAttribute('role') === 'slider';
@@ -664,7 +714,7 @@ export class Table {
 
   private createRenderModel(): TableRenderModel {
     return createTableRenderModel({
-      columns: this.columns,
+      columns: this.visibleColumns,
       rows: this.rows,
       groups: this.groups,
       grouped: this.grouped,
@@ -686,21 +736,29 @@ export class Table {
 
   private warnModelIssues(): void {
     const issues = tableModelIssues(this.columns, this.rows, this.groups, this.grouped);
+    const visibleColumns = this.visibleColumns;
     if (!this.caption?.trim()) issues.unshift('A non-empty caption is required.');
-    if (this.grouping && !this.columns.some(column => column.id === this.grouping!.columnId)) {
-      issues.push(`Grouping references unknown column id: ${this.grouping.columnId}`);
+    if (this.grouping) {
+      const groupingColumn = this.columns.find(column => column.id === this.grouping!.columnId);
+      if (!groupingColumn) {
+        issues.push(`Grouping references unknown column id: ${this.grouping.columnId}`);
+      } else if (!visibleColumns.some(column => column.id === groupingColumn.id)) {
+        issues.push(`Grouping references hidden column id: ${this.grouping.columnId}`);
+      }
     }
-    if (
-      this.sort &&
-      !this.columns.some(column =>
+    if (this.sort) {
+      const sortColumn = this.columns.find(column =>
         column.id === this.sort!.columnId ||
         column.headerSegments?.some(segment => segment.sortKey === this.sort!.columnId),
-      )
-    ) {
-      issues.push(`Sorting references unknown column id: ${this.sort.columnId}`);
+      );
+      if (!sortColumn) {
+        issues.push(`Sorting references unknown column id: ${this.sort.columnId}`);
+      } else if (!visibleColumns.some(column => column.id === sortColumn.id)) {
+        issues.push(`Sorting references hidden column id: ${this.sort.columnId}`);
+      }
     }
-    const stickyStart = this.columns.filter(column => column.sticky === 'start');
-    const stickyEnd = this.columns.filter(column => column.sticky === 'end');
+    const stickyStart = visibleColumns.filter(column => column.sticky === 'start');
+    const stickyEnd = visibleColumns.filter(column => column.sticky === 'end');
     if (stickyStart.length > 1 || (this.selectable && stickyStart.length > 0)) {
       issues.push('Only one sticky start column is supported, and row selection already owns that lane.');
     }
@@ -1167,7 +1225,7 @@ export class Table {
     return (
       <colgroup>
         {model.selectable && <col class="ds-table__selection-column" />}
-        {this.columns.map(column => {
+        {this.visibleColumns.map(column => {
           const width = tableColumnSize(column);
           const flexible = column.id === model.flexibleColumnId;
           return (
@@ -1216,7 +1274,7 @@ export class Table {
               {this.renderStickyEdge('start')}
             </th>
           )}
-          {this.columns.map(column => (
+          {this.visibleColumns.map(column => (
             this.renderColumnHeader(column, model, interactive, presentational)
           ))}
         </tr>
@@ -1520,7 +1578,7 @@ export class Table {
             'ds-interaction-fill--selected': selected,
           }}>
             {this.renderSelectionControl(
-              `${selected ? 'Deselect' : 'Select'} ${tableRowSelectionLabel(row, this.columns)}`,
+              `${selected ? 'Deselect' : 'Select'} ${tableRowSelectionLabel(row, this.visibleColumns)}`,
               selected,
               false,
               !rowSelectable,
@@ -1529,7 +1587,7 @@ export class Table {
             {this.renderStickyEdge('start')}
           </td>
         )}
-        {this.columns.map(column => {
+        {this.visibleColumns.map(column => {
           const align = column.align ?? 'start';
           const cell = resolveTableCellPresentation(row.cells[column.id], column);
           const tagCell = cell.kind === 'tag';
@@ -1839,7 +1897,7 @@ export class Table {
                 {this.renderStickyEdge('start')}
               </td>
             )}
-            {this.columns.map(column => this.renderSkeletonCell(column, index))}
+            {this.visibleColumns.map(column => this.renderSkeletonCell(column, index))}
           </tr>
         ))}
       </tbody>
@@ -2140,6 +2198,7 @@ export class Table {
               as="span"
               variant="text-body-medium"
               color="secondary"
+              lineTruncation={1}
             >
               {summary}
             </ds-text>
@@ -2177,25 +2236,122 @@ export class Table {
     if (this.captionVisibility !== 'visible') return null;
     return (
       <div class="ds-table__caption-bar ds-table__bar ds-control--md">
-        <div class="ds-table__caption-content">
-          <slot
-            name="header"
-            onSlotchange={this.syncHeaderSlotPresence}
-          />
-          {!this.headerPresent ? (
-            <ds-text
-              class="ds-table__caption-title ds-table__bar-text"
-              as="div"
-              variant="text-title-small"
-              emphasis={true}
-              color="primary"
-              aria-hidden="true"
-            >
-              {this.caption}
-            </ds-text>
-          ) : null}
+        <div class={{
+          'ds-table__caption-content': true,
+          'ds-table__caption-content--trailing': this.showsCaptionTrailing,
+        }}>
+          <div class="ds-table__caption-leading">
+            <slot
+              name="header"
+              onSlotchange={this.syncHeaderSlotPresence}
+            />
+            {!this.headerPresent ? (
+              <ds-text
+                class="ds-table__caption-title ds-table__bar-text"
+                as="div"
+                variant="text-title-small"
+                emphasis={true}
+                color="primary"
+                aria-hidden="true"
+              >
+                {this.caption}
+              </ds-text>
+            ) : null}
+          </div>
+          {this.renderCaptionTrailing()}
         </div>
       </div>
+    );
+  }
+
+  private renderCaptionTrailing() {
+    if (!this.showsCaptionTrailing) return null;
+    return (
+      <div class="ds-table__caption-trailing">
+        {this.renderColumnCustomizerTrigger()}
+      </div>
+    );
+  }
+
+  private renderColumnCustomizerTrigger() {
+    if (!this.showsColumnCustomizer) return null;
+    return (
+      <ds-button-unfilled
+        id={`${this.columnCustomizerElementId}-trigger`}
+        variant="icon"
+        size="md"
+        icon="Preferences"
+        aria-label="Customize table"
+        hasMenu={true}
+        expanded={this.columnCustomizerOpen}
+        controls={this.columnCustomizerElementId}
+        activeFill={false}
+        onDsClick={(event: CustomEvent<MouseEvent>) => {
+          this.toggleColumnCustomizer(event.detail.detail === 0);
+        }}
+      />
+    );
+  }
+
+  private renderColumnCustomizerMenu() {
+    if (!this.showsColumnCustomizer) return null;
+    return (
+      <ds-menu
+        id={this.columnCustomizerElementId}
+        open={this.columnCustomizerOpen}
+        anchorId={`${this.columnCustomizerElementId}-trigger`}
+        align="end"
+        side="bottom"
+        menuLabel="Customize table"
+        initialFocusVisible={this.columnCustomizerInitialFocusVisible}
+        items={tableColumnCustomizerMenuItems(
+          this.columns,
+          this.hiddenColumnIds,
+          this.columnOrder,
+        )}
+        onDsClose={() => this.closeColumnCustomizer()}
+        onDsSelect={event => this.handleColumnCustomizerSelect(event.detail)}
+        onDsReorder={event => this.handleColumnCustomizerReorder(event.detail)}
+      />
+    );
+  }
+
+  private toggleColumnCustomizer(fromKeyboard = false): void {
+    if (this.columnCustomizerOpen) this.closeColumnCustomizer();
+    else this.openColumnCustomizer(fromKeyboard);
+  }
+
+  private openColumnCustomizer(fromKeyboard = false): void {
+    if (!this.showsColumnCustomizer || this.columnCustomizerOpen) return;
+    this.columnCustomizerInitialFocusVisible = fromKeyboard;
+    this.columnCustomizerOpen = true;
+  }
+
+  private closeColumnCustomizer(): void {
+    this.columnCustomizerOpen = false;
+  }
+
+  private emitColumnsConfigChange(hiddenColumnIds: string[], columnOrder: string[]): void {
+    this.dsColumnsConfigChange.emit({
+      hiddenColumnIds: resolveTableHiddenColumnIds(this.columns, hiddenColumnIds),
+      columnOrder: resolveTableColumnOrder(this.columns, columnOrder),
+    });
+  }
+
+  private handleColumnCustomizerReorder(detail: MenuReorderDetail): void {
+    const order = detail.items
+      .filter(item => item.reorderable)
+      .map(item => item.value)
+      .filter((id): id is string => !!id);
+    this.emitColumnsConfigChange(this.hiddenColumnIds, order);
+  }
+
+  private handleColumnCustomizerSelect(item: MenuItemData): void {
+    const columnId = item.value;
+    if (!columnId || item.isInactive) return;
+    this.emitColumnsConfigChange(
+      toggleTableColumnHidden(this.columns, this.hiddenColumnIds, columnId),
+      resolveTableColumnOrder(this.columns, this.columnOrder),
     );
   }
 
@@ -2303,6 +2459,7 @@ export class Table {
           </div>
           {this.renderResultFooter()}
           {this.renderOverflowActionMenu()}
+          {this.renderColumnCustomizerMenu()}
           {this.renderTruncateTooltip()}
           <div class="ds-visually-hidden" role="status" aria-live="polite" aria-atomic="true">
             {this.announcement}

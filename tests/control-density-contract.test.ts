@@ -126,6 +126,15 @@ test('choice rows derive primary and supporting type from control density', () =
   assert.match(parts, /variant={CONTROL_SUPPORTING_TEXT_VARIANT\[size\]}/);
 });
 
+test('menu switch suffix keeps the 8px label gap without overriding the density prefix gap', () => {
+  const css = read('src/wc/components/Menu/Menu.css');
+  assert.doesNotMatch(css, /\.menu-item--switch\s*{[^}]*\bgap:/);
+  assert.match(
+    css,
+    /\.menu-item__switch\s*{[\s\S]*?margin-inline-start: calc\(\s*var\(--dimension-space-100\) - var\(--ds-control-gap/,
+  );
+});
+
 test('shell navigation rows consume the shared control-density recipe', () => {
   const cases = [
     {

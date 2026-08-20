@@ -5,6 +5,9 @@ import localDsTextMetrics, { ruleName } from '../stylelint-plugin-local/index.js
 import localReducedMotion, {
   reducedMotionRuleName,
 } from '../stylelint-plugin-local/require-reduced-motion.js';
+import localRawOpacity, {
+  rawOpacityRuleName,
+} from '../stylelint-plugin-local/no-raw-opacity.js';
 
 async function lint(code: string, codeFilename = 'src/wc/components/Example/Example.css') {
   const result = await stylelint.lint({
@@ -109,6 +112,46 @@ describe(reducedMotionRuleName, () => {
         .thumb { transition: none; }
       }
     `);
+    assert.equal(warnings.length, 0);
+  });
+});
+
+async function lintOpacity(code: string) {
+  const result = await stylelint.lint({
+    code,
+    codeFilename: 'src/wc/components/Example/Example.css',
+    config: {
+      plugins: [localRawOpacity],
+      rules: { [rawOpacityRuleName]: true },
+    },
+  });
+
+  return result.results[0]?.warnings ?? [];
+}
+
+describe(rawOpacityRuleName, () => {
+  it('rejects raw intermediate opacity values', async () => {
+    const warnings = await lintOpacity(`
+      .decimal { opacity: 0.5; }
+      .short-decimal { opacity: .5; }
+      .percentage { opacity: 50%; }
+    `);
+
+    assert.deepEqual(
+      warnings.map(warning => warning.rule),
+      [rawOpacityRuleName, rawOpacityRuleName, rawOpacityRuleName],
+    );
+  });
+
+  it('allows structural endpoints, global values, and token-backed opacity', async () => {
+    const warnings = await lintOpacity(`
+      .hidden { opacity: 0; }
+      .visible { opacity: 1; }
+      .inactive { opacity: var(--effect-opacity-medium); }
+      .configurable { opacity: var(--component-opacity, var(--effect-opacity-medium)); }
+      .inherited { opacity: inherit; }
+    `);
+
     assert.equal(warnings.length, 0);
   });
 });

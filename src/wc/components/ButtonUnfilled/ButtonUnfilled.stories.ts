@@ -379,8 +379,9 @@ export const Surfaces: Story = {
  *
  * - **has a menu** (`label` / `icon-label`) — an action that opens a menu. The
  *   trailing chevron carries the affordance.
- * - **is a menu** (`icon`) — the overflow / more-options control. No chevron, so
- *   the glyph must convey it alone; use `Ellipses`.
+ * - **is a menu** (`icon`) — an overflow or named-menu control. No chevron, so
+ *   the glyph must convey it alone; use `Ellipses` for more options, or a
+ *   specific icon such as `Preferences` for Customize table.
  */
 export const MenuTrigger: Story = {
   parameters: {
@@ -389,9 +390,9 @@ export const MenuTrigger: Story = {
       description: {
         story:
           'One prop, two shapes. `label` and `icon-label` are actions that *have* a menu, so they get a trailing ' +
-          'ChevronDown. The `icon` variant *is* a menu — the overflow control — and stays chevron-free because an ' +
-          '`Ellipses` glyph already means "more options". Never pair `hasMenu` with an icon-only glyph that does ' +
-          'not read as a menu on its own; there is no chevron to fall back on.',
+          'ChevronDown. The `icon` variant *is* a menu and stays chevron-free, so the glyph must convey it alone. ' +
+          'Use `Ellipses` for generic more-options or overflow. Use a specific icon when the menu has a named ' +
+          'purpose, such as `Preferences` for Customize table.',
       },
     },
   },
@@ -451,6 +452,20 @@ export const MenuTrigger: Story = {
               .hasBorder=${false}
               .activeFill=${false}
               aria-label="More options"
+            ></ds-button-unfilled>
+          `,
+        )}
+      </div>
+      <div style="${ROW}">
+        <span style="${LABEL}">is a named menu</span>
+        ${SIZES.map(
+          size => html`
+            <ds-button-unfilled
+              variant="icon"
+              size=${size}
+              icon="Preferences"
+              has-menu
+              aria-label="Customize table"
             ></ds-button-unfilled>
           `,
         )}

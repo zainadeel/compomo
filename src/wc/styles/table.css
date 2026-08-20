@@ -285,7 +285,28 @@
   max-inline-size: 100%;
 }
 
-:where(.ds-table__caption-content > slot) {
+:where(.ds-table__caption-content--trailing) {
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--dimension-space-100);
+}
+
+:where(.ds-table__caption-trailing) {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-inline-size: 0;
+  gap: var(--dimension-space-100);
+}
+
+:where(.ds-table__caption-leading) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+:where(.ds-table__caption-leading > slot) {
   display: contents;
 }
 

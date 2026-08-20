@@ -410,6 +410,12 @@ export interface TableRowActivateDetail {
   rowId: string;
 }
 
+/** Controlled show/hide and data-column order for the table-owned customizer. */
+export interface TableColumnsConfigChangeDetail {
+  hiddenColumnIds: string[];
+  columnOrder: string[];
+}
+
 /** Controlled top-level pagination state. Rows or groups contain only the active page. */
 export interface TablePaginationState extends PaginationState {
   /** Change to request one fresh fitted-capacity snapshot for the current query shape. */

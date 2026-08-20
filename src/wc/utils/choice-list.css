@@ -26,6 +26,7 @@
   background-color: var(--color-background-primary);
   border-radius: var(--dimension-radius-075);
   box-shadow: var(--effect-shadow-elevated-floating);
+  color: var(--color-foreground-secondary);
   animation: dsChoiceFadeIn var(--effect-motion-short-2) forwards;
   backface-visibility: hidden;
   will-change: transform;
@@ -138,6 +139,10 @@ ds-text.ds-choice-item__subtext {
   width: var(--ds-control-icon, var(--dimension-iconography-md));
   height: var(--ds-control-icon, var(--dimension-iconography-md));
   pointer-events: none;
+}
+
+.ds-choice-item.ds-interaction-fill--selected .ds-choice-item__icon {
+  color: var(--color-foreground-primary);
 }
 
 .ds-choice-item__tag {

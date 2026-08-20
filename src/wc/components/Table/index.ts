@@ -23,6 +23,7 @@ export type {
   TableCellValue,
   TableSkeletonWidth,
   TableColumn,
+  TableColumnsConfigChangeDetail,
   TableColumnSticky,
   TableColumnWidth,
   TableDataMode,

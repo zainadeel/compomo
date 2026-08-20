@@ -14,6 +14,7 @@ import type {
   TableCellAction,
   TableCellActionMenuEntry,
   TableColumn,
+  TableColumnsConfigChangeDetail,
   TableGroup,
   TableGroupIntent,
   TableGroupingState,
@@ -931,7 +932,7 @@ export const SafetyEvents: Story = {
               ></ds-select>
             </div>
           </div>
-          <ds-text slot="footer-leading" as="span" variant="text-body-medium" color="secondary">
+          <ds-text slot="footer-leading" as="span" variant="text-body-medium" color="secondary" line-truncation="1">
             Last updated: Aug 13, 2026  7:00 PM PT
           </ds-text>
         </ds-table>
@@ -1030,13 +1031,14 @@ export const GroupingAndMemberSorting: Story = {
   },
   render: args => {
     const [, updateArgs] = useArgs();
-    const grouping = args['grouping'] as TableGroupingState;
+    const grouping = (args['grouping'] as TableGroupingState | null) ?? null;
     const sort = (args['sort'] as TableSortState | null) ?? null;
     const collapsedGroupIds = (args['collapsedGroupIds'] as string[]) ?? [];
     return html`
       <ds-table
         .columns=${COLUMNS}
-        .groups=${groupedRows(ROWS, grouping, sort)}
+        .rows=${grouping ? [] : ROWS}
+        .groups=${grouping ? groupedRows(ROWS, grouping, sort) : []}
         .grouping=${grouping}
         .sort=${sort}
         .collapsedGroupIds=${collapsedGroupIds}
@@ -1238,6 +1240,67 @@ export const OverflowActionMenu: Story = {
       >
         Last dsCellAction: ${String(args['lastAction'])}
       </ds-text>
+    `;
+  },
+};
+
+export const ColumnCustomizer: Story = {
+  name: 'Column customizer',
+  args: {
+    hiddenColumnIds: [] as string[],
+    columnOrder: [] as string[],
+  },
+  argTypes: {
+    hiddenColumnIds: { table: { disable: true } },
+    columnOrder: { table: { disable: true } },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Opt-in columnCustomizer keeps columns as the catalog. hiddenColumnIds and columnOrder are controlled; dsColumnsConfigChange reports live show/hide and data-column reorder. The trailing Preferences control opens the shared Menu of reorderable switch rows and stays open while toggling or dragging. Selection is omitted from the menu, action columns stay last with inactive switches, and the last remaining visible data column cannot be hidden. Persistence stays in the application.',
+      },
+    },
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    const rows = ROWS.slice(0, 4).map(row => ({
+      ...row,
+      cells: {
+        ...row.cells,
+        action: overflowAction(row.selectionLabel ?? row.id),
+      },
+    }));
+    return html`
+      <ds-table
+        data-a11y-fixture
+        .columns=${[
+          { id: 'driver', header: 'Driver', sortable: true, size: 'sm' },
+          { id: 'status', header: 'Status', size: 'xs' },
+          { id: 'vehicle', header: 'Vehicle', size: 'xs' },
+          { id: 'location', header: 'Last known location', size: 'sm' },
+          {
+            id: 'action',
+            kind: 'action',
+            header: '',
+            headerLabel: 'Action',
+            align: 'center',
+            size: 40,
+            sticky: 'end',
+          },
+        ] satisfies TableColumn[]}
+        .rows=${rows}
+        .hiddenColumnIds=${args['hiddenColumnIds'] as string[]}
+        .columnOrder=${args['columnOrder'] as string[]}
+        column-customizer
+        selection-mode="multiple"
+        caption="Customizable drivers"
+        caption-visibility="visible"
+        @dsColumnsConfigChange=${(event: CustomEvent<TableColumnsConfigChangeDetail>) =>
+          updateArgs({
+            hiddenColumnIds: event.detail.hiddenColumnIds,
+            columnOrder: event.detail.columnOrder,
+          })}
+      ></ds-table>
     `;
   },
 };
@@ -1501,7 +1564,7 @@ export const WorkingPagination: Story = {
         @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>
           updateArgs({ selectedRowIds: event.detail.selectedRowIds })}
       >
-        <ds-text slot="footer-leading" as="span" variant="text-body-medium" color="secondary">
+        <ds-text slot="footer-leading" as="span" variant="text-body-medium" color="secondary" line-truncation="1">
           Last updated: just now
         </ds-text>
       </ds-table>
