@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.6.0](https://github.com/zainadeel/compomo/compare/v14.5.0...v14.6.0) (2026-08-20)
+
+
+### Added
+
+* **table:** add overflow action menus, wrap-to-track text, and truncation tooltips ([#487](https://github.com/zainadeel/compomo/issues/487)) ([ac54d34](https://github.com/zainadeel/compomo/commit/ac54d341ab51e58a6fae368b8e46044fb378eee1))
+
 ## [14.5.0](https://github.com/zainadeel/compomo/compare/v14.4.2...v14.5.0) (2026-08-19)
 
 
