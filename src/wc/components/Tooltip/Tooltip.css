@@ -48,6 +48,25 @@
   color: var(--color-foreground-primary);
 }
 
+.tooltip-popup--wrap {
+  white-space: normal;
+  max-inline-size: var(--dimension-panel-width-xs);
+}
+
+.tooltip-popup--wrap .tooltip-inner {
+  height: auto;
+  min-height: var(--ds-control-height, var(--dimension-size-400));
+  padding-block: var(--dimension-space-050);
+  align-items: flex-start;
+}
+
+.tooltip-popup--wrap .tooltip-inner > ds-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+}
+
 @keyframes tooltipFadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }

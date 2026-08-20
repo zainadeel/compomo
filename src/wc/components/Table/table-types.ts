@@ -13,6 +13,10 @@ export type TableLoadMoreMode = 'auto' | 'manual';
 export type TableDataMode = 'infinite' | 'pagination';
 export type TableLoadMoreReason = 'auto' | 'manual' | 'retry';
 export type TableColumnWidth = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+/** Visible line budget before a text track ellipsizes. */
+export type TableCellMaxLines = 1 | 2 | 3;
+/** Resolved clamp, including unlimited wrapping. */
+export type TableCellLineClamp = TableCellMaxLines | 'none';
 /** Semantic color for a group section header (faint surface + bold title). */
 export type TableGroupIntent =
   | 'brand'
@@ -69,6 +73,8 @@ export interface TableCellText {
   target?: TableCellLinkTarget;
   /** Allow this cell to wrap even when its column truncates by default. */
   wrap?: boolean;
+  /** Clamp wrapping text after 1, 2, or 3 lines. Overrides column wrap. */
+  maxLines?: TableCellMaxLines;
   fontFeature?: 'normal' | 'tabular-nums';
 }
 
@@ -83,6 +89,8 @@ export interface TableCellPrimaryText {
   target?: TableCellLinkTarget;
   /** Allow this cell to wrap even when its column truncates by default. */
   wrap?: boolean;
+  /** Clamp wrapping text after 1, 2, or 3 lines. Overrides column wrap. */
+  maxLines?: TableCellMaxLines;
   fontFeature?: 'normal' | 'tabular-nums';
 }
 
@@ -127,6 +135,7 @@ export interface TableCellIconText {
   href?: string;
   target?: TableCellLinkTarget;
   wrap?: boolean;
+  maxLines?: TableCellMaxLines;
   fontFeature?: 'normal' | 'tabular-nums';
 }
 
@@ -308,6 +317,8 @@ export interface TableColumn {
   maxSize?: number;
   /** Wrap cell text instead of truncating it to one line. */
   wrap?: boolean;
+  /** Clamp wrapping text after 1, 2, or 3 lines. Omit with wrap for unlimited wrap. */
+  maxLines?: TableCellMaxLines;
   /** Pin one application column to either inline edge during horizontal scrolling. */
   sticky?: TableColumnSticky;
   /**

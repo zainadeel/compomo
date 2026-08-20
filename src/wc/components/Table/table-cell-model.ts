@@ -22,6 +22,8 @@ import type {
   TableCellTextTrack,
   TableCellValue,
   TableCellLinkTarget,
+  TableCellLineClamp,
+  TableCellMaxLines,
   TableColumn,
 } from './table-types';
 import type { IconColor } from '../Icon/Icon';
@@ -55,6 +57,7 @@ export type TableCellPresentation =
       value: ResolvedTableCellText;
       variant: 'single' | 'multi' | 'triple';
       wraps: boolean;
+      lineClamp: TableCellLineClamp;
     }
   | {
       kind: 'image';
@@ -77,6 +80,7 @@ export type TableCellPresentation =
       singleLine: boolean;
       variant: 'single' | 'multi' | 'triple' | 'primary-pair';
       wraps: boolean;
+      lineClamp: TableCellLineClamp;
     };
 
 function trackText(value: string | number | TableCellTextRun): string | undefined {
@@ -122,6 +126,30 @@ export function normalizeTableCellTextTrack(
   return runs.length ? runs : undefined;
 }
 
+/** Map wrap / maxLines onto wrap-to-track geometry and a line clamp. */
+export function resolveTableCellTextOverflow(
+  source: { wrap?: boolean; maxLines?: TableCellMaxLines },
+  column: TableColumn,
+): { wraps: boolean; lineClamp: TableCellLineClamp } {
+  const wrap = source.wrap ?? column.wrap ?? false;
+  const maxLines = source.maxLines ?? (source.wrap === true ? undefined : column.maxLines);
+  if (maxLines != null) {
+    return { wraps: maxLines > 1, lineClamp: maxLines };
+  }
+  if (wrap) return { wraps: true, lineClamp: 'none' };
+  return { wraps: false, lineClamp: 1 };
+}
+
+/** ds-text overflow props for a resolved clamp. */
+export function tableCellTextOverflowProps(lineClamp: TableCellLineClamp): {
+  lineTruncation: TableCellLineClamp;
+  wrap: 'wrap' | 'nowrap';
+} {
+  if (lineClamp === 'none') return { lineTruncation: 'none', wrap: 'wrap' };
+  if (lineClamp === 1) return { lineTruncation: 1, wrap: 'nowrap' };
+  return { lineTruncation: lineClamp, wrap: 'wrap' };
+}
+
 function resolveTextPresentation(
   source: {
     primary: string | number;
@@ -132,6 +160,7 @@ function resolveTextPresentation(
     href?: string;
     target?: TableCellLinkTarget;
     wrap?: boolean;
+    maxLines?: TableCellMaxLines;
     fontFeature?: 'normal' | 'tabular-nums';
   },
   column: TableColumn,
@@ -141,6 +170,7 @@ function resolveTextPresentation(
   singleLine: boolean;
   variant: 'single' | 'multi' | 'triple' | 'primary-pair';
   wraps: boolean;
+  lineClamp: TableCellLineClamp;
 } {
   const secondary = normalizeTableCellTextTrack(source.secondary);
   const tertiary = options.allowTertiary
@@ -158,6 +188,7 @@ function resolveTextPresentation(
     ...(source.fontFeature ? { fontFeature: source.fontFeature } : {}),
   };
   const singleLine = !options.primaryText && !secondary && !tertiary;
+  const overflow = resolveTableCellTextOverflow(source, column);
   return {
     value,
     singleLine,
@@ -168,7 +199,8 @@ function resolveTextPresentation(
         : singleLine
           ? 'single'
           : 'multi',
-    wraps: value.wrap ?? column.wrap ?? false,
+    wraps: overflow.wraps,
+    lineClamp: overflow.lineClamp,
   };
 }
 
@@ -196,6 +228,7 @@ export function resolveTableCellPresentation(
       value: text.value,
       variant: text.variant === 'primary-pair' ? 'single' : text.variant,
       wraps: text.wraps,
+      lineClamp: text.lineClamp,
     };
   }
   if (isTableCellImage(value)) {
@@ -238,5 +271,6 @@ export function resolveTableCellPresentation(
     singleLine: text.singleLine,
     variant: text.variant,
     wraps: text.wraps,
+    lineClamp: text.lineClamp,
   };
 }

@@ -41,6 +41,15 @@
       - var(--dimension-space-025)
     ) / 2
   );
+  /*
+   * Wrapping secondary on a 2-track cell occupies later tracks. Zero the copy
+   * gap and use later-track + gap as line-height so 1 / 2 / 3 secondary lines
+   * land on 62 / 84 / 106 with primary remaining the first 24px track.
+   */
+  --_table-wrap-secondary-line-height: calc(
+    var(--dimension-size-250) + var(--dimension-space-025)
+  );
+  --_table-wrap-secondary-padding-block: 0;
   --_table-surface: var(--ds-table-surface, var(--color-background-primary));
   --_table-header-surface: var(--ds-table-header-surface, var(--color-background-primary));
   --_table-group-surface: var(--ds-table-group-surface, var(--color-background-faint-neutral));
@@ -813,6 +822,8 @@
  * with column-header labels. Later body-small tracks stay 20px, stacked with
  * a 2px gap. Wrapping 1-track primary folds that gap into line-height so
  * extra lines land on the same 62px and 84px rows as 2- and 3-track cells.
+ * Wrapping secondary keeps primary on track 1 and consumes later tracks the
+ * same way, including a 106px fourth track when secondary wraps to three lines.
  * Header and group rows keep their own recipes.
  */
 :where(.ds-table__cell-primary),
@@ -988,10 +999,33 @@
   overflow-wrap: anywhere;
 }
 
-:where(.ds-table__cell--text-single .ds-table__cell-copy--wrap .ds-table__cell-primary),
-:where(.ds-table__cell--icon-text-single .ds-table__cell-copy--wrap .ds-table__cell-primary) {
+/*
+ * Wrapping tracks must be block boxes so ds-text line-clamp (a -webkit-box
+ * inner) can grow onto later tracks. Flex + line-clamp otherwise collapses
+ * to the 40px single-track row.
+ */
+:where(.ds-table__cell--text-wrap .ds-table__cell-track--text),
+:where(.ds-table__cell--icon-text-wrap .ds-table__cell-track--text) {
+  display: block;
+}
+
+:where(.ds-table__cell--text-wrap.ds-table__cell--text-single .ds-table__cell-primary),
+:where(.ds-table__cell--text-wrap.ds-table__cell--text-multi .ds-table__cell-primary),
+:where(.ds-table__cell--icon-text-wrap.ds-table__cell--icon-text-single .ds-table__cell-primary),
+:where(.ds-table__cell--icon-text-wrap.ds-table__cell--icon-text-multi .ds-table__cell-primary) {
   line-height: var(--_table-wrap-primary-line-height);
   padding-block: var(--_table-wrap-primary-padding-block);
+}
+
+:where(.ds-table__cell--text-wrap.ds-table__cell--text-multi .ds-table__cell-copy),
+:where(.ds-table__cell--icon-text-wrap.ds-table__cell--icon-text-multi .ds-table__cell-copy) {
+  gap: 0;
+}
+
+:where(.ds-table__cell--text-wrap.ds-table__cell--text-multi .ds-table__cell-secondary),
+:where(.ds-table__cell--icon-text-wrap.ds-table__cell--icon-text-multi .ds-table__cell-secondary) {
+  line-height: var(--_table-wrap-secondary-line-height);
+  padding-block: var(--_table-wrap-secondary-padding-block);
 }
 
 :where(.ds-table__cell--align-center),

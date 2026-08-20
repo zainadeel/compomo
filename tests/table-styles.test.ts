@@ -47,6 +47,16 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(componentTsx, /ds-table__cell--action-menu/);
   assert.match(componentTsx, /renderOverflowActionMenu/);
   assert.match(componentTsx, /<ds-menu/);
+  assert.match(componentTsx, /renderTruncateTooltip/);
+  assert.match(componentTsx, /<ds-tooltip/);
+  assert.match(
+    css,
+    /\.ds-table__cell--text-wrap \.ds-table__cell-track--text\)[\s\S]*?display: block/,
+  );
+  assert.match(
+    componentCss,
+    /\.ds-table__cell--text-wrap ds-text\.ds-table__cell-track--text[\s\S]*?display: block/,
+  );
   assert.match(componentTsx, /variant === 'text-with-tag' \? 'sm' : 'md'/);
   assert.match(componentTsx, /variant === 'text-with-tag' \? 'single' : 'double'/);
   assert.match(componentTsx, /'ds-table--caption-visible'/);
@@ -70,6 +80,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
     'ds-table__cell-icon-text',
     'ds-table__cell-tertiary',
     'ds-table__cell-track--runs',
+    'ds-table__cell--text-wrap',
     'ds-table__group-content',
     'ds-table__collapse-all-overlay',
     'ds-table__sticky-edge',
@@ -87,12 +98,21 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   );
   assert.match(
     css,
-    /\.ds-table__cell--text-single \.ds-table__cell-copy--wrap \.ds-table__cell-primary\)[\s\S]*?line-height: var\(--_table-wrap-primary-line-height\)/,
+    /\.ds-table__cell--text-wrap\.ds-table__cell--text-single \.ds-table__cell-primary\)[\s\S]*?line-height: var\(--_table-wrap-primary-line-height\)/,
   );
   assert.match(
     componentCss,
-    /\.ds-table__cell--text-single \.ds-table__cell-copy--wrap \.ds-table__cell-primary[\s\S]*?line-height: var\(--_table-wrap-primary-line-height\)/,
+    /\.ds-table__cell--text-wrap\.ds-table__cell--text-single \.ds-table__cell-primary[\s\S]*?line-height: var\(--_table-wrap-primary-line-height\)/,
   );
+  assert.match(
+    css,
+    /--_table-wrap-secondary-line-height: calc\(\s*var\(--dimension-size-250\) \+ var\(--dimension-space-025\)\s*\)/,
+  );
+  assert.match(
+    css,
+    /\.ds-table__cell--text-wrap\.ds-table__cell--text-multi \.ds-table__cell-secondary\)[\s\S]*?line-height: var\(--_table-wrap-secondary-line-height\)/,
+  );
+  assert.match(componentTsx, /ds-table__cell--text-wrap/);
   assert.match(css, /\.ds-table__cell-icon-text\)[\s\S]*?gap: var\(--dimension-space-025\)/);
   assert.match(css, /\.ds-table__cell-icon-text-icon\)[\s\S]*?padding: var\(--dimension-space-025\)/);
   assert.match(css, /\.ds-table__cell-image[\s\S]*?aspect-ratio: 16 \/ 9/);

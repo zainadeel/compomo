@@ -14,6 +14,7 @@ test('normalizes text cells once for markup and class recipes', () => {
     singleLine: true,
     variant: 'single',
     wraps: false,
+    lineClamp: 1,
   });
   assert.deepEqual(
     resolveTableCellPresentation(
@@ -32,6 +33,7 @@ test('normalizes text cells once for markup and class recipes', () => {
       singleLine: false,
       variant: 'multi',
       wraps: false,
+      lineClamp: 1,
     },
   );
   assert.deepEqual(
@@ -72,6 +74,7 @@ test('normalizes text cells once for markup and class recipes', () => {
       singleLine: false,
       variant: 'triple',
       wraps: false,
+      lineClamp: 1,
     },
   );
   assert.equal(
@@ -137,6 +140,7 @@ test('preserves declarative non-text cell kinds and variants', () => {
       value: { primary: 'Freightliner Cascadia' },
       variant: 'single',
       wraps: false,
+      lineClamp: 1,
     },
   );
   assert.deepEqual(
@@ -163,6 +167,7 @@ test('preserves declarative non-text cell kinds and variants', () => {
       },
       variant: 'multi',
       wraps: false,
+      lineClamp: 1,
     },
   );
   assert.equal(
@@ -221,4 +226,47 @@ test('preserves declarative non-text cell kinds and variants', () => {
   );
   assert.equal(tag.kind, 'tag');
   assert.equal(tag.variant, 'tag-with-text');
+});
+
+test('resolves wrap and maxLines into wrap geometry and a line clamp', () => {
+  assert.deepEqual(resolveTableCellPresentation({ primary: 'Notes' }, { ...column, wrap: true }), {
+    kind: 'text',
+    cellType: 'text',
+    value: { primary: 'Notes' },
+    primaryText: false,
+    singleLine: true,
+    variant: 'single',
+    wraps: true,
+    lineClamp: 'none',
+  });
+  assert.equal(
+    resolveTableCellPresentation({ primary: 'Notes' }, { ...column, maxLines: 2 }).lineClamp,
+    2,
+  );
+  assert.equal(
+    resolveTableCellPresentation({ primary: 'Notes' }, { ...column, maxLines: 2 }).wraps,
+    true,
+  );
+  assert.equal(
+    resolveTableCellPresentation({ primary: 'Notes', maxLines: 3 }, column).lineClamp,
+    3,
+  );
+  assert.equal(
+    resolveTableCellPresentation(
+      { primary: 'Notes', wrap: true },
+      { ...column, maxLines: 2 },
+    ).lineClamp,
+    'none',
+  );
+  assert.equal(
+    resolveTableCellPresentation(
+      { primary: 'Notes', wrap: true, maxLines: 2 },
+      column,
+    ).lineClamp,
+    2,
+  );
+  assert.equal(
+    resolveTableCellPresentation({ primary: 'Notes', wrap: false }, { ...column, wrap: true }).wraps,
+    false,
+  );
 });

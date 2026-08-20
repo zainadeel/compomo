@@ -1216,6 +1216,7 @@ test('wrapping primary occupies 2-track and 3-track row heights', async ({ page 
     });
 
   await expect(oneLine).toHaveClass(/ds-table__cell--text-single/);
+  await expect(oneLine).toHaveClass(/ds-table__cell--text-wrap/);
   await expect(twoLine).toHaveClass(/ds-table__cell--text-single/);
   await expect(threeLine).toHaveClass(/ds-table__cell--text-single/);
   await expect(oneLine).toHaveCSS('width', '140px');
@@ -1239,6 +1240,92 @@ test('wrapping primary occupies 2-track and 3-track row heights', async ({ page 
   await expect(threeLine.locator('.ds-table__cell-primary')).toHaveCSS('height', '68px');
   await expect(threeTrack).toHaveClass(/ds-table__cell--text-triple/);
   await expect(threeTrack).toHaveCSS('height', '84px');
+});
+
+test('wrapping secondary occupies 3-track and 4-track row heights', async ({ page }) => {
+  const two = page.locator('#wrap-secondary-two');
+  const three = page.locator('#wrap-secondary-three');
+  const oneLine = two.locator('[data-row-id="wrap-secondary-one-line"] [data-column-id="notes"]');
+  const twoLine = two.locator('[data-row-id="wrap-secondary-two-line"] [data-column-id="notes"]');
+  const threeLine = three.locator('[data-row-id="wrap-secondary-three-line"] [data-column-id="notes"]');
+  const threeTrack = two.locator('[data-row-id="wrap-secondary-two-line"] [data-column-id="name"]');
+
+  const secondaryLines = (cell: ReturnType<typeof two.locator>) =>
+    cell.locator('.ds-table__cell-secondary .ds-text__element').evaluate(element => {
+      const lineHeight = parseFloat(getComputedStyle(element).lineHeight);
+      return Math.round(element.getBoundingClientRect().height / lineHeight);
+    });
+
+  for (const cell of [oneLine, twoLine, threeLine]) {
+    await expect(cell).toHaveClass(/ds-table__cell--text-wrap/);
+    await expect(cell).toHaveClass(/ds-table__cell--text-multi/);
+    await expect(cell.locator('.ds-table__cell-copy')).toHaveCSS('gap', '0px');
+    await expect(cell.locator('.ds-table__cell-secondary')).toHaveCSS('line-height', '22px');
+    await expect(cell.locator('.ds-table__cell-secondary')).toHaveCSS('padding-top', '0px');
+    await expect(cell.locator('.ds-table__cell-secondary')).toHaveCSS('padding-bottom', '0px');
+    await expect(cell.locator('.ds-table__cell-primary')).toHaveCSS('line-height', '22px');
+    await expect(cell.locator('.ds-table__cell-primary')).toHaveCSS('height', '24px');
+  }
+
+  expect(await secondaryLines(oneLine)).toBe(1);
+  expect(await secondaryLines(twoLine)).toBe(2);
+  expect(await secondaryLines(threeLine)).toBe(3);
+
+  await expect(oneLine).toHaveCSS('height', '62px');
+  await expect(twoLine).toHaveCSS('height', '84px');
+  await expect(threeTrack).toHaveClass(/ds-table__cell--text-triple/);
+  await expect(threeTrack).toHaveCSS('height', '84px');
+  await expect(threeLine).toHaveCSS('height', '106px');
+  await expect(threeLine.locator('.ds-table__cell-secondary')).toHaveCSS('height', '66px');
+});
+
+test('shows a truncation tooltip when 1-, 2-, or 3-line text overflows', async ({ page }) => {
+  const table = page.locator('#truncate-tooltip');
+  const longLocation =
+    'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia';
+  const tooltip = page.getByRole('tooltip', { name: longLocation });
+  const hoverNotes = async (rowId: string) => {
+    await table.locator(`[data-row-id="${rowId}"] [data-column-id="notes"] .ds-table__cell-primary`).hover();
+  };
+
+  const one = table.locator('[data-row-id="truncate-one"] [data-column-id="notes"]');
+  const two = table.locator('[data-row-id="truncate-two"] [data-column-id="notes"]');
+  const three = table.locator('[data-row-id="truncate-three"] [data-column-id="notes"]');
+  const wrap = table.locator('[data-row-id="truncate-wrap"] [data-column-id="notes"]');
+  const link = table.locator('[data-row-id="truncate-link"] [data-column-id="notes"] a');
+
+  await expect(one).toHaveCSS('height', '40px');
+  await expect(two).toHaveClass(/ds-table__cell--text-wrap/);
+  await expect(two).toHaveCSS('width', '140px');
+  await expect(two.locator('.ds-table__cell-primary')).toHaveClass(/ds-text--truncate-2/);
+  await expect(two).toHaveCSS('height', '62px');
+  await expect(three.locator('.ds-table__cell-primary')).toHaveClass(/ds-text--truncate-3/);
+  await expect(three).toHaveCSS('height', '84px');
+
+  await hoverNotes('truncate-one');
+  await expect(tooltip).toBeVisible();
+  await expect(one.locator('.ds-table__cell-primary')).not.toHaveAttribute('aria-describedby');
+
+  await hoverNotes('truncate-two');
+  await expect(tooltip).toBeVisible();
+
+  await hoverNotes('truncate-three');
+  await expect(tooltip).toBeVisible();
+
+  await hoverNotes('truncate-short');
+  await expect(tooltip).toHaveCount(0);
+
+  await hoverNotes('truncate-wrap');
+  await expect(tooltip).toHaveCount(0);
+  await expect(wrap).toHaveClass(/ds-table__cell--text-wrap/);
+  await expect(wrap.locator('.ds-table__cell-primary')).not.toHaveClass(/ds-text--truncate-/);
+
+  await hoverNotes('truncate-disabled');
+  await expect(tooltip).toHaveCount(0);
+  await expect(table.locator('[data-row-id="truncate-disabled"]')).toHaveClass(/ds-table__row--disabled/);
+
+  await link.hover();
+  await expect(tooltip).toBeVisible();
 });
 
 test('positions sort controls according to column alignment', async ({ page }) => {

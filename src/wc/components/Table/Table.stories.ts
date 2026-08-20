@@ -7,6 +7,7 @@ import '../../../../dist/components/ds-select.js';
 import '../../../../dist/components/ds-bar-action.js';
 import '../../../../dist/components/ds-button-unfilled.js';
 import '../../../../dist/components/ds-menu.js';
+import '../../../../dist/components/ds-tooltip.js';
 import '../../../../dist/components/ds-pagination.js';
 import '../../styles/table.css';
 import type {
@@ -1245,7 +1246,7 @@ export const ContentPrimitives: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Scalar values, primary/secondary copy, null values, numeric alignment, truncation, and explicit wrapping share stable cell-layer classes. Wrapping 1-track primary occupies the same 62px and 84px rows as 2-track and 3-track cells.',
+        story: 'Scalar values, primary/secondary copy, null values, numeric alignment, truncation, and explicit wrapping share stable cell-layer classes. Wrapping 1-track primary occupies the same 62px and 84px rows as 2-track and 3-track cells. Wrapping secondary stays on track 1 for primary and consumes later tracks, including 106px when secondary wraps to three lines. Review secondary wrap on the last two rows of Wrapping content.',
       },
     },
   },
@@ -1275,6 +1276,32 @@ export const ContentPrimitives: Story = {
             cells: {
               name: { primary: 'Dry van', secondary: 'TR-2201' },
               notes: { primary: 'This individual cell wraps onto the second track.', wrap: true },
+              quantity: null,
+            },
+          },
+          {
+            id: 'primitive-secondary-two',
+            cells: {
+              name: {
+                primary: 'Reefer trailer',
+                secondary: 'TR-1048',
+                tertiary: 'Active reefer',
+              },
+              notes: {
+                primary: 'Reefer trailer',
+                secondary: 'Due after the next delivery window.',
+              },
+              quantity: { primary: 4, fontFeature: 'tabular-nums' },
+            },
+          },
+          {
+            id: 'primitive-secondary-three',
+            cells: {
+              name: { primary: 'Dry van', secondary: 'TR-2201' },
+              notes: {
+                primary: 'Dry van',
+                secondary: 'Temperature check is due after the next delivery window.',
+              },
               quantity: null,
             },
           },
@@ -1686,28 +1713,85 @@ export const NativeGroupedStickyPerformance: Story = {
 
 export const NarrowAndLongContent: Story = {
   name: 'Narrow viewport and long content',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Default cells truncate to one line. Hover an overflowing track to see the omitted value in one table-owned tooltip. maxLines 2 and 3 wrap onto the named 2-track and 3-track row heights, then ellipsize with the same tooltip. wrap: true remains unlimited and does not show a truncation tooltip. Disabled rows never show it.',
+      },
+    },
+  },
   render: () => html`
     <div style="max-inline-size:var(--dimension-panel-width-xs);">
       <ds-table
         .columns=${[
-          { id: 'driver', header: 'Driver', size: 'sm' },
-          { id: 'location', header: 'Last known location', size: 'md', wrap: true },
-          { id: 'event', header: 'Latest event', size: 'sm' },
+          { id: 'case', header: 'Case', size: 'xs' },
+          { id: 'notes', header: 'Notes', size: 'sm' },
         ] satisfies TableColumn[]}
         .rows=${[
           {
-            id: 'long-content',
+            id: 'truncate-one',
             cells: {
-              driver: {
-                primary: 'Alexandria Montgomery-Wilson',
-                secondary: 'alexandria.montgomery-wilson@example.com',
+              case: '1 line',
+              notes: 'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
+            },
+          },
+          {
+            id: 'truncate-two',
+            cells: {
+              case: '2 lines',
+              notes: {
+                primary: 'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
+                maxLines: 2,
               },
-              location: 'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
-              event: 'Vehicle inspection completed successfully',
+            },
+          },
+          {
+            id: 'truncate-three',
+            cells: {
+              case: '3 lines',
+              notes: {
+                primary: 'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
+                maxLines: 3,
+              },
+            },
+          },
+          {
+            id: 'truncate-wrap',
+            cells: {
+              case: 'Wrap',
+              notes: {
+                primary: 'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
+                wrap: true,
+              },
+            },
+          },
+          {
+            id: 'truncate-short',
+            cells: {
+              case: 'Fits',
+              notes: 'Fleet',
+            },
+          },
+          {
+            id: 'truncate-disabled',
+            disabled: true,
+            cells: {
+              case: 'Disabled',
+              notes: 'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
+            },
+          },
+          {
+            id: 'truncate-link',
+            cells: {
+              case: 'Link',
+              notes: {
+                primary: 'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
+                href: '/routes/highway-99',
+              },
             },
           },
         ] satisfies TableRow[]}
-        caption="Long-content behavior"
+        caption="Truncation tooltip"
         caption-visibility="visible"
       ></ds-table>
     </div>

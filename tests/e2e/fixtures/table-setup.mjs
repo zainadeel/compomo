@@ -1,5 +1,6 @@
 import '/dist/components/ds-table.js';
 import '/dist/components/ds-menu.js';
+import '/dist/components/ds-tooltip.js';
 
 await customElements.whenDefined('ds-table');
 
@@ -349,6 +350,100 @@ wrapThree.rows = [
         tertiary: 'Active reefer',
       },
       notes: 'Temperature check is due after the next delivery window.',
+    },
+  },
+];
+
+const wrapSecondaryTwo = document.getElementById('wrap-secondary-two');
+wrapSecondaryTwo.columns = [
+  { id: 'name', header: 'Tracks' },
+  { id: 'notes', header: 'Wrapping secondary', wrap: true, size: 180 },
+];
+wrapSecondaryTwo.rows = [
+  {
+    id: 'wrap-secondary-one-line',
+    cells: {
+      name: { primary: 'Reefer trailer', secondary: 'TR-1048' },
+      notes: { primary: 'Reefer trailer', secondary: 'TR-1048' },
+    },
+  },
+  {
+    id: 'wrap-secondary-two-line',
+    cells: {
+      name: {
+        primary: 'Reefer trailer',
+        secondary: 'TR-1048',
+        tertiary: 'Active reefer',
+      },
+      notes: {
+        primary: 'Reefer trailer',
+        secondary: 'Due after the next delivery window.',
+      },
+    },
+  },
+];
+
+const wrapSecondaryThree = document.getElementById('wrap-secondary-three');
+wrapSecondaryThree.columns = [
+  { id: 'name', header: 'Tracks' },
+  { id: 'notes', header: 'Wrapping secondary', wrap: true, size: 140 },
+];
+wrapSecondaryThree.rows = [
+  {
+    id: 'wrap-secondary-three-line',
+    cells: {
+      name: {
+        primary: 'Reefer trailer',
+        secondary: 'TR-1048',
+        tertiary: 'Active reefer',
+      },
+      notes: {
+        primary: 'Reefer trailer',
+        secondary: 'Temperature check is due after the next delivery window.',
+      },
+    },
+  },
+];
+
+const LONG_LOCATION =
+  'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia';
+
+const truncateTooltip = document.getElementById('truncate-tooltip');
+truncateTooltip.columns = [
+  { id: 'case', header: 'Case' },
+  { id: 'notes', header: 'Notes', size: 140 },
+];
+truncateTooltip.rows = [
+  {
+    id: 'truncate-one',
+    cells: { case: '1 line', notes: LONG_LOCATION },
+  },
+  {
+    id: 'truncate-two',
+    cells: { case: '2 lines', notes: { primary: LONG_LOCATION, maxLines: 2 } },
+  },
+  {
+    id: 'truncate-three',
+    cells: { case: '3 lines', notes: { primary: LONG_LOCATION, maxLines: 3 } },
+  },
+  {
+    id: 'truncate-wrap',
+    cells: { case: 'Wrap', notes: { primary: LONG_LOCATION, wrap: true } },
+  },
+  {
+    id: 'truncate-short',
+    cells: { case: 'Fits', notes: 'Fleet' },
+  },
+  {
+    id: 'truncate-disabled',
+    disabled: true,
+    cells: { case: 'Disabled', notes: LONG_LOCATION },
+  },
+  {
+    id: 'truncate-link',
+    cells: {
+      case: 'Link',
+      notes: { primary: LONG_LOCATION, href: '/routes/highway-99' },
     },
   },
 ];

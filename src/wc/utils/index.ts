@@ -12,6 +12,7 @@ export type {
   ResolveMetricTrendOptions,
 } from './metric-change';
 export { truncateSvgTextToWidth } from './truncate-svg-text';
+export { isElementTruncated } from './is-element-truncated';
 export {
   parseCssTimeMs,
   prefersReducedMotion,
