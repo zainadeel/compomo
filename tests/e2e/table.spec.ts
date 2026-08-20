@@ -1059,7 +1059,9 @@ test('renders independently styled standard cell types', async ({ page }) => {
 
 test('opens a shared overflow action menu and emits only on command select', async ({ page }) => {
   const table = page.locator('#cell-types');
-  const trigger = table.getByRole('button', { name: 'More actions' });
+  const trigger = table
+    .locator('[data-row-id="tag-variants"] [data-column-id="action"]')
+    .getByRole('button', { name: 'More actions', exact: true });
   await page.evaluate(() => {
     window.__tableCellActionEvents = [];
     window.__tableRowActivationEvents = [];
@@ -1077,25 +1079,27 @@ test('opens a shared overflow action menu and emits only on command select', asy
   await expect.poll(() => page.evaluate(() => window.__tableCellActionEvents)).toEqual([]);
   await expect.poll(() => page.evaluate(() => window.__tableRowActivationEvents)).toEqual([]);
 
-  const menu = page.getByRole('menu', { name: 'More actions' });
+  const menu = page.getByRole('menu', { name: 'More actions', exact: true });
   await expect(menu).toBeVisible();
   await expect(menu).toHaveJSProperty('popover', 'manual');
   expect(await menu.evaluate(element => element.matches(':popover-open'))).toBe(true);
   await expect(menu.getByRole('menuitem', { name: 'Download report' })).toBeDisabled();
   await expect(menu.getByRole('menuitem', { name: 'Delete' })).toHaveClass(/menu-item--destructive/);
+  await expect(menu.getByRole('menuitem', { name: 'View details' })).toBeFocused();
 
   await page.keyboard.press('Escape');
   await expect(menu).toHaveCount(0);
   await expect(trigger).toBeFocused();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
   await expect.poll(() => page.evaluate(() => window.__tableCellActionEvents)).toEqual([]);
 
   await trigger.click();
-  await page.getByRole('menuitem', { name: 'View details' }).click();
+  await menu.getByRole('menuitem', { name: 'View details' }).click();
   await expect.poll(() => page.evaluate(() => window.__tableCellActionEvents)).toEqual([
     { actionId: 'view', rowId: 'tag-variants', columnId: 'action' },
   ]);
   await expect.poll(() => page.evaluate(() => window.__tableRowActivationEvents)).toEqual([]);
-  await expect(page.getByRole('menu', { name: 'More actions' })).toHaveCount(0);
+  await expect(menu).toHaveCount(0);
   await expect(trigger).toBeFocused();
 });
 
@@ -1251,7 +1255,7 @@ test('wrapping secondary occupies 3-track and 4-track row heights', async ({ pag
   const threeTrack = two.locator('[data-row-id="wrap-secondary-two-line"] [data-column-id="name"]');
 
   const secondaryLines = (cell: ReturnType<typeof two.locator>) =>
-    cell.locator('.ds-table__cell-secondary .ds-text__element').evaluate(element => {
+    cell.locator('.ds-table__cell-secondary').evaluate(element => {
       const lineHeight = parseFloat(getComputedStyle(element).lineHeight);
       return Math.round(element.getBoundingClientRect().height / lineHeight);
     });

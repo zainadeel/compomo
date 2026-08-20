@@ -399,7 +399,9 @@ wrapSecondaryThree.rows = [
       },
       notes: {
         primary: 'Reefer trailer',
-        secondary: 'Temperature check is due after the next delivery window.',
+        secondary:
+          'Temperature check is due after the next delivery window. Confirm the reefer setpoint before departure and after every stop on this route.',
+        maxLines: 3,
       },
     },
   },
