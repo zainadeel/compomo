@@ -129,8 +129,69 @@ test('menu prefix and drag handles share Select choice-row density and secondary
     .getByRole('menu', { name: 'Customize columns' })
     .getByRole('menuitemcheckbox', { name: 'Driver' });
   await expect(handleRow).toBeVisible();
+  await expect(handleRow.locator('[data-menu-handle]')).toHaveCSS('cursor', 'grab');
   await expect.poll(() => leadingMetrics(handleRow)).toEqual(expected);
 });
+
+test(
+  'reorder drop rail stays centered between rows at every boundary',
+  menuGeometry,
+  async ({ page }) => {
+    await page.locator('#reorder-anchor').click();
+    const menu = page.getByRole('menu', { name: 'Customize columns' });
+    const rows = menu
+      .getByRole('menuitemcheckbox')
+      .filter({ has: page.locator('[data-menu-handle]') });
+    const driverHandle = rows.nth(0).locator('[data-menu-handle]');
+    const boxes = await Promise.all([
+      rows.nth(0).boundingBox(),
+      rows.nth(1).boundingBox(),
+      rows.nth(2).boundingBox(),
+    ]);
+    expect(boxes.every(Boolean)).toBe(true);
+    const [firstBox, middleBox, lastBox] = boxes as [
+      NonNullable<(typeof boxes)[number]>,
+      NonNullable<(typeof boxes)[number]>,
+      NonNullable<(typeof boxes)[number]>,
+    ];
+    const rowGap = middleBox.y - (firstBox.y + firstBox.height);
+    expect(rowGap).toBeGreaterThan(0);
+
+    await driverHandle.dispatchEvent('pointerdown', {
+      button: 0,
+      pointerId: 51,
+      clientY: firstBox.y + firstBox.height / 2,
+    });
+
+    const railCenter = () =>
+      menu.locator('[data-menu-drop-rail]').evaluate(element => {
+        const rect = element.getBoundingClientRect();
+        return rect.y + rect.height / 2;
+      });
+    const movePointer = (clientY: number) =>
+      page.evaluate(y => {
+        window.dispatchEvent(new PointerEvent('pointermove', { pointerId: 51, clientY: y }));
+      }, clientY);
+
+    const middleGapCenter = (middleBox.y + middleBox.height + lastBox.y) / 2;
+    await movePointer(middleGapCenter);
+    await expect.poll(railCenter).toBeCloseTo(middleGapCenter, 5);
+
+    await movePointer(firstBox.y);
+    await expect.poll(railCenter).toBeCloseTo(firstBox.y - rowGap / 2, 5);
+
+    await movePointer(lastBox.y + lastBox.height);
+    await expect(menu.locator('[data-menu-drop-rail]')).toHaveCount(1);
+    await expect
+      .poll(railCenter)
+      .toBeCloseTo(lastBox.y + lastBox.height + rowGap / 2, 5);
+
+    await page.evaluate(() => {
+      window.dispatchEvent(new PointerEvent('pointercancel', { pointerId: 51 }));
+    });
+    await expect(menu.locator('[data-menu-drop-rail]')).toHaveCount(0);
+  },
+);
 
 test('reorderable switch rows move with keyboard and pointer without closing', async ({ page }) => {
   await page.locator('#reorder-anchor').click();
@@ -187,6 +248,27 @@ test('reorderable switch rows move with keyboard and pointer without closing', a
   });
   await expect(menu.getByRole('menuitemcheckbox').nth(0)).toHaveAccessibleName('Vehicle');
   await expect(menu.getByRole('menuitemcheckbox').nth(1)).toHaveAccessibleName('Status');
+  await expect(menu).toBeVisible();
+
+  const driverTargetBox = await menu
+    .getByRole('menuitemcheckbox', { name: 'Driver' })
+    .boundingBox();
+  expect(driverTargetBox).not.toBeNull();
+  await menu
+    .getByRole('menuitemcheckbox', { name: 'Vehicle' })
+    .locator('[data-menu-handle]')
+    .dragTo(menu.getByRole('menuitemcheckbox', { name: 'Driver' }), {
+      targetPosition: { x: 16, y: driverTargetBox!.height - 1 },
+    });
+  await expect(menu.getByRole('menuitemcheckbox').nth(2)).toHaveAccessibleName('Vehicle');
+
+  await menu
+    .getByRole('menuitemcheckbox', { name: 'Vehicle' })
+    .locator('[data-menu-handle]')
+    .dragTo(menu.getByRole('menuitemcheckbox', { name: 'Status' }), {
+      targetPosition: { x: 16, y: 1 },
+    });
+  await expect(menu.getByRole('menuitemcheckbox').nth(0)).toHaveAccessibleName('Vehicle');
   await expect(menu).toBeVisible();
 });
 

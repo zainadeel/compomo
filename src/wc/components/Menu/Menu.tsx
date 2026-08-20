@@ -787,6 +787,8 @@ export class Menu {
                     const dragging = this.reorderFromFlat === idx;
                     const dropBefore =
                       dragLocated?.sectionIndex === si &&
+                      dragRange !== null &&
+                      itemIndex <= dragRange.end &&
                       this.reorderInsertBefore === itemIndex;
                     const dropAfter =
                       dragLocated?.sectionIndex === si &&
@@ -812,8 +814,6 @@ export class Menu {
                           'menu-item--destructive': !!item.isDestructive,
                           'menu-item--focused': isFocused,
                           'menu-item--dragging': dragging,
-                          'menu-item--drop-before': dropBefore,
-                          'menu-item--drop-after': dropAfter,
                         }}
                         role={
                           hasCompositeSections
@@ -862,6 +862,17 @@ export class Menu {
                           this.focusedIndex = idx;
                         }}
                       >
+                        {(dropBefore || dropAfter) && (
+                          <span
+                            class={{
+                              'menu-item__drop-rail': true,
+                              'menu-item__drop-rail--before': dropBefore,
+                              'menu-item__drop-rail--after': dropAfter,
+                            }}
+                            data-menu-drop-rail
+                            aria-hidden="true"
+                          />
+                        )}
                         {item.reorderable ? (
                           <span
                             class="menu-item__handle ds-choice-item__icon ds-control-icon-box ds-interaction-fill__content"
