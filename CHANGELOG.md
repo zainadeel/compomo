@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.7.0](https://github.com/zainadeel/compomo/compare/v14.6.0...v14.7.0) (2026-08-20)
+
+
+### Added
+
+* **table:** add a table-owned column customizer for live visibility and reorder ([#489](https://github.com/zainadeel/compomo/issues/489)) ([f469bde](https://github.com/zainadeel/compomo/commit/f469bde4440e9981d8ed924201a5b7294ea681f9))
+
 ## [14.6.0](https://github.com/zainadeel/compomo/compare/v14.5.0...v14.6.0) (2026-08-20)
 
 
