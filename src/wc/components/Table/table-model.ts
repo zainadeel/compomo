@@ -315,6 +315,21 @@ export function formatTableTotalSummary(
   return label.replace('{total}', new Intl.NumberFormat(locale).format(total as number));
 }
 
+/**
+ * True when a footer slot belongs to the table itself: a light-DOM child of the
+ * host, or a node Stencil already relocated into the table footer. Nested
+ * dialogs (saved-views modal actions) keep slot="footer" but are neither.
+ */
+export function isOwnedTableFooterSlot(node: Element, host: Element): boolean {
+  return node.parentElement === host || node.closest('.ds-table__footer') !== null;
+}
+
+export function hasOwnedTableFooterSlot(host: Element, slotName: string): boolean {
+  return [...host.querySelectorAll(`[slot="${slotName}"]`)].some(node =>
+    isOwnedTableFooterSlot(node, host),
+  );
+}
+
 export function tableModelIssues(
   columns: TableColumn[],
   rows: TableRow[],
