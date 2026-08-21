@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.9.0](https://github.com/zainadeel/compomo/compare/v14.8.0...v14.9.0) (2026-08-21)
+
+
+### Added
+
+* **table:** fill empty states and add dotted header help ([#497](https://github.com/zainadeel/compomo/issues/497)) ([d2cd528](https://github.com/zainadeel/compomo/commit/d2cd52878f0fa5ed88b952058a3cde553fbe1f81))
+
 ## [14.8.0](https://github.com/zainadeel/compomo/compare/v14.7.0...v14.8.0) (2026-08-21)
 
 
