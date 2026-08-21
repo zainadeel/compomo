@@ -1955,24 +1955,34 @@ export const VirtualFitViewport: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Virtual mode follows the fitted table height as surrounding page chrome collapses or the window resizes. The visible row window is recomputed from that definite block size.',
+        story: 'Scroll the expanded page header until the table reaches its compact insets and owns vertical scrolling. The recycled row window tracks that fitted block size.',
       },
     },
   },
   render: () => html`
-    <div style="height: 480px; overflow: auto;">
+    <div
+      style="
+        --story-table-fit-start: 80px;
+        height: 480px;
+        overflow: auto;
+        overscroll-behavior: none;
+      "
+    >
       <div style="height: 120px; background: var(--color-background-secondary);"></div>
-      <ds-table
-        .columns=${COLUMNS}
-        .rows=${VIRTUAL_ROWS}
-        data-mode="virtual"
-        sticky-header
-        fit-viewport
-        viewport-inset-block-end="32px"
-        caption="Virtual viewport-fitted workforce"
-        caption-visibility="visible"
-        .totalCount=${VIRTUAL_ROWS.length}
-      ></ds-table>
+      <div style="padding: 32px;">
+        <ds-table
+          .columns=${COLUMNS}
+          .rows=${VIRTUAL_ROWS}
+          data-mode="virtual"
+          sticky-header
+          fit-viewport
+          viewport-inset-block-start="var(--story-table-fit-start)"
+          viewport-inset-block-end="32px"
+          caption="Virtual viewport-fitted workforce"
+          caption-visibility="visible"
+          .totalCount=${VIRTUAL_ROWS.length}
+        ></ds-table>
+      </div>
     </div>
   `,
 };
