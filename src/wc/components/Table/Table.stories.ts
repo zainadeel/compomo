@@ -47,7 +47,7 @@ const COLUMNS: TableColumn[] = [
   { id: 'status', header: 'Status', sortable: true, size: 'xs' },
   { id: 'vehicle', header: 'Vehicle', sortable: true, size: 'xs' },
   { id: 'location', header: 'Last known location', size: 'sm' },
-  { id: 'safetyScore', header: 'Safety score', sortable: true, align: 'end', size: 'xs' },
+  { id: 'safetyScore', header: 'Safety score', sortable: true, align: 'end', size: 'xs', help: 'Rolling 7-day safety score from 0 to 100.' },
   { id: 'driveTime', header: 'Drive time', sortable: true, align: 'end', size: 'xs' },
 ];
 
@@ -1424,7 +1424,7 @@ export const InitialAndOutcomeStates: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Initial loading preserves the real table grid and uses each column’s representative image, multiline text, Tag, icon, or action geometry. Ten rows fill a useful default viewport. Empty and initial error keep the table caption and columns present while replacing only the body state.',
+        story: 'Initial loading preserves the real table grid and uses each column’s representative image, multiline text, Tag, icon, or action geometry. Ten rows fill a useful default viewport. Empty and initial error keep the table caption and columns present while replacing only the body with ds-empty-state. Height-bounded empty and error tables fill the remaining body below the column header.',
       },
     },
   },
@@ -1443,6 +1443,7 @@ export const InitialAndOutcomeStates: Story = {
         .columns=${ASYNC_COLUMNS}
         caption="Empty driver result"
         caption-visibility="visible"
+        height="var(--dimension-card-height-sm)"
         empty-heading="No matching drivers"
         empty-body="Try changing the active filters."
       ></ds-table>
@@ -1452,10 +1453,74 @@ export const InitialAndOutcomeStates: Story = {
         error
         caption="Unavailable drivers"
         caption-visibility="visible"
+        height="var(--dimension-card-height-sm)"
         error-heading="Drivers unavailable"
         error-body="Check the connection and try again."
       ></ds-table>
     </div>
+  `,
+};
+
+export const HeaderHelp: Story = {
+  name: 'Header help',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Optional column.help underlines the header label with the shared dotted decoration and opens ds-tooltip from that label. Sort stays on the existing sort button. A non-sortable label with help is keyboard-focusable so the tip can open without a second control. Touch follows the shared Tooltip contract and does not open the tip.',
+      },
+    },
+  },
+  render: () => html`
+    <ds-table
+      data-a11y-fixture
+      .columns=${[
+        {
+          id: 'driver',
+          header: 'Driver',
+          sortable: true,
+          size: 'sm',
+          help: 'Legal name used on the driver profile.',
+        },
+        { id: 'status', header: 'Status', sortable: true, align: 'center', size: 'xs' },
+        {
+          id: 'vehicle',
+          header: 'Vehicle',
+          size: 'xs',
+          help: 'Assigned vehicle identifier.',
+        },
+        {
+          id: 'behaviorDetails',
+          header: 'Behavior / Severity',
+          headerSegments: [
+            { label: 'Behavior', sortKey: 'behavior', separator: '/' },
+            { label: 'Severity', sortKey: 'severity' },
+          ],
+          sortable: true,
+          size: 'sm',
+          help: 'Primary behavior and its severity from the latest scored event.',
+        },
+        {
+          id: 'safetyScore',
+          header: 'Safety score',
+          sortable: true,
+          align: 'end',
+          size: 'xs',
+          help: 'Rolling 7-day safety score from 0 to 100.',
+        },
+      ] satisfies TableColumn[]}
+      .rows=${ROWS.slice(0, 4).map(row => ({
+        ...row,
+        cells: {
+          driver: row.cells.driver,
+          status: row.cells.status,
+          vehicle: row.cells.vehicle,
+          behaviorDetails: { primary: 'Speeding', secondary: 'High', secondaryColor: 'negative' },
+          safetyScore: row.cells.safetyScore,
+        },
+      }))}
+      caption="Driver columns with header help"
+      caption-visibility="visible"
+    ></ds-table>
   `,
 };
 

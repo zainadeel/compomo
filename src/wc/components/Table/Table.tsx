@@ -1117,8 +1117,13 @@ export class Table {
       ? (this.sort!.direction === 'asc' ? 'ascending' : 'descending')
       : undefined;
 
-    const labelControl = (
-      <span class="ds-table__header-labels">
+    const help = column.help?.trim();
+    const labels = (
+      <span
+        class="ds-table__header-labels"
+        tabIndex={interactive && help && !column.sortable ? 0 : undefined}
+        data-header-help={help ? '' : undefined}
+      >
         {headerSegments.map((segment, index) => {
           const segmentActive = activeMemberSegment?.sortKey === segment.sortKey;
           const segmentInteractive = interactive && !!column.sortable;
@@ -1129,6 +1134,7 @@ export class Table {
               variant="text-caption"
               emphasis={segmentActive}
               color="inherit"
+              decoration={help ? 'dotted-underline' : undefined}
               lineTruncation={1}
             >
               {segment.label}
@@ -1169,6 +1175,11 @@ export class Table {
         })}
       </span>
     );
+    const labelControl = interactive && help ? (
+      <ds-tooltip label={help} side="top" size="sm" wrapLabel={true}>
+        {labels}
+      </ds-tooltip>
+    ) : labels;
     const sortControl = interactive ? (
       <span class="ds-table__sort-slot">
         {activeSort && (
@@ -2500,6 +2511,9 @@ export class Table {
           'ds-table--contained-sticky-header': this.stickyHeader && !this.documentStickyHeader,
           'ds-table--caption-visible': this.captionVisibility === 'visible',
           'ds-table--footer-visible': this.hasResultFooter,
+          'ds-table--state-fill': !initialLoading && (
+            initialError || !(model.hasData || hasGroupedStructure)
+          ),
         }} ref={element => {
           this.rootEl = element ?? null;
         }}>

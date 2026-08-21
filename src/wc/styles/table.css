@@ -699,6 +699,7 @@
 }
 
 :where(.ds-table__header-label--interactive:focus-visible),
+:where(.ds-table__header-labels[data-header-help]:focus-visible),
 :where(.ds-table__selection-control:focus-visible) {
   outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
   outline-offset: calc(-1 * var(--dimension-stroke-width-025));
@@ -728,6 +729,12 @@
 :where(.ds-table__header-labels) {
   max-inline-size: 100%;
   gap: var(--dimension-space-025);
+}
+
+:where(.ds-table__header-labels[data-header-help]) {
+  border-radius: var(--dimension-radius-025);
+  cursor: default;
+  outline: none;
 }
 
 :where(.ds-table__header-segment) {
@@ -1439,12 +1446,40 @@
   min-block-size: var(--dimension-space-025);
 }
 
+:where(.ds-table--state-fill .ds-table__table) {
+  block-size: 100%;
+}
+
+:where(.ds-table--state-fill .ds-table__viewport) {
+  min-block-size: var(--ds-table-max-block-size);
+}
+
+:where(.ds-table--state-fill .ds-table__state-body),
+:where(.ds-table--state-fill .ds-table__state-row),
+:where(.ds-table--state-fill .ds-table__state-cell) {
+  block-size: 100%;
+}
+
 :where(.ds-table__state-cell) {
-  block-size: calc(var(--dimension-size-800) * 2);
+  min-block-size: calc(var(--dimension-size-800) * 2);
 }
 
 :where(.ds-table__state-band) {
+  align-self: stretch;
+  flex: 1 1 auto;
   min-block-size: calc(var(--dimension-size-800) * 2);
+}
+
+:where(.ds-table--state-fill .ds-table__state-band) {
+  block-size: 100%;
+  min-block-size: 100%;
+}
+
+:where(.ds-table__state-band) > ds-empty-state {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  inline-size: 100%;
+  block-size: 100%;
 }
 
 :where(.ds-table__skeleton-row) {
@@ -1525,6 +1560,7 @@
   }
 
   :where(.ds-table__header-label--interactive:focus-visible),
+  :where(.ds-table__header-labels[data-header-help]:focus-visible),
   :where(.ds-table__selection-control:focus-visible),
   :where(.ds-table__viewport:focus-visible) {
     outline-color: var(--ds-forced-color-selected);

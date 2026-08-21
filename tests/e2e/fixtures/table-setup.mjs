@@ -50,8 +50,8 @@ const overflowActionItems = [
 const columns = [
   { id: 'name', header: 'Driver', sortable: true, size: 'sm' },
   { id: 'status', header: 'Status', sortable: true, align: 'center', size: 'sm' },
-  { id: 'vehicle', header: 'Vehicle', size: 'xs' },
-  { id: 'score', header: 'Safety score', sortable: true, align: 'end', size: 'xs' },
+  { id: 'vehicle', header: 'Vehicle', size: 'xs', help: 'Assigned vehicle identifier.' },
+  { id: 'score', header: 'Safety score', sortable: true, align: 'end', size: 'xs', help: 'Rolling 7-day safety score from 0 to 100.' },
 ];
 const rows = [
   { id: 'avery', selectionLabel: 'Avery Chen', cells: { name: { primary: 'Avery Chen', secondary: 'avery@example.com' }, status: 'Driving', vehicle: 'V-2048', score: 98 } },
