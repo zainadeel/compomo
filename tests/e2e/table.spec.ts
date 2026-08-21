@@ -30,6 +30,13 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
+async function focusByKeyboard(anchor: Locator) {
+  await anchor.evaluate(element => {
+    element.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+    (element as HTMLElement).focus();
+  });
+}
+
 async function expectImageColumnToHugPreview(cell: Locator) {
   const difference = await cell.evaluate(element => {
     const preview = element.querySelector<HTMLElement>('.ds-table__cell-image')!;
@@ -301,7 +308,7 @@ test('shows dotted header help on the column label without a second control', as
   await score.locator('[data-sort-control="label"]').click();
   await expect(score).toHaveAttribute('aria-sort', 'ascending');
 
-  await vehicle.locator('.ds-table__header-labels').focus();
+  await focusByKeyboard(vehicle.locator('.ds-table__header-labels'));
   await expect(page.getByRole('tooltip', { name: 'Assigned vehicle identifier.' })).toBeVisible();
 });
 
@@ -2616,19 +2623,22 @@ test('fills remaining bounded table body with empty and error EmptyState',
     const table = page.locator(selector);
     const viewport = table.locator('.ds-table__viewport');
     const header = table.locator('.ds-table__header-row');
+    const region = table.locator('.ds-table__state-cell');
     const empty = table.locator('ds-empty-state');
     await expect(empty).toBeVisible();
-    const [viewportBox, headerBox, emptyBox] = await Promise.all([
+    const [viewportBox, headerBox, regionBox, emptyBox] = await Promise.all([
       viewport.boundingBox(),
       header.boundingBox(),
+      region.boundingBox(),
       empty.boundingBox(),
     ]);
     expect(viewportBox).not.toBeNull();
     expect(headerBox).not.toBeNull();
+    expect(regionBox).not.toBeNull();
     expect(emptyBox).not.toBeNull();
     expect(emptyBox!.height).toBeGreaterThan(80);
     expectGeometryClose(
-      emptyBox!.height + headerBox!.height,
+      regionBox!.height + headerBox!.height,
       viewportBox!.height,
       `${selector} empty-state fills remaining viewport`,
       2,
