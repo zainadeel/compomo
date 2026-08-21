@@ -8876,7 +8876,7 @@
           ],
           "accessibility": [
             "The rendered structure uses a native table, caption, column headers, row groups, and data cells; keep the caption non-empty. The native caption remains visually hidden as the table's accessible name. When caption visibility is enabled, a 48px header bar renders as component chrome outside the horizontal scrollport. It defaults to a presentational caption title that does not duplicate the accessible name. Application-owned labeled controls supplied through the single named header slot replace that fallback and occupy the leading content width inside the component-owned 8px inset. When columnCustomizer is enabled, the table adds a trailing Preferences control named Customize table; otherwise the header slot receives the complete content width.",
-            "The data-mode switcher is the shared Menu of the table's supported infinite and pagination modes. Virtual mode is a controlled dataMode value only; it is not a default switcher item. The switcher is the final caption-bar action; when the column customizer is also present, a decorative vertical divider separates the two controls. dataMode remains controlled, and the application responds to change intent by supplying the matching records, pagination state, loading behavior, and query consequences. Escape, dismissal, and selection return focus to the trigger.",
+            "The data-mode switcher is the shared Menu of the table's supported infinite, pagination, and virtual modes. The switcher is the final caption-bar action; when the column customizer is also present, a decorative vertical divider separates the two controls. dataMode remains controlled, and the application responds to change intent by supplying the matching records, pagination state, loading behavior, and query consequences. Escape, dismissal, and selection return focus to the trigger.",
             "The column customizer is the shared Menu of switch rows, not a table-owned dialog. Data columns can be shown, hidden, and reordered. Locked action columns stay visible, inactive, and last. The selection checkbox is not a column and never appears. The last remaining visible data column cannot be hidden, but it stays focusable so it can still be reordered. Escape and outside click restore focus to the trigger. Persistence stays in the application.",
             "Sorting controls remain buttons inside column headers and expose the table's one controlled member-row sort through aria-sort. Grouping never adds a second sort indicator or header control; the application supplies groups in its fixed product order. Optional column help underlines the header label with the shared dotted decoration and shows ds-tooltip from that label; it does not add a second header control or replace the column name.",
             "Selection controls expose checkbox semantics and explicit row names; select-all affects selectable loaded rows only and preserves selected identities outside the loaded window. In virtual mode the supplied in-memory rows are that loaded set, including rows whose DOM is recycled. When grouping is active with multi-selection, each group section header also exposes a checkbox that selects or clears that group's selectable loaded rows.",
@@ -8912,7 +8912,7 @@
           "frameworkCaveats": {
             "customElements": [
               "Assign columns, rows, groups, grouping, sort, selectedRowIds, collapsedGroupIds, hiddenColumnIds, columnOrder, pagination, displayedCount, and totalCount through JavaScript properties rather than HTML attribute strings.",
-              "dataMode=virtual recycles row DOM over the supplied in-memory rows or groups and requires height, maxHeight, or fitViewport. It does not fetch, paginate, or add a default data-mode switcher item.",
+              "dataMode=virtual recycles row DOM over the supplied in-memory rows or groups and requires height, maxHeight, or fitViewport. It does not fetch or paginate.",
               "When an action cell supplies items, the table opens one shared ds-menu from the Ellipses trigger; dsCellAction fires for the selected command, not for opening or closing the menu.",
               "When columnCustomizer is enabled, the Preferences trigger opens the same shared ds-menu of reorderable switch rows; toggling a switch or reordering a row emits dsColumnsConfigChange and does not close the menu.",
               "Overflowing text tracks present one shared ds-tooltip with the omitted value. Unlimited wrapping tracks and disabled rows never show it. The tooltip is not linked with aria-describedby because the full string remains in the cell.",
@@ -9165,6 +9165,10 @@
           },
           "viewportInsetBlockStart": {
             "type": "string | number",
+            "required": false
+          },
+          "virtualModeLabel": {
+            "type": "string",
             "required": false
           }
         },

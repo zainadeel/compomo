@@ -198,6 +198,7 @@ export class Table {
   @Prop() dataModeMenuLabel: string = 'Table variation';
   @Prop() infiniteModeLabel: string = 'Infinite scroll';
   @Prop() paginationModeLabel: string = 'Pagination + Infinite groups';
+  @Prop() virtualModeLabel: string = 'Virtual scroll';
   /** Controlled top-level pagination state. Required when dataMode is pagination. */
   @Prop() pagination: TablePaginationState | null = null;
   @Prop() loadMoreMode: TableLoadMoreMode = 'auto';
@@ -2583,6 +2584,7 @@ export class Table {
         items={tableDataModeMenuItems(this.dataMode, {
           infinite: this.infiniteModeLabel,
           pagination: this.paginationModeLabel,
+          virtual: this.virtualModeLabel,
         })}
         onDsClose={() => this.closeDataModeSwitcher()}
         onDsSelect={event => this.handleDataModeSwitcherSelect(event.detail)}

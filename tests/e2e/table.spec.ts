@@ -2730,7 +2730,7 @@ test('owns a controlled caption-bar data mode switcher for supported modes', asy
   await expect(
     menu.getByRole('menuitem', { name: 'Pagination + Infinite groups' }),
   ).toBeVisible();
-  await expect(menu.getByText('Virtual scroll')).toHaveCount(0);
+  await expect(menu.getByRole('menuitem', { name: 'Virtual scroll' })).toBeVisible();
 
   await menu.getByRole('menuitem', { name: 'Pagination + Infinite groups' }).click();
   await expect(menu).toHaveCount(0);
@@ -2741,6 +2741,18 @@ test('owns a controlled caption-bar data mode switcher for supported modes', asy
   await expect(
     page.getByRole('menu', { name: 'Table variation' }).getByRole('menuitem', {
       name: 'Pagination + Infinite groups',
+    }),
+  ).toHaveAttribute('aria-current', 'true');
+
+  await page.getByRole('menu', { name: 'Table variation' })
+    .getByRole('menuitem', { name: 'Virtual scroll' })
+    .click();
+  await expect(table).toHaveJSProperty('dataMode', 'virtual');
+
+  await trigger.click();
+  await expect(
+    page.getByRole('menu', { name: 'Table variation' }).getByRole('menuitem', {
+      name: 'Virtual scroll',
     }),
   ).toHaveAttribute('aria-current', 'true');
 

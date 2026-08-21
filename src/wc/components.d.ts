@@ -3095,6 +3095,10 @@ export namespace Components {
           * @default 0
          */
         "viewportInsetBlockStart": string | number;
+        /**
+          * @default 'Virtual scroll'
+         */
+        "virtualModeLabel": string;
     }
     interface DsTableSavedViews {
         /**
@@ -8027,6 +8031,10 @@ declare namespace LocalJSX {
           * @default 0
          */
         "viewportInsetBlockStart"?: string | number;
+        /**
+          * @default 'Virtual scroll'
+         */
+        "virtualModeLabel"?: string;
     }
     interface DsTableSavedViews {
         /**
@@ -9033,6 +9041,7 @@ declare namespace LocalJSX {
         "dataModeMenuLabel": string;
         "infiniteModeLabel": string;
         "paginationModeLabel": string;
+        "virtualModeLabel": string;
         "loadMoreMode": TableLoadMoreMode;
         "hasMore": boolean;
         "loadingMore": boolean;
