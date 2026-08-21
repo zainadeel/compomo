@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.10.0](https://github.com/zainadeel/compomo/compare/v14.9.0...v14.10.0) (2026-08-21)
+
+
+### Added
+
+* **table:** add virtual row recycling as a third data mode ([#502](https://github.com/zainadeel/compomo/issues/502)) ([04d05b6](https://github.com/zainadeel/compomo/commit/04d05b61409677e06c6acfd04f1c468c5ebfecff))
+
 ## [14.9.0](https://github.com/zainadeel/compomo/compare/v14.8.0...v14.9.0) (2026-08-21)
 
 
