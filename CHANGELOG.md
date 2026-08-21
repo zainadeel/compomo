@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.8.0](https://github.com/zainadeel/compomo/compare/v14.7.0...v14.8.0) (2026-08-21)
+
+
+### Added
+
+* **table:** add reusable toolbar and saved views ([#491](https://github.com/zainadeel/compomo/issues/491)) ([fad393c](https://github.com/zainadeel/compomo/commit/fad393c09f504aae1eb42f280c07606d4b3c427f))
+
 ## [14.7.0](https://github.com/zainadeel/compomo/compare/v14.6.0...v14.7.0) (2026-08-20)
 
 
