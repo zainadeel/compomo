@@ -6,6 +6,8 @@ import {
   deriveTableSelectionState,
   formatTableResultSummary,
   formatTableTotalSummary,
+  hasOwnedTableFooterSlot,
+  isOwnedTableFooterSlot,
   isTableCellIcon,
   isTableCellIconText,
   isTableGroupIntent,
@@ -224,6 +226,36 @@ test('formats a total-only summary for virtual mode', () => {
   assert.equal(formatTableTotalSummary(1500), '1,500 items');
   assert.equal(formatTableTotalSummary(1, '{total} item'), '1 item');
   assert.equal(formatTableTotalSummary(undefined), null);
+});
+
+test('treats relocated table footer slots as owned and ignores nested dialog footers', () => {
+  const host = { id: 'table' } as unknown as Element;
+  const asChild = {
+    parentElement: host,
+    closest: () => null,
+  } as unknown as Element;
+  const relocated = {
+    parentElement: { id: 'status' } as unknown as Element,
+    closest: (selector: string) => (selector === '.ds-table__footer' ? {} : null),
+  } as unknown as Element;
+  const nestedDialog = {
+    parentElement: { id: 'modal' } as unknown as Element,
+    closest: () => null,
+  } as unknown as Element;
+
+  assert.equal(isOwnedTableFooterSlot(asChild, host), true);
+  assert.equal(isOwnedTableFooterSlot(relocated, host), true);
+  assert.equal(isOwnedTableFooterSlot(nestedDialog, host), false);
+
+  const nestedHost = {
+    querySelectorAll: () => [nestedDialog],
+  } as unknown as Element;
+  assert.equal(hasOwnedTableFooterSlot(nestedHost, 'footer'), false);
+
+  const relocatedHost = {
+    querySelectorAll: () => [relocated],
+  } as unknown as Element;
+  assert.equal(hasOwnedTableFooterSlot(relocatedHost, 'footer-leading'), true);
 });
 
 test('maps optional group intents to class and title color recipes', () => {

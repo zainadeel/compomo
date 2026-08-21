@@ -13,6 +13,7 @@ import {
   deriveTableSelectionState,
   formatTableResultSummary,
   formatTableTotalSummary,
+  hasOwnedTableFooterSlot,
   isTableCellAction,
   nextTableSortState,
   tableColumnSize,
@@ -2440,16 +2441,17 @@ export class Table {
 
   private get hasResultFooter(): boolean {
     return (this.dataMode === 'pagination' && !!this.pagination) ||
-      !!this.resultSummary || !!this.el.querySelector(
-      '[slot="footer-leading"], [slot="footer"], [slot="footer-trailing"]',
-    );
+      !!this.resultSummary ||
+      hasOwnedTableFooterSlot(this.el, 'footer-leading') ||
+      hasOwnedTableFooterSlot(this.el, 'footer') ||
+      hasOwnedTableFooterSlot(this.el, 'footer-trailing');
   }
 
   private renderResultFooter() {
     const summary = this.resultSummary;
-    const hasLeading = !!this.el.querySelector('[slot="footer-leading"]');
-    const hasCopy = !!this.el.querySelector('[slot="footer"]');
-    const hasTrailing = !!this.el.querySelector('[slot="footer-trailing"]');
+    const hasLeading = hasOwnedTableFooterSlot(this.el, 'footer-leading');
+    const hasCopy = hasOwnedTableFooterSlot(this.el, 'footer');
+    const hasTrailing = hasOwnedTableFooterSlot(this.el, 'footer-trailing');
     const pagination = this.dataMode === 'pagination' ? this.pagination : null;
     if (!this.hasResultFooter) return null;
     return (

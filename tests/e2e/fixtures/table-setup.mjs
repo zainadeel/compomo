@@ -90,6 +90,13 @@ const footer = setBase('footer');
 footer.displayedCount = 50;
 footer.totalCount = 1500;
 
+const footerNested = setBase('footer-nested');
+footerNested.displayedCount = 50;
+footerNested.totalCount = 1500;
+footerNested.querySelector('ds-table-saved-views').views = [
+  { id: 'attention', label: 'Needs attention' },
+];
+
 const grouped = document.getElementById('grouped');
 grouped.columns = columns;
 grouped.grouping = { columnId: 'status', direction: 'asc' };

@@ -259,6 +259,13 @@ test('renders an optional result summary footer from controlled counts', async (
   await expect(footer).toContainText('Last updated: Aug 13, 2026  7:00 PM PT');
 });
 
+test('keeps the result summary when nested saved-view dialogs expose their own footer slot', async ({ page }) => {
+  const table = page.locator('#footer-nested');
+  const footer = table.locator('.ds-table__footer');
+  await expect(footer).toContainText('Last updated: Aug 13, 2026  7:00 PM PT');
+  await expect(footer.locator('.ds-table__footer-summary')).toHaveText('Displaying 50 of 1,500');
+});
+
 test('toggles active sort direction and moves sorting only through another column', async ({ page }) => {
   const table = page.locator('#basic');
   const driverHeader = table.getByRole('columnheader', { name: /Driver/ });
