@@ -40,9 +40,20 @@ test('uses the icon row variant only when every option has an icon', () => {
   );
 });
 
-test('uses the subtext row variant when any option has supporting text', () => {
+test('uses the stable subtext row variant for descriptions but not option-local actions', () => {
   assert.equal(choiceListUsesSubtext(options.slice(0, 2)), false);
   assert.equal(choiceListUsesSubtext(options), true);
+  assert.equal(
+    choiceListUsesSubtext([
+      ...options.slice(0, 2),
+      {
+        label: 'Saved view',
+        value: 'saved',
+        subtextActions: [{ label: 'Save', value: 'save' }],
+      },
+    ]),
+    false,
+  );
 });
 
 test('filters labels, subtext, and section headings while removing empty sections', () => {

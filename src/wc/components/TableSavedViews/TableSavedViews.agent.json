@@ -1,0 +1,62 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-table-saved-views",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-table-saved-views",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Controlled saved-views UI for table toolbars, including selection, dirty state, create, save, discard, rename, remove, validation, and focus behavior without owning table configuration or persistence.",
+  "useWhen": [
+    "A table workspace lets people recall and manage named combinations of table controls.",
+    "Several products need the same saved-view interaction while retaining different view payloads and storage systems."
+  ],
+  "avoidWhen": [
+    "The choices do not represent restorable table configurations.",
+    "The application expects the component to serialize filters, grouping, sorting, columns, pagination, or product-specific state."
+  ],
+  "commonlyComposedWith": [
+    "component:ds-table-toolbar",
+    "component:ds-table",
+    "component:ds-select",
+    "component:ds-menu",
+    "component:ds-modal"
+  ],
+  "patterns": ["pattern:menu-trigger"],
+  "accessibility": [
+    "The primary control retains combobox semantics and exposes a direct accessible name.",
+    "Each custom view exposes a separately named options trigger. The options menu supports keyboard navigation and returns focus through the shared Select and Menu behavior.",
+    "The naming dialog traps focus through Modal behavior, associates validation text with the input through Field, and restores focus to the saved-views control after closing."
+  ],
+  "states": [
+    "views, value, and dirty are controlled. Selection, create, save, discard, rename, and remove events communicate intent and never mutate application records.",
+    "The component owns only transient interaction state: the contextual menu, naming dialog, draft name, duplicate-name validation, and focus restoration.",
+    "The default view is a non-editable template. Application-owned custom views appear in a separate section with Rename and Remove actions. New view opens the naming dialog. When an editable selected view is dirty, that view row shows Save and negative Discard supporting actions while the footer remains dedicated to New view. The application decides which table state to capture, restore, and persist."
+  ],
+  "responsiveBehavior": [
+    "The control remains a single toolbar item and relies on Select, Menu, and Modal collision and viewport behavior.",
+    "Place it in the leading region of ds-table-toolbar so narrow table headers preserve the expected control order."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign views through the JavaScript property and update value after handling dsViewChange."
+    ],
+    "react": [
+      "Keep view records and serialized table configuration in application state; update controlled props in response to the component events."
+    ],
+    "angular": [
+      "Import the generated DsTableSavedViews adapter and bind views, value, and dirty; handle event.detail for selection and mutations."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook review states",
+      "path": "src/wc/components/TableSavedViews/TableSavedViews.stories.ts"
+    },
+    {
+      "label": "Toolbar composition owner",
+      "path": "src/wc/components/TableToolbar/TableToolbar.agent.json"
+    }
+  ]
+}

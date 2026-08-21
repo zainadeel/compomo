@@ -192,6 +192,7 @@ interface ChoiceOptionRowProps {
   focusRingVisible: boolean;
   usesSubtext: boolean;
   leading?: VNode;
+  supporting?: VNode;
   action?: VNode;
   actionOpen?: boolean;
   popupRole?: 'listbox' | 'grid';
@@ -211,6 +212,7 @@ export const ChoiceOptionRow: FunctionalComponent<ChoiceOptionRowProps> = ({
   focusRingVisible,
   usesSubtext,
   leading,
+  supporting,
   action,
   actionOpen = false,
   popupRole = 'listbox',
@@ -270,7 +272,7 @@ export const ChoiceOptionRow: FunctionalComponent<ChoiceOptionRowProps> = ({
           >
             {option.label}
           </ds-text>
-          {usesSubtext && (
+          {supporting ?? (usesSubtext ? (
             <ds-text
               class="ds-choice-item__subtext ds-control-label-box"
               as="span"
@@ -279,7 +281,7 @@ export const ChoiceOptionRow: FunctionalComponent<ChoiceOptionRowProps> = ({
             >
               {option.subtext?.trim() || '—'}
             </ds-text>
-          )}
+          ) : null)}
         </div>
       </div>
       {action && (

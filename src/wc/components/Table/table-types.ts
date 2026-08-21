@@ -11,6 +11,9 @@ export type TableColumnSticky = 'start' | 'end';
 export type TableCaptionVisibility = 'visible' | 'hidden';
 export type TableLoadMoreMode = 'auto' | 'manual';
 export type TableDataMode = 'infinite' | 'pagination';
+export interface TableDataModeChangeDetail {
+  dataMode: TableDataMode;
+}
 export type TableLoadMoreReason = 'auto' | 'manual' | 'retry';
 export type TableColumnWidth = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 /** Visible line budget before a text track ellipsizes. */
@@ -311,6 +314,8 @@ export interface TableColumn {
   sortable?: boolean;
   /** Preferred TokoMo table-column width. Numbers remain available for exceptional custom pixel widths. */
   size?: TableColumnWidth | number;
+  /** Derive a fixed image-column width from the matching 1, 2, or 3 track cell geometry. Ignored when size is set. */
+  imageTracks?: TableCellImageTracks;
   /** Minimum accepted preferred width in CSS pixels. */
   minSize?: number;
   /** Maximum accepted preferred width in CSS pixels. */

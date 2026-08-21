@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
 import { chromiumOnly } from './browser-tier';
 import { COMPOSITED_EDGE_CEILING_PX, expectGeometryClose } from './rendered-geometry';
 
@@ -29,6 +29,19 @@ test.beforeEach(async ({ page }) => {
   await page.goto('/table.html');
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
+
+async function expectImageColumnToHugPreview(cell: Locator) {
+  const difference = await cell.evaluate(element => {
+    const preview = element.querySelector<HTMLElement>('.ds-table__cell-image')!;
+    const styles = getComputedStyle(element);
+    const expected =
+      preview.getBoundingClientRect().width +
+      Number.parseFloat(styles.paddingInlineStart) +
+      Number.parseFloat(styles.paddingInlineEnd);
+    return Math.abs(element.getBoundingClientRect().width - expected);
+  });
+  expect(difference).toBeLessThanOrEqual(COMPOSITED_EDGE_CEILING_PX);
+}
 
 test('renders native caption, header, row, and cell semantics', async ({ page }) => {
   const table = page.locator('#basic');
@@ -878,7 +891,7 @@ test('renders independently styled standard cell types', async ({ page }) => {
   await expect(image).toHaveCSS('padding-right', '8px');
   await expect(image).toHaveCSS('padding-bottom', '8px');
   await expect(image).toHaveCSS('padding-left', '8px');
-  await expect(image).toHaveCSS('width', '98px');
+  await expectImageColumnToHugPreview(image);
   await expect(image).toHaveCSS('height', '62px');
   const imagePlaceholder = image.getByRole('img', { name: 'Safety event preview unavailable' });
   await expect(imagePlaceholder).toBeVisible();
@@ -1144,7 +1157,7 @@ test('keeps single-track rows at 40px including tag-only cells',
   }
   await expect(image).toHaveClass(/ds-table__cell--image-single/);
   await expect(image).toHaveAttribute('data-cell-variant', 'single');
-  await expect(image).toHaveCSS('width', '59px');
+  await expectImageColumnToHugPreview(image);
   await expect(image.locator('.ds-table__cell-image')).toHaveCSS('height', '24px');
   await expect(tagOnly.locator('ds-tag')).toHaveCSS('height', '24px');
   await expect(icon.locator('.ds-table__cell-content')).toHaveCSS('min-height', '24px');
@@ -1208,7 +1221,7 @@ test('renders three-track text cells with a uniform 84px row', async ({ page }) 
   await expect(averyImage).toHaveClass(/ds-table__cell--image-triple/);
   await expect(averyImage).toHaveAttribute('data-cell-variant', 'triple');
   await expect(averyImage).toHaveCSS('height', '84px');
-  await expect(averyImage).toHaveCSS('width', '137px');
+  await expectImageColumnToHugPreview(averyImage);
   await expect(averyImage.locator('.ds-table__cell-image')).toHaveCSS('height', '68px');
   await expect(averyIconText).toHaveClass(/ds-table__cell--icon-text-triple/);
   await expect(averyIconText).not.toHaveClass(/ds-table__cell--text-triple/);
@@ -2628,4 +2641,200 @@ test('owns a caption-bar column customizer menu for live show/hide and reorder',
   await page.keyboard.press('Escape');
   await expect(menu).toHaveCount(0);
   await expect(trigger).toBeFocused();
+});
+
+test('owns a controlled caption-bar data mode switcher for supported modes', async ({ page }) => {
+  const table = page.locator('#column-customizer');
+  const trigger = table.getByRole('button', { name: 'Change table variation' });
+  await expect(trigger).toBeVisible();
+
+  const trailingControls = table.locator('.ds-table__caption-trailing > *');
+  await expect(trailingControls).toHaveCount(3);
+  await expect(trailingControls.nth(0)).toHaveAttribute('aria-label', 'Customize table');
+  await expect(trailingControls.nth(1)).toHaveJSProperty('tagName', 'DS-DIVIDER');
+  await expect(trailingControls.nth(1)).toHaveJSProperty('orientation', 'vertical');
+  await expect(trailingControls.nth(1)).toHaveJSProperty('length', '32px');
+  await expect(trailingControls.nth(2)).toHaveAttribute(
+    'aria-label',
+    'Change table variation',
+  );
+
+  await trigger.click();
+  const menu = page.getByRole('menu', { name: 'Table variation' });
+  await expect(menu).toBeVisible();
+  await expect(menu.getByRole('menuitem', { name: 'Infinite scroll' })).toHaveAttribute(
+    'aria-current',
+    'true',
+  );
+  await expect(
+    menu.getByRole('menuitem', { name: 'Pagination + Infinite groups' }),
+  ).toBeVisible();
+  await expect(menu.getByText('Virtual scroll')).toHaveCount(0);
+
+  await menu.getByRole('menuitem', { name: 'Pagination + Infinite groups' }).click();
+  await expect(menu).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+  await expect(table).toHaveJSProperty('dataMode', 'pagination');
+
+  await trigger.click();
+  await expect(
+    page.getByRole('menu', { name: 'Table variation' }).getByRole('menuitem', {
+      name: 'Pagination + Infinite groups',
+    }),
+  ).toHaveAttribute('aria-current', 'true');
+
+  await table.getByRole('button', { name: 'Customize table' }).click();
+  await expect(page.getByRole('menu', { name: 'Table variation' })).toHaveCount(0);
+  await expect(page.getByRole('menu', { name: 'Customize table' })).toBeVisible();
+});
+
+test('lays out application-owned table controls in named leading and trailing groups', async ({
+  page,
+}) => {
+  const toolbar = page.locator('#table-toolbar');
+  await expect(toolbar.getByRole('toolbar', { name: 'Fleet table controls' })).toBeVisible();
+  await expect(toolbar.getByRole('button')).toHaveCount(4);
+
+  const layout = await toolbar.evaluate(element => {
+    const surface = element.querySelector<HTMLElement>('.table-toolbar')!;
+    const leading = element.querySelector<HTMLElement>('.table-toolbar__leading')!;
+    const trailing = element.querySelector<HTMLElement>('.table-toolbar__trailing')!;
+    const leadingRect = leading.getBoundingClientRect();
+    const trailingRect = trailing.getBoundingClientRect();
+    return {
+      overflow: surface.scrollWidth > surface.clientWidth,
+      leadingTop: leadingRect.top,
+      trailingTop: trailingRect.top,
+      ordered: leadingRect.right <= trailingRect.left,
+    };
+  });
+
+  expect(layout.overflow).toBe(true);
+  expect(Math.abs(layout.leadingTop - layout.trailingTop)).toBeLessThanOrEqual(0.5);
+  expect(layout.ordered).toBe(true);
+
+  await expect(
+    page.locator('#column-customizer').getByRole('toolbar', {
+      name: 'Customizable driver controls',
+    }),
+  ).toBeVisible();
+});
+
+test('owns controlled saved-view selection, naming validation, and mutation intents', async ({
+  page,
+}) => {
+  const control = page.locator('#saved-views');
+  const select = control.getByRole('combobox', { name: 'Saved views' });
+
+  await expect(select).toContainText('Needs attention');
+  await select.click();
+  await expect(page.getByRole('button', { name: 'New view' })).toBeVisible();
+  const dirtyRow = page.getByRole('row', { name: /Needs attention Save Discard/ });
+  await expect(dirtyRow.getByRole('button', { name: 'Save', exact: true })).toBeVisible();
+  await expect(dirtyRow.getByRole('button', { name: 'Discard', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Save', exact: true })).toHaveCount(1);
+  await expect(page.getByRole('button', { name: 'Discard', exact: true })).toHaveCount(1);
+  const actionTypography = await dirtyRow.evaluate(element => {
+    const save = element.querySelector<HTMLElement>('.select-option__subtext-action .ds-text__element')!;
+    const separator = element.querySelector<HTMLElement>(
+      '.select-option__subtext-action-separator .ds-text__element',
+    )!;
+    const discard = element.querySelectorAll<HTMLElement>(
+      '.select-option__subtext-action .ds-text__element',
+    )[1];
+    const metrics = (target: HTMLElement) => {
+      const styles = getComputedStyle(target);
+      const rect = target.getBoundingClientRect();
+      return {
+        fontFamily: styles.fontFamily,
+        fontSize: styles.fontSize,
+        fontWeight: styles.fontWeight,
+        lineHeight: styles.lineHeight,
+        top: rect.top,
+        height: rect.height,
+      };
+    };
+    return {
+      save: metrics(save),
+      separator: metrics(separator),
+      discard: metrics(discard),
+    };
+  });
+  expect(actionTypography.separator).toEqual(actionTypography.save);
+  expect(actionTypography.discard).toEqual(actionTypography.save);
+  await expect(
+    page.locator('.ds-choice-footer').getByRole('button', { name: 'New view', exact: true }),
+  ).toBeVisible();
+  const popupWidth = await page
+    .locator('.select-popup')
+    .evaluate(element => element.getBoundingClientRect().width);
+  expect(popupWidth).toBeGreaterThanOrEqual(144);
+  const dirtyOptionHeight = await dirtyRow
+    .locator('.select-option')
+    .evaluate(element => element.getBoundingClientRect().height);
+  expect(dirtyOptionHeight).toBeGreaterThan(32);
+  await expect(page.getByRole('row', { name: 'Default', exact: true })).toBeVisible();
+  await expect(page.getByRole('row', { name: /West region Options for West region/ })).toBeVisible();
+  await expect(
+    page.getByRole('row', { name: 'Default', exact: true }).locator('.ds-choice-item__subtext'),
+  ).toHaveCount(0);
+  await expect(
+    page
+      .getByRole('row', { name: /West region Options for West region/ })
+      .locator('.ds-choice-item__subtext'),
+  ).toHaveCount(0);
+  await dirtyRow.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(control).toHaveJSProperty('dirty', false);
+
+  await control.evaluate(element => {
+    (element as HTMLElement & { dirty: boolean }).dirty = true;
+  });
+  await page
+    .getByRole('row', { name: /Needs attention Save Discard/ })
+    .getByRole('button', { name: 'Discard', exact: true })
+    .click();
+  await expect(control).toHaveJSProperty('dirty', false);
+
+  await page.getByRole('gridcell', { name: 'West region', exact: true }).click();
+  await expect(control).toHaveJSProperty('value', 'west');
+
+  await select.click();
+  await page.getByRole('button', { name: 'New view' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Save as new view' });
+  const name = dialog.getByRole('textbox', { name: 'Name' });
+  await expect(name).toBeFocused();
+  await name.fill('Default');
+  await dialog.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(dialog.getByText('A view with this name already exists.')).toBeVisible();
+
+  await name.fill('Night shift');
+  await dialog.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(select).toBeFocused();
+
+  await select.click();
+  await page.getByRole('row', { name: /Needs attention/ }).hover();
+  await page.getByRole('button', { name: 'Options for Needs attention' }).click();
+  await page.getByRole('menuitem', { name: 'Rename', exact: true }).click();
+  const renameDialog = page.getByRole('dialog', { name: 'Rename view' });
+  const renameName = renameDialog.getByRole('textbox', { name: 'Name' });
+  await expect(renameName).toBeFocused();
+  await renameName.fill('Needs review');
+  await renameDialog.getByRole('button', { name: 'Rename', exact: true }).click();
+  await expect(renameDialog).toHaveCount(0);
+
+  await select.click();
+  await page.getByRole('row', { name: /West region/ }).hover();
+  await page.getByRole('button', { name: 'Options for West region' }).click();
+  await page.getByRole('menuitem', { name: 'Remove', exact: true }).click();
+  await expect
+    .poll(() => control.evaluate(element => (element as HTMLElement & { eventLog: unknown[] }).eventLog))
+    .toEqual([
+      { type: 'save', viewId: 'attention' },
+      { type: 'discard', viewId: 'attention' },
+      { type: 'change', viewId: 'west' },
+      { type: 'create', name: 'Night shift' },
+      { type: 'rename', viewId: 'attention', name: 'Needs review' },
+      { type: 'remove', viewId: 'west' },
+    ]);
 });

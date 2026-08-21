@@ -30,6 +30,12 @@ const TABLE_COLUMN_WIDTH_TOKENS = {
   xl: '--dimension-table-column-width-xl',
 } as const;
 
+const TABLE_IMAGE_COLUMN_WIDTH_VARIABLES = {
+  1: '--_table-image-column-inline-size',
+  2: '--_table-image-column-inline-size-multi',
+  3: '--_table-image-column-inline-size-triple',
+} as const;
+
 export function isTableCellText(value: TableCellValue): value is TableCellText {
   return typeof value === 'object' && value !== null && 'primary' in value && !('kind' in value);
 }
@@ -156,6 +162,9 @@ export function tableColumnSize(column: TableColumn): string | undefined {
   }
   const width = clampTableColumnSize(column);
   if (width != null) return `${width}px`;
+  if (column.imageTracks) {
+    return `var(${TABLE_IMAGE_COLUMN_WIDTH_VARIABLES[column.imageTracks]})`;
+  }
   return column.kind === 'action' ? 'var(--dimension-size-500)' : undefined;
 }
 

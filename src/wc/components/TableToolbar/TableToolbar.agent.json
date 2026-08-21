@@ -1,0 +1,63 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-table-toolbar",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-table-toolbar",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Data-agnostic companion layout for application-owned controls in a table header, with leading and trailing control groups and narrow-width horizontal overflow.",
+  "useWhen": [
+    "Several table pages repeat the same leading discovery controls and trailing result-shaping controls.",
+    "A ds-table header slot needs consistent control spacing, alignment, grouping, and narrow-width overflow without moving product behavior into the table."
+  ],
+  "avoidWhen": [
+    "The controls do not operate on a table or structured result set.",
+    "The application expects the toolbar to define filters, saved views, grouping choices, persistence, or data transformations.",
+    "Only one standalone control is present and needs no grouped toolbar semantics."
+  ],
+  "commonlyComposedWith": [
+    "component:ds-table",
+    "component:ds-table-saved-views",
+    "component:ds-input",
+    "component:ds-filter-menu",
+    "component:ds-button-unfilled"
+  ],
+  "patterns": [],
+  "accessibility": [
+    "The component exposes a named toolbar while each slotted control retains its own accessible name and native keyboard behavior.",
+    "Use the leading slot for discovery and context controls such as saved views and search. Use the trailing slot for result-shaping controls such as filters and grouping.",
+    "Tab order follows authored DOM order. The toolbar does not add roving focus because it may contain heterogeneous form and popup controls."
+  ],
+  "states": [
+    "The component owns layout only. Slotted controls, values, menus, loading, persistence, and consequences remain controlled by the application. Use ds-table-saved-views when saved-view interaction needs the shared CompoMo behavior while application storage remains external.",
+    "Either region may be empty. The populated region continues to occupy the available width without adding placeholder chrome."
+  ],
+  "responsiveBehavior": [
+    "The two control groups stay on one line and horizontally scroll when their complete controls no longer fit.",
+    "The scrollbar is visually suppressed without removing touch, trackpad, mouse-wheel, or keyboard scrolling from the overflow container.",
+    "Trailing controls remain grouped after leading controls; the toolbar does not collapse controls into an application-specific overflow menu."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Project controls through slot=leading or slot=trailing and provide a label that names their table context when Table controls is insufficient."
+    ],
+    "react": [
+      "Set slot=leading or slot=trailing on each child control; keep values and event handlers in the application."
+    ],
+    "angular": [
+      "Set slot=leading or slot=trailing on each child control and import the generated DsTableToolbar adapter alongside those controls."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook review states",
+      "path": "src/wc/components/TableToolbar/TableToolbar.stories.ts"
+    },
+    {
+      "label": "Table composition owner",
+      "path": "src/wc/components/Table/Table.agent.json"
+    }
+  ]
+}

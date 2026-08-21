@@ -15,6 +15,7 @@ import type {
   TableCellActionMenuEntry,
   TableColumn,
   TableColumnsConfigChangeDetail,
+  TableDataModeChangeDetail,
   TableGroup,
   TableGroupIntent,
   TableGroupingState,
@@ -24,7 +25,6 @@ import type {
 import type { PaginationChangeDetail } from '../Pagination/pagination-types';
 
 /** 8px cell chrome on both sides plus a 16:9 preview at the matching track stack. */
-const IMAGE_COLUMN_SIZE = { 1: 59, 2: 98, 3: 137 } as const;
 
 const OVERFLOW_ACTION_ITEMS: TableCellActionMenuEntry[] = [
   { actionId: 'view', label: 'View details' },
@@ -133,7 +133,7 @@ const ASYNC_COLUMNS: TableColumn[] = [
 ];
 
 const COMPOSED_SKELETON_COLUMNS: TableColumn[] = [
-  { id: 'preview', header: 'Preview', size: IMAGE_COLUMN_SIZE[2], skeleton: { kind: 'image', tracks: 2 } },
+  { id: 'preview', header: 'Preview', imageTracks: 2, skeleton: { kind: 'image', tracks: 2 } },
   {
     id: 'event',
     header: 'Event',
@@ -171,7 +171,7 @@ const ALL_CELL_TYPE_COLUMNS: TableColumn[] = [
   { id: 'linkedText', header: 'Linked text', size: 'sm' },
   { id: 'primaryPair', header: 'Primary + primary', size: 'sm' },
   { id: 'event', header: 'Event', size: 'sm' },
-  { id: 'image', header: 'Image', size: IMAGE_COLUMN_SIZE[2] },
+  { id: 'image', header: 'Image', imageTracks: 2 },
   { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
   { id: 'iconText', header: 'Icon + text', size: 'sm' },
   { id: 'tagOnly', header: 'Tag only', size: 'sm' },
@@ -186,7 +186,7 @@ const ALL_CELL_TYPE_COLUMNS: TableColumn[] = [
 const SINGLE_TRACK_COLUMNS: TableColumn[] = [
   { id: 'scalar', header: 'Scalar text', size: 'sm' },
   { id: 'linkedText', header: 'Linked text', size: 'sm' },
-  { id: 'image', header: 'Image', size: IMAGE_COLUMN_SIZE[1] },
+  { id: 'image', header: 'Image', imageTracks: 1 },
   { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
   { id: 'iconText', header: 'Icon + text', size: 'sm' },
   { id: 'tagOnly', header: 'Tag only', size: 'sm' },
@@ -314,7 +314,7 @@ const ALL_CELL_TYPE_ROWS: TableRow[] = [
 ];
 
 const THREE_TRACK_COLUMNS: TableColumn[] = [
-  { id: 'image', header: 'Image', size: IMAGE_COLUMN_SIZE[3] },
+  { id: 'image', header: 'Image', imageTracks: 3 },
   { id: 'iconText', header: 'Icon + text', size: 'sm' },
   { id: 'driver', header: 'Driver', size: 'sm' },
   { id: 'vehicle', header: 'Vehicle', size: 'sm' },
@@ -387,7 +387,7 @@ const THREE_TRACK_ROWS: TableRow[] = [
 ];
 
 const SAFETY_EVENT_COLUMNS: TableColumn[] = [
-  { id: 'preview', header: 'Preview', size: IMAGE_COLUMN_SIZE[2] },
+  { id: 'preview', header: 'Preview', imageTracks: 2 },
   {
     id: 'behaviorDetails',
     header: 'Behavior / Severity',
@@ -1300,6 +1300,49 @@ export const ColumnCustomizer: Story = {
             hiddenColumnIds: event.detail.hiddenColumnIds,
             columnOrder: event.detail.columnOrder,
           })}
+      ></ds-table>
+    `;
+  },
+};
+
+export const DataModeSwitcher: Story = {
+  name: 'Data mode switcher',
+  args: {
+    dataMode: 'infinite',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Opt-in dataModeSwitcher renders the table-owned mode trigger and Menu for the supported infinite and pagination modes. dataMode remains controlled; dsDataModeChange reports intent while the application supplies the matching row window, pagination state, and loading consequences.',
+      },
+    },
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    const dataMode = args['dataMode'] === 'pagination' ? 'pagination' : 'infinite';
+    return html`
+      <ds-table
+        data-a11y-fixture
+        .columns=${COLUMNS}
+        .rows=${ROWS.slice(0, 4)}
+        .dataMode=${dataMode}
+        .pagination=${dataMode === 'pagination'
+          ? {
+              pageIndex: 0,
+              pageSize: 25,
+              totalItems: 100,
+              pageSizeOptions: [25, 50, 100],
+              itemLabel: 'rows',
+              pageSizeLabel: 'Rows',
+            }
+          : null}
+        .displayedCount=${4}
+        .totalCount=${100}
+        data-mode-switcher
+        caption="Driver mode example"
+        caption-visibility="visible"
+        @dsDataModeChange=${(event: CustomEvent<TableDataModeChangeDetail>) =>
+          updateArgs({ dataMode: event.detail.dataMode })}
       ></ds-table>
     `;
   },

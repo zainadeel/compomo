@@ -7,6 +7,14 @@ export interface ChoiceOption {
   isInactive?: boolean;
   /** Optional contextual action shown at the trailing edge of this option. */
   action?: ChoiceOptionAction;
+  /** Optional compact actions rendered as supporting content beneath the option label. */
+  subtextActions?: ChoiceOptionSubtextAction[];
+}
+
+export interface ChoiceOptionSubtextAction {
+  label: string;
+  value: string;
+  tone?: 'action' | 'negative';
 }
 
 export interface ChoiceOptionAction {
@@ -50,7 +58,7 @@ export function choiceListUsesIcons(options: ChoiceOption[]): boolean {
   return options.length > 0 && options.every(option => Boolean(option.icon));
 }
 
-/** Once one option needs supporting text, every row keeps the same two-line structure. */
+/** Descriptive subtext gives the complete list one stable two-line row layout. */
 export function choiceListUsesSubtext(options: ChoiceOption[]): boolean {
   return options.some(option => Boolean(option.subtext?.trim()));
 }
