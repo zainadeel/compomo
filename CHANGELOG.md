@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.11.1](https://github.com/zainadeel/compomo/compare/v14.11.0...v14.11.1) (2026-08-21)
+
+
+### Fixed
+
+* **table:** ignore nested dialog footer slots ([#507](https://github.com/zainadeel/compomo/issues/507)) ([6b0ffba](https://github.com/zainadeel/compomo/commit/6b0ffbaa43192ecb8a7a84fa54b735b30c522273))
+
 ## [14.11.0](https://github.com/zainadeel/compomo/compare/v14.10.0...v14.11.0) (2026-08-21)
 
 
