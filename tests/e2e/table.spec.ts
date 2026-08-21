@@ -1649,10 +1649,12 @@ test('uses the shared focus-ring utility for every table-owned keyboard target',
 
 test('drives manual lazy loading and terminal state without pagination', async ({ page }) => {
   const table = page.locator('#lazy');
+  await expect(table.locator('.ds-table__footer-summary')).toHaveText('Displaying 2 of 4');
   await table.getByRole('button', { name: 'Load more' }).click();
   await expect(table.locator('.ds-table__load-cell').getByText('Loading more items')).toBeVisible();
   await expect(table.locator('tbody .ds-table__row')).toHaveCount(4);
   await expect(table.locator('.ds-table__load-cell').getByText('All results loaded')).toBeVisible();
+  await expect(table.locator('.ds-table__footer-summary')).toHaveText('Displaying 4 of 4');
   await expect(table).toHaveJSProperty('hasMore', false);
   await expect
     .poll(() => page.evaluate(() => window.__tableLoadEvents.filter(event => event.id === 'lazy')))
