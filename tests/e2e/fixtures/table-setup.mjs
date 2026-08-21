@@ -1,9 +1,43 @@
 import '/dist/components/ds-table.js';
+import '/dist/components/ds-table-toolbar.js';
+import '/dist/components/ds-table-saved-views.js';
 import '/dist/components/ds-menu.js';
 import '/dist/components/ds-select.js';
 import '/dist/components/ds-tooltip.js';
 
 await customElements.whenDefined('ds-table');
+await customElements.whenDefined('ds-table-toolbar');
+await customElements.whenDefined('ds-table-saved-views');
+
+const savedViews = document.getElementById('saved-views');
+savedViews.views = [
+  { id: 'attention', label: 'Needs attention' },
+  { id: 'west', label: 'West region' },
+];
+savedViews.value = 'attention';
+savedViews.dirty = true;
+savedViews.eventLog = [];
+savedViews.addEventListener('dsViewChange', event => {
+  savedViews.eventLog.push({ type: 'change', ...event.detail });
+  savedViews.value = event.detail.viewId;
+});
+savedViews.addEventListener('dsViewCreate', event => {
+  savedViews.eventLog.push({ type: 'create', ...event.detail });
+});
+savedViews.addEventListener('dsViewRename', event => {
+  savedViews.eventLog.push({ type: 'rename', ...event.detail });
+});
+savedViews.addEventListener('dsViewRemove', event => {
+  savedViews.eventLog.push({ type: 'remove', ...event.detail });
+});
+savedViews.addEventListener('dsViewSave', event => {
+  savedViews.eventLog.push({ type: 'save', ...event.detail });
+  savedViews.dirty = false;
+});
+savedViews.addEventListener('dsViewDiscard', event => {
+  savedViews.eventLog.push({ type: 'discard', ...event.detail });
+  savedViews.dirty = false;
+});
 
 const overflowActionItems = [
   { actionId: 'view', label: 'View details' },
@@ -155,7 +189,7 @@ cellTypes.columns = [
   { id: 'linkedText', header: 'Linked text', size: 'sm' },
   { id: 'primaryPair', header: 'Primary + primary', size: 'sm' },
   { id: 'event', header: 'Event', size: 'sm' },
-  { id: 'image', header: 'Image', size: 98 },
+  { id: 'image', header: 'Image', imageTracks: 2 },
   { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
   { id: 'iconText', header: 'Icon + text', size: 'sm' },
   { id: 'tagOnly', header: 'Tag only', size: 'sm' },
@@ -243,7 +277,7 @@ cellTypes.addEventListener('dsRowActivate', event => {
 
 const threeTrack = document.getElementById('three-track');
 threeTrack.columns = [
-  { id: 'image', header: 'Image', size: 137 },
+  { id: 'image', header: 'Image', imageTracks: 3 },
   { id: 'iconText', header: 'Icon + text', size: 'sm' },
   { id: 'driver', header: 'Driver', size: 'sm' },
   { id: 'vehicle', header: 'Vehicle', size: 'sm' },
@@ -454,7 +488,7 @@ truncateTooltip.rows = [
 const singleTrack = document.getElementById('single-track');
 singleTrack.columns = [
   { id: 'scalar', header: 'Scalar text', size: 'sm' },
-  { id: 'image', header: 'Image', size: 59 },
+  { id: 'image', header: 'Image', imageTracks: 1 },
   { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
   { id: 'iconText', header: 'Icon + text', size: 'sm' },
   { id: 'tagOnly', header: 'Tag only', size: 'sm' },
@@ -747,6 +781,9 @@ customizer.columnOrder = [];
 customizer.addEventListener('dsColumnsConfigChange', event => {
   customizer.hiddenColumnIds = event.detail.hiddenColumnIds;
   customizer.columnOrder = event.detail.columnOrder;
+});
+customizer.addEventListener('dsDataModeChange', event => {
+  customizer.dataMode = event.detail.dataMode;
 });
 
 for (const id of ['loading', 'empty', 'error']) {

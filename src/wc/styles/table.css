@@ -25,6 +25,18 @@
     + var(--dimension-space-025)
     + var(--dimension-size-250)
   );
+  --_table-image-column-inline-size: calc(
+    ((var(--_table-image-block-size) * 16) / 9)
+    + (var(--_table-cell-padding-inline) * 2)
+  );
+  --_table-image-column-inline-size-multi: calc(
+    ((var(--_table-image-block-size-multi) * 16) / 9)
+    + (var(--_table-cell-padding-inline) * 2)
+  );
+  --_table-image-column-inline-size-triple: calc(
+    ((var(--_table-image-block-size-triple) * 16) / 9)
+    + (var(--_table-cell-padding-inline) * 2)
+  );
   /*
    * Wrapping primary on a 1-track cell occupies later tracks instead of a
    * private leading scale. Keep body-medium size; add the 2px stack gap to

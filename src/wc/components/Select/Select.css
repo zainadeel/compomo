@@ -53,6 +53,34 @@
   background: var(--ds-interaction-hover);
 }
 
+.select-option__subtext-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--dimension-space-025);
+  min-inline-size: 0;
+  color: var(--color-foreground-secondary);
+}
+
+.select-option__subtext-action {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--dimension-radius-025);
+  background: transparent;
+  cursor: pointer;
+}
+
+.select-option__subtext-action--negative {
+  --ds-text-action-foreground: var(--color-foreground-bold-negative);
+}
+
+.select-option__subtext-action-separator {
+  color: var(--color-foreground-tertiary);
+  pointer-events: none;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .select-option-row:hover .select-option-row__action {
     opacity: 1;

@@ -12,7 +12,7 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  min-width: var(--dimension-menu-width-xs);
+  min-width: var(--ds-choice-popup-min-inline-size, var(--dimension-menu-width-xs));
   max-width: min(
     var(--dimension-panel-width-lg),
     calc(100vw - var(--dimension-space-200))

@@ -1,0 +1,383 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "table-saved-views",
+  "title": "TableSavedViews",
+  "description": "Controlled saved-views UI for table toolbars, including selection, dirty state, create, save, discard, rename, remove, validation, and focus behavior without owning table configuration or persistence.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/table-saved-views",
+    "source": "src/wc/components/TableSavedViews/TableSavedViews.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Controlled saved-views UI for table toolbars, including selection, dirty state, create, save, discard, rename, remove, validation, and focus behavior without owning table configuration or persistence.",
+      "useWhen": [
+        "A table workspace lets people recall and manage named combinations of table controls.",
+        "Several products need the same saved-view interaction while retaining different view payloads and storage systems."
+      ],
+      "avoidWhen": [
+        "The choices do not represent restorable table configurations.",
+        "The application expects the component to serialize filters, grouping, sorting, columns, pagination, or product-specific state."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-table-toolbar",
+        "component:ds-table",
+        "component:ds-select",
+        "component:ds-menu",
+        "component:ds-modal"
+      ],
+      "patterns": [
+        "pattern:menu-trigger"
+      ],
+      "accessibility": [
+        "The primary control retains combobox semantics and exposes a direct accessible name.",
+        "Each custom view exposes a separately named options trigger. The options menu supports keyboard navigation and returns focus through the shared Select and Menu behavior.",
+        "The naming dialog traps focus through Modal behavior, associates validation text with the input through Field, and restores focus to the saved-views control after closing."
+      ],
+      "states": [
+        "views, value, and dirty are controlled. Selection, create, save, discard, rename, and remove events communicate intent and never mutate application records.",
+        "The component owns only transient interaction state: the contextual menu, naming dialog, draft name, duplicate-name validation, and focus restoration.",
+        "The default view is a non-editable template. Application-owned custom views appear in a separate section with Rename and Remove actions. New view opens the naming dialog. When an editable selected view is dirty, that view row shows Save and negative Discard supporting actions while the footer remains dedicated to New view. The application decides which table state to capture, restore, and persist."
+      ],
+      "responsiveBehavior": [
+        "The control remains a single toolbar item and relies on Select, Menu, and Modal collision and viewport behavior.",
+        "Place it in the leading region of ds-table-toolbar so narrow table headers preserve the expected control order."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign views through the JavaScript property and update value after handling dsViewChange."
+        ],
+        "react": [
+          "Keep view records and serialized table configuration in application state; update controlled props in response to the component events."
+        ],
+        "angular": [
+          "Import the generated DsTableSavedViews adapter and bind views, value, and dirty; handle event.detail for selection and mutations."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook review states",
+          "path": "src/wc/components/TableSavedViews/TableSavedViews.stories.ts"
+        },
+        {
+          "label": "Toolbar composition owner",
+          "path": "src/wc/components/TableToolbar/TableToolbar.agent.json"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "createLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "create-label",
+          "default": "'New view'",
+          "required": false,
+          "mutable": false,
+          "description": "Footer action label that opens the create-view dialog."
+        },
+        "defaultViewId": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "default-view-id",
+          "default": "'__default__'",
+          "required": false,
+          "mutable": false,
+          "description": "ID used for the built-in default view."
+        },
+        "defaultViewLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "default-view-label",
+          "default": "'Default'",
+          "required": false,
+          "mutable": false,
+          "description": "Label used for the built-in default view."
+        },
+        "dirty": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "dirty",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Whether the current table state differs from the selected view."
+        },
+        "label": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "label",
+          "default": "'Saved views'",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name for the saved-views select."
+        },
+        "triggerLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "trigger-label",
+          "default": "'Views'",
+          "required": false,
+          "mutable": false,
+          "description": "Trigger label shown while the default view is selected."
+        },
+        "value": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "value",
+          "default": "'__default__'",
+          "required": false,
+          "mutable": false,
+          "description": "ID of the controlled active view, including the default view ID."
+        },
+        "views": {
+          "type": "TableSavedView[]",
+          "resolvedType": "TableSavedView[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Application-owned custom saved views. Assign arrays through the JavaScript property."
+        }
+      },
+      "events": [
+        {
+          "name": "dsViewChange",
+          "detail": "TableSavedViewChangeDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emitted when a view selection is requested."
+        },
+        {
+          "name": "dsViewCreate",
+          "detail": "TableSavedViewCreateDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emitted after a valid create-view name is submitted."
+        },
+        {
+          "name": "dsViewDiscard",
+          "detail": "TableSavedViewDiscardDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emitted when the active custom view's stored payload should be restored."
+        },
+        {
+          "name": "dsViewRemove",
+          "detail": "TableSavedViewRemoveDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emitted when a custom view removal is requested."
+        },
+        {
+          "name": "dsViewRename",
+          "detail": "TableSavedViewRenameDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emitted after a valid renamed view name is submitted."
+        },
+        {
+          "name": "dsViewSave",
+          "detail": "TableSavedViewSaveDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emitted when changes to the active custom view should replace its stored payload."
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "createLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "create-label",
+        "default": "'New view'",
+        "required": false,
+        "mutable": false,
+        "description": "Footer action label that opens the create-view dialog."
+      },
+      "defaultViewId": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "default-view-id",
+        "default": "'__default__'",
+        "required": false,
+        "mutable": false,
+        "description": "ID used for the built-in default view."
+      },
+      "defaultViewLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "default-view-label",
+        "default": "'Default'",
+        "required": false,
+        "mutable": false,
+        "description": "Label used for the built-in default view."
+      },
+      "dirty": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "dirty",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Whether the current table state differs from the selected view."
+      },
+      "label": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "label",
+        "default": "'Saved views'",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name for the saved-views select."
+      },
+      "triggerLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "trigger-label",
+        "default": "'Views'",
+        "required": false,
+        "mutable": false,
+        "description": "Trigger label shown while the default view is selected."
+      },
+      "value": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "value",
+        "default": "'__default__'",
+        "required": false,
+        "mutable": false,
+        "description": "ID of the controlled active view, including the default view ID."
+      },
+      "views": {
+        "type": "TableSavedView[]",
+        "resolvedType": "TableSavedView[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Application-owned custom saved views. Assign arrays through the JavaScript property."
+      }
+    },
+    "events": [
+      {
+        "name": "dsViewChange",
+        "detail": "TableSavedViewChangeDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emitted when a view selection is requested."
+      },
+      {
+        "name": "dsViewCreate",
+        "detail": "TableSavedViewCreateDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emitted after a valid create-view name is submitted."
+      },
+      {
+        "name": "dsViewDiscard",
+        "detail": "TableSavedViewDiscardDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emitted when the active custom view's stored payload should be restored."
+      },
+      {
+        "name": "dsViewRemove",
+        "detail": "TableSavedViewRemoveDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emitted when a custom view removal is requested."
+      },
+      {
+        "name": "dsViewRename",
+        "detail": "TableSavedViewRenameDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emitted after a valid renamed view name is submitted."
+      },
+      {
+        "name": "dsViewSave",
+        "detail": "TableSavedViewSaveDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emitted when changes to the active custom view should replace its stored payload."
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-table-saved-views",
+      "react": "DsTableSavedViews",
+      "angular": "DsTableSavedViews"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-table-saved-views.js';",
+        "example": "<ds-table-saved-views></ds-table-saved-views>"
+      },
+      "react": {
+        "import": "import { DsTableSavedViews } from '@ds-mo/ui/react';",
+        "example": "<DsTableSavedViews />"
+      },
+      "angular": {
+        "import": "import { DsTableSavedViews } from '@ds-mo/ui/angular/ds-table-saved-views';",
+        "example": "<ds-table-saved-views></ds-table-saved-views>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: views.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.5.0",
+          "@ds-mo/icons ^7.0.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "button-filled",
+    "button-unfilled",
+    "field",
+    "input",
+    "menu",
+    "modal",
+    "select"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/TableSavedViews/TableSavedViews.css",
+      "content": ":host {\n  --ds-choice-popup-min-inline-size: var(--dimension-menu-width-sm);\n\n  display: inline-block;\n  min-inline-size: 0;\n}\n\nds-select {\n  display: block;\n}\n\n.table-saved-views__dialog-actions {\n  display: flex;\n  align-items: center;\n  justify-content: flex-start;\n  gap: var(--dimension-space-100);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/TableSavedViews/TableSavedViews.tsx",
+      "content": "import {\n  Component,\n  Element,\n  Event,\n  EventEmitter,\n  h,\n  Host,\n  Prop,\n  State,\n} from '@stencil/core';\nimport type { MenuItemData } from '../Menu/menu-types';\nimport type {\n  SelectOptionActionDetail,\n  SelectOptionSubtextActionDetail,\n  SelectValue,\n} from '../Select/Select';\nimport type {\n  TableSavedView,\n  TableSavedViewChangeDetail,\n  TableSavedViewCreateDetail,\n  TableSavedViewDiscardDetail,\n  TableSavedViewRemoveDetail,\n  TableSavedViewRenameDetail,\n  TableSavedViewSaveDetail,\n} from './table-saved-views-types';\n\ntype SavedViewDialogMode = 'create' | 'rename';\n\nlet tableSavedViewsId = 0;\n\n@Component({\n  tag: 'ds-table-saved-views',\n  styleUrl: 'TableSavedViews.css',\n  scoped: true,\n})\nexport class TableSavedViews {\n  @Element() el!: HTMLElement;\n\n  /** Application-owned custom saved views. Assign arrays through the JavaScript property. */\n  @Prop() views: TableSavedView[] = [];\n  /** ID of the controlled active view, including the default view ID. */\n  @Prop() value: string = '__default__';\n  /** Whether the current table state differs from the selected view. */\n  @Prop() dirty: boolean = false;\n  /** ID used for the built-in default view. */\n  @Prop() defaultViewId: string = '__default__';\n  /** Label used for the built-in default view. */\n  @Prop() defaultViewLabel: string = 'Default';\n  /** Accessible name for the saved-views select. */\n  @Prop() label: string = 'Saved views';\n  /** Trigger label shown while the default view is selected. */\n  @Prop() triggerLabel: string = 'Views';\n  /** Footer action label that opens the create-view dialog. */\n  @Prop() createLabel: string = 'New view';\n\n  /** Emitted when a view selection is requested. */\n  @Event() dsViewChange!: EventEmitter<TableSavedViewChangeDetail>;\n  /** Emitted after a valid create-view name is submitted. */\n  @Event() dsViewCreate!: EventEmitter<TableSavedViewCreateDetail>;\n  /** Emitted after a valid renamed view name is submitted. */\n  @Event() dsViewRename!: EventEmitter<TableSavedViewRenameDetail>;\n  /** Emitted when a custom view removal is requested. */\n  @Event() dsViewRemove!: EventEmitter<TableSavedViewRemoveDetail>;\n  /** Emitted when changes to the active custom view should replace its stored payload. */\n  @Event() dsViewSave!: EventEmitter<TableSavedViewSaveDetail>;\n  /** Emitted when the active custom view's stored payload should be restored. */\n  @Event() dsViewDiscard!: EventEmitter<TableSavedViewDiscardDetail>;\n\n  @State() private actionViewId: string | null = null;\n  @State() private actionAnchorId: string | undefined;\n  @State() private actionMenuOpen = false;\n  @State() private actionMenuInitialFocusVisible = false;\n  @State() private dialogOpen = false;\n  @State() private dialogMode: SavedViewDialogMode = 'create';\n  @State() private dialogViewId: string | null = null;\n  @State() private nameDraft = '';\n  @State() private nameError = '';\n\n  private readonly componentId = `ds-table-saved-views-${++tableSavedViewsId}`;\n  private readonly selectId = `${this.componentId}-select`;\n  private readonly actionMenuId = `${this.componentId}-actions`;\n  private readonly fieldId = `${this.componentId}-name-field`;\n  private readonly inputId = `${this.componentId}-name-input`;\n  private readonly actionItems: MenuItemData[] = [\n    { label: 'Rename', value: 'rename' },\n    { label: 'Remove', value: 'remove', isDestructive: true },\n  ];\n\n  private get selectedCustomView(): TableSavedView | undefined {\n    return this.views.find(view => view.id === this.value);\n  }\n\n  private get dialogView(): TableSavedView | undefined {\n    return this.views.find(view => view.id === this.dialogViewId);\n  }\n\n  private get sections() {\n    const custom = this.views.map(view => ({\n      label: view.label,\n      value: view.id,\n      subtextActions:\n        this.dirty && view.id === this.selectedCustomView?.id\n          ? [\n            { label: 'Save', value: 'save' },\n            { label: 'Discard', value: 'discard', tone: 'negative' as const },\n          ]\n          : undefined,\n      action: {\n        label: `Options for ${view.label}`,\n        controls: this.actionMenuId,\n        expanded: this.actionViewId === view.id && this.actionMenuOpen,\n      },\n    }));\n    const templates = {\n      header: 'Templates',\n      options: [{ label: this.defaultViewLabel, value: this.defaultViewId }],\n      divider: custom.length > 0,\n    };\n    return custom.length > 0\n      ? [templates, { header: 'Custom', options: custom }]\n      : [templates];\n  }\n\n  private handleViewChange(value: SelectValue) {\n    if (typeof value === 'string') this.dsViewChange.emit({ viewId: value });\n  }\n\n  private handleSubtextAction(detail: SelectOptionSubtextActionDetail) {\n    const view = this.selectedCustomView;\n    if (!view || !this.dirty || detail.value !== view.id) return;\n    if (detail.actionValue === 'save') this.dsViewSave.emit({ viewId: view.id });\n    if (detail.actionValue === 'discard') this.dsViewDiscard.emit({ viewId: view.id });\n  }\n\n  private handleOptionAction(detail: SelectOptionActionDetail) {\n    if (!this.views.some(view => view.id === detail.value)) return;\n    this.actionMenuInitialFocusVisible = detail.originalEvent.detail === 0;\n    if (this.actionViewId === detail.value && this.actionMenuOpen) {\n      this.actionMenuOpen = false;\n      return;\n    }\n    this.actionViewId = detail.value;\n    this.actionAnchorId = detail.anchorId;\n    this.actionMenuOpen = true;\n  }\n\n  private handleActionSelect(event: CustomEvent<MenuItemData>) {\n    const viewId = this.actionViewId;\n    this.actionMenuOpen = false;\n    if (!viewId) return;\n    if (event.detail.value === 'rename') this.openDialog('rename', viewId);\n    if (event.detail.value === 'remove') this.dsViewRemove.emit({ viewId });\n  }\n\n  private openDialog(mode: SavedViewDialogMode, viewId: string | null = null) {\n    const view = mode === 'rename' ? this.views.find(item => item.id === viewId) : undefined;\n    if (mode === 'rename' && !view) return;\n    this.dialogMode = mode;\n    this.dialogViewId = view?.id ?? null;\n    this.nameDraft = view?.label ?? '';\n    this.nameError = '';\n    this.dialogOpen = true;\n    requestAnimationFrame(() => {\n      requestAnimationFrame(() => {\n        const input = this.el.querySelector<HTMLElement & { setFocus?: () => Promise<void> }>(\n          `#${this.inputId}`,\n        );\n        void input?.setFocus?.();\n      });\n    });\n  }\n\n  private validateName(): string {\n    const name = this.nameDraft.trim();\n    if (!name) return 'View name is required.';\n    const duplicate = this.views.some(\n      view => view.id !== this.dialogViewId && view.label.trim().toLocaleLowerCase() === name.toLocaleLowerCase(),\n    );\n    if (duplicate || this.defaultViewLabel.trim().toLocaleLowerCase() === name.toLocaleLowerCase()) {\n      return 'A view with this name already exists.';\n    }\n    return '';\n  }\n\n  private submitDialog() {\n    const error = this.validateName();\n    if (error) {\n      this.nameError = error;\n      return;\n    }\n    const name = this.nameDraft.trim();\n    if (this.dialogMode === 'rename' && this.dialogView) {\n      this.dsViewRename.emit({ viewId: this.dialogView.id, name });\n    } else {\n      this.dsViewCreate.emit({ name });\n    }\n    this.dialogOpen = false;\n  }\n\n  private finishDialogClose() {\n    if (this.dialogOpen) return;\n    this.dialogViewId = null;\n    this.nameDraft = '';\n    this.nameError = '';\n    const select = this.el.querySelector<HTMLElement & { setFocus?: () => Promise<void> }>(\n      `#${this.selectId}`,\n    );\n    void select?.setFocus?.();\n  }\n\n  render() {\n    return (\n      <Host>\n        <ds-select\n          id={this.selectId}\n          size=\"md\"\n          placeholder={this.label}\n          aria-label={this.label}\n          sections={this.sections}\n          value={this.value}\n          triggerLabel={this.selectedCustomView ? undefined : this.triggerLabel}\n          triggerLabelPlaceholder={!this.selectedCustomView}\n          dot={this.dirty}\n          footerActionLabel={this.createLabel}\n          activeFill={false}\n          allowClear={false}\n          onDsChange={(event: CustomEvent<SelectValue>) => this.handleViewChange(event.detail)}\n          onDsFooterAction={() => this.openDialog('create')}\n          onDsOptionSubtextAction={(event: CustomEvent<SelectOptionSubtextActionDetail>) =>\n            this.handleSubtextAction(event.detail)\n          }\n          onDsOptionAction={(event: CustomEvent<SelectOptionActionDetail>) =>\n            this.handleOptionAction(event.detail)\n          }\n        />\n\n        <ds-menu\n          id={this.actionMenuId}\n          anchorId={this.actionAnchorId}\n          menuLabel=\"Saved view options\"\n          side=\"bottom\"\n          align=\"end\"\n          menuWidth=\"max-content\"\n          minWidth=\"0\"\n          items={this.actionItems}\n          open={this.actionMenuOpen}\n          initialFocusVisible={this.actionMenuInitialFocusVisible}\n          onDsClose={() => (this.actionMenuOpen = false)}\n          onDsAfterClose={() => {\n            if (this.actionMenuOpen) return;\n            this.actionViewId = null;\n            this.actionAnchorId = undefined;\n          }}\n          onDsSelect={(event: CustomEvent<MenuItemData>) => this.handleActionSelect(event)}\n        />\n\n        <ds-modal\n          open={this.dialogOpen}\n          heading={this.dialogMode === 'rename' ? 'Rename view' : 'Save as new view'}\n          modalWidth=\"sm\"\n          onDsClose={() => (this.dialogOpen = false)}\n          onDsAfterClose={() => this.finishDialogClose()}\n        >\n          <ds-field\n            label=\"Name\"\n            fieldId={this.fieldId}\n            error={this.nameError.length > 0}\n            errorMessage={this.nameError}\n          >\n            <ds-input\n              id={this.inputId}\n              size=\"md\"\n              placeholder=\"Enter a unique name\"\n              value={this.nameDraft}\n              autoFocus={true}\n              onDsChange={(event: CustomEvent<string>) => {\n                this.nameDraft = event.detail;\n                if (this.nameError) this.nameError = '';\n              }}\n              onKeyDown={(event: KeyboardEvent) => {\n                if (event.key === 'Enter') this.submitDialog();\n              }}\n            />\n          </ds-field>\n\n          <div slot=\"footer\" class=\"table-saved-views__dialog-actions\">\n            <ds-button-filled\n              label={this.dialogMode === 'rename' ? 'Rename' : 'Save'}\n              size=\"md\"\n              onDsClick={() => this.submitDialog()}\n            />\n            <ds-button-unfilled\n              label=\"Cancel\"\n              size=\"md\"\n              onDsClick={() => (this.dialogOpen = false)}\n            />\n          </div>\n        </ds-modal>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/TableSavedViews/table-saved-views-types.ts",
+      "content": "export interface TableSavedView {\n  id: string;\n  label: string;\n}\n\nexport interface TableSavedViewChangeDetail {\n  viewId: string;\n}\n\nexport interface TableSavedViewCreateDetail {\n  name: string;\n}\n\nexport interface TableSavedViewRenameDetail {\n  viewId: string;\n  name: string;\n}\n\nexport interface TableSavedViewRemoveDetail {\n  viewId: string;\n}\n\nexport interface TableSavedViewSaveDetail {\n  viewId: string;\n}\n\nexport interface TableSavedViewDiscardDetail {\n  viewId: string;\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

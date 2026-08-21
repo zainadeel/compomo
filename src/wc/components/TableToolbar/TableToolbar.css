@@ -1,0 +1,43 @@
+:host {
+  display: block;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+.table-toolbar {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  inline-size: 100%;
+  min-inline-size: 0;
+  gap: var(--dimension-space-100);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.table-toolbar::-webkit-scrollbar {
+  display: none;
+}
+
+.table-toolbar__leading,
+.table-toolbar__trailing {
+  display: flex;
+  align-items: center;
+  min-inline-size: 0;
+  gap: var(--dimension-space-100);
+}
+
+.table-toolbar__leading {
+  flex: 1 0 auto;
+}
+
+.table-toolbar__trailing {
+  flex: 0 0 auto;
+  margin-inline-start: auto;
+}
+
+.table-toolbar__leading slot,
+.table-toolbar__trailing slot {
+  display: contents;
+}

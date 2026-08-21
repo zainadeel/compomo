@@ -27,6 +27,7 @@ export type {
   TableColumnSticky,
   TableColumnWidth,
   TableDataMode,
+  TableDataModeChangeDetail,
   TableGroup,
   TableGroupCollapseChangeDetail,
   TableGroupLoadMoreDetail,

@@ -162,6 +162,14 @@ test('resolves labels, column constraints, and server group totals defensively',
   assert.equal(clampTableColumnSize({ ...columns[0], size: 80 }), 120);
   assert.equal(clampTableColumnSize({ ...columns[0], size: 240 }), 200);
   assert.equal(tableColumnSize({ id: 'token', header: 'Token', size: 'sm' }), 'var(--dimension-table-column-width-sm)');
+  assert.equal(
+    tableColumnSize({ id: 'preview', header: 'Preview', imageTracks: 2 }),
+    'var(--_table-image-column-inline-size-multi)',
+  );
+  assert.equal(
+    tableColumnSize({ id: 'preview', header: 'Preview', size: 102, imageTracks: 2 }),
+    '102px',
+  );
   assert.equal(tableExplicitMinWidth(columns), 'calc(160px + 80px)');
   assert.equal(
     tableExplicitMinWidth([

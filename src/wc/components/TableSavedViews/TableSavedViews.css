@@ -1,0 +1,17 @@
+:host {
+  --ds-choice-popup-min-inline-size: var(--dimension-menu-width-sm);
+
+  display: inline-block;
+  min-inline-size: 0;
+}
+
+ds-select {
+  display: block;
+}
+
+.table-saved-views__dialog-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--dimension-space-100);
+}

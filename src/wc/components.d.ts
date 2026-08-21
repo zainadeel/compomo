@@ -54,7 +54,7 @@ import { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 import { PanelToolsHeaderAction, PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { RadioOption, RadioSize } from "./components/Radio/Radio";
 import { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
-import { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
+import { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
 import { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
 import { ShellGradientPreset } from "./shell/shell-gradient-presets";
 import { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
@@ -64,7 +64,8 @@ import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 import { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 import { SwitchSize } from "./components/Switch/Switch";
 import { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
-import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableColumnsConfigChangeDetail, TableDataMode, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableColumnsConfigChangeDetail, TableDataMode, TableDataModeChangeDetail, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+import { TableSavedView, TableSavedViewChangeDetail, TableSavedViewCreateDetail, TableSavedViewDiscardDetail, TableSavedViewRemoveDetail, TableSavedViewRenameDetail, TableSavedViewSaveDetail } from "./components/TableSavedViews/table-saved-views-types";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -118,7 +119,7 @@ export { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 export { PanelToolsHeaderAction, PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { RadioOption, RadioSize } from "./components/Radio/Radio";
 export { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
-export { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
+export { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
 export { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
 export { ShellGradientPreset } from "./shell/shell-gradient-presets";
 export { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
@@ -128,7 +129,8 @@ export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 export { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 export { SwitchSize } from "./components/Switch/Switch";
 export { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
-export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableColumnsConfigChangeDetail, TableDataMode, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableColumnsConfigChangeDetail, TableDataMode, TableDataModeChangeDetail, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+export { TableSavedView, TableSavedViewChangeDetail, TableSavedViewCreateDetail, TableSavedViewDiscardDetail, TableSavedViewRemoveDetail, TableSavedViewRenameDetail, TableSavedViewSaveDetail } from "./components/TableSavedViews/table-saved-views-types";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
@@ -2880,6 +2882,19 @@ export namespace Components {
          */
         "dataMode": TableDataMode;
         /**
+          * @default 'Table variation'
+         */
+        "dataModeMenuLabel": string;
+        /**
+          * Opt in to the table-owned control for choosing between supported data modes.
+          * @default false
+         */
+        "dataModeSwitcher": boolean;
+        /**
+          * @default 'Change table variation'
+         */
+        "dataModeSwitcherLabel": string;
+        /**
           * Optional result summary footer. When both `displayedCount` and `totalCount` are finite numbers, the table shows “Displaying {displayed} of {total}”.
          */
         "displayedCount": number | undefined;
@@ -2970,6 +2985,10 @@ export namespace Components {
          */
         "hiddenColumnIds": string[];
         /**
+          * @default 'Infinite scroll'
+         */
+        "infiniteModeLabel": string;
+        /**
           * Reset key for a new query/group/sort dataset.
           * @default 'default'
          */
@@ -3010,6 +3029,10 @@ export namespace Components {
           * @default null
          */
         "pagination": TablePaginationState | null;
+        /**
+          * @default 'Pagination + Infinite groups'
+         */
+        "paginationModeLabel": string;
         /**
           * Supports {displayed} and {total} placeholders.
           * @default 'Displaying {displayed} of {total}'
@@ -3067,6 +3090,55 @@ export namespace Components {
           * @default 0
          */
         "viewportInsetBlockStart": string | number;
+    }
+    interface DsTableSavedViews {
+        /**
+          * Footer action label that opens the create-view dialog.
+          * @default 'New view'
+         */
+        "createLabel": string;
+        /**
+          * ID used for the built-in default view.
+          * @default '__default__'
+         */
+        "defaultViewId": string;
+        /**
+          * Label used for the built-in default view.
+          * @default 'Default'
+         */
+        "defaultViewLabel": string;
+        /**
+          * Whether the current table state differs from the selected view.
+          * @default false
+         */
+        "dirty": boolean;
+        /**
+          * Accessible name for the saved-views select.
+          * @default 'Saved views'
+         */
+        "label": string;
+        /**
+          * Trigger label shown while the default view is selected.
+          * @default 'Views'
+         */
+        "triggerLabel": string;
+        /**
+          * ID of the controlled active view, including the default view ID.
+          * @default '__default__'
+         */
+        "value": string;
+        /**
+          * Application-owned custom saved views. Assign arrays through the JavaScript property.
+          * @default []
+         */
+        "views": TableSavedView[];
+    }
+    interface DsTableToolbar {
+        /**
+          * Accessible name for the grouped table controls.
+          * @default 'Table controls'
+         */
+        "label": string;
     }
     interface DsTag {
         /**
@@ -3510,6 +3582,10 @@ export interface DsTabGroupCustomEvent<T> extends CustomEvent<T> {
 export interface DsTableCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsTableElement;
+}
+export interface DsTableSavedViewsCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsTableSavedViewsElement;
 }
 export interface DsTagCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -4335,6 +4411,7 @@ declare global {
         "dsOpenChange": boolean;
         "dsFooterAction": void;
         "dsOptionAction": SelectOptionActionDetail;
+        "dsOptionSubtextAction": SelectOptionSubtextActionDetail;
     }
     interface HTMLDsSelectElement extends Components.DsSelect, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsSelectElementEventMap>(type: K, listener: (this: HTMLDsSelectElement, ev: DsSelectCustomEvent<HTMLDsSelectElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -4501,6 +4578,7 @@ declare global {
         "dsCellAction": TableCellActionDetail;
         "dsRowActivate": TableRowActivateDetail;
         "dsColumnsConfigChange": TableColumnsConfigChangeDetail;
+        "dsDataModeChange": TableDataModeChangeDetail;
     }
     interface HTMLDsTableElement extends Components.DsTable, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsTableElementEventMap>(type: K, listener: (this: HTMLDsTableElement, ev: DsTableCustomEvent<HTMLDsTableElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -4515,6 +4593,34 @@ declare global {
     var HTMLDsTableElement: {
         prototype: HTMLDsTableElement;
         new (): HTMLDsTableElement;
+    };
+    interface HTMLDsTableSavedViewsElementEventMap {
+        "dsViewChange": TableSavedViewChangeDetail;
+        "dsViewCreate": TableSavedViewCreateDetail;
+        "dsViewRename": TableSavedViewRenameDetail;
+        "dsViewRemove": TableSavedViewRemoveDetail;
+        "dsViewSave": TableSavedViewSaveDetail;
+        "dsViewDiscard": TableSavedViewDiscardDetail;
+    }
+    interface HTMLDsTableSavedViewsElement extends Components.DsTableSavedViews, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsTableSavedViewsElementEventMap>(type: K, listener: (this: HTMLDsTableSavedViewsElement, ev: DsTableSavedViewsCustomEvent<HTMLDsTableSavedViewsElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsTableSavedViewsElementEventMap>(type: K, listener: (this: HTMLDsTableSavedViewsElement, ev: DsTableSavedViewsCustomEvent<HTMLDsTableSavedViewsElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsTableSavedViewsElement: {
+        prototype: HTMLDsTableSavedViewsElement;
+        new (): HTMLDsTableSavedViewsElement;
+    };
+    interface HTMLDsTableToolbarElement extends Components.DsTableToolbar, HTMLStencilElement {
+    }
+    var HTMLDsTableToolbarElement: {
+        prototype: HTMLDsTableToolbarElement;
+        new (): HTMLDsTableToolbarElement;
     };
     interface HTMLDsTagElementEventMap {
         "dsClick": MouseEvent;
@@ -4661,6 +4767,8 @@ declare global {
         "ds-switch": HTMLDsSwitchElement;
         "ds-tab-group": HTMLDsTabGroupElement;
         "ds-table": HTMLDsTableElement;
+        "ds-table-saved-views": HTMLDsTableSavedViewsElement;
+        "ds-table-toolbar": HTMLDsTableToolbarElement;
         "ds-tag": HTMLDsTagElement;
         "ds-text": HTMLDsTextElement;
         "ds-toast": HTMLDsToastElement;
@@ -7100,6 +7208,10 @@ declare namespace LocalJSX {
          */
         "onDsOptionAction"?: (event: DsSelectCustomEvent<SelectOptionActionDetail>) => void;
         /**
+          * Emitted when an option's supporting text action is activated.
+         */
+        "onDsOptionSubtextAction"?: (event: DsSelectCustomEvent<SelectOptionSubtextActionDetail>) => void;
+        /**
           * Controlled popup visibility.
           * @default false
          */
@@ -7687,6 +7799,19 @@ declare namespace LocalJSX {
          */
         "dataMode"?: TableDataMode;
         /**
+          * @default 'Table variation'
+         */
+        "dataModeMenuLabel"?: string;
+        /**
+          * Opt in to the table-owned control for choosing between supported data modes.
+          * @default false
+         */
+        "dataModeSwitcher"?: boolean;
+        /**
+          * @default 'Change table variation'
+         */
+        "dataModeSwitcherLabel"?: string;
+        /**
           * Optional result summary footer. When both `displayedCount` and `totalCount` are finite numbers, the table shows “Displaying {displayed} of {total}”.
          */
         "displayedCount"?: number | undefined;
@@ -7777,6 +7902,10 @@ declare namespace LocalJSX {
          */
         "hiddenColumnIds"?: string[];
         /**
+          * @default 'Infinite scroll'
+         */
+        "infiniteModeLabel"?: string;
+        /**
           * Reset key for a new query/group/sort dataset.
           * @default 'default'
          */
@@ -7814,6 +7943,7 @@ declare namespace LocalJSX {
         "maxHeight"?: string | number | undefined;
         "onDsCellAction"?: (event: DsTableCustomEvent<TableCellActionDetail>) => void;
         "onDsColumnsConfigChange"?: (event: DsTableCustomEvent<TableColumnsConfigChangeDetail>) => void;
+        "onDsDataModeChange"?: (event: DsTableCustomEvent<TableDataModeChangeDetail>) => void;
         "onDsGroupCollapseChange"?: (event: DsTableCustomEvent<TableGroupCollapseChangeDetail>) => void;
         "onDsGroupLoadMore"?: (event: DsTableCustomEvent<TableGroupLoadMoreDetail>) => void;
         "onDsLoadMore"?: (event: DsTableCustomEvent<TableLoadMoreDetail>) => void;
@@ -7826,6 +7956,10 @@ declare namespace LocalJSX {
           * @default null
          */
         "pagination"?: TablePaginationState | null;
+        /**
+          * @default 'Pagination + Infinite groups'
+         */
+        "paginationModeLabel"?: string;
         /**
           * Supports {displayed} and {total} placeholders.
           * @default 'Displaying {displayed} of {total}'
@@ -7883,6 +8017,79 @@ declare namespace LocalJSX {
           * @default 0
          */
         "viewportInsetBlockStart"?: string | number;
+    }
+    interface DsTableSavedViews {
+        /**
+          * Footer action label that opens the create-view dialog.
+          * @default 'New view'
+         */
+        "createLabel"?: string;
+        /**
+          * ID used for the built-in default view.
+          * @default '__default__'
+         */
+        "defaultViewId"?: string;
+        /**
+          * Label used for the built-in default view.
+          * @default 'Default'
+         */
+        "defaultViewLabel"?: string;
+        /**
+          * Whether the current table state differs from the selected view.
+          * @default false
+         */
+        "dirty"?: boolean;
+        /**
+          * Accessible name for the saved-views select.
+          * @default 'Saved views'
+         */
+        "label"?: string;
+        /**
+          * Emitted when a view selection is requested.
+         */
+        "onDsViewChange"?: (event: DsTableSavedViewsCustomEvent<TableSavedViewChangeDetail>) => void;
+        /**
+          * Emitted after a valid create-view name is submitted.
+         */
+        "onDsViewCreate"?: (event: DsTableSavedViewsCustomEvent<TableSavedViewCreateDetail>) => void;
+        /**
+          * Emitted when the active custom view's stored payload should be restored.
+         */
+        "onDsViewDiscard"?: (event: DsTableSavedViewsCustomEvent<TableSavedViewDiscardDetail>) => void;
+        /**
+          * Emitted when a custom view removal is requested.
+         */
+        "onDsViewRemove"?: (event: DsTableSavedViewsCustomEvent<TableSavedViewRemoveDetail>) => void;
+        /**
+          * Emitted after a valid renamed view name is submitted.
+         */
+        "onDsViewRename"?: (event: DsTableSavedViewsCustomEvent<TableSavedViewRenameDetail>) => void;
+        /**
+          * Emitted when changes to the active custom view should replace its stored payload.
+         */
+        "onDsViewSave"?: (event: DsTableSavedViewsCustomEvent<TableSavedViewSaveDetail>) => void;
+        /**
+          * Trigger label shown while the default view is selected.
+          * @default 'Views'
+         */
+        "triggerLabel"?: string;
+        /**
+          * ID of the controlled active view, including the default view ID.
+          * @default '__default__'
+         */
+        "value"?: string;
+        /**
+          * Application-owned custom saved views. Assign arrays through the JavaScript property.
+          * @default []
+         */
+        "views"?: TableSavedView[];
+    }
+    interface DsTableToolbar {
+        /**
+          * Accessible name for the grouped table controls.
+          * @default 'Table controls'
+         */
+        "label"?: string;
     }
     interface DsTag {
         /**
@@ -8810,6 +9017,11 @@ declare namespace LocalJSX {
         "errorBody": string;
         "emptyCellLabel": string;
         "dataMode": TableDataMode;
+        "dataModeSwitcher": boolean;
+        "dataModeSwitcherLabel": string;
+        "dataModeMenuLabel": string;
+        "infiniteModeLabel": string;
+        "paginationModeLabel": string;
         "loadMoreMode": TableLoadMoreMode;
         "hasMore": boolean;
         "loadingMore": boolean;
@@ -8827,6 +9039,18 @@ declare namespace LocalJSX {
         "groupLoadingMoreLabel": string;
         "groupEndOfResultsLabel": string;
         "groupRowsLoadedLabel": string;
+    }
+    interface DsTableSavedViewsAttributes {
+        "value": string;
+        "dirty": boolean;
+        "defaultViewId": string;
+        "defaultViewLabel": string;
+        "label": string;
+        "triggerLabel": string;
+        "createLabel": string;
+    }
+    interface DsTableToolbarAttributes {
+        "label": string;
     }
     interface DsTagAttributes {
         "label": string;
@@ -8955,6 +9179,8 @@ declare namespace LocalJSX {
         "ds-switch": Omit<DsSwitch, keyof DsSwitchAttributes> & { [K in keyof DsSwitch & keyof DsSwitchAttributes]?: DsSwitch[K] } & { [K in keyof DsSwitch & keyof DsSwitchAttributes as `attr:${K}`]?: DsSwitchAttributes[K] } & { [K in keyof DsSwitch & keyof DsSwitchAttributes as `prop:${K}`]?: DsSwitch[K] };
         "ds-tab-group": Omit<DsTabGroup, keyof DsTabGroupAttributes> & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes]?: DsTabGroup[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `attr:${K}`]?: DsTabGroupAttributes[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `prop:${K}`]?: DsTabGroup[K] };
         "ds-table": Omit<DsTable, keyof DsTableAttributes> & { [K in keyof DsTable & keyof DsTableAttributes]?: DsTable[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `attr:${K}`]?: DsTableAttributes[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `prop:${K}`]?: DsTable[K] } & OneOf<"caption", DsTable["caption"], DsTableAttributes["caption"]>;
+        "ds-table-saved-views": Omit<DsTableSavedViews, keyof DsTableSavedViewsAttributes> & { [K in keyof DsTableSavedViews & keyof DsTableSavedViewsAttributes]?: DsTableSavedViews[K] } & { [K in keyof DsTableSavedViews & keyof DsTableSavedViewsAttributes as `attr:${K}`]?: DsTableSavedViewsAttributes[K] } & { [K in keyof DsTableSavedViews & keyof DsTableSavedViewsAttributes as `prop:${K}`]?: DsTableSavedViews[K] };
+        "ds-table-toolbar": Omit<DsTableToolbar, keyof DsTableToolbarAttributes> & { [K in keyof DsTableToolbar & keyof DsTableToolbarAttributes]?: DsTableToolbar[K] } & { [K in keyof DsTableToolbar & keyof DsTableToolbarAttributes as `attr:${K}`]?: DsTableToolbarAttributes[K] } & { [K in keyof DsTableToolbar & keyof DsTableToolbarAttributes as `prop:${K}`]?: DsTableToolbar[K] };
         "ds-tag": Omit<DsTag, keyof DsTagAttributes> & { [K in keyof DsTag & keyof DsTagAttributes]?: DsTag[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `attr:${K}`]?: DsTagAttributes[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `prop:${K}`]?: DsTag[K] } & OneOf<"label", DsTag["label"], DsTagAttributes["label"]>;
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
         "ds-toast": Omit<DsToast, keyof DsToastAttributes> & { [K in keyof DsToast & keyof DsToastAttributes]?: DsToast[K] } & { [K in keyof DsToast & keyof DsToastAttributes as `attr:${K}`]?: DsToastAttributes[K] } & { [K in keyof DsToast & keyof DsToastAttributes as `prop:${K}`]?: DsToast[K] };
@@ -9047,6 +9273,8 @@ declare module "@stencil/core" {
             "ds-switch": LocalJSX.IntrinsicElements["ds-switch"] & JSXBase.HTMLAttributes<HTMLDsSwitchElement>;
             "ds-tab-group": LocalJSX.IntrinsicElements["ds-tab-group"] & JSXBase.HTMLAttributes<HTMLDsTabGroupElement>;
             "ds-table": LocalJSX.IntrinsicElements["ds-table"] & JSXBase.HTMLAttributes<HTMLDsTableElement>;
+            "ds-table-saved-views": LocalJSX.IntrinsicElements["ds-table-saved-views"] & JSXBase.HTMLAttributes<HTMLDsTableSavedViewsElement>;
+            "ds-table-toolbar": LocalJSX.IntrinsicElements["ds-table-toolbar"] & JSXBase.HTMLAttributes<HTMLDsTableToolbarElement>;
             "ds-tag": LocalJSX.IntrinsicElements["ds-tag"] & JSXBase.HTMLAttributes<HTMLDsTagElement>;
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
             "ds-toast": LocalJSX.IntrinsicElements["ds-toast"] & JSXBase.HTMLAttributes<HTMLDsToastElement>;

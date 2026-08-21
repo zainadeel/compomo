@@ -21,6 +21,15 @@
   </head>
   <body>
     <main>
+      <div style="inline-size: 240px;">
+        <ds-table-toolbar id="table-toolbar" label="Fleet table controls">
+          <button slot="leading" type="button">Saved views</button>
+          <button slot="leading" type="button">Search fleet records</button>
+          <button slot="trailing" type="button">Filters</button>
+          <button slot="trailing" type="button">Group by</button>
+        </ds-table-toolbar>
+      </div>
+      <ds-table-saved-views id="saved-views"></ds-table-saved-views>
       <ds-table id="basic" caption="Workforce overview" caption-visibility="visible"></ds-table>
       <ds-table id="composable" caption="Composable drivers" caption-visibility="visible">
         <div
@@ -102,7 +111,13 @@
         caption-visibility="visible"
         selection-mode="multiple"
         column-customizer
-      ></ds-table>
+        data-mode-switcher
+      >
+        <ds-table-toolbar slot="header" label="Customizable driver controls">
+          <button slot="leading" type="button">Saved views</button>
+          <button slot="trailing" type="button">Filters</button>
+        </ds-table-toolbar>
+      </ds-table>
       <div style="width: 360px;">
         <ds-table
           id="document-sticky"

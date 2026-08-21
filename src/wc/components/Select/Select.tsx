@@ -58,6 +58,12 @@ export interface SelectOptionActionDetail {
   originalEvent: MouseEvent;
 }
 
+export interface SelectOptionSubtextActionDetail {
+  value: string;
+  actionValue: string;
+  originalEvent: MouseEvent;
+}
+
 const ICON_SIZE: Record<SelectSize, 'lg' | 'md' | 'sm' | 'xs'> = {
   lg: 'lg',
   md: 'md',
@@ -169,6 +175,8 @@ export class Select {
   @Event() dsFooterAction!: EventEmitter<void>;
   /** Emitted when an option's contextual ellipsis action is activated. */
   @Event() dsOptionAction!: EventEmitter<SelectOptionActionDetail>;
+  /** Emitted when an option's supporting text action is activated. */
+  @Event() dsOptionSubtextAction!: EventEmitter<SelectOptionSubtextActionDetail>;
 
   @State() private activeIndex = -1;
   @State() private searchTerm = '';
@@ -564,6 +572,52 @@ export class Select {
               aria-hidden="true"
             >
               <ds-icon name={option.icon} size={this.size} color="inherit" />
+            </span>
+          ) : undefined
+        }
+        supporting={
+          option.subtextActions?.length ? (
+            <span class="ds-choice-item__subtext ds-control-label-box select-option__subtext-actions">
+              {option.subtextActions.map((action, actionIndex) => [
+                actionIndex > 0 ? (
+                  <ds-text
+                    class="select-option__subtext-action-separator"
+                    as="span"
+                    variant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
+                    color="inherit"
+                    aria-hidden="true"
+                  >
+                    ·
+                  </ds-text>
+                ) : null,
+                <button
+                  type="button"
+                  class={{
+                    'select-option__subtext-action': true,
+                    'select-option__subtext-action--negative': action.tone === 'negative',
+                    'ds-text-action': true,
+                    'ds-focus-ring': true,
+                  }}
+                  onKeyDown={(event: KeyboardEvent) => event.stopPropagation()}
+                  onClick={(event: MouseEvent) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.dsOptionSubtextAction.emit({
+                      value: option.value,
+                      actionValue: action.value,
+                      originalEvent: event,
+                    });
+                  }}
+                >
+                  <ds-text
+                    as="span"
+                    variant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
+                    color="inherit"
+                  >
+                    {action.label}
+                  </ds-text>
+                </button>,
+              ])}
             </span>
           ) : undefined
         }

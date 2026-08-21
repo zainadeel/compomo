@@ -51,6 +51,11 @@ import {
   toggleTableColumnHidden,
 } from './table-column-customizer';
 import {
+  nextTableDataModeSwitcherElementId,
+  tableDataModeFromMenuItem,
+  tableDataModeMenuItems,
+} from './table-data-mode-switcher';
+import {
   resolveTableTruncateTrack,
   tableTruncateLabel,
 } from './table-truncate';
@@ -77,6 +82,7 @@ import type {
   TableColumn,
   TableColumnsConfigChangeDetail,
   TableDataMode,
+  TableDataModeChangeDetail,
   TableGroup,
   TableGroupCollapseChangeDetail,
   TableGroupLoadMoreDetail,
@@ -170,6 +176,12 @@ export class Table {
 
   /** Top-level data-window strategy. Group member loading remains group-owned. */
   @Prop() dataMode: TableDataMode = 'infinite';
+  /** Opt in to the table-owned control for choosing between supported data modes. */
+  @Prop() dataModeSwitcher: boolean = false;
+  @Prop() dataModeSwitcherLabel: string = 'Change table variation';
+  @Prop() dataModeMenuLabel: string = 'Table variation';
+  @Prop() infiniteModeLabel: string = 'Infinite scroll';
+  @Prop() paginationModeLabel: string = 'Pagination + Infinite groups';
   /** Controlled top-level pagination state. Required when dataMode is pagination. */
   @Prop() pagination: TablePaginationState | null = null;
   @Prop() loadMoreMode: TableLoadMoreMode = 'auto';
@@ -207,6 +219,7 @@ export class Table {
   @Event() dsCellAction!: EventEmitter<TableCellActionDetail>;
   @Event() dsRowActivate!: EventEmitter<TableRowActivateDetail>;
   @Event() dsColumnsConfigChange!: EventEmitter<TableColumnsConfigChangeDetail>;
+  @Event() dsDataModeChange!: EventEmitter<TableDataModeChangeDetail>;
 
   @State() private overflowStart = false;
   @State() private overflowEnd = false;
@@ -221,9 +234,12 @@ export class Table {
   @State() private truncateTooltipLabel = '';
   @State() private columnCustomizerOpen = false;
   @State() private columnCustomizerInitialFocusVisible = false;
+  @State() private dataModeSwitcherOpen = false;
+  @State() private dataModeSwitcherInitialFocusVisible = false;
 
   private readonly actionMenuElementId = nextTableActionMenuElementId();
   private readonly columnCustomizerElementId = nextTableColumnCustomizerElementId();
+  private readonly dataModeSwitcherElementId = nextTableDataModeSwitcherElementId();
   private truncateTooltipEl?: HTMLDsTooltipElement;
   private truncateAnchor: HTMLElement | null = null;
   private truncateTooltipBound = false;
@@ -538,6 +554,12 @@ export class Table {
     if (!this.showsColumnCustomizer) this.closeColumnCustomizer();
   }
 
+  @Watch('dataModeSwitcher')
+  @Watch('captionVisibility')
+  handleDataModeSwitcherAvailability(): void {
+    if (!this.showsDataModeSwitcher) this.closeDataModeSwitcher();
+  }
+
   private get grouped(): boolean {
     return this.grouping !== null;
   }
@@ -563,8 +585,12 @@ export class Table {
     return this.columnCustomizer && this.captionVisibility === 'visible';
   }
 
+  private get showsDataModeSwitcher(): boolean {
+    return this.dataModeSwitcher && this.captionVisibility === 'visible';
+  }
+
   private get showsCaptionTrailing(): boolean {
-    return this.showsColumnCustomizer;
+    return this.showsDataModeSwitcher || this.showsColumnCustomizer;
   }
 
   private get documentStickyHeader(): boolean {
@@ -2269,8 +2295,86 @@ export class Table {
     return (
       <div class="ds-table__caption-trailing">
         {this.renderColumnCustomizerTrigger()}
+        {this.showsColumnCustomizer && this.showsDataModeSwitcher ? (
+          <ds-divider
+            orientation="vertical"
+            length="32px"
+          />
+        ) : null}
+        {this.renderDataModeSwitcherTrigger()}
       </div>
     );
+  }
+
+  private renderDataModeSwitcherTrigger() {
+    if (!this.showsDataModeSwitcher) return null;
+    return (
+      <ds-button-unfilled
+        id={`${this.dataModeSwitcherElementId}-trigger`}
+        variant="icon"
+        size="md"
+        icon="Table"
+        aria-label={this.dataModeSwitcherLabel}
+        hasMenu={true}
+        expanded={this.dataModeSwitcherOpen}
+        controls={this.dataModeSwitcherElementId}
+        activeFill={false}
+        onDsClick={(event: CustomEvent<MouseEvent>) => {
+          this.toggleDataModeSwitcher(event.detail.detail === 0);
+        }}
+      />
+    );
+  }
+
+  private renderDataModeSwitcherMenu() {
+    if (!this.showsDataModeSwitcher) return null;
+    return (
+      <ds-menu
+        id={this.dataModeSwitcherElementId}
+        open={this.dataModeSwitcherOpen}
+        anchorId={`${this.dataModeSwitcherElementId}-trigger`}
+        align="end"
+        side="bottom"
+        menuLabel={this.dataModeMenuLabel}
+        initialFocusVisible={this.dataModeSwitcherInitialFocusVisible}
+        items={tableDataModeMenuItems(this.dataMode, {
+          infinite: this.infiniteModeLabel,
+          pagination: this.paginationModeLabel,
+        })}
+        onDsClose={() => this.closeDataModeSwitcher()}
+        onDsSelect={event => this.handleDataModeSwitcherSelect(event.detail)}
+      />
+    );
+  }
+
+  private toggleDataModeSwitcher(fromKeyboard = false): void {
+    if (this.dataModeSwitcherOpen) this.closeDataModeSwitcher();
+    else this.openDataModeSwitcher(fromKeyboard);
+  }
+
+  private openDataModeSwitcher(fromKeyboard = false): void {
+    if (!this.showsDataModeSwitcher || this.dataModeSwitcherOpen) return;
+    this.closeColumnCustomizer();
+    this.dataModeSwitcherInitialFocusVisible = fromKeyboard;
+    this.dataModeSwitcherOpen = true;
+  }
+
+  private closeDataModeSwitcher(): void {
+    this.dataModeSwitcherOpen = false;
+  }
+
+  private handleDataModeSwitcherSelect(item: MenuItemData): void {
+    const dataMode = tableDataModeFromMenuItem(item);
+    if (!dataMode) return;
+    this.closeDataModeSwitcher();
+    if (dataMode !== this.dataMode) this.dsDataModeChange.emit({ dataMode });
+    requestAnimationFrame(() => {
+      this.el
+        .querySelector<HTMLElement & { setFocus?: () => void }>(
+          `#${CSS.escape(`${this.dataModeSwitcherElementId}-trigger`)}`,
+        )
+        ?.setFocus?.();
+    });
   }
 
   private renderColumnCustomizerTrigger() {
@@ -2323,6 +2427,7 @@ export class Table {
 
   private openColumnCustomizer(fromKeyboard = false): void {
     if (!this.showsColumnCustomizer || this.columnCustomizerOpen) return;
+    this.closeDataModeSwitcher();
     this.columnCustomizerInitialFocusVisible = fromKeyboard;
     this.columnCustomizerOpen = true;
   }
@@ -2459,6 +2564,7 @@ export class Table {
           </div>
           {this.renderResultFooter()}
           {this.renderOverflowActionMenu()}
+          {this.renderDataModeSwitcherMenu()}
           {this.renderColumnCustomizerMenu()}
           {this.renderTruncateTooltip()}
           <div class="ds-visually-hidden" role="status" aria-live="polite" aria-atomic="true">
