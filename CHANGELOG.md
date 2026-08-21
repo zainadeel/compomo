@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.11.0](https://github.com/zainadeel/compomo/compare/v14.10.0...v14.11.0) (2026-08-21)
+
+
+### Added
+
+* **table:** add virtual to the data-mode switcher ([#504](https://github.com/zainadeel/compomo/issues/504)) ([8f646cd](https://github.com/zainadeel/compomo/commit/8f646cd628078198025d4b4e7f444d81fc48c10a))
+
 ## [14.10.0](https://github.com/zainadeel/compomo/compare/v14.9.0...v14.10.0) (2026-08-21)
 
 
