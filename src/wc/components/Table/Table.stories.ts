@@ -15,6 +15,7 @@ import type {
   TableCellActionMenuEntry,
   TableColumn,
   TableColumnsConfigChangeDetail,
+  TableDataMode,
   TableDataModeChangeDetail,
   TableGroup,
   TableGroupIntent,
@@ -1322,18 +1323,20 @@ export const DataModeSwitcher: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Opt-in dataModeSwitcher renders the table-owned mode trigger and Menu for the supported infinite and pagination modes. dataMode remains controlled; dsDataModeChange reports intent while the application supplies the matching row window, pagination state, and loading consequences.',
+        story: 'Opt-in dataModeSwitcher renders the table-owned mode trigger and Menu for infinite, pagination, and virtual modes. dataMode remains controlled; dsDataModeChange reports intent while the application supplies the matching row window, pagination state, loading consequences, and a bounded height for virtual.',
       },
     },
   },
   render: args => {
     const [, updateArgs] = useArgs();
-    const dataMode = args['dataMode'] === 'pagination' ? 'pagination' : 'infinite';
+    const dataMode: TableDataMode = args['dataMode'] === 'pagination' || args['dataMode'] === 'virtual'
+      ? args['dataMode']
+      : 'infinite';
     return html`
       <ds-table
         data-a11y-fixture
         .columns=${COLUMNS}
-        .rows=${ROWS.slice(0, 4)}
+        .rows=${dataMode === 'virtual' ? VIRTUAL_ROWS : ROWS.slice(0, 4)}
         .dataMode=${dataMode}
         .pagination=${dataMode === 'pagination'
           ? {
@@ -1345,8 +1348,9 @@ export const DataModeSwitcher: Story = {
               pageSizeLabel: 'Rows',
             }
           : null}
-        .displayedCount=${4}
-        .totalCount=${100}
+        height="var(--dimension-card-height-lg)"
+        .displayedCount=${dataMode === 'virtual' ? VIRTUAL_ROWS.length : 4}
+        .totalCount=${dataMode === 'virtual' ? VIRTUAL_ROWS.length : 100}
         data-mode-switcher
         caption="Driver mode example"
         caption-visibility="visible"

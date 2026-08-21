@@ -5,11 +5,12 @@ import {
   tableDataModeMenuItems,
 } from '../src/wc/components/Table/table-data-mode-switcher';
 
-test('builds the two supported data-mode choices from the controlled mode', () => {
+test('builds the supported data-mode choices from the controlled mode', () => {
   assert.deepEqual(
-    tableDataModeMenuItems('pagination', {
+    tableDataModeMenuItems('virtual', {
       infinite: 'Infinite scroll',
       pagination: 'Pagination + Infinite groups',
+      virtual: 'Virtual scroll',
     }),
     [
       {
@@ -20,6 +21,11 @@ test('builds the two supported data-mode choices from the controlled mode', () =
       {
         label: 'Pagination + Infinite groups',
         value: 'pagination',
+        isSelected: false,
+      },
+      {
+        label: 'Virtual scroll',
+        value: 'virtual',
         isSelected: true,
       },
     ],
@@ -29,6 +35,6 @@ test('builds the two supported data-mode choices from the controlled mode', () =
 test('accepts only supported data-mode menu values', () => {
   assert.equal(tableDataModeFromMenuItem({ label: 'Infinite', value: 'infinite' }), 'infinite');
   assert.equal(tableDataModeFromMenuItem({ label: 'Pagination', value: 'pagination' }), 'pagination');
-  assert.equal(tableDataModeFromMenuItem({ label: 'Virtual', value: 'virtual' }), null);
+  assert.equal(tableDataModeFromMenuItem({ label: 'Virtual', value: 'virtual' }), 'virtual');
   assert.equal(tableDataModeFromMenuItem({ label: 'Missing' }), null);
 });
