@@ -28,6 +28,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(componentTsx, /TableViewportFitController/);
   assert.match(componentTsx, /TableLoadController/);
   assert.match(componentTsx, /TableGroupLoadController/);
+  assert.match(componentTsx, /TableVirtualController/);
   assert.match(componentTsx, /createTableRenderModel/);
   assert.match(componentTsx, /resolveTableCellPresentation/);
   assert.match(layoutController, /--ds-table-visible-inline-size/);
@@ -78,6 +79,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(css, /\.ds-table__table--native-group-sticky/);
   assert.match(css, /grid-template-columns: var\(--_table-grid-template-columns\)/);
   assert.match(css, /\.ds-table__group-row--native-sticky/);
+  assert.match(css, /\.ds-table__virtual-spacer-cell/);
   assert.doesNotMatch(css, /ds-table__group-cell--sticky-backstop/);
   assert.match(css, /\.ds-table--contained-scroll \.ds-table__frame\)[\s\S]*?overflow: clip/);
 

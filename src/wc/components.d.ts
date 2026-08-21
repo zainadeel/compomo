@@ -2877,7 +2877,7 @@ export namespace Components {
          */
         "columns": TableColumn[];
         /**
-          * Top-level data-window strategy. Group member loading remains group-owned.
+          * Top-level data-window strategy. Virtual mode recycles row DOM only.
           * @default 'infinite'
          */
         "dataMode": TableDataMode;
@@ -2895,7 +2895,7 @@ export namespace Components {
          */
         "dataModeSwitcherLabel": string;
         /**
-          * Optional result summary footer. When both `displayedCount` and `totalCount` are finite numbers, the table shows “Displaying {displayed} of {total}”.
+          * Optional result summary footer. When both `displayedCount` and `totalCount` are finite numbers, infinite mode shows “Displaying {displayed} of {total}”. Virtual mode ignores `displayedCount` and shows a total-only summary.
          */
         "displayedCount": number | undefined;
         /**
@@ -3038,6 +3038,11 @@ export namespace Components {
           * @default 'Displaying {displayed} of {total}'
          */
         "resultSummaryLabel": string;
+        /**
+          * Supports the {total} placeholder. Used when dataMode is virtual.
+          * @default '{total} items'
+         */
+        "resultTotalSummaryLabel": string;
         /**
           * @default 'Retry'
          */
@@ -7794,7 +7799,7 @@ declare namespace LocalJSX {
          */
         "columns"?: TableColumn[];
         /**
-          * Top-level data-window strategy. Group member loading remains group-owned.
+          * Top-level data-window strategy. Virtual mode recycles row DOM only.
           * @default 'infinite'
          */
         "dataMode"?: TableDataMode;
@@ -7812,7 +7817,7 @@ declare namespace LocalJSX {
          */
         "dataModeSwitcherLabel"?: string;
         /**
-          * Optional result summary footer. When both `displayedCount` and `totalCount` are finite numbers, the table shows “Displaying {displayed} of {total}”.
+          * Optional result summary footer. When both `displayedCount` and `totalCount` are finite numbers, infinite mode shows “Displaying {displayed} of {total}”. Virtual mode ignores `displayedCount` and shows a total-only summary.
          */
         "displayedCount"?: number | undefined;
         /**
@@ -7965,6 +7970,11 @@ declare namespace LocalJSX {
           * @default 'Displaying {displayed} of {total}'
          */
         "resultSummaryLabel"?: string;
+        /**
+          * Supports the {total} placeholder. Used when dataMode is virtual.
+          * @default '{total} items'
+         */
+        "resultTotalSummaryLabel"?: string;
         /**
           * @default 'Retry'
          */
@@ -9000,6 +9010,7 @@ declare namespace LocalJSX {
         "displayedCount": number | undefined;
         "totalCount": number | undefined;
         "resultSummaryLabel": string;
+        "resultTotalSummaryLabel": string;
         "stickyHeader": boolean;
         "maxHeight": string;
         "height": string;

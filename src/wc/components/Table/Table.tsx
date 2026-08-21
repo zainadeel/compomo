@@ -12,6 +12,7 @@ import {
 import {
   deriveTableSelectionState,
   formatTableResultSummary,
+  formatTableTotalSummary,
   isTableCellAction,
   nextTableSortState,
   tableColumnSize,
@@ -33,6 +34,7 @@ import {
 } from './table-cell-model';
 import {
   createTableRenderModel,
+  type TableGroupRenderModel,
   type TableRenderModel,
 } from './table-render-model';
 import {
@@ -62,6 +64,17 @@ import {
 import { TableLayoutController } from './table-layout-controller';
 import { TableLoadController } from './table-load-controller';
 import { TableGroupLoadController } from './table-group-load-controller';
+import {
+  flattenTableVirtualItems,
+  resolveTableVirtualPlan,
+  TABLE_VIRTUAL_TOTAL_SUMMARY_LABEL,
+  TABLE_VIRTUAL_VIEWPORT_REQUIRED_BODY,
+  TABLE_VIRTUAL_VIEWPORT_REQUIRED_HEADING,
+  type TableVirtualItem,
+  type TableVirtualNode,
+  type TableVirtualPlan,
+} from './table-virtual-model';
+import { TableVirtualController } from './table-virtual-controller';
 import type { PaginationChangeDetail } from '../Pagination/pagination-types';
 import type { MenuItemData, MenuReorderDetail } from '../Menu/menu-types';
 import { resolvePaginationState } from '../Pagination/pagination-model';
@@ -138,12 +151,15 @@ export class Table {
   @Prop() columnOrder: string[] = [];
   /**
    * Optional result summary footer. When both `displayedCount` and `totalCount`
-   * are finite numbers, the table shows “Displaying {displayed} of {total}”.
+   * are finite numbers, infinite mode shows “Displaying {displayed} of {total}”.
+   * Virtual mode ignores `displayedCount` and shows a total-only summary.
    */
   @Prop() displayedCount: number | undefined;
   @Prop() totalCount: number | undefined;
   /** Supports {displayed} and {total} placeholders. */
   @Prop() resultSummaryLabel: string = 'Displaying {displayed} of {total}';
+  /** Supports the {total} placeholder. Used when dataMode is virtual. */
+  @Prop() resultTotalSummaryLabel: string = TABLE_VIRTUAL_TOTAL_SUMMARY_LABEL;
   @Prop() stickyHeader: boolean = false;
   /** Maximum scroll-region height. Numbers resolve to CSS pixels. */
   @Prop() maxHeight: string | number | undefined;
@@ -174,7 +190,7 @@ export class Table {
   @Prop() errorBody: string = 'The data could not be loaded.';
   @Prop() emptyCellLabel: string = 'Not available';
 
-  /** Top-level data-window strategy. Group member loading remains group-owned. */
+  /** Top-level data-window strategy. Virtual mode recycles row DOM only. */
   @Prop() dataMode: TableDataMode = 'infinite';
   /** Opt in to the table-owned control for choosing between supported data modes. */
   @Prop() dataModeSwitcher: boolean = false;
@@ -236,6 +252,7 @@ export class Table {
   @State() private columnCustomizerInitialFocusVisible = false;
   @State() private dataModeSwitcherOpen = false;
   @State() private dataModeSwitcherInitialFocusVisible = false;
+  @State() private virtualWindow: TableVirtualPlan | null = null;
 
   private readonly actionMenuElementId = nextTableActionMenuElementId();
   private readonly columnCustomizerElementId = nextTableColumnCustomizerElementId();
@@ -243,6 +260,8 @@ export class Table {
   private truncateTooltipEl?: HTMLDsTooltipElement;
   private truncateAnchor: HTMLElement | null = null;
   private truncateTooltipBound = false;
+  private focusedRowId: string | null = null;
+  private virtualItems: TableVirtualItem[] = [];
 
   private rootEl: HTMLElement | null = null;
   private viewportEl: HTMLElement | null = null;
@@ -309,7 +328,7 @@ export class Table {
   });
   private readonly groupLoadController = new TableGroupLoadController({
     state: () => ({
-      enabled: this.grouped,
+      enabled: this.grouped && this.dataMode !== 'virtual',
       loadMoreMode: this.loadMoreMode,
       loadMoreThreshold: this.loadMoreThreshold,
       containedScroll: this.containedScroll,
@@ -325,6 +344,18 @@ export class Table {
     },
     request: detail => {
       this.dsGroupLoadMore.emit(detail);
+    },
+  });
+  private readonly virtualController = new TableVirtualController({
+    state: () => ({
+      enabled: this.virtualizationEnabled,
+      items: this.virtualItems,
+      pinnedRowIds: this.virtualPinnedRowIds(),
+      viewport: this.viewportEl,
+      viewportSize: this.estimateVirtualViewportSize(),
+    }),
+    windowChanged: plan => {
+      this.virtualWindow = plan;
     },
   });
   private readonly viewportFitController = new TableViewportFitController({
@@ -353,6 +384,7 @@ export class Table {
     this.layoutController.connect();
     this.loadController.connect();
     this.groupLoadController.connect();
+    this.virtualController.connect();
     this.viewportFitController.connect();
     this.syncStickyGroupConnection();
     this.connectHeaderSlotObserver();
@@ -365,6 +397,16 @@ export class Table {
     this.layoutController.refresh();
     this.loadController.refresh();
     this.groupLoadController.refresh();
+    this.virtualController.refresh();
+    this.virtualController.collectMeasurements(this.tableEl);
+    if (
+      this.dataMode === 'virtual' &&
+      this.truncateAnchor &&
+      this.tableEl &&
+      !this.tableEl.contains(this.truncateAnchor)
+    ) {
+      this.dismissTruncateTooltip();
+    }
     this.viewportFitController.refresh();
     this.syncStickyGroupConnection();
     this.connectFitObserver();
@@ -377,6 +419,7 @@ export class Table {
     this.layoutController.connect();
     this.loadController.connect();
     this.groupLoadController.connect();
+    this.virtualController.connect();
     this.viewportFitController.connect();
     this.syncStickyGroupConnection();
     this.connectHeaderSlotObserver();
@@ -388,6 +431,7 @@ export class Table {
     this.layoutController.disconnect();
     this.loadController.disconnect();
     this.groupLoadController.disconnect();
+    this.virtualController.disconnect();
     this.viewportFitController.disconnect();
     this.disconnectStickyGroup();
     this.headerSlotObserver?.disconnect();
@@ -487,6 +531,7 @@ export class Table {
     this.warnModelIssues();
     this.loadController.structureChanged();
     this.groupLoadController.structureChanged();
+    this.virtualController.invalidateMeasures();
   }
 
   @Watch('rows')
@@ -496,12 +541,20 @@ export class Table {
     else this.loadController.dataChanged();
     this.warnModelIssues();
     this.syncActionMenu();
+    this.virtualController.schedule();
   }
 
   @Watch('loadIdentity')
   handleLoadIdentityChange(): void {
     this.incrementalWindowActive = this.hasIncrementalState;
     this.loadController.identityChanged();
+    this.virtualController.resetToTop();
+  }
+
+  @Watch('sort')
+  @Watch('grouping')
+  handleVirtualIndexReset(): void {
+    this.virtualController.resetToTop();
   }
 
   @Watch('loadMoreMode')
@@ -515,6 +568,7 @@ export class Table {
   handleDataModeChange(): void {
     this.incrementalWindowActive = this.hasIncrementalState;
     this.handleLazyConfigurationChange();
+    if (this.dataMode === 'virtual') this.virtualController.resetToTop();
   }
 
   @Watch('pagination')
@@ -747,7 +801,54 @@ export class Table {
       selectionMode: this.selectionMode,
       selectedRowIds: this.selectedRowIds,
       collapsedGroupIds: this.collapsedGroupIds,
+      groupCountPresentation: this.dataMode === 'virtual' ? 'total' : 'loaded-progress',
     });
+  }
+
+  private get virtualizationEnabled(): boolean {
+    return this.dataMode === 'virtual' && this.containedScroll;
+  }
+
+  private get virtualViewportMissing(): boolean {
+    return this.dataMode === 'virtual' && !this.containedScroll;
+  }
+
+  private estimateVirtualViewportSize(): number {
+    if (this.viewportEl && this.viewportEl.clientHeight > 0) return this.viewportEl.clientHeight;
+    const chrome = (this.captionVisibility === 'visible' ? 48 : 0) + (this.hasResultFooter ? 48 : 0);
+    if (this.fixedHeight && this.resolvedHeight) {
+      return Math.max(0, resolveCssLengthPx(this.resolvedHeight, 0, this.rootEl ?? this.el) - chrome);
+    }
+    if (this.resolvedMaxHeight) {
+      return resolveCssLengthPx(this.resolvedMaxHeight, 0, this.rootEl ?? this.el);
+    }
+    return 0;
+  }
+
+  private virtualPinnedRowIds(): Set<string> {
+    const pinned = new Set<string>();
+    if (this.focusedRowId) pinned.add(this.focusedRowId);
+    if (this.actionMenu?.rowId) pinned.add(this.actionMenu.rowId);
+    return pinned;
+  }
+
+  private syncVirtualItems(model: TableRenderModel): void {
+    if (this.dataMode !== 'virtual') {
+      this.virtualItems = [];
+      return;
+    }
+    this.virtualItems = flattenTableVirtualItems({
+      grouped: model.grouped,
+      rows: this.rows,
+      groups: this.groups,
+      collapsedGroupIds: this.collapsedGroupIds,
+      columns: this.visibleColumns,
+    });
+  }
+
+  private shouldVirtualize(model: TableRenderModel): boolean {
+    return this.virtualizationEnabled &&
+      (model.hasData || (model.grouped && model.groups.length > 0));
   }
 
   private get resolvedMaxHeight(): string | undefined {
@@ -1022,6 +1123,16 @@ export class Table {
     this.emitRowActivation(row, event);
   }
 
+  private onVirtualFocusIn = (event: FocusEvent): void => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    const row = target.closest('[data-row-id]');
+    const id = row?.getAttribute('data-row-id') ?? null;
+    if (id === this.focusedRowId) return;
+    this.focusedRowId = id;
+    if (this.virtualizationEnabled) this.virtualController.schedule();
+  };
+
   private renderSelectionControl(
     label: string,
     checked: boolean,
@@ -1284,6 +1395,7 @@ export class Table {
     model: TableRenderModel,
     interactive = true,
     presentational = false,
+    ariaRowIndex?: number,
   ) {
     const selection = model.selection;
     return (
@@ -1293,7 +1405,7 @@ export class Table {
       }} ref={element => {
         if (interactive) this.interactiveHeadEl = element ?? null;
       }}>
-        <tr class="ds-table__header-row">
+        <tr class="ds-table__header-row" aria-rowindex={ariaRowIndex}>
           {model.selectable && (
             <th
               class="ds-table__header-cell ds-table__selection-cell ds-table__cell--sticky-start"
@@ -1585,7 +1697,7 @@ export class Table {
     );
   }
 
-  private renderRow(row: TableRow, model: TableRenderModel) {
+  private renderRow(row: TableRow, model: TableRenderModel, ariaRowIndex?: number) {
     const selected = model.selectedRowIds.has(row.id);
     const rowSelectable = row.selectable !== false && !row.disabled;
     return (
@@ -1599,7 +1711,9 @@ export class Table {
           'ds-focus-ring': !!row.interactive && !row.disabled,
         }}
         data-row-id={row.id}
+        data-virtual-id={ariaRowIndex != null ? `row:${row.id}` : undefined}
         data-selected={selected ? 'true' : undefined}
+        aria-rowindex={ariaRowIndex}
         aria-disabled={row.disabled ? 'true' : undefined}
         tabIndex={row.interactive && !row.disabled ? 0 : undefined}
         onClick={event => this.emitRowActivation(row, event)}
@@ -1710,8 +1824,6 @@ export class Table {
   private renderGroupContent(groupModel: TableRenderModel['groups'][number]) {
     const {
       group,
-      count,
-      loadedCount,
       countLabel,
       collapsed: isCollapsed,
       labelColor,
@@ -1758,7 +1870,7 @@ export class Table {
             color="secondary"
             aria-hidden="true"
           >
-            {loadedCount} of {count}
+            {groupModel.visibleCountText}
           </ds-text>
           <span class="ds-visually-hidden">{countLabel}</span>
         </span>
@@ -1862,7 +1974,112 @@ export class Table {
     );
   }
 
-  private renderDataBodies(model: TableRenderModel) {
+  private renderVirtualSpacer(node: Extract<TableVirtualNode, { kind: 'spacer' }>, totalColumns: number) {
+    if (node.size <= 0) return null;
+    return (
+      <tr class="ds-table__virtual-spacer-row" key={node.key} aria-hidden="true">
+        <td
+          class="ds-table__virtual-spacer-cell"
+          colSpan={totalColumns}
+          style={{ '--_table-virtual-spacer-block-size': `${node.size}px` } as Record<string, string>}
+        />
+      </tr>
+    );
+  }
+
+  private renderVirtualRow(
+    node: Extract<TableVirtualNode, { kind: 'row' }>,
+    model: TableRenderModel,
+    rowsById: Map<string, TableRow>,
+  ) {
+    const row = node.item.rowId ? rowsById.get(node.item.rowId) : undefined;
+    if (!row) return null;
+    return this.renderRow(row, model, node.index + 2);
+  }
+
+  private renderVirtualGroup(
+    node: Extract<TableVirtualNode, { kind: 'group' }>,
+    model: TableRenderModel,
+    rowsById: Map<string, TableRow>,
+    groupsById: Map<string, TableGroupRenderModel>,
+  ) {
+    const groupModel = groupsById.get(node.groupId);
+    if (!groupModel) return null;
+    const { group, collapsed: isCollapsed, intent, intentClass } = groupModel;
+    return (
+      <tbody
+        class="ds-table__body ds-table__group"
+        role="rowgroup"
+        data-group-id={group.id}
+        data-group-intent={intent}
+        data-collapsed={isCollapsed ? 'true' : undefined}
+        key={group.id}
+      >
+        <tr
+          role="row"
+          data-virtual-id={`group:${group.id}`}
+          aria-rowindex={node.headerIndex + 2}
+          class={{
+            'ds-table__group-row': true,
+            'ds-table__group-row--native-sticky': this.stickyHeader && !this.documentStickyHeader,
+          }}
+        >
+          <th
+            class={{
+              'ds-table__group-cell': true,
+              [intentClass ?? '']: !!intentClass,
+            }}
+            role="rowheader"
+            scope="rowgroup"
+            colSpan={model.totalColumns}
+          >
+            {this.renderGroupContent(groupModel)}
+          </th>
+        </tr>
+        {node.nodes.map(child => (
+          child.kind === 'spacer'
+            ? this.renderVirtualSpacer(child, model.totalColumns)
+            : this.renderVirtualRow(child, model, rowsById)
+        ))}
+      </tbody>
+    );
+  }
+
+  private renderVirtualBodies(model: TableRenderModel, plan: TableVirtualPlan) {
+    const rowsById = new Map(model.loadedRows.map(row => [row.id, row]));
+    const groupsById = new Map(model.groups.map(groupModel => [groupModel.group.id, groupModel]));
+    if (!model.grouped) {
+      return (
+        <tbody class="ds-table__body">
+          {plan.nodes.map(node => (
+            node.kind === 'spacer'
+              ? this.renderVirtualSpacer(node, model.totalColumns)
+              : node.kind === 'row'
+                ? this.renderVirtualRow(node, model, rowsById)
+                : null
+          ))}
+        </tbody>
+      );
+    }
+
+    return plan.nodes.map(node => {
+      if (node.kind === 'spacer') {
+        return (
+          <tbody class="ds-table__body ds-table__virtual-pad" aria-hidden="true" key={node.key}>
+            {this.renderVirtualSpacer(node, model.totalColumns)}
+          </tbody>
+        );
+      }
+      if (node.kind === 'group') {
+        return this.renderVirtualGroup(node, model, rowsById, groupsById);
+      }
+      return null;
+    });
+  }
+
+  private renderDataBodies(model: TableRenderModel, plan: TableVirtualPlan | null) {
+    if (plan) return this.renderVirtualBodies(model, plan);
+
     if (!model.grouped) {
       return (
         <tbody class="ds-table__body">
@@ -2083,8 +2300,17 @@ export class Table {
     return copy;
   }
 
-  private renderStateBody(kind: 'empty' | 'error', totalColumns: number) {
-    const error = kind === 'error';
+  private renderStateBody(
+    kind: 'empty' | 'error' | 'virtual-viewport',
+    totalColumns: number,
+  ) {
+    const error = kind !== 'empty';
+    const heading = kind === 'virtual-viewport'
+      ? TABLE_VIRTUAL_VIEWPORT_REQUIRED_HEADING
+      : error ? this.errorHeading : this.emptyHeading;
+    const body = kind === 'virtual-viewport'
+      ? TABLE_VIRTUAL_VIEWPORT_REQUIRED_BODY
+      : error ? this.errorBody : this.emptyBody;
     return (
       <tbody class="ds-table__body ds-table__state-body">
         <tr class="ds-table__state-row">
@@ -2092,8 +2318,8 @@ export class Table {
             <div class="ds-table__viewport-band ds-table__state-band">
               <ds-empty-state
                 icon={error ? 'ErrorTriangle' : 'Inbox'}
-                heading={error ? this.errorHeading : this.emptyHeading}
-                body={error ? this.errorBody : this.emptyBody}
+                heading={heading}
+                body={body}
               />
             </div>
           </td>
@@ -2198,6 +2424,12 @@ export class Table {
 
   private get resultSummary(): string | null {
     if (this.dataMode === 'pagination') return null;
+    if (this.dataMode === 'virtual') {
+      const total = Number.isFinite(this.totalCount)
+        ? this.totalCount
+        : this.currentLoadedRowCount();
+      return formatTableTotalSummary(total, this.resultTotalSummaryLabel);
+    }
     return formatTableResultSummary(
       this.displayedCount,
       this.totalCount,
@@ -2474,11 +2706,25 @@ export class Table {
   render() {
     this.groupSentinelEls.clear();
     const model = this.createRenderModel();
+    this.syncVirtualItems(model);
     this.renderedModel = model;
     const regionLabel = this.scrollLabel?.trim() || `${this.caption} scroll area`;
     const initialLoading = this.loading && !model.hasData;
     const initialError = !model.hasData && this.error;
     const hasGroupedStructure = model.grouped && model.groups.length > 0;
+    const virtualize = this.shouldVirtualize(model);
+    const virtualViewportMissing = this.virtualViewportMissing &&
+      !initialLoading &&
+      (model.hasData || hasGroupedStructure);
+    const virtualPlan = virtualize
+      ? this.virtualWindow ?? resolveTableVirtualPlan({
+        items: this.virtualItems,
+        sizes: this.virtualItems.map(item => this.virtualController.sizeFor(item)),
+        scrollOffset: this.viewportEl?.scrollTop ?? 0,
+        viewportSize: this.estimateVirtualViewportSize(),
+        pinnedRowIds: this.virtualPinnedRowIds(),
+      })
+      : null;
     const groupLoadingMore = hasGroupedStructure && this.groups.some(group => group.loadingMore);
     const viewportStyle = !this.boundedComposition && this.resolvedMaxHeight
       ? { '--ds-table-max-block-size': this.resolvedMaxHeight }
@@ -2497,6 +2743,7 @@ export class Table {
         }}
         style={hostStyle}
         onKeyDown={(event: KeyboardEvent) => this.handlePaginationKeyDown(event)}
+        onFocusin={this.onVirtualFocusIn}
       >
         <div class={{
           'ds-table': true,
@@ -2512,7 +2759,7 @@ export class Table {
           'ds-table--caption-visible': this.captionVisibility === 'visible',
           'ds-table--footer-visible': this.hasResultFooter,
           'ds-table--state-fill': !initialLoading && (
-            initialError || !(model.hasData || hasGroupedStructure)
+            initialError || virtualViewportMissing || !(model.hasData || hasGroupedStructure)
           ),
         }} ref={element => {
           this.rootEl = element ?? null;
@@ -2549,10 +2796,12 @@ export class Table {
                   'ds-table__table': true,
                   'ds-table__table--selectable': model.selectable,
                   'ds-table__table--grouped': model.grouped,
-                  'ds-table__table--native-group-sticky': model.grouped &&
-                    this.stickyHeader && !this.documentStickyHeader,
+                  'ds-table__table--virtual': virtualize,
+                  'ds-table__table--native-group-sticky': (model.grouped &&
+                    this.stickyHeader && !this.documentStickyHeader) || virtualize,
                 }}
                 style={model.tableStyle}
+                aria-rowcount={virtualize ? 1 + this.virtualItems.length : undefined}
                 aria-busy={initialLoading || this.loadingMore || groupLoadingMore ? 'true' : undefined}
                 ref={element => {
                   this.tableEl = element ?? null;
@@ -2564,15 +2813,17 @@ export class Table {
                   </ds-text>
                 </caption>
                 {this.renderColgroup(model)}
-                {this.renderHeader(model, !this.documentStickyHeader)}
+                {this.renderHeader(model, !this.documentStickyHeader, false, virtualize ? 1 : undefined)}
                 {initialLoading
                   ? this.renderSkeletonBody(model)
                   : initialError
                     ? this.renderStateBody('error', model.totalColumns)
-                    : model.hasData || hasGroupedStructure
-                      ? this.renderDataBodies(model)
-                      : this.renderStateBody('empty', model.totalColumns)}
-                {!initialLoading && !initialError && this.renderLazyBody(model)}
+                    : virtualViewportMissing
+                      ? this.renderStateBody('virtual-viewport', model.totalColumns)
+                      : model.hasData || hasGroupedStructure
+                        ? this.renderDataBodies(model, virtualPlan)
+                        : this.renderStateBody('empty', model.totalColumns)}
+                {!initialLoading && !initialError && this.dataMode !== 'virtual' && this.renderLazyBody(model)}
               </table>
             </div>
           </div>

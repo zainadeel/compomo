@@ -133,6 +133,34 @@
       <ds-table id="loading" caption="Loading drivers" loading></ds-table>
       <ds-table id="empty" caption="Empty drivers" empty-heading="No matching drivers" height="320px"></ds-table>
       <ds-table id="error" caption="Unavailable drivers" error error-heading="Drivers unavailable" height="320px"></ds-table>
+      <ds-table
+        id="virtual"
+        caption="Virtual drivers"
+        data-mode="virtual"
+        selection-mode="multiple"
+        sticky-header
+        height="240px"
+        caption-visibility="visible"
+      ></ds-table>
+      <ds-table
+        id="virtual-grouped"
+        caption="Virtual grouped drivers"
+        data-mode="virtual"
+        selection-mode="multiple"
+        sticky-header
+        height="240px"
+      ></ds-table>
+      <ds-table id="virtual-unbounded" caption="Virtual without height" data-mode="virtual"></ds-table>
+      <div id="virtual-fit-owner" style="height: 360px; overflow: auto;">
+        <ds-table
+          id="virtual-fit"
+          caption="Virtual fitted drivers"
+          data-mode="virtual"
+          sticky-header
+          fit-viewport
+          viewport-inset-block-end="24px"
+        ></ds-table>
+      </div>
     </main>
     <script type="module" src="/table-setup.mjs"></script>
   </body>

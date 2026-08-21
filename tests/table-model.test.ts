@@ -5,6 +5,7 @@ import {
   clampTableColumnSize,
   deriveTableSelectionState,
   formatTableResultSummary,
+  formatTableTotalSummary,
   isTableCellIcon,
   isTableCellIconText,
   isTableGroupIntent,
@@ -217,6 +218,12 @@ test('formats the optional result summary footer from controlled counts', () => 
   assert.equal(formatTableResultSummary(undefined, 1500), null);
   assert.equal(formatTableResultSummary(50, undefined), null);
   assert.equal(formatTableResultSummary(Number.NaN, 10), null);
+});
+
+test('formats a total-only summary for virtual mode', () => {
+  assert.equal(formatTableTotalSummary(1500), '1,500 items');
+  assert.equal(formatTableTotalSummary(1, '{total} item'), '1 item');
+  assert.equal(formatTableTotalSummary(undefined), null);
 });
 
 test('maps optional group intents to class and title color recipes', () => {

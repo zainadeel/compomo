@@ -70,15 +70,41 @@ test('normalizes group presentation and selection without mutating inputs', () =
   assert.equal(model.loadedRows.length, 2);
   assert.equal(model.groups[0].count, 3);
   assert.equal(model.groups[0].loadedCount, 2);
+  assert.equal(model.groups[0].visibleCountText, '2 of 3');
   assert.equal(model.groups[0].countLabel, '2 of 3 events loaded');
   assert.equal(model.groups[0].selection?.indeterminate, true);
   assert.equal(model.groups[1].intent, undefined);
   assert.equal(model.groups[1].intentClass, undefined);
   assert.equal(model.groups[1].labelColor, 'primary');
   assert.equal(model.groups[1].loadedCount, 0);
+  assert.equal(model.groups[1].visibleCountText, '0 of 0');
   assert.equal(model.groups[1].countLabel, '0 of 0 items loaded');
   assert.equal(model.groups[1].collapsed, true);
   assert.deepEqual(model.collapseAllHost, { columnId: 'action', mode: 'action' });
   assert.equal(model.allGroupsCollapsed, false);
   assert.deepEqual(groups.map(group => group.id), ['critical', 'invalid']);
+});
+
+test('uses supplied member totals without loaded-window phrasing', () => {
+  const groups: TableGroup[] = [{
+    id: 'critical',
+    label: 'Critical',
+    totalCount: 166,
+    countLabel: '166 events',
+    rows,
+  }];
+  const model = createTableRenderModel({
+    columns,
+    rows: [],
+    groups,
+    grouped: true,
+    selectionMode: 'none',
+    selectedRowIds: [],
+    collapsedGroupIds: [],
+    groupCountPresentation: 'total',
+  });
+
+  assert.equal(model.groups[0].count, 2);
+  assert.equal(model.groups[0].visibleCountText, '2');
+  assert.equal(model.groups[0].countLabel, '166 events');
 });

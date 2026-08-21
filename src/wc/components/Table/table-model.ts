@@ -305,6 +305,16 @@ export function formatTableResultSummary(
     .replace('{total}', formatter.format(total as number));
 }
 
+/** Formats the virtual-mode total-only result footer. */
+export function formatTableTotalSummary(
+  total: number | null | undefined,
+  label = '{total} items',
+  locale?: string,
+): string | null {
+  if (!Number.isFinite(total)) return null;
+  return label.replace('{total}', new Intl.NumberFormat(locale).format(total as number));
+}
+
 export function tableModelIssues(
   columns: TableColumn[],
   rows: TableRow[],

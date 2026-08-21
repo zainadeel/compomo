@@ -786,6 +786,86 @@ customizer.addEventListener('dsDataModeChange', event => {
   customizer.dataMode = event.detail.dataMode;
 });
 
+const virtualColumns = [
+  ...columns,
+  {
+    id: 'action',
+    kind: 'action',
+    header: '',
+    headerLabel: 'Action',
+    align: 'center',
+    size: 40,
+    sticky: 'end',
+  },
+];
+const virtualRows = Array.from({ length: 120 }, (_, index) => {
+  const source = rows[index % rows.length];
+  return {
+    ...source,
+    id: `virtual-${index}`,
+    selectionLabel: `${source.selectionLabel} ${index + 1}`,
+    interactive: index === 0,
+    cells: {
+      ...source.cells,
+      action: {
+        kind: 'action',
+        ariaLabel: `More actions for ${source.selectionLabel} ${index + 1}`,
+        items: overflowActionItems,
+      },
+    },
+  };
+});
+
+const virtualTable = document.getElementById('virtual');
+virtualTable.columns = virtualColumns;
+virtualTable.rows = virtualRows;
+virtualTable.totalCount = virtualRows.length;
+virtualTable.selectedRowIds = [];
+virtualTable.addEventListener('dsSelectionChange', event => {
+  virtualTable.selectedRowIds = event.detail.selectedRowIds;
+});
+virtualTable.addEventListener('dsSortChange', event => {
+  virtualTable.sort = event.detail.sort;
+  virtualTable.rows = event.detail.sort
+    ? [...virtualRows].reverse()
+    : virtualRows;
+});
+
+const virtualGrouped = document.getElementById('virtual-grouped');
+virtualGrouped.columns = virtualColumns;
+virtualGrouped.grouping = { columnId: 'status', direction: 'asc' };
+virtualGrouped.groups = [
+  {
+    id: 'virtual-first',
+    label: 'First section',
+    rows: virtualRows.slice(0, 60),
+    totalCount: 60,
+  },
+  {
+    id: 'virtual-second',
+    label: 'Second section',
+    rows: virtualRows.slice(60),
+    totalCount: 60,
+  },
+];
+virtualGrouped.collapsedGroupIds = [];
+virtualGrouped.totalCount = virtualRows.length;
+virtualGrouped.addEventListener('dsGroupCollapseChange', event => {
+  virtualGrouped.collapsedGroupIds = event.detail.collapsedGroupIds;
+});
+virtualGrouped.addEventListener('dsSelectionChange', event => {
+  virtualGrouped.selectedRowIds = event.detail.selectedRowIds;
+});
+
+const virtualUnbounded = document.getElementById('virtual-unbounded');
+virtualUnbounded.columns = columns;
+virtualUnbounded.rows = virtualRows.slice(0, 40);
+
+const virtualFit = document.getElementById('virtual-fit');
+virtualFit.columns = columns;
+virtualFit.rows = virtualRows;
+virtualFit.totalCount = virtualRows.length;
+
 for (const id of ['loading', 'empty', 'error']) {
   document.getElementById(id).columns = columns.slice(0, 3);
 }

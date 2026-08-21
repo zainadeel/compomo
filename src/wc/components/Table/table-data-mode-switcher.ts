@@ -8,6 +8,7 @@ export function nextTableDataModeSwitcherElementId(): string {
   return `ds-table-data-mode-${tableDataModeSwitcherSequence}`;
 }
 
+/** Menu of supported data-mode choices. Virtual is a controlled prop, not a switcher item. */
 export function tableDataModeMenuItems(
   dataMode: TableDataMode,
   labels: { infinite: string; pagination: string },
