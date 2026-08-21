@@ -308,6 +308,8 @@ export interface TableColumn {
   header: string;
   /** Screen-reader-only column name for an intentionally blank visual header. */
   headerLabel?: string;
+  /** Supplementary header help. Does not replace the visible or accessible column name. */
+  help?: string;
   /** Optional labels for columns that present and sort multiple related data points. */
   headerSegments?: TableHeaderSegment[];
   align?: TableCellAlign;

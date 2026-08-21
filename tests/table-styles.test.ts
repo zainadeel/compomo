@@ -95,6 +95,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
     'ds-table__sticky-edge',
     'ds-table__skeleton-row',
     'ds-table__load-cell',
+    'ds-table__state-cell',
     'ds-table__footer',
     'ds-table__caption-leading',
     'ds-table__caption-trailing',
@@ -183,6 +184,12 @@ test('keeps public table selectors and custom properties override-friendly', () 
 test('retains the structural and accessibility fallbacks rendered tests depend on', () => {
   assert.match(css, /overflow: auto/);
   assert.match(css, /position: sticky/);
+  assert.match(css, /\.ds-table--state-fill/);
+  assert.match(componentTsx, /dotted-underline/);
+  assert.match(componentTsx, /data-header-help/);
+  assert.match(componentTsx, /ds-table--state-fill/);
+  assert.doesNotMatch(componentTsx, /CircleQuestion/);
+  assert.doesNotMatch(css, /\.ds-table__header-help/);
   assert.match(css, /forced-colors: active/);
   assert.match(css, /prefers-reduced-motion: reduce/);
   assert.match(css, /\.ds-table__header-label--interactive:focus-visible/);

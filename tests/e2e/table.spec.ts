@@ -30,6 +30,13 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
+async function focusByKeyboard(anchor: Locator) {
+  await anchor.evaluate(element => {
+    element.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+    (element as HTMLElement).focus();
+  });
+}
+
 async function expectImageColumnToHugPreview(cell: Locator) {
   const difference = await cell.evaluate(element => {
     const preview = element.querySelector<HTMLElement>('.ds-table__cell-image')!;
@@ -281,6 +288,28 @@ test('toggles active sort direction and moves sorting only through another colum
   await expect(driverHeader).not.toHaveAttribute('aria-sort');
   await expect(directionControl).toHaveCount(0);
   await expect(table.getByRole('columnheader', { name: /Status/ })).toHaveAttribute('aria-sort', 'ascending');
+});
+
+test('shows dotted header help on the column label without a second control', async ({ page }) => {
+  const table = page.locator('#basic');
+  const score = table.locator('.ds-table__header-cell[data-column-id="score"]');
+  const vehicle = table.locator('.ds-table__header-cell[data-column-id="vehicle"]');
+
+  await expect(score.getByRole('button', { name: /About / })).toHaveCount(0);
+  await expect(score.locator('.ds-table__header-label-box')).toHaveClass(/ds-text--decoration-dotted-underline/);
+  await expect(vehicle.locator('.ds-table__header-label-box')).toHaveClass(/ds-text--decoration-dotted-underline/);
+  await expect(vehicle.locator('.ds-table__header-labels')).toHaveAttribute('tabindex', '0');
+  await expect(score.locator('.ds-table__header-labels')).not.toHaveAttribute('tabindex', '0');
+
+  await score.locator('.ds-table__header-labels').hover();
+  const scoreTip = page.getByRole('tooltip', { name: 'Rolling 7-day safety score from 0 to 100.' });
+  await expect(scoreTip).toBeVisible();
+
+  await score.locator('[data-sort-control="label"]').click();
+  await expect(score).toHaveAttribute('aria-sort', 'ascending');
+
+  await focusByKeyboard(vehicle.locator('.ds-table__header-labels'));
+  await expect(page.getByRole('tooltip', { name: 'Assigned vehicle identifier.' })).toBeVisible();
 });
 
 test('keeps application group order fixed and exposes only member-row sorting', async ({ page }) => {
@@ -2575,6 +2604,8 @@ test('renders initial state bodies and passes an accessibility scan', async ({ p
   expect(skeletonInsets).toEqual(selectionInsets);
   await expect(page.locator('#empty').getByText('No matching drivers')).toBeVisible();
   await expect(page.locator('#error').getByText('Drivers unavailable')).toBeVisible();
+  await expect(page.locator('#empty').locator('ds-empty-state')).toBeVisible();
+  await expect(page.locator('#error').locator('ds-empty-state')).toBeVisible();
 
   const results = await new AxeBuilder({ page })
     .include('#basic')
@@ -2583,6 +2614,36 @@ test('renders initial state bodies and passes an accessibility scan', async ({ p
     .include('#document-sticky')
     .analyze();
   expect(results.violations).toEqual([]);
+});
+
+test('fills remaining bounded table body with empty and error EmptyState',
+  chromiumOnly('layout-geometry', 'Empty-state body fill is a token-backed geometry contract.'),
+  async ({ page }) => {
+  for (const selector of ['#empty', '#error']) {
+    const table = page.locator(selector);
+    const viewport = table.locator('.ds-table__viewport');
+    const header = table.locator('.ds-table__header-row');
+    const region = table.locator('.ds-table__state-cell');
+    const empty = table.locator('ds-empty-state');
+    await expect(empty).toBeVisible();
+    const [viewportBox, headerBox, regionBox, emptyBox] = await Promise.all([
+      viewport.boundingBox(),
+      header.boundingBox(),
+      region.boundingBox(),
+      empty.boundingBox(),
+    ]);
+    expect(viewportBox).not.toBeNull();
+    expect(headerBox).not.toBeNull();
+    expect(regionBox).not.toBeNull();
+    expect(emptyBox).not.toBeNull();
+    expect(emptyBox!.height).toBeGreaterThan(80);
+    expectGeometryClose(
+      regionBox!.height + headerBox!.height,
+      viewportBox!.height,
+      `${selector} empty-state fills remaining viewport`,
+      2,
+    );
+  }
 });
 
 test('owns a caption-bar column customizer menu for live show/hide and reorder', async ({ page }) => {
