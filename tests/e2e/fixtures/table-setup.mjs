@@ -608,6 +608,8 @@ for (const id of ['lazy', 'lazy-guard', 'lazy-retry', 'lazy-auto']) {
   const table = document.getElementById(id);
   table.columns = columns.slice(0, 3);
   table.rows = rows.slice(0, 2);
+  table.displayedCount = 2;
+  table.totalCount = rows.length;
 }
 
 window.__tableLoadEvents = [];
@@ -620,6 +622,7 @@ lazy.addEventListener('dsLoadMore', () => {
   lazy.loadingMore = true;
   window.setTimeout(() => {
     lazy.rows = [...rows];
+    lazy.displayedCount = rows.length;
     lazy.loadingMore = false;
     lazy.hasMore = false;
   }, 1000);

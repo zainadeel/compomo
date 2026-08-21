@@ -1542,7 +1542,7 @@ export const IncrementalLoadingStates: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Existing rows remain visible through manual ready, loading, retry, and terminal lazy-loading states. There is no pagination UI.',
+        story: 'Existing rows remain visible through manual ready, loading, retry, and terminal lazy-loading states. The footer reports the loaded window as Displaying {displayed} of {total}. There is no pagination UI.',
       },
     },
   },
@@ -1555,6 +1555,8 @@ export const IncrementalLoadingStates: Story = {
         data-mode="infinite"
         load-more-mode="manual"
         has-more
+        .displayedCount=${2}
+        .totalCount=${ROWS.length}
         caption="Ready to load more drivers"
         caption-visibility="visible"
       ></ds-table>
@@ -1566,6 +1568,8 @@ export const IncrementalLoadingStates: Story = {
         load-more-mode="manual"
         has-more
         loading-more
+        .displayedCount=${2}
+        .totalCount=${ROWS.length}
         caption="Loading more drivers"
         caption-visibility="visible"
       ></ds-table>
@@ -1577,6 +1581,8 @@ export const IncrementalLoadingStates: Story = {
         load-more-mode="manual"
         has-more
         load-more-error="More drivers could not be loaded."
+        .displayedCount=${2}
+        .totalCount=${ROWS.length}
         caption="Driver load-more error"
         caption-visibility="visible"
       ></ds-table>
@@ -1586,6 +1592,8 @@ export const IncrementalLoadingStates: Story = {
         .rows=${ROWS.slice(0, 2)}
         data-mode="infinite"
         load-more-mode="manual"
+        .displayedCount=${2}
+        .totalCount=${2}
         caption="All drivers loaded"
         caption-visibility="visible"
       ></ds-table>
@@ -1603,20 +1611,24 @@ export const WorkingLazyLoading: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Activate Load more to see the application acknowledge the request, append stable rows, and finish the dataset. The component never owns a cursor or fetch.',
+        story: 'Activate Load more to see the application acknowledge the request, append stable rows, and finish the dataset. displayedCount tracks the loaded window in the footer. The component never owns a cursor or fetch.',
       },
     },
   },
   render: args => {
     const [, updateArgs] = useArgs();
+    const lazyRows = args['lazyRows'] as TableRow[];
+    const lazyTotal = ROWS.slice(0, 3).length + ADDED_ROWS.length;
     return html`
       <ds-table
         .columns=${ASYNC_COLUMNS}
-        .rows=${args['lazyRows'] as TableRow[]}
+        .rows=${lazyRows}
         data-mode="infinite"
         load-more-mode="manual"
         .hasMore=${args['hasMore']}
         .loadingMore=${args['loadingMore']}
+        .displayedCount=${lazyRows.length}
+        .totalCount=${lazyTotal}
         load-identity="workforce-demo"
         caption="Lazy-loaded drivers"
         caption-visibility="visible"
