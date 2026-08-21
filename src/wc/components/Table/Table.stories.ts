@@ -658,6 +658,15 @@ const PAGINATED_ROWS: TableRow[] = Array.from({ length: 63 }, (_, index) => {
   };
 });
 
+const VIRTUAL_ROWS: TableRow[] = Array.from({ length: 2000 }, (_, index) => {
+  const source = ROWS[index % ROWS.length]!;
+  return {
+    ...source,
+    id: `${source.id}-virtual-${index}`,
+    selectionLabel: `${source.selectionLabel ?? source.id} ${index + 1}`,
+  };
+});
+
 const PAGINATED_GROUP_SOURCE: TableGroup[] = Array.from({ length: 30 }, (_, groupIndex) => ({
   id: `fleet-${groupIndex + 1}`,
   label: `Fleet ${String(groupIndex + 1).padStart(2, '0')}`,
@@ -1880,6 +1889,112 @@ export const NativeGroupedStickyPerformance: Story = {
       </div>
     `;
   },
+};
+
+export const VirtualRows: Story = {
+  name: 'Virtual rows',
+  parameters: {
+    docs: {
+      description: {
+        story: 'dataMode=virtual recycles row DOM over the full in-memory list. The application still supplies every row; the table does not fetch as you scroll. A bounded height, maxHeight, or fitViewport is required.',
+      },
+    },
+  },
+  render: () => html`
+    <ds-table
+      .columns=${COLUMNS}
+      .rows=${VIRTUAL_ROWS}
+      data-mode="virtual"
+      selection-mode="multiple"
+      sticky-header
+      height="var(--dimension-card-height-lg)"
+      caption="Virtual workforce overview"
+      caption-visibility="visible"
+      .totalCount=${VIRTUAL_ROWS.length}
+    ></ds-table>
+  `,
+};
+
+export const VirtualGroupedRows: Story = {
+  name: 'Virtual grouped rows',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Grouping stays orthogonal. Expanded sections insert members into the same virtual list so the table viewport remains the only vertical scroller. Sticky section headers still push off natively.',
+      },
+    },
+  },
+  render: () => {
+    const groupLabels = ['Driving', 'On duty', 'Off duty', 'Unavailable'];
+    const groups = groupLabels.map((label, groupIndex) => ({
+      id: `virtual-${groupIndex}`,
+      label,
+      rows: VIRTUAL_ROWS.slice(groupIndex * 500, groupIndex * 500 + 500),
+      totalCount: 500,
+    } satisfies TableGroup));
+
+    return html`
+      <ds-table
+        .columns=${COLUMNS}
+        .groups=${groups}
+        .grouping=${{ columnId: 'status', direction: 'asc' }}
+        data-mode="virtual"
+        selection-mode="multiple"
+        sticky-header
+        height="var(--dimension-card-height-lg)"
+        caption="Virtual grouped workforce overview"
+        caption-visibility="visible"
+        .totalCount=${VIRTUAL_ROWS.length}
+      ></ds-table>
+    `;
+  },
+};
+
+export const VirtualFitViewport: Story = {
+  name: 'Virtual fitViewport',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Virtual mode follows the fitted table height as surrounding page chrome collapses or the window resizes. The visible row window is recomputed from that definite block size.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="height: 480px; overflow: auto;">
+      <div style="height: 120px; background: var(--color-background-secondary);"></div>
+      <ds-table
+        .columns=${COLUMNS}
+        .rows=${VIRTUAL_ROWS}
+        data-mode="virtual"
+        sticky-header
+        fit-viewport
+        viewport-inset-block-end="32px"
+        caption="Virtual viewport-fitted workforce"
+        caption-visibility="visible"
+        .totalCount=${VIRTUAL_ROWS.length}
+      ></ds-table>
+    </div>
+  `,
+};
+
+export const VirtualRequiresHeight: Story = {
+  name: 'Virtual requires height',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Without height, maxHeight, or fitViewport, virtual mode fails visibly instead of mounting every row.',
+      },
+    },
+  },
+  render: () => html`
+    <ds-table
+      .columns=${COLUMNS}
+      .rows=${VIRTUAL_ROWS.slice(0, 40)}
+      data-mode="virtual"
+      caption="Virtual table without a bounded viewport"
+      caption-visibility="visible"
+    ></ds-table>
+  `,
 };
 
 export const NarrowAndLongContent: Story = {

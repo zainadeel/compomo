@@ -242,7 +242,8 @@
 
 :where(.ds-table__table--native-group-sticky .ds-table__group-row),
 :where(.ds-table__table--native-group-sticky .ds-table__state-row),
-:where(.ds-table__table--native-group-sticky .ds-table__load-row) {
+:where(.ds-table__table--native-group-sticky .ds-table__load-row),
+:where(.ds-table__table--native-group-sticky .ds-table__virtual-spacer-row) {
   display: block;
   inline-size: 100%;
 }
@@ -251,7 +252,8 @@
 :where(.ds-table__table--native-group-sticky .ds-table__cell),
 :where(.ds-table__table--native-group-sticky .ds-table__group-cell),
 :where(.ds-table__table--native-group-sticky .ds-table__state-cell),
-:where(.ds-table__table--native-group-sticky .ds-table__load-cell) {
+:where(.ds-table__table--native-group-sticky .ds-table__load-cell),
+:where(.ds-table__table--native-group-sticky .ds-table__virtual-spacer-cell) {
   display: block;
   inline-size: auto;
   width: auto;
@@ -261,9 +263,26 @@
 
 :where(.ds-table__table--native-group-sticky .ds-table__group-cell),
 :where(.ds-table__table--native-group-sticky .ds-table__state-cell),
-:where(.ds-table__table--native-group-sticky .ds-table__load-cell) {
+:where(.ds-table__table--native-group-sticky .ds-table__load-cell),
+:where(.ds-table__table--native-group-sticky .ds-table__virtual-spacer-cell) {
   inline-size: 100%;
   width: 100%;
+}
+
+:where(.ds-table__virtual-spacer-row) {
+  border: 0;
+}
+
+:where(.ds-table__virtual-spacer-cell) {
+  box-sizing: border-box;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  line-height: 0;
+  font-size: 0;
+  background: transparent;
+  block-size: var(--_table-virtual-spacer-block-size, 0);
+  min-block-size: var(--_table-virtual-spacer-block-size, 0);
 }
 
 :where(.ds-table__caption-bar),

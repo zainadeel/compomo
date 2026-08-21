@@ -20,10 +20,13 @@ import type {
   TableSelectionMode,
 } from './table-types';
 
+export type TableGroupCountPresentation = 'loaded-progress' | 'total';
+
 export interface TableGroupRenderModel {
   group: TableGroup;
   count: number;
   loadedCount: number;
+  visibleCountText: string;
   countLabel: string;
   intent: TableGroupIntent | undefined;
   intentClass: string | undefined;
@@ -57,6 +60,7 @@ export interface TableRenderModelInput {
   selectionMode: TableSelectionMode;
   selectedRowIds: string[];
   collapsedGroupIds: string[];
+  groupCountPresentation?: TableGroupCountPresentation;
 }
 
 /** Create one immutable snapshot of all derived state consumed during a render. */
@@ -94,15 +98,17 @@ export function createTableRenderModel(input: TableRenderModelInput): TableRende
     selection: deriveTableSelectionState(loadedRows, input.selectedRowIds),
     collapsedGroupIds,
     groups: input.groups.map(group => {
-      const count = resolvedTableGroupCount(group);
       const loadedCount = group.rows.length;
+      const totalPresentation = input.groupCountPresentation === 'total';
+      const count = totalPresentation ? loadedCount : resolvedTableGroupCount(group);
       const totalLabel = group.countLabel ?? `${count} ${count === 1 ? 'item' : 'items'}`;
       const intent = isTableGroupIntent(group.intent) ? group.intent : undefined;
       return {
         group,
         count,
         loadedCount,
-        countLabel: `${loadedCount} of ${totalLabel} loaded`,
+        visibleCountText: totalPresentation ? String(count) : `${loadedCount} of ${count}`,
+        countLabel: totalPresentation ? totalLabel : `${loadedCount} of ${totalLabel} loaded`,
         intent,
         intentClass: tableGroupIntentClass(intent),
         labelColor: tableGroupLabelColor(intent),

@@ -10,7 +10,7 @@ export type TableCellLinkTarget = '_self' | '_blank';
 export type TableColumnSticky = 'start' | 'end';
 export type TableCaptionVisibility = 'visible' | 'hidden';
 export type TableLoadMoreMode = 'auto' | 'manual';
-export type TableDataMode = 'infinite' | 'pagination';
+export type TableDataMode = 'infinite' | 'pagination' | 'virtual';
 export interface TableDataModeChangeDetail {
   dataMode: TableDataMode;
 }
