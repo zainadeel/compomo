@@ -21,6 +21,7 @@ const meta: Meta = {
     pageSize: 25,
     totalItems: 500,
     loading: false,
+    fitToPageInactive: false,
   },
 };
 
@@ -38,6 +39,7 @@ export const Playground: Story = {
         .loading=${args['loading']}
         page-size-label="Rows"
         fit-to-page
+        ?fit-to-page-inactive=${args['fitToPageInactive']}
         fit-page-size="8"
         item-label="rows"
         label="Table pagination"

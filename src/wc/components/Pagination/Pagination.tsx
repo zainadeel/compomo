@@ -25,6 +25,8 @@ export class Pagination {
   @Prop() pageSizeOptions: number[] = [25, 50, 100, 200];
   /** Include the Fit to page choice. */
   @Prop() fitToPage: boolean = false;
+  /** Keep the Fit to page choice visible but unavailable. */
+  @Prop() fitToPageInactive: boolean = false;
   /** Effective whole-item capacity to request when Fit is selected. */
   @Prop() fitPageSize: number | undefined;
   /** Full choice-list label for Fit. */
@@ -59,6 +61,7 @@ export class Pagination {
       totalItems: state.totalItems,
       pageSizeOptions: state.pageSizeOptions,
       fitToPage: this.fitToPage,
+      fitToPageInactive: this.fitToPageInactive,
       fitPageSize: this.resolvedFitPageSize,
       fitPageSizeLabel: this.fitPageSizeLabel,
       fitPageSizeTriggerLabel: this.fitPageSizeTriggerLabel,
@@ -73,7 +76,11 @@ export class Pagination {
   }
 
   private requestPageSize(value: string | string[]): void {
-    if (this.loading || typeof value !== 'string') return;
+    if (
+      this.loading ||
+      typeof value !== 'string' ||
+      (value === 'fit' && this.fitToPageInactive)
+    ) return;
     const state = this.resolvedState;
     const nextMode: PaginationPageSizeMode = value === 'fit' ? 'fit' : 'fixed';
     const pageSize = nextMode === 'fit' ? this.resolvedFitPageSize : Number(value);
@@ -85,6 +92,7 @@ export class Pagination {
       totalItems: state.totalItems,
       pageSizeOptions: state.pageSizeOptions,
       fitToPage: this.fitToPage,
+      fitToPageInactive: this.fitToPageInactive,
       fitPageSize: this.resolvedFitPageSize,
       fitPageSizeLabel: this.fitPageSizeLabel,
       fitPageSizeTriggerLabel: this.fitPageSizeTriggerLabel,
@@ -145,7 +153,7 @@ export class Pagination {
       options.push({
         label: this.fitPageSizeLabel,
         value: 'fit',
-        isInactive: this.resolvedFitPageSize === undefined,
+        isInactive: this.fitToPageInactive || this.resolvedFitPageSize === undefined,
       });
     }
 

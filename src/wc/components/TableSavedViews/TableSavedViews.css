@@ -1,5 +1,5 @@
 :host {
-  --ds-choice-popup-min-inline-size: var(--dimension-menu-width-sm);
+  --ds-choice-popup-min-inline-size: var(--dimension-menu-width-xs);
 
   display: inline-block;
   min-inline-size: 0;

@@ -32,7 +32,7 @@
     "Page-size changes request the first page. Out-of-range page indexes and invalid numeric inputs normalize only for presentation; the owner remains authoritative.",
     "Zero results display 0–0 of 0 and Page 1 of 1. A partial final page caps the visible range at totalItems.",
     "loading preserves the full pagination surface, applies aria-busy to the navigation region, and prevents page or page-size requests.",
-    "fitToPage appends a Fit to page choice. fitPageSize supplies its effective whole-item capacity; the closed trigger says Fit while the range continues to expose the resulting count. Pagination does not measure layouts itself."
+    "fitToPage appends a Fit to page choice. fitPageSize supplies its effective whole-item capacity; the closed trigger says Fit while the range continues to expose the resulting count. fitToPageInactive keeps that choice visible but unavailable when fitting is not meaningful for the current data shape. Pagination does not measure layouts itself."
   ],
   "responsiveBehavior": [
     "The compact controls remain on one line with noun, selected size, total, a vertical divider, and page position. When inline space is still insufficient, the pagination surface scrolls horizontally rather than wrapping labels away from their controls."

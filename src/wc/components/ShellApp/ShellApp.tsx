@@ -33,7 +33,6 @@ import {
   CHROME_TRANSITION_START,
   ChromeTransitionDepth,
   createRafCoalescer,
-  readChromeTransitionPhase,
   readChromeTransitionSource,
 } from '../../shell/chrome-transition';
 import {
@@ -165,8 +164,6 @@ export class ShellApp {
   @State() private toolsFullscreen = false;
   @State() private resolvedMode: ShellResponsiveMode = 'desktop';
   @State() private managedToolsOpen = false;
-  /** Keep page capacity aligned with the drawer until its closing clip reaches zero. */
-  @State() private managedToolsClosing = false;
   @State() private managedActiveTool: PanelToolsToolId | '' = '';
   @State() private managedToolPresentation: 'drawer' | 'fullscreen' = 'drawer';
   @State() private managedMobileDestination: MobileDestination = 'area';
@@ -336,12 +333,6 @@ export class ShellApp {
 
   private onChromeTransitionStart = (event: Event) => {
     const source = readChromeTransitionSource(event);
-    if (source === 'panel-tools') {
-      if (readChromeTransitionPhase(event) === 'closing') {
-        this.managedToolsClosing = true;
-      }
-      return;
-    }
     if (source !== 'panel-nav') return;
 
     this.panelNavTransition.enter();
@@ -353,10 +344,6 @@ export class ShellApp {
 
   private onChromeTransitionEnd = (event: Event) => {
     const source = readChromeTransitionSource(event);
-    if (source === 'panel-tools') {
-      this.managedToolsClosing = false;
-      return;
-    }
     if (source !== 'panel-nav') return;
 
     this.panelNavTransition.exit();
@@ -922,8 +909,16 @@ export class ShellApp {
   private renderManagedToolSlots() {
     const ids = [...new Set(this.resolvedToolItems.map(item => item.id))].sort();
     return ids.flatMap(id => [
-      <slot key={`tool:${id}`} name={id} slot={id} />,
-      <slot key={`tool-view:${id}`} name={`${id}-view`} slot={`${id}-view`} />,
+      <div key={`tool:${id}`} class="shell-app__tool-slot-proxy" slot={id}>
+        <slot name={id} />
+      </div>,
+      <div
+        key={`tool-view:${id}`}
+        class="shell-app__tool-slot-proxy"
+        slot={`${id}-view`}
+      >
+        <slot name={`${id}-view`} />
+      </div>,
     ]);
   }
 
@@ -1073,10 +1068,7 @@ export class ShellApp {
     return (
       <ds-shell-page
         responsiveMode={this.resolvedMode}
-        headerCapacity={resolveManagedShellPageCapacity(
-          this.resolvedMode,
-          this.managedToolsOpen || this.managedToolsClosing
-        )}
+        headerCapacity={resolveManagedShellPageCapacity(this.resolvedMode)}
         contentInset={page.contentInset ?? 'default'}
         contentInsetBlockStart={page.contentInsetBlockStart ?? 'default'}
         contentInsetBlockStartSize={page.contentInsetBlockStartSize}

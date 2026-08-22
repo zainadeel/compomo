@@ -116,13 +116,11 @@ export class Menu {
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
   private positionReadyCallback: (() => void) | undefined;
   private suppressItemClick = false;
-  private reorderPointer:
-    | {
-        pointerId: number;
-        sectionIndex: number;
-        fromIndex: number;
-      }
-    | null = null;
+  private reorderPointer: {
+    pointerId: number;
+    sectionIndex: number;
+    fromIndex: number;
+  } | null = null;
   /**
    * Anchored placement. The choice-cell measurement stays here on purpose: the
    * inner-cell align offset and the `--dimension-menu-width-xs` floor are Menu
@@ -460,12 +458,7 @@ export class Menu {
 
     if (this.hasCompositeSections) return;
 
-    if (
-      (e.key === 'ArrowUp' || e.key === 'ArrowDown') &&
-      e.altKey &&
-      !e.ctrlKey &&
-      !e.shiftKey
-    ) {
+    if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && e.altKey && !e.ctrlKey && !e.shiftKey) {
       this.handleReorderKey(e);
       return;
     }
@@ -540,7 +533,7 @@ export class Menu {
     const nextItems = moveReorderableMenuItemBy(
       located.items,
       located.itemIndex,
-      event.key === 'ArrowUp' ? -1 : 1,
+      event.key === 'ArrowUp' ? -1 : 1
     );
     if (!nextItems) return;
 
@@ -553,7 +546,7 @@ export class Menu {
     items: MenuItemData[],
     fromIndex: number,
     nextItems: MenuItemData[],
-    sectionIndex: number,
+    sectionIndex: number
   ): void {
     const detail = createMenuReorderDetail(items, fromIndex, nextItems, sectionIndex);
     if (!detail) return;
@@ -584,7 +577,7 @@ export class Menu {
     event: PointerEvent,
     sectionIndex: number,
     itemIndex: number,
-    flatIndex: number,
+    flatIndex: number
   ): void {
     if (event.button !== 0) return;
     const section = this.activeSections[sectionIndex];
@@ -619,7 +612,7 @@ export class Menu {
       event.clientY,
       drag.sectionIndex,
       drag.fromIndex,
-      section.items,
+      section.items
     );
     if (insertBefore !== this.reorderInsertBefore) this.reorderInsertBefore = insertBefore;
   };
@@ -636,11 +629,7 @@ export class Menu {
     });
     if (!section || isMenuPickerSection(section) || insertBefore === null) return;
 
-    const nextItems = moveReorderableMenuItemBefore(
-      section.items,
-      drag.fromIndex,
-      insertBefore,
-    );
+    const nextItems = moveReorderableMenuItemBefore(section.items, drag.fromIndex, insertBefore);
     if (!nextItems) return;
     this.emitReorder(section.items, drag.fromIndex, nextItems, drag.sectionIndex);
   };
@@ -657,7 +646,7 @@ export class Menu {
     clientY: number,
     sectionIndex: number,
     fromIndex: number,
-    items: MenuItemData[],
+    items: MenuItemData[]
   ): number {
     const range = menuReorderableRange(items, fromIndex);
     if (!range) return fromIndex;
@@ -700,9 +689,8 @@ export class Menu {
       this.closingSections = null;
     }
     let flatIdx = 0;
-    const dragLocated = this.reorderFromFlat === null
-      ? null
-      : locateMenuItem(sections, this.reorderFromFlat);
+    const dragLocated =
+      this.reorderFromFlat === null ? null : locateMenuItem(sections, this.reorderFromFlat);
     const dragRange = dragLocated
       ? menuReorderableRange(dragLocated.items, dragLocated.itemIndex)
       : null;
@@ -781,7 +769,7 @@ export class Menu {
                     const isSingleSelectionItem =
                       !hasCompositeSections && this.selectionMode === 'single' && !item.showSwitch;
                     const usesLeading = section.items.some(
-                      candidate => candidate.reorderable || !!candidate.icon,
+                      candidate => candidate.reorderable || !!candidate.icon
                     );
                     const locked = !!item.isInactive && !item.reorderable;
                     const dragging = this.reorderFromFlat === idx;

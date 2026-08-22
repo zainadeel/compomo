@@ -89,7 +89,7 @@ export class TableViewportFitController {
     }
 
     const { host, surface } = this.options.elements();
-    if (!host || !surface) return;
+    if (!host) return;
     const elementsChanged = host !== this.connectedHost || surface !== this.connectedSurface;
     const nextScrollRoot = elementsChanged || !this.scrollRoot
       ? this.findScrollRoot(host)
@@ -162,7 +162,7 @@ export class TableViewportFitController {
   private readonly sync = (): void => {
     if (!this.connected || !this.options.enabled() || !this.scrollRoot) return;
     const { host, surface } = this.options.elements();
-    if (!host || !surface) return;
+    if (!host) return;
 
     const hostRect = host.getBoundingClientRect();
     const scrollportRect = this.scrollRoot instanceof HTMLElement
@@ -182,11 +182,13 @@ export class TableViewportFitController {
       '--_table-viewport-fit-reserved-block-size',
       `${next.reservedBlockSize}px`,
     );
-    this.setProperty(
-      surface,
-      '--_table-viewport-fit-current-block-size',
-      `${next.currentBlockSize}px`,
-    );
+    if (surface) {
+      this.setProperty(
+        surface,
+        '--_table-viewport-fit-current-block-size',
+        `${next.currentBlockSize}px`,
+      );
+    }
     if (
       !this.metrics ||
       this.metrics.reservedBlockSize !== next.reservedBlockSize ||

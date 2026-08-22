@@ -15,11 +15,9 @@ export function resolveShellResponsiveMode(width: number): ShellResponsiveMode {
 }
 
 export function resolveManagedShellPageCapacity(
-  mode: ShellResponsiveMode,
-  toolsOpen: boolean
+  mode: ShellResponsiveMode
 ): 'roomy' | 'compact' | 'constrained' {
-  if (mode === 'desktop') return toolsOpen ? 'compact' : 'roomy';
-  return toolsOpen ? 'constrained' : 'compact';
+  return mode === 'desktop' ? 'roomy' : 'compact';
 }
 
 export function shellMobileDestinationForTool(

@@ -29,7 +29,7 @@ test.describe('Managed application shell', () => {
     await shell.getByRole('button', { name: 'Search' }).click();
     await expect(shell.locator('ds-shell-page')).toHaveJSProperty(
       'headerCapacity',
-      'compact'
+      'roomy'
     );
     await expect(shell.locator('ds-panel-tools')).not.toHaveClass(
       /panel-tools--motion-opening/,
@@ -41,7 +41,7 @@ test.describe('Managed application shell', () => {
     );
     await expect(shell.locator('ds-shell-page')).toHaveJSProperty(
       'headerCapacity',
-      'compact'
+      'roomy'
     );
     await expect(shell.locator('ds-panel-tools')).not.toHaveClass(
       /panel-tools--motion-closing/,
@@ -69,7 +69,7 @@ test.describe('Managed application shell', () => {
     await shell.getByRole('button', { name: 'Search' }).click();
     await expect(shell.locator('ds-shell-page')).toHaveJSProperty(
       'headerCapacity',
-      'constrained'
+      'compact'
     );
     await shell.getByRole('button', { name: 'Search' }).click();
     await expect(shell.locator('ds-shell-page')).toHaveJSProperty(
@@ -218,14 +218,14 @@ test.describe('Managed application shell', () => {
     await expect(shellPage.locator('.shell-page__flow-spacer')).toHaveCSS('height', '0px');
 
     await shell.getByRole('button', { name: 'Search' }).click();
-    await expect(barTitle).toHaveClass(/bar-title-host--compact/);
-    await expect(content).toHaveCSS('padding-top', '32px');
+    await expect(barTitle).toHaveClass(/bar-title-host--expanded/);
+    await expect(content).toHaveCSS('padding-top', '2px');
     expect(
       await barTitle.locator('.bar-title').evaluate(element => getComputedStyle(element, '::after').display)
-    ).not.toBe('none');
+    ).toBe('none');
     await expect.poll(() => shellPage.evaluate(element =>
       Number.parseFloat(getComputedStyle(element).getPropertyValue('--ds-shell-page-sticky-header-block-size'))
-    )).toBe(48);
+    )).toBeGreaterThan(48);
 
     await shell.getByRole('button', { name: 'Search' }).click();
     await page.setViewportSize({ width: 1024, height: 760 });
@@ -278,7 +278,7 @@ test.describe('Managed application shell', () => {
     await expect(titleSurface).toHaveCSS('background-color', surfaces.secondary);
 
     await shell.getByRole('button', { name: 'Search' }).click();
-    await expect(barTitle).toHaveClass(/bar-title-host--compact/);
+    await expect(barTitle).toHaveClass(/bar-title-host--expanded/);
     await expect(stickyHeader).toHaveCSS('background-color', surfaces.secondary);
     await expect(barTitle).toHaveCSS('background-color', surfaces.secondary);
     await expect(titleSurface).toHaveCSS('background-color', surfaces.secondary);

@@ -222,7 +222,12 @@ export class TableVirtualController {
     this.viewportSize = size;
     if (width !== this.viewportWidth) {
       this.viewportWidth = width;
-      this.invalidateMeasures();
+      const items = this.options.state().items;
+      const hasVariableSize = this.indexedItems === items && this.index
+        ? this.index.hasVariableSize
+        : items.some(item => item.variableSize);
+      if (hasVariableSize) this.invalidateMeasures();
+      else if (sizeChanged) this.schedule();
       return;
     }
     if (sizeChanged) this.schedule();

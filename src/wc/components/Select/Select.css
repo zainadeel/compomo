@@ -56,7 +56,7 @@
 .select-option__subtext-actions {
   display: flex;
   align-items: center;
-  gap: var(--dimension-space-025);
+  gap: var(--dimension-space-050);
   min-inline-size: 0;
   color: var(--color-foreground-secondary);
 }

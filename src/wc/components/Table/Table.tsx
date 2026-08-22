@@ -58,10 +58,7 @@ import {
   tableDataModeFromMenuItem,
   tableDataModeMenuItems,
 } from './table-data-mode-switcher';
-import {
-  resolveTableTruncateTrack,
-  tableTruncateLabel,
-} from './table-truncate';
+import { resolveTableTruncateTrack, tableTruncateLabel } from './table-truncate';
 import { TableLayoutController } from './table-layout-controller';
 import { TableLoadController } from './table-load-controller';
 import { TableGroupLoadController } from './table-group-load-controller';
@@ -118,11 +115,7 @@ const TABLE_FOOTER_SLOT_TRAILING = 4;
 
 @Component({
   tag: 'ds-table',
-  styleUrls: [
-    '../../utils/focus-ring.css',
-    '../../utils/interaction-fill.css',
-    'Table.css',
-  ],
+  styleUrls: ['../../utils/focus-ring.css', '../../utils/interaction-fill.css', 'Table.css'],
   scoped: true,
 })
 export class Table {
@@ -186,6 +179,8 @@ export class Table {
 
   /** Initial loading state. Existing rows stay visible; incremental loading uses loadingMore. */
   @Prop() loading: boolean = false;
+  /** Replace opted-in table-owned caption controls with same-size visual skeletons. */
+  @Prop() chromeLoading: boolean = false;
   /** Initial-loading rows. Defaults to ten so bounded tables retain a useful filled viewport. */
   @Prop() skeletonRows: number = 10;
   @Prop() emptyHeading: string = 'No results';
@@ -231,7 +226,8 @@ export class Table {
   /** Supports the {group} placeholder. */
   @Prop() groupEndOfResultsLabel: string = 'All {group} results loaded';
   /** Supports {group}, {count}, {loaded}, and {total} placeholders. */
-  @Prop() groupRowsLoadedLabel: string = '{count} more rows loaded in {group}. {loaded} of {total} rows loaded.';
+  @Prop() groupRowsLoadedLabel: string =
+    '{count} more rows loaded in {group}. {loaded} of {total} rows loaded.';
 
   @Event() dsSortChange!: EventEmitter<TableSortChangeDetail>;
   @Event() dsGroupCollapseChange!: EventEmitter<TableGroupCollapseChangeDetail>;
@@ -301,10 +297,13 @@ export class Table {
     rowsById: Map<string, TableRow>;
     groupsById: Map<string, TableGroupRenderModel>;
   } | null = null;
-  private virtualRowPoolStates = new Map<string, {
-    slotsByRowId: Map<string, number>;
-    nextSlot: number;
-  }>();
+  private virtualRowPoolStates = new Map<
+    string,
+    {
+      slotsByRowId: Map<string, number>;
+      nextSlot: number;
+    }
+  >();
 
   private rootEl: HTMLElement | null = null;
   private viewportEl: HTMLElement | null = null;
@@ -317,6 +316,7 @@ export class Table {
   private incrementalWindowActive = false;
   private readonly groupSentinelEls = new Map<string, HTMLElement>();
   private previousModelWarning = '';
+  private modelWarningQueued = false;
   private hasLoaded = false;
   private renderedModel: TableRenderModel | null = null;
   private stickyGroupConnected = false;
@@ -417,6 +417,10 @@ export class Table {
   });
 
   componentWillLoad(): void {
+    // Reserve the final viewport-fit height before the first paint. The fitted
+    // surface is connected after render, but the host can already resolve its
+    // owning scrollport and prevent an initial auto-height frame.
+    this.viewportFitController.connect();
     this.incrementalWindowActive = this.hasIncrementalState;
     this.syncHeaderSlotPresence();
     this.syncFooterSlotPresence();
@@ -560,7 +564,7 @@ export class Table {
     }
 
     const stickyHeader = this.frameEl.querySelector<HTMLElement>(
-      '.ds-table__document-sticky-header',
+      '.ds-table__document-sticky-header'
     );
     if (!stickyHeader) return;
     const threshold = stickyHeader.getBoundingClientRect().bottom;
@@ -583,7 +587,7 @@ export class Table {
     const frameRect = this.frameEl.getBoundingClientRect();
     this.frameEl.style.setProperty(
       '--_table-sticky-group-top',
-      `${activeGroupTop - frameRect.top}px`,
+      `${activeGroupTop - frameRect.top}px`
     );
 
     if (activeGroupId !== this.activeStickyGroupId) {
@@ -598,7 +602,7 @@ export class Table {
   @Watch('columnOrder')
   @Watch('columnCustomizer')
   handleStructureChange(): void {
-    this.warnModelIssues();
+    this.scheduleModelIssueWarning();
     this.loadController.structureChanged();
     this.groupLoadController.structureChanged();
     this.virtualController.invalidateMeasures();
@@ -609,14 +613,14 @@ export class Table {
   handleDataChange(): void {
     if (this.grouped) this.groupLoadController.dataChanged();
     else this.loadController.dataChanged();
-    this.warnModelIssues();
+    this.scheduleModelIssueWarning();
     this.syncActionMenu();
     this.virtualController.invalidateMeasures();
   }
 
   @Watch('totalCount')
   handleTotalCountChange(): void {
-    this.warnModelIssues();
+    this.scheduleModelIssueWarning();
   }
 
   @Watch('loadIdentity')
@@ -642,7 +646,7 @@ export class Table {
   @Watch('dataMode')
   handleDataModeChange(): void {
     this.incrementalWindowActive = this.hasIncrementalState;
-    this.warnModelIssues();
+    this.scheduleModelIssueWarning();
     this.handleLazyConfigurationChange();
     if (this.dataMode === 'virtual') this.virtualController.resetToTop();
   }
@@ -650,12 +654,9 @@ export class Table {
   @Watch('pagination')
   handlePaginationChange(
     pagination: TablePaginationState | null,
-    previous: TablePaginationState | null,
+    previous: TablePaginationState | null
   ): void {
-    if (
-      pagination?.pageSizeMode === 'fit' &&
-      pagination.fitIdentity !== previous?.fitIdentity
-    ) {
+    if (pagination?.pageSizeMode === 'fit' && pagination.fitIdentity !== previous?.fitIdentity) {
       this.fitMeasurementPending = true;
     }
   }
@@ -690,13 +691,22 @@ export class Table {
     if (!this.showsDataModeSwitcher) this.closeDataModeSwitcher();
   }
 
+  @Watch('chromeLoading')
+  handleChromeLoadingChange(loading: boolean): void {
+    if (!loading) return;
+    this.closeColumnCustomizer();
+    this.closeDataModeSwitcher();
+  }
+
   private get grouped(): boolean {
     return this.grouping !== null;
   }
 
   private get hasIncrementalState(): boolean {
-    return this.dataMode === 'infinite' &&
-      (this.hasMore || this.loadingMore || !!this.loadMoreError?.trim());
+    return (
+      this.dataMode === 'infinite' &&
+      (this.hasMore || this.loadingMore || !!this.loadMoreError?.trim())
+    );
   }
 
   private get selectable(): boolean {
@@ -779,22 +789,28 @@ export class Table {
 
   private readonly syncFitPageSize = (): void => {
     const pagination = this.dataMode === 'pagination' ? this.pagination : null;
-    if (!pagination?.fitToPage || !this.containedScroll || !this.viewportEl || !this.tableEl) {
+    if (
+      !pagination?.fitToPage ||
+      pagination.fitToPageInactive ||
+      !this.containedScroll ||
+      !this.viewportEl ||
+      !this.tableEl
+    ) {
       if (this.fitPageSize !== undefined) this.fitPageSize = undefined;
       this.fitMeasurementPending = false;
       return;
     }
-    const header = this.tableEl.querySelector<HTMLElement>(
-      '.ds-table__head .ds-table__header-row',
-    );
+    const header = this.tableEl.querySelector<HTMLElement>('.ds-table__head .ds-table__header-row');
     const item = this.tableEl.querySelector<HTMLElement>(
-      this.grouped ? '.ds-table__group-row' : '.ds-table__body .ds-table__row',
+      this.grouped ? '.ds-table__group-row' : '.ds-table__body .ds-table__row'
     );
-    const itemBlockSize = item?.getBoundingClientRect().height || resolveCssLengthPx(
-      'var(--ds-table-row-min-block-size, var(--dimension-size-500))',
-      0,
-      this.rootEl ?? this.el,
-    );
+    const itemBlockSize =
+      item?.getBoundingClientRect().height ||
+      resolveCssLengthPx(
+        'var(--ds-table-row-min-block-size, var(--dimension-size-500))',
+        0,
+        this.rootEl ?? this.el
+      );
     const next = resolveTableFitPageSize({
       viewportBlockSize: this.viewportEl.clientHeight,
       headerBlockSize: header?.getBoundingClientRect().height ?? 0,
@@ -813,6 +829,7 @@ export class Table {
       totalItems: pagination.totalItems,
       pageSizeOptions: pagination.pageSizeOptions ?? [25, 50, 100, 200],
       fitToPage: true,
+      fitToPageInactive: false,
       fitPageSize: next,
       fitPageSizeLabel: pagination.fitPageSizeLabel ?? 'Fit to page',
       fitPageSizeTriggerLabel: pagination.fitPageSizeTriggerLabel ?? 'Fit',
@@ -843,11 +860,13 @@ export class Table {
 
     const fromDirectionalControl = event.composedPath().some(node => {
       if (!(node instanceof HTMLElement)) return false;
-      return node.tagName === 'DS-SELECT' ||
+      return (
+        node.tagName === 'DS-SELECT' ||
         node.tagName === 'DS-MENU' ||
         ['INPUT', 'SELECT', 'TEXTAREA'].includes(node.tagName) ||
         node.isContentEditable ||
-        node.getAttribute('role') === 'slider';
+        node.getAttribute('role') === 'slider'
+      );
     });
     if (fromDirectionalControl) return;
 
@@ -863,6 +882,7 @@ export class Table {
       totalItems: state.totalItems,
       pageSizeOptions: state.pageSizeOptions,
       fitToPage: pagination.fitToPage ?? false,
+      fitToPageInactive: pagination.fitToPageInactive ?? false,
       fitPageSize: this.fitPageSize ?? pagination.fitPageSize,
       fitPageSizeLabel: pagination.fitPageSizeLabel ?? 'Fit to page',
       fitPageSizeTriggerLabel: pagination.fitPageSizeTriggerLabel ?? 'Fit',
@@ -941,12 +961,16 @@ export class Table {
   }
 
   private estimateVirtualViewportSize(): number {
-    const measured = this.virtualController.currentViewportSize() ||
-      this.viewportEl?.clientHeight || 0;
-    const chrome = (this.captionVisibility === 'visible' ? 48 : 0) + (this.hasResultFooter ? 48 : 0);
+    const measured =
+      this.virtualController.currentViewportSize() || this.viewportEl?.clientHeight || 0;
+    const chrome =
+      (this.captionVisibility === 'visible' ? 48 : 0) + (this.hasResultFooter ? 48 : 0);
     if (this.fixedHeight && this.resolvedHeight) {
       if (measured > 0) return measured;
-      return Math.max(0, resolveCssLengthPx(this.resolvedHeight, 0, this.rootEl ?? this.el) - chrome);
+      return Math.max(
+        0,
+        resolveCssLengthPx(this.resolvedHeight, 0, this.rootEl ?? this.el) - chrome
+      );
     }
     if (this.fitViewport) return Math.max(0, measured);
     if (this.resolvedMaxHeight) {
@@ -999,8 +1023,9 @@ export class Table {
   }
 
   private shouldVirtualize(model: TableRenderModel): boolean {
-    return this.virtualizationEnabled &&
-      (model.hasData || (model.grouped && model.groups.length > 0));
+    return (
+      this.virtualizationEnabled && (model.hasData || (model.grouped && model.groups.length > 0))
+    );
   }
 
   private get resolvedMaxHeight(): string | undefined {
@@ -1026,9 +1051,10 @@ export class Table {
       }
     }
     if (this.sort) {
-      const sortColumn = this.columns.find(column =>
-        column.id === this.sort!.columnId ||
-        column.headerSegments?.some(segment => segment.sortKey === this.sort!.columnId),
+      const sortColumn = this.columns.find(
+        column =>
+          column.id === this.sort!.columnId ||
+          column.headerSegments?.some(segment => segment.sortKey === this.sort!.columnId)
       );
       if (!sortColumn) {
         issues.push(`Sorting references unknown column id: ${this.sort.columnId}`);
@@ -1046,16 +1072,32 @@ export class Table {
     const stickyStart = visibleColumns.filter(column => column.sticky === 'start');
     const stickyEnd = visibleColumns.filter(column => column.sticky === 'end');
     if (stickyStart.length > 1 || (this.selectable && stickyStart.length > 0)) {
-      issues.push('Only one sticky start column is supported, and row selection already owns that lane.');
+      issues.push(
+        'Only one sticky start column is supported, and row selection already owns that lane.'
+      );
     }
     if (stickyEnd.length > 1) issues.push('Only one sticky end column is supported.');
     for (const column of [...stickyStart, ...stickyEnd]) {
-      if (!tableColumnSize(column)) issues.push(`Sticky column ${column.id} requires an explicit size.`);
+      if (!tableColumnSize(column))
+        issues.push(`Sticky column ${column.id} requires an explicit size.`);
     }
     const message = issues.join(' ');
-    if (!message || message === this.previousModelWarning) return;
+    if (!message) {
+      this.previousModelWarning = '';
+      return;
+    }
+    if (message === this.previousModelWarning) return;
     this.previousModelWarning = message;
     console.warn(`[ds-table] ${message}`);
+  }
+
+  private scheduleModelIssueWarning(): void {
+    if (this.modelWarningQueued) return;
+    this.modelWarningQueued = true;
+    queueMicrotask(() => {
+      this.modelWarningQueued = false;
+      this.warnModelIssues();
+    });
   }
 
   private emitSort(column: TableColumn, sortKey = column.id): void {
@@ -1105,7 +1147,7 @@ export class Table {
     return !event.composedPath().some(target => {
       if (!(target instanceof HTMLElement) || target === currentTarget) return false;
       return target.matches(
-        'button, a, input, select, textarea, [role="button"], [role="checkbox"], [popover], ds-button-unfilled, ds-menu',
+        'button, a, input, select, textarea, [role="button"], [role="checkbox"], [popover], ds-button-unfilled, ds-menu'
       );
     });
   }
@@ -1118,7 +1160,7 @@ export class Table {
   private syncActionMenu(): void {
     if (!this.actionMenu) return;
     const row = tableRows(this.rows, this.groups, this.grouped).find(
-      candidate => candidate.id === this.actionMenu?.rowId,
+      candidate => candidate.id === this.actionMenu?.rowId
     );
     const value = row && !row.disabled ? row.cells[this.actionMenu.columnId] : undefined;
     if (!isTableCellAction(value) || !isRenderableTableActionMenu(value)) {
@@ -1143,7 +1185,7 @@ export class Table {
     this.closeActionMenu();
     requestAnimationFrame(() => {
       const trigger = this.el.querySelector<HTMLElement & { setFocus?: () => void }>(
-        `#${CSS.escape(triggerId)}`,
+        `#${CSS.escape(triggerId)}`
       );
       trigger?.setFocus?.();
     });
@@ -1151,8 +1193,7 @@ export class Table {
 
   private toggleActionMenu(row: TableRow, column: TableColumn, event: MouseEvent): void {
     if (row.disabled) return;
-    const open =
-      this.actionMenu?.rowId === row.id && this.actionMenu?.columnId === column.id;
+    const open = this.actionMenu?.rowId === row.id && this.actionMenu?.columnId === column.id;
     this.actionMenuInitialFocusVisible = event.detail === 0;
     this.actionMenu = open ? null : { rowId: row.id, columnId: column.id };
   }
@@ -1160,7 +1201,9 @@ export class Table {
   private renderOverflowActionMenu() {
     const open = this.actionMenu;
     const row = open
-      ? tableRows(this.rows, this.groups, this.grouped).find(candidate => candidate.id === open.rowId)
+      ? tableRows(this.rows, this.groups, this.grouped).find(
+          candidate => candidate.id === open.rowId
+        )
       : undefined;
     const value = row && open ? row.cells[open.columnId] : undefined;
     const menu = isTableCellAction(value) && isRenderableTableActionMenu(value) ? value : undefined;
@@ -1277,7 +1320,8 @@ export class Table {
   }
 
   private handleRowKeydown(row: TableRow, event: KeyboardEvent): void {
-    if (event.target !== event.currentTarget || (event.key !== 'Enter' && event.key !== ' ')) return;
+    if (event.target !== event.currentTarget || (event.key !== 'Enter' && event.key !== ' '))
+      return;
     event.preventDefault();
     this.emitRowActivation(row, event);
   }
@@ -1297,7 +1341,7 @@ export class Table {
     checked: boolean,
     indeterminate: boolean,
     disabled: boolean,
-    onActivate: () => void,
+    onActivate: () => void
   ) {
     return (
       <button
@@ -1323,10 +1367,7 @@ export class Table {
   private renderStickyEdge(sticky: TableColumn['sticky']) {
     if (!sticky) return null;
     return (
-      <span
-        class={`ds-table__sticky-edge ds-table__sticky-edge--${sticky}`}
-        aria-hidden="true"
-      />
+      <span class={`ds-table__sticky-edge ds-table__sticky-edge--${sticky}`} aria-hidden="true" />
     );
   }
 
@@ -1370,21 +1411,23 @@ export class Table {
     column: TableColumn,
     model: TableRenderModel,
     interactive = true,
-    presentational = false,
+    presentational = false
   ) {
     const groupedColumn = this.grouping?.columnId === column.id;
     const headerSegments = column.headerSegments?.length
       ? column.headerSegments
       : [{ label: column.header, sortKey: column.id }];
     const activeMemberSegment = headerSegments.find(
-      segment => segment.sortKey === this.sort?.columnId,
+      segment => segment.sortKey === this.sort?.columnId
     );
     const activeMemberSort = !!activeMemberSegment;
     const activeSort = activeMemberSort;
     const align = column.align ?? 'start';
     const direction = activeMemberSort ? this.sort!.direction : undefined;
     const memberAriaSort = activeMemberSort
-      ? (this.sort!.direction === 'asc' ? 'ascending' : 'descending')
+      ? this.sort!.direction === 'asc'
+        ? 'ascending'
+        : 'descending'
       : undefined;
 
     const help = column.help?.trim();
@@ -1445,11 +1488,14 @@ export class Table {
         })}
       </span>
     );
-    const labelControl = interactive && help ? (
-      <ds-tooltip label={help} side="top" size="sm" wrapLabel={true}>
-        {labels}
-      </ds-tooltip>
-    ) : labels;
+    const labelControl =
+      interactive && help ? (
+        <ds-tooltip label={help} side="top" size="sm" wrapLabel={true}>
+          {labels}
+        </ds-tooltip>
+      ) : (
+        labels
+      );
     const sortControl = interactive ? (
       <span class="ds-table__sort-slot">
         {activeSort && (
@@ -1461,7 +1507,7 @@ export class Table {
             aria-label={this.sortButtonLabel(
               column,
               activeMemberSegment?.sortKey ?? column.id,
-              activeMemberSegment?.label ?? column.header,
+              activeMemberSegment?.label ?? column.header
             )}
             hasBorder={false}
             activeFill={false}
@@ -1474,15 +1520,13 @@ export class Table {
       </span>
     ) : null;
     const collapseHost = model.collapseAllHost;
-    const actionCollapseHost = collapseHost?.mode === 'action' && collapseHost.columnId === column.id;
-    const blankActionCollapseHost = actionCollapseHost &&
-      !column.header.trim() &&
-      !column.headerSegments?.length;
+    const actionCollapseHost =
+      collapseHost?.mode === 'action' && collapseHost.columnId === column.id;
+    const blankActionCollapseHost =
+      actionCollapseHost && !column.header.trim() && !column.headerSegments?.length;
     const collapseControl =
       interactive && actionCollapseHost ? (
-        <span class="ds-table__collapse-slot">
-          {this.renderCollapseAllButton()}
-        </span>
+        <span class="ds-table__collapse-slot">{this.renderCollapseAllButton()}</span>
       ) : null;
 
     return (
@@ -1554,47 +1598,48 @@ export class Table {
     model: TableRenderModel,
     interactive = true,
     presentational = false,
-    ariaRowIndex?: number,
+    ariaRowIndex?: number
   ) {
     const selection = model.selection;
     return (
-      <thead class={{
-        'ds-table__head': true,
-        'ds-table__head--semantic-copy': !interactive,
-      }} ref={element => {
-        if (interactive) this.interactiveHeadEl = element ?? null;
-      }}>
+      <thead
+        class={{
+          'ds-table__head': true,
+          'ds-table__head--semantic-copy': !interactive,
+        }}
+        ref={element => {
+          if (interactive) this.interactiveHeadEl = element ?? null;
+        }}
+      >
         <tr class="ds-table__header-row" aria-rowindex={ariaRowIndex}>
           {model.selectable && (
             <th
               class="ds-table__header-cell ds-table__selection-cell ds-table__cell--sticky-start"
               scope={presentational ? undefined : 'col'}
             >
-              {interactive ? this.renderSelectionControl(
-                selection.allSelected ? 'Deselect all loaded rows' : 'Select all loaded rows',
-                selection.allSelected,
-                selection.indeterminate,
-                selection.selectableRowIds.length === 0,
-                () => this.emitAllSelection(),
+              {interactive ? (
+                this.renderSelectionControl(
+                  selection.allSelected ? 'Deselect all loaded rows' : 'Select all loaded rows',
+                  selection.allSelected,
+                  selection.indeterminate,
+                  selection.selectableRowIds.length === 0,
+                  () => this.emitAllSelection()
+                )
               ) : (
                 <span class="ds-visually-hidden">Select rows</span>
               )}
               {this.renderStickyEdge('start')}
             </th>
           )}
-          {this.visibleColumns.map(column => (
+          {this.visibleColumns.map(column =>
             this.renderColumnHeader(column, model, interactive, presentational)
-          ))}
+          )}
         </tr>
       </thead>
     );
   }
 
-  private renderCellValue(
-    cell: TableCellPresentation,
-    column: TableColumn,
-    row: TableRow,
-  ) {
+  private renderCellValue(cell: TableCellPresentation, column: TableColumn, row: TableRow) {
     if (cell.kind === 'blank') return null;
 
     if (cell.kind === 'empty') {
@@ -1644,13 +1689,14 @@ export class Table {
       return (
         <span class="ds-table__cell-image">
           {value.src ? (
-            <img class="ds-table__cell-image-content" src={value.src} alt={value.alt} loading="lazy" />
-          ) : (
-            <span
-              class="ds-table__cell-image-placeholder"
-              role="img"
-              aria-label={value.alt}
+            <img
+              class="ds-table__cell-image-content"
+              src={value.src}
+              alt={value.alt}
+              loading="lazy"
             />
+          ) : (
+            <span class="ds-table__cell-image-placeholder" role="img" aria-label={value.alt} />
           )}
         </span>
       );
@@ -1660,13 +1706,12 @@ export class Table {
       const value = cell.value;
       const menu = isRenderableTableActionMenu(value);
       const triggerId = tableActionTriggerId(this.actionMenuElementId, row.id, column.id);
-      const expanded = menu &&
-        this.actionMenu?.rowId === row.id &&
-        this.actionMenu?.columnId === column.id;
+      const expanded =
+        menu && this.actionMenu?.rowId === row.id && this.actionMenu?.columnId === column.id;
       return (
         <ds-button-unfilled
           id={menu ? triggerId : undefined}
-          variant={menu ? 'icon' : value.variant ?? 'label'}
+          variant={menu ? 'icon' : (value.variant ?? 'label')}
           size="md"
           isInset={true}
           insetDepth="double"
@@ -1738,9 +1783,7 @@ export class Table {
     return this.renderTextCopy(cell);
   }
 
-  private renderTextCopy(
-    cell: Extract<TableCellPresentation, { kind: 'text' | 'icon-text' }>,
-  ) {
+  private renderTextCopy(cell: Extract<TableCellPresentation, { kind: 'text' | 'icon-text' }>) {
     const text = cell.value;
     const wraps = cell.wraps;
     const overflow = tableCellTextOverflowProps(cell.lineClamp);
@@ -1773,7 +1816,9 @@ export class Table {
           >
             {primary}
           </a>
-        ) : primary}
+        ) : (
+          primary
+        )}
         {this.renderTextTrack(text.secondary, {
           track: 'secondary',
           variant: primaryText ? 'text-body-medium' : 'text-body-small',
@@ -1800,7 +1845,7 @@ export class Table {
       defaultColor: 'primary' | 'secondary';
       wholeColor?: TableCellTextRun['color'];
       lineClamp: TableCellLineClamp;
-    },
+    }
   ) {
     if (!runs?.length) return null;
     const trackClass = `ds-table__cell-${options.track} ds-table__cell-track ds-table__cell-track--text`;
@@ -1861,7 +1906,7 @@ export class Table {
     model: TableRenderModel,
     ariaRowIndex?: number,
     variableVirtualSize = false,
-    rowKey = row.id,
+    rowKey = row.id
   ) {
     const selected = model.selectedRowIds.has(row.id);
     const rowSelectable = row.selectable !== false && !row.disabled;
@@ -1887,20 +1932,22 @@ export class Table {
         onKeyDown={event => this.handleRowKeydown(row, event)}
       >
         {model.selectable && (
-          <td class={{
-            'ds-table__cell': true,
-            'ds-table__selection-cell': true,
-            'ds-table__cell--sticky-start': true,
-            'ds-interaction-fill': true,
-            'ds-interaction-fill--grouped': true,
-            'ds-interaction-fill--selected': selected,
-          }}>
+          <td
+            class={{
+              'ds-table__cell': true,
+              'ds-table__selection-cell': true,
+              'ds-table__cell--sticky-start': true,
+              'ds-interaction-fill': true,
+              'ds-interaction-fill--grouped': true,
+              'ds-interaction-fill--selected': selected,
+            }}
+          >
             {this.renderSelectionControl(
               `${selected ? 'Deselect' : 'Select'} ${tableRowSelectionLabel(row, this.visibleColumns)}`,
               selected,
               false,
               !rowSelectable,
-              () => this.emitRowSelection(row),
+              () => this.emitRowSelection(row)
             )}
             {this.renderStickyEdge('start')}
           </td>
@@ -1942,7 +1989,8 @@ export class Table {
                 'ds-table__cell--action-menu': actionMenuCell,
                 'ds-table__cell--primary-text': primaryTextCell,
                 'ds-table__cell--text-single': singleTextCell,
-                'ds-table__cell--text-multi': textCell && !singleTextCell && textVariant !== 'triple',
+                'ds-table__cell--text-multi':
+                  textCell && !singleTextCell && textVariant !== 'triple',
                 'ds-table__cell--text-triple': textVariant === 'triple',
                 'ds-table__cell--text-wrap': textCell && wraps,
                 'ds-table__cell--empty': emptyCell,
@@ -2007,7 +2055,7 @@ export class Table {
               groupSelection.allSelected,
               groupSelection.indeterminate,
               groupSelection.selectableRowIds.length === 0,
-              () => this.emitGroupSelection(group),
+              () => this.emitGroupSelection(group)
             )}
           </span>
         )}
@@ -2049,11 +2097,7 @@ export class Table {
           insetDepth="double"
           icon={isCollapsed ? 'ChevronDown' : 'ChevronUp'}
           expanded={!isCollapsed}
-          aria-label={
-            isCollapsed
-              ? `Expand ${group.label} group`
-              : `Collapse ${group.label} group`
-          }
+          aria-label={isCollapsed ? `Expand ${group.label} group` : `Collapse ${group.label} group`}
           hasBorder={false}
           onDsClick={event => {
             event.stopPropagation();
@@ -2071,8 +2115,8 @@ export class Table {
   private renderGroupLoadRow(group: TableGroup, totalColumns: number) {
     const error = group.loadMoreError?.trim();
     if (!error && !group.loadingMore && !group.hasMore) return null;
-    const manualFallback = this.loadMoreMode === 'manual' ||
-      !this.groupLoadController.intersectionSupported;
+    const manualFallback =
+      this.loadMoreMode === 'manual' || !this.groupLoadController.intersectionSupported;
 
     return (
       <tr
@@ -2089,7 +2133,9 @@ export class Table {
               <span class="ds-table__load-content ds-table__load-content--error">
                 <span class="ds-table__load-copy">
                   <ds-icon name="ErrorTriangle" size="md" color="secondary" aria-hidden="true" />
-                  <ds-text as="span" variant="text-body-medium" color="secondary">{error}</ds-text>
+                  <ds-text as="span" variant="text-body-medium" color="secondary">
+                    {error}
+                  </ds-text>
                 </span>
                 <ds-button-unfilled
                   label={this.formatGroupLoadLabel(this.groupRetryLabel, group)}
@@ -2141,14 +2187,19 @@ export class Table {
     );
   }
 
-  private renderVirtualSpacer(node: Extract<TableVirtualNode, { kind: 'spacer' }>, totalColumns: number) {
+  private renderVirtualSpacer(
+    node: Extract<TableVirtualNode, { kind: 'spacer' }>,
+    totalColumns: number
+  ) {
     if (node.size <= 0) return null;
     return (
       <tr class="ds-table__virtual-spacer-row" key={node.key} aria-hidden="true">
         <td
           class="ds-table__virtual-spacer-cell"
           colSpan={totalColumns}
-          style={{ '--_table-virtual-spacer-block-size': `${node.size}px` } as Record<string, string>}
+          style={
+            { '--_table-virtual-spacer-block-size': `${node.size}px` } as Record<string, string>
+          }
         />
       </tr>
     );
@@ -2158,7 +2209,7 @@ export class Table {
     node: Extract<TableVirtualNode, { kind: 'row' }>,
     model: TableRenderModel,
     rowsById: Map<string, TableRow>,
-    rowKey: string,
+    rowKey: string
   ) {
     const row = node.item.rowId ? rowsById.get(node.item.rowId) : undefined;
     if (!row) return null;
@@ -2167,10 +2218,10 @@ export class Table {
 
   private virtualRowPoolKeys(
     nodes: readonly TableVirtualNode[],
-    scope: string,
+    scope: string
   ): Map<number, string> {
     const rows = nodes.filter(
-      (node): node is Extract<TableVirtualNode, { kind: 'row' }> => node.kind === 'row',
+      (node): node is Extract<TableVirtualNode, { kind: 'row' }> => node.kind === 'row'
     );
     const state = this.virtualRowPoolStates.get(scope) ?? {
       slotsByRowId: new Map<string, number>(),
@@ -2203,7 +2254,7 @@ export class Table {
     node: Extract<TableVirtualNode, { kind: 'group' }>,
     model: TableRenderModel,
     rowsById: Map<string, TableRow>,
-    groupsById: Map<string, TableGroupRenderModel>,
+    groupsById: Map<string, TableGroupRenderModel>
   ) {
     const groupModel = groupsById.get(node.groupId);
     if (!groupModel) return null;
@@ -2239,16 +2290,16 @@ export class Table {
             {this.renderGroupContent(groupModel)}
           </th>
         </tr>
-        {node.nodes.map(child => (
+        {node.nodes.map(child =>
           child.kind === 'spacer'
             ? this.renderVirtualSpacer(child, model.totalColumns)
             : this.renderVirtualRow(
-              child,
-              model,
-              rowsById,
-              rowKeys.get(child.index) ?? `virtual-row-${child.index}`,
-            )
-        ))}
+                child,
+                model,
+                rowsById,
+                rowKeys.get(child.index) ?? `virtual-row-${child.index}`
+              )
+        )}
       </tbody>
     );
   }
@@ -2272,26 +2323,28 @@ export class Table {
       const rowKeys = this.virtualRowPoolKeys(plan.nodes, 'flat');
       return (
         <tbody class="ds-table__body">
-          {plan.nodes.map(node => (
+          {plan.nodes.map(node =>
             node.kind === 'spacer'
               ? this.renderVirtualSpacer(node, model.totalColumns)
               : node.kind === 'row'
                 ? this.renderVirtualRow(
-                  node,
-                  model,
-                  rowsById,
-                  rowKeys.get(node.index) ?? `virtual-row-${node.index}`,
-                )
+                    node,
+                    model,
+                    rowsById,
+                    rowKeys.get(node.index) ?? `virtual-row-${node.index}`
+                  )
                 : null
-          ))}
+          )}
         </tbody>
       );
     }
 
     const activeGroupScopes = new Set(
       plan.nodes
-        .filter((node): node is Extract<TableVirtualNode, { kind: 'group' }> => node.kind === 'group')
-        .map(node => `group:${node.groupId}`),
+        .filter(
+          (node): node is Extract<TableVirtualNode, { kind: 'group' }> => node.kind === 'group'
+        )
+        .map(node => `group:${node.groupId}`)
     );
     for (const scope of this.virtualRowPoolStates.keys()) {
       if (!activeGroupScopes.has(scope)) this.virtualRowPoolStates.delete(scope);
@@ -2305,12 +2358,7 @@ export class Table {
         );
       }
       if (node.kind === 'group') {
-        return this.renderVirtualGroup(
-          node,
-          model,
-          rowsById,
-          groupsById,
-        );
+        return this.renderVirtualGroup(node, model, rowsById, groupsById);
       }
       return null;
     });
@@ -2321,9 +2369,7 @@ export class Table {
 
     if (!model.grouped) {
       return (
-        <tbody class="ds-table__body">
-          {this.rows.map(row => this.renderRow(row, model))}
-        </tbody>
+        <tbody class="ds-table__body">{this.rows.map(row => this.renderRow(row, model))}</tbody>
       );
     }
 
@@ -2398,15 +2444,15 @@ export class Table {
   }
 
   private renderSkeletonCell(column: TableColumn, rowIndex: number) {
-    const skeleton = column.skeleton ?? (
-      column.kind === 'action'
+    const skeleton =
+      column.skeleton ??
+      ((column.kind === 'action'
         ? { kind: 'action', variant: 'icon' }
-        : { kind: 'text', lines: 1 }
-    ) satisfies TableCellSkeleton;
+        : { kind: 'text', lines: 1 }) satisfies TableCellSkeleton);
     const align = column.align ?? 'start';
     const text = skeleton.kind === 'text';
     const iconText = skeleton.kind === 'icon-text';
-    const lines = text || iconText ? skeleton.lines ?? 1 : 1;
+    const lines = text || iconText ? (skeleton.lines ?? 1) : 1;
     const tag = skeleton.kind === 'tag';
     const icon = skeleton.kind === 'icon';
     const image = skeleton.kind === 'image';
@@ -2414,7 +2460,11 @@ export class Table {
       ? tableCellImageVariant(resolveTableCellImageTracks(skeleton.tracks))
       : undefined;
     const iconTextVariant = iconText
-      ? lines === 3 ? 'triple' : lines === 2 ? 'multi' : 'single'
+      ? lines === 3
+        ? 'triple'
+        : lines === 2
+          ? 'multi'
+          : 'single'
       : undefined;
     const action = skeleton.kind === 'action';
     const blank = skeleton.kind === 'blank';
@@ -2476,13 +2526,7 @@ export class Table {
     }
 
     if (skeleton.kind === 'tag') {
-      return (
-        <ds-skeleton
-          variant="control"
-          controlSize="sm"
-          width={skeleton.width ?? '64%'}
-        />
-      );
+      return <ds-skeleton variant="control" controlSize="sm" width={skeleton.width ?? '64%'} />;
     }
 
     if (skeleton.kind === 'action') {
@@ -2539,17 +2583,20 @@ export class Table {
     return copy;
   }
 
-  private renderStateBody(
-    kind: 'empty' | 'error' | 'virtual-viewport',
-    totalColumns: number,
-  ) {
+  private renderStateBody(kind: 'empty' | 'error' | 'virtual-viewport', totalColumns: number) {
     const error = kind !== 'empty';
-    const heading = kind === 'virtual-viewport'
-      ? TABLE_VIRTUAL_VIEWPORT_REQUIRED_HEADING
-      : error ? this.errorHeading : this.emptyHeading;
-    const body = kind === 'virtual-viewport'
-      ? TABLE_VIRTUAL_VIEWPORT_REQUIRED_BODY
-      : error ? this.errorBody : this.emptyBody;
+    const heading =
+      kind === 'virtual-viewport'
+        ? TABLE_VIRTUAL_VIEWPORT_REQUIRED_HEADING
+        : error
+          ? this.errorHeading
+          : this.emptyHeading;
+    const body =
+      kind === 'virtual-viewport'
+        ? TABLE_VIRTUAL_VIEWPORT_REQUIRED_BODY
+        : error
+          ? this.errorBody
+          : this.emptyBody;
     return (
       <tbody class="ds-table__body ds-table__state-body">
         <tr class="ds-table__state-row">
@@ -2573,10 +2620,11 @@ export class Table {
       !this.incrementalWindowActive ||
       !model.hasData ||
       model.grouped
-    ) return null;
+    )
+      return null;
     const error = this.loadMoreError?.trim();
-    const manualFallback = this.loadMoreMode === 'manual' ||
-      !this.loadController.intersectionSupported;
+    const manualFallback =
+      this.loadMoreMode === 'manual' || !this.loadController.intersectionSupported;
 
     return (
       <tbody class="ds-table__body ds-table__load-body">
@@ -2592,7 +2640,9 @@ export class Table {
                 <span class="ds-table__load-content ds-table__load-content--error">
                   <span class="ds-table__load-copy">
                     <ds-icon name="ErrorTriangle" size="md" color="secondary" aria-hidden="true" />
-                    <ds-text as="span" variant="text-body-medium" color="secondary">{error}</ds-text>
+                    <ds-text as="span" variant="text-body-medium" color="secondary">
+                      {error}
+                    </ds-text>
                   </span>
                   <ds-button-unfilled
                     label={this.retryLabel}
@@ -2637,9 +2687,7 @@ export class Table {
   private renderDocumentStickyHeader(model: TableRenderModel) {
     if (!this.documentStickyHeader) return null;
     return (
-      <div
-        class="ds-table__document-sticky-header"
-      >
+      <div class="ds-table__document-sticky-header">
         <table
           class={{
             'ds-table__table': true,
@@ -2666,17 +2714,15 @@ export class Table {
     if (this.dataMode === 'virtual') {
       return formatTableTotalSummary(this.currentLoadedRowCount(), this.resultTotalSummaryLabel);
     }
-    return formatTableResultSummary(
-      this.displayedCount,
-      this.totalCount,
-      this.resultSummaryLabel,
-    );
+    return formatTableResultSummary(this.displayedCount, this.totalCount, this.resultSummaryLabel);
   }
 
   private get hasResultFooter(): boolean {
-    return (this.dataMode === 'pagination' && !!this.pagination) ||
+    return (
+      (this.dataMode === 'pagination' && !!this.pagination) ||
       !!this.resultSummary ||
-      this.footerSlotPresence !== 0;
+      this.footerSlotPresence !== 0
+    );
   }
 
   private renderResultFooter() {
@@ -2718,6 +2764,7 @@ export class Table {
                 totalItems={pagination.totalItems}
                 pageSizeOptions={pagination.pageSizeOptions ?? [25, 50, 100, 200]}
                 fitToPage={pagination.fitToPage ?? false}
+                {...{ fitToPageInactive: pagination.fitToPageInactive ?? false }}
                 fitPageSize={this.fitPageSize ?? pagination.fitPageSize}
                 fitPageSizeLabel={pagination.fitPageSizeLabel ?? 'Fit to page'}
                 fitPageSizeTriggerLabel={pagination.fitPageSizeTriggerLabel ?? 'Fit'}
@@ -2726,7 +2773,8 @@ export class Table {
                 label={pagination.ariaLabel ?? `${this.caption} pagination`}
                 loading={this.loading}
                 onDsChange={(event: CustomEvent<PaginationChangeDetail>) =>
-                  this.dsPaginationChange.emit(event.detail)}
+                  this.dsPaginationChange.emit(event.detail)
+                }
               />
             )}
             <slot name="footer-trailing" onSlotchange={this.syncFooterSlotPresence} />
@@ -2740,15 +2788,14 @@ export class Table {
     if (this.captionVisibility !== 'visible') return null;
     return (
       <div class="ds-table__caption-bar ds-table__bar ds-control--md">
-        <div class={{
-          'ds-table__caption-content': true,
-          'ds-table__caption-content--trailing': this.showsCaptionTrailing,
-        }}>
+        <div
+          class={{
+            'ds-table__caption-content': true,
+            'ds-table__caption-content--trailing': this.showsCaptionTrailing,
+          }}
+        >
           <div class="ds-table__caption-leading">
-            <slot
-              name="header"
-              onSlotchange={this.syncHeaderSlotPresence}
-            />
+            <slot name="header" onSlotchange={this.syncHeaderSlotPresence} />
             {!this.headerPresent ? (
               <ds-text
                 class="ds-table__caption-title ds-table__bar-text"
@@ -2774,10 +2821,7 @@ export class Table {
       <div class="ds-table__caption-trailing">
         {this.renderColumnCustomizerTrigger()}
         {this.showsColumnCustomizer && this.showsDataModeSwitcher ? (
-          <ds-divider
-            orientation="vertical"
-            length="32px"
-          />
+          <ds-divider orientation="vertical" length="32px" />
         ) : null}
         {this.renderDataModeSwitcherTrigger()}
       </div>
@@ -2786,6 +2830,9 @@ export class Table {
 
   private renderDataModeSwitcherTrigger() {
     if (!this.showsDataModeSwitcher) return null;
+    if (this.chromeLoading) {
+      return <ds-skeleton variant="control" controlSize="md" width="var(--dimension-size-400)" />;
+    }
     return (
       <ds-button-unfilled
         id={`${this.dataModeSwitcherElementId}-trigger`}
@@ -2805,7 +2852,7 @@ export class Table {
   }
 
   private renderDataModeSwitcherMenu() {
-    if (!this.showsDataModeSwitcher) return null;
+    if (!this.showsDataModeSwitcher || this.chromeLoading) return null;
     return (
       <ds-menu
         id={this.dataModeSwitcherElementId}
@@ -2850,7 +2897,7 @@ export class Table {
     requestAnimationFrame(() => {
       this.el
         .querySelector<HTMLElement & { setFocus?: () => void }>(
-          `#${CSS.escape(`${this.dataModeSwitcherElementId}-trigger`)}`,
+          `#${CSS.escape(`${this.dataModeSwitcherElementId}-trigger`)}`
         )
         ?.setFocus?.();
     });
@@ -2858,6 +2905,9 @@ export class Table {
 
   private renderColumnCustomizerTrigger() {
     if (!this.showsColumnCustomizer) return null;
+    if (this.chromeLoading) {
+      return <ds-skeleton variant="control" controlSize="md" width="var(--dimension-size-400)" />;
+    }
     return (
       <ds-button-unfilled
         id={`${this.columnCustomizerElementId}-trigger`}
@@ -2877,7 +2927,7 @@ export class Table {
   }
 
   private renderColumnCustomizerMenu() {
-    if (!this.showsColumnCustomizer) return null;
+    if (!this.showsColumnCustomizer || this.chromeLoading) return null;
     return (
       <ds-menu
         id={this.columnCustomizerElementId}
@@ -2887,11 +2937,7 @@ export class Table {
         side="bottom"
         menuLabel="Customize table"
         initialFocusVisible={this.columnCustomizerInitialFocusVisible}
-        items={tableColumnCustomizerMenuItems(
-          this.columns,
-          this.hiddenColumnIds,
-          this.columnOrder,
-        )}
+        items={tableColumnCustomizerMenuItems(this.columns, this.hiddenColumnIds, this.columnOrder)}
         onDsClose={() => this.closeColumnCustomizer()}
         onDsSelect={event => this.handleColumnCustomizerSelect(event.detail)}
         onDsReorder={event => this.handleColumnCustomizerReorder(event.detail)}
@@ -2935,7 +2981,7 @@ export class Table {
     if (!columnId || item.isInactive) return;
     this.emitColumnsConfigChange(
       toggleTableColumnHidden(this.columns, this.hiddenColumnIds, columnId),
-      resolveTableColumnOrder(this.columns, this.columnOrder),
+      resolveTableColumnOrder(this.columns, this.columnOrder)
     );
   }
 
@@ -2949,22 +2995,23 @@ export class Table {
     const initialError = !model.hasData && this.error;
     const hasGroupedStructure = model.grouped && model.groups.length > 0;
     const virtualize = this.shouldVirtualize(model);
-    const virtualViewportMissing = this.virtualViewportMissing &&
-      !initialLoading &&
-      (model.hasData || hasGroupedStructure);
+    const virtualViewportMissing =
+      this.virtualViewportMissing && !initialLoading && (model.hasData || hasGroupedStructure);
     const virtualPlan = virtualize
-      ? this.virtualWindow ?? resolveTableVirtualPlan({
-        items: this.virtualItems,
-        sizes: this.virtualItems.map(item => this.virtualController.sizeFor(item)),
-        scrollOffset: this.viewportEl?.scrollTop ?? 0,
-        viewportSize: this.estimateVirtualViewportSize(),
-        pinnedRowIds: this.virtualPinnedRowIds(),
-      })
+      ? (this.virtualWindow ??
+        resolveTableVirtualPlan({
+          items: this.virtualItems,
+          sizes: this.virtualItems.map(item => this.virtualController.sizeFor(item)),
+          scrollOffset: this.viewportEl?.scrollTop ?? 0,
+          viewportSize: this.estimateVirtualViewportSize(),
+          pinnedRowIds: this.virtualPinnedRowIds(),
+        }))
       : null;
     const groupLoadingMore = hasGroupedStructure && this.groups.some(group => group.loadingMore);
-    const viewportStyle = !this.boundedComposition && this.resolvedMaxHeight
-      ? { '--ds-table-max-block-size': this.resolvedMaxHeight }
-      : undefined;
+    const viewportStyle =
+      !this.boundedComposition && this.resolvedMaxHeight
+        ? { '--ds-table-max-block-size': this.resolvedMaxHeight }
+        : undefined;
     const hostStyle = this.fixedHeight
       ? { '--_table-fixed-block-size': this.resolvedHeight }
       : undefined;
@@ -2981,25 +3028,28 @@ export class Table {
         onKeyDown={(event: KeyboardEvent) => this.handlePaginationKeyDown(event)}
         onFocusin={this.onVirtualFocusIn}
       >
-        <div class={{
-          'ds-table': true,
-          'ds-table--bounded': this.boundedComposition,
-          'ds-table--contained-scroll': this.containedScroll,
-          'ds-table--fixed-height': this.fixedHeight,
-          'ds-table--viewport-fit': this.fitViewport,
-          'ds-table--viewport-fit-pending': this.fitViewport && !this.viewportFitSettled,
-          'ds-table--viewport-fit-settled': this.fitViewport && this.viewportFitSettled,
-          'ds-table--sticky-header': this.stickyHeader,
-          'ds-table--document-sticky-header': this.documentStickyHeader,
-          'ds-table--contained-sticky-header': this.stickyHeader && !this.documentStickyHeader,
-          'ds-table--caption-visible': this.captionVisibility === 'visible',
-          'ds-table--footer-visible': this.hasResultFooter,
-          'ds-table--state-fill': !initialLoading && (
-            initialError || virtualViewportMissing || !(model.hasData || hasGroupedStructure)
-          ),
-        }} ref={element => {
-          this.rootEl = element ?? null;
-        }}>
+        <div
+          class={{
+            'ds-table': true,
+            'ds-table--bounded': this.boundedComposition,
+            'ds-table--contained-scroll': this.containedScroll,
+            'ds-table--fixed-height': this.fixedHeight,
+            'ds-table--viewport-fit': this.fitViewport,
+            'ds-table--viewport-fit-pending': this.fitViewport && !this.viewportFitSettled,
+            'ds-table--viewport-fit-settled': this.fitViewport && this.viewportFitSettled,
+            'ds-table--sticky-header': this.stickyHeader,
+            'ds-table--document-sticky-header': this.documentStickyHeader,
+            'ds-table--contained-sticky-header': this.stickyHeader && !this.documentStickyHeader,
+            'ds-table--caption-visible': this.captionVisibility === 'visible',
+            'ds-table--footer-visible': this.hasResultFooter,
+            'ds-table--state-fill':
+              !initialLoading &&
+              (initialError || virtualViewportMissing || !(model.hasData || hasGroupedStructure)),
+          }}
+          ref={element => {
+            this.rootEl = element ?? null;
+          }}
+        >
           {this.renderCaptionBar()}
           <div
             class={{
@@ -3033,14 +3083,18 @@ export class Table {
                   'ds-table__table--selectable': model.selectable,
                   'ds-table__table--grouped': model.grouped,
                   'ds-table__table--virtual': virtualize,
-                  'ds-table__table--native-group-sticky': (model.grouped &&
-                    this.stickyHeader && !this.documentStickyHeader) || virtualize,
+                  'ds-table__table--native-group-sticky':
+                    (model.grouped && this.stickyHeader && !this.documentStickyHeader) ||
+                    virtualize,
                 }}
                 style={model.tableStyle}
                 aria-rowcount={virtualize ? 1 + this.virtualItems.length : undefined}
-                aria-busy={initialLoading || (
-                  this.dataMode === 'infinite' && (this.loadingMore || groupLoadingMore)
-                ) ? 'true' : undefined}
+                aria-busy={
+                  initialLoading ||
+                  (this.dataMode === 'infinite' && (this.loadingMore || groupLoadingMore))
+                    ? 'true'
+                    : undefined
+                }
                 ref={element => {
                   this.tableEl = element ?? null;
                 }}
@@ -3051,7 +3105,12 @@ export class Table {
                   </ds-text>
                 </caption>
                 {this.renderColgroup(model)}
-                {this.renderHeader(model, !this.documentStickyHeader, false, virtualize ? 1 : undefined)}
+                {this.renderHeader(
+                  model,
+                  !this.documentStickyHeader,
+                  false,
+                  virtualize ? 1 : undefined
+                )}
                 {initialLoading
                   ? this.renderSkeletonBody(model)
                   : initialError
@@ -3061,7 +3120,10 @@ export class Table {
                       : model.hasData || hasGroupedStructure
                         ? this.renderDataBodies(model, virtualPlan)
                         : this.renderStateBody('empty', model.totalColumns)}
-                {!initialLoading && !initialError && this.dataMode !== 'virtual' && this.renderLazyBody(model)}
+                {!initialLoading &&
+                  !initialError &&
+                  this.dataMode !== 'virtual' &&
+                  this.renderLazyBody(model)}
               </table>
             </div>
           </div>

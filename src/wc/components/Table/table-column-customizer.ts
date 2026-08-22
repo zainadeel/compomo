@@ -23,7 +23,7 @@ export function tableDataColumns(columns: TableColumn[]): TableColumn[] {
 /** Data-column ids in display order. Unknown, duplicate, and action ids are ignored. */
 export function resolveTableColumnOrder(
   columns: TableColumn[],
-  columnOrder: string[] | undefined,
+  columnOrder: string[] | undefined
 ): string[] {
   const catalogIds = tableDataColumns(columns).map(column => column.id);
   const catalog = new Set(catalogIds);
@@ -50,7 +50,7 @@ export function resolveTableColumnOrder(
  */
 export function resolveTableHiddenColumnIds(
   columns: TableColumn[],
-  hiddenColumnIds: string[] | undefined,
+  hiddenColumnIds: string[] | undefined
 ): string[] {
   const dataIds = tableDataColumns(columns).map(column => column.id);
   const data = new Set(dataIds);
@@ -67,7 +67,7 @@ export function resolveTableVisibleColumns(
     columnCustomizer?: boolean;
     hiddenColumnIds?: string[];
     columnOrder?: string[];
-  } = {},
+  } = {}
 ): TableColumn[] {
   if (!options.columnCustomizer) return columns;
 
@@ -83,7 +83,7 @@ export function resolveTableVisibleColumns(
 export function canToggleTableColumnHidden(
   columns: TableColumn[],
   hiddenColumnIds: string[] | undefined,
-  columnId: string,
+  columnId: string
 ): boolean {
   const column = columns.find(candidate => candidate.id === columnId);
   if (!column || isTableActionColumn(column)) return false;
@@ -98,7 +98,7 @@ export function canToggleTableColumnHidden(
 export function toggleTableColumnHidden(
   columns: TableColumn[],
   hiddenColumnIds: string[] | undefined,
-  columnId: string,
+  columnId: string
 ): string[] {
   const resolved = resolveTableHiddenColumnIds(columns, hiddenColumnIds);
   if (!canToggleTableColumnHidden(columns, resolved, columnId)) return resolved;
@@ -109,11 +109,7 @@ export function toggleTableColumnHidden(
   return resolveTableHiddenColumnIds(columns, [...hidden]);
 }
 
-export function moveTableColumnOrder(
-  order: string[],
-  fromId: string,
-  toId: string,
-): string[] {
+export function moveTableColumnOrder(order: string[], fromId: string, toId: string): string[] {
   const from = order.indexOf(fromId);
   const to = order.indexOf(toId);
   if (from < 0 || to < 0 || from === to) return order;
@@ -127,7 +123,7 @@ export function moveTableColumnOrder(
 export function moveTableColumnInOrder(
   order: string[],
   columnId: string,
-  offset: number,
+  offset: number
 ): string[] {
   const from = order.indexOf(columnId);
   if (from < 0 || offset === 0) return order;
@@ -145,7 +141,7 @@ export interface TableColumnCustomizerItem {
 export function tableColumnCustomizerItems(
   columns: TableColumn[],
   hiddenColumnIds: string[] | undefined,
-  columnOrder: string[] | undefined,
+  columnOrder: string[] | undefined
 ): TableColumnCustomizerItem[] {
   const byId = new Map(columns.map(column => [column.id, column]));
   const resolvedHidden = resolveTableHiddenColumnIds(columns, hiddenColumnIds);
@@ -153,29 +149,24 @@ export function tableColumnCustomizerItems(
   const dataItems = resolveTableColumnOrder(columns, columnOrder).flatMap(id => {
     const column = byId.get(id);
     if (!column) return [];
-    return [{
-      column,
-      label: tableColumnCustomizerLabel(column),
-      visible: !hidden.has(id),
-      hideable: canToggleTableColumnHidden(columns, resolvedHidden, id),
-      reorderable: true,
-    }];
+    return [
+      {
+        column,
+        label: tableColumnCustomizerLabel(column),
+        visible: !hidden.has(id),
+        hideable: canToggleTableColumnHidden(columns, resolvedHidden, id),
+        reorderable: true,
+      },
+    ];
   });
-  const actionItems = columns.filter(isTableActionColumn).map(column => ({
-    column,
-    label: tableColumnCustomizerLabel(column),
-    visible: true,
-    hideable: false,
-    reorderable: false,
-  }));
-  return [...dataItems, ...actionItems];
+  return dataItems;
 }
 
 /** Menu switch rows for the table-owned column customizer. */
 export function tableColumnCustomizerMenuItems(
   columns: TableColumn[],
   hiddenColumnIds: string[] | undefined,
-  columnOrder: string[] | undefined,
+  columnOrder: string[] | undefined
 ): MenuItemData[] {
   return tableColumnCustomizerItems(columns, hiddenColumnIds, columnOrder).map(item => ({
     label: item.label,

@@ -18,13 +18,10 @@ describe('resolveShellResponsiveMode', () => {
 });
 
 describe('resolveManagedShellPageCapacity', () => {
-  it('preserves the established page-header capacity policy', () => {
-    assert.equal(resolveManagedShellPageCapacity('desktop', false), 'roomy');
-    assert.equal(resolveManagedShellPageCapacity('desktop', true), 'compact');
-    assert.equal(resolveManagedShellPageCapacity('tablet', false), 'compact');
-    assert.equal(resolveManagedShellPageCapacity('tablet', true), 'constrained');
-    assert.equal(resolveManagedShellPageCapacity('mobile', false), 'compact');
-    assert.equal(resolveManagedShellPageCapacity('mobile', true), 'constrained');
+  it('derives page-header capacity only from the responsive breakpoint', () => {
+    assert.equal(resolveManagedShellPageCapacity('desktop'), 'roomy');
+    assert.equal(resolveManagedShellPageCapacity('tablet'), 'compact');
+    assert.equal(resolveManagedShellPageCapacity('mobile'), 'compact');
   });
 });
 

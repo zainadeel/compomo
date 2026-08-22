@@ -71,7 +71,7 @@
     "A slotted Banner remains below the top safe-area inset and above routed, navigation, fullscreen-tool, and mobile global-surface presentations.",
     "Mobile global surfaces conceal and inert the routed workspace without unmounting it, preserving nested routes and scroll state.",
     "Keep PanelNav width, BarNav height, PanelTools chrome, and main-content origin stable except during intentional responsive or collapse transitions.",
-    "Keep managed page-header capacity compact or constrained through the complete PanelTools close transition, then restore the closed-tools capacity after the drawer no longer occupies page width.",
+    "Managed page-header capacity follows only the fixed shell breakpoint: roomy on desktop and compact on tablet. Opening PanelTools does not compact or constrain BarTitle.",
     "The bottom bar remains visible at all route and tool depths in the foundation release."
   ],
   "frameworkCaveats": {

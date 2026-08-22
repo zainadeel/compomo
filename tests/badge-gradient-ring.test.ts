@@ -76,6 +76,18 @@ describe('isShellGradientActive', () => {
     } as unknown as HTMLElement;
     assert.equal(isShellGradientActive(el), false);
   });
+
+  it('crosses native shadow boundaries to find the shell', () => {
+    const shell = {
+      closest: (tag: string) => tag === 'ds-shell-app' ? shell : null,
+      getAttribute: () => 'neutral',
+    };
+    const el = {
+      closest: () => null,
+      getRootNode: () => ({ host: shell }),
+    } as unknown as HTMLElement;
+    assert.equal(isShellGradientActive(el), true);
+  });
 });
 
 describe('findGradientSurface', () => {

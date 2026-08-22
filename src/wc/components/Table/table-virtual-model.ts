@@ -74,6 +74,7 @@ export interface TableVirtualIndex {
   prefix: readonly number[];
   itemCount: number;
   totalSize: number;
+  hasVariableSize: boolean;
   grouped: boolean;
   groupHeaderIndexes: readonly number[];
   headerIndexByGroup: ReadonlyMap<string, number>;
@@ -282,10 +283,14 @@ export function createTableVirtualIndex(
   const rowIndexById = new Map<string, number>();
   const itemIndexById = new Map<string, number>();
   let activeHeaderIndex: number | null = null;
+  let hasVariableSize = false;
 
   for (let itemIndex = 0; itemIndex < itemCount; itemIndex += 1) {
     const item = items[itemIndex];
-    if (item) itemIndexById.set(item.id, itemIndex);
+    if (item) {
+      itemIndexById.set(item.id, itemIndex);
+      hasVariableSize ||= item.variableSize;
+    }
     if (item?.kind === 'group' && item.groupId) {
       if (activeHeaderIndex != null) groupEndByHeader.set(activeHeaderIndex, itemIndex);
       activeHeaderIndex = itemIndex;
@@ -303,6 +308,7 @@ export function createTableVirtualIndex(
     prefix,
     itemCount,
     totalSize: prefix[itemCount] ?? 0,
+    hasVariableSize,
     grouped: groupHeaderIndexes.length > 0,
     groupHeaderIndexes,
     headerIndexByGroup,

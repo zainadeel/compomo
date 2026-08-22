@@ -48,7 +48,14 @@ const COLUMNS: TableColumn[] = [
   { id: 'status', header: 'Status', sortable: true, size: 'xs' },
   { id: 'vehicle', header: 'Vehicle', sortable: true, size: 'xs' },
   { id: 'location', header: 'Last known location', size: 'sm' },
-  { id: 'safetyScore', header: 'Safety score', sortable: true, align: 'end', size: 'xs', help: 'Rolling 7-day safety score from 0 to 100.' },
+  {
+    id: 'safetyScore',
+    header: 'Safety score',
+    sortable: true,
+    align: 'end',
+    size: 'xs',
+    help: 'Rolling 7-day safety score from 0 to 100.',
+  },
   { id: 'driveTime', header: 'Drive time', sortable: true, align: 'end', size: 'xs' },
 ];
 
@@ -179,7 +186,14 @@ const ALL_CELL_TYPE_COLUMNS: TableColumn[] = [
   { id: 'tagWithText', header: 'Tag + text', size: 'sm' },
   { id: 'textWithTag', header: 'Text + tag', size: 'sm' },
   { id: 'action', kind: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
-  { id: 'borderedAction', kind: 'action', header: '', headerLabel: 'Bordered action', align: 'center', size: 40 },
+  {
+    id: 'borderedAction',
+    kind: 'action',
+    header: '',
+    headerLabel: 'Bordered action',
+    align: 'center',
+    size: 40,
+  },
   { id: 'empty', header: 'Empty', size: 'xs' },
   { id: 'blank', header: 'Blank', size: 'xs' },
 ];
@@ -192,7 +206,14 @@ const SINGLE_TRACK_COLUMNS: TableColumn[] = [
   { id: 'iconText', header: 'Icon + text', size: 'sm' },
   { id: 'tagOnly', header: 'Tag only', size: 'sm' },
   { id: 'action', kind: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
-  { id: 'borderedAction', kind: 'action', header: '', headerLabel: 'Bordered action', align: 'center', size: 40 },
+  {
+    id: 'borderedAction',
+    kind: 'action',
+    header: '',
+    headerLabel: 'Bordered action',
+    align: 'center',
+    size: 40,
+  },
   { id: 'empty', header: 'Empty', size: 'xs' },
   { id: 'blank', header: 'Blank', size: 'xs' },
 ];
@@ -267,10 +288,7 @@ const ALL_CELL_TYPE_ROWS: TableRow[] = [
       primaryPair: { kind: 'primary-text', primary: 'Vehicle', secondary: 'VH-2841' },
       event: {
         primary: 'Speeding',
-        secondary: [
-          { text: 'High', color: 'negative' },
-          { text: '45 mph over' },
-        ],
+        secondary: [{ text: 'High', color: 'negative' }, { text: '45 mph over' }],
       },
       image: { kind: 'image', tracks: 2, alt: 'Safety event preview unavailable' },
       icon: { kind: 'icon', icon: 'DocumentInverted', color: 'secondary', label: 'Has notes' },
@@ -279,10 +297,7 @@ const ALL_CELL_TYPE_ROWS: TableRow[] = [
         icon: 'VehicleTruck',
         primary: 'Freightliner Cascadia',
         href: '/vehicles/VEH-1042',
-        secondary: [
-          { text: 'VEH-1042' },
-          { text: 'Class 8' },
-        ],
+        secondary: [{ text: 'VEH-1042' }, { text: 'Class 8' }],
       },
       tagOnly: { kind: 'tag', label: 'Pending', intent: 'caution' },
       tagWithText: {
@@ -451,7 +466,11 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
     interactive: true,
     cells: {
       preview: { kind: 'image', tracks: 2, alt: 'Road-facing video preview unavailable' },
-      behaviorDetails: { primary: 'Close following', secondary: 'Critical', secondaryColor: 'negative' },
+      behaviorDetails: {
+        primary: 'Close following',
+        secondary: 'Critical',
+        secondaryColor: 'negative',
+      },
       behavior: 'Close following',
       severity: 'Critical',
       driverDetails: { primary: 'John Smith', secondary: 'DRV-1048' },
@@ -544,7 +563,11 @@ const SAFETY_EVENT_ROWS: TableRow[] = [
     interactive: true,
     cells: {
       preview: { kind: 'image', tracks: 2, alt: 'Road-facing video preview unavailable' },
-      behaviorDetails: { primary: 'Stop sign violation', secondary: 'Critical', secondaryColor: 'negative' },
+      behaviorDetails: {
+        primary: 'Stop sign violation',
+        secondary: 'Critical',
+        secondaryColor: 'negative',
+      },
       behavior: 'Stop sign violation',
       severity: 'Critical',
       driverDetails: { primary: 'Sarah Williams', secondary: 'DRV-3109' },
@@ -706,7 +729,7 @@ function orderedRows(rows: TableRow[], sort: TableSortState | null): TableRow[] 
 function groupedRows(
   rows: TableRow[],
   grouping: TableGroupingState,
-  sort: TableSortState | null,
+  sort: TableSortState | null
 ): TableGroup[] {
   const byStatus = new Map<string, TableRow[]>();
   for (const row of rows) {
@@ -754,7 +777,7 @@ function severityGroupedRows(rows: TableRow[], sort: TableSortState | null): Tab
 function lazySeverityGroups(
   loadedByGroup: Record<string, number>,
   loadingGroupId: string | null,
-  sort: TableSortState | null,
+  sort: TableSortState | null
 ): TableGroup[] {
   return severityGroupedRows(SAFETY_EVENT_ROWS, sort).map(group => {
     const totalCount = group.rows.length;
@@ -788,6 +811,7 @@ const meta: Meta = {
     stickyHeader: { control: 'boolean' },
     selectionMode: { control: 'select', options: ['none', 'multiple'] },
     loading: { control: 'boolean' },
+    chromeLoading: { control: 'boolean' },
     dataMode: { control: 'select', options: ['infinite', 'pagination'] },
     loadMoreMode: { control: 'select', options: ['auto', 'manual'] },
     displayedCount: { control: 'number' },
@@ -798,6 +822,7 @@ const meta: Meta = {
     stickyHeader: false,
     selectionMode: 'multiple',
     loading: false,
+    chromeLoading: false,
     dataMode: 'infinite',
     loadMoreMode: 'manual',
     selectedRowIds: [],
@@ -828,6 +853,7 @@ export const Playground: Story = {
         .totalCount=${args['totalCount']}
         .stickyHeader=${args['stickyHeader']}
         .loading=${args['loading']}
+        .chromeLoading=${args['chromeLoading']}
         data-mode=${args['dataMode']}
         load-more-mode=${args['loadMoreMode']}
         .hasMore=${args['dataMode'] === 'infinite'}
@@ -850,7 +876,8 @@ export const ColumnHeaderAlignment: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Start-aligned headers reserve the far-right sort lane. End-aligned headers place it at the far left. Center-aligned headers keep it inline immediately after the label.',
+        story:
+          'Start-aligned headers reserve the far-right sort lane. End-aligned headers place it at the far left. Center-aligned headers keep it inline immediately after the label.',
       },
     },
   },
@@ -870,9 +897,8 @@ export const ColumnHeaderAlignment: Story = {
         caption-visibility="visible"
         @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
           updateArgs({ sort: event.detail.sort })}
-        @dsGroupCollapseChange=${(
-          event: CustomEvent<{ collapsedGroupIds: string[] }>,
-        ) => updateArgs({ collapsedGroupIds: event.detail.collapsedGroupIds })}
+        @dsGroupCollapseChange=${(event: CustomEvent<{ collapsedGroupIds: string[] }>) =>
+          updateArgs({ collapsedGroupIds: event.detail.collapsedGroupIds })}
       ></ds-table>
     `;
   },
@@ -888,7 +914,8 @@ export const SafetyEvents: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'A Motive Dashboard-inspired safety-events table. Its table-owned 48px header gives one full-width, 8px-inset surface to the application through the header slot. Selecting rows overlays ds-bar-action above the footer; that overlay inset is application layout, not table chrome. The footer pairs an application-owned last-updated label on the left with the controlled result summary on the right. The checkbox and blank action lanes stay pinned; each owns a fixed divider and a row-clipped shadow directed into the scrolling columns while more content remains.',
+        story:
+          'A Motive Dashboard-inspired safety-events table. Its table-owned 48px header gives one full-width, 8px-inset surface to the application through the header slot. Selecting rows overlays ds-bar-action above the footer; that overlay inset is application layout, not table chrome. The footer pairs an application-owned last-updated label on the left with the controlled result summary on the right. The checkbox and blank action lanes stay pinned; each owns a fixed divider and a row-clipped shadow directed into the scrolling columns while more content remains.',
       },
     },
   },
@@ -942,8 +969,14 @@ export const SafetyEvents: Story = {
               ></ds-select>
             </div>
           </div>
-          <ds-text slot="footer-leading" as="span" variant="text-body-medium" color="secondary" line-truncation="1">
-            Last updated: Aug 13, 2026  7:00 PM PT
+          <ds-text
+            slot="footer-leading"
+            as="span"
+            variant="text-body-medium"
+            color="secondary"
+            line-truncation="1"
+          >
+            Last updated: Aug 13, 2026 7:00 PM PT
           </ds-text>
         </ds-table>
         <ds-bar-action
@@ -982,7 +1015,8 @@ export const DocumentFlowStickyLanes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'The table grows the Storybook document instead of creating a vertical scrollport. Its synchronized header sticks below the simulated compact page bar, while vertical wheel and trackpad input continues scrolling the page.',
+        story:
+          'The table grows the Storybook document instead of creating a vertical scrollport. Its synchronized header sticks below the simulated compact page bar, while vertical wheel and trackpad input continues scrolling the page.',
       },
     },
   },
@@ -991,7 +1025,7 @@ export const DocumentFlowStickyLanes: Story = {
     const sort = (args['sort'] as TableSortState | null) ?? null;
     const selectedRowIds = (args['selectedRowIds'] as string[]) ?? [];
     const repeatedRows = Array.from({ length: 3 }, (_, copy) =>
-      SAFETY_EVENT_ROWS.map(row => ({ ...row, id: `${row.id}-${copy}` })),
+      SAFETY_EVENT_ROWS.map(row => ({ ...row, id: `${row.id}-${copy}` }))
     ).flat();
     return html`
       <div style="max-inline-size:var(--dimension-panel-width-lg);">
@@ -1035,7 +1069,8 @@ export const GroupingAndMemberSorting: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'The application supplies Status groups in its fixed order while Safety score remains the table\'s one interactive member-row sort. Group section headers expose a controlled collapse control matching the action-column ButtonUnfilled recipe. While any group is expanded and no action column exists, collapse-all floats at the visible header edge on a medium-elevation surface so horizontal scrolling never hides it.',
+        story:
+          "The application supplies Status groups in its fixed order while Safety score remains the table's one interactive member-row sort. Group section headers expose a controlled collapse control matching the action-column ButtonUnfilled recipe. While any group is expanded and no action column exists, collapse-all floats at the visible header edge on a medium-elevation surface so horizontal scrolling never hides it.",
       },
     },
   },
@@ -1058,9 +1093,8 @@ export const GroupingAndMemberSorting: Story = {
         caption-visibility="visible"
         @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
           updateArgs({ sort: event.detail.sort })}
-        @dsGroupCollapseChange=${(
-          event: CustomEvent<{ collapsedGroupIds: string[] }>,
-        ) => updateArgs({ collapsedGroupIds: event.detail.collapsedGroupIds })}
+        @dsGroupCollapseChange=${(event: CustomEvent<{ collapsedGroupIds: string[] }>) =>
+          updateArgs({ collapsedGroupIds: event.detail.collapsedGroupIds })}
       ></ds-table>
     `;
   },
@@ -1104,9 +1138,8 @@ export const GroupingBySeverity: Story = {
         caption-visibility="hidden"
         @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
           updateArgs({ sort: event.detail.sort })}
-        @dsGroupCollapseChange=${(
-          event: CustomEvent<{ collapsedGroupIds: string[] }>,
-        ) => updateArgs({ collapsedGroupIds: event.detail.collapsedGroupIds })}
+        @dsGroupCollapseChange=${(event: CustomEvent<{ collapsedGroupIds: string[] }>) =>
+          updateArgs({ collapsedGroupIds: event.detail.collapsedGroupIds })}
         @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>
           updateArgs({ selectedRowIds: event.detail.selectedRowIds })}
       ></ds-table>
@@ -1119,14 +1152,15 @@ export const ControlledSelection: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Selection is row-ID controlled. Select all targets selectable loaded rows and preserves driver-not-loaded, demonstrating that lazy datasets do not lose off-window selection.',
+        story:
+          'Selection is row-ID controlled. Select all targets selectable loaded rows and preserves driver-not-loaded, demonstrating that lazy datasets do not lose off-window selection.',
       },
     },
   },
   render: args => {
     const [, updateArgs] = useArgs();
     const rows = ROWS.slice(0, 5).map(row =>
-      row.id === 'driver-sam' ? { ...row, selectable: false } : row,
+      row.id === 'driver-sam' ? { ...row, selectable: false } : row
     );
     return html`
       <ds-table
@@ -1156,7 +1190,8 @@ export const AllCellTypes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Three review tables, one height each. Image cells declare tracks 1, 2, or 3 so the 16:9 preview fills the matching content box (cell height minus 8px padding). Icon-and-text cells (`kind: icon-text`) place one md prefix icon beside the copy stack: 2px padding on every side of the icon, a 2px flex gap before the copy, and text-track padding staying on the copy. Single-track cells, including the 1-track image and icon-and-text, stay on a 40px row. Two-track text, 2-track image, and 2-track icon-and-text share a 62px row. Event in that table shows a two-line cell with middle-dot runs. Three-track text, 3-track image, and 3-track icon-and-text stay on an 84px row. Body cells share 8px outer padding; 20px content sits in a 24px track; later tracks are 20px with a 2px stack gap. Linked primary text uses a native anchor and the shared brand text-action treatment; secondary copy stays unlinked. Secondary tracks may split into middle-dot-separated runs. The third line uses the same subdued track recipe as the second. Unbordered action cells open the shared overflow ds-menu from the Ellipses trigger; the bordered column stays a single-shot control. Empty means the data applies but has no value and renders an em dash; Blank means the data is not applicable and intentionally renders nothing.',
+        story:
+          'Three review tables, one height each. Image cells declare tracks 1, 2, or 3 so the 16:9 preview fills the matching content box (cell height minus 8px padding). Icon-and-text cells (`kind: icon-text`) place one md prefix icon beside the copy stack: 2px padding on every side of the icon, a 2px flex gap before the copy, and text-track padding staying on the copy. Single-track cells, including the 1-track image and icon-and-text, stay on a 40px row. Two-track text, 2-track image, and 2-track icon-and-text share a 62px row. Event in that table shows a two-line cell with middle-dot runs. Three-track text, 3-track image, and 3-track icon-and-text stay on an 84px row. Body cells share 8px outer padding; 20px content sits in a 24px track; later tracks are 20px with a 2px stack gap. Linked primary text uses a native anchor and the shared brand text-action treatment; secondary copy stays unlinked. Secondary tracks may split into middle-dot-separated runs. The third line uses the same subdued track recipe as the second. Unbordered action cells open the shared overflow ds-menu from the Ellipses trigger; the bordered column stays a single-shot control. Empty means the data applies but has no value and renders an em dash; Blank means the data is not applicable and intentionally renders nothing.',
       },
     },
   },
@@ -1201,7 +1236,8 @@ export const OverflowActionMenu: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'A trailing unbordered Ellipses column opens one shared ds-menu for the table. Opening or closing the menu does not emit; choosing a command emits dsCellAction with that item\'s actionId, rowId, and columnId. Inactive commands stay in the list, destructive commands keep the Menu treatment, and the popup is not clipped by the sticky-end viewport.',
+        story:
+          "A trailing unbordered Ellipses column opens one shared ds-menu for the table. Opening or closing the menu does not emit; choosing a command emits dsCellAction with that item's actionId, rowId, and columnId. Inactive commands stay in the list, destructive commands keep the Menu treatment, and the popup is not clipped by the sticky-end viewport.",
       },
     },
   },
@@ -1218,26 +1254,30 @@ export const OverflowActionMenu: Story = {
     return html`
       <ds-table
         data-a11y-fixture
-        .columns=${[
-          { id: 'driver', header: 'Driver', sortable: true, size: 'sm' },
-          { id: 'status', header: 'Status', size: 'xs' },
-          { id: 'vehicle', header: 'Vehicle', size: 'xs' },
-          { id: 'location', header: 'Last known location', size: 'sm' },
-          {
-            id: 'action',
-            kind: 'action',
-            header: '',
-            headerLabel: 'Action',
-            align: 'center',
-            size: 40,
-            sticky: 'end',
-          },
-        ] satisfies TableColumn[]}
+        .columns=${
+          [
+            { id: 'driver', header: 'Driver', sortable: true, size: 'sm' },
+            { id: 'status', header: 'Status', size: 'xs' },
+            { id: 'vehicle', header: 'Vehicle', size: 'xs' },
+            { id: 'location', header: 'Last known location', size: 'sm' },
+            {
+              id: 'action',
+              kind: 'action',
+              header: '',
+              headerLabel: 'Action',
+              align: 'center',
+              size: 40,
+              sticky: 'end',
+            },
+          ] satisfies TableColumn[]
+        }
         .rows=${rows}
         selection-mode="multiple"
         caption="Driver overflow actions"
         caption-visibility="visible"
-        @dsCellAction=${(event: CustomEvent<{ actionId: string; rowId: string; columnId: string }>) =>
+        @dsCellAction=${(
+          event: CustomEvent<{ actionId: string; rowId: string; columnId: string }>
+        ) =>
           updateArgs({
             lastAction: `${event.detail.actionId} · ${event.detail.rowId} · ${event.detail.columnId}`,
           })}
@@ -1267,7 +1307,8 @@ export const ColumnCustomizer: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Opt-in columnCustomizer keeps columns as the catalog. hiddenColumnIds and columnOrder are controlled; dsColumnsConfigChange reports live show/hide and data-column reorder. The trailing Preferences control opens the shared Menu of reorderable switch rows and stays open while toggling or dragging. Selection is omitted from the menu, action columns stay last with inactive switches, and the last remaining visible data column cannot be hidden. Persistence stays in the application.',
+        story:
+          'Opt-in columnCustomizer keeps columns as the catalog. hiddenColumnIds and columnOrder are controlled; dsColumnsConfigChange reports live show/hide and data-column reorder. The trailing Preferences control opens the shared Menu of reorderable switch rows and stays open while toggling or dragging. Selection and action columns are omitted from the menu, action columns stay fixed last, and the last remaining visible data column cannot be hidden. Persistence stays in the application.',
       },
     },
   },
@@ -1283,21 +1324,23 @@ export const ColumnCustomizer: Story = {
     return html`
       <ds-table
         data-a11y-fixture
-        .columns=${[
-          { id: 'driver', header: 'Driver', sortable: true, size: 'sm' },
-          { id: 'status', header: 'Status', size: 'xs' },
-          { id: 'vehicle', header: 'Vehicle', size: 'xs' },
-          { id: 'location', header: 'Last known location', size: 'sm' },
-          {
-            id: 'action',
-            kind: 'action',
-            header: '',
-            headerLabel: 'Action',
-            align: 'center',
-            size: 40,
-            sticky: 'end',
-          },
-        ] satisfies TableColumn[]}
+        .columns=${
+          [
+            { id: 'driver', header: 'Driver', sortable: true, size: 'sm' },
+            { id: 'status', header: 'Status', size: 'xs' },
+            { id: 'vehicle', header: 'Vehicle', size: 'xs' },
+            { id: 'location', header: 'Last known location', size: 'sm' },
+            {
+              id: 'action',
+              kind: 'action',
+              header: '',
+              headerLabel: 'Action',
+              align: 'center',
+              size: 40,
+              sticky: 'end',
+            },
+          ] satisfies TableColumn[]
+        }
         .rows=${rows}
         .hiddenColumnIds=${args['hiddenColumnIds'] as string[]}
         .columnOrder=${args['columnOrder'] as string[]}
@@ -1323,31 +1366,35 @@ export const DataModeSwitcher: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Opt-in dataModeSwitcher renders the table-owned mode trigger and Menu for infinite, pagination, and virtual modes. dataMode remains controlled; dsDataModeChange reports intent while the application supplies the matching row window, pagination state, loading consequences, and a bounded height for virtual.',
+        story:
+          'Opt-in dataModeSwitcher renders the table-owned mode trigger and Menu for infinite, pagination, and virtual modes. dataMode remains controlled; dsDataModeChange reports intent while the application supplies the matching row window, pagination state, loading consequences, and a bounded height for virtual.',
       },
     },
   },
   render: args => {
     const [, updateArgs] = useArgs();
-    const dataMode: TableDataMode = args['dataMode'] === 'pagination' || args['dataMode'] === 'virtual'
-      ? args['dataMode']
-      : 'infinite';
+    const dataMode: TableDataMode =
+      args['dataMode'] === 'pagination' || args['dataMode'] === 'virtual'
+        ? args['dataMode']
+        : 'infinite';
     return html`
       <ds-table
         data-a11y-fixture
         .columns=${COLUMNS}
         .rows=${dataMode === 'virtual' ? VIRTUAL_ROWS : ROWS.slice(0, 4)}
         .dataMode=${dataMode}
-        .pagination=${dataMode === 'pagination'
-          ? {
-              pageIndex: 0,
-              pageSize: 25,
-              totalItems: 100,
-              pageSizeOptions: [25, 50, 100],
-              itemLabel: 'rows',
-              pageSizeLabel: 'Rows',
-            }
-          : null}
+        .pagination=${
+          dataMode === 'pagination'
+            ? {
+                pageIndex: 0,
+                pageSize: 25,
+                totalItems: 100,
+                pageSizeOptions: [25, 50, 100],
+                itemLabel: 'rows',
+                pageSizeLabel: 'Rows',
+              }
+            : null
+        }
         height="var(--dimension-card-height-lg)"
         .displayedCount=${dataMode === 'virtual' ? VIRTUAL_ROWS.length : 4}
         .totalCount=${dataMode === 'virtual' ? VIRTUAL_ROWS.length : 100}
@@ -1365,66 +1412,71 @@ export const ContentPrimitives: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Scalar values, primary/secondary copy, null values, numeric alignment, truncation, and explicit wrapping share stable cell-layer classes. Wrapping 1-track primary occupies the same 62px and 84px rows as 2-track and 3-track cells. Wrapping secondary stays on track 1 for primary and consumes later tracks, including 106px when secondary wraps to three lines. Review secondary wrap on the last two rows of Wrapping content.',
+        story:
+          'Scalar values, primary/secondary copy, null values, numeric alignment, truncation, and explicit wrapping share stable cell-layer classes. Wrapping 1-track primary occupies the same 62px and 84px rows as 2-track and 3-track cells. Wrapping secondary stays on track 1 for primary and consumes later tracks, including 106px when secondary wraps to three lines. Review secondary wrap on the last two rows of Wrapping content.',
       },
     },
   },
   render: () => html`
     <div style="max-inline-size:var(--dimension-panel-width-sm);">
       <ds-table
-        .columns=${[
-          { id: 'name', header: 'Primary and secondary', size: 'sm' },
-          { id: 'notes', header: 'Wrapping content', wrap: true, size: 'sm' },
-          { id: 'quantity', header: 'Quantity', align: 'end', size: 'xs' },
-        ] satisfies TableColumn[]}
-        .rows=${[
-          {
-            id: 'primitive-one',
-            cells: {
-              name: {
-                primary: 'Reefer trailer',
-                secondary: 'TR-1048',
-                tertiary: 'Active reefer',
+        .columns=${
+          [
+            { id: 'name', header: 'Primary and secondary', size: 'sm' },
+            { id: 'notes', header: 'Wrapping content', wrap: true, size: 'sm' },
+            { id: 'quantity', header: 'Quantity', align: 'end', size: 'xs' },
+          ] satisfies TableColumn[]
+        }
+        .rows=${
+          [
+            {
+              id: 'primitive-one',
+              cells: {
+                name: {
+                  primary: 'Reefer trailer',
+                  secondary: 'TR-1048',
+                  tertiary: 'Active reefer',
+                },
+                notes: 'Temperature check is due after the next delivery window.',
+                quantity: { primary: 12840, fontFeature: 'tabular-nums' },
               },
-              notes: 'Temperature check is due after the next delivery window.',
-              quantity: { primary: 12840, fontFeature: 'tabular-nums' },
             },
-          },
-          {
-            id: 'primitive-two',
-            cells: {
-              name: { primary: 'Dry van', secondary: 'TR-2201' },
-              notes: { primary: 'This individual cell wraps onto the second track.', wrap: true },
-              quantity: null,
-            },
-          },
-          {
-            id: 'primitive-secondary-two',
-            cells: {
-              name: {
-                primary: 'Reefer trailer',
-                secondary: 'TR-1048',
-                tertiary: 'Active reefer',
+            {
+              id: 'primitive-two',
+              cells: {
+                name: { primary: 'Dry van', secondary: 'TR-2201' },
+                notes: { primary: 'This individual cell wraps onto the second track.', wrap: true },
+                quantity: null,
               },
-              notes: {
-                primary: 'Reefer trailer',
-                secondary: 'Due after the next delivery window.',
-              },
-              quantity: { primary: 4, fontFeature: 'tabular-nums' },
             },
-          },
-          {
-            id: 'primitive-secondary-three',
-            cells: {
-              name: { primary: 'Dry van', secondary: 'TR-2201' },
-              notes: {
-                primary: 'Dry van',
-                secondary: 'Temperature check is due after the next delivery window.',
+            {
+              id: 'primitive-secondary-two',
+              cells: {
+                name: {
+                  primary: 'Reefer trailer',
+                  secondary: 'TR-1048',
+                  tertiary: 'Active reefer',
+                },
+                notes: {
+                  primary: 'Reefer trailer',
+                  secondary: 'Due after the next delivery window.',
+                },
+                quantity: { primary: 4, fontFeature: 'tabular-nums' },
               },
-              quantity: null,
             },
-          },
-        ] satisfies TableRow[]}
+            {
+              id: 'primitive-secondary-three',
+              cells: {
+                name: { primary: 'Dry van', secondary: 'TR-2201' },
+                notes: {
+                  primary: 'Dry van',
+                  secondary: 'Temperature check is due after the next delivery window.',
+                },
+                quantity: null,
+              },
+            },
+          ] satisfies TableRow[]
+        }
         caption="Cell content primitives"
         caption-visibility="visible"
       ></ds-table>
@@ -1437,19 +1489,25 @@ export const InitialAndOutcomeStates: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Initial loading preserves the real table grid and uses each column’s representative image, multiline text, Tag, icon, or action geometry. Ten rows fill a useful default viewport. Empty and initial error keep the table caption and columns present while replacing only the body with ds-empty-state. Height-bounded empty and error tables fill the remaining body below the column header.',
+        story:
+          'Initial loading preserves the real table grid and uses each column’s representative image, multiline text, Tag, icon, or action geometry. chromeLoading can replace opted-in table-owned caption controls without changing their footprint. Ten rows fill a useful default viewport. Empty and initial error keep the table caption and columns present while replacing only the body with ds-empty-state. Height-bounded empty and error tables fill the remaining body below the column header.',
       },
     },
   },
   render: () => html`
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(var(--dimension-panel-width-xs),1fr));gap:var(--dimension-space-200);">
+    <div
+      style="display:grid;grid-template-columns:repeat(auto-fit,minmax(var(--dimension-panel-width-xs),1fr));gap:var(--dimension-space-200);"
+    >
       <ds-table
         data-a11y-fixture
         .columns=${COMPOSED_SKELETON_COLUMNS}
         .loading=${true}
+        .chromeLoading=${true}
         selection-mode="multiple"
         caption="Loading drivers"
         caption-visibility="visible"
+        column-customizer
+        data-mode-switcher
       ></ds-table>
       <ds-table
         data-a11y-fixture
@@ -1479,48 +1537,51 @@ export const HeaderHelp: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Optional column.help underlines the header label with the shared dotted decoration and opens ds-tooltip from that label. Sort stays on the existing sort button. A non-sortable label with help is keyboard-focusable so the tip can open without a second control. Touch follows the shared Tooltip contract and does not open the tip.',
+        story:
+          'Optional column.help underlines the header label with the shared dotted decoration and opens ds-tooltip from that label. Sort stays on the existing sort button. A non-sortable label with help is keyboard-focusable so the tip can open without a second control. Touch follows the shared Tooltip contract and does not open the tip.',
       },
     },
   },
   render: () => html`
     <ds-table
       data-a11y-fixture
-      .columns=${[
-        {
-          id: 'driver',
-          header: 'Driver',
-          sortable: true,
-          size: 'sm',
-          help: 'Legal name used on the driver profile.',
-        },
-        { id: 'status', header: 'Status', sortable: true, align: 'center', size: 'xs' },
-        {
-          id: 'vehicle',
-          header: 'Vehicle',
-          size: 'xs',
-          help: 'Assigned vehicle identifier.',
-        },
-        {
-          id: 'behaviorDetails',
-          header: 'Behavior / Severity',
-          headerSegments: [
-            { label: 'Behavior', sortKey: 'behavior', separator: '/' },
-            { label: 'Severity', sortKey: 'severity' },
-          ],
-          sortable: true,
-          size: 'sm',
-          help: 'Primary behavior and its severity from the latest scored event.',
-        },
-        {
-          id: 'safetyScore',
-          header: 'Safety score',
-          sortable: true,
-          align: 'end',
-          size: 'xs',
-          help: 'Rolling 7-day safety score from 0 to 100.',
-        },
-      ] satisfies TableColumn[]}
+      .columns=${
+        [
+          {
+            id: 'driver',
+            header: 'Driver',
+            sortable: true,
+            size: 'sm',
+            help: 'Legal name used on the driver profile.',
+          },
+          { id: 'status', header: 'Status', sortable: true, align: 'center', size: 'xs' },
+          {
+            id: 'vehicle',
+            header: 'Vehicle',
+            size: 'xs',
+            help: 'Assigned vehicle identifier.',
+          },
+          {
+            id: 'behaviorDetails',
+            header: 'Behavior / Severity',
+            headerSegments: [
+              { label: 'Behavior', sortKey: 'behavior', separator: '/' },
+              { label: 'Severity', sortKey: 'severity' },
+            ],
+            sortable: true,
+            size: 'sm',
+            help: 'Primary behavior and its severity from the latest scored event.',
+          },
+          {
+            id: 'safetyScore',
+            header: 'Safety score',
+            sortable: true,
+            align: 'end',
+            size: 'xs',
+            help: 'Rolling 7-day safety score from 0 to 100.',
+          },
+        ] satisfies TableColumn[]
+      }
       .rows=${ROWS.slice(0, 4).map(row => ({
         ...row,
         cells: {
@@ -1542,12 +1603,15 @@ export const IncrementalLoadingStates: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Existing rows remain visible through manual ready, loading, retry, and terminal lazy-loading states. The footer reports the loaded window as Displaying {displayed} of {total}. There is no pagination UI.',
+        story:
+          'Existing rows remain visible through manual ready, loading, retry, and terminal lazy-loading states. The footer reports the loaded window as Displaying {displayed} of {total}. There is no pagination UI.',
       },
     },
   },
   render: () => html`
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(var(--dimension-panel-width-xs),1fr));gap:var(--dimension-space-200);">
+    <div
+      style="display:grid;grid-template-columns:repeat(auto-fit,minmax(var(--dimension-panel-width-xs),1fr));gap:var(--dimension-space-200);"
+    >
       <ds-table
         data-a11y-fixture
         .columns=${ASYNC_COLUMNS}
@@ -1611,7 +1675,8 @@ export const WorkingLazyLoading: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Activate Load more to see the application acknowledge the request, append stable rows, and finish the dataset. displayedCount tracks the loaded window in the footer. The component never owns a cursor or fetch.',
+        story:
+          'Activate Load more to see the application acknowledge the request, append stable rows, and finish the dataset. displayedCount tracks the loaded window in the footer. The component never owns a cursor or fetch.',
       },
     },
   },
@@ -1659,7 +1724,8 @@ export const WorkingPagination: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'The application supplies only the active page. The table keeps off-page selection IDs controlled, replaces the result summary with Pagination, and forwards page intent without slicing records itself.',
+        story:
+          'The application supplies only the active page. The table keeps off-page selection IDs controlled, replaces the result summary with Pagination, and forwards page intent without slicing records itself.',
       },
     },
   },
@@ -1697,7 +1763,13 @@ export const WorkingPagination: Story = {
         @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>
           updateArgs({ selectedRowIds: event.detail.selectedRowIds })}
       >
-        <ds-text slot="footer-leading" as="span" variant="text-body-medium" color="secondary" line-truncation="1">
+        <ds-text
+          slot="footer-leading"
+          as="span"
+          variant="text-body-medium"
+          color="secondary"
+          line-truncation="1"
+        >
           Last updated: just now
         </ds-text>
       </ds-table>
@@ -1717,7 +1789,8 @@ export const GroupParentPagination: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Pagination counts only parent groups. Every visible group retains its own member total and incremental load control; appending children never moves the parent to another page.',
+        story:
+          'Pagination counts only parent groups. Every visible group retains its own member total and incremental load control; appending children never moves the parent to another page.',
       },
     },
   },
@@ -1726,17 +1799,18 @@ export const GroupParentPagination: Story = {
     const pageIndex = Number(args['pageIndex']);
     const pageSize = Number(args['pageSize']);
     const loadedByGroup = args['loadedByGroup'] as Record<string, number>;
-    const pageGroups = PAGINATED_GROUP_SOURCE
-      .slice(pageIndex * pageSize, (pageIndex + 1) * pageSize)
-      .map(group => {
-        const loadedCount = Math.min(loadedByGroup[group.id] ?? 1, group.rows.length);
-        return {
-          ...group,
-          rows: group.rows.slice(0, loadedCount),
-          hasMore: loadedCount < group.rows.length,
-          loadIdentity: `group-page:${pageIndex}:${group.id}`,
-        };
-      });
+    const pageGroups = PAGINATED_GROUP_SOURCE.slice(
+      pageIndex * pageSize,
+      (pageIndex + 1) * pageSize
+    ).map(group => {
+      const loadedCount = Math.min(loadedByGroup[group.id] ?? 1, group.rows.length);
+      return {
+        ...group,
+        rows: group.rows.slice(0, loadedCount),
+        hasMore: loadedCount < group.rows.length,
+        loadIdentity: `group-page:${pageIndex}:${group.id}`,
+      };
+    });
     return html`
       <ds-table
         .columns=${COLUMNS}
@@ -1791,7 +1865,8 @@ export const WorkingGroupedLazyLoading: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Every severity keeps its authoritative total and independently loaded member window. Section headers show that progress directly as “loaded of total” and update when rows append. Grouped tables never emit the global bottom-of-table request. Internal section rows keep their dividers, while only the final rendered item yields its divider to the table edge or footer.',
+        story:
+          'Every severity keeps its authoritative total and independently loaded member window. Section headers show that progress directly as “loaded of total” and update when rows append. Grouped tables never emit the global bottom-of-table request. Internal section rows keep their dividers, while only the final rendered item yields its divider to the table edge or footer.',
       },
     },
   },
@@ -1819,9 +1894,8 @@ export const WorkingGroupedLazyLoading: Story = {
         caption-visibility="visible"
         @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
           updateArgs({ sort: event.detail.sort, loadedByGroup: {} })}
-        @dsGroupCollapseChange=${(
-          event: CustomEvent<{ collapsedGroupIds: string[] }>,
-        ) => updateArgs({ collapsedGroupIds: event.detail.collapsedGroupIds })}
+        @dsGroupCollapseChange=${(event: CustomEvent<{ collapsedGroupIds: string[] }>) =>
+          updateArgs({ collapsedGroupIds: event.detail.collapsedGroupIds })}
         @dsGroupLoadMore=${(event: CustomEvent<{ groupId: string }>) => {
           const groupId = event.detail.groupId;
           if (loadingGroupId) return;
@@ -1846,7 +1920,8 @@ export const StickyHeaderAndOverflow: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'A constrained scroll region keeps the header visible, preserves native table semantics, and provides horizontal overflow cues and keyboard focus.',
+        story:
+          'A constrained scroll region keeps the header visible, preserves native table semantics, and provides horizontal overflow cues and keyboard focus.',
       },
     },
   },
@@ -1870,25 +1945,29 @@ export const NativeGroupedStickyPerformance: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'A 1,000-row contained table for reviewing section push-off and surrounding panel-resize animation. Every section uses its real row-group header as the native sticky element; scrolling and resizing do not select, duplicate, measure, or transform an active section in JavaScript.',
+        story:
+          'A 1,000-row contained table for reviewing section push-off and surrounding panel-resize animation. Every section uses its real row-group header as the native sticky element; scrolling and resizing do not select, duplicate, measure, or transform an active section in JavaScript.',
       },
     },
   },
   render: () => {
     const groupLabels = ['Driving', 'On duty', 'Off duty', 'Unavailable'];
-    const groups = groupLabels.map((label, groupIndex) => ({
-      id: `performance-${groupIndex}`,
-      label,
-      rows: Array.from({ length: 250 }, (_, rowIndex) => {
-        const source = ROWS[(groupIndex * 250 + rowIndex) % ROWS.length]!;
-        return {
-          ...source,
-          id: `${source.id}-performance-${groupIndex}-${rowIndex}`,
-          selectionLabel: `${source.selectionLabel ?? source.id} ${rowIndex + 1}`,
-        };
-      }),
-      totalCount: 250,
-    } satisfies TableGroup));
+    const groups = groupLabels.map(
+      (label, groupIndex) =>
+        ({
+          id: `performance-${groupIndex}`,
+          label,
+          rows: Array.from({ length: 250 }, (_, rowIndex) => {
+            const source = ROWS[(groupIndex * 250 + rowIndex) % ROWS.length]!;
+            return {
+              ...source,
+              id: `${source.id}-performance-${groupIndex}-${rowIndex}`,
+              selectionLabel: `${source.selectionLabel ?? source.id} ${rowIndex + 1}`,
+            };
+          }),
+          totalCount: 250,
+        }) satisfies TableGroup
+    );
 
     return html`
       <div style="max-inline-size:var(--dimension-panel-width-lg);">
@@ -1912,7 +1991,8 @@ export const VirtualRows: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'dataMode=virtual recycles row DOM over the full in-memory list. The application still supplies every row; the table does not fetch as you scroll. A bounded height, maxHeight, or fitViewport is required.',
+        story:
+          'dataMode=virtual recycles row DOM over the full in-memory list. The application still supplies every row; the table does not fetch as you scroll. A bounded height, maxHeight, or fitViewport is required.',
       },
     },
   },
@@ -1936,18 +2016,22 @@ export const VirtualGroupedRows: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Grouping stays orthogonal. Expanded sections insert members into the same virtual list so the table viewport remains the only vertical scroller. Sticky section headers still push off natively.',
+        story:
+          'Grouping stays orthogonal. Expanded sections insert members into the same virtual list so the table viewport remains the only vertical scroller. Sticky section headers still push off natively.',
       },
     },
   },
   render: () => {
     const groupLabels = ['Driving', 'On duty', 'Off duty', 'Unavailable'];
-    const groups = groupLabels.map((label, groupIndex) => ({
-      id: `virtual-${groupIndex}`,
-      label,
-      rows: VIRTUAL_ROWS.slice(groupIndex * 500, groupIndex * 500 + 500),
-      totalCount: 500,
-    } satisfies TableGroup));
+    const groups = groupLabels.map(
+      (label, groupIndex) =>
+        ({
+          id: `virtual-${groupIndex}`,
+          label,
+          rows: VIRTUAL_ROWS.slice(groupIndex * 500, groupIndex * 500 + 500),
+          totalCount: 500,
+        }) satisfies TableGroup
+    );
 
     return html`
       <ds-table
@@ -1971,7 +2055,8 @@ export const VirtualFitViewport: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Scroll the expanded page header until the table reaches its compact insets and owns vertical scrolling. The recycled row window tracks that fitted block size.',
+        story:
+          'Scroll the expanded page header until the table reaches its compact insets and owns vertical scrolling. The recycled row window tracks that fitted block size.',
       },
     },
   },
@@ -2008,7 +2093,8 @@ export const VirtualRequiresHeight: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Without height, maxHeight, or fitViewport, virtual mode fails visibly instead of mounting every row.',
+        story:
+          'Without height, maxHeight, or fitViewport, virtual mode fails visibly instead of mounting every row.',
       },
     },
   },
@@ -2028,81 +2114,92 @@ export const NarrowAndLongContent: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Default cells truncate to one line. Hover an overflowing track to see the omitted value in one table-owned tooltip. maxLines 2 and 3 wrap onto the named 2-track and 3-track row heights, then ellipsize with the same tooltip. wrap: true remains unlimited and does not show a truncation tooltip. Disabled rows never show it.',
+        story:
+          'Default cells truncate to one line. Hover an overflowing track to see the omitted value in one table-owned tooltip. maxLines 2 and 3 wrap onto the named 2-track and 3-track row heights, then ellipsize with the same tooltip. wrap: true remains unlimited and does not show a truncation tooltip. Disabled rows never show it.',
       },
     },
   },
   render: () => html`
     <div style="max-inline-size:var(--dimension-panel-width-xs);">
       <ds-table
-        .columns=${[
-          { id: 'case', header: 'Case', size: 'xs' },
-          { id: 'notes', header: 'Notes', size: 'sm' },
-        ] satisfies TableColumn[]}
-        .rows=${[
-          {
-            id: 'truncate-one',
-            cells: {
-              case: '1 line',
-              notes: 'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
-            },
-          },
-          {
-            id: 'truncate-two',
-            cells: {
-              case: '2 lines',
-              notes: {
-                primary: 'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
-                maxLines: 2,
+        .columns=${
+          [
+            { id: 'case', header: 'Case', size: 'xs' },
+            { id: 'notes', header: 'Notes', size: 'sm' },
+          ] satisfies TableColumn[]
+        }
+        .rows=${
+          [
+            {
+              id: 'truncate-one',
+              cells: {
+                case: '1 line',
+                notes:
+                  'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
               },
             },
-          },
-          {
-            id: 'truncate-three',
-            cells: {
-              case: '3 lines',
-              notes: {
-                primary: 'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
-                maxLines: 3,
+            {
+              id: 'truncate-two',
+              cells: {
+                case: '2 lines',
+                notes: {
+                  primary:
+                    'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
+                  maxLines: 2,
+                },
               },
             },
-          },
-          {
-            id: 'truncate-wrap',
-            cells: {
-              case: 'Wrap',
-              notes: {
-                primary: 'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
-                wrap: true,
+            {
+              id: 'truncate-three',
+              cells: {
+                case: '3 lines',
+                notes: {
+                  primary:
+                    'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
+                  maxLines: 3,
+                },
               },
             },
-          },
-          {
-            id: 'truncate-short',
-            cells: {
-              case: 'Fits',
-              notes: 'Fleet',
-            },
-          },
-          {
-            id: 'truncate-disabled',
-            disabled: true,
-            cells: {
-              case: 'Disabled',
-              notes: 'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
-            },
-          },
-          {
-            id: 'truncate-link',
-            cells: {
-              case: 'Link',
-              notes: {
-                primary: 'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
-                href: '/routes/highway-99',
+            {
+              id: 'truncate-wrap',
+              cells: {
+                case: 'Wrap',
+                notes: {
+                  primary:
+                    'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
+                  wrap: true,
+                },
               },
             },
-          },
-        ] satisfies TableRow[]}
+            {
+              id: 'truncate-short',
+              cells: {
+                case: 'Fits',
+                notes: 'Fleet',
+              },
+            },
+            {
+              id: 'truncate-disabled',
+              disabled: true,
+              cells: {
+                case: 'Disabled',
+                notes:
+                  'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
+              },
+            },
+            {
+              id: 'truncate-link',
+              cells: {
+                case: 'Link',
+                notes: {
+                  primary:
+                    'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
+                  href: '/routes/highway-99',
+                },
+              },
+            },
+          ] satisfies TableRow[]
+        }
         caption="Truncation tooltip"
         caption-visibility="visible"
       ></ds-table>
@@ -2115,7 +2212,8 @@ export const RestyledVisualPrimitives: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'A product can reshape the visual recipe through public --ds-table-* properties without changing table behavior or semantic markup.',
+        story:
+          'A product can reshape the visual recipe through public --ds-table-* properties without changing table behavior or semantic markup.',
       },
     },
   },
@@ -2144,7 +2242,8 @@ export const NativeCssRecipe: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'The exported @ds-mo/ui/table.css recipe can style application-owned native markup with the same stable primitives when the component data model is not appropriate.',
+        story:
+          'The exported @ds-mo/ui/table.css recipe can style application-owned native markup with the same stable primitives when the component data model is not appropriate.',
       },
     },
   },
@@ -2154,29 +2253,39 @@ export const NativeCssRecipe: Story = {
         <div class="ds-table__viewport">
           <table class="ds-table__table">
             <caption class="ds-table__caption">
-              <ds-text as="span" variant="text-title-small" emphasis>Application-owned audit log</ds-text>
+              <ds-text as="span" variant="text-title-small" emphasis
+                >Application-owned audit log</ds-text
+              >
             </caption>
             <thead class="ds-table__head">
               <tr class="ds-table__header-row">
                 <th class="ds-table__header-cell" scope="col">
                   <span class="ds-table__header-static">
-                    <ds-text as="span" variant="text-body-small" emphasis color="secondary">Event</ds-text>
+                    <ds-text as="span" variant="text-body-small" emphasis color="secondary"
+                      >Event</ds-text
+                    >
                   </span>
                 </th>
                 <th class="ds-table__header-cell" scope="col">
                   <span class="ds-table__header-static">
-                    <ds-text as="span" variant="text-body-small" emphasis color="secondary">Time</ds-text>
+                    <ds-text as="span" variant="text-body-small" emphasis color="secondary"
+                      >Time</ds-text
+                    >
                   </span>
                 </th>
               </tr>
             </thead>
             <tbody class="ds-table__body">
               <tr class="ds-table__row">
-                <td class="ds-table__cell"><span class="ds-table__cell-content">Vehicle assigned</span></td>
+                <td class="ds-table__cell">
+                  <span class="ds-table__cell-content">Vehicle assigned</span>
+                </td>
                 <td class="ds-table__cell"><span class="ds-table__cell-content">09:42</span></td>
               </tr>
               <tr class="ds-table__row">
-                <td class="ds-table__cell"><span class="ds-table__cell-content">Driver acknowledged</span></td>
+                <td class="ds-table__cell">
+                  <span class="ds-table__cell-content">Driver acknowledged</span>
+                </td>
                 <td class="ds-table__cell"><span class="ds-table__cell-content">09:45</span></td>
               </tr>
             </tbody>
