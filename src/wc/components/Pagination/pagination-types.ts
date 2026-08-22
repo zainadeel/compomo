@@ -15,6 +15,8 @@ export interface PaginationState {
   pageSizeOptions?: number[];
   /** Include a Fit to page option. The owner supplies the effective fitted size. */
   fitToPage?: boolean;
+  /** Keep the Fit to page option visible but unavailable for the current data shape. */
+  fitToPageInactive?: boolean;
   /** Effective page size proposed when Fit to page is selected. */
   fitPageSize?: number;
   /** Full option label for Fit in the open choice list. */

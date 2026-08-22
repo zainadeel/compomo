@@ -12,18 +12,33 @@ export interface GradientSurface {
   positionVar: string;
 }
 
+function closestComposed(from: HTMLElement, selector: string): HTMLElement | null {
+  let current: HTMLElement | null = from;
+  while (current) {
+    const match = current.closest<HTMLElement>(selector);
+    if (match) return match;
+    if (typeof current.getRootNode !== 'function') return null;
+    const composedRoot = current.getRootNode() as Node & { readonly host?: Element };
+    const shadowHost: Element | undefined = composedRoot.host;
+    current = shadowHost && typeof (shadowHost as HTMLElement).closest === 'function'
+      ? shadowHost as HTMLElement
+      : null;
+  }
+  return null;
+}
+
 /** Whether the badge sits under a shell with an active wash preset. */
 export function isShellGradientActive(from: HTMLElement): boolean {
   // Explicit <HTMLElement>: the inferred HTMLDsShellAppElement type only
   // resolves where @stencil/core types are installed — consumers importing
   // `@ds-mo/ui/shell` (raw TS) compile this without them.
-  const shell = from.closest<HTMLElement>('ds-shell-app');
+  const shell = closestComposed(from, 'ds-shell-app');
   return shell !== null && shell.getAttribute('gradient-preset') !== 'none';
 }
 
 /** Bar or panel chrome surface that owns the shell gradient stack. */
 export function findGradientSurface(from: HTMLElement): GradientSurface | null {
-  const barHost = from.closest('ds-bar-nav') as HTMLElement | null;
+  const barHost = closestComposed(from, 'ds-bar-nav');
   if (barHost) {
     const root = barHost.shadowRoot ?? barHost;
     const element = root.querySelector('.bar-nav');
@@ -36,7 +51,7 @@ export function findGradientSurface(from: HTMLElement): GradientSurface | null {
     }
   }
 
-  const panelHost = from.closest('ds-panel-nav') as HTMLElement | null;
+  const panelHost = closestComposed(from, 'ds-panel-nav');
   if (panelHost) {
     const root = panelHost.shadowRoot ?? panelHost;
     const element = root.querySelector('.panel-nav');

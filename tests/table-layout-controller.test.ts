@@ -65,6 +65,7 @@ test('resolves first-paint geometry synchronously when layout elements connect',
   const controller = new TableLayoutController({
     elements: () => ({
       viewport,
+      contentTable: null,
       stickyHeaderTable: null,
       collapseAllOverlay: null,
       frame: null,
@@ -104,6 +105,7 @@ test('resolves viewport-size changes synchronously after a render refresh', () =
   const controller = new TableLayoutController({
     elements: () => ({
       viewport,
+      contentTable: null,
       stickyHeaderTable: null,
       collapseAllOverlay: null,
       frame: null,
@@ -128,6 +130,46 @@ test('resolves viewport-size changes synchronously after a render refresh', () =
   controller.disconnect();
 });
 
+test('skips geometry reads for a recycled render with stable layout elements', () => {
+  let geometryReads = 0;
+  const viewport = {
+    get clientWidth() { geometryReads += 1; return 432; },
+    get clientHeight() { geometryReads += 1; return 240; },
+    get scrollWidth() { geometryReads += 1; return 900; },
+    get scrollHeight() { geometryReads += 1; return 640; },
+    scrollLeft: 0,
+    style: {
+      getPropertyValue: () => '',
+      setProperty: () => undefined,
+    },
+    addEventListener: () => undefined,
+    removeEventListener: () => undefined,
+  } as unknown as HTMLElement;
+  const controller = new TableLayoutController({
+    elements: () => ({
+      viewport,
+      contentTable: null,
+      stickyHeaderTable: null,
+      collapseAllOverlay: null,
+      frame: null,
+      interactiveHead: null,
+    }),
+    mode: () => ({
+      documentStickyHeader: false,
+      floatingCollapseAll: false,
+      clampVerticalOverscroll: false,
+    }),
+    overflowChanged: () => undefined,
+  });
+
+  controller.connect();
+  assert.ok(geometryReads > 0);
+  geometryReads = 0;
+  controller.refresh(false);
+  assert.equal(geometryReads, 0);
+  controller.disconnect();
+});
+
 test('contains vertical wheel deltas at fitted viewport edges and transfers them outward', () => {
   const listeners = new Map<string, EventListener>();
   const viewport = {
@@ -148,6 +190,7 @@ test('contains vertical wheel deltas at fitted viewport edges and transfers them
   const controller = new TableLayoutController({
     elements: () => ({
       viewport,
+      contentTable: null,
       stickyHeaderTable: null,
       collapseAllOverlay: null,
       frame: null,

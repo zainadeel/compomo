@@ -35,7 +35,7 @@ import {
 @Component({
   tag: 'ds-panel-tools',
   styleUrl: 'PanelTools.css',
-  scoped: true,
+  shadow: true,
 })
 export class PanelTools {
   @Element() el!: HTMLElement;
@@ -328,7 +328,7 @@ export class PanelTools {
   }
 
   private startDrawerTransition(phase: 'opening' | 'closing') {
-    const drawer = this.el.querySelector('.panel-tools__drawer') as HTMLElement | null;
+    const drawer = this.renderRoot.querySelector('.panel-tools__drawer') as HTMLElement | null;
     if (this.motion !== 'idle') {
       this.finishDrawerTransition();
       this.ignoreReplacementTerminal = true;
@@ -363,7 +363,7 @@ export class PanelTools {
   }
 
   private handleTransitionEnd = (event: TransitionEvent) => {
-    const drawer = this.el.querySelector('.panel-tools__drawer') as HTMLElement | null;
+    const drawer = this.renderRoot.querySelector('.panel-tools__drawer') as HTMLElement | null;
     if (event.target !== drawer) return;
     if (event.propertyName !== 'max-width') return;
     if (this.ignoreReplacementTerminal) {
@@ -434,6 +434,10 @@ export class PanelTools {
     if (next.join('|') !== this.fullViewToolIds.join('|')) this.fullViewToolIds = next;
   }
 
+  private get renderRoot(): ParentNode {
+    return this.el.shadowRoot ?? this.el;
+  }
+
   private headerLabel(): string {
     if (!this.isDrawerPresent() || !this.activeTool) return '';
     const item = this.railItems.find(candidate => candidate.id === this.activeTool);
@@ -482,7 +486,7 @@ export class PanelTools {
   /** Focus an active tool-header action by its application-owned id. */
   @Method()
   async focusHeaderAction(id: string) {
-    const action = this.el.querySelector(`[data-header-action-id="${CSS.escape(id)}"]`) as
+    const action = this.renderRoot.querySelector(`[data-header-action-id="${CSS.escape(id)}"]`) as
       | (HTMLElement & { setFocus?: () => Promise<void> })
       | null;
     await action?.setFocus?.();
@@ -495,7 +499,7 @@ export class PanelTools {
     if (bounded === this.rovingIndex) return;
     this.rovingIndex = bounded;
     const actions = Array.from(
-      this.el.querySelectorAll<HTMLElement>('.panel-tools__rail-action .button-icon')
+      this.renderRoot.querySelectorAll<HTMLElement>('.panel-tools__rail-action .button-icon')
     );
     actions[bounded]?.focus({ preventScroll: true });
   }

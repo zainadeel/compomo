@@ -20,12 +20,14 @@ async function expectSelectedFillBelowContent(control: Locator) {
 
 async function expectActiveToolToFillStage(page: Page) {
   const geometry = await page.evaluate(() => {
-    const tools = document.querySelector('ds-shell-tools')?.getBoundingClientRect();
-    const body = document
-      .querySelector('.shell-tools__mobile-body')
+    const host = document.querySelector('ds-shell-tools');
+    const root = host?.shadowRoot;
+    const tools = host?.getBoundingClientRect();
+    const body = root
+      ?.querySelector('.shell-tools__mobile-body')
       ?.getBoundingClientRect();
-    const view = document
-      .querySelector('.shell-tools__view--active')
+    const view = root
+      ?.querySelector('.shell-tools__view--active')
       ?.getBoundingClientRect();
 
     return {
@@ -711,7 +713,7 @@ test.describe('Responsive mobile shell foundation', () => {
 
     await inboxTabs.getByRole('tab', { name: 'Stacks' }).click();
     await expect(tools).toHaveAttribute('active-tool', 'stacks');
-    await expect(page.locator('.shell-tools__view--active')).toContainText('Stacks view');
+    await expect(page.getByText('Stacks view', { exact: true })).toBeVisible();
 
     await page.getByRole('button', { name: 'Messages' }).click();
     await expect(tools).toHaveAttribute('active-tool', 'messages');
@@ -796,7 +798,7 @@ test.describe('Shell tablet and desktop compatibility', () => {
     expect(gradientImage).not.toBe('none');
 
     const closedGeometry = await tools.evaluate(element => {
-      const inner = element.querySelector('ds-panel-tools');
+      const inner = element.shadowRoot?.querySelector('ds-panel-tools');
       const outerRect = element.getBoundingClientRect();
       const innerRect = inner?.getBoundingClientRect();
       return {
@@ -815,7 +817,7 @@ test.describe('Shell tablet and desktop compatibility', () => {
     await expect(page.locator('.shell-app__content')).not.toHaveAttribute('inert', '');
 
     const openGeometry = await tools.evaluate(element => {
-      const inner = element.querySelector('ds-panel-tools');
+      const inner = element.shadowRoot?.querySelector('ds-panel-tools');
       const outerRect = element.getBoundingClientRect();
       const innerRect = inner?.getBoundingClientRect();
       return {
@@ -848,8 +850,10 @@ test.describe('Shell tablet and desktop compatibility', () => {
 
     const entering = await tools.evaluate(element => {
       element.setAttribute('presentation', 'fullscreen');
-      const panel = element.querySelector('ds-panel-tools');
-      const drawerSurface = panel?.querySelector('.panel-tools__drawer-surface');
+      const panel = element.shadowRoot?.querySelector('ds-panel-tools');
+      const drawerSurface = panel?.shadowRoot?.querySelector(
+        '.panel-tools__drawer-surface'
+      );
       return {
         forwarded: panel?.getAttribute('presentation'),
         committed: panel?.classList.contains('panel-tools--fullscreen'),

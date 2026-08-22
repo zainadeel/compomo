@@ -13,10 +13,7 @@
   display: flex;
   flex-direction: column;
   min-width: var(--ds-choice-popup-min-inline-size, var(--dimension-menu-width-xs));
-  max-width: min(
-    var(--dimension-panel-width-lg),
-    calc(100vw - var(--dimension-space-200))
-  );
+  max-width: min(var(--dimension-panel-width-lg), calc(100vw - var(--dimension-space-200)));
   max-height: calc(100vh - var(--dimension-space-200));
   overflow: hidden;
   inset: auto;
@@ -185,8 +182,7 @@ ds-text.ds-choice-item__subtext {
 .ds-choice-footer__clear ds-text,
 .ds-choice-footer__action ds-text {
   padding-inline: calc(
-    var(--dimension-space-050) +
-      var(--ds-control-padding-inline, var(--dimension-space-075)) +
+    var(--dimension-space-050) + var(--ds-control-padding-inline, var(--dimension-space-075)) +
       var(--ds-control-label-inset, var(--dimension-space-025))
   );
 }

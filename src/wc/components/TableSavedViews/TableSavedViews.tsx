@@ -1,13 +1,4 @@
-import {
-  Component,
-  Element,
-  Event,
-  EventEmitter,
-  h,
-  Host,
-  Prop,
-  State,
-} from '@stencil/core';
+import { Component, Element, Event, EventEmitter, h, Host, Prop, State } from '@stencil/core';
 import type { MenuItemData } from '../Menu/menu-types';
 import type {
   SelectOptionActionDetail,
@@ -40,7 +31,7 @@ export class TableSavedViews {
   @Prop() views: TableSavedView[] = [];
   /** ID of the controlled active view, including the default view ID. */
   @Prop() value: string = '__default__';
-  /** Whether the current table state differs from the selected view. */
+  /** Whether the current table state differs from the selected custom view. Ignored for the default view. */
   @Prop() dirty: boolean = false;
   /** ID used for the built-in default view. */
   @Prop() defaultViewId: string = '__default__';
@@ -101,9 +92,9 @@ export class TableSavedViews {
       subtextActions:
         this.dirty && view.id === this.selectedCustomView?.id
           ? [
-            { label: 'Save', value: 'save' },
-            { label: 'Discard', value: 'discard', tone: 'negative' as const },
-          ]
+              { label: 'Save', value: 'save' },
+              { label: 'Discard', value: 'discard', tone: 'negative' as const },
+            ]
           : undefined,
       action: {
         label: `Options for ${view.label}`,
@@ -116,9 +107,7 @@ export class TableSavedViews {
       options: [{ label: this.defaultViewLabel, value: this.defaultViewId }],
       divider: custom.length > 0,
     };
-    return custom.length > 0
-      ? [templates, { header: 'Custom', options: custom }]
-      : [templates];
+    return custom.length > 0 ? [templates, { header: 'Custom', options: custom }] : [templates];
   }
 
   private handleViewChange(value: SelectValue) {
@@ -163,7 +152,7 @@ export class TableSavedViews {
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         const input = this.el.querySelector<HTMLElement & { setFocus?: () => Promise<void> }>(
-          `#${this.inputId}`,
+          `#${this.inputId}`
         );
         void input?.setFocus?.();
       });
@@ -174,9 +163,14 @@ export class TableSavedViews {
     const name = this.nameDraft.trim();
     if (!name) return 'View name is required.';
     const duplicate = this.views.some(
-      view => view.id !== this.dialogViewId && view.label.trim().toLocaleLowerCase() === name.toLocaleLowerCase(),
+      view =>
+        view.id !== this.dialogViewId &&
+        view.label.trim().toLocaleLowerCase() === name.toLocaleLowerCase()
     );
-    if (duplicate || this.defaultViewLabel.trim().toLocaleLowerCase() === name.toLocaleLowerCase()) {
+    if (
+      duplicate ||
+      this.defaultViewLabel.trim().toLocaleLowerCase() === name.toLocaleLowerCase()
+    ) {
       return 'A view with this name already exists.';
     }
     return '';
@@ -203,7 +197,7 @@ export class TableSavedViews {
     this.nameDraft = '';
     this.nameError = '';
     const select = this.el.querySelector<HTMLElement & { setFocus?: () => Promise<void> }>(
-      `#${this.selectId}`,
+      `#${this.selectId}`
     );
     void select?.setFocus?.();
   }
@@ -220,7 +214,7 @@ export class TableSavedViews {
           value={this.value}
           triggerLabel={this.selectedCustomView ? undefined : this.triggerLabel}
           triggerLabelPlaceholder={!this.selectedCustomView}
-          dot={this.dirty}
+          dot={this.dirty && Boolean(this.selectedCustomView)}
           footerActionLabel={this.createLabel}
           activeFill={false}
           allowClear={false}

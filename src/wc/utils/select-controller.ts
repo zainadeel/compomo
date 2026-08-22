@@ -55,7 +55,7 @@ export class SelectController<T extends ChoiceOption> {
         if (!this.state.open || !popup.isConnected || !this.state.host.contains(popup)) return null;
 
         const sectionPadding = resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050);
-        popup.style.minWidth = `${choicePopupMinWidth(trigger.offsetWidth, sectionPadding)}px`;
+        popup.style.minWidth = `max(var(--ds-choice-popup-min-inline-size, ${TOKEN_DEFAULTS.menuWidthXs}), ${choicePopupMinWidth(trigger.offsetWidth, sectionPadding)}px)`;
 
         const align = this.state.popupAlign;
         return {

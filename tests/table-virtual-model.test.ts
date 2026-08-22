@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  createTableVirtualIndex,
   estimateTableRowBlockSize,
   findTableVirtualIndexAtOffset,
   flattenTableVirtualItems,
   resolveTableVirtualPlan,
+  resolveTableVirtualPlanFromIndex,
   sameTableVirtualPlan,
   TABLE_VIRTUAL_GROUP_HEADER_SIZE,
   TABLE_VIRTUAL_MIN_OVERSCAN_ROWS,
@@ -72,6 +74,28 @@ test('flattens ungrouped rows and collapsed grouped sections', () => {
     columns,
   });
   assert.deepEqual(ungrouped.map(item => item.id), ['row:a', 'row:b']);
+  assert.equal(ungrouped.every(item => !item.variableSize), true);
+
+  const wrapping = flattenTableVirtualItems({
+    grouped: false,
+    rows: [{ id: 'wrap', cells: { name: { primary: 'Wrapping copy', wrap: true }, score: 1 } }],
+    groups: [],
+    collapsedGroupIds: [],
+    columns,
+  });
+  assert.equal(wrapping[0]?.variableSize, true);
+
+  const clamped = flattenTableVirtualItems({
+    grouped: false,
+    rows: [{
+      id: 'clamped',
+      cells: { name: { primary: 'Clamped copy', wrap: true, maxLines: 2 }, score: 1 },
+    }],
+    groups: [],
+    collapsedGroupIds: [],
+    columns,
+  });
+  assert.equal(clamped[0]?.variableSize, false);
 
   const groups: TableGroup[] = [
     { id: 'critical', label: 'Critical', rows: [row('a'), row('b')] },
@@ -110,7 +134,8 @@ test('prefix-sum lookup and overscan follow the locked window contract', () => {
     tableVirtualOverscanPx(100),
     TABLE_VIRTUAL_MIN_OVERSCAN_ROWS * TABLE_VIRTUAL_ROW_TRACK_SIZE[1],
   );
-  assert.equal(tableVirtualOverscanPx(400), 400);
+  assert.equal(tableVirtualOverscanPx(400), 320);
+  assert.equal(tableVirtualOverscanPx(800), 400);
 });
 
 test('windows an ungrouped list with spacers instead of every row', () => {
@@ -139,6 +164,30 @@ test('windows an ungrouped list with spacers instead of every row', () => {
   assert.ok(last && last.kind === 'row');
   assert.ok(first.index > 0);
   assert.ok(last.index < items.length - 1);
+});
+
+test('keeps more overscan ahead of the active scroll direction', () => {
+  const items = flattenTableVirtualItems({
+    grouped: false,
+    rows: Array.from({ length: 40 }, (_, index) => row(`direction-${index}`)),
+    groups: [],
+    collapsedGroupIds: [],
+    columns,
+  });
+  const index = createTableVirtualIndex(items, items.map(item => item.estimatedSize));
+  const forward = resolveTableVirtualPlanFromIndex(index, {
+    scrollOffset: 800,
+    viewportSize: 200,
+    scrollDirection: 'forward',
+  });
+  const backward = resolveTableVirtualPlanFromIndex(index, {
+    scrollOffset: 800,
+    viewportSize: 200,
+    scrollDirection: 'backward',
+  });
+
+  assert.ok(forward.start > backward.start);
+  assert.ok(forward.end > backward.end);
 });
 
 test('keeps intersecting group headers and the next header for sticky push-off', () => {
@@ -217,4 +266,26 @@ test('treats equal plans as unchanged so scroll can skip a render', () => {
   const right = resolveTableVirtualPlan(input);
   assert.equal(sameTableVirtualPlan(left, right), true);
   assert.equal(sameTableVirtualPlan(left, { ...right, start: right.start + 1 }), false);
+});
+
+test('treats same-length row reorders and replacements as changed plans', () => {
+  const createPlan = (ids: string[]) => {
+    const items = flattenTableVirtualItems({
+      grouped: false,
+      rows: ids.map(id => row(id)),
+      groups: [],
+      collapsedGroupIds: [],
+      columns,
+    });
+    return resolveTableVirtualPlan({
+      items,
+      sizes: sizes(items),
+      scrollOffset: 0,
+      viewportSize: 400,
+    });
+  };
+
+  const original = createPlan(['a', 'b', 'c']);
+  assert.equal(sameTableVirtualPlan(original, createPlan(['c', 'b', 'a'])), false);
+  assert.equal(sameTableVirtualPlan(original, createPlan(['x', 'y', 'z'])), false);
 });

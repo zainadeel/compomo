@@ -1830,6 +1830,11 @@ export namespace Components {
          */
         "fitToPage": boolean;
         /**
+          * Keep the Fit to page choice visible but unavailable.
+          * @default false
+         */
+        "fitToPageInactive": boolean;
+        /**
           * Localized plural noun used by assistive range announcements.
           * @default 'items'
          */
@@ -2857,6 +2862,11 @@ export namespace Components {
          */
         "captionVisibility": TableCaptionVisibility;
         /**
+          * Replace opted-in table-owned caption controls with same-size visual skeletons.
+          * @default false
+         */
+        "chromeLoading": boolean;
+        /**
           * Controlled collapsed group identities. Groups not listed remain expanded.
           * @default []
          */
@@ -2895,7 +2905,7 @@ export namespace Components {
          */
         "dataModeSwitcherLabel": string;
         /**
-          * Optional result summary footer. When both `displayedCount` and `totalCount` are finite numbers, infinite mode shows “Displaying {displayed} of {total}”. Virtual mode ignores `displayedCount` and shows a total-only summary.
+          * Optional result summary footer. When both `displayedCount` and `totalCount` are finite numbers, infinite mode shows “Displaying {displayed} of {total}”. Virtual mode ignores `displayedCount` and derives its total from the complete supplied rows; a mismatched `totalCount` emits a warning.
          */
         "displayedCount": number | undefined;
         /**
@@ -3117,7 +3127,7 @@ export namespace Components {
          */
         "defaultViewLabel": string;
         /**
-          * Whether the current table state differs from the selected view.
+          * Whether the current table state differs from the selected custom view. Ignored for the default view.
           * @default false
          */
         "dirty": boolean;
@@ -6637,6 +6647,11 @@ declare namespace LocalJSX {
          */
         "fitToPage"?: boolean;
         /**
+          * Keep the Fit to page choice visible but unavailable.
+          * @default false
+         */
+        "fitToPageInactive"?: boolean;
+        /**
           * Localized plural noun used by assistive range announcements.
           * @default 'items'
          */
@@ -7783,6 +7798,11 @@ declare namespace LocalJSX {
          */
         "captionVisibility"?: TableCaptionVisibility;
         /**
+          * Replace opted-in table-owned caption controls with same-size visual skeletons.
+          * @default false
+         */
+        "chromeLoading"?: boolean;
+        /**
           * Controlled collapsed group identities. Groups not listed remain expanded.
           * @default []
          */
@@ -7821,7 +7841,7 @@ declare namespace LocalJSX {
          */
         "dataModeSwitcherLabel"?: string;
         /**
-          * Optional result summary footer. When both `displayedCount` and `totalCount` are finite numbers, infinite mode shows “Displaying {displayed} of {total}”. Virtual mode ignores `displayedCount` and shows a total-only summary.
+          * Optional result summary footer. When both `displayedCount` and `totalCount` are finite numbers, infinite mode shows “Displaying {displayed} of {total}”. Virtual mode ignores `displayedCount` and derives its total from the complete supplied rows; a mismatched `totalCount` emits a warning.
          */
         "displayedCount"?: number | undefined;
         /**
@@ -8053,7 +8073,7 @@ declare namespace LocalJSX {
          */
         "defaultViewLabel"?: string;
         /**
-          * Whether the current table state differs from the selected view.
+          * Whether the current table state differs from the selected custom view. Ignored for the default view.
           * @default false
          */
         "dirty"?: boolean;
@@ -8793,6 +8813,7 @@ declare namespace LocalJSX {
         "pageSizeMode": PaginationPageSizeMode;
         "totalItems": number;
         "fitToPage": boolean;
+        "fitToPageInactive": boolean;
         "fitPageSize": number | undefined;
         "fitPageSizeLabel": string;
         "fitPageSizeTriggerLabel": string;
@@ -9028,6 +9049,7 @@ declare namespace LocalJSX {
         "scrollLabel": string | undefined;
         "selectionMode": TableSelectionMode;
         "loading": boolean;
+        "chromeLoading": boolean;
         "skeletonRows": number;
         "emptyHeading": string;
         "emptyBody": string;

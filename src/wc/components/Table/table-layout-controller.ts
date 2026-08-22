@@ -1,5 +1,6 @@
 export interface TableLayoutElements {
   viewport: HTMLElement | null;
+  contentTable: HTMLTableElement | null;
   stickyHeaderTable: HTMLTableElement | null;
   collapseAllOverlay: HTMLElement | null;
   frame: HTMLElement | null;
@@ -72,9 +73,14 @@ export function resolveTableLayoutMetrics(input: TableLayoutMetricInput): TableL
 export class TableLayoutController {
   private connected = false;
   private connectedViewport: HTMLElement | null = null;
+  private connectedContentTable: HTMLTableElement | null = null;
   private resizeObserver: ResizeObserver | null = null;
   private frame: number | null = null;
   private overflow: TableOverflowState | null = null;
+  private inlineOffset = 0;
+  private maxInlineOffset = 0;
+  private maxBlockOffset = 0;
+  private lastMode: TableLayoutMode | null = null;
 
   constructor(private readonly options: TableLayoutControllerOptions) {}
 
@@ -90,31 +96,42 @@ export class TableLayoutController {
     this.connectedViewport?.removeEventListener('scroll', this.handleScroll);
     this.connectedViewport?.removeEventListener('wheel', this.handleWheel);
     this.connectedViewport = null;
+    this.connectedContentTable = null;
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
   }
 
   /** Reconcile newly rendered refs, observers, and pending geometry. */
-  refresh(): void {
+  refresh(forceGeometry = true): void {
     if (!this.connected) return;
-    const { viewport } = this.options.elements();
-    const elementsChanged = viewport !== this.connectedViewport;
+    const { viewport, contentTable } = this.options.elements();
+    const elementsChanged = viewport !== this.connectedViewport ||
+      contentTable !== this.connectedContentTable;
     if (elementsChanged) {
       this.connectedViewport?.removeEventListener('scroll', this.handleScroll);
       this.connectedViewport?.removeEventListener('wheel', this.handleWheel);
       this.resizeObserver?.disconnect();
       this.connectedViewport = viewport;
+      this.connectedContentTable = contentTable;
       viewport?.addEventListener('scroll', this.handleScroll, { passive: true });
       viewport?.addEventListener('wheel', this.handleWheel, { passive: false });
 
       if (typeof ResizeObserver !== 'undefined' && viewport) {
         this.resizeObserver ??= new ResizeObserver(this.schedule);
         this.resizeObserver.observe(viewport);
+        if (contentTable) this.resizeObserver.observe(contentTable);
       }
     }
-    // Resolve before componentDidRender returns so WebKit cannot paint or expose
-    // one frame using the full spanning-cell width.
-    this.sync();
+    const mode = this.options.mode();
+    const modeChanged = !this.lastMode ||
+      mode.documentStickyHeader !== this.lastMode.documentStickyHeader ||
+      mode.floatingCollapseAll !== this.lastMode.floatingCollapseAll ||
+      mode.clampVerticalOverscroll !== this.lastMode.clampVerticalOverscroll;
+    this.lastMode = mode;
+    // New refs and explicit refreshes resolve before paint. A recycled virtual
+    // window keeps the same scroll geometry, so ResizeObserver owns later size
+    // changes without forcing layout after every row patch.
+    if (forceGeometry || elementsChanged || modeChanged) this.sync();
   }
 
   private schedule = (): void => {
@@ -126,9 +143,17 @@ export class TableLayoutController {
   };
 
   private readonly handleScroll = (): void => {
+    const viewport = this.connectedViewport;
+    if (!viewport) return;
+    const mode = this.options.mode();
     this.clampInlineOffset();
-    if (this.options.mode().clampVerticalOverscroll) this.clampBlockOffset();
-    this.schedule();
+    if (mode.clampVerticalOverscroll) this.clampBlockOffset();
+    if (
+      viewport.scrollLeft !== this.inlineOffset ||
+      (mode.floatingCollapseAll && !mode.documentStickyHeader)
+    ) {
+      this.schedule();
+    }
   };
 
   private readonly handleWheel = (event: WheelEvent): void => {
@@ -136,17 +161,15 @@ export class TableLayoutController {
     if (!viewport) return;
 
     if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
-      const max = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
       const atStart = viewport.scrollLeft <= 0 && event.deltaX < 0;
-      const atEnd = viewport.scrollLeft >= max && event.deltaX > 0;
+      const atEnd = viewport.scrollLeft >= this.maxInlineOffset && event.deltaX > 0;
       if (atStart || atEnd) event.preventDefault();
       return;
     }
 
     if (!this.options.mode().clampVerticalOverscroll || event.deltaY === 0) return;
-    const max = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
     const atStart = viewport.scrollTop <= 0 && event.deltaY < 0;
-    const atEnd = viewport.scrollTop >= max && event.deltaY > 0;
+    const atEnd = viewport.scrollTop >= this.maxBlockOffset && event.deltaY > 0;
     if (!atStart && !atEnd) return;
 
     this.options.verticalEdgeWheel?.(event.deltaY);
@@ -156,16 +179,14 @@ export class TableLayoutController {
   private clampInlineOffset(): void {
     const viewport = this.connectedViewport;
     if (!viewport) return;
-    const max = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
-    const clamped = Math.min(max, Math.max(0, viewport.scrollLeft));
+    const clamped = Math.min(this.maxInlineOffset, Math.max(0, viewport.scrollLeft));
     if (viewport.scrollLeft !== clamped) viewport.scrollLeft = clamped;
   }
 
   private clampBlockOffset(): void {
     const viewport = this.connectedViewport;
     if (!viewport) return;
-    const max = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
-    const clamped = Math.min(max, Math.max(0, viewport.scrollTop));
+    const clamped = Math.min(this.maxBlockOffset, Math.max(0, viewport.scrollTop));
     if (viewport.scrollTop !== clamped) viewport.scrollTop = clamped;
   }
 
@@ -191,6 +212,9 @@ export class TableLayoutController {
         ? elements.frame!.getBoundingClientRect().top
         : undefined,
     });
+    this.inlineOffset = metrics.inlineOffset;
+    this.maxInlineOffset = metrics.maxInlineOffset;
+    this.maxBlockOffset = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
 
     this.setProperty(
       viewport,

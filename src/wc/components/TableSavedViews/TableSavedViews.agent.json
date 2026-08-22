@@ -30,12 +30,12 @@
     "The naming dialog traps focus through Modal behavior, associates validation text with the input through Field, and restores focus to the saved-views control after closing."
   ],
   "states": [
-    "views, value, and dirty are controlled. Selection, create, save, discard, rename, and remove events communicate intent and never mutate application records.",
+    "views, value, and dirty are controlled. Dirty state is presented only for a selected custom view; the default template never shows the trigger dot or save/discard actions even if dirty is supplied. Selection, create, save, discard, rename, and remove events communicate intent and never mutate application records.",
     "The component owns only transient interaction state: the contextual menu, naming dialog, draft name, duplicate-name validation, and focus restoration.",
     "The default view is a non-editable template. Application-owned custom views appear in a separate section with Rename and Remove actions. New view opens the naming dialog. When an editable selected view is dirty, that view row shows Save and negative Discard supporting actions while the footer remains dedicated to New view. The application decides which table state to capture, restore, and persist."
   ],
   "responsiveBehavior": [
-    "The control remains a single toolbar item and relies on Select, Menu, and Modal collision and viewport behavior.",
+    "The control remains a single toolbar item and relies on Select, Menu, and Modal collision and viewport behavior. Its choice popup keeps the token-backed 200px menu-width-xs minimum.",
     "Place it in the leading region of ds-table-toolbar so narrow table headers preserve the expected control order."
   ],
   "frameworkCaveats": {

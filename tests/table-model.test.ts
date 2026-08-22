@@ -213,6 +213,8 @@ test('resolves labels, column constraints, and server group totals defensively',
 test('formats the optional result summary footer from controlled counts', () => {
   assert.equal(formatTableResultSummary(50, 1500), 'Displaying 50 of 1,500');
   assert.equal(formatTableResultSummary(0, 0), 'Displaying 0 of 0');
+  assert.equal(formatTableResultSummary(-2, 10.8), 'Displaying 0 of 10');
+  assert.equal(formatTableResultSummary(12, 10), 'Displaying 10 of 10');
   assert.equal(
     formatTableResultSummary(12, 3400, 'Showing {displayed} / {total}', 'en-US'),
     'Showing 12 / 3,400',
@@ -225,37 +227,31 @@ test('formats the optional result summary footer from controlled counts', () => 
 test('formats a total-only summary for virtual mode', () => {
   assert.equal(formatTableTotalSummary(1500), '1,500 items');
   assert.equal(formatTableTotalSummary(1, '{total} item'), '1 item');
+  assert.equal(formatTableTotalSummary(-2.5), '0 items');
   assert.equal(formatTableTotalSummary(undefined), null);
 });
 
 test('treats relocated table footer slots as owned and ignores nested dialog footers', () => {
   const host = { id: 'table' } as unknown as Element;
-  const asChild = {
-    parentElement: host,
-    closest: () => null,
-  } as unknown as Element;
-  const relocated = {
-    parentElement: { id: 'status' } as unknown as Element,
-    closest: (selector: string) => (selector === '.ds-table__footer' ? {} : null),
-  } as unknown as Element;
-  const nestedDialog = {
-    parentElement: { id: 'modal' } as unknown as Element,
-    closest: () => null,
-  } as unknown as Element;
+  const ancestor = (parentElement: Element, options: { slot?: boolean; footer?: boolean } = {}) => ({
+    parentElement,
+    hasAttribute: (name: string) => name === 'slot' && !!options.slot,
+    classList: { contains: (name: string) => name === 'ds-table__footer' && !!options.footer },
+  } as unknown as Element);
+  const asChild = { parentElement: host } as unknown as Element;
+  const footer = ancestor(host, { footer: true });
+  const relocated = { parentElement: ancestor(footer) } as unknown as Element;
+  const nestedBoundary = ancestor(footer, { slot: true });
+  const nestedDialog = { parentElement: ancestor(nestedBoundary) } as unknown as Element;
 
   assert.equal(isOwnedTableFooterSlot(asChild, host), true);
   assert.equal(isOwnedTableFooterSlot(relocated, host), true);
   assert.equal(isOwnedTableFooterSlot(nestedDialog, host), false);
 
-  const nestedHost = {
-    querySelectorAll: () => [nestedDialog],
-  } as unknown as Element;
-  assert.equal(hasOwnedTableFooterSlot(nestedHost, 'footer'), false);
-
-  const relocatedHost = {
-    querySelectorAll: () => [relocated],
-  } as unknown as Element;
-  assert.equal(hasOwnedTableFooterSlot(relocatedHost, 'footer-leading'), true);
+  (host as Element & { querySelectorAll: () => Element[] }).querySelectorAll = () => [nestedDialog];
+  assert.equal(hasOwnedTableFooterSlot(host, 'footer'), false);
+  (host as Element & { querySelectorAll: () => Element[] }).querySelectorAll = () => [relocated];
+  assert.equal(hasOwnedTableFooterSlot(host, 'footer-leading'), true);
 });
 
 test('maps optional group intents to class and title color recipes', () => {

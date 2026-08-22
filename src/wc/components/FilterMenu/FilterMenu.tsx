@@ -165,10 +165,7 @@ export class FilterMenu {
     measure: (anchor, popup) => {
       if (!this.open) return null;
       const anchorRect = anchor.getBoundingClientRect();
-      const sectionInsetPx = resolveCssLengthPx(
-        TOKEN_DEFAULTS.space050,
-        TOKEN_DEFAULTS.space050
-      );
+      const sectionInsetPx = resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050);
       return {
         anchorRect,
         popupWidth: popup.offsetWidth || this.popupFallbackWidth,
@@ -515,7 +512,9 @@ export class FilterMenu {
     this.activeOptionIndex = next;
     this.focusRingVisible = true;
     requestAnimationFrame(() => {
-      this.el.querySelector<HTMLElement>(`#${this.generatedId}-${filter.id}-option-${next}`)?.focus();
+      this.el
+        .querySelector<HTMLElement>(`#${this.generatedId}-${filter.id}-option-${next}`)
+        ?.focus();
     });
   }
 
@@ -566,9 +565,7 @@ export class FilterMenu {
       );
       return options.map((option, index) => {
         const isSelected =
-          filter.kind === 'multiple'
-            ? selected.includes(option.value)
-            : value === option.value;
+          filter.kind === 'multiple' ? selected.includes(option.value) : value === option.value;
         return (
           <ChoiceOptionRow
             size="md"
@@ -786,135 +783,133 @@ export class FilterMenu {
 
         {this.shouldRender ? (
           <div
-          id={popupId}
-          popover="manual"
-          class={{
-            'filter-menu-popup': true,
-            'ds-choice-popup': true,
-            'ds-choice-popup--closing': this.closing,
-          }}
-          style={popupStyle}
-          role="dialog"
-          aria-label={this.menuLabel}
-        >
-          {activeFilter ? (
-            <div class="filter-menu">
-              <div class="filter-menu__body">
-                <div
-                  class="filter-menu__categories ds-choice-list ds-chrome-column ds-chrome-space--sm"
-                  role="tablist"
-                  aria-label={this.categoriesLabel}
-                  aria-orientation="vertical"
-                >
-                  {state.filters.map(filter => {
-                    const active = filter.id === activeFilter.id;
-                    const count = this.selectedCount(filter, state.values);
-                    return (
-                      <div
-                        key={filter.id}
-                        class={{
-                          'filter-menu__category-section': true,
-                          'ds-choice-section--divided': Boolean(filter.divider),
-                        }}
-                      >
-                        <button
-                          id={`${this.generatedId}-${filter.id}-tab`}
-                          type="button"
-                          role="tab"
-                          data-filter-category={filter.id}
-                          class={{
-                            'filter-menu__category': true,
-                            'filter-menu__category--active': active,
-                            'ds-choice-item': true,
-                            'ds-control-frame': true,
-                            'ds-control--md': true,
-                            'ds-focus-ring-inset': true,
-                            'ds-focus-ring--visible': active && this.focusRingVisible,
-                            'ds-interaction-fill': true,
-                            'ds-interaction-fill--selected': active,
-                          }}
-                          aria-selected={String(active)}
-                          aria-controls={`${this.generatedId}-panel`}
-                          tabIndex={active ? 0 : -1}
-                          onMouseDown={() => {
-                            this.focusRingVisible = false;
-                          }}
-                          onClick={() => this.selectCategory(filter.id)}
-                          onKeyDown={(event: KeyboardEvent) =>
-                            this.handleCategoryKeyDown(event, state.filters, filter.id)
-                          }
-                        >
-                          <ds-text
-                            class="ds-choice-item__content ds-choice-item__label ds-control-label-box ds-interaction-fill__content"
-                            as="span"
-                            variant="text-body-medium"
-                            color={active ? 'primary' : 'secondary'}
-                          >
-                            {filter.label}
-                          </ds-text>
-                          {count > 0 ? (
-                            <ds-tag
-                              class="ds-choice-item__tag ds-interaction-fill__content"
-                              label={String(count)}
-                              size="sm"
-                              intent="brand"
-                              contrast="bold"
-                              isInset
-                              rounded
-                            />
-                          ) : null}
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <div
-                  id={`${this.generatedId}-panel`}
-                  class="filter-menu__options"
-                  role="tabpanel"
-                  aria-labelledby={`${this.generatedId}-${activeFilter.id}-tab`}
-                >
+            id={popupId}
+            popover="manual"
+            class={{
+              'filter-menu-popup': true,
+              'ds-choice-popup': true,
+              'ds-choice-popup--closing': this.closing,
+            }}
+            style={popupStyle}
+            role="dialog"
+            aria-label={this.menuLabel}
+          >
+            {activeFilter ? (
+              <div class="filter-menu">
+                <div class="filter-menu__body">
                   <div
-                    key={activeFilter.id}
-                    class="filter-menu__option-list ds-choice-list ds-chrome-column ds-chrome-space--sm"
-                    role="listbox"
-                    aria-label={activeFilter.label}
-                    aria-multiselectable={
-                      activeFilter.kind === 'multiple' ? 'true' : undefined
-                    }
+                    class="filter-menu__categories ds-choice-list ds-chrome-column ds-chrome-space--sm"
+                    role="tablist"
+                    aria-label={this.categoriesLabel}
+                    aria-orientation="vertical"
                   >
-                    {this.renderOptions(activeFilter, state.values)}
+                    {state.filters.map(filter => {
+                      const active = filter.id === activeFilter.id;
+                      const count = this.selectedCount(filter, state.values);
+                      return (
+                        <div
+                          key={filter.id}
+                          class={{
+                            'filter-menu__category-section': true,
+                            'ds-choice-section--divided': Boolean(filter.divider),
+                          }}
+                        >
+                          <button
+                            id={`${this.generatedId}-${filter.id}-tab`}
+                            type="button"
+                            role="tab"
+                            data-filter-category={filter.id}
+                            class={{
+                              'filter-menu__category': true,
+                              'filter-menu__category--active': active,
+                              'ds-choice-item': true,
+                              'ds-control-frame': true,
+                              'ds-control--md': true,
+                              'ds-focus-ring-inset': true,
+                              'ds-focus-ring--visible': active && this.focusRingVisible,
+                              'ds-interaction-fill': true,
+                              'ds-interaction-fill--selected': active,
+                            }}
+                            aria-selected={String(active)}
+                            aria-controls={`${this.generatedId}-panel`}
+                            tabIndex={active ? 0 : -1}
+                            onMouseDown={() => {
+                              this.focusRingVisible = false;
+                            }}
+                            onClick={() => this.selectCategory(filter.id)}
+                            onKeyDown={(event: KeyboardEvent) =>
+                              this.handleCategoryKeyDown(event, state.filters, filter.id)
+                            }
+                          >
+                            <ds-text
+                              class="ds-choice-item__content ds-choice-item__label ds-control-label-box ds-interaction-fill__content"
+                              as="span"
+                              variant="text-body-medium"
+                              color={active ? 'primary' : 'secondary'}
+                            >
+                              {filter.label}
+                            </ds-text>
+                            {count > 0 ? (
+                              <ds-tag
+                                class="ds-choice-item__tag ds-interaction-fill__content"
+                                label={String(count)}
+                                size="sm"
+                                intent="brand"
+                                contrast="bold"
+                                isInset
+                                rounded
+                              />
+                            ) : null}
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
-                </div>
-              </div>
 
-              {totalSelected > 0 ? (
-                <div class="filter-menu__footer ds-choice-footer">
-                  <div class="ds-choice-footer__content ds-control--md">
-                    <ds-text
-                      class="ds-choice-footer__summary"
-                      as="span"
-                      variant="text-body-medium"
-                      color="secondary"
-                      aria-live="polite"
+                  <div
+                    id={`${this.generatedId}-panel`}
+                    class="filter-menu__options"
+                    role="tabpanel"
+                    aria-labelledby={`${this.generatedId}-${activeFilter.id}-tab`}
+                  >
+                    <div
+                      key={activeFilter.id}
+                      class="filter-menu__option-list ds-choice-list ds-chrome-column ds-chrome-space--sm"
+                      role="listbox"
+                      aria-label={activeFilter.label}
+                      aria-multiselectable={activeFilter.kind === 'multiple' ? 'true' : undefined}
                     >
-                      {totalSelected} selected
-                    </ds-text>
-                    <button
-                      class="filter-menu__clear ds-choice-footer__clear ds-text-action"
-                      type="button"
-                      onClick={() => this.dsClear.emit()}
-                    >
-                      <ds-text as="span" variant="text-body-medium" color="inherit">
-                        {this.clearLabel}
-                      </ds-text>
-                    </button>
+                      {this.renderOptions(activeFilter, state.values)}
+                    </div>
                   </div>
                 </div>
-              ) : null}
-            </div>
-          ) : null}
+
+                {totalSelected > 0 ? (
+                  <div class="filter-menu__footer ds-choice-footer">
+                    <div class="ds-choice-footer__content ds-control--md">
+                      <ds-text
+                        class="ds-choice-footer__summary"
+                        as="span"
+                        variant="text-body-medium"
+                        color="secondary"
+                        aria-live="polite"
+                      >
+                        {totalSelected} selected
+                      </ds-text>
+                      <button
+                        class="filter-menu__clear ds-choice-footer__clear ds-text-action"
+                        type="button"
+                        onClick={() => this.dsClear.emit()}
+                      >
+                        <ds-text as="span" variant="text-body-medium" color="inherit">
+                          {this.clearLabel}
+                        </ds-text>
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
           </div>
         ) : null}
       </Host>

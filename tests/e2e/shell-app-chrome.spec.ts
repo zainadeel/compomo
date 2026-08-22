@@ -310,7 +310,9 @@ test.describe('App shell chrome', () => {
   test('makes an overflowing tool rail keyboard-scrollable', async ({ page }) => {
     const tools = page.locator('ds-panel-tools');
     await tools.evaluate(element => {
-      element.querySelector<HTMLElement>('.panel-tools__rail-body')!.style.maxHeight = '96px';
+      element.shadowRoot!.querySelector<HTMLElement>(
+        '.panel-tools__rail-body'
+      )!.style.maxHeight = '96px';
     });
 
     const scrollRegion = page.getByRole('region', { name: 'Tool shortcuts' });
@@ -762,7 +764,9 @@ test.describe('App shell chrome', () => {
 
     const entering = await tools.evaluate(element => {
       element.setAttribute('presentation', 'fullscreen');
-      const drawerSurface = element.querySelector('.panel-tools__drawer-surface');
+      const drawerSurface = element.shadowRoot?.querySelector(
+        '.panel-tools__drawer-surface'
+      );
       return {
         committed: element.classList.contains('panel-tools--fullscreen'),
         visibility: drawerSurface ? getComputedStyle(drawerSurface).visibility : null,
@@ -775,7 +779,9 @@ test.describe('App shell chrome', () => {
 
     const exiting = await tools.evaluate(element => {
       element.setAttribute('presentation', 'drawer');
-      const drawerSurface = element.querySelector('.panel-tools__drawer-surface');
+      const drawerSurface = element.shadowRoot?.querySelector(
+        '.panel-tools__drawer-surface'
+      );
       return {
         committed: !element.classList.contains('panel-tools--fullscreen'),
         visibility: drawerSurface ? getComputedStyle(drawerSurface).visibility : null,
@@ -793,9 +799,9 @@ test.describe('App shell chrome', () => {
     const host = page.locator('ds-panel-tools');
     const drawer = page.locator('.panel-tools__drawer');
     const header = page.locator('ds-panel-tool-header.panel-tools__header');
-    const fullView = page
-      .locator('.panel-tools__full-view')
-      .filter({ has: page.locator('#agents-full-view') });
+    const fullView = page.locator(
+      '.panel-tools__full-view:has(slot[name="agents-view"])'
+    );
     const agents = page.getByRole('button', { name: 'Agents', exact: true });
 
     await agents.click();

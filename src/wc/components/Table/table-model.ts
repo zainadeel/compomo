@@ -299,10 +299,15 @@ export function formatTableResultSummary(
   locale?: string,
 ): string | null {
   if (!Number.isFinite(displayed) || !Number.isFinite(total)) return null;
+  const normalizedTotal = Math.max(0, Math.trunc(total as number));
+  const normalizedDisplayed = Math.min(
+    normalizedTotal,
+    Math.max(0, Math.trunc(displayed as number)),
+  );
   const formatter = new Intl.NumberFormat(locale);
   return label
-    .replace('{displayed}', formatter.format(displayed as number))
-    .replace('{total}', formatter.format(total as number));
+    .replace('{displayed}', formatter.format(normalizedDisplayed))
+    .replace('{total}', formatter.format(normalizedTotal));
 }
 
 /** Formats the virtual-mode total-only result footer. */
@@ -312,16 +317,24 @@ export function formatTableTotalSummary(
   locale?: string,
 ): string | null {
   if (!Number.isFinite(total)) return null;
-  return label.replace('{total}', new Intl.NumberFormat(locale).format(total as number));
+  const normalizedTotal = Math.max(0, Math.trunc(total as number));
+  return label.replace('{total}', new Intl.NumberFormat(locale).format(normalizedTotal));
 }
 
 /**
  * True when a footer slot belongs to the table itself: a light-DOM child of the
- * host, or a node Stencil already relocated into the table footer. Nested
- * dialogs (saved-views modal actions) keep slot="footer" but are neither.
+ * host, or a top-level node Stencil relocated into this table's footer. A
+ * slotted ancestor marks a nested component boundary, so dialog action slots
+ * inside footer-leading/footer-trailing content cannot replace the table copy.
  */
 export function isOwnedTableFooterSlot(node: Element, host: Element): boolean {
-  return node.parentElement === host || node.closest('.ds-table__footer') !== null;
+  if (node.parentElement === host) return true;
+  let insideTableFooter = false;
+  for (let ancestor = node.parentElement; ancestor && ancestor !== host; ancestor = ancestor.parentElement) {
+    if (ancestor.hasAttribute('slot')) return false;
+    if (ancestor.classList.contains('ds-table__footer')) insideTableFooter = true;
+  }
+  return insideTableFooter;
 }
 
 export function hasOwnedTableFooterSlot(host: Element, slotName: string): boolean {

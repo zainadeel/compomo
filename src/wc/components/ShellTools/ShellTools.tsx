@@ -31,7 +31,7 @@ import {
 @Component({
   tag: 'ds-shell-tools',
   styleUrl: 'ShellTools.css',
-  scoped: true,
+  shadow: true,
 })
 export class ShellTools {
   @Element() el!: HTMLElement;
@@ -212,7 +212,9 @@ export class ShellTools {
       await this.panelToolsEl?.focusHeaderAction(id);
       return;
     }
-    const action = this.el.querySelector(`[data-header-action-id="${CSS.escape(id)}"]`) as
+    const action = (this.el.shadowRoot ?? this.el).querySelector(
+      `[data-header-action-id="${CSS.escape(id)}"]`
+    ) as
       | (HTMLElement & { setFocus?: () => Promise<void> })
       | null;
     await action?.setFocus?.();
@@ -220,8 +222,16 @@ export class ShellTools {
 
   private renderForwardedSlots() {
     return this.mobileViewOrder.flatMap(id => [
-      <slot name={id} slot={id} />,
-      <slot name={`${id}-view`} slot={`${id}-view`} />,
+      <div key={`tool:${id}`} class="shell-tools__slot-proxy" slot={id}>
+        <slot name={id} />
+      </div>,
+      <div
+        key={`tool-view:${id}`}
+        class="shell-tools__slot-proxy"
+        slot={`${id}-view`}
+      >
+        <slot name={`${id}-view`} />
+      </div>,
     ]);
   }
 
@@ -344,6 +354,7 @@ export class ShellTools {
             const active = this.open && id === tool;
             return (
               <div
+                key={`mobile-tool-view:${id}`}
                 class={{
                   'shell-tools__view': true,
                   'shell-tools__view--active': active,

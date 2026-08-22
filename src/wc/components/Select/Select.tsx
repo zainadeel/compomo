@@ -377,7 +377,7 @@ export class Select {
     if (this.multiple) {
       return Array.isArray(value) ? [...value] : value ? [value] : [];
     }
-    return Array.isArray(value) ? value[0] ?? '' : value;
+    return Array.isArray(value) ? (value[0] ?? '') : value;
   }
 
   private get allSections(): SelectSection[] {
@@ -427,9 +427,7 @@ export class Select {
 
   private observeFooterContent() {
     const content =
-      this.open && this.multiple && this.hasSelection
-        ? this.footerContentElement
-        : undefined;
+      this.open && this.multiple && this.hasSelection ? this.footerContentElement : undefined;
     if (!content?.isConnected) {
       this.footerResizeObserver?.disconnect();
       this.observedFooterContentElement = undefined;
@@ -439,9 +437,7 @@ export class Select {
 
     this.footerResizeObserver?.disconnect();
     if (typeof ResizeObserver !== 'undefined') {
-      this.footerResizeObserver = new ResizeObserver(() =>
-        this.scheduleFooterSummaryMeasurement()
-      );
+      this.footerResizeObserver = new ResizeObserver(() => this.scheduleFooterSummaryMeasurement());
       this.footerResizeObserver.observe(content);
     }
     this.observedFooterContentElement = content;
@@ -893,11 +889,7 @@ export class Select {
                         sectionIndex > 0 && Boolean(section.header),
                     }}
                     role={
-                      this.popupRole === 'grid'
-                        ? 'rowgroup'
-                        : section.header
-                          ? 'group'
-                          : undefined
+                      this.popupRole === 'grid' ? 'rowgroup' : section.header ? 'group' : undefined
                     }
                     aria-label={section.header}
                   >
@@ -910,10 +902,7 @@ export class Select {
                         color="primary"
                         role="row"
                       >
-                        <span
-                          class="ds-choice-section__header-label"
-                          role="gridcell"
-                        >
+                        <span class="ds-choice-section__header-label" role="gridcell">
                           {section.header}
                         </span>
                       </ds-text>
@@ -945,9 +934,7 @@ export class Select {
             ) : this.allowClear && this.hasSelection && !this.isLoading ? (
               <ChoiceFooter
                 size={this.size}
-                summary={
-                  this.multiple ? `${count} ${this.selectedLabel}` : undefined
-                }
+                summary={this.multiple ? `${count} ${this.selectedLabel}` : undefined}
                 compactSummary={this.multiple ? String(count) : undefined}
                 useCompactSummary={this.compactFooterSummary}
                 contentRef={element => {
