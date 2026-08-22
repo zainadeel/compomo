@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.12.0](https://github.com/zainadeel/compomo/compare/v14.11.1...v14.12.0) (2026-08-22)
+
+
+### Added
+
+* **table:** scale virtual scrolling to large datasets ([#509](https://github.com/zainadeel/compomo/issues/509)) ([a358c01](https://github.com/zainadeel/compomo/commit/a358c01c8c4f7bab434b126bc857e44408dd8af0))
+
 ## [14.11.1](https://github.com/zainadeel/compomo/compare/v14.11.0...v14.11.1) (2026-08-21)
 
 
