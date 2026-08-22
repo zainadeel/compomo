@@ -29,6 +29,7 @@ export interface TableVirtualItem {
   groupId?: string;
   rowId?: string;
   estimatedSize: number;
+  variableSize: boolean;
 }
 
 export type TableVirtualNode =
@@ -67,12 +68,38 @@ export interface ResolveTableVirtualPlanInput {
   pinnedRowIds?: ReadonlySet<string>;
 }
 
+export interface TableVirtualIndex {
+  items: readonly TableVirtualItem[];
+  sizes: readonly number[];
+  prefix: readonly number[];
+  itemCount: number;
+  totalSize: number;
+  grouped: boolean;
+  groupHeaderIndexes: readonly number[];
+  headerIndexByGroup: ReadonlyMap<string, number>;
+  groupEndByHeader: ReadonlyMap<number, number>;
+  rowIndexById: ReadonlyMap<string, number>;
+  itemIndexById: ReadonlyMap<string, number>;
+}
+
+export interface ResolveTableVirtualIndexedPlanInput {
+  scrollOffset: number;
+  viewportSize: number;
+  scrollDirection?: 'backward' | 'forward' | 'none';
+  pinnedRowIds?: ReadonlySet<string>;
+}
+
 /** Map a cell recipe onto the named track stack used for first-paint estimates. */
 export function estimateTableCellTrackCount(
   value: TableRow['cells'][string],
   column: TableColumn,
 ): number {
-  const presentation = resolveTableCellPresentation(value, column);
+  return tableCellTrackCount(resolveTableCellPresentation(value, column));
+}
+
+function tableCellTrackCount(
+  presentation: ReturnType<typeof resolveTableCellPresentation>,
+): number {
   if (presentation.kind === 'image') {
     return presentation.variant === 'triple' ? 3 : presentation.variant === 'multi' ? 2 : 1;
   }
@@ -96,16 +123,31 @@ export function estimateTableCellTrackCount(
 
 /** Tallest named track stack across the row's visible cells. */
 export function estimateTableRowBlockSize(row: TableRow, columns: readonly TableColumn[]): number {
+  return tableVirtualRowMetrics(row, columns).estimatedSize;
+}
+
+function tableVirtualRowMetrics(
+  row: TableRow,
+  columns: readonly TableColumn[],
+): Pick<TableVirtualItem, 'estimatedSize' | 'variableSize'> {
   let tracks: 1 | 2 | 3 | 4 = 1;
+  let variableSize = false;
   for (const column of columns) {
-    const count = estimateTableCellTrackCount(row.cells[column.id], column);
+    const value = row.cells[column.id];
+    const presentation = resolveTableCellPresentation(value, column);
+    if (
+      (presentation.kind === 'text' || presentation.kind === 'icon-text') &&
+      presentation.wraps &&
+      presentation.lineClamp === 'none'
+    ) {
+      variableSize = true;
+    }
+    const count = tableCellTrackCount(presentation);
     if (count === 4) {
       tracks = 4;
-      break;
-    }
-    if (count > tracks) tracks = count as 1 | 2 | 3;
+    } else if (count > tracks) tracks = count as 1 | 2 | 3;
   }
-  return TABLE_VIRTUAL_ROW_TRACK_SIZE[tracks];
+  return { estimatedSize: TABLE_VIRTUAL_ROW_TRACK_SIZE[tracks], variableSize };
 }
 
 export function flattenTableVirtualItems(input: FlattenTableVirtualItemsInput): TableVirtualItem[] {
@@ -113,12 +155,15 @@ export function flattenTableVirtualItems(input: FlattenTableVirtualItemsInput): 
     ? input.collapsedGroupIds
     : new Set(input.collapsedGroupIds);
   if (!input.grouped) {
-    return input.rows.map(row => ({
-      kind: 'row' as const,
-      id: `row:${row.id}`,
-      rowId: row.id,
-      estimatedSize: estimateTableRowBlockSize(row, input.columns),
-    }));
+    return input.rows.map(row => {
+      const metrics = tableVirtualRowMetrics(row, input.columns);
+      return {
+        kind: 'row' as const,
+        id: `row:${row.id}`,
+        rowId: row.id,
+        ...metrics,
+      };
+    });
   }
 
   const items: TableVirtualItem[] = [];
@@ -128,15 +173,17 @@ export function flattenTableVirtualItems(input: FlattenTableVirtualItemsInput): 
       id: `group:${group.id}`,
       groupId: group.id,
       estimatedSize: TABLE_VIRTUAL_GROUP_HEADER_SIZE,
+      variableSize: false,
     });
     if (collapsed.has(group.id)) continue;
     for (const row of group.rows) {
+      const metrics = tableVirtualRowMetrics(row, input.columns);
       items.push({
         kind: 'row',
         id: `row:${row.id}`,
         rowId: row.id,
         groupId: group.id,
-        estimatedSize: estimateTableRowBlockSize(row, input.columns),
+        ...metrics,
       });
     }
   }
@@ -145,7 +192,7 @@ export function flattenTableVirtualItems(input: FlattenTableVirtualItemsInput): 
 
 export function tableVirtualOverscanPx(viewportSize: number): number {
   const min = TABLE_VIRTUAL_MIN_OVERSCAN_ROWS * TABLE_VIRTUAL_ROW_TRACK_SIZE[1];
-  return Math.max(0, viewportSize, min);
+  return Math.max(0, viewportSize / 2, min);
 }
 
 export function buildTableVirtualPrefixSums(sizes: readonly number[]): number[] {
@@ -211,7 +258,7 @@ function sameVirtualNodes(left: readonly TableVirtualNode[], right: readonly Tab
       continue;
     }
     if (a.kind === 'row' && b.kind === 'row') {
-      if (a.index !== b.index) return false;
+      if (a.index !== b.index || a.item.id !== b.item.id) return false;
       continue;
     }
     if (a.kind === 'group' && b.kind === 'group') {
@@ -222,12 +269,55 @@ function sameVirtualNodes(left: readonly TableVirtualNode[], right: readonly Tab
   return true;
 }
 
-/** Resolve the mounted slice, sticky headers, and in-flow spacers for one scroll offset. */
-export function resolveTableVirtualPlan(input: ResolveTableVirtualPlanInput): TableVirtualPlan {
-  const { items, sizes } = input;
+/** Precompute dataset-wide lookup state. Rebuild only when items or their sizes change. */
+export function createTableVirtualIndex(
+  items: readonly TableVirtualItem[],
+  sizes: readonly number[],
+): TableVirtualIndex {
   const prefix = buildTableVirtualPrefixSums(sizes);
   const itemCount = items.length;
-  const totalSize = prefix[itemCount] ?? 0;
+  const groupHeaderIndexes: number[] = [];
+  const headerIndexByGroup = new Map<string, number>();
+  const groupEndByHeader = new Map<number, number>();
+  const rowIndexById = new Map<string, number>();
+  const itemIndexById = new Map<string, number>();
+  let activeHeaderIndex: number | null = null;
+
+  for (let itemIndex = 0; itemIndex < itemCount; itemIndex += 1) {
+    const item = items[itemIndex];
+    if (item) itemIndexById.set(item.id, itemIndex);
+    if (item?.kind === 'group' && item.groupId) {
+      if (activeHeaderIndex != null) groupEndByHeader.set(activeHeaderIndex, itemIndex);
+      activeHeaderIndex = itemIndex;
+      groupHeaderIndexes.push(itemIndex);
+      headerIndexByGroup.set(item.groupId, itemIndex);
+    } else if (item?.kind === 'row' && item.rowId) {
+      rowIndexById.set(item.rowId, itemIndex);
+    }
+  }
+  if (activeHeaderIndex != null) groupEndByHeader.set(activeHeaderIndex, itemCount);
+
+  return {
+    items,
+    sizes,
+    prefix,
+    itemCount,
+    totalSize: prefix[itemCount] ?? 0,
+    grouped: groupHeaderIndexes.length > 0,
+    groupHeaderIndexes,
+    headerIndexByGroup,
+    groupEndByHeader,
+    rowIndexById,
+    itemIndexById,
+  };
+}
+
+/** Resolve the mounted slice from cached dataset-wide lookup state. */
+export function resolveTableVirtualPlanFromIndex(
+  index: TableVirtualIndex,
+  input: ResolveTableVirtualIndexedPlanInput,
+): TableVirtualPlan {
+  const { items, prefix, itemCount, totalSize } = index;
   const empty: TableVirtualPlan = {
     totalSize,
     itemCount,
@@ -241,193 +331,166 @@ export function resolveTableVirtualPlan(input: ResolveTableVirtualPlanInput): Ta
 
   const viewportSize = Math.max(0, input.viewportSize);
   const overscan = tableVirtualOverscanPx(viewportSize);
+  const trailingOverscan = TABLE_VIRTUAL_MIN_OVERSCAN_ROWS *
+    TABLE_VIRTUAL_ROW_TRACK_SIZE[1] / 4;
+  const before = input.scrollDirection === 'forward' ? trailingOverscan : overscan;
+  const after = input.scrollDirection === 'backward' ? trailingOverscan : overscan;
   const scrollOffset = Math.max(0, Math.min(input.scrollOffset, Math.max(0, totalSize)));
-  const rangeStart = Math.max(0, scrollOffset - overscan);
-  const rangeEnd = scrollOffset + viewportSize + overscan;
+  const rangeStart = Math.max(0, scrollOffset - before);
+  const rangeEnd = scrollOffset + viewportSize + after;
   const start = findTableVirtualIndexAtOffset(prefix, rangeStart);
   let end = start;
   while (end < itemCount && (prefix[end] ?? 0) < rangeEnd) end += 1;
   if (end === start) end = Math.min(itemCount, start + 1);
 
   const mounted = new Set<number>();
-  for (let index = start; index < end; index += 1) mounted.add(index);
-
-  const headerIndexByGroup = new Map<string, number>();
-  for (let index = 0; index < itemCount; index += 1) {
-    const item = items[index];
-    if (item?.kind === 'group' && item.groupId) headerIndexByGroup.set(item.groupId, index);
-  }
+  for (let itemIndex = start; itemIndex < end; itemIndex += 1) mounted.add(itemIndex);
 
   const pinHeader = (groupId: string | undefined) => {
     if (!groupId) return;
-    const headerIndex = headerIndexByGroup.get(groupId);
+    const headerIndex = index.headerIndexByGroup.get(groupId);
     if (headerIndex != null) mounted.add(headerIndex);
   };
+  for (const mountedIndex of [...mounted]) pinHeader(items[mountedIndex]?.groupId);
 
-  for (const index of [...mounted]) {
-    pinHeader(items[index]?.groupId);
-  }
+  const nextHeader = firstTableVirtualIndexAfter(index.groupHeaderIndexes, end - 1);
+  if (nextHeader != null) mounted.add(nextHeader);
 
-  const last = end - 1;
-  if (last >= 0) {
-    for (let index = last + 1; index < itemCount; index += 1) {
-      if (items[index]?.kind === 'group') {
-        mounted.add(index);
-        break;
-      }
+  if (input.pinnedRowIds) {
+    for (const rowId of input.pinnedRowIds) {
+      const rowIndex = index.rowIndexById.get(rowId);
+      if (rowIndex == null) continue;
+      mounted.add(rowIndex);
+      pinHeader(items[rowIndex]?.groupId);
     }
   }
 
-  const pinnedRowIds = input.pinnedRowIds;
-  if (pinnedRowIds && pinnedRowIds.size > 0) {
-    for (let index = 0; index < itemCount; index += 1) {
-      const item = items[index];
-      if (item?.kind === 'row' && item.rowId && pinnedRowIds.has(item.rowId)) {
-        mounted.add(index);
-        pinHeader(item.groupId);
-      }
-    }
-  }
-
-  const grouped = items.some(item => item.kind === 'group');
-  const nodes = grouped
-    ? buildGroupedVirtualNodes(items, sizes, mounted)
-    : buildFlatVirtualNodes(items, sizes, mounted);
-
+  const mountedSorted = [...mounted].sort((left, right) => left - right);
+  const nodes = index.grouped
+    ? buildGroupedVirtualNodes(index, mounted, mountedSorted)
+    : buildFlatVirtualNodes(index, mountedSorted);
   const mountedIds = new Set<string>();
-  for (const index of mounted) {
-    const id = items[index]?.id;
+  for (const mountedIndex of mounted) {
+    const id = items[mountedIndex]?.id;
     if (id) mountedIds.add(id);
-  }
-
-  let planStart = itemCount;
-  let planEnd = 0;
-  for (const index of mounted) {
-    if (index < planStart) planStart = index;
-    if (index + 1 > planEnd) planEnd = index + 1;
-  }
-  if (planStart === itemCount) {
-    planStart = start;
-    planEnd = end;
   }
 
   return {
     totalSize,
     itemCount,
-    start: planStart,
-    end: planEnd,
+    start: mountedSorted[0] ?? start,
+    end: mountedSorted.length > 0 ? mountedSorted[mountedSorted.length - 1]! + 1 : end,
     nodes,
     mountedIds,
     mountedIndexes: mounted,
   };
 }
 
-function buildFlatVirtualNodes(
-  items: readonly TableVirtualItem[],
-  sizes: readonly number[],
-  mounted: ReadonlySet<number>,
-): TableVirtualNode[] {
-  const nodes: TableVirtualNode[] = [];
-  let spacer = 0;
-  let spacerFrom = 0;
-  const flush = (until: number) => {
-    if (spacer <= 0) return;
-    nodes.push({ kind: 'spacer', size: spacer, key: `pad-${spacerFrom}-${until}` });
-    spacer = 0;
-  };
+/** Resolve a one-off plan. Controllers retain and reuse a prepared index. */
+export function resolveTableVirtualPlan(input: ResolveTableVirtualPlanInput): TableVirtualPlan {
+  return resolveTableVirtualPlanFromIndex(createTableVirtualIndex(input.items, input.sizes), input);
+}
 
-  for (let index = 0; index < items.length; index += 1) {
-    const item = items[index];
-    if (!item) continue;
-    if (mounted.has(index)) {
-      flush(index);
-      nodes.push({ kind: 'row', index, item });
-      continue;
-    }
-    if (spacer === 0) spacerFrom = index;
-    spacer += sizes[index] ?? 0;
+function firstTableVirtualIndexAfter(indexes: readonly number[], target: number): number | undefined {
+  let low = 0;
+  let high = indexes.length;
+  while (low < high) {
+    const middle = (low + high) >> 1;
+    if ((indexes[middle] ?? 0) <= target) low = middle + 1;
+    else high = middle;
   }
-  flush(items.length);
+  return indexes[low];
+}
+
+function buildFlatVirtualNodes(
+  index: TableVirtualIndex,
+  mounted: readonly number[],
+): TableVirtualNode[] {
+  const { items, prefix, itemCount } = index;
+  const nodes: TableVirtualNode[] = [];
+  let cursor = 0;
+  for (const mountedIndex of mounted) {
+    const item = items[mountedIndex];
+    if (!item) continue;
+    const spacerSize = (prefix[mountedIndex] ?? 0) - (prefix[cursor] ?? 0);
+    if (spacerSize > 0) {
+      nodes.push({ kind: 'spacer', size: spacerSize, key: `pad-${cursor}-${mountedIndex}` });
+    }
+    nodes.push({ kind: 'row', index: mountedIndex, item });
+    cursor = mountedIndex + 1;
+  }
+  const trailingSize = (prefix[itemCount] ?? 0) - (prefix[cursor] ?? 0);
+  if (trailingSize > 0) {
+    nodes.push({ kind: 'spacer', size: trailingSize, key: `pad-${cursor}-${itemCount}` });
+  }
   return nodes;
 }
 
 function buildGroupedVirtualNodes(
-  items: readonly TableVirtualItem[],
-  sizes: readonly number[],
+  index: TableVirtualIndex,
   mounted: ReadonlySet<number>,
+  mountedSorted: readonly number[],
 ): TableVirtualNode[] {
+  const { items, prefix, itemCount } = index;
   const nodes: TableVirtualNode[] = [];
-  let leading = 0;
-  let leadingFrom = 0;
-  const flushLeading = (key: string) => {
-    if (leading <= 0) return;
-    nodes.push({ kind: 'spacer', size: leading, key });
-    leading = 0;
-  };
-
-  let index = 0;
-  while (index < items.length) {
-    const header = items[index];
-    if (header?.kind !== 'group' || !header.groupId) {
-      if (leading === 0) leadingFrom = index;
-      leading += sizes[index] ?? 0;
-      index += 1;
-      continue;
-    }
-
-    const groupId = header.groupId;
-    const headerIndex = index;
-    const memberIndexes: number[] = [];
-    index += 1;
-    while (index < items.length && items[index]?.kind === 'row' && items[index]?.groupId === groupId) {
-      memberIndexes.push(index);
-      index += 1;
-    }
-
-    const headerMounted = mounted.has(headerIndex);
-    const mountedMembers = memberIndexes.filter(memberIndex => mounted.has(memberIndex));
-    if (!headerMounted && mountedMembers.length === 0) {
-      if (leading === 0) leadingFrom = headerIndex;
-      leading += sizes[headerIndex] ?? 0;
-      for (const memberIndex of memberIndexes) leading += sizes[memberIndex] ?? 0;
-      continue;
-    }
-
-    flushLeading(`pad-${leadingFrom}-${headerIndex}`);
-    const groupNodes: Array<Extract<TableVirtualNode, { kind: 'spacer' | 'row' }>> = [];
-    if (mountedMembers.length > 0) {
-      let memberSpacer = 0;
-      let memberFrom = 0;
-      const flushMember = (until: number) => {
-        if (memberSpacer <= 0) return;
-        groupNodes.push({
-          kind: 'spacer',
-          size: memberSpacer,
-          key: `group-${groupId}-pad-${memberFrom}-${until}`,
-        });
-        memberSpacer = 0;
-      };
-      for (const memberIndex of memberIndexes) {
-        const item = items[memberIndex];
-        if (item && mounted.has(memberIndex)) {
-          flushMember(memberIndex);
-          groupNodes.push({ kind: 'row', index: memberIndex, item });
-          continue;
-        }
-        if (memberSpacer === 0) memberFrom = memberIndex;
-        memberSpacer += sizes[memberIndex] ?? 0;
-      }
-      flushMember(memberIndexes[memberIndexes.length - 1]! + 1);
-    }
-
-    nodes.push({
-      kind: 'group',
-      groupId,
-      headerIndex,
-      nodes: groupNodes,
-    });
+  const selectedHeaders = new Set<number>();
+  for (const mountedIndex of mountedSorted) {
+    const item = items[mountedIndex];
+    const headerIndex = item?.kind === 'group'
+      ? mountedIndex
+      : item?.groupId
+        ? index.headerIndexByGroup.get(item.groupId)
+        : undefined;
+    if (headerIndex != null) selectedHeaders.add(headerIndex);
   }
 
-  flushLeading(`pad-${leadingFrom}-end`);
+  let cursor = 0;
+  for (const headerIndex of [...selectedHeaders].sort((left, right) => left - right)) {
+    const header = items[headerIndex];
+    if (header?.kind !== 'group' || !header.groupId) continue;
+    const groupId = header.groupId;
+    const groupEnd = index.groupEndByHeader.get(headerIndex) ?? headerIndex + 1;
+    const leadingSize = (prefix[headerIndex] ?? 0) - (prefix[cursor] ?? 0);
+    if (leadingSize > 0) {
+      nodes.push({ kind: 'spacer', size: leadingSize, key: `pad-${cursor}-${headerIndex}` });
+    }
+
+    const groupNodes: Array<Extract<TableVirtualNode, { kind: 'spacer' | 'row' }>> = [];
+    const mountedMembers = mountedSorted.filter(
+      mountedIndex => mountedIndex > headerIndex && mountedIndex < groupEnd,
+    );
+    let memberCursor = headerIndex + 1;
+    for (const memberIndex of mountedMembers) {
+      const item = items[memberIndex];
+      const spacerSize = (prefix[memberIndex] ?? 0) - (prefix[memberCursor] ?? 0);
+      if (spacerSize > 0) {
+        groupNodes.push({
+          kind: 'spacer',
+          size: spacerSize,
+          key: `group-${groupId}-pad-${memberCursor}-${memberIndex}`,
+        });
+      }
+      if (item?.kind === 'row' && mounted.has(memberIndex)) {
+        groupNodes.push({ kind: 'row', index: memberIndex, item });
+      }
+      memberCursor = memberIndex + 1;
+    }
+    const trailingSize = (prefix[groupEnd] ?? 0) - (prefix[memberCursor] ?? 0);
+    if (trailingSize > 0) {
+      groupNodes.push({
+        kind: 'spacer',
+        size: trailingSize,
+        key: `group-${groupId}-pad-${memberCursor}-${groupEnd}`,
+      });
+    }
+
+    nodes.push({ kind: 'group', groupId, headerIndex, nodes: groupNodes });
+    cursor = groupEnd;
+  }
+
+  const trailingSize = (prefix[itemCount] ?? 0) - (prefix[cursor] ?? 0);
+  if (trailingSize > 0) {
+    nodes.push({ kind: 'spacer', size: trailingSize, key: `pad-${cursor}-${itemCount}` });
+  }
   return nodes;
 }

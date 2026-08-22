@@ -266,6 +266,55 @@ test('keeps the result summary when nested saved-view dialogs expose their own f
   await expect(footer.locator('.ds-table__footer-summary')).toHaveText('Displaying 50 of 1,500');
 });
 
+test('keeps nested component footer slots scoped to footer-leading content', async ({ page }) => {
+  const table = page.locator('#footer');
+  await table.evaluate(element => {
+    const component = document.createElement('div');
+    component.slot = 'footer-leading';
+    component.textContent = 'Saved views';
+    const dialogAction = document.createElement('button');
+    dialogAction.slot = 'footer';
+    dialogAction.textContent = 'Save view';
+    component.append(dialogAction);
+    element.append(component);
+  });
+
+  await expect(table.locator('.ds-table__footer-summary')).toHaveText('Displaying 50 of 1,500');
+  await table.evaluate(element => {
+    (element as HTMLDsTableElement).displayedCount = 51;
+  });
+  await expect(table.locator('.ds-table__footer-summary')).toHaveText('Displaying 51 of 1,500');
+});
+
+test('reacts when owned footer content is added, renamed, and removed after hydration', async ({ page }) => {
+  const table = page.locator('#standard');
+  await expect(table.locator('.ds-table__footer')).toHaveCount(0);
+
+  await table.evaluate(element => {
+    const action = document.createElement('button');
+    action.id = 'dynamic-footer-action';
+    action.slot = 'footer-trailing';
+    action.textContent = 'Export current view';
+    element.append(action);
+  });
+  await expect(table.locator('.ds-table__footer')).toBeVisible();
+  await expect(table.getByRole('button', { name: 'Export current view' })).toBeVisible();
+
+  await table.evaluate(element => {
+    element.querySelector('#dynamic-footer-action')?.setAttribute('slot', 'unrelated');
+  });
+  await expect(table.locator('.ds-table__footer')).toHaveCount(0);
+
+  await table.evaluate(element => {
+    element.querySelector('#dynamic-footer-action')?.setAttribute('slot', 'footer');
+  });
+  await expect(table.locator('.ds-table__footer')).toBeVisible();
+  await table.evaluate(element => {
+    element.querySelector('#dynamic-footer-action')?.remove();
+  });
+  await expect(table.locator('.ds-table__footer')).toHaveCount(0);
+});
+
 test('toggles active sort direction and moves sorting only through another column', async ({ page }) => {
   const table = page.locator('#basic');
   const driverHeader = table.getByRole('columnheader', { name: /Driver/ });
@@ -2945,6 +2994,22 @@ test('virtual mode mounts a window of rows and reports the full list to AT', asy
   })).toBe(true);
 });
 
+test('virtual mode reuses stable row shells when a pool slot re-enters the window', async ({ page }) => {
+  const table = page.locator('#virtual');
+  const viewport = table.locator('.ds-table__viewport');
+  const firstRow = table.locator('[data-row-id="virtual-0"]');
+  await firstRow.evaluate(element => {
+    (window as Window & { __virtualPoolProbe?: Element }).__virtualPoolProbe = element;
+  });
+
+  await viewport.evaluate(element => { element.scrollTop = 960; });
+  await expect(table.locator('[data-row-id="virtual-0"]')).toHaveCount(0);
+  await expect.poll(() => table.evaluate(() => {
+    const probe = (window as Window & { __virtualPoolProbe?: HTMLElement }).__virtualPoolProbe;
+    return !!probe?.isConnected && probe.dataset.rowId !== 'virtual-0';
+  })).toBe(true);
+});
+
 test('virtual select-all applies to supplied rows that are not in the DOM', async ({ page }) => {
   const table = page.locator('#virtual');
   await table.getByRole('checkbox', { name: 'Select all loaded rows' }).click();
@@ -2953,6 +3018,19 @@ test('virtual select-all applies to supplied rows that are not in the DOM', asyn
   await expect.poll(() => table.evaluate((element: HTMLDsTableElement) =>
     element.selectedRowIds.includes('virtual-116'))).toBe(true);
   await expect.poll(() => table.locator('.ds-table__body .ds-table__row').count()).toBeLessThan(50);
+});
+
+test('virtual totals and busy state stay scoped to the complete supplied dataset', async ({ page }) => {
+  const table = page.locator('#virtual');
+  await table.evaluate(element => {
+    const virtual = element as HTMLDsTableElement;
+    virtual.totalCount = 2_000;
+    virtual.loadingMore = true;
+  });
+
+  await expect(table.locator('.ds-table__footer-summary')).toHaveText('120 items');
+  await expect(table.locator('.ds-table__table')).toHaveAttribute('aria-rowcount', '121');
+  await expect(table.locator('.ds-table__table')).not.toHaveAttribute('aria-busy', 'true');
 });
 
 test('keeps a focused row and an open action menu row mounted while virtualizing', async ({ page }) => {
@@ -3003,12 +3081,50 @@ test('virtual grouped tables flatten members into one scrollport with sticky pus
     });
   });
   expect(nestedScroll).toBe(false);
+
+  await table.evaluate(element => {
+    const virtual = element as HTMLDsTableElement;
+    virtual.groups = virtual.groups.map((group, index) => (
+      index === 0 ? { ...group, totalCount: 166 } : group
+    ));
+    element.querySelector<HTMLElement>('.ds-table__viewport')!.scrollTop = 0;
+  });
+  await expect(
+    table.locator('tbody[data-group-id="virtual-first"] .ds-table__group-count'),
+  ).toHaveText('166');
+});
+
+test('virtual table and rowgroup semantics survive windowing styles', async ({ page }) => {
+  const virtual = page.locator('#virtual');
+  const grouped = page.locator('#virtual-grouped');
+  await expect(virtual.getByRole('table')).toBeVisible();
+  await expect(virtual.getByRole('rowgroup')).toHaveCount(2);
+  await expect(grouped.getByRole('rowgroup').first()).toBeVisible();
+  await expect(grouped.getByRole('row').first()).toBeVisible();
+
+  const results = await new AxeBuilder({ page })
+    .include('#virtual')
+    .include('#virtual-grouped')
+    .analyze();
+  expect(results.violations).toEqual([]);
 });
 
 test('virtual mode fails visibly without a bounded viewport', async ({ page }) => {
   const table = page.locator('#virtual-unbounded');
   await expect(table.getByText('Bounded height required')).toBeVisible();
   await expect(table.locator('.ds-table__body .ds-table__row')).toHaveCount(0);
+
+  await table.evaluate(element => {
+    (element as HTMLDsTableElement).maxHeight = 'none';
+  });
+  await expect(table.getByText('Bounded height required')).toBeVisible();
+  await expect(table.locator('.ds-table__body .ds-table__row')).toHaveCount(0);
+
+  await table.evaluate(element => {
+    (element as HTMLDsTableElement).maxHeight = '240px';
+  });
+  await expect.poll(() => table.locator('.ds-table__body .ds-table__row').count())
+    .toBeGreaterThan(0);
 });
 
 test('virtual windows follow height and fitViewport changes', async ({ page }) => {
@@ -3033,10 +3149,23 @@ test('virtual windows follow height and fitViewport changes', async ({ page }) =
 test('virtual mode rebuilds from the top when sort or load identity changes', async ({ page }) => {
   const table = page.locator('#virtual');
   const viewport = table.locator('.ds-table__viewport');
+  await expect(table.locator('.ds-table__body .ds-table__row').first())
+    .toHaveAttribute('data-row-id', 'virtual-0');
   await viewport.evaluate(element => { element.scrollTop = 1200; });
   await expect.poll(() => viewport.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
   await table.locator('[data-sort-control="label"]').first().click();
   await expect.poll(() => viewport.evaluate(element => element.scrollTop)).toBe(0);
+  await expect(table.locator('.ds-table__body .ds-table__row').first())
+    .toHaveAttribute('data-row-id', 'virtual-119');
+
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.rows = element.rows.map((row, index) => ({
+      ...row,
+      id: `replacement-${index}`,
+    }));
+  });
+  await expect(table.locator('.ds-table__body .ds-table__row').first())
+    .toHaveAttribute('data-row-id', 'replacement-0');
 
   await viewport.evaluate(element => { element.scrollTop = 1200; });
   await table.evaluate(element => {
@@ -3044,4 +3173,3 @@ test('virtual mode rebuilds from the top when sort or load identity changes', as
   });
   await expect.poll(() => viewport.evaluate(element => element.scrollTop)).toBe(0);
 });
-

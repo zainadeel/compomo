@@ -104,7 +104,7 @@ test('uses supplied member totals without loaded-window phrasing', () => {
     groupCountPresentation: 'total',
   });
 
-  assert.equal(model.groups[0].count, 2);
-  assert.equal(model.groups[0].visibleCountText, '2');
+  assert.equal(model.groups[0].count, 166);
+  assert.equal(model.groups[0].visibleCountText, '166');
   assert.equal(model.groups[0].countLabel, '166 events');
 });

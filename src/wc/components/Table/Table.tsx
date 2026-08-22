@@ -112,6 +112,10 @@ import type {
   TableSortState,
 } from './table-types';
 
+const TABLE_FOOTER_SLOT_LEADING = 1;
+const TABLE_FOOTER_SLOT_COPY = 2;
+const TABLE_FOOTER_SLOT_TRAILING = 4;
+
 @Component({
   tag: 'ds-table',
   styleUrls: [
@@ -153,7 +157,8 @@ export class Table {
   /**
    * Optional result summary footer. When both `displayedCount` and `totalCount`
    * are finite numbers, infinite mode shows “Displaying {displayed} of {total}”.
-   * Virtual mode ignores `displayedCount` and shows a total-only summary.
+   * Virtual mode ignores `displayedCount` and derives its total from the
+   * complete supplied rows; a mismatched `totalCount` emits a warning.
    */
   @Prop() displayedCount: number | undefined;
   @Prop() totalCount: number | undefined;
@@ -246,6 +251,7 @@ export class Table {
   @State() private activeStickyGroupId: string | null = null;
   @State() private viewportFitSettled = false;
   @State() private headerPresent = false;
+  @State() private footerSlotPresence = 0;
   @State() private fitPageSize: number | undefined;
   @State() private actionMenu: { rowId: string; columnId: string } | null = null;
   @State() private actionMenuInitialFocusVisible = false;
@@ -264,6 +270,41 @@ export class Table {
   private truncateTooltipBound = false;
   private focusedRowId: string | null = null;
   private virtualItems: TableVirtualItem[] = [];
+  private visibleColumnsCache: {
+    columns: TableColumn[];
+    columnCustomizer: boolean;
+    hiddenColumnIds: string[];
+    columnOrder: string[];
+    value: TableColumn[];
+  } | null = null;
+  private renderModelCache: {
+    columns: TableColumn[];
+    rows: TableRow[];
+    groups: TableGroup[];
+    grouped: boolean;
+    selectionMode: TableSelectionMode;
+    selectedRowIds: string[];
+    collapsedGroupIds: string[];
+    virtualCounts: boolean;
+    value: TableRenderModel;
+  } | null = null;
+  private virtualItemsCache: {
+    columns: TableColumn[];
+    rows: TableRow[];
+    groups: TableGroup[];
+    grouped: boolean;
+    collapsedGroupIds: string[];
+  } | null = null;
+  private virtualLookupCache: {
+    rows: TableRow[];
+    groups: TableGroupRenderModel[];
+    rowsById: Map<string, TableRow>;
+    groupsById: Map<string, TableGroupRenderModel>;
+  } | null = null;
+  private virtualRowPoolStates = new Map<string, {
+    slotsByRowId: Map<string, number>;
+    nextSlot: number;
+  }>();
 
   private rootEl: HTMLElement | null = null;
   private viewportEl: HTMLElement | null = null;
@@ -280,6 +321,7 @@ export class Table {
   private renderedModel: TableRenderModel | null = null;
   private stickyGroupConnected = false;
   private headerSlotObserver: MutationObserver | null = null;
+  private footerSlotObserver: MutationObserver | null = null;
   private fitResizeObserver: ResizeObserver | null = null;
   private fitObservedViewport: HTMLElement | null = null;
   private fitObservedTable: HTMLTableElement | null = null;
@@ -287,6 +329,7 @@ export class Table {
   private readonly layoutController = new TableLayoutController({
     elements: () => ({
       viewport: this.viewportEl,
+      contentTable: this.tableEl,
       stickyHeaderTable: this.stickyHeaderTableEl,
       collapseAllOverlay: this.collapseAllOverlayEl,
       frame: this.frameEl,
@@ -376,6 +419,7 @@ export class Table {
   componentWillLoad(): void {
     this.incrementalWindowActive = this.hasIncrementalState;
     this.syncHeaderSlotPresence();
+    this.syncFooterSlotPresence();
     this.loadController.initialize();
     this.groupLoadController.initialize();
     this.warnModelIssues();
@@ -390,13 +434,14 @@ export class Table {
     this.viewportFitController.connect();
     this.syncStickyGroupConnection();
     this.connectHeaderSlotObserver();
+    this.connectFooterSlotObserver();
     this.connectFitObserver();
     this.syncFitPageSize();
     this.connectTruncateTooltip();
   }
 
   componentDidRender(): void {
-    this.layoutController.refresh();
+    this.layoutController.refresh(false);
     this.loadController.refresh();
     this.groupLoadController.refresh();
     this.virtualController.refresh();
@@ -409,7 +454,7 @@ export class Table {
     ) {
       this.dismissTruncateTooltip();
     }
-    this.viewportFitController.refresh();
+    this.viewportFitController.refresh(false);
     this.syncStickyGroupConnection();
     this.connectFitObserver();
     this.syncFitPageSize();
@@ -425,6 +470,7 @@ export class Table {
     this.viewportFitController.connect();
     this.syncStickyGroupConnection();
     this.connectHeaderSlotObserver();
+    this.connectFooterSlotObserver();
     this.connectFitObserver();
     this.connectTruncateTooltip();
   }
@@ -438,6 +484,8 @@ export class Table {
     this.disconnectStickyGroup();
     this.headerSlotObserver?.disconnect();
     this.headerSlotObserver = null;
+    this.footerSlotObserver?.disconnect();
+    this.footerSlotObserver = null;
     this.disconnectFitObserver();
     this.disconnectTruncateTooltip();
     this.closeColumnCustomizer();
@@ -452,6 +500,26 @@ export class Table {
     this.headerSlotObserver = new MutationObserver(this.syncHeaderSlotPresence);
     this.headerSlotObserver.observe(this.el, { childList: true });
     this.syncHeaderSlotPresence();
+  }
+
+  private syncFooterSlotPresence = () => {
+    let presence = 0;
+    if (hasOwnedTableFooterSlot(this.el, 'footer-leading')) presence |= TABLE_FOOTER_SLOT_LEADING;
+    if (hasOwnedTableFooterSlot(this.el, 'footer')) presence |= TABLE_FOOTER_SLOT_COPY;
+    if (hasOwnedTableFooterSlot(this.el, 'footer-trailing')) presence |= TABLE_FOOTER_SLOT_TRAILING;
+    if (presence !== this.footerSlotPresence) this.footerSlotPresence = presence;
+  };
+
+  private connectFooterSlotObserver(): void {
+    if (this.footerSlotObserver || typeof MutationObserver === 'undefined') return;
+    this.footerSlotObserver = new MutationObserver(this.syncFooterSlotPresence);
+    this.footerSlotObserver.observe(this.el, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['slot'],
+    });
+    this.syncFooterSlotPresence();
   }
 
   private connectStickyGroup(): void {
@@ -543,7 +611,12 @@ export class Table {
     else this.loadController.dataChanged();
     this.warnModelIssues();
     this.syncActionMenu();
-    this.virtualController.schedule();
+    this.virtualController.invalidateMeasures();
+  }
+
+  @Watch('totalCount')
+  handleTotalCountChange(): void {
+    this.warnModelIssues();
   }
 
   @Watch('loadIdentity')
@@ -569,6 +642,7 @@ export class Table {
   @Watch('dataMode')
   handleDataModeChange(): void {
     this.incrementalWindowActive = this.hasIncrementalState;
+    this.warnModelIssues();
     this.handleLazyConfigurationChange();
     if (this.dataMode === 'virtual') this.virtualController.resetToTop();
   }
@@ -630,11 +704,29 @@ export class Table {
   }
 
   private get visibleColumns(): TableColumn[] {
-    return resolveTableVisibleColumns(this.columns, {
+    const cached = this.visibleColumnsCache;
+    if (
+      cached &&
+      cached.columns === this.columns &&
+      cached.columnCustomizer === this.columnCustomizer &&
+      cached.hiddenColumnIds === this.hiddenColumnIds &&
+      cached.columnOrder === this.columnOrder
+    ) {
+      return cached.value;
+    }
+    const value = resolveTableVisibleColumns(this.columns, {
       columnCustomizer: this.columnCustomizer,
       hiddenColumnIds: this.hiddenColumnIds,
       columnOrder: this.columnOrder,
     });
+    this.visibleColumnsCache = {
+      columns: this.columns,
+      columnCustomizer: this.columnCustomizer,
+      hiddenColumnIds: this.hiddenColumnIds,
+      columnOrder: this.columnOrder,
+      value,
+    };
+    return value;
   }
 
   private get showsColumnCustomizer(): boolean {
@@ -795,33 +887,70 @@ export class Table {
   }
 
   private createRenderModel(): TableRenderModel {
-    return createTableRenderModel({
-      columns: this.visibleColumns,
+    const columns = this.visibleColumns;
+    const grouped = this.grouped;
+    const virtualCounts = this.dataMode === 'virtual';
+    const cached = this.renderModelCache;
+    if (
+      cached &&
+      cached.columns === columns &&
+      cached.rows === this.rows &&
+      cached.groups === this.groups &&
+      cached.grouped === grouped &&
+      cached.selectionMode === this.selectionMode &&
+      cached.selectedRowIds === this.selectedRowIds &&
+      cached.collapsedGroupIds === this.collapsedGroupIds &&
+      cached.virtualCounts === virtualCounts
+    ) {
+      return cached.value;
+    }
+    const value = createTableRenderModel({
+      columns,
       rows: this.rows,
       groups: this.groups,
-      grouped: this.grouped,
+      grouped,
       selectionMode: this.selectionMode,
       selectedRowIds: this.selectedRowIds,
       collapsedGroupIds: this.collapsedGroupIds,
-      groupCountPresentation: this.dataMode === 'virtual' ? 'total' : 'loaded-progress',
+      groupCountPresentation: virtualCounts ? 'total' : 'loaded-progress',
     });
+    this.renderModelCache = {
+      columns,
+      rows: this.rows,
+      groups: this.groups,
+      grouped,
+      selectionMode: this.selectionMode,
+      selectedRowIds: this.selectedRowIds,
+      collapsedGroupIds: this.collapsedGroupIds,
+      virtualCounts,
+      value,
+    };
+    return value;
   }
 
   private get virtualizationEnabled(): boolean {
-    return this.dataMode === 'virtual' && this.containedScroll;
+    return this.dataMode === 'virtual' && this.hasVirtualViewportBounds;
   }
 
   private get virtualViewportMissing(): boolean {
-    return this.dataMode === 'virtual' && !this.containedScroll;
+    return this.dataMode === 'virtual' && !this.hasVirtualViewportBounds;
+  }
+
+  private get hasVirtualViewportBounds(): boolean {
+    return this.containedScroll && this.estimateVirtualViewportSize() > 0;
   }
 
   private estimateVirtualViewportSize(): number {
-    if (this.viewportEl && this.viewportEl.clientHeight > 0) return this.viewportEl.clientHeight;
+    const measured = this.virtualController.currentViewportSize() ||
+      this.viewportEl?.clientHeight || 0;
     const chrome = (this.captionVisibility === 'visible' ? 48 : 0) + (this.hasResultFooter ? 48 : 0);
     if (this.fixedHeight && this.resolvedHeight) {
+      if (measured > 0) return measured;
       return Math.max(0, resolveCssLengthPx(this.resolvedHeight, 0, this.rootEl ?? this.el) - chrome);
     }
+    if (this.fitViewport) return Math.max(0, measured);
     if (this.resolvedMaxHeight) {
+      if (this.resolvedMaxHeight.trim().toLowerCase() === 'none') return 0;
       return resolveCssLengthPx(this.resolvedMaxHeight, 0, this.rootEl ?? this.el);
     }
     return 0;
@@ -837,6 +966,20 @@ export class Table {
   private syncVirtualItems(model: TableRenderModel): void {
     if (this.dataMode !== 'virtual') {
       this.virtualItems = [];
+      this.virtualItemsCache = null;
+      this.virtualRowPoolStates.clear();
+      return;
+    }
+    const columns = this.visibleColumns;
+    const cached = this.virtualItemsCache;
+    if (
+      cached &&
+      cached.columns === columns &&
+      cached.rows === this.rows &&
+      cached.groups === this.groups &&
+      cached.grouped === model.grouped &&
+      cached.collapsedGroupIds === this.collapsedGroupIds
+    ) {
       return;
     }
     this.virtualItems = flattenTableVirtualItems({
@@ -844,8 +987,15 @@ export class Table {
       rows: this.rows,
       groups: this.groups,
       collapsedGroupIds: this.collapsedGroupIds,
-      columns: this.visibleColumns,
+      columns,
     });
+    this.virtualItemsCache = {
+      columns,
+      rows: this.rows,
+      groups: this.groups,
+      grouped: model.grouped,
+      collapsedGroupIds: this.collapsedGroupIds,
+    };
   }
 
   private shouldVirtualize(model: TableRenderModel): boolean {
@@ -885,6 +1035,13 @@ export class Table {
       } else if (!visibleColumns.some(column => column.id === sortColumn.id)) {
         issues.push(`Sorting references hidden column id: ${this.sort.columnId}`);
       }
+    }
+    if (
+      this.dataMode === 'virtual' &&
+      Number.isFinite(this.totalCount) &&
+      Math.max(0, Math.trunc(this.totalCount!)) !== this.currentLoadedRowCount()
+    ) {
+      issues.push('Virtual mode requires totalCount to match the complete supplied row count.');
     }
     const stickyStart = visibleColumns.filter(column => column.sticky === 'start');
     const stickyEnd = visibleColumns.filter(column => column.sticky === 'end');
@@ -1699,12 +1856,18 @@ export class Table {
     );
   }
 
-  private renderRow(row: TableRow, model: TableRenderModel, ariaRowIndex?: number) {
+  private renderRow(
+    row: TableRow,
+    model: TableRenderModel,
+    ariaRowIndex?: number,
+    variableVirtualSize = false,
+    rowKey = row.id,
+  ) {
     const selected = model.selectedRowIds.has(row.id);
     const rowSelectable = row.selectable !== false && !row.disabled;
     return (
       <tr
-        key={row.id}
+        key={rowKey}
         class={{
           'ds-table__row': true,
           'ds-table__row--selected': selected,
@@ -1714,6 +1877,8 @@ export class Table {
         }}
         data-row-id={row.id}
         data-virtual-id={ariaRowIndex != null ? `row:${row.id}` : undefined}
+        data-virtual-pool-key={ariaRowIndex != null ? rowKey : undefined}
+        data-virtual-measure={ariaRowIndex != null && variableVirtualSize ? 'true' : undefined}
         data-selected={selected ? 'true' : undefined}
         aria-rowindex={ariaRowIndex}
         aria-disabled={row.disabled ? 'true' : undefined}
@@ -1993,10 +2158,45 @@ export class Table {
     node: Extract<TableVirtualNode, { kind: 'row' }>,
     model: TableRenderModel,
     rowsById: Map<string, TableRow>,
+    rowKey: string,
   ) {
     const row = node.item.rowId ? rowsById.get(node.item.rowId) : undefined;
     if (!row) return null;
-    return this.renderRow(row, model, node.index + 2);
+    return this.renderRow(row, model, node.index + 2, node.item.variableSize, rowKey);
+  }
+
+  private virtualRowPoolKeys(
+    nodes: readonly TableVirtualNode[],
+    scope: string,
+  ): Map<number, string> {
+    const rows = nodes.filter(
+      (node): node is Extract<TableVirtualNode, { kind: 'row' }> => node.kind === 'row',
+    );
+    const state = this.virtualRowPoolStates.get(scope) ?? {
+      slotsByRowId: new Map<string, number>(),
+      nextSlot: 0,
+    };
+    this.virtualRowPoolStates.set(scope, state);
+    const desiredIds = new Set(rows.map(node => node.item.rowId ?? node.item.id));
+    const freeSlots: number[] = [];
+    for (const [rowId, slot] of state.slotsByRowId) {
+      if (desiredIds.has(rowId)) continue;
+      state.slotsByRowId.delete(rowId);
+      freeSlots.push(slot);
+    }
+    freeSlots.sort((left, right) => left - right);
+
+    const keys = new Map<number, string>();
+    for (const node of rows) {
+      const rowId = node.item.rowId ?? node.item.id;
+      let slot = state.slotsByRowId.get(rowId);
+      if (slot == null) {
+        slot = freeSlots.shift() ?? state.nextSlot++;
+        state.slotsByRowId.set(rowId, slot);
+      }
+      keys.set(node.index, `virtual-row-slot-${slot}`);
+    }
+    return keys;
   }
 
   private renderVirtualGroup(
@@ -2008,6 +2208,7 @@ export class Table {
     const groupModel = groupsById.get(node.groupId);
     if (!groupModel) return null;
     const { group, collapsed: isCollapsed, intent, intentClass } = groupModel;
+    const rowKeys = this.virtualRowPoolKeys(node.nodes, `group:${group.id}`);
     return (
       <tbody
         class="ds-table__body ds-table__group"
@@ -2041,29 +2242,60 @@ export class Table {
         {node.nodes.map(child => (
           child.kind === 'spacer'
             ? this.renderVirtualSpacer(child, model.totalColumns)
-            : this.renderVirtualRow(child, model, rowsById)
+            : this.renderVirtualRow(
+              child,
+              model,
+              rowsById,
+              rowKeys.get(child.index) ?? `virtual-row-${child.index}`,
+            )
         ))}
       </tbody>
     );
   }
 
   private renderVirtualBodies(model: TableRenderModel, plan: TableVirtualPlan) {
-    const rowsById = new Map(model.loadedRows.map(row => [row.id, row]));
-    const groupsById = new Map(model.groups.map(groupModel => [groupModel.group.id, groupModel]));
+    let lookup = this.virtualLookupCache;
+    if (!lookup || lookup.rows !== model.loadedRows || lookup.groups !== model.groups) {
+      lookup = {
+        rows: model.loadedRows,
+        groups: model.groups,
+        rowsById: new Map(model.loadedRows.map(row => [row.id, row])),
+        groupsById: new Map(model.groups.map(groupModel => [groupModel.group.id, groupModel])),
+      };
+      this.virtualLookupCache = lookup;
+    }
+    const { rowsById, groupsById } = lookup;
     if (!model.grouped) {
+      for (const scope of this.virtualRowPoolStates.keys()) {
+        if (scope !== 'flat') this.virtualRowPoolStates.delete(scope);
+      }
+      const rowKeys = this.virtualRowPoolKeys(plan.nodes, 'flat');
       return (
         <tbody class="ds-table__body">
           {plan.nodes.map(node => (
             node.kind === 'spacer'
               ? this.renderVirtualSpacer(node, model.totalColumns)
               : node.kind === 'row'
-                ? this.renderVirtualRow(node, model, rowsById)
+                ? this.renderVirtualRow(
+                  node,
+                  model,
+                  rowsById,
+                  rowKeys.get(node.index) ?? `virtual-row-${node.index}`,
+                )
                 : null
           ))}
         </tbody>
       );
     }
 
+    const activeGroupScopes = new Set(
+      plan.nodes
+        .filter((node): node is Extract<TableVirtualNode, { kind: 'group' }> => node.kind === 'group')
+        .map(node => `group:${node.groupId}`),
+    );
+    for (const scope of this.virtualRowPoolStates.keys()) {
+      if (!activeGroupScopes.has(scope)) this.virtualRowPoolStates.delete(scope);
+    }
     return plan.nodes.map(node => {
       if (node.kind === 'spacer') {
         return (
@@ -2073,7 +2305,12 @@ export class Table {
         );
       }
       if (node.kind === 'group') {
-        return this.renderVirtualGroup(node, model, rowsById, groupsById);
+        return this.renderVirtualGroup(
+          node,
+          model,
+          rowsById,
+          groupsById,
+        );
       }
       return null;
     });
@@ -2427,10 +2664,7 @@ export class Table {
   private get resultSummary(): string | null {
     if (this.dataMode === 'pagination') return null;
     if (this.dataMode === 'virtual') {
-      const total = Number.isFinite(this.totalCount)
-        ? this.totalCount
-        : this.currentLoadedRowCount();
-      return formatTableTotalSummary(total, this.resultTotalSummaryLabel);
+      return formatTableTotalSummary(this.currentLoadedRowCount(), this.resultTotalSummaryLabel);
     }
     return formatTableResultSummary(
       this.displayedCount,
@@ -2442,16 +2676,14 @@ export class Table {
   private get hasResultFooter(): boolean {
     return (this.dataMode === 'pagination' && !!this.pagination) ||
       !!this.resultSummary ||
-      hasOwnedTableFooterSlot(this.el, 'footer-leading') ||
-      hasOwnedTableFooterSlot(this.el, 'footer') ||
-      hasOwnedTableFooterSlot(this.el, 'footer-trailing');
+      this.footerSlotPresence !== 0;
   }
 
   private renderResultFooter() {
     const summary = this.resultSummary;
-    const hasLeading = hasOwnedTableFooterSlot(this.el, 'footer-leading');
-    const hasCopy = hasOwnedTableFooterSlot(this.el, 'footer');
-    const hasTrailing = hasOwnedTableFooterSlot(this.el, 'footer-trailing');
+    const hasLeading = (this.footerSlotPresence & TABLE_FOOTER_SLOT_LEADING) !== 0;
+    const hasCopy = (this.footerSlotPresence & TABLE_FOOTER_SLOT_COPY) !== 0;
+    const hasTrailing = (this.footerSlotPresence & TABLE_FOOTER_SLOT_TRAILING) !== 0;
     const pagination = this.dataMode === 'pagination' ? this.pagination : null;
     if (!this.hasResultFooter) return null;
     return (
@@ -2459,11 +2691,11 @@ export class Table {
         <div class="ds-table__bar-copy ds-chrome-header__copy ds-control--md">
           {hasLeading && (
             <div class="ds-table__bar-status ds-chrome-header__heading">
-              <slot name="footer-leading" />
+              <slot name="footer-leading" onSlotchange={this.syncFooterSlotPresence} />
             </div>
           )}
           {hasCopy ? (
-            <slot name="footer" />
+            <slot name="footer" onSlotchange={this.syncFooterSlotPresence} />
           ) : summary ? (
             <ds-text
               class="ds-table__footer-summary ds-table__bar-text"
@@ -2497,7 +2729,7 @@ export class Table {
                   this.dsPaginationChange.emit(event.detail)}
               />
             )}
-            <slot name="footer-trailing" />
+            <slot name="footer-trailing" onSlotchange={this.syncFooterSlotPresence} />
           </div>
         )}
       </div>
@@ -2806,7 +3038,9 @@ export class Table {
                 }}
                 style={model.tableStyle}
                 aria-rowcount={virtualize ? 1 + this.virtualItems.length : undefined}
-                aria-busy={initialLoading || this.loadingMore || groupLoadingMore ? 'true' : undefined}
+                aria-busy={initialLoading || (
+                  this.dataMode === 'infinite' && (this.loadingMore || groupLoadingMore)
+                ) ? 'true' : undefined}
                 ref={element => {
                   this.tableEl = element ?? null;
                 }}

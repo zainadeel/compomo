@@ -59,9 +59,13 @@ export function resolveTableViewportFitMetrics(
  */
 export class TableViewportFitController {
   private connected = false;
+  private connectedHost: HTMLElement | null = null;
+  private connectedSurface: HTMLElement | null = null;
   private scrollRoot: HTMLElement | Window | null = null;
   private resizeObserver: ResizeObserver | null = null;
   private metrics: TableViewportFitMetrics | null = null;
+  private insetBlockStart: string | number | null = null;
+  private insetBlockEnd: string | number | null = null;
 
   constructor(private readonly options: TableViewportFitControllerOptions) {}
 
@@ -76,7 +80,7 @@ export class TableViewportFitController {
     this.clearGeometry();
   }
 
-  refresh(): void {
+  refresh(forceGeometry = true): void {
     if (!this.connected) return;
     if (!this.options.enabled()) {
       this.disconnectRuntime();
@@ -84,9 +88,13 @@ export class TableViewportFitController {
       return;
     }
 
-    const host = this.options.elements().host;
-    if (!host) return;
-    const nextScrollRoot = this.findScrollRoot(host);
+    const { host, surface } = this.options.elements();
+    if (!host || !surface) return;
+    const elementsChanged = host !== this.connectedHost || surface !== this.connectedSurface;
+    const nextScrollRoot = elementsChanged || !this.scrollRoot
+      ? this.findScrollRoot(host)
+      : this.scrollRoot;
+    const rootChanged = nextScrollRoot !== this.scrollRoot;
     if (nextScrollRoot !== this.scrollRoot) {
       this.disconnectRuntime();
       this.scrollRoot = nextScrollRoot;
@@ -97,7 +105,14 @@ export class TableViewportFitController {
         this.resizeObserver.observe(this.scrollRoot);
       }
     }
-    this.sync();
+    this.connectedHost = host;
+    this.connectedSurface = surface;
+    const insets = this.options.insets();
+    const insetsChanged = insets.blockStart !== this.insetBlockStart ||
+      insets.blockEnd !== this.insetBlockEnd;
+    this.insetBlockStart = insets.blockStart;
+    this.insetBlockEnd = insets.blockEnd;
+    if (forceGeometry || elementsChanged || rootChanged || insetsChanged) this.sync();
   }
 
   /** Pass a fitted table's boundary wheel delta to its owning page scrollport. */
@@ -126,8 +141,12 @@ export class TableViewportFitController {
     this.scrollRoot?.removeEventListener('scroll', this.sync);
     window.removeEventListener('resize', this.sync);
     this.scrollRoot = null;
+    this.connectedHost = null;
+    this.connectedSurface = null;
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
+    this.insetBlockStart = null;
+    this.insetBlockEnd = null;
   }
 
   private clearGeometry(): void {

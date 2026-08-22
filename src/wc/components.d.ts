@@ -2895,7 +2895,7 @@ export namespace Components {
          */
         "dataModeSwitcherLabel": string;
         /**
-          * Optional result summary footer. When both `displayedCount` and `totalCount` are finite numbers, infinite mode shows “Displaying {displayed} of {total}”. Virtual mode ignores `displayedCount` and shows a total-only summary.
+          * Optional result summary footer. When both `displayedCount` and `totalCount` are finite numbers, infinite mode shows “Displaying {displayed} of {total}”. Virtual mode ignores `displayedCount` and derives its total from the complete supplied rows; a mismatched `totalCount` emits a warning.
          */
         "displayedCount": number | undefined;
         /**
@@ -7821,7 +7821,7 @@ declare namespace LocalJSX {
          */
         "dataModeSwitcherLabel"?: string;
         /**
-          * Optional result summary footer. When both `displayedCount` and `totalCount` are finite numbers, infinite mode shows “Displaying {displayed} of {total}”. Virtual mode ignores `displayedCount` and shows a total-only summary.
+          * Optional result summary footer. When both `displayedCount` and `totalCount` are finite numbers, infinite mode shows “Displaying {displayed} of {total}”. Virtual mode ignores `displayedCount` and derives its total from the complete supplied rows; a mismatched `totalCount` emits a warning.
          */
         "displayedCount"?: number | undefined;
         /**

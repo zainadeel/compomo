@@ -100,7 +100,7 @@ export function createTableRenderModel(input: TableRenderModelInput): TableRende
     groups: input.groups.map(group => {
       const loadedCount = group.rows.length;
       const totalPresentation = input.groupCountPresentation === 'total';
-      const count = totalPresentation ? loadedCount : resolvedTableGroupCount(group);
+      const count = resolvedTableGroupCount(group);
       const totalLabel = group.countLabel ?? `${count} ${count === 1 ? 'item' : 'items'}`;
       const intent = isTableGroupIntent(group.intent) ? group.intent : undefined;
       return {

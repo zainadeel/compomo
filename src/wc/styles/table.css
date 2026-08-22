@@ -232,6 +232,11 @@
   contain: layout style;
 }
 
+/* Bound style and layout invalidation to recycled row shells during window updates. */
+:where(.ds-table__table--virtual .ds-table__row) {
+  contain: layout style;
+}
+
 :where(.ds-table__table--native-group-sticky .ds-table__header-row),
 :where(.ds-table__table--native-group-sticky .ds-table__row),
 :where(.ds-table__table--native-group-sticky .ds-table__skeleton-row) {
