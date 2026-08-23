@@ -75,6 +75,7 @@ import type {
   ShellPageChromeConfig,
   ShellToolsConfig,
 } from './shell-app-types';
+import type { PaperTextureConfig } from '../PaperTexture/paper-texture-types';
 
 @Component({
   tag: 'ds-shell-app',
@@ -105,6 +106,9 @@ export class ShellApp {
    */
   @Prop({ attribute: 'gradient-preset', reflect: true }) gradientPreset: ShellGradientPreset =
     DEFAULT_SHELL_GRADIENT_PRESET;
+
+  /** Optional decorative Paper Design texture layered above the shell wash. */
+  @Prop({ attribute: 'paper-texture' }) paperTexture?: PaperTextureConfig;
 
   /** When `true` (default), registers global shell keyboard shortcuts. `[` toggles panel nav; `]` closes tools; K, A, S, M, N, and / toggle tool drawers. Modifiers are ignored so browser chords like ⌘N stay native. */
   @Prop({ attribute: 'shortcuts-enabled' }) shortcutsEnabled: boolean = true;
@@ -267,6 +271,7 @@ export class ShellApp {
 
   @Watch('navStyle')
   @Watch('gradientPreset')
+  @Watch('paperTexture')
   onShellPropsChange() {
     this.syncSlottedNavStyle();
     this.scheduleChromeSync();
@@ -557,10 +562,18 @@ export class ShellApp {
   }
 
   private chromeLayerActive(): boolean {
+    return this.gradientLayerActive() || this.paperTextureLayerActive();
+  }
+
+  private gradientLayerActive(): boolean {
     return (
       this.resolvedMode !== 'mobile' &&
       normalizeShellGradientPreset(this.gradientPreset) !== 'none'
     );
+  }
+
+  private paperTextureLayerActive(): boolean {
+    return this.resolvedMode !== 'mobile' && this.paperTexture != null;
   }
 
   @Listen('keydown', { target: 'window', capture: true })
@@ -816,13 +829,20 @@ export class ShellApp {
     };
 
     const preset = normalizeShellGradientPreset(this.gradientPreset);
-    if (preset === 'none' || this.resolvedMode === 'mobile') {
+    if (this.resolvedMode === 'mobile') {
       this.clearGradientPaintVars(targets);
       clearLayoutVars();
       return;
     }
 
     const viewport = this.resolveViewportDimensions();
+    if (preset === 'none') {
+      this.clearGradientPaintVars(targets);
+      clearLayoutVars();
+      this.syncPaperTextureLayout(viewport);
+      return;
+    }
+
     const panelWidth = this.resolvePanelWidthPx(panelNav);
 
     const panelPosition = shellGradientPositionPanel();
@@ -859,6 +879,27 @@ export class ShellApp {
         [SHELL_GRADIENT_POSITION_BAR_VAR]: isBar ? barPosition : null,
       });
     }
+
+    this.syncPaperTextureLayout(viewport);
+  }
+
+  private syncPaperTextureLayout(viewport: { width: number; height: number }) {
+    const chrome = this.el.querySelector<HTMLElement>('.shell-app__chrome');
+    const paperTexture = this.el.querySelector<HTMLElement>(
+      '.shell-app__chrome > ds-paper-texture',
+    );
+    if (!chrome || !paperTexture) return;
+
+    const chromeRect = chrome.getBoundingClientRect();
+    paperTexture.style.setProperty('width', `${Math.round(viewport.width)}px`);
+    paperTexture.style.setProperty('height', `${Math.round(viewport.height)}px`);
+    paperTexture.style.setProperty('left', `${-Math.round(chromeRect.left)}px`);
+    paperTexture.style.setProperty('top', `${-Math.round(chromeRect.top)}px`);
+  }
+
+  private renderPaperTexture() {
+    if (!this.paperTextureLayerActive()) return null;
+    return <ds-paper-texture class="shell-app__paper-texture" config={this.paperTexture} />;
   }
 
   private renderManagedPanelNav() {
@@ -1135,7 +1176,9 @@ export class ShellApp {
           <slot name="banner" />
         </div>
         <div class="shell-app__row">
-          <div class="shell-app__chrome" aria-hidden="true" />
+          <div class="shell-app__chrome" aria-hidden="true">
+            {this.renderPaperTexture()}
+          </div>
           <div
             class="shell-app__panel"
             aria-hidden={fullscreen ? 'true' : undefined}
@@ -1196,6 +1239,8 @@ export class ShellApp {
 
   render() {
     const chromeActive = this.chromeLayerActive();
+    const gradientActive = this.gradientLayerActive();
+    const paperTextureActive = this.paperTextureLayerActive();
     const mobile = this.resolvedMode === 'mobile';
     const mobileToolActive = mobile && this.effectiveMobileDestination !== 'area';
     const mobileStageBlocked =
@@ -1203,7 +1248,9 @@ export class ShellApp {
     const fullscreen = !mobile && this.toolsFullscreen;
     const shellCls: Record<string, boolean> = {
       'shell-app': true,
-      'shell-app--gradient': chromeActive,
+      'shell-app--chrome': chromeActive,
+      'shell-app--gradient': gradientActive,
+      'shell-app--paper-texture': paperTextureActive,
       [`shell-app--${this.navStyle}`]: true,
       [`shell-app--${this.resolvedMode}`]: true,
       'shell-app--tools-fullscreen': fullscreen,
@@ -1230,7 +1277,9 @@ export class ShellApp {
           <slot name="banner" />
         </div>
         <div class="shell-app__row">
-          <div class="shell-app__chrome" aria-hidden="true" />
+          <div class="shell-app__chrome" aria-hidden="true">
+            {this.renderPaperTexture()}
+          </div>
           <div class="shell-app__panel" aria-hidden={fullscreen ? 'true' : undefined} inert={fullscreen ? true : undefined}>
             {this.renderManagedPanelNav()}
           </div>

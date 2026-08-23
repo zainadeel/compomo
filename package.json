@@ -73,7 +73,8 @@
     "./components/*": "./dist/components/*"
   },
   "files": [
-    "dist"
+    "dist",
+    "NOTICE"
   ],
   "scripts": {
     "prebuild": "npm run clean && npm run clean:framework-proxies && node scripts/generate-icon-catalog.mjs",
@@ -190,6 +191,7 @@
   ],
   "dependencies": {
     "@lit/react": "^1.0.8",
+    "@paper-design/shaders": "0.0.80",
     "d3-array": "^3.2.4",
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0",

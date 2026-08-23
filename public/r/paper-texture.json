@@ -1,0 +1,141 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "paper-texture",
+  "title": "PaperTexture",
+  "description": "A decorative Paper Design WebGL2 paper texture surface with Storybook-tunable literal shader parameters and a static default frame.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/paper-texture",
+    "source": "src/wc/components/PaperTexture/PaperTexture.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "specialized",
+      "status": "experimental",
+      "summary": "A decorative Paper Design WebGL2 paper texture surface with Storybook-tunable literal shader parameters and a static default frame.",
+      "useWhen": [
+        "A shell or other visual surface needs a paper or cardboard texture layered above an existing background.",
+        "Designers need to tune paper texture parameters interactively before choosing a baked static asset."
+      ],
+      "avoidWhen": [
+        "The surface needs semantic content, interaction, or accessible information.",
+        "The target environment cannot provide WebGL2 and no pre-baked fallback asset is available.",
+        "A token-driven color treatment is required; this component accepts literal shader colors only."
+      ],
+      "alternatives": [],
+      "commonlyComposedWith": [
+        "component:ds-shell-app"
+      ],
+      "accessibility": [
+        "The texture is decorative and is hidden from assistive technology.",
+        "Keep all meaningful content in the owning surface above or beside the texture."
+      ],
+      "states": [
+        "The default speed is zero, so a texture renders one deterministic frame without a recurring animation loop.",
+        "Paper shader colors are literal CSS color strings and are not resolved from TokoMo tokens.",
+        "If WebGL2 or the noise texture is unavailable, the decorative layer removes itself without blocking the owning surface."
+      ],
+      "responsiveBehavior": [
+        "The shader observes its host dimensions and follows the owning surface through resize changes.",
+        "minPixelRatio and maxPixelCount are available for explicit quality/performance tuning."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign config as a JavaScript property; nested shader values are not intended for serialized HTML attributes."
+        ],
+        "react": [
+          "Use the generated wrapper and pass the config object as a property."
+        ],
+        "angular": [
+          "Bind the config object as a property so nested shader values are preserved."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook parameter playground",
+          "path": "src/wc/components/PaperTexture/PaperTexture.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "config": {
+          "type": "PaperTextureConfig",
+          "resolvedType": "PaperTextureConfig",
+          "default": "{}",
+          "required": false,
+          "mutable": false,
+          "description": "Paper Design shader parameters. Set as a JavaScript property."
+        }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "config": {
+        "type": "PaperTextureConfig",
+        "resolvedType": "PaperTextureConfig",
+        "default": "{}",
+        "required": false,
+        "mutable": false,
+        "description": "Paper Design shader parameters. Set as a JavaScript property."
+      }
+    },
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-paper-texture",
+      "react": "DsPaperTexture",
+      "angular": "DsPaperTexture"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-paper-texture.js';",
+        "example": "<ds-paper-texture></ds-paper-texture>"
+      },
+      "react": {
+        "import": "import { DsPaperTexture } from '@ds-mo/ui/react';",
+        "example": "<DsPaperTexture />"
+      },
+      "angular": {
+        "import": "import { DsPaperTexture } from '@ds-mo/ui/angular/ds-paper-texture';",
+        "example": "<ds-paper-texture></ds-paper-texture>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: config.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.5.0",
+          "@ds-mo/icons ^7.0.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "src/wc/components/PaperTexture/PaperTexture.css",
+      "content": ":host {\n  position: absolute;\n  inset: 0;\n  display: block;\n  overflow: hidden;\n  pointer-events: none;\n  opacity: var(--ds-paper-texture-opacity, 1);\n}\n\n.paper-texture__mount {\n  position: absolute;\n  inset: 0;\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n  isolation: isolate;\n}\n\n.paper-texture__mount[data-paper-shader] canvas {\n  z-index: 0;\n}\n\n:host([data-paper-texture-error]) {\n  display: none;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/PaperTexture/PaperTexture.tsx",
+      "content": "import { Component, Element, Host, Prop, Watch, h } from '@stencil/core';\nimport {\n  emptyPixel,\n  getShaderColorFromString,\n  getShaderNoiseTexture,\n  paperTextureFragmentShader,\n  ShaderFitOptions,\n  ShaderMount,\n  type ShaderMountUniforms,\n} from '@paper-design/shaders';\nimport { DEFAULT_PAPER_TEXTURE_CONFIG, type PaperTextureConfig } from './paper-texture-types';\n\nlet emptyPixelPromise: Promise<HTMLImageElement> | undefined;\nlet noiseTexturePromise: Promise<HTMLImageElement> | undefined;\n\nfunction waitForImage(image: HTMLImageElement): Promise<HTMLImageElement> {\n  if (image.complete && image.naturalWidth > 0) return Promise.resolve(image);\n\n  return new Promise((resolve, reject) => {\n    const onLoad = () => {\n      cleanup();\n      resolve(image);\n    };\n    const onError = () => {\n      cleanup();\n      reject(new Error(`Paper texture image failed to load: ${image.src}`));\n    };\n    const cleanup = () => {\n      image.removeEventListener('load', onLoad);\n      image.removeEventListener('error', onError);\n    };\n\n    image.addEventListener('load', onLoad, { once: true });\n    image.addEventListener('error', onError, { once: true });\n  });\n}\n\nfunction loadImage(source: HTMLImageElement | string | undefined): Promise<HTMLImageElement> {\n  if (source instanceof HTMLImageElement) return waitForImage(source);\n\n  const image = new Image();\n  if (source && source !== emptyPixel) image.crossOrigin = 'anonymous';\n  image.src = source || emptyPixel;\n  return waitForImage(image);\n}\n\nfunction loadEmptyPixel(): Promise<HTMLImageElement> {\n  emptyPixelPromise ??= loadImage(emptyPixel);\n  return emptyPixelPromise;\n}\n\nfunction loadNoiseTexture(): Promise<HTMLImageElement> {\n  noiseTexturePromise ??= Promise.resolve(getShaderNoiseTexture()).then(image => {\n    if (!image) throw new Error('Paper texture noise texture is unavailable');\n    return waitForImage(image);\n  });\n  return noiseTexturePromise;\n}\n\n@Component({\n  tag: 'ds-paper-texture',\n  styleUrl: 'PaperTexture.css',\n  scoped: true,\n})\nexport class PaperTexture {\n  @Element() el!: HTMLElement;\n\n  /** Paper Design shader parameters. Set as a JavaScript property. */\n  @Prop() config: PaperTextureConfig = {};\n\n  private shaderMount?: ShaderMount;\n  private syncGeneration = 0;\n  private hasLoaded = false;\n\n  componentDidLoad() {\n    this.hasLoaded = true;\n    void this.syncShader();\n  }\n\n  disconnectedCallback() {\n    this.syncGeneration += 1;\n    this.disposeShader();\n  }\n\n  @Watch('config')\n  onConfigChange() {\n    if (this.hasLoaded) void this.syncShader();\n  }\n\n  private resolvedConfig(): Required<Omit<PaperTextureConfig, 'image'>> &\n    Pick<PaperTextureConfig, 'image'> {\n    return {\n      ...DEFAULT_PAPER_TEXTURE_CONFIG,\n      ...(this.config ?? {}),\n    };\n  }\n\n  private async syncShader() {\n    const generation = ++this.syncGeneration;\n    const config = this.resolvedConfig();\n\n    try {\n      const [image, noiseTexture] = await Promise.all([\n        loadImage(config.image).catch(() => loadEmptyPixel()),\n        loadNoiseTexture(),\n      ]);\n\n      if (generation !== this.syncGeneration || !this.el.isConnected) return;\n\n      const uniforms = this.buildUniforms(config, image, noiseTexture);\n      const mountElement = this.el.querySelector<HTMLElement>('.paper-texture__mount');\n      if (!mountElement) return;\n\n      if (!this.shaderMount) {\n        this.shaderMount = new ShaderMount(\n          mountElement,\n          paperTextureFragmentShader,\n          uniforms,\n          undefined,\n          config.speed,\n          config.frame,\n          config.minPixelRatio,\n          config.maxPixelCount,\n          ['u_image']\n        );\n      } else {\n        this.shaderMount.setUniforms(uniforms);\n        this.shaderMount.setSpeed(config.speed);\n        this.shaderMount.setFrame(config.frame);\n        this.shaderMount.setMinPixelRatio(config.minPixelRatio);\n        this.shaderMount.setMaxPixelCount(config.maxPixelCount);\n      }\n\n      this.el.removeAttribute('data-paper-texture-error');\n    } catch (error) {\n      if (generation !== this.syncGeneration) return;\n      this.disposeShader();\n      this.el.querySelector<HTMLElement>('.paper-texture__mount')?.replaceChildren();\n      this.el.setAttribute('data-paper-texture-error', 'unavailable');\n      console.warn('[ds-paper-texture] WebGL2 paper texture unavailable.', error);\n    }\n  }\n\n  private buildUniforms(\n    config: Required<Omit<PaperTextureConfig, 'image'>> & Pick<PaperTextureConfig, 'image'>,\n    image: HTMLImageElement,\n    noiseTexture: HTMLImageElement\n  ): ShaderMountUniforms {\n    return {\n      u_image: image,\n      u_noiseTexture: noiseTexture,\n      u_colorFront: getShaderColorFromString(config.colorFront),\n      u_colorBack: getShaderColorFromString(config.colorBack),\n      u_contrast: config.contrast,\n      u_roughness: config.roughness,\n      u_fiber: config.fiber,\n      u_fiberSize: config.fiberSize,\n      u_crumples: config.crumples,\n      u_crumpleSize: config.crumpleSize,\n      u_foldCount: config.foldCount,\n      u_folds: config.folds,\n      u_fade: config.fade,\n      u_drops: config.drops,\n      u_seed: config.seed,\n      u_fit: ShaderFitOptions[config.fit],\n      u_scale: config.scale,\n      u_rotation: config.rotation,\n      u_offsetX: config.offsetX,\n      u_offsetY: config.offsetY,\n      u_originX: config.originX,\n      u_originY: config.originY,\n      u_worldWidth: config.worldWidth,\n      u_worldHeight: config.worldHeight,\n    };\n  }\n\n  private disposeShader() {\n    this.shaderMount?.dispose();\n    this.shaderMount = undefined;\n  }\n\n  render() {\n    const config = this.resolvedConfig();\n    return (\n      <Host aria-hidden=\"true\" style={{ '--ds-paper-texture-opacity': String(config.opacity) }}>\n        <div class=\"paper-texture__mount\" />\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/PaperTexture/paper-texture-types.ts",
+      "content": "export type PaperTextureFit = 'none' | 'contain' | 'cover';\n\n/**\n * Literal parameters forwarded to Paper Design's paper texture shader.\n * Colors intentionally remain ordinary CSS color strings; they are not token\n * references and are parsed once into shader RGBA uniforms.\n */\nexport interface PaperTextureConfig {\n  image?: HTMLImageElement | string;\n  colorFront?: string;\n  colorBack?: string;\n  contrast?: number;\n  roughness?: number;\n  fiber?: number;\n  fiberSize?: number;\n  crumples?: number;\n  crumpleSize?: number;\n  folds?: number;\n  foldCount?: number;\n  fade?: number;\n  drops?: number;\n  seed?: number;\n  fit?: PaperTextureFit;\n  scale?: number;\n  rotation?: number;\n  originX?: number;\n  originY?: number;\n  offsetX?: number;\n  offsetY?: number;\n  worldWidth?: number;\n  worldHeight?: number;\n  speed?: number;\n  frame?: number;\n  minPixelRatio?: number;\n  maxPixelCount?: number;\n  /** CSS opacity applied after the shader has rendered. */\n  opacity?: number;\n}\n\nexport const DEFAULT_PAPER_TEXTURE_CONFIG: Required<Omit<PaperTextureConfig, 'image'>> = {\n  colorFront: '#b8b8b8',\n  colorBack: '#ffffff',\n  contrast: 0.3,\n  roughness: 0.4,\n  fiber: 0.3,\n  fiberSize: 0.2,\n  crumples: 0.3,\n  crumpleSize: 0.35,\n  folds: 0.65,\n  foldCount: 5,\n  fade: 0,\n  drops: 0.2,\n  seed: 5.8,\n  fit: 'cover',\n  scale: 0.6,\n  rotation: 0,\n  originX: 0.5,\n  originY: 0.5,\n  offsetX: 0,\n  offsetY: 0,\n  worldWidth: 0,\n  worldHeight: 0,\n  speed: 0,\n  frame: 0,\n  minPixelRatio: 2,\n  maxPixelCount: 1920 * 1080 * 4,\n  opacity: 1,\n};\n",
+      "type": "registry:ui"
+    }
+  ]
+}

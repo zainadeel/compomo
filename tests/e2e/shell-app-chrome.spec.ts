@@ -712,6 +712,58 @@ test.describe('App shell chrome', () => {
     expect(colors.chrome).toBe(colors.secondary);
   });
 
+  test('optional paper texture follows the shell chrome viewport layer',
+    chromiumOnly('layout-geometry', 'Paper texture uses the Chromium WebGL2 path when available and has a no-op fallback otherwise.'),
+    async ({ page }) => {
+    const shell = page.locator('ds-shell-app');
+    const paper = page.locator('.shell-app__chrome > ds-paper-texture');
+
+    await shell.evaluate(element => {
+      (element as HTMLElement & { paperTexture: Record<string, unknown> }).paperTexture = {
+        colorFront: '#b8b8b8',
+        colorBack: '#ffffff',
+        contrast: 0.3,
+        roughness: 0.4,
+        fiber: 0.3,
+        fiberSize: 0.2,
+        crumples: 0.3,
+        crumpleSize: 0.35,
+        folds: 0.65,
+        foldCount: 5,
+        fade: 0,
+        drops: 0.2,
+        seed: 5.8,
+        fit: 'cover',
+        scale: 0.6,
+        speed: 0,
+        opacity: 0.2,
+      };
+    });
+
+    await expect(shell).toHaveClass(/shell-app--paper-texture/);
+    await expect(paper).toHaveCount(1);
+    await expect(paper).toHaveAttribute('aria-hidden', 'true');
+    await expect
+      .poll(() =>
+        paper.evaluate(element => {
+          const canvas = element.querySelector('canvas') as HTMLCanvasElement | null;
+          return Boolean(canvas && canvas.width > 0 && canvas.height > 0) ||
+            element.hasAttribute('data-paper-texture-error');
+        }),
+      )
+      .toBe(true);
+
+    const paperBox = await paper.boundingBox();
+    expect(paperBox).toMatchObject({ width: 1280, height: 720 });
+
+    await shell.evaluate(element => {
+      (element as HTMLElement & { paperTexture?: Record<string, unknown> }).paperTexture =
+        undefined;
+    });
+    await expect(paper).toHaveCount(0);
+    await expect(shell).not.toHaveClass(/shell-app--paper-texture/);
+  });
+
   test('tools drawer sets inert and aria-hidden when resting closed', async ({ page }) => {
     const drawer = page.locator('.panel-tools__drawer');
     const host = page.locator('ds-panel-tools');

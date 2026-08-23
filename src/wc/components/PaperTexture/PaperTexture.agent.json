@@ -1,0 +1,48 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-paper-texture",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-paper-texture",
+  "audience": "specialized",
+  "status": "experimental",
+  "summary": "A decorative Paper Design WebGL2 paper texture surface with Storybook-tunable literal shader parameters and a static default frame.",
+  "useWhen": [
+    "A shell or other visual surface needs a paper or cardboard texture layered above an existing background.",
+    "Designers need to tune paper texture parameters interactively before choosing a baked static asset."
+  ],
+  "avoidWhen": [
+    "The surface needs semantic content, interaction, or accessible information.",
+    "The target environment cannot provide WebGL2 and no pre-baked fallback asset is available.",
+    "A token-driven color treatment is required; this component accepts literal shader colors only."
+  ],
+  "alternatives": [],
+  "commonlyComposedWith": ["component:ds-shell-app"],
+  "accessibility": [
+    "The texture is decorative and is hidden from assistive technology.",
+    "Keep all meaningful content in the owning surface above or beside the texture."
+  ],
+  "states": [
+    "The default speed is zero, so a texture renders one deterministic frame without a recurring animation loop.",
+    "Paper shader colors are literal CSS color strings and are not resolved from TokoMo tokens.",
+    "If WebGL2 or the noise texture is unavailable, the decorative layer removes itself without blocking the owning surface."
+  ],
+  "responsiveBehavior": [
+    "The shader observes its host dimensions and follows the owning surface through resize changes.",
+    "minPixelRatio and maxPixelCount are available for explicit quality/performance tuning."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign config as a JavaScript property; nested shader values are not intended for serialized HTML attributes."
+    ],
+    "react": ["Use the generated wrapper and pass the config object as a property."],
+    "angular": ["Bind the config object as a property so nested shader values are preserved."]
+  },
+  "references": [
+    {
+      "label": "Storybook parameter playground",
+      "path": "src/wc/components/PaperTexture/PaperTexture.stories.ts"
+    }
+  ]
+}

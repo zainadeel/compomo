@@ -52,6 +52,7 @@ import { ChromeTransitionDetail } from "./shell/chrome-transition";
 import { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 import { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 import { PanelToolsHeaderAction, PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
+import { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
 import { RadioOption, RadioSize } from "./components/Radio/Radio";
 import { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
 import { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
@@ -117,6 +118,7 @@ export { ChromeTransitionDetail } from "./shell/chrome-transition";
 export { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 export { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 export { PanelToolsHeaderAction, PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
+export { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
 export { RadioOption, RadioSize } from "./components/Radio/Radio";
 export { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
 export { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
@@ -2170,6 +2172,13 @@ export namespace Components {
          */
         "toolsLabel": string;
     }
+    interface DsPaperTexture {
+        /**
+          * Paper Design shader parameters. Set as a JavaScript property.
+          * @default {}
+         */
+        "config": PaperTextureConfig;
+    }
     interface DsRadio {
         /**
           * Accessible name when visible group labeling is unavailable.
@@ -2474,6 +2483,10 @@ export namespace Components {
           * @default {}
          */
         "pageChrome": ShellPageChromeConfig;
+        /**
+          * Optional decorative Paper Design texture layered above the shell wash.
+         */
+        "paperTexture"?: PaperTextureConfig;
         /**
           * Request drawer or fullscreen presentation for the active managed tool.
          */
@@ -4390,6 +4403,12 @@ declare global {
         prototype: HTMLDsPanelToolsElement;
         new (): HTMLDsPanelToolsElement;
     };
+    interface HTMLDsPaperTextureElement extends Components.DsPaperTexture, HTMLStencilElement {
+    }
+    var HTMLDsPaperTextureElement: {
+        prototype: HTMLDsPaperTextureElement;
+        new (): HTMLDsPaperTextureElement;
+    };
     interface HTMLDsRadioElementEventMap {
         "dsChange": string;
     }
@@ -4774,6 +4793,7 @@ declare global {
         "ds-panel-tool-header": HTMLDsPanelToolHeaderElement;
         "ds-panel-tool-search": HTMLDsPanelToolSearchElement;
         "ds-panel-tools": HTMLDsPanelToolsElement;
+        "ds-paper-texture": HTMLDsPaperTextureElement;
         "ds-radio": HTMLDsRadioElement;
         "ds-scroll-overlay": HTMLDsScrollOverlayElement;
         "ds-select": HTMLDsSelectElement;
@@ -7031,6 +7051,13 @@ declare namespace LocalJSX {
          */
         "toolsLabel"?: string;
     }
+    interface DsPaperTexture {
+        /**
+          * Paper Design shader parameters. Set as a JavaScript property.
+          * @default {}
+         */
+        "config"?: PaperTextureConfig;
+    }
     interface DsRadio {
         /**
           * Accessible name when visible group labeling is unavailable.
@@ -7402,6 +7429,10 @@ declare namespace LocalJSX {
           * @default {}
          */
         "pageChrome"?: ShellPageChromeConfig;
+        /**
+          * Optional decorative Paper Design texture layered above the shell wash.
+         */
+        "paperTexture"?: PaperTextureConfig;
         /**
           * When `true` (default), registers global shell keyboard shortcuts. `[` toggles panel nav; `]` closes tools; K, A, S, M, N, and / toggle tool drawers. Modifiers are ignored so browser chords like ⌘N stay native.
           * @default true
@@ -9209,6 +9240,7 @@ declare namespace LocalJSX {
         "ds-panel-tool-header": Omit<DsPanelToolHeader, keyof DsPanelToolHeaderAttributes> & { [K in keyof DsPanelToolHeader & keyof DsPanelToolHeaderAttributes]?: DsPanelToolHeader[K] } & { [K in keyof DsPanelToolHeader & keyof DsPanelToolHeaderAttributes as `attr:${K}`]?: DsPanelToolHeaderAttributes[K] } & { [K in keyof DsPanelToolHeader & keyof DsPanelToolHeaderAttributes as `prop:${K}`]?: DsPanelToolHeader[K] };
         "ds-panel-tool-search": Omit<DsPanelToolSearch, keyof DsPanelToolSearchAttributes> & { [K in keyof DsPanelToolSearch & keyof DsPanelToolSearchAttributes]?: DsPanelToolSearch[K] } & { [K in keyof DsPanelToolSearch & keyof DsPanelToolSearchAttributes as `attr:${K}`]?: DsPanelToolSearchAttributes[K] } & { [K in keyof DsPanelToolSearch & keyof DsPanelToolSearchAttributes as `prop:${K}`]?: DsPanelToolSearch[K] };
         "ds-panel-tools": Omit<DsPanelTools, keyof DsPanelToolsAttributes> & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes]?: DsPanelTools[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `attr:${K}`]?: DsPanelToolsAttributes[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `prop:${K}`]?: DsPanelTools[K] };
+        "ds-paper-texture": DsPaperTexture;
         "ds-radio": Omit<DsRadio, keyof DsRadioAttributes> & { [K in keyof DsRadio & keyof DsRadioAttributes]?: DsRadio[K] } & { [K in keyof DsRadio & keyof DsRadioAttributes as `attr:${K}`]?: DsRadioAttributes[K] } & { [K in keyof DsRadio & keyof DsRadioAttributes as `prop:${K}`]?: DsRadio[K] };
         "ds-scroll-overlay": Omit<DsScrollOverlay, keyof DsScrollOverlayAttributes> & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes]?: DsScrollOverlay[K] } & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes as `attr:${K}`]?: DsScrollOverlayAttributes[K] } & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes as `prop:${K}`]?: DsScrollOverlay[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
@@ -9303,6 +9335,7 @@ declare module "@stencil/core" {
             "ds-panel-tool-header": LocalJSX.IntrinsicElements["ds-panel-tool-header"] & JSXBase.HTMLAttributes<HTMLDsPanelToolHeaderElement>;
             "ds-panel-tool-search": LocalJSX.IntrinsicElements["ds-panel-tool-search"] & JSXBase.HTMLAttributes<HTMLDsPanelToolSearchElement>;
             "ds-panel-tools": LocalJSX.IntrinsicElements["ds-panel-tools"] & JSXBase.HTMLAttributes<HTMLDsPanelToolsElement>;
+            "ds-paper-texture": LocalJSX.IntrinsicElements["ds-paper-texture"] & JSXBase.HTMLAttributes<HTMLDsPaperTextureElement>;
             "ds-radio": LocalJSX.IntrinsicElements["ds-radio"] & JSXBase.HTMLAttributes<HTMLDsRadioElement>;
             "ds-scroll-overlay": LocalJSX.IntrinsicElements["ds-scroll-overlay"] & JSXBase.HTMLAttributes<HTMLDsScrollOverlayElement>;
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;

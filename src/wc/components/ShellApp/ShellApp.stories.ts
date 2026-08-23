@@ -10,6 +10,7 @@ import {
   type PanelToolsItem,
 } from '../PanelTools/panel-tools-types';
 import type { ShellGradientPreset } from '../../shell/shell-gradient-presets';
+import type { PaperTextureConfig } from '../PaperTexture/paper-texture-types';
 import type {
   ShellNavigationConfig,
   ShellPageChromeConfig,
@@ -80,7 +81,27 @@ function toolViews() {
   `;
 }
 
-function shellLayout(gradientPreset: ShellGradientPreset) {
+const PAPER_TEXTURE: PaperTextureConfig = {
+  colorFront: '#b8b8b8',
+  colorBack: '#ffffff',
+  contrast: 0.3,
+  roughness: 0.4,
+  fiber: 0.3,
+  fiberSize: 0.2,
+  crumples: 0.3,
+  crumpleSize: 0.35,
+  folds: 0.65,
+  foldCount: 5,
+  fade: 0,
+  drops: 0.2,
+  seed: 5.8,
+  fit: 'cover',
+  scale: 0.6,
+  speed: 0,
+  opacity: 0.2,
+};
+
+function shellLayout(gradientPreset: ShellGradientPreset, paperTexture?: PaperTextureConfig) {
   return html`
     <div
       style="
@@ -93,6 +114,7 @@ function shellLayout(gradientPreset: ShellGradientPreset) {
         .navigation=${NAVIGATION}
         .pageChrome=${PAGE_CHROME}
         .tools=${TOOLS}
+        .paperTexture=${paperTexture}
         gradient-preset=${gradientPreset}
         style="height: 100%;"
       >
@@ -121,6 +143,11 @@ export const Managed: Story = {
 export const WithoutGradient: Story = {
   name: 'Managed without gradient',
   render: () => shellLayout('none'),
+};
+
+export const PaperTextureOverlay: Story = {
+  name: 'Gradient with paper texture',
+  render: () => shellLayout('neutral', PAPER_TEXTURE),
 };
 
 export const MobileManaged: Story = {
