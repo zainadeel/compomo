@@ -46,6 +46,7 @@
   inset: 0;
   pointer-events: none;
   z-index: 0;
+  overflow: hidden;
   background-color: var(--_shell-chrome-bg);
 }
 
@@ -61,6 +62,10 @@
   background-image: var(--ds-shell-gradient-image, none);
   background-size: var(--ds-shell-gradient-size, auto);
   background-repeat: no-repeat;
+}
+
+.shell-app__paper-texture {
+  z-index: 2;
 }
 
 .shell-app__panel {

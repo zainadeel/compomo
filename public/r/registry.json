@@ -6929,6 +6929,85 @@
       ]
     },
     {
+      "name": "paper-texture",
+      "title": "PaperTexture",
+      "description": "A decorative Paper Design WebGL2 paper texture surface with Storybook-tunable literal shader parameters and a static default frame.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/paper-texture",
+        "source": "src/wc/components/PaperTexture/PaperTexture.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "experimental",
+          "summary": "A decorative Paper Design WebGL2 paper texture surface with Storybook-tunable literal shader parameters and a static default frame.",
+          "useWhen": [
+            "A shell or other visual surface needs a paper or cardboard texture layered above an existing background.",
+            "Designers need to tune paper texture parameters interactively before choosing a baked static asset."
+          ],
+          "avoidWhen": [
+            "The surface needs semantic content, interaction, or accessible information.",
+            "The target environment cannot provide WebGL2 and no pre-baked fallback asset is available.",
+            "A token-driven color treatment is required; this component accepts literal shader colors only."
+          ],
+          "alternatives": [],
+          "commonlyComposedWith": [
+            "component:ds-shell-app"
+          ],
+          "accessibility": [
+            "The texture is decorative and is hidden from assistive technology.",
+            "Keep all meaningful content in the owning surface above or beside the texture."
+          ],
+          "states": [
+            "The default speed is zero, so a texture renders one deterministic frame without a recurring animation loop.",
+            "Paper shader colors are literal CSS color strings and are not resolved from TokoMo tokens.",
+            "If WebGL2 or the noise texture is unavailable, the decorative layer removes itself without blocking the owning surface."
+          ],
+          "responsiveBehavior": [
+            "The shader observes its host dimensions and follows the owning surface through resize changes.",
+            "minPixelRatio and maxPixelCount are available for explicit quality/performance tuning."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign config as a JavaScript property; nested shader values are not intended for serialized HTML attributes."
+            ],
+            "react": [
+              "Use the generated wrapper and pass the config object as a property."
+            ],
+            "angular": [
+              "Bind the config object as a property so nested shader values are preserved."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook parameter playground",
+              "path": "src/wc/components/PaperTexture/PaperTexture.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "config": {
+            "type": "PaperTextureConfig",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-paper-texture",
+          "react": "DsPaperTexture",
+          "angular": "DsPaperTexture"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": []
+    },
+    {
       "name": "radio",
       "title": "Radio",
       "description": "Form-associated one-of-many radio selection set with vertical or horizontal layout, optional per-option descriptions, four densities, per-option inactive state, and roving keyboard focus.",
@@ -7515,7 +7594,8 @@
             "component:ds-mobile-bar-nav",
             "component:ds-shell-page",
             "component:ds-banner",
-            "component:ds-swatch-picker"
+            "component:ds-swatch-picker",
+            "component:ds-paper-texture"
           ],
           "patterns": [
             "pattern:application-shell",
@@ -7541,6 +7621,7 @@
             "Use composition=slotted only for advanced application architectures that intentionally own all lower-level chrome wiring.",
             "Set gradientPreset to the single resolved global chrome preference: neutral by default, none for solid chrome, or cool, neutral, warm, and fresh for token-based washes.",
             "The application owns gradient preference persistence, cross-tab synchronization, and server or account precedence; ShellApp owns rendering the resolved preset across authenticated routes.",
+            "The optional paperTexture property adds a decorative Paper Design texture layer above the gradient or solid chrome frame; its color values are literal shader inputs rather than design tokens.",
             "Dashboard represents day-to-day operational work while Settings represents administrative and configuration work; route state selects the context.",
             "Replace navigation and pageChrome together from one completed route state.",
             "When pageChrome.showBack marks a detail depth, mobile chrome keeps the page heading as its identity and presents only local subsections; peer route tabs remain in desktop BarNav rather than replacing the detail heading.",
@@ -7561,20 +7642,24 @@
             "A slotted Banner remains below the top safe-area inset and above routed, navigation, fullscreen-tool, and mobile global-surface presentations.",
             "Mobile global surfaces conceal and inert the routed workspace without unmounting it, preserving nested routes and scroll state.",
             "Keep PanelNav width, BarNav height, PanelTools chrome, and main-content origin stable except during intentional responsive or collapse transitions.",
+            "Paper texture chrome is desktop/tablet-only and follows the fixed viewport phase of the shell chrome; mobile remains a solid primary stage.",
             "Managed page-header capacity follows only the fixed shell breakpoint: roomy on desktop and compact on tablet. Opening PanelTools does not compact or constrain BarTitle.",
             "The bottom bar remains visible at all route and tool depths in the foundation release."
           ],
           "frameworkCaveats": {
             "customElements": [
               "Assign navigation, pageChrome, and tools as JavaScript properties on the managed ShellApp.",
+              "Assign paperTexture as a JavaScript property when enabling the optional decorative layer.",
               "Stamp route-derived nav-style before components connect when deterministic first paint is required."
             ],
             "react": [
               "Use the generated ShellApp wrapper, structured object props, named tool-view slots, and stable routed children.",
+              "Pass paperTexture as a structured property when the shell needs the optional texture layer.",
               "Resolve all shell inputs from one router state before rendering the composition."
             ],
             "angular": [
               "Use the generated standalone ShellApp adapter, bind structured object props, and preserve named tool-view slots.",
+              "Bind paperTexture as a property so nested shader parameters are preserved.",
               "Bind complex inputs as properties and update navigation inputs atomically from one resolved router state.",
               "Bind both nav-style attributes and properties when deterministic first paint is required."
             ]
@@ -7625,6 +7710,10 @@
           },
           "pageChrome": {
             "type": "ShellPageChromeConfig",
+            "required": false
+          },
+          "paperTexture": {
+            "type": "PaperTextureConfig",
             "required": false
           },
           "shortcutsEnabled": {
@@ -7713,6 +7802,7 @@
         "mobile-header",
         "mobile-sheet-nav",
         "panel-nav",
+        "paper-texture",
         "shell-page",
         "shell-tools",
         "tooltip"

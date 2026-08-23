@@ -20,6 +20,15 @@ measurement, popup positioning, form association, scrolling, or animation
 lifecycle. Chromium-only is appropriate for a narrow local geometry check when
 cross-browser behavior is unaffected.
 
+On macOS, the default `npm run test:e2e` run intentionally uses Chromium and
+WebKit only. Playwright's bundled Firefox build is a Nightly application and
+can hang during headless launch on macOS, leaving high-CPU browser workers
+behind. Firefox remains part of Linux CI; use the Docker helper below for local
+Firefox coverage.
+
+Set `PLAYWRIGHT_ENABLE_FIREFOX=1` only when deliberately investigating the
+native macOS Firefox path.
+
 ### Local Firefox on macOS
 
 When the Playwright Firefox build cannot launch on the host macOS version, run
