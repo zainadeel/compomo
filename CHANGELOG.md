@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.13.0](https://github.com/zainadeel/compomo/compare/v14.12.0...v14.13.0) (2026-08-23)
+
+
+### Added
+
+* **shell:** add paper texture chrome layer ([#511](https://github.com/zainadeel/compomo/issues/511)) ([d67d3c0](https://github.com/zainadeel/compomo/commit/d67d3c0418161eeae2c8a2d6c2e70a2a436c2a4f))
+
 ## [14.12.0](https://github.com/zainadeel/compomo/compare/v14.11.1...v14.12.0) (2026-08-22)
 
 
