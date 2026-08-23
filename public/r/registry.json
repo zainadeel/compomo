@@ -4197,7 +4197,7 @@
     {
       "name": "input",
       "title": "Input",
-      "description": "Form-associated single-line text field for primary and secondary application backgrounds, with native text input behavior, four control densities, optional leading and trailing content, search clearing, and validation.",
+      "description": "Form-associated single-line text and number field for primary and secondary application backgrounds, with native input behavior, four control densities, optional leading and trailing content, search clearing, and validation.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -4208,9 +4208,9 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Form-associated single-line text field for primary and secondary application backgrounds, with native text input behavior, four control densities, optional leading and trailing content, search clearing, and validation.",
+          "summary": "Form-associated single-line text and number field for primary and secondary application backgrounds, with native input behavior, four control densities, optional leading and trailing content, search clearing, and validation.",
           "useWhen": [
-            "A user must enter or edit one line of text, an email address, telephone number, URL, search query, or password.",
+            "A user must enter or edit one line of text, an email address, telephone number, URL, search query, password, or exact number.",
             "The value must participate in native, Angular, or React form state.",
             "A compact filter or toolbar needs a single-line search field that follows the shared control-density recipe."
           ],
@@ -4256,6 +4256,7 @@
             "Search fields show a standard borderless CrossCircle icon action only while they contain a value. Clearing emits the empty value and restores focus to the native field.",
             "The suffix slot is for compact units or decorations. The optional leading icon is decorative and does not replace the field label.",
             "Use autoComplete, inputMode, and enterKeyHint to provide browser and virtual-keyboard hints without changing the value's semantic type.",
+            "Number fields preserve native spinbutton semantics, stepping, and min/max constraint behavior while dsChange continues to report the native string value.",
             "The host exposes focused, filled, dirty, touched, invalid, disabled, read-only, and required data attributes for Field integration and diagnostics.",
             "Use Input only on primary or secondary application backgrounds. It intentionally does not expose alternate surface contexts."
           ],
@@ -4352,6 +4353,14 @@
             "type": "boolean",
             "required": false
           },
+          "max": {
+            "type": "number | undefined",
+            "required": false
+          },
+          "min": {
+            "type": "number | undefined",
+            "required": false
+          },
           "name": {
             "type": "string | undefined",
             "required": false
@@ -4374,6 +4383,10 @@
           },
           "size": {
             "type": "InputSize",
+            "required": false
+          },
+          "step": {
+            "type": "number | undefined",
             "required": false
           },
           "type": {

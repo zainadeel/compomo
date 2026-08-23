@@ -8,7 +8,10 @@ const meta: Meta = {
   argTypes: {
     value: { control: 'text' },
     placeholder: { control: 'text' },
-    type: { control: 'select', options: ['text', 'email', 'tel', 'url', 'search', 'password'] },
+    type: { control: 'select', options: ['text', 'email', 'tel', 'url', 'search', 'password', 'number'] },
+    min: { control: 'number' },
+    max: { control: 'number' },
+    step: { control: 'number' },
     size: { control: 'select', options: ['lg', 'md', 'sm', 'xs'] },
     width: { control: 'select', options: ['fill', 'hug'] },
     icon: { control: 'text' },
@@ -42,6 +45,9 @@ export const Playground: Story = {
         value=${args['value'] ?? ''}
         placeholder=${args['placeholder'] ?? ''}
         type=${args['type'] ?? 'text'}
+        .min=${args['min']}
+        .max=${args['max']}
+        .step=${args['step']}
         size=${args['size'] ?? 'md'}
         width=${args['width'] ?? 'fill'}
         icon=${args['icon'] ?? ''}
@@ -71,6 +77,8 @@ export const SizesAndStates: Story = {
       <ds-input value="Entered value" icon="MagnifyingGlass" aria-label="Input with value"></ds-input>
       <ds-text variant="text-body-small" color="secondary">Search</ds-text>
       <ds-input type="search" value="Search query" icon="MagnifyingGlass" aria-label="Search input"></ds-input>
+      <ds-text variant="text-body-small" color="secondary">Number</ds-text>
+      <ds-input type="number" value="1200" min="0" max="4000" step="100" aria-label="Number input"></ds-input>
       <ds-text variant="text-body-small" color="secondary">Suffix</ds-text>
       <ds-input value="48" aria-label="Input with suffix">
         <ds-text slot="suffix" as="span" variant="text-body-medium" color="inherit">%</ds-text>
