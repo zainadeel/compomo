@@ -14,7 +14,11 @@ let emptyPixelPromise: Promise<HTMLImageElement> | undefined;
 let noiseTexturePromise: Promise<HTMLImageElement> | undefined;
 
 function waitForImage(image: HTMLImageElement): Promise<HTMLImageElement> {
-  if (image.complete && image.naturalWidth > 0) return Promise.resolve(image);
+  if (image.complete) {
+    return image.naturalWidth > 0
+      ? Promise.resolve(image)
+      : Promise.reject(new Error(`Paper texture image failed to load: ${image.src}`));
+  }
 
   return new Promise((resolve, reject) => {
     const onLoad = () => {
@@ -75,6 +79,10 @@ export class PaperTexture {
   componentDidLoad() {
     this.hasLoaded = true;
     void this.syncShader();
+  }
+
+  connectedCallback() {
+    if (this.hasLoaded) void this.syncShader();
   }
 
   disconnectedCallback() {
