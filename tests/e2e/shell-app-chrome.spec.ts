@@ -764,6 +764,55 @@ test.describe('App shell chrome', () => {
     await expect(shell).not.toHaveClass(/shell-app--paper-texture/);
   });
 
+  test('paper texture remounts its shader after reconnecting',
+    chromiumOnly('layout-geometry', 'Reconnect behavior exercises the Chromium WebGL2 shader lifecycle.'),
+    async ({ page }) => {
+    const shell = page.locator('ds-shell-app');
+    const paper = page.locator('.shell-app__chrome > ds-paper-texture');
+
+    await shell.evaluate(element => {
+      (element as HTMLElement & { paperTexture: Record<string, unknown> }).paperTexture = {
+        speed: 0,
+      };
+    });
+
+    await expect(paper.locator('canvas')).toHaveCount(1);
+    await paper.evaluate(element => {
+      const parent = element.parentElement;
+      element.remove();
+      parent?.append(element);
+    });
+
+    await expect(paper.locator('canvas')).toHaveCount(1);
+  });
+
+  test('paper texture falls back when an image failed before assignment',
+    chromiumOnly('layout-geometry', 'The fallback is rendered through the Chromium WebGL2 shader path.'),
+    async ({ page }) => {
+    const precondition = await page.evaluate(async () => {
+      const image = new Image();
+      image.src = 'data:image/png;base64,broken';
+      await new Promise(resolve => {
+        image.onload = resolve;
+        image.onerror = resolve;
+      });
+
+      const paper = document.createElement('ds-paper-texture') as HTMLElement & {
+        config: Record<string, unknown>;
+      };
+      paper.setAttribute('data-e2e-broken-image', '');
+      paper.config = { image, speed: 0 };
+      document.body.append(paper);
+
+      return { complete: image.complete, naturalWidth: image.naturalWidth };
+    });
+
+    expect(precondition).toEqual({ complete: true, naturalWidth: 0 });
+    const paper = page.locator('ds-paper-texture[data-e2e-broken-image]');
+    await expect(paper.locator('canvas')).toHaveCount(1);
+    await expect(paper).not.toHaveAttribute('data-paper-texture-error', 'unavailable');
+  });
+
   test('tools drawer sets inert and aria-hidden when resting closed', async ({ page }) => {
     const drawer = page.locator('.panel-tools__drawer');
     const host = page.locator('ds-panel-tools');

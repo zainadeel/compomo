@@ -1369,6 +1369,14 @@ export namespace Components {
           * @default false
          */
         "isInactive": boolean;
+        /**
+          * Maximum accepted value when type is number.
+         */
+        "max": number | undefined;
+        /**
+          * Minimum accepted value when type is number.
+         */
+        "min": number | undefined;
         "name": string | undefined;
         "placeholder": string | undefined;
         /**
@@ -1390,6 +1398,10 @@ export namespace Components {
           * @default 'md'
          */
         "size": InputSize;
+        /**
+          * Numeric increment used by native stepping and constraint validation.
+         */
+        "step": number | undefined;
         /**
           * @default 'text'
          */
@@ -6163,6 +6175,14 @@ declare namespace LocalJSX {
           * @default false
          */
         "isInactive"?: boolean;
+        /**
+          * Maximum accepted value when type is number.
+         */
+        "max"?: number | undefined;
+        /**
+          * Minimum accepted value when type is number.
+         */
+        "min"?: number | undefined;
         "name"?: string | undefined;
         "onDsChange"?: (event: DsInputCustomEvent<string>) => void;
         "onDsClear"?: (event: DsInputCustomEvent<void>) => void;
@@ -6185,6 +6205,10 @@ declare namespace LocalJSX {
           * @default 'md'
          */
         "size"?: InputSize;
+        /**
+          * Numeric increment used by native stepping and constraint validation.
+         */
+        "step"?: number | undefined;
         /**
           * @default 'text'
          */
@@ -8714,6 +8738,9 @@ declare namespace LocalJSX {
         "clearLabel": string;
         "placeholder": string | undefined;
         "type": InputType;
+        "min": number | undefined;
+        "max": number | undefined;
+        "step": number | undefined;
         "autoComplete": string | undefined;
         "inputMode": string;
         "enterKeyHint": string;

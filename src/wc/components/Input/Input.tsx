@@ -9,7 +9,7 @@ import {
   type ControlWidth,
 } from '../../utils';
 
-export type InputType = 'text' | 'email' | 'tel' | 'url' | 'search' | 'password';
+export type InputType = 'text' | 'email' | 'tel' | 'url' | 'search' | 'password' | 'number';
 export type InputSize = 'lg' | 'md' | 'sm' | 'xs';
 export type InputWidth = ControlWidth;
 
@@ -53,6 +53,12 @@ export class Input {
   @Prop() clearLabel: string = 'Clear';
   @Prop() placeholder: string | undefined;
   @Prop() type: InputType = 'text';
+  /** Minimum accepted value when type is number. */
+  @Prop() min: number | undefined;
+  /** Maximum accepted value when type is number. */
+  @Prop() max: number | undefined;
+  /** Numeric increment used by native stepping and constraint validation. */
+  @Prop() step: number | undefined;
   /** Native browser autofill hint. */
   @Prop({ attribute: 'autocomplete' }) autoComplete: string | undefined;
   /** Preferred virtual keyboard without changing the value semantics. */
@@ -156,6 +162,7 @@ export class Input {
     const showError = this.error && Boolean(this.errorMessage);
     const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const iconSize = ICON_SIZE[this.size];
+    const numeric = this.type === 'number';
 
     const describedBy = [
       this.ariaDescribedby,
@@ -200,6 +207,9 @@ export class Input {
             id={inputId}
             value={this.value}
             placeholder={this.placeholder}
+            min={numeric ? this.min : undefined}
+            max={numeric ? this.max : undefined}
+            step={numeric ? this.step : undefined}
             disabled={inactive}
             readOnly={this.readOnly}
             required={this.required}

@@ -136,6 +136,31 @@ test('input read-only state remains focusable and submittable without a clear ac
   )).toBe('Kept value');
 });
 
+test('number input preserves native semantics, constraints, stepping, and form value', async ({ page }) => {
+  const input = page.locator('#input-number');
+  const nativeInput = input.getByRole('spinbutton', { name: 'Exact quantity' });
+
+  await expect(nativeInput).toHaveAttribute('type', 'number');
+  await expect(nativeInput).toHaveAttribute('min', '0');
+  await expect(nativeInput).toHaveAttribute('max', '10');
+  await expect(nativeInput).toHaveAttribute('step', '0.5');
+
+  await nativeInput.fill('7.5');
+  await nativeInput.press('ArrowUp');
+  await expect(nativeInput).toHaveValue('8');
+  await expect.poll(() => page.locator('#number-input-form').evaluate(form =>
+    new FormData(form as HTMLFormElement).get('quantity')
+  )).toBe('8');
+
+  await nativeInput.fill('12');
+  expect(await nativeInput.evaluate(element =>
+    (element as HTMLInputElement).validity.rangeOverflow
+  )).toBe(true);
+  expect(await page.locator('#number-input-form').evaluate(form =>
+    (form as HTMLFormElement).checkValidity()
+  )).toBe(false);
+});
+
 test('input follows shared control density, focus, and search-clear recipes', async ({ page }) => {
   const expected = {
     lg: { height: 40, icon: 24, textClass: 'ds-text--body-large' },
