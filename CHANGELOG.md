@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.14.0](https://github.com/zainadeel/compomo/compare/v14.13.0...v14.14.0) (2026-08-23)
+
+
+### Added
+
+* **input:** support numeric fields and harden paper texture ([#513](https://github.com/zainadeel/compomo/issues/513)) ([bc8ea0b](https://github.com/zainadeel/compomo/commit/bc8ea0bc5a46ebd3d080cb446476d21ed737f256))
+
 ## [14.13.0](https://github.com/zainadeel/compomo/compare/v14.12.0...v14.13.0) (2026-08-23)
 
 
