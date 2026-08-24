@@ -283,6 +283,7 @@
     "exports": {
       "customElement": "ds-banner",
       "react": "DsBanner",
+      "vue": "DsBanner",
       "angular": "DsBanner"
     },
     "consumption": {
@@ -296,6 +297,10 @@
         "import": "import { DsBanner } from '@ds-mo/ui/react';",
         "example": "<DsBanner />"
       },
+      "vue": {
+        "import": "import { DsBanner } from '@ds-mo/ui/vue';",
+        "example": "<DsBanner />"
+      },
       "angular": {
         "import": "import { DsBanner } from '@ds-mo/ui/angular/ds-banner';",
         "example": "<ds-banner></ds-banner>"
@@ -305,7 +310,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

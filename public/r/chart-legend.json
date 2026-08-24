@@ -247,6 +247,7 @@
     "exports": {
       "customElement": "ds-chart-legend",
       "react": "DsChartLegend",
+      "vue": "DsChartLegend",
       "angular": "DsChartLegend"
     },
     "consumption": {
@@ -260,6 +261,10 @@
         "import": "import { DsChartLegend } from '@ds-mo/ui/react';",
         "example": "<DsChartLegend />"
       },
+      "vue": {
+        "import": "import { DsChartLegend } from '@ds-mo/ui/vue';",
+        "example": "<DsChartLegend />"
+      },
       "angular": {
         "import": "import { DsChartLegend } from '@ds-mo/ui/angular/ds-chart-legend';",
         "example": "<ds-chart-legend></ds-chart-legend>"
@@ -270,7 +275,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

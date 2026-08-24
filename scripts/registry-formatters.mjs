@@ -26,6 +26,7 @@ export function formatComponentDetail(component) {
     codeExample('Design tokens (once at app entry point)', consumption.cssSetup),
     codeExample('Custom Elements', consumption.customElements?.import),
     codeExample('React', consumption.react?.import),
+    codeExample('Vue', consumption.vue?.import),
     codeExample('Angular', consumption.angular?.import),
   ].filter(Boolean);
   sections.push(`## Imports\n\n${imports.join('\n\n')}`);
@@ -33,6 +34,7 @@ export function formatComponentDetail(component) {
   const examples = [
     codeExample('Custom Elements', consumption.customElements?.example, 'html'),
     codeExample('React', consumption.react?.example),
+    codeExample('Vue', consumption.vue?.example),
     codeExample('Angular', consumption.angular?.example, 'html'),
   ].filter(Boolean);
   if (examples.length) sections.push(`## Examples\n\n${examples.join('\n\n')}`);

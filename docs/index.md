@@ -8,7 +8,7 @@ live in source, package manifests, compiler output, and generated registries.
 | Need                                           | Read                                                                           |
 | ---------------------------------------------- | ------------------------------------------------------------------------------ |
 | Install and first component                    | [README](../README.md), [Storybook introduction](../src/docs/Introduction.mdx) |
-| Angular, React, routing, forms, or first paint | [Framework integration](framework-integration.md)                              |
+| Angular, React, Vue, routing, forms, or first paint | [Framework integration](framework-integration.md)                              |
 | Color                                          | [Color usage](../src/docs/ColorUsage.mdx)                                      |
 | Typography                                     | [Typography usage](../src/docs/TypographyUsage.mdx)                            |
 | Font ownership and loading                     | [Font ownership](font-ownership.md)                                             |

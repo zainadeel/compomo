@@ -107,7 +107,7 @@ const PATTERN_LIST_OUTPUT_SCHEMA = z.object({
   patterns: z.array(PATTERN_SUMMARY_SCHEMA),
 });
 const PATTERN_OUTPUT_SCHEMA = z.object({
-  framework: z.enum(['customElements', 'react', 'angular']).nullable(),
+  framework: z.enum(['customElements', 'react', 'vue', 'angular']).nullable(),
   pattern: JSON_OBJECT_SCHEMA,
 });
 
@@ -256,6 +256,19 @@ function MyPage() {
 }
 \`\`\`
 
+**Vue wrappers** (Stencil-generated):
+
+\`\`\`vue
+<script setup lang="ts">
+import { DsButtonFilled, DsText } from '@ds-mo/ui/vue';
+import '@ds-mo/tokens';
+</script>
+
+<template>
+  <DsButtonFilled label="Continue" />
+</template>
+\`\`\`
+
 **Custom elements** (any framework):
 
 \`\`\`html
@@ -282,7 +295,7 @@ Never hardcode these values. The tokens support light/dark theming automatically
 ## 8. Important
 
 - Source of truth is Stencil \`<ds-*>\` custom elements in \`dist/components/\`
-- Angular: \`@ds-mo/ui/angular\` proxies; React: \`@ds-mo/ui/react\` wrappers
+- Angular: \`@ds-mo/ui/angular\` proxies; React: \`@ds-mo/ui/react\` wrappers; Vue: \`@ds-mo/ui/vue\` wrappers
 - No \`@ds-mo/ui/loader\` or global \`@ds-mo/ui/css\` — import per-component JS modules
 - Icons: \`@ds-mo/icons\` is a required peer; \`<ds-icon name="Bell" />\` uses IcoMo export keys
 `;
@@ -500,10 +513,10 @@ server.registerTool(
   'get_pattern',
   {
     title: 'Get Pattern',
-    description: 'Get design intent, state ownership, accessibility requirements, and executable Custom Elements, React, or Angular recipes for an @ds-mo/ui composition.',
+    description: 'Get design intent, state ownership, accessibility requirements, and executable Custom Elements, React, Vue, or Angular recipes for an @ds-mo/ui composition.',
     inputSchema: z.object({
       name: z.string().describe('Pattern id or name, for example "menu-trigger" or "pattern:menu-trigger".'),
-      framework: z.enum(['customElements', 'react', 'angular']).optional().describe('Return recipes only for this framework. Omit to return every implementation.'),
+      framework: z.enum(['customElements', 'react', 'vue', 'angular']).optional().describe('Return recipes only for this framework. Omit to return every implementation.'),
     }),
     outputSchema: PATTERN_OUTPUT_SCHEMA,
     annotations: READ_ONLY_TOOL_ANNOTATIONS,

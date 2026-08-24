@@ -120,11 +120,18 @@ describe('source-derived component inventory', () => {
     writeFile(root, 'src/.generated/angular/ds-deleted-widget.ts');
     writeFile(root, 'src/.generated/react/ds-deleted-widget.ts');
     writeFile(root, 'src/.generated/react/ds-deleted-widget 2.ts');
+    writeFile(root, 'src/.generated/vue/ds-deleted-widget.ts');
+    writeFile(root, 'src/.generated/vue/ds-deleted-widget 2.ts');
 
     const errors = validateFrameworkAdapters({ root, components: discoverComponents(root) });
     assert.ok(
       errors.some(error =>
         error.includes('missing generated framework adapter src/.generated/react/ds-new-widget.ts')
+      )
+    );
+    assert.ok(
+      errors.some(error =>
+        error.includes('missing generated framework adapter src/.generated/vue/ds-new-widget.ts')
       )
     );
     assert.ok(
@@ -135,6 +142,11 @@ describe('source-derived component inventory', () => {
     assert.ok(
       errors.some(error =>
         error.includes('stale generated framework adapter src/.generated/react/ds-deleted-widget.ts')
+      )
+    );
+    assert.ok(
+      errors.some(error =>
+        error.includes('stale generated framework adapter src/.generated/vue/ds-deleted-widget.ts')
       )
     );
     assert.equal(
@@ -155,6 +167,9 @@ describe('source-derived component inventory', () => {
       'src/.generated/react/ds-new-widget.ts',
       'src/.generated/react/components.ts',
       'src/.generated/react/components 2.ts',
+      'src/.generated/vue/ds-new-widget.ts',
+      'src/.generated/vue/components.ts',
+      'src/.generated/vue/components 2.ts',
     ])
       writeFile(root, generatedPath, 'generated');
     writeFile(root, 'src/framework/angular.ts', 'preserved');
@@ -176,6 +191,9 @@ describe('source-derived component inventory', () => {
       'src/.generated/react/components 2.ts',
       'src/.generated/react/components.ts',
       'src/.generated/react/ds-new-widget.ts',
+      'src/.generated/vue/components 2.ts',
+      'src/.generated/vue/components.ts',
+      'src/.generated/vue/ds-new-widget.ts',
       'src/angular/angular-component-lib/utils 3.ts',
       'src/wc/components/Widget/Widget.stories 2.ts',
       'tests/e2e/widget.spec 2.ts',

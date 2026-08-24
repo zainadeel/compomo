@@ -66,6 +66,9 @@
     "react": [
       "Use DsCheckbox and handle onDsChange; checked and indeterminate are mutable and update after user activation."
     ],
+    "vue": [
+      "Use DsCheckbox with v-model for checked, bind indeterminate as a property, and listen for dsChange."
+    ],
     "angular": [
       "Use DsCheckbox with checked binding and dsChange, or the generated boolean value accessor in Angular forms."
     ]

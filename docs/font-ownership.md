@@ -47,8 +47,9 @@ concrete need before another Fira Code weight is shipped.
 ## Application loading contract
 
 Load each family once at the application root, before product CSS. The same
-setup applies to native custom elements, generated Angular adapters, and
-generated React wrappers because all three render the canonical Stencil CSS.
+setup applies to native custom elements, generated Angular adapters, generated
+React wrappers, and generated Vue wrappers because all four render the canonical
+Stencil CSS.
 
 ```css
 @font-face {

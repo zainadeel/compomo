@@ -303,6 +303,7 @@
     "exports": {
       "customElement": "ds-mobile-sheet-nav",
       "react": "DsMobileSheetNav",
+      "vue": "DsMobileSheetNav",
       "angular": "DsMobileSheetNav"
     },
     "consumption": {
@@ -316,6 +317,10 @@
         "import": "import { DsMobileSheetNav } from '@ds-mo/ui/react';",
         "example": "<DsMobileSheetNav />"
       },
+      "vue": {
+        "import": "import { DsMobileSheetNav } from '@ds-mo/ui/vue';",
+        "example": "<DsMobileSheetNav />"
+      },
       "angular": {
         "import": "import { DsMobileSheetNav } from '@ds-mo/ui/angular/ds-mobile-sheet-nav';",
         "example": "<ds-mobile-sheet-nav></ds-mobile-sheet-nav>"
@@ -326,7 +331,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

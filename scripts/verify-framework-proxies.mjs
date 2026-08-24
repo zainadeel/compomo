@@ -7,4 +7,4 @@ if (errors.length) {
   throw new Error(`Framework proxy inventory is stale:\n${errors.map(error => `  - ${error}`).join('\n')}`);
 }
 
-console.log('✅ Angular and React proxies match the Stencil component inventory.');
+console.log('✅ Angular, React, and Vue proxies match the Stencil component inventory.');

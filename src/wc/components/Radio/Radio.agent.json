@@ -64,6 +64,9 @@
     "react": [
       "Use DsRadio, pass options as an array, and handle onDsChange; value is mutable and updates after user selection."
     ],
+    "vue": [
+      "Use DsRadio with v-model for the selected value, bind options as a property, and listen for dsChange."
+    ],
     "angular": [
       "Use DsRadio with options and value bindings plus dsChange, or import the generated radio value accessor with the component adapter."
     ]

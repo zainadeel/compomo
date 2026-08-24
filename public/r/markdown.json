@@ -98,6 +98,7 @@
     "exports": {
       "customElement": "ds-markdown",
       "react": "DsMarkdown",
+      "vue": "DsMarkdown",
       "angular": "DsMarkdown"
     },
     "consumption": {
@@ -111,6 +112,10 @@
         "import": "import { DsMarkdown } from '@ds-mo/ui/react';",
         "example": "<DsMarkdown />"
       },
+      "vue": {
+        "import": "import { DsMarkdown } from '@ds-mo/ui/vue';",
+        "example": "<DsMarkdown />"
+      },
       "angular": {
         "import": "import { DsMarkdown } from '@ds-mo/ui/angular/ds-markdown';",
         "example": "<ds-markdown></ds-markdown>"
@@ -120,7 +125,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

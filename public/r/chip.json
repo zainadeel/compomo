@@ -226,6 +226,7 @@
     "exports": {
       "customElement": "ds-chip",
       "react": "DsChip",
+      "vue": "DsChip",
       "angular": "DsChip"
     },
     "consumption": {
@@ -239,6 +240,10 @@
         "import": "import { DsChip } from '@ds-mo/ui/react';",
         "example": "<DsChip />"
       },
+      "vue": {
+        "import": "import { DsChip } from '@ds-mo/ui/vue';",
+        "example": "<DsChip />"
+      },
       "angular": {
         "import": "import { DsChip } from '@ds-mo/ui/angular/ds-chip';",
         "example": "<ds-chip></ds-chip>"
@@ -248,7 +253,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

@@ -106,6 +106,7 @@
     "exports": {
       "customElement": "ds-agent-activity",
       "react": "DsAgentActivity",
+      "vue": "DsAgentActivity",
       "angular": "DsAgentActivity"
     },
     "consumption": {
@@ -119,6 +120,10 @@
         "import": "import { DsAgentActivity } from '@ds-mo/ui/react';",
         "example": "<DsAgentActivity />"
       },
+      "vue": {
+        "import": "import { DsAgentActivity } from '@ds-mo/ui/vue';",
+        "example": "<DsAgentActivity />"
+      },
       "angular": {
         "import": "import { DsAgentActivity } from '@ds-mo/ui/angular/ds-agent-activity';",
         "example": "<ds-agent-activity></ds-agent-activity>"
@@ -129,7 +134,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

@@ -70,6 +70,9 @@
         "react": [
           "Use DsRadio, pass options as an array, and handle onDsChange; value is mutable and updates after user selection."
         ],
+        "vue": [
+          "Use DsRadio with v-model for the selected value, bind options as a property, and listen for dsChange."
+        ],
         "angular": [
           "Use DsRadio with options and value bindings plus dsChange, or import the generated radio value accessor with the component adapter."
         ]
@@ -338,6 +341,7 @@
     "exports": {
       "customElement": "ds-radio",
       "react": "DsRadio",
+      "vue": "DsRadio",
       "angular": "DsRadio"
     },
     "consumption": {
@@ -351,6 +355,10 @@
         "import": "import { DsRadio } from '@ds-mo/ui/react';",
         "example": "<DsRadio />"
       },
+      "vue": {
+        "import": "import { DsRadio } from '@ds-mo/ui/vue';",
+        "example": "<DsRadio />"
+      },
       "angular": {
         "import": "import { DsRadio } from '@ds-mo/ui/angular/ds-radio';",
         "example": "<ds-radio></ds-radio>"
@@ -361,7 +369,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

@@ -72,6 +72,9 @@
         "react": [
           "Use DsCheckbox and handle onDsChange; checked and indeterminate are mutable and update after user activation."
         ],
+        "vue": [
+          "Use DsCheckbox with v-model for checked, bind indeterminate as a property, and listen for dsChange."
+        ],
         "angular": [
           "Use DsCheckbox with checked binding and dsChange, or the generated boolean value accessor in Angular forms."
         ]
@@ -330,6 +333,7 @@
     "exports": {
       "customElement": "ds-checkbox",
       "react": "DsCheckbox",
+      "vue": "DsCheckbox",
       "angular": "DsCheckbox"
     },
     "consumption": {
@@ -343,6 +347,10 @@
         "import": "import { DsCheckbox } from '@ds-mo/ui/react';",
         "example": "<DsCheckbox />"
       },
+      "vue": {
+        "import": "import { DsCheckbox } from '@ds-mo/ui/vue';",
+        "example": "<DsCheckbox />"
+      },
       "angular": {
         "import": "import { DsCheckbox } from '@ds-mo/ui/angular/ds-checkbox';",
         "example": "<ds-checkbox></ds-checkbox>"
@@ -352,7 +360,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

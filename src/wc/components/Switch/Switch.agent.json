@@ -67,6 +67,9 @@
     "react": [
       "Use DsSwitch and handle onDsChange; checked is mutable and updates immediately when the component is activated."
     ],
+    "vue": [
+      "Use DsSwitch with v-model for checked, and listen for dsChange."
+    ],
     "angular": [
       "Use DsSwitch with checked binding and dsChange, or the generated boolean value accessor in Angular forms."
     ]

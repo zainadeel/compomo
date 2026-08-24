@@ -23,6 +23,7 @@ const PACKAGE_ARTIFACTS = [
   'dist/components/index.js',
   'dist/types/components.d.ts',
   'dist/react/components.js',
+  'dist/vue/components.js',
   'dist/framework/angular.js',
   'dist/agent.json',
 ];

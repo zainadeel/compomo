@@ -10,7 +10,7 @@
   "summary": "Form-associated single-line text and number field for primary and secondary application backgrounds, with native input behavior, four control densities, optional leading and trailing content, search clearing, and validation.",
   "useWhen": [
     "A user must enter or edit one line of text, an email address, telephone number, URL, search query, password, or exact number.",
-    "The value must participate in native, Angular, or React form state.",
+    "The value must participate in native, Angular, React, or Vue form state.",
     "A compact filter or toolbar needs a single-line search field that follows the shared control-density recipe."
   ],
   "avoidWhen": [
@@ -71,6 +71,9 @@
     ],
     "react": [
       "Use DsInput, bind value for controlled application state, and handle onDsChange and onDsClear."
+    ],
+    "vue": [
+      "Use DsInput with v-model for the value, and listen for dsChange and dsClear."
     ],
     "angular": [
       "Import DsInput with TextValueAccessor when integrating with Angular Forms."

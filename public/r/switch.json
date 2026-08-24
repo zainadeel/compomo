@@ -73,6 +73,9 @@
         "react": [
           "Use DsSwitch and handle onDsChange; checked is mutable and updates immediately when the component is activated."
         ],
+        "vue": [
+          "Use DsSwitch with v-model for checked, and listen for dsChange."
+        ],
         "angular": [
           "Use DsSwitch with checked binding and dsChange, or the generated boolean value accessor in Angular forms."
         ]
@@ -315,6 +318,7 @@
     "exports": {
       "customElement": "ds-switch",
       "react": "DsSwitch",
+      "vue": "DsSwitch",
       "angular": "DsSwitch"
     },
     "consumption": {
@@ -328,6 +332,10 @@
         "import": "import { DsSwitch } from '@ds-mo/ui/react';",
         "example": "<DsSwitch />"
       },
+      "vue": {
+        "import": "import { DsSwitch } from '@ds-mo/ui/vue';",
+        "example": "<DsSwitch />"
+      },
       "angular": {
         "import": "import { DsSwitch } from '@ds-mo/ui/angular/ds-switch';",
         "example": "<ds-switch></ds-switch>"
@@ -337,7 +345,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

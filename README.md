@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/@ds-mo/ui.svg)](https://www.npmjs.com/package/@ds-mo/ui)
 
 Framework-neutral Stencil web components styled with TokoMo tokens. CompoMo
-ships custom elements plus generated Angular and React adapters.
+ships custom elements plus generated Angular, React, and Vue adapters.
 
 ## Install
 
@@ -43,6 +43,14 @@ React applications use the generated wrappers:
 import { DsButtonFilled } from '@ds-mo/ui/react';
 ```
 
+Vue applications use the generated wrappers:
+
+```vue
+<script setup lang="ts">
+import { DsButtonFilled } from '@ds-mo/ui/vue';
+</script>
+```
+
 Install `@ds-mo/icons` in the consuming application. `ds-icon` resolves exact
 canonical IcoMo export names at application bundle time.
 
@@ -59,7 +67,7 @@ There is no global component CSS bundle; styles ship with each custom element.
 ## Agent recipes
 
 The package includes the local `compomo-mcp` executable with generated
-component metadata and executable Custom Elements, Angular, and React
+component metadata and executable Custom Elements, Angular, React, and Vue
 composition recipes.
 
 ```toml

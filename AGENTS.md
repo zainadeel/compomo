@@ -24,8 +24,8 @@ changed.
 
 ## Architecture
 
-CompoMo ships framework-neutral `<ds-*>` custom elements plus generated Angular
-and React adapters:
+CompoMo ships framework-neutral `<ds-*>` custom elements plus generated Angular,
+React, and Vue adapters:
 
 ```text
 @ds-mo/tokens → @ds-mo/icons → @ds-mo/ui → applications
@@ -33,7 +33,7 @@ and React adapters:
 
 - Source components: `src/wc/components/`
 - Shared component utilities: `src/wc/utils/`
-- Generated framework source: ignored `src/.generated/{angular,react}/`
+- Generated framework source: ignored `src/.generated/{angular,react,vue}/`
 - Storybook usage documentation: `src/docs/`
 - Agent intent and compositions: co-located `*.agent.json` and `agent/patterns/`
 - Generated registry: `public/r/`
@@ -84,8 +84,8 @@ then rewrites back.
 
 - Use TokoMo custom properties for colors, spacing, dimensions, radii,
   typography, motion, and effects. Do not hardcode design values.
-- Author behavior once in Stencil. Do not create hand-maintained Angular or
-  React implementations.
+- Author behavior once in Stencil. Do not create hand-maintained Angular, React,
+  or Vue implementations.
 - Default components to `scoped: true`; use shadow DOM only when isolation is
   required by the implementation.
 - Components are authored for left-to-right interfaces. Do not add RTL-only

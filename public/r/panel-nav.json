@@ -579,6 +579,7 @@
     "exports": {
       "customElement": "ds-panel-nav",
       "react": "DsPanelNav",
+      "vue": "DsPanelNav",
       "angular": "DsPanelNav"
     },
     "consumption": {
@@ -592,6 +593,10 @@
         "import": "import { DsPanelNav } from '@ds-mo/ui/react';",
         "example": "<DsPanelNav />"
       },
+      "vue": {
+        "import": "import { DsPanelNav } from '@ds-mo/ui/vue';",
+        "example": "<DsPanelNav />"
+      },
       "angular": {
         "import": "import { DsPanelNav } from '@ds-mo/ui/angular/ds-panel-nav';",
         "example": "<ds-panel-nav></ds-panel-nav>"
@@ -601,7 +606,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

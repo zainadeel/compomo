@@ -5,8 +5,8 @@ import { Meta } from '@storybook/addon-docs/blocks';
 # CompoMo
 
 CompoMo (`@ds-mo/ui`) is the component layer of the ds-mo design system. It
-ships framework-agnostic Stencil web components plus generated Angular and
-React adapters from the same source.
+ships framework-agnostic Stencil web components plus generated Angular, React,
+and Vue adapters from the same source.
 
 ## Install
 
@@ -70,6 +70,16 @@ Use the generated React wrappers:
 
 ```tsx
 import { DsButtonFilled, DsText } from '@ds-mo/ui/react';
+```
+
+### Vue
+
+Use the generated Vue wrappers:
+
+```vue
+<script setup lang="ts">
+import { DsButtonFilled, DsText } from '@ds-mo/ui/vue';
+</script>
 ```
 
 ## Icons

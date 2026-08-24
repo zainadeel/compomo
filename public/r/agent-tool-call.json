@@ -202,6 +202,7 @@
     "exports": {
       "customElement": "ds-agent-tool-call",
       "react": "DsAgentToolCall",
+      "vue": "DsAgentToolCall",
       "angular": "DsAgentToolCall"
     },
     "consumption": {
@@ -215,6 +216,10 @@
         "import": "import { DsAgentToolCall } from '@ds-mo/ui/react';",
         "example": "<DsAgentToolCall />"
       },
+      "vue": {
+        "import": "import { DsAgentToolCall } from '@ds-mo/ui/vue';",
+        "example": "<DsAgentToolCall />"
+      },
       "angular": {
         "import": "import { DsAgentToolCall } from '@ds-mo/ui/angular/ds-agent-tool-call';",
         "example": "<ds-agent-tool-call></ds-agent-tool-call>"
@@ -225,7 +230,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

@@ -1233,6 +1233,7 @@
     "exports": {
       "customElement": "ds-table",
       "react": "DsTable",
+      "vue": "DsTable",
       "angular": "DsTable"
     },
     "consumption": {
@@ -1246,6 +1247,10 @@
         "import": "import { DsTable } from '@ds-mo/ui/react';",
         "example": "<DsTable />"
       },
+      "vue": {
+        "import": "import { DsTable } from '@ds-mo/ui/vue';",
+        "example": "<DsTable />"
+      },
       "angular": {
         "import": "import { DsTable } from '@ds-mo/ui/angular/ds-table';",
         "example": "<ds-table></ds-table>"
@@ -1256,7 +1261,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

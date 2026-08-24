@@ -7,7 +7,7 @@ CompoMo has one source-derived component inventory and two deliberately separate
 | Component existence, tag, source path | Stencil `@Component()` source, discovered by `scripts/component-inventory.mjs` | Every discovered component produces exactly one item and detail file. |
 | Props, attributes, defaults, types, events, methods, slots, dependency graph | Stencil `docs-json` at `dist/docs/components.json` | Copied mechanically into `meta.api`; never authored in agent JSON. |
 | Selection, avoidance, composition, accessibility, state ownership, responsive behavior | Co-located `<Name>.agent.json` | Merged into `meta.intent`. |
-| React and Angular names and package subpaths | Source-derived component name plus generated adapters | Generated in consumption examples and verified as files. |
+| React, Vue, and Angular names and package subpaths | Source-derived component name plus generated adapters | Generated in consumption examples and verified as files. |
 | Package name, version ranges, required peers | `package.json` | Read at generation time. |
 | Source bodies for detailed MCP context | Component source directory | Included only in individual detail endpoints, not the master registry. |
 

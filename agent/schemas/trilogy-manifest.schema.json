@@ -143,10 +143,11 @@
         "exports": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["customElement", "react", "angular"],
+          "required": ["customElement", "react", "vue", "angular"],
           "properties": {
             "customElement": { "type": "string", "pattern": "^ds-[a-z0-9-]+$" },
             "react": { "type": "string", "pattern": "^Ds[A-Z][A-Za-z0-9]+$" },
+            "vue": { "type": "string", "pattern": "^Ds[A-Z][A-Za-z0-9]+$" },
             "angular": { "type": "string", "pattern": "^Ds[A-Z][A-Za-z0-9]+$" }
           }
         },
@@ -184,10 +185,11 @@
         "implementations": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["customElements", "react", "angular"],
+          "required": ["customElements", "react", "vue", "angular"],
           "properties": {
             "customElements": { "$ref": "#/$defs/patternImplementation" },
             "react": { "$ref": "#/$defs/patternImplementation" },
+            "vue": { "$ref": "#/$defs/patternImplementation" },
             "angular": { "$ref": "#/$defs/patternImplementation" }
           }
         },
@@ -233,7 +235,7 @@
             "required": ["path", "language", "content"],
             "properties": {
               "path": { "type": "string", "minLength": 1 },
-              "language": { "enum": ["html", "typescript", "tsx"] },
+              "language": { "enum": ["html", "typescript", "tsx", "vue"] },
               "content": { "type": "string", "minLength": 1 }
             }
           }

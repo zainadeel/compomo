@@ -211,6 +211,7 @@
     "exports": {
       "customElement": "ds-agent-questionnaire",
       "react": "DsAgentQuestionnaire",
+      "vue": "DsAgentQuestionnaire",
       "angular": "DsAgentQuestionnaire"
     },
     "consumption": {
@@ -224,6 +225,10 @@
         "import": "import { DsAgentQuestionnaire } from '@ds-mo/ui/react';",
         "example": "<DsAgentQuestionnaire />"
       },
+      "vue": {
+        "import": "import { DsAgentQuestionnaire } from '@ds-mo/ui/vue';",
+        "example": "<DsAgentQuestionnaire />"
+      },
       "angular": {
         "import": "import { DsAgentQuestionnaire } from '@ds-mo/ui/angular/ds-agent-questionnaire';",
         "example": "<ds-agent-questionnaire></ds-agent-questionnaire>"
@@ -234,7 +239,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

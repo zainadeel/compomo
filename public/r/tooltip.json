@@ -320,6 +320,7 @@
     "exports": {
       "customElement": "ds-tooltip",
       "react": "DsTooltip",
+      "vue": "DsTooltip",
       "angular": "DsTooltip"
     },
     "consumption": {
@@ -333,6 +334,10 @@
         "import": "import { DsTooltip } from '@ds-mo/ui/react';",
         "example": "<DsTooltip />"
       },
+      "vue": {
+        "import": "import { DsTooltip } from '@ds-mo/ui/vue';",
+        "example": "<DsTooltip />"
+      },
       "angular": {
         "import": "import { DsTooltip } from '@ds-mo/ui/angular/ds-tooltip';",
         "example": "<ds-tooltip></ds-tooltip>"
@@ -342,7 +347,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

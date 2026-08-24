@@ -64,6 +64,7 @@
       "properties": {
         "customElements": { "$ref": "#/$defs/guidanceOptional" },
         "react": { "$ref": "#/$defs/guidanceOptional" },
+        "vue": { "$ref": "#/$defs/guidanceOptional" },
         "angular": { "$ref": "#/$defs/guidanceOptional" }
       }
     },
