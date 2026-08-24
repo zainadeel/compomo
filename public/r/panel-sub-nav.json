@@ -195,6 +195,7 @@
     "exports": {
       "customElement": "ds-panel-sub-nav",
       "react": "DsPanelSubNav",
+      "vue": "DsPanelSubNav",
       "angular": "DsPanelSubNav"
     },
     "consumption": {
@@ -208,6 +209,10 @@
         "import": "import { DsPanelSubNav } from '@ds-mo/ui/react';",
         "example": "<DsPanelSubNav />"
       },
+      "vue": {
+        "import": "import { DsPanelSubNav } from '@ds-mo/ui/vue';",
+        "example": "<DsPanelSubNav />"
+      },
       "angular": {
         "import": "import { DsPanelSubNav } from '@ds-mo/ui/angular/ds-panel-sub-nav';",
         "example": "<ds-panel-sub-nav></ds-panel-sub-nav>"
@@ -218,7 +223,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

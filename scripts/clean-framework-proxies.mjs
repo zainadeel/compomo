@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** Remove only Stencil-generated React and Angular source adapters. */
+/** Remove only Stencil-generated React, Vue, and Angular source adapters. */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -9,18 +9,22 @@ export const ROOT = path.resolve(path.dirname(SCRIPT_PATH), '..');
 
 const FRAMEWORK_OUTPUTS = [
   { directory: 'src/.generated/react', barrels: ['components.ts'] },
+  { directory: 'src/.generated/vue', barrels: ['components.ts'] },
   { directory: 'src/.generated/angular', barrels: ['proxies.ts', 'index.ts'] },
 ];
 
 const LEGACY_FRAMEWORK_OUTPUTS = [
   { directory: 'src/react', barrels: ['components.ts'] },
+  { directory: 'src/vue', barrels: ['components.ts'] },
   { directory: 'src/angular', barrels: ['proxies.ts', 'index.ts'] },
 ];
 
 const FILE_PROVIDER_COLLISION_OUTPUTS = [
   { directory: 'src/.generated/react', pattern: / \d+\.ts$/ },
+  { directory: 'src/.generated/vue', pattern: / \d+\.ts$/ },
   { directory: 'src/.generated/angular', pattern: / \d+\.ts$/ },
   { directory: 'src/react', pattern: / \d+\.ts$/ },
+  { directory: 'src/vue', pattern: / \d+\.ts$/ },
   { directory: 'src/angular', pattern: / \d+\.ts$/ },
   { directory: 'public/r', pattern: / \d+\.json$/ },
   { directory: 'src/wc/components', pattern: / \d+\.(?:css|json|mdx|ts|tsx)$/ },

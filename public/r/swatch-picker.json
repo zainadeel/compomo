@@ -179,6 +179,7 @@
     "exports": {
       "customElement": "ds-swatch-picker",
       "react": "DsSwatchPicker",
+      "vue": "DsSwatchPicker",
       "angular": "DsSwatchPicker"
     },
     "consumption": {
@@ -192,6 +193,10 @@
         "import": "import { DsSwatchPicker } from '@ds-mo/ui/react';",
         "example": "<DsSwatchPicker />"
       },
+      "vue": {
+        "import": "import { DsSwatchPicker } from '@ds-mo/ui/vue';",
+        "example": "<DsSwatchPicker />"
+      },
       "angular": {
         "import": "import { DsSwatchPicker } from '@ds-mo/ui/angular/ds-swatch-picker';",
         "example": "<ds-swatch-picker></ds-swatch-picker>"
@@ -202,7 +207,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

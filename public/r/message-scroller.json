@@ -175,6 +175,7 @@
     "exports": {
       "customElement": "ds-message-scroller",
       "react": "DsMessageScroller",
+      "vue": "DsMessageScroller",
       "angular": "DsMessageScroller"
     },
     "consumption": {
@@ -188,6 +189,10 @@
         "import": "import { DsMessageScroller } from '@ds-mo/ui/react';",
         "example": "<DsMessageScroller />"
       },
+      "vue": {
+        "import": "import { DsMessageScroller } from '@ds-mo/ui/vue';",
+        "example": "<DsMessageScroller />"
+      },
       "angular": {
         "import": "import { DsMessageScroller } from '@ds-mo/ui/angular/ds-message-scroller';",
         "example": "<ds-message-scroller></ds-message-scroller>"
@@ -197,7 +202,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

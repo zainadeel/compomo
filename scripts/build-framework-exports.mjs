@@ -12,28 +12,92 @@ import {
 import { cleanFileProviderCollisions } from './clean-framework-proxies.mjs';
 
 const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+const stencilReactRuntime = '@stencil/react-output-target/runtime';
+const stencilVueRuntime = '@stencil/vue-output-target/runtime';
+
+const VUE_RUNTIME_DTS = `import type {
+  AllowedComponentProps,
+  ComponentCustomProps,
+  DefineSetupFnComponent,
+  VNodeProps,
+} from 'vue';
+
+export type StencilVueComponent<
+  Props,
+  VModelType = string | number | boolean,
+> = DefineSetupFnComponent<
+  Props & { modelValue?: VModelType } & VNodeProps & AllowedComponentProps & ComponentCustomProps,
+  {},
+  {},
+  Props & { modelValue?: VModelType } & VNodeProps & AllowedComponentProps & ComponentCustomProps
+>;
+
+export declare function defineContainer<
+  Props,
+  VModelType = string | number | boolean,
+>(
+  name: string,
+  defineCustomElement?: () => void,
+  componentProps?: string[],
+  emitProps?: string[],
+  modelProp?: string,
+  modelUpdateEvent?: string,
+  modelUpdateEventAttribute?: string,
+  transformTagFn?: (tagName: string) => string,
+): StencilVueComponent<Props, VModelType>;
+
+export declare function defineStencilSSRComponent(...args: never[]): never;
+`;
+
+function rewriteRuntimeImports(directory, stencilRuntime, localRuntime, label, skip = []) {
+  const skipNames = new Set(skip);
+  let rewritten = 0;
+  for (const file of readdirSync(directory, { withFileTypes: true })) {
+    if (!file.isFile() || !(file.name.endsWith('.js') || file.name.endsWith('.d.ts'))) continue;
+    if (skipNames.has(file.name)) continue;
+    const path = `${directory}/${file.name}`;
+    const source = readFileSync(path, 'utf8');
+    const publishSource = source.replaceAll(stencilRuntime, localRuntime);
+    if (source !== publishSource) {
+      rewritten += 1;
+      writeFileSync(path, publishSource);
+    }
+  }
+  if (!rewritten) {
+    throw new Error(`Generated ${label} adapters did not contain the expected Stencil runtime import`);
+  }
+}
 
 cleanFileProviderCollisions();
 
 execFileSync(npx, ['tsc', '-p', 'tsconfig.react.json'], { stdio: 'inherit' });
 execFileSync(npx, ['tsc', '-p', 'tsconfig.react-runtime.json'], { stdio: 'inherit' });
+execFileSync(npx, ['tsc', '-p', 'tsconfig.vue.json'], { stdio: 'inherit' });
 execFileSync(npx, ['ngc', '-p', 'tsconfig.angular.json'], { stdio: 'inherit' });
 
-const stencilReactRuntime = '@stencil/react-output-target/runtime';
-let rewrittenReactRuntimeImports = 0;
-for (const file of readdirSync('dist/react').filter(
-  name => name.endsWith('.js') || name.endsWith('.d.ts')
-)) {
-  const path = `dist/react/${file}`;
-  const source = readFileSync(path, 'utf8');
-  const publishSource = source.replaceAll(stencilReactRuntime, './react-runtime.js');
-  if (source !== publishSource) {
-    rewrittenReactRuntimeImports += 1;
-    writeFileSync(path, publishSource);
-  }
-}
-if (!rewrittenReactRuntimeImports) {
-  throw new Error('Generated React adapters did not contain the expected Stencil runtime import');
+rewriteRuntimeImports('dist/react', stencilReactRuntime, './react-runtime.js', 'React');
+
+execFileSync(
+  npx,
+  [
+    'esbuild',
+    'src/framework/vue-runtime.ts',
+    '--bundle',
+    '--format=esm',
+    '--platform=neutral',
+    '--outfile=dist/vue/vue-runtime.js',
+    '--external:vue',
+    '--external:vue/server-renderer',
+  ],
+  { stdio: 'inherit' },
+);
+writeFileSync('dist/vue/vue-runtime.d.ts', VUE_RUNTIME_DTS);
+rewriteRuntimeImports('dist/vue', stencilVueRuntime, './vue-runtime.js', 'Vue', [
+  'vue-runtime.js',
+  'vue-runtime.d.ts',
+]);
+if (/(?:from|import)\s*['"]@stencil\/vue-output-target/.test(readFileSync('dist/vue/vue-runtime.js', 'utf8'))) {
+  throw new Error('Bundled Vue runtime still imports @stencil/vue-output-target');
 }
 
 const generatedAngularOutput = 'dist/.generated/angular';
@@ -66,4 +130,4 @@ for (const dir of ['dist/angular', 'dist/framework']) {
   }
 }
 
-console.log('  Built self-contained dist/react and dist/angular framework adapters');
+console.log('  Built self-contained dist/react, dist/vue, and dist/angular framework adapters');

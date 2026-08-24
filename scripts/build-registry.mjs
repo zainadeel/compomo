@@ -19,7 +19,7 @@ const PACKAGE_NAME = PACKAGE_JSON.name;
 const STORYBOOK_URL = 'https://zainadeel.github.io/compomo/';
 const TOKENS_PEER = PACKAGE_JSON.peerDependencies['@ds-mo/tokens'];
 const ICONS_PEER = PACKAGE_JSON.peerDependencies['@ds-mo/icons'];
-const FRAMEWORKS = 'Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters.';
+const FRAMEWORKS = 'Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters.';
 
 function readIntent(component) {
   return readJson(ROOT, component.agentPath);
@@ -99,6 +99,10 @@ function usage(component, docs) {
       import: `import { Ds${component.title} } from '@ds-mo/ui/react';`,
       example: `<Ds${component.title} />`,
     },
+    vue: {
+      import: `import { Ds${component.title} } from '@ds-mo/ui/vue';`,
+      example: `<Ds${component.title} />`,
+    },
     angular: {
       import: `import { Ds${component.title} } from '@ds-mo/ui/angular/${component.tag}';`,
       example: `<${component.tag}></${component.tag}>`,
@@ -156,6 +160,7 @@ for (const component of components) {
   const frameworkExports = {
     customElement: component.tag,
     react: `Ds${component.title}`,
+    vue: `Ds${component.title}`,
     angular: `Ds${component.title}`,
   };
 
@@ -231,7 +236,7 @@ const registry = {
     peerDependencies: {
       required: [`@ds-mo/tokens ${TOKENS_PEER}`, `@ds-mo/icons ${ICONS_PEER}`],
       optional: [],
-      frameworks: 'None required for Custom Elements; generated React and Angular adapters are included.',
+      frameworks: 'None required for Custom Elements; generated React, Vue, and Angular adapters are included.',
     },
   },
   items: registryItems,

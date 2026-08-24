@@ -311,6 +311,7 @@
     "exports": {
       "customElement": "ds-mobile-bar-nav",
       "react": "DsMobileBarNav",
+      "vue": "DsMobileBarNav",
       "angular": "DsMobileBarNav"
     },
     "consumption": {
@@ -324,6 +325,10 @@
         "import": "import { DsMobileBarNav } from '@ds-mo/ui/react';",
         "example": "<DsMobileBarNav />"
       },
+      "vue": {
+        "import": "import { DsMobileBarNav } from '@ds-mo/ui/vue';",
+        "example": "<DsMobileBarNav />"
+      },
       "angular": {
         "import": "import { DsMobileBarNav } from '@ds-mo/ui/angular/ds-mobile-bar-nav';",
         "example": "<ds-mobile-bar-nav></ds-mobile-bar-nav>"
@@ -334,7 +339,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

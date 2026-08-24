@@ -212,6 +212,7 @@ try {
       react: pkg.devDependencies.react,
       'react-dom': pkg.devDependencies['react-dom'],
       typescript: pkg.devDependencies.typescript,
+      vue: pkg.devDependencies.vue,
     },
   }, null, 2));
   execFileSync('npm', ['install', '--ignore-scripts', '--no-audit', '--no-fund'], {
@@ -228,6 +229,7 @@ try {
     const angular = await import('@ds-mo/ui/angular');
     const angularComponent = await import('@ds-mo/ui/angular/ds-button-filled');
     const react = await import('@ds-mo/ui/react');
+    const vue = await import('@ds-mo/ui/vue');
     const shell = await import('@ds-mo/ui/shell');
     const toast = await import('@ds-mo/ui/toast');
     const utils = await import('@ds-mo/ui/utils');
@@ -248,6 +250,7 @@ try {
       ['angular component subpath', angularComponent.DsButtonFilled],
       ['angular forms', angular.TextValueAccessor],
       ['react', react.DsButtonFilled],
+      ['vue', vue.DsButtonFilled],
       ['shell', shell.normalizeShellGradientPreset],
       ['shell swatch presets', shell.shellGradientPickerSections?.().flatMap(section => section.options).length],
       ['toast manager', toast.toastManager?.add],
@@ -337,7 +340,7 @@ try {
     clientOptions: undefined,
     expectedEra: 'legacy',
   });
-  console.log('✅ Packed native, Angular, React, shell, toast, utils, agent, and MCP entry points load successfully.');
+  console.log('✅ Packed native, Angular, React, Vue, shell, toast, utils, agent, and MCP entry points load successfully.');
 } finally {
   rmSync(packDir, { recursive: true, force: true });
   rmSync(smokeDir, { recursive: true, force: true });

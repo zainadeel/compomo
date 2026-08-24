@@ -91,6 +91,7 @@
     "exports": {
       "customElement": "ds-conversation-list-section",
       "react": "DsConversationListSection",
+      "vue": "DsConversationListSection",
       "angular": "DsConversationListSection"
     },
     "consumption": {
@@ -104,6 +105,10 @@
         "import": "import { DsConversationListSection } from '@ds-mo/ui/react';",
         "example": "<DsConversationListSection />"
       },
+      "vue": {
+        "import": "import { DsConversationListSection } from '@ds-mo/ui/vue';",
+        "example": "<DsConversationListSection />"
+      },
       "angular": {
         "import": "import { DsConversationListSection } from '@ds-mo/ui/angular/ds-conversation-list-section';",
         "example": "<ds-conversation-list-section></ds-conversation-list-section>"
@@ -113,7 +118,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

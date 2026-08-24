@@ -5,6 +5,7 @@ CompoMo (`@ds-mo/ui`) is a **Stencil web component library**. `npm run build` em
 - **`dist/components/`** — `<ds-*>` custom elements (canonical; auto-define on import)
 - **`src/.generated/angular/`** — ignored Angular standalone proxy sources, compiled to published per-component subpaths
 - **`src/.generated/react/`** — ignored React wrapper sources, compiled to published JavaScript
+- **`src/.generated/vue/`** — ignored Vue wrapper sources, compiled to published JavaScript
 
 **Consumption options:**
 
@@ -13,13 +14,17 @@ CompoMo (`@ds-mo/ui`) is a **Stencil web component library**. `npm run build` em
 | Any | `@ds-mo/ui/components/ds-*.js` | Canonical custom elements; tree-shake per tag |
 | Angular | `@ds-mo/ui/angular/ds-*` | Standalone adapter per component; preferred for tree shaking |
 | React | `@ds-mo/ui/react` | `DsButtonFilled`, `DsBarNav`, … |
+| Vue | `@ds-mo/ui/vue` | `DsButtonFilled`, `DsBarNav`, … |
 
 Generated proxy source never lands in the authored tree. The publish step
-retains the existing `dist/angular`, `dist/react`, and package import paths.
+retains the existing `dist/angular`, `dist/react`, `dist/vue`, and package
+import paths.
 The generated React wrappers use CompoMo's private runtime adapter, backed by
 the same `@lit/react` bridge selected by Stencil's React output target.
-Consumers install only the documented React peers; Stencil's output-target
-package remains a build dependency and is not required at application runtime.
+The generated Vue wrappers use CompoMo's private runtime adapter, backed by
+Stencil's Vue output-target runtime bundled into the published package.
+Consumers install only the documented React or Vue peers; Stencil's output-target
+packages remain build dependencies and are not required at application runtime.
 
 There is no published `@ds-mo/ui/loader` or global component bundle such as `@ds-mo/ui/css`. Import TokoMo via `@ds-mo/tokens` (or `@ds-mo/tokens/css`). Component CSS is scoped inside each custom-element bundle. Deliberate renderer-neutral exports include `@ds-mo/ui/prose.css` for safe semantic document trees and `@ds-mo/ui/control-elevation.css` for elevated wrappers around controls.
 
@@ -27,8 +32,8 @@ Font files remain application-owned. Interface content consumes
 `--typography-font-family-ui`; code surfaces consume
 `--typography-font-family-code` with a robust system-monospace fallback. Load
 Inter and Fira Code once at the application root rather than from a component
-or framework adapter. The Stencil source, Angular adapters, and React wrappers
-therefore share one CSS contract without duplicate downloads. See
+or framework adapter. The Stencil source, Angular adapters, React wrappers,
+and Vue wrappers therefore share one CSS contract without duplicate downloads. See
 [`docs/font-ownership.md`](font-ownership.md) for the self-hosted setup,
 ligature override, CSP, caching, preload, license, and fallback requirements.
 
@@ -52,7 +57,7 @@ The utility places the split outer shadow on the wrapper and TokoMo's inset high
 
 ## Renderer-neutral prose
 
-Import the stylesheet once after TokoMo tokens, then apply `.ds-prose` to an application-owned semantic container. This is a CSS surface rather than a web component, so it needs no React wrapper, Angular adapter, or custom-elements schema entry.
+Import the stylesheet once after TokoMo tokens, then apply `.ds-prose` to an application-owned semantic container. This is a CSS surface rather than a web component, so it needs no React wrapper, Vue wrapper, Angular adapter, or custom-elements schema entry.
 
 **Plain HTML**
 
@@ -342,6 +347,29 @@ Do not add `CUSTOM_ELEMENTS_SCHEMA` when using adapters; Angular should validate
   <router-outlet />
 </ds-shell-app>
 ```
+
+## Vue
+
+Import generated wrappers from `@ds-mo/ui/vue`. Form controls that participate
+in native value state also support `v-model` (`ds-input`, `ds-select`,
+`ds-radio`, `ds-checkbox`, and `ds-switch`). Listen for the original custom
+events such as `dsChange` rather than inventing framework-specific names.
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue';
+import { DsInput, DsShellApp } from '@ds-mo/ui/vue';
+
+const value = ref('');
+</script>
+
+<template>
+  <DsInput v-model="value" label="Search" />
+</template>
+```
+
+Complex properties such as `navigation`, `pageChrome`, `tools`, `items`, and
+`options` must be bound as Vue properties, not attributes.
 
 ## `ds-panel-tools` drawer paint skip
 

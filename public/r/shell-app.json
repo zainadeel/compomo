@@ -566,6 +566,7 @@
     "exports": {
       "customElement": "ds-shell-app",
       "react": "DsShellApp",
+      "vue": "DsShellApp",
       "angular": "DsShellApp"
     },
     "consumption": {
@@ -579,6 +580,10 @@
         "import": "import { DsShellApp } from '@ds-mo/ui/react';",
         "example": "<DsShellApp />"
       },
+      "vue": {
+        "import": "import { DsShellApp } from '@ds-mo/ui/vue';",
+        "example": "<DsShellApp />"
+      },
       "angular": {
         "import": "import { DsShellApp } from '@ds-mo/ui/angular/ds-shell-app';",
         "example": "<ds-shell-app></ds-shell-app>"
@@ -589,7 +594,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

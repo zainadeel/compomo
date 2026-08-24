@@ -335,6 +335,7 @@
     "exports": {
       "customElement": "ds-panel-tool-search",
       "react": "DsPanelToolSearch",
+      "vue": "DsPanelToolSearch",
       "angular": "DsPanelToolSearch"
     },
     "consumption": {
@@ -348,6 +349,10 @@
         "import": "import { DsPanelToolSearch } from '@ds-mo/ui/react';",
         "example": "<DsPanelToolSearch />"
       },
+      "vue": {
+        "import": "import { DsPanelToolSearch } from '@ds-mo/ui/vue';",
+        "example": "<DsPanelToolSearch />"
+      },
       "angular": {
         "import": "import { DsPanelToolSearch } from '@ds-mo/ui/angular/ds-panel-tool-search';",
         "example": "<ds-panel-tool-search></ds-panel-tool-search>"
@@ -357,7 +362,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

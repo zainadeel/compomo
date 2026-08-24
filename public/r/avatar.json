@@ -124,6 +124,7 @@
     "exports": {
       "customElement": "ds-avatar",
       "react": "DsAvatar",
+      "vue": "DsAvatar",
       "angular": "DsAvatar"
     },
     "consumption": {
@@ -137,6 +138,10 @@
         "import": "import { DsAvatar } from '@ds-mo/ui/react';",
         "example": "<DsAvatar />"
       },
+      "vue": {
+        "import": "import { DsAvatar } from '@ds-mo/ui/vue';",
+        "example": "<DsAvatar />"
+      },
       "angular": {
         "import": "import { DsAvatar } from '@ds-mo/ui/angular/ds-avatar';",
         "example": "<ds-avatar></ds-avatar>"
@@ -146,7 +151,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

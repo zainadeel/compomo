@@ -13,7 +13,7 @@
     "The user may choose several independent values when multiple is enabled.",
     "The option set benefits from local search, subtext, prefix icons, grouping, or disabled choices.",
     "The choice set has more than roughly 20 options, comes from a user-managed listing, or represents a large domain such as addresses where search materially improves retrieval.",
-    "The selected value must participate in native, Angular, or React form state."
+    "The selected value must participate in native, Angular, React, or Vue form state."
   ],
   "avoidWhen": [
     "The rows perform commands rather than choosing a form value.",
@@ -91,6 +91,9 @@
     ],
     "react": [
       "Pass options or sections as wrapper props, set multiple for array values, and handle onDsChange, onDsClear, onDsOpenChange, onDsFooterAction, onDsOptionAction, and onDsOptionSubtextAction."
+    ],
+    "vue": [
+      "Use DsSelect with v-model for the selected value, bind options or sections as properties, and listen for dsChange, dsClear, dsOpenChange, dsFooterAction, dsOptionAction, and dsOptionSubtextAction."
     ],
     "angular": [
       "Import DsSelect and SelectValueAccessor when integrating with Angular Forms; bind options and sections as properties."

@@ -28,7 +28,7 @@ test('menu trigger pattern provides executable recipes for every framework', () 
   const result = validateAgentDocument('pattern', pattern);
 
   assert.equal(result.valid, true);
-  for (const framework of ['customElements', 'react', 'angular']) {
+  for (const framework of ['customElements', 'react', 'vue', 'angular']) {
     const recipes = pattern.implementations[framework].recipes;
     assert.ok(recipes.length > 0, `${framework} should include a recipe`);
     assert.match(

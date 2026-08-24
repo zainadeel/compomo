@@ -66,6 +66,7 @@ export function discoverComponents(root = ROOT) {
       agentPath: `${relativeDirectory}/${directory}.agent.json`,
       angularPath: `src/.generated/angular/ds-${name}.ts`,
       reactPath: `src/.generated/react/ds-${name}.ts`,
+      vuePath: `src/.generated/vue/ds-${name}.ts`,
     });
   }
   return components.sort((a, b) => a.tag.localeCompare(b.tag));
@@ -126,6 +127,7 @@ export function validateFrameworkAdapters({ root = ROOT, components }) {
   for (const component of components) {
     expected.set(component.angularPath, component.tag);
     expected.set(component.reactPath, component.tag);
+    expected.set(component.vuePath, component.tag);
   }
   const actual = new Set(listFrameworkComponentProxies(root));
 

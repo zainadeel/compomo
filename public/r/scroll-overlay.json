@@ -137,6 +137,7 @@
     "exports": {
       "customElement": "ds-scroll-overlay",
       "react": "DsScrollOverlay",
+      "vue": "DsScrollOverlay",
       "angular": "DsScrollOverlay"
     },
     "consumption": {
@@ -150,6 +151,10 @@
         "import": "import { DsScrollOverlay } from '@ds-mo/ui/react';",
         "example": "<DsScrollOverlay />"
       },
+      "vue": {
+        "import": "import { DsScrollOverlay } from '@ds-mo/ui/vue';",
+        "example": "<DsScrollOverlay />"
+      },
       "angular": {
         "import": "import { DsScrollOverlay } from '@ds-mo/ui/angular/ds-scroll-overlay';",
         "example": "<ds-scroll-overlay></ds-scroll-overlay>"
@@ -159,7 +164,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

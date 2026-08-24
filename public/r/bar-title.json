@@ -465,6 +465,7 @@
     "exports": {
       "customElement": "ds-bar-title",
       "react": "DsBarTitle",
+      "vue": "DsBarTitle",
       "angular": "DsBarTitle"
     },
     "consumption": {
@@ -478,6 +479,10 @@
         "import": "import { DsBarTitle } from '@ds-mo/ui/react';",
         "example": "<DsBarTitle />"
       },
+      "vue": {
+        "import": "import { DsBarTitle } from '@ds-mo/ui/vue';",
+        "example": "<DsBarTitle />"
+      },
       "angular": {
         "import": "import { DsBarTitle } from '@ds-mo/ui/angular/ds-bar-title';",
         "example": "<ds-bar-title></ds-bar-title>"
@@ -488,7 +493,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

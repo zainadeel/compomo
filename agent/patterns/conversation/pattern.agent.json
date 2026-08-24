@@ -82,6 +82,7 @@
       "references": ["src/wc/components/MessageScroller/MessageScroller.stories.ts"]
     },
     "react": { "status": "planned", "references": ["docs/framework-integration.md"] },
+    "vue": { "status": "planned", "references": ["docs/framework-integration.md"] },
     "angular": { "status": "planned", "references": ["docs/framework-integration.md"] }
   },
   "references": [

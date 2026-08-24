@@ -79,6 +79,7 @@
     "exports": {
       "customElement": "ds-typing-indicator",
       "react": "DsTypingIndicator",
+      "vue": "DsTypingIndicator",
       "angular": "DsTypingIndicator"
     },
     "consumption": {
@@ -92,6 +93,10 @@
         "import": "import { DsTypingIndicator } from '@ds-mo/ui/react';",
         "example": "<DsTypingIndicator />"
       },
+      "vue": {
+        "import": "import { DsTypingIndicator } from '@ds-mo/ui/vue';",
+        "example": "<DsTypingIndicator />"
+      },
       "angular": {
         "import": "import { DsTypingIndicator } from '@ds-mo/ui/angular/ds-typing-indicator';",
         "example": "<ds-typing-indicator></ds-typing-indicator>"
@@ -101,7 +106,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

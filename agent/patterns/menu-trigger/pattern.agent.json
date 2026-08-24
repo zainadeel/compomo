@@ -115,6 +115,31 @@
         "src/wc/components/Menu/Menu.stories.ts"
       ]
     },
+    "vue": {
+      "status": "verified",
+      "recipes": [
+        {
+          "id": "selected-view-menu",
+          "title": "Selected view menu",
+          "summary": "A controlled Vue composition using generated ButtonUnfilled and Menu wrappers.",
+          "files": [
+            {
+              "path": "ViewMenu.vue",
+              "language": "vue",
+              "content": "<script setup lang=\"ts\">\nimport { computed, ref } from 'vue'\nimport type { HTMLDsButtonUnfilledElement, MenuItemData } from '@ds-mo/ui'\nimport { DsButtonUnfilled, DsMenu } from '@ds-mo/ui/vue'\n\nconst choices: MenuItemData[] = [\n  { label: 'Overview', value: 'overview' },\n  { label: 'Map', value: 'map' },\n  { label: 'Timeline', value: 'timeline' },\n]\n\nconst selectedValue = ref('overview')\nconst open = ref(false)\nconst initialFocusVisible = ref(false)\nconst selected = computed(() => choices.find(item => item.value === selectedValue.value) ?? choices[0])\nconst items = computed(() => choices.map(item => ({ ...item, isSelected: item.value === selectedValue.value })))\n\nfunction focusTrigger() {\n  requestAnimationFrame(() => {\n    const trigger = document.querySelector<HTMLDsButtonUnfilledElement>('#view-menu-trigger')\n    trigger?.setFocus()\n  })\n}\n\nfunction toggleMenu(event: CustomEvent<MouseEvent>) {\n  initialFocusVisible.value = event.detail.detail === 0\n  open.value = !open.value\n}\n\nfunction selectView(event: CustomEvent<MenuItemData>) {\n  selectedValue.value = event.detail.value ?? selectedValue.value\n  open.value = false\n  focusTrigger()\n}\n</script>\n\n<template>\n  <DsButtonUnfilled\n    id=\"view-menu-trigger\"\n    :label=\"`View · ${selected.label}`\"\n    has-menu\n    controls=\"view-menu\"\n    :expanded=\"open\"\n    @ds-click=\"toggleMenu\"\n  />\n  <DsMenu\n    id=\"view-menu\"\n    anchor-id=\"view-menu-trigger\"\n    menu-label=\"Choose view\"\n    :items=\"items\"\n    :open=\"open\"\n    :initial-focus-visible=\"initialFocusVisible\"\n    @ds-close=\"open = false\"\n    @ds-select=\"selectView\"\n  />\n</template>"
+            }
+          ],
+          "notes": [
+            "Use one Vue ref for both the trigger expanded prop and Menu open prop.",
+            "Keep the stable trigger and menu ids unique when rendering more than one composition."
+          ]
+        }
+      ],
+      "references": [
+        "docs/framework-integration.md",
+        "src/wc/components/Menu/Menu.stories.ts"
+      ]
+    },
     "angular": {
       "status": "verified",
       "recipes": [

@@ -6,8 +6,8 @@
 
 1. Cleans generated framework proxy sources.
 2. Builds Stencil custom elements and compiler metadata.
-3. Generates and verifies Angular and React adapters.
-4. Compiles public `/angular`, `/shell`, `/toast`, and `/utils` entries.
+3. Generates and verifies Angular, React, and Vue adapters.
+4. Compiles public `/angular`, `/react`, `/vue`, `/shell`, `/toast`, and `/utils` entries.
 5. Copies public CSS surfaces.
 6. Regenerates registry and agent manifests.
 7. Bundles the published MCP executable and registry snapshot.

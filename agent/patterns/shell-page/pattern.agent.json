@@ -110,6 +110,10 @@
         "docs/framework-integration.md"
       ]
     },
+    "vue": {
+      "status": "planned",
+      "references": ["docs/framework-integration.md"]
+    },
     "angular": {
       "status": "verified",
       "recipes": [

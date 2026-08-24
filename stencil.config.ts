@@ -1,6 +1,7 @@
 import { Config } from '@stencil/core';
 import { angularOutputTarget } from '@stencil/angular-output-target';
 import { reactOutputTarget } from '@stencil/react-output-target';
+import { vueOutputTarget } from '@stencil/vue-output-target';
 
 export const config: Config = {
   namespace: 'ds-mo',
@@ -38,6 +39,21 @@ export const config: Config = {
     reactOutputTarget({
       outDir: 'src/.generated/react',
       esModules: true,
+    }),
+    vueOutputTarget({
+      componentCorePackage: '@ds-mo/ui',
+      proxiesFile: 'src/.generated/vue/components.ts',
+      includeImportCustomElements: true,
+      includeDefineCustomElements: false,
+      includePolyfills: false,
+      customElementsDir: 'components',
+      esModules: true,
+      componentModels: [
+        { elements: ['ds-input'], event: 'dsChange', targetAttr: 'value', eventAttr: 'detail' },
+        { elements: ['ds-select'], event: 'dsChange', targetAttr: 'value', eventAttr: 'detail' },
+        { elements: ['ds-radio'], event: 'dsChange', targetAttr: 'value', eventAttr: 'detail' },
+        { elements: ['ds-checkbox', 'ds-switch'], event: 'dsChange', targetAttr: 'checked', eventAttr: 'detail' },
+      ],
     }),
   ],
 };

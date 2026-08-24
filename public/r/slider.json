@@ -609,6 +609,7 @@
     "exports": {
       "customElement": "ds-slider",
       "react": "DsSlider",
+      "vue": "DsSlider",
       "angular": "DsSlider"
     },
     "consumption": {
@@ -622,6 +623,10 @@
         "import": "import { DsSlider } from '@ds-mo/ui/react';",
         "example": "<DsSlider />"
       },
+      "vue": {
+        "import": "import { DsSlider } from '@ds-mo/ui/vue';",
+        "example": "<DsSlider />"
+      },
       "angular": {
         "import": "import { DsSlider } from '@ds-mo/ui/angular/ds-slider';",
         "example": "<ds-slider></ds-slider>"
@@ -632,7 +637,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },

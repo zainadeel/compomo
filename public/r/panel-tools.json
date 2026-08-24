@@ -419,6 +419,7 @@
     "exports": {
       "customElement": "ds-panel-tools",
       "react": "DsPanelTools",
+      "vue": "DsPanelTools",
       "angular": "DsPanelTools"
     },
     "consumption": {
@@ -432,6 +433,10 @@
         "import": "import { DsPanelTools } from '@ds-mo/ui/react';",
         "example": "<DsPanelTools />"
       },
+      "vue": {
+        "import": "import { DsPanelTools } from '@ds-mo/ui/vue';",
+        "example": "<DsPanelTools />"
+      },
       "angular": {
         "import": "import { DsPanelTools } from '@ds-mo/ui/angular/ds-panel-tools';",
         "example": "<ds-panel-tools></ds-panel-tools>"
@@ -442,7 +447,7 @@
           "@ds-mo/tokens ^6.5.0",
           "@ds-mo/icons ^7.0.0"
         ],
-        "frameworks": "Custom Elements; React 18/19 wrappers; Angular 19-22 standalone adapters."
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
     }
   },
