@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.15.1](https://github.com/zainadeel/compomo/compare/v14.15.0...v14.15.1) (2026-08-24)
+
+
+### Fixed
+
+* **table:** paginate from containing page scrollers ([#518](https://github.com/zainadeel/compomo/issues/518)) ([163562b](https://github.com/zainadeel/compomo/commit/163562b3cdf98336ff0a0b70af7d5851f3e354de))
+
 ## [14.15.0](https://github.com/zainadeel/compomo/compare/v14.14.0...v14.15.0) (2026-08-24)
 
 
