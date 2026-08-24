@@ -2042,9 +2042,9 @@ test('supports keyboard focus and terminal page boundaries', async ({ page }) =>
   const pagination = page.locator('#paginated ds-pagination');
   const pageSize = pagination.getByRole('combobox', { name: 'Rows per page' });
 
+  await expect(pagination.locator('.pagination__page')).toHaveText('1 of 3');
   const selectAll = table.getByRole('checkbox', { name: 'Select all loaded rows' });
-  await selectAll.focus();
-  await page.keyboard.press('ArrowRight');
+  await selectAll.press('ArrowRight');
   await expect(pagination.locator('.pagination__page')).toHaveText('2 of 3');
 
   await pageSize.focus();
@@ -2069,6 +2069,67 @@ test('supports keyboard focus and terminal page boundaries', async ({ page }) =>
   await expect(pagination.locator('.pagination__page')).toHaveText('3 of 3');
   await expect(next).toBeDisabled();
   await expect(last).toBeDisabled();
+});
+
+test('paginates from a containing page scroller without moving focus into the table', async ({
+  page,
+}) => {
+  const table = page.locator('#paginated');
+  const pagination = page.locator('#paginated ds-pagination');
+
+  await table.evaluate((element: HTMLDsTableElement) => {
+    const scroller = element.ownerDocument.createElement('div');
+    scroller.className = 'page-scroller';
+    scroller.tabIndex = 0;
+    element.parentElement?.insertBefore(scroller, element);
+    scroller.append(element);
+  });
+
+  const scroller = page.locator('.page-scroller');
+  await scroller.focus();
+  await expect(scroller).toBeFocused();
+  await page.keyboard.press('ArrowRight');
+  await expect(pagination.locator('.pagination__page')).toHaveText('2 of 3');
+  await expect(scroller).toBeFocused();
+});
+
+test('paginates from a slotted shadow page scroller without moving focus into the table', async ({
+  page,
+}) => {
+  const table = page.locator('#paginated');
+  const pagination = page.locator('#paginated ds-pagination');
+
+  await table.evaluate((element: HTMLDsTableElement) => {
+    const host = element.ownerDocument.createElement('div');
+    host.className = 'shell-host';
+    const scroller = element.ownerDocument.createElement('div');
+    scroller.className = 'page-scroller';
+    scroller.tabIndex = 0;
+    scroller.append(element.ownerDocument.createElement('slot'));
+    host.attachShadow({ mode: 'open' }).append(scroller);
+    element.parentElement?.insertBefore(host, element);
+    host.append(element);
+  });
+
+  await page.locator('.shell-host').evaluate((host: HTMLElement) => {
+    host.shadowRoot?.querySelector<HTMLElement>('.page-scroller')?.focus();
+  });
+  await expect
+    .poll(() =>
+      page.locator('.shell-host').evaluate(host =>
+        host.shadowRoot?.activeElement?.classList.contains('page-scroller'),
+      ),
+    )
+    .toBe(true);
+  await page.keyboard.press('ArrowRight');
+  await expect(pagination.locator('.pagination__page')).toHaveText('2 of 3');
+  await expect
+    .poll(() =>
+      page.locator('.shell-host').evaluate(host =>
+        host.shadowRoot?.activeElement?.classList.contains('page-scroller'),
+      ),
+    )
+    .toBe(true);
 });
 
 test('keeps Fit to page visible but inactive when the data shape cannot support it', async ({

@@ -5,6 +5,7 @@ import {
   EventEmitter,
   h,
   Host,
+  Listen,
   Prop,
   State,
   Watch,
@@ -80,6 +81,10 @@ import { resolveCssLengthPx } from '../../utils/resolve-css-length-px';
 import { isElementTruncated } from '../../utils/is-element-truncated';
 import { resolveSafeUrl } from '../../utils/safe-url';
 import { resolveTableFitPageSize } from './table-pagination-fit';
+import {
+  paginationShortcutBlockedByPath,
+  shouldHandleContainingPagePaginationShortcut,
+} from './table-pagination-shortcut';
 import {
   TableViewportFitController,
   type TableViewportFitMetrics,
@@ -843,7 +848,12 @@ export class Table {
     });
   };
 
-  private handlePaginationKeyDown(event: KeyboardEvent): void {
+  @Listen('keydown', { target: 'window' })
+  handleWindowPaginationKeyDown(event: KeyboardEvent): void {
+    this.handlePaginationKeyDown(event, true);
+  }
+
+  private handlePaginationKeyDown(event: KeyboardEvent, fromWindow = false): void {
     const pagination = this.dataMode === 'pagination' ? this.pagination : null;
     if (
       !pagination ||
@@ -858,17 +868,21 @@ export class Table {
       return;
     }
 
-    const fromDirectionalControl = event.composedPath().some(node => {
-      if (!(node instanceof HTMLElement)) return false;
-      return (
-        node.tagName === 'DS-SELECT' ||
-        node.tagName === 'DS-MENU' ||
-        ['INPUT', 'SELECT', 'TEXTAREA'].includes(node.tagName) ||
-        node.isContentEditable ||
-        node.getAttribute('role') === 'slider'
-      );
-    });
-    if (fromDirectionalControl) return;
+    if (paginationShortcutBlockedByPath(event.composedPath())) return;
+
+    if (fromWindow) {
+      const origin = event.composedPath()[0];
+      const originNode = origin instanceof Text ? origin.parentNode : origin;
+      if (
+        !shouldHandleContainingPagePaginationShortcut({
+          origin: originNode,
+          table: this.el,
+          eventPath: event.composedPath(),
+        })
+      ) {
+        return;
+      }
+    }
 
     const state = resolvePaginationState(pagination);
     const pageIndex = event.key === 'ArrowLeft' ? state.pageIndex - 1 : state.pageIndex + 1;

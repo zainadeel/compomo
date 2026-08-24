@@ -1211,7 +1211,7 @@ export class ShellApp {
               <slot name="tools" />
             </div>
             <div
-              class="shell-app__content ds-focus-ring"
+              class="shell-app__content"
               aria-hidden={fullscreen || mobileStageBlocked ? 'true' : undefined}
               inert={fullscreen || mobileStageBlocked ? true : undefined}
               tabIndex={0}
@@ -1304,7 +1304,7 @@ export class ShellApp {
               {this.renderManagedTools()}
             </div>
             <div
-              class="shell-app__content ds-focus-ring"
+              class="shell-app__content"
               aria-hidden={fullscreen || mobileStageBlocked ? 'true' : undefined}
               inert={fullscreen || mobileStageBlocked ? true : undefined}
               tabIndex={0}
