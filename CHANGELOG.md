@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.15.0](https://github.com/zainadeel/compomo/compare/v14.14.0...v14.15.0) (2026-08-24)
+
+
+### Added
+
+* **vue:** generate and publish vue wrappers ([#515](https://github.com/zainadeel/compomo/issues/515)) ([f96f43a](https://github.com/zainadeel/compomo/commit/f96f43afd4d9603cd7999649a101324daeedbbdd))
+
 ## [14.14.0](https://github.com/zainadeel/compomo/compare/v14.13.0...v14.14.0) (2026-08-23)
 
 
