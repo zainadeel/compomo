@@ -1,5 +1,3 @@
-@import '../../utils/focus-ring.css';
-
 :host {
   display: flex;
   flex-direction: column;
@@ -129,6 +127,12 @@
   overscroll-behavior: none;
   /* Limit reflow to the page column — not on __main (breaks tools flex shrink). */
   contain: layout;
+}
+
+/* Layout scroller, not a control: keep it keyboard-focusable without a page-sized ring. */
+.shell-app__content:focus,
+.shell-app__content:focus-visible {
+  outline: none;
 }
 
 /* Opaque page surface — masks the fixed chrome layer in the content column. */

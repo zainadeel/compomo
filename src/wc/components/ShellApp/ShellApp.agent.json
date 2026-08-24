@@ -35,7 +35,7 @@
   "accessibility": [
     "Supply primary destinations through navigation and secondary route sections through pageChrome so managed ShellApp preserves their correct semantics.",
     "Ensure the default content region contains the page's single main landmark.",
-    "Keep the shell-owned routed-content scroller keyboard-focusable while its page landmark retains content semantics.",
+    "Keep the shell-owned routed-content scroller keyboard-focusable while its page landmark retains content semantics. Do not paint a control focus ring around that scroller; it is a layout region, and a page-column outline looks like a selected card.",
     "Keep the managed desktop/tablet and mobile presentations available without conditionally recreating routed or tool content.",
     "Do not override browser keyboard chords when enabling shell shortcuts.",
     "Require Search and Help as the minimum PanelTools actions and provide accessible labels for every tool.",
