@@ -674,6 +674,11 @@ export namespace Components {
           * Actual parent surface context. Omit on primary and secondary surfaces.
          */
         "background": ButtonUnfilledBackground | undefined;
+        /**
+          * Collapse the visible label and chevron to an icon-only control when the owning `ds-table` caption is narrower than 900px. The trigger omits those parts rather than clipping them.
+          * @default false
+         */
+        "collapseLabel": boolean;
         "controls": string | undefined;
         /**
           * Show a notification dot at the top-right of the icon zone (icon variant only).
@@ -694,7 +699,7 @@ export namespace Components {
          */
         "hasBorder": boolean;
         /**
-          * Mark the button as a Menu trigger. Implies `aria-haspopup="menu"` and covers both menu-button shapes:  - `label` / `icon-label` — the action *has* a menu; a trailing chevron carries   the affordance. - `icon` — the button *is* a menu. No chevron is added, so the glyph must   convey the menu on its own. Use `Ellipses` for generic more-options;   use a specific icon when the menu has a named purpose, such as   `Preferences` for Customize table.  Use `haspopup` directly for non-menu popups.
+          * Mark the button as a Menu trigger. Implies `aria-haspopup="menu"` and covers both menu-button shapes:  - `label` / `icon-label` — the action *has* a menu; a trailing chevron carries   the affordance. - `icon` — the button *is* a menu. No chevron is added, so the glyph must   convey the menu on its own. Use `Ellipses` for generic more-options;   use a specific icon when the menu has a named purpose, such as   `Table` for Customize table.  Use `haspopup` directly for non-menu popups.
           * @default false
          */
         "hasMenu": boolean;
@@ -1223,6 +1228,11 @@ export namespace Components {
          */
         "clearLabel": string;
         /**
+          * Opt into table-caption icon-only chrome below 900px. The trigger omits its visible label and chevron; keep an accessible name via aria-label.
+          * @default false
+         */
+        "collapseLabel": boolean;
+        /**
           * Product-owned filter categories and option definitions.
           * @default []
          */
@@ -1248,7 +1258,7 @@ export namespace Components {
         "inputId": string | undefined;
         /**
           * Accessible name for the non-modal filter dialog.
-          * @default 'Filters'
+          * @default 'Filter'
          */
         "menuLabel": string;
         /**
@@ -1278,7 +1288,7 @@ export namespace Components {
         "size": FilterMenuSize;
         /**
           * Select trigger text. The selected count is appended automatically.
-          * @default 'Filters'
+          * @default 'Filter'
          */
         "triggerLabel": string;
         /**
@@ -2306,6 +2316,11 @@ export namespace Components {
          */
         "clearLabel": string;
         /**
+          * Opt into table-caption icon-only chrome below 900px. The trigger omits its visible label and chevron; keep an accessible name via aria-label.
+          * @default false
+         */
+        "collapseLabel": boolean;
+        /**
           * Native disabled state.
           * @default false
          */
@@ -3177,6 +3192,24 @@ export namespace Components {
          */
         "views": TableSavedView[];
     }
+    interface DsTableSort {
+        /**
+          * Accessible name for the trigger and menu.
+          * @default null
+         */
+        "ariaLabel": string | null;
+        /**
+          * Catalog used to derive sortable fields, including compound header segments.
+          * @default []
+         */
+        "columns": TableColumn[];
+        "setFocus": () => Promise<void>;
+        /**
+          * Controlled table sort. Header sorting and this menu share the same value.
+          * @default null
+         */
+        "sort": TableSortState | null;
+    }
     interface DsTableToolbar {
         /**
           * Accessible name for the grouped table controls.
@@ -3630,6 +3663,10 @@ export interface DsTableCustomEvent<T> extends CustomEvent<T> {
 export interface DsTableSavedViewsCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsTableSavedViewsElement;
+}
+export interface DsTableSortCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsTableSortElement;
 }
 export interface DsTagCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -4666,6 +4703,23 @@ declare global {
         prototype: HTMLDsTableSavedViewsElement;
         new (): HTMLDsTableSavedViewsElement;
     };
+    interface HTMLDsTableSortElementEventMap {
+        "dsSortChange": TableSortChangeDetail;
+    }
+    interface HTMLDsTableSortElement extends Components.DsTableSort, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsTableSortElementEventMap>(type: K, listener: (this: HTMLDsTableSortElement, ev: DsTableSortCustomEvent<HTMLDsTableSortElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsTableSortElementEventMap>(type: K, listener: (this: HTMLDsTableSortElement, ev: DsTableSortCustomEvent<HTMLDsTableSortElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsTableSortElement: {
+        prototype: HTMLDsTableSortElement;
+        new (): HTMLDsTableSortElement;
+    };
     interface HTMLDsTableToolbarElement extends Components.DsTableToolbar, HTMLStencilElement {
     }
     var HTMLDsTableToolbarElement: {
@@ -4819,6 +4873,7 @@ declare global {
         "ds-tab-group": HTMLDsTabGroupElement;
         "ds-table": HTMLDsTableElement;
         "ds-table-saved-views": HTMLDsTableSavedViewsElement;
+        "ds-table-sort": HTMLDsTableSortElement;
         "ds-table-toolbar": HTMLDsTableToolbarElement;
         "ds-tag": HTMLDsTagElement;
         "ds-text": HTMLDsTextElement;
@@ -5418,6 +5473,11 @@ declare namespace LocalJSX {
           * Actual parent surface context. Omit on primary and secondary surfaces.
          */
         "background"?: ButtonUnfilledBackground | undefined;
+        /**
+          * Collapse the visible label and chevron to an icon-only control when the owning `ds-table` caption is narrower than 900px. The trigger omits those parts rather than clipping them.
+          * @default false
+         */
+        "collapseLabel"?: boolean;
         "controls"?: string | undefined;
         /**
           * Show a notification dot at the top-right of the icon zone (icon variant only).
@@ -5438,7 +5498,7 @@ declare namespace LocalJSX {
          */
         "hasBorder"?: boolean;
         /**
-          * Mark the button as a Menu trigger. Implies `aria-haspopup="menu"` and covers both menu-button shapes:  - `label` / `icon-label` — the action *has* a menu; a trailing chevron carries   the affordance. - `icon` — the button *is* a menu. No chevron is added, so the glyph must   convey the menu on its own. Use `Ellipses` for generic more-options;   use a specific icon when the menu has a named purpose, such as   `Preferences` for Customize table.  Use `haspopup` directly for non-menu popups.
+          * Mark the button as a Menu trigger. Implies `aria-haspopup="menu"` and covers both menu-button shapes:  - `label` / `icon-label` — the action *has* a menu; a trailing chevron carries   the affordance. - `icon` — the button *is* a menu. No chevron is added, so the glyph must   convey the menu on its own. Use `Ellipses` for generic more-options;   use a specific icon when the menu has a named purpose, such as   `Table` for Customize table.  Use `haspopup` directly for non-menu popups.
           * @default false
          */
         "hasMenu"?: boolean;
@@ -6005,6 +6065,11 @@ declare namespace LocalJSX {
          */
         "clearLabel"?: string;
         /**
+          * Opt into table-caption icon-only chrome below 900px. The trigger omits its visible label and chevron; keep an accessible name via aria-label.
+          * @default false
+         */
+        "collapseLabel"?: boolean;
+        /**
           * Product-owned filter categories and option definitions.
           * @default []
          */
@@ -6030,7 +6095,7 @@ declare namespace LocalJSX {
         "inputId"?: string | undefined;
         /**
           * Accessible name for the non-modal filter dialog.
-          * @default 'Filters'
+          * @default 'Filter'
          */
         "menuLabel"?: string;
         /**
@@ -6084,7 +6149,7 @@ declare namespace LocalJSX {
         "size"?: FilterMenuSize;
         /**
           * Select trigger text. The selected count is appended automatically.
-          * @default 'Filters'
+          * @default 'Filter'
          */
         "triggerLabel"?: string;
         /**
@@ -7189,6 +7254,11 @@ declare namespace LocalJSX {
          */
         "clearLabel"?: string;
         /**
+          * Opt into table-caption icon-only chrome below 900px. The trigger omits its visible label and chevron; keep an accessible name via aria-label.
+          * @default false
+         */
+        "collapseLabel"?: boolean;
+        /**
           * Native disabled state.
           * @default false
          */
@@ -8177,6 +8247,24 @@ declare namespace LocalJSX {
          */
         "views"?: TableSavedView[];
     }
+    interface DsTableSort {
+        /**
+          * Accessible name for the trigger and menu.
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        /**
+          * Catalog used to derive sortable fields, including compound header segments.
+          * @default []
+         */
+        "columns"?: TableColumn[];
+        "onDsSortChange"?: (event: DsTableSortCustomEvent<TableSortChangeDetail>) => void;
+        /**
+          * Controlled table sort. Header sorting and this menu share the same value.
+          * @default null
+         */
+        "sort"?: TableSortState | null;
+    }
     interface DsTableToolbar {
         /**
           * Accessible name for the grouped table controls.
@@ -8589,6 +8677,7 @@ declare namespace LocalJSX {
         "expanded": boolean | undefined;
         "haspopup": ButtonUnfilledPopup | undefined;
         "pressed": boolean | undefined;
+        "collapseLabel": boolean;
         "hasMenu": boolean;
         "focusTabIndex": number;
     }
@@ -8707,6 +8796,7 @@ declare namespace LocalJSX {
         "width": FilterMenuWidth;
         "hasBorder": boolean;
         "activeFill": boolean;
+        "collapseLabel": boolean;
         "inputId": string | undefined;
         "ariaLabel": string | null;
         "activeFilterId": string | undefined;
@@ -8976,6 +9066,7 @@ declare namespace LocalJSX {
         "isInactive": boolean;
         "isLoading": boolean;
         "activeFill": boolean;
+        "collapseLabel": boolean;
         "hasBorder": boolean;
         "icon": string | undefined;
         "indicator": SelectIndicator;
@@ -9149,6 +9240,9 @@ declare namespace LocalJSX {
         "triggerLabel": string;
         "createLabel": string;
     }
+    interface DsTableSortAttributes {
+        "ariaLabel": string | null;
+    }
     interface DsTableToolbarAttributes {
         "label": string;
     }
@@ -9281,6 +9375,7 @@ declare namespace LocalJSX {
         "ds-tab-group": Omit<DsTabGroup, keyof DsTabGroupAttributes> & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes]?: DsTabGroup[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `attr:${K}`]?: DsTabGroupAttributes[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `prop:${K}`]?: DsTabGroup[K] };
         "ds-table": Omit<DsTable, keyof DsTableAttributes> & { [K in keyof DsTable & keyof DsTableAttributes]?: DsTable[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `attr:${K}`]?: DsTableAttributes[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `prop:${K}`]?: DsTable[K] } & OneOf<"caption", DsTable["caption"], DsTableAttributes["caption"]>;
         "ds-table-saved-views": Omit<DsTableSavedViews, keyof DsTableSavedViewsAttributes> & { [K in keyof DsTableSavedViews & keyof DsTableSavedViewsAttributes]?: DsTableSavedViews[K] } & { [K in keyof DsTableSavedViews & keyof DsTableSavedViewsAttributes as `attr:${K}`]?: DsTableSavedViewsAttributes[K] } & { [K in keyof DsTableSavedViews & keyof DsTableSavedViewsAttributes as `prop:${K}`]?: DsTableSavedViews[K] };
+        "ds-table-sort": Omit<DsTableSort, keyof DsTableSortAttributes> & { [K in keyof DsTableSort & keyof DsTableSortAttributes]?: DsTableSort[K] } & { [K in keyof DsTableSort & keyof DsTableSortAttributes as `attr:${K}`]?: DsTableSortAttributes[K] } & { [K in keyof DsTableSort & keyof DsTableSortAttributes as `prop:${K}`]?: DsTableSort[K] };
         "ds-table-toolbar": Omit<DsTableToolbar, keyof DsTableToolbarAttributes> & { [K in keyof DsTableToolbar & keyof DsTableToolbarAttributes]?: DsTableToolbar[K] } & { [K in keyof DsTableToolbar & keyof DsTableToolbarAttributes as `attr:${K}`]?: DsTableToolbarAttributes[K] } & { [K in keyof DsTableToolbar & keyof DsTableToolbarAttributes as `prop:${K}`]?: DsTableToolbar[K] };
         "ds-tag": Omit<DsTag, keyof DsTagAttributes> & { [K in keyof DsTag & keyof DsTagAttributes]?: DsTag[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `attr:${K}`]?: DsTagAttributes[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `prop:${K}`]?: DsTag[K] } & OneOf<"label", DsTag["label"], DsTagAttributes["label"]>;
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
@@ -9376,6 +9471,7 @@ declare module "@stencil/core" {
             "ds-tab-group": LocalJSX.IntrinsicElements["ds-tab-group"] & JSXBase.HTMLAttributes<HTMLDsTabGroupElement>;
             "ds-table": LocalJSX.IntrinsicElements["ds-table"] & JSXBase.HTMLAttributes<HTMLDsTableElement>;
             "ds-table-saved-views": LocalJSX.IntrinsicElements["ds-table-saved-views"] & JSXBase.HTMLAttributes<HTMLDsTableSavedViewsElement>;
+            "ds-table-sort": LocalJSX.IntrinsicElements["ds-table-sort"] & JSXBase.HTMLAttributes<HTMLDsTableSortElement>;
             "ds-table-toolbar": LocalJSX.IntrinsicElements["ds-table-toolbar"] & JSXBase.HTMLAttributes<HTMLDsTableToolbarElement>;
             "ds-tag": LocalJSX.IntrinsicElements["ds-tag"] & JSXBase.HTMLAttributes<HTMLDsTagElement>;
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;

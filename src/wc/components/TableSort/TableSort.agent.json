@@ -1,0 +1,74 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-table-sort",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-table-sort",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Toolbar companion for the table's one controlled member-row sort, with a two-section menu for the sort field and direction that mirrors header sorting.",
+  "useWhen": [
+    "A table toolbar needs an explicit Sort control alongside Filter and Group.",
+    "Sortable columns or compound header segments should be choosable without relying only on column-header clicks."
+  ],
+  "avoidWhen": [
+    "The table has no sortable columns; the control hides itself.",
+    "The application expects the control to sort rows internally or persist preferences.",
+    "The popup should submit a form value; use Select."
+  ],
+  "alternatives": [
+    {
+      "when": "The choice is one submitted form value.",
+      "component": "component:ds-select",
+      "reason": "Select owns form-value and listbox semantics, not table sort state."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-table",
+    "component:ds-table-toolbar",
+    "component:ds-filter-menu",
+    "component:ds-select",
+    "component:ds-button-unfilled",
+    "component:ds-menu"
+  ],
+  "patterns": [
+    "pattern:menu-trigger"
+  ],
+  "accessibility": [
+    "The trigger is an icon-label menu button named Sort table unless a product aria-label is supplied. Compact caption widths keep that accessible name after the visible label is omitted.",
+    "The menu has two sections, Data and Direction. Each section presents one selected row through isSelected; the menu is not a single radio group because field and direction are independent.",
+    "Choosing a row applies immediately and keeps the menu open so the other section can be changed. Escape and outside activation close the menu and restore trigger focus."
+  ],
+  "states": [
+    "columns and sort are controlled. dsSortChange reports the next TableSortState and never mutates those inputs. The same sort object is what column headers emit through the table.",
+    "Selecting a different data field keeps the current direction, or starts ascending when no sort exists. Selecting a direction applies it to the current field, or to the first sortable field when no sort exists. Selecting the already-active field or direction is a no-op and does not toggle the way a header click does.",
+    "The trigger stays Sort in resting secondary chrome. Field and direction selection live in the menu and on column headers, so the trigger never uses active primary emphasis.",
+    "Compound sortable headers contribute one Data row per segment. Action columns never appear."
+  ],
+  "responsiveBehavior": [
+    "Place the control in the trailing region of ds-table-toolbar with Filter and Group.",
+    "Inside a named ds-table container narrower than 900px, the trigger omits its label and chevron and becomes icon-only. The icon keeps the resting secondary foreground."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign columns and sort as JavaScript properties. Replace sort from both dsSortChange on this control and dsSortChange on the table."
+    ],
+    "react": [
+      "Keep one sort state and pass it to both ds-table and ds-table-sort; update it from either event."
+    ],
+    "angular": [
+      "Import the generated DsTableSort adapter, bind columns and sort, and handle dsSortChange with the same owner that handles table header sorting."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook review states",
+      "path": "src/wc/components/TableSort/TableSort.stories.ts"
+    },
+    {
+      "label": "Toolbar composition owner",
+      "path": "src/wc/components/TableToolbar/TableToolbar.agent.json"
+    }
+  ]
+}

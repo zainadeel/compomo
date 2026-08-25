@@ -23,10 +23,10 @@
     <main>
       <div style="inline-size: 240px;">
         <ds-table-toolbar id="table-toolbar" label="Fleet table controls">
-          <button slot="leading" type="button">Saved views</button>
+          <button slot="start" type="button">Saved views</button>
           <button slot="leading" type="button">Search fleet records</button>
-          <button slot="trailing" type="button">Filters</button>
-          <button slot="trailing" type="button">Group by</button>
+          <button slot="trailing" type="button">Filter</button>
+          <button slot="trailing" type="button">Group</button>
         </ds-table-toolbar>
       </div>
       <ds-table-saved-views id="saved-views"></ds-table-saved-views>
@@ -49,7 +49,7 @@
       </ds-table>
       <ds-table id="footer-nested" caption="Drivers with nested dialog footer" caption-visibility="hidden">
         <ds-table-toolbar slot="header" label="Driver table controls">
-          <ds-table-saved-views slot="leading"></ds-table-saved-views>
+          <ds-table-saved-views slot="start"></ds-table-saved-views>
         </ds-table-toolbar>
         <ds-text slot="footer-leading" as="span" variant="text-body-medium" color="secondary" line-truncation="1">
           Last updated: Aug 13, 2026  7:00 PM PT
@@ -122,8 +122,24 @@
         data-mode-switcher
       >
         <ds-table-toolbar slot="header" label="Customizable driver controls">
-          <button slot="leading" type="button">Saved views</button>
-          <button slot="trailing" type="button">Filters</button>
+          <button slot="start" type="button">Saved views</button>
+          <ds-filter-menu
+            slot="trailing"
+            id="column-customizer-filter"
+            size="md"
+            icon="Filters"
+            trigger-label="Filter"
+            menu-label="Filter fleet"
+          ></ds-filter-menu>
+          <ds-select
+            slot="trailing"
+            id="column-customizer-group"
+            size="md"
+            icon="SectionList"
+            placeholder="Group"
+            aria-label="Group fleet"
+          ></ds-select>
+          <ds-table-sort slot="trailing" id="column-customizer-sort"></ds-table-sort>
         </ds-table-toolbar>
       </ds-table>
       <div style="width: 360px;">

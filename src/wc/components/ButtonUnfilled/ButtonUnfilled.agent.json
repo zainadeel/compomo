@@ -61,7 +61,7 @@
     "Set isInset only when the button is nested inside a same-size control. The default single inset removes 4px overall; insetDepth double removes 8px overall so the parent can add 4px per edge while preserving its outer alignment box. Double inset falls back to single at xs to protect minimum icon geometry.",
     "A true pressed toggle and owner-controlled isActive emphasis share the selected visual treatment, but only pressed supplies toggle semantics and dsChange.",
     "General content UI keeps the selected interaction fill and border for pressed or active emphasis.",
-    "Shell, navigation, and tool-rail composites use isActive with foreground-only emphasis and no selected fill or border.",
+    "Shell, navigation, and tool-rail composites use isActive with foreground-only emphasis and no selected fill or border. On icon-label that emphasis is the label; the leading icon and menu chevron keep the resting foreground. On icon, the glyph is the only content and takes the primary foreground.",
     "The omitted default surface treatment is for primary and secondary parent surfaces and uses the brand-active selected fill; pass faint explicitly on faint surfaces to use the neutral active fill.",
     "Surface context must match the actual parent surface; translucent, inverted, media, and always-dark treatments are reserved for those surfaces.",
     "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
@@ -69,11 +69,12 @@
     "Physical press scaling is on by default. Disable it only when an owning composite must keep child or background geometry fixed; hover and pressed interaction washes remain available.",
     "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width.",
     "hasMenu covers two distinct menu-button shapes and the variant selects between them. With label or icon-label the action has a menu, and a trailing chevron carries the affordance. With icon the button is a menu and no chevron is added.",
-    "Because the icon-only shape has no chevron, its glyph must convey the menu on its own. Use Ellipses for a generic more-options or overflow control. Use a specific icon when the menu has a named purpose, such as Preferences for Customize table.",
+    "Because the icon-only shape has no chevron, its glyph must convey the menu on its own. Use Ellipses for a generic more-options or overflow control. Use a specific icon when the menu has a named purpose, such as Table for Customize table.",
     "An open popup is a transient pressed state rather than a selected one. While expanded is true and haspopup or hasMenu identifies a popup, the pressed wash is held for the popup's complete rendered lifecycle and survives hover without promoting foreground or selected fill, including when chrome opts out of selected fills with activeFill set to false. Expanded disclosure buttons without popup semantics remain visually neutral."
   ],
   "responsiveBehavior": [
-    "The consuming layout decides when an icon-label action becomes icon-only and must provide an explicit accessible name after changing variants.",
+    "The consuming layout decides when an icon-label action becomes icon-only and must provide an explicit accessible name after changing variants. Table caption Customize is one such layout: below 900px it uses the icon shape, and a customized catalog promotes the Table icon to primary.",
+    "When collapseLabel is set inside a named ds-table container narrower than 900px, an icon-label caption action omits its label and chevron and becomes icon-only while keeping its accessible name. An active control then promotes the icon to primary.",
     "Use fill width only when the parent layout requires a full-width secondary action."
   ],
   "frameworkCaveats": {

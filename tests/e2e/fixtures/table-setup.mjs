@@ -1,13 +1,18 @@
 import '/dist/components/ds-table.js';
 import '/dist/components/ds-table-toolbar.js';
 import '/dist/components/ds-table-saved-views.js';
+import '/dist/components/ds-table-sort.js';
 import '/dist/components/ds-menu.js';
 import '/dist/components/ds-select.js';
+import '/dist/components/ds-filter-menu.js';
 import '/dist/components/ds-tooltip.js';
 
 await customElements.whenDefined('ds-table');
 await customElements.whenDefined('ds-table-toolbar');
 await customElements.whenDefined('ds-table-saved-views');
+await customElements.whenDefined('ds-table-sort');
+await customElements.whenDefined('ds-filter-menu');
+await customElements.whenDefined('ds-select');
 
 const savedViews = document.getElementById('saved-views');
 savedViews.views = [
@@ -788,6 +793,7 @@ const customizerRows = rows.map(row => ({
 customizer.rows = customizerRows;
 customizer.hiddenColumnIds = [];
 customizer.columnOrder = [];
+customizer.sort = { columnId: 'name', direction: 'asc' };
 customizer.addEventListener('dsColumnsConfigChange', event => {
   customizer.hiddenColumnIds = event.detail.hiddenColumnIds;
   customizer.columnOrder = event.detail.columnOrder;
@@ -795,6 +801,40 @@ customizer.addEventListener('dsColumnsConfigChange', event => {
 customizer.addEventListener('dsDataModeChange', event => {
   customizer.dataMode = event.detail.dataMode;
 });
+customizer.addEventListener('dsSortChange', event => {
+  customizer.sort = event.detail.sort;
+  customizerSort.sort = event.detail.sort;
+});
+
+const customizerSort = document.getElementById('column-customizer-sort');
+customizerSort.columns = customizer.columns;
+customizerSort.sort = customizer.sort;
+customizerSort.addEventListener('dsSortChange', event => {
+  customizer.sort = event.detail.sort;
+  customizerSort.sort = event.detail.sort;
+});
+
+const customizerFilter = document.getElementById('column-customizer-filter');
+customizerFilter.filters = [
+  {
+    id: 'status',
+    label: 'Status',
+    kind: 'multiple',
+    options: [
+      { label: 'Driving', value: 'driving' },
+      { label: 'On duty', value: 'on-duty' },
+      { label: 'Off duty', value: 'off-duty' },
+    ],
+  },
+];
+customizerFilter.values = {};
+
+const customizerGroup = document.getElementById('column-customizer-group');
+customizerGroup.options = [
+  { label: 'Status', value: 'status' },
+  { label: 'Vehicle', value: 'vehicle' },
+];
+customizerGroup.activeFill = false;
 
 const virtualColumns = [
   ...columns,

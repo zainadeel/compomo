@@ -1,0 +1,54 @@
+/**
+ * Table caption chrome: Filter, Group, and Sort become structurally icon-only
+ * when `ds-table-caption-control--compact` is set from the owning table width.
+ * Active values promote the prefix icon to primary. Caption choice popups keep
+ * the compact menu-width floor used by Sort.
+ */
+
+:host(.ds-table-caption-control) {
+  --ds-choice-popup-min-inline-size: var(--dimension-menu-width-xs);
+}
+
+:host(.ds-table-caption-control.ds-table-caption-control--compact) {
+  flex: 0 0 auto;
+  width: var(--ds-control-height, var(--dimension-size-400));
+  height: var(--ds-control-height, var(--dimension-size-400));
+  min-width: var(--ds-control-height, var(--dimension-size-400));
+  min-height: var(--ds-control-height, var(--dimension-size-400));
+  max-width: var(--ds-control-height, var(--dimension-size-400));
+  inline-size: var(--ds-control-height, var(--dimension-size-400));
+  min-inline-size: var(--ds-control-height, var(--dimension-size-400));
+  max-inline-size: var(--ds-control-height, var(--dimension-size-400));
+}
+
+:host(.ds-table-caption-control.ds-table-caption-control--compact) .trigger {
+  justify-content: center;
+  inline-size: 100%;
+  min-inline-size: 100%;
+  height: 100%;
+  padding-inline: 0;
+}
+
+:host(.ds-table-caption-control.ds-table-caption-control--compact) .trigger--has-value {
+  --ds-select-prefix-fg: var(--ds-select-fg-active);
+}
+
+@container ds-table (max-width: 899px) {
+  :host(.ds-table-caption-control) {
+    flex: 0 0 auto;
+    inline-size: var(--ds-control-height, var(--dimension-size-400));
+    min-inline-size: var(--ds-control-height, var(--dimension-size-400));
+    max-inline-size: var(--ds-control-height, var(--dimension-size-400));
+  }
+
+  :host(.ds-table-caption-control) .trigger {
+    justify-content: center;
+    inline-size: 100%;
+    min-inline-size: 100%;
+    padding-inline: 0;
+  }
+
+  :host(.ds-table-caption-control) .trigger--has-value {
+    --ds-select-prefix-fg: var(--ds-select-fg-active);
+  }
+}

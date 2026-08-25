@@ -1,0 +1,229 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "table-sort",
+  "title": "TableSort",
+  "description": "Toolbar companion for the table's one controlled member-row sort, with a two-section menu for the sort field and direction that mirrors header sorting.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/table-sort",
+    "source": "src/wc/components/TableSort/TableSort.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Toolbar companion for the table's one controlled member-row sort, with a two-section menu for the sort field and direction that mirrors header sorting.",
+      "useWhen": [
+        "A table toolbar needs an explicit Sort control alongside Filter and Group.",
+        "Sortable columns or compound header segments should be choosable without relying only on column-header clicks."
+      ],
+      "avoidWhen": [
+        "The table has no sortable columns; the control hides itself.",
+        "The application expects the control to sort rows internally or persist preferences.",
+        "The popup should submit a form value; use Select."
+      ],
+      "alternatives": [
+        {
+          "when": "The choice is one submitted form value.",
+          "component": "component:ds-select",
+          "reason": "Select owns form-value and listbox semantics, not table sort state."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-table",
+        "component:ds-table-toolbar",
+        "component:ds-filter-menu",
+        "component:ds-select",
+        "component:ds-button-unfilled",
+        "component:ds-menu"
+      ],
+      "patterns": [
+        "pattern:menu-trigger"
+      ],
+      "accessibility": [
+        "The trigger is an icon-label menu button named Sort table unless a product aria-label is supplied. Compact caption widths keep that accessible name after the visible label is omitted.",
+        "The menu has two sections, Data and Direction. Each section presents one selected row through isSelected; the menu is not a single radio group because field and direction are independent.",
+        "Choosing a row applies immediately and keeps the menu open so the other section can be changed. Escape and outside activation close the menu and restore trigger focus."
+      ],
+      "states": [
+        "columns and sort are controlled. dsSortChange reports the next TableSortState and never mutates those inputs. The same sort object is what column headers emit through the table.",
+        "Selecting a different data field keeps the current direction, or starts ascending when no sort exists. Selecting a direction applies it to the current field, or to the first sortable field when no sort exists. Selecting the already-active field or direction is a no-op and does not toggle the way a header click does.",
+        "The trigger stays Sort in resting secondary chrome. Field and direction selection live in the menu and on column headers, so the trigger never uses active primary emphasis.",
+        "Compound sortable headers contribute one Data row per segment. Action columns never appear."
+      ],
+      "responsiveBehavior": [
+        "Place the control in the trailing region of ds-table-toolbar with Filter and Group.",
+        "Inside a named ds-table container narrower than 900px, the trigger omits its label and chevron and becomes icon-only. The icon keeps the resting secondary foreground."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign columns and sort as JavaScript properties. Replace sort from both dsSortChange on this control and dsSortChange on the table."
+        ],
+        "react": [
+          "Keep one sort state and pass it to both ds-table and ds-table-sort; update it from either event."
+        ],
+        "angular": [
+          "Import the generated DsTableSort adapter, bind columns and sort, and handle dsSortChange with the same owner that handles table header sorting."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook review states",
+          "path": "src/wc/components/TableSort/TableSort.stories.ts"
+        },
+        {
+          "label": "Toolbar composition owner",
+          "path": "src/wc/components/TableToolbar/TableToolbar.agent.json"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "ariaLabel": {
+          "type": "string | null",
+          "resolvedType": "null | string",
+          "attribute": "aria-label",
+          "default": "null",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name for the trigger and menu."
+        },
+        "columns": {
+          "type": "TableColumn[]",
+          "resolvedType": "TableColumn[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Catalog used to derive sortable fields, including compound header segments."
+        },
+        "sort": {
+          "type": "TableSortState | null",
+          "resolvedType": "TableSortState | null",
+          "default": "null",
+          "required": false,
+          "mutable": false,
+          "description": "Controlled table sort. Header sorting and this menu share the same value."
+        }
+      },
+      "events": [
+        {
+          "name": "dsSortChange",
+          "detail": "TableSortChangeDetail",
+          "bubbles": false,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [
+        {
+          "name": "setFocus",
+          "signature": "setFocus() => Promise<void>"
+        }
+      ],
+      "slots": []
+    },
+    "props": {
+      "ariaLabel": {
+        "type": "string | null",
+        "resolvedType": "null | string",
+        "attribute": "aria-label",
+        "default": "null",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name for the trigger and menu."
+      },
+      "columns": {
+        "type": "TableColumn[]",
+        "resolvedType": "TableColumn[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Catalog used to derive sortable fields, including compound header segments."
+      },
+      "sort": {
+        "type": "TableSortState | null",
+        "resolvedType": "TableSortState | null",
+        "default": "null",
+        "required": false,
+        "mutable": false,
+        "description": "Controlled table sort. Header sorting and this menu share the same value."
+      }
+    },
+    "events": [
+      {
+        "name": "dsSortChange",
+        "detail": "TableSortChangeDetail",
+        "bubbles": false,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [
+      {
+        "name": "setFocus",
+        "signature": "setFocus() => Promise<void>"
+      }
+    ],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-table-sort",
+      "react": "DsTableSort",
+      "vue": "DsTableSort",
+      "angular": "DsTableSort"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-table-sort.js';",
+        "example": "<ds-table-sort></ds-table-sort>"
+      },
+      "react": {
+        "import": "import { DsTableSort } from '@ds-mo/ui/react';",
+        "example": "<DsTableSort />"
+      },
+      "vue": {
+        "import": "import { DsTableSort } from '@ds-mo/ui/vue';",
+        "example": "<DsTableSort />"
+      },
+      "angular": {
+        "import": "import { DsTableSort } from '@ds-mo/ui/angular/ds-table-sort';",
+        "example": "<ds-table-sort></ds-table-sort>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: columns, sort.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.5.0",
+          "@ds-mo/icons ^7.0.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "button-unfilled",
+    "menu"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/TableSort/TableSort.css",
+      "content": ":host {\n  display: inline-flex;\n  min-inline-size: 0;\n  max-inline-size: var(--dimension-menu-width-xs);\n}\n\n:host([hidden]) {\n  display: none;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/TableSort/TableSort.tsx",
+      "content": "import { Component, Element, Event, EventEmitter, h, Host, Method, Prop, State } from '@stencil/core';\nimport type { MenuItemData } from '../Menu/menu-types';\nimport type { TableColumn, TableSortChangeDetail, TableSortState } from '../Table/table-types';\nimport {\n  nextTableSortStateFromMenuItem,\n  tableSortFields,\n  tableSortMenuSections,\n  tableSortStatesEqual,\n} from './table-sort-menu';\n\nlet tableSortSeq = 0;\n\n@Component({\n  tag: 'ds-table-sort',\n  styleUrl: 'TableSort.css',\n  scoped: true,\n})\nexport class TableSort {\n  @Element() private el!: HTMLElement;\n\n  /** Catalog used to derive sortable fields, including compound header segments. */\n  @Prop() columns: TableColumn[] = [];\n  /** Controlled table sort. Header sorting and this menu share the same value. */\n  @Prop() sort: TableSortState | null = null;\n  /** Accessible name for the trigger and menu. */\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n\n  @Event({ bubbles: false }) dsSortChange!: EventEmitter<TableSortChangeDetail>;\n\n  @State() private menuOpen = false;\n  @State() private initialFocusVisible = false;\n\n  private readonly componentId = `ds-table-sort-${++tableSortSeq}`;\n  private readonly triggerId = `${this.componentId}-trigger`;\n  private readonly menuId = `${this.componentId}-menu`;\n\n  @Method()\n  async setFocus() {\n    const trigger = this.el.querySelector<HTMLElement & { setFocus?: () => Promise<void> }>(\n      `#${CSS.escape(this.triggerId)}`\n    );\n    await trigger?.setFocus?.();\n  }\n\n  render() {\n    const fields = tableSortFields(this.columns);\n    const name = this.ariaLabel?.trim() || 'Sort table';\n\n    return (\n      <Host hidden={fields.length === 0 ? true : undefined}>\n        {fields.length === 0 ? null : (\n          <ds-button-unfilled\n            id={this.triggerId}\n            variant=\"icon-label\"\n            size=\"md\"\n            icon=\"ArrowsVertical\"\n            label=\"Sort\"\n            aria-label={name}\n            hasMenu={true}\n            collapseLabel={true}\n            expanded={this.menuOpen}\n            controls={this.menuId}\n            onDsClick={(event: CustomEvent<MouseEvent>) => {\n              this.toggle(event.detail.detail === 0);\n            }}\n          />\n        )}\n        {fields.length === 0 ? null : (\n          <ds-menu\n            id={this.menuId}\n            open={this.menuOpen}\n            anchorId={this.triggerId}\n            align=\"end\"\n            side=\"bottom\"\n            menuLabel={name}\n            selectionMode=\"none\"\n            initialFocusVisible={this.initialFocusVisible}\n            sections={tableSortMenuSections(this.columns, this.sort)}\n            onDsClose={() => this.close()}\n            onDsSelect={event => this.handleSelect(event.detail)}\n          />\n        )}\n      </Host>\n    );\n  }\n\n  private toggle(fromKeyboard = false): void {\n    if (this.menuOpen) this.close();\n    else this.open(fromKeyboard);\n  }\n\n  private open(fromKeyboard = false): void {\n    if (this.menuOpen) return;\n    this.initialFocusVisible = fromKeyboard;\n    this.menuOpen = true;\n  }\n\n  private close(): void {\n    this.menuOpen = false;\n  }\n\n  private handleSelect(item: MenuItemData): void {\n    const next = nextTableSortStateFromMenuItem(this.columns, this.sort, item);\n    if (tableSortStatesEqual(this.sort, next)) return;\n    this.dsSortChange.emit({ sort: next });\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/TableSort/table-sort-menu.ts",
+      "content": "import type { MenuItemData, MenuSection } from '../Menu/menu-types';\nimport { isTableActionColumn } from '../Table/table-column-customizer';\nimport type { TableColumn, TableSortState } from '../Table/table-types';\n\nexport const TABLE_SORT_DIRECTION_ASC = 'direction:asc';\nexport const TABLE_SORT_DIRECTION_DESC = 'direction:desc';\n\nexport interface TableSortField {\n  id: string;\n  label: string;\n}\n\n/** Sortable data fields from the catalog, including compound header segments. */\nexport function tableSortFields(columns: readonly TableColumn[]): TableSortField[] {\n  const fields: TableSortField[] = [];\n  const seen = new Set<string>();\n\n  for (const column of columns) {\n    if (isTableActionColumn(column) || !column.sortable) continue;\n    const segments = column.headerSegments?.filter(segment => segment.sortKey.trim()) ?? [];\n    if (segments.length > 0) {\n      for (const segment of segments) {\n        if (seen.has(segment.sortKey)) continue;\n        seen.add(segment.sortKey);\n        fields.push({\n          id: segment.sortKey,\n          label: segment.label.trim() || segment.sortKey,\n        });\n      }\n      continue;\n    }\n    if (seen.has(column.id)) continue;\n    seen.add(column.id);\n    fields.push({\n      id: column.id,\n      label: column.header.trim() || column.headerLabel?.trim() || column.id,\n    });\n  }\n\n  return fields;\n}\n\nexport function tableSortMenuSections(\n  columns: readonly TableColumn[],\n  sort: TableSortState | null | undefined\n): MenuSection[] {\n  const fields = tableSortFields(columns);\n  return [\n    {\n      header: 'Data',\n      items: fields.map(field => ({\n        label: field.label,\n        value: field.id,\n        isSelected: sort?.columnId === field.id,\n      })),\n    },\n    {\n      header: 'Direction',\n      items: [\n        {\n          label: 'Ascending',\n          value: TABLE_SORT_DIRECTION_ASC,\n          icon: 'ArrowUp',\n          isSelected: sort?.direction === 'asc',\n        },\n        {\n          label: 'Descending',\n          value: TABLE_SORT_DIRECTION_DESC,\n          icon: 'ArrowDown',\n          isSelected: sort?.direction === 'desc',\n        },\n      ],\n    },\n  ];\n}\n\nexport function tableSortStatesEqual(\n  left: TableSortState | null | undefined,\n  right: TableSortState | null | undefined\n): boolean {\n  if (left === right) return true;\n  if (!left || !right) return false;\n  return left.columnId === right.columnId && left.direction === right.direction;\n}\n\n/** Next controlled sort from a Sort menu selection. Does not toggle like a header click. */\nexport function nextTableSortStateFromMenuItem(\n  columns: readonly TableColumn[],\n  current: TableSortState | null | undefined,\n  item: MenuItemData\n): TableSortState | null {\n  const fields = tableSortFields(columns);\n  if (fields.length === 0) return current ?? null;\n\n  if (item.value === TABLE_SORT_DIRECTION_ASC || item.value === TABLE_SORT_DIRECTION_DESC) {\n    const direction = item.value === TABLE_SORT_DIRECTION_ASC ? 'asc' : 'desc';\n    const columnId = current?.columnId ?? fields[0]!.id;\n    return { columnId, direction };\n  }\n\n  if (!item.value || !fields.some(field => field.id === item.value)) return current ?? null;\n  if (current?.columnId === item.value) return current ?? null;\n  return { columnId: item.value, direction: current?.direction ?? 'asc' };\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

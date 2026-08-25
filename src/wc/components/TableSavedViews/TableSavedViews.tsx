@@ -208,6 +208,7 @@ export class TableSavedViews {
         <ds-select
           id={this.selectId}
           size="md"
+          width="fill"
           placeholder={this.label}
           aria-label={this.label}
           sections={this.sections}

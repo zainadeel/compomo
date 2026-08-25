@@ -20,12 +20,43 @@
   display: none;
 }
 
+.table-toolbar__start,
+.table-toolbar__search,
+.table-toolbar__main,
 .table-toolbar__leading,
 .table-toolbar__trailing {
   display: flex;
   align-items: center;
   min-inline-size: 0;
   gap: var(--dimension-space-100);
+}
+
+.table-toolbar__start {
+  flex: 0 1 var(--dimension-menu-width-xs);
+  max-inline-size: var(--dimension-menu-width-xs);
+}
+
+.table-toolbar__rule {
+  flex: 0 0 auto;
+}
+
+.table-toolbar__main {
+  flex: 1 1 auto;
+  min-inline-size: min-content;
+}
+
+.table-toolbar__search {
+  flex: 0 1 var(--dimension-panel-width-xs);
+  max-inline-size: var(--dimension-panel-width-xs);
+}
+
+:host(:not(:has([slot='search']))) .table-toolbar__search {
+  display: none;
+}
+
+:host(:not(:has([slot='start']))) .table-toolbar__start,
+:host(:not(:has([slot='start']))) .table-toolbar__rule {
+  display: none;
 }
 
 .table-toolbar__leading {
@@ -37,6 +68,16 @@
   margin-inline-start: auto;
 }
 
+.table-toolbar__trailing > *,
+.table-toolbar ds-filter-menu,
+.table-toolbar ds-select,
+.table-toolbar ds-table-sort {
+  max-inline-size: var(--dimension-menu-width-xs);
+  --ds-choice-popup-min-inline-size: var(--dimension-menu-width-xs);
+}
+
+.table-toolbar__start slot,
+.table-toolbar__search slot,
 .table-toolbar__leading slot,
 .table-toolbar__trailing slot {
   display: contents;

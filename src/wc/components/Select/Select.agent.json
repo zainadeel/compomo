@@ -65,7 +65,7 @@
     "Option labels and the selected trigger label stay on one line and truncate when constrained. Option subtext may wrap to at most two lines.",
     "Use an option action only for a contextual menu about that user-managed option. The fixed ellipsis action appears on hover, keyboard activity, focus, and touch; expanded keeps it visible while its controlled menu is open. Activating it emits dsOptionAction without selecting the option or closing the Select popup.",
     "Use option subtextActions for a compact set of immediate actions that belong to one option. They render beneath only that option's label using the standard supporting-text inset and rhythm, use action or negative semantic color, and emit dsOptionSubtextAction without selecting the option or closing the popup. Unlike descriptive subtext, they do not reserve a blank supporting line on neighboring options.",
-    "The optional prefix icon and trailing indicator always use the parent surface's secondary foreground color, including when a selected value promotes the label to primary. The default down indicator communicates disclosure; up-down is reserved for compact value steppers such as pagination page size.",
+    "The optional prefix icon and trailing indicator always use the parent surface's secondary foreground color, including when a selected value promotes the label to primary. When collapseLabel compact icon-only chrome is active, a selected value promotes the prefix icon to primary instead. The default down indicator communicates disclosure; up-down is reserved for compact value steppers such as pagination page size.",
     "While the popup is open, the trigger holds the pressed interaction wash without changing its resting foreground or selected-value treatment.",
     "The shared popup search control follows the Select density, using the same text, icon, and internal spacing as a borderless trigger. Its container uses menu-item padding on every side and owns a 1px bottom divider that becomes a 1.5px bold-brand stroke while search has focus. Search placeholder text is secondary at rest and quaternary while focused because it becomes decorative once the editable field is active.",
     "When search contains text, the shared control shows a rounded icon-only ButtonUnfilled with the CrossCircle icon and no border, sized to remain inset within the current row density. It clears the local term, stays hidden for an empty term, and returns focus to search.",
@@ -81,6 +81,7 @@
   ],
   "responsiveBehavior": [
     "Use width fill for form fields and width hug for compact filter bars. Override those defaults only when the owning layout has a clear constraint.",
+    "When collapseLabel is set inside a named ds-table container narrower than 900px, the trigger omits its label and chevron and becomes icon-only. A selected value promotes the prefix icon to primary.",
     "The popup matches the trigger minimum width, may grow for content, and clamps to the viewport.",
     "Keep popupAlign at start for ordinary fields and filters. Use end when a control sits against a right layout edge and the popup should grow inward.",
     "Long option collections scroll inside the popup; virtualization and remote search are not part of this component."
