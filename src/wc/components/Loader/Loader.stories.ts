@@ -17,6 +17,14 @@ const LABEL = 'font-size: var(--typography-fontsize-xs); line-height: var(--typo
 const meta: Meta = {
   title: 'Primitives/Loader',
   tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'An indeterminate progress glyph with a clockwise leading arc and trailing opacity ramp. Reduced-motion preferences keep the glyph visible without rotation.',
+      },
+    },
+  },
   argTypes: {
     size: {
       control: 'select',

@@ -1,0 +1,72 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-table-filter",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-table-filter",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Standard table-toolbar Filter control that owns the shared trigger, filter menu UI, accessible defaults, and compact-caption behavior while the application controls data and values.",
+  "useWhen": [
+    "A table toolbar should expose the standard singular Filter control and shared filter-menu interaction.",
+    "A product supplies filter definitions and controlled values but should not recreate the toolbar trigger, selected count, category navigation, or responsive treatment."
+  ],
+  "avoidWhen": [
+    "Filtering is unrelated to a table or structured result set; use ds-filter-menu directly.",
+    "The application expects the component to filter, fetch, persist, or otherwise transform rows.",
+    "A filter requires a product-specific editor that the shared filter category kinds cannot represent."
+  ],
+  "alternatives": [
+    {
+      "when": "A non-table surface needs the generic filter interaction or custom trigger recipe.",
+      "component": "component:ds-filter-menu",
+      "reason": "FilterMenu exposes generic trigger geometry and popup positioning rather than the fixed table-toolbar recipe."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-table",
+    "component:ds-table-toolbar",
+    "component:ds-table-saved-views",
+    "component:ds-table-sort",
+    "component:ds-filter-menu"
+  ],
+  "patterns": [
+    "pattern:menu-trigger"
+  ],
+  "accessibility": [
+    "The trigger is an icon-label combobox named Filter table unless a product aria-label supplies the table context. Compact caption widths preserve that accessible name after the visible label and chevron are omitted.",
+    "The popup retains ds-filter-menu category navigation, option semantics, focus entry, dismissal, and focus return.",
+    "Localize label, menuLabel, categoriesLabel, and clearLabel together so visible and accessible wording remains consistent."
+  ],
+  "states": [
+    "filters, values, and activeFilterId are controlled. dsChange, dsClear, and dsActiveFilterChange report intent without changing those inputs; the application applies query consequences and returns replacement values.",
+    "The visible trigger label defaults to singular Filter and appends the selected criterion count. The trigger uses resting secondary chrome at typical widths; active criteria promote only the visible label, without redefining generic button active semantics.",
+    "Popup visibility follows the same mutable open and dsOpenChange contract as ds-filter-menu."
+  ],
+  "responsiveBehavior": [
+    "Place the control in the trailing region of ds-table-toolbar.",
+    "Inside a named ds-table container narrower than 900px, the trigger becomes icon-only and active criteria promote the Filters icon to primary."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign filters, values, and activeFilterId as JavaScript properties. Replace controlled values in response to dsChange and dsClear."
+    ],
+    "react": [
+      "Keep filters and values in application state and replace values from the typed dsChange and dsClear events."
+    ],
+    "angular": [
+      "Import the generated DsTableFilter adapter, bind filters and values, and handle dsChange, dsClear, and dsActiveFilterChange."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook review states",
+      "path": "src/wc/components/TableFilter/TableFilter.stories.ts"
+    },
+    {
+      "label": "Toolbar composition owner",
+      "path": "src/wc/components/TableToolbar/TableToolbar.agent.json"
+    }
+  ]
+}

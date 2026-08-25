@@ -32,7 +32,7 @@
 }
 
 .table-toolbar__start {
-  flex: 0 1 var(--dimension-menu-width-xs);
+  flex: 0 0 auto;
   min-inline-size: 0;
   max-inline-size: var(--dimension-menu-width-xs);
   overflow: hidden;
@@ -72,6 +72,7 @@
 
 .table-toolbar__trailing > *,
 .table-toolbar [slot='start'],
+.table-toolbar ds-table-filter,
 .table-toolbar ds-filter-menu,
 .table-toolbar ds-select,
 .table-toolbar ds-table-sort {

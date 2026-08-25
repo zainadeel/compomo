@@ -4,10 +4,10 @@ import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 import '../../../../dist/components/ds-table.js';
 import '../../../../dist/components/ds-table-toolbar.js';
 import '../../../../dist/components/ds-table-saved-views.js';
+import '../../../../dist/components/ds-table-filter.js';
 import '../../../../dist/components/ds-table-sort.js';
 import '../../../../dist/components/ds-select.js';
 import '../../../../dist/components/ds-input.js';
-import '../../../../dist/components/ds-filter-menu.js';
 import type { TableColumnsConfigChangeDetail, TableSortState } from '../Table/table-types';
 
 const COLUMNS = [
@@ -86,17 +86,16 @@ const renderToolbar = (options?: { filterValues?: Record<string, string[]>; grou
       placeholder="Search"
       aria-label="Search fleet"
     ></ds-input>
-    <ds-filter-menu
+    <ds-table-filter
       slot="trailing"
-      size="md"
-      icon="Filters"
-      trigger-label="Filter"
       menu-label="Filter fleet"
+      aria-label="Filter fleet"
       .filters=${FILTERS}
       .values=${options?.filterValues ?? {}}
-    ></ds-filter-menu>
+    ></ds-table-filter>
     <ds-select
       slot="trailing"
+      collapse-label
       size="md"
       icon="SectionList"
       placeholder="Group"
@@ -206,9 +205,13 @@ export const NarrowOverflow: Story = {
           placeholder="Search"
           aria-label="Search fleet"
         ></ds-input>
-        <ds-filter-menu slot="trailing" size="md" icon="Filters" trigger-label="Filter"></ds-filter-menu>
+        <ds-table-filter
+          slot="trailing"
+          aria-label="Filter fleet"
+        ></ds-table-filter>
         <ds-select
           slot="trailing"
+          collapse-label
           size="md"
           icon="SectionList"
           placeholder="Group"

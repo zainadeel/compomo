@@ -46,6 +46,7 @@
   ],
   "states": [
     "Loader communicates indeterminate progress only and does not emit completion or failure events.",
+    "The segmented glyph rotates clockwise, with its opacity ramp trailing the leading arc.",
     "Omitted color inherits currentColor. Explicit semantic aliases and CSS-variable references match Icon when an independent progress color is required.",
     "Nested Loader inherits a readable color from its owning busy control or region rather than selecting tertiary or quaternary directly.",
     "The owner decides whether to delay Loader visibility for short operations and removes it when the operation settles.",

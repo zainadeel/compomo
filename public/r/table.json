@@ -32,6 +32,7 @@
         "component:ds-pagination",
         "component:ds-table-toolbar",
         "component:ds-table-saved-views",
+        "component:ds-table-filter",
         "component:ds-table-sort",
         "component:ds-bar-action",
         "component:ds-button-unfilled",

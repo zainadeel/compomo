@@ -22,7 +22,7 @@
     "component:ds-table-saved-views",
     "component:ds-divider",
     "component:ds-input",
-    "component:ds-filter-menu",
+    "component:ds-table-filter",
     "component:ds-select",
     "component:ds-table-sort",
     "component:ds-button-unfilled"
@@ -34,25 +34,25 @@
     "Tab order follows authored DOM order. The toolbar does not add roving focus because it may contain heterogeneous form and popup controls."
   ],
   "states": [
-    "The component owns layout only. Slotted controls, values, menus, loading, persistence, and consequences remain controlled by the application. Use ds-table-saved-views when saved-view interaction needs the shared CompoMo behavior while application storage remains external.",
+    "The component owns layout only. It never mutates slotted control props, values, menus, loading, persistence, or consequences. Use ds-table-saved-views and ds-table-filter when those interactions need the shared CompoMo behavior while application data and persistence remain external.",
     "The start cluster is followed by a decorative vertical divider, then the spanning middle region. The start cluster and divider hide when nothing is projected. Search is a dedicated slot that hides when nothing is projected. Empty leading or trailing clusters add no placeholder chrome. The middle region occupies remaining width so trailing controls stay at its inline end.",
     "Column customizer and data-mode switching stay table-owned caption actions. Do not recreate those menus in the toolbar."
   ],
   "responsiveBehavior": [
-    "The start cluster, search, trailing Filter/Group/Sort, and table caption trailing actions stay on one line. Saved views, Filter, Group, and Sort triggers cap at the compact menu-width token and truncate their labels, keeping a saved-view dirty dot visible. Group and Sort popups keep that same compact menu-width floor. The toolbar horizontally scrolls when its complete controls no longer fit.",
-    "Inside a named ds-table container narrower than 900px, Filter, Group, and Sort omit their labels and chevrons and become icon-only. Active filtering or grouping promotes the prefix icon to primary. Sort keeps resting secondary chrome. Table-owned Customize also becomes the icon-only Table menu button at that width.",
+    "The start cluster, search, trailing Filter/Group/Sort, and table caption trailing actions stay on one line. Saved views hug their current trigger content up to the compact menu-width token rather than reserving that full width; long names truncate while the dirty dot stays visible. Filter, Group, and Sort triggers cap at the same token, and Group and Sort popups keep that compact menu-width floor. The toolbar horizontally scrolls when its complete controls no longer fit.",
+    "Inside a named ds-table container narrower than 900px, ds-table-filter and ds-table-sort omit their labels and chevrons and become icon-only. Group controls explicitly opt into the same treatment with collapseLabel. Active filtering or grouping promotes the prefix icon to primary. Sort keeps resting secondary chrome. Table-owned Customize also becomes the icon-only Table menu button at that width.",
     "The scrollbar is visually suppressed without removing touch, trackpad, mouse-wheel, or keyboard scrolling from the overflow container.",
     "Trailing controls remain grouped after leading controls; the toolbar does not collapse controls into an application-specific overflow menu."
   ],
   "frameworkCaveats": {
     "customElements": [
-      "Project saved views through slot=start, search through slot=search, additional left-side middle controls through slot=leading, and Filter, Group, and Sort through slot=trailing. Provide a label that names their table context when Table controls is insufficient."
+      "Project saved views through slot=start, search through slot=search, additional left-side middle controls through slot=leading, and ds-table-filter, Group, and ds-table-sort through slot=trailing. Set collapseLabel on the Group control and provide contextual accessible names when Table controls is insufficient."
     ],
     "react": [
-      "Set slot=start, slot=search, slot=leading, or slot=trailing on each child control; keep values and event handlers in the application."
+      "Set slot=start, slot=search, slot=leading, or slot=trailing on each child control. Use ds-table-filter for the standard Filter recipe, opt Group into collapseLabel, and keep values and event handlers in the application."
     ],
     "angular": [
-      "Set slot=start, slot=search, slot=leading, or slot=trailing on each child control and import the generated DsTableToolbar adapter alongside those controls."
+      "Set slot=start, slot=search, slot=leading, or slot=trailing on each child control, use DsTableFilter for the standard Filter recipe, opt Group into collapseLabel, and import the generated adapters."
     ]
   },
   "references": [

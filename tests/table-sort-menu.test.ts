@@ -40,7 +40,7 @@ test('builds Data and Direction menu sections from the controlled sort', () => {
     ['Data', 'Direction']
   );
   assert.equal(
-    sections[0]?.items.find(item => item.value === 'severity')?.isSelected,
+    sections[0]?.items.find(item => item.label === 'Severity')?.isSelected,
     true
   );
   assert.equal(
@@ -51,16 +51,21 @@ test('builds Data and Direction menu sections from the controlled sort', () => {
 
 test('changes field while keeping direction and does not toggle the active field', () => {
   const current = { columnId: 'behavior', direction: 'desc' as const };
+  const sections = tableSortMenuSections(columns, current);
+  const status = sections[0]?.items.find(item => item.label === 'Status');
+  const behavior = sections[0]?.items.find(item => item.label === 'Behavior');
+  assert.ok(status);
+  assert.ok(behavior);
   assert.deepEqual(
-    nextTableSortStateFromMenuItem(columns, current, { label: 'Status', value: 'status' }),
+    nextTableSortStateFromMenuItem(columns, current, status),
     { columnId: 'status', direction: 'desc' }
   );
   assert.deepEqual(
-    nextTableSortStateFromMenuItem(columns, current, { label: 'Behavior', value: 'behavior' }),
+    nextTableSortStateFromMenuItem(columns, current, behavior),
     current
   );
   assert.deepEqual(
-    nextTableSortStateFromMenuItem(columns, null, { label: 'Status', value: 'status' }),
+    nextTableSortStateFromMenuItem(columns, null, status),
     { columnId: 'status', direction: 'asc' }
   );
 });
@@ -81,6 +86,26 @@ test('applies direction to the current field or the first sortable field', () =>
     }),
     { columnId: 'behavior', direction: 'asc' }
   );
+  assert.deepEqual(
+    nextTableSortStateFromMenuItem(columns, { columnId: 'removed', direction: 'asc' }, {
+      label: 'Descending',
+      value: TABLE_SORT_DIRECTION_DESC,
+    }),
+    { columnId: 'behavior', direction: 'desc' }
+  );
+});
+
+test('keeps application column ids separate from direction command values', () => {
+  const collidingColumns: TableColumn[] = [
+    { id: TABLE_SORT_DIRECTION_DESC, header: 'Direction data', sortable: true },
+  ];
+  const fieldItem = tableSortMenuSections(collidingColumns, null)[0]?.items[0];
+  assert.ok(fieldItem);
+  assert.notEqual(fieldItem.value, TABLE_SORT_DIRECTION_DESC);
+  assert.deepEqual(nextTableSortStateFromMenuItem(collidingColumns, null, fieldItem), {
+    columnId: TABLE_SORT_DIRECTION_DESC,
+    direction: 'asc',
+  });
 });
 
 test('compares sort states by column and direction', () => {

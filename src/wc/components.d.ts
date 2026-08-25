@@ -66,6 +66,7 @@ import { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPick
 import { SwitchSize } from "./components/Switch/Switch";
 import { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
 import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableColumnsConfigChangeDetail, TableDataMode, TableDataModeChangeDetail, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+import { FilterMenuChangeDetail as FilterMenuChangeDetail1, FilterMenuFilter as FilterMenuFilter1, FilterMenuValues as FilterMenuValues1 } from "./components/FilterMenu/FilterMenu";
 import { TableSavedView, TableSavedViewChangeDetail, TableSavedViewCreateDetail, TableSavedViewDiscardDetail, TableSavedViewRemoveDetail, TableSavedViewRenameDetail, TableSavedViewSaveDetail } from "./components/TableSavedViews/table-saved-views-types";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
@@ -132,6 +133,7 @@ export { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPick
 export { SwitchSize } from "./components/Switch/Switch";
 export { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
 export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableColumnsConfigChangeDetail, TableDataMode, TableDataModeChangeDetail, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+export { FilterMenuChangeDetail as FilterMenuChangeDetail1, FilterMenuFilter as FilterMenuFilter1, FilterMenuValues as FilterMenuValues1 } from "./components/FilterMenu/FilterMenu";
 export { TableSavedView, TableSavedViewChangeDetail, TableSavedViewCreateDetail, TableSavedViewDiscardDetail, TableSavedViewRemoveDetail, TableSavedViewRenameDetail, TableSavedViewSaveDetail } from "./components/TableSavedViews/table-saved-views-types";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
@@ -1258,7 +1260,7 @@ export namespace Components {
         "inputId": string | undefined;
         /**
           * Accessible name for the non-modal filter dialog.
-          * @default 'Filter'
+          * @default 'Filters'
          */
         "menuLabel": string;
         /**
@@ -1288,7 +1290,7 @@ export namespace Components {
         "size": FilterMenuSize;
         /**
           * Select trigger text. The selected count is appended automatically.
-          * @default 'Filter'
+          * @default 'Filters'
          */
         "triggerLabel": string;
         /**
@@ -3150,6 +3152,52 @@ export namespace Components {
          */
         "virtualModeLabel": string;
     }
+    interface DsTableFilter {
+        /**
+          * Controlled category shown in the option pane.
+         */
+        "activeFilterId": string | undefined;
+        /**
+          * Accessible name for the trigger. Defaults to Filter table.
+          * @default null
+         */
+        "ariaLabel": string | null;
+        /**
+          * Accessible name for the category tab list.
+          * @default 'Filter categories'
+         */
+        "categoriesLabel": string;
+        /**
+          * Footer action and date-clear accessible label.
+          * @default 'Clear'
+         */
+        "clearLabel": string;
+        /**
+          * Product-owned filter categories and option definitions.
+          * @default []
+         */
+        "filters": FilterMenuFilter1[];
+        /**
+          * Visible trigger label.
+          * @default 'Filter'
+         */
+        "label": string;
+        /**
+          * Accessible name for the non-modal filter dialog. Defaults to the trigger name.
+          * @default null
+         */
+        "menuLabel": string | null;
+        /**
+          * Controlled popup visibility.
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * Controlled values keyed by filter id.
+          * @default {}
+         */
+        "values": FilterMenuValues1;
+    }
     interface DsTableSavedViews {
         /**
           * Footer action label that opens the create-view dialog.
@@ -3659,6 +3707,10 @@ export interface DsTabGroupCustomEvent<T> extends CustomEvent<T> {
 export interface DsTableCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsTableElement;
+}
+export interface DsTableFilterCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsTableFilterElement;
 }
 export interface DsTableSavedViewsCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -4681,6 +4733,28 @@ declare global {
         prototype: HTMLDsTableElement;
         new (): HTMLDsTableElement;
     };
+    interface HTMLDsTableFilterElementEventMap {
+        "dsChange": FilterMenuChangeDetail1;
+        "dsClear": void;
+        "dsActiveFilterChange": string;
+        "dsClose": void;
+        "dsOpenChange": boolean;
+        "dsAfterClose": void;
+    }
+    interface HTMLDsTableFilterElement extends Components.DsTableFilter, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsTableFilterElementEventMap>(type: K, listener: (this: HTMLDsTableFilterElement, ev: DsTableFilterCustomEvent<HTMLDsTableFilterElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsTableFilterElementEventMap>(type: K, listener: (this: HTMLDsTableFilterElement, ev: DsTableFilterCustomEvent<HTMLDsTableFilterElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsTableFilterElement: {
+        prototype: HTMLDsTableFilterElement;
+        new (): HTMLDsTableFilterElement;
+    };
     interface HTMLDsTableSavedViewsElementEventMap {
         "dsViewChange": TableSavedViewChangeDetail;
         "dsViewCreate": TableSavedViewCreateDetail;
@@ -4872,6 +4946,7 @@ declare global {
         "ds-switch": HTMLDsSwitchElement;
         "ds-tab-group": HTMLDsTabGroupElement;
         "ds-table": HTMLDsTableElement;
+        "ds-table-filter": HTMLDsTableFilterElement;
         "ds-table-saved-views": HTMLDsTableSavedViewsElement;
         "ds-table-sort": HTMLDsTableSortElement;
         "ds-table-toolbar": HTMLDsTableToolbarElement;
@@ -6095,7 +6170,7 @@ declare namespace LocalJSX {
         "inputId"?: string | undefined;
         /**
           * Accessible name for the non-modal filter dialog.
-          * @default 'Filter'
+          * @default 'Filters'
          */
         "menuLabel"?: string;
         /**
@@ -6149,7 +6224,7 @@ declare namespace LocalJSX {
         "size"?: FilterMenuSize;
         /**
           * Select trigger text. The selected count is appended automatically.
-          * @default 'Filter'
+          * @default 'Filters'
          */
         "triggerLabel"?: string;
         /**
@@ -8181,6 +8256,76 @@ declare namespace LocalJSX {
          */
         "virtualModeLabel"?: string;
     }
+    interface DsTableFilter {
+        /**
+          * Controlled category shown in the option pane.
+         */
+        "activeFilterId"?: string | undefined;
+        /**
+          * Accessible name for the trigger. Defaults to Filter table.
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        /**
+          * Accessible name for the category tab list.
+          * @default 'Filter categories'
+         */
+        "categoriesLabel"?: string;
+        /**
+          * Footer action and date-clear accessible label.
+          * @default 'Clear'
+         */
+        "clearLabel"?: string;
+        /**
+          * Product-owned filter categories and option definitions.
+          * @default []
+         */
+        "filters"?: FilterMenuFilter1[];
+        /**
+          * Visible trigger label.
+          * @default 'Filter'
+         */
+        "label"?: string;
+        /**
+          * Accessible name for the non-modal filter dialog. Defaults to the trigger name.
+          * @default null
+         */
+        "menuLabel"?: string | null;
+        /**
+          * Requests a controlled active-category replacement.
+         */
+        "onDsActiveFilterChange"?: (event: DsTableFilterCustomEvent<string>) => void;
+        /**
+          * Emitted after exit motion and rendered popup removal complete.
+         */
+        "onDsAfterClose"?: (event: DsTableFilterCustomEvent<void>) => void;
+        /**
+          * Requests a controlled value replacement without closing the popup.
+         */
+        "onDsChange"?: (event: DsTableFilterCustomEvent<FilterMenuChangeDetail1>) => void;
+        /**
+          * Requests that the consumer clear every filter value.
+         */
+        "onDsClear"?: (event: DsTableFilterCustomEvent<void>) => void;
+        /**
+          * Requests that the controlled popup close.
+         */
+        "onDsClose"?: (event: DsTableFilterCustomEvent<void>) => void;
+        /**
+          * Emitted whenever trigger activation changes popup visibility.
+         */
+        "onDsOpenChange"?: (event: DsTableFilterCustomEvent<boolean>) => void;
+        /**
+          * Controlled popup visibility.
+          * @default false
+         */
+        "open"?: boolean;
+        /**
+          * Controlled values keyed by filter id.
+          * @default {}
+         */
+        "values"?: FilterMenuValues1;
+    }
     interface DsTableSavedViews {
         /**
           * Footer action label that opens the create-view dialog.
@@ -9231,6 +9376,15 @@ declare namespace LocalJSX {
         "groupEndOfResultsLabel": string;
         "groupRowsLoadedLabel": string;
     }
+    interface DsTableFilterAttributes {
+        "open": boolean;
+        "activeFilterId": string | undefined;
+        "label": string;
+        "ariaLabel": string | null;
+        "menuLabel": string | null;
+        "categoriesLabel": string;
+        "clearLabel": string;
+    }
     interface DsTableSavedViewsAttributes {
         "value": string;
         "dirty": boolean;
@@ -9374,6 +9528,7 @@ declare namespace LocalJSX {
         "ds-switch": Omit<DsSwitch, keyof DsSwitchAttributes> & { [K in keyof DsSwitch & keyof DsSwitchAttributes]?: DsSwitch[K] } & { [K in keyof DsSwitch & keyof DsSwitchAttributes as `attr:${K}`]?: DsSwitchAttributes[K] } & { [K in keyof DsSwitch & keyof DsSwitchAttributes as `prop:${K}`]?: DsSwitch[K] };
         "ds-tab-group": Omit<DsTabGroup, keyof DsTabGroupAttributes> & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes]?: DsTabGroup[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `attr:${K}`]?: DsTabGroupAttributes[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `prop:${K}`]?: DsTabGroup[K] };
         "ds-table": Omit<DsTable, keyof DsTableAttributes> & { [K in keyof DsTable & keyof DsTableAttributes]?: DsTable[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `attr:${K}`]?: DsTableAttributes[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `prop:${K}`]?: DsTable[K] } & OneOf<"caption", DsTable["caption"], DsTableAttributes["caption"]>;
+        "ds-table-filter": Omit<DsTableFilter, keyof DsTableFilterAttributes> & { [K in keyof DsTableFilter & keyof DsTableFilterAttributes]?: DsTableFilter[K] } & { [K in keyof DsTableFilter & keyof DsTableFilterAttributes as `attr:${K}`]?: DsTableFilterAttributes[K] } & { [K in keyof DsTableFilter & keyof DsTableFilterAttributes as `prop:${K}`]?: DsTableFilter[K] };
         "ds-table-saved-views": Omit<DsTableSavedViews, keyof DsTableSavedViewsAttributes> & { [K in keyof DsTableSavedViews & keyof DsTableSavedViewsAttributes]?: DsTableSavedViews[K] } & { [K in keyof DsTableSavedViews & keyof DsTableSavedViewsAttributes as `attr:${K}`]?: DsTableSavedViewsAttributes[K] } & { [K in keyof DsTableSavedViews & keyof DsTableSavedViewsAttributes as `prop:${K}`]?: DsTableSavedViews[K] };
         "ds-table-sort": Omit<DsTableSort, keyof DsTableSortAttributes> & { [K in keyof DsTableSort & keyof DsTableSortAttributes]?: DsTableSort[K] } & { [K in keyof DsTableSort & keyof DsTableSortAttributes as `attr:${K}`]?: DsTableSortAttributes[K] } & { [K in keyof DsTableSort & keyof DsTableSortAttributes as `prop:${K}`]?: DsTableSort[K] };
         "ds-table-toolbar": Omit<DsTableToolbar, keyof DsTableToolbarAttributes> & { [K in keyof DsTableToolbar & keyof DsTableToolbarAttributes]?: DsTableToolbar[K] } & { [K in keyof DsTableToolbar & keyof DsTableToolbarAttributes as `attr:${K}`]?: DsTableToolbarAttributes[K] } & { [K in keyof DsTableToolbar & keyof DsTableToolbarAttributes as `prop:${K}`]?: DsTableToolbar[K] };
@@ -9470,6 +9625,7 @@ declare module "@stencil/core" {
             "ds-switch": LocalJSX.IntrinsicElements["ds-switch"] & JSXBase.HTMLAttributes<HTMLDsSwitchElement>;
             "ds-tab-group": LocalJSX.IntrinsicElements["ds-tab-group"] & JSXBase.HTMLAttributes<HTMLDsTabGroupElement>;
             "ds-table": LocalJSX.IntrinsicElements["ds-table"] & JSXBase.HTMLAttributes<HTMLDsTableElement>;
+            "ds-table-filter": LocalJSX.IntrinsicElements["ds-table-filter"] & JSXBase.HTMLAttributes<HTMLDsTableFilterElement>;
             "ds-table-saved-views": LocalJSX.IntrinsicElements["ds-table-saved-views"] & JSXBase.HTMLAttributes<HTMLDsTableSavedViewsElement>;
             "ds-table-sort": LocalJSX.IntrinsicElements["ds-table-sort"] & JSXBase.HTMLAttributes<HTMLDsTableSortElement>;
             "ds-table-toolbar": LocalJSX.IntrinsicElements["ds-table-toolbar"] & JSXBase.HTMLAttributes<HTMLDsTableToolbarElement>;

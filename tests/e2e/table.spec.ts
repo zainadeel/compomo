@@ -3205,7 +3205,7 @@ test('owns a caption-bar column customizer menu for live show/hide and reorder',
   await expect(trigger).toBeFocused();
 });
 
-test('promotes only the Customize label when columns are customized at typical width', async ({
+test('promotes the complete Customize control when columns are customized at typical width', async ({
   page,
 }) => {
   const table = page.locator('#column-customizer');
@@ -3242,10 +3242,10 @@ test('promotes only the Customize label when columns are customized at typical w
       secondary: tokenColor('--color-foreground-secondary'),
     };
   });
-  expect(colors.button).toBe(colors.secondary);
-  expect(colors.icon).toBe(colors.secondary);
+  expect(colors.button).toBe(colors.primary);
+  expect(colors.icon).toBe(colors.primary);
   expect(colors.label).toBe(colors.primary);
-  expect(colors.chevron).toBe(colors.secondary);
+  expect(colors.chevron).toBe(colors.primary);
 });
 
 test('uses an icon-only Customize control below 900px and promotes the icon when customized', async ({
@@ -3343,7 +3343,19 @@ test('keeps labeled Filter, Group, and Sort chrome at typical width and promotes
     };
   });
   expect(colors.prefix).toBe(colors.secondary);
-  expect(colors.label).toBe(colors.primary);
+  await expect
+    .poll(() =>
+      filter.evaluate(element => {
+        const probe = document.createElement('span');
+        probe.style.color = 'var(--color-foreground-primary)';
+        document.body.append(probe);
+        const primary = getComputedStyle(probe).color;
+        probe.remove();
+        const label = element.querySelector('.trigger__label-box');
+        return label ? getComputedStyle(label).color === primary : false;
+      })
+    )
+    .toBe(true);
   expect(colors.chevron).toBe(colors.secondary);
 
   const groupColors = await group.evaluate(element => {
@@ -3367,7 +3379,19 @@ test('keeps labeled Filter, Group, and Sort chrome at typical width and promotes
     };
   });
   expect(groupColors.prefix).toBe(groupColors.secondary);
-  expect(groupColors.label).toBe(groupColors.primary);
+  await expect
+    .poll(() =>
+      group.evaluate(element => {
+        const probe = document.createElement('span');
+        probe.style.color = 'var(--color-foreground-primary)';
+        document.body.append(probe);
+        const primary = getComputedStyle(probe).color;
+        probe.remove();
+        const label = element.querySelector('.trigger__label-box');
+        return label ? getComputedStyle(label).color === primary : false;
+      })
+    )
+    .toBe(true);
   expect(groupColors.chevron).toBe(groupColors.secondary);
 
   const sortColors = await sort.evaluate(element => {
@@ -3393,6 +3417,39 @@ test('keeps labeled Filter, Group, and Sort chrome at typical width and promotes
   expect(sortColors.icon).toBe(sortColors.secondary);
   expect(sortColors.label).toBe(sortColors.secondary);
   expect(sortColors.chevron).toBe(sortColors.secondary);
+});
+
+test('reports table filter intent from the dedicated host without mutating controlled values', async ({
+  page,
+}) => {
+  const control = page.locator('#column-customizer-filter');
+  const trigger = control.getByRole('combobox', { name: 'Filter fleet' });
+
+  await control.evaluate(element => {
+    (window as typeof window & { __tableFilterChange?: unknown }).__tableFilterChange = null;
+    element.addEventListener('dsChange', event => {
+      (window as typeof window & { __tableFilterChange?: unknown }).__tableFilterChange = {
+        targetId: (event.target as HTMLElement).id,
+        detail: (event as CustomEvent).detail,
+      };
+    });
+  });
+
+  await trigger.click();
+  await expect(control).toHaveJSProperty('open', true);
+  await control.getByRole('option', { name: 'Driving' }).click();
+
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => (window as typeof window & { __tableFilterChange?: unknown }).__tableFilterChange
+      )
+    )
+    .toEqual({
+      targetId: 'column-customizer-filter',
+      detail: { filterId: 'status', value: ['driving'] },
+    });
+  await expect(control).toHaveJSProperty('values', {});
 });
 
 test('uses icon-only Filter, Group, and Sort below 900px and promotes the icon when active', async ({
@@ -3507,6 +3564,36 @@ test('uses icon-only Filter, Group, and Sort below 900px and promotes the icon w
     };
   });
   expect(sortColors.icon).toBe(sortColors.secondary);
+});
+
+test('restores compact caption observation after controls are reinserted', async ({ page }) => {
+  const table = page.locator('#column-customizer');
+  const filterHost = table.locator('#column-customizer-filter ds-filter-menu');
+  const groupHost = table.locator('#column-customizer-group');
+  const sortButtonHost = table.locator('#column-customizer-sort ds-button-unfilled');
+
+  await table.evaluate(element => {
+    (element as HTMLElement).style.inlineSize = '800px';
+  });
+  await expect(filterHost).toHaveClass(/ds-table-caption-control--compact/);
+  await expect(groupHost).toHaveClass(/ds-table-caption-control--compact/);
+  await expect(sortButtonHost).toHaveClass(/ds-table-caption-control--compact/);
+
+  await table.evaluate(element => {
+    const toolbar = element.querySelector('ds-table-toolbar')!;
+    const controls = [
+      toolbar.querySelector('#column-customizer-filter')!,
+      toolbar.querySelector('#column-customizer-group')!,
+      toolbar.querySelector('#column-customizer-sort')!,
+    ];
+    controls.forEach(control => control.remove());
+    controls.forEach(control => toolbar.append(control));
+    (element as HTMLElement).style.inlineSize = '1000px';
+  });
+
+  await expect(filterHost).not.toHaveClass(/ds-table-caption-control--compact/);
+  await expect(groupHost).not.toHaveClass(/ds-table-caption-control--compact/);
+  await expect(sortButtonHost).not.toHaveClass(/ds-table-caption-control--compact/);
 });
 
 test('mirrors table sort through the toolbar Sort menu and column headers', async ({ page }) => {
@@ -3686,6 +3773,8 @@ test('lays out application-owned table controls in start and spanning middle gro
       ordered: leadingRect.right <= trailingRect.left,
       startBeforeLeading: startRect.right <= leadingRect.left,
       startControlInCluster: startControl.getBoundingClientRect().left >= startRect.left - 0.5,
+      startClusterWidth: startRect.width,
+      startControlWidth: startControl.getBoundingClientRect().width,
       dividerVisible: !!divider && getComputedStyle(divider).display !== 'none',
       dividerHeight: divider ? Math.round(divider.getBoundingClientRect().height) : 0,
     };
@@ -3696,6 +3785,7 @@ test('lays out application-owned table controls in start and spanning middle gro
   expect(layout.ordered).toBe(true);
   expect(layout.startBeforeLeading).toBe(true);
   expect(layout.startControlInCluster).toBe(true);
+  expect(layout.startClusterWidth).toBeCloseTo(layout.startControlWidth, 0);
   expect(layout.dividerVisible).toBe(true);
   expect(layout.dividerHeight).toBe(32);
 
