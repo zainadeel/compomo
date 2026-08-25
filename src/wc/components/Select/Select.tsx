@@ -42,6 +42,7 @@ import {
   type ChoiceSection,
 } from '../../utils/choice-list';
 import { SelectController } from '../../utils/select-controller';
+import { observeTableCaptionCompact } from '../../utils/table-caption-compact';
 
 export type SelectOption = ChoiceOption;
 export type SelectSection = ChoiceSection;
@@ -128,6 +129,11 @@ export class Select {
   @Prop() isLoading: boolean = false;
   /** Show the selected interaction fill when a valid value exists. */
   @Prop() activeFill: boolean = true;
+  /**
+   * Opt into table-caption icon-only chrome below 900px. The trigger omits its
+   * visible label and chevron; keep an accessible name via aria-label.
+   */
+  @Prop({ reflect: true }) collapseLabel: boolean = false;
   /** Show the surface-aware inset border, including focused and invalid strokes. */
   @Prop() hasBorder: boolean = true;
   /** Optional trigger prefix icon name. */
@@ -185,6 +191,7 @@ export class Select {
   @State() private positionReady = false;
   @State() private focusRingVisible = false;
   @State() private compactFooterSummary = false;
+  @State() private captionCompact = false;
 
   private readonly generatedId = `ds-select-${++selectId}`;
   private readonly listboxId = `${this.generatedId}-listbox`;
@@ -197,6 +204,7 @@ export class Select {
   private footerResizeObserver?: ResizeObserver;
   private observedFooterContentElement?: HTMLDivElement;
   private footerMeasurementFrame?: number;
+  private captionCompactDisconnect: (() => void) | undefined;
 
   private createController() {
     // eslint-disable-next-line @typescript-eslint/no-this-alias -- adapter getters preserve reactive component ownership without inheritance.
@@ -276,6 +284,7 @@ export class Select {
   componentDidLoad() {
     this.controller.connect();
     this.observeFooterContent();
+    this.syncCaptionCompactObserver();
   }
 
   componentDidRender() {
@@ -290,6 +299,12 @@ export class Select {
     if (this.footerMeasurementFrame !== undefined) {
       cancelAnimationFrame(this.footerMeasurementFrame);
     }
+    this.disconnectCaptionCompactObserver();
+  }
+
+  @Watch('collapseLabel')
+  onCollapseLabelChange() {
+    this.syncCaptionCompactObserver();
   }
 
   @Watch('value')
@@ -660,6 +675,26 @@ export class Select {
     );
   }
 
+  private get captionIconOnly(): boolean {
+    return this.collapseLabel && this.captionCompact && Boolean(this.icon || this.isLoading);
+  }
+
+  private syncCaptionCompactObserver(): void {
+    this.disconnectCaptionCompactObserver();
+    if (!this.collapseLabel) {
+      if (this.captionCompact) this.captionCompact = false;
+      return;
+    }
+    this.captionCompactDisconnect = observeTableCaptionCompact(this.el, compact => {
+      if (this.captionCompact !== compact) this.captionCompact = compact;
+    });
+  }
+
+  private disconnectCaptionCompactObserver(): void {
+    this.captionCompactDisconnect?.();
+    this.captionCompactDisconnect = undefined;
+  }
+
   render() {
     const inactive = this.isDisabled;
     const showPlaceholder = !this.hasSelection;
@@ -696,6 +731,8 @@ export class Select {
           'ds-field-stack': true,
           'ds-control-inactive': inactive,
           [`ds-control--${this.size}`]: true,
+          'ds-table-caption-control': this.collapseLabel,
+          'ds-table-caption-control--compact': this.captionIconOnly,
           ...controlWidthClass(this.width),
           [`select-host--background-${this.background}`]: !!this.background,
           [`ds-select-trigger-host--background-${this.background}`]: !!this.background,
@@ -729,7 +766,7 @@ export class Select {
           aria-expanded={String(this.open)}
           aria-controls={this.open ? this.listboxId : undefined}
           aria-activedescendant={this.open && !this.searchable ? this.activeOptionId : undefined}
-          aria-label={this.ariaLabel}
+          aria-label={this.ariaLabel ?? (this.captionIconOnly ? label : undefined)}
           aria-labelledby={this.ariaLabelledby}
           aria-describedby={describedBy}
           aria-invalid={this.error ? 'true' : undefined}
@@ -765,50 +802,54 @@ export class Select {
               )}
             </span>
           )}
-          <span
-            class={{
-              'trigger__label-box': true,
-              'ds-interaction-fill__content': true,
-            }}
-          >
+          {this.captionIconOnly ? null : (
             <span
               class={{
-                'trigger__label-content': true,
-                'ds-control-label-box': true,
-                'ds-control-label-dot': this.dot,
-                'trigger__label-content--dot': this.dot,
+                'trigger__label-box': true,
+                'ds-interaction-fill__content': true,
               }}
             >
-              <ds-text
-                class="trigger__label"
-                as="span"
-                variant={textVariant}
-                color="inherit"
-                lineTruncation={1}
+              <span
+                class={{
+                  'trigger__label-content': true,
+                  'ds-control-label-box': true,
+                  'ds-control-label-dot': this.dot,
+                  'trigger__label-content--dot': this.dot,
+                }}
               >
-                {label}
-              </ds-text>
-              {this.dot && (
-                <ds-badge
-                  class="trigger__dot ds-control-label-dot__badge"
-                  variant="dot"
-                  hasRing={false}
-                  label=""
-                  aria-hidden="true"
-                />
-              )}
+                <ds-text
+                  class="trigger__label"
+                  as="span"
+                  variant={textVariant}
+                  color="inherit"
+                  lineTruncation={1}
+                >
+                  {label}
+                </ds-text>
+                {this.dot && (
+                  <ds-badge
+                    class="trigger__dot ds-control-label-dot__badge"
+                    variant="dot"
+                    hasRing={false}
+                    label=""
+                    aria-hidden="true"
+                  />
+                )}
+              </span>
             </span>
-          </span>
-          <span
-            class="trigger__chevron ds-control-icon-box ds-interaction-fill__content"
-            aria-hidden="true"
-          >
-            <ds-icon
-              name={this.indicator === 'up-down' ? 'ChevronUpDown' : 'ChevronDown'}
-              size={iconSize}
-              color="inherit"
-            />
-          </span>
+          )}
+          {this.captionIconOnly ? null : (
+            <span
+              class="trigger__chevron ds-control-icon-box ds-interaction-fill__content"
+              aria-hidden="true"
+            >
+              <ds-icon
+                name={this.indicator === 'up-down' ? 'ChevronUpDown' : 'ChevronDown'}
+                size={iconSize}
+                color="inherit"
+              />
+            </span>
+          )}
         </button>
 
         {this.open && (

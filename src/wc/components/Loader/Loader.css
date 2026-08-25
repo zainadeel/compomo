@@ -19,6 +19,7 @@
   flex-shrink: 0;
   width: 100%;
   height: 100%;
+  transform: scaleX(-1);
 }
 
 .status {
@@ -26,10 +27,10 @@
   align-items: center;
 }
 
-/* Anti-clockwise continuous spin — 1000ms via long-2. */
+/* Clockwise continuous spin — 1000ms via long-2. */
 @keyframes loader-spin {
   from { transform: rotate(0deg); }
-  to   { transform: rotate(-360deg); }
+  to   { transform: rotate(360deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {

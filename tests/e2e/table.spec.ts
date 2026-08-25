@@ -3154,7 +3154,7 @@ test('owns a caption-bar column customizer menu for live show/hide and reorder',
   page,
 }) => {
   const table = page.locator('#column-customizer');
-  const trigger = table.getByRole('button', { name: 'Customize table' });
+  const trigger = table.getByRole('button', { name: /Customiz(?:e|ed) table/ });
   await expect(trigger).toBeVisible();
   await expect(table.getByRole('combobox', { name: 'Group by' })).toHaveCount(0);
   await expect(table.getByRole('checkbox', { name: /Select all loaded rows/ })).toBeVisible();
@@ -3185,6 +3185,7 @@ test('owns a caption-bar column customizer menu for live show/hide and reorder',
   await menu.getByRole('menuitemcheckbox', { name: 'Status' }).click();
   await expect(table.getByRole('columnheader', { name: /Status/ })).toHaveCount(0);
   await expect(menu).toBeVisible();
+  await expect(trigger).toHaveAccessibleName('Customized table');
 
   await menu.getByRole('menuitemcheckbox', { name: 'Driver' }).click();
   await menu.getByRole('menuitemcheckbox', { name: 'Vehicle' }).click();
@@ -3204,6 +3205,376 @@ test('owns a caption-bar column customizer menu for live show/hide and reorder',
   await expect(trigger).toBeFocused();
 });
 
+test('promotes only the Customize label when columns are customized at typical width', async ({
+  page,
+}) => {
+  const table = page.locator('#column-customizer');
+  const trigger = table.getByRole('button', { name: /Customiz(?:e|ed) table/ });
+  await trigger.click();
+  await page.getByRole('menu', { name: 'Customize table' }).getByRole('menuitemcheckbox', {
+    name: 'Status',
+  }).click();
+  await expect(trigger).toHaveAccessibleName('Customized table');
+  await expect
+    .poll(() =>
+      trigger.evaluate(element => (element.closest('ds-button-unfilled') as HTMLDsButtonUnfilledElement).variant)
+    )
+    .toBe('icon-label');
+
+  const colors = await trigger.evaluate(element => {
+    const tokenColor = (token: string) => {
+      const probe = document.createElement('span');
+      probe.style.color = `var(${token})`;
+      document.body.append(probe);
+      const color = getComputedStyle(probe).color;
+      probe.remove();
+      return color;
+    };
+    const icon = element.querySelector('.ds-button__icon-wrap');
+    const label = element.querySelector('.ds-button__label');
+    const chevron = element.querySelector('.ds-button__chevron');
+    return {
+      button: getComputedStyle(element).color,
+      icon: icon ? getComputedStyle(icon).color : null,
+      label: label ? getComputedStyle(label).color : null,
+      chevron: chevron ? getComputedStyle(chevron).color : null,
+      primary: tokenColor('--color-foreground-primary'),
+      secondary: tokenColor('--color-foreground-secondary'),
+    };
+  });
+  expect(colors.button).toBe(colors.secondary);
+  expect(colors.icon).toBe(colors.secondary);
+  expect(colors.label).toBe(colors.primary);
+  expect(colors.chevron).toBe(colors.secondary);
+});
+
+test('uses an icon-only Customize control below 900px and promotes the icon when customized', async ({
+  page,
+}) => {
+  const table = page.locator('#column-customizer');
+  await table.evaluate(element => {
+    (element as HTMLElement).style.inlineSize = '800px';
+  });
+  const trigger = table.getByRole('button', { name: /Customiz(?:e|ed) table/ });
+  await expect
+    .poll(() =>
+      trigger.evaluate(element => (element.closest('ds-button-unfilled') as HTMLDsButtonUnfilledElement).variant)
+    )
+    .toBe('icon');
+  await expect(table.locator('.ds-table__caption-customizer .ds-button__label')).toHaveCount(0);
+  await expect(table.locator('.ds-table__caption-customizer .ds-button__chevron')).toHaveCount(0);
+
+  await trigger.click();
+  await page.getByRole('menu', { name: 'Customize table' }).getByRole('menuitemcheckbox', {
+    name: 'Status',
+  }).click();
+  await expect(trigger).toHaveAccessibleName('Customized table');
+
+  const colors = await trigger.evaluate(element => {
+    const tokenColor = (token: string) => {
+      const probe = document.createElement('span');
+      probe.style.color = `var(${token})`;
+      document.body.append(probe);
+      const color = getComputedStyle(probe).color;
+      probe.remove();
+      return color;
+    };
+    const icon = element.querySelector('.ds-button__icon-wrap');
+    return {
+      button: getComputedStyle(element).color,
+      icon: icon ? getComputedStyle(icon).color : null,
+      primary: tokenColor('--color-foreground-primary'),
+    };
+  });
+  expect(colors.button).toBe(colors.primary);
+  expect(colors.icon).toBe(colors.primary);
+});
+
+test('keeps labeled Filter, Group, and Sort chrome at typical width and promotes only the label when active', async ({
+  page,
+}) => {
+  const table = page.locator('#column-customizer');
+  const filter = table.getByRole('combobox', { name: 'Filter fleet' });
+  const group = table.getByRole('combobox', { name: 'Group fleet' });
+  const sort = page.locator('#column-customizer-sort').getByRole('button', { name: 'Sort table' });
+
+  await expect(filter).toContainText('Filter');
+  await expect(group).toContainText('Group');
+  await expect(sort).toContainText('Sort');
+  await expect(filter.locator('.trigger__label-box')).toBeVisible();
+  await expect(filter.locator('.trigger__chevron')).toBeVisible();
+  await expect(group.locator('.trigger__label-box')).toBeVisible();
+  await expect(group.locator('.trigger__chevron')).toBeVisible();
+  await expect(sort.locator('.ds-button__label')).toBeVisible();
+  await expect(sort.locator('.ds-button__chevron')).toBeVisible();
+
+  await table.evaluate(() => {
+    const filterMenu = document.getElementById('column-customizer-filter') as HTMLElement & {
+      values: Record<string, string[]>;
+    };
+    const groupSelect = document.getElementById('column-customizer-group') as HTMLElement & {
+      value: string;
+    };
+    filterMenu.values = { status: ['driving'] };
+    groupSelect.value = 'status';
+  });
+
+  await expect(filter).toContainText('Filter · 1');
+  await expect(group).toContainText('Status');
+
+  const colors = await filter.evaluate(element => {
+    const tokenColor = (token: string) => {
+      const probe = document.createElement('span');
+      probe.style.color = `var(${token})`;
+      document.body.append(probe);
+      const color = getComputedStyle(probe).color;
+      probe.remove();
+      return color;
+    };
+    const prefix = element.querySelector('.trigger__prefix');
+    const label = element.querySelector('.trigger__label-box');
+    const chevron = element.querySelector('.trigger__chevron');
+    return {
+      prefix: prefix ? getComputedStyle(prefix).color : null,
+      label: label ? getComputedStyle(label).color : null,
+      chevron: chevron ? getComputedStyle(chevron).color : null,
+      primary: tokenColor('--color-foreground-primary'),
+      secondary: tokenColor('--color-foreground-secondary'),
+    };
+  });
+  expect(colors.prefix).toBe(colors.secondary);
+  expect(colors.label).toBe(colors.primary);
+  expect(colors.chevron).toBe(colors.secondary);
+
+  const groupColors = await group.evaluate(element => {
+    const tokenColor = (token: string) => {
+      const probe = document.createElement('span');
+      probe.style.color = `var(${token})`;
+      document.body.append(probe);
+      const color = getComputedStyle(probe).color;
+      probe.remove();
+      return color;
+    };
+    const prefix = element.querySelector('.trigger__prefix');
+    const label = element.querySelector('.trigger__label-box');
+    const chevron = element.querySelector('.trigger__chevron');
+    return {
+      prefix: prefix ? getComputedStyle(prefix).color : null,
+      label: label ? getComputedStyle(label).color : null,
+      chevron: chevron ? getComputedStyle(chevron).color : null,
+      primary: tokenColor('--color-foreground-primary'),
+      secondary: tokenColor('--color-foreground-secondary'),
+    };
+  });
+  expect(groupColors.prefix).toBe(groupColors.secondary);
+  expect(groupColors.label).toBe(groupColors.primary);
+  expect(groupColors.chevron).toBe(groupColors.secondary);
+
+  const sortColors = await sort.evaluate(element => {
+    const tokenColor = (token: string) => {
+      const probe = document.createElement('span');
+      probe.style.color = `var(${token})`;
+      document.body.append(probe);
+      const color = getComputedStyle(probe).color;
+      probe.remove();
+      return color;
+    };
+    const icon = element.querySelector('.ds-button__icon-wrap');
+    const label = element.querySelector('.ds-button__label');
+    const chevron = element.querySelector('.ds-button__chevron');
+    return {
+      icon: icon ? getComputedStyle(icon).color : null,
+      label: label ? getComputedStyle(label).color : null,
+      chevron: chevron ? getComputedStyle(chevron).color : null,
+      primary: tokenColor('--color-foreground-primary'),
+      secondary: tokenColor('--color-foreground-secondary'),
+    };
+  });
+  expect(sortColors.icon).toBe(sortColors.secondary);
+  expect(sortColors.label).toBe(sortColors.secondary);
+  expect(sortColors.chevron).toBe(sortColors.secondary);
+});
+
+test('uses icon-only Filter, Group, and Sort below 900px and promotes the icon when active', async ({
+  page,
+}) => {
+  const table = page.locator('#column-customizer');
+  await table.evaluate(element => {
+    (element as HTMLElement).style.inlineSize = '800px';
+  });
+  const filter = table.getByRole('combobox', { name: 'Filter fleet' });
+  const group = table.getByRole('combobox', { name: 'Group fleet' });
+  const sort = page.locator('#column-customizer-sort').getByRole('button', { name: 'Sort table' });
+
+  await expect
+    .poll(() =>
+      filter.evaluate(element =>
+        (element.closest('ds-filter-menu') as HTMLElement | null)?.classList.contains(
+          'ds-table-caption-control--compact'
+        )
+      )
+    )
+    .toBe(true);
+  await expect
+    .poll(() =>
+      group.evaluate(element =>
+        (element.closest('ds-select') as HTMLElement | null)?.classList.contains(
+          'ds-table-caption-control--compact'
+        )
+      )
+    )
+    .toBe(true);
+
+  await expect
+    .poll(() =>
+      sort.evaluate(element =>
+        (element.closest('ds-button-unfilled') as HTMLElement | null)?.classList.contains(
+          'ds-table-caption-control--compact'
+        )
+      )
+    )
+    .toBe(true);
+
+  await expect(filter.locator('.trigger__label-box')).toHaveCount(0);
+  await expect(filter.locator('.trigger__chevron')).toHaveCount(0);
+  await expect(group.locator('.trigger__label-box')).toHaveCount(0);
+  await expect(group.locator('.trigger__chevron')).toHaveCount(0);
+  await expect(sort.locator('.ds-button__label')).toHaveCount(0);
+  await expect(sort.locator('.ds-button__chevron')).toHaveCount(0);
+  await expect(filter.locator('.trigger__prefix')).toBeVisible();
+  await expect(group.locator('.trigger__prefix')).toBeVisible();
+  await expect(sort.locator('.ds-button__icon-wrap')).toBeVisible();
+
+  await table.evaluate(() => {
+    const filterMenu = document.getElementById('column-customizer-filter') as HTMLElement & {
+      values: Record<string, string[]>;
+    };
+    const groupSelect = document.getElementById('column-customizer-group') as HTMLElement & {
+      value: string;
+    };
+    filterMenu.values = { status: ['driving'] };
+    groupSelect.value = 'status';
+  });
+
+  const filterColors = await filter.evaluate(element => {
+    const tokenColor = (token: string) => {
+      const probe = document.createElement('span');
+      probe.style.color = `var(${token})`;
+      document.body.append(probe);
+      const color = getComputedStyle(probe).color;
+      probe.remove();
+      return color;
+    };
+    const prefix = element.querySelector('.trigger__prefix');
+    return {
+      prefix: prefix ? getComputedStyle(prefix).color : null,
+      primary: tokenColor('--color-foreground-primary'),
+    };
+  });
+  expect(filterColors.prefix).toBe(filterColors.primary);
+
+  const groupColors = await group.evaluate(element => {
+    const tokenColor = (token: string) => {
+      const probe = document.createElement('span');
+      probe.style.color = `var(${token})`;
+      document.body.append(probe);
+      const color = getComputedStyle(probe).color;
+      probe.remove();
+      return color;
+    };
+    const prefix = element.querySelector('.trigger__prefix');
+    return {
+      prefix: prefix ? getComputedStyle(prefix).color : null,
+      primary: tokenColor('--color-foreground-primary'),
+    };
+  });
+  expect(groupColors.prefix).toBe(groupColors.primary);
+
+  const sortColors = await sort.evaluate(element => {
+    const tokenColor = (token: string) => {
+      const probe = document.createElement('span');
+      probe.style.color = `var(${token})`;
+      document.body.append(probe);
+      const color = getComputedStyle(probe).color;
+      probe.remove();
+      return color;
+    };
+    const icon = element.querySelector('.ds-button__icon-wrap');
+    return {
+      icon: icon ? getComputedStyle(icon).color : null,
+      primary: tokenColor('--color-foreground-primary'),
+      secondary: tokenColor('--color-foreground-secondary'),
+    };
+  });
+  expect(sortColors.icon).toBe(sortColors.secondary);
+});
+
+test('mirrors table sort through the toolbar Sort menu and column headers', async ({ page }) => {
+  const table = page.locator('#column-customizer');
+  const sortTrigger = page.locator('#column-customizer-sort').getByRole('button', { name: 'Sort table' });
+  await expect(sortTrigger).toBeVisible();
+
+  await sortTrigger.click();
+  const menu = page.getByRole('menu', { name: 'Sort table' });
+  await expect(menu).toBeVisible();
+  await expect(menu.getByRole('menuitem', { name: 'Driver' })).toBeVisible();
+  await expect(menu.getByRole('menuitem', { name: 'Status' })).toBeVisible();
+  await expect(menu.getByRole('menuitem', { name: 'Ascending' })).toBeVisible();
+  await expect(menu.getByRole('menuitem', { name: 'Descending' })).toBeVisible();
+
+  await menu.getByRole('menuitem', { name: 'Status' }).click();
+  await expect(menu).toBeVisible();
+  await expect(table).toHaveJSProperty('sort', { columnId: 'status', direction: 'asc' });
+  await expect(table.locator('th[data-column-id="status"]')).toHaveAttribute('aria-sort', 'ascending');
+
+  await menu.getByRole('menuitem', { name: 'Descending' }).click();
+  await expect(table).toHaveJSProperty('sort', { columnId: 'status', direction: 'desc' });
+  await expect(table.locator('th[data-column-id="status"]')).toHaveAttribute('aria-sort', 'descending');
+
+  await page.keyboard.press('Escape');
+  await table.getByRole('button', { name: /Sort Driver/ }).click();
+  await expect(table).toHaveJSProperty('sort', { columnId: 'name', direction: 'asc' });
+
+  await sortTrigger.click();
+  await expect(page.getByRole('menu', { name: 'Sort table' }).getByRole('menuitem', { name: 'Driver' })).toHaveClass(
+    /menu-item--selected/
+  );
+});
+
+test('gives Group and Sort popups the compact menu-width floor', async ({ page }) => {
+  const table = page.locator('#column-customizer');
+  const group = table.getByRole('combobox', { name: 'Group fleet' });
+  const sort = page.locator('#column-customizer-sort').getByRole('button', { name: 'Sort table' });
+
+  const menuWidthXs = await page.evaluate(() => {
+    const probe = document.createElement('div');
+    probe.style.width = 'var(--dimension-menu-width-xs)';
+    document.body.append(probe);
+    const width = Number.parseFloat(getComputedStyle(probe).width);
+    probe.remove();
+    return width;
+  });
+
+  await group.click();
+  const groupPopup = table.locator('#column-customizer-group .select-popup');
+  await expect(groupPopup).toBeVisible();
+  await expect
+    .poll(async () =>
+      groupPopup.evaluate(element => Number.parseFloat(getComputedStyle(element).minWidth))
+    )
+    .toBeGreaterThanOrEqual(menuWidthXs - 0.5);
+  await page.keyboard.press('Escape');
+
+  await sort.click();
+  const sortMenu = page.getByRole('menu', { name: 'Sort table' });
+  await expect(sortMenu).toBeVisible();
+  await expect
+    .poll(async () =>
+      sortMenu.evaluate(element => Number.parseFloat(getComputedStyle(element).minWidth))
+    )
+    .toBeGreaterThanOrEqual(menuWidthXs - 0.5);
+});
+
 test('owns a controlled caption-bar data mode switcher for supported modes', async ({ page }) => {
   const table = page.locator('#column-customizer');
   const trigger = table.getByRole('button', { name: 'Change table variation' });
@@ -3211,7 +3582,7 @@ test('owns a controlled caption-bar data mode switcher for supported modes', asy
 
   const trailingControls = table.locator('.ds-table__caption-trailing > *');
   await expect(trailingControls).toHaveCount(3);
-  await expect(trailingControls.nth(0)).toHaveAttribute('aria-label', 'Customize table');
+  await expect(trailingControls.nth(0).getByRole('button', { name: 'Customize table' })).toBeVisible();
   await expect(trailingControls.nth(1)).toHaveJSProperty('tagName', 'DS-DIVIDER');
   await expect(trailingControls.nth(1)).toHaveJSProperty('orientation', 'vertical');
   await expect(trailingControls.nth(1)).toHaveJSProperty('length', '32px');
@@ -3291,7 +3662,7 @@ test('preserves table-owned caption control geometry while its chrome is loading
   expect(await geometry()).toEqual(loadingGeometry);
 });
 
-test('lays out application-owned table controls in named leading and trailing groups', async ({
+test('lays out application-owned table controls in start and spanning middle groups', async ({
   page,
 }) => {
   const toolbar = page.locator('#table-toolbar');
@@ -3302,19 +3673,31 @@ test('lays out application-owned table controls in named leading and trailing gr
     const surface = element.querySelector<HTMLElement>('.table-toolbar')!;
     const leading = element.querySelector<HTMLElement>('.table-toolbar__leading')!;
     const trailing = element.querySelector<HTMLElement>('.table-toolbar__trailing')!;
+    const divider = element.querySelector('ds-divider');
     const leadingRect = leading.getBoundingClientRect();
     const trailingRect = trailing.getBoundingClientRect();
+    const start = element.querySelector<HTMLElement>('.table-toolbar__start')!;
+    const startRect = start.getBoundingClientRect();
+    const startControl = element.querySelector<HTMLElement>('[slot="start"]')!;
     return {
       overflow: surface.scrollWidth > surface.clientWidth,
       leadingTop: leadingRect.top,
       trailingTop: trailingRect.top,
       ordered: leadingRect.right <= trailingRect.left,
+      startBeforeLeading: startRect.right <= leadingRect.left,
+      startControlInCluster: startControl.getBoundingClientRect().left >= startRect.left - 0.5,
+      dividerVisible: !!divider && getComputedStyle(divider).display !== 'none',
+      dividerHeight: divider ? Math.round(divider.getBoundingClientRect().height) : 0,
     };
   });
 
   expect(layout.overflow).toBe(true);
   expect(Math.abs(layout.leadingTop - layout.trailingTop)).toBeLessThanOrEqual(0.5);
   expect(layout.ordered).toBe(true);
+  expect(layout.startBeforeLeading).toBe(true);
+  expect(layout.startControlInCluster).toBe(true);
+  expect(layout.dividerVisible).toBe(true);
+  expect(layout.dividerHeight).toBe(32);
 
   await expect(
     page.locator('#column-customizer').getByRole('toolbar', {

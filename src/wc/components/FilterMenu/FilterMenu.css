@@ -2,6 +2,7 @@
 @import '../../utils/control-parts.css';
 @import '../../utils/control-width.css';
 @import '../../utils/select-trigger.css';
+@import '../../utils/table-caption-control.css';
 
 :host(.filter-menu-host--external-trigger) {
   display: contents;

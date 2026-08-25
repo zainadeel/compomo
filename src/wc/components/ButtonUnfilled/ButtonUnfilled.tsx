@@ -1,8 +1,9 @@
-import { Component, Element, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';
+import { Component, Element, Event, EventEmitter, h, Host, Method, Prop, State, Watch } from '@stencil/core';
 import { controlWidthClass } from '../../utils';
 import { beginElevatedControlPress } from '../../utils/control-press';
 import { renderButtonContent } from '../../utils/button-render';
 import type { ControlInsetDepth } from '../../utils/control-text';
+import { observeTableCaptionCompact } from '../../utils/table-caption-compact';
 import type {
   ButtonPopup,
   ButtonSize,
@@ -114,6 +115,13 @@ export class ButtonUnfilled {
   @Prop() pressed: boolean | undefined;
 
   /**
+   * Collapse the visible label and chevron to an icon-only control when the
+   * owning `ds-table` caption is narrower than 900px. The trigger omits those
+   * parts rather than clipping them.
+   */
+  @Prop({ reflect: true }) collapseLabel: boolean = false;
+
+  /**
    * Mark the button as a Menu trigger. Implies `aria-haspopup="menu"` and covers
    * both menu-button shapes:
    *
@@ -122,7 +130,7 @@ export class ButtonUnfilled {
    * - `icon` — the button *is* a menu. No chevron is added, so the glyph must
    *   convey the menu on its own. Use `Ellipses` for generic more-options;
    *   use a specific icon when the menu has a named purpose, such as
-   *   `Preferences` for Customize table.
+   *   `Table` for Customize table.
    *
    * Use `haspopup` directly for non-menu popups.
    */
@@ -137,7 +145,23 @@ export class ButtonUnfilled {
   @Event() dsClick!: EventEmitter<MouseEvent>;
   @Event() dsChange!: EventEmitter<boolean>;
 
+  @State() private captionCompact = false;
+
   private buttonEl: HTMLButtonElement | null = null;
+  private captionCompactDisconnect: (() => void) | undefined;
+
+  componentDidLoad(): void {
+    this.syncCaptionCompactObserver();
+  }
+
+  disconnectedCallback(): void {
+    this.disconnectCaptionCompactObserver();
+  }
+
+  @Watch('collapseLabel')
+  onCollapseLabelChange() {
+    this.syncCaptionCompactObserver();
+  }
 
   @Method()
   async setFocus() {
@@ -154,8 +178,37 @@ export class ButtonUnfilled {
     if (this.pressed !== undefined) this.dsChange.emit(!this.pressed);
   };
 
+  private get captionIconOnly(): boolean {
+    return (
+      this.collapseLabel &&
+      this.captionCompact &&
+      this.variant === 'icon-label' &&
+      Boolean(this.icon)
+    );
+  }
+
+  private get visualVariant(): ButtonUnfilledVariant {
+    return this.captionIconOnly ? 'icon' : this.variant;
+  }
+
   private get showDot(): boolean {
     return this.variant === 'icon' && this.dot && !this.isLoading;
+  }
+
+  private syncCaptionCompactObserver(): void {
+    this.disconnectCaptionCompactObserver();
+    if (!this.collapseLabel) {
+      if (this.captionCompact) this.captionCompact = false;
+      return;
+    }
+    this.captionCompactDisconnect = observeTableCaptionCompact(this.el, compact => {
+      if (this.captionCompact !== compact) this.captionCompact = compact;
+    });
+  }
+
+  private disconnectCaptionCompactObserver(): void {
+    this.captionCompactDisconnect?.();
+    this.captionCompactDisconnect = undefined;
   }
 
   private get resolvedHaspopup(): ButtonUnfilledPopup | undefined {
@@ -224,10 +277,10 @@ export class ButtonUnfilled {
       'ds-control--inset': this.isInset && !this.doubleInset,
       'ds-control--inset-double': this.doubleInset,
       'ds-control-frame': true,
-      'button-unfilled--icon': this.variant === 'icon',
-      'ds-button--icon': this.variant === 'icon',
-      'button-unfilled--label': this.variant === 'label',
-      'button-unfilled--icon-label': this.variant === 'icon-label',
+      'button-unfilled--icon': this.visualVariant === 'icon',
+      'ds-button--icon': this.visualVariant === 'icon',
+      'button-unfilled--label': this.visualVariant === 'label',
+      'button-unfilled--icon-label': this.visualVariant === 'icon-label',
       'button-unfilled--background-faint': bg === 'faint',
       'button-unfilled--background-medium': bg === 'medium',
       'button-unfilled--background-bold': bg === 'bold',
@@ -242,14 +295,16 @@ export class ButtonUnfilled {
       <Host
         class={{
           'button-unfilled-host': true,
-          'button-unfilled-host--icon': this.variant === 'icon',
-          'ds-button-host--icon': this.variant === 'icon',
+          'button-unfilled-host--icon': this.visualVariant === 'icon',
+          'ds-button-host--icon': this.visualVariant === 'icon',
           'ds-control--lg': this.size === 'lg',
           'ds-control--md': this.size === 'md',
           'ds-control--sm': this.size === 'sm',
           'ds-control--xs': this.size === 'xs',
           'ds-control--inset': this.isInset && !this.doubleInset,
           'ds-control--inset-double': this.doubleInset,
+          'ds-table-caption-control': this.collapseLabel,
+          'ds-table-caption-control--compact': this.captionIconOnly,
           ...controlWidthClass(this.width),
         }}
         tabIndex={-1}
@@ -279,7 +334,7 @@ export class ButtonUnfilled {
         >
           {renderButtonContent({
             namespace: 'button-unfilled',
-            variant: this.variant,
+            variant: this.visualVariant,
             size: this.size,
             label: this.label,
             icon: this.icon,

@@ -3,10 +3,13 @@
 
   display: inline-block;
   min-inline-size: 0;
+  max-inline-size: var(--dimension-menu-width-xs);
 }
 
 ds-select {
   display: block;
+  min-inline-size: 0;
+  max-inline-size: 100%;
 }
 
 .table-saved-views__dialog-actions {

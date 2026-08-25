@@ -1,0 +1,9 @@
+:host {
+  display: inline-flex;
+  min-inline-size: 0;
+  max-inline-size: var(--dimension-menu-width-xs);
+}
+
+:host([hidden]) {
+  display: none;
+}

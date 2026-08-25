@@ -20,6 +20,7 @@ import {
   TOKEN_DEFAULTS,
   type ControlWidth,
 } from '../../utils';
+import { observeTableCaptionCompact } from '../../utils/table-caption-compact';
 import type { AnchoredAlign, AnchoredSide } from '../../utils/anchored-position';
 import { AnchoredPositionController } from '../../utils/anchored-position-controller';
 import { ChoiceOptionRow } from '../../utils/choice-list-parts';
@@ -84,7 +85,7 @@ export class FilterMenu {
   /** Controlled popup visibility. */
   @Prop({ mutable: true }) open: boolean = false;
   /** Select trigger text. The selected count is appended automatically. */
-  @Prop() triggerLabel: string = 'Filters';
+  @Prop() triggerLabel: string = 'Filter';
   /** Optional select trigger prefix icon name. */
   @Prop() icon: string | undefined = 'Filters';
   /** Select trigger density. */
@@ -95,6 +96,11 @@ export class FilterMenu {
   @Prop() hasBorder: boolean = true;
   /** Show selected interaction fill when one or more criteria are active. */
   @Prop() activeFill: boolean = false;
+  /**
+   * Opt into table-caption icon-only chrome below 900px. The trigger omits its
+   * visible label and chevron; keep an accessible name via aria-label.
+   */
+  @Prop({ reflect: true }) collapseLabel: boolean = false;
   /** ID applied to the internal select trigger. */
   @Prop() inputId: string | undefined;
   /** Direct accessible name for the internal select trigger. */
@@ -120,7 +126,7 @@ export class FilterMenu {
   /** Popup width. It remains clamped to the viewport by the component recipe. */
   @Prop() menuWidth: string = TOKEN_CSS_LENGTHS.menuWidthLg;
   /** Accessible name for the non-modal filter dialog. */
-  @Prop() menuLabel: string = 'Filters';
+  @Prop() menuLabel: string = 'Filter';
   /** Accessible name for the category tab list. */
   @Prop() categoriesLabel: string = 'Filter categories';
   /** Footer action and date-clear accessible label. */
@@ -134,6 +140,7 @@ export class FilterMenu {
   @State() private pos: { x: number; y: number } = { x: 0, y: 0 };
   @State() private focusRingVisible = false;
   @State() private activeOptionIndex = 0;
+  @State() private captionCompact = false;
 
   /** Requests a controlled value replacement without closing the popup. */
   @Event() dsChange!: EventEmitter<FilterMenuChangeDetail>;
@@ -153,6 +160,7 @@ export class FilterMenu {
   private triggerElement: HTMLButtonElement | null = null;
   private pendingInitialFocusVisible = false;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
+  private captionCompactDisconnect: (() => void) | undefined;
   private closingSnapshot: {
     filters: FilterMenuFilter[];
     values: FilterMenuValues;
@@ -195,12 +203,19 @@ export class FilterMenu {
   });
 
   componentDidLoad() {
+    this.syncCaptionCompactObserver();
     if (this.open) this.onOpenChange(true);
   }
 
   disconnectedCallback() {
+    this.disconnectCaptionCompactObserver();
     this.position.unobserve();
     this.teardownListeners();
+  }
+
+  @Watch('collapseLabel')
+  onCollapseLabelChange() {
+    this.syncCaptionCompactObserver();
   }
 
   @Watch('open')
@@ -692,6 +707,31 @@ export class FilterMenu {
     );
   }
 
+  private get captionIconOnly(): boolean {
+    return (
+      this.collapseLabel &&
+      this.captionCompact &&
+      this.usesInternalTrigger &&
+      Boolean(this.icon)
+    );
+  }
+
+  private syncCaptionCompactObserver(): void {
+    this.disconnectCaptionCompactObserver();
+    if (!this.collapseLabel) {
+      if (this.captionCompact) this.captionCompact = false;
+      return;
+    }
+    this.captionCompactDisconnect = observeTableCaptionCompact(this.el, compact => {
+      if (this.captionCompact !== compact) this.captionCompact = compact;
+    });
+  }
+
+  private disconnectCaptionCompactObserver(): void {
+    this.captionCompactDisconnect?.();
+    this.captionCompactDisconnect = undefined;
+  }
+
   render() {
     const state =
       this.closing && this.closingSnapshot
@@ -726,6 +766,8 @@ export class FilterMenu {
           'filter-menu-host--external-trigger': !this.usesInternalTrigger,
           'ds-select-trigger-host': this.usesInternalTrigger,
           [`ds-control--${this.size}`]: true,
+          'ds-table-caption-control': this.collapseLabel,
+          'ds-table-caption-control--compact': this.captionIconOnly,
           ...controlWidthClass(this.width),
         }}
       >
@@ -763,21 +805,25 @@ export class FilterMenu {
                 <ds-icon name={this.icon} size={iconSize} color="inherit" />
               </span>
             ) : null}
-            <ds-text
-              class="trigger__label-box trigger__label trigger__label-content ds-control-label-box ds-interaction-fill__content"
-              as="span"
-              variant={textVariant}
-              color="inherit"
-              lineTruncation={1}
-            >
-              {label}
-            </ds-text>
-            <span
-              class="trigger__chevron ds-control-icon-box ds-interaction-fill__content"
-              aria-hidden="true"
-            >
-              <ds-icon name="ChevronDown" size={iconSize} color="inherit" />
-            </span>
+            {this.captionIconOnly ? null : (
+              <ds-text
+                class="trigger__label-box trigger__label trigger__label-content ds-control-label-box ds-interaction-fill__content"
+                as="span"
+                variant={textVariant}
+                color="inherit"
+                lineTruncation={1}
+              >
+                {label}
+              </ds-text>
+            )}
+            {this.captionIconOnly ? null : (
+              <span
+                class="trigger__chevron ds-control-icon-box ds-interaction-fill__content"
+                aria-hidden="true"
+              >
+                <ds-icon name="ChevronDown" size={iconSize} color="inherit" />
+              </span>
+            )}
           </button>
         ) : null}
 

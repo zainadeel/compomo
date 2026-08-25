@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "table-toolbar",
   "title": "TableToolbar",
-  "description": "Data-agnostic companion layout for application-owned controls in a table header, with leading and trailing control groups and narrow-width horizontal overflow.",
+  "description": "Data-agnostic companion layout for application-owned table caption controls, with a start cluster, optional search, trailing Filter/Group/Sort, and narrow-width horizontal overflow.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
@@ -13,9 +13,9 @@
     "intent": {
       "audience": "general",
       "status": "stable",
-      "summary": "Data-agnostic companion layout for application-owned controls in a table header, with leading and trailing control groups and narrow-width horizontal overflow.",
+      "summary": "Data-agnostic companion layout for application-owned table caption controls, with a start cluster, optional search, trailing Filter/Group/Sort, and narrow-width horizontal overflow.",
       "useWhen": [
-        "Several table pages repeat the same leading discovery controls and trailing result-shaping controls.",
+        "Several table pages repeat the same saved-view cluster, middle discovery and result-shaping controls, and table-owned caption actions.",
         "A ds-table header slot needs consistent control spacing, alignment, grouping, and narrow-width overflow without moving product behavior into the table."
       ],
       "avoidWhen": [
@@ -26,34 +26,39 @@
       "commonlyComposedWith": [
         "component:ds-table",
         "component:ds-table-saved-views",
+        "component:ds-divider",
         "component:ds-input",
         "component:ds-filter-menu",
+        "component:ds-select",
+        "component:ds-table-sort",
         "component:ds-button-unfilled"
       ],
       "patterns": [],
       "accessibility": [
         "The component exposes a named toolbar while each slotted control retains its own accessible name and native keyboard behavior.",
-        "Use the leading slot for discovery and context controls such as saved views and search. Use the trailing slot for result-shaping controls such as filters and grouping.",
+        "Use the start slot for saved views. Use search for the optional discovery field, leading for any additional left-side middle controls, and trailing for Filter, Group, and Sort. Table-owned column customizer and data-mode actions remain in the table caption trailing cluster.",
         "Tab order follows authored DOM order. The toolbar does not add roving focus because it may contain heterogeneous form and popup controls."
       ],
       "states": [
         "The component owns layout only. Slotted controls, values, menus, loading, persistence, and consequences remain controlled by the application. Use ds-table-saved-views when saved-view interaction needs the shared CompoMo behavior while application storage remains external.",
-        "Either region may be empty. The populated region continues to occupy the available width without adding placeholder chrome."
+        "The start cluster is followed by a decorative vertical divider, then the spanning middle region. The start cluster and divider hide when nothing is projected. Search is a dedicated slot that hides when nothing is projected. Empty leading or trailing clusters add no placeholder chrome. The middle region occupies remaining width so trailing controls stay at its inline end.",
+        "Column customizer and data-mode switching stay table-owned caption actions. Do not recreate those menus in the toolbar."
       ],
       "responsiveBehavior": [
-        "The two control groups stay on one line and horizontally scroll when their complete controls no longer fit.",
+        "The start cluster, search, trailing Filter/Group/Sort, and table caption trailing actions stay on one line. Saved views, Filter, Group, and Sort triggers cap at the compact menu-width token and truncate their labels, keeping a saved-view dirty dot visible. Group and Sort popups keep that same compact menu-width floor. The toolbar horizontally scrolls when its complete controls no longer fit.",
+        "Inside a named ds-table container narrower than 900px, Filter, Group, and Sort omit their labels and chevrons and become icon-only. Active filtering or grouping promotes the prefix icon to primary. Sort keeps resting secondary chrome. Table-owned Customize also becomes the icon-only Table menu button at that width.",
         "The scrollbar is visually suppressed without removing touch, trackpad, mouse-wheel, or keyboard scrolling from the overflow container.",
         "Trailing controls remain grouped after leading controls; the toolbar does not collapse controls into an application-specific overflow menu."
       ],
       "frameworkCaveats": {
         "customElements": [
-          "Project controls through slot=leading or slot=trailing and provide a label that names their table context when Table controls is insufficient."
+          "Project saved views through slot=start, search through slot=search, additional left-side middle controls through slot=leading, and Filter, Group, and Sort through slot=trailing. Provide a label that names their table context when Table controls is insufficient."
         ],
         "react": [
-          "Set slot=leading or slot=trailing on each child control; keep values and event handlers in the application."
+          "Set slot=start, slot=search, slot=leading, or slot=trailing on each child control; keep values and event handlers in the application."
         ],
         "angular": [
-          "Set slot=leading or slot=trailing on each child control and import the generated DsTableToolbar adapter alongside those controls."
+          "Set slot=start, slot=search, slot=leading, or slot=trailing on each child control and import the generated DsTableToolbar adapter alongside those controls."
         ]
       },
       "references": [
@@ -135,16 +140,18 @@
     "@ds-mo/ui",
     "@ds-mo/tokens"
   ],
-  "registryDependencies": [],
+  "registryDependencies": [
+    "divider"
+  ],
   "files": [
     {
       "path": "src/wc/components/TableToolbar/TableToolbar.css",
-      "content": ":host {\n  display: block;\n  min-inline-size: 0;\n  max-inline-size: 100%;\n}\n\n.table-toolbar {\n  box-sizing: border-box;\n  display: flex;\n  align-items: center;\n  inline-size: 100%;\n  min-inline-size: 0;\n  gap: var(--dimension-space-100);\n  overflow-x: auto;\n  overflow-y: hidden;\n  scrollbar-width: none;\n}\n\n.table-toolbar::-webkit-scrollbar {\n  display: none;\n}\n\n.table-toolbar__leading,\n.table-toolbar__trailing {\n  display: flex;\n  align-items: center;\n  min-inline-size: 0;\n  gap: var(--dimension-space-100);\n}\n\n.table-toolbar__leading {\n  flex: 1 0 auto;\n}\n\n.table-toolbar__trailing {\n  flex: 0 0 auto;\n  margin-inline-start: auto;\n}\n\n.table-toolbar__leading slot,\n.table-toolbar__trailing slot {\n  display: contents;\n}\n",
+      "content": ":host {\n  display: block;\n  min-inline-size: 0;\n  max-inline-size: 100%;\n}\n\n.table-toolbar {\n  box-sizing: border-box;\n  display: flex;\n  align-items: center;\n  inline-size: 100%;\n  min-inline-size: 0;\n  gap: var(--dimension-space-100);\n  overflow-x: auto;\n  overflow-y: hidden;\n  scrollbar-width: none;\n}\n\n.table-toolbar::-webkit-scrollbar {\n  display: none;\n}\n\n.table-toolbar__start,\n.table-toolbar__search,\n.table-toolbar__main,\n.table-toolbar__leading,\n.table-toolbar__trailing {\n  display: flex;\n  align-items: center;\n  min-inline-size: 0;\n  gap: var(--dimension-space-100);\n}\n\n.table-toolbar__start {\n  flex: 0 1 var(--dimension-menu-width-xs);\n  min-inline-size: 0;\n  max-inline-size: var(--dimension-menu-width-xs);\n  overflow: hidden;\n}\n\n.table-toolbar__rule {\n  flex: 0 0 auto;\n}\n\n.table-toolbar__main {\n  flex: 1 1 auto;\n  min-inline-size: min-content;\n}\n\n.table-toolbar__search {\n  flex: 0 1 var(--dimension-panel-width-xs);\n  max-inline-size: var(--dimension-panel-width-xs);\n}\n\n:host(:not(:has([slot='search']))) .table-toolbar__search {\n  display: none;\n}\n\n:host(:not(:has([slot='start']))) .table-toolbar__start,\n:host(:not(:has([slot='start']))) .table-toolbar__rule {\n  display: none;\n}\n\n.table-toolbar__leading {\n  flex: 1 0 auto;\n}\n\n.table-toolbar__trailing {\n  flex: 0 0 auto;\n  margin-inline-start: auto;\n}\n\n.table-toolbar__trailing > *,\n.table-toolbar [slot='start'],\n.table-toolbar ds-filter-menu,\n.table-toolbar ds-select,\n.table-toolbar ds-table-sort {\n  min-inline-size: 0;\n  max-inline-size: var(--dimension-menu-width-xs);\n  --ds-choice-popup-min-inline-size: var(--dimension-menu-width-xs);\n}\n\n.table-toolbar__start slot,\n.table-toolbar__search slot,\n.table-toolbar__leading slot,\n.table-toolbar__trailing slot {\n  display: contents;\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/TableToolbar/TableToolbar.tsx",
-      "content": "import { Component, h, Host, Prop } from '@stencil/core';\n\n@Component({\n  tag: 'ds-table-toolbar',\n  styleUrl: 'TableToolbar.css',\n  scoped: true,\n})\nexport class TableToolbar {\n  /** Accessible name for the grouped table controls. */\n  @Prop() label: string = 'Table controls';\n\n  render() {\n    return (\n      <Host>\n        <div class=\"table-toolbar\" role=\"toolbar\" aria-label={this.label}>\n          <div class=\"table-toolbar__leading\">\n            <slot name=\"leading\" />\n          </div>\n          <div class=\"table-toolbar__trailing\">\n            <slot name=\"trailing\" />\n          </div>\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Element, h, Host, Prop } from '@stencil/core';\n\nconst CAPTION_CONTROL_SELECTOR = 'ds-filter-menu, ds-select';\n\n@Component({\n  tag: 'ds-table-toolbar',\n  styleUrl: 'TableToolbar.css',\n  scoped: true,\n})\nexport class TableToolbar {\n  @Element() private el!: HTMLElement;\n\n  /** Accessible name for the grouped table controls. */\n  @Prop() label: string = 'Table controls';\n\n  private captionControlObserver: MutationObserver | undefined;\n\n  componentDidLoad(): void {\n    this.connectCaptionControlObserver();\n  }\n\n  disconnectedCallback(): void {\n    this.captionControlObserver?.disconnect();\n  }\n\n  render() {\n    return (\n      <Host>\n        <div class=\"table-toolbar\" role=\"toolbar\" aria-label={this.label}>\n          <div class=\"table-toolbar__start\">\n            <slot name=\"start\" />\n          </div>\n          <ds-divider class=\"table-toolbar__rule\" orientation=\"vertical\" length=\"32px\" />\n          <div class=\"table-toolbar__main\">\n            <div class=\"table-toolbar__search\">\n              <slot name=\"search\" />\n            </div>\n            <div class=\"table-toolbar__leading\">\n              <slot name=\"leading\" />\n            </div>\n            <div class=\"table-toolbar__trailing\">\n              <slot name=\"trailing\" />\n            </div>\n          </div>\n        </div>\n      </Host>\n    );\n  }\n\n  private connectCaptionControlObserver(): void {\n    if (this.captionControlObserver || typeof MutationObserver === 'undefined') return;\n    this.captionControlObserver = new MutationObserver(this.syncCaptionControls);\n    this.captionControlObserver.observe(this.el, { childList: true, subtree: true });\n    this.syncCaptionControls();\n  }\n\n  private syncCaptionControls = () => {\n    for (const control of this.el.querySelectorAll<\n      HTMLElement & { collapseLabel?: boolean }\n    >(CAPTION_CONTROL_SELECTOR)) {\n      if (control.closest('ds-table-saved-views')) continue;\n      if (control.collapseLabel) continue;\n      control.collapseLabel = true;\n    }\n  };\n}\n",
       "type": "registry:ui"
     }
   ]

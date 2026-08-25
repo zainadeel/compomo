@@ -9,6 +9,8 @@
   box-sizing: border-box;
   min-width: 0;
   max-width: 100%;
+  container-type: inline-size;
+  container-name: ds-table;
 }
 
 :host(.table-host--bounded) {
@@ -143,4 +145,20 @@ ds-skeleton.ds-table__skeleton-checkbox {
   justify-content: center;
   inline-size: var(--dimension-size-300);
   block-size: var(--dimension-size-300);
+}
+
+.ds-table__caption-customizer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-inline-size: 0;
+}
+
+.ds-table__caption-customizer--loading > ds-button-unfilled {
+  visibility: hidden;
+}
+
+.ds-table__caption-customizer > ds-skeleton {
+  position: absolute;
+  inset: 0;
 }

@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { useArgs } from 'storybook/preview-api';
+import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 import '../../../../dist/components/ds-table.js';
 import '../../../../dist/components/ds-text.js';
 import '../../../../dist/components/ds-select.js';
@@ -41,6 +42,16 @@ function overflowAction(name: string): TableCellAction {
     ariaLabel: `More actions for ${name}`,
     items: OVERFLOW_ACTION_ITEMS,
   };
+}
+
+function applyColumnsConfig(event: Event) {
+  const table = event.currentTarget as HTMLElement & {
+    hiddenColumnIds: string[];
+    columnOrder: string[];
+  };
+  const detail = (event as CustomEvent<TableColumnsConfigChangeDetail>).detail;
+  table.hiddenColumnIds = detail.hiddenColumnIds;
+  table.columnOrder = detail.columnOrder;
 }
 
 const COLUMNS: TableColumn[] = [
@@ -1296,24 +1307,16 @@ export const OverflowActionMenu: Story = {
 
 export const ColumnCustomizer: Story = {
   name: 'Column customizer',
-  args: {
-    hiddenColumnIds: [] as string[],
-    columnOrder: [] as string[],
-  },
-  argTypes: {
-    hiddenColumnIds: { table: { disable: true } },
-    columnOrder: { table: { disable: true } },
-  },
   parameters: {
     docs: {
       description: {
         story:
-          'Opt-in columnCustomizer keeps columns as the catalog. hiddenColumnIds and columnOrder are controlled; dsColumnsConfigChange reports live show/hide and data-column reorder. The trailing Preferences control opens the shared Menu of reorderable switch rows and stays open while toggling or dragging. Selection and action columns are omitted from the menu, action columns stay fixed last, and the last remaining visible data column cannot be hidden. Persistence stays in the application.',
+          'Opt-in columnCustomizer keeps columns as the catalog. hiddenColumnIds and columnOrder are controlled; dsColumnsConfigChange reports live show/hide and data-column reorder. The trailing Table control opens the shared Menu of reorderable switch rows and stays open while toggling or dragging. At typical widths the trigger is icon-label Customize/Customized with only the label in primary when customized. Below 900px it is the icon-only Table menu button, and a customized catalog promotes that icon to primary. Selection and action columns are omitted from the menu, action columns stay fixed last, and the last remaining visible data column cannot be hidden. Persistence stays in the application.',
       },
+      ...isolatedOverlayDocs('480px'),
     },
   },
-  render: args => {
-    const [, updateArgs] = useArgs();
+  render: () => {
     const rows = ROWS.slice(0, 4).map(row => ({
       ...row,
       cells: {
@@ -1342,17 +1345,11 @@ export const ColumnCustomizer: Story = {
           ] satisfies TableColumn[]
         }
         .rows=${rows}
-        .hiddenColumnIds=${args['hiddenColumnIds'] as string[]}
-        .columnOrder=${args['columnOrder'] as string[]}
         column-customizer
         selection-mode="multiple"
         caption="Customizable drivers"
         caption-visibility="visible"
-        @dsColumnsConfigChange=${(event: CustomEvent<TableColumnsConfigChangeDetail>) =>
-          updateArgs({
-            hiddenColumnIds: event.detail.hiddenColumnIds,
-            columnOrder: event.detail.columnOrder,
-          })}
+        @dsColumnsConfigChange=${applyColumnsConfig}
       ></ds-table>
     `;
   },

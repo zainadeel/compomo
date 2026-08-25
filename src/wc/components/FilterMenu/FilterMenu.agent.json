@@ -49,6 +49,7 @@
   ],
   "responsiveBehavior": [
     "The popup defaults to the large menu-width token and clamps to the viewport.",
+    "When collapseLabel is set inside a named ds-table container narrower than 900px, the trigger omits its label and chevron and becomes icon-only. Active criteria promote the prefix icon to primary.",
     "Both panes remain visible at narrow widths, with a smaller category minimum and reduced option-pane padding.",
     "Treat side as preferred placement; the popup flips and clamps when viewport collision requires it."
   ],

@@ -47,6 +47,7 @@ import {
   tableActionTriggerId,
 } from './table-action-menu';
 import {
+  isTableColumnsCustomized,
   nextTableColumnCustomizerElementId,
   resolveTableColumnOrder,
   resolveTableHiddenColumnIds,
@@ -80,6 +81,7 @@ import { resolvePaginationState } from '../Pagination/pagination-model';
 import { resolveCssLengthPx } from '../../utils/resolve-css-length-px';
 import { isElementTruncated } from '../../utils/is-element-truncated';
 import { resolveSafeUrl } from '../../utils/safe-url';
+import { observeTableCaptionCompact } from '../../utils/table-caption-compact';
 import { resolveTableFitPageSize } from './table-pagination-fit';
 import {
   paginationShortcutBlockedByPath,
@@ -257,6 +259,7 @@ export class Table {
   @State() private actionMenu: { rowId: string; columnId: string } | null = null;
   @State() private actionMenuInitialFocusVisible = false;
   @State() private truncateTooltipLabel = '';
+  @State() private captionCompact = false;
   @State() private columnCustomizerOpen = false;
   @State() private columnCustomizerInitialFocusVisible = false;
   @State() private dataModeSwitcherOpen = false;
@@ -327,6 +330,7 @@ export class Table {
   private stickyGroupConnected = false;
   private headerSlotObserver: MutationObserver | null = null;
   private footerSlotObserver: MutationObserver | null = null;
+  private captionCompactDisconnect: (() => void) | undefined;
   private fitResizeObserver: ResizeObserver | null = null;
   private fitObservedViewport: HTMLElement | null = null;
   private fitObservedTable: HTMLTableElement | null = null;
@@ -445,6 +449,7 @@ export class Table {
     this.connectHeaderSlotObserver();
     this.connectFooterSlotObserver();
     this.connectFitObserver();
+    this.connectCaptionCompactObserver();
     this.syncFitPageSize();
     this.connectTruncateTooltip();
   }
@@ -466,6 +471,7 @@ export class Table {
     this.viewportFitController.refresh(false);
     this.syncStickyGroupConnection();
     this.connectFitObserver();
+    this.connectCaptionCompactObserver();
     this.syncFitPageSize();
     if (this.stickyGroupConnected) this.updateStickyGroup();
   }
@@ -481,6 +487,7 @@ export class Table {
     this.connectHeaderSlotObserver();
     this.connectFooterSlotObserver();
     this.connectFitObserver();
+    this.connectCaptionCompactObserver();
     this.connectTruncateTooltip();
   }
 
@@ -496,6 +503,7 @@ export class Table {
     this.footerSlotObserver?.disconnect();
     this.footerSlotObserver = null;
     this.disconnectFitObserver();
+    this.disconnectCaptionCompactObserver();
     this.disconnectTruncateTooltip();
     this.closeColumnCustomizer();
   }
@@ -790,6 +798,18 @@ export class Table {
     this.fitResizeObserver = null;
     this.fitObservedViewport = null;
     this.fitObservedTable = null;
+  }
+
+  private connectCaptionCompactObserver(): void {
+    if (this.captionCompactDisconnect) return;
+    this.captionCompactDisconnect = observeTableCaptionCompact(this.el, compact => {
+      if (this.captionCompact !== compact) this.captionCompact = compact;
+    });
+  }
+
+  private disconnectCaptionCompactObserver(): void {
+    this.captionCompactDisconnect?.();
+    this.captionCompactDisconnect = undefined;
   }
 
   private readonly syncFitPageSize = (): void => {
@@ -2852,7 +2872,7 @@ export class Table {
         id={`${this.dataModeSwitcherElementId}-trigger`}
         variant="icon"
         size="md"
-        icon="Table"
+        icon="Ellipses"
         aria-label={this.dataModeSwitcherLabel}
         hasMenu={true}
         expanded={this.dataModeSwitcherOpen}
@@ -2919,24 +2939,41 @@ export class Table {
 
   private renderColumnCustomizerTrigger() {
     if (!this.showsColumnCustomizer) return null;
-    if (this.chromeLoading) {
-      return <ds-skeleton variant="control" controlSize="md" width="var(--dimension-size-400)" />;
-    }
+    const customized = isTableColumnsCustomized(
+      this.columns,
+      this.hiddenColumnIds,
+      this.columnOrder
+    );
+    const label = customized ? 'Customized' : 'Customize';
     return (
-      <ds-button-unfilled
-        id={`${this.columnCustomizerElementId}-trigger`}
-        variant="icon"
-        size="md"
-        icon="Preferences"
-        aria-label="Customize table"
-        hasMenu={true}
-        expanded={this.columnCustomizerOpen}
-        controls={this.columnCustomizerElementId}
-        activeFill={false}
-        onDsClick={(event: CustomEvent<MouseEvent>) => {
-          this.toggleColumnCustomizer(event.detail.detail === 0);
+      <div
+        class={{
+          'ds-table__caption-customizer': true,
+          'ds-table__caption-customizer--loading': this.chromeLoading,
         }}
-      />
+        aria-hidden={this.chromeLoading ? 'true' : undefined}
+      >
+        <ds-button-unfilled
+          id={`${this.columnCustomizerElementId}-trigger`}
+          variant={this.captionCompact ? 'icon' : 'icon-label'}
+          size="md"
+          icon="Table"
+          label={label}
+          aria-label={`${label} table`}
+          hasMenu={true}
+          expanded={this.columnCustomizerOpen}
+          controls={this.columnCustomizerElementId}
+          isActive={customized}
+          activeFill={false}
+          onDsClick={(event: CustomEvent<MouseEvent>) => {
+            if (this.chromeLoading) return;
+            this.toggleColumnCustomizer(event.detail.detail === 0);
+          }}
+        />
+        {this.chromeLoading ? (
+          <ds-skeleton variant="control" controlSize="md" width="100%" />
+        ) : null}
+      </div>
     );
   }
 

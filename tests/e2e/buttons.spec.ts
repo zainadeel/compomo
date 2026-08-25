@@ -425,6 +425,74 @@ test('keeps popup triggers visibly pressed when expanded without creating select
   ))).toBe(tokens.pressed);
 });
 
+test('icon-label chrome active promotes only the label foreground', async ({ page }) => {
+  const host = page.locator('#unfilled-icon-label');
+  const button = host.locator('button');
+  const tokens = await page.evaluate(() => {
+    const probe = document.createElement('div');
+    document.body.append(probe);
+    const resolve = (token: string) => {
+      probe.style.color = `var(${token})`;
+      return getComputedStyle(probe).color;
+    };
+    const result = {
+      primary: resolve('--color-foreground-primary'),
+      secondary: resolve('--color-foreground-secondary'),
+    };
+    probe.remove();
+    return result;
+  });
+
+  await host.evaluate(element => {
+    const control = element as HTMLElement & {
+      activeFill: boolean;
+      hasMenu: boolean;
+      isActive: boolean;
+    };
+    control.activeFill = false;
+    control.hasMenu = true;
+    control.isActive = true;
+  });
+
+  await expect(button).toHaveClass(/button-unfilled--icon-label/);
+  await expect(button).toHaveClass(/button-unfilled--active/);
+  await expect(button).not.toHaveClass(/ds-interaction-fill--selected/);
+  await expect(button).toHaveCSS('color', tokens.secondary);
+  await expect(button.locator('.button-unfilled__label')).toHaveCSS('color', tokens.primary);
+  await expect(button.locator('.button-unfilled__icon-wrap')).toHaveCSS('color', tokens.secondary);
+  await expect(button.locator('.button-unfilled__chevron')).toHaveCSS('color', tokens.secondary);
+});
+
+test('icon chrome active promotes the glyph foreground', async ({ page }) => {
+  const host = page.locator('#unfilled-icon');
+  const button = host.locator('button');
+  const tokens = await page.evaluate(() => {
+    const probe = document.createElement('div');
+    document.body.append(probe);
+    const resolve = (token: string) => {
+      probe.style.color = `var(${token})`;
+      return getComputedStyle(probe).color;
+    };
+    const result = {
+      primary: resolve('--color-foreground-primary'),
+      secondary: resolve('--color-foreground-secondary'),
+    };
+    probe.remove();
+    return result;
+  });
+
+  await host.evaluate(element => {
+    const control = element as HTMLElement & { activeFill: boolean; isActive: boolean };
+    control.activeFill = false;
+    control.isActive = true;
+  });
+
+  await expect(button).toHaveClass(/button-unfilled--icon/);
+  await expect(button).toHaveClass(/button-unfilled--active/);
+  await expect(button).toHaveCSS('color', tokens.primary);
+  await expect(button.locator('.button-unfilled__icon-wrap')).toHaveCSS('color', tokens.primary);
+});
+
 test('keeps expanded disclosure buttons visually neutral', async ({ page }) => {
   const host = page.locator('#unfilled-icon');
   const button = host.locator('button');

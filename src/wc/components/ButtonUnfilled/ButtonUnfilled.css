@@ -1,4 +1,5 @@
 @import '../../utils/button-base.css';
+@import '../../utils/table-caption-control.css';
 
 :host {
   --ds-button-unfilled-fg: var(--color-foreground-secondary);
@@ -15,6 +16,19 @@
 }
 
 .button-unfilled--active {
+  color: var(--ds-button-unfilled-fg-active);
+}
+
+/*
+ * Foreground-only active on icon-label: the word carries the selected meaning.
+ * Icon and menu chevron keep the resting foreground. Icon-only active still
+ * promotes the glyph because that is the only content.
+ */
+.button-unfilled--icon-label.button-unfilled--active:not(.ds-interaction-fill--selected) {
+  color: var(--ds-button-unfilled-fg);
+}
+
+.button-unfilled--icon-label.button-unfilled--active:not(.ds-interaction-fill--selected) .button-unfilled__label {
   color: var(--ds-button-unfilled-fg-active);
 }
 

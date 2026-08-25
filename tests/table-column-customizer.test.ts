@@ -8,6 +8,7 @@ import {
   resolveTableColumnOrder,
   resolveTableHiddenColumnIds,
   resolveTableVisibleColumns,
+  isTableColumnsCustomized,
   tableColumnCustomizerItems,
   tableColumnCustomizerLabel,
   tableColumnCustomizerMenuItems,
@@ -102,6 +103,13 @@ test('reorders data columns without moving unknown ids', () => {
     'status',
     'vehicle',
   ]);
+});
+
+test('treats hidden or reordered data columns as customized', () => {
+  assert.equal(isTableColumnsCustomized(columns, [], undefined), false);
+  assert.equal(isTableColumnsCustomized(columns, ['status'], undefined), true);
+  assert.equal(isTableColumnsCustomized(columns, [], ['status', 'driver', 'vehicle']), true);
+  assert.equal(isTableColumnsCustomized(columns, [], ['driver', 'status', 'vehicle']), false);
 });
 
 test('lists only data columns for the customizer', () => {

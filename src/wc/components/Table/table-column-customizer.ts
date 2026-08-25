@@ -61,6 +61,18 @@ export function resolveTableHiddenColumnIds(
   return hidden.filter(id => id !== keep);
 }
 
+/** True when hidden ids or data-column order differ from the catalog default. */
+export function isTableColumnsCustomized(
+  columns: TableColumn[],
+  hiddenColumnIds: string[] | undefined,
+  columnOrder: string[] | undefined
+): boolean {
+  if (resolveTableHiddenColumnIds(columns, hiddenColumnIds).length > 0) return true;
+  const catalog = tableDataColumns(columns).map(column => column.id);
+  const order = resolveTableColumnOrder(columns, columnOrder);
+  return order.length !== catalog.length || order.some((id, index) => id !== catalog[index]);
+}
+
 export function resolveTableVisibleColumns(
   columns: TableColumn[],
   options: {
