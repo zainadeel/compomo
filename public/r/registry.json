@@ -2043,7 +2043,7 @@
             "Set isInset only when the button is nested inside a same-size control. The default single inset removes 4px overall; insetDepth double removes 8px overall so the parent can add 4px per edge while preserving its outer alignment box. Double inset falls back to single at xs to protect minimum icon geometry.",
             "A true pressed toggle and owner-controlled isActive emphasis share the selected visual treatment, but only pressed supplies toggle semantics and dsChange.",
             "General content UI keeps the selected interaction fill and border for pressed or active emphasis.",
-            "Shell, navigation, and tool-rail composites use isActive with foreground-only emphasis and no selected fill or border. On icon-label that emphasis is the label; the leading icon and menu chevron keep the resting foreground. On icon, the glyph is the only content and takes the primary foreground.",
+            "Shell, navigation, and tool-rail composites use isActive with primary foreground across the complete control and no selected fill or border.",
             "The omitted default surface treatment is for primary and secondary parent surfaces and uses the brand-active selected fill; pass faint explicitly on faint surfaces to use the neutral active fill.",
             "Surface context must match the actual parent surface; translucent, inverted, media, and always-dark treatments are reserved for those surfaces.",
             "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
@@ -4532,6 +4532,7 @@
           ],
           "states": [
             "Loader communicates indeterminate progress only and does not emit completion or failure events.",
+            "The segmented glyph rotates clockwise, with its opacity ramp trailing the leading arc.",
             "Omitted color inherits currentColor. Explicit semantic aliases and CSS-variable references match Icon when an independent progress color is required.",
             "Nested Loader inherits a readable color from its owning busy control or region rather than selecting tertiary or quaternary directly.",
             "The owner decides whether to delay Loader visibility for short operations and removes it when the operation settles.",
@@ -9065,6 +9066,7 @@
             "component:ds-pagination",
             "component:ds-table-toolbar",
             "component:ds-table-saved-views",
+            "component:ds-table-filter",
             "component:ds-table-sort",
             "component:ds-bar-action",
             "component:ds-button-unfilled",
@@ -9450,6 +9452,163 @@
       ]
     },
     {
+      "name": "table-filter",
+      "title": "TableFilter",
+      "description": "Standard table-toolbar Filter control that owns the shared trigger, filter menu UI, accessible defaults, and compact-caption behavior while the application controls data and values.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/table-filter",
+        "source": "src/wc/components/TableFilter/TableFilter.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Standard table-toolbar Filter control that owns the shared trigger, filter menu UI, accessible defaults, and compact-caption behavior while the application controls data and values.",
+          "useWhen": [
+            "A table toolbar should expose the standard singular Filter control and shared filter-menu interaction.",
+            "A product supplies filter definitions and controlled values but should not recreate the toolbar trigger, selected count, category navigation, or responsive treatment."
+          ],
+          "avoidWhen": [
+            "Filtering is unrelated to a table or structured result set; use ds-filter-menu directly.",
+            "The application expects the component to filter, fetch, persist, or otherwise transform rows.",
+            "A filter requires a product-specific editor that the shared filter category kinds cannot represent."
+          ],
+          "alternatives": [
+            {
+              "when": "A non-table surface needs the generic filter interaction or custom trigger recipe.",
+              "component": "component:ds-filter-menu",
+              "reason": "FilterMenu exposes generic trigger geometry and popup positioning rather than the fixed table-toolbar recipe."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-table",
+            "component:ds-table-toolbar",
+            "component:ds-table-saved-views",
+            "component:ds-table-sort",
+            "component:ds-filter-menu"
+          ],
+          "patterns": [
+            "pattern:menu-trigger"
+          ],
+          "accessibility": [
+            "The trigger is an icon-label combobox named Filter table unless a product aria-label supplies the table context. Compact caption widths preserve that accessible name after the visible label and chevron are omitted.",
+            "The popup retains ds-filter-menu category navigation, option semantics, focus entry, dismissal, and focus return.",
+            "Localize label, menuLabel, categoriesLabel, and clearLabel together so visible and accessible wording remains consistent."
+          ],
+          "states": [
+            "filters, values, and activeFilterId are controlled. dsChange, dsClear, and dsActiveFilterChange report intent without changing those inputs; the application applies query consequences and returns replacement values.",
+            "The visible trigger label defaults to singular Filter and appends the selected criterion count. The trigger uses resting secondary chrome at typical widths; active criteria promote only the visible label, without redefining generic button active semantics.",
+            "Popup visibility follows the same mutable open and dsOpenChange contract as ds-filter-menu."
+          ],
+          "responsiveBehavior": [
+            "Place the control in the trailing region of ds-table-toolbar.",
+            "Inside a named ds-table container narrower than 900px, the trigger becomes icon-only and active criteria promote the Filters icon to primary."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign filters, values, and activeFilterId as JavaScript properties. Replace controlled values in response to dsChange and dsClear."
+            ],
+            "react": [
+              "Keep filters and values in application state and replace values from the typed dsChange and dsClear events."
+            ],
+            "angular": [
+              "Import the generated DsTableFilter adapter, bind filters and values, and handle dsChange, dsClear, and dsActiveFilterChange."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook review states",
+              "path": "src/wc/components/TableFilter/TableFilter.stories.ts"
+            },
+            {
+              "label": "Toolbar composition owner",
+              "path": "src/wc/components/TableToolbar/TableToolbar.agent.json"
+            }
+          ]
+        },
+        "props": {
+          "activeFilterId": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "categoriesLabel": {
+            "type": "string",
+            "required": false
+          },
+          "clearLabel": {
+            "type": "string",
+            "required": false
+          },
+          "filters": {
+            "type": "FilterMenuFilter[]",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": false
+          },
+          "menuLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "open": {
+            "type": "boolean",
+            "required": false
+          },
+          "values": {
+            "type": "FilterMenuValues",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsActiveFilterChange",
+            "detail": "string"
+          },
+          {
+            "name": "dsAfterClose",
+            "detail": "void"
+          },
+          {
+            "name": "dsChange",
+            "detail": "FilterMenuChangeDetail"
+          },
+          {
+            "name": "dsClear",
+            "detail": "void"
+          },
+          {
+            "name": "dsClose",
+            "detail": "void"
+          },
+          {
+            "name": "dsOpenChange",
+            "detail": "boolean"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-table-filter",
+          "react": "DsTableFilter",
+          "vue": "DsTableFilter",
+          "angular": "DsTableFilter"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "filter-menu"
+      ]
+    },
+    {
       "name": "table-saved-views",
       "title": "TableSavedViews",
       "description": "Controlled saved-views UI for table toolbars, including selection, dirty state, create, save, discard, rename, remove, validation, and focus behavior without owning table configuration or persistence.",
@@ -9493,7 +9652,7 @@
             "The default view is a non-editable template. Application-owned custom views appear in a separate section with Rename and Remove actions. New view opens the naming dialog. When an editable selected view is dirty, that view row shows Save and negative Discard supporting actions while the footer remains dedicated to New view. The application decides which table state to capture, restore, and persist."
           ],
           "responsiveBehavior": [
-            "The control remains a single toolbar item and relies on Select, Menu, and Modal collision and viewport behavior. Its trigger is capped at the compact menu-width token so long view names truncate while the dirty dot stays visible. Its choice popup keeps that same token as the minimum width.",
+            "The control remains a single toolbar item and relies on Select, Menu, and Modal collision and viewport behavior. Its trigger hugs short view names and is capped at the compact menu-width token so long names truncate while the dirty dot stays visible. Its choice popup keeps that same token as the minimum width.",
             "Place it in the start region of ds-table-toolbar so the middle region can keep left-side and right-side controls on one spanning cluster."
           ],
           "frameworkCaveats": {
@@ -9634,7 +9793,7 @@
           "commonlyComposedWith": [
             "component:ds-table",
             "component:ds-table-toolbar",
-            "component:ds-filter-menu",
+            "component:ds-table-filter",
             "component:ds-select",
             "component:ds-button-unfilled",
             "component:ds-menu"
@@ -9745,7 +9904,7 @@
             "component:ds-table-saved-views",
             "component:ds-divider",
             "component:ds-input",
-            "component:ds-filter-menu",
+            "component:ds-table-filter",
             "component:ds-select",
             "component:ds-table-sort",
             "component:ds-button-unfilled"
@@ -9757,25 +9916,25 @@
             "Tab order follows authored DOM order. The toolbar does not add roving focus because it may contain heterogeneous form and popup controls."
           ],
           "states": [
-            "The component owns layout only. Slotted controls, values, menus, loading, persistence, and consequences remain controlled by the application. Use ds-table-saved-views when saved-view interaction needs the shared CompoMo behavior while application storage remains external.",
+            "The component owns layout only. It never mutates slotted control props, values, menus, loading, persistence, or consequences. Use ds-table-saved-views and ds-table-filter when those interactions need the shared CompoMo behavior while application data and persistence remain external.",
             "The start cluster is followed by a decorative vertical divider, then the spanning middle region. The start cluster and divider hide when nothing is projected. Search is a dedicated slot that hides when nothing is projected. Empty leading or trailing clusters add no placeholder chrome. The middle region occupies remaining width so trailing controls stay at its inline end.",
             "Column customizer and data-mode switching stay table-owned caption actions. Do not recreate those menus in the toolbar."
           ],
           "responsiveBehavior": [
-            "The start cluster, search, trailing Filter/Group/Sort, and table caption trailing actions stay on one line. Saved views, Filter, Group, and Sort triggers cap at the compact menu-width token and truncate their labels, keeping a saved-view dirty dot visible. Group and Sort popups keep that same compact menu-width floor. The toolbar horizontally scrolls when its complete controls no longer fit.",
-            "Inside a named ds-table container narrower than 900px, Filter, Group, and Sort omit their labels and chevrons and become icon-only. Active filtering or grouping promotes the prefix icon to primary. Sort keeps resting secondary chrome. Table-owned Customize also becomes the icon-only Table menu button at that width.",
+            "The start cluster, search, trailing Filter/Group/Sort, and table caption trailing actions stay on one line. Saved views hug their current trigger content up to the compact menu-width token rather than reserving that full width; long names truncate while the dirty dot stays visible. Filter, Group, and Sort triggers cap at the same token, and Group and Sort popups keep that compact menu-width floor. The toolbar horizontally scrolls when its complete controls no longer fit.",
+            "Inside a named ds-table container narrower than 900px, ds-table-filter and ds-table-sort omit their labels and chevrons and become icon-only. Group controls explicitly opt into the same treatment with collapseLabel. Active filtering or grouping promotes the prefix icon to primary. Sort keeps resting secondary chrome. Table-owned Customize also becomes the icon-only Table menu button at that width.",
             "The scrollbar is visually suppressed without removing touch, trackpad, mouse-wheel, or keyboard scrolling from the overflow container.",
             "Trailing controls remain grouped after leading controls; the toolbar does not collapse controls into an application-specific overflow menu."
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Project saved views through slot=start, search through slot=search, additional left-side middle controls through slot=leading, and Filter, Group, and Sort through slot=trailing. Provide a label that names their table context when Table controls is insufficient."
+              "Project saved views through slot=start, search through slot=search, additional left-side middle controls through slot=leading, and ds-table-filter, Group, and ds-table-sort through slot=trailing. Set collapseLabel on the Group control and provide contextual accessible names when Table controls is insufficient."
             ],
             "react": [
-              "Set slot=start, slot=search, slot=leading, or slot=trailing on each child control; keep values and event handlers in the application."
+              "Set slot=start, slot=search, slot=leading, or slot=trailing on each child control. Use ds-table-filter for the standard Filter recipe, opt Group into collapseLabel, and keep values and event handlers in the application."
             ],
             "angular": [
-              "Set slot=start, slot=search, slot=leading, or slot=trailing on each child control and import the generated DsTableToolbar adapter alongside those controls."
+              "Set slot=start, slot=search, slot=leading, or slot=trailing on each child control, use DsTableFilter for the standard Filter recipe, opt Group into collapseLabel, and import the generated adapters."
             ]
           },
           "references": [

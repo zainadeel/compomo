@@ -85,7 +85,7 @@ export class FilterMenu {
   /** Controlled popup visibility. */
   @Prop({ mutable: true }) open: boolean = false;
   /** Select trigger text. The selected count is appended automatically. */
-  @Prop() triggerLabel: string = 'Filter';
+  @Prop() triggerLabel: string = 'Filters';
   /** Optional select trigger prefix icon name. */
   @Prop() icon: string | undefined = 'Filters';
   /** Select trigger density. */
@@ -126,7 +126,7 @@ export class FilterMenu {
   /** Popup width. It remains clamped to the viewport by the component recipe. */
   @Prop() menuWidth: string = TOKEN_CSS_LENGTHS.menuWidthLg;
   /** Accessible name for the non-modal filter dialog. */
-  @Prop() menuLabel: string = 'Filter';
+  @Prop() menuLabel: string = 'Filters';
   /** Accessible name for the category tab list. */
   @Prop() categoriesLabel: string = 'Filter categories';
   /** Footer action and date-clear accessible label. */
@@ -161,6 +161,7 @@ export class FilterMenu {
   private pendingInitialFocusVisible = false;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
   private captionCompactDisconnect: (() => void) | undefined;
+  private hasLoaded = false;
   private closingSnapshot: {
     filters: FilterMenuFilter[];
     values: FilterMenuValues;
@@ -203,6 +204,13 @@ export class FilterMenu {
   });
 
   componentDidLoad() {
+    this.hasLoaded = true;
+    this.syncCaptionCompactObserver();
+    if (this.open) this.onOpenChange(true);
+  }
+
+  connectedCallback() {
+    if (!this.hasLoaded) return;
     this.syncCaptionCompactObserver();
     if (this.open) this.onOpenChange(true);
   }

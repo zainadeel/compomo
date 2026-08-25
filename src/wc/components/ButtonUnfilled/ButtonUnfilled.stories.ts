@@ -232,7 +232,7 @@ export const States: Story = {
     docs: {
       description: {
         story:
-          'Use `isActive` with the default `activeFill` for general UI. Shell chrome (PanelNav, PanelTools, BarNav) should set `activeFill={false}` so selection is primary foreground only (no fill). On icon-label that foreground is the label; icon and chevron stay at the resting color. On icon, the glyph takes primary.',
+          'Use `isActive` with the default `activeFill` for general UI. Shell chrome (PanelNav, PanelTools, BarNav) should set `activeFill={false}` so the complete control uses primary foreground only, without a selected fill.',
       },
     },
   },

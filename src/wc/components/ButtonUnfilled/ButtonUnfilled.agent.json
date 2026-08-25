@@ -61,7 +61,7 @@
     "Set isInset only when the button is nested inside a same-size control. The default single inset removes 4px overall; insetDepth double removes 8px overall so the parent can add 4px per edge while preserving its outer alignment box. Double inset falls back to single at xs to protect minimum icon geometry.",
     "A true pressed toggle and owner-controlled isActive emphasis share the selected visual treatment, but only pressed supplies toggle semantics and dsChange.",
     "General content UI keeps the selected interaction fill and border for pressed or active emphasis.",
-    "Shell, navigation, and tool-rail composites use isActive with foreground-only emphasis and no selected fill or border. On icon-label that emphasis is the label; the leading icon and menu chevron keep the resting foreground. On icon, the glyph is the only content and takes the primary foreground.",
+    "Shell, navigation, and tool-rail composites use isActive with primary foreground across the complete control and no selected fill or border.",
     "The omitted default surface treatment is for primary and secondary parent surfaces and uses the brand-active selected fill; pass faint explicitly on faint surfaces to use the neutral active fill.",
     "Surface context must match the actual parent surface; translucent, inverted, media, and always-dark treatments are reserved for those surfaces.",
     "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",

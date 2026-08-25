@@ -205,6 +205,7 @@ export class Select {
   private observedFooterContentElement?: HTMLDivElement;
   private footerMeasurementFrame?: number;
   private captionCompactDisconnect: (() => void) | undefined;
+  private hasLoaded = false;
 
   private createController() {
     // eslint-disable-next-line @typescript-eslint/no-this-alias -- adapter getters preserve reactive component ownership without inheritance.
@@ -282,6 +283,14 @@ export class Select {
   }
 
   componentDidLoad() {
+    this.hasLoaded = true;
+    this.controller.connect();
+    this.observeFooterContent();
+    this.syncCaptionCompactObserver();
+  }
+
+  connectedCallback() {
+    if (!this.hasLoaded) return;
     this.controller.connect();
     this.observeFooterContent();
     this.syncCaptionCompactObserver();
@@ -298,6 +307,7 @@ export class Select {
     this.observedFooterContentElement = undefined;
     if (this.footerMeasurementFrame !== undefined) {
       cancelAnimationFrame(this.footerMeasurementFrame);
+      this.footerMeasurementFrame = undefined;
     }
     this.disconnectCaptionCompactObserver();
   }

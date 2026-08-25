@@ -1,6 +1,7 @@
 import '/dist/components/ds-table.js';
 import '/dist/components/ds-table-toolbar.js';
 import '/dist/components/ds-table-saved-views.js';
+import '/dist/components/ds-table-filter.js';
 import '/dist/components/ds-table-sort.js';
 import '/dist/components/ds-menu.js';
 import '/dist/components/ds-select.js';
@@ -10,6 +11,7 @@ import '/dist/components/ds-tooltip.js';
 await customElements.whenDefined('ds-table');
 await customElements.whenDefined('ds-table-toolbar');
 await customElements.whenDefined('ds-table-saved-views');
+await customElements.whenDefined('ds-table-filter');
 await customElements.whenDefined('ds-table-sort');
 await customElements.whenDefined('ds-filter-menu');
 await customElements.whenDefined('ds-select');

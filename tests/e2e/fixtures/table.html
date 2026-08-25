@@ -123,17 +123,16 @@
       >
         <ds-table-toolbar slot="header" label="Customizable driver controls">
           <button slot="start" type="button">Saved views</button>
-          <ds-filter-menu
+          <ds-table-filter
             slot="trailing"
             id="column-customizer-filter"
-            size="md"
-            icon="Filters"
-            trigger-label="Filter"
+            aria-label="Filter fleet"
             menu-label="Filter fleet"
-          ></ds-filter-menu>
+          ></ds-table-filter>
           <ds-select
             slot="trailing"
             id="column-customizer-group"
+            collapse-label
             size="md"
             icon="SectionList"
             placeholder="Group"

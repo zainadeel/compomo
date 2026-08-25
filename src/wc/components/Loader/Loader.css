@@ -19,6 +19,7 @@
   flex-shrink: 0;
   width: 100%;
   height: 100%;
+  /* Mirror the opacity ramp so it trails the clockwise rotation on the wrapper. */
   transform: scaleX(-1);
 }
 

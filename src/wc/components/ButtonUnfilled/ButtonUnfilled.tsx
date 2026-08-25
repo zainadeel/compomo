@@ -149,9 +149,15 @@ export class ButtonUnfilled {
 
   private buttonEl: HTMLButtonElement | null = null;
   private captionCompactDisconnect: (() => void) | undefined;
+  private hasLoaded = false;
 
   componentDidLoad(): void {
+    this.hasLoaded = true;
     this.syncCaptionCompactObserver();
+  }
+
+  connectedCallback(): void {
+    if (this.hasLoaded) this.syncCaptionCompactObserver();
   }
 
   disconnectedCallback(): void {

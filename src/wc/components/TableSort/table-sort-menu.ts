@@ -4,6 +4,7 @@ import type { TableColumn, TableSortState } from '../Table/table-types';
 
 export const TABLE_SORT_DIRECTION_ASC = 'direction:asc';
 export const TABLE_SORT_DIRECTION_DESC = 'direction:desc';
+const TABLE_SORT_FIELD_PREFIX = 'field:';
 
 export interface TableSortField {
   id: string;
@@ -50,7 +51,7 @@ export function tableSortMenuSections(
       header: 'Data',
       items: fields.map(field => ({
         label: field.label,
-        value: field.id,
+        value: `${TABLE_SORT_FIELD_PREFIX}${encodeURIComponent(field.id)}`,
         isSelected: sort?.columnId === field.id,
       })),
     },
@@ -94,11 +95,20 @@ export function nextTableSortStateFromMenuItem(
 
   if (item.value === TABLE_SORT_DIRECTION_ASC || item.value === TABLE_SORT_DIRECTION_DESC) {
     const direction = item.value === TABLE_SORT_DIRECTION_ASC ? 'asc' : 'desc';
-    const columnId = current?.columnId ?? fields[0]!.id;
+    const columnId = fields.some(field => field.id === current?.columnId)
+      ? current!.columnId
+      : fields[0]!.id;
     return { columnId, direction };
   }
 
-  if (!item.value || !fields.some(field => field.id === item.value)) return current ?? null;
-  if (current?.columnId === item.value) return current ?? null;
-  return { columnId: item.value, direction: current?.direction ?? 'asc' };
+  if (!item.value?.startsWith(TABLE_SORT_FIELD_PREFIX)) return current ?? null;
+  let columnId: string;
+  try {
+    columnId = decodeURIComponent(item.value.slice(TABLE_SORT_FIELD_PREFIX.length));
+  } catch {
+    return current ?? null;
+  }
+  if (!fields.some(field => field.id === columnId)) return current ?? null;
+  if (current?.columnId === columnId) return current ?? null;
+  return { columnId, direction: current?.direction ?? 'asc' };
 }

@@ -27,7 +27,7 @@
   "commonlyComposedWith": [
     "component:ds-table",
     "component:ds-table-toolbar",
-    "component:ds-filter-menu",
+    "component:ds-table-filter",
     "component:ds-select",
     "component:ds-button-unfilled",
     "component:ds-menu"

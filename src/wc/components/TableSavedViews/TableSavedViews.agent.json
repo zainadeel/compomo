@@ -35,7 +35,7 @@
     "The default view is a non-editable template. Application-owned custom views appear in a separate section with Rename and Remove actions. New view opens the naming dialog. When an editable selected view is dirty, that view row shows Save and negative Discard supporting actions while the footer remains dedicated to New view. The application decides which table state to capture, restore, and persist."
   ],
   "responsiveBehavior": [
-    "The control remains a single toolbar item and relies on Select, Menu, and Modal collision and viewport behavior. Its trigger is capped at the compact menu-width token so long view names truncate while the dirty dot stays visible. Its choice popup keeps that same token as the minimum width.",
+    "The control remains a single toolbar item and relies on Select, Menu, and Modal collision and viewport behavior. Its trigger hugs short view names and is capped at the compact menu-width token so long names truncate while the dirty dot stays visible. Its choice popup keeps that same token as the minimum width.",
     "Place it in the start region of ds-table-toolbar so the middle region can keep left-side and right-side controls on one spanning cluster."
   ],
   "frameworkCaveats": {

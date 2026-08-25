@@ -425,7 +425,7 @@ test('keeps popup triggers visibly pressed when expanded without creating select
   ))).toBe(tokens.pressed);
 });
 
-test('icon-label chrome active promotes only the label foreground', async ({ page }) => {
+test('icon-label chrome active promotes the complete control foreground', async ({ page }) => {
   const host = page.locator('#unfilled-icon-label');
   const button = host.locator('button');
   const tokens = await page.evaluate(() => {
@@ -457,10 +457,10 @@ test('icon-label chrome active promotes only the label foreground', async ({ pag
   await expect(button).toHaveClass(/button-unfilled--icon-label/);
   await expect(button).toHaveClass(/button-unfilled--active/);
   await expect(button).not.toHaveClass(/ds-interaction-fill--selected/);
-  await expect(button).toHaveCSS('color', tokens.secondary);
+  await expect(button).toHaveCSS('color', tokens.primary);
   await expect(button.locator('.button-unfilled__label')).toHaveCSS('color', tokens.primary);
-  await expect(button.locator('.button-unfilled__icon-wrap')).toHaveCSS('color', tokens.secondary);
-  await expect(button.locator('.button-unfilled__chevron')).toHaveCSS('color', tokens.secondary);
+  await expect(button.locator('.button-unfilled__icon-wrap')).toHaveCSS('color', tokens.primary);
+  await expect(button.locator('.button-unfilled__chevron')).toHaveCSS('color', tokens.primary);
 });
 
 test('icon chrome active promotes the glyph foreground', async ({ page }) => {
