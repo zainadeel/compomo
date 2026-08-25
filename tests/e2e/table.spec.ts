@@ -3676,14 +3676,16 @@ test('lays out application-owned table controls in start and spanning middle gro
     const divider = element.querySelector('ds-divider');
     const leadingRect = leading.getBoundingClientRect();
     const trailingRect = trailing.getBoundingClientRect();
+    const start = element.querySelector<HTMLElement>('.table-toolbar__start')!;
+    const startRect = start.getBoundingClientRect();
     const startControl = element.querySelector<HTMLElement>('[slot="start"]')!;
-    const startControlRect = startControl.getBoundingClientRect();
     return {
       overflow: surface.scrollWidth > surface.clientWidth,
       leadingTop: leadingRect.top,
       trailingTop: trailingRect.top,
       ordered: leadingRect.right <= trailingRect.left,
-      startBeforeLeading: startControlRect.right <= leadingRect.left,
+      startBeforeLeading: startRect.right <= leadingRect.left,
+      startControlInCluster: startControl.getBoundingClientRect().left >= startRect.left - 0.5,
       dividerVisible: !!divider && getComputedStyle(divider).display !== 'none',
       dividerHeight: divider ? Math.round(divider.getBoundingClientRect().height) : 0,
     };
@@ -3693,6 +3695,7 @@ test('lays out application-owned table controls in start and spanning middle gro
   expect(Math.abs(layout.leadingTop - layout.trailingTop)).toBeLessThanOrEqual(0.5);
   expect(layout.ordered).toBe(true);
   expect(layout.startBeforeLeading).toBe(true);
+  expect(layout.startControlInCluster).toBe(true);
   expect(layout.dividerVisible).toBe(true);
   expect(layout.dividerHeight).toBe(32);
 
