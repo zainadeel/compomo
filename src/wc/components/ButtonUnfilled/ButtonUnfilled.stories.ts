@@ -257,15 +257,15 @@ export const States: Story = {
         <span style="${LABEL}">active icon-label (chrome)</span>
         <ds-button-unfilled
           variant="icon-label"
-          icon="Table"
-          label="Customize"
+          icon="SectionList"
+          label="Sections"
           has-menu
           .activeFill=${false}
         ></ds-button-unfilled>
         <ds-button-unfilled
           variant="icon-label"
-          icon="Table"
-          label="Customized"
+          icon="SectionList"
+          label="Sections"
           has-menu
           is-active
           .activeFill=${false}

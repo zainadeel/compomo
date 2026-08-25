@@ -1311,7 +1311,7 @@ export const ColumnCustomizer: Story = {
     docs: {
       description: {
         story:
-          'Opt-in columnCustomizer keeps columns as the catalog. hiddenColumnIds and columnOrder are controlled; dsColumnsConfigChange reports live show/hide and data-column reorder. The trailing Table control opens the shared Menu of reorderable switch rows and stays open while toggling or dragging. At typical widths the trigger is icon-label Customize/Customized with only the label in primary when customized. Below 900px it is the icon-only Table menu button, and a customized catalog promotes that icon to primary. Selection and action columns are omitted from the menu, action columns stay fixed last, and the last remaining visible data column cannot be hidden. Persistence stays in the application.',
+          'Opt-in columnCustomizer keeps columns as the catalog. hiddenColumnIds and columnOrder are controlled; dsColumnsConfigChange reports live show/hide and data-column reorder. The trailing neutral Customize control opens the shared Menu of reorderable switch rows and stays open while toggling or dragging. Its label and resting foreground do not change when the controlled column configuration differs from the catalog default. Below 900px it becomes the icon-only Table menu button with the same neutral resting foreground. Selection and action columns are omitted from the menu, action columns stay fixed last, and the last remaining visible data column cannot be hidden. Persistence stays in the application.',
       },
       ...isolatedOverlayDocs('480px'),
     },
