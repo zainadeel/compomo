@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.17.0](https://github.com/zainadeel/compomo/compare/v14.16.0...v14.17.0) (2026-08-25)
+
+
+### Added
+
+* add table filter toolbar control ([#522](https://github.com/zainadeel/compomo/issues/522)) ([f4a43ec](https://github.com/zainadeel/compomo/commit/f4a43eced2f5c4447ab74cd30696c2097b4296cf))
+
 ## [14.16.0](https://github.com/zainadeel/compomo/compare/v14.15.1...v14.16.0) (2026-08-25)
 
 
