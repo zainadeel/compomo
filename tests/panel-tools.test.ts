@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {
   PANEL_TOOLS_FOOTER_TOOL_ID,
+  PANEL_TOOLS_DEFAULT_ITEMS,
   PANEL_TOOLS_LABELS,
   PANEL_TOOLS_PRIMARY_TOOL_ID,
   PANEL_TOOLS_SHORTCUTS,
@@ -19,21 +20,36 @@ import {
 } from '../src/wc/components/PanelTools/panel-tools-utils';
 
 describe('PANEL_TOOLS_TOOL_IDS', () => {
-  it('lists search, messages, agents, stacks, activity, and help', () => {
+  it('lists the canonical rail order and retained optional stacks id', () => {
     assert.deepEqual(PANEL_TOOLS_TOOL_IDS, [
-      'search',
-      'messages',
       'agents',
-      'stacks',
+      'messages',
       'activity',
+      'search',
+      'stacks',
       'help',
     ]);
   });
 });
 
 describe('PANEL_TOOLS_PRIMARY_TOOL_ID', () => {
-  it('places search in the rail header row', () => {
-    assert.equal(PANEL_TOOLS_PRIMARY_TOOL_ID, 'search');
+  it('places agents in the rail header row', () => {
+    assert.equal(PANEL_TOOLS_PRIMARY_TOOL_ID, 'agents');
+  });
+});
+
+describe('PANEL_TOOLS_DEFAULT_ITEMS', () => {
+  it('pins agents and exposes activity directly without stacks', () => {
+    assert.deepEqual(
+      PANEL_TOOLS_DEFAULT_ITEMS.map(item => [item.id, item.railPlacement ?? 'body', item.mobileDestination]),
+      [
+        ['agents', 'header', 'agents'],
+        ['messages', 'body', 'messages'],
+        ['activity', 'body', 'activity'],
+        ['search', 'body', 'search'],
+        ['help', 'footer', 'help'],
+      ]
+    );
   });
 });
 
@@ -70,11 +86,11 @@ describe('PANEL_TOOLS_SHORTCUTS', () => {
 describe('orderPanelToolsItems', () => {
   it('enforces canonical order and removes duplicate semantic tools', () => {
     const help = { id: 'help' as const, icon: 'CircleQuestion' };
-    const search = { id: 'search' as const, icon: 'MagnifyingGlass' };
+    const agents = { id: 'agents' as const, icon: 'AI' };
     const messages = { id: 'messages' as const, icon: 'Messages' };
     assert.deepEqual(
-      orderPanelToolsItems([help, messages, search, { ...messages, icon: 'Duplicate' }]),
-      [search, messages, help]
+      orderPanelToolsItems([help, messages, agents, { ...messages, icon: 'Duplicate' }]),
+      [agents, messages, help]
     );
   });
 });

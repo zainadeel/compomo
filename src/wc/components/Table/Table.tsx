@@ -2875,21 +2875,25 @@ export class Table {
       return <ds-skeleton variant="control" controlSize="md" width="var(--dimension-size-400)" />;
     }
     return (
-      <ds-button-unfilled
-        id={`${this.dataModeSwitcherElementId}-trigger`}
-        variant="icon"
-        size="md"
-        icon="Ellipses"
-        aria-label={this.dataModeSwitcherLabel}
-        hasMenu={true}
-        expanded={this.dataModeSwitcherOpen}
-        controls={this.dataModeSwitcherElementId}
-        activeFill={false}
-        pressScale={false}
-        onDsClick={(event: CustomEvent<MouseEvent>) => {
-          this.toggleDataModeSwitcher(event.detail.detail === 0);
-        }}
-      />
+      <span class="ds-table__caption-mode-switcher">
+        <ds-tooltip label={this.dataModeSwitcherLabel} side="top" size="sm">
+          <ds-button-unfilled
+            id={`${this.dataModeSwitcherElementId}-trigger`}
+            variant="icon"
+            size="md"
+            icon="Ellipses"
+            aria-label={this.dataModeSwitcherLabel}
+            hasMenu={true}
+            expanded={this.dataModeSwitcherOpen}
+            controls={this.dataModeSwitcherElementId}
+            activeFill={false}
+            pressScale={false}
+            onDsClick={(event: CustomEvent<MouseEvent>) => {
+              this.toggleDataModeSwitcher(event.detail.detail === 0);
+            }}
+          />
+        </ds-tooltip>
+      </span>
     );
   }
 
@@ -2955,23 +2959,25 @@ export class Table {
         }}
         aria-hidden={this.chromeLoading ? 'true' : undefined}
       >
-        <ds-button-unfilled
-          id={`${this.columnCustomizerElementId}-trigger`}
-          variant={this.captionCompact ? 'icon' : 'icon-label'}
-          size="md"
-          icon="Table"
-          label="Customize"
-          labelEmphasis={false}
-          pressScale={false}
-          aria-label="Customize table"
-          hasMenu={true}
-          expanded={this.columnCustomizerOpen}
-          controls={this.columnCustomizerElementId}
-          onDsClick={(event: CustomEvent<MouseEvent>) => {
-            if (this.chromeLoading) return;
-            this.toggleColumnCustomizer(event.detail.detail === 0);
-          }}
-        />
+        <ds-tooltip label={this.captionCompact ? 'Customize' : ''} side="top" size="sm">
+          <ds-button-unfilled
+            id={`${this.columnCustomizerElementId}-trigger`}
+            variant={this.captionCompact ? 'icon' : 'icon-label'}
+            size="md"
+            icon="Table"
+            label="Customize"
+            labelEmphasis={false}
+            pressScale={false}
+            aria-label="Customize table"
+            hasMenu={true}
+            expanded={this.columnCustomizerOpen}
+            controls={this.columnCustomizerElementId}
+            onDsClick={(event: CustomEvent<MouseEvent>) => {
+              if (this.chromeLoading) return;
+              this.toggleColumnCustomizer(event.detail.detail === 0);
+            }}
+          />
+        </ds-tooltip>
         {this.chromeLoading ? (
           <ds-skeleton variant="control" controlSize="md" width="100%" />
         ) : null}

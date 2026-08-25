@@ -22,9 +22,16 @@ three typed data objects and persistent content:
 
 ShellApp assembles PanelNav, BarNav, ShellTools/PanelTools, MobileSheetNav,
 MobileBarNav, MobileHeader, BarTitle, and ShellPage. It owns presentation state,
-responsive mode, active global surfaces, mobile Inbox grouping, focus return,
+responsive mode, active global surfaces, direct mobile destinations, optional
+Inbox grouping, focus return,
 and preservation across breakpoints. The application still owns authorization,
 URLs, browser history, route changes, page data, and tool data.
+
+The canonical tool recipe pins Agents, orders Messages, Activity, then Search
+in the body, and exposes Activity directly in the mobile bar. Stacks is omitted
+from that recipe. Products that still need several review tools under one
+mobile destination can explicitly assign those items to `mobileDestination:
+'inbox'`.
 
 Navigation events are intent-only. Handle `dsNavSelect` and `dsTabChange` with
 the application router, then replace `navigation` and `pageChrome` together

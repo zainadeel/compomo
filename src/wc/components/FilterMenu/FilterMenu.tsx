@@ -780,7 +780,12 @@ export class FilterMenu {
         }}
       >
         {this.usesInternalTrigger ? (
-          <button
+          <ds-tooltip
+            label={this.captionIconOnly ? label : ''}
+            side="top"
+            size="sm"
+          >
+            <button
             ref={element => {
               this.triggerElement = (element as HTMLButtonElement) ?? null;
             }}
@@ -832,7 +837,8 @@ export class FilterMenu {
                 <ds-icon name="ChevronDown" size={iconSize} color="inherit" />
               </span>
             )}
-          </button>
+            </button>
+          </ds-tooltip>
         ) : null}
 
         {this.shouldRender ? (

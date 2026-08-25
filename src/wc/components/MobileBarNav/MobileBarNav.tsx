@@ -42,11 +42,15 @@ export class MobileBarNav {
   @Prop() sheetNavExpanded: boolean = false;
   @Prop() menuLabel: string = 'Menu';
   @Prop() searchLabel: string = 'Search';
+  /** Render Activity directly, or retain the optional grouped Inbox destination. */
+  @Prop() activityMode: 'direct' | 'inbox' = 'direct';
+  @Prop() activityLabel: string = 'Activity';
   @Prop() inboxLabel: string = 'Inbox';
   @Prop() messagesLabel: string = 'Messages';
   @Prop() agentsLabel: string = 'Agents';
   @Prop() helpLabel: string = 'Help & Support';
   @Prop() searchDot: boolean = false;
+  @Prop() activityDot: boolean = false;
   @Prop() inboxDot: boolean = false;
   @Prop() messagesDot: boolean = false;
   @Prop() agentsDot: boolean = false;
@@ -138,10 +142,25 @@ export class MobileBarNav {
             dot: false,
           };
 
+    const activity =
+      this.activityMode === 'direct'
+        ? {
+            id: 'activity' as const,
+            icon: 'Bell',
+            label: this.activityLabel,
+            dot: this.activityDot,
+          }
+        : {
+            id: 'inbox' as const,
+            icon: 'Inbox',
+            label: this.inboxLabel,
+            dot: this.inboxDot,
+          };
+
     return [
       currentArea,
       { id: 'search', icon: 'MagnifyingGlass', label: this.searchLabel, dot: this.searchDot },
-      { id: 'inbox', icon: 'Inbox', label: this.inboxLabel, dot: this.inboxDot },
+      activity,
       {
         id: 'messages',
         icon: 'MessageBubbleStack',

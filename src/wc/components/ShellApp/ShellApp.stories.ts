@@ -75,7 +75,6 @@ function toolViews() {
     <div slot="search-view">Search tool</div>
     <div slot="agents-view">Agents tool</div>
     <div slot="messages-view">Messages tool</div>
-    <div slot="stacks-view">Stacks tool</div>
     <div slot="activity-view">Activity tool</div>
     <div slot="help-view">Help &amp; Support</div>
   `;

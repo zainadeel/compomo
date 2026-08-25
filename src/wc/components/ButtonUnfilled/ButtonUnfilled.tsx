@@ -318,7 +318,12 @@ export class ButtonUnfilled {
         }}
         tabIndex={-1}
       >
-        <button
+        <ds-tooltip
+          label={this.captionIconOnly ? (this.label || this.accessibleName || '') : ''}
+          side="top"
+          size="sm"
+        >
+          <button
           ref={el => {
             this.buttonEl = el ?? null;
           }}
@@ -355,7 +360,8 @@ export class ButtonUnfilled {
               background: this.dotRing,
             },
           })}
-        </button>
+          </button>
+        </ds-tooltip>
       </Host>
     );
   }

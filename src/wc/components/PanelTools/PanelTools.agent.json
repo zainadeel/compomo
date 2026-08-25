@@ -45,7 +45,7 @@
   "patterns": ["pattern:application-shell"],
   "accessibility": [
     "Provide localized accessible labels for the rail, shortcut group, and every rendered tool.",
-    "Use the canonical default recipe when the product needs Search first and Help last; custom recipes must preserve a deliberate keyboard and visual order.",
+    "Use the canonical default recipe when the product needs Agents pinned first and Help pinned last; custom recipes must preserve a deliberate keyboard and visual order.",
     "Keep focus on the selected rail action when opening a drawer and allow normal Tab navigation into its content.",
     "When the shortcut rail overflows, its labeled body becomes a keyboard-focusable scroll region without changing the rail action order.",
     "Do not trigger global shortcuts while focus is in an editable control.",
@@ -55,7 +55,7 @@
   "states": [
     "Every tool has a stable explicit id and accessible label. The application filters definitions for authorization and entitlement.",
     "Tool order, header or footer rail placement, shortcut, and mobile grouping come from explicit item metadata rather than id-based layout assumptions.",
-    "PANEL_TOOLS_DEFAULT_ITEMS is the canonical Lab recipe: Search pinned first, Messages before Agents, Help pinned last, current shortcuts, and only Stacks and Activity grouped under mobile Inbox.",
+    "PANEL_TOOLS_DEFAULT_ITEMS is the canonical Lab recipe: Agents pinned first; Messages, Activity, then Search in the body; Help pinned last; Activity directly reachable on mobile; and Stacks omitted.",
     "Only one drawer is open at a time; selecting another tool switches directly and selecting the active tool closes to rail-only mode.",
     "The drawer starts closed, remains open across ordinary route changes, and retains every mounted tool's independent conversation, query, scroll, and work state.",
     "When storageKey is set, persist only the last active tool in this browser and still restore the drawer closed after reload.",

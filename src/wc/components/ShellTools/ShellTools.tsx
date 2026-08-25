@@ -22,6 +22,7 @@ import {
   resolvePanelToolActivation,
 } from '../PanelTools/panel-tools-utils';
 import {
+  itemUsesShellInbox,
   isShellInboxTool,
   resolveAvailableInboxTool,
   type ShellInboxToolId,
@@ -93,7 +94,7 @@ export class ShellTools {
       .filter(
         item =>
           !item.isInactive &&
-          (item.mobileDestination === 'inbox' || isShellInboxTool(item.id))
+          itemUsesShellInbox(item)
       )
       .map(item => item.id as ShellInboxToolId);
   }
@@ -114,8 +115,7 @@ export class ShellTools {
 
   private get mobileActiveTool(): PanelToolsToolId | '' {
     const item = this.resolvedItems.find(candidate => candidate.id === this.activeTool);
-    const inbox =
-      item?.mobileDestination === 'inbox' || isShellInboxTool(this.activeTool);
+    const inbox = item ? itemUsesShellInbox(item) : isShellInboxTool(this.activeTool);
     if (!inbox) return this.activeTool;
     return resolveAvailableInboxTool(this.activeTool, this.availableInboxTools);
   }
@@ -265,7 +265,8 @@ export class ShellTools {
     const configuredTitle = header.title?.trim();
     const title = configuredTitle || this.toolLabel(tool);
     const actions = (header.actions ?? []).filter(action => action.id !== 'fullscreen');
-    const inboxRoot = isShellInboxTool(tool) && !header.showBack;
+    const item = this.resolvedItems.find(candidate => candidate.id === tool);
+    const inboxRoot = Boolean(item && itemUsesShellInbox(item) && !header.showBack);
     const sections =
       inboxRoot
         ? this.availableInboxTools.map(id => {

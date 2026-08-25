@@ -48,7 +48,7 @@
     },
     {
       "component": "component:ds-mobile-bar-nav",
-      "role": "Managed persistent mobile destinations for Menu, current area, Search, Inbox, Messages, Agents, and Help.",
+      "role": "Managed persistent mobile destinations for Menu, current area, Search, Activity, Messages, Agents, and Help, with optional Inbox grouping.",
       "required": false
     },
     {
@@ -61,7 +61,7 @@
     "Lab or the consuming application supplies navigation, pageChrome, and tools objects to managed ShellApp.",
     "The application router owns authorization, current URLs, history, route changes, and the routed content placed in ShellApp's default slot.",
     "ShellApp emits stable navigation and page intent events; it never mutates router history.",
-    "ShellApp owns responsive mode, PanelNav presentation, tool open state, active tool, mobile Inbox grouping, Menu state, fullscreen presentation, focus restoration, and breakpoint state preservation.",
+    "ShellApp owns responsive mode, PanelNav presentation, tool open state, active tool, direct mobile destinations, optional Inbox grouping, Menu state, fullscreen presentation, focus restoration, and breakpoint state preservation.",
     "Tool products and routed content are instantiated once by the application in named tool-view and default slots; ShellApp changes presentation without recreating those owners.",
     "The application owns account menus, tool product data, page actions, and the consequences of every emitted intent event.",
     "The application owns viewport and theme-color metadata, the dynamic-viewport framework root, and containing document overscroll so body never becomes a second application scroller; ShellApp fills that owner and keeps its existing internal scrollers.",
@@ -72,7 +72,7 @@
     "Render exactly one managed ShellApp and one active routed main landmark.",
     "Provide visible labels and accessible names in navigation, pageChrome, and tool definitions before passing them to ShellApp.",
     "Handle ShellApp intent events without replacing focusable owners during responsive or fullscreen transitions.",
-    "Keep the canonical Search and Help tools available and preserve Inbox unread state when Stacks and Activity are grouped on mobile; Messages remains directly reachable.",
+    "Keep the canonical Agents and Help tools available; expose Activity directly on mobile unless the product explicitly opts into grouped Inbox behavior.",
     "Do not override browser keyboard chords when enabling shell shortcuts."
   ],
   "responsiveBehavior": [
@@ -83,7 +83,7 @@
     "With viewport-fit=cover, ShellApp consumes the shared top safe-area inset once and MobileBarNav consumes the persistent bottom inset; nested routed, tool, sheet, and consumer headers do not duplicate either inset.",
     "An optional Banner spans the complete application above desktop navigation, workspace, tools, and mobile global surfaces while remaining below the operating-system top safe area.",
     "Switching breakpoints changes presentation and inert state without recreating route or tool elements.",
-    "Messages uses its own mobile destination; Stacks and Activity use explicit mobile Inbox grouping metadata."
+    "Search, Activity, Messages, and Agents use direct mobile destinations; products may explicitly group review tools under Inbox instead."
   ],
   "implementations": {
     "customElements": {
@@ -97,7 +97,7 @@
             {
               "path": "app-shell.html",
               "language": "html",
-              "content": "<ds-shell-app id=\"shell\">\n  <app-search slot=\"search-view\"></app-search>\n  <app-agents slot=\"agents-view\"></app-agents>\n  <app-messages slot=\"messages-view\"></app-messages>\n  <app-stacks slot=\"stacks-view\"></app-stacks>\n  <app-activity slot=\"activity-view\"></app-activity>\n  <app-help slot=\"help-view\"></app-help>\n  <app-route-content><!-- router-owned page --></app-route-content>\n</ds-shell-app>"
+              "content": "<ds-shell-app id=\"shell\">\n  <app-agents slot=\"agents-view\"></app-agents>\n  <app-messages slot=\"messages-view\"></app-messages>\n  <app-activity slot=\"activity-view\"></app-activity>\n  <app-search slot=\"search-view\"></app-search>\n  <app-help slot=\"help-view\"></app-help>\n  <app-route-content><!-- router-owned page --></app-route-content>\n</ds-shell-app>"
             },
             {
               "path": "app-shell.ts",

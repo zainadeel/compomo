@@ -37,7 +37,7 @@
   ],
   "accessibility": [
     "The trigger is an icon-label menu button named Sort table unless a product aria-label is supplied. Compact caption widths keep that accessible name after the visible label is omitted.",
-    "The menu has two sections, Data and Direction. Each section presents one selected row through isSelected; the menu is not a single radio group because field and direction are independent.",
+    "The start-aligned menu has two sections, Data and Direction. Each section presents one selected row through isSelected; the menu is not a single radio group because field and direction are independent.",
     "Choosing a row applies immediately and keeps the menu open so the other section can be changed. Escape and outside activation close the menu and restore trigger focus."
   ],
   "states": [
@@ -48,7 +48,7 @@
   ],
   "responsiveBehavior": [
     "Place the control in the trailing region of ds-table-toolbar with Filter and Group.",
-    "Inside a named ds-table container narrower than 900px, the trigger omits its label and chevron and becomes icon-only. The icon keeps the resting secondary foreground.",
+    "Inside a named ds-table container narrower than 900px, the trigger omits its label and chevron and becomes icon-only. A hover and keyboard-focus tooltip preserves the label, and the icon keeps the resting secondary foreground.",
     "Long sortable-field catalogs inherit Menu's collision-aware height cap and internal choice scrolling instead of extending beyond the available viewport space."
   ],
   "frameworkCaveats": {

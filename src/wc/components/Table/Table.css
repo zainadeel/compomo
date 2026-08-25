@@ -159,7 +159,12 @@ ds-skeleton.ds-table__skeleton-checkbox {
   min-inline-size: 0;
 }
 
-.ds-table__caption-customizer--loading > ds-button-unfilled {
+.ds-table__caption-mode-switcher {
+  display: flex;
+  align-items: center;
+}
+
+.ds-table__caption-customizer--loading > ds-tooltip ds-button-unfilled {
   visibility: hidden;
 }
 

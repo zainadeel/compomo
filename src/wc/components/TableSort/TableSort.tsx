@@ -72,7 +72,7 @@ export class TableSort {
             id={this.menuId}
             open={this.menuOpen}
             anchorId={this.triggerId}
-            align="end"
+            align="start"
             side="bottom"
             menuLabel={name}
             selectionMode="none"

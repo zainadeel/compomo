@@ -1,12 +1,21 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
+  itemUsesShellInbox,
   resolveAvailableInboxTool,
   resolveManagedShellPageCapacity,
   resolveShellResponsiveMode,
   shellMobileDestinationForTool,
   shouldEmitMobileDestinationChange,
 } from '../src/wc/shell/shell-responsive';
+
+describe('itemUsesShellInbox', () => {
+  it('lets explicit direct Activity metadata override the legacy id fallback', () => {
+    assert.equal(itemUsesShellInbox({ id: 'activity', mobileDestination: 'activity' }), false);
+    assert.equal(itemUsesShellInbox({ id: 'activity', mobileDestination: 'inbox' }), true);
+    assert.equal(itemUsesShellInbox({ id: 'activity' }), true);
+  });
+});
 
 describe('resolveShellResponsiveMode', () => {
   it('uses the fixed mobile, tablet, and desktop boundaries', () => {

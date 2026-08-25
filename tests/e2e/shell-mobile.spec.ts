@@ -159,7 +159,7 @@ test.describe('Responsive mobile shell foundation', () => {
       'Menu',
       'Tracking',
       'Search',
-      'Inbox',
+      'Activity',
       'Messages',
       'Agents',
     ]);
@@ -662,7 +662,7 @@ test.describe('Responsive mobile shell foundation', () => {
     await expect(input).toHaveValue('brake inspection');
   });
 
-  test('stretches Search, Inbox, and Messages across the stage and omits fullscreen actions', async ({
+  test('stretches Search, Activity, and Messages across the stage and omits fullscreen actions', async ({
     page,
   }) => {
     const tools = page.locator('ds-shell-tools');
@@ -676,44 +676,14 @@ test.describe('Responsive mobile shell foundation', () => {
     await expect(page.getByRole('button', { name: 'Enter fullscreen' })).toHaveCount(0);
     await expectActiveToolToFillStage(page);
 
-    await page.getByRole('button', { name: 'Inbox' }).click();
+    await page.getByRole('button', { name: 'Activity' }).click();
     await expect(tools).toHaveAttribute('active-tool', 'activity');
     await expect(page.locator('.shell-tools__view--active')).toHaveCSS('width', '390px');
     await expect(page.getByRole('button', { name: 'Enter fullscreen' })).toHaveCount(0);
     await expectActiveToolToFillStage(page);
 
-    const inboxTabs = tools.getByRole('tablist', { name: 'Inbox sections' });
-    await expect(inboxTabs.getByRole('tab')).toHaveCount(2);
-    await expect(inboxTabs.getByRole('tab').allTextContents()).resolves.toEqual([
-      'Stacks',
-      'Activity',
-    ]);
-    await expect(inboxTabs.locator('.tab__icon')).toHaveCount(0);
-    const inboxTabGroup = tools.locator('ds-mobile-header ds-tab-group');
-    await expect(inboxTabGroup).toHaveJSProperty('size', 'lg');
-    await expect(inboxTabGroup).toHaveJSProperty('width', 'fill');
-    await expect(tools.locator('ds-mobile-header .tab-list')).toHaveCSS('height', '40px');
-    const inboxHeaderMetrics = await tools.locator('.mobile-header__primary').evaluate(element => {
-      const styles = getComputedStyle(element);
-      const tabGroup = element.querySelector('ds-tab-group');
-      const tabs = Array.from(element.querySelectorAll('.tab'));
-      const usableWidth =
-        element.getBoundingClientRect().width -
-        parseFloat(styles.paddingLeft) -
-        parseFloat(styles.paddingRight) -
-        parseFloat(styles.columnGap) * 2;
-      return {
-        ratio: (tabGroup?.getBoundingClientRect().width ?? 0) / usableWidth,
-        tabWidths: tabs.map(tab => tab.getBoundingClientRect().width),
-      };
-    });
-    expect(inboxHeaderMetrics.ratio).toBeCloseTo(2 / 3, 2);
-    expect(Math.max(...inboxHeaderMetrics.tabWidths) - Math.min(...inboxHeaderMetrics.tabWidths))
-      .toBeLessThanOrEqual(0.5);
-
-    await inboxTabs.getByRole('tab', { name: 'Stacks' }).click();
-    await expect(tools).toHaveAttribute('active-tool', 'stacks');
-    await expect(page.getByText('Stacks view', { exact: true })).toBeVisible();
+    await expect(tools.getByRole('heading', { name: 'Activity' })).toBeVisible();
+    await expect(tools.getByRole('tablist', { name: 'Inbox sections' })).toHaveCount(0);
 
     await page.getByRole('button', { name: 'Messages' }).click();
     await expect(tools).toHaveAttribute('active-tool', 'messages');

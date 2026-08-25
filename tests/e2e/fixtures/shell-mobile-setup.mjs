@@ -39,11 +39,10 @@ const settingsGroups = [
   },
 ];
 const toolItems = [
-  { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search', dot: true },
-  { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages' },
-  { id: 'agents', icon: 'AI', ariaLabel: 'Agents' },
-  { id: 'stacks', icon: 'ViewMenu', ariaLabel: 'Stacks' },
-  { id: 'activity', icon: 'Bell', ariaLabel: 'Activity', dot: true },
+  { id: 'agents', icon: 'AI', ariaLabel: 'Agents', railPlacement: 'header', mobileDestination: 'agents' },
+  { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages', mobileDestination: 'messages' },
+  { id: 'activity', icon: 'Bell', ariaLabel: 'Activity', dot: true, mobileDestination: 'activity' },
+  { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search', dot: true, mobileDestination: 'search' },
   { id: 'help', icon: 'CircleQuestion', ariaLabel: 'Help & Support' },
 ];
 const sectionTabs = [
@@ -83,7 +82,8 @@ mobileHeader.value = 'live-map';
 mobileHeader.heading = 'Tracking';
 mobileBarNav.currentArea = { id: 'tracking', icon: 'MapPage', label: 'Tracking' };
 mobileBarNav.searchDot = true;
-mobileBarNav.inboxDot = true;
+mobileBarNav.activityMode = 'direct';
+mobileBarNav.activityDot = true;
 mobileBarNav.messagesDot = true;
 tools.items = toolItems;
 tools.headers = {
@@ -163,12 +163,8 @@ tools.addEventListener('dsToolChange', event => {
   const { id, selected } = event.detail;
   tools.activeTool = id;
   tools.open = selected;
-  const destination =
-    !selected
-      ? 'area'
-      : id === 'search' || id === 'messages' || id === 'agents' || id === 'help'
-        ? id
-        : 'inbox';
+  const item = toolItems.find(candidate => candidate.id === id);
+  const destination = !selected ? 'area' : (item?.mobileDestination ?? 'inbox');
   applyShellState(destination, false);
 });
 

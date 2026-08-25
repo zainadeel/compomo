@@ -16,9 +16,22 @@ export const Foundation: Story = {
       <ds-mobile-bar-nav
         active-destination="area"
         .currentArea=${{ id: 'tracking', icon: 'MapPage', label: 'Tracking' }}
-        inbox-dot
+        activity-dot
         messages-dot
         agents-dot
+      ></ds-mobile-bar-nav>
+    </div>
+  `,
+};
+
+export const GroupedInbox: Story = {
+  render: () => html`
+    <div style="max-width: 430px; margin: 0 auto;">
+      <ds-mobile-bar-nav
+        activity-mode="inbox"
+        active-destination="inbox"
+        .currentArea=${{ id: 'tracking', icon: 'MapPage', label: 'Tracking' }}
+        inbox-dot
       ></ds-mobile-bar-nav>
     </div>
   `,

@@ -1648,6 +1648,19 @@ export namespace Components {
         /**
           * @default false
          */
+        "activityDot": boolean;
+        /**
+          * @default 'Activity'
+         */
+        "activityLabel": string;
+        /**
+          * Render Activity directly, or retain the optional grouped Inbox destination.
+          * @default 'direct'
+         */
+        "activityMode": 'direct' | 'inbox';
+        /**
+          * @default false
+         */
         "agentsDot": boolean;
         /**
           * @default 'Agents'
@@ -6609,6 +6622,19 @@ declare namespace LocalJSX {
         /**
           * @default false
          */
+        "activityDot"?: boolean;
+        /**
+          * @default 'Activity'
+         */
+        "activityLabel"?: string;
+        /**
+          * Render Activity directly, or retain the optional grouped Inbox destination.
+          * @default 'direct'
+         */
+        "activityMode"?: 'direct' | 'inbox';
+        /**
+          * @default false
+         */
         "agentsDot"?: boolean;
         /**
           * @default 'Agents'
@@ -9078,11 +9104,14 @@ declare namespace LocalJSX {
         "sheetNavExpanded": boolean;
         "menuLabel": string;
         "searchLabel": string;
+        "activityMode": 'direct' | 'inbox';
+        "activityLabel": string;
         "inboxLabel": string;
         "messagesLabel": string;
         "agentsLabel": string;
         "helpLabel": string;
         "searchDot": boolean;
+        "activityDot": boolean;
         "inboxDot": boolean;
         "messagesDot": boolean;
         "agentsDot": boolean;

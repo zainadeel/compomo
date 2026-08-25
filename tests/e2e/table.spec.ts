@@ -3266,7 +3266,10 @@ test('keeps the Customize control neutral when columns are customized at typical
   }).click();
   await expect(trigger).toHaveAccessibleName('Customize table');
   await expect(trigger.locator('.ds-button__label')).toHaveJSProperty('emphasis', false);
-  await expect(trigger.locator('..')).toHaveJSProperty('pressScale', false);
+  await expect(trigger.locator('xpath=ancestor::ds-button-unfilled[1]')).toHaveJSProperty(
+    'pressScale',
+    false
+  );
   await expect
     .poll(() =>
       trigger.evaluate(element => (element.closest('ds-button-unfilled') as HTMLDsButtonUnfilledElement).variant)
@@ -3359,7 +3362,10 @@ test('keeps labeled Filter, Group, and Sort chrome at typical width and promotes
   await expect(sort.locator('.ds-button__label')).toBeVisible();
   await expect(sort.locator('.ds-button__label')).toHaveJSProperty('emphasis', false);
   await expect(sort.locator('.ds-button__chevron')).toBeVisible();
-  await expect(sort.locator('..')).toHaveJSProperty('pressScale', false);
+  await expect(sort.locator('xpath=ancestor::ds-button-unfilled[1]')).toHaveJSProperty(
+    'pressScale',
+    false
+  );
 
   await table.evaluate(() => {
     const filterMenu = document.getElementById('column-customizer-filter') as HTMLElement & {
@@ -3554,6 +3560,13 @@ test('uses icon-only Filter, Group, and Sort below 900px and promotes the icon w
   await expect(filter.locator('.trigger__prefix')).toBeVisible();
   await expect(group.locator('.trigger__prefix')).toBeVisible();
   await expect(sort.locator('.ds-button__icon-wrap')).toBeVisible();
+
+  await filter.hover();
+  await expect(page.getByRole('tooltip', { name: 'Filter' })).toBeVisible();
+  await group.hover();
+  await expect(page.getByRole('tooltip', { name: 'Group fleet' })).toBeVisible();
+  await sort.hover();
+  await expect(page.getByRole('tooltip', { name: 'Sort' })).toBeVisible();
 
   await table.evaluate(() => {
     const filterMenu = document.getElementById('column-customizer-filter') as HTMLElement & {
@@ -3797,7 +3810,10 @@ test('owns a controlled caption-bar data mode switcher for supported modes', asy
   const table = page.locator('#column-customizer');
   const trigger = table.getByRole('button', { name: 'Change table variation' });
   await expect(trigger).toBeVisible();
-  await expect(trigger.locator('..')).toHaveJSProperty('pressScale', false);
+  await expect(trigger.locator('xpath=ancestor::ds-button-unfilled[1]')).toHaveJSProperty(
+    'pressScale',
+    false
+  );
 
   const trailingControls = table.locator('.ds-table__caption-trailing > *');
   await expect(trailingControls).toHaveCount(3);
@@ -3805,7 +3821,9 @@ test('owns a controlled caption-bar data mode switcher for supported modes', asy
   await expect(trailingControls.nth(1)).toHaveJSProperty('tagName', 'DS-DIVIDER');
   await expect(trailingControls.nth(1)).toHaveJSProperty('orientation', 'vertical');
   await expect(trailingControls.nth(1)).toHaveJSProperty('length', '32px');
-  await expect(trailingControls.nth(2)).toHaveAttribute('aria-label', 'Change table variation');
+  await expect(
+    trailingControls.nth(2).getByRole('button', { name: 'Change table variation' })
+  ).toBeVisible();
 
   await trigger.click();
   const menu = page.getByRole('menu', { name: 'Table variation' });

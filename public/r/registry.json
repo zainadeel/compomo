@@ -2062,7 +2062,7 @@
           ],
           "responsiveBehavior": [
             "The consuming layout decides when an icon-label action becomes icon-only and must provide an explicit accessible name after changing variants. Table caption Customize is one such layout: below 900px it uses the icon shape while keeping the same neutral resting foreground regardless of the controlled column configuration.",
-            "When collapseLabel is set inside a named ds-table container narrower than 900px, an icon-label caption action omits its label and chevron and becomes icon-only while keeping its accessible name. An active control then promotes the icon to primary.",
+            "When collapseLabel is set inside a named ds-table container narrower than 900px, an icon-label caption action omits its label and chevron and becomes icon-only while keeping its accessible name and exposing its label through a hover and keyboard-focus tooltip. An active control then promotes the icon to primary.",
             "Use fill width only when the parent layout requires a full-width secondary action."
           ],
           "frameworkCaveats": {
@@ -2217,7 +2217,8 @@
         "badge",
         "icon",
         "loader",
-        "text"
+        "text",
+        "tooltip"
       ]
     },
     {
@@ -3956,7 +3957,7 @@
           ],
           "responsiveBehavior": [
             "The popup defaults to the large menu-width token and clamps to the viewport.",
-            "When collapseLabel is set inside a named ds-table container narrower than 900px, the trigger omits its label and chevron and becomes icon-only. Active criteria promote the prefix icon to primary.",
+            "When collapseLabel is set inside a named ds-table container narrower than 900px, the trigger omits its label and chevron, becomes icon-only, and exposes its label through a hover and keyboard-focus tooltip. Active criteria promote the prefix icon to primary.",
             "Both panes remain visible at narrow widths, with a smaller category minimum and reduced option-pane padding.",
             "Treat side as preferred placement; the popup flips and clamps when viewport collision requires it."
           ],
@@ -5384,7 +5385,7 @@
     {
       "name": "mobile-bar-nav",
       "title": "MobileBarNav",
-      "description": "Persistent mobile shell navigation for Menu, the router-derived current area, Search, Inbox, Messages, and Agents.",
+      "description": "Persistent mobile shell navigation for Menu, the router-derived current area, Search, Activity, Messages, and Agents, with optional Inbox grouping.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -5395,7 +5396,7 @@
         "intent": {
           "audience": "specialized",
           "status": "experimental",
-          "summary": "Persistent mobile shell navigation for Menu, the router-derived current area, Search, Inbox, Messages, and Agents.",
+          "summary": "Persistent mobile shell navigation for Menu, the router-derived current area, Search, Activity, Messages, and Agents, with optional Inbox grouping.",
           "useWhen": [
             "ShellApp is rendering its dedicated below-768px application composition."
           ],
@@ -5414,7 +5415,8 @@
             "Only the active destination exposes aria-current; Menu exposes its controlled pane through aria-expanded."
           ],
           "states": [
-            "The fixed groups are Menu plus current area, followed by Search, Inbox, Messages, and Agents.",
+            "The fixed groups are Menu plus current area, followed by Search, Activity, Messages, and Agents.",
+            "Consumers that intentionally group multiple review tools can replace the Activity destination with Inbox.",
             "Selection promotes foreground to primary without painting a selected fill; unselected destinations use tertiary foreground.",
             "Opening Mobile Sheet Nav replaces the Menu glyph with Cross while preserving its accessible name.",
             "Reselecting an active destination does not reset its nested state.",
@@ -5435,6 +5437,18 @@
         "props": {
           "activeDestination": {
             "type": "MobileDestination",
+            "required": false
+          },
+          "activityDot": {
+            "type": "boolean",
+            "required": false
+          },
+          "activityLabel": {
+            "type": "string",
+            "required": false
+          },
+          "activityMode": {
+            "type": "'direct' | 'inbox'",
             "required": false
           },
           "agentsDot": {
@@ -6871,7 +6885,7 @@
           ],
           "accessibility": [
             "Provide localized accessible labels for the rail, shortcut group, and every rendered tool.",
-            "Use the canonical default recipe when the product needs Search first and Help last; custom recipes must preserve a deliberate keyboard and visual order.",
+            "Use the canonical default recipe when the product needs Agents pinned first and Help pinned last; custom recipes must preserve a deliberate keyboard and visual order.",
             "Keep focus on the selected rail action when opening a drawer and allow normal Tab navigation into its content.",
             "When the shortcut rail overflows, its labeled body becomes a keyboard-focusable scroll region without changing the rail action order.",
             "Do not trigger global shortcuts while focus is in an editable control.",
@@ -6881,7 +6895,7 @@
           "states": [
             "Every tool has a stable explicit id and accessible label. The application filters definitions for authorization and entitlement.",
             "Tool order, header or footer rail placement, shortcut, and mobile grouping come from explicit item metadata rather than id-based layout assumptions.",
-            "PANEL_TOOLS_DEFAULT_ITEMS is the canonical Lab recipe: Search pinned first, Messages before Agents, Help pinned last, current shortcuts, and only Stacks and Activity grouped under mobile Inbox.",
+            "PANEL_TOOLS_DEFAULT_ITEMS is the canonical Lab recipe: Agents pinned first; Messages, Activity, then Search in the body; Help pinned last; Activity directly reachable on mobile; and Stacks omitted.",
             "Only one drawer is open at a time; selecting another tool switches directly and selecting the active tool closes to rail-only mode.",
             "The drawer starts closed, remains open across ordinary route changes, and retains every mounted tool's independent conversation, query, scroll, and work state.",
             "When storageKey is set, persist only the last active tool in this browser and still restore the drawer closed after reload.",
@@ -7434,7 +7448,7 @@
           ],
           "responsiveBehavior": [
             "Use width fill for form fields and width hug for compact filter bars. Override those defaults only when the owning layout has a clear constraint.",
-            "When collapseLabel is set inside a named ds-table container narrower than 900px, the trigger omits its label and chevron and becomes icon-only. A selected value promotes the prefix icon to primary.",
+            "When collapseLabel is set inside a named ds-table container narrower than 900px, the trigger omits its label and chevron, becomes icon-only, and exposes its label through a hover and keyboard-focus tooltip. A selected value promotes the prefix icon to primary.",
             "The popup matches the trigger minimum width, may grow for content, and clamps to the viewport.",
             "Keep popupAlign at start for ordinary fields and filters. Use end when a control sits against a right layout edge and the popup should grow inward.",
             "Long option collections scroll inside the popup; virtualization and remote search are not part of this component."
@@ -7716,14 +7730,14 @@
             "Keep the shell-owned routed-content scroller keyboard-focusable while its page landmark retains content semantics. Do not paint a control focus ring around that scroller; it is a layout region, and a page-column outline looks like a selected card.",
             "Keep the managed desktop/tablet and mobile presentations available without conditionally recreating routed or tool content.",
             "Do not override browser keyboard chords when enabling shell shortcuts.",
-            "Require Search and Help as the minimum PanelTools actions and provide accessible labels for every tool.",
+            "Require Agents and Help as the minimum pinned PanelTools actions and provide accessible labels for every tool.",
             "Preserve focus and accessible names across navigation, collapse, overflow, and responsive presentation changes."
           ],
           "states": [
             "Render exactly one ShellApp as the workspace root and never nest it.",
             "Managed composition is the standard. Supply navigation, pageChrome, and tools objects plus named tool-view and default page-content slots.",
             "The application router owns the current route, authorization filtering, Dashboard or Settings context, destination collections, section collections, and localized content labels.",
-            "ShellApp renders the lower-level desktop, tablet, and mobile chrome, coordinates layout, gradient alignment, transitions, shortcuts, global surfaces, Inbox state, focus restoration, and mobile-stage visibility.",
+            "ShellApp renders the lower-level desktop, tablet, and mobile chrome, coordinates layout, gradient alignment, transitions, shortcuts, global surfaces, optional Inbox state, focus restoration, and mobile-stage visibility.",
             "The application router owns authorization, current URLs, history, and route execution; ShellApp forwards navigation and page intent events without routing.",
             "The application supplies each routed content owner and tool view once. ShellApp changes visibility, inert state, and presentation without recreating those nodes.",
             "The optional banner slot accepts one application-owned ds-banner above the complete shell row. The application owns its open state, orientation for the current shell capacity, action consequences, dismissal persistence, and resolution when several messages compete.",
@@ -8125,17 +8139,17 @@
           "accessibility": [
             "Only the active mobile tool view participates in focus or the accessibility tree.",
             "Header Back and application-owned header actions preserve the PanelTools event contract.",
-            "Mobile Inbox uses a named label-only TabGroup for Stacks and Activity; Messages remains a direct mobile destination."
+            "A direct Activity destination renders its own named tool view; an explicitly grouped Inbox uses a named label-only TabGroup."
           ],
           "states": [
             "The application owns open and activeTool and replaces headers when tool depth changes.",
-            "Items with mobileDestination inbox map to one mobile Inbox destination while retaining the actual active tool id; the canonical recipe groups Stacks and Activity, while Messages remains a separate destination.",
+            "Items with mobileDestination inbox map to one mobile Inbox destination while retaining the actual active tool id; the canonical recipe exposes Activity directly and keeps Inbox grouping opt-in.",
             "Stable tool ids own named slots; label, order, rail placement, shortcut, and mobile destination are explicit item data.",
             "Switching responsive mode must not recreate application-owned slotted product elements."
           ],
           "responsiveBehavior": [
             "Desktop and tablet compose PanelTools-compatible rail and drawer chrome.",
-            "Mobile renders one centered MobileHeader for every tool; Stacks and Activity use the large segmented Inbox control, while Messages remains a direct tool destination."
+            "Mobile renders one centered MobileHeader for every direct tool; explicitly grouped Inbox tools use the large segmented section control."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -9091,7 +9105,7 @@
             "pattern:menu-trigger"
           ],
           "accessibility": [
-            "The rendered structure uses a native table, caption, column headers, row groups, and data cells; keep the caption non-empty. The native caption remains visually hidden as the table's accessible name. When caption visibility is enabled, a 48px header bar renders as component chrome outside the data scrollport. It defaults to a presentational caption title that does not duplicate the accessible name. Application-owned labeled controls supplied through the single named header slot replace that fallback and share one horizontal caption overflow row with table-owned actions inside the component-owned 8px inset. Table caption buttons keep pressed interaction paint without physically scaling. When columnCustomizer is enabled, the table adds a trailing Customize control named Customize table. Its label uses regular weight and its resting foreground remains neutral when hidden or reordered columns differ from the catalog default. The control is icon-label at typical widths and the icon-only Table menu button below 900px. Otherwise the header slot receives the complete content width.",
+            "The rendered structure uses a native table, caption, column headers, row groups, and data cells; keep the caption non-empty. The native caption remains visually hidden as the table's accessible name. When caption visibility is enabled, a 48px header bar renders as component chrome outside the data scrollport. It defaults to a presentational caption title that does not duplicate the accessible name. Application-owned labeled controls supplied through the single named header slot replace that fallback and share one horizontal caption overflow row with table-owned actions inside the component-owned 8px inset. Table caption buttons keep pressed interaction paint without physically scaling. When columnCustomizer is enabled, the table adds a trailing Customize control named Customize table. Its label uses regular weight and its resting foreground remains neutral when hidden or reordered columns differ from the catalog default. The control is icon-label at typical widths and the icon-only Table menu button below 900px, where a tooltip preserves the Customize label. The always-icon-only table-variant control also exposes its label through a tooltip. Otherwise the header slot receives the complete content width.",
             "The data-mode switcher is the shared Menu of the table's supported infinite, pagination, and virtual modes. It uses an Ellipses trigger. The switcher is the final caption-bar action; when the column customizer is also present, a decorative vertical divider separates the two controls. dataMode remains controlled, and the application responds to change intent by supplying the matching records, pagination state, loading behavior, and query consequences. Escape, dismissal, and selection return focus to the trigger.",
             "The column customizer is the shared Menu of switch rows, not a table-owned dialog. Data columns can be shown, hidden, and reordered. Action columns and the selection checkbox never appear in the menu. The last remaining visible data column cannot be hidden, but it stays focusable so it can still be reordered. Escape and outside click restore focus to the trigger. Persistence stays in the application.",
             "Sorting controls remain buttons inside column headers and expose the table's one controlled member-row sort through aria-sort. ds-table-sort in the toolbar trailing cluster is the matching menu of Data and Direction sections; it emits the same dsSortChange shape so header clicks and menu choices stay in sync. Grouping never adds a second sort indicator or header control; the application supplies groups in its fixed product order. Optional column help underlines the header label with the shared dotted decoration and shows ds-tooltip from that label; it does not add a second header control or replace the column name.",
@@ -9506,7 +9520,7 @@
           ],
           "accessibility": [
             "The trigger is an icon-label combobox named Filter table unless a product aria-label supplies the table context. Compact caption widths preserve that accessible name after the visible label and chevron are omitted.",
-            "The popup retains ds-filter-menu category navigation, option semantics, focus entry, dismissal, and focus return.",
+            "The popup retains ds-filter-menu category navigation, option semantics, focus entry, dismissal, and focus return, and aligns its start edge with the trigger.",
             "Localize label, menuLabel, categoriesLabel, and clearLabel together so visible and accessible wording remains consistent."
           ],
           "states": [
@@ -9516,7 +9530,7 @@
           ],
           "responsiveBehavior": [
             "Place the control in the trailing region of ds-table-toolbar.",
-            "Inside a named ds-table container narrower than 900px, the trigger becomes icon-only and active criteria promote the Filters icon to primary."
+            "Inside a named ds-table container narrower than 900px, the trigger becomes icon-only, exposes its visible label through a hover and keyboard-focus tooltip, and active criteria promote the Filters icon to primary."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -9815,7 +9829,7 @@
           ],
           "accessibility": [
             "The trigger is an icon-label menu button named Sort table unless a product aria-label is supplied. Compact caption widths keep that accessible name after the visible label is omitted.",
-            "The menu has two sections, Data and Direction. Each section presents one selected row through isSelected; the menu is not a single radio group because field and direction are independent.",
+            "The start-aligned menu has two sections, Data and Direction. Each section presents one selected row through isSelected; the menu is not a single radio group because field and direction are independent.",
             "Choosing a row applies immediately and keeps the menu open so the other section can be changed. Escape and outside activation close the menu and restore trigger focus."
           ],
           "states": [
@@ -9826,7 +9840,7 @@
           ],
           "responsiveBehavior": [
             "Place the control in the trailing region of ds-table-toolbar with Filter and Group.",
-            "Inside a named ds-table container narrower than 900px, the trigger omits its label and chevron and becomes icon-only. The icon keeps the resting secondary foreground.",
+            "Inside a named ds-table container narrower than 900px, the trigger omits its label and chevron and becomes icon-only. A hover and keyboard-focus tooltip preserves the label, and the icon keeps the resting secondary foreground.",
             "Long sortable-field catalogs inherit Menu's collision-aware height cap and internal choice scrolling instead of extending beyond the available viewport space."
           ],
           "frameworkCaveats": {
@@ -9936,7 +9950,7 @@
           ],
           "responsiveBehavior": [
             "The start cluster, search, trailing Filter/Sort/Group, and table caption trailing actions stay on one line. Saved views hug their current trigger content up to the compact menu-width token rather than reserving that full width; long names truncate while the dirty dot stays visible. Filter, Sort, and Group triggers cap at the same token, and Sort and Group popups keep that compact menu-width floor. A standalone toolbar owns its horizontal scrolling; inside a table, the complete caption row is the single overflow owner so table-owned actions never remain pinned over scrolling toolbar controls.",
-            "Inside a named ds-table container narrower than 900px, Search retains its standard maximum width and flexes smaller only when the complete row needs space. ds-table-filter and ds-table-sort omit their labels and chevrons, and Group controls explicitly opted into collapseLabel become icon-only. Empty leading and trailing slot groups do not add spacing. Active filtering or grouping promotes the prefix icon to primary. Sort keeps resting secondary chrome. Table-owned Customize also becomes the icon-only Table menu button at that width.",
+            "Inside a named ds-table container narrower than 900px, Search retains its standard maximum width and flexes smaller only when the complete row needs space. ds-table-filter and ds-table-sort omit their labels and chevrons, and Group controls explicitly opted into collapseLabel become icon-only; each exposes its label through a hover and keyboard-focus tooltip. Empty leading and trailing slot groups do not add spacing. Active filtering or grouping promotes the prefix icon to primary. Sort keeps resting secondary chrome. Table-owned Customize also becomes the icon-only Table menu button at that width with the same tooltip behavior.",
             "The scrollbar is visually suppressed without removing touch, trackpad, mouse-wheel, or keyboard scrolling from the overflow container.",
             "Trailing controls remain grouped after leading controls; the toolbar does not collapse controls into an application-specific overflow menu."
           ],
