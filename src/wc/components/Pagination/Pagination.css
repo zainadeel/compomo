@@ -33,7 +33,7 @@
 }
 
 .pagination__page-size {
-  gap: var(--dimension-space-100);
+  gap: 0;
   padding-inline-end: var(--dimension-space-100);
 }
 
@@ -50,8 +50,29 @@
   white-space: nowrap;
 }
 
+.pagination__total {
+  margin-inline-start: var(--dimension-space-100);
+}
+
+.pagination .pagination__page-size-select {
+  --ds-select-fg-active: var(--color-foreground-secondary);
+}
+
 .pagination__page {
   justify-content: center;
   min-inline-size: 0;
   padding-inline: var(--dimension-space-100);
+}
+
+.pagination--table-compact .pagination__total,
+.pagination--table-compact .pagination__boundary {
+  display: none;
+}
+
+.pagination--table-compact {
+  gap: var(--dimension-space-100);
+}
+
+.pagination--table-compact .pagination__page-size {
+  padding-inline-end: 0;
 }

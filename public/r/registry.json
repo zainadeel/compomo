@@ -1838,6 +1838,7 @@
             "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
             "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width.",
             "Physical press scaling is on by default. Disable it only when an owning composite must keep child or background geometry fixed; hover and pressed interaction washes remain available.",
+            "Visible labels are emphasized by default. Set labelEmphasis to false when a composed surface deliberately needs the button label to match adjacent regular-weight control labels; this does not change the action hierarchy, foreground, icon, or interaction states.",
             "ButtonFilled has no active, pressed, or selected state; a filled action is a command, not a toggle or a persistent selection.",
             "An open popup is a transient pressed state instead. While expanded is true the pressed wash is held for the popup's complete rendered lifecycle and survives hover, so the trigger reads as held open without introducing a selected treatment.",
             "hasMenu supports only the label and icon-label variants. The chevron is what communicates that a menu will open, so an icon-only filled menu button would leave the affordance unstated."
@@ -1922,6 +1923,10 @@
           },
           "label": {
             "type": "string",
+            "required": false
+          },
+          "labelEmphasis": {
+            "type": "boolean",
             "required": false
           },
           "pressScale": {
@@ -2049,6 +2054,7 @@
             "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
             "Rounded changes only the control radius to the half-radius treatment; it does not change hierarchy, size, variant, or interaction semantics.",
             "Physical press scaling is on by default. Disable it only when an owning composite must keep child or background geometry fixed; hover and pressed interaction washes remain available.",
+            "Visible labels are emphasized by default. Set labelEmphasis to false when a composed surface deliberately needs the button label to match adjacent regular-weight control labels; this does not change active state, foreground, icon, chevron, or interaction fills.",
             "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width.",
             "hasMenu covers two distinct menu-button shapes and the variant selects between them. With label or icon-label the action has a menu, and a trailing chevron carries the affordance. With icon the button is a menu and no chevron is added.",
             "Because the icon-only shape has no chevron, its glyph must convey the menu on its own. Use Ellipses for a generic more-options or overflow control. Use a specific icon when the menu has a named purpose, such as Table for Customize table.",
@@ -2149,6 +2155,10 @@
           },
           "label": {
             "type": "string",
+            "required": false
+          },
+          "labelEmphasis": {
+            "type": "boolean",
             "required": false
           },
           "pressScale": {
@@ -4296,7 +4306,7 @@
           "states": [
             "Every size applies one complete control-density recipe across frame height, inline padding, icon zones, text-container inset, gap, and radius; supporting error content follows the shared 4px field flow.",
             "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry. Set hasBorder to false only in chrome that supplies enough surrounding structure; the control then remains borderless at rest, while focused, and while invalid, with semantics and supporting error copy unchanged.",
-            "Placeholder text is secondary at rest and quaternary while the editable field is focused because it becomes decorative once typing begins.",
+            "Placeholder text is secondary at rest and quaternary while the editable field is focused because it becomes decorative once typing begins. Single-line placeholder and entered value text truncate with an ellipsis when the field is narrower than its content.",
             "Entered values use the parent surface's primary foreground; prefix icons, suffix content, and resting placeholder text use its secondary foreground.",
             "Search fields show a standard borderless CrossCircle icon action only while they contain a value. Clearing emits the empty value and restores focus to the native field.",
             "The suffix slot is for compact units or decorations. The optional leading icon is decorative and does not replace the field label.",
@@ -4745,6 +4755,7 @@
           "responsiveBehavior": [
             "Keep the default choice-cell anchor alignment so the first or last interactive row edge aligns with its trigger, matching Select; use popup-frame only for deliberate custom frame geometry.",
             "Treat side as the preferred placement. When the popup cannot fit there and the opposite side offers more room, Menu flips on that main axis before clamping the final position to the viewport.",
+            "Cap the popup to the vertical room available on its resolved side. When content is taller, the choice list scrolls internally and keyboard focus scrolls the active row into view.",
             "Avoid fixed widths that exceed narrow viewports."
           ],
           "frameworkCaveats": {
@@ -6049,7 +6060,7 @@
           ],
           "accessibility": [
             "The component renders a named navigation region, gives its compact page-size noun a complete accessible label, and gives every icon-only boundary control an explicit page action name.",
-            "The visible page-size cluster states the localized noun, selected size, and total, for example Rows: 25 of 500. The page position uses compact ‘of’ phrasing, for example 1 of 20. A polite atomic status update retains the complete current range and ‘Page’ phrasing with the localized item noun.",
+            "The visible page-size cluster states the localized noun, selected size, and current-page count of total, for example Rows: [25] 25 of 500. The page position uses compact ‘of’ phrasing, for example 1 of 20. A polite atomic status update retains the complete current range and ‘Page’ phrasing with the localized item noun.",
             "Left and Right Arrow request the adjacent page while focus is within pagination navigation controls. The page-size combobox retains its own arrow-key behavior.",
             "Inactive boundary controls and every control during loading remain non-interactive while retaining their accessible names."
           ],
@@ -6061,7 +6072,8 @@
             "fitToPage appends a Fit to page choice. fitPageSize supplies its effective whole-item capacity; the closed trigger says Fit while the range continues to expose the resulting count. fitToPageInactive keeps that choice visible but unavailable when fitting is not meaningful for the current data shape. Pagination does not measure layouts itself."
           ],
           "responsiveBehavior": [
-            "The compact controls remain on one line with noun, selected size, total, a vertical divider, and page position. When inline space is still insufficient, the pagination surface scrolls horizontally rather than wrapping labels away from their controls."
+            "The full-width controls remain on one line with noun, selected size, current-page count of total, a vertical divider, page position, and first, previous, next, and last navigation.",
+            "Inside a ds-table container narrower than 900px, pagination hides the visible current-page count and first/last boundary controls while retaining the page-size noun and selector plus previous, page position, and next. The complete current range remains available to assistive technology."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -9079,7 +9091,7 @@
             "pattern:menu-trigger"
           ],
           "accessibility": [
-            "The rendered structure uses a native table, caption, column headers, row groups, and data cells; keep the caption non-empty. The native caption remains visually hidden as the table's accessible name. When caption visibility is enabled, a 48px header bar renders as component chrome outside the horizontal scrollport. It defaults to a presentational caption title that does not duplicate the accessible name. Application-owned labeled controls supplied through the single named header slot replace that fallback and occupy the leading content width inside the component-owned 8px inset. When columnCustomizer is enabled, the table adds a trailing Customize control named Customize table. Its label and resting foreground remain neutral when hidden or reordered columns differ from the catalog default. The control is icon-label at typical widths and the icon-only Table menu button below 900px. Otherwise the header slot receives the complete content width.",
+            "The rendered structure uses a native table, caption, column headers, row groups, and data cells; keep the caption non-empty. The native caption remains visually hidden as the table's accessible name. When caption visibility is enabled, a 48px header bar renders as component chrome outside the data scrollport. It defaults to a presentational caption title that does not duplicate the accessible name. Application-owned labeled controls supplied through the single named header slot replace that fallback and share one horizontal caption overflow row with table-owned actions inside the component-owned 8px inset. Table caption buttons keep pressed interaction paint without physically scaling. When columnCustomizer is enabled, the table adds a trailing Customize control named Customize table. Its label uses regular weight and its resting foreground remains neutral when hidden or reordered columns differ from the catalog default. The control is icon-label at typical widths and the icon-only Table menu button below 900px. Otherwise the header slot receives the complete content width.",
             "The data-mode switcher is the shared Menu of the table's supported infinite, pagination, and virtual modes. It uses an Ellipses trigger. The switcher is the final caption-bar action; when the column customizer is also present, a decorative vertical divider separates the two controls. dataMode remains controlled, and the application responds to change intent by supplying the matching records, pagination state, loading behavior, and query consequences. Escape, dismissal, and selection return focus to the trigger.",
             "The column customizer is the shared Menu of switch rows, not a table-owned dialog. Data columns can be shown, hidden, and reordered. Action columns and the selection checkbox never appear in the menu. The last remaining visible data column cannot be hidden, but it stays focusable so it can still be reordered. Escape and outside click restore focus to the trigger. Persistence stays in the application.",
             "Sorting controls remain buttons inside column headers and expose the table's one controlled member-row sort through aria-sort. ds-table-sort in the toolbar trailing cluster is the matching menu of Data and Direction sections; it emits the same dsSortChange shape so header clicks and menu choices stay in sync. Grouping never adds a second sort indicator or header control; the application supplies groups in its fixed product order. Optional column help underlines the header label with the shared dotted decoration and shows ds-tooltip from that label; it does not add a second header control or replace the column name.",
@@ -9105,7 +9117,7 @@
           ],
           "responsiveBehavior": [
             "The table keeps native semantics at narrow widths and scrolls horizontally instead of transforming into cards.",
-            "Inside the named ds-table container, caption Filter, Group, and Sort controls that opt into collapseLabel become icon-only below 900px by omitting their labels and chevrons. Active filtering or grouping promotes the visible icon to primary. Sort keeps resting secondary chrome because its selection lives in the menu and headers. Customize switches to the icon-only Table menu button below 900px and keeps its neutral resting foreground regardless of the controlled column configuration.",
+            "Inside the named ds-table container, caption Search retains its standard maximum width and flexes smaller only when the complete row needs space. Filter, Group, and Sort controls that opt into collapseLabel become icon-only below 900px by omitting their labels and chevrons. Active filtering or grouping promotes the visible icon to primary. Sort keeps resting secondary chrome because its selection lives in the menu and headers. Customize switches to the icon-only Table menu button below 900px and keeps its neutral resting foreground regardless of the controlled column configuration. The caption, frame, and footer remain within the table host at every width. The complete caption row scrolls together only when those compact controls no longer fit, while data columns scroll inside the viewport; table-owned trailing actions never stay pinned over the scrolling toolbar.",
             "stickyHeader follows the active vertical scroll owner: a maxHeight, height, or fitViewport table keeps its native header and group sections inside one bounded table scrollport, while a document-flow table retains a semantic native header and renders a sticky control header whose columns follow the body's native inline scroll timeline. Consumers set --ds-table-sticky-header-offset when page chrome occupies an unbounded document scrollport edge. When the 48px table header bar is visible, it sticks at that external offset and the column header stacks immediately below it.",
             "fitViewport uses viewportInsetBlockStart and viewportInsetBlockEnd to describe compact surrounding chrome and page gutters relative to the nearest vertical scroll owner. Before the table reaches that compact position, its host reserves the eventual height while the visible composition grows and vertical input remains owned by the outer page. Once settled, the internal table viewport becomes the vertical scroll owner. Bounded grouped tables use browser-native sticky section rows inside real block row-group boundaries, so scroll and resize do not run component JavaScript or trigger reactive section swaps. Document-flow tables retain the synchronized visual lane required by their separate horizontal scrollport.",
             "Without maxHeight the table grows the document and automatic lazy loading observes the browser viewport. Horizontal scrolling chains vertical wheel and trackpad movement to the page instead of trapping it.",
@@ -9809,12 +9821,13 @@
           "states": [
             "columns and sort are controlled. dsSortChange reports the next TableSortState and never mutates those inputs. The same sort object is what column headers emit through the table.",
             "Selecting a different data field keeps the current direction, or starts ascending when no sort exists. Selecting a direction applies it to the current field, or to the first sortable field when no sort exists. Selecting the already-active field or direction is a no-op and does not toggle the way a header click does.",
-            "The trigger stays Sort in resting secondary chrome. Field and direction selection live in the menu and on column headers, so the trigger never uses active primary emphasis.",
+            "The trigger stays Sort in regular-weight resting secondary chrome. Field and direction selection live in the menu and on column headers, so the trigger never uses active primary emphasis. It keeps pressed interaction paint without physically scaling inside the stable table caption row.",
             "Compound sortable headers contribute one Data row per segment. Action columns never appear."
           ],
           "responsiveBehavior": [
             "Place the control in the trailing region of ds-table-toolbar with Filter and Group.",
-            "Inside a named ds-table container narrower than 900px, the trigger omits its label and chevron and becomes icon-only. The icon keeps the resting secondary foreground."
+            "Inside a named ds-table container narrower than 900px, the trigger omits its label and chevron and becomes icon-only. The icon keeps the resting secondary foreground.",
+            "Long sortable-field catalogs inherit Menu's collision-aware height cap and internal choice scrolling instead of extending beyond the available viewport space."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -9878,7 +9891,7 @@
     {
       "name": "table-toolbar",
       "title": "TableToolbar",
-      "description": "Data-agnostic companion layout for application-owned table caption controls, with a start cluster, optional search, trailing Filter/Group/Sort, and narrow-width horizontal overflow.",
+      "description": "Data-agnostic companion layout for application-owned table caption controls, with a start cluster, optional search, trailing Filter/Sort/Group, and narrow-width horizontal overflow.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -9889,7 +9902,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Data-agnostic companion layout for application-owned table caption controls, with a start cluster, optional search, trailing Filter/Group/Sort, and narrow-width horizontal overflow.",
+          "summary": "Data-agnostic companion layout for application-owned table caption controls, with a start cluster, optional search, trailing Filter/Sort/Group, and narrow-width horizontal overflow.",
           "useWhen": [
             "Several table pages repeat the same saved-view cluster, middle discovery and result-shaping controls, and table-owned caption actions.",
             "A ds-table header slot needs consistent control spacing, alignment, grouping, and narrow-width overflow without moving product behavior into the table."
@@ -9912,17 +9925,18 @@
           "patterns": [],
           "accessibility": [
             "The component exposes a named toolbar while each slotted control retains its own accessible name and native keyboard behavior.",
-            "Use the start slot for saved views. Use search for the optional discovery field, leading for any additional left-side middle controls, and trailing for Filter, Group, and Sort. Table-owned column customizer and data-mode actions remain in the table caption trailing cluster.",
+            "Use the start slot for saved views. Use search for the optional discovery field, leading for any additional left-side middle controls, and trailing for Filter, Sort, and Group. Table-owned column customizer and data-mode actions remain in the table caption trailing cluster and participate in the same caption overflow row.",
             "Tab order follows authored DOM order. The toolbar does not add roving focus because it may contain heterogeneous form and popup controls."
           ],
           "states": [
             "The component owns layout only. It never mutates slotted control props, values, menus, loading, persistence, or consequences. Use ds-table-saved-views and ds-table-filter when those interactions need the shared CompoMo behavior while application data and persistence remain external.",
-            "The start cluster is followed by a decorative vertical divider, then the spanning middle region. The start cluster and divider hide when nothing is projected. Search is a dedicated slot that hides when nothing is projected. Empty leading or trailing clusters add no placeholder chrome. The middle region occupies remaining width so trailing controls stay at its inline end.",
-            "Column customizer and data-mode switching stay table-owned caption actions. Do not recreate those menus in the toolbar."
+            "Buttons in the toolbar keep their hover and pressed interaction paint without physically scaling, so pointer feedback does not disturb the stable caption geometry.",
+            "The start cluster is followed by a decorative vertical divider, then Search, optional leading controls, and one trailing action cluster. The start cluster and divider hide when nothing is projected. Search is a dedicated slot that hides when nothing is projected. Empty leading or trailing clusters add no placeholder chrome. Search is the only toolbar region that shrinks; all action controls retain their control geometry and align directly before the table-owned actions.",
+            "Column customizer and data-mode switching stay table-owned caption actions. Do not recreate those menus in the toolbar. When slotted into a table header, the table caption owns overflow for the complete toolbar and table-owned action row."
           ],
           "responsiveBehavior": [
-            "The start cluster, search, trailing Filter/Group/Sort, and table caption trailing actions stay on one line. Saved views hug their current trigger content up to the compact menu-width token rather than reserving that full width; long names truncate while the dirty dot stays visible. Filter, Group, and Sort triggers cap at the same token, and Group and Sort popups keep that compact menu-width floor. The toolbar horizontally scrolls when its complete controls no longer fit.",
-            "Inside a named ds-table container narrower than 900px, ds-table-filter and ds-table-sort omit their labels and chevrons and become icon-only. Group controls explicitly opt into the same treatment with collapseLabel. Active filtering or grouping promotes the prefix icon to primary. Sort keeps resting secondary chrome. Table-owned Customize also becomes the icon-only Table menu button at that width.",
+            "The start cluster, search, trailing Filter/Sort/Group, and table caption trailing actions stay on one line. Saved views hug their current trigger content up to the compact menu-width token rather than reserving that full width; long names truncate while the dirty dot stays visible. Filter, Sort, and Group triggers cap at the same token, and Sort and Group popups keep that compact menu-width floor. A standalone toolbar owns its horizontal scrolling; inside a table, the complete caption row is the single overflow owner so table-owned actions never remain pinned over scrolling toolbar controls.",
+            "Inside a named ds-table container narrower than 900px, Search retains its standard maximum width and flexes smaller only when the complete row needs space. ds-table-filter and ds-table-sort omit their labels and chevrons, and Group controls explicitly opted into collapseLabel become icon-only. Empty leading and trailing slot groups do not add spacing. Active filtering or grouping promotes the prefix icon to primary. Sort keeps resting secondary chrome. Table-owned Customize also becomes the icon-only Table menu button at that width.",
             "The scrollbar is visually suppressed without removing touch, trackpad, mouse-wheel, or keyboard scrolling from the overflow container.",
             "Trailing controls remain grouped after leading controls; the toolbar does not collapse controls into an application-specific overflow menu."
           ],

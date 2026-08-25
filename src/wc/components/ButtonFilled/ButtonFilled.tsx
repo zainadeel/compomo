@@ -60,6 +60,9 @@ export class ButtonFilled {
   /** Visible text for `label` / `icon-label` variants. */
   @Prop() label: string = '';
 
+  /** Whether the visible label uses the emphasized weight. */
+  @Prop() labelEmphasis: boolean = true;
+
   /** Icon name passed to <ds-icon> for `icon` / `icon-label` variants. */
   @Prop() icon: string = '';
 
@@ -236,6 +239,7 @@ export class ButtonFilled {
             variant: this.variant,
             size: this.size,
             label: this.label,
+            labelEmphasis: this.labelEmphasis,
             icon: this.icon,
             hasMenu: this.hasMenu,
             isLoading: this.isLoading,

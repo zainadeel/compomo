@@ -164,7 +164,8 @@ export class AnchoredPositionController {
       !this.last ||
       this.last.x !== next.x ||
       this.last.y !== next.y ||
-      this.last.resolvedSide !== next.resolvedSide
+      this.last.resolvedSide !== next.resolvedSide ||
+      this.last.availableHeight !== next.availableHeight
     ) {
       this.last = next;
       this.options.apply(next);

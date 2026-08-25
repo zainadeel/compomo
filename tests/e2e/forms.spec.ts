@@ -248,6 +248,22 @@ test('input follows shared control density, focus, and search-clear recipes', as
   await expect(search.locator('ds-button-unfilled')).toHaveCount(0);
 });
 
+test('input truncates single-line values and placeholder guidance when constrained', async ({
+  page,
+}) => {
+  const host = page.locator('#input-md');
+  const input = host.locator('input');
+
+  await host.evaluate((element: HTMLDsInputElement) => {
+    element.style.inlineSize = '120px';
+    element.value = 'A long entered value that cannot fit';
+    element.placeholder = 'A long placeholder that cannot fit';
+  });
+
+  await expect(input).toHaveCSS('text-overflow', 'ellipsis');
+  await expect.poll(() => input.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true);
+});
+
 test('select, multi-select, and menu propagate density into choice rows',
   chromiumOnly('layout-geometry', 'Density propagation is deterministic and its token recipes have contract coverage.'),
   async ({ page }) => {

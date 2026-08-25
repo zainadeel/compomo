@@ -43,12 +43,13 @@
   "states": [
     "columns and sort are controlled. dsSortChange reports the next TableSortState and never mutates those inputs. The same sort object is what column headers emit through the table.",
     "Selecting a different data field keeps the current direction, or starts ascending when no sort exists. Selecting a direction applies it to the current field, or to the first sortable field when no sort exists. Selecting the already-active field or direction is a no-op and does not toggle the way a header click does.",
-    "The trigger stays Sort in resting secondary chrome. Field and direction selection live in the menu and on column headers, so the trigger never uses active primary emphasis.",
+    "The trigger stays Sort in regular-weight resting secondary chrome. Field and direction selection live in the menu and on column headers, so the trigger never uses active primary emphasis. It keeps pressed interaction paint without physically scaling inside the stable table caption row.",
     "Compound sortable headers contribute one Data row per segment. Action columns never appear."
   ],
   "responsiveBehavior": [
     "Place the control in the trailing region of ds-table-toolbar with Filter and Group.",
-    "Inside a named ds-table container narrower than 900px, the trigger omits its label and chevron and becomes icon-only. The icon keeps the resting secondary foreground."
+    "Inside a named ds-table container narrower than 900px, the trigger omits its label and chevron and becomes icon-only. The icon keeps the resting secondary foreground.",
+    "Long sortable-field catalogs inherit Menu's collision-aware height cap and internal choice scrolling instead of extending beyond the available viewport space."
   ],
   "frameworkCaveats": {
     "customElements": [

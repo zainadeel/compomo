@@ -55,6 +55,8 @@ export class TableSort {
             size="md"
             icon="ArrowsVertical"
             label="Sort"
+            labelEmphasis={false}
+            pressScale={false}
             aria-label={name}
             hasMenu={true}
             collapseLabel={true}

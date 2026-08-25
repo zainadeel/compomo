@@ -19,6 +19,8 @@ export interface AnchoredPosition {
   y: number;
   /** Side actually used, which differs from the request when placement flipped. */
   resolvedSide: AnchoredSide;
+  /** Vertical room available on the resolved side inside the padded viewport. */
+  availableHeight: number;
 }
 
 const OPPOSITE_SIDE: Record<AnchoredSide, AnchoredSide> = {
@@ -106,10 +108,17 @@ export function computeAnchoredPosition(input: AnchoredPositionInput): AnchoredP
   const useOpposite = preferredOverflow > 0 && oppositeOverflow < preferredOverflow;
   const resolvedSide = useOpposite ? oppositeSide : input.side;
   const position = useOpposite ? opposite : preferred;
+  const availableHeight =
+    resolvedSide === 'top'
+      ? input.anchorRect.top - input.viewportPadPx - input.sideOffsetPx
+      : resolvedSide === 'bottom'
+        ? input.viewportHeight - input.viewportPadPx - input.anchorRect.bottom - input.sideOffsetPx
+        : input.viewportHeight - input.viewportPadPx * 2;
 
   return {
     x: clampToViewport(position.x, input.popupWidth, input.viewportWidth, input.viewportPadPx),
     y: clampToViewport(position.y, input.popupHeight, input.viewportHeight, input.viewportPadPx),
     resolvedSide,
+    availableHeight: Math.max(0, availableHeight),
   };
 }

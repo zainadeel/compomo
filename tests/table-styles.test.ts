@@ -69,6 +69,11 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(componentTsx, /'ds-table--caption-visible'/);
   assert.match(css, /\.ds-table__caption-content/);
   assert.match(css, /\.ds-table__caption-content--trailing/);
+  assert.match(css, /\.ds-table__caption-content[\s\S]*?overflow-x: auto/);
+  assert.match(
+    css,
+    /:where\(\.ds-table__caption-bar\),\s*:where\(\.ds-table__footer\)\s*\{[\s\S]*?min-inline-size: 0;/
+  );
   assert.match(css, /\.ds-table__caption-trailing/);
   assert.match(css, /\.ds-table__caption-leading > slot/);
   assert.match(css, /\.ds-table__bar-copy > slot/);

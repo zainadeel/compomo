@@ -630,6 +630,11 @@ export namespace Components {
          */
         "label": string;
         /**
+          * Whether the visible label uses the emphasized weight.
+          * @default true
+         */
+        "labelEmphasis": boolean;
+        /**
           * Scale down during a physical pointer press. Disable when an owning composite requires fixed child or background geometry.
           * @default true
          */
@@ -741,6 +746,11 @@ export namespace Components {
           * @default ''
          */
         "label": string;
+        /**
+          * Whether the visible label uses the emphasized weight.
+          * @default true
+         */
+        "labelEmphasis": boolean;
         /**
           * Scale down during a physical pointer press. Disable when an owning composite requires fixed child or background geometry.
           * @default true
@@ -5501,6 +5511,11 @@ declare namespace LocalJSX {
           * @default ''
          */
         "label"?: string;
+        /**
+          * Whether the visible label uses the emphasized weight.
+          * @default true
+         */
+        "labelEmphasis"?: boolean;
         "onDsClick"?: (event: DsButtonFilledCustomEvent<MouseEvent>) => void;
         /**
           * Scale down during a physical pointer press. Disable when an owning composite requires fixed child or background geometry.
@@ -5613,6 +5628,11 @@ declare namespace LocalJSX {
           * @default ''
          */
         "label"?: string;
+        /**
+          * Whether the visible label uses the emphasized weight.
+          * @default true
+         */
+        "labelEmphasis"?: boolean;
         "onDsChange"?: (event: DsButtonUnfilledCustomEvent<boolean>) => void;
         "onDsClick"?: (event: DsButtonUnfilledCustomEvent<MouseEvent>) => void;
         /**
@@ -8783,6 +8803,7 @@ declare namespace LocalJSX {
         "insetDepth": ControlInsetDepth;
         "width": ButtonFilledWidth;
         "label": string;
+        "labelEmphasis": boolean;
         "icon": string;
         "intent": ButtonFilledIntent;
         "contrast": ButtonFilledContrast;
@@ -8806,6 +8827,7 @@ declare namespace LocalJSX {
         "insetDepth": ControlInsetDepth;
         "width": ButtonUnfilledWidth;
         "label": string;
+        "labelEmphasis": boolean;
         "icon": string;
         "isActive": boolean;
         "activeFill": boolean;

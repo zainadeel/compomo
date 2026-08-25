@@ -1,4 +1,5 @@
-import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';
+import { Component, Element, Event, EventEmitter, h, Host, Prop, State } from '@stencil/core';
+import { observeTableCaptionCompact } from '../../utils/table-caption-compact';
 import { resolvePaginationState } from './pagination-model';
 import type {
   PaginationChangeDetail,
@@ -13,6 +14,8 @@ let paginationId = 0;
   scoped: true,
 })
 export class Pagination {
+  @Element() el!: HTMLElement;
+
   /** Controlled zero-based page index. */
   @Prop() pageIndex: number = 0;
   /** Controlled number of top-level items on a full page. */
@@ -47,7 +50,32 @@ export class Pagination {
   /** Emits the complete next controlled state after a page or page-size request. */
   @Event() dsChange!: EventEmitter<PaginationChangeDetail>;
 
+  @State() private tableCompact = false;
+
   private readonly pageSizeControlId = `ds-pagination-${++paginationId}-page-size`;
+  private tableCompactDisconnect: (() => void) | undefined;
+  private hasLoaded = false;
+
+  componentDidLoad(): void {
+    this.hasLoaded = true;
+    this.syncTableCompactObserver();
+  }
+
+  connectedCallback(): void {
+    if (this.hasLoaded) this.syncTableCompactObserver();
+  }
+
+  disconnectedCallback(): void {
+    this.tableCompactDisconnect?.();
+    this.tableCompactDisconnect = undefined;
+  }
+
+  private syncTableCompactObserver(): void {
+    this.tableCompactDisconnect?.();
+    this.tableCompactDisconnect = observeTableCaptionCompact(this.el, compact => {
+      if (this.tableCompact !== compact) this.tableCompact = compact;
+    });
+  }
 
   private requestPage(pageIndex: number): void {
     const state = this.resolvedState;
@@ -142,7 +170,8 @@ export class Pagination {
     const state = this.resolvedState;
     const atStart = state.pageIndex === 0;
     const atEnd = state.pageIndex === state.totalPages - 1;
-    const total = `of ${state.totalItems}`;
+    const visibleItems = state.totalItems === 0 ? 0 : state.lastItem - state.firstItem + 1;
+    const total = `${visibleItems} of ${state.totalItems}`;
     const page = `${state.pageIndex + 1} of ${state.totalPages}`;
     const announcedRange = `${state.firstItem}–${state.lastItem} of ${state.totalItems}`;
     const announcedPage = `Page ${state.pageIndex + 1} of ${state.totalPages}`;
@@ -160,7 +189,10 @@ export class Pagination {
     return (
       <Host>
         <nav
-          class="pagination"
+          class={{
+            pagination: true,
+            'pagination--table-compact': this.tableCompact,
+          }}
           aria-label={this.label}
           aria-busy={this.loading ? 'true' : undefined}
           onKeyDown={event => this.handleKeyDown(event)}
@@ -179,6 +211,7 @@ export class Pagination {
               {pageSizeAriaLabel}
             </span>
             <ds-select
+              class="pagination__page-size-select"
               size="md"
               inputId={this.pageSizeControlId}
               ariaLabelledby={`${this.pageSizeControlId}-label`}
@@ -188,6 +221,7 @@ export class Pagination {
               indicator="up-down"
               allowClear={false}
               activeFill={false}
+              hasBorder={false}
               isInactive={this.loading}
               onDsChange={event => {
                 event.stopPropagation();
@@ -204,9 +238,14 @@ export class Pagination {
               {total}
             </ds-text>
           </div>
-          <ds-divider class="pagination__divider" orientation="vertical" length="24px" />
+          <ds-divider
+            class="pagination__divider"
+            orientation="vertical"
+            length="var(--dimension-size-250)"
+          />
           <div class="pagination__navigation">
             <ds-button-unfilled
+              class="pagination__boundary"
               variant="icon"
               size="md"
               icon="ChevronLeftDouble"
@@ -243,6 +282,7 @@ export class Pagination {
               onDsClick={() => this.requestPage(state.pageIndex + 1)}
             />
             <ds-button-unfilled
+              class="pagination__boundary"
               variant="icon"
               size="md"
               icon="ChevronRightDouble"

@@ -93,6 +93,13 @@ const renderToolbar = (options?: { filterValues?: Record<string, string[]>; grou
       .filters=${FILTERS}
       .values=${options?.filterValues ?? {}}
     ></ds-table-filter>
+    <ds-table-sort
+      slot="trailing"
+      .columns=${COLUMNS}
+      .sort=${{ columnId: 'driver', direction: 'asc' }}
+      aria-label="Sort fleet"
+      @dsSortChange=${applySort}
+    ></ds-table-sort>
     <ds-select
       slot="trailing"
       collapse-label
@@ -104,13 +111,6 @@ const renderToolbar = (options?: { filterValues?: Record<string, string[]>; grou
       .options=${GROUPING_OPTIONS}
       .value=${options?.groupValue ?? ''}
     ></ds-select>
-    <ds-table-sort
-      slot="trailing"
-      .columns=${COLUMNS}
-      .sort=${{ columnId: 'driver', direction: 'asc' }}
-      aria-label="Sort fleet"
-      @dsSortChange=${applySort}
-    ></ds-table-sort>
   </ds-table-toolbar>
 `;
 
@@ -121,7 +121,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'A data-agnostic companion layout for application-owned controls placed in a table header slot. It groups a start cluster, an optional search slot, and trailing Filter, Group, and Sort controls. Customize table and table variation remain table-owned caption actions.',
+          'A data-agnostic companion layout for application-owned controls placed in a table header slot. It groups a start cluster, an optional search slot, and trailing Filter, Sort, and Group controls. Customize table and table variation remain table-owned caption actions and scroll with the complete caption row.',
       },
     },
   },
@@ -136,7 +136,7 @@ export const Controls: Story = {
     docs: {
       description: {
         story:
-          'Full-width table caption: saved views, search, Filter, Group, and Sort in the toolbar, then the table-owned Customize and Ellipses variation actions. Below 900px, Filter, Group, Sort, and Customize become icon-only. Active Filter or Group promote the icon to primary. Sort stays secondary. Customized columns promote the Table icon to primary.',
+          'Full-width table caption: saved views, search, Filter, Sort, and Group in the toolbar, then the table-owned Customize and Ellipses variation actions. Search keeps its standard maximum width and flexes smaller only when needed; at compact widths, Filter, Sort, Group, and Customize become icon-only. The complete row shares one overflow owner. Active Filter or Group promote the icon to primary. Sort stays secondary.',
       },
       ...isolatedOverlayDocs('420px'),
     },

@@ -253,6 +253,7 @@ export class Table {
   @State() private activeStickyGroupId: string | null = null;
   @State() private viewportFitSettled = false;
   @State() private headerPresent = false;
+  @State() private headerUsesToolbar = false;
   @State() private footerSlotPresence = 0;
   @State() private fitPageSize: number | undefined;
   @State() private actionMenu: { rowId: string; columnId: string } | null = null;
@@ -508,7 +509,9 @@ export class Table {
   }
 
   private syncHeaderSlotPresence = () => {
-    this.headerPresent = !!this.el.querySelector('[slot="header"]');
+    const header = this.el.querySelector<HTMLElement>('[slot="header"]');
+    this.headerPresent = !!header;
+    this.headerUsesToolbar = header?.tagName === 'DS-TABLE-TOOLBAR';
   };
 
   private connectHeaderSlotObserver(): void {
@@ -2827,7 +2830,12 @@ export class Table {
             'ds-table__caption-content--trailing': this.showsCaptionTrailing,
           }}
         >
-          <div class="ds-table__caption-leading">
+          <div
+            class={{
+              'ds-table__caption-leading': true,
+              'ds-table__caption-leading--toolbar': this.headerUsesToolbar,
+            }}
+          >
             <slot name="header" onSlotchange={this.syncHeaderSlotPresence} />
             {!this.headerPresent ? (
               <ds-text
@@ -2877,6 +2885,7 @@ export class Table {
         expanded={this.dataModeSwitcherOpen}
         controls={this.dataModeSwitcherElementId}
         activeFill={false}
+        pressScale={false}
         onDsClick={(event: CustomEvent<MouseEvent>) => {
           this.toggleDataModeSwitcher(event.detail.detail === 0);
         }}
@@ -2952,6 +2961,8 @@ export class Table {
           size="md"
           icon="Table"
           label="Customize"
+          labelEmphasis={false}
+          pressScale={false}
           aria-label="Customize table"
           hasMenu={true}
           expanded={this.columnCustomizerOpen}

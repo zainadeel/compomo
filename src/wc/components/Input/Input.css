@@ -60,6 +60,7 @@
   outline: none;
   color: var(--ds-input-fg);
   font-family: inherit;
+  text-overflow: ellipsis;
   -webkit-appearance: none;
   appearance: none;
 }
