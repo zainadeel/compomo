@@ -126,6 +126,6 @@ describe('computeMenuPosition', () => {
       viewportHeight: 300,
     });
 
-    assert.deepEqual(pos, { x: 8, y: 8, resolvedSide: 'bottom' });
+    assert.deepEqual(pos, { x: 8, y: 8, resolvedSide: 'bottom', availableHeight: 152 });
   });
 });
