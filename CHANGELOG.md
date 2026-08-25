@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.16.0](https://github.com/zainadeel/compomo/compare/v14.15.1...v14.16.0) (2026-08-25)
+
+
+### Added
+
+* **table:** add toolbar sort menu and compact caption chrome ([#520](https://github.com/zainadeel/compomo/issues/520)) ([120d826](https://github.com/zainadeel/compomo/commit/120d826c88130c62f0ddf32e78903437fb0ad803))
+
 ## [14.15.1](https://github.com/zainadeel/compomo/compare/v14.15.0...v14.15.1) (2026-08-24)
 
 
