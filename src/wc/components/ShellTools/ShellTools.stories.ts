@@ -3,12 +3,17 @@ import { html } from 'lit';
 import '../../../../dist/components/ds-shell-tools.js';
 
 const items = [
-  { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
+  { id: 'agents', icon: 'AI', ariaLabel: 'Agents', railPlacement: 'header' },
   { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages' },
-  { id: 'agents', icon: 'AI', ariaLabel: 'Agents' },
-  { id: 'stacks', icon: 'ViewMenu', ariaLabel: 'Stacks' },
-  { id: 'activity', icon: 'Bell', ariaLabel: 'Activity', dot: true },
+  { id: 'activity', icon: 'Bell', ariaLabel: 'Activity', dot: true, mobileDestination: 'activity' },
+  { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
   { id: 'help', icon: 'CircleQuestion', ariaLabel: 'Help & Support' },
+];
+
+const inboxItems = [
+  ...items.filter(item => item.id !== 'activity'),
+  { id: 'stacks', icon: 'ViewMenu', ariaLabel: 'Stacks', mobileDestination: 'inbox' },
+  { id: 'activity', icon: 'Bell', ariaLabel: 'Activity', dot: true, mobileDestination: 'inbox' },
 ];
 
 const meta: Meta = {
@@ -20,7 +25,7 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-export const MobileInbox: Story = {
+export const MobileActivity: Story = {
   render: () => html`
     <div style="height: 720px; max-width: 430px; margin: 0 auto;">
       <ds-shell-tools
@@ -28,6 +33,21 @@ export const MobileInbox: Story = {
         open
         active-tool="activity"
         .items=${items}
+      >
+        <div slot="activity-view">Persistent Activity product view</div>
+      </ds-shell-tools>
+    </div>
+  `,
+};
+
+export const MobileInbox: Story = {
+  render: () => html`
+    <div style="height: 720px; max-width: 430px; margin: 0 auto;">
+      <ds-shell-tools
+        responsive-mode="mobile"
+        open
+        active-tool="activity"
+        .items=${inboxItems}
       >
         <div slot="stacks-view">Persistent Stacks product view</div>
         <div slot="activity-view">Persistent Activity product view</div>

@@ -67,6 +67,7 @@
     "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
     "Rounded changes only the control radius to the half-radius treatment; it does not change hierarchy, size, variant, or interaction semantics.",
     "Physical press scaling is on by default. Disable it only when an owning composite must keep child or background geometry fixed; hover and pressed interaction washes remain available.",
+    "Visible labels are emphasized by default. Set labelEmphasis to false when a composed surface deliberately needs the button label to match adjacent regular-weight control labels; this does not change active state, foreground, icon, chevron, or interaction fills.",
     "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width.",
     "hasMenu covers two distinct menu-button shapes and the variant selects between them. With label or icon-label the action has a menu, and a trailing chevron carries the affordance. With icon the button is a menu and no chevron is added.",
     "Because the icon-only shape has no chevron, its glyph must convey the menu on its own. Use Ellipses for a generic more-options or overflow control. Use a specific icon when the menu has a named purpose, such as Table for Customize table.",
@@ -74,7 +75,7 @@
   ],
   "responsiveBehavior": [
     "The consuming layout decides when an icon-label action becomes icon-only and must provide an explicit accessible name after changing variants. Table caption Customize is one such layout: below 900px it uses the icon shape while keeping the same neutral resting foreground regardless of the controlled column configuration.",
-    "When collapseLabel is set inside a named ds-table container narrower than 900px, an icon-label caption action omits its label and chevron and becomes icon-only while keeping its accessible name. An active control then promotes the icon to primary.",
+    "When collapseLabel is set inside a named ds-table container narrower than 900px, an icon-label caption action omits its label and chevron and becomes icon-only while keeping its accessible name and exposing its label through a hover and keyboard-focus tooltip. An active control then promotes the icon to primary.",
     "Use fill width only when the parent layout requires a full-width secondary action."
   ],
   "frameworkCaveats": {

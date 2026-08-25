@@ -36,7 +36,7 @@
   ],
   "accessibility": [
     "The trigger is an icon-label combobox named Filter table unless a product aria-label supplies the table context. Compact caption widths preserve that accessible name after the visible label and chevron are omitted.",
-    "The popup retains ds-filter-menu category navigation, option semantics, focus entry, dismissal, and focus return.",
+    "The popup retains ds-filter-menu category navigation, option semantics, focus entry, dismissal, and focus return, and aligns its start edge with the trigger.",
     "Localize label, menuLabel, categoriesLabel, and clearLabel together so visible and accessible wording remains consistent."
   ],
   "states": [
@@ -46,7 +46,7 @@
   ],
   "responsiveBehavior": [
     "Place the control in the trailing region of ds-table-toolbar.",
-    "Inside a named ds-table container narrower than 900px, the trigger becomes icon-only and active criteria promote the Filters icon to primary."
+    "Inside a named ds-table container narrower than 900px, the trigger becomes icon-only, exposes its visible label through a hover and keyboard-focus tooltip, and active criteria promote the Filters icon to primary."
   ],
   "frameworkCaveats": {
     "customElements": [

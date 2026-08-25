@@ -23,6 +23,7 @@ const meta: Meta = {
     insetDepth: { control: 'select', options: ['single', 'double'] },
     width: { control: 'select', options: [...WIDTHS] },
     label: { control: 'text' },
+    labelEmphasis: { control: 'boolean' },
     icon: { control: 'text' },
     isActive: { control: 'boolean' },
     pressed: { control: 'boolean' },
@@ -58,6 +59,7 @@ const meta: Meta = {
     insetDepth: 'single',
     width: 'hug',
     label: 'Action',
+    labelEmphasis: true,
     icon: 'Bell',
     ariaLabel: '',
     isActive: false,
@@ -106,6 +108,7 @@ export const Playground: Story = {
       inset-depth=${args['insetDepth']}
       width=${args['width']}
       label=${args['label']}
+      .labelEmphasis=${args['labelEmphasis']}
       icon=${args['icon']}
       ?is-active=${args['isActive']}
       .pressed=${args['pressed']}
@@ -145,6 +148,15 @@ export const VariantsAndSizes: Story = {
           </div>
         `,
       )}
+    </div>
+  `,
+};
+
+export const LabelEmphasis: Story = {
+  render: () => html`
+    <div style="${ROW}">
+      <ds-button-unfilled label="Emphasized"></ds-button-unfilled>
+      <ds-button-unfilled label="Regular" .labelEmphasis=${false}></ds-button-unfilled>
     </div>
   `,
 };

@@ -49,6 +49,7 @@ const meta: Meta = {
     insetDepth: { control: 'select', options: ['single', 'double'] },
     width: { control: 'select', options: [...WIDTHS] },
     label: { control: 'text' },
+    labelEmphasis: { control: 'boolean' },
     icon: { control: 'text' },
     intent: { control: 'select', options: [...INTENTS] },
     contrast: { control: 'select', options: [...CONTRASTS] },
@@ -69,6 +70,7 @@ const meta: Meta = {
     insetDepth: 'single',
     width: 'hug',
     label: 'Confirm',
+    labelEmphasis: true,
     icon: 'Check',
     intent: 'brand',
     contrast: 'bold',
@@ -112,6 +114,7 @@ export const Playground: Story = {
       inset-depth=${args['insetDepth']}
       width=${args['width']}
       label=${args['label']}
+      .labelEmphasis=${args['labelEmphasis']}
       icon=${args['icon']}
       intent=${args['intent']}
       contrast=${args['contrast']}
@@ -150,6 +153,15 @@ export const VariantsAndSizes: Story = {
           </div>
         `,
       )}
+    </div>
+  `,
+};
+
+export const LabelEmphasis: Story = {
+  render: () => html`
+    <div style="${ROW}">
+      <ds-button-filled label="Emphasized"></ds-button-filled>
+      <ds-button-filled label="Regular" .labelEmphasis=${false}></ds-button-filled>
     </div>
   `,
 };

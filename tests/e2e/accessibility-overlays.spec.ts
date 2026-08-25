@@ -298,6 +298,39 @@ test('menu flips above a bottom-edge trigger instead of overlapping the viewport
   expect(menuBox!.y + menuBox!.height).toBeLessThanOrEqual(anchorBox!.y);
 });
 
+test('menu caps itself to adjacent viewport space and scrolls long choices', async ({ page }) => {
+  const anchor = page.locator('#scroll-anchor');
+  await anchor.click();
+  const menu = page.getByRole('menu', { name: 'Scrollable actions' });
+  const list = menu.locator('.ds-choice-list');
+  await expect(menu).toBeVisible();
+
+  const geometry = await Promise.all([
+    anchor.boundingBox(),
+    menu.boundingBox(),
+    list.evaluate(element => ({
+      clientHeight: element.clientHeight,
+      scrollHeight: element.scrollHeight,
+      overflowY: getComputedStyle(element).overflowY,
+    })),
+  ]);
+  const [anchorBox, menuBox, listMetrics] = geometry;
+  expect(anchorBox).not.toBeNull();
+  expect(menuBox).not.toBeNull();
+  expect(menuBox!.y).toBeGreaterThanOrEqual(4);
+  expect(menuBox!.y + menuBox!.height).toBeLessThanOrEqual(page.viewportSize()!.height - 4);
+  expect(
+    menuBox!.y + menuBox!.height <= anchorBox!.y ||
+      menuBox!.y >= anchorBox!.y + anchorBox!.height
+  ).toBe(true);
+  expect(listMetrics.scrollHeight).toBeGreaterThan(listMetrics.clientHeight);
+  expect(listMetrics.overflowY).toBe('auto');
+
+  await page.keyboard.press('End');
+  await expect(menu.getByRole('menuitem', { name: 'Action 30' })).toBeFocused();
+  await expect.poll(() => list.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
+});
+
 test('rich preference popup exposes dialog and radio-group semantics without stealing arrow keys', openPopupAxe, async ({ page }) => {
   await page.locator('#rich-anchor').click();
   const popup = page.getByRole('dialog', { name: 'Appearance' });

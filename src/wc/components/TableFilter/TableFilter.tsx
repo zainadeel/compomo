@@ -58,6 +58,7 @@ export class TableFilter {
           hasBorder={true}
           activeFill={false}
           collapseLabel={true}
+          align="start"
           aria-label={name}
           filters={this.filters}
           values={this.values}

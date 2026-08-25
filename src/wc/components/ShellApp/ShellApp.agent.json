@@ -38,14 +38,14 @@
     "Keep the shell-owned routed-content scroller keyboard-focusable while its page landmark retains content semantics. Do not paint a control focus ring around that scroller; it is a layout region, and a page-column outline looks like a selected card.",
     "Keep the managed desktop/tablet and mobile presentations available without conditionally recreating routed or tool content.",
     "Do not override browser keyboard chords when enabling shell shortcuts.",
-    "Require Search and Help as the minimum PanelTools actions and provide accessible labels for every tool.",
+    "Require Agents and Help as the minimum pinned PanelTools actions and provide accessible labels for every tool.",
     "Preserve focus and accessible names across navigation, collapse, overflow, and responsive presentation changes."
   ],
   "states": [
     "Render exactly one ShellApp as the workspace root and never nest it.",
     "Managed composition is the standard. Supply navigation, pageChrome, and tools objects plus named tool-view and default page-content slots.",
     "The application router owns the current route, authorization filtering, Dashboard or Settings context, destination collections, section collections, and localized content labels.",
-    "ShellApp renders the lower-level desktop, tablet, and mobile chrome, coordinates layout, gradient alignment, transitions, shortcuts, global surfaces, Inbox state, focus restoration, and mobile-stage visibility.",
+    "ShellApp renders the lower-level desktop, tablet, and mobile chrome, coordinates layout, gradient alignment, transitions, shortcuts, global surfaces, optional Inbox state, focus restoration, and mobile-stage visibility.",
     "The application router owns authorization, current URLs, history, and route execution; ShellApp forwards navigation and page intent events without routing.",
     "The application supplies each routed content owner and tool view once. ShellApp changes visibility, inert state, and presentation without recreating those nodes.",
     "The optional banner slot accepts one application-owned ds-banner above the complete shell row. The application owns its open state, orientation for the current shell capacity, action consequences, dismissal persistence, and resolution when several messages compete.",

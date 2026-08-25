@@ -1936,10 +1936,10 @@ test('forwards controlled pagination while preserving off-page selection', async
 
   await expect(table.locator('.ds-table__footer-summary')).toHaveCount(0);
   await expect(pagination).toContainText('Rows:');
-  await expect(pagination.locator('.pagination__total')).toHaveText('of 63');
+  await expect(pagination.locator('.pagination__total')).toHaveText('25 of 63');
   await expect(pagination.locator('.pagination__page')).toHaveText('1 of 3');
   await expect(pagination.locator('ds-divider')).toHaveJSProperty('orientation', 'vertical');
-  await expect(pagination.locator('ds-divider')).toHaveCSS('height', '24px');
+  await expect(pagination.locator('ds-divider')).toHaveCSS('height', '20px');
   await expect(pagination.locator('.pagination__page')).toHaveCSS('min-width', '0px');
   await expect(pagination.locator('.pagination__page')).toHaveCSS('padding-left', '8px');
   await expect(pagination.locator('.pagination__page')).toHaveCSS('padding-right', '8px');
@@ -1949,11 +1949,24 @@ test('forwards controlled pagination while preserving off-page selection', async
   ]);
   expect(labelBox).not.toBeNull();
   expect(selectBox).not.toBeNull();
-  expectGeometryClose(selectBox!.x - (labelBox!.x + labelBox!.width), 8);
+  expectGeometryClose(selectBox!.x - (labelBox!.x + labelBox!.width), 0);
   await expect(pagination.locator('ds-select .trigger__chevron ds-icon')).toHaveJSProperty(
     'name',
     'ChevronUpDown'
   );
+  await expect(pagination.locator('ds-select')).toHaveJSProperty('hasBorder', false);
+  await expect
+    .poll(() =>
+      pagination.locator('ds-select .trigger__label-box').evaluate(element => {
+        const probe = document.createElement('span');
+        probe.style.color = 'var(--color-foreground-secondary)';
+        element.append(probe);
+        const secondary = getComputedStyle(probe).color;
+        probe.remove();
+        return getComputedStyle(element).color === secondary;
+      })
+    )
+    .toBe(true);
 
   for (const [label, iconName] of [
     ['First page', 'ChevronLeftDouble'],
@@ -1970,7 +1983,7 @@ test('forwards controlled pagination while preserving off-page selection', async
   await expect(pagination.getByRole('button', { name: 'Previous page' })).toBeDisabled();
 
   await pagination.getByRole('button', { name: 'Next page' }).click();
-  await expect(pagination.locator('.pagination__total')).toHaveText('of 63');
+  await expect(pagination.locator('.pagination__total')).toHaveText('25 of 63');
   await expect(pagination.locator('.pagination__page')).toHaveText('2 of 3');
   await expect(table.locator('tbody .ds-table__row').first()).toHaveAttribute(
     'data-row-id',
@@ -2009,6 +2022,43 @@ test('forwards controlled pagination while preserving off-page selection', async
     .toBe(true);
 });
 
+test('compacts table pagination without dropping adjacent-page navigation', async ({ page }) => {
+  const table = page.locator('#paginated');
+  const pagination = table.locator('ds-pagination');
+
+  await table.evaluate((element: HTMLElement) => {
+    element.style.inlineSize = '898px';
+  });
+
+  await expect(pagination.locator('.pagination__label')).toBeVisible();
+  await expect(pagination.locator('ds-select')).toBeVisible();
+  await expect(pagination.locator('.pagination__total')).toBeHidden();
+  await expect(pagination.locator('.pagination__boundary')).toHaveCount(2);
+  await expect(pagination.locator('.pagination__boundary').first()).toBeHidden();
+  await expect(pagination.getByRole('button', { name: 'Previous page' })).toBeVisible();
+  await expect(pagination.locator('.pagination__page')).toBeVisible();
+  await expect(pagination.getByRole('button', { name: 'Next page' })).toBeVisible();
+  await expect(pagination.locator('.pagination__boundary').last()).toBeHidden();
+  const [compactSelectBox, compactDividerBox] = await Promise.all([
+    pagination.locator('ds-select').boundingBox(),
+    pagination.locator('ds-divider').boundingBox(),
+  ]);
+  expect(compactSelectBox).not.toBeNull();
+  expect(compactDividerBox).not.toBeNull();
+  expectGeometryClose(
+    compactDividerBox!.x - (compactSelectBox!.x + compactSelectBox!.width),
+    8
+  );
+
+  await table.evaluate((element: HTMLElement) => {
+    element.style.inlineSize = '900px';
+  });
+
+  await expect(pagination.locator('.pagination__total')).toBeVisible();
+  await expect(pagination.getByRole('button', { name: 'First page' })).toBeVisible();
+  await expect(pagination.getByRole('button', { name: 'Last page' })).toBeVisible();
+});
+
 test('resets to page one after a controlled page-size request', async ({ page }) => {
   const table = page.locator('#paginated');
   const pagination = table.locator('ds-pagination');
@@ -2017,7 +2067,7 @@ test('resets to page one after a controlled page-size request', async ({ page })
   await pagination.getByRole('combobox', { name: 'Rows per page' }).click();
   await page.getByRole('option', { name: '50', exact: true }).click();
 
-  await expect(pagination.locator('.pagination__total')).toHaveText('of 63');
+  await expect(pagination.locator('.pagination__total')).toHaveText('50 of 63');
   await expect(pagination.locator('.pagination__page')).toHaveText('1 of 2');
   await expect
     .poll(() => page.evaluate(() => window.__tablePaginationEvents.at(-1)))
@@ -2065,7 +2115,7 @@ test('supports keyboard focus and terminal page boundaries', async ({ page }) =>
   const last = pagination.getByRole('button', { name: 'Last page' });
   await last.focus();
   await page.keyboard.press('Enter');
-  await expect(pagination.locator('.pagination__total')).toHaveText('of 63');
+  await expect(pagination.locator('.pagination__total')).toHaveText('13 of 63');
   await expect(pagination.locator('.pagination__page')).toHaveText('3 of 3');
   await expect(next).toBeDisabled();
   await expect(last).toBeDisabled();
@@ -2206,7 +2256,7 @@ test('paginates parent groups while each group loads members independently', asy
 
   await expect(table.locator('tbody[data-group-id]')).toHaveCount(25);
   await expect(pagination).toContainText('Groups:');
-  await expect(pagination.locator('.pagination__total')).toHaveText('of 30');
+  await expect(pagination.locator('.pagination__total')).toHaveText('25 of 30');
   await expect(pagination.locator('.pagination__page')).toHaveText('1 of 2');
   await expect(table.locator('.ds-table__load-body')).toHaveCount(0);
 
@@ -2218,7 +2268,7 @@ test('paginates parent groups while each group loads members independently', asy
 
   await pagination.getByRole('button', { name: 'Next page' }).click();
   await expect(table.locator('tbody[data-group-id]')).toHaveCount(5);
-  await expect(pagination.locator('.pagination__total')).toHaveText('of 30');
+  await expect(pagination.locator('.pagination__total')).toHaveText('5 of 30');
   await expect(pagination.locator('.pagination__page')).toHaveText('2 of 2');
   await pagination.getByRole('button', { name: 'Previous page' }).click();
   await expect(table.locator('tbody[data-group-id="group-1"] .ds-table__row')).toHaveCount(1);
@@ -3215,6 +3265,11 @@ test('keeps the Customize control neutral when columns are customized at typical
     name: 'Status',
   }).click();
   await expect(trigger).toHaveAccessibleName('Customize table');
+  await expect(trigger.locator('.ds-button__label')).toHaveJSProperty('emphasis', false);
+  await expect(trigger.locator('xpath=ancestor::ds-button-unfilled[1]')).toHaveJSProperty(
+    'pressScale',
+    false
+  );
   await expect
     .poll(() =>
       trigger.evaluate(element => (element.closest('ds-button-unfilled') as HTMLDsButtonUnfilledElement).variant)
@@ -3305,7 +3360,12 @@ test('keeps labeled Filter, Group, and Sort chrome at typical width and promotes
   await expect(group.locator('.trigger__label-box')).toBeVisible();
   await expect(group.locator('.trigger__chevron')).toBeVisible();
   await expect(sort.locator('.ds-button__label')).toBeVisible();
+  await expect(sort.locator('.ds-button__label')).toHaveJSProperty('emphasis', false);
   await expect(sort.locator('.ds-button__chevron')).toBeVisible();
+  await expect(sort.locator('xpath=ancestor::ds-button-unfilled[1]')).toHaveJSProperty(
+    'pressScale',
+    false
+  );
 
   await table.evaluate(() => {
     const filterMenu = document.getElementById('column-customizer-filter') as HTMLElement & {
@@ -3501,6 +3561,13 @@ test('uses icon-only Filter, Group, and Sort below 900px and promotes the icon w
   await expect(group.locator('.trigger__prefix')).toBeVisible();
   await expect(sort.locator('.ds-button__icon-wrap')).toBeVisible();
 
+  await filter.hover();
+  await expect(page.getByRole('tooltip', { name: 'Filter' })).toBeVisible();
+  await group.hover();
+  await expect(page.getByRole('tooltip', { name: 'Group fleet' })).toBeVisible();
+  await sort.hover();
+  await expect(page.getByRole('tooltip', { name: 'Sort' })).toBeVisible();
+
   await table.evaluate(() => {
     const filterMenu = document.getElementById('column-customizer-filter') as HTMLElement & {
       values: Record<string, string[]>;
@@ -3563,6 +3630,84 @@ test('uses icon-only Filter, Group, and Sort below 900px and promotes the icon w
     };
   });
   expect(sortColors.icon).toBe(sortColors.secondary);
+});
+
+test('keeps the bounded table surface within its host while the complete caption row scrolls', async ({
+  page,
+}) => {
+  const table = page.locator('#column-customizer');
+  const caption = table.locator('.ds-table__caption-content');
+  const toolbar = table.locator('ds-table-toolbar .table-toolbar');
+  const search = table.locator('#column-customizer-search');
+  const group = table.locator('#column-customizer-group');
+  const customize = table.locator('.ds-table__caption-customizer');
+  await table.evaluate(element => {
+    (element as HTMLElement).style.inlineSize = '500px';
+  });
+
+  const compactGeometry = await table.evaluate(element => {
+    const caption = element.querySelector<HTMLElement>('.ds-table__caption-content')!;
+    const toolbar = element.querySelector<HTMLElement>('.table-toolbar')!;
+    const search = element.querySelector<HTMLElement>('#column-customizer-search')!;
+    return {
+      captionGap: Number.parseFloat(getComputedStyle(caption).columnGap),
+      searchWidth: search.getBoundingClientRect().width,
+      toolbarGap: Number.parseFloat(getComputedStyle(toolbar).gap),
+    };
+  });
+
+  expect(compactGeometry.searchWidth).toBeLessThanOrEqual(300);
+  expect(compactGeometry.toolbarGap).toBe(8);
+  expect(compactGeometry.captionGap).toBe(8);
+  await expect(toolbar).toHaveCSS('display', 'contents');
+
+  await table.evaluate(element => {
+    (element as HTMLElement).style.inlineSize = '400px';
+    element.setAttribute('height', '320px');
+  });
+  await expect(table).toHaveClass(/table-host--bounded/);
+  for (const surface of [
+    table.locator('.ds-table'),
+    table.locator('.ds-table__caption-bar'),
+    table.locator('.ds-table__frame'),
+  ]) {
+    await expect
+      .poll(async () => (await surface.boundingBox())!.width)
+      .toBeLessThanOrEqual(400);
+  }
+  const narrowGeometry = await Promise.all([
+    search.boundingBox(),
+    group.boundingBox(),
+    customize.boundingBox(),
+  ]);
+  expect(narrowGeometry[0]!.width).toBeLessThan(300);
+  expect(narrowGeometry[2]!.x - (narrowGeometry[1]!.x + narrowGeometry[1]!.width)).toBeCloseTo(8, 0);
+
+  await table.evaluate(element => {
+    (element as HTMLElement).style.inlineSize = '320px';
+  });
+  await expect
+    .poll(() => caption.evaluate(element => element.scrollWidth > element.clientWidth))
+    .toBe(true);
+  const before = await Promise.all([group.boundingBox(), customize.boundingBox()]);
+  await caption.evaluate(element => {
+    element.scrollLeft = element.scrollWidth;
+  });
+  await expect.poll(() => caption.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
+  const after = await Promise.all([group.boundingBox(), customize.boundingBox()]);
+  const groupShift = before[0]!.x - after[0]!.x;
+  const customizeShift = before[1]!.x - after[1]!.x;
+  expect(groupShift).toBeGreaterThan(0);
+  expect(customizeShift).toBeCloseTo(groupShift, 0);
+  expect(await search.boundingBox()).not.toBeNull();
+
+  const footerTable = page.locator('#footer');
+  await footerTable.evaluate(element => {
+    (element as HTMLElement).style.inlineSize = '400px';
+  });
+  await expect
+    .poll(async () => (await footerTable.locator('.ds-table__footer').boundingBox())!.width)
+    .toBeLessThanOrEqual(400);
 });
 
 test('restores compact caption observation after controls are reinserted', async ({ page }) => {
@@ -3665,6 +3810,10 @@ test('owns a controlled caption-bar data mode switcher for supported modes', asy
   const table = page.locator('#column-customizer');
   const trigger = table.getByRole('button', { name: 'Change table variation' });
   await expect(trigger).toBeVisible();
+  await expect(trigger.locator('xpath=ancestor::ds-button-unfilled[1]')).toHaveJSProperty(
+    'pressScale',
+    false
+  );
 
   const trailingControls = table.locator('.ds-table__caption-trailing > *');
   await expect(trailingControls).toHaveCount(3);
@@ -3672,7 +3821,9 @@ test('owns a controlled caption-bar data mode switcher for supported modes', asy
   await expect(trailingControls.nth(1)).toHaveJSProperty('tagName', 'DS-DIVIDER');
   await expect(trailingControls.nth(1)).toHaveJSProperty('orientation', 'vertical');
   await expect(trailingControls.nth(1)).toHaveJSProperty('length', '32px');
-  await expect(trailingControls.nth(2)).toHaveAttribute('aria-label', 'Change table variation');
+  await expect(
+    trailingControls.nth(2).getByRole('button', { name: 'Change table variation' })
+  ).toBeVisible();
 
   await trigger.click();
   const menu = page.getByRole('menu', { name: 'Table variation' });
@@ -3787,6 +3938,30 @@ test('lays out application-owned table controls in start and spanning middle gro
   expect(layout.startClusterWidth).toBeCloseTo(layout.startControlWidth, 0);
   expect(layout.dividerVisible).toBe(true);
   expect(layout.dividerHeight).toBe(32);
+
+  const probe = await toolbar.evaluate(element => {
+    const control = document.createElement('ds-button-unfilled') as HTMLElement & {
+      label: string;
+      pressScale: boolean;
+    };
+    control.id = 'table-toolbar-press-probe';
+    control.slot = 'trailing';
+    control.label = 'Probe';
+    element.append(control);
+    return control.id;
+  });
+  const probeHost = page.locator(`#${probe}`);
+  const probeButton = probeHost.locator('button');
+  await expect(probeHost).toHaveJSProperty('pressScale', true);
+  const probeBox = await probeButton.boundingBox();
+  expect(probeBox).not.toBeNull();
+  await page.mouse.move(
+    probeBox!.x + probeBox!.width / 2,
+    probeBox!.y + probeBox!.height / 2
+  );
+  await page.mouse.down();
+  await expect(probeButton).toHaveCSS('scale', '1');
+  await page.mouse.up();
 
   await expect(
     page.locator('#column-customizer').getByRole('toolbar', {

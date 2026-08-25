@@ -81,7 +81,7 @@
   ],
   "responsiveBehavior": [
     "Use width fill for form fields and width hug for compact filter bars. Override those defaults only when the owning layout has a clear constraint.",
-    "When collapseLabel is set inside a named ds-table container narrower than 900px, the trigger omits its label and chevron and becomes icon-only. A selected value promotes the prefix icon to primary.",
+    "When collapseLabel is set inside a named ds-table container narrower than 900px, the trigger omits its label and chevron, becomes icon-only, and exposes its label through a hover and keyboard-focus tooltip. A selected value promotes the prefix icon to primary.",
     "The popup matches the trigger minimum width, may grow for content, and clamps to the viewport.",
     "Keep popupAlign at start for ordinary fields and filters. Use end when a control sits against a right layout edge and the popup should grow inward.",
     "Long option collections scroll inside the popup; virtualization and remote search are not part of this component."

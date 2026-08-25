@@ -17,6 +17,12 @@
         right: 8px;
         bottom: 8px;
       }
+
+      #scroll-anchor {
+        position: fixed;
+        top: 280px;
+        left: 8px;
+      }
     </style>
   </head>
   <body>
@@ -62,6 +68,8 @@
 
     <button id="collision-anchor" aria-haspopup="menu" aria-controls="collision-menu" aria-expanded="false">More</button>
     <ds-menu id="collision-menu" anchor-id="collision-anchor" menu-label="Collision actions"></ds-menu>
+    <button id="scroll-anchor" aria-haspopup="menu" aria-controls="scroll-menu" aria-expanded="false">Long menu</button>
+    <ds-menu id="scroll-menu" anchor-id="scroll-anchor" menu-label="Scrollable actions"></ds-menu>
 
     <script type="module" src="/accessibility-overlays-setup.mjs"></script>
   </body>

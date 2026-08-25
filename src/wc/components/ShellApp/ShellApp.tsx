@@ -55,7 +55,7 @@ import {
   shellGradientSize,
 } from '../../shell/shell-gradient';
 import {
-  isShellInboxTool,
+  itemUsesShellInbox,
   resolveAvailableInboxTool,
   resolveManagedShellPageCapacity,
   resolveShellResponsiveMode,
@@ -221,7 +221,7 @@ export class ShellApp {
       .filter(
         item =>
           !item.isInactive &&
-          (item.mobileDestination === 'inbox' || isShellInboxTool(item.id))
+          itemUsesShellInbox(item)
       )
       .map(item => item.id as ShellInboxToolId);
   }
@@ -680,7 +680,7 @@ export class ShellApp {
     this.managedActiveTool = id;
     this.managedToolsOpen = selected;
     const item = this.resolvedToolItems.find(candidate => candidate.id === id);
-    if (item?.mobileDestination === 'inbox' || isShellInboxTool(id)) {
+    if (item && itemUsesShellInbox(item)) {
       this.managedInboxTool = id;
     }
     this.managedMobileDestination = selected
@@ -733,7 +733,7 @@ export class ShellApp {
     const id = item.id;
     this.managedActiveTool = id;
     this.managedToolsOpen = true;
-    if (isShellInboxTool(id)) this.managedInboxTool = id;
+    if (itemUsesShellInbox(item)) this.managedInboxTool = id;
     this.dsToolChange.emit({ id: id as PanelToolsToolId, selected: true });
     return true;
   }
@@ -1012,18 +1012,29 @@ export class ShellApp {
   }
 
   private renderManagedMobileBarNav() {
+    const item = (id: PanelToolsToolId) =>
+      this.resolvedToolItems.find(candidate => candidate.id === id);
+    const label = (id: PanelToolsToolId, fallback: string) =>
+      item(id)?.ariaLabel ?? item(id)?.label ?? fallback;
+    const directActivity = this.resolvedToolItems.some(
+      candidate => !candidate.isInactive && candidate.mobileDestination === 'activity'
+    );
+
     return (
       <ds-mobile-bar-nav
         hidden={this.tools.mobileBarHidden ?? false}
         activeDestination={this.managedMobileDestination}
         currentArea={this.currentArea}
         sheetNavExpanded={this.managedMobileSheetNavOpen}
-        searchLabel={this.tools.items?.find(item => item.id === 'search')?.ariaLabel ?? 'Search'}
+        searchLabel={label('search', 'Search')}
+        activityMode={directActivity ? 'direct' : 'inbox'}
+        activityLabel={label('activity', 'Activity')}
         inboxLabel={this.tools.inboxLabel ?? 'Inbox'}
-        messagesLabel={this.tools.items?.find(item => item.id === 'messages')?.ariaLabel ?? 'Messages'}
-        agentsLabel={this.tools.items?.find(item => item.id === 'agents')?.ariaLabel ?? 'Agents'}
-        helpLabel={this.tools.items?.find(item => item.id === 'help')?.ariaLabel ?? 'Help & Support'}
+        messagesLabel={label('messages', 'Messages')}
+        agentsLabel={label('agents', 'Agents')}
+        helpLabel={label('help', 'Help & Support')}
         searchDot={this.toolDot('search')}
+        activityDot={this.toolDot('activity')}
         inboxDot={
           this.toolDot('stacks') || this.toolDot('activity')
         }

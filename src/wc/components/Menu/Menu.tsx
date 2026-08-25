@@ -23,6 +23,7 @@ import {
   type ControlSize,
 } from '../../utils';
 import { AnchoredPositionController } from '../../utils/anchored-position-controller';
+import { computeAnchoredPosition, type AnchoredPositionInput } from '../../utils/anchored-position';
 import type { MenuAlign, MenuSide } from './menu-position';
 import {
   isMenuPickerSection,
@@ -98,6 +99,7 @@ export class Menu {
   @State() private pos: { x: number; y: number } = { x: 0, y: 0 };
   @State() private focusedIndex: number = 0;
   @State() private positionReady: boolean = false;
+  @State() private availableHeight: number | null = null;
   @State() private focusRingVisible: boolean = false;
   @State() private reorderFromFlat: number | null = null;
   @State() private reorderInsertBefore: number | null = null;
@@ -148,10 +150,16 @@ export class Menu {
         }
       }
 
-      return {
+      const viewportPadPx = this.viewportPadPx;
+      const list = popup.querySelector<HTMLElement>('.ds-choice-list');
+      const naturalPopupHeight = Math.min(
+        Math.max(popup.offsetHeight, list?.scrollHeight ?? 0),
+        window.innerHeight - viewportPadPx * 2
+      );
+      const input: AnchoredPositionInput = {
         anchorRect,
         popupWidth: popup.offsetWidth || this.popupFallbackWidthPx,
-        popupHeight: popup.offsetHeight || this.popupFallbackHeightPx,
+        popupHeight: naturalPopupHeight || this.popupFallbackHeightPx,
         side: this.side,
         align: this.align,
         sideOffsetPx: this.sideOffsetPx,
@@ -161,13 +169,19 @@ export class Menu {
           sectionInsetPx,
           anchorAlignment: this.anchorAlignment,
         }),
-        viewportPadPx: this.viewportPadPx,
+        viewportPadPx,
         viewportWidth: window.innerWidth,
         viewportHeight: window.innerHeight,
       };
+      const unconstrained = computeAnchoredPosition(input);
+      return {
+        ...input,
+        popupHeight: Math.min(input.popupHeight, unconstrained.availableHeight),
+      };
     },
-    apply: ({ x, y }) => {
+    apply: ({ x, y, availableHeight }) => {
       this.pos = { x, y };
+      this.availableHeight = availableHeight;
     },
     onReady: () => {
       this.positionReady = true;
@@ -198,6 +212,7 @@ export class Menu {
       this.shouldRender = true;
       this.closing = false;
       this.positionReady = false;
+      this.availableHeight = null;
       this.focusRingVisible = this.initialFocusVisible;
       this.setupListeners();
       this.schedulePositionUpdate(() => {
@@ -706,6 +721,9 @@ export class Menu {
 
     if (this.menuWidth) popupStyle['width'] = this.menuWidth;
     if (this.minWidth) popupStyle['min-width'] = this.minWidth;
+    if (this.availableHeight !== null) {
+      popupStyle['max-height'] = `${Math.floor(this.availableHeight)}px`;
+    }
 
     return (
       <Host style={{ display: 'contents' }}>

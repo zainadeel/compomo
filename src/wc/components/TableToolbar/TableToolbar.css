@@ -1,7 +1,15 @@
 :host {
+  --ds-control-press-active-scale: var(--dimension-scale-default);
+
   display: block;
   min-inline-size: 0;
   max-inline-size: 100%;
+}
+
+/* A table caption owns overflow for the complete application + table control row. */
+:host([slot='header']) {
+  display: contents;
+  max-inline-size: none;
 }
 
 .table-toolbar {
@@ -16,13 +24,16 @@
   scrollbar-width: none;
 }
 
+:host([slot='header']) .table-toolbar {
+  display: contents;
+}
+
 .table-toolbar::-webkit-scrollbar {
   display: none;
 }
 
 .table-toolbar__start,
 .table-toolbar__search,
-.table-toolbar__main,
 .table-toolbar__leading,
 .table-toolbar__trailing {
   display: flex;
@@ -42,27 +53,18 @@
   flex: 0 0 auto;
 }
 
-.table-toolbar__main {
-  flex: 1 1 auto;
-  min-inline-size: min-content;
-}
-
 .table-toolbar__search {
   flex: 0 1 var(--dimension-panel-width-xs);
   max-inline-size: var(--dimension-panel-width-xs);
+  contain: inline-size;
 }
 
-:host(:not(:has([slot='search']))) .table-toolbar__search {
-  display: none;
-}
-
-:host(:not(:has([slot='start']))) .table-toolbar__start,
-:host(:not(:has([slot='start']))) .table-toolbar__rule {
+.table-toolbar__slot--empty {
   display: none;
 }
 
 .table-toolbar__leading {
-  flex: 1 0 auto;
+  flex: 0 0 auto;
 }
 
 .table-toolbar__trailing {
@@ -79,6 +81,10 @@
   min-inline-size: 0;
   max-inline-size: var(--dimension-menu-width-xs);
   --ds-choice-popup-min-inline-size: var(--dimension-menu-width-xs);
+}
+
+.table-toolbar__trailing > * {
+  flex: 0 0 auto;
 }
 
 .table-toolbar__start slot,

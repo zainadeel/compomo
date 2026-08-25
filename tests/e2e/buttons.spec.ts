@@ -43,6 +43,24 @@ test('filled lg consumes the complete 40px control recipe', async ({ page }) => 
   });
 });
 
+test('supports emphasized and regular labels across both button families', async ({ page }) => {
+  for (const id of ['filled-label', 'unfilled-label']) {
+    const host = page.locator(`#${id}`);
+    const label = host.locator('.ds-button__label');
+
+    await expect(host).toHaveJSProperty('labelEmphasis', true);
+    await expect(label).toHaveJSProperty('emphasis', true);
+    await expect(label).toHaveCSS('font-weight', '500');
+
+    await host.evaluate(element => {
+      (element as HTMLElement & { labelEmphasis: boolean }).labelEmphasis = false;
+    });
+
+    await expect(label).toHaveJSProperty('emphasis', false);
+    await expect(label).toHaveCSS('font-weight', '400');
+  }
+});
+
 test('filled and unfilled buttons opt into the inset density recipe', async ({ page }) => {
   for (const id of ['filled-inset-md', 'unfilled-inset-md']) {
     const host = page.locator(`#${id}`);

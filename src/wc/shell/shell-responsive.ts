@@ -1,7 +1,14 @@
 import type { PanelToolsToolId } from '../components/PanelTools/panel-tools-types';
 
 export type ShellResponsiveMode = 'desktop' | 'tablet' | 'mobile';
-export type MobileDestination = 'area' | 'search' | 'inbox' | 'messages' | 'agents' | 'help';
+export type MobileDestination =
+  | 'area'
+  | 'search'
+  | 'inbox'
+  | 'activity'
+  | 'messages'
+  | 'agents'
+  | 'help';
 export type ShellInboxToolId = PanelToolsToolId;
 
 export const SHELL_DESKTOP_BREAKPOINT = 1200;
@@ -30,6 +37,15 @@ export function shellMobileDestinationForTool(
   if (tool === 'messages') return 'messages';
   if (tool === 'agents') return 'agents';
   return 'inbox';
+}
+
+/** Explicit item metadata wins over the legacy canonical Stacks/Activity grouping. */
+export function itemUsesShellInbox(item: {
+  id: PanelToolsToolId;
+  mobileDestination?: MobileDestination;
+}): boolean {
+  return item.mobileDestination === 'inbox' ||
+    (item.mobileDestination === undefined && isShellInboxTool(item.id));
 }
 
 export function isShellInboxTool(tool: string): tool is ShellInboxToolId {

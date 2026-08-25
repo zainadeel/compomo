@@ -67,6 +67,7 @@
     "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
     "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width.",
     "Physical press scaling is on by default. Disable it only when an owning composite must keep child or background geometry fixed; hover and pressed interaction washes remain available.",
+    "Visible labels are emphasized by default. Set labelEmphasis to false when a composed surface deliberately needs the button label to match adjacent regular-weight control labels; this does not change the action hierarchy, foreground, icon, or interaction states.",
     "ButtonFilled has no active, pressed, or selected state; a filled action is a command, not a toggle or a persistent selection.",
     "An open popup is a transient pressed state instead. While expanded is true the pressed wash is held for the popup's complete rendered lifecycle and survives hover, so the trigger reads as held open without introducing a selected treatment.",
     "hasMenu supports only the label and icon-label variants. The chevron is what communicates that a menu will open, so an icon-only filled menu button would leave the affordance unstated."

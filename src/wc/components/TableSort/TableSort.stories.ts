@@ -61,3 +61,30 @@ export const SortMenu: Story = {
     </div>
   `,
 };
+
+export const LongColumnCatalog: Story = {
+  name: 'Long column catalog',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'When the sortable field catalog is taller than the available viewport space, the shared menu keeps its resolved placement and scrolls the choices internally.',
+      },
+      ...isolatedOverlayDocs('360px'),
+    },
+  },
+  render: () => html`
+    <div style="padding:var(--dimension-space-200);">
+      <ds-table-sort
+        .columns=${Array.from({ length: 18 }, (_, index) => ({
+          id: `column-${index + 1}`,
+          header: `Sortable column ${index + 1}`,
+          sortable: true,
+          size: 'sm',
+        }))}
+        .sort=${{ columnId: 'column-1', direction: 'asc' }}
+        aria-label="Sort large table"
+      ></ds-table-sort>
+    </div>
+  `,
+};

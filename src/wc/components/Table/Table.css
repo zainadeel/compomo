@@ -26,6 +26,11 @@
   min-block-size: var(--_table-viewport-fit-reserved-block-size, auto);
 }
 
+::slotted([slot='header']) {
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+
 /*
  * The public table recipe stays at zero specificity for product-owned native
  * markup. Inside the component, these classes sit on ds-text hosts whose reset
@@ -154,7 +159,12 @@ ds-skeleton.ds-table__skeleton-checkbox {
   min-inline-size: 0;
 }
 
-.ds-table__caption-customizer--loading > ds-button-unfilled {
+.ds-table__caption-mode-switcher {
+  display: flex;
+  align-items: center;
+}
+
+.ds-table__caption-customizer--loading > ds-tooltip ds-button-unfilled {
   visibility: hidden;
 }
 

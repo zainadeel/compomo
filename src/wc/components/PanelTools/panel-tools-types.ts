@@ -11,16 +11,16 @@ export type CanonicalPanelToolsToolId =
   | 'help';
 
 export const PANEL_TOOLS_TOOL_IDS: CanonicalPanelToolsToolId[] = [
-  'search',
-  'messages',
   'agents',
-  'stacks',
+  'messages',
   'activity',
+  'search',
+  'stacks',
   'help',
 ];
 
 /** Rail header slot — mirrors panel-nav M logo row. */
-export const PANEL_TOOLS_PRIMARY_TOOL_ID: CanonicalPanelToolsToolId = 'search';
+export const PANEL_TOOLS_PRIMARY_TOOL_ID: CanonicalPanelToolsToolId = 'agents';
 
 /** Rail footer slot — flush to the bottom of the tools column. */
 export const PANEL_TOOLS_FOOTER_TOOL_ID: CanonicalPanelToolsToolId = 'help';
@@ -49,14 +49,14 @@ export interface PanelToolsItem {
   icon: string;
   /** Visible and accessible fallback label for custom tool ids. */
   label?: string;
-  /** Explicit rail region; canonical Search/Help placement is the fallback. */
+  /** Explicit rail region; canonical Agents/Help placement is the fallback. */
   railPlacement?: 'header' | 'body' | 'footer';
   /** Stable ordering within the selected rail region. */
   order?: number;
   /** Optional shortcut label displayed by the tooltip. */
   shortcutKey?: string;
   /** Mobile destination recipe; canonical ids retain their explicit defaults. */
-  mobileDestination?: 'search' | 'inbox' | 'messages' | 'agents' | 'help';
+  mobileDestination?: 'search' | 'inbox' | 'activity' | 'messages' | 'agents' | 'help';
   /** Whether this rail button is currently pressed/active. */
   selected?: boolean;
   /** Show a notification dot. */
@@ -68,52 +68,44 @@ export interface PanelToolsItem {
 /** Canonical shell recipe used by Lab and by managed ShellApp examples. */
 export const PANEL_TOOLS_DEFAULT_ITEMS: PanelToolsItem[] = [
   {
-    id: 'search',
-    icon: 'MagnifyingGlass',
-    label: PANEL_TOOLS_LABELS.search,
+    id: 'agents',
+    icon: 'AI',
+    label: PANEL_TOOLS_LABELS.agents,
     railPlacement: 'header',
     order: 0,
-    shortcutKey: PANEL_TOOLS_SHORTCUTS.search,
-    mobileDestination: 'search',
+    shortcutKey: PANEL_TOOLS_SHORTCUTS.agents,
+    mobileDestination: 'agents',
   },
   {
     id: 'messages',
     icon: 'MessageBubbleStack',
     label: PANEL_TOOLS_LABELS.messages,
-    order: 1,
+    order: 0,
     shortcutKey: PANEL_TOOLS_SHORTCUTS.messages,
     mobileDestination: 'messages',
-  },
-  {
-    id: 'agents',
-    icon: 'AI',
-    label: PANEL_TOOLS_LABELS.agents,
-    order: 2,
-    shortcutKey: PANEL_TOOLS_SHORTCUTS.agents,
-    mobileDestination: 'agents',
-  },
-  {
-    id: 'stacks',
-    icon: 'ViewMenu',
-    label: PANEL_TOOLS_LABELS.stacks,
-    order: 3,
-    shortcutKey: PANEL_TOOLS_SHORTCUTS.stacks,
-    mobileDestination: 'inbox',
   },
   {
     id: 'activity',
     icon: 'Bell',
     label: PANEL_TOOLS_LABELS.activity,
-    order: 4,
+    order: 1,
     shortcutKey: PANEL_TOOLS_SHORTCUTS.activity,
-    mobileDestination: 'inbox',
+    mobileDestination: 'activity',
+  },
+  {
+    id: 'search',
+    icon: 'MagnifyingGlass',
+    label: PANEL_TOOLS_LABELS.search,
+    order: 2,
+    shortcutKey: PANEL_TOOLS_SHORTCUTS.search,
+    mobileDestination: 'search',
   },
   {
     id: 'help',
     icon: 'CircleQuestion',
     label: PANEL_TOOLS_LABELS.help,
     railPlacement: 'footer',
-    order: 5,
+    order: 0,
     shortcutKey: PANEL_TOOLS_SHORTCUTS.help,
     mobileDestination: 'help',
   },

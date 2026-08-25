@@ -71,6 +71,7 @@ describe('computeAnchoredPosition', () => {
     assert.equal(pos.x, 196);
     assert.equal(pos.y, 12);
     assert.equal(pos.resolvedSide, 'right');
+    assert.equal(pos.availableHeight, 792);
   });
 
   it('reports the resolved side when placement flips', () => {
@@ -89,6 +90,7 @@ describe('computeAnchoredPosition', () => {
 
     assert.equal(pos.resolvedSide, 'bottom');
     assert.equal(pos.y, 30);
+    assert.equal(pos.availableHeight, 266);
   });
 
   it('keeps the preferred side when it fits even if the opposite side is larger', () => {

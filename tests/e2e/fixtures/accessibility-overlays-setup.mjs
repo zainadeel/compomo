@@ -127,6 +127,18 @@ collisionAnchor.addEventListener('click', () => {
 });
 collisionMenu.addEventListener('dsClose', () => collisionAnchor.setAttribute('aria-expanded', 'false'));
 
+const scrollAnchor = document.getElementById('scroll-anchor');
+const scrollMenu = document.getElementById('scroll-menu');
+scrollMenu.items = Array.from({ length: 30 }, (_, index) => ({
+  label: `Action ${index + 1}`,
+  value: `action-${index + 1}`,
+}));
+scrollAnchor.addEventListener('click', () => {
+  scrollMenu.open = true;
+  scrollAnchor.setAttribute('aria-expanded', 'true');
+});
+scrollMenu.addEventListener('dsClose', () => scrollAnchor.setAttribute('aria-expanded', 'false'));
+
 const modalTrigger = document.getElementById('modal-trigger');
 const modal = document.getElementById('modal');
 window.__modalCloseReasons = [];

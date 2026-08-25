@@ -123,12 +123,22 @@
       >
         <ds-table-toolbar slot="header" label="Customizable driver controls">
           <button slot="start" type="button">Saved views</button>
+          <ds-input
+            slot="search"
+            id="column-customizer-search"
+            type="search"
+            size="md"
+            width="fill"
+            placeholder="Search drivers"
+            aria-label="Search drivers"
+          ></ds-input>
           <ds-table-filter
             slot="trailing"
             id="column-customizer-filter"
             aria-label="Filter fleet"
             menu-label="Filter fleet"
           ></ds-table-filter>
+          <ds-table-sort slot="trailing" id="column-customizer-sort"></ds-table-sort>
           <ds-select
             slot="trailing"
             id="column-customizer-group"
@@ -138,7 +148,6 @@
             placeholder="Group"
             aria-label="Group fleet"
           ></ds-select>
-          <ds-table-sort slot="trailing" id="column-customizer-sort"></ds-table-sort>
         </ds-table-toolbar>
       </ds-table>
       <div style="width: 360px;">

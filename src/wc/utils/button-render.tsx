@@ -14,6 +14,7 @@ interface ButtonContentOptions {
   variant: ButtonVariant;
   size: ButtonSize;
   label: string;
+  labelEmphasis: boolean;
   icon: string;
   hasMenu: boolean;
   isLoading: boolean;
@@ -30,6 +31,7 @@ export function renderButtonContent(options: ButtonContentOptions) {
     variant,
     size,
     label,
+    labelEmphasis,
     icon,
     hasMenu,
     isLoading,
@@ -71,7 +73,7 @@ export function renderButtonContent(options: ButtonContentOptions) {
         }}
         as="span"
         variant={CONTROL_TEXT_VARIANT[size]}
-        emphasis
+        emphasis={labelEmphasis}
         color="inherit"
       >
         {label}

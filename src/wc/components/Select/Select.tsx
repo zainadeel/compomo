@@ -748,7 +748,16 @@ export class Select {
           [`ds-select-trigger-host--background-${this.background}`]: !!this.background,
         }}
       >
-        <button
+        <ds-tooltip
+          label={
+            this.captionIconOnly
+              ? (this.ariaLabel?.trim() || this.placeholder)
+              : ''
+          }
+          side="top"
+          size="sm"
+        >
+          <button
           ref={element => {
             this.controller.setTriggerElement((element as HTMLButtonElement) ?? null);
           }}
@@ -860,7 +869,8 @@ export class Select {
               />
             </span>
           )}
-        </button>
+          </button>
+        </ds-tooltip>
 
         {this.open && (
           <div

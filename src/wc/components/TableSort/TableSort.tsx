@@ -55,6 +55,8 @@ export class TableSort {
             size="md"
             icon="ArrowsVertical"
             label="Sort"
+            labelEmphasis={false}
+            pressScale={false}
             aria-label={name}
             hasMenu={true}
             collapseLabel={true}
@@ -70,7 +72,7 @@ export class TableSort {
             id={this.menuId}
             open={this.menuOpen}
             anchorId={this.triggerId}
-            align="end"
+            align="start"
             side="bottom"
             menuLabel={name}
             selectionMode="none"

@@ -7,7 +7,7 @@
   "tag": "ds-mobile-bar-nav",
   "audience": "specialized",
   "status": "experimental",
-  "summary": "Persistent mobile shell navigation for Menu, the router-derived current area, Search, Inbox, Messages, and Agents.",
+  "summary": "Persistent mobile shell navigation for Menu, the router-derived current area, Search, Activity, Messages, and Agents, with optional Inbox grouping.",
   "useWhen": ["ShellApp is rendering its dedicated below-768px application composition."],
   "avoidWhen": ["Rendering desktop or tablet shell chrome.", "An arbitrary set of product tabs is required."],
   "commonlyComposedWith": ["component:ds-shell-app"],
@@ -17,7 +17,8 @@
     "Only the active destination exposes aria-current; Menu exposes its controlled pane through aria-expanded."
   ],
   "states": [
-    "The fixed groups are Menu plus current area, followed by Search, Inbox, Messages, and Agents.",
+    "The fixed groups are Menu plus current area, followed by Search, Activity, Messages, and Agents.",
+    "Consumers that intentionally group multiple review tools can replace the Activity destination with Inbox.",
     "Selection promotes foreground to primary without painting a selected fill; unselected destinations use tertiary foreground.",
     "Opening Mobile Sheet Nav replaces the Menu glyph with Cross while preserving its accessible name.",
     "Reselecting an active destination does not reset its nested state.",

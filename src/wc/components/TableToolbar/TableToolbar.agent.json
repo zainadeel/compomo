@@ -7,7 +7,7 @@
   "tag": "ds-table-toolbar",
   "audience": "general",
   "status": "stable",
-  "summary": "Data-agnostic companion layout for application-owned table caption controls, with a start cluster, optional search, trailing Filter/Group/Sort, and narrow-width horizontal overflow.",
+  "summary": "Data-agnostic companion layout for application-owned table caption controls, with a start cluster, optional search, trailing Filter/Sort/Group, and narrow-width horizontal overflow.",
   "useWhen": [
     "Several table pages repeat the same saved-view cluster, middle discovery and result-shaping controls, and table-owned caption actions.",
     "A ds-table header slot needs consistent control spacing, alignment, grouping, and narrow-width overflow without moving product behavior into the table."
@@ -30,17 +30,18 @@
   "patterns": [],
   "accessibility": [
     "The component exposes a named toolbar while each slotted control retains its own accessible name and native keyboard behavior.",
-    "Use the start slot for saved views. Use search for the optional discovery field, leading for any additional left-side middle controls, and trailing for Filter, Group, and Sort. Table-owned column customizer and data-mode actions remain in the table caption trailing cluster.",
+    "Use the start slot for saved views. Use search for the optional discovery field, leading for any additional left-side middle controls, and trailing for Filter, Sort, and Group. Table-owned column customizer and data-mode actions remain in the table caption trailing cluster and participate in the same caption overflow row.",
     "Tab order follows authored DOM order. The toolbar does not add roving focus because it may contain heterogeneous form and popup controls."
   ],
   "states": [
     "The component owns layout only. It never mutates slotted control props, values, menus, loading, persistence, or consequences. Use ds-table-saved-views and ds-table-filter when those interactions need the shared CompoMo behavior while application data and persistence remain external.",
-    "The start cluster is followed by a decorative vertical divider, then the spanning middle region. The start cluster and divider hide when nothing is projected. Search is a dedicated slot that hides when nothing is projected. Empty leading or trailing clusters add no placeholder chrome. The middle region occupies remaining width so trailing controls stay at its inline end.",
-    "Column customizer and data-mode switching stay table-owned caption actions. Do not recreate those menus in the toolbar."
+    "Buttons in the toolbar keep their hover and pressed interaction paint without physically scaling, so pointer feedback does not disturb the stable caption geometry.",
+    "The start cluster is followed by a decorative vertical divider, then Search, optional leading controls, and one trailing action cluster. The start cluster and divider hide when nothing is projected. Search is a dedicated slot that hides when nothing is projected. Empty leading or trailing clusters add no placeholder chrome. Search is the only toolbar region that shrinks; all action controls retain their control geometry and align directly before the table-owned actions.",
+    "Column customizer and data-mode switching stay table-owned caption actions. Do not recreate those menus in the toolbar. When slotted into a table header, the table caption owns overflow for the complete toolbar and table-owned action row."
   ],
   "responsiveBehavior": [
-    "The start cluster, search, trailing Filter/Group/Sort, and table caption trailing actions stay on one line. Saved views hug their current trigger content up to the compact menu-width token rather than reserving that full width; long names truncate while the dirty dot stays visible. Filter, Group, and Sort triggers cap at the same token, and Group and Sort popups keep that compact menu-width floor. The toolbar horizontally scrolls when its complete controls no longer fit.",
-    "Inside a named ds-table container narrower than 900px, ds-table-filter and ds-table-sort omit their labels and chevrons and become icon-only. Group controls explicitly opt into the same treatment with collapseLabel. Active filtering or grouping promotes the prefix icon to primary. Sort keeps resting secondary chrome. Table-owned Customize also becomes the icon-only Table menu button at that width.",
+    "The start cluster, search, trailing Filter/Sort/Group, and table caption trailing actions stay on one line. Saved views hug their current trigger content up to the compact menu-width token rather than reserving that full width; long names truncate while the dirty dot stays visible. Filter, Sort, and Group triggers cap at the same token, and Sort and Group popups keep that compact menu-width floor. A standalone toolbar owns its horizontal scrolling; inside a table, the complete caption row is the single overflow owner so table-owned actions never remain pinned over scrolling toolbar controls.",
+    "Inside a named ds-table container narrower than 900px, Search retains its standard maximum width and flexes smaller only when the complete row needs space. ds-table-filter and ds-table-sort omit their labels and chevrons, and Group controls explicitly opted into collapseLabel become icon-only; each exposes its label through a hover and keyboard-focus tooltip. Empty leading and trailing slot groups do not add spacing. Active filtering or grouping promotes the prefix icon to primary. Sort keeps resting secondary chrome. Table-owned Customize also becomes the icon-only Table menu button at that width with the same tooltip behavior.",
     "The scrollbar is visually suppressed without removing touch, trackpad, mouse-wheel, or keyboard scrolling from the overflow container.",
     "Trailing controls remain grouped after leading controls; the toolbar does not collapse controls into an application-specific overflow menu."
   ],

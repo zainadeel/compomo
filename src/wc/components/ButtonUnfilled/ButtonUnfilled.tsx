@@ -55,6 +55,9 @@ export class ButtonUnfilled {
   /** Visible text for `label` / `icon-label` variants. */
   @Prop() label: string = '';
 
+  /** Whether the visible label uses the emphasized weight. */
+  @Prop() labelEmphasis: boolean = true;
+
   /** Icon name passed to <ds-icon> for `icon` / `icon-label` variants. */
   @Prop() icon: string = '';
 
@@ -315,7 +318,12 @@ export class ButtonUnfilled {
         }}
         tabIndex={-1}
       >
-        <button
+        <ds-tooltip
+          label={this.captionIconOnly ? (this.label || this.accessibleName || '') : ''}
+          side="top"
+          size="sm"
+        >
+          <button
           ref={el => {
             this.buttonEl = el ?? null;
           }}
@@ -343,6 +351,7 @@ export class ButtonUnfilled {
             variant: this.visualVariant,
             size: this.size,
             label: this.label,
+            labelEmphasis: this.labelEmphasis,
             icon: this.icon,
             hasMenu: this.hasMenu,
             isLoading: this.isLoading,
@@ -351,7 +360,8 @@ export class ButtonUnfilled {
               background: this.dotRing,
             },
           })}
-        </button>
+          </button>
+        </ds-tooltip>
       </Host>
     );
   }

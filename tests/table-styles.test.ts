@@ -5,6 +5,14 @@ import test from 'node:test';
 const css = fs.readFileSync('src/wc/styles/table.css', 'utf8');
 const componentCss = fs.readFileSync('src/wc/components/Table/Table.css', 'utf8');
 const componentTsx = fs.readFileSync('src/wc/components/Table/Table.tsx', 'utf8');
+const buttonUnfilledTsx = fs.readFileSync(
+  'src/wc/components/ButtonUnfilled/ButtonUnfilled.tsx',
+  'utf8',
+);
+const selectTsx = fs.readFileSync('src/wc/components/Select/Select.tsx', 'utf8');
+const filterMenuTsx = fs.readFileSync('src/wc/components/FilterMenu/FilterMenu.tsx', 'utf8');
+const tableFilterTsx = fs.readFileSync('src/wc/components/TableFilter/TableFilter.tsx', 'utf8');
+const tableSortTsx = fs.readFileSync('src/wc/components/TableSort/TableSort.tsx', 'utf8');
 const layoutController = fs.readFileSync(
   'src/wc/components/Table/table-layout-controller.ts',
   'utf8',
@@ -56,6 +64,12 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(componentTsx, /<ds-menu/);
   assert.match(componentTsx, /renderTruncateTooltip/);
   assert.match(componentTsx, /<ds-tooltip/);
+  assert.match(componentTsx, /label={this\.captionCompact \? 'Customize' : ''}/);
+  assert.match(buttonUnfilledTsx, /label={this\.captionIconOnly/);
+  assert.match(selectTsx, /label={[\s\S]*?this\.captionIconOnly/);
+  assert.match(filterMenuTsx, /label={this\.captionIconOnly \? label : ''}/);
+  assert.match(tableFilterTsx, /align="start"/);
+  assert.match(tableSortTsx, /align="start"/);
   assert.match(
     css,
     /\.ds-table__cell--text-wrap \.ds-table__cell-track--text\)[\s\S]*?display: block/,
@@ -69,6 +83,11 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(componentTsx, /'ds-table--caption-visible'/);
   assert.match(css, /\.ds-table__caption-content/);
   assert.match(css, /\.ds-table__caption-content--trailing/);
+  assert.match(css, /\.ds-table__caption-content[\s\S]*?overflow-x: auto/);
+  assert.match(
+    css,
+    /:where\(\.ds-table__caption-bar\),\s*:where\(\.ds-table__footer\)\s*\{[\s\S]*?min-inline-size: 0;/
+  );
   assert.match(css, /\.ds-table__caption-trailing/);
   assert.match(css, /\.ds-table__caption-leading > slot/);
   assert.match(css, /\.ds-table__bar-copy > slot/);

@@ -1,5 +1,6 @@
 import { parseCssTimeMs } from '../../utils/resolve-css-time-ms';
 import {
+  PANEL_TOOLS_PRIMARY_TOOL_ID,
   PANEL_TOOLS_TOOL_IDS,
   type PanelToolsItem,
   type PanelToolsToolId,
@@ -34,7 +35,7 @@ export function panelToolsRailPlacement(
   item: PanelToolsItem
 ): 'header' | 'body' | 'footer' {
   if (item.railPlacement) return item.railPlacement;
-  if (item.id === 'search') return 'header';
+  if (item.id === PANEL_TOOLS_PRIMARY_TOOL_ID) return 'header';
   if (item.id === 'help') return 'footer';
   return 'body';
 }
