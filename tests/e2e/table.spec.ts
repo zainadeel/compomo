@@ -3154,7 +3154,7 @@ test('owns a caption-bar column customizer menu for live show/hide and reorder',
   page,
 }) => {
   const table = page.locator('#column-customizer');
-  const trigger = table.getByRole('button', { name: /Customiz(?:e|ed) table/ });
+  const trigger = table.getByRole('button', { name: 'Customize table' });
   await expect(trigger).toBeVisible();
   await expect(table.getByRole('combobox', { name: 'Group by' })).toHaveCount(0);
   await expect(table.getByRole('checkbox', { name: /Select all loaded rows/ })).toBeVisible();
@@ -3185,7 +3185,7 @@ test('owns a caption-bar column customizer menu for live show/hide and reorder',
   await menu.getByRole('menuitemcheckbox', { name: 'Status' }).click();
   await expect(table.getByRole('columnheader', { name: /Status/ })).toHaveCount(0);
   await expect(menu).toBeVisible();
-  await expect(trigger).toHaveAccessibleName('Customized table');
+  await expect(trigger).toHaveAccessibleName('Customize table');
 
   await menu.getByRole('menuitemcheckbox', { name: 'Driver' }).click();
   await menu.getByRole('menuitemcheckbox', { name: 'Vehicle' }).click();
@@ -3205,16 +3205,16 @@ test('owns a caption-bar column customizer menu for live show/hide and reorder',
   await expect(trigger).toBeFocused();
 });
 
-test('promotes the complete Customize control when columns are customized at typical width', async ({
+test('keeps the Customize control neutral when columns are customized at typical width', async ({
   page,
 }) => {
   const table = page.locator('#column-customizer');
-  const trigger = table.getByRole('button', { name: /Customiz(?:e|ed) table/ });
+  const trigger = table.getByRole('button', { name: 'Customize table' });
   await trigger.click();
   await page.getByRole('menu', { name: 'Customize table' }).getByRole('menuitemcheckbox', {
     name: 'Status',
   }).click();
-  await expect(trigger).toHaveAccessibleName('Customized table');
+  await expect(trigger).toHaveAccessibleName('Customize table');
   await expect
     .poll(() =>
       trigger.evaluate(element => (element.closest('ds-button-unfilled') as HTMLDsButtonUnfilledElement).variant)
@@ -3238,24 +3238,23 @@ test('promotes the complete Customize control when columns are customized at typ
       icon: icon ? getComputedStyle(icon).color : null,
       label: label ? getComputedStyle(label).color : null,
       chevron: chevron ? getComputedStyle(chevron).color : null,
-      primary: tokenColor('--color-foreground-primary'),
       secondary: tokenColor('--color-foreground-secondary'),
     };
   });
-  expect(colors.button).toBe(colors.primary);
-  expect(colors.icon).toBe(colors.primary);
-  expect(colors.label).toBe(colors.primary);
-  expect(colors.chevron).toBe(colors.primary);
+  expect(colors.button).toBe(colors.secondary);
+  expect(colors.icon).toBe(colors.secondary);
+  expect(colors.label).toBe(colors.secondary);
+  expect(colors.chevron).toBe(colors.secondary);
 });
 
-test('uses an icon-only Customize control below 900px and promotes the icon when customized', async ({
+test('uses an icon-only neutral Customize control below 900px when customized', async ({
   page,
 }) => {
   const table = page.locator('#column-customizer');
   await table.evaluate(element => {
     (element as HTMLElement).style.inlineSize = '800px';
   });
-  const trigger = table.getByRole('button', { name: /Customiz(?:e|ed) table/ });
+  const trigger = table.getByRole('button', { name: 'Customize table' });
   await expect
     .poll(() =>
       trigger.evaluate(element => (element.closest('ds-button-unfilled') as HTMLDsButtonUnfilledElement).variant)
@@ -3268,7 +3267,7 @@ test('uses an icon-only Customize control below 900px and promotes the icon when
   await page.getByRole('menu', { name: 'Customize table' }).getByRole('menuitemcheckbox', {
     name: 'Status',
   }).click();
-  await expect(trigger).toHaveAccessibleName('Customized table');
+  await expect(trigger).toHaveAccessibleName('Customize table');
 
   const colors = await trigger.evaluate(element => {
     const tokenColor = (token: string) => {
@@ -3283,11 +3282,11 @@ test('uses an icon-only Customize control below 900px and promotes the icon when
     return {
       button: getComputedStyle(element).color,
       icon: icon ? getComputedStyle(icon).color : null,
-      primary: tokenColor('--color-foreground-primary'),
+      secondary: tokenColor('--color-foreground-secondary'),
     };
   });
-  expect(colors.button).toBe(colors.primary);
-  expect(colors.icon).toBe(colors.primary);
+  expect(colors.button).toBe(colors.secondary);
+  expect(colors.icon).toBe(colors.secondary);
 });
 
 test('keeps labeled Filter, Group, and Sort chrome at typical width and promotes only the label when active', async ({

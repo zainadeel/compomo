@@ -79,7 +79,7 @@
         "An open popup is a transient pressed state rather than a selected one. While expanded is true and haspopup or hasMenu identifies a popup, the pressed wash is held for the popup's complete rendered lifecycle and survives hover without promoting foreground or selected fill, including when chrome opts out of selected fills with activeFill set to false. Expanded disclosure buttons without popup semantics remain visually neutral."
       ],
       "responsiveBehavior": [
-        "The consuming layout decides when an icon-label action becomes icon-only and must provide an explicit accessible name after changing variants. Table caption Customize is one such layout: below 900px it uses the icon shape, and a customized catalog promotes the Table icon to primary.",
+        "The consuming layout decides when an icon-label action becomes icon-only and must provide an explicit accessible name after changing variants. Table caption Customize is one such layout: below 900px it uses the icon shape while keeping the same neutral resting foreground regardless of the controlled column configuration.",
         "When collapseLabel is set inside a named ds-table container narrower than 900px, an icon-label caption action omits its label and chevron and becomes icon-only while keeping its accessible name. An active control then promotes the icon to primary.",
         "Use fill width only when the parent layout requires a full-width secondary action."
       ],

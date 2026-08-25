@@ -47,7 +47,6 @@ import {
   tableActionTriggerId,
 } from './table-action-menu';
 import {
-  isTableColumnsCustomized,
   nextTableColumnCustomizerElementId,
   resolveTableColumnOrder,
   resolveTableHiddenColumnIds,
@@ -2939,12 +2938,6 @@ export class Table {
 
   private renderColumnCustomizerTrigger() {
     if (!this.showsColumnCustomizer) return null;
-    const customized = isTableColumnsCustomized(
-      this.columns,
-      this.hiddenColumnIds,
-      this.columnOrder
-    );
-    const label = customized ? 'Customized' : 'Customize';
     return (
       <div
         class={{
@@ -2958,13 +2951,11 @@ export class Table {
           variant={this.captionCompact ? 'icon' : 'icon-label'}
           size="md"
           icon="Table"
-          label={label}
-          aria-label={`${label} table`}
+          label="Customize"
+          aria-label="Customize table"
           hasMenu={true}
           expanded={this.columnCustomizerOpen}
           controls={this.columnCustomizerElementId}
-          isActive={customized}
-          activeFill={false}
           onDsClick={(event: CustomEvent<MouseEvent>) => {
             if (this.chromeLoading) return;
             this.toggleColumnCustomizer(event.detail.detail === 0);
