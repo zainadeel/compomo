@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.18.0](https://github.com/zainadeel/compomo/compare/v14.17.1...v14.18.0) (2026-08-25)
+
+
+### Added
+
+* refine table chrome and shell tools ([#526](https://github.com/zainadeel/compomo/issues/526)) ([782d0f2](https://github.com/zainadeel/compomo/commit/782d0f2d6876cce8dc5af57cb417994ae5b64870))
+
 ## [14.17.1](https://github.com/zainadeel/compomo/compare/v14.17.0...v14.17.1) (2026-08-25)
 
 
