@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.17.1](https://github.com/zainadeel/compomo/compare/v14.17.0...v14.17.1) (2026-08-25)
+
+
+### Fixed
+
+* **table:** keep customize trigger neutral ([#524](https://github.com/zainadeel/compomo/issues/524)) ([5bc508b](https://github.com/zainadeel/compomo/commit/5bc508b36c0dbe68a98d0aac6b463d39f0a2a1f1))
+
 ## [14.17.0](https://github.com/zainadeel/compomo/compare/v14.16.0...v14.17.0) (2026-08-25)
 
 
