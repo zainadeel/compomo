@@ -26,6 +26,8 @@ export interface AnchoredPositionControllerOptions {
   getAnchor: () => HTMLElement | null;
   /** Resolve the popup at measure time; positioning retries while this is null. */
   getPopup: () => HTMLElement | null;
+  /** Stable owner fallback when framework bindings assign open before anchor. */
+  getOwnerDocument?: () => Document | null;
   /**
    * Build the layout input for one measurement pass.
    *
@@ -55,6 +57,11 @@ export interface AnchoredPositionControllerOptions {
    * label's `ds-text` upgrade changes the measured width after mount.
    */
   observeResize?: boolean;
+  /**
+   * Follow CSS transitions or animations that move the anchor without resizing
+   * it. The observer only runs a measurement loop while related motion is active.
+   */
+  observeAnchorMotion?: boolean;
   retryBudget?: number;
 }
 
@@ -77,8 +84,21 @@ export class AnchoredPositionController {
   private resizeObserver: ResizeObserver | null = null;
   private retryRaf: number | null = null;
   private liveRaf: number | null = null;
+  private anchorMotionRaf: number | null = null;
+  private activeAnchorMotions = 0;
+  private ownerDocument: Document | null = null;
   private last: AnchoredPosition | null = null;
   private isReady = false;
+  private readonly anchorMotionStartHandler = (event: Event) => {
+    if (!this.eventCanMoveAnchor(event)) return;
+    this.activeAnchorMotions += 1;
+    this.scheduleAnchorMotionUpdate();
+  };
+  private readonly anchorMotionEndHandler = (event: Event) => {
+    if (!this.eventCanMoveAnchor(event)) return;
+    this.activeAnchorMotions = Math.max(0, this.activeAnchorMotions - 1);
+    this.scheduleAnchorMotionUpdate();
+  };
 
   constructor(options: AnchoredPositionControllerOptions) {
     this.options = options;
@@ -141,6 +161,7 @@ export class AnchoredPositionController {
     if (!anchor) return false;
     const popup = this.options.getPopup();
     if (!popup) return false;
+    this.observeResizeTargets();
 
     if (
       this.options.topLayer &&
@@ -208,6 +229,10 @@ export class AnchoredPositionController {
       cancelAnimationFrame(this.liveRaf);
       this.liveRaf = null;
     }
+    if (this.anchorMotionRaf !== null) {
+      cancelAnimationFrame(this.anchorMotionRaf);
+      this.anchorMotionRaf = null;
+    }
   }
 
   private cancelRetry(): void {
@@ -227,6 +252,17 @@ export class AnchoredPositionController {
       this.resizeObserver = new ResizeObserver(() => this.update());
       this.observeResizeTargets();
     }
+
+    if (this.options.observeAnchorMotion) {
+      this.ownerDocument =
+        this.options.getAnchor()?.ownerDocument ?? this.options.getOwnerDocument?.() ?? null;
+      this.ownerDocument?.addEventListener('transitionrun', this.anchorMotionStartHandler, true);
+      this.ownerDocument?.addEventListener('transitionend', this.anchorMotionEndHandler, true);
+      this.ownerDocument?.addEventListener('transitioncancel', this.anchorMotionEndHandler, true);
+      this.ownerDocument?.addEventListener('animationstart', this.anchorMotionStartHandler, true);
+      this.ownerDocument?.addEventListener('animationend', this.anchorMotionEndHandler, true);
+      this.ownerDocument?.addEventListener('animationcancel', this.anchorMotionEndHandler, true);
+    }
   }
 
   private unbindListeners(): void {
@@ -237,6 +273,38 @@ export class AnchoredPositionController {
     }
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
+    this.ownerDocument?.removeEventListener('transitionrun', this.anchorMotionStartHandler, true);
+    this.ownerDocument?.removeEventListener('transitionend', this.anchorMotionEndHandler, true);
+    this.ownerDocument?.removeEventListener('transitioncancel', this.anchorMotionEndHandler, true);
+    this.ownerDocument?.removeEventListener('animationstart', this.anchorMotionStartHandler, true);
+    this.ownerDocument?.removeEventListener('animationend', this.anchorMotionEndHandler, true);
+    this.ownerDocument?.removeEventListener('animationcancel', this.anchorMotionEndHandler, true);
+    this.ownerDocument = null;
+    this.activeAnchorMotions = 0;
+  }
+
+  private eventCanMoveAnchor(event: Event): boolean {
+    const anchor = this.options.getAnchor();
+    const target = event.target;
+    if (!anchor || !(target instanceof Element)) return false;
+    // Motion on the anchor or one of its layout ancestors can move its rect.
+    // Descendant-only animation is irrelevant unless it resizes the anchor,
+    // which the ResizeObserver path already covers.
+    return target === anchor || target.contains(anchor);
+  }
+
+  private scheduleAnchorMotionUpdate(): void {
+    if (this.anchorMotionRaf !== null) return;
+    const tick = () => {
+      this.anchorMotionRaf = null;
+      this.update();
+      if (this.activeAnchorMotions <= 0 || !this.options.getAnchor()?.isConnected) {
+        this.activeAnchorMotions = 0;
+        return;
+      }
+      this.anchorMotionRaf = requestAnimationFrame(tick);
+    };
+    this.anchorMotionRaf = requestAnimationFrame(tick);
   }
 
   /**

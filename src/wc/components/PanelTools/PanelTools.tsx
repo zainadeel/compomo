@@ -547,6 +547,7 @@ export class PanelTools {
         }
         side="left"
         size="sm"
+        boundary="viewport"
       >
         <ds-button-unfilled
           variant="icon"

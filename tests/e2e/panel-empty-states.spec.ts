@@ -44,6 +44,15 @@ test('centers a conversation empty state above its persistent action', async ({ 
   expect(geometry.actual).toBeCloseTo(geometry.expected, 0);
 });
 
+test('keeps declarative empty content consumer styles untouched', async ({ page }) => {
+  const list = page.locator('#declarative');
+  const empty = list.locator('[slot="empty"]');
+
+  await expect(empty).toBeVisible();
+  await expect(empty).not.toHaveAttribute('style');
+  await expect(list.locator('.conversation-list__empty')).toHaveCSS('position', 'absolute');
+});
+
 test('centers an empty list in the full viewport when no action exists', async ({ page }) => {
   const geometry = await page.locator('#activity').evaluate(element => {
     const viewport = element.querySelector<HTMLElement>('.conversation-list__viewport')!;

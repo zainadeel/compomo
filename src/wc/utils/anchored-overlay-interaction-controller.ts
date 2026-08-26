@@ -14,6 +14,8 @@ type FocusableAnchor = HTMLElement & {
 export interface AnchoredOverlayInteractionOptions {
   getAnchor: () => HTMLElement | null;
   getPopup: () => HTMLElement | null;
+  /** Stable owner fallback when framework bindings assign open before anchor. */
+  getOwnerDocument?: () => Document | null;
   onOutsideActivation: () => void;
 }
 
@@ -110,7 +112,7 @@ export class AnchoredOverlayInteractionController {
   connect(): void {
     this.disconnect();
     const boundary = this.options.getPopup() ?? this.options.getAnchor();
-    this.ownerDocument = boundary?.ownerDocument ?? null;
+    this.ownerDocument = boundary?.ownerDocument ?? this.options.getOwnerDocument?.() ?? null;
     this.ownerDocument?.addEventListener('mousedown', this.outsideHandler, true);
   }
 

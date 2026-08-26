@@ -70,6 +70,7 @@
   "responsiveBehavior": [
     "Keep the default choice-cell anchor alignment so the first or last interactive row edge aligns with its trigger, matching Select; use popup-frame only for deliberate custom frame geometry.",
     "Treat side as the preferred placement. When the popup cannot fit there and the opposite side offers more room, Menu flips on that main axis before clamping to the nearest data-ds-overlay-boundary rectangle or the viewport fallback.",
+    "Keep the popup attached while its external anchor moves or resizes, including during CSS transitions in responsive shell chrome.",
     "Cap the popup to the vertical room available on its resolved side. When content is taller, the choice list scrolls internally and keyboard focus scrolls the active row into view.",
     "Assign boundary as an HTMLElement only when the nearest composed-tree boundary is not the intended collision owner.",
     "Avoid fixed widths that exceed narrow collision boundaries."

@@ -76,7 +76,10 @@
 }
 
 .conversation-list__empty {
-  display: contents;
+  position: absolute;
+  inset-block: 0 var(--ds-scroll-overlay-block-size, 0);
+  inset-inline: 0;
+  box-sizing: border-box;
 }
 
 .conversation-list__actions {

@@ -8,10 +8,15 @@
   overscroll-behavior: none;
   font-family: var(--typography-font-family-ui, system-ui);
   --ds-shell-panel-tools-width: var(--dimension-panel-width-xs);
+  --ds-shell-gradient-context: flat;
 }
 
 :host {
   --_shell-chrome-bg: var(--color-background-secondary);
+}
+
+:host(.shell-app--gradient) {
+  --ds-shell-gradient-context: gradient;
 }
 
 .shell-app__row {

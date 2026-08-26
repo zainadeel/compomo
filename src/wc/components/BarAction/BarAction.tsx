@@ -1,12 +1,10 @@
 import {
   Component,
-  Element,
   Event,
   EventEmitter,
   h,
   Host,
   Prop,
-  State,
 } from '@stencil/core';
 
 @Component({
@@ -15,8 +13,6 @@ import {
   scoped: true,
 })
 export class BarAction {
-  @Element() el!: HTMLElement;
-
   /** Number of selected items. The bar is hidden while this is below one. */
   @Prop() count: number = 0;
 
@@ -32,30 +28,6 @@ export class BarAction {
   /** Emitted when Clear is activated. The application owns the selected identities. */
   @Event() dsClear!: EventEmitter<MouseEvent>;
 
-  @State() private hasActions = false;
-
-  private actionsObserver?: MutationObserver;
-
-  componentWillLoad() {
-    this.updateActionsPresence();
-  }
-
-  componentDidLoad() {
-    this.updateActionsPresence();
-    if (typeof MutationObserver === 'undefined') return;
-    this.actionsObserver = new MutationObserver(this.updateActionsPresence);
-    this.actionsObserver.observe(this.el, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['slot'],
-    });
-  }
-
-  disconnectedCallback() {
-    this.actionsObserver?.disconnect();
-  }
-
   private get resolvedCount(): number {
     if (!Number.isFinite(this.count)) return 0;
     return Math.max(0, Math.trunc(this.count));
@@ -64,10 +36,6 @@ export class BarAction {
   private get isVisible(): boolean {
     return this.resolvedCount >= 1;
   }
-
-  private updateActionsPresence = () => {
-    this.hasActions = Boolean(this.el.querySelector('[slot="actions"]'));
-  };
 
   private handleClear = (event: MouseEvent) => {
     this.dsClear.emit(event);
@@ -113,12 +81,7 @@ export class BarAction {
               </ds-text>
             </button>
           </div>
-          <div
-            class={{
-              'bar-action__actions': true,
-              'bar-action__actions--empty': !this.hasActions,
-            }}
-          >
+          <div class="bar-action__actions">
             <slot name="actions" />
           </div>
         </div>

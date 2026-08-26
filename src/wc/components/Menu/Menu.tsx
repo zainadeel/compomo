@@ -125,6 +125,7 @@ export class Menu {
   private readonly position = new AnchoredPositionController({
     getAnchor: () => this.resolvedAnchor ?? null,
     getPopup: () => this.el.querySelector<HTMLElement>('.menu-popup'),
+    getOwnerDocument: () => this.el.ownerDocument,
     measure: (anchorEl, popup) => {
       if (!this.open) return null;
 
@@ -183,10 +184,13 @@ export class Menu {
     },
     liveUpdate: 'double-frame',
     topLayer: true,
+    observeResize: true,
+    observeAnchorMotion: true,
   });
   private readonly interaction = new AnchoredOverlayInteractionController({
     getAnchor: () => this.resolvedAnchor,
     getPopup: () => this.el.querySelector<HTMLElement>('.menu-popup'),
+    getOwnerDocument: () => this.el.ownerDocument,
     onOutsideActivation: () => this.close(),
   });
   /** Last content actually painted while open; retained unchanged through exit motion. */

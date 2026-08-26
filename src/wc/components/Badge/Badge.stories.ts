@@ -92,7 +92,7 @@ const meta: Meta = {
     surface: 'primary',
     background: '',
     hasRing: true,
-    gradientBackground: false,
+    gradientBackground: undefined,
     label: '',
   },
 };
@@ -265,7 +265,7 @@ export const OnGradientBackground: Story = {
         <div style="position: relative; display: flex; flex-direction: column; gap: var(--dimension-space-100); align-items: center;">
           <div style="${BADGE_TARGET}; color: var(--color-foreground-secondary);">
             <ds-badge
-              style="${BADGE_ANCHOR}; --_badge-gradient-position: 0 0;"
+              style="${BADGE_ANCHOR}"
               variant="dot"
               background="var(--color-background-secondary)"
               gradient-background

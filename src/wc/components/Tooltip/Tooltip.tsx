@@ -10,7 +10,10 @@ import {
 import type { TextVariant } from '../Text/text-types';
 import { shortcutKeyLabels } from '../../utils/shortcut-key';
 import { AnchoredPositionController } from '../../utils/anchored-position-controller';
-import { resolveAnchoredOverlayBoundaryRect } from '../../utils/anchored-overlay-boundary';
+import {
+  resolveAnchoredOverlayBoundaryRect,
+  type AnchoredOverlayBoundary,
+} from '../../utils/anchored-overlay-boundary';
 // Side-effect: register `ds-text` — the portal builds it via createElement, not JSX.
 import '../Text/Text';
 
@@ -96,8 +99,8 @@ export class Tooltip {
   @Prop() sideOffset: number | string = TOKEN_CSS_LENGTHS.space050;
   /** Cross-axis offset — number (px) or TokoMo length. */
   @Prop() alignOffset: number | string = 0;
-  /** Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used. */
-  @Prop() boundary: HTMLElement | undefined;
+  /** Explicit collision owner, `viewport`, or the nearest data-ds-overlay-boundary ancestor. */
+  @Prop() boundary: AnchoredOverlayBoundary | undefined;
   /**
    * Hover show delay before the tooltip appears.
    * Default: `--effect-animation-delay-medium-3` (1000ms). Accepts a number (ms)
@@ -126,6 +129,7 @@ export class Tooltip {
   private readonly position = new AnchoredPositionController({
     getAnchor: () => this.anchor,
     getPopup: () => this.popupEl,
+    getOwnerDocument: () => this.el.ownerDocument,
     measure: (anchor, tip) => ({
       anchorRect: anchor.getBoundingClientRect(),
       // Fall back to token metrics until `ds-text` upgrades and reports a width.

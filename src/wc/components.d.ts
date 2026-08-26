@@ -71,6 +71,7 @@ import { TableSavedView, TableSavedViewChangeDetail, TableSavedViewCreateDetail,
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
+import { AnchoredOverlayBoundary } from "./utils/anchored-overlay-boundary";
 import { TooltipChartItem } from "./components/TooltipChart/TooltipChart";
 export { AgentActivityItem, AgentQuestion, AgentQuestionAnswer, AgentQuestionnaireAnswerEventDetail, AgentQuestionnaireCancelEventDetail, AgentQuestionnaireLabels, AgentQuestionnaireStatus, AgentResponsePart, AgentResponseRenderMode, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageCopyResultEventDetail, MessageDeliveryState, MessageDirection, MessageFeedback, MessageGroupPosition, MessageMetadataVisibility, MessageScrollerPosition } from "./components/conversation-types";
 export { IconColor, IconSize as IconSize1 } from "./components/Icon/Icon";
@@ -138,6 +139,7 @@ export { TableSavedView, TableSavedViewChangeDetail, TableSavedViewCreateDetail,
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
+export { AnchoredOverlayBoundary } from "./utils/anchored-overlay-boundary";
 export { TooltipChartItem } from "./components/TooltipChart/TooltipChart";
 export namespace Components {
     interface DsAgentActivity {
@@ -287,10 +289,9 @@ export namespace Components {
          */
         "count": number;
         /**
-          * Ring samples the shell gradient stack (base fill + wash) instead of a flat `box-shadow`. Auto-enabled under an ShellApp with an active gradient preset; set `gradient-background` to opt in/out explicitly.  The attribute must NOT start with `on` — Stencil's setAccessor routes any unknown `on*` member down the event-listener path during attribute reflection, calling addEventListener with a non-listener and throwing.
-          * @default false
+          * Ring samples the shell gradient stack (base fill + wash) instead of a flat `box-shadow`. Omit to inherit ShellApp context; set true or false to override.  The attribute must NOT start with `on` — Stencil's setAccessor routes any unknown `on*` member down the event-listener path during attribute reflection, calling addEventListener with a non-listener and throwing.
          */
-        "gradientBackground": boolean;
+        "gradientBackground"?: boolean;
         /**
           * Show the separation ring when the badge overlaps an icon or other content.
           * @default true
@@ -1278,7 +1279,7 @@ export namespace Components {
          */
         "menuLabel": string;
         /**
-          * Popup width. It remains clamped to the viewport by the component recipe.
+          * Popup width. It remains clamped to its collision boundary by the component recipe.
           * @default TOKEN_CSS_LENGTHS.menuWidthLg
          */
         "menuWidth": string;
@@ -3459,9 +3460,9 @@ export namespace Components {
          */
         "alignOffset": number | string;
         /**
-          * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
+          * Explicit collision owner, `viewport`, or the nearest data-ds-overlay-boundary ancestor.
          */
-        "boundary": HTMLElement | undefined;
+        "boundary": AnchoredOverlayBoundary | undefined;
         /**
           * Hover show delay before the tooltip appears. Default: `--effect-animation-delay-medium-3` (1000ms). Accepts a number (ms) or a TokoMo time token / `var(--effect-animation-delay-*)`. Applies to the initial hover/focus show only — after a recent dismiss, reopen is instant. Prefer the default; override only for denser chrome or rare/destructive actions.
           * @default TOKEN_DEFAULTS.animationDelayMedium3
@@ -5147,8 +5148,7 @@ declare namespace LocalJSX {
          */
         "count"?: number;
         /**
-          * Ring samples the shell gradient stack (base fill + wash) instead of a flat `box-shadow`. Auto-enabled under an ShellApp with an active gradient preset; set `gradient-background` to opt in/out explicitly.  The attribute must NOT start with `on` — Stencil's setAccessor routes any unknown `on*` member down the event-listener path during attribute reflection, calling addEventListener with a non-listener and throwing.
-          * @default false
+          * Ring samples the shell gradient stack (base fill + wash) instead of a flat `box-shadow`. Omit to inherit ShellApp context; set true or false to override.  The attribute must NOT start with `on` — Stencil's setAccessor routes any unknown `on*` member down the event-listener path during attribute reflection, calling addEventListener with a non-listener and throwing.
          */
         "gradientBackground"?: boolean;
         /**
@@ -6224,7 +6224,7 @@ declare namespace LocalJSX {
          */
         "menuLabel"?: string;
         /**
-          * Popup width. It remains clamped to the viewport by the component recipe.
+          * Popup width. It remains clamped to its collision boundary by the component recipe.
           * @default TOKEN_CSS_LENGTHS.menuWidthLg
          */
         "menuWidth"?: string;
@@ -8651,9 +8651,9 @@ declare namespace LocalJSX {
          */
         "alignOffset"?: number | string;
         /**
-          * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
+          * Explicit collision owner, `viewport`, or the nearest data-ds-overlay-boundary ancestor.
          */
-        "boundary"?: HTMLElement | undefined;
+        "boundary"?: AnchoredOverlayBoundary | undefined;
         /**
           * Hover show delay before the tooltip appears. Default: `--effect-animation-delay-medium-3` (1000ms). Accepts a number (ms) or a TokoMo time token / `var(--effect-animation-delay-*)`. Applies to the initial hover/focus show only — after a recent dismiss, reopen is instant. Prefer the default; override only for denser chrome or rare/destructive actions.
           * @default TOKEN_DEFAULTS.animationDelayMedium3
@@ -9521,6 +9521,7 @@ declare namespace LocalJSX {
         "align": TooltipAlign;
         "sideOffset": string;
         "alignOffset": string;
+        "boundary": AnchoredOverlayBoundary | undefined;
         "delay": string;
         "shortcutKey": string | undefined;
         "shortcutKeyPosition": 'start' | 'end';

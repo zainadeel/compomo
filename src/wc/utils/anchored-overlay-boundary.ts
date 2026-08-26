@@ -3,6 +3,9 @@ import type { AnchoredCollisionRect } from './anchored-position';
 /** Attribute placed on a page or panel whose visible rectangle owns anchored overlays. */
 export const ANCHORED_OVERLAY_BOUNDARY_ATTRIBUTE = 'data-ds-overlay-boundary';
 
+/** An element-owned collision rectangle, or an explicit escape to the viewport. */
+export type AnchoredOverlayBoundary = HTMLElement | 'viewport';
+
 function composedParentElement(element: Element): Element | null {
   if (element.assignedSlot) return element.assignedSlot;
   if (element.parentElement) return element.parentElement;
@@ -32,7 +35,8 @@ export function findAnchoredOverlayBoundary(anchor: Element): HTMLElement | null
 /** Resolve an explicit owner first, then the nearest composed-tree boundary. */
 export function resolveAnchoredOverlayBoundaryRect(
   anchor: Element,
-  explicitBoundary?: HTMLElement,
+  explicitBoundary?: AnchoredOverlayBoundary,
 ): AnchoredCollisionRect | undefined {
+  if (explicitBoundary === 'viewport') return undefined;
   return (explicitBoundary ?? findAnchoredOverlayBoundary(anchor))?.getBoundingClientRect();
 }

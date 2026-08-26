@@ -166,6 +166,7 @@ export class FilterMenu {
   private readonly position = new AnchoredPositionController({
     getAnchor: () => this.resolvedAnchor,
     getPopup: () => this.el.querySelector<HTMLElement>('.filter-menu-popup'),
+    getOwnerDocument: () => this.el.ownerDocument,
     measure: (anchor, popup) => {
       if (!this.open) return null;
       const anchorRect = anchor.getBoundingClientRect();
@@ -201,6 +202,7 @@ export class FilterMenu {
   private readonly interaction = new AnchoredOverlayInteractionController({
     getAnchor: () => this.resolvedAnchor,
     getPopup: () => this.el.querySelector<HTMLElement>('.filter-menu-popup'),
+    getOwnerDocument: () => this.el.ownerDocument,
     onOutsideActivation: () => this.close(),
   });
 
