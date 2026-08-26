@@ -23,7 +23,7 @@
     "pattern:conversation"
   ],
   "accessibility": [
-    "Provide concise localized status text; the standard label is Typing followed by a three-dot ellipsis.",
+    "Provide concise localized status text; the standard label is Typing followed by a single Unicode ellipsis.",
     "The polite atomic status announces typing without representing it as a message bubble."
   ],
   "states": [

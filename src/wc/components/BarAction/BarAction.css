@@ -27,7 +27,7 @@
 }
 
 .bar-action[hidden],
-.bar-action__actions--empty {
+.bar-action__actions:not(:has([slot='actions'])) {
   display: none;
 }
 

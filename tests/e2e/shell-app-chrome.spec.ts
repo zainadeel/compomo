@@ -60,7 +60,6 @@ test.describe('App shell chrome', () => {
 
     await expect(action).not.toHaveClass(/ds-control-press-scale/);
     await expect(action).toHaveCSS('scale', 'none');
-    await expect(badge).toHaveClass(/badge--on-gradient-background/);
     await expect(mark).toHaveCSS('box-shadow', 'none');
     await expect
       .poll(() =>
@@ -93,6 +92,56 @@ test.describe('App shell chrome', () => {
     expect(pressedLayers.wash).not.toBe('rgba(0, 0, 0, 0)');
 
     await page.mouse.up();
+  });
+
+  test('keeps shell-owned rail tooltips inside the viewport', async ({ page }) => {
+    const action = page.getByRole('button', { name: 'Agents', exact: true });
+    await action.hover();
+
+    const tooltip = page.getByRole('tooltip', { name: /Agents/ });
+    await expect(tooltip).toBeVisible();
+    await expect(tooltip).toHaveAttribute('data-side', 'left');
+
+    const actionBox = await action.boundingBox();
+    const tooltipBox = await tooltip.boundingBox();
+    expect(actionBox).not.toBeNull();
+    expect(tooltipBox).not.toBeNull();
+    const tooltipRight = tooltipBox!.x + tooltipBox!.width;
+    expect(tooltipRight).toBeLessThan(actionBox!.x);
+    expect(tooltipBox!.x).toBeGreaterThanOrEqual(0);
+    expect(tooltipRight).toBeLessThanOrEqual(page.viewportSize()!.width);
+  });
+
+  test('resolves badge gradient rings from CSS context and explicit overrides', async ({
+    page,
+  }) => {
+    const shell = page.locator('ds-shell-app');
+    const badge = page.getByRole('button', { name: 'Activity' }).locator('ds-badge');
+    const mark = badge.locator('.badge__mark');
+
+    await expect(mark).toHaveCSS('box-shadow', 'none');
+
+    await badge.evaluate(element => {
+      (element as HTMLElement & { gradientBackground?: boolean }).gradientBackground = false;
+    });
+    await expect.poll(() => mark.evaluate(element => getComputedStyle(element).boxShadow))
+      .not.toBe('none');
+
+    await badge.evaluate(element => {
+      (element as HTMLElement & { gradientBackground?: boolean }).gradientBackground = undefined;
+    });
+    await expect(mark).toHaveCSS('box-shadow', 'none');
+
+    await shell.evaluate(element => {
+      (element as HTMLElement & { gradientPreset: string }).gradientPreset = 'none';
+    });
+    await expect.poll(() => mark.evaluate(element => getComputedStyle(element).boxShadow))
+      .not.toBe('none');
+
+    await badge.evaluate(element => {
+      (element as HTMLElement & { gradientBackground?: boolean }).gradientBackground = true;
+    });
+    await expect(mark).toHaveCSS('box-shadow', 'none');
   });
 
   test('contains page scrolling without moving the shell viewport', async ({ page }) => {
@@ -166,6 +215,136 @@ test.describe('App shell chrome', () => {
         return headerBox.x + headerBox.width - (actionBox.x + actionBox.width);
       })
       .toBe(8);
+  });
+
+  test('provides the rendered header action as an external menu anchor @cross-browser', async ({
+    page,
+  }) => {
+    await page.getByRole('button', { name: 'Agents', exact: true }).click();
+    const trigger = page.getByRole('button', { name: 'Agents options' });
+    const menu = page.getByRole('menu', { name: 'Agents options' });
+
+    await trigger.click();
+    await expect(menu).toBeVisible();
+    await expect(menu.getByRole('menuitem', { name: 'Settings' })).toBeFocused();
+    await expect
+      .poll(() =>
+        page.locator('#agents-options-menu').evaluate(element => {
+          const anchor = (element as HTMLElement & { anchor?: HTMLElement }).anchor;
+          return anchor?.id;
+        })
+      )
+      .toBe('agents-options-trigger');
+
+    const menuBox = await menu.boundingBox();
+    const toolsBox = await page.locator('.shell-app__tools').boundingBox();
+    expect(menuBox).not.toBeNull();
+    expect(toolsBox).not.toBeNull();
+    expect(menuBox!.x).toBeGreaterThanOrEqual(toolsBox!.x + 3.5);
+    expect(menuBox!.x + menuBox!.width).toBeLessThanOrEqual(
+      toolsBox!.x + toolsBox!.width - 3.5,
+    );
+
+    await trigger.click();
+    await expect(menu).toBeHidden();
+  });
+
+  test('completes controlled account-menu dismissal after outside activation @cross-browser', async ({
+    page,
+  }) => {
+    const account = page.getByRole('button', { name: 'Account' });
+    const menu = page.getByRole('dialog', { name: 'Account appearance' });
+
+    await account.click();
+    await expect(menu).toBeVisible();
+    await page.locator('main').click();
+
+    await expect(menu).toBeHidden();
+    await expect(account).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  test('keeps an open account menu attached while its anchor collapses @cross-browser', async ({
+    page,
+  }) => {
+    const panel = page.locator('#panel');
+    const account = page.getByRole('button', { name: 'Account' });
+    const menu = page.getByRole('dialog', { name: 'Account appearance' });
+    const anchorGap = async () => {
+      const accountBox = await account.boundingBox();
+      const menuBox = await menu.boundingBox();
+      if (!accountBox || !menuBox) return null;
+      return {
+        inline: Math.round(menuBox.x - (accountBox.x + accountBox.width)),
+        block: Math.round(menuBox.y - accountBox.y),
+      };
+    };
+
+    await account.click();
+    await expect(menu).toBeVisible();
+    const expandedGap = await anchorGap();
+
+    await panel.evaluate(element => {
+      (element as HTMLElement & { collapsed: boolean }).collapsed = true;
+    });
+
+    await expect(menu).toBeVisible();
+    await expect
+      .poll(async () => Math.round((await account.boundingBox())?.width ?? 0))
+      .toBe(32);
+    await expect.poll(anchorGap).toEqual(expandedGap);
+  });
+
+  test('keeps a top-layer page menu inside the routed-content boundary @cross-browser', async ({
+    page,
+  }) => {
+    const trigger = page.getByRole('button', { name: 'Page actions' });
+    const menu = page.getByRole('menu', { name: 'Page actions' });
+    const content = page.locator('.shell-app__content');
+    const tools = page.locator('.shell-app__tools');
+
+    await trigger.click();
+    await expect(menu).toBeVisible();
+
+    const geometry = await Promise.all([
+      menu.boundingBox(),
+      content.boundingBox(),
+      tools.boundingBox(),
+    ]);
+    const [menuBox, contentBox, toolsBox] = geometry;
+    expect(menuBox).not.toBeNull();
+    expect(contentBox).not.toBeNull();
+    expect(toolsBox).not.toBeNull();
+    expect(menuBox!.x + menuBox!.width).toBeLessThanOrEqual(contentBox!.x + contentBox!.width - 3.5);
+    expect(menuBox!.x + menuBox!.width).toBeLessThan(toolsBox!.x);
+  });
+
+  test('continues Tab from a shadow-root menu anchor in composed document order @cross-browser', async ({
+    page,
+  }) => {
+    await page.getByRole('button', { name: 'Agents', exact: true }).click();
+    const trigger = page.getByRole('button', { name: 'Agents options' });
+    const menu = page.getByRole('menu', { name: 'Agents options' });
+
+    await trigger.focus();
+    await page.keyboard.press('Tab');
+    const markedNativeTarget = await page.evaluate(() => {
+      let active = document.activeElement;
+      while (active instanceof HTMLElement && active.shadowRoot?.activeElement) {
+        active = active.shadowRoot.activeElement;
+      }
+      if (!(active instanceof HTMLElement)) return false;
+      active.dataset.nativeTabAfterMenuAnchor = '';
+      return true;
+    });
+    expect(markedNativeTarget).toBe(true);
+    const nativeTarget = page.locator('[data-native-tab-after-menu-anchor]');
+
+    await trigger.click();
+    await expect(menu.getByRole('menuitem', { name: 'Settings' })).toBeFocused();
+    await page.keyboard.press('Tab');
+
+    await expect(menu).toBeHidden();
+    await expect(nativeTarget).toBeFocused();
   });
 
   test('keeps 4px between header actions in drawer and fullscreen presentations',
@@ -637,15 +816,32 @@ test.describe('App shell chrome', () => {
     });
 
     await page.getByRole('button', { name: 'Collapse navigation' }).click();
-    await expect.poll(readGeometry).toEqual({
+    await expect.poll(readGeometry).toMatchObject({
       bodyLeft: 8,
       bodyRight: 8,
       footerLeft: 8,
-      footerRight: 8,
       horizontalGap: -32,
       verticalGap: 4,
       marker: 'stable',
     });
+
+    const compactControls = await page.evaluate(() => {
+      const settings = document.querySelector('.panel-nav__footer-btn') as HTMLElement;
+      const user = document.querySelector('.panel-nav__footer-user') as HTMLElement;
+      const settingsRect = settings.getBoundingClientRect();
+      const userRect = user.getBoundingClientRect();
+
+      return {
+        settingsWidth: settingsRect.width,
+        settingsHeight: settingsRect.height,
+        userWidth: userRect.width,
+        userHeight: userRect.height,
+      };
+    });
+
+    expect(compactControls.userWidth).toBeCloseTo(compactControls.userHeight, 5);
+    expect(compactControls.userWidth).toBeCloseTo(compactControls.settingsWidth, 5);
+    expect(compactControls.userHeight).toBeCloseTo(compactControls.settingsHeight, 5);
   });
 
   test('rapid collapse reversal emits one balanced chrome transition', async ({ page }) => {

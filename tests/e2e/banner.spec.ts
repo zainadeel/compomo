@@ -211,7 +211,45 @@ test('cancels a pending close when controlled state reopens', async ({ page }) =
   await expect.poll(() => page.evaluate(() => window.bannerEvents.afterClose)).toBe(0);
 });
 
-test('synchronizes surface and shell-space motion with directional panel easing', async ({ page }) => {
+test('animates an initially open insertion from its CSS starting style', async ({ page }) => {
+  const motion = await page.evaluate(async () => {
+    const owner = document.createElement('div');
+    owner.style.width = '900px';
+    const banner = document.createElement('ds-banner');
+    banner.description = 'A newly inserted application notice.';
+    owner.append(banner);
+    document.body.append(owner);
+
+    const heights: number[] = [];
+    const uncoveredEdgeDeltas: number[] = [];
+    for (let frame = 0; frame < 16; frame += 1) {
+      await new Promise(resolve => requestAnimationFrame(resolve));
+      const surface = banner.querySelector('.banner-surface');
+      if (!surface) continue;
+      const hostBounds = banner.getBoundingClientRect();
+      const surfaceBounds = surface.getBoundingClientRect();
+      if (hostBounds.height > 0) {
+        heights.push(hostBounds.height);
+        uncoveredEdgeDeltas.push(hostBounds.bottom - surfaceBounds.bottom);
+      }
+    }
+
+    owner.remove();
+    return {
+      heightRange: Math.max(...heights) - Math.min(...heights),
+      maximumUncoveredEdgeDelta: Math.max(0, ...uncoveredEdgeDeltas),
+    };
+  });
+
+  expect(motion.heightRange).toBeGreaterThan(1);
+  expectGeometryBelow(
+    motion.maximumUncoveredEdgeDelta,
+    COMPOSITED_EDGE_CEILING_PX,
+    'Initially open Banner uncovered shell edge',
+  );
+});
+
+test('uses directional panel easing for CSS-owned shell-space motion', async ({ page }) => {
   const controlled = page.locator('#controlled');
   const opening = await controlled.evaluate(element => {
     const surface = element.querySelector('.banner-surface')!;
@@ -220,12 +258,12 @@ test('synchronizes surface and shell-space motion with directional panel easing'
     probe.style.transitionTimingFunction = 'var(--effect-animation-easing-ease-out)';
     document.body.append(probe);
     const result = {
+      hostProperties: getComputedStyle(element).transitionProperty,
       hostDuration: getComputedStyle(element).transitionDuration,
       hostEasing: getComputedStyle(element).transitionTimingFunction,
       surfaceProperties: getComputedStyle(surface).transitionProperty,
       surfaceDuration: getComputedStyle(surface).transitionDuration,
       surfaceEasing: getComputedStyle(surface).transitionTimingFunction,
-      surfaceOpacity: getComputedStyle(surface).opacity,
       expectedDuration: getComputedStyle(probe).transitionDuration,
       expectedEasing: getComputedStyle(probe).transitionTimingFunction,
     };
@@ -233,12 +271,12 @@ test('synchronizes surface and shell-space motion with directional panel easing'
     return result;
   });
 
+  expect(opening.hostProperties).toBe('grid-template-rows');
   expect(opening.hostDuration).toBe(opening.expectedDuration);
+  expect(opening.hostEasing).toBe(opening.expectedEasing);
   expect(opening.surfaceProperties).toBe('transform');
   expect(opening.surfaceDuration).toBe(opening.expectedDuration);
-  expect(opening.hostEasing).toBe(opening.expectedEasing);
   expect(opening.surfaceEasing).toBe(opening.expectedEasing);
-  expect(opening.surfaceOpacity).toBe('1');
 
   await controlled.evaluate((element: HTMLDsBannerElement) => { element.open = false; });
   await expect(controlled).toHaveClass(/banner--closing/);
@@ -249,24 +287,24 @@ test('synchronizes surface and shell-space motion with directional panel easing'
     probe.style.transitionTimingFunction = 'var(--effect-animation-easing-ease-in)';
     document.body.append(probe);
     const result = {
+      hostProperties: getComputedStyle(element).transitionProperty,
       hostDuration: getComputedStyle(element).transitionDuration,
       hostEasing: getComputedStyle(element).transitionTimingFunction,
       surfaceProperties: getComputedStyle(surface).transitionProperty,
       surfaceDuration: getComputedStyle(surface).transitionDuration,
       surfaceEasing: getComputedStyle(surface).transitionTimingFunction,
-      surfaceOpacity: getComputedStyle(surface).opacity,
       expectedEasing: getComputedStyle(probe).transitionTimingFunction,
     };
     probe.remove();
     return result;
   });
 
+  expect(closing.hostProperties).toBe(opening.hostProperties);
   expect(closing.hostDuration).toBe(opening.hostDuration);
+  expect(closing.hostEasing).toBe(closing.expectedEasing);
   expect(closing.surfaceProperties).toBe(opening.surfaceProperties);
   expect(closing.surfaceDuration).toBe(opening.surfaceDuration);
-  expect(closing.hostEasing).toBe(closing.expectedEasing);
   expect(closing.surfaceEasing).toBe(closing.expectedEasing);
-  expect(closing.surfaceOpacity).toBe('1');
 });
 
 test('keeps one moving clip boundary flush with the shell edge', async ({ page }) => {
@@ -277,6 +315,7 @@ test('keeps one moving clip boundary flush with the shell edge', async ({ page }
   const motion = await banner.evaluate(async (element: HTMLDsBannerElement) => {
     element.open = true;
     const deltas: number[] = [];
+    const hostHeights: number[] = [];
     const surfaceHeights: number[] = [];
     for (let frame = 0; frame < 16; frame += 1) {
       await new Promise(resolve => requestAnimationFrame(resolve));
@@ -286,6 +325,7 @@ test('keeps one moving clip boundary flush with the shell edge', async ({ page }
       const surfaceBounds = surface.getBoundingClientRect();
       if (hostBounds.height > 0) {
         deltas.push(Math.abs(hostBounds.bottom - surfaceBounds.bottom));
+        hostHeights.push(hostBounds.height);
         surfaceHeights.push(surfaceBounds.height);
       }
     }
@@ -294,12 +334,14 @@ test('keeps one moving clip boundary flush with the shell edge', async ({ page }
       hostOverflow: getComputedStyle(element).overflow,
       innerOverflow: getComputedStyle(overflow).overflow,
       maximumEdgeDelta: Math.max(0, ...deltas),
+      hostHeightRange: Math.max(...hostHeights) - Math.min(...hostHeights),
       surfaceHeightRange: Math.max(...surfaceHeights) - Math.min(...surfaceHeights),
     };
   });
 
   expect(motion.hostOverflow).toBe('hidden');
   expect(motion.innerOverflow).toBe('visible');
+  expect(motion.hostHeightRange).toBeGreaterThan(1);
   expectGeometryBelow(
     motion.maximumEdgeDelta,
     COMPOSITED_EDGE_CEILING_PX,

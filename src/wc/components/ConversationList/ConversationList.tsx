@@ -17,6 +17,7 @@ export class ConversationList {
 
   private viewport?: HTMLElement;
   private content?: HTMLElement;
+  private empty?: HTMLElement;
   private overlay?: HTMLElement;
   private scrollOverlayController?: ScrollOverlayController;
   private emptySlotObserver?: MutationObserver;
@@ -43,7 +44,10 @@ export class ConversationList {
 
   private syncEmptyStateLayout = (): void => {
     const emptyState = this.el.querySelector<HTMLElement>('[slot="empty"]');
-    if (emptyState) {
+    if (emptyState && !this.empty?.contains(emptyState)) {
+      // Stencil's scoped-slot runtime does not relocate nodes appended after
+      // hydration. Keep that dynamic fallback aligned with the CSS-owned
+      // wrapper used by declarative slot content.
       emptyState.style.setProperty('position', 'absolute');
       emptyState.style.setProperty('inset-block-start', '0');
       emptyState.style.setProperty('inset-inline', '0');
@@ -75,7 +79,12 @@ export class ConversationList {
               }}
             >
               <slot />
-              <div class="conversation-list__empty">
+              <div
+                class="conversation-list__empty"
+                ref={element => {
+                  this.empty = element;
+                }}
+              >
                 <slot name="empty" />
               </div>
             </div>

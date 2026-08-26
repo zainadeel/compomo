@@ -34,7 +34,7 @@ const meta: Meta = {
       ...isolatedOverlayDocs('720px'),
       description: {
         component:
-          'Tool rail + sliding 300px drawer. Each tool supports a backward-compatible body slot (`search`, `agents`, `messages`, `stacks`, `activity`, `help`) and a full-view slot (`search-view`, `agents-view`, and so on). PanelTools owns the shared drawer header; split fullscreen layouts may compose one header per visible pane. Closing uses a clipped reveal and keeps slotted content mounted.',
+          'Tool rail + sliding 300px drawer. Each tool supports a backward-compatible body slot (`search`, `agents`, `messages`, `stacks`, `activity`, `help`) and a full-view slot (`search-view`, `agents-view`, and so on). PanelTools owns the shared drawer header; split fullscreen layouts may compose one header per visible pane. Rail tooltips are shell-owned and may cross the tools lane into the viewport. Closing uses a clipped reveal and keeps slotted content mounted.',
       },
     },
   },

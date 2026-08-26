@@ -7,7 +7,6 @@ import {
   Host,
   Method,
   Prop,
-  Watch,
 } from '@stencil/core';
 import type { ButtonFilledIntent } from '../ButtonFilled/ButtonFilled';
 import type { MessageComposerStatus } from '../conversation-types';
@@ -38,15 +37,6 @@ export class MessageComposer {
   private textarea?: HTMLTextAreaElement;
   private readonly errorId = `ds-message-composer-error-${++composerId}`;
 
-  componentDidLoad() {
-    this.resize();
-  }
-
-  @Watch('value')
-  onValueChange() {
-    requestAnimationFrame(() => this.resize());
-  }
-
   @Method()
   async setFocus() {
     this.textarea?.focus();
@@ -56,15 +46,8 @@ export class MessageComposer {
     return this.status === 'submitted' || this.status === 'streaming';
   }
 
-  private resize() {
-    if (!this.textarea) return;
-    this.textarea.style.height = 'auto';
-    this.textarea.style.height = `${this.textarea.scrollHeight}px`;
-  }
-
   private handleInput = (event: Event) => {
     this.value = (event.target as HTMLTextAreaElement).value;
-    this.resize();
     this.dsInput.emit(this.value);
   };
 
@@ -127,7 +110,6 @@ export class MessageComposer {
                 aria-invalid={error ? 'true' : undefined}
                 aria-describedby={error ? this.errorId : undefined}
                 disabled={this.isInactive}
-                rows={2}
                 onInput={this.handleInput}
                 onKeyDown={this.handleKeyDown}
               />

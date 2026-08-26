@@ -61,17 +61,16 @@ export class Banner {
 
   private loaded = false;
   private transitionTimer: ReturnType<typeof setTimeout> | null = null;
-  private openFrame: number | null = null;
   private closePending = false;
 
   componentWillLoad() {
     this.rendered = this.open;
+    this.phase = this.open ? 'open' : 'closed';
   }
 
   componentDidLoad() {
     this.loaded = true;
     this.updateActionsPresence();
-    if (this.open) this.startOpen();
   }
 
   disconnectedCallback() {
@@ -94,20 +93,14 @@ export class Banner {
 
   private clearTransitionWork() {
     if (this.transitionTimer) clearTimeout(this.transitionTimer);
-    if (this.openFrame !== null) cancelAnimationFrame(this.openFrame);
     this.transitionTimer = null;
-    this.openFrame = null;
   }
 
   private startOpen() {
     this.clearTransitionWork();
     this.closePending = false;
     this.rendered = true;
-    this.phase = 'closed';
-    this.openFrame = requestAnimationFrame(() => {
-      this.openFrame = null;
-      if (this.open) this.phase = 'open';
-    });
+    this.phase = 'open';
   }
 
   private startClose() {
@@ -175,67 +168,65 @@ export class Banner {
 
     return (
       <Host class={hostClass}>
-        {this.rendered && (
-          <div class="banner-overflow">
-            <section
-              class="banner-surface ds-chrome-header ds-chrome-header--wrapping"
-              role={this.role}
-              aria-live={this.ariaLive}
-              aria-atomic={this.announcement === 'none' ? undefined : 'true'}
-              aria-hidden={closing ? 'true' : undefined}
-              inert={closing ? true : undefined}
-              data-phase={this.phase}
-            >
-              {/* eslint-disable-next-line local/prefer-direct-ds-text -- The header-copy lane owns the 6px container inset separately from the inline text flow's 2px inset. */}
-              <div class="banner-copy ds-chrome-header__copy ds-chrome-header__copy--wrapping ds-control--md">
-                <ds-text
-                  class="banner-copy-flow"
-                  as="div"
-                  variant="text-body-medium"
-                  color="inherit"
-                >
-                  {this.heading && (
-                    <ds-text
-                      class="banner-heading"
-                      as="span"
-                      variant="text-title-small"
-                      color="inherit"
-                    >
-                      {this.heading}
-                    </ds-text>
-                  )}
-                  <span class="banner-description">{this.description}</span>
-                </ds-text>
+        <div class="banner-overflow">
+          <section
+            class="banner-surface ds-chrome-header ds-chrome-header--wrapping"
+            role={this.role}
+            aria-live={this.ariaLive}
+            aria-atomic={this.announcement === 'none' ? undefined : 'true'}
+            aria-hidden={closing ? 'true' : undefined}
+            inert={closing ? true : undefined}
+            data-phase={this.phase}
+          >
+            {/* eslint-disable-next-line local/prefer-direct-ds-text -- The header-copy lane owns the 6px container inset separately from the inline text flow's 2px inset. */}
+            <div class="banner-copy ds-chrome-header__copy ds-chrome-header__copy--wrapping ds-control--md">
+              <ds-text
+                class="banner-copy-flow"
+                as="div"
+                variant="text-body-medium"
+                color="inherit"
+              >
+                {this.heading && (
+                  <ds-text
+                    class="banner-heading"
+                    as="span"
+                    variant="text-title-small"
+                    color="inherit"
+                  >
+                    {this.heading}
+                  </ds-text>
+                )}
+                <span class="banner-description">{this.description}</span>
+              </ds-text>
+            </div>
+            <div class="banner-trailing ds-chrome-header__trailing">
+              <div class={{ 'banner-actions': true, 'banner-actions--empty': !this.hasActions }}>
+                <slot
+                  name="actions"
+                  onSlotchange={(event: Event) =>
+                    this.updateActionsPresence(event.currentTarget as HTMLSlotElement)
+                  }
+                />
               </div>
-              <div class="banner-trailing ds-chrome-header__trailing">
-                <div class={{ 'banner-actions': true, 'banner-actions--empty': !this.hasActions }}>
-                  <slot
-                    name="actions"
-                    onSlotchange={(event: Event) =>
-                      this.updateActionsPresence(event.currentTarget as HTMLSlotElement)
-                    }
+              <div class="banner-dismiss">
+                <ds-tooltip label={this.dismissLabel} side="bottom" size="sm">
+                  <ds-button-unfilled
+                    class="banner-close"
+                    variant="icon"
+                    icon="Cross"
+                    size="md"
+                    type="button"
+                    background={this.contrast}
+                    aria-label={this.dismissLabel}
+                    hasBorder={false}
+                    activeFill={false}
+                    onDsClick={(event: CustomEvent<MouseEvent>) => this.requestClose(event)}
                   />
-                </div>
-                <div class="banner-dismiss">
-                  <ds-tooltip label={this.dismissLabel} side="bottom" size="sm">
-                    <ds-button-unfilled
-                      class="banner-close"
-                      variant="icon"
-                      icon="Cross"
-                      size="md"
-                      type="button"
-                      background={this.contrast}
-                      aria-label={this.dismissLabel}
-                      hasBorder={false}
-                      activeFill={false}
-                      onDsClick={(event: CustomEvent<MouseEvent>) => this.requestClose(event)}
-                    />
-                  </ds-tooltip>
-                </div>
+                </ds-tooltip>
               </div>
-            </section>
-          </div>
-        )}
+            </div>
+          </section>
+        </div>
       </Host>
     );
   }

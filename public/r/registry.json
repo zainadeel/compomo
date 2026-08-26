@@ -748,7 +748,7 @@
             "Badge keeps one brand treatment; semantic severity belongs to another component or adjacent content.",
             "Use the ring only when Badge overlaps an icon or other content. Disable it in a reserved safe-area slot.",
             "When enabled, the ring matches the immediate backing surface for both variants. Use a direct ring override only for a component-local fill that no surface preset represents.",
-            "Enabled shell gradient rings align automatically inside active ShellApp gradient chrome and may be explicitly enabled or disabled when composition requires it."
+            "Shell gradient rings follow the inherited ShellApp chrome context automatically; an explicit composition override may force either the gradient or flat ring treatment."
           ],
           "responsiveBehavior": [
             "The owning control or layout positions Badge and decides whether notification indicators remain visible, condense, or move at responsive breakpoints.",
@@ -3946,6 +3946,7 @@
             "The built-in select trigger exposes combobox semantics with a dialog popup, synchronizes expanded state, holds the pressed interaction wash without changing resting foreground while open, and restores focus after dismissal.",
             "The category pane is a vertical tab list. Arrow Up and Arrow Down wrap, Home and End jump, Arrow Right enters the option pane, and Arrow Left returns to the active category.",
             "Escape and outside activation close the popup and restore trigger focus. Tab moves through option controls and closes only when it leaves the popup boundary.",
+            "When an external trigger is inside an open shadow tree, pass its HTMLElement through anchor so outside activation, focus return, and Tab continuation use the composed tree.",
             "The trigger count reports active filter categories. Category counts and the footer report individual selected criteria; none replace visible selected-state indication."
           ],
           "states": [
@@ -3956,10 +3957,10 @@
             "The trigger reports how many filter categories have selections, while the footer appears when values are selected and reports the total selected criteria."
           ],
           "responsiveBehavior": [
-            "The popup defaults to the large menu-width token and clamps to the viewport.",
+            "The popup defaults to the large menu-width token and clamps to the nearest data-ds-overlay-boundary rectangle or the viewport fallback.",
             "When collapseLabel is set inside a named ds-table container narrower than 900px, the trigger omits its label and chevron, becomes icon-only, and exposes its label through a hover and keyboard-focus tooltip. Active criteria promote the prefix icon to primary.",
             "Both panes remain visible at narrow widths, with a smaller category minimum and reduced option-pane padding.",
-            "Treat side as preferred placement; the popup flips and clamps when viewport collision requires it."
+            "Treat side as preferred placement; the popup flips and clamps when boundary collision requires it. Assign boundary as an HTMLElement only for an explicit override."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -4006,6 +4007,10 @@
           },
           "ariaLabel": {
             "type": "string | null",
+            "required": false
+          },
+          "boundary": {
+            "type": "HTMLElement | undefined",
             "required": false
           },
           "categoriesLabel": {
@@ -4302,6 +4307,7 @@
             "Choose the native input type that matches the value so browsers and assistive technology can provide appropriate semantics and keyboards.",
             "Error text is associated with the native input and announced as an alert when the invalid state is rendered.",
             "Read-only fields remain focusable and submittable while preventing edits; inactive or disabled fields leave the tab order and are omitted from form submission.",
+            "Number stepper actions are pointer affordances hidden from the accessibility tree; the native spinbutton remains the single keyboard and assistive-technology control.",
             "Suffix content must not carry information that is otherwise absent from the field's visible label, value, or description."
           ],
           "states": [
@@ -4312,7 +4318,8 @@
             "Search fields show a standard borderless CrossCircle icon action only while they contain a value. Clearing emits the empty value and restores focus to the native field.",
             "The suffix slot is for compact units or decorations. The optional leading icon is decorative and does not replace the field label.",
             "Use autoComplete, inputMode, and enterKeyHint to provide browser and virtual-keyboard hints without changing the value's semantic type.",
-            "Number fields preserve native spinbutton semantics, stepping, and min/max constraint behavior while dsChange continues to report the native string value.",
+            "Number fields preserve native spinbutton semantics, keyboard stepping, and min/max constraint behavior while dsChange continues to report the native string value. Two borderless inset chevron actions split the available inner height, disable independently at their numeric bound, and restore focus to the spinbutton after pointer activation.",
+            "textAlign positions the editable value while the numeric stepper stays on the opposite inline edge, keeping the actions clear of the number: start-aligned values use an inline-end stepper and end-aligned values use an inline-start stepper.",
             "The host exposes focused, filled, dirty, touched, invalid, disabled, read-only, and required data attributes for Field integration and diagnostics.",
             "Use Input only on primary or secondary application backgrounds. It intentionally does not expose alternate surface contexts."
           ],
@@ -4446,6 +4453,10 @@
           },
           "step": {
             "type": "number | undefined",
+            "required": false
+          },
+          "textAlign": {
+            "type": "InputTextAlign",
             "required": false
           },
           "type": {
@@ -4736,6 +4747,7 @@
             "Switch rows use menuitemcheckbox semantics on the row; the nested ds-switch is an aria-hidden presentation indicator at the same density as the menu.",
             "Single-selection menus use menuitemradio semantics and aria-checked on each row, but render no nested radio control; selected interaction fill and primary foreground provide the visual state.",
             "A swatch-picker section changes the popup to a non-modal dialog so its radio group and ordinary preference buttons keep valid nested semantics; Tab moves between its controls, then leaves and closes at the popup boundary.",
+            "When the anchor is inside an open shadow tree, pass its HTMLElement through anchor. Outside activation, focus return, and forward Tab continuation follow the composed tree across that boundary.",
             "Use notification dots only as supplemental status and not as the sole indication of important information.",
             "Trailing tags are non-interactive supplemental content; their visible label remains part of the menu item's accessible name.",
             "Reorderable rows keep a presentation Drag handle. Pointer drag on the handle and Alt+Arrow Up or Down emit dsReorder without closing. Pointer cancellation abandons the pending move. Hide-locked reorderable rows expose aria-disabled for the unavailable toggle but stay focusable so they can move; fully locked rows stay out of the contiguous reorderable run.",
@@ -4748,6 +4760,7 @@
             "After dsReorder, replace items or the affected section with the emitted items array. Menu never mutates order and does not close.",
             "For selectionMode single, keep exactly one item isSelected and replace the items or sections array after dsSelect; Menu never mutates consumer-owned selection data.",
             "Arrays, objects, and element anchors must be assigned as JavaScript properties.",
+            "anchorId resolves only in the document tree; use the anchor property for a trigger rendered inside a shadow root.",
             "Use a swatch-picker section for a small curated visual preference and apply dsSwatchSelect immediately without closing the popup.",
             "Ordinary rows, section headings, and supporting text consume the Menu size. At xs, both the primary label and supporting text use caption metrics.",
             "A trailing tag resolves one density smaller than its menu row and uses the inset recipe so it nests without changing row height. Do not combine tag, dot, and switch suffixes on one item.",
@@ -4755,9 +4768,11 @@
           ],
           "responsiveBehavior": [
             "Keep the default choice-cell anchor alignment so the first or last interactive row edge aligns with its trigger, matching Select; use popup-frame only for deliberate custom frame geometry.",
-            "Treat side as the preferred placement. When the popup cannot fit there and the opposite side offers more room, Menu flips on that main axis before clamping the final position to the viewport.",
+            "Treat side as the preferred placement. When the popup cannot fit there and the opposite side offers more room, Menu flips on that main axis before clamping to the nearest data-ds-overlay-boundary rectangle or the viewport fallback.",
+            "Keep the popup attached while its external anchor moves or resizes, including during CSS transitions in responsive shell chrome.",
             "Cap the popup to the vertical room available on its resolved side. When content is taller, the choice list scrolls internally and keyboard focus scrolls the active row into view.",
-            "Avoid fixed widths that exceed narrow viewports."
+            "Assign boundary as an HTMLElement only when the nearest composed-tree boundary is not the intended collision owner.",
+            "Avoid fixed widths that exceed narrow collision boundaries."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -4801,6 +4816,10 @@
           },
           "anchorId": {
             "type": "string | undefined",
+            "required": false
+          },
+          "boundary": {
+            "type": "HTMLElement | undefined",
             "required": false
           },
           "initialFocusVisible": {
@@ -6656,7 +6675,7 @@
         "events": [
           {
             "name": "dsAction",
-            "detail": "{ id: string; originalEvent: MouseEvent }"
+            "detail": "PanelToolHeaderActionDetail"
           },
           {
             "name": "dsBack",
@@ -6910,6 +6929,7 @@
             "If an active optional tool becomes unavailable, PanelTools closes the drawer, clears activeTool, and emits its deselection.",
             "Use isInactive only for a temporarily unavailable visible tool; omit tools the user is not authorized to access.",
             "Rail actions disable physical press scaling so notification-dot halos remain aligned to the shell gradient; hover and pressed washes continue to paint above the dot and halo.",
+            "Rail tooltips are shell-owned and position against the viewport so the narrow tools-lane collision boundary cannot clamp them beyond the viewport edge.",
             "The application owns slotted tool products and data while PanelTools owns rail ordering, drawer selection, open state, motion, and shell events.",
             "Opening and closing clip an already-rendered fixed-width surface. Header and tool content remain fully opaque and retained during width motion; transition completion is accepted only at the measured terminal clip width, after which the closed surface becomes inert and paint-skipped.",
             "Entering and exiting fullscreen snaps without borrowing the drawer open or close animation.",
@@ -7003,7 +7023,7 @@
           },
           {
             "name": "dsHeaderAction",
-            "detail": "{\n    tool: PanelToolsToolId;\n    id: string;\n  }"
+            "detail": "PanelToolsHeaderActionDetail"
           },
           {
             "name": "dsHeaderBack",
@@ -7449,7 +7469,7 @@
           "responsiveBehavior": [
             "Use width fill for form fields and width hug for compact filter bars. Override those defaults only when the owning layout has a clear constraint.",
             "When collapseLabel is set inside a named ds-table container narrower than 900px, the trigger omits its label and chevron, becomes icon-only, and exposes its label through a hover and keyboard-focus tooltip. A selected value promotes the prefix icon to primary.",
-            "The popup matches the trigger minimum width, may grow for content, and clamps to the viewport.",
+            "The popup matches the trigger minimum width, may grow for content, and clamps to the nearest data-ds-overlay-boundary rectangle or the viewport fallback. Assign boundary as an HTMLElement only for an explicit override.",
             "Keep popupAlign at start for ordinary fields and filters. Use end when a control sits against a right layout edge and the popup should grow inward.",
             "Long option collections scroll inside the popup; virtualization and remote search are not part of this component."
           ],
@@ -7501,6 +7521,10 @@
           },
           "background": {
             "type": "SelectBackground | undefined",
+            "required": false
+          },
+          "boundary": {
+            "type": "HTMLElement | undefined",
             "required": false
           },
           "clearLabel": {
@@ -7765,6 +7789,7 @@
             "A slotted Banner remains below the top safe-area inset and above routed, navigation, fullscreen-tool, and mobile global-surface presentations.",
             "Mobile global surfaces conceal and inert the routed workspace without unmounting it, preserving nested routes and scroll state.",
             "Keep PanelNav width, BarNav height, PanelTools chrome, and main-content origin stable except during intentional responsive or collapse transitions.",
+            "The routed content cell and tools cell expose separate anchored-overlay collision boundaries, so top-layer menus and tooltips remain above local clipping without crossing into neighboring shell lanes. Full-screen modal overlays remain viewport-owned.",
             "Paper texture chrome is desktop/tablet-only and follows the fixed viewport phase of the shell chrome; mobile remains a solid primary stage.",
             "Managed page-header capacity follows only the fixed shell breakpoint: roomy on desktop and compact on tablet. Opening PanelTools does not compact or constrain BarTitle.",
             "The bottom bar remains visible at all route and tool depths in the foundation release."
@@ -10402,7 +10427,7 @@
           "responsiveBehavior": [
             "The global stack stays at the viewport bottom-end with token-based inset and never exceeds the available viewport width.",
             "Set avoid-mobile-shell-bar when the application uses the persistent shell bottom bar. Below 768px the global stack clears the complete safe-area-aware bar container by 16px; tablet and desktop positioning remain unchanged.",
-            "Anchored toasts flip on their placement axis and clamp to viewport padding when the preferred side does not fit.",
+            "Anchored toasts flip on their placement axis and clamp to their anchor's nearest data-ds-overlay-boundary rectangle, falling back to viewport padding when no owner is marked.",
             "The owner does not create separate mobile and desktop managers; one queue preserves ordering across responsive layouts.",
             "Pointer swipe remains optional input. Close and action controls retain keyboard access through the notification region."
           ],
@@ -10557,7 +10582,7 @@
             "Only one tooltip remains active globally; warm handoff removes the previous popup before showing the next.",
             "Disconnecting and reinserting the tooltip host rebinds the current slotted trigger.",
             "A host may present the popup against an external anchor it already owns, without wrapping that trigger or binding hover on it.",
-            "The preferred side flips when it cannot fit, then alignment is clamped to viewport padding.",
+            "The preferred side flips when it cannot fit, then alignment is clamped to the nearest data-ds-overlay-boundary rectangle or viewport padding. Assign boundary as an HTMLElement for an explicit owner, or viewport when shell-owned chrome must escape a narrow page or lane boundary.",
             "Reduced motion removes enter and exit fades while retaining the final visible or hidden state."
           ],
           "responsiveBehavior": [
@@ -10570,7 +10595,8 @@
               "Place exactly one trigger element as the component's light-DOM child.",
               "Replacing the slotted trigger rebinds pointer and focus behavior automatically.",
               "A table or similar host can present the popup against an overflowing text node instead of wrapping that node.",
-              "sideOffset, alignOffset, and delay accept numbers or TokoMo CSS values."
+              "sideOffset, alignOffset, and delay accept numbers or TokoMo CSS values.",
+              "Use boundary=viewport only for shell-owned chrome whose tooltip intentionally crosses an inner page or lane boundary."
             ],
             "react": [
               "Wrap one focusable trigger with DsTooltip; keep the trigger's aria-label independent from the tooltip label."
@@ -10601,6 +10627,10 @@
           },
           "alignOffset": {
             "type": "number | string",
+            "required": false
+          },
+          "boundary": {
+            "type": "AnchoredOverlayBoundary | undefined",
             "required": false
           },
           "delay": {
@@ -10812,7 +10842,7 @@
             "pattern:conversation"
           ],
           "accessibility": [
-            "Provide concise localized status text; the standard label is Typing followed by a three-dot ellipsis.",
+            "Provide concise localized status text; the standard label is Typing followed by a single Unicode ellipsis.",
             "The polite atomic status announces typing without representing it as a message bubble."
           ],
           "states": [

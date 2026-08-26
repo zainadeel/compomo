@@ -76,7 +76,16 @@
 }
 
 .conversation-list__empty {
-  display: contents;
+  position: absolute;
+  inset-block: 0 var(--ds-scroll-overlay-block-size, 0);
+  inset-inline: 0;
+  box-sizing: border-box;
+}
+
+/* The named slot itself keeps this wrapper from matching :empty. Only create
+   its full-size hit area when assigned empty-state content is actually here. */
+.conversation-list__empty:not(:has([slot='empty'])) {
+  display: none;
 }
 
 .conversation-list__actions {

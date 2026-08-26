@@ -123,6 +123,20 @@ export interface PanelToolsHeaderAction {
   isInactive?: boolean;
 }
 
+export interface PanelToolsHeaderActionDetail {
+  tool: PanelToolsToolId;
+  id: string;
+  /** Rendered header action host. Pass this to an external overlay's element anchor prop. */
+  anchor?: HTMLElement;
+}
+
+export interface PanelToolHeaderActionDetail {
+  id: string;
+  originalEvent: MouseEvent;
+  /** Rendered action host, suitable for anchoring an external overlay across a shadow boundary. */
+  anchor: HTMLElement;
+}
+
 export interface PanelToolsHeaderConfig {
   title?: string;
   showBack?: boolean;

@@ -1207,6 +1207,7 @@ export class ShellApp {
             </div>
             <div
               class="shell-app__tools"
+              data-ds-overlay-boundary
               aria-hidden={
                 mobile && (!mobileToolActive || this.mobileSheetNavOpen)
                   ? 'true'
@@ -1223,6 +1224,7 @@ export class ShellApp {
             </div>
             <div
               class="shell-app__content"
+              data-ds-overlay-boundary
               aria-hidden={fullscreen || mobileStageBlocked ? 'true' : undefined}
               inert={fullscreen || mobileStageBlocked ? true : undefined}
               tabIndex={0}
@@ -1300,6 +1302,7 @@ export class ShellApp {
             </div>
             <div
               class="shell-app__tools"
+              data-ds-overlay-boundary
               aria-hidden={
                 mobile && (!mobileToolActive || this.effectiveMobileSheetNavOpen)
                   ? 'true'
@@ -1316,6 +1319,7 @@ export class ShellApp {
             </div>
             <div
               class="shell-app__content"
+              data-ds-overlay-boundary
               aria-hidden={fullscreen || mobileStageBlocked ? 'true' : undefined}
               inert={fullscreen || mobileStageBlocked ? true : undefined}
               tabIndex={0}

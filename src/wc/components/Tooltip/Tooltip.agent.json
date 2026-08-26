@@ -54,7 +54,7 @@
     "Only one tooltip remains active globally; warm handoff removes the previous popup before showing the next.",
     "Disconnecting and reinserting the tooltip host rebinds the current slotted trigger.",
     "A host may present the popup against an external anchor it already owns, without wrapping that trigger or binding hover on it.",
-    "The preferred side flips when it cannot fit, then alignment is clamped to viewport padding.",
+    "The preferred side flips when it cannot fit, then alignment is clamped to the nearest data-ds-overlay-boundary rectangle or viewport padding. Assign boundary as an HTMLElement for an explicit owner, or viewport when shell-owned chrome must escape a narrow page or lane boundary.",
     "Reduced motion removes enter and exit fades while retaining the final visible or hidden state."
   ],
   "responsiveBehavior": [
@@ -67,7 +67,8 @@
       "Place exactly one trigger element as the component's light-DOM child.",
       "Replacing the slotted trigger rebinds pointer and focus behavior automatically.",
       "A table or similar host can present the popup against an overflowing text node instead of wrapping that node.",
-      "sideOffset, alignOffset, and delay accept numbers or TokoMo CSS values."
+      "sideOffset, alignOffset, and delay accept numbers or TokoMo CSS values.",
+      "Use boundary=viewport only for shell-owned chrome whose tooltip intentionally crosses an inner page or lane boundary."
     ],
     "react": [
       "Wrap one focusable trigger with DsTooltip; keep the trigger's aria-label independent from the tooltip label."

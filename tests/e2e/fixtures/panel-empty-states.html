@@ -13,7 +13,8 @@
 
       #generic,
       #conversations,
-      #activity {
+      #activity,
+      #declarative {
         display: block;
         width: 300px;
         height: 240px;
@@ -64,6 +65,14 @@
     </ds-conversation-list>
 
     <ds-conversation-list id="activity"></ds-conversation-list>
+
+    <ds-conversation-list id="declarative">
+      <ds-empty-state
+        slot="empty"
+        heading="No saved conversations"
+        body="Saved conversations will appear here."
+      ></ds-empty-state>
+    </ds-conversation-list>
 
     <script type="module" src="/panel-empty-states-setup.mjs"></script>
   </body>

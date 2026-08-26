@@ -12,6 +12,7 @@ import {
 export type InputType = 'text' | 'email' | 'tel' | 'url' | 'search' | 'password' | 'number';
 export type InputSize = 'lg' | 'md' | 'sm' | 'xs';
 export type InputWidth = ControlWidth;
+export type InputTextAlign = 'start' | 'end';
 
 const ICON_SIZE: Record<InputSize, 'lg' | 'md' | 'sm' | 'xs'> = {
   lg: 'lg',
@@ -59,6 +60,8 @@ export class Input {
   @Prop() max: number | undefined;
   /** Numeric increment used by native stepping and constraint validation. */
   @Prop() step: number | undefined;
+  /** Align the editable value; number steppers follow the same inline edge. */
+  @Prop() textAlign: InputTextAlign = 'start';
   /** Native browser autofill hint. */
   @Prop({ attribute: 'autocomplete' }) autoComplete: string | undefined;
   /** Preferred virtual keyboard without changing the value semantics. */
@@ -87,6 +90,7 @@ export class Input {
   @Event() dsClear!: EventEmitter<void>;
 
   private initialValue = '';
+  private inputEl?: HTMLInputElement;
   @State() private formDisabled = false;
   @State() private hasSuffix = false;
   @State() private focused = false;
@@ -129,7 +133,7 @@ export class Input {
 
   @Method()
   async setFocus() {
-    this.el.querySelector('input')?.focus();
+    this.inputEl?.focus();
   }
 
   private handleInput = (e: Event) => {
@@ -150,8 +154,71 @@ export class Input {
     this.value = '';
     this.dsChange.emit('');
     this.dsClear.emit();
-    this.el.querySelector('input')?.focus();
+    this.inputEl?.focus();
   };
+
+  private numericStepDisabled(direction: 1 | -1): boolean {
+    if (this.value.trim() === '') return false;
+    const value = Number(this.value);
+    if (!Number.isFinite(value)) return false;
+    if (direction > 0 && this.max !== undefined) return value >= this.max;
+    if (direction < 0 && this.min !== undefined) return value <= this.min;
+    return false;
+  }
+
+  private handleNumericStep = (direction: 1 | -1) => {
+    const input = this.inputEl;
+    if (!input || input.disabled || input.readOnly || this.numericStepDisabled(direction)) return;
+
+    const previous = input.value;
+    if (direction > 0) input.stepUp();
+    else input.stepDown();
+    input.focus({ preventScroll: true });
+    if (input.value === previous) return;
+
+    this.value = input.value;
+    this.dsChange.emit(this.value);
+  };
+
+  private renderNumericStepper(inactive: boolean) {
+    const incrementDisabled = inactive || this.readOnly || this.numericStepDisabled(1);
+    const decrementDisabled = inactive || this.readOnly || this.numericStepDisabled(-1);
+
+    return (
+      <span class="input-control__number-stepper">
+        <button
+          type="button"
+          class="input-control__number-step input-control__number-step--increment ds-focus-ring-inset ds-interaction-fill"
+          disabled={incrementDisabled}
+          tabIndex={-1}
+          aria-hidden="true"
+          onClick={() => this.handleNumericStep(1)}
+        >
+          <ds-icon
+            class="input-control__number-step-icon ds-interaction-fill__content"
+            name="ChevronUp"
+            size="xs"
+            color="inherit"
+          />
+        </button>
+        <button
+          type="button"
+          class="input-control__number-step input-control__number-step--decrement ds-focus-ring-inset ds-interaction-fill"
+          disabled={decrementDisabled}
+          tabIndex={-1}
+          aria-hidden="true"
+          onClick={() => this.handleNumericStep(-1)}
+        >
+          <ds-icon
+            class="input-control__number-step-icon ds-interaction-fill__content"
+            name="ChevronDown"
+            size="xs"
+            color="inherit"
+          />
+        </button>
+      </span>
+    );
+  }
 
   render() {
     const inputId = this.inputId ?? this.generatedId;
@@ -190,6 +257,9 @@ export class Input {
         <div
           class={{
             'input-control': true,
+            'input-control--number': numeric,
+            'input-control--align-start': this.textAlign === 'start',
+            'input-control--align-end': this.textAlign === 'end',
             'ds-control-frame': true,
             'input-control--bordered': this.hasBorder,
             'input-control--error': this.hasBorder && this.error,
@@ -197,12 +267,16 @@ export class Input {
             [`ds-control--${this.size}`]: true,
           }}
         >
+          {numeric && this.textAlign === 'end' && this.renderNumericStepper(inactive)}
           {this.icon && (
             <span class="input-control__prefix ds-control-icon-box ds-interaction-fill__content" aria-hidden="true">
               <ds-icon name={this.icon} size={iconSize} color="inherit" />
             </span>
           )}
           <input
+            ref={element => {
+              this.inputEl = element;
+            }}
             type={this.type}
             id={inputId}
             value={this.value}
@@ -217,7 +291,7 @@ export class Input {
             autoComplete={this.autoComplete}
             inputMode={this.inputMode || undefined}
             enterKeyHint={this.enterKeyHint || undefined}
-            class={`native-input ds-control-label-box ds-text--${textVariant.replace('text-', '')} ds-text--regular ds-interaction-fill__content`}
+            class={`native-input native-input--align-${this.textAlign} ds-control-label-box ds-text--${textVariant.replace('text-', '')} ds-text--regular ds-interaction-fill__content`}
             aria-label={this.ariaLabel}
             aria-labelledby={this.ariaLabelledby}
             aria-describedby={describedBy}
@@ -241,6 +315,7 @@ export class Input {
               onDsClick={this.handleClear}
             />
           )}
+          {numeric && this.textAlign === 'start' && this.renderNumericStepper(inactive)}
         </div>
         {showError && (
           <ds-text

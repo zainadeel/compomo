@@ -63,11 +63,11 @@ test('normalizes fractional counts and rejects non-finite counts', async ({ page
 test('removes the empty action lane without removing the persistent status region', async ({ page }) => {
   const bar = page.locator('#bar-action');
   const actions = bar.locator('.bar-action__actions');
+  const action = bar.getByRole('button', { name: 'Coaching status' });
 
   await expect(actions).toBeVisible();
-  await bar.locator('[slot="actions"]').evaluate(element => element.remove());
+  await action.evaluate(element => element.remove());
 
-  await expect(actions).toHaveClass(/bar-action__actions--empty/);
   await expect(actions).toBeHidden();
   await expect(bar.locator('.bar-action__status')).toHaveCount(1);
 });

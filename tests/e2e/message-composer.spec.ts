@@ -41,6 +41,36 @@ test('keeps 8px between dictation and send controls', async ({ page }) => {
   expect(Math.round(sendBox!.x - (dictationBox!.x + dictationBox!.width))).toBe(8);
 });
 
+test('grows the textarea with content through its six-line limit', async ({ page }) => {
+  const composer = page.locator('#composer');
+  const textarea = composer.locator('textarea');
+
+  await expect(textarea).toHaveCSS('field-sizing', 'content');
+  const twoLineHeight = await textarea.evaluate(element => element.getBoundingClientRect().height);
+
+  await composer.evaluate((element: HTMLDsMessageComposerElement) => {
+    element.value = 'Line 1\nLine 2\nLine 3\nLine 4';
+  });
+  await expect(textarea).toHaveValue('Line 1\nLine 2\nLine 3\nLine 4');
+  const fourLineHeight = await textarea.evaluate(element => element.getBoundingClientRect().height);
+
+  await composer.evaluate((element: HTMLDsMessageComposerElement) => {
+    element.value = 'Line 1\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6\nLine 7';
+  });
+  await expect(textarea).toHaveValue('Line 1\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6\nLine 7');
+  const overflow = await textarea.evaluate(element => ({
+    clientHeight: element.clientHeight,
+    height: element.getBoundingClientRect().height,
+    maxHeight: Number.parseFloat(getComputedStyle(element).maxHeight),
+    scrollHeight: element.scrollHeight,
+  }));
+
+  expect(fourLineHeight).toBeGreaterThan(twoLineHeight);
+  expect(overflow.height).toBeGreaterThan(fourLineHeight);
+  expect(overflow.height).toBeCloseTo(overflow.maxHeight, 1);
+  expect(overflow.scrollHeight).toBeGreaterThan(overflow.clientHeight);
+});
+
 test('uses the input-field active border for mouse and keyboard focus', async ({ page }) => {
   const composer = page.locator('#composer');
   const field = composer.locator('.message-composer__field');

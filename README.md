@@ -64,6 +64,13 @@ canonical IcoMo export names at application bundle time.
 
 There is no global component CSS bundle; styles ship with each custom element.
 
+## Browser baseline
+
+CompoMo targets the moving **Baseline Newly available** browser set. Components
+may use a web-platform feature once it is interoperable across the Baseline core
+browsers; consumers that retain older browser releases must provide their own
+fallback or remain on an earlier compatible CompoMo release.
+
 ## Agent recipes
 
 The package includes the local `compomo-mcp` executable with generated

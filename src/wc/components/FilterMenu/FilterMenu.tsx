@@ -8,6 +8,7 @@ import {
   Listen,
   Prop,
   State,
+  type VNode,
   Watch,
 } from '@stencil/core';
 import {
@@ -23,6 +24,8 @@ import {
 import { observeTableCaptionCompact } from '../../utils/table-caption-compact';
 import type { AnchoredAlign, AnchoredSide } from '../../utils/anchored-position';
 import { AnchoredPositionController } from '../../utils/anchored-position-controller';
+import { AnchoredOverlayInteractionController } from '../../utils/anchored-overlay-interaction-controller';
+import { resolveAnchoredOverlayBoundaryRect } from '../../utils/anchored-overlay-boundary';
 import { ChoiceOptionRow } from '../../utils/choice-list-parts';
 import { choiceListUsesSubtext } from '../../utils/choice-list';
 
@@ -55,15 +58,6 @@ export interface FilterMenuChangeDetail {
   filterId: string;
   value: FilterMenuValue;
 }
-
-const FILTER_MENU_FOCUSABLE_SELECTOR = [
-  'a[href]',
-  'button:not([disabled])',
-  'input:not([disabled]):not([type="hidden"])',
-  'select:not([disabled])',
-  'textarea:not([disabled])',
-  '[tabindex]:not([tabindex="-1"])',
-].join(',');
 
 let filterMenuId = 0;
 
@@ -115,6 +109,8 @@ export class FilterMenu {
   @Prop() anchor: HTMLElement | undefined;
   /** ID of the external trigger element used for positioning and focus return. */
   @Prop() anchorId: string | undefined;
+  /** Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used. */
+  @Prop() boundary: HTMLElement | undefined;
   /** Preferred popup side; collision handling may flip it. */
   @Prop() side: AnchoredSide = 'bottom';
   /** Cross-axis alignment against the trigger. */
@@ -123,7 +119,7 @@ export class FilterMenu {
   @Prop() sideOffset: number | string = TOKEN_CSS_LENGTHS.space050;
   /** Cross-axis offset — number in px or a TokoMo length. */
   @Prop() alignOffset: number | string = 0;
-  /** Popup width. It remains clamped to the viewport by the component recipe. */
+  /** Popup width. It remains clamped to its collision boundary by the component recipe. */
   @Prop() menuWidth: string = TOKEN_CSS_LENGTHS.menuWidthLg;
   /** Accessible name for the non-modal filter dialog. */
   @Prop() menuLabel: string = 'Filters';
@@ -156,7 +152,6 @@ export class FilterMenu {
   @Event() dsAfterClose!: EventEmitter<void>;
 
   private readonly generatedId = `ds-filter-menu-${++filterMenuId}`;
-  private outsideHandler: ((event: MouseEvent) => void) | null = null;
   private triggerElement: HTMLButtonElement | null = null;
   private pendingInitialFocusVisible = false;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
@@ -171,6 +166,7 @@ export class FilterMenu {
   private readonly position = new AnchoredPositionController({
     getAnchor: () => this.resolvedAnchor,
     getPopup: () => this.el.querySelector<HTMLElement>('.filter-menu-popup'),
+    getOwnerDocument: () => this.el.ownerDocument,
     measure: (anchor, popup) => {
       if (!this.open) return null;
       const anchorRect = anchor.getBoundingClientRect();
@@ -190,6 +186,7 @@ export class FilterMenu {
         viewportPadPx: this.viewportPad,
         viewportWidth: window.innerWidth,
         viewportHeight: window.innerHeight,
+        collisionRect: resolveAnchoredOverlayBoundaryRect(anchor, this.boundary),
       };
     },
     apply: ({ x, y }) => {
@@ -201,6 +198,12 @@ export class FilterMenu {
     liveUpdate: 'double-frame',
     observeResize: true,
     topLayer: true,
+  });
+  private readonly interaction = new AnchoredOverlayInteractionController({
+    getAnchor: () => this.resolvedAnchor,
+    getPopup: () => this.el.querySelector<HTMLElement>('.filter-menu-popup'),
+    getOwnerDocument: () => this.el.ownerDocument,
+    onOutsideActivation: () => this.close(),
   });
 
   componentDidLoad() {
@@ -258,6 +261,7 @@ export class FilterMenu {
 
   @Watch('anchor')
   @Watch('anchorId')
+  @Watch('boundary')
   @Watch('side')
   @Watch('align')
   @Watch('sideOffset')
@@ -278,7 +282,7 @@ export class FilterMenu {
     if (event.key !== 'Tab' || !this.tabLeavesPopup(event)) return;
     event.preventDefault();
     this.close(false);
-    this.moveFocusAfterTab(event.shiftKey);
+    this.interaction.moveFocusAfterTab(event.shiftKey);
   }
 
   private get resolvedAnchor(): HTMLElement | null {
@@ -289,13 +293,6 @@ export class FilterMenu {
 
   private get usesInternalTrigger(): boolean {
     return !this.anchor && !this.anchorId;
-  }
-
-  private get anchorFocusTarget(): HTMLElement | null {
-    const anchor = this.resolvedAnchor;
-    if (!anchor) return null;
-    if (anchor.matches(FILTER_MENU_FOCUSABLE_SELECTOR)) return anchor;
-    return anchor.querySelector<HTMLElement>(FILTER_MENU_FOCUSABLE_SELECTOR) ?? anchor;
   }
 
   private get viewportPad(): number {
@@ -311,22 +308,13 @@ export class FilterMenu {
   }
 
   private setupListeners() {
-    this.outsideHandler = event => {
-      const target = event.target as Node;
-      const popup = this.el.querySelector('.filter-menu-popup');
-      if (popup?.contains(target) || this.resolvedAnchor?.contains(target)) return;
-      this.close();
-    };
-    document.addEventListener('mousedown', this.outsideHandler, true);
+    this.interaction.connect();
     this.position.observe();
   }
 
   private teardownListeners() {
     this.position.unobserve();
-    if (this.outsideHandler) {
-      document.removeEventListener('mousedown', this.outsideHandler, true);
-      this.outsideHandler = null;
-    }
+    this.interaction.disconnect();
     if (this.closeTimer) {
       clearTimeout(this.closeTimer);
       this.closeTimer = null;
@@ -335,7 +323,7 @@ export class FilterMenu {
 
   private close(restoreFocus = true) {
     this.captureClosingSnapshot();
-    if (restoreFocus) this.focusAnchor();
+    if (restoreFocus) this.interaction.focusAnchor();
     this.dsOpenChange.emit(false);
     this.dsClose.emit();
     this.open = false;
@@ -389,16 +377,6 @@ export class FilterMenu {
     };
   }
 
-  private focusAnchor() {
-    const anchor = this.resolvedAnchor as
-      (HTMLElement & { setFocus?: () => Promise<void> | void }) | null;
-    if (anchor?.setFocus) {
-      void anchor.setFocus();
-      return;
-    }
-    this.anchorFocusTarget?.focus();
-  }
-
   private focusInitialCategory() {
     requestAnimationFrame(() => {
       this.el.querySelector<HTMLElement>('.filter-menu__category[tabindex="0"]')?.focus();
@@ -407,33 +385,7 @@ export class FilterMenu {
   }
 
   private tabLeavesPopup(event: KeyboardEvent): boolean {
-    const popup = this.el.querySelector<HTMLElement>('.filter-menu-popup');
-    if (!popup) return true;
-    const focusables = Array.from(
-      popup.querySelectorAll<HTMLElement>(FILTER_MENU_FOCUSABLE_SELECTOR)
-    ).filter(element => element.getClientRects().length > 0);
-    const index = focusables.indexOf(event.target as HTMLElement);
-    if (index < 0) return true;
-    return event.shiftKey ? index === 0 : index === focusables.length - 1;
-  }
-
-  private moveFocusAfterTab(backwards: boolean) {
-    const anchor = this.anchorFocusTarget;
-    if (!anchor) return;
-    if (backwards) {
-      anchor.focus();
-      return;
-    }
-    const candidates = Array.from(
-      document.querySelectorAll<HTMLElement>(FILTER_MENU_FOCUSABLE_SELECTOR)
-    ).filter(
-      element =>
-        !element.closest('.filter-menu-popup') &&
-        !element.closest('[inert]') &&
-        element.getClientRects().length > 0
-    );
-    const index = candidates.indexOf(anchor);
-    (candidates[index + 1] ?? anchor).focus();
+    return this.interaction.tabLeavesPopup(event);
   }
 
   private selectedFilter(filters: FilterMenuFilter[], activeFilterId: string | undefined) {
@@ -740,6 +692,15 @@ export class FilterMenu {
     this.captionCompactDisconnect = undefined;
   }
 
+  private renderCaptionTooltip(trigger: VNode, label: string): VNode {
+    if (!this.collapseLabel) return trigger;
+    return (
+      <ds-tooltip label={label} side="top" size="sm">
+        {trigger}
+      </ds-tooltip>
+    );
+  }
+
   render() {
     const state =
       this.closing && this.closingSnapshot
@@ -780,11 +741,7 @@ export class FilterMenu {
         }}
       >
         {this.usesInternalTrigger ? (
-          <ds-tooltip
-            label={this.captionIconOnly ? label : ''}
-            side="top"
-            size="sm"
-          >
+          this.renderCaptionTooltip(
             <button
             ref={element => {
               this.triggerElement = (element as HTMLButtonElement) ?? null;
@@ -837,8 +794,9 @@ export class FilterMenu {
                 <ds-icon name="ChevronDown" size={iconSize} color="inherit" />
               </span>
             )}
-            </button>
-          </ds-tooltip>
+            </button>,
+            this.captionIconOnly ? label : ''
+          )
         ) : null}
 
         {this.shouldRender ? (

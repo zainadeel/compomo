@@ -404,8 +404,9 @@ ds-text.panel-nav__group-label {
 }
 
 .panel-nav--collapsed .panel-nav__footer-user {
-  /* Compact column keeps the intentionally tighter 4px vertical gap. */
+  /* Resolve one shared square control while keeping both inline edges animatable. */
   left: var(--_nav-padding-x);
+  right: calc(100% - var(--_nav-padding-x) - var(--_nav-item-height));
   top: calc(var(--_nav-padding-y) + var(--_nav-item-height) + var(--dimension-space-050, 4px));
 }
 

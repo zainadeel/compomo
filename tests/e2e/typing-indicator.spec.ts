@@ -10,7 +10,7 @@ test('exposes a polite typing status outside message-bubble semantics', async ({
   await expect(indicator).toHaveAttribute('role', 'status');
   await expect(indicator).toHaveAttribute('aria-live', 'polite');
   await expect(indicator).toHaveAttribute('aria-atomic', 'true');
-  await expect(indicator).toContainText('Typing...');
+  await expect(indicator).toContainText('Typing…');
   await expect(indicator.locator('ds-message-bubble')).toHaveCount(0);
   await expect(text).toHaveJSProperty('variant', 'text-body-medium');
   await expect(text).toHaveJSProperty('color', 'secondary');

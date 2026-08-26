@@ -5,6 +5,22 @@ import test from 'node:test';
 const css = fs.readFileSync('src/wc/styles/table.css', 'utf8');
 const componentCss = fs.readFileSync('src/wc/components/Table/Table.css', 'utf8');
 const componentTsx = fs.readFileSync('src/wc/components/Table/Table.tsx', 'utf8');
+const rowViewTsx = fs.readFileSync(
+  'src/wc/components/Table/table-row-view.tsx',
+  'utf8',
+);
+const bodyRendererTsx = fs.readFileSync(
+  'src/wc/components/Table/table-body-renderer.tsx',
+  'utf8',
+);
+const skeletonViewTsx = fs.readFileSync(
+  'src/wc/components/Table/table-skeleton-view.tsx',
+  'utf8',
+);
+const loadViewTsx = fs.readFileSync(
+  'src/wc/components/Table/table-load-view.tsx',
+  'utf8',
+);
 const buttonUnfilledTsx = fs.readFileSync(
   'src/wc/components/ButtonUnfilled/ButtonUnfilled.tsx',
   'utf8',
@@ -38,7 +54,14 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(componentTsx, /TableGroupLoadController/);
   assert.match(componentTsx, /TableVirtualController/);
   assert.match(componentTsx, /createTableRenderModel/);
-  assert.match(componentTsx, /resolveTableCellPresentation/);
+  assert.match(componentTsx, /renderTableRowView/);
+  assert.match(componentTsx, /TableBodyRenderer/);
+  assert.match(componentTsx, /renderTableSkeletonBody/);
+  assert.match(componentTsx, /renderTableLoadContent/);
+  assert.match(rowViewTsx, /resolveTableCellPresentation/);
+  assert.match(bodyRendererTsx, /assignTableVirtualRowPoolKeys/);
+  assert.match(skeletonViewTsx, /resolveTableCellImageTracks/);
+  assert.match(loadViewTsx, /ds-table__load-content/);
   assert.match(layoutController, /--ds-table-visible-inline-size/);
   assert.doesNotMatch(layoutController, /elements\.table|observe\(table\)/);
   assert.match(componentTsx, /ds-table__table--native-group-sticky/);
@@ -46,7 +69,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.doesNotMatch(componentTsx, /scroll-edge-fade\.css|ds-table__overflow-shadow/);
   assert.match(componentTsx, /ds-table__selection-control ds-focus-ring/);
   assert.match(componentTsx, /ds-table__header-label--interactive ds-focus-ring/);
-  assert.match(componentTsx, /'ds-focus-ring': !!row\.interactive && !row\.disabled/);
+  assert.match(rowViewTsx, /'ds-focus-ring': !!row\.interactive && !row\.disabled/);
   assert.match(componentTsx, /'ds-focus-ring': this\.scrollable/);
   assert.match(componentTsx, /<slot\s+name="header"/);
   assert.match(componentTsx, /ds-table__caption-leading/);
@@ -59,15 +82,18 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(componentTsx, /<slot name="footer"/);
   assert.match(componentTsx, /<slot name="footer-leading"/);
   assert.match(componentTsx, /<slot name="footer-trailing"/);
-  assert.match(componentTsx, /ds-table__cell--action-menu/);
+  assert.match(rowViewTsx, /ds-table__cell--action-menu/);
   assert.match(componentTsx, /renderOverflowActionMenu/);
   assert.match(componentTsx, /<ds-menu/);
   assert.match(componentTsx, /renderTruncateTooltip/);
   assert.match(componentTsx, /<ds-tooltip/);
   assert.match(componentTsx, /label={this\.captionCompact \? 'Customize' : ''}/);
+  assert.match(buttonUnfilledTsx, /\{this\.collapseLabel \? \(\s*<ds-tooltip/);
   assert.match(buttonUnfilledTsx, /label={this\.captionIconOnly/);
-  assert.match(selectTsx, /label={[\s\S]*?this\.captionIconOnly/);
-  assert.match(filterMenuTsx, /label={this\.captionIconOnly \? label : ''}/);
+  assert.match(selectTsx, /if \(!this\.collapseLabel\) return trigger/);
+  assert.match(selectTsx, /this\.captionIconOnly \? \(this\.ariaLabel/);
+  assert.match(filterMenuTsx, /if \(!this\.collapseLabel\) return trigger/);
+  assert.match(filterMenuTsx, /this\.captionIconOnly \? label : ''/);
   assert.match(tableFilterTsx, /align="start"/);
   assert.match(tableSortTsx, /align="start"/);
   assert.match(
@@ -78,8 +104,8 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
     componentCss,
     /\.ds-table__cell--text-wrap ds-text\.ds-table__cell-track--text[\s\S]*?display: block/,
   );
-  assert.match(componentTsx, /variant === 'text-with-tag' \? 'sm' : 'md'/);
-  assert.match(componentTsx, /variant === 'text-with-tag' \? 'single' : 'double'/);
+  assert.match(rowViewTsx, /variant === 'text-with-tag' \? 'sm' : 'md'/);
+  assert.match(rowViewTsx, /variant === 'text-with-tag' \? 'single' : 'double'/);
   assert.match(componentTsx, /'ds-table--caption-visible'/);
   assert.match(css, /\.ds-table__caption-content/);
   assert.match(css, /\.ds-table__caption-content--trailing/);

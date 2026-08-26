@@ -7,7 +7,7 @@ import { Component, h, Host, Prop } from '@stencil/core';
 })
 export class TypingIndicator {
   /** Concise localized typing status. */
-  @Prop() label: string = 'Typing...';
+  @Prop() label: string = 'Typing…';
 
   render() {
     return (

@@ -1,5 +1,8 @@
 import { Component, Element, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';
-import type { PanelToolsHeaderAction } from '../PanelTools/panel-tools-types';
+import type {
+  PanelToolHeaderActionDetail,
+  PanelToolsHeaderAction,
+} from '../PanelTools/panel-tools-types';
 
 @Component({
   tag: 'ds-panel-tool-header',
@@ -32,7 +35,7 @@ export class PanelToolHeader {
 
   @Event() dsBack!: EventEmitter<MouseEvent>;
   @Event() dsMenuToggle!: EventEmitter<MouseEvent>;
-  @Event() dsAction!: EventEmitter<{ id: string; originalEvent: MouseEvent }>;
+  @Event() dsAction!: EventEmitter<PanelToolHeaderActionDetail>;
 
   @Method()
   async focusMenuTrigger() {
@@ -113,7 +116,11 @@ export class PanelToolHeader {
                   onDsClick={(event: CustomEvent<MouseEvent>) => {
                     if (!authoredActions && action.id === 'menu')
                       this.dsMenuToggle.emit(event.detail);
-                    this.dsAction.emit({ id: action.id, originalEvent: event.detail });
+                    this.dsAction.emit({
+                      id: action.id,
+                      originalEvent: event.detail,
+                      anchor: event.currentTarget as HTMLElement,
+                    });
                   }}
                 />
               </ds-tooltip>

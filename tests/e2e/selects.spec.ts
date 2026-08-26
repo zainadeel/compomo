@@ -7,6 +7,72 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
+test('select-family controls only own tooltips for the collapsible table-caption contract', async ({
+  page,
+}) => {
+  await expect(page.locator('#single > ds-tooltip')).toHaveCount(0);
+  await expect(page.locator('#filters > ds-tooltip')).toHaveCount(0);
+  await expect(page.locator('#collapsible-single > ds-tooltip')).toHaveCount(1);
+  await expect(page.locator('#collapsible-filters > ds-tooltip')).toHaveCount(1);
+});
+
+test('keeps Select activation inside an outer shadow boundary @cross-browser', async ({ page }) => {
+  const trigger = page.getByRole('combobox', { name: 'Shadow fruit' });
+
+  await trigger.click();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  await trigger.click();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+});
+
+test('keeps external FilterMenu anchors inside and continues Tab through composed order @cross-browser', async ({
+  page,
+}) => {
+  const trigger = page.getByRole('button', { name: 'Open external filters' });
+  const after = page.getByRole('button', { name: 'After external filters' });
+  const filterMenu = page.locator('#shadow-external-filters');
+  const dialog = filterMenu.getByRole('dialog', { name: 'External filters' });
+
+  await trigger.click();
+  await expect(dialog).toBeVisible();
+  await trigger.click();
+  await expect(dialog).toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (window as typeof window & { __shadowFilterCloses: number })
+            .__shadowFilterCloses
+      )
+    )
+    .toBe(0);
+
+  await after.click();
+  await expect(dialog).toBeHidden();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (window as typeof window & { __shadowFilterCloses: number })
+            .__shadowFilterCloses
+      )
+    )
+    .toBe(1);
+
+  await trigger.click();
+  const category = filterMenu.getByRole('tab', { name: 'Priority' });
+  const option = filterMenu.getByRole('option', { name: 'High' });
+  await expect(category).toBeFocused();
+
+  await page.keyboard.press('Tab');
+  await expect(option).toBeFocused();
+  await expect(dialog).toBeVisible();
+
+  await page.keyboard.press('Tab');
+  await expect(dialog).toBeHidden();
+  await expect(after).toBeFocused();
+});
+
 test('defaults both select triggers to hug width and supports explicit fill',
   chromiumOnly('layout-geometry', 'Explicit width props map to deterministic trigger geometry.'),
   async ({ page }) => {

@@ -12,6 +12,7 @@ const meta: Meta = {
     min: { control: 'number' },
     max: { control: 'number' },
     step: { control: 'number' },
+    textAlign: { control: 'select', options: ['start', 'end'] },
     size: { control: 'select', options: ['lg', 'md', 'sm', 'xs'] },
     width: { control: 'select', options: ['fill', 'hug'] },
     icon: { control: 'text' },
@@ -26,6 +27,7 @@ const meta: Meta = {
     placeholder: 'Placeholder text',
     type: 'text',
     size: 'md',
+    textAlign: 'start',
     width: 'fill',
     icon: 'MagnifyingGlass',
     hasBorder: true,
@@ -48,6 +50,7 @@ export const Playground: Story = {
         .min=${args['min']}
         .max=${args['max']}
         .step=${args['step']}
+        text-align=${args['textAlign'] ?? 'start'}
         size=${args['size'] ?? 'md'}
         width=${args['width'] ?? 'fill'}
         icon=${args['icon'] ?? ''}
@@ -115,6 +118,28 @@ export const SearchClearAlignment: Story = {
       <ds-input type="search" size="sm" value="Search query" icon="MagnifyingGlass" aria-label="Small search input"></ds-input>
       <ds-text variant="text-body-small" color="secondary">Extra small</ds-text>
       <ds-input type="search" size="xs" value="Search query" icon="MagnifyingGlass" aria-label="Extra-small search input"></ds-input>
+    </div>
+  `,
+};
+
+export const NumberSteppers: Story = {
+  name: 'Number steppers',
+  render: () => html`
+    <div style="display:grid;grid-template-columns:max-content var(--dimension-panel-width-xs);align-items:center;gap:var(--dimension-space-100) var(--dimension-space-200);">
+      <ds-text variant="text-body-small" color="secondary">Start aligned</ds-text>
+      <ds-input type="number" value="1200" min="0" max="4000" step="100" text-align="start" aria-label="Start-aligned number"></ds-input>
+      <ds-text variant="text-body-small" color="secondary">End aligned</ds-text>
+      <ds-input type="number" value="1200" min="0" max="4000" step="100" text-align="end" aria-label="End-aligned number"></ds-input>
+      <ds-text variant="text-body-small" color="secondary">Large</ds-text>
+      <ds-input type="number" size="lg" value="12" min="0" max="20" text-align="end" aria-label="Large number"></ds-input>
+      <ds-text variant="text-body-small" color="secondary">Small</ds-text>
+      <ds-input type="number" size="sm" value="12" min="0" max="20" text-align="end" aria-label="Small number"></ds-input>
+      <ds-text variant="text-body-small" color="secondary">Extra small</ds-text>
+      <ds-input type="number" size="xs" value="12" min="0" max="20" text-align="end" aria-label="Extra-small number"></ds-input>
+      <ds-text variant="text-body-small" color="secondary">At maximum</ds-text>
+      <ds-input type="number" value="20" min="0" max="20" text-align="end" aria-label="Maximum number"></ds-input>
+      <ds-text variant="text-body-small" color="secondary">Read-only</ds-text>
+      <ds-input type="number" value="12" min="0" max="20" text-align="end" read-only aria-label="Read-only number"></ds-input>
     </div>
   `,
 };

@@ -33,7 +33,7 @@ import { DividerBackground, DividerInset, DividerLength, DividerOrientation } fr
 import { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuSize, FilterMenuValues, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
 import { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
 import { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
-import { InputSize, InputType, InputWidth } from "./components/Input/Input";
+import { InputSize, InputTextAlign, InputType, InputWidth } from "./components/Input/Input";
 import { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 import { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
 import { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
@@ -51,7 +51,7 @@ import { PaginationChangeDetail, PaginationPageSizeMode } from "./components/Pag
 import { ChromeTransitionDetail } from "./shell/chrome-transition";
 import { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 import { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
-import { PanelToolsHeaderAction, PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
+import { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderActionDetail, PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
 import { RadioOption, RadioSize } from "./components/Radio/Radio";
 import { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
@@ -71,6 +71,7 @@ import { TableSavedView, TableSavedViewChangeDetail, TableSavedViewCreateDetail,
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
+import { AnchoredOverlayBoundary } from "./utils/anchored-overlay-boundary";
 import { TooltipChartItem } from "./components/TooltipChart/TooltipChart";
 export { AgentActivityItem, AgentQuestion, AgentQuestionAnswer, AgentQuestionnaireAnswerEventDetail, AgentQuestionnaireCancelEventDetail, AgentQuestionnaireLabels, AgentQuestionnaireStatus, AgentResponsePart, AgentResponseRenderMode, AgentSource, AgentToolState, ConversationAttachment, ConversationItemState, MessageComposerStatus, MessageCopyResultEventDetail, MessageDeliveryState, MessageDirection, MessageFeedback, MessageGroupPosition, MessageMetadataVisibility, MessageScrollerPosition } from "./components/conversation-types";
 export { IconColor, IconSize as IconSize1 } from "./components/Icon/Icon";
@@ -100,7 +101,7 @@ export { DividerBackground, DividerInset, DividerLength, DividerOrientation } fr
 export { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuSize, FilterMenuValues, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
 export { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
 export { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
-export { InputSize, InputType, InputWidth } from "./components/Input/Input";
+export { InputSize, InputTextAlign, InputType, InputWidth } from "./components/Input/Input";
 export { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 export { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
 export { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
@@ -118,7 +119,7 @@ export { PaginationChangeDetail, PaginationPageSizeMode } from "./components/Pag
 export { ChromeTransitionDetail } from "./shell/chrome-transition";
 export { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 export { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
-export { PanelToolsHeaderAction, PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
+export { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderActionDetail, PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
 export { RadioOption, RadioSize } from "./components/Radio/Radio";
 export { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
@@ -138,6 +139,7 @@ export { TableSavedView, TableSavedViewChangeDetail, TableSavedViewCreateDetail,
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
+export { AnchoredOverlayBoundary } from "./utils/anchored-overlay-boundary";
 export { TooltipChartItem } from "./components/TooltipChart/TooltipChart";
 export namespace Components {
     interface DsAgentActivity {
@@ -287,10 +289,9 @@ export namespace Components {
          */
         "count": number;
         /**
-          * Ring samples the shell gradient stack (base fill + wash) instead of a flat `box-shadow`. Auto-enabled under an ShellApp with an active gradient preset; set `gradient-background` to opt in/out explicitly.  The attribute must NOT start with `on` — Stencil's setAccessor routes any unknown `on*` member down the event-listener path during attribute reflection, calling addEventListener with a non-listener and throwing.
-          * @default false
+          * Ring samples the shell gradient stack (base fill + wash) instead of a flat `box-shadow`. Omit to inherit ShellApp context; set true or false to override.  The attribute must NOT start with `on` — Stencil's setAccessor routes any unknown `on*` member down the event-listener path during attribute reflection, calling addEventListener with a non-listener and throwing.
          */
-        "gradientBackground": boolean;
+        "gradientBackground"?: boolean;
         /**
           * Show the separation ring when the badge overlaps an icon or other content.
           * @default true
@@ -1230,6 +1231,10 @@ export namespace Components {
          */
         "ariaLabel": string | null;
         /**
+          * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
+         */
+        "boundary": HTMLElement | undefined;
+        /**
           * Accessible name for the category tab list.
           * @default 'Filter categories'
          */
@@ -1274,7 +1279,7 @@ export namespace Components {
          */
         "menuLabel": string;
         /**
-          * Popup width. It remains clamped to the viewport by the component recipe.
+          * Popup width. It remains clamped to its collision boundary by the component recipe.
           * @default TOKEN_CSS_LENGTHS.menuWidthLg
          */
         "menuWidth": string;
@@ -1425,6 +1430,11 @@ export namespace Components {
          */
         "step": number | undefined;
         /**
+          * Align the editable value; number steppers follow the same inline edge.
+          * @default 'start'
+         */
+        "textAlign": InputTextAlign;
+        /**
           * @default 'text'
          */
         "type": InputType;
@@ -1487,6 +1497,10 @@ export namespace Components {
           * ID of the external trigger element for positioning
          */
         "anchorId": string | undefined;
+        /**
+          * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
+         */
+        "boundary": HTMLElement | undefined;
         /**
           * Show a visible ring on the initially focused menu item. Use only when the opener was keyboard-driven.
           * @default false
@@ -2335,6 +2349,10 @@ export namespace Components {
           * Actual parent surface context; omit on primary and secondary surfaces.
          */
         "background": SelectBackground | undefined;
+        /**
+          * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
+         */
+        "boundary": HTMLElement | undefined;
         /**
           * Localized clear action label.
           * @default 'Clear'
@@ -3447,6 +3465,10 @@ export namespace Components {
          */
         "alignOffset": number | string;
         /**
+          * Explicit collision owner, `viewport`, or the nearest data-ds-overlay-boundary ancestor.
+         */
+        "boundary": AnchoredOverlayBoundary | undefined;
+        /**
           * Hover show delay before the tooltip appears. Default: `--effect-animation-delay-medium-3` (1000ms). Accepts a number (ms) or a TokoMo time token / `var(--effect-animation-delay-*)`. Applies to the initial hover/focus show only — after a recent dismiss, reopen is instant. Prefer the default; override only for denser chrome or rare/destructive actions.
           * @default TOKEN_DEFAULTS.animationDelayMedium3
          */
@@ -3542,7 +3564,7 @@ export namespace Components {
     interface DsTypingIndicator {
         /**
           * Concise localized typing status.
-          * @default 'Typing...'
+          * @default 'Typing…'
          */
         "label": string;
     }
@@ -4460,7 +4482,7 @@ declare global {
     interface HTMLDsPanelToolHeaderElementEventMap {
         "dsBack": MouseEvent;
         "dsMenuToggle": MouseEvent;
-        "dsAction": { id: string; originalEvent: MouseEvent };
+        "dsAction": PanelToolHeaderActionDetail;
     }
     interface HTMLDsPanelToolHeaderElement extends Components.DsPanelToolHeader, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsPanelToolHeaderElementEventMap>(type: K, listener: (this: HTMLDsPanelToolHeaderElement, ev: DsPanelToolHeaderCustomEvent<HTMLDsPanelToolHeaderElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -4506,10 +4528,7 @@ declare global {
         "dsHeaderBack": {
     tool: PanelToolsToolId;
   };
-        "dsHeaderAction": {
-    tool: PanelToolsToolId;
-    id: string;
-  };
+        "dsHeaderAction": PanelToolsHeaderActionDetail;
         "dsChromeTransitionStart": ChromeTransitionDetail;
         "dsChromeTransitionEnd": ChromeTransitionDetail;
     }
@@ -5134,8 +5153,7 @@ declare namespace LocalJSX {
          */
         "count"?: number;
         /**
-          * Ring samples the shell gradient stack (base fill + wash) instead of a flat `box-shadow`. Auto-enabled under an ShellApp with an active gradient preset; set `gradient-background` to opt in/out explicitly.  The attribute must NOT start with `on` — Stencil's setAccessor routes any unknown `on*` member down the event-listener path during attribute reflection, calling addEventListener with a non-listener and throwing.
-          * @default false
+          * Ring samples the shell gradient stack (base fill + wash) instead of a flat `box-shadow`. Omit to inherit ShellApp context; set true or false to override.  The attribute must NOT start with `on` — Stencil's setAccessor routes any unknown `on*` member down the event-listener path during attribute reflection, calling addEventListener with a non-listener and throwing.
          */
         "gradientBackground"?: boolean;
         /**
@@ -6163,6 +6181,10 @@ declare namespace LocalJSX {
          */
         "ariaLabel"?: string | null;
         /**
+          * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
+         */
+        "boundary"?: HTMLElement | undefined;
+        /**
           * Accessible name for the category tab list.
           * @default 'Filter categories'
          */
@@ -6207,7 +6229,7 @@ declare namespace LocalJSX {
          */
         "menuLabel"?: string;
         /**
-          * Popup width. It remains clamped to the viewport by the component recipe.
+          * Popup width. It remains clamped to its collision boundary by the component recipe.
           * @default TOKEN_CSS_LENGTHS.menuWidthLg
          */
         "menuWidth"?: string;
@@ -6383,6 +6405,11 @@ declare namespace LocalJSX {
          */
         "step"?: number | undefined;
         /**
+          * Align the editable value; number steppers follow the same inline edge.
+          * @default 'start'
+         */
+        "textAlign"?: InputTextAlign;
+        /**
           * @default 'text'
          */
         "type"?: InputType;
@@ -6445,6 +6472,10 @@ declare namespace LocalJSX {
           * ID of the external trigger element for positioning
          */
         "anchorId"?: string | undefined;
+        /**
+          * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
+         */
+        "boundary"?: HTMLElement | undefined;
         /**
           * Show a visible ring on the initially focused menu item. Use only when the opener was keyboard-driven.
           * @default false
@@ -7113,7 +7144,7 @@ declare namespace LocalJSX {
           * @default ''
          */
         "menuTriggerId"?: string;
-        "onDsAction"?: (event: DsPanelToolHeaderCustomEvent<{ id: string; originalEvent: MouseEvent }>) => void;
+        "onDsAction"?: (event: DsPanelToolHeaderCustomEvent<PanelToolHeaderActionDetail>) => void;
         "onDsBack"?: (event: DsPanelToolHeaderCustomEvent<MouseEvent>) => void;
         "onDsMenuToggle"?: (event: DsPanelToolHeaderCustomEvent<MouseEvent>) => void;
         /**
@@ -7214,10 +7245,7 @@ declare namespace LocalJSX {
         /**
           * Requests one application-owned action from the active tool header.
          */
-        "onDsHeaderAction"?: (event: DsPanelToolsCustomEvent<{
-    tool: PanelToolsToolId;
-    id: string;
-  }>) => void;
+        "onDsHeaderAction"?: (event: DsPanelToolsCustomEvent<PanelToolsHeaderActionDetail>) => void;
         /**
           * Requests navigation to the active tool's parent view.
          */
@@ -7369,6 +7397,10 @@ declare namespace LocalJSX {
           * Actual parent surface context; omit on primary and secondary surfaces.
          */
         "background"?: SelectBackground | undefined;
+        /**
+          * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
+         */
+        "boundary"?: HTMLElement | undefined;
         /**
           * Localized clear action label.
           * @default 'Clear'
@@ -8629,6 +8661,10 @@ declare namespace LocalJSX {
          */
         "alignOffset"?: number | string;
         /**
+          * Explicit collision owner, `viewport`, or the nearest data-ds-overlay-boundary ancestor.
+         */
+        "boundary"?: AnchoredOverlayBoundary | undefined;
+        /**
           * Hover show delay before the tooltip appears. Default: `--effect-animation-delay-medium-3` (1000ms). Accepts a number (ms) or a TokoMo time token / `var(--effect-animation-delay-*)`. Applies to the initial hover/focus show only — after a recent dismiss, reopen is instant. Prefer the default; override only for denser chrome or rare/destructive actions.
           * @default TOKEN_DEFAULTS.animationDelayMedium3
          */
@@ -8716,7 +8752,7 @@ declare namespace LocalJSX {
     interface DsTypingIndicator {
         /**
           * Concise localized typing status.
-          * @default 'Typing...'
+          * @default 'Typing…'
          */
         "label"?: string;
     }
@@ -9024,6 +9060,7 @@ declare namespace LocalJSX {
         "min": number | undefined;
         "max": number | undefined;
         "step": number | undefined;
+        "textAlign": InputTextAlign;
         "autoComplete": string | undefined;
         "inputMode": string;
         "enterKeyHint": string;
@@ -9495,6 +9532,7 @@ declare namespace LocalJSX {
         "align": TooltipAlign;
         "sideOffset": string;
         "alignOffset": string;
+        "boundary": AnchoredOverlayBoundary | undefined;
         "delay": string;
         "shortcutKey": string | undefined;
         "shortcutKeyPosition": 'start' | 'end';

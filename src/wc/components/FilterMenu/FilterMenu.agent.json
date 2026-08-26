@@ -38,6 +38,7 @@
     "The built-in select trigger exposes combobox semantics with a dialog popup, synchronizes expanded state, holds the pressed interaction wash without changing resting foreground while open, and restores focus after dismissal.",
     "The category pane is a vertical tab list. Arrow Up and Arrow Down wrap, Home and End jump, Arrow Right enters the option pane, and Arrow Left returns to the active category.",
     "Escape and outside activation close the popup and restore trigger focus. Tab moves through option controls and closes only when it leaves the popup boundary.",
+    "When an external trigger is inside an open shadow tree, pass its HTMLElement through anchor so outside activation, focus return, and Tab continuation use the composed tree.",
     "The trigger count reports active filter categories. Category counts and the footer report individual selected criteria; none replace visible selected-state indication."
   ],
   "states": [
@@ -48,10 +49,10 @@
     "The trigger reports how many filter categories have selections, while the footer appears when values are selected and reports the total selected criteria."
   ],
   "responsiveBehavior": [
-    "The popup defaults to the large menu-width token and clamps to the viewport.",
+    "The popup defaults to the large menu-width token and clamps to the nearest data-ds-overlay-boundary rectangle or the viewport fallback.",
     "When collapseLabel is set inside a named ds-table container narrower than 900px, the trigger omits its label and chevron, becomes icon-only, and exposes its label through a hover and keyboard-focus tooltip. Active criteria promote the prefix icon to primary.",
     "Both panes remain visible at narrow widths, with a smaller category minimum and reduced option-pane padding.",
-    "Treat side as preferred placement; the popup flips and clamps when viewport collision requires it."
+    "Treat side as preferred placement; the popup flips and clamps when boundary collision requires it. Assign boundary as an HTMLElement only for an explicit override."
   ],
   "frameworkCaveats": {
     "customElements": [

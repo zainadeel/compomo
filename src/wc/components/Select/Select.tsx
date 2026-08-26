@@ -9,6 +9,7 @@ import {
   Method,
   Prop,
   State,
+  type VNode,
   Watch,
 } from '@stencil/core';
 import {
@@ -123,6 +124,8 @@ export class Select {
   @Prop() width: SelectWidth = 'hug';
   /** Align the popup's choice edge to the trigger start or end edge. */
   @Prop() popupAlign: SelectPopupAlign = 'start';
+  /** Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used. */
+  @Prop() boundary: HTMLElement | undefined;
   /** Shared inactive treatment; removes interaction and form submission. */
   @Prop() isInactive: boolean = false;
   /** Replace the prefix with a loader and disable option interaction. */
@@ -235,6 +238,9 @@ export class Select {
       },
       get popupAlign() {
         return owner.popupAlign;
+      },
+      get boundary() {
+        return owner.boundary;
       },
       get open() {
         return owner.open;
@@ -351,6 +357,7 @@ export class Select {
   }
 
   @Watch('popupAlign')
+  @Watch('boundary')
   onPopupAlignChange() {
     this.controller.positionChanged();
   }
@@ -705,6 +712,15 @@ export class Select {
     this.captionCompactDisconnect = undefined;
   }
 
+  private renderCaptionTooltip(trigger: VNode, label: string): VNode {
+    if (!this.collapseLabel) return trigger;
+    return (
+      <ds-tooltip label={label} side="top" size="sm">
+        {trigger}
+      </ds-tooltip>
+    );
+  }
+
   render() {
     const inactive = this.isDisabled;
     const showPlaceholder = !this.hasSelection;
@@ -748,15 +764,7 @@ export class Select {
           [`ds-select-trigger-host--background-${this.background}`]: !!this.background,
         }}
       >
-        <ds-tooltip
-          label={
-            this.captionIconOnly
-              ? (this.ariaLabel?.trim() || this.placeholder)
-              : ''
-          }
-          side="top"
-          size="sm"
-        >
+        {this.renderCaptionTooltip(
           <button
           ref={element => {
             this.controller.setTriggerElement((element as HTMLButtonElement) ?? null);
@@ -869,8 +877,9 @@ export class Select {
               />
             </span>
           )}
-          </button>
-        </ds-tooltip>
+          </button>,
+          this.captionIconOnly ? (this.ariaLabel?.trim() || this.placeholder) : ''
+        )}
 
         {this.open && (
           <div

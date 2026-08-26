@@ -26,6 +26,7 @@ import {
   type ToastSwipeDirection,
 } from '../../toast';
 import { computeAnchoredPosition } from '../../utils/anchored-position';
+import { resolveAnchoredOverlayBoundaryRect } from '../../utils/anchored-overlay-boundary';
 
 interface ToastTimer {
   timerKey: number;
@@ -812,6 +813,7 @@ export class Toast {
         viewportPadPx: resolveCssLengthPx(undefined, TOKEN_DEFAULTS.space200),
         viewportWidth: window.innerWidth,
         viewportHeight: window.innerHeight,
+        collisionRect: resolveAnchoredOverlayBoundaryRect(anchor),
       });
       const current = this.anchoredPositions.get(record.id);
       if (
