@@ -659,6 +659,7 @@ paginated.pagination = {
   totalItems: paginatedRows.length,
   pageSizeOptions: [25, 50, 100, 200],
   fitToPage: true,
+  showFirstLastButtons: true,
   itemLabel: 'rows',
   pageSizeLabel: 'Rows',
 };

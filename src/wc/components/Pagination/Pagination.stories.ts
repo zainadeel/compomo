@@ -22,6 +22,7 @@ const meta: Meta = {
     totalItems: 500,
     loading: false,
     fitToPageInactive: false,
+    showFirstLastButtons: false,
   },
 };
 
@@ -37,6 +38,7 @@ export const Playground: Story = {
         .pageSize=${args['pageSize']}
         .totalItems=${args['totalItems']}
         .loading=${args['loading']}
+        .showFirstLastButtons=${args['showFirstLastButtons']}
         page-size-label="Rows"
         fit-to-page
         ?fit-to-page-inactive=${args['fitToPageInactive']}
@@ -63,6 +65,15 @@ export const Outcomes: Story = {
       <ds-pagination total-items="0" page-size-label="Rows" item-label="rows"></ds-pagination>
       <ds-pagination page-index="2" page-size="25" total-items="63" page-size-label="Rows" item-label="rows"></ds-pagination>
       <ds-pagination page-index="1" page-size="25" total-items="500" loading page-size-label="Groups" item-label="groups"></ds-pagination>
+      <ds-pagination
+        page-index="4"
+        page-size="25"
+        total-items="500"
+        page-size-label="Rows"
+        item-label="rows"
+        show-first-last-buttons
+        label="Pagination with first and last page controls"
+      ></ds-pagination>
     </div>
   `,
 };

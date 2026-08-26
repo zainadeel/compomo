@@ -836,6 +836,7 @@ export class Table {
       itemLabel: pagination.itemLabel ?? 'items',
       pageSizeLabel: pagination.pageSizeLabel ?? 'Items',
       ariaLabel: pagination.ariaLabel ?? `${this.caption} pagination`,
+      showFirstLastButtons: pagination.showFirstLastButtons ?? false,
       previousPageIndex: pagination.pageIndex,
       previousPageSize: pagination.pageSize,
       previousPageSizeMode: 'fit',
@@ -898,6 +899,7 @@ export class Table {
       itemLabel: pagination.itemLabel ?? 'items',
       pageSizeLabel: pagination.pageSizeLabel ?? 'Items',
       ariaLabel: pagination.ariaLabel ?? `${this.caption} pagination`,
+      showFirstLastButtons: pagination.showFirstLastButtons ?? false,
       previousPageIndex: state.pageIndex,
       previousPageSize: state.pageSize,
       previousPageSizeMode: state.pageSizeMode,
@@ -2012,6 +2014,7 @@ export class Table {
                 itemLabel={pagination.itemLabel ?? 'items'}
                 pageSizeLabel={pagination.pageSizeLabel ?? 'Items'}
                 label={pagination.ariaLabel ?? `${this.caption} pagination`}
+                showFirstLastButtons={pagination.showFirstLastButtons ?? false}
                 loading={this.loading}
                 onDsChange={(event: CustomEvent<PaginationChangeDetail>) =>
                   this.dsPaginationChange.emit(event.detail)
