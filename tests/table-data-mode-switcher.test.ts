@@ -28,13 +28,16 @@ test('builds the supported data-mode choices from the controlled mode', () => {
         value: 'virtual',
         isSelected: true,
       },
-    ],
+    ]
   );
 });
 
 test('accepts only supported data-mode menu values', () => {
   assert.equal(tableDataModeFromMenuItem({ label: 'Infinite', value: 'infinite' }), 'infinite');
-  assert.equal(tableDataModeFromMenuItem({ label: 'Pagination', value: 'pagination' }), 'pagination');
+  assert.equal(
+    tableDataModeFromMenuItem({ label: 'Pagination', value: 'pagination' }),
+    'pagination'
+  );
   assert.equal(tableDataModeFromMenuItem({ label: 'Virtual', value: 'virtual' }), 'virtual');
   assert.equal(tableDataModeFromMenuItem({ label: 'Missing' }), null);
 });

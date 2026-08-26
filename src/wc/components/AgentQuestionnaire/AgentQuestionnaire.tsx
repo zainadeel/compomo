@@ -24,10 +24,7 @@ import {
   normalizeQuestionAnswer,
   validateQuestionDraft,
 } from './agent-questionnaire-model';
-import type {
-  AgentQuestionDraft,
-  AgentQuestionDrafts,
-} from './agent-questionnaire-model';
+import type { AgentQuestionDraft, AgentQuestionDrafts } from './agent-questionnaire-model';
 
 const DEFAULT_LABELS: AgentQuestionnaireLabels = {
   progress: 'Question {current} of {total}',
@@ -134,15 +131,16 @@ export class AgentQuestionnaire {
     const focus = () => {
       const invalidControl = preferInvalid
         ? this.el.querySelector<HTMLElement>(
-            '[data-question-control][aria-invalid="true"]:not([disabled])',
+            '[data-question-control][aria-invalid="true"]:not([disabled])'
           )
         : null;
-      const control = invalidControl ??
+      const control =
+        invalidControl ??
         this.el.querySelector<HTMLElement>(
-          '[data-question-control]:not([disabled]):not([is-inactive])',
+          '[data-question-control]:not([disabled]):not([is-inactive])'
         );
       const action = this.el.querySelector<HTMLElement>(
-        '[data-question-action]:not([is-inactive]):not([is-loading])',
+        '[data-question-action]:not([is-inactive]):not([is-loading])'
       );
       const target = (control ?? action) as
         | (HTMLElement & { setFocus?: () => Promise<void> })
@@ -209,9 +207,7 @@ export class AgentQuestionnaire {
 
   private submit() {
     if (this.disabled || this.answerPending) return;
-    const invalidIndex = this.questions.findIndex(
-      question => !this.validateWithoutFocus(question),
-    );
+    const invalidIndex = this.questions.findIndex(question => !this.validateWithoutFocus(question));
     if (invalidIndex >= 0) {
       this.currentStep = invalidIndex;
       this.focusCurrentControl(true);
@@ -222,7 +218,7 @@ export class AgentQuestionnaire {
     this.dsAnswer.emit({
       requestId: this.requestId,
       answers: this.questions.map(question =>
-        normalizeQuestionAnswer(question, this.drafts[question.id]),
+        normalizeQuestionAnswer(question, this.drafts[question.id])
       ),
     });
   }
@@ -250,16 +246,12 @@ export class AgentQuestionnaire {
     });
     if (otherSelected) {
       requestAnimationFrame(() =>
-        this.el.querySelector<HTMLInputElement>('[data-question-other-input]')?.focus(),
+        this.el.querySelector<HTMLInputElement>('[data-question-other-input]')?.focus()
       );
     }
   }
 
-  private renderSingleChoice(
-    question: AgentQuestion,
-    promptId: string,
-    errorId: string,
-  ) {
+  private renderSingleChoice(question: AgentQuestion, promptId: string, errorId: string) {
     const draft = this.drafts[question.id];
     const value = draft.otherSelected
       ? this.otherValue
@@ -268,9 +260,7 @@ export class AgentQuestionnaire {
         : '';
     const options = [
       ...(question.choices ?? []),
-      ...(question.allowOther
-        ? [{ value: this.otherValue, label: this.copy.other }]
-        : []),
+      ...(question.allowOther ? [{ value: this.otherValue, label: this.copy.other }] : []),
     ];
     return (
       <div class="questionnaire__single-choice">
@@ -283,9 +273,7 @@ export class AgentQuestionnaire {
           form={`ds-agent-questionnaire-detached-${this.instanceId}`}
           ariaLabelledby={promptId}
           aria-describedby={this.validation[question.id] ? errorId : undefined}
-          onDsChange={(event: CustomEvent<string>) =>
-            this.selectSingle(question, event.detail)
-          }
+          onDsChange={(event: CustomEvent<string>) => this.selectSingle(question, event.detail)}
         />
         {draft.otherSelected ? this.renderOtherInput(question, errorId) : null}
       </div>
@@ -331,9 +319,7 @@ export class AgentQuestionnaire {
                 this.updateDraft(question.id, { otherSelected: event.detail });
                 if (event.detail) {
                   requestAnimationFrame(() =>
-                    this.el
-                      .querySelector<HTMLInputElement>('[data-question-other-input]')
-                      ?.focus(),
+                    this.el.querySelector<HTMLInputElement>('[data-question-other-input]')?.focus()
                   );
                 }
               }}
@@ -432,11 +418,13 @@ export class AgentQuestionnaire {
         <ol class="questionnaire__summary">
           {this.questions.map(question => (
             <li>
-              <ds-text variant="text-body-small" emphasis>{question.question}</ds-text>
+              <ds-text variant="text-body-small" emphasis>
+                {question.question}
+              </ds-text>
               <ds-text variant="text-body-small" color="secondary">
                 {formatQuestionAnswer(
                   question,
-                  this.answers.find(answer => answer.questionId === question.id),
+                  this.answers.find(answer => answer.questionId === question.id)
                 )}
               </ds-text>
             </li>
@@ -475,7 +463,9 @@ export class AgentQuestionnaire {
           aria-label={question.question}
         >
           <header class="questionnaire__header">
-            <ds-text variant="text-caption" color="secondary">{this.progressLabel()}</ds-text>
+            <ds-text variant="text-caption" color="secondary">
+              {this.progressLabel()}
+            </ds-text>
             {this.allowCancel ? (
               <ds-tooltip label={this.copy.cancel} side="top" size="sm">
                 <ds-button-unfilled
@@ -495,7 +485,9 @@ export class AgentQuestionnaire {
           {this.status === 'error' && this.errorMessage ? (
             <div class="questionnaire__submission-error" role="alert">
               <ds-icon name="ErrorTriangle" size="xs" color="inherit" />
-              <ds-text variant="text-body-small" color="negative">{this.errorMessage}</ds-text>
+              <ds-text variant="text-body-small" color="negative">
+                {this.errorMessage}
+              </ds-text>
             </div>
           ) : null}
           <footer class="questionnaire__actions">

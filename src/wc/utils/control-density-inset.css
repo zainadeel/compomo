@@ -16,55 +16,41 @@
 :host(.ds-control--lg.ds-control--inset),
 .ds-control--lg.ds-control--inset {
   --ds-control-height: calc(var(--dimension-size-500) - var(--dimension-space-050));
-  --ds-control-padding-inline: calc(
-    var(--dimension-space-100) - var(--dimension-space-025)
-  );
+  --ds-control-padding-inline: calc(var(--dimension-space-100) - var(--dimension-space-025));
 }
 
 :host(.ds-control--md.ds-control--inset),
 .ds-control--md.ds-control--inset {
   --ds-control-height: calc(var(--dimension-size-400) - var(--dimension-space-050));
-  --ds-control-padding-inline: calc(
-    var(--dimension-space-075) - var(--dimension-space-025)
-  );
+  --ds-control-padding-inline: calc(var(--dimension-space-075) - var(--dimension-space-025));
 }
 
 :host(.ds-control--sm.ds-control--inset),
 .ds-control--sm.ds-control--inset {
   --ds-control-height: calc(var(--dimension-size-300) - var(--dimension-space-050));
-  --ds-control-padding-inline: calc(
-    var(--dimension-space-050) - var(--dimension-space-025)
-  );
+  --ds-control-padding-inline: calc(var(--dimension-space-050) - var(--dimension-space-025));
 }
 
 :host(.ds-control--xs.ds-control--inset),
 .ds-control--xs.ds-control--inset {
   --ds-control-height: calc(var(--dimension-size-200) - var(--dimension-space-050));
-  --ds-control-padding-inline: calc(
-    var(--dimension-space-025) - var(--dimension-space-025)
-  );
+  --ds-control-padding-inline: calc(var(--dimension-space-025) - var(--dimension-space-025));
 }
 
 :host(.ds-control--lg.ds-control--inset-double),
 .ds-control--lg.ds-control--inset-double {
   --ds-control-height: calc(var(--dimension-size-500) - var(--dimension-space-100));
-  --ds-control-padding-inline: calc(
-    var(--dimension-space-100) - var(--dimension-space-050)
-  );
+  --ds-control-padding-inline: calc(var(--dimension-space-100) - var(--dimension-space-050));
 }
 
 :host(.ds-control--md.ds-control--inset-double),
 .ds-control--md.ds-control--inset-double {
   --ds-control-height: calc(var(--dimension-size-400) - var(--dimension-space-100));
-  --ds-control-padding-inline: calc(
-    var(--dimension-space-075) - var(--dimension-space-050)
-  );
+  --ds-control-padding-inline: calc(var(--dimension-space-075) - var(--dimension-space-050));
 }
 
 :host(.ds-control--sm.ds-control--inset-double),
 .ds-control--sm.ds-control--inset-double {
   --ds-control-height: calc(var(--dimension-size-300) - var(--dimension-space-100));
-  --ds-control-padding-inline: calc(
-    var(--dimension-space-050) - var(--dimension-space-050)
-  );
+  --ds-control-padding-inline: calc(var(--dimension-space-050) - var(--dimension-space-050));
 }

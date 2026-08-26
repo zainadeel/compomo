@@ -16,14 +16,14 @@ attached to an edge. Consume the complete TokoMo elevation token through
 
 ## Standard elevation tokens
 
-| Token | Use |
-| --- | --- |
-| `--effect-elevation-elevated-none` | Explicitly no elevation |
-| `--effect-elevation-elevated-sm` | Subtle raised surface |
-| `--effect-elevation-elevated-md` | Stronger raised surface |
+| Token                                  | Use                                                |
+| -------------------------------------- | -------------------------------------------------- |
+| `--effect-elevation-elevated-none`     | Explicitly no elevation                            |
+| `--effect-elevation-elevated-sm`       | Subtle raised surface                              |
+| `--effect-elevation-elevated-md`       | Stronger raised surface                            |
 | `--effect-elevation-elevated-floating` | Popover, tooltip, modal, or other floating overlay |
-| `--effect-elevation-depressed-sm` | Compact inset field or control |
-| `--effect-elevation-depressed-md` | Stronger inset region |
+| `--effect-elevation-depressed-sm`      | Compact inset field or control                     |
+| `--effect-elevation-depressed-md`      | Stronger inset region                              |
 
 Choose the lowest level that communicates the required relationship. A normal
 card does not need floating elevation merely because it should be noticeable;
@@ -33,12 +33,12 @@ surface, border, and spacing hierarchy usually provide that distinction.
 
 Use panel tokens only for surfaces attached to the matching container edge:
 
-| Attached edge | Token |
-| --- | --- |
-| Top | `--effect-elevation-elevated-panel-top` |
-| Right | `--effect-elevation-elevated-panel-right` |
-| Bottom | `--effect-elevation-elevated-panel-bottom` |
-| Left | `--effect-elevation-elevated-panel-left` |
+| Attached edge | Token                                      |
+| ------------- | ------------------------------------------ |
+| Top           | `--effect-elevation-elevated-panel-top`    |
+| Right         | `--effect-elevation-elevated-panel-right`  |
+| Bottom        | `--effect-elevation-elevated-panel-bottom` |
+| Left          | `--effect-elevation-elevated-panel-left`   |
 
 Directional panel shadows are asymmetric. Do not use them on floating cards or
 surfaces with open space around every side.
@@ -97,9 +97,7 @@ non-scaling controls; their focus and error strokes remain control-owned.
 Every elevation recipe is composed from matching shadow and highlight tokens:
 
 ```css
-box-shadow:
-  var(--effect-shadow-elevated-floating),
-  var(--effect-highlight-elevated-floating);
+box-shadow: var(--effect-shadow-elevated-floating), var(--effect-highlight-elevated-floating);
 ```
 
 Use the combined `--effect-elevation-*` token by default. Split the parts only

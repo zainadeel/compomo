@@ -75,7 +75,8 @@ export class Breadcrumb {
       !this.listElement ||
       !this.ellipsisMeasurement ||
       this.items.length === 0
-    ) return;
+    )
+      return;
 
     const naturalWidths = this.items.map(
       (_, index) => this.measurementElements[index]?.getBoundingClientRect().width ?? 0
@@ -103,19 +104,14 @@ export class Breadcrumb {
     // Protect the current/newest location. Extra width is granted newest-to-oldest,
     // so ancestors collapse in path order as the available space decreases.
     for (let index = naturalWidths.length - 1; index >= 0 && remainingWidth > 0; index -= 1) {
-      const extraWidth = Math.min(
-        remainingWidth,
-        naturalWidths[index] - minimumWidths[index]
-      );
+      const extraWidth = Math.min(remainingWidth, naturalWidths[index] - minimumWidths[index]);
       nextWidths[index] += extraWidth;
       remainingWidth -= extraWidth;
     }
 
     const widthsChanged =
       nextWidths.length !== this.labelWidths.length ||
-      nextWidths.some(
-        (width, index) => Math.abs(width - (this.labelWidths[index] ?? 0)) > 0.25
-      );
+      nextWidths.some((width, index) => Math.abs(width - (this.labelWidths[index] ?? 0)) > 0.25);
     const nextCollapsedLabels = nextWidths.map(
       (width, index) =>
         naturalWidths[index] > minimumWidths[index] &&
@@ -123,9 +119,7 @@ export class Breadcrumb {
     );
     const collapsedLabelsChanged =
       nextCollapsedLabels.length !== this.collapsedLabels.length ||
-      nextCollapsedLabels.some(
-        (isCollapsed, index) => isCollapsed !== this.collapsedLabels[index]
-      );
+      nextCollapsedLabels.some((isCollapsed, index) => isCollapsed !== this.collapsedLabels[index]);
     if (widthsChanged) this.labelWidths = nextWidths;
     if (collapsedLabelsChanged) this.collapsedLabels = nextCollapsedLabels;
   }
@@ -138,26 +132,26 @@ export class Breadcrumb {
   private renderItem(item: BreadcrumbItem, index: number) {
     const allocatedWidth = this.labelWidths[index];
     const isCollapsed = this.collapsedLabels[index] ?? false;
-    const label = (
-      [
-        <ds-text
-          class="breadcrumb__label ds-text-decoration"
-          as="span"
-          variant="text-caption"
-          color="inherit"
-          lineTruncation={isCollapsed ? 'none' : 1}
-          aria-hidden={isCollapsed ? 'true' : undefined}
-          style={
-            allocatedWidth === undefined
-              ? undefined
-              : { '--breadcrumb-label-width': `${allocatedWidth}px` }
-          }
-        >
-          {isCollapsed ? '…' : item.label}
-        </ds-text>,
-        isCollapsed ? <span class="breadcrumb__accessible-label ds-visually-hidden">{item.label}</span> : null,
-      ]
-    );
+    const label = [
+      <ds-text
+        class="breadcrumb__label ds-text-decoration"
+        as="span"
+        variant="text-caption"
+        color="inherit"
+        lineTruncation={isCollapsed ? 'none' : 1}
+        aria-hidden={isCollapsed ? 'true' : undefined}
+        style={
+          allocatedWidth === undefined
+            ? undefined
+            : { '--breadcrumb-label-width': `${allocatedWidth}px` }
+        }
+      >
+        {isCollapsed ? '…' : item.label}
+      </ds-text>,
+      isCollapsed ? (
+        <span class="breadcrumb__accessible-label ds-visually-hidden">{item.label}</span>
+      ) : null,
+    ];
 
     if (item.isCurrent) {
       return (

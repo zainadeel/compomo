@@ -68,10 +68,7 @@ test('emits independently guarded requests with the group identity', () => {
       loadedRowCount: 1,
     },
   ]);
-  assert.deepEqual(announcements, [
-    'Loading more Critical results',
-    'Loading more High results',
-  ]);
+  assert.deepEqual(announcements, ['Loading more Critical results', 'Loading more High results']);
 });
 
 test('announces rows and terminal state only for the group that changed', () => {

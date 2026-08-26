@@ -8,43 +8,127 @@
 
 /* ── Intent × Contrast — strong ─────────────────────────────────────────── */
 
-:host(.tag--intent-neutral.tag--contrast-strong)  { background-color: var(--color-background-strong-neutral);  color: var(--color-foreground-medium-neutral);  }
-:host(.tag--intent-brand.tag--contrast-strong)    { background-color: var(--color-background-strong-brand);    color: var(--color-foreground-on-strong-background-primary); }
-:host(.tag--intent-ai.tag--contrast-strong)       { background-color: var(--color-background-strong-ai);       color: var(--color-foreground-medium-ai);       }
-:host(.tag--intent-negative.tag--contrast-strong) { background-color: var(--color-background-strong-negative); color: var(--color-foreground-medium-negative); }
-:host(.tag--intent-warning.tag--contrast-strong)  { background-color: var(--color-background-strong-warning);  color: var(--color-foreground-medium-warning);  }
-:host(.tag--intent-caution.tag--contrast-strong)  { background-color: var(--color-background-strong-caution);  color: var(--color-foreground-medium-caution);  }
-:host(.tag--intent-positive.tag--contrast-strong) { background-color: var(--color-background-strong-positive); color: var(--color-foreground-medium-positive); }
+:host(.tag--intent-neutral.tag--contrast-strong) {
+  background-color: var(--color-background-strong-neutral);
+  color: var(--color-foreground-medium-neutral);
+}
+:host(.tag--intent-brand.tag--contrast-strong) {
+  background-color: var(--color-background-strong-brand);
+  color: var(--color-foreground-on-strong-background-primary);
+}
+:host(.tag--intent-ai.tag--contrast-strong) {
+  background-color: var(--color-background-strong-ai);
+  color: var(--color-foreground-medium-ai);
+}
+:host(.tag--intent-negative.tag--contrast-strong) {
+  background-color: var(--color-background-strong-negative);
+  color: var(--color-foreground-medium-negative);
+}
+:host(.tag--intent-warning.tag--contrast-strong) {
+  background-color: var(--color-background-strong-warning);
+  color: var(--color-foreground-medium-warning);
+}
+:host(.tag--intent-caution.tag--contrast-strong) {
+  background-color: var(--color-background-strong-caution);
+  color: var(--color-foreground-medium-caution);
+}
+:host(.tag--intent-positive.tag--contrast-strong) {
+  background-color: var(--color-background-strong-positive);
+  color: var(--color-foreground-medium-positive);
+}
 
 /* ── Intent × Contrast — bold ───────────────────────────────────────────── */
 
-:host(.tag--intent-neutral.tag--contrast-bold)  { background-color: var(--color-background-bold-neutral);  color: var(--color-foreground-on-bold-background-primary); }
-:host(.tag--intent-brand.tag--contrast-bold)    { background-color: var(--color-background-bold-brand);    color: var(--color-foreground-on-bold-background-primary); }
-:host(.tag--intent-ai.tag--contrast-bold)       { background-color: var(--color-background-bold-ai);       color: var(--color-foreground-on-bold-background-primary); }
-:host(.tag--intent-negative.tag--contrast-bold) { background-color: var(--color-background-bold-negative); color: var(--color-foreground-on-bold-background-primary); }
-:host(.tag--intent-warning.tag--contrast-bold)  { background-color: var(--color-background-bold-warning);  color: var(--color-foreground-on-bold-background-primary); }
-:host(.tag--intent-caution.tag--contrast-bold)  { background-color: var(--color-background-bold-caution);  color: var(--color-foreground-on-bold-background-primary); }
-:host(.tag--intent-positive.tag--contrast-bold) { background-color: var(--color-background-bold-positive); color: var(--color-foreground-on-bold-background-primary); }
+:host(.tag--intent-neutral.tag--contrast-bold) {
+  background-color: var(--color-background-bold-neutral);
+  color: var(--color-foreground-on-bold-background-primary);
+}
+:host(.tag--intent-brand.tag--contrast-bold) {
+  background-color: var(--color-background-bold-brand);
+  color: var(--color-foreground-on-bold-background-primary);
+}
+:host(.tag--intent-ai.tag--contrast-bold) {
+  background-color: var(--color-background-bold-ai);
+  color: var(--color-foreground-on-bold-background-primary);
+}
+:host(.tag--intent-negative.tag--contrast-bold) {
+  background-color: var(--color-background-bold-negative);
+  color: var(--color-foreground-on-bold-background-primary);
+}
+:host(.tag--intent-warning.tag--contrast-bold) {
+  background-color: var(--color-background-bold-warning);
+  color: var(--color-foreground-on-bold-background-primary);
+}
+:host(.tag--intent-caution.tag--contrast-bold) {
+  background-color: var(--color-background-bold-caution);
+  color: var(--color-foreground-on-bold-background-primary);
+}
+:host(.tag--intent-positive.tag--contrast-bold) {
+  background-color: var(--color-background-bold-positive);
+  color: var(--color-foreground-on-bold-background-primary);
+}
 
 /* ── Intent × Contrast — medium ─────────────────────────────────────────── */
 
-:host(.tag--intent-neutral.tag--contrast-medium)  { background-color: var(--color-background-medium-neutral);  color: var(--color-foreground-strong-neutral);  }
-:host(.tag--intent-brand.tag--contrast-medium)    { background-color: var(--color-background-medium-brand);    color: var(--color-foreground-on-medium-background-primary); }
-:host(.tag--intent-ai.tag--contrast-medium)       { background-color: var(--color-background-medium-ai);       color: var(--color-foreground-strong-ai);       }
-:host(.tag--intent-negative.tag--contrast-medium) { background-color: var(--color-background-medium-negative); color: var(--color-foreground-strong-negative); }
-:host(.tag--intent-warning.tag--contrast-medium)  { background-color: var(--color-background-medium-warning);  color: var(--color-foreground-strong-warning);  }
-:host(.tag--intent-caution.tag--contrast-medium)  { background-color: var(--color-background-medium-caution);  color: var(--color-foreground-strong-caution);  }
-:host(.tag--intent-positive.tag--contrast-medium) { background-color: var(--color-background-medium-positive); color: var(--color-foreground-strong-positive); }
+:host(.tag--intent-neutral.tag--contrast-medium) {
+  background-color: var(--color-background-medium-neutral);
+  color: var(--color-foreground-strong-neutral);
+}
+:host(.tag--intent-brand.tag--contrast-medium) {
+  background-color: var(--color-background-medium-brand);
+  color: var(--color-foreground-on-medium-background-primary);
+}
+:host(.tag--intent-ai.tag--contrast-medium) {
+  background-color: var(--color-background-medium-ai);
+  color: var(--color-foreground-strong-ai);
+}
+:host(.tag--intent-negative.tag--contrast-medium) {
+  background-color: var(--color-background-medium-negative);
+  color: var(--color-foreground-strong-negative);
+}
+:host(.tag--intent-warning.tag--contrast-medium) {
+  background-color: var(--color-background-medium-warning);
+  color: var(--color-foreground-strong-warning);
+}
+:host(.tag--intent-caution.tag--contrast-medium) {
+  background-color: var(--color-background-medium-caution);
+  color: var(--color-foreground-strong-caution);
+}
+:host(.tag--intent-positive.tag--contrast-medium) {
+  background-color: var(--color-background-medium-positive);
+  color: var(--color-foreground-strong-positive);
+}
 
 /* ── Intent × Contrast — faint ──────────────────────────────────────────── */
 
-:host(.tag--intent-neutral.tag--contrast-faint)  { background-color: var(--color-background-faint-neutral);  color: var(--color-foreground-bold-neutral);  }
-:host(.tag--intent-brand.tag--contrast-faint)    { background-color: var(--color-background-faint-brand);    color: var(--color-foreground-bold-brand);    }
-:host(.tag--intent-ai.tag--contrast-faint)       { background-color: var(--color-background-faint-ai);       color: var(--color-foreground-bold-ai);       }
-:host(.tag--intent-negative.tag--contrast-faint) { background-color: var(--color-background-faint-negative); color: var(--color-foreground-bold-negative); }
-:host(.tag--intent-warning.tag--contrast-faint)  { background-color: var(--color-background-faint-warning);  color: var(--color-foreground-bold-warning);  }
-:host(.tag--intent-caution.tag--contrast-faint)  { background-color: var(--color-background-faint-caution);  color: var(--color-foreground-bold-caution);  }
-:host(.tag--intent-positive.tag--contrast-faint) { background-color: var(--color-background-faint-positive); color: var(--color-foreground-bold-positive); }
+:host(.tag--intent-neutral.tag--contrast-faint) {
+  background-color: var(--color-background-faint-neutral);
+  color: var(--color-foreground-bold-neutral);
+}
+:host(.tag--intent-brand.tag--contrast-faint) {
+  background-color: var(--color-background-faint-brand);
+  color: var(--color-foreground-bold-brand);
+}
+:host(.tag--intent-ai.tag--contrast-faint) {
+  background-color: var(--color-background-faint-ai);
+  color: var(--color-foreground-bold-ai);
+}
+:host(.tag--intent-negative.tag--contrast-faint) {
+  background-color: var(--color-background-faint-negative);
+  color: var(--color-foreground-bold-negative);
+}
+:host(.tag--intent-warning.tag--contrast-faint) {
+  background-color: var(--color-background-faint-warning);
+  color: var(--color-foreground-bold-warning);
+}
+:host(.tag--intent-caution.tag--contrast-faint) {
+  background-color: var(--color-background-faint-caution);
+  color: var(--color-foreground-bold-caution);
+}
+:host(.tag--intent-positive.tag--contrast-faint) {
+  background-color: var(--color-background-faint-positive);
+  color: var(--color-foreground-bold-positive);
+}
 
 /* ── Interactive menu trigger ───────────────────────────────────────────── */
 

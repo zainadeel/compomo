@@ -53,7 +53,7 @@ export class AgentActivity {
               variant="text-body-small"
               shimmer={!this.expanded && this.currentItem?.state === 'active'}
             >
-              {this.expanded ? this.heading : this.currentItem?.label ?? this.heading}
+              {this.expanded ? this.heading : (this.currentItem?.label ?? this.heading)}
             </ds-text>
           </summary>
           <ol>
@@ -81,7 +81,9 @@ export class AgentActivity {
                       {item.detail}
                     </ds-text>
                   ) : null}
-                  <span class="agent-activity__state ds-visually-hidden">{this.stateLabel(item)}</span>
+                  <span class="agent-activity__state ds-visually-hidden">
+                    {this.stateLabel(item)}
+                  </span>
                 </span>
               </li>
             ))}

@@ -37,14 +37,14 @@ export function shellChromeLayerActive(preset: ShellGradientPreset): boolean {
  * Tokens follow `data-theme` (light/dark intent stops).
  */
 export function buildShellRadialGradient(
-  preset: ShellGradientPreset = DEFAULT_SHELL_GRADIENT_PRESET,
+  preset: ShellGradientPreset = DEFAULT_SHELL_GRADIENT_PRESET
 ): string {
   return buildShellRadialGradientForPreset(preset);
 }
 
 /** Built-in radial image for the selected shell preset. */
 export function shellGradientImage(
-  preset: ShellGradientPreset = DEFAULT_SHELL_GRADIENT_PRESET,
+  preset: ShellGradientPreset = DEFAULT_SHELL_GRADIENT_PRESET
 ): string {
   return buildShellRadialGradient(preset);
 }

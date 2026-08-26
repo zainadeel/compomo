@@ -14,9 +14,33 @@ const DONUT_DATA: ChartLegendItem[] = [
   { label: 'Offline', value: 31 },
   { label: 'Needs attention', value: 12 },
 ];
-const DONUT_SLICES = pieLayout(DONUT_DATA, { value: row => row.value ?? 0, key: 'label', label: 'label' });
+const DONUT_SLICES = pieLayout(DONUT_DATA, {
+  value: row => row.value ?? 0,
+  key: 'label',
+  label: 'label',
+});
 const DONUT_DEFINITION = defineChart({
-  marks: [polar({ innerRadius: 0.75, grid: 'none', marks: [arcMark(DONUT_SLICES, { id: 'status', key: 'key', theta1: 'theta1', theta2: 'theta2', z: 'label', value: 'value', label: 'label' })], center: { value: String(DONUT_DATA.reduce((total, row) => total + (row.value ?? 0), 0)), caption: 'Total devices' } })],
+  marks: [
+    polar({
+      innerRadius: 0.75,
+      grid: 'none',
+      marks: [
+        arcMark(DONUT_SLICES, {
+          id: 'status',
+          key: 'key',
+          theta1: 'theta1',
+          theta2: 'theta2',
+          z: 'label',
+          value: 'value',
+          label: 'label',
+        }),
+      ],
+      center: {
+        value: String(DONUT_DATA.reduce((total, row) => total + (row.value ?? 0), 0)),
+        caption: 'Total devices',
+      },
+    }),
+  ],
   focus: 'nearest',
   tooltip: true,
 });
@@ -32,7 +56,14 @@ const CHART_ROWS = [
 ];
 const CHART_DEFINITION = defineChart({
   marks: [
-    lineY(CHART_ROWS, { id: 'trend', key: 'id', x: 'month', y: 'value', z: 'series', interactive: false }),
+    lineY(CHART_ROWS, {
+      id: 'trend',
+      key: 'id',
+      x: 'month',
+      y: 'value',
+      z: 'series',
+      interactive: false,
+    }),
     dot(CHART_ROWS, { id: 'points', key: 'id', x: 'month', y: 'value', z: 'series' }),
   ],
   x: { scale: scalePoint },
@@ -60,12 +91,18 @@ type Story = StoryObj;
 
 export const Donut: Story = {
   render: args => html`
-    <ds-card-chart heading=${args['heading']} card-width=${args['cardWidth']} variant="chart" show-filter>
+    <ds-card-chart
+      heading=${args['heading']}
+      card-width=${args['cardWidth']}
+      variant="chart"
+      show-filter
+    >
       <ds-chart
         slot="chart"
         label="Device status distribution"
         ${ref(element => {
-          if (element) (element as HTMLElement & { definition: unknown }).definition = DONUT_DEFINITION;
+          if (element)
+            (element as HTMLElement & { definition: unknown }).definition = DONUT_DEFINITION;
         })}
       ></ds-chart>
       <ds-chart-legend
@@ -80,12 +117,18 @@ export const Donut: Story = {
 
 export const Chart: Story = {
   render: args => html`
-    <ds-card-chart heading=${args['heading']} card-width=${args['cardWidth']} variant="chart" show-filter>
+    <ds-card-chart
+      heading=${args['heading']}
+      card-width=${args['cardWidth']}
+      variant="chart"
+      show-filter
+    >
       <ds-chart
         slot="chart"
         label="Fuel score and idling by month"
         ${ref(element => {
-          if (element) (element as HTMLElement & { definition: unknown }).definition = CHART_DEFINITION;
+          if (element)
+            (element as HTMLElement & { definition: unknown }).definition = CHART_DEFINITION;
         })}
       ></ds-chart>
       <ds-chart-legend
@@ -102,9 +145,16 @@ export const Chart: Story = {
 export const Custom: Story = {
   render: args => html`
     <ds-card-chart heading=${args['heading']} card-width=${args['cardWidth']}>
-      <ds-button-unfilled slot="actions" variant="icon" icon="Filters" aria-label="Filter data"></ds-button-unfilled>
+      <ds-button-unfilled
+        slot="actions"
+        variant="icon"
+        icon="Filters"
+        aria-label="Filter data"
+      ></ds-button-unfilled>
       <div style="padding:var(--dimension-space-400);box-sizing:border-box;">
-        <ds-text variant="text-body-medium" color="secondary">Application-owned chart content.</ds-text>
+        <ds-text variant="text-body-medium" color="secondary"
+          >Application-owned chart content.</ds-text
+        >
       </div>
     </ds-card-chart>
   `,

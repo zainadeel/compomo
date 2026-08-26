@@ -40,8 +40,8 @@ try {
         },
       },
       null,
-      2,
-    ),
+      2
+    )
   );
 
   execSync('npm install --no-audit --no-fund', { cwd: smokeDir, stdio: 'inherit' });
@@ -85,7 +85,7 @@ try {
         }
       }
     "`,
-    { cwd: smokeDir, stdio: 'inherit' },
+    { cwd: smokeDir, stdio: 'inherit' }
   );
 
   console.log('✅ @ds-mo/ui/shell and @ds-mo/ui/utils import from packed tarball with plain node.');

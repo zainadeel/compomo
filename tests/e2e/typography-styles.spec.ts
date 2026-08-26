@@ -26,14 +26,14 @@ test.describe('Foundation typography style specs', () => {
           lineHeight: style.lineHeight,
           fontWeight: style.fontWeight,
         };
-      }),
+      })
     );
 
     expect(rows).toHaveLength(18);
 
     for (const row of rows) {
       expect(row.spec, `${row.variant} ${row.emphasis}`).toContain(
-        `${row.fontSize} / ${row.lineHeight}`,
+        `${row.fontSize} / ${row.lineHeight}`
       );
     }
 
@@ -44,7 +44,7 @@ test.describe('Foundation typography style specs', () => {
         expect(row.fontSize, `${variant} size`).toBe(metrics.fontSize);
         expect(row.lineHeight, `${variant} leading`).toBe(metrics.lineHeight);
         expect(row.spec, `${variant} spec`).toContain(
-          `${metrics.fontSize} / ${metrics.lineHeight}`,
+          `${metrics.fontSize} / ${metrics.lineHeight}`
         );
       }
     }

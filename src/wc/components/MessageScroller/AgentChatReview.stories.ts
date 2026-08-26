@@ -111,7 +111,7 @@ const completedResponse = () => html`
     ${outgoingTurn(
       'review-completed-user',
       'Review recent maintenance issues and prepare the highest-priority follow-up.',
-      true,
+      true
     )}
     <ds-agent-response
       message-id="review-completed-agent"
@@ -122,8 +122,8 @@ const completedResponse = () => html`
       <div class="agent-chat-review__prose">
         <ds-text as="h2" variant="text-title-small" emphasis>Maintenance review</ds-text>
         <ds-text as="p" variant="text-body-medium">
-          I found three repeat battery failures with matching charging-system symptoms. Unit 104
-          has the highest operational risk, followed by Units 118 and 203.
+          I found three repeat battery failures with matching charging-system symptoms. Unit 104 has
+          the highest operational risk, followed by Units 118 and 203.
         </ds-text>
         <ds-text as="p" variant="text-body-medium">
           I prepared a follow-up issue with the diagnostic sequence and affected vehicles.
@@ -173,7 +173,7 @@ const waitingForInput = () => html`
     ${outgoingTurn(
       'review-waiting-user',
       'Review the maintenance backlog and prepare follow-up work.',
-      true,
+      true
     )}
     <ds-agent-response
       message-id="review-waiting-agent"
@@ -225,7 +225,7 @@ export const StreamingAtLiveEdge: Story = {
         ${outgoingTurn(
           'review-streaming-user',
           'Summarize repeat service issues from the last 30 days.',
-          true,
+          true
         )}
         <ds-agent-response
           message-id="review-streaming-agent"
@@ -275,7 +275,7 @@ export const ComposerFailure: Story = {
         ${outgoingTurn(
           'review-error-user',
           'Create work orders for the three affected vehicles.',
-          true,
+          true
         )}
         <ds-agent-response
           message-id="review-error-agent"
@@ -298,11 +298,7 @@ export const ComposerFailure: Story = {
             error-message="The message could not be sent. Your draft is still available."
           >
             ${modelSelector()}
-            <ds-button-unfilled
-              slot="error-actions"
-              label="Retry"
-              size="sm"
-            ></ds-button-unfilled>
+            <ds-button-unfilled slot="error-actions" label="Retry" size="sm"></ds-button-unfilled>
           </ds-message-composer>
         </div>
       </ds-message-scroller>

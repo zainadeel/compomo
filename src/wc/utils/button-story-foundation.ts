@@ -27,9 +27,7 @@ export function wireButtonStoryMenuTriggers(root: Element | undefined) {
     if (trigger.dataset['wired'] === 'true') return;
     trigger.dataset['wired'] = 'true';
 
-    const menu = root.querySelector<MenuElement>(
-      `#${trigger.dataset['menuTrigger']}`
-    );
+    const menu = root.querySelector<MenuElement>(`#${trigger.dataset['menuTrigger']}`);
     if (!menu) return;
 
     const setOpen = (open: boolean) => {
@@ -38,8 +36,7 @@ export function wireButtonStoryMenuTriggers(root: Element | undefined) {
     };
 
     trigger.addEventListener('dsClick', event => {
-      menu.initialFocusVisible =
-        (event as CustomEvent<MouseEvent>).detail.detail === 0;
+      menu.initialFocusVisible = (event as CustomEvent<MouseEvent>).detail.detail === 0;
       setOpen(!menu.open);
     });
     menu.addEventListener('dsClose', () => setOpen(false));

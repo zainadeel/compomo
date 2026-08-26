@@ -56,15 +56,29 @@ export const Outcomes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Zero results, a partial final page, and an in-progress page request retain one stable navigation surface.',
+        story:
+          'Zero results, a partial final page, and an in-progress page request retain one stable navigation surface.',
       },
     },
   },
   render: () => html`
     <div style="display:grid;gap:var(--dimension-space-300);">
       <ds-pagination total-items="0" page-size-label="Rows" item-label="rows"></ds-pagination>
-      <ds-pagination page-index="2" page-size="25" total-items="63" page-size-label="Rows" item-label="rows"></ds-pagination>
-      <ds-pagination page-index="1" page-size="25" total-items="500" loading page-size-label="Groups" item-label="groups"></ds-pagination>
+      <ds-pagination
+        page-index="2"
+        page-size="25"
+        total-items="63"
+        page-size-label="Rows"
+        item-label="rows"
+      ></ds-pagination>
+      <ds-pagination
+        page-index="1"
+        page-size="25"
+        total-items="500"
+        loading
+        page-size-label="Groups"
+        item-label="groups"
+      ></ds-pagination>
       <ds-pagination
         page-index="4"
         page-size="25"

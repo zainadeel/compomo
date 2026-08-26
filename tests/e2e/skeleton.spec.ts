@@ -52,7 +52,9 @@ test('scales icon shape insets proportionally from the medium canvas', async ({ 
   await expect.poll(geometry).toEqual({ hostSize: 56, shapeSize: 42, inset: 7 });
 });
 
-test('scales text bar block insets proportionally from the body-medium canvas', async ({ page }) => {
+test('scales text bar block insets proportionally from the body-medium canvas', async ({
+  page,
+}) => {
   const text = page.locator('#text');
   const geometry = () =>
     text.evaluate(element => {
@@ -80,30 +82,52 @@ test('uses concise background contexts with explicit faint support', async ({ pa
   const skeleton = page.locator('#text');
   const contexts = [
     ['faint', '--color-foreground-quaternary', '--color-shimmer-shimmer'],
-    ['medium', '--color-foreground-on-medium-background-quaternary', '--color-shimmer-shimmer-on-medium-background'],
-    ['bold', '--color-foreground-on-bold-background-quaternary', '--color-shimmer-shimmer-on-bold-background'],
-    ['strong', '--color-foreground-on-strong-background-quaternary', '--color-shimmer-shimmer-on-strong-background'],
+    [
+      'medium',
+      '--color-foreground-on-medium-background-quaternary',
+      '--color-shimmer-shimmer-on-medium-background',
+    ],
+    [
+      'bold',
+      '--color-foreground-on-bold-background-quaternary',
+      '--color-shimmer-shimmer-on-bold-background',
+    ],
+    [
+      'strong',
+      '--color-foreground-on-strong-background-quaternary',
+      '--color-shimmer-shimmer-on-strong-background',
+    ],
     ['translucent', '--color-translucent-foreground-quaternary', '--color-translucent-shimmer'],
     ['inverted', '--color-inverted-foreground-quaternary', '--color-inverted-shimmer'],
     ['media', '--color-media-foreground-quaternary', '--color-media-shimmer'],
     ['navigation', '--color-navigation-foreground-quaternary', '--color-navigation-shimmer'],
     ['always-dark', '--color-always-dark-foreground-quaternary', '--color-always-dark-shimmer'],
   ] as const;
-  const tokenValue = (token: string) => page.evaluate(name => (
-    getComputedStyle(document.documentElement).getPropertyValue(name).trim()
-  ), token);
+  const tokenValue = (token: string) =>
+    page.evaluate(
+      name => getComputedStyle(document.documentElement).getPropertyValue(name).trim(),
+      token
+    );
 
   for (const [background, baseToken, shimmerToken] of contexts) {
     await skeleton.evaluate((element, value) => {
       (element as HTMLElement & { background: string }).background = value;
     }, background);
     await expect(skeleton).toHaveClass(new RegExp(`skeleton--background-${background}`));
-    await expect.poll(() => skeleton.evaluate(element => (
-      getComputedStyle(element).getPropertyValue('--ds-skeleton-base').trim()
-    ))).toBe(await tokenValue(baseToken));
-    await expect.poll(() => skeleton.evaluate(element => (
-      getComputedStyle(element).getPropertyValue('--ds-shimmer').trim()
-    ))).toBe(await tokenValue(shimmerToken));
+    await expect
+      .poll(() =>
+        skeleton.evaluate(element =>
+          getComputedStyle(element).getPropertyValue('--ds-skeleton-base').trim()
+        )
+      )
+      .toBe(await tokenValue(baseToken));
+    await expect
+      .poll(() =>
+        skeleton.evaluate(element =>
+          getComputedStyle(element).getPropertyValue('--ds-shimmer').trim()
+        )
+      )
+      .toBe(await tokenValue(shimmerToken));
   }
 });
 
@@ -113,7 +137,11 @@ test('supports static mode and removes shimmer motion under reduced motion', asy
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
-  await expect.poll(() => page.locator('#text .skeleton__shape').evaluate(element => (
-    getComputedStyle(element, '::after').display
-  ))).toBe('none');
+  await expect
+    .poll(() =>
+      page
+        .locator('#text .skeleton__shape')
+        .evaluate(element => getComputedStyle(element, '::after').display)
+    )
+    .toBe('none');
 });

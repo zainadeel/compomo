@@ -122,7 +122,7 @@
     },
     {
       "path": "src/wc/components/MessageBubble/MessageBubble.tsx",
-      "content": "import { Component, h, Host, Prop } from '@stencil/core';\n\nexport type MessageBubbleVariant = 'user' | 'received';\n\n@Component({\n  tag: 'ds-message-bubble',\n  styleUrl: 'MessageBubble.css',\n  scoped: true,\n})\nexport class MessageBubble {\n  @Prop() variant: MessageBubbleVariant = 'received';\n\n  render() {\n    return (\n      <Host class={`message-bubble--${this.variant}`}>\n        <div class=\"message-bubble\"><slot /></div>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, h, Host, Prop } from '@stencil/core';\n\nexport type MessageBubbleVariant = 'user' | 'received';\n\n@Component({\n  tag: 'ds-message-bubble',\n  styleUrl: 'MessageBubble.css',\n  scoped: true,\n})\nexport class MessageBubble {\n  @Prop() variant: MessageBubbleVariant = 'received';\n\n  render() {\n    return (\n      <Host class={`message-bubble--${this.variant}`}>\n        <div class=\"message-bubble\">\n          <slot />\n        </div>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

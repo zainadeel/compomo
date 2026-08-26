@@ -41,7 +41,11 @@ describe('PANEL_TOOLS_PRIMARY_TOOL_ID', () => {
 describe('PANEL_TOOLS_DEFAULT_ITEMS', () => {
   it('pins agents and exposes activity directly without stacks', () => {
     assert.deepEqual(
-      PANEL_TOOLS_DEFAULT_ITEMS.map(item => [item.id, item.railPlacement ?? 'body', item.mobileDestination]),
+      PANEL_TOOLS_DEFAULT_ITEMS.map(item => [
+        item.id,
+        item.railPlacement ?? 'body',
+        item.mobileDestination,
+      ]),
       [
         ['agents', 'header', 'agents'],
         ['messages', 'body', 'messages'],

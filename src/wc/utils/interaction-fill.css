@@ -262,9 +262,7 @@
   :host(.ds-interaction-fill)::after,
   .ds-interaction-fill::after {
     box-shadow: none;
-    outline:
-      var(--ds-interaction-border-width) solid
-      var(--ds-forced-color-control-boundary);
+    outline: var(--ds-interaction-border-width) solid var(--ds-forced-color-control-boundary);
     outline-offset: calc(-1 * var(--ds-interaction-border-width));
   }
 
@@ -277,8 +275,14 @@
 }
 
 @media (forced-colors: active) and (hover: hover) and (pointer: fine) {
-  :host(.ds-interaction-fill:hover:not(:disabled):not(:focus-visible):not(:focus-within):not(.ds-focus-ring--visible))::after,
-  .ds-interaction-fill:hover:not(:disabled):not(:focus-visible):not(:focus-within):not(.ds-focus-ring--visible)::after {
+  :host(
+    .ds-interaction-fill:hover:not(:disabled):not(:focus-visible):not(:focus-within):not(
+        .ds-focus-ring--visible
+      )
+  )::after,
+  .ds-interaction-fill:hover:not(:disabled):not(:focus-visible):not(:focus-within):not(
+      .ds-focus-ring--visible
+    )::after {
     outline-color: var(--ds-forced-color-selected);
     outline-width: var(--dimension-stroke-width-012);
   }

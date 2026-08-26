@@ -8,7 +8,7 @@ import { spawn } from 'node:child_process';
 if (!process.env.DS_STENCIL_WATCH) {
   process.stderr.write(
     '\n⚠️  Run `npm run storybook` (not `storybook:ui`) for live Stencil → Storybook reloads.\n' +
-      '   Starting UI anyway — canvas will stay stale until you rebuild dist/.\n\n',
+      '   Starting UI anyway — canvas will stay stale until you rebuild dist/.\n\n'
   );
 }
 

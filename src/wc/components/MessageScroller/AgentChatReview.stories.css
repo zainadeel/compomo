@@ -11,10 +11,7 @@
 
 .agent-chat-review__viewport {
   width: min(var(--agent-chat-review-width), 100%);
-  height: min(
-    var(--agent-chat-review-height),
-    calc(100vh - var(--dimension-space-400))
-  );
+  height: min(var(--agent-chat-review-height), calc(100vh - var(--dimension-space-400)));
   min-height: var(--agent-chat-review-min-height);
   overflow: hidden;
   border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
@@ -25,10 +22,7 @@
 
 .agent-chat-review__viewport--narrow {
   width: min(var(--agent-chat-review-width), 100%);
-  height: min(
-    var(--agent-chat-review-height),
-    calc(100vh - var(--dimension-space-400))
-  );
+  height: min(var(--agent-chat-review-height), calc(100vh - var(--dimension-space-400)));
 }
 
 .agent-chat-review__viewport ds-message-scroller {

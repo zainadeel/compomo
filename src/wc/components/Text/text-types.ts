@@ -10,9 +10,19 @@ export type TextVariant =
   | 'text-caption';
 
 export type TextColorToken =
-  | 'primary' | 'secondary' | 'tertiary' | 'quaternary'
-  | 'brand' | 'negative' | 'positive' | 'warning' | 'caution' | 'ai'
-  | 'on-strong' | 'on-bold' | 'inherit';
+  | 'primary'
+  | 'secondary'
+  | 'tertiary'
+  | 'quaternary'
+  | 'brand'
+  | 'negative'
+  | 'positive'
+  | 'warning'
+  | 'caution'
+  | 'ai'
+  | 'on-strong'
+  | 'on-bold'
+  | 'inherit';
 
 export type TextColor = TextColorToken | `var(--${string})`;
 export type TextDecoration = 'none' | 'underline' | 'dotted-underline';

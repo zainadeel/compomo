@@ -110,11 +110,7 @@ export class BarWorkflow {
 
   private renderMobile() {
     return (
-      <ds-mobile-header
-        class="bar-workflow__mobile"
-        heading={this.resolvedHeading}
-        tone="brand"
-      >
+      <ds-mobile-header class="bar-workflow__mobile" heading={this.resolvedHeading} tone="brand">
         <ds-tooltip slot="leading" label={this.exitLabel} side="bottom" size="sm">
           <ds-button-unfilled
             class="bar-workflow__exit"
@@ -173,80 +169,78 @@ export class BarWorkflow {
   private renderDesktop() {
     return (
       <div class="bar-workflow ds-chrome-row ds-chrome-space--md">
-          <div class="bar-workflow__identity">
-            <ds-tooltip label={this.exitLabel} side="bottom" size="sm">
+        <div class="bar-workflow__identity">
+          <ds-tooltip label={this.exitLabel} side="bottom" size="sm">
+            <ds-button-unfilled
+              class="bar-workflow__exit"
+              variant="icon"
+              icon="Cross"
+              aria-label={this.exitAriaLabel}
+              size="md"
+              background="bold"
+              activeFill={false}
+              hasBorder={false}
+              onDsClick={(event: CustomEvent<MouseEvent>) => this.dsExit.emit(event.detail)}
+            />
+          </ds-tooltip>
+          <ds-text
+            class="bar-workflow__heading ds-control--md"
+            variant="text-title-small"
+            emphasis
+            color="on-bold"
+            as="h1"
+            lineTruncation={1}
+          >
+            {this.resolvedHeading}
+          </ds-text>
+        </div>
+
+        <div class="bar-workflow__actions">
+          {this.previousStep ? (
+            <ds-tooltip label={this.previousLabel} side="bottom" size="sm">
               <ds-button-unfilled
-                class="bar-workflow__exit"
+                class="bar-workflow__previous"
                 variant="icon"
-                icon="Cross"
-                aria-label={this.exitAriaLabel}
+                icon="ChevronLeft"
+                aria-label={this.previousLabel}
                 size="md"
                 background="bold"
                 activeFill={false}
                 hasBorder={false}
-                onDsClick={(event: CustomEvent<MouseEvent>) => this.dsExit.emit(event.detail)}
+                isInactive={this.previousStep.isInactive}
+                onDsClick={this.handlePrevious}
               />
             </ds-tooltip>
-            <ds-text
-              class="bar-workflow__heading ds-control--md"
-              variant="text-title-small"
-              emphasis
-              color="on-bold"
-              as="h1"
-              lineTruncation={1}
-            >
-              {this.resolvedHeading}
-            </ds-text>
-          </div>
+          ) : null}
 
-          <div class="bar-workflow__actions">
-            {this.previousStep ? (
-              <ds-tooltip label={this.previousLabel} side="bottom" size="sm">
-                <ds-button-unfilled
-                  class="bar-workflow__previous"
-                  variant="icon"
-                  icon="ChevronLeft"
-                  aria-label={this.previousLabel}
-                  size="md"
-                  background="bold"
-                  activeFill={false}
-                  hasBorder={false}
-                  isInactive={this.previousStep.isInactive}
-                  onDsClick={this.handlePrevious}
-                />
-              </ds-tooltip>
-            ) : null}
-
-            {this.isLastStep ? (
-              this.renderSubmit()
-            ) : (
-              <ds-tooltip label={this.nextLabel} side="bottom" size="sm">
-                <ds-button-filled
-                  class="bar-workflow__next"
-                  variant="icon"
-                  icon="ChevronRight"
-                  label={this.nextLabel}
-                  aria-label={this.nextLabel}
-                  intent="brand"
-                  contrast="faint"
-                  background="bold"
-                  size="md"
-                  type="button"
-                  isInactive={this.isNextInactive || this.nextStep?.isInactive}
-                  onDsClick={this.handleNext}
-                />
-              </ds-tooltip>
-            )}
-          </div>
+          {this.isLastStep ? (
+            this.renderSubmit()
+          ) : (
+            <ds-tooltip label={this.nextLabel} side="bottom" size="sm">
+              <ds-button-filled
+                class="bar-workflow__next"
+                variant="icon"
+                icon="ChevronRight"
+                label={this.nextLabel}
+                aria-label={this.nextLabel}
+                intent="brand"
+                contrast="faint"
+                background="bold"
+                size="md"
+                type="button"
+                isInactive={this.isNextInactive || this.nextStep?.isInactive}
+                onDsClick={this.handleNext}
+              />
+            </ds-tooltip>
+          )}
+        </div>
       </div>
     );
   }
 
   render() {
     return (
-      <Host>
-        {this.responsiveMode === 'mobile' ? this.renderMobile() : this.renderDesktop()}
-      </Host>
+      <Host>{this.responsiveMode === 'mobile' ? this.renderMobile() : this.renderDesktop()}</Host>
     );
   }
 }

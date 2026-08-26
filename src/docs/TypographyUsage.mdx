@@ -14,24 +14,22 @@ style — a bare `class="text-body-medium"` styles nothing at all.
 
 ## Choose a variant
 
-| Variant | Typical use |
-| --- | --- |
-| `text-body-medium` | Default product copy and standard labels |
-| `text-body-small` | Helper text, metadata, and supporting copy |
-| `text-body-large` | Introductory copy or a modest hierarchy increase |
-| `text-title-small` | Card titles, modal titles, and compact chrome headings |
-| `text-title-medium` | Section headings and expanded page regions |
-| `text-title-large` | Page headings |
-| `text-display-small` | Prominent summary values |
-| `text-display-medium` | Rare hero metrics |
-| `text-caption` | Compact labels and xs-density control text |
+| Variant               | Typical use                                            |
+| --------------------- | ------------------------------------------------------ |
+| `text-body-medium`    | Default product copy and standard labels               |
+| `text-body-small`     | Helper text, metadata, and supporting copy             |
+| `text-body-large`     | Introductory copy or a modest hierarchy increase       |
+| `text-title-small`    | Card titles, modal titles, and compact chrome headings |
+| `text-title-medium`   | Section headings and expanded page regions             |
+| `text-title-large`    | Page headings                                          |
+| `text-display-small`  | Prominent summary values                               |
+| `text-display-medium` | Rare hero metrics                                      |
+| `text-caption`        | Compact labels and xs-density control text             |
 
 If no stronger hierarchy is required, start with `text-body-medium`.
 
 ```html
-<ds-text variant="text-body-medium">
-  Normal product copy
-</ds-text>
+<ds-text variant="text-body-medium"> Normal product copy </ds-text>
 ```
 
 ## Semantics and appearance are separate
@@ -54,9 +52,7 @@ Available semantic elements are `p`, `span`, `div`, `label`, and `h1`–`h6`.
 `emphasis` is a boolean modifier, not a separate variant:
 
 ```html
-<ds-text variant="text-body-medium" emphasis>
-  Emphasized label
-</ds-text>
+<ds-text variant="text-body-medium" emphasis> Emphasized label </ds-text>
 ```
 
 Use emphasis to strengthen text within the same size tier. If the text is
@@ -91,9 +87,9 @@ decorative.
 
 ## Underlines and interaction
 
-| Decoration | Meaning |
-| --- | --- |
-| `underline` | Default affordance for link text |
+| Decoration         | Meaning                                              |
+| ------------------ | ---------------------------------------------------- |
+| `underline`        | Default affordance for link text                     |
 | `dotted-underline` | Hidden or supplemental interaction such as a tooltip |
 
 Decoration is visual only; it does not make `ds-text` interactive.
@@ -118,9 +114,7 @@ Use `wrap="nowrap"`, `wrap="balance"`, or `wrap="pretty"` when the text owner
 has a clear layout reason. `lineTruncation` supports one through five lines:
 
 ```html
-<ds-text variant="text-body-small" line-truncation="2">
-  Long supporting copy
-</ds-text>
+<ds-text variant="text-body-small" line-truncation="2"> Long supporting copy </ds-text>
 ```
 
 The host needs a bounded width for truncation to occur. `ds-text` owns the

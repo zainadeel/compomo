@@ -44,7 +44,8 @@ export const Overview: Story = {
       <div class="util-demo-section">
         <h2 class="util-demo-h2">Density scale</h2>
         <p class="util-demo-sub">
-          Fixed height from <code class="util-demo-code">--ds-control-height</code> + horizontal padding only.
+          Fixed height from <code class="util-demo-code">--ds-control-height</code> + horizontal
+          padding only.
         </p>
         <div class="util-demo-col">
           ${SIZES.map(
@@ -60,11 +61,12 @@ export const Overview: Story = {
                     as="span"
                     variant=${text}
                     color="inherit"
-                  >Label</ds-text>
+                    >Label</ds-text
+                  >
                 </button>
                 <span class="util-demo-code">.${cls}</span>
               </div>
-            `,
+            `
           )}
         </div>
       </div>
@@ -78,27 +80,31 @@ export const Inset: Story = {
       <div class="util-demo-section">
         <h2 class="util-demo-h2">Same-density nested controls</h2>
         <p class="util-demo-sub">
-          The nested control loses one 2px outer inset on each edge while its inner density metrics stay unchanged.
+          The nested control loses one 2px outer inset on each edge while its inner density metrics
+          stay unchanged.
         </p>
         <div class="util-demo-col">
-          ${INSET_SIZES.map(({ cls, label, text, dimensions }) => html`
-            <div class="util-demo-row">
-              <span class="util-demo-label">${label} · ${dimensions}</span>
-              <div class="util-demo-inset-frame ${cls}">
-                <button
-                  type="button"
-                  class="util-demo-control util-demo-control--inset-example ${cls} ds-control--inset"
-                >
-                  <ds-text
-                    class="util-demo-control__label"
-                    as="span"
-                    variant=${text}
-                    color="inherit"
-                  >Inset</ds-text>
-                </button>
+          ${INSET_SIZES.map(
+            ({ cls, label, text, dimensions }) => html`
+              <div class="util-demo-row">
+                <span class="util-demo-label">${label} · ${dimensions}</span>
+                <div class="util-demo-inset-frame ${cls}">
+                  <button
+                    type="button"
+                    class="util-demo-control util-demo-control--inset-example ${cls} ds-control--inset"
+                  >
+                    <ds-text
+                      class="util-demo-control__label"
+                      as="span"
+                      variant=${text}
+                      color="inherit"
+                      >Inset</ds-text
+                    >
+                  </button>
+                </div>
               </div>
-            </div>
-          `)}
+            `
+          )}
         </div>
       </div>
     </div>
@@ -111,7 +117,8 @@ export const Compositions: Story = {
       <div class="util-demo-section">
         <h2 class="util-demo-h2">One recipe, every composition</h2>
         <p class="util-demo-sub">
-          Every row below resolves height, outer inset, label inset, icon box, and gap from the same size class.
+          Every row below resolves height, outer inset, label inset, icon box, and gap from the same
+          size class.
         </p>
         <div class="util-demo-density-compositions">
           ${SIZES.map(
@@ -120,26 +127,70 @@ export const Compositions: Story = {
                 <span class="util-demo-label">${label}</span>
 
                 <button type="button" class="util-demo-control ${cls}">
-                  <ds-text class="util-demo-control__label" as="span" variant=${text} color="inherit">Text</ds-text>
+                  <ds-text
+                    class="util-demo-control__label"
+                    as="span"
+                    variant=${text}
+                    color="inherit"
+                    >Text</ds-text
+                  >
                 </button>
 
                 <button type="button" class="util-demo-control ${cls}">
-                  <ds-icon class="util-demo-control__icon" name="Bookmark" size=${icon} color="inherit"></ds-icon>
-                  <ds-text class="util-demo-control__label" as="span" variant=${text} color="inherit">Icon + text</ds-text>
+                  <ds-icon
+                    class="util-demo-control__icon"
+                    name="Bookmark"
+                    size=${icon}
+                    color="inherit"
+                  ></ds-icon>
+                  <ds-text
+                    class="util-demo-control__label"
+                    as="span"
+                    variant=${text}
+                    color="inherit"
+                    >Icon + text</ds-text
+                  >
                 </button>
 
                 <button type="button" class="util-demo-control ${cls}">
-                  <ds-text class="util-demo-control__label" as="span" variant=${text} color="inherit">Text + icon</ds-text>
-                  <ds-icon class="util-demo-control__icon" name="ChevronDown" size=${icon} color="inherit"></ds-icon>
+                  <ds-text
+                    class="util-demo-control__label"
+                    as="span"
+                    variant=${text}
+                    color="inherit"
+                    >Text + icon</ds-text
+                  >
+                  <ds-icon
+                    class="util-demo-control__icon"
+                    name="ChevronDown"
+                    size=${icon}
+                    color="inherit"
+                  ></ds-icon>
                 </button>
 
                 <button type="button" class="util-demo-control ${cls}">
-                  <ds-icon class="util-demo-control__icon" name="Bookmark" size=${icon} color="inherit"></ds-icon>
-                  <ds-text class="util-demo-control__label" as="span" variant=${text} color="inherit">Both icons</ds-text>
-                  <ds-icon class="util-demo-control__icon" name="ChevronDown" size=${icon} color="inherit"></ds-icon>
+                  <ds-icon
+                    class="util-demo-control__icon"
+                    name="Bookmark"
+                    size=${icon}
+                    color="inherit"
+                  ></ds-icon>
+                  <ds-text
+                    class="util-demo-control__label"
+                    as="span"
+                    variant=${text}
+                    color="inherit"
+                    >Both icons</ds-text
+                  >
+                  <ds-icon
+                    class="util-demo-control__icon"
+                    name="ChevronDown"
+                    size=${icon}
+                    color="inherit"
+                  ></ds-icon>
                 </button>
               </div>
-            `,
+            `
           )}
         </div>
       </div>
@@ -147,7 +198,8 @@ export const Compositions: Story = {
       <div class="util-demo-section">
         <h2 class="util-demo-h2">Read-only row inside structural chrome</h2>
         <p class="util-demo-sub">
-          The header owns its 8px structural inset. Its title and action both use md density even though only the action is interactive.
+          The header owns its 8px structural inset. Its title and action both use md density even
+          though only the action is interactive.
         </p>
         <div class="util-demo-density-header">
           <ds-text
@@ -156,7 +208,8 @@ export const Compositions: Story = {
             variant="text-body-medium"
             emphasis
             color="primary"
-          >Panel title</ds-text>
+            >Panel title</ds-text
+          >
           <ds-button-unfilled
             variant="icon"
             icon="Ellipses"

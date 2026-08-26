@@ -1,25 +1,15 @@
 import type { BarNavTab } from '../BarNav/bar-nav-types';
-import type {
-  BarTitleActionItem,
-  BarTitlePrimaryAction,
-} from '../BarTitle/bar-title-types';
+import type { BarTitleActionItem, BarTitlePrimaryAction } from '../BarTitle/bar-title-types';
 import type { BreadcrumbItem } from '../Breadcrumb/breadcrumb-types';
 import type { MobileHeaderTone } from '../MobileHeader/mobile-header-types';
-import type {
-  PanelNavGroup,
-  PanelNavItem,
-  PanelNavRouterMode,
-} from '../PanelNav/panel-nav-types';
+import type { PanelNavGroup, PanelNavItem, PanelNavRouterMode } from '../PanelNav/panel-nav-types';
 import type {
   PanelToolsHeaders,
   PanelToolsHeaderAction,
   PanelToolsItem,
 } from '../PanelTools/panel-tools-types';
 import type { NavChromeStyle } from '../../shell/nav-chrome';
-import type {
-  ShellPageContentInset,
-  ShellPageContentSurface,
-} from '../ShellPage/shell-page-types';
+import type { ShellPageContentInset, ShellPageContentSurface } from '../ShellPage/shell-page-types';
 
 export type ShellAppComposition = 'managed' | 'slotted';
 

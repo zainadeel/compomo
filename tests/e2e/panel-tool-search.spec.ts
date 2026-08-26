@@ -53,7 +53,7 @@ test('uses the concise clear label without appending search guidance', async ({ 
   await expect(clearTooltip).toHaveJSProperty('label', 'Clear');
   await expect(clear).toBeVisible();
   await expect(search.getByRole('button', { name: 'Clear Search chats', exact: true })).toHaveCount(
-    0,
+    0
   );
 });
 

@@ -58,7 +58,7 @@ export interface ScrollEdgeFadeOptions {
 /** Resolve a dimension size token name or raw CSS length for `--ds-scroll-edge-fade-size`. */
 export function resolveScrollEdgeFadeSize(
   size: ScrollEdgeFadeSize = 'size-600',
-  height?: string,
+  height?: string
 ): string {
   if (height) return height;
   return Object.prototype.hasOwnProperty.call(SIZE_VALUE, size)
@@ -69,7 +69,7 @@ export function resolveScrollEdgeFadeSize(
 /** Inline style map setting fade depth on a scroll container. */
 export function scrollEdgeFadeSizeStyle(
   size: ScrollEdgeFadeSize = 'size-600',
-  height?: string,
+  height?: string
 ): Record<string, string> {
   return {
     [SCROLL_EDGE_FADE_SIZE_VAR]: resolveScrollEdgeFadeSize(size, height),
@@ -97,7 +97,7 @@ export function scrollEdgeFadeMaskImage(edge: ScrollEdgeFadeEdge): string {
 export function scrollEdgeFadeMaskStyle(
   edge: ScrollEdgeFadeEdge,
   size: ScrollEdgeFadeSize = 'size-600',
-  height?: string,
+  height?: string
 ): Record<string, string> {
   const mask = scrollEdgeFadeMaskImage(edge);
   return {
@@ -137,11 +137,7 @@ export function scrollEdgeFadeClassMap(opts: ScrollEdgeFadeOptions): Record<stri
 }
 
 /** Whether a scroll container is flush with the given edge (within `threshold` px). */
-export function isScrollAtEdge(
-  el: HTMLElement,
-  edge: ScrollEdgeFadeEdge,
-  threshold = 2,
-): boolean {
+export function isScrollAtEdge(el: HTMLElement, edge: ScrollEdgeFadeEdge, threshold = 2): boolean {
   switch (edge) {
     case 'top':
       return el.scrollTop <= threshold;

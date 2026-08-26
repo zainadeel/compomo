@@ -60,7 +60,9 @@ test('normalizes fractional counts and rejects non-finite counts', async ({ page
   await expect(bar.locator('.bar-action__status')).toHaveText('');
 });
 
-test('removes the empty action lane without removing the persistent status region', async ({ page }) => {
+test('removes the empty action lane without removing the persistent status region', async ({
+  page,
+}) => {
   const bar = page.locator('#bar-action');
   const actions = bar.locator('.bar-action__actions');
   const action = bar.getByRole('button', { name: 'Coaching status' });
@@ -72,9 +74,7 @@ test('removes the empty action lane without removing the persistent status regio
   await expect(bar.locator('.bar-action__status')).toHaveCount(1);
 });
 
-test('keeps Clear beside the selected count and actions at the trailing edge', async ({
-  page,
-}) => {
+test('keeps Clear beside the selected count and actions at the trailing edge', async ({ page }) => {
   const bar = page.locator('#bar-action');
   const count = await bar.locator('.bar-action__count').boundingBox();
   const clear = await bar.getByRole('button', { name: 'Clear' }).boundingBox();

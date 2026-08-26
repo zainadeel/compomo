@@ -27,11 +27,11 @@ export function expectGeometryClose(
   actual: number,
   expected: number,
   label: string,
-  tolerance = SUBPIXEL_TOLERANCE_PX,
+  tolerance = SUBPIXEL_TOLERANCE_PX
 ) {
   expect(
     Math.abs(actual - expected),
-    `${label} differs by more than ${tolerance} CSS px`,
+    `${label} differs by more than ${tolerance} CSS px`
   ).toBeLessThanOrEqual(tolerance);
 }
 
@@ -55,7 +55,7 @@ export async function expectDefiniteBounds(locator: Locator, contract: BoundsCon
       bounds.width,
       contract.width,
       `${contract.label} width`,
-      contract.tolerance,
+      contract.tolerance
     );
   }
   if (contract.height !== undefined) {
@@ -63,7 +63,7 @@ export async function expectDefiniteBounds(locator: Locator, contract: BoundsCon
       bounds.height,
       contract.height,
       `${contract.label} height`,
-      contract.tolerance,
+      contract.tolerance
     );
   }
 
@@ -73,9 +73,11 @@ export async function expectDefiniteBounds(locator: Locator, contract: BoundsCon
 export async function expectHitTarget(locator: Locator, contract: HitTargetContract) {
   const bounds = await expectDefiniteBounds(locator, { label: contract.label });
   const tolerance = contract.tolerance ?? SUBPIXEL_TOLERANCE_PX;
-  expect(bounds.width, `${contract.label} hit width`)
-    .toBeGreaterThanOrEqual(contract.minimumWidth - tolerance);
-  expect(bounds.height, `${contract.label} hit height`)
-    .toBeGreaterThanOrEqual(contract.minimumHeight - tolerance);
+  expect(bounds.width, `${contract.label} hit width`).toBeGreaterThanOrEqual(
+    contract.minimumWidth - tolerance
+  );
+  expect(bounds.height, `${contract.label} hit height`).toBeGreaterThanOrEqual(
+    contract.minimumHeight - tolerance
+  );
   return bounds;
 }

@@ -64,7 +64,8 @@ const BACKGROUND_SURFACES = [
     id: 'translucent',
     value: 'translucent',
     label: 'translucent',
-    background: 'linear-gradient(var(--color-translucent-translucent), var(--color-translucent-translucent)), var(--color-background-bold-brand)',
+    background:
+      'linear-gradient(var(--color-translucent-translucent), var(--color-translucent-translucent)), var(--color-background-bold-brand)',
     labelColor: 'var(--color-translucent-foreground-secondary)',
   },
   {
@@ -110,8 +111,8 @@ export default meta;
 type Story = StoryObj;
 
 function panelSubNavExample(exampleItems: typeof items, value: string, background = '') {
-  const surface = BACKGROUND_SURFACES.find(option => option.value === background)
-    ?? BACKGROUND_SURFACES[0];
+  const surface =
+    BACKGROUND_SURFACES.find(option => option.value === background) ?? BACKGROUND_SURFACES[0];
   const subNav = html`
     <ds-panel-sub-nav
       .items=${exampleItems}
@@ -134,7 +135,8 @@ function panelSubNavExample(exampleItems: typeof items, value: string, backgroun
         if (!subNav) return;
         const showPanel = (id: string) => {
           element.querySelectorAll('[role="tabpanel"]').forEach(panel => {
-            (panel as HTMLElement).hidden = panel.id !== exampleItems.find(item => item.id === id)?.panelId;
+            (panel as HTMLElement).hidden =
+              panel.id !== exampleItems.find(item => item.id === id)?.panelId;
           });
         };
         subNav.addEventListener('dsChange', event => {
@@ -145,47 +147,43 @@ function panelSubNavExample(exampleItems: typeof items, value: string, backgroun
     >
       ${background
         ? html`
-          <div
-            style="
+            <div
+              style="
               padding:var(--dimension-space-150);
               border-radius:var(--dimension-radius-100);
               background:${surface.background};
             "
-          >
-            ${subNav}
-          </div>
-        `
+            >
+              ${subNav}
+            </div>
+          `
         : subNav}
       <div style="color: var(--color-foreground-primary)">
-        ${exampleItems.map(item => html`
-          <section
-            id=${item.panelId}
-            role="tabpanel"
-            aria-labelledby=${item.id}
-            tabindex="0"
-          >
-            <ds-text as="h3" variant="text-heading-xs" color="primary">${item.label}</ds-text>
-            <ds-text as="p" variant="text-body-medium" color="secondary">
-              ${panelContent[item.id]}
-            </ds-text>
-          </section>
-        `)}
+        ${exampleItems.map(
+          item => html`
+            <section id=${item.panelId} role="tabpanel" aria-labelledby=${item.id} tabindex="0">
+              <ds-text as="h3" variant="text-heading-xs" color="primary">${item.label}</ds-text>
+              <ds-text as="p" variant="text-body-medium" color="secondary">
+                ${panelContent[item.id]}
+              </ds-text>
+            </section>
+          `
+        )}
       </div>
     </div>
   `;
 }
 
 export const Playground: Story = {
-  render: args => panelSubNavExample(
-    items,
-    args['value'] ?? 'profile-tab',
-    args['background'] ?? '',
-  ),
+  render: args =>
+    panelSubNavExample(items, args['value'] ?? 'profile-tab', args['background'] ?? ''),
 };
 
 export const Backgrounds: Story = {
   render: () => html`
-    <div style="display:grid;grid-template-columns:repeat(3, minmax(180px, 1fr));gap:var(--dimension-space-150);">
+    <div
+      style="display:grid;grid-template-columns:repeat(3, minmax(180px, 1fr));gap:var(--dimension-space-150);"
+    >
       ${BACKGROUND_SURFACES.map(surface => {
         const prefix = surface.id;
         const surfaceItems = items.slice(0, 3).map(item => ({
@@ -213,9 +211,11 @@ export const Backgrounds: Story = {
               background=${surface.value}
               aria-label="${surface.label} panel sub-navigation"
             ></ds-panel-sub-nav>
-            ${surfaceItems.map(item => html`
-              <div id=${item.panelId} role="tabpanel" aria-labelledby=${item.id} hidden></div>
-            `)}
+            ${surfaceItems.map(
+              item => html`
+                <div id=${item.panelId} role="tabpanel" aria-labelledby=${item.id} hidden></div>
+              `
+            )}
           </div>
         `;
       })}
@@ -224,8 +224,9 @@ export const Backgrounds: Story = {
 };
 
 export const WithInactiveItem: Story = {
-  render: () => panelSubNavExample(
-    items.map(item => item.id === 'permissions-tab' ? { ...item, isInactive: true } : item),
-    'profile-tab',
-  ),
+  render: () =>
+    panelSubNavExample(
+      items.map(item => (item.id === 'permissions-tab' ? { ...item, isInactive: true } : item)),
+      'profile-tab'
+    ),
 };

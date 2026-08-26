@@ -99,7 +99,13 @@ describe('resolveMetricTrend', () => {
   });
 
   it('covers every direction and tone combination', () => {
-    const cases: [number, number, { inverted?: boolean; neutral?: boolean }, string, MetricTrendTone][] = [
+    const cases: [
+      number,
+      number,
+      { inverted?: boolean; neutral?: boolean },
+      string,
+      MetricTrendTone,
+    ][] = [
       [10, 5, {}, 'up', 'positive'],
       [5, 10, {}, 'down', 'negative'],
       [10, 5, { inverted: true }, 'up', 'negative'],

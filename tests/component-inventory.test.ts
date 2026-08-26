@@ -136,12 +136,16 @@ describe('source-derived component inventory', () => {
     );
     assert.ok(
       errors.some(error =>
-        error.includes('stale generated framework adapter src/.generated/angular/ds-deleted-widget.ts')
+        error.includes(
+          'stale generated framework adapter src/.generated/angular/ds-deleted-widget.ts'
+        )
       )
     );
     assert.ok(
       errors.some(error =>
-        error.includes('stale generated framework adapter src/.generated/react/ds-deleted-widget.ts')
+        error.includes(
+          'stale generated framework adapter src/.generated/react/ds-deleted-widget.ts'
+        )
       )
     );
     assert.ok(
@@ -198,10 +202,7 @@ describe('source-derived component inventory', () => {
       'src/wc/components/Widget/Widget.stories 2.ts',
       'tests/e2e/widget.spec 2.ts',
     ]);
-    assert.equal(
-      fs.readFileSync(path.join(root, 'src/framework/angular.ts'), 'utf8'),
-      'preserved'
-    );
+    assert.equal(fs.readFileSync(path.join(root, 'src/framework/angular.ts'), 'utf8'), 'preserved');
     assert.equal(fs.existsSync(path.join(root, '.stencil')), false);
   });
 

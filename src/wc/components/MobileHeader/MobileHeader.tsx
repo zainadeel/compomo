@@ -1,9 +1,5 @@
 import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';
-import {
-  getSelectableTabs,
-  type TabGroupItem,
-  type TabItem,
-} from '../TabGroup/tab-item-utils';
+import { getSelectableTabs, type TabGroupItem, type TabItem } from '../TabGroup/tab-item-utils';
 import type { TabGroupSize } from '../TabGroup/TabGroup';
 import type {
   MobileHeaderHeadingLevel,
@@ -55,9 +51,11 @@ export class MobileHeader {
 
   private get selectedLabel(): string {
     const selectable = getSelectableTabs(this.resolvedSections);
-    return selectable.find(section => section.id === this.value)?.label ??
+    return (
+      selectable.find(section => section.id === this.value)?.label ??
       selectable[0]?.label ??
-      this.heading;
+      this.heading
+    );
   }
 
   private handleSectionChange = (event: CustomEvent<string>) => {

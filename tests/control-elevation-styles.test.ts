@@ -20,7 +20,7 @@ describe('public control elevation style contract', () => {
   it('publishes the stylesheet from compiled package output', () => {
     assert.equal(
       packageJson.exports['./control-elevation.css'],
-      './dist/styles/control-elevation.css',
+      './dist/styles/control-elevation.css'
     );
     assert.match(buildScript, /dist\/styles\/control-elevation\.css/);
     assert.match(packVerification, /dist\/styles\/control-elevation\.css/);
@@ -35,8 +35,8 @@ describe('public control elevation style contract', () => {
         new RegExp(
           `ds-control-elevation--${level}[\\s\\S]*?` +
             `--ds-control-elevation-shadow: var\\(--effect-shadow-elevated-${level}\\);[\\s\\S]*?` +
-            `--ds-control-elevation-highlight: var\\(--effect-highlight-elevated-${level}\\);`,
-        ),
+            `--ds-control-elevation-highlight: var\\(--effect-highlight-elevated-${level}\\);`
+        )
       );
     }
     assert.doesNotMatch(declarations, /--effect-elevation-/);
@@ -53,20 +53,20 @@ describe('public control elevation style contract', () => {
   it('transfers approved button press scale to the complete elevated wrapper', () => {
     assert.match(
       css,
-      /\.ds-control-elevation--press-scale\s*{[\s\S]*?--ds-control-press-active-scale: var\(--dimension-scale-default\);[\s\S]*?transition: scale var\(--effect-motion-short-2\);/,
+      /\.ds-control-elevation--press-scale\s*{[\s\S]*?--ds-control-press-active-scale: var\(--dimension-scale-default\);[\s\S]*?transition: scale var\(--effect-motion-short-2\);/
     );
     assert.doesNotMatch(
       css,
       /\.ds-control-elevation--press-scale\s*{[^}]*\n\s*scale\s*:/,
-      'resting wrappers must not create a transformed containing block',
+      'resting wrappers must not create a transformed containing block'
     );
     assert.match(
       css,
-      /\.ds-control-elevation--press-scale\[data-ds-press-active\]\s*{[\s\S]*?scale: var\(--dimension-scale-subtle\);/,
+      /\.ds-control-elevation--press-scale\[data-ds-press-active\]\s*{[\s\S]*?scale: var\(--dimension-scale-subtle\);/
     );
     assert.match(
       css,
-      /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.ds-control-elevation--press-scale\[data-ds-press-active\][\s\S]*?scale: none;[\s\S]*?transition: none;/,
+      /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.ds-control-elevation--press-scale\[data-ds-press-active\][\s\S]*?scale: none;[\s\S]*?transition: none;/
     );
   });
 
@@ -76,7 +76,7 @@ describe('public control elevation style contract', () => {
       assert.match(source, /control-elevation\.css|ds-control-elevation--md/);
     }
     for (const source of migratedSources.filter(source =>
-      source.includes('ds-control-elevation--md'),
+      source.includes('ds-control-elevation--md')
     )) {
       assert.match(source, /ds-control-elevation--press-scale/);
     }

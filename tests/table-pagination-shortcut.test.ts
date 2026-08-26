@@ -15,13 +15,13 @@ test('blocks arrows that originate in choice, menu, or editable controls', () =>
   assert.equal(paginationShortcutBlockedByPath([{ tagName: 'INPUT' }]), true);
   assert.equal(
     paginationShortcutBlockedByPath([{ tagName: 'DIV', isContentEditable: true }]),
-    true,
+    true
   );
   assert.equal(
     paginationShortcutBlockedByPath([
       { tagName: 'DIV', getAttribute: name => (name === 'role' ? 'combobox' : null) },
     ]),
-    true,
+    true
   );
 });
 
@@ -46,7 +46,7 @@ test('handles arrows from a containing page scroller or in-table focus, not body
       table,
       eventPath: [scroller],
     }),
-    true,
+    true
   );
   assert.equal(
     shouldHandleContainingPagePaginationShortcut({
@@ -54,7 +54,7 @@ test('handles arrows from a containing page scroller or in-table focus, not body
       table,
       eventPath: [innerControl, table],
     }),
-    true,
+    true
   );
   assert.equal(
     shouldHandleContainingPagePaginationShortcut({
@@ -62,7 +62,7 @@ test('handles arrows from a containing page scroller or in-table focus, not body
       table,
       eventPath: [{ tagName: 'BODY' }],
     }),
-    false,
+    false
   );
   assert.equal(isDocumentRootNode({ tagName: 'HTML' }), true);
 });

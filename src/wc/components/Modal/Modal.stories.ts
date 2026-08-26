@@ -81,18 +81,15 @@ export const HeaderDescription: Story = {
 
 export const DeleteConfirmation: Story = {
   render: () => html`
-    <ds-modal
-      ?open=${true}
-      heading="Delete vehicle?"
-      aria-describedby="modal-delete-description"
-    >
+    <ds-modal ?open=${true} heading="Delete vehicle?" aria-describedby="modal-delete-description">
       <ds-text
         as="p"
         variant="text-body-medium"
         color="secondary"
         text-id="modal-delete-description"
       >
-        This action cannot be undone. The vehicle and its associated data will be permanently removed.
+        This action cannot be undone. The vehicle and its associated data will be permanently
+        removed.
       </ds-text>
       <ds-button-filled
         slot="footer"
@@ -150,11 +147,7 @@ export const LeaveConfirmation: Story = {
 
 export const WithoutFooter: Story = {
   render: () => html`
-    <ds-modal
-      ?open=${true}
-      heading="Vehicle update"
-      aria-describedby="modal-update-description"
-    >
+    <ds-modal ?open=${true} heading="Vehicle update" aria-describedby="modal-update-description">
       <ds-text
         as="p"
         variant="text-body-medium"

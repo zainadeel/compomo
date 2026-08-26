@@ -6,8 +6,19 @@ import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 
 const OPTIONS = [
   { label: 'Apple', value: 'apple', icon: 'Chart' },
-  { label: 'Banana', value: 'banana', icon: 'Bell', subtext: 'Unavailable for this account', isInactive: true },
-  { label: 'Cherry', value: 'cherry', icon: 'Bell', action: { label: 'Cherry options', controls: 'cherry-menu' } },
+  {
+    label: 'Banana',
+    value: 'banana',
+    icon: 'Bell',
+    subtext: 'Unavailable for this account',
+    isInactive: true,
+  },
+  {
+    label: 'Cherry',
+    value: 'cherry',
+    icon: 'Bell',
+    action: { label: 'Cherry options', controls: 'cherry-menu' },
+  },
   { label: 'Date', value: 'date', icon: 'Chart', subtext: 'A longer secondary description' },
 ];
 
@@ -60,7 +71,17 @@ const meta: Meta = {
     isInactive: { control: 'boolean' },
     background: {
       control: 'select',
-      options: [undefined, 'faint', 'medium', 'bold', 'strong', 'translucent', 'inverted', 'media', 'always-dark'],
+      options: [
+        undefined,
+        'faint',
+        'medium',
+        'bold',
+        'strong',
+        'translucent',
+        'inverted',
+        'media',
+        'always-dark',
+      ],
     },
   },
   args: {
@@ -282,11 +303,15 @@ export const KeyboardNavigation: Story = {
 
 export const Backgrounds: Story = {
   render: () => html`
-    <div style="display:grid;grid-template-columns:repeat(3,minmax(220px,1fr));gap:var(--dimension-space-100);">
+    <div
+      style="display:grid;grid-template-columns:repeat(3,minmax(220px,1fr));gap:var(--dimension-space-100);"
+    >
       ${BACKGROUNDS.map(
         background => html`
           <div style="padding:var(--dimension-space-200);background:${background.surface};">
-            <ds-text as="div" variant="text-body-small" color="inherit">${background.label}</ds-text>
+            <ds-text as="div" variant="text-body-small" color="inherit"
+              >${background.label}</ds-text
+            >
             <ds-select
               data-a11y-fixture
               style="margin-top:var(--dimension-space-100);"
@@ -296,7 +321,7 @@ export const Backgrounds: Story = {
               aria-label="${background.label} fruit"
             ></ds-select>
           </div>
-        `,
+        `
       )}
     </div>
   `,
@@ -306,7 +331,13 @@ export const SizesAndStates: Story = {
   render: () => html`
     <div style="display:flex;flex-direction:column;gap:var(--dimension-space-100);width:260px;">
       ${(['lg', 'md', 'sm', 'xs'] as const).map(
-        size => html`<ds-select .options=${OPTIONS} value="cherry" size=${size} aria-label="${size} fruit"></ds-select>`,
+        size =>
+          html`<ds-select
+            .options=${OPTIONS}
+            value="cherry"
+            size=${size}
+            aria-label="${size} fruit"
+          ></ds-select>`
       )}
       <ds-select .options=${OPTIONS} is-inactive aria-label="Inactive fruit"></ds-select>
       <ds-select

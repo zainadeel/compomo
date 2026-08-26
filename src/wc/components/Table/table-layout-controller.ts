@@ -51,16 +51,17 @@ export function resolveTableLayoutMetrics(input: TableLayoutMetricInput): TableL
     visibleInlineSize: input.viewportInlineSize,
     overflow: {
       start: horizontalOverflow && input.scrollInlineOffset > 1,
-      end: horizontalOverflow &&
+      end:
+        horizontalOverflow &&
         input.scrollInlineOffset + input.viewportInlineSize < input.scrollInlineSize - 1,
       scrollable: horizontalOverflow || input.scrollBlockSize - input.viewportBlockSize > 1,
     },
     inlineOffset: input.scrollInlineOffset,
     maxInlineOffset: Math.max(0, input.scrollInlineSize - input.viewportInlineSize),
-    collapseBlockOffset: input.collapseHeadBlockStart == null ||
-      input.collapseFrameBlockStart == null
-      ? null
-      : Math.max(0, input.collapseHeadBlockStart - input.collapseFrameBlockStart),
+    collapseBlockOffset:
+      input.collapseHeadBlockStart == null || input.collapseFrameBlockStart == null
+        ? null
+        : Math.max(0, input.collapseHeadBlockStart - input.collapseFrameBlockStart),
   };
 }
 
@@ -105,8 +106,8 @@ export class TableLayoutController {
   refresh(forceGeometry = true): void {
     if (!this.connected) return;
     const { viewport, contentTable } = this.options.elements();
-    const elementsChanged = viewport !== this.connectedViewport ||
-      contentTable !== this.connectedContentTable;
+    const elementsChanged =
+      viewport !== this.connectedViewport || contentTable !== this.connectedContentTable;
     if (elementsChanged) {
       this.connectedViewport?.removeEventListener('scroll', this.handleScroll);
       this.connectedViewport?.removeEventListener('wheel', this.handleWheel);
@@ -123,7 +124,8 @@ export class TableLayoutController {
       }
     }
     const mode = this.options.mode();
-    const modeChanged = !this.lastMode ||
+    const modeChanged =
+      !this.lastMode ||
       mode.documentStickyHeader !== this.lastMode.documentStickyHeader ||
       mode.floatingCollapseAll !== this.lastMode.floatingCollapseAll ||
       mode.clampVerticalOverscroll !== this.lastMode.clampVerticalOverscroll;
@@ -197,8 +199,12 @@ export class TableLayoutController {
 
     // Read every layout value before writing styles or reactive state.
     const mode = this.options.mode();
-    const measureCollapse = mode.floatingCollapseAll && !mode.documentStickyHeader &&
-      elements.collapseAllOverlay && elements.frame && elements.interactiveHead;
+    const measureCollapse =
+      mode.floatingCollapseAll &&
+      !mode.documentStickyHeader &&
+      elements.collapseAllOverlay &&
+      elements.frame &&
+      elements.interactiveHead;
     const metrics = resolveTableLayoutMetrics({
       viewportInlineSize: viewport.clientWidth,
       viewportBlockSize: viewport.clientHeight,
@@ -216,28 +222,24 @@ export class TableLayoutController {
     this.maxInlineOffset = metrics.maxInlineOffset;
     this.maxBlockOffset = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
 
-    this.setProperty(
-      viewport,
-      '--ds-table-visible-inline-size',
-      `${metrics.visibleInlineSize}px`,
-    );
+    this.setProperty(viewport, '--ds-table-visible-inline-size', `${metrics.visibleInlineSize}px`);
     if (elements.stickyHeaderTable) {
       this.setProperty(
         elements.stickyHeaderTable,
         '--ds-table-inline-scroll-offset',
-        `${metrics.inlineOffset}px`,
+        `${metrics.inlineOffset}px`
       );
       this.setProperty(
         elements.stickyHeaderTable,
         '--ds-table-inline-scroll-max-offset',
-        `${metrics.maxInlineOffset}px`,
+        `${metrics.maxInlineOffset}px`
       );
     }
     if (metrics.collapseBlockOffset !== null && elements.collapseAllOverlay) {
       this.setProperty(
         elements.collapseAllOverlay,
         '--ds-table-collapse-all-block-offset',
-        `${metrics.collapseBlockOffset}px`,
+        `${metrics.collapseBlockOffset}px`
       );
     }
 

@@ -84,10 +84,7 @@ export const PolicyAndStates: Story = {
           This navigation-style row keeps its interaction wash but does not opt into press scaling.
         </p>
         <div class="util-demo-row">
-          <button
-            type="button"
-            class="util-demo-control ds-interaction-fill ds-focus-ring-inset"
-          >
+          <button type="button" class="util-demo-control ds-interaction-fill ds-focus-ring-inset">
             <span class="ds-interaction-fill__content">Navigation row — no scale</span>
           </button>
         </div>

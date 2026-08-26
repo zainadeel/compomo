@@ -62,8 +62,7 @@
 }
 
 .ds-button--bordered:not(.ds-interaction-fill) {
-  box-shadow: inset 0 0 0 var(--ds-interaction-border-width)
-    var(--ds-interaction-border-color);
+  box-shadow: inset 0 0 0 var(--ds-interaction-border-width) var(--ds-interaction-border-color);
 }
 
 .ds-button__icon-wrap,

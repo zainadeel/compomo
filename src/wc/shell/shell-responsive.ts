@@ -44,8 +44,10 @@ export function itemUsesShellInbox(item: {
   id: PanelToolsToolId;
   mobileDestination?: MobileDestination;
 }): boolean {
-  return item.mobileDestination === 'inbox' ||
-    (item.mobileDestination === undefined && isShellInboxTool(item.id));
+  return (
+    item.mobileDestination === 'inbox' ||
+    (item.mobileDestination === undefined && isShellInboxTool(item.id))
+  );
 }
 
 export function isShellInboxTool(tool: string): tool is ShellInboxToolId {

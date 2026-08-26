@@ -44,13 +44,22 @@
 }
 
 @keyframes dsChoiceFadeIn {
-  from { opacity: 0; transform: inherit scale(0.97); }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+    transform: inherit scale(0.97);
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes dsChoiceFadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

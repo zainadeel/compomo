@@ -20,13 +20,10 @@ export function resolveSafeUrl(
   if (!candidate) return undefined;
 
   const baseUrl =
-    options.baseUrl ??
-    (typeof document === 'undefined' ? undefined : document.baseURI);
+    options.baseUrl ?? (typeof document === 'undefined' ? undefined : document.baseURI);
 
   try {
-    const url = baseUrl === undefined
-      ? new URL(candidate)
-      : new URL(candidate, baseUrl);
+    const url = baseUrl === undefined ? new URL(candidate) : new URL(candidate, baseUrl);
     const protocols = options.protocols ?? DEFAULT_PROTOCOLS;
     return protocols.includes(url.protocol as SafeUrlProtocol) ? url.href : undefined;
   } catch {

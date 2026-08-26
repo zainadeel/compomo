@@ -66,9 +66,12 @@ test('keeps the Customize control neutral when columns are customized at typical
   const table = page.locator('#column-customizer');
   const trigger = table.getByRole('button', { name: 'Customize table' });
   await trigger.click();
-  await page.getByRole('menu', { name: 'Customize table' }).getByRole('menuitemcheckbox', {
-    name: 'Status',
-  }).click();
+  await page
+    .getByRole('menu', { name: 'Customize table' })
+    .getByRole('menuitemcheckbox', {
+      name: 'Status',
+    })
+    .click();
   await expect(trigger).toHaveAccessibleName('Customize table');
   await expect(trigger.locator('.ds-button__label')).toHaveJSProperty('emphasis', false);
   await expect(trigger.locator('xpath=ancestor::ds-button-unfilled[1]')).toHaveJSProperty(
@@ -77,7 +80,9 @@ test('keeps the Customize control neutral when columns are customized at typical
   );
   await expect
     .poll(() =>
-      trigger.evaluate(element => (element.closest('ds-button-unfilled') as HTMLDsButtonUnfilledElement).variant)
+      trigger.evaluate(
+        element => (element.closest('ds-button-unfilled') as HTMLDsButtonUnfilledElement).variant
+      )
     )
     .toBe('icon-label');
 
@@ -117,16 +122,21 @@ test('uses an icon-only neutral Customize control below 900px when customized', 
   const trigger = table.getByRole('button', { name: 'Customize table' });
   await expect
     .poll(() =>
-      trigger.evaluate(element => (element.closest('ds-button-unfilled') as HTMLDsButtonUnfilledElement).variant)
+      trigger.evaluate(
+        element => (element.closest('ds-button-unfilled') as HTMLDsButtonUnfilledElement).variant
+      )
     )
     .toBe('icon');
   await expect(table.locator('.ds-table__caption-customizer .ds-button__label')).toHaveCount(0);
   await expect(table.locator('.ds-table__caption-customizer .ds-button__chevron')).toHaveCount(0);
 
   await trigger.click();
-  await page.getByRole('menu', { name: 'Customize table' }).getByRole('menuitemcheckbox', {
-    name: 'Status',
-  }).click();
+  await page
+    .getByRole('menu', { name: 'Customize table' })
+    .getByRole('menuitemcheckbox', {
+      name: 'Status',
+    })
+    .click();
   await expect(trigger).toHaveAccessibleName('Customize table');
 
   const colors = await trigger.evaluate(element => {
@@ -476,9 +486,7 @@ test('keeps the bounded table surface within its host while the complete caption
     table.locator('.ds-table__caption-bar'),
     table.locator('.ds-table__frame'),
   ]) {
-    await expect
-      .poll(async () => (await surface.boundingBox())!.width)
-      .toBeLessThanOrEqual(400);
+    await expect.poll(async () => (await surface.boundingBox())!.width).toBeLessThanOrEqual(400);
   }
   const narrowGeometry = await Promise.all([
     search.boundingBox(),
@@ -486,7 +494,10 @@ test('keeps the bounded table surface within its host while the complete caption
     customize.boundingBox(),
   ]);
   expect(narrowGeometry[0]!.width).toBeLessThan(300);
-  expect(narrowGeometry[2]!.x - (narrowGeometry[1]!.x + narrowGeometry[1]!.width)).toBeCloseTo(8, 0);
+  expect(narrowGeometry[2]!.x - (narrowGeometry[1]!.x + narrowGeometry[1]!.width)).toBeCloseTo(
+    8,
+    0
+  );
 
   await table.evaluate(element => {
     (element as HTMLElement).style.inlineSize = '320px';
@@ -547,7 +558,9 @@ test('restores compact caption observation after controls are reinserted', async
 
 test('mirrors table sort through the toolbar Sort menu and column headers', async ({ page }) => {
   const table = page.locator('#column-customizer');
-  const sortTrigger = page.locator('#column-customizer-sort').getByRole('button', { name: 'Sort table' });
+  const sortTrigger = page
+    .locator('#column-customizer-sort')
+    .getByRole('button', { name: 'Sort table' });
   await expect(sortTrigger).toBeVisible();
 
   await sortTrigger.click();
@@ -561,20 +574,26 @@ test('mirrors table sort through the toolbar Sort menu and column headers', asyn
   await menu.getByRole('menuitem', { name: 'Status' }).click();
   await expect(menu).toBeVisible();
   await expect(table).toHaveJSProperty('sort', { columnId: 'status', direction: 'asc' });
-  await expect(table.locator('th[data-column-id="status"]')).toHaveAttribute('aria-sort', 'ascending');
+  await expect(table.locator('th[data-column-id="status"]')).toHaveAttribute(
+    'aria-sort',
+    'ascending'
+  );
 
   await menu.getByRole('menuitem', { name: 'Descending' }).click();
   await expect(table).toHaveJSProperty('sort', { columnId: 'status', direction: 'desc' });
-  await expect(table.locator('th[data-column-id="status"]')).toHaveAttribute('aria-sort', 'descending');
+  await expect(table.locator('th[data-column-id="status"]')).toHaveAttribute(
+    'aria-sort',
+    'descending'
+  );
 
   await page.keyboard.press('Escape');
   await table.getByRole('button', { name: /Sort Driver/ }).click();
   await expect(table).toHaveJSProperty('sort', { columnId: 'name', direction: 'asc' });
 
   await sortTrigger.click();
-  await expect(page.getByRole('menu', { name: 'Sort table' }).getByRole('menuitem', { name: 'Driver' })).toHaveClass(
-    /menu-item--selected/
-  );
+  await expect(
+    page.getByRole('menu', { name: 'Sort table' }).getByRole('menuitem', { name: 'Driver' })
+  ).toHaveClass(/menu-item--selected/);
 });
 
 test('gives Group and Sort popups the compact menu-width floor', async ({ page }) => {
@@ -622,7 +641,9 @@ test('owns a controlled caption-bar data mode switcher for supported modes', asy
 
   const trailingControls = table.locator('.ds-table__caption-trailing > *');
   await expect(trailingControls).toHaveCount(3);
-  await expect(trailingControls.nth(0).getByRole('button', { name: 'Customize table' })).toBeVisible();
+  await expect(
+    trailingControls.nth(0).getByRole('button', { name: 'Customize table' })
+  ).toBeVisible();
   await expect(trailingControls.nth(1)).toHaveJSProperty('tagName', 'DS-DIVIDER');
   await expect(trailingControls.nth(1)).toHaveJSProperty('orientation', 'vertical');
   await expect(trailingControls.nth(1)).toHaveJSProperty('length', '32px');
@@ -694,13 +715,12 @@ test('defaults to adjacent-page controls and supports opting into first and last
   await optedInPagination.getByRole('button', { name: 'Next page' }).click();
   await expect
     .poll(() =>
-      page.evaluate(
-        () =>
-          (
-            window as typeof window & {
-              __tablePaginationEvents: Array<Record<string, unknown>>;
-            }
-          ).__tablePaginationEvents.at(-1)
+      page.evaluate(() =>
+        (
+          window as typeof window & {
+            __tablePaginationEvents: Array<Record<string, unknown>>;
+          }
+        ).__tablePaginationEvents.at(-1)
       )
     )
     .toMatchObject({ pageIndex: 1, showFirstLastButtons: true, reason: 'page' });
@@ -796,10 +816,7 @@ test('lays out application-owned table controls in start and spanning middle gro
   await expect(probeHost).toHaveJSProperty('pressScale', true);
   const probeBox = await probeButton.boundingBox();
   expect(probeBox).not.toBeNull();
-  await page.mouse.move(
-    probeBox!.x + probeBox!.width / 2,
-    probeBox!.y + probeBox!.height / 2
-  );
+  await page.mouse.move(probeBox!.x + probeBox!.width / 2, probeBox!.y + probeBox!.height / 2);
   await page.mouse.down();
   await expect(probeButton).toHaveCSS('scale', '1');
   await page.mouse.up();

@@ -23,13 +23,10 @@ const overflow: TableCellAction = {
 test('treats items as the overflow-menu variant', () => {
   assert.equal(isTableCellActionMenu(overflow), true);
   assert.equal(isRenderableTableActionMenu(overflow), true);
-  assert.equal(
-    isTableCellActionMenu({ kind: 'action', actionId: 'more', label: 'More' }),
-    false,
-  );
+  assert.equal(isTableCellActionMenu({ kind: 'action', actionId: 'more', label: 'More' }), false);
   assert.equal(
     isRenderableTableActionMenu({ kind: 'action', actionId: 'more', label: 'More' }),
-    false,
+    false
   );
 });
 
@@ -57,15 +54,12 @@ test('maps divider entries to Menu sections and drops empty runs', () => {
       { actionId: 'edit', label: 'Edit' },
       { kind: 'divider' },
     ]),
-    [
-      { items: [{ value: 'view', label: 'View' }] },
-      { items: [{ value: 'edit', label: 'Edit' }] },
-    ],
+    [{ items: [{ value: 'view', label: 'View' }] }, { items: [{ value: 'edit', label: 'Edit' }] }]
   );
 
   assert.equal(
     isRenderableTableActionMenu({ kind: 'action', ariaLabel: 'More', items: [] }),
-    false,
+    false
   );
   assert.equal(
     isRenderableTableActionMenu({
@@ -73,13 +67,13 @@ test('maps divider entries to Menu sections and drops empty runs', () => {
       ariaLabel: 'More',
       items: [{ kind: 'divider' }],
     }),
-    false,
+    false
   );
 });
 
 test('builds stable trigger ids from table, row, and column identities', () => {
   assert.equal(
     tableActionTriggerId('ds-table-action-menu-1', 'tag variants', 'action'),
-    'ds-table-action-menu-1-tag-variants-action',
+    'ds-table-action-menu-1-tag-variants-action'
   );
 });

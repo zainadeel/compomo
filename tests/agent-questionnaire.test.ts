@@ -85,14 +85,11 @@ describe('agent questionnaire draft model', () => {
     const drafts = createQuestionnaireDrafts(questions, []);
     assert.equal(
       validateQuestionDraft(questions[0], drafts.single),
-      'Choose an answer before continuing.',
+      'Choose an answer before continuing.'
     );
 
     drafts.single.otherSelected = true;
-    assert.equal(
-      validateQuestionDraft(questions[0], drafts.single),
-      'Enter a response for Other.',
-    );
+    assert.equal(validateQuestionDraft(questions[0], drafts.single), 'Enter a response for Other.');
   });
 
   it('rejects choice questions without choices and formats answered history labels', () => {
@@ -102,16 +99,13 @@ describe('agent questionnaire draft model', () => {
       question: 'Missing options',
     };
     const [draft] = Object.values(createQuestionnaireDrafts([invalid], []));
-    assert.equal(
-      validateQuestionDraft(invalid, draft),
-      'This question has no available choices.',
-    );
+    assert.equal(validateQuestionDraft(invalid, draft), 'This question has no available choices.');
     assert.equal(
       formatQuestionAnswer(questions[1], {
         questionId: 'multiple',
         value: ['one', 'Custom'],
       }),
-      'One, Custom',
+      'One, Custom'
     );
     assert.equal(formatQuestionAnswer(questions[2], undefined), 'Skipped');
   });

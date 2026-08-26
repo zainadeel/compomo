@@ -93,13 +93,13 @@ export interface ResolveTableVirtualIndexedPlanInput {
 /** Map a cell recipe onto the named track stack used for first-paint estimates. */
 export function estimateTableCellTrackCount(
   value: TableRow['cells'][string],
-  column: TableColumn,
+  column: TableColumn
 ): number {
   return tableCellTrackCount(resolveTableCellPresentation(value, column));
 }
 
 function tableCellTrackCount(
-  presentation: ReturnType<typeof resolveTableCellPresentation>,
+  presentation: ReturnType<typeof resolveTableCellPresentation>
 ): number {
   if (presentation.kind === 'image') {
     return presentation.variant === 'triple' ? 3 : presentation.variant === 'multi' ? 2 : 1;
@@ -109,11 +109,12 @@ function tableCellTrackCount(
   }
   if (presentation.kind !== 'text' && presentation.kind !== 'icon-text') return 1;
 
-  const variantTracks = presentation.variant === 'triple'
-    ? 3
-    : presentation.variant === 'multi' || presentation.variant === 'primary-pair'
-      ? 2
-      : 1;
+  const variantTracks =
+    presentation.variant === 'triple'
+      ? 3
+      : presentation.variant === 'multi' || presentation.variant === 'primary-pair'
+        ? 2
+        : 1;
   if (!presentation.wraps) return variantTracks;
   if (presentation.lineClamp === 'none') {
     return presentation.kind === 'text' && !presentation.singleLine ? 4 : 3;
@@ -129,7 +130,7 @@ export function estimateTableRowBlockSize(row: TableRow, columns: readonly Table
 
 function tableVirtualRowMetrics(
   row: TableRow,
-  columns: readonly TableColumn[],
+  columns: readonly TableColumn[]
 ): Pick<TableVirtualItem, 'estimatedSize' | 'variableSize'> {
   let tracks: 1 | 2 | 3 | 4 = 1;
   let variableSize = false;
@@ -152,9 +153,10 @@ function tableVirtualRowMetrics(
 }
 
 export function flattenTableVirtualItems(input: FlattenTableVirtualItemsInput): TableVirtualItem[] {
-  const collapsed = input.collapsedGroupIds instanceof Set
-    ? input.collapsedGroupIds
-    : new Set(input.collapsedGroupIds);
+  const collapsed =
+    input.collapsedGroupIds instanceof Set
+      ? input.collapsedGroupIds
+      : new Set(input.collapsedGroupIds);
   if (!input.grouped) {
     return input.rows.map(row => {
       const metrics = tableVirtualRowMetrics(row, input.columns);
@@ -222,14 +224,14 @@ export function findTableVirtualIndexAtOffset(prefix: readonly number[], offset:
 
 export function tableVirtualItemSizes(
   items: readonly TableVirtualItem[],
-  measures: ReadonlyMap<string, number>,
+  measures: ReadonlyMap<string, number>
 ): number[] {
   return items.map(item => measures.get(item.id) ?? item.estimatedSize);
 }
 
 export function sameTableVirtualPlan(
   left: TableVirtualPlan | null | undefined,
-  right: TableVirtualPlan | null | undefined,
+  right: TableVirtualPlan | null | undefined
 ): boolean {
   if (left === right) return true;
   if (!left || !right) return false;
@@ -248,7 +250,10 @@ export function sameTableVirtualPlan(
   return sameVirtualNodes(left.nodes, right.nodes);
 }
 
-function sameVirtualNodes(left: readonly TableVirtualNode[], right: readonly TableVirtualNode[]): boolean {
+function sameVirtualNodes(
+  left: readonly TableVirtualNode[],
+  right: readonly TableVirtualNode[]
+): boolean {
   if (left.length !== right.length) return false;
   for (let index = 0; index < left.length; index += 1) {
     const a = left[index];
@@ -273,7 +278,7 @@ function sameVirtualNodes(left: readonly TableVirtualNode[], right: readonly Tab
 /** Precompute dataset-wide lookup state. Rebuild only when items or their sizes change. */
 export function createTableVirtualIndex(
   items: readonly TableVirtualItem[],
-  sizes: readonly number[],
+  sizes: readonly number[]
 ): TableVirtualIndex {
   const prefix = buildTableVirtualPrefixSums(sizes);
   const itemCount = items.length;
@@ -321,7 +326,7 @@ export function createTableVirtualIndex(
 /** Resolve the mounted slice from cached dataset-wide lookup state. */
 export function resolveTableVirtualPlanFromIndex(
   index: TableVirtualIndex,
-  input: ResolveTableVirtualIndexedPlanInput,
+  input: ResolveTableVirtualIndexedPlanInput
 ): TableVirtualPlan {
   const { items, prefix, itemCount, totalSize } = index;
   const empty: TableVirtualPlan = {
@@ -337,8 +342,7 @@ export function resolveTableVirtualPlanFromIndex(
 
   const viewportSize = Math.max(0, input.viewportSize);
   const overscan = tableVirtualOverscanPx(viewportSize);
-  const trailingOverscan = TABLE_VIRTUAL_MIN_OVERSCAN_ROWS *
-    TABLE_VIRTUAL_ROW_TRACK_SIZE[1] / 4;
+  const trailingOverscan = (TABLE_VIRTUAL_MIN_OVERSCAN_ROWS * TABLE_VIRTUAL_ROW_TRACK_SIZE[1]) / 4;
   const before = input.scrollDirection === 'forward' ? trailingOverscan : overscan;
   const after = input.scrollDirection === 'backward' ? trailingOverscan : overscan;
   const scrollOffset = Math.max(0, Math.min(input.scrollOffset, Math.max(0, totalSize)));
@@ -397,7 +401,10 @@ export function resolveTableVirtualPlan(input: ResolveTableVirtualPlanInput): Ta
   return resolveTableVirtualPlanFromIndex(createTableVirtualIndex(input.items, input.sizes), input);
 }
 
-function firstTableVirtualIndexAfter(indexes: readonly number[], target: number): number | undefined {
+function firstTableVirtualIndexAfter(
+  indexes: readonly number[],
+  target: number
+): number | undefined {
   let low = 0;
   let high = indexes.length;
   while (low < high) {
@@ -410,7 +417,7 @@ function firstTableVirtualIndexAfter(indexes: readonly number[], target: number)
 
 function buildFlatVirtualNodes(
   index: TableVirtualIndex,
-  mounted: readonly number[],
+  mounted: readonly number[]
 ): TableVirtualNode[] {
   const { items, prefix, itemCount } = index;
   const nodes: TableVirtualNode[] = [];
@@ -435,18 +442,19 @@ function buildFlatVirtualNodes(
 function buildGroupedVirtualNodes(
   index: TableVirtualIndex,
   mounted: ReadonlySet<number>,
-  mountedSorted: readonly number[],
+  mountedSorted: readonly number[]
 ): TableVirtualNode[] {
   const { items, prefix, itemCount } = index;
   const nodes: TableVirtualNode[] = [];
   const selectedHeaders = new Set<number>();
   for (const mountedIndex of mountedSorted) {
     const item = items[mountedIndex];
-    const headerIndex = item?.kind === 'group'
-      ? mountedIndex
-      : item?.groupId
-        ? index.headerIndexByGroup.get(item.groupId)
-        : undefined;
+    const headerIndex =
+      item?.kind === 'group'
+        ? mountedIndex
+        : item?.groupId
+          ? index.headerIndexByGroup.get(item.groupId)
+          : undefined;
     if (headerIndex != null) selectedHeaders.add(headerIndex);
   }
 
@@ -463,7 +471,7 @@ function buildGroupedVirtualNodes(
 
     const groupNodes: Array<Extract<TableVirtualNode, { kind: 'spacer' | 'row' }>> = [];
     const mountedMembers = mountedSorted.filter(
-      mountedIndex => mountedIndex > headerIndex && mountedIndex < groupEnd,
+      mountedIndex => mountedIndex > headerIndex && mountedIndex < groupEnd
     );
     let memberCursor = headerIndex + 1;
     for (const memberIndex of mountedMembers) {

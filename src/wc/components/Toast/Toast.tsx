@@ -258,9 +258,7 @@ export class Toast {
   }
 
   private syncObservedElements() {
-    const next = new Set<Element>(
-      this.el.querySelectorAll<HTMLElement>('.toast-positioner'),
-    );
+    const next = new Set<Element>(this.el.querySelectorAll<HTMLElement>('.toast-positioner'));
     for (const record of this.records) {
       if (!record.positioner) continue;
       const anchor = this.resolveAnchor(record.positioner.anchor);
@@ -295,9 +293,7 @@ export class Toast {
     for (const id of this.hoveredIds) {
       if (id !== GLOBAL_STACK_HOVER && !recordIds.has(id)) this.hoveredIds.delete(id);
     }
-    const hasEndingRecords = records.some(
-      record => record.transitionStatus === 'ending',
-    );
+    const hasEndingRecords = records.some(record => record.transitionStatus === 'ending');
     if (this.pendingHoverLeave && !hasEndingRecords && !this.hoveredIds.size) {
       this.pendingHoverLeave = false;
       this.expanded = false;
@@ -342,10 +338,7 @@ export class Toast {
 
     for (const record of records) {
       this.ensureDomId(record.id);
-      if (
-        record.transitionStatus === 'starting' &&
-        !this.activationFrames.has(record.id)
-      ) {
+      if (record.transitionStatus === 'starting' && !this.activationFrames.has(record.id)) {
         const manager = this.attachedManager;
         const frame = requestAnimationFrame(() => {
           this.activationFrames.delete(record.id);
@@ -465,14 +458,11 @@ export class Toast {
       });
       this.moveFocusAfterClose(record.id);
     }
-    if (
-      this.closeWatchdogs.has(record.id) ||
-      this.closeFrames.has(record.id)
-    ) return;
+    if (this.closeWatchdogs.has(record.id) || this.closeFrames.has(record.id)) return;
 
     const duration = resolveMotionTimeMs(
       TOKEN_DEFAULTS.motionShort3,
-      TOKEN_DEFAULTS.animationDurationShort3,
+      TOKEN_DEFAULTS.animationDurationShort3
     );
     if (duration <= 0) {
       queueMicrotask(() => this.completeRemoval(record));
@@ -484,7 +474,7 @@ export class Toast {
       if (!current || current.transitionStatus !== 'ending') return;
       this.closeWatchdogs.set(
         record.id,
-        setTimeout(() => this.completeRemoval(current), duration),
+        setTimeout(() => this.completeRemoval(current), duration)
       );
     });
     this.closeFrames.set(record.id, frame);
@@ -566,7 +556,7 @@ export class Toast {
   private handleDocumentKeyDown = (event: KeyboardEvent) => {
     if (event.key !== 'F6') return;
     const eligible = Array.from(connectedToastRegions).filter(
-      region => region.activeRecords.length > 0,
+      region => region.activeRecords.length > 0
     );
     const target =
       activeToastRegion && activeToastRegion.activeRecords.length
@@ -673,8 +663,12 @@ export class Toast {
     if (!active.axis) return;
     const horizontal = active.axis === 'x';
     const direction: ToastSwipeDirection = horizontal
-      ? dx >= 0 ? 'right' : 'left'
-      : dy >= 0 ? 'down' : 'up';
+      ? dx >= 0
+        ? 'right'
+        : 'left'
+      : dy >= 0
+        ? 'down'
+        : 'up';
     const allowed = this.swipeDirections.includes(direction);
     const rawDistance = horizontal ? Math.abs(dx) : Math.abs(dy);
     const distance = allowed ? rawDistance : Math.sqrt(rawDistance);
@@ -697,10 +691,7 @@ export class Toast {
     if (!active || active.pointerId !== event.pointerId) return;
     const swipe = this.swipe;
     const distance = swipe ? Math.max(Math.abs(swipe.x), Math.abs(swipe.y)) : 0;
-    const shouldDismiss =
-      !active.cancelled &&
-      !!swipe?.direction &&
-      distance >= SWIPE_THRESHOLD;
+    const shouldDismiss = !active.cancelled && !!swipe?.direction && distance >= SWIPE_THRESHOLD;
     const id = active.id;
     const wasTouch = active.pointerType === 'touch';
     this.activeSwipe = null;
@@ -727,8 +718,7 @@ export class Toast {
   private get touchAction(): string {
     const horizontal =
       this.swipeDirections.includes('left') || this.swipeDirections.includes('right');
-    const vertical =
-      this.swipeDirections.includes('up') || this.swipeDirections.includes('down');
+    const vertical = this.swipeDirections.includes('up') || this.swipeDirections.includes('down');
     if (horizontal && vertical) return 'none';
     if (horizontal) return 'pan-y';
     if (vertical) return 'pan-x';
@@ -797,10 +787,7 @@ export class Toast {
         continue;
       }
       const rect = element.getBoundingClientRect();
-      const sideOffset = resolveCssLengthPx(
-        record.positioner.sideOffset,
-        TOKEN_DEFAULTS.space050,
-      );
+      const sideOffset = resolveCssLengthPx(record.positioner.sideOffset, TOKEN_DEFAULTS.space050);
       const alignOffset = resolveCssLengthPx(record.positioner.alignOffset, 0);
       const position = computeAnchoredPosition({
         anchorRect: anchor.getBoundingClientRect(),
@@ -839,8 +826,9 @@ export class Toast {
 
   private positionerElement(id: string): HTMLElement | null {
     return (
-      Array.from(this.el.querySelectorAll<HTMLElement>('.toast-positioner'))
-        .find(element => element.dataset['toastId'] === id) ?? null
+      Array.from(this.el.querySelectorAll<HTMLElement>('.toast-positioner')).find(
+        element => element.dataset['toastId'] === id
+      ) ?? null
     );
   }
 
@@ -879,7 +867,7 @@ export class Toast {
 
   private renderToast(
     record: ToastRecord,
-    layout: { index: number; offset: number; limited: boolean },
+    layout: { index: number; offset: number; limited: boolean }
   ) {
     const domId = this.ensureDomId(record.id);
     const titleId = `ds-toast-${this.instanceId}-${domId}-title`;
@@ -924,9 +912,7 @@ export class Toast {
           }}
           role={record.priority === 'high' ? 'alertdialog' : 'dialog'}
           aria-modal="false"
-          aria-labelledby={
-            record.title ? titleId : record.description ? descriptionId : undefined
-          }
+          aria-labelledby={record.title ? titleId : record.description ? descriptionId : undefined}
           aria-describedby={record.title && record.description ? descriptionId : undefined}
           aria-hidden={hiddenHighPriority ? 'true' : undefined}
           data-type={record.type}
@@ -943,12 +929,8 @@ export class Toast {
           onPointerMove={(event: PointerEvent) => this.handlePointerMove(event)}
           onPointerUp={(event: PointerEvent) => this.handlePointerUp(event)}
           onPointerCancel={(event: PointerEvent) => this.handlePointerCancel(event)}
-          onPointerEnter={
-            anchored ? () => this.handlePointerEnter(record.id) : undefined
-          }
-          onPointerLeave={
-            anchored ? () => this.handlePointerLeave(record.id) : undefined
-          }
+          onPointerEnter={anchored ? () => this.handlePointerEnter(record.id) : undefined}
+          onPointerLeave={anchored ? () => this.handlePointerLeave(record.id) : undefined}
         >
           <div class="toast-content">
             <div class="toast-copy">
@@ -986,9 +968,7 @@ export class Toast {
                 hasBorder
                 focusTabIndex={focusTabIndex}
                 aria-hidden={!this.keyboardActive ? 'true' : undefined}
-                onDsClick={(event: CustomEvent<MouseEvent>) =>
-                  this.handleAction(record, event)
-                }
+                onDsClick={(event: CustomEvent<MouseEvent>) => this.handleAction(record, event)}
               />
             )}
           </div>
@@ -1019,7 +999,7 @@ export class Toast {
       record =>
         record.priority === 'high' &&
         record.transitionStatus !== 'ending' &&
-        !globalLayouts.get(record.id)?.limited,
+        !globalLayouts.get(record.id)?.limited
     );
 
     return (
@@ -1045,7 +1025,7 @@ export class Toast {
             {globalRecords.map(record =>
               this.renderToast(
                 record,
-                globalLayouts.get(record.id) ?? { index: 0, offset: 0, limited: false },
+                globalLayouts.get(record.id) ?? { index: 0, offset: 0, limited: false }
               )
             )}
           </div>

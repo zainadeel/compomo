@@ -6,7 +6,7 @@ test.describe('BarNav responsive overflow', () => {
     await page.waitForFunction(() => typeof window.__setShellWidth === 'function');
     await expect(page.locator('ds-bar-nav .bar-nav__tabs-probe')).toHaveCount(1);
     await expect(
-      page.locator('.bar-nav__tabs-visible, .bar-nav__overflow-trigger').first(),
+      page.locator('.bar-nav__tabs-visible, .bar-nav__overflow-trigger').first()
     ).toBeVisible({ timeout: 5000 });
   });
 
@@ -50,7 +50,7 @@ test.describe('BarNav responsive overflow', () => {
         nav.tabs = fewTabs;
         nav.value = 'live-map';
       },
-      { fewTabs, basePath: '/e2e/fleet-view' },
+      { fewTabs, basePath: '/e2e/fleet-view' }
     );
     await expect(page.locator('.bar-nav__tabs-visible')).toBeVisible({ timeout: 5000 });
 
@@ -66,13 +66,15 @@ test.describe('BarNav responsive overflow', () => {
         nav.currentUrl = `${basePath}-safety/events`;
         nav.tabs = manyTabs;
       },
-      { manyTabs, basePath: '/e2e/fleet-view' },
+      { manyTabs, basePath: '/e2e/fleet-view' }
     );
 
     await expect(page.locator('.bar-nav__overflow-trigger')).toBeVisible({ timeout: 5000 });
   });
 
-  test('wide viewport shows full tab row; narrow shows overflow; widen restores', async ({ page }) => {
+  test('wide viewport shows full tab row; narrow shows overflow; widen restores', async ({
+    page,
+  }) => {
     await page.evaluate(() => window.__setShellWidth(900));
     await expect(page.locator('.bar-nav__tabs-visible')).toBeVisible();
     await expect(page.locator('.bar-nav__overflow-trigger')).toHaveCount(0);
@@ -104,10 +106,7 @@ test.describe('BarNav responsive overflow', () => {
       const nav = document.getElementById('nav') as HTMLElement & {
         basePath: string;
         currentUrl: string;
-        tabs: Array<
-          | { id: string; label: string; isInactive?: boolean }
-          | { type: 'divider' }
-        >;
+        tabs: Array<{ id: string; label: string; isInactive?: boolean } | { type: 'divider' }>;
         value: string;
       };
       nav.basePath = '';
@@ -120,8 +119,9 @@ test.describe('BarNav responsive overflow', () => {
       ];
       nav.value = 'overview';
       nav.addEventListener('dsTabChange', event => {
-        (window as typeof window & { __barNavChange?: string }).__barNavChange =
-          (event as CustomEvent<string>).detail;
+        (window as typeof window & { __barNavChange?: string }).__barNavChange = (
+          event as CustomEvent<string>
+        ).detail;
       });
     });
 
@@ -138,12 +138,16 @@ test.describe('BarNav responsive overflow', () => {
     await expect(settings).toHaveAttribute('aria-selected', 'false');
 
     await settings.press('Enter');
-    await expect.poll(() => page.evaluate(() => (
-      window as typeof window & { __barNavChange?: string }
-    ).__barNavChange)).toBe('settings');
-    await expect.poll(() => page.locator('#nav').evaluate(element => (
-      element as HTMLElement & { value: string }
-    ).value)).toBe('settings');
+    await expect
+      .poll(() =>
+        page.evaluate(() => (window as typeof window & { __barNavChange?: string }).__barNavChange)
+      )
+      .toBe('settings');
+    await expect
+      .poll(() =>
+        page.locator('#nav').evaluate(element => (element as HTMLElement & { value: string }).value)
+      )
+      .toBe('settings');
     await expect(settings).toHaveAttribute('aria-selected', 'true');
   });
 
@@ -204,9 +208,11 @@ test.describe('BarNav responsive overflow', () => {
     const dottedItem = page.locator('.menu-item').filter({ hasText: 'Events' });
     const dottedBadge = dottedItem.locator('ds-badge');
     await expect(dottedBadge).toBeVisible();
-    await expect.poll(() => dottedBadge.evaluate(element => (
-      element as HTMLElement & { variant?: string }
-    ).variant)).toBe('dot');
+    await expect
+      .poll(() =>
+        dottedBadge.evaluate(element => (element as HTMLElement & { variant?: string }).variant)
+      )
+      .toBe('dot');
     const dotGeometry = await dottedItem.evaluate(row => {
       const box = row.querySelector('.menu-item__dot-box') as HTMLElement;
       const dot = row.querySelector('.menu-item__dot') as HTMLElement;
@@ -237,9 +243,7 @@ test.describe('BarNav responsive overflow', () => {
     expect(iconName).toBe('ChevronDown');
   });
 
-  test('pointer-opened overflow menu does not show focus ring or hover paint', async ({
-    page,
-  }) => {
+  test('pointer-opened overflow menu does not show focus ring or hover paint', async ({ page }) => {
     await page.evaluate(() => {
       const nav = document.getElementById('nav') as HTMLElement & {
         currentUrl: string;
@@ -281,9 +285,7 @@ test.describe('BarNav responsive overflow', () => {
     expect(layout.focusedAfterOutlineStyle).toBe('none');
   });
 
-  test('keyboard-opened overflow menu shows focus ring without hover paint', async ({
-    page,
-  }) => {
+  test('keyboard-opened overflow menu shows focus ring without hover paint', async ({ page }) => {
     await page.evaluate(() => {
       const nav = document.getElementById('nav') as HTMLElement & {
         currentUrl: string;

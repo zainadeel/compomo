@@ -67,12 +67,7 @@ export interface AgentQuestionAnswer {
   value: string | string[] | null;
 }
 
-export type AgentQuestionnaireStatus =
-  | 'preparing'
-  | 'ready'
-  | 'submitting'
-  | 'error'
-  | 'answered';
+export type AgentQuestionnaireStatus = 'preparing' | 'ready' | 'submitting' | 'error' | 'answered';
 
 export interface AgentQuestionnaireLabels {
   progress: string;

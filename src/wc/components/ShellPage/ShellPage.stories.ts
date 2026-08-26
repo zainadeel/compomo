@@ -133,9 +133,7 @@ export const Playground: Story = {
         content-inset=${args['contentInset']}
         content-inset-block-start=${args['contentInsetBlockStart']}
         .contentInsetBlockStartSize=${args['contentInsetBlockStartSize'] || undefined}
-        .compactContentInsetBlockStartSize=${
-          args['compactContentInsetBlockStartSize'] || undefined
-        }
+        .compactContentInsetBlockStartSize=${args['compactContentInsetBlockStartSize'] || undefined}
         .scrollCompaction=${args['scrollCompaction']}
         content-surface=${args['contentSurface']}
       >
@@ -271,11 +269,7 @@ export const SecondaryCanvas: Story = {
   render: () => html`
     ${demoStyles}
     <div class="shell-page-demo">
-      <ds-shell-page
-        header-capacity="roomy"
-        content-inset="default"
-        content-surface="secondary"
-      >
+      <ds-shell-page header-capacity="roomy" content-inset="default" content-surface="secondary">
         <ds-bar-title slot="header" heading="Safety overview"></ds-bar-title>
         ${pageContent}
       </ds-shell-page>

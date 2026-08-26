@@ -14,7 +14,7 @@ describe('icon cache', () => {
     assert.equal(iconCache().get(iconCacheKey('Bell', false)), '<svg data-test="bell"/>');
     assert.equal(
       iconCache().get(iconCacheKey('FlagUnitedStates', true)),
-      '<svg data-test="us-flag"/>',
+      '<svg data-test="us-flag"/>'
     );
     assert.equal(iconCache().get(iconCacheKey('FlagUnitedStates', false)), undefined);
   });

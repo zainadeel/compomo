@@ -54,7 +54,13 @@ export const WithInput: Story = {
         description="We will only use this for account notifications."
         field-id="account-email"
       >
-        <ds-input name="email" type="email" autocomplete="email" placeholder="name@example.com" required></ds-input>
+        <ds-input
+          name="email"
+          type="email"
+          autocomplete="email"
+          placeholder="name@example.com"
+          required
+        ></ds-input>
       </ds-field>
     </div>
   `,
@@ -91,10 +97,16 @@ export const Error: Story = {
 export const ReadOnlyAndInactive: Story = {
   render: () => html`
     <div style="width:320px;display:flex;flex-direction:column;gap:var(--dimension-space-200);">
-      <ds-field label="Vehicle ID" description="Read-only values remain focusable and are submitted with the form.">
+      <ds-field
+        label="Vehicle ID"
+        description="Read-only values remain focusable and are submitted with the form."
+      >
         <ds-input value="VH-1042" read-only></ds-input>
       </ds-field>
-      <ds-field label="Archived vehicle" description="Inactive fields are unavailable and omitted from submission.">
+      <ds-field
+        label="Archived vehicle"
+        description="Inactive fields are unavailable and omitted from submission."
+      >
         <ds-input value="VH-0091" is-inactive></ds-input>
       </ds-field>
     </div>

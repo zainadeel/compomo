@@ -30,7 +30,7 @@ test('inherits owner color when color is omitted', async ({ page }) => {
 
   await expect(nested).toHaveCSS(
     'color',
-    await button.evaluate(element => getComputedStyle(element).color),
+    await button.evaluate(element => getComputedStyle(element).color)
   );
 });
 

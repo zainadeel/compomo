@@ -13,7 +13,7 @@ export interface MenuReorderRange {
 /** Contiguous reorderable run containing `index`, or null when that row cannot move. */
 export function menuReorderableRange(
   items: readonly MenuItemData[],
-  index: number,
+  index: number
 ): MenuReorderRange | null {
   if (!items[index]?.reorderable) return null;
 
@@ -33,7 +33,7 @@ export function menuReorderableRange(
 export function moveReorderableMenuItemBefore(
   items: readonly MenuItemData[],
   fromIndex: number,
-  insertBefore: number,
+  insertBefore: number
 ): MenuItemData[] | null {
   const range = menuReorderableRange(items, fromIndex);
   if (!range) return null;
@@ -53,19 +53,19 @@ export function moveReorderableMenuItemBefore(
 export function moveReorderableMenuItemBy(
   items: readonly MenuItemData[],
   fromIndex: number,
-  offset: number,
+  offset: number
 ): MenuItemData[] | null {
   if (offset === 0) return null;
   return moveReorderableMenuItemBefore(
     items,
     fromIndex,
-    fromIndex + (offset < 0 ? offset : offset + 1),
+    fromIndex + (offset < 0 ? offset : offset + 1)
   );
 }
 
 export function locateMenuItem(
   sections: readonly MenuSection[],
-  flatIndex: number,
+  flatIndex: number
 ): { sectionIndex: number; itemIndex: number; items: MenuItemData[] } | null {
   let remaining = flatIndex;
   for (let sectionIndex = 0; sectionIndex < sections.length; sectionIndex += 1) {
@@ -83,16 +83,14 @@ export function createMenuReorderDetail(
   items: MenuItemData[],
   fromIndex: number,
   nextItems: MenuItemData[],
-  sectionIndex: number,
+  sectionIndex: number
 ): MenuReorderDetail | null {
   const item = items[fromIndex];
   if (!item) return null;
   const toIndex = nextItems.indexOf(item);
   if (toIndex < 0) {
     const value = item.value;
-    const matched = value
-      ? nextItems.findIndex(candidate => candidate.value === value)
-      : -1;
+    const matched = value ? nextItems.findIndex(candidate => candidate.value === value) : -1;
     if (matched < 0) return null;
     return { item, fromIndex, toIndex: matched, sectionIndex, items: nextItems };
   }

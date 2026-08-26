@@ -4,7 +4,9 @@ import { discoverComponents, validateFrameworkAdapters } from './component-inven
 
 const errors = validateFrameworkAdapters({ components: discoverComponents() });
 if (errors.length) {
-  throw new Error(`Framework proxy inventory is stale:\n${errors.map(error => `  - ${error}`).join('\n')}`);
+  throw new Error(
+    `Framework proxy inventory is stale:\n${errors.map(error => `  - ${error}`).join('\n')}`
+  );
 }
 
 console.log('✅ Angular, React, and Vue proxies match the Stencil component inventory.');

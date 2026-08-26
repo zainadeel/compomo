@@ -66,9 +66,7 @@ describe('resolvePanelNavDisableVt', () => {
 });
 
 describe('shouldResyncPanelNavGroups', () => {
-  const GROUPS: PanelNavGroup[] = [
-    { items: [{ id: 'a', icon: 'MapPage', label: 'A' }] },
-  ];
+  const GROUPS: PanelNavGroup[] = [{ items: [{ id: 'a', icon: 'MapPage', label: 'A' }] }];
 
   it('returns true when parsed state is empty but host groups have items', () => {
     assert.equal(shouldResyncPanelNavGroups([], GROUPS), true);
@@ -86,7 +84,12 @@ describe('shouldResyncPanelNavGroups', () => {
 describe('countPanelNavItems', () => {
   it('counts items across groups', () => {
     const groups = parsePanelNavGroups([
-      { items: [{ id: 'a', icon: 'MapPage', label: 'A' }, { id: 'b', icon: 'MapPage', label: 'B' }] },
+      {
+        items: [
+          { id: 'a', icon: 'MapPage', label: 'A' },
+          { id: 'b', icon: 'MapPage', label: 'B' },
+        ],
+      },
       { items: [{ id: 'c', icon: 'MapPage', label: 'C' }] },
     ]);
     assert.equal(countPanelNavItems(groups), 3);
@@ -113,7 +116,7 @@ describe('panelNavWidthTransitionMs', () => {
         transitionDuration: '0.3s, 200ms, 50ms',
         transitionDelay: '25ms, 0s, 0s',
       }),
-      325,
+      325
     );
   });
 
@@ -124,7 +127,7 @@ describe('panelNavWidthTransitionMs', () => {
         transitionDuration: '100ms',
         transitionDelay: '0ms, 50ms',
       }),
-      150,
+      150
     );
   });
 
@@ -135,7 +138,7 @@ describe('panelNavWidthTransitionMs', () => {
         transitionDuration: '100ms, 200ms',
         transitionDelay: '0s',
       }),
-      0,
+      0
     );
   });
 });

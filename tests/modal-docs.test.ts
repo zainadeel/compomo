@@ -23,6 +23,6 @@ test('isolates every open Modal docs example in its own iframe', () => {
   }
   assert.equal(
     docs.match(/story=\{\{\s*inline:\s*false,\s*height:\s*'360px'\s*\}\}/g)?.length,
-    exports.length,
+    exports.length
   );
 });

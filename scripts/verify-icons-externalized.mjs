@@ -26,7 +26,9 @@ const hasExternalImport = jsFiles.some(name => {
 });
 
 if (!hasExternalImport) {
-  console.error('❌ dist/components/ must retain bare @ds-mo/icons imports (icons were likely bundled)');
+  console.error(
+    '❌ dist/components/ must retain bare @ds-mo/icons imports (icons were likely bundled)'
+  );
   process.exit(1);
 }
 
@@ -45,7 +47,7 @@ for (const chunk of sharedChunks) {
   // Inlined IcoMo catalog is ~360KB+ with hundreds of SVG strings.
   if (size > 100_000 && viewBoxCount > 20) {
     console.error(
-      `❌ ${chunk} (${size} bytes, ${viewBoxCount} viewBox hits) looks like an inlined IcoMo catalog`,
+      `❌ ${chunk} (${size} bytes, ${viewBoxCount} viewBox hits) looks like an inlined IcoMo catalog`
     );
     failed = true;
   }

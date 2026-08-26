@@ -5,7 +5,9 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('is decorative by default and labelled only when independently informative', async ({ page }) => {
+test('is decorative by default and labelled only when independently informative', async ({
+  page,
+}) => {
   const decorative = page.locator('#decorative .icon');
   const informative = page.locator('#informative .icon');
 
@@ -23,7 +25,7 @@ test('inherits currentColor when color is omitted', async ({ page }) => {
 
   await expect(icon).toHaveCSS(
     'color',
-    await owner.evaluate(element => getComputedStyle(element).color),
+    await owner.evaluate(element => getComputedStyle(element).color)
   );
 });
 

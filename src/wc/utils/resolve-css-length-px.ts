@@ -19,7 +19,7 @@ function getProbeElement(): HTMLElement | null {
 function applyContextVariables(
   probe: HTMLElement,
   cssLength: string,
-  context: Element,
+  context: Element
 ): Array<{ name: string; value: string; priority: string }> {
   const contextStyle = getComputedStyle(context);
   const pending = [...cssLength.matchAll(/var\(\s*(--[\w-]+)/g)].map(match => match[1]);
@@ -46,7 +46,7 @@ function applyContextVariables(
 
 function restoreProbeVariables(
   probe: HTMLElement,
-  previous: Array<{ name: string; value: string; priority: string }>,
+  previous: Array<{ name: string; value: string; priority: string }>
 ): void {
   for (const { name, value, priority } of previous) {
     if (value) probe.style.setProperty(name, value, priority);
@@ -66,7 +66,7 @@ export function clearCssLengthPxCache(): void {
 export function resolveCssLengthPx(
   value: number | string | undefined,
   fallback: number | string,
-  context?: Element,
+  context?: Element
 ): number {
   const resolved = value === undefined || value === null || value === '' ? fallback : value;
   if (typeof resolved === 'number') return resolved;
@@ -110,9 +110,7 @@ export function resolveCssLengthPx(
     return typeof fallback === 'number' ? fallback : 0;
   }
 
-  const previousVariables = context
-    ? applyContextVariables(probe, cssLength, context)
-    : [];
+  const previousVariables = context ? applyContextVariables(probe, cssLength, context) : [];
   probe.style.width = cssLength;
   const px = probe.getBoundingClientRect().width;
   probe.style.width = '';

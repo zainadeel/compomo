@@ -9,33 +9,24 @@
 
 :where(.ds-table) {
   --_table-cell-track-min-block-size: var(--dimension-size-300);
-  --_table-cell-track-padding-inline: calc(
-    var(--dimension-space-075) - var(--dimension-space-025)
-  );
+  --_table-cell-track-padding-inline: calc(var(--dimension-space-075) - var(--dimension-space-025));
   --_table-cell-track-label-inset: var(--dimension-space-025);
   --_table-caption-bar-block-size: var(--dimension-size-600);
   --_table-image-block-size: var(--_table-cell-track-min-block-size);
   --_table-image-block-size-multi: calc(
-    var(--_table-cell-track-min-block-size)
-    + var(--dimension-space-025)
-    + var(--dimension-size-250)
+    var(--_table-cell-track-min-block-size) + var(--dimension-space-025) + var(--dimension-size-250)
   );
   --_table-image-block-size-triple: calc(
-    var(--_table-image-block-size-multi)
-    + var(--dimension-space-025)
-    + var(--dimension-size-250)
+    var(--_table-image-block-size-multi) + var(--dimension-space-025) + var(--dimension-size-250)
   );
   --_table-image-column-inline-size: calc(
-    ((var(--_table-image-block-size) * 16) / 9)
-    + (var(--_table-cell-padding-inline) * 2)
+    ((var(--_table-image-block-size) * 16) / 9) + (var(--_table-cell-padding-inline) * 2)
   );
   --_table-image-column-inline-size-multi: calc(
-    ((var(--_table-image-block-size-multi) * 16) / 9)
-    + (var(--_table-cell-padding-inline) * 2)
+    ((var(--_table-image-block-size-multi) * 16) / 9) + (var(--_table-cell-padding-inline) * 2)
   );
   --_table-image-column-inline-size-triple: calc(
-    ((var(--_table-image-block-size-triple) * 16) / 9)
-    + (var(--_table-cell-padding-inline) * 2)
+    ((var(--_table-image-block-size-triple) * 16) / 9) + (var(--_table-cell-padding-inline) * 2)
   );
   /*
    * Wrapping primary on a 1-track cell occupies later tracks instead of a
@@ -48,19 +39,17 @@
   );
   --_table-wrap-primary-padding-block: calc(
     (
-      var(--_table-cell-track-min-block-size)
-      - var(--typography-lineheight-md)
-      - var(--dimension-space-025)
-    ) / 2
+        var(--_table-cell-track-min-block-size) - var(--typography-lineheight-md) -
+          var(--dimension-space-025)
+      ) /
+      2
   );
   /*
    * Wrapping secondary on a 2-track cell occupies later tracks. Zero the copy
    * gap and use later-track + gap as line-height so 1 / 2 / 3 secondary lines
    * land on 62 / 84 / 106 with primary remaining the first 24px track.
    */
-  --_table-wrap-secondary-line-height: calc(
-    var(--dimension-size-250) + var(--dimension-space-025)
-  );
+  --_table-wrap-secondary-line-height: calc(var(--dimension-size-250) + var(--dimension-space-025));
   --_table-wrap-secondary-padding-block: 0;
   --_table-surface: var(--ds-table-surface, var(--color-background-primary));
   --_table-header-surface: var(--ds-table-header-surface, var(--color-background-primary));
@@ -73,22 +62,10 @@
   --_table-sticky-border: var(--ds-table-sticky-border, var(--color-border-tertiary));
   --_table-border-strong: var(--ds-table-border-strong, var(--color-border-secondary));
   --_table-radius: var(--ds-table-radius, var(--dimension-radius-000));
-  --_table-header-min-block-size: var(
-    --ds-table-header-min-block-size,
-    var(--dimension-size-400)
-  );
-  --_table-row-min-block-size: var(
-    --ds-table-row-min-block-size,
-    var(--dimension-size-500)
-  );
-  --_table-cell-padding-block: var(
-    --ds-table-cell-padding-block,
-    var(--dimension-space-100)
-  );
-  --_table-cell-padding-inline: var(
-    --ds-table-cell-padding-inline,
-    var(--dimension-space-100)
-  );
+  --_table-header-min-block-size: var(--ds-table-header-min-block-size, var(--dimension-size-400));
+  --_table-row-min-block-size: var(--ds-table-row-min-block-size, var(--dimension-size-500));
+  --_table-cell-padding-block: var(--ds-table-cell-padding-block, var(--dimension-space-100));
+  --_table-cell-padding-inline: var(--ds-table-cell-padding-inline, var(--dimension-space-100));
   --_table-selection-column-inline-size: var(
     --ds-table-selection-column-inline-size,
     var(--dimension-size-500)
@@ -190,8 +167,7 @@
   min-inline-size: max(
     100%,
     calc(
-      var(--ds-table-explicit-min-inline-size, 0px) +
-        var(--_table-selection-column-contribution)
+      var(--ds-table-explicit-min-inline-size, 0px) + var(--_table-selection-column-contribution)
     )
   );
   border: 0;
@@ -485,7 +461,9 @@
   z-index: 3;
 }
 
-:where(.ds-table--document-sticky-header.ds-table--caption-visible .ds-table__document-sticky-header) {
+:where(
+  .ds-table--document-sticky-header.ds-table--caption-visible .ds-table__document-sticky-header
+) {
   inset-block-start: calc(
     var(--ds-table-sticky-header-offset, 0px) + var(--_table-caption-bar-block-size)
   );
@@ -538,10 +516,7 @@
 
 :where(.ds-table__sticky-header-table .ds-table__cell--sticky-end) {
   transform: translate3d(
-    calc(
-      var(--ds-table-inline-scroll-offset, 0) -
-      var(--ds-table-inline-scroll-max-offset, 0)
-    ),
+    calc(var(--ds-table-inline-scroll-offset, 0) - var(--ds-table-inline-scroll-max-offset, 0)),
     0,
     0
   );
@@ -571,30 +546,30 @@
 }
 
 @keyframes ds-table-follow-inline-scroll {
-  from { transform: translate3d(0, 0, 0); }
+  from {
+    transform: translate3d(0, 0, 0);
+  }
   to {
-    transform: translate3d(
-      calc(-1 * var(--ds-table-inline-scroll-max-offset, 0)),
-      0,
-      0
-    );
+    transform: translate3d(calc(-1 * var(--ds-table-inline-scroll-max-offset, 0)), 0, 0);
   }
 }
 
 @keyframes ds-table-counter-inline-scroll-start {
-  from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(var(--ds-table-inline-scroll-max-offset, 0), 0, 0); }
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(var(--ds-table-inline-scroll-max-offset, 0), 0, 0);
+  }
 }
 
 @keyframes ds-table-counter-inline-scroll-end {
   from {
-    transform: translate3d(
-      calc(-1 * var(--ds-table-inline-scroll-max-offset, 0)),
-      0,
-      0
-    );
+    transform: translate3d(calc(-1 * var(--ds-table-inline-scroll-max-offset, 0)), 0, 0);
   }
-  to { transform: translate3d(0, 0, 0); }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
 }
 
 :where(.ds-table__head--semantic-copy) {
@@ -735,7 +710,6 @@
   :where(.ds-table__header-label--interactive:hover) {
     color: var(--color-foreground-primary);
   }
-
 }
 
 :where(.ds-table__header-label--interactive:active) {
@@ -1276,9 +1250,7 @@
   justify-content: center;
   box-sizing: border-box;
   inline-size: 100%;
-  min-block-size: calc(
-    var(--_table-header-min-block-size) - var(--dimension-stroke-width-012)
-  );
+  min-block-size: calc(var(--_table-header-min-block-size) - var(--dimension-stroke-width-012));
   padding: 0;
   border: 0;
   border-radius: 0;
@@ -1386,7 +1358,9 @@
 
 /* A section header yields its divider only when no member or load row follows
  * it and the section itself is the table's final body. */
-:where(.ds-table__group:last-child > .ds-table__group-row:last-child .ds-table__group-content)::after {
+:where(
+  .ds-table__group:last-child > .ds-table__group-row:last-child .ds-table__group-content
+)::after {
   display: none;
 }
 
@@ -1429,9 +1403,7 @@
 
 :where(.ds-table__table--selectable .ds-table__group-copy),
 :where(.ds-table__sticky-group--selectable .ds-table__group-copy) {
-  padding-inline-start: calc(
-    var(--dimension-space-100) + var(--_table-cell-track-label-inset)
-  );
+  padding-inline-start: calc(var(--dimension-space-100) + var(--_table-cell-track-label-inset));
 }
 
 :where(.ds-table__group-separator),

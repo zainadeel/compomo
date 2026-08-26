@@ -44,7 +44,7 @@ export function renderTableSkeletonBody(options: TableSkeletonViewOptions) {
 function renderSkeletonCell(
   column: TableColumn,
   rowIndex: number,
-  renderStickyEdge: TableSkeletonViewOptions['renderStickyEdge'],
+  renderStickyEdge: TableSkeletonViewOptions['renderStickyEdge']
 ) {
   const skeleton =
     column.skeleton ??

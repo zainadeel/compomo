@@ -7,7 +7,5 @@ export function textVariantClass(variant: TextVariant): string {
 
 /** Inline semantics get a measurable inline box; paragraphs/headings get a block box. */
 export function textDisplayClass(element: TextElement): string {
-  return element === 'span' || element === 'label'
-    ? 'ds-text--inline-box'
-    : 'ds-text--block-box';
+  return element === 'span' || element === 'label' ? 'ds-text--inline-box' : 'ds-text--block-box';
 }

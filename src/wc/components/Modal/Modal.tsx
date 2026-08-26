@@ -1,4 +1,14 @@
-import { Component, Prop, State, Event, EventEmitter, Element, Watch, h, Host } from '@stencil/core';
+import {
+  Component,
+  Prop,
+  State,
+  Event,
+  EventEmitter,
+  Element,
+  Watch,
+  h,
+  Host,
+} from '@stencil/core';
 import { resolveMotionTimeMs, TOKEN_DEFAULTS } from '../../utils';
 
 export type ModalWidth = 'sm' | 'md' | 'lg';
@@ -140,8 +150,8 @@ export class Modal {
     if (event.key !== 'Tab' || !this.dialogEl) return;
     const focusables = Array.from(
       this.dialogEl.querySelectorAll<HTMLElement>(FOCUSABLE_SEL)
-    ).filter(element =>
-      !element.hasAttribute('disabled') && element.getAttribute('aria-hidden') !== 'true'
+    ).filter(
+      element => !element.hasAttribute('disabled') && element.getAttribute('aria-hidden') !== 'true'
     );
     if (!focusables.length) {
       event.preventDefault();
@@ -169,7 +179,7 @@ export class Modal {
 
   private get describedBy(): string | undefined {
     const ids = [this.description ? this.descriptionId : '', this.ariaDescribedby ?? ''].filter(
-      Boolean,
+      Boolean
     );
     return ids.length > 0 ? ids.join(' ') : undefined;
   }
@@ -231,7 +241,12 @@ export class Modal {
                 </ds-text>
               ) : null}
             </div>
-            <ds-tooltip class="modal-close-tooltip ds-chrome-header__trailing" label={this.closeAriaLabel} side="bottom" size="sm">
+            <ds-tooltip
+              class="modal-close-tooltip ds-chrome-header__trailing"
+              label={this.closeAriaLabel}
+              side="bottom"
+              size="sm"
+            >
               <ds-button-unfilled
                 class="modal-close"
                 variant="icon"

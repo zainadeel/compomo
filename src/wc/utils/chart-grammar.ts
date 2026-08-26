@@ -3,13 +3,7 @@ import type { CurveFactory } from 'd3-shape';
 
 export type ChartValue = string | number | Date;
 export type ChartKey = string | number;
-export type ChartDataIntent =
-  | 'brand'
-  | 'caution'
-  | 'negative'
-  | 'neutral'
-  | 'positive'
-  | 'warning';
+export type ChartDataIntent = 'brand' | 'caution' | 'negative' | 'neutral' | 'positive' | 'warning';
 
 export type ChartChannel<TDatum, TValue> =
   | Extract<keyof TDatum, string>
@@ -68,13 +62,7 @@ export interface ChartMargin {
   left?: number;
 }
 
-export type ChartFocusMode =
-  | 'none'
-  | 'nearest'
-  | 'nearest-x'
-  | 'nearest-y'
-  | 'group-x'
-  | 'group-y';
+export type ChartFocusMode = 'none' | 'nearest' | 'nearest-x' | 'nearest-y' | 'group-x' | 'group-y';
 
 export interface ChartPoint<TDatum = unknown> {
   key: ChartKey;
@@ -109,14 +97,8 @@ export interface ChartTooltipContext<TDatum = unknown> {
 
 export interface ChartTooltipOptions<TDatum = unknown> {
   format?: (point: ChartPoint<TDatum>, locale: string) => string;
-  formatGroupHeading?: (
-    points: readonly ChartPoint<TDatum>[],
-    locale: string,
-  ) => string;
-  formatGroupItem?: (
-    point: ChartPoint<TDatum>,
-    locale: string,
-  ) => ChartTooltipItem;
+  formatGroupHeading?: (points: readonly ChartPoint<TDatum>[], locale: string) => string;
+  formatGroupItem?: (point: ChartPoint<TDatum>, locale: string) => ChartTooltipItem;
 }
 
 export type ChartTooltip<TDatum = unknown> = boolean | ChartTooltipOptions<TDatum>;
@@ -363,9 +345,7 @@ export interface ChartSpec<TDatum = unknown> {
   maxFocusDistance?: number;
 }
 
-export type ChartSpecBuilder<TDatum = unknown> = (
-  context: ChartBuildContext,
-) => ChartSpec<TDatum>;
+export type ChartSpecBuilder<TDatum = unknown> = (context: ChartBuildContext) => ChartSpec<TDatum>;
 
 export interface ChartDefinition<TDatum = unknown> {
   chart: ChartSpec<TDatum> | ChartSpecBuilder<TDatum>;
@@ -430,7 +410,7 @@ export interface ChartDensityOptions<TDatum> {
 }
 
 export function defineChart<TDatum>(
-  chart: ChartSpec<TDatum> | ChartSpecBuilder<TDatum>,
+  chart: ChartSpec<TDatum> | ChartSpecBuilder<TDatum>
 ): ChartDefinition<TDatum> {
   return { chart };
 }
@@ -438,7 +418,7 @@ export function defineChart<TDatum>(
 function createMark<TDatum, TOptions extends ChartMarkOptions<TDatum>>(
   kind: ChartMarkKind,
   data: readonly TDatum[],
-  options: TOptions,
+  options: TOptions
 ): ChartMark<TDatum> {
   return { kind, data, options };
 }
@@ -450,79 +430,181 @@ export function polar(options: ChartPolarContainerOptions): ChartMark {
 
 const identity = <TValue>(value: TValue): TValue => value;
 
-export function lineY<TDatum>(data: readonly TDatum[], options: ChartLineYOptions<TDatum> = {}): ChartMark<TDatum> {
-  return createMark('line-y', data, { x: options.x ?? ((_, index) => index), y: options.y ?? (identity as ChartChannel<TDatum, number>), ...options });
+export function lineY<TDatum>(
+  data: readonly TDatum[],
+  options: ChartLineYOptions<TDatum> = {}
+): ChartMark<TDatum> {
+  return createMark('line-y', data, {
+    x: options.x ?? ((_, index) => index),
+    y: options.y ?? (identity as ChartChannel<TDatum, number>),
+    ...options,
+  });
 }
 
-export function areaY<TDatum>(data: readonly TDatum[], options: ChartAreaYOptions<TDatum> = {}): ChartMark<TDatum> {
-  return createMark('area-y', data, { x: options.x ?? ((_, index) => index), y: options.y ?? (identity as ChartChannel<TDatum, number>), ...options });
+export function areaY<TDatum>(
+  data: readonly TDatum[],
+  options: ChartAreaYOptions<TDatum> = {}
+): ChartMark<TDatum> {
+  return createMark('area-y', data, {
+    x: options.x ?? ((_, index) => index),
+    y: options.y ?? (identity as ChartChannel<TDatum, number>),
+    ...options,
+  });
 }
 
-export function barY<TDatum>(data: readonly TDatum[], options: ChartBarOptions<TDatum> = {}): ChartMark<TDatum> {
-  return createMark('bar-y', data, { x: options.x ?? ((_, index) => index), y: options.y ?? (identity as ChartChannel<TDatum, number>), ...options });
+export function barY<TDatum>(
+  data: readonly TDatum[],
+  options: ChartBarOptions<TDatum> = {}
+): ChartMark<TDatum> {
+  return createMark('bar-y', data, {
+    x: options.x ?? ((_, index) => index),
+    y: options.y ?? (identity as ChartChannel<TDatum, number>),
+    ...options,
+  });
 }
 
-export function barX<TDatum>(data: readonly TDatum[], options: ChartBarOptions<TDatum> = {}): ChartMark<TDatum> {
-  return createMark('bar-x', data, { x: options.x ?? (identity as ChartChannel<TDatum, number>), y: options.y ?? ((_, index) => index), ...options });
+export function barX<TDatum>(
+  data: readonly TDatum[],
+  options: ChartBarOptions<TDatum> = {}
+): ChartMark<TDatum> {
+  return createMark('bar-x', data, {
+    x: options.x ?? (identity as ChartChannel<TDatum, number>),
+    y: options.y ?? ((_, index) => index),
+    ...options,
+  });
 }
 
-export function boxY<TDatum>(data: readonly TDatum[], options: ChartBoxYOptions<TDatum> = {}): ChartMark<TDatum> {
-  return createMark('box-y', data, { x: options.x ?? (() => 'distribution'), y: options.y ?? (identity as ChartChannel<TDatum, number>), ...options });
+export function boxY<TDatum>(
+  data: readonly TDatum[],
+  options: ChartBoxYOptions<TDatum> = {}
+): ChartMark<TDatum> {
+  return createMark('box-y', data, {
+    x: options.x ?? (() => 'distribution'),
+    y: options.y ?? (identity as ChartChannel<TDatum, number>),
+    ...options,
+  });
 }
 
-export function dot<TDatum>(data: readonly TDatum[], options: ChartDotOptions<TDatum> = {}): ChartMark<TDatum> {
-  return createMark('dot', data, { x: options.x ?? ((_, index) => index), y: options.y ?? (identity as ChartChannel<TDatum, number>), ...options });
+export function dot<TDatum>(
+  data: readonly TDatum[],
+  options: ChartDotOptions<TDatum> = {}
+): ChartMark<TDatum> {
+  return createMark('dot', data, {
+    x: options.x ?? ((_, index) => index),
+    y: options.y ?? (identity as ChartChannel<TDatum, number>),
+    ...options,
+  });
 }
 
-export function ruleX<TDatum>(data: readonly TDatum[], options: ChartRuleOptions<TDatum> = {}): ChartMark<TDatum> {
-  return createMark('rule-x', data, { x: options.x ?? (identity as ChartChannel<TDatum, ChartValue>), ...options });
+export function ruleX<TDatum>(
+  data: readonly TDatum[],
+  options: ChartRuleOptions<TDatum> = {}
+): ChartMark<TDatum> {
+  return createMark('rule-x', data, {
+    x: options.x ?? (identity as ChartChannel<TDatum, ChartValue>),
+    ...options,
+  });
 }
 
-export function ruleY<TDatum>(data: readonly TDatum[], options: ChartRuleOptions<TDatum> = {}): ChartMark<TDatum> {
-  return createMark('rule-y', data, { y: options.y ?? (identity as ChartChannel<TDatum, ChartValue>), ...options });
+export function ruleY<TDatum>(
+  data: readonly TDatum[],
+  options: ChartRuleOptions<TDatum> = {}
+): ChartMark<TDatum> {
+  return createMark('rule-y', data, {
+    y: options.y ?? (identity as ChartChannel<TDatum, ChartValue>),
+    ...options,
+  });
 }
 
-export function bandX<TDatum>(data: readonly TDatum[], options: ChartBandOptions<TDatum>): ChartMark<TDatum> {
+export function bandX<TDatum>(
+  data: readonly TDatum[],
+  options: ChartBandOptions<TDatum>
+): ChartMark<TDatum> {
   return createMark('band-x', data, options);
 }
 
-export function bandY<TDatum>(data: readonly TDatum[], options: ChartBandOptions<TDatum>): ChartMark<TDatum> {
+export function bandY<TDatum>(
+  data: readonly TDatum[],
+  options: ChartBandOptions<TDatum>
+): ChartMark<TDatum> {
   return createMark('band-y', data, options);
 }
 
-export function rect<TDatum>(data: readonly TDatum[], options: ChartRectOptions<TDatum>): ChartMark<TDatum> {
+export function rect<TDatum>(
+  data: readonly TDatum[],
+  options: ChartRectOptions<TDatum>
+): ChartMark<TDatum> {
   return createMark('rect', data, options);
 }
 
-export function cell<TDatum>(data: readonly TDatum[], options: ChartCellOptions<TDatum>): ChartMark<TDatum> {
+export function cell<TDatum>(
+  data: readonly TDatum[],
+  options: ChartCellOptions<TDatum>
+): ChartMark<TDatum> {
   return createMark('cell', data, options);
 }
 
-export function textMark<TDatum>(data: readonly TDatum[], options: ChartTextOptions<TDatum> = {}): ChartMark<TDatum> {
-  return createMark('text', data, { x: options.x ?? ((_, index) => index), y: options.y ?? ((_, index) => index), text: options.text ?? (identity as ChartChannel<TDatum, string>), ...options });
+export function textMark<TDatum>(
+  data: readonly TDatum[],
+  options: ChartTextOptions<TDatum> = {}
+): ChartMark<TDatum> {
+  return createMark('text', data, {
+    x: options.x ?? ((_, index) => index),
+    y: options.y ?? ((_, index) => index),
+    text: options.text ?? (identity as ChartChannel<TDatum, string>),
+    ...options,
+  });
 }
 
-export function arcMark<TDatum>(data: readonly TDatum[], options: ChartArcOptions<TDatum> = {}): ChartMark<TDatum> {
-  return createMark('arc', data, { theta1: options.theta1 ?? ('theta1' as ChartChannel<TDatum, number>), theta2: options.theta2 ?? ('theta2' as ChartChannel<TDatum, number>), ...options });
+export function arcMark<TDatum>(
+  data: readonly TDatum[],
+  options: ChartArcOptions<TDatum> = {}
+): ChartMark<TDatum> {
+  return createMark('arc', data, {
+    theta1: options.theta1 ?? ('theta1' as ChartChannel<TDatum, number>),
+    theta2: options.theta2 ?? ('theta2' as ChartChannel<TDatum, number>),
+    ...options,
+  });
 }
 
-export function radialLine<TDatum>(data: readonly TDatum[], options: ChartRadialOptions<TDatum> = {}): ChartMark<TDatum> {
-  return createMark('radial-line', data, { angle: options.angle ?? ((_, index) => index), radius: options.radius ?? (identity as ChartChannel<TDatum, number>), ...options });
+export function radialLine<TDatum>(
+  data: readonly TDatum[],
+  options: ChartRadialOptions<TDatum> = {}
+): ChartMark<TDatum> {
+  return createMark('radial-line', data, {
+    angle: options.angle ?? ((_, index) => index),
+    radius: options.radius ?? (identity as ChartChannel<TDatum, number>),
+    ...options,
+  });
 }
 
-export function radialArea<TDatum>(data: readonly TDatum[], options: ChartRadialOptions<TDatum> = {}): ChartMark<TDatum> {
-  return createMark('radial-area', data, { angle: options.angle ?? ((_, index) => index), radius: options.radius ?? (identity as ChartChannel<TDatum, number>), ...options });
+export function radialArea<TDatum>(
+  data: readonly TDatum[],
+  options: ChartRadialOptions<TDatum> = {}
+): ChartMark<TDatum> {
+  return createMark('radial-area', data, {
+    angle: options.angle ?? ((_, index) => index),
+    radius: options.radius ?? (identity as ChartChannel<TDatum, number>),
+    ...options,
+  });
 }
 
-export function radialDot<TDatum>(data: readonly TDatum[], options: ChartRadialOptions<TDatum> = {}): ChartMark<TDatum> {
-  return createMark('radial-dot', data, { angle: options.angle ?? ((_, index) => index), radius: options.radius ?? (identity as ChartChannel<TDatum, number>), ...options });
+export function radialDot<TDatum>(
+  data: readonly TDatum[],
+  options: ChartRadialOptions<TDatum> = {}
+): ChartMark<TDatum> {
+  return createMark('radial-dot', data, {
+    angle: options.angle ?? ((_, index) => index),
+    radius: options.radius ?? (identity as ChartChannel<TDatum, number>),
+    ...options,
+  });
 }
 
 export function channelValue<TDatum, TValue>(
   datum: TDatum,
   index: number,
   data: readonly TDatum[],
-  channel: ChartChannel<TDatum, TValue> | undefined,
+  channel: ChartChannel<TDatum, TValue> | undefined
 ): TValue | undefined {
   if (channel === undefined) return undefined;
   if (typeof channel === 'function') return channel(datum, index, data);
@@ -535,31 +617,48 @@ export function visualValue<TDatum, TValue>(
   index: number,
   data: readonly TDatum[],
   value: ChartVisual<TDatum, TValue> | undefined,
-  fallback: TValue,
+  fallback: TValue
 ): TValue {
   return typeof value === 'function'
-    ? (value as (datum: TDatum, index: number, data: readonly TDatum[]) => TValue)(datum, index, data)
+    ? (value as (datum: TDatum, index: number, data: readonly TDatum[]) => TValue)(
+        datum,
+        index,
+        data
+      )
     : (value ?? fallback);
 }
 
 export function normalizeStack<TDatum>(
   data: readonly TDatum[],
-  options: NormalizeStackOptions<TDatum>,
+  options: NormalizeStackOptions<TDatum>
 ): NormalizedStackDatum<TDatum>[] {
   const rows = data.map((datum, index) => {
     const group = channelValue(datum, index, data, options.group);
     const series = channelValue(datum, index, data, options.series);
     const value = channelValue(datum, index, data, options.value);
-    if (group === undefined || series === undefined) throw new TypeError('normalizeStack requires a group and series key for every row.');
-    if (typeof value !== 'number' || !Number.isFinite(value) || value < 0) throw new RangeError('normalizeStack values must be finite, non-negative numbers.');
+    if (group === undefined || series === undefined)
+      throw new TypeError('normalizeStack requires a group and series key for every row.');
+    if (typeof value !== 'number' || !Number.isFinite(value) || value < 0)
+      throw new RangeError('normalizeStack values must be finite, non-negative numbers.');
     return { data: datum, group, series, value };
   });
   const totals = new Map<string, number>();
-  rows.forEach(row => totals.set(chartValueKey(row.group), (totals.get(chartValueKey(row.group)) ?? 0) + row.value));
-  return rows.map(row => ({ ...row, proportion: (totals.get(chartValueKey(row.group)) ?? 0) > 0 ? row.value / (totals.get(chartValueKey(row.group)) as number) : 0 }));
+  rows.forEach(row =>
+    totals.set(chartValueKey(row.group), (totals.get(chartValueKey(row.group)) ?? 0) + row.value)
+  );
+  return rows.map(row => ({
+    ...row,
+    proportion:
+      (totals.get(chartValueKey(row.group)) ?? 0) > 0
+        ? row.value / (totals.get(chartValueKey(row.group)) as number)
+        : 0,
+  }));
 }
 
-export function pieLayout<TDatum>(data: readonly TDatum[], options: ChartPieOptions<TDatum>): ChartPieDatum<TDatum>[] {
+export function pieLayout<TDatum>(
+  data: readonly TDatum[],
+  options: ChartPieOptions<TDatum>
+): ChartPieDatum<TDatum>[] {
   const ordered = data.map((datum, index) => ({ datum, index }));
   if (options.sort) ordered.sort((a, b) => options.sort?.(a.datum, b.datum) ?? 0);
   const values = ordered.map(({ datum, index }) => {
@@ -579,8 +678,14 @@ export function pieLayout<TDatum>(data: readonly TDatum[], options: ChartPieOpti
   });
 }
 
-export function binX<TDatum>(data: readonly TDatum[], options: ChartBinOptions<TDatum>): ChartBinDatum<TDatum>[] {
-  const generator = d3Bin<TDatum, number>().value((datum, index, rows) => channelValue(datum, index, Array.from(rows), options.value) ?? Number.NaN);
+export function binX<TDatum>(
+  data: readonly TDatum[],
+  options: ChartBinOptions<TDatum>
+): ChartBinDatum<TDatum>[] {
+  const generator = d3Bin<TDatum, number>().value(
+    (datum, index, rows) =>
+      channelValue(datum, index, Array.from(rows), options.value) ?? Number.NaN
+  );
   if (typeof options.thresholds === 'number') generator.thresholds(options.thresholds);
   else if (options.thresholds !== undefined) generator.thresholds([...options.thresholds]);
   const bins = generator(data as TDatum[]);
@@ -590,32 +695,54 @@ export function binX<TDatum>(data: readonly TDatum[], options: ChartBinOptions<T
     const x2 = bin.x1;
     if (x1 === undefined || x2 === undefined) return [];
     cumulative += bin.length;
-    return [{ key: `bin:${x1}:${x2}`, x1, x2, x: (x1 + x2) / 2, count: bin.length, cumulative, rows: [...bin] }];
+    return [
+      {
+        key: `bin:${x1}:${x2}`,
+        x1,
+        x2,
+        x: (x1 + x2) / 2,
+        count: bin.length,
+        cumulative,
+        rows: [...bin],
+      },
+    ];
   });
 }
 
-export function cumulativeBins<TDatum>(bins: readonly ChartBinDatum<TDatum>[]): ChartBinDatum<TDatum>[] {
+export function cumulativeBins<TDatum>(
+  bins: readonly ChartBinDatum<TDatum>[]
+): ChartBinDatum<TDatum>[] {
   let cumulative = 0;
   return bins.map(bin => ({ ...bin, cumulative: (cumulative += bin.count) }));
 }
 
-export function densityX<TDatum>(data: readonly TDatum[], options: ChartDensityOptions<TDatum>): ChartDensityDatum[] {
-  const values = data.map((datum, index) => channelValue(datum, index, data, options.value)).filter((value): value is number => typeof value === 'number' && Number.isFinite(value)).sort((a, b) => a - b);
+export function densityX<TDatum>(
+  data: readonly TDatum[],
+  options: ChartDensityOptions<TDatum>
+): ChartDensityDatum[] {
+  const values = data
+    .map((datum, index) => channelValue(datum, index, data, options.value))
+    .filter((value): value is number => typeof value === 'number' && Number.isFinite(value))
+    .sort((a, b) => a - b);
   if (values.length === 0) return [];
   const [minimum = 0, maximum = minimum + 1] = extent(values);
   const span = Math.max(Number.EPSILON, maximum - minimum);
   const sampleCount = Math.max(8, options.samples ?? 48);
   const sampleValues = ticks(minimum, maximum, sampleCount);
   const sigma = deviation(values) ?? span / 6;
-  const bandwidth = Math.max(Number.EPSILON, options.bandwidth ?? 1.06 * sigma * Math.pow(values.length, -0.2));
+  const bandwidth = Math.max(
+    Number.EPSILON,
+    options.bandwidth ?? 1.06 * sigma * Math.pow(values.length, -0.2)
+  );
   const normalizer = 1 / (Math.sqrt(2 * Math.PI) * bandwidth * values.length);
   return sampleValues.map(x => ({
     key: `density:${x}`,
     x,
-    density: values.reduce((sum, value) => {
-      const u = (x - value) / bandwidth;
-      return sum + Math.exp(-0.5 * u * u);
-    }, 0) * normalizer,
+    density:
+      values.reduce((sum, value) => {
+        const u = (x - value) / bandwidth;
+        return sum + Math.exp(-0.5 * u * u);
+      }, 0) * normalizer,
   }));
 }
 
@@ -629,8 +756,16 @@ export function boxStatistics(values: readonly number[], whisker = 1.5) {
   const lowerFence = q1 - whisker * iqr;
   const upperFence = q3 + whisker * iqr;
   const lower = sorted.find(value => value >= lowerFence) ?? sorted[0];
-  const upper = [...sorted].reverse().find(value => value <= upperFence) ?? sorted[sorted.length - 1];
-  return { q1, median, q3, lower, upper, outliers: sorted.filter(value => value < lower || value > upper) };
+  const upper =
+    [...sorted].reverse().find(value => value <= upperFence) ?? sorted[sorted.length - 1];
+  return {
+    q1,
+    median,
+    q3,
+    lower,
+    upper,
+    outliers: sorted.filter(value => value < lower || value > upper),
+  };
 }
 
 export function chartValueKey(value: unknown): string {

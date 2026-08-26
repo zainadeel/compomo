@@ -1,4 +1,14 @@
-import { Component, Prop, Event, EventEmitter, Element, Listen, Watch, h, Host } from '@stencil/core';
+import {
+  Component,
+  Prop,
+  Event,
+  EventEmitter,
+  Element,
+  Listen,
+  Watch,
+  h,
+  Host,
+} from '@stencil/core';
 import type { PanelSubNavItem } from './panel-sub-nav-types';
 
 export type PanelSubNavBackground =
@@ -78,16 +88,19 @@ export class PanelSubNav {
   handleKeyDown(event: KeyboardEvent) {
     if (!this.enabledItems.length) return;
 
-    const focusedId = (event.target as Element | null)
-      ?.closest<HTMLElement>('[data-panel-sub-nav-id]')
-      ?.dataset['panelSubNavId'];
+    const focusedId = (event.target as Element | null)?.closest<HTMLElement>(
+      '[data-panel-sub-nav-id]'
+    )?.dataset['panelSubNavId'];
     const focusedIndex = this.items.findIndex(item => item.id === focusedId);
     const selectedIndex = this.items.findIndex(item => item.id === this.value && !item.isInactive);
-    const currentIndex = focusedIndex >= 0
-      ? focusedIndex
-      : selectedIndex >= 0
-        ? selectedIndex
-      : (event.key === 'ArrowUp' ? 0 : -1);
+    const currentIndex =
+      focusedIndex >= 0
+        ? focusedIndex
+        : selectedIndex >= 0
+          ? selectedIndex
+          : event.key === 'ArrowUp'
+            ? 0
+            : -1;
     let nextIndex: number | null = null;
 
     if (event.key === 'ArrowDown') {

@@ -34,23 +34,20 @@ function sizes(items: TableVirtualItem[]): number[] {
 }
 
 test('estimates named track stacks including unlimited wrap', () => {
-  assert.equal(
-    estimateTableRowBlockSize(row('single'), columns),
-    TABLE_VIRTUAL_ROW_TRACK_SIZE[1],
-  );
+  assert.equal(estimateTableRowBlockSize(row('single'), columns), TABLE_VIRTUAL_ROW_TRACK_SIZE[1]);
   assert.equal(
     estimateTableRowBlockSize(
       { id: 'multi', cells: { name: { primary: 'A', secondary: 'B' }, score: 1 } },
-      columns,
+      columns
     ),
-    TABLE_VIRTUAL_ROW_TRACK_SIZE[2],
+    TABLE_VIRTUAL_ROW_TRACK_SIZE[2]
   );
   assert.equal(
     estimateTableRowBlockSize(
       { id: 'wrap', cells: { name: { primary: 'A', wrap: true }, score: 1 } },
-      columns,
+      columns
     ),
-    TABLE_VIRTUAL_ROW_TRACK_SIZE[3],
+    TABLE_VIRTUAL_ROW_TRACK_SIZE[3]
   );
   assert.equal(
     estimateTableRowBlockSize(
@@ -58,9 +55,9 @@ test('estimates named track stacks including unlimited wrap', () => {
         id: 'wrap-secondary',
         cells: { name: { primary: 'A', secondary: 'B', wrap: true }, score: 1 },
       },
-      columns,
+      columns
     ),
-    TABLE_VIRTUAL_ROW_TRACK_SIZE[4],
+    TABLE_VIRTUAL_ROW_TRACK_SIZE[4]
   );
 });
 
@@ -73,8 +70,14 @@ test('flattens ungrouped rows and collapsed grouped sections', () => {
     collapsedGroupIds: [],
     columns,
   });
-  assert.deepEqual(ungrouped.map(item => item.id), ['row:a', 'row:b']);
-  assert.equal(ungrouped.every(item => !item.variableSize), true);
+  assert.deepEqual(
+    ungrouped.map(item => item.id),
+    ['row:a', 'row:b']
+  );
+  assert.equal(
+    ungrouped.every(item => !item.variableSize),
+    true
+  );
 
   const wrapping = flattenTableVirtualItems({
     grouped: false,
@@ -87,10 +90,12 @@ test('flattens ungrouped rows and collapsed grouped sections', () => {
 
   const clamped = flattenTableVirtualItems({
     grouped: false,
-    rows: [{
-      id: 'clamped',
-      cells: { name: { primary: 'Clamped copy', wrap: true, maxLines: 2 }, score: 1 },
-    }],
+    rows: [
+      {
+        id: 'clamped',
+        cells: { name: { primary: 'Clamped copy', wrap: true, maxLines: 2 }, score: 1 },
+      },
+    ],
     groups: [],
     collapsedGroupIds: [],
     columns,
@@ -110,7 +115,7 @@ test('flattens ungrouped rows and collapsed grouped sections', () => {
   });
   assert.deepEqual(
     expanded.map(item => item.id),
-    ['group:critical', 'row:a', 'row:b', 'group:high', 'row:c'],
+    ['group:critical', 'row:a', 'row:b', 'group:high', 'row:c']
   );
   assert.equal(expanded[0]?.estimatedSize, TABLE_VIRTUAL_GROUP_HEADER_SIZE);
 
@@ -121,7 +126,10 @@ test('flattens ungrouped rows and collapsed grouped sections', () => {
     collapsedGroupIds: ['critical'],
     columns,
   });
-  assert.deepEqual(collapsed.map(item => item.id), ['group:critical', 'group:high', 'row:c']);
+  assert.deepEqual(
+    collapsed.map(item => item.id),
+    ['group:critical', 'group:high', 'row:c']
+  );
 });
 
 test('prefix-sum lookup and overscan follow the locked window contract', () => {
@@ -132,7 +140,7 @@ test('prefix-sum lookup and overscan follow the locked window contract', () => {
   assert.equal(findTableVirtualIndexAtOffset(prefix, 200), 3);
   assert.equal(
     tableVirtualOverscanPx(100),
-    TABLE_VIRTUAL_MIN_OVERSCAN_ROWS * TABLE_VIRTUAL_ROW_TRACK_SIZE[1],
+    TABLE_VIRTUAL_MIN_OVERSCAN_ROWS * TABLE_VIRTUAL_ROW_TRACK_SIZE[1]
   );
   assert.equal(tableVirtualOverscanPx(400), 320);
   assert.equal(tableVirtualOverscanPx(800), 400);
@@ -174,7 +182,10 @@ test('keeps more overscan ahead of the active scroll direction', () => {
     collapsedGroupIds: [],
     columns,
   });
-  const index = createTableVirtualIndex(items, items.map(item => item.estimatedSize));
+  const index = createTableVirtualIndex(
+    items,
+    items.map(item => item.estimatedSize)
+  );
   const forward = resolveTableVirtualPlanFromIndex(index, {
     scrollOffset: 800,
     viewportSize: 200,

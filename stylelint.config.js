@@ -24,12 +24,7 @@ export default {
     './stylelint-plugin-local/require-reduced-motion.js',
   ],
   defaultSeverity: 'warning',
-  ignoreFiles: [
-    '**/dist/**',
-    '**/node_modules/**',
-    '**/storybook-static/**',
-    '**/public/**',
-  ],
+  ignoreFiles: ['**/dist/**', '**/node_modules/**', '**/storybook-static/**', '**/public/**'],
   rules: {
     'local/no-ds-text-metric-overrides': true,
     'local/no-raw-opacity': [true, { severity: 'error' }],
@@ -70,15 +65,11 @@ export default {
     'declaration-property-value-disallowed-list': [
       {
         // Space
-        '/^(margin|padding|gap|row-gap|column-gap|inset|top|right|bottom|left)(-|$)/': [
-          RAW_LENGTH,
-        ],
+        '/^(margin|padding|gap|row-gap|column-gap|inset|top|right|bottom|left)(-|$)/': [RAW_LENGTH],
         // Size (width / height / min- / max-)
         '/^(min-|max-)?(width|height)$/': [RAW_LENGTH],
         // Width tokens used as height (the CardSetting / CardDataViz bug class)
-        '/^(min-|max-)?height$/': [
-          '/--dimension-(card|modal|menu|panel)-width/',
-        ],
+        '/^(min-|max-)?height$/': ['/--dimension-(card|modal|menu|panel)-width/'],
         // Radius
         '/^border(-(top|right|bottom|left))?(-[a-z]+)?-radius$/': [RAW_LENGTH],
         // Stroke / border width (shorthand + longhand)

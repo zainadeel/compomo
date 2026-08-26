@@ -45,5 +45,5 @@ writeCatalog('system-icon-catalog.ts', 'systemIconLoaders', system, '@ds-mo/icon
 writeCatalog('flag-icon-catalog.ts', 'flagIconLoaders', flags, '@ds-mo/icons/svg/flags');
 
 console.log(
-  `  Verified lazy icon-loader catalogs (${system.length} system, ${flags.length} flag) from @ds-mo/icons@${meta.version}`,
+  `  Verified lazy icon-loader catalogs (${system.length} system, ${flags.length} flag) from @ds-mo/icons@${meta.version}`
 );

@@ -4,7 +4,7 @@ import { chromiumOnly } from './browser-tier';
 
 const integratedAxe = chromiumOnly(
   'accessibility',
-  'The integrated Badge semantic scan and static non-interactive recipe are engine-neutral.',
+  'The integrated Badge semantic scan and static non-interactive recipe are engine-neutral.'
 );
 
 test.beforeEach(async ({ page }) => {
@@ -48,31 +48,39 @@ test('maps every immediate backing surface and allows a direct ring override', a
     await badge.evaluate((element, value) => {
       (element as HTMLElement & { surface: string }).surface = value;
     }, surface);
-    await expect.poll(() => badge.evaluate(element => (
-      element.style.getPropertyValue('--_badge-ring')
-    ))).toBe(ring);
+    await expect
+      .poll(() => badge.evaluate(element => element.style.getPropertyValue('--_badge-ring')))
+      .toBe(ring);
   }
 
   await badge.evaluate(element => {
     (element as HTMLElement & { background: string }).background = 'hotpink';
   });
-  await expect.poll(() => badge.evaluate(element => (
-    element.style.getPropertyValue('--_badge-ring')
-  ))).toBe('hotpink');
+  await expect
+    .poll(() => badge.evaluate(element => element.style.getPropertyValue('--_badge-ring')))
+    .toBe('hotpink');
 });
 
 test('omits the separation ring in reserved safe-area placements', async ({ page }) => {
   const badge = page.locator('#safe-area');
   await expect(badge).toHaveClass(/badge--no-ring/);
-  await expect.poll(() => badge.evaluate(element => (
-    getComputedStyle(element).getPropertyValue('--_badge-ring-width').trim()
-  ))).toBe('0');
+  await expect
+    .poll(() =>
+      badge.evaluate(element =>
+        getComputedStyle(element).getPropertyValue('--_badge-ring-width').trim()
+      )
+    )
+    .toBe('0');
 });
 
-test('remains non-interactive and has no detectable accessibility violations', integratedAxe, async ({ page }) => {
-  await expect(page.locator('#counter')).toHaveCSS('pointer-events', 'none');
-  await expect(page.locator('ds-badge button')).toHaveCount(0);
+test(
+  'remains non-interactive and has no detectable accessibility violations',
+  integratedAxe,
+  async ({ page }) => {
+    await expect(page.locator('#counter')).toHaveCSS('pointer-events', 'none');
+    await expect(page.locator('ds-badge button')).toHaveCount(0);
 
-  const results = await new AxeBuilder({ page }).analyze();
-  expect(results.violations).toEqual([]);
-});
+    const results = await new AxeBuilder({ page }).analyze();
+    expect(results.violations).toEqual([]);
+  }
+);

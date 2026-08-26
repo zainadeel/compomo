@@ -2045,10 +2045,7 @@ test('compacts table pagination without dropping adjacent-page navigation', asyn
   ]);
   expect(compactSelectBox).not.toBeNull();
   expect(compactDividerBox).not.toBeNull();
-  expectGeometryClose(
-    compactDividerBox!.x - (compactSelectBox!.x + compactSelectBox!.width),
-    8
-  );
+  expectGeometryClose(compactDividerBox!.x - (compactSelectBox!.x + compactSelectBox!.width), 8);
 
   await table.evaluate((element: HTMLElement) => {
     element.style.inlineSize = '900px';
@@ -2166,18 +2163,18 @@ test('paginates from a slotted shadow page scroller without moving focus into th
   });
   await expect
     .poll(() =>
-      page.locator('.shell-host').evaluate(host =>
-        host.shadowRoot?.activeElement?.classList.contains('page-scroller'),
-      ),
+      page
+        .locator('.shell-host')
+        .evaluate(host => host.shadowRoot?.activeElement?.classList.contains('page-scroller'))
     )
     .toBe(true);
   await page.keyboard.press('ArrowRight');
   await expect(pagination.locator('.pagination__page')).toHaveText('2 of 3');
   await expect
     .poll(() =>
-      page.locator('.shell-host').evaluate(host =>
-        host.shadowRoot?.activeElement?.classList.contains('page-scroller'),
-      ),
+      page
+        .locator('.shell-host')
+        .evaluate(host => host.shadowRoot?.activeElement?.classList.contains('page-scroller'))
     )
     .toBe(true);
 });

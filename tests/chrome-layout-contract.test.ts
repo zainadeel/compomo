@@ -18,8 +18,8 @@ test('chrome spacing defines matching padding and gap without owning size', () =
     assert.match(
       css,
       new RegExp(
-        `\\.ds-chrome-space--${size}[\\s\\S]*?--ds-chrome-padding: var\\(--dimension-space-${token}\\);[\\s\\S]*?--ds-chrome-gap: var\\(--dimension-space-${token}\\);`,
-      ),
+        `\\.ds-chrome-space--${size}[\\s\\S]*?--ds-chrome-padding: var\\(--dimension-space-${token}\\);[\\s\\S]*?--ds-chrome-gap: var\\(--dimension-space-${token}\\);`
+      )
     );
   }
 
@@ -36,20 +36,38 @@ test('compact headers share one geometry and copy-zone anatomy', () => {
   assert.match(css, /@import ['"]\.\/control-density\.css['"];/);
 
   assert.match(css, /\.ds-chrome-header\s*{[\s\S]*?min-block-size: var\(--dimension-size-600\);/);
-  assert.match(css, /\.ds-chrome-header\s*{[\s\S]*?padding: var\(--dimension-space-100\);[\s\S]*?gap: var\(--dimension-space-100\);/);
-  assert.match(css, /\.ds-chrome-header--bounded\s*{[\s\S]*?border-block-end: var\(--dimension-stroke-width-012\) solid var\(--color-border-tertiary\);/);
-  assert.match(css, /\.ds-chrome-header__copy\s*{[\s\S]*?padding: var\(--ds-control-padding-inline, var\(--dimension-space-075\)\);/);
-  assert.match(css, /\.ds-chrome-header__heading,[\s\S]*?\.ds-chrome-header__description\s*{[\s\S]*?padding-inline: var\(--ds-control-label-inset, var\(--dimension-space-025\)\);/);
-  assert.match(css, /\.ds-chrome-header__copy--wrapping\s*{[\s\S]*?column-gap: var\(--dimension-space-100\);[\s\S]*?row-gap: var\(--dimension-space-050\);/);
-  assert.match(css, /\.ds-chrome-header__copy--stacked\s*{[\s\S]*?flex-direction: column;[\s\S]*?gap: var\(--dimension-space-050\);/);
+  assert.match(
+    css,
+    /\.ds-chrome-header\s*{[\s\S]*?padding: var\(--dimension-space-100\);[\s\S]*?gap: var\(--dimension-space-100\);/
+  );
+  assert.match(
+    css,
+    /\.ds-chrome-header--bounded\s*{[\s\S]*?border-block-end: var\(--dimension-stroke-width-012\) solid var\(--color-border-tertiary\);/
+  );
+  assert.match(
+    css,
+    /\.ds-chrome-header__copy\s*{[\s\S]*?padding: var\(--ds-control-padding-inline, var\(--dimension-space-075\)\);/
+  );
+  assert.match(
+    css,
+    /\.ds-chrome-header__heading,[\s\S]*?\.ds-chrome-header__description\s*{[\s\S]*?padding-inline: var\(--ds-control-label-inset, var\(--dimension-space-025\)\);/
+  );
+  assert.match(
+    css,
+    /\.ds-chrome-header__copy--wrapping\s*{[\s\S]*?column-gap: var\(--dimension-space-100\);[\s\S]*?row-gap: var\(--dimension-space-050\);/
+  );
+  assert.match(
+    css,
+    /\.ds-chrome-header__copy--stacked\s*{[\s\S]*?flex-direction: column;[\s\S]*?gap: var\(--dimension-space-050\);/
+  );
 
   assert.match(
     read('src/wc/components/Banner/Banner.tsx'),
-    /banner-copy ds-chrome-header__copy ds-chrome-header__copy--wrapping ds-control--md/,
+    /banner-copy ds-chrome-header__copy ds-chrome-header__copy--wrapping ds-control--md/
   );
   assert.match(
     read('src/wc/components/Modal/Modal.tsx'),
-    /modal-copy ds-chrome-header__copy ds-chrome-header__copy--stacked ds-control--md/,
+    /modal-copy ds-chrome-header__copy ds-chrome-header__copy--stacked ds-control--md/
   );
 
   const consumers = {
@@ -68,17 +86,29 @@ test('compact headers share one geometry and copy-zone anatomy', () => {
     assert.match(
       read(`src/wc/components/${component}/${component}.css`),
       /@import ['"]\.\.\/\.\.\/utils\/chrome-header\.css['"];/,
-      component,
+      component
     );
   }
 });
 
 test('migrated chrome consumes shared recipes while retaining nested rhythms', () => {
   const migrations = [
-    ['src/wc/components/BarWorkflow/BarWorkflow.tsx', /bar-workflow ds-chrome-row ds-chrome-space--md/],
-    ['src/wc/components/BarAction/BarAction.tsx', /ds-chrome-row ds-chrome-space--md ds-control-elevation ds-control-elevation--md/],
-    ['src/wc/components/PanelToolSearch/PanelToolSearch.tsx', /panel-tool-search ds-chrome-row ds-chrome-space--md/],
-    ['src/wc/components/MobileBarNav/MobileBarNav.tsx', /mobile-bar-nav ds-chrome-row ds-chrome-space--md/],
+    [
+      'src/wc/components/BarWorkflow/BarWorkflow.tsx',
+      /bar-workflow ds-chrome-row ds-chrome-space--md/,
+    ],
+    [
+      'src/wc/components/BarAction/BarAction.tsx',
+      /ds-chrome-row ds-chrome-space--md ds-control-elevation ds-control-elevation--md/,
+    ],
+    [
+      'src/wc/components/PanelToolSearch/PanelToolSearch.tsx',
+      /panel-tool-search ds-chrome-row ds-chrome-space--md/,
+    ],
+    [
+      'src/wc/components/MobileBarNav/MobileBarNav.tsx',
+      /mobile-bar-nav ds-chrome-row ds-chrome-space--md/,
+    ],
   ] as const;
 
   for (const [sourcePath, contract] of migrations) {
@@ -112,15 +142,15 @@ test('migrated chrome consumes shared recipes while retaining nested rhythms', (
   assert.match(mobileSheetNav, /class="mobile-sheet-nav__sections"/);
   assert.match(
     mobileSheetNav,
-    /this\.groups[\s\S]*?\.filter\(group => group\.items\.length > 0\)[\s\S]*?group\.items\.map/,
+    /this\.groups[\s\S]*?\.filter\(group => group\.items\.length > 0\)[\s\S]*?group\.items\.map/
   );
   assert.match(
     mobileSheetNavCss,
-    /\.mobile-sheet-nav__sections\s*{[\s\S]*?gap: var\(--dimension-space-400\);/,
+    /\.mobile-sheet-nav__sections\s*{[\s\S]*?gap: var\(--dimension-space-400\);/
   );
   assert.match(
     mobileSheetNavCss,
-    /\.mobile-sheet-nav__items\s*{[\s\S]*?gap: var\(--dimension-space-100\);/,
+    /\.mobile-sheet-nav__items\s*{[\s\S]*?gap: var\(--dimension-space-100\);/
   );
 
   const modal = read('src/wc/components/Modal/Modal.tsx');
@@ -133,7 +163,10 @@ test('migrated chrome consumes shared recipes while retaining nested rhythms', (
 test('choice sections migrate last to the shared sm column recipe', () => {
   for (const component of ['Menu', 'Select']) {
     const source = read(`src/wc/components/${component}/${component}.tsx`);
-    assert.match(source, /'ds-choice-section': true,[\s\S]*?'ds-chrome-column': true,[\s\S]*?'ds-chrome-space--sm': true/);
+    assert.match(
+      source,
+      /'ds-choice-section': true,[\s\S]*?'ds-chrome-column': true,[\s\S]*?'ds-chrome-space--sm': true/
+    );
   }
 
   const css = read('src/wc/utils/choice-list.css');
@@ -147,14 +180,14 @@ test('mobile shell owns the top safe area while the primary bottom bar owns the 
 
   assert.match(
     shellCss,
-    /:host\(\.shell-app--mobile\)\s*{[\s\S]*?padding-block-start: env\(safe-area-inset-top\);/,
+    /:host\(\.shell-app--mobile\)\s*{[\s\S]*?padding-block-start: env\(safe-area-inset-top\);/
   );
   assert.doesNotMatch(
     shellCss,
-    /:host\(\.shell-app--mobile\) \.shell-app__main\s*{[^}]*padding-block-start:/,
+    /:host\(\.shell-app--mobile\) \.shell-app__main\s*{[^}]*padding-block-start:/
   );
   assert.match(
     mobileBarCss,
-    /\.mobile-bar-nav\s*{[\s\S]*?padding-block-end: max\(var\(--ds-chrome-padding\), env\(safe-area-inset-bottom\)\);[\s\S]*?background: var\(--color-background-primary\);/,
+    /\.mobile-bar-nav\s*{[\s\S]*?padding-block-end: max\(var\(--ds-chrome-padding\), env\(safe-area-inset-bottom\)\);[\s\S]*?background: var\(--color-background-primary\);/
   );
 });

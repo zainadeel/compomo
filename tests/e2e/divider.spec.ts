@@ -18,14 +18,15 @@ test('is decorative by default and exposes opt-in separator semantics', async ({
 
 test('uses concise background contexts with explicit faint support', async ({ page }) => {
   const divider = page.locator('#decorative');
-  const resolveColor = (token: string) => page.evaluate(cssToken => {
-    const probe = document.createElement('div');
-    probe.style.backgroundColor = `var(${cssToken})`;
-    document.body.append(probe);
-    const color = getComputedStyle(probe).backgroundColor;
-    probe.remove();
-    return color;
-  }, token);
+  const resolveColor = (token: string) =>
+    page.evaluate(cssToken => {
+      const probe = document.createElement('div');
+      probe.style.backgroundColor = `var(${cssToken})`;
+      document.body.append(probe);
+      const color = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return color;
+    }, token);
   const contexts = [
     ['faint', '--color-divider-divider'],
     ['medium', '--color-divider-divider-on-medium-background'],
@@ -39,7 +40,10 @@ test('uses concise background contexts with explicit faint support', async ({ pa
   ] as const;
 
   await expect(divider).not.toHaveAttribute('background');
-  await expect(divider).toHaveCSS('background-color', await resolveColor('--color-divider-divider'));
+  await expect(divider).toHaveCSS(
+    'background-color',
+    await resolveColor('--color-divider-divider')
+  );
 
   for (const [background, token] of contexts) {
     await divider.evaluate((element, value) => {
@@ -55,10 +59,10 @@ test('resolves parent-selected length and symmetric inset values', async ({ page
 
   await expect(semantic).toHaveClass(/divider--vertical/);
   await expect(semantic).toHaveClass(/divider--custom-length/);
-  await expect.poll(() => semantic.evaluate(element => (
-    element.style.getPropertyValue('--_divider-length')
-  ))).toBe('var(--dimension-size-300)');
-  await expect.poll(() => semantic.evaluate(element => (
-    element.style.getPropertyValue('--_divider-inset')
-  ))).toBe('var(--dimension-space-100)');
+  await expect
+    .poll(() => semantic.evaluate(element => element.style.getPropertyValue('--_divider-length')))
+    .toBe('var(--dimension-size-300)');
+  await expect
+    .poll(() => semantic.evaluate(element => element.style.getPropertyValue('--_divider-inset')))
+    .toBe('var(--dimension-space-100)');
 });

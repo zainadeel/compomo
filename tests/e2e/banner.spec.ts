@@ -12,7 +12,7 @@ import {
 
 const reducedMotionAxe = chromiumOnly(
   'accessibility',
-  'This integrated reduced-motion fixture scan is authoritative in Chromium; announcement and motion behavior retain dedicated coverage.',
+  'This integrated reduced-motion fixture scan is authoritative in Chromium; announcement and motion behavior retain dedicated coverage.'
 );
 
 test.beforeEach(async ({ page }) => {
@@ -20,12 +20,14 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('renders required description, optional heading, actions, and localized dismissal', async ({ page }) => {
+test('renders required description, optional heading, actions, and localized dismissal', async ({
+  page,
+}) => {
   const controlled = page.locator('#controlled');
   await expect(controlled.locator('.banner-heading')).toHaveText('Connection interrupted');
   await expect(controlled.locator('.banner-heading')).toHaveClass(/ds-text--title-small/);
   await expect(controlled.locator('.banner-description')).toHaveText(
-    'Changes will sync when service returns.',
+    'Changes will sync when service returns.'
   );
   await expect(controlled.getByRole('button', { name: 'Retry' })).toBeVisible();
   await expect(controlled.getByRole('button', { name: 'View status' })).toBeVisible();
@@ -39,7 +41,8 @@ test('renders required description, optional heading, actions, and localized dis
       surfacePaddingInline: getComputedStyle(surface).paddingInlineStart,
       copyPaddingInline: getComputedStyle(copy).paddingInlineStart,
       copyPaddingBlock: getComputedStyle(copy).paddingBlockStart,
-      flowPaddingInline: getComputedStyle(element.querySelector('.banner-copy-flow')!).paddingInlineStart,
+      flowPaddingInline: getComputedStyle(element.querySelector('.banner-copy-flow')!)
+        .paddingInlineStart,
     };
   });
   expect(wideCopy).toMatchObject({
@@ -51,7 +54,9 @@ test('renders required description, optional heading, actions, and localized dis
 
   const descriptionOnly = page.locator('#description-only');
   await expect(descriptionOnly.locator('.banner-heading')).toHaveCount(0);
-  await expect(descriptionOnly.locator('.banner-description')).toHaveText('Reporting data is current.');
+  await expect(descriptionOnly.locator('.banner-description')).toHaveText(
+    'Reporting data is current.'
+  );
   await expect(descriptionOnly.locator('.banner-actions')).toBeHidden();
   await expect(descriptionOnly.getByRole('button', { name: 'Dismiss banner' })).toBeVisible();
 });
@@ -60,7 +65,7 @@ test(
   'fixture provides a definite shell viewport and rendered interaction targets',
   chromiumOnly(
     'layout-geometry',
-    'This smoke check identifies fixture setup failures before component geometry is evaluated.',
+    'This smoke check identifies fixture setup failures before component geometry is evaluated.'
   ),
   async ({ page }) => {
     await expectDefiniteBounds(page.locator('#shell-owner'), {
@@ -78,10 +83,12 @@ test(
       minimumWidth: 32,
       minimumHeight: 32,
     });
-  },
+  }
 );
 
-test('flows wrapped description beneath its heading and top-aligns horizontal actions with dismiss', async ({ page }) => {
+test('flows wrapped description beneath its heading and top-aligns horizontal actions with dismiss', async ({
+  page,
+}) => {
   const banner = page.locator('#inline-wrap');
   await expect(banner).toHaveAttribute('orientation', 'horizontal');
   await expect(banner).toHaveClass(/banner--orientation-horizontal/);
@@ -91,7 +98,9 @@ test('flows wrapped description beneath its heading and top-aligns horizontal ac
     const heading = element.querySelector('.banner-heading')!.getBoundingClientRect();
     const description = element.querySelector('.banner-description')!;
     const descriptionLines = Array.from(description.getClientRects());
-    const action = element.querySelector('ds-button-unfilled[slot="actions"]')!.getBoundingClientRect();
+    const action = element
+      .querySelector('ds-button-unfilled[slot="actions"]')!
+      .getBoundingClientRect();
     const dismiss = element.querySelector('.banner-dismiss')!.getBoundingClientRect();
     const flowBounds = flow.getBoundingClientRect();
     const flowPadding = Number.parseFloat(getComputedStyle(flow).paddingInlineStart);
@@ -112,7 +121,7 @@ test('flows wrapped description beneath its heading and top-aligns horizontal ac
   expectGeometryClose(
     geometry.continuationStart,
     geometry.textStart,
-    'Wrapped description continuation alignment',
+    'Wrapped description continuation alignment'
   );
   expectGeometryClose(geometry.actionTop, geometry.dismissTop, 'Action and dismiss top alignment');
 });
@@ -123,7 +132,10 @@ test('keeps announcement urgency independent from visual intent', async ({ page 
   await expect(page.locator('#polite .banner-surface')).toHaveAttribute('role', 'status');
   await expect(page.locator('#polite .banner-surface')).toHaveAttribute('aria-live', 'polite');
   await expect(page.locator('#assertive .banner-surface')).toHaveAttribute('role', 'alert');
-  await expect(page.locator('#assertive .banner-surface')).toHaveAttribute('aria-live', 'assertive');
+  await expect(page.locator('#assertive .banner-surface')).toHaveAttribute(
+    'aria-live',
+    'assertive'
+  );
 });
 
 test('maps every intent and contrast to a resolved surface recipe', async ({ page }) => {
@@ -135,40 +147,46 @@ test('maps every intent and contrast to a resolved surface recipe', async ({ pag
       const banner = page.locator(`#matrix-${intent}-${contrast}`);
       await expect(banner).toHaveClass(new RegExp(`banner--intent-${intent}`));
       await expect(banner).toHaveClass(new RegExp(`banner--contrast-${contrast}`));
-      const colors = await banner.locator('.banner-surface').evaluate((element, recipe) => {
-        const style = getComputedStyle(element);
-        const probe = document.createElement('span');
-        probe.style.backgroundColor = `var(--color-background-${recipe.contrast}-${recipe.intent})`;
-        probe.style.borderColor = recipe.contrast === 'faint'
-          ? 'var(--color-border-tertiary)'
-          : `var(--color-border-on-${recipe.contrast}-background-tertiary)`;
-        const headingProbe = document.createElement('span');
-        const descriptionProbe = document.createElement('span');
-        headingProbe.style.color = recipe.contrast === 'faint'
-          ? 'var(--color-foreground-primary)'
-          : `var(--color-foreground-on-${recipe.contrast}-background-primary)`;
-        descriptionProbe.style.color = recipe.contrast === 'faint'
-          ? 'var(--color-foreground-secondary)'
-          : `var(--color-foreground-on-${recipe.contrast}-background-secondary)`;
-        probe.append(headingProbe, descriptionProbe);
-        document.body.append(probe);
-        const expected = getComputedStyle(probe);
-        const result = {
-          background: style.backgroundColor,
-          heading: getComputedStyle(element.querySelector('.banner-heading')!).color,
-          description: getComputedStyle(element.querySelector('.banner-description')!).color,
-          border: style.borderBottomColor,
-          borderWidth: Number.parseFloat(style.borderBottomWidth),
-          expectedBackground: expected.backgroundColor,
-          expectedHeading: getComputedStyle(headingProbe).color,
-          expectedDescription: getComputedStyle(descriptionProbe).color,
-          expectedBorder: expected.borderColor,
-        };
-        probe.remove();
-        return {
-          ...result,
-        };
-      }, { intent, contrast });
+      const colors = await banner.locator('.banner-surface').evaluate(
+        (element, recipe) => {
+          const style = getComputedStyle(element);
+          const probe = document.createElement('span');
+          probe.style.backgroundColor = `var(--color-background-${recipe.contrast}-${recipe.intent})`;
+          probe.style.borderColor =
+            recipe.contrast === 'faint'
+              ? 'var(--color-border-tertiary)'
+              : `var(--color-border-on-${recipe.contrast}-background-tertiary)`;
+          const headingProbe = document.createElement('span');
+          const descriptionProbe = document.createElement('span');
+          headingProbe.style.color =
+            recipe.contrast === 'faint'
+              ? 'var(--color-foreground-primary)'
+              : `var(--color-foreground-on-${recipe.contrast}-background-primary)`;
+          descriptionProbe.style.color =
+            recipe.contrast === 'faint'
+              ? 'var(--color-foreground-secondary)'
+              : `var(--color-foreground-on-${recipe.contrast}-background-secondary)`;
+          probe.append(headingProbe, descriptionProbe);
+          document.body.append(probe);
+          const expected = getComputedStyle(probe);
+          const result = {
+            background: style.backgroundColor,
+            heading: getComputedStyle(element.querySelector('.banner-heading')!).color,
+            description: getComputedStyle(element.querySelector('.banner-description')!).color,
+            border: style.borderBottomColor,
+            borderWidth: Number.parseFloat(style.borderBottomWidth),
+            expectedBackground: expected.backgroundColor,
+            expectedHeading: getComputedStyle(headingProbe).color,
+            expectedDescription: getComputedStyle(descriptionProbe).color,
+            expectedBorder: expected.borderColor,
+          };
+          probe.remove();
+          return {
+            ...result,
+          };
+        },
+        { intent, contrast }
+      );
       expect(colors.background).toBe(colors.expectedBackground);
       expect(colors.heading).toBe(colors.expectedHeading);
       expect(colors.description).toBe(colors.expectedDescription);
@@ -185,17 +203,23 @@ test('emits controlled close and one post-exit event, and supports reopening', a
   await expect(close).toBeFocused();
   await close.press('Enter');
 
-  await expect.poll(() => controlled.evaluate((element: HTMLDsBannerElement) => element.open))
+  await expect
+    .poll(() => controlled.evaluate((element: HTMLDsBannerElement) => element.open))
     .toBe(false);
   await expect(controlled).toBeHidden();
-  await expect.poll(() => page.evaluate(() => window.bannerEvents)).toEqual({
-    close: 1,
-    afterClose: 1,
-  });
+  await expect
+    .poll(() => page.evaluate(() => window.bannerEvents))
+    .toEqual({
+      close: 1,
+      afterClose: 1,
+    });
 
-  await controlled.evaluate((element: HTMLDsBannerElement) => { element.open = true; });
+  await controlled.evaluate((element: HTMLDsBannerElement) => {
+    element.open = true;
+  });
   await expect(controlled.locator('.banner-surface')).toBeVisible();
-  await expect.poll(() => controlled.evaluate(element => getComputedStyle(element).gridTemplateRows))
+  await expect
+    .poll(() => controlled.evaluate(element => getComputedStyle(element).gridTemplateRows))
     .not.toBe('0px');
 });
 
@@ -203,7 +227,9 @@ test('cancels a pending close when controlled state reopens', async ({ page }) =
   const controlled = page.locator('#controlled');
   await controlled.evaluate((element: HTMLDsBannerElement) => {
     element.open = false;
-    requestAnimationFrame(() => { element.open = true; });
+    requestAnimationFrame(() => {
+      element.open = true;
+    });
   });
 
   await expect(controlled.locator('.banner-surface')).toBeVisible();
@@ -245,7 +271,7 @@ test('animates an initially open insertion from its CSS starting style', async (
   expectGeometryBelow(
     motion.maximumUncoveredEdgeDelta,
     COMPOSITED_EDGE_CEILING_PX,
-    'Initially open Banner uncovered shell edge',
+    'Initially open Banner uncovered shell edge'
   );
 });
 
@@ -278,7 +304,9 @@ test('uses directional panel easing for CSS-owned shell-space motion', async ({ 
   expect(opening.surfaceDuration).toBe(opening.expectedDuration);
   expect(opening.surfaceEasing).toBe(opening.expectedEasing);
 
-  await controlled.evaluate((element: HTMLDsBannerElement) => { element.open = false; });
+  await controlled.evaluate((element: HTMLDsBannerElement) => {
+    element.open = false;
+  });
   await expect(controlled).toHaveClass(/banner--closing/);
   const closing = await controlled.evaluate(element => {
     const surface = element.querySelector('.banner-surface')!;
@@ -309,7 +337,9 @@ test('uses directional panel easing for CSS-owned shell-space motion', async ({ 
 
 test('keeps one moving clip boundary flush with the shell edge', async ({ page }) => {
   const banner = page.locator('#shell-banner');
-  await banner.evaluate((element: HTMLDsBannerElement) => { element.open = false; });
+  await banner.evaluate((element: HTMLDsBannerElement) => {
+    element.open = false;
+  });
   await expect(banner).toBeHidden();
 
   const motion = await banner.evaluate(async (element: HTMLDsBannerElement) => {
@@ -345,12 +375,12 @@ test('keeps one moving clip boundary flush with the shell edge', async ({ page }
   expectGeometryBelow(
     motion.maximumEdgeDelta,
     COMPOSITED_EDGE_CEILING_PX,
-    'Banner and shell moving-edge separation',
+    'Banner and shell moving-edge separation'
   );
   expectGeometryBelow(
     motion.surfaceHeightRange,
     SUBPIXEL_TOLERANCE_PX,
-    'Banner surface height change during motion',
+    'Banner surface height change during motion'
   );
 });
 
@@ -375,11 +405,13 @@ test('uses an explicit vertical orientation without horizontal overflow', async 
     const surfaceElement = element.querySelector('.banner-surface')!;
     const surface = surfaceElement.getBoundingClientRect();
     const dismiss = element.querySelector('.banner-dismiss')!.getBoundingClientRect();
-    const action = element.querySelector('ds-button-unfilled[slot="actions"]')!.getBoundingClientRect();
+    const action = element
+      .querySelector('ds-button-unfilled[slot="actions"]')!
+      .getBoundingClientRect();
     const flowPadding = Number.parseFloat(getComputedStyle(flow).paddingInlineStart);
     const borderWidth = Number.parseFloat(getComputedStyle(surfaceElement).borderBottomWidth);
     const expectedInset = Number.parseFloat(
-      getComputedStyle(element).getPropertyValue('--dimension-space-100'),
+      getComputedStyle(element).getPropertyValue('--dimension-space-100')
     );
     return {
       copyTop: copy.top,
@@ -397,14 +429,14 @@ test('uses an explicit vertical orientation without horizontal overflow', async 
   expectGeometryClose(
     lanes.descriptionTop - lanes.headingBottom,
     lanes.expectedInset / 2,
-    'Vertical heading-description gap',
+    'Vertical heading-description gap'
   );
   expect(lanes.trailingTop).toBeGreaterThan(lanes.copyTop);
   expectGeometryClose(lanes.actionStart, lanes.textStart, 'Vertical action and copy alignment');
   expectGeometryClose(
     lanes.actionBottomInset,
     lanes.expectedInset * 2,
-    'Vertical action bottom inset',
+    'Vertical action bottom inset'
   );
   expectGeometryClose(lanes.dismissTopInset, lanes.expectedInset, 'Dismiss top inset');
   expectGeometryClose(lanes.dismissEndInset, lanes.expectedInset, 'Dismiss end inset');
@@ -414,7 +446,7 @@ test(
   'keeps vertical description-only copy visually balanced without an empty action row',
   chromiumOnly(
     'layout-geometry',
-    'Vertical no-action padding and trailing-lane removal are static Banner geometry.',
+    'Vertical no-action padding and trailing-lane removal are static Banner geometry.'
   ),
   async ({ page }) => {
     const banner = page.locator('#vertical-description-only');
@@ -434,12 +466,14 @@ test(
     expectGeometryClose(
       geometry.bottomInset,
       geometry.topInset,
-      'Vertical description-only visual block insets',
+      'Vertical description-only visual block insets'
     );
-  },
+  }
 );
 
-test('occupies one full shell row and preserves application-owned content identity', async ({ page }) => {
+test('occupies one full shell row and preserves application-owned content identity', async ({
+  page,
+}) => {
   const shell = page.locator('#shell');
   const banner = page.locator('#shell-banner');
   const row = shell.locator('.shell-app__row');
@@ -454,35 +488,43 @@ test('occupies one full shell row and preserves application-owned content identi
   expectGeometryClose(
     geometry.row.y,
     geometry.banner.y + geometry.banner.height,
-    'Shell row and banner boundary',
+    'Shell row and banner boundary'
   );
   expectGeometryClose(
     geometry.row.y + geometry.row.height,
     geometry.shell.y + geometry.shell.height,
-    'Shell row and shell bottom edge',
+    'Shell row and shell bottom edge'
   );
   expectGeometryClose(
     geometry.banner.height + geometry.row.height,
     geometry.shell.height,
-    'Banner and shell row combined height',
+    'Banner and shell row combined height'
   );
 
   const expandedOffset = geometry.row.y - geometry.shell.y;
   expect(expandedOffset).toBeGreaterThan(0);
-  await banner.evaluate((element: HTMLDsBannerElement) => { element.open = false; });
+  await banner.evaluate((element: HTMLDsBannerElement) => {
+    element.open = false;
+  });
   await expect(banner).toBeHidden();
-  expect(await page.evaluate(() => {
-    const shellRect = document.querySelector('#shell')!.getBoundingClientRect();
-    const rowRect = document.querySelector('#shell .shell-app__row')!.getBoundingClientRect();
-    return {
-      rowOffset: rowRect.y - shellRect.y,
-      rowBottomDelta: rowRect.bottom - shellRect.bottom,
-      rowHeightDelta: rowRect.height - shellRect.height,
-    };
-  })).toEqual({ rowOffset: 0, rowBottomDelta: 0, rowHeightDelta: 0 });
-  await expect.poll(() => page.locator('#shell-content').evaluate(
-    element => (element as HTMLElement & { identityMarker: string }).identityMarker,
-  )).toBe('stable');
+  expect(
+    await page.evaluate(() => {
+      const shellRect = document.querySelector('#shell')!.getBoundingClientRect();
+      const rowRect = document.querySelector('#shell .shell-app__row')!.getBoundingClientRect();
+      return {
+        rowOffset: rowRect.y - shellRect.y,
+        rowBottomDelta: rowRect.bottom - shellRect.bottom,
+        rowHeightDelta: rowRect.height - shellRect.height,
+      };
+    })
+  ).toEqual({ rowOffset: 0, rowBottomDelta: 0, rowHeightDelta: 0 });
+  await expect
+    .poll(() =>
+      page
+        .locator('#shell-content')
+        .evaluate(element => (element as HTMLElement & { identityMarker: string }).identityMarker)
+    )
+    .toBe('stable');
 });
 
 test('removes transition delay under reduced motion', async ({ page }) => {
@@ -491,7 +533,9 @@ test('removes transition delay under reduced motion', async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
   const controlled = page.locator('#controlled');
 
-  await controlled.evaluate((element: HTMLDsBannerElement) => { element.open = false; });
+  await controlled.evaluate((element: HTMLDsBannerElement) => {
+    element.open = false;
+  });
   await expect(controlled).toBeHidden();
   await expect.poll(() => page.evaluate(() => window.bannerEvents.afterClose)).toBe(1);
 });
@@ -503,8 +547,11 @@ test('preserves a real boundary in forced colors', async ({ page, browserName })
 
   const surface = page.locator('#controlled .banner-surface');
   await expect(surface).toHaveCSS('border-bottom-style', 'solid');
-  expect(await surface.evaluate(element => Number.parseFloat(getComputedStyle(element).borderBottomWidth)))
-    .toBeGreaterThan(0);
+  expect(
+    await surface.evaluate(element =>
+      Number.parseFloat(getComputedStyle(element).borderBottomWidth)
+    )
+  ).toBeGreaterThan(0);
 });
 
 test('has no detectable accessibility violations', reducedMotionAxe, async ({ page }) => {

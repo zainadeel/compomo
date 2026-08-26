@@ -4,8 +4,7 @@ import path from 'node:path';
 import test from 'node:test';
 
 const root = path.resolve(import.meta.dirname, '..');
-const read = (relativePath: string) =>
-  fs.readFileSync(path.join(root, relativePath), 'utf8');
+const read = (relativePath: string) => fs.readFileSync(path.join(root, relativePath), 'utf8');
 
 function filesBelow(relativeDirectory: string, extension: string): string[] {
   const absoluteDirectory = path.join(root, relativeDirectory);
@@ -46,7 +45,7 @@ test('every authored hover selector is limited to a hover-capable fine pointer',
       const offset = match.index;
       assert.ok(
         ranges.some(([start, end]) => offset >= start && offset < end),
-        `${file}:${css.slice(0, offset).split('\n').length} has an unguarded :hover selector`,
+        `${file}:${css.slice(0, offset).split('\n').length} has an unguarded :hover selector`
       );
     }
   }
@@ -54,18 +53,16 @@ test('every authored hover selector is limited to a hover-capable fine pointer',
   const interactionFill = read('src/wc/utils/interaction-fill.css');
   assert.match(
     interactionFill,
-    /:host\(\.ds-interaction-fill:active:not\(:disabled\)\)::after,[\s\S]*?background: var\(--ds-interaction-pressed\);/,
+    /:host\(\.ds-interaction-fill:active:not\(:disabled\)\)::after,[\s\S]*?background: var\(--ds-interaction-pressed\);/
   );
-  const conversationItem = read(
-    'src/wc/components/ConversationListItem/ConversationListItem.css',
+  const conversationItem = read('src/wc/components/ConversationListItem/ConversationListItem.css');
+  assert.match(
+    conversationItem,
+    /:host\(\.conversation-list-item--actions-open\) \.conversation-list-item__actions[\s\S]*?opacity: 1;[\s\S]*?pointer-events: auto;/
   );
   assert.match(
     conversationItem,
-    /:host\(\.conversation-list-item--actions-open\) \.conversation-list-item__actions[\s\S]*?opacity: 1;[\s\S]*?pointer-events: auto;/,
-  );
-  assert.match(
-    conversationItem,
-    /\.conversation-list-item__row:has\(:focus-visible\) \.conversation-list-item__actions/,
+    /\.conversation-list-item__row:has\(:focus-visible\) \.conversation-list-item__actions/
   );
 });
 
@@ -83,21 +80,15 @@ test('mobile host guidance and executable shell fixture share one ownership cont
   ]) {
     assert.ok(guide.includes(fragment), `framework guide must include ${fragment}`);
   }
-  assert.doesNotMatch(
-    guide,
-    /html, body, app-root, shell host \{ height: 100% \}/,
-  );
+  assert.doesNotMatch(guide, /html, body, app-root, shell host \{ height: 100% \}/);
 
   const fixture = read('tests/e2e/fixtures/shell-mobile.html');
-  assert.match(
-    fixture,
-    /content="width=device-width, initial-scale=1, viewport-fit=cover"/,
-  );
+  assert.match(fixture, /content="width=device-width, initial-scale=1, viewport-fit=cover"/);
   assert.match(fixture, /@supports \(height: 100dvh\)/);
   assert.match(fixture, /#app-root\s*{[\s\S]*?height: 100dvh;/);
   assert.match(
     fixture,
-    /html,[\s\S]*?body\s*{[\s\S]*?overflow: hidden;[\s\S]*?overscroll-behavior: none;/,
+    /html,[\s\S]*?body\s*{[\s\S]*?overflow: hidden;[\s\S]*?overscroll-behavior: none;/
   );
 
   const pattern = read('agent/patterns/application-shell/pattern.agent.json');

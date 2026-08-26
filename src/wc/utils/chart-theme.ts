@@ -47,12 +47,9 @@ export const defaultChartTheme: ChartTheme = {
 
 /** Resolve chart geometry and opacity recipes from the current TokoMo theme. */
 export function resolveChartTheme(element?: Element): ChartTheme {
-  const style = element && typeof getComputedStyle === 'function'
-    ? getComputedStyle(element)
-    : undefined;
-  const lowOpacity = Number.parseFloat(
-    style?.getPropertyValue('--effect-opacity-low') ?? '',
-  );
+  const style =
+    element && typeof getComputedStyle === 'function' ? getComputedStyle(element) : undefined;
+  const lowOpacity = Number.parseFloat(style?.getPropertyValue('--effect-opacity-low') ?? '');
   const resolvedLowOpacity = Number.isFinite(lowOpacity)
     ? lowOpacity
     : defaultChartTheme.heatmapMinimumOpacity;

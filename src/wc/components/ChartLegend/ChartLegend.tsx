@@ -85,9 +85,14 @@ export class ChartLegend {
             const isDimmed = highlightLabel != null && item.label !== highlightLabel;
             const href = resolveSafeUrl(item.href);
             const RowTag = href ? 'a' : 'div';
-            const percentage = item.value != null
-              ? formatPercentage(total ? item.value / total : 0, this.percentageDecimals, this.locale)
-              : '';
+            const percentage =
+              item.value != null
+                ? formatPercentage(
+                    total ? item.value / total : 0,
+                    this.percentageDecimals,
+                    this.locale
+                  )
+                : '';
 
             return (
               <li class="chart-legend__list-item" key={item.label}>
@@ -102,14 +107,15 @@ export class ChartLegend {
                   }}
                   href={href}
                   onClick={href ? (e: MouseEvent) => this.handleClick(item, e) : undefined}
-                  onMouseEnter={
-                    this.highlightOnHover ? () => this.handleHover(item) : undefined
-                  }
+                  onMouseEnter={this.highlightOnHover ? () => this.handleHover(item) : undefined}
                   onFocus={this.highlightOnHover ? () => this.handleHover(item) : undefined}
                   onBlur={this.highlightOnHover ? () => this.handleHover(null) : undefined}
                 >
                   <span class="chart-legend__swatch-box">
-                    <span class="chart-legend__swatch" style={{ backgroundColor: item.color ?? categoryColor(i) }} />
+                    <span
+                      class="chart-legend__swatch"
+                      style={{ backgroundColor: item.color ?? categoryColor(i) }}
+                    />
                   </span>
                   <ds-text
                     class="chart-legend__label"

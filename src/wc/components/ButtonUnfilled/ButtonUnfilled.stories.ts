@@ -143,10 +143,10 @@ export const VariantsAndSizes: Story = {
                   icon="Bell"
                   aria-label=${variant === 'icon' ? `Action ${size}` : undefined}
                 ></ds-button-unfilled>
-              `,
+              `
             )}
           </div>
-        `,
+        `
       )}
     </div>
   `,
@@ -164,15 +164,30 @@ export const LabelEmphasis: Story = {
 export const InsetDensity: Story = {
   render: () => html`
     <div style="${COL}">
-      ${SIZES.map(size => html`
-        <div style="${ROW}">
-          <span style="${LABEL}">${size}</span>
-          <ds-button-unfilled size=${size} label="Default"></ds-button-unfilled>
-          <ds-button-unfilled size=${size} label="Inset" is-inset></ds-button-unfilled>
-          <ds-button-unfilled size=${size} variant="icon" icon="Bell" aria-label="Inset ${size}" is-inset></ds-button-unfilled>
-          <ds-button-unfilled size=${size} variant="icon" icon="Bell" aria-label="Double inset ${size}" is-inset inset-depth="double"></ds-button-unfilled>
-        </div>
-      `)}
+      ${SIZES.map(
+        size => html`
+          <div style="${ROW}">
+            <span style="${LABEL}">${size}</span>
+            <ds-button-unfilled size=${size} label="Default"></ds-button-unfilled>
+            <ds-button-unfilled size=${size} label="Inset" is-inset></ds-button-unfilled>
+            <ds-button-unfilled
+              size=${size}
+              variant="icon"
+              icon="Bell"
+              aria-label="Inset ${size}"
+              is-inset
+            ></ds-button-unfilled>
+            <ds-button-unfilled
+              size=${size}
+              variant="icon"
+              icon="Bell"
+              aria-label="Double inset ${size}"
+              is-inset
+              inset-depth="double"
+            ></ds-button-unfilled>
+          </div>
+        `
+      )}
     </div>
   `,
 };
@@ -181,8 +196,18 @@ export const Rounded: Story = {
   render: () => html`
     <div style="${ROW}">
       <ds-button-unfilled rounded variant="label" label="Action"></ds-button-unfilled>
-      <ds-button-unfilled rounded variant="icon-label" icon="Bell" label="Action"></ds-button-unfilled>
-      <ds-button-unfilled rounded variant="icon" icon="Bell" aria-label="Action"></ds-button-unfilled>
+      <ds-button-unfilled
+        rounded
+        variant="icon-label"
+        icon="Bell"
+        label="Action"
+      ></ds-button-unfilled>
+      <ds-button-unfilled
+        rounded
+        variant="icon"
+        icon="Bell"
+        aria-label="Action"
+      ></ds-button-unfilled>
     </div>
   `,
 };
@@ -199,7 +224,7 @@ export const LoadingVariants: Story = {
             is-loading
             aria-label=${variant === 'icon' ? 'Action' : undefined}
           ></ds-button-unfilled>
-        `,
+        `
       )}
     </div>
   `,
@@ -209,12 +234,12 @@ export const LoadingVariants: Story = {
 export const Widths: Story = {
   parameters: { controls: { exclude: ['width'] } },
   render: args => html`
-    <div
-      style="display:flex;flex-direction:column;gap:var(--dimension-space-200);width:280px;"
-    >
+    <div style="display:flex;flex-direction:column;gap:var(--dimension-space-200);width:280px;">
       ${WIDTHS.map(
         width => html`
-          <div style="display:flex;flex-direction:column;gap:var(--dimension-space-100);width:100%;">
+          <div
+            style="display:flex;flex-direction:column;gap:var(--dimension-space-100);width:100%;"
+          >
             <span style="${LABEL}">width=${width}</span>
             <ds-button-unfilled
               variant=${args['variant'] === 'icon' ? 'label' : args['variant']}
@@ -228,7 +253,7 @@ export const Widths: Story = {
               background=${args['background'] || ''}
             ></ds-button-unfilled>
           </div>
-        `,
+        `
       )}
     </div>
   `,
@@ -252,18 +277,48 @@ export const States: Story = {
     <div style="${COL}">
       <div style="${ROW}">
         <span style="${LABEL}">idle</span>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Notifications"></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Notifications"
+        ></ds-button-unfilled>
         <ds-button-unfilled variant="icon" icon="Inbox" aria-label="Inbox" dot></ds-button-unfilled>
       </div>
       <div style="${ROW}">
         <span style="${LABEL}">active (general UI)</span>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Notifications active" is-active></ds-button-unfilled>
-        <ds-button-unfilled variant="icon" icon="Inbox" aria-label="Inbox active" is-active dot></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Notifications active"
+          is-active
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Inbox"
+          aria-label="Inbox active"
+          is-active
+          dot
+        ></ds-button-unfilled>
       </div>
       <div style="${ROW}">
         <span style="${LABEL}">active (chrome)</span>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Notifications active" is-active .activeFill=${false} .hasBorder=${false}></ds-button-unfilled>
-        <ds-button-unfilled variant="icon" icon="Inbox" aria-label="Inbox active" is-active .activeFill=${false} .hasBorder=${false} dot></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Notifications active"
+          is-active
+          .activeFill=${false}
+          .hasBorder=${false}
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Inbox"
+          aria-label="Inbox active"
+          is-active
+          .activeFill=${false}
+          .hasBorder=${false}
+          dot
+        ></ds-button-unfilled>
       </div>
       <div style="${ROW}">
         <span style="${LABEL}">active icon-label (chrome)</span>
@@ -297,18 +352,49 @@ export const States: Story = {
       </div>
       <div style="${ROW}">
         <span style="${LABEL}">no border</span>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Notifications" .hasBorder=${false}></ds-button-unfilled>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Notifications active" is-active .hasBorder=${false}></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Notifications"
+          .hasBorder=${false}
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Notifications active"
+          is-active
+          .hasBorder=${false}
+        ></ds-button-unfilled>
       </div>
       <div style="${ROW}">
         <span style="${LABEL}">bordered (default)</span>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Notifications bordered"></ds-button-unfilled>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Notifications bordered active" is-active></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Notifications bordered"
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Notifications bordered active"
+          is-active
+        ></ds-button-unfilled>
       </div>
       <div style="${ROW}">
         <span style="${LABEL}">inactive</span>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Notifications inactive" is-inactive></ds-button-unfilled>
-        <ds-button-unfilled variant="icon" icon="Inbox" aria-label="Inbox inactive" is-inactive dot></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Notifications inactive"
+          is-inactive
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Inbox"
+          aria-label="Inbox inactive"
+          is-inactive
+          dot
+        ></ds-button-unfilled>
       </div>
     </div>
   `,
@@ -353,52 +439,159 @@ export const Surfaces: Story = {
       <div style="${SURFACE} background:var(--color-background-primary);">
         <span style="${LABEL}">default · primary</span>
         <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell"></ds-button-unfilled>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell active" is-active></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Bell active"
+          is-active
+        ></ds-button-unfilled>
       </div>
       <div style="${SURFACE} background:var(--color-background-secondary);">
         <span style="${LABEL}">default · secondary</span>
         <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell"></ds-button-unfilled>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell active" is-active></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Bell active"
+          is-active
+        ></ds-button-unfilled>
       </div>
       <div style="${SURFACE} background:var(--color-background-faint-neutral);">
         <span style="${LABEL}">faint</span>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell" background="faint"></ds-button-unfilled>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell active" background="faint" is-active></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Bell"
+          background="faint"
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Bell active"
+          background="faint"
+          is-active
+        ></ds-button-unfilled>
       </div>
       <div style="${SURFACE} background:var(--color-background-medium-neutral);">
         <span style="${LABEL}">medium</span>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell" background="medium"></ds-button-unfilled>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell active" background="medium" is-active></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Bell"
+          background="medium"
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Bell active"
+          background="medium"
+          is-active
+        ></ds-button-unfilled>
       </div>
       <div style="${SURFACE} background:var(--color-background-bold-neutral);">
         <span style="${LABEL}">bold</span>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell" background="bold"></ds-button-unfilled>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell active" background="bold" is-active></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Bell"
+          background="bold"
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Bell active"
+          background="bold"
+          is-active
+        ></ds-button-unfilled>
       </div>
       <div style="${SURFACE} background:var(--color-background-strong-neutral);">
         <span style="${LABEL}">strong</span>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell" background="strong"></ds-button-unfilled>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell active" background="strong" is-active></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Bell"
+          background="strong"
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Bell active"
+          background="strong"
+          is-active
+        ></ds-button-unfilled>
       </div>
-      <div style="${SURFACE} background:linear-gradient(var(--color-translucent-translucent), var(--color-translucent-translucent)), var(--color-background-bold-brand);">
-        <span style="${LABEL};color:var(--color-translucent-foreground-secondary)">translucent</span>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell" background="translucent"></ds-button-unfilled>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell active" background="translucent" is-active></ds-button-unfilled>
+      <div
+        style="${SURFACE} background:linear-gradient(var(--color-translucent-translucent), var(--color-translucent-translucent)), var(--color-background-bold-brand);"
+      >
+        <span style="${LABEL};color:var(--color-translucent-foreground-secondary)"
+          >translucent</span
+        >
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Bell"
+          background="translucent"
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Bell active"
+          background="translucent"
+          is-active
+        ></ds-button-unfilled>
       </div>
       <div style="${SURFACE} background:var(--color-inverted-background);">
         <span style="${LABEL};color:var(--color-inverted-foreground-secondary)">inverted</span>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell" background="inverted"></ds-button-unfilled>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell active" background="inverted" is-active></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Bell"
+          background="inverted"
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Bell active"
+          background="inverted"
+          is-active
+        ></ds-button-unfilled>
       </div>
       <div style="${SURFACE} background:var(--color-media-background);">
         <span style="${LABEL};color:var(--color-media-foreground-secondary)">media</span>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell" background="media"></ds-button-unfilled>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell active" background="media" is-active></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Bell"
+          background="media"
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Bell active"
+          background="media"
+          is-active
+        ></ds-button-unfilled>
       </div>
       <div style="${SURFACE} background:var(--color-always-dark-background);">
-        <span style="${LABEL};color:var(--color-always-dark-foreground-secondary)">always-dark</span>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell" background="always-dark" .hasBorder=${false}></ds-button-unfilled>
-        <ds-button-unfilled variant="icon" icon="Bell" aria-label="Bell active" background="always-dark" is-active .activeFill=${false} .hasBorder=${false}></ds-button-unfilled>
+        <span style="${LABEL};color:var(--color-always-dark-foreground-secondary)"
+          >always-dark</span
+        >
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Bell"
+          background="always-dark"
+          .hasBorder=${false}
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Bell active"
+          background="always-dark"
+          is-active
+          .activeFill=${false}
+          .hasBorder=${false}
+        ></ds-button-unfilled>
       </div>
     </div>
   `,
@@ -438,7 +631,7 @@ export const MenuTrigger: Story = {
               label="View"
               has-menu
             ></ds-button-unfilled>
-          `,
+          `
         )}
       </div>
       <div style="${ROW}">
@@ -452,7 +645,7 @@ export const MenuTrigger: Story = {
               label="Filter"
               has-menu
             ></ds-button-unfilled>
-          `,
+          `
         )}
       </div>
       <div style="${ROW}">
@@ -466,7 +659,7 @@ export const MenuTrigger: Story = {
               has-menu
               aria-label="More options"
             ></ds-button-unfilled>
-          `,
+          `
         )}
       </div>
       <div style="${ROW}">
@@ -483,7 +676,7 @@ export const MenuTrigger: Story = {
               .activeFill=${false}
               aria-label="More options"
             ></ds-button-unfilled>
-          `,
+          `
         )}
       </div>
       <div style="${ROW}">
@@ -497,7 +690,7 @@ export const MenuTrigger: Story = {
               has-menu
               aria-label="Customize table"
             ></ds-button-unfilled>
-          `,
+          `
         )}
       </div>
     </div>
@@ -530,28 +723,79 @@ export const MenuTriggerOpenState: Story = {
       </div>
       <div style="${ROW}">
         <span style="${LABEL}">icon-label</span>
-        <ds-button-unfilled variant="icon-label" icon="Filters" label="Filter" has-menu></ds-button-unfilled>
-        <ds-button-unfilled variant="icon-label" icon="Filters" label="Filter" has-menu expanded></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon-label"
+          icon="Filters"
+          label="Filter"
+          has-menu
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon-label"
+          icon="Filters"
+          label="Filter"
+          has-menu
+          expanded
+        ></ds-button-unfilled>
       </div>
       <div style="${ROW}">
         <span style="${LABEL}">is a menu</span>
-        <ds-button-unfilled variant="icon" icon="Ellipses" has-menu aria-label="More options"></ds-button-unfilled>
-        <ds-button-unfilled variant="icon" icon="Ellipses" has-menu expanded aria-label="More options open"></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Ellipses"
+          has-menu
+          aria-label="More options"
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Ellipses"
+          has-menu
+          expanded
+          aria-label="More options open"
+        ></ds-button-unfilled>
       </div>
       <div style="${ROW}">
         <span style="${LABEL}">is a menu (chrome)</span>
-        <ds-button-unfilled variant="icon" icon="Ellipses" has-menu rounded .hasBorder=${false} .activeFill=${false} aria-label="More options"></ds-button-unfilled>
-        <ds-button-unfilled variant="icon" icon="Ellipses" has-menu rounded expanded .hasBorder=${false} .activeFill=${false} aria-label="More options open"></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Ellipses"
+          has-menu
+          rounded
+          .hasBorder=${false}
+          .activeFill=${false}
+          aria-label="More options"
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Ellipses"
+          has-menu
+          rounded
+          expanded
+          .hasBorder=${false}
+          .activeFill=${false}
+          aria-label="More options open"
+        ></ds-button-unfilled>
       </div>
       <div style="${ROW}">
         <span style="${LABEL}">inactive</span>
         <ds-button-unfilled variant="label" label="View" has-menu is-inactive></ds-button-unfilled>
-        <ds-button-unfilled variant="label" label="View" has-menu expanded is-inactive></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="label"
+          label="View"
+          has-menu
+          expanded
+          is-inactive
+        ></ds-button-unfilled>
       </div>
       <div style="${ROW}">
         <span style="${LABEL}">loading</span>
         <ds-button-unfilled variant="label" label="View" has-menu is-loading></ds-button-unfilled>
-        <ds-button-unfilled variant="icon-label" icon="Filters" label="Filter" has-menu is-loading></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon-label"
+          icon="Filters"
+          label="Filter"
+          has-menu
+          is-loading
+        ></ds-button-unfilled>
       </div>
     </div>
   `,

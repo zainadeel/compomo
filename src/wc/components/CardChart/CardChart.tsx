@@ -1,13 +1,4 @@
-import {
-  Component,
-  Element,
-  Event,
-  EventEmitter,
-  h,
-  Host,
-  Prop,
-  State,
-} from '@stencil/core';
+import { Component, Element, Event, EventEmitter, h, Host, Prop, State } from '@stencil/core';
 
 export type CardChartWidth = 'sm' | 'md' | 'lg';
 export type CardChartVariant = 'custom' | 'chart';
@@ -63,9 +54,7 @@ export class CardChart {
   }
 
   componentDidRender() {
-    const legend = this.el.querySelector(
-      'ds-chart-legend[slot="legend"]'
-    ) as LegendSlot | null;
+    const legend = this.el.querySelector('ds-chart-legend[slot="legend"]') as LegendSlot | null;
     if (this.variant === 'chart' && legend) {
       legend.setAttribute('highlight-on-hover', 'false');
       if ('highlightOnHover' in legend) legend.highlightOnHover = false;

@@ -11,13 +11,7 @@ import {
 } from '@stencil/core';
 import { resolveMotionTimeMs, TOKEN_DEFAULTS } from '../../utils';
 
-export type BannerIntent =
-  | 'neutral'
-  | 'brand'
-  | 'positive'
-  | 'warning'
-  | 'caution'
-  | 'negative';
+export type BannerIntent = 'neutral' | 'brand' | 'positive' | 'warning' | 'caution' | 'negative';
 
 export type BannerContrast = 'faint' | 'medium' | 'strong' | 'bold';
 export type BannerAnnouncement = 'none' | 'polite' | 'assertive';
@@ -85,10 +79,7 @@ export class Banner {
   }
 
   private get closeMotionMs(): number {
-    return resolveMotionTimeMs(
-      TOKEN_DEFAULTS.motionShort3,
-      TOKEN_DEFAULTS.animationDurationShort3,
-    );
+    return resolveMotionTimeMs(TOKEN_DEFAULTS.motionShort3, TOKEN_DEFAULTS.animationDurationShort3);
   }
 
   private clearTransitionWork() {
@@ -180,12 +171,7 @@ export class Banner {
           >
             {/* eslint-disable-next-line local/prefer-direct-ds-text -- The header-copy lane owns the 6px container inset separately from the inline text flow's 2px inset. */}
             <div class="banner-copy ds-chrome-header__copy ds-chrome-header__copy--wrapping ds-control--md">
-              <ds-text
-                class="banner-copy-flow"
-                as="div"
-                variant="text-body-medium"
-                color="inherit"
-              >
+              <ds-text class="banner-copy-flow" as="div" variant="text-body-medium" color="inherit">
                 {this.heading && (
                   <ds-text
                     class="banner-heading"

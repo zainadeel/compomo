@@ -8,7 +8,7 @@ import {
 import { shortcutKeyLabels } from '../src/wc/utils/shortcut-key';
 
 function keyEvent(
-  init: Partial<KeyboardEvent> & Pick<KeyboardEvent, 'key'>,
+  init: Partial<KeyboardEvent> & Pick<KeyboardEvent, 'key'>
 ): Pick<KeyboardEvent, 'key' | 'code' | 'metaKey' | 'ctrlKey' | 'altKey' | 'shiftKey'> {
   return {
     code: '',
@@ -49,12 +49,12 @@ describe('resolveShellShortcut', () => {
     assert.equal(resolveShellShortcut(keyEvent({ key: '[' })), 'toggle-panel-nav');
     assert.equal(
       resolveShellShortcut(keyEvent({ key: '[', code: 'BracketLeft' })),
-      'toggle-panel-nav',
+      'toggle-panel-nav'
     );
     assert.equal(resolveShellShortcut(keyEvent({ key: ']' })), 'close-panel-tools');
     assert.equal(
       resolveShellShortcut(keyEvent({ key: ']', code: 'BracketRight' })),
-      'close-panel-tools',
+      'close-panel-tools'
     );
     assert.equal(resolveShellShortcut(keyEvent({ key: 'k' })), 'open-tool:search');
     assert.equal(resolveShellShortcut(keyEvent({ key: 'a' })), 'open-tool:agents');

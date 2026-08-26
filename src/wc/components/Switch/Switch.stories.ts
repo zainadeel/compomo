@@ -8,8 +8,7 @@ const STACK =
   'display:flex;flex-direction:column;align-items:flex-start;gap:var(--dimension-space-200);';
 const ROW =
   'display:flex;align-items:center;justify-content:space-between;gap:var(--dimension-space-300);min-width:var(--dimension-panel-width-sm);';
-const PAIR =
-  'display:flex;align-items:center;gap:var(--dimension-space-200);';
+const PAIR = 'display:flex;align-items:center;gap:var(--dimension-space-200);';
 
 const meta: Meta = {
   title: 'Form/Switch',
@@ -50,17 +49,26 @@ export const Sizes: Story = {
   parameters: { controls: { exclude: ['size', 'checked', 'readOnly', 'isInactive'] } },
   render: () => html`
     <div style=${STACK}>
-      ${SIZES.map(size => html`
-        <div style=${ROW}>
-          <ds-text as="span" variant="text-body-medium" color="secondary">
-            ${size} · ${size === 'lg' ? '40×24' : size === 'md' ? '32×20' : size === 'sm' ? '24×16' : '20×12'}px
-          </ds-text>
-          <div style=${PAIR}>
-            <ds-switch size=${size} aria-label="${size} off"></ds-switch>
-            <ds-switch size=${size} checked aria-label="${size} on"></ds-switch>
+      ${SIZES.map(
+        size => html`
+          <div style=${ROW}>
+            <ds-text as="span" variant="text-body-medium" color="secondary">
+              ${size} ·
+              ${size === 'lg'
+                ? '40×24'
+                : size === 'md'
+                  ? '32×20'
+                  : size === 'sm'
+                    ? '24×16'
+                    : '20×12'}px
+            </ds-text>
+            <div style=${PAIR}>
+              <ds-switch size=${size} aria-label="${size} off"></ds-switch>
+              <ds-switch size=${size} checked aria-label="${size} on"></ds-switch>
+            </div>
           </div>
-        </div>
-      `)}
+        `
+      )}
     </div>
   `,
 };
@@ -76,18 +84,20 @@ export const States: Story = {
         ['Read-only on', true, true, false],
         ['Inactive off', false, false, true],
         ['Inactive on', true, false, true],
-      ].map(([label, checked, readOnly, inactive]) => html`
-        <div style=${ROW}>
-          <ds-text as="span" variant="text-body-medium" color="secondary">${label}</ds-text>
-          <ds-switch
-            size=${args['size']}
-            ?checked=${checked}
-            ?read-only=${readOnly}
-            ?is-inactive=${inactive}
-            aria-label=${String(label)}
-          ></ds-switch>
-        </div>
-      `)}
+      ].map(
+        ([label, checked, readOnly, inactive]) => html`
+          <div style=${ROW}>
+            <ds-text as="span" variant="text-body-medium" color="secondary">${label}</ds-text>
+            <ds-switch
+              size=${args['size']}
+              ?checked=${checked}
+              ?read-only=${readOnly}
+              ?is-inactive=${inactive}
+              aria-label=${String(label)}
+            ></ds-switch>
+          </div>
+        `
+      )}
     </div>
   `,
 };
@@ -159,13 +169,10 @@ export const FocusRing: Story = {
   render: () => html`
     <div style=${STACK}>
       <ds-text as="p" variant="text-body-medium" color="secondary">
-        The shared outset ring is forced visible below for visual review. Keyboard Tab focus uses the same ring.
+        The shared outset ring is forced visible below for visual review. Keyboard Tab focus uses
+        the same ring.
       </ds-text>
-      <ds-switch
-        class="ds-focus-ring--visible"
-        size="md"
-        aria-label="Focused switch"
-      ></ds-switch>
+      <ds-switch class="ds-focus-ring--visible" size="md" aria-label="Focused switch"></ds-switch>
     </div>
   `,
 };

@@ -1,4 +1,14 @@
-import { Component, Prop, Event, EventEmitter, Element, Listen, Watch, h, Host } from '@stencil/core';
+import {
+  Component,
+  Prop,
+  Event,
+  EventEmitter,
+  Element,
+  Listen,
+  Watch,
+  h,
+  Host,
+} from '@stencil/core';
 import { controlWidthClass, CONTROL_TEXT_VARIANT, type ControlWidth } from '../../utils';
 import {
   getSelectableTabs,
@@ -106,7 +116,9 @@ export class TabGroup {
     const tabs = this.selectableTabs;
     if (!tabs.length) return;
 
-    const focusedId = (e.target as Element | null)?.closest<HTMLElement>('[data-tab-id]')?.dataset['tabId'];
+    const focusedId = (e.target as Element | null)?.closest<HTMLElement>('[data-tab-id]')?.dataset[
+      'tabId'
+    ];
     const currentIdx = tabs.findIndex(t => t.id === (focusedId ?? this.focusableTabId));
 
     let nextIdx: number | null = null;
@@ -162,11 +174,7 @@ export class TabGroup {
           {this.tabs.map((tab, index) => {
             if (isTabDivider(tab)) {
               return (
-                <div
-                  key={`divider-${index}`}
-                  class="tab-divider"
-                  aria-hidden="true"
-                >
+                <div key={`divider-${index}`} class="tab-divider" aria-hidden="true">
                   <div class="tab-divider__line" />
                 </div>
               );
@@ -209,18 +217,15 @@ export class TabGroup {
                 tabIndex={tab.id === focusableTabId ? 0 : -1}
                 onClick={() => !tab.isInactive && this.selectTab(tab.id)}
               >
-                <span class={{
-                  tab__content: true,
-                  [`tab__content--${variant}`]: true,
-                  'tab__content--dot': !!tab.dot,
-                }}>
+                <span
+                  class={{
+                    tab__content: true,
+                    [`tab__content--${variant}`]: true,
+                    'tab__content--dot': !!tab.dot,
+                  }}
+                >
                   {showIcon && (
-                    <ds-icon
-                      class="tab__icon"
-                      name={tab.icon}
-                      size={this.size}
-                      color="inherit"
-                    />
+                    <ds-icon class="tab__icon" name={tab.icon} size={this.size} color="inherit" />
                   )}
                   {showLabel && (
                     <ds-text

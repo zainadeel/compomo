@@ -12,14 +12,8 @@ import {
   Host,
 } from '@stencil/core';
 import type { NavChromeStyle } from '../../shell/nav-chrome';
-import {
-  isEditableShortcutTarget,
-  resolveShellShortcut,
-} from '../../shell/shell-shortcuts';
-import type {
-  PanelToolsToolId,
-  PanelToolsHeaderAction,
-} from '../PanelTools/panel-tools-types';
+import { isEditableShortcutTarget, resolveShellShortcut } from '../../shell/shell-shortcuts';
+import type { PanelToolsToolId, PanelToolsHeaderAction } from '../PanelTools/panel-tools-types';
 import { PANEL_TOOLS_DEFAULT_ITEMS } from '../PanelTools/panel-tools-types';
 import type { BarTitleSectionItem } from '../BarTitle/bar-title-types';
 import type { BreadcrumbSelectDetail } from '../Breadcrumb/breadcrumb-types';
@@ -218,11 +212,7 @@ export class ShellApp {
 
   private get availableInboxTools(): ShellInboxToolId[] {
     return this.resolvedToolItems
-      .filter(
-        item =>
-          !item.isInactive &&
-          itemUsesShellInbox(item)
-      )
+      .filter(item => !item.isInactive && itemUsesShellInbox(item))
       .map(item => item.id as ShellInboxToolId);
   }
 
@@ -306,17 +296,11 @@ export class ShellApp {
       this.managedMobileSheetNavOpen = this.mobileSheetNavOpen;
     }
     this.syncSlottedMobileState();
-    if (
-      previous === true &&
-      !this.effectiveMobileSheetNavOpen &&
-      this.resolvedMode === 'mobile'
-    ) {
+    if (previous === true && !this.effectiveMobileSheetNavOpen && this.resolvedMode === 'mobile') {
       requestAnimationFrame(() => {
         const bar = this.el.querySelector('ds-mobile-bar-nav') as
           | (HTMLElement & {
-              focusDestination?: (
-                destination: MobileDestination | 'sheet-nav'
-              ) => Promise<void>;
+              focusDestination?: (destination: MobileDestination | 'sheet-nav') => Promise<void>;
             })
           | null;
         const activeElement = document.activeElement;
@@ -363,8 +347,12 @@ export class ShellApp {
   }
 
   private syncSlottedNavStyle() {
-    const panel = this.el.querySelector('ds-panel-nav') as (HTMLElement & { navStyle: NavChromeStyle }) | null;
-    const bar = this.el.querySelector('ds-bar-nav') as (HTMLElement & { navStyle: NavChromeStyle }) | null;
+    const panel = this.el.querySelector('ds-panel-nav') as
+      | (HTMLElement & { navStyle: NavChromeStyle })
+      | null;
+    const bar = this.el.querySelector('ds-bar-nav') as
+      | (HTMLElement & { navStyle: NavChromeStyle })
+      | null;
     if (panel) {
       panel.setAttribute('nav-style', this.navStyle);
       panel.navStyle = this.navStyle;
@@ -504,11 +492,7 @@ export class ShellApp {
   }
 
   private clearGradientPaintVars(targets: HTMLElement[]) {
-    const keys = [
-      SHELL_GRADIENT_IMAGE_VAR,
-      SHELL_GRADIENT_SIZE_VAR,
-      SHELL_GRADIENT_OPACITY_VAR,
-    ];
+    const keys = [SHELL_GRADIENT_IMAGE_VAR, SHELL_GRADIENT_SIZE_VAR, SHELL_GRADIENT_OPACITY_VAR];
     for (const target of targets) {
       for (const key of keys) target.style.removeProperty(key);
     }
@@ -519,7 +503,7 @@ export class ShellApp {
     panel: HTMLElement | null,
     bar: HTMLElement | null,
     panelPosition: string,
-    barPosition: string,
+    barPosition: string
   ) {
     if (panel) {
       panel.style.setProperty(SHELL_GRADIENT_POSITION_PANEL_VAR, panelPosition);
@@ -567,8 +551,7 @@ export class ShellApp {
 
   private gradientLayerActive(): boolean {
     return (
-      this.resolvedMode !== 'mobile' &&
-      normalizeShellGradientPreset(this.gradientPreset) !== 'none'
+      this.resolvedMode !== 'mobile' && normalizeShellGradientPreset(this.gradientPreset) !== 'none'
     );
   }
 
@@ -654,9 +637,7 @@ export class ShellApp {
     this.dsPageBack.emit(event.detail);
   };
 
-  private handleManagedBreadcrumbSelect = (
-    event: CustomEvent<BreadcrumbSelectDetail>
-  ) => {
+  private handleManagedBreadcrumbSelect = (event: CustomEvent<BreadcrumbSelectDetail>) => {
     event.stopPropagation();
     const forwarded = this.dsBreadcrumbSelect.emit(event.detail);
     if (forwarded.defaultPrevented) event.preventDefault();
@@ -738,9 +719,7 @@ export class ShellApp {
     return true;
   }
 
-  private handleManagedMobileDestination = (
-    event: CustomEvent<MobileBarNavDestinationDetail>
-  ) => {
+  private handleManagedMobileDestination = (event: CustomEvent<MobileBarNavDestinationDetail>) => {
     event.stopPropagation();
     const destination = event.detail.destination;
     this.managedMobileSheetNavOpen = false;
@@ -784,9 +763,7 @@ export class ShellApp {
     this.dsNavFooterAction.emit();
   };
 
-  private handleManagedNavUserAction = (
-    event: CustomEvent<PanelNavUserActionDetail>
-  ) => {
+  private handleManagedNavUserAction = (event: CustomEvent<PanelNavUserActionDetail>) => {
     event.stopPropagation();
     this.dsNavUserAction.emit(event.detail);
   };
@@ -800,10 +777,7 @@ export class ShellApp {
     const items = groups.flatMap(group => group.items);
     const activeId =
       this.navigation.activeId ||
-      deriveActiveIdFromUrl(
-        this.navigation.currentUrl ?? this.pageChrome.currentUrl ?? '',
-        items
-      );
+      deriveActiveIdFromUrl(this.navigation.currentUrl ?? this.pageChrome.currentUrl ?? '', items);
     return (
       items.find(item => item.id === activeId) ??
       items[0] ?? {
@@ -886,7 +860,7 @@ export class ShellApp {
   private syncPaperTextureLayout(viewport: { width: number; height: number }) {
     const chrome = this.el.querySelector<HTMLElement>('.shell-app__chrome');
     const paperTexture = this.el.querySelector<HTMLElement>(
-      '.shell-app__chrome > ds-paper-texture',
+      '.shell-app__chrome > ds-paper-texture'
     );
     if (!chrome || !paperTexture) return;
 
@@ -919,12 +893,8 @@ export class ShellApp {
         dashboardLabel={navigation.dashboardLabel ?? 'Dashboard'}
         settingsLabel={navigation.settingsLabel ?? 'Settings'}
         accountLabel={navigation.accountLabel ?? 'Account'}
-        dashboardNavigationLabel={
-          navigation.dashboardNavigationLabel ?? 'Dashboard navigation'
-        }
-        settingsNavigationLabel={
-          navigation.settingsNavigationLabel ?? 'Settings navigation'
-        }
+        dashboardNavigationLabel={navigation.dashboardNavigationLabel ?? 'Dashboard navigation'}
+        settingsNavigationLabel={navigation.settingsNavigationLabel ?? 'Settings navigation'}
         navigationItemsLabel={navigation.navigationLabel ?? 'Navigation items'}
         onDsNavSelect={this.handleManagedNavSelect}
         onDsNavFooterAction={this.handleManagedNavFooterAction}
@@ -953,11 +923,7 @@ export class ShellApp {
       <div key={`tool:${id}`} class="shell-app__tool-slot-proxy" slot={id}>
         <slot name={id} />
       </div>,
-      <div
-        key={`tool-view:${id}`}
-        class="shell-app__tool-slot-proxy"
-        slot={`${id}-view`}
-      >
+      <div key={`tool-view:${id}`} class="shell-app__tool-slot-proxy" slot={`${id}-view`}>
         <slot name={`${id}-view`} />
       </div>,
     ]);
@@ -1035,9 +1001,7 @@ export class ShellApp {
         helpLabel={label('help', 'Help & Support')}
         searchDot={this.toolDot('search')}
         activityDot={this.toolDot('activity')}
-        inboxDot={
-          this.toolDot('stacks') || this.toolDot('activity')
-        }
+        inboxDot={this.toolDot('stacks') || this.toolDot('activity')}
         messagesDot={this.toolDot('messages')}
         agentsDot={this.toolDot('agents')}
         onDsSheetNavToggle={this.handleManagedSheetToggle}
@@ -1064,9 +1028,7 @@ export class ShellApp {
           aria-label={this.pageChrome.backAriaLabel ?? 'Back'}
           activeFill={false}
           hasBorder={false}
-          onDsClick={(event: CustomEvent<MouseEvent>) =>
-            this.dsPageBack.emit(event.detail)
-          }
+          onDsClick={(event: CustomEvent<MouseEvent>) => this.dsPageBack.emit(event.detail)}
         />
       </ds-tooltip>,
       <slot name="page-header-leading" slot="leading" />,
@@ -1159,9 +1121,7 @@ export class ShellApp {
           sectionsAriaLabel={page.sectionsAriaLabel ?? 'Change page section'}
           subsections={page.subsections ?? []}
           subvalue={page.subvalue ?? ''}
-          subsectionsAriaLabel={
-            page.subsectionsAriaLabel ?? 'Change page subsection'
-          }
+          subsectionsAriaLabel={page.subsectionsAriaLabel ?? 'Change page subsection'}
           tone={page.tone ?? 'default'}
           onDsSectionChange={this.handleManagedTabChange}
           onDsSubsectionChange={this.handleManagedSubsectionChange}
@@ -1209,15 +1169,9 @@ export class ShellApp {
               class="shell-app__tools"
               data-ds-overlay-boundary
               aria-hidden={
-                mobile && (!mobileToolActive || this.mobileSheetNavOpen)
-                  ? 'true'
-                  : undefined
+                mobile && (!mobileToolActive || this.mobileSheetNavOpen) ? 'true' : undefined
               }
-              inert={
-                mobile && (!mobileToolActive || this.mobileSheetNavOpen)
-                  ? true
-                  : undefined
-              }
+              inert={mobile && (!mobileToolActive || this.mobileSheetNavOpen) ? true : undefined}
               hidden={mobile && !mobileToolActive}
             >
               <slot name="tools" />
@@ -1234,9 +1188,7 @@ export class ShellApp {
             <div
               class="shell-app__mobile-sheet-nav"
               hidden={!mobile || !this.mobileSheetNavOpen}
-              aria-hidden={
-                mobile && this.mobileSheetNavOpen ? undefined : 'true'
-              }
+              aria-hidden={mobile && this.mobileSheetNavOpen ? undefined : 'true'}
               inert={mobile && this.mobileSheetNavOpen ? undefined : true}
             >
               <slot name="mobile-sheet-nav" />
@@ -1256,8 +1208,7 @@ export class ShellApp {
     const paperTextureActive = this.paperTextureLayerActive();
     const mobile = this.resolvedMode === 'mobile';
     const mobileToolActive = mobile && this.effectiveMobileDestination !== 'area';
-    const mobileStageBlocked =
-      mobile && (mobileToolActive || this.effectiveMobileSheetNavOpen);
+    const mobileStageBlocked = mobile && (mobileToolActive || this.effectiveMobileSheetNavOpen);
     const fullscreen = !mobile && this.toolsFullscreen;
     const shellCls: Record<string, boolean> = {
       'shell-app': true,
@@ -1268,8 +1219,7 @@ export class ShellApp {
       [`shell-app--${this.resolvedMode}`]: true,
       'shell-app--tools-fullscreen': fullscreen,
       'shell-app--mobile-tool-active': mobileToolActive,
-      'shell-app--mobile-sheet-nav-open':
-        mobile && this.effectiveMobileSheetNavOpen,
+      'shell-app--mobile-sheet-nav-open': mobile && this.effectiveMobileSheetNavOpen,
       'shell-app--managed': this.managed,
       'shell-app--slotted': !this.managed,
     };
@@ -1293,11 +1243,19 @@ export class ShellApp {
           <div class="shell-app__chrome" aria-hidden="true">
             {this.renderPaperTexture()}
           </div>
-          <div class="shell-app__panel" aria-hidden={fullscreen ? 'true' : undefined} inert={fullscreen ? true : undefined}>
+          <div
+            class="shell-app__panel"
+            aria-hidden={fullscreen ? 'true' : undefined}
+            inert={fullscreen ? true : undefined}
+          >
             {this.renderManagedPanelNav()}
           </div>
           <div class="shell-app__main">
-            <div class="shell-app__bar" aria-hidden={fullscreen ? 'true' : undefined} inert={fullscreen ? true : undefined}>
+            <div
+              class="shell-app__bar"
+              aria-hidden={fullscreen ? 'true' : undefined}
+              inert={fullscreen ? true : undefined}
+            >
               {this.renderManagedBarNav()}
             </div>
             <div
@@ -1309,9 +1267,7 @@ export class ShellApp {
                   : undefined
               }
               inert={
-                mobile && (!mobileToolActive || this.effectiveMobileSheetNavOpen)
-                  ? true
-                  : undefined
+                mobile && (!mobileToolActive || this.effectiveMobileSheetNavOpen) ? true : undefined
               }
               hidden={mobile && !mobileToolActive}
             >
@@ -1329,9 +1285,7 @@ export class ShellApp {
             <div
               class="shell-app__mobile-sheet-nav"
               hidden={!mobile || !this.effectiveMobileSheetNavOpen}
-              aria-hidden={
-                mobile && this.effectiveMobileSheetNavOpen ? undefined : 'true'
-              }
+              aria-hidden={mobile && this.effectiveMobileSheetNavOpen ? undefined : 'true'}
               inert={mobile && this.effectiveMobileSheetNavOpen ? undefined : true}
             >
               {this.renderManagedMobileSheetNav()}

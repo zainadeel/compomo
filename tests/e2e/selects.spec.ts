@@ -40,9 +40,7 @@ test('keeps external FilterMenu anchors inside and continues Tab through compose
   await expect
     .poll(() =>
       page.evaluate(
-        () =>
-          (window as typeof window & { __shadowFilterCloses: number })
-            .__shadowFilterCloses
+        () => (window as typeof window & { __shadowFilterCloses: number }).__shadowFilterCloses
       )
     )
     .toBe(0);
@@ -52,9 +50,7 @@ test('keeps external FilterMenu anchors inside and continues Tab through compose
   await expect
     .poll(() =>
       page.evaluate(
-        () =>
-          (window as typeof window & { __shadowFilterCloses: number })
-            .__shadowFilterCloses
+        () => (window as typeof window & { __shadowFilterCloses: number }).__shadowFilterCloses
       )
     )
     .toBe(1);
@@ -73,65 +69,70 @@ test('keeps external FilterMenu anchors inside and continues Tab through compose
   await expect(after).toBeFocused();
 });
 
-test('defaults both select triggers to hug width and supports explicit fill',
+test(
+  'defaults both select triggers to hug width and supports explicit fill',
   chromiumOnly('layout-geometry', 'Explicit width props map to deterministic trigger geometry.'),
   async ({ page }) => {
-  for (const selector of ['#single', '#multi']) {
-    const select = page.locator(selector);
-    await expect
-      .poll(() =>
-        select.evaluate((element: HTMLDsSelectElement) => element.width)
-      )
-      .toBe('hug');
-    await expect(select).toHaveClass(/ds-control-width--hug/);
+    for (const selector of ['#single', '#multi']) {
+      const select = page.locator(selector);
+      await expect
+        .poll(() => select.evaluate((element: HTMLDsSelectElement) => element.width))
+        .toBe('hug');
+      await expect(select).toHaveClass(/ds-control-width--hug/);
+
+      await select.evaluate((element: HTMLDsSelectElement) => {
+        element.width = 'fill';
+        element.style.width = '320px';
+      });
+      await expect(select).toHaveClass(/ds-control-width--fill/);
+      const alignment = await select.getByRole('combobox').evaluate(trigger => {
+        const label = trigger.querySelector<HTMLElement>('.trigger__label-box');
+        const triggerRect = trigger.getBoundingClientRect();
+        const labelRect = label?.getBoundingClientRect();
+        return {
+          justifyContent: getComputedStyle(trigger).justifyContent,
+          labelTextAlign: label ? getComputedStyle(label).textAlign : undefined,
+          labelWidth: labelRect?.width ?? 0,
+          triggerWidth: triggerRect.width,
+        };
+      });
+      expect(alignment.justifyContent).toBe('flex-start');
+      expect(alignment.labelTextAlign).toBe('left');
+      expect(alignment.labelWidth).toBeGreaterThan(alignment.triggerWidth / 2);
+    }
+  }
+);
+
+test(
+  'keeps hasBorder=false borderless when selected, focused, and invalid',
+  chromiumOnly(
+    'controlled-behavior',
+    'The borderless override is a deterministic visual-state contract.'
+  ),
+  async ({ page }) => {
+    const select = page.locator('#borderless-error');
+    const trigger = select.getByRole('combobox');
 
     await select.evaluate((element: HTMLDsSelectElement) => {
-      element.width = 'fill';
-      element.style.width = '320px';
+      element.value = 'cherry';
     });
-    await expect(select).toHaveClass(/ds-control-width--fill/);
-    const alignment = await select.getByRole('combobox').evaluate(trigger => {
-      const label = trigger.querySelector<HTMLElement>('.trigger__label-box');
-      const triggerRect = trigger.getBoundingClientRect();
-      const labelRect = label?.getBoundingClientRect();
-      return {
-        justifyContent: getComputedStyle(trigger).justifyContent,
-        labelTextAlign: label ? getComputedStyle(label).textAlign : undefined,
-        labelWidth: labelRect?.width ?? 0,
-        triggerWidth: triggerRect.width,
-      };
-    });
-    expect(alignment.justifyContent).toBe('flex-start');
-    expect(alignment.labelTextAlign).toBe('left');
-    expect(alignment.labelWidth).toBeGreaterThan(alignment.triggerWidth / 2);
+    await trigger.focus();
+
+    const presentation = await trigger.evaluate(element => ({
+      borderWidth: getComputedStyle(element)
+        .getPropertyValue('--ds-interaction-border-width')
+        .trim(),
+      borderedClass: element.classList.contains('trigger--bordered'),
+      errorClass: element.classList.contains('wrapper--error'),
+    }));
+
+    await expect(select).toHaveJSProperty('hasBorder', false);
+    await expect(trigger).toHaveAttribute('aria-invalid', 'true');
+    expect(presentation.borderWidth).toBe('0px');
+    expect(presentation.borderedClass).toBe(false);
+    expect(presentation.errorClass).toBe(false);
   }
-});
-
-test('keeps hasBorder=false borderless when selected, focused, and invalid',
-  chromiumOnly('controlled-behavior', 'The borderless override is a deterministic visual-state contract.'),
-  async ({ page }) => {
-  const select = page.locator('#borderless-error');
-  const trigger = select.getByRole('combobox');
-
-  await select.evaluate((element: HTMLDsSelectElement) => {
-    element.value = 'cherry';
-  });
-  await trigger.focus();
-
-  const presentation = await trigger.evaluate(element => ({
-    borderWidth: getComputedStyle(element)
-      .getPropertyValue('--ds-interaction-border-width')
-      .trim(),
-    borderedClass: element.classList.contains('trigger--bordered'),
-    errorClass: element.classList.contains('wrapper--error'),
-  }));
-
-  await expect(select).toHaveJSProperty('hasBorder', false);
-  await expect(trigger).toHaveAttribute('aria-invalid', 'true');
-  expect(presentation.borderWidth).toBe('0px');
-  expect(presentation.borderedClass).toBe(false);
-  expect(presentation.errorClass).toBe(false);
-});
+);
 
 test('uses combobox and listbox semantics with disabled-option keyboard skipping', async ({
   page,
@@ -230,9 +231,7 @@ test('holds the pressed wash without changing select-trigger foreground while op
     await expect(trigger).toHaveClass(/trigger--expanded/);
     await expect(trigger).toHaveCSS('color', foreground);
     await expect
-      .poll(() =>
-        trigger.evaluate(element => getComputedStyle(element, '::after').backgroundColor)
-      )
+      .poll(() => trigger.evaluate(element => getComputedStyle(element, '::after').backgroundColor))
       .toBe(pressed);
     await trigger.press('Escape');
   }
@@ -249,10 +248,7 @@ test('remounts the filter option pane when its active category changes', async (
   });
   await filterMenu.getByRole('tab', { name: 'Status' }).click();
 
-  await expect(filterMenu.getByRole('tabpanel')).toHaveAttribute(
-    'aria-labelledby',
-    /-status-tab$/
-  );
+  await expect(filterMenu.getByRole('tabpanel')).toHaveAttribute('aria-labelledby', /-status-tab$/);
   await expect(optionPane.locator('[data-previous-pane]')).toHaveCount(0);
   await expect(optionPane.locator('ds-checkbox').first()).toHaveJSProperty('checked', false);
 });
@@ -341,9 +337,13 @@ test('keeps a scalar trigger label override while the popup shows the selected o
   await expect(select.getByRole('option', { name: 'Apple', selected: true })).toBeVisible();
   await select.getByRole('button', { name: 'Save view' }).click();
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
-  await expect.poll(() => page.evaluate(() =>
-    (window as typeof window & { __selectFooterActions: number }).__selectFooterActions
-  )).toBe(1);
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => (window as typeof window & { __selectFooterActions: number }).__selectFooterActions
+      )
+    )
+    .toBe(1);
 });
 
 test('exposes contextual option actions without changing selection', async ({ page }) => {
@@ -364,11 +364,13 @@ test('exposes contextual option actions without changing selection', async ({ pa
     element.value = 'default';
     (window as typeof window & { __selectOptionAction?: unknown }).__selectOptionAction = null;
     element.addEventListener('dsOptionAction', event => {
-      const detail = (event as CustomEvent<{
-        value: string;
-        anchorId: string;
-        originalEvent: MouseEvent;
-      }>).detail;
+      const detail = (
+        event as CustomEvent<{
+          value: string;
+          anchorId: string;
+          originalEvent: MouseEvent;
+        }>
+      ).detail;
       (window as typeof window & { __selectOptionAction?: unknown }).__selectOptionAction = {
         value: detail.value,
         anchorId: detail.anchorId,
@@ -385,7 +387,9 @@ test('exposes contextual option actions without changing selection', async ({ pa
   const action = select.getByRole('button', { name: 'Options for My view' });
   const actionSurface = select.locator('.select-option-row__action');
 
-  await expect(defaultOption.locator('xpath=..').locator('.select-option-row__action')).toHaveCount(0);
+  await expect(defaultOption.locator('xpath=..').locator('.select-option-row__action')).toHaveCount(
+    0
+  );
   await expect(action).toHaveAttribute('aria-haspopup', 'menu');
   await expect(action).toHaveAttribute('aria-controls', 'my-view-menu');
   await expect(actionSurface).toHaveCSS('opacity', '0');
@@ -410,8 +414,8 @@ test('exposes contextual option actions without changing selection', async ({ pa
     .toBe('default');
   await expect
     .poll(() =>
-      page.evaluate(() =>
-        (window as typeof window & { __selectOptionAction?: unknown }).__selectOptionAction
+      page.evaluate(
+        () => (window as typeof window & { __selectOptionAction?: unknown }).__selectOptionAction
       )
     )
     .toMatchObject({ value: 'my-view', keyboard: false });
@@ -423,8 +427,8 @@ test('exposes contextual option actions without changing selection', async ({ pa
   await action.press('Enter');
   await expect
     .poll(() =>
-      page.evaluate(() =>
-        (window as typeof window & { __selectOptionAction?: unknown }).__selectOptionAction
+      page.evaluate(
+        () => (window as typeof window & { __selectOptionAction?: unknown }).__selectOptionAction
       )
     )
     .toMatchObject({ value: 'my-view', keyboard: true });
@@ -462,8 +466,9 @@ test('keeps single and multi popups visible and pointer-usable after repeated re
     await multi.getByRole('option', { name: 'Date' }).click();
     await expect
       .poll(() =>
-        multi.evaluate((element: HTMLDsSelectElement) =>
-          Array.isArray(element.value) && element.value.includes('date')
+        multi.evaluate(
+          (element: HTMLDsSelectElement) =>
+            Array.isArray(element.value) && element.value.includes('date')
         )
       )
       .toBe(cycle % 2 === 0);
@@ -526,21 +531,26 @@ test('aligns the popup choice edge to the trigger end when requested', async ({ 
   expect(geometry.popupRight).toBeCloseTo(geometry.triggerRight + 4, 0);
 });
 
-test('falls back to one text-only option layout when icon data is mixed',
-  chromiumOnly('controlled-behavior', 'Mixed option data maps deterministically to one component-owned layout.'),
+test(
+  'falls back to one text-only option layout when icon data is mixed',
+  chromiumOnly(
+    'controlled-behavior',
+    'Mixed option data maps deterministically to one component-owned layout.'
+  ),
   async ({ page }) => {
-  const select = page.locator('#single');
-  await select.evaluate((element: HTMLDsSelectElement) => {
-    element.options = [
-      { label: 'With icon', value: 'with-icon', icon: 'Chart' },
-      { label: 'Without icon', value: 'without-icon' },
-    ];
-  });
+    const select = page.locator('#single');
+    await select.evaluate((element: HTMLDsSelectElement) => {
+      element.options = [
+        { label: 'With icon', value: 'with-icon', icon: 'Chart' },
+        { label: 'Without icon', value: 'without-icon' },
+      ];
+    });
 
-  await select.getByRole('combobox').click();
-  await expect(select.getByRole('option')).toHaveCount(2);
-  await expect(select.locator('.ds-choice-item__icon')).toHaveCount(0);
-});
+    await select.getByRole('combobox').click();
+    await expect(select.getByRole('option')).toHaveCount(2);
+    await expect(select.locator('.ds-choice-item__icon')).toHaveCount(0);
+  }
+);
 
 test('keeps the active descendant visible in long single and multi lists', async ({ page }) => {
   for (const selector of ['#single', '#multi']) {
@@ -683,141 +693,161 @@ test('filters locally by subtext and preserves group semantics', async ({ page }
   await expect(options.first()).toContainText('Cherry');
 });
 
-test('shares a rounded sm search clear button across single and multi selects',
-  chromiumOnly('layout-geometry', 'The shared clear-button recipe is token-backed static geometry.'),
-  async ({
-  page,
-}) => {
-  for (const selector of ['#searchable', '#multi-search']) {
-    const select = page.locator(selector);
-    await select.getByRole('combobox').click();
-    const search = select.getByRole('searchbox', { name: 'Search' });
-    await search.click();
-    await expect(search).toBeFocused();
-
-    const focusedPlaceholder = await search.evaluate(element => {
-      const probe = document.createElement('span');
-      probe.style.color = 'var(--color-foreground-quaternary)';
-      element.parentElement?.append(probe);
-      const expected = getComputedStyle(probe).color;
-      probe.remove();
-      return {
-        actual: getComputedStyle(element, '::placeholder').color,
-        expected,
-      };
-    });
-    expect(focusedPlaceholder.actual).toBe(focusedPlaceholder.expected);
-
-    await search.fill('app');
-
-    const clearHost = select.locator('ds-button-unfilled.select-search__clear');
-    const clear = clearHost.getByRole('button', { name: 'Clear', exact: true });
-    await expect(clearHost).toHaveJSProperty('variant', 'icon');
-    await expect(clearHost).toHaveJSProperty('size', 'sm');
-    await expect(clearHost).toHaveJSProperty('icon', 'CrossCircle');
-    await expect(clearHost).toHaveJSProperty('hasBorder', false);
-    await expect(clearHost).toHaveJSProperty('rounded', true);
-    await expect(clear).toHaveCSS('border-radius', '9999px');
-
-    const spacing = await select.locator('.select-search__control').evaluate(element => {
-      const control = element.getBoundingClientRect();
-      const button = element.querySelector('ds-button-unfilled')?.getBoundingClientRect();
-      return {
-        top: (button?.top ?? 0) - control.top,
-        right: control.right - (button?.right ?? 0),
-        bottom: control.bottom - (button?.bottom ?? 0),
-      };
-    });
-    expect(spacing.top).toBeCloseTo(4, 3);
-    expect(spacing.right).toBeCloseTo(4, 3);
-    expect(spacing.bottom).toBeCloseTo(4, 3);
-
-    await clear.click();
-    await expect(search).toHaveValue('');
-    await expect(search).toBeFocused();
-    await expect(clearHost).toHaveCount(0);
-  }
-});
-
-test('uses body-only Empty State for empty single and multi search results',
-  chromiumOnly('controlled-behavior', 'Empty-result composition and unavailable-option semantics are deterministic after filtering.'),
+test(
+  'shares a rounded sm search clear button across single and multi selects',
+  chromiumOnly(
+    'layout-geometry',
+    'The shared clear-button recipe is token-backed static geometry.'
+  ),
   async ({ page }) => {
-  for (const selector of ['#searchable', '#multi-search']) {
-    const select = page.locator(selector);
-    await select.getByRole('combobox').click();
-    await select.getByRole('searchbox', { name: 'Search' }).fill('no matching choices');
+    for (const selector of ['#searchable', '#multi-search']) {
+      const select = page.locator(selector);
+      await select.getByRole('combobox').click();
+      const search = select.getByRole('searchbox', { name: 'Search' });
+      await search.click();
+      await expect(search).toBeFocused();
 
-    const emptyState = select.locator('ds-empty-state');
-    const emptyOption = select.getByRole('option', { name: 'No results found' });
-    await expect(emptyOption).toHaveAttribute('aria-disabled', 'true');
-    await expect(emptyOption).toHaveAttribute('aria-selected', 'false');
-    await expect(emptyState).toHaveCount(1);
-    await expect(emptyState.locator('ds-icon')).toHaveCount(0);
-    await expect(emptyState.locator('.empty-state__title')).toHaveCount(0);
-    await expect(emptyState.locator('.empty-state__body')).toHaveText('No results found');
-    await expect(emptyState.locator('.empty-state__body')).toHaveClass(/ds-text--body-medium/);
-    await expect(emptyState.locator('.empty-state__body')).toHaveClass(/ds-text--color-secondary/);
+      const focusedPlaceholder = await search.evaluate(element => {
+        const probe = document.createElement('span');
+        probe.style.color = 'var(--color-foreground-quaternary)';
+        element.parentElement?.append(probe);
+        const expected = getComputedStyle(probe).color;
+        probe.remove();
+        return {
+          actual: getComputedStyle(element, '::placeholder').color,
+          expected,
+        };
+      });
+      expect(focusedPlaceholder.actual).toBe(focusedPlaceholder.expected);
+
+      await search.fill('app');
+
+      const clearHost = select.locator('ds-button-unfilled.select-search__clear');
+      const clear = clearHost.getByRole('button', { name: 'Clear', exact: true });
+      await expect(clearHost).toHaveJSProperty('variant', 'icon');
+      await expect(clearHost).toHaveJSProperty('size', 'sm');
+      await expect(clearHost).toHaveJSProperty('icon', 'CrossCircle');
+      await expect(clearHost).toHaveJSProperty('hasBorder', false);
+      await expect(clearHost).toHaveJSProperty('rounded', true);
+      await expect(clear).toHaveCSS('border-radius', '9999px');
+
+      const spacing = await select.locator('.select-search__control').evaluate(element => {
+        const control = element.getBoundingClientRect();
+        const button = element.querySelector('ds-button-unfilled')?.getBoundingClientRect();
+        return {
+          top: (button?.top ?? 0) - control.top,
+          right: control.right - (button?.right ?? 0),
+          bottom: control.bottom - (button?.bottom ?? 0),
+        };
+      });
+      expect(spacing.top).toBeCloseTo(4, 3);
+      expect(spacing.right).toBeCloseTo(4, 3);
+      expect(spacing.bottom).toBeCloseTo(4, 3);
+
+      await clear.click();
+      await expect(search).toHaveValue('');
+      await expect(search).toBeFocused();
+      await expect(clearHost).toHaveCount(0);
+    }
   }
-});
+);
 
-test('shows busy state in the trigger and popup',
-  chromiumOnly('controlled-behavior', 'Busy-state composition and ARIA semantics follow explicit controlled props.'),
+test(
+  'uses body-only Empty State for empty single and multi search results',
+  chromiumOnly(
+    'controlled-behavior',
+    'Empty-result composition and unavailable-option semantics are deterministic after filtering.'
+  ),
   async ({ page }) => {
-  const select = page.locator('#loading');
-  const trigger = select.getByRole('combobox');
+    for (const selector of ['#searchable', '#multi-search']) {
+      const select = page.locator(selector);
+      await select.getByRole('combobox').click();
+      await select.getByRole('searchbox', { name: 'Search' }).fill('no matching choices');
 
-  await expect(trigger).toHaveAttribute('aria-busy', 'true');
-  await expect(trigger.locator('ds-loader')).toHaveCount(1);
-  await trigger.click();
-  const loadingOption = select.getByRole('option', { name: 'Loading' });
-  const popupLoader = loadingOption.locator('ds-loader');
-  await expect(loadingOption).toHaveCount(1);
-  await expect(loadingOption).toHaveAttribute('aria-disabled', 'true');
-  await expect(loadingOption).toHaveAttribute('aria-selected', 'false');
-  await expect(loadingOption).toHaveAttribute('aria-live', 'polite');
+      const emptyState = select.locator('ds-empty-state');
+      const emptyOption = select.getByRole('option', { name: 'No results found' });
+      await expect(emptyOption).toHaveAttribute('aria-disabled', 'true');
+      await expect(emptyOption).toHaveAttribute('aria-selected', 'false');
+      await expect(emptyState).toHaveCount(1);
+      await expect(emptyState.locator('ds-icon')).toHaveCount(0);
+      await expect(emptyState.locator('.empty-state__title')).toHaveCount(0);
+      await expect(emptyState.locator('.empty-state__body')).toHaveText('No results found');
+      await expect(emptyState.locator('.empty-state__body')).toHaveClass(/ds-text--body-medium/);
+      await expect(emptyState.locator('.empty-state__body')).toHaveClass(
+        /ds-text--color-secondary/
+      );
+    }
+  }
+);
 
-  const [loadingBox, loaderBox] = await Promise.all([
-    loadingOption.boundingBox(),
-    popupLoader.boundingBox(),
-  ]);
-  expect(loadingBox).not.toBeNull();
-  expect(loaderBox).not.toBeNull();
-  expect(loaderBox!.x + loaderBox!.width / 2).toBeCloseTo(
-    loadingBox!.x + loadingBox!.width / 2,
-    1
-  );
-  expect(loaderBox!.y + loaderBox!.height / 2).toBeCloseTo(
-    loadingBox!.y + loadingBox!.height / 2,
-    1
-  );
-});
-
-test('uses a thicker inset stroke for error without changing control geometry',
-  chromiumOnly('layout-geometry', 'Error stroke and unchanged bounds are local token-backed geometry.'),
-  async ({
-  page,
-}) => {
-  for (const selector of ['#single', '#multi']) {
-    const select = page.locator(selector);
+test(
+  'shows busy state in the trigger and popup',
+  chromiumOnly(
+    'controlled-behavior',
+    'Busy-state composition and ARIA semantics follow explicit controlled props.'
+  ),
+  async ({ page }) => {
+    const select = page.locator('#loading');
     const trigger = select.getByRole('combobox');
-    const normalHeight = await trigger.evaluate(element => element.getBoundingClientRect().height);
 
-    await expect
-      .poll(() => trigger.evaluate(element => getComputedStyle(element, '::after').boxShadow))
-      .toMatch(/0px 0px 0px 1px/);
-    await select.evaluate((element: HTMLDsSelectElement) => {
-      element.error = true;
-      element.errorMessage = 'Make a selection.';
-    });
+    await expect(trigger).toHaveAttribute('aria-busy', 'true');
+    await expect(trigger.locator('ds-loader')).toHaveCount(1);
+    await trigger.click();
+    const loadingOption = select.getByRole('option', { name: 'Loading' });
+    const popupLoader = loadingOption.locator('ds-loader');
+    await expect(loadingOption).toHaveCount(1);
+    await expect(loadingOption).toHaveAttribute('aria-disabled', 'true');
+    await expect(loadingOption).toHaveAttribute('aria-selected', 'false');
+    await expect(loadingOption).toHaveAttribute('aria-live', 'polite');
 
-    await expect
-      .poll(() => trigger.evaluate(element => getComputedStyle(element, '::after').boxShadow))
-      .toMatch(/0px 0px 0px 1.5px/);
-    await expect
-      .poll(() => trigger.evaluate(element => element.getBoundingClientRect().height))
-      .toBe(normalHeight);
+    const [loadingBox, loaderBox] = await Promise.all([
+      loadingOption.boundingBox(),
+      popupLoader.boundingBox(),
+    ]);
+    expect(loadingBox).not.toBeNull();
+    expect(loaderBox).not.toBeNull();
+    expect(loaderBox!.x + loaderBox!.width / 2).toBeCloseTo(
+      loadingBox!.x + loadingBox!.width / 2,
+      1
+    );
+    expect(loaderBox!.y + loaderBox!.height / 2).toBeCloseTo(
+      loadingBox!.y + loadingBox!.height / 2,
+      1
+    );
   }
-});
+);
+
+test(
+  'uses a thicker inset stroke for error without changing control geometry',
+  chromiumOnly(
+    'layout-geometry',
+    'Error stroke and unchanged bounds are local token-backed geometry.'
+  ),
+  async ({ page }) => {
+    for (const selector of ['#single', '#multi']) {
+      const select = page.locator(selector);
+      const trigger = select.getByRole('combobox');
+      const normalHeight = await trigger.evaluate(
+        element => element.getBoundingClientRect().height
+      );
+
+      await expect
+        .poll(() => trigger.evaluate(element => getComputedStyle(element, '::after').boxShadow))
+        .toMatch(/0px 0px 0px 1px/);
+      await select.evaluate((element: HTMLDsSelectElement) => {
+        element.error = true;
+        element.errorMessage = 'Make a selection.';
+      });
+
+      await expect
+        .poll(() => trigger.evaluate(element => getComputedStyle(element, '::after').boxShadow))
+        .toMatch(/0px 0px 0px 1.5px/);
+      await expect
+        .poll(() => trigger.evaluate(element => element.getBoundingClientRect().height))
+        .toBe(normalHeight);
+    }
+  }
+);
 
 test('keeps the multi trigger label and inline count, repeated selection, and clear-all behavior', async ({
   page,
@@ -928,9 +958,7 @@ test('keeps the multi trigger label and inline count, repeated selection, and cl
     const summaryRect = element
       .querySelector('.ds-choice-footer__summary')
       ?.getBoundingClientRect();
-    const clearRect = element
-      .querySelector('.ds-choice-footer__clear')
-      ?.getBoundingClientRect();
+    const clearRect = element.querySelector('.ds-choice-footer__clear')?.getBoundingClientRect();
     return {
       summaryRight: summaryRect?.right ?? 0,
       clearLeft: clearRect?.left ?? 0,
@@ -946,39 +974,40 @@ test('keeps the multi trigger label and inline count, repeated selection, and cl
   });
   await expect(summary).toHaveText('3 selected');
 
-  const readTextActionStyles = (
-    foregroundToken: string,
-    underlineToken: string,
-  ) => clear.evaluate((element, tokens) => {
-    const foregroundProbe = document.createElement('span');
-    const underlineProbe = document.createElement('span');
-    const geometryProbe = document.createElement('span');
-    foregroundProbe.style.color = `var(${tokens.foregroundToken})`;
-    underlineProbe.style.color = `var(${tokens.underlineToken})`;
-    geometryProbe.style.textDecorationThickness = 'var(--dimension-stroke-width-012)';
-    geometryProbe.style.textUnderlineOffset = 'var(--dimension-space-025)';
-    document.body.append(foregroundProbe, underlineProbe, geometryProbe);
-    const actual = getComputedStyle(element);
-    const geometry = getComputedStyle(geometryProbe);
-    const result = {
-      color: actual.color,
-      expectedColor: getComputedStyle(foregroundProbe).color,
-      underlineColor: actual.textDecorationColor,
-      expectedUnderlineColor: getComputedStyle(underlineProbe).color,
-      thickness: actual.textDecorationThickness,
-      expectedThickness: geometry.textDecorationThickness,
-      offset: actual.textUnderlineOffset,
-      expectedOffset: geometry.textUnderlineOffset,
-    };
-    foregroundProbe.remove();
-    underlineProbe.remove();
-    geometryProbe.remove();
-    return result;
-  }, { foregroundToken, underlineToken });
+  const readTextActionStyles = (foregroundToken: string, underlineToken: string) =>
+    clear.evaluate(
+      (element, tokens) => {
+        const foregroundProbe = document.createElement('span');
+        const underlineProbe = document.createElement('span');
+        const geometryProbe = document.createElement('span');
+        foregroundProbe.style.color = `var(${tokens.foregroundToken})`;
+        underlineProbe.style.color = `var(${tokens.underlineToken})`;
+        geometryProbe.style.textDecorationThickness = 'var(--dimension-stroke-width-012)';
+        geometryProbe.style.textUnderlineOffset = 'var(--dimension-space-025)';
+        document.body.append(foregroundProbe, underlineProbe, geometryProbe);
+        const actual = getComputedStyle(element);
+        const geometry = getComputedStyle(geometryProbe);
+        const result = {
+          color: actual.color,
+          expectedColor: getComputedStyle(foregroundProbe).color,
+          underlineColor: actual.textDecorationColor,
+          expectedUnderlineColor: getComputedStyle(underlineProbe).color,
+          thickness: actual.textDecorationThickness,
+          expectedThickness: geometry.textDecorationThickness,
+          offset: actual.textUnderlineOffset,
+          expectedOffset: geometry.textUnderlineOffset,
+        };
+        foregroundProbe.remove();
+        underlineProbe.remove();
+        geometryProbe.remove();
+        return result;
+      },
+      { foregroundToken, underlineToken }
+    );
 
   const brandStyles = await readTextActionStyles(
     '--color-foreground-bold-brand',
-    '--color-foreground-bold-brand',
+    '--color-foreground-bold-brand'
   );
   expect(brandStyles.color).toBe(brandStyles.expectedColor);
   expect(brandStyles.underlineColor).toBe(brandStyles.expectedUnderlineColor);
@@ -992,13 +1021,13 @@ test('keeps the multi trigger label and inline count, repeated selection, and cl
       element.classList.remove(
         'ds-text-action--on-medium',
         'ds-text-action--on-strong',
-        'ds-text-action--on-bold',
+        'ds-text-action--on-bold'
       );
       element.classList.add(`ds-text-action--on-${nextContext}`);
     }, context);
     const surfaceStyles = await readTextActionStyles(
       `--color-foreground-on-${context}-background-primary`,
-      `--color-foreground-on-${context}-background-secondary`,
+      `--color-foreground-on-${context}-background-secondary`
     );
     await expect(clear).toHaveCSS('text-decoration-line', 'underline');
     expect(surfaceStyles.color).toBe(surfaceStyles.expectedColor);
@@ -1011,7 +1040,7 @@ test('keeps the multi trigger label and inline count, repeated selection, and cl
     element.classList.remove(
       'ds-text-action--on-medium',
       'ds-text-action--on-strong',
-      'ds-text-action--on-bold',
+      'ds-text-action--on-bold'
     );
   });
   await expect(clear).toHaveCSS('text-decoration-line', 'none');
@@ -1060,92 +1089,100 @@ test('submits repeated multi values, validates required controls, and resets', a
     .toEqual([]);
 });
 
-test('keeps prefix icons and chevrons secondary across selected surface contexts',
-  chromiumOnly('layout-geometry', 'Foreground token mapping is deterministic across explicit contexts.'),
-  async ({
-  page,
-}) => {
-  const cases = [
-    [undefined, '--color-foreground-secondary', '--color-foreground-primary'],
-    ['faint', '--color-foreground-secondary', '--color-foreground-primary'],
-    [
-      'medium',
-      '--color-foreground-on-medium-background-secondary',
-      '--color-foreground-on-medium-background-primary',
-    ],
-    [
-      'bold',
-      '--color-foreground-on-bold-background-secondary',
-      '--color-foreground-on-bold-background-primary',
-    ],
-    [
-      'strong',
-      '--color-foreground-on-strong-background-secondary',
-      '--color-foreground-on-strong-background-primary',
-    ],
-    [
-      'translucent',
-      '--color-translucent-foreground-secondary',
-      '--color-translucent-foreground-primary',
-    ],
-    ['inverted', '--color-inverted-foreground-secondary', '--color-inverted-foreground-primary'],
-    ['media', '--color-media-foreground-secondary', '--color-media-foreground-primary'],
-    [
-      'always-dark',
-      '--color-always-dark-foreground-secondary',
-      '--color-always-dark-foreground-primary',
-    ],
-  ] as const;
+test(
+  'keeps prefix icons and chevrons secondary across selected surface contexts',
+  chromiumOnly(
+    'layout-geometry',
+    'Foreground token mapping is deterministic across explicit contexts.'
+  ),
+  async ({ page }) => {
+    const cases = [
+      [undefined, '--color-foreground-secondary', '--color-foreground-primary'],
+      ['faint', '--color-foreground-secondary', '--color-foreground-primary'],
+      [
+        'medium',
+        '--color-foreground-on-medium-background-secondary',
+        '--color-foreground-on-medium-background-primary',
+      ],
+      [
+        'bold',
+        '--color-foreground-on-bold-background-secondary',
+        '--color-foreground-on-bold-background-primary',
+      ],
+      [
+        'strong',
+        '--color-foreground-on-strong-background-secondary',
+        '--color-foreground-on-strong-background-primary',
+      ],
+      [
+        'translucent',
+        '--color-translucent-foreground-secondary',
+        '--color-translucent-foreground-primary',
+      ],
+      ['inverted', '--color-inverted-foreground-secondary', '--color-inverted-foreground-primary'],
+      ['media', '--color-media-foreground-secondary', '--color-media-foreground-primary'],
+      [
+        'always-dark',
+        '--color-always-dark-foreground-secondary',
+        '--color-always-dark-foreground-primary',
+      ],
+    ] as const;
 
-  for (const selector of ['#single', '#multi']) {
-    const select = page.locator(selector);
-    await select.evaluate((element: HTMLDsSelectElement) => {
-      element.icon = 'Chart';
-      element.value = element.multiple ? ['apple'] : 'apple';
-    });
+    for (const selector of ['#single', '#multi']) {
+      const select = page.locator(selector);
+      await select.evaluate((element: HTMLDsSelectElement) => {
+        element.icon = 'Chart';
+        element.value = element.multiple ? ['apple'] : 'apple';
+      });
 
-    for (const [background, secondaryToken, primaryToken] of cases) {
-      await select.evaluate((element: HTMLDsSelectElement, value) => {
-        element.background = value;
-      }, background);
+      for (const [background, secondaryToken, primaryToken] of cases) {
+        await select.evaluate((element: HTMLDsSelectElement, value) => {
+          element.background = value;
+        }, background);
 
-      await expect
-        .poll(() =>
-          select.evaluate(
-            (element, [secondary, primary]) => {
-              const prefix = element.querySelector<HTMLElement>('.trigger__prefix');
-              const chevron = element.querySelector<HTMLElement>('.trigger__chevron');
-              const label = element.querySelector<HTMLElement>('.trigger__label');
-              const probe = document.createElement('span');
-              probe.style.color = `var(${secondary})`;
-              document.body.append(probe);
-              const expectedSecondary = getComputedStyle(probe).color;
-              probe.style.color = `var(${primary})`;
-              const expectedPrimary = getComputedStyle(probe).color;
-              probe.remove();
-              if (!prefix || !chevron || !label) return false;
-              return (
-                getComputedStyle(prefix).color === expectedSecondary &&
-                getComputedStyle(chevron).color === expectedSecondary &&
-                getComputedStyle(label).color === expectedPrimary
-              );
-            },
-            [secondaryToken, primaryToken] as const
+        await expect
+          .poll(() =>
+            select.evaluate(
+              (element, [secondary, primary]) => {
+                const prefix = element.querySelector<HTMLElement>('.trigger__prefix');
+                const chevron = element.querySelector<HTMLElement>('.trigger__chevron');
+                const label = element.querySelector<HTMLElement>('.trigger__label');
+                const probe = document.createElement('span');
+                probe.style.color = `var(${secondary})`;
+                document.body.append(probe);
+                const expectedSecondary = getComputedStyle(probe).color;
+                probe.style.color = `var(${primary})`;
+                const expectedPrimary = getComputedStyle(probe).color;
+                probe.remove();
+                if (!prefix || !chevron || !label) return false;
+                return (
+                  getComputedStyle(prefix).color === expectedSecondary &&
+                  getComputedStyle(chevron).color === expectedSecondary &&
+                  getComputedStyle(label).color === expectedPrimary
+                );
+              },
+              [secondaryToken, primaryToken] as const
+            )
           )
-        )
-        .toBe(true);
+          .toBe(true);
+      }
     }
   }
-});
+);
 
-test('has no detectable accessibility violations',
-  chromiumOnly('accessibility', 'Storybook owns documented select states; this fixture retains one integrated Chromium Axe check.'),
+test(
+  'has no detectable accessibility violations',
+  chromiumOnly(
+    'accessibility',
+    'Storybook owns documented select states; this fixture retains one integrated Chromium Axe check.'
+  ),
   async ({ page }) => {
-  await page.locator('#multi-search').getByRole('combobox').click();
-  await expect(page.locator('#multi-search').getByRole('listbox')).toBeVisible();
-  const results = await new AxeBuilder({ page }).analyze();
-  expect(results.violations).toEqual([]);
-});
+    await page.locator('#multi-search').getByRole('combobox').click();
+    await expect(page.locator('#multi-search').getByRole('listbox')).toBeVisible();
+    const results = await new AxeBuilder({ page }).analyze();
+    expect(results.violations).toEqual([]);
+  }
+);
 
 declare global {
   interface Window {

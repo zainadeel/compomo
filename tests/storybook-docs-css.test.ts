@@ -10,7 +10,7 @@ test('docs markdown table styles exclude ds-table light-DOM markup', () => {
   assert.match(docsCss, /\.sbdocs-content table:not\(\.ds-table__table\)/);
   assert.match(
     docsCss,
-    /\.sbdocs-content table:not\(\.ds-table__table\) th,\s*\n\.sbdocs-content table:not\(\.ds-table__table\) td/,
+    /\.sbdocs-content table:not\(\.ds-table__table\) th,\s*\n\.sbdocs-content table:not\(\.ds-table__table\) td/
   );
   assert.doesNotMatch(docsCss, /\.sbdocs-content th,\s*\n\.sbdocs-content td/);
   assert.doesNotMatch(docsCss, /^\.sbdocs-content table \{/m);

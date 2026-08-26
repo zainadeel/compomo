@@ -4,7 +4,7 @@ import { chromiumOnly } from './browser-tier';
 
 const loadingAxe = chromiumOnly(
   'accessibility',
-  'Axe audits the integrated loading-state matrix in Chromium; loading semantics retain dedicated rendered coverage.',
+  'Axe audits the integrated loading-state matrix in Chromium; loading semantics retain dedicated rendered coverage.'
 );
 
 const BUTTON_IDS = [
@@ -21,7 +21,9 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('unfilled buttons only own a tooltip for the collapsible table-caption contract', async ({ page }) => {
+test('unfilled buttons only own a tooltip for the collapsible table-caption contract', async ({
+  page,
+}) => {
   await expect(page.locator('#unfilled-label > ds-tooltip')).toHaveCount(0);
   await expect(page.locator('#unfilled-collapsible-label > ds-tooltip')).toHaveCount(1);
 });
@@ -119,7 +121,7 @@ test('physical press scales only eligible filled and unfilled buttons', async ({
   expect(loadingBox).not.toBeNull();
   await page.mouse.move(
     loadingBox!.x + loadingBox!.width / 2,
-    loadingBox!.y + loadingBox!.height / 2,
+    loadingBox!.y + loadingBox!.height / 2
   );
   await page.mouse.down();
   await expect(loadingButton).toHaveCSS('scale', 'none');
@@ -131,10 +133,7 @@ test('physical press scales only eligible filled and unfilled buttons', async ({
   await expect(stableButton).not.toHaveClass(/ds-control-press-scale/);
   const stableBox = await stableButton.boundingBox();
   expect(stableBox).not.toBeNull();
-  await page.mouse.move(
-    stableBox!.x + stableBox!.width / 2,
-    stableBox!.y + stableBox!.height / 2,
-  );
+  await page.mouse.move(stableBox!.x + stableBox!.width / 2, stableBox!.y + stableBox!.height / 2);
   await page.mouse.down();
   await expect(stableButton).toHaveCSS('scale', 'none');
   await page.mouse.up();
@@ -172,11 +171,19 @@ test('release outside and keyboard activation always restore resting scale', asy
   await expect(button).toHaveCSS('scale', 'none');
 });
 
-test('loading preserves width, disables activation, and inherits foreground color', async ({ page }) => {
-  const before = await page.evaluate(ids => Object.fromEntries(ids.map(id => {
-    const host = document.getElementById(id) as HTMLElement;
-    return [id, host.getBoundingClientRect().width];
-  })), BUTTON_IDS);
+test('loading preserves width, disables activation, and inherits foreground color', async ({
+  page,
+}) => {
+  const before = await page.evaluate(
+    ids =>
+      Object.fromEntries(
+        ids.map(id => {
+          const host = document.getElementById(id) as HTMLElement;
+          return [id, host.getBoundingClientRect().width];
+        })
+      ),
+    BUTTON_IDS
+  );
 
   await page.evaluate(ids => {
     for (const id of ids) {
@@ -194,26 +201,35 @@ test('loading preserves width, disables activation, and inherits foreground colo
     await expect(host.locator('ds-loader')).toHaveCount(1);
   }
 
-  const state = await page.evaluate(ids => Object.fromEntries(ids.map(id => {
-    const host = document.getElementById(id) as HTMLElement;
-    const button = host.querySelector('button') as HTMLButtonElement;
-    const loader = host.querySelector('ds-loader') as HTMLElement;
-    const spinner = loader.shadowRoot?.querySelector('.loader') as HTMLElement;
-    button.click();
-    return [id, {
-      width: host.getBoundingClientRect().width,
-      buttonColor: getComputedStyle(button).color,
-      loaderColor: getComputedStyle(spinner).color,
-    }];
-  })), BUTTON_IDS);
+  const state = await page.evaluate(
+    ids =>
+      Object.fromEntries(
+        ids.map(id => {
+          const host = document.getElementById(id) as HTMLElement;
+          const button = host.querySelector('button') as HTMLButtonElement;
+          const loader = host.querySelector('ds-loader') as HTMLElement;
+          const spinner = loader.shadowRoot?.querySelector('.loader') as HTMLElement;
+          button.click();
+          return [
+            id,
+            {
+              width: host.getBoundingClientRect().width,
+              buttonColor: getComputedStyle(button).color,
+              loaderColor: getComputedStyle(spinner).color,
+            },
+          ];
+        })
+      ),
+    BUTTON_IDS
+  );
 
   for (const id of BUTTON_IDS) {
     expect(state[id].width).toBe(before[id]);
     expect(state[id].loaderColor).toBe(state[id].buttonColor);
   }
-  expect(await page.evaluate(() => (
-    window as typeof window & { __buttonClicks: number }
-  ).__buttonClicks)).toBe(0);
+  expect(
+    await page.evaluate(() => (window as typeof window & { __buttonClicks: number }).__buttonClicks)
+  ).toBe(0);
 });
 
 test('loading preserves keyboard focus and blocks native form submission', async ({ page }) => {
@@ -229,9 +245,9 @@ test('loading preserves keyboard focus and blocks native form submission', async
   await expect(button).not.toHaveAttribute('disabled');
   await expect(button).toHaveAttribute('aria-disabled', 'true');
   await button.evaluate(element => (element as HTMLButtonElement).click());
-  expect(await page.evaluate(() => (
-    window as typeof window & { __formSubmits: number }
-  ).__formSubmits)).toBe(0);
+  expect(
+    await page.evaluate(() => (window as typeof window & { __formSubmits: number }).__formSubmits)
+  ).toBe(0);
 });
 
 test('loading swaps the correct content for each variant', async ({ page }) => {
@@ -269,22 +285,24 @@ test('keeps the filled inset border opt-in and visible while inactive', async ({
 
   await expect(borderedHost).toHaveJSProperty('hasBorder', true);
   await expect(borderedButton).toHaveClass(/button-filled--bordered/);
-  const borderWidth = await page.evaluate(() => (
+  const borderWidth = await page.evaluate(() =>
     getComputedStyle(document.documentElement)
       .getPropertyValue('--dimension-stroke-width-012')
       .trim()
-  ));
+  );
   await expect(borderedButton).toHaveCSS('--ds-interaction-border-width', borderWidth);
-  await expect.poll(() => borderedButton.evaluate(element => (
-    getComputedStyle(element, '::after').boxShadow
-  ))).toContain('inset');
+  await expect
+    .poll(() => borderedButton.evaluate(element => getComputedStyle(element, '::after').boxShadow))
+    .toContain('inset');
 
   await borderedHost.evaluate(element => {
     (element as HTMLElement & { isInactive: boolean }).isInactive = true;
   });
-  await expect.poll(() => borderedButton.evaluate(element => (
-    element.classList.contains('ds-interaction-fill')
-  ))).toBe(false);
+  await expect
+    .poll(() =>
+      borderedButton.evaluate(element => element.classList.contains('ds-interaction-fill'))
+    )
+    .toBe(false);
   await expect(borderedButton).toHaveCSS('box-shadow', /inset/);
 });
 
@@ -380,33 +398,36 @@ test('uses one background prop for standard and special surfaces', async ({ page
 test('uses brand active by default and neutral active on faint surfaces', async ({ page }) => {
   const host = page.locator('#unfilled-label');
   const button = host.locator('button');
-  const resolveColor = (token: string) => page.evaluate(cssToken => {
-    const probe = document.createElement('div');
-    probe.style.backgroundColor = `var(${cssToken})`;
-    document.body.append(probe);
-    const color = getComputedStyle(probe).backgroundColor;
-    probe.remove();
-    return color;
-  }, token);
+  const resolveColor = (token: string) =>
+    page.evaluate(cssToken => {
+      const probe = document.createElement('div');
+      probe.style.backgroundColor = `var(${cssToken})`;
+      document.body.append(probe);
+      const color = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return color;
+    }, token);
 
   await host.evaluate(element => {
     const control = element as HTMLElement & { background?: string; isActive: boolean };
     control.background = undefined;
     control.isActive = true;
   });
-  await expect.poll(() => button.evaluate(element => (
-    getComputedStyle(element, '::before').backgroundColor
-  ))).toBe(await resolveColor('--color-interaction-active-brand'));
+  await expect
+    .poll(() => button.evaluate(element => getComputedStyle(element, '::before').backgroundColor))
+    .toBe(await resolveColor('--color-interaction-active-brand'));
 
   await host.evaluate(element => {
     (element as HTMLElement & { background: string }).background = 'faint';
   });
-  await expect.poll(() => button.evaluate(element => (
-    getComputedStyle(element, '::before').backgroundColor
-  ))).toBe(await resolveColor('--color-interaction-active'));
+  await expect
+    .poll(() => button.evaluate(element => getComputedStyle(element, '::before').backgroundColor))
+    .toBe(await resolveColor('--color-interaction-active'));
 });
 
-test('keeps popup triggers visibly pressed when expanded without creating selected fill', async ({ page }) => {
+test('keeps popup triggers visibly pressed when expanded without creating selected fill', async ({
+  page,
+}) => {
   const host = page.locator('#unfilled-icon');
   const button = host.locator('button');
   const tokens = await page.evaluate(() => {
@@ -443,9 +464,9 @@ test('keeps popup triggers visibly pressed when expanded without creating select
     .poll(() => button.evaluate(element => getComputedStyle(element).transitionProperty))
     .not.toContain('color');
   await expect(button).toHaveCSS('color', tokens.secondary);
-  await expect.poll(() => button.evaluate(element => (
-    getComputedStyle(element, '::after').backgroundColor
-  ))).toBe(tokens.pressed);
+  await expect
+    .poll(() => button.evaluate(element => getComputedStyle(element, '::after').backgroundColor))
+    .toBe(tokens.pressed);
 });
 
 test('icon-label chrome active promotes the complete control foreground', async ({ page }) => {
@@ -540,9 +561,9 @@ test('keeps inactive buttons disabled, styled, and non-activating', async ({ pag
     await button.click({ force: true });
   }
 
-  expect(await page.evaluate(() => (
-    window as typeof window & { __buttonClicks: number }
-  ).__buttonClicks)).toBe(0);
+  expect(
+    await page.evaluate(() => (window as typeof window & { __buttonClicks: number }).__buttonClicks)
+  ).toBe(0);
 });
 
 test('setFocus targets the native button for both button families', async ({ page }) => {
@@ -569,16 +590,16 @@ test('supports the rounded treatment across both button families', async ({ page
 test('preserves native submit and reset behavior', async ({ page }) => {
   await page.locator('#filled-submit button').click();
   await page.locator('#unfilled-submit button').click();
-  expect(await page.evaluate(() => (
-    window as typeof window & { __formSubmits: number }
-  ).__formSubmits)).toBe(2);
+  expect(
+    await page.evaluate(() => (window as typeof window & { __formSubmits: number }).__formSubmits)
+  ).toBe(2);
 
   await page.locator('#form-value').fill('changed');
   await page.locator('#unfilled-reset button').click();
   await expect(page.locator('#form-value')).toHaveValue('initial');
-  expect(await page.evaluate(() => (
-    window as typeof window & { __formResets: number }
-  ).__formResets)).toBe(1);
+  expect(
+    await page.evaluate(() => (window as typeof window & { __formResets: number }).__formResets)
+  ).toBe(1);
 });
 
 test('maps every filled intent and contrast recipe', async ({ page }) => {
@@ -599,11 +620,14 @@ test('maps every filled intent and contrast recipe', async ({ page }) => {
 
   for (const intent of intents) {
     for (const contrast of contrasts) {
-      await host.evaluate((element, values) => {
-        const control = element as HTMLElement & { intent: string; contrast: string };
-        control.intent = values.intent;
-        control.contrast = values.contrast;
-      }, { intent, contrast });
+      await host.evaluate(
+        (element, values) => {
+          const control = element as HTMLElement & { intent: string; contrast: string };
+          control.intent = values.intent;
+          control.contrast = values.contrast;
+        },
+        { intent, contrast }
+      );
       await expect(button).toHaveClass(new RegExp(`button-filled--intent-${intent}`));
       await expect(button).toHaveClass(new RegExp(`button-filled--contrast-${contrast}`));
       await expect(button).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
@@ -616,21 +640,33 @@ test('emits controlled toggle intent only for pressed without mutating state', a
   const button = host.locator('button');
 
   await button.click();
-  await expect.poll(() => page.evaluate(() => (
-    window as typeof window & { __buttonChanges: Array<{ id: string; detail: boolean }> }
-  ).__buttonChanges)).toEqual([]);
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (window as typeof window & { __buttonChanges: Array<{ id: string; detail: boolean }> })
+            .__buttonChanges
+      )
+    )
+    .toEqual([]);
 
   await host.evaluate(element => {
     (element as HTMLElement & { pressed?: boolean }).pressed = false;
   });
   await button.click();
-  await expect.poll(() => page.evaluate(() => (
-    window as typeof window & { __buttonChanges: Array<{ id: string; detail: boolean }> }
-  ).__buttonChanges)).toEqual([{ id: 'unfilled-label', detail: true }]);
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (window as typeof window & { __buttonChanges: Array<{ id: string; detail: boolean }> })
+            .__buttonChanges
+      )
+    )
+    .toEqual([{ id: 'unfilled-label', detail: true }]);
 
-  expect(await host.evaluate(element => (
-    (element as HTMLElement & { pressed?: boolean }).pressed
-  ))).toBe(false);
+  expect(
+    await host.evaluate(element => (element as HTMLElement & { pressed?: boolean }).pressed)
+  ).toBe(false);
 
   await host.evaluate(element => {
     const control = element as HTMLElement & { pressed?: boolean; isActive: boolean };
@@ -638,28 +674,37 @@ test('emits controlled toggle intent only for pressed without mutating state', a
     control.isActive = false;
   });
   await button.click();
-  await expect.poll(() => page.evaluate(() => (
-    window as typeof window & { __buttonChanges: Array<{ id: string; detail: boolean }> }
-  ).__buttonChanges)).toEqual([
-    { id: 'unfilled-label', detail: true },
-    { id: 'unfilled-label', detail: false },
-  ]);
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (window as typeof window & { __buttonChanges: Array<{ id: string; detail: boolean }> })
+            .__buttonChanges
+      )
+    )
+    .toEqual([
+      { id: 'unfilled-label', detail: true },
+      { id: 'unfilled-label', detail: false },
+    ]);
   await expect(button).toHaveAttribute('aria-pressed', 'true');
 });
 
 test('requires an explicit accessible name for icon-only buttons', async ({ page }) => {
   for (const tag of ['ds-button-filled', 'ds-button-unfilled']) {
     const id = `unnamed-${tag}`;
-    await page.evaluate(({ componentTag, componentId }) => {
-      const element = document.createElement(componentTag) as HTMLElement & {
-        variant: string;
-        icon: string;
-      };
-      element.id = componentId;
-      element.variant = 'icon';
-      element.icon = 'Check';
-      document.body.append(element);
-    }, { componentTag: tag, componentId: id });
+    await page.evaluate(
+      ({ componentTag, componentId }) => {
+        const element = document.createElement(componentTag) as HTMLElement & {
+          variant: string;
+          icon: string;
+        };
+        element.id = componentId;
+        element.variant = 'icon';
+        element.icon = 'Check';
+        document.body.append(element);
+      },
+      { componentTag: tag, componentId: id }
+    );
 
     const host = page.locator(`#${id}`);
     const button = host.locator('button');

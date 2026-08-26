@@ -13,10 +13,7 @@ const read = (relativePath: string) => fs.readFileSync(path.join(root, relativeP
 
 test('all control densities share one default radius declaration', () => {
   const css = read('src/wc/utils/control-density.css');
-  assert.equal(
-    css.match(/--ds-control-radius:\s*var\(--dimension-radius-025\);/g)?.length,
-    1,
-  );
+  assert.equal(css.match(/--ds-control-radius:\s*var\(--dimension-radius-025\);/g)?.length, 1);
   for (const size of ['lg', 'md', 'sm', 'xs']) {
     assert.match(css, new RegExp(`:host\\(\\.ds-control--${size}\\)[\\s\\S]*?--ds-control-radius`));
   }
@@ -26,7 +23,7 @@ test('lg resolves one complete 40px control recipe', () => {
   const css = read('src/wc/utils/control-density.css');
   assert.match(
     css,
-    /:host\(\.ds-control--lg\),\s*\.ds-control--lg\s*{[\s\S]*?--ds-control-height: var\(--dimension-size-500\);[\s\S]*?--ds-control-icon: var\(--dimension-iconography-lg\);[\s\S]*?--ds-control-padding-inline: var\(--dimension-space-100\);[\s\S]*?--ds-control-label-inset: var\(--dimension-space-050\);[\s\S]*?--ds-control-gap: var\(--dimension-space-050\);[\s\S]*?}/,
+    /:host\(\.ds-control--lg\),\s*\.ds-control--lg\s*{[\s\S]*?--ds-control-height: var\(--dimension-size-500\);[\s\S]*?--ds-control-icon: var\(--dimension-iconography-lg\);[\s\S]*?--ds-control-padding-inline: var\(--dimension-space-100\);[\s\S]*?--ds-control-label-inset: var\(--dimension-space-050\);[\s\S]*?--ds-control-gap: var\(--dimension-space-050\);[\s\S]*?}/
   );
   assert.equal(CONTROL_TEXT_VARIANT.lg, 'text-body-large');
 });
@@ -61,9 +58,9 @@ test('inset density reduces only same-size outer geometry', () => {
       css,
       new RegExp(
         `:host\\(\\.ds-control--${density.size}\\.ds-control--inset\\),[\\s\\S]*?` +
-        `--ds-control-height: calc\\(var\\(--dimension-size-${density.height}\\) - var\\(--dimension-space-050\\)\\);[\\s\\S]*?` +
-        `--ds-control-padding-inline: calc\\([\\s\\S]*?var\\(--dimension-space-${density.padding}\\) - var\\(--dimension-space-025\\)[\\s\\S]*?\\);`,
-      ),
+          `--ds-control-height: calc\\(var\\(--dimension-size-${density.height}\\) - var\\(--dimension-space-050\\)\\);[\\s\\S]*?` +
+          `--ds-control-padding-inline: calc\\([\\s\\S]*?var\\(--dimension-space-${density.padding}\\) - var\\(--dimension-space-025\\)[\\s\\S]*?\\);`
+      )
     );
   }
 
@@ -74,9 +71,9 @@ test('inset density reduces only same-size outer geometry', () => {
       css,
       new RegExp(
         `:host\\(\\.ds-control--${density.size}\\.ds-control--inset-double\\),[\\s\\S]*?` +
-        `--ds-control-height: calc\\(var\\(--dimension-size-${density.height}\\) - var\\(--dimension-space-100\\)\\);[\\s\\S]*?` +
-        `--ds-control-padding-inline: calc\\([\\s\\S]*?var\\(--dimension-space-${density.padding}\\) - var\\(--dimension-space-050\\)[\\s\\S]*?\\);`,
-      ),
+          `--ds-control-height: calc\\(var\\(--dimension-size-${density.height}\\) - var\\(--dimension-space-100\\)\\);[\\s\\S]*?` +
+          `--ds-control-padding-inline: calc\\([\\s\\S]*?var\\(--dimension-space-${density.padding}\\) - var\\(--dimension-space-050\\)[\\s\\S]*?\\);`
+      )
     );
   }
   assert.doesNotMatch(css, /ds-control--xs\.ds-control--inset-double/);
@@ -95,7 +92,10 @@ test('inset density reduces only same-size outer geometry', () => {
   for (const component of ['ButtonFilled', 'ButtonUnfilled']) {
     const source = read(`src/wc/components/${component}/${component}.tsx`);
     assert.match(source, /@Prop\(\) isInset: boolean = false/);
-    assert.equal(source.match(/['"]ds-control--inset['"]: this\.isInset && !this\.doubleInset/g)?.length, 2);
+    assert.equal(
+      source.match(/['"]ds-control--inset['"]: this\.isInset && !this\.doubleInset/g)?.length,
+      2
+    );
     assert.equal(source.match(/['"]ds-control--inset-double['"]: this\.doubleInset/g)?.length, 2);
   }
 
@@ -131,7 +131,7 @@ test('menu switch suffix keeps the 8px label gap without overriding the density 
   assert.doesNotMatch(css, /\.menu-item--switch\s*{[^}]*\bgap:/);
   assert.match(
     css,
-    /\.menu-item__switch\s*{[\s\S]*?margin-inline-start: calc\(\s*var\(--dimension-space-100\) - var\(--ds-control-gap/,
+    /\.menu-item__switch\s*{[\s\S]*?margin-inline-start: calc\(\s*var\(--dimension-space-100\) - var\(--ds-control-gap/
   );
 });
 
@@ -158,11 +158,23 @@ test('shell navigation rows consume the shared control-density recipe', () => {
   ];
 
   for (const row of cases) {
-    assert.match(row.css, /@import ['"]\.\.\/\.\.\/utils\/control-density\.css['"];/, `${row.name} imports the recipe`);
+    assert.match(
+      row.css,
+      /@import ['"]\.\.\/\.\.\/utils\/control-density\.css['"];/,
+      `${row.name} imports the recipe`
+    );
     assert.match(row.source, row.sizeClass, `${row.name} applies its density class`);
     assert.match(row.css, /var\(--ds-control-height\)/, `${row.name} consumes shared height`);
-    assert.match(row.css, /var\(--ds-control-padding-inline\)/, `${row.name} consumes shared row padding`);
-    assert.match(row.css, /var\(--ds-control-label-inset\)/, `${row.name} consumes shared label inset`);
+    assert.match(
+      row.css,
+      /var\(--ds-control-padding-inline\)/,
+      `${row.name} consumes shared row padding`
+    );
+    assert.match(
+      row.css,
+      /var\(--ds-control-label-inset\)/,
+      `${row.name} consumes shared label inset`
+    );
     assert.match(row.css, /var\(--ds-control-gap\)/, `${row.name} consumes shared content gap`);
   }
 });
@@ -173,15 +185,12 @@ test('PanelNav text hosts consume the shared md label inset without coupling row
 
   assert.match(css, /@import ['"]\.\.\/\.\.\/utils\/control-density\.css['"];/);
   assert.match(source, /['"]ds-control--md['"]: true/);
+  assert.match(css, /\.panel-nav__header-btn\s*{[\s\S]*?border-radius: var\(--ds-control-radius,/);
+  assert.match(css, /\.panel-nav__item\s*{[\s\S]*?border-radius: var\(--ds-control-radius,/);
   assert.match(
     css,
-    /\.panel-nav__header-btn\s*{[\s\S]*?border-radius: var\(--ds-control-radius,/,
+    /\.panel-nav__item-label-text\s*{[\s\S]*?padding: 0 var\(--ds-control-label-inset\);/
   );
-  assert.match(
-    css,
-    /\.panel-nav__item\s*{[\s\S]*?border-radius: var\(--ds-control-radius,/,
-  );
-  assert.match(css, /\.panel-nav__item-label-text\s*{[\s\S]*?padding: 0 var\(--ds-control-label-inset\);/);
   assert.match(source, /panel-nav__footer-user-label panel-nav__item-label-text ds-control--md/);
   assert.match(source, /panel-nav__item-label panel-nav__item-label-text ds-control--md/);
   assert.match(source, /panel-nav__group-label ds-control--md/);
@@ -196,7 +205,7 @@ test('Skeleton control placeholders consume the selected density radius', () => 
   assert.match(source, /\[`ds-control--\$\{this\.controlSize\}`\]: this\.variant === 'control'/);
   assert.match(
     css,
-    /:host\(\.skeleton--control\) \.skeleton__shape\s*{[\s\S]*?border-radius: var\(--ds-control-radius,/,
+    /:host\(\.skeleton--control\) \.skeleton__shape\s*{[\s\S]*?border-radius: var\(--ds-control-radius,/
   );
 });
 
@@ -208,11 +217,14 @@ test('read-only tool titles use the same md density variables as their actions',
   assert.match(panelToolsSource, /<ds-panel-tool-header/);
   assert.match(headerCss, /@import ['"]\.\.\/\.\.\/utils\/control-density\.css['"];/);
   assert.match(headerCss, /@import ['"]\.\.\/\.\.\/utils\/chrome-header\.css['"];/);
-  assert.match(headerSource, /class="panel-tool-header__heading ds-chrome-header__heading ds-control--md"/);
+  assert.match(
+    headerSource,
+    /class="panel-tool-header__heading ds-chrome-header__heading ds-control--md"/
+  );
   assert.match(headerCss, /height: var\(--ds-control-height\);/);
   assert.match(
     headerCss,
-    /padding-inline: calc\(var\(--ds-control-padding-inline\) \+ var\(--ds-control-label-inset\)\);/,
+    /padding-inline: calc\(var\(--ds-control-padding-inline\) \+ var\(--ds-control-label-inset\)\);/
   );
   assert.match(headerSource, /<ds-button-unfilled[\s\S]*?size="md"/);
 });
@@ -229,7 +241,7 @@ test('PanelTools search uses the shared Select search control at md density', ()
   assert.match(searchParts, /onDsChange={event => event\.stopPropagation\(\)}/);
   assert.match(
     read('src/wc/utils/search-control.css'),
-    /\.select-search__control > ds-icon\s*{[\s\S]*?color: var\(--color-foreground-secondary\);/,
+    /\.select-search__control > ds-icon\s*{[\s\S]*?color: var\(--color-foreground-secondary\);/
   );
   assert.match(css, /height: var\(--dimension-size-600\);/);
   assert.match(source, /panel-tool-search ds-chrome-row ds-chrome-space--md/);
@@ -239,13 +251,16 @@ test('PanelTools search uses the shared Select search control at md density', ()
   assert.match(css, /@import ['"]\.\.\/\.\.\/utils\/typography\.css['"];/);
   assert.match(
     css,
-    /\.panel-tool-search::after\s*{[\s\S]*?height: var\(--dimension-stroke-width-012\);[\s\S]*?background-color: var\(--color-border-tertiary\);/,
+    /\.panel-tool-search::after\s*{[\s\S]*?height: var\(--dimension-stroke-width-012\);[\s\S]*?background-color: var\(--color-border-tertiary\);/
   );
   assert.match(source, /<ds-divider[\s\S]*?orientation="vertical"/);
   assert.match(
     source,
-    /<ds-button-unfilled[\s\S]*?icon="Filters"[\s\S]*?size="md"[\s\S]*?hasBorder={false}/,
+    /<ds-button-unfilled[\s\S]*?icon="Filters"[\s\S]*?size="md"[\s\S]*?hasBorder={false}/
   );
   assert.match(selectCss, /@import ['"]\.\.\/\.\.\/utils\/search-control\.css['"];/);
-  assert.doesNotMatch(panelToolsCss, /background-color: var\(--color-background-(?:primary|secondary)\)/);
+  assert.doesNotMatch(
+    panelToolsCss,
+    /background-color: var\(--color-background-(?:primary|secondary)\)/
+  );
 });

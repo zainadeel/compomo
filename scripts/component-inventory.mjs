@@ -13,7 +13,13 @@ function posix(relativePath) {
 }
 
 function componentTagFromSource(sourcePath, source) {
-  const file = ts.createSourceFile(sourcePath, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const file = ts.createSourceFile(
+    sourcePath,
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TSX
+  );
   let tag;
 
   function visit(node) {
@@ -29,7 +35,8 @@ function componentTagFromSource(sourcePath, source) {
           if (!ts.isPropertyAssignment(property)) continue;
           const name = property.name;
           const isTag = (ts.isIdentifier(name) || ts.isStringLiteral(name)) && name.text === 'tag';
-          if (isTag && ts.isStringLiteralLike(property.initializer)) tag = property.initializer.text;
+          if (isTag && ts.isStringLiteralLike(property.initializer))
+            tag = property.initializer.text;
         }
       }
     }
@@ -81,15 +88,17 @@ export function loadCompilerDocs(root = ROOT, relativePath = COMPILER_DOCS_PATH)
 
 export function componentSourceFiles(component, root = ROOT) {
   const absoluteDirectory = path.join(root, component.relativeDirectory);
-  return fs.readdirSync(absoluteDirectory)
-    .filter(filename =>
-      (filename.endsWith('.tsx') || filename.endsWith('.ts') || filename.endsWith('.css')) &&
-      // Apple File Provider/iCloud collision copies use names such as
-      // `Component.stories 2.ts`. They are not authored component artifacts.
-      !/ \d+\.(?:tsx?|css)$/.test(filename) &&
-      !filename.endsWith('.stories.ts') &&
-      !filename.endsWith('.stories.tsx') &&
-      filename !== 'index.ts'
+  return fs
+    .readdirSync(absoluteDirectory)
+    .filter(
+      filename =>
+        (filename.endsWith('.tsx') || filename.endsWith('.ts') || filename.endsWith('.css')) &&
+        // Apple File Provider/iCloud collision copies use names such as
+        // `Component.stories 2.ts`. They are not authored component artifacts.
+        !/ \d+\.(?:tsx?|css)$/.test(filename) &&
+        !filename.endsWith('.stories.ts') &&
+        !filename.endsWith('.stories.tsx') &&
+        filename !== 'index.ts'
     )
     .sort()
     .map(filename => posix(path.join(component.relativeDirectory, filename)));
@@ -99,11 +108,7 @@ export function readJson(root, relativePath) {
   return JSON.parse(fs.readFileSync(path.join(root, relativePath), 'utf8'));
 }
 
-export function validateAuthoredArtifacts({
-  root = ROOT,
-  components,
-  checkAdapters = true,
-}) {
+export function validateAuthoredArtifacts({ root = ROOT, components, checkAdapters = true }) {
   const errors = [];
   for (const component of components) {
     const required = [
@@ -133,7 +138,9 @@ export function validateFrameworkAdapters({ root = ROOT, components }) {
 
   for (const [generatedPath, tag] of expected) {
     if (!actual.has(generatedPath)) {
-      errors.push(`${tag}: missing generated framework adapter ${generatedPath}; run npm run build`);
+      errors.push(
+        `${tag}: missing generated framework adapter ${generatedPath}; run npm run build`
+      );
     }
   }
   for (const generatedPath of actual) {
@@ -148,11 +155,18 @@ export function validateRegistryCoverage(components, registry, detailFilenames) 
   const errors = [];
   const inventoryNames = new Set(components.map(component => component.name));
   const registryNames = new Set((registry.items ?? []).map(item => item.name));
-  const detailNames = new Set(detailFilenames
-    .filter(filename => /^[a-z0-9]+(?:-[a-z0-9]+)*\.json$/.test(filename) && filename !== 'registry.json')
-    .map(filename => filename.slice(0, -5)));
+  const detailNames = new Set(
+    detailFilenames
+      .filter(
+        filename =>
+          /^[a-z0-9]+(?:-[a-z0-9]+)*\.json$/.test(filename) && filename !== 'registry.json'
+      )
+      .map(filename => filename.slice(0, -5))
+  );
   if ((registry.items ?? []).length !== components.length) {
-    errors.push(`registry coverage: expected ${components.length} source components, found ${(registry.items ?? []).length} items`);
+    errors.push(
+      `registry coverage: expected ${components.length} source components, found ${(registry.items ?? []).length} items`
+    );
   }
   for (const name of inventoryNames) {
     if (!registryNames.has(name)) errors.push(`registry coverage: missing ${name}`);
@@ -162,7 +176,8 @@ export function validateRegistryCoverage(components, registry, detailFilenames) 
     if (!inventoryNames.has(name)) errors.push(`registry coverage: stale item ${name}`);
   }
   for (const name of detailNames) {
-    if (!inventoryNames.has(name)) errors.push(`registry coverage: stale file public/r/${name}.json`);
+    if (!inventoryNames.has(name))
+      errors.push(`registry coverage: stale file public/r/${name}.json`);
   }
   return errors;
 }

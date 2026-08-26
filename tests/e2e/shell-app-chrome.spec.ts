@@ -17,82 +17,92 @@ test.describe('App shell chrome', () => {
     await expect(page.locator('.panel-nav--collapsed')).toHaveCount(0);
   });
 
-  test('panel nav controls inherit the shared md control radius',
-    chromiumOnly('layout-geometry', 'The shared control radius is a token-backed recipe with contract coverage.'),
+  test(
+    'panel nav controls inherit the shared md control radius',
+    chromiumOnly(
+      'layout-geometry',
+      'The shared control radius is a token-backed recipe with contract coverage.'
+    ),
     async ({ page }) => {
-    const nav = page.locator('.panel-nav');
-    await expect(nav).toHaveClass(/ds-control--md/);
-    await nav.evaluate(element => {
-      (element as HTMLElement).style.setProperty('--ds-control-radius', '10px');
-    });
+      const nav = page.locator('.panel-nav');
+      await expect(nav).toHaveClass(/ds-control--md/);
+      await nav.evaluate(element => {
+        (element as HTMLElement).style.setProperty('--ds-control-radius', '10px');
+      });
 
-    await expect(nav.locator('.panel-nav__header-btn')).toHaveCSS('border-radius', '10px');
-    await expect(nav.locator('.panel-nav__item').first()).toHaveCSS('border-radius', '10px');
-  });
+      await expect(nav.locator('.panel-nav__header-btn')).toHaveCSS('border-radius', '10px');
+      await expect(nav.locator('.panel-nav__item').first()).toHaveCSS('border-radius', '10px');
+    }
+  );
 
-  test('keeps one default cursor across desktop button hit areas',
-    chromiumOnly('layout-geometry', 'Static cursor recipes do not depend on an engine-specific API.'),
+  test(
+    'keeps one default cursor across desktop button hit areas',
+    chromiumOnly(
+      'layout-geometry',
+      'Static cursor recipes do not depend on an engine-specific API.'
+    ),
     async ({ page }) => {
-    const targets = page.locator(
-      '.panel-nav__item, .bar-nav__tab, .panel-tools__rail-action .button-unfilled'
-    );
+      const targets = page.locator(
+        '.panel-nav__item, .bar-nav__tab, .panel-tools__rail-action .button-unfilled'
+      );
 
-    const cursors = await targets.evaluateAll(elements =>
-      elements.flatMap(element => [
-        getComputedStyle(element).cursor,
-        ...Array.from(element.querySelectorAll('*')).map(
-          descendant => getComputedStyle(descendant).cursor
-        ),
-      ])
-    );
+      const cursors = await targets.evaluateAll(elements =>
+        elements.flatMap(element => [
+          getComputedStyle(element).cursor,
+          ...Array.from(element.querySelectorAll('*')).map(
+            descendant => getComputedStyle(descendant).cursor
+          ),
+        ])
+      );
 
-    expect(new Set(cursors)).toEqual(new Set(['default']));
-  });
+      expect(new Set(cursors)).toEqual(new Set(['default']));
+    }
+  );
 
-  test('keeps tool-rail dot halos aligned below the interaction wash while pressed',
+  test(
+    'keeps tool-rail dot halos aligned below the interaction wash while pressed',
     chromiumOnly('layout-geometry', 'Layer ordering and dot geometry are static shared recipes.'),
-    async ({
-    page,
-  }) => {
-    const action = page.getByRole('button', { name: 'Activity' });
-    const badge = action.locator('ds-badge');
-    const mark = badge.locator('.badge__mark');
+    async ({ page }) => {
+      const action = page.getByRole('button', { name: 'Activity' });
+      const badge = action.locator('ds-badge');
+      const mark = badge.locator('.badge__mark');
 
-    await expect(action).not.toHaveClass(/ds-control-press-scale/);
-    await expect(action).toHaveCSS('scale', 'none');
-    await expect(mark).toHaveCSS('box-shadow', 'none');
-    await expect
-      .poll(() =>
-        mark.evaluate(element => getComputedStyle(element, '::after').backgroundAttachment),
-      )
-      .toBe('fixed');
+      await expect(action).not.toHaveClass(/ds-control-press-scale/);
+      await expect(action).toHaveCSS('scale', 'none');
+      await expect(mark).toHaveCSS('box-shadow', 'none');
+      await expect
+        .poll(() =>
+          mark.evaluate(element => getComputedStyle(element, '::after').backgroundAttachment)
+        )
+        .toBe('fixed');
 
-    const restingBadge = await badge.boundingBox();
-    expect(restingBadge).not.toBeNull();
-    const actionBox = await action.boundingBox();
-    expect(actionBox).not.toBeNull();
+      const restingBadge = await badge.boundingBox();
+      expect(restingBadge).not.toBeNull();
+      const actionBox = await action.boundingBox();
+      expect(actionBox).not.toBeNull();
 
-    await page.mouse.move(
-      actionBox!.x + actionBox!.width / 2,
-      actionBox!.y + actionBox!.height / 2,
-    );
-    await page.mouse.down();
+      await page.mouse.move(
+        actionBox!.x + actionBox!.width / 2,
+        actionBox!.y + actionBox!.height / 2
+      );
+      await page.mouse.down();
 
-    await expect(action).toHaveCSS('scale', 'none');
-    expect(await badge.boundingBox()).toEqual(restingBadge);
-    const pressedLayers = await action.evaluate(element => ({
-      interaction: Number(getComputedStyle(element, '::after').zIndex),
-      content: Number(
-        getComputedStyle(element.querySelector<HTMLElement>('.button-unfilled__icon-wrap')!)
-          .zIndex,
-      ),
-      wash: getComputedStyle(element, '::after').backgroundColor,
-    }));
-    expect(pressedLayers.interaction).toBeGreaterThan(pressedLayers.content);
-    expect(pressedLayers.wash).not.toBe('rgba(0, 0, 0, 0)');
+      await expect(action).toHaveCSS('scale', 'none');
+      expect(await badge.boundingBox()).toEqual(restingBadge);
+      const pressedLayers = await action.evaluate(element => ({
+        interaction: Number(getComputedStyle(element, '::after').zIndex),
+        content: Number(
+          getComputedStyle(element.querySelector<HTMLElement>('.button-unfilled__icon-wrap')!)
+            .zIndex
+        ),
+        wash: getComputedStyle(element, '::after').backgroundColor,
+      }));
+      expect(pressedLayers.interaction).toBeGreaterThan(pressedLayers.content);
+      expect(pressedLayers.wash).not.toBe('rgba(0, 0, 0, 0)');
 
-    await page.mouse.up();
-  });
+      await page.mouse.up();
+    }
+  );
 
   test('keeps shell-owned rail tooltips inside the viewport', async ({ page }) => {
     const action = page.getByRole('button', { name: 'Agents', exact: true });
@@ -124,7 +134,8 @@ test.describe('App shell chrome', () => {
     await badge.evaluate(element => {
       (element as HTMLElement & { gradientBackground?: boolean }).gradientBackground = false;
     });
-    await expect.poll(() => mark.evaluate(element => getComputedStyle(element).boxShadow))
+    await expect
+      .poll(() => mark.evaluate(element => getComputedStyle(element).boxShadow))
       .not.toBe('none');
 
     await badge.evaluate(element => {
@@ -135,7 +146,8 @@ test.describe('App shell chrome', () => {
     await shell.evaluate(element => {
       (element as HTMLElement & { gradientPreset: string }).gradientPreset = 'none';
     });
-    await expect.poll(() => mark.evaluate(element => getComputedStyle(element).boxShadow))
+    await expect
+      .poll(() => mark.evaluate(element => getComputedStyle(element).boxShadow))
       .not.toBe('none');
 
     await badge.evaluate(element => {
@@ -197,25 +209,28 @@ test.describe('App shell chrome', () => {
     expect(afterBoundaryWheel).toEqual(beforeBoundaryWheel);
   });
 
-  test('keeps a base-view tool header action exactly 8px from the drawer edge',
-    chromiumOnly('layout-geometry', 'Header action inset is a local token-backed geometry contract.'),
-    async ({
-    page,
-  }) => {
-    await page.getByRole('button', { name: 'Agents', exact: true }).click();
-    const header = page.locator('ds-panel-tool-header.panel-tools__header');
-    const action = page.getByRole('button', { name: 'Agents options' });
+  test(
+    'keeps a base-view tool header action exactly 8px from the drawer edge',
+    chromiumOnly(
+      'layout-geometry',
+      'Header action inset is a local token-backed geometry contract.'
+    ),
+    async ({ page }) => {
+      await page.getByRole('button', { name: 'Agents', exact: true }).click();
+      const header = page.locator('ds-panel-tool-header.panel-tools__header');
+      const action = page.getByRole('button', { name: 'Agents options' });
 
-    await expect(action).toBeVisible();
-    await expect
-      .poll(async () => {
-        const headerBox = await header.boundingBox();
-        const actionBox = await action.boundingBox();
-        if (!headerBox || !actionBox) return null;
-        return headerBox.x + headerBox.width - (actionBox.x + actionBox.width);
-      })
-      .toBe(8);
-  });
+      await expect(action).toBeVisible();
+      await expect
+        .poll(async () => {
+          const headerBox = await header.boundingBox();
+          const actionBox = await action.boundingBox();
+          if (!headerBox || !actionBox) return null;
+          return headerBox.x + headerBox.width - (actionBox.x + actionBox.width);
+        })
+        .toBe(8);
+    }
+  );
 
   test('provides the rendered header action as an external menu anchor @cross-browser', async ({
     page,
@@ -241,9 +256,7 @@ test.describe('App shell chrome', () => {
     expect(menuBox).not.toBeNull();
     expect(toolsBox).not.toBeNull();
     expect(menuBox!.x).toBeGreaterThanOrEqual(toolsBox!.x + 3.5);
-    expect(menuBox!.x + menuBox!.width).toBeLessThanOrEqual(
-      toolsBox!.x + toolsBox!.width - 3.5,
-    );
+    expect(menuBox!.x + menuBox!.width).toBeLessThanOrEqual(toolsBox!.x + toolsBox!.width - 3.5);
 
     await trigger.click();
     await expect(menu).toBeHidden();
@@ -288,9 +301,7 @@ test.describe('App shell chrome', () => {
     });
 
     await expect(menu).toBeVisible();
-    await expect
-      .poll(async () => Math.round((await account.boundingBox())?.width ?? 0))
-      .toBe(32);
+    await expect.poll(async () => Math.round((await account.boundingBox())?.width ?? 0)).toBe(32);
     await expect.poll(anchorGap).toEqual(expandedGap);
   });
 
@@ -314,7 +325,9 @@ test.describe('App shell chrome', () => {
     expect(menuBox).not.toBeNull();
     expect(contentBox).not.toBeNull();
     expect(toolsBox).not.toBeNull();
-    expect(menuBox!.x + menuBox!.width).toBeLessThanOrEqual(contentBox!.x + contentBox!.width - 3.5);
+    expect(menuBox!.x + menuBox!.width).toBeLessThanOrEqual(
+      contentBox!.x + contentBox!.width - 3.5
+    );
     expect(menuBox!.x + menuBox!.width).toBeLessThan(toolsBox!.x);
   });
 
@@ -347,112 +360,121 @@ test.describe('App shell chrome', () => {
     await expect(nativeTarget).toBeFocused();
   });
 
-  test('keeps 4px between header actions in drawer and fullscreen presentations',
+  test(
+    'keeps 4px between header actions in drawer and fullscreen presentations',
     chromiumOnly('layout-geometry', 'Header action gaps are static token-backed geometry.'),
-    async ({
-    page,
-  }) => {
-    await page.getByRole('button', { name: 'Agents', exact: true }).click();
-    const tools = page.locator('ds-panel-tools');
-    const menu = page.getByRole('button', { name: 'Agents options' });
-    const fullscreen = page.getByRole('button', { name: 'Enter fullscreen' });
-    const actionGap = async () => {
-      const menuBox = await menu.boundingBox();
-      const fullscreenBox = await fullscreen.boundingBox();
-      if (!menuBox || !fullscreenBox) return null;
-      return menuBox.x - (fullscreenBox.x + fullscreenBox.width);
-    };
-
-    await expect.poll(actionGap).toBe(4);
-    const reflectedPresentation = await tools.evaluate(element => {
-      (element as HTMLElement & { presentation: 'fullscreen' }).presentation = 'fullscreen';
-      return element.getAttribute('presentation');
-    });
-    expect(reflectedPresentation).toBe('fullscreen');
-    await expect(tools).toHaveAttribute('presentation', 'fullscreen');
-    await expect.poll(actionGap).toBe(4);
-  });
-
-  test('keeps shared 8px header gaps while only the title shrinks',
-    chromiumOnly('layout-geometry', 'Shared header gaps and title flex behavior are local geometry contracts.'),
     async ({ page }) => {
-    await page.getByRole('button', { name: 'Agents', exact: true }).click();
-    const shell = page.locator('ds-shell-app');
-    const tools = page.locator('ds-panel-tools');
-    const drawer = page.locator('.panel-tools__drawer');
-    const leading = page.locator('.panel-tool-header__leading');
-    const title = page.locator('ds-text.panel-tool-header__heading');
-    const trailing = page.locator('.panel-tool-header__trailing');
-    const geometry = async () => {
-      const leadingBox = await leading.boundingBox();
-      const titleBox = await title.boundingBox();
-      const trailingBox = await trailing.boundingBox();
-      if (!leadingBox || !titleBox || !trailingBox) return null;
-      return {
-        leadingWidth: leadingBox.width,
-        titleWidth: titleBox.width,
-        trailingWidth: trailingBox.width,
-        leadingGap: titleBox.x - (leadingBox.x + leadingBox.width),
-        trailingGap: trailingBox.x - (titleBox.x + titleBox.width),
+      await page.getByRole('button', { name: 'Agents', exact: true }).click();
+      const tools = page.locator('ds-panel-tools');
+      const menu = page.getByRole('button', { name: 'Agents options' });
+      const fullscreen = page.getByRole('button', { name: 'Enter fullscreen' });
+      const actionGap = async () => {
+        const menuBox = await menu.boundingBox();
+        const fullscreenBox = await fullscreen.boundingBox();
+        if (!menuBox || !fullscreenBox) return null;
+        return menuBox.x - (fullscreenBox.x + fullscreenBox.width);
       };
-    };
 
-    await expect(tools).toHaveClass(/panel-tools--motion-opening/);
-    await expect(tools).not.toHaveClass(/panel-tools--motion-opening/, { timeout: 5000 });
-    const wide = await geometry();
-    expect(wide).not.toBeNull();
-    expect(wide).toMatchObject({
-      leadingWidth: 32,
-      trailingWidth: 68,
-      leadingGap: 8,
-      trailingGap: 8,
-    });
+      await expect.poll(actionGap).toBe(4);
+      const reflectedPresentation = await tools.evaluate(element => {
+        (element as HTMLElement & { presentation: 'fullscreen' }).presentation = 'fullscreen';
+        return element.getAttribute('presentation');
+      });
+      expect(reflectedPresentation).toBe('fullscreen');
+      await expect(tools).toHaveAttribute('presentation', 'fullscreen');
+      await expect.poll(actionGap).toBe(4);
+    }
+  );
 
-    await shell.evaluate(element => {
-      (element as HTMLElement).style.setProperty('--ds-shell-panel-tools-width', '220px');
-    });
-    await expect
-      .poll(() => drawer.evaluate(element => element.getBoundingClientRect().width))
-      .toBe(220);
-    await expect.poll(geometry).toMatchObject({
-      leadingWidth: 32,
-      trailingWidth: 68,
-      leadingGap: 8,
-      trailingGap: 8,
-    });
-    const narrow = await geometry();
-    expect(narrow).not.toBeNull();
-    expect(narrow!.titleWidth).toBeLessThan(wide!.titleWidth);
-  });
+  test(
+    'keeps shared 8px header gaps while only the title shrinks',
+    chromiumOnly(
+      'layout-geometry',
+      'Shared header gaps and title flex behavior are local geometry contracts.'
+    ),
+    async ({ page }) => {
+      await page.getByRole('button', { name: 'Agents', exact: true }).click();
+      const shell = page.locator('ds-shell-app');
+      const tools = page.locator('ds-panel-tools');
+      const drawer = page.locator('.panel-tools__drawer');
+      const leading = page.locator('.panel-tool-header__leading');
+      const title = page.locator('ds-text.panel-tool-header__heading');
+      const trailing = page.locator('.panel-tool-header__trailing');
+      const geometry = async () => {
+        const leadingBox = await leading.boundingBox();
+        const titleBox = await title.boundingBox();
+        const trailingBox = await trailing.boundingBox();
+        if (!leadingBox || !titleBox || !trailingBox) return null;
+        return {
+          leadingWidth: leadingBox.width,
+          titleWidth: titleBox.width,
+          trailingWidth: trailingBox.width,
+          leadingGap: titleBox.x - (leadingBox.x + leadingBox.width),
+          trailingGap: trailingBox.x - (titleBox.x + titleBox.width),
+        };
+      };
 
-  test('does not allow tool header title selection',
+      await expect(tools).toHaveClass(/panel-tools--motion-opening/);
+      await expect(tools).not.toHaveClass(/panel-tools--motion-opening/, { timeout: 5000 });
+      const wide = await geometry();
+      expect(wide).not.toBeNull();
+      expect(wide).toMatchObject({
+        leadingWidth: 32,
+        trailingWidth: 68,
+        leadingGap: 8,
+        trailingGap: 8,
+      });
+
+      await shell.evaluate(element => {
+        (element as HTMLElement).style.setProperty('--ds-shell-panel-tools-width', '220px');
+      });
+      await expect
+        .poll(() => drawer.evaluate(element => element.getBoundingClientRect().width))
+        .toBe(220);
+      await expect.poll(geometry).toMatchObject({
+        leadingWidth: 32,
+        trailingWidth: 68,
+        leadingGap: 8,
+        trailingGap: 8,
+      });
+      const narrow = await geometry();
+      expect(narrow).not.toBeNull();
+      expect(narrow!.titleWidth).toBeLessThan(wide!.titleWidth);
+    }
+  );
+
+  test(
+    'does not allow tool header title selection',
     chromiumOnly('layout-geometry', 'The user-select recipe is a static CSS contract.'),
     async ({ page }) => {
-    await page.getByRole('button', { name: 'Agents', exact: true }).click();
-    const tools = page.locator('ds-panel-tools');
-    const title = page.getByRole('heading', { name: 'Agents', level: 2 });
+      await page.getByRole('button', { name: 'Agents', exact: true }).click();
+      const tools = page.locator('ds-panel-tools');
+      const title = page.getByRole('heading', { name: 'Agents', level: 2 });
 
-    await expect(tools).toHaveClass(/panel-tools--motion-opening/);
-    await expect(tools).not.toHaveClass(/panel-tools--motion-opening/, { timeout: 5000 });
-    const userSelect = await title.evaluate(element => {
-      const style = getComputedStyle(element) as CSSStyleDeclaration & {
-        webkitUserSelect?: string;
-      };
-      return style.userSelect || style.webkitUserSelect || '';
-    });
-    expect(userSelect).toBe('none');
+      await expect(tools).toHaveClass(/panel-tools--motion-opening/);
+      await expect(tools).not.toHaveClass(/panel-tools--motion-opening/, { timeout: 5000 });
+      const userSelect = await title.evaluate(element => {
+        const style = getComputedStyle(element) as CSSStyleDeclaration & {
+          webkitUserSelect?: string;
+        };
+        return style.userSelect || style.webkitUserSelect || '';
+      });
+      expect(userSelect).toBe('none');
 
-    const box = await title.boundingBox();
-    expect(box).not.toBeNull();
-    await page.mouse.move(box!.x + 2, box!.y + box!.height / 2);
-    await page.mouse.down();
-    await page.mouse.move(box!.x + Math.min(52, box!.width - 2), box!.y + box!.height / 2, {
-      steps: 8,
-    });
-    await page.mouse.up();
+      const box = await title.boundingBox();
+      expect(box).not.toBeNull();
+      await page.mouse.move(box!.x + 2, box!.y + box!.height / 2);
+      await page.mouse.down();
+      await page.mouse.move(box!.x + Math.min(52, box!.width - 2), box!.y + box!.height / 2, {
+        steps: 8,
+      });
+      await page.mouse.up();
 
-    await expect.poll(() => page.evaluate(() => window.getSelection()?.toString() ?? '')).toBe('');
-  });
+      await expect
+        .poll(() => page.evaluate(() => window.getSelection()?.toString() ?? ''))
+        .toBe('');
+    }
+  );
 
   test('makes an overflowing destination body keyboard-scrollable and keeps footer roving focus working', async ({
     page,
@@ -489,9 +511,8 @@ test.describe('App shell chrome', () => {
   test('makes an overflowing tool rail keyboard-scrollable', async ({ page }) => {
     const tools = page.locator('ds-panel-tools');
     await tools.evaluate(element => {
-      element.shadowRoot!.querySelector<HTMLElement>(
-        '.panel-tools__rail-body'
-      )!.style.maxHeight = '96px';
+      element.shadowRoot!.querySelector<HTMLElement>('.panel-tools__rail-body')!.style.maxHeight =
+        '96px';
     });
 
     const scrollRegion = page.getByRole('region', { name: 'Tool shortcuts' });
@@ -502,45 +523,45 @@ test.describe('App shell chrome', () => {
     await expect.poll(() => scrollRegion.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
   });
 
-  test('panel nav dot uses a 20px suffix zone in expanded and collapsed layouts',
+  test(
+    'panel nav dot uses a 20px suffix zone in expanded and collapsed layouts',
     chromiumOnly('layout-geometry', 'The suffix zone is static token-backed navigation geometry.'),
-    async ({
-    page,
-  }) => {
-    await expect(page.locator('.panel-nav__item-dot')).toHaveCount(1);
-    await expect(page.locator('.panel-nav__item-dot-box')).toHaveCount(1);
+    async ({ page }) => {
+      await expect(page.locator('.panel-nav__item-dot')).toHaveCount(1);
+      await expect(page.locator('.panel-nav__item-dot-box')).toHaveCount(1);
 
-    const readDotGeometry = () =>
-      page.evaluate(() => {
-        const dot = document.querySelector('.panel-nav__item-dot') as HTMLElement;
-        const box = document.querySelector('.panel-nav__item-dot-box') as HTMLElement;
-        const row = dot.closest('.panel-nav__item') as HTMLElement;
-        const dotRect = dot.getBoundingClientRect();
-        const boxRect = box.getBoundingClientRect();
-        const rowRect = row.getBoundingClientRect();
-        return {
-          boxWidth: boxRect.width,
-          boxHeight: boxRect.height,
-          rightInset: rowRect.right - dotRect.right,
-          topInset: dotRect.top - rowRect.top,
-        };
+      const readDotGeometry = () =>
+        page.evaluate(() => {
+          const dot = document.querySelector('.panel-nav__item-dot') as HTMLElement;
+          const box = document.querySelector('.panel-nav__item-dot-box') as HTMLElement;
+          const row = dot.closest('.panel-nav__item') as HTMLElement;
+          const dotRect = dot.getBoundingClientRect();
+          const boxRect = box.getBoundingClientRect();
+          const rowRect = row.getBoundingClientRect();
+          return {
+            boxWidth: boxRect.width,
+            boxHeight: boxRect.height,
+            rightInset: rowRect.right - dotRect.right,
+            topInset: dotRect.top - rowRect.top,
+          };
+        });
+
+      await expect.poll(readDotGeometry).toEqual({
+        boxWidth: 20,
+        boxHeight: 20,
+        rightInset: 13,
+        topInset: 13,
       });
 
-    await expect.poll(readDotGeometry).toEqual({
-      boxWidth: 20,
-      boxHeight: 20,
-      rightInset: 13,
-      topInset: 13,
-    });
-
-    await page.getByRole('button', { name: 'Collapse navigation' }).click();
-    await expect.poll(readDotGeometry).toEqual({
-      boxWidth: 20,
-      boxHeight: 20,
-      rightInset: 6,
-      topInset: 6,
-    });
-  });
+      await page.getByRole('button', { name: 'Collapse navigation' }).click();
+      await expect.poll(readDotGeometry).toEqual({
+        boxWidth: 20,
+        boxHeight: 20,
+        rightInset: 6,
+        topInset: 6,
+      });
+    }
+  );
 
   test('breakpoint lock suppresses toggle affordance and preserves desktop preference', async ({
     page,
@@ -649,130 +670,138 @@ test.describe('App shell chrome', () => {
     await expect(page.getByRole('tab', { name: 'Live Map' })).toBeVisible();
   });
 
-  test('collapsed user initial keeps caption metrics and optical centering',
-    chromiumOnly('layout-geometry', 'Caption metrics and centering are a static compact-navigation recipe.'),
+  test(
+    'collapsed user initial keeps caption metrics and optical centering',
+    chromiumOnly(
+      'layout-geometry',
+      'Caption metrics and centering are a static compact-navigation recipe.'
+    ),
     async ({ page }) => {
-    await page.getByRole('button', { name: 'Collapse navigation' }).click();
+      await page.getByRole('button', { name: 'Collapse navigation' }).click();
 
-    const geometry = await page.locator('.panel-nav__user-initial').evaluate(element => {
-      const text = element as HTMLElement;
-      const circle = document.querySelector(
-        '.panel-nav__footer-icon-collapsed ds-icon'
-      ) as HTMLElement;
-      const inner = text.querySelector('.ds-text__element') as HTMLElement;
-      const textRect = text.getBoundingClientRect();
-      const circleRect = circle.getBoundingClientRect();
-      const range = document.createRange();
-      range.selectNodeContents(inner);
-      const inkRect = range.getBoundingClientRect();
-      const rootStyle = getComputedStyle(document.documentElement);
+      const geometry = await page.locator('.panel-nav__user-initial').evaluate(element => {
+        const text = element as HTMLElement;
+        const circle = document.querySelector(
+          '.panel-nav__footer-icon-collapsed ds-icon'
+        ) as HTMLElement;
+        const inner = text.querySelector('.ds-text__element') as HTMLElement;
+        const textRect = text.getBoundingClientRect();
+        const circleRect = circle.getBoundingClientRect();
+        const range = document.createRange();
+        range.selectNodeContents(inner);
+        const inkRect = range.getBoundingClientRect();
+        const rootStyle = getComputedStyle(document.documentElement);
 
-      return {
-        textHeight: textRect.height,
-        tokenLineHeight: Number.parseFloat(
-          rootStyle.getPropertyValue('--typography-lineheight-xs')
-        ),
-        boxCenterDeltaX:
-          textRect.left + textRect.width / 2 - (circleRect.left + circleRect.width / 2),
-        boxCenterDeltaY:
-          textRect.top + textRect.height / 2 - (circleRect.top + circleRect.height / 2),
-        inkCenterDeltaX:
-          inkRect.left + inkRect.width / 2 - (circleRect.left + circleRect.width / 2),
-        inkCenterDeltaY:
-          inkRect.top + inkRect.height / 2 - (circleRect.top + circleRect.height / 2),
-      };
-    });
+        return {
+          textHeight: textRect.height,
+          tokenLineHeight: Number.parseFloat(
+            rootStyle.getPropertyValue('--typography-lineheight-xs')
+          ),
+          boxCenterDeltaX:
+            textRect.left + textRect.width / 2 - (circleRect.left + circleRect.width / 2),
+          boxCenterDeltaY:
+            textRect.top + textRect.height / 2 - (circleRect.top + circleRect.height / 2),
+          inkCenterDeltaX:
+            inkRect.left + inkRect.width / 2 - (circleRect.left + circleRect.width / 2),
+          inkCenterDeltaY:
+            inkRect.top + inkRect.height / 2 - (circleRect.top + circleRect.height / 2),
+        };
+      });
 
-    expect(geometry.textHeight).toBeCloseTo(geometry.tokenLineHeight, 5);
-    expect(Math.abs(geometry.boxCenterDeltaX)).toBeLessThanOrEqual(0.5);
-    expect(Math.abs(geometry.boxCenterDeltaY)).toBeLessThanOrEqual(0.5);
-    expect(Math.abs(geometry.inkCenterDeltaX)).toBeLessThanOrEqual(0.5);
-    expect(Math.abs(geometry.inkCenterDeltaY)).toBeLessThanOrEqual(0.5);
-  });
+      expect(geometry.textHeight).toBeCloseTo(geometry.tokenLineHeight, 5);
+      expect(Math.abs(geometry.boxCenterDeltaX)).toBeLessThanOrEqual(0.5);
+      expect(Math.abs(geometry.boxCenterDeltaY)).toBeLessThanOrEqual(0.5);
+      expect(Math.abs(geometry.inkCenterDeltaX)).toBeLessThanOrEqual(0.5);
+      expect(Math.abs(geometry.inkCenterDeltaY)).toBeLessThanOrEqual(0.5);
+    }
+  );
 
-  test('account menu expansion keeps its resting foreground and pressed overlay in both panel modes',
-    chromiumOnly('controlled-behavior', 'Controlled popup state and token-backed paint are deterministic without browser APIs.'),
-    async ({
-    page,
-  }) => {
-    const panel = page.locator('#panel');
-    const account = page.getByRole('button', { name: 'Account' });
+  test(
+    'account menu expansion keeps its resting foreground and pressed overlay in both panel modes',
+    chromiumOnly(
+      'controlled-behavior',
+      'Controlled popup state and token-backed paint are deterministic without browser APIs.'
+    ),
+    async ({ page }) => {
+      const panel = page.locator('#panel');
+      const account = page.getByRole('button', { name: 'Account' });
 
-    for (const theme of ['light', 'dark']) {
-      await page.locator('html').evaluate((element, nextTheme) => {
-        element.dataset['theme'] = nextTheme;
-      }, theme);
+      for (const theme of ['light', 'dark']) {
+        await page.locator('html').evaluate((element, nextTheme) => {
+          element.dataset['theme'] = nextTheme;
+        }, theme);
 
-      for (const collapsed of [false, true]) {
-        await panel.evaluate((element, nextCollapsed) => {
-          const control = element as HTMLElement & {
-            accountMenuExpanded: boolean;
-            collapsed: boolean;
-          };
-          control.accountMenuExpanded = false;
-          control.collapsed = nextCollapsed;
-        }, collapsed);
-        await expect(account).toHaveAttribute('aria-expanded', 'false');
+        for (const collapsed of [false, true]) {
+          await panel.evaluate((element, nextCollapsed) => {
+            const control = element as HTMLElement & {
+              accountMenuExpanded: boolean;
+              collapsed: boolean;
+            };
+            control.accountMenuExpanded = false;
+            control.collapsed = nextCollapsed;
+          }, collapsed);
+          await expect(account).toHaveAttribute('aria-expanded', 'false');
 
-        const resting = await account.evaluate(element => {
-          const selected = document.querySelector<HTMLElement>(
-            '.panel-nav__body .panel-nav__item--active'
-          )!;
-          return {
-            foreground: getComputedStyle(element).color,
-            label: getComputedStyle(
-              element.querySelector<HTMLElement>('.panel-nav__footer-user-label')!
-            ).color,
-            expandedIcon: getComputedStyle(
-              element.querySelector<HTMLElement>('.panel-nav__footer-icon-expanded')!
-            ).color,
-            collapsedIcon: getComputedStyle(
-              element.querySelector<HTMLElement>('.panel-nav__footer-icon-collapsed')!
-            ).color,
-            selectedForeground: getComputedStyle(selected).color,
-          };
-        });
+          const resting = await account.evaluate(element => {
+            const selected = document.querySelector<HTMLElement>(
+              '.panel-nav__body .panel-nav__item--active'
+            )!;
+            return {
+              foreground: getComputedStyle(element).color,
+              label: getComputedStyle(
+                element.querySelector<HTMLElement>('.panel-nav__footer-user-label')!
+              ).color,
+              expandedIcon: getComputedStyle(
+                element.querySelector<HTMLElement>('.panel-nav__footer-icon-expanded')!
+              ).color,
+              collapsedIcon: getComputedStyle(
+                element.querySelector<HTMLElement>('.panel-nav__footer-icon-collapsed')!
+              ).color,
+              selectedForeground: getComputedStyle(selected).color,
+            };
+          });
 
-        await panel.evaluate(element => {
-          (element as HTMLElement & { accountMenuExpanded: boolean }).accountMenuExpanded = true;
-        });
-        await expect(account).toHaveAttribute('aria-expanded', 'true');
-        await expect(account).toHaveClass(/panel-nav__footer-user--menu-expanded/);
-        await expect(account).not.toHaveClass(/panel-nav__item--active/);
+          await panel.evaluate(element => {
+            (element as HTMLElement & { accountMenuExpanded: boolean }).accountMenuExpanded = true;
+          });
+          await expect(account).toHaveAttribute('aria-expanded', 'true');
+          await expect(account).toHaveClass(/panel-nav__footer-user--menu-expanded/);
+          await expect(account).not.toHaveClass(/panel-nav__item--active/);
 
-        const expanded = await account.evaluate(element => {
-          const probe = document.createElement('span');
-          probe.style.backgroundColor = 'var(--color-interaction-pressed)';
-          document.body.append(probe);
-          const pressed = getComputedStyle(probe).backgroundColor;
-          probe.remove();
-          return {
-            foreground: getComputedStyle(element).color,
-            label: getComputedStyle(
-              element.querySelector<HTMLElement>('.panel-nav__footer-user-label')!
-            ).color,
-            expandedIcon: getComputedStyle(
-              element.querySelector<HTMLElement>('.panel-nav__footer-icon-expanded')!
-            ).color,
-            collapsedIcon: getComputedStyle(
-              element.querySelector<HTMLElement>('.panel-nav__footer-icon-collapsed')!
-            ).color,
-            wash: getComputedStyle(element, '::after').backgroundColor,
-            pressed,
-          };
-        });
+          const expanded = await account.evaluate(element => {
+            const probe = document.createElement('span');
+            probe.style.backgroundColor = 'var(--color-interaction-pressed)';
+            document.body.append(probe);
+            const pressed = getComputedStyle(probe).backgroundColor;
+            probe.remove();
+            return {
+              foreground: getComputedStyle(element).color,
+              label: getComputedStyle(
+                element.querySelector<HTMLElement>('.panel-nav__footer-user-label')!
+              ).color,
+              expandedIcon: getComputedStyle(
+                element.querySelector<HTMLElement>('.panel-nav__footer-icon-expanded')!
+              ).color,
+              collapsedIcon: getComputedStyle(
+                element.querySelector<HTMLElement>('.panel-nav__footer-icon-collapsed')!
+              ).color,
+              wash: getComputedStyle(element, '::after').backgroundColor,
+              pressed,
+            };
+          });
 
-        expect(expanded).toMatchObject({
-          foreground: resting.foreground,
-          label: resting.label,
-          expandedIcon: resting.expandedIcon,
-          collapsedIcon: resting.collapsedIcon,
-        });
-        expect(expanded.foreground).not.toBe(resting.selectedForeground);
-        expect(expanded.wash).toBe(expanded.pressed);
+          expect(expanded).toMatchObject({
+            foreground: resting.foreground,
+            label: resting.label,
+            expandedIcon: resting.expandedIcon,
+            collapsedIcon: resting.collapsedIcon,
+          });
+          expect(expanded.foreground).not.toBe(resting.selectedForeground);
+          expect(expanded.wash).toBe(expanded.pressed);
+        }
       }
     }
-  });
+  );
 
   test('keeps balanced panel insets, an 8px expanded footer gap, and the same animated user node', async ({
     page,
@@ -878,136 +907,158 @@ test.describe('App shell chrome', () => {
     await expect(page.getByRole('tab', { name: 'Health' })).toBeVisible();
   });
 
-  test('none preset keeps the solid secondary chrome layer mounted',
-    chromiumOnly('layout-geometry', 'The explicit none preset maps to a deterministic chrome surface recipe.'),
+  test(
+    'none preset keeps the solid secondary chrome layer mounted',
+    chromiumOnly(
+      'layout-geometry',
+      'The explicit none preset maps to a deterministic chrome surface recipe.'
+    ),
     async ({ page }) => {
-    const shell = page.locator('ds-shell-app');
-    const chrome = page.locator('.shell-app__chrome');
-    await chrome.evaluate(element => {
-      element.setAttribute('data-e2e-persistent', '');
-    });
-
-    await shell.evaluate(element => {
-      (element as HTMLElement & { gradientPreset: string }).gradientPreset = 'none';
-    });
-
-    await expect(shell).toHaveAttribute('gradient-preset', 'none');
-    await expect(chrome).toHaveCount(1);
-    await expect(chrome).toHaveAttribute('data-e2e-persistent', '');
-    const colors = await chrome.evaluate(element => {
-      const probe = document.createElement('div');
-      probe.style.backgroundColor = 'var(--color-background-secondary)';
-      document.body.append(probe);
-      const secondary = getComputedStyle(probe).backgroundColor;
-      probe.remove();
-      return {
-        chrome: getComputedStyle(element).backgroundColor,
-        secondary,
-      };
-    });
-    expect(colors.chrome).toBe(colors.secondary);
-  });
-
-  test('optional paper texture follows the shell chrome viewport layer',
-    chromiumOnly('layout-geometry', 'Paper texture uses the Chromium WebGL2 path when available and has a no-op fallback otherwise.'),
-    async ({ page }) => {
-    const shell = page.locator('ds-shell-app');
-    const paper = page.locator('.shell-app__chrome > ds-paper-texture');
-
-    await shell.evaluate(element => {
-      (element as HTMLElement & { paperTexture: Record<string, unknown> }).paperTexture = {
-        colorFront: '#b8b8b8',
-        colorBack: '#ffffff',
-        contrast: 0.3,
-        roughness: 0.4,
-        fiber: 0.3,
-        fiberSize: 0.2,
-        crumples: 0.3,
-        crumpleSize: 0.35,
-        folds: 0.65,
-        foldCount: 5,
-        fade: 0,
-        drops: 0.2,
-        seed: 5.8,
-        fit: 'cover',
-        scale: 0.6,
-        speed: 0,
-        opacity: 0.2,
-      };
-    });
-
-    await expect(shell).toHaveClass(/shell-app--paper-texture/);
-    await expect(paper).toHaveCount(1);
-    await expect(paper).toHaveAttribute('aria-hidden', 'true');
-    await expect
-      .poll(() =>
-        paper.evaluate(element => {
-          const canvas = element.querySelector('canvas') as HTMLCanvasElement | null;
-          return Boolean(canvas && canvas.width > 0 && canvas.height > 0) ||
-            element.hasAttribute('data-paper-texture-error');
-        }),
-      )
-      .toBe(true);
-
-    const paperBox = await paper.boundingBox();
-    expect(paperBox).toMatchObject({ width: 1280, height: 720 });
-
-    await shell.evaluate(element => {
-      (element as HTMLElement & { paperTexture?: Record<string, unknown> }).paperTexture =
-        undefined;
-    });
-    await expect(paper).toHaveCount(0);
-    await expect(shell).not.toHaveClass(/shell-app--paper-texture/);
-  });
-
-  test('paper texture remounts its shader after reconnecting',
-    chromiumOnly('layout-geometry', 'Reconnect behavior exercises the Chromium WebGL2 shader lifecycle.'),
-    async ({ page }) => {
-    const shell = page.locator('ds-shell-app');
-    const paper = page.locator('.shell-app__chrome > ds-paper-texture');
-
-    await shell.evaluate(element => {
-      (element as HTMLElement & { paperTexture: Record<string, unknown> }).paperTexture = {
-        speed: 0,
-      };
-    });
-
-    await expect(paper.locator('canvas')).toHaveCount(1);
-    await paper.evaluate(element => {
-      const parent = element.parentElement;
-      element.remove();
-      parent?.append(element);
-    });
-
-    await expect(paper.locator('canvas')).toHaveCount(1);
-  });
-
-  test('paper texture falls back when an image failed before assignment',
-    chromiumOnly('layout-geometry', 'The fallback is rendered through the Chromium WebGL2 shader path.'),
-    async ({ page }) => {
-    const precondition = await page.evaluate(async () => {
-      const image = new Image();
-      image.src = 'data:image/png;base64,broken';
-      await new Promise(resolve => {
-        image.onload = resolve;
-        image.onerror = resolve;
+      const shell = page.locator('ds-shell-app');
+      const chrome = page.locator('.shell-app__chrome');
+      await chrome.evaluate(element => {
+        element.setAttribute('data-e2e-persistent', '');
       });
 
-      const paper = document.createElement('ds-paper-texture') as HTMLElement & {
-        config: Record<string, unknown>;
-      };
-      paper.setAttribute('data-e2e-broken-image', '');
-      paper.config = { image, speed: 0 };
-      document.body.append(paper);
+      await shell.evaluate(element => {
+        (element as HTMLElement & { gradientPreset: string }).gradientPreset = 'none';
+      });
 
-      return { complete: image.complete, naturalWidth: image.naturalWidth };
-    });
+      await expect(shell).toHaveAttribute('gradient-preset', 'none');
+      await expect(chrome).toHaveCount(1);
+      await expect(chrome).toHaveAttribute('data-e2e-persistent', '');
+      const colors = await chrome.evaluate(element => {
+        const probe = document.createElement('div');
+        probe.style.backgroundColor = 'var(--color-background-secondary)';
+        document.body.append(probe);
+        const secondary = getComputedStyle(probe).backgroundColor;
+        probe.remove();
+        return {
+          chrome: getComputedStyle(element).backgroundColor,
+          secondary,
+        };
+      });
+      expect(colors.chrome).toBe(colors.secondary);
+    }
+  );
 
-    expect(precondition).toEqual({ complete: true, naturalWidth: 0 });
-    const paper = page.locator('ds-paper-texture[data-e2e-broken-image]');
-    await expect(paper.locator('canvas')).toHaveCount(1);
-    await expect(paper).not.toHaveAttribute('data-paper-texture-error', 'unavailable');
-  });
+  test(
+    'optional paper texture follows the shell chrome viewport layer',
+    chromiumOnly(
+      'layout-geometry',
+      'Paper texture uses the Chromium WebGL2 path when available and has a no-op fallback otherwise.'
+    ),
+    async ({ page }) => {
+      const shell = page.locator('ds-shell-app');
+      const paper = page.locator('.shell-app__chrome > ds-paper-texture');
+
+      await shell.evaluate(element => {
+        (element as HTMLElement & { paperTexture: Record<string, unknown> }).paperTexture = {
+          colorFront: '#b8b8b8',
+          colorBack: '#ffffff',
+          contrast: 0.3,
+          roughness: 0.4,
+          fiber: 0.3,
+          fiberSize: 0.2,
+          crumples: 0.3,
+          crumpleSize: 0.35,
+          folds: 0.65,
+          foldCount: 5,
+          fade: 0,
+          drops: 0.2,
+          seed: 5.8,
+          fit: 'cover',
+          scale: 0.6,
+          speed: 0,
+          opacity: 0.2,
+        };
+      });
+
+      await expect(shell).toHaveClass(/shell-app--paper-texture/);
+      await expect(paper).toHaveCount(1);
+      await expect(paper).toHaveAttribute('aria-hidden', 'true');
+      await expect
+        .poll(() =>
+          paper.evaluate(element => {
+            const canvas = element.querySelector('canvas') as HTMLCanvasElement | null;
+            return (
+              Boolean(canvas && canvas.width > 0 && canvas.height > 0) ||
+              element.hasAttribute('data-paper-texture-error')
+            );
+          })
+        )
+        .toBe(true);
+
+      const paperBox = await paper.boundingBox();
+      expect(paperBox).toMatchObject({ width: 1280, height: 720 });
+
+      await shell.evaluate(element => {
+        (element as HTMLElement & { paperTexture?: Record<string, unknown> }).paperTexture =
+          undefined;
+      });
+      await expect(paper).toHaveCount(0);
+      await expect(shell).not.toHaveClass(/shell-app--paper-texture/);
+    }
+  );
+
+  test(
+    'paper texture remounts its shader after reconnecting',
+    chromiumOnly(
+      'layout-geometry',
+      'Reconnect behavior exercises the Chromium WebGL2 shader lifecycle.'
+    ),
+    async ({ page }) => {
+      const shell = page.locator('ds-shell-app');
+      const paper = page.locator('.shell-app__chrome > ds-paper-texture');
+
+      await shell.evaluate(element => {
+        (element as HTMLElement & { paperTexture: Record<string, unknown> }).paperTexture = {
+          speed: 0,
+        };
+      });
+
+      await expect(paper.locator('canvas')).toHaveCount(1);
+      await paper.evaluate(element => {
+        const parent = element.parentElement;
+        element.remove();
+        parent?.append(element);
+      });
+
+      await expect(paper.locator('canvas')).toHaveCount(1);
+    }
+  );
+
+  test(
+    'paper texture falls back when an image failed before assignment',
+    chromiumOnly(
+      'layout-geometry',
+      'The fallback is rendered through the Chromium WebGL2 shader path.'
+    ),
+    async ({ page }) => {
+      const precondition = await page.evaluate(async () => {
+        const image = new Image();
+        image.src = 'data:image/png;base64,broken';
+        await new Promise(resolve => {
+          image.onload = resolve;
+          image.onerror = resolve;
+        });
+
+        const paper = document.createElement('ds-paper-texture') as HTMLElement & {
+          config: Record<string, unknown>;
+        };
+        paper.setAttribute('data-e2e-broken-image', '');
+        paper.config = { image, speed: 0 };
+        document.body.append(paper);
+
+        return { complete: image.complete, naturalWidth: image.naturalWidth };
+      });
+
+      expect(precondition).toEqual({ complete: true, naturalWidth: 0 });
+      const paper = page.locator('ds-paper-texture[data-e2e-broken-image]');
+      await expect(paper.locator('canvas')).toHaveCount(1);
+      await expect(paper).not.toHaveAttribute('data-paper-texture-error', 'unavailable');
+    }
+  );
 
   test('tools drawer sets inert and aria-hidden when resting closed', async ({ page }) => {
     const drawer = page.locator('.panel-tools__drawer');
@@ -1061,9 +1112,7 @@ test.describe('App shell chrome', () => {
 
     const entering = await tools.evaluate(element => {
       element.setAttribute('presentation', 'fullscreen');
-      const drawerSurface = element.shadowRoot?.querySelector(
-        '.panel-tools__drawer-surface'
-      );
+      const drawerSurface = element.shadowRoot?.querySelector('.panel-tools__drawer-surface');
       return {
         committed: element.classList.contains('panel-tools--fullscreen'),
         visibility: drawerSurface ? getComputedStyle(drawerSurface).visibility : null,
@@ -1076,9 +1125,7 @@ test.describe('App shell chrome', () => {
 
     const exiting = await tools.evaluate(element => {
       element.setAttribute('presentation', 'drawer');
-      const drawerSurface = element.shadowRoot?.querySelector(
-        '.panel-tools__drawer-surface'
-      );
+      const drawerSurface = element.shadowRoot?.querySelector('.panel-tools__drawer-surface');
       return {
         committed: !element.classList.contains('panel-tools--fullscreen'),
         visibility: drawerSurface ? getComputedStyle(drawerSurface).visibility : null,
@@ -1096,9 +1143,7 @@ test.describe('App shell chrome', () => {
     const host = page.locator('ds-panel-tools');
     const drawer = page.locator('.panel-tools__drawer');
     const header = page.locator('ds-panel-tool-header.panel-tools__header');
-    const fullView = page.locator(
-      '.panel-tools__full-view:has(slot[name="agents-view"])'
-    );
+    const fullView = page.locator('.panel-tools__full-view:has(slot[name="agents-view"])');
     const agents = page.getByRole('button', { name: 'Agents', exact: true });
 
     await agents.click();
@@ -1121,16 +1166,21 @@ test.describe('App shell chrome', () => {
     await expect(fullView).toBeHidden();
   });
 
-  test('uses the same fixed 300px drawer width on desktop and tablet',
-    chromiumOnly('layout-geometry', 'Fixed drawer width is a token-backed local geometry contract.'),
+  test(
+    'uses the same fixed 300px drawer width on desktop and tablet',
+    chromiumOnly(
+      'layout-geometry',
+      'Fixed drawer width is a token-backed local geometry contract.'
+    ),
     async ({ page }) => {
-    const surface = page.locator('.panel-tools__drawer-surface');
-    await page.getByRole('button', { name: 'Agents', exact: true }).click();
-    await expect(surface).toHaveCSS('width', '300px');
+      const surface = page.locator('.panel-tools__drawer-surface');
+      await page.getByRole('button', { name: 'Agents', exact: true }).click();
+      await expect(surface).toHaveCSS('width', '300px');
 
-    await page.setViewportSize({ width: 1000, height: 720 });
-    await expect(surface).toHaveCSS('width', '300px');
-  });
+      await page.setViewportSize({ width: 1000, height: 720 });
+      await expect(surface).toHaveCSS('width', '300px');
+    }
+  );
 
   test('slash toggles Help outside editable controls', async ({ page }) => {
     await page.keyboard.press('/');

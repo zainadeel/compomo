@@ -3,12 +3,7 @@ import type { AnchoredAlign, AnchoredSide } from '../utils/anchored-position';
 export type ToastPriority = 'low' | 'high';
 export type ToastTransitionStatus = 'starting' | 'active' | 'ending';
 export type ToastSwipeDirection = 'up' | 'down' | 'left' | 'right';
-export type ToastCloseReason =
-  | 'timeout'
-  | 'close-button'
-  | 'swipe'
-  | 'escape'
-  | 'programmatic';
+export type ToastCloseReason = 'timeout' | 'close-button' | 'swipe' | 'escape' | 'programmatic';
 
 export interface ToastPositionerOptions {
   /** Element or document id used to position this toast outside the global stack. */
@@ -54,8 +49,7 @@ export interface ToastOptions<Data = unknown> {
   onRemove?: (context: ToastCloseContext<Data>) => void;
 }
 
-export interface ToastRecord<Data = unknown>
-  extends Omit<ToastOptions<Data>, 'id' | 'priority'> {
+export interface ToastRecord<Data = unknown> extends Omit<ToastOptions<Data>, 'id' | 'priority'> {
   id: string;
   priority: ToastPriority;
   transitionStatus: ToastTransitionStatus;
@@ -69,17 +63,11 @@ export type ToastPromiseValue<Data = unknown> = string | ToastOptions<Data>;
 
 export interface ToastPromiseOptions<Value, Data = unknown> {
   loading: ToastPromiseValue<Data>;
-  success:
-    | ToastPromiseValue<Data>
-    | ((value: Value) => ToastPromiseValue<Data>);
-  error:
-    | ToastPromiseValue<Data>
-    | ((error: unknown) => ToastPromiseValue<Data>);
+  success: ToastPromiseValue<Data> | ((value: Value) => ToastPromiseValue<Data>);
+  error: ToastPromiseValue<Data> | ((error: unknown) => ToastPromiseValue<Data>);
 }
 
-export type ToastListener<Data = unknown> = (
-  records: readonly ToastRecord<Data>[],
-) => void;
+export type ToastListener<Data = unknown> = (records: readonly ToastRecord<Data>[]) => void;
 
 export interface ToastManager<Data = unknown> {
   add(options: ToastOptions<Data>): string;
@@ -88,7 +76,7 @@ export interface ToastManager<Data = unknown> {
   closeAll(reason?: ToastCloseReason): void;
   promise<Value>(
     promiseValue: PromiseLike<Value>,
-    options: ToastPromiseOptions<Value, Data>,
+    options: ToastPromiseOptions<Value, Data>
   ): Promise<Value>;
   subscribe(listener: ToastListener<Data>): () => void;
   getSnapshot(): readonly ToastRecord<Data>[];
@@ -105,12 +93,10 @@ export interface ToastEventDetail<Data = unknown> {
   toast: ToastRecord<Data>;
 }
 
-export interface ToastCloseEventDetail<Data = unknown>
-  extends ToastEventDetail<Data> {
+export interface ToastCloseEventDetail<Data = unknown> extends ToastEventDetail<Data> {
   reason: ToastCloseReason;
 }
 
-export interface ToastActionEventDetail<Data = unknown>
-  extends ToastEventDetail<Data> {
+export interface ToastActionEventDetail<Data = unknown> extends ToastEventDetail<Data> {
   originalEvent: MouseEvent;
 }

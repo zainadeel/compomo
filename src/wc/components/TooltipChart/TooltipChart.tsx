@@ -117,16 +117,20 @@ export class TooltipChart {
     const rect = this.el.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
 
-    const nextSide: TooltipChartSide = rect.right > window.innerWidth - VIEWPORT_PAD_PX ? 'left' : 'right';
-    const nextAlign: TooltipChartAlign = rect.bottom > window.innerHeight - VIEWPORT_PAD_PX ? 'top' : 'bottom';
+    const nextSide: TooltipChartSide =
+      rect.right > window.innerWidth - VIEWPORT_PAD_PX ? 'left' : 'right';
+    const nextAlign: TooltipChartAlign =
+      rect.bottom > window.innerHeight - VIEWPORT_PAD_PX ? 'top' : 'bottom';
 
     if (nextSide !== this.side) this.side = nextSide;
     if (nextAlign !== this.align) this.align = nextAlign;
   }
 
   render() {
-    const translateX = this.side === 'right' ? `${CURSOR_OFFSET_PX}px` : `calc(-100% - ${CURSOR_OFFSET_PX}px)`;
-    const translateY = this.align === 'bottom' ? `${CURSOR_OFFSET_PX}px` : `calc(-100% - ${CURSOR_OFFSET_PX}px)`;
+    const translateX =
+      this.side === 'right' ? `${CURSOR_OFFSET_PX}px` : `calc(-100% - ${CURSOR_OFFSET_PX}px)`;
+    const translateY =
+      this.align === 'bottom' ? `${CURSOR_OFFSET_PX}px` : `calc(-100% - ${CURSOR_OFFSET_PX}px)`;
     const rows = this.items ?? [{ label: this.label, value: this.value }];
     const usesSwatches = rows.some(item => Boolean(item.color));
 
@@ -138,7 +142,11 @@ export class TooltipChart {
           'ds-chrome-column': true,
           'ds-chrome-space--sm': true,
         }}
-        style={{ left: `${this.x}px`, top: `${this.y}px`, transform: `translate(${translateX}, ${translateY})` }}
+        style={{
+          left: `${this.x}px`,
+          top: `${this.y}px`,
+          transform: `translate(${translateX}, ${translateY})`,
+        }}
       >
         {this.heading && (
           <ds-text
@@ -153,7 +161,10 @@ export class TooltipChart {
         )}
         <div class="tooltip-chart__items">
           {rows.map((item, index) => (
-            <div class="tooltip-chart__item ds-control-frame ds-control--md" key={`${item.label}-${index}`}>
+            <div
+              class="tooltip-chart__item ds-control-frame ds-control--md"
+              key={`${item.label}-${index}`}
+            >
               {usesSwatches && (
                 <span class="tooltip-chart__swatch-box ds-control-icon-box" aria-hidden="true">
                   {item.color && (

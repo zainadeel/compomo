@@ -76,8 +76,7 @@ ds-text.card-chart__title {
   align-items: center;
   box-sizing: border-box;
   min-height: 0;
-  padding: var(--dimension-space-200) var(--dimension-space-200) 0
-    var(--dimension-space-200);
+  padding: var(--dimension-space-200) var(--dimension-space-200) 0 var(--dimension-space-200);
 }
 
 .card-chart__chart > * {
@@ -93,8 +92,7 @@ ds-text.card-chart__title {
 .card-chart__legend {
   flex: 0 0 auto;
   box-sizing: border-box;
-  padding: 0 var(--dimension-space-100) var(--dimension-space-100)
-    var(--dimension-space-100);
+  padding: 0 var(--dimension-space-100) var(--dimension-space-100) var(--dimension-space-100);
 }
 
 @media (forced-colors: active) {

@@ -19,7 +19,9 @@ export class AttachmentList {
       <span class="attachment-list__item-content">
         <ds-icon name="Document" size="sm" color="secondary" />
         <span class="attachment-list__copy">
-          <ds-text as="span" variant="text-body-small" emphasis color="primary" lineTruncation={1}>{item.name}</ds-text>
+          <ds-text as="span" variant="text-body-small" emphasis color="primary" lineTruncation={1}>
+            {item.name}
+          </ds-text>
           {item.mediaType || item.size ? (
             <ds-text as="span" variant="text-caption" color="secondary">
               {[item.mediaType, item.size].filter(Boolean).join(' · ')}
@@ -29,7 +31,9 @@ export class AttachmentList {
       </span>
     );
     return url ? (
-      <a class="attachment-list__item" href={url} target="_blank" rel="noopener noreferrer">{content}</a>
+      <a class="attachment-list__item" href={url} target="_blank" rel="noopener noreferrer">
+        {content}
+      </a>
     ) : (
       <div class="attachment-list__item">{content}</div>
     );
@@ -39,7 +43,11 @@ export class AttachmentList {
     return (
       <Host>
         <div class="attachment-list" role="list" aria-label={this.label}>
-          {this.items.map(item => <div role="listitem" key={item.id}>{this.renderItem(item)}</div>)}
+          {this.items.map(item => (
+            <div role="listitem" key={item.id}>
+              {this.renderItem(item)}
+            </div>
+          ))}
         </div>
       </Host>
     );

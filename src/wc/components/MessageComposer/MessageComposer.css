@@ -75,7 +75,8 @@
 }
 
 .message-composer:not(.message-composer--error) .message-composer__field:focus-within {
-  box-shadow: var(--effect-elevation-elevated-md),
+  box-shadow:
+    var(--effect-elevation-elevated-md),
     inset 0 0 0 var(--dimension-stroke-width-018) var(--color-border-bold-brand);
 }
 
@@ -159,8 +160,7 @@ textarea:focus-visible {
   }
 
   .message-composer__error-support {
-    border-block-end: var(--dimension-stroke-width-012) solid
-      var(--ds-forced-color-content);
+    border-block-end: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
     background: var(--ds-forced-color-surface);
   }
 }

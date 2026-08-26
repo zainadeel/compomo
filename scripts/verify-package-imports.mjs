@@ -9,19 +9,23 @@ import { Client } from '@modelcontextprotocol/client';
 import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
 
 const repoRoot = resolve(fileURLToPath(new URL('..', import.meta.url)));
-const pkg = JSON.parse(execFileSync('node', ['-e', "process.stdout.write(require('fs').readFileSync('package.json'))"], {
-  cwd: repoRoot,
-  encoding: 'utf8',
-}));
+const pkg = JSON.parse(
+  execFileSync('node', ['-e', "process.stdout.write(require('fs').readFileSync('package.json'))"], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  })
+);
 const packDir = mkdtempSync(join(tmpdir(), 'ds-mo-pack-'));
 const smokeDir = mkdtempSync(join(tmpdir(), 'ds-mo-consumer-'));
 const npmEnv = { ...process.env, npm_config_cache: join(tmpdir(), 'ds-mo-npm-cache') };
 
 function resultText(result) {
-  return result.content
-    ?.filter(item => item.type === 'text')
-    .map(item => item.text)
-    .join('\n') ?? '';
+  return (
+    result.content
+      ?.filter(item => item.type === 'text')
+      .map(item => item.text)
+      .join('\n') ?? ''
+  );
 }
 
 function assertCompatibleText(result, toolName) {
@@ -33,10 +37,7 @@ function assertCompatibleText(result, toolName) {
 async function verifyPackagedMcp(consumerDir, { clientOptions, expectedEra }) {
   const command = join(consumerDir, 'node_modules', '.bin', 'compomo-mcp');
   const transport = new StdioClientTransport({ command, cwd: consumerDir, stderr: 'pipe' });
-  const client = new Client(
-    { name: 'ds-mo-package-smoke', version: '1.0.0' },
-    clientOptions,
-  );
+  const client = new Client({ name: 'ds-mo-package-smoke', version: '1.0.0' }, clientOptions);
   let stderr = '';
   transport.stderr?.on('data', chunk => {
     stderr += chunk.toString();
@@ -51,10 +52,7 @@ async function verifyPackagedMcp(consumerDir, { clientOptions, expectedEra }) {
     }
     const discover = client.getDiscoverResult();
     if (expectedEra === 'modern') {
-      if (
-        !discover?.supportedVersions?.includes('2026-07-28') ||
-        !discover.capabilities?.tools
-      ) {
+      if (!discover?.supportedVersions?.includes('2026-07-28') || !discover.capabilities?.tools) {
         throw new Error('Packaged MCP discovery did not advertise the modern protocol and tools.');
       }
     } else if (discover !== undefined) {
@@ -89,7 +87,8 @@ async function verifyPackagedMcp(consumerDir, { clientOptions, expectedEra }) {
 
     for (const name of expectedTools) {
       const tool = tools.tools.find(candidate => candidate.name === name);
-      if (!tool?.outputSchema) throw new Error(`Packaged MCP tool does not advertise structured output: ${name}`);
+      if (!tool?.outputSchema)
+        throw new Error(`Packaged MCP tool does not advertise structured output: ${name}`);
       if (
         tool.annotations?.readOnlyHint !== true ||
         tool.annotations?.destructiveHint !== false ||
@@ -110,7 +109,9 @@ async function verifyPackagedMcp(consumerDir, { clientOptions, expectedEra }) {
       !componentResult.structuredContent.component.meta?.intent?.useWhen?.length ||
       componentResult.structuredContent.component.files
     ) {
-      throw new Error('Packaged MCP did not return structured ButtonFilled metadata without source files.');
+      throw new Error(
+        'Packaged MCP did not return structured ButtonFilled metadata without source files.'
+      );
     }
     assertCompatibleText(componentResult, 'get_component');
 
@@ -147,7 +148,9 @@ async function verifyPackagedMcp(consumerDir, { clientOptions, expectedEra }) {
     if (
       componentListResult.isError ||
       componentListResult.structuredContent?.query !== 'button' ||
-      !componentListResult.structuredContent.components?.some(component => component.name === 'button-filled')
+      !componentListResult.structuredContent.components?.some(
+        component => component.name === 'button-filled'
+      )
     ) {
       throw new Error('Packaged MCP did not return a structured filtered component summary.');
     }
@@ -160,7 +163,9 @@ async function verifyPackagedMcp(consumerDir, { clientOptions, expectedEra }) {
     if (
       patternListResult.isError ||
       patternListResult.structuredContent?.query !== 'menu' ||
-      !patternListResult.structuredContent.patterns?.some(pattern => pattern.id === 'pattern:menu-trigger')
+      !patternListResult.structuredContent.patterns?.some(
+        pattern => pattern.id === 'pattern:menu-trigger'
+      )
     ) {
       throw new Error('Packaged MCP did not return a structured filtered pattern summary.');
     }
@@ -198,23 +203,30 @@ try {
   });
   const [{ filename }] = JSON.parse(packOutput);
   const tarballPath = join(packDir, filename);
-  writeFileSync(join(smokeDir, 'package.json'), JSON.stringify({
-    name: 'ds-mo-package-smoke',
-    private: true,
-    type: 'module',
-    dependencies: {
-      '@angular/compiler': pkg.devDependencies['@angular/compiler'],
-      '@angular/core': pkg.devDependencies['@angular/core'],
-      '@angular/forms': pkg.devDependencies['@angular/forms'],
-      '@ds-mo/icons': pkg.devDependencies['@ds-mo/icons'],
-      '@ds-mo/tokens': pkg.devDependencies['@ds-mo/tokens'],
-      '@ds-mo/ui': `file:${tarballPath}`,
-      react: pkg.devDependencies.react,
-      'react-dom': pkg.devDependencies['react-dom'],
-      typescript: pkg.devDependencies.typescript,
-      vue: pkg.devDependencies.vue,
-    },
-  }, null, 2));
+  writeFileSync(
+    join(smokeDir, 'package.json'),
+    JSON.stringify(
+      {
+        name: 'ds-mo-package-smoke',
+        private: true,
+        type: 'module',
+        dependencies: {
+          '@angular/compiler': pkg.devDependencies['@angular/compiler'],
+          '@angular/core': pkg.devDependencies['@angular/core'],
+          '@angular/forms': pkg.devDependencies['@angular/forms'],
+          '@ds-mo/icons': pkg.devDependencies['@ds-mo/icons'],
+          '@ds-mo/tokens': pkg.devDependencies['@ds-mo/tokens'],
+          '@ds-mo/ui': `file:${tarballPath}`,
+          react: pkg.devDependencies.react,
+          'react-dom': pkg.devDependencies['react-dom'],
+          typescript: pkg.devDependencies.typescript,
+          vue: pkg.devDependencies.vue,
+        },
+      },
+      null,
+      2
+    )
+  );
   execFileSync('npm', ['install', '--ignore-scripts', '--no-audit', '--no-fund'], {
     cwd: smokeDir,
     stdio: 'inherit',
@@ -330,7 +342,7 @@ try {
       'NodeNext',
       'type-smoke.ts',
     ],
-    { cwd: smokeDir, stdio: 'inherit' },
+    { cwd: smokeDir, stdio: 'inherit' }
   );
   await verifyPackagedMcp(smokeDir, {
     clientOptions: { versionNegotiation: { mode: 'auto' } },
@@ -340,7 +352,9 @@ try {
     clientOptions: undefined,
     expectedEra: 'legacy',
   });
-  console.log('✅ Packed native, Angular, React, Vue, shell, toast, utils, agent, and MCP entry points load successfully.');
+  console.log(
+    '✅ Packed native, Angular, React, Vue, shell, toast, utils, agent, and MCP entry points load successfully.'
+  );
 } finally {
   rmSync(packDir, { recursive: true, force: true });
   rmSync(smokeDir, { recursive: true, force: true });

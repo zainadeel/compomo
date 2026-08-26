@@ -52,15 +52,16 @@ export class Chip {
     const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const iconSize = ICON_SIZE[this.size];
 
-    const maxWidthStyle = this.maxWidth != null
-      ? { maxWidth: typeof this.maxWidth === 'number' ? `${this.maxWidth}px` : this.maxWidth }
-      : undefined;
+    const maxWidthStyle =
+      this.maxWidth != null
+        ? { maxWidth: typeof this.maxWidth === 'number' ? `${this.maxWidth}px` : this.maxWidth }
+        : undefined;
 
     return (
       <Host
         class={{
-          'tag': true,
-          'chip': true,
+          tag: true,
+          chip: true,
           [`chip--${this.state}`]: true,
           [`tag--size-${this.size}`]: true,
           'ds-control--md': this.size === 'md',

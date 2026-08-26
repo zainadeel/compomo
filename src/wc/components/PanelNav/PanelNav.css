@@ -8,36 +8,42 @@
 
 .panel-nav {
   /* ─ Sizes ─ */
-  --_nav-width:              var(--dimension-panel-width-2xs);
-  --_nav-width-collapsed:    var(--dimension-size-600);
-  --_nav-item-height:        var(--dimension-size-400, 32px);
-  --_nav-padding-x:          var(--dimension-space-100, 8px);
-  --_nav-padding-y:          var(--dimension-space-100, 8px);
+  --_nav-width: var(--dimension-panel-width-2xs);
+  --_nav-width-collapsed: var(--dimension-size-600);
+  --_nav-item-height: var(--dimension-size-400, 32px);
+  --_nav-padding-x: var(--dimension-space-100, 8px);
+  --_nav-padding-y: var(--dimension-space-100, 8px);
   /* gear button outer width = padding*2 + icon */
-  --_nav-footer-btn-w:       calc(var(--dimension-space-075, 6px) * 2 + var(--dimension-iconography-md, 20px));
+  --_nav-footer-btn-w: calc(
+    var(--dimension-space-075, 6px) * 2 + var(--dimension-iconography-md, 20px)
+  );
 
   /* ─ Motion ─ */
   /* --ds-panel-nav-speed: unitless multiplier; override in Storybook to slow-mo (e.g. 10 = 10×).
      *-dur vars are duration-only (needed for calc); *-motion vars add easing for use in transitions. */
-  --_nav-speed:               var(--ds-panel-nav-speed, 1);
-  --_nav-expand-dur:          calc(var(--_nav-speed) * var(--effect-animation-duration-medium-1, 300ms));
-  --_nav-expand-motion:       var(--_nav-expand-dur) var(--effect-animation-easing-ease-in-out, ease);
-  --_nav-label-fade-dur:      calc(var(--_nav-speed) * var(--effect-animation-duration-medium-1, 300ms));
-  --_nav-label-fade-motion:   var(--_nav-label-fade-dur) var(--effect-animation-easing-ease-in-out, ease);
-  --_nav-label-fade-out-dur:  calc(var(--_nav-speed) * var(--effect-animation-duration-medium-1, 300ms));
-  --_nav-label-fade-out-motion: var(--_nav-label-fade-out-dur) var(--effect-animation-easing-ease-in-out, ease);
+  --_nav-speed: var(--ds-panel-nav-speed, 1);
+  --_nav-expand-dur: calc(var(--_nav-speed) * var(--effect-animation-duration-medium-1, 300ms));
+  --_nav-expand-motion: var(--_nav-expand-dur) var(--effect-animation-easing-ease-in-out, ease);
+  --_nav-label-fade-dur: calc(var(--_nav-speed) * var(--effect-animation-duration-medium-1, 300ms));
+  --_nav-label-fade-motion: var(--_nav-label-fade-dur)
+    var(--effect-animation-easing-ease-in-out, ease);
+  --_nav-label-fade-out-dur: calc(
+    var(--_nav-speed) * var(--effect-animation-duration-medium-1, 300ms)
+  );
+  --_nav-label-fade-out-motion: var(--_nav-label-fade-out-dur)
+    var(--effect-animation-easing-ease-in-out, ease);
 
   /* ─ Colours – default chrome (app surfaces) ─ */
-  --_nav-bg:           var(--color-background-secondary);
-  --_nav-border:       var(--color-border-tertiary);
-  --_nav-divider:      var(--color-border-tertiary);
-  --_nav-fg-primary:   var(--color-foreground-primary);
+  --_nav-bg: var(--color-background-secondary);
+  --_nav-border: var(--color-border-tertiary);
+  --_nav-divider: var(--color-border-tertiary);
+  --_nav-fg-primary: var(--color-foreground-primary);
   --_nav-fg-secondary: var(--color-foreground-secondary);
-  --_nav-fg-tertiary:  var(--color-foreground-tertiary);
-  --_nav-hover:        var(--color-interaction-hover);
-  --_nav-pressed:      var(--color-interaction-pressed);
-  --_nav-focus:        var(--color-interaction-focus);
-  --_nav-dot:          var(--color-foreground-bold-brand);
+  --_nav-fg-tertiary: var(--color-foreground-tertiary);
+  --_nav-hover: var(--color-interaction-hover);
+  --_nav-pressed: var(--color-interaction-pressed);
+  --_nav-focus: var(--color-interaction-focus);
+  --_nav-dot: var(--color-foreground-bold-brand);
   --ds-interaction-hover: var(--_nav-hover);
   --ds-interaction-pressed: var(--_nav-pressed);
   --ds-focus-ring-color: var(--_nav-focus);
@@ -54,16 +60,16 @@
 /* Style slots — same app tokens for now; hook texture/glyph layers on these classes later. */
 .panel-nav--dashboard,
 .panel-nav--settings {
-  --_nav-bg:           var(--color-background-secondary);
-  --_nav-border:       var(--color-border-tertiary);
-  --_nav-divider:      var(--color-border-tertiary);
-  --_nav-fg-primary:   var(--color-foreground-primary);
+  --_nav-bg: var(--color-background-secondary);
+  --_nav-border: var(--color-border-tertiary);
+  --_nav-divider: var(--color-border-tertiary);
+  --_nav-fg-primary: var(--color-foreground-primary);
   --_nav-fg-secondary: var(--color-foreground-secondary);
-  --_nav-fg-tertiary:  var(--color-foreground-tertiary);
-  --_nav-hover:        var(--color-interaction-hover);
-  --_nav-pressed:      var(--color-interaction-pressed);
-  --_nav-focus:        var(--color-interaction-focus);
-  --_nav-dot:          var(--color-foreground-bold-brand);
+  --_nav-fg-tertiary: var(--color-foreground-tertiary);
+  --_nav-hover: var(--color-interaction-hover);
+  --_nav-pressed: var(--color-interaction-pressed);
+  --_nav-focus: var(--color-interaction-focus);
+  --_nav-dot: var(--color-foreground-bold-brand);
   --ds-interaction-hover: var(--_nav-hover);
   --ds-interaction-pressed: var(--_nav-pressed);
   --ds-focus-ring-color: var(--_nav-focus);
@@ -311,8 +317,7 @@ ds-text.panel-nav__group-label {
 }
 
 .panel-nav__item-dot {
-  transition:
-    transform var(--_nav-expand-motion);
+  transition: transform var(--_nav-expand-motion);
 }
 
 .panel-nav--collapsed .panel-nav__item-dot {
@@ -362,7 +367,9 @@ ds-text.panel-nav__group-label {
 
 .panel-nav--collapsed .panel-nav__footer {
   /* two rows: padding*2 + item*2 + gap */
-  height: calc(var(--_nav-padding-y) * 2 + var(--_nav-item-height) * 2 + var(--dimension-space-050, 4px));
+  height: calc(
+    var(--_nav-padding-y) * 2 + var(--_nav-item-height) * 2 + var(--dimension-space-050, 4px)
+  );
 }
 
 /* ── Footer icon button (gear / dashboard) ───────────────────────────────── */
@@ -415,7 +422,10 @@ ds-text.panel-nav__group-label {
   text-align: right;
   position: absolute;
   left: var(--dimension-space-075, 6px);
-  right: calc(var(--dimension-space-075, 6px) + var(--dimension-iconography-md, 20px) + var(--dimension-space-050, 4px));
+  right: calc(
+    var(--dimension-space-075, 6px) + var(--dimension-iconography-md, 20px) +
+      var(--dimension-space-050, 4px)
+  );
   top: 50%;
   transform: translateY(-50%);
   flex: none;

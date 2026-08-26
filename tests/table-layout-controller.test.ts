@@ -23,7 +23,7 @@ test('resolves viewport, sticky, and floating-control geometry in one snapshot',
       inlineOffset: 120,
       maxInlineOffset: 440,
       collapseBlockOffset: 32,
-    },
+    }
   );
 });
 
@@ -42,7 +42,7 @@ test('does not report edge overflow or unmeasured overlay geometry', () => {
       inlineOffset: 0,
       maxInlineOffset: 0,
       collapseBlockOffset: null,
-    },
+    }
   );
 });
 
@@ -76,7 +76,9 @@ test('resolves first-paint geometry synchronously when layout elements connect',
       floatingCollapseAll: false,
       clampVerticalOverscroll: false,
     }),
-    overflowChanged: state => { overflow = state; },
+    overflowChanged: state => {
+      overflow = state;
+    },
   });
 
   controller.connect();
@@ -90,7 +92,9 @@ test('resolves viewport-size changes synchronously after a render refresh', () =
   const properties = new Map<string, string>();
   let viewportWidth = 320;
   const viewport = {
-    get clientWidth() { return viewportWidth; },
+    get clientWidth() {
+      return viewportWidth;
+    },
     clientHeight: 240,
     scrollWidth: 432,
     scrollHeight: 240,
@@ -133,10 +137,22 @@ test('resolves viewport-size changes synchronously after a render refresh', () =
 test('skips geometry reads for a recycled render with stable layout elements', () => {
   let geometryReads = 0;
   const viewport = {
-    get clientWidth() { geometryReads += 1; return 432; },
-    get clientHeight() { geometryReads += 1; return 240; },
-    get scrollWidth() { geometryReads += 1; return 900; },
-    get scrollHeight() { geometryReads += 1; return 640; },
+    get clientWidth() {
+      geometryReads += 1;
+      return 432;
+    },
+    get clientHeight() {
+      geometryReads += 1;
+      return 240;
+    },
+    get scrollWidth() {
+      geometryReads += 1;
+      return 900;
+    },
+    get scrollHeight() {
+      geometryReads += 1;
+      return 640;
+    },
     scrollLeft: 0,
     style: {
       getPropertyValue: () => '',
@@ -213,7 +229,9 @@ test('contains vertical wheel deltas at fitted viewport edges and transfers them
   listeners.get('wheel')?.({
     deltaX: 0,
     deltaY: -24,
-    preventDefault: () => { prevented = true; },
+    preventDefault: () => {
+      prevented = true;
+    },
   } as unknown as Event);
   assert.equal(prevented, true);
   assert.deepEqual(deltas, [-24]);
@@ -223,7 +241,9 @@ test('contains vertical wheel deltas at fitted viewport edges and transfers them
   listeners.get('wheel')?.({
     deltaX: 0,
     deltaY: 24,
-    preventDefault: () => { prevented = true; },
+    preventDefault: () => {
+      prevented = true;
+    },
   } as unknown as Event);
   assert.equal(prevented, false);
   assert.deepEqual(deltas, [-24]);
@@ -232,7 +252,9 @@ test('contains vertical wheel deltas at fitted viewport edges and transfers them
   listeners.get('wheel')?.({
     deltaX: 0,
     deltaY: 24,
-    preventDefault: () => { prevented = true; },
+    preventDefault: () => {
+      prevented = true;
+    },
   } as unknown as Event);
   assert.equal(prevented, true);
   assert.deepEqual(deltas, [-24, 24]);

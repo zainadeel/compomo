@@ -81,9 +81,7 @@ test('places metadata actions around timestamps without moving metadata on hover
   if (!incomingActionBox || !incomingTimeBefore || !incomingTimeAfter) {
     throw new Error('Incoming metadata actions did not render');
   }
-  expect(incomingActionBox.x + incomingActionBox.width).toBeLessThanOrEqual(
-    incomingTimeAfter.x
-  );
+  expect(incomingActionBox.x + incomingActionBox.width).toBeLessThanOrEqual(incomingTimeAfter.x);
   expect(incomingTimeAfter.x).toBeCloseTo(incomingTimeBefore.x, 0);
 
   await outgoing.hover();
@@ -95,9 +93,7 @@ test('places metadata actions around timestamps without moving metadata on hover
   if (!outgoingActionBox || !outgoingTimeBox) {
     throw new Error('Outgoing metadata actions did not render');
   }
-  expect(outgoingActionBox.x).toBeGreaterThanOrEqual(
-    outgoingTimeBox.x + outgoingTimeBox.width
-  );
+  expect(outgoingActionBox.x).toBeGreaterThanOrEqual(outgoingTimeBox.x + outgoingTimeBox.width);
 });
 
 test('reveals hover metadata actions for keyboard focus and preserves persistent actions', async ({
@@ -133,16 +129,9 @@ test('keeps hover metadata visible for touch and coarse-pointer input', async ({
     await page.goto(`${baseURL}/message-row.html`);
     await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
     await expect
-      .poll(() =>
-        page.evaluate(
-          () => matchMedia('(hover: hover) and (pointer: fine)').matches
-        )
-      )
+      .poll(() => page.evaluate(() => matchMedia('(hover: hover) and (pointer: fine)').matches))
       .toBe(false);
-    await expect(page.locator('#incoming-actions .message__footer')).toHaveCSS(
-      'opacity',
-      '1'
-    );
+    await expect(page.locator('#incoming-actions .message__footer')).toHaveCSS('opacity', '1');
   } finally {
     await context.close();
   }
@@ -239,9 +228,7 @@ test('reports clipboard failure without entering copied state', async ({ page })
   await expect(actions.locator('ds-button-unfilled[aria-label="Copied"]')).toHaveCount(0);
 });
 
-test('ignores an in-flight clipboard result after message actions disconnect', async ({
-  page,
-}) => {
+test('ignores an in-flight clipboard result after message actions disconnect', async ({ page }) => {
   await page.addInitScript(() => {
     let finishClipboardWrite: (() => void) | undefined;
     Object.defineProperty(navigator, 'clipboard', {
@@ -285,9 +272,7 @@ test('ignores an in-flight clipboard result after message actions disconnect', a
   );
 });
 
-test('suppresses the complete metadata row until the last grouped message', async ({
-  page,
-}) => {
+test('suppresses the complete metadata row until the last grouped message', async ({ page }) => {
   await page.goto('/message-row.html');
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 

@@ -8,28 +8,28 @@ const blockingImpacts = new Set(['critical', 'serious']);
 async function waitForStencil(): Promise<HTMLElement[]> {
   await document.fonts.ready;
 
-  const components = Array.from(document.querySelectorAll<HTMLElement>('*')).filter(
-    (element) => element.localName.startsWith('ds-'),
+  const components = Array.from(document.querySelectorAll<HTMLElement>('*')).filter(element =>
+    element.localName.startsWith('ds-')
   );
 
-  await Promise.all(components.map((element) => customElements.whenDefined(element.localName)));
+  await Promise.all(components.map(element => customElements.whenDefined(element.localName)));
   await Promise.all(
-    components.map((element) => {
+    components.map(element => {
       const stencilElement = element as HTMLElement & {
         componentOnReady?: () => Promise<unknown>;
       };
       return stencilElement.componentOnReady?.() ?? Promise.resolve();
-    }),
+    })
   );
 
   return components;
 }
 
 function markComponentRoots(components: HTMLElement[]): HTMLElement[] {
-  const explicitFixtures = components.filter((element) =>
-    element.hasAttribute(explicitFixtureAttribute),
+  const explicitFixtures = components.filter(element =>
+    element.hasAttribute(explicitFixtureAttribute)
   );
-  const inferredRoots = components.filter((element) => {
+  const inferredRoots = components.filter(element => {
     let ancestor = element.parentElement;
     while (ancestor) {
       if (ancestor.localName.startsWith('ds-')) return false;
@@ -45,14 +45,12 @@ function markComponentRoots(components: HTMLElement[]): HTMLElement[] {
 
 function describeFindings(findings: Result[]): string {
   return findings
-    .flatMap((finding) =>
-      finding.nodes.map(
-        (node) => {
-          // `selectors: false` above means axe omits `target`, so fall back to markup.
-          const target = node.target?.length ? node.target.join(' >>> ') : node.html;
-          return `${finding.impact ?? 'unknown'}/${finding.id}: ${finding.help} — ${target}`;
-        },
-      ),
+    .flatMap(finding =>
+      finding.nodes.map(node => {
+        // `selectors: false` above means axe omits `target`, so fall back to markup.
+        const target = node.target?.length ? node.target.join(' >>> ') : node.html;
+        return `${finding.impact ?? 'unknown'}/${finding.id}: ${finding.help} — ${target}`;
+      })
     )
     .join('\n');
 }
@@ -74,16 +72,16 @@ afterEach(async ({ task }) => {
       rules: {
         region: { enabled: false },
       },
-    },
+    }
   );
   const blockingFindings = results.violations.filter(
-    (finding) => finding.impact && blockingImpacts.has(finding.impact),
+    finding => finding.impact && blockingImpacts.has(finding.impact)
   );
 
-  roots.forEach((element) => element.removeAttribute(componentRootAttribute));
+  roots.forEach(element => element.removeAttribute(componentRootAttribute));
 
   expect(
     blockingFindings,
-    `No serious or critical component accessibility violations are allowed.\n${describeFindings(blockingFindings)}`,
+    `No serious or critical component accessibility violations are allowed.\n${describeFindings(blockingFindings)}`
   ).toEqual([]);
 });

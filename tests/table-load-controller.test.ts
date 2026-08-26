@@ -38,11 +38,13 @@ test('guards duplicate requests and reopens deliberate manual loading', () => {
 
   controller.request('manual');
   controller.request('manual');
-  assert.deepEqual(requests, [{
-    reason: 'manual',
-    loadIdentity: 'drivers',
-    loadedRowCount: 2,
-  }]);
+  assert.deepEqual(requests, [
+    {
+      reason: 'manual',
+      loadIdentity: 'drivers',
+      loadedRowCount: 2,
+    },
+  ]);
   assert.deepEqual(announcements, ['Loading more results']);
 
   controller.loadingChanged(false);

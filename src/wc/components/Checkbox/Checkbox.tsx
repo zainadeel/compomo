@@ -1,4 +1,14 @@
-import { AttachInternals, Component, Prop, State, Event, EventEmitter, Watch, h, Host } from '@stencil/core';
+import {
+  AttachInternals,
+  Component,
+  Prop,
+  State,
+  Event,
+  EventEmitter,
+  Watch,
+  h,
+  Host,
+} from '@stencil/core';
 import {
   CONTROL_SUPPORTING_TEXT_VARIANT,
   CONTROL_TEXT_VARIANT,
@@ -105,14 +115,14 @@ export class Checkbox {
     return (
       <Host
         role={this.presentation ? undefined : 'checkbox'}
-        aria-checked={this.presentation ? undefined : this.indeterminate ? 'mixed' : String(this.checked)}
+        aria-checked={
+          this.presentation ? undefined : this.indeterminate ? 'mixed' : String(this.checked)
+        }
         aria-disabled={!this.presentation && inactive ? 'true' : undefined}
         aria-required={!this.presentation && this.required ? 'true' : undefined}
         aria-invalid={!this.presentation && invalid ? 'true' : undefined}
         aria-labelledby={this.presentation ? undefined : this.labelId}
-        aria-describedby={
-          !this.presentation && this.description ? this.descriptionId : undefined
-        }
+        aria-describedby={!this.presentation && this.description ? this.descriptionId : undefined}
         aria-hidden={this.presentation ? 'true' : undefined}
         tabIndex={this.presentation || inactive ? -1 : 0}
         class={{
@@ -132,12 +142,7 @@ export class Checkbox {
           <span class={{ box: true, 'box--marked': isMarked }}>
             {isMarked && (
               // eslint-disable-next-line local/prefer-ds-icon -- Checkbox owns this fixed state-mark geometry.
-              <svg
-                class="checkbox__mark"
-                viewBox="0 0 16 16"
-                fill="currentColor"
-                focusable="false"
-              >
+              <svg class="checkbox__mark" viewBox="0 0 16 16" fill="currentColor" focusable="false">
                 <path
                   d={
                     this.indeterminate

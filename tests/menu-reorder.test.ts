@@ -25,11 +25,11 @@ test('finds the contiguous reorderable run and ignores locked rows', () => {
 test('moves a reorderable row before a clamped insert index', () => {
   assert.deepEqual(
     moveReorderableMenuItemBefore(items, 2, 0)?.map(item => item.value),
-    ['vehicle', 'driver', 'status', 'action'],
+    ['vehicle', 'driver', 'status', 'action']
   );
   assert.deepEqual(
     moveReorderableMenuItemBefore(items, 0, 3)?.map(item => item.value),
-    ['status', 'vehicle', 'driver', 'action'],
+    ['status', 'vehicle', 'driver', 'action']
   );
   assert.equal(moveReorderableMenuItemBefore(items, 1, 1), null);
   assert.equal(moveReorderableMenuItemBefore(items, 1, 2), null);
@@ -39,22 +39,22 @@ test('moves a reorderable row before a clamped insert index', () => {
 test('clamps drops to the reorderable run so locked rows stay last', () => {
   assert.deepEqual(
     moveReorderableMenuItemBefore(items, 0, 8)?.map(item => item.value),
-    ['status', 'vehicle', 'driver', 'action'],
+    ['status', 'vehicle', 'driver', 'action']
   );
   assert.deepEqual(
     moveReorderableMenuItemBefore(items, 2, -4)?.map(item => item.value),
-    ['vehicle', 'driver', 'status', 'action'],
+    ['vehicle', 'driver', 'status', 'action']
   );
 });
 
 test('keyboard offset moves one slot and no-ops at the range edge', () => {
   assert.deepEqual(
     moveReorderableMenuItemBy(items, 1, -1)?.map(item => item.value),
-    ['status', 'driver', 'vehicle', 'action'],
+    ['status', 'driver', 'vehicle', 'action']
   );
   assert.deepEqual(
     moveReorderableMenuItemBy(items, 1, 1)?.map(item => item.value),
-    ['driver', 'vehicle', 'status', 'action'],
+    ['driver', 'vehicle', 'status', 'action']
   );
   assert.equal(moveReorderableMenuItemBy(items, 0, -1), null);
   assert.equal(moveReorderableMenuItemBy(items, 2, 1), null);

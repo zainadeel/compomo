@@ -19,7 +19,7 @@ test('inherits owner color and keeps one-line metric height atomic', async ({ pa
   await expect(text).toHaveClass(/ds-text--color-inherit/);
   await expect(text).toHaveCSS(
     'color',
-    await owner.evaluate(element => getComputedStyle(element).color),
+    await owner.evaluate(element => getComputedStyle(element).color)
   );
   const metrics = await text.evaluate(element => {
     const style = getComputedStyle(element);
@@ -53,12 +53,14 @@ test('applies bounded line truncation to the inner semantic element', async ({ p
 
   await expect(text).toHaveClass(/ds-text--truncate-2/);
   await expect(inner).toHaveCSS('overflow', 'hidden');
-  await expect.poll(() => inner.evaluate(element => (
-    getComputedStyle(element).webkitLineClamp
-  ))).toBe('2');
+  await expect
+    .poll(() => inner.evaluate(element => getComputedStyle(element).webkitLineClamp))
+    .toBe('2');
 });
 
-test('uses solid underline for links and dotted underline for hidden interaction triggers', async ({ page }) => {
+test('uses solid underline for links and dotted underline for hidden interaction triggers', async ({
+  page,
+}) => {
   const linkText = page.locator('#link-text');
   const tooltipText = page.locator('#tooltip-text');
 

@@ -20,7 +20,9 @@ test('keeps compact workflow navigation available through the final submit step'
   const previous = header.getByRole('button', { name: 'Previous step' });
   const next = header.getByRole('button', { name: 'Next step' });
 
-  await expect(header.getByRole('heading', { name: 'Create driver · 1/3', level: 1 })).toBeVisible();
+  await expect(
+    header.getByRole('heading', { name: 'Create driver · 1/3', level: 1 })
+  ).toBeVisible();
   await expect(header.getByRole('button', { name: 'Exit driver creation' })).toBeVisible();
   await expect(previous).toHaveCount(0);
   await expect(next).toBeVisible();
@@ -45,12 +47,16 @@ test('keeps compact workflow navigation available through the final submit step'
   expect(surface.actionCount).toBe(1);
 
   await next.click();
-  await expect(header.getByRole('heading', { name: 'Create driver · 2/3', level: 1 })).toBeVisible();
+  await expect(
+    header.getByRole('heading', { name: 'Create driver · 2/3', level: 1 })
+  ).toBeVisible();
   await expect(previous).toBeVisible();
   await expect(next).toBeVisible();
 
   await next.click();
-  await expect(header.getByRole('heading', { name: 'Create driver · 3/3', level: 1 })).toBeVisible();
+  await expect(
+    header.getByRole('heading', { name: 'Create driver · 3/3', level: 1 })
+  ).toBeVisible();
   const submit = header.getByRole('button', { name: 'Save driver' });
   await expect(previous).toBeVisible();
   await expect(submit).toBeVisible();

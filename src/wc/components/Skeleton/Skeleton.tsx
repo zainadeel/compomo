@@ -48,7 +48,7 @@ export class Skeleton {
       <Host
         aria-hidden="true"
         class={{
-          'skeleton': true,
+          skeleton: true,
           [`skeleton--${this.variant}`]: true,
           [`skeleton--text-${this.textVariant}`]: this.variant === 'text',
           [`skeleton--icon-${this.iconSize}`]: this.variant === 'icon',
@@ -60,7 +60,7 @@ export class Skeleton {
       >
         <span
           class={{
-            'skeleton__shape': true,
+            skeleton__shape: true,
             'ds-shimmer-surface': this.shimmer,
           }}
         />

@@ -11,7 +11,7 @@ test(
   'uses one menu-like content grid for single, grouped, mixed-swatch, and long rows',
   chromiumOnly(
     'layout-geometry',
-    'The section spacing and medium control anatomy are static token-backed geometry.',
+    'The section spacing and medium control anatomy are static token-backed geometry.'
   ),
   async ({ page }) => {
     const single = page.locator('#single-tooltip');
@@ -28,13 +28,18 @@ test(
     const grouped = page.locator('#grouped-tooltip');
     const groupedGeometry = await grouped.evaluate(element => {
       const host = element.getBoundingClientRect();
-      const heading = element.querySelector<HTMLElement>('.tooltip-chart__heading')!.getBoundingClientRect();
-      const rows = [...element.querySelectorAll<HTMLElement>('.tooltip-chart__item')]
-        .map(row => row.getBoundingClientRect());
-      const labels = [...element.querySelectorAll<HTMLElement>('.tooltip-chart__label')]
-        .map(label => label.getBoundingClientRect());
-      const values = [...element.querySelectorAll<HTMLElement>('.tooltip-chart__value')]
-        .map(value => value.getBoundingClientRect());
+      const heading = element
+        .querySelector<HTMLElement>('.tooltip-chart__heading')!
+        .getBoundingClientRect();
+      const rows = [...element.querySelectorAll<HTMLElement>('.tooltip-chart__item')].map(row =>
+        row.getBoundingClientRect()
+      );
+      const labels = [...element.querySelectorAll<HTMLElement>('.tooltip-chart__label')].map(
+        label => label.getBoundingClientRect()
+      );
+      const values = [...element.querySelectorAll<HTMLElement>('.tooltip-chart__value')].map(
+        value => value.getBoundingClientRect()
+      );
       const style = getComputedStyle(element);
       return {
         hostPadding: Number.parseFloat(style.paddingLeft),
@@ -61,40 +66,58 @@ test(
     groupedGeometry.rowGaps.forEach((gap, index) =>
       expectGeometryClose(gap, 4, `grouped row ${index + 1} gap`)
     );
-    groupedGeometry.labelLefts.slice(1).forEach((left, index) =>
-      expectGeometryClose(left, groupedGeometry.labelLefts[0], `grouped label ${index + 2} inset`)
-    );
-    groupedGeometry.valueRights.slice(1).forEach((right, index) =>
-      expectGeometryClose(right, groupedGeometry.valueRights[0], `grouped value ${index + 2} edge`)
-    );
+    groupedGeometry.labelLefts
+      .slice(1)
+      .forEach((left, index) =>
+        expectGeometryClose(left, groupedGeometry.labelLefts[0], `grouped label ${index + 2} inset`)
+      );
+    groupedGeometry.valueRights
+      .slice(1)
+      .forEach((right, index) =>
+        expectGeometryClose(
+          right,
+          groupedGeometry.valueRights[0],
+          `grouped value ${index + 2} edge`
+        )
+      );
     expect(groupedGeometry.hostContainsRows).toBe(true);
 
     const mixed = page.locator('#mixed-tooltip');
     await expect(mixed.locator('.tooltip-chart__swatch-box')).toHaveCount(3);
     await expect(mixed.locator('.tooltip-chart__swatch')).toHaveCount(2);
     const mixedGeometry = await mixed.evaluate(element => ({
-      labelLefts: [...element.querySelectorAll<HTMLElement>('.tooltip-chart__label')]
-        .map(label => label.getBoundingClientRect().left),
-      valueRights: [...element.querySelectorAll<HTMLElement>('.tooltip-chart__value')]
-        .map(value => value.getBoundingClientRect().right),
+      labelLefts: [...element.querySelectorAll<HTMLElement>('.tooltip-chart__label')].map(
+        label => label.getBoundingClientRect().left
+      ),
+      valueRights: [...element.querySelectorAll<HTMLElement>('.tooltip-chart__value')].map(
+        value => value.getBoundingClientRect().right
+      ),
     }));
-    mixedGeometry.labelLefts.slice(1).forEach((left, index) =>
-      expectGeometryClose(left, mixedGeometry.labelLefts[0], `mixed label ${index + 2} inset`)
-    );
-    mixedGeometry.valueRights.slice(1).forEach((right, index) =>
-      expectGeometryClose(right, mixedGeometry.valueRights[0], `mixed value ${index + 2} edge`)
-    );
+    mixedGeometry.labelLefts
+      .slice(1)
+      .forEach((left, index) =>
+        expectGeometryClose(left, mixedGeometry.labelLefts[0], `mixed label ${index + 2} inset`)
+      );
+    mixedGeometry.valueRights
+      .slice(1)
+      .forEach((right, index) =>
+        expectGeometryClose(right, mixedGeometry.valueRights[0], `mixed value ${index + 2} edge`)
+      );
 
     const long = page.locator('#long-tooltip');
     const longGeometry = await long.evaluate(element => {
       const host = element.getBoundingClientRect();
-      const content = [...element.querySelectorAll<HTMLElement>('.tooltip-chart__heading, .tooltip-chart__item')]
-        .map(child => child.getBoundingClientRect());
+      const content = [
+        ...element.querySelectorAll<HTMLElement>('.tooltip-chart__heading, .tooltip-chart__item'),
+      ].map(child => child.getBoundingClientRect());
       return {
         rowCount: element.querySelectorAll('.tooltip-chart__item').length,
-        containsContent: content.every(child =>
-          child.left >= host.left && child.right <= host.right &&
-          child.top >= host.top && child.bottom <= host.bottom
+        containsContent: content.every(
+          child =>
+            child.left >= host.left &&
+            child.right <= host.right &&
+            child.top >= host.top &&
+            child.bottom <= host.bottom
         ),
         clipsInlineContent: element.scrollWidth > element.clientWidth,
         clipsBlockContent: element.scrollHeight > element.clientHeight,
@@ -106,10 +129,12 @@ test(
       clipsInlineContent: false,
       clipsBlockContent: false,
     });
-  },
+  }
 );
 
-test('keeps immediate feedback while removing motion when reduced motion is requested', async ({ page }) => {
+test('keeps immediate feedback while removing motion when reduced motion is requested', async ({
+  page,
+}) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');

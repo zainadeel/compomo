@@ -10,10 +10,12 @@ describe('snapshotMenuSections', () => {
       {
         variant: 'swatch-picker',
         value: 'blue',
-        sections: [{
-          label: 'Themes',
-          options: [{ value: 'blue', label: 'Blue', background: '#00f' }],
-        }],
+        sections: [
+          {
+            label: 'Themes',
+            options: [{ value: 'blue', label: 'Blue', background: '#00f' }],
+          },
+        ],
       },
     ];
     const snapshot = snapshotMenuSections(source);

@@ -91,11 +91,7 @@ export class ShellTools {
 
   private get availableInboxTools(): ShellInboxToolId[] {
     return this.resolvedItems
-      .filter(
-        item =>
-          !item.isInactive &&
-          itemUsesShellInbox(item)
-      )
+      .filter(item => !item.isInactive && itemUsesShellInbox(item))
       .map(item => item.id as ShellInboxToolId);
   }
 
@@ -214,9 +210,7 @@ export class ShellTools {
     }
     const action = (this.el.shadowRoot ?? this.el).querySelector(
       `[data-header-action-id="${CSS.escape(id)}"]`
-    ) as
-      | (HTMLElement & { setFocus?: () => Promise<void> })
-      | null;
+    ) as (HTMLElement & { setFocus?: () => Promise<void> }) | null;
     await action?.setFocus?.();
   }
 
@@ -225,11 +219,7 @@ export class ShellTools {
       <div key={`tool:${id}`} class="shell-tools__slot-proxy" slot={id}>
         <slot name={id} />
       </div>,
-      <div
-        key={`tool-view:${id}`}
-        class="shell-tools__slot-proxy"
-        slot={`${id}-view`}
-      >
+      <div key={`tool-view:${id}`} class="shell-tools__slot-proxy" slot={`${id}-view`}>
         <slot name={`${id}-view`} />
       </div>,
     ]);
@@ -267,18 +257,17 @@ export class ShellTools {
     const actions = (header.actions ?? []).filter(action => action.id !== 'fullscreen');
     const item = this.resolvedItems.find(candidate => candidate.id === tool);
     const inboxRoot = Boolean(item && itemUsesShellInbox(item) && !header.showBack);
-    const sections =
-      inboxRoot
-        ? this.availableInboxTools.map(id => {
-            const item = this.resolvedItems.find(candidate => candidate.id === id);
-            return {
-              id,
-              label: this.toolLabel(id),
-              variant: 'label' as const,
-              dot: item?.dot,
-            };
-          })
-        : [];
+    const sections = inboxRoot
+      ? this.availableInboxTools.map(id => {
+          const item = this.resolvedItems.find(candidate => candidate.id === id);
+          return {
+            id,
+            label: this.toolLabel(id),
+            variant: 'label' as const,
+            dot: item?.dot,
+          };
+        })
+      : [];
 
     return (
       <ds-mobile-header
@@ -293,12 +282,7 @@ export class ShellTools {
         onDsSectionChange={this.selectInboxTool}
       >
         {header.showBack ? (
-          <ds-tooltip
-            slot="leading"
-            label={header.backAriaLabel || 'Back'}
-            side="bottom"
-            size="sm"
-          >
+          <ds-tooltip slot="leading" label={header.backAriaLabel || 'Back'} side="bottom" size="sm">
             <ds-button-unfilled
               variant="icon"
               icon={header.backIcon || 'ChevronLeft'}
@@ -333,7 +317,8 @@ export class ShellTools {
               activeFill={false}
               hasBorder={false}
               onDsClick={(event: CustomEvent<MouseEvent>) =>
-                this.handleMobileHeaderAction(tool, action.id, event)}
+                this.handleMobileHeaderAction(tool, action.id, event)
+              }
             />
           </ds-tooltip>
         ))}
@@ -380,11 +365,7 @@ export class ShellTools {
     return (
       <Host
         role={
-          mobile
-            ? this.presentation === 'fullscreen'
-              ? 'dialog'
-              : 'complementary'
-            : undefined
+          mobile ? (this.presentation === 'fullscreen' ? 'dialog' : 'complementary') : undefined
         }
         aria-modal={mobile && this.presentation === 'fullscreen' ? 'true' : undefined}
         aria-label={mobile ? this.toolsLabel : undefined}

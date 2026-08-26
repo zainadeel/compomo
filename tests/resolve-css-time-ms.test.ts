@@ -73,14 +73,14 @@ describe('resolveCssTimeMs', () => {
   it('resolves var(--effect-motion-short-3) from computed style', () => {
     assert.equal(
       resolveCssTimeMs(TOKEN_DEFAULTS.motionShort3, TOKEN_DEFAULTS.animationDurationShort3),
-      200,
+      200
     );
   });
 
   it('resolves var(--effect-animation-delay-medium-1) from computed style', () => {
     assert.equal(
       resolveCssTimeMs(TOKEN_DEFAULTS.animationDelayMedium1, TOKEN_DEFAULTS.animationDelayMedium1),
-      500,
+      500
     );
   });
 });

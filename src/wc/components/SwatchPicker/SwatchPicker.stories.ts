@@ -33,29 +33,29 @@ const GRADIENT_OPTIONS: SwatchPickerOption[] = [
     value: 'sunset',
     label: 'Sunset',
     preview: {
-      backgroundImage: 'linear-gradient(135deg, var(--color-color-intent-orange-bold-background), var(--color-color-intent-pink-bold-background))',
+      backgroundImage:
+        'linear-gradient(135deg, var(--color-color-intent-orange-bold-background), var(--color-color-intent-pink-bold-background))',
     },
   },
   {
     value: 'ocean',
     label: 'Ocean',
     preview: {
-      backgroundImage: 'linear-gradient(135deg, var(--color-color-intent-blue-bold-background), var(--color-color-intent-cyan-bold-background))',
+      backgroundImage:
+        'linear-gradient(135deg, var(--color-color-intent-blue-bold-background), var(--color-color-intent-cyan-bold-background))',
     },
   },
   {
     value: 'aurora',
     label: 'Aurora',
     preview: {
-      backgroundImage: 'linear-gradient(135deg, var(--color-color-intent-green-bold-background), var(--color-color-intent-purple-bold-background))',
+      backgroundImage:
+        'linear-gradient(135deg, var(--color-color-intent-green-bold-background), var(--color-color-intent-purple-bold-background))',
     },
   },
 ];
 
-const MIXED_OPTIONS: SwatchPickerOption[] = [
-  ...FLAT_OPTIONS.slice(0, 2),
-  ...GRADIENT_OPTIONS,
-];
+const MIXED_OPTIONS: SwatchPickerOption[] = [...FLAT_OPTIONS.slice(0, 2), ...GRADIENT_OPTIONS];
 
 const meta: Meta = {
   title: 'Primitives/SwatchPicker',

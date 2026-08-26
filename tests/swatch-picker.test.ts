@@ -11,7 +11,11 @@ import {
 const OPTIONS: SwatchPickerOption[] = [
   { value: 'flat', label: 'Flat', preview: { backgroundColor: 'red' } },
   { value: 'inactive', label: 'Inactive', preview: { backgroundColor: 'grey' }, isInactive: true },
-  { value: 'gradient', label: 'Gradient', preview: { backgroundImage: 'linear-gradient(red, blue)' } },
+  {
+    value: 'gradient',
+    label: 'Gradient',
+    preview: { backgroundImage: 'linear-gradient(red, blue)' },
+  },
 ];
 
 describe('SwatchPicker option resolution', () => {
@@ -21,7 +25,7 @@ describe('SwatchPicker option resolution', () => {
         { options: [OPTIONS[2]] },
         { options: [OPTIONS[0]] },
       ]).map(option => option.value),
-      ['gradient', 'flat'],
+      ['gradient', 'flat']
     );
   });
 
@@ -48,9 +52,7 @@ describe('SwatchPicker keyboard navigation', () => {
   });
 
   it('returns null when every option is inactive', () => {
-    assert.equal(resolveSwatchPickerNavigationIndex([
-      { ...OPTIONS[1] },
-    ], 0, 'ArrowRight'), null);
+    assert.equal(resolveSwatchPickerNavigationIndex([{ ...OPTIONS[1] }], 0, 'ArrowRight'), null);
   });
 });
 

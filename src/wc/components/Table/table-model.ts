@@ -41,7 +41,9 @@ export function isTableCellText(value: TableCellValue): value is TableCellText {
 }
 
 export function isTableCellPrimaryText(value: TableCellValue): value is TableCellPrimaryText {
-  return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'primary-text';
+  return (
+    typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'primary-text'
+  );
 }
 
 export function isTableCellTag(value: TableCellValue): value is TableCellTag {
@@ -53,7 +55,9 @@ export function isTableCellIcon(value: TableCellValue): value is TableCellIcon {
 }
 
 export function isTableCellIconText(value: TableCellValue): value is TableCellIconText {
-  return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'icon-text';
+  return (
+    typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'icon-text'
+  );
 }
 
 export function isTableCellImage(value: TableCellValue): value is TableCellImage {
@@ -98,17 +102,14 @@ export function tableRowSelectionLabel(row: TableRow, columns: TableColumn[]): s
 
 export function nextTableSortState(
   current: TableSortState | null | undefined,
-  columnId: string,
+  columnId: string
 ): TableSortState {
   if (current?.columnId !== columnId) return { columnId, direction: 'asc' };
   if (current.direction === 'asc') return { columnId, direction: 'desc' };
   return { columnId, direction: 'asc' };
 }
 
-export function toggleTableGroupCollapsed(
-  collapsedGroupIds: string[],
-  groupId: string,
-): string[] {
+export function toggleTableGroupCollapsed(collapsedGroupIds: string[], groupId: string): string[] {
   const next = new Set(collapsedGroupIds);
   if (next.has(groupId)) next.delete(groupId);
   else next.add(groupId);
@@ -117,7 +118,7 @@ export function toggleTableGroupCollapsed(
 
 export function nextTableGroupsCollapsed(
   collapsedGroupIds: string[],
-  groupIds: string[],
+  groupIds: string[]
 ): string[] {
   if (groupIds.length === 0) return [];
   const collapsed = new Set(collapsedGroupIds);
@@ -126,13 +127,9 @@ export function nextTableGroupsCollapsed(
 }
 
 /** Host for grouped collapse-all: the trailing action lane or a scrollport-owned overlay. */
-export type TableCollapseAllHost =
-  | { columnId: string; mode: 'action' }
-  | { mode: 'floating' };
+export type TableCollapseAllHost = { columnId: string; mode: 'action' } | { mode: 'floating' };
 
-export function tableCollapseAllHost(
-  columns: TableColumn[],
-): TableCollapseAllHost | undefined {
+export function tableCollapseAllHost(columns: TableColumn[]): TableCollapseAllHost | undefined {
   if (columns.length === 0) return undefined;
   for (let index = columns.length - 1; index >= 0; index -= 1) {
     const column = columns[index]!;
@@ -146,12 +143,12 @@ export function clampTableColumnSize(column: TableColumn): number | undefined {
     return undefined;
   }
 
-  const minimum = Number.isFinite(column.minSize) && (column.minSize ?? 0) > 0
-    ? column.minSize!
-    : 0;
-  const maximum = Number.isFinite(column.maxSize) && (column.maxSize ?? 0) > 0
-    ? Math.max(column.maxSize!, minimum)
-    : Number.POSITIVE_INFINITY;
+  const minimum =
+    Number.isFinite(column.minSize) && (column.minSize ?? 0) > 0 ? column.minSize! : 0;
+  const maximum =
+    Number.isFinite(column.maxSize) && (column.maxSize ?? 0) > 0
+      ? Math.max(column.maxSize!, minimum)
+      : Number.POSITIVE_INFINITY;
 
   return Math.min(Math.max(column.size!, minimum), maximum);
 }
@@ -202,13 +199,13 @@ function canSelectRow(row: TableRow): boolean {
 
 export function deriveTableSelectionState(
   rows: TableRow[],
-  selectedRowIds: readonly string[],
+  selectedRowIds: readonly string[]
 ): TableSelectionState {
   const selected = new Set(selectedRowIds);
   const selectableRowIds = rows.filter(canSelectRow).map(row => row.id);
   const selectedLoadedCount = selectableRowIds.reduce(
     (count, id) => count + (selected.has(id) ? 1 : 0),
-    0,
+    0
   );
 
   return {
@@ -221,7 +218,7 @@ export function deriveTableSelectionState(
 
 export function toggleTableRowSelection(
   selectedRowIds: readonly string[],
-  row: TableRow,
+  row: TableRow
 ): string[] {
   if (!canSelectRow(row)) return [...selectedRowIds];
   const selected = new Set(selectedRowIds);
@@ -232,7 +229,7 @@ export function toggleTableRowSelection(
 
 export function toggleAllLoadedTableRows(
   selectedRowIds: readonly string[],
-  loadedRows: TableRow[],
+  loadedRows: TableRow[]
 ): string[] {
   const selected = new Set(selectedRowIds);
   const state = deriveTableSelectionState(loadedRows, selectedRowIds);
@@ -248,7 +245,7 @@ export function toggleAllLoadedTableRows(
 /** Toggle every selectable loaded row that belongs to a group. */
 export function toggleTableGroupSelection(
   selectedRowIds: readonly string[],
-  groupRows: TableRow[],
+  groupRows: TableRow[]
 ): string[] {
   return toggleAllLoadedTableRows(selectedRowIds, groupRows);
 }
@@ -267,24 +264,19 @@ export const TABLE_GROUP_INTENTS = [
   'positive',
 ] as const;
 
-export function isTableGroupIntent(
-  value: unknown,
-): value is (typeof TABLE_GROUP_INTENTS)[number] {
-  return (
-    typeof value === 'string' &&
-    (TABLE_GROUP_INTENTS as readonly string[]).includes(value)
-  );
+export function isTableGroupIntent(value: unknown): value is (typeof TABLE_GROUP_INTENTS)[number] {
+  return typeof value === 'string' && (TABLE_GROUP_INTENTS as readonly string[]).includes(value);
 }
 
 export function tableGroupIntentClass(
-  intent: (typeof TABLE_GROUP_INTENTS)[number] | undefined,
+  intent: (typeof TABLE_GROUP_INTENTS)[number] | undefined
 ): string | undefined {
   return isTableGroupIntent(intent) ? `ds-table__group-cell--intent-${intent}` : undefined;
 }
 
 /** Title color for an intentful group label; defaults to primary when unset. */
 export function tableGroupLabelColor(
-  intent: (typeof TABLE_GROUP_INTENTS)[number] | undefined,
+  intent: (typeof TABLE_GROUP_INTENTS)[number] | undefined
 ): 'primary' | 'brand' | 'negative' | 'warning' | 'caution' | 'positive' | `var(--${string})` {
   if (!isTableGroupIntent(intent)) return 'primary';
   if (intent === 'neutral') return 'var(--color-foreground-bold-neutral)';
@@ -296,13 +288,13 @@ export function formatTableResultSummary(
   displayed: number | null | undefined,
   total: number | null | undefined,
   label = 'Displaying {displayed} of {total}',
-  locale?: string,
+  locale?: string
 ): string | null {
   if (!Number.isFinite(displayed) || !Number.isFinite(total)) return null;
   const normalizedTotal = Math.max(0, Math.trunc(total as number));
   const normalizedDisplayed = Math.min(
     normalizedTotal,
-    Math.max(0, Math.trunc(displayed as number)),
+    Math.max(0, Math.trunc(displayed as number))
   );
   const formatter = new Intl.NumberFormat(locale);
   return label
@@ -314,7 +306,7 @@ export function formatTableResultSummary(
 export function formatTableTotalSummary(
   total: number | null | undefined,
   label = '{total} items',
-  locale?: string,
+  locale?: string
 ): string | null {
   if (!Number.isFinite(total)) return null;
   const normalizedTotal = Math.max(0, Math.trunc(total as number));
@@ -330,7 +322,11 @@ export function formatTableTotalSummary(
 export function isOwnedTableFooterSlot(node: Element, host: Element): boolean {
   if (node.parentElement === host) return true;
   let insideTableFooter = false;
-  for (let ancestor = node.parentElement; ancestor && ancestor !== host; ancestor = ancestor.parentElement) {
+  for (
+    let ancestor = node.parentElement;
+    ancestor && ancestor !== host;
+    ancestor = ancestor.parentElement
+  ) {
     if (ancestor.hasAttribute('slot')) return false;
     if (ancestor.classList.contains('ds-table__footer')) insideTableFooter = true;
   }
@@ -339,7 +335,7 @@ export function isOwnedTableFooterSlot(node: Element, host: Element): boolean {
 
 export function hasOwnedTableFooterSlot(host: Element, slotName: string): boolean {
   return [...host.querySelectorAll(`[slot="${slotName}"]`)].some(node =>
-    isOwnedTableFooterSlot(node, host),
+    isOwnedTableFooterSlot(node, host)
   );
 }
 
@@ -347,7 +343,7 @@ export function tableModelIssues(
   columns: TableColumn[],
   rows: TableRow[],
   groups: TableGroup[],
-  grouped: boolean,
+  grouped: boolean
 ): string[] {
   const issues: string[] = [];
   const columnIds = new Set<string>();
@@ -355,7 +351,9 @@ export function tableModelIssues(
     if (!column.id.trim()) issues.push('Every column requires a non-empty id.');
     else if (columnIds.has(column.id)) issues.push(`Duplicate column id: ${column.id}`);
     if (!column.header.trim() && !column.headerLabel?.trim()) {
-      issues.push(`Column ${column.id || '(missing id)'} requires a visible header or headerLabel.`);
+      issues.push(
+        `Column ${column.id || '(missing id)'} requires a visible header or headerLabel.`
+      );
     }
     columnIds.add(column.id);
   }

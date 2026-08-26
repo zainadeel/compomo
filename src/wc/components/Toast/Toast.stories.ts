@@ -30,7 +30,7 @@ type Story = StoryObj;
 function connectToast(
   element: HTMLDsToastElement | undefined,
   manager: ToastManager,
-  seed: () => void,
+  seed: () => void
 ) {
   if (!element) return;
   element.manager = manager;
@@ -61,7 +61,8 @@ export const Playground: Story = {
             description: 'Your changes are now available to everyone.',
             timeout: 0,
           });
-        }))}
+        })
+      )}
     ></ds-toast>
   `,
 };
@@ -87,7 +88,8 @@ export const WithAction: Story = {
               },
             },
           });
-        }))}
+        })
+      )}
     ></ds-toast>
   `,
 };
@@ -106,7 +108,8 @@ export const StackedAndLimited: Story = {
               timeout: 0,
             });
           }
-        }))}
+        })
+      )}
     ></ds-toast>
   `,
 };
@@ -125,7 +128,8 @@ export const PromiseStates: Story = {
             success: 'Report uploaded.',
             error: 'The report could not be uploaded.',
           });
-        }))}
+        })
+      )}
     ></ds-toast>
   `,
 };
@@ -142,7 +146,8 @@ export const HighPriority: Story = {
             priority: 'high',
             timeout: 0,
           });
-        }))}
+        })
+      )}
     ></ds-toast>
   `,
 };
@@ -158,7 +163,8 @@ export const Persistent: Story = {
             description: 'Dismiss this notification when you are ready.',
             timeout: 0,
           });
-        }))}
+        })
+      )}
     ></ds-toast>
   `,
 };
@@ -198,7 +204,8 @@ export const Anchored: Story = {
                 sideOffset: 'var(--dimension-space-100)',
               },
             });
-          }))}
+          })
+        )}
       ></ds-toast>
     </div>
   `,

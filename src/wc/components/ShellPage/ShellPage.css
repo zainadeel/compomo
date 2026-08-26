@@ -8,8 +8,7 @@
   );
   --ds-shell-page-sticky-header-block-size: var(--dimension-size-600);
   --ds-shell-page-content-block-start-offset: calc(
-    var(--ds-shell-page-sticky-header-block-size) +
-      var(--_shell-page-content-block-start-inset)
+    var(--ds-shell-page-sticky-header-block-size) + var(--_shell-page-content-block-start-inset)
   );
   display: block;
   position: relative;

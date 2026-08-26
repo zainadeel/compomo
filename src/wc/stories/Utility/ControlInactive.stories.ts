@@ -25,8 +25,10 @@ export const Overview: Story = {
       <div class="util-demo-section">
         <h2 class="util-demo-h2">Active vs inactive</h2>
         <p class="util-demo-sub">
-          Same control chrome; inactive adds <code class="util-demo-code">.ds-control-inactive</code>
-          (<code class="util-demo-code">opacity: var(--effect-opacity-medium)</code>).
+          Same control chrome; inactive adds
+          <code class="util-demo-code">.ds-control-inactive</code> (<code class="util-demo-code"
+            >opacity: var(--effect-opacity-medium)</code
+          >).
         </p>
         <div class="util-demo-row">
           <button type="button" class="util-demo-control ds-interaction-fill ds-focus-ring-inset">

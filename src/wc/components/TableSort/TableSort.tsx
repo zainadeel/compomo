@@ -1,4 +1,14 @@
-import { Component, Element, Event, EventEmitter, h, Host, Method, Prop, State } from '@stencil/core';
+import {
+  Component,
+  Element,
+  Event,
+  EventEmitter,
+  h,
+  Host,
+  Method,
+  Prop,
+  State,
+} from '@stencil/core';
 import type { MenuItemData } from '../Menu/menu-types';
 import type { TableColumn, TableSortChangeDetail, TableSortState } from '../Table/table-types';
 import {

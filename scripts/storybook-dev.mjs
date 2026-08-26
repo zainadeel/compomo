@@ -29,7 +29,7 @@ const cleanCollisions = () => {
   const collisions = cleanFileProviderCollisions();
   if (collisions.length) {
     process.stdout.write(
-      `[storybook-dev] Cleaned ${collisions.length} File Provider collision artifact${collisions.length === 1 ? '' : 's'}\n`,
+      `[storybook-dev] Cleaned ${collisions.length} File Provider collision artifact${collisions.length === 1 ? '' : 's'}\n`
     );
   }
 };
@@ -118,7 +118,7 @@ const watcher = spawnScript('dev:components', 'stencil', line => {
       startStorybook();
     } else {
       process.stdout.write(
-        '[storybook-dev] Component rebuild finished — Storybook reloads from dist/.storybook-ready\n',
+        '[storybook-dev] Component rebuild finished — Storybook reloads from dist/.storybook-ready\n'
       );
     }
   }
@@ -142,5 +142,7 @@ process.on('SIGTERM', () => shutdown('SIGTERM'));
 process.on('SIGHUP', () => shutdown('SIGHUP'));
 
 watcher.on('spawn', () => {
-  process.stdout.write('[storybook-dev] Waiting for initial Stencil watch build before starting Storybook...\n');
+  process.stdout.write(
+    '[storybook-dev] Waiting for initial Stencil watch build before starting Storybook...\n'
+  );
 });

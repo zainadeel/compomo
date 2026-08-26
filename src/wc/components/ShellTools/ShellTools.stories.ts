@@ -28,12 +28,7 @@ type Story = StoryObj;
 export const MobileActivity: Story = {
   render: () => html`
     <div style="height: 720px; max-width: 430px; margin: 0 auto;">
-      <ds-shell-tools
-        responsive-mode="mobile"
-        open
-        active-tool="activity"
-        .items=${items}
-      >
+      <ds-shell-tools responsive-mode="mobile" open active-tool="activity" .items=${items}>
         <div slot="activity-view">Persistent Activity product view</div>
       </ds-shell-tools>
     </div>
@@ -43,12 +38,7 @@ export const MobileActivity: Story = {
 export const MobileInbox: Story = {
   render: () => html`
     <div style="height: 720px; max-width: 430px; margin: 0 auto;">
-      <ds-shell-tools
-        responsive-mode="mobile"
-        open
-        active-tool="activity"
-        .items=${inboxItems}
-      >
+      <ds-shell-tools responsive-mode="mobile" open active-tool="activity" .items=${inboxItems}>
         <div slot="stacks-view">Persistent Stacks product view</div>
         <div slot="activity-view">Persistent Activity product view</div>
       </ds-shell-tools>
@@ -59,12 +49,7 @@ export const MobileInbox: Story = {
 export const MobileMessages: Story = {
   render: () => html`
     <div style="height: 720px; max-width: 430px; margin: 0 auto;">
-      <ds-shell-tools
-        responsive-mode="mobile"
-        open
-        active-tool="messages"
-        .items=${items}
-      >
+      <ds-shell-tools responsive-mode="mobile" open active-tool="messages" .items=${items}>
         <div slot="messages-view">Persistent Messages product view</div>
       </ds-shell-tools>
     </div>

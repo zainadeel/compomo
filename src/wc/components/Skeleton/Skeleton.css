@@ -77,15 +77,29 @@
   height: 75%;
 }
 
-:host(.skeleton--text-text-display-medium) { --ds-skeleton-canvas-size: var(--typography-lineheight-3xl); }
-:host(.skeleton--text-text-display-small)  { --ds-skeleton-canvas-size: var(--typography-lineheight-2xl); }
-:host(.skeleton--text-text-title-large)    { --ds-skeleton-canvas-size: var(--typography-lineheight-xl); }
+:host(.skeleton--text-text-display-medium) {
+  --ds-skeleton-canvas-size: var(--typography-lineheight-3xl);
+}
+:host(.skeleton--text-text-display-small) {
+  --ds-skeleton-canvas-size: var(--typography-lineheight-2xl);
+}
+:host(.skeleton--text-text-title-large) {
+  --ds-skeleton-canvas-size: var(--typography-lineheight-xl);
+}
 :host(.skeleton--text-text-title-medium),
-:host(.skeleton--text-text-body-large)     { --ds-skeleton-canvas-size: var(--typography-lineheight-lg); }
+:host(.skeleton--text-text-body-large) {
+  --ds-skeleton-canvas-size: var(--typography-lineheight-lg);
+}
 :host(.skeleton--text-text-title-small),
-:host(.skeleton--text-text-body-medium)    { --ds-skeleton-canvas-size: var(--typography-lineheight-md); }
-:host(.skeleton--text-text-body-small)     { --ds-skeleton-canvas-size: var(--typography-lineheight-sm); }
-:host(.skeleton--text-text-caption)        { --ds-skeleton-canvas-size: var(--typography-lineheight-xs); }
+:host(.skeleton--text-text-body-medium) {
+  --ds-skeleton-canvas-size: var(--typography-lineheight-md);
+}
+:host(.skeleton--text-text-body-small) {
+  --ds-skeleton-canvas-size: var(--typography-lineheight-sm);
+}
+:host(.skeleton--text-text-caption) {
+  --ds-skeleton-canvas-size: var(--typography-lineheight-xs);
+}
 
 /* ── Icon ──────────────────────────────────────────────────────────────── */
 
@@ -104,13 +118,27 @@
   border-radius: var(--dimension-radius-half);
 }
 
-:host(.skeleton--icon-xs)  { --ds-skeleton-canvas-size: var(--dimension-iconography-xs); }
-:host(.skeleton--icon-sm)  { --ds-skeleton-canvas-size: var(--dimension-iconography-sm); }
-:host(.skeleton--icon-md)  { --ds-skeleton-canvas-size: var(--dimension-iconography-md); }
-:host(.skeleton--icon-lg)  { --ds-skeleton-canvas-size: var(--dimension-iconography-lg); }
-:host(.skeleton--icon-xl)  { --ds-skeleton-canvas-size: var(--dimension-iconography-xl); }
-:host(.skeleton--icon-2xl) { --ds-skeleton-canvas-size: var(--dimension-iconography-2xl); }
-:host(.skeleton--icon-3xl) { --ds-skeleton-canvas-size: var(--dimension-iconography-3xl); }
+:host(.skeleton--icon-xs) {
+  --ds-skeleton-canvas-size: var(--dimension-iconography-xs);
+}
+:host(.skeleton--icon-sm) {
+  --ds-skeleton-canvas-size: var(--dimension-iconography-sm);
+}
+:host(.skeleton--icon-md) {
+  --ds-skeleton-canvas-size: var(--dimension-iconography-md);
+}
+:host(.skeleton--icon-lg) {
+  --ds-skeleton-canvas-size: var(--dimension-iconography-lg);
+}
+:host(.skeleton--icon-xl) {
+  --ds-skeleton-canvas-size: var(--dimension-iconography-xl);
+}
+:host(.skeleton--icon-2xl) {
+  --ds-skeleton-canvas-size: var(--dimension-iconography-2xl);
+}
+:host(.skeleton--icon-3xl) {
+  --ds-skeleton-canvas-size: var(--dimension-iconography-3xl);
+}
 
 /* ── Control ───────────────────────────────────────────────────────────── */
 

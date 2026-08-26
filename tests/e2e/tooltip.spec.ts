@@ -10,7 +10,10 @@ async function focusByKeyboard(anchor: Locator) {
 async function waitForPopupPosition(popup: Locator) {
   await expect(popup).toHaveAttribute('data-side', /^(top|right|bottom|left)$/);
   await popup.evaluate(
-    () => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))),
+    () =>
+      new Promise<void>(resolve =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+      )
   );
 }
 
@@ -19,7 +22,9 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('links aria-describedby only while the popup exists and preserves consumer ids', async ({ page }) => {
+test('links aria-describedby only while the popup exists and preserves consumer ids', async ({
+  page,
+}) => {
   const anchor = page.locator('#aria-anchor');
   await expect(anchor).toHaveAttribute('aria-describedby', 'existing-description');
 
@@ -37,7 +42,9 @@ test('links aria-describedby only while the popup exists and preserves consumer 
 
 test('tracks its trigger through nested scrolling and viewport resize', async ({ page }) => {
   const scroller = page.locator('#scroll-container');
-  await scroller.evaluate(element => { element.scrollTop = 300; });
+  await scroller.evaluate(element => {
+    element.scrollTop = 300;
+  });
   const scrollAnchor = page.locator('#scroll-anchor');
   await focusByKeyboard(scrollAnchor);
   const popup = page.getByRole('tooltip', { name: 'Scrolling label' });
@@ -45,8 +52,12 @@ test('tracks its trigger through nested scrolling and viewport resize', async ({
   await waitForPopupPosition(popup);
 
   const before = await popup.boundingBox();
-  await scroller.evaluate(element => { element.scrollTop += 40; });
-  await expect.poll(async () => (await popup.boundingBox())?.y).toBeCloseTo((before?.y ?? 0) - 40, 0);
+  await scroller.evaluate(element => {
+    element.scrollTop += 40;
+  });
+  await expect
+    .poll(async () => (await popup.boundingBox())?.y)
+    .toBeCloseTo((before?.y ?? 0) - 40, 0);
 
   await page.keyboard.press('Escape');
   const resizeAnchor = page.locator('#resize-anchor');
@@ -56,7 +67,9 @@ test('tracks its trigger through nested scrolling and viewport resize', async ({
   await waitForPopupPosition(resizePopup);
   const wide = await resizePopup.boundingBox();
   await page.setViewportSize({ width: 640, height: 600 });
-  await expect.poll(async () => (await resizePopup.boundingBox())?.x).toBeLessThan(wide?.x ?? Infinity);
+  await expect
+    .poll(async () => (await resizePopup.boundingBox())?.x)
+    .toBeLessThan(wide?.x ?? Infinity);
 });
 
 test('flips to the opposite side before clamping', async ({ page }) => {
@@ -110,7 +123,9 @@ test('removes tooltip motion when reduced motion is requested', async ({ page })
   await page.locator('#aria-anchor').hover();
   const popup = page.getByRole('tooltip', { name: 'Supplementary label' });
   await expect(popup).toBeVisible();
-  await expect.poll(() => popup.evaluate(element => getComputedStyle(element).animationName)).toBe('none');
+  await expect
+    .poll(() => popup.evaluate(element => getComputedStyle(element).animationName))
+    .toBe('none');
 
   await page.mouse.move(600, 500);
   await expect(popup).toHaveCount(0);

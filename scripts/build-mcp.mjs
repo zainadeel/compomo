@@ -18,7 +18,9 @@ for (const requiredPath of [
   path.join(distDir, 'agent-patterns.json'),
 ]) {
   if (!fs.existsSync(requiredPath)) {
-    throw new Error(`Cannot build the packaged MCP server: missing ${path.relative(root, requiredPath)}`);
+    throw new Error(
+      `Cannot build the packaged MCP server: missing ${path.relative(root, requiredPath)}`
+    );
   }
 }
 
@@ -31,7 +33,7 @@ for (const entry of fs.readdirSync(registrySourceDir, { withFileTypes: true })) 
   if (!entry.isFile() || !entry.name.endsWith('.json')) continue;
   fs.copyFileSync(
     path.join(registrySourceDir, entry.name),
-    path.join(registryOutputDir, entry.name),
+    path.join(registryOutputDir, entry.name)
   );
 }
 
@@ -47,4 +49,6 @@ await build({
 });
 
 fs.chmodSync(outputFile, 0o755);
-console.log(`  Built dist/mcp/cli.js with ${fs.readdirSync(registryOutputDir).length} registry files`);
+console.log(
+  `  Built dist/mcp/cli.js with ${fs.readdirSync(registryOutputDir).length} registry files`
+);

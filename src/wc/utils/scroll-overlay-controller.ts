@@ -62,7 +62,7 @@ export class ScrollOverlayController {
     this.overlayBlockSize = Math.max(Math.ceil(overlayRect.height), 0);
 
     const assigned = host.querySelector<HTMLElement>(
-      this.options.overlayContentSelector ?? '[slot="overlay"]',
+      this.options.overlayContentSelector ?? '[slot="overlay"]'
     );
     if (!assigned) {
       this.overlayBlockSize = 0;
@@ -78,17 +78,14 @@ export class ScrollOverlayController {
       assigned.firstElementChild instanceof HTMLElement ? assigned.firstElementChild : assigned;
     const topInset = Math.max(
       Math.ceil(visibleContent.getBoundingClientRect().top - overlayRect.top),
-      0,
+      0
     );
     this.overlayContentBlockSize = Math.max(this.overlayBlockSize - topInset, 0);
     const fadeLead = resolveCssLengthPx('var(--dimension-space-100)', 8);
     this.fadeBlockSize = this.overlayContentBlockSize + fadeLead;
 
     host.style.setProperty(SCROLL_OVERLAY_BLOCK_SIZE, `${this.overlayBlockSize}px`);
-    host.style.setProperty(
-      SCROLL_OVERLAY_CONTENT_BLOCK_SIZE,
-      `${this.overlayContentBlockSize}px`,
-    );
+    host.style.setProperty(SCROLL_OVERLAY_CONTENT_BLOCK_SIZE, `${this.overlayContentBlockSize}px`);
     host.style.setProperty(SCROLL_OVERLAY_FADE_BLOCK_SIZE, `${this.fadeBlockSize}px`);
   }
 

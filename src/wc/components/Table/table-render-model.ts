@@ -69,7 +69,9 @@ export function createTableRenderModel(input: TableRenderModelInput): TableRende
   const loadedRows = tableRows(input.rows, input.groups, input.grouped);
   const selectedRowIds = new Set(input.selectedRowIds);
   const collapsedGroupIds = new Set(input.collapsedGroupIds);
-  const allGroupsCollapsed = input.grouped && input.groups.length > 0 &&
+  const allGroupsCollapsed =
+    input.grouped &&
+    input.groups.length > 0 &&
     input.groups.every(group => collapsedGroupIds.has(group.id));
   const showCollapseAll = input.grouped && input.groups.length > 0 && !allGroupsCollapsed;
   const explicitMinWidth = tableExplicitMinWidth(input.columns);
@@ -113,9 +115,7 @@ export function createTableRenderModel(input: TableRenderModelInput): TableRende
         intentClass: tableGroupIntentClass(intent),
         labelColor: tableGroupLabelColor(intent),
         collapsed: collapsedGroupIds.has(group.id),
-        selection: selectable
-          ? deriveTableSelectionState(group.rows, input.selectedRowIds)
-          : null,
+        selection: selectable ? deriveTableSelectionState(group.rows, input.selectedRowIds) : null,
       };
     }),
     totalColumns: input.columns.length + (selectable ? 1 : 0),

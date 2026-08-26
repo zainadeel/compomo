@@ -3,21 +3,42 @@ import { html } from 'lit';
 import '../../../../dist/components/ds-text.js';
 
 const VARIANTS = [
-  'text-display-medium', 'text-display-small',
-  'text-title-large', 'text-title-medium', 'text-title-small',
-  'text-body-large', 'text-body-medium', 'text-body-small',
+  'text-display-medium',
+  'text-display-small',
+  'text-title-large',
+  'text-title-medium',
+  'text-title-small',
+  'text-body-large',
+  'text-body-medium',
+  'text-body-small',
   'text-caption',
 ];
 
 const COLORS = [
-  'primary', 'secondary', 'tertiary', 'quaternary',
-  'brand', 'negative', 'positive', 'warning', 'caution', 'ai',
-  'on-strong', 'on-bold', 'inherit',
+  'primary',
+  'secondary',
+  'tertiary',
+  'quaternary',
+  'brand',
+  'negative',
+  'positive',
+  'warning',
+  'caution',
+  'ai',
+  'on-strong',
+  'on-bold',
+  'inherit',
 ];
 
 const GENERAL_CONTENT_COLORS = [
-  'primary', 'secondary',
-  'brand', 'negative', 'positive', 'warning', 'caution', 'ai',
+  'primary',
+  'secondary',
+  'brand',
+  'negative',
+  'positive',
+  'warning',
+  'caution',
+  'ai',
 ] as const;
 
 const CONTEXTUAL_COLORS = [
@@ -29,7 +50,7 @@ const meta: Meta = {
   title: 'Primitives/Text',
   tags: ['autodocs'],
   argTypes: {
-    variant:       { control: 'select', options: VARIANTS },
+    variant: { control: 'select', options: VARIANTS },
     emphasis: {
       control: 'boolean',
       description:
@@ -39,16 +60,19 @@ const meta: Meta = {
       control: 'text',
       description: `Color token (${COLORS.join(', ')}) or CSS var. Tertiary and quaternary are restricted to genuinely inactive/disabled or purely decorative content; quaternary is the fainter tier. Prefer the owning control's inactive state.`,
     },
-    as:            { control: 'select', options: ['p', 'span', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'label'] },
-    align:         { control: 'select', options: ['left', 'center', 'right'] },
-    decoration:    { control: 'select', options: ['none', 'underline', 'dotted-underline'] },
-    fontFeature:   { control: 'select', options: ['normal', 'tabular-nums'] },
-    italic:        { control: 'boolean' },
-    shimmer:       { control: 'boolean' },
-    lineTruncation:{ control: 'select', options: [1, 2, 3, 4, 5, 'none'] },
-    wrap:          { control: 'select', options: ['wrap', 'nowrap', 'balance', 'pretty'] },
-    for:           { control: 'text' },
-    content:       { control: 'text' },
+    as: {
+      control: 'select',
+      options: ['p', 'span', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'label'],
+    },
+    align: { control: 'select', options: ['left', 'center', 'right'] },
+    decoration: { control: 'select', options: ['none', 'underline', 'dotted-underline'] },
+    fontFeature: { control: 'select', options: ['normal', 'tabular-nums'] },
+    italic: { control: 'boolean' },
+    shimmer: { control: 'boolean' },
+    lineTruncation: { control: 'select', options: [1, 2, 3, 4, 5, 'none'] },
+    wrap: { control: 'select', options: ['wrap', 'nowrap', 'balance', 'pretty'] },
+    for: { control: 'text' },
+    content: { control: 'text' },
   },
   args: {
     variant: 'text-body-medium',
@@ -96,9 +120,7 @@ export const Playground: Story = {
 export const Shimmer: Story = {
   render: () => html`
     <div role="status">
-      <ds-text variant="text-body-medium" color="secondary" shimmer>
-        Generating response…
-      </ds-text>
+      <ds-text variant="text-body-medium" color="secondary" shimmer> Generating response… </ds-text>
     </div>
   `,
 };
@@ -107,13 +129,18 @@ export const AllVariants: Story = {
   name: 'All variants',
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: 8px">
-      ${VARIANTS.map(v => html`
-        <div style="display: flex; align-items: baseline; gap: 16px">
-          <span style="font-size: 10px; font-family: monospace; color: var(--color-foreground-secondary); min-width: 180px; flex-shrink: 0">${v}</span>
-          <ds-text variant=${v}>The quick brown fox jumps over the lazy dog</ds-text>
-          <ds-text variant=${v} emphasis>emphasis</ds-text>
-        </div>
-      `)}
+      ${VARIANTS.map(
+        v => html`
+          <div style="display: flex; align-items: baseline; gap: 16px">
+            <span
+              style="font-size: 10px; font-family: monospace; color: var(--color-foreground-secondary); min-width: 180px; flex-shrink: 0"
+              >${v}</span
+            >
+            <ds-text variant=${v}>The quick brown fox jumps over the lazy dog</ds-text>
+            <ds-text variant=${v} emphasis>emphasis</ds-text>
+          </div>
+        `
+      )}
     </div>
   `,
 };
@@ -122,13 +149,18 @@ export const Emphasis: Story = {
   name: 'Emphasis pairs',
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: 8px">
-      ${VARIANTS.map(v => html`
-        <div style="display: flex; align-items: baseline; gap: 24px">
-          <span style="font-size: 10px; font-family: monospace; color: var(--color-foreground-secondary); min-width: 180px; flex-shrink: 0">${v}</span>
-          <ds-text variant=${v} .emphasis=${false} as="span">regular</ds-text>
-          <ds-text variant=${v} .emphasis=${true} as="span">emphasis</ds-text>
-        </div>
-      `)}
+      ${VARIANTS.map(
+        v => html`
+          <div style="display: flex; align-items: baseline; gap: 24px">
+            <span
+              style="font-size: 10px; font-family: monospace; color: var(--color-foreground-secondary); min-width: 180px; flex-shrink: 0"
+              >${v}</span
+            >
+            <ds-text variant=${v} .emphasis=${false} as="span">regular</ds-text>
+            <ds-text variant=${v} .emphasis=${true} as="span">emphasis</ds-text>
+          </div>
+        `
+      )}
     </div>
   `,
 };
@@ -136,29 +168,43 @@ export const Emphasis: Story = {
 export const Colors: Story = {
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: 8px">
-      ${GENERAL_CONTENT_COLORS.map(c => html`
-        <div style="display: flex; align-items: center; gap: 16px">
-          <span style="font-size: 10px; font-family: monospace; color: var(--color-foreground-secondary); min-width: 120px; flex-shrink: 0">${c}</span>
-          <ds-text color=${c}>Sample text in ${c}</ds-text>
-        </div>
-      `)}
-
-      ${CONTEXTUAL_COLORS.map(({ color, background }) => html`
-        <div style="display: flex; align-items: center; gap: 16px; padding: var(--dimension-space-100); border-radius: var(--dimension-radius-075); background: ${background}">
-          <ds-text as="span" variant="text-caption" color=${color} style="min-width: 120px">${color}</ds-text>
-          <ds-text color=${color}>Sample text in ${color}</ds-text>
-        </div>
-      `)}
-
-      ${(['tertiary', 'quaternary'] as const).map(color => html`
-        <button
-          disabled
-          style="display: flex; align-items: center; gap: 16px; padding: 0; border: 0; background: transparent; text-align: left"
-        >
-          <span style="font-size: 10px; font-family: monospace; color: var(--color-foreground-secondary); min-width: 120px; flex-shrink: 0">${color} · restricted</span>
-          <ds-text as="span" color=${color}>Unavailable setting</ds-text>
-        </button>
-      `)}
+      ${GENERAL_CONTENT_COLORS.map(
+        c => html`
+          <div style="display: flex; align-items: center; gap: 16px">
+            <span
+              style="font-size: 10px; font-family: monospace; color: var(--color-foreground-secondary); min-width: 120px; flex-shrink: 0"
+              >${c}</span
+            >
+            <ds-text color=${c}>Sample text in ${c}</ds-text>
+          </div>
+        `
+      )}
+      ${CONTEXTUAL_COLORS.map(
+        ({ color, background }) => html`
+          <div
+            style="display: flex; align-items: center; gap: 16px; padding: var(--dimension-space-100); border-radius: var(--dimension-radius-075); background: ${background}"
+          >
+            <ds-text as="span" variant="text-caption" color=${color} style="min-width: 120px"
+              >${color}</ds-text
+            >
+            <ds-text color=${color}>Sample text in ${color}</ds-text>
+          </div>
+        `
+      )}
+      ${(['tertiary', 'quaternary'] as const).map(
+        color => html`
+          <button
+            disabled
+            style="display: flex; align-items: center; gap: 16px; padding: 0; border: 0; background: transparent; text-align: left"
+          >
+            <span
+              style="font-size: 10px; font-family: monospace; color: var(--color-foreground-secondary); min-width: 120px; flex-shrink: 0"
+              >${color} · restricted</span
+            >
+            <ds-text as="span" color=${color}>Unavailable setting</ds-text>
+          </button>
+        `
+      )}
     </div>
   `,
 };
@@ -170,7 +216,8 @@ export const Truncation: Story = {
         Single line truncation — the quick brown fox jumps over the lazy dog and then keeps going.
       </ds-text>
       <ds-text line-truncation="2">
-        Two line truncation — the quick brown fox jumps over the lazy dog. It runs and runs and runs and never stops.
+        Two line truncation — the quick brown fox jumps over the lazy dog. It runs and runs and runs
+        and never stops.
       </ds-text>
       <ds-text wrap="nowrap">
         Nowrap with ellipsis — the quick brown fox jumps over the lazy dog.
@@ -179,8 +226,10 @@ export const Truncation: Story = {
   `,
 };
 
-const ROW = 'display: flex; align-items: baseline; gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--color-border-tertiary)';
-const LBL = 'font-size: 10px; font-family: monospace; color: var(--color-foreground-secondary); min-width: 180px; flex-shrink: 0';
+const ROW =
+  'display: flex; align-items: baseline; gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--color-border-tertiary)';
+const LBL =
+  'font-size: 10px; font-family: monospace; color: var(--color-foreground-secondary); min-width: 180px; flex-shrink: 0';
 
 export const Decorations: Story = {
   render: () => html`
@@ -191,19 +240,27 @@ export const Decorations: Story = {
       </div>
       <div style="${ROW}">
         <span style="${LBL}">underline</span>
-        <ds-text variant="text-body-large" decoration="underline">The quick brown fox jumps over the lazy dog</ds-text>
+        <ds-text variant="text-body-large" decoration="underline"
+          >The quick brown fox jumps over the lazy dog</ds-text
+        >
       </div>
       <div style="${ROW}">
         <span style="${LBL}">dotted-underline</span>
-        <ds-text variant="text-body-large" decoration="dotted-underline">The quick brown fox jumps over the lazy dog</ds-text>
+        <ds-text variant="text-body-large" decoration="dotted-underline"
+          >The quick brown fox jumps over the lazy dog</ds-text
+        >
       </div>
       <div style="${ROW}">
         <span style="${LBL}">italic</span>
-        <ds-text variant="text-body-large" italic>The quick brown fox jumps over the lazy dog</ds-text>
+        <ds-text variant="text-body-large" italic
+          >The quick brown fox jumps over the lazy dog</ds-text
+        >
       </div>
       <div style="${ROW}">
         <span style="${LBL}">italic + underline</span>
-        <ds-text variant="text-body-large" decoration="underline" italic>The quick brown fox jumps over the lazy dog</ds-text>
+        <ds-text variant="text-body-large" decoration="underline" italic
+          >The quick brown fox jumps over the lazy dog</ds-text
+        >
       </div>
     </div>
   `,
@@ -212,16 +269,24 @@ export const Decorations: Story = {
 export const Alignment: Story = {
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: 16px; max-width: 480px">
-      ${(['left', 'center', 'right'] as const).map(a => html`
-        <div style="display: flex; flex-direction: column; gap: 4px">
-          <span style="font-size: 10px; font-family: monospace; color: var(--color-foreground-secondary)">${a}</span>
-          <div style="border: 1px solid var(--color-border-tertiary); border-radius: 6px; padding: 12px">
-            <ds-text variant="text-body-medium" align=${a}>
-              The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.
-            </ds-text>
+      ${(['left', 'center', 'right'] as const).map(
+        a => html`
+          <div style="display: flex; flex-direction: column; gap: 4px">
+            <span
+              style="font-size: 10px; font-family: monospace; color: var(--color-foreground-secondary)"
+              >${a}</span
+            >
+            <div
+              style="border: 1px solid var(--color-border-tertiary); border-radius: 6px; padding: 12px"
+            >
+              <ds-text variant="text-body-medium" align=${a}>
+                The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor
+                jugs.
+              </ds-text>
+            </div>
           </div>
-        </div>
-      `)}
+        `
+      )}
     </div>
   `,
 };
@@ -242,12 +307,16 @@ export const SemanticElements: Story = {
 
     return html`
       <div style="display: flex; flex-direction: column; gap: 12px">
-        ${(['h1','h2','h3','h4','h5','h6'] as const).map((tag, i) => html`
-          <div style="${ROW}">
-            <span style="${LBL}">as="${tag}" → ${headingVariant[tag]}</span>
-            <ds-text as=${tag} variant=${headingVariant[tag]} emphasis>Heading level ${i + 1}</ds-text>
-          </div>
-        `)}
+        ${(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as const).map(
+          (tag, i) => html`
+            <div style="${ROW}">
+              <span style="${LBL}">as="${tag}" → ${headingVariant[tag]}</span>
+              <ds-text as=${tag} variant=${headingVariant[tag]} emphasis
+                >Heading level ${i + 1}</ds-text
+              >
+            </div>
+          `
+        )}
         <div style="${ROW}">
           <span style="${LBL}">as="p" (default)</span>
           <ds-text as="p">Paragraph text — the quick brown fox.</ds-text>

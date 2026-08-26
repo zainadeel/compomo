@@ -5,9 +5,9 @@ import '../../../../dist/components/ds-tag.js';
 import '../../../../dist/components/ds-icon.js';
 import '../../../../dist/components/ds-menu.js';
 
-const INTENTS   = ['neutral', 'brand', 'ai', 'negative', 'warning', 'caution', 'positive'];
+const INTENTS = ['neutral', 'brand', 'ai', 'negative', 'warning', 'caution', 'positive'];
 const CONTRASTS = ['strong', 'bold', 'medium', 'faint'];
-const SIZES     = ['md', 'sm', 'xs'] as const;
+const SIZES = ['md', 'sm', 'xs'] as const;
 const SIZE_HEIGHT = {
   md: 'var(--dimension-size-400)',
   sm: 'var(--dimension-size-300)',
@@ -24,14 +24,14 @@ const meta: Meta = {
   title: 'Primitives/Tag',
   tags: ['autodocs'],
   argTypes: {
-    label:    { control: 'text' },
-    icon:     { control: 'text' },
-    intent:   { control: 'select', options: INTENTS },
+    label: { control: 'text' },
+    icon: { control: 'text' },
+    intent: { control: 'select', options: INTENTS },
     contrast: { control: 'select', options: CONTRASTS },
-    size:     { control: 'select', options: [...SIZES] },
-    isInset:  { control: 'boolean' },
+    size: { control: 'select', options: [...SIZES] },
+    isInset: { control: 'boolean' },
     insetDepth: { control: 'select', options: ['single', 'double'] },
-    rounded:  { control: 'boolean' },
+    rounded: { control: 'boolean' },
     maxWidth: { control: 'text' },
     interactive: { control: 'boolean' },
     expanded: { control: 'boolean' },
@@ -39,14 +39,14 @@ const meta: Meta = {
     isInactive: { control: 'boolean' },
   },
   args: {
-    label:    'Tag',
-    icon:     '',
-    intent:   'neutral',
+    label: 'Tag',
+    icon: '',
+    intent: 'neutral',
     contrast: 'faint',
-    size:     'md',
-    isInset:  false,
+    size: 'md',
+    isInset: false,
     insetDepth: 'single',
-    rounded:  false,
+    rounded: false,
     maxWidth: '',
     interactive: false,
     expanded: false,
@@ -81,16 +81,24 @@ export const Playground: Story = {
 export const IntentMatrix: Story = {
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: var(--dimension-space-100)">
-      ${CONTRASTS.map(contrast => html`
-        <div>
-          <div style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-tertiary); margin-bottom: var(--dimension-space-050)">${contrast}</div>
-          <div style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap">
-            ${INTENTS.map(intent => html`
-              <ds-tag label=${intent} intent=${intent} contrast=${contrast}></ds-tag>
-            `)}
+      ${CONTRASTS.map(
+        contrast => html`
+          <div>
+            <div
+              style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-tertiary); margin-bottom: var(--dimension-space-050)"
+            >
+              ${contrast}
+            </div>
+            <div style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap">
+              ${INTENTS.map(
+                intent => html`
+                  <ds-tag label=${intent} intent=${intent} contrast=${contrast}></ds-tag>
+                `
+              )}
+            </div>
           </div>
-        </div>
-      `)}
+        `
+      )}
     </div>
   `,
 };
@@ -98,12 +106,19 @@ export const IntentMatrix: Story = {
 export const Sizes: Story = {
   render: () => html`
     <div style="display: flex; gap: var(--dimension-space-150); align-items: center">
-      ${SIZES.map(size => html`
-        <div style="display: flex; flex-direction: column; align-items: center; gap: var(--dimension-space-075)">
-          <ds-tag label=${size} intent="brand" contrast="faint" size=${size}></ds-tag>
-          <span style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-tertiary)">${size}</span>
-        </div>
-      `)}
+      ${SIZES.map(
+        size => html`
+          <div
+            style="display: flex; flex-direction: column; align-items: center; gap: var(--dimension-space-075)"
+          >
+            <ds-tag label=${size} intent="brand" contrast="faint" size=${size}></ds-tag>
+            <span
+              style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-tertiary)"
+              >${size}</span
+            >
+          </div>
+        `
+      )}
     </div>
   `,
 };
@@ -112,52 +127,69 @@ export const InsetDensity: Story = {
   name: 'Inset density',
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: var(--dimension-space-150)">
-      ${SIZES.map(size => html`
-        <div style="display: grid; grid-template-columns: minmax(var(--dimension-size-600), auto) auto auto; gap: var(--dimension-space-100); align-items: center">
-          <span style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-tertiary)">${size}</span>
-          <ds-tag
-            label="Default"
-            intent="brand"
-            contrast="faint"
-            size=${size}
-          ></ds-tag>
+      ${SIZES.map(
+        size => html`
           <div
-            style="display: inline-flex; align-items: center; box-sizing: border-box; width: fit-content; height: ${SIZE_HEIGHT[size]}; padding: var(--dimension-space-025); border-radius: var(--dimension-radius-050); background: var(--color-background-secondary)"
+            style="display: grid; grid-template-columns: minmax(var(--dimension-size-600), auto) auto auto; gap: var(--dimension-space-100); align-items: center"
           >
-            <ds-tag
-              label="Inset"
-              intent="brand"
-              contrast="faint"
-              size=${size}
-              is-inset
-            ></ds-tag>
-            <ds-tag
-              label="Double"
-              intent="brand"
-              contrast="faint"
-              size=${size}
-              is-inset
-              inset-depth="double"
-            ></ds-tag>
+            <span
+              style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-tertiary)"
+              >${size}</span
+            >
+            <ds-tag label="Default" intent="brand" contrast="faint" size=${size}></ds-tag>
+            <div
+              style="display: inline-flex; align-items: center; box-sizing: border-box; width: fit-content; height: ${SIZE_HEIGHT[
+                size
+              ]}; padding: var(--dimension-space-025); border-radius: var(--dimension-radius-050); background: var(--color-background-secondary)"
+            >
+              <ds-tag label="Inset" intent="brand" contrast="faint" size=${size} is-inset></ds-tag>
+              <ds-tag
+                label="Double"
+                intent="brand"
+                contrast="faint"
+                size=${size}
+                is-inset
+                inset-depth="double"
+              ></ds-tag>
+            </div>
           </div>
-        </div>
-      `)}
+        `
+      )}
     </div>
   `,
 };
 
 export const Rounded: Story = {
   render: () => html`
-    <div style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap; align-items: center">
+    <div
+      style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap; align-items: center"
+    >
       <ds-tag label="Default" intent="neutral" contrast="faint"></ds-tag>
       <ds-tag label="Rounded" intent="brand" contrast="faint" rounded></ds-tag>
-      ${SIZES.map(size => html`
-        <div style="display: inline-flex; gap: var(--dimension-space-050); align-items: center">
-          <ds-tag label="1" intent="brand" contrast="faint" size=${size} rounded></ds-tag>
-          <ds-tag label="1" intent="brand" contrast="faint" size=${size} rounded is-inset></ds-tag>
-          <ds-tag label="1" intent="brand" contrast="faint" size=${size} rounded is-inset inset-depth="double"></ds-tag>
-        </div>
-      `)}
+      ${SIZES.map(
+        size => html`
+          <div style="display: inline-flex; gap: var(--dimension-space-050); align-items: center">
+            <ds-tag label="1" intent="brand" contrast="faint" size=${size} rounded></ds-tag>
+            <ds-tag
+              label="1"
+              intent="brand"
+              contrast="faint"
+              size=${size}
+              rounded
+              is-inset
+            ></ds-tag>
+            <ds-tag
+              label="1"
+              intent="brand"
+              contrast="faint"
+              size=${size}
+              rounded
+              is-inset
+              inset-depth="double"
+            ></ds-tag>
+          </div>
+        `
+      )}
     </div>
   `,
 };
@@ -165,17 +197,21 @@ export const Rounded: Story = {
 /** Icon size matches tag size (md/sm/xs → iconography 20/16/12). */
 export const WithIcon: Story = {
   render: () => html`
-    <div style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap; align-items: center">
-      ${SIZES.map(size => html`
-        <ds-tag
-          label="Fleet"
-          icon="VehicleTruck"
-          intent="brand"
-          contrast="faint"
-          size=${size}
-          ?rounded=${size === 'md'}
-        ></ds-tag>
-      `)}
+    <div
+      style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap; align-items: center"
+    >
+      ${SIZES.map(
+        size => html`
+          <ds-tag
+            label="Fleet"
+            icon="VehicleTruck"
+            intent="brand"
+            contrast="faint"
+            size=${size}
+            ?rounded=${size === 'md'}
+          ></ds-tag>
+        `
+      )}
     </div>
   `,
 };
@@ -190,7 +226,8 @@ export const InteractiveMenuTrigger: Story = {
   render: args => {
     const [, updateArgs] = useArgs();
     const selectedStatus = String(args['selectedStatus'] ?? 'all');
-    const selectedItem = STATUS_ITEMS.find(item => item.value === selectedStatus) ?? STATUS_ITEMS[0];
+    const selectedItem =
+      STATUS_ITEMS.find(item => item.value === selectedStatus) ?? STATUS_ITEMS[0];
     const items = STATUS_ITEMS.map(item => ({
       ...item,
       isSelected: item.value === selectedStatus,
@@ -211,10 +248,11 @@ export const InteractiveMenuTrigger: Story = {
           interactive
           ?expanded=${Boolean(args['expanded'])}
           aria-controls="vehicle-status-menu"
-          @dsClick=${(event: CustomEvent<MouseEvent>) => updateArgs({
-            expanded: !args['expanded'],
-            initialFocusVisible: event.detail.detail === 0,
-          })}
+          @dsClick=${(event: CustomEvent<MouseEvent>) =>
+            updateArgs({
+              expanded: !args['expanded'],
+              initialFocusVisible: event.detail.detail === 0,
+            })}
         ></ds-tag>
         <ds-menu
           id="vehicle-status-menu"

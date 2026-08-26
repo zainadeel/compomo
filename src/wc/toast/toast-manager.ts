@@ -10,10 +10,8 @@ import type {
 } from './toast-types';
 
 function resolvePromiseValue<Value, Data>(
-  value:
-    | ToastPromiseValue<Data>
-    | ((input: Value) => ToastPromiseValue<Data>),
-  input: Value,
+  value: ToastPromiseValue<Data> | ((input: Value) => ToastPromiseValue<Data>),
+  input: Value
 ): ToastOptions<Data> {
   const resolved = typeof value === 'function' ? value(input) : value;
   return typeof resolved === 'string' ? { description: resolved } : resolved;
@@ -44,10 +42,7 @@ class ToastManagerImpl<Data = unknown> implements ToastManager<Data> {
         updateKey: current.updateKey + 1,
         timerKey: current.timerKey + 1,
       };
-      this.records = [
-        updated,
-        ...this.records.filter((_, index) => index !== existingIndex),
-      ];
+      this.records = [updated, ...this.records.filter((_, index) => index !== existingIndex)];
       this.emit();
       return id;
     }
@@ -108,7 +103,7 @@ class ToastManagerImpl<Data = unknown> implements ToastManager<Data> {
 
   async promise<Value>(
     promiseValue: PromiseLike<Value>,
-    options: ToastPromiseOptions<Value, Data>,
+    options: ToastPromiseOptions<Value, Data>
   ): Promise<Value> {
     const loading = resolvePromiseValue(options.loading, undefined as Value);
     const id = this.add({
@@ -153,9 +148,7 @@ class ToastManagerImpl<Data = unknown> implements ToastManager<Data> {
     const record = this.records.find(candidate => candidate.id === id);
     if (!record || record.transitionStatus !== 'starting') return;
     this.records = this.records.map(candidate =>
-      candidate.id === id
-        ? { ...candidate, transitionStatus: 'active' }
-        : candidate
+      candidate.id === id ? { ...candidate, transitionStatus: 'active' } : candidate
     );
     this.emit();
   }
@@ -189,7 +182,6 @@ const defaultManagerKey = Symbol.for('@ds-mo/ui/default-toast-manager');
 const globalScope = globalThis as typeof globalThis & Record<PropertyKey, unknown>;
 const existingManager = globalScope[defaultManagerKey] as ToastManager | undefined;
 
-export const toastManager: ToastManager =
-  existingManager ?? createToastManager();
+export const toastManager: ToastManager = existingManager ?? createToastManager();
 
 if (!existingManager) globalScope[defaultManagerKey] = toastManager;

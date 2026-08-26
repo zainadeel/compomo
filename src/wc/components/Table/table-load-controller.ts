@@ -1,8 +1,4 @@
-import type {
-  TableLoadMoreDetail,
-  TableLoadMoreMode,
-  TableLoadMoreReason,
-} from './table-types';
+import type { TableLoadMoreDetail, TableLoadMoreMode, TableLoadMoreReason } from './table-types';
 
 export interface TableLoadControllerState {
   lazyLoading: boolean;
@@ -82,7 +78,7 @@ export class TableLoadController {
       {
         root: state.containedScroll ? state.viewport : null,
         rootMargin: `0px 0px ${threshold}px 0px`,
-      },
+      }
     );
     this.observedSentinel = state.sentinel;
     this.intersectionObserver.observe(state.sentinel);
@@ -105,7 +101,7 @@ export class TableLoadController {
       this.options.announce(
         state.rowsLoadedLabel
           .replace('{count}', String(added))
-          .replace('{total}', String(nextCount)),
+          .replace('{total}', String(nextCount))
       );
     }
     if (nextCount > this.requestedRowCount) this.requestPending = false;
@@ -170,7 +166,8 @@ export class TableLoadController {
       state.loadingMore ||
       (reason !== 'retry' && !!state.loadMoreError?.trim()) ||
       this.requestPending
-    ) return;
+    )
+      return;
 
     this.requestPending = true;
     this.requestedRowCount = state.loadedRowCount;

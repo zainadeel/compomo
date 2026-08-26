@@ -44,14 +44,11 @@ function createDistReloadPlugin(): Plugin {
           filePath,
           { interval: RELOAD_POLL_INTERVAL_MS, persistent: false },
           (current, previous) => {
-            if (
-              current.mtimeMs === previous.mtimeMs &&
-              current.size === previous.size
-            ) {
+            if (current.mtimeMs === previous.mtimeMs && current.size === previous.size) {
               return;
             }
             scheduleFullReload(reason);
-          },
+          }
         );
       }
 
@@ -63,25 +60,16 @@ function createDistReloadPlugin(): Plugin {
 }
 
 const config: StorybookConfig = {
-  stories: [
-    '../src/docs/**/*.mdx',
-    '../src/wc/**/*.mdx',
-    '../src/wc/**/*.stories.@(ts|tsx)',
-  ],
-  staticDirs: [
-    './static',
-    { from: '../docs/licenses', to: '/licenses' },
-  ],
+  stories: ['../src/docs/**/*.mdx', '../src/wc/**/*.mdx', '../src/wc/**/*.stories.@(ts|tsx)'],
+  staticDirs: ['./static', { from: '../docs/licenses', to: '/licenses' }],
   addons: ['@storybook/addon-docs', '@storybook/addon-a11y', '@storybook/addon-vitest'],
   framework: {
     name: '@storybook/web-components-vite',
     options: {},
   },
-  viteFinal: (config) => {
+  viteFinal: config => {
     config.resolve = config.resolve || {};
-    const aliases = Array.isArray(config.resolve.alias)
-      ? config.resolve.alias
-      : [];
+    const aliases = Array.isArray(config.resolve.alias) ? config.resolve.alias : [];
     aliases.push({ find: '@', replacement: resolve(__dirname, '../src') });
     config.resolve.alias = aliases;
     config.resolve.dedupe = [

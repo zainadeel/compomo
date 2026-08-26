@@ -150,9 +150,7 @@ export class Slider {
   formStateRestoreCallback(state: string | File | FormData | null) {
     if (this.isRange) {
       const restored = restoreNumberArrayFormState(state, 2);
-      this.value = restored.length
-        ? restored
-        : this.cloneValue(this.initialValue);
+      this.value = restored.length ? restored : this.cloneValue(this.initialValue);
     } else {
       const restored = Number(restoreStringFormState(state, 'NaN'));
       if (Number.isFinite(restored)) this.value = restored;
@@ -239,11 +237,14 @@ export class Slider {
     const maximum = this.safeMax;
     const candidate = Number.isFinite(value) ? value : minimum;
     const stepped = minimum + Math.round((candidate - minimum) / this.safeStep) * this.safeStep;
-    const precision = Math.min(10, Math.max(
-      this.decimalPlaces(minimum),
-      this.decimalPlaces(maximum),
-      this.decimalPlaces(this.safeStep),
-    ));
+    const precision = Math.min(
+      10,
+      Math.max(
+        this.decimalPlaces(minimum),
+        this.decimalPlaces(maximum),
+        this.decimalPlaces(this.safeStep)
+      )
+    );
     return Number(Math.min(maximum, Math.max(minimum, stepped)).toFixed(precision));
   }
 
@@ -266,7 +267,10 @@ export class Slider {
   private setValueAt(index: number, next: number): boolean {
     const previous = this.publicValue;
     const values = this.resolvedValues;
-    const constrained = Math.min(this.allowedMax(index, values), Math.max(this.allowedMin(index, values), this.snap(next)));
+    const constrained = Math.min(
+      this.allowedMax(index, values),
+      Math.max(this.allowedMin(index, values), this.snap(next))
+    );
     values[index] = constrained;
     const nextValue: SliderValue = this.isRange ? [...values] : values[0];
     if (this.valuesEqual(previous, nextValue)) return false;
@@ -305,7 +309,13 @@ export class Slider {
   }
 
   private ariaValueText(value: number, index: number): string | undefined {
-    if (this.valueTexts[index] || this.valueText || this.valuePrefix || this.valueSuffix || this.formatOptions) {
+    if (
+      this.valueTexts[index] ||
+      this.valueText ||
+      this.valuePrefix ||
+      this.valueSuffix ||
+      this.formatOptions
+    ) {
       return this.formattedValue(value, index);
     }
     return undefined;
@@ -327,7 +337,18 @@ export class Slider {
 
   private handleKeyDown = (event: KeyboardEvent) => {
     if (!this.readOnly) return;
-    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown'].includes(event.key)) {
+    if (
+      [
+        'ArrowLeft',
+        'ArrowRight',
+        'ArrowUp',
+        'ArrowDown',
+        'Home',
+        'End',
+        'PageUp',
+        'PageDown',
+      ].includes(event.key)
+    ) {
       event.preventDefault();
     }
   };
@@ -356,7 +377,9 @@ export class Slider {
     const rect = control.getBoundingClientRect();
     const thumb = this.el.querySelector<HTMLElement>('.slider__thumb');
     const thumbSize = thumb
-      ? this.orientation === 'horizontal' ? thumb.offsetWidth : thumb.offsetHeight
+      ? this.orientation === 'horizontal'
+        ? thumb.offsetWidth
+        : thumb.offsetHeight
       : 0;
     // Both alignment modes keep the complete thumb inside the control. Edge
     // alignment lets the rail span the control while center alignment insets
@@ -378,9 +401,8 @@ export class Slider {
   }
 
   private closestThumbIndex(value: number, target: EventTarget | null): number {
-    const targetElement = target instanceof HTMLElement
-      ? target.closest<HTMLElement>('.slider__thumb')
-      : null;
+    const targetElement =
+      target instanceof HTMLElement ? target.closest<HTMLElement>('.slider__thumb') : null;
     if (targetElement?.dataset['index']) return Number(targetElement.dataset['index']);
     if (!this.isRange) return 0;
 
@@ -402,7 +424,10 @@ export class Slider {
     this.dragging = true;
     this.setValueAt(index, value);
     this.controlEl?.setPointerCapture(event.pointerId);
-    requestAnimationFrame(() => this.el.querySelectorAll<HTMLInputElement>('.slider__input')[index]?.focus({ preventScroll: true }));
+    requestAnimationFrame(() => {
+      const input = this.el.querySelectorAll<HTMLInputElement>('.slider__input')[index];
+      input?.focus({ preventScroll: true });
+    });
   };
 
   private handlePointerMove = (event: PointerEvent) => {
@@ -413,21 +438,24 @@ export class Slider {
 
   private endPointerInteraction(event: PointerEvent, canceled: boolean) {
     if (this.pointerId !== event.pointerId) return;
-    if (this.controlEl?.hasPointerCapture(event.pointerId)) this.controlEl.releasePointerCapture(event.pointerId);
+    if (this.controlEl?.hasPointerCapture(event.pointerId))
+      this.controlEl.releasePointerCapture(event.pointerId);
     this.pointerId = null;
     this.dragging = false;
     this.touched = true;
-    if (!canceled && !this.valuesEqual(this.pointerStartValue, this.publicValue)) this.commitIfChanged();
+    if (!canceled && !this.valuesEqual(this.pointerStartValue, this.publicValue))
+      this.commitIfChanged();
   }
 
   private renderThumb(value: number, index: number) {
-    const inputId = index === 0
-      ? this.inputId ?? `${this.generatedId}-input`
-      : `${this.inputId ?? `${this.generatedId}-input`}-end`;
+    const inputId =
+      index === 0
+        ? (this.inputId ?? `${this.generatedId}-input`)
+        : `${this.inputId ?? `${this.generatedId}-input`}-end`;
     const rangeLabel = index === 0 ? this.startLabel : this.endLabel;
     const labelledby = this.isRange
       ? undefined
-      : this.ariaLabelledby ?? (this.label ? this.labelId : this.externalLabelledby);
+      : (this.ariaLabelledby ?? (this.label ? this.labelId : this.externalLabelledby));
     const directLabel = this.isRange ? rangeLabel : labelledby ? undefined : this.ariaLabel;
 
     return (
@@ -460,7 +488,9 @@ export class Slider {
           onFocus={() => this.handleFocus(index)}
           onBlur={this.handleBlur}
         />
-        <span class="slider__thumb-visual" aria-hidden="true"><span class="slider__thumb-wash" /></span>
+        <span class="slider__thumb-visual" aria-hidden="true">
+          <span class="slider__thumb-wash" />
+        </span>
       </div>
     );
   }
@@ -471,7 +501,9 @@ export class Slider {
     const last = values[values.length - 1];
     const firstInputId = this.inputId ?? `${this.generatedId}-input`;
     const dirty = !this.valuesEqual(this.publicValue, this.initialValue);
-    const valueDisplay = values.map((value, index) => this.formattedValue(value, index)).join(` ${this.rangeSeparator} `);
+    const valueDisplay = values
+      .map((value, index) => this.formattedValue(value, index))
+      .join(` ${this.rangeSeparator} `);
 
     return (
       <Host
@@ -527,17 +559,23 @@ export class Slider {
         )}
         <div
           class="slider__control"
-          ref={element => { this.controlEl = element ?? null; }}
-          style={{
-            '--ds-slider-start-pct': String(this.isRange ? this.percent(first) : 0),
-            '--ds-slider-end-pct': String(this.percent(last)),
-          } as Record<string, string>}
+          ref={element => {
+            this.controlEl = element ?? null;
+          }}
+          style={
+            {
+              '--ds-slider-start-pct': String(this.isRange ? this.percent(first) : 0),
+              '--ds-slider-end-pct': String(this.percent(last)),
+            } as Record<string, string>
+          }
           onPointerDown={this.handlePointerDown}
           onPointerMove={this.handlePointerMove}
           onPointerUp={(event: PointerEvent) => this.endPointerInteraction(event, false)}
           onPointerCancel={(event: PointerEvent) => this.endPointerInteraction(event, true)}
         >
-          <div class="slider__rail" aria-hidden="true"><div class="slider__indicator" /></div>
+          <div class="slider__rail" aria-hidden="true">
+            <div class="slider__indicator" />
+          </div>
           {values.map((value, index) => this.renderThumb(value, index))}
         </div>
       </Host>

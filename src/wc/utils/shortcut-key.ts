@@ -19,7 +19,11 @@ export function shortcutKeyLabels(shortcut: string): string[] {
   if (!normalized) return [];
 
   if (normalized.includes('+')) {
-    return normalized.split('+').map(part => part.trim()).filter(Boolean).map(canonicalKeyLabel);
+    return normalized
+      .split('+')
+      .map(part => part.trim())
+      .filter(Boolean)
+      .map(canonicalKeyLabel);
   }
 
   if (/\s/.test(normalized)) {

@@ -1,11 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createTableRenderModel } from '../src/wc/components/Table/table-render-model';
-import type {
-  TableColumn,
-  TableGroup,
-  TableRow,
-} from '../src/wc/components/Table/table-types';
+import type { TableColumn, TableGroup, TableRow } from '../src/wc/components/Table/table-types';
 
 const columns: TableColumn[] = [
   { id: 'name', header: 'Name', size: 160 },
@@ -35,7 +31,8 @@ test('creates one complete derived snapshot for an ungrouped render', () => {
   assert.equal(model.collapseAllHost, undefined);
   assert.equal(model.flexibleColumnId, 'name');
   assert.deepEqual(model.tableStyle, {
-    '--_table-grid-template-columns': 'var(--_table-selection-column-inline-size) minmax(160px, 1fr) var(--dimension-size-500)',
+    '--_table-grid-template-columns':
+      'var(--_table-selection-column-inline-size) minmax(160px, 1fr) var(--dimension-size-500)',
     '--ds-table-explicit-min-inline-size': 'calc(160px + var(--dimension-size-500))',
   });
 });
@@ -82,17 +79,22 @@ test('normalizes group presentation and selection without mutating inputs', () =
   assert.equal(model.groups[1].collapsed, true);
   assert.deepEqual(model.collapseAllHost, { columnId: 'action', mode: 'action' });
   assert.equal(model.allGroupsCollapsed, false);
-  assert.deepEqual(groups.map(group => group.id), ['critical', 'invalid']);
+  assert.deepEqual(
+    groups.map(group => group.id),
+    ['critical', 'invalid']
+  );
 });
 
 test('uses supplied member totals without loaded-window phrasing', () => {
-  const groups: TableGroup[] = [{
-    id: 'critical',
-    label: 'Critical',
-    totalCount: 166,
-    countLabel: '166 events',
-    rows,
-  }];
+  const groups: TableGroup[] = [
+    {
+      id: 'critical',
+      label: 'Critical',
+      totalCount: 166,
+      countLabel: '166 events',
+      rows,
+    },
+  ];
   const model = createTableRenderModel({
     columns,
     rows: [],

@@ -75,18 +75,10 @@ export function listFrameworkComponentProxies(
   root = ROOT,
   { includeCollisionCopies = false } = {}
 ) {
-  return listFrameworkComponentProxiesForOutputs(
-    root,
-    FRAMEWORK_OUTPUTS,
-    includeCollisionCopies
-  );
+  return listFrameworkComponentProxiesForOutputs(root, FRAMEWORK_OUTPUTS, includeCollisionCopies);
 }
 
-function listFrameworkComponentProxiesForOutputs(
-  root,
-  outputs,
-  includeCollisionCopies
-) {
+function listFrameworkComponentProxiesForOutputs(root, outputs, includeCollisionCopies) {
   const proxies = [];
   for (const { directory } of outputs) {
     const absoluteDirectory = path.join(root, directory);

@@ -52,10 +52,23 @@ const trendDefinition = defineChart({
   marks: [
     areaY(trendRows, { id: 'range', x: 'date', y1: 'low', y2: 'high', interactive: false }),
     ruleY([68], { id: 'target', strokeDasharray: '4 4' }),
-    lineY(trendRows, { id: 'actual', key: 'id', x: 'date', y: 'value', z: 'series', interactive: false }),
+    lineY(trendRows, {
+      id: 'actual',
+      key: 'id',
+      x: 'date',
+      y: 'value',
+      z: 'series',
+      interactive: false,
+    }),
     dot(trendRows, { id: 'actual-points', key: 'id', x: 'date', y: 'value', z: 'series' }),
     textMark([{ id: 'target-label', date: new Date('2026-05-01'), value: 68, label: 'Target' }], {
-      id: 'annotations', key: 'id', x: 'date', y: 'value', text: 'label', textAnchor: 'end', dy: -8,
+      id: 'annotations',
+      key: 'id',
+      x: 'date',
+      y: 'value',
+      text: 'label',
+      textAnchor: 'end',
+      dy: -8,
     }),
   ],
   x: { scale: scaleUtc, axis: { label: 'Month' } },
@@ -79,7 +92,14 @@ const comparisonRows = [
 
 const comparisonDefinition = defineChart({
   marks: [
-    lineY(comparisonRows, { id: 'score-lines', key: 'id', x: 'month', y: 'value', z: 'series', interactive: false }),
+    lineY(comparisonRows, {
+      id: 'score-lines',
+      key: 'id',
+      x: 'month',
+      y: 'value',
+      z: 'series',
+      interactive: false,
+    }),
     dot(comparisonRows, { id: 'score-points', key: 'id', x: 'month', y: 'value', z: 'series' }),
   ],
   x: { scale: scalePoint, axis: { label: 'Month' } },
@@ -100,7 +120,13 @@ const utilizationRows = [
 
 const areaDefinition = defineChart({
   marks: [
-    areaY(utilizationRows, { id: 'utilization-area', key: 'id', x: 'day', y: 'value', interactive: false }),
+    areaY(utilizationRows, {
+      id: 'utilization-area',
+      key: 'id',
+      x: 'day',
+      y: 'value',
+      interactive: false,
+    }),
     lineY(utilizationRows, { id: 'utilization-line', key: 'id', x: 'day', y: 'value' }),
   ],
   x: { scale: scalePoint, axis: { label: 'Day' } },
@@ -121,7 +147,16 @@ const scatterRows = [
 ];
 
 const scatterDefinition = defineChart({
-  marks: [dot(scatterRows, { id: 'vehicles', key: 'id', x: 'distance', y: 'efficiency', z: 'type', r: 5 })],
+  marks: [
+    dot(scatterRows, {
+      id: 'vehicles',
+      key: 'id',
+      x: 'distance',
+      y: 'efficiency',
+      z: 'type',
+      r: 5,
+    }),
+  ],
   x: { scale: scaleLinear, nice: true, grid: true, axis: { label: 'Daily distance' } },
   y: { scale: scaleLinear, nice: true, grid: true, axis: { label: 'Efficiency score' } },
   focus: 'nearest',
@@ -175,13 +210,16 @@ const horizontalBarDefinition = defineChart({
   tooltip: true,
 });
 
-const barDefinition = (layout: 'single' | 'grouped' | 'stacked') => defineChart({
-  marks: [barY(barRows, { id: 'activity', key: 'id', x: 'month', y: 'value', z: 'series', layout })],
-  x: { scale: scaleBand, axis: { label: 'Month' } },
-  y: { scale: scaleLinear, nice: true, grid: true, axis: { label: 'Minutes' } },
-  focus: 'group-x',
-  tooltip: true,
-});
+const barDefinition = (layout: 'single' | 'grouped' | 'stacked') =>
+  defineChart({
+    marks: [
+      barY(barRows, { id: 'activity', key: 'id', x: 'month', y: 'value', z: 'series', layout }),
+    ],
+    x: { scale: scaleBand, axis: { label: 'Month' } },
+    y: { scale: scaleLinear, nice: true, grid: true, axis: { label: 'Minutes' } },
+    focus: 'group-x',
+    tooltip: true,
+  });
 
 const divergingRows = [
   { id: 'jan-gain', month: 'Jan', series: 'Improvement', value: 12 },
@@ -193,17 +231,18 @@ const divergingRows = [
 ];
 
 const divergingDefinition = defineChart({
-  marks: [barY(divergingRows, {
-    id: 'change',
-    key: 'id',
-    x: 'month',
-    y: 'value',
-    z: 'series',
-    layout: 'stacked',
-    fill: row => row.value >= 0
-      ? 'var(--color-data-win-loss-win)'
-      : 'var(--color-data-win-loss-loss)',
-  })],
+  marks: [
+    barY(divergingRows, {
+      id: 'change',
+      key: 'id',
+      x: 'month',
+      y: 'value',
+      z: 'series',
+      layout: 'stacked',
+      fill: row =>
+        row.value >= 0 ? 'var(--color-data-win-loss-win)' : 'var(--color-data-win-loss-loss)',
+    }),
+  ],
   x: { scale: scaleBand, axis: { label: 'Month' } },
   y: { scale: scaleLinear, nice: true, grid: true, axis: { label: 'Score change' } },
   focus: 'group-x',
@@ -217,14 +256,16 @@ const percentageRows = normalizeStack(barRows, {
 });
 
 const percentageDefinition = defineChart({
-  marks: [barY(percentageRows, {
-    id: 'share',
-    key: row => row.data.id,
-    x: 'group',
-    y: 'proportion',
-    z: 'series',
-    layout: 'stacked',
-  })],
+  marks: [
+    barY(percentageRows, {
+      id: 'share',
+      key: row => row.data.id,
+      x: 'group',
+      y: 'proportion',
+      z: 'series',
+      layout: 'stacked',
+    }),
+  ],
   x: { scale: scaleBand<string>().domain(['Jan', 'Feb', 'Mar']) },
   y: {
     scale: scaleLinear().domain([0, 1]),
@@ -241,30 +282,63 @@ const partRows = [
   { id: 'offline', label: 'Offline', value: 10 },
 ];
 const partSlices = pieLayout(partRows, { value: 'value', key: 'id', label: 'label' });
-const polarDefinition = (innerRadius: number) => defineChart({
-  marks: [polar({
-    innerRadius,
-    grid: 'none',
-    marks: [arcMark(partSlices, { id: 'status', key: 'key', theta1: 'theta1', theta2: 'theta2', z: 'label', value: 'value', label: 'label' })],
-    center: innerRadius > 0 ? { value: '100', caption: 'Total devices' } : undefined,
-  })],
-  focus: 'nearest',
-  tooltip: true,
-});
+const polarDefinition = (innerRadius: number) =>
+  defineChart({
+    marks: [
+      polar({
+        innerRadius,
+        grid: 'none',
+        marks: [
+          arcMark(partSlices, {
+            id: 'status',
+            key: 'key',
+            theta1: 'theta1',
+            theta2: 'theta2',
+            z: 'label',
+            value: 'value',
+            label: 'label',
+          }),
+        ],
+        center: innerRadius > 0 ? { value: '100', caption: 'Total devices' } : undefined,
+      }),
+    ],
+    focus: 'nearest',
+    tooltip: true,
+  });
 
 const gaugeValue = 72;
 const gaugeDefinition = defineChart({
-  marks: [polar({
-    startAngle: -Math.PI / 2,
-    endAngle: Math.PI / 2,
-    innerRadius: 0.75,
-    grid: 'none',
-    marks: [
-      arcMark([{ id: 'track', theta1: 0, theta2: 1 }], { id: 'gauge-track', key: 'id', theta1: 'theta1', theta2: 'theta2', fill: 'var(--color-foreground-quaternary)', interactive: false }),
-      arcMark([{ id: 'score', label: 'Score', value: gaugeValue, theta1: 0, theta2: gaugeValue / 100 }], { id: 'gauge-value', key: 'id', theta1: 'theta1', theta2: 'theta2', value: 'value', label: 'label', fill: 'var(--color-data-intent-brand)' }),
-    ],
-    center: { value: `${gaugeValue}%`, caption: 'Fleet score' },
-  })],
+  marks: [
+    polar({
+      startAngle: -Math.PI / 2,
+      endAngle: Math.PI / 2,
+      innerRadius: 0.75,
+      grid: 'none',
+      marks: [
+        arcMark([{ id: 'track', theta1: 0, theta2: 1 }], {
+          id: 'gauge-track',
+          key: 'id',
+          theta1: 'theta1',
+          theta2: 'theta2',
+          fill: 'var(--color-foreground-quaternary)',
+          interactive: false,
+        }),
+        arcMark(
+          [{ id: 'score', label: 'Score', value: gaugeValue, theta1: 0, theta2: gaugeValue / 100 }],
+          {
+            id: 'gauge-value',
+            key: 'id',
+            theta1: 'theta1',
+            theta2: 'theta2',
+            value: 'value',
+            label: 'label',
+            fill: 'var(--color-data-intent-brand)',
+          }
+        ),
+      ],
+      center: { value: `${gaugeValue}%`, caption: 'Fleet score' },
+    }),
+  ],
   focus: 'nearest',
   tooltip: { format: point => `${point.value}%` },
 });
@@ -280,17 +354,39 @@ const radarRows = [
   { id: 'service-b', metric: 'Service', series: 'Previous', value: 68 },
 ];
 const radarDefinition = defineChart({
-  marks: [polar({
-    grid: 'polygon',
-    outerRadius: 0.86,
-    angle: { domain: ['Safety', 'Fuel', 'Uptime', 'Service'], grid: true },
-    radius: { scale: scaleLinear().domain([0, 100]) },
-    marks: [
-      radialArea(radarRows, { id: 'radar-area', key: 'id', angle: 'metric', radius: 'value', z: 'series', interactive: false }),
-      radialLine(radarRows, { id: 'radar-line', key: 'id', angle: 'metric', radius: 'value', z: 'series', interactive: false }),
-      radialDot(radarRows, { id: 'radar-points', key: 'id', angle: 'metric', radius: 'value', z: 'series' }),
-    ],
-  })],
+  marks: [
+    polar({
+      grid: 'polygon',
+      outerRadius: 0.86,
+      angle: { domain: ['Safety', 'Fuel', 'Uptime', 'Service'], grid: true },
+      radius: { scale: scaleLinear().domain([0, 100]) },
+      marks: [
+        radialArea(radarRows, {
+          id: 'radar-area',
+          key: 'id',
+          angle: 'metric',
+          radius: 'value',
+          z: 'series',
+          interactive: false,
+        }),
+        radialLine(radarRows, {
+          id: 'radar-line',
+          key: 'id',
+          angle: 'metric',
+          radius: 'value',
+          z: 'series',
+          interactive: false,
+        }),
+        radialDot(radarRows, {
+          id: 'radar-points',
+          key: 'id',
+          angle: 'metric',
+          radius: 'value',
+          z: 'series',
+        }),
+      ],
+    }),
+  ],
   focus: 'nearest',
   tooltip: true,
 });
@@ -301,30 +397,64 @@ const heatmapRows = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].flatMap((day, dayIndex) 
     day,
     period,
     value: 12 + dayIndex * 13 + periodIndex * 9,
-  })),
+  }))
 );
 const heatmapDefinition = defineChart({
-  marks: [cell(heatmapRows, { id: 'activity', key: 'id', x: 'day', y: 'period', intensity: 'value', value: 'value', intent: 'brand' })],
+  marks: [
+    cell(heatmapRows, {
+      id: 'activity',
+      key: 'id',
+      x: 'day',
+      y: 'period',
+      intensity: 'value',
+      value: 'value',
+      intent: 'brand',
+    }),
+  ],
   x: { scale: scaleBand },
   y: { scale: scaleBand },
   focus: 'nearest',
   tooltip: true,
 });
 
-const distributionRows = [42, 45, 48, 49, 50, 51, 51, 52, 53, 54, 57, 59, 60, 63, 67, 69, 72].map((value, index) => ({ id: index, value }));
+const distributionRows = [42, 45, 48, 49, 50, 51, 51, 52, 53, 54, 57, 59, 60, 63, 67, 69, 72].map(
+  (value, index) => ({ id: index, value })
+);
 const histogramBins = binX(distributionRows, { value: 'value' });
 const cumulativeHistogramBins = cumulativeBins(histogramBins);
 const densityRows = densityX(distributionRows, { value: 'value' });
-const histogramDefinition = (cumulative = false) => defineChart({
-  marks: [rect(cumulative ? cumulativeHistogramBins : histogramBins, { id: cumulative ? 'cumulative' : 'histogram', key: 'key', x1: 'x1', x2: 'x2', y1: () => 0, y2: cumulative ? 'cumulative' : 'count', value: cumulative ? 'cumulative' : 'count' })],
-  x: { scale: scaleLinear, nice: true, axis: { label: 'Value' } },
-  y: { scale: scaleLinear, nice: true, grid: true, axis: { label: cumulative ? 'Cumulative count' : 'Count' } },
-  focus: 'nearest',
-  tooltip: true,
-});
+const histogramDefinition = (cumulative = false) =>
+  defineChart({
+    marks: [
+      rect(cumulative ? cumulativeHistogramBins : histogramBins, {
+        id: cumulative ? 'cumulative' : 'histogram',
+        key: 'key',
+        x1: 'x1',
+        x2: 'x2',
+        y1: () => 0,
+        y2: cumulative ? 'cumulative' : 'count',
+        value: cumulative ? 'cumulative' : 'count',
+      }),
+    ],
+    x: { scale: scaleLinear, nice: true, axis: { label: 'Value' } },
+    y: {
+      scale: scaleLinear,
+      nice: true,
+      grid: true,
+      axis: { label: cumulative ? 'Cumulative count' : 'Count' },
+    },
+    focus: 'nearest',
+    tooltip: true,
+  });
 const densityDefinition = defineChart({
   marks: [
-    areaY(densityRows, { id: 'density-area', key: 'key', x: 'x', y: 'density', interactive: false }),
+    areaY(densityRows, {
+      id: 'density-area',
+      key: 'key',
+      x: 'x',
+      y: 'density',
+      interactive: false,
+    }),
     lineY(densityRows, { id: 'density-line', key: 'key', x: 'x', y: 'density' }),
   ],
   x: { scale: scaleLinear, nice: true, axis: { label: 'Value' } },
@@ -333,11 +463,31 @@ const densityDefinition = defineChart({
   tooltip: true,
 });
 const boxRows = [
-  ...[42, 45, 48, 51, 54, 60, 72].map((value, index) => ({ id: `north-${index}`, region: 'North', value })),
-  ...[30, 46, 50, 52, 55, 58, 90].map((value, index) => ({ id: `south-${index}`, region: 'South', value })),
-  ...[38, 47, 49, 53, 56, 61, 64].map((value, index) => ({ id: `east-${index}`, region: 'East', value })),
-  ...[35, 44, 47, 50, 59, 65, 76].map((value, index) => ({ id: `west-${index}`, region: 'West', value })),
-  ...[40, 43, 46, 49, 52, 57, 63].map((value, index) => ({ id: `central-${index}`, region: 'Central', value })),
+  ...[42, 45, 48, 51, 54, 60, 72].map((value, index) => ({
+    id: `north-${index}`,
+    region: 'North',
+    value,
+  })),
+  ...[30, 46, 50, 52, 55, 58, 90].map((value, index) => ({
+    id: `south-${index}`,
+    region: 'South',
+    value,
+  })),
+  ...[38, 47, 49, 53, 56, 61, 64].map((value, index) => ({
+    id: `east-${index}`,
+    region: 'East',
+    value,
+  })),
+  ...[35, 44, 47, 50, 59, 65, 76].map((value, index) => ({
+    id: `west-${index}`,
+    region: 'West',
+    value,
+  })),
+  ...[40, 43, 46, 49, 52, 57, 63].map((value, index) => ({
+    id: `central-${index}`,
+    region: 'Central',
+    value,
+  })),
 ];
 const boxDefinition = defineChart({
   marks: [boxY(boxRows, { id: 'distribution', key: 'id', x: 'region', y: 'value' })],
@@ -349,10 +499,23 @@ const boxDefinition = defineChart({
 
 const annotatedDefinition = defineChart({
   marks: [
-    bandY([{ id: 'target-band', low: 65, high: 75 }], { id: 'target-band', key: 'id', y1: 'low', y2: 'high', interactive: false }),
+    bandY([{ id: 'target-band', low: 65, high: 75 }], {
+      id: 'target-band',
+      key: 'id',
+      y1: 'low',
+      y2: 'high',
+      interactive: false,
+    }),
     ruleY([70], { id: 'target', strokeDasharray: '4 4', interactive: false }),
     lineY(trendRows, { id: 'actual', key: 'id', x: 'date', y: 'value', z: 'series' }),
-    textMark([{ id: 'note', date: new Date('2026-04-01'), value: 74, label: 'Target reached' }], { id: 'note', key: 'id', x: 'date', y: 'value', text: 'label', dy: -10 }),
+    textMark([{ id: 'note', date: new Date('2026-04-01'), value: 74, label: 'Target reached' }], {
+      id: 'note',
+      key: 'id',
+      x: 'date',
+      y: 'value',
+      text: 'label',
+      dy: -10,
+    }),
   ],
   x: { scale: scaleUtc, axis: { label: 'Month' } },
   y: { scale: scaleLinear, nice: true, grid: true, axis: { label: 'Score' } },
@@ -373,7 +536,9 @@ const renderChart = (definition: ChartDefinition, options: ChartStoryOptions) =>
     style=${`display:grid;gap:var(--dimension-space-200);box-sizing:border-box;width:${options.width ?? 'min(720px, 100%)'};padding:var(--dimension-space-300);border:var(--dimension-stroke-width-012) solid var(--color-border-tertiary);border-radius:var(--dimension-radius-050);background:var(--color-background-primary);`}
   >
     <header style="display:grid;gap:var(--dimension-space-050);">
-      <ds-text as="h2" variant="text-title-small" emphasis color="primary">${options.title}</ds-text>
+      <ds-text as="h2" variant="text-title-small" emphasis color="primary"
+        >${options.title}</ds-text
+      >
       <ds-text as="p" variant="text-body-small" color="secondary">${options.description}</ds-text>
     </header>
     <ds-chart
@@ -395,35 +560,213 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-export const MultiSeriesLine: Story = { render: () => renderChart(comparisonDefinition, { title: 'Fleet score comparison', description: 'Current and previous year scores with grouped month focus.', summary: 'May: current year 78; previous year 70.' }) };
-export const Area: Story = { render: () => renderChart(areaDefinition, { title: 'Weekly fleet utilization', description: 'A zero-based area with a straight-line boundary.', summary: 'Peak utilization: Thursday, 81%.' }) };
-export const LayeredTimeSeries: Story = { render: () => renderChart(trendDefinition, { title: 'Fleet score with expected range', description: 'A time series with a missing observation, confidence area, target rule, and annotation.', summary: 'Latest score: 78. Target: 68.' }) };
-export const Scatter: Story = { render: () => renderChart(scatterDefinition, { title: 'Distance and efficiency', description: 'Vehicle observations grouped by vehicle type.', summary: 'Highest efficiency: EV, 94 at 35 km daily distance.' }) };
-export const SingleBars: Story = { render: () => renderChart(singleBarDefinition, { title: 'Monthly fleet distance', description: 'A single quantitative series across monthly categories.', summary: 'May leads with 612 km.' }) };
-export const HorizontalBars: Story = { render: () => renderChart(horizontalBarDefinition, { title: 'Safety risk events', description: 'Horizontal bars keep longer category labels readable.', summary: 'Speeding is the largest category with 38 events.' }) };
-export const GroupedBars: Story = { render: () => renderChart(barDefinition('grouped'), { title: 'Driving and idling time', description: 'Series are compared side by side within each month.', summary: 'March: 445 driving minutes and 88 idling minutes.' }) };
-export const StackedBars: Story = { render: () => renderChart(barDefinition('stacked'), { title: 'Total activity composition', description: 'Positive series accumulate with a one-pixel internal segment gap.', summary: 'March total: 533 minutes.' }) };
-export const DivergingStackedBars: Story = { render: () => renderChart(divergingDefinition, { title: 'Monthly score movement', description: 'Positive and negative stacks accumulate independently from zero.', summary: 'March: +15 improvement and −3 regression.' }) };
-export const PercentageBars: Story = { render: () => renderChart(percentageDefinition, { title: 'Activity share', description: 'The explicit normalizeStack transform produces percentage composition.', summary: 'January: 82% driving and 18% idling.' }) };
-export const Pie: Story = { render: () => renderChart(polarDefinition(0), { title: 'Device status share', description: 'A pie uses the same arc mark and layout transform as a donut.', summary: 'Online 68; needs review 22; offline 10.', width: '360px' }) };
-export const Donut: Story = { render: () => renderChart(polarDefinition(0.75), { title: 'Device status total', description: 'A 75% inner radius and one-pixel slice gaps frame authored center content.', summary: 'Total devices: 100.', width: '360px' }) };
-export const Gauge: Story = { render: () => renderChart(gaugeDefinition, { title: 'Fleet score gauge', description: 'A semicircular polar composition built from track and value arcs.', summary: 'Fleet score: 72%.', width: '400px', height: 280 }) };
-export const Radar: Story = { render: () => renderChart(radarDefinition, { title: 'Fleet capability profile', description: 'Two series share measured polygon guides and directional labels.', summary: 'Current uptime is the strongest metric at 90.', width: '460px' }) };
-export const Heatmap: Story = { render: () => renderChart(heatmapDefinition, { title: 'Weekly activity intensity', description: 'A brand-intent sequential scale runs continuously from 25% to 100% opacity.', summary: 'Highest activity appears Friday evening.' }) };
-export const Histogram: Story = { render: () => renderChart(histogramDefinition(), { title: 'Vehicle value distribution', description: 'Stable D3 bins are rendered as quantitative rectangles.', summary: 'Most observations fall between 48 and 60.' }) };
-export const CumulativeHistogram: Story = { render: () => renderChart(histogramDefinition(true), { title: 'Cumulative vehicle distribution', description: 'The same bins are transformed into running totals.', summary: `Final cumulative count: ${distributionRows.length}.` }) };
-export const Density: Story = { render: () => renderChart(densityDefinition, { title: 'Smoothed value density', description: 'A zero-inclusive density area and straight line share one semantic series.', summary: 'The highest density is near 52.' }) };
-export const BoxPlot: Story = { render: () => renderChart(boxDefinition, { title: 'Regional value spread', description: 'Compact quartile boxes use 25% data-intent fill with full-strength medians, whiskers, and hollow outliers.', summary: 'North median: 51. South median: 52.' }) };
-export const Annotations: Story = { render: () => renderChart(annotatedDefinition, { title: 'Target attainment', description: 'A band, rule, line, and text annotation render in authored layer order.', summary: 'The score reaches the target range in April.' }) };
+export const MultiSeriesLine: Story = {
+  render: () =>
+    renderChart(comparisonDefinition, {
+      title: 'Fleet score comparison',
+      description: 'Current and previous year scores with grouped month focus.',
+      summary: 'May: current year 78; previous year 70.',
+    }),
+};
+export const Area: Story = {
+  render: () =>
+    renderChart(areaDefinition, {
+      title: 'Weekly fleet utilization',
+      description: 'A zero-based area with a straight-line boundary.',
+      summary: 'Peak utilization: Thursday, 81%.',
+    }),
+};
+export const LayeredTimeSeries: Story = {
+  render: () =>
+    renderChart(trendDefinition, {
+      title: 'Fleet score with expected range',
+      description:
+        'A time series with a missing observation, confidence area, target rule, and annotation.',
+      summary: 'Latest score: 78. Target: 68.',
+    }),
+};
+export const Scatter: Story = {
+  render: () =>
+    renderChart(scatterDefinition, {
+      title: 'Distance and efficiency',
+      description: 'Vehicle observations grouped by vehicle type.',
+      summary: 'Highest efficiency: EV, 94 at 35 km daily distance.',
+    }),
+};
+export const SingleBars: Story = {
+  render: () =>
+    renderChart(singleBarDefinition, {
+      title: 'Monthly fleet distance',
+      description: 'A single quantitative series across monthly categories.',
+      summary: 'May leads with 612 km.',
+    }),
+};
+export const HorizontalBars: Story = {
+  render: () =>
+    renderChart(horizontalBarDefinition, {
+      title: 'Safety risk events',
+      description: 'Horizontal bars keep longer category labels readable.',
+      summary: 'Speeding is the largest category with 38 events.',
+    }),
+};
+export const GroupedBars: Story = {
+  render: () =>
+    renderChart(barDefinition('grouped'), {
+      title: 'Driving and idling time',
+      description: 'Series are compared side by side within each month.',
+      summary: 'March: 445 driving minutes and 88 idling minutes.',
+    }),
+};
+export const StackedBars: Story = {
+  render: () =>
+    renderChart(barDefinition('stacked'), {
+      title: 'Total activity composition',
+      description: 'Positive series accumulate with a one-pixel internal segment gap.',
+      summary: 'March total: 533 minutes.',
+    }),
+};
+export const DivergingStackedBars: Story = {
+  render: () =>
+    renderChart(divergingDefinition, {
+      title: 'Monthly score movement',
+      description: 'Positive and negative stacks accumulate independently from zero.',
+      summary: 'March: +15 improvement and −3 regression.',
+    }),
+};
+export const PercentageBars: Story = {
+  render: () =>
+    renderChart(percentageDefinition, {
+      title: 'Activity share',
+      description: 'The explicit normalizeStack transform produces percentage composition.',
+      summary: 'January: 82% driving and 18% idling.',
+    }),
+};
+export const Pie: Story = {
+  render: () =>
+    renderChart(polarDefinition(0), {
+      title: 'Device status share',
+      description: 'A pie uses the same arc mark and layout transform as a donut.',
+      summary: 'Online 68; needs review 22; offline 10.',
+      width: '360px',
+    }),
+};
+export const Donut: Story = {
+  render: () =>
+    renderChart(polarDefinition(0.75), {
+      title: 'Device status total',
+      description: 'A 75% inner radius and one-pixel slice gaps frame authored center content.',
+      summary: 'Total devices: 100.',
+      width: '360px',
+    }),
+};
+export const Gauge: Story = {
+  render: () =>
+    renderChart(gaugeDefinition, {
+      title: 'Fleet score gauge',
+      description: 'A semicircular polar composition built from track and value arcs.',
+      summary: 'Fleet score: 72%.',
+      width: '400px',
+      height: 280,
+    }),
+};
+export const Radar: Story = {
+  render: () =>
+    renderChart(radarDefinition, {
+      title: 'Fleet capability profile',
+      description: 'Two series share measured polygon guides and directional labels.',
+      summary: 'Current uptime is the strongest metric at 90.',
+      width: '460px',
+    }),
+};
+export const Heatmap: Story = {
+  render: () =>
+    renderChart(heatmapDefinition, {
+      title: 'Weekly activity intensity',
+      description: 'A brand-intent sequential scale runs continuously from 25% to 100% opacity.',
+      summary: 'Highest activity appears Friday evening.',
+    }),
+};
+export const Histogram: Story = {
+  render: () =>
+    renderChart(histogramDefinition(), {
+      title: 'Vehicle value distribution',
+      description: 'Stable D3 bins are rendered as quantitative rectangles.',
+      summary: 'Most observations fall between 48 and 60.',
+    }),
+};
+export const CumulativeHistogram: Story = {
+  render: () =>
+    renderChart(histogramDefinition(true), {
+      title: 'Cumulative vehicle distribution',
+      description: 'The same bins are transformed into running totals.',
+      summary: `Final cumulative count: ${distributionRows.length}.`,
+    }),
+};
+export const Density: Story = {
+  render: () =>
+    renderChart(densityDefinition, {
+      title: 'Smoothed value density',
+      description: 'A zero-inclusive density area and straight line share one semantic series.',
+      summary: 'The highest density is near 52.',
+    }),
+};
+export const BoxPlot: Story = {
+  render: () =>
+    renderChart(boxDefinition, {
+      title: 'Regional value spread',
+      description:
+        'Compact quartile boxes use 25% data-intent fill with full-strength medians, whiskers, and hollow outliers.',
+      summary: 'North median: 51. South median: 52.',
+    }),
+};
+export const Annotations: Story = {
+  render: () =>
+    renderChart(annotatedDefinition, {
+      title: 'Target attainment',
+      description: 'A band, rule, line, and text annotation render in authored layer order.',
+      summary: 'The score reaches the target range in April.',
+    }),
+};
 export const NarrowCard: Story = {
-  render: () => renderChart(defineChart(({ width }) => ({
-    ...barDefinition('grouped').chart as object,
-    marks: width < 360
-      ? [barY(barRows, { id: 'activity', key: 'id', x: 'month', y: 'value', z: 'series', layout: 'stacked' })]
-      : [barY(barRows, { id: 'activity', key: 'id', x: 'month', y: 'value', z: 'series', layout: 'grouped' })],
-    x: { scale: scaleBand, axis: { ticks: { count: width < 360 ? 3 : 6 } } },
-    y: { scale: scaleLinear, nice: true, grid: true },
-    focus: 'group-x',
-    tooltip: true,
-  })), { title: 'Responsive card chart', description: 'At card width the definition switches grouped bars to a stacked composition without scaling text.', summary: 'The chart remains keyboard-focusable and exact values remain available in its tooltip.', width: '280px', height: 240 }),
+  render: () =>
+    renderChart(
+      defineChart(({ width }) => ({
+        ...(barDefinition('grouped').chart as object),
+        marks:
+          width < 360
+            ? [
+                barY(barRows, {
+                  id: 'activity',
+                  key: 'id',
+                  x: 'month',
+                  y: 'value',
+                  z: 'series',
+                  layout: 'stacked',
+                }),
+              ]
+            : [
+                barY(barRows, {
+                  id: 'activity',
+                  key: 'id',
+                  x: 'month',
+                  y: 'value',
+                  z: 'series',
+                  layout: 'grouped',
+                }),
+              ],
+        x: { scale: scaleBand, axis: { ticks: { count: width < 360 ? 3 : 6 } } },
+        y: { scale: scaleLinear, nice: true, grid: true },
+        focus: 'group-x',
+        tooltip: true,
+      })),
+      {
+        title: 'Responsive card chart',
+        description:
+          'At card width the definition switches grouped bars to a stacked composition without scaling text.',
+        summary:
+          'The chart remains keyboard-focusable and exact values remain available in its tooltip.',
+        width: '280px',
+        height: 240,
+      }
+    ),
 };

@@ -24,20 +24,20 @@ test('normalizes flat options and flattens grouped sections', () => {
   assert.equal(flat.length, 1);
   assert.deepEqual(flattenChoiceSections(flat), options);
 
-  const grouped = resolveChoiceSections([], [
-    { header: 'First', options: options.slice(0, 1) },
-    { header: 'Second', options: options.slice(1) },
-  ]);
+  const grouped = resolveChoiceSections(
+    [],
+    [
+      { header: 'First', options: options.slice(0, 1) },
+      { header: 'Second', options: options.slice(1) },
+    ]
+  );
   assert.deepEqual(flattenChoiceSections(grouped), options);
 });
 
 test('uses the icon row variant only when every option has an icon', () => {
   assert.equal(choiceListUsesIcons([]), false);
   assert.equal(choiceListUsesIcons(options), false);
-  assert.equal(
-    choiceListUsesIcons(options.map(option => ({ ...option, icon: 'Chart' }))),
-    true,
-  );
+  assert.equal(choiceListUsesIcons(options.map(option => ({ ...option, icon: 'Chart' }))), true);
 });
 
 test('uses the stable subtext row variant for descriptions but not option-local actions', () => {
@@ -52,7 +52,7 @@ test('uses the stable subtext row variant for descriptions but not option-local 
         subtextActions: [{ label: 'Save', value: 'save' }],
       },
     ]),
-    false,
+    false
   );
 });
 
@@ -63,12 +63,12 @@ test('filters labels, subtext, and section headings while removing empty section
   ];
   assert.deepEqual(
     filterChoiceSections(sections, 'dark').map(section => section.header),
-    ['More'],
+    ['More']
   );
   assert.equal(filterChoiceSections(sections, 'APP')[0].options[0].value, 'apple');
   assert.deepEqual(
     filterChoiceSections(sections, 'common')[0].options.map(option => option.value),
-    ['apple', 'banana'],
+    ['apple', 'banana']
   );
 });
 

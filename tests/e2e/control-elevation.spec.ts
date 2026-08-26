@@ -4,7 +4,7 @@ import { chromiumOnly } from './browser-tier';
 
 const focusedFixtureAxe = chromiumOnly(
   'accessibility',
-  'Axe audits the integrated focused-control matrix in Chromium; focus and elevation behavior retain dedicated coverage.',
+  'Axe audits the integrated focused-control matrix in Chromium; focus and elevation behavior retain dedicated coverage.'
 );
 
 test.beforeEach(async ({ page }) => {
@@ -24,7 +24,7 @@ test('scales the complete elevated surface without compounding its button scale'
 
   await page.mouse.move(
     buttonBefore!.x + buttonBefore!.width / 2,
-    buttonBefore!.y + buttonBefore!.height / 2,
+    buttonBefore!.y + buttonBefore!.height / 2
   );
   await page.mouse.down();
   await expect(wrapper).toHaveAttribute('data-ds-press-active', '');
@@ -143,16 +143,12 @@ test('paints the md outer shadow once and keeps its highlight above an opaque ch
   await page.locator('#opaque-control button').click();
   await expect
     .poll(() =>
-      page.evaluate(
-        () => (window as typeof window & { __opaqueClicks?: number }).__opaqueClicks,
-      ),
+      page.evaluate(() => (window as typeof window & { __opaqueClicks?: number }).__opaqueClicks)
     )
     .toBe(1);
 });
 
-test('retains transparent backdrop blur and borderless unfilled geometry', async ({
-  page,
-}) => {
+test('retains transparent backdrop blur and borderless unfilled geometry', async ({ page }) => {
   const result = await page.locator('#blur-wrapper').evaluate(wrapper => {
     const controlHost = wrapper.querySelector<HTMLElement>('ds-button-unfilled')!;
     const control = controlHost.querySelector<HTMLElement>('.button-unfilled')!;
@@ -251,10 +247,14 @@ test('keeps wrapped borderless Input free of resting, focused, and error strokes
   await expect(page.locator('#input-error input')).toHaveAttribute('aria-invalid', 'true');
 });
 
-test('keeps the focused fixture free of serious accessibility violations', focusedFixtureAxe, async ({ page }) => {
-  const results = await new AxeBuilder({ page }).include('main').analyze();
-  const blocking = results.violations.filter(finding =>
-    ['critical', 'serious'].includes(finding.impact ?? ''),
-  );
-  expect(blocking).toEqual([]);
-});
+test(
+  'keeps the focused fixture free of serious accessibility violations',
+  focusedFixtureAxe,
+  async ({ page }) => {
+    const results = await new AxeBuilder({ page }).include('main').analyze();
+    const blocking = results.violations.filter(finding =>
+      ['critical', 'serious'].includes(finding.impact ?? '')
+    );
+    expect(blocking).toEqual([]);
+  }
+);

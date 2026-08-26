@@ -88,12 +88,7 @@ export const MetadataActions: Story = {
 export const Grouped: Story = {
   render: () => html`
     <div style="display:grid; gap:var(--dimension-space-300); width:min(600px, 90vw);">
-      <ds-message
-        message-id="group-one"
-        direction="incoming"
-        author="Avery"
-        group-position="first"
-      >
+      <ds-message message-id="group-one" direction="incoming" author="Avery" group-position="first">
         <ds-message-bubble variant="received">The route is updated.</ds-message-bubble>
       </ds-message>
       <ds-message

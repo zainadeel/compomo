@@ -40,7 +40,6 @@
   --_badge-ring-width: 0;
 }
 
-
 :host(.badge--dot) .badge__mark {
   width: var(--dimension-size-075);
   height: var(--dimension-size-075);

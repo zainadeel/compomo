@@ -13,10 +13,7 @@ import type { NavChromeStyle } from '../../shell/nav-chrome';
 import type { MenuItemData } from '../Menu/menu-types';
 import { getSelectableTabs, isTabDivider, type TabItemTab } from '../TabGroup/tab-item-utils';
 import type { BarNavTab } from './bar-nav-types';
-import {
-  deriveBarNavValueFromUrl,
-  shouldResyncBarNavProps,
-} from './bar-nav-utils';
+import { deriveBarNavValueFromUrl, shouldResyncBarNavProps } from './bar-nav-utils';
 import {
   tabsOverflowContainer,
   tabsToOverflowMenuSections,
@@ -229,11 +226,11 @@ export class BarNav {
     if (!this.chromeTransitionShell) return;
     this.chromeTransitionShell.removeEventListener(
       CHROME_TRANSITION_START,
-      this.onChromeTransitionStart,
+      this.onChromeTransitionStart
     );
     this.chromeTransitionShell.removeEventListener(
       CHROME_TRANSITION_END,
-      this.onChromeTransitionEnd,
+      this.onChromeTransitionEnd
     );
     this.chromeTransitionShell = null;
   }
@@ -335,13 +332,11 @@ export class BarNav {
     return this.triggerEl.getBoundingClientRect().width + this.getHeaderGap();
   }
 
-  private getProbeTabMetrics():
-    | {
-        itemWidths: number[];
-        itemGap: number;
-        listExtraWidth: number;
-      }
-    | null {
+  private getProbeTabMetrics(): {
+    itemWidths: number[];
+    itemGap: number;
+    listExtraWidth: number;
+  } | null {
     const tabList = this.probeTabListEl;
     if (!tabList) return null;
 
@@ -380,7 +375,7 @@ export class BarNav {
     }
     this.syncFocusedTabId(
       this.effectiveValue,
-      getSelectableTabs(nextCollapsed ? visibleTabs : this.resolvedTabs),
+      getSelectableTabs(nextCollapsed ? visibleTabs : this.resolvedTabs)
     );
   }
 
@@ -395,7 +390,7 @@ export class BarNav {
     this.tabLayoutPendingFrames = 0;
     this.setOverflowTabLayout(
       fallbackCollapsed ? [] : this.resolvedTabs,
-      fallbackCollapsed ? this.resolvedTabs : [],
+      fallbackCollapsed ? this.resolvedTabs : []
     );
     this.tabLayoutCommitted = true;
   }
@@ -431,7 +426,7 @@ export class BarNav {
       intrinsicWidth,
       this.getLeftZoneAvailableWidth(),
       this.tabsCollapsed,
-      BarNav.OVERFLOW_HYSTERESIS_PX,
+      BarNav.OVERFLOW_HYSTERESIS_PX
     );
 
     if (!shouldCollapse) {
@@ -445,7 +440,7 @@ export class BarNav {
       this.getLeftZoneAvailableWidth(),
       this.getOverflowTriggerReserveWidth(),
       metrics.itemGap,
-      metrics.listExtraWidth,
+      metrics.listExtraWidth
     );
     const visibleTabs = trimTrailingDividers(this.resolvedTabs.slice(0, visibleCount));
     const overflowTabs = this.resolvedTabs.slice(visibleTabs.length);
@@ -485,9 +480,7 @@ export class BarNav {
   private applyHostProps() {
     const nextBasePath = this.basePath;
     const sectionChanged =
-      nextBasePath !== '' &&
-      this.committedSection !== '' &&
-      nextBasePath !== this.committedSection;
+      nextBasePath !== '' && this.committedSection !== '' && nextBasePath !== this.committedSection;
 
     if (sectionChanged) {
       this.urlDerivedValue = '';
@@ -545,11 +538,7 @@ export class BarNav {
       return;
     }
 
-    const { value, hideTabs } = deriveBarNavValueFromUrl(
-      this.currentUrl,
-      this.basePath,
-      tabs,
-    );
+    const { value, hideTabs } = deriveBarNavValueFromUrl(this.currentUrl, this.basePath, tabs);
     this.urlDerivedValue = value;
     this.hideTabsForDetailRoute = hideTabs;
   }
@@ -562,16 +551,14 @@ export class BarNav {
   /** Move focus to the selected tab in the visible tab group (after expand). */
   private focusVisibleSelectedTab() {
     const tab = this.visibleTabListEl?.querySelector(
-      `[data-tab-id="${this.effectiveValue}"]`,
+      `[data-tab-id="${this.effectiveValue}"]`
     ) as HTMLElement | null;
     tab?.focus({ preventScroll: true });
   }
 
   private focusVisibleTab(id: string) {
     this.focusedTabId = id;
-    const tab = this.visibleTabListEl?.querySelector(
-      `[data-tab-id="${id}"]`,
-    ) as HTMLElement | null;
+    const tab = this.visibleTabListEl?.querySelector(`[data-tab-id="${id}"]`) as HTMLElement | null;
     tab?.focus({ preventScroll: true });
   }
 
@@ -703,9 +690,13 @@ export class BarNav {
           }
         }}
         onKeyDown={probe ? undefined : (e: KeyboardEvent) => this.handleTabKeyDown(e)}
-        onFocusin={probe ? undefined : () => {
-          this.overflowRovingFocused = false;
-        }}
+        onFocusin={
+          probe
+            ? undefined
+            : () => {
+                this.overflowRovingFocused = false;
+              }
+        }
       >
         {tabs.map((tab, index) => {
           if (isTabDivider(tab)) {
@@ -735,9 +726,7 @@ export class BarNav {
               aria-controls={tab.panelId ?? undefined}
               disabled={tab.isInactive}
               tabIndex={
-                !probe && !this.overflowRovingFocused && tab.id === this.focusedTabId
-                  ? 0
-                  : -1
+                !probe && !this.overflowRovingFocused && tab.id === this.focusedTabId ? 0 : -1
               }
               onClick={() => !probe && !tab.isInactive && this.selectTab(tab.id)}
               onFocus={() => {
@@ -776,10 +765,8 @@ export class BarNav {
     // Section gating only applies when `basePath` is set (SPA section sync).
     // Tabs without a base path must still render — otherwise a single-tab bar
     // (or any non-routed tabs) silently falls through to an empty header.
-    const sectionReady =
-      this.basePath === '' || this.committedSection === this.basePath;
-    const hasTabs =
-      sectionReady && this.resolvedTabs.length > 0 && !this.hideTabsForDetailRoute;
+    const sectionReady = this.basePath === '' || this.committedSection === this.basePath;
+    const hasTabs = sectionReady && this.resolvedTabs.length > 0 && !this.hideTabsForDetailRoute;
     const tabGroupKey = this.basePath || 'no-section';
     const renderedTabs = this.hasOverflowTabs ? this.visibleTabs : this.resolvedTabs;
 
@@ -793,8 +780,7 @@ export class BarNav {
             'ds-chrome-space--md': true,
             'bar-nav--dashboard': this.navStyle === 'dashboard',
             'bar-nav--settings': this.navStyle === 'settings',
-            'bar-nav--tabs-collapsed':
-              hasTabs && this.hasOverflowTabs,
+            'bar-nav--tabs-collapsed': hasTabs && this.hasOverflowTabs,
           }}
           ref={el => {
             this.headerEl = el as HTMLElement;
@@ -803,62 +789,60 @@ export class BarNav {
             }
           }}
         >
-            {hasTabs && (
-              <div class="bar-nav__tabs-probe" aria-hidden="true" inert>
-                <div key={`probe-${tabGroupKey}`}>
-                  {this.renderTabList(this.resolvedTabs, true)}
-                </div>
+          {hasTabs && (
+            <div class="bar-nav__tabs-probe" aria-hidden="true" inert>
+              <div key={`probe-${tabGroupKey}`}>{this.renderTabList(this.resolvedTabs, true)}</div>
+            </div>
+          )}
+
+          {hasTabs && this.tabLayoutCommitted && renderedTabs.length > 0 && (
+            <div class="bar-nav__left">
+              <div key={`visible-${tabGroupKey}`} class="bar-nav__tabs-visible">
+                {this.renderTabList(renderedTabs, false)}
               </div>
-            )}
+            </div>
+          )}
 
-            {hasTabs && this.tabLayoutCommitted && renderedTabs.length > 0 && (
-              <div class="bar-nav__left">
-                <div key={`visible-${tabGroupKey}`} class="bar-nav__tabs-visible">
-                  {this.renderTabList(renderedTabs, false)}
-                </div>
-              </div>
-            )}
+          {hasTabs && !this.tabLayoutCommitted && (
+            <div class="bar-nav__tabs-pending" aria-hidden="true" />
+          )}
 
-            {hasTabs && !this.tabLayoutCommitted && (
-              <div class="bar-nav__tabs-pending" aria-hidden="true" />
-            )}
+          {!hasTabs && this.heading && (
+            <ds-text
+              class="bar-nav__heading"
+              lineTruncation={1}
+              as="span"
+              variant="text-body-medium"
+              emphasis
+              color="primary"
+              wrap="nowrap"
+            >
+              {this.heading}
+            </ds-text>
+          )}
 
-            {!hasTabs && this.heading && (
-              <ds-text
-                class="bar-nav__heading"
-                lineTruncation={1}
-                as="span"
-                variant="text-body-medium"
-                emphasis
-                color="primary"
-                wrap="nowrap"
-              >
-                {this.heading}
-              </ds-text>
-            )}
-
-            {hasTabs && this.hasOverflowTabs && (
-              <ds-button-unfilled variant="icon"
-                class={{
-                  'bar-nav__overflow-trigger': true,
-                }}
-                icon="ChevronDown"
-                activeFill={false}
-                hasBorder={false}
-                focusTabIndex={this.overflowRovingFocused ? 0 : -1}
-                ref={(el?: HTMLDsButtonUnfilledElement) => {
-                  this.triggerEl = (el as (HTMLElement & { setFocus?: () => Promise<void> })) ?? null;
-                }}
-                haspopup="menu"
-                expanded={this.menuTriggerActive}
-                aria-label={this.moreTabsLabel}
-                onDsClick={() => this.toggleTabMenu({ focusVisible: false })}
-                onFocusin={this.handleOverflowFocus}
-                onFocusout={this.handleOverflowBlur}
-                onKeyDown={(e: KeyboardEvent) => this.handleTriggerKeyDown(e)}
-              />
-            )}
-
+          {hasTabs && this.hasOverflowTabs && (
+            <ds-button-unfilled
+              variant="icon"
+              class={{
+                'bar-nav__overflow-trigger': true,
+              }}
+              icon="ChevronDown"
+              activeFill={false}
+              hasBorder={false}
+              focusTabIndex={this.overflowRovingFocused ? 0 : -1}
+              ref={(el?: HTMLDsButtonUnfilledElement) => {
+                this.triggerEl = (el as HTMLElement & { setFocus?: () => Promise<void> }) ?? null;
+              }}
+              haspopup="menu"
+              expanded={this.menuTriggerActive}
+              aria-label={this.moreTabsLabel}
+              onDsClick={() => this.toggleTabMenu({ focusVisible: false })}
+              onFocusin={this.handleOverflowFocus}
+              onFocusout={this.handleOverflowBlur}
+              onKeyDown={(e: KeyboardEvent) => this.handleTriggerKeyDown(e)}
+            />
+          )}
         </header>
 
         {hasTabs && this.hasOverflowTabs && (

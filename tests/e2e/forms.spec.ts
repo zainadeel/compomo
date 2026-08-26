@@ -7,73 +7,89 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('non-button selection, editing, popup, continuous, and drag targets never scale',
+test(
+  'non-button selection, editing, popup, continuous, and drag targets never scale',
   chromiumOnly('interaction', 'The no-scale policy is a shared static interaction recipe.'),
-  async ({
-  page,
-}) => {
-  const targets = [
-    page.locator('#terms'),
-    page.locator('#region .trigger'),
-    page.locator('#tier [role="radio"]').first(),
-    page.locator('#alerts'),
-    page.locator('#slider-single input[type="range"]'),
-    page.locator('#press-policy-swatch .swatch-picker__option').first(),
-  ];
+  async ({ page }) => {
+    const targets = [
+      page.locator('#terms'),
+      page.locator('#region .trigger'),
+      page.locator('#tier [role="radio"]').first(),
+      page.locator('#alerts'),
+      page.locator('#slider-single input[type="range"]'),
+      page.locator('#press-policy-swatch .swatch-picker__option').first(),
+    ];
 
-  for (const target of targets) {
-    await target.scrollIntoViewIfNeeded();
-    await expect(target).not.toHaveClass(/ds-control-press-scale/);
-    const box = await target.boundingBox();
-    expect(box).not.toBeNull();
-    if (!box) continue;
+    for (const target of targets) {
+      await target.scrollIntoViewIfNeeded();
+      await expect(target).not.toHaveClass(/ds-control-press-scale/);
+      const box = await target.boundingBox();
+      expect(box).not.toBeNull();
+      if (!box) continue;
 
-    const before = await target.evaluate(element => ({
-      scale: getComputedStyle(element).scale,
-      width: element.getBoundingClientRect().width,
-      height: element.getBoundingClientRect().height,
-    }));
-    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-    await page.mouse.down();
-    const pressed = await target.evaluate(element => ({
-      scale: getComputedStyle(element).scale,
-      width: element.getBoundingClientRect().width,
-      height: element.getBoundingClientRect().height,
-    }));
-    expect(pressed).toEqual(before);
-    await page.mouse.up();
+      const before = await target.evaluate(element => ({
+        scale: getComputedStyle(element).scale,
+        width: element.getBoundingClientRect().width,
+        height: element.getBoundingClientRect().height,
+      }));
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+      await page.mouse.down();
+      const pressed = await target.evaluate(element => ({
+        scale: getComputedStyle(element).scale,
+        width: element.getBoundingClientRect().width,
+        height: element.getBoundingClientRect().height,
+      }));
+      expect(pressed).toEqual(before);
+      await page.mouse.up();
+    }
   }
-});
+);
 
 test('submits, validates, and resets form-associated controls', async ({ page }) => {
   await page.locator('#submit').click();
-  expect(await page.evaluate(() => (window as typeof window & { __submitted?: unknown }).__submitted)).toBeUndefined();
+  expect(
+    await page.evaluate(() => (window as typeof window & { __submitted?: unknown }).__submitted)
+  ).toBeUndefined();
 
   await page.locator('#email input').fill('person@example.com');
   await page.locator('#terms').click();
-  await page.locator('#region').evaluate((element: HTMLDsSelectElement) => { element.value = 'ca'; });
+  await page.locator('#region').evaluate((element: HTMLDsSelectElement) => {
+    element.value = 'ca';
+  });
   await page.locator('#tier [data-radio-item]').first().click();
-  await page.locator('#alert-fieldset').evaluate((element: HTMLFieldSetElement) => { element.disabled = true; });
+  await page.locator('#alert-fieldset').evaluate((element: HTMLFieldSetElement) => {
+    element.disabled = true;
+  });
   await expect(page.locator('#alerts')).toHaveAttribute('aria-disabled', 'true');
-  await page.locator('#alert-fieldset').evaluate((element: HTMLFieldSetElement) => { element.disabled = false; });
+  await page.locator('#alert-fieldset').evaluate((element: HTMLFieldSetElement) => {
+    element.disabled = false;
+  });
   await expect(page.locator('#alerts')).not.toHaveAttribute('aria-disabled', 'true');
-  await page.locator('#alerts').evaluate((element: HTMLDsSwitchElement) => { element.click(); });
+  await page.locator('#alerts').evaluate((element: HTMLDsSwitchElement) => {
+    element.click();
+  });
   await page.locator('#submit').click();
 
-  await expect.poll(() => page.evaluate(() => (window as typeof window & { __submitted?: unknown }).__submitted)).toEqual({
-    email: 'person@example.com',
-    terms: 'accepted',
-    region: 'ca',
-    tier: 'standard',
-    alerts: 'enabled',
-  });
+  await expect
+    .poll(() =>
+      page.evaluate(() => (window as typeof window & { __submitted?: unknown }).__submitted)
+    )
+    .toEqual({
+      email: 'person@example.com',
+      terms: 'accepted',
+      region: 'ca',
+      tier: 'standard',
+      alerts: 'enabled',
+    });
 
   await page.locator('#reset').click();
   await expect(page.locator('#email input')).toHaveValue('');
   await expect(page.locator('#terms')).toHaveAttribute('aria-checked', 'false');
 });
 
-test('field associates one control with its label, guidance, error, and interaction state', async ({ page }) => {
+test('field associates one control with its label, guidance, error, and interaction state', async ({
+  page,
+}) => {
   const field = page.locator('#email-field');
   const input = page.locator('#email');
   const nativeInput = input.locator('input');
@@ -116,12 +132,14 @@ test('field associates one control with its label, guidance, error, and interact
   });
   await expect(field.getByRole('alert')).toHaveCount(0);
   await expect(field.locator('.field__description .ds-text__element')).toHaveText(
-    'Use your work email address.',
+    'Use your work email address.'
   );
   await expect(nativeInput).toHaveAttribute('aria-describedby', 'email-control-description');
 });
 
-test('input read-only state remains focusable and submittable without a clear action', async ({ page }) => {
+test('input read-only state remains focusable and submittable without a clear action', async ({
+  page,
+}) => {
   const input = page.locator('#input-readonly');
   const nativeInput = input.locator('input');
 
@@ -131,12 +149,18 @@ test('input read-only state remains focusable and submittable without a clear ac
   await nativeInput.focus();
   await expect(nativeInput).toBeFocused();
   await expect(input).toHaveAttribute('data-focused', '');
-  await expect.poll(() => page.locator('#readonly-input-form').evaluate(form =>
-    new FormData(form as HTMLFormElement).get('readonly-input')
-  )).toBe('Kept value');
+  await expect
+    .poll(() =>
+      page
+        .locator('#readonly-input-form')
+        .evaluate(form => new FormData(form as HTMLFormElement).get('readonly-input'))
+    )
+    .toBe('Kept value');
 });
 
-test('number input preserves native semantics, constraints, stepping, and form value', async ({ page }) => {
+test('number input preserves native semantics, constraints, stepping, and form value', async ({
+  page,
+}) => {
   const input = page.locator('#input-number');
   const nativeInput = input.getByRole('spinbutton', { name: 'Exact quantity' });
 
@@ -161,24 +185,32 @@ test('number input preserves native semantics, constraints, stepping, and form v
   await nativeInput.fill('7.5');
   await nativeInput.press('ArrowUp');
   await expect(nativeInput).toHaveValue('8');
-  await expect.poll(() => page.locator('#number-input-form').evaluate(form =>
-    new FormData(form as HTMLFormElement).get('quantity')
-  )).toBe('8');
+  await expect
+    .poll(() =>
+      page
+        .locator('#number-input-form')
+        .evaluate(form => new FormData(form as HTMLFormElement).get('quantity'))
+    )
+    .toBe('8');
 
   await nativeInput.fill('12');
-  expect(await nativeInput.evaluate(element =>
-    (element as HTMLInputElement).validity.rangeOverflow
-  )).toBe(true);
-  expect(await page.locator('#number-input-form').evaluate(form =>
-    (form as HTMLFormElement).checkValidity()
-  )).toBe(false);
+  expect(
+    await nativeInput.evaluate(element => (element as HTMLInputElement).validity.rangeOverflow)
+  ).toBe(true);
+  expect(
+    await page
+      .locator('#number-input-form')
+      .evaluate(form => (form as HTMLFormElement).checkValidity())
+  ).toBe(false);
 
   await nativeInput.fill('10');
   await expect(increment).toBeDisabled();
   await expect(decrement).toBeEnabled();
 });
 
-test('number stepper follows value alignment and splits the inset control height', async ({ page }) => {
+test('number stepper follows value alignment and splits the inset control height', async ({
+  page,
+}) => {
   for (const [id, alignment] of [
     ['input-number', 'start'],
     ['input-number-end', 'end'],
@@ -190,12 +222,27 @@ test('number stepper follows value alignment and splits the inset control height
       const stepper = element
         .querySelector<HTMLElement>('.input-control__number-stepper')!
         .getBoundingClientRect();
-      const buttons = [...element.querySelectorAll<HTMLElement>('.input-control__number-step')]
-        .map(button => button.getBoundingClientRect());
+      const buttons = [...element.querySelectorAll<HTMLElement>('.input-control__number-step')].map(
+        button => button.getBoundingClientRect()
+      );
       return {
-        control: { left: control.left, right: control.right, top: control.top, bottom: control.bottom },
-        input: { left: inputRect.left, right: inputRect.right, textAlign: getComputedStyle(input).textAlign },
-        stepper: { left: stepper.left, right: stepper.right, top: stepper.top, bottom: stepper.bottom },
+        control: {
+          left: control.left,
+          right: control.right,
+          top: control.top,
+          bottom: control.bottom,
+        },
+        input: {
+          left: inputRect.left,
+          right: inputRect.right,
+          textAlign: getComputedStyle(input).textAlign,
+        },
+        stepper: {
+          left: stepper.left,
+          right: stepper.right,
+          top: stepper.top,
+          bottom: stepper.bottom,
+        },
         buttonHeights: buttons.map(button => button.height),
       };
     });
@@ -314,114 +361,131 @@ test('input truncates single-line values and placeholder guidance when constrain
   });
 
   await expect(input).toHaveCSS('text-overflow', 'ellipsis');
-  await expect.poll(() => input.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true);
+  await expect
+    .poll(() => input.evaluate(element => element.scrollWidth > element.clientWidth))
+    .toBe(true);
 });
 
-test('select, multi-select, and menu propagate density into choice rows',
-  chromiumOnly('layout-geometry', 'Density propagation is deterministic and its token recipes have contract coverage.'),
+test(
+  'select, multi-select, and menu propagate density into choice rows',
+  chromiumOnly(
+    'layout-geometry',
+    'Density propagation is deterministic and its token recipes have contract coverage.'
+  ),
   async ({ page }) => {
-  const select = page.locator('#select-lg');
-  await select.locator('.trigger').click();
-  const selectRow = select.getByRole('option', { name: /Primary/ });
-  await expect(selectRow).toHaveClass(/ds-control--lg/);
-  await expect(selectRow.locator('.ds-choice-item__label')).toHaveJSProperty(
-    'variant',
-    'text-body-large',
-  );
-  await expect(selectRow.locator('.ds-choice-item__subtext')).toHaveJSProperty(
-    'variant',
-    'text-body-medium',
-  );
-  await expect(select.locator('.select-search__control')).toHaveClass(/ds-control--lg/);
+    const select = page.locator('#select-lg');
+    await select.locator('.trigger').click();
+    const selectRow = select.getByRole('option', { name: /Primary/ });
+    await expect(selectRow).toHaveClass(/ds-control--lg/);
+    await expect(selectRow.locator('.ds-choice-item__label')).toHaveJSProperty(
+      'variant',
+      'text-body-large'
+    );
+    await expect(selectRow.locator('.ds-choice-item__subtext')).toHaveJSProperty(
+      'variant',
+      'text-body-medium'
+    );
+    await expect(select.locator('.select-search__control')).toHaveClass(/ds-control--lg/);
 
-  await select.locator('.trigger').click();
-  const multi = page.locator('#select-multi-lg');
-  await multi.locator('.trigger').click();
-  await expect(multi.getByRole('option', { name: /Primary/ })).toHaveClass(/ds-control--lg/);
-  await expect(multi.locator('ds-checkbox').first()).toHaveJSProperty('size', 'lg');
+    await select.locator('.trigger').click();
+    const multi = page.locator('#select-multi-lg');
+    await multi.locator('.trigger').click();
+    await expect(multi.getByRole('option', { name: /Primary/ })).toHaveClass(/ds-control--lg/);
+    await expect(multi.locator('ds-checkbox').first()).toHaveJSProperty('size', 'lg');
 
-  await page.locator('#menu-xs').evaluate((element: HTMLDsMenuElement) => {
-    element.open = true;
-  });
-  const menuSection = page.locator('#menu-xs .ds-choice-section').first();
-  await expect(menuSection).toHaveClass(/ds-chrome-column/);
-  await expect(menuSection).toHaveClass(/ds-chrome-space--sm/);
-  await expect
-    .poll(() =>
-      menuSection.evaluate(element => {
-        const style = getComputedStyle(element);
-        return { gap: style.gap, padding: style.padding };
-      })
-    )
-    .toEqual({ gap: '4px', padding: '4px' });
-  const menuRow = page.locator('#menu-xs .menu-item').first();
-  await expect(menuRow).toHaveClass(/ds-control--xs/);
-  await expect(menuRow.locator('.menu-item__label')).toHaveJSProperty('variant', 'text-caption');
-  await expect(menuRow.locator('.menu-item__subtext')).toHaveJSProperty('variant', 'text-caption');
+    await page.locator('#menu-xs').evaluate((element: HTMLDsMenuElement) => {
+      element.open = true;
+    });
+    const menuSection = page.locator('#menu-xs .ds-choice-section').first();
+    await expect(menuSection).toHaveClass(/ds-chrome-column/);
+    await expect(menuSection).toHaveClass(/ds-chrome-space--sm/);
+    await expect
+      .poll(() =>
+        menuSection.evaluate(element => {
+          const style = getComputedStyle(element);
+          return { gap: style.gap, padding: style.padding };
+        })
+      )
+      .toEqual({ gap: '4px', padding: '4px' });
+    const menuRow = page.locator('#menu-xs .menu-item').first();
+    await expect(menuRow).toHaveClass(/ds-control--xs/);
+    await expect(menuRow.locator('.menu-item__label')).toHaveJSProperty('variant', 'text-caption');
+    await expect(menuRow.locator('.menu-item__subtext')).toHaveJSProperty(
+      'variant',
+      'text-caption'
+    );
 
-  await page.locator('#menu-tag').evaluate((element: HTMLDsMenuElement) => {
-    element.open = true;
-  });
-  const taggedMenuRow = page.locator('#menu-tag .menu-item');
-  const trailingTag = taggedMenuRow.locator('ds-tag');
-  await expect(trailingTag).toHaveJSProperty('size', 'sm');
-  await expect(trailingTag).toHaveJSProperty('isInset', true);
-  await expect(trailingTag).toHaveJSProperty('intent', 'brand');
-  await expect(trailingTag).toHaveJSProperty('contrast', 'bold');
-  await expect(trailingTag).toHaveJSProperty('rounded', true);
-  await expect
-    .poll(() =>
-      taggedMenuRow.evaluate(row => {
-        const rowRect = row.getBoundingClientRect();
-        const tagRect = row.querySelector('ds-tag')!.getBoundingClientRect();
-        return { rowHeight: rowRect.height, tagWidth: tagRect.width, tagHeight: tagRect.height };
-      })
-    )
-    .toEqual({ rowHeight: 32, tagWidth: 20, tagHeight: 20 });
-});
+    await page.locator('#menu-tag').evaluate((element: HTMLDsMenuElement) => {
+      element.open = true;
+    });
+    const taggedMenuRow = page.locator('#menu-tag .menu-item');
+    const trailingTag = taggedMenuRow.locator('ds-tag');
+    await expect(trailingTag).toHaveJSProperty('size', 'sm');
+    await expect(trailingTag).toHaveJSProperty('isInset', true);
+    await expect(trailingTag).toHaveJSProperty('intent', 'brand');
+    await expect(trailingTag).toHaveJSProperty('contrast', 'bold');
+    await expect(trailingTag).toHaveJSProperty('rounded', true);
+    await expect
+      .poll(() =>
+        taggedMenuRow.evaluate(row => {
+          const rowRect = row.getBoundingClientRect();
+          const tagRect = row.querySelector('ds-tag')!.getBoundingClientRect();
+          return { rowHeight: rowRect.height, tagWidth: tagRect.width, tagHeight: tagRect.height };
+        })
+      )
+      .toEqual({ rowHeight: 32, tagWidth: 20, tagHeight: 20 });
+  }
+);
 
-test('checkbox sizes center owned filled marks without SVG strokes',
+test(
+  'checkbox sizes center owned filled marks without SVG strokes',
   chromiumOnly('layout-geometry', 'Density-specific mark sizing is static token-backed geometry.'),
   async ({ page }) => {
-  const expected = {
-    lg: { height: 40, placement: 24, box: 20, mark: 20 },
-    md: { height: 32, placement: 20, box: 16, mark: 16 },
-    sm: { height: 24, placement: 16, box: 12, mark: 12 },
-    xs: { height: 16, placement: 12, box: 8, mark: 8 },
-  } as const;
+    const expected = {
+      lg: { height: 40, placement: 24, box: 20, mark: 20 },
+      md: { height: 32, placement: 20, box: 16, mark: 16 },
+      sm: { height: 24, placement: 16, box: 12, mark: 12 },
+      xs: { height: 16, placement: 12, box: 8, mark: 8 },
+    } as const;
 
-  for (const [size, dimensions] of Object.entries(expected)) {
-    const checkbox = page.locator(`#checkbox-${size}`);
-    await expect(checkbox.locator('.checkbox__mark')).toHaveCount(1);
-    await expect(checkbox.locator('ds-icon')).toHaveCount(0);
-    const actual = await checkbox.evaluate(element => {
-      const host = element.getBoundingClientRect();
-      const placement = element.querySelector('.checkbox__placement')!.getBoundingClientRect();
-      const box = element.querySelector('.box')!.getBoundingClientRect();
-      const markElement = element.querySelector('.checkbox__mark')!;
-      const mark = markElement.getBoundingClientRect();
-      return {
-        height: Math.round(host.height),
-        placement: Math.round(placement.width),
-        box: Math.round(box.width),
-        mark: Math.round(mark.width),
-        fill: getComputedStyle(markElement).fill,
-        border: getComputedStyle(element.querySelector('.box')!).boxShadow,
-      };
-    });
+    for (const [size, dimensions] of Object.entries(expected)) {
+      const checkbox = page.locator(`#checkbox-${size}`);
+      await expect(checkbox.locator('.checkbox__mark')).toHaveCount(1);
+      await expect(checkbox.locator('ds-icon')).toHaveCount(0);
+      const actual = await checkbox.evaluate(element => {
+        const host = element.getBoundingClientRect();
+        const placement = element.querySelector('.checkbox__placement')!.getBoundingClientRect();
+        const box = element.querySelector('.box')!.getBoundingClientRect();
+        const markElement = element.querySelector('.checkbox__mark')!;
+        const mark = markElement.getBoundingClientRect();
+        return {
+          height: Math.round(host.height),
+          placement: Math.round(placement.width),
+          box: Math.round(box.width),
+          mark: Math.round(mark.width),
+          fill: getComputedStyle(markElement).fill,
+          border: getComputedStyle(element.querySelector('.box')!).boxShadow,
+        };
+      });
 
-    expect(actual).toMatchObject(dimensions);
-    expect(actual.fill).not.toBe('none');
-    expect(actual.border).toBe('none');
-    await expect(checkbox.locator('.checkbox__mark path')).not.toHaveAttribute('vector-effect', /.+/);
-    await expect(checkbox.locator('.checkbox__mark path')).toHaveAttribute(
-      'd',
-      'M12.9756 4.65527L7.22559 11.4053C7.11258 11.5379 6.94946 11.6169 6.77539 11.624C6.60111 11.631 6.43095 11.5657 6.30762 11.4424L3.05762 8.19238L3.94238 7.30762L6.71289 10.0781L12.0244 3.84473L12.9756 4.65527Z'
-    );
+      expect(actual).toMatchObject(dimensions);
+      expect(actual.fill).not.toBe('none');
+      expect(actual.border).toBe('none');
+      await expect(checkbox.locator('.checkbox__mark path')).not.toHaveAttribute(
+        'vector-effect',
+        /.+/
+      );
+      await expect(checkbox.locator('.checkbox__mark path')).toHaveAttribute(
+        'd',
+        'M12.9756 4.65527L7.22559 11.4053C7.11258 11.5379 6.94946 11.6169 6.77539 11.624C6.60111 11.631 6.43095 11.5657 6.30762 11.4424L3.05762 8.19238L3.94238 7.30762L6.71289 10.0781L12.0244 3.84473L12.9756 4.65527Z'
+      );
+    }
   }
-});
+);
 
-test('checkbox supports Enter and Space activation with mixed-state and presentation semantics', async ({ page }) => {
+test('checkbox supports Enter and Space activation with mixed-state and presentation semantics', async ({
+  page,
+}) => {
   const required = page.locator('#terms');
   await expect(required).toHaveAttribute('aria-required', 'true');
   await expect(required).toHaveAttribute('aria-invalid', 'true');
@@ -430,7 +494,10 @@ test('checkbox supports Enter and Space activation with mixed-state and presenta
 
   const mixed = page.locator('#checkbox-mixed');
   await expect(mixed).toHaveAttribute('aria-checked', 'mixed');
-  await expect(mixed.locator('.checkbox__mark path')).toHaveAttribute('d', 'M12 7.375V8.625H4V7.375H12Z');
+  await expect(mixed.locator('.checkbox__mark path')).toHaveAttribute(
+    'd',
+    'M12 7.375V8.625H4V7.375H12Z'
+  );
 
   await mixed.press('Enter');
   await expect(mixed).toHaveAttribute('aria-checked', 'true');
@@ -449,45 +516,57 @@ test('checkbox supports Enter and Space activation with mixed-state and presenta
   await expect(presentation.locator('ds-text')).toHaveCount(0);
 });
 
-test('radio sizes match checkbox density and use a component-owned selected circle',
-  chromiumOnly('layout-geometry', 'Radio sizing and selected-mark ownership are static component recipes.'),
+test(
+  'radio sizes match checkbox density and use a component-owned selected circle',
+  chromiumOnly(
+    'layout-geometry',
+    'Radio sizing and selected-mark ownership are static component recipes.'
+  ),
   async ({ page }) => {
-  const expected = {
-    lg: { height: 40, placement: 24, circle: 20, dot: 10, stroke: '1.5px' },
-    md: { height: 32, placement: 20, circle: 16, dot: 8, stroke: '1.25px' },
-    sm: { height: 24, placement: 16, circle: 12, dot: 6, stroke: '1px' },
-    xs: { height: 16, placement: 12, circle: 8, dot: 4, stroke: '0.75px' },
-  } as const;
+    const expected = {
+      lg: { height: 40, placement: 24, circle: 20, dot: 10, stroke: '1.5px' },
+      md: { height: 32, placement: 20, circle: 16, dot: 8, stroke: '1.25px' },
+      sm: { height: 24, placement: 16, circle: 12, dot: 6, stroke: '1px' },
+      xs: { height: 16, placement: 12, circle: 8, dot: 4, stroke: '0.75px' },
+    } as const;
 
-  for (const [size, dimensions] of Object.entries(expected)) {
-    const radio = page.locator(`#radio-${size}`);
-    const actual = await radio.evaluate(element => {
-      const selectedElement = element.querySelector<HTMLElement>('[role="radio"][aria-checked="true"]')!;
-      const unselectedElement = element.querySelector<HTMLElement>('[role="radio"][aria-checked="false"]')!;
-      const placement = selectedElement.querySelector('.radio__placement')!.getBoundingClientRect();
-      const circle = selectedElement.querySelector('.radio__circle')!.getBoundingClientRect();
-      const dot = selectedElement.querySelector('.radio__dot')!.getBoundingClientRect();
-      const uncheckedCircle = unselectedElement.querySelector('.radio__circle')!;
-      return {
-        height: Math.round(selectedElement.getBoundingClientRect().height),
-        placement: Math.round(placement.width),
-        circle: Math.round(circle.width),
-        dot: Math.round(dot.width),
-        selectedBorder: getComputedStyle(selectedElement.querySelector('.radio__circle')!).boxShadow,
-        uncheckedBorder: getComputedStyle(uncheckedCircle).boxShadow,
-      };
-    });
+    for (const [size, dimensions] of Object.entries(expected)) {
+      const radio = page.locator(`#radio-${size}`);
+      const actual = await radio.evaluate(element => {
+        const selectedElement = element.querySelector<HTMLElement>(
+          '[role="radio"][aria-checked="true"]'
+        )!;
+        const unselectedElement = element.querySelector<HTMLElement>(
+          '[role="radio"][aria-checked="false"]'
+        )!;
+        const placement = selectedElement
+          .querySelector('.radio__placement')!
+          .getBoundingClientRect();
+        const circle = selectedElement.querySelector('.radio__circle')!.getBoundingClientRect();
+        const dot = selectedElement.querySelector('.radio__dot')!.getBoundingClientRect();
+        const uncheckedCircle = unselectedElement.querySelector('.radio__circle')!;
+        return {
+          height: Math.round(selectedElement.getBoundingClientRect().height),
+          placement: Math.round(placement.width),
+          circle: Math.round(circle.width),
+          dot: Math.round(dot.width),
+          selectedBorder: getComputedStyle(selectedElement.querySelector('.radio__circle')!)
+            .boxShadow,
+          uncheckedBorder: getComputedStyle(uncheckedCircle).boxShadow,
+        };
+      });
 
-    expect(actual).toMatchObject({
-      height: dimensions.height,
-      placement: dimensions.placement,
-      circle: dimensions.circle,
-      dot: dimensions.dot,
-      selectedBorder: 'none',
-    });
-    expect(actual.uncheckedBorder).toContain(dimensions.stroke);
+      expect(actual).toMatchObject({
+        height: dimensions.height,
+        placement: dimensions.placement,
+        circle: dimensions.circle,
+        dot: dimensions.dot,
+        selectedBorder: 'none',
+      });
+      expect(actual.uncheckedBorder).toContain(dimensions.stroke);
+    }
   }
-});
+);
 
 test('radio uses roving focus and arrow-key selection', async ({ page }) => {
   const radio = page.locator('#tier');
@@ -504,7 +583,9 @@ test('radio uses roving focus and arrow-key selection', async ({ page }) => {
   await expect(premium).toBeFocused();
 });
 
-test('switch supports readonly, required, unchecked, and external form behavior', async ({ page }) => {
+test('switch supports readonly, required, unchecked, and external form behavior', async ({
+  page,
+}) => {
   const readOnly = page.locator('#readonly-switch');
   await expect(readOnly).toHaveAttribute('aria-checked', 'true');
   await expect(readOnly).toHaveAttribute('aria-readonly', 'true');
@@ -518,13 +599,17 @@ test('switch supports readonly, required, unchecked, and external form behavior'
   await expect(required).toHaveAttribute('aria-required', 'true');
   await expect(required).toHaveAttribute('aria-invalid', 'true');
   await expect(required).toHaveAttribute('data-invalid', '');
-  await expect.poll(() => switchForm.evaluate(form => (form as HTMLFormElement).checkValidity())).toBe(false);
+  await expect
+    .poll(() => switchForm.evaluate(form => (form as HTMLFormElement).checkValidity()))
+    .toBe(false);
   await required.click();
   await expect(required).toHaveAttribute('data-filled', '');
   await expect(required).toHaveAttribute('data-dirty', '');
   await expect(required).toHaveAttribute('data-valid', '');
   await expect(required).not.toHaveAttribute('aria-invalid');
-  await expect.poll(() => switchForm.evaluate(form => (form as HTMLFormElement).checkValidity())).toBe(true);
+  await expect
+    .poll(() => switchForm.evaluate(form => (form as HTMLFormElement).checkValidity()))
+    .toBe(true);
 
   const presentation = page.locator('#presentation-switch');
   await expect(presentation).toHaveAttribute('aria-hidden', 'true');
@@ -546,90 +631,101 @@ test('switch supports readonly, required, unchecked, and external form behavior'
   await expect(labeled).toHaveAttribute('aria-checked', 'true');
 });
 
-test('switch sizes preserve density-specific thumb insets and an outset focus ring',
-  chromiumOnly('layout-geometry', 'Switch density and focus-ring geometry are token-backed recipes.'),
+test(
+  'switch sizes preserve density-specific thumb insets and an outset focus ring',
+  chromiumOnly(
+    'layout-geometry',
+    'Switch density and focus-ring geometry are token-backed recipes.'
+  ),
   async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  const expected = {
-    lg: { width: 40, height: 24, thumb: 16, inset: 4, blockInset: 4, stroke: '1px' },
-    md: { width: 32, height: 20, thumb: 12, inset: 4, blockInset: 4, stroke: '1px' },
-    sm: { width: 24, height: 16, thumb: 10, inset: 3, blockInset: 3, stroke: '1px' },
-    xs: { width: 20, height: 12, thumb: 8, inset: 2, blockInset: 2, stroke: '1px' },
-  } as const;
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    const expected = {
+      lg: { width: 40, height: 24, thumb: 16, inset: 4, blockInset: 4, stroke: '1px' },
+      md: { width: 32, height: 20, thumb: 12, inset: 4, blockInset: 4, stroke: '1px' },
+      sm: { width: 24, height: 16, thumb: 10, inset: 3, blockInset: 3, stroke: '1px' },
+      xs: { width: 20, height: 12, thumb: 8, inset: 2, blockInset: 2, stroke: '1px' },
+    } as const;
 
-  for (const [size, dimensions] of Object.entries(expected)) {
-    const switchControl = page.locator(`#switch-${size}`);
-    const off = await switchControl.evaluate(element => {
-      const host = element.getBoundingClientRect();
-      const thumbElement = element.shadowRoot!.querySelector<HTMLElement>('.thumb')!;
-      const thumb = thumbElement.getBoundingClientRect();
-      const probe = document.createElement('span');
-      probe.style.color = 'var(--color-border-secondary)';
-      element.shadowRoot!.append(probe);
-      const borderSecondary = getComputedStyle(probe).color;
-      probe.style.color = 'var(--color-foreground-tertiary)';
-      const tertiary = getComputedStyle(probe).color;
-      probe.remove();
-      return {
-        width: Math.round(host.width),
-        height: Math.round(host.height),
-        thumb: Math.round(thumb.width),
-        inset: Math.round(thumb.left - host.left),
-        blockInset: Math.round(thumb.top - host.top),
-        border: getComputedStyle(element).boxShadow,
-        thumbBackground: getComputedStyle(thumbElement).backgroundColor,
-        thumbBorder: getComputedStyle(thumbElement).boxShadow,
-        borderSecondary,
-        tertiary,
-      };
+    for (const [size, dimensions] of Object.entries(expected)) {
+      const switchControl = page.locator(`#switch-${size}`);
+      const off = await switchControl.evaluate(element => {
+        const host = element.getBoundingClientRect();
+        const thumbElement = element.shadowRoot!.querySelector<HTMLElement>('.thumb')!;
+        const thumb = thumbElement.getBoundingClientRect();
+        const probe = document.createElement('span');
+        probe.style.color = 'var(--color-border-secondary)';
+        element.shadowRoot!.append(probe);
+        const borderSecondary = getComputedStyle(probe).color;
+        probe.style.color = 'var(--color-foreground-tertiary)';
+        const tertiary = getComputedStyle(probe).color;
+        probe.remove();
+        return {
+          width: Math.round(host.width),
+          height: Math.round(host.height),
+          thumb: Math.round(thumb.width),
+          inset: Math.round(thumb.left - host.left),
+          blockInset: Math.round(thumb.top - host.top),
+          border: getComputedStyle(element).boxShadow,
+          thumbBackground: getComputedStyle(thumbElement).backgroundColor,
+          thumbBorder: getComputedStyle(thumbElement).boxShadow,
+          borderSecondary,
+          tertiary,
+        };
+      });
+
+      expect(off).toMatchObject({
+        width: dimensions.width,
+        height: dimensions.height,
+        thumb: dimensions.thumb,
+        inset: dimensions.inset,
+        blockInset: dimensions.blockInset,
+      });
+      expect(off.border).toContain('inset');
+      expect(off.border).toContain(dimensions.stroke);
+      expect(off.border).toContain(off.borderSecondary);
+      expect(off.thumbBackground).toBe(off.tertiary);
+      expect(off.thumbBorder).toBe('none');
+
+      await switchControl.click();
+      await expect(switchControl).toHaveAttribute('aria-checked', 'true');
+      await expect
+        .poll(() =>
+          switchControl.evaluate(element => {
+            const host = element.getBoundingClientRect();
+            const thumb = element.shadowRoot!.querySelector('.thumb')!.getBoundingClientRect();
+            return Math.round(host.right - thumb.right);
+          })
+        )
+        .toBe(dimensions.inset);
+      const checkedBorders = await switchControl.evaluate(element => ({
+        track: getComputedStyle(element).boxShadow,
+        thumb: getComputedStyle(element.shadowRoot!.querySelector('.thumb')!).boxShadow,
+      }));
+      expect(checkedBorders.track).toBe('none');
+      expect(checkedBorders.thumb).toBe('none');
+    }
+
+    await page.locator('#switch-sm').focus();
+    await expect(page.locator('#switch-sm')).toHaveAttribute('data-focused', '');
+    await page.keyboard.press('Shift+Tab');
+    await expect(page.locator('#switch-sm')).toHaveAttribute('data-touched', '');
+    await page.keyboard.press('Tab');
+    const focus = await page.locator('#switch-sm').evaluate(element => {
+      const style = getComputedStyle(element);
+      return { style: style.outlineStyle, offset: style.outlineOffset };
     });
-
-    expect(off).toMatchObject({
-      width: dimensions.width,
-      height: dimensions.height,
-      thumb: dimensions.thumb,
-      inset: dimensions.inset,
-      blockInset: dimensions.blockInset,
-    });
-    expect(off.border).toContain('inset');
-    expect(off.border).toContain(dimensions.stroke);
-    expect(off.border).toContain(off.borderSecondary);
-    expect(off.thumbBackground).toBe(off.tertiary);
-    expect(off.thumbBorder).toBe('none');
-
-    await switchControl.click();
-    await expect(switchControl).toHaveAttribute('aria-checked', 'true');
-    await expect.poll(() => switchControl.evaluate(element => {
-      const host = element.getBoundingClientRect();
-      const thumb = element.shadowRoot!.querySelector('.thumb')!.getBoundingClientRect();
-      return Math.round(host.right - thumb.right);
-    })).toBe(dimensions.inset);
-    const checkedBorders = await switchControl.evaluate(element => ({
-      track: getComputedStyle(element).boxShadow,
-      thumb: getComputedStyle(element.shadowRoot!.querySelector('.thumb')!).boxShadow,
-    }));
-    expect(checkedBorders.track).toBe('none');
-    expect(checkedBorders.thumb).toBe('none');
+    expect(focus).toEqual({ style: 'solid', offset: '2px' });
   }
-
-  await page.locator('#switch-sm').focus();
-  await expect(page.locator('#switch-sm')).toHaveAttribute('data-focused', '');
-  await page.keyboard.press('Shift+Tab');
-  await expect(page.locator('#switch-sm')).toHaveAttribute('data-touched', '');
-  await page.keyboard.press('Tab');
-  const focus = await page.locator('#switch-sm').evaluate(element => {
-    const style = getComputedStyle(element);
-    return { style: style.outlineStyle, offset: style.outlineOffset };
-  });
-  expect(focus).toEqual({ style: 'solid', offset: '2px' });
-});
+);
 
 test('switch paints hover and press feedback on the thumb only', async ({ page }) => {
   const switchControl = page.locator('#switch-md');
-  const interactionColors = () => switchControl.evaluate(element => ({
-    host: getComputedStyle(element, '::after').backgroundColor,
-    thumb: getComputedStyle(element.shadowRoot!.querySelector('.thumb')!, '::after').backgroundColor,
-  }));
+  const interactionColors = () =>
+    switchControl.evaluate(element => ({
+      host: getComputedStyle(element, '::after').backgroundColor,
+      thumb: getComputedStyle(element.shadowRoot!.querySelector('.thumb')!, '::after')
+        .backgroundColor,
+    }));
 
   const rest = await interactionColors();
   await switchControl.hover();
@@ -646,7 +742,9 @@ test('switch paints hover and press feedback on the thumb only', async ({ page }
   expect(pressed.thumb).not.toBe(hover.thumb);
 });
 
-test('slider uses native range semantics with complete labels and dynamic range limits', async ({ page }) => {
+test('slider uses native range semantics with complete labels and dynamic range limits', async ({
+  page,
+}) => {
   const single = page.locator('#slider-single input[type="range"]');
   await expect(single).toHaveCount(1);
   await expect(single).toHaveAttribute('aria-labelledby', /ds-slider-.*-label/);
@@ -673,41 +771,46 @@ test('slider uses native range semantics with complete labels and dynamic range 
   await expect(externallyLabeledInput).toBeFocused();
 });
 
-test('slider label matches Field while its value keeps the same primary metric without emphasis',
+test(
+  'slider label matches Field while its value keeps the same primary metric without emphasis',
   chromiumOnly('layout-geometry', 'Typography variants are deterministic component composition.'),
   async ({ page }) => {
-  const textRecipe = async (selector: string) => page.locator(selector).evaluate(text => {
-    const element = text.querySelector<HTMLElement>('.ds-text__element');
-    if (!element) throw new Error(`Missing rendered text element for ${selector}`);
-    const style = getComputedStyle(element);
-    return {
-      variant: (text as HTMLElement & { variant?: string }).variant,
-      emphasis: (text as HTMLElement & { emphasis?: boolean }).emphasis,
-      color: style.color,
-      fontSize: style.fontSize,
-      lineHeight: style.lineHeight,
-      fontWeight: style.fontWeight,
-      letterSpacing: style.letterSpacing,
-    };
-  });
-  const [fieldLabel, sliderLabel, sliderValue] = await Promise.all([
-    textRecipe('#email-field .field__label'),
-    textRecipe('#slider-single .slider__label'),
-    textRecipe('#slider-single .slider__value'),
-  ]);
+    const textRecipe = async (selector: string) =>
+      page.locator(selector).evaluate(text => {
+        const element = text.querySelector<HTMLElement>('.ds-text__element');
+        if (!element) throw new Error(`Missing rendered text element for ${selector}`);
+        const style = getComputedStyle(element);
+        return {
+          variant: (text as HTMLElement & { variant?: string }).variant,
+          emphasis: (text as HTMLElement & { emphasis?: boolean }).emphasis,
+          color: style.color,
+          fontSize: style.fontSize,
+          lineHeight: style.lineHeight,
+          fontWeight: style.fontWeight,
+          letterSpacing: style.letterSpacing,
+        };
+      });
+    const [fieldLabel, sliderLabel, sliderValue] = await Promise.all([
+      textRecipe('#email-field .field__label'),
+      textRecipe('#slider-single .slider__label'),
+      textRecipe('#slider-single .slider__value'),
+    ]);
 
-  expect(sliderLabel).toEqual(fieldLabel);
-  expect(sliderValue).toMatchObject({
-    variant: sliderLabel.variant,
-    emphasis: false,
-    color: sliderLabel.color,
-    fontSize: sliderLabel.fontSize,
-    lineHeight: sliderLabel.lineHeight,
-  });
-  expect(sliderValue.fontWeight).not.toBe(sliderLabel.fontWeight);
-});
+    expect(sliderLabel).toEqual(fieldLabel);
+    expect(sliderValue).toMatchObject({
+      variant: sliderLabel.variant,
+      emphasis: false,
+      color: sliderLabel.color,
+      fontSize: sliderLabel.fontSize,
+      lineHeight: sliderLabel.lineHeight,
+    });
+    expect(sliderValue.fontWeight).not.toBe(sliderLabel.fontWeight);
+  }
+);
 
-test('slider keyboard updates continuously, commits, constrains ranges, and preserves read-only values', async ({ page }) => {
+test('slider keyboard updates continuously, commits, constrains ranges, and preserves read-only values', async ({
+  page,
+}) => {
   const single = page.locator('#slider-single input[type="range"]');
   await single.focus();
   await single.press('ArrowRight');
@@ -716,15 +819,27 @@ test('slider keyboard updates continuously, commits, constrains ranges, and pres
   await expect(page.locator('#slider-single')).toHaveAttribute('data-dirty', '');
   await expect(page.locator('#slider-single')).toHaveAttribute('data-focused', '');
 
-  await expect.poll(() => page.evaluate(() => (window as typeof window & {
-    __sliderEvents: { change: number[]; commit: number[] };
-  }).__sliderEvents)).toEqual({ change: [41], commit: [41] });
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (
+            window as typeof window & {
+              __sliderEvents: { change: number[]; commit: number[] };
+            }
+          ).__sliderEvents
+      )
+    )
+    .toEqual({ change: [41], commit: [41] });
 
   const rangeStart = page.locator('#slider-range input[type="range"]').nth(0);
   await rangeStart.focus();
   await rangeStart.press('End');
   await expect(rangeStart).toHaveValue('70');
-  await expect(page.locator('#slider-range input[type="range"]').nth(1)).toHaveAttribute('min', '80');
+  await expect(page.locator('#slider-range input[type="range"]').nth(1)).toHaveAttribute(
+    'min',
+    '80'
+  );
 
   const readOnly = page.locator('#slider-readonly input[type="range"]');
   await readOnly.focus();
@@ -733,7 +848,9 @@ test('slider keyboard updates continuously, commits, constrains ranges, and pres
   await expect(readOnly).toHaveAttribute('aria-readonly', 'true');
 });
 
-test('slider pointer press selects the nearest thumb and emits one committed value', async ({ page }) => {
+test('slider pointer press selects the nearest thumb and emits one committed value', async ({
+  page,
+}) => {
   const slider = page.locator('#slider-single');
   const control = slider.locator('.slider__control');
   await control.scrollIntoViewIfNeeded();
@@ -742,10 +859,21 @@ test('slider pointer press selects the nearest thumb and emits one committed val
   if (!box) return;
 
   await page.mouse.click(box.x + box.width * 0.75, box.y + box.height / 2);
-  await expect.poll(() => slider.evaluate((element: HTMLDsSliderElement) => element.value)).toBe(75);
-  await expect.poll(() => page.evaluate(() => (window as typeof window & {
-    __sliderEvents: { change: number[]; commit: number[] };
-  }).__sliderEvents.commit)).toEqual([75]);
+  await expect
+    .poll(() => slider.evaluate((element: HTMLDsSliderElement) => element.value))
+    .toBe(75);
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (
+            window as typeof window & {
+              __sliderEvents: { change: number[]; commit: number[] };
+            }
+          ).__sliderEvents.commit
+      )
+    )
+    .toEqual([75]);
 
   const range = page.locator('#slider-range');
   await range.locator('.slider__control').scrollIntoViewIfNeeded();
@@ -753,85 +881,123 @@ test('slider pointer press selects the nearest thumb and emits one committed val
   expect(rangeBox).not.toBeNull();
   if (!rangeBox) return;
   await page.mouse.click(rangeBox.x + rangeBox.width * 0.3, rangeBox.y + rangeBox.height / 2);
-  await expect.poll(() => range.evaluate((element: HTMLDsSliderElement) => element.value)).toEqual([30, 80]);
+  await expect
+    .poll(() => range.evaluate((element: HTMLDsSliderElement) => element.value))
+    .toEqual([30, 80]);
 });
 
-test('slider thumb alignment keeps edge and center rail endpoints geometrically consistent',
-  chromiumOnly('layout-geometry', 'Endpoint alignment is a local geometry contract with explicit tolerance.'),
+test(
+  'slider thumb alignment keeps edge and center rail endpoints geometrically consistent',
+  chromiumOnly(
+    'layout-geometry',
+    'Endpoint alignment is a local geometry contract with explicit tolerance.'
+  ),
   async ({ page }) => {
-  const horizontal = page.locator('#slider-single');
-  const vertical = page.locator('#slider-vertical');
+    const horizontal = page.locator('#slider-single');
+    const vertical = page.locator('#slider-vertical');
 
-  const horizontalGeometry = async (alignment: 'edge' | 'center', value: number) => {
-    await horizontal.evaluate((element: HTMLDsSliderElement, input) => {
-      element.thumbAlignment = input.alignment;
-      element.value = input.value;
-    }, { alignment, value });
-    await expect(horizontal).toHaveClass(new RegExp(`slider--thumb-${alignment}`));
-    await expect(horizontal.locator('input[type="range"]')).toHaveValue(String(value));
-    return horizontal.evaluate((element: HTMLDsSliderElement) => {
-      const control = element.querySelector<HTMLElement>('.slider__control')!.getBoundingClientRect();
-      const rail = element.querySelector<HTMLElement>('.slider__rail')!.getBoundingClientRect();
-      const thumb = element.querySelector<HTMLElement>('.slider__thumb')!.getBoundingClientRect();
-      const indicator = element.querySelector<HTMLElement>('.slider__indicator')!.getBoundingClientRect();
-      return {
-        control: { left: control.left, right: control.right },
-        rail: { left: rail.left, right: rail.right },
-        thumb: { left: thumb.left, right: thumb.right, center: thumb.left + thumb.width / 2, width: thumb.width },
-        indicator: { left: indicator.left, right: indicator.right },
-      };
-    });
-  };
+    const horizontalGeometry = async (alignment: 'edge' | 'center', value: number) => {
+      await horizontal.evaluate(
+        (element: HTMLDsSliderElement, input) => {
+          element.thumbAlignment = input.alignment;
+          element.value = input.value;
+        },
+        { alignment, value }
+      );
+      await expect(horizontal).toHaveClass(new RegExp(`slider--thumb-${alignment}`));
+      await expect(horizontal.locator('input[type="range"]')).toHaveValue(String(value));
+      return horizontal.evaluate((element: HTMLDsSliderElement) => {
+        const control = element
+          .querySelector<HTMLElement>('.slider__control')!
+          .getBoundingClientRect();
+        const rail = element.querySelector<HTMLElement>('.slider__rail')!.getBoundingClientRect();
+        const thumb = element.querySelector<HTMLElement>('.slider__thumb')!.getBoundingClientRect();
+        const indicator = element
+          .querySelector<HTMLElement>('.slider__indicator')!
+          .getBoundingClientRect();
+        return {
+          control: { left: control.left, right: control.right },
+          rail: { left: rail.left, right: rail.right },
+          thumb: {
+            left: thumb.left,
+            right: thumb.right,
+            center: thumb.left + thumb.width / 2,
+            width: thumb.width,
+          },
+          indicator: { left: indicator.left, right: indicator.right },
+        };
+      });
+    };
 
-  const edgeMin = await horizontalGeometry('edge', 0);
-  expect(edgeMin.rail.left).toBeCloseTo(edgeMin.control.left, 3);
-  expect(edgeMin.rail.right).toBeCloseTo(edgeMin.control.right, 3);
-  expect(edgeMin.thumb.left).toBeCloseTo(edgeMin.control.left, 3);
-  expect(edgeMin.indicator.left).toBeCloseTo(edgeMin.control.left, 3);
-  expect(edgeMin.indicator.right).toBeCloseTo(edgeMin.thumb.center, 3);
+    const edgeMin = await horizontalGeometry('edge', 0);
+    expect(edgeMin.rail.left).toBeCloseTo(edgeMin.control.left, 3);
+    expect(edgeMin.rail.right).toBeCloseTo(edgeMin.control.right, 3);
+    expect(edgeMin.thumb.left).toBeCloseTo(edgeMin.control.left, 3);
+    expect(edgeMin.indicator.left).toBeCloseTo(edgeMin.control.left, 3);
+    expect(edgeMin.indicator.right).toBeCloseTo(edgeMin.thumb.center, 3);
 
-  const edgeMax = await horizontalGeometry('edge', 100);
-  expect(edgeMax.thumb.right).toBeCloseTo(edgeMax.control.right, 3);
-  expect(edgeMax.indicator.right).toBeCloseTo(edgeMax.thumb.center, 3);
+    const edgeMax = await horizontalGeometry('edge', 100);
+    expect(edgeMax.thumb.right).toBeCloseTo(edgeMax.control.right, 3);
+    expect(edgeMax.indicator.right).toBeCloseTo(edgeMax.thumb.center, 3);
 
-  const centerMin = await horizontalGeometry('center', 0);
-  expect(centerMin.rail.left).toBeCloseTo(centerMin.control.left + centerMin.thumb.width / 2, 3);
-  expect(centerMin.rail.right).toBeCloseTo(centerMin.control.right - centerMin.thumb.width / 2, 3);
-  expect(centerMin.thumb.center).toBeCloseTo(centerMin.rail.left, 3);
+    const centerMin = await horizontalGeometry('center', 0);
+    expect(centerMin.rail.left).toBeCloseTo(centerMin.control.left + centerMin.thumb.width / 2, 3);
+    expect(centerMin.rail.right).toBeCloseTo(
+      centerMin.control.right - centerMin.thumb.width / 2,
+      3
+    );
+    expect(centerMin.thumb.center).toBeCloseTo(centerMin.rail.left, 3);
 
-  const centerMax = await horizontalGeometry('center', 100);
-  expect(centerMax.thumb.center).toBeCloseTo(centerMax.rail.right, 3);
-  expect(centerMax.thumb.right).toBeCloseTo(centerMax.control.right, 3);
+    const centerMax = await horizontalGeometry('center', 100);
+    expect(centerMax.thumb.center).toBeCloseTo(centerMax.rail.right, 3);
+    expect(centerMax.thumb.right).toBeCloseTo(centerMax.control.right, 3);
 
-  const verticalGeometry = async (alignment: 'edge' | 'center', value: number) => {
-    await vertical.evaluate((element: HTMLDsSliderElement, input) => {
-      element.thumbAlignment = input.alignment;
-      element.value = input.value;
-    }, { alignment, value });
-    await expect(vertical).toHaveClass(new RegExp(`slider--thumb-${alignment}`));
-    await expect(vertical.locator('input[type="range"]')).toHaveValue(String(value));
-    return vertical.evaluate((element: HTMLDsSliderElement) => {
-      const control = element.querySelector<HTMLElement>('.slider__control')!.getBoundingClientRect();
-      const rail = element.querySelector<HTMLElement>('.slider__rail')!.getBoundingClientRect();
-      const thumb = element.querySelector<HTMLElement>('.slider__thumb')!.getBoundingClientRect();
-      return {
-        control: { top: control.top, bottom: control.bottom },
-        rail: { top: rail.top, bottom: rail.bottom },
-        thumb: { top: thumb.top, bottom: thumb.bottom, center: thumb.top + thumb.height / 2, height: thumb.height },
-      };
-    });
-  };
+    const verticalGeometry = async (alignment: 'edge' | 'center', value: number) => {
+      await vertical.evaluate(
+        (element: HTMLDsSliderElement, input) => {
+          element.thumbAlignment = input.alignment;
+          element.value = input.value;
+        },
+        { alignment, value }
+      );
+      await expect(vertical).toHaveClass(new RegExp(`slider--thumb-${alignment}`));
+      await expect(vertical.locator('input[type="range"]')).toHaveValue(String(value));
+      return vertical.evaluate((element: HTMLDsSliderElement) => {
+        const control = element
+          .querySelector<HTMLElement>('.slider__control')!
+          .getBoundingClientRect();
+        const rail = element.querySelector<HTMLElement>('.slider__rail')!.getBoundingClientRect();
+        const thumb = element.querySelector<HTMLElement>('.slider__thumb')!.getBoundingClientRect();
+        return {
+          control: { top: control.top, bottom: control.bottom },
+          rail: { top: rail.top, bottom: rail.bottom },
+          thumb: {
+            top: thumb.top,
+            bottom: thumb.bottom,
+            center: thumb.top + thumb.height / 2,
+            height: thumb.height,
+          },
+        };
+      });
+    };
 
-  const verticalEdgeMin = await verticalGeometry('edge', 0);
-  expect(verticalEdgeMin.rail.top).toBeCloseTo(verticalEdgeMin.control.top, 3);
-  expect(verticalEdgeMin.rail.bottom).toBeCloseTo(verticalEdgeMin.control.bottom, 3);
-  expect(verticalEdgeMin.thumb.bottom).toBeCloseTo(verticalEdgeMin.control.bottom, 3);
+    const verticalEdgeMin = await verticalGeometry('edge', 0);
+    expect(verticalEdgeMin.rail.top).toBeCloseTo(verticalEdgeMin.control.top, 3);
+    expect(verticalEdgeMin.rail.bottom).toBeCloseTo(verticalEdgeMin.control.bottom, 3);
+    expect(verticalEdgeMin.thumb.bottom).toBeCloseTo(verticalEdgeMin.control.bottom, 3);
 
-  const verticalCenterMax = await verticalGeometry('center', 100);
-  expect(verticalCenterMax.rail.top).toBeCloseTo(verticalCenterMax.control.top + verticalCenterMax.thumb.height / 2, 3);
-  expect(verticalCenterMax.rail.bottom).toBeCloseTo(verticalCenterMax.control.bottom - verticalCenterMax.thumb.height / 2, 3);
-  expect(verticalCenterMax.thumb.center).toBeCloseTo(verticalCenterMax.rail.top, 3);
-});
+    const verticalCenterMax = await verticalGeometry('center', 100);
+    expect(verticalCenterMax.rail.top).toBeCloseTo(
+      verticalCenterMax.control.top + verticalCenterMax.thumb.height / 2,
+      3
+    );
+    expect(verticalCenterMax.rail.bottom).toBeCloseTo(
+      verticalCenterMax.control.bottom - verticalCenterMax.thumb.height / 2,
+      3
+    );
+    expect(verticalCenterMax.thumb.center).toBeCloseTo(verticalCenterMax.rail.top, 3);
+  }
+);
 
 test('slider thumb promotes hover to pressed while the pointer is held', async ({ page }) => {
   const slider = page.locator('#slider-single');
@@ -865,14 +1031,17 @@ test('slider thumb promotes hover to pressed while the pointer is held', async (
   await expect(slider).not.toHaveAttribute('data-dragging');
 });
 
-test('slider drag paint stays locked to the pointer without positional easing', async ({ page }) => {
+test('slider drag paint stays locked to the pointer without positional easing', async ({
+  page,
+}) => {
   const slider = page.locator('#slider-single');
   const control = slider.locator('.slider__control');
   const thumb = slider.locator('.slider__thumb');
   await control.scrollIntoViewIfNeeded();
 
   const motion = await slider.evaluate(element => ({
-    indicatorDuration: getComputedStyle(element.querySelector('.slider__indicator')!).transitionDuration,
+    indicatorDuration: getComputedStyle(element.querySelector('.slider__indicator')!)
+      .transitionDuration,
     thumbDuration: getComputedStyle(element.querySelector('.slider__thumb')!).transitionDuration,
   }));
   expect(motion).toEqual({ indicatorDuration: '0s', thumbDuration: '0s' });
@@ -884,83 +1053,95 @@ test('slider drag paint stays locked to the pointer without positional easing', 
   if (!controlBox || !thumbBox) return;
 
   const targetPercentage = 0.82;
-  const targetX = controlBox.x + thumbBox.width / 2
-    + (controlBox.width - thumbBox.width) * targetPercentage;
+  const targetX =
+    controlBox.x + thumbBox.width / 2 + (controlBox.width - thumbBox.width) * targetPercentage;
   const targetY = controlBox.y + controlBox.height / 2;
   await page.mouse.move(thumbBox.x + thumbBox.width / 2, thumbBox.y + thumbBox.height / 2);
   await page.mouse.down();
   await page.mouse.move(targetX, targetY);
 
-  await expect.poll(async () => {
-    const box = await thumb.boundingBox();
-    return box ? Math.abs(box.x + box.width / 2 - targetX) : Number.POSITIVE_INFINITY;
-  }).toBeLessThan(1);
+  await expect
+    .poll(async () => {
+      const box = await thumb.boundingBox();
+      return box ? Math.abs(box.x + box.width / 2 - targetX) : Number.POSITIVE_INFINITY;
+    })
+    .toBeLessThan(1);
   await page.mouse.up();
-  await expect.poll(() => slider.evaluate((element: HTMLDsSliderElement) => element.value)).toBe(82);
+  await expect
+    .poll(() => slider.evaluate((element: HTMLDsSliderElement) => element.value))
+    .toBe(82);
 });
 
-test('slider sizes align with the control density system',
-  chromiumOnly('layout-geometry', 'Slider density values are token-backed and protected by shared density contracts.'),
+test(
+  'slider sizes align with the control density system',
+  chromiumOnly(
+    'layout-geometry',
+    'Slider density values are token-backed and protected by shared density contracts.'
+  ),
   async ({ page }) => {
-  const expected = {
-    md: { control: 32, thumb: 16, track: 8, trackStroke: '1px' },
-    sm: { control: 24, thumb: 12, track: 6, trackStroke: '1px' },
-    xs: { control: 16, thumb: 8, track: 4, trackStroke: '1px' },
-  } as const;
+    const expected = {
+      md: { control: 32, thumb: 16, track: 8, trackStroke: '1px' },
+      sm: { control: 24, thumb: 12, track: 6, trackStroke: '1px' },
+      xs: { control: 16, thumb: 8, track: 4, trackStroke: '1px' },
+    } as const;
 
-  for (const [size, dimensions] of Object.entries(expected)) {
-    const actual = await page.locator(`#slider-${size}`).evaluate(element => {
-      const control = element.querySelector<HTMLElement>('.slider__control')!;
-      const thumb = element.querySelector<HTMLElement>('.slider__thumb')!;
-      const rail = element.querySelector<HTMLElement>('.slider__rail')!;
-      const visual = element.querySelector<HTMLElement>('.slider__thumb-visual')!;
-      const probe = document.createElement('span');
-      probe.style.color = 'var(--color-border-secondary)';
-      element.append(probe);
-      const trackColor = getComputedStyle(probe).color;
-      probe.style.boxShadow = 'var(--effect-elevation-elevated-sm)';
-      const thumbElevation = getComputedStyle(probe).boxShadow;
-      probe.remove();
+    for (const [size, dimensions] of Object.entries(expected)) {
+      const actual = await page.locator(`#slider-${size}`).evaluate(element => {
+        const control = element.querySelector<HTMLElement>('.slider__control')!;
+        const thumb = element.querySelector<HTMLElement>('.slider__thumb')!;
+        const rail = element.querySelector<HTMLElement>('.slider__rail')!;
+        const visual = element.querySelector<HTMLElement>('.slider__thumb-visual')!;
+        const probe = document.createElement('span');
+        probe.style.color = 'var(--color-border-secondary)';
+        element.append(probe);
+        const trackColor = getComputedStyle(probe).color;
+        probe.style.boxShadow = 'var(--effect-elevation-elevated-sm)';
+        const thumbElevation = getComputedStyle(probe).boxShadow;
+        probe.remove();
+        return {
+          control: Math.round(control.getBoundingClientRect().height),
+          thumb: Math.round(thumb.getBoundingClientRect().width),
+          track: Math.round(rail.getBoundingClientRect().height),
+          trackBackground: getComputedStyle(rail).backgroundColor,
+          trackBorder: getComputedStyle(rail).boxShadow,
+          trackRadius: getComputedStyle(rail).borderRadius,
+          thumbBorder: getComputedStyle(visual).boxShadow,
+          thumbRadius: getComputedStyle(visual).borderRadius,
+          trackColor,
+          thumbElevation,
+        };
+      });
+
+      expect(actual).toMatchObject({
+        control: dimensions.control,
+        thumb: dimensions.thumb,
+        track: dimensions.track,
+      });
+      expect(actual.trackBackground).toBe('rgba(0, 0, 0, 0)');
+      expect(actual.trackRadius).toBe('2px');
+      expect(actual.trackBorder).toContain('inset');
+      expect(actual.trackBorder).toContain(dimensions.trackStroke);
+      expect(actual.trackBorder).toContain(actual.trackColor);
+      expect(actual.thumbBorder).toBe(actual.thumbElevation);
+      expect(actual.thumbRadius).toBe('2px');
+    }
+  }
+);
+
+test('slider submits single and repeated range values, associates externally, and resets', async ({
+  page,
+}) => {
+  const form = page.locator('#slider-form');
+  const values = () =>
+    form.evaluate(formElement => {
+      const data = new FormData(formElement as HTMLFormElement);
       return {
-        control: Math.round(control.getBoundingClientRect().height),
-        thumb: Math.round(thumb.getBoundingClientRect().width),
-        track: Math.round(rail.getBoundingClientRect().height),
-        trackBackground: getComputedStyle(rail).backgroundColor,
-        trackBorder: getComputedStyle(rail).boxShadow,
-        trackRadius: getComputedStyle(rail).borderRadius,
-        thumbBorder: getComputedStyle(visual).boxShadow,
-        thumbRadius: getComputedStyle(visual).borderRadius,
-        trackColor,
-        thumbElevation,
+        volume: data.getAll('volume'),
+        price: data.getAll('price'),
+        locked: data.getAll('locked'),
+        external: data.getAll('external-slider'),
       };
     });
-
-    expect(actual).toMatchObject({
-      control: dimensions.control,
-      thumb: dimensions.thumb,
-      track: dimensions.track,
-    });
-    expect(actual.trackBackground).toBe('rgba(0, 0, 0, 0)');
-    expect(actual.trackRadius).toBe('2px');
-    expect(actual.trackBorder).toContain('inset');
-    expect(actual.trackBorder).toContain(dimensions.trackStroke);
-    expect(actual.trackBorder).toContain(actual.trackColor);
-    expect(actual.thumbBorder).toBe(actual.thumbElevation);
-    expect(actual.thumbRadius).toBe('2px');
-  }
-});
-
-test('slider submits single and repeated range values, associates externally, and resets', async ({ page }) => {
-  const form = page.locator('#slider-form');
-  const values = () => form.evaluate(formElement => {
-    const data = new FormData(formElement as HTMLFormElement);
-    return {
-      volume: data.getAll('volume'),
-      price: data.getAll('price'),
-      locked: data.getAll('locked'),
-      external: data.getAll('external-slider'),
-    };
-  });
 
   await expect.poll(values).toEqual({
     volume: ['40'],
@@ -978,12 +1159,17 @@ test('slider submits single and repeated range values, associates externally, an
   await expect(page.locator('#slider-single')).not.toHaveAttribute('data-dirty');
 });
 
-test('has no serious or critical accessibility violations',
-  chromiumOnly('accessibility', 'Storybook owns the component state matrix; this fixture retains one integrated Chromium Axe check.'),
+test(
+  'has no serious or critical accessibility violations',
+  chromiumOnly(
+    'accessibility',
+    'Storybook owns the component state matrix; this fixture retains one integrated Chromium Axe check.'
+  ),
   async ({ page }) => {
-  const results = await new AxeBuilder({ page }).analyze();
-  const highImpact = results.violations.filter(violation =>
-    violation.impact === 'serious' || violation.impact === 'critical'
-  );
-  expect(highImpact).toEqual([]);
-});
+    const results = await new AxeBuilder({ page }).analyze();
+    const highImpact = results.violations.filter(
+      violation => violation.impact === 'serious' || violation.impact === 'critical'
+    );
+    expect(highImpact).toEqual([]);
+  }
+);

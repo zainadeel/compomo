@@ -29,10 +29,7 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-const elevationLevel = (
-  level: 'sm' | 'md' | 'floating',
-  label: string,
-) => html`
+const elevationLevel = (level: 'sm' | 'md' | 'floating', label: string) => html`
   <div class="control-elevation-demo__example">
     <p class="control-elevation-demo__label">${label}</p>
     <div
@@ -54,8 +51,7 @@ const themeExamples = (theme: 'light' | 'dark') => html`
   <section class="control-elevation-demo__theme" data-theme=${theme}>
     <h2 class="util-demo-h2">${theme === 'light' ? 'Light theme' : 'Dark theme'}</h2>
     <div class="control-elevation-demo__examples">
-      ${elevationLevel('sm', 'Small')}
-      ${elevationLevel('md', 'Medium')}
+      ${elevationLevel('sm', 'Small')} ${elevationLevel('md', 'Medium')}
       ${elevationLevel('floating', 'Floating')}
     </div>
     <div class="control-elevation-demo__example">
@@ -80,8 +76,7 @@ export const LevelsAndSurfaces: Story = {
   render: () => html`
     <div class="control-elevation-demo">
       <div class="control-elevation-demo__themes">
-        ${themeExamples('light')}
-        ${themeExamples('dark')}
+        ${themeExamples('light')} ${themeExamples('dark')}
       </div>
     </div>
   `,

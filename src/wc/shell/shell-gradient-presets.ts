@@ -117,7 +117,7 @@ export function isShellGradientPreset(value: string): value is ShellGradientPres
  * literal string "undefined" into CSS and the wash silently disappears.
  */
 export function normalizeShellGradientPreset(
-  value: string | null | undefined,
+  value: string | null | undefined
 ): ShellGradientPreset {
   return value != null && isShellGradientPreset(value) ? value : DEFAULT_SHELL_GRADIENT_PRESET;
 }
@@ -140,13 +140,15 @@ export function buildShellRadialGradientFromStops(stops: readonly ShellGradientS
 export function shellGradientPickerSections(): ShellGradientPickerSection[] {
   return [
     {
-      options: [{
-        value: 'none',
-        label: SHELL_GRADIENT_PRESET_LABELS.none,
-        preview: {
-          backgroundColor: 'var(--color-background-secondary)',
+      options: [
+        {
+          value: 'none',
+          label: SHELL_GRADIENT_PRESET_LABELS.none,
+          preview: {
+            backgroundColor: 'var(--color-background-secondary)',
+          },
         },
-      }],
+      ],
     },
     {
       options: SHELL_GRADIENT_WASH_PRESETS.map(preset => ({

@@ -6,10 +6,7 @@ const baseUrl = 'https://app.example.test/dashboard/';
 
 describe('resolveSafeUrl', () => {
   it('resolves allowed absolute and relative URLs', () => {
-    assert.equal(
-      resolveSafeUrl('../reports', { baseUrl }),
-      'https://app.example.test/reports'
-    );
+    assert.equal(resolveSafeUrl('../reports', { baseUrl }), 'https://app.example.test/reports');
     assert.equal(
       resolveSafeUrl('https://docs.example.test/guide'),
       'https://docs.example.test/guide'

@@ -35,7 +35,7 @@ describe('public prose style contract', () => {
   it('offers an override-friendly direct-text measure without constraining structures', () => {
     assert.match(css, /max-inline-size:\s*var\(--ds-prose-text-max-inline-size,\s*100%\)/);
     const measuredSelector = css.match(
-      />\s*:where\(([^)]+)\):not\([^}]+\{\s*max-inline-size:\s*var\(--ds-prose-text-max-inline-size,\s*100%\)/,
+      />\s*:where\(([^)]+)\):not\([^}]+\{\s*max-inline-size:\s*var\(--ds-prose-text-max-inline-size,\s*100%\)/
     )?.[1];
     assert.ok(measuredSelector?.includes('p'));
     assert.ok(measuredSelector?.includes('blockquote'));

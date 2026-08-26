@@ -30,17 +30,14 @@ export function readPanelNavWidthTokens(navRoot: HTMLElement): PanelNavWidthToke
 
 export function isPanelNavCollapsed(
   panelNavHost: HTMLElement | null,
-  navRoot: HTMLElement | null,
+  navRoot: HTMLElement | null
 ): boolean {
   if (navRoot?.classList.contains('panel-nav--collapsed')) return true;
   const collapsedProp = (panelNavHost as (HTMLElement & { collapsed?: boolean }) | null)?.collapsed;
   return collapsedProp === true;
 }
 
-export function panelWidthPxFromTokens(
-  tokens: PanelNavWidthTokens,
-  collapsed: boolean,
-): number {
+export function panelWidthPxFromTokens(tokens: PanelNavWidthTokens, collapsed: boolean): number {
   return collapsed ? tokens.collapsedPx : tokens.expandedPx;
 }
 

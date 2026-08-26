@@ -7,75 +7,43 @@ test.describe('Managed application shell', () => {
     await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
   });
 
-  test('wires managed chrome and header capacity at each breakpoint', async ({
-    page,
-  }) => {
+  test('wires managed chrome and header capacity at each breakpoint', async ({ page }) => {
     const shell = page.locator('#managed-shell');
     await expect(shell).toHaveJSProperty('composition', 'managed');
     await expect(shell).toHaveAttribute('responsive-mode', 'desktop');
     await expect(shell.locator('ds-panel-nav')).toBeVisible();
     await expect(shell.locator('ds-bar-nav')).toBeVisible();
-    await expect(shell.locator('ds-shell-page')).toHaveJSProperty(
-      'headerCapacity',
-      'roomy'
-    );
-    await expect(
-      shell.getByRole('heading', { level: 1, name: 'Fleet overview' })
-    ).toBeVisible();
+    await expect(shell.locator('ds-shell-page')).toHaveJSProperty('headerCapacity', 'roomy');
+    await expect(shell.getByRole('heading', { level: 1, name: 'Fleet overview' })).toBeVisible();
     await expect(shell.locator('ds-mobile-header')).not.toBeVisible();
     await expect(shell.locator('ds-mobile-bar-nav')).not.toBeVisible();
     await expect(shell.getByRole('main')).toHaveCount(1);
 
     await shell.getByRole('button', { name: 'Search' }).click();
-    await expect(shell.locator('ds-shell-page')).toHaveJSProperty(
-      'headerCapacity',
-      'roomy'
-    );
-    await expect(shell.locator('ds-panel-tools')).not.toHaveClass(
-      /panel-tools--motion-opening/,
-      { timeout: 5000 }
-    );
+    await expect(shell.locator('ds-shell-page')).toHaveJSProperty('headerCapacity', 'roomy');
+    await expect(shell.locator('ds-panel-tools')).not.toHaveClass(/panel-tools--motion-opening/, {
+      timeout: 5000,
+    });
     await shell.getByRole('button', { name: 'Search' }).click();
-    await expect(shell.locator('ds-panel-tools')).toHaveClass(
-      /panel-tools--motion-closing/
-    );
-    await expect(shell.locator('ds-shell-page')).toHaveJSProperty(
-      'headerCapacity',
-      'roomy'
-    );
-    await expect(shell.locator('ds-panel-tools')).not.toHaveClass(
-      /panel-tools--motion-closing/,
-      { timeout: 5000 }
-    );
-    await expect(shell.locator('ds-shell-page')).toHaveJSProperty(
-      'headerCapacity',
-      'roomy'
-    );
+    await expect(shell.locator('ds-panel-tools')).toHaveClass(/panel-tools--motion-closing/);
+    await expect(shell.locator('ds-shell-page')).toHaveJSProperty('headerCapacity', 'roomy');
+    await expect(shell.locator('ds-panel-tools')).not.toHaveClass(/panel-tools--motion-closing/, {
+      timeout: 5000,
+    });
+    await expect(shell.locator('ds-shell-page')).toHaveJSProperty('headerCapacity', 'roomy');
 
     await page.setViewportSize({ width: 1024, height: 760 });
     await expect(shell).toHaveAttribute('responsive-mode', 'tablet');
     await expect(shell.locator('ds-panel-nav')).toBeVisible();
-    await expect(shell.locator('ds-panel-nav')).toHaveJSProperty(
-      'breakpoint',
-      1200
-    );
+    await expect(shell.locator('ds-panel-nav')).toHaveJSProperty('breakpoint', 1200);
     await expect(shell.locator('ds-bar-nav')).toBeVisible();
-    await expect(shell.locator('ds-shell-page')).toHaveJSProperty(
-      'headerCapacity',
-      'compact'
-    );
+    await expect(shell.locator('ds-shell-page')).toHaveJSProperty('headerCapacity', 'compact');
     await expect(shell.locator('ds-mobile-header')).not.toBeVisible();
 
     await shell.getByRole('button', { name: 'Search' }).click();
-    await expect(shell.locator('ds-shell-page')).toHaveJSProperty(
-      'headerCapacity',
-      'compact'
-    );
+    await expect(shell.locator('ds-shell-page')).toHaveJSProperty('headerCapacity', 'compact');
     await shell.getByRole('button', { name: 'Search' }).click();
-    await expect(shell.locator('ds-shell-page')).toHaveJSProperty(
-      'headerCapacity',
-      'compact'
-    );
+    await expect(shell.locator('ds-shell-page')).toHaveJSProperty('headerCapacity', 'compact');
 
     await page.setViewportSize({ width: 390, height: 760 });
     await expect(shell).toHaveAttribute('responsive-mode', 'mobile');
@@ -100,13 +68,9 @@ test.describe('Managed application shell', () => {
         shellPage.evaluate(element => {
           const mobileHeader = element.querySelector<HTMLElement>('.shell-page__mobile-header');
           const reportedHeight = Number.parseFloat(
-            getComputedStyle(element).getPropertyValue(
-              '--ds-shell-page-sticky-header-block-size'
-            )
+            getComputedStyle(element).getPropertyValue('--ds-shell-page-sticky-header-block-size')
           );
-          return Math.abs(
-            reportedHeight - (mobileHeader?.getBoundingClientRect().height ?? 0)
-          );
+          return Math.abs(reportedHeight - (mobileHeader?.getBoundingClientRect().height ?? 0));
         })
       )
       .toBeLessThan(0.5);
@@ -139,8 +103,9 @@ test.describe('Managed application shell', () => {
       };
     });
     expect(contextMetrics.ratio).toBeCloseTo(2 / 3, 2);
-    expect(Math.max(...contextMetrics.tabWidths) - Math.min(...contextMetrics.tabWidths))
-      .toBeLessThanOrEqual(0.5);
+    expect(
+      Math.max(...contextMetrics.tabWidths) - Math.min(...contextMetrics.tabWidths)
+    ).toBeLessThanOrEqual(0.5);
     await shell.getByRole('button', { name: 'Help & Support' }).click();
 
     await expect(shell.locator('ds-shell-tools')).toHaveAttribute('active-tool', 'help');
@@ -207,13 +172,23 @@ test.describe('Managed application shell', () => {
     await expect(content).toHaveCSS('padding-left', '32px');
     await expect(barTitle).toHaveClass(/bar-title-host--expanded/);
     expect(
-      await barTitle.locator('.bar-title').evaluate(element => getComputedStyle(element, '::after').display)
+      await barTitle
+        .locator('.bar-title')
+        .evaluate(element => getComputedStyle(element, '::after').display)
     ).toBe('none');
 
-    await expect.poll(() => shellPage.evaluate(element =>
-      Number.parseFloat(getComputedStyle(element).getPropertyValue('--ds-shell-page-sticky-header-block-size'))
-    )).toBeGreaterThan(48);
-    await scroller.evaluate((element: HTMLElement) => { element.scrollTop = 300; });
+    await expect
+      .poll(() =>
+        shellPage.evaluate(element =>
+          Number.parseFloat(
+            getComputedStyle(element).getPropertyValue('--ds-shell-page-sticky-header-block-size')
+          )
+        )
+      )
+      .toBeGreaterThan(48);
+    await scroller.evaluate((element: HTMLElement) => {
+      element.scrollTop = 300;
+    });
     await expect(barTitle).toHaveClass(/bar-title-host--expanded/);
     await expect(shellPage.locator('.shell-page__flow-spacer')).toHaveCSS('height', '0px');
 
@@ -221,11 +196,19 @@ test.describe('Managed application shell', () => {
     await expect(barTitle).toHaveClass(/bar-title-host--expanded/);
     await expect(content).toHaveCSS('padding-top', '2px');
     expect(
-      await barTitle.locator('.bar-title').evaluate(element => getComputedStyle(element, '::after').display)
+      await barTitle
+        .locator('.bar-title')
+        .evaluate(element => getComputedStyle(element, '::after').display)
     ).toBe('none');
-    await expect.poll(() => shellPage.evaluate(element =>
-      Number.parseFloat(getComputedStyle(element).getPropertyValue('--ds-shell-page-sticky-header-block-size'))
-    )).toBeGreaterThan(48);
+    await expect
+      .poll(() =>
+        shellPage.evaluate(element =>
+          Number.parseFloat(
+            getComputedStyle(element).getPropertyValue('--ds-shell-page-sticky-header-block-size')
+          )
+        )
+      )
+      .toBeGreaterThan(48);
 
     await shell.getByRole('button', { name: 'Search' }).click();
     await page.setViewportSize({ width: 1024, height: 760 });
@@ -345,7 +328,9 @@ test.describe('Managed application shell', () => {
       .toBeGreaterThan(0);
 
     const snapScrollTop = await shellPage.evaluate(element => {
-      const root = element.closest('ds-shell-app')?.querySelector<HTMLElement>('.shell-app__content');
+      const root = element
+        .closest('ds-shell-app')
+        ?.querySelector<HTMLElement>('.shell-app__content');
       const sentinel = element.querySelector<HTMLElement>('.shell-page__scroll-sentinel');
       return root && sentinel
         ? root.scrollTop + sentinel.getBoundingClientRect().top - root.getBoundingClientRect().top
@@ -376,7 +361,7 @@ test.describe('Managed application shell', () => {
     'emits navigation intent without changing the application URL',
     chromiumOnly(
       'controlled-behavior',
-      'Managed navigation event forwarding is deterministic and does not use an engine-specific API.',
+      'Managed navigation event forwarding is deterministic and does not use an engine-specific API.'
     ),
     async ({ page }) => {
       const originalUrl = page.url();
@@ -387,7 +372,7 @@ test.describe('Managed application shell', () => {
         JSON.stringify({ type: 'dsNavSelect', detail: 'safety' })
       );
       expect(page.url()).toBe(originalUrl);
-    },
+    }
   );
 
   test('keeps detail identity in mobile chrome instead of promoting a peer route tab', async ({
@@ -406,13 +391,9 @@ test.describe('Managed application shell', () => {
 
     await page.setViewportSize({ width: 390, height: 760 });
     await expect(shell).toHaveAttribute('responsive-mode', 'mobile');
-    await expect(
-      shell.getByRole('heading', { level: 1, name: 'John Smith' })
-    ).toBeVisible();
+    await expect(shell.getByRole('heading', { level: 1, name: 'John Smith' })).toBeVisible();
     await expect(shell.getByRole('button', { name: 'Back to People' })).toBeVisible();
-    await expect(
-      shell.getByRole('button', { name: /Current section: Overview/ })
-    ).toHaveCount(0);
+    await expect(shell.getByRole('button', { name: /Current section: Overview/ })).toHaveCount(0);
   });
 
   test('preserves routed and tool element identity across responsive presentation changes', async ({
@@ -432,10 +413,7 @@ test.describe('Managed application shell', () => {
     await draft.fill('Keep this draft');
 
     await page.setViewportSize({ width: 390, height: 760 });
-    await expect(page.locator('#managed-shell')).toHaveAttribute(
-      'responsive-mode',
-      'mobile'
-    );
+    await expect(page.locator('#managed-shell')).toHaveAttribute('responsive-mode', 'mobile');
     await expect(page.getByRole('button', { name: 'Agents' })).toHaveAttribute(
       'aria-current',
       'page'
@@ -448,10 +426,8 @@ test.describe('Managed application shell', () => {
         managedToolOwner?: Element | null;
       };
       return {
-        page:
-          state.managedPageOwner === document.getElementById('managed-page-content'),
-        tool:
-          state.managedToolOwner === document.getElementById('managed-agents-view'),
+        page: state.managedPageOwner === document.getElementById('managed-page-content'),
+        tool: state.managedToolOwner === document.getElementById('managed-agents-view'),
       };
     });
     expect(identity).toEqual({ page: true, tool: true });
@@ -483,16 +459,12 @@ test.describe('Managed application shell', () => {
       };
     });
 
-    await expect(
-      shell.getByRole('heading', { level: 1, name: 'Fleet overview' })
-    ).toBeVisible();
+    await expect(shell.getByRole('heading', { level: 1, name: 'Fleet overview' })).toBeVisible();
     await expect(pageContent).toContainText('Persistent routed content');
 
     await page.setViewportSize({ width: 390, height: 760 });
     await expect(shell).toHaveAttribute('responsive-mode', 'mobile');
-    await expect(
-      shell.getByRole('heading', { level: 1, name: 'Overview' })
-    ).toBeVisible();
+    await expect(shell.getByRole('heading', { level: 1, name: 'Overview' })).toBeVisible();
     await expect(pageContent).toContainText('Persistent routed content');
     expect(runtimeErrors).toEqual([]);
   });
@@ -504,8 +476,7 @@ test.describe('Managed application shell', () => {
     const shell = page.locator('#managed-shell');
     const agentsView = page.locator('#managed-agents-view');
     const owner = await agentsView.evaluate(element => {
-      (window as typeof window & { fullscreenOwner?: Element }).fullscreenOwner =
-        element;
+      (window as typeof window & { fullscreenOwner?: Element }).fullscreenOwner = element;
       return element.id;
     });
     expect(owner).toBe('managed-agents-view');
@@ -513,9 +484,7 @@ test.describe('Managed application shell', () => {
     await shell.evaluate(async element => {
       await (
         element as HTMLElement & {
-          setToolPresentation: (
-            presentation: 'drawer' | 'fullscreen'
-          ) => Promise<void>;
+          setToolPresentation: (presentation: 'drawer' | 'fullscreen') => Promise<void>;
         }
       ).setToolPresentation('fullscreen');
     });
@@ -524,17 +493,14 @@ test.describe('Managed application shell', () => {
     expect(
       await agentsView.evaluate(
         element =>
-          (window as typeof window & { fullscreenOwner?: Element }).fullscreenOwner ===
-          element
+          (window as typeof window & { fullscreenOwner?: Element }).fullscreenOwner === element
       )
     ).toBe(true);
 
     await shell.evaluate(async element => {
       await (
         element as HTMLElement & {
-          setToolPresentation: (
-            presentation: 'drawer' | 'fullscreen'
-          ) => Promise<void>;
+          setToolPresentation: (presentation: 'drawer' | 'fullscreen') => Promise<void>;
         }
       ).setToolPresentation('drawer');
     });
