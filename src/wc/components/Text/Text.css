@@ -87,10 +87,18 @@
   word-break: break-word;
 }
 
-:host(.ds-text--truncate-2) .ds-text__element { -webkit-line-clamp: 2; }
-:host(.ds-text--truncate-3) .ds-text__element { -webkit-line-clamp: 3; }
-:host(.ds-text--truncate-4) .ds-text__element { -webkit-line-clamp: 4; }
-:host(.ds-text--truncate-5) .ds-text__element { -webkit-line-clamp: 5; }
+:host(.ds-text--truncate-2) .ds-text__element {
+  -webkit-line-clamp: 2;
+}
+:host(.ds-text--truncate-3) .ds-text__element {
+  -webkit-line-clamp: 3;
+}
+:host(.ds-text--truncate-4) .ds-text__element {
+  -webkit-line-clamp: 4;
+}
+:host(.ds-text--truncate-5) .ds-text__element {
+  -webkit-line-clamp: 5;
+}
 
 /* ── Wrap ───────────────────────────────────────────────────────────────── */
 
@@ -104,25 +112,53 @@
 }
 
 :host(.ds-text--balance),
-:host(.ds-text--balance) .ds-text__element { text-wrap: balance; }
+:host(.ds-text--balance) .ds-text__element {
+  text-wrap: balance;
+}
 
 :host(.ds-text--pretty),
-:host(.ds-text--pretty) .ds-text__element { text-wrap: pretty; }
+:host(.ds-text--pretty) .ds-text__element {
+  text-wrap: pretty;
+}
 
 /* ── Color ──────────────────────────────────────────────────────────────── */
 
-:host(.ds-text--color-primary)   { color: var(--color-foreground-primary); }
-:host(.ds-text--color-secondary) { color: var(--color-foreground-secondary); }
-:host(.ds-text--color-tertiary)  { color: var(--color-foreground-tertiary); }
-:host(.ds-text--color-quaternary) { color: var(--color-foreground-quaternary); }
-:host(.ds-text--color-brand)     { color: var(--color-foreground-bold-brand); }
-:host(.ds-text--color-negative)  { color: var(--color-foreground-bold-negative); }
-:host(.ds-text--color-positive)  { color: var(--color-foreground-bold-positive); }
-:host(.ds-text--color-warning)   { color: var(--color-foreground-bold-warning); }
-:host(.ds-text--color-caution)   { color: var(--color-foreground-bold-caution); }
-:host(.ds-text--color-ai)        { color: var(--color-foreground-bold-ai); }
-:host(.ds-text--color-on-strong) { color: var(--color-foreground-on-strong-background-primary); }
-:host(.ds-text--color-on-bold)   { color: var(--color-foreground-on-bold-background-primary); }
+:host(.ds-text--color-primary) {
+  color: var(--color-foreground-primary);
+}
+:host(.ds-text--color-secondary) {
+  color: var(--color-foreground-secondary);
+}
+:host(.ds-text--color-tertiary) {
+  color: var(--color-foreground-tertiary);
+}
+:host(.ds-text--color-quaternary) {
+  color: var(--color-foreground-quaternary);
+}
+:host(.ds-text--color-brand) {
+  color: var(--color-foreground-bold-brand);
+}
+:host(.ds-text--color-negative) {
+  color: var(--color-foreground-bold-negative);
+}
+:host(.ds-text--color-positive) {
+  color: var(--color-foreground-bold-positive);
+}
+:host(.ds-text--color-warning) {
+  color: var(--color-foreground-bold-warning);
+}
+:host(.ds-text--color-caution) {
+  color: var(--color-foreground-bold-caution);
+}
+:host(.ds-text--color-ai) {
+  color: var(--color-foreground-bold-ai);
+}
+:host(.ds-text--color-on-strong) {
+  color: var(--color-foreground-on-strong-background-primary);
+}
+:host(.ds-text--color-on-bold) {
+  color: var(--color-foreground-on-bold-background-primary);
+}
 /*
  * The inherit state intentionally has no declaration. `color` inherits
  * naturally, while omitting a host rule lets an owning component apply a
@@ -149,7 +185,9 @@
 
 /* ── Style ──────────────────────────────────────────────────────────────── */
 
-:host(.ds-text--italic) { font-style: italic; }
+:host(.ds-text--italic) {
+  font-style: italic;
+}
 
 :host(.ds-text--font-feature-tabular-nums) {
   font-variant-numeric: tabular-nums;
@@ -158,6 +196,12 @@
 
 /* ── Align ──────────────────────────────────────────────────────────────── */
 
-:host(.ds-text--align-left)   { text-align: left; }
-:host(.ds-text--align-center) { text-align: center; }
-:host(.ds-text--align-right)  { text-align: right; }
+:host(.ds-text--align-left) {
+  text-align: left;
+}
+:host(.ds-text--align-center) {
+  text-align: center;
+}
+:host(.ds-text--align-right) {
+  text-align: right;
+}

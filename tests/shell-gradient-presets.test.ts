@@ -43,7 +43,7 @@ describe('shell gradient recipes', () => {
         { color: 'red', position: 40 },
         { color: 'blue', position: 100 },
       ]),
-      'radial-gradient(100% 100% at 0% 0%, transparent 0%, red 40%, blue 100%)',
+      'radial-gradient(100% 100% at 0% 0%, transparent 0%, red 40%, blue 100%)'
     );
   });
 
@@ -57,7 +57,10 @@ describe('shell gradient recipes', () => {
     const sections = shellGradientPickerSections();
     const options = sections.flatMap(section => section.options);
 
-    assert.deepEqual(options.map(option => option.value), SHELL_GRADIENT_PRESETS);
+    assert.deepEqual(
+      options.map(option => option.value),
+      SHELL_GRADIENT_PRESETS
+    );
     assert.equal(options[0].preview.backgroundImage, undefined);
     assert.match(options[1].preview.backgroundImage ?? '', /radial-gradient/);
     assert.equal(options[4].preview.opacity, 0.4);
@@ -82,19 +85,19 @@ describe('buildShellRadialGradientForPreset', () => {
   it('uses intent stop tokens per preset', () => {
     assert.match(
       buildShellRadialGradientForPreset('cool'),
-      /var\(--color-color-intent-blue-strong-background\) 100%/,
+      /var\(--color-color-intent-blue-strong-background\) 100%/
     );
     assert.match(
       buildShellRadialGradientForPreset('neutral'),
-      /var\(--color-color-intent-grey-strong-background\) 100%/,
+      /var\(--color-color-intent-grey-strong-background\) 100%/
     );
     assert.match(
       buildShellRadialGradientForPreset('warm'),
-      /var\(--color-color-intent-yellow-strong-background\) 100%/,
+      /var\(--color-color-intent-yellow-strong-background\) 100%/
     );
     assert.equal(
       buildShellRadialGradientForPreset('fresh'),
-      'radial-gradient(100% 100% at 0% 0%, var(--color-color-intent-cyan-faint-background) 0%, var(--color-background-transparent) 47%, var(--color-background-transparent) 58%, var(--color-color-intent-red-faint-background) 83%, var(--color-color-intent-pink-faint-background) 100%)',
+      'radial-gradient(100% 100% at 0% 0%, var(--color-color-intent-cyan-faint-background) 0%, var(--color-background-transparent) 47%, var(--color-background-transparent) 58%, var(--color-color-intent-red-faint-background) 83%, var(--color-color-intent-pink-faint-background) 100%)'
     );
   });
 
@@ -124,6 +127,9 @@ describe('SHELL_GRADIENT_PRESET_LABELS', () => {
     assert.equal(SHELL_GRADIENT_PRESET_LABELS.warm, 'Warm');
     assert.equal(SHELL_GRADIENT_PRESET_LABELS.fresh, 'Fresh');
     assert.equal(shellGradientPresetStopToken('none'), null);
-    assert.equal(shellGradientPresetStopToken('cool'), 'var(--color-color-intent-blue-strong-background)');
+    assert.equal(
+      shellGradientPresetStopToken('cool'),
+      'var(--color-color-intent-blue-strong-background)'
+    );
   });
 });

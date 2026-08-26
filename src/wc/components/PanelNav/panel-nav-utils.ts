@@ -48,10 +48,7 @@ export function countPanelNavItems(groups: PanelNavGroup[]): number {
 }
 
 /** Resolve a user toggle without mutating the persisted desktop preference while breakpoint-locked. */
-export function resolvePanelNavToggle(
-  collapsed: boolean,
-  viewportNarrow: boolean,
-): boolean | null {
+export function resolvePanelNavToggle(collapsed: boolean, viewportNarrow: boolean): boolean | null {
   return viewportNarrow ? null : !collapsed;
 }
 
@@ -106,10 +103,9 @@ export function resolvePanelNavDisableVt(prop: boolean, attr: string | null): bo
 /** True when host `groups` has items but internal parsed state is still empty. */
 export function shouldResyncPanelNavGroups(
   parsedGroups: PanelNavGroup[],
-  groups: string | unknown,
+  groups: string | unknown
 ): boolean {
   return (
-    countPanelNavItems(parsedGroups) === 0 &&
-    countPanelNavItems(parsePanelNavGroups(groups)) > 0
+    countPanelNavItems(parsedGroups) === 0 && countPanelNavItems(parsePanelNavGroups(groups)) > 0
   );
 }

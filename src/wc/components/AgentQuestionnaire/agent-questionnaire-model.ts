@@ -1,7 +1,4 @@
-import type {
-  AgentQuestion,
-  AgentQuestionAnswer,
-} from '../conversation-types';
+import type { AgentQuestion, AgentQuestionAnswer } from '../conversation-types';
 
 export interface AgentQuestionDraft {
   value: string | string[];
@@ -14,14 +11,14 @@ export type AgentQuestionDrafts = Record<string, AgentQuestionDraft>;
 
 function answerFor(
   answers: AgentQuestionAnswer[],
-  questionId: string,
+  questionId: string
 ): AgentQuestionAnswer | undefined {
   return answers.find(answer => answer.questionId === questionId);
 }
 
 export function createQuestionnaireDrafts(
   questions: AgentQuestion[],
-  answers: AgentQuestionAnswer[],
+  answers: AgentQuestionAnswer[]
 ): AgentQuestionDrafts {
   return Object.fromEntries(
     questions.map(question => {
@@ -50,7 +47,7 @@ export function createQuestionnaireDrafts(
         {
           value: question.type === 'single' && !isKnownChoice ? '' : value,
           otherSelected: Boolean(
-            question.type === 'single' && question.allowOther && value && !isKnownChoice,
+            question.type === 'single' && question.allowOther && value && !isKnownChoice
           ),
           otherText:
             question.type === 'single' && question.allowOther && value && !isKnownChoice
@@ -59,13 +56,13 @@ export function createQuestionnaireDrafts(
           skipped: answer?.value === null,
         },
       ];
-    }),
+    })
   );
 }
 
 export function normalizeQuestionAnswer(
   question: AgentQuestion,
-  draft: AgentQuestionDraft,
+  draft: AgentQuestionDraft
 ): AgentQuestionAnswer {
   if (draft.skipped) return { questionId: question.id, value: null };
 
@@ -89,12 +86,9 @@ export function normalizeQuestionAnswer(
 
 export function validateQuestionDraft(
   question: AgentQuestion,
-  draft: AgentQuestionDraft,
+  draft: AgentQuestionDraft
 ): string | undefined {
-  if (
-    (question.type === 'single' || question.type === 'multiple') &&
-    !question.choices?.length
-  ) {
+  if ((question.type === 'single' || question.type === 'multiple') && !question.choices?.length) {
     return 'This question has no available choices.';
   }
 
@@ -113,7 +107,7 @@ export function validateQuestionDraft(
 
 export function formatQuestionAnswer(
   question: AgentQuestion,
-  answer: AgentQuestionAnswer | undefined,
+  answer: AgentQuestionAnswer | undefined
 ): string {
   if (!answer || answer.value === null) return 'Skipped';
   const values = Array.isArray(answer.value) ? answer.value : [answer.value];

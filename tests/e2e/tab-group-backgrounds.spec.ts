@@ -6,30 +6,36 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('keeps default styling and uses surface borders with neutral selected fills elsewhere', async ({ page }) => {
+test('keeps default styling and uses surface borders with neutral selected fills elsewhere', async ({
+  page,
+}) => {
   const host = page.locator('#tabs');
   const track = host.locator('.tab-list');
   const selected = host.locator('.tab--selected');
   const idle = host.getByRole('tab', { name: 'Activity' });
   const dot = selected.locator('ds-badge');
 
-  const resolveColor = (token: string) => page.evaluate(cssToken => {
-    const probe = document.createElement('div');
-    probe.style.backgroundColor = `var(${cssToken})`;
-    document.body.append(probe);
-    const color = getComputedStyle(probe).backgroundColor;
-    probe.remove();
-    return color;
-  }, token);
+  const resolveColor = (token: string) =>
+    page.evaluate(cssToken => {
+      const probe = document.createElement('div');
+      probe.style.backgroundColor = `var(${cssToken})`;
+      document.body.append(probe);
+      const color = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return color;
+    }, token);
 
-  await expect(track).toHaveCSS('background-color', await resolveColor('--color-background-secondary'));
-  await expect(track).toHaveCSS('border-top-color', await resolveColor('--color-border-tertiary'));
-  await expect(selected).toHaveCSS('background-color', await resolveColor('--color-background-primary'));
-  await expect(dot).toHaveCSS('--_badge-ring-width', '0');
-  await expect(dot.locator('.badge__mark')).toHaveCSS(
-    'box-shadow',
-    /0px 0px 0px 0px/,
+  await expect(track).toHaveCSS(
+    'background-color',
+    await resolveColor('--color-background-secondary')
   );
+  await expect(track).toHaveCSS('border-top-color', await resolveColor('--color-border-tertiary'));
+  await expect(selected).toHaveCSS(
+    'background-color',
+    await resolveColor('--color-background-primary')
+  );
+  await expect(dot).toHaveCSS('--_badge-ring-width', '0');
+  await expect(dot.locator('.badge__mark')).toHaveCSS('box-shadow', /0px 0px 0px 0px/);
   const defaultWeights = await Promise.all([
     selected.locator('ds-text').evaluate(element => getComputedStyle(element).fontWeight),
     idle.locator('ds-text').evaluate(element => getComputedStyle(element).fontWeight),
@@ -90,30 +96,34 @@ test('keeps default styling and uses surface borders with neutral selected fills
     const borderColor = await resolveColor(surface.border);
     await expect(track).toHaveCSS('border-top-color', borderColor);
     await expect(selected).toHaveCSS('background-color', await resolveColor(surface.active));
-    await expect.poll(() => Promise.all([
-      selected.locator('ds-text').evaluate(element => getComputedStyle(element).fontWeight),
-      idle.locator('ds-text').evaluate(element => getComputedStyle(element).fontWeight),
-    ])).toEqual([defaultWeights[1], defaultWeights[1]]);
-    await expect.poll(() => selected.evaluate(element => (
-      getComputedStyle(element, '::after').boxShadow
-    ))).toContain(borderColor);
+    await expect
+      .poll(() =>
+        Promise.all([
+          selected.locator('ds-text').evaluate(element => getComputedStyle(element).fontWeight),
+          idle.locator('ds-text').evaluate(element => getComputedStyle(element).fontWeight),
+        ])
+      )
+      .toEqual([defaultWeights[1], defaultWeights[1]]);
+    await expect
+      .poll(() => selected.evaluate(element => getComputedStyle(element, '::after').boxShadow))
+      .toContain(borderColor);
   }
 });
 
-test('renders one accessible label, icon, or icon-label variant across the group', async ({ page }) => {
+test('renders one accessible label, icon, or icon-label variant across the group', async ({
+  page,
+}) => {
   const host = page.locator('#tabs');
   const tabs = page.getByRole('tab');
 
-  const setVariant = (variant: 'label' | 'icon' | 'icon-label') => host.evaluate(
-    (element, nextVariant) => {
+  const setVariant = (variant: 'label' | 'icon' | 'icon-label') =>
+    host.evaluate((element, nextVariant) => {
       (element as HTMLElement & { tabs: unknown[] }).tabs = [
         { id: 'overview', label: 'Overview', icon: 'Bookmark', variant: nextVariant, dot: true },
         { id: 'activity', label: 'Activity', icon: 'Bolt', variant: nextVariant },
         { id: 'settings', label: 'Settings', icon: 'Bell', variant: nextVariant },
       ];
-    },
-    variant,
-  );
+    }, variant);
 
   await setVariant('icon');
   await expect(tabs).toHaveCount(3);
@@ -164,7 +174,9 @@ test('supports small, medium, and large density geometry', async ({ page }) => {
       label: `${density.size} TabGroup segment`,
       height: density.segment,
     });
-    await expect(host.locator('.tab').first()).toHaveClass(new RegExp(`ds-control--${density.size}`));
+    await expect(host.locator('.tab').first()).toHaveClass(
+      new RegExp(`ds-control--${density.size}`)
+    );
     await expect(host.locator('.tab').first()).toHaveClass(/ds-control--inset/);
     await expectDefiniteBounds(host.locator('.tab__icon').first(), {
       label: `${density.size} TabGroup icon`,
@@ -175,7 +187,9 @@ test('supports small, medium, and large density geometry', async ({ page }) => {
   }
 });
 
-test('shares the hug and fill width contract and gives fill segments equal space', async ({ page }) => {
+test('shares the hug and fill width contract and gives fill segments equal space', async ({
+  page,
+}) => {
   const host = page.locator('#tabs');
   const track = host.locator('.tab-list');
   const tabs = host.getByRole('tab');
@@ -200,7 +214,9 @@ test('shares the hug and fill width contract and gives fill segments equal space
   expect(Math.max(...segmentWidths) - Math.min(...segmentWidths)).toBeLessThanOrEqual(0.5);
 });
 
-test('keeps one enabled tab reachable when value is missing or points to an inactive tab', async ({ page }) => {
+test('keeps one enabled tab reachable when value is missing or points to an inactive tab', async ({
+  page,
+}) => {
   const host = page.locator('#tabs');
   await host.evaluate(element => {
     const group = element as HTMLElement & { value: string; tabs: unknown[] };

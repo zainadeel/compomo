@@ -5,21 +5,23 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('preserves questionnaire drafts across steps and emits normalized ordered answers once', async ({ page }) => {
+test('preserves questionnaire drafts across steps and emits normalized ordered answers once', async ({
+  page,
+}) => {
   const questionnaire = page.locator('#questionnaire');
   const battery = questionnaire.getByLabel('Repeated battery failures');
   await battery.click();
   expect(
-    await page.locator('#questionnaire-owner-form').evaluate(form =>
-      Array.from(new FormData(form as HTMLFormElement).entries()),
-    ),
+    await page
+      .locator('#questionnaire-owner-form')
+      .evaluate(form => Array.from(new FormData(form as HTMLFormElement).entries()))
   ).toEqual([]);
   await questionnaire.getByRole('button', { name: 'Next' }).click();
   await questionnaire.getByLabel('Executive summary').click();
   expect(
-    await page.locator('#questionnaire-owner-form').evaluate(form =>
-      Array.from(new FormData(form as HTMLFormElement).entries()),
-    ),
+    await page
+      .locator('#questionnaire-owner-form')
+      .evaluate(form => Array.from(new FormData(form as HTMLFormElement).entries()))
   ).toEqual([]);
   await questionnaire.getByRole('button', { name: 'Previous' }).click();
   await expect(battery).toBeChecked();
@@ -30,9 +32,7 @@ test('preserves questionnaire drafts across steps and emits normalized ordered a
 
   await expect
     .poll(() =>
-      page.evaluate(() =>
-        (window as unknown as { answerEvents: unknown[] }).answerEvents,
-      ),
+      page.evaluate(() => (window as unknown as { answerEvents: unknown[] }).answerEvents)
     )
     .toEqual([
       {
@@ -47,7 +47,9 @@ test('preserves questionnaire drafts across steps and emits normalized ordered a
   await expect(questionnaire.getByRole('button', { name: 'Answer' })).toBeDisabled();
 });
 
-test('composes questionnaire choices and actions from DS primitives with isolated form and keyboard behavior', async ({ page }) => {
+test('composes questionnaire choices and actions from DS primitives with isolated form and keyboard behavior', async ({
+  page,
+}) => {
   const questionnaire = page.locator('#questionnaire');
   const ownerForm = page.locator('#questionnaire-owner-form');
   const radio = questionnaire.locator('ds-radio');
@@ -63,9 +65,7 @@ test('composes questionnaire choices and actions from DS primitives with isolate
   await ownerForm.evaluate((form: HTMLFormElement) => form.reset());
   await expect(tires).toBeChecked();
   expect(
-    await ownerForm.evaluate((form: HTMLFormElement) =>
-      Array.from(new FormData(form).entries()),
-    ),
+    await ownerForm.evaluate((form: HTMLFormElement) => Array.from(new FormData(form).entries()))
   ).toEqual([]);
   await expect(questionnaire.locator('input[type="radio"], input[type="checkbox"]')).toHaveCount(0);
 
@@ -80,7 +80,7 @@ test('composes questionnaire choices and actions from DS primitives with isolate
 
   const summary = questionnaire.getByRole('checkbox', { name: 'Executive summary' });
   await expect(summary).toHaveAccessibleDescription(
-    'Include affected vehicles and recommended next steps.',
+    'Include affected vehicles and recommended next steps.'
   );
   await expect(questionnaire.locator('ds-checkbox')).toHaveCount(2);
   await expect(questionnaire.locator('ds-checkbox').first()).toHaveJSProperty('size', 'lg');
@@ -92,12 +92,10 @@ test('composes questionnaire choices and actions from DS primitives with isolate
   });
   const actionNames = ['Previous', 'Skip', 'Answer'];
   const actionBoxes = await Promise.all(
-    actionNames.map(name => questionnaire.getByRole('button', { name }).boundingBox()),
+    actionNames.map(name => questionnaire.getByRole('button', { name }).boundingBox())
   );
   expect(
-    actionBoxes.every(
-      box => box && Math.abs(box.height - actionBoxes[0]!.height) <= 0.5,
-    ),
+    actionBoxes.every(box => box && Math.abs(box.height - actionBoxes[0]!.height) <= 0.5)
   ).toBe(true);
   expect(actionBoxes[0]!.y).toBeLessThan(actionBoxes[1]!.y);
   expect(actionBoxes[1]!.y).toBeLessThan(actionBoxes[2]!.y);
@@ -105,7 +103,9 @@ test('composes questionnaire choices and actions from DS primitives with isolate
   expect(Math.abs(actionBoxes[0]!.width - actionBoxes[2]!.width)).toBeLessThanOrEqual(0.5);
 });
 
-test('announces questionnaire validation, retains error drafts, resets requests, and focuses explicitly', async ({ page }) => {
+test('announces questionnaire validation, retains error drafts, resets requests, and focuses explicitly', async ({
+  page,
+}) => {
   const questionnaire = page.locator('#questionnaire');
   await questionnaire.getByRole('button', { name: 'Next' }).click();
   await expect(questionnaire.getByRole('alert')).toHaveText('Choose an answer before continuing.');
@@ -128,36 +128,42 @@ test('announces questionnaire validation, retains error drafts, resets requests,
   await expect(questionnaire.getByLabel('Repeated battery failures')).toBeFocused();
 });
 
-test('coalesces related questionnaire replacements and accepts later answer seeds', async ({ page }) => {
+test('coalesces related questionnaire replacements and accepts later answer seeds', async ({
+  page,
+}) => {
   const questionnaire = page.locator('#questionnaire');
   await questionnaire.evaluate((element: HTMLDsAgentQuestionnaireElement) => {
     element.requestId = 'request-coalesced';
-    element.questions = [{
-      id: 'coalesced-context',
-      type: 'text',
-      question: 'Coalesced context',
-    }];
+    element.questions = [
+      {
+        id: 'coalesced-context',
+        type: 'text',
+        question: 'Coalesced context',
+      },
+    ];
     element.answers = [{ questionId: 'coalesced-context', value: 'Same turn seed' }];
   });
-  await expect(
-    questionnaire.getByRole('textbox', { name: 'Coalesced context' }),
-  ).toHaveValue('Same turn seed');
+  await expect(questionnaire.getByRole('textbox', { name: 'Coalesced context' })).toHaveValue(
+    'Same turn seed'
+  );
 
   await questionnaire.evaluate((element: HTMLDsAgentQuestionnaireElement) => {
     element.requestId = 'request-later-seed';
-    element.questions = [{
-      id: 'coalesced-context',
-      type: 'text',
-      question: 'Later context',
-    }];
+    element.questions = [
+      {
+        id: 'coalesced-context',
+        type: 'text',
+        question: 'Later context',
+      },
+    ];
   });
   await expect(questionnaire.getByRole('textbox', { name: 'Later context' })).toHaveValue('');
   await questionnaire.evaluate((element: HTMLDsAgentQuestionnaireElement) => {
     element.answers = [{ questionId: 'coalesced-context', value: 'Later seed' }];
   });
-  await expect(
-    questionnaire.getByRole('textbox', { name: 'Later context' }),
-  ).toHaveValue('Later seed');
+  await expect(questionnaire.getByRole('textbox', { name: 'Later context' })).toHaveValue(
+    'Later seed'
+  );
 });
 
 test('associates Other validation and focuses the invalid free-text input', async ({ page }) => {
@@ -172,7 +178,9 @@ test('associates Other validation and focuses the invalid free-text input', asyn
   await expect(otherInput).toBeFocused();
 });
 
-test('keeps compact tool rows non-disclosing and emits disclosure changes when diagnostics exist', async ({ page }) => {
+test('keeps compact tool rows non-disclosing and emits disclosure changes when diagnostics exist', async ({
+  page,
+}) => {
   const compact = page.locator('#tool-compact');
   await expect(compact.locator('details')).toHaveCount(0);
   await expect(compact).toContainText('Completed');
@@ -183,9 +191,9 @@ test('keeps compact tool rows non-disclosing and emits disclosure changes when d
   await details.locator('summary').click();
   await expect
     .poll(() =>
-      page.evaluate(() =>
-        (window as unknown as { toolOpenEvents: Array<{ open: boolean }> }).toolOpenEvents,
-      ),
+      page.evaluate(
+        () => (window as unknown as { toolOpenEvents: Array<{ open: boolean }> }).toolOpenEvents
+      )
     )
     .toContainEqual({ open: false });
 
@@ -210,17 +218,16 @@ test('defaults only plain custom tool results to body-medium typography', async 
   });
   expect(typography.plain).toBe(typography.reference);
   expect(Number.parseFloat(typography.structured)).toBeLessThan(
-    Number.parseFloat(typography.plain),
+    Number.parseFloat(typography.plain)
   );
 });
 
-test('renders safe source hostnames, rejects unsafe links, and reports disclosure changes', async ({ page }) => {
+test('renders safe source hostnames, rejects unsafe links, and reports disclosure changes', async ({
+  page,
+}) => {
   const sources = page.locator('#sources');
   const sourceLink = sources.getByRole('link', { name: /Maintenance guide/ });
-  await expect(sourceLink).toHaveAttribute(
-    'href',
-    'https://docs.example.com/guide',
-  );
+  await expect(sourceLink).toHaveAttribute('href', 'https://docs.example.com/guide');
   const decoration = await sourceLink.evaluate(element => {
     const probe = document.createElement('span');
     probe.style.color = 'var(--color-foreground-tertiary)';
@@ -249,14 +256,16 @@ test('renders safe source hostnames, rejects unsafe links, and reports disclosur
   await sources.locator('summary').click();
   await expect
     .poll(() =>
-      page.evaluate(() =>
-        (window as unknown as { sourceOpenEvents: Array<{ open: boolean }> }).sourceOpenEvents,
-      ),
+      page.evaluate(
+        () => (window as unknown as { sourceOpenEvents: Array<{ open: boolean }> }).sourceOpenEvents
+      )
     )
     .toContainEqual({ open: false });
 });
 
-test('links visible composer error text to the editable draft and clears it on recovery', async ({ page }) => {
+test('links visible composer error text to the editable draft and clears it on recovery', async ({
+  page,
+}) => {
   const composer = page.locator('#composer');
   const textarea = composer.locator('textarea');
   const alert = composer.getByRole('alert');
@@ -318,9 +327,8 @@ test('measures prose without narrowing tables or code', async ({ page }) => {
       frameClientWidth: element.clientWidth,
       responseClientWidth: responseElement.clientWidth,
       paragraph: responseElement.querySelector('p')!.getBoundingClientRect().width,
-      table: responseElement
-        .querySelector('.ds-prose__table-scroll')!
-        .getBoundingClientRect().width,
+      table: responseElement.querySelector('.ds-prose__table-scroll')!.getBoundingClientRect()
+        .width,
       scrollWidth: responseElement.scrollWidth,
       clientWidth: responseElement.clientWidth,
     };
@@ -331,7 +339,9 @@ test('measures prose without narrowing tables or code', async ({ page }) => {
   expect(narrow.scrollWidth).toBeLessThanOrEqual(narrow.clientWidth);
 });
 
-test('keeps parts as the default, lets composed content ignore parts, and renders answered records', async ({ page }) => {
+test('keeps parts as the default, lets composed content ignore parts, and renders answered records', async ({
+  page,
+}) => {
   await expect(page.locator('#response ds-markdown')).toHaveCount(1);
   await expect(page.locator('#response-composed #composed-marker')).toBeVisible();
   await expect(page.locator('#response-composed')).not.toContainText('Ignored parts content');
@@ -341,15 +351,17 @@ test('keeps parts as the default, lets composed content ignore parts, and render
   await expect(history.locator('button, input, textarea')).toHaveCount(0);
 });
 
-test('anchors only newly appended turns and clears the combined interaction and composer stack', async ({ page }) => {
+test('anchors only newly appended turns and clears the combined interaction and composer stack', async ({
+  page,
+}) => {
   const scroller = page.locator('#scroller');
   const viewport = scroller.locator('.message-scroller__viewport');
   const overlay = await scroller.evaluate(element =>
-    Number.parseFloat(getComputedStyle(element).getPropertyValue('--ds-scroll-overlay-block-size')),
+    Number.parseFloat(getComputedStyle(element).getPropertyValue('--ds-scroll-overlay-block-size'))
   );
-  const interactionHeight = await page.locator('#interaction-wrap').evaluate(element =>
-    element.getBoundingClientRect().height,
-  );
+  const interactionHeight = await page
+    .locator('#interaction-wrap')
+    .evaluate(element => element.getBoundingClientRect().height);
   expect(overlay).toBeGreaterThan(interactionHeight);
   await page.locator('#interaction-surface').evaluate((element: HTMLElement) => {
     element.style.height = '160px';
@@ -358,14 +370,14 @@ test('anchors only newly appended turns and clears the combined interaction and 
     .poll(() =>
       scroller.evaluate(element =>
         Number.parseFloat(
-          getComputedStyle(element).getPropertyValue('--ds-scroll-overlay-block-size'),
-        ),
-      ),
+          getComputedStyle(element).getPropertyValue('--ds-scroll-overlay-block-size')
+        )
+      )
     )
     .toBeGreaterThan(overlay + 50);
 
   await page.evaluate(() =>
-    (window as unknown as { appendAnchoredTurn: () => HTMLElement }).appendAnchoredTurn(),
+    (window as unknown as { appendAnchoredTurn: () => HTMLElement }).appendAnchoredTurn()
   );
   const relativeTop = async () =>
     scroller.evaluate(element => {
@@ -383,25 +395,25 @@ test('anchors only newly appended turns and clears the combined interaction and 
   await expect.poll(relativeTop).toBeGreaterThan(200);
   const beforePrependTop = await relativeTop();
   const beforePrepend = await viewport.evaluate(element => element.scrollTop);
-  await page.evaluate(() =>
-    (window as unknown as { prependHistory: () => void }).prependHistory(),
-  );
-  await expect.poll(() => viewport.evaluate(element => element.scrollTop)).toBeGreaterThan(beforePrepend);
+  await page.evaluate(() => (window as unknown as { prependHistory: () => void }).prependHistory());
+  await expect
+    .poll(() => viewport.evaluate(element => element.scrollTop))
+    .toBeGreaterThan(beforePrepend);
   await expect
     .poll(async () => Math.abs((await relativeTop()) - beforePrependTop))
     .toBeLessThanOrEqual(50);
 });
 
-test('streams only while following and lets reader input release and restore the live edge', async ({ page }) => {
+test('streams only while following and lets reader input release and restore the live edge', async ({
+  page,
+}) => {
   const scroller = page.locator('#scroller');
   const viewport = scroller.locator('.message-scroller__viewport');
   const distanceFromLiveEdge = () =>
-    viewport.evaluate(element =>
-      element.scrollHeight - element.clientHeight - element.scrollTop,
-    );
+    viewport.evaluate(element => element.scrollHeight - element.clientHeight - element.scrollTop);
   const grow = () =>
     page.evaluate(() =>
-      (window as unknown as { growLatestMessage: () => void }).growLatestMessage(),
+      (window as unknown as { growLatestMessage: () => void }).growLatestMessage()
     );
   const returnToLatest = async () => {
     await scroller.evaluate((element: HTMLDsMessageScrollerElement) => element.scrollToEnd());

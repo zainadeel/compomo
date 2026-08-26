@@ -87,11 +87,7 @@ export const Error: Story = {
         status="error"
         error-message="The message could not be sent. Check your connection and try again."
       >
-        <ds-button-unfilled
-          slot="error-actions"
-          label="Retry"
-          size="sm"
-        ></ds-button-unfilled>
+        <ds-button-unfilled slot="error-actions" label="Retry" size="sm"></ds-button-unfilled>
       </ds-message-composer>
     `),
 };

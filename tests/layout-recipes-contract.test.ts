@@ -48,8 +48,14 @@ test('chart chrome lines use subordinate foreground roles', () => {
   assert.match(css, /\.chart__axis-line[\s\S]*?stroke: var\(--color-foreground-tertiary\)/);
   assert.match(css, /\.chart__grid[\s\S]*?stroke: var\(--color-foreground-quaternary\)/);
   assert.match(css, /\.chart__plot-boundary[\s\S]*?stroke: var\(--color-foreground-quaternary\)/);
-  assert.doesNotMatch(css, /\.chart__(?:axis-line|grid|plot-boundary)[^{]*\{[^}]*foreground-primary/);
-  assert.match(source, /applyMeasuredSize\(entry\.contentRect\.width, entry\.contentRect\.height\)/);
+  assert.doesNotMatch(
+    css,
+    /\.chart__(?:axis-line|grid|plot-boundary)[^{]*\{[^}]*foreground-primary/
+  );
+  assert.match(
+    source,
+    /applyMeasuredSize\(entry\.contentRect\.width, entry\.contentRect\.height\)/
+  );
   assert.match(source, /var\(--ds-chart-container-height, 320px\)/);
 });
 

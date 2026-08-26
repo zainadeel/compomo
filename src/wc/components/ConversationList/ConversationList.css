@@ -33,9 +33,7 @@
   position: relative;
   min-height: 100%;
   padding: var(--dimension-space-100);
-  padding-bottom: calc(
-    var(--dimension-space-100) + var(--ds-scroll-overlay-block-size, 0px)
-  );
+  padding-bottom: calc(var(--dimension-space-100) + var(--ds-scroll-overlay-block-size, 0px));
   box-sizing: border-box;
 }
 
@@ -58,21 +56,12 @@
   content: '';
   position: absolute;
   inset: 0;
-  background-image: var(
-    --ds-scroll-overlay-surface-image,
-    var(--ds-shell-gradient-image, none)
-  );
+  background-image: var(--ds-scroll-overlay-surface-image, var(--ds-shell-gradient-image, none));
   background-position: var(--ds-scroll-overlay-surface-position, 0 0);
   background-attachment: fixed;
-  background-size: var(
-    --ds-scroll-overlay-surface-size,
-    var(--ds-shell-gradient-size, auto)
-  );
+  background-size: var(--ds-scroll-overlay-surface-size, var(--ds-shell-gradient-size, auto));
   background-repeat: no-repeat;
-  opacity: var(
-    --ds-scroll-overlay-surface-image-opacity,
-    var(--ds-shell-gradient-opacity, 1)
-  );
+  opacity: var(--ds-scroll-overlay-surface-image-opacity, var(--ds-shell-gradient-opacity, 1));
 }
 
 .conversation-list__empty {

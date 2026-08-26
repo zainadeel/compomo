@@ -25,7 +25,10 @@
 }
 
 .mobile-header__primary {
-  grid-template-columns: minmax(var(--dimension-size-400), 1fr) minmax(0, auto) minmax(var(--dimension-size-400), 1fr);
+  grid-template-columns: minmax(var(--dimension-size-400), 1fr) minmax(0, auto) minmax(
+      var(--dimension-size-400),
+      1fr
+    );
   width: 100%;
   height: calc(var(--dimension-size-500) + var(--dimension-space-200));
   min-width: 0;

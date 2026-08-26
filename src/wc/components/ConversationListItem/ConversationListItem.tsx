@@ -47,10 +47,7 @@ export class ConversationListItem {
       .join('. ');
 
     return (
-      <Host
-        role="listitem"
-        class={{ 'conversation-list-item--actions-open': this.actionsOpen }}
-      >
+      <Host role="listitem" class={{ 'conversation-list-item--actions-open': this.actionsOpen }}>
         <div class="conversation-list-item__row">
           <button
             type="button"
@@ -103,7 +100,10 @@ export class ConversationListItem {
                 </ds-text>
               </span>
               {this.updatedAt ? (
-                <time class="conversation-list-item__time ds-visually-hidden" dateTime={this.updatedAt}>
+                <time
+                  class="conversation-list-item__time ds-visually-hidden"
+                  dateTime={this.updatedAt}
+                >
                   {this.updatedAt}
                 </time>
               ) : null}

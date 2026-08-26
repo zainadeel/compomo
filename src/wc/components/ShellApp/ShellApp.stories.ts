@@ -5,10 +5,7 @@ import '../../../../dist/components/ds-panel-nav.js';
 import '../../../../dist/components/ds-bar-nav.js';
 import '../../../../dist/components/ds-panel-tools.js';
 import type { PanelNavGroup } from '../PanelNav/panel-nav-types';
-import {
-  PANEL_TOOLS_DEFAULT_ITEMS,
-  type PanelToolsItem,
-} from '../PanelTools/panel-tools-types';
+import { PANEL_TOOLS_DEFAULT_ITEMS, type PanelToolsItem } from '../PanelTools/panel-tools-types';
 import type { ShellGradientPreset } from '../../shell/shell-gradient-presets';
 import type { PaperTextureConfig } from '../PaperTexture/paper-texture-types';
 import type {
@@ -35,9 +32,7 @@ const DASHBOARD_GROUPS: PanelNavGroup[] = [
 
 const SETTINGS_GROUPS: PanelNavGroup[] = [
   {
-    items: [
-      { id: 'account', icon: 'Gear', label: 'Account', href: '/settings/account' },
-    ],
+    items: [{ id: 'account', icon: 'Gear', label: 'Account', href: '/settings/account' }],
   },
 ];
 
@@ -118,7 +113,9 @@ function shellLayout(gradientPreset: ShellGradientPreset, paperTexture?: PaperTe
         style="height: 100%;"
       >
         ${toolViews()}
-        <section style="min-height: 100%; padding: var(--dimension-space-200); box-sizing: border-box;">
+        <section
+          style="min-height: 100%; padding: var(--dimension-space-200); box-sizing: border-box;"
+        >
           Router-owned Area B content
         </section>
       </ds-shell-app>
@@ -177,12 +174,10 @@ export const AdvancedSlotted: Story = {
             value="tab-2"
             heading="Area B"
           ></ds-bar-nav>
-          <ds-panel-tools
-            slot="tools"
-            .items=${items}
-            active-tool=""
-          ></ds-panel-tools>
-          <section style="padding: var(--dimension-space-200);">Manually composed shell content</section>
+          <ds-panel-tools slot="tools" .items=${items} active-tool=""></ds-panel-tools>
+          <section style="padding: var(--dimension-space-200);">
+            Manually composed shell content
+          </section>
         </ds-shell-app>
       </div>
     `;

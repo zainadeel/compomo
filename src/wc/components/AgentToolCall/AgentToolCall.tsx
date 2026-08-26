@@ -1,13 +1,4 @@
-import {
-  Component,
-  Element,
-  Event,
-  EventEmitter,
-  h,
-  Host,
-  Prop,
-  State,
-} from '@stencil/core';
+import { Component, Element, Event, EventEmitter, h, Host, Prop, State } from '@stencil/core';
 import type { AgentToolState } from '../conversation-types';
 
 const STATUS_LABELS: Record<AgentToolState, string> = {
@@ -67,7 +58,7 @@ export class AgentToolCall {
     const result = this.el.querySelector<HTMLElement>('[slot="result"]');
     this.hasResult = Boolean(result);
     this.hasPlainTextResult = Boolean(
-      result && result.childElementCount === 0 && result.textContent?.trim(),
+      result && result.childElementCount === 0 && result.textContent?.trim()
     );
     this.hasDetails = Boolean(this.el.querySelector('[slot="details"]'));
   }
@@ -130,12 +121,7 @@ export class AgentToolCall {
           </ds-text>
         </span>
         {expandable ? (
-          <ds-icon
-            class="agent-tool__chevron"
-            name="ChevronRight"
-            size="xs"
-            color="inherit"
-          />
+          <ds-icon class="agent-tool__chevron" name="ChevronRight" size="xs" color="inherit" />
         ) : null}
       </span>
     );
@@ -146,19 +132,25 @@ export class AgentToolCall {
       <div class="agent-tool__diagnostics">
         {this.input !== undefined ? (
           <section>
-            <ds-text variant="text-caption" emphasis>Input</ds-text>
+            <ds-text variant="text-caption" emphasis>
+              Input
+            </ds-text>
             <pre>{this.serialize(this.input)}</pre>
           </section>
         ) : null}
         {this.output !== undefined ? (
           <section>
-            <ds-text variant="text-caption" emphasis>Output</ds-text>
+            <ds-text variant="text-caption" emphasis>
+              Output
+            </ds-text>
             <pre>{this.serialize(this.output)}</pre>
           </section>
         ) : null}
         {this.error ? (
           <section>
-            <ds-text variant="text-caption" emphasis>Error</ds-text>
+            <ds-text variant="text-caption" emphasis>
+              Error
+            </ds-text>
             <pre>{this.error}</pre>
           </section>
         ) : null}

@@ -63,13 +63,13 @@ function renderWorkflow(
 
 export const Playground: Story = {
   render: args => html`
-      <ds-bar-workflow
-        heading=${args['heading']}
-        exit-label="Exit"
-        exit-aria-label="Exit driver creation"
-        .submitAction=${{ label: args['submitLabel'], type: 'submit' }}
-      ></ds-bar-workflow>
-    `,
+    <ds-bar-workflow
+      heading=${args['heading']}
+      exit-label="Exit"
+      exit-aria-label="Exit driver creation"
+      .submitAction=${{ label: args['submitLabel'], type: 'submit' }}
+    ></ds-bar-workflow>
+  `,
 };
 
 export const FirstStep: Story = {

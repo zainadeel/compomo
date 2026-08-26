@@ -31,20 +31,16 @@ export type SwatchPickerNavigationKey =
 
 export function flattenSwatchPickerOptions(
   options: readonly SwatchPickerOption[],
-  sections: readonly SwatchPickerSection[],
+  sections: readonly SwatchPickerSection[]
 ): SwatchPickerOption[] {
-  return sections.length > 0
-    ? sections.flatMap(section => section.options)
-    : [...options];
+  return sections.length > 0 ? sections.flatMap(section => section.options) : [...options];
 }
 
 export function resolveSwatchPickerTabIndex(
   options: readonly SwatchPickerOption[],
-  value: string,
+  value: string
 ): number {
-  const selectedIndex = options.findIndex(option => (
-    option.value === value && !option.isInactive
-  ));
+  const selectedIndex = options.findIndex(option => option.value === value && !option.isInactive);
   if (selectedIndex >= 0) return selectedIndex;
   return options.findIndex(option => !option.isInactive);
 }
@@ -52,7 +48,7 @@ export function resolveSwatchPickerTabIndex(
 export function resolveSwatchPickerNavigationIndex(
   options: readonly SwatchPickerOption[],
   currentIndex: number,
-  key: SwatchPickerNavigationKey,
+  key: SwatchPickerNavigationKey
 ): number | null {
   const enabledIndexes = options
     .map((option, index) => ({ option, index }))
@@ -66,9 +62,7 @@ export function resolveSwatchPickerNavigationIndex(
   const direction = key === 'ArrowRight' || key === 'ArrowDown' ? 1 : -1;
   const currentEnabledIndex = enabledIndexes.indexOf(currentIndex);
   if (currentEnabledIndex < 0) {
-    return direction > 0
-      ? enabledIndexes[0]
-      : enabledIndexes[enabledIndexes.length - 1];
+    return direction > 0 ? enabledIndexes[0] : enabledIndexes[enabledIndexes.length - 1];
   }
 
   return enabledIndexes[

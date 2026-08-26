@@ -7,9 +7,7 @@ import '../../../../dist/components/ds-text.js';
 export default { title: 'Agent/Tool call', tags: ['autodocs'] } satisfies Meta;
 type Story = StoryObj;
 
-const frame = (content: unknown) => html`
-  <div style="width:min(720px, 90vw);">${content}</div>
-`;
+const frame = (content: unknown) => html` <div style="width:min(720px, 90vw);">${content}</div> `;
 
 const lifecycle = (state: AgentToolState, label: string, statusLabel?: string) =>
   frame(html`

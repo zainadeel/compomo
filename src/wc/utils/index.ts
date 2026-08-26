@@ -137,8 +137,5 @@ export type {
 } from './chart-grammar';
 export { CONTROL_SUPPORTING_TEXT_VARIANT, CONTROL_TEXT_VARIANT } from './control-text';
 export type { ControlInsetDepth, ControlSize } from './control-text';
-export {
-  choicePopupMinWidth,
-  resolveChoicePopupAlignOffset,
-} from './choice-popup-alignment';
+export { choicePopupMinWidth, resolveChoicePopupAlignOffset } from './choice-popup-alignment';
 export type { ChoicePopupAnchorAlignment } from './choice-popup-alignment';

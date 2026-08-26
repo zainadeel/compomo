@@ -1,5 +1,1 @@
-export type {
-  TooltipChartSide,
-  TooltipChartAlign,
-  TooltipChartItem,
-} from './TooltipChart';
+export type { TooltipChartSide, TooltipChartAlign, TooltipChartItem } from './TooltipChart';

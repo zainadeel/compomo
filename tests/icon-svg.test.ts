@@ -5,7 +5,7 @@ import { isValidIconSvgRoot, type IconSvgElementLike } from '../src/wc/component
 function el(
   localName: string,
   attrs: Record<string, string> = {},
-  children: IconSvgElementLike[] = [],
+  children: IconSvgElementLike[] = []
 ): IconSvgElementLike {
   return {
     localName,
@@ -46,12 +46,17 @@ describe('icon svg validation', () => {
     assert.equal(isValidIconSvgRoot(el('svg', {}, [el('use', { href: '#glyph' })])), true);
     assert.equal(
       isValidIconSvgRoot(el('svg', {}, [el('use', { href: 'javascript:alert(1)' })])),
-      false,
+      false
     );
     assert.equal(
-      isValidIconSvgRoot(el('svg', {}, [el('use', { 'xlink:href': 'https://evil.example/x.svg#g' })])),
-      false,
+      isValidIconSvgRoot(
+        el('svg', {}, [el('use', { 'xlink:href': 'https://evil.example/x.svg#g' })])
+      ),
+      false
     );
-    assert.equal(isValidIconSvgRoot(el('svg', {}, [el('image', { href: 'data:image/svg+xml,x' })])), false);
+    assert.equal(
+      isValidIconSvgRoot(el('svg', {}, [el('image', { href: 'data:image/svg+xml,x' })])),
+      false
+    );
   });
 });

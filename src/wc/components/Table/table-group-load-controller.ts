@@ -38,10 +38,14 @@ function groupIdentity(group: TableGroup): string | number {
 
 function formatGroupLabel(template: string, group: TableGroup, count?: number): string {
   return template
-    .split('{group}').join(group.label)
-    .split('{count}').join(String(count ?? group.rows.length))
-    .split('{loaded}').join(String(group.rows.length))
-    .split('{total}').join(String(group.totalCount ?? group.rows.length));
+    .split('{group}')
+    .join(group.label)
+    .split('{count}')
+    .join(String(count ?? group.rows.length))
+    .split('{loaded}')
+    .join(String(group.rows.length))
+    .split('{total}')
+    .join(String(group.totalCount ?? group.rows.length));
 }
 
 /** Owns request guards, announcements, and observation for independently loaded groups. */
@@ -97,7 +101,7 @@ export class TableGroupLoadController {
       {
         root: state.containedScroll ? state.viewport : null,
         rootMargin: `0px 0px ${threshold}px 0px`,
-      },
+      }
     );
 
     for (const [groupId, sentinel] of state.sentinels) {
@@ -127,7 +131,7 @@ export class TableGroupLoadController {
       } else {
         if (next.count > previous.count) {
           this.options.announce(
-            formatGroupLabel(state.rowsLoadedLabel, group, next.count - previous.count),
+            formatGroupLabel(state.rowsLoadedLabel, group, next.count - previous.count)
           );
         }
         if (!previous.error && next.error) {
@@ -167,7 +171,8 @@ export class TableGroupLoadController {
       group.loadingMore ||
       (reason !== 'retry' && !!group.loadMoreError?.trim()) ||
       this.pending.has(groupId)
-    ) return;
+    )
+      return;
 
     const identity = groupIdentity(group);
     this.pending.set(groupId, { identity, count: group.rows.length });

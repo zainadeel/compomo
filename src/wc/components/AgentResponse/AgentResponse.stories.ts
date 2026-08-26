@@ -36,7 +36,9 @@ export const ComposedResponse: Story = {
     <div style="width:min(800px, 90vw);">
       <ds-agent-response author="Agent" .showAuthor=${false} render-mode="composed">
         <ds-markdown
-          content="## Investigation complete\n\nThe repeated failures share one charging-system signature."
+          content="## Investigation complete
+
+The repeated failures share one charging-system signature."
         ></ds-markdown>
         <ds-agent-tool-call
           name="records.search"

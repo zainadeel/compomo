@@ -94,21 +94,19 @@ function trackText(value: string | number | TableCellTextRun): string | undefine
 
 /** Resolve an image cell's track stack; unknown values fall back to one track. */
 export function resolveTableCellImageTracks(
-  tracks: TableCellImage['tracks'],
+  tracks: TableCellImage['tracks']
 ): TableCellImageTracks {
   return tracks === 2 || tracks === 3 ? tracks : 1;
 }
 
 /** Map an image track stack onto the shared single/multi/triple cell variant. */
-export function tableCellImageVariant(
-  tracks: TableCellImageTracks,
-): 'single' | 'multi' | 'triple' {
+export function tableCellImageVariant(tracks: TableCellImageTracks): 'single' | 'multi' | 'triple' {
   return tracks === 3 ? 'triple' : tracks === 2 ? 'multi' : 'single';
 }
 
 /** Collapse a consumer track into at most three non-empty runs. */
 export function normalizeTableCellTextTrack(
-  track: TableCellTextTrack | number | undefined,
+  track: TableCellTextTrack | number | undefined
 ): TableCellTextRun[] | undefined {
   if (track == null) return undefined;
   const items = Array.isArray(track) ? track : [track];
@@ -120,7 +118,7 @@ export function normalizeTableCellTextTrack(
     runs.push(
       typeof item === 'object' && item !== null && 'color' in item && item.color
         ? { text, color: item.color }
-        : { text },
+        : { text }
     );
   }
   return runs.length ? runs : undefined;
@@ -129,7 +127,7 @@ export function normalizeTableCellTextTrack(
 /** Map wrap / maxLines onto wrap-to-track geometry and a line clamp. */
 export function resolveTableCellTextOverflow(
   source: { wrap?: boolean; maxLines?: TableCellMaxLines },
-  column: TableColumn,
+  column: TableColumn
 ): { wraps: boolean; lineClamp: TableCellLineClamp } {
   const wrap = source.wrap ?? column.wrap ?? false;
   const maxLines = source.maxLines ?? (source.wrap === true ? undefined : column.maxLines);
@@ -164,7 +162,7 @@ function resolveTextPresentation(
     fontFeature?: 'normal' | 'tabular-nums';
   },
   column: TableColumn,
-  options: { primaryText: boolean; allowTertiary: boolean },
+  options: { primaryText: boolean; allowTertiary: boolean }
 ): {
   value: ResolvedTableCellText;
   singleLine: boolean;
@@ -173,9 +171,7 @@ function resolveTextPresentation(
   lineClamp: TableCellLineClamp;
 } {
   const secondary = normalizeTableCellTextTrack(source.secondary);
-  const tertiary = options.allowTertiary
-    ? normalizeTableCellTextTrack(source.tertiary)
-    : undefined;
+  const tertiary = options.allowTertiary ? normalizeTableCellTextTrack(source.tertiary) : undefined;
   const value: ResolvedTableCellText = {
     primary: source.primary,
     ...(secondary ? { secondary } : {}),
@@ -207,7 +203,7 @@ function resolveTextPresentation(
 /** Resolve a cell's semantic and visual recipe once for both markup and classes. */
 export function resolveTableCellPresentation(
   value: TableCellValue,
-  column: TableColumn,
+  column: TableColumn
 ): TableCellPresentation {
   if (isTableCellBlank(value)) return { kind: 'blank', cellType: 'blank', value };
   if (value == null || isTableCellEmpty(value)) {
@@ -250,19 +246,17 @@ export function resolveTableCellPresentation(
   }
 
   const primaryText = isTableCellPrimaryText(value);
-  const source = isTableCellText(value) || primaryText
-    ? value
-    : {
-        primary: value,
-        fontFeature: typeof value === 'number' ? 'tabular-nums' as const : 'normal' as const,
-      };
-  const text = resolveTextPresentation(
-    isTableCellText(value)
+  const source =
+    isTableCellText(value) || primaryText
       ? value
-      : source,
-    column,
-    { primaryText, allowTertiary: isTableCellText(value) },
-  );
+      : {
+          primary: value,
+          fontFeature: typeof value === 'number' ? ('tabular-nums' as const) : ('normal' as const),
+        };
+  const text = resolveTextPresentation(isTableCellText(value) ? value : source, column, {
+    primaryText,
+    allowTertiary: isTableCellText(value),
+  });
   return {
     kind: 'text',
     cellType: primaryText ? 'primary-text' : 'text',

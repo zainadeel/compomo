@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { resolveTableCellPresentation, resolveTableCellImageTracks } from '../src/wc/components/Table/table-cell-model';
+import {
+  resolveTableCellPresentation,
+  resolveTableCellImageTracks,
+} from '../src/wc/components/Table/table-cell-model';
 import type { TableColumn } from '../src/wc/components/Table/table-types';
 
 const column: TableColumn = { id: 'value', header: 'Value' };
@@ -19,7 +22,7 @@ test('normalizes text cells once for markup and class recipes', () => {
   assert.deepEqual(
     resolveTableCellPresentation(
       { primary: 'Driver', secondary: 'Active', secondaryColor: 'positive' },
-      column,
+      column
     ),
     {
       kind: 'text',
@@ -34,7 +37,7 @@ test('normalizes text cells once for markup and class recipes', () => {
       variant: 'multi',
       wraps: false,
       lineClamp: 1,
-    },
+    }
   );
   assert.deepEqual(
     resolveTableCellPresentation(
@@ -44,14 +47,14 @@ test('normalizes text cells once for markup and class recipes', () => {
         href: '/vehicles/VEH-1042',
         target: '_blank',
       },
-      column,
+      column
     ).value,
     {
       primary: 'Freightliner Cascadia',
       secondary: [{ text: 'VEH-1042' }],
       href: '/vehicles/VEH-1042',
       target: '_blank',
-    },
+    }
   );
   assert.deepEqual(
     resolveTableCellPresentation(
@@ -60,7 +63,7 @@ test('normalizes text cells once for markup and class recipes', () => {
         secondary: 'DRV-1048',
         tertiary: 'Dallas, TX',
       },
-      column,
+      column
     ),
     {
       kind: 'text',
@@ -75,7 +78,7 @@ test('normalizes text cells once for markup and class recipes', () => {
       variant: 'triple',
       wraps: false,
       lineClamp: 1,
-    },
+    }
   );
   assert.equal(
     resolveTableCellPresentation(
@@ -88,9 +91,9 @@ test('normalizes text cells once for markup and class recipes', () => {
           { text: 'ignored' },
         ],
       },
-      column,
+      column
     ).value.secondary?.length,
-    3,
+    3
   );
   assert.equal(
     resolveTableCellPresentation(
@@ -100,16 +103,16 @@ test('normalizes text cells once for markup and class recipes', () => {
         secondary: 42,
         tertiary: 'ignored',
       } as never,
-      column,
+      column
     ).variant,
-    'primary-pair',
+    'primary-pair'
   );
   assert.equal(
     resolveTableCellPresentation(
       { kind: 'primary-text', primary: 'Driver', secondary: 42 },
-      { ...column, wrap: true },
+      { ...column, wrap: true }
     ).variant,
-    'primary-pair',
+    'primary-pair'
   );
 });
 
@@ -120,10 +123,7 @@ test('preserves declarative non-text cell kinds and variants', () => {
     value: null,
   });
   assert.equal(resolveTableCellPresentation({ kind: 'blank' }, column).kind, 'blank');
-  assert.equal(
-    resolveTableCellPresentation({ kind: 'icon', icon: 'Check' }, column).kind,
-    'icon',
-  );
+  assert.equal(resolveTableCellPresentation({ kind: 'icon', icon: 'Check' }, column).kind, 'icon');
   assert.deepEqual(
     resolveTableCellPresentation(
       {
@@ -131,7 +131,7 @@ test('preserves declarative non-text cell kinds and variants', () => {
         icon: 'VehicleTruck',
         primary: 'Freightliner Cascadia',
       },
-      column,
+      column
     ),
     {
       kind: 'icon-text',
@@ -141,7 +141,7 @@ test('preserves declarative non-text cell kinds and variants', () => {
       variant: 'single',
       wraps: false,
       lineClamp: 1,
-    },
+    }
   );
   assert.deepEqual(
     resolveTableCellPresentation(
@@ -153,7 +153,7 @@ test('preserves declarative non-text cell kinds and variants', () => {
         secondary: [{ text: 'VEH-1042' }, { text: 'Class 8' }],
         href: '/vehicles/VEH-1042',
       },
-      column,
+      column
     ),
     {
       kind: 'icon-text',
@@ -168,7 +168,7 @@ test('preserves declarative non-text cell kinds and variants', () => {
       variant: 'multi',
       wraps: false,
       lineClamp: 1,
-    },
+    }
   );
   assert.equal(
     resolveTableCellPresentation(
@@ -179,19 +179,16 @@ test('preserves declarative non-text cell kinds and variants', () => {
         secondary: 'DRV-1048',
         tertiary: 'Dallas, TX',
       },
-      column,
+      column
     ).variant,
-    'triple',
+    'triple'
   );
-  assert.deepEqual(
-    resolveTableCellPresentation({ kind: 'image', alt: 'Vehicle' }, column),
-    {
-      kind: 'image',
-      cellType: 'image',
-      value: { kind: 'image', alt: 'Vehicle' },
-      variant: 'single',
-    },
-  );
+  assert.deepEqual(resolveTableCellPresentation({ kind: 'image', alt: 'Vehicle' }, column), {
+    kind: 'image',
+    cellType: 'image',
+    value: { kind: 'image', alt: 'Vehicle' },
+    variant: 'single',
+  });
   assert.deepEqual(
     resolveTableCellPresentation({ kind: 'image', alt: 'Vehicle', tracks: 2 }, column),
     {
@@ -199,7 +196,7 @@ test('preserves declarative non-text cell kinds and variants', () => {
       cellType: 'image',
       value: { kind: 'image', alt: 'Vehicle', tracks: 2 },
       variant: 'multi',
-    },
+    }
   );
   assert.deepEqual(
     resolveTableCellPresentation({ kind: 'image', alt: 'Vehicle', tracks: 3 }, column),
@@ -208,21 +205,18 @@ test('preserves declarative non-text cell kinds and variants', () => {
       cellType: 'image',
       value: { kind: 'image', alt: 'Vehicle', tracks: 3 },
       variant: 'triple',
-    },
+    }
   );
   assert.equal(resolveTableCellImageTracks(undefined), 1);
   assert.equal(resolveTableCellImageTracks(2), 2);
   assert.equal(resolveTableCellImageTracks(3), 3);
   assert.equal(
-    resolveTableCellPresentation(
-      { kind: 'action', actionId: 'open', label: 'Open' },
-      column,
-    ).kind,
-    'action',
+    resolveTableCellPresentation({ kind: 'action', actionId: 'open', label: 'Open' }, column).kind,
+    'action'
   );
   const tag = resolveTableCellPresentation(
     { kind: 'tag', label: 'Active', variant: 'tag-with-text', text: 'Status' },
-    column,
+    column
   );
   assert.equal(tag.kind, 'tag');
   assert.equal(tag.variant, 'tag-with-text');
@@ -241,32 +235,28 @@ test('resolves wrap and maxLines into wrap geometry and a line clamp', () => {
   });
   assert.equal(
     resolveTableCellPresentation({ primary: 'Notes' }, { ...column, maxLines: 2 }).lineClamp,
-    2,
+    2
   );
   assert.equal(
     resolveTableCellPresentation({ primary: 'Notes' }, { ...column, maxLines: 2 }).wraps,
-    true,
+    true
   );
   assert.equal(
     resolveTableCellPresentation({ primary: 'Notes', maxLines: 3 }, column).lineClamp,
-    3,
+    3
   );
   assert.equal(
-    resolveTableCellPresentation(
-      { primary: 'Notes', wrap: true },
-      { ...column, maxLines: 2 },
-    ).lineClamp,
-    'none',
+    resolveTableCellPresentation({ primary: 'Notes', wrap: true }, { ...column, maxLines: 2 })
+      .lineClamp,
+    'none'
   );
   assert.equal(
-    resolveTableCellPresentation(
-      { primary: 'Notes', wrap: true, maxLines: 2 },
-      column,
-    ).lineClamp,
-    2,
+    resolveTableCellPresentation({ primary: 'Notes', wrap: true, maxLines: 2 }, column).lineClamp,
+    2
   );
   assert.equal(
-    resolveTableCellPresentation({ primary: 'Notes', wrap: false }, { ...column, wrap: true }).wraps,
-    false,
+    resolveTableCellPresentation({ primary: 'Notes', wrap: false }, { ...column, wrap: true })
+      .wraps,
+    false
   );
 });

@@ -187,7 +187,8 @@ export class CardOverview {
     const layout = this.layoutEl;
     if (!layout) return;
 
-    const bounds = width === undefined || height === undefined ? layout.getBoundingClientRect() : null;
+    const bounds =
+      width === undefined || height === undefined ? layout.getBoundingClientRect() : null;
     const resolvedWidth = width ?? bounds?.width ?? 0;
     const resolvedHeight = height ?? bounds?.height ?? 0;
 
@@ -313,9 +314,7 @@ export class CardOverview {
       return (
         <div class="card-overview__score" part="score">
           <div class="card-overview__score-content">
-            <div class="card-overview__score-badge">
-              {this.bar('text-display-small', '40px')}
-            </div>
+            <div class="card-overview__score-badge">{this.bar('text-display-small', '40px')}</div>
             <div class="card-overview__score-copy">
               {this.bar('text-body-small', '64px', 'card-overview__score-label-spacer')}
               {this.bar('text-body-medium', '28px')}

@@ -33,7 +33,12 @@ export const config: Config = {
         { elementSelectors: 'ds-input', event: 'dsChange', targetAttr: 'value', type: 'text' },
         { elementSelectors: 'ds-select', event: 'dsChange', targetAttr: 'value', type: 'select' },
         { elementSelectors: 'ds-radio', event: 'dsChange', targetAttr: 'value', type: 'radio' },
-        { elementSelectors: ['ds-checkbox', 'ds-switch'], event: 'dsChange', targetAttr: 'checked', type: 'boolean' },
+        {
+          elementSelectors: ['ds-checkbox', 'ds-switch'],
+          event: 'dsChange',
+          targetAttr: 'checked',
+          type: 'boolean',
+        },
       ],
     }),
     reactOutputTarget({
@@ -52,7 +57,12 @@ export const config: Config = {
         { elements: ['ds-input'], event: 'dsChange', targetAttr: 'value', eventAttr: 'detail' },
         { elements: ['ds-select'], event: 'dsChange', targetAttr: 'value', eventAttr: 'detail' },
         { elements: ['ds-radio'], event: 'dsChange', targetAttr: 'value', eventAttr: 'detail' },
-        { elements: ['ds-checkbox', 'ds-switch'], event: 'dsChange', targetAttr: 'checked', eventAttr: 'detail' },
+        {
+          elements: ['ds-checkbox', 'ds-switch'],
+          event: 'dsChange',
+          targetAttr: 'checked',
+          eventAttr: 'detail',
+        },
       ],
     }),
   ],

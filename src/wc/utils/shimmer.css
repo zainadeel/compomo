@@ -9,24 +9,34 @@
  */
 
 @keyframes ds-shimmer-text-motion {
-  0% { background-position: 100% 0; }
-  76.923% { background-position: 0 0; }
-  100% { background-position: 0 0; }
+  0% {
+    background-position: 100% 0;
+  }
+  76.923% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
 }
 
 @keyframes ds-shimmer-surface-motion {
-  0% { background-position: 100% 0; }
-  76.923% { background-position: 0 0; }
-  100% { background-position: 0 0; }
+  0% {
+    background-position: 100% 0;
+  }
+  76.923% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
 }
 
 .ds-shimmer-text {
   --ds-shimmer-base: currentColor;
   --ds-shimmer-duration: var(--effect-animation-duration-long-2);
   --ds-shimmer-repeat-delay: var(--effect-animation-delay-short-3);
-  --ds-shimmer-cycle-duration: calc(
-    var(--ds-shimmer-duration) + var(--ds-shimmer-repeat-delay)
-  );
+  --ds-shimmer-cycle-duration: calc(var(--ds-shimmer-duration) + var(--ds-shimmer-repeat-delay));
   --ds-shimmer-easing: var(--effect-animation-easing-linear);
   --ds-shimmer-spread: var(--dimension-size-500);
   --ds-shimmer-travel: calc(
@@ -42,22 +52,19 @@
   );
   background-repeat: no-repeat;
   background-position: 100% 0;
-  background-size: calc(
-    200% + var(--ds-shimmer-spread) * 2 + var(--ds-shimmer-travel) * 2
-  ) 100%;
+  background-size: calc(200% + var(--ds-shimmer-spread) * 2 + var(--ds-shimmer-travel) * 2) 100%;
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: ds-shimmer-text-motion var(--ds-shimmer-cycle-duration) var(--ds-shimmer-easing) infinite;
+  animation: ds-shimmer-text-motion var(--ds-shimmer-cycle-duration) var(--ds-shimmer-easing)
+    infinite;
 }
 
 .ds-shimmer-surface {
   --ds-shimmer-surface-base: var(--color-foreground-quaternary);
   --ds-shimmer-duration: var(--effect-animation-duration-long-2);
   --ds-shimmer-repeat-delay: var(--effect-animation-delay-short-3);
-  --ds-shimmer-cycle-duration: calc(
-    var(--ds-shimmer-duration) + var(--ds-shimmer-repeat-delay)
-  );
+  --ds-shimmer-cycle-duration: calc(var(--ds-shimmer-duration) + var(--ds-shimmer-repeat-delay));
   --ds-shimmer-easing: var(--effect-animation-easing-linear);
   --ds-shimmer-spread: var(--dimension-size-500);
   --ds-shimmer-travel: calc(
@@ -82,10 +89,9 @@
   );
   background-repeat: no-repeat;
   background-position: 100% 0;
-  background-size: calc(
-    200% + var(--ds-shimmer-spread) * 2 + var(--ds-shimmer-travel) * 2
-  ) 100%;
-  animation: ds-shimmer-surface-motion var(--ds-shimmer-cycle-duration) var(--ds-shimmer-easing) infinite;
+  background-size: calc(200% + var(--ds-shimmer-spread) * 2 + var(--ds-shimmer-travel) * 2) 100%;
+  animation: ds-shimmer-surface-motion var(--ds-shimmer-cycle-duration) var(--ds-shimmer-easing)
+    infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -41,7 +41,7 @@ export const FooterAction: Story = {
               >
                 ${row}
               </ds-text>
-            `,
+            `
           )}
         </div>
         <div slot="overlay" style="padding:var(--dimension-space-100);">

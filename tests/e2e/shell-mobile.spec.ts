@@ -5,9 +5,7 @@ async function expectSelectedFillBelowContent(control: Locator) {
   const layers = await control.evaluate(element => ({
     selectedFill: getComputedStyle(element, '::before').backgroundColor,
     selectedFillZIndex: getComputedStyle(element, '::before').zIndex,
-    contentZIndexes: Array.from(element.children).map(
-      child => getComputedStyle(child).zIndex
-    ),
+    contentZIndexes: Array.from(element.children).map(child => getComputedStyle(child).zIndex),
   }));
 
   expect(layers.selectedFill).not.toBe('rgba(0, 0, 0, 0)');
@@ -23,12 +21,8 @@ async function expectActiveToolToFillStage(page: Page) {
     const host = document.querySelector('ds-shell-tools');
     const root = host?.shadowRoot;
     const tools = host?.getBoundingClientRect();
-    const body = root
-      ?.querySelector('.shell-tools__mobile-body')
-      ?.getBoundingClientRect();
-    const view = root
-      ?.querySelector('.shell-tools__view--active')
-      ?.getBoundingClientRect();
+    const body = root?.querySelector('.shell-tools__mobile-body')?.getBoundingClientRect();
+    const view = root?.querySelector('.shell-tools__view--active')?.getBoundingClientRect();
 
     return {
       toolsBottom: tools?.bottom,
@@ -59,7 +53,7 @@ test.describe('Responsive mobile shell foundation', () => {
   }) => {
     await expect(page.locator('meta[name="viewport"]')).toHaveAttribute(
       'content',
-      'width=device-width, initial-scale=1, viewport-fit=cover',
+      'width=device-width, initial-scale=1, viewport-fit=cover'
     );
     await expect(page.locator('meta[name="theme-color"]')).toHaveCount(2);
 
@@ -80,7 +74,7 @@ test.describe('Responsive mobile shell foundation', () => {
               bodyClientHeight: document.body.clientHeight,
               bodyScrollHeight: document.body.scrollHeight,
             };
-          }),
+          })
         )
         .toEqual({
           viewportHeight: height,
@@ -114,8 +108,9 @@ test.describe('Responsive mobile shell foundation', () => {
 
     await page.locator('#shell').evaluate(element => {
       const history: boolean[] = [];
-      (window as typeof window & { __foregroundRefreshHistory?: boolean[] })
-        .__foregroundRefreshHistory = history;
+      (
+        window as typeof window & { __foregroundRefreshHistory?: boolean[] }
+      ).__foregroundRefreshHistory = history;
       new MutationObserver(() => {
         history.push(element.classList.contains('shell-app--foreground-refresh'));
       }).observe(element, { attributes: true, attributeFilter: ['class'] });
@@ -145,115 +140,110 @@ test.describe('Responsive mobile shell foundation', () => {
     ).resolves.toBe(true);
   });
 
-  test('renders two fixed icon-only groups without overflow and keeps status dots supplemental',
-    chromiumOnly('layout-geometry', 'Fixed mobile-bar groups, icon sizing, and supplemental dots are static chrome recipes.'),
-    async ({
-    page,
-  }) => {
-    const primary = page.getByRole('navigation', { name: 'Primary' });
-    const buttons = primary.getByRole('button');
-    await expect(buttons).toHaveCount(6);
-    await expect(buttons.allTextContents()).resolves.toEqual(['', '', '', '', '', '']);
-    await expect(buttons.evaluateAll(items => items.map(item => item.getAttribute('aria-label'))))
-      .resolves.toEqual([
-      'Menu',
-      'Tracking',
-      'Search',
-      'Activity',
-      'Messages',
-      'Agents',
-    ]);
-    await expect(page.locator('.mobile-bar-nav__group')).toHaveCount(2);
-    await expect(page.locator('.mobile-bar-nav__dot')).toHaveCount(3);
+  test(
+    'renders two fixed icon-only groups without overflow and keeps status dots supplemental',
+    chromiumOnly(
+      'layout-geometry',
+      'Fixed mobile-bar groups, icon sizing, and supplemental dots are static chrome recipes.'
+    ),
+    async ({ page }) => {
+      const primary = page.getByRole('navigation', { name: 'Primary' });
+      const buttons = primary.getByRole('button');
+      await expect(buttons).toHaveCount(6);
+      await expect(buttons.allTextContents()).resolves.toEqual(['', '', '', '', '', '']);
+      await expect(
+        buttons.evaluateAll(items => items.map(item => item.getAttribute('aria-label')))
+      ).resolves.toEqual(['Menu', 'Tracking', 'Search', 'Activity', 'Messages', 'Agents']);
+      await expect(page.locator('.mobile-bar-nav__group')).toHaveCount(2);
+      await expect(page.locator('.mobile-bar-nav__dot')).toHaveCount(3);
 
-    const metrics = await page.locator('ds-mobile-bar-nav').evaluate(element => {
-      const bar = element.querySelector('.mobile-bar-nav');
-      const groups = Array.from(element.querySelectorAll('.mobile-bar-nav__group'));
-      const items = Array.from(element.querySelectorAll('.mobile-bar-nav__item'));
-      const icons = Array.from(element.querySelectorAll('.mobile-bar-nav__icon'));
-      const divider = element.querySelector('.mobile-bar-nav__divider');
-      const selected = element.querySelector('.mobile-bar-nav__item--selected');
-      const unselected = element.querySelector(
-        '.mobile-bar-nav__item:not(.mobile-bar-nav__item--selected)'
-      );
-      const colorProbe = document.createElement('span');
-      element.append(colorProbe);
-      colorProbe.style.color = 'var(--color-foreground-primary)';
-      const primaryForeground = getComputedStyle(colorProbe).color;
-      colorProbe.style.color = 'var(--color-foreground-tertiary)';
-      const tertiaryForeground = getComputedStyle(colorProbe).color;
-      colorProbe.style.backgroundColor = 'var(--color-background-primary)';
-      const primaryBackground = getComputedStyle(colorProbe).backgroundColor;
-      colorProbe.remove();
-      const barRect = bar?.getBoundingClientRect();
-      const groupRects = groups.map(group => group.getBoundingClientRect());
+      const metrics = await page.locator('ds-mobile-bar-nav').evaluate(element => {
+        const bar = element.querySelector('.mobile-bar-nav');
+        const groups = Array.from(element.querySelectorAll('.mobile-bar-nav__group'));
+        const items = Array.from(element.querySelectorAll('.mobile-bar-nav__item'));
+        const icons = Array.from(element.querySelectorAll('.mobile-bar-nav__icon'));
+        const divider = element.querySelector('.mobile-bar-nav__divider');
+        const selected = element.querySelector('.mobile-bar-nav__item--selected');
+        const unselected = element.querySelector(
+          '.mobile-bar-nav__item:not(.mobile-bar-nav__item--selected)'
+        );
+        const colorProbe = document.createElement('span');
+        element.append(colorProbe);
+        colorProbe.style.color = 'var(--color-foreground-primary)';
+        const primaryForeground = getComputedStyle(colorProbe).color;
+        colorProbe.style.color = 'var(--color-foreground-tertiary)';
+        const tertiaryForeground = getComputedStyle(colorProbe).color;
+        colorProbe.style.backgroundColor = 'var(--color-background-primary)';
+        const primaryBackground = getComputedStyle(colorProbe).backgroundColor;
+        colorProbe.remove();
+        const barRect = bar?.getBoundingClientRect();
+        const groupRects = groups.map(group => group.getBoundingClientRect());
 
-      return {
-        barGap: bar ? getComputedStyle(bar).gap : '',
-        barJustifyContent: bar ? getComputedStyle(bar).justifyContent : '',
-        barPaddingInline: bar ? getComputedStyle(bar).paddingInline : '',
-        barBackground: bar ? getComputedStyle(bar).backgroundColor : '',
-        hostBackground: getComputedStyle(element).backgroundColor,
-        groupEdgeInsets:
-          barRect && groupRects.length === 2
-            ? [
-                Math.round(groupRects[0].left - barRect.left),
-                Math.round(barRect.right - groupRects[1].right),
-              ]
-            : [],
-        groupGaps: groups.map(group => getComputedStyle(group).gap),
-        itemSizes: items.map(item => {
-          const rect = item.getBoundingClientRect();
-          return [rect.width, rect.height];
-        }),
-        itemRadii: items.map(item => getComputedStyle(item).borderRadius),
-        iconSizes: icons.map(icon => {
-          const rect = icon.getBoundingClientRect();
-          return [rect.width, rect.height];
-        }),
-        dividerHeight: divider?.getBoundingClientRect().height,
-        selectedFill: selected
-          ? getComputedStyle(selected, '::before').backgroundColor
-          : '',
-        selectedForeground: selected ? getComputedStyle(selected).color : '',
-        unselectedForeground: unselected ? getComputedStyle(unselected).color : '',
-        primaryForeground,
-        tertiaryForeground,
-        primaryBackground,
-      };
-    });
+        return {
+          barGap: bar ? getComputedStyle(bar).gap : '',
+          barJustifyContent: bar ? getComputedStyle(bar).justifyContent : '',
+          barPaddingInline: bar ? getComputedStyle(bar).paddingInline : '',
+          barBackground: bar ? getComputedStyle(bar).backgroundColor : '',
+          hostBackground: getComputedStyle(element).backgroundColor,
+          groupEdgeInsets:
+            barRect && groupRects.length === 2
+              ? [
+                  Math.round(groupRects[0].left - barRect.left),
+                  Math.round(barRect.right - groupRects[1].right),
+                ]
+              : [],
+          groupGaps: groups.map(group => getComputedStyle(group).gap),
+          itemSizes: items.map(item => {
+            const rect = item.getBoundingClientRect();
+            return [rect.width, rect.height];
+          }),
+          itemRadii: items.map(item => getComputedStyle(item).borderRadius),
+          iconSizes: icons.map(icon => {
+            const rect = icon.getBoundingClientRect();
+            return [rect.width, rect.height];
+          }),
+          dividerHeight: divider?.getBoundingClientRect().height,
+          selectedFill: selected ? getComputedStyle(selected, '::before').backgroundColor : '',
+          selectedForeground: selected ? getComputedStyle(selected).color : '',
+          unselectedForeground: unselected ? getComputedStyle(unselected).color : '',
+          primaryForeground,
+          tertiaryForeground,
+          primaryBackground,
+        };
+      });
 
-    expect(metrics.barGap).toBe('8px');
-    expect(metrics.barJustifyContent).toBe('space-between');
-    expect(metrics.barPaddingInline).toBe('8px');
-    expect(metrics.barBackground).toBe(metrics.primaryBackground);
-    expect(metrics.hostBackground).toBe(metrics.primaryBackground);
-    expect(metrics.groupEdgeInsets).toEqual([8, 8]);
-    expect(metrics.groupGaps).toEqual(['8px', '8px']);
-    expect(metrics.itemSizes).toEqual(Array.from({ length: 6 }, () => [40, 40]));
-    expect(metrics.itemRadii).toEqual(Array.from({ length: 6 }, () => '2px'));
-    expect(metrics.iconSizes).toEqual(Array.from({ length: 6 }, () => [24, 24]));
-    expect(metrics.dividerHeight).toBe(24);
-    expect(metrics.selectedFill).toBe('rgba(0, 0, 0, 0)');
-    expect(metrics.selectedForeground).toBe(metrics.primaryForeground);
-    expect(metrics.unselectedForeground).toBe(metrics.tertiaryForeground);
+      expect(metrics.barGap).toBe('8px');
+      expect(metrics.barJustifyContent).toBe('space-between');
+      expect(metrics.barPaddingInline).toBe('8px');
+      expect(metrics.barBackground).toBe(metrics.primaryBackground);
+      expect(metrics.hostBackground).toBe(metrics.primaryBackground);
+      expect(metrics.groupEdgeInsets).toEqual([8, 8]);
+      expect(metrics.groupGaps).toEqual(['8px', '8px']);
+      expect(metrics.itemSizes).toEqual(Array.from({ length: 6 }, () => [40, 40]));
+      expect(metrics.itemRadii).toEqual(Array.from({ length: 6 }, () => '2px'));
+      expect(metrics.iconSizes).toEqual(Array.from({ length: 6 }, () => [24, 24]));
+      expect(metrics.dividerHeight).toBe(24);
+      expect(metrics.selectedFill).toBe('rgba(0, 0, 0, 0)');
+      expect(metrics.selectedForeground).toBe(metrics.primaryForeground);
+      expect(metrics.unselectedForeground).toBe(metrics.tertiaryForeground);
 
-    const barBox = await page.locator('ds-mobile-bar-nav').boundingBox();
-    expect(barBox).not.toBeNull();
-    expect(barBox!.x).toBeGreaterThanOrEqual(0);
-    expect(barBox!.x + barBox!.width).toBeLessThanOrEqual(390);
+      const barBox = await page.locator('ds-mobile-bar-nav').boundingBox();
+      expect(barBox).not.toBeNull();
+      expect(barBox!.x).toBeGreaterThanOrEqual(0);
+      expect(barBox!.x + barBox!.width).toBeLessThanOrEqual(390);
 
-    const dividerInteraction = await page.locator('.mobile-bar-nav__divider').evaluate(
-      element => ({
-        pointerEvents: getComputedStyle(element).pointerEvents,
-        webkitUserSelect: getComputedStyle(element).webkitUserSelect,
-      })
-    );
-    expect(dividerInteraction).toEqual({
-      pointerEvents: 'none',
-      webkitUserSelect: 'none',
-    });
-  });
+      const dividerInteraction = await page
+        .locator('.mobile-bar-nav__divider')
+        .evaluate(element => ({
+          pointerEvents: getComputedStyle(element).pointerEvents,
+          webkitUserSelect: getComputedStyle(element).webkitUserSelect,
+        }));
+      expect(dividerInteraction).toEqual({
+        pointerEvents: 'none',
+        webkitUserSelect: 'none',
+      });
+    }
+  );
 
   test('owns direct-touch press feedback and clears it after a quick tap', async ({ page }) => {
     const menu = page.getByRole('button', { name: 'Menu' });
@@ -372,265 +362,284 @@ test.describe('Responsive mobile shell foundation', () => {
     );
   });
 
-  test('uses one icon-only sheet header lane and large-density destination rows',
-    chromiumOnly('layout-geometry', 'Sheet header and destination density are token-backed static geometry.'),
-    async ({
-    page,
-  }) => {
-    await page.locator('ds-mobile-sheet-nav').evaluate(element => {
-      (element as HTMLElement & {
-        dashboardGroups: Array<{
-          id: string;
-          items: Array<{ id: string; icon: string; label: string; href: string }>;
-        }>;
-      }).dashboardGroups = [
-        {
-          id: 'primary',
-          items: [
-            {
-              id: 'tracking',
-              icon: 'MapPage',
-              label: 'Tracking',
-              href: '/dashboard/tracking',
-            },
-            {
-              id: 'workforce',
-              icon: 'Person',
-              label: 'Workforce',
-              href: '/dashboard/workforce',
-            },
-          ],
-        },
-        {
-          id: 'administration',
-          items: [
-            {
-              id: 'devices',
-              icon: 'Devices',
-              label: 'Devices',
-              href: '/dashboard/devices',
-            },
-          ],
-        },
-      ];
-    });
-
-    await page.getByRole('button', { name: 'Menu' }).click();
-
-    const sheet = page.locator('ds-mobile-sheet-nav');
-    const tabs = sheet.getByRole('tab');
-    await expect(tabs).toHaveCount(2);
-    await expect(tabs.allTextContents()).resolves.toEqual(['', '']);
-    await expect(tabs.evaluateAll(items => items.map(item => item.getAttribute('aria-label'))))
-      .resolves.toEqual(['Dashboard', 'Settings']);
-    await expect(sheet.getByRole('button', { name: 'Help & Support' })).toHaveText('');
-    await expect(sheet.getByRole('button', { name: 'Account' })).toHaveText('');
-    await expect(sheet.getByText('Navigation', { exact: true })).toHaveCount(0);
-
-    const headerMetrics = await sheet.evaluate(element => {
-      const header = element.querySelector('.mobile-sheet-nav__header');
-      const logo = element.querySelector('.mobile-sheet-nav__logo');
-      const context = element.querySelector('.mobile-sheet-nav__context');
-      const contextTrack = context?.querySelector('.tab-list');
-      const contextTabs = Array.from(context?.querySelectorAll('.tab') ?? []);
-      const contextIcons = Array.from(context?.querySelectorAll('.tab__icon') ?? []);
-      const actions = element.querySelector('.mobile-sheet-nav__actions');
-      const logoMark = element.querySelector('.mobile-sheet-nav__logo-mark');
-      const actionButtons = Array.from(
-        element.querySelectorAll('.mobile-sheet-nav__actions ds-button-unfilled')
-      );
-      const rects = [logo, context, actions].map(item => item?.getBoundingClientRect());
-      return {
-        height: header?.getBoundingClientRect().height,
-        padding: header ? getComputedStyle(header).padding : '',
-        gap: header ? getComputedStyle(header).gap : '',
-        centers: rects.map(rect => rect ? rect.top + rect.height / 2 : 0),
-        logoLeft: rects[0]?.left,
-        logoMarkLeft: logoMark?.getBoundingClientRect().left,
-        logoMarkSize: logoMark
-          ? [logoMark.getBoundingClientRect().width, logoMark.getBoundingClientRect().height]
-          : [],
-        contextCenter: rects[1] ? rects[1].left + rects[1].width / 2 : 0,
-        contextSize: (context as HTMLElement & { size?: string } | null)?.size,
-        contextTrackHeight: contextTrack?.getBoundingClientRect().height,
-        contextTabSizes: contextTabs.map(item => {
-          const rect = item.getBoundingClientRect();
-          return [rect.width, rect.height];
-        }),
-        contextIconSizes: contextIcons.map(item => {
-          const rect = item.getBoundingClientRect();
-          return [rect.width, rect.height];
-        }),
-        actionsRight: rects[2]?.right,
-        actionSizes: actionButtons.map(item => {
-          const rect = item.getBoundingClientRect();
-          return [rect.width, rect.height];
-        }),
-        actionIconSizes: actionButtons.map(item => {
-          const icon = item.querySelector('ds-icon')?.getBoundingClientRect();
-          return icon ? [icon.width, icon.height] : [];
-        }),
-        headerCenter: header
-          ? header.getBoundingClientRect().left + header.getBoundingClientRect().width / 2
-          : 0,
-        headerRight: header?.getBoundingClientRect().right,
-      };
-    });
-
-    expect(headerMetrics.height).toBe(56);
-    expect(headerMetrics.padding).toBe('8px');
-    expect(headerMetrics.gap).toBe('8px');
-    expect(headerMetrics.centers[0]).toBeCloseTo(headerMetrics.centers[1], 0);
-    expect(headerMetrics.centers[1]).toBeCloseTo(headerMetrics.centers[2], 0);
-    expect(headerMetrics.contextCenter).toBeCloseTo(headerMetrics.headerCenter, 0);
-    expect(headerMetrics.contextSize).toBe('lg');
-    expect(headerMetrics.contextTrackHeight).toBe(40);
-    expect(headerMetrics.contextTabSizes.map(size => size[1])).toEqual([36, 36]);
-    expect(headerMetrics.contextIconSizes).toEqual([[24, 24], [24, 24]]);
-    expect(headerMetrics.logoLeft).toBe(8);
-    expect(headerMetrics.logoMarkLeft).toBe(16);
-    expect(headerMetrics.logoMarkSize).toEqual([24, 24]);
-    expect(headerMetrics.actionsRight).toBeCloseTo(headerMetrics.headerRight! - 8, 0);
-    expect(headerMetrics.actionSizes).toEqual([[40, 40], [40, 40]]);
-    expect(headerMetrics.actionIconSizes).toEqual([[24, 24], [24, 24]]);
-
-    const sheetMetrics = await sheet.evaluate(element => {
-      const body = element.querySelector('.mobile-sheet-nav__body');
-      const sectionsContainer = element.querySelector('.mobile-sheet-nav__sections');
-      const itemsContainer = element.querySelector('.mobile-sheet-nav__items');
-      const sections = Array.from(element.querySelectorAll('.mobile-sheet-nav__items'));
-      const items = Array.from(element.querySelectorAll('.mobile-sheet-nav__item'));
-      return {
-        bodyPadding: body ? getComputedStyle(body).padding : '',
-        sectionGap: sectionsContainer ? getComputedStyle(sectionsContainer).gap : '',
-        sectionCount: sections.length,
-        itemGap: itemsContainer ? getComputedStyle(itemsContainer).gap : '',
-        items: items.map(item => {
-          const icon = item.querySelector('ds-icon');
-          const label = item.querySelector('.mobile-sheet-nav__item-label');
-          const itemStyle = getComputedStyle(item);
-          const labelStyle = label ? getComputedStyle(label) : null;
-          const iconRect = icon?.getBoundingClientRect();
-          return {
-            height: item.getBoundingClientRect().height,
-            paddingInline: itemStyle.paddingInline,
-            gap: itemStyle.gap,
-            iconSize: iconRect ? [iconRect.width, iconRect.height] : [],
-            labelPaddingInline: labelStyle?.paddingInline,
-          };
-        }),
-      };
-    });
-
-    expect(sheetMetrics.bodyPadding).toBe('8px');
-    expect(sheetMetrics.sectionGap).toBe('32px');
-    expect(sheetMetrics.sectionCount).toBe(2);
-    expect(sheetMetrics.itemGap).toBe('8px');
-    expect(sheetMetrics.items).toEqual([
-      {
-        height: 40,
-        paddingInline: '8px',
-        gap: '4px',
-        iconSize: [24, 24],
-        labelPaddingInline: '4px',
-      },
-      {
-        height: 40,
-        paddingInline: '8px',
-        gap: '4px',
-        iconSize: [24, 24],
-        labelPaddingInline: '4px',
-      },
-      {
-        height: 40,
-        paddingInline: '8px',
-        gap: '4px',
-        iconSize: [24, 24],
-        labelPaddingInline: '4px',
-      },
-    ]);
-  });
-
-  test('uses the centered section chooser and emphasis-only sheet selection',
-    chromiumOnly('layout-geometry', 'Chooser alignment and selection emphasis are static component recipes.'),
-    async ({
-    page,
-  }) => {
-    await expect(
-      page.locator('ds-mobile-section-switcher button').getByText('Live Map')
-    ).toBeVisible();
-
-    await page
-      .getByRole('navigation', { name: 'Primary' })
-      .getByRole('button', { name: 'Menu' })
-      .click();
-
-    const selectedSheetItem = page.locator(
-      'ds-mobile-sheet-nav button[aria-current="page"]'
-    );
-    await expect(selectedSheetItem.locator('ds-text')).toHaveClass(/ds-text--emphasis/);
-    await expect(
-      selectedSheetItem.evaluate(
-        element => getComputedStyle(element, '::before').backgroundColor
-      )
-    ).resolves.toBe('rgba(0, 0, 0, 0)');
-  });
-
-  test('keeps local page tabs subordinate to the selected area section',
-    chromiumOnly('controlled-behavior', 'Explicit area and page state map deterministically to the visible section control.'),
+  test(
+    'uses one icon-only sheet header lane and large-density destination rows',
+    chromiumOnly(
+      'layout-geometry',
+      'Sheet header and destination density are token-backed static geometry.'
+    ),
     async ({ page }) => {
-    await page.locator('#mobile-header').evaluate(header => {
-      const mobileHeader = header as HTMLElement & {
-        sections: Array<{ id: string; label: string }>;
-        value: string;
-        subsections: Array<{ id: string; label: string }>;
-        subvalue: string;
-        sectionsAriaLabel: string;
-        subsectionsAriaLabel: string;
-      };
-      mobileHeader.sections = [
-        { id: 'overview', label: 'Overview' },
-        { id: 'people', label: 'People' },
-        { id: 'timecards', label: 'Timecards' },
-      ];
-      mobileHeader.value = 'people';
-      mobileHeader.sectionsAriaLabel = 'Change Workforce page';
-      mobileHeader.subsections = [
-        { id: 'drivers', label: 'Drivers' },
-        { id: 'managers', label: 'Managers' },
-      ];
-      mobileHeader.subvalue = 'drivers';
-      mobileHeader.subsectionsAriaLabel = 'Change People view';
-      mobileHeader.addEventListener('dsSubsectionChange', event => {
-        mobileHeader.subvalue = (event as CustomEvent<string>).detail;
+      await page.locator('ds-mobile-sheet-nav').evaluate(element => {
+        (
+          element as HTMLElement & {
+            dashboardGroups: Array<{
+              id: string;
+              items: Array<{ id: string; icon: string; label: string; href: string }>;
+            }>;
+          }
+        ).dashboardGroups = [
+          {
+            id: 'primary',
+            items: [
+              {
+                id: 'tracking',
+                icon: 'MapPage',
+                label: 'Tracking',
+                href: '/dashboard/tracking',
+              },
+              {
+                id: 'workforce',
+                icon: 'Person',
+                label: 'Workforce',
+                href: '/dashboard/workforce',
+              },
+            ],
+          },
+          {
+            id: 'administration',
+            items: [
+              {
+                id: 'devices',
+                icon: 'Devices',
+                label: 'Devices',
+                href: '/dashboard/devices',
+              },
+            ],
+          },
+        ];
       });
-    });
 
-    await expect(page.getByRole('heading', { name: 'People', level: 1 })).toBeVisible();
-    await expect(
-      page.getByRole('button', {
-        name: 'Change Workforce page. Current section: People',
-      })
-    ).toBeVisible();
-    await expect(page.getByRole('navigation', { name: 'Change People view' })).toBeVisible();
-    await page
-      .getByRole('button', { name: 'Change People view. Current section: Drivers' })
-      .click();
-    await expect(page.getByRole('menuitemradio')).toHaveCount(0);
-    await expect(page.getByRole('menuitem', { name: 'Drivers' })).toHaveAttribute(
-      'aria-current',
-      'true'
-    );
-    await page.getByRole('menuitem', { name: 'Managers' }).click();
-    await expect(
-      page.getByRole('button', { name: 'Change People view. Current section: Managers' })
-    ).toBeVisible();
-    await expect(
-      page.getByRole('button', {
-        name: 'Change Workforce page. Current section: People',
-      })
-    ).toBeVisible();
-  });
+      await page.getByRole('button', { name: 'Menu' }).click();
+
+      const sheet = page.locator('ds-mobile-sheet-nav');
+      const tabs = sheet.getByRole('tab');
+      await expect(tabs).toHaveCount(2);
+      await expect(tabs.allTextContents()).resolves.toEqual(['', '']);
+      await expect(
+        tabs.evaluateAll(items => items.map(item => item.getAttribute('aria-label')))
+      ).resolves.toEqual(['Dashboard', 'Settings']);
+      await expect(sheet.getByRole('button', { name: 'Help & Support' })).toHaveText('');
+      await expect(sheet.getByRole('button', { name: 'Account' })).toHaveText('');
+      await expect(sheet.getByText('Navigation', { exact: true })).toHaveCount(0);
+
+      const headerMetrics = await sheet.evaluate(element => {
+        const header = element.querySelector('.mobile-sheet-nav__header');
+        const logo = element.querySelector('.mobile-sheet-nav__logo');
+        const context = element.querySelector('.mobile-sheet-nav__context');
+        const contextTrack = context?.querySelector('.tab-list');
+        const contextTabs = Array.from(context?.querySelectorAll('.tab') ?? []);
+        const contextIcons = Array.from(context?.querySelectorAll('.tab__icon') ?? []);
+        const actions = element.querySelector('.mobile-sheet-nav__actions');
+        const logoMark = element.querySelector('.mobile-sheet-nav__logo-mark');
+        const actionButtons = Array.from(
+          element.querySelectorAll('.mobile-sheet-nav__actions ds-button-unfilled')
+        );
+        const rects = [logo, context, actions].map(item => item?.getBoundingClientRect());
+        return {
+          height: header?.getBoundingClientRect().height,
+          padding: header ? getComputedStyle(header).padding : '',
+          gap: header ? getComputedStyle(header).gap : '',
+          centers: rects.map(rect => (rect ? rect.top + rect.height / 2 : 0)),
+          logoLeft: rects[0]?.left,
+          logoMarkLeft: logoMark?.getBoundingClientRect().left,
+          logoMarkSize: logoMark
+            ? [logoMark.getBoundingClientRect().width, logoMark.getBoundingClientRect().height]
+            : [],
+          contextCenter: rects[1] ? rects[1].left + rects[1].width / 2 : 0,
+          contextSize: (context as (HTMLElement & { size?: string }) | null)?.size,
+          contextTrackHeight: contextTrack?.getBoundingClientRect().height,
+          contextTabSizes: contextTabs.map(item => {
+            const rect = item.getBoundingClientRect();
+            return [rect.width, rect.height];
+          }),
+          contextIconSizes: contextIcons.map(item => {
+            const rect = item.getBoundingClientRect();
+            return [rect.width, rect.height];
+          }),
+          actionsRight: rects[2]?.right,
+          actionSizes: actionButtons.map(item => {
+            const rect = item.getBoundingClientRect();
+            return [rect.width, rect.height];
+          }),
+          actionIconSizes: actionButtons.map(item => {
+            const icon = item.querySelector('ds-icon')?.getBoundingClientRect();
+            return icon ? [icon.width, icon.height] : [];
+          }),
+          headerCenter: header
+            ? header.getBoundingClientRect().left + header.getBoundingClientRect().width / 2
+            : 0,
+          headerRight: header?.getBoundingClientRect().right,
+        };
+      });
+
+      expect(headerMetrics.height).toBe(56);
+      expect(headerMetrics.padding).toBe('8px');
+      expect(headerMetrics.gap).toBe('8px');
+      expect(headerMetrics.centers[0]).toBeCloseTo(headerMetrics.centers[1], 0);
+      expect(headerMetrics.centers[1]).toBeCloseTo(headerMetrics.centers[2], 0);
+      expect(headerMetrics.contextCenter).toBeCloseTo(headerMetrics.headerCenter, 0);
+      expect(headerMetrics.contextSize).toBe('lg');
+      expect(headerMetrics.contextTrackHeight).toBe(40);
+      expect(headerMetrics.contextTabSizes.map(size => size[1])).toEqual([36, 36]);
+      expect(headerMetrics.contextIconSizes).toEqual([
+        [24, 24],
+        [24, 24],
+      ]);
+      expect(headerMetrics.logoLeft).toBe(8);
+      expect(headerMetrics.logoMarkLeft).toBe(16);
+      expect(headerMetrics.logoMarkSize).toEqual([24, 24]);
+      expect(headerMetrics.actionsRight).toBeCloseTo(headerMetrics.headerRight! - 8, 0);
+      expect(headerMetrics.actionSizes).toEqual([
+        [40, 40],
+        [40, 40],
+      ]);
+      expect(headerMetrics.actionIconSizes).toEqual([
+        [24, 24],
+        [24, 24],
+      ]);
+
+      const sheetMetrics = await sheet.evaluate(element => {
+        const body = element.querySelector('.mobile-sheet-nav__body');
+        const sectionsContainer = element.querySelector('.mobile-sheet-nav__sections');
+        const itemsContainer = element.querySelector('.mobile-sheet-nav__items');
+        const sections = Array.from(element.querySelectorAll('.mobile-sheet-nav__items'));
+        const items = Array.from(element.querySelectorAll('.mobile-sheet-nav__item'));
+        return {
+          bodyPadding: body ? getComputedStyle(body).padding : '',
+          sectionGap: sectionsContainer ? getComputedStyle(sectionsContainer).gap : '',
+          sectionCount: sections.length,
+          itemGap: itemsContainer ? getComputedStyle(itemsContainer).gap : '',
+          items: items.map(item => {
+            const icon = item.querySelector('ds-icon');
+            const label = item.querySelector('.mobile-sheet-nav__item-label');
+            const itemStyle = getComputedStyle(item);
+            const labelStyle = label ? getComputedStyle(label) : null;
+            const iconRect = icon?.getBoundingClientRect();
+            return {
+              height: item.getBoundingClientRect().height,
+              paddingInline: itemStyle.paddingInline,
+              gap: itemStyle.gap,
+              iconSize: iconRect ? [iconRect.width, iconRect.height] : [],
+              labelPaddingInline: labelStyle?.paddingInline,
+            };
+          }),
+        };
+      });
+
+      expect(sheetMetrics.bodyPadding).toBe('8px');
+      expect(sheetMetrics.sectionGap).toBe('32px');
+      expect(sheetMetrics.sectionCount).toBe(2);
+      expect(sheetMetrics.itemGap).toBe('8px');
+      expect(sheetMetrics.items).toEqual([
+        {
+          height: 40,
+          paddingInline: '8px',
+          gap: '4px',
+          iconSize: [24, 24],
+          labelPaddingInline: '4px',
+        },
+        {
+          height: 40,
+          paddingInline: '8px',
+          gap: '4px',
+          iconSize: [24, 24],
+          labelPaddingInline: '4px',
+        },
+        {
+          height: 40,
+          paddingInline: '8px',
+          gap: '4px',
+          iconSize: [24, 24],
+          labelPaddingInline: '4px',
+        },
+      ]);
+    }
+  );
+
+  test(
+    'uses the centered section chooser and emphasis-only sheet selection',
+    chromiumOnly(
+      'layout-geometry',
+      'Chooser alignment and selection emphasis are static component recipes.'
+    ),
+    async ({ page }) => {
+      await expect(
+        page.locator('ds-mobile-section-switcher button').getByText('Live Map')
+      ).toBeVisible();
+
+      await page
+        .getByRole('navigation', { name: 'Primary' })
+        .getByRole('button', { name: 'Menu' })
+        .click();
+
+      const selectedSheetItem = page.locator('ds-mobile-sheet-nav button[aria-current="page"]');
+      await expect(selectedSheetItem.locator('ds-text')).toHaveClass(/ds-text--emphasis/);
+      await expect(
+        selectedSheetItem.evaluate(element => getComputedStyle(element, '::before').backgroundColor)
+      ).resolves.toBe('rgba(0, 0, 0, 0)');
+    }
+  );
+
+  test(
+    'keeps local page tabs subordinate to the selected area section',
+    chromiumOnly(
+      'controlled-behavior',
+      'Explicit area and page state map deterministically to the visible section control.'
+    ),
+    async ({ page }) => {
+      await page.locator('#mobile-header').evaluate(header => {
+        const mobileHeader = header as HTMLElement & {
+          sections: Array<{ id: string; label: string }>;
+          value: string;
+          subsections: Array<{ id: string; label: string }>;
+          subvalue: string;
+          sectionsAriaLabel: string;
+          subsectionsAriaLabel: string;
+        };
+        mobileHeader.sections = [
+          { id: 'overview', label: 'Overview' },
+          { id: 'people', label: 'People' },
+          { id: 'timecards', label: 'Timecards' },
+        ];
+        mobileHeader.value = 'people';
+        mobileHeader.sectionsAriaLabel = 'Change Workforce page';
+        mobileHeader.subsections = [
+          { id: 'drivers', label: 'Drivers' },
+          { id: 'managers', label: 'Managers' },
+        ];
+        mobileHeader.subvalue = 'drivers';
+        mobileHeader.subsectionsAriaLabel = 'Change People view';
+        mobileHeader.addEventListener('dsSubsectionChange', event => {
+          mobileHeader.subvalue = (event as CustomEvent<string>).detail;
+        });
+      });
+
+      await expect(page.getByRole('heading', { name: 'People', level: 1 })).toBeVisible();
+      await expect(
+        page.getByRole('button', {
+          name: 'Change Workforce page. Current section: People',
+        })
+      ).toBeVisible();
+      await expect(page.getByRole('navigation', { name: 'Change People view' })).toBeVisible();
+      await page
+        .getByRole('button', { name: 'Change People view. Current section: Drivers' })
+        .click();
+      await expect(page.getByRole('menuitemradio')).toHaveCount(0);
+      await expect(page.getByRole('menuitem', { name: 'Drivers' })).toHaveAttribute(
+        'aria-current',
+        'true'
+      );
+      await page.getByRole('menuitem', { name: 'Managers' }).click();
+      await expect(
+        page.getByRole('button', { name: 'Change People view. Current section: Managers' })
+      ).toBeVisible();
+      await expect(
+        page.getByRole('button', {
+          name: 'Change Workforce page. Current section: People',
+        })
+      ).toBeVisible();
+    }
+  );
 
   test('preserves a slotted tool owner and form value across destination and breakpoint changes', async ({
     page,
@@ -647,15 +656,11 @@ test.describe('Responsive mobile shell foundation', () => {
 
     await page.setViewportSize({ width: 900, height: 760 });
     await expect(page.locator('ds-shell-app')).toHaveAttribute('responsive-mode', 'tablet');
-    await expect(page.locator('ds-shell-tools')).toHaveCSS(
-      'background-color',
-      'rgba(0, 0, 0, 0)'
-    );
+    await expect(page.locator('ds-shell-tools')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     await expect
       .poll(() =>
         page.evaluate(
-          () =>
-            window.__persistentSearchInput === document.getElementById('persistent-value')
+          () => window.__persistentSearchInput === document.getElementById('persistent-value')
         )
       )
       .toBe(true);
@@ -696,43 +701,46 @@ test.describe('Responsive mobile shell foundation', () => {
     await expect(page.getByRole('button', { name: 'Enter fullscreen' })).toBeVisible();
   });
 
-  test('uses a solid primary stage with the selected route in the mobile header',
-    chromiumOnly('layout-geometry', 'Mobile stage surface and selected-route styling are deterministic chrome recipes.'),
-    async ({
-    page,
-  }) => {
-    await expect(page.locator('.shell-app__chrome')).toHaveCSS('display', 'none');
-    await expect(page.locator('.shell-app__main')).toHaveCSS(
-      'background-color',
-      'rgb(255, 255, 255)'
-    );
-    await expect(page.locator('ds-shell-tools')).toHaveCSS(
-      'background-color',
-      'rgb(255, 255, 255)'
-    );
-    await expect(page.getByRole('button', { name: /Current section: Live Map/ })).toBeVisible();
-    await expect(page.locator('.shell-app__content .mobile-header__primary')).toHaveCSS(
-      'height',
-      '56px'
-    );
-    const bottomBarMetrics = await page.locator('.mobile-bar-nav').evaluate(element => {
-      const styles = getComputedStyle(element);
-      return {
-        height: element.getBoundingClientRect().height,
-        borderBlockStart: parseFloat(styles.borderBlockStartWidth),
-      };
-    });
-    expect(bottomBarMetrics.height - bottomBarMetrics.borderBlockStart).toBe(56);
+  test(
+    'uses a solid primary stage with the selected route in the mobile header',
+    chromiumOnly(
+      'layout-geometry',
+      'Mobile stage surface and selected-route styling are deterministic chrome recipes.'
+    ),
+    async ({ page }) => {
+      await expect(page.locator('.shell-app__chrome')).toHaveCSS('display', 'none');
+      await expect(page.locator('.shell-app__main')).toHaveCSS(
+        'background-color',
+        'rgb(255, 255, 255)'
+      );
+      await expect(page.locator('ds-shell-tools')).toHaveCSS(
+        'background-color',
+        'rgb(255, 255, 255)'
+      );
+      await expect(page.getByRole('button', { name: /Current section: Live Map/ })).toBeVisible();
+      await expect(page.locator('.shell-app__content .mobile-header__primary')).toHaveCSS(
+        'height',
+        '56px'
+      );
+      const bottomBarMetrics = await page.locator('.mobile-bar-nav').evaluate(element => {
+        const styles = getComputedStyle(element);
+        return {
+          height: element.getBoundingClientRect().height,
+          borderBlockStart: parseFloat(styles.borderBlockStartWidth),
+        };
+      });
+      expect(bottomBarMetrics.height - bottomBarMetrics.borderBlockStart).toBe(56);
 
-    await page.getByRole('button', { name: 'Search' }).click();
-    await expect(page.locator('ds-shell-tools .mobile-header__primary')).toHaveCSS(
-      'height',
-      '56px'
-    );
+      await page.getByRole('button', { name: 'Search' }).click();
+      await expect(page.locator('ds-shell-tools .mobile-header__primary')).toHaveCSS(
+        'height',
+        '56px'
+      );
 
-    await page.getByRole('button', { name: 'Menu' }).click();
-    await expect(page.locator('.mobile-sheet-nav__header')).toHaveCSS('height', '56px');
-  });
+      await page.getByRole('button', { name: 'Menu' }).click();
+      await expect(page.locator('.mobile-sheet-nav__header')).toHaveCSS('height', '56px');
+    }
+  );
 });
 
 test.describe('Shell tablet and desktop compatibility', () => {
@@ -762,9 +770,9 @@ test.describe('Shell tablet and desktop compatibility', () => {
     await expect(tools).not.toHaveAttribute('aria-label');
     await expect(innerTools).toBeVisible();
 
-    const gradientImage = await page.locator('.shell-app__chrome').evaluate(element =>
-      getComputedStyle(element, '::before').backgroundImage
-    );
+    const gradientImage = await page
+      .locator('.shell-app__chrome')
+      .evaluate(element => getComputedStyle(element, '::before').backgroundImage);
     expect(gradientImage).not.toBe('none');
 
     const closedGeometry = await tools.evaluate(element => {
@@ -773,9 +781,7 @@ test.describe('Shell tablet and desktop compatibility', () => {
       const innerRect = inner?.getBoundingClientRect();
       return {
         outer: [outerRect.x, outerRect.y, outerRect.width, outerRect.height],
-        inner: innerRect
-          ? [innerRect.x, innerRect.y, innerRect.width, innerRect.height]
-          : null,
+        inner: innerRect ? [innerRect.x, innerRect.y, innerRect.width, innerRect.height] : null,
       };
     });
     expect(closedGeometry.inner).toEqual(closedGeometry.outer);
@@ -792,9 +798,7 @@ test.describe('Shell tablet and desktop compatibility', () => {
       const innerRect = inner?.getBoundingClientRect();
       return {
         outer: [outerRect.x, outerRect.y, outerRect.width, outerRect.height],
-        inner: innerRect
-          ? [innerRect.x, innerRect.y, innerRect.width, innerRect.height]
-          : null,
+        inner: innerRect ? [innerRect.x, innerRect.y, innerRect.width, innerRect.height] : null,
       };
     });
     expect(openGeometry.inner).toEqual(openGeometry.outer);
@@ -821,9 +825,7 @@ test.describe('Shell tablet and desktop compatibility', () => {
     const entering = await tools.evaluate(element => {
       element.setAttribute('presentation', 'fullscreen');
       const panel = element.shadowRoot?.querySelector('ds-panel-tools');
-      const drawerSurface = panel?.shadowRoot?.querySelector(
-        '.panel-tools__drawer-surface'
-      );
+      const drawerSurface = panel?.shadowRoot?.querySelector('.panel-tools__drawer-surface');
       return {
         forwarded: panel?.getAttribute('presentation'),
         committed: panel?.classList.contains('panel-tools--fullscreen'),

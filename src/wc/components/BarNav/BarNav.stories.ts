@@ -41,10 +41,7 @@ export const SingleTab: Story = {
   name: 'Single tab',
   render: () => html`
     <div style="width: min(100%, 720px);">
-      <ds-bar-nav
-        .tabs=${singleTabs}
-        value="tab-1"
-      ></ds-bar-nav>
+      <ds-bar-nav .tabs=${singleTabs} value="tab-1"></ds-bar-nav>
     </div>
   `,
 };

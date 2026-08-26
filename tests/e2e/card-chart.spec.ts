@@ -15,7 +15,9 @@ test('owns chart heading, actions, body, and token-based dimensions', async ({ p
   await expect(shell).not.toHaveCSS('box-shadow', 'none');
 });
 
-test('polar definition retains the unified chart and static external legend composition', async ({ page }) => {
+test('polar definition retains the unified chart and static external legend composition', async ({
+  page,
+}) => {
   const card = page.locator('#donut-card');
   await expect(card.locator('.card-chart__title')).toHaveText('Availability status');
   await expect(card.locator('.card-chart__chart ds-chart')).toHaveCount(1);
@@ -66,20 +68,25 @@ test('chart variant composes ds-chart with a static external legend', async ({ p
   expect(chrome).toMatchObject({ paddingTop: '16px', paddingRight: '16px', paddingLeft: '16px' });
 });
 
-test('unconfigured charts fill the card region while explicit height remains authoritative', async ({ page }) => {
+test('unconfigured charts fill the card region while explicit height remains authoritative', async ({
+  page,
+}) => {
   const fluidRegion = page.locator('#chart-card .card-chart__chart');
   const fluidChart = fluidRegion.locator('ds-chart');
   const explicitChart = page.locator('#donut-card ds-chart');
 
-  await expect.poll(() =>
-    fluidChart.locator('svg').evaluate(element => Number(element.getAttribute('height')))
-  ).toBeGreaterThan(240);
+  await expect
+    .poll(() =>
+      fluidChart.locator('svg').evaluate(element => Number(element.getAttribute('height')))
+    )
+    .toBeGreaterThan(240);
   const geometry = await fluidRegion.evaluate(region => {
     const regionBounds = region.getBoundingClientRect();
     const chartBounds = region.querySelector('ds-chart')!.getBoundingClientRect();
     const style = getComputedStyle(region);
     return {
-      availableHeight: regionBounds.height - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom),
+      availableHeight:
+        regionBounds.height - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom),
       chartHeight: chartBounds.height,
     };
   });
@@ -88,7 +95,9 @@ test('unconfigured charts fill the card region while explicit height remains aut
   await expect(explicitChart.locator('svg')).toHaveAttribute('height', '240');
 });
 
-test('chart geometry grows with the card while visual primitives stay constant', async ({ page }) => {
+test('chart geometry grows with the card while visual primitives stay constant', async ({
+  page,
+}) => {
   const card = page.locator('#chart-card');
   const chart = card.locator('ds-chart');
   const before = await chart.evaluate(element => {
@@ -101,9 +110,23 @@ test('chart geometry grows with the card while visual primitives stay constant',
       strokeWidth: getComputedStyle(grid).strokeWidth,
     };
   });
-  await card.evaluate(element => { (element as HTMLElement & { cardWidth: 'lg' }).cardWidth = 'lg'; });
+  await card.evaluate(element => {
+    (element as HTMLElement & { cardWidth: 'lg' }).cardWidth = 'lg';
+  });
   await expect(card).toHaveCSS('width', '600px');
-  await expect.poll(() => chart.locator('svg').evaluate(element => Number(element.getAttribute('width')))).toBeGreaterThan(before.width);
-  expect(await chart.locator('.chart__tick').first().evaluate(element => getComputedStyle(element).fontSize)).toBe(before.fontSize);
-  expect(await chart.locator('.chart__grid').first().evaluate(element => getComputedStyle(element).strokeWidth)).toBe(before.strokeWidth);
+  await expect
+    .poll(() => chart.locator('svg').evaluate(element => Number(element.getAttribute('width'))))
+    .toBeGreaterThan(before.width);
+  expect(
+    await chart
+      .locator('.chart__tick')
+      .first()
+      .evaluate(element => getComputedStyle(element).fontSize)
+  ).toBe(before.fontSize);
+  expect(
+    await chart
+      .locator('.chart__grid')
+      .first()
+      .evaluate(element => getComputedStyle(element).strokeWidth)
+  ).toBe(before.strokeWidth);
 });

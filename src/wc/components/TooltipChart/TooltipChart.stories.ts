@@ -30,7 +30,9 @@ type Story = StoryObj;
 
 export const Playground: Story = {
   render: args => html`
-    <div style="position:relative;width:280px;height:200px;background:var(--color-background-secondary);border-radius:var(--dimension-radius-100)">
+    <div
+      style="position:relative;width:280px;height:200px;background:var(--color-background-secondary);border-radius:var(--dimension-radius-100)"
+    >
       <ds-tooltip-chart
         value=${args['value']}
         label=${args['label']}
@@ -45,7 +47,9 @@ export const Playground: Story = {
 
 export const GroupedRows: Story = {
   render: () => html`
-    <div style="position:relative;width:320px;height:220px;background:var(--color-background-secondary);border-radius:var(--dimension-radius-100)">
+    <div
+      style="position:relative;width:320px;height:220px;background:var(--color-background-secondary);border-radius:var(--dimension-radius-100)"
+    >
       <ds-tooltip-chart
         heading="March"
         x="140"
@@ -64,7 +68,9 @@ export const GroupedRows: Story = {
 
 export const MixedSwatches: Story = {
   render: () => html`
-    <div style="position:relative;width:360px;height:240px;background:var(--color-background-secondary);border-radius:var(--dimension-radius-100)">
+    <div
+      style="position:relative;width:360px;height:240px;background:var(--color-background-secondary);border-radius:var(--dimension-radius-100)"
+    >
       <ds-tooltip-chart
         heading="March"
         x="140"
@@ -84,7 +90,9 @@ export const MixedSwatches: Story = {
 
 export const LongContent: Story = {
   render: () => html`
-    <div style="position:relative;width:640px;height:240px;background:var(--color-background-secondary);border-radius:var(--dimension-radius-100)">
+    <div
+      style="position:relative;width:640px;height:240px;background:var(--color-background-secondary);border-radius:var(--dimension-radius-100)"
+    >
       <ds-tooltip-chart
         heading="Vehicle activity during the current reporting period"
         x="80"

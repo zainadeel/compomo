@@ -4,15 +4,15 @@ import { chromiumOnly } from './browser-tier';
 
 const openPopupAxe = chromiumOnly(
   'accessibility',
-  'Axe audits the integrated open popup in Chromium; popup focus and keyboard behavior remain cross-browser.',
+  'Axe audits the integrated open popup in Chromium; popup focus and keyboard behavior remain cross-browser.'
 );
 const openModalAxe = chromiumOnly(
   'accessibility',
-  'Axe audits the integrated open modal in Chromium; top-layer, focus, and dismissal behavior remain cross-browser elsewhere.',
+  'Axe audits the integrated open modal in Chromium; top-layer, focus, and dismissal behavior remain cross-browser elsewhere.'
 );
 const menuGeometry = chromiumOnly(
   'layout-geometry',
-  'Token-backed menu spacing is engine-neutral and Chromium is authoritative for its computed geometry.',
+  'Token-backed menu spacing is engine-neutral and Chromium is authoritative for its computed geometry.'
 );
 
 test.beforeEach(async ({ page }) => {
@@ -72,66 +72,70 @@ test('switch menu rows keep an 8px label-to-control gap', menuGeometry, async ({
         const control = element.querySelector('.menu-item__switch');
         if (!content || !control) return null;
         return Math.round(
-          control.getBoundingClientRect().left - content.getBoundingClientRect().right,
+          control.getBoundingClientRect().left - content.getBoundingClientRect().right
         );
-      }),
+      })
     )
     .toBe(8);
 });
 
-test('menu prefix and drag handles share Select choice-row density and secondary color', menuGeometry, async ({ page }) => {
-  const leadingMetrics = (row: ReturnType<typeof page.locator>) =>
-    row.evaluate(element => {
-      const icon = element.querySelector<HTMLElement>('.ds-choice-item__icon');
-      const content = element.querySelector<HTMLElement>('.ds-choice-item__content');
-      const glyph = element.querySelector<HTMLElement>('.ds-choice-item__icon ds-icon');
-      if (!icon || !content || !glyph) return null;
-      const rowRect = element.getBoundingClientRect();
-      const iconRect = icon.getBoundingClientRect();
-      const contentRect = content.getBoundingClientRect();
-      const style = getComputedStyle(element);
-      const probe = document.createElement('span');
-      probe.style.color = 'var(--color-foreground-secondary)';
-      document.body.append(probe);
-      const expectedSecondary = getComputedStyle(probe).color;
-      probe.remove();
-      return {
-        paddingInline: style.paddingInline,
-        gap: style.gap,
-        iconWidth: Math.round(iconRect.width),
-        iconHeight: Math.round(iconRect.height),
-        leadingInset: Math.round(iconRect.left - rowRect.left),
-        iconToContent: Math.round(contentRect.left - iconRect.right),
-        colorMatches: getComputedStyle(glyph).color === expectedSecondary,
-      };
+test(
+  'menu prefix and drag handles share Select choice-row density and secondary color',
+  menuGeometry,
+  async ({ page }) => {
+    const leadingMetrics = (row: ReturnType<typeof page.locator>) =>
+      row.evaluate(element => {
+        const icon = element.querySelector<HTMLElement>('.ds-choice-item__icon');
+        const content = element.querySelector<HTMLElement>('.ds-choice-item__content');
+        const glyph = element.querySelector<HTMLElement>('.ds-choice-item__icon ds-icon');
+        if (!icon || !content || !glyph) return null;
+        const rowRect = element.getBoundingClientRect();
+        const iconRect = icon.getBoundingClientRect();
+        const contentRect = content.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        const probe = document.createElement('span');
+        probe.style.color = 'var(--color-foreground-secondary)';
+        document.body.append(probe);
+        const expectedSecondary = getComputedStyle(probe).color;
+        probe.remove();
+        return {
+          paddingInline: style.paddingInline,
+          gap: style.gap,
+          iconWidth: Math.round(iconRect.width),
+          iconHeight: Math.round(iconRect.height),
+          leadingInset: Math.round(iconRect.left - rowRect.left),
+          iconToContent: Math.round(contentRect.left - iconRect.right),
+          colorMatches: getComputedStyle(glyph).color === expectedSecondary,
+        };
+      });
+
+    const expected = {
+      paddingInline: '6px',
+      gap: '4px',
+      iconWidth: 20,
+      iconHeight: 20,
+      leadingInset: 6,
+      iconToContent: 4,
+      colorMatches: true,
+    };
+
+    await page.locator('#prefix-anchor').click();
+    const prefixRow = page.getByRole('menu', { name: 'File actions' }).getByRole('menuitem', {
+      name: 'Edit',
     });
+    await expect(prefixRow).toBeVisible();
+    await expect.poll(() => leadingMetrics(prefixRow)).toEqual(expected);
 
-  const expected = {
-    paddingInline: '6px',
-    gap: '4px',
-    iconWidth: 20,
-    iconHeight: 20,
-    leadingInset: 6,
-    iconToContent: 4,
-    colorMatches: true,
-  };
-
-  await page.locator('#prefix-anchor').click();
-  const prefixRow = page.getByRole('menu', { name: 'File actions' }).getByRole('menuitem', {
-    name: 'Edit',
-  });
-  await expect(prefixRow).toBeVisible();
-  await expect.poll(() => leadingMetrics(prefixRow)).toEqual(expected);
-
-  await page.keyboard.press('Escape');
-  await page.locator('#reorder-anchor').click();
-  const handleRow = page
-    .getByRole('menu', { name: 'Customize columns' })
-    .getByRole('menuitemcheckbox', { name: 'Driver' });
-  await expect(handleRow).toBeVisible();
-  await expect(handleRow.locator('[data-menu-handle]')).toHaveCSS('cursor', 'grab');
-  await expect.poll(() => leadingMetrics(handleRow)).toEqual(expected);
-});
+    await page.keyboard.press('Escape');
+    await page.locator('#reorder-anchor').click();
+    const handleRow = page
+      .getByRole('menu', { name: 'Customize columns' })
+      .getByRole('menuitemcheckbox', { name: 'Driver' });
+    await expect(handleRow).toBeVisible();
+    await expect(handleRow.locator('[data-menu-handle]')).toHaveCSS('cursor', 'grab');
+    await expect.poll(() => leadingMetrics(handleRow)).toEqual(expected);
+  }
+);
 
 test(
   'reorder drop rail stays centered between rows at every boundary',
@@ -182,15 +186,13 @@ test(
 
     await movePointer(lastBox.y + lastBox.height);
     await expect(menu.locator('[data-menu-drop-rail]')).toHaveCount(1);
-    await expect
-      .poll(railCenter)
-      .toBeCloseTo(lastBox.y + lastBox.height + rowGap / 2, 5);
+    await expect.poll(railCenter).toBeCloseTo(lastBox.y + lastBox.height + rowGap / 2, 5);
 
     await page.evaluate(() => {
       window.dispatchEvent(new PointerEvent('pointercancel', { pointerId: 51 }));
     });
     await expect(menu.locator('[data-menu-drop-rail]')).toHaveCount(0);
-  },
+  }
 );
 
 test('reorderable switch rows move with keyboard and pointer without closing', async ({ page }) => {
@@ -201,15 +203,13 @@ test('reorderable switch rows move with keyboard and pointer without closing', a
   await expect(status).toHaveAccessibleDescription(/Drag to reorder/);
   await expect(menu.getByRole('menuitemcheckbox', { name: 'Action' })).toBeDisabled();
   await expect(
-    menu.getByRole('menuitemcheckbox', { name: 'Action' }).locator('[data-menu-handle]'),
+    menu.getByRole('menuitemcheckbox', { name: 'Action' }).locator('[data-menu-handle]')
   ).toHaveCount(0);
 
   const driverHandle = menu
     .getByRole('menuitemcheckbox', { name: 'Driver' })
     .locator('[data-menu-handle]');
-  const vehicleBox = await menu
-    .getByRole('menuitemcheckbox', { name: 'Vehicle' })
-    .boundingBox();
+  const vehicleBox = await menu.getByRole('menuitemcheckbox', { name: 'Vehicle' }).boundingBox();
   expect(vehicleBox).not.toBeNull();
   await driverHandle.dispatchEvent('pointerdown', {
     button: 0,
@@ -272,21 +272,27 @@ test('reorderable switch rows move with keyboard and pointer without closing', a
   await expect(menu).toBeVisible();
 });
 
-test('reorderable menu keeps status announcements outside the menu role', openPopupAxe, async ({ page }) => {
-  await page.locator('#reorder-anchor').click();
-  const menu = page.getByRole('menu', { name: 'Customize columns' });
-  await expect(menu).toBeVisible();
-  await expect(menu.getByRole('status')).toHaveCount(0);
-  await expect(page.locator('#reorder-menu').getByRole('status')).toHaveCount(1);
+test(
+  'reorderable menu keeps status announcements outside the menu role',
+  openPopupAxe,
+  async ({ page }) => {
+    await page.locator('#reorder-anchor').click();
+    const menu = page.getByRole('menu', { name: 'Customize columns' });
+    await expect(menu).toBeVisible();
+    await expect(menu.getByRole('status')).toHaveCount(0);
+    await expect(page.locator('#reorder-menu').getByRole('status')).toHaveCount(1);
 
-  const results = await new AxeBuilder({ page })
-    .include('#reorder-menu')
-    .disableRules(['color-contrast'])
-    .analyze();
-  expect(results.violations).toEqual([]);
-});
+    const results = await new AxeBuilder({ page })
+      .include('#reorder-menu')
+      .disableRules(['color-contrast'])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  }
+);
 
-test('menu flips above a bottom-edge trigger instead of overlapping the viewport edge', async ({ page }) => {
+test('menu flips above a bottom-edge trigger instead of overlapping the viewport edge', async ({
+  page,
+}) => {
   const anchor = page.locator('#collision-anchor');
   await anchor.click();
   const menu = page.getByRole('menu', { name: 'Collision actions' });
@@ -320,8 +326,7 @@ test('menu caps itself to adjacent viewport space and scrolls long choices', asy
   expect(menuBox!.y).toBeGreaterThanOrEqual(4);
   expect(menuBox!.y + menuBox!.height).toBeLessThanOrEqual(page.viewportSize()!.height - 4);
   expect(
-    menuBox!.y + menuBox!.height <= anchorBox!.y ||
-      menuBox!.y >= anchorBox!.y + anchorBox!.height
+    menuBox!.y + menuBox!.height <= anchorBox!.y || menuBox!.y >= anchorBox!.y + anchorBox!.height
   ).toBe(true);
   expect(listMetrics.scrollHeight).toBeGreaterThan(listMetrics.clientHeight);
   expect(listMetrics.overflowY).toBe('auto');
@@ -331,43 +336,46 @@ test('menu caps itself to adjacent viewport space and scrolls long choices', asy
   await expect.poll(() => list.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
 });
 
-test('rich preference popup exposes dialog and radio-group semantics without stealing arrow keys', openPopupAxe, async ({ page }) => {
-  await page.locator('#rich-anchor').click();
-  const popup = page.getByRole('dialog', { name: 'Appearance' });
-  await expect(popup).toBeVisible();
-  await expect(popup.getByRole('menu')).toHaveCount(0);
+test(
+  'rich preference popup exposes dialog and radio-group semantics without stealing arrow keys',
+  openPopupAxe,
+  async ({ page }) => {
+    await page.locator('#rich-anchor').click();
+    const popup = page.getByRole('dialog', { name: 'Appearance' });
+    await expect(popup).toBeVisible();
+    await expect(popup.getByRole('menu')).toHaveCount(0);
 
-  const selected = popup.getByRole('radio', { checked: true });
-  await expect(selected).toBeFocused();
-  const before = await selected.getAttribute('aria-label');
-  await page.keyboard.press('ArrowRight');
-  await expect.poll(() => popup.getByRole('radio', { checked: true }).getAttribute('aria-label'))
-    .not.toBe(before);
+    const selected = popup.getByRole('radio', { checked: true });
+    await expect(selected).toBeFocused();
+    const before = await selected.getAttribute('aria-label');
+    await page.keyboard.press('ArrowRight');
+    await expect
+      .poll(() => popup.getByRole('radio', { checked: true }).getAttribute('aria-label'))
+      .not.toBe(before);
 
-  await page.keyboard.press('Tab');
-  await expect(popup.getByRole('button', { name: 'System' })).toBeFocused();
-  await expect(page.locator('#rich-anchor')).toHaveAttribute('aria-expanded', 'true');
-  await page.keyboard.press('Tab');
-  const dark = popup.getByRole('button', { name: 'Dark' });
-  await expect(dark).toBeFocused();
-  await expect(dark).toHaveAttribute('aria-pressed', 'true');
-  await page.keyboard.press('Tab');
-  await expect(page.locator('#modal-trigger')).toBeFocused();
-  await expect(page.locator('#rich-anchor')).toHaveAttribute('aria-expanded', 'false');
+    await page.keyboard.press('Tab');
+    await expect(popup.getByRole('button', { name: 'System' })).toBeFocused();
+    await expect(page.locator('#rich-anchor')).toHaveAttribute('aria-expanded', 'true');
+    await page.keyboard.press('Tab');
+    const dark = popup.getByRole('button', { name: 'Dark' });
+    await expect(dark).toBeFocused();
+    await expect(dark).toHaveAttribute('aria-pressed', 'true');
+    await page.keyboard.press('Tab');
+    await expect(page.locator('#modal-trigger')).toBeFocused();
+    await expect(page.locator('#rich-anchor')).toHaveAttribute('aria-expanded', 'false');
 
-  await page.locator('#rich-anchor').click();
-  const results = await new AxeBuilder({ page })
-    .include('#rich-menu')
-    .disableRules(['color-contrast'])
-    .analyze();
-  expect(results.violations).toEqual([]);
-});
+    await page.locator('#rich-anchor').click();
+    const results = await new AxeBuilder({ page })
+      .include('#rich-menu')
+      .disableRules(['color-contrast'])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  }
+);
 
 test('menu adds 4px only above headed sections after the first', menuGeometry, async ({ page }) => {
   await page.locator('#rich-anchor').click();
-  const sections = page
-    .getByRole('dialog', { name: 'Appearance' })
-    .locator('.ds-choice-section');
+  const sections = page.getByRole('dialog', { name: 'Appearance' }).locator('.ds-choice-section');
   const heading = sections.first().locator('.ds-choice-section__header');
 
   const geometry = await heading.evaluate(element => {
@@ -386,27 +394,32 @@ test('menu adds 4px only above headed sections after the first', menuGeometry, a
     labelOffset: 0,
   });
   await expect
-    .poll(() => sections.evaluateAll(elements =>
-      elements.map(element => getComputedStyle(element).marginBlockStart)
-    ))
+    .poll(() =>
+      sections.evaluateAll(elements =>
+        elements.map(element => getComputedStyle(element).marginBlockStart)
+      )
+    )
     .toEqual(['0px', '4px']);
 });
 
 test('modal surface and backdrop animate together when entering and exiting', async ({ page }) => {
   const modal = page.locator('#modal');
   const dialog = page.getByRole('dialog', { name: 'Confirm changes' });
-  const readMotion = () => dialog.evaluate(element => {
-    const surface = getComputedStyle(element);
-    const backdrop = getComputedStyle(element, '::backdrop');
-    return {
-      surfaceName: surface.animationName,
-      surfaceDuration: surface.animationDuration,
-      backdropName: backdrop.animationName,
-      backdropDuration: backdrop.animationDuration,
-    };
-  });
+  const readMotion = () =>
+    dialog.evaluate(element => {
+      const surface = getComputedStyle(element);
+      const backdrop = getComputedStyle(element, '::backdrop');
+      return {
+        surfaceName: surface.animationName,
+        surfaceDuration: surface.animationDuration,
+        backdropName: backdrop.animationName,
+        backdropDuration: backdrop.animationDuration,
+      };
+    });
 
-  await modal.evaluate((element: HTMLDsModalElement) => { element.open = true; });
+  await modal.evaluate((element: HTMLDsModalElement) => {
+    element.open = true;
+  });
   await expect(dialog).toBeVisible();
   const openingMotion = await readMotion();
   expect(openingMotion).toMatchObject({
@@ -416,30 +429,31 @@ test('modal surface and backdrop animate together when entering and exiting', as
   expect(openingMotion.surfaceDuration).not.toBe('0s');
   expect(openingMotion.backdropDuration).toBe(openingMotion.surfaceDuration);
 
-  const closingMotion = await dialog.evaluate(element =>
-    new Promise<{
-      surfaceName: string;
-      surfaceDuration: string;
-      backdropName: string;
-      backdropDuration: string;
-    }>(resolve => {
-      const captureClosingMotion = () => {
-        if (!element.classList.contains('modal-dialog--closing')) return;
-        observer.disconnect();
-        const surface = getComputedStyle(element);
-        const backdrop = getComputedStyle(element, '::backdrop');
-        resolve({
-          surfaceName: surface.animationName,
-          surfaceDuration: surface.animationDuration,
-          backdropName: backdrop.animationName,
-          backdropDuration: backdrop.animationDuration,
-        });
-      };
-      const observer = new MutationObserver(captureClosingMotion);
-      observer.observe(element, { attributes: true, attributeFilter: ['class'] });
-      (element.closest('ds-modal') as HTMLDsModalElement).open = false;
-      captureClosingMotion();
-    })
+  const closingMotion = await dialog.evaluate(
+    element =>
+      new Promise<{
+        surfaceName: string;
+        surfaceDuration: string;
+        backdropName: string;
+        backdropDuration: string;
+      }>(resolve => {
+        const captureClosingMotion = () => {
+          if (!element.classList.contains('modal-dialog--closing')) return;
+          observer.disconnect();
+          const surface = getComputedStyle(element);
+          const backdrop = getComputedStyle(element, '::backdrop');
+          resolve({
+            surfaceName: surface.animationName,
+            surfaceDuration: surface.animationDuration,
+            backdropName: backdrop.animationName,
+            backdropDuration: backdrop.animationDuration,
+          });
+        };
+        const observer = new MutationObserver(captureClosingMotion);
+        observer.observe(element, { attributes: true, attributeFilter: ['class'] });
+        (element.closest('ds-modal') as HTMLDsModalElement).open = false;
+        captureClosingMotion();
+      })
   );
   expect(closingMotion).toMatchObject({
     surfaceName: 'modalDialogOut',
@@ -450,90 +464,106 @@ test('modal surface and backdrop animate together when entering and exiting', as
   await expect(dialog).toBeHidden();
 });
 
-test('modal uses the top layer, reports dismissal reasons, and restores its trigger', openModalAxe, async ({ page }) => {
-  const trigger = page.locator('#modal-trigger');
-  await trigger.focus();
-  await trigger.press('Enter');
+test(
+  'modal uses the top layer, reports dismissal reasons, and restores its trigger',
+  openModalAxe,
+  async ({ page }) => {
+    const trigger = page.locator('#modal-trigger');
+    await trigger.focus();
+    await trigger.press('Enter');
 
-  const dialog = page.getByRole('dialog', { name: 'Confirm changes' });
-  const close = dialog.getByRole('button', { name: 'Close' });
-  await expect(dialog).toBeVisible();
-  await expect(dialog).toHaveAttribute('aria-describedby', 'modal-description');
-  await expect(close).toBeFocused();
-  expect(await dialog.evaluate(element => element instanceof HTMLDialogElement && element.open)).toBe(true);
-  expect((await dialog.boundingBox())!.width).toBeGreaterThan(1);
+    const dialog = page.getByRole('dialog', { name: 'Confirm changes' });
+    const close = dialog.getByRole('button', { name: 'Close' });
+    await expect(dialog).toBeVisible();
+    await expect(dialog).toHaveAttribute('aria-describedby', 'modal-description');
+    await expect(close).toBeFocused();
+    expect(
+      await dialog.evaluate(element => element instanceof HTMLDialogElement && element.open)
+    ).toBe(true);
+    expect((await dialog.boundingBox())!.width).toBeGreaterThan(1);
 
-  await page.locator('#outside-action').evaluate((element: HTMLButtonElement) => element.focus());
-  await expect(close).toBeFocused();
+    await page.locator('#outside-action').evaluate((element: HTMLButtonElement) => element.focus());
+    await expect(close).toBeFocused();
 
-  const chromeHeights = await dialog.evaluate(element => ({
-    header: getComputedStyle(element.querySelector('.modal-header')!).height,
-    headerPaddingInline: getComputedStyle(element.querySelector('.modal-header')!).paddingInline,
-    copyPaddingInline: getComputedStyle(element.querySelector('.modal-copy')!).paddingInline,
-    copyPaddingBlock: getComputedStyle(element.querySelector('.modal-copy')!).paddingBlock,
-    footer: getComputedStyle(element.querySelector('.modal-footer')!).height,
-    titleFontSize: getComputedStyle(element.querySelector('.modal-heading')!).fontSize,
-    titleLineHeight: getComputedStyle(element.querySelector('.modal-heading')!).lineHeight,
-    titlePaddingInline: getComputedStyle(element.querySelector('.modal-heading')!).paddingInline,
-    titleCenter: (() => {
-      const bounds = element.querySelector('.modal-heading')!.getBoundingClientRect();
-      return bounds.top + bounds.height / 2;
-    })(),
-    closeCenter: (() => {
-      const bounds = element.querySelector('.modal-close')!.getBoundingClientRect();
-      return bounds.top + bounds.height / 2;
-    })(),
-  }));
-  expect(chromeHeights).toMatchObject({
-    header: '49px',
-    headerPaddingInline: '8px',
-    copyPaddingInline: '6px',
-    copyPaddingBlock: '6px',
-    footer: '64px',
-    titleFontSize: '14px',
-    titleLineHeight: '20px',
-    titlePaddingInline: '2px',
-  });
-  expect(chromeHeights.titleCenter).toBeCloseTo(chromeHeights.closeCenter, 1);
+    const chromeHeights = await dialog.evaluate(element => ({
+      header: getComputedStyle(element.querySelector('.modal-header')!).height,
+      headerPaddingInline: getComputedStyle(element.querySelector('.modal-header')!).paddingInline,
+      copyPaddingInline: getComputedStyle(element.querySelector('.modal-copy')!).paddingInline,
+      copyPaddingBlock: getComputedStyle(element.querySelector('.modal-copy')!).paddingBlock,
+      footer: getComputedStyle(element.querySelector('.modal-footer')!).height,
+      titleFontSize: getComputedStyle(element.querySelector('.modal-heading')!).fontSize,
+      titleLineHeight: getComputedStyle(element.querySelector('.modal-heading')!).lineHeight,
+      titlePaddingInline: getComputedStyle(element.querySelector('.modal-heading')!).paddingInline,
+      titleCenter: (() => {
+        const bounds = element.querySelector('.modal-heading')!.getBoundingClientRect();
+        return bounds.top + bounds.height / 2;
+      })(),
+      closeCenter: (() => {
+        const bounds = element.querySelector('.modal-close')!.getBoundingClientRect();
+        return bounds.top + bounds.height / 2;
+      })(),
+    }));
+    expect(chromeHeights).toMatchObject({
+      header: '49px',
+      headerPaddingInline: '8px',
+      copyPaddingInline: '6px',
+      copyPaddingBlock: '6px',
+      footer: '64px',
+      titleFontSize: '14px',
+      titleLineHeight: '20px',
+      titlePaddingInline: '2px',
+    });
+    expect(chromeHeights.titleCenter).toBeCloseTo(chromeHeights.closeCenter, 1);
 
-  await dialog.getByRole('button', { name: 'Cancel' }).focus();
-  await page.keyboard.press('Tab');
-  await expect(close).toBeFocused();
+    await dialog.getByRole('button', { name: 'Cancel' }).focus();
+    await page.keyboard.press('Tab');
+    await expect(close).toBeFocused();
 
-  const results = await new AxeBuilder({ page }).include('#modal').analyze();
-  expect(results.violations).toEqual([]);
+    const results = await new AxeBuilder({ page }).include('#modal').analyze();
+    expect(results.violations).toEqual([]);
 
-  await close.click();
-  await expect(dialog).toBeHidden();
-  await expect(trigger).toBeFocused();
-  expect(await page.evaluate(() =>
-    (window as typeof window & { __modalCloseReasons: string[] }).__modalCloseReasons
-  )).toEqual(['close-button']);
-  expect(await page.evaluate(() =>
-    (window as typeof window & { __modalAfterClose: number }).__modalAfterClose
-  )).toBe(1);
+    await close.click();
+    await expect(dialog).toBeHidden();
+    await expect(trigger).toBeFocused();
+    expect(
+      await page.evaluate(
+        () => (window as typeof window & { __modalCloseReasons: string[] }).__modalCloseReasons
+      )
+    ).toEqual(['close-button']);
+    expect(
+      await page.evaluate(
+        () => (window as typeof window & { __modalAfterClose: number }).__modalAfterClose
+      )
+    ).toBe(1);
 
-  await trigger.press('Enter');
-  await expect(close).toBeFocused();
-  await page.keyboard.press('Escape');
-  await expect(dialog).toBeHidden();
-  await expect(trigger).toBeFocused();
-  expect(await page.evaluate(() =>
-    (window as typeof window & { __modalCloseReasons: string[] }).__modalCloseReasons
-  )).toEqual(['close-button', 'escape']);
+    await trigger.press('Enter');
+    await expect(close).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
+    await expect(trigger).toBeFocused();
+    expect(
+      await page.evaluate(
+        () => (window as typeof window & { __modalCloseReasons: string[] }).__modalCloseReasons
+      )
+    ).toEqual(['close-button', 'escape']);
 
-  await trigger.press('Enter');
-  await expect(close).toBeFocused();
-  await page.mouse.click(0, 0);
-  await expect(dialog).toBeHidden();
-  await expect(trigger).toBeFocused();
-  expect(await page.evaluate(() =>
-    (window as typeof window & { __modalCloseReasons: string[] }).__modalCloseReasons
-  )).toEqual(['close-button', 'escape', 'backdrop']);
-  expect(await page.evaluate(() =>
-    (window as typeof window & { __modalAfterClose: number }).__modalAfterClose
-  )).toBe(3);
-});
+    await trigger.press('Enter');
+    await expect(close).toBeFocused();
+    await page.mouse.click(0, 0);
+    await expect(dialog).toBeHidden();
+    await expect(trigger).toBeFocused();
+    expect(
+      await page.evaluate(
+        () => (window as typeof window & { __modalCloseReasons: string[] }).__modalCloseReasons
+      )
+    ).toEqual(['close-button', 'escape', 'backdrop']);
+    expect(
+      await page.evaluate(
+        () => (window as typeof window & { __modalAfterClose: number }).__modalAfterClose
+      )
+    ).toBe(3);
+  }
+);
 
 test('modal omits the footer block when no footer actions are assigned', async ({ page }) => {
   const modal = page.locator('#modal-no-footer');
@@ -547,7 +577,7 @@ test('modal omits the footer block when no footer actions are assigned', async (
   await expect(footer).toHaveClass(/modal-footer--empty/);
   await expect(footer).toBeHidden();
   await expect(dialog.locator('.modal-description')).toHaveText(
-    'Changes are already available to everyone.',
+    'Changes are already available to everyone.'
   );
   await expect(dialog.locator('.modal-heading')).toHaveClass(/ds-text--title-small/);
   await expect(dialog.locator('.modal-copy')).toHaveCSS('gap', '4px');

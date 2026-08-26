@@ -669,10 +669,7 @@ export class FilterMenu {
 
   private get captionIconOnly(): boolean {
     return (
-      this.collapseLabel &&
-      this.captionCompact &&
-      this.usesInternalTrigger &&
-      Boolean(this.icon)
+      this.collapseLabel && this.captionCompact && this.usesInternalTrigger && Boolean(this.icon)
     );
   }
 
@@ -740,64 +737,64 @@ export class FilterMenu {
           ...controlWidthClass(this.width),
         }}
       >
-        {this.usesInternalTrigger ? (
-          this.renderCaptionTooltip(
-            <button
-            ref={element => {
-              this.triggerElement = (element as HTMLButtonElement) ?? null;
-            }}
-            id={this.inputId ?? `${this.generatedId}-trigger`}
-            type="button"
-            class={{
-              trigger: true,
-              'ds-control-frame': true,
-              'ds-focus-ring-inset': true,
-              'ds-interaction-fill': true,
-              'ds-interaction-fill--selected': this.activeFill && hasActiveFilters,
-              'trigger--expanded': this.open || this.closing,
-              'trigger--bordered': this.hasBorder,
-              'trigger--has-value': hasActiveFilters,
-              [`ds-control--${this.size}`]: true,
-            }}
-            role="combobox"
-            aria-haspopup="dialog"
-            aria-expanded={String(this.open)}
-            aria-controls={this.open ? popupId : undefined}
-            aria-label={this.ariaLabel ?? this.menuLabel}
-            onClick={(event: MouseEvent) => this.toggleFromTrigger(event)}
-            onKeyDown={(event: KeyboardEvent) => this.handleTriggerKeyDown(event)}
-          >
-            {this.icon ? (
-              <span
-                class="trigger__prefix ds-control-icon-box ds-interaction-fill__content"
-                aria-hidden="true"
+        {this.usesInternalTrigger
+          ? this.renderCaptionTooltip(
+              <button
+                ref={element => {
+                  this.triggerElement = (element as HTMLButtonElement) ?? null;
+                }}
+                id={this.inputId ?? `${this.generatedId}-trigger`}
+                type="button"
+                class={{
+                  trigger: true,
+                  'ds-control-frame': true,
+                  'ds-focus-ring-inset': true,
+                  'ds-interaction-fill': true,
+                  'ds-interaction-fill--selected': this.activeFill && hasActiveFilters,
+                  'trigger--expanded': this.open || this.closing,
+                  'trigger--bordered': this.hasBorder,
+                  'trigger--has-value': hasActiveFilters,
+                  [`ds-control--${this.size}`]: true,
+                }}
+                role="combobox"
+                aria-haspopup="dialog"
+                aria-expanded={String(this.open)}
+                aria-controls={this.open ? popupId : undefined}
+                aria-label={this.ariaLabel ?? this.menuLabel}
+                onClick={(event: MouseEvent) => this.toggleFromTrigger(event)}
+                onKeyDown={(event: KeyboardEvent) => this.handleTriggerKeyDown(event)}
               >
-                <ds-icon name={this.icon} size={iconSize} color="inherit" />
-              </span>
-            ) : null}
-            {this.captionIconOnly ? null : (
-              <ds-text
-                class="trigger__label-box trigger__label trigger__label-content ds-control-label-box ds-interaction-fill__content"
-                as="span"
-                variant={textVariant}
-                color="inherit"
-                lineTruncation={1}
-              >
-                {label}
-              </ds-text>
-            )}
-            {this.captionIconOnly ? null : (
-              <span
-                class="trigger__chevron ds-control-icon-box ds-interaction-fill__content"
-                aria-hidden="true"
-              >
-                <ds-icon name="ChevronDown" size={iconSize} color="inherit" />
-              </span>
-            )}
-            </button>,
-            this.captionIconOnly ? label : ''
-          )
-        ) : null}
+                {this.icon ? (
+                  <span
+                    class="trigger__prefix ds-control-icon-box ds-interaction-fill__content"
+                    aria-hidden="true"
+                  >
+                    <ds-icon name={this.icon} size={iconSize} color="inherit" />
+                  </span>
+                ) : null}
+                {this.captionIconOnly ? null : (
+                  <ds-text
+                    class="trigger__label-box trigger__label trigger__label-content ds-control-label-box ds-interaction-fill__content"
+                    as="span"
+                    variant={textVariant}
+                    color="inherit"
+                    lineTruncation={1}
+                  >
+                    {label}
+                  </ds-text>
+                )}
+                {this.captionIconOnly ? null : (
+                  <span
+                    class="trigger__chevron ds-control-icon-box ds-interaction-fill__content"
+                    aria-hidden="true"
+                  >
+                    <ds-icon name="ChevronDown" size={iconSize} color="inherit" />
+                  </span>
+                )}
+              </button>,
+              this.captionIconOnly ? label : ''
+            )
+          : null}
 
         {this.shouldRender ? (
           <div

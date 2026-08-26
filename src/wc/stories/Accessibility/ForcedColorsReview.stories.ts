@@ -46,9 +46,30 @@ const availability = [
   { label: 'Missing', value: 25 },
   { label: 'Out of service', value: 25 },
 ];
-const availabilitySlices = pieLayout(availability, { value: 'value', key: 'label', label: 'label' });
+const availabilitySlices = pieLayout(availability, {
+  value: 'value',
+  key: 'label',
+  label: 'label',
+});
 const availabilityDefinition = defineChart({
-  marks: [polar({ innerRadius: 0.75, grid: 'none', marks: [arcMark(availabilitySlices, { id: 'availability', key: 'key', theta1: 'theta1', theta2: 'theta2', z: 'label', value: 'value', label: 'label' })], center: { value: '200', caption: 'Total vehicles' } })],
+  marks: [
+    polar({
+      innerRadius: 0.75,
+      grid: 'none',
+      marks: [
+        arcMark(availabilitySlices, {
+          id: 'availability',
+          key: 'key',
+          theta1: 'theta1',
+          theta2: 'theta2',
+          z: 'label',
+          value: 'value',
+          label: 'label',
+        }),
+      ],
+      center: { value: '200', caption: 'Total vehicles' },
+    }),
+  ],
   focus: 'nearest',
   tooltip: true,
 });
@@ -63,8 +84,7 @@ const sectionStyle =
   'display:flex;flex-direction:column;gap:var(--dimension-space-150);padding:var(--dimension-space-300);' +
   'background:var(--color-background-primary);border:var(--dimension-stroke-width-012) solid var(--color-border-tertiary);' +
   'border-radius:var(--dimension-radius-050);';
-const rowStyle =
-  'display:flex;align-items:center;flex-wrap:wrap;gap:var(--dimension-space-150);';
+const rowStyle = 'display:flex;align-items:center;flex-wrap:wrap;gap:var(--dimension-space-150);';
 
 export const ControlsNavigationAndLoading: Story = {
   name: 'Controls, navigation, and loading',
@@ -72,8 +92,8 @@ export const ControlsNavigationAndLoading: Story = {
     <main style=${pageStyle}>
       <h1 style="margin-block-start:0">Forced-colors review</h1>
       <p>
-        In a forced-colors environment, verify real boundaries, state marks, and
-        keyboard focus instead of the normal theme palette.
+        In a forced-colors environment, verify real boundaries, state marks, and keyboard focus
+        instead of the normal theme palette.
       </p>
       <div style=${gridStyle}>
         <section style=${sectionStyle}>
@@ -194,8 +214,8 @@ export const DataVisualization: Story = {
     <main style=${pageStyle}>
       <h1 style="margin-block-start:0">Data colors in forced-colors mode</h1>
       <p>
-        Authored colors remain only on literal data marks and legend swatches.
-        Labels, focus, controls, and the card boundary follow the OS palette.
+        Authored colors remain only on literal data marks and legend swatches. Labels, focus,
+        controls, and the card boundary follow the OS palette.
       </p>
       <ds-card-chart heading="Availability status" card-width="lg" variant="chart">
         <ds-chart
@@ -203,7 +223,9 @@ export const DataVisualization: Story = {
           height="240"
           label="Availability status"
           ${ref(element => {
-            if (element) (element as HTMLElement & { definition: unknown }).definition = availabilityDefinition;
+            if (element)
+              (element as HTMLElement & { definition: unknown }).definition =
+                availabilityDefinition;
           })}
         ></ds-chart>
         <ds-chart-legend

@@ -46,8 +46,7 @@ const METRICS: OverviewMetric[] = [
     id: 'events',
     label: 'Events / 1k miles',
     value: 27.3,
-    trend:
-      resolveMetricTrend(27.3, 28.7, { inverted: true, display: 'percentage' }) ?? undefined,
+    trend: resolveMetricTrend(27.3, 28.7, { inverted: true, display: 'percentage' }) ?? undefined,
   },
   {
     id: 'speeding',
@@ -246,11 +245,7 @@ export const NoScore: Story = {
   parameters: { controls: { disable: true } },
   render: () => html`
     <div style="${FRAME}">
-      <ds-card-overview
-        period-label="Jul 27"
-        comparison-label="vs."
-        .metrics=${METRICS}
-      >
+      <ds-card-overview period-label="Jul 27" comparison-label="vs." .metrics=${METRICS}>
         ${comparisonSelect()}
       </ds-card-overview>
     </div>

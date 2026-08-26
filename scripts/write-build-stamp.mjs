@@ -1,9 +1,4 @@
-import {
-  mkdirSync,
-  readFileSync,
-  renameSync,
-  writeFileSync,
-} from 'node:fs';
+import { mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -15,7 +10,7 @@ export function writePackageVersion() {
   mkdirSync(staticDir, { recursive: true });
   writeFileSync(
     join(staticDir, 'package-version.json'),
-    `${JSON.stringify({ name: pkg.name, version: pkg.version })}\n`,
+    `${JSON.stringify({ name: pkg.name, version: pkg.version })}\n`
   );
 }
 
@@ -33,9 +28,7 @@ export function writeBuildStamp() {
   const distDir = join(process.cwd(), 'dist');
   mkdirSync(distDir, { recursive: true });
   const pkg = JSON.parse(readFileSync(join(process.cwd(), 'package.json'), 'utf8'));
-  const registry = JSON.parse(
-    readFileSync(join(process.cwd(), 'public/r/registry.json'), 'utf8')
-  );
+  const registry = JSON.parse(readFileSync(join(process.cwd(), 'public/r/registry.json'), 'utf8'));
   const digest = createHash('sha256');
   for (const artifact of PACKAGE_ARTIFACTS) {
     digest.update(artifact);
@@ -66,8 +59,7 @@ export function writeStorybookStamp() {
 }
 
 const isMain =
-  process.argv[1] !== undefined &&
-  import.meta.url === pathToFileURL(process.argv[1]).href;
+  process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href;
 
 if (isMain) {
   if (process.argv.includes('--storybook')) writeStorybookStamp();

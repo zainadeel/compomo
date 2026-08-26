@@ -22,7 +22,9 @@ type Story = StoryObj;
 
 export const Playground: Story = {
   render: args => html`
-    <div style="padding:var(--dimension-space-200);height:240px;border:1px solid var(--color-border-primary);">
+    <div
+      style="padding:var(--dimension-space-200);height:240px;border:1px solid var(--color-border-primary);"
+    >
       <ds-empty-state
         icon=${args['icon'] ?? ''}
         heading=${args['heading'] ?? ''}

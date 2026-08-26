@@ -193,7 +193,7 @@ export class Chart {
       this.surfaceHeight,
       this.locale ?? document.documentElement.lang ?? 'en',
       text => this.measuredLabels.get(text) ?? { width: text.length * 7, height: 14 },
-      resolveChartTheme(this.el),
+      resolveChartTheme(this.el)
     );
     this.scene = scene;
     if (previousKey) {
@@ -205,11 +205,9 @@ export class Chart {
           restored.x,
           restored.y,
           scene.maxFocusDistance,
-          scene.arcHitRegions,
+          scene.arcHitRegions
         );
-        this.focusState = grouped
-          ? { ...grouped, source: this.focusState.source }
-          : undefined;
+        this.focusState = grouped ? { ...grouped, source: this.focusState.source } : undefined;
       } else {
         this.focusState = undefined;
       }
@@ -236,7 +234,11 @@ export class Chart {
         return;
       }
       const previous = this.measuredLabels.get(text);
-      if (!previous || Math.abs(previous.width - box.width) > 0.5 || Math.abs(previous.height - box.height) > 0.5) {
+      if (
+        !previous ||
+        Math.abs(previous.width - box.width) > 0.5 ||
+        Math.abs(previous.height - box.height) > 0.5
+      ) {
         this.measuredLabels.set(text, { width: box.width, height: box.height });
         changed = true;
       }
@@ -252,7 +254,7 @@ export class Chart {
       x,
       y,
       this.scene.maxFocusDistance,
-      this.scene.arcHitRegions,
+      this.scene.arcHitRegions
     );
     if (!result) {
       this.clearFocus(source);
@@ -261,7 +263,8 @@ export class Chart {
     if (
       this.focusState?.primary.sceneKey === result.primary.sceneKey &&
       this.focusState.source === source
-    ) return;
+    )
+      return;
     this.focusState = { ...result, source };
     this.dsChartFocusChange.emit({ ...result, source });
   }
@@ -305,8 +308,10 @@ export class Chart {
     let next: number | undefined;
     if (event.key === 'Home') next = 0;
     else if (event.key === 'End') next = points.length - 1;
-    else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') next = Math.min(points.length - 1, current + 1);
-    else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') next = Math.max(0, current < 0 ? 0 : current - 1);
+    else if (event.key === 'ArrowRight' || event.key === 'ArrowDown')
+      next = Math.min(points.length - 1, current + 1);
+    else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp')
+      next = Math.max(0, current < 0 ? 0 : current - 1);
     else return;
     event.preventDefault();
     const point = points[next ?? 0] ?? points[0];
@@ -324,13 +329,73 @@ export class Chart {
       'stroke-width': node.style.strokeWidth,
       'stroke-dasharray': node.style.strokeDasharray || undefined,
     };
-    if (node.type === 'path') return <path key={node.key} class={resolvedClassName} d={node.d} transform={node.transform} {...presentation} />;
+    if (node.type === 'path')
+      return (
+        <path
+          key={node.key}
+          class={resolvedClassName}
+          d={node.d}
+          transform={node.transform}
+          {...presentation}
+        />
+      );
     if (node.type === 'rect') {
-      return <rect key={node.key} class={resolvedClassName} x={node.x} y={node.y} width={node.width} height={node.height} rx={node.style.radius} {...presentation} />;
+      return (
+        <rect
+          key={node.key}
+          class={resolvedClassName}
+          x={node.x}
+          y={node.y}
+          width={node.width}
+          height={node.height}
+          rx={node.style.radius}
+          {...presentation}
+        />
+      );
     }
-    if (node.type === 'circle') return <circle key={node.key} class={resolvedClassName} cx={node.x} cy={node.y} r={node.radius} {...presentation} />;
-    if (node.type === 'line') return <line key={node.key} class={resolvedClassName} x1={node.x1} x2={node.x2} y1={node.y1} y2={node.y2} {...presentation} />;
-    return <text key={node.key} class={node.className ?? `${className} chart__text-mark`} data-chart-measure={node.measure ? '' : undefined} x={node.x} y={node.y} dx={node.dx} dy={node.dy} text-anchor={node.style.textAnchor} font-family={node.style.fontFamily} font-size={node.style.fontSize} font-weight={node.style.fontWeight} dominant-baseline={node.dominantBaseline ?? 'middle'} transform={node.rotate ? `rotate(${node.rotate} ${node.x} ${node.y})` : undefined} {...presentation}>{node.text}</text>;
+    if (node.type === 'circle')
+      return (
+        <circle
+          key={node.key}
+          class={resolvedClassName}
+          cx={node.x}
+          cy={node.y}
+          r={node.radius}
+          {...presentation}
+        />
+      );
+    if (node.type === 'line')
+      return (
+        <line
+          key={node.key}
+          class={resolvedClassName}
+          x1={node.x1}
+          x2={node.x2}
+          y1={node.y1}
+          y2={node.y2}
+          {...presentation}
+        />
+      );
+    return (
+      <text
+        key={node.key}
+        class={node.className ?? `${className} chart__text-mark`}
+        data-chart-measure={node.measure ? '' : undefined}
+        x={node.x}
+        y={node.y}
+        dx={node.dx}
+        dy={node.dy}
+        text-anchor={node.style.textAnchor}
+        font-family={node.style.fontFamily}
+        font-size={node.style.fontSize}
+        font-weight={node.style.fontWeight}
+        dominant-baseline={node.dominantBaseline ?? 'middle'}
+        transform={node.rotate ? `rotate(${node.rotate} ${node.x} ${node.y})` : undefined}
+        {...presentation}
+      >
+        {node.text}
+      </text>
+    );
   }
 
   private renderMarkLayers(scene: ChartScene) {
@@ -367,22 +432,25 @@ export class Chart {
     const points = this.focusState.points;
     const formatValue = (point: ChartPoint) => {
       const value = point.value ?? point.yValue;
-      return options.format?.(point, locale) ??
+      return (
+        options.format?.(point, locale) ??
         (typeof value === 'number'
           ? new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(value)
-          : String(value));
+          : String(value))
+      );
     };
     return {
       heading:
         points.length > 1
-          ? options.formatGroupHeading?.(points, locale) ?? String(this.focusState.primary.xValue)
+          ? (options.formatGroupHeading?.(points, locale) ?? String(this.focusState.primary.xValue))
           : undefined,
-      items: points.map(point =>
-        options.formatGroupItem?.(point, locale) ?? {
-          label: point.groupLabel ?? point.markId,
-          value: formatValue(point),
-          color: point.color,
-        },
+      items: points.map(
+        point =>
+          options.formatGroupItem?.(point, locale) ?? {
+            label: point.groupLabel ?? point.markId,
+            value: formatValue(point),
+            color: point.color,
+          }
       ),
     };
   }
@@ -399,30 +467,36 @@ export class Chart {
     const scene = this.scene;
     const tooltip = this.tooltipContent();
     const focus = this.focusState?.primary;
-    const tooltipAnchor = focus &&
+    const tooltipAnchor =
+      focus &&
       this.focusState?.source === 'pointer' &&
       scene?.arcHitRegions.length &&
       this.pointerAnchor
-      ? this.pointerAnchor
-      : focus;
+        ? this.pointerAnchor
+        : focus;
     const focusedDotPoints = scene ? this.focusedDotPoints(scene) : [];
-    const groupedPointFocus = scene?.coordinate === 'cartesian' &&
-      scene.focus === 'group-x' &&
-      focusedDotPoints.length > 1;
-    const center = focus && scene?.center?.focused
-      ? scene.center.focused(focus, this.locale ?? document.documentElement.lang ?? 'en')
-      : scene?.center;
+    const groupedPointFocus =
+      scene?.coordinate === 'cartesian' && scene.focus === 'group-x' && focusedDotPoints.length > 1;
+    const center =
+      focus && scene?.center?.focused
+        ? scene.center.focused(focus, this.locale ?? document.documentElement.lang ?? 'en')
+        : scene?.center;
     return (
       <Host
         class="chart"
         style={{
           '--ds-chart-width': this.width ? `${this.width}px` : '100%',
-          '--ds-chart-height': this.height || this.aspectRatio
-            ? `${this.surfaceHeight}px`
-            : 'var(--ds-chart-container-height, 320px)',
+          '--ds-chart-height':
+            this.height || this.aspectRatio
+              ? `${this.surfaceHeight}px`
+              : 'var(--ds-chart-container-height, 320px)',
         }}
       >
-        {this.description && <span id={this.descriptionId} class="chart__description">{this.description}</span>}
+        {this.description && (
+          <span id={this.descriptionId} class="chart__description">
+            {this.description}
+          </span>
+        )}
         {scene && (
           /* eslint-disable-next-line local/prefer-ds-icon -- SVG is the chart renderer. */
           <svg
@@ -440,7 +514,12 @@ export class Chart {
           >
             <defs aria-hidden="true">
               <clipPath id={this.clipId}>
-                <rect x={scene.plot.left} y={scene.plot.top} width={scene.plot.width} height={scene.plot.height} />
+                <rect
+                  x={scene.plot.left}
+                  y={scene.plot.top}
+                  width={scene.plot.width}
+                  height={scene.plot.height}
+                />
               </clipPath>
             </defs>
             <rect
@@ -453,28 +532,131 @@ export class Chart {
             />
             <g class="chart__guides" aria-hidden="true">
               {scene.guides.map(node => this.renderNode(node, 'chart__grid chart__polar-guide'))}
-              {scene.yAxis.line && <line class="chart__axis-line" x1={scene.plot.left} x2={scene.plot.left} y1={scene.plot.top} y2={scene.plot.bottom} />}
+              {scene.yAxis.line && (
+                <line
+                  class="chart__axis-line"
+                  x1={scene.plot.left}
+                  x2={scene.plot.left}
+                  y1={scene.plot.top}
+                  y2={scene.plot.bottom}
+                />
+              )}
               {scene.yAxis.ticks.map(tick => (
                 <g key={`y-${tick.key}`}>
-                  {scene.yAxis.grid && <line class="chart__grid" x1={scene.plot.left} x2={scene.plot.right} y1={tick.position} y2={tick.position} />}
-                  <line class="chart__axis-line chart__tick-stub" x1={scene.plot.left - scene.yAxis.tickSize} x2={scene.plot.left} y1={tick.position} y2={tick.position} />
-                  {tick.labelVisible && <text data-chart-measure class="chart__tick chart__tick--y" x={scene.plot.left - scene.yAxis.tickSize - scene.yAxis.tickPadding} y={tick.position} text-anchor="end" dominant-baseline="middle">{tick.label}</text>}
+                  {scene.yAxis.grid && (
+                    <line
+                      class="chart__grid"
+                      x1={scene.plot.left}
+                      x2={scene.plot.right}
+                      y1={tick.position}
+                      y2={tick.position}
+                    />
+                  )}
+                  <line
+                    class="chart__axis-line chart__tick-stub"
+                    x1={scene.plot.left - scene.yAxis.tickSize}
+                    x2={scene.plot.left}
+                    y1={tick.position}
+                    y2={tick.position}
+                  />
+                  {tick.labelVisible && (
+                    <text
+                      data-chart-measure
+                      class="chart__tick chart__tick--y"
+                      x={scene.plot.left - scene.yAxis.tickSize - scene.yAxis.tickPadding}
+                      y={tick.position}
+                      text-anchor="end"
+                      dominant-baseline="middle"
+                    >
+                      {tick.label}
+                    </text>
+                  )}
                 </g>
               ))}
-              {scene.xAxis.line && <line class="chart__axis-line" x1={scene.plot.left} x2={scene.plot.right} y1={scene.plot.bottom} y2={scene.plot.bottom} />}
+              {scene.xAxis.line && (
+                <line
+                  class="chart__axis-line"
+                  x1={scene.plot.left}
+                  x2={scene.plot.right}
+                  y1={scene.plot.bottom}
+                  y2={scene.plot.bottom}
+                />
+              )}
               {scene.xAxis.ticks.map(tick => (
                 <g key={`x-${tick.key}`}>
-                  {scene.xAxis.grid && <line class="chart__grid" x1={tick.position} x2={tick.position} y1={scene.plot.top} y2={scene.plot.bottom} />}
-                  <line class="chart__axis-line chart__tick-stub" x1={tick.position} x2={tick.position} y1={scene.plot.bottom} y2={scene.plot.bottom + scene.xAxis.tickSize} />
-                  {tick.labelVisible && <text data-chart-measure class="chart__tick chart__tick--x" x={tick.position} y={scene.plot.bottom + scene.xAxis.tickSize + scene.xAxis.tickPadding} text-anchor="middle" dominant-baseline="hanging" transform={scene.xAxis.rotate ? `rotate(${scene.xAxis.rotate} ${tick.position} ${scene.plot.bottom + scene.xAxis.tickSize + scene.xAxis.tickPadding})` : undefined}>{tick.label}</text>}
+                  {scene.xAxis.grid && (
+                    <line
+                      class="chart__grid"
+                      x1={tick.position}
+                      x2={tick.position}
+                      y1={scene.plot.top}
+                      y2={scene.plot.bottom}
+                    />
+                  )}
+                  <line
+                    class="chart__axis-line chart__tick-stub"
+                    x1={tick.position}
+                    x2={tick.position}
+                    y1={scene.plot.bottom}
+                    y2={scene.plot.bottom + scene.xAxis.tickSize}
+                  />
+                  {tick.labelVisible && (
+                    <text
+                      data-chart-measure
+                      class="chart__tick chart__tick--x"
+                      x={tick.position}
+                      y={scene.plot.bottom + scene.xAxis.tickSize + scene.xAxis.tickPadding}
+                      text-anchor="middle"
+                      dominant-baseline="hanging"
+                      transform={
+                        scene.xAxis.rotate
+                          ? `rotate(${scene.xAxis.rotate} ${tick.position} ${scene.plot.bottom + scene.xAxis.tickSize + scene.xAxis.tickPadding})`
+                          : undefined
+                      }
+                    >
+                      {tick.label}
+                    </text>
+                  )}
                 </g>
               ))}
-              {scene.xAxis.label && <text class="chart__axis-title" x={(scene.plot.left + scene.plot.right) / 2} y={scene.height - 4} text-anchor="middle">{scene.xAxis.label}</text>}
-              {scene.yAxis.label && <text class="chart__axis-title" x="8" y={(scene.plot.top + scene.plot.bottom) / 2} text-anchor="middle" dominant-baseline="middle" transform={`rotate(-90 8 ${(scene.plot.top + scene.plot.bottom) / 2})`}>{scene.yAxis.label}</text>}
+              {scene.xAxis.label && (
+                <text
+                  class="chart__axis-title"
+                  x={(scene.plot.left + scene.plot.right) / 2}
+                  y={scene.height - 4}
+                  text-anchor="middle"
+                >
+                  {scene.xAxis.label}
+                </text>
+              )}
+              {scene.yAxis.label && (
+                <text
+                  class="chart__axis-title"
+                  x="8"
+                  y={(scene.plot.top + scene.plot.bottom) / 2}
+                  text-anchor="middle"
+                  dominant-baseline="middle"
+                  transform={`rotate(-90 8 ${(scene.plot.top + scene.plot.bottom) / 2})`}
+                >
+                  {scene.yAxis.label}
+                </text>
+              )}
               {scene.coordinate === 'cartesian' && (
                 <g class="chart__plot-frame">
-                  <line class="chart__plot-boundary chart__plot-boundary--top" x1={scene.plot.left} x2={scene.plot.right} y1={scene.plot.top} y2={scene.plot.top} />
-                  <line class="chart__plot-boundary chart__plot-boundary--right" x1={scene.plot.right} x2={scene.plot.right} y1={scene.plot.top} y2={scene.plot.bottom} />
+                  <line
+                    class="chart__plot-boundary chart__plot-boundary--top"
+                    x1={scene.plot.left}
+                    x2={scene.plot.right}
+                    y1={scene.plot.top}
+                    y2={scene.plot.top}
+                  />
+                  <line
+                    class="chart__plot-boundary chart__plot-boundary--right"
+                    x1={scene.plot.right}
+                    x2={scene.plot.right}
+                    y1={scene.plot.top}
+                    y2={scene.plot.bottom}
+                  />
                 </g>
               )}
             </g>
@@ -502,7 +684,9 @@ export class Chart {
                 aria-hidden="true"
               />
             ))}
-            {focus && focusedDotPoints.length === 0 && <circle class="chart__focus" cx={focus.x} cy={focus.y} r="6" aria-hidden="true" />}
+            {focus && focusedDotPoints.length === 0 && (
+              <circle class="chart__focus" cx={focus.x} cy={focus.y} r="6" aria-hidden="true" />
+            )}
             {center?.value && (
               <text
                 class="chart__center-value"
@@ -537,7 +721,9 @@ export class Chart {
             y={tooltipAnchor.y}
           />
         )}
-        <span class="chart__status" aria-live="polite" aria-atomic="true">{this.statusText()}</span>
+        <span class="chart__status" aria-live="polite" aria-atomic="true">
+          {this.statusText()}
+        </span>
       </Host>
     );
   }

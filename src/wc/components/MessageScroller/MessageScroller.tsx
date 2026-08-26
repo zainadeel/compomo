@@ -120,14 +120,17 @@ export class MessageScroller {
     const behavior = this.motionBehavior();
     this.viewport.scrollTo({ top, behavior });
     if (this.programmaticTimer) clearTimeout(this.programmaticTimer);
-    this.programmaticTimer = setTimeout(() => {
-      this.programmatic = false;
-      this.programmaticTimer = undefined;
-      if (this.following) {
-        this.viewport!.scrollTop = top;
-        this.showScrollToLatest = false;
-      }
-    }, behavior === 'smooth' ? 600 : 0);
+    this.programmaticTimer = setTimeout(
+      () => {
+        this.programmatic = false;
+        this.programmaticTimer = undefined;
+        if (this.following) {
+          this.viewport!.scrollTop = top;
+          this.showScrollToLatest = false;
+        }
+      },
+      behavior === 'smooth' ? 600 : 0
+    );
   }
 
   private connectObservers() {
@@ -179,16 +182,12 @@ export class MessageScroller {
     const assignedTranscript = assigned.filter(
       (element): element is HTMLElement =>
         element instanceof HTMLElement &&
-        (element.matches('ds-message') || element.matches('ds-agent-response')),
+        (element.matches('ds-message') || element.matches('ds-agent-response'))
     );
     const queriedTranscript = Array.from(
-      this.el.querySelectorAll<HTMLElement>('ds-message, ds-agent-response'),
+      this.el.querySelectorAll<HTMLElement>('ds-message, ds-agent-response')
     ).filter(element => {
-      if (
-        element.closest(
-          '.message-scroller__interaction, .message-scroller__overlay-content',
-        )
-      ) {
+      if (element.closest('.message-scroller__interaction, .message-scroller__overlay-content')) {
         return false;
       }
       if (element.matches('ds-agent-response')) return true;
@@ -205,16 +204,11 @@ export class MessageScroller {
     const hadKnownTranscript = this.knownTranscriptElements.size > 0;
     const previouslyKnown = new Set(this.knownTranscriptElements);
     const appendedAnchor = [...current].reverse().find((element, reverseIndex) => {
-      if (
-        !element.matches('ds-message[scroll-anchor]') ||
-        this.knownTurnAnchors.has(element)
-      ) {
+      if (!element.matches('ds-message[scroll-anchor]') || this.knownTurnAnchors.has(element)) {
         return false;
       }
       const index = current.length - reverseIndex - 1;
-      return current
-        .slice(index + 1)
-        .every(next => !this.knownTranscriptElements.has(next));
+      return current.slice(index + 1).every(next => !this.knownTranscriptElements.has(next));
     });
     current.forEach(element => {
       this.knownTranscriptElements.add(element);
@@ -233,9 +227,10 @@ export class MessageScroller {
     const firstKnownIndex = current.findIndex(element => previouslyKnown.has(element));
     const newTranscript = current.filter(element => !previouslyKnown.has(element));
     const prepended =
-      (current.length > previous.length && previous.every(
-        (element, index) => current[current.length - previous.length + index] === element,
-      )) ||
+      (current.length > previous.length &&
+        previous.every(
+          (element, index) => current[current.length - previous.length + index] === element
+        )) ||
       (!appendedAnchor &&
         newTranscript.length > 0 &&
         firstKnownIndex > 0 &&
@@ -252,11 +247,7 @@ export class MessageScroller {
           : this.firstChildViewportTop;
         if (preservedElement && preservedTop !== undefined) {
           this.reconcilePrependPosition(preservedElement, preservedTop);
-          this.schedulePrependReconciliation(
-            preservedElement,
-            preservedTop,
-            newTranscript,
-          );
+          this.schedulePrependReconciliation(preservedElement, preservedTop, newTranscript);
         }
       }
       this.rememberFirstChildTop();
@@ -271,15 +262,14 @@ export class MessageScroller {
 
   private reconcilePrependPosition(element: HTMLElement, viewportTop: number) {
     if (!this.viewport || !element.isConnected) return;
-    const nextTop =
-      element.getBoundingClientRect().top - this.viewport.getBoundingClientRect().top;
+    const nextTop = element.getBoundingClientRect().top - this.viewport.getBoundingClientRect().top;
     this.viewport.scrollTop += nextTop - viewportTop;
   }
 
   private schedulePrependReconciliation(
     element: HTMLElement,
     viewportTop: number,
-    prepended: HTMLElement[],
+    prepended: HTMLElement[]
   ) {
     const generation = ++this.prependReconciliation;
     // Prepended custom elements can gain height after their child-list mutation.
@@ -348,8 +338,7 @@ export class MessageScroller {
   private rememberActiveTurnAnchorTop() {
     if (!this.viewport || !this.activeTurnAnchor?.isConnected) return;
     this.activeTurnAnchorViewportTop =
-      this.activeTurnAnchor.getBoundingClientRect().top -
-      this.viewport.getBoundingClientRect().top;
+      this.activeTurnAnchor.getBoundingClientRect().top - this.viewport.getBoundingClientRect().top;
   }
 
   private syncTurnClearance() {
@@ -366,7 +355,7 @@ export class MessageScroller {
     const contentAfterAnchor = Math.max(lastRect.bottom - anchorRect.top, 0);
     const clearance = Math.max(
       Math.ceil(this.viewport.clientHeight - offset - contentAfterAnchor),
-      0,
+      0
     );
     if (clearance === this.turnClearance) return;
     this.turnClearance = clearance;
@@ -475,7 +464,7 @@ export class MessageScroller {
             onKeyDown={(event: KeyboardEvent) => {
               if (
                 ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(
-                  event.key,
+                  event.key
                 )
               ) {
                 this.releaseFollow();

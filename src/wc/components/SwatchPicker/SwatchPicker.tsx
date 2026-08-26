@@ -43,26 +43,18 @@ export class SwatchPicker {
 
   private focusOption(index: number) {
     requestAnimationFrame(() => {
-      const optionButtons = this.el
-        .querySelectorAll<HTMLButtonElement>('.swatch-picker__option');
+      const optionButtons = this.el.querySelectorAll<HTMLButtonElement>('.swatch-picker__option');
       optionButtons[index]?.focus();
     });
   }
 
-  private handleOptionKeyDown(
-    event: KeyboardEvent,
-    currentIndex: number,
-  ) {
+  private handleOptionKeyDown(event: KeyboardEvent, currentIndex: number) {
     const key = event.key as SwatchPickerNavigationKey;
     if (!['ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'Home', 'End'].includes(key)) {
       return;
     }
 
-    const nextIndex = resolveSwatchPickerNavigationIndex(
-      this.activeOptions,
-      currentIndex,
-      key,
-    );
+    const nextIndex = resolveSwatchPickerNavigationIndex(this.activeOptions, currentIndex, key);
     if (nextIndex === null) return;
 
     event.preventDefault();
@@ -71,11 +63,7 @@ export class SwatchPicker {
     this.focusOption(nextIndex);
   }
 
-  private renderOption(
-    option: SwatchPickerOption,
-    index: number,
-    tabIndex: number,
-  ) {
+  private renderOption(option: SwatchPickerOption, index: number, tabIndex: number) {
     const selected = option.value === this.value;
     const opacity = normalizeSwatchPickerOpacity(option.preview.opacity);
 
@@ -90,7 +78,8 @@ export class SwatchPicker {
           'ds-control-inactive': !!option.isInactive,
         }}
         style={{
-          '--_swatch-preview-color': option.preview.backgroundColor ?? 'var(--color-background-secondary)',
+          '--_swatch-preview-color':
+            option.preview.backgroundColor ?? 'var(--color-background-secondary)',
           '--_swatch-preview-image': option.preview.backgroundImage ?? 'none',
           '--_swatch-preview-opacity': String(opacity),
         }}
@@ -118,20 +107,18 @@ export class SwatchPicker {
 
     return (
       <Host>
-        <div
-          class="swatch-picker"
-          role="radiogroup"
-          aria-label={this.groupLabel}
-        >
-          {(this.sections.length > 0 ? this.sections : [{ options: this.options }]).map((section, sectionIndex) => [
-            section.options.map(option => {
-              const currentIndex = optionIndex++;
-              return this.renderOption(option, currentIndex, tabIndex);
-            }),
-            sectionIndex < (this.sections.length > 0 ? this.sections.length : 1) - 1 && (
-              <span class="swatch-picker__divider" aria-hidden="true" />
-            ),
-          ])}
+        <div class="swatch-picker" role="radiogroup" aria-label={this.groupLabel}>
+          {(this.sections.length > 0 ? this.sections : [{ options: this.options }]).map(
+            (section, sectionIndex) => [
+              section.options.map(option => {
+                const currentIndex = optionIndex++;
+                return this.renderOption(option, currentIndex, tabIndex);
+              }),
+              sectionIndex < (this.sections.length > 0 ? this.sections.length : 1) - 1 && (
+                <span class="swatch-picker__divider" aria-hidden="true" />
+              ),
+            ]
+          )}
         </div>
       </Host>
     );

@@ -7,7 +7,7 @@ const tabs = [
   { id: 'overview', label: 'Overview' },
   { id: 'activity', label: 'Activity' },
   { id: 'settings', label: 'Settings' },
-  { id: 'members',  label: 'Members' },
+  { id: 'members', label: 'Members' },
 ];
 
 const BACKGROUND_SURFACES = [
@@ -57,7 +57,8 @@ const BACKGROUND_SURFACES = [
     id: 'translucent',
     value: 'translucent',
     label: 'translucent',
-    background: 'linear-gradient(var(--color-translucent-translucent), var(--color-translucent-translucent)), var(--color-background-bold-brand)',
+    background:
+      'linear-gradient(var(--color-translucent-translucent), var(--color-translucent-translucent)), var(--color-background-bold-brand)',
     labelColor: 'var(--color-translucent-foreground-secondary)',
   },
   {
@@ -140,7 +141,8 @@ export const Widths: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Use width="hug" for content-sized segments or width="fill" inside a bounded parent to distribute the available track equally across every selectable segment.',
+        story:
+          'Use width="hug" for content-sized segments or width="fill" inside a bounded parent to distribute the available track equally across every selectable segment.',
       },
     },
   },
@@ -166,20 +168,30 @@ export const Sizes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Small, medium, and large tracks consume the normal 24px, 32px, and 40px control-density recipes. Their nested segments consume the matching inset recipe at 20px, 28px, and 36px while retaining the same-size 16px, 20px, and 24px icon and typography scales.',
+        story:
+          'Small, medium, and large tracks consume the normal 24px, 32px, and 40px control-density recipes. Their nested segments consume the matching inset recipe at 20px, 28px, and 36px while retaining the same-size 16px, 20px, and 24px icon and typography scales.',
       },
     },
   },
   render: () => html`
-    <div style="display:flex;flex-direction:column;gap:var(--dimension-space-150);align-items:flex-start;">
+    <div
+      style="display:flex;flex-direction:column;gap:var(--dimension-space-150);align-items:flex-start;"
+    >
       ${(['sm', 'md', 'lg'] as const).map(size => {
         const sizeTabs = [
-          { id: `${size}-dashboard`, label: 'Dashboard', icon: 'MapPage', variant: 'icon' as const },
+          {
+            id: `${size}-dashboard`,
+            label: 'Dashboard',
+            icon: 'MapPage',
+            variant: 'icon' as const,
+          },
           { id: `${size}-settings`, label: 'Settings', icon: 'Gear', variant: 'icon' as const },
         ];
         return html`
           <div style="display:flex;align-items:center;gap:var(--dimension-space-100);">
-            <span style="min-width:var(--dimension-size-400);color:var(--color-foreground-tertiary);font:var(--typography-text-caption-font);">
+            <span
+              style="min-width:var(--dimension-size-400);color:var(--color-foreground-tertiary);font:var(--typography-text-caption-font);"
+            >
               ${size}
             </span>
             <ds-tab-group
@@ -199,12 +211,15 @@ export const Variants: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Keep one variant consistent across every selectable item in a TabGroup. Icon-only tabs retain their required label as the accessible name.',
+        story:
+          'Keep one variant consistent across every selectable item in a TabGroup. Icon-only tabs retain their required label as the accessible name.',
       },
     },
   },
   render: () => html`
-    <div style="display:flex;flex-direction:column;gap:var(--dimension-space-150);align-items:flex-start;">
+    <div
+      style="display:flex;flex-direction:column;gap:var(--dimension-space-150);align-items:flex-start;"
+    >
       ${(['label', 'icon', 'icon-label'] as const).map(variant => {
         const variantTabs = [
           { id: `${variant}-overview`, label: 'Overview', icon: 'Bookmark', variant, dot: true },
@@ -213,7 +228,9 @@ export const Variants: Story = {
         ];
         return html`
           <div style="display:flex;flex-direction:column;gap:var(--dimension-space-100);">
-            <span style="color:var(--color-foreground-tertiary);font:var(--typography-text-caption-font);">
+            <span
+              style="color:var(--color-foreground-tertiary);font:var(--typography-text-caption-font);"
+            >
               ${variant}
             </span>
             <ds-tab-group
@@ -231,7 +248,9 @@ export const Variants: Story = {
 /** Current TabGroup surface contexts shown on their actual parent backgrounds. */
 export const Backgrounds: Story = {
   render: () => html`
-    <div style="display:flex;flex-direction:column;gap:var(--dimension-space-150);align-items:flex-start;">
+    <div
+      style="display:flex;flex-direction:column;gap:var(--dimension-space-150);align-items:flex-start;"
+    >
       ${BACKGROUND_SURFACES.map(
         surface => html`
           <div
@@ -263,7 +282,7 @@ export const Backgrounds: Story = {
               aria-label="${surface.label} background tabs"
             ></ds-tab-group>
           </div>
-        `,
+        `
       )}
     </div>
   `,
@@ -275,42 +294,45 @@ export const WithPanels: Story = {
       { id: 'overview', label: 'Overview', panelId: 'panel-overview' },
       { id: 'activity', label: 'Activity', panelId: 'panel-activity' },
       { id: 'settings', label: 'Settings', panelId: 'panel-settings' },
-      { id: 'members',  label: 'Members',  panelId: 'panel-members'  },
+      { id: 'members', label: 'Members', panelId: 'panel-members' },
     ];
     const panelContent: Record<string, string> = {
-      overview:  'Overview panel — summary of the item, key metrics, and recent highlights.',
-      activity:  'Activity panel — timeline of recent events and changes.',
-      settings:  'Settings panel — configure preferences and permissions.',
-      members:   'Members panel — manage team members and roles.',
+      overview: 'Overview panel — summary of the item, key metrics, and recent highlights.',
+      activity: 'Activity panel — timeline of recent events and changes.',
+      settings: 'Settings panel — configure preferences and permissions.',
+      members: 'Members panel — manage team members and roles.',
     };
     return html`
-      <div style="width: 480px" ${ref(el => {
-        if (!el) return;
-        const tabGroup = el.querySelector('ds-tab-group') as HTMLElement & { value: string };
-        if (!tabGroup) return;
-        const showPanel = (id: string) => {
-          el.querySelectorAll('[role="tabpanel"]').forEach(p => {
-            (p as HTMLElement).hidden = (p as HTMLElement).id !== `panel-${id}`;
-          });
-        };
-        tabGroup.addEventListener('dsChange', (e: Event) => showPanel((e as CustomEvent<string>).detail));
-        showPanel(tabGroup.value || 'overview');
-      })}>
+      <div
+        style="width: 480px"
+        ${ref(el => {
+          if (!el) return;
+          const tabGroup = el.querySelector('ds-tab-group') as HTMLElement & { value: string };
+          if (!tabGroup) return;
+          const showPanel = (id: string) => {
+            el.querySelectorAll('[role="tabpanel"]').forEach(p => {
+              (p as HTMLElement).hidden = (p as HTMLElement).id !== `panel-${id}`;
+            });
+          };
+          tabGroup.addEventListener('dsChange', (e: Event) =>
+            showPanel((e as CustomEvent<string>).detail)
+          );
+          showPanel(tabGroup.value || 'overview');
+        })}
+      >
         <ds-tab-group
           .tabs=${panelTabs}
           value="overview"
           aria-label="Content sections"
         ></ds-tab-group>
         <div style="padding: var(--dimension-space-150) 0; color: var(--color-foreground-primary)">
-          ${panelTabs.map(t => html`
-            <div
-              id="panel-${t.id}"
-              role="tabpanel"
-              aria-labelledby="${t.id}"
-            >
-              ${panelContent[t.id]}
-            </div>
-          `)}
+          ${panelTabs.map(
+            t => html`
+              <div id="panel-${t.id}" role="tabpanel" aria-labelledby="${t.id}">
+                ${panelContent[t.id]}
+              </div>
+            `
+          )}
         </div>
       </div>
     `;
@@ -321,9 +343,9 @@ export const WithDot: Story = {
   render: () => html`
     <ds-tab-group
       .tabs=${[
-        { id: 'inbox',    label: 'Inbox',    dot: true },
-        { id: 'sent',     label: 'Sent'  },
-        { id: 'drafts',   label: 'Drafts', dot: true },
+        { id: 'inbox', label: 'Inbox', dot: true },
+        { id: 'sent', label: 'Sent' },
+        { id: 'drafts', label: 'Drafts', dot: true },
         { id: 'archived', label: 'Archived' },
       ]}
       value="inbox"
@@ -349,7 +371,10 @@ export const WithInactive: Story = {
 export const TwoTabs: Story = {
   render: () => html`
     <ds-tab-group
-      .tabs=${[{ id: 'list', label: 'List' }, { id: 'grid', label: 'Grid' }]}
+      .tabs=${[
+        { id: 'list', label: 'List' },
+        { id: 'grid', label: 'Grid' },
+      ]}
       value="list"
       aria-label="View mode"
     ></ds-tab-group>
@@ -361,12 +386,12 @@ export const WithDivider: Story = {
   render: () => html`
     <ds-tab-group
       .tabs=${[
-        { id: 'live-map',         label: 'Live Map' },
+        { id: 'live-map', label: 'Live Map' },
         { id: 'location-history', label: 'Location History' },
-        { id: 'trips',            label: 'Trips' },
+        { id: 'trips', label: 'Trips' },
         { type: 'divider' },
         { id: 'overview', label: 'Overview' },
-        { id: 'events',   label: 'Events', dot: true },
+        { id: 'events', label: 'Events', dot: true },
         { id: 'requests', label: 'Requests' },
       ]}
       value="live-map"

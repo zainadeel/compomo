@@ -100,10 +100,7 @@ export class MobileBarNav {
     if (event.pointerId !== this.activePointerId) return;
 
     this.activePointerId = null;
-    const remaining = Math.max(
-      0,
-      MINIMUM_DIRECT_PRESS_MS - (performance.now() - this.pressedAt)
-    );
+    const remaining = Math.max(0, MINIMUM_DIRECT_PRESS_MS - (performance.now() - this.pressedAt));
 
     this.clearPressTimer();
     this.pressClearTimer = setTimeout(() => {
@@ -173,11 +170,7 @@ export class MobileBarNav {
 
   private selectDestination(destination: MobileDestination) {
     if (
-      !shouldEmitMobileDestinationChange(
-        this.activeDestination,
-        destination,
-        this.sheetNavExpanded
-      )
+      !shouldEmitMobileDestinationChange(this.activeDestination, destination, this.sheetNavExpanded)
     ) {
       return;
     }
@@ -242,8 +235,7 @@ export class MobileBarNav {
               class={{
                 'mobile-bar-nav__item': true,
                 'mobile-bar-nav__item--selected': this.sheetNavExpanded,
-                'mobile-bar-nav__item--pressed':
-                  this.pressedItemId === 'sheet-nav',
+                'mobile-bar-nav__item--pressed': this.pressedItemId === 'sheet-nav',
                 'ds-focus-ring-inset': true,
                 'ds-interaction-fill': true,
               }}

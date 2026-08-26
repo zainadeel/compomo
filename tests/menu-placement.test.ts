@@ -16,7 +16,7 @@ describe('PANEL_NAV_USER_MENU_PLACEMENT', () => {
     assert.equal(PANEL_NAV_USER_MENU_PLACEMENT.anchorAlignment, 'choice-cell');
     assert.equal(
       PANEL_NAV_USER_MENU_PLACEMENT.sideOffset,
-      'calc(var(--dimension-space-100) + var(--dimension-space-050))',
+      'calc(var(--dimension-space-100) + var(--dimension-space-050))'
     );
     assert.equal(PANEL_NAV_USER_MENU_PLACEMENT.alignOffset, 0);
   });
@@ -32,12 +32,9 @@ describe('PANEL_NAV_USER_MENU_PLACEMENT', () => {
     try {
       const sideOffsetPx = resolveCssLengthPx(
         PANEL_NAV_USER_MENU_PLACEMENT.sideOffset,
-        TOKEN_CSS_LENGTHS.space050,
+        TOKEN_CSS_LENGTHS.space050
       );
-      const alignOffsetPx = resolveCssLengthPx(
-        PANEL_NAV_USER_MENU_PLACEMENT.alignOffset,
-        0,
-      );
+      const alignOffsetPx = resolveCssLengthPx(PANEL_NAV_USER_MENU_PLACEMENT.alignOffset, 0);
       assert.equal(sideOffsetPx, 12);
       assert.equal(alignOffsetPx, 0);
 

@@ -19,7 +19,9 @@ test('exposes vertical tab semantics and panel relationships', async ({ page }) 
   await expect(page.locator('#settings-panel')).toBeHidden();
 });
 
-test('arrow navigation skips inactive items, activates panels, and emits change', async ({ page }) => {
+test('arrow navigation skips inactive items, activates panels, and emits change', async ({
+  page,
+}) => {
   const overview = page.getByRole('tab', { name: 'Overview' });
   const settings = page.getByRole('tab', { name: 'Settings' });
 
@@ -31,9 +33,13 @@ test('arrow navigation skips inactive items, activates panels, and emits change'
   await expect(overview).toHaveAttribute('aria-selected', 'false');
   await expect(page.locator('#settings-panel')).toBeVisible();
   await expect(page.locator('#overview-panel')).toBeHidden();
-  await expect.poll(() => page.evaluate(() => (
-    window as typeof window & { __panelSubNavChange?: string }
-  ).__panelSubNavChange)).toBe('settings-tab');
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => (window as typeof window & { __panelSubNavChange?: string }).__panelSubNavChange
+      )
+    )
+    .toBe('settings-tab');
 
   await settings.press('Home');
   await expect(overview).toBeFocused();
@@ -93,14 +99,15 @@ test('uses surface-aware interaction fills and foregrounds', async ({ page }) =>
   const host = page.locator('#sub-nav');
   const selected = page.getByRole('tab', { name: 'Overview' });
 
-  const resolveColor = (token: string) => page.evaluate(cssToken => {
-    const probe = document.createElement('div');
-    probe.style.backgroundColor = `var(${cssToken})`;
-    document.body.append(probe);
-    const color = getComputedStyle(probe).backgroundColor;
-    probe.remove();
-    return color;
-  }, token);
+  const resolveColor = (token: string) =>
+    page.evaluate(cssToken => {
+      const probe = document.createElement('div');
+      probe.style.backgroundColor = `var(${cssToken})`;
+      document.body.append(probe);
+      const color = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return color;
+    }, token);
 
   const surfaces = [
     {
@@ -150,12 +157,12 @@ test('uses surface-aware interaction fills and foregrounds', async ({ page }) =>
       (element as HTMLElement & { background: string }).background = background;
     }, surface.value);
 
-    await expect(selected).toHaveClass(
-      new RegExp(`panel-sub-nav__item--on-${surface.value}`),
-    );
+    await expect(selected).toHaveClass(new RegExp(`panel-sub-nav__item--on-${surface.value}`));
     await expect(selected).toHaveCSS('color', await resolveColor(surface.foreground));
-    await expect.poll(() => selected.evaluate(element => (
-      getComputedStyle(element, '::before').backgroundColor
-    ))).toBe(await resolveColor(surface.active));
+    await expect
+      .poll(() =>
+        selected.evaluate(element => getComputedStyle(element, '::before').backgroundColor)
+      )
+      .toBe(await resolveColor(surface.active));
   }
 });

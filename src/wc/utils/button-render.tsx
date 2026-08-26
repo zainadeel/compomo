@@ -26,17 +26,7 @@ interface ButtonContentOptions {
 
 /** One content renderer shared by both semantic button components. */
 export function renderButtonContent(options: ButtonContentOptions) {
-  const {
-    namespace,
-    variant,
-    size,
-    label,
-    labelEmphasis,
-    icon,
-    hasMenu,
-    isLoading,
-    dot,
-  } = options;
+  const { namespace, variant, size, label, labelEmphasis, icon, hasMenu, isLoading, dot } = options;
   const iconSize = BUTTON_ICON_SIZE[size];
   const labelLoading = isLoading && variant === 'label';
 

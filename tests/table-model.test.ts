@@ -44,18 +44,18 @@ const rows: TableRow[] = [
 
 test('keeps controlled member sorting binary', () => {
   assert.deepEqual(nextTableSortState(null, 'score'), { columnId: 'score', direction: 'asc' });
-  assert.deepEqual(
-    nextTableSortState({ columnId: 'score', direction: 'asc' }, 'score'),
-    { columnId: 'score', direction: 'desc' },
-  );
-  assert.deepEqual(
-    nextTableSortState({ columnId: 'score', direction: 'desc' }, 'score'),
-    { columnId: 'score', direction: 'asc' },
-  );
-  assert.deepEqual(
-    nextTableSortState({ columnId: 'name', direction: 'desc' }, 'score'),
-    { columnId: 'score', direction: 'asc' },
-  );
+  assert.deepEqual(nextTableSortState({ columnId: 'score', direction: 'asc' }, 'score'), {
+    columnId: 'score',
+    direction: 'desc',
+  });
+  assert.deepEqual(nextTableSortState({ columnId: 'score', direction: 'desc' }, 'score'), {
+    columnId: 'score',
+    direction: 'asc',
+  });
+  assert.deepEqual(nextTableSortState({ columnId: 'name', direction: 'desc' }, 'score'), {
+    columnId: 'score',
+    direction: 'asc',
+  });
 });
 
 test('derives loaded selection while excluding non-selectable and disabled rows', () => {
@@ -139,7 +139,7 @@ test('keeps fixed lanes stable by assigning spare width to one data column', () 
       { id: 'notes', header: 'Notes' },
       { id: 'actions', kind: 'action', header: '', headerLabel: 'Actions' },
     ]),
-    undefined,
+    undefined
   );
   assert.equal(
     tableFlexibleColumnId([
@@ -148,11 +148,11 @@ test('keeps fixed lanes stable by assigning spare width to one data column', () 
       { id: 'identifier', header: 'Identifier', size: 140, sticky: true },
       { id: 'actions', kind: 'action', header: '', headerLabel: 'Actions' },
     ]),
-    'status',
+    'status'
   );
   assert.equal(
     tableColumnSize({ id: 'actions', kind: 'action', header: '', headerLabel: 'Actions' }),
-    'var(--dimension-size-500)',
+    'var(--dimension-size-500)'
   );
 });
 
@@ -160,18 +160,21 @@ test('resolves labels, column constraints, and server group totals defensively',
   assert.equal(tableRowSelectionLabel(rows[0], columns), 'Avery');
   assert.equal(
     tableRowSelectionLabel({ id: 'fallback', selectionLabel: ' Explicit ', cells: {} }, columns),
-    'Explicit',
+    'Explicit'
   );
   assert.equal(clampTableColumnSize({ ...columns[0], size: 80 }), 120);
   assert.equal(clampTableColumnSize({ ...columns[0], size: 240 }), 200);
-  assert.equal(tableColumnSize({ id: 'token', header: 'Token', size: 'sm' }), 'var(--dimension-table-column-width-sm)');
+  assert.equal(
+    tableColumnSize({ id: 'token', header: 'Token', size: 'sm' }),
+    'var(--dimension-table-column-width-sm)'
+  );
   assert.equal(
     tableColumnSize({ id: 'preview', header: 'Preview', imageTracks: 2 }),
-    'var(--_table-image-column-inline-size-multi)',
+    'var(--_table-image-column-inline-size-multi)'
   );
   assert.equal(
     tableColumnSize({ id: 'preview', header: 'Preview', size: 102, imageTracks: 2 }),
-    '102px',
+    '102px'
   );
   assert.equal(tableExplicitMinWidth(columns), 'calc(160px + 80px)');
   assert.equal(
@@ -179,23 +182,42 @@ test('resolves labels, column constraints, and server group totals defensively',
       { id: 'token-a', header: 'A', size: 'xs' },
       { id: 'token-b', header: 'B', size: 'md' },
     ]),
-    'calc(var(--dimension-table-column-width-xs) + var(--dimension-table-column-width-md))',
+    'calc(var(--dimension-table-column-width-xs) + var(--dimension-table-column-width-md))'
   );
   assert.equal(resolvedTableGroupCount({ id: 'g', label: 'Group', totalCount: 8, rows }), 8);
   assert.equal(resolvedTableGroupCount({ id: 'g', label: 'Group', totalCount: 1, rows }), 4);
-  assert.equal(tableCellPrimary({ kind: 'tag', label: 'Pending review', intent: 'caution' }), 'Pending review');
-  assert.equal(tableCellPrimary({ kind: 'icon', icon: 'DocumentInverted', label: 'Has notes' }), null);
+  assert.equal(
+    tableCellPrimary({ kind: 'tag', label: 'Pending review', intent: 'caution' }),
+    'Pending review'
+  );
+  assert.equal(
+    tableCellPrimary({ kind: 'icon', icon: 'DocumentInverted', label: 'Has notes' }),
+    null
+  );
   assert.equal(isTableCellIcon({ kind: 'icon', icon: 'DocumentInverted' }), true);
-  assert.equal(isTableCellIcon({ kind: 'icon-text', icon: 'VehicleTruck', primary: 'Freightliner Cascadia' }), false);
-  assert.equal(isTableCellIconText({ kind: 'icon-text', icon: 'VehicleTruck', primary: 'Freightliner Cascadia' }), true);
+  assert.equal(
+    isTableCellIcon({ kind: 'icon-text', icon: 'VehicleTruck', primary: 'Freightliner Cascadia' }),
+    false
+  );
+  assert.equal(
+    isTableCellIconText({
+      kind: 'icon-text',
+      icon: 'VehicleTruck',
+      primary: 'Freightliner Cascadia',
+    }),
+    true
+  );
   assert.equal(
     tableCellPrimary({ kind: 'icon-text', icon: 'VehicleTruck', primary: 'Freightliner Cascadia' }),
-    'Freightliner Cascadia',
+    'Freightliner Cascadia'
   );
-  assert.equal(tableCellPrimary({ kind: 'image', alt: 'Road-facing preview' }), 'Road-facing preview');
+  assert.equal(
+    tableCellPrimary({ kind: 'image', alt: 'Road-facing preview' }),
+    'Road-facing preview'
+  );
   assert.equal(
     tableCellPrimary({ kind: 'primary-text', primary: 'Vehicle', secondary: 'VH-2841' }),
-    'Vehicle',
+    'Vehicle'
   );
   assert.equal(tableCellPrimary({ kind: 'action', actionId: 'view', label: 'View' }), 'View');
   assert.equal(
@@ -204,7 +226,7 @@ test('resolves labels, column constraints, and server group totals defensively',
       ariaLabel: 'More actions for Avery Chen',
       items: [{ actionId: 'view', label: 'View details' }],
     }),
-    'More actions for Avery Chen',
+    'More actions for Avery Chen'
   );
   assert.equal(tableCellPrimary({ kind: 'empty' }), null);
   assert.equal(tableCellPrimary({ kind: 'blank' }), null);
@@ -217,7 +239,7 @@ test('formats the optional result summary footer from controlled counts', () => 
   assert.equal(formatTableResultSummary(12, 10), 'Displaying 10 of 10');
   assert.equal(
     formatTableResultSummary(12, 3400, 'Showing {displayed} / {total}', 'en-US'),
-    'Showing 12 / 3,400',
+    'Showing 12 / 3,400'
   );
   assert.equal(formatTableResultSummary(undefined, 1500), null);
   assert.equal(formatTableResultSummary(50, undefined), null);
@@ -233,11 +255,12 @@ test('formats a total-only summary for virtual mode', () => {
 
 test('treats relocated table footer slots as owned and ignores nested dialog footers', () => {
   const host = { id: 'table' } as unknown as Element;
-  const ancestor = (parentElement: Element, options: { slot?: boolean; footer?: boolean } = {}) => ({
-    parentElement,
-    hasAttribute: (name: string) => name === 'slot' && !!options.slot,
-    classList: { contains: (name: string) => name === 'ds-table__footer' && !!options.footer },
-  } as unknown as Element);
+  const ancestor = (parentElement: Element, options: { slot?: boolean; footer?: boolean } = {}) =>
+    ({
+      parentElement,
+      hasAttribute: (name: string) => name === 'slot' && !!options.slot,
+      classList: { contains: (name: string) => name === 'ds-table__footer' && !!options.footer },
+    }) as unknown as Element;
   const asChild = { parentElement: host } as unknown as Element;
   const footer = ancestor(host, { footer: true });
   const relocated = { parentElement: ancestor(footer) } as unknown as Element;
@@ -273,7 +296,7 @@ test('reports unstable model identities and impossible group counts', () => {
       { id: 'same', label: 'First', rows: [rows[0]] },
       { id: 'same', label: 'Second', totalCount: 0, rows: [rows[0]] },
     ],
-    true,
+    true
   );
 
   assert.ok(issues.includes('Duplicate column id: name'));

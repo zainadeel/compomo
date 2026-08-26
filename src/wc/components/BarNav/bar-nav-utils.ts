@@ -13,7 +13,7 @@ export interface BarNavUrlState {
 export function deriveBarNavValueFromUrl(
   path: string,
   basePath: string,
-  tabs: BarNavTab[],
+  tabs: BarNavTab[]
 ): BarNavUrlState {
   if (!path || !basePath) {
     return { value: '', hideTabs: false };
@@ -40,9 +40,6 @@ export function deriveBarNavValueFromUrl(
 }
 
 /** True when host array props have data but resolved internal state is still empty. */
-export function shouldResyncBarNavProps(
-  resolvedTabs: BarNavTab[],
-  tabs: BarNavTab[],
-): boolean {
+export function shouldResyncBarNavProps(resolvedTabs: BarNavTab[], tabs: BarNavTab[]): boolean {
   return resolvedTabs.length === 0 && (tabs?.length ?? 0) > 0;
 }

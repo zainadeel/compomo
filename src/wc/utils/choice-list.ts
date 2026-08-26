@@ -44,7 +44,7 @@ export type ChoiceBackground =
 
 export function resolveChoiceSections(
   options: ChoiceOption[],
-  sections: ChoiceSection[],
+  sections: ChoiceSection[]
 ): ChoiceSection[] {
   return sections.length > 0 ? sections : [{ options }];
 }
@@ -65,7 +65,7 @@ export function choiceListUsesSubtext(options: ChoiceOption[]): boolean {
 
 export function filterChoiceSections(
   sections: ChoiceSection[],
-  searchTerm: string,
+  searchTerm: string
 ): ChoiceSection[] {
   const normalized = searchTerm.trim().toLocaleLowerCase();
   if (!normalized) return sections;
@@ -78,8 +78,8 @@ export function filterChoiceSections(
         options: sectionMatches
           ? section.options
           : section.options.filter(option =>
-            `${option.label} ${option.subtext ?? ''}`.toLocaleLowerCase().includes(normalized),
-          ),
+              `${option.label} ${option.subtext ?? ''}`.toLocaleLowerCase().includes(normalized)
+            ),
       };
     })
     .filter(section => section.options.length > 0);
@@ -95,7 +95,7 @@ export function enabledChoiceIndexes(options: ChoiceOption[]): number[] {
 export function moveChoiceIndex(
   options: ChoiceOption[],
   currentIndex: number,
-  direction: 1 | -1,
+  direction: 1 | -1
 ): number {
   const enabled = enabledChoiceIndexes(options);
   if (!enabled.length) return -1;
@@ -108,7 +108,7 @@ export function moveChoiceIndex(
 export function findChoiceTypeaheadMatch(
   options: ChoiceOption[],
   query: string,
-  currentIndex: number,
+  currentIndex: number
 ): number {
   const normalized = query.toLocaleLowerCase();
   if (!normalized) return -1;
@@ -122,7 +122,7 @@ export function findChoiceTypeaheadMatch(
 }
 
 export function choiceBackgroundClassMap(
-  background: ChoiceBackground | undefined,
+  background: ChoiceBackground | undefined
 ): Record<string, boolean> {
   return {
     'ds-interaction-fill--on-faint': background === 'faint',

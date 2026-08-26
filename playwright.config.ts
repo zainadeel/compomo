@@ -10,15 +10,16 @@ const enableHostFirefox = process.env.PLAYWRIGHT_ENABLE_FIREFOX === '1';
 // process but never establish the headless Juggler pipe, leaving multiple
 // high-CPU Nightly workers alive until the browser launch timeout. Firefox
 // remains covered on Linux CI and through the Docker-backed local helper.
-const firefoxProject = !isMacOS || enableHostFirefox
-  ? [
-      {
-        name: 'firefox',
-        grepInvert: /@chromium-only/,
-        use: { ...devices['Desktop Firefox'] },
-      },
-    ]
-  : [];
+const firefoxProject =
+  !isMacOS || enableHostFirefox
+    ? [
+        {
+          name: 'firefox',
+          grepInvert: /@chromium-only/,
+          use: { ...devices['Desktop Firefox'] },
+        },
+      ]
+    : [];
 
 export default defineConfig({
   testDir: './tests/e2e',

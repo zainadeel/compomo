@@ -29,7 +29,9 @@ export function ensureShellNavVtStyle(): void {
     `::view-transition-old(${SHELL_BAR_NAV_VT_NAME}),::view-transition-new(${SHELL_BAR_NAV_VT_NAME}){animation:none;mix-blend-mode:normal}`,
     `::view-transition-old(${SHELL_BAR_NAV_VT_NAME}){z-index:1}`,
     `::view-transition-new(${SHELL_BAR_NAV_VT_NAME}){z-index:2${reduceMotion ? '' : ';clip-path:circle(0px at var(--vt-x,50%) var(--vt-y,50%))'}}`,
-    reduceMotion ? '' : '::view-transition-new(root){clip-path:circle(0px at var(--vt-x,50%) var(--vt-y,50%))}',
+    reduceMotion
+      ? ''
+      : '::view-transition-new(root){clip-path:circle(0px at var(--vt-x,50%) var(--vt-y,50%))}',
   ].join('\n');
 
   const existing = document.getElementById(VT_STYLE_ID) as HTMLStyleElement | null;
@@ -52,14 +54,12 @@ export interface ShellNavRevealOrigin {
 
 /** Origin for the radial reveal — defaults to panel-nav footer gear, then viewport center. */
 export function resolveShellNavRevealOrigin(originEl?: HTMLElement | null): ShellNavRevealOrigin {
-  const btn =
-    originEl ??
-    document.querySelector<HTMLElement>('.panel-nav__footer-btn');
+  const btn = originEl ?? document.querySelector<HTMLElement>('.panel-nav__footer-btn');
   const rect = btn?.getBoundingClientRect();
   const x = rect ? Math.round(rect.left + rect.width / 2) : Math.round(window.innerWidth / 2);
   const y = rect ? Math.round(rect.top + rect.height / 2) : Math.round(window.innerHeight / 2);
   const maxRadius = Math.ceil(
-    Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y)),
+    Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y))
   );
   return { x, y, maxRadius };
 }
@@ -72,7 +72,7 @@ export function setShellNavRevealOriginVars(origin: ShellNavRevealOrigin): void 
 /** Animate root + bar-nav snapshots with the same radial clip-path reveal. */
 export function animateShellNavRadialReveal(
   origin: ShellNavRevealOrigin,
-  durationMs?: number,
+  durationMs?: number
 ): void {
   if (prefersReducedMotion()) {
     ensureShellNavVtStyle();
@@ -83,11 +83,11 @@ export function animateShellNavRadialReveal(
     durationMs ??
     parseCssTimeMs(
       readCssCustomProperty(SHELL_NAV_REVEAL_DURATION_VAR, '400ms'),
-      SHELL_NAV_REVEAL_DURATION_FALLBACK_MS,
+      SHELL_NAV_REVEAL_DURATION_FALLBACK_MS
     );
   const easing = readCssCustomProperty(
     SHELL_NAV_REVEAL_EASING_VAR,
-    SHELL_NAV_REVEAL_EASING_FALLBACK,
+    SHELL_NAV_REVEAL_EASING_FALLBACK
   );
   const keyframes = {
     clipPath: [
@@ -114,7 +114,7 @@ export function animateShellNavRadialReveal(
 /** Run radial reveal when a view transition's `ready` promise settles (app/router driver). */
 export function runShellNavStyleRevealOnReady(
   transition: { ready: Promise<void> },
-  originEl?: HTMLElement | null,
+  originEl?: HTMLElement | null
 ): void {
   ensureShellNavVtStyle();
   if (prefersReducedMotion()) {

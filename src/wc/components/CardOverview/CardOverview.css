@@ -248,8 +248,7 @@
   justify-content: center;
   /* No fill to align, so this box keeps the metric cells' inner inset. */
   padding-inline-start: var(--dimension-space-075);
-  border: var(--ds-card-overview-divider-width) solid
-    var(--color-always-dark-border-tertiary);
+  border: var(--ds-card-overview-divider-width) solid var(--color-always-dark-border-tertiary);
   background: transparent;
   color: var(--color-always-dark-foreground-negative);
   text-align: center;

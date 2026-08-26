@@ -766,119 +766,119 @@ export class Select {
       >
         {this.renderCaptionTooltip(
           <button
-          ref={element => {
-            this.controller.setTriggerElement((element as HTMLButtonElement) ?? null);
-          }}
-          id={this.inputId ?? this.generatedId}
-          type="button"
-          class={{
-            trigger: true,
-            'ds-control-frame': true,
-            'ds-focus-ring-inset': true,
-            'ds-interaction-fill': true,
-            'ds-interaction-fill--selected': !inactive && this.activeFill && this.hasSelection,
-            'trigger--expanded': !inactive && this.open,
-            'trigger--bordered': this.hasBorder,
-            'trigger--placeholder': showPlaceholder && !this.multiple,
-            'trigger--has-value': this.hasSelection,
-            'trigger--label-placeholder':
-              !this.multiple && Boolean(this.triggerLabel) && this.triggerLabelPlaceholder,
-            'wrapper--error': this.hasBorder && this.error,
-            [`ds-control--${this.size}`]: true,
-            ...choiceBackgroundClassMap(this.background),
-          }}
-          disabled={inactive}
-          role="combobox"
-          aria-haspopup={this.popupRole}
-          aria-expanded={String(this.open)}
-          aria-controls={this.open ? this.listboxId : undefined}
-          aria-activedescendant={this.open && !this.searchable ? this.activeOptionId : undefined}
-          aria-label={this.ariaLabel ?? (this.captionIconOnly ? label : undefined)}
-          aria-labelledby={this.ariaLabelledby}
-          aria-describedby={describedBy}
-          aria-invalid={this.error ? 'true' : undefined}
-          aria-required={this.required || undefined}
-          aria-busy={this.isLoading ? 'true' : undefined}
-          onClick={() => (this.open ? this.closePopup() : this.openPopup(false))}
-          onKeyDown={event => {
-            const action = this.visibleOptions[this.activeIndex]?.action;
-            if (
-              this.open &&
-              action &&
-              (event.key === 'ArrowRight' || (event.key === 'F10' && event.shiftKey))
-            ) {
-              event.preventDefault();
-              document
-                .getElementById(`${this.generatedId}-option-action-${this.activeIndex}`)
-                ?.querySelector<HTMLElement>('button')
-                ?.focus();
-              return;
-            }
-            this.handleTriggerKeyDown(event);
-          }}
-        >
-          {(this.icon || this.isLoading) && (
-            <span
-              class="trigger__prefix ds-control-icon-box ds-interaction-fill__content"
-              aria-hidden="true"
-            >
-              {this.isLoading ? (
-                <ds-loader size={iconSize} color="inherit" />
-              ) : (
-                <ds-icon name={this.icon} size={iconSize} color="inherit" />
-              )}
-            </span>
-          )}
-          {this.captionIconOnly ? null : (
-            <span
-              class={{
-                'trigger__label-box': true,
-                'ds-interaction-fill__content': true,
-              }}
-            >
+            ref={element => {
+              this.controller.setTriggerElement((element as HTMLButtonElement) ?? null);
+            }}
+            id={this.inputId ?? this.generatedId}
+            type="button"
+            class={{
+              trigger: true,
+              'ds-control-frame': true,
+              'ds-focus-ring-inset': true,
+              'ds-interaction-fill': true,
+              'ds-interaction-fill--selected': !inactive && this.activeFill && this.hasSelection,
+              'trigger--expanded': !inactive && this.open,
+              'trigger--bordered': this.hasBorder,
+              'trigger--placeholder': showPlaceholder && !this.multiple,
+              'trigger--has-value': this.hasSelection,
+              'trigger--label-placeholder':
+                !this.multiple && Boolean(this.triggerLabel) && this.triggerLabelPlaceholder,
+              'wrapper--error': this.hasBorder && this.error,
+              [`ds-control--${this.size}`]: true,
+              ...choiceBackgroundClassMap(this.background),
+            }}
+            disabled={inactive}
+            role="combobox"
+            aria-haspopup={this.popupRole}
+            aria-expanded={String(this.open)}
+            aria-controls={this.open ? this.listboxId : undefined}
+            aria-activedescendant={this.open && !this.searchable ? this.activeOptionId : undefined}
+            aria-label={this.ariaLabel ?? (this.captionIconOnly ? label : undefined)}
+            aria-labelledby={this.ariaLabelledby}
+            aria-describedby={describedBy}
+            aria-invalid={this.error ? 'true' : undefined}
+            aria-required={this.required || undefined}
+            aria-busy={this.isLoading ? 'true' : undefined}
+            onClick={() => (this.open ? this.closePopup() : this.openPopup(false))}
+            onKeyDown={event => {
+              const action = this.visibleOptions[this.activeIndex]?.action;
+              if (
+                this.open &&
+                action &&
+                (event.key === 'ArrowRight' || (event.key === 'F10' && event.shiftKey))
+              ) {
+                event.preventDefault();
+                document
+                  .getElementById(`${this.generatedId}-option-action-${this.activeIndex}`)
+                  ?.querySelector<HTMLElement>('button')
+                  ?.focus();
+                return;
+              }
+              this.handleTriggerKeyDown(event);
+            }}
+          >
+            {(this.icon || this.isLoading) && (
               <span
-                class={{
-                  'trigger__label-content': true,
-                  'ds-control-label-box': true,
-                  'ds-control-label-dot': this.dot,
-                  'trigger__label-content--dot': this.dot,
-                }}
+                class="trigger__prefix ds-control-icon-box ds-interaction-fill__content"
+                aria-hidden="true"
               >
-                <ds-text
-                  class="trigger__label"
-                  as="span"
-                  variant={textVariant}
-                  color="inherit"
-                  lineTruncation={1}
-                >
-                  {label}
-                </ds-text>
-                {this.dot && (
-                  <ds-badge
-                    class="trigger__dot ds-control-label-dot__badge"
-                    variant="dot"
-                    hasRing={false}
-                    label=""
-                    aria-hidden="true"
-                  />
+                {this.isLoading ? (
+                  <ds-loader size={iconSize} color="inherit" />
+                ) : (
+                  <ds-icon name={this.icon} size={iconSize} color="inherit" />
                 )}
               </span>
-            </span>
-          )}
-          {this.captionIconOnly ? null : (
-            <span
-              class="trigger__chevron ds-control-icon-box ds-interaction-fill__content"
-              aria-hidden="true"
-            >
-              <ds-icon
-                name={this.indicator === 'up-down' ? 'ChevronUpDown' : 'ChevronDown'}
-                size={iconSize}
-                color="inherit"
-              />
-            </span>
-          )}
+            )}
+            {this.captionIconOnly ? null : (
+              <span
+                class={{
+                  'trigger__label-box': true,
+                  'ds-interaction-fill__content': true,
+                }}
+              >
+                <span
+                  class={{
+                    'trigger__label-content': true,
+                    'ds-control-label-box': true,
+                    'ds-control-label-dot': this.dot,
+                    'trigger__label-content--dot': this.dot,
+                  }}
+                >
+                  <ds-text
+                    class="trigger__label"
+                    as="span"
+                    variant={textVariant}
+                    color="inherit"
+                    lineTruncation={1}
+                  >
+                    {label}
+                  </ds-text>
+                  {this.dot && (
+                    <ds-badge
+                      class="trigger__dot ds-control-label-dot__badge"
+                      variant="dot"
+                      hasRing={false}
+                      label=""
+                      aria-hidden="true"
+                    />
+                  )}
+                </span>
+              </span>
+            )}
+            {this.captionIconOnly ? null : (
+              <span
+                class="trigger__chevron ds-control-icon-box ds-interaction-fill__content"
+                aria-hidden="true"
+              >
+                <ds-icon
+                  name={this.indicator === 'up-down' ? 'ChevronUpDown' : 'ChevronDown'}
+                  size={iconSize}
+                  color="inherit"
+                />
+              </span>
+            )}
           </button>,
-          this.captionIconOnly ? (this.ariaLabel?.trim() || this.placeholder) : ''
+          this.captionIconOnly ? this.ariaLabel?.trim() || this.placeholder : ''
         )}
 
         {this.open && (

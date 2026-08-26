@@ -9,21 +9,19 @@ export function nextTableActionMenuElementId(): string {
 }
 
 export function isTableCellActionMenu(
-  value: TableCellAction,
+  value: TableCellAction
 ): value is TableCellAction & { items: TableCellActionMenuEntry[]; ariaLabel: string } {
   return Array.isArray(value.items);
 }
 
 export function isRenderableTableActionMenu(
-  value: TableCellAction,
+  value: TableCellAction
 ): value is TableCellAction & { items: TableCellActionMenuEntry[]; ariaLabel: string } {
   return isTableCellActionMenu(value) && tableActionMenuSections(value.items).length > 0;
 }
 
 /** Split divider entries into Menu sections. Empty runs (leading/repeated dividers) are dropped. */
-export function tableActionMenuSections(
-  items: TableCellActionMenuEntry[],
-): MenuItemsSection[] {
+export function tableActionMenuSections(items: TableCellActionMenuEntry[]): MenuItemsSection[] {
   const sections: MenuItemsSection[] = [];
   let current: MenuItemData[] = [];
   const flush = () => {

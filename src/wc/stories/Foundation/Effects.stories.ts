@@ -51,22 +51,28 @@ type Story = StoryObj;
 
 function elevationGrid(levels: ReadonlyArray<readonly [string, string]>) {
   return html`
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--dimension-card-width-sm),1fr));gap:var(--dimension-space-300)">
-      ${levels.map(([token, label]) => html`
-        <div style="display:flex;flex-direction:column;align-items:center;gap:var(--dimension-space-150);padding:var(--dimension-space-200)">
+    <div
+      style="display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--dimension-card-width-sm),1fr));gap:var(--dimension-space-300)"
+    >
+      ${levels.map(
+        ([token, label]) => html`
           <div
-            style="
+            style="display:flex;flex-direction:column;align-items:center;gap:var(--dimension-space-150);padding:var(--dimension-space-200)"
+          >
+            <div
+              style="
               width:var(--dimension-size-800);
               height:var(--dimension-size-600);
               background:var(--color-background-primary);
               border-radius:var(--dimension-radius-100);
               box-shadow:var(--effect-elevation-${token});
             "
-          ></div>
-          <ds-text as="span" variant="text-body-small" color="secondary">${label}</ds-text>
-          <code style="color:var(--color-foreground-tertiary)">--effect-elevation-${token}</code>
-        </div>
-      `)}
+            ></div>
+            <ds-text as="span" variant="text-body-small" color="secondary">${label}</ds-text>
+            <code style="color:var(--color-foreground-tertiary)">--effect-elevation-${token}</code>
+          </div>
+        `
+      )}
     </div>
   `;
 }
@@ -125,28 +131,33 @@ export const MotionAndBlur: Story = {
         <ds-text as="p" variant="text-body-medium" color="secondary">
           Hover or focus a track to compare duration and easing.
         </ds-text>
-        ${MOTION_LEVELS.map(([token, duration]) => html`
-          <div class="effect-motion-demo">
-            <code style="width:var(--dimension-size-800);color:var(--color-foreground-secondary)">
-              --effect-motion-${token}
-            </code>
-            <ds-text as="span" variant="text-body-small" color="tertiary">${duration}</ds-text>
-            <div class="effect-motion-track" tabindex="0">
-              <div
-                class="effect-motion-dot"
-                style="transition:inset-inline-start var(--effect-motion-${token})"
-              ></div>
+        ${MOTION_LEVELS.map(
+          ([token, duration]) => html`
+            <div class="effect-motion-demo">
+              <code style="width:var(--dimension-size-800);color:var(--color-foreground-secondary)">
+                --effect-motion-${token}
+              </code>
+              <ds-text as="span" variant="text-body-small" color="tertiary">${duration}</ds-text>
+              <div class="effect-motion-track" tabindex="0">
+                <div
+                  class="effect-motion-dot"
+                  style="transition:inset-inline-start var(--effect-motion-${token})"
+                ></div>
+              </div>
             </div>
-          </div>
-        `)}
+          `
+        )}
       </section>
       <section style="display:flex;flex-direction:column;gap:var(--dimension-space-200)">
         <ds-text as="h2" variant="text-title-medium">Backdrop blur</ds-text>
         <div style="display:flex;flex-wrap:wrap;gap:var(--dimension-space-300)">
-          ${['sm', 'md', 'lg'].map(size => html`
-            <div style="display:flex;flex-direction:column;align-items:center;gap:var(--dimension-space-100)">
+          ${['sm', 'md', 'lg'].map(
+            size => html`
               <div
-                style="
+                style="display:flex;flex-direction:column;align-items:center;gap:var(--dimension-space-100)"
+              >
+                <div
+                  style="
                   position:relative;
                   overflow:hidden;
                   width:var(--dimension-size-800);
@@ -154,19 +165,20 @@ export const MotionAndBlur: Story = {
                   border-radius:var(--dimension-radius-100);
                   background:var(--color-background-bold-brand);
                 "
-              >
-                <div
-                  style="
+                >
+                  <div
+                    style="
                     position:absolute;
                     inset:var(--dimension-space-150);
                     backdrop-filter:blur(var(--effect-blur-${size}));
                     background:var(--color-translucent-translucent);
                   "
-                ></div>
+                  ></div>
+                </div>
+                <code style="color:var(--color-foreground-secondary)">--effect-blur-${size}</code>
               </div>
-              <code style="color:var(--color-foreground-secondary)">--effect-blur-${size}</code>
-            </div>
-          `)}
+            `
+          )}
         </div>
       </section>
     </div>

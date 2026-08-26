@@ -3,8 +3,7 @@ export interface ChartViewportSize {
   height: number;
 }
 
-const normalizeSize = (value: number): number =>
-  Math.max(1, Math.round(value * 100) / 100);
+const normalizeSize = (value: number): number => Math.max(1, Math.round(value * 100) / 100);
 
 /**
  * Keeps SVG chart geometry matched to the rendered SVG viewport.
@@ -17,7 +16,7 @@ export class ChartViewportController {
 
   constructor(
     private readonly target: Element,
-    private readonly onResize: (size: ChartViewportSize) => void,
+    private readonly onResize: (size: ChartViewportSize) => void
   ) {}
 
   connect(): void {

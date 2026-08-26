@@ -16,7 +16,7 @@ describe('tabsToMenuSections', () => {
         { id: 'a', label: 'Alpha', dot: true },
         { id: 'b', label: 'Beta' },
       ],
-      'b',
+      'b'
     );
     assert.equal(sections.length, 1);
     assert.deepEqual(sections[0].items, [
@@ -27,12 +27,8 @@ describe('tabsToMenuSections', () => {
 
   it('splits sections at dividers', () => {
     const sections = tabsToMenuSections(
-      [
-        { id: 'a', label: 'Alpha' },
-        { type: 'divider' },
-        { id: 'b', label: 'Beta' },
-      ],
-      'b',
+      [{ id: 'a', label: 'Alpha' }, { type: 'divider' }, { id: 'b', label: 'Beta' }],
+      'b'
     );
     assert.equal(sections.length, 2);
     assert.equal(sections[0].items[0].value, 'a');
@@ -43,11 +39,8 @@ describe('tabsToMenuSections', () => {
 describe('tabsToOverflowMenuSections', () => {
   it('drops leading dividers from overflow-only menus', () => {
     const sections = tabsToOverflowMenuSections(
-      [
-        { type: 'divider' },
-        { id: 'events', label: 'Events' },
-      ],
-      'events',
+      [{ type: 'divider' }, { id: 'events', label: 'Events' }],
+      'events'
     );
     assert.equal(sections.length, 1);
     assert.equal(sections[0].items[0].value, 'events');
@@ -57,8 +50,14 @@ describe('tabsToOverflowMenuSections', () => {
 describe('getActiveTabLabel', () => {
   it('returns the selected tab label', () => {
     assert.equal(
-      getActiveTabLabel([{ id: 'a', label: 'Alpha' }, { id: 'b', label: 'Beta' }], 'b'),
-      'Beta',
+      getActiveTabLabel(
+        [
+          { id: 'a', label: 'Alpha' },
+          { id: 'b', label: 'Beta' },
+        ],
+        'b'
+      ),
+      'Beta'
     );
   });
 });
@@ -91,11 +90,8 @@ describe('visibleTabCountForWidth', () => {
 describe('trimTrailingDividers', () => {
   it('removes dividers at the end of visible tab slices', () => {
     assert.deepEqual(
-      trimTrailingDividers([
-        { id: 'live-map', label: 'Live Map' },
-        { type: 'divider' },
-      ]),
-      [{ id: 'live-map', label: 'Live Map' }],
+      trimTrailingDividers([{ id: 'live-map', label: 'Live Map' }, { type: 'divider' }]),
+      [{ id: 'live-map', label: 'Live Map' }]
     );
   });
 });

@@ -57,12 +57,7 @@ export function renderTableLoadContent(options: TableLoadContentOptions) {
   if (options.hasMore) return <span class="ds-table__auto-sentinel" aria-hidden="true" />;
   if (!options.endOfResultsLabel) return null;
   return (
-    <ds-text
-      class="ds-table__load-content"
-      as="span"
-      variant="text-body-medium"
-      color="secondary"
-    >
+    <ds-text class="ds-table__load-content" as="span" variant="text-body-medium" color="secondary">
       {options.endOfResultsLabel}
     </ds-text>
   );

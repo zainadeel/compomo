@@ -31,9 +31,8 @@ const handleControlledAction = (event: CustomEvent<CardSettingActionDetail>) => 
 
 const handleSingleEditAction = (event: CustomEvent<CardSettingActionDetail>) => {
   const activeCard = event.currentTarget as HTMLDsCardSettingElement;
-  const cards = activeCard.parentElement?.querySelectorAll<HTMLDsCardSettingElement>(
-    'ds-card-setting'
-  );
+  const cards =
+    activeCard.parentElement?.querySelectorAll<HTMLDsCardSettingElement>('ds-card-setting');
   if (event.detail.action === 'edit') {
     cards?.forEach(card => {
       card.editing = card === activeCard;
@@ -80,9 +79,7 @@ export const Edit: Story = {
 export const Widths: Story = {
   parameters: { controls: { exclude: ['cardWidth'] } },
   render: args => html`
-    <div
-      style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:var(--dimension-space-300);"
-    >
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:var(--dimension-space-300);">
       ${WIDTHS.map(
         width => html`
           <ds-card-setting
@@ -96,7 +93,7 @@ export const Widths: Story = {
           >
             ${settingsBody(`Settings content at the ${width} card width.`)}
           </ds-card-setting>
-        `,
+        `
       )}
     </div>
   `,
@@ -123,7 +120,7 @@ export const Interactive: Story = {
           >
             ${settingsBody(copy)}
           </ds-card-setting>
-        `,
+        `
       )}
     </div>
   `,

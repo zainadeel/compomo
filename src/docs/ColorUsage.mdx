@@ -40,16 +40,16 @@ Choose semantic tokens by purpose rather than hue.
 
 ### Base surfaces and hierarchy
 
-| Role | Token |
-| --- | --- |
-| Primary page or card body | `--color-background-primary` |
-| Secondary surface or card chrome | `--color-background-secondary` |
-| Primary content | `--color-foreground-primary` |
-| Supporting content | `--color-foreground-secondary` |
-| Inactive/disabled UI content | `--color-foreground-tertiary` |
-| Fainter inactive/disabled or purely decorative content | `--color-foreground-quaternary` |
-| Structural border | `--color-border-primary`, `secondary`, or `tertiary` |
-| Internal content rule | `--color-divider-divider` |
+| Role                                                   | Token                                                |
+| ------------------------------------------------------ | ---------------------------------------------------- |
+| Primary page or card body                              | `--color-background-primary`                         |
+| Secondary surface or card chrome                       | `--color-background-secondary`                       |
+| Primary content                                        | `--color-foreground-primary`                         |
+| Supporting content                                     | `--color-foreground-secondary`                       |
+| Inactive/disabled UI content                           | `--color-foreground-tertiary`                        |
+| Fainter inactive/disabled or purely decorative content | `--color-foreground-quaternary`                      |
+| Structural border                                      | `--color-border-primary`, `secondary`, or `tertiary` |
+| Internal content rule                                  | `--color-divider-divider`                            |
 
 Use border tokens for container and control edges. Use divider tokens only for
 rules that separate content inside a surface; prefer `ds-divider` when the rule
@@ -103,16 +103,16 @@ Do not infer accessibility from the words `faint`, `medium`, `bold`, or
 Several surfaces have complete context-specific foreground, border,
 interaction, and divider families:
 
-| Context | Use |
-| --- | --- |
-| Default | Primary and secondary application surfaces |
-| Faint | Explicit faint intent surfaces |
-| Medium / bold / strong | Colored intent surfaces |
-| Translucent | Overlay glass using `--color-translucent-translucent` |
-| Inverted | Deliberately inverted application surfaces |
-| Media | Content displayed over photos or video |
-| Always dark | Theme-invariant dark surfaces |
-| Navigation | App navigation chrome only |
+| Context                | Use                                                   |
+| ---------------------- | ----------------------------------------------------- |
+| Default                | Primary and secondary application surfaces            |
+| Faint                  | Explicit faint intent surfaces                        |
+| Medium / bold / strong | Colored intent surfaces                               |
+| Translucent            | Overlay glass using `--color-translucent-translucent` |
+| Inverted               | Deliberately inverted application surfaces            |
+| Media                  | Content displayed over photos or video                |
+| Always dark            | Theme-invariant dark surfaces                         |
+| Navigation             | App navigation chrome only                            |
 
 Components with a `background` or `surface` prop map these contexts to the
 correct token families. Prefer that component API instead of manually
@@ -155,16 +155,16 @@ Use data colors for chart marks, legend keys, heatmaps, map overlays, and
 value-encoding ramps. Do not use them for general UI surfaces, text hierarchy,
 buttons, toasts, or form validation.
 
-| Family | Purpose |
-| --- | --- |
-| `--color-data-category-1` … `12` | Unordered categories |
-| `--color-data-sequence-blue-{2|3|4}-*` | Ordered blue ramps |
-| `--color-data-diverging-blue-orange-{5|7|9}-*` | Values around a midpoint |
-| `--color-data-win-loss-*` | Outcome polarity |
-| `--color-data-misc-{strong|bold|medium|faint}` | Axes and supporting marks |
-| `--color-data-intent-*` | Intent-aware visualization marks |
-| `--color-data-status-device-*` | Device-status visualization |
-| `--color-data-score-safety-*` | Safety-score visualization |
+| Family                                 | Purpose                          |
+| -------------------------------------- | -------------------------------- | ------ | ------------------------ | ------------------------- |
+| `--color-data-category-1` … `12`       | Unordered categories             |
+| `--color-data-sequence-blue-{2         | 3                                | 4}-\*` | Ordered blue ramps       |
+| `--color-data-diverging-blue-orange-{5 | 7                                | 9}-\*` | Values around a midpoint |
+| `--color-data-win-loss-*`              | Outcome polarity                 |
+| `--color-data-misc-{strong             | bold                             | medium | faint}`                  | Axes and supporting marks |
+| `--color-data-intent-*`                | Intent-aware visualization marks |
+| `--color-data-status-device-*`         | Device-status visualization      |
+| `--color-data-score-safety-*`          | Safety-score visualization       |
 
 Use category colors in numeric order, especially when marks touch in a donut
 or stacked chart. Chart containers, titles, axes, and alert chrome still use

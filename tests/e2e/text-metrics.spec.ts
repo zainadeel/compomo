@@ -39,11 +39,11 @@ test.describe('ds-text metric box', () => {
     for (const result of results) {
       expect(result.computedLineHeight, `${result.variant} computed leading`).toBeCloseTo(
         result.tokenLineHeight,
-        5,
+        5
       );
       expect(result.height, `${result.variant} ${result.lines}-line box`).toBeCloseTo(
         result.lines * result.tokenLineHeight,
-        5,
+        5
       );
     }
   });
@@ -75,7 +75,7 @@ test.describe('ds-text metric box', () => {
     expect(after.height).toBeGreaterThan(before.height);
     expect(after.height / after.lineHeight).toBeCloseTo(
       Math.round(after.height / after.lineHeight),
-      5,
+      5
     );
   });
 
@@ -112,8 +112,18 @@ test.describe('ds-text metric box', () => {
   }) => {
     const cases = [
       { control: '#button-md button', text: '#button-md ds-text', height: 32, leading: 20 },
-      { control: '#button-bordered-md button', text: '#button-bordered-md ds-text', height: 32, leading: 20 },
-      { control: '#button-borderless-md button', text: '#button-borderless-md ds-text', height: 32, leading: 20 },
+      {
+        control: '#button-bordered-md button',
+        text: '#button-bordered-md ds-text',
+        height: 32,
+        leading: 20,
+      },
+      {
+        control: '#button-borderless-md button',
+        text: '#button-borderless-md ds-text',
+        height: 32,
+        leading: 20,
+      },
       { control: '#tag-sm', text: '#tag-sm ds-text', height: 24, leading: 16 },
       { control: '#select-xs .trigger', text: '#select-xs ds-text', height: 16, leading: 12 },
     ];
@@ -127,8 +137,7 @@ test.describe('ds-text metric box', () => {
           controlHeight: controlRect.height,
           textHeight: textRect.height,
           centerDelta:
-            (textRect.top + textRect.height / 2) -
-            (controlRect.top + controlRect.height / 2),
+            textRect.top + textRect.height / 2 - (controlRect.top + controlRect.height / 2),
         };
       }, item);
 
@@ -151,8 +160,7 @@ test.describe('ds-text metric box', () => {
         labelText: text.textContent?.trim() ?? '',
         paddingInline: cs.paddingLeft,
         centerDelta:
-          (textRect.top + textRect.height / 2) -
-          (controlRect.top + controlRect.height / 2),
+          textRect.top + textRect.height / 2 - (controlRect.top + controlRect.height / 2),
       };
     });
 

@@ -3,16 +3,12 @@ import type { EventName, Options } from '@lit/react';
 import type React from 'react';
 
 type EventNames = Record<string, EventName | string>;
-type StencilProps<
-  I extends HTMLElement,
-  E extends EventNames,
-  C,
-  R extends keyof C = never,
-> = Omit<React.HTMLAttributes<I>, keyof E> &
+type StencilProps<I extends HTMLElement, E extends EventNames, C, R extends keyof C = never> = Omit<
+  React.HTMLAttributes<I>,
+  keyof E
+> &
   Partial<{
-    [K in keyof E]: E[K] extends EventName<infer T>
-      ? (event: T) => void
-      : (event: Event) => void;
+    [K in keyof E]: E[K] extends EventName<infer T> ? (event: T) => void : (event: Event) => void;
   }> &
   Required<Pick<C, R>> &
   Partial<Omit<C, R>> &

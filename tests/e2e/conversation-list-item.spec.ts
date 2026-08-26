@@ -5,9 +5,7 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('uses read-aware body-medium emphasis and color with a one-line preview', async ({
-  page,
-}) => {
+test('uses read-aware body-medium emphasis and color with a one-line preview', async ({ page }) => {
   const item = page.locator('#conversation');
   const title = item.locator('.conversation-list-item__title');
   const preview = item.locator('.conversation-list-item__preview');
@@ -44,10 +42,7 @@ test('pairs the busy label with a 16px loader and 4px gap', async ({ page }) => 
   await expect(label).toHaveCSS('font-size', '12px');
   await expect(label).toHaveCSS('line-height', '16px');
 
-  const [loaderBox, labelBox] = await Promise.all([
-    loader.boundingBox(),
-    label.boundingBox(),
-  ]);
+  const [loaderBox, labelBox] = await Promise.all([loader.boundingBox(), label.boundingBox()]);
   if (!loaderBox || !labelBox) throw new Error('Busy row geometry did not render');
   expect(loaderBox.width).toBeCloseTo(16, 0);
   expect(loaderBox.height).toBeCloseTo(16, 0);
@@ -131,9 +126,7 @@ test('overlays a centered rounded action at the 8px right inset', async ({ page 
   await expect(trigger.locator('button')).toHaveCSS('border-radius', '9999px');
 });
 
-test('keeps contextual backdrop blur outside the persistent footer fade root', async ({
-  page,
-}) => {
+test('keeps contextual backdrop blur outside the persistent footer fade root', async ({ page }) => {
   const list = page.locator('#conversation-list');
   const item = page.locator('#overlay-conversation');
   const row = item.locator('.conversation-list-item__row');
@@ -165,7 +158,7 @@ test('keeps contextual backdrop blur outside the persistent footer fade root', a
       maskedAncestor,
       hostZIndex: getComputedStyle(element).zIndex,
       fadeZIndex: getComputedStyle(
-        element.closest('ds-conversation-list')!.querySelector('.conversation-list__fade')!,
+        element.closest('ds-conversation-list')!.querySelector('.conversation-list__fade')!
       ).zIndex,
     };
   });
@@ -208,8 +201,8 @@ test.describe('direct-touch conversation action', () => {
     await expect
       .poll(() =>
         page.evaluate(
-          () => matchMedia('(hover: none)').matches && matchMedia('(pointer: coarse)').matches,
-        ),
+          () => matchMedia('(hover: none)').matches && matchMedia('(pointer: coarse)').matches
+        )
       )
       .toBe(true);
 
@@ -218,9 +211,7 @@ test.describe('direct-touch conversation action', () => {
     await expect(item.locator('.conversation-list-item__actions')).toHaveCSS('opacity', '1');
     await row.tap();
     await expect
-      .poll(() =>
-        row.evaluate(element => getComputedStyle(element, '::after').backgroundColor),
-      )
+      .poll(() => row.evaluate(element => getComputedStyle(element, '::after').backgroundColor))
       .toBe('rgba(0, 0, 0, 0)');
     await expect(item.getByRole('button', { name: 'Chat options' })).toBeVisible();
   });

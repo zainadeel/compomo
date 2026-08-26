@@ -184,42 +184,43 @@ export interface TableCellActionDivider {
 export type TableCellActionMenuEntry = TableCellActionMenuItem | TableCellActionDivider;
 
 /** Declarative ButtonUnfilled content rendered by the table's standard action cell. */
-export type TableCellAction = TableCellActionBase & (
-  | {
-      variant?: 'label';
-      /** Stable application-owned action identity emitted with dsCellAction. */
-      actionId: string;
-      label: string;
-      icon?: never;
-      ariaLabel?: string;
-      items?: never;
-    }
-  | {
-      variant: 'icon-label';
-      actionId: string;
-      label: string;
-      icon: string;
-      ariaLabel?: string;
-      items?: never;
-    }
-  | {
-      variant: 'icon';
-      actionId: string;
-      label?: never;
-      icon: string;
-      ariaLabel: string;
-      items?: never;
-    }
-  | {
-      variant?: 'icon';
-      /** Overflow commands. The Ellipses trigger opens ds-menu instead of emitting on click. */
-      items: TableCellActionMenuEntry[];
-      ariaLabel: string;
-      icon?: string;
-      actionId?: never;
-      label?: never;
-    }
-);
+export type TableCellAction = TableCellActionBase &
+  (
+    | {
+        variant?: 'label';
+        /** Stable application-owned action identity emitted with dsCellAction. */
+        actionId: string;
+        label: string;
+        icon?: never;
+        ariaLabel?: string;
+        items?: never;
+      }
+    | {
+        variant: 'icon-label';
+        actionId: string;
+        label: string;
+        icon: string;
+        ariaLabel?: string;
+        items?: never;
+      }
+    | {
+        variant: 'icon';
+        actionId: string;
+        label?: never;
+        icon: string;
+        ariaLabel: string;
+        items?: never;
+      }
+    | {
+        variant?: 'icon';
+        /** Overflow commands. The Ellipses trigger opens ds-menu instead of emitting on click. */
+        items: TableCellActionMenuEntry[];
+        ariaLabel: string;
+        icon?: string;
+        actionId?: never;
+        label?: never;
+      }
+  );
 
 /** Declarative Tag content rendered by the table's standard cell primitive. */
 export type TableCellTagVariant = 'tag-only' | 'tag-with-text' | 'text-with-tag';
@@ -233,16 +234,17 @@ interface TableCellTagBase {
   rounded?: boolean;
 }
 
-export type TableCellTag = TableCellTagBase & (
-  | {
-      variant?: 'tag-only';
-      text?: never;
-    }
-  | {
-      variant: Exclude<TableCellTagVariant, 'tag-only'>;
-      text: string;
-    }
-);
+export type TableCellTag = TableCellTagBase &
+  (
+    | {
+        variant?: 'tag-only';
+        text?: never;
+      }
+    | {
+        variant: Exclude<TableCellTagVariant, 'tag-only'>;
+        text: string;
+      }
+  );
 
 export type TableCellValue =
   | string
@@ -270,36 +272,36 @@ export type TableCellSkeleton =
       primaryWidth?: TableSkeletonWidth;
       secondaryWidth?: TableSkeletonWidth;
       tertiaryWidth?: TableSkeletonWidth;
-  }
+    }
   | {
       kind: 'image';
       /** Match the loaded image cell's track stack. Defaults to 1. */
       tracks?: TableCellImageTracks;
-  }
+    }
   | {
       kind: 'tag';
       width?: TableSkeletonWidth;
-  }
+    }
   | {
       kind: 'icon';
       rounded?: boolean;
-  }
+    }
   | {
       kind: 'icon-text';
       lines?: 1 | 2 | 3;
       primaryWidth?: TableSkeletonWidth;
       secondaryWidth?: TableSkeletonWidth;
       tertiaryWidth?: TableSkeletonWidth;
-  }
+    }
   | {
       kind: 'action';
       /** Icon actions use a square control canvas; labeled actions may provide a wider width. */
       variant?: 'icon' | 'label' | 'icon-label';
       width?: TableSkeletonWidth;
-  }
+    }
   | {
       kind: 'blank';
-  };
+    };
 
 export interface TableColumn {
   /** Stable column identity. */

@@ -28,9 +28,10 @@ export const Overview: Story = {
     <article class="ds-prose prose-demo-document">
       <h1>Quarterly service review</h1>
       <p>
-        Prose provides consistent rhythm for semantic HTML from an application, CMS, or safe rich-content
-        renderer. It includes <a href="#prose-highlights">links</a>, inline <code>code</code>, and
-        <strong>appropriate emphasis</strong> without requiring a custom element.
+        Prose provides consistent rhythm for semantic HTML from an application, CMS, or safe
+        rich-content renderer. It includes <a href="#prose-highlights">links</a>, inline
+        <code>code</code>, and <strong>appropriate emphasis</strong> without requiring a custom
+        element.
       </p>
 
       <h2 id="prose-highlights">Highlights</h2>
@@ -87,8 +88,8 @@ export const NarrowContent: Story = {
     <article class="ds-prose prose-demo-document prose-demo-document--narrow">
       <h2>Narrow content region</h2>
       <p>
-        Long copy wraps within the available inline size, including unusually long identifiers such as
-        service-observability-production-north-america-01.
+        Long copy wraps within the available inline size, including unusually long identifiers such
+        as service-observability-production-north-america-01.
       </p>
       <div class="ds-prose__table-scroll" role="region" aria-label="Deployment status" tabindex="0">
         <table>
@@ -118,10 +119,16 @@ export const EmbeddedUiOptOut: Story = {
       <h2>Report actions</h2>
       <p>Ordinary semantic content continues to use the prose recipe.</p>
 
-      <section class="prose-demo-product-card" data-ds-prose="off" aria-labelledby="prose-actions-title">
+      <section
+        class="prose-demo-product-card"
+        data-ds-prose="off"
+        aria-labelledby="prose-actions-title"
+      >
         <div>
           <h3 class="prose-demo-product-card__title" id="prose-actions-title">Export report</h3>
-          <p class="prose-demo-product-card__description">This embedded product UI owns its own presentation.</p>
+          <p class="prose-demo-product-card__description">
+            This embedded product UI owns its own presentation.
+          </p>
         </div>
         <ds-button-unfilled label="Download" size="sm"></ds-button-unfilled>
       </section>
@@ -156,7 +163,11 @@ export const AppendStable: Story = {
           <p>Streamed block 1 is already present.</p>
         </div>
         <div data-ds-prose="off">
-          <ds-button-unfilled label="Append block" size="sm" @dsClick=${appendBlock}></ds-button-unfilled>
+          <ds-button-unfilled
+            label="Append block"
+            size="sm"
+            @dsClick=${appendBlock}
+          ></ds-button-unfilled>
         </div>
       </div>
     `;

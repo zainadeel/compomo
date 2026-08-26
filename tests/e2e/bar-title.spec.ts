@@ -20,232 +20,252 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('uses the default cursor for breadcrumb commands and pointer only for links',
+test(
+  'uses the default cursor for breadcrumb commands and pointer only for links',
   chromiumOnly('layout-geometry', 'Static cursor recipes do not depend on an engine-specific API.'),
-  async ({
-  page,
-}) => {
-  await expect(
-    page.getByRole('button', { name: 'Back to Drivers' })
-  ).toHaveCSS('cursor', 'default');
-  await expect(
-    page.getByRole('link', { name: 'Operations and workforce management' })
-  ).toHaveCSS('cursor', 'pointer');
-});
-
-test('composes one page main and semantic h1 with the default content inset',
-  chromiumOnly('layout-geometry', 'Static semantic structure and token-backed insets are authoritative in Chromium.'),
   async ({ page }) => {
-  const shell = page.locator('#shell-page');
-  const header = page.locator('#detail-header');
+    await expect(page.getByRole('button', { name: 'Back to Drivers' })).toHaveCSS(
+      'cursor',
+      'default'
+    );
+    await expect(page.getByRole('link', { name: 'Operations and workforce management' })).toHaveCSS(
+      'cursor',
+      'pointer'
+    );
+  }
+);
 
-  await expect(shell).toHaveAttribute('role', 'main');
-  await expect(header).toHaveClass(/bar-title-host--expanded/);
-  await expect(header.getByRole('heading', { level: 1, name: 'John Smith' })).toHaveCount(1);
-  await expect(header.locator('.bar-title__description')).toHaveText(
-    'View and manage driver details, activity, timecards, and settings.'
-  );
-  const breadcrumb = header.getByRole('navigation', { name: 'Breadcrumb' });
-  await expect(breadcrumb.getByRole('button', { name: 'Back to Drivers' })).toHaveText('Drivers');
-  await expect(header.locator('.bar-title__back')).toHaveCount(0);
-  await expect(breadcrumb.locator('.breadcrumb__label')).toHaveClass(/ds-text--regular/);
-
-  const geometry = await shell.evaluate(element => {
-    const header = element.querySelector<HTMLElement>('ds-bar-title');
-    const content = element.querySelector<HTMLElement>('.shell-page__content');
-    const bar = header?.querySelector<HTMLElement>('.bar-title');
-    const breadcrumb = header?.querySelector<HTMLElement>('.bar-title__breadcrumb');
-    const heading = header?.querySelector<HTMLElement>('.bar-title__heading');
-    const divider = bar ? getComputedStyle(bar, '::after') : null;
-    return {
-      contentOffset: content?.offsetTop ?? 0,
-      headerHeight: header?.getBoundingClientRect().height ?? 0,
-      paddingTop: content ? Number.parseFloat(getComputedStyle(content).paddingTop) : 0,
-      paddingRight: content ? Number.parseFloat(getComputedStyle(content).paddingRight) : 0,
-      paddingBottom: content ? Number.parseFloat(getComputedStyle(content).paddingBottom) : 0,
-      paddingLeft: content ? Number.parseFloat(getComputedStyle(content).paddingLeft) : 0,
-      headingLeftInset:
-        header && heading
-          ? heading.getBoundingClientRect().left - header.getBoundingClientRect().left
-          : 0,
-      breadcrumbTop:
-        header && breadcrumb
-          ? breadcrumb.getBoundingClientRect().top - header.getBoundingClientRect().top
-          : 0,
-      breadcrumbLeft:
-        header && breadcrumb
-          ? breadcrumb.getBoundingClientRect().left - header.getBoundingClientRect().left
-          : 0,
-      breadcrumbRightInset:
-        header && breadcrumb
-          ? header.getBoundingClientRect().right - breadcrumb.getBoundingClientRect().right
-          : 0,
-      breadcrumbAboveHeading:
-        breadcrumb && heading
-          ? breadcrumb.getBoundingClientRect().bottom <= heading.getBoundingClientRect().top
-          : false,
-      dividerLeft: divider ? Number.parseFloat(divider.left) : 0,
-      dividerRight: divider ? Number.parseFloat(divider.right) : 0,
-    };
-  });
-
-  expect(geometry.contentOffset).toBe(geometry.headerHeight);
-  expect(geometry.paddingTop).toBe(32);
-  expect(geometry.paddingRight).toBe(32);
-  expect(geometry.paddingBottom).toBe(32);
-  expect(geometry.paddingLeft).toBe(32);
-  expect(geometry.headingLeftInset).toBe(32);
-  expect(geometry.breadcrumbTop).toBe(32);
-  expect(geometry.breadcrumbLeft).toBe(32);
-  expect(geometry.breadcrumbRightInset).toBe(32);
-  expect(geometry.breadcrumbAboveHeading).toBe(true);
-  expect(geometry.dividerLeft).toBe(32);
-  expect(geometry.dividerRight).toBe(32);
-});
-
-test('reduces the default page inset for tablet and mobile modes',
-  chromiumOnly('responsive-shell', 'Explicit responsive-mode rendering checks token-backed insets without viewport measurement.'),
+test(
+  'composes one page main and semantic h1 with the default content inset',
+  chromiumOnly(
+    'layout-geometry',
+    'Static semantic structure and token-backed insets are authoritative in Chromium.'
+  ),
   async ({ page }) => {
-  const shell = page.locator('#shell-page');
-  const content = shell.locator('.shell-page__content');
+    const shell = page.locator('#shell-page');
+    const header = page.locator('#detail-header');
 
-  await shell.evaluate((element: HTMLDsShellPageElement) => {
-    element.responsiveMode = 'tablet';
-  });
-  await expect(shell).toHaveAttribute('responsive-mode', 'tablet');
-  await expect(content).toHaveCSS('padding-top', '16px');
-  await expect(content).toHaveCSS('padding-right', '16px');
-  await expect(content).toHaveCSS('padding-bottom', '16px');
-  await expect(content).toHaveCSS('padding-left', '16px');
+    await expect(shell).toHaveAttribute('role', 'main');
+    await expect(header).toHaveClass(/bar-title-host--expanded/);
+    await expect(header.getByRole('heading', { level: 1, name: 'John Smith' })).toHaveCount(1);
+    await expect(header.locator('.bar-title__description')).toHaveText(
+      'View and manage driver details, activity, timecards, and settings.'
+    );
+    const breadcrumb = header.getByRole('navigation', { name: 'Breadcrumb' });
+    await expect(breadcrumb.getByRole('button', { name: 'Back to Drivers' })).toHaveText('Drivers');
+    await expect(header.locator('.bar-title__back')).toHaveCount(0);
+    await expect(breadcrumb.locator('.breadcrumb__label')).toHaveClass(/ds-text--regular/);
 
-  await shell.evaluate((element: HTMLDsShellPageElement) => {
-    element.responsiveMode = 'mobile';
-  });
-  await expect(shell).toHaveAttribute('responsive-mode', 'mobile');
-  await expect(content).toHaveCSS('padding-top', '16px');
-  await expect(content).toHaveCSS('padding-right', '16px');
-  await expect(content).toHaveCSS('padding-bottom', '16px');
-  await expect(content).toHaveCSS('padding-left', '16px');
-});
+    const geometry = await shell.evaluate(element => {
+      const header = element.querySelector<HTMLElement>('ds-bar-title');
+      const content = element.querySelector<HTMLElement>('.shell-page__content');
+      const bar = header?.querySelector<HTMLElement>('.bar-title');
+      const breadcrumb = header?.querySelector<HTMLElement>('.bar-title__breadcrumb');
+      const heading = header?.querySelector<HTMLElement>('.bar-title__heading');
+      const divider = bar ? getComputedStyle(bar, '::after') : null;
+      return {
+        contentOffset: content?.offsetTop ?? 0,
+        headerHeight: header?.getBoundingClientRect().height ?? 0,
+        paddingTop: content ? Number.parseFloat(getComputedStyle(content).paddingTop) : 0,
+        paddingRight: content ? Number.parseFloat(getComputedStyle(content).paddingRight) : 0,
+        paddingBottom: content ? Number.parseFloat(getComputedStyle(content).paddingBottom) : 0,
+        paddingLeft: content ? Number.parseFloat(getComputedStyle(content).paddingLeft) : 0,
+        headingLeftInset:
+          header && heading
+            ? heading.getBoundingClientRect().left - header.getBoundingClientRect().left
+            : 0,
+        breadcrumbTop:
+          header && breadcrumb
+            ? breadcrumb.getBoundingClientRect().top - header.getBoundingClientRect().top
+            : 0,
+        breadcrumbLeft:
+          header && breadcrumb
+            ? breadcrumb.getBoundingClientRect().left - header.getBoundingClientRect().left
+            : 0,
+        breadcrumbRightInset:
+          header && breadcrumb
+            ? header.getBoundingClientRect().right - breadcrumb.getBoundingClientRect().right
+            : 0,
+        breadcrumbAboveHeading:
+          breadcrumb && heading
+            ? breadcrumb.getBoundingClientRect().bottom <= heading.getBoundingClientRect().top
+            : false,
+        dividerLeft: divider ? Number.parseFloat(divider.left) : 0,
+        dividerRight: divider ? Number.parseFloat(divider.right) : 0,
+      };
+    });
 
-test('aligns expanded title and actions below a full-width breadcrumb row',
-  chromiumOnly('layout-geometry', 'This is a local token-backed alignment contract with shared geometry tolerance.'),
+    expect(geometry.contentOffset).toBe(geometry.headerHeight);
+    expect(geometry.paddingTop).toBe(32);
+    expect(geometry.paddingRight).toBe(32);
+    expect(geometry.paddingBottom).toBe(32);
+    expect(geometry.paddingLeft).toBe(32);
+    expect(geometry.headingLeftInset).toBe(32);
+    expect(geometry.breadcrumbTop).toBe(32);
+    expect(geometry.breadcrumbLeft).toBe(32);
+    expect(geometry.breadcrumbRightInset).toBe(32);
+    expect(geometry.breadcrumbAboveHeading).toBe(true);
+    expect(geometry.dividerLeft).toBe(32);
+    expect(geometry.dividerRight).toBe(32);
+  }
+);
+
+test(
+  'reduces the default page inset for tablet and mobile modes',
+  chromiumOnly(
+    'responsive-shell',
+    'Explicit responsive-mode rendering checks token-backed insets without viewport measurement.'
+  ),
   async ({ page }) => {
-  const shell = page.locator('#shell-page');
-  const header = page.locator('#detail-header');
+    const shell = page.locator('#shell-page');
+    const content = shell.locator('.shell-page__content');
 
-  await shell.evaluate((element: HTMLDsShellPageElement) => {
-    element.headerPresentation = 'expanded';
-  });
-  await expect(header).toHaveClass(/bar-title-host--expanded/);
+    await shell.evaluate((element: HTMLDsShellPageElement) => {
+      element.responsiveMode = 'tablet';
+    });
+    await expect(shell).toHaveAttribute('responsive-mode', 'tablet');
+    await expect(content).toHaveCSS('padding-top', '16px');
+    await expect(content).toHaveCSS('padding-right', '16px');
+    await expect(content).toHaveCSS('padding-bottom', '16px');
+    await expect(content).toHaveCSS('padding-left', '16px');
 
-  const withBreadcrumb = await header.evaluate(element => {
-    const host = element.getBoundingClientRect();
-    const breadcrumb = element.querySelector<HTMLElement>('.bar-title__breadcrumb');
-    const titleRow = element.querySelector<HTMLElement>('.bar-title__title-row');
-    const description = element.querySelector<HTMLElement>('.bar-title__description');
-    const actions = element.querySelector<HTMLElement>('.bar-title__actions');
-    const breadcrumbRect = breadcrumb?.getBoundingClientRect();
-    const titleRowRect = titleRow?.getBoundingClientRect();
-    const descriptionRect = description?.getBoundingClientRect();
+    await shell.evaluate((element: HTMLDsShellPageElement) => {
+      element.responsiveMode = 'mobile';
+    });
+    await expect(shell).toHaveAttribute('responsive-mode', 'mobile');
+    await expect(content).toHaveCSS('padding-top', '16px');
+    await expect(content).toHaveCSS('padding-right', '16px');
+    await expect(content).toHaveCSS('padding-bottom', '16px');
+    await expect(content).toHaveCSS('padding-left', '16px');
+  }
+);
 
-    return {
-      breadcrumbTop: breadcrumbRect ? breadcrumbRect.top - host.top : 0,
-      breadcrumbLeft: breadcrumbRect ? breadcrumbRect.left - host.left : 0,
-      breadcrumbRightInset: breadcrumbRect ? host.right - breadcrumbRect.right : 0,
-      actionsTop: actions ? actions.getBoundingClientRect().top - host.top : 0,
-      titleTop: titleRowRect ? titleRowRect.top - host.top : 0,
-      breadcrumbToTitle:
-        breadcrumbRect && titleRowRect ? titleRowRect.top - breadcrumbRect.bottom : 0,
-      titleToDescription:
-        titleRowRect && descriptionRect ? descriptionRect.top - titleRowRect.bottom : 0,
-    };
-  });
-  await expect(header.locator('.bar-title__leading > .bar-title__description')).toHaveCount(1);
+test(
+  'aligns expanded title and actions below a full-width breadcrumb row',
+  chromiumOnly(
+    'layout-geometry',
+    'This is a local token-backed alignment contract with shared geometry tolerance.'
+  ),
+  async ({ page }) => {
+    const shell = page.locator('#shell-page');
+    const header = page.locator('#detail-header');
 
-  await header.evaluate((element: HTMLDsBarTitleElement) => {
-    element.showBack = false;
-  });
-  await expect(header.locator('.bar-title__breadcrumb')).toHaveCount(0);
+    await shell.evaluate((element: HTMLDsShellPageElement) => {
+      element.headerPresentation = 'expanded';
+    });
+    await expect(header).toHaveClass(/bar-title-host--expanded/);
 
-  const withoutBreadcrumb = await header.evaluate(element => {
-    const host = element.getBoundingClientRect();
-    const actions = element.querySelector<HTMLElement>('.bar-title__actions');
-    const titleRow = element.querySelector<HTMLElement>('.bar-title__title-row');
-    return {
-      actionsTop: actions ? actions.getBoundingClientRect().top - host.top : 0,
-      titleTop: titleRow ? titleRow.getBoundingClientRect().top - host.top : 0,
-    };
-  });
+    const withBreadcrumb = await header.evaluate(element => {
+      const host = element.getBoundingClientRect();
+      const breadcrumb = element.querySelector<HTMLElement>('.bar-title__breadcrumb');
+      const titleRow = element.querySelector<HTMLElement>('.bar-title__title-row');
+      const description = element.querySelector<HTMLElement>('.bar-title__description');
+      const actions = element.querySelector<HTMLElement>('.bar-title__actions');
+      const breadcrumbRect = breadcrumb?.getBoundingClientRect();
+      const titleRowRect = titleRow?.getBoundingClientRect();
+      const descriptionRect = description?.getBoundingClientRect();
 
-  expect(withBreadcrumb).toEqual({
-    breadcrumbTop: 32,
-    breadcrumbLeft: 32,
-    breadcrumbRightInset: 32,
-    actionsTop: 52,
-    titleTop: 52,
-    breadcrumbToTitle: 8,
-    titleToDescription: 8,
-  });
-  expect(withoutBreadcrumb).toEqual({ actionsTop: 32, titleTop: 32 });
-});
+      return {
+        breadcrumbTop: breadcrumbRect ? breadcrumbRect.top - host.top : 0,
+        breadcrumbLeft: breadcrumbRect ? breadcrumbRect.left - host.left : 0,
+        breadcrumbRightInset: breadcrumbRect ? host.right - breadcrumbRect.right : 0,
+        actionsTop: actions ? actions.getBoundingClientRect().top - host.top : 0,
+        titleTop: titleRowRect ? titleRowRect.top - host.top : 0,
+        breadcrumbToTitle:
+          breadcrumbRect && titleRowRect ? titleRowRect.top - breadcrumbRect.bottom : 0,
+        titleToDescription:
+          titleRowRect && descriptionRect ? descriptionRect.top - titleRowRect.bottom : 0,
+      };
+    });
+    await expect(header.locator('.bar-title__leading > .bar-title__description')).toHaveCount(1);
 
-test('supports multi-level expanded breadcrumbs without changing compact Back',
-  chromiumOnly('controlled-behavior', 'This verifies deterministic variant composition rather than browser navigation behavior.'),
-  async ({
-  page,
-}) => {
-  const shell = page.locator('#shell-page');
-  const header = page.locator('#detail-header');
+    await header.evaluate((element: HTMLDsBarTitleElement) => {
+      element.showBack = false;
+    });
+    await expect(header.locator('.bar-title__breadcrumb')).toHaveCount(0);
 
-  await header.evaluate((element: HTMLDsBarTitleElement) => {
-    element.breadcrumbs = [
-      { id: 'workforce', label: 'Workforce', href: '#workforce' },
-      { id: 'drivers', label: 'Drivers' },
-      { id: 'john-smith', label: 'John Smith', isCurrent: true },
-    ];
-  });
+    const withoutBreadcrumb = await header.evaluate(element => {
+      const host = element.getBoundingClientRect();
+      const actions = element.querySelector<HTMLElement>('.bar-title__actions');
+      const titleRow = element.querySelector<HTMLElement>('.bar-title__title-row');
+      return {
+        actionsTop: actions ? actions.getBoundingClientRect().top - host.top : 0,
+        titleTop: titleRow ? titleRow.getBoundingClientRect().top - host.top : 0,
+      };
+    });
 
-  const breadcrumb = header.getByRole('navigation', { name: 'Breadcrumb' });
-  const workforce = breadcrumb.getByRole('link', { name: 'Workforce' });
-  const workforceLabel = workforce.locator('.breadcrumb__label');
-  await expect(workforceLabel).toHaveCSS('text-decoration-line', 'none');
-  await workforce.hover();
-  await expect(workforceLabel).toHaveCSS('text-decoration-line', 'underline');
-  const underlineColors = await workforceLabel.evaluate(element => {
-    const probe = document.createElement('span');
-    probe.style.color = 'var(--color-foreground-quaternary)';
-    probe.style.textDecorationThickness = 'var(--dimension-stroke-width-012)';
-    probe.style.textUnderlineOffset = 'var(--dimension-space-025)';
-    document.body.append(probe);
-    const actual = getComputedStyle(element);
-    const expected = getComputedStyle(probe);
-    const result = {
-      underline: actual.textDecorationColor,
-      quaternary: expected.color,
-      thickness: actual.textDecorationThickness,
-      expectedThickness: expected.textDecorationThickness,
-      offset: actual.textUnderlineOffset,
-      expectedOffset: expected.textUnderlineOffset,
-    };
-    probe.remove();
-    return result;
-  });
-  expect(underlineColors.underline).toBe(underlineColors.quaternary);
-  expect(underlineColors.thickness).toBe(underlineColors.expectedThickness);
-  expect(underlineColors.offset).toBe(underlineColors.expectedOffset);
-  await expect(breadcrumb.locator('[aria-current="page"]')).toHaveText('John Smith');
-  await expect(breadcrumb.locator('.breadcrumb__separator')).toHaveCount(2);
+    expect(withBreadcrumb).toEqual({
+      breadcrumbTop: 32,
+      breadcrumbLeft: 32,
+      breadcrumbRightInset: 32,
+      actionsTop: 52,
+      titleTop: 52,
+      breadcrumbToTitle: 8,
+      titleToDescription: 8,
+    });
+    expect(withoutBreadcrumb).toEqual({ actionsTop: 32, titleTop: 32 });
+  }
+);
 
-  await breadcrumb.getByRole('button', { name: 'Drivers' }).click();
-  expect(await readEvents(page)).toContainEqual({ type: 'breadcrumb', id: 'drivers' });
+test(
+  'supports multi-level expanded breadcrumbs without changing compact Back',
+  chromiumOnly(
+    'controlled-behavior',
+    'This verifies deterministic variant composition rather than browser navigation behavior.'
+  ),
+  async ({ page }) => {
+    const shell = page.locator('#shell-page');
+    const header = page.locator('#detail-header');
 
-  await shell.evaluate((element: HTMLDsShellPageElement) => {
-    element.headerPresentation = 'compact';
-  });
-  await expect(header.getByRole('navigation', { name: 'Breadcrumb' })).toHaveCount(0);
-  await expect(header.getByRole('button', { name: 'Back to Drivers' })).toBeVisible();
-});
+    await header.evaluate((element: HTMLDsBarTitleElement) => {
+      element.breadcrumbs = [
+        { id: 'workforce', label: 'Workforce', href: '#workforce' },
+        { id: 'drivers', label: 'Drivers' },
+        { id: 'john-smith', label: 'John Smith', isCurrent: true },
+      ];
+    });
+
+    const breadcrumb = header.getByRole('navigation', { name: 'Breadcrumb' });
+    const workforce = breadcrumb.getByRole('link', { name: 'Workforce' });
+    const workforceLabel = workforce.locator('.breadcrumb__label');
+    await expect(workforceLabel).toHaveCSS('text-decoration-line', 'none');
+    await workforce.hover();
+    await expect(workforceLabel).toHaveCSS('text-decoration-line', 'underline');
+    const underlineColors = await workforceLabel.evaluate(element => {
+      const probe = document.createElement('span');
+      probe.style.color = 'var(--color-foreground-quaternary)';
+      probe.style.textDecorationThickness = 'var(--dimension-stroke-width-012)';
+      probe.style.textUnderlineOffset = 'var(--dimension-space-025)';
+      document.body.append(probe);
+      const actual = getComputedStyle(element);
+      const expected = getComputedStyle(probe);
+      const result = {
+        underline: actual.textDecorationColor,
+        quaternary: expected.color,
+        thickness: actual.textDecorationThickness,
+        expectedThickness: expected.textDecorationThickness,
+        offset: actual.textUnderlineOffset,
+        expectedOffset: expected.textUnderlineOffset,
+      };
+      probe.remove();
+      return result;
+    });
+    expect(underlineColors.underline).toBe(underlineColors.quaternary);
+    expect(underlineColors.thickness).toBe(underlineColors.expectedThickness);
+    expect(underlineColors.offset).toBe(underlineColors.expectedOffset);
+    await expect(breadcrumb.locator('[aria-current="page"]')).toHaveText('John Smith');
+    await expect(breadcrumb.locator('.breadcrumb__separator')).toHaveCount(2);
+
+    await breadcrumb.getByRole('button', { name: 'Drivers' }).click();
+    expect(await readEvents(page)).toContainEqual({ type: 'breadcrumb', id: 'drivers' });
+
+    await shell.evaluate((element: HTMLDsShellPageElement) => {
+      element.headerPresentation = 'compact';
+    });
+    await expect(header.getByRole('navigation', { name: 'Breadcrumb' })).toHaveCount(0);
+    await expect(header.getByRole('button', { name: 'Back to Drivers' })).toBeVisible();
+  }
+);
 
 test('truncates breadcrumb labels oldest-to-newest while protecting the current location', async ({
   page,
@@ -465,315 +485,339 @@ test('keeps inline section state controlled and restores trigger focus', async (
   expect(events).toContainEqual({ type: 'section', id: 'history' });
 });
 
-test('uses the complete rounded md control recipe for the section trigger',
-  chromiumOnly('layout-geometry', 'The shared control recipe is token-backed and independently protected by contract tests.'),
+test(
+  'uses the complete rounded md control recipe for the section trigger',
+  chromiumOnly(
+    'layout-geometry',
+    'The shared control recipe is token-backed and independently protected by contract tests.'
+  ),
   async ({ page }) => {
-  const trigger = page
-    .locator('#detail-header')
-    .getByRole('button', { name: 'Change driver section. Current section: Summary' });
+    const trigger = page
+      .locator('#detail-header')
+      .getByRole('button', { name: 'Change driver section. Current section: Summary' });
 
-  const metrics = await trigger.evaluate(element => {
-    const row = element.closest<HTMLElement>('.bar-title__row');
-    const identity = row?.querySelector<HTMLElement>('.bar-title__identity');
-    const headingText = identity?.querySelector<HTMLElement>(
-      '.bar-title__heading .ds-text__element'
-    );
-    const divider = row?.querySelector<HTMLElement>('.bar-title__divider');
-    const label = element.querySelector<HTMLElement>('.bar-title__section-label');
-    const labelText = label?.querySelector<HTMLElement>('.ds-text__element');
-    const icon = element.querySelector<HTMLElement>('.bar-title__section-chevron .icon');
-    const triggerStyle = getComputedStyle(element);
-    const labelStyle = label ? getComputedStyle(label) : null;
-    const iconRect = icon?.getBoundingClientRect();
-    const headingTextRect = headingText?.getBoundingClientRect();
-    const dividerRect = divider?.getBoundingClientRect();
-    const labelTextRect = labelText?.getBoundingClientRect();
-
-    return {
-      height: triggerStyle.height,
-      paddingLeft: triggerStyle.paddingLeft,
-      paddingRight: triggerStyle.paddingRight,
-      gap: triggerStyle.gap,
-      radius: triggerStyle.borderRadius,
-      fontSize: labelStyle?.fontSize,
-      lineHeight: labelStyle?.lineHeight,
-      labelPaddingLeft: labelStyle?.paddingLeft,
-      labelPaddingRight: labelStyle?.paddingRight,
-      iconWidth: iconRect?.width,
-      iconHeight: iconRect?.height,
-      titleToDividerGap:
-        headingTextRect && dividerRect ? Math.round(dividerRect.left - headingTextRect.right) : 0,
-      dividerToLabelGap:
-        dividerRect && labelTextRect ? Math.round(labelTextRect.left - dividerRect.right) : 0,
-    };
-  });
-
-  expect(metrics).toEqual({
-    height: '32px',
-    paddingLeft: '6px',
-    paddingRight: '6px',
-    gap: '4px',
-    radius: '9999px',
-    fontSize: '14px',
-    lineHeight: '20px',
-    labelPaddingLeft: '2px',
-    labelPaddingRight: '2px',
-    iconWidth: 20,
-    iconHeight: 20,
-    titleToDividerGap: 16,
-    dividerToLabelGap: 16,
-  });
-});
-
-test('balances title and section-label spacing around the divider in every presentation',
-  chromiumOnly('layout-geometry', 'Static spacing recipes are engine-neutral token contracts.'),
-  async ({
-  page,
-}) => {
-  const shell = page.locator('#shell-page');
-  const header = page.locator('#detail-header');
-
-  for (const variant of ['expanded', 'compact', 'constrained'] as const) {
-    await shell.evaluate((element: HTMLDsShellPageElement, nextVariant) => {
-      element.headerPresentation = nextVariant;
-    }, variant);
-    await expect(header).toHaveClass(
-      new RegExp(`bar-title-host--${variant === 'compact' ? 'compact' : variant}`)
-    );
-
-    const gaps = await header.evaluate(element => {
-      const headingText = element.querySelector<HTMLElement>(
+    const metrics = await trigger.evaluate(element => {
+      const row = element.closest<HTMLElement>('.bar-title__row');
+      const identity = row?.querySelector<HTMLElement>('.bar-title__identity');
+      const headingText = identity?.querySelector<HTMLElement>(
         '.bar-title__heading .ds-text__element'
       );
-      const divider = element.querySelector<HTMLElement>('.bar-title__divider');
-      const labelText = element.querySelector<HTMLElement>(
-        '.bar-title__section-label .ds-text__element'
-      );
+      const divider = row?.querySelector<HTMLElement>('.bar-title__divider');
+      const label = element.querySelector<HTMLElement>('.bar-title__section-label');
+      const labelText = label?.querySelector<HTMLElement>('.ds-text__element');
+      const icon = element.querySelector<HTMLElement>('.bar-title__section-chevron .icon');
+      const triggerStyle = getComputedStyle(element);
+      const labelStyle = label ? getComputedStyle(label) : null;
+      const iconRect = icon?.getBoundingClientRect();
       const headingTextRect = headingText?.getBoundingClientRect();
       const dividerRect = divider?.getBoundingClientRect();
       const labelTextRect = labelText?.getBoundingClientRect();
 
       return {
-        titleToDivider:
+        height: triggerStyle.height,
+        paddingLeft: triggerStyle.paddingLeft,
+        paddingRight: triggerStyle.paddingRight,
+        gap: triggerStyle.gap,
+        radius: triggerStyle.borderRadius,
+        fontSize: labelStyle?.fontSize,
+        lineHeight: labelStyle?.lineHeight,
+        labelPaddingLeft: labelStyle?.paddingLeft,
+        labelPaddingRight: labelStyle?.paddingRight,
+        iconWidth: iconRect?.width,
+        iconHeight: iconRect?.height,
+        titleToDividerGap:
           headingTextRect && dividerRect ? Math.round(dividerRect.left - headingTextRect.right) : 0,
-        dividerToLabel:
+        dividerToLabelGap:
           dividerRect && labelTextRect ? Math.round(labelTextRect.left - dividerRect.right) : 0,
       };
     });
 
-    expect(gaps).toEqual({ titleToDivider: 16, dividerToLabel: 16 });
+    expect(metrics).toEqual({
+      height: '32px',
+      paddingLeft: '6px',
+      paddingRight: '6px',
+      gap: '4px',
+      radius: '9999px',
+      fontSize: '14px',
+      lineHeight: '20px',
+      labelPaddingLeft: '2px',
+      labelPaddingRight: '2px',
+      iconWidth: 20,
+      iconHeight: 20,
+      titleToDividerGap: 16,
+      dividerToLabelGap: 16,
+    });
   }
-});
+);
 
-test('emits the same command ids from visible and overflow actions',
-  chromiumOnly('controlled-behavior', 'Custom-event identity is deterministic and does not rely on a browser-specific API.'),
+test(
+  'balances title and section-label spacing around the divider in every presentation',
+  chromiumOnly('layout-geometry', 'Static spacing recipes are engine-neutral token contracts.'),
   async ({ page }) => {
-  const header = page.locator('#detail-header');
+    const shell = page.locator('#shell-page');
+    const header = page.locator('#detail-header');
 
-  await header.getByRole('button', { name: 'Back to Drivers' }).click();
-  await header.getByRole('button', { name: 'Call driver' }).click();
-  const more = header.getByRole('button', { name: 'More driver actions' });
-  await more.click();
-  await page.getByRole('menuitem', { name: 'Message driver' }).click();
-  await expect(more).toBeFocused();
+    for (const variant of ['expanded', 'compact', 'constrained'] as const) {
+      await shell.evaluate((element: HTMLDsShellPageElement, nextVariant) => {
+        element.headerPresentation = nextVariant;
+      }, variant);
+      await expect(header).toHaveClass(
+        new RegExp(`bar-title-host--${variant === 'compact' ? 'compact' : variant}`)
+      );
 
-  await more.click();
-  const destructive = page.getByRole('menuitem', { name: 'Remove driver' });
-  await expect(destructive).toHaveClass(/menu-item--destructive/);
-  await destructive.click();
+      const gaps = await header.evaluate(element => {
+        const headingText = element.querySelector<HTMLElement>(
+          '.bar-title__heading .ds-text__element'
+        );
+        const divider = element.querySelector<HTMLElement>('.bar-title__divider');
+        const labelText = element.querySelector<HTMLElement>(
+          '.bar-title__section-label .ds-text__element'
+        );
+        const headingTextRect = headingText?.getBoundingClientRect();
+        const dividerRect = divider?.getBoundingClientRect();
+        const labelTextRect = labelText?.getBoundingClientRect();
 
-  const events = await readEvents(page);
-  expect(events).toEqual([
-    { type: 'back' },
-    { type: 'action', id: 'call-driver' },
-    { type: 'action', id: 'message-driver' },
-    { type: 'action', id: 'remove-driver' },
-  ]);
-});
+        return {
+          titleToDivider:
+            headingTextRect && dividerRect
+              ? Math.round(dividerRect.left - headingTextRect.right)
+              : 0,
+          dividerToLabel:
+            dividerRect && labelTextRect ? Math.round(labelTextRect.left - dividerRect.right) : 0,
+        };
+      });
 
-test('borders overflow only while a primary action is visible beside it',
+      expect(gaps).toEqual({ titleToDivider: 16, dividerToLabel: 16 });
+    }
+  }
+);
+
+test(
+  'emits the same command ids from visible and overflow actions',
+  chromiumOnly(
+    'controlled-behavior',
+    'Custom-event identity is deterministic and does not rely on a browser-specific API.'
+  ),
+  async ({ page }) => {
+    const header = page.locator('#detail-header');
+
+    await header.getByRole('button', { name: 'Back to Drivers' }).click();
+    await header.getByRole('button', { name: 'Call driver' }).click();
+    const more = header.getByRole('button', { name: 'More driver actions' });
+    await more.click();
+    await page.getByRole('menuitem', { name: 'Message driver' }).click();
+    await expect(more).toBeFocused();
+
+    await more.click();
+    const destructive = page.getByRole('menuitem', { name: 'Remove driver' });
+    await expect(destructive).toHaveClass(/menu-item--destructive/);
+    await destructive.click();
+
+    const events = await readEvents(page);
+    expect(events).toEqual([
+      { type: 'back' },
+      { type: 'action', id: 'call-driver' },
+      { type: 'action', id: 'message-driver' },
+      { type: 'action', id: 'remove-driver' },
+    ]);
+  }
+);
+
+test(
+  'borders overflow only while a primary action is visible beside it',
   chromiumOnly('layout-geometry', 'This is a deterministic class and border-recipe state check.'),
   async ({ page }) => {
-  const shell = page.locator('#shell-page');
-  const header = page.locator('#detail-header');
-  const more = header.locator('.bar-title__more-actions');
-  const hasBorder = () =>
-    more.evaluate(element => (element as HTMLDsButtonUnfilledElement).hasBorder);
+    const shell = page.locator('#shell-page');
+    const header = page.locator('#detail-header');
+    const more = header.locator('.bar-title__more-actions');
+    const hasBorder = () =>
+      more.evaluate(element => (element as HTMLDsButtonUnfilledElement).hasBorder);
 
-  await expect(header.locator('.bar-title__primary-action')).toHaveCount(1);
-  await expect.poll(hasBorder).toBe(true);
+    await expect(header.locator('.bar-title__primary-action')).toHaveCount(1);
+    await expect.poll(hasBorder).toBe(true);
 
-  await shell.evaluate((element: HTMLDsShellPageElement) => {
-    element.headerCapacity = 'compact';
-  });
-  await expect(header).toHaveClass(/bar-title-host--compact/);
-  await expect(header.locator('.bar-title__primary-action')).toHaveCount(1);
-  await expect.poll(hasBorder).toBe(true);
+    await shell.evaluate((element: HTMLDsShellPageElement) => {
+      element.headerCapacity = 'compact';
+    });
+    await expect(header).toHaveClass(/bar-title-host--compact/);
+    await expect(header.locator('.bar-title__primary-action')).toHaveCount(1);
+    await expect.poll(hasBorder).toBe(true);
 
-  await shell.evaluate((element: HTMLDsShellPageElement) => {
-    element.headerCapacity = 'constrained';
-  });
-  await expect(header).toHaveClass(/bar-title-host--constrained/);
-  await expect(header.locator('.bar-title__primary-action')).toHaveCount(0);
-  await expect.poll(hasBorder).toBe(false);
+    await shell.evaluate((element: HTMLDsShellPageElement) => {
+      element.headerCapacity = 'constrained';
+    });
+    await expect(header).toHaveClass(/bar-title-host--constrained/);
+    await expect(header.locator('.bar-title__primary-action')).toHaveCount(0);
+    await expect.poll(hasBorder).toBe(false);
 
-  await header.evaluate((element: HTMLDsBarTitleElement) => {
-    element.primaryAction = {
-      id: 'save-driver',
-      label: 'Save driver',
-      collapse: 'never',
-    };
-  });
-  await expect(header.locator('.bar-title__primary-action')).toHaveCount(1);
-  await expect.poll(hasBorder).toBe(true);
+    await header.evaluate((element: HTMLDsBarTitleElement) => {
+      element.primaryAction = {
+        id: 'save-driver',
+        label: 'Save driver',
+        collapse: 'never',
+      };
+    });
+    await expect(header.locator('.bar-title__primary-action')).toHaveCount(1);
+    await expect.poll(hasBorder).toBe(true);
 
-  await header.evaluate((element: HTMLDsBarTitleElement) => {
-    element.primaryAction = null;
-  });
-  await expect(header.locator('.bar-title__primary-action')).toHaveCount(0);
-  await expect.poll(hasBorder).toBe(false);
-});
+    await header.evaluate((element: HTMLDsBarTitleElement) => {
+      element.primaryAction = null;
+    });
+    await expect(header.locator('.bar-title__primary-action')).toHaveCount(0);
+    await expect.poll(hasBorder).toBe(false);
+  }
+);
 
-test('selects compact and constrained variants from supplied ShellPage capacity',
-  chromiumOnly('responsive-shell', 'Supplied capacity maps deterministically to variants without viewport measurement.'),
-  async ({
-  page,
-}) => {
-  const viewport = page.locator('#app-viewport');
-  const shell = page.locator('#shell-page');
-  const header = page.locator('#detail-header');
+test(
+  'selects compact and constrained variants from supplied ShellPage capacity',
+  chromiumOnly(
+    'responsive-shell',
+    'Supplied capacity maps deterministically to variants without viewport measurement.'
+  ),
+  async ({ page }) => {
+    const viewport = page.locator('#app-viewport');
+    const shell = page.locator('#shell-page');
+    const header = page.locator('#detail-header');
 
-  await viewport.evaluate((element: HTMLElement) => {
-    element.style.width = 'var(--dimension-panel-width-lg)';
-  });
-  await expect(header).toHaveClass(/bar-title-host--expanded/);
+    await viewport.evaluate((element: HTMLElement) => {
+      element.style.width = 'var(--dimension-panel-width-lg)';
+    });
+    await expect(header).toHaveClass(/bar-title-host--expanded/);
 
-  await shell.evaluate((element: HTMLDsShellPageElement) => {
-    element.headerCapacity = 'compact';
-  });
-  await expect(header).toHaveClass(/bar-title-host--compact/);
-  await expect(header).not.toHaveClass(/bar-title-host--constrained/);
-  await expect(header.locator('.bar-title__description')).toHaveCount(0);
-  await expect(header.locator('.bar-title__primary-action')).toHaveCount(1);
+    await shell.evaluate((element: HTMLDsShellPageElement) => {
+      element.headerCapacity = 'compact';
+    });
+    await expect(header).toHaveClass(/bar-title-host--compact/);
+    await expect(header).not.toHaveClass(/bar-title-host--constrained/);
+    await expect(header.locator('.bar-title__description')).toHaveCount(0);
+    await expect(header.locator('.bar-title__primary-action')).toHaveCount(1);
 
-  const compactGeometry = await header.evaluate(element => {
-    const host = element.getBoundingClientRect();
-    const back = element.querySelector<HTMLElement>('.bar-title__back');
-    const heading = element.querySelector<HTMLElement>('.bar-title__heading');
-    const actions = element.querySelector<HTMLElement>('.bar-title__actions');
-    const leading = element.querySelector<HTMLElement>('.bar-title__leading');
-    // Query the actual controls rather than `actions.children`: a `display:
-    // contents` `ds-tooltip` wrapper can sit between `.bar-title__actions`
-    // and the button it wraps, and contributes a degenerate (zero) rect.
-    const actionControls = actions
-      ? Array.from(actions.querySelectorAll<HTMLElement>('ds-button-filled, ds-button-unfilled'))
-      : [];
-    const headingRect = heading?.getBoundingClientRect();
-    const actionsRect = actions?.getBoundingClientRect();
-    return {
-      height: host.height,
-      backRight: back?.getBoundingClientRect().right ?? 0,
-      headingLeft: headingRect?.left ?? 0,
-      actionsRightInset: host.right - (actionsRect?.right ?? host.right),
-      headingPaddingLeft: heading ? Number.parseFloat(getComputedStyle(heading).paddingLeft) : 0,
-      actionGap:
-        actionControls.length > 1
-          ? actionControls[1].getBoundingClientRect().left -
-            actionControls[0].getBoundingClientRect().right
-          : 0,
-      // The expanded-only alignment fix pulls `.bar-title__leading` up with a
-      // negative margin; regression-guards that it never leaks into compact.
-      leadingMarginBlockStart: leading ? getComputedStyle(leading).marginBlockStart : '',
-      headingCenterY: headingRect ? headingRect.top + headingRect.height / 2 : 0,
-      actionsCenterY: actionsRect ? actionsRect.top + actionsRect.height / 2 : 0,
-    };
-  });
+    const compactGeometry = await header.evaluate(element => {
+      const host = element.getBoundingClientRect();
+      const back = element.querySelector<HTMLElement>('.bar-title__back');
+      const heading = element.querySelector<HTMLElement>('.bar-title__heading');
+      const actions = element.querySelector<HTMLElement>('.bar-title__actions');
+      const leading = element.querySelector<HTMLElement>('.bar-title__leading');
+      // Query the actual controls rather than `actions.children`: a `display:
+      // contents` `ds-tooltip` wrapper can sit between `.bar-title__actions`
+      // and the button it wraps, and contributes a degenerate (zero) rect.
+      const actionControls = actions
+        ? Array.from(actions.querySelectorAll<HTMLElement>('ds-button-filled, ds-button-unfilled'))
+        : [];
+      const headingRect = heading?.getBoundingClientRect();
+      const actionsRect = actions?.getBoundingClientRect();
+      return {
+        height: host.height,
+        backRight: back?.getBoundingClientRect().right ?? 0,
+        headingLeft: headingRect?.left ?? 0,
+        actionsRightInset: host.right - (actionsRect?.right ?? host.right),
+        headingPaddingLeft: heading ? Number.parseFloat(getComputedStyle(heading).paddingLeft) : 0,
+        actionGap:
+          actionControls.length > 1
+            ? actionControls[1].getBoundingClientRect().left -
+              actionControls[0].getBoundingClientRect().right
+            : 0,
+        // The expanded-only alignment fix pulls `.bar-title__leading` up with a
+        // negative margin; regression-guards that it never leaks into compact.
+        leadingMarginBlockStart: leading ? getComputedStyle(leading).marginBlockStart : '',
+        headingCenterY: headingRect ? headingRect.top + headingRect.height / 2 : 0,
+        actionsCenterY: actionsRect ? actionsRect.top + actionsRect.height / 2 : 0,
+      };
+    });
 
-  expect(compactGeometry.height).toBe(48);
-  expect(compactGeometry.headingLeft - compactGeometry.backRight).toBeCloseTo(4, 3);
-  expect(compactGeometry.headingPaddingLeft).toBe(8);
-  expect(compactGeometry.actionsRightInset).toBeCloseTo(8, 3);
-  expect(compactGeometry.actionGap).toBeCloseTo(8, 3);
-  expect(compactGeometry.leadingMarginBlockStart).toBe('0px');
-  expect(compactGeometry.headingCenterY).toBeCloseTo(compactGeometry.actionsCenterY, 0);
+    expect(compactGeometry.height).toBe(48);
+    expect(compactGeometry.headingLeft - compactGeometry.backRight).toBeCloseTo(4, 3);
+    expect(compactGeometry.headingPaddingLeft).toBe(8);
+    expect(compactGeometry.actionsRightInset).toBeCloseTo(8, 3);
+    expect(compactGeometry.actionGap).toBeCloseTo(8, 3);
+    expect(compactGeometry.leadingMarginBlockStart).toBe('0px');
+    expect(compactGeometry.headingCenterY).toBeCloseTo(compactGeometry.actionsCenterY, 0);
 
-  await shell.evaluate((element: HTMLDsShellPageElement) => {
-    element.headerCapacity = 'constrained';
-  });
-  await expect(header).toHaveClass(/bar-title-host--constrained/);
-  await expect(header.locator('.bar-title__primary-action')).toHaveCount(0);
+    await shell.evaluate((element: HTMLDsShellPageElement) => {
+      element.headerCapacity = 'constrained';
+    });
+    await expect(header).toHaveClass(/bar-title-host--constrained/);
+    await expect(header.locator('.bar-title__primary-action')).toHaveCount(0);
 
-  const constrainedActionsRightInset = await header.evaluate(element => {
-    const host = element.getBoundingClientRect();
-    const actions = element.querySelector<HTMLElement>('.bar-title__actions');
-    return host.right - (actions?.getBoundingClientRect().right ?? host.right);
-  });
-  expect(constrainedActionsRightInset).toBeCloseTo(8, 3);
+    const constrainedActionsRightInset = await header.evaluate(element => {
+      const host = element.getBoundingClientRect();
+      const actions = element.querySelector<HTMLElement>('.bar-title__actions');
+      return host.right - (actions?.getBoundingClientRect().right ?? host.right);
+    });
+    expect(constrainedActionsRightInset).toBeCloseTo(8, 3);
 
-  const more = header.getByRole('button', { name: 'More driver actions' });
-  await more.click();
-  await expect(page.getByRole('menuitem', { name: 'Call driver' })).toHaveCount(1);
-});
+    const more = header.getByRole('button', { name: 'More driver actions' });
+    await more.click();
+    await expect(page.getByRole('menuitem', { name: 'Call driver' })).toHaveCount(1);
+  }
+);
 
-test('aligns a compact top-level title with BarNav control text',
+test(
+  'aligns a compact top-level title with BarNav control text',
   chromiumOnly('layout-geometry', 'This is a local typography and padding alignment contract.'),
   async ({ page }) => {
-  const shell = page.locator('#shell-page');
-  const header = page.locator('#detail-header');
+    const shell = page.locator('#shell-page');
+    const header = page.locator('#detail-header');
 
-  await shell.evaluate((element: HTMLDsShellPageElement) => {
-    element.headerCapacity = 'compact';
-  });
-  await header.evaluate((element: HTMLDsBarTitleElement) => {
-    element.showBack = false;
-    element.sections = [];
-    element.primaryAction = null;
-    element.actions = [];
-    element.heading = 'Live Map';
-  });
-  await expect(header).toHaveClass(/bar-title-host--compact/);
-  await expect(header.getByRole('button', { name: /back/i })).toHaveCount(0);
-  await expect(header.locator('.bar-title__heading')).toHaveText('Live Map');
+    await shell.evaluate((element: HTMLDsShellPageElement) => {
+      element.headerCapacity = 'compact';
+    });
+    await header.evaluate((element: HTMLDsBarTitleElement) => {
+      element.showBack = false;
+      element.sections = [];
+      element.primaryAction = null;
+      element.actions = [];
+      element.heading = 'Live Map';
+    });
+    await expect(header).toHaveClass(/bar-title-host--compact/);
+    await expect(header.getByRole('button', { name: /back/i })).toHaveCount(0);
+    await expect(header.locator('.bar-title__heading')).toHaveText('Live Map');
 
-  const geometry = await header.evaluate(element => {
-    const host = element.getBoundingClientRect();
-    const heading = element.querySelector<HTMLElement>('.bar-title__heading');
-    const headingText = heading?.querySelector<HTMLElement>('.ds-text__element');
-    return {
-      textLeftInset:
-        headingText && heading ? headingText.getBoundingClientRect().left - host.left : 0,
-      headingHeight: heading?.getBoundingClientRect().height ?? 0,
-    };
-  });
+    const geometry = await header.evaluate(element => {
+      const host = element.getBoundingClientRect();
+      const heading = element.querySelector<HTMLElement>('.bar-title__heading');
+      const headingText = heading?.querySelector<HTMLElement>('.ds-text__element');
+      return {
+        textLeftInset:
+          headingText && heading ? headingText.getBoundingClientRect().left - host.left : 0,
+        headingHeight: heading?.getBoundingClientRect().height ?? 0,
+      };
+    });
 
-  expect(geometry.textLeftInset).toBe(16);
-  expect(geometry.headingHeight).toBe(32);
-});
+    expect(geometry.textLeftInset).toBe(16);
+    expect(geometry.headingHeight).toBe(32);
+  }
+);
 
-test('keeps a never-collapse primary action visible when constrained',
-  chromiumOnly('controlled-behavior', 'Explicit capacity and action priority produce deterministic rendered state.'),
+test(
+  'keeps a never-collapse primary action visible when constrained',
+  chromiumOnly(
+    'controlled-behavior',
+    'Explicit capacity and action priority produce deterministic rendered state.'
+  ),
   async ({ page }) => {
-  const shell = page.locator('#shell-page');
-  const header = page.locator('#detail-header');
+    const shell = page.locator('#shell-page');
+    const header = page.locator('#detail-header');
 
-  await header.evaluate((element: HTMLDsBarTitleElement) => {
-    element.primaryAction = {
-      id: 'save-driver',
-      label: 'Save driver',
-      type: 'submit',
-      collapse: 'never',
-    };
-  });
-  await shell.evaluate((element: HTMLDsShellPageElement) => {
-    element.headerCapacity = 'constrained';
-  });
+    await header.evaluate((element: HTMLDsBarTitleElement) => {
+      element.primaryAction = {
+        id: 'save-driver',
+        label: 'Save driver',
+        type: 'submit',
+        collapse: 'never',
+      };
+    });
+    await shell.evaluate((element: HTMLDsShellPageElement) => {
+      element.headerCapacity = 'constrained';
+    });
 
-  await expect(header).toHaveClass(/bar-title-host--constrained/);
-  await expect(header.getByRole('button', { name: 'Save driver' })).toBeVisible();
+    await expect(header).toHaveClass(/bar-title-host--constrained/);
+    await expect(header.getByRole('button', { name: 'Save driver' })).toBeVisible();
 
-  await header.getByRole('button', { name: 'More driver actions' }).click();
-  await expect(page.getByRole('menuitem', { name: 'Save driver' })).toHaveCount(0);
-});
+    await header.getByRole('button', { name: 'More driver actions' }).click();
+    await expect(page.getByRole('menuitem', { name: 'Save driver' })).toHaveCount(0);
+  }
+);
 
 test('snaps only when the expanded title and actions reach their compact position', async ({
   page,
@@ -974,48 +1018,55 @@ test('keeps an open header menu in the top layer while the sticky header compact
   expect(await menu.evaluate(element => element.matches(':popover-open'))).toBe(true);
 });
 
-test('honors explicit ShellPage presentation overrides',
-  chromiumOnly('controlled-behavior', 'Explicit presentation props map deterministically to rendered variants.'),
+test(
+  'honors explicit ShellPage presentation overrides',
+  chromiumOnly(
+    'controlled-behavior',
+    'Explicit presentation props map deterministically to rendered variants.'
+  ),
   async ({ page }) => {
-  const viewport = page.locator('#app-viewport');
-  const shell = page.locator('#shell-page');
-  const header = page.locator('#detail-header');
+    const viewport = page.locator('#app-viewport');
+    const shell = page.locator('#shell-page');
+    const header = page.locator('#detail-header');
 
-  await viewport.evaluate((element: HTMLElement) => {
-    element.style.width = 'var(--dimension-panel-width-lg)';
-  });
-  await shell.evaluate((element: HTMLDsShellPageElement) => {
-    element.headerPresentation = 'expanded';
-  });
-  await expect(header).toHaveClass(/bar-title-host--expanded/);
-  await expect(header.locator('.bar-title__description')).toHaveCount(1);
-  await expect(header.locator('.bar-title__primary-action')).toHaveCount(1);
+    await viewport.evaluate((element: HTMLElement) => {
+      element.style.width = 'var(--dimension-panel-width-lg)';
+    });
+    await shell.evaluate((element: HTMLDsShellPageElement) => {
+      element.headerPresentation = 'expanded';
+    });
+    await expect(header).toHaveClass(/bar-title-host--expanded/);
+    await expect(header.locator('.bar-title__description')).toHaveCount(1);
+    await expect(header.locator('.bar-title__primary-action')).toHaveCount(1);
 
-  await shell.evaluate((element: HTMLDsShellPageElement) => {
-    element.headerPresentation = 'constrained';
-  });
-  await expect(header).toHaveClass(/bar-title-host--constrained/);
-  await expect(header.locator('.bar-title__primary-action')).toHaveCount(0);
-});
+    await shell.evaluate((element: HTMLDsShellPageElement) => {
+      element.headerPresentation = 'constrained';
+    });
+    await expect(header).toHaveClass(/bar-title-host--constrained/);
+    await expect(header.locator('.bar-title__primary-action')).toHaveCount(0);
+  }
+);
 
-test('supports full-bleed content without changing header inset',
+test(
+  'supports full-bleed content without changing header inset',
   chromiumOnly('layout-geometry', 'Full-bleed and header insets are static token-backed geometry.'),
   async ({ page }) => {
-  const shell = page.locator('#shell-page');
-  const headerPaddingBefore = await page
-    .locator('#detail-header .bar-title__inner')
-    .evaluate(element => getComputedStyle(element).paddingInlineStart);
+    const shell = page.locator('#shell-page');
+    const headerPaddingBefore = await page
+      .locator('#detail-header .bar-title__inner')
+      .evaluate(element => getComputedStyle(element).paddingInlineStart);
 
-  await shell.evaluate((element: HTMLDsShellPageElement) => {
-    element.contentInset = 'none';
-  });
+    await shell.evaluate((element: HTMLDsShellPageElement) => {
+      element.contentInset = 'none';
+    });
 
-  await expect(shell.locator('.shell-page__content')).toHaveCSS('padding', '0px');
-  await expect(page.locator('#detail-header .bar-title__inner')).toHaveCSS(
-    'padding-left',
-    headerPaddingBefore
-  );
-});
+    await expect(shell.locator('.shell-page__content')).toHaveCSS('padding', '0px');
+    await expect(page.locator('#detail-header .bar-title__inner')).toHaveCSS(
+      'padding-left',
+      headerPaddingBefore
+    );
+  }
+);
 
 test('truncates a long heading before it can crowd fixed controls', async ({ page }) => {
   const viewport = page.locator('#app-viewport');
@@ -1054,22 +1105,32 @@ test('truncates a long heading before it can crowd fixed controls', async ({ pag
   expect(geometry.actionsRight).toBeLessThanOrEqual(geometry.hostRight);
 });
 
-test('omits a redundant section menu when only one section exists',
-  chromiumOnly('controlled-behavior', 'Single-section omission is deterministic composition behavior.'),
+test(
+  'omits a redundant section menu when only one section exists',
+  chromiumOnly(
+    'controlled-behavior',
+    'Single-section omission is deterministic composition behavior.'
+  ),
   async ({ page }) => {
-  const header = page.locator('#detail-header');
-  await header.evaluate((element: HTMLDsBarTitleElement) => {
-    element.sections = [{ id: 'general', label: 'General' }];
-    element.value = 'general';
-  });
+    const header = page.locator('#detail-header');
+    await header.evaluate((element: HTMLDsBarTitleElement) => {
+      element.sections = [{ id: 'general', label: 'General' }];
+      element.value = 'general';
+    });
 
-  await expect(header.locator('.bar-title__section-trigger')).toHaveCount(0);
-  await expect(header.locator('.bar-title__section-menu')).toHaveCount(0);
-});
+    await expect(header.locator('.bar-title__section-trigger')).toHaveCount(0);
+    await expect(header.locator('.bar-title__section-menu')).toHaveCount(0);
+  }
+);
 
-test('has no automatically detectable accessibility violations',
-  chromiumOnly('accessibility', 'Storybook already runs documented states in Chromium; this fixture retains one integrated Axe check.'),
+test(
+  'has no automatically detectable accessibility violations',
+  chromiumOnly(
+    'accessibility',
+    'Storybook already runs documented states in Chromium; this fixture retains one integrated Axe check.'
+  ),
   async ({ page }) => {
-  const results = await new AxeBuilder({ page }).analyze();
-  expect(results.violations).toEqual([]);
-});
+    const results = await new AxeBuilder({ page }).analyze();
+    expect(results.violations).toEqual([]);
+  }
+);

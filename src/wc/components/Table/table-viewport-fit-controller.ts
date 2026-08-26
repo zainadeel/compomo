@@ -28,7 +28,7 @@ export interface TableViewportFitControllerOptions {
 
 /** Resolve the reserved compact-state height and the height currently visible. */
 export function resolveTableViewportFitMetrics(
-  input: TableViewportFitMetricInput,
+  input: TableViewportFitMetricInput
 ): TableViewportFitMetrics {
   const insetBlockStart = Math.max(0, input.insetBlockStart);
   const insetBlockEnd = Math.max(0, input.insetBlockEnd);
@@ -36,12 +36,12 @@ export function resolveTableViewportFitMetrics(
   const settledBlockStart = input.scrollportBlockStart + insetBlockStart;
   const reservedBlockSize = Math.max(
     0,
-    input.scrollportBlockSize - insetBlockStart - insetBlockEnd,
+    input.scrollportBlockSize - insetBlockStart - insetBlockEnd
   );
   const currentBlockStart = Math.max(input.hostBlockStart, settledBlockStart);
   const currentBlockSize = Math.min(
     reservedBlockSize,
-    Math.max(0, scrollportBlockEnd - insetBlockEnd - currentBlockStart),
+    Math.max(0, scrollportBlockEnd - insetBlockEnd - currentBlockStart)
   );
 
   return {
@@ -91,9 +91,8 @@ export class TableViewportFitController {
     const { host, surface } = this.options.elements();
     if (!host) return;
     const elementsChanged = host !== this.connectedHost || surface !== this.connectedSurface;
-    const nextScrollRoot = elementsChanged || !this.scrollRoot
-      ? this.findScrollRoot(host)
-      : this.scrollRoot;
+    const nextScrollRoot =
+      elementsChanged || !this.scrollRoot ? this.findScrollRoot(host) : this.scrollRoot;
     const rootChanged = nextScrollRoot !== this.scrollRoot;
     if (nextScrollRoot !== this.scrollRoot) {
       this.disconnectRuntime();
@@ -108,8 +107,8 @@ export class TableViewportFitController {
     this.connectedHost = host;
     this.connectedSurface = surface;
     const insets = this.options.insets();
-    const insetsChanged = insets.blockStart !== this.insetBlockStart ||
-      insets.blockEnd !== this.insetBlockEnd;
+    const insetsChanged =
+      insets.blockStart !== this.insetBlockStart || insets.blockEnd !== this.insetBlockEnd;
     this.insetBlockStart = insets.blockStart;
     this.insetBlockEnd = insets.blockEnd;
     if (forceGeometry || elementsChanged || rootChanged || insetsChanged) this.sync();
@@ -129,8 +128,7 @@ export class TableViewportFitController {
     const previous = window.scrollY;
     const max = Math.max(
       0,
-      (scrollingElement?.scrollHeight ?? document.documentElement.scrollHeight) -
-        window.innerHeight,
+      (scrollingElement?.scrollHeight ?? document.documentElement.scrollHeight) - window.innerHeight
     );
     const next = Math.min(max, Math.max(0, previous + delta));
     if (next !== previous) window.scrollTo({ top: next, behavior: 'auto' });
@@ -165,9 +163,10 @@ export class TableViewportFitController {
     if (!host) return;
 
     const hostRect = host.getBoundingClientRect();
-    const scrollportRect = this.scrollRoot instanceof HTMLElement
-      ? this.scrollRoot.getBoundingClientRect()
-      : { top: 0, height: window.innerHeight };
+    const scrollportRect =
+      this.scrollRoot instanceof HTMLElement
+        ? this.scrollRoot.getBoundingClientRect()
+        : { top: 0, height: window.innerHeight };
     const insets = this.options.insets();
     const next = resolveTableViewportFitMetrics({
       scrollportBlockStart: scrollportRect.top,
@@ -180,13 +179,13 @@ export class TableViewportFitController {
     this.setProperty(
       host,
       '--_table-viewport-fit-reserved-block-size',
-      `${next.reservedBlockSize}px`,
+      `${next.reservedBlockSize}px`
     );
     if (surface) {
       this.setProperty(
         surface,
         '--_table-viewport-fit-current-block-size',
-        `${next.currentBlockSize}px`,
+        `${next.currentBlockSize}px`
       );
     }
     if (

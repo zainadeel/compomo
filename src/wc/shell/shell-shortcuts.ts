@@ -18,7 +18,7 @@ const TOOL_SHORTCUT_KEYS: Record<string, PanelToolsToolId> = {
 
 /** True when no modifier keys are held — avoids browser/app chords like ⌘N. */
 export function isBareShellShortcutKey(
-  e: Pick<KeyboardEvent, 'metaKey' | 'ctrlKey' | 'altKey' | 'shiftKey'>,
+  e: Pick<KeyboardEvent, 'metaKey' | 'ctrlKey' | 'altKey' | 'shiftKey'>
 ): boolean {
   return !e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey;
 }
@@ -31,7 +31,7 @@ export function isEditableShortcutTarget(target: EventTarget | null): boolean {
   const el = target as Element & { isContentEditable?: boolean };
 
   const editable = el.closest(
-    'input, textarea, select, [contenteditable=""], [contenteditable="true"], [contenteditable="plaintext-only"]',
+    'input, textarea, select, [contenteditable=""], [contenteditable="true"], [contenteditable="plaintext-only"]'
   );
   if (editable) return true;
 
@@ -49,7 +49,7 @@ function normalizedShortcutKey(e: Pick<KeyboardEvent, 'key' | 'code'>): string {
 
 /** Resolve a shell chrome shortcut, or `null` when the key is not handled. */
 export function resolveShellShortcut(
-  e: Pick<KeyboardEvent, 'key' | 'code' | 'metaKey' | 'ctrlKey' | 'altKey' | 'shiftKey'>,
+  e: Pick<KeyboardEvent, 'key' | 'code' | 'metaKey' | 'ctrlKey' | 'altKey' | 'shiftKey'>
 ): ShellShortcutAction | null {
   if (!isBareShellShortcutKey(e)) return null;
 

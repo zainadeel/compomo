@@ -33,25 +33,46 @@ export class AgentSourceList {
         >
           <summary>
             <ds-icon name="ChevronRight" size="xs" color="inherit" />
-            <ds-text variant="text-body-small" emphasis>{this.heading} · {this.items.length}</ds-text>
+            <ds-text variant="text-body-small" emphasis>
+              {this.heading} · {this.items.length}
+            </ds-text>
           </summary>
           <ol>
             {this.items.map(source => {
               const href = resolveSafeUrl(source.url);
               const hostname = href ? this.hostname(href) : '';
-              return <li>
-                {href
-                  ? <a
+              return (
+                <li>
+                  {href ? (
+                    <a
                       class="ds-text-decoration"
                       href={href}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${source.title} (${hostname}, opens in a new tab)`}
-                    ><ds-text variant="text-body-small" emphasis>{source.title}</ds-text><ds-icon name="ExternalLink" size="xs" color="inherit" /></a>
-                  : <ds-text variant="text-body-small" emphasis>{source.title}</ds-text>}
-                {hostname ? <ds-text variant="text-caption" color="secondary">{hostname}</ds-text> : null}
-                {source.description ? <ds-text variant="text-body-small" color="secondary">{source.description}</ds-text> : null}
-              </li>;
+                    >
+                      <ds-text variant="text-body-small" emphasis>
+                        {source.title}
+                      </ds-text>
+                      <ds-icon name="ExternalLink" size="xs" color="inherit" />
+                    </a>
+                  ) : (
+                    <ds-text variant="text-body-small" emphasis>
+                      {source.title}
+                    </ds-text>
+                  )}
+                  {hostname ? (
+                    <ds-text variant="text-caption" color="secondary">
+                      {hostname}
+                    </ds-text>
+                  ) : null}
+                  {source.description ? (
+                    <ds-text variant="text-body-small" color="secondary">
+                      {source.description}
+                    </ds-text>
+                  ) : null}
+                </li>
+              );
             })}
           </ol>
         </details>

@@ -70,10 +70,7 @@ export const Hidden: Story = {
     },
   },
   render: args => html`
-    <ds-bar-action
-      .count=${args['count'] as number}
-      label=${args['label']}
-    ></ds-bar-action>
+    <ds-bar-action .count=${args['count'] as number} label=${args['label']}></ds-bar-action>
   `,
 };
 

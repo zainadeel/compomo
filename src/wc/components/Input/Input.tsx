@@ -1,4 +1,16 @@
-import { AttachInternals, Component, Prop, State, Event, EventEmitter, Element, Method, Watch, h, Host } from '@stencil/core';
+import {
+  AttachInternals,
+  Component,
+  Prop,
+  State,
+  Event,
+  EventEmitter,
+  Element,
+  Method,
+  Watch,
+  h,
+  Host,
+} from '@stencil/core';
 import {
   controlWidthClass,
   CONTROL_TEXT_VARIANT,
@@ -231,10 +243,9 @@ export class Input {
     const iconSize = ICON_SIZE[this.size];
     const numeric = this.type === 'number';
 
-    const describedBy = [
-      this.ariaDescribedby,
-      showError ? this.errorId : undefined,
-    ].filter(Boolean).join(' ') || undefined;
+    const describedBy =
+      [this.ariaDescribedby, showError ? this.errorId : undefined].filter(Boolean).join(' ') ||
+      undefined;
 
     return (
       <Host
@@ -269,7 +280,10 @@ export class Input {
         >
           {numeric && this.textAlign === 'end' && this.renderNumericStepper(inactive)}
           {this.icon && (
-            <span class="input-control__prefix ds-control-icon-box ds-interaction-fill__content" aria-hidden="true">
+            <span
+              class="input-control__prefix ds-control-icon-box ds-interaction-fill__content"
+              aria-hidden="true"
+            >
               <ds-icon name={this.icon} size={iconSize} color="inherit" />
             </span>
           )}
@@ -300,7 +314,13 @@ export class Input {
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}
           />
-          <span class={{ 'input-control__suffix': true, 'ds-control-icon-box': true, 'input-control__suffix--empty': !this.hasSuffix }}>
+          <span
+            class={{
+              'input-control__suffix': true,
+              'ds-control-icon-box': true,
+              'input-control__suffix--empty': !this.hasSuffix,
+            }}
+          >
             <slot name="suffix" />
           </span>
           {showClear && (

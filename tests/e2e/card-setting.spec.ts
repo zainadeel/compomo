@@ -25,9 +25,7 @@ test('owns settings shell chrome without composing ds-card', async ({ page }) =>
       width: element.getBoundingClientRect().width,
       expectedWidth: Number.parseFloat(style.getPropertyValue('--dimension-card-width-sm')),
       minHeight: Number.parseFloat(style.minHeight),
-      expectedMinHeight: Number.parseFloat(
-        style.getPropertyValue('--dimension-card-height-sm')
-      ),
+      expectedMinHeight: Number.parseFloat(style.getPropertyValue('--dimension-card-height-sm')),
       borderRadius: style.borderRadius,
       expectedBorderRadius,
       boxShadow: style.boxShadow,

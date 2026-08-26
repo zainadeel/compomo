@@ -8,8 +8,6 @@ import { config as packageConfig } from './stencil.config';
 export const config: Config = {
   ...packageConfig,
   outputTargets: packageConfig.outputTargets?.filter(
-    target =>
-      target.type === 'docs-json' ||
-      target.type === 'dist-custom-elements'
+    target => target.type === 'docs-json' || target.type === 'dist-custom-elements'
   ),
 };

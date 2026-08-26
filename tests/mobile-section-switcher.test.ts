@@ -35,4 +35,3 @@ describe('resolveMobileSectionPosition', () => {
     assert.equal(position.hasNext, false);
   });
 });
-

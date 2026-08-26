@@ -27,4 +27,3 @@ export const Foundation: Story = {
     ></ds-mobile-section-switcher>
   `,
 };
-

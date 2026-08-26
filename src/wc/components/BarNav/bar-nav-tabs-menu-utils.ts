@@ -54,7 +54,7 @@ export function tabsOverflowContainer(
   tabListScrollWidth: number,
   containerClientWidth: number,
   collapsed: boolean,
-  hysteresis = 2,
+  hysteresis = 2
 ): boolean {
   const diff = tabListScrollWidth - containerClientWidth;
   if (collapsed) {
@@ -68,7 +68,7 @@ export function visibleTabCountForWidth(
   availableWidth: number,
   overflowTriggerWidth: number,
   itemGap: number,
-  listExtraWidth: number,
+  listExtraWidth: number
 ): number {
   if (itemWidths.length === 0 || availableWidth <= 0) return 0;
 
@@ -107,7 +107,7 @@ function widthForItemCount(
   itemWidths: number[],
   count: number,
   itemGap: number,
-  listExtraWidth: number,
+  listExtraWidth: number
 ): number {
   if (count <= 0) return 0;
   const itemsWidth = itemWidths.slice(0, count).reduce((sum, width) => sum + width, 0);

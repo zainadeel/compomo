@@ -69,31 +69,30 @@ export class Text {
       'ds-text--truncate-3': truncationLines === 3 && this.wrap !== 'nowrap',
       'ds-text--truncate-4': truncationLines === 4 && this.wrap !== 'nowrap',
       'ds-text--truncate-5': truncationLines === 5 && this.wrap !== 'nowrap',
-      'ds-text--color-primary':   this.color === 'primary',
+      'ds-text--color-primary': this.color === 'primary',
       'ds-text--color-secondary': this.color === 'secondary',
-      'ds-text--color-tertiary':  this.color === 'tertiary',
+      'ds-text--color-tertiary': this.color === 'tertiary',
       'ds-text--color-quaternary': this.color === 'quaternary',
-      'ds-text--color-brand':     this.color === 'brand',
-      'ds-text--color-negative':  this.color === 'negative',
-      'ds-text--color-positive':  this.color === 'positive',
-      'ds-text--color-warning':   this.color === 'warning',
-      'ds-text--color-caution':   this.color === 'caution',
-      'ds-text--color-ai':        this.color === 'ai',
+      'ds-text--color-brand': this.color === 'brand',
+      'ds-text--color-negative': this.color === 'negative',
+      'ds-text--color-positive': this.color === 'positive',
+      'ds-text--color-warning': this.color === 'warning',
+      'ds-text--color-caution': this.color === 'caution',
+      'ds-text--color-ai': this.color === 'ai',
       'ds-text--color-on-strong': this.color === 'on-strong',
-      'ds-text--color-on-bold':   this.color === 'on-bold',
-      'ds-text--color-inherit':   this.color === 'inherit',
-      'ds-text--decoration-underline':        this.decoration === 'underline',
+      'ds-text--color-on-bold': this.color === 'on-bold',
+      'ds-text--color-inherit': this.color === 'inherit',
+      'ds-text--decoration-underline': this.decoration === 'underline',
       'ds-text--decoration-dotted-underline': this.decoration === 'dotted-underline',
       'ds-text--italic': this.italic,
-      'ds-text--align-left':   this.align === 'left',
+      'ds-text--align-left': this.align === 'left',
       'ds-text--align-center': this.align === 'center',
-      'ds-text--align-right':  this.align === 'right',
+      'ds-text--align-right': this.align === 'right',
       'ds-text--font-feature-tabular-nums': this.fontFeature === 'tabular-nums',
     };
 
-    const style = this.color && isCustomColor(this.color)
-      ? { color: this.color as string }
-      : undefined;
+    const style =
+      this.color && isCustomColor(this.color) ? { color: this.color as string } : undefined;
 
     const extraProps: Record<string, string> = {};
     if (this.as === 'label' && this.for) extraProps['for'] = this.for;

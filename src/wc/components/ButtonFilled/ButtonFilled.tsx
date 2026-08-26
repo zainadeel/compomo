@@ -4,12 +4,7 @@ import type { ChoiceBackground } from '../../utils/choice-list';
 import { beginElevatedControlPress } from '../../utils/control-press';
 import { renderButtonContent } from '../../utils/button-render';
 import type { ControlInsetDepth } from '../../utils/control-text';
-import type {
-  ButtonPopup,
-  ButtonSize,
-  ButtonVariant,
-  ButtonWidth,
-} from '../../utils/button-types';
+import type { ButtonPopup, ButtonSize, ButtonVariant, ButtonWidth } from '../../utils/button-types';
 
 export type ButtonFilledIntent =
   | 'neutral'
@@ -227,10 +222,7 @@ export class ButtonFilled {
           aria-expanded={this.expanded === undefined ? undefined : String(this.expanded)}
           aria-haspopup={this.resolvedHaspopup}
           onPointerDown={event =>
-            beginElevatedControlPress(
-              event,
-              this.pressScale && !this.isInactive && !this.isLoading,
-            )
+            beginElevatedControlPress(event, this.pressScale && !this.isInactive && !this.isLoading)
           }
           onClick={this.handleClick}
         >

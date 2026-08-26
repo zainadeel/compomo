@@ -56,7 +56,7 @@ function isUsable(value: number | null | undefined): value is number {
  */
 export function computeMetricChange(
   current: number | null | undefined,
-  previous: number | null | undefined,
+  previous: number | null | undefined
 ): MetricChange {
   if (!isUsable(current) || !isUsable(previous)) return NO_CHANGE;
 
@@ -80,7 +80,7 @@ export function computeMetricChange(
 export function resolveMetricTrend(
   current: number | null | undefined,
   previous: number | null | undefined,
-  options: ResolveMetricTrendOptions = {},
+  options: ResolveMetricTrendOptions = {}
 ): MetricTrend | null {
   const { inverted = false, neutral = false, display = 'absolute', locale } = options;
   const change = computeMetricChange(current, previous);
@@ -88,15 +88,14 @@ export function resolveMetricTrend(
 
   // A rise reads positive by default and negative when lower is better.
   const rose = change.direction === 'up';
-  const tone: MetricTrendTone = neutral
-    ? 'neutral'
-    : rose !== inverted
-      ? 'positive'
-      : 'negative';
+  const tone: MetricTrendTone = neutral ? 'neutral' : rose !== inverted ? 'positive' : 'negative';
 
-  const value = display === 'percentage'
-    ? new Intl.NumberFormat(locale, { style: 'percent', maximumFractionDigits: 0 }).format(change.ratio)
-    : formatCompactNumber(change.absolute, locale);
+  const value =
+    display === 'percentage'
+      ? new Intl.NumberFormat(locale, { style: 'percent', maximumFractionDigits: 0 }).format(
+          change.ratio
+        )
+      : formatCompactNumber(change.absolute, locale);
 
   return { direction: change.direction, value, tone };
 }

@@ -8,23 +8,54 @@ export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
 
 export type IconColorToken =
   // Hierarchy
-  | 'primary' | 'secondary' | 'tertiary' | 'quaternary'
+  | 'primary'
+  | 'secondary'
+  | 'tertiary'
+  | 'quaternary'
   // Intent — bold contrast (default)
-  | 'brand' | 'negative' | 'positive' | 'warning' | 'caution' | 'ai' | 'guide' | 'neutral'
+  | 'brand'
+  | 'negative'
+  | 'positive'
+  | 'warning'
+  | 'caution'
+  | 'ai'
+  | 'guide'
+  | 'neutral'
   // Intent — faint
-  | 'faint-brand' | 'faint-negative' | 'faint-positive' | 'faint-warning'
-  | 'faint-caution' | 'faint-ai' | 'faint-neutral'
+  | 'faint-brand'
+  | 'faint-negative'
+  | 'faint-positive'
+  | 'faint-warning'
+  | 'faint-caution'
+  | 'faint-ai'
+  | 'faint-neutral'
   // Intent — medium
-  | 'medium-brand' | 'medium-negative' | 'medium-positive' | 'medium-warning'
-  | 'medium-caution' | 'medium-ai' | 'medium-neutral'
+  | 'medium-brand'
+  | 'medium-negative'
+  | 'medium-positive'
+  | 'medium-warning'
+  | 'medium-caution'
+  | 'medium-ai'
+  | 'medium-neutral'
   // Intent — bold (explicit)
-  | 'bold-brand' | 'bold-negative' | 'bold-positive' | 'bold-warning'
-  | 'bold-caution' | 'bold-ai' | 'bold-neutral'
+  | 'bold-brand'
+  | 'bold-negative'
+  | 'bold-positive'
+  | 'bold-warning'
+  | 'bold-caution'
+  | 'bold-ai'
+  | 'bold-neutral'
   // Intent — strong
-  | 'strong-brand' | 'strong-negative' | 'strong-positive' | 'strong-warning'
-  | 'strong-caution' | 'strong-ai' | 'strong-neutral'
+  | 'strong-brand'
+  | 'strong-negative'
+  | 'strong-positive'
+  | 'strong-warning'
+  | 'strong-caution'
+  | 'strong-ai'
+  | 'strong-neutral'
   // Contextual
-  | 'on-strong' | 'on-bold'
+  | 'on-strong'
+  | 'on-bold'
   // Pass-through
   | 'inherit';
 

@@ -4,10 +4,25 @@ import '../../../../dist/components/ds-icon.js';
 
 const SIZES = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'] as const;
 const COLORS = [
-  'primary', 'secondary', 'tertiary', 'quaternary',
-  'brand', 'negative', 'positive', 'warning', 'caution', 'ai', 'guide', 'neutral',
-  'faint-brand', 'medium-brand', 'bold-brand', 'strong-brand',
-  'on-strong', 'on-bold', 'inherit',
+  'primary',
+  'secondary',
+  'tertiary',
+  'quaternary',
+  'brand',
+  'negative',
+  'positive',
+  'warning',
+  'caution',
+  'ai',
+  'guide',
+  'neutral',
+  'faint-brand',
+  'medium-brand',
+  'bold-brand',
+  'strong-brand',
+  'on-strong',
+  'on-bold',
+  'inherit',
 ] as const;
 const FLAGS = [
   { name: 'FlagUnitedStates', label: 'United States' },
@@ -18,12 +33,16 @@ const FLAGS = [
   { name: 'FlagGermany', label: 'Germany' },
 ] as const;
 
-const PAGE = 'display: flex; flex-direction: column; gap: var(--dimension-space-300); color: var(--color-foreground-primary);';
-const GRID = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: var(--dimension-space-150);';
+const PAGE =
+  'display: flex; flex-direction: column; gap: var(--dimension-space-300); color: var(--color-foreground-primary);';
+const GRID =
+  'display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: var(--dimension-space-150);';
 const GROUP = 'display: flex; flex-direction: column; gap: var(--dimension-space-100);';
 const ROW = 'display: flex; align-items: center; gap: var(--dimension-space-150); flex-wrap: wrap;';
-const CARD = 'display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--dimension-space-075); min-height: calc(var(--dimension-size-base) * 10); padding: var(--dimension-space-150); border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary); border-radius: var(--dimension-radius-100); background: var(--color-background-primary);';
-const LABEL = 'font-size: var(--typography-fontsize-xs); line-height: var(--typography-lineheight-xs); color: var(--color-foreground-secondary); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;';
+const CARD =
+  'display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--dimension-space-075); min-height: calc(var(--dimension-size-base) * 10); padding: var(--dimension-space-150); border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary); border-radius: var(--dimension-radius-100); background: var(--color-background-primary);';
+const LABEL =
+  'font-size: var(--typography-fontsize-xs); line-height: var(--typography-lineheight-xs); color: var(--color-foreground-secondary); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;';
 
 const meta: Meta = {
   title: 'Primitives/Icon',
@@ -62,11 +81,13 @@ export const Playground: Story = {
 export const Sizes: Story = {
   render: () => html`
     <div style="${GRID}">
-      ${SIZES.map(size => html`
-        <div style="${CARD}">
-          <ds-icon name="Bell" size=${size} color="primary"></ds-icon>
-          <span style="${LABEL}">${size}</span>
-        </div>`)}
+      ${SIZES.map(
+        size =>
+          html` <div style="${CARD}">
+            <ds-icon name="Bell" size=${size} color="primary"></ds-icon>
+            <span style="${LABEL}">${size}</span>
+          </div>`
+      )}
     </div>
   `,
 };
@@ -74,11 +95,13 @@ export const Sizes: Story = {
 export const Colors: Story = {
   render: () => html`
     <div style="${GRID}">
-      ${COLORS.filter(color => !['inherit', 'tertiary', 'quaternary'].includes(color)).map(color => html`
-        <div style="${CARD}">
-          <ds-icon name="Bell" size="lg" color=${color}></ds-icon>
-          <span style="${LABEL}">${color}</span>
-        </div>`)}
+      ${COLORS.filter(color => !['inherit', 'tertiary', 'quaternary'].includes(color)).map(
+        color =>
+          html` <div style="${CARD}">
+            <ds-icon name="Bell" size="lg" color=${color}></ds-icon>
+            <span style="${LABEL}">${color}</span>
+          </div>`
+      )}
     </div>
   `,
 };
@@ -86,16 +109,20 @@ export const Colors: Story = {
 export const InactiveTertiary: Story = {
   name: 'Inactive foreground hierarchy',
   render: () => html`
-    <div style="display: flex; flex-direction: column; align-items: flex-start; gap: var(--dimension-space-100)">
-      ${(['tertiary', 'quaternary'] as const).map(color => html`
-        <button
-          disabled
-          style="display: inline-flex; align-items: center; gap: var(--dimension-space-100); padding: var(--dimension-space-100); color: inherit"
-        >
-          <ds-icon name="Bell" size="md" color=${color}></ds-icon>
-          <span>${color} inactive</span>
-        </button>
-      `)}
+    <div
+      style="display: flex; flex-direction: column; align-items: flex-start; gap: var(--dimension-space-100)"
+    >
+      ${(['tertiary', 'quaternary'] as const).map(
+        color => html`
+          <button
+            disabled
+            style="display: inline-flex; align-items: center; gap: var(--dimension-space-100); padding: var(--dimension-space-100); color: inherit"
+          >
+            <ds-icon name="Bell" size="md" color=${color}></ds-icon>
+            <span>${color} inactive</span>
+          </button>
+        `
+      )}
     </div>
   `,
 };
@@ -122,11 +149,13 @@ export const Accessibility: Story = {
 export const Flags: Story = {
   render: () => html`
     <div style="${GRID}">
-      ${FLAGS.map(flag => html`
-        <div style="${CARD}">
-          <ds-icon name=${flag.name} size="xl" label=${flag.label}></ds-icon>
-          <span style="${LABEL}">${flag.name}</span>
-        </div>`)}
+      ${FLAGS.map(
+        flag =>
+          html` <div style="${CARD}">
+            <ds-icon name=${flag.name} size="xl" label=${flag.label}></ds-icon>
+            <span style="${LABEL}">${flag.name}</span>
+          </div>`
+      )}
     </div>
   `,
 };

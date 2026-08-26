@@ -39,10 +39,7 @@ test('builds Data and Direction menu sections from the controlled sort', () => {
     sections.map(section => section.header),
     ['Data', 'Direction']
   );
-  assert.equal(
-    sections[0]?.items.find(item => item.label === 'Severity')?.isSelected,
-    true
-  );
+  assert.equal(sections[0]?.items.find(item => item.label === 'Severity')?.isSelected, true);
   assert.equal(
     sections[1]?.items.find(item => item.value === TABLE_SORT_DIRECTION_DESC)?.isSelected,
     true
@@ -56,18 +53,15 @@ test('changes field while keeping direction and does not toggle the active field
   const behavior = sections[0]?.items.find(item => item.label === 'Behavior');
   assert.ok(status);
   assert.ok(behavior);
-  assert.deepEqual(
-    nextTableSortStateFromMenuItem(columns, current, status),
-    { columnId: 'status', direction: 'desc' }
-  );
-  assert.deepEqual(
-    nextTableSortStateFromMenuItem(columns, current, behavior),
-    current
-  );
-  assert.deepEqual(
-    nextTableSortStateFromMenuItem(columns, null, status),
-    { columnId: 'status', direction: 'asc' }
-  );
+  assert.deepEqual(nextTableSortStateFromMenuItem(columns, current, status), {
+    columnId: 'status',
+    direction: 'desc',
+  });
+  assert.deepEqual(nextTableSortStateFromMenuItem(columns, current, behavior), current);
+  assert.deepEqual(nextTableSortStateFromMenuItem(columns, null, status), {
+    columnId: 'status',
+    direction: 'asc',
+  });
 });
 
 test('applies direction to the current field or the first sortable field', () => {
@@ -87,10 +81,14 @@ test('applies direction to the current field or the first sortable field', () =>
     { columnId: 'behavior', direction: 'asc' }
   );
   assert.deepEqual(
-    nextTableSortStateFromMenuItem(columns, { columnId: 'removed', direction: 'asc' }, {
-      label: 'Descending',
-      value: TABLE_SORT_DIRECTION_DESC,
-    }),
+    nextTableSortStateFromMenuItem(
+      columns,
+      { columnId: 'removed', direction: 'asc' },
+      {
+        label: 'Descending',
+        value: TABLE_SORT_DIRECTION_DESC,
+      }
+    ),
     { columnId: 'behavior', direction: 'desc' }
   );
 });
@@ -110,11 +108,17 @@ test('keeps application column ids separate from direction command values', () =
 
 test('compares sort states by column and direction', () => {
   assert.equal(
-    tableSortStatesEqual({ columnId: 'status', direction: 'asc' }, { columnId: 'status', direction: 'asc' }),
+    tableSortStatesEqual(
+      { columnId: 'status', direction: 'asc' },
+      { columnId: 'status', direction: 'asc' }
+    ),
     true
   );
   assert.equal(
-    tableSortStatesEqual({ columnId: 'status', direction: 'asc' }, { columnId: 'status', direction: 'desc' }),
+    tableSortStatesEqual(
+      { columnId: 'status', direction: 'asc' },
+      { columnId: 'status', direction: 'desc' }
+    ),
     false
   );
   assert.equal(tableSortStatesEqual(null, null), true);

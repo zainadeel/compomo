@@ -1,9 +1,16 @@
 import { Component, Event, EventEmitter, Prop, h, Host } from '@stencil/core';
 import { CONTROL_TEXT_VARIANT, type ControlInsetDepth } from '../../utils';
 
-export type TagIntent   = 'neutral' | 'brand' | 'ai' | 'negative' | 'warning' | 'caution' | 'positive';
+export type TagIntent =
+  | 'neutral'
+  | 'brand'
+  | 'ai'
+  | 'negative'
+  | 'warning'
+  | 'caution'
+  | 'positive';
 export type TagContrast = 'strong' | 'bold' | 'medium' | 'faint';
-export type TagSize     = 'md' | 'sm' | 'xs';
+export type TagSize = 'md' | 'sm' | 'xs';
 
 /**
  * `ds-icon` size prop matching control-density icon metrics
@@ -55,11 +62,12 @@ export class Tag {
     const iconSize = ICON_SIZE[this.size];
     const doubleInset = this.isInset && this.insetDepth === 'double' && this.size !== 'xs';
 
-    const maxWidthStyle = this.maxWidth != null
-      ? { maxWidth: typeof this.maxWidth === 'number' ? `${this.maxWidth}px` : this.maxWidth }
-      : undefined;
+    const maxWidthStyle =
+      this.maxWidth != null
+        ? { maxWidth: typeof this.maxWidth === 'number' ? `${this.maxWidth}px` : this.maxWidth }
+        : undefined;
     const hostClass = {
-      'tag': true,
+      tag: true,
       [`tag--intent-${this.intent}`]: true,
       [`tag--contrast-${this.contrast}`]: true,
       [`tag--size-${this.size}`]: true,
@@ -87,7 +95,11 @@ export class Tag {
     ];
 
     if (!this.interactive) {
-      return <Host class={hostClass} style={maxWidthStyle}>{content}</Host>;
+      return (
+        <Host class={hostClass} style={maxWidthStyle}>
+          {content}
+        </Host>
+      );
     }
 
     return (
@@ -95,7 +107,7 @@ export class Tag {
         <button
           type="button"
           class={{
-            'tag__button': true,
+            tag__button: true,
             'tag__button--expanded': this.expanded,
             'ds-interaction-fill': true,
             'ds-focus-ring-inset': true,

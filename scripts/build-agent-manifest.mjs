@@ -11,21 +11,19 @@ const patternsOutputPath = path.join(ROOT, 'dist/agent-patterns.json');
 
 function walkPatterns(directory = path.join(ROOT, 'agent', 'patterns')) {
   if (!fs.existsSync(directory)) return [];
-  return fs.readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
-    const child = path.join(directory, entry.name);
-    if (entry.isDirectory()) return walkPatterns(child);
-    return entry.name.endsWith('.agent.json') ? [child] : [];
-  }).sort();
+  return fs
+    .readdirSync(directory, { withFileTypes: true })
+    .flatMap(entry => {
+      const child = path.join(directory, entry.name);
+      if (entry.isDirectory()) return walkPatterns(child);
+      return entry.name.endsWith('.agent.json') ? [child] : [];
+    })
+    .sort();
 }
 
 function compactPattern(patternPath) {
   const pattern = JSON.parse(fs.readFileSync(patternPath, 'utf8'));
-  const {
-    $schema: _schema,
-    schemaVersion: _schemaVersion,
-    kind: _kind,
-    ...entry
-  } = pattern;
+  const { $schema: _schema, schemaVersion: _schemaVersion, kind: _kind, ...entry } = pattern;
   return entry;
 }
 

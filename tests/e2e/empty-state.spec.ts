@@ -11,7 +11,9 @@ test('renders the three supported content variants', async ({ page }) => {
   await expect(complete.locator('ds-icon')).toHaveJSProperty('color', 'primary');
   await expect(complete.locator('ds-icon .icon')).toHaveClass(/icon--color-primary/);
   await expect(complete.locator('.empty-state__title')).toHaveText('No results found');
-  await expect(complete.locator('.empty-state__body')).toHaveText('Try adjusting your search or filters.');
+  await expect(complete.locator('.empty-state__body')).toHaveText(
+    'Try adjusting your search or filters.'
+  );
 
   const titleBody = page.locator('#title-body');
   await expect(titleBody.locator('ds-icon')).toHaveCount(0);

@@ -31,7 +31,7 @@ function readTokenTimeMs(token: string, fallback: number): number {
  */
 export function resolveCssTimeMs(
   value: number | string | undefined,
-  fallbackToken: string,
+  fallbackToken: string
 ): number {
   if (typeof value === 'number') return value;
 
@@ -47,9 +47,11 @@ export function resolveCssTimeMs(
 
 /** Whether the user has requested reduced non-essential motion. */
 export function prefersReducedMotion(): boolean {
-  return typeof window !== 'undefined' &&
+  return (
+    typeof window !== 'undefined' &&
     typeof window.matchMedia === 'function' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
 }
 
 /**
@@ -58,7 +60,7 @@ export function prefersReducedMotion(): boolean {
  */
 export function resolveMotionTimeMs(
   value: number | string | undefined,
-  fallbackToken: string,
+  fallbackToken: string
 ): number {
   return prefersReducedMotion() ? 0 : resolveCssTimeMs(value, fallbackToken);
 }

@@ -37,10 +37,7 @@
   flex-direction: column;
   gap: var(--dimension-space-300);
   width: 100%;
-  max-width: var(
-    --ds-message-scroller-content-max-width,
-    var(--dimension-panel-width-2xl)
-  );
+  max-width: var(--ds-message-scroller-content-max-width, var(--dimension-panel-width-2xl));
   min-height: 100%;
   margin-inline: auto;
   padding-block-start: var(--dimension-space-200);
@@ -72,9 +69,7 @@
 
 .message-scroller__control {
   position: absolute;
-  bottom: calc(
-    var(--ds-scroll-overlay-content-block-size, 0px) + var(--dimension-space-200)
-  );
+  bottom: calc(var(--ds-scroll-overlay-content-block-size, 0px) + var(--dimension-space-200));
   left: 50%;
   z-index: var(--dimension-z-index-floating);
   display: flex;

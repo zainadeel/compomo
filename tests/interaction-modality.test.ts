@@ -12,15 +12,15 @@ test('shared focus targets suppress touch chrome without weakening keyboard focu
 
   assert.match(
     css,
-    /:host\(\.ds-focus-ring\),[\s\S]*?\.ds-focus-ring-inset\s*{[\s\S]*?outline: none;[\s\S]*?-webkit-tap-highlight-color: transparent;[\s\S]*?touch-action: manipulation;/,
+    /:host\(\.ds-focus-ring\),[\s\S]*?\.ds-focus-ring-inset\s*{[\s\S]*?outline: none;[\s\S]*?-webkit-tap-highlight-color: transparent;[\s\S]*?touch-action: manipulation;/
   );
   assert.match(
     css,
-    /:host\(\.ds-focus-ring:focus-visible\),[\s\S]*?outline: var\(--ds-focus-ring-width\) solid var\(--ds-focus-ring-color\);/,
+    /:host\(\.ds-focus-ring:focus-visible\),[\s\S]*?outline: var\(--ds-focus-ring-width\) solid var\(--ds-focus-ring-color\);/
   );
   assert.match(
     css,
-    /:host\(\.ds-focus-ring-inset:focus-visible\)::after,[\s\S]*?outline: var\(--ds-focus-ring-width\) solid var\(--ds-focus-ring-color\);/,
+    /:host\(\.ds-focus-ring-inset:focus-visible\)::after,[\s\S]*?outline: var\(--ds-focus-ring-width\) solid var\(--ds-focus-ring-color\);/
   );
 });
 
@@ -32,6 +32,6 @@ test('shared hover wash is limited to hover-capable fine pointers', () => {
   assert.match(css, guardedHover);
   assert.match(
     css,
-    /:host\(\.ds-interaction-fill:active:not\(:disabled\)\)::after,[\s\S]*?background: var\(--ds-interaction-pressed\);/,
+    /:host\(\.ds-interaction-fill:active:not\(:disabled\)\)::after,[\s\S]*?background: var\(--ds-interaction-pressed\);/
   );
 });

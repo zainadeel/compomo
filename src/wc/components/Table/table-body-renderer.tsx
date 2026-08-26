@@ -20,7 +20,7 @@ export interface TableBodyRenderOptions {
     model: TableRenderModel,
     ariaRowIndex?: number,
     variableVirtualSize?: boolean,
-    rowKey?: string,
+    rowKey?: string
   ) => unknown;
   renderGroupContent: (group: TableGroupRenderModel) => unknown;
   renderGroupLoadRow: (group: TableGroup, totalColumns: number) => unknown;
@@ -32,10 +32,10 @@ export interface TableBodyRenderOptions {
  */
 export function assignTableVirtualRowPoolKeys(
   nodes: readonly TableVirtualNode[],
-  state: TableVirtualRowPoolState,
+  state: TableVirtualRowPoolState
 ): Map<number, string> {
   const rows = nodes.filter(
-    (node): node is Extract<TableVirtualNode, { kind: 'row' }> => node.kind === 'row',
+    (node): node is Extract<TableVirtualNode, { kind: 'row' }> => node.kind === 'row'
   );
   const desiredIds = new Set(rows.map(node => node.item.rowId ?? node.item.id));
   const freeSlots: number[] = [];
@@ -132,7 +132,7 @@ export class TableBodyRenderer {
 
   private renderVirtualSpacer(
     node: Extract<TableVirtualNode, { kind: 'spacer' }>,
-    totalColumns: number,
+    totalColumns: number
   ) {
     if (node.size <= 0) return null;
     return (
@@ -152,17 +152,11 @@ export class TableBodyRenderer {
     node: Extract<TableVirtualNode, { kind: 'row' }>,
     options: TableBodyRenderOptions,
     rowsById: Map<string, TableRow>,
-    rowKey: string,
+    rowKey: string
   ) {
     const row = node.item.rowId ? rowsById.get(node.item.rowId) : undefined;
     if (!row) return null;
-    return options.renderRow(
-      row,
-      options.model,
-      node.index + 2,
-      node.item.variableSize,
-      rowKey,
-    );
+    return options.renderRow(row, options.model, node.index + 2, node.item.variableSize, rowKey);
   }
 
   private virtualRowPoolKeys(nodes: readonly TableVirtualNode[], scope: string) {
@@ -178,7 +172,7 @@ export class TableBodyRenderer {
     node: Extract<TableVirtualNode, { kind: 'group' }>,
     options: TableBodyRenderOptions,
     rowsById: Map<string, TableRow>,
-    groupsById: Map<string, TableGroupRenderModel>,
+    groupsById: Map<string, TableGroupRenderModel>
   ) {
     const groupModel = groupsById.get(node.groupId);
     if (!groupModel) return null;
@@ -222,8 +216,8 @@ export class TableBodyRenderer {
                 child,
                 options,
                 rowsById,
-                rowKeys.get(child.index) ?? `virtual-row-${child.index}`,
-              ),
+                rowKeys.get(child.index) ?? `virtual-row-${child.index}`
+              )
         )}
       </tbody>
     );
@@ -258,9 +252,9 @@ export class TableBodyRenderer {
                     node,
                     options,
                     rowsById,
-                    rowKeys.get(node.index) ?? `virtual-row-${node.index}`,
+                    rowKeys.get(node.index) ?? `virtual-row-${node.index}`
                   )
-                : null,
+                : null
           )}
         </tbody>
       );
@@ -269,9 +263,9 @@ export class TableBodyRenderer {
     const activeGroupScopes = new Set(
       plan.nodes
         .filter(
-          (node): node is Extract<TableVirtualNode, { kind: 'group' }> => node.kind === 'group',
+          (node): node is Extract<TableVirtualNode, { kind: 'group' }> => node.kind === 'group'
         )
-        .map(node => `group:${node.groupId}`),
+        .map(node => `group:${node.groupId}`)
     );
     for (const scope of this.virtualRowPoolStates.keys()) {
       if (!activeGroupScopes.has(scope)) this.virtualRowPoolStates.delete(scope);

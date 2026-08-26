@@ -12,7 +12,7 @@ test('centers a generic empty state in the visible space above its footer', asyn
     const viewportRect = viewport.getBoundingClientRect();
     const emptyRect = empty.getBoundingClientRect();
     const overlay = Number.parseFloat(
-      getComputedStyle(element).getPropertyValue('--ds-scroll-overlay-block-size'),
+      getComputedStyle(element).getPropertyValue('--ds-scroll-overlay-block-size')
     );
     return {
       actual: (emptyRect.top + emptyRect.bottom) / 2,
@@ -33,7 +33,7 @@ test('centers a conversation empty state above its persistent action', async ({ 
     const viewportRect = viewport.getBoundingClientRect();
     const emptyRect = empty.getBoundingClientRect();
     const overlay = Number.parseFloat(
-      getComputedStyle(element).getPropertyValue('--ds-scroll-overlay-block-size'),
+      getComputedStyle(element).getPropertyValue('--ds-scroll-overlay-block-size')
     );
     return {
       actual: (emptyRect.top + emptyRect.bottom) / 2,
@@ -63,7 +63,7 @@ test('centers an empty list in the full viewport when no action exists', async (
       actual: (emptyRect.top + emptyRect.bottom) / 2,
       expected: (viewportRect.top + viewportRect.bottom) / 2,
       overlay: Number.parseFloat(
-        getComputedStyle(element).getPropertyValue('--ds-scroll-overlay-block-size'),
+        getComputedStyle(element).getPropertyValue('--ds-scroll-overlay-block-size')
       ),
     };
   });

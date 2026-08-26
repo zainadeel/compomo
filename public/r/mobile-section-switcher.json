@@ -186,12 +186,12 @@
     },
     {
       "path": "src/wc/components/MobileSectionSwitcher/mobile-section-switcher-types.ts",
-      "content": "import type { TabItem } from '../TabGroup/tab-item-utils';\n\n/** Ordered mobile sections. Dividers group the tap menu but do not participate in selection. */\nexport type MobileSectionItem = TabItem;\n\n",
+      "content": "import type { TabItem } from '../TabGroup/tab-item-utils';\n\n/** Ordered mobile sections. Dividers group the tap menu but do not participate in selection. */\nexport type MobileSectionItem = TabItem;\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/MobileSectionSwitcher/mobile-section-switcher-utils.ts",
-      "content": "import { getSelectableTabs, type TabItem, type TabItemTab } from '../TabGroup/tab-item-utils';\n\nexport interface MobileSectionPosition {\n  selectedIndex: number;\n  selected?: TabItemTab;\n  hasPrevious: boolean;\n  hasNext: boolean;\n}\n\n/** Resolve ordered selectable neighbors while ignoring visual divider entries. */\nexport function resolveMobileSectionPosition(\n  sections: TabItem[],\n  value: string\n): MobileSectionPosition {\n  const selectable = getSelectableTabs(sections);\n  const matchedIndex = selectable.findIndex(section => section.id === value);\n  const selectedIndex = matchedIndex >= 0 ? matchedIndex : 0;\n  return {\n    selectedIndex,\n    selected: selectable[selectedIndex],\n    hasPrevious: selectedIndex > 0,\n    hasNext: selectedIndex < selectable.length - 1,\n  };\n}\n\n",
+      "content": "import { getSelectableTabs, type TabItem, type TabItemTab } from '../TabGroup/tab-item-utils';\n\nexport interface MobileSectionPosition {\n  selectedIndex: number;\n  selected?: TabItemTab;\n  hasPrevious: boolean;\n  hasNext: boolean;\n}\n\n/** Resolve ordered selectable neighbors while ignoring visual divider entries. */\nexport function resolveMobileSectionPosition(\n  sections: TabItem[],\n  value: string\n): MobileSectionPosition {\n  const selectable = getSelectableTabs(sections);\n  const matchedIndex = selectable.findIndex(section => section.id === value);\n  const selectedIndex = matchedIndex >= 0 ? matchedIndex : 0;\n  return {\n    selectedIndex,\n    selected: selectable[selectedIndex],\n    hasPrevious: selectedIndex > 0,\n    hasNext: selectedIndex < selectable.length - 1,\n  };\n}\n",
       "type": "registry:ui"
     }
   ]

@@ -213,9 +213,27 @@ describe('computeAnchoredPosition flip parity with the pre-merge space-based rul
     ]) {
       for (const side of SIDES) {
         for (const align of ALIGNS) {
-          for (const left of [-20, 0, 12, Math.round(viewportWidth / 2), viewportWidth - 60, viewportWidth + 20]) {
-            for (const top of [-20, 0, 12, Math.round(viewportHeight / 2), viewportHeight - 60, viewportHeight + 20]) {
-              for (const [width, height] of [[0, 0], [24, 24], [200, 48]]) {
+          for (const left of [
+            -20,
+            0,
+            12,
+            Math.round(viewportWidth / 2),
+            viewportWidth - 60,
+            viewportWidth + 20,
+          ]) {
+            for (const top of [
+              -20,
+              0,
+              12,
+              Math.round(viewportHeight / 2),
+              viewportHeight - 60,
+              viewportHeight + 20,
+            ]) {
+              for (const [width, height] of [
+                [0, 0],
+                [24, 24],
+                [200, 48],
+              ]) {
                 for (const [popupWidth, popupHeight] of [
                   [120, 80],
                   [400, 600],
@@ -252,7 +270,7 @@ describe('computeAnchoredPosition flip parity with the pre-merge space-based rul
                           `${viewportWidth}x${viewportHeight} side=${side} align=${align} ` +
                             `anchor=${left},${top} ${width}x${height} popup=${popupWidth}x${popupHeight} ` +
                             `alignOffset=${alignOffsetPx} pad=${viewportPadPx}: ` +
-                            `overflow-rule=${actual.resolvedSide} space-rule=${legacySide}`,
+                            `overflow-rule=${actual.resolvedSide} space-rule=${legacySide}`
                         );
                       }
                     }

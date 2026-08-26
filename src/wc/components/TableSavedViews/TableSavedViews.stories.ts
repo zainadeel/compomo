@@ -8,7 +8,8 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: 'A controlled saved-views companion control for table toolbars. It owns selection, create, rename, remove, validation, and focus UX while the application owns each view payload and persistence.',
+        component:
+          'A controlled saved-views companion control for table toolbars. It owns selection, create, rename, remove, validation, and focus UX while the application owns each view payload and persistence.',
       },
     },
   },
@@ -43,7 +44,7 @@ export const SavedViews: Story = {
         @dsViewRename=${(event: CustomEvent<{ viewId: string; name: string }>) => {
           const control = event.currentTarget as HTMLElement & { views: typeof views };
           control.views = control.views.map(view =>
-            view.id === event.detail.viewId ? { ...view, label: event.detail.name } : view,
+            view.id === event.detail.viewId ? { ...view, label: event.detail.name } : view
           );
         }}
         @dsViewRemove=${(event: CustomEvent<{ viewId: string }>) => {

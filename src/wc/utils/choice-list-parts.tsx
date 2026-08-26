@@ -65,12 +65,7 @@ export const ChoiceSearch: FunctionalComponent<ChoiceSearchProps> = ({
           onKeyDown={onKeyDown}
         />
         {value && !disabled && (
-          <ds-tooltip
-            class="select-search__clear-tooltip"
-            label={clearLabel}
-            side="top"
-            size="sm"
-          >
+          <ds-tooltip class="select-search__clear-tooltip" label={clearLabel} side="top" size="sm">
             <ds-button-unfilled
               class="select-search__clear"
               variant="icon"
@@ -129,7 +124,7 @@ export const ChoiceFooter: FunctionalComponent<ChoiceFooterProps> = ({
           variant={CONTROL_TEXT_VARIANT[size]}
           color="secondary"
         >
-          {useCompactSummary ? compactSummary ?? summary : summary}
+          {useCompactSummary ? (compactSummary ?? summary) : summary}
         </ds-text>,
         <ds-text
           key="summary-measure"
@@ -272,16 +267,17 @@ export const ChoiceOptionRow: FunctionalComponent<ChoiceOptionRowProps> = ({
           >
             {option.label}
           </ds-text>
-          {supporting ?? (usesSubtext ? (
-            <ds-text
-              class="ds-choice-item__subtext ds-control-label-box"
-              as="span"
-              variant={CONTROL_SUPPORTING_TEXT_VARIANT[size]}
-              color="secondary"
-            >
-              {option.subtext?.trim() || '—'}
-            </ds-text>
-          ) : null)}
+          {supporting ??
+            (usesSubtext ? (
+              <ds-text
+                class="ds-choice-item__subtext ds-control-label-box"
+                as="span"
+                variant={CONTROL_SUPPORTING_TEXT_VARIANT[size]}
+                color="secondary"
+              >
+                {option.subtext?.trim() || '—'}
+              </ds-text>
+            ) : null)}
         </div>
       </div>
       {action && (

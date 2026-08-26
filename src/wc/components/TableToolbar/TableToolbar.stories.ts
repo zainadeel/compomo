@@ -68,7 +68,10 @@ const applyColumnsConfig = (event: Event) => {
   table.columnOrder = detail.columnOrder;
 };
 
-const renderToolbar = (options?: { filterValues?: Record<string, string[]>; groupValue?: string }) => html`
+const renderToolbar = (options?: {
+  filterValues?: Record<string, string[]>;
+  groupValue?: string;
+}) => html`
   <ds-table-toolbar slot="header" label="Fleet table controls">
     <ds-table-saved-views
       slot="start"
@@ -205,10 +208,7 @@ export const NarrowOverflow: Story = {
           placeholder="Search"
           aria-label="Search fleet"
         ></ds-input>
-        <ds-table-filter
-          slot="trailing"
-          aria-label="Filter fleet"
-        ></ds-table-filter>
+        <ds-table-filter slot="trailing" aria-label="Filter fleet"></ds-table-filter>
         <ds-select
           slot="trailing"
           collapse-label

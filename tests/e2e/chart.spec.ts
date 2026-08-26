@@ -25,10 +25,18 @@ test('recompiles responsive geometry without scaling visual tokens', async ({ pa
     };
   });
 
-  await container.evaluate(element => { (element as HTMLElement).style.width = '280px'; });
-  await expect.poll(() => svg.evaluate(element => Number(element.getAttribute('width')))).toBeCloseTo(280, 0);
-  await chart.evaluate(element => { (element as HTMLElement & { height: number }).height = 220; });
-  await expect.poll(() => svg.evaluate(element => Number(element.getAttribute('height')))).toBe(220);
+  await container.evaluate(element => {
+    (element as HTMLElement).style.width = '280px';
+  });
+  await expect
+    .poll(() => svg.evaluate(element => Number(element.getAttribute('width'))))
+    .toBeCloseTo(280, 0);
+  await chart.evaluate(element => {
+    (element as HTMLElement & { height: number }).height = 220;
+  });
+  await expect
+    .poll(() => svg.evaluate(element => Number(element.getAttribute('height'))))
+    .toBe(220);
 
   const after = await chart.evaluate(element => {
     const surface = element.querySelector('svg')!;
@@ -88,17 +96,23 @@ test('pointer and keyboard resolve grouped points through one focus model', asyn
     swatchBoxWidth: 20,
   });
   expect(tooltipGeometry.labelValueGap).toBeCloseTo(4, 0);
-  const pointerKey = await page.evaluate(() => (window as unknown as { lastFocus: { primary: { key: string } } }).lastFocus.primary.key);
+  const pointerKey = await page.evaluate(
+    () => (window as unknown as { lastFocus: { primary: { key: string } } }).lastFocus.primary.key
+  );
 
   await surface.focus();
   await surface.press('Home');
-  const keyboardKey = await page.evaluate(() => (window as unknown as { lastFocus: { primary: { key: string } } }).lastFocus.primary.key);
+  const keyboardKey = await page.evaluate(
+    () => (window as unknown as { lastFocus: { primary: { key: string } } }).lastFocus.primary.key
+  );
   expect(keyboardKey).toBe(pointerKey);
   await surface.press('Escape');
   await expect(chart.locator('ds-tooltip-chart')).toHaveCount(0);
 });
 
-test('groups multi-line focus with a vertical guide and enlarged tooltip points', async ({ page }) => {
+test('groups multi-line focus with a vertical guide and enlarged tooltip points', async ({
+  page,
+}) => {
   const chart = page.locator('#multi-line-chart');
   const firstPoint = chart.locator('circle.chart__mark').first();
   await firstPoint.hover();
@@ -133,16 +147,22 @@ test('stable keyed focus survives data reorder and resize', async ({ page }) => 
   const surface = chart.locator('svg');
   await surface.focus();
   await surface.press('End');
-  const before = await page.evaluate(() => (window as unknown as { lastFocus: { primary: { key: string } } }).lastFocus.primary.key);
+  const before = await page.evaluate(
+    () => (window as unknown as { lastFocus: { primary: { key: string } } }).lastFocus.primary.key
+  );
   await page.evaluate(() => (window as unknown as { reorderChart: () => void }).reorderChart());
-  await page.locator('#chart-container').evaluate(element => { (element as HTMLElement).style.width = '520px'; });
+  await page.locator('#chart-container').evaluate(element => {
+    (element as HTMLElement).style.width = '520px';
+  });
   await expect.poll(() => chart.locator('.chart__focus').count()).toBe(1);
   const after = await chart.locator('.chart__focus').evaluate(element => {
     const host = element.closest('ds-chart') as HTMLElement & { definition: unknown };
     return Boolean(host.definition);
   });
   expect(after).toBe(true);
-  const activeKey = await page.evaluate(() => (window as unknown as { lastFocus: { primary: { key: string } } }).lastFocus.primary.key);
+  const activeKey = await page.evaluate(
+    () => (window as unknown as { lastFocus: { primary: { key: string } } }).lastFocus.primary.key
+  );
   expect(activeKey).toBe(before);
 });
 
@@ -164,8 +184,12 @@ test('polar recipes resize geometry without scaling center typography', async ({
     path: element.querySelector('path.chart__mark')?.getAttribute('d'),
     fontSize: getComputedStyle(element.querySelector('.chart__center-value') as Element).fontSize,
   }));
-  await container.evaluate(element => { (element as HTMLElement).style.width = '280px'; });
-  await expect.poll(() => chart.locator('svg').evaluate(element => Number(element.getAttribute('width')))).toBe(280);
+  await container.evaluate(element => {
+    (element as HTMLElement).style.width = '280px';
+  });
+  await expect
+    .poll(() => chart.locator('svg').evaluate(element => Number(element.getAttribute('width'))))
+    .toBe(280);
   const after = await chart.evaluate(element => ({
     path: element.querySelector('path.chart__mark')?.getAttribute('d'),
     fontSize: getComputedStyle(element.querySelector('.chart__center-value') as Element).fontSize,
@@ -177,7 +201,9 @@ test('polar recipes resize geometry without scaling center typography', async ({
   await expect(chart.locator('ds-tooltip-chart')).toBeVisible();
 });
 
-test('resolves donut hover from slice containment instead of centroid distance', async ({ page }) => {
+test('resolves donut hover from slice containment instead of centroid distance', async ({
+  page,
+}) => {
   const chart = page.locator('#polar-chart');
   const hoverPoints = await chart.evaluate(element => {
     const path = element.querySelector<SVGPathElement>('path.chart__mark')!;
@@ -198,9 +224,14 @@ test('resolves donut hover from slice containment instead of centroid distance',
         }
       }
     }
-    if (points.length < 2) throw new Error('Not enough interior points found for the first donut slice.');
+    if (points.length < 2)
+      throw new Error('Not enough interior points found for the first donut slice.');
     const center = new DOMPoint(0, 0).matrixTransform(path.getScreenCTM()!);
-    return { first: points[0], last: points[points.length - 1], center: { x: center.x, y: center.y } };
+    return {
+      first: points[0],
+      last: points[points.length - 1],
+      center: { x: center.x, y: center.y },
+    };
   });
 
   await page.mouse.move(hoverPoints.first.x, hoverPoints.first.y);
@@ -210,10 +241,14 @@ test('resolves donut hover from slice containment instead of centroid distance',
     y: (element as HTMLElement & { y: number }).y,
   }));
   await page.mouse.move(hoverPoints.last.x, hoverPoints.last.y);
-  await expect.poll(() => chart.locator('ds-tooltip-chart').evaluate(element => ({
-    x: (element as HTMLElement & { x: number }).x,
-    y: (element as HTMLElement & { y: number }).y,
-  }))).not.toEqual(firstAnchor);
+  await expect
+    .poll(() =>
+      chart.locator('ds-tooltip-chart').evaluate(element => ({
+        x: (element as HTMLElement & { x: number }).x,
+        y: (element as HTMLElement & { y: number }).y,
+      }))
+    )
+    .not.toEqual(firstAnchor);
   await page.mouse.move(hoverPoints.center.x, hoverPoints.center.y);
   await expect(chart.locator('ds-tooltip-chart')).toHaveCount(0);
 });
@@ -222,18 +257,24 @@ test('heatmap uses continuous 25 to 100 percent data-intent opacity', async ({ p
   const chart = page.locator('#heatmap-chart');
   const cells = chart.locator('rect.chart__mark');
   await expect(cells).toHaveCount(3);
-  const opacities = await cells.evaluateAll(elements => elements.map(element => getComputedStyle(element).fillOpacity));
+  const opacities = await cells.evaluateAll(elements =>
+    elements.map(element => getComputedStyle(element).fillOpacity)
+  );
   expect(opacities).toEqual(['0.25', '0.625', '1']);
   await expect(cells.first()).toHaveCSS('fill', /.+/);
 });
 
-test('renders axis baselines and outward tick stubs independently from grids and labels', async ({ page }) => {
+test('renders axis baselines and outward tick stubs independently from grids and labels', async ({
+  page,
+}) => {
   const chart = page.locator('#chart');
   await expect(chart.locator('.chart__axis-line:not(.chart__tick-stub)')).toHaveCount(2);
   await expect(chart.locator('.chart__tick-stub')).not.toHaveCount(0);
   const xStub = chart.locator('.chart__tick--x').first().locator('xpath=preceding-sibling::*[1]');
   await expect(xStub).toHaveClass(/chart__tick-stub/);
-  const extendsOutward = await xStub.evaluate(element => Number(element.getAttribute('y2')) > Number(element.getAttribute('y1')));
+  const extendsOutward = await xStub.evaluate(
+    element => Number(element.getAttribute('y2')) > Number(element.getAttribute('y1'))
+  );
   expect(extendsOutward).toBe(true);
 });
 
@@ -263,7 +304,8 @@ test('frames the plot while keeping six-pixel haloed edge dots visible', async (
       clipTop: Number(clip.getAttribute('y')),
       rightX: Number(right.getAttribute('x1')),
       boundaryStroke: getComputedStyle(top).stroke,
-      expectedStroke: getComputedStyle(element.querySelector('.chart__grid') as SVGLineElement).stroke,
+      expectedStroke: getComputedStyle(element.querySelector('.chart__grid') as SVGLineElement)
+        .stroke,
     };
   });
 
@@ -278,12 +320,18 @@ test('frames the plot while keeping six-pixel haloed edge dots visible', async (
   expect(geometry.boundaryStroke).toBe(geometry.expectedStroke);
 });
 
-test('clips density marks to a zero-inclusive solved plot at wide and card widths', async ({ page }) => {
+test('clips density marks to a zero-inclusive solved plot at wide and card widths', async ({
+  page,
+}) => {
   const container = page.locator('#density-container');
   const chart = page.locator('#density-chart');
   for (const width of [720, 280]) {
-    await container.evaluate((element, nextWidth) => { (element as HTMLElement).style.width = `${nextWidth}px`; }, width);
-    await expect.poll(() => chart.locator('svg').evaluate(element => Number(element.getAttribute('width')))).toBe(width);
+    await container.evaluate((element, nextWidth) => {
+      (element as HTMLElement).style.width = `${nextWidth}px`;
+    }, width);
+    await expect
+      .poll(() => chart.locator('svg').evaluate(element => Number(element.getAttribute('width'))))
+      .toBe(width);
     const geometry = await chart.evaluate(element => {
       const clip = element.querySelector('clipPath rect') as SVGRectElement;
       const area = element.querySelector('path.chart__mark') as SVGPathElement;
@@ -300,12 +348,18 @@ test('clips density marks to a zero-inclusive solved plot at wide and card width
   }
 });
 
-test('measures directional radar labels inside the surface without covering data marks', async ({ page }) => {
+test('measures directional radar labels inside the surface without covering data marks', async ({
+  page,
+}) => {
   const container = page.locator('#radar-container');
   const chart = page.locator('#radar-chart');
   for (const width of [420, 280]) {
-    await container.evaluate((element, nextWidth) => { (element as HTMLElement).style.width = `${nextWidth}px`; }, width);
-    await expect.poll(() => chart.locator('svg').evaluate(element => Number(element.getAttribute('width')))).toBe(width);
+    await container.evaluate((element, nextWidth) => {
+      (element as HTMLElement).style.width = `${nextWidth}px`;
+    }, width);
+    await expect
+      .poll(() => chart.locator('svg').evaluate(element => Number(element.getAttribute('width'))))
+      .toBe(width);
     const result = await chart.evaluate(element => {
       const svg = element.querySelector('svg') as SVGSVGElement;
       const labels = [...element.querySelectorAll<SVGTextElement>('.chart__polar-label')];
@@ -314,17 +368,33 @@ test('measures directional radar labels inside the surface without covering data
       const surface = svg.getBoundingClientRect();
       return labels.map(label => {
         const box = label.getBoundingClientRect();
-        const overlapsMark = markBounds.some(mark => box.left < mark.right && box.right > mark.left && box.top < mark.bottom && box.bottom > mark.top);
+        const overlapsMark = markBounds.some(
+          mark =>
+            box.left < mark.right &&
+            box.right > mark.left &&
+            box.top < mark.bottom &&
+            box.bottom > mark.top
+        );
         return {
-          contained: box.left >= surface.left - 0.5 && box.right <= surface.right + 0.5 && box.top >= surface.top - 0.5 && box.bottom <= surface.bottom + 0.5,
+          contained:
+            box.left >= surface.left - 0.5 &&
+            box.right <= surface.right + 0.5 &&
+            box.top >= surface.top - 0.5 &&
+            box.bottom <= surface.bottom + 0.5,
           overlapsMark,
           anchor: label.getAttribute('text-anchor'),
         };
       });
     });
     expect(result.length).toBe(4);
-    expect(result.every(item => item.contained), JSON.stringify(result)).toBe(true);
-    expect(result.every(item => !item.overlapsMark), JSON.stringify(result)).toBe(true);
+    expect(
+      result.every(item => item.contained),
+      JSON.stringify(result)
+    ).toBe(true);
+    expect(
+      result.every(item => !item.overlapsMark),
+      JSON.stringify(result)
+    ).toBe(true);
     expect(result.map(item => item.anchor)).toEqual(['middle', 'start', 'middle', 'end']);
   }
 });

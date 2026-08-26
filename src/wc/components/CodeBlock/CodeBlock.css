@@ -35,8 +35,16 @@ pre {
   overflow: auto;
   font-family: var(
     --typography-font-family-code,
-    'Fira Code', ui-monospace, 'SFMono-Regular', 'Cascadia Code', 'Roboto Mono',
-    Menlo, Monaco, Consolas, 'Liberation Mono', monospace
+    'Fira Code',
+    ui-monospace,
+    'SFMono-Regular',
+    'Cascadia Code',
+    'Roboto Mono',
+    Menlo,
+    Monaco,
+    Consolas,
+    'Liberation Mono',
+    monospace
   );
   font-size: var(--typography-fontsize-sm);
   font-variant-ligatures: var(--ds-code-font-variant-ligatures, normal);

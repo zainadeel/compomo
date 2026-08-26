@@ -31,9 +31,7 @@ export function isPanelToolsToolId(value: string | null): value is PanelToolsToo
   return typeof value === 'string' && value.trim().length > 0;
 }
 
-export function panelToolsRailPlacement(
-  item: PanelToolsItem
-): 'header' | 'body' | 'footer' {
+export function panelToolsRailPlacement(item: PanelToolsItem): 'header' | 'body' | 'footer' {
   if (item.railPlacement) return item.railPlacement;
   if (item.id === PANEL_TOOLS_PRIMARY_TOOL_ID) return 'header';
   if (item.id === 'help') return 'footer';

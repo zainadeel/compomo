@@ -26,7 +26,8 @@ const STORY_SURFACE_BG: Record<(typeof SURFACES)[number], string> = {
   medium: 'var(--color-background-medium-neutral)',
   bold: 'var(--color-background-bold-neutral)',
   strong: 'var(--color-background-strong-neutral)',
-  translucent: 'linear-gradient(var(--color-translucent-translucent), var(--color-translucent-translucent)), var(--color-background-bold-brand)',
+  translucent:
+    'linear-gradient(var(--color-translucent-translucent), var(--color-translucent-translucent)), var(--color-background-bold-brand)',
   inverted: 'var(--color-inverted-background)',
   media: 'var(--color-media-background)',
   navigation: 'var(--color-navigation-background)',
@@ -76,14 +77,14 @@ const meta: Meta = {
   title: 'Primitives/Badge',
   tags: ['autodocs'],
   argTypes: {
-    variant:    { control: 'select', options: VARIANTS },
-    count:      { control: 'number' },
-    max:        { control: 'number' },
-    surface:    { control: 'select', options: SURFACES },
+    variant: { control: 'select', options: VARIANTS },
+    count: { control: 'number' },
+    max: { control: 'number' },
+    surface: { control: 'select', options: SURFACES },
     background: { control: 'text' },
     hasRing: { control: 'boolean' },
     gradientBackground: { control: 'boolean', name: 'gradient-background' },
-    label:      { control: 'text' },
+    label: { control: 'text' },
   },
   args: {
     variant: 'counter',
@@ -118,9 +119,16 @@ export const Playground: Story = {
 export const RingUsage: Story = {
   render: () => html`
     <div style="display:flex;align-items:center;gap:var(--dimension-space-300);">
-      <div style="${REVIEW_CELL};background:var(--color-background-secondary);color:var(--color-foreground-secondary);">
+      <div
+        style="${REVIEW_CELL};background:var(--color-background-secondary);color:var(--color-foreground-secondary);"
+      >
         <div style="${BADGE_TARGET}">
-          <ds-badge style="${BADGE_ANCHOR}" count="3" surface="secondary" label="3 notifications"></ds-badge>
+          <ds-badge
+            style="${BADGE_ANCHOR}"
+            count="3"
+            surface="secondary"
+            label="3 notifications"
+          ></ds-badge>
         </div>
       </div>
       <div style="display:inline-flex;align-items:center;gap:var(--dimension-space-050);">
@@ -133,21 +141,30 @@ export const RingUsage: Story = {
 
 export const Counters: Story = {
   render: () => html`
-    <div style="display: flex; gap: var(--dimension-space-200); align-items: center; flex-wrap: wrap">
-      ${COUNTS.map(c => html`
-        <div style="${REVIEW_CELL}; background: var(--color-background-secondary); color: var(--color-foreground-secondary);">
-          <div style="${BADGE_TARGET}">
-            <ds-badge
-              style="${BADGE_ANCHOR}"
-              count=${c}
-              surface="secondary"
-              label="${c} notifications"
-            ></ds-badge>
+    <div
+      style="display: flex; gap: var(--dimension-space-200); align-items: center; flex-wrap: wrap"
+    >
+      ${COUNTS.map(
+        c => html`
+          <div
+            style="${REVIEW_CELL}; background: var(--color-background-secondary); color: var(--color-foreground-secondary);"
+          >
+            <div style="${BADGE_TARGET}">
+              <ds-badge
+                style="${BADGE_ANCHOR}"
+                count=${c}
+                surface="secondary"
+                label="${c} notifications"
+              ></ds-badge>
+            </div>
           </div>
-        </div>
-      `)}
+        `
+      )}
       <div style="display: flex; gap: var(--dimension-space-200); align-items: center">
-        <span style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-tertiary);">zero hides:</span>
+        <span
+          style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-tertiary);"
+          >zero hides:</span
+        >
         <ds-badge count="0"></ds-badge>
       </div>
     </div>
@@ -157,22 +174,33 @@ export const Counters: Story = {
 export const Dots: Story = {
   name: 'Dots',
   render: () => html`
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--dimension-space-200);">
-      ${SURFACES.map(surface => html`
-        <div style="display: flex; flex-direction: column; gap: var(--dimension-space-075);">
-          <div style="${REVIEW_CELL}; background: ${STORY_SURFACE_BG[surface]}; color: ${STORY_SURFACE_FG[surface]};">
-            <div style="${BADGE_TARGET}">
-              <ds-badge
-                style="${BADGE_ANCHOR}"
-                variant="dot"
-                surface=${surface}
-                label="${surface} notification"
-              ></ds-badge>
+    <div
+      style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--dimension-space-200);"
+    >
+      ${SURFACES.map(
+        surface => html`
+          <div style="display: flex; flex-direction: column; gap: var(--dimension-space-075);">
+            <div
+              style="${REVIEW_CELL}; background: ${STORY_SURFACE_BG[
+                surface
+              ]}; color: ${STORY_SURFACE_FG[surface]};"
+            >
+              <div style="${BADGE_TARGET}">
+                <ds-badge
+                  style="${BADGE_ANCHOR}"
+                  variant="dot"
+                  surface=${surface}
+                  label="${surface} notification"
+                ></ds-badge>
+              </div>
             </div>
+            <span
+              style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-secondary);"
+              >${surface}</span
+            >
           </div>
-          <span style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-secondary);">${surface}</span>
-        </div>
-      `)}
+        `
+      )}
     </div>
   `,
 };
@@ -180,30 +208,41 @@ export const Dots: Story = {
 export const CounterAndDot: Story = {
   name: 'Counter + Dot',
   render: () => html`
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--dimension-space-200);">
-      ${SURFACES.map(surface => html`
-        <div style="display: flex; flex-direction: column; gap: var(--dimension-space-075);">
-          <div style="${REVIEW_CELL}; gap: var(--dimension-space-300); background: ${STORY_SURFACE_BG[surface]}; color: ${STORY_SURFACE_FG[surface]};">
-            <div style="${BADGE_TARGET}">
-              <ds-badge
-                style="${BADGE_ANCHOR}"
-                variant="dot"
-                surface=${surface}
-                label="${surface} dot notification"
-              ></ds-badge>
+    <div
+      style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--dimension-space-200);"
+    >
+      ${SURFACES.map(
+        surface => html`
+          <div style="display: flex; flex-direction: column; gap: var(--dimension-space-075);">
+            <div
+              style="${REVIEW_CELL}; gap: var(--dimension-space-300); background: ${STORY_SURFACE_BG[
+                surface
+              ]}; color: ${STORY_SURFACE_FG[surface]};"
+            >
+              <div style="${BADGE_TARGET}">
+                <ds-badge
+                  style="${BADGE_ANCHOR}"
+                  variant="dot"
+                  surface=${surface}
+                  label="${surface} dot notification"
+                ></ds-badge>
+              </div>
+              <div style="${BADGE_TARGET}">
+                <ds-badge
+                  style="${BADGE_ANCHOR}"
+                  count="3"
+                  surface=${surface}
+                  label="3 notifications"
+                ></ds-badge>
+              </div>
             </div>
-            <div style="${BADGE_TARGET}">
-              <ds-badge
-                style="${BADGE_ANCHOR}"
-                count="3"
-                surface=${surface}
-                label="3 notifications"
-              ></ds-badge>
-            </div>
+            <span
+              style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-secondary);"
+              >${surface}</span
+            >
           </div>
-          <span style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-secondary);">${surface}</span>
-        </div>
-      `)}
+        `
+      )}
     </div>
   `,
 };
@@ -251,7 +290,9 @@ export const OnGradientBackground: Story = {
             background-attachment: fixed;
           "
         ></div>
-        <div style="position: relative; display: flex; flex-direction: column; gap: var(--dimension-space-100); align-items: center;">
+        <div
+          style="position: relative; display: flex; flex-direction: column; gap: var(--dimension-space-100); align-items: center;"
+        >
           <div style="${BADGE_TARGET}; color: var(--color-foreground-secondary);">
             <ds-badge
               style="${BADGE_ANCHOR}"
@@ -260,9 +301,14 @@ export const OnGradientBackground: Story = {
               label="flat ring"
             ></ds-badge>
           </div>
-          <span style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-secondary);">flat ring</span>
+          <span
+            style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-secondary);"
+            >flat ring</span
+          >
         </div>
-        <div style="position: relative; display: flex; flex-direction: column; gap: var(--dimension-space-100); align-items: center;">
+        <div
+          style="position: relative; display: flex; flex-direction: column; gap: var(--dimension-space-100); align-items: center;"
+        >
           <div style="${BADGE_TARGET}; color: var(--color-foreground-secondary);">
             <ds-badge
               style="${BADGE_ANCHOR}"
@@ -272,7 +318,10 @@ export const OnGradientBackground: Story = {
               label="gradient ring"
             ></ds-badge>
           </div>
-          <span style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-secondary);">gradient-background</span>
+          <span
+            style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-secondary);"
+            >gradient-background</span
+          >
         </div>
       </div>
     `;
@@ -281,8 +330,12 @@ export const OnGradientBackground: Story = {
 
 export const CustomRing: Story = {
   render: () => html`
-    <div style="display: flex; gap: var(--dimension-space-200); align-items: center; flex-wrap: wrap">
-      <div style="${REVIEW_CELL}; background: var(--color-background-bold-brand); color: var(--color-foreground-on-bold-background-primary);">
+    <div
+      style="display: flex; gap: var(--dimension-space-200); align-items: center; flex-wrap: wrap"
+    >
+      <div
+        style="${REVIEW_CELL}; background: var(--color-background-bold-brand); color: var(--color-foreground-on-bold-background-primary);"
+      >
         <div style="${BADGE_TARGET}">
           <ds-badge
             style="${BADGE_ANCHOR}"
@@ -292,7 +345,9 @@ export const CustomRing: Story = {
           ></ds-badge>
         </div>
       </div>
-      <div style="${REVIEW_CELL}; background: var(--color-background-bold-brand); color: var(--color-foreground-on-bold-background-primary);">
+      <div
+        style="${REVIEW_CELL}; background: var(--color-background-bold-brand); color: var(--color-foreground-on-bold-background-primary);"
+      >
         <div style="${BADGE_TARGET}">
           <ds-badge
             style="${BADGE_ANCHOR}"

@@ -4,7 +4,7 @@ import { chromiumOnly } from './browser-tier';
 
 const liveToastAxe = chromiumOnly(
   'accessibility',
-  'Axe audits the integrated live Toast state in Chromium; manager, focus, and announcement behavior retain dedicated coverage.',
+  'Axe audits the integrated live Toast state in Chromium; manager, focus, and announcement behavior retain dedicated coverage.'
 );
 
 type ToastTestWindow = typeof window & {
@@ -29,9 +29,7 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('keeps the global stack 16px above the responsive shell bottom bar', async ({
-  page,
-}) => {
+test('keeps the global stack 16px above the responsive shell bottom bar', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 760 });
 
   const bar = page.locator('#mobile-bar');
@@ -92,14 +90,14 @@ test('renders the minimal primary elevated surface and typed content', async ({ 
 
   const close = surface.locator('ds-button-unfilled.toast-close');
   await expect(close).not.toHaveAttribute('has-border');
-  expect(await close.evaluate(element => {
-    const button = element as HTMLDsButtonUnfilledElement;
-    return { icon: button.icon, hasBorder: button.hasBorder };
-  })).toEqual({ icon: 'Cross', hasBorder: false });
+  expect(
+    await close.evaluate(element => {
+      const button = element as HTMLDsButtonUnfilledElement;
+      return { icon: button.icon, hasBorder: button.hasBorder };
+    })
+  ).toEqual({ icon: 'Cross', hasBorder: false });
   const closeInsets = await surface.evaluate(element => {
-    const closeButton = element.querySelector<HTMLElement>(
-      'ds-button-unfilled.toast-close'
-    );
+    const closeButton = element.querySelector<HTMLElement>('ds-button-unfilled.toast-close');
     if (!closeButton) return null;
     const surfaceBox = element.getBoundingClientRect();
     const closeBox = closeButton.getBoundingClientRect();
@@ -125,16 +123,10 @@ test('centers one copy line in the 48px compact geometry', async ({ page }) => {
   const surface = page.locator('[data-toast-id="copied"] .toast-surface');
   const copy = surface.locator('.toast-copy');
   await expect(copy).toBeVisible();
-  const [surfaceBox, copyBox] = await Promise.all([
-    surface.boundingBox(),
-    copy.boundingBox(),
-  ]);
+  const [surfaceBox, copyBox] = await Promise.all([surface.boundingBox(), copy.boundingBox()]);
   if (!surfaceBox || !copyBox) throw new Error('Compact Toast geometry did not render');
   expect(surfaceBox.height).toBeCloseTo(48, 0);
-  expect(copyBox.y + copyBox.height / 2).toBeCloseTo(
-    surfaceBox.y + surfaceBox.height / 2,
-    0,
-  );
+  expect(copyBox.y + copyBox.height / 2).toBeCloseTo(surfaceBox.y + surfaceBox.height / 2, 0);
 });
 
 test('limits the global stack and promotes the next record after close', async ({ page }) => {
@@ -173,21 +165,15 @@ test('steps collapsed stack widths by 8px per side and expands to equal widths',
   const boxes = await Promise.all(
     ['width-3', 'width-2', 'width-1'].map(id =>
       page.locator(`[data-toast-id="${id}"]`).boundingBox()
-    ),
+    )
   );
   if (boxes.some(box => !box)) throw new Error('Collapsed stack geometry did not render');
   expect(boxes[0]!.width - boxes[1]!.width).toBeCloseTo(16, 0);
   expect(boxes[1]!.width - boxes[2]!.width).toBeCloseTo(16, 0);
   expect(boxes[0]!.y - boxes[1]!.y).toBeCloseTo(8, 0);
   expect(boxes[1]!.y - boxes[2]!.y).toBeCloseTo(8, 0);
-  await expect(page.locator('[data-toast-id="width-2"] .toast-content')).toHaveCSS(
-    'opacity',
-    '0',
-  );
-  await expect(page.locator('[data-toast-id="width-1"] .toast-content')).toHaveCSS(
-    'opacity',
-    '0',
-  );
+  await expect(page.locator('[data-toast-id="width-2"] .toast-content')).toHaveCSS('opacity', '0');
+  await expect(page.locator('[data-toast-id="width-1"] .toast-content')).toHaveCSS('opacity', '0');
 
   await page.locator('[data-toast-id="width-3"] .toast-surface').hover();
   await expect(page.locator('.toast-viewport')).toHaveAttribute('data-expanded', '');
@@ -195,22 +181,16 @@ test('steps collapsed stack widths by 8px per side and expands to equal widths',
     .poll(async () => {
       const expandedWidths = await Promise.all(
         ['width-3', 'width-2', 'width-1'].map(id =>
-          page.locator(`[data-toast-id="${id}"]`).evaluate(element =>
-            element.getBoundingClientRect().width
-          )
-        ),
+          page
+            .locator(`[data-toast-id="${id}"]`)
+            .evaluate(element => element.getBoundingClientRect().width)
+        )
       );
       return new Set(expandedWidths.map(width => Math.round(width))).size;
     })
     .toBe(1);
-  await expect(page.locator('[data-toast-id="width-2"] .toast-content')).toHaveCSS(
-    'opacity',
-    '1',
-  );
-  await expect(page.locator('[data-toast-id="width-1"] .toast-content')).toHaveCSS(
-    'opacity',
-    '1',
-  );
+  await expect(page.locator('[data-toast-id="width-2"] .toast-content')).toHaveCSS('opacity', '1');
+  await expect(page.locator('[data-toast-id="width-1"] .toast-content')).toHaveCSS('opacity', '1');
 });
 
 test('promotes the correct stacked toast without dismissal jitter', async ({ page }) => {
@@ -255,9 +235,7 @@ test('pauses and resumes the remaining timeout on hover', async ({ page }) => {
 
   await page.mouse.move(0, 0);
   await expect(page.locator('[data-toast-id="timed"]')).toHaveCount(0);
-  const close = await page.evaluate(
-    () => (window as ToastTestWindow).__toastEvents.closes.at(-1),
-  );
+  const close = await page.evaluate(() => (window as ToastTestWindow).__toastEvents.closes.at(-1));
   expect(close).toEqual({ id: 'timed', reason: 'timeout' });
 });
 
@@ -297,15 +275,16 @@ test('supports F6 access, actions, Escape dismissal, and focus restoration', asy
   expect(actionGeometry.hasBorder).toBe(true);
   expect(actionGeometry.actionLeft).toBeCloseTo(actionGeometry.contentLeft, 0);
   expect(actionGeometry.actionTop - actionGeometry.descriptionBottom).toBeCloseTo(16, 0);
-  expect(
-    await page.evaluate(() => (window as ToastTestWindow).__toastEvents.actions),
-  ).toEqual(['action', 'callback:action']);
+  expect(await page.evaluate(() => (window as ToastTestWindow).__toastEvents.actions)).toEqual([
+    'action',
+    'callback:action',
+  ]);
 
   await page.keyboard.press('Escape');
   await expect(page.locator('[data-toast-id="action"]')).toHaveCount(0);
   await expect(page.locator('#before')).toBeFocused();
   expect(
-    await page.evaluate(() => (window as ToastTestWindow).__toastEvents.closes.at(-1)),
+    await page.evaluate(() => (window as ToastTestWindow).__toastEvents.closes.at(-1))
   ).toEqual({ id: 'action', reason: 'escape' });
 });
 
@@ -324,7 +303,7 @@ test('announces high priority separately until users enter the region', async ({
   await expect(visual).toHaveAttribute('role', 'alertdialog');
   await expect(visual).toHaveAttribute('aria-hidden', 'true');
   await expect(page.locator('.toast-assertive-announcer [role="alert"]')).toContainText(
-    'Connection lost. Changes will sync later.',
+    'Connection lost. Changes will sync later.'
   );
 
   await page.locator('#before').focus();
@@ -340,7 +319,7 @@ test('updates one record through promise loading and success states', async ({ p
   await expect(loading).toContainText('Uploading');
 
   const id = await page.evaluate(
-    () => (window as ToastTestWindow).__toastManager.getSnapshot()[0].id,
+    () => (window as ToastTestWindow).__toastManager.getSnapshot()[0].id
   );
   await page.evaluate(() => {
     (window as ToastTestWindow).__resolveToastPromise('report.csv');
@@ -348,7 +327,7 @@ test('updates one record through promise loading and success states', async ({ p
 
   await expect(page.locator(`[data-toast-id="${id}"] .toast-surface`)).toHaveAttribute(
     'data-type',
-    'success',
+    'success'
   );
   await expect(page.locator(`[data-toast-id="${id}"]`)).toContainText('report.csv');
   await expect(page.locator('.toast-positioner')).toHaveCount(1);
@@ -375,7 +354,7 @@ test('dismisses with an allowed swipe gesture', async ({ page }) => {
 
   await expect(page.locator('[data-toast-id="swipe"]')).toHaveCount(0);
   expect(
-    await page.evaluate(() => (window as ToastTestWindow).__toastEvents.closes.at(-1)),
+    await page.evaluate(() => (window as ToastTestWindow).__toastEvents.closes.at(-1))
   ).toEqual({ id: 'swipe', reason: 'swipe' });
 });
 
@@ -464,9 +443,10 @@ test('has no automatically detectable accessibility violations', liveToastAxe, a
       timeout: 0,
     });
   });
-  await expect(
-    page.locator('[data-toast-id="accessible"] .toast-surface'),
-  ).toHaveCSS('opacity', '1');
+  await expect(page.locator('[data-toast-id="accessible"] .toast-surface')).toHaveCSS(
+    'opacity',
+    '1'
+  );
   const results = await new AxeBuilder({ page }).analyze();
   expect(results.violations).toEqual([]);
 });

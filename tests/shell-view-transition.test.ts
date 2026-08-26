@@ -47,7 +47,9 @@ describe('ensureShellNavVtStyle', () => {
     let animationCount = 0;
     const doc = {
       documentElement: {
-        animate: () => { animationCount += 1; },
+        animate: () => {
+          animationCount += 1;
+        },
       },
       getElementById: (id: string) => styles.find(s => s.id === id) ?? null,
       createElement: () => ({ id: '', textContent: '' }),
@@ -77,7 +79,9 @@ describe('ensureShellNavVtStyle', () => {
     let animationCount = 0;
     const doc = {
       documentElement: {
-        animate: () => { animationCount += 1; },
+        animate: () => {
+          animationCount += 1;
+        },
       },
       getElementById: (id: string) => styles.find(s => s.id === id) ?? null,
       createElement: () => ({ id: '', textContent: '' }),

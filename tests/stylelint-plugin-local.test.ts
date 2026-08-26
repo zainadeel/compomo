@@ -5,9 +5,7 @@ import localDsTextMetrics, { ruleName } from '../stylelint-plugin-local/index.js
 import localReducedMotion, {
   reducedMotionRuleName,
 } from '../stylelint-plugin-local/require-reduced-motion.js';
-import localRawOpacity, {
-  rawOpacityRuleName,
-} from '../stylelint-plugin-local/no-raw-opacity.js';
+import localRawOpacity, { rawOpacityRuleName } from '../stylelint-plugin-local/no-raw-opacity.js';
 
 async function lint(code: string, codeFilename = 'src/wc/components/Example/Example.css') {
   const result = await stylelint.lint({
@@ -34,7 +32,7 @@ describe(ruleName, () => {
 
     assert.deepEqual(
       warnings.map(warning => warning.rule),
-      [ruleName, ruleName],
+      [ruleName, ruleName]
     );
   });
 
@@ -54,7 +52,7 @@ describe(ruleName, () => {
   it('allows ds-text to own its metrics inside the Text component', async () => {
     const warnings = await lint(
       `.ds-text__element { font: inherit; line-height: inherit; }`,
-      'src/wc/components/Text/Text.css',
+      'src/wc/components/Text/Text.css'
     );
 
     assert.equal(warnings.length, 0);
@@ -79,7 +77,10 @@ describe(reducedMotionRuleName, () => {
     const warnings = await lintMotion(`
       .loader { animation: spin var(--effect-motion-short-3) infinite; }
     `);
-    assert.deepEqual(warnings.map(warning => warning.rule), [reducedMotionRuleName]);
+    assert.deepEqual(
+      warnings.map(warning => warning.rule),
+      [reducedMotionRuleName]
+    );
   });
 
   it('rejects spatial and opacity transitions without an override', async () => {
@@ -89,7 +90,7 @@ describe(reducedMotionRuleName, () => {
     `);
     assert.deepEqual(
       warnings.map(warning => warning.rule),
-      [reducedMotionRuleName, reducedMotionRuleName],
+      [reducedMotionRuleName, reducedMotionRuleName]
     );
   });
 
@@ -139,7 +140,7 @@ describe(rawOpacityRuleName, () => {
 
     assert.deepEqual(
       warnings.map(warning => warning.rule),
-      [rawOpacityRuleName, rawOpacityRuleName, rawOpacityRuleName],
+      [rawOpacityRuleName, rawOpacityRuleName, rawOpacityRuleName]
     );
   });
 

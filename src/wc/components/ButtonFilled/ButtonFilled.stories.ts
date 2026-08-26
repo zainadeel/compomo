@@ -148,10 +148,10 @@ export const VariantsAndSizes: Story = {
                   intent="brand"
                   aria-label=${variant === 'icon' ? `Confirm ${size}` : undefined}
                 ></ds-button-filled>
-              `,
+              `
             )}
           </div>
-        `,
+        `
       )}
     </div>
   `,
@@ -169,15 +169,30 @@ export const LabelEmphasis: Story = {
 export const InsetDensity: Story = {
   render: () => html`
     <div style="${COL}">
-      ${SIZES.map(size => html`
-        <div style="${ROW}">
-          <span style="${LABEL}">${size}</span>
-          <ds-button-filled size=${size} label="Default"></ds-button-filled>
-          <ds-button-filled size=${size} label="Inset" is-inset></ds-button-filled>
-          <ds-button-filled size=${size} variant="icon" icon="Check" aria-label="Inset ${size}" is-inset></ds-button-filled>
-          <ds-button-filled size=${size} variant="icon" icon="Check" aria-label="Double inset ${size}" is-inset inset-depth="double"></ds-button-filled>
-        </div>
-      `)}
+      ${SIZES.map(
+        size => html`
+          <div style="${ROW}">
+            <span style="${LABEL}">${size}</span>
+            <ds-button-filled size=${size} label="Default"></ds-button-filled>
+            <ds-button-filled size=${size} label="Inset" is-inset></ds-button-filled>
+            <ds-button-filled
+              size=${size}
+              variant="icon"
+              icon="Check"
+              aria-label="Inset ${size}"
+              is-inset
+            ></ds-button-filled>
+            <ds-button-filled
+              size=${size}
+              variant="icon"
+              icon="Check"
+              aria-label="Double inset ${size}"
+              is-inset
+              inset-depth="double"
+            ></ds-button-filled>
+          </div>
+        `
+      )}
     </div>
   `,
 };
@@ -186,7 +201,12 @@ export const Rounded: Story = {
   render: () => html`
     <div style="${ROW}">
       <ds-button-filled rounded variant="label" label="Confirm"></ds-button-filled>
-      <ds-button-filled rounded variant="icon-label" icon="Check" label="Confirm"></ds-button-filled>
+      <ds-button-filled
+        rounded
+        variant="icon-label"
+        icon="Check"
+        label="Confirm"
+      ></ds-button-filled>
       <ds-button-filled rounded variant="icon" icon="Check" aria-label="Confirm"></ds-button-filled>
     </div>
   `,
@@ -204,7 +224,7 @@ export const LoadingVariants: Story = {
             is-loading
             aria-label=${variant === 'icon' ? 'Confirm' : undefined}
           ></ds-button-filled>
-        `,
+        `
       )}
     </div>
   `,
@@ -263,12 +283,12 @@ export const PhysicalPressPolicy: Story = {
 export const Widths: Story = {
   parameters: { controls: { exclude: ['width'] } },
   render: args => html`
-    <div
-      style="display:flex;flex-direction:column;gap:var(--dimension-space-200);width:280px;"
-    >
+    <div style="display:flex;flex-direction:column;gap:var(--dimension-space-200);width:280px;">
       ${WIDTHS.map(
         width => html`
-          <div style="display:flex;flex-direction:column;gap:var(--dimension-space-100);width:100%;">
+          <div
+            style="display:flex;flex-direction:column;gap:var(--dimension-space-100);width:100%;"
+          >
             <span style="${LABEL}">width=${width}</span>
             <ds-button-filled
               variant=${args['variant'] === 'icon' ? 'label' : args['variant']}
@@ -280,7 +300,7 @@ export const Widths: Story = {
               contrast=${args['contrast']}
             ></ds-button-filled>
           </div>
-        `,
+        `
       )}
     </div>
   `,
@@ -297,7 +317,7 @@ export const IntentsBold: Story = {
             intent=${intent}
             aria-label=${intent}
           ></ds-button-filled>
-        `,
+        `
       )}
     </div>
   `,
@@ -319,10 +339,10 @@ export const ContrastMatrix: Story = {
                   contrast=${contrast}
                   aria-label="${intent} ${contrast}"
                 ></ds-button-filled>
-              `,
+              `
             )}
           </div>
-        `,
+        `
       )}
     </div>
   `,
@@ -333,8 +353,19 @@ export const OnBoldBrand: Story = {
     <div
       style="display:flex;gap:var(--dimension-space-100);align-items:center;padding:var(--dimension-space-150);border-radius:var(--dimension-radius-100);background:var(--color-background-bold-brand);"
     >
-      <ds-button-filled variant="icon" icon="Check" intent="neutral" contrast="faint" aria-label="Save"></ds-button-filled>
-      <ds-button-filled variant="label" label="Save" intent="brand" contrast="faint"></ds-button-filled>
+      <ds-button-filled
+        variant="icon"
+        icon="Check"
+        intent="neutral"
+        contrast="faint"
+        aria-label="Save"
+      ></ds-button-filled>
+      <ds-button-filled
+        variant="label"
+        label="Save"
+        intent="brand"
+        contrast="faint"
+      ></ds-button-filled>
     </div>
   `,
 };
@@ -348,35 +379,81 @@ export const BorderSurfaceContexts: Story = {
       </div>
       <div style="${SURFACE} background:var(--color-background-faint-neutral);">
         <span style="${LABEL}">faint</span>
-        <ds-button-filled has-border background="faint" label="Confirm" contrast="faint"></ds-button-filled>
+        <ds-button-filled
+          has-border
+          background="faint"
+          label="Confirm"
+          contrast="faint"
+        ></ds-button-filled>
       </div>
       <div style="${SURFACE} background:var(--color-background-medium-neutral);">
         <span style="${LABEL}">medium</span>
-        <ds-button-filled has-border background="medium" label="Confirm" contrast="faint"></ds-button-filled>
+        <ds-button-filled
+          has-border
+          background="medium"
+          label="Confirm"
+          contrast="faint"
+        ></ds-button-filled>
       </div>
       <div style="${SURFACE} background:var(--color-background-bold-neutral);">
         <span style="${LABEL}">bold</span>
-        <ds-button-filled has-border background="bold" label="Confirm" contrast="faint"></ds-button-filled>
+        <ds-button-filled
+          has-border
+          background="bold"
+          label="Confirm"
+          contrast="faint"
+        ></ds-button-filled>
       </div>
       <div style="${SURFACE} background:var(--color-background-strong-neutral);">
         <span style="${LABEL}">strong</span>
-        <ds-button-filled has-border background="strong" label="Confirm" contrast="faint"></ds-button-filled>
+        <ds-button-filled
+          has-border
+          background="strong"
+          label="Confirm"
+          contrast="faint"
+        ></ds-button-filled>
       </div>
-      <div style="${SURFACE} background:linear-gradient(var(--color-translucent-translucent), var(--color-translucent-translucent)), var(--color-background-bold-brand);">
-        <span style="${LABEL};color:var(--color-translucent-foreground-secondary)">translucent</span>
-        <ds-button-filled has-border background="translucent" label="Confirm" contrast="faint"></ds-button-filled>
+      <div
+        style="${SURFACE} background:linear-gradient(var(--color-translucent-translucent), var(--color-translucent-translucent)), var(--color-background-bold-brand);"
+      >
+        <span style="${LABEL};color:var(--color-translucent-foreground-secondary)"
+          >translucent</span
+        >
+        <ds-button-filled
+          has-border
+          background="translucent"
+          label="Confirm"
+          contrast="faint"
+        ></ds-button-filled>
       </div>
       <div style="${SURFACE} background:var(--color-inverted-background);">
         <span style="${LABEL};color:var(--color-inverted-foreground-secondary)">inverted</span>
-        <ds-button-filled has-border background="inverted" label="Confirm" contrast="faint"></ds-button-filled>
+        <ds-button-filled
+          has-border
+          background="inverted"
+          label="Confirm"
+          contrast="faint"
+        ></ds-button-filled>
       </div>
       <div style="${SURFACE} background:var(--color-media-background);">
         <span style="${LABEL};color:var(--color-media-foreground-secondary)">media</span>
-        <ds-button-filled has-border background="media" label="Confirm" contrast="faint"></ds-button-filled>
+        <ds-button-filled
+          has-border
+          background="media"
+          label="Confirm"
+          contrast="faint"
+        ></ds-button-filled>
       </div>
       <div style="${SURFACE} background:var(--color-always-dark-background);">
-        <span style="${LABEL};color:var(--color-always-dark-foreground-secondary)">always-dark</span>
-        <ds-button-filled has-border background="always-dark" label="Confirm" contrast="faint"></ds-button-filled>
+        <span style="${LABEL};color:var(--color-always-dark-foreground-secondary)"
+          >always-dark</span
+        >
+        <ds-button-filled
+          has-border
+          background="always-dark"
+          label="Confirm"
+          contrast="faint"
+        ></ds-button-filled>
       </div>
     </div>
   `,
@@ -415,10 +492,10 @@ export const MenuTrigger: Story = {
                   icon="Plus"
                   has-menu
                 ></ds-button-filled>
-              `,
+              `
             )}
           </div>
-        `,
+        `
       )}
     </div>
   `,
@@ -451,17 +528,35 @@ export const MenuTriggerOpenState: Story = {
       <div style="${ROW}">
         <span style="${LABEL}">icon-label</span>
         <ds-button-filled variant="icon-label" icon="Plus" label="Add" has-menu></ds-button-filled>
-        <ds-button-filled variant="icon-label" icon="Plus" label="Add" has-menu expanded></ds-button-filled>
+        <ds-button-filled
+          variant="icon-label"
+          icon="Plus"
+          label="Add"
+          has-menu
+          expanded
+        ></ds-button-filled>
       </div>
       <div style="${ROW}">
         <span style="${LABEL}">inactive</span>
         <ds-button-filled variant="label" label="Add" has-menu is-inactive></ds-button-filled>
-        <ds-button-filled variant="label" label="Add" has-menu expanded is-inactive></ds-button-filled>
+        <ds-button-filled
+          variant="label"
+          label="Add"
+          has-menu
+          expanded
+          is-inactive
+        ></ds-button-filled>
       </div>
       <div style="${ROW}">
         <span style="${LABEL}">loading</span>
         <ds-button-filled variant="label" label="Add" has-menu is-loading></ds-button-filled>
-        <ds-button-filled variant="icon-label" icon="Plus" label="Add" has-menu is-loading></ds-button-filled>
+        <ds-button-filled
+          variant="icon-label"
+          icon="Plus"
+          label="Add"
+          has-menu
+          is-loading
+        ></ds-button-filled>
       </div>
 
       <div style="${COL};margin-top:var(--dimension-space-100);">
@@ -470,10 +565,21 @@ export const MenuTriggerOpenState: Story = {
           contrast => html`
             <div style="${ROW}">
               <span style="${LABEL}">${contrast}</span>
-              <ds-button-filled variant="label" label="Add" contrast=${contrast} has-menu></ds-button-filled>
-              <ds-button-filled variant="label" label="Add" contrast=${contrast} has-menu expanded></ds-button-filled>
+              <ds-button-filled
+                variant="label"
+                label="Add"
+                contrast=${contrast}
+                has-menu
+              ></ds-button-filled>
+              <ds-button-filled
+                variant="label"
+                label="Add"
+                contrast=${contrast}
+                has-menu
+                expanded
+              ></ds-button-filled>
             </div>
-          `,
+          `
         )}
       </div>
 
@@ -483,10 +589,21 @@ export const MenuTriggerOpenState: Story = {
           intent => html`
             <div style="${ROW}">
               <span style="${LABEL}">${intent}</span>
-              <ds-button-filled variant="label" label="Add" intent=${intent} has-menu></ds-button-filled>
-              <ds-button-filled variant="label" label="Add" intent=${intent} has-menu expanded></ds-button-filled>
+              <ds-button-filled
+                variant="label"
+                label="Add"
+                intent=${intent}
+                has-menu
+              ></ds-button-filled>
+              <ds-button-filled
+                variant="label"
+                label="Add"
+                intent=${intent}
+                has-menu
+                expanded
+              ></ds-button-filled>
             </div>
-          `,
+          `
         )}
       </div>
     </div>

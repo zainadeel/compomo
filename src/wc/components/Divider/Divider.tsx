@@ -77,9 +77,7 @@ export class Divider {
   }
 
   private resolveLength(): string {
-    return this.length === 'auto' || this.length === 'full'
-      ? '100%'
-      : this.length;
+    return this.length === 'auto' || this.length === 'full' ? '100%' : this.length;
   }
 
   render() {

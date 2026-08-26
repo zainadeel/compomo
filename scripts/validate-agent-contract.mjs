@@ -24,15 +24,20 @@ function readJson(relativePath) {
 function walk(directory, suffix) {
   const absolute = path.join(ROOT, directory);
   if (!fs.existsSync(absolute)) return [];
-  return fs.readdirSync(absolute, { withFileTypes: true }).flatMap(entry => {
-    const child = path.join(directory, entry.name);
-    if (entry.isDirectory()) return walk(child, suffix);
-    return entry.name.endsWith(suffix) ? [child] : [];
-  }).sort();
+  return fs
+    .readdirSync(absolute, { withFileTypes: true })
+    .flatMap(entry => {
+      const child = path.join(directory, entry.name);
+      if (entry.isDirectory()) return walk(child, suffix);
+      return entry.name.endsWith(suffix) ? [child] : [];
+    })
+    .sort();
 }
 
 function formatErrors(relativePath, errors = []) {
-  return errors.map(error => `${relativePath}${error.instancePath || '/'} ${error.message}`).join('\n');
+  return errors
+    .map(error => `${relativePath}${error.instancePath || '/'} ${error.message}`)
+    .join('\n');
 }
 
 export function validateAgentContract() {
@@ -48,20 +53,24 @@ export function validateAgentContract() {
   const patternDocuments = walk('agent/patterns', '.agent.json');
   const patterns = new Map();
 
-  errors.push(...validateAuthoredArtifacts({
-    root: ROOT,
-    components: inventory,
-  }));
+  errors.push(
+    ...validateAuthoredArtifacts({
+      root: ROOT,
+      components: inventory,
+    })
+  );
 
   for (const relativePath of componentDocuments) {
     const document = readJson(relativePath);
-    if (!validateComponent(document)) errors.push(formatErrors(relativePath, validateComponent.errors));
+    if (!validateComponent(document))
+      errors.push(formatErrors(relativePath, validateComponent.errors));
     if (ids.has(document.id)) errors.push(`${relativePath}: duplicate id ${document.id}`);
     ids.add(document.id);
 
     const source = knownComponents.get(document.id);
     if (!source) errors.push(`${relativePath}: ${document.id} does not match a Stencil component`);
-    else if (source.tag !== document.tag) errors.push(`${relativePath}: tag ${document.tag} does not match ${source.tag}`);
+    else if (source.tag !== document.tag)
+      errors.push(`${relativePath}: tag ${document.tag} does not match ${source.tag}`);
     if (document.replacedBy && !knownComponents.has(document.replacedBy)) {
       errors.push(`${relativePath}: unknown replacement ${document.replacedBy}`);
     }
@@ -72,10 +81,12 @@ export function validateAgentContract() {
       }
     }
     for (const componentId of document.commonlyComposedWith ?? []) {
-      if (!knownComponents.has(componentId)) errors.push(`${relativePath}: unknown component ${componentId}`);
+      if (!knownComponents.has(componentId))
+        errors.push(`${relativePath}: unknown component ${componentId}`);
     }
     for (const reference of document.references ?? []) {
-      if (!fs.existsSync(path.join(ROOT, reference.path))) errors.push(`${relativePath}: missing reference ${reference.path}`);
+      if (!fs.existsSync(path.join(ROOT, reference.path)))
+        errors.push(`${relativePath}: missing reference ${reference.path}`);
     }
   }
 
@@ -87,15 +98,18 @@ export function validateAgentContract() {
     patterns.set(document.id, relativePath);
 
     for (const entry of document.components ?? []) {
-      if (!knownComponents.has(entry.component)) errors.push(`${relativePath}: unknown component ${entry.component}`);
+      if (!knownComponents.has(entry.component))
+        errors.push(`${relativePath}: unknown component ${entry.component}`);
     }
     for (const implementation of Object.values(document.implementations ?? {})) {
       for (const reference of implementation.references ?? []) {
-        if (!fs.existsSync(path.join(ROOT, reference))) errors.push(`${relativePath}: missing reference ${reference}`);
+        if (!fs.existsSync(path.join(ROOT, reference)))
+          errors.push(`${relativePath}: missing reference ${reference}`);
       }
     }
     for (const reference of document.references ?? []) {
-      if (!fs.existsSync(path.join(ROOT, reference))) errors.push(`${relativePath}: missing reference ${reference}`);
+      if (!fs.existsSync(path.join(ROOT, reference)))
+        errors.push(`${relativePath}: missing reference ${reference}`);
     }
   }
 
@@ -108,11 +122,9 @@ export function validateAgentContract() {
 
   const compatibility = readJson('agent/contracts/registry-compatibility.json');
   const registry = readJson(compatibility.masterPath);
-  errors.push(...validateRegistryCoverage(
-    inventory,
-    registry,
-    fs.readdirSync(path.join(ROOT, 'public/r')),
-  ));
+  errors.push(
+    ...validateRegistryCoverage(inventory, registry, fs.readdirSync(path.join(ROOT, 'public/r')))
+  );
   for (const key of compatibility.requiredTopLevelKeys) {
     if (!(key in registry)) errors.push(`registry compatibility: missing top-level key ${key}`);
   }
@@ -123,7 +135,9 @@ export function validateAgentContract() {
       const docs = compilerDocs.get(component.tag);
       if (!docs) errors.push(`${COMPILER_DOCS_PATH}: missing ${component.tag}`);
       else if (docs.filePath !== component.sourcePath) {
-        errors.push(`${COMPILER_DOCS_PATH}: ${component.tag} points to ${docs.filePath}, expected ${component.sourcePath}`);
+        errors.push(
+          `${COMPILER_DOCS_PATH}: ${component.tag} points to ${docs.filePath}, expected ${component.sourcePath}`
+        );
       }
     }
     for (const tag of compilerDocs.keys()) {
@@ -133,7 +147,8 @@ export function validateAgentContract() {
     }
   }
 
-  if (errors.length) throw new Error(`Agent contract validation failed:\n${errors.filter(Boolean).join('\n')}`);
+  if (errors.length)
+    throw new Error(`Agent contract validation failed:\n${errors.filter(Boolean).join('\n')}`);
   return {
     sourceComponents: inventory.length,
     componentDocuments: componentDocuments.length,
@@ -142,11 +157,8 @@ export function validateAgentContract() {
 }
 
 export function validateAgentDocument(kind, document) {
-  const schemaPath = kind === 'component'
-    ? COMPONENT_SCHEMA_PATH
-    : kind === 'pattern'
-      ? PATTERN_SCHEMA_PATH
-      : null;
+  const schemaPath =
+    kind === 'component' ? COMPONENT_SCHEMA_PATH : kind === 'pattern' ? PATTERN_SCHEMA_PATH : null;
   if (!schemaPath) throw new Error(`Unknown agent document kind: ${kind}`);
 
   const ajv = new Ajv2020({ allErrors: true, strict: true });
@@ -159,5 +171,7 @@ export function validateAgentDocument(kind, document) {
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const result = validateAgentContract();
-  console.log(`Agent contract valid: ${result.componentDocuments} component prototypes, ${result.patternDocuments} pattern, ${result.sourceComponents} source components.`);
+  console.log(
+    `Agent contract valid: ${result.componentDocuments} component prototypes, ${result.patternDocuments} pattern, ${result.sourceComponents} source components.`
+  );
 }

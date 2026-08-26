@@ -134,19 +134,22 @@ export class Field {
     const describedby = uniqueTokens(
       authored.describedby,
       this.renderedDescription ? [this.descriptionId] : [],
-      this.renderedError ? [this.errorId] : [],
+      this.renderedError ? [this.errorId] : []
     ).join(' ');
 
     this.updateControlAttribute(control, 'aria-labelledby', labelledby);
     this.updateControlAttribute(control, 'aria-describedby', describedby || undefined);
     this.updateControlAttribute(control, 'aria-invalid', this.error ? 'true' : undefined);
 
-    if (isDsControl && 'error' in control && control.error !== this.error) control.error = this.error;
+    if (isDsControl && 'error' in control && control.error !== this.error)
+      control.error = this.error;
 
     const value = this.readValue(control);
     this.filled = value.length > 0;
     this.dirty = value !== this.initialValue;
-    this.controlDisabled = Boolean(control.disabled || control.isInactive || control.hasAttribute('disabled'));
+    this.controlDisabled = Boolean(
+      control.disabled || control.isInactive || control.hasAttribute('disabled')
+    );
     this.controlRequired = Boolean(control.required || control.hasAttribute('required'));
   };
 

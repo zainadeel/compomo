@@ -1,4 +1,15 @@
-import { AttachInternals, Component, Element, Prop, State, Event, EventEmitter, Watch, h, Host } from '@stencil/core';
+import {
+  AttachInternals,
+  Component,
+  Element,
+  Prop,
+  State,
+  Event,
+  EventEmitter,
+  Watch,
+  h,
+  Host,
+} from '@stencil/core';
 import { DEFAULT_REQUIRED_MESSAGE, setFormControlValue, setRequiredValidity } from '../../utils';
 
 export type SwitchSize = 'lg' | 'md' | 'sm' | 'xs';
@@ -67,7 +78,7 @@ export class Switch {
   @Watch('required')
   syncFormValue() {
     const inactive = this.presentation || this.isInactive || this.disabled || this.formDisabled;
-    const submissionValue = this.checked ? this.value : this.uncheckedValue ?? null;
+    const submissionValue = this.checked ? this.value : (this.uncheckedValue ?? null);
     const state = this.checked ? 'checked' : 'unchecked';
     setFormControlValue(this.internals, submissionValue, { inactive, state });
 
@@ -102,13 +113,15 @@ export class Switch {
   }
 
   private handleClick = () => {
-    if (this.presentation || this.readOnly || this.isInactive || this.disabled || this.formDisabled) return;
+    if (this.presentation || this.readOnly || this.isInactive || this.disabled || this.formDisabled)
+      return;
     this.checked = !this.checked;
     this.dsChange.emit(this.checked);
   };
 
   private handleKeyDown = (event: KeyboardEvent) => {
-    if (this.presentation || this.readOnly || this.isInactive || this.disabled || this.formDisabled) return;
+    if (this.presentation || this.readOnly || this.isInactive || this.disabled || this.formDisabled)
+      return;
     if (event.key === ' ' || event.key === 'Enter') {
       event.preventDefault();
       this.handleClick();

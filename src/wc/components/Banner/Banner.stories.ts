@@ -98,18 +98,22 @@ export const MultipleActions: Story = {
 export const IntentAndContrastMatrix: Story = {
   render: () => html`
     <div style="display:grid;gap:var(--dimension-space-200);">
-      ${CONTRASTS.map(contrast => html`
-        <div style="display:grid;gap:var(--dimension-space-100);">
-          ${INTENTS.map(intent => html`
-            <ds-banner
-              heading=${intent}
-              description=${`${contrast} contrast`}
-              intent=${intent}
-              contrast=${contrast}
-            ></ds-banner>
-          `)}
-        </div>
-      `)}
+      ${CONTRASTS.map(
+        contrast => html`
+          <div style="display:grid;gap:var(--dimension-space-100);">
+            ${INTENTS.map(
+              intent => html`
+                <ds-banner
+                  heading=${intent}
+                  description=${`${contrast} contrast`}
+                  intent=${intent}
+                  contrast=${contrast}
+                ></ds-banner>
+              `
+            )}
+          </div>
+        `
+      )}
     </div>
   `,
 };
@@ -124,8 +128,18 @@ export const NarrowWrapping: Story = {
         intent="negative"
         contrast="faint"
       >
-        <ds-button-unfilled slot="actions" label="Retry" size="md" background="faint"></ds-button-unfilled>
-        <ds-button-unfilled slot="actions" label="Details" size="md" background="faint"></ds-button-unfilled>
+        <ds-button-unfilled
+          slot="actions"
+          label="Retry"
+          size="md"
+          background="faint"
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          slot="actions"
+          label="Details"
+          size="md"
+          background="faint"
+        ></ds-button-unfilled>
       </ds-banner>
     </div>
   `,
@@ -243,11 +257,20 @@ export const ShellIntegration: Story = {
           intent="brand"
           contrast="faint"
         >
-          <ds-button-unfilled slot="actions" label="Learn more" background="faint"></ds-button-unfilled>
+          <ds-button-unfilled
+            slot="actions"
+            label="Learn more"
+            background="faint"
+          ></ds-button-unfilled>
         </ds-banner>
-        <div slot="panel" style="width:240px;height:100%;background:var(--color-background-secondary);"></div>
+        <div
+          slot="panel"
+          style="width:240px;height:100%;background:var(--color-background-secondary);"
+        ></div>
         <div slot="bar" style="height:64px;background:var(--color-background-secondary);"></div>
-        <main style="height:100%;padding:var(--dimension-space-200);box-sizing:border-box;">Application content</main>
+        <main style="height:100%;padding:var(--dimension-space-200);box-sizing:border-box;">
+          Application content
+        </main>
       </ds-shell-app>
     </div>
   `,

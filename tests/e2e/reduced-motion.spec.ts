@@ -6,10 +6,14 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('stops infinite and spatial component motion while retaining final states', async ({ page }) => {
-  const loaderAnimation = await page.locator('#loader').evaluate(element =>
-    getComputedStyle(element.shadowRoot!.querySelector('.loader')!).animationName
-  );
+test('stops infinite and spatial component motion while retaining final states', async ({
+  page,
+}) => {
+  const loaderAnimation = await page
+    .locator('#loader')
+    .evaluate(
+      element => getComputedStyle(element.shadowRoot!.querySelector('.loader')!).animationName
+    );
   expect(loaderAnimation).toBe('none');
 
   const switchMotion = await page.locator('#switch').evaluate(element => {
@@ -19,9 +23,11 @@ test('stops infinite and spatial component motion while retaining final states',
   expect(switchMotion.duration).toBe('0s');
   expect(switchMotion.property).toBe('none');
 
-  const buttonTransition = await page.locator('#button').evaluate(element =>
-    getComputedStyle(element.querySelector('.button-filled')!).transitionProperty
-  );
+  const buttonTransition = await page
+    .locator('#button')
+    .evaluate(
+      element => getComputedStyle(element.querySelector('.button-filled')!).transitionProperty
+    );
   expect(buttonTransition).not.toContain('transform');
 });
 
@@ -37,10 +43,14 @@ test('renders overlays without entry or exit animation delays', async ({ page })
   }));
   expect(animations).toEqual({ menu: 'none', modal: 'none', toast: 'none' });
 
-  await page.locator('#menu').evaluate((element: HTMLDsMenuElement) => { element.open = false; });
+  await page.locator('#menu').evaluate((element: HTMLDsMenuElement) => {
+    element.open = false;
+  });
   await expect(page.locator('#menu .menu-popup')).toHaveCount(0);
 
-  await page.locator('#modal').evaluate((element: HTMLDsModalElement) => { element.open = false; });
+  await page.locator('#modal').evaluate((element: HTMLDsModalElement) => {
+    element.open = false;
+  });
   await expect(page.locator('#modal .modal-dialog')).toBeHidden();
 
   await page.evaluate(() => {
@@ -50,7 +60,9 @@ test('renders overlays without entry or exit animation delays', async ({ page })
       }
     ).__reducedMotionToastManager.close('reduced-motion-toast');
   });
-  await expect.poll(() => page.evaluate(() =>
-    (window as typeof window & { __toastRemoved: number }).__toastRemoved
-  )).toBe(1);
+  await expect
+    .poll(() =>
+      page.evaluate(() => (window as typeof window & { __toastRemoved: number }).__toastRemoved)
+    )
+    .toBe(1);
 });

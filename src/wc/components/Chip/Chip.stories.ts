@@ -2,27 +2,27 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-chip.js';
 
-const STATES      = ['default', 'active', 'error', 'caution'] as const;
-const SIZES       = ['md', 'sm', 'xs'] as const;
+const STATES = ['default', 'active', 'error', 'caution'] as const;
+const SIZES = ['md', 'sm', 'xs'] as const;
 
 const meta: Meta = {
   title: 'Primitives/Chip',
   tags: ['autodocs'],
   argTypes: {
-    label:      { control: 'text' },
-    state:      { control: 'select', options: [...STATES] },
-    size:       { control: 'select', options: [...SIZES] },
-    rounded:    { control: 'boolean' },
+    label: { control: 'text' },
+    state: { control: 'select', options: [...STATES] },
+    size: { control: 'select', options: [...SIZES] },
+    rounded: { control: 'boolean' },
     isInactive: { control: 'boolean' },
-    maxWidth:   { control: 'text' },
+    maxWidth: { control: 'text' },
   },
   args: {
-    label:      'Chip',
-    state:      'default',
-    size:       'md',
-    rounded:    false,
+    label: 'Chip',
+    state: 'default',
+    size: 'md',
+    rounded: false,
     isInactive: false,
-    maxWidth:   '',
+    maxWidth: '',
   },
 };
 
@@ -44,10 +44,10 @@ export const Playground: Story = {
 
 export const States: Story = {
   render: () => html`
-    <div style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap; align-items: center">
-      ${STATES.map(state => html`
-        <ds-chip label=${state} state=${state}></ds-chip>
-      `)}
+    <div
+      style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap; align-items: center"
+    >
+      ${STATES.map(state => html` <ds-chip label=${state} state=${state}></ds-chip> `)}
     </div>
   `,
 };
@@ -55,19 +55,28 @@ export const States: Story = {
 export const Sizes: Story = {
   render: () => html`
     <div style="display: flex; gap: var(--dimension-space-150); align-items: center">
-      ${SIZES.map(size => html`
-        <div style="display: flex; flex-direction: column; align-items: center; gap: var(--dimension-space-075)">
-          <ds-chip label=${size} state="active" size=${size}></ds-chip>
-          <span style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-tertiary)">${size}</span>
-        </div>
-      `)}
+      ${SIZES.map(
+        size => html`
+          <div
+            style="display: flex; flex-direction: column; align-items: center; gap: var(--dimension-space-075)"
+          >
+            <ds-chip label=${size} state="active" size=${size}></ds-chip>
+            <span
+              style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-tertiary)"
+              >${size}</span
+            >
+          </div>
+        `
+      )}
     </div>
   `,
 };
 
 export const Rounded: Story = {
   render: () => html`
-    <div style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap; align-items: center">
+    <div
+      style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap; align-items: center"
+    >
       <ds-chip label="Default" state="default"></ds-chip>
       <ds-chip label="Rounded" state="active" rounded></ds-chip>
     </div>
@@ -76,7 +85,9 @@ export const Rounded: Story = {
 
 export const Inactive: Story = {
   render: () => html`
-    <div style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap; align-items: center">
+    <div
+      style="display: flex; gap: var(--dimension-space-100); flex-wrap: wrap; align-items: center"
+    >
       <ds-chip label="Default" state="default"></ds-chip>
       <ds-chip label="Inactive" state="default" is-inactive></ds-chip>
     </div>

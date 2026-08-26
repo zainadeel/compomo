@@ -185,7 +185,10 @@ export const ReorderableSwitches: Story = {
     const items = (args['items'] as MenuItemData[]) ?? reorderableItems;
     return html`
       <div style="padding: 16px; height: 320px">
-        <span id="menu-anchor-reorder" style="display: inline-block; width: 1px; height: 1px"></span>
+        <span
+          id="menu-anchor-reorder"
+          style="display: inline-block; width: 1px; height: 1px"
+        ></span>
         <ds-menu
           ?open=${true}
           menu-label="Customize table"
@@ -198,7 +201,7 @@ export const ReorderableSwitches: Story = {
               items: items.map(item =>
                 item.value === event.detail.value && !item.isInactive
                   ? { ...item, switchValue: !item.switchValue }
-                  : item,
+                  : item
               ),
             })}
         ></ds-menu>

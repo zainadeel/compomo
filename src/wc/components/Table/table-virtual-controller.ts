@@ -49,12 +49,16 @@ export class TableVirtualController {
   private readonly caf: (handle: number) => void;
 
   constructor(private readonly options: TableVirtualControllerOptions) {
-    this.raf = options.requestAnimationFrame ?? (typeof requestAnimationFrame === 'function'
-      ? callback => requestAnimationFrame(callback)
-      : callback => setTimeout(callback, 16) as unknown as number);
-    this.caf = options.cancelAnimationFrame ?? (typeof cancelAnimationFrame === 'function'
-      ? handle => cancelAnimationFrame(handle)
-      : handle => clearTimeout(handle));
+    this.raf =
+      options.requestAnimationFrame ??
+      (typeof requestAnimationFrame === 'function'
+        ? callback => requestAnimationFrame(callback)
+        : callback => setTimeout(callback, 16) as unknown as number);
+    this.caf =
+      options.cancelAnimationFrame ??
+      (typeof cancelAnimationFrame === 'function'
+        ? handle => cancelAnimationFrame(handle)
+        : handle => clearTimeout(handle));
   }
 
   connect(): void {
@@ -152,7 +156,7 @@ export class TableVirtualController {
 
   private applyMeasurements(
     items: readonly TableVirtualItem[],
-    measurements: readonly { id: string; height: number }[],
+    measurements: readonly { id: string; height: number }[]
   ): void {
     if (measurements.length === 0) return;
     const currentIndex = this.ensureIndex(items);
@@ -223,9 +227,10 @@ export class TableVirtualController {
     if (width !== this.viewportWidth) {
       this.viewportWidth = width;
       const items = this.options.state().items;
-      const hasVariableSize = this.indexedItems === items && this.index
-        ? this.index.hasVariableSize
-        : items.some(item => item.variableSize);
+      const hasVariableSize =
+        this.indexedItems === items && this.index
+          ? this.index.hasVariableSize
+          : items.some(item => item.variableSize);
       if (hasVariableSize) this.invalidateMeasures();
       else if (sizeChanged) this.schedule();
       return;
@@ -237,11 +242,12 @@ export class TableVirtualController {
     const viewport = this.connectedViewport;
     if (viewport) {
       const nextOffset = viewport.scrollTop;
-      this.scrollDirection = nextOffset > this.scrollOffset
-        ? 'forward'
-        : nextOffset < this.scrollOffset
-          ? 'backward'
-          : this.scrollDirection;
+      this.scrollDirection =
+        nextOffset > this.scrollOffset
+          ? 'forward'
+          : nextOffset < this.scrollOffset
+            ? 'backward'
+            : this.scrollDirection;
       this.scrollOffset = nextOffset;
     }
     this.schedule();

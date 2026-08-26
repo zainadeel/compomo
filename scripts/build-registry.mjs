@@ -19,22 +19,28 @@ const PACKAGE_NAME = PACKAGE_JSON.name;
 const STORYBOOK_URL = 'https://zainadeel.github.io/compomo/';
 const TOKENS_PEER = PACKAGE_JSON.peerDependencies['@ds-mo/tokens'];
 const ICONS_PEER = PACKAGE_JSON.peerDependencies['@ds-mo/icons'];
-const FRAMEWORKS = 'Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters.';
+const FRAMEWORKS =
+  'Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters.';
 
 function readIntent(component) {
   return readJson(ROOT, component.agentPath);
 }
 
 function apiProps(docs) {
-  return Object.fromEntries((docs.props ?? []).map(prop => [prop.name, {
-    type: prop.complexType?.original ?? prop.type,
-    resolvedType: prop.type,
-    attribute: prop.attr,
-    default: prop.default,
-    required: prop.required ?? false,
-    mutable: prop.mutable ?? false,
-    description: prop.docs || undefined,
-  }]));
+  return Object.fromEntries(
+    (docs.props ?? []).map(prop => [
+      prop.name,
+      {
+        type: prop.complexType?.original ?? prop.type,
+        resolvedType: prop.type,
+        attribute: prop.attr,
+        default: prop.default,
+        required: prop.required ?? false,
+        mutable: prop.mutable ?? false,
+        description: prop.docs || undefined,
+      },
+    ])
+  );
 }
 
 function apiEvents(docs) {
@@ -85,12 +91,11 @@ function sourceFiles(component) {
 }
 
 function usage(component, docs) {
-  const complexProps = (docs.props ?? [])
-    .filter(prop => prop.attr == null)
-    .map(prop => prop.name);
+  const complexProps = (docs.props ?? []).filter(prop => prop.attr == null).map(prop => prop.name);
   return {
     install: `npm install ${PACKAGE_NAME} @ds-mo/tokens @ds-mo/icons`,
-    cssSetup: "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+    cssSetup:
+      "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
     customElements: {
       import: `import '@ds-mo/ui/dist/components/${component.tag}.js';`,
       example: `<${component.tag}></${component.tag}>`,
@@ -132,7 +137,9 @@ function cleanOutput() {
 const components = discoverComponents();
 const compilerDocs = loadCompilerDocs();
 if (!compilerDocs) {
-  throw new Error(`Missing ${COMPILER_DOCS_PATH}. Run npm run build before npm run registry:build.`);
+  throw new Error(
+    `Missing ${COMPILER_DOCS_PATH}. Run npm run build before npm run registry:build.`
+  );
 }
 
 const sourceTags = new Set(components.map(component => component.tag));
@@ -140,7 +147,9 @@ const docsTags = new Set(compilerDocs.keys());
 const missingDocs = [...sourceTags].filter(tag => !docsTags.has(tag));
 const staleDocs = [...docsTags].filter(tag => !sourceTags.has(tag));
 if (missingDocs.length || staleDocs.length) {
-  throw new Error(`Stencil metadata mismatch. Missing: ${missingDocs.join(', ') || 'none'}. Stale: ${staleDocs.join(', ') || 'none'}.`);
+  throw new Error(
+    `Stencil metadata mismatch. Missing: ${missingDocs.join(', ') || 'none'}. Stale: ${staleDocs.join(', ') || 'none'}.`
+  );
 }
 
 cleanOutput();
@@ -185,11 +194,7 @@ for (const component of components) {
       exports: frameworkExports,
       consumption: usage(component, docs),
     },
-    dependencies: [
-      PACKAGE_NAME,
-      '@ds-mo/tokens',
-      ...(usesIcons ? ['@ds-mo/icons'] : []),
-    ],
+    dependencies: [PACKAGE_NAME, '@ds-mo/tokens', ...(usesIcons ? ['@ds-mo/icons'] : [])],
     registryDependencies: internalDependencies.map(tag => tag.replace(/^ds-/, '')),
     files: sourceFiles(component),
   };
@@ -207,10 +212,15 @@ for (const component of components) {
       source: item.meta.source,
       intentStatus: item.meta.intentStatus,
       intent: item.meta.intent,
-      props: Object.fromEntries(Object.entries(props).map(([name, prop]) => [name, {
-        type: prop.type,
-        required: prop.required,
-      }])),
+      props: Object.fromEntries(
+        Object.entries(props).map(([name, prop]) => [
+          name,
+          {
+            type: prop.type,
+            required: prop.required,
+          },
+        ])
+      ),
       events: events.map(event => ({ name: event.name, detail: event.detail })),
       slots: slots.map(slot => slot.name),
       exports: frameworkExports,
@@ -218,7 +228,9 @@ for (const component of components) {
     dependencies: item.dependencies,
     registryDependencies: item.registryDependencies,
   });
-  console.log(`  ✓ ${component.name}.json (${Object.keys(props).length} props, ${intent ? 'intent' : 'migration pending'})`);
+  console.log(
+    `  ✓ ${component.name}.json (${Object.keys(props).length} props, ${intent ? 'intent' : 'migration pending'})`
+  );
 }
 
 const registry = {
@@ -231,12 +243,14 @@ const registry = {
     generatedFrom: COMPILER_DOCS_PATH,
     install: `npm install ${PACKAGE_NAME} @ds-mo/tokens @ds-mo/icons`,
     register: "import '@ds-mo/ui/dist/components/ds-button-filled.js';",
-    cssSetup: "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+    cssSetup:
+      "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
     themeSetup: 'Set data-theme="dark" on <html> for dark mode. Light is default.',
     peerDependencies: {
       required: [`@ds-mo/tokens ${TOKENS_PEER}`, `@ds-mo/icons ${ICONS_PEER}`],
       optional: [],
-      frameworks: 'None required for Custom Elements; generated React, Vue, and Angular adapters are included.',
+      frameworks:
+        'None required for Custom Elements; generated React, Vue, and Angular adapters are included.',
     },
   },
   items: registryItems,

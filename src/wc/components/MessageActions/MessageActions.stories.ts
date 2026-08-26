@@ -21,9 +21,7 @@ export const Feedback: Story = {
       copy-text="A completed agent response."
       .feedbackEnabled=${true}
       feedback="positive"
-      @dsFeedbackChange=${(
-        event: CustomEvent<MessageFeedback | undefined>
-      ) => {
+      @dsFeedbackChange=${(event: CustomEvent<MessageFeedback | undefined>) => {
         const actions = event.currentTarget as HTMLElement & {
           feedback?: MessageFeedback;
         };

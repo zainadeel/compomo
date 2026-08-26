@@ -18,7 +18,7 @@ test('reserves compact-state height while exposing only the currently visible he
       reservedBlockSize: 560,
       currentBlockSize: 488,
       settled: false,
-    },
+    }
   );
 });
 
@@ -35,7 +35,7 @@ test('fills the reserved height after surrounding page chrome has compacted', ()
       reservedBlockSize: 560,
       currentBlockSize: 560,
       settled: true,
-    },
+    }
   );
 });
 
@@ -52,13 +52,15 @@ test('clamps impossible inset geometry without producing negative sizes', () => 
       reservedBlockSize: 0,
       currentBlockSize: 0,
       settled: false,
-    },
+    }
   );
 });
 
 test('does not rediscover or remeasure stable fit geometry after a recycled render', () => {
   const globals = ['window', 'document', 'HTMLElement'] as const;
-  const previous = new Map(globals.map(name => [name, Object.getOwnPropertyDescriptor(globalThis, name)]));
+  const previous = new Map(
+    globals.map(name => [name, Object.getOwnPropertyDescriptor(globalThis, name)])
+  );
   let hostRectReads = 0;
   const windowMock = {
     innerHeight: 900,
@@ -118,7 +120,9 @@ test('does not rediscover or remeasure stable fit geometry after a recycled rend
 
 test('reserves host geometry before the fitted surface is rendered', () => {
   const globals = ['window', 'document', 'HTMLElement'] as const;
-  const previous = new Map(globals.map(name => [name, Object.getOwnPropertyDescriptor(globalThis, name)]));
+  const previous = new Map(
+    globals.map(name => [name, Object.getOwnPropertyDescriptor(globalThis, name)])
+  );
   const windowMock = {
     innerHeight: 900,
     scrollY: 0,
@@ -164,18 +168,12 @@ test('reserves host geometry before the fitted surface is rendered', () => {
 
   try {
     controller.connect();
-    assert.equal(
-      hostProperties.get('--_table-viewport-fit-reserved-block-size'),
-      '750px',
-    );
+    assert.equal(hostProperties.get('--_table-viewport-fit-reserved-block-size'), '750px');
     assert.equal(surfaceProperties.size, 0);
 
     renderedSurface = surface;
     controller.refresh();
-    assert.equal(
-      surfaceProperties.get('--_table-viewport-fit-current-block-size'),
-      '730px',
-    );
+    assert.equal(surfaceProperties.get('--_table-viewport-fit-current-block-size'), '730px');
     controller.disconnect();
   } finally {
     for (const name of globals) {

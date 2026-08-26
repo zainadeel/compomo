@@ -7,9 +7,7 @@ export function snapshotMenuSections(sections: readonly MenuSection[]): MenuSect
     if (isMenuSwatchPickerSection(section)) {
       return {
         ...section,
-        ...(section.options
-          ? { options: section.options.map(option => ({ ...option })) }
-          : {}),
+        ...(section.options ? { options: section.options.map(option => ({ ...option })) } : {}),
         ...(section.sections
           ? {
               sections: section.sections.map(swatchSection => ({

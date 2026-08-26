@@ -28,32 +28,34 @@ const DENSITIES = [
 export const SpacingAndAxis: Story = {
   render: () => html`
     <div class="util-demo-page">
-      ${DENSITIES.map(({ size, value }) => html`
-        <section class="util-demo-section">
-          <h2 class="util-demo-h2">${size} · ${value} padding / ${value} gap</h2>
-          <div
-            class="ds-chrome-row ds-chrome-space--${size}"
-            style="width:100%;border:var(--dimension-stroke-width-012) solid var(--color-border-tertiary);background:var(--color-background-secondary);"
-          >
-            <ds-text as="span" variant="text-body-medium" emphasis>Row chrome</ds-text>
-            <ds-button-unfilled
-              variant="icon"
-              icon="Ellipses"
-              aria-label="${size} row options"
-              .hasBorder=${false}
-            ></ds-button-unfilled>
-          </div>
-          <div
-            class="ds-chrome-column ds-chrome-space--${size}"
-            style="width:100%;border:var(--dimension-stroke-width-012) solid var(--color-border-tertiary);background:var(--color-background-secondary);"
-          >
-            <ds-text as="span" variant="text-body-medium" emphasis>Column chrome</ds-text>
-            <ds-text as="span" variant="text-body-small" color="secondary">
-              Inner groups may own their own spacing independently.
-            </ds-text>
-          </div>
-        </section>
-      `)}
+      ${DENSITIES.map(
+        ({ size, value }) => html`
+          <section class="util-demo-section">
+            <h2 class="util-demo-h2">${size} · ${value} padding / ${value} gap</h2>
+            <div
+              class="ds-chrome-row ds-chrome-space--${size}"
+              style="width:100%;border:var(--dimension-stroke-width-012) solid var(--color-border-tertiary);background:var(--color-background-secondary);"
+            >
+              <ds-text as="span" variant="text-body-medium" emphasis>Row chrome</ds-text>
+              <ds-button-unfilled
+                variant="icon"
+                icon="Ellipses"
+                aria-label="${size} row options"
+                .hasBorder=${false}
+              ></ds-button-unfilled>
+            </div>
+            <div
+              class="ds-chrome-column ds-chrome-space--${size}"
+              style="width:100%;border:var(--dimension-stroke-width-012) solid var(--color-border-tertiary);background:var(--color-background-secondary);"
+            >
+              <ds-text as="span" variant="text-body-medium" emphasis>Column chrome</ds-text>
+              <ds-text as="span" variant="text-body-small" color="secondary">
+                Inner groups may own their own spacing independently.
+              </ds-text>
+            </div>
+          </section>
+        `
+      )}
       <section class="util-demo-section">
         <h2 class="util-demo-h2">Grid · symmetric chrome lanes</h2>
         <div

@@ -33,10 +33,7 @@ describe('writeClipboardText', () => {
 
   it('reports unavailable, empty, and rejected writes without throwing', async () => {
     assert.equal(await writeClipboardText('Message content', undefined), false);
-    assert.equal(
-      await writeClipboardText('', { writeText: () => Promise.resolve() }),
-      false
-    );
+    assert.equal(await writeClipboardText('', { writeText: () => Promise.resolve() }), false);
     assert.equal(
       await writeClipboardText('Message content', {
         writeText: () => Promise.reject(new Error('Clipboard denied')),

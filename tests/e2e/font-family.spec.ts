@@ -13,14 +13,17 @@ test('resolves the canonical UI family across direct rendering surfaces', async 
     await page.goto(surface.path);
     await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 
-    const families = await page.locator(surface.selector).first().evaluate(element => {
-      const root = getComputedStyle(document.documentElement);
-      return {
-        actual: getComputedStyle(element).fontFamily,
-        expected: root.getPropertyValue('--typography-font-family-ui').trim(),
-        legacy: root.getPropertyValue(`--typography-font-${'family'}`).trim(),
-      };
-    });
+    const families = await page
+      .locator(surface.selector)
+      .first()
+      .evaluate(element => {
+        const root = getComputedStyle(document.documentElement);
+        return {
+          actual: getComputedStyle(element).fontFamily,
+          expected: root.getPropertyValue('--typography-font-family-ui').trim(),
+          legacy: root.getPropertyValue(`--typography-font-${'family'}`).trim(),
+        };
+      });
 
     expect(families.expected, `${surface.label} canonical token`).toContain('Inter');
     expect(families.actual, `${surface.label} computed family`).toContain('Inter');

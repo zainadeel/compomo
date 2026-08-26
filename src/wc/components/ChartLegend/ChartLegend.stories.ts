@@ -60,7 +60,8 @@ const TRUNCATE_ITEMS: ChartLegendItem[] = [
   { label: 'Needs attention this week', value: 8 },
   { label: 'Vehicles flagged for inspection and compliance review', value: 5 },
   {
-    label: 'Drivers with expired qualification documents requiring immediate renewal before next dispatch',
+    label:
+      'Drivers with expired qualification documents requiring immediate renewal before next dispatch',
     value: 3,
   },
 ];
@@ -72,9 +73,13 @@ const TRUNCATE_ITEMS: ChartLegendItem[] = [
  */
 export const TruncateAndFormat: Story = {
   render: () => html`
-    <div style="display:flex;gap:var(--dimension-space-400);align-items:flex-start;font-family:var(--typography-font-family-ui, system-ui)">
+    <div
+      style="display:flex;gap:var(--dimension-space-400);align-items:flex-start;font-family:var(--typography-font-family-ui, system-ui)"
+    >
       <div style="display:flex;flex-direction:column;gap:var(--dimension-space-150);width:220px">
-        <p style="color:var(--color-foreground-tertiary);font-size:var(--typography-fontsize-xs);margin:0">
+        <p
+          style="color:var(--color-foreground-tertiary);font-size:var(--typography-fontsize-xs);margin:0"
+        >
           Number formatting with percentages fixed to 2 decimal places
         </p>
         <ds-chart-legend
@@ -87,7 +92,9 @@ export const TruncateAndFormat: Story = {
       </div>
 
       <div style="display:flex;flex-direction:column;gap:var(--dimension-space-150);width:220px">
-        <p style="color:var(--color-foreground-tertiary);font-size:var(--typography-fontsize-xs);margin:0">
+        <p
+          style="color:var(--color-foreground-tertiary);font-size:var(--typography-fontsize-xs);margin:0"
+        >
           Label truncate — stays 1 line and ellipsis-truncates instead of wrapping
         </p>
         <ds-chart-legend

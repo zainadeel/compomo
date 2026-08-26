@@ -1,15 +1,21 @@
-import { Component, Element, Event, EventEmitter, h, Host, Method, Prop, State, Watch } from '@stencil/core';
+import {
+  Component,
+  Element,
+  Event,
+  EventEmitter,
+  h,
+  Host,
+  Method,
+  Prop,
+  State,
+  Watch,
+} from '@stencil/core';
 import { controlWidthClass } from '../../utils';
 import { beginElevatedControlPress } from '../../utils/control-press';
 import { renderButtonContent } from '../../utils/button-render';
 import type { ControlInsetDepth } from '../../utils/control-text';
 import { observeTableCaptionCompact } from '../../utils/table-caption-compact';
-import type {
-  ButtonPopup,
-  ButtonSize,
-  ButtonVariant,
-  ButtonWidth,
-} from '../../utils/button-types';
+import type { ButtonPopup, ButtonSize, ButtonVariant, ButtonWidth } from '../../utils/button-types';
 
 export type ButtonUnfilledBackground =
   | 'faint'
@@ -260,9 +266,7 @@ export class ButtonUnfilled {
       'ds-control-press-scale': this.pressScale,
       'ds-interaction-fill': true,
       'ds-interaction-fill--selected':
-        (this.isActive || this.pressed === true) &&
-        this.activeFill &&
-        !this.isInactive,
+        (this.isActive || this.pressed === true) && this.activeFill && !this.isInactive,
       'ds-interaction-fill--on-faint': bg === 'faint',
       'ds-interaction-fill--on-medium': bg === 'medium',
       'ds-interaction-fill--on-bold': bg === 'bold',
@@ -317,10 +321,7 @@ export class ButtonUnfilled {
         aria-haspopup={this.resolvedHaspopup}
         aria-pressed={this.pressed === undefined ? undefined : String(this.pressed)}
         onPointerDown={event =>
-          beginElevatedControlPress(
-            event,
-            this.pressScale && !this.isInactive && !this.isLoading,
-          )
+          beginElevatedControlPress(event, this.pressScale && !this.isInactive && !this.isLoading)
         }
         onClick={this.handleClick}
       >
@@ -361,7 +362,7 @@ export class ButtonUnfilled {
       >
         {this.collapseLabel ? (
           <ds-tooltip
-            label={this.captionIconOnly ? (this.label || this.accessibleName || '') : ''}
+            label={this.captionIconOnly ? this.label || this.accessibleName || '' : ''}
             side="top"
             size="sm"
           >

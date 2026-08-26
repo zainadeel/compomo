@@ -96,8 +96,8 @@
   bottom: 0;
   left: 0;
   width: calc(
-    var(--ds-slider-thumb-size) / 2 +
-      (var(--ds-slider-end-pct, 0) / 100) * (100% - var(--ds-slider-thumb-size))
+    var(--ds-slider-thumb-size) / 2 + (var(--ds-slider-end-pct, 0) / 100) *
+      (100% - var(--ds-slider-thumb-size))
   );
   border-radius: inherit;
   background-color: var(--color-background-bold-brand);
@@ -105,8 +105,8 @@
 
 :host(.slider--range) .slider__indicator {
   left: calc(
-    var(--ds-slider-thumb-size) / 2 +
-      (var(--ds-slider-start-pct, 0) / 100) * (100% - var(--ds-slider-thumb-size))
+    var(--ds-slider-thumb-size) / 2 + (var(--ds-slider-start-pct, 0) / 100) *
+      (100% - var(--ds-slider-thumb-size))
   );
   width: calc(
     ((var(--ds-slider-end-pct, 0) - var(--ds-slider-start-pct, 0)) / 100) *
@@ -178,7 +178,8 @@
 }
 
 :host([data-dragging]:not(.slider--readonly):not(.ds-control-inactive))
-  .slider__thumb--active .slider__thumb-wash {
+  .slider__thumb--active
+  .slider__thumb-wash {
   background-color: var(--color-interaction-pressed);
 }
 
@@ -210,15 +211,15 @@
   left: 0;
   width: auto;
   height: calc(
-    var(--ds-slider-thumb-size) / 2 +
-      (var(--ds-slider-end-pct, 0) / 100) * (100% - var(--ds-slider-thumb-size))
+    var(--ds-slider-thumb-size) / 2 + (var(--ds-slider-end-pct, 0) / 100) *
+      (100% - var(--ds-slider-thumb-size))
   );
 }
 
 :host(.slider--vertical.slider--range) .slider__indicator {
   bottom: calc(
-    var(--ds-slider-thumb-size) / 2 +
-      (var(--ds-slider-start-pct, 0) / 100) * (100% - var(--ds-slider-thumb-size))
+    var(--ds-slider-thumb-size) / 2 + (var(--ds-slider-start-pct, 0) / 100) *
+      (100% - var(--ds-slider-thumb-size))
   );
   height: calc(
     ((var(--ds-slider-end-pct, 0) - var(--ds-slider-start-pct, 0)) / 100) *
@@ -256,9 +257,7 @@
   }
 
   .slider__thumb-visual {
-    border:
-      var(--dimension-stroke-width-012) solid
-      var(--ds-forced-color-control-boundary);
+    border: var(--dimension-stroke-width-012) solid var(--ds-forced-color-control-boundary);
     background-color: var(--ds-forced-color-surface);
     box-shadow: none;
   }

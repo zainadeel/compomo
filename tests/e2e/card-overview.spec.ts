@@ -5,7 +5,9 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('renders the safety score as the first equal-track, nonselectable grid cell', async ({ page }) => {
+test('renders the safety score as the first equal-track, nonselectable grid cell', async ({
+  page,
+}) => {
   const card = page.locator('#default');
   const cells = card.locator('.card-overview__score, .card-overview__metric');
   const widths = await cells.evaluateAll(elements =>
@@ -24,9 +26,11 @@ test('renders the safety score as the first equal-track, nonselectable grid cell
 test('prefers equal rows, falling back to a short final row when none divide', async ({ page }) => {
   const card = page.locator('#default');
   const columnCount = () =>
-    card.locator('.card-overview__metrics').evaluate(element =>
-      getComputedStyle(element).gridTemplateColumns.split(' ').filter(Boolean).length
-    );
+    card
+      .locator('.card-overview__metrics')
+      .evaluate(
+        element => getComputedStyle(element).gridTemplateColumns.split(' ').filter(Boolean).length
+      );
   const setMetricCount = (count: number) =>
     card.evaluate((element, nextCount) => {
       const host = element as HTMLElement & {
@@ -62,14 +66,17 @@ test('prefers equal rows, falling back to a short final row when none divide', a
   await expect.poll(columnCount).toBe(3); // 7 cells: 3 + 3 + 1
 });
 
-test('maps score boundaries to matching semantic background and foreground pairs', async ({ page }) => {
+test('maps score boundaries to matching semantic background and foreground pairs', async ({
+  page,
+}) => {
   for (const [id, level] of [
     ['fair', 'fair'],
     ['good', 'good'],
     ['excellent', 'excellent'],
   ] as const) {
-    const colors = await page.locator(`#${id} .card-overview__score-badge`).evaluate(
-      (element, resolvedLevel) => {
+    const colors = await page
+      .locator(`#${id} .card-overview__score-badge`)
+      .evaluate((element, resolvedLevel) => {
         const resolve = (property: string) => {
           const probe = document.createElement('span');
           probe.style.color = `var(${property})`;
@@ -85,9 +92,7 @@ test('maps score boundaries to matching semantic background and foreground pairs
           expectedBackground: resolve(`--color-safety-score-background-${resolvedLevel}`),
           expectedColor: resolve(`--color-safety-score-foreground-on-${resolvedLevel}`),
         };
-      },
-      level
-    );
+      }, level);
 
     expect(colors.background).toBe(colors.expectedBackground);
     expect(colors.color).toBe(colors.expectedColor);
@@ -179,8 +184,8 @@ test('keeps equal-height cell content with the inset, content, and text balance 
   expect(geometry.surfaceRadius).toBe('10px');
 
   await action.hover();
-  const hoverFill = await action.evaluate(element =>
-    getComputedStyle(element, '::after').backgroundColor
+  const hoverFill = await action.evaluate(
+    element => getComputedStyle(element, '::after').backgroundColor
   );
   expect(hoverFill).not.toBe('rgba(0, 0, 0, 0)');
 });
@@ -219,9 +224,9 @@ test('keeps loading placeholders in the resolved content geometry', async ({ pag
   await expect(scoreContent).toBeVisible();
   await expect(metricContent).toBeVisible();
 
-  const metricSkeletonWidths = await metricContent.locator('ds-skeleton').evaluateAll(elements =>
-    elements.map(element => element.getBoundingClientRect().width)
-  );
+  const metricSkeletonWidths = await metricContent
+    .locator('ds-skeleton')
+    .evaluateAll(elements => elements.map(element => element.getBoundingClientRect().width));
   expect(metricSkeletonWidths[0]).toBeCloseTo(geometry.metricContentWidth * 0.35, 1);
   expect(metricSkeletonWidths.slice(1)).toEqual([40, 28]);
 });
@@ -363,7 +368,9 @@ test('keeps the period bar stationary while the grid moves and clips during coll
   });
   await expect
     .poll(() =>
-      card.locator('.card-overview__surface').evaluate(element => element.getBoundingClientRect().height)
+      card
+        .locator('.card-overview__surface')
+        .evaluate(element => element.getBoundingClientRect().height)
     )
     .toBeCloseTo(48, 1);
 
@@ -371,11 +378,15 @@ test('keeps the period bar stationary while the grid moves and clips during coll
     element.scrollCollapseProgress = 0;
   });
   await expect
-    .poll(() => card.locator('.card-overview__body').evaluate(element => element.getBoundingClientRect().top))
+    .poll(() =>
+      card.locator('.card-overview__body').evaluate(element => element.getBoundingClientRect().top)
+    )
     .toBeCloseTo(initial.bodyTop, 1);
 });
 
-test('covers missing score, missing trend, error, wrapping, and forced stacking', async ({ page }) => {
+test('covers missing score, missing trend, error, wrapping, and forced stacking', async ({
+  page,
+}) => {
   const unavailable = page.locator('#no-score .card-overview__score-content--error');
   await expect(unavailable).toHaveText('Score unavailable');
   await expect(unavailable.locator('ds-icon')).toHaveCount(0);
@@ -403,12 +414,18 @@ test('covers missing score, missing trend, error, wrapping, and forced stacking'
   await expect(page.locator('#no-trend .card-overview__trend')).toHaveCount(0);
   await expect(page.locator('#score-error [role="alert"]')).toHaveText('Score unavailable');
 
-  const wrappedRows = await page.locator('#wrapped .card-overview__score, #wrapped .card-overview__metric').evaluateAll(
-    elements => new Set(elements.map(element => Math.round(element.getBoundingClientRect().top))).size
-  );
-  const stackedRows = await page.locator('#stacked .card-overview__score, #stacked .card-overview__metric').evaluateAll(
-    elements => new Set(elements.map(element => Math.round(element.getBoundingClientRect().top))).size
-  );
+  const wrappedRows = await page
+    .locator('#wrapped .card-overview__score, #wrapped .card-overview__metric')
+    .evaluateAll(
+      elements =>
+        new Set(elements.map(element => Math.round(element.getBoundingClientRect().top))).size
+    );
+  const stackedRows = await page
+    .locator('#stacked .card-overview__score, #stacked .card-overview__metric')
+    .evaluateAll(
+      elements =>
+        new Set(elements.map(element => Math.round(element.getBoundingClientRect().top))).size
+    );
   expect(wrappedRows).toBeGreaterThan(1);
   expect(stackedRows).toBe(6);
 });

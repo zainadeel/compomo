@@ -21,9 +21,6 @@ export function buttonShowsLabel(variant: ButtonVariant): boolean {
   return variant === 'label' || variant === 'icon-label';
 }
 
-export function buttonShowsChevron(
-  variant: ButtonVariant,
-  hasMenu: boolean
-): boolean {
+export function buttonShowsChevron(variant: ButtonVariant, hasMenu: boolean): boolean {
   return hasMenu && variant !== 'icon';
 }

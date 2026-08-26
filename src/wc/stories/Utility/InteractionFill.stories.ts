@@ -109,12 +109,13 @@ export const Overview: Story = {
         <h2 class="util-demo-h2">Idle / hover / press / selected</h2>
         <p class="util-demo-sub">
           Hover and press paint on <code class="util-demo-code">::after</code>; selected uses
-          <code class="util-demo-code">::before</code> with the surface’s
-          matching interaction active token. Default primary and secondary surfaces use
-          <code class="util-demo-code">--color-interaction-active-brand</code>; translucent, inverted,
-          and always-dark surfaces use their <code class="util-demo-code">*-active-brand</code> token;
-          other explicit surfaces use their neutral <code class="util-demo-code">*-active</code> wash.
-          Demo controls are transparent so the wash composites over the parent surface.
+          <code class="util-demo-code">::before</code> with the surface’s matching interaction
+          active token. Default primary and secondary surfaces use
+          <code class="util-demo-code">--color-interaction-active-brand</code>; translucent,
+          inverted, and always-dark surfaces use their
+          <code class="util-demo-code">*-active-brand</code> token; other explicit surfaces use
+          their neutral <code class="util-demo-code">*-active</code> wash. Demo controls are
+          transparent so the wash composites over the parent surface.
         </p>
         <div class="util-demo-row">
           ${control('Idle', 'ds-interaction-fill')}
@@ -122,7 +123,7 @@ export const Overview: Story = {
           ${control('Bordered', 'ds-interaction-fill ds-interaction-fill--bordered')}
           ${control(
             'Selected + border',
-            'ds-interaction-fill ds-interaction-fill--selected ds-interaction-fill--bordered',
+            'ds-interaction-fill ds-interaction-fill--selected ds-interaction-fill--bordered'
           )}
         </div>
       </div>
@@ -135,9 +136,7 @@ export const Overview: Story = {
           <code class="util-demo-code">.ds-interaction-fill--on-*</code> remaps hover, pressed,
           selected, and focus tokens for the contrast underneath.
         </p>
-        <div class="util-demo-col">
-          ${SURFACE_CONTEXTS.map(surfaceContext)}
-        </div>
+        <div class="util-demo-col">${SURFACE_CONTEXTS.map(surfaceContext)}</div>
       </div>
     </div>
   `,

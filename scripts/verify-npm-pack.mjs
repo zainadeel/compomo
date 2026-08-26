@@ -35,25 +35,33 @@ const REQUIRED_PATHS = [
 ];
 
 const npmEnv = { ...process.env, npm_config_cache: join(tmpdir(), 'ds-mo-npm-cache') };
-const pack = JSON.parse(execFileSync('npm', ['pack', '--dry-run', '--json'], {
-  encoding: 'utf8',
-  env: npmEnv,
-}));
+const pack = JSON.parse(
+  execFileSync('npm', ['pack', '--dry-run', '--json'], {
+    encoding: 'utf8',
+    env: npmEnv,
+  })
+);
 const packed = new Set(pack[0].files.map(file => file.path));
 const missing = REQUIRED_PATHS.filter(path => !packed.has(path));
 if (missing.length) {
-  throw new Error(`npm pack is missing required compiled files:\n${missing.map(path => `  - ${path}`).join('\n')}`);
+  throw new Error(
+    `npm pack is missing required compiled files:\n${missing.map(path => `  - ${path}`).join('\n')}`
+  );
 }
 
-const sourceFiles = [...packed].filter(path => path.startsWith('src/') && /\.(?:ts|tsx)$/.test(path));
+const sourceFiles = [...packed].filter(
+  path => path.startsWith('src/') && /\.(?:ts|tsx)$/.test(path)
+);
 if (sourceFiles.length) {
-  throw new Error(`npm pack contains source TypeScript:\n${sourceFiles.map(path => `  - ${path}`).join('\n')}`);
+  throw new Error(
+    `npm pack contains source TypeScript:\n${sourceFiles.map(path => `  - ${path}`).join('\n')}`
+  );
 }
 
 const sourceComponents = new Set(
   readdirSync('src/wc/components', { withFileTypes: true })
     .filter(entry => entry.isDirectory())
-    .map(entry => entry.name),
+    .map(entry => entry.name)
 );
 const emittedComponents = readdirSync('dist/types/components', { withFileTypes: true })
   .filter(entry => entry.isDirectory())
@@ -63,4 +71,6 @@ if (staleComponents.length) {
   throw new Error(`dist contains stale component declarations: ${staleComponents.join(', ')}`);
 }
 
-console.log('✅ npm pack contains compiled public surfaces with no source TypeScript or stale components.');
+console.log(
+  '✅ npm pack contains compiled public surfaces with no source TypeScript or stale components.'
+);

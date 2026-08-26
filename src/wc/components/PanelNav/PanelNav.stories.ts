@@ -12,68 +12,66 @@ import type { PanelNavGroup } from './panel-nav-types';
 const DASHBOARD_GROUPS: PanelNavGroup[] = [
   {
     items: [
-      { id: 'area-a',            icon: 'MapPage',            label: 'Area A'              },
-      { id: 'area-b',            icon: 'ShieldCircle',       label: 'Area B'              },
-      { id: 'area-c',            icon: 'Chart',              label: 'Area C'              },
-      { id: 'area-d',            icon: 'FuelPump',           label: 'Area D'              },
-      { id: 'area-e',            icon: 'Card',               label: 'Area E'              },
-      { id: 'area-f',            icon: 'Wrench',             label: 'Area F'              },
-      { id: 'area-g',            icon: 'Person',             label: 'Area G'              },
+      { id: 'area-a', icon: 'MapPage', label: 'Area A' },
+      { id: 'area-b', icon: 'ShieldCircle', label: 'Area B' },
+      { id: 'area-c', icon: 'Chart', label: 'Area C' },
+      { id: 'area-d', icon: 'FuelPump', label: 'Area D' },
+      { id: 'area-e', icon: 'Card', label: 'Area E' },
+      { id: 'area-f', icon: 'Wrench', label: 'Area F' },
+      { id: 'area-g', icon: 'Person', label: 'Area G' },
     ],
   },
   {
     label: 'Section 1',
     items: [
-      { id: 'area-h',            icon: 'Whistle',            label: 'Area H'              },
-      { id: 'area-i',            icon: 'ShieldLock',         label: 'Area I'              },
-      { id: 'area-j',            icon: 'WorkflowA',          label: 'Area J'              },
-      { id: 'area-k',            icon: 'LocationPinArrows',  label: 'Area K'              },
-      { id: 'area-l',            icon: 'Devices',            label: 'Area L'              },
+      { id: 'area-h', icon: 'Whistle', label: 'Area H' },
+      { id: 'area-i', icon: 'ShieldLock', label: 'Area I' },
+      { id: 'area-j', icon: 'WorkflowA', label: 'Area J' },
+      { id: 'area-k', icon: 'LocationPinArrows', label: 'Area K' },
+      { id: 'area-l', icon: 'Devices', label: 'Area L' },
     ],
   },
   {
     label: 'Section 2',
     items: [
-      { id: 'area-m',            icon: 'AI',                 label: 'Area M'              },
-      { id: 'area-n',            icon: 'MessageBubbleStack', label: 'Area N',     dot: true },
-      { id: 'area-o',            icon: 'Document',           label: 'Area O'              },
-      { id: 'area-p',            icon: 'GraphArrow',         label: 'Area P'              },
-      { id: 'area-q',            icon: 'ShoppingBag',        label: 'Area Q'              },
-      { id: 'area-r',            icon: 'Beaker',             label: 'Area R'              },
+      { id: 'area-m', icon: 'AI', label: 'Area M' },
+      { id: 'area-n', icon: 'MessageBubbleStack', label: 'Area N', dot: true },
+      { id: 'area-o', icon: 'Document', label: 'Area O' },
+      { id: 'area-p', icon: 'GraphArrow', label: 'Area P' },
+      { id: 'area-q', icon: 'ShoppingBag', label: 'Area Q' },
+      { id: 'area-r', icon: 'Beaker', label: 'Area R' },
     ],
   },
 ];
 
 const SETTINGS_GROUPS: PanelNavGroup[] = [
   {
-    items: [
-      { id: 'item-1',            icon: 'Avatar',             label: 'Item 1'              },
-    ],
+    items: [{ id: 'item-1', icon: 'Avatar', label: 'Item 1' }],
   },
   {
     label: 'Section 3',
     items: [
-      { id: 'item-2',            icon: 'BuildingOffice',     label: 'Item 2'              },
-      { id: 'item-3',            icon: 'PersonManager',      label: 'Item 3'              },
-      { id: 'item-4',            icon: 'PersonGroup',        label: 'Item 4'              },
+      { id: 'item-2', icon: 'BuildingOffice', label: 'Item 2' },
+      { id: 'item-3', icon: 'PersonManager', label: 'Item 3' },
+      { id: 'item-4', icon: 'PersonGroup', label: 'Item 4' },
     ],
   },
   {
     label: 'Section 4',
     items: [
-      { id: 'item-5',            icon: 'DocumentGear',       label: 'Item 5'              },
-      { id: 'item-6',            icon: 'Preferences',        label: 'Item 6'              },
-      { id: 'item-7',            icon: 'Bolt',               label: 'Item 7'              },
-      { id: 'item-8',            icon: 'Notification',       label: 'Item 8',     dot: true },
+      { id: 'item-5', icon: 'DocumentGear', label: 'Item 5' },
+      { id: 'item-6', icon: 'Preferences', label: 'Item 6' },
+      { id: 'item-7', icon: 'Bolt', label: 'Item 7' },
+      { id: 'item-8', icon: 'Notification', label: 'Item 8', dot: true },
     ],
   },
   {
     label: 'Section 5',
     items: [
-      { id: 'item-9',            icon: 'Mobile',             label: 'Item 9'              },
-      { id: 'item-10',           icon: 'LockClosed',         label: 'Item 10'             },
-      { id: 'item-11',           icon: 'BackslashBrackets',  label: 'Item 11'             },
-      { id: 'item-12',           icon: 'DocumentPencil',     label: 'Item 12'             },
+      { id: 'item-9', icon: 'Mobile', label: 'Item 9' },
+      { id: 'item-10', icon: 'LockClosed', label: 'Item 10' },
+      { id: 'item-11', icon: 'BackslashBrackets', label: 'Item 11' },
+      { id: 'item-12', icon: 'DocumentPencil', label: 'Item 12' },
     ],
   },
 ];
@@ -104,14 +102,21 @@ function switchFooterStyle(id: string) {
   el.activeId = STYLE_ACTIVE[next];
 }
 
-function interactiveDashboard(activeId = 'area-a', collapsed = false, breakpoint = 0): TemplateResult {
+function interactiveDashboard(
+  activeId = 'area-a',
+  collapsed = false,
+  breakpoint = 0
+): TemplateResult {
   return html`
-    <div id="dash-nav-wrap" style="
+    <div
+      id="dash-nav-wrap"
+      style="
       display: flex;
       height: 100vh;
       background: var(--color-background-primary);
       font-family: var(--typography-font-family-ui, system-ui);
-    ">
+    "
+    >
       <ds-panel-nav
         id="dash-nav"
         nav-style="dashboard"
@@ -133,7 +138,10 @@ function interactiveDashboard(activeId = 'area-a', collapsed = false, breakpoint
       ></ds-panel-nav>
 
       <div style="flex:1; padding: 24px; color: rgba(255,255,255,0.5); font-size: 13px;">
-        <p style="margin: 0;">← Hover the logo to reveal the collapse toggle. Click the bottom-left button to switch sections.</p>
+        <p style="margin: 0;">
+          ← Hover the logo to reveal the collapse toggle. Click the bottom-left button to switch
+          sections.
+        </p>
       </div>
     </div>
   `;
@@ -141,12 +149,15 @@ function interactiveDashboard(activeId = 'area-a', collapsed = false, breakpoint
 
 function interactiveSettings(activeId = 'item-1', collapsed = false): TemplateResult {
   return html`
-    <div id="settings-nav-wrap" style="
+    <div
+      id="settings-nav-wrap"
+      style="
       display: flex;
       height: 100vh;
       background: var(--color-background-primary);
       font-family: var(--typography-font-family-ui, system-ui);
-    ">
+    "
+    >
       <ds-panel-nav
         id="settings-nav"
         nav-style="settings"
@@ -166,19 +177,25 @@ function interactiveSettings(activeId = 'item-1', collapsed = false): TemplateRe
         @dsNavFooterAction=${() => switchFooterStyle('settings-nav')}
       ></ds-panel-nav>
 
-      <div style="flex:1; padding: 24px; color: var(--color-foreground-secondary); font-size: 13px;">
-        <p style="margin: 0;">← Hover the logo to reveal the collapse toggle. Click the bottom-left button to switch sections.</p>
+      <div
+        style="flex:1; padding: 24px; color: var(--color-foreground-secondary); font-size: 13px;"
+      >
+        <p style="margin: 0;">
+          ← Hover the logo to reveal the collapse toggle. Click the bottom-left button to switch
+          sections.
+        </p>
       </div>
     </div>
   `;
 }
 
 function sideBySide(): TemplateResult {
-  const dashGroups     = JSON.stringify(DASHBOARD_GROUPS);
+  const dashGroups = JSON.stringify(DASHBOARD_GROUPS);
   const settingsGroups = JSON.stringify(SETTINGS_GROUPS);
 
   return html`
-    <div style="
+    <div
+      style="
       display: flex;
       gap: 32px;
       padding: 32px;
@@ -187,10 +204,13 @@ function sideBySide(): TemplateResult {
       font-family: var(--typography-font-family-ui, system-ui);
       flex-wrap: wrap;
       box-sizing: border-box;
-    ">
+    "
+    >
       <!-- Dashboard expanded -->
       <div style="display:flex; flex-direction:column; gap:8px;">
-        <span style="font-size:12px; font-weight:500; color:var(--color-foreground-secondary)">Dashboard — expanded</span>
+        <span style="font-size:12px; font-weight:500; color:var(--color-foreground-secondary)"
+          >Dashboard — expanded</span
+        >
         <div style="flex:1; min-height:560px; display:flex;">
           <ds-panel-nav
             id="sb-dash-exp"
@@ -213,7 +233,9 @@ function sideBySide(): TemplateResult {
 
       <!-- Dashboard collapsed -->
       <div style="display:flex; flex-direction:column; gap:8px;">
-        <span style="font-size:12px; font-weight:500; color:var(--color-foreground-secondary)">Dashboard — collapsed</span>
+        <span style="font-size:12px; font-weight:500; color:var(--color-foreground-secondary)"
+          >Dashboard — collapsed</span
+        >
         <div style="flex:1; min-height:560px; display:flex;">
           <ds-panel-nav
             id="sb-dash-col"
@@ -237,8 +259,12 @@ function sideBySide(): TemplateResult {
 
       <!-- Settings expanded -->
       <div style="display:flex; flex-direction:column; gap:8px;">
-        <span style="font-size:12px; font-weight:500; color:var(--color-foreground-secondary)">Settings — expanded</span>
-        <div style="flex:1; min-height:560px; display:flex; background:var(--color-background-primary);">
+        <span style="font-size:12px; font-weight:500; color:var(--color-foreground-secondary)"
+          >Settings — expanded</span
+        >
+        <div
+          style="flex:1; min-height:560px; display:flex; background:var(--color-background-primary);"
+        >
           <ds-panel-nav
             id="sb-settings-exp"
             nav-style="settings"
@@ -260,8 +286,12 @@ function sideBySide(): TemplateResult {
 
       <!-- Settings collapsed -->
       <div style="display:flex; flex-direction:column; gap:8px;">
-        <span style="font-size:12px; font-weight:500; color:var(--color-foreground-secondary)">Settings — collapsed</span>
-        <div style="flex:1; min-height:560px; display:flex; background:var(--color-background-primary);">
+        <span style="font-size:12px; font-weight:500; color:var(--color-foreground-secondary)"
+          >Settings — collapsed</span
+        >
+        <div
+          style="flex:1; min-height:560px; display:flex; background:var(--color-background-primary);"
+        >
           <ds-panel-nav
             id="sb-settings-col"
             nav-style="settings"
@@ -325,7 +355,9 @@ const ACCOUNT_MENU_GROUPS: PanelNavGroup[] = [
 
 function accountMenuReviewPanel(collapsed: boolean, expanded: boolean): TemplateResult {
   return html`
-    <div style="display:flex;flex-direction:column;gap:var(--dimension-space-100);min-height:100vh;">
+    <div
+      style="display:flex;flex-direction:column;gap:var(--dimension-space-100);min-height:100vh;"
+    >
       <ds-text as="div" variant="text-body-small" color="secondary">
         ${collapsed ? 'Collapsed' : 'Expanded'} · menu ${expanded ? 'open' : 'closed'}
       </ds-text>
@@ -347,11 +379,11 @@ function accountMenuReviewPanel(collapsed: boolean, expanded: boolean): Template
 export const AccountMenuStates: Story = {
   name: 'Account menu states',
   render: () => html`
-    <div style="display:flex;gap:var(--dimension-space-200);min-width:max-content;padding:var(--dimension-space-200);background:var(--color-background-primary);">
-      ${accountMenuReviewPanel(false, false)}
-      ${accountMenuReviewPanel(false, true)}
-      ${accountMenuReviewPanel(true, false)}
-      ${accountMenuReviewPanel(true, true)}
+    <div
+      style="display:flex;gap:var(--dimension-space-200);min-width:max-content;padding:var(--dimension-space-200);background:var(--color-background-primary);"
+    >
+      ${accountMenuReviewPanel(false, false)} ${accountMenuReviewPanel(false, true)}
+      ${accountMenuReviewPanel(true, false)} ${accountMenuReviewPanel(true, true)}
     </div>
   `,
 };
@@ -370,11 +402,11 @@ const DASHBOARD_ITEM_COUNT = DASHBOARD_GROUPS.reduce((n, g) => n + g.items.lengt
 function assignPanelNavAfterUpgrade(
   navId: string,
   statusId: string,
-  assign: (el: HTMLElement & Record<string, unknown>) => void,
+  assign: (el: HTMLElement & Record<string, unknown>) => void
 ) {
   customElements.whenDefined('ds-panel-nav').then(() => {
     requestAnimationFrame(() => {
-      const el = document.getElementById(navId) as HTMLElement & Record<string, unknown> | null;
+      const el = document.getElementById(navId) as (HTMLElement & Record<string, unknown>) | null;
       const status = document.getElementById(statusId);
       if (!el || !status) return;
       assign(el);
@@ -383,8 +415,7 @@ function assignPanelNavAfterUpgrade(
         const mode = (el as HTMLElement & { routerMode?: string }).routerMode ?? 'anchor';
         const anchors = el.querySelectorAll('.panel-nav__body a.panel-nav__item').length;
         const buttons = el.querySelectorAll('.panel-nav__body button.panel-nav__item').length;
-        status.textContent =
-          `${count} nav items · routerMode=${mode} · ${anchors} anchors / ${buttons} buttons`;
+        status.textContent = `${count} nav items · routerMode=${mode} · ${anchors} anchors / ${buttons} buttons`;
       });
     });
   });
@@ -410,12 +441,14 @@ export const AngularHostTiming: Story = {
     });
 
     return html`
-      <div style="
+      <div
+        style="
         display: flex;
         height: 100vh;
         background: var(--color-background-primary);
         font-family: var(--typography-font-family-ui, system-ui);
-      ">
+      "
+      >
         <ds-panel-nav
           id="angular-timing-nav"
           nav-style="dashboard"
@@ -425,7 +458,8 @@ export const AngularHostTiming: Story = {
         ></ds-panel-nav>
         <div style="flex:1; padding:24px; color:rgba(255,255,255,0.55); font-size:13px;">
           <p style="margin:0 0 8px;">
-            Props assigned after upgrade — expect <strong>${DASHBOARD_ITEM_COUNT}</strong> nav items.
+            Props assigned after upgrade — expect <strong>${DASHBOARD_ITEM_COUNT}</strong> nav
+            items.
           </p>
           <p style="margin:0;" id="angular-timing-status">Waiting for host prop assignment…</p>
         </div>
@@ -441,21 +475,25 @@ export const RouterModeEvent: Story = {
 
     const navigate = (path: string) => {
       currentUrl = path;
-      const el = document.getElementById('router-nav') as HTMLElement & {
-        currentUrl: string;
-      } | null;
+      const el = document.getElementById('router-nav') as
+        | (HTMLElement & {
+            currentUrl: string;
+          })
+        | null;
       if (el) el.currentUrl = path;
       const label = document.getElementById('router-url-label');
       if (label) label.textContent = path;
     };
 
     return html`
-      <div style="
+      <div
+        style="
         display: flex;
         height: 100vh;
         background: var(--color-background-primary);
         font-family: var(--typography-font-family-ui, system-ui);
-      ">
+      "
+      >
         <ds-panel-nav
           id="router-nav"
           nav-style="dashboard"
@@ -468,7 +506,9 @@ export const RouterModeEvent: Story = {
             const item = ROUTER_GROUPS.flatMap(g => g.items).find(i => i.id === e.detail);
             if (item?.href) navigate(item.href);
           }}
-          @dsNavUserAction=${(e: CustomEvent<{ anchor: HTMLElement; menuPlacement: { side: string; align: string } }>) => {
+          @dsNavUserAction=${(
+            e: CustomEvent<{ anchor: HTMLElement; menuPlacement: { side: string; align: string } }>
+          ) => {
             const status = document.getElementById('router-user-status');
             if (status) {
               status.textContent = `User menu clicked (anchor: ${e.detail.anchor.id || e.detail.anchor.className}, side: ${e.detail.menuPlacement.side})`;
@@ -478,11 +518,15 @@ export const RouterModeEvent: Story = {
 
         <div style="flex:1; padding: 24px; color: rgba(255,255,255,0.55); font-size: 13px;">
           <p style="margin: 0 0 8px;">
-            <strong>routerMode="event"</strong> — items keep <code>href</code> for URL matching but render as buttons.
-            No full-page navigation; <code>dsNavSelect</code> drives routing.
+            <strong>routerMode="event"</strong> — items keep <code>href</code> for URL matching but
+            render as buttons. No full-page navigation; <code>dsNavSelect</code> drives routing.
           </p>
-          <p style="margin: 0 0 4px;">Current URL: <code id="router-url-label">${currentUrl}</code></p>
-          <p style="margin: 0;" id="router-user-status">Click the user footer button to test <code>dsNavUserAction</code>.</p>
+          <p style="margin: 0 0 4px;">
+            Current URL: <code id="router-url-label">${currentUrl}</code>
+          </p>
+          <p style="margin: 0;" id="router-user-status">
+            Click the user footer button to test <code>dsNavUserAction</code>.
+          </p>
         </div>
       </div>
     `;
@@ -494,18 +538,22 @@ export const LiveSwitch: Story = {
   render: () => {
     const toggleLive = () => switchFooterStyle('live-nav');
     return html`
-      <div style="
+      <div
+        style="
         display: flex;
         flex-direction: column;
         height: 100vh;
         background: var(--color-background-primary);
         font-family: var(--typography-font-family-ui, system-ui);
-      " id="live-wrap">
-        <div style="padding: 12px 16px; display: flex; align-items: center; gap: 12px; background: var(--color-background-secondary); border-bottom: 1px solid var(--color-border-tertiary);">
-          <button
-            style="padding: 6px 14px; cursor: pointer; font-size: 13px;"
-            @click=${toggleLive}
-          >Toggle section (same instance)</button>
+      "
+        id="live-wrap"
+      >
+        <div
+          style="padding: 12px 16px; display: flex; align-items: center; gap: 12px; background: var(--color-background-secondary); border-bottom: 1px solid var(--color-border-tertiary);"
+        >
+          <button style="padding: 6px 14px; cursor: pointer; font-size: 13px;" @click=${toggleLive}>
+            Toggle section (same instance)
+          </button>
           <span style="font-size: 12px; color: var(--color-foreground-secondary);">
             Switches dashboard ↔ settings groups on the same mounted &lt;ds-panel-nav&gt;.
           </span>

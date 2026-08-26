@@ -35,7 +35,7 @@ export function findAnchoredOverlayBoundary(anchor: Element): HTMLElement | null
 /** Resolve an explicit owner first, then the nearest composed-tree boundary. */
 export function resolveAnchoredOverlayBoundaryRect(
   anchor: Element,
-  explicitBoundary?: AnchoredOverlayBoundary,
+  explicitBoundary?: AnchoredOverlayBoundary
 ): AnchoredCollisionRect | undefined {
   if (explicitBoundary === 'viewport') return undefined;
   return (explicitBoundary ?? findAnchoredOverlayBoundary(anchor))?.getBoundingClientRect();

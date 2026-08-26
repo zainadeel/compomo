@@ -40,13 +40,7 @@ describe('form association utilities', () => {
   });
 
   it('restores only valid scalar arrays', () => {
-    assert.deepEqual(
-      restoreStringArrayFormState('["safety",4,"speed"]'),
-      ['safety', 'speed']
-    );
-    assert.deepEqual(
-      restoreNumberArrayFormState('["10",20,"nope",30]', 2),
-      [10, 20]
-    );
+    assert.deepEqual(restoreStringArrayFormState('["safety",4,"speed"]'), ['safety', 'speed']);
+    assert.deepEqual(restoreNumberArrayFormState('["10",20,"nope",30]', 2), [10, 20]);
   });
 });

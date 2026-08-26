@@ -47,10 +47,7 @@ export function setRepeatedFormControlValue(
   internals.setFormValue(data, options.state ?? JSON.stringify(values));
 }
 
-export function restoreStringFormState(
-  state: FormControlState,
-  fallback: string = ''
-): string {
+export function restoreStringFormState(state: FormControlState, fallback: string = ''): string {
   return typeof state === 'string' ? state : fallback;
 }
 
@@ -75,7 +72,7 @@ export function restoreNumberArrayFormState(
     const restored: unknown = JSON.parse(state);
     if (!Array.isArray(restored)) return [];
     const values = restored
-      .map(value => typeof value === 'number' ? value : Number(value))
+      .map(value => (typeof value === 'number' ? value : Number(value)))
       .filter(value => Number.isFinite(value));
     return maximumValues === undefined ? values : values.slice(0, maximumValues);
   } catch {

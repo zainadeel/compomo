@@ -1,9 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import {
-  isBrowserNeutralPath,
-  requiresBrowserValidation,
-} from '../scripts/ci-browser-scope.mjs';
+import { isBrowserNeutralPath, requiresBrowserValidation } from '../scripts/ci-browser-scope.mjs';
 
 describe('CI browser scope', () => {
   it('skips documentation and generated agent metadata', () => {

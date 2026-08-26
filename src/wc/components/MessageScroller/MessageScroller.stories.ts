@@ -154,9 +154,14 @@ export const AgentTurnWithPendingQuestionnaire: Story = {
           ]}
         ></ds-agent-response>
         <ds-message message-id="u2" direction="outgoing" author="You" scroll-anchor>
-          <ds-message-bubble variant="user">Continue with the highest-priority work.</ds-message-bubble>
+          <ds-message-bubble variant="user"
+            >Continue with the highest-priority work.</ds-message-bubble
+          >
         </ds-message>
-        <div slot="interaction" style="padding:var(--dimension-space-100) var(--dimension-space-100) 0;">
+        <div
+          slot="interaction"
+          style="padding:var(--dimension-space-100) var(--dimension-space-100) 0;"
+        >
           <ds-agent-questionnaire
             request-id="maintenance-follow-up"
             .questions=${[
@@ -206,7 +211,9 @@ export const FirstUsePromptSuggestions: Story = {
   render: () => html`
     <div style="height:640px; width:min(880px, 90vw);">
       <ds-message-scroller messages-label="New agent conversation" default-position="start">
-        <div style="display:grid; gap:var(--dimension-space-100); max-width:var(--dimension-panel-width-lg);">
+        <div
+          style="display:grid; gap:var(--dimension-space-100); max-width:var(--dimension-panel-width-lg);"
+        >
           <ds-text as="h2" variant="text-title-medium">What should we work on?</ds-text>
           <ds-text color="secondary">
             Suggestions are optional application composition. Selecting one should fill and focus
@@ -218,7 +225,10 @@ export const FirstUsePromptSuggestions: Story = {
           </div>
         </div>
         <div slot="overlay" style="padding:var(--dimension-space-100);">
-          <ds-message-composer label="Message agent" placeholder="Ask the agent"></ds-message-composer>
+          <ds-message-composer
+            label="Message agent"
+            placeholder="Ask the agent"
+          ></ds-message-composer>
         </div>
       </ds-message-scroller>
     </div>

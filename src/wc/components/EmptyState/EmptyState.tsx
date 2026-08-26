@@ -21,12 +21,7 @@ export class EmptyState {
       <Host>
         <div class="empty-state">
           {showIcon && (
-            <ds-icon
-              class="empty-state__icon"
-              name={this.icon}
-              size="xl"
-              color="primary"
-            />
+            <ds-icon class="empty-state__icon" name={this.icon} size="xl" color="primary" />
           )}
           <div class="empty-state__text">
             {showHeading && (

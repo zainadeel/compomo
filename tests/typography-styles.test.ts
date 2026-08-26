@@ -14,14 +14,14 @@ const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 
 const css = fs.readFileSync(path.join(root, 'src/wc/utils/typography.css'), 'utf8');
 const story = fs.readFileSync(
   path.join(root, 'src/wc/stories/Foundation/Typography.stories.ts'),
-  'utf8',
+  'utf8'
 );
 
 describe('typography style specifications', () => {
   it('keeps the TokoMo peer baseline aligned with the installed tokens package', () => {
     assert.equal(
       packageJson.peerDependencies['@ds-mo/tokens'],
-      packageJson.devDependencies['@ds-mo/tokens'],
+      packageJson.devDependencies['@ds-mo/tokens']
     );
   });
 
@@ -33,7 +33,7 @@ describe('typography style specifications', () => {
 
   it('uses the 6.5 TokoMo metrics for display-small, title-medium, and body-large', () => {
     const rows = TYPOGRAPHY_STYLE_ROWS.filter(row =>
-      ['text-display-small', 'text-title-medium', 'text-body-large'].includes(row.variant),
+      ['text-display-small', 'text-title-medium', 'text-body-large'].includes(row.variant)
     );
 
     assert.equal(rows.length, 6);
@@ -56,16 +56,18 @@ describe('typography style specifications', () => {
       assert.match(
         css,
         new RegExp(
-          `\\.ds-text--${className}\\.ds-text--${modifier}[\\s\\S]*?font-weight: var\\(${row.weightToken}\\)`,
+          `\\.ds-text--${className}\\.ds-text--${modifier}[\\s\\S]*?font-weight: var\\(${row.weightToken}\\)`
         ),
-        `${row.variant} ${modifier} weight`,
+        `${row.variant} ${modifier} weight`
       );
     }
 
     for (const row of variants.values()) {
       const className = textVariantClass(row.variant).replace('ds-text--', '');
       const block = css.match(
-        new RegExp(`:host\\(\\.ds-text--${className}\\),[\\s\\S]*?\\.ds-text--${className} \\{([\\s\\S]*?)\\}`),
+        new RegExp(
+          `:host\\(\\.ds-text--${className}\\),[\\s\\S]*?\\.ds-text--${className} \\{([\\s\\S]*?)\\}`
+        )
       )?.[1];
       assert.ok(block, `${row.variant} recipe block`);
       assert.match(block, new RegExp(`font-size: var\\(${row.fontSizeToken}\\);`));

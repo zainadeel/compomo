@@ -11,10 +11,7 @@ async function openFixture(page: Page, path: string, browserName: string) {
       window.matchMedia('(forced-colors: active)').matches &&
       CSS.supports('forced-color-adjust', 'auto')
   );
-  test.skip(
-    !supported,
-    `${browserName} does not implement forced-colors CSS emulation`
-  );
+  test.skip(!supported, `${browserName} does not implement forced-colors CSS emulation`);
 }
 
 async function systemColors(page: Page) {
@@ -61,31 +58,19 @@ test('preserves control boundaries, state, focus, invalid, and disabled meaning'
   const radio = page.locator('#tier [role="radio"]').first();
   await radio.click();
   await expect(radio).toHaveAttribute('aria-checked', 'true');
-  await expect(radio.locator('.radio__circle')).toHaveCSS(
-    'background-color',
-    colors.highlight
-  );
-  await expect(radio.locator('.radio__dot')).toHaveCSS(
-    'background-color',
-    colors.highlightText
-  );
+  await expect(radio.locator('.radio__circle')).toHaveCSS('background-color', colors.highlight);
+  await expect(radio.locator('.radio__dot')).toHaveCSS('background-color', colors.highlightText);
 
   const switchControl = page.locator('#alerts');
   await expect(switchControl).toHaveCSS('border-top-style', 'solid');
   await switchControl.click();
   await expect(switchControl).toHaveAttribute('aria-checked', 'true');
   await expect(switchControl).toHaveCSS('background-color', colors.highlight);
-  await expect(switchControl.locator('.thumb')).toHaveCSS(
-    'background-color',
-    colors.highlightText
-  );
+  await expect(switchControl.locator('.thumb')).toHaveCSS('background-color', colors.highlightText);
 
   const sliderInput = page.locator('#slider-single .slider__input');
   const sliderThumb = page.locator('#slider-single .slider__thumb-visual');
-  await expect(page.locator('#slider-single .slider__rail')).toHaveCSS(
-    'border-top-style',
-    'solid'
-  );
+  await expect(page.locator('#slider-single .slider__rail')).toHaveCSS('border-top-style', 'solid');
   await expect(sliderThumb).toHaveCSS('border-top-color', colors.buttonText);
   await page.locator('#slider-range .slider__input').first().focus();
   await page.keyboard.press('Shift+Tab');
@@ -97,9 +82,9 @@ test('preserves control boundaries, state, focus, invalid, and disabled meaning'
   const inputIcon = page.locator('#input-md ds-icon');
   await expect(inputIcon).toBeVisible();
   await expect(inputIcon).toHaveCSS('color', colors.canvasText);
-  expect(
-    await inputIcon.evaluate(element => getComputedStyle(element).forcedColorAdjust)
-  ).not.toBe('none');
+  expect(await inputIcon.evaluate(element => getComputedStyle(element).forcedColorAdjust)).not.toBe(
+    'none'
+  );
   await page.locator('#email input').focus();
   await expect
     .poll(() =>
@@ -126,20 +111,14 @@ test('preserves control boundaries, state, focus, invalid, and disabled meaning'
     await inputControl.evaluate(element =>
       Number.parseFloat(getComputedStyle(element, '::after').outlineWidth)
     )
-  ).toBe(
-    focusedBoundaryWidth
-  );
+  ).toBe(focusedBoundaryWidth);
 
   await page.locator('#email-field').evaluate((element: HTMLDsFieldElement) => {
     element.error = true;
     element.errorMessage = 'Enter a valid work email.';
   });
   await expect
-    .poll(() =>
-      inputControl.evaluate(
-        element => getComputedStyle(element, '::after').outlineStyle
-      )
-    )
+    .poll(() => inputControl.evaluate(element => getComputedStyle(element, '::after').outlineStyle))
     .toBe('dashed');
 
   const select = page.locator('#region');
@@ -201,18 +180,11 @@ test('preserves navigation and overlay boundaries without relying on fills or sh
   const selectedTab = page.getByRole('tab', { name: 'Overview' });
   const idleTab = page.getByRole('tab', { name: 'Activity' });
   const tabWeights = await Promise.all([
-    selectedTab
-      .locator('ds-text')
-      .evaluate(element => getComputedStyle(element).fontWeight),
-    idleTab
-      .locator('ds-text')
-      .evaluate(element => getComputedStyle(element).fontWeight),
+    selectedTab.locator('ds-text').evaluate(element => getComputedStyle(element).fontWeight),
+    idleTab.locator('ds-text').evaluate(element => getComputedStyle(element).fontWeight),
   ]);
   expect(tabWeights[0]).not.toBe(tabWeights[1]);
-  await expect(selectedTab.locator('.badge__mark')).toHaveCSS(
-    'background-color',
-    colors.highlight
-  );
+  await expect(selectedTab.locator('.badge__mark')).toHaveCSS('background-color', colors.highlight);
 
   await openFixture(page, '/accessibility-overlays.html', browserName);
   await page.locator('#filter-anchor').click();
@@ -315,12 +287,14 @@ test('keeps loading states visible and removes decorative shimmer motion', async
   await openFixture(page, '/skeleton.html', browserName);
   const skeleton = page.locator('#text .skeleton__shape');
   await expect(skeleton).toHaveCSS('background-color', colors.grayText);
-  await expect.poll(() =>
-    skeleton.evaluate(element => {
-      const style = getComputedStyle(element, '::after');
-      return { animation: style.animationName, display: style.display };
-    })
-  ).toEqual({ animation: 'none', display: 'none' });
+  await expect
+    .poll(() =>
+      skeleton.evaluate(element => {
+        const style = getComputedStyle(element, '::after');
+        return { animation: style.animationName, display: style.display };
+      })
+    )
+    .toEqual({ animation: 'none', display: 'none' });
 });
 
 test('preserves only literal data marks while chart chrome follows the OS palette', async ({
@@ -334,10 +308,7 @@ test('preserves only literal data marks while chart chrome follows the OS palett
     '#chart-card .chart__mark',
     '#donut-card .chart-legend__swatch',
   ]) {
-    await expect(page.locator(selector).first()).toHaveCSS(
-      'forced-color-adjust',
-      'none'
-    );
+    await expect(page.locator(selector).first()).toHaveCSS('forced-color-adjust', 'none');
   }
 
   expect(

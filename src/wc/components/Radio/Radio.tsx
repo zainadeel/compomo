@@ -1,4 +1,17 @@
-import { AttachInternals, Component, Prop, State, Event, EventEmitter, Element, Listen, Method, Watch, h, Host } from '@stencil/core';
+import {
+  AttachInternals,
+  Component,
+  Prop,
+  State,
+  Event,
+  EventEmitter,
+  Element,
+  Listen,
+  Method,
+  Watch,
+  h,
+  Host,
+} from '@stencil/core';
 import {
   CONTROL_SUPPORTING_TEXT_VARIANT,
   CONTROL_TEXT_VARIANT,
@@ -98,7 +111,9 @@ export class Radio {
   }
 
   private get activeItems(): HTMLElement[] {
-    return Array.from(this.el.querySelectorAll<HTMLElement>('[data-radio-item]:not([data-inactive])'));
+    return Array.from(
+      this.el.querySelectorAll<HTMLElement>('[data-radio-item]:not([data-inactive])')
+    );
   }
 
   @Listen('keydown')
@@ -156,9 +171,10 @@ export class Radio {
     const invalid = this.required && !inactive && this.value.length === 0;
     const selectedIdx = this.options.findIndex(option => option.value === this.value);
     const firstActiveIdx = this.options.findIndex(option => !inactive && !option.isInactive);
-    const focusableIdx = selectedIdx >= 0 && !inactive && !this.options[selectedIdx]?.isInactive
-      ? selectedIdx
-      : firstActiveIdx;
+    const focusableIdx =
+      selectedIdx >= 0 && !inactive && !this.options[selectedIdx]?.isInactive
+        ? selectedIdx
+        : firstActiveIdx;
 
     return (
       <Host

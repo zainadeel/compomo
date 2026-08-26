@@ -65,11 +65,7 @@ const textQuestion: AgentQuestion[] = [
   },
 ];
 
-const multiStep: AgentQuestion[] = [
-  singleQuestion[0],
-  multipleQuestion[0],
-  textQuestion[0],
-];
+const multiStep: AgentQuestion[] = [singleQuestion[0], multipleQuestion[0], textQuestion[0]];
 
 const frame = (
   questions: AgentQuestion[],
@@ -79,7 +75,7 @@ const frame = (
     errorMessage?: string;
     allowCancel?: boolean;
     labels?: Partial<AgentQuestionnaireLabels>;
-  } = {},
+  } = {}
 ) => html`
   <div style="width:min(600px, 90vw);">
     <ds-agent-questionnaire
@@ -120,9 +116,9 @@ export const OtherAnswer: Story = {
 export const RequiredValidation: Story = {
   render: () => frame(singleQuestion),
   play: async ({ canvasElement }) => {
-    canvasElement.querySelector('ds-agent-questionnaire ds-button-filled')?.dispatchEvent(
-      new CustomEvent('dsClick', { bubbles: true, composed: true }),
-    );
+    canvasElement
+      .querySelector('ds-agent-questionnaire ds-button-filled')
+      ?.dispatchEvent(new CustomEvent('dsClick', { bubbles: true, composed: true }));
   },
 };
 

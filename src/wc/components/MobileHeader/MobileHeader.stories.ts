@@ -24,10 +24,7 @@ type Story = StoryObj;
 
 export const Foundation: Story = {
   render: () => html`
-    <ds-mobile-header
-      .sections=${sections}
-      value="location-history"
-    >
+    <ds-mobile-header .sections=${sections} value="location-history">
       <ds-button-unfilled
         slot="leading"
         variant="icon"
@@ -75,7 +72,8 @@ export const SegmentedToolSections: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Segmented mobile tool sections fill the centered two-thirds top-bar lane and divide that space equally between options.',
+        story:
+          'Segmented mobile tool sections fill the centered two-thirds top-bar lane and divide that space equally between options.',
       },
     },
   },

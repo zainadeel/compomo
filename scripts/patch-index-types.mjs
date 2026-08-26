@@ -7,10 +7,7 @@ import { dirname, join } from 'node:path';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const indexPath = join(root, 'dist/components/index.d.ts');
 const packageTypesPath = join(root, 'dist/types/components.d.ts');
-const questionnaireEntryPath = join(
-  root,
-  'dist/components/ds-agent-questionnaire.d.ts',
-);
+const questionnaireEntryPath = join(root, 'dist/components/ds-agent-questionnaire.d.ts');
 
 const marker = '// --- nav type re-exports (patch-index-types.mjs) ---';
 const patch = `
@@ -91,8 +88,7 @@ export type {
 } from '../types/components/Pagination/pagination-types';
 `;
 
-const questionnaireTypesMarker =
-  '// --- questionnaire type re-exports (patch-index-types.mjs) ---';
+const questionnaireTypesMarker = '// --- questionnaire type re-exports (patch-index-types.mjs) ---';
 const packageTypesPatch = `
 ${questionnaireTypesMarker}
 export type {
@@ -126,7 +122,7 @@ function patchQuestionnaireEntry() {
   let existing = readFileSync(questionnaireEntryPath, 'utf8');
   existing = existing.replace(
     'interface DsAgentQuestionnaire extends Components.DsAgentQuestionnaire, HTMLElement {}',
-    'export interface DsAgentQuestionnaire extends Components.DsAgentQuestionnaire, HTMLElement {}',
+    'export interface DsAgentQuestionnaire extends Components.DsAgentQuestionnaire, HTMLElement {}'
   );
   if (!existing.includes(questionnaireTypesMarker)) {
     existing = existing.trimEnd() + questionnaireEntryPatch + '\n';

@@ -4,7 +4,7 @@ export type PercentageDecimals = 1 | 2;
 export function formatPercentage(
   ratio: number,
   decimals: PercentageDecimals = 1,
-  locale?: string,
+  locale?: string
 ): string {
   const precision = decimals === 2 ? 2 : 1;
   const value = Number.isFinite(ratio) ? ratio : 0;

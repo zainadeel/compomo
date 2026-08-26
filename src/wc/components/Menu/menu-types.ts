@@ -58,19 +58,15 @@ export interface MenuSwatchPickerSection {
   groupLabel?: string;
 }
 
-export type MenuSection =
-  | MenuItemsSection
-  | MenuSwatchPickerSection;
+export type MenuSection = MenuItemsSection | MenuSwatchPickerSection;
 
 export function isMenuSwatchPickerSection(
-  section: MenuSection,
+  section: MenuSection
 ): section is MenuSwatchPickerSection {
   return 'variant' in section && section.variant === 'swatch-picker';
 }
 
-export function isMenuPickerSection(
-  section: MenuSection,
-): section is MenuSwatchPickerSection {
+export function isMenuPickerSection(section: MenuSection): section is MenuSwatchPickerSection {
   return isMenuSwatchPickerSection(section);
 }
 

@@ -51,10 +51,7 @@ export class ConversationList {
       emptyState.style.setProperty('position', 'absolute');
       emptyState.style.setProperty('inset-block-start', '0');
       emptyState.style.setProperty('inset-inline', '0');
-      emptyState.style.setProperty(
-        'inset-block-end',
-        'var(--ds-scroll-overlay-block-size, 0)',
-      );
+      emptyState.style.setProperty('inset-block-end', 'var(--ds-scroll-overlay-block-size, 0)');
       emptyState.style.setProperty('height', 'auto');
       emptyState.style.setProperty('box-sizing', 'border-box');
     }

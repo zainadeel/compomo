@@ -13,7 +13,9 @@ export class MessageBubble {
   render() {
     return (
       <Host class={`message-bubble--${this.variant}`}>
-        <div class="message-bubble"><slot /></div>
+        <div class="message-bubble">
+          <slot />
+        </div>
       </Host>
     );
   }

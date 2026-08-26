@@ -1,8 +1,5 @@
 export type { NavChromeStyle } from './nav-chrome';
-export type {
-  PanelNavGroup,
-  PanelNavItem,
-} from '../components/PanelNav/panel-nav-types';
+export type { PanelNavGroup, PanelNavItem } from '../components/PanelNav/panel-nav-types';
 export type { BarNavTab } from '../components/BarNav/bar-nav-types';
 export type {
   ShellPageContentInset,
@@ -58,8 +55,4 @@ export {
   shellMobileDestinationForTool,
   shouldEmitMobileDestinationChange,
 } from './shell-responsive';
-export type {
-  ShellInboxToolId,
-  MobileDestination,
-  ShellResponsiveMode,
-} from './shell-responsive';
+export type { ShellInboxToolId, MobileDestination, ShellResponsiveMode } from './shell-responsive';

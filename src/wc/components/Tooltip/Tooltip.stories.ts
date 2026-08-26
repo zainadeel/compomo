@@ -57,7 +57,12 @@ export const Playground: Story = {
           tip.sideOffset = typeof raw === 'string' && /^\d+$/.test(raw) ? Number(raw) : raw;
         })}
       >
-        <ds-button-filled variant="icon" icon="Bell" intent="brand" aria-label="Hover me"></ds-button-filled>
+        <ds-button-filled
+          variant="icon"
+          icon="Bell"
+          intent="brand"
+          aria-label="Hover me"
+        ></ds-button-filled>
       </ds-tooltip>
     </div>
   `,
@@ -65,7 +70,9 @@ export const Playground: Story = {
 
 export const Sizes: Story = {
   render: () => html`
-    <div style="display:flex;gap:var(--dimension-space-200);justify-content:center;padding:80px;align-items:center;">
+    <div
+      style="display:flex;gap:var(--dimension-space-200);justify-content:center;padding:80px;align-items:center;"
+    >
       ${SIZES.map(
         size => html`
           <ds-tooltip label="Tooltip ${size}" size=${size} side="top">
@@ -77,7 +84,7 @@ export const Sizes: Story = {
               aria-label=${`Size ${size}`}
             ></ds-button-filled>
           </ds-tooltip>
-        `,
+        `
       )}
     </div>
   `,
@@ -85,24 +92,46 @@ export const Sizes: Story = {
 
 export const Sides: Story = {
   render: () => html`
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 80px; place-items: center">
+    <div
+      style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 80px; place-items: center"
+    >
       <div></div>
       <ds-tooltip label="Top tooltip" side="top">
-        <ds-button-filled variant="icon" icon="ArrowUp" intent="brand" aria-label="Top"></ds-button-filled>
+        <ds-button-filled
+          variant="icon"
+          icon="ArrowUp"
+          intent="brand"
+          aria-label="Top"
+        ></ds-button-filled>
       </ds-tooltip>
       <div></div>
 
       <ds-tooltip label="Left tooltip" side="left">
-        <ds-button-filled variant="icon" icon="ArrowLeft" intent="brand" aria-label="Left"></ds-button-filled>
+        <ds-button-filled
+          variant="icon"
+          icon="ArrowLeft"
+          intent="brand"
+          aria-label="Left"
+        ></ds-button-filled>
       </ds-tooltip>
       <div></div>
       <ds-tooltip label="Right tooltip" side="right">
-        <ds-button-filled variant="icon" icon="ArrowRight" intent="brand" aria-label="Right"></ds-button-filled>
+        <ds-button-filled
+          variant="icon"
+          icon="ArrowRight"
+          intent="brand"
+          aria-label="Right"
+        ></ds-button-filled>
       </ds-tooltip>
 
       <div></div>
       <ds-tooltip label="Bottom tooltip" side="bottom">
-        <ds-button-filled variant="icon" icon="ArrowDown" intent="brand" aria-label="Bottom"></ds-button-filled>
+        <ds-button-filled
+          variant="icon"
+          icon="ArrowDown"
+          intent="brand"
+          aria-label="Bottom"
+        ></ds-button-filled>
       </ds-tooltip>
       <div></div>
     </div>
@@ -111,15 +140,34 @@ export const Sides: Story = {
 
 export const WithShortcut: Story = {
   render: () => html`
-    <div style="display: flex; justify-content: center; padding: 80px; gap: var(--dimension-space-200);">
+    <div
+      style="display: flex; justify-content: center; padding: 80px; gap: var(--dimension-space-200);"
+    >
       <ds-tooltip label="Save file" size="md" shortcut-key="⌘S">
-        <ds-button-filled variant="icon" icon="Check" intent="brand" aria-label="Save md"></ds-button-filled>
+        <ds-button-filled
+          variant="icon"
+          icon="Check"
+          intent="brand"
+          aria-label="Save md"
+        ></ds-button-filled>
       </ds-tooltip>
       <ds-tooltip label="Save file" size="sm" shortcut-key="⌘S">
-        <ds-button-filled variant="icon" size="sm" icon="Check" intent="brand" aria-label="Save sm"></ds-button-filled>
+        <ds-button-filled
+          variant="icon"
+          size="sm"
+          icon="Check"
+          intent="brand"
+          aria-label="Save sm"
+        ></ds-button-filled>
       </ds-tooltip>
       <ds-tooltip label="Save file" size="xs" shortcut-key="⌘S">
-        <ds-button-filled variant="icon" size="xs" icon="Check" intent="brand" aria-label="Save xs"></ds-button-filled>
+        <ds-button-filled
+          variant="icon"
+          size="xs"
+          icon="Check"
+          intent="brand"
+          aria-label="Save xs"
+        ></ds-button-filled>
       </ds-tooltip>
     </div>
   `,
@@ -131,7 +179,8 @@ export const ScrollAndResize: Story = {
   render: () => html`
     <div style="padding:var(--dimension-space-300);display:grid;gap:var(--dimension-space-200);">
       <ds-text as="p" variant="text-body-medium" color="secondary">
-        Tab to the bell, then scroll the container or resize the Storybook viewport. The open tooltip stays anchored.
+        Tab to the bell, then scroll the container or resize the Storybook viewport. The open
+        tooltip stays anchored.
       </ds-text>
       <div
         style="
@@ -151,7 +200,11 @@ export const ScrollAndResize: Story = {
           "
         >
           <ds-tooltip label="Tracks the scrolling trigger" side="top" delay="0">
-            <ds-button-filled variant="icon" icon="Bell" aria-label="Tracked action"></ds-button-filled>
+            <ds-button-filled
+              variant="icon"
+              icon="Bell"
+              aria-label="Tracked action"
+            ></ds-button-filled>
           </ds-tooltip>
         </div>
       </div>
@@ -173,10 +226,18 @@ export const CollisionFlip: Story = {
       "
     >
       <ds-tooltip label="Requested top, resolved bottom" side="top" align="start" delay="0">
-        <ds-button-filled variant="icon" icon="ArrowUp" aria-label="Top-edge action"></ds-button-filled>
+        <ds-button-filled
+          variant="icon"
+          icon="ArrowUp"
+          aria-label="Top-edge action"
+        ></ds-button-filled>
       </ds-tooltip>
       <ds-tooltip label="Requested right, resolved left" side="right" align="end" delay="0">
-        <ds-button-filled variant="icon" icon="ArrowRight" aria-label="Right-edge action"></ds-button-filled>
+        <ds-button-filled
+          variant="icon"
+          icon="ArrowRight"
+          aria-label="Right-edge action"
+        ></ds-button-filled>
       </ds-tooltip>
     </div>
   `,
@@ -188,19 +249,21 @@ export const KeyboardAndWarmHandoff: Story = {
   render: () => html`
     <div style="padding:80px;display:grid;gap:var(--dimension-space-200);justify-content:center;">
       <ds-text as="p" variant="text-body-medium" color="secondary">
-        Tab through the actions to open by keyboard; Escape dismisses. After one delayed tooltip opens,
-        moving across the row opens adjacent tooltips immediately.
+        Tab through the actions to open by keyboard; Escape dismisses. After one delayed tooltip
+        opens, moving across the row opens adjacent tooltips immediately.
       </ds-text>
       <div style="display:flex;gap:var(--dimension-space-100);justify-content:center;">
-        ${['Bell', 'Chart', 'DeviceMobile'].map((icon, index) => html`
-          <ds-tooltip label=${`Action ${index + 1}`} side="bottom">
-            <ds-button-filled
-              variant="icon"
-              icon=${icon}
-              aria-label=${`Action ${index + 1}`}
-            ></ds-button-filled>
-          </ds-tooltip>
-        `)}
+        ${['Bell', 'Chart', 'DeviceMobile'].map(
+          (icon, index) => html`
+            <ds-tooltip label=${`Action ${index + 1}`} side="bottom">
+              <ds-button-filled
+                variant="icon"
+                icon=${icon}
+                aria-label=${`Action ${index + 1}`}
+              ></ds-button-filled>
+            </ds-tooltip>
+          `
+        )}
       </div>
     </div>
   `,
@@ -219,14 +282,21 @@ export const DynamicTriggerReplacement: Story = {
           if (!(tooltip instanceof HTMLElement)) return;
           const replacement = document.createElement('ds-button-filled');
           replacement.setAttribute('variant', 'icon');
-          replacement.setAttribute('icon', tooltip.dataset['alternate'] === 'true' ? 'Bell' : 'Chart');
+          replacement.setAttribute(
+            'icon',
+            tooltip.dataset['alternate'] === 'true' ? 'Bell' : 'Chart'
+          );
           replacement.setAttribute('aria-label', 'Replacement trigger');
           tooltip.dataset['alternate'] = tooltip.dataset['alternate'] === 'true' ? 'false' : 'true';
           tooltip.replaceChildren(replacement);
         }}
       ></ds-button-unfilled>
       <ds-tooltip label="Bound to the current slotted trigger" side="right" delay="0">
-        <ds-button-filled variant="icon" icon="Bell" aria-label="Initial trigger"></ds-button-filled>
+        <ds-button-filled
+          variant="icon"
+          icon="Bell"
+          aria-label="Initial trigger"
+        ></ds-button-filled>
       </ds-tooltip>
     </div>
   `,
@@ -239,11 +309,16 @@ export const InputAndMotionPolicy: Story = {
     <div style="padding:80px;display:grid;gap:var(--dimension-space-200);justify-content:center;">
       <ds-text as="p" variant="text-body-medium" color="secondary">
         Touch does not open visual-only tooltips. Mouse or hover-capable pen and keyboard focus do.
-        Enable the operating system reduced-motion preference to verify that enter and exit are instant.
+        Enable the operating system reduced-motion preference to verify that enter and exit are
+        instant.
       </ds-text>
       <div style="display:flex;justify-content:center;">
         <ds-tooltip label="Supplementary visual label" side="bottom" delay="0">
-          <ds-button-filled variant="icon" icon="Bell" aria-label="Notifications"></ds-button-filled>
+          <ds-button-filled
+            variant="icon"
+            icon="Bell"
+            aria-label="Notifications"
+          ></ds-button-filled>
         </ds-tooltip>
       </div>
     </div>

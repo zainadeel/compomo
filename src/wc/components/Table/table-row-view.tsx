@@ -4,15 +4,14 @@ import {
   tableCellTextOverflowProps,
   type TableCellPresentation,
 } from './table-cell-model';
-import { isRenderableTableActionMenu, isTableCellActionMenu, tableActionTriggerId } from './table-action-menu';
+import {
+  isRenderableTableActionMenu,
+  isTableCellActionMenu,
+  tableActionTriggerId,
+} from './table-action-menu';
 import { tableRowSelectionLabel } from './table-model';
 import type { TableRenderModel } from './table-render-model';
-import type {
-  TableCellActionDetail,
-  TableCellTextRun,
-  TableColumn,
-  TableRow,
-} from './table-types';
+import type { TableCellActionDetail, TableCellTextRun, TableColumn, TableRow } from './table-types';
 import { resolveSafeUrl } from '../../utils/safe-url';
 
 export interface TableRowViewOptions {
@@ -30,7 +29,7 @@ export interface TableRowViewOptions {
     checked: boolean,
     indeterminate: boolean,
     disabled: boolean,
-    onActivate: () => void,
+    onActivate: () => void
   ) => unknown;
   renderStickyEdge: (sticky: TableColumn['sticky']) => unknown;
   onRowActivate: (row: TableRow, event: Event) => void;
@@ -99,7 +98,7 @@ export function renderTableRow({
             selected,
             false,
             !rowSelectable,
-            () => onRowSelection(row),
+            () => onRowSelection(row)
           )}
           {renderStickyEdge('start')}
         </td>
@@ -115,7 +114,7 @@ export function renderTableRow({
           renderStickyEdge,
           onCellAction,
           onActionMenuToggle,
-        }),
+        })
       )}
     </tr>
   );
@@ -224,12 +223,7 @@ function renderTableCellValue(cell: TableCellPresentation, options: TableCellVie
   if (cell.kind === 'icon') {
     const value = cell.value;
     return (
-      <ds-icon
-        name={value.icon}
-        size="md"
-        color={value.color ?? 'secondary'}
-        label={value.label}
-      />
+      <ds-icon name={value.icon} size="md" color={value.color ?? 'secondary'} label={value.label} />
     );
   }
 
@@ -254,7 +248,12 @@ function renderTableCellValue(cell: TableCellPresentation, options: TableCellVie
     return (
       <span class="ds-table__cell-image">
         {value.src ? (
-          <img class="ds-table__cell-image-content" src={value.src} alt={value.alt} loading="lazy" />
+          <img
+            class="ds-table__cell-image-content"
+            src={value.src}
+            alt={value.alt}
+            loading="lazy"
+          />
         ) : (
           <span class="ds-table__cell-image-placeholder" role="img" aria-label={value.alt} />
         )}
@@ -394,7 +393,7 @@ function renderTextTrack(
     defaultColor: 'primary' | 'secondary';
     wholeColor?: TableCellTextRun['color'];
     lineClamp: Extract<TableCellPresentation, { kind: 'text' | 'icon-text' }>['lineClamp'];
-  },
+  }
 ) {
   if (!runs?.length) return null;
   const trackClass = `ds-table__cell-${options.track} ds-table__cell-track ds-table__cell-track--text`;
@@ -449,6 +448,8 @@ function renderTextTrack(
   );
 }
 
-function truncateAttr(lineClamp: Extract<TableCellPresentation, { kind: 'text' | 'icon-text' }>['lineClamp']) {
+function truncateAttr(
+  lineClamp: Extract<TableCellPresentation, { kind: 'text' | 'icon-text' }>['lineClamp']
+) {
   return lineClamp === 'none' ? undefined : '';
 }

@@ -31,11 +31,7 @@ message-action composition remains available in either mode.
 ```html
 <ds-agent-response render-mode="composed">
   <ds-markdown content="The preview is ready."></ds-markdown>
-  <ds-agent-tool-call
-    name="deploy.preview"
-    label="Created preview"
-    state="success"
-  >
+  <ds-agent-tool-call name="deploy.preview" label="Created preview" state="success">
     <product-preview slot="result"></product-preview>
   </ds-agent-tool-call>
   <ds-agent-source-list></ds-agent-source-list>

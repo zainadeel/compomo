@@ -8,11 +8,14 @@ function codeExample(label, value, language = 'tsx') {
 }
 
 export function formatComponentList(items) {
-  return items.map(item => {
-    const dependencies = item.dependencies?.filter(dependency => dependency !== '@ds-mo/ui') ?? [];
-    const note = dependencies.length ? ` (also needs ${dependencies.join(', ')})` : '';
-    return `- **${item.title}** (\`${item.name}\`)${note}\n  ${item.description}`;
-  }).join('\n\n');
+  return items
+    .map(item => {
+      const dependencies =
+        item.dependencies?.filter(dependency => dependency !== '@ds-mo/ui') ?? [];
+      const note = dependencies.length ? ` (also needs ${dependencies.join(', ')})` : '';
+      return `- **${item.title}** (\`${item.name}\`)${note}\n  ${item.description}`;
+    })
+    .join('\n\n');
 }
 
 export function formatComponentDetail(component) {
@@ -43,23 +46,32 @@ export function formatComponentDetail(component) {
   if (props && Object.keys(props).length > 0) {
     const rows = Object.entries(props).map(([name, definition]) => {
       const required = definition.required ? ' **(required)**' : '';
-      const defaultValue = definition.default != null ? ` — default: \`${definition.default}\`` : '';
+      const defaultValue =
+        definition.default != null ? ` — default: \`${definition.default}\`` : '';
       const description = definition.description
         ? ` — ${definition.description.replaceAll('\n', ' ').replaceAll('|', '\\|')}`
         : '';
       const type = (definition.resolvedType ?? definition.type).replaceAll('|', '\\|');
       return `| \`${name}\` | \`${type}\` | ${required}${defaultValue}${description} |`;
     });
-    sections.push(`## Props\n\n| Prop | Type | Notes |\n|------|------|-------|\n${rows.join('\n')}`);
+    sections.push(
+      `## Props\n\n| Prop | Type | Notes |\n|------|------|-------|\n${rows.join('\n')}`
+    );
   }
 
   if (component.registryDependencies?.length) {
-    sections.push(`## Component Dependencies\n\n${component.registryDependencies.map(dependency => `- \`${dependency}\``).join('\n')}`);
+    sections.push(
+      `## Component Dependencies\n\n${component.registryDependencies.map(dependency => `- \`${dependency}\``).join('\n')}`
+    );
   }
 
   if (consumption.peerDependencies) {
-    const required = consumption.peerDependencies.required.map(dependency => `- ${dependency} (required)`);
-    const optional = (consumption.peerDependencies.optional ?? []).map(dependency => `- ${dependency} (optional)`);
+    const required = consumption.peerDependencies.required.map(
+      dependency => `- ${dependency} (required)`
+    );
+    const optional = (consumption.peerDependencies.optional ?? []).map(
+      dependency => `- ${dependency} (optional)`
+    );
     sections.push(`## Peer Dependencies\n\n${[...required, ...optional].join('\n')}`);
   }
 
@@ -70,10 +82,13 @@ export function formatComponentDetail(component) {
   ];
   sections.push(`## Design Intent\n\n${intent.join('\n\n')}`);
   if (meta.intent.patterns?.length) {
-    sections.push(`## Composition Patterns\n\n${meta.intent.patterns.map(pattern => `- \`${pattern}\` — retrieve it with \`get_pattern\` for executable framework recipes.`).join('\n')}`);
+    sections.push(
+      `## Composition Patterns\n\n${meta.intent.patterns.map(pattern => `- \`${pattern}\` — retrieve it with \`get_pattern\` for executable framework recipes.`).join('\n')}`
+    );
   }
 
-  if (consumption.complexPropertyNote) sections.push(`## Framework Note\n\n${consumption.complexPropertyNote}`);
+  if (consumption.complexPropertyNote)
+    sections.push(`## Framework Note\n\n${consumption.complexPropertyNote}`);
   if (meta.storybook) sections.push(`## Storybook\n\n${meta.storybook}`);
   return sections.join('\n\n---\n\n');
 }
@@ -84,11 +99,14 @@ export function formatComponentSourceHeader(component) {
 }
 
 export function formatPatternList(patterns) {
-  return patterns.map(pattern => {
-    const recipeCount = Object.values(pattern.implementations ?? {})
-      .flatMap(implementation => implementation.recipes ?? []).length;
-    return `- **${pattern.id.replace(/^pattern:/, '')}** (\`${pattern.id}\`) — ${recipeCount} framework recipe${recipeCount === 1 ? '' : 's'}\n  ${pattern.summary}`;
-  }).join('\n\n');
+  return patterns
+    .map(pattern => {
+      const recipeCount = Object.values(pattern.implementations ?? {}).flatMap(
+        implementation => implementation.recipes ?? []
+      ).length;
+      return `- **${pattern.id.replace(/^pattern:/, '')}** (\`${pattern.id}\`) — ${recipeCount} framework recipe${recipeCount === 1 ? '' : 's'}\n  ${pattern.summary}`;
+    })
+    .join('\n\n');
 }
 
 function formatGuidance(title, guidance = []) {
@@ -99,18 +117,23 @@ export function formatPatternDetail(pattern, requestedFramework) {
   const sections = [`# ${pattern.id}\n\n${pattern.summary}`];
   sections.push(formatGuidance('Use When', pattern.useWhen));
   sections.push(formatGuidance('Avoid When', pattern.avoidWhen));
-  sections.push(`## Components\n\n${pattern.components.map(entry => `- \`${entry.component}\` (${entry.required ? 'required' : 'optional'}): ${entry.role}`).join('\n')}`);
+  sections.push(
+    `## Components\n\n${pattern.components.map(entry => `- \`${entry.component}\` (${entry.required ? 'required' : 'optional'}): ${entry.role}`).join('\n')}`
+  );
   sections.push(formatGuidance('State Ownership', pattern.stateOwnership));
   sections.push(formatGuidance('Accessibility', pattern.accessibility));
   sections.push(formatGuidance('Responsive Behavior', pattern.responsiveBehavior));
 
-  const implementations = Object.entries(pattern.implementations)
-    .filter(([framework]) => !requestedFramework || framework === requestedFramework);
+  const implementations = Object.entries(pattern.implementations).filter(
+    ([framework]) => !requestedFramework || framework === requestedFramework
+  );
   for (const [framework, implementation] of implementations) {
     const recipes = implementation.recipes ?? [];
     if (!recipes.length) continue;
     const recipeSections = recipes.map(recipe => {
-      const files = recipe.files.map(file => `### ${file.path}\n\n\`\`\`${file.language}\n${file.content}\n\`\`\``).join('\n\n');
+      const files = recipe.files
+        .map(file => `### ${file.path}\n\n\`\`\`${file.language}\n${file.content}\n\`\`\``)
+        .join('\n\n');
       const notes = recipe.notes?.length
         ? `\n\n**Notes**\n\n${recipe.notes.map(note => `- ${note}`).join('\n')}`
         : '';

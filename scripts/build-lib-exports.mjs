@@ -17,11 +17,7 @@ import { execSync } from 'node:child_process';
 import { build } from 'esbuild';
 
 await build({
-  entryPoints: [
-    'src/wc/shell/index.ts',
-    'src/wc/toast/index.ts',
-    'src/wc/utils/index.ts',
-  ],
+  entryPoints: ['src/wc/shell/index.ts', 'src/wc/toast/index.ts', 'src/wc/utils/index.ts'],
   outdir: 'dist/lib',
   outbase: 'src/wc',
   bundle: true,

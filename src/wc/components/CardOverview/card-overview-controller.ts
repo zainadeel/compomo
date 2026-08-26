@@ -1,8 +1,4 @@
-import type {
-  CardOverviewVariant,
-  OverviewMetric,
-  SafetyScoreLevel,
-} from './card-overview-types';
+import type { CardOverviewVariant, OverviewMetric, SafetyScoreLevel } from './card-overview-types';
 
 export interface CardOverviewCollapseGeometry {
   active: boolean;
@@ -87,9 +83,7 @@ export function resolveOverviewRovingIndex(
 ): number {
   const first = metrics.findIndex(metric => !metric.isInactive);
   if (first < 0) return -1;
-  return metrics[focusedIndex] && !metrics[focusedIndex].isInactive
-    ? focusedIndex
-    : first;
+  return metrics[focusedIndex] && !metrics[focusedIndex].isInactive ? focusedIndex : first;
 }
 
 export function findNextOverviewMetricIndex(

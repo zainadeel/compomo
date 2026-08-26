@@ -175,7 +175,7 @@ export class Tooltip {
   private focusHandler = () => {
     if (this.lastInteractionWasKeyboard || this.anchor?.matches(':focus-visible')) this.show();
   };
-  private blurHandler: (e: FocusEvent) => void = (e) => {
+  private blurHandler: (e: FocusEvent) => void = e => {
     const next = e.relatedTarget as Node | null;
     if (next && this.anchor?.contains(next)) return;
     this.hide();
@@ -251,7 +251,7 @@ export class Tooltip {
   private get instantReopenMs(): number {
     return resolveCssTimeMs(
       TOKEN_DEFAULTS.animationDurationMedium1,
-      TOKEN_DEFAULTS.animationDurationMedium1,
+      TOKEN_DEFAULTS.animationDurationMedium1
     );
   }
 
@@ -260,7 +260,10 @@ export class Tooltip {
   }
 
   private get tooltipFallbackWidthPx(): number {
-    return resolveCssLengthPx(TOKEN_DEFAULTS.tooltipFallbackWidth, TOKEN_DEFAULTS.tooltipFallbackWidth);
+    return resolveCssLengthPx(
+      TOKEN_DEFAULTS.tooltipFallbackWidth,
+      TOKEN_DEFAULTS.tooltipFallbackWidth
+    );
   }
 
   private get tooltipFallbackHeightPx(): number {
@@ -333,7 +336,9 @@ export class Tooltip {
 
   private linkDescribedBy() {
     if (!this.describedBy || !this.anchor || !this.popupEl) return;
-    const ids = new Set((this.anchor.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(Boolean));
+    const ids = new Set(
+      (this.anchor.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(Boolean)
+    );
     ids.add(this.tooltipId);
     this.anchor.setAttribute('aria-describedby', Array.from(ids).join(' '));
   }
@@ -358,8 +363,14 @@ export class Tooltip {
   };
 
   private clearTimers() {
-    if (this.delayTimer) { clearTimeout(this.delayTimer); this.delayTimer = null; }
-    if (this.closeTimer) { clearTimeout(this.closeTimer); this.closeTimer = null; }
+    if (this.delayTimer) {
+      clearTimeout(this.delayTimer);
+      this.delayTimer = null;
+    }
+    if (this.closeTimer) {
+      clearTimeout(this.closeTimer);
+      this.closeTimer = null;
+    }
   }
 
   private setupOpenListeners() {
@@ -487,7 +498,7 @@ export class Tooltip {
 
     this.setupOpenListeners();
     this.linkDescribedBy();
-      this.popupEl.classList.toggle('tooltip-popup--instant', this.skipEnterAnimation);
+    this.popupEl.classList.toggle('tooltip-popup--instant', this.skipEnterAnimation);
     this.popupEl.classList.toggle('tooltip-popup--wrap', this.wrapLabel);
     this.popupEl.classList.remove('tooltip-popup--closing');
     this.renderPopupContent();
@@ -500,7 +511,11 @@ export class Tooltip {
     this.popupEl.classList.toggle('tooltip-popup--wrap', this.wrapLabel);
     const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const density =
-      this.size === 'md' ? 'ds-control--md' : this.size === 'sm' ? 'ds-control--sm' : 'ds-control--xs';
+      this.size === 'md'
+        ? 'ds-control--md'
+        : this.size === 'sm'
+          ? 'ds-control--sm'
+          : 'ds-control--xs';
     // Every layout node needs `sc-ds-tooltip` so scoped selectors (`.foo.sc-ds-tooltip`) match.
     const sc = 'sc-ds-tooltip';
 

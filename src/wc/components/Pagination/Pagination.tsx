@@ -1,10 +1,7 @@
 import { Component, Element, Event, EventEmitter, h, Host, Prop, State } from '@stencil/core';
 import { observeTableCaptionCompact } from '../../utils/table-caption-compact';
 import { resolvePaginationState } from './pagination-model';
-import type {
-  PaginationChangeDetail,
-  PaginationPageSizeMode,
-} from './pagination-types';
+import type { PaginationChangeDetail, PaginationPageSizeMode } from './pagination-types';
 
 let paginationId = 0;
 
@@ -81,7 +78,12 @@ export class Pagination {
 
   private requestPage(pageIndex: number): void {
     const state = this.resolvedState;
-    if (this.loading || pageIndex === state.pageIndex || pageIndex < 0 || pageIndex >= state.totalPages) {
+    if (
+      this.loading ||
+      pageIndex === state.pageIndex ||
+      pageIndex < 0 ||
+      pageIndex >= state.totalPages
+    ) {
       return;
     }
     this.dsChange.emit({
@@ -107,11 +109,8 @@ export class Pagination {
   }
 
   private requestPageSize(value: string | string[]): void {
-    if (
-      this.loading ||
-      typeof value !== 'string' ||
-      (value === 'fit' && this.fitToPageInactive)
-    ) return;
+    if (this.loading || typeof value !== 'string' || (value === 'fit' && this.fitToPageInactive))
+      return;
     const state = this.resolvedState;
     const nextMode: PaginationPageSizeMode = value === 'fit' ? 'fit' : 'fixed';
     const pageSize = nextMode === 'fit' ? this.resolvedFitPageSize : Number(value);
@@ -139,13 +138,22 @@ export class Pagination {
   }
 
   private handleKeyDown(event: KeyboardEvent): void {
-    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
+    if (
+      event.defaultPrevented ||
+      event.altKey ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.shiftKey
+    ) {
       return;
     }
-    const fromChoiceControl = event.composedPath().some(node =>
-      node instanceof HTMLElement &&
-      (node.tagName === 'DS-SELECT' || ['INPUT', 'SELECT', 'TEXTAREA'].includes(node.tagName)),
-    );
+    const fromChoiceControl = event
+      .composedPath()
+      .some(
+        node =>
+          node instanceof HTMLElement &&
+          (node.tagName === 'DS-SELECT' || ['INPUT', 'SELECT', 'TEXTAREA'].includes(node.tagName))
+      );
     if (fromChoiceControl || (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight')) return;
     const state = this.resolvedState;
     const pageIndex = event.key === 'ArrowLeft' ? state.pageIndex - 1 : state.pageIndex + 1;

@@ -40,7 +40,7 @@ const OPPOSITE_SIDE: Record<AnchoredSide, AnchoredSide> = {
 /** Unclamped coordinates for one candidate side. */
 function rawPosition(
   input: AnchoredPositionInput,
-  side: AnchoredSide,
+  side: AnchoredSide
 ): Pick<AnchoredPosition, 'x' | 'y'> {
   const { anchorRect: anchor, popupWidth, popupHeight, align, sideOffsetPx, alignOffsetPx } = input;
 
@@ -52,16 +52,12 @@ function rawPosition(
           : align === 'end'
             ? anchor.right - popupWidth + alignOffsetPx
             : anchor.left + anchor.width / 2 - popupWidth / 2 + alignOffsetPx,
-      y: side === 'top'
-        ? anchor.top - popupHeight - sideOffsetPx
-        : anchor.bottom + sideOffsetPx,
+      y: side === 'top' ? anchor.top - popupHeight - sideOffsetPx : anchor.bottom + sideOffsetPx,
     };
   }
 
   return {
-    x: side === 'left'
-      ? anchor.left - popupWidth - sideOffsetPx
-      : anchor.right + sideOffsetPx,
+    x: side === 'left' ? anchor.left - popupWidth - sideOffsetPx : anchor.right + sideOffsetPx,
     y:
       align === 'start'
         ? anchor.top + alignOffsetPx
@@ -90,18 +86,20 @@ function collisionBounds(input: AnchoredPositionInput) {
 function mainAxisOverflow(
   input: AnchoredPositionInput,
   side: AnchoredSide,
-  position: Pick<AnchoredPosition, 'x' | 'y'>,
+  position: Pick<AnchoredPosition, 'x' | 'y'>
 ): number {
   const { popupWidth, popupHeight } = input;
   const bounds = collisionBounds(input);
 
   if (side === 'top' || side === 'bottom') {
-    return Math.max(bounds.top - position.y, 0) +
-      Math.max(position.y + popupHeight - bounds.bottom, 0);
+    return (
+      Math.max(bounds.top - position.y, 0) + Math.max(position.y + popupHeight - bounds.bottom, 0)
+    );
   }
 
-  return Math.max(bounds.left - position.x, 0) +
-    Math.max(position.x + popupWidth - bounds.right, 0);
+  return (
+    Math.max(bounds.left - position.x, 0) + Math.max(position.x + popupWidth - bounds.right, 0)
+  );
 }
 
 function clampToBounds(value: number, size: number, minimum: number, maximumEdge: number): number {

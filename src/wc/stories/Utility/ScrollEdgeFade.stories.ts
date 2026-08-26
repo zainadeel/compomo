@@ -29,8 +29,8 @@ export const Overview: Story = {
       <div class="util-demo-section">
         <h2 class="util-demo-h2">Static bottom edge</h2>
         <p class="util-demo-sub">
-          PanelNav pattern: the bottom fade intentionally remains present while scrolling.
-          Import the util CSS and use <code class="util-demo-code">scrollEdgeFadeClassMap</code> from
+          PanelNav pattern: the bottom fade intentionally remains present while scrolling. Import
+          the util CSS and use <code class="util-demo-code">scrollEdgeFadeClassMap</code> from
           <code class="util-demo-code">@ds-mo/ui/utils</code>.
         </p>
         <div class="util-demo-row">
@@ -48,8 +48,9 @@ export const Overview: Story = {
       <div class="util-demo-section">
         <h2 class="util-demo-h2">Scroll-aware edges</h2>
         <p class="util-demo-sub">
-          The bottom fade disappears near the end; after scrolling down, the top fade appears. This is driven
-          by the scroll container's CSS timeline, with the configured static fades as the browser fallback.
+          The bottom fade disappears near the end; after scrolling down, the top fade appears. This
+          is driven by the scroll container's CSS timeline, with the configured static fades as the
+          browser fallback.
         </p>
         <div class="util-demo-row">
           <div

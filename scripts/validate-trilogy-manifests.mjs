@@ -6,7 +6,9 @@ import { fileURLToPath } from 'node:url';
 import Ajv2020 from 'ajv/dist/2020.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const schema = JSON.parse(fs.readFileSync(path.join(ROOT, 'agent/schemas/trilogy-manifest.schema.json'), 'utf8'));
+const schema = JSON.parse(
+  fs.readFileSync(path.join(ROOT, 'agent/schemas/trilogy-manifest.schema.json'), 'utf8')
+);
 const manifestPaths = process.argv.slice(2);
 
 if (manifestPaths.length === 0) {
@@ -20,7 +22,9 @@ for (const manifestPath of manifestPaths) {
   const absolutePath = path.resolve(ROOT, manifestPath);
   const manifest = JSON.parse(fs.readFileSync(absolutePath, 'utf8'));
   if (!validate(manifest)) {
-    const errors = validate.errors.map(error => `${error.instancePath || '/'} ${error.message}`).join('\n');
+    const errors = validate.errors
+      .map(error => `${error.instancePath || '/'} ${error.message}`)
+      .join('\n');
     throw new Error(`${manifestPath} is invalid:\n${errors}`);
   }
   for (const entry of manifest.entries) {
@@ -29,5 +33,7 @@ for (const manifestPath of manifestPaths) {
     ids.add(id);
   }
   const label = manifest.kind === 'tokens' ? 'token-family' : manifest.kind.slice(0, -1);
-  console.log(`${manifest.package}@${manifest.packageVersion}: ${manifest.entries.length} ${label} entries valid.`);
+  console.log(
+    `${manifest.package}@${manifest.packageVersion}: ${manifest.entries.length} ${label} entries valid.`
+  );
 }

@@ -22,4 +22,3 @@ export function resolveMobileSectionPosition(
     hasNext: selectedIndex < selectable.length - 1,
   };
 }
-

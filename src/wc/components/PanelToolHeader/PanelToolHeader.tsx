@@ -50,18 +50,18 @@ export class PanelToolHeader {
     const actions: PanelToolsHeaderAction[] = authoredActions
       ? this.actions
       : this.showMenu
-      ? [
-          {
-            id: 'menu',
-            icon: 'Ellipses',
-            ariaLabel: this.menuAriaLabel,
-            triggerId: this.menuTriggerId,
-            controls: this.menuControls,
-            expanded: this.menuExpanded,
-            haspopup: 'menu',
-          },
-        ]
-      : [];
+        ? [
+            {
+              id: 'menu',
+              icon: 'Ellipses',
+              ariaLabel: this.menuAriaLabel,
+              triggerId: this.menuTriggerId,
+              controls: this.menuControls,
+              expanded: this.menuExpanded,
+              haspopup: 'menu',
+            },
+          ]
+        : [];
 
     return (
       <Host>

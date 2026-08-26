@@ -34,7 +34,7 @@ describe('deriveBarNavValueFromUrl', () => {
     const state = deriveBarNavValueFromUrl(
       '/dashboard/safety/events',
       '/dashboard/safety',
-      SAFETY_TABS,
+      SAFETY_TABS
     );
     assert.equal(state.value, 'events');
     assert.equal(state.hideTabs, false);
@@ -44,7 +44,7 @@ describe('deriveBarNavValueFromUrl', () => {
     const state = deriveBarNavValueFromUrl(
       '/dashboard/safety/evt-123',
       '/dashboard/safety',
-      SAFETY_TABS,
+      SAFETY_TABS
     );
     assert.equal(state.value, '');
     assert.equal(state.hideTabs, true);
@@ -73,11 +73,7 @@ describe('deriveBarNavValueFromUrl', () => {
       { type: 'divider' },
       { id: 'events', label: 'Events' },
     ];
-    const state = deriveBarNavValueFromUrl(
-      '/dashboard/safety/events',
-      '/dashboard/safety',
-      tabs,
-    );
+    const state = deriveBarNavValueFromUrl('/dashboard/safety/events', '/dashboard/safety', tabs);
     assert.equal(state.value, 'events');
     assert.equal(state.hideTabs, false);
   });
@@ -94,13 +90,13 @@ describe('deriveBarNavValueFromUrl', () => {
     const stale = deriveBarNavValueFromUrl(
       '/dashboard/marketplace/browse',
       '/dashboard/marketplace',
-      analyticsTabs,
+      analyticsTabs
     );
     assert.equal(stale.value, 'browse');
     const fresh = deriveBarNavValueFromUrl(
       '/dashboard/analytics/dashboards',
       '/dashboard/analytics',
-      analyticsTabs,
+      analyticsTabs
     );
     assert.equal(fresh.value, 'dashboards');
   });

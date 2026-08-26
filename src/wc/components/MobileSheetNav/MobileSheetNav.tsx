@@ -97,12 +97,7 @@ export class MobileSheetNav {
         aria-current={selected ? 'page' : undefined}
         onClick={() => this.dsAreaSelect.emit(item.id)}
       >
-        <ds-icon
-          class="ds-interaction-fill__content"
-          name={item.icon}
-          size="lg"
-          color="inherit"
-        />
+        <ds-icon class="ds-interaction-fill__content" name={item.icon} size="lg" color="inherit" />
         <ds-text
           class="mobile-sheet-nav__item-label ds-interaction-fill__content"
           as="span"
@@ -174,10 +169,7 @@ export class MobileSheetNav {
 
     return (
       <Host aria-hidden={this.open ? undefined : 'true'} inert={this.open ? undefined : true}>
-        <section
-          id="ds-mobile-sheet-nav"
-          class="mobile-sheet-nav"
-        >
+        <section id="ds-mobile-sheet-nav" class="mobile-sheet-nav">
           <header
             class={{
               'mobile-sheet-nav__header': true,

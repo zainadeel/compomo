@@ -4,7 +4,7 @@ import { chromiumOnly } from './browser-tier';
 
 const semanticProseAxe = chromiumOnly(
   'accessibility',
-  'The semantic prose tree and its integrated Axe scan are engine-neutral DOM contracts.',
+  'The semantic prose tree and its integrated Axe scan are engine-neutral DOM contracts.'
 );
 
 test.describe('renderer-neutral prose foundation', () => {
@@ -51,7 +51,9 @@ test.describe('renderer-neutral prose foundation', () => {
     await expect(page.locator('#semantic-prose > h2')).toHaveCSS('margin-block-start', '0px');
   });
 
-  test('uses the shared brand hover underline and decoration geometry for prose links', async ({ page }) => {
+  test('uses the shared brand hover underline and decoration geometry for prose links', async ({
+    page,
+  }) => {
     const link = page.locator('#semantic-prose a');
     const styles = await link.evaluate(element => {
       const probe = document.createElement('span');
@@ -83,20 +85,25 @@ test.describe('renderer-neutral prose foundation', () => {
     await expect(link).toHaveCSS('text-decoration-line', 'underline');
   });
 
-  test('shares the semantic code-family and ligature contract across code surfaces', async ({ page }) => {
+  test('shares the semantic code-family and ligature contract across code surfaces', async ({
+    page,
+  }) => {
     await expect(page.locator('#agent-tool-call pre')).toHaveCount(2);
 
-    const readCodeStyles = () => page.evaluate(() => {
-      const inline = getComputedStyle(document.querySelector('#semantic-prose code')!);
-      const fenced = getComputedStyle(document.querySelector('#semantic-prose pre')!);
-      const component = getComputedStyle(document.querySelector('#markdown-renderer ds-code-block pre')!);
-      const toolCall = getComputedStyle(document.querySelector('#agent-tool-call pre')!);
-      return [inline, fenced, component, toolCall].map(style => ({
-        family: style.fontFamily,
-        ligatures: style.fontVariantLigatures,
-        weight: style.fontWeight,
-      }));
-    });
+    const readCodeStyles = () =>
+      page.evaluate(() => {
+        const inline = getComputedStyle(document.querySelector('#semantic-prose code')!);
+        const fenced = getComputedStyle(document.querySelector('#semantic-prose pre')!);
+        const component = getComputedStyle(
+          document.querySelector('#markdown-renderer ds-code-block pre')!
+        );
+        const toolCall = getComputedStyle(document.querySelector('#agent-tool-call pre')!);
+        return [inline, fenced, component, toolCall].map(style => ({
+          family: style.fontFamily,
+          ligatures: style.fontVariantLigatures,
+          weight: style.fontWeight,
+        }));
+      });
 
     const defaults = await readCodeStyles();
     for (const style of defaults) {
@@ -108,7 +115,7 @@ test.describe('renderer-neutral prose foundation', () => {
     await page.evaluate(() => {
       document.documentElement.style.setProperty(
         '--typography-font-family-code',
-        "'Configured Code Face', monospace",
+        "'Configured Code Face', monospace"
       );
       document.documentElement.style.setProperty('--ds-code-font-variant-ligatures', 'none');
     });
@@ -121,7 +128,9 @@ test.describe('renderer-neutral prose foundation', () => {
     }
   });
 
-  test('allows ordinary consumer overrides and opts product UI out as a subtree', async ({ page }) => {
+  test('allows ordinary consumer overrides and opts product UI out as a subtree', async ({
+    page,
+  }) => {
     const result = await page.evaluate(() => {
       const root = getComputedStyle(document.documentElement);
       const override = getComputedStyle(document.querySelector('#override-prose p')!);
@@ -200,15 +209,15 @@ test.describe('renderer-neutral prose foundation', () => {
   });
 
   test('remains usable when browser content is zoomed', async ({ page }) => {
-    const before = await page.locator('#semantic-prose h2').evaluate(element =>
-      element.getBoundingClientRect().height,
-    );
+    const before = await page
+      .locator('#semantic-prose h2')
+      .evaluate(element => element.getBoundingClientRect().height);
     await page.evaluate(() => {
       document.body.style.zoom = '2';
     });
-    const after = await page.locator('#semantic-prose h2').evaluate(element =>
-      element.getBoundingClientRect().height,
-    );
+    const after = await page
+      .locator('#semantic-prose h2')
+      .evaluate(element => element.getBoundingClientRect().height);
     const pageOverflow = await page.evaluate(() => ({
       client: document.documentElement.clientWidth,
       scroll: document.documentElement.scrollWidth,
@@ -269,7 +278,7 @@ test.describe('renderer-neutral prose foundation', () => {
 
     const results = await new AxeBuilder({ page }).include('#semantic-prose').analyze();
     const blocking = results.violations.filter(finding =>
-      ['critical', 'serious'].includes(finding.impact ?? ''),
+      ['critical', 'serious'].includes(finding.impact ?? '')
     );
     expect(blocking).toEqual([]);
   });

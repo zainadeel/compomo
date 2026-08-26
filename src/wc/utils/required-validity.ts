@@ -16,7 +16,7 @@ export const DEFAULT_REQUIRED_MESSAGE = 'This field is required.';
 export function setRequiredValidity(
   internals: ElementInternals,
   missing: boolean,
-  message: string,
+  message: string
 ): void {
   internals.setValidity(missing ? { valueMissing: true } : {}, missing ? message : '');
 }

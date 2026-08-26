@@ -1651,7 +1651,7 @@ export class Table {
     model: TableRenderModel,
     ariaRowIndex?: number,
     variableVirtualSize = false,
-    rowKey = row.id,
+    rowKey = row.id
   ) {
     return renderTableRowView({
       row,
@@ -1674,7 +1674,6 @@ export class Table {
         this.toggleActionMenu(targetRow, column, event),
     });
   }
-
 
   private emitGroupCollapse(group: TableGroup) {
     const collapsedGroupIds = toggleTableGroupCollapsed(this.collapsedGroupIds, group.id);
@@ -1807,7 +1806,6 @@ export class Table {
     );
   }
 
-
   private renderStickyGroup(model: TableRenderModel) {
     if (!this.documentStickyHeader || !this.activeStickyGroupId) return null;
     const groupModel = model.groups.find(item => item.group.id === this.activeStickyGroupId);
@@ -1838,11 +1836,9 @@ export class Table {
       renderRow: (row, renderModel, ariaRowIndex, variableVirtualSize, rowKey) =>
         this.renderRow(row, renderModel, ariaRowIndex, variableVirtualSize, rowKey),
       renderGroupContent: groupModel => this.renderGroupContent(groupModel),
-      renderGroupLoadRow: (group, totalColumns) =>
-        this.renderGroupLoadRow(group, totalColumns),
+      renderGroupLoadRow: (group, totalColumns) => this.renderGroupLoadRow(group, totalColumns),
     });
   }
-
 
   private renderSkeletonBody(model: TableRenderModel) {
     return renderTableSkeletonBody({
@@ -1852,7 +1848,6 @@ export class Table {
       renderStickyEdge: sticky => this.renderStickyEdge(sticky),
     });
   }
-
 
   private renderStateBody(kind: 'empty' | 'error' | 'virtual-viewport', totalColumns: number) {
     const error = kind !== 'empty';
@@ -1925,7 +1920,6 @@ export class Table {
       </tbody>
     );
   }
-
 
   private renderDocumentStickyHeader(model: TableRenderModel) {
     if (!this.documentStickyHeader) return null;
@@ -2150,9 +2144,9 @@ export class Table {
     if (dataMode !== this.dataMode) this.dsDataModeChange.emit({ dataMode });
     requestAnimationFrame(() => {
       this.el
-        .querySelector<HTMLElement & { setFocus?: () => void }>(
-          `#${CSS.escape(`${this.dataModeSwitcherElementId}-trigger`)}`
-        )
+        .querySelector<
+          HTMLElement & { setFocus?: () => void }
+        >(`#${CSS.escape(`${this.dataModeSwitcherElementId}-trigger`)}`)
         ?.setFocus?.();
     });
   }

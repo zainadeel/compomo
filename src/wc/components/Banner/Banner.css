@@ -183,11 +183,21 @@
   --ds-banner-border: var(--color-border-on-medium-background-tertiary);
 }
 
-:host(.banner--intent-brand.banner--contrast-medium) { --ds-banner-background: var(--color-background-medium-brand); }
-:host(.banner--intent-positive.banner--contrast-medium) { --ds-banner-background: var(--color-background-medium-positive); }
-:host(.banner--intent-warning.banner--contrast-medium) { --ds-banner-background: var(--color-background-medium-warning); }
-:host(.banner--intent-caution.banner--contrast-medium) { --ds-banner-background: var(--color-background-medium-caution); }
-:host(.banner--intent-negative.banner--contrast-medium) { --ds-banner-background: var(--color-background-medium-negative); }
+:host(.banner--intent-brand.banner--contrast-medium) {
+  --ds-banner-background: var(--color-background-medium-brand);
+}
+:host(.banner--intent-positive.banner--contrast-medium) {
+  --ds-banner-background: var(--color-background-medium-positive);
+}
+:host(.banner--intent-warning.banner--contrast-medium) {
+  --ds-banner-background: var(--color-background-medium-warning);
+}
+:host(.banner--intent-caution.banner--contrast-medium) {
+  --ds-banner-background: var(--color-background-medium-caution);
+}
+:host(.banner--intent-negative.banner--contrast-medium) {
+  --ds-banner-background: var(--color-background-medium-negative);
+}
 
 :host(.banner--contrast-strong) {
   --ds-banner-background: var(--color-background-strong-neutral);
@@ -196,11 +206,21 @@
   --ds-banner-border: var(--color-border-on-strong-background-tertiary);
 }
 
-:host(.banner--intent-brand.banner--contrast-strong) { --ds-banner-background: var(--color-background-strong-brand); }
-:host(.banner--intent-positive.banner--contrast-strong) { --ds-banner-background: var(--color-background-strong-positive); }
-:host(.banner--intent-warning.banner--contrast-strong) { --ds-banner-background: var(--color-background-strong-warning); }
-:host(.banner--intent-caution.banner--contrast-strong) { --ds-banner-background: var(--color-background-strong-caution); }
-:host(.banner--intent-negative.banner--contrast-strong) { --ds-banner-background: var(--color-background-strong-negative); }
+:host(.banner--intent-brand.banner--contrast-strong) {
+  --ds-banner-background: var(--color-background-strong-brand);
+}
+:host(.banner--intent-positive.banner--contrast-strong) {
+  --ds-banner-background: var(--color-background-strong-positive);
+}
+:host(.banner--intent-warning.banner--contrast-strong) {
+  --ds-banner-background: var(--color-background-strong-warning);
+}
+:host(.banner--intent-caution.banner--contrast-strong) {
+  --ds-banner-background: var(--color-background-strong-caution);
+}
+:host(.banner--intent-negative.banner--contrast-strong) {
+  --ds-banner-background: var(--color-background-strong-negative);
+}
 
 :host(.banner--contrast-bold) {
   --ds-banner-background: var(--color-background-bold-neutral);
@@ -209,11 +229,21 @@
   --ds-banner-border: var(--color-border-on-bold-background-tertiary);
 }
 
-:host(.banner--intent-brand.banner--contrast-bold) { --ds-banner-background: var(--color-background-bold-brand); }
-:host(.banner--intent-positive.banner--contrast-bold) { --ds-banner-background: var(--color-background-bold-positive); }
-:host(.banner--intent-warning.banner--contrast-bold) { --ds-banner-background: var(--color-background-bold-warning); }
-:host(.banner--intent-caution.banner--contrast-bold) { --ds-banner-background: var(--color-background-bold-caution); }
-:host(.banner--intent-negative.banner--contrast-bold) { --ds-banner-background: var(--color-background-bold-negative); }
+:host(.banner--intent-brand.banner--contrast-bold) {
+  --ds-banner-background: var(--color-background-bold-brand);
+}
+:host(.banner--intent-positive.banner--contrast-bold) {
+  --ds-banner-background: var(--color-background-bold-positive);
+}
+:host(.banner--intent-warning.banner--contrast-bold) {
+  --ds-banner-background: var(--color-background-bold-warning);
+}
+:host(.banner--intent-caution.banner--contrast-bold) {
+  --ds-banner-background: var(--color-background-bold-caution);
+}
+:host(.banner--intent-negative.banner--contrast-bold) {
+  --ds-banner-background: var(--color-background-bold-negative);
+}
 
 @media (prefers-reduced-motion: reduce) {
   :host,

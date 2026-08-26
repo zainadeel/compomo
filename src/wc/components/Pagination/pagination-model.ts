@@ -25,16 +25,15 @@ export function resolvePaginationState(
   state: Pick<
     PaginationState,
     'pageIndex' | 'pageSize' | 'pageSizeMode' | 'totalItems' | 'pageSizeOptions'
-  >,
+  >
 ): ResolvedPaginationState {
   const pageSize = positiveInteger(state.pageSize, DEFAULT_PAGE_SIZE_OPTIONS[0]);
   const pageSizeMode = state.pageSizeMode === 'fit' ? 'fit' : 'fixed';
   const totalItems = nonNegativeInteger(state.totalItems);
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
   const pageIndex = Math.min(nonNegativeInteger(state.pageIndex), totalPages - 1);
-  const options = (state.pageSizeOptions?.length
-    ? state.pageSizeOptions
-    : DEFAULT_PAGE_SIZE_OPTIONS
+  const options = (
+    state.pageSizeOptions?.length ? state.pageSizeOptions : DEFAULT_PAGE_SIZE_OPTIONS
   )
     .map(value => positiveInteger(value, 0))
     .filter(value => value > 0);

@@ -22,7 +22,7 @@ export function clearNavStyleHint(): void {
 export function resolveNavChromeStyle(
   styleProp: NavChromeStyle,
   hostAttr: string | null,
-  docHint?: string | null,
+  docHint?: string | null
 ): NavChromeStyle {
   const fromHost = readNavStyleAttr(hostAttr);
   if (fromHost) return fromHost;
@@ -41,7 +41,7 @@ export function resolveNavChromeStyle(
 
 export function shouldResyncNavChromeStyle(
   renderedStyle: NavChromeStyle,
-  style: NavChromeStyle,
+  style: NavChromeStyle
 ): boolean {
   return renderedStyle !== style;
 }

@@ -11,17 +11,28 @@ test('is always removable with the fixed Cross icon', async ({ page }) => {
 
   await expect(chip).toHaveAttribute('removable', 'false');
   await expect(remove).toHaveAccessibleName('Remove Vehicle: 452');
-  await expect.poll(() => remove.locator('ds-icon').evaluate(
-    element => (element as HTMLElement & { name: string }).name,
-  )).toBe('Cross');
+  await expect
+    .poll(() =>
+      remove
+        .locator('ds-icon')
+        .evaluate(element => (element as HTMLElement & { name: string }).name)
+    )
+    .toBe('Cross');
 
   await remove.click();
 
-  await expect.poll(() => page.evaluate(() => (
-    (window as unknown as {
-      __chipRemovals: Array<{ id: string; hasNoDetail: boolean }>;
-    }).__chipRemovals
-  ))).toEqual([{ id: 'chip', hasNoDetail: true }]);
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (
+            window as unknown as {
+              __chipRemovals: Array<{ id: string; hasNoDetail: boolean }>;
+            }
+          ).__chipRemovals
+      )
+    )
+    .toEqual([{ id: 'chip', hasNoDetail: true }]);
 });
 
 test('keeps inactive metadata visible without an interactive dismiss action', async ({ page }) => {
@@ -31,22 +42,26 @@ test('keeps inactive metadata visible without an interactive dismiss action', as
   await expect(inactive).toBeVisible();
   await expect(remove).toBeDisabled();
   await remove.evaluate((button: HTMLButtonElement) => button.click());
-  await expect.poll(() => page.evaluate(() => (
-    (window as unknown as { __chipRemovals: unknown[] }).__chipRemovals
-  ))).toEqual([]);
+  await expect
+    .poll(() =>
+      page.evaluate(() => (window as unknown as { __chipRemovals: unknown[] }).__chipRemovals)
+    )
+    .toEqual([]);
 });
 
 test('truncates one line only when constrained by maxWidth', async ({ page }) => {
   const host = page.locator('#long-chip');
   const label = host.locator('ds-text');
 
-  await expect.poll(() => host.evaluate(element => getComputedStyle(element).maxWidth)).toBe('120px');
+  await expect
+    .poll(() => host.evaluate(element => getComputedStyle(element).maxWidth))
+    .toBe('120px');
   await expect(label).toHaveCSS('white-space', 'nowrap');
   await expect(label).toHaveCSS('overflow', 'hidden');
   await expect(label).toHaveCSS('text-overflow', 'ellipsis');
-  expect(await label.locator('span').evaluate(
-    element => element.scrollWidth > element.clientWidth,
-  )).toBe(true);
+  expect(
+    await label.locator('span').evaluate(element => element.scrollWidth > element.clientWidth)
+  ).toBe(true);
 });
 
 test('shows hover and active feedback for a fine pointer', async ({ page }) => {
@@ -56,15 +71,11 @@ test('shows hover and active feedback for a fine pointer', async ({ page }) => {
   await page.mouse.move(viewport.width - 1, viewport.height - 1);
 
   await expect
-    .poll(() =>
-      remove.evaluate(element => getComputedStyle(element, '::before').backgroundColor),
-    )
+    .poll(() => remove.evaluate(element => getComputedStyle(element, '::before').backgroundColor))
     .toBe('rgba(0, 0, 0, 0)');
   await remove.hover();
   await expect
-    .poll(() =>
-      remove.evaluate(element => getComputedStyle(element, '::before').backgroundColor),
-    )
+    .poll(() => remove.evaluate(element => getComputedStyle(element, '::before').backgroundColor))
     .not.toBe('rgba(0, 0, 0, 0)');
 
   await page.mouse.down();
@@ -77,7 +88,7 @@ test('shows hover and active feedback for a fine pointer', async ({ page }) => {
         const expected = getComputedStyle(probe).backgroundColor;
         probe.remove();
         return getComputedStyle(element, '::before').backgroundColor === expected;
-      }),
+      })
     )
     .toBe(true);
   await page.mouse.up();
@@ -90,8 +101,8 @@ test.describe('direct-touch chip', () => {
     await expect
       .poll(() =>
         page.evaluate(
-          () => matchMedia('(hover: none)').matches && matchMedia('(pointer: coarse)').matches,
-        ),
+          () => matchMedia('(hover: none)').matches && matchMedia('(pointer: coarse)').matches
+        )
       )
       .toBe(true);
 
@@ -106,7 +117,7 @@ test.describe('direct-touch chip', () => {
             host: getComputedStyle(element, '::after').backgroundColor,
             action: getComputedStyle(action, '::before').backgroundColor,
           };
-        }),
+        })
       )
       .toEqual({
         host: 'rgba(0, 0, 0, 0)',

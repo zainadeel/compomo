@@ -1,14 +1,7 @@
 #!/usr/bin/env node
 /** Compile generated framework adapters to publishable JavaScript and declarations. */
 import { execFileSync } from 'node:child_process';
-import {
-  cpSync,
-  existsSync,
-  readFileSync,
-  readdirSync,
-  rmSync,
-  writeFileSync,
-} from 'node:fs';
+import { cpSync, existsSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { cleanFileProviderCollisions } from './clean-framework-proxies.mjs';
 
 const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
@@ -64,7 +57,9 @@ function rewriteRuntimeImports(directory, stencilRuntime, localRuntime, label, s
     }
   }
   if (!rewritten) {
-    throw new Error(`Generated ${label} adapters did not contain the expected Stencil runtime import`);
+    throw new Error(
+      `Generated ${label} adapters did not contain the expected Stencil runtime import`
+    );
   }
 }
 
@@ -89,14 +84,18 @@ execFileSync(
     '--external:vue',
     '--external:vue/server-renderer',
   ],
-  { stdio: 'inherit' },
+  { stdio: 'inherit' }
 );
 writeFileSync('dist/vue/vue-runtime.d.ts', VUE_RUNTIME_DTS);
 rewriteRuntimeImports('dist/vue', stencilVueRuntime, './vue-runtime.js', 'Vue', [
   'vue-runtime.js',
   'vue-runtime.d.ts',
 ]);
-if (/(?:from|import)\s*['"]@stencil\/vue-output-target/.test(readFileSync('dist/vue/vue-runtime.js', 'utf8'))) {
+if (
+  /(?:from|import)\s*['"]@stencil\/vue-output-target/.test(
+    readFileSync('dist/vue/vue-runtime.js', 'utf8')
+  )
+) {
   throw new Error('Bundled Vue runtime still imports @stencil/vue-output-target');
 }
 
@@ -113,17 +112,12 @@ for (const dir of ['dist/angular', 'dist/framework']) {
   )) {
     const path = `${dir}/${file}`;
     const source = readFileSync(path, 'utf8');
-    const publicPaths = source.replace(
-      /\.\.\/\.generated\/angular\//g,
-      '../angular/'
-    );
+    const publicPaths = source.replace(/\.\.\/\.generated\/angular\//g, '../angular/');
     const publishSource = file.endsWith('.js')
       ? publicPaths.replace(
           /(from\s+['"])(\.\.?\/[^'"]+?)(['"])/g,
           (match, start, specifier, end) =>
-            /\.[a-z]+$/i.test(specifier)
-              ? match
-              : `${start}${specifier}.js${end}`,
+            /\.[a-z]+$/i.test(specifier) ? match : `${start}${specifier}.js${end}`
         )
       : publicPaths;
     writeFileSync(path, publishSource);

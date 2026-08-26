@@ -11,7 +11,7 @@ export function nextTableDataModeSwitcherElementId(): string {
 /** Menu of supported data-mode choices. */
 export function tableDataModeMenuItems(
   dataMode: TableDataMode,
-  labels: { infinite: string; pagination: string; virtual: string },
+  labels: { infinite: string; pagination: string; virtual: string }
 ): MenuItemData[] {
   return [
     {

@@ -24,11 +24,11 @@ describe('scrollEdgeFadeMaskImage', () => {
   it('points horizontal fades at their requested physical edges', () => {
     assert.match(
       scrollEdgeFadeMaskImage('left'),
-      /to right, transparent 0, #000 var\(--ds-scroll-edge-fade-size/,
+      /to right, transparent 0, #000 var\(--ds-scroll-edge-fade-size/
     );
     assert.match(
       scrollEdgeFadeMaskImage('right'),
-      /to right, #000 0, #000 calc\(100% - var\(--ds-scroll-edge-fade-size/,
+      /to right, #000 0, #000 calc\(100% - var\(--ds-scroll-edge-fade-size/
     );
   });
 });
@@ -51,7 +51,7 @@ describe('scrollEdgeFadeSizeStyle', () => {
   it('sets the fade depth custom property', () => {
     assert.equal(
       scrollEdgeFadeSizeStyle('size-500')[SCROLL_EDGE_FADE_SIZE_VAR],
-      'var(--dimension-size-500)',
+      'var(--dimension-size-500)'
     );
   });
 });

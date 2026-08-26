@@ -12,12 +12,12 @@ import {
 } from '../scripts/registry-formatters.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const loadComponent = (name: string) => JSON.parse(
-  fs.readFileSync(path.join(root, 'public', 'r', `${name}.json`), 'utf8'),
-);
-const loadPattern = (name: string) => JSON.parse(
-  fs.readFileSync(path.join(root, 'agent', 'patterns', name, 'pattern.agent.json'), 'utf8'),
-);
+const loadComponent = (name: string) =>
+  JSON.parse(fs.readFileSync(path.join(root, 'public', 'r', `${name}.json`), 'utf8'));
+const loadPattern = (name: string) =>
+  JSON.parse(
+    fs.readFileSync(path.join(root, 'agent', 'patterns', name, 'pattern.agent.json'), 'utf8')
+  );
 
 test('formats compiler API, framework imports, and complete intent', () => {
   const output = formatComponentDetail(loadComponent('button-filled'));

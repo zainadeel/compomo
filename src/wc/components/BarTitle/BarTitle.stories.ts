@@ -272,9 +272,7 @@ function renderFocusedCase(reviewCase: BarTitleReviewCase) {
           ${reviewCase.rationale}
         </ds-text>
       </div>
-      <div class="bar-title-review__surface">
-        ${renderHeader(reviewCase)} ${renderCanvas()}
-      </div>
+      <div class="bar-title-review__surface">${renderHeader(reviewCase)} ${renderCanvas()}</div>
     </div>
   `;
 }
@@ -287,9 +285,9 @@ function renderVariant(reviewCase: BarTitleReviewCase, variant: BarTitleVariant)
         <div class="bar-title-review__variant-rule" aria-hidden="true"></div>
       </div>
       <div
-        class="bar-title-review__surface ${
-          variant === 'constrained' ? 'bar-title-review__surface--constrained' : ''
-        }"
+        class="bar-title-review__surface ${variant === 'constrained'
+          ? 'bar-title-review__surface--constrained'
+          : ''}"
       >
         ${renderHeader(reviewCase, variant)} ${renderCanvas()}
       </div>

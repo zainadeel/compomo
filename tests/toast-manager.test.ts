@@ -9,7 +9,10 @@ test('toast manager adds newest-first records and upserts stable ids', () => {
 
   assert.equal(first, 'first');
   assert.equal(second, 'second');
-  assert.deepEqual(manager.getSnapshot().map(record => record.id), ['second', 'first']);
+  assert.deepEqual(
+    manager.getSnapshot().map(record => record.id),
+    ['second', 'first']
+  );
   assert.equal(manager.getSnapshot()[0].priority, 'low');
   assert.equal(manager.getSnapshot()[0].transitionStatus, 'starting');
 
@@ -68,7 +71,7 @@ test('closeAll closes every active record', () => {
 
   assert.deepEqual(
     manager.getSnapshot().map(record => record.transitionStatus),
-    ['ending', 'ending'],
+    ['ending', 'ending']
   );
 });
 

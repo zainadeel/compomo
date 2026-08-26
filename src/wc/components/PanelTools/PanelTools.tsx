@@ -542,8 +542,7 @@ export class PanelTools {
         key={item.id}
         label={label}
         shortcutKey={
-          item.shortcutKey ??
-          PANEL_TOOLS_SHORTCUTS[item.id as keyof typeof PANEL_TOOLS_SHORTCUTS]
+          item.shortcutKey ?? PANEL_TOOLS_SHORTCUTS[item.id as keyof typeof PANEL_TOOLS_SHORTCUTS]
         }
         side="left"
         size="sm"
@@ -578,15 +577,9 @@ export class PanelTools {
     const headerTitle = header.title?.trim() || headerLabel;
     const headerActions = header.actions ?? [];
     const orderedRailItems = this.orderedRailItems;
-    const headerItems = orderedRailItems.filter(
-      item => panelToolsRailPlacement(item) === 'header'
-    );
-    const bodyItems = orderedRailItems.filter(
-      item => panelToolsRailPlacement(item) === 'body'
-    );
-    const footerItems = orderedRailItems.filter(
-      item => panelToolsRailPlacement(item) === 'footer'
-    );
+    const headerItems = orderedRailItems.filter(item => panelToolsRailPlacement(item) === 'header');
+    const bodyItems = orderedRailItems.filter(item => panelToolsRailPlacement(item) === 'body');
+    const footerItems = orderedRailItems.filter(item => panelToolsRailPlacement(item) === 'footer');
     const headerCount = headerItems.length;
     const footerStart = headerCount + bodyItems.length;
     const showDrawerChrome = this.isDrawerPresent();

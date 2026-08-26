@@ -134,13 +134,9 @@ export class AnchoredOverlayInteractionController {
     const popup = this.options.getPopup();
     if (!popup) return true;
     const focusables = composedFocusableElements(popup);
-    const currentIndex = focusables.findIndex(element =>
-      event.composedPath().includes(element)
-    );
+    const currentIndex = focusables.findIndex(element => event.composedPath().includes(element));
     if (currentIndex < 0) return true;
-    return event.shiftKey
-      ? currentIndex === 0
-      : currentIndex === focusables.length - 1;
+    return event.shiftKey ? currentIndex === 0 : currentIndex === focusables.length - 1;
   }
 
   moveFocusAfterTab(backwards: boolean): void {

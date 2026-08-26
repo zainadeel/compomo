@@ -49,12 +49,15 @@ class TestResizeObserver {
 
   emit(width: number, height: number) {
     if (!this.target) return;
-    this.callback([
-      {
-        target: this.target,
-        contentRect: { width, height },
-      } as ResizeObserverEntry,
-    ], this as unknown as ResizeObserver);
+    this.callback(
+      [
+        {
+          target: this.target,
+          contentRect: { width, height },
+        } as ResizeObserverEntry,
+      ],
+      this as unknown as ResizeObserver
+    );
   }
 }
 
@@ -204,12 +207,15 @@ test('reuses dataset-wide lookup state while scrolling a 10,000-row list', () =>
     groups: [],
     collapsedGroupIds: [],
     columns,
-  }).map(item => new Proxy(item, {
-    get(target, property, receiver) {
-      propertyReads += 1;
-      return Reflect.get(target, property, receiver);
-    },
-  }));
+  }).map(
+    item =>
+      new Proxy(item, {
+        get(target, property, receiver) {
+          propertyReads += 1;
+          return Reflect.get(target, property, receiver);
+        },
+      })
+  );
   let frames: FrameRequestCallback[] = [];
   const controller = new TableVirtualController({
     state: () => ({

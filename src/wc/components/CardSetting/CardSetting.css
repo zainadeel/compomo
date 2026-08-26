@@ -28,8 +28,7 @@
 
 :host(.card-setting--editing) {
   background-color: var(--color-background-bold-brand);
-  box-shadow: 0 0 0 var(--dimension-stroke-width-025)
-    var(--color-border-bold-brand);
+  box-shadow: 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-brand);
 }
 
 :host(.card-setting--editing)::after {

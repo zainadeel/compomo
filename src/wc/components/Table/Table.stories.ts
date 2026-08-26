@@ -1265,23 +1265,21 @@ export const OverflowActionMenu: Story = {
     return html`
       <ds-table
         data-a11y-fixture
-        .columns=${
-          [
-            { id: 'driver', header: 'Driver', sortable: true, size: 'sm' },
-            { id: 'status', header: 'Status', size: 'xs' },
-            { id: 'vehicle', header: 'Vehicle', size: 'xs' },
-            { id: 'location', header: 'Last known location', size: 'sm' },
-            {
-              id: 'action',
-              kind: 'action',
-              header: '',
-              headerLabel: 'Action',
-              align: 'center',
-              size: 40,
-              sticky: 'end',
-            },
-          ] satisfies TableColumn[]
-        }
+        .columns=${[
+          { id: 'driver', header: 'Driver', sortable: true, size: 'sm' },
+          { id: 'status', header: 'Status', size: 'xs' },
+          { id: 'vehicle', header: 'Vehicle', size: 'xs' },
+          { id: 'location', header: 'Last known location', size: 'sm' },
+          {
+            id: 'action',
+            kind: 'action',
+            header: '',
+            headerLabel: 'Action',
+            align: 'center',
+            size: 40,
+            sticky: 'end',
+          },
+        ] satisfies TableColumn[]}
         .rows=${rows}
         selection-mode="multiple"
         caption="Driver overflow actions"
@@ -1327,23 +1325,21 @@ export const ColumnCustomizer: Story = {
     return html`
       <ds-table
         data-a11y-fixture
-        .columns=${
-          [
-            { id: 'driver', header: 'Driver', sortable: true, size: 'sm' },
-            { id: 'status', header: 'Status', size: 'xs' },
-            { id: 'vehicle', header: 'Vehicle', size: 'xs' },
-            { id: 'location', header: 'Last known location', size: 'sm' },
-            {
-              id: 'action',
-              kind: 'action',
-              header: '',
-              headerLabel: 'Action',
-              align: 'center',
-              size: 40,
-              sticky: 'end',
-            },
-          ] satisfies TableColumn[]
-        }
+        .columns=${[
+          { id: 'driver', header: 'Driver', sortable: true, size: 'sm' },
+          { id: 'status', header: 'Status', size: 'xs' },
+          { id: 'vehicle', header: 'Vehicle', size: 'xs' },
+          { id: 'location', header: 'Last known location', size: 'sm' },
+          {
+            id: 'action',
+            kind: 'action',
+            header: '',
+            headerLabel: 'Action',
+            align: 'center',
+            size: 40,
+            sticky: 'end',
+          },
+        ] satisfies TableColumn[]}
         .rows=${rows}
         column-customizer
         selection-mode="multiple"
@@ -1380,18 +1376,16 @@ export const DataModeSwitcher: Story = {
         .columns=${COLUMNS}
         .rows=${dataMode === 'virtual' ? VIRTUAL_ROWS : ROWS.slice(0, 4)}
         .dataMode=${dataMode}
-        .pagination=${
-          dataMode === 'pagination'
-            ? {
-                pageIndex: 0,
-                pageSize: 25,
-                totalItems: 100,
-                pageSizeOptions: [25, 50, 100],
-                itemLabel: 'rows',
-                pageSizeLabel: 'Rows',
-              }
-            : null
-        }
+        .pagination=${dataMode === 'pagination'
+          ? {
+              pageIndex: 0,
+              pageSize: 25,
+              totalItems: 100,
+              pageSizeOptions: [25, 50, 100],
+              itemLabel: 'rows',
+              pageSizeLabel: 'Rows',
+            }
+          : null}
         height="var(--dimension-card-height-lg)"
         .displayedCount=${dataMode === 'virtual' ? VIRTUAL_ROWS.length : 4}
         .totalCount=${dataMode === 'virtual' ? VIRTUAL_ROWS.length : 100}
@@ -1417,63 +1411,59 @@ export const ContentPrimitives: Story = {
   render: () => html`
     <div style="max-inline-size:var(--dimension-panel-width-sm);">
       <ds-table
-        .columns=${
-          [
-            { id: 'name', header: 'Primary and secondary', size: 'sm' },
-            { id: 'notes', header: 'Wrapping content', wrap: true, size: 'sm' },
-            { id: 'quantity', header: 'Quantity', align: 'end', size: 'xs' },
-          ] satisfies TableColumn[]
-        }
-        .rows=${
-          [
-            {
-              id: 'primitive-one',
-              cells: {
-                name: {
-                  primary: 'Reefer trailer',
-                  secondary: 'TR-1048',
-                  tertiary: 'Active reefer',
-                },
-                notes: 'Temperature check is due after the next delivery window.',
-                quantity: { primary: 12840, fontFeature: 'tabular-nums' },
+        .columns=${[
+          { id: 'name', header: 'Primary and secondary', size: 'sm' },
+          { id: 'notes', header: 'Wrapping content', wrap: true, size: 'sm' },
+          { id: 'quantity', header: 'Quantity', align: 'end', size: 'xs' },
+        ] satisfies TableColumn[]}
+        .rows=${[
+          {
+            id: 'primitive-one',
+            cells: {
+              name: {
+                primary: 'Reefer trailer',
+                secondary: 'TR-1048',
+                tertiary: 'Active reefer',
               },
+              notes: 'Temperature check is due after the next delivery window.',
+              quantity: { primary: 12840, fontFeature: 'tabular-nums' },
             },
-            {
-              id: 'primitive-two',
-              cells: {
-                name: { primary: 'Dry van', secondary: 'TR-2201' },
-                notes: { primary: 'This individual cell wraps onto the second track.', wrap: true },
-                quantity: null,
+          },
+          {
+            id: 'primitive-two',
+            cells: {
+              name: { primary: 'Dry van', secondary: 'TR-2201' },
+              notes: { primary: 'This individual cell wraps onto the second track.', wrap: true },
+              quantity: null,
+            },
+          },
+          {
+            id: 'primitive-secondary-two',
+            cells: {
+              name: {
+                primary: 'Reefer trailer',
+                secondary: 'TR-1048',
+                tertiary: 'Active reefer',
               },
-            },
-            {
-              id: 'primitive-secondary-two',
-              cells: {
-                name: {
-                  primary: 'Reefer trailer',
-                  secondary: 'TR-1048',
-                  tertiary: 'Active reefer',
-                },
-                notes: {
-                  primary: 'Reefer trailer',
-                  secondary: 'Due after the next delivery window.',
-                },
-                quantity: { primary: 4, fontFeature: 'tabular-nums' },
+              notes: {
+                primary: 'Reefer trailer',
+                secondary: 'Due after the next delivery window.',
               },
+              quantity: { primary: 4, fontFeature: 'tabular-nums' },
             },
-            {
-              id: 'primitive-secondary-three',
-              cells: {
-                name: { primary: 'Dry van', secondary: 'TR-2201' },
-                notes: {
-                  primary: 'Dry van',
-                  secondary: 'Temperature check is due after the next delivery window.',
-                },
-                quantity: null,
+          },
+          {
+            id: 'primitive-secondary-three',
+            cells: {
+              name: { primary: 'Dry van', secondary: 'TR-2201' },
+              notes: {
+                primary: 'Dry van',
+                secondary: 'Temperature check is due after the next delivery window.',
               },
+              quantity: null,
             },
-          ] satisfies TableRow[]
-        }
+          },
+        ] satisfies TableRow[]}
         caption="Cell content primitives"
         caption-visibility="visible"
       ></ds-table>
@@ -1542,43 +1532,41 @@ export const HeaderHelp: Story = {
   render: () => html`
     <ds-table
       data-a11y-fixture
-      .columns=${
-        [
-          {
-            id: 'driver',
-            header: 'Driver',
-            sortable: true,
-            size: 'sm',
-            help: 'Legal name used on the driver profile.',
-          },
-          { id: 'status', header: 'Status', sortable: true, align: 'center', size: 'xs' },
-          {
-            id: 'vehicle',
-            header: 'Vehicle',
-            size: 'xs',
-            help: 'Assigned vehicle identifier.',
-          },
-          {
-            id: 'behaviorDetails',
-            header: 'Behavior / Severity',
-            headerSegments: [
-              { label: 'Behavior', sortKey: 'behavior', separator: '/' },
-              { label: 'Severity', sortKey: 'severity' },
-            ],
-            sortable: true,
-            size: 'sm',
-            help: 'Primary behavior and its severity from the latest scored event.',
-          },
-          {
-            id: 'safetyScore',
-            header: 'Safety score',
-            sortable: true,
-            align: 'end',
-            size: 'xs',
-            help: 'Rolling 7-day safety score from 0 to 100.',
-          },
-        ] satisfies TableColumn[]
-      }
+      .columns=${[
+        {
+          id: 'driver',
+          header: 'Driver',
+          sortable: true,
+          size: 'sm',
+          help: 'Legal name used on the driver profile.',
+        },
+        { id: 'status', header: 'Status', sortable: true, align: 'center', size: 'xs' },
+        {
+          id: 'vehicle',
+          header: 'Vehicle',
+          size: 'xs',
+          help: 'Assigned vehicle identifier.',
+        },
+        {
+          id: 'behaviorDetails',
+          header: 'Behavior / Severity',
+          headerSegments: [
+            { label: 'Behavior', sortKey: 'behavior', separator: '/' },
+            { label: 'Severity', sortKey: 'severity' },
+          ],
+          sortable: true,
+          size: 'sm',
+          help: 'Primary behavior and its severity from the latest scored event.',
+        },
+        {
+          id: 'safetyScore',
+          header: 'Safety score',
+          sortable: true,
+          align: 'end',
+          size: 'xs',
+          help: 'Rolling 7-day safety score from 0 to 100.',
+        },
+      ] satisfies TableColumn[]}
       .rows=${ROWS.slice(0, 4).map(row => ({
         ...row,
         cells: {
@@ -2119,84 +2107,80 @@ export const NarrowAndLongContent: Story = {
   render: () => html`
     <div style="max-inline-size:var(--dimension-panel-width-xs);">
       <ds-table
-        .columns=${
-          [
-            { id: 'case', header: 'Case', size: 'xs' },
-            { id: 'notes', header: 'Notes', size: 'sm' },
-          ] satisfies TableColumn[]
-        }
-        .rows=${
-          [
-            {
-              id: 'truncate-one',
-              cells: {
-                case: '1 line',
-                notes:
+        .columns=${[
+          { id: 'case', header: 'Case', size: 'xs' },
+          { id: 'notes', header: 'Notes', size: 'sm' },
+        ] satisfies TableColumn[]}
+        .rows=${[
+          {
+            id: 'truncate-one',
+            cells: {
+              case: '1 line',
+              notes:
+                'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
+            },
+          },
+          {
+            id: 'truncate-two',
+            cells: {
+              case: '2 lines',
+              notes: {
+                primary:
                   'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
+                maxLines: 2,
               },
             },
-            {
-              id: 'truncate-two',
-              cells: {
-                case: '2 lines',
-                notes: {
-                  primary:
-                    'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
-                  maxLines: 2,
-                },
-              },
-            },
-            {
-              id: 'truncate-three',
-              cells: {
-                case: '3 lines',
-                notes: {
-                  primary:
-                    'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
-                  maxLines: 3,
-                },
-              },
-            },
-            {
-              id: 'truncate-wrap',
-              cells: {
-                case: 'Wrap',
-                notes: {
-                  primary:
-                    'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
-                  wrap: true,
-                },
-              },
-            },
-            {
-              id: 'truncate-short',
-              cells: {
-                case: 'Fits',
-                notes: 'Fleet',
-              },
-            },
-            {
-              id: 'truncate-disabled',
-              disabled: true,
-              cells: {
-                case: 'Disabled',
-                notes:
+          },
+          {
+            id: 'truncate-three',
+            cells: {
+              case: '3 lines',
+              notes: {
+                primary:
                   'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
+                maxLines: 3,
               },
             },
-            {
-              id: 'truncate-link',
-              cells: {
-                case: 'Link',
-                notes: {
-                  primary:
-                    'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
-                  href: '/routes/highway-99',
-                },
+          },
+          {
+            id: 'truncate-wrap',
+            cells: {
+              case: 'Wrap',
+              notes: {
+                primary:
+                  'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
+                wrap: true,
               },
             },
-          ] satisfies TableRow[]
-        }
+          },
+          {
+            id: 'truncate-short',
+            cells: {
+              case: 'Fits',
+              notes: 'Fleet',
+            },
+          },
+          {
+            id: 'truncate-disabled',
+            disabled: true,
+            cells: {
+              case: 'Disabled',
+              notes:
+                'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
+            },
+          },
+          {
+            id: 'truncate-link',
+            cells: {
+              case: 'Link',
+              notes: {
+                primary:
+                  'Northbound Highway 99 near the George Massey Tunnel, Richmond, British Columbia',
+                href: '/routes/highway-99',
+              },
+            },
+          },
+        ] satisfies TableRow[]}
         caption="Truncation tooltip"
         caption-visibility="visible"
       ></ds-table>

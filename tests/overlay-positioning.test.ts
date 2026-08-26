@@ -14,7 +14,7 @@ describe('overlay positioning with token offsets', () => {
     try {
       const sideOffsetPx = resolveCssLengthPx(
         'var(--dimension-space-200)',
-        TOKEN_DEFAULTS.space050,
+        TOKEN_DEFAULTS.space050
       );
       const vpPad = resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050);
 
