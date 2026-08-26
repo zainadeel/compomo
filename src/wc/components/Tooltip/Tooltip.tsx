@@ -10,6 +10,7 @@ import {
 import type { TextVariant } from '../Text/text-types';
 import { shortcutKeyLabels } from '../../utils/shortcut-key';
 import { AnchoredPositionController } from '../../utils/anchored-position-controller';
+import { resolveAnchoredOverlayBoundaryRect } from '../../utils/anchored-overlay-boundary';
 // Side-effect: register `ds-text` — the portal builds it via createElement, not JSX.
 import '../Text/Text';
 
@@ -95,6 +96,8 @@ export class Tooltip {
   @Prop() sideOffset: number | string = TOKEN_CSS_LENGTHS.space050;
   /** Cross-axis offset — number (px) or TokoMo length. */
   @Prop() alignOffset: number | string = 0;
+  /** Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used. */
+  @Prop() boundary: HTMLElement | undefined;
   /**
    * Hover show delay before the tooltip appears.
    * Default: `--effect-animation-delay-medium-3` (1000ms). Accepts a number (ms)
@@ -135,6 +138,7 @@ export class Tooltip {
       viewportPadPx: this.viewportPadPx,
       viewportWidth: window.innerWidth,
       viewportHeight: window.innerHeight,
+      collisionRect: resolveAnchoredOverlayBoundaryRect(anchor, this.boundary),
     }),
     apply: ({ x, y, resolvedSide }) => {
       if (!this.popupEl) return;
@@ -210,6 +214,7 @@ export class Tooltip {
   @Watch('align')
   @Watch('sideOffset')
   @Watch('alignOffset')
+  @Watch('boundary')
   @Watch('shortcutKey')
   @Watch('shortcutKeyPosition')
   @Watch('wrapLabel')

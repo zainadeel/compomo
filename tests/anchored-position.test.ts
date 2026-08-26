@@ -146,6 +146,59 @@ describe('computeAnchoredPosition', () => {
     assert.equal(pos.x, 8);
     assert.equal(pos.y, 8);
   });
+
+  it('clamps to a page collision rectangle with a non-zero origin', () => {
+    const pos = computeAnchoredPosition({
+      anchorRect: { top: 180, left: 820, right: 848, bottom: 208, width: 28, height: 28 },
+      popupWidth: 300,
+      popupHeight: 240,
+      side: 'bottom',
+      align: 'start',
+      sideOffsetPx: 4,
+      alignOffsetPx: 0,
+      viewportPadPx: 4,
+      viewportWidth: 920,
+      viewportHeight: 800,
+      collisionRect: {
+        top: 112,
+        left: 64,
+        right: 855,
+        bottom: 766,
+        width: 791,
+        height: 654,
+      },
+    });
+
+    assert.equal(pos.x, 551);
+    assert.equal(pos.y, 212);
+    assert.equal(pos.availableHeight, 550);
+  });
+
+  it('uses boundary-relative space when choosing whether to flip', () => {
+    const pos = computeAnchoredPosition({
+      anchorRect: { top: 140, left: 300, right: 340, bottom: 172, width: 40, height: 32 },
+      popupWidth: 160,
+      popupHeight: 120,
+      side: 'top',
+      align: 'center',
+      sideOffsetPx: 4,
+      alignOffsetPx: 0,
+      viewportPadPx: 4,
+      viewportWidth: 1200,
+      viewportHeight: 800,
+      collisionRect: {
+        top: 112,
+        left: 64,
+        right: 900,
+        bottom: 700,
+        width: 836,
+        height: 588,
+      },
+    });
+
+    assert.equal(pos.resolvedSide, 'bottom');
+    assert.equal(pos.y, 176);
+  });
 });
 
 describe('computeAnchoredPosition flip parity with the pre-merge space-based rule', () => {

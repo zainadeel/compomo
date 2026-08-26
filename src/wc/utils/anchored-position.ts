@@ -1,6 +1,11 @@
 export type AnchoredSide = 'top' | 'right' | 'bottom' | 'left';
 export type AnchoredAlign = 'start' | 'center' | 'end';
 
+export type AnchoredCollisionRect = Pick<
+  DOMRectReadOnly,
+  'top' | 'left' | 'right' | 'bottom' | 'width' | 'height'
+>;
+
 export interface AnchoredPositionInput {
   anchorRect: Pick<DOMRectReadOnly, 'top' | 'left' | 'right' | 'bottom' | 'width' | 'height'>;
   popupWidth: number;
@@ -12,6 +17,8 @@ export interface AnchoredPositionInput {
   viewportPadPx: number;
   viewportWidth: number;
   viewportHeight: number;
+  /** Optional page or panel collision rectangle in viewport-fixed coordinates. */
+  collisionRect?: AnchoredCollisionRect;
 }
 
 export interface AnchoredPosition {
@@ -65,34 +72,51 @@ function rawPosition(
 }
 
 /** Total main-axis spill past the padded viewport for a candidate position. */
+function collisionBounds(input: AnchoredPositionInput) {
+  const boundary = input.collisionRect ?? {
+    top: 0,
+    left: 0,
+    right: input.viewportWidth,
+    bottom: input.viewportHeight,
+  };
+  return {
+    top: boundary.top + input.viewportPadPx,
+    left: boundary.left + input.viewportPadPx,
+    right: boundary.right - input.viewportPadPx,
+    bottom: boundary.bottom - input.viewportPadPx,
+  };
+}
+
 function mainAxisOverflow(
   input: AnchoredPositionInput,
   side: AnchoredSide,
   position: Pick<AnchoredPosition, 'x' | 'y'>,
 ): number {
-  const { popupWidth, popupHeight, viewportPadPx, viewportWidth, viewportHeight } = input;
+  const { popupWidth, popupHeight } = input;
+  const bounds = collisionBounds(input);
 
   if (side === 'top' || side === 'bottom') {
-    return Math.max(viewportPadPx - position.y, 0) +
-      Math.max(position.y + popupHeight - (viewportHeight - viewportPadPx), 0);
+    return Math.max(bounds.top - position.y, 0) +
+      Math.max(position.y + popupHeight - bounds.bottom, 0);
   }
 
-  return Math.max(viewportPadPx - position.x, 0) +
-    Math.max(position.x + popupWidth - (viewportWidth - viewportPadPx), 0);
+  return Math.max(bounds.left - position.x, 0) +
+    Math.max(position.x + popupWidth - bounds.right, 0);
 }
 
-function clampToViewport(value: number, size: number, viewportSize: number, padding: number): number {
-  const maximum = Math.max(padding, viewportSize - size - padding);
-  return Math.min(Math.max(value, padding), maximum);
+function clampToBounds(value: number, size: number, minimum: number, maximumEdge: number): number {
+  const maximum = Math.max(minimum, maximumEdge - size);
+  return Math.min(Math.max(value, minimum), maximum);
 }
 
 /**
  * Pure viewport-fixed anchored-popup layout math shared by every element-anchored
  * overlay: menus, selects, tooltips, and anchored toasts.
  *
- * `side` is preferred. When the popup spills past the padded viewport there and
+ * `side` is preferred. When the popup spills past the padded collision boundary and
  * the opposite side spills less, placement flips on the main axis; the result is
- * then clamped into the viewport on both axes. Cross-axis `align` is applied
+ * then clamped into that boundary on both axes. The viewport is the fallback when
+ * no page or panel collision rectangle is supplied. Cross-axis `align` is applied
  * before clamping so `alignOffsetPx` stays an additive nudge.
  *
  * Callers own their own anchor semantics — inner-cell alignment offsets and
@@ -100,6 +124,7 @@ function clampToViewport(value: number, size: number, viewportSize: number, padd
  * @see choice-popup-alignment.ts for the choice-cell alignment transform.
  */
 export function computeAnchoredPosition(input: AnchoredPositionInput): AnchoredPosition {
+  const bounds = collisionBounds(input);
   const preferred = rawPosition(input, input.side);
   const oppositeSide = OPPOSITE_SIDE[input.side];
   const opposite = rawPosition(input, oppositeSide);
@@ -110,14 +135,14 @@ export function computeAnchoredPosition(input: AnchoredPositionInput): AnchoredP
   const position = useOpposite ? opposite : preferred;
   const availableHeight =
     resolvedSide === 'top'
-      ? input.anchorRect.top - input.viewportPadPx - input.sideOffsetPx
+      ? input.anchorRect.top - bounds.top - input.sideOffsetPx
       : resolvedSide === 'bottom'
-        ? input.viewportHeight - input.viewportPadPx - input.anchorRect.bottom - input.sideOffsetPx
-        : input.viewportHeight - input.viewportPadPx * 2;
+        ? bounds.bottom - input.anchorRect.bottom - input.sideOffsetPx
+        : bounds.bottom - bounds.top;
 
   return {
-    x: clampToViewport(position.x, input.popupWidth, input.viewportWidth, input.viewportPadPx),
-    y: clampToViewport(position.y, input.popupHeight, input.viewportHeight, input.viewportPadPx),
+    x: clampToBounds(position.x, input.popupWidth, bounds.left, bounds.right),
+    y: clampToBounds(position.y, input.popupHeight, bounds.top, bounds.bottom),
     resolvedSide,
     availableHeight: Math.max(0, availableHeight),
   };

@@ -17,6 +17,8 @@ export type {
 } from '../components/ShellApp/shell-app-types';
 export type {
   PanelToolsHeaderAction,
+  PanelToolsHeaderActionDetail,
+  PanelToolHeaderActionDetail,
   PanelToolsHeaderConfig,
   PanelToolsHeaders,
   PanelToolsItem,

@@ -23,6 +23,8 @@ import {
   type ControlSize,
 } from '../../utils';
 import { AnchoredPositionController } from '../../utils/anchored-position-controller';
+import { AnchoredOverlayInteractionController } from '../../utils/anchored-overlay-interaction-controller';
+import { resolveAnchoredOverlayBoundaryRect } from '../../utils/anchored-overlay-boundary';
 import { computeAnchoredPosition, type AnchoredPositionInput } from '../../utils/anchored-position';
 import type { MenuAlign, MenuSide } from './menu-position';
 import {
@@ -49,15 +51,6 @@ const MENU_ITEM_TAG_SIZE: Record<MenuSize, 'md' | 'sm' | 'xs'> = {
   sm: 'xs',
   xs: 'xs',
 };
-
-const MENU_FOCUSABLE_SELECTOR = [
-  'a[href]',
-  'button:not([disabled])',
-  'input:not([disabled]):not([type="hidden"])',
-  'select:not([disabled])',
-  'textarea:not([disabled])',
-  '[tabindex]:not([tabindex="-1"])',
-].join(',');
 
 @Component({
   tag: 'ds-menu',
@@ -89,6 +82,8 @@ export class Menu {
   @Prop() anchor: HTMLElement | undefined;
   /** ID of the external trigger element for positioning */
   @Prop() anchorId: string | undefined;
+  /** Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used. */
+  @Prop() boundary: HTMLElement | undefined;
   /** Show a visible ring on the initially focused menu item. Use only when the opener was keyboard-driven. */
   @Prop() initialFocusVisible: boolean = false;
   /** Accessible name for the popup menu. */
@@ -114,7 +109,6 @@ export class Menu {
   /** Emitted after a pointer drop or keyboard move; Menu never mutates item order. */
   @Event() dsReorder!: EventEmitter<MenuReorderDetail>;
 
-  private clickOutsideHandler: ((e: MouseEvent) => void) | null = null;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
   private positionReadyCallback: (() => void) | undefined;
   private suppressItemClick = false;
@@ -172,6 +166,7 @@ export class Menu {
         viewportPadPx,
         viewportWidth: window.innerWidth,
         viewportHeight: window.innerHeight,
+        collisionRect: resolveAnchoredOverlayBoundaryRect(anchorEl, this.boundary),
       };
       const unconstrained = computeAnchoredPosition(input);
       return {
@@ -188,6 +183,11 @@ export class Menu {
     },
     liveUpdate: 'double-frame',
     topLayer: true,
+  });
+  private readonly interaction = new AnchoredOverlayInteractionController({
+    getAnchor: () => this.resolvedAnchor,
+    getPopup: () => this.el.querySelector<HTMLElement>('.menu-popup'),
+    onOutsideActivation: () => this.close(),
   });
   /** Last content actually painted while open; retained unchanged through exit motion. */
   private lastRenderedSections: MenuSection[] = [];
@@ -238,6 +238,7 @@ export class Menu {
 
   @Watch('anchor')
   @Watch('anchorId')
+  @Watch('boundary')
   onAnchorChange() {
     if (this.open) this.schedulePositionUpdate();
   }
@@ -301,52 +302,8 @@ export class Menu {
     return null;
   }
 
-  private get anchorFocusTarget(): HTMLElement | null {
-    const anchor = this.resolvedAnchor;
-    if (!anchor) return null;
-    if (anchor.matches(MENU_FOCUSABLE_SELECTOR)) return anchor;
-    return anchor.querySelector<HTMLElement>(MENU_FOCUSABLE_SELECTOR) ?? anchor;
-  }
-
-  private focusAnchor() {
-    const anchor = this.resolvedAnchor as
-      (HTMLElement & { setFocus?: () => Promise<void> | void }) | null;
-    if (anchor?.setFocus) {
-      anchor.setFocus();
-      return;
-    }
-    this.anchorFocusTarget?.focus();
-  }
-
-  private moveFocusAfterTab(backwards: boolean) {
-    const anchor = this.anchorFocusTarget;
-    if (!anchor) return;
-    if (backwards) {
-      anchor.focus();
-      return;
-    }
-
-    const candidates = Array.from(
-      document.querySelectorAll<HTMLElement>(MENU_FOCUSABLE_SELECTOR)
-    ).filter(
-      element =>
-        !element.closest('.menu-popup') &&
-        !element.closest('[inert]') &&
-        element.getClientRects().length > 0
-    );
-    const index = candidates.indexOf(anchor);
-    (candidates[index + 1] ?? anchor).focus();
-  }
-
   private compositeTabLeavesPopup(event: KeyboardEvent): boolean {
-    const popup = this.el.querySelector<HTMLElement>('.menu-popup');
-    if (!popup) return true;
-    const focusables = Array.from(
-      popup.querySelectorAll<HTMLElement>(MENU_FOCUSABLE_SELECTOR)
-    ).filter(element => element.getClientRects().length > 0);
-    const currentIndex = focusables.indexOf(event.target as HTMLElement);
-    if (currentIndex < 0) return true;
-    return event.shiftKey ? currentIndex === 0 : currentIndex === focusables.length - 1;
+    return this.interaction.tabLeavesPopup(event);
   }
 
   private get activeSections(): MenuSection[] {
@@ -421,24 +378,13 @@ export class Menu {
   }
 
   private setupListeners() {
-    this.clickOutsideHandler = (e: MouseEvent) => {
-      const t = e.target as Node;
-      const popup = this.el.querySelector('.menu-popup');
-      const anchorEl = this.resolvedAnchor;
-      if (popup?.contains(t) || anchorEl?.contains(t)) return;
-      this.close();
-    };
-
-    document.addEventListener('mousedown', this.clickOutsideHandler, true);
+    this.interaction.connect();
     this.position.observe();
   }
 
   private teardownListeners() {
     this.position.unobserve();
-    if (this.clickOutsideHandler) {
-      document.removeEventListener('mousedown', this.clickOutsideHandler, true);
-      this.clickOutsideHandler = null;
-    }
+    this.interaction.disconnect();
     if (this.closeTimer) {
       clearTimeout(this.closeTimer);
       this.closeTimer = null;
@@ -447,7 +393,7 @@ export class Menu {
 
   private close(restoreFocus = true) {
     this.captureClosingSections();
-    if (restoreFocus) this.focusAnchor();
+    if (restoreFocus) this.interaction.focusAnchor();
     this.dsClose.emit();
     this.open = false;
     this.onOpenChange(false);
@@ -467,7 +413,7 @@ export class Menu {
       if (this.hasCompositeSections && !this.compositeTabLeavesPopup(e)) return;
       e.preventDefault();
       this.close(false);
-      this.moveFocusAfterTab(e.shiftKey);
+      this.interaction.moveFocusAfterTab(e.shiftKey);
       return;
     }
 

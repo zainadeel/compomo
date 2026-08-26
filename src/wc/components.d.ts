@@ -51,7 +51,7 @@ import { PaginationChangeDetail, PaginationPageSizeMode } from "./components/Pag
 import { ChromeTransitionDetail } from "./shell/chrome-transition";
 import { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 import { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
-import { PanelToolsHeaderAction, PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
+import { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderActionDetail, PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
 import { RadioOption, RadioSize } from "./components/Radio/Radio";
 import { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
@@ -118,7 +118,7 @@ export { PaginationChangeDetail, PaginationPageSizeMode } from "./components/Pag
 export { ChromeTransitionDetail } from "./shell/chrome-transition";
 export { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 export { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
-export { PanelToolsHeaderAction, PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
+export { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderActionDetail, PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
 export { RadioOption, RadioSize } from "./components/Radio/Radio";
 export { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
@@ -1230,6 +1230,10 @@ export namespace Components {
          */
         "ariaLabel": string | null;
         /**
+          * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
+         */
+        "boundary": HTMLElement | undefined;
+        /**
           * Accessible name for the category tab list.
           * @default 'Filter categories'
          */
@@ -1487,6 +1491,10 @@ export namespace Components {
           * ID of the external trigger element for positioning
          */
         "anchorId": string | undefined;
+        /**
+          * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
+         */
+        "boundary": HTMLElement | undefined;
         /**
           * Show a visible ring on the initially focused menu item. Use only when the opener was keyboard-driven.
           * @default false
@@ -2335,6 +2343,10 @@ export namespace Components {
           * Actual parent surface context; omit on primary and secondary surfaces.
          */
         "background": SelectBackground | undefined;
+        /**
+          * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
+         */
+        "boundary": HTMLElement | undefined;
         /**
           * Localized clear action label.
           * @default 'Clear'
@@ -3447,6 +3459,10 @@ export namespace Components {
          */
         "alignOffset": number | string;
         /**
+          * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
+         */
+        "boundary": HTMLElement | undefined;
+        /**
           * Hover show delay before the tooltip appears. Default: `--effect-animation-delay-medium-3` (1000ms). Accepts a number (ms) or a TokoMo time token / `var(--effect-animation-delay-*)`. Applies to the initial hover/focus show only — after a recent dismiss, reopen is instant. Prefer the default; override only for denser chrome or rare/destructive actions.
           * @default TOKEN_DEFAULTS.animationDelayMedium3
          */
@@ -4460,7 +4476,7 @@ declare global {
     interface HTMLDsPanelToolHeaderElementEventMap {
         "dsBack": MouseEvent;
         "dsMenuToggle": MouseEvent;
-        "dsAction": { id: string; originalEvent: MouseEvent };
+        "dsAction": PanelToolHeaderActionDetail;
     }
     interface HTMLDsPanelToolHeaderElement extends Components.DsPanelToolHeader, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsPanelToolHeaderElementEventMap>(type: K, listener: (this: HTMLDsPanelToolHeaderElement, ev: DsPanelToolHeaderCustomEvent<HTMLDsPanelToolHeaderElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -4506,10 +4522,7 @@ declare global {
         "dsHeaderBack": {
     tool: PanelToolsToolId;
   };
-        "dsHeaderAction": {
-    tool: PanelToolsToolId;
-    id: string;
-  };
+        "dsHeaderAction": PanelToolsHeaderActionDetail;
         "dsChromeTransitionStart": ChromeTransitionDetail;
         "dsChromeTransitionEnd": ChromeTransitionDetail;
     }
@@ -6163,6 +6176,10 @@ declare namespace LocalJSX {
          */
         "ariaLabel"?: string | null;
         /**
+          * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
+         */
+        "boundary"?: HTMLElement | undefined;
+        /**
           * Accessible name for the category tab list.
           * @default 'Filter categories'
          */
@@ -6445,6 +6462,10 @@ declare namespace LocalJSX {
           * ID of the external trigger element for positioning
          */
         "anchorId"?: string | undefined;
+        /**
+          * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
+         */
+        "boundary"?: HTMLElement | undefined;
         /**
           * Show a visible ring on the initially focused menu item. Use only when the opener was keyboard-driven.
           * @default false
@@ -7113,7 +7134,7 @@ declare namespace LocalJSX {
           * @default ''
          */
         "menuTriggerId"?: string;
-        "onDsAction"?: (event: DsPanelToolHeaderCustomEvent<{ id: string; originalEvent: MouseEvent }>) => void;
+        "onDsAction"?: (event: DsPanelToolHeaderCustomEvent<PanelToolHeaderActionDetail>) => void;
         "onDsBack"?: (event: DsPanelToolHeaderCustomEvent<MouseEvent>) => void;
         "onDsMenuToggle"?: (event: DsPanelToolHeaderCustomEvent<MouseEvent>) => void;
         /**
@@ -7214,10 +7235,7 @@ declare namespace LocalJSX {
         /**
           * Requests one application-owned action from the active tool header.
          */
-        "onDsHeaderAction"?: (event: DsPanelToolsCustomEvent<{
-    tool: PanelToolsToolId;
-    id: string;
-  }>) => void;
+        "onDsHeaderAction"?: (event: DsPanelToolsCustomEvent<PanelToolsHeaderActionDetail>) => void;
         /**
           * Requests navigation to the active tool's parent view.
          */
@@ -7369,6 +7387,10 @@ declare namespace LocalJSX {
           * Actual parent surface context; omit on primary and secondary surfaces.
          */
         "background"?: SelectBackground | undefined;
+        /**
+          * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
+         */
+        "boundary"?: HTMLElement | undefined;
         /**
           * Localized clear action label.
           * @default 'Clear'
@@ -8628,6 +8650,10 @@ declare namespace LocalJSX {
           * @default 0
          */
         "alignOffset"?: number | string;
+        /**
+          * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
+         */
+        "boundary"?: HTMLElement | undefined;
         /**
           * Hover show delay before the tooltip appears. Default: `--effect-animation-delay-medium-3` (1000ms). Accepts a number (ms) or a TokoMo time token / `var(--effect-animation-delay-*)`. Applies to the initial hover/focus show only — after a recent dismiss, reopen is instant. Prefer the default; override only for denser chrome or rare/destructive actions.
           * @default TOKEN_DEFAULTS.animationDelayMedium3

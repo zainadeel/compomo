@@ -16,6 +16,7 @@ import {
   PANEL_TOOLS_LABELS,
   PANEL_TOOLS_SHORTCUTS,
   type PanelToolsHeaderAction,
+  type PanelToolsHeaderActionDetail,
   type PanelToolsHeaderConfig,
   type PanelToolsHeaders,
   type PanelToolsItem,
@@ -89,10 +90,8 @@ export class PanelTools {
   }>;
 
   /** Requests one application-owned action from the active tool header. */
-  @Event({ bubbles: true, composed: true }) dsHeaderAction!: EventEmitter<{
-    tool: PanelToolsToolId;
-    id: string;
-  }>;
+  @Event({ bubbles: true, composed: true })
+  dsHeaderAction!: EventEmitter<PanelToolsHeaderActionDetail>;
 
   /** Bubbling lifecycle — `ds-bar-nav` defers overflow checks during drawer motion. */
   @Event({ bubbles: true, composed: true })
@@ -214,10 +213,14 @@ export class PanelTools {
   }
 
   private handleComposedHeaderAction = (event: Event) => {
-    const detail = (event as CustomEvent<{ id?: string }>).detail;
+    const detail = (event as CustomEvent<{ id?: string; anchor?: HTMLElement }>).detail;
     if (!this.activeTool || !detail?.id) return;
     event.stopPropagation();
-    this.dsHeaderAction.emit({ tool: this.activeTool, id: detail.id });
+    this.dsHeaderAction.emit({
+      tool: this.activeTool,
+      id: detail.id,
+      anchor: detail.anchor,
+    });
   };
 
   componentWillLoad() {

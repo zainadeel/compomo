@@ -21,6 +21,7 @@
       <h1>Select foundations test</h1>
 
       <ds-select id="single" aria-label="Fruit"></ds-select>
+      <ds-select id="collapsible-single" icon="Chart" collapse-label aria-label="Collapsible fruit"></ds-select>
       <ds-select id="searchable" searchable aria-label="Search fruit"></ds-select>
       <ds-select id="loading" icon="Chart" is-loading aria-label="Loading fruit"></ds-select>
       <ds-select id="surface" background="bold" aria-label="Bold fruit"></ds-select>
@@ -49,6 +50,19 @@
         trigger-label="Filters"
         aria-label="Filter records"
         menu-label="Filter records"
+      ></ds-filter-menu>
+      <ds-filter-menu
+        id="collapsible-filters"
+        icon="Filter"
+        collapse-label
+        trigger-label="Filters"
+        aria-label="Collapsible filters"
+      ></ds-filter-menu>
+      <div id="shadow-select-host"></div>
+      <div id="shadow-filter-anchor-host"></div>
+      <ds-filter-menu
+        id="shadow-external-filters"
+        menu-label="External filters"
       ></ds-filter-menu>
 
       <form id="selection-form">

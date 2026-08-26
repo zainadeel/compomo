@@ -168,6 +168,91 @@ test.describe('App shell chrome', () => {
       .toBe(8);
   });
 
+  test('provides the rendered header action as an external menu anchor @cross-browser', async ({
+    page,
+  }) => {
+    await page.getByRole('button', { name: 'Agents', exact: true }).click();
+    const trigger = page.getByRole('button', { name: 'Agents options' });
+    const menu = page.getByRole('menu', { name: 'Agents options' });
+
+    await trigger.click();
+    await expect(menu).toBeVisible();
+    await expect(menu.getByRole('menuitem', { name: 'Settings' })).toBeFocused();
+    await expect
+      .poll(() =>
+        page.locator('#agents-options-menu').evaluate(element => {
+          const anchor = (element as HTMLElement & { anchor?: HTMLElement }).anchor;
+          return anchor?.id;
+        })
+      )
+      .toBe('agents-options-trigger');
+
+    const menuBox = await menu.boundingBox();
+    const toolsBox = await page.locator('.shell-app__tools').boundingBox();
+    expect(menuBox).not.toBeNull();
+    expect(toolsBox).not.toBeNull();
+    expect(menuBox!.x).toBeGreaterThanOrEqual(toolsBox!.x + 3.5);
+    expect(menuBox!.x + menuBox!.width).toBeLessThanOrEqual(
+      toolsBox!.x + toolsBox!.width - 3.5,
+    );
+
+    await trigger.click();
+    await expect(menu).toBeHidden();
+  });
+
+  test('keeps a top-layer page menu inside the routed-content boundary @cross-browser', async ({
+    page,
+  }) => {
+    const trigger = page.getByRole('button', { name: 'Page actions' });
+    const menu = page.getByRole('menu', { name: 'Page actions' });
+    const content = page.locator('.shell-app__content');
+    const tools = page.locator('.shell-app__tools');
+
+    await trigger.click();
+    await expect(menu).toBeVisible();
+
+    const geometry = await Promise.all([
+      menu.boundingBox(),
+      content.boundingBox(),
+      tools.boundingBox(),
+    ]);
+    const [menuBox, contentBox, toolsBox] = geometry;
+    expect(menuBox).not.toBeNull();
+    expect(contentBox).not.toBeNull();
+    expect(toolsBox).not.toBeNull();
+    expect(menuBox!.x + menuBox!.width).toBeLessThanOrEqual(contentBox!.x + contentBox!.width - 3.5);
+    expect(menuBox!.x + menuBox!.width).toBeLessThan(toolsBox!.x);
+  });
+
+  test('continues Tab from a shadow-root menu anchor in composed document order @cross-browser', async ({
+    page,
+  }) => {
+    await page.getByRole('button', { name: 'Agents', exact: true }).click();
+    const trigger = page.getByRole('button', { name: 'Agents options' });
+    const menu = page.getByRole('menu', { name: 'Agents options' });
+
+    await trigger.focus();
+    await page.keyboard.press('Tab');
+    const markedNativeTarget = await page.evaluate(() => {
+      let active = document.activeElement;
+      while (active instanceof HTMLElement && active.shadowRoot?.activeElement) {
+        active = active.shadowRoot.activeElement;
+      }
+      if (!(active instanceof HTMLElement)) return false;
+      active.dataset.nativeTabAfterMenuAnchor = '';
+      return true;
+    });
+    expect(markedNativeTarget).toBe(true);
+    const nativeTarget = page.locator('[data-native-tab-after-menu-anchor]');
+
+    await trigger.click();
+    await expect(menu.getByRole('menuitem', { name: 'Settings' })).toBeFocused();
+    await page.keyboard.press('Tab');
+
+    await expect(menu).toBeHidden();
+    await expect(nativeTarget).toBeFocused();
+  });
+
   test('keeps 4px between header actions in drawer and fullscreen presentations',
     chromiumOnly('layout-geometry', 'Header action gaps are static token-backed geometry.'),
     async ({

@@ -2,6 +2,7 @@ import '/dist/components/ds-shell-app.js';
 import '/dist/components/ds-bar-nav.js';
 import '/dist/components/ds-panel-nav.js';
 import '/dist/components/ds-panel-tools.js';
+import '/dist/components/ds-menu.js';
 import '/dist/components/ds-text.js';
 
 const groups = [
@@ -28,6 +29,7 @@ await Promise.all([
   customElements.whenDefined('ds-bar-nav'),
   customElements.whenDefined('ds-panel-nav'),
   customElements.whenDefined('ds-panel-tools'),
+  customElements.whenDefined('ds-menu'),
 ]);
 
 const panel = document.getElementById('panel');
@@ -46,6 +48,15 @@ bar.tabs = [
 ];
 
 const tools = document.getElementById('tools');
+const agentsOptionsMenu = document.getElementById('agents-options-menu');
+agentsOptionsMenu.items = [{ label: 'Settings', value: 'settings' }];
+const pageEdgeMenu = document.getElementById('page-edge-menu');
+const pageEdgeMenuTrigger = document.getElementById('page-edge-menu-trigger');
+pageEdgeMenu.anchor = pageEdgeMenuTrigger;
+pageEdgeMenu.items = [{ label: 'Inspect page', value: 'inspect' }];
+pageEdgeMenuTrigger.addEventListener('click', () => {
+  pageEdgeMenu.open = !pageEdgeMenu.open;
+});
 tools.items = toolsItems;
 tools.headers = {
   agents: {
@@ -63,11 +74,17 @@ tools.headers = {
         icon: 'Ellipses',
         ariaLabel: 'Agents options',
         triggerId: 'agents-options-trigger',
+        controls: 'agents-options-menu',
         haspopup: 'menu',
       },
     ],
   },
 };
+tools.addEventListener('dsHeaderAction', event => {
+  if (event.detail.id !== 'menu') return;
+  agentsOptionsMenu.anchor = event.detail.anchor;
+  agentsOptionsMenu.open = !agentsOptionsMenu.open;
+});
 
 await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 document.documentElement.dataset.ready = 'true';

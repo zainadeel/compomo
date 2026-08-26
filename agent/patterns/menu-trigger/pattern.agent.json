@@ -24,7 +24,7 @@
     },
     {
       "component": "component:ds-menu",
-      "role": "Owns anchored placement, menu semantics, keyboard navigation, viewport clamping, selection, and close behavior.",
+      "role": "Owns anchored placement, menu semantics, keyboard navigation, collision-boundary clamping, selection, and close behavior.",
       "required": true
     },
     {
@@ -51,12 +51,13 @@
     "Use haspopup directly instead of hasMenu for a non-menu popup such as a listbox or dialog; those cases get no chevron.",
     "Give Menu a concise menuLabel describing the available commands or views.",
     "Set Menu.initialFocusVisible only when the trigger MouseEvent detail is zero, indicating keyboard activation.",
+    "When the trigger is rendered inside an open shadow root, assign its HTMLElement to Menu.anchor; anchorId resolves only document-tree ids.",
     "Keep visible selected styling synchronized with the application's selected value; Menu exposes the selected command through aria-current.",
     "Return focus to the trigger after selection; Menu already restores it for Escape and outside dismissal."
   ],
   "responsiveBehavior": [
     "Keep Menu's default choice-cell anchor alignment unless deliberate custom frame geometry is required.",
-    "Let Menu clamp to the viewport and avoid application-authored fixed or absolute positioning.",
+    "Let Menu clamp to the nearest shell or application data-ds-overlay-boundary and fall back to the viewport; avoid application-authored fixed or absolute positioning.",
     "Use a concise trigger label that can fit the owning layout without hiding the selected meaning."
   ],
   "implementations": {

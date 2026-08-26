@@ -300,6 +300,47 @@ export class ButtonUnfilled {
       'button-unfilled--on-always-dark': bg === 'always-dark',
     };
 
+    const button = (
+      <button
+        ref={el => {
+          this.buttonEl = el ?? null;
+        }}
+        type={this.type}
+        class={cls}
+        disabled={this.isInactive}
+        tabIndex={this.focusTabIndex ?? 0}
+        aria-label={this.accessibleName}
+        aria-busy={this.isLoading ? 'true' : undefined}
+        aria-disabled={this.isLoading ? 'true' : undefined}
+        aria-controls={this.controls}
+        aria-expanded={this.expanded === undefined ? undefined : String(this.expanded)}
+        aria-haspopup={this.resolvedHaspopup}
+        aria-pressed={this.pressed === undefined ? undefined : String(this.pressed)}
+        onPointerDown={event =>
+          beginElevatedControlPress(
+            event,
+            this.pressScale && !this.isInactive && !this.isLoading,
+          )
+        }
+        onClick={this.handleClick}
+      >
+        {renderButtonContent({
+          namespace: 'button-unfilled',
+          variant: this.visualVariant,
+          size: this.size,
+          label: this.label,
+          labelEmphasis: this.labelEmphasis,
+          icon: this.icon,
+          hasMenu: this.hasMenu,
+          isLoading: this.isLoading,
+          dot: {
+            visible: this.showDot,
+            background: this.dotRing,
+          },
+        })}
+      </button>
+    );
+
     return (
       <Host
         class={{
@@ -318,50 +359,17 @@ export class ButtonUnfilled {
         }}
         tabIndex={-1}
       >
-        <ds-tooltip
-          label={this.captionIconOnly ? (this.label || this.accessibleName || '') : ''}
-          side="top"
-          size="sm"
-        >
-          <button
-          ref={el => {
-            this.buttonEl = el ?? null;
-          }}
-          type={this.type}
-          class={cls}
-          disabled={this.isInactive}
-          tabIndex={this.focusTabIndex ?? 0}
-          aria-label={this.accessibleName}
-          aria-busy={this.isLoading ? 'true' : undefined}
-          aria-disabled={this.isLoading ? 'true' : undefined}
-          aria-controls={this.controls}
-          aria-expanded={this.expanded === undefined ? undefined : String(this.expanded)}
-          aria-haspopup={this.resolvedHaspopup}
-          aria-pressed={this.pressed === undefined ? undefined : String(this.pressed)}
-          onPointerDown={event =>
-            beginElevatedControlPress(
-              event,
-              this.pressScale && !this.isInactive && !this.isLoading,
-            )
-          }
-          onClick={this.handleClick}
-        >
-          {renderButtonContent({
-            namespace: 'button-unfilled',
-            variant: this.visualVariant,
-            size: this.size,
-            label: this.label,
-            labelEmphasis: this.labelEmphasis,
-            icon: this.icon,
-            hasMenu: this.hasMenu,
-            isLoading: this.isLoading,
-            dot: {
-              visible: this.showDot,
-              background: this.dotRing,
-            },
-          })}
-          </button>
-        </ds-tooltip>
+        {this.collapseLabel ? (
+          <ds-tooltip
+            label={this.captionIconOnly ? (this.label || this.accessibleName || '') : ''}
+            side="top"
+            size="sm"
+          >
+            {button}
+          </ds-tooltip>
+        ) : (
+          button
+        )}
       </Host>
     );
   }

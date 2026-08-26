@@ -20,28 +20,15 @@ import {
   tableColumnSize,
   tableModelIssues,
   tableRows,
-  tableRowSelectionLabel,
   toggleAllLoadedTableRows,
   toggleTableGroupCollapsed,
   toggleTableGroupSelection,
   nextTableGroupsCollapsed,
   toggleTableRowSelection,
 } from './table-model';
-import {
-  resolveTableCellImageTracks,
-  resolveTableCellPresentation,
-  tableCellImageVariant,
-  tableCellTextOverflowProps,
-  type TableCellPresentation,
-} from './table-cell-model';
-import {
-  createTableRenderModel,
-  type TableGroupRenderModel,
-  type TableRenderModel,
-} from './table-render-model';
+import { createTableRenderModel, type TableRenderModel } from './table-render-model';
 import {
   isRenderableTableActionMenu,
-  isTableCellActionMenu,
   nextTableActionMenuElementId,
   tableActionMenuSections,
   tableActionTriggerId,
@@ -60,6 +47,10 @@ import {
   tableDataModeMenuItems,
 } from './table-data-mode-switcher';
 import { resolveTableTruncateTrack, tableTruncateLabel } from './table-truncate';
+import { renderTableRow as renderTableRowView } from './table-row-view';
+import { TableBodyRenderer } from './table-body-renderer';
+import { renderTableSkeletonBody } from './table-skeleton-view';
+import { renderTableLoadContent } from './table-load-view';
 import { TableLayoutController } from './table-layout-controller';
 import { TableLoadController } from './table-load-controller';
 import { TableGroupLoadController } from './table-group-load-controller';
@@ -70,7 +61,6 @@ import {
   TABLE_VIRTUAL_VIEWPORT_REQUIRED_BODY,
   TABLE_VIRTUAL_VIEWPORT_REQUIRED_HEADING,
   type TableVirtualItem,
-  type TableVirtualNode,
   type TableVirtualPlan,
 } from './table-virtual-model';
 import { TableVirtualController } from './table-virtual-controller';
@@ -79,7 +69,6 @@ import type { MenuItemData, MenuReorderDetail } from '../Menu/menu-types';
 import { resolvePaginationState } from '../Pagination/pagination-model';
 import { resolveCssLengthPx } from '../../utils/resolve-css-length-px';
 import { isElementTruncated } from '../../utils/is-element-truncated';
-import { resolveSafeUrl } from '../../utils/safe-url';
 import { observeTableCaptionCompact } from '../../utils/table-caption-compact';
 import { resolveTableFitPageSize } from './table-pagination-fit';
 import {
@@ -93,9 +82,6 @@ import {
 import type {
   TableCaptionVisibility,
   TableCellActionDetail,
-  TableCellLineClamp,
-  TableCellSkeleton,
-  TableCellTextRun,
   TableColumn,
   TableColumnsConfigChangeDetail,
   TableDataMode,
@@ -299,20 +285,6 @@ export class Table {
     grouped: boolean;
     collapsedGroupIds: string[];
   } | null = null;
-  private virtualLookupCache: {
-    rows: TableRow[];
-    groups: TableGroupRenderModel[];
-    rowsById: Map<string, TableRow>;
-    groupsById: Map<string, TableGroupRenderModel>;
-  } | null = null;
-  private virtualRowPoolStates = new Map<
-    string,
-    {
-      slotsByRowId: Map<string, number>;
-      nextSlot: number;
-    }
-  >();
-
   private rootEl: HTMLElement | null = null;
   private viewportEl: HTMLElement | null = null;
   private frameEl: HTMLElement | null = null;
@@ -335,6 +307,7 @@ export class Table {
   private fitObservedViewport: HTMLElement | null = null;
   private fitObservedTable: HTMLTableElement | null = null;
   private fitMeasurementPending = false;
+  private readonly bodyRenderer = new TableBodyRenderer();
   private readonly layoutController = new TableLayoutController({
     elements: () => ({
       viewport: this.viewportEl,
@@ -1027,7 +1000,7 @@ export class Table {
     if (this.dataMode !== 'virtual') {
       this.virtualItems = [];
       this.virtualItemsCache = null;
-      this.virtualRowPoolStates.clear();
+      this.bodyRenderer.resetVirtualState();
       return;
     }
     const columns = this.visibleColumns;
@@ -1351,10 +1324,6 @@ export class Table {
     );
   }
 
-  private truncateAttr(lineClamp: TableCellLineClamp) {
-    return lineClamp === 'none' ? undefined : '';
-  }
-
   private handleRowKeydown(row: TableRow, event: KeyboardEvent): void {
     if (event.target !== event.currentTarget || (event.key !== 'Enter' && event.key !== ' '))
       return;
@@ -1675,382 +1644,35 @@ export class Table {
     );
   }
 
-  private renderCellValue(cell: TableCellPresentation, column: TableColumn, row: TableRow) {
-    if (cell.kind === 'blank') return null;
-
-    if (cell.kind === 'empty') {
-      return (
-        <ds-text
-          class="ds-table__cell-track ds-table__cell-track--text"
-          as="span"
-          variant="text-body-medium"
-          color="tertiary"
-        >
-          <span aria-hidden="true">—</span>
-          <span class="ds-visually-hidden">{this.emptyCellLabel}</span>
-        </ds-text>
-      );
-    }
-
-    if (cell.kind === 'icon') {
-      const value = cell.value;
-      return (
-        <ds-icon
-          name={value.icon}
-          size="md"
-          color={value.color ?? 'secondary'}
-          label={value.label}
-        />
-      );
-    }
-
-    if (cell.kind === 'icon-text') {
-      return (
-        <span class="ds-table__cell-icon-text">
-          <span class="ds-table__cell-icon-text-icon">
-            <ds-icon
-              name={cell.icon}
-              size="md"
-              color={cell.iconColor ?? 'secondary'}
-              label={cell.iconLabel}
-            />
-          </span>
-          {this.renderTextCopy(cell)}
-        </span>
-      );
-    }
-
-    if (cell.kind === 'image') {
-      const value = cell.value;
-      return (
-        <span class="ds-table__cell-image">
-          {value.src ? (
-            <img
-              class="ds-table__cell-image-content"
-              src={value.src}
-              alt={value.alt}
-              loading="lazy"
-            />
-          ) : (
-            <span class="ds-table__cell-image-placeholder" role="img" aria-label={value.alt} />
-          )}
-        </span>
-      );
-    }
-
-    if (cell.kind === 'action') {
-      const value = cell.value;
-      const menu = isRenderableTableActionMenu(value);
-      const triggerId = tableActionTriggerId(this.actionMenuElementId, row.id, column.id);
-      const expanded =
-        menu && this.actionMenu?.rowId === row.id && this.actionMenu?.columnId === column.id;
-      return (
-        <ds-button-unfilled
-          id={menu ? triggerId : undefined}
-          variant={menu ? 'icon' : (value.variant ?? 'label')}
-          size="md"
-          isInset={true}
-          insetDepth="double"
-          label={value.label ?? ''}
-          icon={value.icon ?? (menu ? 'Ellipses' : '')}
-          aria-label={value.ariaLabel ?? null}
-          hasBorder={value.hasBorder ?? false}
-          isInactive={value.isInactive ?? false}
-          isLoading={value.isLoading ?? false}
-          hasMenu={menu}
-          expanded={menu ? expanded : undefined}
-          controls={menu ? this.actionMenuElementId : undefined}
-          onDsClick={event => {
-            event.stopPropagation();
-            if (menu) {
-              this.toggleActionMenu(row, column, event.detail);
-              return;
-            }
-            if (isTableCellActionMenu(value)) return;
-            this.dsCellAction.emit({
-              actionId: value.actionId,
-              rowId: row.id,
-              columnId: column.id,
-            });
-          }}
-        />
-      );
-    }
-
-    if (cell.kind === 'tag') {
-      const value = cell.value;
-      const variant = cell.variant;
-      const tag = (
-        <ds-tag
-          label={value.label}
-          intent={value.intent ?? 'neutral'}
-          contrast={value.contrast ?? 'faint'}
-          size={variant === 'text-with-tag' ? 'sm' : 'md'}
-          icon={value.icon ?? ''}
-          rounded={value.rounded ?? false}
-          isInset
-          insetDepth={variant === 'text-with-tag' ? 'single' : 'double'}
-        />
-      );
-
-      if (variant === 'tag-only') return tag;
-
-      return (
-        <span class={`ds-table__cell-tag-stack ds-table__cell-tag-stack--${variant}`}>
-          {variant === 'tag-with-text' && tag}
-          <ds-text
-            class="ds-table__cell-tag-text ds-table__cell-track"
-            as="span"
-            variant={variant === 'tag-with-text' ? 'text-body-small' : 'text-body-medium'}
-            color="secondary"
-            lineTruncation={1}
-            data-table-truncate=""
-          >
-            {value.text}
-          </ds-text>
-          {variant === 'text-with-tag' && (
-            <span class="ds-table__cell-tag-control-track">{tag}</span>
-          )}
-        </span>
-      );
-    }
-
-    if (cell.kind !== 'text') return null;
-    return this.renderTextCopy(cell);
-  }
-
-  private renderTextCopy(cell: Extract<TableCellPresentation, { kind: 'text' | 'icon-text' }>) {
-    const text = cell.value;
-    const wraps = cell.wraps;
-    const overflow = tableCellTextOverflowProps(cell.lineClamp);
-    const truncate = this.truncateAttr(cell.lineClamp);
-    const primaryText = cell.kind === 'text' && cell.primaryText;
-    const href = resolveSafeUrl(text.href);
-    const primary = (
-      <ds-text
-        class="ds-table__cell-primary ds-table__cell-track ds-table__cell-track--text"
-        as="span"
-        variant="text-body-medium"
-        color={href ? 'inherit' : 'primary'}
-        lineTruncation={overflow.lineTruncation}
-        wrap={overflow.wrap}
-        fontFeature={text.fontFeature ?? 'normal'}
-        data-table-truncate={truncate}
-      >
-        {text.primary}
-      </ds-text>
-    );
-
-    return (
-      <span class={{ 'ds-table__cell-copy': true, 'ds-table__cell-copy--wrap': wraps }}>
-        {href ? (
-          <a
-            class="ds-table__cell-link ds-text-action ds-focus-ring"
-            href={href}
-            target={text.target === '_blank' ? '_blank' : undefined}
-            rel={text.target === '_blank' ? 'noopener noreferrer' : undefined}
-          >
-            {primary}
-          </a>
-        ) : (
-          primary
-        )}
-        {this.renderTextTrack(text.secondary, {
-          track: 'secondary',
-          variant: primaryText ? 'text-body-medium' : 'text-body-small',
-          defaultColor: primaryText ? 'primary' : 'secondary',
-          wholeColor: text.secondaryColor,
-          lineClamp: cell.lineClamp,
-        })}
-        {this.renderTextTrack(text.tertiary, {
-          track: 'tertiary',
-          variant: 'text-body-small',
-          defaultColor: 'secondary',
-          wholeColor: text.tertiaryColor,
-          lineClamp: cell.lineClamp,
-        })}
-      </span>
-    );
-  }
-
-  private renderTextTrack(
-    runs: TableCellTextRun[] | undefined,
-    options: {
-      track: 'secondary' | 'tertiary';
-      variant: 'text-body-medium' | 'text-body-small';
-      defaultColor: 'primary' | 'secondary';
-      wholeColor?: TableCellTextRun['color'];
-      lineClamp: TableCellLineClamp;
-    }
-  ) {
-    if (!runs?.length) return null;
-    const trackClass = `ds-table__cell-${options.track} ds-table__cell-track ds-table__cell-track--text`;
-    const overflow = tableCellTextOverflowProps(options.lineClamp);
-    const truncate = this.truncateAttr(options.lineClamp);
-    const colorFor = (run: TableCellTextRun) =>
-      run.color ?? options.wholeColor ?? options.defaultColor;
-    if (runs.length === 1) {
-      return (
-        <ds-text
-          class={trackClass}
-          as="span"
-          variant={options.variant}
-          color={colorFor(runs[0])}
-          lineTruncation={overflow.lineTruncation}
-          wrap={overflow.wrap}
-          data-table-truncate={truncate}
-        >
-          {runs[0].text}
-        </ds-text>
-      );
-    }
-
-    return (
-      <span class={`${trackClass} ds-table__cell-track--runs`}>
-        {runs.map((run, index) => [
-          index > 0 && (
-            <ds-text
-              key={`${options.track}-sep-${index}`}
-              class="ds-table__cell-run-separator"
-              as="span"
-              variant={options.variant}
-              color="secondary"
-              aria-hidden="true"
-            >
-              ·
-            </ds-text>
-          ),
-          <ds-text
-            key={`${options.track}-run-${index}`}
-            class="ds-table__cell-run"
-            as="span"
-            variant={options.variant}
-            color={colorFor(run)}
-            lineTruncation={overflow.lineTruncation}
-            wrap={overflow.wrap}
-            data-table-truncate={truncate}
-          >
-            {run.text}
-          </ds-text>,
-        ])}
-      </span>
-    );
-  }
-
   private renderRow(
     row: TableRow,
     model: TableRenderModel,
     ariaRowIndex?: number,
     variableVirtualSize = false,
-    rowKey = row.id
+    rowKey = row.id,
   ) {
-    const selected = model.selectedRowIds.has(row.id);
-    const rowSelectable = row.selectable !== false && !row.disabled;
-    return (
-      <tr
-        key={rowKey}
-        class={{
-          'ds-table__row': true,
-          'ds-table__row--selected': selected,
-          'ds-table__row--disabled': !!row.disabled,
-          'ds-table__row--interactive': !!row.interactive && !row.disabled,
-          'ds-focus-ring': !!row.interactive && !row.disabled,
-        }}
-        data-row-id={row.id}
-        data-virtual-id={ariaRowIndex != null ? `row:${row.id}` : undefined}
-        data-virtual-pool-key={ariaRowIndex != null ? rowKey : undefined}
-        data-virtual-measure={ariaRowIndex != null && variableVirtualSize ? 'true' : undefined}
-        data-selected={selected ? 'true' : undefined}
-        aria-rowindex={ariaRowIndex}
-        aria-disabled={row.disabled ? 'true' : undefined}
-        tabIndex={row.interactive && !row.disabled ? 0 : undefined}
-        onClick={event => this.emitRowActivation(row, event)}
-        onKeyDown={event => this.handleRowKeydown(row, event)}
-      >
-        {model.selectable && (
-          <td
-            class={{
-              'ds-table__cell': true,
-              'ds-table__selection-cell': true,
-              'ds-table__cell--sticky-start': true,
-              'ds-interaction-fill': true,
-              'ds-interaction-fill--grouped': true,
-              'ds-interaction-fill--selected': selected,
-            }}
-          >
-            {this.renderSelectionControl(
-              `${selected ? 'Deselect' : 'Select'} ${tableRowSelectionLabel(row, this.visibleColumns)}`,
-              selected,
-              false,
-              !rowSelectable,
-              () => this.emitRowSelection(row)
-            )}
-            {this.renderStickyEdge('start')}
-          </td>
-        )}
-        {this.visibleColumns.map(column => {
-          const align = column.align ?? 'start';
-          const cell = resolveTableCellPresentation(row.cells[column.id], column);
-          const tagCell = cell.kind === 'tag';
-          const iconCell = cell.kind === 'icon';
-          const iconTextCell = cell.kind === 'icon-text';
-          const imageCell = cell.kind === 'image';
-          const actionCell = cell.kind === 'action';
-          const actionMenuCell = actionCell && isRenderableTableActionMenu(cell.value);
-          const textCell = cell.kind === 'text';
-          const primaryTextCell = textCell && cell.primaryText;
-          const singleTextCell = textCell && cell.singleLine;
-          const emptyCell = cell.kind === 'empty';
-          const blankCell = cell.kind === 'blank';
-          const tagVariant = tagCell ? cell.variant : undefined;
-          const textVariant = textCell ? cell.variant : undefined;
-          const imageVariant = cell.kind === 'image' ? cell.variant : undefined;
-          const iconTextVariant = iconTextCell ? cell.variant : undefined;
-          const wraps = (cell.kind === 'text' || cell.kind === 'icon-text') && cell.wraps;
-          return (
-            <td
-              key={`${row.id}:${column.id}`}
-              class={{
-                'ds-table__cell': true,
-                [`ds-table__cell--align-${align}`]: true,
-                'ds-table__cell--tag': tagCell,
-                [`ds-table__cell--tag-${tagVariant}`]: tagCell,
-                'ds-table__cell--icon': iconCell,
-                'ds-table__cell--icon-text': iconTextCell,
-                [`ds-table__cell--icon-text-${iconTextVariant}`]: iconTextCell,
-                'ds-table__cell--icon-text-wrap': iconTextCell && wraps,
-                'ds-table__cell--image': imageCell,
-                [`ds-table__cell--image-${imageVariant}`]: imageCell,
-                'ds-table__cell--action': actionCell,
-                'ds-table__cell--action-menu': actionMenuCell,
-                'ds-table__cell--primary-text': primaryTextCell,
-                'ds-table__cell--text-single': singleTextCell,
-                'ds-table__cell--text-multi':
-                  textCell && !singleTextCell && textVariant !== 'triple',
-                'ds-table__cell--text-triple': textVariant === 'triple',
-                'ds-table__cell--text-wrap': textCell && wraps,
-                'ds-table__cell--empty': emptyCell,
-                'ds-table__cell--blank': blankCell,
-                'ds-table__cell--sticky-start': column.sticky === 'start',
-                'ds-table__cell--sticky-end': column.sticky === 'end',
-                'ds-interaction-fill': true,
-                'ds-interaction-fill--grouped': true,
-                'ds-interaction-fill--selected': selected,
-              }}
-              data-column-id={column.id}
-              data-cell-type={cell.cellType}
-              data-cell-variant={tagVariant ?? textVariant ?? imageVariant ?? iconTextVariant}
-            >
-              <span class="ds-table__cell-content ds-interaction-fill__content">
-                {this.renderCellValue(cell, column, row)}
-              </span>
-              {this.renderStickyEdge(column.sticky)}
-            </td>
-          );
-        })}
-      </tr>
-    );
+    return renderTableRowView({
+      row,
+      model,
+      visibleColumns: this.visibleColumns,
+      emptyCellLabel: this.emptyCellLabel,
+      actionMenuElementId: this.actionMenuElementId,
+      actionMenu: this.actionMenu,
+      ariaRowIndex,
+      variableVirtualSize,
+      rowKey,
+      renderSelectionControl: (label, checked, indeterminate, disabled, onActivate) =>
+        this.renderSelectionControl(label, checked, indeterminate, disabled, onActivate),
+      renderStickyEdge: sticky => this.renderStickyEdge(sticky),
+      onRowActivate: (targetRow, event) => this.emitRowActivation(targetRow, event),
+      onRowKeyDown: (targetRow, event) => this.handleRowKeydown(targetRow, event),
+      onRowSelection: targetRow => this.emitRowSelection(targetRow),
+      onCellAction: detail => this.dsCellAction.emit(detail),
+      onActionMenuToggle: (targetRow, column, event) =>
+        this.toggleActionMenu(targetRow, column, event),
+    });
   }
+
 
   private emitGroupCollapse(group: TableGroup) {
     const collapsedGroupIds = toggleTableGroupCollapsed(this.collapsedGroupIds, group.id);
@@ -2165,44 +1787,24 @@ export class Table {
       >
         <td class="ds-table__load-cell" colSpan={totalColumns}>
           <div class="ds-table__viewport-band ds-table__load-band">
-            {error ? (
-              <span class="ds-table__load-content ds-table__load-content--error">
-                <span class="ds-table__load-copy">
-                  <ds-icon name="ErrorTriangle" size="md" color="secondary" aria-hidden="true" />
-                  <ds-text as="span" variant="text-body-medium" color="secondary">
-                    {error}
-                  </ds-text>
-                </span>
-                <ds-button-unfilled
-                  label={this.formatGroupLoadLabel(this.groupRetryLabel, group)}
-                  size="md"
-                  onDsClick={() => this.groupLoadController.request(group.id, 'retry')}
-                />
-              </span>
-            ) : group.loadingMore ? (
-              <span class="ds-table__load-content">
-                <ds-loader size="md" color="secondary" />
-                <ds-text as="span" variant="text-body-medium" color="secondary">
-                  {this.formatGroupLoadLabel(this.groupLoadingMoreLabel, group)}
-                </ds-text>
-              </span>
-            ) : group.hasMore && manualFallback ? (
-              <span class="ds-table__load-content">
-                <ds-button-unfilled
-                  label={this.groupLoadMoreLabel}
-                  aria-label={this.formatGroupLoadLabel(this.groupLoadMoreAriaLabel, group)}
-                  size="md"
-                  onDsClick={() => this.groupLoadController.request(group.id, 'manual')}
-                />
-              </span>
-            ) : (
-              <span class="ds-table__auto-sentinel" aria-hidden="true" />
-            )}
+            {renderTableLoadContent({
+              error,
+              loading: !!group.loadingMore,
+              hasMore: !!group.hasMore,
+              manualFallback,
+              retryLabel: this.formatGroupLoadLabel(this.groupRetryLabel, group),
+              loadingLabel: this.formatGroupLoadLabel(this.groupLoadingMoreLabel, group),
+              loadMoreLabel: this.groupLoadMoreLabel,
+              loadMoreAriaLabel: this.formatGroupLoadLabel(this.groupLoadMoreAriaLabel, group),
+              onRetry: () => this.groupLoadController.request(group.id, 'retry'),
+              onLoadMore: () => this.groupLoadController.request(group.id, 'manual'),
+            })}
           </div>
         </td>
       </tr>
     );
   }
+
 
   private renderStickyGroup(model: TableRenderModel) {
     if (!this.documentStickyHeader || !this.activeStickyGroupId) return null;
@@ -2223,401 +1825,32 @@ export class Table {
     );
   }
 
-  private renderVirtualSpacer(
-    node: Extract<TableVirtualNode, { kind: 'spacer' }>,
-    totalColumns: number
-  ) {
-    if (node.size <= 0) return null;
-    return (
-      <tr class="ds-table__virtual-spacer-row" key={node.key} aria-hidden="true">
-        <td
-          class="ds-table__virtual-spacer-cell"
-          colSpan={totalColumns}
-          style={
-            { '--_table-virtual-spacer-block-size': `${node.size}px` } as Record<string, string>
-          }
-        />
-      </tr>
-    );
-  }
-
-  private renderVirtualRow(
-    node: Extract<TableVirtualNode, { kind: 'row' }>,
-    model: TableRenderModel,
-    rowsById: Map<string, TableRow>,
-    rowKey: string
-  ) {
-    const row = node.item.rowId ? rowsById.get(node.item.rowId) : undefined;
-    if (!row) return null;
-    return this.renderRow(row, model, node.index + 2, node.item.variableSize, rowKey);
-  }
-
-  private virtualRowPoolKeys(
-    nodes: readonly TableVirtualNode[],
-    scope: string
-  ): Map<number, string> {
-    const rows = nodes.filter(
-      (node): node is Extract<TableVirtualNode, { kind: 'row' }> => node.kind === 'row'
-    );
-    const state = this.virtualRowPoolStates.get(scope) ?? {
-      slotsByRowId: new Map<string, number>(),
-      nextSlot: 0,
-    };
-    this.virtualRowPoolStates.set(scope, state);
-    const desiredIds = new Set(rows.map(node => node.item.rowId ?? node.item.id));
-    const freeSlots: number[] = [];
-    for (const [rowId, slot] of state.slotsByRowId) {
-      if (desiredIds.has(rowId)) continue;
-      state.slotsByRowId.delete(rowId);
-      freeSlots.push(slot);
-    }
-    freeSlots.sort((left, right) => left - right);
-
-    const keys = new Map<number, string>();
-    for (const node of rows) {
-      const rowId = node.item.rowId ?? node.item.id;
-      let slot = state.slotsByRowId.get(rowId);
-      if (slot == null) {
-        slot = freeSlots.shift() ?? state.nextSlot++;
-        state.slotsByRowId.set(rowId, slot);
-      }
-      keys.set(node.index, `virtual-row-slot-${slot}`);
-    }
-    return keys;
-  }
-
-  private renderVirtualGroup(
-    node: Extract<TableVirtualNode, { kind: 'group' }>,
-    model: TableRenderModel,
-    rowsById: Map<string, TableRow>,
-    groupsById: Map<string, TableGroupRenderModel>
-  ) {
-    const groupModel = groupsById.get(node.groupId);
-    if (!groupModel) return null;
-    const { group, collapsed: isCollapsed, intent, intentClass } = groupModel;
-    const rowKeys = this.virtualRowPoolKeys(node.nodes, `group:${group.id}`);
-    return (
-      <tbody
-        class="ds-table__body ds-table__group"
-        role="rowgroup"
-        data-group-id={group.id}
-        data-group-intent={intent}
-        data-collapsed={isCollapsed ? 'true' : undefined}
-        key={group.id}
-      >
-        <tr
-          role="row"
-          data-virtual-id={`group:${group.id}`}
-          aria-rowindex={node.headerIndex + 2}
-          class={{
-            'ds-table__group-row': true,
-            'ds-table__group-row--native-sticky': this.stickyHeader && !this.documentStickyHeader,
-          }}
-        >
-          <th
-            class={{
-              'ds-table__group-cell': true,
-              [intentClass ?? '']: !!intentClass,
-            }}
-            role="rowheader"
-            scope="rowgroup"
-            colSpan={model.totalColumns}
-          >
-            {this.renderGroupContent(groupModel)}
-          </th>
-        </tr>
-        {node.nodes.map(child =>
-          child.kind === 'spacer'
-            ? this.renderVirtualSpacer(child, model.totalColumns)
-            : this.renderVirtualRow(
-                child,
-                model,
-                rowsById,
-                rowKeys.get(child.index) ?? `virtual-row-${child.index}`
-              )
-        )}
-      </tbody>
-    );
-  }
-
-  private renderVirtualBodies(model: TableRenderModel, plan: TableVirtualPlan) {
-    let lookup = this.virtualLookupCache;
-    if (!lookup || lookup.rows !== model.loadedRows || lookup.groups !== model.groups) {
-      lookup = {
-        rows: model.loadedRows,
-        groups: model.groups,
-        rowsById: new Map(model.loadedRows.map(row => [row.id, row])),
-        groupsById: new Map(model.groups.map(groupModel => [groupModel.group.id, groupModel])),
-      };
-      this.virtualLookupCache = lookup;
-    }
-    const { rowsById, groupsById } = lookup;
-    if (!model.grouped) {
-      for (const scope of this.virtualRowPoolStates.keys()) {
-        if (scope !== 'flat') this.virtualRowPoolStates.delete(scope);
-      }
-      const rowKeys = this.virtualRowPoolKeys(plan.nodes, 'flat');
-      return (
-        <tbody class="ds-table__body">
-          {plan.nodes.map(node =>
-            node.kind === 'spacer'
-              ? this.renderVirtualSpacer(node, model.totalColumns)
-              : node.kind === 'row'
-                ? this.renderVirtualRow(
-                    node,
-                    model,
-                    rowsById,
-                    rowKeys.get(node.index) ?? `virtual-row-${node.index}`
-                  )
-                : null
-          )}
-        </tbody>
-      );
-    }
-
-    const activeGroupScopes = new Set(
-      plan.nodes
-        .filter(
-          (node): node is Extract<TableVirtualNode, { kind: 'group' }> => node.kind === 'group'
-        )
-        .map(node => `group:${node.groupId}`)
-    );
-    for (const scope of this.virtualRowPoolStates.keys()) {
-      if (!activeGroupScopes.has(scope)) this.virtualRowPoolStates.delete(scope);
-    }
-    return plan.nodes.map(node => {
-      if (node.kind === 'spacer') {
-        return (
-          <tbody class="ds-table__body ds-table__virtual-pad" aria-hidden="true" key={node.key}>
-            {this.renderVirtualSpacer(node, model.totalColumns)}
-          </tbody>
-        );
-      }
-      if (node.kind === 'group') {
-        return this.renderVirtualGroup(node, model, rowsById, groupsById);
-      }
-      return null;
-    });
-  }
-
   private renderDataBodies(model: TableRenderModel, plan: TableVirtualPlan | null) {
-    if (plan) return this.renderVirtualBodies(model, plan);
-
-    if (!model.grouped) {
-      return (
-        <tbody class="ds-table__body">{this.rows.map(row => this.renderRow(row, model))}</tbody>
-      );
-    }
-
-    return model.groups.map(groupModel => {
-      const { group, collapsed: isCollapsed, intent, intentClass } = groupModel;
-      const stickySourceHidden = this.documentStickyHeader && this.activeStickyGroupId === group.id;
-      return (
-        <tbody
-          class="ds-table__body ds-table__group"
-          role="rowgroup"
-          data-group-id={group.id}
-          data-group-intent={intent}
-          data-collapsed={isCollapsed ? 'true' : undefined}
-          aria-busy={!isCollapsed && group.loadingMore ? 'true' : undefined}
-          key={group.id}
-        >
-          <tr
-            role="row"
-            aria-hidden={stickySourceHidden ? 'true' : undefined}
-            class={{
-              'ds-table__group-row': true,
-              'ds-table__group-row--native-sticky': this.stickyHeader && !this.documentStickyHeader,
-            }}
-          >
-            <th
-              class={{
-                'ds-table__group-cell': true,
-                'ds-table__group-cell--sticky-source-hidden': stickySourceHidden,
-                [intentClass ?? '']: !!intentClass,
-              }}
-              role="rowheader"
-              scope="rowgroup"
-              colSpan={model.totalColumns}
-            >
-              {this.renderGroupContent(groupModel)}
-            </th>
-          </tr>
-          {!isCollapsed && group.rows.map(row => this.renderRow(row, model))}
-          {!isCollapsed && this.renderGroupLoadRow(group, model.totalColumns)}
-        </tbody>
-      );
+    return this.bodyRenderer.render({
+      model,
+      plan,
+      rows: this.rows,
+      stickyHeader: this.stickyHeader,
+      documentStickyHeader: this.documentStickyHeader,
+      activeStickyGroupId: this.activeStickyGroupId,
+      renderRow: (row, renderModel, ariaRowIndex, variableVirtualSize, rowKey) =>
+        this.renderRow(row, renderModel, ariaRowIndex, variableVirtualSize, rowKey),
+      renderGroupContent: groupModel => this.renderGroupContent(groupModel),
+      renderGroupLoadRow: (group, totalColumns) =>
+        this.renderGroupLoadRow(group, totalColumns),
     });
   }
+
 
   private renderSkeletonBody(model: TableRenderModel) {
-    const count = Math.min(20, Math.max(1, Math.round(this.skeletonRows) || 1));
-    return (
-      <tbody class="ds-table__body ds-table__skeleton-body">
-        {Array.from({ length: count }, (_, index) => (
-          <tr class="ds-table__row ds-table__skeleton-row" key={`skeleton-${index}`}>
-            {model.selectable && (
-              <td
-                class="ds-table__cell ds-table__selection-cell ds-table__cell--sticky-start ds-table__skeleton-cell ds-interaction-fill ds-interaction-fill--grouped"
-                data-skeleton-kind="checkbox"
-              >
-                <span class="ds-table__skeleton-checkbox-canvas ds-interaction-fill__content">
-                  <ds-skeleton
-                    class="ds-table__skeleton-checkbox"
-                    variant="control"
-                    controlSize="xs"
-                    width="var(--dimension-iconography-sm)"
-                  />
-                </span>
-                {this.renderStickyEdge('start')}
-              </td>
-            )}
-            {this.visibleColumns.map(column => this.renderSkeletonCell(column, index))}
-          </tr>
-        ))}
-      </tbody>
-    );
+    return renderTableSkeletonBody({
+      model,
+      visibleColumns: this.visibleColumns,
+      skeletonRows: this.skeletonRows,
+      renderStickyEdge: sticky => this.renderStickyEdge(sticky),
+    });
   }
 
-  private renderSkeletonCell(column: TableColumn, rowIndex: number) {
-    const skeleton =
-      column.skeleton ??
-      ((column.kind === 'action'
-        ? { kind: 'action', variant: 'icon' }
-        : { kind: 'text', lines: 1 }) satisfies TableCellSkeleton);
-    const align = column.align ?? 'start';
-    const text = skeleton.kind === 'text';
-    const iconText = skeleton.kind === 'icon-text';
-    const lines = text || iconText ? (skeleton.lines ?? 1) : 1;
-    const tag = skeleton.kind === 'tag';
-    const icon = skeleton.kind === 'icon';
-    const image = skeleton.kind === 'image';
-    const imageVariant = image
-      ? tableCellImageVariant(resolveTableCellImageTracks(skeleton.tracks))
-      : undefined;
-    const iconTextVariant = iconText
-      ? lines === 3
-        ? 'triple'
-        : lines === 2
-          ? 'multi'
-          : 'single'
-      : undefined;
-    const action = skeleton.kind === 'action';
-    const blank = skeleton.kind === 'blank';
-
-    return (
-      <td
-        class={{
-          'ds-table__cell': true,
-          [`ds-table__cell--align-${align}`]: true,
-          'ds-table__skeleton-cell': true,
-          'ds-table__cell--text-single': text && lines === 1,
-          'ds-table__cell--text-multi': text && lines === 2,
-          'ds-table__cell--text-triple': text && lines === 3,
-          'ds-table__cell--tag': tag,
-          'ds-table__cell--tag-tag-only': tag,
-          'ds-table__cell--icon': icon,
-          'ds-table__cell--icon-text': iconText,
-          [`ds-table__cell--icon-text-${iconTextVariant}`]: iconText,
-          'ds-table__cell--image': image,
-          [`ds-table__cell--image-${imageVariant}`]: image,
-          'ds-table__cell--action': action,
-          'ds-table__cell--blank': blank,
-          'ds-table__cell--sticky-start': column.sticky === 'start',
-          'ds-table__cell--sticky-end': column.sticky === 'end',
-          'ds-interaction-fill': true,
-          'ds-interaction-fill--grouped': true,
-        }}
-        data-column-id={column.id}
-        data-skeleton-kind={skeleton.kind}
-        data-cell-variant={imageVariant ?? iconTextVariant}
-        key={`skeleton-${rowIndex}:${column.id}`}
-      >
-        <span class="ds-table__cell-content ds-interaction-fill__content">
-          {this.renderSkeletonCellContent(skeleton)}
-        </span>
-        {this.renderStickyEdge(column.sticky)}
-      </td>
-    );
-  }
-
-  private renderSkeletonCellContent(skeleton: TableCellSkeleton) {
-    if (skeleton.kind === 'blank') return null;
-
-    if (skeleton.kind === 'image') {
-      return (
-        <span class="ds-table__cell-image ds-table__skeleton-image">
-          <ds-skeleton
-            class="ds-table__skeleton-image-shape"
-            variant="control"
-            controlSize="md"
-            width="100%"
-          />
-        </span>
-      );
-    }
-
-    if (skeleton.kind === 'icon') {
-      return <ds-skeleton variant="icon" iconSize="md" rounded={skeleton.rounded ?? false} />;
-    }
-
-    if (skeleton.kind === 'tag') {
-      return <ds-skeleton variant="control" controlSize="sm" width={skeleton.width ?? '64%'} />;
-    }
-
-    if (skeleton.kind === 'action') {
-      const iconOnly = (skeleton.variant ?? 'icon') === 'icon';
-      return (
-        <ds-skeleton
-          variant="control"
-          controlSize="sm"
-          width={skeleton.width ?? (iconOnly ? '24px' : '72%')}
-        />
-      );
-    }
-
-    const lines = skeleton.lines ?? 1;
-    const copy = (
-      <span class="ds-table__cell-copy">
-        <span class="ds-table__cell-primary ds-table__cell-track ds-table__cell-track--text">
-          <ds-skeleton
-            variant="text"
-            textVariant="text-body-medium"
-            width={skeleton.primaryWidth ?? '100%'}
-          />
-        </span>
-        {lines >= 2 && (
-          <span class="ds-table__cell-secondary ds-table__cell-track ds-table__cell-track--text">
-            <ds-skeleton
-              variant="text"
-              textVariant="text-body-small"
-              width={skeleton.secondaryWidth ?? '72%'}
-            />
-          </span>
-        )}
-        {lines === 3 && (
-          <span class="ds-table__cell-tertiary ds-table__cell-track ds-table__cell-track--text">
-            <ds-skeleton
-              variant="text"
-              textVariant="text-body-small"
-              width={skeleton.tertiaryWidth ?? '56%'}
-            />
-          </span>
-        )}
-      </span>
-    );
-    if (skeleton.kind === 'icon-text') {
-      return (
-        <span class="ds-table__cell-icon-text">
-          <span class="ds-table__cell-icon-text-icon">
-            <ds-skeleton variant="icon" iconSize="md" />
-          </span>
-          {copy}
-        </span>
-      );
-    }
-    return copy;
-  }
 
   private renderStateBody(kind: 'empty' | 'error' | 'virtual-viewport', totalColumns: number) {
     const error = kind !== 'empty';
@@ -2672,53 +1905,25 @@ export class Table {
         >
           <td class="ds-table__load-cell" colSpan={model.totalColumns}>
             <div class="ds-table__viewport-band ds-table__load-band">
-              {error ? (
-                <span class="ds-table__load-content ds-table__load-content--error">
-                  <span class="ds-table__load-copy">
-                    <ds-icon name="ErrorTriangle" size="md" color="secondary" aria-hidden="true" />
-                    <ds-text as="span" variant="text-body-medium" color="secondary">
-                      {error}
-                    </ds-text>
-                  </span>
-                  <ds-button-unfilled
-                    label={this.retryLabel}
-                    size="md"
-                    onDsClick={() => this.loadController.request('retry')}
-                  />
-                </span>
-              ) : this.loadingMore ? (
-                <span class="ds-table__load-content">
-                  <ds-loader size="md" color="secondary" />
-                  <ds-text as="span" variant="text-body-medium" color="secondary">
-                    {this.loadingMoreLabel}
-                  </ds-text>
-                </span>
-              ) : this.hasMore && manualFallback ? (
-                <span class="ds-table__load-content">
-                  <ds-button-unfilled
-                    label={this.loadMoreLabel}
-                    size="md"
-                    onDsClick={() => this.loadController.request('manual')}
-                  />
-                </span>
-              ) : this.hasMore ? (
-                <span class="ds-table__auto-sentinel" aria-hidden="true" />
-              ) : (
-                <ds-text
-                  class="ds-table__load-content"
-                  as="span"
-                  variant="text-body-medium"
-                  color="secondary"
-                >
-                  {this.endOfResultsLabel}
-                </ds-text>
-              )}
+              {renderTableLoadContent({
+                error,
+                loading: this.loadingMore,
+                hasMore: this.hasMore,
+                manualFallback,
+                retryLabel: this.retryLabel,
+                loadingLabel: this.loadingMoreLabel,
+                loadMoreLabel: this.loadMoreLabel,
+                endOfResultsLabel: this.endOfResultsLabel,
+                onRetry: () => this.loadController.request('retry'),
+                onLoadMore: () => this.loadController.request('manual'),
+              })}
             </div>
           </td>
         </tr>
       </tbody>
     );
   }
+
 
   private renderDocumentStickyHeader(model: TableRenderModel) {
     if (!this.documentStickyHeader) return null;

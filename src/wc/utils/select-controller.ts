@@ -9,6 +9,8 @@ import { choicePopupMinWidth, resolveChoicePopupAlignOffset } from './choice-pop
 import { resolveCssLengthPx } from './resolve-css-length-px';
 import { resolveCssTimeMs } from './resolve-css-time-ms';
 import { TOKEN_DEFAULTS } from './token-defaults';
+import { eventIntersectsComposedBoundary } from './anchored-overlay-interaction-controller';
+import { resolveAnchoredOverlayBoundaryRect } from './anchored-overlay-boundary';
 
 type PopupPosition = { x: number; y: number };
 
@@ -21,6 +23,7 @@ export interface SelectControllerState<T extends ChoiceOption> {
   readonly isDisabled: boolean;
   readonly preferredIndex: number;
   readonly popupAlign: 'start' | 'end';
+  readonly boundary: HTMLElement | undefined;
   open: boolean;
   activeIndex: number;
   searchTerm: string;
@@ -73,6 +76,7 @@ export class SelectController<T extends ChoiceOption> {
           viewportPadPx: sectionPadding,
           viewportWidth: window.innerWidth,
           viewportHeight: window.innerHeight,
+          collisionRect: resolveAnchoredOverlayBoundaryRect(trigger, this.state.boundary),
         };
       },
       apply: ({ x, y }) => {
@@ -281,7 +285,7 @@ export class SelectController<T extends ChoiceOption> {
   private bindPopupListeners() {
     this.unbindPopupListeners();
     this.outsideHandler = event => {
-      if (this.state.host.contains(event.target as Node)) return;
+      if (eventIntersectsComposedBoundary(event, this.state.host)) return;
       this.closePopup();
     };
     document.addEventListener('mousedown', this.outsideHandler, true);

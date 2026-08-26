@@ -21,6 +21,11 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
+test('unfilled buttons only own a tooltip for the collapsible table-caption contract', async ({ page }) => {
+  await expect(page.locator('#unfilled-label > ds-tooltip')).toHaveCount(0);
+  await expect(page.locator('#unfilled-collapsible-label > ds-tooltip')).toHaveCount(1);
+});
+
 test('filled lg consumes the complete 40px control recipe', async ({ page }) => {
   const metrics = await page.locator('#filled-lg').evaluate(element => {
     const button = element.querySelector<HTMLElement>('button')!;
