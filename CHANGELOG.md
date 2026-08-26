@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.19.0](https://github.com/zainadeel/compomo/compare/v14.18.1...v14.19.0) (2026-08-26)
+
+
+### Added
+
+* make pagination boundary controls optional ([#531](https://github.com/zainadeel/compomo/issues/531)) ([6aa904d](https://github.com/zainadeel/compomo/commit/6aa904d438a8535a2d69cf687787a132a2a53f0f))
+
 ## [14.18.1](https://github.com/zainadeel/compomo/compare/v14.18.0...v14.18.1) (2026-08-26)
 
 
