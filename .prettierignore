@@ -1,0 +1,14 @@
+# Generated package and framework output
+dist/
+public/r/
+src/.generated/
+src/components.d.ts
+src/wc/components.d.ts
+
+# Local build, test, and browser artifacts
+.stencil/
+.playwright-cli/
+coverage/
+playwright-report/
+storybook-static/
+test-results/
