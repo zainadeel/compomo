@@ -44,6 +44,8 @@ export class Pagination {
   @Prop() pageSizeAriaLabel: string | undefined;
   /** Accessible name for the pagination navigation region. */
   @Prop() label: string = 'Pagination';
+  /** Include direct first-page and last-page controls. */
+  @Prop() showFirstLastButtons: boolean = false;
   /** Prevent interaction while the owner replaces the current data page. */
   @Prop() loading: boolean = false;
 
@@ -96,6 +98,7 @@ export class Pagination {
       itemLabel: this.itemLabel,
       pageSizeLabel: this.pageSizeLabel,
       ariaLabel: this.label,
+      showFirstLastButtons: this.showFirstLastButtons,
       previousPageIndex: state.pageIndex,
       previousPageSize: state.pageSize,
       previousPageSizeMode: state.pageSizeMode,
@@ -127,6 +130,7 @@ export class Pagination {
       itemLabel: this.itemLabel,
       pageSizeLabel: this.pageSizeLabel,
       ariaLabel: this.label,
+      showFirstLastButtons: this.showFirstLastButtons,
       previousPageIndex: state.pageIndex,
       previousPageSize: state.pageSize,
       previousPageSizeMode: state.pageSizeMode,
@@ -244,16 +248,18 @@ export class Pagination {
             length="var(--dimension-size-250)"
           />
           <div class="pagination__navigation">
-            <ds-button-unfilled
-              class="pagination__boundary"
-              variant="icon"
-              size="md"
-              icon="ChevronLeftDouble"
-              ariaLabel="First page"
-              hasBorder={false}
-              isInactive={this.loading || atStart}
-              onDsClick={() => this.requestPage(0)}
-            />
+            {this.showFirstLastButtons ? (
+              <ds-button-unfilled
+                class="pagination__boundary"
+                variant="icon"
+                size="md"
+                icon="ChevronLeftDouble"
+                ariaLabel="First page"
+                hasBorder={false}
+                isInactive={this.loading || atStart}
+                onDsClick={() => this.requestPage(0)}
+              />
+            ) : null}
             <ds-button-unfilled
               variant="icon"
               size="md"
@@ -281,16 +287,18 @@ export class Pagination {
               isInactive={this.loading || atEnd}
               onDsClick={() => this.requestPage(state.pageIndex + 1)}
             />
-            <ds-button-unfilled
-              class="pagination__boundary"
-              variant="icon"
-              size="md"
-              icon="ChevronRightDouble"
-              ariaLabel="Last page"
-              hasBorder={false}
-              isInactive={this.loading || atEnd}
-              onDsClick={() => this.requestPage(state.totalPages - 1)}
-            />
+            {this.showFirstLastButtons ? (
+              <ds-button-unfilled
+                class="pagination__boundary"
+                variant="icon"
+                size="md"
+                icon="ChevronRightDouble"
+                ariaLabel="Last page"
+                hasBorder={false}
+                isInactive={this.loading || atEnd}
+                onDsClick={() => this.requestPage(state.totalPages - 1)}
+              />
+            ) : null}
           </div>
           <span class="ds-visually-hidden" role="status" aria-live="polite" aria-atomic="true">
             {announcedRange} {this.itemLabel}. {announcedPage}.

@@ -1942,6 +1942,11 @@ export namespace Components {
          */
         "pageSizeOptions": number[];
         /**
+          * Include direct first-page and last-page controls.
+          * @default false
+         */
+        "showFirstLastButtons": boolean;
+        /**
           * Controlled total number of top-level items across every page.
           * @default 0
          */
@@ -6961,6 +6966,11 @@ declare namespace LocalJSX {
          */
         "pageSizeOptions"?: number[];
         /**
+          * Include direct first-page and last-page controls.
+          * @default false
+         */
+        "showFirstLastButtons"?: boolean;
+        /**
           * Controlled total number of top-level items across every page.
           * @default 0
          */
@@ -9202,6 +9212,7 @@ declare namespace LocalJSX {
         "pageSizeLabel": string;
         "pageSizeAriaLabel": string | undefined;
         "label": string;
+        "showFirstLastButtons": boolean;
         "loading": boolean;
     }
     interface DsPanelNavAttributes {

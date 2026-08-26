@@ -7,14 +7,15 @@
   "tag": "ds-pagination",
   "audience": "general",
   "status": "stable",
-  "summary": "Controlled fixed or fitted page-size, compact range, and first/previous/next/last navigation for application-owned data windows.",
+  "summary": "Controlled fixed or fitted page-size, compact range, adjacent-page navigation, and optional first/last controls for application-owned data windows.",
   "useWhen": [
     "A result set is divided into discrete pages and the application owns fetching or slicing each page.",
-    "A table or list needs a compact page-size selector, result range, and boundary-aware navigation."
+    "A table or list needs a compact page-size selector, result range, and boundary-aware navigation.",
+    "Direct first-page and last-page navigation is useful enough to opt into alongside the default Previous and Next controls."
   ],
   "avoidWhen": [
     "More results append to one continuous list; use the owning component's incremental-loading behavior instead.",
-    "Only previous and next navigation is meaningful and the total result count is unknown."
+    "The total result count is unknown; use an incremental-loading pattern instead."
   ],
   "commonlyComposedWith": [
     "component:ds-table",
@@ -25,18 +26,20 @@
     "The component renders a named navigation region, gives its compact page-size noun a complete accessible label, and gives every icon-only boundary control an explicit page action name.",
     "The visible page-size cluster states the localized noun, selected size, and current-page count of total, for example Rows: [25] 25 of 500. The page position uses compact ‘of’ phrasing, for example 1 of 20. A polite atomic status update retains the complete current range and ‘Page’ phrasing with the localized item noun.",
     "Left and Right Arrow request the adjacent page while focus is within pagination navigation controls. The page-size combobox retains its own arrow-key behavior.",
-    "Inactive boundary controls and every control during loading remain non-interactive while retaining their accessible names."
+    "Inactive boundary controls and every control during loading remain non-interactive while retaining their accessible names.",
+    "showFirstLastButtons adds explicitly named First page and Last page controls; Previous and Next remain present in either mode."
   ],
   "states": [
     "pageIndex, numeric effective pageSize, pageSizeMode, totalItems, and pageSizeOptions are controlled inputs. dsChange reports the complete next pagination state, previous index, size, and mode, and whether the request changed the page, page size, or fitted capacity; it never mutates controlled inputs.",
     "Page-size changes request the first page. Out-of-range page indexes and invalid numeric inputs normalize only for presentation; the owner remains authoritative.",
     "Zero results display 0–0 of 0 and Page 1 of 1. A partial final page caps the visible range at totalItems.",
     "loading preserves the full pagination surface, applies aria-busy to the navigation region, and prevents page or page-size requests.",
-    "fitToPage appends a Fit to page choice. fitPageSize supplies its effective whole-item capacity; the closed trigger says Fit while the range continues to expose the resulting count. fitToPageInactive keeps that choice visible but unavailable when fitting is not meaningful for the current data shape. Pagination does not measure layouts itself."
+    "fitToPage appends a Fit to page choice. fitPageSize supplies its effective whole-item capacity; the closed trigger says Fit while the range continues to expose the resulting count. fitToPageInactive keeps that choice visible but unavailable when fitting is not meaningful for the current data shape. Pagination does not measure layouts itself.",
+    "showFirstLastButtons defaults to false. Enable it when direct jumps to both result boundaries materially help the workflow."
   ],
   "responsiveBehavior": [
-    "The full-width controls remain on one line with noun, selected size, current-page count of total, a vertical divider, page position, and first, previous, next, and last navigation.",
-    "Inside a ds-table container narrower than 900px, pagination hides the visible current-page count and first/last boundary controls while retaining the page-size noun and selector plus previous, page position, and next. The complete current range remains available to assistive technology."
+    "The full-width controls remain on one line with noun, selected size, current-page count of total, a vertical divider, page position, Previous and Next, plus optional First and Last navigation.",
+    "Inside a ds-table container narrower than 900px, pagination hides the visible current-page count and any opted-in first/last controls while retaining the page-size noun and selector plus Previous, page position, and Next. The complete current range remains available to assistive technology."
   ],
   "frameworkCaveats": {
     "customElements": [

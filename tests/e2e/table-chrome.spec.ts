@@ -670,6 +670,42 @@ test('owns a controlled caption-bar data mode switcher for supported modes', asy
   await expect(page.getByRole('menu', { name: 'Customize table' })).toBeVisible();
 });
 
+test('defaults to adjacent-page controls and supports opting into first and last', async ({
+  page,
+}) => {
+  const defaultTable = page.locator('#grouped-paginated');
+  const defaultPagination = defaultTable.locator('ds-pagination');
+
+  await expect(defaultPagination.getByRole('button', { name: 'Previous page' })).toBeVisible();
+  await expect(defaultPagination.getByRole('button', { name: 'Next page' })).toBeVisible();
+  await expect(defaultPagination.getByRole('button', { name: 'First page' })).toHaveCount(0);
+  await expect(defaultPagination.getByRole('button', { name: 'Last page' })).toHaveCount(0);
+  await expect(defaultPagination).toHaveJSProperty('showFirstLastButtons', false);
+
+  await defaultTable.evaluate((element: HTMLDsTableElement) => {
+    element.pagination = { ...element.pagination!, showFirstLastButtons: true };
+  });
+
+  await expect(defaultPagination.getByRole('button', { name: 'First page' })).toBeVisible();
+  await expect(defaultPagination.getByRole('button', { name: 'Last page' })).toBeVisible();
+  await expect(defaultPagination).toHaveJSProperty('showFirstLastButtons', true);
+
+  const optedInPagination = page.locator('#paginated ds-pagination');
+  await optedInPagination.getByRole('button', { name: 'Next page' }).click();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (
+            window as typeof window & {
+              __tablePaginationEvents: Array<Record<string, unknown>>;
+            }
+          ).__tablePaginationEvents.at(-1)
+      )
+    )
+    .toMatchObject({ pageIndex: 1, showFirstLastButtons: true, reason: 'page' });
+});
+
 test('preserves table-owned caption control geometry while its chrome is loading', async ({
   page,
 }) => {

@@ -29,6 +29,8 @@ export interface PaginationState {
   pageSizeLabel?: string;
   /** Accessible name for the pagination navigation region. */
   ariaLabel?: string;
+  /** Include direct first-page and last-page controls around Previous and Next. */
+  showFirstLastButtons?: boolean;
 }
 
 /** Complete next controlled state emitted for a page or page-size request. */
