@@ -29,7 +29,7 @@
         "pattern:conversation"
       ],
       "accessibility": [
-        "Provide concise localized status text; the standard label is Typing followed by a three-dot ellipsis.",
+        "Provide concise localized status text; the standard label is Typing followed by a single Unicode ellipsis.",
         "The polite atomic status announces typing without representing it as a message bubble."
       ],
       "states": [
@@ -52,7 +52,7 @@
           "type": "string",
           "resolvedType": "string",
           "attribute": "label",
-          "default": "'Typing...'",
+          "default": "'Typing…'",
           "required": false,
           "mutable": false,
           "description": "Concise localized typing status."
@@ -67,7 +67,7 @@
         "type": "string",
         "resolvedType": "string",
         "attribute": "label",
-        "default": "'Typing...'",
+        "default": "'Typing…'",
         "required": false,
         "mutable": false,
         "description": "Concise localized typing status."
@@ -125,7 +125,7 @@
     },
     {
       "path": "src/wc/components/TypingIndicator/TypingIndicator.tsx",
-      "content": "import { Component, h, Host, Prop } from '@stencil/core';\n\n@Component({\n  tag: 'ds-typing-indicator',\n  styleUrl: 'TypingIndicator.css',\n  scoped: true,\n})\nexport class TypingIndicator {\n  /** Concise localized typing status. */\n  @Prop() label: string = 'Typing...';\n\n  render() {\n    return (\n      <Host role=\"status\" aria-live=\"polite\" aria-atomic=\"true\">\n        <ds-text as=\"span\" variant=\"text-body-medium\" color=\"secondary\" shimmer>\n          {this.label}\n        </ds-text>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, h, Host, Prop } from '@stencil/core';\n\n@Component({\n  tag: 'ds-typing-indicator',\n  styleUrl: 'TypingIndicator.css',\n  scoped: true,\n})\nexport class TypingIndicator {\n  /** Concise localized typing status. */\n  @Prop() label: string = 'Typing…';\n\n  render() {\n    return (\n      <Host role=\"status\" aria-live=\"polite\" aria-atomic=\"true\">\n        <ds-text as=\"span\" variant=\"text-body-medium\" color=\"secondary\" shimmer>\n          {this.label}\n        </ds-text>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

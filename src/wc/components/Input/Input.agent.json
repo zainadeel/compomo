@@ -45,6 +45,7 @@
     "Choose the native input type that matches the value so browsers and assistive technology can provide appropriate semantics and keyboards.",
     "Error text is associated with the native input and announced as an alert when the invalid state is rendered.",
     "Read-only fields remain focusable and submittable while preventing edits; inactive or disabled fields leave the tab order and are omitted from form submission.",
+    "Number stepper actions are pointer affordances hidden from the accessibility tree; the native spinbutton remains the single keyboard and assistive-technology control.",
     "Suffix content must not carry information that is otherwise absent from the field's visible label, value, or description."
   ],
   "states": [
@@ -55,7 +56,8 @@
     "Search fields show a standard borderless CrossCircle icon action only while they contain a value. Clearing emits the empty value and restores focus to the native field.",
     "The suffix slot is for compact units or decorations. The optional leading icon is decorative and does not replace the field label.",
     "Use autoComplete, inputMode, and enterKeyHint to provide browser and virtual-keyboard hints without changing the value's semantic type.",
-    "Number fields preserve native spinbutton semantics, stepping, and min/max constraint behavior while dsChange continues to report the native string value.",
+    "Number fields preserve native spinbutton semantics, keyboard stepping, and min/max constraint behavior while dsChange continues to report the native string value. Two borderless inset chevron actions split the available inner height, disable independently at their numeric bound, and restore focus to the spinbutton after pointer activation.",
+    "textAlign positions the editable value while the numeric stepper stays on the opposite inline edge, keeping the actions clear of the number: start-aligned values use an inline-end stepper and end-aligned values use an inline-start stepper.",
     "The host exposes focused, filled, dirty, touched, invalid, disabled, read-only, and required data attributes for Field integration and diagnostics.",
     "Use Input only on primary or secondary application backgrounds. It intentionally does not expose alternate surface contexts."
   ],

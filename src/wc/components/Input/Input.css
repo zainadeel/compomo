@@ -1,4 +1,5 @@
 @import '../../utils/interaction-fill.css';
+@import '../../utils/focus-ring.css';
 @import '../../utils/control-inactive.css';
 @import '../../utils/control-density.css';
 @import '../../utils/control-parts.css';
@@ -14,6 +15,7 @@
   --ds-input-placeholder-active: var(--color-foreground-quaternary);
   --ds-input-adornment-fg: var(--color-foreground-secondary);
   --ds-input-border: var(--color-border-secondary);
+  --ds-input-stepper-fg: var(--color-foreground-secondary);
 }
 
 :host(.ds-control-width--fill),
@@ -63,6 +65,79 @@
   text-overflow: ellipsis;
   -webkit-appearance: none;
   appearance: none;
+}
+
+.native-input--align-start {
+  text-align: start;
+}
+
+.native-input--align-end {
+  text-align: end;
+}
+
+/* Replace engine-specific number arrows with one density-aware inset stepper. */
+.native-input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+.native-input[type='number']::-webkit-inner-spin-button,
+.native-input[type='number']::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.input-control--number.input-control--align-start {
+  padding-inline-end: var(--dimension-space-025);
+}
+
+.input-control--number.input-control--align-end {
+  padding-inline-start: var(--dimension-space-025);
+}
+
+.input-control__number-stepper {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  flex: 0 0 var(--ds-control-icon);
+  width: var(--ds-control-icon);
+  height: calc(var(--ds-control-height) - var(--dimension-space-050));
+  overflow: hidden;
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
+  color: var(--ds-input-stepper-fg);
+}
+
+.input-control__number-step {
+  all: unset;
+  position: relative;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  color: inherit;
+  cursor: default;
+}
+
+.input-control__number-step--increment {
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025))
+    var(--ds-control-radius, var(--dimension-radius-025)) 0 0;
+}
+
+.input-control__number-step--decrement {
+  border-radius: 0 0 var(--ds-control-radius, var(--dimension-radius-025))
+    var(--ds-control-radius, var(--dimension-radius-025));
+}
+
+.input-control__number-step:disabled {
+  color: var(--color-foreground-quaternary);
+}
+
+.input-control__number-step-icon {
+  flex-shrink: 0;
 }
 
 .native-input:disabled {
@@ -121,6 +196,10 @@
 }
 
 @media (forced-colors: active) {
+  .input-control__number-step:disabled {
+    color: var(--ds-forced-color-disabled);
+  }
+
   .input-control--bordered:focus-within:not(.input-control--error)::after {
     outline-color: var(--ds-forced-color-selected);
   }

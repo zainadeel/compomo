@@ -33,7 +33,7 @@ import { DividerBackground, DividerInset, DividerLength, DividerOrientation } fr
 import { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuSize, FilterMenuValues, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
 import { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
 import { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
-import { InputSize, InputType, InputWidth } from "./components/Input/Input";
+import { InputSize, InputTextAlign, InputType, InputWidth } from "./components/Input/Input";
 import { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 import { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
 import { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
@@ -101,7 +101,7 @@ export { DividerBackground, DividerInset, DividerLength, DividerOrientation } fr
 export { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuSize, FilterMenuValues, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
 export { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
 export { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
-export { InputSize, InputType, InputWidth } from "./components/Input/Input";
+export { InputSize, InputTextAlign, InputType, InputWidth } from "./components/Input/Input";
 export { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 export { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
 export { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
@@ -1429,6 +1429,11 @@ export namespace Components {
           * Numeric increment used by native stepping and constraint validation.
          */
         "step": number | undefined;
+        /**
+          * Align the editable value; number steppers follow the same inline edge.
+          * @default 'start'
+         */
+        "textAlign": InputTextAlign;
         /**
           * @default 'text'
          */
@@ -3559,7 +3564,7 @@ export namespace Components {
     interface DsTypingIndicator {
         /**
           * Concise localized typing status.
-          * @default 'Typing...'
+          * @default 'Typing…'
          */
         "label": string;
     }
@@ -6400,6 +6405,11 @@ declare namespace LocalJSX {
          */
         "step"?: number | undefined;
         /**
+          * Align the editable value; number steppers follow the same inline edge.
+          * @default 'start'
+         */
+        "textAlign"?: InputTextAlign;
+        /**
           * @default 'text'
          */
         "type"?: InputType;
@@ -8742,7 +8752,7 @@ declare namespace LocalJSX {
     interface DsTypingIndicator {
         /**
           * Concise localized typing status.
-          * @default 'Typing...'
+          * @default 'Typing…'
          */
         "label"?: string;
     }
@@ -9050,6 +9060,7 @@ declare namespace LocalJSX {
         "min": number | undefined;
         "max": number | undefined;
         "step": number | undefined;
+        "textAlign": InputTextAlign;
         "autoComplete": string | undefined;
         "inputMode": string;
         "enterKeyHint": string;

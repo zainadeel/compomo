@@ -144,6 +144,19 @@ test('number input preserves native semantics, constraints, stepping, and form v
   await expect(nativeInput).toHaveAttribute('min', '0');
   await expect(nativeInput).toHaveAttribute('max', '10');
   await expect(nativeInput).toHaveAttribute('step', '0.5');
+  await expect(nativeInput).toHaveAccessibleName('Exact quantity');
+  const increment = input.locator('.input-control__number-step--increment');
+  const decrement = input.locator('.input-control__number-step--decrement');
+  await expect(increment).toHaveAttribute('aria-hidden', 'true');
+  await expect(increment).toHaveJSProperty('tabIndex', -1);
+  await expect(decrement).toHaveAttribute('aria-hidden', 'true');
+  await expect(decrement).toHaveJSProperty('tabIndex', -1);
+
+  await increment.click();
+  await expect(nativeInput).toHaveValue('5.5');
+  await expect(nativeInput).toBeFocused();
+  await decrement.click();
+  await expect(nativeInput).toHaveValue('5');
 
   await nativeInput.fill('7.5');
   await nativeInput.press('ArrowUp');
@@ -159,6 +172,46 @@ test('number input preserves native semantics, constraints, stepping, and form v
   expect(await page.locator('#number-input-form').evaluate(form =>
     (form as HTMLFormElement).checkValidity()
   )).toBe(false);
+
+  await nativeInput.fill('10');
+  await expect(increment).toBeDisabled();
+  await expect(decrement).toBeEnabled();
+});
+
+test('number stepper follows value alignment and splits the inset control height', async ({ page }) => {
+  for (const [id, alignment] of [
+    ['input-number', 'start'],
+    ['input-number-end', 'end'],
+  ] as const) {
+    const geometry = await page.locator(`#${id}`).evaluate(element => {
+      const control = element.querySelector<HTMLElement>('.input-control')!.getBoundingClientRect();
+      const input = element.querySelector<HTMLInputElement>('input')!;
+      const inputRect = input.getBoundingClientRect();
+      const stepper = element
+        .querySelector<HTMLElement>('.input-control__number-stepper')!
+        .getBoundingClientRect();
+      const buttons = [...element.querySelectorAll<HTMLElement>('.input-control__number-step')]
+        .map(button => button.getBoundingClientRect());
+      return {
+        control: { left: control.left, right: control.right, top: control.top, bottom: control.bottom },
+        input: { left: inputRect.left, right: inputRect.right, textAlign: getComputedStyle(input).textAlign },
+        stepper: { left: stepper.left, right: stepper.right, top: stepper.top, bottom: stepper.bottom },
+        buttonHeights: buttons.map(button => button.height),
+      };
+    });
+
+    expect(geometry.input.textAlign).toBe(alignment);
+    expect(geometry.stepper.top - geometry.control.top).toBeCloseTo(2, 5);
+    expect(geometry.control.bottom - geometry.stepper.bottom).toBeCloseTo(2, 5);
+    expect(geometry.buttonHeights[0]).toBeCloseTo(geometry.buttonHeights[1], 5);
+    if (alignment === 'start') {
+      expect(geometry.control.right - geometry.stepper.right).toBeCloseTo(2, 5);
+      expect(geometry.stepper.left).toBeGreaterThanOrEqual(geometry.input.right);
+    } else {
+      expect(geometry.stepper.left - geometry.control.left).toBeCloseTo(2, 5);
+      expect(geometry.stepper.right).toBeLessThanOrEqual(geometry.input.left);
+    }
+  }
 });
 
 test('input follows shared control density, focus, and search-clear recipes', async ({ page }) => {
