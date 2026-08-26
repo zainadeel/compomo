@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.18.1](https://github.com/zainadeel/compomo/compare/v14.18.0...v14.18.1) (2026-08-26)
+
+
+### Changed
+
+* harden overlays and component rendering ([#528](https://github.com/zainadeel/compomo/issues/528)) ([c528112](https://github.com/zainadeel/compomo/commit/c528112ad805dd8338758e7b2252a5619b2f7376))
+
 ## [14.18.0](https://github.com/zainadeel/compomo/compare/v14.17.1...v14.18.0) (2026-08-25)
 
 
