@@ -17,8 +17,8 @@ import {
   tableCellPrimary,
   tableCollapseAllHost,
   tableColumnSize,
+  tableElasticSpacerIndex,
   tableExplicitMinWidth,
-  tableFlexibleColumnId,
   tableGroupIntentClass,
   tableGroupLabelColor,
   tableModelIssues,
@@ -131,10 +131,10 @@ test('hosts collapse-all on the trailing action column or a scrollport overlay',
   assert.deepEqual(tableCollapseAllHost(plainColumns), { mode: 'floating' });
 });
 
-test('keeps fixed lanes stable by assigning spare width to one data column', () => {
-  assert.equal(tableFlexibleColumnId(columns), 'score');
+test('places an elastic spacer before trailing fixed lanes only when every column is sized', () => {
+  assert.equal(tableElasticSpacerIndex(columns), 2);
   assert.equal(
-    tableFlexibleColumnId([
+    tableElasticSpacerIndex([
       { id: 'name', header: 'Name', size: 160 },
       { id: 'notes', header: 'Notes' },
       { id: 'actions', kind: 'action', header: '', headerLabel: 'Actions' },
@@ -142,13 +142,21 @@ test('keeps fixed lanes stable by assigning spare width to one data column', () 
     undefined
   );
   assert.equal(
-    tableFlexibleColumnId([
+    tableElasticSpacerIndex([
       { id: 'name', header: 'Name', size: 160 },
       { id: 'status', header: 'Status', size: 120 },
       { id: 'identifier', header: 'Identifier', size: 140, sticky: true },
       { id: 'actions', kind: 'action', header: '', headerLabel: 'Actions' },
     ]),
-    'status'
+    3
+  );
+  assert.equal(
+    tableElasticSpacerIndex([
+      { id: 'name', header: 'Name', size: 160 },
+      { id: 'identifier', header: 'Identifier', size: 140, sticky: 'end' },
+      { id: 'actions', kind: 'action', header: '', headerLabel: 'Actions' },
+    ]),
+    1
   );
   assert.equal(
     tableColumnSize({ id: 'actions', kind: 'action', header: '', headerLabel: 'Actions' }),

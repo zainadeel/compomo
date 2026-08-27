@@ -45,6 +45,8 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(componentTsx, /renderTableRowView/);
   assert.match(componentTsx, /TableBodyRenderer/);
   assert.match(componentTsx, /renderTableSkeletonBody/);
+  assert.match(componentTsx, /ds-table__elastic-spacer-column/);
+  assert.match(componentTsx, /ds-table__elastic-spacer-cell/);
   assert.match(componentTsx, /renderTableLoadContent/);
   assert.match(rowViewTsx, /resolveTableCellPresentation/);
   assert.match(bodyRendererTsx, /assignTableVirtualRowPoolKeys/);
@@ -71,6 +73,8 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(componentTsx, /<slot name="footer-leading"/);
   assert.match(componentTsx, /<slot name="footer-trailing"/);
   assert.match(rowViewTsx, /ds-table__cell--action-menu/);
+  assert.match(rowViewTsx, /data-elastic-spacer="true"/);
+  assert.match(skeletonViewTsx, /data-elastic-spacer="true"/);
   assert.match(componentTsx, /renderOverflowActionMenu/);
   assert.match(componentTsx, /<ds-menu/);
   assert.match(componentTsx, /renderTruncateTooltip/);
@@ -131,6 +135,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
     'ds-table__skeleton-row',
     'ds-table__load-cell',
     'ds-table__state-cell',
+    'ds-table__elastic-spacer-cell',
     'ds-table__footer',
     'ds-table__caption-leading',
     'ds-table__caption-trailing',

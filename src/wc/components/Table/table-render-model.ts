@@ -4,8 +4,8 @@ import {
   resolvedTableGroupCount,
   tableCollapseAllHost,
   tableColumnSize,
+  tableElasticSpacerIndex,
   tableExplicitMinWidth,
-  tableFlexibleColumnId,
   tableGroupIntentClass,
   tableGroupLabelColor,
   tableRows,
@@ -48,7 +48,7 @@ export interface TableRenderModel {
   allGroupsCollapsed: boolean;
   showCollapseAll: boolean;
   collapseAllHost: TableCollapseAllHost | undefined;
-  flexibleColumnId: string | undefined;
+  elasticSpacerIndex: number | undefined;
   tableStyle: Record<string, string> | undefined;
 }
 
@@ -75,14 +75,12 @@ export function createTableRenderModel(input: TableRenderModelInput): TableRende
     input.groups.every(group => collapsedGroupIds.has(group.id));
   const showCollapseAll = input.grouped && input.groups.length > 0 && !allGroupsCollapsed;
   const explicitMinWidth = tableExplicitMinWidth(input.columns);
-  const flexibleColumnId = tableFlexibleColumnId(input.columns);
+  const elasticSpacerIndex = tableElasticSpacerIndex(input.columns);
+  const columnTracks = input.columns.map(column => tableColumnSize(column) ?? 'minmax(0, 1fr)');
+  if (elasticSpacerIndex != null) columnTracks.splice(elasticSpacerIndex, 0, 'minmax(0, 1fr)');
   const gridTracks = [
     ...(selectable ? ['var(--_table-selection-column-inline-size)'] : []),
-    ...input.columns.map(column => {
-      const width = tableColumnSize(column);
-      if (!width) return 'minmax(0, 1fr)';
-      return column.id === flexibleColumnId ? `minmax(${width}, 1fr)` : width;
-    }),
+    ...columnTracks,
   ].join(' ');
   const tableStyle: Record<string, string> = {
     '--_table-grid-template-columns': gridTracks || 'minmax(0, 1fr)',
@@ -118,11 +116,12 @@ export function createTableRenderModel(input: TableRenderModelInput): TableRende
         selection: selectable ? deriveTableSelectionState(group.rows, input.selectedRowIds) : null,
       };
     }),
-    totalColumns: input.columns.length + (selectable ? 1 : 0),
+    totalColumns:
+      input.columns.length + (selectable ? 1 : 0) + (elasticSpacerIndex == null ? 0 : 1),
     allGroupsCollapsed,
     showCollapseAll,
     collapseAllHost: showCollapseAll ? tableCollapseAllHost(input.columns) : undefined,
-    flexibleColumnId,
+    elasticSpacerIndex,
     tableStyle,
   };
 }

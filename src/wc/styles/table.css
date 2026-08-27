@@ -432,6 +432,18 @@
   width: var(--dimension-size-500);
 }
 
+:where(.ds-table__elastic-spacer-column) {
+  inline-size: auto;
+  width: auto;
+}
+
+:where(.ds-table__elastic-spacer-cell) {
+  min-inline-size: 0;
+  inline-size: auto;
+  width: auto;
+  padding: 0;
+}
+
 :where(.ds-table__head) {
   position: relative;
   z-index: 1;

@@ -184,6 +184,31 @@ const ALIGNMENT_ROWS: TableRow[] = [
   { id: 'alignment-three', cells: { driver: 'Sam Rivera', status: 'Off duty', score: 89 } },
 ];
 
+const ELASTIC_SPACER_COLUMNS: TableColumn[] = [
+  { id: 'driver', header: 'Driver', size: 'sm' },
+  { id: 'status', header: 'Status', size: 'xs' },
+  { id: 'vehicle', header: 'Vehicle', size: 'xs' },
+  {
+    id: 'actions',
+    header: '',
+    headerLabel: 'Actions',
+    kind: 'action',
+    size: 40,
+    align: 'center',
+    sticky: 'end',
+  },
+];
+
+const ELASTIC_SPACER_ROWS: TableRow[] = ROWS.slice(0, 3).map(row => ({
+  ...row,
+  cells: {
+    driver: row.cells['driver'],
+    status: row.cells['status'],
+    vehicle: row.cells['vehicle'],
+    actions: { kind: 'blank' },
+  },
+}));
+
 const ALL_CELL_TYPE_COLUMNS: TableColumn[] = [
   { id: 'scalar', header: 'Scalar text', size: 'sm' },
   { id: 'primarySecondary', header: 'Primary + secondary', size: 'sm' },
@@ -913,6 +938,41 @@ export const ColumnHeaderAlignment: Story = {
       ></ds-table>
     `;
   },
+};
+
+export const ElasticSpacer: Story = {
+  name: 'Elastic trailing spacer',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'When every visible data column has an explicit size, an internal presentational spacer absorbs unused inline space without stretching the final data column. The same spacer collapses to zero when the explicit columns overflow, preserving horizontal scrolling. Trailing action and sticky-end lanes remain after the spacer at the visible edge.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="display:grid;gap:var(--dimension-space-300);">
+      <section style="display:grid;gap:var(--dimension-space-100);">
+        <ds-text as="h3" variant="text-title-small" emphasis>Available inline space</ds-text>
+        <ds-table
+          .columns=${ELASTIC_SPACER_COLUMNS}
+          .rows=${ELASTIC_SPACER_ROWS}
+          caption="Elastic spacer with available inline space"
+        ></ds-table>
+      </section>
+      <section
+        style="display:grid;gap:var(--dimension-space-100);max-inline-size:var(--dimension-panel-width-sm);"
+      >
+        <ds-text as="h3" variant="text-title-small" emphasis>Horizontal overflow</ds-text>
+        <ds-table
+          .columns=${ELASTIC_SPACER_COLUMNS}
+          .rows=${ELASTIC_SPACER_ROWS}
+          caption="Elastic spacer with horizontal overflow"
+          scroll-label="Scrollable elastic spacer example"
+        ></ds-table>
+      </section>
+    </div>
+  `,
 };
 
 export const SafetyEvents: Story = {

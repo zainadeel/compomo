@@ -14,6 +14,12 @@ interface TableSkeletonViewOptions {
 export function renderTableSkeletonBody(options: TableSkeletonViewOptions) {
   const { model, visibleColumns, renderStickyEdge } = options;
   const count = Math.min(20, Math.max(1, Math.round(options.skeletonRows) || 1));
+  const beforeSpacer =
+    model.elasticSpacerIndex == null
+      ? visibleColumns
+      : visibleColumns.slice(0, model.elasticSpacerIndex);
+  const afterSpacer =
+    model.elasticSpacerIndex == null ? [] : visibleColumns.slice(model.elasticSpacerIndex);
   return (
     <tbody class="ds-table__body ds-table__skeleton-body">
       {Array.from({ length: count }, (_, index) => (
@@ -34,7 +40,16 @@ export function renderTableSkeletonBody(options: TableSkeletonViewOptions) {
               {renderStickyEdge('start')}
             </td>
           )}
-          {visibleColumns.map(column => renderSkeletonCell(column, index, renderStickyEdge))}
+          {beforeSpacer.map(column => renderSkeletonCell(column, index, renderStickyEdge))}
+          {model.elasticSpacerIndex != null && (
+            <td
+              class="ds-table__cell ds-table__elastic-spacer-cell ds-table__skeleton-cell ds-interaction-fill ds-interaction-fill--grouped"
+              aria-hidden="true"
+              role="presentation"
+              data-elastic-spacer="true"
+            />
+          )}
+          {afterSpacer.map(column => renderSkeletonCell(column, index, renderStickyEdge))}
         </tr>
       ))}
     </tbody>

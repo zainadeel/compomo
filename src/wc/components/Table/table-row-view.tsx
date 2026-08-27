@@ -60,6 +60,24 @@ export function renderTableRow({
 }: TableRowViewOptions) {
   const selected = model.selectedRowIds.has(row.id);
   const rowSelectable = row.selectable !== false && !row.disabled;
+  const beforeSpacer =
+    model.elasticSpacerIndex == null
+      ? visibleColumns
+      : visibleColumns.slice(0, model.elasticSpacerIndex);
+  const afterSpacer =
+    model.elasticSpacerIndex == null ? [] : visibleColumns.slice(model.elasticSpacerIndex);
+  const renderColumn = (column: TableColumn) =>
+    renderTableCell({
+      row,
+      column,
+      selected,
+      emptyCellLabel,
+      actionMenuElementId,
+      actionMenu,
+      renderStickyEdge,
+      onCellAction,
+      onActionMenuToggle,
+    });
 
   return (
     <tr
@@ -103,19 +121,22 @@ export function renderTableRow({
           {renderStickyEdge('start')}
         </td>
       )}
-      {visibleColumns.map(column =>
-        renderTableCell({
-          row,
-          column,
-          selected,
-          emptyCellLabel,
-          actionMenuElementId,
-          actionMenu,
-          renderStickyEdge,
-          onCellAction,
-          onActionMenuToggle,
-        })
+      {beforeSpacer.map(renderColumn)}
+      {model.elasticSpacerIndex != null && (
+        <td
+          class={{
+            'ds-table__cell': true,
+            'ds-table__elastic-spacer-cell': true,
+            'ds-interaction-fill': true,
+            'ds-interaction-fill--grouped': true,
+            'ds-interaction-fill--selected': selected,
+          }}
+          aria-hidden="true"
+          role="presentation"
+          data-elastic-spacer="true"
+        />
       )}
+      {afterSpacer.map(renderColumn)}
     </tr>
   );
 }

@@ -27,13 +27,35 @@ test('creates one complete derived snapshot for an ungrouped render', () => {
   assert.equal(model.hasData, true);
   assert.equal(model.selectedRowIds.has('b'), true);
   assert.equal(model.selection.selectedLoadedCount, 1);
-  assert.equal(model.totalColumns, 3);
+  assert.equal(model.totalColumns, 4);
   assert.equal(model.collapseAllHost, undefined);
-  assert.equal(model.flexibleColumnId, 'name');
+  assert.equal(model.elasticSpacerIndex, 1);
   assert.deepEqual(model.tableStyle, {
     '--_table-grid-template-columns':
-      'var(--_table-selection-column-inline-size) minmax(160px, 1fr) var(--dimension-size-500)',
+      'var(--_table-selection-column-inline-size) 160px minmax(0, 1fr) var(--dimension-size-500)',
     '--ds-table-explicit-min-inline-size': 'calc(160px + var(--dimension-size-500))',
+  });
+});
+
+test('leaves intentionally unsized columns flexible without adding a spacer', () => {
+  const model = createTableRenderModel({
+    columns: [
+      { id: 'name', header: 'Name', size: 160 },
+      { id: 'notes', header: 'Notes' },
+    ],
+    rows,
+    groups: [],
+    grouped: false,
+    selectionMode: 'none',
+    selectedRowIds: [],
+    collapsedGroupIds: [],
+  });
+
+  assert.equal(model.totalColumns, 2);
+  assert.equal(model.elasticSpacerIndex, undefined);
+  assert.deepEqual(model.tableStyle, {
+    '--_table-grid-template-columns': '160px minmax(0, 1fr)',
+    '--ds-table-explicit-min-inline-size': '160px',
   });
 });
 

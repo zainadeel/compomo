@@ -2473,30 +2473,50 @@ test(
   }
 );
 
-test(
-  'keeps selection and action columns fixed when the table grows',
-  chromiumOnly('layout-geometry', 'Chrome column max-width locks are rendered geometry contracts.'),
-  async ({ page }) => {
-    await page.setViewportSize({ width: 1600, height: 900 });
-    const interactive = page.locator('#interactive');
-    await expect(interactive.locator('.ds-table__row .ds-table__selection-cell').first()).toHaveCSS(
-      'width',
-      '40px'
-    );
-    await expect(
-      interactive.locator('.ds-table__row [data-column-id="actions"]').first()
-    ).toHaveCSS('width', '40px');
+test('uses a zero-minimum elastic spacer while keeping fixed edge lanes stable @cross-browser', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1600, height: 900 });
+  const interactive = page.locator('#interactive');
+  await expect(interactive.locator('.ds-table__row .ds-table__selection-cell').first()).toHaveCSS(
+    'width',
+    '40px'
+  );
+  await expect(interactive.locator('.ds-table__row [data-column-id="actions"]').first()).toHaveCSS(
+    'width',
+    '40px'
+  );
+  const wideSpacer = interactive.locator('.ds-table__row [data-elastic-spacer="true"]').first();
+  await expect(wideSpacer).toBeVisible();
+  expect(
+    await wideSpacer.evaluate(element => element.getBoundingClientRect().width)
+  ).toBeGreaterThan(0);
+  await expect(wideSpacer.locator('xpath=following-sibling::*[1]')).toHaveAttribute(
+    'data-column-id',
+    'actions'
+  );
 
-    const grouped = page.locator('#severity-grouped');
-    await expect(grouped.locator('.ds-table__row .ds-table__selection-cell').first()).toHaveCSS(
-      'width',
-      '40px'
-    );
-    await expect(grouped.locator('.ds-table__selection-column')).toHaveCSS('max-width', '40px');
-    await expect(grouped.locator('.ds-table__collapse-column')).toHaveCount(0);
-    await expect(grouped.locator('.ds-table__collapse-cell')).toHaveCount(0);
-  }
-);
+  const overflow = page.locator('#overflow');
+  const overflowViewport = overflow.locator('.ds-table__viewport');
+  const collapsedSpacer = overflow.locator('.ds-table__row [data-elastic-spacer="true"]').first();
+  const overflowGeometry = await overflowViewport.evaluate(element => ({
+    clientWidth: element.clientWidth,
+    scrollWidth: element.scrollWidth,
+  }));
+  expect(overflowGeometry.scrollWidth).toBeGreaterThan(overflowGeometry.clientWidth);
+  expect(
+    await collapsedSpacer.evaluate(element => element.getBoundingClientRect().width)
+  ).toBeLessThanOrEqual(COMPOSITED_EDGE_CEILING_PX);
+
+  const grouped = page.locator('#severity-grouped');
+  await expect(grouped.locator('.ds-table__row .ds-table__selection-cell').first()).toHaveCSS(
+    'width',
+    '40px'
+  );
+  await expect(grouped.locator('.ds-table__selection-column')).toHaveCSS('max-width', '40px');
+  await expect(grouped.locator('.ds-table__collapse-column')).toHaveCount(0);
+  await expect(grouped.locator('.ds-table__collapse-cell')).toHaveCount(0);
+});
 
 test('bounds the complete header, frame, and footer composition with height', async ({ page }) => {
   const table = page.locator('#fixed-height');
@@ -3085,8 +3105,13 @@ test('renders initial state bodies and passes an accessibility scan', async ({ p
   await expect(loading.locator('ds-skeleton')).toHaveCount(70);
   const skeletonRows = loading.locator('.ds-table__skeleton-row');
   await expect(skeletonRows).toHaveCount(10);
-  const skeletonCells = skeletonRows.first().locator('.ds-table__skeleton-cell');
+  const skeletonCells = skeletonRows
+    .first()
+    .locator('.ds-table__skeleton-cell:not([data-elastic-spacer])');
   await expect(skeletonCells).toHaveCount(6);
+  await expect(
+    skeletonRows.first().locator('.ds-table__skeleton-cell[data-elastic-spacer="true"]')
+  ).toHaveCount(1);
   const selectionSkeleton = skeletonRows.first().locator('.ds-table__selection-cell');
   await expect(selectionSkeleton).toHaveAttribute('data-skeleton-kind', 'checkbox');
   const selectionSkeletonGeometry = await selectionSkeleton

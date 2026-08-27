@@ -1580,23 +1580,28 @@ export class Table {
   }
 
   private renderColgroup(model: TableRenderModel) {
+    const beforeSpacer =
+      model.elasticSpacerIndex == null
+        ? this.visibleColumns
+        : this.visibleColumns.slice(0, model.elasticSpacerIndex);
+    const afterSpacer =
+      model.elasticSpacerIndex == null ? [] : this.visibleColumns.slice(model.elasticSpacerIndex);
+    const renderColumn = (column: TableColumn) => {
+      const width = tableColumnSize(column);
+      return (
+        <col
+          key={column.id}
+          class={{ 'ds-table__action-column': column.kind === 'action' }}
+          style={width ? { width } : undefined}
+        />
+      );
+    };
     return (
       <colgroup>
         {model.selectable && <col class="ds-table__selection-column" />}
-        {this.visibleColumns.map(column => {
-          const width = tableColumnSize(column);
-          const flexible = column.id === model.flexibleColumnId;
-          return (
-            <col
-              key={column.id}
-              class={{
-                'ds-table__action-column': column.kind === 'action',
-                'ds-table__flexible-column': flexible,
-              }}
-              style={width && !flexible ? { width } : undefined}
-            />
-          );
-        })}
+        {beforeSpacer.map(renderColumn)}
+        {model.elasticSpacerIndex != null && <col class="ds-table__elastic-spacer-column" />}
+        {afterSpacer.map(renderColumn)}
       </colgroup>
     );
   }
@@ -1608,6 +1613,12 @@ export class Table {
     ariaRowIndex?: number
   ) {
     const selection = model.selection;
+    const beforeSpacer =
+      model.elasticSpacerIndex == null
+        ? this.visibleColumns
+        : this.visibleColumns.slice(0, model.elasticSpacerIndex);
+    const afterSpacer =
+      model.elasticSpacerIndex == null ? [] : this.visibleColumns.slice(model.elasticSpacerIndex);
     return (
       <thead
         class={{
@@ -1638,7 +1649,18 @@ export class Table {
               {this.renderStickyEdge('start')}
             </th>
           )}
-          {this.visibleColumns.map(column =>
+          {beforeSpacer.map(column =>
+            this.renderColumnHeader(column, model, interactive, presentational)
+          )}
+          {model.elasticSpacerIndex != null && (
+            <th
+              class="ds-table__header-cell ds-table__elastic-spacer-cell"
+              aria-hidden="true"
+              role="presentation"
+              data-elastic-spacer="true"
+            />
+          )}
+          {afterSpacer.map(column =>
             this.renderColumnHeader(column, model, interactive, presentational)
           )}
         </tr>
