@@ -172,8 +172,7 @@
   display: none;
 }
 
-/* Keep this more specific than ButtonUnfilled's host-level hug alignment so
-   component stylesheet hydration order cannot move the nested action. */
+/* The input frame owns the nested clear action's cross-axis alignment. */
 .input-control > .input-control__clear {
   position: relative;
   z-index: 2;

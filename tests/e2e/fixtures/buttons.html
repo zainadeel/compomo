@@ -24,6 +24,18 @@
       <ds-button-unfilled id="unfilled-no-press-scale" label="Stable" press-scale="false"></ds-button-unfilled>
       <ds-button-filled id="filled-inactive" label="Unavailable" is-inactive></ds-button-filled>
       <ds-button-unfilled id="unfilled-inactive" label="Unavailable" is-inactive></ds-button-unfilled>
+      <div id="hug-column" style="display:flex;flex-direction:column;align-items:stretch;width:240px;">
+        <ds-button-filled id="filled-hug-column" label="Primary hug"></ds-button-filled>
+        <ds-button-unfilled id="unfilled-hug-column" label="Secondary hug"></ds-button-unfilled>
+      </div>
+      <div id="hug-centered-row" style="display:flex;align-items:center;height:120px;width:240px;">
+        <ds-tooltip label="Primary action" side="bottom" size="sm">
+          <ds-button-filled id="filled-centered" variant="icon" icon="Check" aria-label="Primary action"></ds-button-filled>
+        </ds-tooltip>
+        <ds-tooltip label="Secondary action" side="bottom" size="sm">
+          <ds-button-unfilled id="unfilled-centered" variant="icon" icon="Close" aria-label="Secondary action"></ds-button-unfilled>
+        </ds-tooltip>
+      </div>
       <form id="button-form">
         <label for="form-value">Form value</label>
         <input id="form-value" name="value" value="initial">

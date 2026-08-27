@@ -4,8 +4,9 @@
  * Apply `.ds-control-width--hug|fill` on the host (and optionally the inner
  * control). Defaults: buttons hug; form fields (Select, Input) fill.
  *
- * Hug uses `fit-content` + `align-self: flex-start` so column flex parents
- * with `align-items: stretch` don't force the control full-width.
+ * Hug uses an explicit `fit-content` width so column flex parents with
+ * `align-items: stretch` don't force the control full-width. Cross-axis
+ * alignment remains owned by the parent layout.
  *
  * @see AGENTS.md — control density / shared control recipes
  */
@@ -15,7 +16,6 @@
   width: fit-content;
   max-width: 100%;
   flex: 0 0 auto;
-  align-self: flex-start;
 }
 
 :host(.ds-control-width--fill),
