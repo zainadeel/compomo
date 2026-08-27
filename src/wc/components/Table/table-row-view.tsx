@@ -11,6 +11,7 @@ import {
 } from './table-action-menu';
 import { tableRowSelectionLabel } from './table-model';
 import type { TableRenderModel } from './table-render-model';
+import type { TableHighlightMatcher } from './table-highlight';
 import type { TableCellActionDetail, TableCellTextRun, TableColumn, TableRow } from './table-types';
 import { resolveSafeUrl } from '../../utils/safe-url';
 
@@ -21,6 +22,7 @@ export interface TableRowViewOptions {
   emptyCellLabel: string;
   actionMenuElementId: string;
   actionMenu: { rowId: string; columnId: string } | null;
+  highlightMatcher: TableHighlightMatcher;
   ariaRowIndex?: number;
   variableVirtualSize?: boolean;
   rowKey?: string;
@@ -47,6 +49,7 @@ export function renderTableRow({
   emptyCellLabel,
   actionMenuElementId,
   actionMenu,
+  highlightMatcher,
   ariaRowIndex,
   variableVirtualSize = false,
   rowKey = row.id,
@@ -74,6 +77,7 @@ export function renderTableRow({
       emptyCellLabel,
       actionMenuElementId,
       actionMenu,
+      highlightMatcher,
       renderStickyEdge,
       onCellAction,
       onActionMenuToggle,
@@ -148,6 +152,7 @@ interface TableCellViewOptions {
   emptyCellLabel: string;
   actionMenuElementId: string;
   actionMenu: { rowId: string; columnId: string } | null;
+  highlightMatcher: TableHighlightMatcher;
   renderStickyEdge: (sticky: TableColumn['sticky']) => unknown;
   onCellAction: (detail: TableCellActionDetail) => void;
   onActionMenuToggle: (row: TableRow, column: TableColumn, event: MouseEvent) => void;
@@ -259,7 +264,7 @@ function renderTableCellValue(cell: TableCellPresentation, options: TableCellVie
             label={cell.iconLabel}
           />
         </span>
-        {renderTextCopy(cell)}
+        {renderTextCopy(cell, options.highlightMatcher)}
       </span>
     );
   }
@@ -343,7 +348,7 @@ function renderTableCellValue(cell: TableCellPresentation, options: TableCellVie
           lineTruncation={1}
           data-table-truncate=""
         >
-          {value.text}
+          {renderHighlightedText(value.text, options.highlightMatcher)}
         </ds-text>
         {variant === 'text-with-tag' && <span class="ds-table__cell-tag-control-track">{tag}</span>}
       </span>
@@ -351,10 +356,13 @@ function renderTableCellValue(cell: TableCellPresentation, options: TableCellVie
   }
 
   if (cell.kind !== 'text') return null;
-  return renderTextCopy(cell);
+  return renderTextCopy(cell, options.highlightMatcher);
 }
 
-function renderTextCopy(cell: Extract<TableCellPresentation, { kind: 'text' | 'icon-text' }>) {
+function renderTextCopy(
+  cell: Extract<TableCellPresentation, { kind: 'text' | 'icon-text' }>,
+  highlightMatcher: TableHighlightMatcher
+) {
   const text = cell.value;
   const overflow = tableCellTextOverflowProps(cell.lineClamp);
   const primaryText = cell.kind === 'text' && cell.primaryText;
@@ -370,7 +378,7 @@ function renderTextCopy(cell: Extract<TableCellPresentation, { kind: 'text' | 'i
       fontFeature={text.fontFeature ?? 'normal'}
       data-table-truncate={truncateAttr(cell.lineClamp)}
     >
-      {text.primary}
+      {renderHighlightedText(text.primary, highlightMatcher)}
     </ds-text>
   );
 
@@ -394,6 +402,7 @@ function renderTextCopy(cell: Extract<TableCellPresentation, { kind: 'text' | 'i
         defaultColor: primaryText ? 'primary' : 'secondary',
         wholeColor: text.secondaryColor,
         lineClamp: cell.lineClamp,
+        highlightMatcher,
       })}
       {renderTextTrack(text.tertiary, {
         track: 'tertiary',
@@ -401,6 +410,7 @@ function renderTextCopy(cell: Extract<TableCellPresentation, { kind: 'text' | 'i
         defaultColor: 'secondary',
         wholeColor: text.tertiaryColor,
         lineClamp: cell.lineClamp,
+        highlightMatcher,
       })}
     </span>
   );
@@ -414,6 +424,7 @@ function renderTextTrack(
     defaultColor: 'primary' | 'secondary';
     wholeColor?: TableCellTextRun['color'];
     lineClamp: Extract<TableCellPresentation, { kind: 'text' | 'icon-text' }>['lineClamp'];
+    highlightMatcher: TableHighlightMatcher;
   }
 ) {
   if (!runs?.length) return null;
@@ -432,7 +443,7 @@ function renderTextTrack(
         wrap={overflow.wrap}
         data-table-truncate={truncateAttr(options.lineClamp)}
       >
-        {runs[0].text}
+        {renderHighlightedText(runs[0].text, options.highlightMatcher)}
       </ds-text>
     );
   }
@@ -462,10 +473,23 @@ function renderTextTrack(
           wrap={overflow.wrap}
           data-table-truncate={truncateAttr(options.lineClamp)}
         >
-          {run.text}
+          {renderHighlightedText(run.text, options.highlightMatcher)}
         </ds-text>,
       ])}
     </span>
+  );
+}
+
+function renderHighlightedText(value: string | number | undefined, matcher: TableHighlightMatcher) {
+  if (value === undefined) return null;
+  return matcher(value).map((segment, index) =>
+    segment.match ? (
+      <mark class="ds-table__match" key={`match-${index}`}>
+        {segment.text}
+      </mark>
+    ) : (
+      segment.text
+    )
   );
 }
 

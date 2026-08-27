@@ -74,6 +74,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.match(componentTsx, /<slot name="footer-trailing"/);
   assert.match(rowViewTsx, /ds-table__cell--action-menu/);
   assert.match(rowViewTsx, /data-elastic-spacer="true"/);
+  assert.match(rowViewTsx, /<mark class="ds-table__match"/);
   assert.match(skeletonViewTsx, /data-elastic-spacer="true"/);
   assert.match(componentTsx, /renderOverflowActionMenu/);
   assert.match(componentTsx, /<ds-menu/);
@@ -136,6 +137,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
     'ds-table__load-cell',
     'ds-table__state-cell',
     'ds-table__elastic-spacer-cell',
+    'ds-table__match',
     'ds-table__footer',
     'ds-table__caption-leading',
     'ds-table__caption-trailing',
@@ -144,6 +146,10 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   }
 
   assert.match(css, /--_table-cell-track-min-block-size: var\(--dimension-size-300\)/);
+  assert.match(
+    css,
+    /\.ds-table__match[\s\S]*?background-color: var\(--color-background-faint-brand\)[\s\S]*?color: var\(--color-foreground-bold-brand\)/
+  );
   assert.match(
     css,
     /--_table-wrap-primary-line-height: calc\(\s*var\(--typography-lineheight-md\) \+ var\(--dimension-space-025\)\s*\)/

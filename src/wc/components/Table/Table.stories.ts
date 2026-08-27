@@ -4,6 +4,7 @@ import { useArgs } from 'storybook/preview-api';
 import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 import '../../../../dist/components/ds-table.js';
 import '../../../../dist/components/ds-text.js';
+import '../../../../dist/components/ds-input.js';
 import '../../../../dist/components/ds-select.js';
 import '../../../../dist/components/ds-bar-action.js';
 import '../../../../dist/components/ds-button-unfilled.js';
@@ -52,6 +53,17 @@ function applyColumnsConfig(event: Event) {
   const detail = (event as CustomEvent<TableColumnsConfigChangeDetail>).detail;
   table.hiddenColumnIds = detail.hiddenColumnIds;
   table.columnOrder = detail.columnOrder;
+}
+
+function tableRowSearchText(row: TableRow): string {
+  const textFrom = (value: unknown): string => {
+    if (value == null) return '';
+    if (typeof value !== 'object') return String(value);
+    if (Array.isArray(value)) return value.map(textFrom).join(' ');
+    return Object.values(value).map(textFrom).join(' ');
+  };
+
+  return [row.selectionLabel, ...Object.values(row.cells)].map(textFrom).join(' ');
 }
 
 const COLUMNS: TableColumn[] = [
@@ -973,6 +985,54 @@ export const ElasticSpacer: Story = {
       </section>
     </div>
   `,
+};
+
+export const SearchMatchHighlighting: Story = {
+  name: 'Search match highlighting',
+  args: {
+    searchValue: 'avery',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The application owns the search query and row filtering, then supplies the same literal query through highlightTerms. The table marks matching text without changing the cell’s accessible name or guessing how the application tokenizes search.',
+      },
+    },
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    const searchValue = String(args['searchValue'] ?? '');
+    const query = searchValue.trim().toLocaleLowerCase();
+    const rows = query
+      ? ROWS.filter(row => tableRowSearchText(row).toLocaleLowerCase().includes(query))
+      : ROWS;
+
+    return html`
+      <ds-table
+        .columns=${COLUMNS}
+        .rows=${rows}
+        .highlightTerms=${query ? [searchValue.trim()] : []}
+        caption="Searchable workforce overview"
+        caption-visibility="visible"
+        .displayedCount=${rows.length}
+        .totalCount=${ROWS.length}
+      >
+        <ds-input
+          slot="header"
+          type="search"
+          size="md"
+          width="fill"
+          icon="MagnifyingGlass"
+          placeholder="Search drivers"
+          aria-label="Search drivers"
+          .value=${searchValue}
+          @dsChange=${(event: CustomEvent<string>) => updateArgs({ searchValue: event.detail })}
+          @dsClear=${() => updateArgs({ searchValue: '' })}
+        ></ds-input>
+      </ds-table>
+    `;
+  },
 };
 
 export const SafetyEvents: Story = {

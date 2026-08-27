@@ -75,6 +75,43 @@ test('renders native caption, header, row, and cell semantics @pr-critical', asy
   await expect(table.locator('.ds-table__footer')).toHaveCount(0);
 });
 
+test('highlights controlled literal search terms without changing cell names', async ({ page }) => {
+  const table = page.locator('#basic');
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.highlightTerms = ['avery', 'V-20'];
+  });
+
+  const marks = table.locator('mark.ds-table__match');
+  await expect(marks).toHaveCount(3);
+  await expect(marks).toHaveText(['Avery', 'avery', 'V-20']);
+  await expect(table.getByRole('cell', { name: 'Avery Chen avery@example.com' })).toBeVisible();
+  await expect(table.getByRole('cell', { name: 'V-2048' })).toBeVisible();
+
+  const colors = await marks.first().evaluate(element => {
+    const actual = getComputedStyle(element);
+    const probe = document.createElement('span');
+    probe.style.backgroundColor = 'var(--color-background-faint-brand)';
+    probe.style.color = 'var(--color-foreground-bold-brand)';
+    document.body.append(probe);
+    const expected = getComputedStyle(probe);
+    const result = {
+      background: actual.backgroundColor,
+      foreground: actual.color,
+      expectedBackground: expected.backgroundColor,
+      expectedForeground: expected.color,
+    };
+    probe.remove();
+    return result;
+  });
+  expect(colors.background).toBe(colors.expectedBackground);
+  expect(colors.foreground).toBe(colors.expectedForeground);
+
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.highlightTerms = [];
+  });
+  await expect(marks).toHaveCount(0);
+});
+
 test('composes application controls inside table-owned header and footer chrome', async ({
   page,
 }) => {

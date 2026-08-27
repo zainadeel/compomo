@@ -1069,6 +1069,11 @@
   overflow-wrap: anywhere;
 }
 
+:where(.ds-table__match) {
+  background-color: var(--color-background-faint-brand);
+  color: var(--color-foreground-bold-brand);
+}
+
 /*
  * Wrapping tracks must be block boxes so ds-text line-clamp (a -webkit-box
  * inner) can grow onto later tracks. Flex + line-clamp otherwise collapses

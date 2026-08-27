@@ -71,6 +71,7 @@ import { resolveCssLengthPx } from '../../utils/resolve-css-length-px';
 import { isElementTruncated } from '../../utils/is-element-truncated';
 import { observeTableCaptionCompact } from '../../utils/table-caption-compact';
 import { resolveTableFitPageSize } from './table-pagination-fit';
+import { createTableHighlightMatcher, type TableHighlightMatcher } from './table-highlight';
 import {
   paginationShortcutBlockedByPath,
   shouldHandleContainingPagePaginationShortcut,
@@ -124,6 +125,8 @@ export class Table {
   @Prop() sort: TableSortState | null = null;
   /** Controlled collapsed group identities. Groups not listed remain expanded. */
   @Prop() collapsedGroupIds: string[] = [];
+  /** Literal terms to highlight in table-owned text cells. Applications still own filtering. */
+  @Prop() highlightTerms: string[] = [];
 
   /** Required accessible table name, retained as a native caption. */
   @Prop() caption!: string;
@@ -277,6 +280,10 @@ export class Table {
     collapsedGroupIds: string[];
     virtualCounts: boolean;
     value: TableRenderModel;
+  } | null = null;
+  private highlightMatcherCache: {
+    terms: string[];
+    value: TableHighlightMatcher;
   } | null = null;
   private virtualItemsCache: {
     columns: TableColumn[];
@@ -956,6 +963,15 @@ export class Table {
       virtualCounts,
       value,
     };
+    return value;
+  }
+
+  private get highlightMatcher(): TableHighlightMatcher {
+    if (this.highlightMatcherCache?.terms === this.highlightTerms) {
+      return this.highlightMatcherCache.value;
+    }
+    const value = createTableHighlightMatcher(this.highlightTerms);
+    this.highlightMatcherCache = { terms: this.highlightTerms, value };
     return value;
   }
 
@@ -1682,6 +1698,7 @@ export class Table {
       emptyCellLabel: this.emptyCellLabel,
       actionMenuElementId: this.actionMenuElementId,
       actionMenu: this.actionMenu,
+      highlightMatcher: this.highlightMatcher,
       ariaRowIndex,
       variableVirtualSize,
       rowKey,

@@ -3093,6 +3093,11 @@ export namespace Components {
          */
         "hiddenColumnIds": string[];
         /**
+          * Literal terms to highlight in table-owned text cells. Applications still own filtering.
+          * @default []
+         */
+        "highlightTerms": string[];
+        /**
           * @default 'Infinite scroll'
          */
         "infiniteModeLabel": string;
@@ -8238,6 +8243,11 @@ declare namespace LocalJSX {
           * @default []
          */
         "hiddenColumnIds"?: string[];
+        /**
+          * Literal terms to highlight in table-owned text cells. Applications still own filtering.
+          * @default []
+         */
+        "highlightTerms"?: string[];
         /**
           * @default 'Infinite scroll'
          */
