@@ -31,9 +31,7 @@ test('keeps input focus while slash, arrows, and Enter add a canonical field chi
 
   const firstActive = await input.getAttribute('aria-activedescendant');
   await input.press('ArrowDown');
-  await expect
-    .poll(() => input.getAttribute('aria-activedescendant'))
-    .not.toBe(firstActive);
+  await expect.poll(() => input.getAttribute('aria-activedescendant')).not.toBe(firstActive);
   const secondActive = await input.getAttribute('aria-activedescendant');
   await input.press('ArrowLeft');
   await expect(input).toBeFocused();

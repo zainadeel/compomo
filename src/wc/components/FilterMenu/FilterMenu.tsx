@@ -552,9 +552,7 @@ export class FilterMenu {
   private optionMatchesQuery(option: FilterMenuOption, query: string): boolean {
     const normalized = query.trim().toLocaleLowerCase();
     if (!normalized) return true;
-    return `${option.label} ${option.description ?? ''}`
-      .toLocaleLowerCase()
-      .includes(normalized);
+    return `${option.label} ${option.description ?? ''}`.toLocaleLowerCase().includes(normalized);
   }
 
   private visibleOptions(
@@ -1379,9 +1377,7 @@ export class FilterMenu {
                     role="tabpanel"
                     aria-labelledby={`${this.generatedId}-${activeFilter.id}-tab`}
                   >
-                    {activeFilter.kind === 'date'
-                      ? null
-                      : this.renderOptionSearch(activeFilter)}
+                    {activeFilter.kind === 'date' ? null : this.renderOptionSearch(activeFilter)}
                     <div class="filter-menu__options-content">
                       {activeFilter.kind === 'date' ? (
                         <div key={activeFilter.id} class="filter-menu__option-list--date">

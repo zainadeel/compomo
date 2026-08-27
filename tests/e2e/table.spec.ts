@@ -137,9 +137,9 @@ test('scopes highlighting to selected compound data points', async ({ page }) =>
   });
   await expect(primaryMarks).toHaveCount(3);
   await expect(secondaryMarks).toHaveCount(0);
-  await expect(table.locator('[data-row-id="event-a"] [data-column-id="behaviorDetails"]')).toHaveText(
-    'Close followingCritical'
-  );
+  await expect(
+    table.locator('[data-row-id="event-a"] [data-column-id="behaviorDetails"]')
+  ).toHaveText('Close followingCritical');
 });
 
 test('composes application controls inside table-owned header and footer chrome', async ({

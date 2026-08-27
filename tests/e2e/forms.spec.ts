@@ -313,10 +313,7 @@ test('input follows shared control density, focus, and search-clear recipes', as
     element.ariaActiveDescendant = 'search-result-2';
   });
   await expect(search.locator('input')).toHaveAttribute('aria-controls', 'search-results');
-  await expect(search.locator('input')).toHaveAttribute(
-    'aria-activedescendant',
-    'search-result-2'
-  );
+  await expect(search.locator('input')).toHaveAttribute('aria-activedescendant', 'search-result-2');
   await search.evaluate((element: HTMLDsInputElement) => {
     element.hasInteractionFill = false;
   });

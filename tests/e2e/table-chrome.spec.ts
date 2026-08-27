@@ -36,10 +36,7 @@ test('groups through two dependent panes and keeps order unavailable until data 
 
   await expect
     .poll(() =>
-      control.evaluate(
-        element =>
-          (element as HTMLElement & { eventLog: unknown[] }).eventLog
-      )
+      control.evaluate(element => (element as HTMLElement & { eventLog: unknown[] }).eventLog)
     )
     .toEqual([
       { type: 'change', columnId: 'severity', direction: 'asc' },
@@ -662,10 +659,7 @@ test('supports semantic relative dates and fixed calendar ranges @pr-critical', 
   await expect(dateHeader).toHaveCSS('padding', '4px');
   await expect(dateTabs).toHaveJSProperty('hasContainer', false);
   await expect(dateTabs.locator('.tab-list')).toHaveCSS('border-top-width', '0px');
-  await expect(dateTabs.locator('.tab-list')).toHaveCSS(
-    'background-color',
-    'rgba(0, 0, 0, 0)'
-  );
+  await expect(dateTabs.locator('.tab-list')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   expect((await popup.locator('.filter-menu__category-pane').boundingBox())?.width).toBeCloseTo(
     200,
     1

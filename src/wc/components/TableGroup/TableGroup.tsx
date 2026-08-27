@@ -260,9 +260,7 @@ export class TableGroup {
     let next: number;
     if (event.key === 'Home') next = 0;
     else if (event.key === 'End') next = items.length - 1;
-    else
-      next =
-        (currentIndex + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+    else next = (currentIndex + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
     this.focusRingVisible = true;
     items[next]?.focus();
   }
@@ -390,14 +388,25 @@ export class TableGroup {
                   className="table-group__list"
                 >
                   {this.options.map((option, index) => (
-                    <div data-group-value={option.value}>{this.renderDataOption(option, index)}</div>
+                    <div data-group-value={option.value}>
+                      {this.renderDataOption(option, index)}
+                    </div>
                   ))}
                 </ChoiceListSection>
-                <div class="table-group__footer ds-choice-footer" aria-hidden={!this.grouping ? 'true' : undefined}>
+                <div
+                  class="table-group__footer ds-choice-footer"
+                  aria-hidden={!this.grouping ? 'true' : undefined}
+                >
                   <div class="ds-choice-footer__content ds-control--md">
                     {this.grouping ? (
-                      <button class="ds-choice-footer__clear ds-text-action ds-focus-ring" type="button" onClick={() => this.dsClear.emit()}>
-                        <ds-text as="span" variant="text-body-medium" color="inherit">{this.clearLabel}</ds-text>
+                      <button
+                        class="ds-choice-footer__clear ds-text-action ds-focus-ring"
+                        type="button"
+                        onClick={() => this.dsClear.emit()}
+                      >
+                        <ds-text as="span" variant="text-body-medium" color="inherit">
+                          {this.clearLabel}
+                        </ds-text>
                       </button>
                     ) : null}
                   </div>

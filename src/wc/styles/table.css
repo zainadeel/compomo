@@ -935,10 +935,7 @@
   inline-size: 100%;
   min-inline-size: 0;
   max-inline-size: 100%;
-  min-block-size: var(
-    --_table-cell-tags-min-block-size,
-    var(--_table-cell-track-min-block-size)
-  );
+  min-block-size: var(--_table-cell-tags-min-block-size, var(--_table-cell-track-min-block-size));
   padding-block: var(--dimension-space-025);
 }
 

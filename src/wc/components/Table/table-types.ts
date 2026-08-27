@@ -239,9 +239,7 @@ export interface TableCellTagItem {
   rounded?: boolean;
 }
 
-export type TableCellTag = TableCellTagItem &
-  { kind: 'tag' } &
-  (
+export type TableCellTag = TableCellTagItem & { kind: 'tag' } & (
     | {
         variant?: 'tag-only';
         text?: never;
