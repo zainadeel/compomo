@@ -60,6 +60,7 @@
     "A missing, empty, inactive, or unknown selected value is invalid when enabled tabs exist; the component does not choose a fallback selection.",
     "Selection is singular and follows keyboard focus.",
     "Width follows the shared control contract: hug keeps the track content-sized, while fill occupies the parent width and distributes available space equally across selectable segments; dividers remain fixed-width separators.",
+    "hasContainer defaults to true. Set it to false only when a parent surface owns the track background and boundary; the outer fill, border, and inset disappear while selected-pill, interaction, focus, density, and keyboard behavior remain unchanged.",
     "Small, medium, and large use the shared 24px, 32px, and 40px control-density recipes for the outer track. Each segment uses the same-size inset recipe at 20px, 28px, and 36px while preserving that density's typography, icon, gap, and label metrics.",
     "Use one consistent content variant across every selectable tab in a group.",
     "Omitted background is for primary and secondary surfaces; pass the faint context explicitly on faint surfaces.",

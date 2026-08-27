@@ -1,0 +1,62 @@
+@import '../../utils/choice-list.css';
+@import '../../utils/control-parts.css';
+@import '../../utils/table-caption-control.css';
+
+:host {
+  display: inline-flex;
+  min-inline-size: 0;
+  max-inline-size: var(--dimension-menu-width-xs);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.table-group__body {
+  display: grid;
+  grid-template-columns: var(--dimension-menu-width-xs) var(--dimension-menu-width-sm);
+  min-height: calc(var(--dimension-size-800) * 4 + var(--dimension-space-150));
+  max-height: calc(100vh - var(--dimension-size-800) - var(--dimension-size-600));
+}
+
+.table-group__data-pane,
+.table-group__order-pane {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.table-group__data-pane {
+  border-inline-end: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+}
+
+.table-group__list {
+  flex: 1 1 auto;
+}
+
+.table-group__empty {
+  flex: 1 1 auto;
+}
+
+.table-group__footer {
+  flex: 0 0 auto;
+}
+
+.table-group__footer .ds-choice-footer__content {
+  justify-content: flex-start;
+}
+
+.table-group__footer[aria-hidden='true']::before {
+  visibility: hidden;
+}
+
+.table-group__footer[aria-hidden='true'] .ds-choice-footer__content {
+  visibility: hidden;
+}
+
+@media (forced-colors: active) {
+  .table-group__data-pane {
+    border-inline-end-color: var(--ds-forced-color-content);
+  }
+}

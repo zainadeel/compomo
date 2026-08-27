@@ -27,6 +27,7 @@
   "accessibility": [
     "The native search input remains the one Tab stop and exposes combobox, expanded, controls, and active-descendant relationships to the field listbox.",
     "Typing slash opens the field listbox without inserting slash into the query. While open, Up and Down change the active option, Enter selects it, Escape or Backspace closes it, and Left and Right retain native text-cursor behavior because focus never leaves the input.",
+    "The query disables browser autocomplete history, automatic capitalization, autocorrection, and spellchecking so browser-owned suggestions never obscure the product-owned field menu or table results.",
     "Selected field Chips have individually labeled remove actions and are also described by the search input. Polite announcements report additions, removals, and clearing without duplicating the visible query.",
     "The slash suffix is a labeled double-inset md button excluded from sequential keyboard navigation; the search input exposes the same action through aria-keyshortcuts and its description.",
     "The clear action removes both free text and every selected field. It restores focus to the search input; each Chip's own remove action remains scoped to that field."

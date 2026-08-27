@@ -31,7 +31,7 @@ import type { AnchoredAlign, AnchoredSide } from '../../utils/anchored-position'
 import { AnchoredPositionController } from '../../utils/anchored-position-controller';
 import { AnchoredOverlayInteractionController } from '../../utils/anchored-overlay-interaction-controller';
 import { resolveAnchoredOverlayBoundaryRect } from '../../utils/anchored-overlay-boundary';
-import { ChoiceOptionRow } from '../../utils/choice-list-parts';
+import { ChoiceOptionRow, ChoiceSearch } from '../../utils/choice-list-parts';
 import { choiceListUsesSubtext } from '../../utils/choice-list';
 import {
   FILTER_MENU_WEEKDAYS,
@@ -163,6 +163,10 @@ export class FilterMenu {
   @Prop() categoriesLabel: string = 'Filter categories';
   /** Footer action and date-clear accessible label. */
   @Prop() clearLabel: string = 'Clear';
+  /** Placeholder shown in each non-date option search header. */
+  @Prop() searchPlaceholder: string = 'Search';
+  /** Empty-state text shown when an option search has no matches. */
+  @Prop() noResultsText: string = 'No results';
   /** Footer recipe: full-width selected summary or reserved category-pane Clear action. */
   @Prop() footerLayout: FilterMenuFooterLayout = 'summary';
   /** Show a visible focus ring on initial entry after keyboard activation. */
@@ -179,6 +183,7 @@ export class FilterMenu {
   @State() private calendarMonthByFilter: Record<string, string> = {};
   @State() private pendingRangeStartByFilter: Record<string, string> = {};
   @State() private previewRangeEndByFilter: Record<string, string> = {};
+  @State() private optionQueryByFilter: Record<string, string> = {};
 
   /** Requests a controlled value replacement without closing the popup. */
   @Event() dsChange!: EventEmitter<FilterMenuChangeDetail>;
@@ -406,6 +411,7 @@ export class FilterMenu {
     this.calendarMonthByFilter = {};
     this.pendingRangeStartByFilter = {};
     this.previewRangeEndByFilter = {};
+    this.optionQueryByFilter = {};
     this.dsAfterClose.emit();
   }
 
@@ -506,9 +512,9 @@ export class FilterMenu {
     filter: FilterMenuFilter,
     option: FilterMenuOption,
     index: number,
-    values: FilterMenuValues
+    values: FilterMenuValues,
+    visibleOptions: FilterMenuOption[] = filter.options ?? []
   ) {
-    const options = filter.options ?? [];
     if (event.key === 'ArrowLeft') {
       this.handlePanelKeyDown(event, filter.id);
       return;
@@ -520,7 +526,7 @@ export class FilterMenu {
     }
     if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
     event.preventDefault();
-    const enabled = options
+    const enabled = visibleOptions
       .map((candidate, optionIndex) => ({ candidate, optionIndex }))
       .filter(({ candidate }) => !candidate.isInactive)
       .map(({ optionIndex }) => optionIndex);
@@ -534,6 +540,65 @@ export class FilterMenu {
       const start = current >= 0 ? current : direction === 1 ? -1 : 0;
       next = enabled[(start + direction + enabled.length) % enabled.length];
     }
+    this.activeOptionIndex = next;
+    this.focusRingVisible = true;
+    requestAnimationFrame(() => {
+      this.el
+        .querySelector<HTMLElement>(`#${this.generatedId}-${filter.id}-option-${next}`)
+        ?.focus();
+    });
+  }
+
+  private optionMatchesQuery(option: FilterMenuOption, query: string): boolean {
+    const normalized = query.trim().toLocaleLowerCase();
+    if (!normalized) return true;
+    return `${option.label} ${option.description ?? ''}`
+      .toLocaleLowerCase()
+      .includes(normalized);
+  }
+
+  private visibleOptions(
+    filter: FilterMenuFilter,
+    query = this.optionQueryByFilter[filter.id] ?? ''
+  ) {
+    if (filter.kind === 'boolean') {
+      const option = this.booleanOption(filter);
+      return this.optionMatchesQuery(option, query) ? [option] : [];
+    }
+    return (filter.options ?? []).filter(option => this.optionMatchesQuery(option, query));
+  }
+
+  private booleanOption(filter: FilterMenuFilter): FilterMenuOption {
+    return {
+      label: filter.fieldLabel ?? filter.label,
+      value: 'true',
+      description: filter.description,
+    };
+  }
+
+  private setOptionQuery(filter: FilterMenuFilter, value: string) {
+    const visibleOptions = this.visibleOptions(filter, value);
+    const firstEnabled = visibleOptions.findIndex(option => !option.isInactive);
+    this.activeOptionIndex = firstEnabled;
+    this.focusRingVisible = false;
+    this.optionQueryByFilter = { ...this.optionQueryByFilter, [filter.id]: value };
+    requestAnimationFrame(() => {
+      const content = this.el.querySelector<HTMLElement>('.filter-menu__options-content');
+      if (content) content.scrollTop = 0;
+      this.position.schedule();
+    });
+  }
+
+  private handleOptionSearchKeyDown(event: KeyboardEvent, filter: FilterMenuFilter) {
+    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+    const visibleOptions = this.visibleOptions(filter);
+    const enabled = visibleOptions
+      .map((option, index) => ({ option, index }))
+      .filter(({ option }) => !option.isInactive)
+      .map(({ index }) => index);
+    if (!enabled.length) return;
+    event.preventDefault();
+    const next = event.key === 'ArrowDown' ? enabled[0] : enabled[enabled.length - 1];
     this.activeOptionIndex = next;
     this.focusRingVisible = true;
     requestAnimationFrame(() => {
@@ -854,6 +919,7 @@ export class FilterMenu {
             ariaLabel="Date filter mode"
             size="md"
             width="fill"
+            hasContainer={false}
             value={mode}
             tabs={DATE_MODE_TABS}
             onDsChange={(event: CustomEvent<string>) => {
@@ -871,18 +937,55 @@ export class FilterMenu {
     );
   }
 
+  private renderOptionSearch(filter: FilterMenuFilter) {
+    return (
+      <div class="filter-menu__option-search">
+        <ChoiceSearch
+          size="md"
+          hasFocusBoundary={false}
+          hasInteractionFill={false}
+          value={this.optionQueryByFilter[filter.id] ?? ''}
+          placeholder={this.searchPlaceholder}
+          ariaLabel={`Search ${filter.label} options`}
+          controls={`${this.generatedId}-${filter.id}-options`}
+          inputRef={() => undefined}
+          clearLabel={`Clear ${filter.label} search`}
+          onValueChange={value => this.setOptionQuery(filter, value)}
+          onKeyDown={(event: KeyboardEvent) => this.handleOptionSearchKeyDown(event, filter)}
+        />
+      </div>
+    );
+  }
+
+  private renderNoOptionResults() {
+    return (
+      <div
+        class="ds-choice-empty ds-empty-region"
+        role="option"
+        aria-selected="false"
+        aria-disabled="true"
+        aria-label={this.noResultsText}
+        aria-live="polite"
+      >
+        <ds-empty-state body={this.noResultsText} />
+      </div>
+    );
+  }
+
   private renderOptions(filter: FilterMenuFilter, values: FilterMenuValues) {
     const value = values[filter.id];
     if (filter.kind === 'multiple' || filter.kind === 'single') {
       const selected = Array.isArray(value) ? value : [];
-      const options = filter.options ?? [];
+      const allOptions = filter.options ?? [];
+      const options = this.visibleOptions(filter);
       const usesSubtext = choiceListUsesSubtext(
-        options.map(option => ({
+        allOptions.map(option => ({
           label: option.label,
           value: option.value,
           subtext: option.description,
         }))
       );
+      if (!options.length) return this.renderNoOptionResults();
       return options.map((option, index) => {
         const isSelected =
           filter.kind === 'multiple' ? selected.includes(option.value) : value === option.value;
@@ -915,7 +1018,7 @@ export class FilterMenu {
               this.activeOptionIndex = index;
             }}
             onKeyDown={(event: KeyboardEvent) =>
-              this.handleOptionKeyDown(event, filter, option, index, values)
+              this.handleOptionKeyDown(event, filter, option, index, values, options)
             }
             onHover={() => {
               this.focusRingVisible = false;
@@ -928,11 +1031,8 @@ export class FilterMenu {
     }
 
     if (filter.kind === 'boolean') {
-      const option: FilterMenuOption = {
-        label: filter.fieldLabel ?? filter.label,
-        value: 'true',
-        description: filter.description,
-      };
+      const [option] = this.visibleOptions(filter);
+      if (!option) return this.renderNoOptionResults();
       return (
         <ChoiceOptionRow
           size="md"
@@ -1279,6 +1379,9 @@ export class FilterMenu {
                     role="tabpanel"
                     aria-labelledby={`${this.generatedId}-${activeFilter.id}-tab`}
                   >
+                    {activeFilter.kind === 'date'
+                      ? null
+                      : this.renderOptionSearch(activeFilter)}
                     <div class="filter-menu__options-content">
                       {activeFilter.kind === 'date' ? (
                         <div key={activeFilter.id} class="filter-menu__option-list--date">
@@ -1286,6 +1389,7 @@ export class FilterMenu {
                         </div>
                       ) : (
                         <div
+                          id={`${this.generatedId}-${activeFilter.id}-options`}
                           key={activeFilter.id}
                           class="filter-menu__option-list ds-choice-list ds-chrome-column ds-chrome-space--sm"
                           role="listbox"

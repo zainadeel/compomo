@@ -6,6 +6,51 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
+test('groups through two dependent panes and keeps order unavailable until data is selected', async ({
+  page,
+}) => {
+  const control = page.locator('#table-group');
+  const trigger = control.getByRole('button', { name: 'Group safety events' });
+  await trigger.click();
+
+  const dialog = page.getByRole('dialog', { name: 'Group safety events' });
+  await expect(dialog.getByRole('listbox', { name: 'Group data' })).toBeVisible();
+  await expect(dialog.getByText('Select a group to choose its order.')).toBeVisible();
+  await expect(dialog.getByRole('listbox', { name: 'Group order' })).toHaveCount(0);
+
+  await dialog.getByRole('option', { name: 'Severity' }).click();
+  await expect(dialog.getByRole('option', { name: 'Severity' })).toHaveAttribute(
+    'aria-selected',
+    'true'
+  );
+  await expect(dialog.getByRole('option', { name: 'Ascending' })).toHaveAttribute(
+    'aria-selected',
+    'true'
+  );
+  await dialog.getByRole('option', { name: 'Descending' }).click();
+  await expect(dialog.getByRole('option', { name: 'Descending' })).toHaveAttribute(
+    'aria-selected',
+    'true'
+  );
+  await expect(dialog).toBeVisible();
+
+  await expect
+    .poll(() =>
+      control.evaluate(
+        element =>
+          (element as HTMLElement & { eventLog: unknown[] }).eventLog
+      )
+    )
+    .toEqual([
+      { type: 'change', columnId: 'severity', direction: 'asc' },
+      { type: 'change', columnId: 'severity', direction: 'desc' },
+    ]);
+
+  await dialog.getByRole('button', { name: 'Clear' }).click();
+  await expect(dialog.getByText('Select a group to choose its order.')).toBeVisible();
+  await expect(dialog.getByRole('listbox', { name: 'Group order' })).toHaveCount(0);
+});
+
 test('owns a caption-bar column customizer menu for live show/hide and reorder', async ({
   page,
 }) => {
@@ -410,6 +455,118 @@ test('reserves a category-pane Clear footer for every table filter @pr-critical'
   await expect(control).toHaveJSProperty('values', { status: ['driving'] });
 });
 
+test('searches labels and descriptions within every non-date filter category @pr-critical', async ({
+  page,
+}) => {
+  const control = page.locator('#column-customizer-filter');
+  await control.evaluate((element: HTMLDsTableFilterElement) => {
+    element.filters = [
+      {
+        id: 'group',
+        label: 'Group',
+        kind: 'multiple',
+        options: [
+          {
+            label: 'Main operations',
+            value: 'main',
+            description: '50 vehicles · 50 drivers · 50 assets',
+          },
+          {
+            label: 'West Coast',
+            value: 'west',
+            description: '25 vehicles · 25 drivers · 25 assets',
+          },
+          {
+            label: 'Long Haul',
+            value: 'long-haul',
+            description: '25 vehicles · 25 drivers · 25 assets',
+          },
+        ],
+      },
+      {
+        id: 'status',
+        label: 'Status',
+        kind: 'multiple',
+        options: [
+          { label: 'Driving', value: 'driving' },
+          { label: 'Off duty', value: 'off-duty' },
+        ],
+      },
+      {
+        id: 'notes',
+        label: 'Notes',
+        fieldLabel: 'Has notes',
+        description: 'Only show records with notes',
+        kind: 'boolean',
+      },
+      { id: 'event-date', label: 'Date', kind: 'date' },
+    ];
+    element.activeFilterId = 'group';
+    element.addEventListener('dsActiveFilterChange', event => {
+      element.activeFilterId = (event as CustomEvent<string>).detail;
+    });
+  });
+
+  await control.getByRole('combobox', { name: 'Filter fleet' }).click();
+  const popup = control.getByRole('dialog', { name: 'Filter fleet' });
+  const searchHeader = popup.locator('.filter-menu__option-search');
+  const groupSearch = popup.getByRole('searchbox', { name: 'Search Group options' });
+
+  await expect(searchHeader).toBeVisible();
+  expect((await searchHeader.boundingBox())?.height).toBeCloseTo(40, 1);
+  await expect(groupSearch).toHaveAttribute('placeholder', 'Search');
+  await expect(groupSearch).toHaveAttribute('autocomplete', 'off');
+  await expect(groupSearch).toHaveAttribute('autocapitalize', 'none');
+  await expect(groupSearch).toHaveAttribute('autocorrect', 'off');
+  await expect(groupSearch).toHaveAttribute('spellcheck', 'false');
+  await expect(groupSearch).toHaveCSS('border-top-width', '0px');
+  await expect(groupSearch).toHaveCSS('font-size', '14px');
+  await expect(groupSearch).toHaveCSS('line-height', '20px');
+  await expect(searchHeader).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(searchHeader.locator('.select-search')).toHaveClass(
+    /select-search--without-focus-boundary/
+  );
+  await expect(searchHeader.locator('ds-input')).toHaveJSProperty('hasInteractionFill', false);
+  await expect(searchHeader.locator('.input-control')).not.toHaveClass(/ds-interaction-fill/);
+  const dividerBefore = await searchHeader.evaluate(element => {
+    const style = getComputedStyle(element, '::after');
+    return { height: style.height, color: style.backgroundColor };
+  });
+  await groupSearch.focus();
+  const dividerAfter = await searchHeader.evaluate(element => {
+    const style = getComputedStyle(element, '::after');
+    return { height: style.height, color: style.backgroundColor };
+  });
+  expect(dividerAfter).toEqual(dividerBefore);
+  expect(dividerAfter.height).toBe('1px');
+  await groupSearch.fill('25 drivers');
+  await expect(popup.getByRole('listbox', { name: 'Group' }).getByRole('option')).toHaveText([
+    'West Coast25 vehicles · 25 drivers · 25 assets',
+    'Long Haul25 vehicles · 25 drivers · 25 assets',
+  ]);
+
+  await groupSearch.press('ArrowLeft');
+  await expect(groupSearch).toBeFocused();
+  await groupSearch.press('ArrowDown');
+  await expect(popup.getByRole('option', { name: /West Coast/ })).toBeFocused();
+
+  await popup.getByRole('tab', { name: 'Status' }).click();
+  const statusSearch = popup.getByRole('searchbox', { name: 'Search Status options' });
+  await expect(statusSearch).toHaveValue('');
+  await popup.getByRole('tab', { name: 'Group' }).click();
+  await expect(popup.getByRole('searchbox', { name: 'Search Group options' })).toHaveValue(
+    '25 drivers'
+  );
+
+  await popup.getByRole('tab', { name: 'Notes' }).click();
+  await popup.getByRole('searchbox', { name: 'Search Notes options' }).fill('missing');
+  await expect(popup.getByRole('option', { name: 'No results' })).toBeVisible();
+
+  await popup.getByRole('tab', { name: 'Date' }).click();
+  await expect(popup.getByRole('searchbox')).toHaveCount(0);
+  await expect(popup.getByRole('tablist', { name: 'Date filter mode' })).toBeVisible();
+});
+
 test('requests a controlled any or all mode from the multiple-filter footer @pr-critical', async ({
   page,
 }) => {
@@ -495,11 +652,20 @@ test('supports semantic relative dates and fixed calendar ranges @pr-critical', 
   await control.getByRole('combobox', { name: 'Filter fleet' }).click();
   const popup = control.getByRole('dialog', { name: 'Filter fleet' });
   const dateHeader = popup.locator('.filter-menu__date-header');
+  const dateTabs = dateHeader.locator('ds-tab-group');
   const rangeTab = popup.getByRole('tab', { name: 'Range' });
   const relativeTab = popup.getByRole('tab', { name: 'Relative' });
 
   await expect(dateHeader).toBeVisible();
-  expect((await dateHeader.boundingBox())?.height).toBeCloseTo(48, 3);
+  await expect(popup.getByRole('searchbox')).toHaveCount(0);
+  expect((await dateHeader.boundingBox())?.height).toBeCloseTo(40, 1);
+  await expect(dateHeader).toHaveCSS('padding', '4px');
+  await expect(dateTabs).toHaveJSProperty('hasContainer', false);
+  await expect(dateTabs.locator('.tab-list')).toHaveCSS('border-top-width', '0px');
+  await expect(dateTabs.locator('.tab-list')).toHaveCSS(
+    'background-color',
+    'rgba(0, 0, 0, 0)'
+  );
   expect((await popup.locator('.filter-menu__category-pane').boundingBox())?.width).toBeCloseTo(
     200,
     1

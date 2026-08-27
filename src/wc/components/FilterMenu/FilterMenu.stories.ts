@@ -64,7 +64,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'Controlled two-pane filter dialog. The application owns definitions, values, and filtering consequences; Filter Menu owns anchored overlay behavior, category navigation, option controls, counts, clearing, and focus return.',
+          'Controlled two-pane filter dialog. The application owns definitions, values, and filtering consequences; Filter Menu owns anchored overlay behavior, category navigation, per-category option search outside Date, option controls, counts, clearing, and focus return.',
       },
     },
   },

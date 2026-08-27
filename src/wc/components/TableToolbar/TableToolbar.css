@@ -77,6 +77,7 @@
 .table-toolbar ds-table-filter,
 .table-toolbar ds-filter-menu,
 .table-toolbar ds-select,
+.table-toolbar ds-table-group,
 .table-toolbar ds-table-sort {
   min-inline-size: 0;
   max-inline-size: var(--dimension-menu-width-xs);

@@ -722,7 +722,9 @@ test(
 
       await search.fill('app');
 
-      const clearHost = select.locator('ds-button-unfilled.select-search__clear');
+      const clearHost = select.locator(
+        'ds-input.select-search__control ds-button-unfilled.input-control__clear'
+      );
       const clear = clearHost.getByRole('button', { name: 'Clear', exact: true });
       await expect(clearHost).toHaveJSProperty('variant', 'icon');
       await expect(clearHost).toHaveJSProperty('size', 'sm');

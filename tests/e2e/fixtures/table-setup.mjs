@@ -2,6 +2,7 @@ import '/dist/components/ds-table.js';
 import '/dist/components/ds-table-toolbar.js';
 import '/dist/components/ds-table-saved-views.js';
 import '/dist/components/ds-table-filter.js';
+import '/dist/components/ds-table-group.js';
 import '/dist/components/ds-table-sort.js';
 import '/dist/components/ds-menu.js';
 import '/dist/components/ds-select.js';
@@ -12,6 +13,7 @@ await customElements.whenDefined('ds-table');
 await customElements.whenDefined('ds-table-toolbar');
 await customElements.whenDefined('ds-table-saved-views');
 await customElements.whenDefined('ds-table-filter');
+await customElements.whenDefined('ds-table-group');
 await customElements.whenDefined('ds-table-sort');
 await customElements.whenDefined('ds-filter-menu');
 await customElements.whenDefined('ds-select');
@@ -44,6 +46,23 @@ savedViews.addEventListener('dsViewSave', event => {
 savedViews.addEventListener('dsViewDiscard', event => {
   savedViews.eventLog.push({ type: 'discard', ...event.detail });
   savedViews.dirty = false;
+});
+
+const tableGroup = document.getElementById('table-group');
+tableGroup.options = [
+  { label: 'Behavior', value: 'behavior' },
+  { label: 'Severity', value: 'severity' },
+  { label: 'Driver name', value: 'driverName' },
+];
+tableGroup.grouping = null;
+tableGroup.eventLog = [];
+tableGroup.addEventListener('dsGroupChange', event => {
+  tableGroup.eventLog.push({ type: 'change', ...event.detail });
+  tableGroup.grouping = event.detail;
+});
+tableGroup.addEventListener('dsClear', () => {
+  tableGroup.eventLog.push({ type: 'clear' });
+  tableGroup.grouping = null;
 });
 
 const overflowActionItems = [

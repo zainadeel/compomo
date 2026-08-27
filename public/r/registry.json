@@ -3915,7 +3915,7 @@
     {
       "name": "filter-menu",
       "title": "FilterMenu",
-      "description": "Controlled two-pane filter select with menu-recipe category navigation, single- and multiple-choice, boolean, semantic relative-date and fixed-range filters, selected counts, and a clear action.",
+      "description": "Controlled two-pane filter select with menu-recipe category navigation, local option search for non-date categories, single- and multiple-choice, boolean, semantic relative-date and fixed-range filters, selected counts, and a clear action.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -3926,7 +3926,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Controlled two-pane filter select with menu-recipe category navigation, single- and multiple-choice, boolean, semantic relative-date and fixed-range filters, selected counts, and a clear action.",
+          "summary": "Controlled two-pane filter select with menu-recipe category navigation, local option search for non-date categories, single- and multiple-choice, boolean, semantic relative-date and fixed-range filters, selected counts, and a clear action.",
           "useWhen": [
             "A compact trigger must expose several filter families without turning the toolbar into many separate controls.",
             "Users need to move between persistent filter categories while editing the selected category in a second pane."
@@ -3956,8 +3956,9 @@
           "accessibility": [
             "The built-in select trigger exposes combobox semantics with a dialog popup, synchronizes expanded state, holds the pressed interaction wash without changing resting foreground while open, and restores focus after dismissal.",
             "The category pane is a vertical tab list. Arrow Up and Arrow Down wrap, Home and End jump, Arrow Right enters the option pane, and Arrow Left returns to the active category.",
+            "Every non-date category begins with a labelled search field. Arrow Down and Arrow Up enter the first or last visible option, while Left and Right retain native text-caret behavior. Search matches option labels and descriptions without changing selected values.",
             "Escape and outside activation close the popup and restore trigger focus. Tab moves through option controls and closes only when it leaves the popup boundary.",
-            "Date filters expose Range and Relative tabs in a compact header. Relative presets use listbox semantics; the range calendar exposes a labelled grid, one tab stop, arrow-key day navigation, Home and End week navigation, and Page Up or Page Down month navigation. After a range start is chosen, pointer hover and keyboard focus preview the possible inclusive range without changing selection semantics.",
+            "Date filters expose containerless Range and Relative tabs in a secondary-background header with 4px padding around the 32px medium control. Relative presets use listbox semantics; the range calendar exposes a labelled grid, one tab stop, arrow-key day navigation, Home and End week navigation, and Page Up or Page Down month navigation. After a range start is chosen, pointer hover and keyboard focus preview the possible inclusive range without changing selection semantics.",
             "When an external trigger is inside an open shadow tree, pass its HTMLElement through anchor so outside activation, focus return, and Tab continuation use the composed tree.",
             "The trigger count reports active filter categories. Multiple-choice category tags report individual selected criteria, while an applied Date category uses a visual dot because its value is singular. The default summary footer announces the total; the categories-clear footer recipe reserves a visually empty category-pane action row and exposes its divider and only Clear when criteria are active."
           ],
@@ -3965,6 +3966,7 @@
             "The application owns filters, values, matchModes, activeFilterId, and open. Replace controlled objects and arrays after dsChange, dsMatchModeChange, dsActiveFilterChange, dsClear, or dsClose.",
             "Single filters return a string, multiple filters return ordered string arrays, boolean filters return a boolean, and date filters return a serializable semantic string.",
             "Multiple filters expose a right-pane footer reading Limit results to any or all selected. any is the default OR mode. Activating the blue mode word requests the opposite controlled mode through dsMatchModeChange; the application owns the corresponding query semantics.",
+            "Non-date option search is internal, scoped independently per category while the popup remains open, and reset after the popup closes. An unmatched query shows the configurable noResultsText empty state. Date uses its Relative and Range modes instead of option search.",
             "Date values are serializable semantic strings: relative:<preset> preserves a relative choice for future resolution and range:<start>/<end> preserves fixed inclusive ISO calendar dates. A legacy YYYY-MM-DD value is interpreted as a one-day range.",
             "Relative presets are Today, Yesterday, and the last 7, 14, 30, 60, or 90 inclusive calendar days. Applications resolve them against their current product date and time-zone policy by using resolveDateFilterRange from @ds-mo/ui/utils.",
             "Range selection applies the first date immediately as a one-day range; while an end is pending, that selected start retains its bold treatment and hovering or focusing another day paints the rest of the provisional inclusive span faint without emitting a value. A second activation completes an ordered inclusive range and gives both edges the bold treatment. A new activation after completion starts a replacement range.",
@@ -4077,8 +4079,16 @@
             "type": "string",
             "required": false
           },
+          "noResultsText": {
+            "type": "string",
+            "required": false
+          },
           "open": {
             "type": "boolean",
+            "required": false
+          },
+          "searchPlaceholder": {
+            "type": "string",
             "required": false
           },
           "showSelectedCount": {
@@ -4157,7 +4167,9 @@
         "badge",
         "button-unfilled",
         "checkbox",
+        "empty-state",
         "icon",
+        "input",
         "tab-group",
         "tag",
         "text",
@@ -4346,10 +4358,12 @@
           ],
           "states": [
             "Every size applies one complete control-density recipe across frame height, inline padding, icon zones, text-container inset, gap, and radius; supporting error content follows the shared 4px field flow.",
-            "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry. Set hasBorder to false only in chrome that supplies enough surrounding structure; the control then remains borderless at rest, while focused, and while invalid, with semantics and supporting error copy unchanged.",
+            "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry. Set hasBorder to false only in chrome that supplies enough surrounding structure; set hasInteractionFill to false when that containing chrome also owns hover and pressed feedback.",
             "Placeholder text is secondary at rest and quaternary while the editable field is focused because it becomes decorative once typing begins. Single-line placeholder and entered value text truncate with an ellipsis when the field is narrower than its content.",
             "Entered values use the parent surface's primary foreground; prefix icons, suffix content, and resting placeholder text use its secondary foreground.",
             "Search fields show a standard borderless CrossCircle icon action only while they contain a value. Clearing emits the empty value and restores focus to the native field.",
+            "Search fields disable browser autocomplete history, automatic capitalization, autocorrection, and spellchecking by default so browser-owned suggestions do not compete with product-owned results. Consumers can explicitly provide autoComplete when a different native history behavior is required.",
+            "Search fields used with owned result sets forward aria-controls and aria-activedescendant to the native field so keyboard focus can remain in the query while assistive technology tracks the active result.",
             "The suffix slot is for compact units or decorations. The optional leading icon is decorative and does not replace the field label.",
             "Use autoComplete, inputMode, and enterKeyHint to provide browser and virtual-keyboard hints without changing the value's semantic type.",
             "Number fields preserve native spinbutton semantics, keyboard stepping, and min/max constraint behavior while dsChange continues to report the native string value. Two borderless inset chevron actions split the available inner height, disable independently at their numeric bound, and restore focus to the spinbutton after pointer activation.",
@@ -4389,6 +4403,14 @@
           ]
         },
         "props": {
+          "ariaActiveDescendant": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "ariaControls": {
+            "type": "string | undefined",
+            "required": false
+          },
           "ariaDescribedby": {
             "type": "string | undefined",
             "required": false
@@ -4434,6 +4456,10 @@
             "required": false
           },
           "hasBorder": {
+            "type": "boolean",
+            "required": false
+          },
+          "hasInteractionFill": {
             "type": "boolean",
             "required": false
           },
@@ -6880,13 +6906,12 @@
       },
       "dependencies": [
         "@ds-mo/ui",
-        "@ds-mo/tokens",
-        "@ds-mo/icons"
+        "@ds-mo/tokens"
       ],
       "registryDependencies": [
         "button-unfilled",
         "divider",
-        "icon",
+        "input",
         "text",
         "tooltip"
       ]
@@ -7742,6 +7767,7 @@
         "checkbox",
         "empty-state",
         "icon",
+        "input",
         "loader",
         "text",
         "tooltip"
@@ -9040,6 +9066,7 @@
             "A missing, empty, inactive, or unknown selected value is invalid when enabled tabs exist; the component does not choose a fallback selection.",
             "Selection is singular and follows keyboard focus.",
             "Width follows the shared control contract: hug keeps the track content-sized, while fill occupies the parent width and distributes available space equally across selectable segments; dividers remain fixed-width separators.",
+            "hasContainer defaults to true. Set it to false only when a parent surface owns the track background and boundary; the outer fill, border, and inset disappear while selected-pill, interaction, focus, density, and keyboard behavior remain unchanged.",
             "Small, medium, and large use the shared 24px, 32px, and 40px control-density recipes for the outer track. Each segment uses the same-size inset recipe at 20px, 28px, and 36px while preserving that density's typography, icon, gap, and label metrics.",
             "Use one consistent content variant across every selectable tab in a group.",
             "Omitted background is for primary and secondary surfaces; pass the faint context explicitly on faint surfaces.",
@@ -9081,6 +9108,10 @@
           },
           "background": {
             "type": "TabBackground | undefined",
+            "required": false
+          },
+          "hasContainer": {
+            "type": "boolean",
             "required": false
           },
           "size": {
@@ -9174,7 +9205,7 @@
             "The rendered structure uses a native table, caption, column headers, row groups, and data cells; keep the caption non-empty. The native caption remains visually hidden as the table's accessible name. When caption visibility is enabled, a 48px header bar renders as component chrome outside the data scrollport. It defaults to a presentational caption title that does not duplicate the accessible name. Application-owned labeled controls supplied through the single named header slot replace that fallback and share one horizontal caption overflow row with table-owned actions inside the component-owned 8px inset. Table caption buttons keep pressed interaction paint without physically scaling. When columnCustomizer is enabled, the table adds a trailing Customize control named Customize table. Its label uses regular weight and its resting foreground remains neutral when hidden or reordered columns differ from the catalog default. The control is icon-label at typical widths and the icon-only Table menu button below 900px, where a tooltip preserves the Customize label. The always-icon-only table-variant control also exposes its label through a tooltip. Otherwise the header slot receives the complete content width.",
             "The data-mode switcher is the shared Menu of the table's supported infinite, pagination, and virtual modes. It uses an Ellipses trigger. The switcher is the final caption-bar action; when the column customizer is also present, a decorative vertical divider separates the two controls. dataMode remains controlled, and the application responds to change intent by supplying the matching records, pagination state, loading behavior, and query consequences. Escape, dismissal, and selection return focus to the trigger.",
             "The column customizer is the shared Menu of switch rows, not a table-owned dialog. Data columns can be shown, hidden, and reordered. Action columns and the selection checkbox never appear in the menu. The last remaining visible data column cannot be hidden, but it stays focusable so it can still be reordered. Escape and outside click restore focus to the trigger. Persistence stays in the application.",
-            "Sorting controls remain buttons inside column headers and expose the table's one controlled member-row sort through aria-sort. ds-table-sort in the toolbar trailing cluster is the matching menu of Data and Direction sections; it emits the same dsSortChange shape so header clicks and menu choices stay in sync. Grouping never adds a second sort indicator or header control; the application supplies groups in its fixed product order. Optional column help underlines the header label with the shared dotted decoration and shows ds-tooltip from that label; it does not add a second header control or replace the column name.",
+            "Sorting controls remain buttons inside column headers and expose the table's one controlled member-row sort through aria-sort. ds-table-sort in the toolbar trailing cluster is the matching menu of Data and Direction sections; it emits the same dsSortChange shape so header clicks and menu choices stay in sync. Grouping never adds a second sort indicator or header control; ds-table-group controls the grouping data point and ascending or descending group-section order while the application supplies the resulting groups. Optional column help underlines the header label with the shared dotted decoration and shows ds-tooltip from that label; it does not add a second header control or replace the column name.",
             "Selection controls expose checkbox semantics and explicit row names; select-all affects selectable loaded rows only and preserves selected identities outside the loaded window. In virtual mode the supplied in-memory rows are that loaded set, including rows whose DOM is recycled. When grouping is active with multi-selection, each group section header also exposes a checkbox that selects or clears that group's selectable loaded rows.",
             "Interactive rows are focusable as native rows, activate with Enter or Space, and do not steal activation from their nested selection, action, overflow-menu, or primary-text link controls.",
             "Scrollable table regions become keyboard focusable and named only when overflow exists.",
@@ -9555,7 +9586,7 @@
     {
       "name": "table-filter",
       "title": "TableFilter",
-      "description": "Standard table-toolbar Filter control that owns the shared trigger, filter menu UI, accessible defaults, and compact-caption behavior while the application controls data and values.",
+      "description": "Standard table-toolbar Filter control that owns the shared trigger, searchable non-date filter options, accessible defaults, and compact-caption behavior while the application controls data and values.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -9566,7 +9597,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Standard table-toolbar Filter control that owns the shared trigger, filter menu UI, accessible defaults, and compact-caption behavior while the application controls data and values.",
+          "summary": "Standard table-toolbar Filter control that owns the shared trigger, searchable non-date filter options, accessible defaults, and compact-caption behavior while the application controls data and values.",
           "useWhen": [
             "A table toolbar should expose the standard singular Filter control and shared filter-menu interaction.",
             "A product supplies filter definitions and controlled values but should not recreate the toolbar trigger, category navigation, or responsive treatment."
@@ -9596,13 +9627,14 @@
           "accessibility": [
             "The trigger is an icon-label combobox named Filter table unless a product aria-label supplies the table context. Compact caption widths preserve that accessible name after the visible label and chevron are omitted.",
             "The popup retains ds-filter-menu category navigation, option semantics, focus entry, dismissal, and focus return, and aligns its start edge with the trigger.",
-            "Localize label, menuLabel, categoriesLabel, and clearLabel together so visible and accessible wording remains consistent."
+            "Localize label, menuLabel, categoriesLabel, clearLabel, searchPlaceholder, and noResultsText together so visible and accessible wording remains consistent."
           ],
           "states": [
             "filters, values, matchModes, and activeFilterId are controlled. dsChange, dsMatchModeChange, dsClear, and dsActiveFilterChange report intent without changing those inputs; the application applies query consequences and returns replacement values.",
             "The visible trigger label stays singular Filter without appending an active-count suffix. Active criteria promote only the visible label from secondary to primary, matching the other table caption controls without redefining generic button active semantics.",
             "The popup reserves a visually empty footer row inside the category pane for every state. Active criteria reveal its divider and only a left-aligned Clear action, without adding popup height or showing redundant selected-count copy; the option pane retains its full column.",
             "Every multiple-choice category exposes a right-pane footer where the blue any or all word toggles its controlled match mode. any is the default OR mode; the application applies the requested mode to its query.",
+            "Every non-date category exposes a 40px secondary-background search header that filters its displayed option labels and descriptions without changing controlled filter values. Date retains only its Relative and Range header.",
             "Date categories use the shared compact-header Range and Relative experience. Persist relative values semantically and resolve them from the product's current date whenever rows or saved views are applied.",
             "Popup visibility follows the same mutable open and dsOpenChange contract as ds-filter-menu."
           ],
@@ -9665,8 +9697,16 @@
             "type": "string | null",
             "required": false
           },
+          "noResultsText": {
+            "type": "string",
+            "required": false
+          },
           "open": {
             "type": "boolean",
+            "required": false
+          },
+          "searchPlaceholder": {
+            "type": "string",
             "required": false
           },
           "values": {
@@ -9718,6 +9758,141 @@
       ],
       "registryDependencies": [
         "filter-menu"
+      ]
+    },
+    {
+      "name": "table-group",
+      "title": "TableGroup",
+      "description": "Two-panel toolbar control for choosing one table grouping data point and the ascending or descending order of its group sections.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/table-group",
+        "source": "src/wc/components/TableGroup/TableGroup.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Two-panel toolbar control for choosing one table grouping data point and the ascending or descending order of its group sections.",
+          "useWhen": [
+            "A table toolbar needs explicit control of one grouping level and its section order.",
+            "Grouping data-point labels differ from compact table-header labels."
+          ],
+          "avoidWhen": [
+            "The table is not groupable.",
+            "The application expects the component to rearrange rows or create group sections internally."
+          ],
+          "alternatives": [
+            {
+              "when": "The choice is one submitted form value with no dependent order pane.",
+              "component": "component:ds-select",
+              "reason": "Select owns form-value semantics rather than table grouping state."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-table",
+            "component:ds-table-toolbar",
+            "component:ds-table-filter",
+            "component:ds-table-sort"
+          ],
+          "patterns": [
+            "pattern:menu-trigger"
+          ],
+          "accessibility": [
+            "The trigger opens a named non-modal dialog. Data and Order are independently named single-selection listboxes.",
+            "Up and Down move within the focused pane. Right moves from Data to Order when a group is active, Left returns to the selected Data row, and Escape closes the dialog and restores trigger focus.",
+            "The right pane remains present before a group is active as one complete empty state without the Order heading, and explains that a group must be selected."
+          ],
+          "states": [
+            "options and grouping are controlled. dsGroupChange reports a complete TableGroupingState and dsClear requests null grouping without mutating either input.",
+            "Selecting a new data point starts its order at ascending. Re-selecting the active data point preserves its direction.",
+            "Selecting a data point or direction applies immediately and leaves the dialog open so the other pane can be changed."
+          ],
+          "responsiveBehavior": [
+            "Use in the trailing region of ds-table-toolbar.",
+            "The trigger uses the shared caption-control button behavior and becomes icon-only in compact named table containers.",
+            "Both panes remain present and their choice lists scroll within the collision-constrained popup."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign options and grouping as JavaScript properties and replace grouping from dsGroupChange or dsClear."
+            ],
+            "react": [
+              "Keep grouping in application state and replace it from dsGroupChange; set it to null from dsClear."
+            ],
+            "angular": [
+              "Import the generated DsTableGroup adapter and bind options and grouping as properties."
+            ]
+          },
+          "references": [
+            {
+              "label": "Review states",
+              "path": "src/wc/components/TableGroup/TableGroup.stories.ts"
+            },
+            {
+              "label": "Toolbar composition owner",
+              "path": "src/wc/components/TableToolbar/TableToolbar.agent.json"
+            }
+          ]
+        },
+        "props": {
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "clearLabel": {
+            "type": "string",
+            "required": false
+          },
+          "emptyMessage": {
+            "type": "string",
+            "required": false
+          },
+          "grouping": {
+            "type": "TableGroupingState | null",
+            "required": false
+          },
+          "open": {
+            "type": "boolean",
+            "required": false
+          },
+          "options": {
+            "type": "TableGroupOption[]",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsClear",
+            "detail": "void"
+          },
+          {
+            "name": "dsGroupChange",
+            "detail": "TableGroupingState"
+          },
+          {
+            "name": "dsOpenChange",
+            "detail": "boolean"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-table-group",
+          "react": "DsTableGroup",
+          "vue": "DsTableGroup",
+          "angular": "DsTableGroup"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "button-unfilled",
+        "empty-state",
+        "input",
+        "text"
       ]
     },
     {
@@ -9905,6 +10080,7 @@
           "accessibility": [
             "The native search input remains the one Tab stop and exposes combobox, expanded, controls, and active-descendant relationships to the field listbox.",
             "Typing slash opens the field listbox without inserting slash into the query. While open, Up and Down change the active option, Enter selects it, Escape or Backspace closes it, and Left and Right retain native text-cursor behavior because focus never leaves the input.",
+            "The query disables browser autocomplete history, automatic capitalization, autocorrection, and spellchecking so browser-owned suggestions never obscure the product-owned field menu or table results.",
             "Selected field Chips have individually labeled remove actions and are also described by the search input. Polite announcements report additions, removals, and clearing without duplicating the visible query.",
             "The slash suffix is a labeled double-inset md button excluded from sequential keyboard navigation; the search input exposes the same action through aria-keyshortcuts and its description.",
             "The clear action removes both free text and every selected field. It restores focus to the search input; each Chip's own remove action remains scoped to that field."
@@ -10161,6 +10337,7 @@
             "component:ds-divider",
             "component:ds-input",
             "component:ds-table-filter",
+            "component:ds-table-group",
             "component:ds-select",
             "component:ds-table-sort",
             "component:ds-button-unfilled"
@@ -10179,19 +10356,19 @@
           ],
           "responsiveBehavior": [
             "The start cluster, search, trailing Filter/Sort/Group, and table caption trailing actions stay on one line. Saved views hug their current trigger content up to the compact menu-width token rather than reserving that full width; long names truncate while the dirty dot stays visible. Filter, Sort, and Group triggers cap at the same token, and Sort and Group popups keep that compact menu-width floor. A standalone toolbar owns its horizontal scrolling; inside a table, the complete caption row is the single overflow owner so table-owned actions never remain pinned over scrolling toolbar controls.",
-            "Search consumes the row space left between fixed control groups and flexes smaller when the complete row needs space. Inside a named ds-table container narrower than 900px, ds-table-filter and ds-table-sort omit their labels and chevrons, and Group controls explicitly opted into collapseLabel become icon-only; each exposes its label through a hover and keyboard-focus tooltip. Empty leading and trailing slot groups do not add spacing. Active filtering or grouping promotes the prefix icon to primary. Sort keeps resting secondary chrome. Table-owned Customize also becomes the icon-only Table menu button at that width with the same tooltip behavior.",
+            "Search consumes the row space left between fixed control groups and flexes smaller when the complete row needs space. Inside a named ds-table container narrower than 900px, ds-table-filter, ds-table-group, and ds-table-sort omit their labels and chevrons; each exposes its label through a hover and keyboard-focus tooltip. Empty leading and trailing slot groups do not add spacing. Active filtering promotes its prefix icon to primary. Group and Sort keep resting secondary chrome. Table-owned Customize also becomes the icon-only Table menu button at that width with the same tooltip behavior.",
             "The scrollbar is visually suppressed without removing touch, trackpad, mouse-wheel, or keyboard scrolling from the overflow container.",
             "Trailing controls remain grouped after leading controls; the toolbar does not collapse controls into an application-specific overflow menu."
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Project saved views through slot=start, search through slot=search, additional left-side middle controls through slot=leading, and ds-table-filter, Group, and ds-table-sort through slot=trailing. Set collapseLabel on the Group control and provide contextual accessible names when Table controls is insufficient."
+              "Project saved views through slot=start, search through slot=search, additional left-side middle controls through slot=leading, and ds-table-filter, ds-table-group, and ds-table-sort through slot=trailing. Provide contextual accessible names when Table controls is insufficient."
             ],
             "react": [
-              "Set slot=start, slot=search, slot=leading, or slot=trailing on each child control. Use ds-table-filter for the standard Filter recipe, opt Group into collapseLabel, and keep values and event handlers in the application."
+              "Set slot=start, slot=search, slot=leading, or slot=trailing on each child control. Use ds-table-filter and ds-table-group for the standard Filter and Group recipes, and keep values and event handlers in the application."
             ],
             "angular": [
-              "Set slot=start, slot=search, slot=leading, or slot=trailing on each child control, use DsTableFilter for the standard Filter recipe, opt Group into collapseLabel, and import the generated adapters."
+              "Set slot=start, slot=search, slot=leading, or slot=trailing on each child control, use DsTableFilter and DsTableGroup for the standard Filter and Group recipes, and import the generated adapters."
             ]
           },
           "references": [

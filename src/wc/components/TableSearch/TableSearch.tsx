@@ -347,6 +347,9 @@ export class TableSearch {
               aria-activedescendant={this.activeOptionId}
               aria-keyshortcuts="/"
               autoComplete="off"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellcheck={false}
               onInput={event => this.dsChange.emit((event.target as HTMLInputElement).value)}
               onKeyDown={event => this.handleKeyDown(event)}
             />

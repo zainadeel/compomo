@@ -44,7 +44,7 @@ export interface SelectControllerState<T extends ChoiceOption> {
 export class SelectController<T extends ChoiceOption> {
   private triggerEl: HTMLButtonElement | null = null;
   private popupEl: HTMLDivElement | null = null;
-  private searchEl: HTMLInputElement | null = null;
+  private searchEl: HTMLDsInputElement | null = null;
   private typeahead = '';
   private typeaheadTimer: ReturnType<typeof setTimeout> | null = null;
   private outsideHandler: ((event: MouseEvent) => void) | null = null;
@@ -101,7 +101,7 @@ export class SelectController<T extends ChoiceOption> {
     this.popupEl = element;
   };
 
-  setSearchElement = (element: HTMLInputElement | null) => {
+  setSearchElement = (element: HTMLDsInputElement | null) => {
     this.searchEl = element;
   };
 
@@ -139,7 +139,7 @@ export class SelectController<T extends ChoiceOption> {
       this.bindPopupListeners();
       this.schedulePositionUpdate(() => {
         this.scrollActiveOptionIntoView();
-        if (this.state.searchable) this.searchEl?.focus();
+        if (this.state.searchable) void this.searchEl?.setFocus();
       });
       return;
     }
@@ -181,9 +181,10 @@ export class SelectController<T extends ChoiceOption> {
   }
 
   focusSearchOrTrigger() {
-    requestAnimationFrame(() =>
-      this.state.searchable ? this.searchEl?.focus() : this.triggerEl?.focus()
-    );
+    requestAnimationFrame(() => {
+      if (this.state.searchable) void this.searchEl?.setFocus();
+      else this.triggerEl?.focus();
+    });
   }
 
   handleTriggerKeyDown = (event: KeyboardEvent) => {
@@ -228,7 +229,13 @@ export class SelectController<T extends ChoiceOption> {
       }
       case 'Enter':
       case ' ': {
-        if (event.key === ' ' && this.state.searchable && event.target === this.searchEl) break;
+        if (
+          event.key === ' ' &&
+          this.state.searchable &&
+          event.target instanceof Node &&
+          this.searchEl?.contains(event.target)
+        )
+          break;
         event.preventDefault();
         const option = this.state.options[this.state.activeIndex];
         if (option) this.state.selectOption(option);

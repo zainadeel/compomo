@@ -33,6 +33,10 @@ export class TableFilter {
   @Prop() categoriesLabel: string = 'Filter categories';
   /** Footer action and date-clear accessible label. */
   @Prop() clearLabel: string = 'Clear';
+  /** Placeholder shown in each non-date option search header. */
+  @Prop() searchPlaceholder: string = 'Search';
+  /** Empty-state text shown when an option search has no matches. */
+  @Prop() noResultsText: string = 'No results';
 
   /** Requests a controlled value replacement without closing the popup. */
   @Event() dsChange!: EventEmitter<FilterMenuChangeDetail>;
@@ -74,6 +78,8 @@ export class TableFilter {
           menuLabel={menuName}
           categoriesLabel={this.categoriesLabel}
           clearLabel={this.clearLabel}
+          searchPlaceholder={this.searchPlaceholder}
+          noResultsText={this.noResultsText}
           footerLayout="categories-clear"
           onDsChange={event => this.forward(event, this.dsChange)}
           onDsClear={event => this.forward(event, this.dsClear)}

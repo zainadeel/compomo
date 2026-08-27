@@ -80,6 +80,12 @@
   background-color: transparent;
 }
 
+:host(.tab-group-host--containerless) .tab-list {
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+}
+
 .tab {
   display: flex;
   align-items: center;

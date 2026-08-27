@@ -1,7 +1,6 @@
 @import '../../utils/control-density.css';
 @import '../../utils/chrome-layout.css';
 @import '../../utils/search-control.css';
-@import '../../utils/typography.css';
 
 :host {
   display: block;
@@ -35,10 +34,6 @@
   min-width: 0;
   height: var(--dimension-size-400);
   padding: 0;
-}
-
-.select-search::after {
-  display: none;
 }
 
 .panel-tool-search__filter-group {

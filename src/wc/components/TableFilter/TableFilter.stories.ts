@@ -34,7 +34,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'The standard Filter control for a table toolbar. CompoMo owns the trigger, menu UI, accessibility, and compact-caption treatment while the application owns filter definitions, values, and query consequences.',
+          'The standard Filter control for a table toolbar. CompoMo owns the trigger, menu UI, per-category option search outside Date, accessibility, and compact-caption treatment while the application owns filter definitions, values, and query consequences.',
       },
     },
   },

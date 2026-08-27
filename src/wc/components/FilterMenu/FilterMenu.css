@@ -3,6 +3,7 @@
 @import '../../utils/control-parts.css';
 @import '../../utils/control-width.css';
 @import '../../utils/select-trigger.css';
+@import '../../utils/search-control.css';
 @import '../../utils/table-caption-control.css';
 
 :host(.filter-menu-host--external-trigger) {
@@ -87,6 +88,28 @@
   overflow: auto;
 }
 
+.filter-menu__option-search {
+  position: relative;
+  flex: 0 0 var(--dimension-size-500);
+  min-width: 0;
+  min-height: var(--dimension-size-500);
+  background: transparent;
+}
+
+.filter-menu__option-search::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: var(--dimension-stroke-width-012);
+  background-color: var(--color-border-tertiary);
+  pointer-events: none;
+}
+
+.filter-menu__option-search .select-search {
+  height: 100%;
+  background: transparent;
+}
+
 .filter-menu__options--date,
 .filter-menu__option-list--date,
 .filter-menu__date {
@@ -102,8 +125,11 @@
 }
 
 .filter-menu__date-header {
-  flex: 0 0 var(--dimension-size-600);
+  flex: 0 0 var(--dimension-size-500);
   justify-content: center;
+  min-block-size: var(--dimension-size-500);
+  padding: var(--dimension-space-050);
+  background: var(--color-background-secondary);
 }
 
 .filter-menu__date-body {

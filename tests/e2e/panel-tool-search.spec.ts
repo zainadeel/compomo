@@ -11,12 +11,18 @@ test('renders the complete md content recipe independently of inherited page tex
   const search = page.locator('#search');
   const input = search.getByRole('searchbox', { name: 'Search chats' });
   const control = search.locator('.select-search__control');
-  const icon = control.locator(':scope > ds-icon');
+  const icon = control.locator('.input-control__prefix ds-icon');
 
   await expect(search).toHaveCSS('height', '48px');
   await expect(control).toHaveCSS('height', '32px');
+  await expect(control).toHaveJSProperty('type', 'search');
+  await expect(control).toHaveJSProperty('size', 'md');
+  await expect(control).toHaveJSProperty('hasBorder', false);
+  await expect(control).toHaveJSProperty('hasInteractionFill', false);
+  await expect(control.locator('.input-control')).not.toHaveClass(/ds-interaction-fill/);
   await expect(input).toHaveCSS('font-size', '14px');
   await expect(input).toHaveCSS('line-height', '20px');
+  await expect(input).toHaveAttribute('autocomplete', 'off');
 
   const iconBox = await icon.boundingBox();
   expect(iconBox?.width).toBe(20);
@@ -26,7 +32,7 @@ test('renders the complete md content recipe independently of inherited page tex
 test('keeps the search icon secondary while focused and filled', async ({ page }) => {
   const search = page.locator('#search');
   const input = search.getByRole('searchbox', { name: 'Search chats' });
-  const icon = search.locator('.select-search__control > ds-icon');
+  const icon = search.locator('.select-search__control .input-control__prefix ds-icon');
   const secondaryColor = await page.evaluate(() => {
     const probe = document.createElement('span');
     probe.style.color = 'var(--color-foreground-secondary)';
@@ -48,10 +54,9 @@ test('uses the concise clear label without appending search guidance', async ({ 
 
   await input.fill('service');
 
-  const clearTooltip = search.locator('ds-tooltip.select-search__clear-tooltip');
   const clear = search.getByRole('button', { name: 'Clear', exact: true });
-  await expect(clearTooltip).toHaveJSProperty('label', 'Clear');
   await expect(clear).toBeVisible();
+  await expect(clear.locator('ds-icon svg')).toHaveCount(1);
   await expect(search.getByRole('button', { name: 'Clear Search chats', exact: true })).toHaveCount(
     0
   );
@@ -60,6 +65,9 @@ test('uses the concise clear label without appending search guidance', async ({ 
 test('keeps the container divider unchanged while the input is focused', async ({ page }) => {
   const search = page.locator('#search');
   const input = search.getByRole('searchbox', { name: 'Search chats' });
+  await expect(search.locator('.select-search')).toHaveClass(
+    /select-search--without-focus-boundary/
+  );
   const dividerBefore = await search.locator('.panel-tool-search').evaluate(element => {
     const style = getComputedStyle(element, '::after');
     return { height: style.height, color: style.backgroundColor };
