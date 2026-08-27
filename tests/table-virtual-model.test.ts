@@ -11,6 +11,7 @@ import {
   TABLE_VIRTUAL_GROUP_HEADER_SIZE,
   TABLE_VIRTUAL_MIN_OVERSCAN_ROWS,
   TABLE_VIRTUAL_ROW_TRACK_SIZE,
+  tableVirtualRowTrackSize,
   tableVirtualOverscanPx,
   type TableVirtualItem,
 } from '../src/wc/components/Table/table-virtual-model';
@@ -59,6 +60,20 @@ test('estimates named track stacks including unlimited wrap', () => {
     ),
     TABLE_VIRTUAL_ROW_TRACK_SIZE[4]
   );
+  assert.equal(
+    estimateTableRowBlockSize(
+      {
+        id: 'five-tag-tracks',
+        cells: {
+          name: { kind: 'tags', tracks: 5, items: [{ label: 'One' }, { label: 'Two' }] },
+          score: 1,
+        },
+      },
+      columns
+    ),
+    128
+  );
+  assert.equal(tableVirtualRowTrackSize(5), 128);
 });
 
 test('flattens ungrouped rows and collapsed grouped sections', () => {
@@ -87,6 +102,20 @@ test('flattens ungrouped rows and collapsed grouped sections', () => {
     columns,
   });
   assert.equal(wrapping[0]?.variableSize, true);
+
+  const wrappingTags = flattenTableVirtualItems({
+    grouped: false,
+    rows: [
+      {
+        id: 'tags',
+        cells: { name: { kind: 'tags', tracks: 3, items: [{ label: 'One' }] }, score: 1 },
+      },
+    ],
+    groups: [],
+    collapsedGroupIds: [],
+    columns,
+  });
+  assert.equal(wrappingTags[0]?.variableSize, true);
 
   const clamped = flattenTableVirtualItems({
     grouped: false,

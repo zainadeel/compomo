@@ -12,6 +12,8 @@ const meta: Meta = {
     label: { control: 'text' },
     state: { control: 'select', options: [...STATES] },
     size: { control: 'select', options: [...SIZES] },
+    isInset: { control: 'boolean' },
+    insetDepth: { control: 'select', options: ['single', 'double'] },
     rounded: { control: 'boolean' },
     isInactive: { control: 'boolean' },
     maxWidth: { control: 'text' },
@@ -20,6 +22,8 @@ const meta: Meta = {
     label: 'Chip',
     state: 'default',
     size: 'md',
+    isInset: false,
+    insetDepth: 'single',
     rounded: false,
     isInactive: false,
     maxWidth: '',
@@ -35,6 +39,8 @@ export const Playground: Story = {
       label=${args['label']}
       state=${args['state']}
       size=${args['size']}
+      ?is-inset=${args['isInset']}
+      inset-depth=${args['insetDepth']}
       max-width=${args['maxWidth'] || undefined}
       ?rounded=${args['rounded']}
       ?is-inactive=${args['isInactive']}
@@ -68,6 +74,22 @@ export const Sizes: Story = {
           </div>
         `
       )}
+    </div>
+  `,
+};
+
+export const Inset: Story = {
+  render: () => html`
+    <div style="display:flex;gap:var(--dimension-space-100);align-items:center;">
+      <ds-chip label="Default" state="default" size="md"></ds-chip>
+      <ds-chip label="Single inset" state="default" size="md" is-inset></ds-chip>
+      <ds-chip
+        label="Double inset"
+        state="default"
+        size="md"
+        is-inset
+        inset-depth="double"
+      ></ds-chip>
     </div>
   `,
 };

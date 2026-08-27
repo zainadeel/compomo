@@ -7,6 +7,7 @@ import {
   isTableCellImage,
   isTableCellPrimaryText,
   isTableCellTag,
+  isTableCellTags,
   isTableCellText,
 } from './table-model';
 import type {
@@ -17,6 +18,7 @@ import type {
   TableCellImage,
   TableCellImageTracks,
   TableCellTag,
+  TableCellTags,
   TableCellTagVariant,
   TableCellTextRun,
   TableCellTextTrack,
@@ -73,6 +75,13 @@ export type TableCellPresentation =
       variant: TableCellTagVariant;
     }
   | {
+      kind: 'tags';
+      cellType: 'tags';
+      value: TableCellTags;
+      tracks: number;
+      variant: `${number}-track`;
+    }
+  | {
       kind: 'text';
       cellType: 'text' | 'primary-text';
       value: ResolvedTableCellText;
@@ -102,6 +111,17 @@ export function resolveTableCellImageTracks(
 /** Map an image track stack onto the shared single/multi/triple cell variant. */
 export function tableCellImageVariant(tracks: TableCellImageTracks): 'single' | 'multi' | 'triple' {
   return tracks === 3 ? 'triple' : tracks === 2 ? 'multi' : 'single';
+}
+
+/** Normalize the declared line count used by wrapping multiple-Tag cells. */
+export function resolveTableCellTagsTracks(tracks: number): number {
+  return Number.isFinite(tracks) && tracks > 0 ? Math.floor(tracks) : 1;
+}
+
+/** Token-backed content height for any named number of body-row tracks. */
+export function tableCellTrackStackBlockSize(tracks: number): string {
+  const laterTracks = Math.max(0, resolveTableCellTagsTracks(tracks) - 1);
+  return `calc(var(--_table-cell-track-min-block-size)${' + var(--dimension-space-025) + var(--dimension-size-250)'.repeat(laterTracks)})`;
 }
 
 /** Collapse a consumer track into at most three non-empty runs. */
@@ -242,6 +262,16 @@ export function resolveTableCellPresentation(
       cellType: 'tag',
       value,
       variant: value.variant ?? 'tag-only',
+    };
+  }
+  if (isTableCellTags(value)) {
+    const tracks = resolveTableCellTagsTracks(value.tracks);
+    return {
+      kind: 'tags',
+      cellType: 'tags',
+      value,
+      tracks,
+      variant: `${tracks}-track`,
     };
   }
 

@@ -304,8 +304,23 @@ test('input follows shared control density, focus, and search-clear recipes', as
   expect(activeBorder.shadow).toContain('1.5px');
 
   const search = page.locator('#input-search');
+  await expect(search.locator('input')).toHaveAttribute('autocomplete', 'off');
+  await expect(search.locator('input')).toHaveAttribute('autocapitalize', 'none');
+  await expect(search.locator('input')).toHaveAttribute('autocorrect', 'off');
+  await expect(search.locator('input')).toHaveAttribute('spellcheck', 'false');
+  await search.evaluate((element: HTMLDsInputElement) => {
+    element.ariaControls = 'search-results';
+    element.ariaActiveDescendant = 'search-result-2';
+  });
+  await expect(search.locator('input')).toHaveAttribute('aria-controls', 'search-results');
+  await expect(search.locator('input')).toHaveAttribute('aria-activedescendant', 'search-result-2');
+  await search.evaluate((element: HTMLDsInputElement) => {
+    element.hasInteractionFill = false;
+  });
+  await expect(search.locator('.input-control')).not.toHaveClass(/ds-interaction-fill/);
   await expect(search.locator('ds-button-unfilled')).toHaveCount(1);
   await expect(search.locator('ds-button-unfilled')).toHaveJSProperty('icon', 'CrossCircle');
+  await expect(search.locator('ds-button-unfilled ds-icon svg')).toBeVisible();
   await page.evaluate(() => {
     const buttonStyles = [...document.querySelectorAll('style')].find(style =>
       style.textContent?.includes('.ds-button-host--icon')

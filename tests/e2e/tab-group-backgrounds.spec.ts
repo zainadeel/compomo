@@ -187,6 +187,34 @@ test('supports small, medium, and large density geometry', async ({ page }) => {
   }
 });
 
+test('can remove only the outer container while preserving the selected pill', async ({ page }) => {
+  const host = page.locator('#tabs');
+  const track = host.locator('.tab-list');
+  const selected = host.locator('.tab--selected');
+
+  await expect(host).toHaveJSProperty('hasContainer', true);
+  await host.evaluate(element => {
+    (element as HTMLElement & { hasContainer: boolean }).hasContainer = false;
+  });
+
+  await expect(host).toHaveClass(/tab-group-host--containerless/);
+  await expect(host).toHaveJSProperty('hasContainer', false);
+  await expect(track).toHaveCSS('padding', '0px');
+  await expect(track).toHaveCSS('border-top-width', '0px');
+  await expect(track).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  const selectedFill = await selected.evaluate(element => {
+    const probe = document.createElement('div');
+    probe.style.backgroundColor = 'var(--color-background-primary)';
+    document.body.append(probe);
+    const expected = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return { actual: getComputedStyle(element).backgroundColor, expected };
+  });
+  expect(selectedFill.actual).toBe(selectedFill.expected);
+  await expectDefiniteBounds(track, { label: 'containerless TabGroup track', height: 32 });
+  await expectDefiniteBounds(selected, { label: 'containerless selected pill', height: 28 });
+});
+
 test('shares the hug and fill width contract and gives fill segments equal space', async ({
   page,
 }) => {

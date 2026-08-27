@@ -92,6 +92,7 @@ const meta: Meta = {
     variant: { control: 'select', options: ['label', 'icon', 'icon-label'] },
     size: { control: 'select', options: ['sm', 'md', 'lg'] },
     width: { control: 'select', options: ['hug', 'fill'] },
+    hasContainer: { control: 'boolean' },
     background: {
       control: 'select',
       options: [
@@ -107,7 +108,13 @@ const meta: Meta = {
       ],
     },
   },
-  args: { value: 'overview', variant: 'label', size: 'md', width: 'hug' },
+  args: {
+    value: 'overview',
+    variant: 'label',
+    size: 'md',
+    width: 'hug',
+    hasContainer: true,
+  },
 };
 
 export default meta;
@@ -129,12 +136,33 @@ export const Playground: Story = {
           value=${args['value'] ?? 'overview'}
           size=${args['size'] ?? 'md'}
           width=${args['width'] ?? 'hug'}
+          .hasContainer=${args['hasContainer'] ?? true}
           background=${args['background'] ?? ''}
           aria-label="Playground tabs"
         ></ds-tab-group>
       </div>
     `;
   },
+};
+
+export const Containers: Story = {
+  render: () => html`
+    <div
+      style="display:flex;flex-direction:column;gap:var(--dimension-space-150);align-items:flex-start;background:var(--color-background-secondary);padding:var(--dimension-space-150);"
+    >
+      <ds-tab-group
+        .tabs=${tabs.slice(0, 3)}
+        value="overview"
+        aria-label="Contained tabs"
+      ></ds-tab-group>
+      <ds-tab-group
+        .tabs=${tabs.slice(0, 3)}
+        value="overview"
+        .hasContainer=${false}
+        aria-label="Containerless tabs"
+      ></ds-tab-group>
+    </div>
+  `,
 };
 
 export const Widths: Story = {

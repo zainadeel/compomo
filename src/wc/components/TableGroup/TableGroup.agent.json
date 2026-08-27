@@ -1,0 +1,57 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-table-group",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-table-group",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Two-panel toolbar control for choosing one table grouping data point and the ascending or descending order of its group sections.",
+  "useWhen": [
+    "A table toolbar needs explicit control of one grouping level and its section order.",
+    "Grouping data-point labels differ from compact table-header labels."
+  ],
+  "avoidWhen": [
+    "The table is not groupable.",
+    "The application expects the component to rearrange rows or create group sections internally."
+  ],
+  "alternatives": [
+    {
+      "when": "The choice is one submitted form value with no dependent order pane.",
+      "component": "component:ds-select",
+      "reason": "Select owns form-value semantics rather than table grouping state."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-table",
+    "component:ds-table-toolbar",
+    "component:ds-table-filter",
+    "component:ds-table-sort"
+  ],
+  "patterns": ["pattern:menu-trigger"],
+  "accessibility": [
+    "The trigger opens a named non-modal dialog. Data and Order are independently named single-selection listboxes.",
+    "Up and Down move within the focused pane. Right moves from Data to Order when a group is active, Left returns to the selected Data row, and Escape closes the dialog and restores trigger focus.",
+    "The right pane remains present before a group is active as one complete empty state without the Order heading, and explains that a group must be selected."
+  ],
+  "states": [
+    "options and grouping are controlled. dsGroupChange reports a complete TableGroupingState and dsClear requests null grouping without mutating either input.",
+    "Selecting a new data point starts its order at ascending. Re-selecting the active data point preserves its direction.",
+    "Selecting a data point or direction applies immediately and leaves the dialog open so the other pane can be changed."
+  ],
+  "responsiveBehavior": [
+    "Use in the trailing region of ds-table-toolbar.",
+    "The trigger uses the shared caption-control button behavior and becomes icon-only in compact named table containers.",
+    "Both panes remain present and their choice lists scroll within the collision-constrained popup."
+  ],
+  "frameworkCaveats": {
+    "customElements": ["Assign options and grouping as JavaScript properties and replace grouping from dsGroupChange or dsClear."],
+    "react": ["Keep grouping in application state and replace it from dsGroupChange; set it to null from dsClear."],
+    "angular": ["Import the generated DsTableGroup adapter and bind options and grouping as properties."]
+  },
+  "references": [
+    { "label": "Review states", "path": "src/wc/components/TableGroup/TableGroup.stories.ts" },
+    { "label": "Toolbar composition owner", "path": "src/wc/components/TableToolbar/TableToolbar.agent.json" }
+  ]
+}

@@ -2,7 +2,12 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 import '../../../../dist/components/ds-table-filter.js';
-import type { FilterMenuChangeDetail, FilterMenuValues } from '../FilterMenu/FilterMenu';
+import type {
+  FilterMenuChangeDetail,
+  FilterMenuMatchModeChangeDetail,
+  FilterMenuMatchModes,
+  FilterMenuValues,
+} from '../FilterMenu/FilterMenu';
 
 const FILTERS = [
   {
@@ -29,7 +34,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'The standard Filter control for a table toolbar. CompoMo owns the trigger, menu UI, accessibility, and compact-caption treatment while the application owns filter definitions, values, and query consequences.',
+          'The standard Filter control for a table toolbar. CompoMo owns the trigger, menu UI, per-category option search outside Date, accessibility, and compact-caption treatment while the application owns filter definitions, values, and query consequences.',
       },
     },
   },
@@ -62,6 +67,15 @@ export const FilterMenu: Story = {
         }}
         @dsClear=${(event: Event) => {
           (event.currentTarget as HTMLElement & { values: FilterMenuValues }).values = {};
+        }}
+        @dsMatchModeChange=${(event: CustomEvent<FilterMenuMatchModeChangeDetail>) => {
+          const control = event.currentTarget as HTMLElement & {
+            matchModes: FilterMenuMatchModes;
+          };
+          control.matchModes = {
+            ...control.matchModes,
+            [event.detail.filterId]: event.detail.mode,
+          };
         }}
         @dsActiveFilterChange=${(event: CustomEvent<string>) => {
           (event.currentTarget as HTMLElement & { activeFilterId: string }).activeFilterId =

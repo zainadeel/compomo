@@ -4,6 +4,7 @@ import { useArgs } from 'storybook/preview-api';
 import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 import '../../../../dist/components/ds-table.js';
 import '../../../../dist/components/ds-text.js';
+import '../../../../dist/components/ds-input.js';
 import '../../../../dist/components/ds-select.js';
 import '../../../../dist/components/ds-bar-action.js';
 import '../../../../dist/components/ds-button-unfilled.js';
@@ -52,6 +53,17 @@ function applyColumnsConfig(event: Event) {
   const detail = (event as CustomEvent<TableColumnsConfigChangeDetail>).detail;
   table.hiddenColumnIds = detail.hiddenColumnIds;
   table.columnOrder = detail.columnOrder;
+}
+
+function tableRowSearchText(row: TableRow): string {
+  const textFrom = (value: unknown): string => {
+    if (value == null) return '';
+    if (typeof value !== 'object') return String(value);
+    if (Array.isArray(value)) return value.map(textFrom).join(' ');
+    return Object.values(value).map(textFrom).join(' ');
+  };
+
+  return [row.selectionLabel, ...Object.values(row.cells)].map(textFrom).join(' ');
 }
 
 const COLUMNS: TableColumn[] = [
@@ -184,6 +196,31 @@ const ALIGNMENT_ROWS: TableRow[] = [
   { id: 'alignment-three', cells: { driver: 'Sam Rivera', status: 'Off duty', score: 89 } },
 ];
 
+const ELASTIC_SPACER_COLUMNS: TableColumn[] = [
+  { id: 'driver', header: 'Driver', size: 'sm' },
+  { id: 'status', header: 'Status', size: 'xs' },
+  { id: 'vehicle', header: 'Vehicle', size: 'xs' },
+  {
+    id: 'actions',
+    header: '',
+    headerLabel: 'Actions',
+    kind: 'action',
+    size: 40,
+    align: 'center',
+    sticky: 'end',
+  },
+];
+
+const ELASTIC_SPACER_ROWS: TableRow[] = ROWS.slice(0, 3).map(row => ({
+  ...row,
+  cells: {
+    driver: row.cells['driver'],
+    status: row.cells['status'],
+    vehicle: row.cells['vehicle'],
+    actions: { kind: 'blank' },
+  },
+}));
+
 const ALL_CELL_TYPE_COLUMNS: TableColumn[] = [
   { id: 'scalar', header: 'Scalar text', size: 'sm' },
   { id: 'primarySecondary', header: 'Primary + secondary', size: 'sm' },
@@ -196,6 +233,7 @@ const ALL_CELL_TYPE_COLUMNS: TableColumn[] = [
   { id: 'tagOnly', header: 'Tag only', size: 'sm' },
   { id: 'tagWithText', header: 'Tag + text', size: 'sm' },
   { id: 'textWithTag', header: 'Text + tag', size: 'sm' },
+  { id: 'multipleTags', header: 'Multiple tags', size: 160 },
   { id: 'action', kind: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
   {
     id: 'borderedAction',
@@ -325,6 +363,14 @@ const ALL_CELL_TYPE_ROWS: TableRow[] = [
         label: 'Coached',
         intent: 'neutral',
       },
+      multipleTags: {
+        kind: 'tags',
+        tracks: 2,
+        items: [
+          { label: 'Harsh braking', intent: 'warning' },
+          { label: 'Close following', intent: 'negative' },
+        ],
+      },
       action: overflowAction('Vehicle 2841'),
       borderedAction: {
         kind: 'action',
@@ -409,6 +455,46 @@ const THREE_TRACK_ROWS: TableRow[] = [
         secondary: 'DRV-2210',
         tertiary: 'Oakland, CA',
       },
+    },
+  },
+];
+
+const MULTIPLE_TAG_COLUMNS: TableColumn[] = [
+  { id: 'vehicle', header: 'Vehicle', size: 160 },
+  { id: 'behaviors', header: 'Detected behaviors', size: 160 },
+  { id: 'status', header: 'Status', size: 120 },
+];
+
+const MULTIPLE_TAG_ROWS: TableRow[] = [
+  {
+    id: 'multiple-tags-two-tracks',
+    cells: {
+      vehicle: 'Vehicle 2841',
+      behaviors: {
+        kind: 'tags',
+        tracks: 2,
+        items: [
+          { label: 'Harsh braking', intent: 'warning' },
+          { label: 'Close following', intent: 'negative' },
+        ],
+      },
+      status: 'Two tracks',
+    },
+  },
+  {
+    id: 'multiple-tags-three-tracks',
+    cells: {
+      vehicle: 'Vehicle 1904',
+      behaviors: {
+        kind: 'tags',
+        tracks: 3,
+        items: [
+          { label: 'Harsh braking', intent: 'warning' },
+          { label: 'Close following', intent: 'negative' },
+          { label: 'Lane departure', intent: 'caution' },
+        ],
+      },
+      status: 'Three tracks',
     },
   },
 ];
@@ -915,6 +1001,89 @@ export const ColumnHeaderAlignment: Story = {
   },
 };
 
+export const ElasticSpacer: Story = {
+  name: 'Elastic trailing spacer',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'When every visible data column has an explicit size, an internal presentational spacer absorbs unused inline space without stretching the final data column. The same spacer collapses to zero when the explicit columns overflow, preserving horizontal scrolling. Trailing action and sticky-end lanes remain after the spacer at the visible edge.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="display:grid;gap:var(--dimension-space-300);">
+      <section style="display:grid;gap:var(--dimension-space-100);">
+        <ds-text as="h3" variant="text-title-small" emphasis>Available inline space</ds-text>
+        <ds-table
+          .columns=${ELASTIC_SPACER_COLUMNS}
+          .rows=${ELASTIC_SPACER_ROWS}
+          caption="Elastic spacer with available inline space"
+        ></ds-table>
+      </section>
+      <section
+        style="display:grid;gap:var(--dimension-space-100);max-inline-size:var(--dimension-panel-width-sm);"
+      >
+        <ds-text as="h3" variant="text-title-small" emphasis>Horizontal overflow</ds-text>
+        <ds-table
+          .columns=${ELASTIC_SPACER_COLUMNS}
+          .rows=${ELASTIC_SPACER_ROWS}
+          caption="Elastic spacer with horizontal overflow"
+          scroll-label="Scrollable elastic spacer example"
+        ></ds-table>
+      </section>
+    </div>
+  `,
+};
+
+export const SearchMatchHighlighting: Story = {
+  name: 'Search match highlighting',
+  args: {
+    searchValue: 'avery',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The application owns the search query and row filtering, then supplies the same literal query through highlightTerms. When TableSearch has selected fields, pass those IDs through highlightFieldIds so only the matching data-point tracks are marked. With no field IDs, all table-owned text tracks remain eligible. Highlighting does not change the cell’s accessible name or guess how the application tokenizes search.',
+      },
+    },
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    const searchValue = String(args['searchValue'] ?? '');
+    const query = searchValue.trim().toLocaleLowerCase();
+    const rows = query
+      ? ROWS.filter(row => tableRowSearchText(row).toLocaleLowerCase().includes(query))
+      : ROWS;
+
+    return html`
+      <ds-table
+        .columns=${COLUMNS}
+        .rows=${rows}
+        .highlightTerms=${query ? [searchValue.trim()] : []}
+        caption="Searchable workforce overview"
+        caption-visibility="visible"
+        .displayedCount=${rows.length}
+        .totalCount=${ROWS.length}
+      >
+        <ds-input
+          slot="header"
+          type="search"
+          size="md"
+          width="fill"
+          icon="MagnifyingGlass"
+          placeholder="Search drivers"
+          aria-label="Search drivers"
+          .value=${searchValue}
+          @dsChange=${(event: CustomEvent<string>) => updateArgs({ searchValue: event.detail })}
+          @dsClear=${() => updateArgs({ searchValue: '' })}
+        ></ds-input>
+      </ds-table>
+    `;
+  },
+};
+
 export const SafetyEvents: Story = {
   name: 'Safety events',
   args: {
@@ -1202,7 +1371,7 @@ export const AllCellTypes: Story = {
     docs: {
       description: {
         story:
-          'Three review tables, one height each. Image cells declare tracks 1, 2, or 3 so the 16:9 preview fills the matching content box (cell height minus 8px padding). Icon-and-text cells (`kind: icon-text`) place one md prefix icon beside the copy stack: 2px padding on every side of the icon, a 2px flex gap before the copy, and text-track padding staying on the copy. Single-track cells, including the 1-track image and icon-and-text, stay on a 40px row. Two-track text, 2-track image, and 2-track icon-and-text share a 62px row. Event in that table shows a two-line cell with middle-dot runs. Three-track text, 3-track image, and 3-track icon-and-text stay on an 84px row. Body cells share 8px outer padding; 20px content sits in a 24px track; later tracks are 20px with a 2px stack gap. Linked primary text uses a native anchor and the shared brand text-action treatment; secondary copy stays unlinked. Secondary tracks may split into middle-dot-separated runs. The third line uses the same subdued track recipe as the second. Unbordered action cells open the shared overflow ds-menu from the Ellipses trigger; the bordered column stays a single-shot control. Empty means the data applies but has no value and renders an em dash; Blank means the data is not applicable and intentionally renders nothing.',
+          'Three review tables, one height each. Image cells declare tracks 1, 2, or 3 so the 16:9 preview fills the matching content box (cell height minus 8px padding). Icon-and-text cells (`kind: icon-text`) place one md prefix icon beside the copy stack: 2px padding on every side of the icon, a 2px flex gap before the copy, and text-track padding staying on the copy. Single-track cells, including the 1-track image and icon-and-text, stay on a 40px row. Two-track text, 2-track image, 2-track icon-and-text, and wrapping multiple-Tag cells share a 62px row. Event in that table shows a two-line cell with middle-dot runs. Three-track text, 3-track image, and 3-track icon-and-text stay on an 84px row. Body cells share 8px outer padding; 20px content sits in a 24px track; later tracks are 20px with a 2px stack gap. Linked primary text uses a native anchor and the shared brand text-action treatment; secondary copy stays unlinked. Secondary tracks may split into middle-dot-separated runs. The third line uses the same subdued track recipe as the second. Unbordered action cells open the shared overflow ds-menu from the Ellipses trigger; the bordered column stays a single-shot control. Empty means the data applies but has no value and renders an em dash; Blank means the data is not applicable and intentionally renders nothing.',
       },
     },
   },
@@ -1233,6 +1402,27 @@ export const AllCellTypes: Story = {
         caption-visibility="visible"
       ></ds-table>
     </div>
+  `,
+};
+
+export const MultipleTags: Story = {
+  name: 'Multiple tags',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Multiple-Tag cells use `kind: tags` and declare their expected wrapped line count with `tracks`. Tags wrap naturally at the column edge. Each uses the 20px small single-inset recipe, with a 2px gap between tags and wrapped lines, so two tracks resolve a 62px row and three tracks resolve an 84px row. Track counts may continue beyond three; the tallest cell establishes the native row height and every sibling cell stretches to match.',
+      },
+    },
+  },
+  render: () => html`
+    <ds-table
+      data-a11y-fixture
+      .columns=${MULTIPLE_TAG_COLUMNS}
+      .rows=${MULTIPLE_TAG_ROWS}
+      caption="Wrapping multiple-tag cells"
+      caption-visibility="visible"
+    ></ds-table>
   `,
 };
 

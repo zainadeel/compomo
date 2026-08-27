@@ -68,6 +68,20 @@ test('supports emphasized and regular labels across both button families', async
   }
 });
 
+test('short labels keep a minimum width equal to the resolved button height', async ({ page }) => {
+  for (const id of ['filled-short-label', 'unfilled-short-label']) {
+    const button = page.locator(`#${id} button`);
+    await expect(button).toHaveCSS('width', '32px');
+    await expect(button).toHaveCSS('height', '32px');
+  }
+
+  for (const id of ['filled-short-label-inset', 'unfilled-short-label-inset']) {
+    const button = page.locator(`#${id} button`);
+    await expect(button).toHaveCSS('width', '28px');
+    await expect(button).toHaveCSS('height', '28px');
+  }
+});
+
 test('filled and unfilled buttons opt into the inset density recipe', async ({ page }) => {
   for (const id of ['filled-inset-md', 'unfilled-inset-md']) {
     const host = page.locator(`#${id}`);

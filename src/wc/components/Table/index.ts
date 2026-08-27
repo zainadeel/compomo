@@ -19,6 +19,8 @@ export type {
   TableCellTextRun,
   TableCellTextTrack,
   TableCellTag,
+  TableCellTagItem,
+  TableCellTags,
   TableCellTagVariant,
   TableCellValue,
   TableSkeletonWidth,

@@ -51,6 +51,7 @@
     "The dismiss action is the chip's only interaction, and the parent owns data mutation after dsRemove.",
     "Long labels remain on one line and truncate only when the consuming layout supplies a maximum width; otherwise the chip sizes to its content.",
     "Rounded shape is a visual choice and does not change semantics or interaction.",
+    "isInset opts into reduced outer geometry only when Chip is nested inside a control of the same density. The dismiss button applies the same inset depth again inside the Chip's already-reduced height, and its trailing padding matches the resulting top and bottom space. The default single inset removes 4px overall; insetDepth double removes 8px overall and falls back to single at xs.",
     "Chip is designed only for primary surfaces and has no surface-context API."
   ],
   "responsiveBehavior": [

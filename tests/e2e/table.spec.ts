@@ -75,6 +75,73 @@ test('renders native caption, header, row, and cell semantics @pr-critical', asy
   await expect(table.locator('.ds-table__footer')).toHaveCount(0);
 });
 
+test('highlights controlled literal search terms without changing cell names', async ({ page }) => {
+  const table = page.locator('#basic');
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.highlightTerms = ['avery', 'V-20'];
+  });
+
+  const marks = table.locator('mark.ds-table__match');
+  await expect(marks).toHaveCount(3);
+  await expect(marks).toHaveText(['Avery', 'avery', 'V-20']);
+  await expect(table.getByRole('cell', { name: 'Avery Chen avery@example.com' })).toBeVisible();
+  await expect(table.getByRole('cell', { name: 'V-2048' })).toBeVisible();
+
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.highlightTerms = ['h'];
+  });
+  await expect(
+    table.locator('[data-row-id="avery"] [data-column-id="name"] .ds-table__cell-primary')
+  ).toHaveText('Avery Chen');
+
+  const colors = await marks.first().evaluate(element => {
+    const actual = getComputedStyle(element);
+    const probe = document.createElement('span');
+    probe.style.backgroundColor = 'var(--color-background-faint-brand)';
+    probe.style.color = 'var(--color-foreground-bold-brand)';
+    document.body.append(probe);
+    const expected = getComputedStyle(probe);
+    const result = {
+      background: actual.backgroundColor,
+      foreground: actual.color,
+      expectedBackground: expected.backgroundColor,
+      expectedForeground: expected.color,
+    };
+    probe.remove();
+    return result;
+  });
+  expect(colors.background).toBe(colors.expectedBackground);
+  expect(colors.foreground).toBe(colors.expectedForeground);
+
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.highlightTerms = [];
+  });
+  await expect(marks).toHaveCount(0);
+});
+
+test('scopes highlighting to selected compound data points', async ({ page }) => {
+  const table = page.locator('#compound');
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.highlightTerms = ['i'];
+    element.highlightFieldIds = ['severity'];
+  });
+
+  const primaryMarks = table.locator('.ds-table__cell-primary mark.ds-table__match');
+  const secondaryMarks = table.locator('.ds-table__cell-secondary mark.ds-table__match');
+  await expect(primaryMarks).toHaveCount(0);
+  await expect(secondaryMarks).toHaveCount(3);
+  await expect(secondaryMarks).toHaveText(['i', 'i', 'i']);
+
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.highlightFieldIds = ['behavior'];
+  });
+  await expect(primaryMarks).toHaveCount(3);
+  await expect(secondaryMarks).toHaveCount(0);
+  await expect(
+    table.locator('[data-row-id="event-a"] [data-column-id="behaviorDetails"]')
+  ).toHaveText('Close followingCritical');
+});
+
 test('composes application controls inside table-owned header and footer chrome', async ({
   page,
 }) => {
@@ -1408,6 +1475,53 @@ test(
   }
 );
 
+test(
+  'wraps multiple Tags on named tracks and stretches every sibling cell to the row height',
+  chromiumOnly(
+    'layout-geometry',
+    'Multiple-Tag row tracks and native sibling-cell stretch are Chromium-authoritative geometry contracts.'
+  ),
+  async ({ page }) => {
+    const table = page.locator('#multiple-tags');
+    const cases = [
+      { id: 'multiple-tags-two-tracks', tracks: 2, rowHeight: 62, contentHeight: 46 },
+      { id: 'multiple-tags-three-tracks', tracks: 3, rowHeight: 84, contentHeight: 68 },
+      { id: 'multiple-tags-five-tracks', tracks: 5, rowHeight: 128, contentHeight: 112 },
+    ];
+
+    for (const example of cases) {
+      const row = table.locator(`[data-row-id="${example.id}"]`);
+      const cell = row.locator('[data-column-id="behaviors"]');
+      const tags = cell.locator('ds-tag');
+      const wrapper = cell.locator('.ds-table__cell-tags');
+
+      await expect(cell).toHaveAttribute('data-cell-type', 'tags');
+      await expect(cell).toHaveAttribute('data-cell-tracks', String(example.tracks));
+      await expect(cell).toHaveAttribute('data-cell-variant', `${example.tracks}-track`);
+      await expect(wrapper).toHaveCSS('min-height', `${example.contentHeight}px`);
+      await expect(wrapper).toHaveCSS('gap', '2px');
+      await expect(wrapper).toHaveCSS('padding-top', '2px');
+      await expect(wrapper).toHaveCSS('padding-bottom', '2px');
+      await expect(tags).toHaveCount(example.tracks);
+
+      for (const tag of await tags.all()) {
+        await expect(tag).toHaveJSProperty('size', 'sm');
+        await expect(tag).toHaveJSProperty('isInset', true);
+        await expect(tag).toHaveJSProperty('insetDepth', 'single');
+        await expect(tag).toHaveCSS('height', '20px');
+      }
+      for (const siblingCell of await row.locator('td').all()) {
+        await expect(siblingCell).toHaveCSS('height', `${example.rowHeight}px`);
+      }
+
+      const lineTops = await tags.evaluateAll(elements =>
+        elements.map(element => Math.round(element.getBoundingClientRect().top))
+      );
+      expect(new Set(lineTops).size).toBe(example.tracks);
+    }
+  }
+);
+
 test('renders three-track text cells with a uniform 84px row', async ({ page }) => {
   const table = page.locator('#three-track');
   const averyDriver = table.locator('[data-row-id="three-track-avery"] [data-column-id="driver"]');
@@ -2473,30 +2587,50 @@ test(
   }
 );
 
-test(
-  'keeps selection and action columns fixed when the table grows',
-  chromiumOnly('layout-geometry', 'Chrome column max-width locks are rendered geometry contracts.'),
-  async ({ page }) => {
-    await page.setViewportSize({ width: 1600, height: 900 });
-    const interactive = page.locator('#interactive');
-    await expect(interactive.locator('.ds-table__row .ds-table__selection-cell').first()).toHaveCSS(
-      'width',
-      '40px'
-    );
-    await expect(
-      interactive.locator('.ds-table__row [data-column-id="actions"]').first()
-    ).toHaveCSS('width', '40px');
+test('uses a zero-minimum elastic spacer while keeping fixed edge lanes stable @cross-browser', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1600, height: 900 });
+  const interactive = page.locator('#interactive');
+  await expect(interactive.locator('.ds-table__row .ds-table__selection-cell').first()).toHaveCSS(
+    'width',
+    '40px'
+  );
+  await expect(interactive.locator('.ds-table__row [data-column-id="actions"]').first()).toHaveCSS(
+    'width',
+    '40px'
+  );
+  const wideSpacer = interactive.locator('.ds-table__row [data-elastic-spacer="true"]').first();
+  await expect(wideSpacer).toBeVisible();
+  expect(
+    await wideSpacer.evaluate(element => element.getBoundingClientRect().width)
+  ).toBeGreaterThan(0);
+  await expect(wideSpacer.locator('xpath=following-sibling::*[1]')).toHaveAttribute(
+    'data-column-id',
+    'actions'
+  );
 
-    const grouped = page.locator('#severity-grouped');
-    await expect(grouped.locator('.ds-table__row .ds-table__selection-cell').first()).toHaveCSS(
-      'width',
-      '40px'
-    );
-    await expect(grouped.locator('.ds-table__selection-column')).toHaveCSS('max-width', '40px');
-    await expect(grouped.locator('.ds-table__collapse-column')).toHaveCount(0);
-    await expect(grouped.locator('.ds-table__collapse-cell')).toHaveCount(0);
-  }
-);
+  const overflow = page.locator('#overflow');
+  const overflowViewport = overflow.locator('.ds-table__viewport');
+  const collapsedSpacer = overflow.locator('.ds-table__row [data-elastic-spacer="true"]').first();
+  const overflowGeometry = await overflowViewport.evaluate(element => ({
+    clientWidth: element.clientWidth,
+    scrollWidth: element.scrollWidth,
+  }));
+  expect(overflowGeometry.scrollWidth).toBeGreaterThan(overflowGeometry.clientWidth);
+  expect(
+    await collapsedSpacer.evaluate(element => element.getBoundingClientRect().width)
+  ).toBeLessThanOrEqual(COMPOSITED_EDGE_CEILING_PX);
+
+  const grouped = page.locator('#severity-grouped');
+  await expect(grouped.locator('.ds-table__row .ds-table__selection-cell').first()).toHaveCSS(
+    'width',
+    '40px'
+  );
+  await expect(grouped.locator('.ds-table__selection-column')).toHaveCSS('max-width', '40px');
+  await expect(grouped.locator('.ds-table__collapse-column')).toHaveCount(0);
+  await expect(grouped.locator('.ds-table__collapse-cell')).toHaveCount(0);
+});
 
 test('bounds the complete header, frame, and footer composition with height', async ({ page }) => {
   const table = page.locator('#fixed-height');
@@ -3085,8 +3219,13 @@ test('renders initial state bodies and passes an accessibility scan', async ({ p
   await expect(loading.locator('ds-skeleton')).toHaveCount(70);
   const skeletonRows = loading.locator('.ds-table__skeleton-row');
   await expect(skeletonRows).toHaveCount(10);
-  const skeletonCells = skeletonRows.first().locator('.ds-table__skeleton-cell');
+  const skeletonCells = skeletonRows
+    .first()
+    .locator('.ds-table__skeleton-cell:not([data-elastic-spacer])');
   await expect(skeletonCells).toHaveCount(6);
+  await expect(
+    skeletonRows.first().locator('.ds-table__skeleton-cell[data-elastic-spacer="true"]')
+  ).toHaveCount(1);
   const selectionSkeleton = skeletonRows.first().locator('.ds-table__selection-cell');
   await expect(selectionSkeleton).toHaveAttribute('data-skeleton-kind', 'checkbox');
   const selectionSkeletonGeometry = await selectionSkeleton

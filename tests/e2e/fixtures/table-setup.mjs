@@ -2,6 +2,7 @@ import '/dist/components/ds-table.js';
 import '/dist/components/ds-table-toolbar.js';
 import '/dist/components/ds-table-saved-views.js';
 import '/dist/components/ds-table-filter.js';
+import '/dist/components/ds-table-group.js';
 import '/dist/components/ds-table-sort.js';
 import '/dist/components/ds-menu.js';
 import '/dist/components/ds-select.js';
@@ -12,6 +13,7 @@ await customElements.whenDefined('ds-table');
 await customElements.whenDefined('ds-table-toolbar');
 await customElements.whenDefined('ds-table-saved-views');
 await customElements.whenDefined('ds-table-filter');
+await customElements.whenDefined('ds-table-group');
 await customElements.whenDefined('ds-table-sort');
 await customElements.whenDefined('ds-filter-menu');
 await customElements.whenDefined('ds-select');
@@ -44,6 +46,23 @@ savedViews.addEventListener('dsViewSave', event => {
 savedViews.addEventListener('dsViewDiscard', event => {
   savedViews.eventLog.push({ type: 'discard', ...event.detail });
   savedViews.dirty = false;
+});
+
+const tableGroup = document.getElementById('table-group');
+tableGroup.options = [
+  { label: 'Behavior', value: 'behavior' },
+  { label: 'Severity', value: 'severity' },
+  { label: 'Driver name', value: 'driverName' },
+];
+tableGroup.grouping = null;
+tableGroup.eventLog = [];
+tableGroup.addEventListener('dsGroupChange', event => {
+  tableGroup.eventLog.push({ type: 'change', ...event.detail });
+  tableGroup.grouping = event.detail;
+});
+tableGroup.addEventListener('dsClear', () => {
+  tableGroup.eventLog.push({ type: 'clear' });
+  tableGroup.grouping = null;
 });
 
 const overflowActionItems = [
@@ -358,6 +377,64 @@ threeTrack.rows = [
         secondary: 'DRV-2210',
         tertiary: 'Oakland, CA',
       },
+    },
+  },
+];
+
+const multipleTags = document.getElementById('multiple-tags');
+multipleTags.columns = [
+  { id: 'vehicle', header: 'Vehicle', size: 160 },
+  { id: 'behaviors', header: 'Detected behaviors', size: 160 },
+  { id: 'status', header: 'Status', size: 120 },
+];
+multipleTags.rows = [
+  {
+    id: 'multiple-tags-two-tracks',
+    cells: {
+      vehicle: 'Vehicle 2841',
+      behaviors: {
+        kind: 'tags',
+        tracks: 2,
+        items: [
+          { label: 'Harsh braking', intent: 'warning' },
+          { label: 'Close following', intent: 'negative' },
+        ],
+      },
+      status: 'Two tracks',
+    },
+  },
+  {
+    id: 'multiple-tags-three-tracks',
+    cells: {
+      vehicle: 'Vehicle 1904',
+      behaviors: {
+        kind: 'tags',
+        tracks: 3,
+        items: [
+          { label: 'Harsh braking', intent: 'warning' },
+          { label: 'Close following', intent: 'negative' },
+          { label: 'Lane departure', intent: 'caution' },
+        ],
+      },
+      status: 'Three tracks',
+    },
+  },
+  {
+    id: 'multiple-tags-five-tracks',
+    cells: {
+      vehicle: 'Vehicle 2208',
+      behaviors: {
+        kind: 'tags',
+        tracks: 5,
+        items: [
+          { label: 'Harsh braking', intent: 'warning' },
+          { label: 'Close following', intent: 'negative' },
+          { label: 'Lane departure', intent: 'caution' },
+          { label: 'Rolling stop', intent: 'warning' },
+          { label: 'Seat belt off', intent: 'negative' },
+        ],
+      },
+      status: 'Five tracks',
     },
   },
 ];

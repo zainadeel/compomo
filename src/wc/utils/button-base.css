@@ -32,6 +32,7 @@
 .ds-button {
   justify-content: center;
   overflow: hidden;
+  min-inline-size: var(--ds-control-height);
   border: none;
   border-radius: var(--ds-control-radius, var(--dimension-radius-025));
   cursor: default;

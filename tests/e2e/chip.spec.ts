@@ -49,6 +49,27 @@ test('keeps inactive metadata visible without an interactive dismiss action', as
     .toEqual([]);
 });
 
+test('supports compact inset geometry inside a control of the same density', async ({ page }) => {
+  const defaultChip = page.locator('#chip');
+  const singleInsetChip = page.locator('#single-inset-chip');
+  const doubleInsetChip = page.locator('#inset-chip');
+
+  await expect(singleInsetChip).toHaveJSProperty('size', 'md');
+  await expect(singleInsetChip).toHaveJSProperty('isInset', true);
+  await expect(doubleInsetChip).toHaveJSProperty('insetDepth', 'double');
+
+  for (const [chip, expectedChipSize, expectedRemoveSize, expectedTrailingPadding] of [
+    [defaultChip, '32px', '32px', '6px'],
+    [singleInsetChip, '28px', '24px', '2px'],
+    [doubleInsetChip, '24px', '16px', '4px'],
+  ] as const) {
+    await expect(chip).toHaveCSS('height', expectedChipSize);
+    await expect(chip).toHaveCSS('padding-right', expectedTrailingPadding);
+    await expect(chip.getByRole('button')).toHaveCSS('height', expectedRemoveSize);
+    await expect(chip.getByRole('button')).toHaveCSS('width', expectedRemoveSize);
+  }
+});
+
 test('truncates one line only when constrained by maxWidth', async ({ page }) => {
   const host = page.locator('#long-chip');
   const label = host.locator('ds-text');

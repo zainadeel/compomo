@@ -139,7 +139,7 @@ export const Controls: Story = {
     docs: {
       description: {
         story:
-          'Full-width table caption: saved views, search, Filter, Sort, and Group in the toolbar, then the table-owned Customize and Ellipses variation actions. Search keeps its standard maximum width and flexes smaller only when needed; at compact widths, Filter, Sort, Group, and Customize become icon-only. The complete row shares one overflow owner. Active Filter or Group promote the icon to primary. Sort stays secondary.',
+          'Full-width table caption: saved views, search, Filter, Sort, and Group in the toolbar, then the table-owned Customize and Ellipses variation actions. Search consumes the available space between the fixed control groups and flexes smaller when needed; at compact widths, Filter, Sort, Group, and Customize become icon-only. The complete row shares one overflow owner. Active Filter or Group promote the icon to primary. Sort stays secondary.',
       },
       ...isolatedOverlayDocs('420px'),
     },

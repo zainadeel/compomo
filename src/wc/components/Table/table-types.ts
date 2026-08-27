@@ -31,7 +31,12 @@ export type TableGroupIntent =
 
 /** Independently sortable label within a compound column header. */
 export interface TableHeaderSegment {
+  /** Compact label rendered inside the table header. */
   label: string;
+  /** Complete data-point label used when the segment is named outside the table header. */
+  dataLabel?: string;
+  /** Whether this data point is offered by TableSearch. Defaults to true. */
+  searchable?: boolean;
   /** Stable key emitted through TableSortState.columnId. */
   sortKey: string;
   /** Visible separator rendered after this label when another segment follows. */
@@ -225,8 +230,8 @@ export type TableCellAction = TableCellActionBase &
 /** Declarative Tag content rendered by the table's standard cell primitive. */
 export type TableCellTagVariant = 'tag-only' | 'tag-with-text' | 'text-with-tag';
 
-interface TableCellTagBase {
-  kind: 'tag';
+/** One Tag inside a single- or multiple-Tag table cell. */
+export interface TableCellTagItem {
   label: string;
   intent?: TagIntent;
   contrast?: TagContrast;
@@ -234,8 +239,7 @@ interface TableCellTagBase {
   rounded?: boolean;
 }
 
-export type TableCellTag = TableCellTagBase &
-  (
+export type TableCellTag = TableCellTagItem & { kind: 'tag' } & (
     | {
         variant?: 'tag-only';
         text?: never;
@@ -246,6 +250,14 @@ export type TableCellTag = TableCellTagBase &
       }
   );
 
+/** Multiple Tags that wrap inline while retaining the table's named track rhythm. */
+export interface TableCellTags {
+  kind: 'tags';
+  items: TableCellTagItem[];
+  /** Expected positive wrapped-line count used for row geometry and virtual estimates. */
+  tracks: number;
+}
+
 export type TableCellValue =
   | string
   | number
@@ -254,6 +266,7 @@ export type TableCellValue =
   | TableCellText
   | TableCellPrimaryText
   | TableCellTag
+  | TableCellTags
   | TableCellIcon
   | TableCellIconText
   | TableCellImage
@@ -308,6 +321,10 @@ export interface TableColumn {
   id: string;
   /** Visible column label. May be empty when headerLabel supplies a non-visual name. */
   header: string;
+  /** Complete data-point label used by controls such as Sort and Search. */
+  dataLabel?: string;
+  /** Whether this data point is offered by TableSearch. Defaults to true for data columns. */
+  searchable?: boolean;
   /** Screen-reader-only column name for an intentionally blank visual header. */
   headerLabel?: string;
   /** Supplementary header help. Does not replace the visible or accessible column name. */

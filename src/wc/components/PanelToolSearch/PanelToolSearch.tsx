@@ -64,6 +64,8 @@ export class PanelToolSearch {
       <Host>
         <div class="panel-tool-search ds-chrome-row ds-chrome-space--md">
           <ChoiceSearch
+            hasFocusBoundary={false}
+            hasInteractionFill={false}
             value={this.value}
             placeholder={this.placeholder}
             ariaLabel={this.ariaLabel}

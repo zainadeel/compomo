@@ -3,6 +3,8 @@ import test from 'node:test';
 import {
   resolveTableCellPresentation,
   resolveTableCellImageTracks,
+  resolveTableCellTagsTracks,
+  tableCellTrackStackBlockSize,
 } from '../src/wc/components/Table/table-cell-model';
 import type { TableColumn } from '../src/wc/components/Table/table-types';
 
@@ -220,6 +222,33 @@ test('preserves declarative non-text cell kinds and variants', () => {
   );
   assert.equal(tag.kind, 'tag');
   assert.equal(tag.variant, 'tag-with-text');
+  assert.deepEqual(
+    resolveTableCellPresentation(
+      {
+        kind: 'tags',
+        tracks: 5,
+        items: [{ label: 'Harsh braking' }, { label: 'Close following' }],
+      },
+      column
+    ),
+    {
+      kind: 'tags',
+      cellType: 'tags',
+      value: {
+        kind: 'tags',
+        tracks: 5,
+        items: [{ label: 'Harsh braking' }, { label: 'Close following' }],
+      },
+      tracks: 5,
+      variant: '5-track',
+    }
+  );
+  assert.equal(resolveTableCellTagsTracks(0), 1);
+  assert.equal(resolveTableCellTagsTracks(4.8), 4);
+  assert.equal(
+    tableCellTrackStackBlockSize(3),
+    'calc(var(--_table-cell-track-min-block-size) + var(--dimension-space-025) + var(--dimension-size-250) + var(--dimension-space-025) + var(--dimension-size-250))'
+  );
 });
 
 test('resolves wrap and maxLines into wrap geometry and a line clamp', () => {

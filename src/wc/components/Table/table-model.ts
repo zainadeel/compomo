@@ -8,6 +8,7 @@ import type {
   TableCellPrimaryText,
   TableCellText,
   TableCellTag,
+  TableCellTags,
   TableCellValue,
   TableColumn,
   TableGroup,
@@ -50,6 +51,10 @@ export function isTableCellTag(value: TableCellValue): value is TableCellTag {
   return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'tag';
 }
 
+export function isTableCellTags(value: TableCellValue): value is TableCellTags {
+  return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'tags';
+}
+
 export function isTableCellIcon(value: TableCellValue): value is TableCellIcon {
   return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'icon';
 }
@@ -79,6 +84,7 @@ export function isTableCellBlank(value: TableCellValue): value is TableCellBlank
 export function tableCellPrimary(value: TableCellValue): string | number | null {
   if (value == null) return null;
   if (isTableCellTag(value)) return value.label;
+  if (isTableCellTags(value)) return value.items.map(item => item.label).join(', ');
   if (isTableCellIcon(value)) return null;
   if (isTableCellIconText(value)) return value.primary;
   if (isTableCellImage(value)) return value.alt;
@@ -166,21 +172,19 @@ export function tableColumnSize(column: TableColumn): string | undefined {
 }
 
 /**
- * When every column has an explicit width, one ordinary lane must absorb spare
- * table width so fixed selection and action lanes are not expanded by the
- * native fixed-table layout algorithm.
+ * Fully sized tables add one internal lane that absorbs spare inline space and
+ * collapses to zero at the explicit overflow width. Keep trailing action and
+ * sticky-end lanes after it so those controls remain at the visible edge.
  */
-export function tableFlexibleColumnId(columns: TableColumn[]): string | undefined {
-  if (columns.some(column => !tableColumnSize(column))) return undefined;
-  for (let index = columns.length - 1; index >= 0; index -= 1) {
-    const column = columns[index]!;
-    if (column.kind !== 'action' && !column.sticky) return column.id;
+export function tableElasticSpacerIndex(columns: TableColumn[]): number | undefined {
+  if (columns.length === 0 || columns.some(column => !tableColumnSize(column))) return undefined;
+  let index = columns.length;
+  while (index > 0) {
+    const column = columns[index - 1]!;
+    if (column.kind !== 'action' && column.sticky !== 'end') break;
+    index -= 1;
   }
-  for (let index = columns.length - 1; index >= 0; index -= 1) {
-    const column = columns[index]!;
-    if (column.kind !== 'action') return column.id;
-  }
-  return columns[columns.length - 1]?.id;
+  return index;
 }
 
 export function tableExplicitMinWidth(columns: TableColumn[]): string | undefined {

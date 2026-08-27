@@ -3,6 +3,7 @@
 @import '../../utils/control-parts.css';
 @import '../../utils/control-width.css';
 @import '../../utils/select-trigger.css';
+@import '../../utils/search-control.css';
 @import '../../utils/table-caption-control.css';
 
 :host(.filter-menu-host--external-trigger) {
@@ -71,8 +72,42 @@
 }
 
 .filter-menu__options {
+  display: flex;
   min-width: 0;
+  min-height: 0;
+  flex-direction: column;
   overflow: hidden;
+}
+
+.filter-menu__options-content {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.filter-menu__option-search {
+  position: relative;
+  flex: 0 0 var(--dimension-size-500);
+  min-width: 0;
+  min-height: var(--dimension-size-500);
+  background: transparent;
+}
+
+.filter-menu__option-search::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: var(--dimension-stroke-width-012);
+  background-color: var(--color-border-tertiary);
+  pointer-events: none;
+}
+
+.filter-menu__option-search .select-search {
+  height: 100%;
+  background: transparent;
 }
 
 .filter-menu__options--date,
@@ -90,8 +125,11 @@
 }
 
 .filter-menu__date-header {
-  flex: 0 0 var(--dimension-size-600);
+  flex: 0 0 var(--dimension-size-500);
   justify-content: center;
+  min-block-size: var(--dimension-size-500);
+  padding: var(--dimension-space-050);
+  background: var(--color-background-secondary);
 }
 
 .filter-menu__date-body {
@@ -172,6 +210,11 @@
   color: var(--color-foreground-primary);
 }
 
+/* Pending range preview stays faint while the already-selected start keeps its bold edge. */
+.filter-menu__calendar-day--range-preview {
+  background: var(--color-background-faint-brand);
+}
+
 .filter-menu__calendar-day--today {
   color: var(--color-foreground-primary);
 }
@@ -195,6 +238,29 @@
 
 .filter-menu__clear {
   color: var(--color-foreground-bold-brand);
+}
+
+.filter-menu__match-mode-footer {
+  flex: 0 0 auto;
+}
+
+.filter-menu__match-mode-content {
+  justify-content: flex-start;
+  padding-inline: calc(
+    var(--dimension-space-050) + var(--ds-control-padding-inline, var(--dimension-space-075)) +
+      var(--ds-control-label-inset, var(--dimension-space-025))
+  );
+}
+
+.filter-menu__match-mode-toggle {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--dimension-radius-025);
+  background: transparent;
+  cursor: default;
 }
 
 @media (forced-colors: active) {

@@ -25,7 +25,7 @@ export function tableSortFields(columns: readonly TableColumn[]): TableSortField
         seen.add(segment.sortKey);
         fields.push({
           id: segment.sortKey,
-          label: segment.label.trim() || segment.sortKey,
+          label: segment.dataLabel?.trim() || segment.label.trim() || segment.sortKey,
         });
       }
       continue;
@@ -34,7 +34,8 @@ export function tableSortFields(columns: readonly TableColumn[]): TableSortField
     seen.add(column.id);
     fields.push({
       id: column.id,
-      label: column.header.trim() || column.headerLabel?.trim() || column.id,
+      label:
+        column.dataLabel?.trim() || column.header.trim() || column.headerLabel?.trim() || column.id,
     });
   }
 

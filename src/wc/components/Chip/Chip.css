@@ -1,4 +1,5 @@
 @import '../../utils/tag-chip.css';
+@import '../../utils/control-density-inset.css';
 
 /*
  * Semantic state colors — Chip’s differentiator from Tag.
@@ -29,13 +30,18 @@
  * [inset][text][inset][gap][icon].
  */
 .tag__remove {
+  --ds-chip-remove-size: var(--ds-control-height);
+
   padding: 0;
   margin: 0;
   border: none;
+  box-sizing: border-box;
   background: none;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: var(--ds-chip-remove-size);
+  height: var(--ds-chip-remove-size);
   cursor: default;
   color: inherit;
   flex-shrink: 0;
@@ -44,10 +50,27 @@
   border-radius: var(--dimension-radius-half);
 }
 
+/* The dismiss action nests inside the already-inset chip, so its reduction is additive. */
+:host(.ds-control--inset) .tag__remove {
+  --ds-chip-remove-size: calc(var(--ds-control-height) - var(--dimension-space-050));
+}
+
+:host(.ds-control--inset) {
+  padding-inline-end: var(--dimension-space-025);
+}
+
+:host(.ds-control--inset-double) .tag__remove {
+  --ds-chip-remove-size: calc(var(--ds-control-height) - var(--dimension-space-100));
+}
+
+:host(.ds-control--inset-double) {
+  padding-inline-end: var(--dimension-space-050);
+}
+
 .tag__remove::before {
   content: '';
   position: absolute;
-  inset: var(--dimension-space-n025);
+  inset: 0;
   border-radius: var(--dimension-radius-half);
   background-color: transparent;
   transition: var(--effect-transition-interaction-background-short-2);
@@ -62,14 +85,6 @@
 
 .tag__remove:active::before {
   background-color: var(--color-interaction-pressed);
-}
-
-:host(.tag--size-sm) .tag__remove::before {
-  inset: var(--dimension-space-n012);
-}
-
-:host(.tag--size-xs) .tag__remove::before {
-  inset: 0;
 }
 
 .tag__remove-x {

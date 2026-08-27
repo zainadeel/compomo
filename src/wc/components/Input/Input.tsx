@@ -86,6 +86,8 @@ export class Input {
   @Prop() width: InputWidth = 'fill';
   /** Show the standard inset border, including focused and invalid strokes. */
   @Prop() hasBorder: boolean = true;
+  /** Show the standard hover and pressed fill when the field is not embedded in interactive chrome. */
+  @Prop() hasInteractionFill: boolean = true;
   /** Optional leading icon name. */
   @Prop() icon: string | undefined;
   @Prop() isInactive: boolean = false;
@@ -97,6 +99,10 @@ export class Input {
   @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;
   @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;
   @Prop({ attribute: 'aria-describedby' }) ariaDescribedby: string | undefined;
+  /** Identifies the results or popup controlled by the editable field. */
+  @Prop({ attribute: 'aria-controls' }) ariaControls: string | undefined;
+  /** Identifies the active descendant while focus remains in the editable field. */
+  @Prop({ attribute: 'aria-activedescendant' }) ariaActiveDescendant: string | undefined;
 
   @Event() dsChange!: EventEmitter<string>;
   @Event() dsClear!: EventEmitter<void>;
@@ -242,6 +248,7 @@ export class Input {
     const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const iconSize = ICON_SIZE[this.size];
     const numeric = this.type === 'number';
+    const resolvedAutoComplete = this.autoComplete ?? (this.type === 'search' ? 'off' : undefined);
 
     const describedBy =
       [this.ariaDescribedby, showError ? this.errorId : undefined].filter(Boolean).join(' ') ||
@@ -274,7 +281,7 @@ export class Input {
             'ds-control-frame': true,
             'input-control--bordered': this.hasBorder,
             'input-control--error': this.hasBorder && this.error,
-            'ds-interaction-fill': true,
+            'ds-interaction-fill': this.hasInteractionFill,
             [`ds-control--${this.size}`]: true,
           }}
         >
@@ -302,13 +309,18 @@ export class Input {
             readOnly={this.readOnly}
             required={this.required}
             autoFocus={this.autoFocus}
-            autoComplete={this.autoComplete}
+            autoComplete={resolvedAutoComplete}
+            autoCapitalize={this.type === 'search' ? 'none' : undefined}
+            autoCorrect={this.type === 'search' ? 'off' : undefined}
+            spellcheck={this.type === 'search' ? false : undefined}
             inputMode={this.inputMode || undefined}
             enterKeyHint={this.enterKeyHint || undefined}
             class={`native-input native-input--align-${this.textAlign} ds-control-label-box ds-text--${textVariant.replace('text-', '')} ds-text--regular ds-interaction-fill__content`}
             aria-label={this.ariaLabel}
             aria-labelledby={this.ariaLabelledby}
             aria-describedby={describedBy}
+            aria-controls={this.ariaControls}
+            aria-activedescendant={this.ariaActiveDescendant}
             aria-invalid={this.error ? 'true' : undefined}
             onInput={this.handleInput}
             onFocus={this.handleFocus}

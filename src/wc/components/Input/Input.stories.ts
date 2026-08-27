@@ -20,6 +20,7 @@ const meta: Meta = {
     width: { control: 'select', options: ['fill', 'hug'] },
     icon: { control: 'text' },
     hasBorder: { control: 'boolean' },
+    hasInteractionFill: { control: 'boolean' },
     isInactive: { control: 'boolean' },
     readOnly: { control: 'boolean' },
     error: { control: 'boolean' },
@@ -34,6 +35,7 @@ const meta: Meta = {
     width: 'fill',
     icon: 'MagnifyingGlass',
     hasBorder: true,
+    hasInteractionFill: true,
     isInactive: false,
     readOnly: false,
     error: false,
@@ -58,6 +60,7 @@ export const Playground: Story = {
         width=${args['width'] ?? 'fill'}
         icon=${args['icon'] ?? ''}
         .hasBorder=${args['hasBorder']}
+        .hasInteractionFill=${args['hasInteractionFill']}
         ?is-inactive=${args['isInactive']}
         ?read-only=${args['readOnly']}
         ?error=${args['error']}
@@ -123,6 +126,15 @@ export const SizesAndStates: Story = {
         value="Borderless value"
         .hasBorder=${false}
         aria-label="Borderless input"
+      ></ds-input>
+      <ds-text variant="text-body-small" color="secondary">Embedded search</ds-text>
+      <ds-input
+        type="search"
+        icon="MagnifyingGlass"
+        placeholder="Search"
+        .hasBorder=${false}
+        .hasInteractionFill=${false}
+        aria-label="Embedded search input"
       ></ds-input>
       <ds-text variant="text-body-small" color="secondary">Borderless error</ds-text>
       <ds-input

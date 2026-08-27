@@ -31,7 +31,7 @@ import type { AnchoredAlign, AnchoredSide } from '../../utils/anchored-position'
 import { AnchoredPositionController } from '../../utils/anchored-position-controller';
 import { AnchoredOverlayInteractionController } from '../../utils/anchored-overlay-interaction-controller';
 import { resolveAnchoredOverlayBoundaryRect } from '../../utils/anchored-overlay-boundary';
-import { ChoiceOptionRow } from '../../utils/choice-list-parts';
+import { ChoiceOptionRow, ChoiceSearch } from '../../utils/choice-list-parts';
 import { choiceListUsesSubtext } from '../../utils/choice-list';
 import {
   FILTER_MENU_WEEKDAYS,
@@ -46,6 +46,7 @@ export type FilterMenuFilterKind = 'single' | 'multiple' | 'boolean' | 'date';
 export type FilterMenuSize = 'lg' | 'md' | 'sm' | 'xs';
 export type FilterMenuWidth = ControlWidth;
 export type FilterMenuFooterLayout = 'summary' | 'categories-clear';
+export type FilterMenuMatchMode = 'any' | 'all';
 type FilterMenuDateMode = 'range' | 'relative';
 
 export interface FilterMenuOption {
@@ -68,10 +69,16 @@ export interface FilterMenuFilter {
 
 export type FilterMenuValue = string[] | boolean | string;
 export type FilterMenuValues = Record<string, FilterMenuValue | undefined>;
+export type FilterMenuMatchModes = Record<string, FilterMenuMatchMode | undefined>;
 
 export interface FilterMenuChangeDetail {
   filterId: string;
   value: FilterMenuValue;
+}
+
+export interface FilterMenuMatchModeChangeDetail {
+  filterId: string;
+  mode: FilterMenuMatchMode;
 }
 
 let filterMenuId = 0;
@@ -130,6 +137,8 @@ export class FilterMenu {
   @Prop() filters: FilterMenuFilter[] = [];
   /** Controlled values keyed by filter id. */
   @Prop() values: FilterMenuValues = {};
+  /** Controlled any/all match mode keyed by multiple-choice filter id. Defaults to any. */
+  @Prop() matchModes: FilterMenuMatchModes = {};
   /** Controlled category shown in the option pane. */
   @Prop() activeFilterId: string | undefined;
   /** External trigger element to position against. */
@@ -154,6 +163,10 @@ export class FilterMenu {
   @Prop() categoriesLabel: string = 'Filter categories';
   /** Footer action and date-clear accessible label. */
   @Prop() clearLabel: string = 'Clear';
+  /** Placeholder shown in each non-date option search header. */
+  @Prop() searchPlaceholder: string = 'Search';
+  /** Empty-state text shown when an option search has no matches. */
+  @Prop() noResultsText: string = 'No results';
   /** Footer recipe: full-width selected summary or reserved category-pane Clear action. */
   @Prop() footerLayout: FilterMenuFooterLayout = 'summary';
   /** Show a visible focus ring on initial entry after keyboard activation. */
@@ -169,11 +182,15 @@ export class FilterMenu {
   @State() private dateModeByFilter: Record<string, FilterMenuDateMode> = {};
   @State() private calendarMonthByFilter: Record<string, string> = {};
   @State() private pendingRangeStartByFilter: Record<string, string> = {};
+  @State() private previewRangeEndByFilter: Record<string, string> = {};
+  @State() private optionQueryByFilter: Record<string, string> = {};
 
   /** Requests a controlled value replacement without closing the popup. */
   @Event() dsChange!: EventEmitter<FilterMenuChangeDetail>;
   /** Requests that the consumer clear every filter value. */
   @Event() dsClear!: EventEmitter<void>;
+  /** Requests a controlled any/all mode replacement for a multiple-choice filter. */
+  @Event() dsMatchModeChange!: EventEmitter<FilterMenuMatchModeChangeDetail>;
   /** Requests a controlled active-category replacement. */
   @Event() dsActiveFilterChange!: EventEmitter<string>;
   /** Requests that the controlled popup close. */
@@ -192,6 +209,7 @@ export class FilterMenu {
   private closingSnapshot: {
     filters: FilterMenuFilter[];
     values: FilterMenuValues;
+    matchModes: FilterMenuMatchModes;
     activeFilterId: string | undefined;
   } | null = null;
 
@@ -392,6 +410,8 @@ export class FilterMenu {
     this.dateModeByFilter = {};
     this.calendarMonthByFilter = {};
     this.pendingRangeStartByFilter = {};
+    this.previewRangeEndByFilter = {};
+    this.optionQueryByFilter = {};
     this.dsAfterClose.emit();
   }
 
@@ -408,6 +428,7 @@ export class FilterMenu {
           Array.isArray(value) ? [...value] : value,
         ])
       ),
+      matchModes: { ...this.matchModes },
       activeFilterId: this.activeFilterId,
     };
   }
@@ -491,9 +512,9 @@ export class FilterMenu {
     filter: FilterMenuFilter,
     option: FilterMenuOption,
     index: number,
-    values: FilterMenuValues
+    values: FilterMenuValues,
+    visibleOptions: FilterMenuOption[] = filter.options ?? []
   ) {
-    const options = filter.options ?? [];
     if (event.key === 'ArrowLeft') {
       this.handlePanelKeyDown(event, filter.id);
       return;
@@ -505,7 +526,7 @@ export class FilterMenu {
     }
     if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
     event.preventDefault();
-    const enabled = options
+    const enabled = visibleOptions
       .map((candidate, optionIndex) => ({ candidate, optionIndex }))
       .filter(({ candidate }) => !candidate.isInactive)
       .map(({ optionIndex }) => optionIndex);
@@ -519,6 +540,63 @@ export class FilterMenu {
       const start = current >= 0 ? current : direction === 1 ? -1 : 0;
       next = enabled[(start + direction + enabled.length) % enabled.length];
     }
+    this.activeOptionIndex = next;
+    this.focusRingVisible = true;
+    requestAnimationFrame(() => {
+      this.el
+        .querySelector<HTMLElement>(`#${this.generatedId}-${filter.id}-option-${next}`)
+        ?.focus();
+    });
+  }
+
+  private optionMatchesQuery(option: FilterMenuOption, query: string): boolean {
+    const normalized = query.trim().toLocaleLowerCase();
+    if (!normalized) return true;
+    return `${option.label} ${option.description ?? ''}`.toLocaleLowerCase().includes(normalized);
+  }
+
+  private visibleOptions(
+    filter: FilterMenuFilter,
+    query = this.optionQueryByFilter[filter.id] ?? ''
+  ) {
+    if (filter.kind === 'boolean') {
+      const option = this.booleanOption(filter);
+      return this.optionMatchesQuery(option, query) ? [option] : [];
+    }
+    return (filter.options ?? []).filter(option => this.optionMatchesQuery(option, query));
+  }
+
+  private booleanOption(filter: FilterMenuFilter): FilterMenuOption {
+    return {
+      label: filter.fieldLabel ?? filter.label,
+      value: 'true',
+      description: filter.description,
+    };
+  }
+
+  private setOptionQuery(filter: FilterMenuFilter, value: string) {
+    const visibleOptions = this.visibleOptions(filter, value);
+    const firstEnabled = visibleOptions.findIndex(option => !option.isInactive);
+    this.activeOptionIndex = firstEnabled;
+    this.focusRingVisible = false;
+    this.optionQueryByFilter = { ...this.optionQueryByFilter, [filter.id]: value };
+    requestAnimationFrame(() => {
+      const content = this.el.querySelector<HTMLElement>('.filter-menu__options-content');
+      if (content) content.scrollTop = 0;
+      this.position.schedule();
+    });
+  }
+
+  private handleOptionSearchKeyDown(event: KeyboardEvent, filter: FilterMenuFilter) {
+    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+    const visibleOptions = this.visibleOptions(filter);
+    const enabled = visibleOptions
+      .map((option, index) => ({ option, index }))
+      .filter(({ option }) => !option.isInactive)
+      .map(({ index }) => index);
+    if (!enabled.length) return;
+    event.preventDefault();
+    const next = event.key === 'ArrowDown' ? enabled[0] : enabled[enabled.length - 1];
     this.activeOptionIndex = next;
     this.focusRingVisible = true;
     requestAnimationFrame(() => {
@@ -582,6 +660,7 @@ export class FilterMenu {
       delete next[filter.id];
       this.pendingRangeStartByFilter = next;
     }
+    if (mode === 'relative') this.clearCalendarRangePreview(filter.id);
   }
 
   private calendarMonth(filterId: string, value: FilterMenuValue | undefined): string {
@@ -591,6 +670,7 @@ export class FilterMenu {
   }
 
   private moveCalendarMonth(filterId: string, month: string, offset: number) {
+    this.clearCalendarRangePreview(filterId);
     this.calendarMonthByFilter = {
       ...this.calendarMonthByFilter,
       [filterId]: shiftFilterMenuCalendarMonth(month, offset),
@@ -598,6 +678,7 @@ export class FilterMenu {
   }
 
   private selectCalendarDate(filterId: string, value: string) {
+    this.clearCalendarRangePreview(filterId);
     const pendingStart = this.pendingRangeStartByFilter[filterId];
     const next = { ...this.pendingRangeStartByFilter };
     if (pendingStart) delete next[filterId];
@@ -609,7 +690,21 @@ export class FilterMenu {
     });
   }
 
+  private previewCalendarRange(filterId: string, value: string) {
+    if (!this.pendingRangeStartByFilter[filterId]) return;
+    if (this.previewRangeEndByFilter[filterId] === value) return;
+    this.previewRangeEndByFilter = { ...this.previewRangeEndByFilter, [filterId]: value };
+  }
+
+  private clearCalendarRangePreview(filterId: string) {
+    if (!this.previewRangeEndByFilter[filterId]) return;
+    const next = { ...this.previewRangeEndByFilter };
+    delete next[filterId];
+    this.previewRangeEndByFilter = next;
+  }
+
   private focusCalendarDate(filterId: string, value: string) {
+    this.previewCalendarRange(filterId, value);
     const targetMonth = filterMenuCalendarMonth(value);
     if (this.calendarMonthByFilter[filterId] !== targetMonth) {
       this.calendarMonthByFilter = { ...this.calendarMonthByFilter, [filterId]: targetMonth };
@@ -698,6 +793,10 @@ export class FilterMenu {
     const month = this.calendarMonth(filter.id, value);
     const days = filterMenuCalendarDays(month);
     const today = filterMenuToday();
+    const pendingStart = this.pendingRangeStartByFilter[filter.id];
+    const previewEnd = this.previewRangeEndByFilter[filter.id];
+    const previewStart = pendingStart && previewEnd ? [pendingStart, previewEnd].sort()[0] : null;
+    const previewFinish = pendingStart && previewEnd ? [pendingStart, previewEnd].sort()[1] : null;
     const preferredFocus =
       this.pendingRangeStartByFilter[filter.id] ??
       range?.end ??
@@ -742,11 +841,23 @@ export class FilterMenu {
           class="filter-menu__calendar-grid"
           role="grid"
           aria-label={filterMenuCalendarMonthLabel(month)}
+          onMouseLeave={() => this.clearCalendarRangePreview(filter.id)}
         >
           {days.map(day => {
-            const inRange = Boolean(range && day.value >= range.start && day.value <= range.end);
+            const selectedInRange = Boolean(
+              range && day.value >= range.start && day.value <= range.end
+            );
+            const previewInRange = Boolean(
+              previewStart &&
+              previewFinish &&
+              day.value >= previewStart &&
+              day.value <= previewFinish
+            );
+            const inRange = previewInRange || selectedInRange;
             const rangeEdge = Boolean(
-              range && (day.value === range.start || day.value === range.end)
+              previewStart
+                ? day.value === pendingStart
+                : range && (day.value === range.start || day.value === range.end)
             );
             const textColor = rangeEdge
               ? 'on-bold'
@@ -765,13 +876,16 @@ export class FilterMenu {
                   'filter-menu__calendar-day--outside': !day.inMonth,
                   'filter-menu__calendar-day--today': day.value === today,
                   'filter-menu__calendar-day--in-range': inRange,
+                  'filter-menu__calendar-day--range-preview': previewInRange,
                   'filter-menu__calendar-day--range-edge': rangeEdge,
                   'ds-focus-ring-inset': true,
                   'ds-interaction-fill': true,
                 }}
                 aria-label={day.label}
-                aria-selected={inRange ? 'true' : 'false'}
+                aria-selected={selectedInRange ? 'true' : 'false'}
                 tabIndex={day.value === focusDate ? 0 : -1}
+                onMouseEnter={() => this.previewCalendarRange(filter.id, day.value)}
+                onFocus={() => this.previewCalendarRange(filter.id, day.value)}
                 onClick={() => this.selectCalendarDate(filter.id, day.value)}
                 onKeyDown={(event: KeyboardEvent) =>
                   this.handleCalendarDayKeyDown(event, filter.id, day.value)
@@ -803,6 +917,7 @@ export class FilterMenu {
             ariaLabel="Date filter mode"
             size="md"
             width="fill"
+            hasContainer={false}
             value={mode}
             tabs={DATE_MODE_TABS}
             onDsChange={(event: CustomEvent<string>) => {
@@ -820,18 +935,55 @@ export class FilterMenu {
     );
   }
 
+  private renderOptionSearch(filter: FilterMenuFilter) {
+    return (
+      <div class="filter-menu__option-search">
+        <ChoiceSearch
+          size="md"
+          hasFocusBoundary={false}
+          hasInteractionFill={false}
+          value={this.optionQueryByFilter[filter.id] ?? ''}
+          placeholder={this.searchPlaceholder}
+          ariaLabel={`Search ${filter.label} options`}
+          controls={`${this.generatedId}-${filter.id}-options`}
+          inputRef={() => undefined}
+          clearLabel={`Clear ${filter.label} search`}
+          onValueChange={value => this.setOptionQuery(filter, value)}
+          onKeyDown={(event: KeyboardEvent) => this.handleOptionSearchKeyDown(event, filter)}
+        />
+      </div>
+    );
+  }
+
+  private renderNoOptionResults() {
+    return (
+      <div
+        class="ds-choice-empty ds-empty-region"
+        role="option"
+        aria-selected="false"
+        aria-disabled="true"
+        aria-label={this.noResultsText}
+        aria-live="polite"
+      >
+        <ds-empty-state body={this.noResultsText} />
+      </div>
+    );
+  }
+
   private renderOptions(filter: FilterMenuFilter, values: FilterMenuValues) {
     const value = values[filter.id];
     if (filter.kind === 'multiple' || filter.kind === 'single') {
       const selected = Array.isArray(value) ? value : [];
-      const options = filter.options ?? [];
+      const allOptions = filter.options ?? [];
+      const options = this.visibleOptions(filter);
       const usesSubtext = choiceListUsesSubtext(
-        options.map(option => ({
+        allOptions.map(option => ({
           label: option.label,
           value: option.value,
           subtext: option.description,
         }))
       );
+      if (!options.length) return this.renderNoOptionResults();
       return options.map((option, index) => {
         const isSelected =
           filter.kind === 'multiple' ? selected.includes(option.value) : value === option.value;
@@ -864,7 +1016,7 @@ export class FilterMenu {
               this.activeOptionIndex = index;
             }}
             onKeyDown={(event: KeyboardEvent) =>
-              this.handleOptionKeyDown(event, filter, option, index, values)
+              this.handleOptionKeyDown(event, filter, option, index, values, options)
             }
             onHover={() => {
               this.focusRingVisible = false;
@@ -877,11 +1029,8 @@ export class FilterMenu {
     }
 
     if (filter.kind === 'boolean') {
-      const option: FilterMenuOption = {
-        label: filter.fieldLabel ?? filter.label,
-        value: 'true',
-        description: filter.description,
-      };
+      const [option] = this.visibleOptions(filter);
+      if (!option) return this.renderNoOptionResults();
       return (
         <ChoiceOptionRow
           size="md"
@@ -994,6 +1143,34 @@ export class FilterMenu {
     );
   }
 
+  private renderMatchModeFooter(filter: FilterMenuFilter, matchModes: FilterMenuMatchModes) {
+    const mode: FilterMenuMatchMode = matchModes[filter.id] === 'all' ? 'all' : 'any';
+    const nextMode: FilterMenuMatchMode = mode === 'any' ? 'all' : 'any';
+    return (
+      <div class="filter-menu__match-mode-footer ds-choice-footer">
+        <div class="filter-menu__match-mode-content ds-choice-footer__content ds-control--md">
+          <ds-text as="span" variant="text-body-medium" color="secondary">
+            Limit results to
+          </ds-text>
+          <button
+            class="filter-menu__match-mode-toggle ds-text-action ds-focus-ring"
+            type="button"
+            aria-label={`Limit ${filter.label} results to ${nextMode} selected`}
+            onClick={() => this.dsMatchModeChange.emit({ filterId: filter.id, mode: nextMode })}
+            onKeyDown={(event: KeyboardEvent) => this.handlePanelKeyDown(event, filter.id)}
+          >
+            <ds-text as="span" variant="text-body-medium" color="inherit">
+              {mode}
+            </ds-text>
+          </button>
+          <ds-text as="span" variant="text-body-medium" color="secondary">
+            selected
+          </ds-text>
+        </div>
+      </div>
+    );
+  }
+
   render() {
     const state =
       this.closing && this.closingSnapshot
@@ -1001,6 +1178,7 @@ export class FilterMenu {
         : {
             filters: this.filters,
             values: this.values,
+            matchModes: this.matchModes,
             activeFilterId: this.activeFilterId,
           };
     const activeFilter = this.selectedFilter(state.filters, state.activeFilterId);
@@ -1199,21 +1377,30 @@ export class FilterMenu {
                     role="tabpanel"
                     aria-labelledby={`${this.generatedId}-${activeFilter.id}-tab`}
                   >
-                    {activeFilter.kind === 'date' ? (
-                      <div key={activeFilter.id} class="filter-menu__option-list--date">
-                        {this.renderOptions(activeFilter, state.values)}
-                      </div>
-                    ) : (
-                      <div
-                        key={activeFilter.id}
-                        class="filter-menu__option-list ds-choice-list ds-chrome-column ds-chrome-space--sm"
-                        role="listbox"
-                        aria-label={activeFilter.label}
-                        aria-multiselectable={activeFilter.kind === 'multiple' ? 'true' : undefined}
-                      >
-                        {this.renderOptions(activeFilter, state.values)}
-                      </div>
-                    )}
+                    {activeFilter.kind === 'date' ? null : this.renderOptionSearch(activeFilter)}
+                    <div class="filter-menu__options-content">
+                      {activeFilter.kind === 'date' ? (
+                        <div key={activeFilter.id} class="filter-menu__option-list--date">
+                          {this.renderOptions(activeFilter, state.values)}
+                        </div>
+                      ) : (
+                        <div
+                          id={`${this.generatedId}-${activeFilter.id}-options`}
+                          key={activeFilter.id}
+                          class="filter-menu__option-list ds-choice-list ds-chrome-column ds-chrome-space--sm"
+                          role="listbox"
+                          aria-label={activeFilter.label}
+                          aria-multiselectable={
+                            activeFilter.kind === 'multiple' ? 'true' : undefined
+                          }
+                        >
+                          {this.renderOptions(activeFilter, state.values)}
+                        </div>
+                      )}
+                    </div>
+                    {activeFilter.kind === 'multiple'
+                      ? this.renderMatchModeFooter(activeFilter, state.matchModes)
+                      : null}
                   </div>
                 </div>
 

@@ -57,6 +57,7 @@
   ],
   "states": [
     "Every size applies one complete control-density recipe across frame height, inline padding, icon zone, text-container inset, gap, and radius.",
+    "Every button has a minimum inline size equal to its resolved height. Short labels therefore form a square control while longer labels continue to hug their content.",
     "Set isInset only when the button is nested inside a same-size control. The default single inset removes 4px overall; insetDepth double removes 8px overall so the parent can add 4px per edge while preserving its outer alignment box. Double inset falls back to single at xs to protect minimum icon geometry.",
     "Use only one filled action per local decision area; render all secondary actions with ButtonUnfilled.",
     "Choose brand or neutral for general commands. Reserve positive, negative, warning, and caution for matching action consequences, and AI, guide, or walkthrough for actions that enter those feature experiences.",

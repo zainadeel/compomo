@@ -12,6 +12,15 @@ export const TABLE_VIRTUAL_ROW_TRACK_SIZE = {
   4: 106,
 } as const;
 
+const TABLE_VIRTUAL_LATER_TRACK_INCREMENT =
+  TABLE_VIRTUAL_ROW_TRACK_SIZE[2] - TABLE_VIRTUAL_ROW_TRACK_SIZE[1];
+
+/** Estimated row height for any positive named track count. */
+export function tableVirtualRowTrackSize(tracks: number): number {
+  const count = Number.isFinite(tracks) && tracks > 0 ? Math.floor(tracks) : 1;
+  return TABLE_VIRTUAL_ROW_TRACK_SIZE[1] + (count - 1) * TABLE_VIRTUAL_LATER_TRACK_INCREMENT;
+}
+
 export const TABLE_VIRTUAL_GROUP_HEADER_SIZE = TABLE_VIRTUAL_ROW_TRACK_SIZE[1];
 export const TABLE_VIRTUAL_MIN_OVERSCAN_ROWS = 8;
 
@@ -107,6 +116,7 @@ function tableCellTrackCount(
   if (presentation.kind === 'tag') {
     return presentation.variant === 'text-with-tag' ? 2 : 1;
   }
+  if (presentation.kind === 'tags') return presentation.tracks;
   if (presentation.kind !== 'text' && presentation.kind !== 'icon-text') return 1;
 
   const variantTracks =
@@ -132,7 +142,7 @@ function tableVirtualRowMetrics(
   row: TableRow,
   columns: readonly TableColumn[]
 ): Pick<TableVirtualItem, 'estimatedSize' | 'variableSize'> {
-  let tracks: 1 | 2 | 3 | 4 = 1;
+  let tracks = 1;
   let variableSize = false;
   for (const column of columns) {
     const value = row.cells[column.id];
@@ -144,12 +154,11 @@ function tableVirtualRowMetrics(
     ) {
       variableSize = true;
     }
+    if (presentation.kind === 'tags') variableSize = true;
     const count = tableCellTrackCount(presentation);
-    if (count === 4) {
-      tracks = 4;
-    } else if (count > tracks) tracks = count as 1 | 2 | 3;
+    if (count > tracks) tracks = count;
   }
-  return { estimatedSize: TABLE_VIRTUAL_ROW_TRACK_SIZE[tracks], variableSize };
+  return { estimatedSize: tableVirtualRowTrackSize(tracks), variableSize };
 }
 
 export function flattenTableVirtualItems(input: FlattenTableVirtualItemsInput): TableVirtualItem[] {

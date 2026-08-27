@@ -6,22 +6,50 @@ import {
   type ControlSize,
 } from './control-text';
 
-const INSET_ACTION_SIZE: Record<ControlSize, 'md' | 'sm' | 'xs'> = {
-  lg: 'md',
-  md: 'sm',
-  sm: 'xs',
-  xs: 'xs',
-};
+interface ChoiceListSectionProps {
+  size?: ControlSize;
+  heading?: string;
+  ariaLabel: string;
+  className?: string;
+}
+
+/** Shared listbox anatomy used when an owning surface composes choice lists directly. */
+export const ChoiceListSection: FunctionalComponent<ChoiceListSectionProps> = (
+  { size = 'md', heading, ariaLabel, className },
+  children
+) => (
+  <div
+    class={`ds-choice-list ds-chrome-column ds-chrome-space--sm ${className ?? ''}`.trim()}
+    role="listbox"
+    aria-label={ariaLabel}
+  >
+    {heading ? (
+      <ds-text
+        class={`ds-choice-section__header ds-control-section-heading ds-control--${size}`}
+        as="div"
+        variant={CONTROL_SUPPORTING_TEXT_VARIANT[size]}
+        color="primary"
+        emphasis
+        aria-hidden="true"
+      >
+        {heading}
+      </ds-text>
+    ) : null}
+    {children}
+  </div>
+);
 
 interface ChoiceSearchProps {
   size?: ControlSize;
+  hasFocusBoundary?: boolean;
+  hasInteractionFill?: boolean;
   value: string;
   placeholder: string;
   ariaLabel?: string;
   controls?: string;
   activeDescendant?: string;
   disabled?: boolean;
-  inputRef: (element: HTMLInputElement | null) => void;
+  inputRef: (element: HTMLDsInputElement | null) => void;
   clearLabel: string;
   onValueChange: (value: string) => void;
   onClear?: () => void;
@@ -30,6 +58,8 @@ interface ChoiceSearchProps {
 
 export const ChoiceSearch: FunctionalComponent<ChoiceSearchProps> = ({
   size = 'md',
+  hasFocusBoundary = true,
+  hasInteractionFill = true,
   value,
   placeholder,
   ariaLabel,
@@ -42,48 +72,39 @@ export const ChoiceSearch: FunctionalComponent<ChoiceSearchProps> = ({
   onClear,
   onKeyDown,
 }) => {
-  let inputElement: HTMLInputElement | null = null;
-
   return (
-    <div class="select-search">
-      <div class={`select-search__control ds-control--${size}`}>
-        <ds-icon name="MagnifyingGlass" size={size} color="inherit" />
-        <input
-          class={`ds-text--${CONTROL_TEXT_VARIANT[size].replace('text-', '')} ds-text--regular`}
-          ref={element => {
-            inputElement = (element as HTMLInputElement) ?? null;
-            inputRef(inputElement);
-          }}
-          type="search"
-          value={value}
-          placeholder={placeholder}
-          disabled={disabled}
-          aria-label={ariaLabel ?? placeholder}
-          aria-controls={controls}
-          aria-activedescendant={activeDescendant}
-          onInput={event => onValueChange((event.target as HTMLInputElement).value)}
-          onKeyDown={onKeyDown}
-        />
-        {value && !disabled && (
-          <ds-tooltip class="select-search__clear-tooltip" label={clearLabel} side="top" size="sm">
-            <ds-button-unfilled
-              class="select-search__clear"
-              variant="icon"
-              size={INSET_ACTION_SIZE[size]}
-              icon="CrossCircle"
-              hasBorder={false}
-              rounded
-              ariaLabel={clearLabel}
-              onDsChange={event => event.stopPropagation()}
-              onDsClick={() => {
-                onValueChange('');
-                onClear?.();
-                requestAnimationFrame(() => inputElement?.focus());
-              }}
-            />
-          </ds-tooltip>
-        )}
-      </div>
+    <div
+      class={{
+        'select-search': true,
+        'select-search--without-focus-boundary': !hasFocusBoundary,
+      }}
+    >
+      <ds-input
+        class="select-search__control"
+        ref={element => inputRef((element as HTMLDsInputElement) ?? null)}
+        type="search"
+        size={size}
+        width="fill"
+        value={value}
+        placeholder={placeholder}
+        icon="MagnifyingGlass"
+        clearLabel={clearLabel}
+        isInactive={disabled}
+        hasBorder={false}
+        hasInteractionFill={hasInteractionFill}
+        ariaLabel={ariaLabel ?? placeholder}
+        ariaControls={controls}
+        ariaActiveDescendant={activeDescendant}
+        onKeyDown={onKeyDown}
+        onDsChange={(event: CustomEvent<string>) => {
+          event.stopPropagation();
+          onValueChange(event.detail);
+        }}
+        onDsClear={(event: CustomEvent<void>) => {
+          event.stopPropagation();
+          onClear?.();
+        }}
+      />
     </div>
   );
 };

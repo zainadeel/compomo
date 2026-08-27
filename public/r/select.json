@@ -959,6 +959,7 @@
     "checkbox",
     "empty-state",
     "icon",
+    "input",
     "loader",
     "text",
     "tooltip"

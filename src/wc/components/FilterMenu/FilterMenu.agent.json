@@ -7,7 +7,7 @@
   "tag": "ds-filter-menu",
   "audience": "general",
   "status": "stable",
-  "summary": "Controlled two-pane filter select with menu-recipe category navigation, single- and multiple-choice, boolean, semantic relative-date and fixed-range filters, selected counts, and a clear action.",
+  "summary": "Controlled two-pane filter select with menu-recipe category navigation, local option search for non-date categories, single- and multiple-choice, boolean, semantic relative-date and fixed-range filters, selected counts, and a clear action.",
   "useWhen": [
     "A compact trigger must expose several filter families without turning the toolbar into many separate controls.",
     "Users need to move between persistent filter categories while editing the selected category in a second pane."
@@ -29,25 +29,24 @@
       "reason": "Menu provides the appropriate action-menu semantics and keyboard model."
     }
   ],
-  "commonlyComposedWith": [
-    "component:ds-select",
-    "component:ds-table",
-    "component:ds-checkbox"
-  ],
+  "commonlyComposedWith": ["component:ds-select", "component:ds-table", "component:ds-checkbox"],
   "accessibility": [
     "The built-in select trigger exposes combobox semantics with a dialog popup, synchronizes expanded state, holds the pressed interaction wash without changing resting foreground while open, and restores focus after dismissal.",
     "The category pane is a vertical tab list. Arrow Up and Arrow Down wrap, Home and End jump, Arrow Right enters the option pane, and Arrow Left returns to the active category.",
+    "Every non-date category begins with a labelled search field. Arrow Down and Arrow Up enter the first or last visible option, while Left and Right retain native text-caret behavior. Search matches option labels and descriptions without changing selected values.",
     "Escape and outside activation close the popup and restore trigger focus. Tab moves through option controls and closes only when it leaves the popup boundary.",
-    "Date filters expose Range and Relative tabs in a compact header. Relative presets use listbox semantics; the range calendar exposes a labelled grid, one tab stop, arrow-key day navigation, Home and End week navigation, and Page Up or Page Down month navigation.",
+    "Date filters expose containerless Range and Relative tabs in a secondary-background header with 4px padding around the 32px medium control. Relative presets use listbox semantics; the range calendar exposes a labelled grid, one tab stop, arrow-key day navigation, Home and End week navigation, and Page Up or Page Down month navigation. After a range start is chosen, pointer hover and keyboard focus preview the possible inclusive range without changing selection semantics.",
     "When an external trigger is inside an open shadow tree, pass its HTMLElement through anchor so outside activation, focus return, and Tab continuation use the composed tree.",
     "The trigger count reports active filter categories. Multiple-choice category tags report individual selected criteria, while an applied Date category uses a visual dot because its value is singular. The default summary footer announces the total; the categories-clear footer recipe reserves a visually empty category-pane action row and exposes its divider and only Clear when criteria are active."
   ],
   "states": [
-    "The application owns filters, values, activeFilterId, and open. Replace controlled objects and arrays after dsChange, dsActiveFilterChange, dsClear, or dsClose.",
+    "The application owns filters, values, matchModes, activeFilterId, and open. Replace controlled objects and arrays after dsChange, dsMatchModeChange, dsActiveFilterChange, dsClear, or dsClose.",
     "Single filters return a string, multiple filters return ordered string arrays, boolean filters return a boolean, and date filters return a serializable semantic string.",
+    "Multiple filters expose a right-pane footer reading Limit results to any or all selected. any is the default OR mode. Activating the blue mode word requests the opposite controlled mode through dsMatchModeChange; the application owns the corresponding query semantics.",
+    "Non-date option search is internal, scoped independently per category while the popup remains open, and reset after the popup closes. An unmatched query shows the configurable noResultsText empty state. Date uses its Relative and Range modes instead of option search.",
     "Date values are serializable semantic strings: relative:<preset> preserves a relative choice for future resolution and range:<start>/<end> preserves fixed inclusive ISO calendar dates. A legacy YYYY-MM-DD value is interpreted as a one-day range.",
     "Relative presets are Today, Yesterday, and the last 7, 14, 30, 60, or 90 inclusive calendar days. Applications resolve them against their current product date and time-zone policy by using resolveDateFilterRange from @ds-mo/ui/utils.",
-    "Range selection applies the first date immediately as a one-day range; a second activation completes an ordered inclusive range. A new activation after completion starts a replacement range.",
+    "Range selection applies the first date immediately as a one-day range; while an end is pending, that selected start retains its bold treatment and hovering or focusing another day paints the rest of the provisional inclusive span faint without emitting a value. A second activation completes an ordered inclusive range and gives both edges the bold treatment. A new activation after completion starts a replacement range.",
     "Selection applies immediately and does not close the popup.",
     "Changing category replaces the option-pane subtree so checkbox and other option visuals mount in their new state instead of transitioning from the previous category's row state.",
     "The trigger reports how many filter categories have selections. footerLayout=summary adds a full-width selected-count footer only while values are selected; footerLayout=categories-clear always reserves the category-pane footer height while keeping its inactive divider hidden, then reveals the divider and only its left-aligned Clear action while values are selected."
@@ -60,13 +59,13 @@
   ],
   "frameworkCaveats": {
     "customElements": [
-      "Assign filters and values as JavaScript properties after the element is defined."
+      "Assign filters, values, and matchModes as JavaScript properties after the element is defined."
     ],
     "react": [
-      "Pass filters and values as controlled props and handle onDsChange, onDsActiveFilterChange, onDsClear, and onDsClose."
+      "Pass filters, values, and matchModes as controlled props and handle onDsChange, onDsMatchModeChange, onDsActiveFilterChange, onDsClear, and onDsClose."
     ],
     "angular": [
-      "Use property bindings for filters and values and event bindings for dsChange, dsActiveFilterChange, dsClear, and dsClose."
+      "Use property bindings for filters, values, and matchModes and event bindings for dsChange, dsMatchModeChange, dsActiveFilterChange, dsClear, and dsClose."
     ]
   },
   "references": [

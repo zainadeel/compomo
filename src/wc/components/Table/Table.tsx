@@ -71,6 +71,7 @@ import { resolveCssLengthPx } from '../../utils/resolve-css-length-px';
 import { isElementTruncated } from '../../utils/is-element-truncated';
 import { observeTableCaptionCompact } from '../../utils/table-caption-compact';
 import { resolveTableFitPageSize } from './table-pagination-fit';
+import { createTableHighlightMatcher, type TableHighlightMatcher } from './table-highlight';
 import {
   paginationShortcutBlockedByPath,
   shouldHandleContainingPagePaginationShortcut,
@@ -124,6 +125,10 @@ export class Table {
   @Prop() sort: TableSortState | null = null;
   /** Controlled collapsed group identities. Groups not listed remain expanded. */
   @Prop() collapsedGroupIds: string[] = [];
+  /** Literal terms to highlight in table-owned text cells. Applications still own filtering. */
+  @Prop() highlightTerms: string[] = [];
+  /** Optional TableSearch field identities that restrict which data-point tracks are highlighted. */
+  @Prop() highlightFieldIds: string[] = [];
 
   /** Required accessible table name, retained as a native caption. */
   @Prop() caption!: string;
@@ -277,6 +282,10 @@ export class Table {
     collapsedGroupIds: string[];
     virtualCounts: boolean;
     value: TableRenderModel;
+  } | null = null;
+  private highlightMatcherCache: {
+    terms: string[];
+    value: TableHighlightMatcher;
   } | null = null;
   private virtualItemsCache: {
     columns: TableColumn[];
@@ -959,6 +968,15 @@ export class Table {
     return value;
   }
 
+  private get highlightMatcher(): TableHighlightMatcher {
+    if (this.highlightMatcherCache?.terms === this.highlightTerms) {
+      return this.highlightMatcherCache.value;
+    }
+    const value = createTableHighlightMatcher(this.highlightTerms);
+    this.highlightMatcherCache = { terms: this.highlightTerms, value };
+    return value;
+  }
+
   private get virtualizationEnabled(): boolean {
     return this.dataMode === 'virtual' && this.hasVirtualViewportBounds;
   }
@@ -1464,7 +1482,11 @@ export class Table {
             <button
               class="ds-table__header-label ds-table__header-label--interactive ds-focus-ring"
               type="button"
-              aria-label={this.sortButtonLabel(column, segment.sortKey, segment.label)}
+              aria-label={this.sortButtonLabel(
+                column,
+                segment.sortKey,
+                segment.dataLabel?.trim() || segment.label
+              )}
               data-sort-control="label"
               data-sort-key={segment.sortKey}
               data-sort-active={segmentActive ? 'true' : undefined}
@@ -1580,23 +1602,28 @@ export class Table {
   }
 
   private renderColgroup(model: TableRenderModel) {
+    const beforeSpacer =
+      model.elasticSpacerIndex == null
+        ? this.visibleColumns
+        : this.visibleColumns.slice(0, model.elasticSpacerIndex);
+    const afterSpacer =
+      model.elasticSpacerIndex == null ? [] : this.visibleColumns.slice(model.elasticSpacerIndex);
+    const renderColumn = (column: TableColumn) => {
+      const width = tableColumnSize(column);
+      return (
+        <col
+          key={column.id}
+          class={{ 'ds-table__action-column': column.kind === 'action' }}
+          style={width ? { width } : undefined}
+        />
+      );
+    };
     return (
       <colgroup>
         {model.selectable && <col class="ds-table__selection-column" />}
-        {this.visibleColumns.map(column => {
-          const width = tableColumnSize(column);
-          const flexible = column.id === model.flexibleColumnId;
-          return (
-            <col
-              key={column.id}
-              class={{
-                'ds-table__action-column': column.kind === 'action',
-                'ds-table__flexible-column': flexible,
-              }}
-              style={width && !flexible ? { width } : undefined}
-            />
-          );
-        })}
+        {beforeSpacer.map(renderColumn)}
+        {model.elasticSpacerIndex != null && <col class="ds-table__elastic-spacer-column" />}
+        {afterSpacer.map(renderColumn)}
       </colgroup>
     );
   }
@@ -1608,6 +1635,12 @@ export class Table {
     ariaRowIndex?: number
   ) {
     const selection = model.selection;
+    const beforeSpacer =
+      model.elasticSpacerIndex == null
+        ? this.visibleColumns
+        : this.visibleColumns.slice(0, model.elasticSpacerIndex);
+    const afterSpacer =
+      model.elasticSpacerIndex == null ? [] : this.visibleColumns.slice(model.elasticSpacerIndex);
     return (
       <thead
         class={{
@@ -1638,7 +1671,18 @@ export class Table {
               {this.renderStickyEdge('start')}
             </th>
           )}
-          {this.visibleColumns.map(column =>
+          {beforeSpacer.map(column =>
+            this.renderColumnHeader(column, model, interactive, presentational)
+          )}
+          {model.elasticSpacerIndex != null && (
+            <th
+              class="ds-table__header-cell ds-table__elastic-spacer-cell"
+              aria-hidden="true"
+              role="presentation"
+              data-elastic-spacer="true"
+            />
+          )}
+          {afterSpacer.map(column =>
             this.renderColumnHeader(column, model, interactive, presentational)
           )}
         </tr>
@@ -1660,6 +1704,8 @@ export class Table {
       emptyCellLabel: this.emptyCellLabel,
       actionMenuElementId: this.actionMenuElementId,
       actionMenu: this.actionMenu,
+      highlightMatcher: this.highlightMatcher,
+      highlightFieldIds: this.highlightFieldIds,
       ariaRowIndex,
       variableVirtualSize,
       rowKey,
