@@ -47,14 +47,18 @@ helper prints the exact scoped restart command when that is required.
 
 ## Browser tiers and ownership
 
-Rendered tests remain cross-browser by default. A reviewed assertion may use
+Every rendered test runs in Chromium. Firefox and WebKit repeat the contract
+specs selected in `tests/e2e/browser-tier.ts`: native forms and focus, anchored
+overlays, scrolling, touch, responsive shell ownership, virtualization, and
+motion lifecycle. Keep that list conservative when an entire spec owns
+browser-sensitive behavior.
+
+Within a cross-browser contract spec, a reviewed assertion may use
 `chromiumOnly(owner, reason)` from `tests/e2e/browser-tier.ts` when Chromium is
 the authoritative layer for engine-neutral composition, token-backed geometry,
-or an integrated Axe fixture already covered by the Storybook state matrix.
-The reason is required and stays beside the test so reviewers can evaluate the
-tier without consulting a parallel policy database. Cross-browser coverage
-needs no marker: it remains the default and should be evident from the behavior
-under test.
+or an integrated Axe fixture already covered by the Storybook state matrix. The
+reason is required and stays beside the test so reviewers can evaluate the tier
+without consulting another policy list.
 
 Do not use the Chromium-only tier for browser APIs, focus behavior, native form
 association, popup positioning, scrolling, responsive owner identity, direct
@@ -73,6 +77,13 @@ with the deletion without creating a second test catalog that must stay in sync.
 Rendered tests should assert public behavior or stable geometry contracts, not
 incidental implementation classes unless the class itself is the tested shared
 recipe.
+
+Before opening a pull request, run `npm run verify:local` plus the focused
+rendered spec for every affected component. Use `npm run test:e2e:chromium --
+tests/e2e/<spec>.spec.ts` for ordinary rendered changes. Run the corresponding
+WebKit contract locally, and the Docker-backed Firefox helper where browser APIs
+or engine-sensitive behavior changed. Use `npm run test:e2e:webkit --
+tests/e2e/<spec>.spec.ts` for the local WebKit contract.
 
 Use `tests/e2e/rendered-geometry.ts` for measured layout contracts. Its default
 half-pixel tolerance covers ordinary CSS subpixel rounding without accepting a

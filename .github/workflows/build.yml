@@ -9,8 +9,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  changes:
-    name: Classify browser checks
+  build:
+    name: Build library
     runs-on: ubuntu-latest
     outputs:
       browser: ${{ steps.scope.outputs.browser }}
@@ -25,13 +25,6 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: git diff --name-only -z "$BASE_SHA" "$HEAD_SHA" | node scripts/ci-browser-scope.mjs >> "$GITHUB_OUTPUT"
-
-  build:
-    name: Build library
-    runs-on: ubuntu-latest
-    needs: changes
-    steps:
-      - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v7
         with:
@@ -57,7 +50,7 @@ jobs:
         run: npm run build
 
       - name: Upload browser build
-        if: ${{ needs.changes.outputs.browser == 'true' && !startsWith(github.head_ref, 'release-please--') }}
+        if: ${{ steps.scope.outputs.browser == 'true' && !startsWith(github.head_ref, 'release-please--') }}
         uses: actions/upload-artifact@v7
         with:
           name: browser-build
@@ -99,15 +92,11 @@ jobs:
           fi
           echo "✅ src/ is clean."
 
-  e2e:
-    name: E2E tests (shard ${{ matrix.shard }}/3)
+  e2e-chromium:
+    name: Chromium rendered tests
     runs-on: ubuntu-latest
-    needs: [changes, build]
-    if: ${{ needs.changes.outputs.browser == 'true' && !startsWith(github.head_ref, 'release-please--') }}
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [1, 2, 3]
+    needs: build
+    if: ${{ needs.build.outputs.browser == 'true' && !startsWith(github.head_ref, 'release-please--') }}
     steps:
       - uses: actions/checkout@v7
 
@@ -118,18 +107,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Resolve Playwright version
-        id: playwright-version
-        run: node -e "process.stdout.write('version=' + require('./node_modules/@playwright/test/package.json').version)" >> "$GITHUB_OUTPUT"
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v6
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-all-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
-          restore-keys: |
-            playwright-all-${{ runner.os }}-
 
       - name: Download browser build
         uses: actions/download-artifact@v8
@@ -137,30 +114,26 @@ jobs:
           name: browser-build
           path: dist
 
-      - name: Install Playwright browsers
-        run: npx playwright install chromium firefox webkit --with-deps
+      - name: Install Chromium
+        run: npx playwright install chromium --with-deps
 
-      - name: E2E tests
-        run: npx playwright test --shard=${{ matrix.shard }}/3
+      - name: Chromium rendered tests
+        run: npm run test:e2e:chromium
 
-      - name: Upload E2E failure artifacts
+      - name: Upload Chromium failure artifacts
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: e2e-failure-artifacts-${{ matrix.shard }}
+          name: chromium-failure-artifacts
           path: test-results/
           if-no-files-found: ignore
           retention-days: 7
 
-  storybook-a11y:
-    name: Storybook accessibility (shard ${{ matrix.shard }}/2)
+  e2e-cross-browser:
+    name: Firefox and WebKit contracts
     runs-on: ubuntu-latest
-    needs: [changes, build]
-    if: ${{ needs.changes.outputs.browser == 'true' && !startsWith(github.head_ref, 'release-please--') }}
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [1, 2]
+    needs: build
+    if: ${{ needs.build.outputs.browser == 'true' && !startsWith(github.head_ref, 'release-please--') }}
     steps:
       - uses: actions/checkout@v7
 
@@ -172,17 +145,42 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Resolve Playwright version
-        id: playwright-version
-        run: node -e "process.stdout.write('version=' + require('./node_modules/@playwright/test/package.json').version)" >> "$GITHUB_OUTPUT"
-
-      - name: Cache Playwright browser
-        uses: actions/cache@v6
+      - name: Download browser build
+        uses: actions/download-artifact@v8
         with:
-          path: ~/.cache/ms-playwright
-          key: playwright-chromium-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
-          restore-keys: |
-            playwright-chromium-${{ runner.os }}-
+          name: browser-build
+          path: dist
+
+      - name: Install Firefox and WebKit
+        run: npx playwright install firefox webkit --with-deps
+
+      - name: Cross-browser rendered contracts
+        run: npx playwright test --project=firefox --project=webkit
+
+      - name: Upload cross-browser failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: cross-browser-failure-artifacts
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  storybook-a11y:
+    name: Storybook accessibility
+    runs-on: ubuntu-latest
+    needs: build
+    if: ${{ needs.build.outputs.browser == 'true' && !startsWith(github.head_ref, 'release-please--') }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24.15.0'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Download browser build
         uses: actions/download-artifact@v8
@@ -194,13 +192,13 @@ jobs:
         run: npx playwright install chromium --with-deps
 
       - name: Storybook accessibility tests
-        run: npm run storybook:test:a11y -- --shard=${{ matrix.shard }}/2
+        run: npm run storybook:test:a11y
 
       - name: Upload accessibility failure artifacts
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: storybook-accessibility-failure-artifacts-${{ matrix.shard }}
+          name: storybook-accessibility-failure-artifacts
           path: test-results/
           if-no-files-found: ignore
           retention-days: 7

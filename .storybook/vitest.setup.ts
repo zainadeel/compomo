@@ -25,6 +25,25 @@ async function waitForStencil(): Promise<HTMLElement[]> {
   return components;
 }
 
+async function settleFiniteMotion() {
+  for (let pass = 0; pass < 2; pass += 1) {
+    const animations = document.getAnimations().filter(animation => {
+      const endTime = animation.effect?.getComputedTiming().endTime;
+      return typeof endTime === 'number' && Number.isFinite(endTime);
+    });
+
+    for (const animation of animations) {
+      try {
+        animation.finish();
+      } catch {
+        // A detached animation may become unfinishable between collection and settlement.
+      }
+    }
+
+    await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+  }
+}
+
 function markComponentRoots(components: HTMLElement[]): HTMLElement[] {
   const explicitFixtures = components.filter(element =>
     element.hasAttribute(explicitFixtureAttribute)
@@ -59,6 +78,7 @@ afterEach(async ({ task }) => {
   if (!task.file.filepath.includes('/src/wc/components/')) return;
 
   const components = await waitForStencil();
+  await settleFiniteMotion();
   const roots = markComponentRoots(components);
   if (roots.length === 0) return;
 
