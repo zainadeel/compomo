@@ -1480,7 +1480,11 @@ export class Table {
             <button
               class="ds-table__header-label ds-table__header-label--interactive ds-focus-ring"
               type="button"
-              aria-label={this.sortButtonLabel(column, segment.sortKey, segment.label)}
+              aria-label={this.sortButtonLabel(
+                column,
+                segment.sortKey,
+                segment.dataLabel?.trim() || segment.label
+              )}
               data-sort-control="label"
               data-sort-key={segment.sortKey}
               data-sort-active={segmentActive ? 'true' : undefined}

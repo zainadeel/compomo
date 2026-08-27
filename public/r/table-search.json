@@ -1,0 +1,340 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "table-search",
+  "title": "TableSearch",
+  "description": "Controlled table-search editor with slash-invoked field scoping, inset field Tags, and an input-focused listbox keyboard model.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/table-search",
+    "source": "src/wc/components/TableSearch/TableSearch.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Controlled table-search editor with slash-invoked field scoping, inset field Tags, and an input-focused listbox keyboard model.",
+      "useWhen": [
+        "A data-table search needs optional field-specific scopes without replacing the application's filtering logic.",
+        "People should be able to add one or more searchable data points through a slash command while continuing to type one free-text query."
+      ],
+      "avoidWhen": [
+        "A plain global text search is sufficient; use Input with type search.",
+        "The choices are persistent filters with independent values; use TableFilter or Select instead.",
+        "The component is expected to inspect records, build a search index, or filter rows internally."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-table",
+        "component:ds-table-toolbar",
+        "component:ds-tag",
+        "component:ds-button-unfilled",
+        "component:ds-icon"
+      ],
+      "accessibility": [
+        "The native search input remains the one Tab stop and exposes combobox, expanded, controls, and active-descendant relationships to the field listbox.",
+        "Typing slash opens the field listbox without inserting slash into the query. While open, Up and Down change the active option, Enter selects it, Escape closes, and Left and Right retain native text-cursor behavior because focus never leaves the input.",
+        "Selected field Tags are described by the search input. Polite announcements report additions, Backspace removals, and clearing without duplicating the visible query.",
+        "The visible slash affordance is a pointer shortcut excluded from the accessibility tree; the labeled search input exposes slash through aria-keyshortcuts and its description.",
+        "The clear action removes both free text and every selected field. It restores focus to the search input."
+      ],
+      "states": [
+        "value and selectedFieldIds are controlled. columns supplies the same table catalog used by Table and TableSort; dataLabel provides the complete out-of-context name while header and header segment label may remain compact. dsChange reports query edits, dsFieldsChange reports the next ordered field identities, and dsClear reports a complete clear. The component never filters rows or mutates consumer inputs.",
+        "The field menu excludes already-selected identities and closes after one selection. Typing slash again reopens the remaining fields so multiple scopes can be added.",
+        "Selected scopes render as neutral faint md Tags using the double-inset recipe so they remain 24px high inside the 32px md search control.",
+        "When query text is empty and the listbox is closed, Backspace removes the last selected field. Ordinary Backspace edits query text first.",
+        "Duplicate, blank, and unknown field identities are ignored for presentation. Selected fields preserve the consumer's order.",
+        "Inactive search leaves the tab order, closes the field listbox, and does not emit query or field changes."
+      ],
+      "responsiveBehavior": [
+        "The control fills the table toolbar search slot up to its standard xs panel width. Selected Tags and the editable query share one horizontal editor lane so the md control does not grow vertically.",
+        "The field popup enters the top layer, aligns its first choice cell with the search control, flips or clamps to the viewport or nearest overlay boundary, and scrolls internally when its catalog is taller than available space.",
+        "Long selected field labels truncate inside their Tags while the input remains available at the inline end of the editor lane."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign columns and selectedFieldIds through JavaScript properties and replace controlled values from dsChange and dsFieldsChange.",
+          "Keep field IDs aligned with the application search index; the component treats IDs as opaque values."
+        ],
+        "react": [
+          "Pass new array references for columns and selectedFieldIds and update controlled state from onDsChange and onDsFieldsChange."
+        ],
+        "angular": [
+          "Import DsTableSearch, bind columns, selectedFieldIds, and value, then update application signals from dsChange and dsFieldsChange."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook interaction states",
+          "path": "src/wc/components/TableSearch/TableSearch.stories.ts"
+        },
+        {
+          "label": "Toolbar composition owner",
+          "path": "src/wc/components/TableToolbar/TableToolbar.agent.json"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "ariaLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "aria-label",
+          "default": "'Search table'",
+          "required": false,
+          "mutable": false
+        },
+        "clearLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "clear-label",
+          "default": "'Clear search'",
+          "required": false,
+          "mutable": false
+        },
+        "columns": {
+          "type": "TableColumn[]",
+          "resolvedType": "TableColumn[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Table column catalog used to derive searchable data points and their complete labels."
+        },
+        "fieldMenuLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "field-menu-label",
+          "default": "'Choose search fields'",
+          "required": false,
+          "mutable": false
+        },
+        "isInactive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-inactive",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "placeholder": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "placeholder",
+          "default": "'Search'",
+          "required": false,
+          "mutable": false
+        },
+        "selectedFieldIds": {
+          "type": "string[]",
+          "resolvedType": "string[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Controlled ordered field scopes rendered as Tags."
+        },
+        "value": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "value",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Controlled free-text query."
+        }
+      },
+      "events": [
+        {
+          "name": "dsChange",
+          "detail": "string",
+          "bubbles": false,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsClear",
+          "detail": "void",
+          "bubbles": false,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsFieldsChange",
+          "detail": "TableSearchFieldsChangeDetail",
+          "bubbles": false,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [
+        {
+          "name": "setFocus",
+          "signature": "setFocus() => Promise<void>"
+        }
+      ],
+      "slots": []
+    },
+    "props": {
+      "ariaLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "aria-label",
+        "default": "'Search table'",
+        "required": false,
+        "mutable": false
+      },
+      "clearLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "clear-label",
+        "default": "'Clear search'",
+        "required": false,
+        "mutable": false
+      },
+      "columns": {
+        "type": "TableColumn[]",
+        "resolvedType": "TableColumn[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Table column catalog used to derive searchable data points and their complete labels."
+      },
+      "fieldMenuLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "field-menu-label",
+        "default": "'Choose search fields'",
+        "required": false,
+        "mutable": false
+      },
+      "isInactive": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-inactive",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "placeholder": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "placeholder",
+        "default": "'Search'",
+        "required": false,
+        "mutable": false
+      },
+      "selectedFieldIds": {
+        "type": "string[]",
+        "resolvedType": "string[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Controlled ordered field scopes rendered as Tags."
+      },
+      "value": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "value",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Controlled free-text query."
+      }
+    },
+    "events": [
+      {
+        "name": "dsChange",
+        "detail": "string",
+        "bubbles": false,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsClear",
+        "detail": "void",
+        "bubbles": false,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsFieldsChange",
+        "detail": "TableSearchFieldsChangeDetail",
+        "bubbles": false,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [
+      {
+        "name": "setFocus",
+        "signature": "setFocus() => Promise<void>"
+      }
+    ],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-table-search",
+      "react": "DsTableSearch",
+      "vue": "DsTableSearch",
+      "angular": "DsTableSearch"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-table-search.js';",
+        "example": "<ds-table-search></ds-table-search>"
+      },
+      "react": {
+        "import": "import { DsTableSearch } from '@ds-mo/ui/react';",
+        "example": "<DsTableSearch />"
+      },
+      "vue": {
+        "import": "import { DsTableSearch } from '@ds-mo/ui/vue';",
+        "example": "<DsTableSearch />"
+      },
+      "angular": {
+        "import": "import { DsTableSearch } from '@ds-mo/ui/angular/ds-table-search';",
+        "example": "<ds-table-search></ds-table-search>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: columns, selectedFieldIds.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.5.0",
+          "@ds-mo/icons ^7.0.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "button-unfilled",
+    "icon",
+    "tag",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/TableSearch/TableSearch.css",
+      "content": "@import '../../utils/choice-list.css';\n@import '../../utils/control-density-inset.css';\n@import '../../utils/typography.css';\n@import '../../utils/visually-hidden.css';\n\n:host(.table-search-host) {\n  display: inline-flex;\n  box-sizing: border-box;\n  inline-size: 100%;\n  min-inline-size: 0;\n  max-inline-size: var(--dimension-panel-width-xs);\n  --ds-table-search-foreground: var(--color-foreground-primary);\n  --ds-table-search-adornment: var(--color-foreground-secondary);\n  --ds-table-search-placeholder: var(--color-foreground-secondary);\n  --ds-table-search-placeholder-active: var(--color-foreground-quaternary);\n  --ds-table-search-border: var(--color-border-secondary);\n}\n\n.table-search__control {\n  inline-size: 100%;\n  min-inline-size: 0;\n  overflow: hidden;\n  border: 0;\n  background: transparent;\n  color: var(--ds-table-search-foreground);\n  --ds-interaction-border-width: var(--dimension-stroke-width-012);\n  --ds-interaction-border-color: var(--ds-table-search-border);\n}\n\n.table-search__control:focus-within {\n  --ds-interaction-border-width: var(--dimension-stroke-width-018);\n  --ds-interaction-border-color: var(--color-border-bold-brand);\n}\n\n:host(.ds-control-inactive) .table-search__control::after {\n  background: transparent;\n}\n\n.table-search__icon,\n.table-search__slash,\n.table-search__clear {\n  position: relative;\n  z-index: 2;\n  flex: none;\n}\n\n.table-search__icon {\n  color: var(--ds-table-search-adornment);\n}\n\n.table-search__editor {\n  position: relative;\n  z-index: 2;\n  display: flex;\n  flex: 1 1 auto;\n  align-items: center;\n  min-inline-size: 0;\n  block-size: 100%;\n  gap: var(--dimension-space-050);\n  overflow-x: auto;\n  overflow-y: hidden;\n  scrollbar-width: none;\n}\n\n.table-search__editor::-webkit-scrollbar {\n  display: none;\n}\n\n.table-search__tag {\n  flex: none;\n  max-inline-size: var(--dimension-panel-width-2xs);\n}\n\n.table-search__input {\n  appearance: none;\n  box-sizing: border-box;\n  flex: 1 0 var(--dimension-size-600);\n  min-inline-size: var(--dimension-size-600);\n  block-size: 100%;\n  margin: 0;\n  padding: 0;\n  border: 0;\n  outline: 0;\n  background: transparent;\n  color: var(--ds-table-search-foreground);\n  text-overflow: ellipsis;\n}\n\n.table-search__input::-webkit-search-cancel-button,\n.table-search__input::-webkit-search-decoration {\n  display: none;\n}\n\n.table-search__input::placeholder {\n  color: var(--ds-table-search-placeholder);\n}\n\n.table-search__input:focus::placeholder {\n  color: var(--ds-table-search-placeholder-active);\n}\n\n.table-search__slash {\n  all: unset;\n  position: relative;\n  z-index: 2;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  inline-size: var(--dimension-size-300);\n  block-size: var(--dimension-size-300);\n  border-radius: var(--ds-control-radius, var(--dimension-radius-025));\n  color: var(--ds-table-search-adornment);\n  cursor: default;\n}\n\n.table-search__popup {\n  --ds-choice-popup-min-inline-size: var(--dimension-menu-width-xs);\n}\n\n.table-search__list {\n  padding: var(--dimension-space-050);\n}\n\n.table-search__option {\n  flex: none;\n  inline-size: 100%;\n}\n\n@media (forced-colors: active) {\n  .table-search__control:focus-within::after {\n    outline-color: var(--ds-forced-color-selected);\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/TableSearch/TableSearch.tsx",
+      "content": "import {\n  Component,\n  Element,\n  Event,\n  EventEmitter,\n  h,\n  Host,\n  Method,\n  Prop,\n  State,\n  Watch,\n} from '@stencil/core';\nimport {\n  choicePopupMinWidth,\n  resolveChoicePopupAlignOffset,\n  resolveCssLengthPx,\n  TOKEN_DEFAULTS,\n} from '../../utils';\nimport { AnchoredPositionController } from '../../utils/anchored-position-controller';\nimport { AnchoredOverlayInteractionController } from '../../utils/anchored-overlay-interaction-controller';\nimport { resolveAnchoredOverlayBoundaryRect } from '../../utils/anchored-overlay-boundary';\nimport {\n  availableTableSearchFields,\n  nextTableSearchActiveIndex,\n  selectedTableSearchFields,\n  tableSearchFields,\n} from './table-search-model';\nimport type { TableColumn } from '../Table/table-types';\nimport type { TableSearchField, TableSearchFieldsChangeDetail } from './table-search-types';\n\nlet tableSearchSequence = 0;\n\n@Component({\n  tag: 'ds-table-search',\n  styleUrl: 'TableSearch.css',\n  scoped: true,\n})\nexport class TableSearch {\n  @Element() private el!: HTMLElement;\n\n  /** Controlled free-text query. */\n  @Prop() value: string = '';\n  /** Table column catalog used to derive searchable data points and their complete labels. */\n  @Prop() columns: TableColumn[] = [];\n  /** Controlled ordered field scopes rendered as Tags. */\n  @Prop() selectedFieldIds: string[] = [];\n  @Prop() placeholder: string = 'Search';\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string = 'Search table';\n  @Prop() clearLabel: string = 'Clear search';\n  @Prop() fieldMenuLabel: string = 'Choose search fields';\n  @Prop() isInactive: boolean = false;\n\n  @Event({ bubbles: false }) dsChange!: EventEmitter<string>;\n  @Event({ bubbles: false }) dsFieldsChange!: EventEmitter<TableSearchFieldsChangeDetail>;\n  @Event({ bubbles: false }) dsClear!: EventEmitter<void>;\n\n  @State() private menuOpen = false;\n  @State() private activeIndex = 0;\n  @State() private focusRingVisible = false;\n  @State() private position = { x: 0, y: 0 };\n  @State() private positionReady = false;\n  @State() private availableHeight: number | null = null;\n  @State() private announcement = '';\n\n  private readonly componentId = `ds-table-search-${++tableSearchSequence}`;\n  private readonly inputId = `${this.componentId}-input`;\n  private readonly listboxId = `${this.componentId}-listbox`;\n  private readonly descriptionId = `${this.componentId}-description`;\n  private inputEl: HTMLInputElement | null = null;\n  private controlEl: HTMLElement | null = null;\n  private popupEl: HTMLElement | null = null;\n\n  private readonly positionController = new AnchoredPositionController({\n    getAnchor: () => this.controlEl,\n    getPopup: () => this.popupEl,\n    getOwnerDocument: () => this.el.ownerDocument,\n    measure: (anchor, popup) => {\n      if (!this.menuOpen || !popup.isConnected) return null;\n      const inset = resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050);\n      popup.style.minWidth = `max(var(--ds-choice-popup-min-inline-size, ${TOKEN_DEFAULTS.menuWidthXs}), ${choicePopupMinWidth(anchor.offsetWidth, inset)}px)`;\n      const anchorRect = anchor.getBoundingClientRect();\n      return {\n        anchorRect,\n        popupWidth: popup.offsetWidth,\n        popupHeight: popup.offsetHeight,\n        side: 'bottom',\n        align: 'start',\n        sideOffsetPx: inset,\n        alignOffsetPx: resolveChoicePopupAlignOffset({\n          align: 'start',\n          alignOffsetPx: 0,\n          sectionInsetPx: inset,\n        }),\n        viewportPadPx: inset,\n        viewportWidth: window.innerWidth,\n        viewportHeight: window.innerHeight,\n        collisionRect: resolveAnchoredOverlayBoundaryRect(anchor),\n      };\n    },\n    apply: ({ x, y, availableHeight }) => {\n      this.position = { x, y };\n      this.availableHeight = availableHeight;\n    },\n    onReady: () => {\n      this.positionReady = true;\n    },\n    topLayer: true,\n    liveUpdate: 'frame',\n    observeResize: true,\n    observeAnchorMotion: true,\n  });\n\n  private readonly interactionController = new AnchoredOverlayInteractionController({\n    getAnchor: () => this.controlEl,\n    getPopup: () => this.popupEl,\n    getOwnerDocument: () => this.el.ownerDocument,\n    onOutsideActivation: () => this.closeMenu(),\n  });\n\n  disconnectedCallback(): void {\n    this.closeMenu();\n  }\n\n  @Watch('columns')\n  @Watch('selectedFieldIds')\n  syncAvailableFields(): void {\n    const count = this.availableFields.length;\n    if (count === 0) {\n      this.closeMenu();\n      return;\n    }\n    if (this.activeIndex >= count) this.activeIndex = count - 1;\n  }\n\n  @Watch('isInactive')\n  syncInactive(isInactive: boolean): void {\n    if (isInactive) this.closeMenu();\n  }\n\n  @Method()\n  async setFocus(): Promise<void> {\n    this.inputEl?.focus();\n  }\n\n  private get selectedFields(): TableSearchField[] {\n    return selectedTableSearchFields(this.searchFields, this.selectedFieldIds);\n  }\n\n  private get availableFields(): TableSearchField[] {\n    return availableTableSearchFields(this.searchFields, this.selectedFieldIds);\n  }\n\n  private get searchFields(): TableSearchField[] {\n    return tableSearchFields(this.columns);\n  }\n\n  private get activeOptionId(): string | undefined {\n    return this.menuOpen && this.activeIndex >= 0\n      ? `${this.componentId}-option-${this.activeIndex}`\n      : undefined;\n  }\n\n  private openMenu(fromKeyboard: boolean): void {\n    if (this.isInactive || this.menuOpen || this.availableFields.length === 0) return;\n    this.activeIndex = 0;\n    this.focusRingVisible = fromKeyboard;\n    this.positionReady = false;\n    this.menuOpen = true;\n    requestAnimationFrame(() => {\n      if (!this.menuOpen) return;\n      this.interactionController.connect();\n      this.positionController.observe();\n      this.positionController.schedule();\n    });\n  }\n\n  private closeMenu(): void {\n    if (!this.menuOpen && !this.popupEl) return;\n    if (this.popupEl?.matches(':popover-open')) this.popupEl.hidePopover();\n    this.positionController.unobserve();\n    this.interactionController.disconnect();\n    this.popupEl = null;\n    this.positionReady = false;\n    this.availableHeight = null;\n    this.menuOpen = false;\n  }\n\n  private selectField(field: TableSearchField): void {\n    this.dsFieldsChange.emit({ selectedFieldIds: [...this.selectedFieldIds, field.id] });\n    this.announcement = `${field.label} search field added.`;\n    this.closeMenu();\n    requestAnimationFrame(() => this.inputEl?.focus({ preventScroll: true }));\n  }\n\n  private removeLastField(): void {\n    const selected = this.selectedFields;\n    const removed = selected[selected.length - 1];\n    if (!removed) return;\n    this.dsFieldsChange.emit({\n      selectedFieldIds: this.selectedFieldIds.filter(fieldId => fieldId !== removed.id),\n    });\n    this.announcement = `${removed.label} search field removed.`;\n  }\n\n  private clearSearch(): void {\n    if (this.value) this.dsChange.emit('');\n    if (this.selectedFieldIds.length) this.dsFieldsChange.emit({ selectedFieldIds: [] });\n    this.dsClear.emit();\n    this.announcement = 'Search cleared.';\n    this.closeMenu();\n    requestAnimationFrame(() => this.inputEl?.focus({ preventScroll: true }));\n  }\n\n  private handleKeyDown(event: KeyboardEvent): void {\n    if (event.key === '/' && !event.altKey && !event.ctrlKey && !event.metaKey) {\n      event.preventDefault();\n      this.openMenu(true);\n      return;\n    }\n\n    if (event.key === 'Backspace' && this.value.length === 0 && !this.menuOpen) {\n      if (this.selectedFields.length) {\n        event.preventDefault();\n        this.removeLastField();\n      }\n      return;\n    }\n\n    if (!this.menuOpen) return;\n\n    if (event.key === 'Escape') {\n      event.preventDefault();\n      this.closeMenu();\n      return;\n    }\n\n    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {\n      event.preventDefault();\n      this.focusRingVisible = true;\n      this.activeIndex = nextTableSearchActiveIndex(\n        this.activeIndex,\n        this.availableFields.length,\n        event.key === 'ArrowDown' ? 1 : -1\n      );\n      this.el\n        .querySelector<HTMLElement>(`#${CSS.escape(this.activeOptionId ?? '')}`)\n        ?.scrollIntoView({ block: 'nearest' });\n      return;\n    }\n\n    if (event.key === 'Enter') {\n      const field = this.availableFields[this.activeIndex];\n      if (!field) return;\n      event.preventDefault();\n      this.selectField(field);\n      return;\n    }\n\n    if (event.key === 'Tab') this.closeMenu();\n  }\n\n  render() {\n    const selected = this.selectedFields;\n    const available = this.availableFields;\n    const hasValue = this.value.length > 0 || selected.length > 0;\n    const description = selected.length\n      ? `Search limited to ${selected.map(field => field.label).join(' or ')}.`\n      : 'Search includes every available table field. Type slash to choose fields.';\n    const popupStyle: Record<string, string> = {\n      position: 'fixed',\n      left: '0',\n      top: '0',\n      transform: `translate(${Math.round(this.position.x)}px, ${Math.round(this.position.y)}px)`,\n      zIndex: 'var(--dimension-z-index-floating)',\n      visibility: this.positionReady ? 'visible' : 'hidden',\n    };\n    if (this.availableHeight !== null) {\n      popupStyle['max-height'] = `${Math.floor(this.availableHeight)}px`;\n    }\n\n    return (\n      <Host\n        class={{\n          'table-search-host': true,\n          'ds-control--md': true,\n          'ds-control-inactive': this.isInactive,\n        }}\n        data-filled={hasValue ? '' : undefined}\n        data-expanded={this.menuOpen ? '' : undefined}\n      >\n        <div\n          ref={element => {\n            this.controlEl = element ?? null;\n          }}\n          class=\"table-search__control ds-control-frame ds-control--md ds-interaction-fill\"\n        >\n          <span\n            class=\"table-search__icon ds-control-icon-box ds-interaction-fill__content\"\n            aria-hidden=\"true\"\n          >\n            <ds-icon name=\"MagnifyingGlass\" size=\"md\" color=\"inherit\" />\n          </span>\n          <div class=\"table-search__editor ds-interaction-fill__content\">\n            {selected.map(field => (\n              <ds-tag\n                class=\"table-search__tag\"\n                key={field.id}\n                label={field.label}\n                size=\"md\"\n                intent=\"neutral\"\n                contrast=\"faint\"\n                isInset\n                insetDepth=\"double\"\n              />\n            ))}\n            <input\n              ref={element => {\n                this.inputEl = element ?? null;\n              }}\n              id={this.inputId}\n              class=\"table-search__input ds-text--body-medium ds-text--regular\"\n              type=\"search\"\n              role=\"combobox\"\n              value={this.value}\n              placeholder={this.placeholder}\n              disabled={this.isInactive}\n              aria-label={this.ariaLabel}\n              aria-describedby={this.descriptionId}\n              aria-haspopup=\"listbox\"\n              aria-expanded={String(this.menuOpen)}\n              aria-controls={this.menuOpen ? this.listboxId : undefined}\n              aria-activedescendant={this.activeOptionId}\n              aria-keyshortcuts=\"/\"\n              autoComplete=\"off\"\n              onInput={event => this.dsChange.emit((event.target as HTMLInputElement).value)}\n              onKeyDown={event => this.handleKeyDown(event)}\n            />\n          </div>\n          {available.length > 0 && (\n            <button\n              type=\"button\"\n              class=\"table-search__slash ds-control--md ds-focus-ring-inset ds-interaction-fill\"\n              tabIndex={-1}\n              aria-label={this.fieldMenuLabel}\n              onMouseDown={event => event.preventDefault()}\n              onClick={() => {\n                this.inputEl?.focus({ preventScroll: true });\n                this.openMenu(false);\n              }}\n            >\n              <span class=\"ds-text--body-medium ds-text--regular ds-interaction-fill__content\">\n                /\n              </span>\n            </button>\n          )}\n          {hasValue && !this.isInactive && (\n            <ds-button-unfilled\n              class=\"table-search__clear\"\n              variant=\"icon\"\n              size=\"sm\"\n              icon=\"CrossCircle\"\n              hasBorder={false}\n              rounded\n              ariaLabel={this.clearLabel}\n              onDsClick={() => this.clearSearch()}\n            />\n          )}\n        </div>\n        <span id={this.descriptionId} class=\"ds-visually-hidden\">\n          {description}\n        </span>\n        <span class=\"ds-visually-hidden\" aria-live=\"polite\">\n          {this.announcement}\n        </span>\n        {this.menuOpen && (\n          <div\n            popover=\"manual\"\n            ref={element => {\n              this.popupEl = element ?? null;\n            }}\n            class=\"table-search__popup ds-choice-popup\"\n            style={popupStyle}\n          >\n            <div\n              id={this.listboxId}\n              class=\"table-search__list ds-choice-list\"\n              role=\"listbox\"\n              aria-label={this.fieldMenuLabel}\n            >\n              {available.map((field, index) => {\n                const active = index === this.activeIndex;\n                return (\n                  /* eslint-disable-next-line local/prefer-direct-ds-text -- The option owns listbox semantics and pointer interaction while ds-text remains its typography child. */\n                  <div\n                    id={`${this.componentId}-option-${index}`}\n                    key={field.id}\n                    class={{\n                      'table-search__option': true,\n                      'ds-choice-item': true,\n                      'ds-control-frame': true,\n                      'ds-control--md': true,\n                      'ds-focus-ring-inset': true,\n                      'ds-focus-ring--visible': active && this.focusRingVisible,\n                      'ds-interaction-fill': true,\n                      'ds-interaction-fill--selected': active,\n                    }}\n                    role=\"option\"\n                    aria-selected={String(active)}\n                    onMouseDown={event => event.preventDefault()}\n                    onMouseMove={() => {\n                      this.focusRingVisible = false;\n                      this.activeIndex = index;\n                    }}\n                    onClick={() => this.selectField(field)}\n                  >\n                    <ds-text\n                      class=\"ds-choice-item__label ds-control-label-box ds-interaction-fill__content\"\n                      as=\"span\"\n                      variant=\"text-body-medium\"\n                      color={active ? 'primary' : 'secondary'}\n                    >\n                      {field.label}\n                    </ds-text>\n                  </div>\n                );\n              })}\n            </div>\n          </div>\n        )}\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/TableSearch/table-search-model.ts",
+      "content": "import { isTableActionColumn } from '../Table/table-column-customizer';\nimport type { TableColumn } from '../Table/table-types';\nimport type { TableSearchField } from './table-search-types';\n\n/** Searchable data points from the table catalog, including compound header segments. */\nexport function tableSearchFields(columns: readonly TableColumn[]): TableSearchField[] {\n  const resolved: TableSearchField[] = [];\n  const seen = new Set<string>();\n\n  for (const column of columns) {\n    if (isTableActionColumn(column) || column.searchable === false) continue;\n    const segments = column.headerSegments ?? [];\n    if (segments.length > 0) {\n      for (const segment of segments) {\n        const id = segment.sortKey.trim();\n        const label = segment.dataLabel?.trim() || segment.label.trim() || id;\n        if (!id || !label || segment.searchable === false || seen.has(id)) continue;\n        seen.add(id);\n        resolved.push({ id, label });\n      }\n      continue;\n    }\n\n    const id = column.id.trim();\n    const label =\n      column.dataLabel?.trim() || column.header.trim() || column.headerLabel?.trim() || id;\n    if (!id || !label || seen.has(id)) continue;\n    seen.add(id);\n    resolved.push({ id, label });\n  }\n\n  return resolved;\n}\n\nexport function selectedTableSearchFields(\n  fields: readonly TableSearchField[],\n  selectedFieldIds: string[]\n): TableSearchField[] {\n  const byId = new Map(fields.map(field => [field.id, field]));\n  const selected: TableSearchField[] = [];\n  const seen = new Set<string>();\n\n  for (const fieldId of selectedFieldIds) {\n    if (seen.has(fieldId)) continue;\n    const field = byId.get(fieldId);\n    if (!field) continue;\n    seen.add(fieldId);\n    selected.push(field);\n  }\n\n  return selected;\n}\n\nexport function availableTableSearchFields(\n  fields: readonly TableSearchField[],\n  selectedFieldIds: string[]\n): TableSearchField[] {\n  const selected = new Set(selectedFieldIds);\n  return fields.filter(field => !selected.has(field.id));\n}\n\nexport function nextTableSearchActiveIndex(\n  currentIndex: number,\n  optionCount: number,\n  direction: 1 | -1\n): number {\n  if (optionCount <= 0) return -1;\n  const safeIndex = currentIndex >= 0 && currentIndex < optionCount ? currentIndex : 0;\n  return (safeIndex + direction + optionCount) % optionCount;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/TableSearch/table-search-types.ts",
+      "content": "export interface TableSearchField {\n  /** Stable application-owned field identity used to scope filtering. */\n  id: string;\n  /** Visible field label shown in the slash menu and selected Tag. */\n  label: string;\n}\n\nexport interface TableSearchFieldsChangeDetail {\n  selectedFieldIds: string[];\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

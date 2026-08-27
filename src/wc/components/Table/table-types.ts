@@ -31,7 +31,12 @@ export type TableGroupIntent =
 
 /** Independently sortable label within a compound column header. */
 export interface TableHeaderSegment {
+  /** Compact label rendered inside the table header. */
   label: string;
+  /** Complete data-point label used when the segment is named outside the table header. */
+  dataLabel?: string;
+  /** Whether this data point is offered by TableSearch. Defaults to true. */
+  searchable?: boolean;
   /** Stable key emitted through TableSortState.columnId. */
   sortKey: string;
   /** Visible separator rendered after this label when another segment follows. */
@@ -308,6 +313,10 @@ export interface TableColumn {
   id: string;
   /** Visible column label. May be empty when headerLabel supplies a non-visual name. */
   header: string;
+  /** Complete data-point label used by controls such as Sort and Search. */
+  dataLabel?: string;
+  /** Whether this data point is offered by TableSearch. Defaults to true for data columns. */
+  searchable?: boolean;
   /** Screen-reader-only column name for an intentionally blank visual header. */
   headerLabel?: string;
   /** Supplementary header help. Does not replace the visible or accessible column name. */

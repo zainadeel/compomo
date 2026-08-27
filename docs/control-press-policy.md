@@ -63,6 +63,7 @@ activation remains native and is not promised an equivalent held frame.
 | `ShellApp` — keyboard-focusable routed-content scroller | Scroll/focus state | Shell sizing and chrome transitions are container-owned | A scroll container is not a momentary action. |
 | `TabGroup` — tab buttons | `interaction-fill` and selected tab state | None | Tabs do not scale. |
 | `Table` — sort buttons, loaded-row checkbox controls, and focusable scroll region | Pressed/hover row paint, controlled sort/selection state, and focus outline | Sticky and column geometry must remain stable | Table controls and its scroll region do not scale; composed load-more buttons retain the `ButtonUnfilled` primitive policy. |
+| `TableSearch` — native search input, slash field-picker trigger, and field option rows | Focus, expanded, active-option, and editable-value state | Popup positioning and choice-list enter animation are container-owned | Editable search, popup anchoring, and choice rows remain geometrically stable; the composed clear `ButtonUnfilled` follows its primitive policy. |
 | `Tag` — interactive tag button | `interaction-fill` and selected state | None | Selection targets retain stable geometry. |
 | `Toast` — delegated consumer-provided buttons, links, and inputs | Consumer-owned | Consumer-owned | Toast does not impose geometry on delegated interactive content; CompoMo button children keep their primitive policy. |
 

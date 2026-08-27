@@ -17,11 +17,11 @@ const columns: TableColumn[] = [
     header: 'Behavior / Severity',
     headerSegments: [
       { label: 'Behavior', sortKey: 'behavior', separator: '/' },
-      { label: 'Severity', sortKey: 'severity' },
+      { label: 'Level', dataLabel: 'Severity', sortKey: 'severity' },
     ],
     sortable: true,
   },
-  { id: 'status', header: 'Status', sortable: true },
+  { id: 'status', header: 'State', dataLabel: 'Status', sortable: true },
   { id: 'action', kind: 'action', header: '', headerLabel: 'Action' },
 ];
 

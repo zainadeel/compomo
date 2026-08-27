@@ -9839,6 +9839,148 @@
       ]
     },
     {
+      "name": "table-search",
+      "title": "TableSearch",
+      "description": "Controlled table-search editor with slash-invoked field scoping, inset field Tags, and an input-focused listbox keyboard model.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/table-search",
+        "source": "src/wc/components/TableSearch/TableSearch.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Controlled table-search editor with slash-invoked field scoping, inset field Tags, and an input-focused listbox keyboard model.",
+          "useWhen": [
+            "A data-table search needs optional field-specific scopes without replacing the application's filtering logic.",
+            "People should be able to add one or more searchable data points through a slash command while continuing to type one free-text query."
+          ],
+          "avoidWhen": [
+            "A plain global text search is sufficient; use Input with type search.",
+            "The choices are persistent filters with independent values; use TableFilter or Select instead.",
+            "The component is expected to inspect records, build a search index, or filter rows internally."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-table",
+            "component:ds-table-toolbar",
+            "component:ds-tag",
+            "component:ds-button-unfilled",
+            "component:ds-icon"
+          ],
+          "accessibility": [
+            "The native search input remains the one Tab stop and exposes combobox, expanded, controls, and active-descendant relationships to the field listbox.",
+            "Typing slash opens the field listbox without inserting slash into the query. While open, Up and Down change the active option, Enter selects it, Escape closes, and Left and Right retain native text-cursor behavior because focus never leaves the input.",
+            "Selected field Tags are described by the search input. Polite announcements report additions, Backspace removals, and clearing without duplicating the visible query.",
+            "The visible slash affordance is a pointer shortcut excluded from the accessibility tree; the labeled search input exposes slash through aria-keyshortcuts and its description.",
+            "The clear action removes both free text and every selected field. It restores focus to the search input."
+          ],
+          "states": [
+            "value and selectedFieldIds are controlled. columns supplies the same table catalog used by Table and TableSort; dataLabel provides the complete out-of-context name while header and header segment label may remain compact. dsChange reports query edits, dsFieldsChange reports the next ordered field identities, and dsClear reports a complete clear. The component never filters rows or mutates consumer inputs.",
+            "The field menu excludes already-selected identities and closes after one selection. Typing slash again reopens the remaining fields so multiple scopes can be added.",
+            "Selected scopes render as neutral faint md Tags using the double-inset recipe so they remain 24px high inside the 32px md search control.",
+            "When query text is empty and the listbox is closed, Backspace removes the last selected field. Ordinary Backspace edits query text first.",
+            "Duplicate, blank, and unknown field identities are ignored for presentation. Selected fields preserve the consumer's order.",
+            "Inactive search leaves the tab order, closes the field listbox, and does not emit query or field changes."
+          ],
+          "responsiveBehavior": [
+            "The control fills the table toolbar search slot up to its standard xs panel width. Selected Tags and the editable query share one horizontal editor lane so the md control does not grow vertically.",
+            "The field popup enters the top layer, aligns its first choice cell with the search control, flips or clamps to the viewport or nearest overlay boundary, and scrolls internally when its catalog is taller than available space.",
+            "Long selected field labels truncate inside their Tags while the input remains available at the inline end of the editor lane."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign columns and selectedFieldIds through JavaScript properties and replace controlled values from dsChange and dsFieldsChange.",
+              "Keep field IDs aligned with the application search index; the component treats IDs as opaque values."
+            ],
+            "react": [
+              "Pass new array references for columns and selectedFieldIds and update controlled state from onDsChange and onDsFieldsChange."
+            ],
+            "angular": [
+              "Import DsTableSearch, bind columns, selectedFieldIds, and value, then update application signals from dsChange and dsFieldsChange."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook interaction states",
+              "path": "src/wc/components/TableSearch/TableSearch.stories.ts"
+            },
+            {
+              "label": "Toolbar composition owner",
+              "path": "src/wc/components/TableToolbar/TableToolbar.agent.json"
+            }
+          ]
+        },
+        "props": {
+          "ariaLabel": {
+            "type": "string",
+            "required": false
+          },
+          "clearLabel": {
+            "type": "string",
+            "required": false
+          },
+          "columns": {
+            "type": "TableColumn[]",
+            "required": false
+          },
+          "fieldMenuLabel": {
+            "type": "string",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "placeholder": {
+            "type": "string",
+            "required": false
+          },
+          "selectedFieldIds": {
+            "type": "string[]",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "string"
+          },
+          {
+            "name": "dsClear",
+            "detail": "void"
+          },
+          {
+            "name": "dsFieldsChange",
+            "detail": "TableSearchFieldsChangeDetail"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-table-search",
+          "react": "DsTableSearch",
+          "vue": "DsTableSearch",
+          "angular": "DsTableSearch"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "button-unfilled",
+        "icon",
+        "tag",
+        "text"
+      ]
+    },
+    {
       "name": "table-sort",
       "title": "TableSort",
       "description": "Toolbar companion for the table's one controlled member-row sort, with a two-section menu for the sort field and direction that mirrors header sorting.",
