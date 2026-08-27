@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.19.1](https://github.com/zainadeel/compomo/compare/v14.19.0...v14.19.1) (2026-08-27)
+
+
+### Fixed
+
+* preserve parent alignment for hug controls ([#535](https://github.com/zainadeel/compomo/issues/535)) ([5c11f4b](https://github.com/zainadeel/compomo/commit/5c11f4ba508c5183a28c394bd4f8ec12096056b7))
+
 ## [14.19.0](https://github.com/zainadeel/compomo/compare/v14.18.1...v14.19.0) (2026-08-26)
 
 
