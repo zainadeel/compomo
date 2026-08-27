@@ -56,6 +56,10 @@
   :host(.banner--open) {
     grid-template-rows: 0fr;
   }
+
+  :host(.banner--open) .banner-surface {
+    transform: translateY(-100%);
+  }
 }
 
 .banner-copy {
