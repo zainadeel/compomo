@@ -93,6 +93,27 @@ test('filled and unfilled buttons opt into the inset density recipe', async ({ p
   }
 });
 
+test('hug buttons preserve parent-owned cross-axis alignment @pr-critical', async ({ page }) => {
+  const column = page.locator('#hug-column');
+  const columnWidth = await column.evaluate(element => element.getBoundingClientRect().width);
+  for (const id of ['filled-hug-column', 'unfilled-hug-column']) {
+    const button = page.locator(`#${id}`);
+    await expect(button).toHaveCSS('align-self', 'auto');
+    const width = await button.evaluate(element => element.getBoundingClientRect().width);
+    expect(width).toBeLessThan(columnWidth);
+  }
+
+  const row = page.locator('#hug-centered-row');
+  const rowBox = await row.boundingBox();
+  expect(rowBox).not.toBeNull();
+  for (const id of ['filled-centered', 'unfilled-centered']) {
+    const button = page.locator(`#${id}`);
+    const buttonBox = await button.boundingBox();
+    expect(buttonBox).not.toBeNull();
+    expect(buttonBox!.y + buttonBox!.height / 2).toBeCloseTo(rowBox!.y + rowBox!.height / 2, 1);
+  }
+});
+
 test('physical press scales only eligible filled and unfilled buttons', async ({ page }) => {
   for (const id of ['filled-label', 'unfilled-label']) {
     const button = page.locator(`#${id} button`);
