@@ -87,6 +87,13 @@ test('highlights controlled literal search terms without changing cell names', a
   await expect(table.getByRole('cell', { name: 'Avery Chen avery@example.com' })).toBeVisible();
   await expect(table.getByRole('cell', { name: 'V-2048' })).toBeVisible();
 
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.highlightTerms = ['h'];
+  });
+  await expect(
+    table.locator('[data-row-id="avery"] [data-column-id="name"] .ds-table__cell-primary')
+  ).toHaveText('Avery Chen');
+
   const colors = await marks.first().evaluate(element => {
     const actual = getComputedStyle(element);
     const probe = document.createElement('span');
@@ -110,6 +117,29 @@ test('highlights controlled literal search terms without changing cell names', a
     element.highlightTerms = [];
   });
   await expect(marks).toHaveCount(0);
+});
+
+test('scopes highlighting to selected compound data points', async ({ page }) => {
+  const table = page.locator('#compound');
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.highlightTerms = ['i'];
+    element.highlightFieldIds = ['severity'];
+  });
+
+  const primaryMarks = table.locator('.ds-table__cell-primary mark.ds-table__match');
+  const secondaryMarks = table.locator('.ds-table__cell-secondary mark.ds-table__match');
+  await expect(primaryMarks).toHaveCount(0);
+  await expect(secondaryMarks).toHaveCount(3);
+  await expect(secondaryMarks).toHaveText(['i', 'i', 'i']);
+
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.highlightFieldIds = ['behavior'];
+  });
+  await expect(primaryMarks).toHaveCount(3);
+  await expect(secondaryMarks).toHaveCount(0);
+  await expect(table.locator('[data-row-id="event-a"] [data-column-id="behaviorDetails"]')).toHaveText(
+    'Close followingCritical'
+  );
 });
 
 test('composes application controls inside table-owned header and footer chrome', async ({
@@ -1442,6 +1472,53 @@ test(
     );
     await expect(iconText.locator('.ds-table__cell-primary')).toHaveCSS('padding-left', '4px');
     await expect(iconText.locator('.ds-table__cell-primary')).toHaveCSS('padding-right', '4px');
+  }
+);
+
+test(
+  'wraps multiple Tags on named tracks and stretches every sibling cell to the row height',
+  chromiumOnly(
+    'layout-geometry',
+    'Multiple-Tag row tracks and native sibling-cell stretch are Chromium-authoritative geometry contracts.'
+  ),
+  async ({ page }) => {
+    const table = page.locator('#multiple-tags');
+    const cases = [
+      { id: 'multiple-tags-two-tracks', tracks: 2, rowHeight: 62, contentHeight: 46 },
+      { id: 'multiple-tags-three-tracks', tracks: 3, rowHeight: 84, contentHeight: 68 },
+      { id: 'multiple-tags-five-tracks', tracks: 5, rowHeight: 128, contentHeight: 112 },
+    ];
+
+    for (const example of cases) {
+      const row = table.locator(`[data-row-id="${example.id}"]`);
+      const cell = row.locator('[data-column-id="behaviors"]');
+      const tags = cell.locator('ds-tag');
+      const wrapper = cell.locator('.ds-table__cell-tags');
+
+      await expect(cell).toHaveAttribute('data-cell-type', 'tags');
+      await expect(cell).toHaveAttribute('data-cell-tracks', String(example.tracks));
+      await expect(cell).toHaveAttribute('data-cell-variant', `${example.tracks}-track`);
+      await expect(wrapper).toHaveCSS('min-height', `${example.contentHeight}px`);
+      await expect(wrapper).toHaveCSS('gap', '2px');
+      await expect(wrapper).toHaveCSS('padding-top', '2px');
+      await expect(wrapper).toHaveCSS('padding-bottom', '2px');
+      await expect(tags).toHaveCount(example.tracks);
+
+      for (const tag of await tags.all()) {
+        await expect(tag).toHaveJSProperty('size', 'sm');
+        await expect(tag).toHaveJSProperty('isInset', true);
+        await expect(tag).toHaveJSProperty('insetDepth', 'single');
+        await expect(tag).toHaveCSS('height', '20px');
+      }
+      for (const siblingCell of await row.locator('td').all()) {
+        await expect(siblingCell).toHaveCSS('height', `${example.rowHeight}px`);
+      }
+
+      const lineTops = await tags.evaluateAll(elements =>
+        elements.map(element => Math.round(element.getBoundingClientRect().top))
+      );
+      expect(new Set(lineTops).size).toBe(example.tracks);
+    }
   }
 );
 

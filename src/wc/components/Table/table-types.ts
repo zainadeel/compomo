@@ -230,8 +230,8 @@ export type TableCellAction = TableCellActionBase &
 /** Declarative Tag content rendered by the table's standard cell primitive. */
 export type TableCellTagVariant = 'tag-only' | 'tag-with-text' | 'text-with-tag';
 
-interface TableCellTagBase {
-  kind: 'tag';
+/** One Tag inside a single- or multiple-Tag table cell. */
+export interface TableCellTagItem {
   label: string;
   intent?: TagIntent;
   contrast?: TagContrast;
@@ -239,7 +239,8 @@ interface TableCellTagBase {
   rounded?: boolean;
 }
 
-export type TableCellTag = TableCellTagBase &
+export type TableCellTag = TableCellTagItem &
+  { kind: 'tag' } &
   (
     | {
         variant?: 'tag-only';
@@ -251,6 +252,14 @@ export type TableCellTag = TableCellTagBase &
       }
   );
 
+/** Multiple Tags that wrap inline while retaining the table's named track rhythm. */
+export interface TableCellTags {
+  kind: 'tags';
+  items: TableCellTagItem[];
+  /** Expected positive wrapped-line count used for row geometry and virtual estimates. */
+  tracks: number;
+}
+
 export type TableCellValue =
   | string
   | number
@@ -259,6 +268,7 @@ export type TableCellValue =
   | TableCellText
   | TableCellPrimaryText
   | TableCellTag
+  | TableCellTags
   | TableCellIcon
   | TableCellIconText
   | TableCellImage

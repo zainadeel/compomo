@@ -57,6 +57,7 @@
         "The dismiss action is the chip's only interaction, and the parent owns data mutation after dsRemove.",
         "Long labels remain on one line and truncate only when the consuming layout supplies a maximum width; otherwise the chip sizes to its content.",
         "Rounded shape is a visual choice and does not change semantics or interaction.",
+        "isInset opts into reduced outer geometry only when Chip is nested inside a control of the same density. The dismiss button applies the same inset depth again inside the Chip's already-reduced height, and its trailing padding matches the resulting top and bottom space. The default single inset removes 4px overall; insetDepth double removes 8px overall and falls back to single at xs.",
         "Chip is designed only for primary surfaces and has no surface-context API."
       ],
       "responsiveBehavior": [
@@ -83,6 +84,15 @@
     },
     "api": {
       "props": {
+        "insetDepth": {
+          "type": "ControlInsetDepth",
+          "resolvedType": "\"double\" | \"single\"",
+          "attribute": "inset-depth",
+          "default": "'single'",
+          "required": false,
+          "mutable": false,
+          "description": "Single removes 4px overall; double removes 8px overall (xs stays single)."
+        },
         "isInactive": {
           "type": "boolean",
           "resolvedType": "boolean",
@@ -90,6 +100,15 @@
           "default": "false",
           "required": false,
           "mutable": false
+        },
+        "isInset": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-inset",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Use reduced outer geometry when nested inside a control of the same size."
         },
         "label": {
           "type": "string",
@@ -154,6 +173,15 @@
       "slots": []
     },
     "props": {
+      "insetDepth": {
+        "type": "ControlInsetDepth",
+        "resolvedType": "\"double\" | \"single\"",
+        "attribute": "inset-depth",
+        "default": "'single'",
+        "required": false,
+        "mutable": false,
+        "description": "Single removes 4px overall; double removes 8px overall (xs stays single)."
+      },
       "isInactive": {
         "type": "boolean",
         "resolvedType": "boolean",
@@ -161,6 +189,15 @@
         "default": "false",
         "required": false,
         "mutable": false
+      },
+      "isInset": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-inset",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Use reduced outer geometry when nested inside a control of the same size."
       },
       "label": {
         "type": "string",
@@ -269,12 +306,12 @@
   "files": [
     {
       "path": "src/wc/components/Chip/Chip.css",
-      "content": "@import '../../utils/tag-chip.css';\n\n/*\n * Semantic state colors — Chip’s differentiator from Tag.\n * All states use the faint contrast weight; hue comes from the state.\n */\n:host(.chip--default) {\n  background-color: var(--color-background-faint-neutral);\n  color: var(--color-foreground-bold-neutral);\n}\n\n:host(.chip--active) {\n  background-color: var(--color-background-faint-brand);\n  color: var(--color-foreground-bold-brand);\n}\n\n:host(.chip--error) {\n  background-color: var(--color-background-faint-negative);\n  color: var(--color-foreground-bold-negative);\n}\n\n:host(.chip--caution) {\n  background-color: var(--color-background-faint-caution);\n  color: var(--color-foreground-bold-caution);\n}\n\n/*\n * Label↔dismiss uses host gap, mirroring Tag icon↔label spacing:\n * [inset][text][inset][gap][icon].\n */\n.tag__remove {\n  padding: 0;\n  margin: 0;\n  border: none;\n  background: none;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  cursor: default;\n  color: inherit;\n  flex-shrink: 0;\n  position: relative;\n  z-index: 2;\n  border-radius: var(--dimension-radius-half);\n}\n\n.tag__remove::before {\n  content: '';\n  position: absolute;\n  inset: var(--dimension-space-n025);\n  border-radius: var(--dimension-radius-half);\n  background-color: transparent;\n  transition: var(--effect-transition-interaction-background-short-2);\n  pointer-events: none;\n}\n\n@media (hover: hover) and (pointer: fine) {\n  .tag__remove:hover::before {\n    background-color: var(--color-interaction-hover);\n  }\n}\n\n.tag__remove:active::before {\n  background-color: var(--color-interaction-pressed);\n}\n\n:host(.tag--size-sm) .tag__remove::before {\n  inset: var(--dimension-space-n012);\n}\n\n:host(.tag--size-xs) .tag__remove::before {\n  inset: 0;\n}\n\n.tag__remove-x {\n  display: inline-flex;\n  flex-shrink: 0;\n  width: var(--ds-control-icon);\n  height: var(--ds-control-icon);\n}\n",
+      "content": "@import '../../utils/tag-chip.css';\n@import '../../utils/control-density-inset.css';\n\n/*\n * Semantic state colors — Chip’s differentiator from Tag.\n * All states use the faint contrast weight; hue comes from the state.\n */\n:host(.chip--default) {\n  background-color: var(--color-background-faint-neutral);\n  color: var(--color-foreground-bold-neutral);\n}\n\n:host(.chip--active) {\n  background-color: var(--color-background-faint-brand);\n  color: var(--color-foreground-bold-brand);\n}\n\n:host(.chip--error) {\n  background-color: var(--color-background-faint-negative);\n  color: var(--color-foreground-bold-negative);\n}\n\n:host(.chip--caution) {\n  background-color: var(--color-background-faint-caution);\n  color: var(--color-foreground-bold-caution);\n}\n\n/*\n * Label↔dismiss uses host gap, mirroring Tag icon↔label spacing:\n * [inset][text][inset][gap][icon].\n */\n.tag__remove {\n  --ds-chip-remove-size: var(--ds-control-height);\n\n  padding: 0;\n  margin: 0;\n  border: none;\n  box-sizing: border-box;\n  background: none;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: var(--ds-chip-remove-size);\n  height: var(--ds-chip-remove-size);\n  cursor: default;\n  color: inherit;\n  flex-shrink: 0;\n  position: relative;\n  z-index: 2;\n  border-radius: var(--dimension-radius-half);\n}\n\n/* The dismiss action nests inside the already-inset chip, so its reduction is additive. */\n:host(.ds-control--inset) .tag__remove {\n  --ds-chip-remove-size: calc(var(--ds-control-height) - var(--dimension-space-050));\n}\n\n:host(.ds-control--inset) {\n  padding-inline-end: var(--dimension-space-025);\n}\n\n:host(.ds-control--inset-double) .tag__remove {\n  --ds-chip-remove-size: calc(var(--ds-control-height) - var(--dimension-space-100));\n}\n\n:host(.ds-control--inset-double) {\n  padding-inline-end: var(--dimension-space-050);\n}\n\n.tag__remove::before {\n  content: '';\n  position: absolute;\n  inset: 0;\n  border-radius: var(--dimension-radius-half);\n  background-color: transparent;\n  transition: var(--effect-transition-interaction-background-short-2);\n  pointer-events: none;\n}\n\n@media (hover: hover) and (pointer: fine) {\n  .tag__remove:hover::before {\n    background-color: var(--color-interaction-hover);\n  }\n}\n\n.tag__remove:active::before {\n  background-color: var(--color-interaction-pressed);\n}\n\n.tag__remove-x {\n  display: inline-flex;\n  flex-shrink: 0;\n  width: var(--ds-control-icon);\n  height: var(--ds-control-icon);\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/Chip/Chip.tsx",
-      "content": "import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';\nimport { CONTROL_TEXT_VARIANT } from '../../utils';\n\n/**\n * Semantic chip state — replaces Tag’s intent × contrast matrix.\n * - `default` — neutral faint\n * - `active` — brand faint\n * - `error` — negative faint\n * - `caution` — caution faint\n */\nexport type ChipState = 'default' | 'active' | 'error' | 'caution';\nexport type ChipSize = 'md' | 'sm' | 'xs';\n\n/** Dismiss `ds-icon` size — same iconography metrics as Tag’s leading icon. */\nconst ICON_SIZE: Record<ChipSize, 'md' | 'sm' | 'xs'> = {\n  md: 'md',\n  sm: 'sm',\n  xs: 'xs',\n};\n\n/**\n * Removable chip — same density recipe as Tag, but colored by semantic `state`\n * (not intent × contrast). Not a toggle/select control; the only intentional\n * action is remove.\n */\n@Component({\n  tag: 'ds-chip',\n  styleUrl: 'Chip.css',\n  scoped: true,\n})\nexport class Chip {\n  @Prop() label!: string;\n  /** Semantic color state. @default 'default' */\n  @Prop() state: ChipState = 'default';\n  @Prop() size: ChipSize = 'md';\n  @Prop() rounded: boolean = false;\n  @Prop() maxWidth: string | number | undefined;\n  @Prop() isInactive: boolean = false;\n  /** Accessible remove action. Use `{label}` as the chip-label placeholder. */\n  @Prop() removeLabel: string = 'Remove {label}';\n\n  /** Fired when the remove button is clicked. */\n  @Event() dsRemove!: EventEmitter<void>;\n\n  private handleRemove = (e: MouseEvent) => {\n    e.stopPropagation();\n    if (this.isInactive) return;\n    this.dsRemove.emit();\n  };\n\n  render() {\n    const textVariant = CONTROL_TEXT_VARIANT[this.size];\n    const iconSize = ICON_SIZE[this.size];\n\n    const maxWidthStyle =\n      this.maxWidth != null\n        ? { maxWidth: typeof this.maxWidth === 'number' ? `${this.maxWidth}px` : this.maxWidth }\n        : undefined;\n\n    return (\n      <Host\n        class={{\n          tag: true,\n          chip: true,\n          [`chip--${this.state}`]: true,\n          [`tag--size-${this.size}`]: true,\n          'ds-control--md': this.size === 'md',\n          'ds-control--sm': this.size === 'sm',\n          'ds-control--xs': this.size === 'xs',\n          'tag--rounded': this.rounded,\n          'tag--removable': true,\n          /* Hover overlay on the chip surface — dismiss is the only action. */\n          'ds-interaction-fill': !this.isInactive,\n          'ds-control-inactive': this.isInactive,\n        }}\n        style={maxWidthStyle}\n        aria-disabled={this.isInactive ? 'true' : undefined}\n      >\n        <ds-text class=\"tag__label\" as=\"span\" variant={textVariant} color=\"inherit\">\n          {this.label}\n        </ds-text>\n        <button\n          type=\"button\"\n          class=\"tag__remove ds-focus-ring-inset\"\n          onClick={this.handleRemove}\n          aria-label={this.removeLabel.replace('{label}', this.label)}\n          disabled={this.isInactive || undefined}\n        >\n          <ds-icon class=\"tag__remove-x\" name=\"Cross\" size={iconSize} color=\"inherit\"></ds-icon>\n        </button>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';\nimport { CONTROL_TEXT_VARIANT, type ControlInsetDepth } from '../../utils';\n\n/**\n * Semantic chip state — replaces Tag’s intent × contrast matrix.\n * - `default` — neutral faint\n * - `active` — brand faint\n * - `error` — negative faint\n * - `caution` — caution faint\n */\nexport type ChipState = 'default' | 'active' | 'error' | 'caution';\nexport type ChipSize = 'md' | 'sm' | 'xs';\n\n/** Dismiss `ds-icon` size — same iconography metrics as Tag’s leading icon. */\nconst ICON_SIZE: Record<ChipSize, 'md' | 'sm' | 'xs'> = {\n  md: 'md',\n  sm: 'sm',\n  xs: 'xs',\n};\n\n/**\n * Removable chip — same density recipe as Tag, but colored by semantic `state`\n * (not intent × contrast). Not a toggle/select control; the only intentional\n * action is remove.\n */\n@Component({\n  tag: 'ds-chip',\n  styleUrl: 'Chip.css',\n  scoped: true,\n})\nexport class Chip {\n  @Prop() label!: string;\n  /** Semantic color state. @default 'default' */\n  @Prop() state: ChipState = 'default';\n  @Prop() size: ChipSize = 'md';\n  /** Use reduced outer geometry when nested inside a control of the same size. */\n  @Prop() isInset: boolean = false;\n  /** Single removes 4px overall; double removes 8px overall (xs stays single). */\n  @Prop() insetDepth: ControlInsetDepth = 'single';\n  @Prop() rounded: boolean = false;\n  @Prop() maxWidth: string | number | undefined;\n  @Prop() isInactive: boolean = false;\n  /** Accessible remove action. Use `{label}` as the chip-label placeholder. */\n  @Prop() removeLabel: string = 'Remove {label}';\n\n  /** Fired when the remove button is clicked. */\n  @Event() dsRemove!: EventEmitter<void>;\n\n  private handleRemove = (e: MouseEvent) => {\n    e.stopPropagation();\n    if (this.isInactive) return;\n    this.dsRemove.emit();\n  };\n\n  render() {\n    const textVariant = CONTROL_TEXT_VARIANT[this.size];\n    const iconSize = ICON_SIZE[this.size];\n    const doubleInset = this.isInset && this.insetDepth === 'double' && this.size !== 'xs';\n\n    const maxWidthStyle =\n      this.maxWidth != null\n        ? { maxWidth: typeof this.maxWidth === 'number' ? `${this.maxWidth}px` : this.maxWidth }\n        : undefined;\n\n    return (\n      <Host\n        class={{\n          tag: true,\n          chip: true,\n          [`chip--${this.state}`]: true,\n          [`tag--size-${this.size}`]: true,\n          'ds-control--md': this.size === 'md',\n          'ds-control--sm': this.size === 'sm',\n          'ds-control--xs': this.size === 'xs',\n          'ds-control--inset': this.isInset && !doubleInset,\n          'ds-control--inset-double': doubleInset,\n          'tag--rounded': this.rounded,\n          'tag--removable': true,\n          /* Hover overlay on the chip surface — dismiss is the only action. */\n          'ds-interaction-fill': !this.isInactive,\n          'ds-control-inactive': this.isInactive,\n        }}\n        style={maxWidthStyle}\n        aria-disabled={this.isInactive ? 'true' : undefined}\n      >\n        <ds-text class=\"tag__label\" as=\"span\" variant={textVariant} color=\"inherit\">\n          {this.label}\n        </ds-text>\n        <button\n          type=\"button\"\n          class={{\n            tag__remove: true,\n            'ds-focus-ring-inset': true,\n          }}\n          onClick={this.handleRemove}\n          aria-label={this.removeLabel.replace('{label}', this.label)}\n          disabled={this.isInactive || undefined}\n        >\n          <ds-icon class=\"tag__remove-x\" name=\"Cross\" size={iconSize} color=\"inherit\"></ds-icon>\n        </button>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

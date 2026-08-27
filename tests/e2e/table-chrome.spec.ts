@@ -410,6 +410,65 @@ test('reserves a category-pane Clear footer for every table filter @pr-critical'
   await expect(control).toHaveJSProperty('values', { status: ['driving'] });
 });
 
+test('requests a controlled any or all mode from the multiple-filter footer @pr-critical', async ({
+  page,
+}) => {
+  const control = page.locator('#column-customizer-filter');
+  await control.evaluate((element: HTMLDsTableFilterElement) => {
+    element.values = { status: ['driving'] };
+    element.matchModes = {};
+    (window as typeof window & { __filterMatchModeChanges?: unknown[] }).__filterMatchModeChanges =
+      [];
+    element.addEventListener('dsMatchModeChange', event => {
+      const detail = (event as CustomEvent<{ filterId: string; mode: 'any' | 'all' }>).detail;
+      (
+        window as typeof window & { __filterMatchModeChanges?: unknown[] }
+      ).__filterMatchModeChanges!.push(detail);
+      element.matchModes = { ...element.matchModes, [detail.filterId]: detail.mode };
+    });
+  });
+
+  await control.getByRole('combobox', { name: 'Filter fleet' }).click();
+  const popup = control.getByRole('dialog', { name: 'Filter fleet' });
+  const footer = popup.locator('.filter-menu__match-mode-footer');
+  const toggle = footer.getByRole('button', { name: 'Limit Status results to all selected' });
+
+  await expect(footer).toBeVisible();
+  await expect(footer.getByText('Limit results to', { exact: true })).toBeVisible();
+  await expect(toggle).toHaveText('any');
+  await expect(footer.getByText('selected', { exact: true })).toBeVisible();
+  await toggle.hover();
+  await expect(toggle).toHaveCSS('text-decoration-line', 'underline');
+  const clear = popup.getByRole('button', { name: 'Clear' });
+  const [toggleDecoration, clearDecoration] = await Promise.all(
+    [toggle, clear].map(locator =>
+      locator.evaluate(element => {
+        const style = getComputedStyle(element);
+        return {
+          color: style.textDecorationColor,
+          thickness: style.textDecorationThickness,
+          offset: style.textUnderlineOffset,
+        };
+      })
+    )
+  );
+  expect(toggleDecoration).toEqual(clearDecoration);
+  await toggle.click();
+  await expect(
+    footer.getByRole('button', { name: 'Limit Status results to any selected' })
+  ).toHaveText('all');
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (window as typeof window & { __filterMatchModeChanges?: unknown[] })
+            .__filterMatchModeChanges
+      )
+    )
+    .toEqual([{ filterId: 'status', mode: 'all' }]);
+  await expect(control).toHaveJSProperty('matchModes', { status: 'all' });
+});
+
 test('supports semantic relative dates and fixed calendar ranges @pr-critical', async ({
   page,
 }) => {
@@ -534,7 +593,24 @@ test('supports semantic relative dates and fixed calendar ranges @pr-critical', 
   expect(firstDate).toBeTruthy();
   expect(secondDate).toBeTruthy();
   await calendarDays.nth(10).click();
+  await calendarDays.nth(15).hover();
+  await expect(popup.locator('.filter-menu__calendar-day--range-preview')).toHaveCount(6);
+  await expect(popup.locator('.filter-menu__calendar-day--range-edge')).toHaveCount(1);
+  await expect(calendarDays.nth(10).locator('ds-text')).toHaveJSProperty('color', 'on-bold');
+  await expect(calendarDays.nth(15).locator('ds-text')).toHaveJSProperty('color', 'primary');
+  await expect(calendarDays.nth(15)).toHaveAttribute('aria-selected', 'false');
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => (window as typeof window & { __dateFilterChanges?: unknown[] }).__dateFilterChanges
+      )
+    )
+    .toEqual([
+      { filterId: 'event-date', value: 'relative:last-7-days' },
+      { filterId: 'event-date', value: `range:${firstDate}/${firstDate}` },
+    ]);
   await calendarDays.nth(15).click();
+  await expect(popup.locator('.filter-menu__calendar-day--range-preview')).toHaveCount(0);
   await expect(
     popup.locator('.filter-menu__calendar-day--range-edge ds-text').first()
   ).toHaveJSProperty('color', 'on-bold');
@@ -691,10 +767,10 @@ test('keeps the bounded table surface within its host while the complete caption
   const group = table.locator('#column-customizer-group');
   const customize = table.locator('.ds-table__caption-customizer');
   await table.evaluate(element => {
-    (element as HTMLElement).style.inlineSize = '500px';
+    (element as HTMLElement).style.inlineSize = '1000px';
   });
 
-  const compactGeometry = await table.evaluate(element => {
+  const expandedGeometry = await table.evaluate(element => {
     const caption = element.querySelector<HTMLElement>('.ds-table__caption-content')!;
     const toolbar = element.querySelector<HTMLElement>('.table-toolbar')!;
     const search = element.querySelector<HTMLElement>('#column-customizer-search')!;
@@ -705,9 +781,9 @@ test('keeps the bounded table surface within its host while the complete caption
     };
   });
 
-  expect(compactGeometry.searchWidth).toBeLessThanOrEqual(300);
-  expect(compactGeometry.toolbarGap).toBe(8);
-  expect(compactGeometry.captionGap).toBe(8);
+  expect(expandedGeometry.searchWidth).toBeGreaterThan(300);
+  expect(expandedGeometry.toolbarGap).toBe(8);
+  expect(expandedGeometry.captionGap).toBe(8);
   await expect(toolbar).toHaveCSS('display', 'contents');
 
   await table.evaluate(element => {

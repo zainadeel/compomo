@@ -28,9 +28,10 @@ import { ChartLegendItem } from "./utils/chart-types";
 import { ChartLegendDirection, ChartLegendPercentageDecimals } from "./components/ChartLegend/ChartLegend";
 import { CheckboxSize } from "./components/Checkbox/Checkbox";
 import { ChipSize, ChipState } from "./components/Chip/Chip";
+import { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
 import { ConversationListActionLayout } from "./components/ConversationList/ConversationList";
 import { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
-import { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuFooterLayout, FilterMenuSize, FilterMenuValues, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
+import { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuFooterLayout, FilterMenuMatchModeChangeDetail, FilterMenuMatchModes, FilterMenuSize, FilterMenuValues, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
 import { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
 import { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
 import { InputSize, InputTextAlign, InputType, InputWidth } from "./components/Input/Input";
@@ -38,7 +39,6 @@ import { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 import { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
 import { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
 import { MenuAlign, MenuSide } from "./components/Menu/menu-position";
-import { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
 import { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
 import { ButtonFilledIntent as ButtonFilledIntent1 } from "./components/ButtonFilled/ButtonFilled";
 import { PanelNavGroup, PanelNavItem, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
@@ -66,7 +66,7 @@ import { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPick
 import { SwitchSize } from "./components/Switch/Switch";
 import { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
 import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableColumnsConfigChangeDetail, TableDataMode, TableDataModeChangeDetail, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
-import { FilterMenuChangeDetail as FilterMenuChangeDetail1, FilterMenuFilter as FilterMenuFilter1, FilterMenuValues as FilterMenuValues1 } from "./components/FilterMenu/FilterMenu";
+import { FilterMenuChangeDetail as FilterMenuChangeDetail1, FilterMenuFilter as FilterMenuFilter1, FilterMenuMatchModeChangeDetail as FilterMenuMatchModeChangeDetail1, FilterMenuMatchModes as FilterMenuMatchModes1, FilterMenuValues as FilterMenuValues1 } from "./components/FilterMenu/FilterMenu";
 import { TableSavedView, TableSavedViewChangeDetail, TableSavedViewCreateDetail, TableSavedViewDiscardDetail, TableSavedViewRemoveDetail, TableSavedViewRenameDetail, TableSavedViewSaveDetail } from "./components/TableSavedViews/table-saved-views-types";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
@@ -96,9 +96,10 @@ export { ChartLegendItem } from "./utils/chart-types";
 export { ChartLegendDirection, ChartLegendPercentageDecimals } from "./components/ChartLegend/ChartLegend";
 export { CheckboxSize } from "./components/Checkbox/Checkbox";
 export { ChipSize, ChipState } from "./components/Chip/Chip";
+export { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
 export { ConversationListActionLayout } from "./components/ConversationList/ConversationList";
 export { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
-export { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuFooterLayout, FilterMenuSize, FilterMenuValues, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
+export { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuFooterLayout, FilterMenuMatchModeChangeDetail, FilterMenuMatchModes, FilterMenuSize, FilterMenuValues, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
 export { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
 export { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
 export { InputSize, InputTextAlign, InputType, InputWidth } from "./components/Input/Input";
@@ -106,7 +107,6 @@ export { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 export { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
 export { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
 export { MenuAlign, MenuSide } from "./components/Menu/menu-position";
-export { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
 export { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
 export { ButtonFilledIntent as ButtonFilledIntent1 } from "./components/ButtonFilled/ButtonFilled";
 export { PanelNavGroup, PanelNavItem, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
@@ -134,7 +134,7 @@ export { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPick
 export { SwitchSize } from "./components/Switch/Switch";
 export { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
 export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableColumnsConfigChangeDetail, TableDataMode, TableDataModeChangeDetail, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
-export { FilterMenuChangeDetail as FilterMenuChangeDetail1, FilterMenuFilter as FilterMenuFilter1, FilterMenuValues as FilterMenuValues1 } from "./components/FilterMenu/FilterMenu";
+export { FilterMenuChangeDetail as FilterMenuChangeDetail1, FilterMenuFilter as FilterMenuFilter1, FilterMenuMatchModeChangeDetail as FilterMenuMatchModeChangeDetail1, FilterMenuMatchModes as FilterMenuMatchModes1, FilterMenuValues as FilterMenuValues1 } from "./components/FilterMenu/FilterMenu";
 export { TableSavedView, TableSavedViewChangeDetail, TableSavedViewCreateDetail, TableSavedViewDiscardDetail, TableSavedViewRemoveDetail, TableSavedViewRenameDetail, TableSavedViewSaveDetail } from "./components/TableSavedViews/table-saved-views-types";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
@@ -1035,9 +1035,19 @@ export namespace Components {
      */
     interface DsChip {
         /**
+          * Single removes 4px overall; double removes 8px overall (xs stays single).
+          * @default 'single'
+         */
+        "insetDepth": ControlInsetDepth1;
+        /**
           * @default false
          */
         "isInactive": boolean;
+        /**
+          * Use reduced outer geometry when nested inside a control of the same size.
+          * @default false
+         */
+        "isInset": boolean;
         "label": string;
         "maxWidth": string | number | undefined;
         /**
@@ -1278,6 +1288,11 @@ export namespace Components {
           * ID applied to the internal select trigger.
          */
         "inputId": string | undefined;
+        /**
+          * Controlled any/all match mode keyed by multiple-choice filter id. Defaults to any.
+          * @default {}
+         */
+        "matchModes": FilterMenuMatchModes;
         /**
           * Accessible name for the non-modal filter dialog.
           * @default 'Filters'
@@ -3093,6 +3108,11 @@ export namespace Components {
          */
         "hiddenColumnIds": string[];
         /**
+          * Optional TableSearch field identities that restrict which data-point tracks are highlighted.
+          * @default []
+         */
+        "highlightFieldIds": string[];
+        /**
           * Literal terms to highlight in table-owned text cells. Applications still own filtering.
           * @default []
          */
@@ -3243,6 +3263,11 @@ export namespace Components {
           * @default 'Filter'
          */
         "label": string;
+        /**
+          * Controlled any/all match mode keyed by multiple-choice filter id. Defaults to any.
+          * @default {}
+         */
+        "matchModes": FilterMenuMatchModes1;
         /**
           * Accessible name for the non-modal filter dialog. Defaults to the trigger name.
           * @default null
@@ -4211,6 +4236,7 @@ declare global {
     interface HTMLDsFilterMenuElementEventMap {
         "dsChange": FilterMenuChangeDetail;
         "dsClear": void;
+        "dsMatchModeChange": FilterMenuMatchModeChangeDetail;
         "dsActiveFilterChange": string;
         "dsClose": void;
         "dsOpenChange": boolean;
@@ -4798,6 +4824,7 @@ declare global {
     interface HTMLDsTableFilterElementEventMap {
         "dsChange": FilterMenuChangeDetail1;
         "dsClear": void;
+        "dsMatchModeChange": FilterMenuMatchModeChangeDetail1;
         "dsActiveFilterChange": string;
         "dsClose": void;
         "dsOpenChange": boolean;
@@ -6000,9 +6027,19 @@ declare namespace LocalJSX {
      */
     interface DsChip {
         /**
+          * Single removes 4px overall; double removes 8px overall (xs stays single).
+          * @default 'single'
+         */
+        "insetDepth"?: ControlInsetDepth1;
+        /**
           * @default false
          */
         "isInactive"?: boolean;
+        /**
+          * Use reduced outer geometry when nested inside a control of the same size.
+          * @default false
+         */
+        "isInset"?: boolean;
         "label": string;
         "maxWidth"?: string | number | undefined;
         /**
@@ -6249,6 +6286,11 @@ declare namespace LocalJSX {
          */
         "inputId"?: string | undefined;
         /**
+          * Controlled any/all match mode keyed by multiple-choice filter id. Defaults to any.
+          * @default {}
+         */
+        "matchModes"?: FilterMenuMatchModes;
+        /**
           * Accessible name for the non-modal filter dialog.
           * @default 'Filters'
          */
@@ -6278,6 +6320,10 @@ declare namespace LocalJSX {
           * Requests that the controlled popup close.
          */
         "onDsClose"?: (event: DsFilterMenuCustomEvent<void>) => void;
+        /**
+          * Requests a controlled any/all mode replacement for a multiple-choice filter.
+         */
+        "onDsMatchModeChange"?: (event: DsFilterMenuCustomEvent<FilterMenuMatchModeChangeDetail>) => void;
         /**
           * Emitted whenever internal select-trigger activation changes popup visibility.
          */
@@ -8244,6 +8290,11 @@ declare namespace LocalJSX {
          */
         "hiddenColumnIds"?: string[];
         /**
+          * Optional TableSearch field identities that restrict which data-point tracks are highlighted.
+          * @default []
+         */
+        "highlightFieldIds"?: string[];
+        /**
           * Literal terms to highlight in table-owned text cells. Applications still own filtering.
           * @default []
          */
@@ -8405,6 +8456,11 @@ declare namespace LocalJSX {
          */
         "label"?: string;
         /**
+          * Controlled any/all match mode keyed by multiple-choice filter id. Defaults to any.
+          * @default {}
+         */
+        "matchModes"?: FilterMenuMatchModes1;
+        /**
           * Accessible name for the non-modal filter dialog. Defaults to the trigger name.
           * @default null
          */
@@ -8429,6 +8485,10 @@ declare namespace LocalJSX {
           * Requests that the controlled popup close.
          */
         "onDsClose"?: (event: DsTableFilterCustomEvent<void>) => void;
+        /**
+          * Requests a controlled any/all mode replacement for a multiple-choice filter.
+         */
+        "onDsMatchModeChange"?: (event: DsTableFilterCustomEvent<FilterMenuMatchModeChangeDetail1>) => void;
         /**
           * Emitted whenever trigger activation changes popup visibility.
          */
@@ -9010,6 +9070,8 @@ declare namespace LocalJSX {
         "label": string;
         "state": ChipState;
         "size": ChipSize;
+        "isInset": boolean;
+        "insetDepth": ControlInsetDepth;
         "rounded": boolean;
         "maxWidth": string;
         "isInactive": boolean;

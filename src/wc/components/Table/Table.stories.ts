@@ -233,6 +233,7 @@ const ALL_CELL_TYPE_COLUMNS: TableColumn[] = [
   { id: 'tagOnly', header: 'Tag only', size: 'sm' },
   { id: 'tagWithText', header: 'Tag + text', size: 'sm' },
   { id: 'textWithTag', header: 'Text + tag', size: 'sm' },
+  { id: 'multipleTags', header: 'Multiple tags', size: 160 },
   { id: 'action', kind: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
   {
     id: 'borderedAction',
@@ -362,6 +363,14 @@ const ALL_CELL_TYPE_ROWS: TableRow[] = [
         label: 'Coached',
         intent: 'neutral',
       },
+      multipleTags: {
+        kind: 'tags',
+        tracks: 2,
+        items: [
+          { label: 'Harsh braking', intent: 'warning' },
+          { label: 'Close following', intent: 'negative' },
+        ],
+      },
       action: overflowAction('Vehicle 2841'),
       borderedAction: {
         kind: 'action',
@@ -446,6 +455,46 @@ const THREE_TRACK_ROWS: TableRow[] = [
         secondary: 'DRV-2210',
         tertiary: 'Oakland, CA',
       },
+    },
+  },
+];
+
+const MULTIPLE_TAG_COLUMNS: TableColumn[] = [
+  { id: 'vehicle', header: 'Vehicle', size: 160 },
+  { id: 'behaviors', header: 'Detected behaviors', size: 160 },
+  { id: 'status', header: 'Status', size: 120 },
+];
+
+const MULTIPLE_TAG_ROWS: TableRow[] = [
+  {
+    id: 'multiple-tags-two-tracks',
+    cells: {
+      vehicle: 'Vehicle 2841',
+      behaviors: {
+        kind: 'tags',
+        tracks: 2,
+        items: [
+          { label: 'Harsh braking', intent: 'warning' },
+          { label: 'Close following', intent: 'negative' },
+        ],
+      },
+      status: 'Two tracks',
+    },
+  },
+  {
+    id: 'multiple-tags-three-tracks',
+    cells: {
+      vehicle: 'Vehicle 1904',
+      behaviors: {
+        kind: 'tags',
+        tracks: 3,
+        items: [
+          { label: 'Harsh braking', intent: 'warning' },
+          { label: 'Close following', intent: 'negative' },
+          { label: 'Lane departure', intent: 'caution' },
+        ],
+      },
+      status: 'Three tracks',
     },
   },
 ];
@@ -996,7 +1045,7 @@ export const SearchMatchHighlighting: Story = {
     docs: {
       description: {
         story:
-          'The application owns the search query and row filtering, then supplies the same literal query through highlightTerms. The table marks matching text without changing the cell’s accessible name or guessing how the application tokenizes search.',
+          'The application owns the search query and row filtering, then supplies the same literal query through highlightTerms. When TableSearch has selected fields, pass those IDs through highlightFieldIds so only the matching data-point tracks are marked. With no field IDs, all table-owned text tracks remain eligible. Highlighting does not change the cell’s accessible name or guess how the application tokenizes search.',
       },
     },
   },
@@ -1322,7 +1371,7 @@ export const AllCellTypes: Story = {
     docs: {
       description: {
         story:
-          'Three review tables, one height each. Image cells declare tracks 1, 2, or 3 so the 16:9 preview fills the matching content box (cell height minus 8px padding). Icon-and-text cells (`kind: icon-text`) place one md prefix icon beside the copy stack: 2px padding on every side of the icon, a 2px flex gap before the copy, and text-track padding staying on the copy. Single-track cells, including the 1-track image and icon-and-text, stay on a 40px row. Two-track text, 2-track image, and 2-track icon-and-text share a 62px row. Event in that table shows a two-line cell with middle-dot runs. Three-track text, 3-track image, and 3-track icon-and-text stay on an 84px row. Body cells share 8px outer padding; 20px content sits in a 24px track; later tracks are 20px with a 2px stack gap. Linked primary text uses a native anchor and the shared brand text-action treatment; secondary copy stays unlinked. Secondary tracks may split into middle-dot-separated runs. The third line uses the same subdued track recipe as the second. Unbordered action cells open the shared overflow ds-menu from the Ellipses trigger; the bordered column stays a single-shot control. Empty means the data applies but has no value and renders an em dash; Blank means the data is not applicable and intentionally renders nothing.',
+          'Three review tables, one height each. Image cells declare tracks 1, 2, or 3 so the 16:9 preview fills the matching content box (cell height minus 8px padding). Icon-and-text cells (`kind: icon-text`) place one md prefix icon beside the copy stack: 2px padding on every side of the icon, a 2px flex gap before the copy, and text-track padding staying on the copy. Single-track cells, including the 1-track image and icon-and-text, stay on a 40px row. Two-track text, 2-track image, 2-track icon-and-text, and wrapping multiple-Tag cells share a 62px row. Event in that table shows a two-line cell with middle-dot runs. Three-track text, 3-track image, and 3-track icon-and-text stay on an 84px row. Body cells share 8px outer padding; 20px content sits in a 24px track; later tracks are 20px with a 2px stack gap. Linked primary text uses a native anchor and the shared brand text-action treatment; secondary copy stays unlinked. Secondary tracks may split into middle-dot-separated runs. The third line uses the same subdued track recipe as the second. Unbordered action cells open the shared overflow ds-menu from the Ellipses trigger; the bordered column stays a single-shot control. Empty means the data applies but has no value and renders an em dash; Blank means the data is not applicable and intentionally renders nothing.',
       },
     },
   },
@@ -1353,6 +1402,27 @@ export const AllCellTypes: Story = {
         caption-visibility="visible"
       ></ds-table>
     </div>
+  `,
+};
+
+export const MultipleTags: Story = {
+  name: 'Multiple tags',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Multiple-Tag cells use `kind: tags` and declare their expected wrapped line count with `tracks`. Tags wrap naturally at the column edge. Each uses the 20px small single-inset recipe, with a 2px gap between tags and wrapped lines, so two tracks resolve a 62px row and three tracks resolve an 84px row. Track counts may continue beyond three; the tallest cell establishes the native row height and every sibling cell stretches to match.',
+      },
+    },
+  },
+  render: () => html`
+    <ds-table
+      data-a11y-fixture
+      .columns=${MULTIPLE_TAG_COLUMNS}
+      .rows=${MULTIPLE_TAG_ROWS}
+      caption="Wrapping multiple-tag cells"
+      caption-visibility="visible"
+    ></ds-table>
   `,
 };
 

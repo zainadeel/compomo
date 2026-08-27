@@ -8,7 +8,6 @@
   box-sizing: border-box;
   inline-size: 100%;
   min-inline-size: 0;
-  max-inline-size: var(--dimension-panel-width-xs);
   --ds-table-search-foreground: var(--color-foreground-primary);
   --ds-table-search-adornment: var(--color-foreground-secondary);
   --ds-table-search-placeholder: var(--color-foreground-secondary);
@@ -19,6 +18,7 @@
 .table-search__control {
   inline-size: 100%;
   min-inline-size: 0;
+  padding-inline-end: var(--dimension-space-050);
   overflow: hidden;
   border: 0;
   background: transparent;
@@ -37,8 +37,7 @@
 }
 
 .table-search__icon,
-.table-search__slash,
-.table-search__clear {
+.table-search__actions {
   position: relative;
   z-index: 2;
   flex: none;
@@ -66,7 +65,7 @@
   display: none;
 }
 
-.table-search__tag {
+.table-search__chip {
   flex: none;
   max-inline-size: var(--dimension-panel-width-2xs);
 }
@@ -99,19 +98,20 @@
   color: var(--ds-table-search-placeholder-active);
 }
 
-.table-search__slash {
-  all: unset;
-  position: relative;
-  z-index: 2;
-  display: inline-flex;
+.table-search__actions {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  inline-size: var(--dimension-size-300);
-  block-size: var(--dimension-size-300);
-  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
+  gap: var(--dimension-space-050);
+}
+
+.table-search__clear,
+.table-search__slash,
+.table-search__action-divider {
+  flex: none;
+}
+
+.table-search__slash {
   color: var(--ds-table-search-adornment);
-  cursor: default;
 }
 
 .table-search__popup {

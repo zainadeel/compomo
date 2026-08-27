@@ -1,7 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-filter-menu.js';
-import type { FilterMenuFilter, FilterMenuValues } from './FilterMenu';
+import type {
+  FilterMenuFilter,
+  FilterMenuMatchModeChangeDetail,
+  FilterMenuMatchModes,
+  FilterMenuValues,
+} from './FilterMenu';
 
 const filters: FilterMenuFilter[] = [
   {
@@ -78,6 +83,15 @@ export const Playground: Story = {
         active-filter-id="severity"
         .filters=${filters}
         .values=${values}
+        @dsMatchModeChange=${(event: CustomEvent<FilterMenuMatchModeChangeDetail>) => {
+          const control = event.currentTarget as HTMLElement & {
+            matchModes: FilterMenuMatchModes;
+          };
+          control.matchModes = {
+            ...control.matchModes,
+            [event.detail.filterId]: event.detail.mode,
+          };
+        }}
       ></ds-filter-menu>
     </div>
   `,

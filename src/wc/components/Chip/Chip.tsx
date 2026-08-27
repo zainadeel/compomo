@@ -1,5 +1,5 @@
 import { Component, Prop, Event, EventEmitter, h, Host } from '@stencil/core';
-import { CONTROL_TEXT_VARIANT } from '../../utils';
+import { CONTROL_TEXT_VARIANT, type ControlInsetDepth } from '../../utils';
 
 /**
  * Semantic chip state — replaces Tag’s intent × contrast matrix.
@@ -33,6 +33,10 @@ export class Chip {
   /** Semantic color state. @default 'default' */
   @Prop() state: ChipState = 'default';
   @Prop() size: ChipSize = 'md';
+  /** Use reduced outer geometry when nested inside a control of the same size. */
+  @Prop() isInset: boolean = false;
+  /** Single removes 4px overall; double removes 8px overall (xs stays single). */
+  @Prop() insetDepth: ControlInsetDepth = 'single';
   @Prop() rounded: boolean = false;
   @Prop() maxWidth: string | number | undefined;
   @Prop() isInactive: boolean = false;
@@ -51,6 +55,7 @@ export class Chip {
   render() {
     const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const iconSize = ICON_SIZE[this.size];
+    const doubleInset = this.isInset && this.insetDepth === 'double' && this.size !== 'xs';
 
     const maxWidthStyle =
       this.maxWidth != null
@@ -67,6 +72,8 @@ export class Chip {
           'ds-control--md': this.size === 'md',
           'ds-control--sm': this.size === 'sm',
           'ds-control--xs': this.size === 'xs',
+          'ds-control--inset': this.isInset && !doubleInset,
+          'ds-control--inset-double': doubleInset,
           'tag--rounded': this.rounded,
           'tag--removable': true,
           /* Hover overlay on the chip surface — dismiss is the only action. */
@@ -81,7 +88,10 @@ export class Chip {
         </ds-text>
         <button
           type="button"
-          class="tag__remove ds-focus-ring-inset"
+          class={{
+            tag__remove: true,
+            'ds-focus-ring-inset': true,
+          }}
           onClick={this.handleRemove}
           aria-label={this.removeLabel.replace('{label}', this.label)}
           disabled={this.isInactive || undefined}

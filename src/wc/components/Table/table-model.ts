@@ -8,6 +8,7 @@ import type {
   TableCellPrimaryText,
   TableCellText,
   TableCellTag,
+  TableCellTags,
   TableCellValue,
   TableColumn,
   TableGroup,
@@ -50,6 +51,10 @@ export function isTableCellTag(value: TableCellValue): value is TableCellTag {
   return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'tag';
 }
 
+export function isTableCellTags(value: TableCellValue): value is TableCellTags {
+  return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'tags';
+}
+
 export function isTableCellIcon(value: TableCellValue): value is TableCellIcon {
   return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'icon';
 }
@@ -79,6 +84,7 @@ export function isTableCellBlank(value: TableCellValue): value is TableCellBlank
 export function tableCellPrimary(value: TableCellValue): string | number | null {
   if (value == null) return null;
   if (isTableCellTag(value)) return value.label;
+  if (isTableCellTags(value)) return value.items.map(item => item.label).join(', ');
   if (isTableCellIcon(value)) return null;
   if (isTableCellIconText(value)) return value.primary;
   if (isTableCellImage(value)) return value.alt;

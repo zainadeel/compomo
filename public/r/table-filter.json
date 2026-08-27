@@ -46,9 +46,10 @@
         "Localize label, menuLabel, categoriesLabel, and clearLabel together so visible and accessible wording remains consistent."
       ],
       "states": [
-        "filters, values, and activeFilterId are controlled. dsChange, dsClear, and dsActiveFilterChange report intent without changing those inputs; the application applies query consequences and returns replacement values.",
+        "filters, values, matchModes, and activeFilterId are controlled. dsChange, dsMatchModeChange, dsClear, and dsActiveFilterChange report intent without changing those inputs; the application applies query consequences and returns replacement values.",
         "The visible trigger label stays singular Filter without appending an active-count suffix. Active criteria promote only the visible label from secondary to primary, matching the other table caption controls without redefining generic button active semantics.",
         "The popup reserves a visually empty footer row inside the category pane for every state. Active criteria reveal its divider and only a left-aligned Clear action, without adding popup height or showing redundant selected-count copy; the option pane retains its full column.",
+        "Every multiple-choice category exposes a right-pane footer where the blue any or all word toggles its controlled match mode. any is the default OR mode; the application applies the requested mode to its query.",
         "Date categories use the shared compact-header Range and Relative experience. Persist relative values semantically and resolve them from the product's current date whenever rows or saved views are applied.",
         "Popup visibility follows the same mutable open and dsOpenChange contract as ds-filter-menu."
       ],
@@ -58,13 +59,13 @@
       ],
       "frameworkCaveats": {
         "customElements": [
-          "Assign filters, values, and activeFilterId as JavaScript properties. Replace controlled values in response to dsChange and dsClear."
+          "Assign filters, values, matchModes, and activeFilterId as JavaScript properties. Replace controlled values and modes in response to dsChange, dsMatchModeChange, and dsClear."
         ],
         "react": [
-          "Keep filters and values in application state and replace values from the typed dsChange and dsClear events."
+          "Keep filters, values, and matchModes in application state and replace them from the typed dsChange, dsMatchModeChange, and dsClear events."
         ],
         "angular": [
-          "Import the generated DsTableFilter adapter, bind filters and values, and handle dsChange, dsClear, and dsActiveFilterChange."
+          "Import the generated DsTableFilter adapter, bind filters, values, and matchModes, and handle dsChange, dsMatchModeChange, dsClear, and dsActiveFilterChange."
         ]
       },
       "references": [
@@ -131,6 +132,14 @@
           "required": false,
           "mutable": false,
           "description": "Visible trigger label."
+        },
+        "matchModes": {
+          "type": "FilterMenuMatchModes",
+          "resolvedType": "{ [x: string]: FilterMenuMatchMode | undefined; }",
+          "default": "{}",
+          "required": false,
+          "mutable": false,
+          "description": "Controlled any/all match mode keyed by multiple-choice filter id. Defaults to any."
         },
         "menuLabel": {
           "type": "string | null",
@@ -201,6 +210,14 @@
           "description": "Requests that the controlled popup close."
         },
         {
+          "name": "dsMatchModeChange",
+          "detail": "FilterMenuMatchModeChangeDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Requests a controlled any/all mode replacement for a multiple-choice filter."
+        },
+        {
           "name": "dsOpenChange",
           "detail": "boolean",
           "bubbles": true,
@@ -264,6 +281,14 @@
         "required": false,
         "mutable": false,
         "description": "Visible trigger label."
+      },
+      "matchModes": {
+        "type": "FilterMenuMatchModes",
+        "resolvedType": "{ [x: string]: FilterMenuMatchMode | undefined; }",
+        "default": "{}",
+        "required": false,
+        "mutable": false,
+        "description": "Controlled any/all match mode keyed by multiple-choice filter id. Defaults to any."
       },
       "menuLabel": {
         "type": "string | null",
@@ -334,6 +359,14 @@
         "description": "Requests that the controlled popup close."
       },
       {
+        "name": "dsMatchModeChange",
+        "detail": "FilterMenuMatchModeChangeDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Requests a controlled any/all mode replacement for a multiple-choice filter."
+      },
+      {
         "name": "dsOpenChange",
         "detail": "boolean",
         "bubbles": true,
@@ -369,7 +402,7 @@
         "import": "import { DsTableFilter } from '@ds-mo/ui/angular/ds-table-filter';",
         "example": "<ds-table-filter></ds-table-filter>"
       },
-      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: filters, values.",
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: filters, matchModes, values.",
       "peerDependencies": {
         "required": [
           "@ds-mo/tokens ^6.5.0",
@@ -394,7 +427,7 @@
     },
     {
       "path": "src/wc/components/TableFilter/TableFilter.tsx",
-      "content": "import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\nimport type {\n  FilterMenuChangeDetail,\n  FilterMenuFilter,\n  FilterMenuValues,\n} from '../FilterMenu/FilterMenu';\n\n@Component({\n  tag: 'ds-table-filter',\n  styleUrl: 'TableFilter.css',\n  scoped: true,\n})\nexport class TableFilter {\n  /** Controlled popup visibility. */\n  @Prop({ mutable: true }) open: boolean = false;\n  /** Product-owned filter categories and option definitions. */\n  @Prop() filters: FilterMenuFilter[] = [];\n  /** Controlled values keyed by filter id. */\n  @Prop() values: FilterMenuValues = {};\n  /** Controlled category shown in the option pane. */\n  @Prop() activeFilterId: string | undefined;\n  /** Visible trigger label. */\n  @Prop() label: string = 'Filter';\n  /** Accessible name for the trigger. Defaults to Filter table. */\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n  /** Accessible name for the non-modal filter dialog. Defaults to the trigger name. */\n  @Prop() menuLabel: string | null = null;\n  /** Accessible name for the category tab list. */\n  @Prop() categoriesLabel: string = 'Filter categories';\n  /** Footer action and date-clear accessible label. */\n  @Prop() clearLabel: string = 'Clear';\n\n  /** Requests a controlled value replacement without closing the popup. */\n  @Event() dsChange!: EventEmitter<FilterMenuChangeDetail>;\n  /** Requests that the consumer clear every filter value. */\n  @Event() dsClear!: EventEmitter<void>;\n  /** Requests a controlled active-category replacement. */\n  @Event() dsActiveFilterChange!: EventEmitter<string>;\n  /** Requests that the controlled popup close. */\n  @Event() dsClose!: EventEmitter<void>;\n  /** Emitted whenever trigger activation changes popup visibility. */\n  @Event() dsOpenChange!: EventEmitter<boolean>;\n  /** Emitted after exit motion and rendered popup removal complete. */\n  @Event() dsAfterClose!: EventEmitter<void>;\n\n  render() {\n    const name = this.ariaLabel?.trim() || 'Filter table';\n    const menuName = this.menuLabel?.trim() || name;\n\n    return (\n      <Host>\n        <ds-filter-menu\n          open={this.open}\n          triggerLabel={this.label}\n          showSelectedCount={false}\n          icon=\"Filters\"\n          size=\"md\"\n          width=\"hug\"\n          hasBorder={true}\n          activeFill={false}\n          collapseLabel={true}\n          align=\"start\"\n          aria-label={name}\n          filters={this.filters}\n          values={this.values}\n          activeFilterId={this.activeFilterId}\n          menuLabel={menuName}\n          categoriesLabel={this.categoriesLabel}\n          clearLabel={this.clearLabel}\n          footerLayout=\"categories-clear\"\n          onDsChange={event => this.forward(event, this.dsChange)}\n          onDsClear={event => this.forward(event, this.dsClear)}\n          onDsActiveFilterChange={event => this.forward(event, this.dsActiveFilterChange)}\n          onDsClose={event => this.forward(event, this.dsClose)}\n          onDsOpenChange={event => {\n            event.stopPropagation();\n            this.open = event.detail;\n            this.dsOpenChange.emit(event.detail);\n          }}\n          onDsAfterClose={event => this.forward(event, this.dsAfterClose)}\n        />\n      </Host>\n    );\n  }\n\n  private forward<T>(event: CustomEvent<T>, emitter: EventEmitter<T>): void {\n    event.stopPropagation();\n    emitter.emit(event.detail);\n  }\n}\n",
+      "content": "import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\nimport type {\n  FilterMenuChangeDetail,\n  FilterMenuFilter,\n  FilterMenuMatchModeChangeDetail,\n  FilterMenuMatchModes,\n  FilterMenuValues,\n} from '../FilterMenu/FilterMenu';\n\n@Component({\n  tag: 'ds-table-filter',\n  styleUrl: 'TableFilter.css',\n  scoped: true,\n})\nexport class TableFilter {\n  /** Controlled popup visibility. */\n  @Prop({ mutable: true }) open: boolean = false;\n  /** Product-owned filter categories and option definitions. */\n  @Prop() filters: FilterMenuFilter[] = [];\n  /** Controlled values keyed by filter id. */\n  @Prop() values: FilterMenuValues = {};\n  /** Controlled any/all match mode keyed by multiple-choice filter id. Defaults to any. */\n  @Prop() matchModes: FilterMenuMatchModes = {};\n  /** Controlled category shown in the option pane. */\n  @Prop() activeFilterId: string | undefined;\n  /** Visible trigger label. */\n  @Prop() label: string = 'Filter';\n  /** Accessible name for the trigger. Defaults to Filter table. */\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n  /** Accessible name for the non-modal filter dialog. Defaults to the trigger name. */\n  @Prop() menuLabel: string | null = null;\n  /** Accessible name for the category tab list. */\n  @Prop() categoriesLabel: string = 'Filter categories';\n  /** Footer action and date-clear accessible label. */\n  @Prop() clearLabel: string = 'Clear';\n\n  /** Requests a controlled value replacement without closing the popup. */\n  @Event() dsChange!: EventEmitter<FilterMenuChangeDetail>;\n  /** Requests that the consumer clear every filter value. */\n  @Event() dsClear!: EventEmitter<void>;\n  /** Requests a controlled any/all mode replacement for a multiple-choice filter. */\n  @Event() dsMatchModeChange!: EventEmitter<FilterMenuMatchModeChangeDetail>;\n  /** Requests a controlled active-category replacement. */\n  @Event() dsActiveFilterChange!: EventEmitter<string>;\n  /** Requests that the controlled popup close. */\n  @Event() dsClose!: EventEmitter<void>;\n  /** Emitted whenever trigger activation changes popup visibility. */\n  @Event() dsOpenChange!: EventEmitter<boolean>;\n  /** Emitted after exit motion and rendered popup removal complete. */\n  @Event() dsAfterClose!: EventEmitter<void>;\n\n  render() {\n    const name = this.ariaLabel?.trim() || 'Filter table';\n    const menuName = this.menuLabel?.trim() || name;\n\n    return (\n      <Host>\n        <ds-filter-menu\n          open={this.open}\n          triggerLabel={this.label}\n          showSelectedCount={false}\n          icon=\"Filters\"\n          size=\"md\"\n          width=\"hug\"\n          hasBorder={true}\n          activeFill={false}\n          collapseLabel={true}\n          align=\"start\"\n          aria-label={name}\n          filters={this.filters}\n          values={this.values}\n          matchModes={this.matchModes}\n          activeFilterId={this.activeFilterId}\n          menuLabel={menuName}\n          categoriesLabel={this.categoriesLabel}\n          clearLabel={this.clearLabel}\n          footerLayout=\"categories-clear\"\n          onDsChange={event => this.forward(event, this.dsChange)}\n          onDsClear={event => this.forward(event, this.dsClear)}\n          onDsMatchModeChange={event => this.forward(event, this.dsMatchModeChange)}\n          onDsActiveFilterChange={event => this.forward(event, this.dsActiveFilterChange)}\n          onDsClose={event => this.forward(event, this.dsClose)}\n          onDsOpenChange={event => {\n            event.stopPropagation();\n            this.open = event.detail;\n            this.dsOpenChange.emit(event.detail);\n          }}\n          onDsAfterClose={event => this.forward(event, this.dsAfterClose)}\n        />\n      </Host>\n    );\n  }\n\n  private forward<T>(event: CustomEvent<T>, emitter: EventEmitter<T>): void {\n    event.stopPropagation();\n    emitter.emit(event.detail);\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

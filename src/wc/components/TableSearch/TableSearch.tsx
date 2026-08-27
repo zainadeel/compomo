@@ -202,6 +202,14 @@ export class TableSearch {
     this.announcement = `${removed.label} search field removed.`;
   }
 
+  private removeField(field: TableSearchField): void {
+    this.dsFieldsChange.emit({
+      selectedFieldIds: this.selectedFieldIds.filter(fieldId => fieldId !== field.id),
+    });
+    this.announcement = `${field.label} search field removed.`;
+    requestAnimationFrame(() => this.inputEl?.focus({ preventScroll: true }));
+  }
+
   private clearSearch(): void {
     if (this.value) this.dsChange.emit('');
     if (this.selectedFieldIds.length) this.dsFieldsChange.emit({ selectedFieldIds: [] });
@@ -218,7 +226,13 @@ export class TableSearch {
       return;
     }
 
-    if (event.key === 'Backspace' && this.value.length === 0 && !this.menuOpen) {
+    if (event.key === 'Backspace' && this.menuOpen) {
+      event.preventDefault();
+      this.closeMenu();
+      return;
+    }
+
+    if (event.key === 'Backspace' && this.value.length === 0) {
       if (this.selectedFields.length) {
         event.preventDefault();
         this.removeLastField();
@@ -302,15 +316,16 @@ export class TableSearch {
           </span>
           <div class="table-search__editor ds-interaction-fill__content">
             {selected.map(field => (
-              <ds-tag
-                class="table-search__tag"
+              <ds-chip
+                class="table-search__chip"
                 key={field.id}
                 label={field.label}
                 size="md"
-                intent="neutral"
-                contrast="faint"
+                state="default"
                 isInset
                 insetDepth="double"
+                isInactive={this.isInactive}
+                onDsRemove={() => this.removeField(field)}
               />
             ))}
             <input
@@ -336,34 +351,49 @@ export class TableSearch {
               onKeyDown={event => this.handleKeyDown(event)}
             />
           </div>
-          {available.length > 0 && (
-            <button
-              type="button"
-              class="table-search__slash ds-control--md ds-focus-ring-inset ds-interaction-fill"
-              tabIndex={-1}
-              aria-label={this.fieldMenuLabel}
-              onMouseDown={event => event.preventDefault()}
-              onClick={() => {
-                this.inputEl?.focus({ preventScroll: true });
-                this.openMenu(false);
-              }}
-            >
-              <span class="ds-text--body-medium ds-text--regular ds-interaction-fill__content">
-                /
-              </span>
-            </button>
-          )}
-          {hasValue && !this.isInactive && (
-            <ds-button-unfilled
-              class="table-search__clear"
-              variant="icon"
-              size="sm"
-              icon="CrossCircle"
-              hasBorder={false}
-              rounded
-              ariaLabel={this.clearLabel}
-              onDsClick={() => this.clearSearch()}
-            />
+          {this.searchFields.length > 0 && (
+            <div class="table-search__actions ds-interaction-fill__content">
+              {this.value.length > 0 && !this.isInactive && (
+                <ds-button-unfilled
+                  class="table-search__clear"
+                  variant="icon"
+                  size="sm"
+                  icon="CrossCircle"
+                  hasBorder={false}
+                  rounded
+                  ariaLabel={this.clearLabel}
+                  onDsClick={() => this.clearSearch()}
+                />
+              )}
+              {this.value.length > 0 && !this.isInactive && (
+                <ds-divider
+                  class="table-search__action-divider"
+                  orientation="vertical"
+                  length="var(--dimension-size-200)"
+                />
+              )}
+              <ds-button-unfilled
+                class="table-search__slash"
+                variant="label"
+                size="md"
+                label="/"
+                labelEmphasis={false}
+                isInset
+                insetDepth="double"
+                hasBorder={false}
+                ariaLabel={this.fieldMenuLabel}
+                focusTabIndex={-1}
+                haspopup="listbox"
+                controls={this.menuOpen ? this.listboxId : undefined}
+                expanded={this.menuOpen}
+                isInactive={this.isInactive || available.length === 0}
+                onMouseDown={(event: MouseEvent) => event.preventDefault()}
+                onDsClick={() => {
+                  this.inputEl?.focus({ preventScroll: true });
+                  this.openMenu(false);
+                }}
+              />
+            </div>
           )}
         </div>
         <span id={this.descriptionId} class="ds-visually-hidden">

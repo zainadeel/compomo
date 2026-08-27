@@ -46,6 +46,7 @@ export type FilterMenuFilterKind = 'single' | 'multiple' | 'boolean' | 'date';
 export type FilterMenuSize = 'lg' | 'md' | 'sm' | 'xs';
 export type FilterMenuWidth = ControlWidth;
 export type FilterMenuFooterLayout = 'summary' | 'categories-clear';
+export type FilterMenuMatchMode = 'any' | 'all';
 type FilterMenuDateMode = 'range' | 'relative';
 
 export interface FilterMenuOption {
@@ -68,10 +69,16 @@ export interface FilterMenuFilter {
 
 export type FilterMenuValue = string[] | boolean | string;
 export type FilterMenuValues = Record<string, FilterMenuValue | undefined>;
+export type FilterMenuMatchModes = Record<string, FilterMenuMatchMode | undefined>;
 
 export interface FilterMenuChangeDetail {
   filterId: string;
   value: FilterMenuValue;
+}
+
+export interface FilterMenuMatchModeChangeDetail {
+  filterId: string;
+  mode: FilterMenuMatchMode;
 }
 
 let filterMenuId = 0;
@@ -130,6 +137,8 @@ export class FilterMenu {
   @Prop() filters: FilterMenuFilter[] = [];
   /** Controlled values keyed by filter id. */
   @Prop() values: FilterMenuValues = {};
+  /** Controlled any/all match mode keyed by multiple-choice filter id. Defaults to any. */
+  @Prop() matchModes: FilterMenuMatchModes = {};
   /** Controlled category shown in the option pane. */
   @Prop() activeFilterId: string | undefined;
   /** External trigger element to position against. */
@@ -169,11 +178,14 @@ export class FilterMenu {
   @State() private dateModeByFilter: Record<string, FilterMenuDateMode> = {};
   @State() private calendarMonthByFilter: Record<string, string> = {};
   @State() private pendingRangeStartByFilter: Record<string, string> = {};
+  @State() private previewRangeEndByFilter: Record<string, string> = {};
 
   /** Requests a controlled value replacement without closing the popup. */
   @Event() dsChange!: EventEmitter<FilterMenuChangeDetail>;
   /** Requests that the consumer clear every filter value. */
   @Event() dsClear!: EventEmitter<void>;
+  /** Requests a controlled any/all mode replacement for a multiple-choice filter. */
+  @Event() dsMatchModeChange!: EventEmitter<FilterMenuMatchModeChangeDetail>;
   /** Requests a controlled active-category replacement. */
   @Event() dsActiveFilterChange!: EventEmitter<string>;
   /** Requests that the controlled popup close. */
@@ -192,6 +204,7 @@ export class FilterMenu {
   private closingSnapshot: {
     filters: FilterMenuFilter[];
     values: FilterMenuValues;
+    matchModes: FilterMenuMatchModes;
     activeFilterId: string | undefined;
   } | null = null;
 
@@ -392,6 +405,7 @@ export class FilterMenu {
     this.dateModeByFilter = {};
     this.calendarMonthByFilter = {};
     this.pendingRangeStartByFilter = {};
+    this.previewRangeEndByFilter = {};
     this.dsAfterClose.emit();
   }
 
@@ -408,6 +422,7 @@ export class FilterMenu {
           Array.isArray(value) ? [...value] : value,
         ])
       ),
+      matchModes: { ...this.matchModes },
       activeFilterId: this.activeFilterId,
     };
   }
@@ -582,6 +597,7 @@ export class FilterMenu {
       delete next[filter.id];
       this.pendingRangeStartByFilter = next;
     }
+    if (mode === 'relative') this.clearCalendarRangePreview(filter.id);
   }
 
   private calendarMonth(filterId: string, value: FilterMenuValue | undefined): string {
@@ -591,6 +607,7 @@ export class FilterMenu {
   }
 
   private moveCalendarMonth(filterId: string, month: string, offset: number) {
+    this.clearCalendarRangePreview(filterId);
     this.calendarMonthByFilter = {
       ...this.calendarMonthByFilter,
       [filterId]: shiftFilterMenuCalendarMonth(month, offset),
@@ -598,6 +615,7 @@ export class FilterMenu {
   }
 
   private selectCalendarDate(filterId: string, value: string) {
+    this.clearCalendarRangePreview(filterId);
     const pendingStart = this.pendingRangeStartByFilter[filterId];
     const next = { ...this.pendingRangeStartByFilter };
     if (pendingStart) delete next[filterId];
@@ -609,7 +627,21 @@ export class FilterMenu {
     });
   }
 
+  private previewCalendarRange(filterId: string, value: string) {
+    if (!this.pendingRangeStartByFilter[filterId]) return;
+    if (this.previewRangeEndByFilter[filterId] === value) return;
+    this.previewRangeEndByFilter = { ...this.previewRangeEndByFilter, [filterId]: value };
+  }
+
+  private clearCalendarRangePreview(filterId: string) {
+    if (!this.previewRangeEndByFilter[filterId]) return;
+    const next = { ...this.previewRangeEndByFilter };
+    delete next[filterId];
+    this.previewRangeEndByFilter = next;
+  }
+
   private focusCalendarDate(filterId: string, value: string) {
+    this.previewCalendarRange(filterId, value);
     const targetMonth = filterMenuCalendarMonth(value);
     if (this.calendarMonthByFilter[filterId] !== targetMonth) {
       this.calendarMonthByFilter = { ...this.calendarMonthByFilter, [filterId]: targetMonth };
@@ -698,6 +730,10 @@ export class FilterMenu {
     const month = this.calendarMonth(filter.id, value);
     const days = filterMenuCalendarDays(month);
     const today = filterMenuToday();
+    const pendingStart = this.pendingRangeStartByFilter[filter.id];
+    const previewEnd = this.previewRangeEndByFilter[filter.id];
+    const previewStart = pendingStart && previewEnd ? [pendingStart, previewEnd].sort()[0] : null;
+    const previewFinish = pendingStart && previewEnd ? [pendingStart, previewEnd].sort()[1] : null;
     const preferredFocus =
       this.pendingRangeStartByFilter[filter.id] ??
       range?.end ??
@@ -742,11 +778,23 @@ export class FilterMenu {
           class="filter-menu__calendar-grid"
           role="grid"
           aria-label={filterMenuCalendarMonthLabel(month)}
+          onMouseLeave={() => this.clearCalendarRangePreview(filter.id)}
         >
           {days.map(day => {
-            const inRange = Boolean(range && day.value >= range.start && day.value <= range.end);
+            const selectedInRange = Boolean(
+              range && day.value >= range.start && day.value <= range.end
+            );
+            const previewInRange = Boolean(
+              previewStart &&
+              previewFinish &&
+              day.value >= previewStart &&
+              day.value <= previewFinish
+            );
+            const inRange = previewInRange || selectedInRange;
             const rangeEdge = Boolean(
-              range && (day.value === range.start || day.value === range.end)
+              previewStart
+                ? day.value === pendingStart
+                : range && (day.value === range.start || day.value === range.end)
             );
             const textColor = rangeEdge
               ? 'on-bold'
@@ -765,13 +813,16 @@ export class FilterMenu {
                   'filter-menu__calendar-day--outside': !day.inMonth,
                   'filter-menu__calendar-day--today': day.value === today,
                   'filter-menu__calendar-day--in-range': inRange,
+                  'filter-menu__calendar-day--range-preview': previewInRange,
                   'filter-menu__calendar-day--range-edge': rangeEdge,
                   'ds-focus-ring-inset': true,
                   'ds-interaction-fill': true,
                 }}
                 aria-label={day.label}
-                aria-selected={inRange ? 'true' : 'false'}
+                aria-selected={selectedInRange ? 'true' : 'false'}
                 tabIndex={day.value === focusDate ? 0 : -1}
+                onMouseEnter={() => this.previewCalendarRange(filter.id, day.value)}
+                onFocus={() => this.previewCalendarRange(filter.id, day.value)}
                 onClick={() => this.selectCalendarDate(filter.id, day.value)}
                 onKeyDown={(event: KeyboardEvent) =>
                   this.handleCalendarDayKeyDown(event, filter.id, day.value)
@@ -994,6 +1045,34 @@ export class FilterMenu {
     );
   }
 
+  private renderMatchModeFooter(filter: FilterMenuFilter, matchModes: FilterMenuMatchModes) {
+    const mode: FilterMenuMatchMode = matchModes[filter.id] === 'all' ? 'all' : 'any';
+    const nextMode: FilterMenuMatchMode = mode === 'any' ? 'all' : 'any';
+    return (
+      <div class="filter-menu__match-mode-footer ds-choice-footer">
+        <div class="filter-menu__match-mode-content ds-choice-footer__content ds-control--md">
+          <ds-text as="span" variant="text-body-medium" color="secondary">
+            Limit results to
+          </ds-text>
+          <button
+            class="filter-menu__match-mode-toggle ds-text-action ds-focus-ring"
+            type="button"
+            aria-label={`Limit ${filter.label} results to ${nextMode} selected`}
+            onClick={() => this.dsMatchModeChange.emit({ filterId: filter.id, mode: nextMode })}
+            onKeyDown={(event: KeyboardEvent) => this.handlePanelKeyDown(event, filter.id)}
+          >
+            <ds-text as="span" variant="text-body-medium" color="inherit">
+              {mode}
+            </ds-text>
+          </button>
+          <ds-text as="span" variant="text-body-medium" color="secondary">
+            selected
+          </ds-text>
+        </div>
+      </div>
+    );
+  }
+
   render() {
     const state =
       this.closing && this.closingSnapshot
@@ -1001,6 +1080,7 @@ export class FilterMenu {
         : {
             filters: this.filters,
             values: this.values,
+            matchModes: this.matchModes,
             activeFilterId: this.activeFilterId,
           };
     const activeFilter = this.selectedFilter(state.filters, state.activeFilterId);
@@ -1199,21 +1279,28 @@ export class FilterMenu {
                     role="tabpanel"
                     aria-labelledby={`${this.generatedId}-${activeFilter.id}-tab`}
                   >
-                    {activeFilter.kind === 'date' ? (
-                      <div key={activeFilter.id} class="filter-menu__option-list--date">
-                        {this.renderOptions(activeFilter, state.values)}
-                      </div>
-                    ) : (
-                      <div
-                        key={activeFilter.id}
-                        class="filter-menu__option-list ds-choice-list ds-chrome-column ds-chrome-space--sm"
-                        role="listbox"
-                        aria-label={activeFilter.label}
-                        aria-multiselectable={activeFilter.kind === 'multiple' ? 'true' : undefined}
-                      >
-                        {this.renderOptions(activeFilter, state.values)}
-                      </div>
-                    )}
+                    <div class="filter-menu__options-content">
+                      {activeFilter.kind === 'date' ? (
+                        <div key={activeFilter.id} class="filter-menu__option-list--date">
+                          {this.renderOptions(activeFilter, state.values)}
+                        </div>
+                      ) : (
+                        <div
+                          key={activeFilter.id}
+                          class="filter-menu__option-list ds-choice-list ds-chrome-column ds-chrome-space--sm"
+                          role="listbox"
+                          aria-label={activeFilter.label}
+                          aria-multiselectable={
+                            activeFilter.kind === 'multiple' ? 'true' : undefined
+                          }
+                        >
+                          {this.renderOptions(activeFilter, state.values)}
+                        </div>
+                      )}
+                    </div>
+                    {activeFilter.kind === 'multiple'
+                      ? this.renderMatchModeFooter(activeFilter, state.matchModes)
+                      : null}
                   </div>
                 </div>
 

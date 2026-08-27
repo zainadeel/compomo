@@ -2,6 +2,8 @@ import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';
 import type {
   FilterMenuChangeDetail,
   FilterMenuFilter,
+  FilterMenuMatchModeChangeDetail,
+  FilterMenuMatchModes,
   FilterMenuValues,
 } from '../FilterMenu/FilterMenu';
 
@@ -17,6 +19,8 @@ export class TableFilter {
   @Prop() filters: FilterMenuFilter[] = [];
   /** Controlled values keyed by filter id. */
   @Prop() values: FilterMenuValues = {};
+  /** Controlled any/all match mode keyed by multiple-choice filter id. Defaults to any. */
+  @Prop() matchModes: FilterMenuMatchModes = {};
   /** Controlled category shown in the option pane. */
   @Prop() activeFilterId: string | undefined;
   /** Visible trigger label. */
@@ -34,6 +38,8 @@ export class TableFilter {
   @Event() dsChange!: EventEmitter<FilterMenuChangeDetail>;
   /** Requests that the consumer clear every filter value. */
   @Event() dsClear!: EventEmitter<void>;
+  /** Requests a controlled any/all mode replacement for a multiple-choice filter. */
+  @Event() dsMatchModeChange!: EventEmitter<FilterMenuMatchModeChangeDetail>;
   /** Requests a controlled active-category replacement. */
   @Event() dsActiveFilterChange!: EventEmitter<string>;
   /** Requests that the controlled popup close. */
@@ -63,6 +69,7 @@ export class TableFilter {
           aria-label={name}
           filters={this.filters}
           values={this.values}
+          matchModes={this.matchModes}
           activeFilterId={this.activeFilterId}
           menuLabel={menuName}
           categoriesLabel={this.categoriesLabel}
@@ -70,6 +77,7 @@ export class TableFilter {
           footerLayout="categories-clear"
           onDsChange={event => this.forward(event, this.dsChange)}
           onDsClear={event => this.forward(event, this.dsClear)}
+          onDsMatchModeChange={event => this.forward(event, this.dsMatchModeChange)}
           onDsActiveFilterChange={event => this.forward(event, this.dsActiveFilterChange)}
           onDsClose={event => this.forward(event, this.dsClose)}
           onDsOpenChange={event => {

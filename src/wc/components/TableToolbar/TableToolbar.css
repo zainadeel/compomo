@@ -54,8 +54,8 @@
 }
 
 .table-toolbar__search {
-  flex: 0 1 var(--dimension-panel-width-xs);
-  max-inline-size: var(--dimension-panel-width-xs);
+  flex: 1 1 0;
+  max-inline-size: none;
   contain: inline-size;
 }
 

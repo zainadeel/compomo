@@ -1,6 +1,7 @@
 import { h } from '@stencil/core';
 import {
   resolveTableCellPresentation,
+  tableCellTrackStackBlockSize,
   tableCellTextOverflowProps,
   type TableCellPresentation,
 } from './table-cell-model';
@@ -11,7 +12,7 @@ import {
 } from './table-action-menu';
 import { tableRowSelectionLabel } from './table-model';
 import type { TableRenderModel } from './table-render-model';
-import type { TableHighlightMatcher } from './table-highlight';
+import { TABLE_NO_HIGHLIGHT_MATCHER, type TableHighlightMatcher } from './table-highlight';
 import type { TableCellActionDetail, TableCellTextRun, TableColumn, TableRow } from './table-types';
 import { resolveSafeUrl } from '../../utils/safe-url';
 
@@ -23,6 +24,7 @@ export interface TableRowViewOptions {
   actionMenuElementId: string;
   actionMenu: { rowId: string; columnId: string } | null;
   highlightMatcher: TableHighlightMatcher;
+  highlightFieldIds: string[];
   ariaRowIndex?: number;
   variableVirtualSize?: boolean;
   rowKey?: string;
@@ -50,6 +52,7 @@ export function renderTableRow({
   actionMenuElementId,
   actionMenu,
   highlightMatcher,
+  highlightFieldIds,
   ariaRowIndex,
   variableVirtualSize = false,
   rowKey = row.id,
@@ -78,6 +81,7 @@ export function renderTableRow({
       actionMenuElementId,
       actionMenu,
       highlightMatcher,
+      highlightFieldIds,
       renderStickyEdge,
       onCellAction,
       onActionMenuToggle,
@@ -153,6 +157,7 @@ interface TableCellViewOptions {
   actionMenuElementId: string;
   actionMenu: { rowId: string; columnId: string } | null;
   highlightMatcher: TableHighlightMatcher;
+  highlightFieldIds: string[];
   renderStickyEdge: (sticky: TableColumn['sticky']) => unknown;
   onCellAction: (detail: TableCellActionDetail) => void;
   onActionMenuToggle: (row: TableRow, column: TableColumn, event: MouseEvent) => void;
@@ -163,6 +168,7 @@ function renderTableCell(options: TableCellViewOptions) {
   const align = column.align ?? 'start';
   const cell = resolveTableCellPresentation(row.cells[column.id], column);
   const tagCell = cell.kind === 'tag';
+  const tagsCell = cell.kind === 'tags';
   const iconCell = cell.kind === 'icon';
   const iconTextCell = cell.kind === 'icon-text';
   const imageCell = cell.kind === 'image';
@@ -174,6 +180,7 @@ function renderTableCell(options: TableCellViewOptions) {
   const emptyCell = cell.kind === 'empty';
   const blankCell = cell.kind === 'blank';
   const tagVariant = tagCell ? cell.variant : undefined;
+  const tagsVariant = tagsCell ? cell.variant : undefined;
   const textVariant = textCell ? cell.variant : undefined;
   const imageVariant = imageCell ? cell.variant : undefined;
   const iconTextVariant = iconTextCell ? cell.variant : undefined;
@@ -187,6 +194,8 @@ function renderTableCell(options: TableCellViewOptions) {
         [`ds-table__cell--align-${align}`]: true,
         'ds-table__cell--tag': tagCell,
         [`ds-table__cell--tag-${tagVariant}`]: tagCell,
+        'ds-table__cell--tags': tagsCell,
+        [`ds-table__cell--tags-${tagsVariant}`]: tagsCell,
         'ds-table__cell--icon': iconCell,
         'ds-table__cell--icon-text': iconTextCell,
         [`ds-table__cell--icon-text-${iconTextVariant}`]: iconTextCell,
@@ -210,7 +219,10 @@ function renderTableCell(options: TableCellViewOptions) {
       }}
       data-column-id={column.id}
       data-cell-type={cell.cellType}
-      data-cell-variant={tagVariant ?? textVariant ?? imageVariant ?? iconTextVariant}
+      data-cell-variant={
+        tagVariant ?? tagsVariant ?? textVariant ?? imageVariant ?? iconTextVariant
+      }
+      data-cell-tracks={tagsCell ? cell.tracks : undefined}
     >
       <span class="ds-table__cell-content ds-interaction-fill__content">
         {renderTableCellValue(cell, options)}
@@ -264,7 +276,7 @@ function renderTableCellValue(cell: TableCellPresentation, options: TableCellVie
             label={cell.iconLabel}
           />
         </span>
-        {renderTextCopy(cell, options.highlightMatcher)}
+        {renderTextCopy(cell, options)}
       </span>
     );
   }
@@ -348,20 +360,46 @@ function renderTableCellValue(cell: TableCellPresentation, options: TableCellVie
           lineTruncation={1}
           data-table-truncate=""
         >
-          {renderHighlightedText(value.text, options.highlightMatcher)}
+          {renderHighlightedText(
+            value.text,
+            tableCellFieldMatcher(options, variant === 'tag-with-text' ? 1 : 0)
+          )}
         </ds-text>
         {variant === 'text-with-tag' && <span class="ds-table__cell-tag-control-track">{tag}</span>}
       </span>
     );
   }
 
+  if (cell.kind === 'tags') {
+    return (
+      <span
+        class="ds-table__cell-tags"
+        style={{ '--_table-cell-tags-min-block-size': tableCellTrackStackBlockSize(cell.tracks) }}
+      >
+        {cell.value.items.map((item, index) => (
+          <ds-tag
+            key={`${item.label}-${index}`}
+            label={item.label}
+            intent={item.intent ?? 'neutral'}
+            contrast={item.contrast ?? 'faint'}
+            size="sm"
+            icon={item.icon ?? ''}
+            rounded={item.rounded ?? false}
+            isInset
+            insetDepth="single"
+          />
+        ))}
+      </span>
+    );
+  }
+
   if (cell.kind !== 'text') return null;
-  return renderTextCopy(cell, options.highlightMatcher);
+  return renderTextCopy(cell, options);
 }
 
 function renderTextCopy(
   cell: Extract<TableCellPresentation, { kind: 'text' | 'icon-text' }>,
-  highlightMatcher: TableHighlightMatcher
+  options: TableCellViewOptions
 ) {
   const text = cell.value;
   const overflow = tableCellTextOverflowProps(cell.lineClamp);
@@ -378,7 +416,7 @@ function renderTextCopy(
       fontFeature={text.fontFeature ?? 'normal'}
       data-table-truncate={truncateAttr(cell.lineClamp)}
     >
-      {renderHighlightedText(text.primary, highlightMatcher)}
+      {renderHighlightedText(text.primary, tableCellFieldMatcher(options, 0))}
     </ds-text>
   );
 
@@ -402,7 +440,7 @@ function renderTextCopy(
         defaultColor: primaryText ? 'primary' : 'secondary',
         wholeColor: text.secondaryColor,
         lineClamp: cell.lineClamp,
-        highlightMatcher,
+        highlightMatcherForRun: runIndex => tableCellFieldMatcher(options, 1 + runIndex),
       })}
       {renderTextTrack(text.tertiary, {
         track: 'tertiary',
@@ -410,7 +448,8 @@ function renderTextCopy(
         defaultColor: 'secondary',
         wholeColor: text.tertiaryColor,
         lineClamp: cell.lineClamp,
-        highlightMatcher,
+        highlightMatcherForRun: runIndex =>
+          tableCellFieldMatcher(options, 1 + (text.secondary?.length ?? 0) + runIndex),
       })}
     </span>
   );
@@ -424,7 +463,7 @@ function renderTextTrack(
     defaultColor: 'primary' | 'secondary';
     wholeColor?: TableCellTextRun['color'];
     lineClamp: Extract<TableCellPresentation, { kind: 'text' | 'icon-text' }>['lineClamp'];
-    highlightMatcher: TableHighlightMatcher;
+    highlightMatcherForRun: (runIndex: number) => TableHighlightMatcher;
   }
 ) {
   if (!runs?.length) return null;
@@ -443,7 +482,7 @@ function renderTextTrack(
         wrap={overflow.wrap}
         data-table-truncate={truncateAttr(options.lineClamp)}
       >
-        {renderHighlightedText(runs[0].text, options.highlightMatcher)}
+        {renderHighlightedText(runs[0].text, options.highlightMatcherForRun(0))}
       </ds-text>
     );
   }
@@ -473,7 +512,7 @@ function renderTextTrack(
           wrap={overflow.wrap}
           data-table-truncate={truncateAttr(options.lineClamp)}
         >
-          {renderHighlightedText(run.text, options.highlightMatcher)}
+          {renderHighlightedText(run.text, options.highlightMatcherForRun(index))}
         </ds-text>,
       ])}
     </span>
@@ -488,9 +527,23 @@ function renderHighlightedText(value: string | number | undefined, matcher: Tabl
         {segment.text}
       </mark>
     ) : (
-      segment.text
+      <span key={`text-${index}`}>{segment.text}</span>
     )
   );
+}
+
+function tableCellFieldMatcher(
+  options: TableCellViewOptions,
+  fieldIndex: number
+): TableHighlightMatcher {
+  const selected = options.highlightFieldIds;
+  if (selected.length === 0 || selected.includes(options.column.id)) {
+    return options.highlightMatcher;
+  }
+  const fieldId = options.column.headerSegments?.[fieldIndex]?.sortKey;
+  return fieldId && selected.includes(fieldId)
+    ? options.highlightMatcher
+    : TABLE_NO_HIGHLIGHT_MATCHER;
 }
 
 function truncateAttr(

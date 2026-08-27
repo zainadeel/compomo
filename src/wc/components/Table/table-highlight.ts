@@ -5,6 +5,10 @@ export interface TableHighlightSegment {
 
 export type TableHighlightMatcher = (value: string | number) => TableHighlightSegment[];
 
+export const TABLE_NO_HIGHLIGHT_MATCHER: TableHighlightMatcher = value => [
+  { text: String(value), match: false },
+];
+
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /**
@@ -22,7 +26,7 @@ export function createTableHighlightMatcher(terms: string[]): TableHighlightMatc
   ).sort((left, right) => right.length - left.length);
 
   if (!normalizedTerms.length) {
-    return value => [{ text: String(value), match: false }];
+    return TABLE_NO_HIGHLIGHT_MATCHER;
   }
 
   const expression = new RegExp(normalizedTerms.map(escapeRegExp).join('|'), 'giu');

@@ -199,6 +199,14 @@ test('resolves labels, column constraints, and server group totals defensively',
     'Pending review'
   );
   assert.equal(
+    tableCellPrimary({
+      kind: 'tags',
+      tracks: 2,
+      items: [{ label: 'Harsh braking' }, { label: 'Close following' }],
+    }),
+    'Harsh braking, Close following'
+  );
+  assert.equal(
     tableCellPrimary({ kind: 'icon', icon: 'DocumentInverted', label: 'Has notes' }),
     null
   );

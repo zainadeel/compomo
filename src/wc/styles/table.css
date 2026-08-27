@@ -915,6 +915,38 @@
   min-block-size: 0;
 }
 
+/*
+ * Multiple Tags use the 20px small single-inset control so each wrapped line
+ * occupies one later-track slot. The 2px block inset forms the 24px first
+ * track; subsequent lines add a 20px track and 2px gap, preserving the named
+ * row ladder for any declared number of tracks.
+ */
+:where(.ds-table__cell--tags .ds-table__cell-content) {
+  min-block-size: 0;
+}
+
+:where(.ds-table__cell-tags) {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  align-items: center;
+  gap: var(--dimension-space-025);
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  min-block-size: var(
+    --_table-cell-tags-min-block-size,
+    var(--_table-cell-track-min-block-size)
+  );
+  padding-block: var(--dimension-space-025);
+}
+
+:where(.ds-table__cell-tags > ds-tag) {
+  flex: none;
+  max-inline-size: 100%;
+}
+
 :where(.ds-table__cell-tag-stack) {
   display: flex;
   flex-direction: column;

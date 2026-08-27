@@ -362,6 +362,64 @@ threeTrack.rows = [
   },
 ];
 
+const multipleTags = document.getElementById('multiple-tags');
+multipleTags.columns = [
+  { id: 'vehicle', header: 'Vehicle', size: 160 },
+  { id: 'behaviors', header: 'Detected behaviors', size: 160 },
+  { id: 'status', header: 'Status', size: 120 },
+];
+multipleTags.rows = [
+  {
+    id: 'multiple-tags-two-tracks',
+    cells: {
+      vehicle: 'Vehicle 2841',
+      behaviors: {
+        kind: 'tags',
+        tracks: 2,
+        items: [
+          { label: 'Harsh braking', intent: 'warning' },
+          { label: 'Close following', intent: 'negative' },
+        ],
+      },
+      status: 'Two tracks',
+    },
+  },
+  {
+    id: 'multiple-tags-three-tracks',
+    cells: {
+      vehicle: 'Vehicle 1904',
+      behaviors: {
+        kind: 'tags',
+        tracks: 3,
+        items: [
+          { label: 'Harsh braking', intent: 'warning' },
+          { label: 'Close following', intent: 'negative' },
+          { label: 'Lane departure', intent: 'caution' },
+        ],
+      },
+      status: 'Three tracks',
+    },
+  },
+  {
+    id: 'multiple-tags-five-tracks',
+    cells: {
+      vehicle: 'Vehicle 2208',
+      behaviors: {
+        kind: 'tags',
+        tracks: 5,
+        items: [
+          { label: 'Harsh braking', intent: 'warning' },
+          { label: 'Close following', intent: 'negative' },
+          { label: 'Lane departure', intent: 'caution' },
+          { label: 'Rolling stop', intent: 'warning' },
+          { label: 'Seat belt off', intent: 'negative' },
+        ],
+      },
+      status: 'Five tracks',
+    },
+  },
+];
+
 const wrapTwo = document.getElementById('wrap-two');
 wrapTwo.columns = [
   { id: 'name', header: 'Tracks' },

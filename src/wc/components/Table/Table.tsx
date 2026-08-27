@@ -127,6 +127,8 @@ export class Table {
   @Prop() collapsedGroupIds: string[] = [];
   /** Literal terms to highlight in table-owned text cells. Applications still own filtering. */
   @Prop() highlightTerms: string[] = [];
+  /** Optional TableSearch field identities that restrict which data-point tracks are highlighted. */
+  @Prop() highlightFieldIds: string[] = [];
 
   /** Required accessible table name, retained as a native caption. */
   @Prop() caption!: string;
@@ -1703,6 +1705,7 @@ export class Table {
       actionMenuElementId: this.actionMenuElementId,
       actionMenu: this.actionMenu,
       highlightMatcher: this.highlightMatcher,
+      highlightFieldIds: this.highlightFieldIds,
       ariaRowIndex,
       variableVirtualSize,
       rowKey,
