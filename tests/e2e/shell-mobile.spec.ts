@@ -641,7 +641,7 @@ test.describe('Responsive mobile shell foundation', () => {
     }
   );
 
-  test('preserves a slotted tool owner and form value across destination and breakpoint changes', async ({
+  test('preserves a slotted tool owner and form value across destination and breakpoint changes @pr-critical', async ({
     page,
   }) => {
     await page.getByRole('button', { name: 'Search' }).click();

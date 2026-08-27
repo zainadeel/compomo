@@ -239,7 +239,9 @@ test('pauses and resumes the remaining timeout on hover', async ({ page }) => {
   expect(close).toEqual({ id: 'timed', reason: 'timeout' });
 });
 
-test('supports F6 access, actions, Escape dismissal, and focus restoration', async ({ page }) => {
+test('supports F6 access, actions, Escape dismissal, and focus restoration @pr-critical', async ({
+  page,
+}) => {
   await page.evaluate(() => {
     (window as ToastTestWindow).__addToast({
       id: 'action',
@@ -311,7 +313,9 @@ test('announces high priority separately until users enter the region', async ({
   await expect(visual).not.toHaveAttribute('aria-hidden');
 });
 
-test('updates one record through promise loading and success states', async ({ page }) => {
+test('updates one record through promise loading and success states @pr-critical', async ({
+  page,
+}) => {
   await page.evaluate(() => {
     (window as ToastTestWindow).__startToastPromise();
   });

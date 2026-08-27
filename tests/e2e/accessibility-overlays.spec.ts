@@ -20,7 +20,9 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('plain menu restores focus on Escape but lets Tab continue forward', async ({ page }) => {
+test('plain menu restores focus on Escape but lets Tab continue forward @pr-critical', async ({
+  page,
+}) => {
   const anchor = page.locator('#menu-anchor');
   await anchor.click();
   const menu = page.getByRole('menu', { name: 'Actions' });
@@ -465,7 +467,7 @@ test('modal surface and backdrop animate together when entering and exiting', as
 });
 
 test(
-  'modal uses the top layer, reports dismissal reasons, and restores its trigger',
+  'modal uses the top layer, reports dismissal reasons, and restores its trigger @pr-critical',
   openModalAxe,
   async ({ page }) => {
     const trigger = page.locator('#modal-trigger');

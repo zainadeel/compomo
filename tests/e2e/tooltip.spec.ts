@@ -22,7 +22,7 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('links aria-describedby only while the popup exists and preserves consumer ids', async ({
+test('links aria-describedby only while the popup exists and preserves consumer ids @pr-critical', async ({
   page,
 }) => {
   const anchor = page.locator('#aria-anchor');
@@ -40,7 +40,9 @@ test('links aria-describedby only while the popup exists and preserves consumer 
   await expect(anchor).toBeFocused();
 });
 
-test('tracks its trigger through nested scrolling and viewport resize', async ({ page }) => {
+test('tracks its trigger through nested scrolling and viewport resize @pr-critical', async ({
+  page,
+}) => {
   const scroller = page.locator('#scroll-container');
   await scroller.evaluate(element => {
     element.scrollTop = 300;
@@ -134,7 +136,7 @@ test('removes tooltip motion when reduced motion is requested', async ({ page })
 test.describe('touch input', () => {
   test.use({ hasTouch: true });
 
-  test('does not open a visual-only tooltip after tapping', async ({ page }) => {
+  test('does not open a visual-only tooltip after tapping @pr-critical', async ({ page }) => {
     await page.locator('#touch-anchor').tap();
     await expect(page.getByRole('tooltip', { name: 'Touch should not open' })).toHaveCount(0);
   });

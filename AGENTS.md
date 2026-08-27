@@ -43,6 +43,7 @@ React, and Vue adapters:
 ```bash
 npm run build
 npm run verify:local
+npm run verify:local:full
 npm run test
 npm run test:e2e
 npm run typecheck

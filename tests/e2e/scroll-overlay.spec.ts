@@ -44,7 +44,9 @@ test('keeps a 48px fade behind an inset md footer action at every scroll positio
   await expect(content).not.toHaveCSS('mask-image', 'none');
 });
 
-test('tracks a growing footer and expands both clearance and fade depth', async ({ page }) => {
+test('tracks a growing footer and expands both clearance and fade depth @pr-critical', async ({
+  page,
+}) => {
   const frame = page.locator('#frame');
   const action = page.locator('#action');
 

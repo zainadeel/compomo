@@ -47,18 +47,22 @@ helper prints the exact scoped restart command when that is required.
 
 ## Browser tiers and ownership
 
-Every rendered test runs in Chromium. Firefox and WebKit repeat the contract
-specs selected in `tests/e2e/browser-tier.ts`: native forms and focus, anchored
-overlays, scrolling, touch, responsive shell ownership, virtualization, and
-motion lifecycle. Keep that list conservative when an entire spec owns
-browser-sensitive behavior.
+The pull-request gate runs the focused `@pr-critical` and `@cross-browser`
+contracts in Chromium, Firefox, and WebKit. These tests cover native forms and
+focus, anchored overlays, scrolling, touch, responsive shell ownership,
+virtualization, and motion lifecycle. The unit guard in
+`tests/browser-tier.test.ts` keeps every engine-sensitive behavior family in
+that set.
 
-Within a cross-browser contract spec, a reviewed assertion may use
+The full rendered Chromium suite is the local preflight and remains available
+as `npm run test:e2e:chromium`. A reviewed assertion may use
 `chromiumOnly(owner, reason)` from `tests/e2e/browser-tier.ts` when Chromium is
 the authoritative layer for engine-neutral composition, token-backed geometry,
 or an integrated Axe fixture already covered by the Storybook state matrix. The
 reason is required and stays beside the test so reviewers can evaluate the tier
-without consulting another policy list.
+without consulting another policy list. Mark a small, representative contract
+`@pr-critical` when it belongs in the always-on three-engine pull-request gate;
+use `@cross-browser` when cross-engine behavior is itself the assertion.
 
 Do not use the Chromium-only tier for browser APIs, focus behavior, native form
 association, popup positioning, scrolling, responsive owner identity, direct
@@ -78,12 +82,14 @@ Rendered tests should assert public behavior or stable geometry contracts, not
 incidental implementation classes unless the class itself is the tested shared
 recipe.
 
-Before opening a pull request, run `npm run verify:local` plus the focused
+Before opening a pull request, run `npm run verify:local:full` plus the focused
 rendered spec for every affected component. Use `npm run test:e2e:chromium --
 tests/e2e/<spec>.spec.ts` for ordinary rendered changes. Run the corresponding
 WebKit contract locally, and the Docker-backed Firefox helper where browser APIs
 or engine-sensitive behavior changed. Use `npm run test:e2e:webkit --
-tests/e2e/<spec>.spec.ts` for the local WebKit contract.
+tests/e2e/<spec>.spec.ts` for the local WebKit contract. Use `npm run
+test:e2e:pr` to reproduce the three-engine pull-request gate on Linux; macOS
+omits native Firefox unless it is deliberately enabled.
 
 Use `tests/e2e/rendered-geometry.ts` for measured layout contracts. Its default
 half-pixel tolerance covers ordinary CSS subpixel rounding without accepting a

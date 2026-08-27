@@ -10,7 +10,7 @@ test.describe('BarNav responsive overflow', () => {
     ).toBeVisible({ timeout: 5000 });
   });
 
-  test('narrow shell width on first paint commits overflow (no stuck expanded row)', async ({
+  test('narrow shell width on first paint commits overflow (no stuck expanded row) @pr-critical', async ({
     page,
   }) => {
     await page.setViewportSize({ width: 480, height: 720 });
