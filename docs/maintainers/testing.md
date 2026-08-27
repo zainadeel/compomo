@@ -70,13 +70,16 @@ touch, or animation lifecycle. Those cases continue in Chromium, Firefox, and
 WebKit.
 
 Storybook owns generic component Axe coverage across documented light and dark
-states. Keep a fixture Axe scan only when it covers an integrated, open, focused,
-loading, live-region, or semantic-document state that the component stories do
-not reproduce. Retained fixture scans use `chromiumOnly('accessibility', reason)`;
-the interaction that establishes the state remains cross-browser in its own
-test. When removing a scan or consolidating rendered coverage, identify its
-authoritative replacement in the pull request. Git history keeps that decision
-with the deletion without creating a second test catalog that must stay in sync.
+states. Light mode runs the complete serious/critical rule set. Dark mode repeats
+the CSS-dependent contrast rules across the same component states; theme-
+invariant semantics are not scanned twice. Keep a fixture Axe scan only when it
+covers an integrated, open, focused, loading, live-region, or semantic-document
+state that the component stories do not reproduce. Retained fixture scans use
+`chromiumOnly('accessibility', reason)`; the interaction that establishes the
+state remains cross-browser in its own test. When removing a scan or
+consolidating rendered coverage, identify its authoritative replacement in the
+pull request. Git history keeps that decision with the deletion without creating
+a second test catalog that must stay in sync.
 
 Rendered tests should assert public behavior or stable geometry contracts, not
 incidental implementation classes unless the class itself is the tested shared

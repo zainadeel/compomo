@@ -82,12 +82,18 @@ afterEach(async ({ task }) => {
   const roots = markComponentRoots(components);
   if (roots.length === 0) return;
 
+  const isDarkTheme = document.documentElement.dataset['theme'] === 'dark';
   const results = await axe.run(
     {
       include: [[`[${componentRootAttribute}]`]],
     },
     {
       resultTypes: ['violations'],
+      // Component semantics are theme-invariant and run in full in light mode.
+      // Dark mode retains the CSS-dependent checks that can change with color tokens.
+      runOnly: isDarkTheme
+        ? { type: 'rule', values: ['color-contrast', 'link-in-text-block'] }
+        : undefined,
       selectors: false,
       rules: {
         region: { enabled: false },
