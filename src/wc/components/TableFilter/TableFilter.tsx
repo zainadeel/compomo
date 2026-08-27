@@ -52,6 +52,7 @@ export class TableFilter {
         <ds-filter-menu
           open={this.open}
           triggerLabel={this.label}
+          showSelectedCount={false}
           icon="Filters"
           size="md"
           width="hug"
@@ -66,6 +67,7 @@ export class TableFilter {
           menuLabel={menuName}
           categoriesLabel={this.categoriesLabel}
           clearLabel={this.clearLabel}
+          footerLayout="categories-clear"
           onDsChange={event => this.forward(event, this.dsChange)}
           onDsClear={event => this.forward(event, this.dsClear)}
           onDsActiveFilterChange={event => this.forward(event, this.dsActiveFilterChange)}

@@ -43,9 +43,8 @@ const filters: FilterMenuFilter[] = [
   },
   {
     id: 'event-date',
-    label: 'Date-time',
+    label: 'Date',
     kind: 'date',
-    fieldLabel: 'Event date',
   },
 ];
 

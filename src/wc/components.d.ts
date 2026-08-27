@@ -30,7 +30,7 @@ import { CheckboxSize } from "./components/Checkbox/Checkbox";
 import { ChipSize, ChipState } from "./components/Chip/Chip";
 import { ConversationListActionLayout } from "./components/ConversationList/ConversationList";
 import { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
-import { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuSize, FilterMenuValues, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
+import { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuFooterLayout, FilterMenuSize, FilterMenuValues, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
 import { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
 import { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
 import { InputSize, InputTextAlign, InputType, InputWidth } from "./components/Input/Input";
@@ -98,7 +98,7 @@ export { CheckboxSize } from "./components/Checkbox/Checkbox";
 export { ChipSize, ChipState } from "./components/Chip/Chip";
 export { ConversationListActionLayout } from "./components/ConversationList/ConversationList";
 export { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
-export { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuSize, FilterMenuValues, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
+export { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuFooterLayout, FilterMenuSize, FilterMenuValues, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
 export { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
 export { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
 export { InputSize, InputTextAlign, InputType, InputWidth } from "./components/Input/Input";
@@ -1255,6 +1255,11 @@ export namespace Components {
          */
         "filters": FilterMenuFilter[];
         /**
+          * Footer recipe: full-width selected summary or reserved category-pane Clear action.
+          * @default 'summary'
+         */
+        "footerLayout": FilterMenuFooterLayout;
+        /**
           * Show the surface-aware inset border around the select trigger.
           * @default true
          */
@@ -1289,6 +1294,11 @@ export namespace Components {
          */
         "open": boolean;
         /**
+          * Append the active-filter count to the visible trigger label.
+          * @default true
+         */
+        "showSelectedCount": boolean;
+        /**
           * Preferred popup side; collision handling may flip it.
           * @default 'bottom'
          */
@@ -1304,7 +1314,7 @@ export namespace Components {
          */
         "size": FilterMenuSize;
         /**
-          * Select trigger text. The selected count is appended automatically.
+          * Select trigger text.
           * @default 'Filters'
          */
         "triggerLabel": string;
@@ -6210,6 +6220,11 @@ declare namespace LocalJSX {
          */
         "filters"?: FilterMenuFilter[];
         /**
+          * Footer recipe: full-width selected summary or reserved category-pane Clear action.
+          * @default 'summary'
+         */
+        "footerLayout"?: FilterMenuFooterLayout;
+        /**
           * Show the surface-aware inset border around the select trigger.
           * @default true
          */
@@ -6268,6 +6283,11 @@ declare namespace LocalJSX {
          */
         "open"?: boolean;
         /**
+          * Append the active-filter count to the visible trigger label.
+          * @default true
+         */
+        "showSelectedCount"?: boolean;
+        /**
           * Preferred popup side; collision handling may flip it.
           * @default 'bottom'
          */
@@ -6283,7 +6303,7 @@ declare namespace LocalJSX {
          */
         "size"?: FilterMenuSize;
         /**
-          * Select trigger text. The selected count is appended automatically.
+          * Select trigger text.
           * @default 'Filters'
          */
         "triggerLabel"?: string;
@@ -9030,6 +9050,7 @@ declare namespace LocalJSX {
     interface DsFilterMenuAttributes {
         "open": boolean;
         "triggerLabel": string;
+        "showSelectedCount": boolean;
         "icon": string | undefined;
         "size": FilterMenuSize;
         "width": FilterMenuWidth;
@@ -9048,6 +9069,7 @@ declare namespace LocalJSX {
         "menuLabel": string;
         "categoriesLabel": string;
         "clearLabel": string;
+        "footerLayout": FilterMenuFooterLayout;
         "initialFocusVisible": boolean;
     }
     interface DsIconAttributes {

@@ -210,7 +210,7 @@ export class TabGroup {
                   [bgClass]: !!bgClass,
                 }}
                 aria-label={variant === 'icon' ? tab.label : undefined}
-                aria-selected={isSelected}
+                aria-selected={String(isSelected)}
                 aria-disabled={tab.isInactive ? 'true' : undefined}
                 aria-controls={tab.panelId ?? undefined}
                 disabled={tab.isInactive}

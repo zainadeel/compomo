@@ -139,3 +139,21 @@ export { CONTROL_SUPPORTING_TEXT_VARIANT, CONTROL_TEXT_VARIANT } from './control
 export type { ControlInsetDepth, ControlSize } from './control-text';
 export { choicePopupMinWidth, resolveChoicePopupAlignOffset } from './choice-popup-alignment';
 export type { ChoicePopupAnchorAlignment } from './choice-popup-alignment';
+export {
+  DATE_FILTER_RELATIVE_PRESETS,
+  dateFilterRangeValue,
+  dateFilterRelativeValue,
+  isIsoCalendarDate,
+  normalizeDateFilterValue,
+  parseDateFilterValue,
+  resolveDateFilterRange,
+  shiftIsoCalendarDate,
+} from './date-filter-value';
+export type {
+  DateFilterRange,
+  DateFilterRangeValue,
+  DateFilterRelativePreset,
+  DateFilterRelativeValue,
+  DateFilterValue,
+  ParsedDateFilterValue,
+} from './date-filter-value';

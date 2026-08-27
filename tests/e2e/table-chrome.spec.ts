@@ -193,7 +193,7 @@ test('keeps labeled Filter, Group, and Sort chrome at typical width and promotes
     groupSelect.value = 'status';
   });
 
-  await expect(filter).toContainText('Filter · 1');
+  await expect(filter.locator('.trigger__label-box')).toHaveText('Filter');
   await expect(group).toContainText('Status');
 
   const colors = await filter.evaluate(element => {
@@ -324,6 +324,238 @@ test('reports table filter intent from the dedicated host without mutating contr
       detail: { filterId: 'status', value: ['driving'] },
     });
   await expect(control).toHaveJSProperty('values', {});
+});
+
+test('reserves a category-pane Clear footer for every table filter @pr-critical', async ({
+  page,
+}) => {
+  const control = page.locator('#column-customizer-filter');
+  const trigger = control.getByRole('combobox', { name: 'Filter fleet' });
+
+  await control.evaluate(element => {
+    (window as typeof window & { __tableFilterClears?: number }).__tableFilterClears = 0;
+    element.addEventListener('dsClear', () => {
+      (window as typeof window & { __tableFilterClears?: number }).__tableFilterClears! += 1;
+    });
+  });
+  await trigger.click();
+
+  const popup = control.getByRole('dialog', { name: 'Filter fleet' });
+  const categoryPane = popup.locator('.filter-menu__category-pane');
+  const footer = categoryPane.locator('.filter-menu__footer');
+  const options = popup.locator('.filter-menu__options');
+  await expect(footer).toBeVisible();
+  await expect(footer).toHaveAttribute('aria-hidden', 'true');
+  await expect(footer.locator('.ds-choice-footer__summary')).toHaveCount(0);
+  await expect(control.getByRole('button', { name: 'Clear' })).toHaveCount(0);
+  await expect
+    .poll(() => footer.evaluate(element => getComputedStyle(element, '::before').visibility))
+    .toBe('hidden');
+
+  const idleGeometry = await Promise.all([
+    popup.boundingBox(),
+    categoryPane.boundingBox(),
+    footer.boundingBox(),
+    options.boundingBox(),
+  ]);
+  expect(idleGeometry.every(rect => rect !== null)).toBe(true);
+
+  await control.evaluate((element: HTMLDsTableFilterElement) => {
+    element.values = { status: ['driving'] };
+  });
+
+  const clear = control.getByRole('button', { name: 'Clear' });
+  await expect(footer).not.toHaveAttribute('aria-hidden');
+  await expect(clear).toBeVisible();
+  await expect(footer.locator('.ds-choice-footer__summary')).toHaveCount(0);
+  await expect
+    .poll(() => footer.evaluate(element => getComputedStyle(element, '::before').visibility))
+    .toBe('visible');
+  await expect(footer.locator('.ds-choice-footer__content')).toHaveCSS(
+    'justify-content',
+    'flex-start'
+  );
+
+  const activeGeometry = await Promise.all([
+    popup.boundingBox(),
+    categoryPane.boundingBox(),
+    footer.boundingBox(),
+    clear.boundingBox(),
+  ]);
+  const categoryDividerWidth = await categoryPane.evaluate(element =>
+    Number.parseFloat(getComputedStyle(element).borderInlineEndWidth)
+  );
+  expect(activeGeometry.every(rect => rect !== null)).toBe(true);
+  expect(activeGeometry[0]!.height).toBeCloseTo(idleGeometry[0]!.height, 3);
+  expect(activeGeometry[2]!.x).toBeCloseTo(activeGeometry[1]!.x, 3);
+  expect(activeGeometry[2]!.x + activeGeometry[2]!.width).toBeCloseTo(
+    activeGeometry[1]!.x + activeGeometry[1]!.width - categoryDividerWidth,
+    3
+  );
+  expect(activeGeometry[3]!.x).toBeLessThan(activeGeometry[2]!.x + activeGeometry[2]!.width / 2);
+  expect(idleGeometry[3]!.y + idleGeometry[3]!.height).toBeCloseTo(
+    idleGeometry[0]!.y + idleGeometry[0]!.height,
+    3
+  );
+
+  await clear.click();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => (window as typeof window & { __tableFilterClears?: number }).__tableFilterClears
+      )
+    )
+    .toBe(1);
+  await expect(control).toHaveJSProperty('values', { status: ['driving'] });
+});
+
+test('supports semantic relative dates and fixed calendar ranges @pr-critical', async ({
+  page,
+}) => {
+  const control = page.locator('#column-customizer-filter');
+  await control.evaluate((element: HTMLDsTableFilterElement) => {
+    element.filters = [{ id: 'event-date', label: 'Date', kind: 'date' }];
+    element.activeFilterId = 'event-date';
+    element.values = {};
+    (window as typeof window & { __dateFilterChanges?: unknown[] }).__dateFilterChanges = [];
+    element.addEventListener('dsChange', event => {
+      const detail = (
+        event as CustomEvent<{
+          filterId: string;
+          value: string | string[] | boolean;
+        }>
+      ).detail;
+      (window as typeof window & { __dateFilterChanges?: unknown[] }).__dateFilterChanges!.push(
+        detail
+      );
+      element.values = { ...element.values, [detail.filterId]: detail.value };
+    });
+  });
+
+  await control.getByRole('combobox', { name: 'Filter fleet' }).click();
+  const popup = control.getByRole('dialog', { name: 'Filter fleet' });
+  const dateHeader = popup.locator('.filter-menu__date-header');
+  const rangeTab = popup.getByRole('tab', { name: 'Range' });
+  const relativeTab = popup.getByRole('tab', { name: 'Relative' });
+
+  await expect(dateHeader).toBeVisible();
+  expect((await dateHeader.boundingBox())?.height).toBeCloseTo(48, 3);
+  expect((await popup.locator('.filter-menu__category-pane').boundingBox())?.width).toBeCloseTo(
+    200,
+    1
+  );
+  expect((await popup.locator('.filter-menu__options').boundingBox())?.width).toBeCloseTo(300, 1);
+  await expect(dateHeader.getByRole('tab')).toHaveText(['Relative', 'Range']);
+  await expect(relativeTab).toHaveAttribute('aria-selected', 'true');
+  await expect(popup.getByRole('option')).toHaveText([
+    'Today',
+    'Yesterday',
+    'Last 7 days',
+    'Last 14 days',
+    'Last 30 days',
+    'Last 60 days',
+    'Last 90 days',
+  ]);
+
+  await popup.getByRole('option', { name: 'Last 7 days' }).click();
+  const dateCategory = popup.locator('[data-filter-category="event-date"]');
+  await expect(dateCategory.locator('ds-badge')).toHaveJSProperty('variant', 'dot');
+  await expect(dateCategory.locator('ds-tag')).toHaveCount(0);
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => (window as typeof window & { __dateFilterChanges?: unknown[] }).__dateFilterChanges
+      )
+    )
+    .toEqual([{ filterId: 'event-date', value: 'relative:last-7-days' }]);
+
+  await rangeTab.click();
+  await expect(rangeTab).toHaveAttribute('aria-selected', 'true');
+  await expect(popup.getByRole('grid')).toBeVisible();
+  const previousMonth = popup.getByRole('button', { name: 'Previous month' });
+  const nextMonth = popup.getByRole('button', { name: 'Next month' });
+  await expect(previousMonth).toHaveClass(/ds-control--md/);
+  await expect(nextMonth).toHaveClass(/ds-control--md/);
+  const calendarHeading = popup.locator('.filter-menu__calendar-heading');
+  const weekdays = popup.locator('.filter-menu__calendar-weekdays');
+  const [headingBounds, previousBounds, nextBounds] = await Promise.all([
+    calendarHeading.boundingBox(),
+    previousMonth.boundingBox(),
+    nextMonth.boundingBox(),
+  ]);
+  expect(previousBounds?.x).toBeCloseTo(headingBounds?.x ?? 0, 1);
+  expect((nextBounds?.x ?? 0) + (nextBounds?.width ?? 0)).toBeCloseTo(
+    (headingBounds?.x ?? 0) + (headingBounds?.width ?? 0),
+    1
+  );
+  expect(previousBounds?.width).toBeCloseTo(32, 1);
+  expect(previousBounds?.height).toBeCloseTo(32, 1);
+  expect(nextBounds?.width).toBeCloseTo(32, 1);
+  expect(nextBounds?.height).toBeCloseTo(32, 1);
+  await expect(weekdays).toHaveCSS('margin-top', '4px');
+  const calendarDays = popup.locator('[data-date-option]');
+  await expect(calendarDays).toHaveCount(42);
+  const dateBounds = await calendarDays.nth(10).boundingBox();
+  const calendarGrid = popup.getByRole('grid');
+  const calendarGridBounds = await calendarGrid.boundingBox();
+  const calendarGap = await calendarGrid.evaluate(element => ({
+    column: Number.parseFloat(getComputedStyle(element).columnGap),
+    row: Number.parseFloat(getComputedStyle(element).rowGap),
+  }));
+  expect(calendarGap.column).toBeCloseTo(4, 1);
+  expect(calendarGap.row).toBeCloseTo(4, 1);
+  expect((dateBounds?.width ?? 0) * 7 + calendarGap.column * 6).toBeCloseTo(
+    calendarGridBounds?.width ?? 0,
+    1
+  );
+  expect(dateBounds?.height).toBeCloseTo(32, 1);
+  await expect(
+    popup
+      .locator(
+        '.filter-menu__calendar-day:not(.filter-menu__calendar-day--outside):not(.filter-menu__calendar-day--today):not(.filter-menu__calendar-day--in-range) ds-text'
+      )
+      .first()
+  ).toHaveJSProperty('color', 'secondary');
+  await expect(
+    popup.locator('.filter-menu__calendar-day--outside ds-text').first()
+  ).toHaveJSProperty('color', 'tertiary');
+  await expect(popup.locator('.filter-menu__calendar-day--today ds-text')).toHaveJSProperty(
+    'color',
+    'primary'
+  );
+  await expect(calendarDays.first().locator('ds-text')).toHaveJSProperty(
+    'variant',
+    'text-body-medium'
+  );
+  const firstDate = await calendarDays.nth(10).getAttribute('data-date-option');
+  const secondDate = await calendarDays.nth(15).getAttribute('data-date-option');
+  expect(firstDate).toBeTruthy();
+  expect(secondDate).toBeTruthy();
+  await calendarDays.nth(10).click();
+  await calendarDays.nth(15).click();
+  await expect(
+    popup.locator('.filter-menu__calendar-day--range-edge ds-text').first()
+  ).toHaveJSProperty('color', 'on-bold');
+  await expect(
+    popup
+      .locator(
+        '.filter-menu__calendar-day--in-range:not(.filter-menu__calendar-day--range-edge) ds-text'
+      )
+      .first()
+  ).toHaveJSProperty('color', 'primary');
+  const start = firstDate! < secondDate! ? firstDate! : secondDate!;
+  const end = firstDate! < secondDate! ? secondDate! : firstDate!;
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => (window as typeof window & { __dateFilterChanges?: unknown[] }).__dateFilterChanges
+      )
+    )
+    .toEqual([
+      { filterId: 'event-date', value: 'relative:last-7-days' },
+      { filterId: 'event-date', value: `range:${firstDate}/${firstDate}` },
+      { filterId: 'event-date', value: `range:${start}/${end}` },
+    ]);
 });
 
 test('uses icon-only Filter, Group, and Sort below 900px and promotes the icon when active', async ({
