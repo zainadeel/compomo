@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { expectGeometryClose } from './rendered-geometry';
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/table.html');
@@ -504,9 +505,10 @@ test('supports semantic relative dates and fixed calendar ranges @pr-critical', 
   }));
   expect(calendarGap.column).toBeCloseTo(4, 1);
   expect(calendarGap.row).toBeCloseTo(4, 1);
-  expect((dateBounds?.width ?? 0) * 7 + calendarGap.column * 6).toBeCloseTo(
+  expectGeometryClose(
+    (dateBounds?.width ?? 0) * 7 + calendarGap.column * 6,
     calendarGridBounds?.width ?? 0,
-    1
+    'Calendar columns and gaps fill the grid'
   );
   expect(dateBounds?.height).toBeCloseTo(32, 1);
   await expect(
