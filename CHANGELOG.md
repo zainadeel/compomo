@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.21.0](https://github.com/zainadeel/compomo/compare/v14.20.0...v14.21.0) (2026-08-27)
+
+
+### Added
+
+* **table:** expand search, filters, grouping, and cells ([#539](https://github.com/zainadeel/compomo/issues/539)) ([cedfc74](https://github.com/zainadeel/compomo/commit/cedfc74bf123866ee47738449e6c389e429cf8df))
+
 ## [14.20.0](https://github.com/zainadeel/compomo/compare/v14.19.1...v14.20.0) (2026-08-27)
 
 
