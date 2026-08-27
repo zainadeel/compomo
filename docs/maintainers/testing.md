@@ -85,8 +85,12 @@ Rendered tests should assert public behavior or stable geometry contracts, not
 incidental implementation classes unless the class itself is the tested shared
 recipe.
 
-Before opening a pull request, run `npm run verify:local:full` plus the focused
-rendered spec for every affected component. Use `npm run test:e2e:chromium --
+Opening or preparing a pull request always requires a fresh, successful local
+`npm run verify:local:full` run after the final code change. Treat a request to
+open a PR as an instruction to run this preflight first; the focused GitHub PR
+gate is not a substitute. If it fails or cannot complete, do not open the PR as
+verified—report the failure or blocker. Also run the focused rendered spec for
+every affected component. Use `npm run test:e2e:chromium --
 tests/e2e/<spec>.spec.ts` for ordinary rendered changes. Run the corresponding
 WebKit contract locally, and the Docker-backed Firefox helper where browser APIs
 or engine-sensitive behavior changed. Use `npm run test:e2e:webkit --
