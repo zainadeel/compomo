@@ -17,9 +17,8 @@ const FILTERS = [
   },
   {
     id: 'event-date',
-    label: 'Date-time',
+    label: 'Date',
     kind: 'date' as const,
-    fieldLabel: 'Event date',
   },
 ];
 
@@ -45,7 +44,7 @@ export const FilterMenu: Story = {
     docs: {
       description: {
         story:
-          'The visible toolbar label stays singular. The selected count is derived from controlled values, and changes remain open so several criteria can be adjusted together.',
+          'The visible toolbar label stays singular and promotes to its active foreground without adding a count suffix. Category counts remain derived from controlled values; a reserved footer in the category pane reveals only the Clear action when criteria are active, without changing popup height.',
       },
       ...isolatedOverlayDocs('420px'),
     },
@@ -67,6 +66,37 @@ export const FilterMenu: Story = {
         @dsActiveFilterChange=${(event: CustomEvent<string>) => {
           (event.currentTarget as HTMLElement & { activeFilterId: string }).activeFilterId =
             event.detail;
+        }}
+      ></ds-table-filter>
+    </div>
+  `,
+};
+
+export const DateFilter: Story = {
+  name: 'Date filter',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Date filters persist either a semantic relative preset or a fixed calendar range. Relative presets resolve from the current date whenever an application applies a saved view.',
+      },
+      ...isolatedOverlayDocs('520px'),
+    },
+  },
+  render: () => html`
+    <div style="padding:var(--dimension-space-200);">
+      <ds-table-filter
+        open
+        .filters=${FILTERS}
+        .values=${{ 'event-date': 'relative:last-7-days' }}
+        active-filter-id="event-date"
+        aria-label="Filter events"
+        @dsChange=${(event: CustomEvent<FilterMenuChangeDetail>) => {
+          const control = event.currentTarget as HTMLElement & { values: FilterMenuValues };
+          control.values = { ...control.values, [event.detail.filterId]: event.detail.value };
+        }}
+        @dsClear=${(event: Event) => {
+          (event.currentTarget as HTMLElement & { values: FilterMenuValues }).values = {};
         }}
       ></ds-table-filter>
     </div>

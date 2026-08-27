@@ -3904,7 +3904,7 @@
     {
       "name": "filter-menu",
       "title": "FilterMenu",
-      "description": "Controlled two-pane filter select with menu-recipe category navigation, single- and multiple-choice, boolean, and date filters, selected counts, and a clear action.",
+      "description": "Controlled two-pane filter select with menu-recipe category navigation, single- and multiple-choice, boolean, semantic relative-date and fixed-range filters, selected counts, and a clear action.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -3915,7 +3915,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Controlled two-pane filter select with menu-recipe category navigation, single- and multiple-choice, boolean, and date filters, selected counts, and a clear action.",
+          "summary": "Controlled two-pane filter select with menu-recipe category navigation, single- and multiple-choice, boolean, semantic relative-date and fixed-range filters, selected counts, and a clear action.",
           "useWhen": [
             "A compact trigger must expose several filter families without turning the toolbar into many separate controls.",
             "Users need to move between persistent filter categories while editing the selected category in a second pane."
@@ -3946,15 +3946,19 @@
             "The built-in select trigger exposes combobox semantics with a dialog popup, synchronizes expanded state, holds the pressed interaction wash without changing resting foreground while open, and restores focus after dismissal.",
             "The category pane is a vertical tab list. Arrow Up and Arrow Down wrap, Home and End jump, Arrow Right enters the option pane, and Arrow Left returns to the active category.",
             "Escape and outside activation close the popup and restore trigger focus. Tab moves through option controls and closes only when it leaves the popup boundary.",
+            "Date filters expose Range and Relative tabs in a compact header. Relative presets use listbox semantics; the range calendar exposes a labelled grid, one tab stop, arrow-key day navigation, Home and End week navigation, and Page Up or Page Down month navigation.",
             "When an external trigger is inside an open shadow tree, pass its HTMLElement through anchor so outside activation, focus return, and Tab continuation use the composed tree.",
-            "The trigger count reports active filter categories. Category counts and the footer report individual selected criteria; none replace visible selected-state indication."
+            "The trigger count reports active filter categories. Multiple-choice category tags report individual selected criteria, while an applied Date category uses a visual dot because its value is singular. The default summary footer announces the total; the categories-clear footer recipe reserves a visually empty category-pane action row and exposes its divider and only Clear when criteria are active."
           ],
           "states": [
             "The application owns filters, values, activeFilterId, and open. Replace controlled objects and arrays after dsChange, dsActiveFilterChange, dsClear, or dsClose.",
-            "Single filters return a string, multiple filters return ordered string arrays, boolean filters return a boolean, and date filters return a YYYY-MM-DD string.",
+            "Single filters return a string, multiple filters return ordered string arrays, boolean filters return a boolean, and date filters return a serializable semantic string.",
+            "Date values are serializable semantic strings: relative:<preset> preserves a relative choice for future resolution and range:<start>/<end> preserves fixed inclusive ISO calendar dates. A legacy YYYY-MM-DD value is interpreted as a one-day range.",
+            "Relative presets are Today, Yesterday, and the last 7, 14, 30, 60, or 90 inclusive calendar days. Applications resolve them against their current product date and time-zone policy by using resolveDateFilterRange from @ds-mo/ui/utils.",
+            "Range selection applies the first date immediately as a one-day range; a second activation completes an ordered inclusive range. A new activation after completion starts a replacement range.",
             "Selection applies immediately and does not close the popup.",
             "Changing category replaces the option-pane subtree so checkbox and other option visuals mount in their new state instead of transitioning from the previous category's row state.",
-            "The trigger reports how many filter categories have selections, while the footer appears when values are selected and reports the total selected criteria."
+            "The trigger reports how many filter categories have selections. footerLayout=summary adds a full-width selected-count footer only while values are selected; footerLayout=categories-clear always reserves the category-pane footer height while keeping its inactive divider hidden, then reveals the divider and only its left-aligned Clear action while values are selected."
           ],
           "responsiveBehavior": [
             "The popup defaults to the large menu-width token and clamps to the nearest data-ds-overlay-boundary rectangle or the viewport fallback.",
@@ -4029,6 +4033,10 @@
             "type": "FilterMenuFilter[]",
             "required": false
           },
+          "footerLayout": {
+            "type": "FilterMenuFooterLayout",
+            "required": false
+          },
           "hasBorder": {
             "type": "boolean",
             "required": false
@@ -4054,6 +4062,10 @@
             "required": false
           },
           "open": {
+            "type": "boolean",
+            "required": false
+          },
+          "showSelectedCount": {
             "type": "boolean",
             "required": false
           },
@@ -4122,9 +4134,11 @@
         "@ds-mo/icons"
       ],
       "registryDependencies": [
+        "badge",
         "button-unfilled",
         "checkbox",
         "icon",
+        "tab-group",
         "tag",
         "text",
         "tooltip"
@@ -9526,7 +9540,7 @@
           "summary": "Standard table-toolbar Filter control that owns the shared trigger, filter menu UI, accessible defaults, and compact-caption behavior while the application controls data and values.",
           "useWhen": [
             "A table toolbar should expose the standard singular Filter control and shared filter-menu interaction.",
-            "A product supplies filter definitions and controlled values but should not recreate the toolbar trigger, selected count, category navigation, or responsive treatment."
+            "A product supplies filter definitions and controlled values but should not recreate the toolbar trigger, category navigation, or responsive treatment."
           ],
           "avoidWhen": [
             "Filtering is unrelated to a table or structured result set; use ds-filter-menu directly.",
@@ -9557,7 +9571,9 @@
           ],
           "states": [
             "filters, values, and activeFilterId are controlled. dsChange, dsClear, and dsActiveFilterChange report intent without changing those inputs; the application applies query consequences and returns replacement values.",
-            "The visible trigger label defaults to singular Filter and appends the selected criterion count. The trigger uses resting secondary chrome at typical widths; active criteria promote only the visible label, without redefining generic button active semantics.",
+            "The visible trigger label stays singular Filter without appending an active-count suffix. Active criteria promote only the visible label from secondary to primary, matching the other table caption controls without redefining generic button active semantics.",
+            "The popup reserves a visually empty footer row inside the category pane for every state. Active criteria reveal its divider and only a left-aligned Clear action, without adding popup height or showing redundant selected-count copy; the option pane retains its full column.",
+            "Date categories use the shared compact-header Range and Relative experience. Persist relative values semantically and resolve them from the product's current date whenever rows or saved views are applied.",
             "Popup visibility follows the same mutable open and dsOpenChange contract as ds-filter-menu."
           ],
           "responsiveBehavior": [

@@ -10,7 +10,7 @@
   "summary": "Standard table-toolbar Filter control that owns the shared trigger, filter menu UI, accessible defaults, and compact-caption behavior while the application controls data and values.",
   "useWhen": [
     "A table toolbar should expose the standard singular Filter control and shared filter-menu interaction.",
-    "A product supplies filter definitions and controlled values but should not recreate the toolbar trigger, selected count, category navigation, or responsive treatment."
+    "A product supplies filter definitions and controlled values but should not recreate the toolbar trigger, category navigation, or responsive treatment."
   ],
   "avoidWhen": [
     "Filtering is unrelated to a table or structured result set; use ds-filter-menu directly.",
@@ -41,7 +41,9 @@
   ],
   "states": [
     "filters, values, and activeFilterId are controlled. dsChange, dsClear, and dsActiveFilterChange report intent without changing those inputs; the application applies query consequences and returns replacement values.",
-    "The visible trigger label defaults to singular Filter and appends the selected criterion count. The trigger uses resting secondary chrome at typical widths; active criteria promote only the visible label, without redefining generic button active semantics.",
+    "The visible trigger label stays singular Filter without appending an active-count suffix. Active criteria promote only the visible label from secondary to primary, matching the other table caption controls without redefining generic button active semantics.",
+    "The popup reserves a visually empty footer row inside the category pane for every state. Active criteria reveal its divider and only a left-aligned Clear action, without adding popup height or showing redundant selected-count copy; the option pane retains its full column.",
+    "Date categories use the shared compact-header Range and Relative experience. Persist relative values semantically and resolve them from the product's current date whenever rows or saved views are applied.",
     "Popup visibility follows the same mutable open and dsOpenChange contract as ds-filter-menu."
   ],
   "responsiveBehavior": [
