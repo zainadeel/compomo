@@ -55,7 +55,7 @@ export const SlashFieldMenu: Story = {
     docs: {
       description: {
         story:
-          'Focus the search and type /. Up and Down move through fields while Left and Right remain native input cursor keys. Enter adds the active field as an individually removable inset md Chip. Escape or Backspace closes the open slash menu; once it is closed, Backspace edits query text or removes the last field when the query is empty.',
+          'Focus the search and type /. Continue typing to filter data points by name. Up and Down move through matches while Left and Right remain native input cursor keys. Enter adds the active field as an individually removable inset md Chip. Escape closes the menu; Backspace edits the picker query and closes the menu once that query is empty. With the menu closed, Backspace edits table query text or removes the last field when the query is empty.',
       },
       ...isolatedOverlayDocs('400px'),
     },

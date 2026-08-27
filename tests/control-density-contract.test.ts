@@ -233,22 +233,24 @@ test('PanelTools search uses the shared Select search control at md density', ()
   const source = read('src/wc/components/PanelToolSearch/PanelToolSearch.tsx');
   const css = read('src/wc/components/PanelToolSearch/PanelToolSearch.css');
   const selectCss = read('src/wc/components/Select/Select.css');
+  const inputCss = read('src/wc/components/Input/Input.css');
   const searchParts = read('src/wc/utils/choice-list-parts.tsx');
   const panelToolsCss = read('src/wc/components/PanelTools/PanelTools.css');
 
   assert.match(source, /<ChoiceSearch/);
-  assert.match(searchParts, /class={`select-search__control ds-control--\$\{size\}`}/);
-  assert.match(searchParts, /onDsChange={event => event\.stopPropagation\(\)}/);
+  assert.match(searchParts, /<ds-input[\s\S]*?class="select-search__control"[\s\S]*?size={size}/);
   assert.match(
-    read('src/wc/utils/search-control.css'),
-    /\.select-search__control > ds-icon\s*{[\s\S]*?color: var\(--color-foreground-secondary\);/
+    searchParts,
+    /onDsChange={\(event: CustomEvent<string>\) => {[\s\S]*?event\.stopPropagation\(\)/
   );
+  assert.match(searchParts, /icon="MagnifyingGlass"/);
+  assert.match(inputCss, /--ds-input-adornment-fg: var\(--color-foreground-secondary\);/);
   assert.match(css, /height: var\(--dimension-size-600\);/);
   assert.match(source, /panel-tool-search ds-chrome-row ds-chrome-space--md/);
   assert.match(css, /@import ['"]\.\.\/\.\.\/utils\/chrome-layout\.css['"];/);
   assert.match(css, /@import ['"]\.\.\/\.\.\/utils\/control-density\.css['"];/);
   assert.match(css, /@import ['"]\.\.\/\.\.\/utils\/search-control\.css['"];/);
-  assert.match(css, /@import ['"]\.\.\/\.\.\/utils\/typography\.css['"];/);
+  assert.match(inputCss, /@import ['"]\.\.\/\.\.\/utils\/typography\.css['"];/);
   assert.match(
     css,
     /\.panel-tool-search::after\s*{[\s\S]*?height: var\(--dimension-stroke-width-012\);[\s\S]*?background-color: var\(--color-border-tertiary\);/

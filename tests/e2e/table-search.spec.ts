@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('keeps input focus while slash, arrows, and Enter add a canonical field chip @cross-browser', async ({
+test('filters the slash menu while input focus, arrows, and Enter add a canonical field chip @cross-browser', async ({
   page,
 }) => {
   const search = page.locator('#search');
@@ -18,16 +18,13 @@ test('keeps input focus while slash, arrows, and Enter add a canonical field chi
   await input.fill('ab');
   await input.press('/');
   await expect(search.getByRole('listbox', { name: 'Choose search fields' })).toBeVisible();
-  await expect(input).toHaveValue('ab');
+  await expect(input).toHaveValue('');
   await expect(input).toBeFocused();
-  await expect(search.getByRole('option')).toHaveText([
-    'Vehicle ID',
-    'Vehicle make',
-    'Vehicle model',
-    'Vehicle year',
-    'Driver name',
-    'Driver ID',
-  ]);
+  await input.fill('driv');
+  await expect(search.getByRole('option')).toHaveText(['Driver name', 'Driver ID']);
+  await expect
+    .poll(() => search.evaluate((element: HTMLElement & { value: string }) => element.value))
+    .toBe('ab');
 
   const firstActive = await input.getAttribute('aria-activedescendant');
   await input.press('ArrowDown');
@@ -36,13 +33,13 @@ test('keeps input focus while slash, arrows, and Enter add a canonical field chi
   await input.press('ArrowLeft');
   await expect(input).toBeFocused();
   expect(await input.getAttribute('aria-activedescendant')).toBe(secondActive);
-  expect(await input.evaluate((element: HTMLInputElement) => element.selectionStart)).toBe(1);
+  expect(await input.evaluate((element: HTMLInputElement) => element.selectionStart)).toBe(3);
 
   await input.press('Enter');
   await expect(search.getByRole('listbox')).toHaveCount(0);
   await expect(input).toBeFocused();
   const chip = search.locator('ds-chip');
-  await expect(chip).toHaveJSProperty('label', 'Vehicle make');
+  await expect(chip).toHaveJSProperty('label', 'Driver ID');
   await expect(chip).toHaveJSProperty('size', 'md');
   await expect(chip).toHaveJSProperty('isInset', true);
   await expect(chip).toHaveJSProperty('insetDepth', 'double');
@@ -53,9 +50,10 @@ test('keeps input focus while slash, arrows, and Enter add a canonical field chi
         (element: HTMLElement & { selectedFieldIds: string[] }) => element.selectedFieldIds
       )
     )
-    .toEqual(['vehicleMake']);
+    .toEqual(['driverId']);
+  await expect(input).toHaveValue('ab');
 
-  await search.getByRole('button', { name: 'Remove Vehicle make' }).click();
+  await search.getByRole('button', { name: 'Remove Driver ID' }).click();
   await expect
     .poll(() =>
       search.evaluate(
@@ -111,6 +109,7 @@ test('edits query before Backspace removes the last field and supports multiple 
   expect(slashWidth).toBe(24);
   const clear = search.getByRole('button', { name: 'Clear search' });
   await expect(clear).toBeVisible();
+  await expect(search.locator('.table-search__clear ds-icon svg')).toBeVisible();
   await expect(search.locator('.table-search__action-divider')).toBeVisible();
   await expect(search.locator('.table-search__actions')).toHaveCSS('column-gap', '4px');
   const [clearBox, slashBox] = await Promise.all([clear.boundingBox(), slash.boundingBox()]);

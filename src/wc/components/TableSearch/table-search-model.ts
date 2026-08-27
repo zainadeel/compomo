@@ -59,6 +59,19 @@ export function availableTableSearchFields(
   return fields.filter(field => !selected.has(field.id));
 }
 
+/** Matches the field-picker query against the complete visible label and canonical identity. */
+export function filterTableSearchFields(
+  fields: readonly TableSearchField[],
+  query: string
+): TableSearchField[] {
+  const normalizedQuery = query.trim().toLocaleLowerCase();
+  if (!normalizedQuery) return [...fields];
+
+  return fields.filter(field =>
+    `${field.label} ${field.id}`.toLocaleLowerCase().includes(normalizedQuery)
+  );
+}
+
 export function nextTableSearchActiveIndex(
   currentIndex: number,
   optionCount: number,

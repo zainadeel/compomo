@@ -26,7 +26,7 @@
   ],
   "accessibility": [
     "The native search input remains the one Tab stop and exposes combobox, expanded, controls, and active-descendant relationships to the field listbox.",
-    "Typing slash opens the field listbox without inserting slash into the query. While open, Up and Down change the active option, Enter selects it, Escape or Backspace closes it, and Left and Right retain native text-cursor behavior because focus never leaves the input.",
+    "Typing slash opens the field listbox without inserting slash into the table query. Text typed while it is open filters data points by complete label, Up and Down change the active match, Enter selects it, Escape closes it, and Left and Right retain native text-cursor behavior because focus never leaves the input. Backspace edits the field-picker query first and closes the listbox when that query is empty.",
     "The query disables browser autocomplete history, automatic capitalization, autocorrection, and spellchecking so browser-owned suggestions never obscure the product-owned field menu or table results.",
     "Selected field Chips have individually labeled remove actions and are also described by the search input. Polite announcements report additions, removals, and clearing without duplicating the visible query.",
     "The slash suffix is a labeled double-inset md button excluded from sequential keyboard navigation; the search input exposes the same action through aria-keyshortcuts and its description.",
@@ -36,7 +36,7 @@
     "value and selectedFieldIds are controlled. columns supplies the same table catalog used by Table and TableSort; dataLabel provides the complete out-of-context name while header and header segment label may remain compact. dsChange reports query edits, dsFieldsChange reports the next ordered field identities, and dsClear reports a complete clear. The component never filters rows or mutates consumer inputs.",
     "The field menu excludes already-selected identities and closes after one selection. Typing slash again reopens the remaining fields so multiple scopes can be added.",
     "Selected scopes render as neutral md Chips using the double-inset recipe so they remain 24px high inside the 32px md search control and each can be removed directly.",
-    "Backspace first closes an open slash listbox without editing query text or removing a field. When query text is empty and the listbox is already closed, the next Backspace removes the last selected field. Ordinary Backspace edits query text when the listbox is closed.",
+    "Backspace edits a non-empty field-picker query, then closes the open slash listbox when that query is empty. When the table query is empty and the listbox is already closed, the next Backspace removes the last selected field. Ordinary Backspace edits table query text when the listbox is closed.",
     "Duplicate, blank, and unknown field identities are ignored for presentation. Selected fields preserve the consumer's order.",
     "Inactive search leaves the tab order, closes the field listbox, and does not emit query or field changes."
   ],

@@ -57,8 +57,13 @@ test('keeps external FilterMenu anchors inside and continues Tab through compose
 
   await trigger.click();
   const category = filterMenu.getByRole('tab', { name: 'Priority' });
+  const search = filterMenu.getByRole('searchbox', { name: 'Search Priority options' });
   const option = filterMenu.getByRole('option', { name: 'High' });
   await expect(category).toBeFocused();
+
+  await page.keyboard.press('Tab');
+  await expect(search).toBeFocused();
+  await expect(dialog).toBeVisible();
 
   await page.keyboard.press('Tab');
   await expect(option).toBeFocused();
@@ -729,6 +734,7 @@ test(
       await expect(clearHost).toHaveJSProperty('variant', 'icon');
       await expect(clearHost).toHaveJSProperty('size', 'sm');
       await expect(clearHost).toHaveJSProperty('icon', 'CrossCircle');
+      await expect(clearHost.locator('ds-icon svg')).toBeVisible();
       await expect(clearHost).toHaveJSProperty('hasBorder', false);
       await expect(clearHost).toHaveJSProperty('rounded', true);
       await expect(clear).toHaveCSS('border-radius', '9999px');

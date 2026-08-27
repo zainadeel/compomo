@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   availableTableSearchFields,
+  filterTableSearchFields,
   nextTableSearchActiveIndex,
   selectedTableSearchFields,
   tableSearchFields,
@@ -46,4 +47,19 @@ test('wraps active field traversal in either direction', () => {
   assert.equal(nextTableSearchActiveIndex(0, 3, -1), 2);
   assert.equal(nextTableSearchActiveIndex(4, 3, 1), 1);
   assert.equal(nextTableSearchActiveIndex(0, 0, 1), -1);
+});
+
+test('filters field-picker choices by complete label or canonical identity', () => {
+  assert.deepEqual(filterTableSearchFields(fields, 'driver'), [
+    { id: 'driverName', label: 'Driver name' },
+    { id: 'driverId', label: 'Driver ID' },
+  ]);
+  assert.deepEqual(filterTableSearchFields(fields, 'Name'), [
+    { id: 'driverName', label: 'Driver name' },
+  ]);
+  assert.deepEqual(filterTableSearchFields(fields, 'location'), [
+    { id: 'location', label: 'Location' },
+  ]);
+  assert.deepEqual(filterTableSearchFields(fields, 'missing'), []);
+  assert.deepEqual(filterTableSearchFields(fields, '  '), fields);
 });

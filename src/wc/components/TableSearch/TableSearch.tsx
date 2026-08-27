@@ -21,6 +21,7 @@ import { AnchoredOverlayInteractionController } from '../../utils/anchored-overl
 import { resolveAnchoredOverlayBoundaryRect } from '../../utils/anchored-overlay-boundary';
 import {
   availableTableSearchFields,
+  filterTableSearchFields,
   nextTableSearchActiveIndex,
   selectedTableSearchFields,
   tableSearchFields,
@@ -55,6 +56,7 @@ export class TableSearch {
   @Event({ bubbles: false }) dsClear!: EventEmitter<void>;
 
   @State() private menuOpen = false;
+  @State() private menuQuery = '';
   @State() private activeIndex = 0;
   @State() private focusRingVisible = false;
   @State() private position = { x: 0, y: 0 };
@@ -150,6 +152,10 @@ export class TableSearch {
     return availableTableSearchFields(this.searchFields, this.selectedFieldIds);
   }
 
+  private get visibleFields(): TableSearchField[] {
+    return filterTableSearchFields(this.availableFields, this.menuQuery);
+  }
+
   private get searchFields(): TableSearchField[] {
     return tableSearchFields(this.columns);
   }
@@ -162,6 +168,7 @@ export class TableSearch {
 
   private openMenu(fromKeyboard: boolean): void {
     if (this.isInactive || this.menuOpen || this.availableFields.length === 0) return;
+    this.menuQuery = '';
     this.activeIndex = 0;
     this.focusRingVisible = fromKeyboard;
     this.positionReady = false;
@@ -183,6 +190,20 @@ export class TableSearch {
     this.positionReady = false;
     this.availableHeight = null;
     this.menuOpen = false;
+    this.menuQuery = '';
+  }
+
+  private handleInput(event: Event): void {
+    const nextValue = (event.target as HTMLInputElement).value;
+    if (this.menuOpen) {
+      this.menuQuery = nextValue;
+      this.activeIndex = filterTableSearchFields(this.availableFields, nextValue).length ? 0 : -1;
+      this.focusRingVisible = false;
+      this.positionController.schedule();
+      return;
+    }
+
+    this.dsChange.emit(nextValue);
   }
 
   private selectField(field: TableSearchField): void {
@@ -220,13 +241,13 @@ export class TableSearch {
   }
 
   private handleKeyDown(event: KeyboardEvent): void {
-    if (event.key === '/' && !event.altKey && !event.ctrlKey && !event.metaKey) {
+    if (event.key === '/' && !this.menuOpen && !event.altKey && !event.ctrlKey && !event.metaKey) {
       event.preventDefault();
       this.openMenu(true);
       return;
     }
 
-    if (event.key === 'Backspace' && this.menuOpen) {
+    if (event.key === 'Backspace' && this.menuOpen && this.menuQuery.length === 0) {
       event.preventDefault();
       this.closeMenu();
       return;
@@ -253,7 +274,7 @@ export class TableSearch {
       this.focusRingVisible = true;
       this.activeIndex = nextTableSearchActiveIndex(
         this.activeIndex,
-        this.availableFields.length,
+        this.visibleFields.length,
         event.key === 'ArrowDown' ? 1 : -1
       );
       this.el
@@ -263,7 +284,7 @@ export class TableSearch {
     }
 
     if (event.key === 'Enter') {
-      const field = this.availableFields[this.activeIndex];
+      const field = this.visibleFields[this.activeIndex];
       if (!field) return;
       event.preventDefault();
       this.selectField(field);
@@ -276,6 +297,8 @@ export class TableSearch {
   render() {
     const selected = this.selectedFields;
     const available = this.availableFields;
+    const visible = this.visibleFields;
+    const inputValue = this.menuOpen ? this.menuQuery : this.value;
     const hasValue = this.value.length > 0 || selected.length > 0;
     const description = selected.length
       ? `Search limited to ${selected.map(field => field.label).join(' or ')}.`
@@ -336,7 +359,7 @@ export class TableSearch {
               class="table-search__input ds-text--body-medium ds-text--regular"
               type="search"
               role="combobox"
-              value={this.value}
+              value={inputValue}
               placeholder={this.placeholder}
               disabled={this.isInactive}
               aria-label={this.ariaLabel}
@@ -350,13 +373,13 @@ export class TableSearch {
               autoCapitalize="none"
               autoCorrect="off"
               spellcheck={false}
-              onInput={event => this.dsChange.emit((event.target as HTMLInputElement).value)}
+              onInput={event => this.handleInput(event)}
               onKeyDown={event => this.handleKeyDown(event)}
             />
           </div>
           {this.searchFields.length > 0 && (
             <div class="table-search__actions ds-interaction-fill__content">
-              {this.value.length > 0 && !this.isInactive && (
+              {inputValue.length > 0 && !this.isInactive && (
                 <ds-button-unfilled
                   class="table-search__clear"
                   variant="icon"
@@ -368,7 +391,7 @@ export class TableSearch {
                   onDsClick={() => this.clearSearch()}
                 />
               )}
-              {this.value.length > 0 && !this.isInactive && (
+              {inputValue.length > 0 && !this.isInactive && (
                 <ds-divider
                   class="table-search__action-divider"
                   orientation="vertical"
@@ -420,7 +443,7 @@ export class TableSearch {
               role="listbox"
               aria-label={this.fieldMenuLabel}
             >
-              {available.map((field, index) => {
+              {visible.map((field, index) => {
                 const active = index === this.activeIndex;
                 return (
                   /* eslint-disable-next-line local/prefer-direct-ds-text -- The option owns listbox semantics and pointer interaction while ds-text remains its typography child. */
@@ -457,6 +480,11 @@ export class TableSearch {
                   </div>
                 );
               })}
+              {visible.length === 0 && (
+                <div class="table-search__empty ds-choice-empty ds-empty-region">
+                  <ds-empty-state body="No matching data points" />
+                </div>
+              )}
             </div>
           </div>
         )}

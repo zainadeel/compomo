@@ -320,6 +320,7 @@ test('input follows shared control density, focus, and search-clear recipes', as
   await expect(search.locator('.input-control')).not.toHaveClass(/ds-interaction-fill/);
   await expect(search.locator('ds-button-unfilled')).toHaveCount(1);
   await expect(search.locator('ds-button-unfilled')).toHaveJSProperty('icon', 'CrossCircle');
+  await expect(search.locator('ds-button-unfilled ds-icon svg')).toBeVisible();
   await page.evaluate(() => {
     const buttonStyles = [...document.querySelectorAll('style')].find(style =>
       style.textContent?.includes('.ds-button-host--icon')
