@@ -1,5 +1,13 @@
 # Changelog
 
+## [14.20.0](https://github.com/zainadeel/compomo/compare/v14.19.1...v14.20.0) (2026-08-27)
+
+
+### Added
+
+* add semantic table date filters ([d8c26b2](https://github.com/zainadeel/compomo/commit/d8c26b2d90115745f281d47000406fc659b66f9a))
+* add semantic table date filters ([e6b51e8](https://github.com/zainadeel/compomo/commit/e6b51e891a83348b6ab46c5e8a1d8427e023c34b))
+
 ## [14.19.1](https://github.com/zainadeel/compomo/compare/v14.19.0...v14.19.1) (2026-08-27)
 
 
