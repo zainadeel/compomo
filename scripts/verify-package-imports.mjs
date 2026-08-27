@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /** Install the packed tarball and load every supported public runtime surface. */
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -18,6 +18,12 @@ const pkg = JSON.parse(
 const packDir = mkdtempSync(join(tmpdir(), 'ds-mo-pack-'));
 const smokeDir = mkdtempSync(join(tmpdir(), 'ds-mo-consumer-'));
 const npmEnv = { ...process.env, npm_config_cache: join(tmpdir(), 'ds-mo-npm-cache') };
+
+function installedVersion(packageName) {
+  return JSON.parse(
+    readFileSync(join(repoRoot, 'node_modules', packageName, 'package.json'), 'utf8')
+  ).version;
+}
 
 function resultText(result) {
   return (
@@ -211,16 +217,18 @@ try {
         private: true,
         type: 'module',
         dependencies: {
-          '@angular/compiler': pkg.devDependencies['@angular/compiler'],
-          '@angular/core': pkg.devDependencies['@angular/core'],
-          '@angular/forms': pkg.devDependencies['@angular/forms'],
-          '@ds-mo/icons': pkg.devDependencies['@ds-mo/icons'],
-          '@ds-mo/tokens': pkg.devDependencies['@ds-mo/tokens'],
+          '@angular/common': installedVersion('@angular/common'),
+          '@angular/compiler': installedVersion('@angular/compiler'),
+          '@angular/core': installedVersion('@angular/core'),
+          '@angular/forms': installedVersion('@angular/forms'),
+          '@angular/platform-browser': installedVersion('@angular/platform-browser'),
+          '@ds-mo/icons': installedVersion('@ds-mo/icons'),
+          '@ds-mo/tokens': installedVersion('@ds-mo/tokens'),
           '@ds-mo/ui': `file:${tarballPath}`,
-          react: pkg.devDependencies.react,
-          'react-dom': pkg.devDependencies['react-dom'],
-          typescript: pkg.devDependencies.typescript,
-          vue: pkg.devDependencies.vue,
+          react: installedVersion('react'),
+          'react-dom': installedVersion('react-dom'),
+          typescript: installedVersion('typescript'),
+          vue: installedVersion('vue'),
         },
       },
       null,
