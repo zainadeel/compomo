@@ -1927,6 +1927,9 @@ export const StickyHeaderAndOverflow: Story = {
 
 export const NativeGroupedStickyPerformance: Story = {
   name: 'Native grouped sticky performance',
+  // This 1,000-row manual stress fixture repeats the grouped-table semantics
+  // covered by the smaller stories and is intentionally outside the test matrix.
+  tags: ['!test'],
   parameters: {
     docs: {
       description: {
