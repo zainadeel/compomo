@@ -45,7 +45,7 @@ test(
   }
 );
 
-test('submits, validates, and resets form-associated controls', async ({ page }) => {
+test('submits, validates, and resets form-associated controls @pr-critical', async ({ page }) => {
   await page.locator('#submit').click();
   expect(
     await page.evaluate(() => (window as typeof window & { __submitted?: unknown }).__submitted)
@@ -568,7 +568,7 @@ test(
   }
 );
 
-test('radio uses roving focus and arrow-key selection', async ({ page }) => {
+test('radio uses roving focus and arrow-key selection @pr-critical', async ({ page }) => {
   const radio = page.locator('#tier');
   const standard = radio.getByRole('radio', { name: 'Standard' });
   const premium = radio.getByRole('radio', { name: 'Premium' });
@@ -808,7 +808,7 @@ test(
   }
 );
 
-test('slider keyboard updates continuously, commits, constrains ranges, and preserves read-only values', async ({
+test('slider keyboard updates continuously, commits, constrains ranges, and preserves read-only values @pr-critical', async ({
   page,
 }) => {
   const single = page.locator('#slider-single input[type="range"]');

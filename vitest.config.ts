@@ -33,7 +33,7 @@ function storybookProject(theme: 'light' | 'dark') {
         headless: true,
         instances: [{ browser: 'chromium' }],
       },
-      retry: process.env.CI ? 1 : 0,
+      retry: 0,
       setupFiles: [join(projectRoot, '.storybook/vitest.setup.ts')],
       testTimeout: 120_000,
     },

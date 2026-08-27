@@ -335,7 +335,7 @@ test('uses directional panel easing for CSS-owned shell-space motion', async ({ 
   expect(closing.surfaceEasing).toBe(closing.expectedEasing);
 });
 
-test('keeps one moving clip boundary flush with the shell edge', async ({ page }) => {
+test('keeps one moving clip boundary flush with the shell edge @pr-critical', async ({ page }) => {
   const banner = page.locator('#shell-banner');
   await banner.evaluate((element: HTMLDsBannerElement) => {
     element.open = false;

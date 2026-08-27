@@ -396,7 +396,7 @@ test.describe('Managed application shell', () => {
     await expect(shell.getByRole('button', { name: /Current section: Overview/ })).toHaveCount(0);
   });
 
-  test('preserves routed and tool element identity across responsive presentation changes', async ({
+  test('preserves routed and tool element identity across responsive presentation changes @pr-critical', async ({
     page,
   }) => {
     await page.evaluate(() => {

@@ -50,7 +50,7 @@ async function expectImageColumnToHugPreview(cell: Locator) {
   expect(difference).toBeLessThanOrEqual(COMPOSITED_EDGE_CEILING_PX);
 }
 
-test('renders native caption, header, row, and cell semantics', async ({ page }) => {
+test('renders native caption, header, row, and cell semantics @pr-critical', async ({ page }) => {
   const table = page.locator('#basic');
   const native = table.getByRole('table', { name: 'Workforce overview' });
   await expect(native).toBeVisible();
@@ -1308,7 +1308,9 @@ test('renders independently styled standard cell types', async ({ page }) => {
   expect(Math.abs(iconCenter - iconCellCenter)).toBeLessThanOrEqual(0.5);
 });
 
-test('opens a shared overflow action menu and emits only on command select', async ({ page }) => {
+test('opens a shared overflow action menu and emits only on command select @pr-critical', async ({
+  page,
+}) => {
   const table = page.locator('#cell-types');
   const trigger = table
     .locator('[data-row-id="tag-variants"] [data-column-id="action"]')
@@ -2084,7 +2086,7 @@ test('resets to page one after a controlled page-size request', async ({ page })
     });
 });
 
-test('supports keyboard focus and terminal page boundaries', async ({ page }) => {
+test('supports keyboard focus and terminal page boundaries @pr-critical', async ({ page }) => {
   const table = page.locator('#paginated');
   const pagination = page.locator('#paginated ds-pagination');
   const pageSize = pagination.getByRole('combobox', { name: 'Rows per page' });

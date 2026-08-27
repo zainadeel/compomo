@@ -31,7 +31,7 @@ test('stops infinite and spatial component motion while retaining final states',
   expect(buttonTransition).not.toContain('transform');
 });
 
-test('renders overlays without entry or exit animation delays', async ({ page }) => {
+test('renders overlays without entry or exit animation delays @pr-critical', async ({ page }) => {
   await expect(page.locator('#menu .menu-popup')).toBeVisible();
   await expect(page.locator('#modal .modal-dialog')).toBeVisible();
   await expect(page.locator('#toast .toast-surface')).toBeVisible();

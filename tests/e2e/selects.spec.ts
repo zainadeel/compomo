@@ -134,7 +134,7 @@ test(
   }
 );
 
-test('uses combobox and listbox semantics with disabled-option keyboard skipping', async ({
+test('uses combobox and listbox semantics with disabled-option keyboard skipping @pr-critical', async ({
   page,
 }) => {
   const select = page.locator('#single');
@@ -477,7 +477,7 @@ test('keeps single and multi popups visible and pointer-usable after repeated re
   }
 });
 
-test('keeps single and multi popups viewport-anchored inside contained clipping layouts', async ({
+test('keeps single and multi popups viewport-anchored inside contained clipping layouts @pr-critical', async ({
   page,
 }) => {
   for (const selector of ['#contained-single', '#contained-multi']) {

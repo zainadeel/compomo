@@ -93,7 +93,7 @@ test('virtual totals and busy state stay scoped to the complete supplied dataset
   await expect(table.locator('.ds-table__table')).not.toHaveAttribute('aria-busy', 'true');
 });
 
-test('keeps a focused row and an open action menu row mounted while virtualizing', async ({
+test('keeps a focused row and an open action menu row mounted while virtualizing @pr-critical', async ({
   page,
 }) => {
   const table = page.locator('#virtual');

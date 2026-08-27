@@ -42,6 +42,8 @@ React, and Vue adapters:
 
 ```bash
 npm run build
+npm run verify:local
+npm run verify:local:full
 npm run test
 npm run test:e2e
 npm run typecheck
@@ -136,6 +138,12 @@ Do not add component-specific rules to this root file.
 
 Choose checks in proportion to the change using the
 [testing strategy](docs/maintainers/testing.md).
+
+**Mandatory pre-PR gate:** When asked to open or prepare a pull request, run
+`npm run verify:local:full` locally after the final code change and before
+pushing or opening the PR. Do not substitute the narrower GitHub PR gate. If
+the full local check cannot complete, stop and report the failure or blocker
+instead of opening the PR as though it were verified.
 
 At minimum:
 
