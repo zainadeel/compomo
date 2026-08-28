@@ -1309,6 +1309,7 @@
           ],
           "commonlyComposedWith": [
             "component:ds-shell-page",
+            "component:ds-shell-app",
             "component:ds-button-filled",
             "component:ds-button-unfilled",
             "component:ds-breadcrumb",
@@ -1333,11 +1334,13 @@
             "The overflow trigger uses its bordered treatment whenever the primary action is visible beside it; overflow-only and auto-collapsed-primary presentations keep the trigger borderless.",
             "expanded renders the larger heading, optional description, inset divider, and a full-width caption breadcrumb row above the title. The breadcrumb begins after 32px top padding; the following title and right-side actions share one top alignment. Compact renders 48px chrome with the existing icon Back action; constrained uses compact chrome and moves an auto-collapse primary action into overflow.",
             "primaryAction collapse defaults to auto. Use never for exceptional actions whose hierarchy must remain visible in constrained layouts.",
-            "showDivider=false removes the bottom divider when the surrounding page composition supplies the boundary; showCompactDivider can independently restore or remove that boundary in compact and constrained variants."
+            "showDivider=false removes the bottom divider when the surrounding page composition supplies the boundary; showCompactDivider can independently restore or remove that boundary in compact and constrained variants.",
+            "placement=shell-bar is reserved for ShellApp panel section navigation. It remains compact, omits description and breadcrumb presentation, and preserves applicable Back, section, primary, and overflow controls."
           ],
           "responsiveBehavior": [
             "BarTitle does not observe viewport, shell, scroll, or container state. Its owner selects an explicit variant.",
             "ShellPage is the standard owner for automatic expanded, compact, and constrained selection.",
+            "ShellApp owns shell-bar placement and always selects compact presentation there; mobile continues to use MobileHeader.",
             "When ShellPage owns BarTitle on a secondary desktop or tablet page, its expanded, compact, and constrained presentations all match that canvas; the separate MobileHeader component remains primary.",
             "Compact titles use the shared compact-header geometry and md control inset so top-level headings align with BarNav and inline Back geometry aligns with PanelToolHeader. Long headings and section labels truncate independently while Back and action controls retain complete hit targets and accessible names.",
             "A never-collapse primary action remains visible in constrained mode; the title and section label yield space first."
@@ -1403,6 +1406,10 @@
           "heading": {
             "type": "string",
             "required": true
+          },
+          "placement": {
+            "type": "BarTitlePlacement",
+            "required": false
           },
           "primaryAction": {
             "type": "BarTitlePrimaryAction | null",
@@ -6283,7 +6290,7 @@
     {
       "name": "panel-nav",
       "title": "PanelNav",
-      "description": "The single persistent primary navigation for an application, providing grouped top-level destinations, active-route state, standard dashboard/settings switching, user access, and collapsible desktop and tablet presentation.",
+      "description": "The single persistent primary navigation for an application, providing grouped destinations, optional nested route sections, active-route state, standard dashboard/settings switching, user access, and collapsible desktop and tablet presentation.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -6294,7 +6301,7 @@
         "intent": {
           "audience": "specialized",
           "status": "stable",
-          "summary": "The single persistent primary navigation for an application, providing grouped top-level destinations, active-route state, standard dashboard/settings switching, user access, and collapsible desktop and tablet presentation.",
+          "summary": "The single persistent primary navigation for an application, providing grouped destinations, optional nested route sections, active-route state, standard dashboard/settings switching, user access, and collapsible desktop and tablet presentation.",
           "useWhen": [
             "Building the one primary navigation surface for an application that uses the CompoMo system.",
             "Top-level destinations must remain consistently available while the application's page content changes.",
@@ -6302,14 +6309,14 @@
           ],
           "avoidWhen": [
             "A second navigation surface is needed within the same application; an application must have only one PanelNav.",
-            "The choices represent sections within the active primary destination; use BarNav instead.",
+            "Route sections belong in the shell bar for the application's selected navigation mode; use flat PanelNav with BarNav rather than mixing both section presentations.",
             "The choices switch local content without changing the application's primary destination; use TabGroup instead.",
             "The interaction performs a command or presents temporary contextual choices; use a button or Menu instead.",
             "Building navigation below the mobile breakpoint; use the application's dedicated mobile navigation component instead."
           ],
           "alternatives": [
             {
-              "when": "The choices represent route sections within the active primary destination.",
+              "when": "The application uses the standard flat primary-navigation mode and route sections belong in the shell bar.",
               "component": "component:ds-bar-nav",
               "reason": "BarNav owns secondary section navigation within the destination selected by PanelNav."
             },
@@ -6337,6 +6344,7 @@
             "Give every primary destination a concise visible label and an icon that supports rather than replaces that label.",
             "Provide localized dashboard, settings, account, navigation, collapse, and expand labels.",
             "Preserve accessible destination names when the panel is collapsed to icon-only presentation.",
+            "In nested presentation, expose parent expansion state, give only the active child aria-current, and focus the selected or first enabled child when a keyboard-opened flyout appears.",
             "Use notification dots as supplemental status and never as the only indication of important information.",
             "When the destination body overflows, it becomes a localized keyboard-focusable scroll region in addition to the roving destination controls.",
             "Keep the standard dashboard/settings switch and user/account entry available in the footer."
@@ -6345,7 +6353,12 @@
             "Render exactly one PanelNav per application; it owns primary application destinations and no other navigation role.",
             "The host router owns the current route; prefer currentUrl for active destination matching and use activeId only when route matching is unavailable.",
             "Use anchor mode for native links or routers that intercept anchors; use event mode when the host performs navigation from dsNavSelect.",
-            "Groups visually organize top-level destinations only and must not be interpreted as nested or expandable navigation.",
+            "Groups visually organize top-level destinations. Use presentation=nested only when parent children replace BarNav route sections.",
+            "A parent with children is not a standalone page: activating it while expanded resolves to the first enabled child; route state keeps that parent expanded and gives both parent and child selected styling.",
+            "While one parent is expanded in nested presentation, other top-level destinations use tertiary foreground so the active branch retains visual priority; flat and collapsed presentations keep their existing foreground treatment.",
+            "Expanded nested branches animate to their full required height over 500ms while fixed-size child rows progressively fade over 500ms after a 250ms wait, with each row starting 50ms after the previous row. On close, child rows fade out in reverse order with tertiary foreground and the height contraction waits 250ms; reduced-motion preferences collapse those transitions to the instant motion token.",
+            "Collapsing the full navigation rail keeps the active nested branch mounted through the rail transition and contracts its height over the same duration, so following destinations reposition without snapping.",
+            "Collapsed nested presentation opens a child-only flyout from the parent icon without navigating; the parent holds the transient pressed wash while the flyout is rendered, activates again to close, and emits navigation intent only after a child selection.",
             "Dashboard presents day-to-day operational destinations; Settings presents administrative and configuration destinations.",
             "The standard footer switches the entire destination collection and navStyle between Dashboard and Settings and exposes the user/account entry.",
             "The host owns the external user menu opened from dsNavUserAction.",
@@ -6359,7 +6372,8 @@
             "Below 768px, the consuming application replaces PanelNav with a dedicated mobile navigation component; PanelNav does not own mobile navigation.",
             "Managed ShellApp permanently owns responsive composition: it determines shell mode, enforces tablet collapse, and presents MobileSheetNav below 768px.",
             "When the viewport is below breakpoint, PanelNav locks collapsed, disables its header toggle affordance, and preserves the persisted desktop collapse preference.",
-            "Collapsed presentation must preserve destination ordering, active state, notification status, and accessible names."
+            "Collapsed presentation must preserve destination ordering, active state, notification status, and accessible names.",
+            "Nested parents expose child routes inline while expanded and in an anchored flyout while collapsed; mobile navigation remains owned by ShellApp."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -6398,6 +6412,10 @@
           },
           "accountMenuExpanded": {
             "type": "boolean",
+            "required": false
+          },
+          "activeChildId": {
+            "type": "string",
             "required": false
           },
           "activeId": {
@@ -6448,6 +6466,10 @@
             "type": "string",
             "required": false
           },
+          "presentation": {
+            "type": "PanelNavPresentation",
+            "required": false
+          },
           "routerMode": {
             "type": "PanelNavRouterMode",
             "required": false
@@ -6483,6 +6505,10 @@
             "detail": "ChromeTransitionDetail"
           },
           {
+            "name": "dsNavChildSelect",
+            "detail": "PanelNavChildSelectDetail"
+          },
+          {
             "name": "dsNavFooterAction",
             "detail": "void"
           },
@@ -6516,6 +6542,7 @@
         "badge",
         "button-unfilled",
         "icon",
+        "menu",
         "text",
         "tooltip"
       ]
@@ -7801,6 +7828,7 @@
           "commonlyComposedWith": [
             "component:ds-panel-nav",
             "component:ds-bar-nav",
+            "component:ds-bar-title",
             "component:ds-panel-tools",
             "component:ds-shell-tools",
             "component:ds-mobile-sheet-nav",
@@ -7830,6 +7858,9 @@
             "The application router owns the current route, authorization filtering, Dashboard or Settings context, destination collections, section collections, and localized content labels.",
             "ShellApp renders the lower-level desktop, tablet, and mobile chrome, coordinates layout, gradient alignment, transitions, shortcuts, global surfaces, optional Inbox state, focus restoration, and mobile-stage visibility.",
             "The application router owns authorization, current URLs, history, and route execution; ShellApp forwards navigation and page intent events without routing.",
+            "sectionNavigation is an application-controlled preference: bar keeps route sections in BarNav, while panel renders them as nested PanelNav children and places compact BarTitle in the shell bar.",
+            "Switch sectionNavigation at runtime without replacing routed content or tool owners; the application owns preference storage and defaults new users to bar unless product policy says otherwise.",
+            "In panel mode, supply the same route sections as children on their PanelNav parent and handle dsNavChildSelect as structured parent, child, and href navigation intent.",
             "The application supplies each routed content owner and tool view once. ShellApp changes visibility, inert state, and presentation without recreating those nodes.",
             "The optional banner slot accepts one application-owned ds-banner above the complete shell row. The application owns its open state, orientation for the current shell capacity, action consequences, dismissal persistence, and resolution when several messages compete.",
             "Use composition=slotted only for advanced application architectures that intentionally own all lower-level chrome wiring.",
@@ -7839,7 +7870,7 @@
             "Dashboard represents day-to-day operational work while Settings represents administrative and configuration work; route state selects the context.",
             "Replace navigation and pageChrome together from one completed route state.",
             "When pageChrome.showBack marks a detail depth, mobile chrome keeps the page heading as its identity and presents only local subsections; peer route tabs remain in desktop BarNav rather than replacing the detail heading.",
-            "Managed ShellApp keeps BarNav and ShellPage presentations present and owns page header stickiness and the content scroller.",
+            "Managed ShellApp keeps the selected desktop section-navigation presentation and ShellPage present and owns page header stickiness and the content scroller.",
             "Route-owned pageChrome independently selects ShellPage contentInset, roomy and compact top seams, scroll compaction, expanded and compact header-divider visibility, and contentSurface; ShellApp forwards them without making page-specific layout or surface decisions.",
             "The application filters unauthorized destinations, sections, and tools before passing them into shell components."
           ],
@@ -7847,7 +7878,9 @@
             "ShellApp owns the fixed system breakpoints and resolves desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
             "On desktop, PanelNav defaults expanded, permits user collapse or expansion, and respects the locally persisted desktop preference.",
             "On tablet, ShellApp keeps PanelNav permanently collapsed and prevents user expansion without overwriting the desktop preference.",
+            "On desktop and tablet, panel section navigation replaces BarNav with compact BarTitle; collapsed PanelNav exposes child sections through its anchored flyout.",
             "On mobile, ShellApp hides and inerts desktop chrome, uses a solid primary stage, and composes MobileHeader, MobileSheetNav, ShellTools, and the persistent MobileBarNav around the same application-owned content.",
+            "Changing sectionNavigation never changes mobile chrome; the preference may still be edited by an application Settings page.",
             "Opening MobileSheetNav temporarily overlays the active routed page or global tool; closing it without selecting an area restores that same destination and its nested state. The sheet exposes the router-derived current area only while the routed area owns the mobile stage, so a global tool never leaves an underlying route highlighted.",
             "Selecting Help from the managed mobile sheet activates the configured Help tool and promotes Help to the primary mobile destination instead of forwarding it as route navigation.",
             "Set navigation.showMobileAccount to false when the Settings destination collection already includes account and user preferences.",
@@ -7931,6 +7964,10 @@
             "type": "PaperTextureConfig",
             "required": false
           },
+          "sectionNavigation": {
+            "type": "ShellSectionNavigation",
+            "required": false
+          },
           "shortcutsEnabled": {
             "type": "boolean",
             "required": false
@@ -7956,6 +7993,10 @@
           {
             "name": "dsHeaderBack",
             "detail": "{ tool: PanelToolsToolId }"
+          },
+          {
+            "name": "dsNavChildSelect",
+            "detail": "PanelNavChildSelectDetail"
           },
           {
             "name": "dsNavFooterAction",

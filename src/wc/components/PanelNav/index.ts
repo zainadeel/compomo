@@ -1,6 +1,9 @@
 export type {
   PanelNavRouterMode,
+  PanelNavChildItem,
+  PanelNavChildSelectDetail,
   PanelNavItem,
+  PanelNavPresentation,
   PanelNavGroup,
   PanelNavUserActionDetail,
 } from './panel-nav-types';
@@ -13,5 +16,7 @@ export {
   resolvePanelNavStyle,
   shouldResyncPanelNavStyle,
   deriveActiveIdFromUrl,
+  derivePanelNavSelectionFromUrl,
+  firstEnabledPanelNavChild,
   parsePanelNavGroups,
 } from './panel-nav-utils';

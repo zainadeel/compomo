@@ -6,5 +6,6 @@ export type {
   BarTitlePrimaryAction,
   BarTitleSection,
   BarTitleSectionItem,
+  BarTitlePlacement,
   BarTitleVariant,
 } from './bar-title-types';

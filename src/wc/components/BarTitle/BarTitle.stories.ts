@@ -135,6 +135,7 @@ const meta: Meta = {
     showDivider: { control: 'boolean' },
     showCompactDivider: { control: 'boolean' },
     variant: { control: 'select', options: ['expanded', 'compact', 'constrained'] },
+    placement: { control: 'select', options: ['page', 'shell-bar'] },
   },
   args: {
     heading: 'John Smith',
@@ -145,6 +146,7 @@ const meta: Meta = {
     showDivider: true,
     showCompactDivider: undefined,
     variant: 'expanded',
+    placement: 'page',
   },
 };
 
@@ -307,6 +309,7 @@ export const Playground: Story = {
         back-label=${args['backLabel']}
         .showDivider=${args['showDivider']}
         .showCompactDivider=${args['showCompactDivider']}
+        placement=${args['placement']}
         .breadcrumbs=${driverBreadcrumbs}
         variant=${args['variant']}
         .sections=${detailSections}
@@ -374,6 +377,38 @@ export const DetailWithSections: Story = {
 export const DetailWithoutSections: Story = {
   name: 'Page type · Detail without sections',
   render: () => renderFocusedCase(pageCases[3]),
+};
+
+export const ShellBarPlacement: Story = {
+  name: 'Placement · Shell bar',
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        story:
+          'The compact page title used when nested PanelNav owns route sections. Description copy ' +
+          'is intentionally omitted while Back, subsection, primary, and overflow controls remain.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="background:var(--color-background-secondary);">
+      <ds-bar-title
+        placement="shell-bar"
+        variant="compact"
+        heading="Safety events"
+        description="This description is intentionally not rendered in shell-bar placement."
+        show-back
+        back-aria-label="Back to Safety"
+        .sections=${detailSections}
+        value="summary"
+        .primaryAction=${detailPrimaryAction}
+        .actions=${detailActions}
+        actions-aria-label="Safety page actions"
+        @dsSectionChange=${updateValue}
+      ></ds-bar-title>
+    </div>
+  `,
 };
 
 export const Variants: Story = {

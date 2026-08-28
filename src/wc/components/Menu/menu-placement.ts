@@ -28,6 +28,20 @@ export const PANEL_NAV_USER_MENU_PLACEMENT = {
 } as const satisfies MenuPlacement;
 
 /**
+ * Canonical placement for PanelNav's collapsed child-route flyout.
+ * The parent control is 8px inside the panel edge, so a 12px side offset leaves
+ * a 4px visual gap outside the panel. Start choice-cell alignment places the
+ * first flyout row on the same block axis as its parent control.
+ */
+export const PANEL_NAV_CHILD_MENU_PLACEMENT = {
+  side: 'right',
+  align: 'start',
+  anchorAlignment: 'choice-cell',
+  sideOffset: 'calc(var(--dimension-space-100) + var(--dimension-space-050))',
+  alignOffset: 0,
+} as const satisfies MenuPlacement;
+
+/**
  * Canonical placement for a menu opened by a PanelTools header action.
  * Matches BarNav overflow: the 32px trigger is 8px inside the 48px header, so
  * a 12px side offset places the popup 4px below the header edge. Choice-cell

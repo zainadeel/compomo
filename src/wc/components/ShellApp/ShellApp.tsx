@@ -16,6 +16,8 @@ import { isEditableShortcutTarget, resolveShellShortcut } from '../../shell/shel
 import type { PanelToolsToolId, PanelToolsHeaderAction } from '../PanelTools/panel-tools-types';
 import { PANEL_TOOLS_DEFAULT_ITEMS } from '../PanelTools/panel-tools-types';
 import type { BarTitleSectionItem } from '../BarTitle/bar-title-types';
+import type { BarTitlePlacement } from '../BarTitle/bar-title-types';
+import type { BarNavTab } from '../BarNav/bar-nav-types';
 import type { BreadcrumbSelectDetail } from '../Breadcrumb/breadcrumb-types';
 import {
   DEFAULT_SHELL_GRADIENT_PRESET,
@@ -60,6 +62,7 @@ import {
   type ShellResponsiveMode,
 } from '../../shell/shell-responsive';
 import { deriveActiveIdFromUrl } from '../PanelNav/panel-nav-utils';
+import type { PanelNavChildSelectDetail } from '../PanelNav/panel-nav-types';
 import type { PanelNavItem } from '../PanelNav/panel-nav-types';
 import type { PanelNavUserActionDetail } from '../PanelNav/panel-nav-types';
 import type { MobileBarNavDestinationDetail } from '../MobileBarNav/mobile-bar-nav-types';
@@ -67,6 +70,7 @@ import type {
   ShellAppComposition,
   ShellNavigationConfig,
   ShellPageChromeConfig,
+  ShellSectionNavigation,
   ShellToolsConfig,
 } from './shell-app-types';
 import type { PaperTextureConfig } from '../PaperTexture/paper-texture-types';
@@ -84,6 +88,10 @@ export class ShellApp {
 
   /** Router-owned navigation data used by managed composition. */
   @Prop() navigation: ShellNavigationConfig = {};
+
+  /** Desktop/tablet route sections in BarNav, or nested beneath PanelNav parents. */
+  @Prop({ attribute: 'section-navigation', reflect: true })
+  sectionNavigation: ShellSectionNavigation = 'bar';
 
   /** Route-owned page title and section data used by managed composition. */
   @Prop({ attribute: 'page-chrome' }) pageChrome: ShellPageChromeConfig = {};
@@ -123,6 +131,9 @@ export class ShellApp {
 
   /** Managed desktop BarNav or mobile section-selection intent. */
   @Event() dsTabChange!: EventEmitter<string>;
+
+  /** Managed nested PanelNav child-route intent. */
+  @Event() dsNavChildSelect!: EventEmitter<PanelNavChildSelectDetail>;
 
   /** Managed page-subsection intent from BarTitle or MobileHeader. */
   @Event() dsSubsectionChange!: EventEmitter<string>;
@@ -210,6 +221,17 @@ export class ShellApp {
     return this.tools.items ?? PANEL_TOOLS_DEFAULT_ITEMS;
   }
 
+  private get resolvedPageTabs(): BarNavTab[] {
+    const children = this.currentArea.children;
+    if (!children?.length) return this.pageChrome.tabs ?? [];
+    return children.map(child => ({
+      id: child.id,
+      label: child.label,
+      dot: child.dot,
+      isInactive: child.isInactive,
+    }));
+  }
+
   private get availableInboxTools(): ShellInboxToolId[] {
     return this.resolvedToolItems
       .filter(item => !item.isInactive && itemUsesShellInbox(item))
@@ -262,6 +284,7 @@ export class ShellApp {
   @Watch('navStyle')
   @Watch('gradientPreset')
   @Watch('paperTexture')
+  @Watch('sectionNavigation')
   onShellPropsChange() {
     this.syncSlottedNavStyle();
     this.scheduleChromeSync();
@@ -627,6 +650,11 @@ export class ShellApp {
     this.dsNavSelect.emit(event.detail);
   };
 
+  private handleManagedNavChildSelect = (event: CustomEvent<PanelNavChildSelectDetail>) => {
+    event.stopPropagation();
+    this.dsNavChildSelect.emit(event.detail);
+  };
+
   private handleManagedTabChange = (event: CustomEvent<string>) => {
     event.stopPropagation();
     this.dsTabChange.emit(event.detail);
@@ -794,7 +822,9 @@ export class ShellApp {
 
   private syncChrome() {
     const panelNav = this.el.querySelector('ds-panel-nav') as HTMLElement | null;
-    const bar = this.el.querySelector('ds-bar-nav') as HTMLElement | null;
+    const bar = this.el.querySelector(
+      'ds-bar-nav, ds-bar-title[placement="shell-bar"]'
+    ) as HTMLElement | null;
     const targets = [this.el, panelNav, bar].filter((el): el is HTMLElement => el !== null);
 
     const clearLayoutVars = () => {
@@ -844,7 +874,7 @@ export class ShellApp {
         continue;
       }
 
-      const isBar = target.tagName.toLowerCase() === 'ds-bar-nav';
+      const isBar = target === bar;
       this.applyGradientVars(target, {
         [SHELL_GRADIENT_IMAGE_VAR]: image,
         [SHELL_GRADIENT_SIZE_VAR]: size,
@@ -881,10 +911,12 @@ export class ShellApp {
     return (
       <ds-panel-nav
         navStyle={this.navStyle}
+        presentation={this.sectionNavigation === 'panel' ? 'nested' : 'flat'}
         groups={this.resolvedNavigationGroups}
         breakpoint={SHELL_DESKTOP_BREAKPOINT}
         routerMode={navigation.routerMode ?? 'event'}
         activeId={navigation.activeId ?? ''}
+        activeChildId={this.pageChrome.value ?? ''}
         currentUrl={navigation.currentUrl ?? this.pageChrome.currentUrl ?? ''}
         storageKey={navigation.storageKey ?? ''}
         userName={navigation.userName ?? ''}
@@ -897,6 +929,7 @@ export class ShellApp {
         settingsNavigationLabel={navigation.settingsNavigationLabel ?? 'Settings navigation'}
         navigationItemsLabel={navigation.navigationLabel ?? 'Navigation items'}
         onDsNavSelect={this.handleManagedNavSelect}
+        onDsNavChildSelect={this.handleManagedNavChildSelect}
         onDsNavFooterAction={this.handleManagedNavFooterAction}
         onDsNavUserAction={this.handleManagedNavUserAction}
       />
@@ -907,7 +940,7 @@ export class ShellApp {
     return (
       <ds-bar-nav
         navStyle={this.navStyle}
-        tabs={this.pageChrome.tabs ?? []}
+        tabs={this.resolvedPageTabs}
         value={this.pageChrome.value ?? ''}
         heading={this.pageChrome.routeHeading ?? this.pageChrome.heading}
         basePath={this.pageChrome.basePath ?? ''}
@@ -915,6 +948,12 @@ export class ShellApp {
         onDsTabChange={this.handleManagedTabChange}
       />
     );
+  }
+
+  private renderManagedTopBar() {
+    return this.sectionNavigation === 'panel'
+      ? this.renderManagedBarTitle('shell-bar')
+      : this.renderManagedBarNav();
   }
 
   private renderManagedToolSlots() {
@@ -1067,10 +1106,8 @@ export class ShellApp {
     ];
   }
 
-  private renderManagedPage() {
-    const page = this.pageChrome;
-    const mobileSections = page.showBack ? [] : (page.tabs ?? []);
-    const barTitleSections: BarTitleSectionItem[] = (page.subsections ?? []).map(item =>
+  private get barTitleSections(): BarTitleSectionItem[] {
+    return (this.pageChrome.subsections ?? []).map(item =>
       'type' in item
         ? { type: 'divider' }
         : {
@@ -1079,6 +1116,41 @@ export class ShellApp {
             isInactive: item.isInactive,
           }
     );
+  }
+
+  private renderManagedBarTitle(placement: BarTitlePlacement) {
+    const page = this.pageChrome;
+    return (
+      <ds-bar-title
+        slot={placement === 'page' ? 'header' : undefined}
+        placement={placement}
+        variant={placement === 'shell-bar' ? 'compact' : 'expanded'}
+        heading={page.heading ?? ''}
+        description={page.description ?? ''}
+        showBack={page.showBack ?? false}
+        backAriaLabel={page.backAriaLabel ?? 'Back'}
+        backLabel={page.backLabel ?? 'Back'}
+        breadcrumbs={page.breadcrumbs ?? []}
+        breadcrumbAriaLabel={page.breadcrumbAriaLabel ?? 'Breadcrumb'}
+        sections={this.barTitleSections}
+        value={page.subvalue ?? ''}
+        sectionsAriaLabel={page.subsectionsAriaLabel ?? 'Change page subsection'}
+        primaryAction={page.primaryAction ?? null}
+        actions={page.actions ?? []}
+        actionsAriaLabel={page.actionsAriaLabel ?? 'More page actions'}
+        showDivider={page.showHeaderDivider ?? true}
+        showCompactDivider={page.showCompactHeaderDivider}
+        onDsBack={this.handleManagedPageBack}
+        onDsBreadcrumbSelect={this.handleManagedBreadcrumbSelect}
+        onDsSectionChange={this.handleManagedSubsectionChange}
+        onDsAction={this.handleManagedPageAction}
+      />
+    );
+  }
+
+  private renderManagedPage() {
+    const page = this.pageChrome;
+    const mobileSections = page.showBack ? [] : this.resolvedPageTabs;
     return (
       <ds-shell-page
         responsiveMode={this.resolvedMode}
@@ -1090,28 +1162,7 @@ export class ShellApp {
         scrollCompaction={page.scrollCompaction ?? true}
         contentSurface={page.contentSurface ?? 'primary'}
       >
-        <ds-bar-title
-          slot="header"
-          heading={page.heading ?? ''}
-          description={page.description ?? ''}
-          showBack={page.showBack ?? false}
-          backAriaLabel={page.backAriaLabel ?? 'Back'}
-          backLabel={page.backLabel ?? 'Back'}
-          breadcrumbs={page.breadcrumbs ?? []}
-          breadcrumbAriaLabel={page.breadcrumbAriaLabel ?? 'Breadcrumb'}
-          sections={barTitleSections}
-          value={page.subvalue ?? ''}
-          sectionsAriaLabel={page.subsectionsAriaLabel ?? 'Change page subsection'}
-          primaryAction={page.primaryAction ?? null}
-          actions={page.actions ?? []}
-          actionsAriaLabel={page.actionsAriaLabel ?? 'More page actions'}
-          showDivider={page.showHeaderDivider ?? true}
-          showCompactDivider={page.showCompactHeaderDivider}
-          onDsBack={this.handleManagedPageBack}
-          onDsBreadcrumbSelect={this.handleManagedBreadcrumbSelect}
-          onDsSectionChange={this.handleManagedSubsectionChange}
-          onDsAction={this.handleManagedPageAction}
-        />
+        {this.sectionNavigation === 'bar' ? this.renderManagedBarTitle('page') : null}
         <ds-mobile-header
           slot="mobile-header"
           heading={page.heading ?? ''}
@@ -1256,7 +1307,7 @@ export class ShellApp {
               aria-hidden={fullscreen ? 'true' : undefined}
               inert={fullscreen ? true : undefined}
             >
-              {this.renderManagedBarNav()}
+              {this.renderManagedTopBar()}
             </div>
             <div
               class="shell-app__tools"

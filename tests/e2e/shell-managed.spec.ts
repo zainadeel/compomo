@@ -53,6 +53,278 @@ test.describe('Managed application shell', () => {
     await expect(shell.locator('ds-mobile-bar-nav')).toBeVisible();
   });
 
+  test('switches desktop section navigation without remounting routed or tool content', async ({
+    page,
+  }) => {
+    const shell = page.locator('#managed-shell');
+    const pageContent = shell.locator('#managed-page-content');
+    await pageContent.evaluate(element => {
+      element.dataset.identity = 'preserved';
+    });
+    await shell.getByRole('button', { name: 'Agents' }).click();
+    await shell.locator('#agent-draft').fill('Keep this draft');
+
+    await shell.evaluate(element => {
+      (element as HTMLDsShellAppElement).sectionNavigation = 'panel';
+    });
+
+    const panel = shell.locator('ds-panel-nav');
+    const shellBarTitle = shell.locator('.shell-app__bar > ds-bar-title');
+    await expect(panel).toHaveJSProperty('presentation', 'nested');
+    await expect(shell.locator('.shell-app__bar > ds-bar-nav')).toHaveCount(0);
+    await expect(shellBarTitle).toBeVisible();
+    await expect(shellBarTitle).toHaveJSProperty('placement', 'shell-bar');
+    await expect(shellBarTitle).toHaveJSProperty('variant', 'compact');
+    await expect(shell.locator('ds-shell-page ds-bar-title')).toHaveCount(0);
+    await expect(shell.getByText('Current fleet status.', { exact: true })).toHaveCount(0);
+
+    const parent = panel.getByRole('button', { name: 'Tracking' });
+    const child = panel.getByRole('button', { name: 'Overview' });
+    const otherParent = panel.getByRole('button', { name: 'Safety' });
+    await expect(parent).toHaveClass(/panel-nav__item--active/);
+    await expect(parent).toHaveAttribute('aria-expanded', 'true');
+    await expect(parent.locator('ds-icon')).toHaveCount(1);
+    await expect(child).toHaveClass(/panel-nav__item--active/);
+    await expect(child).toHaveAttribute('aria-current', 'page');
+    await expect(otherParent).toHaveClass(/panel-nav__parent--muted/);
+    const tertiaryForeground = await otherParent.evaluate(element => {
+      const probe = document.createElement('span');
+      probe.style.color = 'var(--color-foreground-tertiary)';
+      document.body.append(probe);
+      const color = getComputedStyle(probe).color;
+      probe.remove();
+      return color;
+    });
+    await expect(otherParent).toHaveCSS('color', tertiaryForeground);
+
+    const maintenanceParent = panel.getByRole('button', { name: 'Maintenance' });
+    const trackingAccordion = panel
+      .locator('.panel-nav__branch')
+      .filter({ hasText: 'Tracking' })
+      .locator('.panel-nav__children-accordion');
+    const maintenanceAccordion = panel
+      .locator('.panel-nav__branch')
+      .filter({ hasText: 'Maintenance' })
+      .locator('.panel-nav__children-accordion');
+    await expect(maintenanceAccordion).toHaveAttribute('aria-hidden', 'true');
+    await expect(maintenanceAccordion).toHaveCSS('grid-template-rows', '0px');
+
+    await maintenanceParent.click();
+    await expect(maintenanceAccordion).toHaveClass(/panel-nav__children-accordion--open/);
+    await expect(maintenanceAccordion).toHaveCSS('transition-property', 'grid-template-rows');
+    await expect
+      .poll(() => maintenanceAccordion.evaluate(element => element.getBoundingClientRect().height))
+      .toBeGreaterThan(0);
+    await expect(trackingAccordion).toHaveCSS('grid-template-rows', '0px');
+    const childFadeDelays = await maintenanceAccordion
+      .locator('.panel-nav__child')
+      .evaluateAll(elements =>
+        elements.map(element => Number.parseFloat(getComputedStyle(element).transitionDelay))
+      );
+    expect(childFadeDelays[1]).toBeGreaterThan(childFadeDelays[0]);
+    const accordionDuration = await maintenanceAccordion.evaluate(element =>
+      Number.parseFloat(getComputedStyle(element).transitionDuration)
+    );
+    const childFadeDuration = await maintenanceAccordion
+      .locator('.panel-nav__child')
+      .first()
+      .evaluate(element => Number.parseFloat(getComputedStyle(element).transitionDuration));
+    expect(childFadeDelays[0]).toBeCloseTo(accordionDuration / 2);
+    expect(childFadeDelays.at(-1)).toBeGreaterThan(childFadeDelays[0]);
+    expect(childFadeDuration).toBeCloseTo(accordionDuration);
+    expect(childFadeDelays[1] - childFadeDelays[0]).toBeCloseTo(childFadeDuration / 10);
+    const childHeights = await maintenanceAccordion
+      .locator('.panel-nav__child')
+      .evaluateAll(elements => elements.map(element => element.getBoundingClientRect().height));
+    expect(childHeights).toEqual([32, 32]);
+    await expect(maintenanceAccordion.locator('.panel-nav__child').first()).toHaveCSS(
+      'flex-shrink',
+      '0'
+    );
+    await expect(maintenanceAccordion.locator('.panel-nav__child').first()).toHaveCSS(
+      'transform',
+      'none'
+    );
+    const childFadeOutDelays = await trackingAccordion
+      .locator('.panel-nav__child')
+      .evaluateAll(elements =>
+        elements.map(element => Number.parseFloat(getComputedStyle(element).transitionDelay))
+      );
+    expect(childFadeOutDelays[0]).toBeGreaterThan(childFadeOutDelays[1]);
+    const [accordionCollapseDelay, closingChildFadeDuration] = await Promise.all([
+      trackingAccordion.evaluate(element =>
+        Number.parseFloat(getComputedStyle(element).transitionDelay)
+      ),
+      trackingAccordion
+        .locator('.panel-nav__child')
+        .first()
+        .evaluate(element => Number.parseFloat(getComputedStyle(element).transitionDuration)),
+    ]);
+    expect(accordionCollapseDelay).toBeCloseTo(accordionDuration / 2);
+    expect(closingChildFadeDuration).toBeCloseTo(childFadeDuration);
+    const [closingChildColor, mutedParentColor] = await Promise.all([
+      trackingAccordion
+        .locator('.panel-nav__child')
+        .first()
+        .evaluate(element => getComputedStyle(element).color),
+      panel
+        .getByRole('button', { name: 'Tracking' })
+        .evaluate(element => getComputedStyle(element).color),
+    ]);
+    expect(closingChildColor).toBe(mutedParentColor);
+
+    const followingParent = panel.getByRole('button', { name: 'Reports' });
+    const [expandedAccordionHeight, followingTopBeforeCollapse] = await Promise.all([
+      maintenanceAccordion.evaluate(element => element.getBoundingClientRect().height),
+      followingParent.evaluate(element => element.getBoundingClientRect().top),
+    ]);
+    await panel.evaluate(element => (element as HTMLDsPanelNavElement).toggleCollapsed());
+    const panelFrame = panel.locator('.panel-nav');
+    await expect(panelFrame).toHaveClass(/panel-nav--collapsed/);
+    await expect(panelFrame).toHaveClass(/panel-nav--animating/);
+    await expect(maintenanceAccordion).toHaveCount(1);
+    const [accordionCollapseDuration, panelCollapseDuration] = await Promise.all([
+      maintenanceAccordion.evaluate(element =>
+        Number.parseFloat(getComputedStyle(element).transitionDuration)
+      ),
+      panelFrame.evaluate(element =>
+        Number.parseFloat(getComputedStyle(element).transitionDuration)
+      ),
+    ]);
+    expect(accordionCollapseDuration).toBeCloseTo(panelCollapseDuration);
+    await page.waitForTimeout(100);
+    const [midCollapseHeight, followingTopMidCollapse] = await Promise.all([
+      maintenanceAccordion.evaluate(element => element.getBoundingClientRect().height),
+      followingParent.evaluate(element => element.getBoundingClientRect().top),
+    ]);
+    expect(midCollapseHeight).toBeGreaterThan(0);
+    expect(midCollapseHeight).toBeLessThan(expandedAccordionHeight);
+    expect(followingTopMidCollapse).toBeLessThan(followingTopBeforeCollapse);
+    await expect(panelFrame).not.toHaveClass(/panel-nav--animating/, { timeout: 5000 });
+    await expect(maintenanceAccordion).toHaveCount(0);
+
+    await shell.evaluate(element => {
+      (element as HTMLDsShellAppElement).sectionNavigation = 'bar';
+    });
+    await expect(shell.locator('.shell-app__bar > ds-bar-nav')).toBeVisible();
+    await expect(shell.locator('ds-shell-page ds-bar-title')).toBeVisible();
+    await expect(otherParent).not.toHaveClass(/panel-nav__parent--muted/);
+    await expect(pageContent).toHaveAttribute('data-identity', 'preserved');
+    await expect(shell.locator('#agent-draft')).toHaveValue('Keep this draft');
+    await expect(shell.locator('ds-shell-tools')).toHaveAttribute('active-tool', 'agents');
+    await expect(shell.locator('ds-shell-tools')).toHaveAttribute('open');
+  });
+
+  test('waits for a flyout child selection before collapsed parent navigation', async ({
+    page,
+  }) => {
+    const shell = page.locator('#managed-shell');
+    await shell.evaluate(element => {
+      const managed = element as HTMLDsShellAppElement;
+      managed.sectionNavigation = 'panel';
+      managed.navigation = {
+        ...managed.navigation,
+        currentUrl: '/dashboard/tracking/history',
+      };
+      managed.pageChrome = {
+        ...managed.pageChrome,
+        value: 'history',
+        currentUrl: '/dashboard/tracking/history',
+      };
+      document.documentElement.removeAttribute('data-last-event');
+    });
+    const panel = shell.locator('ds-panel-nav');
+    await expect(panel).toHaveJSProperty('currentUrl', '/dashboard/tracking/history');
+    await panel.evaluate(element => {
+      (element as HTMLDsPanelNavElement).collapsed = true;
+    });
+
+    const tracking = panel.getByRole('button', { name: 'Tracking' });
+    await expect
+      .poll(() =>
+        tracking.evaluate(element => {
+          const rect = element.getBoundingClientRect();
+          return { width: rect.width, height: rect.height };
+        })
+      )
+      .toEqual({ width: 32, height: 32 });
+    await expect
+      .poll(async () => {
+        const [itemBox, dotBox] = await Promise.all([
+          tracking.boundingBox(),
+          tracking.locator('ds-badge').boundingBox(),
+        ]);
+        return {
+          x: dotBox!.x - itemBox!.x,
+          y: dotBox!.y - itemBox!.y,
+        };
+      })
+      .toEqual({ x: 20, y: 6 });
+    await tracking.focus();
+    await tracking.press('Enter');
+
+    const flyout = panel.getByRole('menu', { name: 'Tracking sections' });
+    await expect(flyout).toBeVisible();
+    await expect(tracking).toHaveAttribute('aria-expanded', 'true');
+    await expect(tracking).toHaveClass(/panel-nav__parent--flyout-active/);
+    const openFill = await tracking.evaluate(element => {
+      const probe = document.createElement('span');
+      probe.style.backgroundColor = 'var(--color-interaction-pressed)';
+      document.body.append(probe);
+      const pressed = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return {
+        fill: getComputedStyle(element, '::after').backgroundColor,
+        pressed,
+      };
+    });
+    expect(openFill.fill).toBe(openFill.pressed);
+    await expect
+      .poll(async () => {
+        const [panelBox, flyoutBox] = await Promise.all([
+          panel.boundingBox(),
+          flyout.boundingBox(),
+        ]);
+        return flyoutBox!.x - (panelBox!.x + panelBox!.width);
+      })
+      .toBeCloseTo(4, 0);
+    await expect
+      .poll(async () => {
+        const [parentBox, firstChildBox] = await Promise.all([
+          tracking.boundingBox(),
+          flyout.getByRole('menuitemradio', { name: 'Overview' }).boundingBox(),
+        ]);
+        return firstChildBox!.y - parentBox!.y;
+      })
+      .toBeCloseTo(0, 0);
+    await expect(page.locator('html')).not.toHaveAttribute('data-last-event');
+    await expect(panel).toHaveJSProperty('currentUrl', '/dashboard/tracking/history');
+    await expect(flyout.getByRole('menuitemradio', { name: 'History' })).toBeFocused();
+
+    await tracking.click();
+    await expect(flyout).toBeHidden();
+    await expect(tracking).toHaveAttribute('aria-expanded', 'false');
+    await expect(tracking).not.toHaveClass(/panel-nav__parent--flyout-active/);
+    await expect(page.locator('html')).not.toHaveAttribute('data-last-event');
+
+    await tracking.click();
+    await expect(flyout).toBeVisible();
+    await flyout.getByRole('menuitemradio', { name: 'Overview' }).click();
+    await expect(flyout).toBeHidden();
+    await expect(page.locator('html')).toHaveAttribute(
+      'data-last-event',
+      JSON.stringify({
+        type: 'dsNavChildSelect',
+        detail: {
+          parentId: 'tracking',
+          childId: 'overview',
+          href: '/dashboard/tracking/overview',
+        },
+      })
+    );
+    await expect(panel).toHaveJSProperty('currentUrl', '/dashboard/tracking/overview');
+  });
+
   test('reports the active mobile header height to viewport-fitted page content', async ({
     page,
   }) => {

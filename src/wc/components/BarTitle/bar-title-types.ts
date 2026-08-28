@@ -31,6 +31,7 @@ export interface BarTitlePrimaryAction extends BarTitleAction {
 export type BarTitleActionItem = BarTitleAction | BarTitleDivider;
 
 export type BarTitleVariant = 'expanded' | 'compact' | 'constrained';
+export type BarTitlePlacement = 'page' | 'shell-bar';
 
 export type BarTitlePrimaryActionCollapse = 'auto' | 'never';
 

@@ -181,13 +181,18 @@
     opacity: 1;
   }
 }
-
 /* ── Scrollable body ─────────────────────────────────────────────────────── */
 
 .panel-nav__body {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+/* The collapsed rail's outer width includes its 1px divider. Return that pixel
+   to the content box so body items match the other 32px rail controls. */
+.panel-nav--collapsed .panel-nav__body {
+  padding-inline-end: calc(var(--_nav-padding-x) - var(--dimension-stroke-width-012));
 }
 
 .panel-nav__sections {
@@ -203,6 +208,45 @@
   display: flex;
   flex-direction: column;
   gap: var(--dimension-space-050, 4px);
+}
+
+.panel-nav__branch {
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-nav__children-accordion {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows
+    var(
+      --_panel-nav-nested-section-duration,
+      calc(
+        var(--effect-animation-duration-short-3) * 2 +
+          var(--effect-animation-duration-short-2)
+      )
+    )
+    var(--effect-animation-easing-ease-in-out)
+    var(
+      --_panel-nav-nested-transition-wait,
+      calc(
+        var(--effect-animation-duration-short-3) +
+          var(--effect-animation-duration-short-1)
+      )
+    );
+}
+
+.panel-nav__children-accordion--open {
+  grid-template-rows: 1fr;
+  transition-delay: var(--effect-animation-duration-instant);
+}
+
+.panel-nav__children {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dimension-space-025);
+  min-height: 0;
+  overflow: hidden;
 }
 
 /*
@@ -258,6 +302,91 @@ ds-text.panel-nav__group-label {
 .panel-nav__item--active {
   color: var(--_nav-fg-primary);
   /* Bold typography via ds-text (text-body-medium + emphasis) on the label */
+}
+
+.panel-nav__parent--muted {
+  color: var(--_nav-fg-tertiary);
+}
+
+.panel-nav__parent--flyout-active {
+  --ds-interaction-hover: var(--_nav-pressed);
+}
+
+.panel-nav__parent--flyout-active::after {
+  background: var(--_nav-pressed);
+}
+
+.panel-nav__child {
+  flex: 0 0 var(--_nav-item-height);
+  padding-inline-start: calc(
+    var(--dimension-space-075, 6px) + var(--dimension-iconography-md) +
+      var(--dimension-space-050)
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity
+      var(
+        --_panel-nav-nested-child-fade-duration,
+        calc(
+          var(--effect-animation-duration-short-3) * 2 +
+            var(--effect-animation-duration-short-2)
+        )
+      )
+      var(--effect-animation-easing-ease-out)
+      calc(
+        var(--_panel-nav-child-reverse-index) *
+          var(
+            --_panel-nav-nested-child-stagger,
+            var(--effect-animation-duration-short-1)
+          )
+      ),
+    color var(--effect-motion-short-1);
+}
+
+.panel-nav__children-accordion--open .panel-nav__child {
+  opacity: 1;
+  pointer-events: auto;
+  transition-delay:
+    calc(
+      var(
+          --_panel-nav-nested-transition-wait,
+          calc(
+            var(--effect-animation-duration-short-3) +
+              var(--effect-animation-duration-short-1)
+          )
+        ) +
+        var(--_panel-nav-child-index) *
+        var(
+          --_panel-nav-nested-child-stagger,
+          var(--effect-animation-duration-short-1)
+        )
+    ),
+    var(--effect-animation-duration-instant);
+}
+
+.panel-nav__children-accordion:not(.panel-nav__children-accordion--open)
+  .panel-nav__child {
+  color: var(--_nav-fg-tertiary);
+}
+
+.panel-nav__child-dot {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 var(--dimension-iconography-md);
+  width: var(--dimension-iconography-md);
+  height: var(--dimension-iconography-md);
+}
+
+.panel-nav__child--inactive {
+  color: var(--_nav-fg-tertiary);
+}
+
+.panel-nav__child--inactive::after {
+  display: none;
 }
 
 /* ── Item icon ───────────────────────────────────────────────────────────── */
@@ -341,6 +470,15 @@ ds-text.panel-nav__group-label {
     opacity var(--_nav-label-fade-out-motion) 0ms,
     mask-position var(--_nav-label-fade-out-motion) 0ms,
     -webkit-mask-position var(--_nav-label-fade-out-motion) 0ms;
+}
+
+.panel-nav--collapsed.panel-nav--animating .panel-nav__children-accordion {
+  transition-duration: var(--_nav-expand-dur);
+  transition-delay: var(--effect-animation-duration-instant);
+}
+
+.panel-nav--collapsed:not(.panel-nav--animating) .panel-nav__children {
+  display: none;
 }
 
 .panel-nav--collapsed ds-text.panel-nav__group-label {

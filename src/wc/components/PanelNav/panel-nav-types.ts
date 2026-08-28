@@ -4,6 +4,18 @@ import type { NavChromeStyle } from '../../shell/nav-chrome';
 
 export type { NavChromeStyle };
 export type PanelNavRouterMode = 'anchor' | 'event';
+export type PanelNavPresentation = 'flat' | 'nested';
+
+export interface PanelNavChildItem {
+  id: string;
+  label: string;
+  /** Show a notification dot badge on the child route. */
+  dot?: boolean;
+  /** Prevent activation while keeping the route visible. */
+  isInactive?: boolean;
+  /** Route path used for URL matching and native anchor navigation. */
+  href?: string;
+}
 
 export interface PanelNavItem {
   id: string;
@@ -14,6 +26,8 @@ export interface PanelNavItem {
   /** Route path used for `currentUrl` matching. In `anchor` mode also sets `<a href>`.
    *  In `event` mode navigation is delegated to the host via `dsNavSelect`. */
   href?: string;
+  /** Optional route sections. Parents with children resolve through a child, not their own href. */
+  children?: PanelNavChildItem[];
 }
 
 export interface PanelNavGroup {
@@ -30,6 +44,13 @@ export interface PanelNavUserActionDetail {
   anchor: HTMLElement;
   /** Recommended `ds-menu` placement — spread onto external user menu instance. */
   menuPlacement: MenuPlacement;
+}
+
+/** Navigation intent for a child route rendered inline or in the collapsed flyout. */
+export interface PanelNavChildSelectDetail {
+  parentId: string;
+  childId: string;
+  href?: string;
 }
 
 export { PANEL_NAV_USER_MENU_PLACEMENT };

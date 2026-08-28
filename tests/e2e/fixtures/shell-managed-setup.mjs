@@ -28,13 +28,40 @@ const groups = [
         id: 'tracking',
         icon: 'MapPage',
         label: 'Tracking',
-        href: '/dashboard/tracking',
+        dot: true,
+        children: [
+          { id: 'overview', label: 'Overview', href: '/dashboard/tracking/overview' },
+          { id: 'history', label: 'History', href: '/dashboard/tracking/history', dot: true },
+        ],
       },
       {
         id: 'safety',
         icon: 'Safety',
         label: 'Safety',
         href: '/dashboard/safety',
+      },
+      {
+        id: 'maintenance',
+        icon: 'Wrench',
+        label: 'Maintenance',
+        children: [
+          {
+            id: 'vehicle-health',
+            label: 'Vehicle health',
+            href: '/dashboard/maintenance/vehicle-health',
+          },
+          {
+            id: 'schedules',
+            label: 'Schedules',
+            href: '/dashboard/maintenance/schedules',
+          },
+        ],
+      },
+      {
+        id: 'reports',
+        icon: 'Chart',
+        label: 'Reports',
+        href: '/dashboard/reports',
       },
     ],
   },
@@ -99,6 +126,7 @@ shell.tools = {
 const events = [];
 for (const type of [
   'dsNavSelect',
+  'dsNavChildSelect',
   'dsTabChange',
   'dsSubsectionChange',
   'dsToolChange',
@@ -109,6 +137,20 @@ for (const type of [
     document.documentElement.dataset.lastEvent = JSON.stringify(events.at(-1));
   });
 }
+
+shell.addEventListener('dsNavChildSelect', event => {
+  const { parentId, childId, href } = event.detail;
+  shell.navigation = {
+    ...shell.navigation,
+    activeId: parentId,
+    currentUrl: href ?? shell.navigation.currentUrl,
+  };
+  shell.pageChrome = {
+    ...shell.pageChrome,
+    value: childId,
+    currentUrl: href ?? shell.pageChrome.currentUrl,
+  };
+});
 
 await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 document.documentElement.dataset.ready = 'true';

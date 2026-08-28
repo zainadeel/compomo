@@ -12,6 +12,7 @@ import type { NavChromeStyle } from '../../shell/nav-chrome';
 import type { ShellPageContentInset, ShellPageContentSurface } from '../ShellPage/shell-page-types';
 
 export type ShellAppComposition = 'managed' | 'slotted';
+export type ShellSectionNavigation = 'bar' | 'panel';
 
 /**
  * Router-owned application navigation supplied to managed ShellApp.

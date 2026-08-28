@@ -7,7 +7,7 @@
   "tag": "ds-panel-nav",
   "audience": "specialized",
   "status": "stable",
-  "summary": "The single persistent primary navigation for an application, providing grouped top-level destinations, active-route state, standard dashboard/settings switching, user access, and collapsible desktop and tablet presentation.",
+  "summary": "The single persistent primary navigation for an application, providing grouped destinations, optional nested route sections, active-route state, standard dashboard/settings switching, user access, and collapsible desktop and tablet presentation.",
   "useWhen": [
     "Building the one primary navigation surface for an application that uses the CompoMo system.",
     "Top-level destinations must remain consistently available while the application's page content changes.",
@@ -15,14 +15,14 @@
   ],
   "avoidWhen": [
     "A second navigation surface is needed within the same application; an application must have only one PanelNav.",
-    "The choices represent sections within the active primary destination; use BarNav instead.",
+    "Route sections belong in the shell bar for the application's selected navigation mode; use flat PanelNav with BarNav rather than mixing both section presentations.",
     "The choices switch local content without changing the application's primary destination; use TabGroup instead.",
     "The interaction performs a command or presents temporary contextual choices; use a button or Menu instead.",
     "Building navigation below the mobile breakpoint; use the application's dedicated mobile navigation component instead."
   ],
   "alternatives": [
     {
-      "when": "The choices represent route sections within the active primary destination.",
+      "when": "The application uses the standard flat primary-navigation mode and route sections belong in the shell bar.",
       "component": "component:ds-bar-nav",
       "reason": "BarNav owns secondary section navigation within the destination selected by PanelNav."
     },
@@ -50,6 +50,7 @@
     "Give every primary destination a concise visible label and an icon that supports rather than replaces that label.",
     "Provide localized dashboard, settings, account, navigation, collapse, and expand labels.",
     "Preserve accessible destination names when the panel is collapsed to icon-only presentation.",
+    "In nested presentation, expose parent expansion state, give only the active child aria-current, and focus the selected or first enabled child when a keyboard-opened flyout appears.",
     "Use notification dots as supplemental status and never as the only indication of important information.",
     "When the destination body overflows, it becomes a localized keyboard-focusable scroll region in addition to the roving destination controls.",
     "Keep the standard dashboard/settings switch and user/account entry available in the footer."
@@ -58,7 +59,12 @@
     "Render exactly one PanelNav per application; it owns primary application destinations and no other navigation role.",
     "The host router owns the current route; prefer currentUrl for active destination matching and use activeId only when route matching is unavailable.",
     "Use anchor mode for native links or routers that intercept anchors; use event mode when the host performs navigation from dsNavSelect.",
-    "Groups visually organize top-level destinations only and must not be interpreted as nested or expandable navigation.",
+    "Groups visually organize top-level destinations. Use presentation=nested only when parent children replace BarNav route sections.",
+    "A parent with children is not a standalone page: activating it while expanded resolves to the first enabled child; route state keeps that parent expanded and gives both parent and child selected styling.",
+    "While one parent is expanded in nested presentation, other top-level destinations use tertiary foreground so the active branch retains visual priority; flat and collapsed presentations keep their existing foreground treatment.",
+    "Expanded nested branches animate to their full required height over 500ms while fixed-size child rows progressively fade over 500ms after a 250ms wait, with each row starting 50ms after the previous row. On close, child rows fade out in reverse order with tertiary foreground and the height contraction waits 250ms; reduced-motion preferences collapse those transitions to the instant motion token.",
+    "Collapsing the full navigation rail keeps the active nested branch mounted through the rail transition and contracts its height over the same duration, so following destinations reposition without snapping.",
+    "Collapsed nested presentation opens a child-only flyout from the parent icon without navigating; the parent holds the transient pressed wash while the flyout is rendered, activates again to close, and emits navigation intent only after a child selection.",
     "Dashboard presents day-to-day operational destinations; Settings presents administrative and configuration destinations.",
     "The standard footer switches the entire destination collection and navStyle between Dashboard and Settings and exposes the user/account entry.",
     "The host owns the external user menu opened from dsNavUserAction.",
@@ -72,7 +78,8 @@
     "Below 768px, the consuming application replaces PanelNav with a dedicated mobile navigation component; PanelNav does not own mobile navigation.",
     "Managed ShellApp permanently owns responsive composition: it determines shell mode, enforces tablet collapse, and presents MobileSheetNav below 768px.",
     "When the viewport is below breakpoint, PanelNav locks collapsed, disables its header toggle affordance, and preserves the persisted desktop collapse preference.",
-    "Collapsed presentation must preserve destination ordering, active state, notification status, and accessible names."
+    "Collapsed presentation must preserve destination ordering, active state, notification status, and accessible names.",
+    "Nested parents expose child routes inline while expanded and in an anchored flyout while collapsed; mobile navigation remains owned by ShellApp."
   ],
   "frameworkCaveats": {
     "customElements": [

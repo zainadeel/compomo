@@ -119,7 +119,15 @@
   display: block;
 }
 
+.shell-app__bar ::slotted(ds-bar-title) {
+  display: block;
+}
+
 .shell-app__bar > ds-bar-nav {
+  display: block;
+}
+
+.shell-app__bar > ds-bar-title {
   display: block;
 }
 

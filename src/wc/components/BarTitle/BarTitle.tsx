@@ -18,6 +18,7 @@ import {
   type BarTitlePrimaryAction,
   type BarTitleSection,
   type BarTitleSectionItem,
+  type BarTitlePlacement,
   type BarTitleVariant,
 } from './bar-title-types';
 
@@ -75,6 +76,9 @@ export class BarTitle {
   /** Explicit visual/capacity variant. ShellPage owns automatic selection. */
   @Prop() variant: BarTitleVariant = 'expanded';
 
+  /** Page-header placement, or compact application-shell bar placement. */
+  @Prop({ reflect: true }) placement: BarTitlePlacement = 'page';
+
   /** Draw the page-title divider beneath the header. */
   @Prop() showDivider: boolean = true;
 
@@ -124,7 +128,11 @@ export class BarTitle {
   }
 
   private get compact(): boolean {
-    return this.variant !== 'expanded';
+    return this.effectiveVariant !== 'expanded';
+  }
+
+  private get effectiveVariant(): BarTitleVariant {
+    return this.placement === 'shell-bar' ? 'compact' : this.variant;
   }
 
   private get dividerVisible(): boolean {
@@ -150,7 +158,7 @@ export class BarTitle {
 
   private get primaryCollapsed(): boolean {
     return (
-      this.variant === 'constrained' &&
+      this.effectiveVariant === 'constrained' &&
       this.primaryAction !== null &&
       (this.primaryAction.collapse ?? 'auto') === 'auto'
     );
@@ -418,11 +426,12 @@ export class BarTitle {
       <Host
         class={{
           'bar-title-host--compact': compact,
-          'bar-title-host--expanded': this.variant === 'expanded',
-          'bar-title-host--constrained': this.variant === 'constrained',
+          'bar-title-host--expanded': this.effectiveVariant === 'expanded',
+          'bar-title-host--constrained': this.effectiveVariant === 'constrained',
           'bar-title-host--has-description': !!this.description,
           'bar-title-host--has-back': this.showBack,
           'bar-title-host--has-breadcrumb': !compact && this.expandedBreadcrumbItems.length > 0,
+          'bar-title-host--shell-bar': this.placement === 'shell-bar',
         }}
       >
         <div
