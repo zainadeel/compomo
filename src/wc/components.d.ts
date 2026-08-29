@@ -58,7 +58,7 @@ import { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOver
 import { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
 import { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellSectionNavigation, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
 import { ShellGradientPreset } from "./shell/shell-gradient-presets";
-import { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
+import { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageDesktopHeaderPlacement, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
 import { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from "./components/Slider/Slider";
@@ -128,7 +128,7 @@ export { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOver
 export { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
 export { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellSectionNavigation, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
 export { ShellGradientPreset } from "./shell/shell-gradient-presets";
-export { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
+export { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageDesktopHeaderPlacement, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
 export { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from "./components/Slider/Slider";
@@ -2673,6 +2673,11 @@ export namespace Components {
           * @default 'primary'
          */
         "contentSurface": ShellPageContentSurface;
+        /**
+          * Desktop title chrome is rendered in this page or externally in the shell bar.
+          * @default 'page'
+         */
+        "desktopHeaderPlacement": ShellPageDesktopHeaderPlacement;
         /**
           * Available page-header capacity supplied by the owning application shell.
          */
@@ -8030,6 +8035,11 @@ declare namespace LocalJSX {
          */
         "contentSurface"?: ShellPageContentSurface;
         /**
+          * Desktop title chrome is rendered in this page or externally in the shell bar.
+          * @default 'page'
+         */
+        "desktopHeaderPlacement"?: ShellPageDesktopHeaderPlacement;
+        /**
           * Available page-header capacity supplied by the owning application shell.
          */
         "headerCapacity"?: ShellPageCapacity;
@@ -9776,6 +9786,7 @@ declare namespace LocalJSX {
     interface DsShellPageAttributes {
         "headerPresentation": ShellPageHeaderPresentation;
         "headerCapacity": ShellPageCapacity;
+        "desktopHeaderPlacement": ShellPageDesktopHeaderPlacement;
         "contentInset": ShellPageContentInset;
         "contentInsetBlockStart": ShellPageContentInset;
         "contentInsetBlockStartSize": string;

@@ -215,24 +215,72 @@
   flex-direction: column;
 }
 
+.panel-nav__branch-divider {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows
+      var(
+        --_panel-nav-nested-section-duration,
+        calc(
+          var(--effect-animation-duration-short-3) * 2 + var(--effect-animation-duration-short-2)
+        )
+      )
+      var(--effect-animation-easing-ease-in-out)
+      var(
+        --_panel-nav-nested-transition-wait,
+        calc(var(--effect-animation-duration-short-3) + var(--effect-animation-duration-short-1))
+      ),
+    opacity
+      var(
+        --_panel-nav-nested-section-duration,
+        calc(
+          var(--effect-animation-duration-short-3) * 2 + var(--effect-animation-duration-short-2)
+        )
+      )
+      var(--effect-animation-easing-ease-out);
+}
+
+.panel-nav__branch-divider--open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition-delay:
+    var(--effect-animation-duration-instant), var(--effect-animation-duration-instant);
+}
+
+.panel-nav__branch-divider-clip {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.panel-nav__branch-divider-line {
+  display: block;
+  height: var(--dimension-stroke-width-012);
+  margin-inline: var(--dimension-space-075);
+  background: var(--_nav-divider);
+}
+
+.panel-nav__branch-divider--before .panel-nav__branch-divider-line {
+  margin-block: var(--dimension-space-050) var(--dimension-space-100);
+}
+
+.panel-nav__branch-divider--after .panel-nav__branch-divider-line {
+  margin-block: var(--dimension-space-100) var(--dimension-space-050);
+}
+
 .panel-nav__children-accordion {
   display: grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows
     var(
       --_panel-nav-nested-section-duration,
-      calc(
-        var(--effect-animation-duration-short-3) * 2 +
-          var(--effect-animation-duration-short-2)
-      )
+      calc(var(--effect-animation-duration-short-3) * 2 + var(--effect-animation-duration-short-2))
     )
     var(--effect-animation-easing-ease-in-out)
     var(
       --_panel-nav-nested-transition-wait,
-      calc(
-        var(--effect-animation-duration-short-3) +
-          var(--effect-animation-duration-short-1)
-      )
+      calc(var(--effect-animation-duration-short-3) + var(--effect-animation-duration-short-1))
     );
 }
 
@@ -305,7 +353,7 @@ ds-text.panel-nav__group-label {
 }
 
 .panel-nav__parent--muted {
-  color: var(--_nav-fg-tertiary);
+  color: var(--_nav-fg-secondary);
 }
 
 .panel-nav__parent--flyout-active {
@@ -319,8 +367,7 @@ ds-text.panel-nav__group-label {
 .panel-nav__child {
   flex: 0 0 var(--_nav-item-height);
   padding-inline-start: calc(
-    var(--dimension-space-075, 6px) + var(--dimension-iconography-md) +
-      var(--dimension-space-050)
+    var(--dimension-space-075, 6px) + var(--dimension-iconography-md) + var(--dimension-space-050)
   );
   opacity: 0;
   pointer-events: none;
@@ -329,17 +376,13 @@ ds-text.panel-nav__group-label {
       var(
         --_panel-nav-nested-child-fade-duration,
         calc(
-          var(--effect-animation-duration-short-3) * 2 +
-            var(--effect-animation-duration-short-2)
+          var(--effect-animation-duration-short-3) * 2 + var(--effect-animation-duration-short-2)
         )
       )
       var(--effect-animation-easing-ease-out)
       calc(
         var(--_panel-nav-child-reverse-index) *
-          var(
-            --_panel-nav-nested-child-stagger,
-            var(--effect-animation-duration-short-1)
-          )
+          var(--_panel-nav-nested-child-stagger, var(--effect-animation-duration-short-1))
       ),
     color var(--effect-motion-short-1);
 }
@@ -351,23 +394,16 @@ ds-text.panel-nav__group-label {
     calc(
       var(
           --_panel-nav-nested-transition-wait,
-          calc(
-            var(--effect-animation-duration-short-3) +
-              var(--effect-animation-duration-short-1)
-          )
+          calc(var(--effect-animation-duration-short-3) + var(--effect-animation-duration-short-1))
         ) +
         var(--_panel-nav-child-index) *
-        var(
-          --_panel-nav-nested-child-stagger,
-          var(--effect-animation-duration-short-1)
-        )
+        var(--_panel-nav-nested-child-stagger, var(--effect-animation-duration-short-1))
     ),
     var(--effect-animation-duration-instant);
 }
 
-.panel-nav__children-accordion:not(.panel-nav__children-accordion--open)
-  .panel-nav__child {
-  color: var(--_nav-fg-tertiary);
+.panel-nav__children-accordion:not(.panel-nav__children-accordion--open) .panel-nav__child {
+  color: var(--_nav-fg-secondary);
 }
 
 .panel-nav__child-dot {
@@ -475,6 +511,12 @@ ds-text.panel-nav__group-label {
 .panel-nav--collapsed.panel-nav--animating .panel-nav__children-accordion {
   transition-duration: var(--_nav-expand-dur);
   transition-delay: var(--effect-animation-duration-instant);
+}
+
+.panel-nav--animating .panel-nav__branch-divider {
+  transition-duration: var(--_nav-expand-dur), var(--_nav-expand-dur);
+  transition-delay:
+    var(--effect-animation-duration-instant), var(--effect-animation-duration-instant);
 }
 
 .panel-nav--collapsed:not(.panel-nav--animating) .panel-nav__children {

@@ -171,6 +171,8 @@ const REVIEW_PAGE_CHROME: ShellPageChromeConfig = {
     { id: 'archive', label: 'Archive reviewed events' },
   ],
   actionsAriaLabel: 'Safety page actions',
+  contentInsetBlockStartSize: 'var(--dimension-space-025)',
+  scrollCompaction: false,
 };
 
 function navigationModeReview(initialMode: ShellSectionNavigation): ReturnType<typeof html> {
@@ -180,9 +182,9 @@ function navigationModeReview(initialMode: ShellSectionNavigation): ReturnType<t
   let currentUrl = '/dashboard/area-b/tab-2';
 
   const updateShellRoute = (parentId: string, childId: string, href?: string) => {
-    const shell = document.getElementById('navigation-mode-review-shell') as
-      | HTMLDsShellAppElement
-      | null;
+    const shell = document.getElementById(
+      'navigation-mode-review-shell'
+    ) as HTMLDsShellAppElement | null;
     if (!shell) return;
     const parent = DASHBOARD_GROUPS.flatMap(group => group.items).find(
       item => item.id === parentId
@@ -266,9 +268,7 @@ function navigationModeReview(initialMode: ShellSectionNavigation): ReturnType<t
         style="height:100%;"
       >
         ${toolViews()}
-        <section
-          style="min-height:100%;padding:var(--dimension-space-200);box-sizing:border-box;"
-        >
+        <section style="min-height:100%;padding:var(--dimension-space-200);box-sizing:border-box;">
           <ds-text as="p" variant="text-body-medium">
             Current route: <strong id="navigation-mode-review-route">${currentUrl}</strong>
           </ds-text>
@@ -325,7 +325,8 @@ export const NavigationModeReview: Story = {
       description: {
         story:
           'Switches the same managed shell between BarNav and nested PanelNav section navigation. ' +
-          'Use the tools and edit the draft before switching to verify application-owned state persists.',
+          'Use the tools and edit the draft before switching to verify application-owned state persists. ' +
+          'The page restores its standard top gutter when BarTitle moves from the page into the shell bar.',
       },
     },
   },

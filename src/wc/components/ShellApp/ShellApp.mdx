@@ -46,6 +46,11 @@ parent's route sections as nested PanelNav children and place compact BarTitle
 in the shell bar. In panel mode, handle `dsNavChildSelect` as structured parent,
 child, and optional href intent.
 
+Managed ShellApp also removes page-local desktop title geometry in panel mode.
+Standard routed content therefore starts at the normal 32px desktop or 16px
+tablet gutter, while full-bleed pages remain full bleed. Route components do not
+need to branch on the navigation preference.
+
 Keep this input controlled when users can change the preference. ShellApp does
 not store the preference, and changing it does not change mobile chrome or
 recreate routed and tool content.

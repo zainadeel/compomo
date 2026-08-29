@@ -301,10 +301,7 @@ export class PanelNav {
     const panel = this.el.querySelector('.panel-nav') as HTMLElement | null;
     this.clearCollapseAnimationCompletion(panel);
     this.transitionCompletionHandler = (e: TransitionEvent) => {
-      if (
-        e.target === panel &&
-        (e.propertyName === 'width' || e.propertyName === 'min-width')
-      ) {
+      if (e.target === panel && (e.propertyName === 'width' || e.propertyName === 'min-width')) {
         this.finishCollapseAnimation(panel);
       }
     };
@@ -876,8 +873,7 @@ export class PanelNav {
         'panel-nav__item': true,
         'panel-nav__parent': disclosure,
         'panel-nav__parent--expanded': expanded,
-        'panel-nav__parent--flyout-active':
-          collapsed && this.flyoutParentId === item.id,
+        'panel-nav__parent--flyout-active': collapsed && this.flyoutParentId === item.id,
         'panel-nav__parent--muted':
           this.presentation === 'nested' &&
           !collapsed &&
@@ -906,8 +902,7 @@ export class PanelNav {
     const href = resolveSafeUrl(
       hasChildRoutes ? firstEnabledPanelNavChild(item.children)?.href : item.href
     );
-    const useAnchor =
-      this.routerMode === 'anchor' && href && !(disclosure && collapsed);
+    const useAnchor = this.routerMode === 'anchor' && href && !(disclosure && collapsed);
     const control = useAnchor ? (
       <a {...sharedProps} href={href}>
         {itemContent}
@@ -1017,8 +1012,7 @@ export class PanelNav {
               dot: child.dot,
               isInactive: child.isInactive,
               isSelected:
-                parent.id === this.effectiveActiveId &&
-                child.id === this.effectiveActiveChildId,
+                parent.id === this.effectiveActiveId && child.id === this.effectiveActiveChildId,
             })),
           },
         ]}
@@ -1132,21 +1126,25 @@ export class PanelNav {
                         {group.label}
                       </ds-text>
                     )}
-                    {group.items.map(item => {
+                    {group.items.map((item, itemIndex) => {
                       const parentPosition = rovingPosition++;
                       const expanded =
                         !collapsed &&
                         item.id === this.expandedParentId &&
                         (item.children?.length ?? 0) > 0;
+                      const hasGroupSiblings = group.items.length > 1;
+                      const hasDividerBefore = hasGroupSiblings && itemIndex > 0;
+                      const hasDividerAfter =
+                        hasGroupSiblings && itemIndex < group.items.length - 1;
+                      const showBranchDividers = expanded && hasGroupSiblings;
                       const hasInlineChildren =
                         this.presentation === 'nested' &&
                         (!collapsed || this.isAnimating) &&
                         (item.children?.length ?? 0) > 0;
                       const children = hasInlineChildren
                         ? item.children?.map((child, childIndex) => {
-                            const childPosition = !expanded || child.isInactive
-                              ? undefined
-                              : rovingPosition++;
+                            const childPosition =
+                              !expanded || child.isInactive ? undefined : rovingPosition++;
                             return this.renderChildItem(
                               item,
                               child,
@@ -1158,9 +1156,25 @@ export class PanelNav {
                         : null;
                       return (
                         <div class="panel-nav__branch" key={item.id}>
+                          {hasDividerBefore ? (
+                            <div
+                              key={`${item.id}-divider-before`}
+                              class={{
+                                'panel-nav__branch-divider': true,
+                                'panel-nav__branch-divider--before': true,
+                                'panel-nav__branch-divider--open': showBranchDividers,
+                              }}
+                              aria-hidden="true"
+                            >
+                              <div class="panel-nav__branch-divider-clip">
+                                <span class="panel-nav__branch-divider-line"></span>
+                              </div>
+                            </div>
+                          ) : null}
                           {this.renderParentItem(item, parentPosition, collapsed)}
                           {hasInlineChildren ? (
                             <div
+                              key={`${item.id}-children`}
                               class={{
                                 'panel-nav__children-accordion': true,
                                 'panel-nav__children-accordion--open': expanded,
@@ -1175,6 +1189,21 @@ export class PanelNav {
                                 aria-labelledby={this.parentAnchorId(item.id)}
                               >
                                 {children}
+                              </div>
+                            </div>
+                          ) : null}
+                          {hasDividerAfter ? (
+                            <div
+                              key={`${item.id}-divider-after`}
+                              class={{
+                                'panel-nav__branch-divider': true,
+                                'panel-nav__branch-divider--after': true,
+                                'panel-nav__branch-divider--open': showBranchDividers,
+                              }}
+                              aria-hidden="true"
+                            >
+                              <div class="panel-nav__branch-divider-clip">
+                                <span class="panel-nav__branch-divider-line"></span>
                               </div>
                             </div>
                           ) : null}

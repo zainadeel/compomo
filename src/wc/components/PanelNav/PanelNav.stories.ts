@@ -349,7 +349,29 @@ const NESTED_GROUPS: PanelNavGroup[] = [
           { id: 'coaching', label: 'Coaching', href: '/safety/coaching' },
         ],
       },
-      { id: 'reports', icon: 'Chart', label: 'Reports', href: '/reports' },
+      {
+        id: 'reports',
+        icon: 'Chart',
+        label: 'Reports',
+        children: [
+          { id: 'overview', label: 'Overview', href: '/reports/overview' },
+          { id: 'custom', label: 'Custom reports', href: '/reports/custom' },
+        ],
+      },
+    ],
+  },
+  {
+    label: 'Account',
+    items: [
+      {
+        id: 'user-settings',
+        icon: 'Avatar',
+        label: 'User Settings',
+        children: [
+          { id: 'profile', label: 'Profile', href: '/settings/profile' },
+          { id: 'preferences', label: 'Preferences', href: '/settings/preferences' },
+        ],
+      },
     ],
   },
 ];
@@ -416,8 +438,8 @@ function nestedNavigationReview(
           Current route: <strong id="${id}-route">${currentUrl}</strong>
         </ds-text>
         <ds-text as="p" variant="text-body-small" color="secondary">
-          Expanded parent activation selects the first enabled child. In collapsed mode it opens
-          the child-only flyout and waits for a child selection. Activate the parent again to close.
+          Expanded parent activation selects the first enabled child. In collapsed mode it opens the
+          child-only flyout and waits for a child selection. Activate the parent again to close.
         </ds-text>
       </div>
     </div>
@@ -479,9 +501,10 @@ export const NestedExpandedReview: Story = {
       description: {
         story:
           'Shows route-derived parent and child selection, one expanded branch, status dots, ' +
-          'tertiary foreground on other destinations, inactive default handling, long-label ' +
-          'truncation, direct destinations, and fixed-size child rows that progressively fade ' +
-          'after expansion and before collapse.',
+          'secondary foreground on other destinations, inactive default handling, long-label ' +
+          'truncation, and fixed-size child rows that progressively fade after expansion and ' +
+          'before collapse. Expanded branches animate equal-space divider boundaries according to ' +
+          'their first, middle, or final position; a single-item group remains undivided.',
       },
     },
   },

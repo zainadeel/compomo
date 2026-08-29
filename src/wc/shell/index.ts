@@ -10,6 +10,7 @@ export type { BarNavTab } from '../components/BarNav/bar-nav-types';
 export type {
   ShellPageContentInset,
   ShellPageContentSurface,
+  ShellPageDesktopHeaderPlacement,
 } from '../components/ShellPage/shell-page-types';
 export type {
   ShellAppComposition,

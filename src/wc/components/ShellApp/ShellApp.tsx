@@ -1155,6 +1155,7 @@ export class ShellApp {
       <ds-shell-page
         responsiveMode={this.resolvedMode}
         headerCapacity={resolveManagedShellPageCapacity(this.resolvedMode)}
+        desktopHeaderPlacement={this.sectionNavigation === 'panel' ? 'shell-bar' : 'page'}
         contentInset={page.contentInset ?? 'default'}
         contentInsetBlockStart={page.contentInsetBlockStart ?? 'default'}
         contentInsetBlockStartSize={page.contentInsetBlockStartSize}

@@ -197,9 +197,7 @@ describe('nested PanelNav routes', () => {
   });
 
   it('does not treat a nested parent href as a standalone destination', () => {
-    const withParentHref: PanelNavItem[] = [
-      { ...nestedItems[0]!, href: '/dashboard/tracking' },
-    ];
+    const withParentHref: PanelNavItem[] = [{ ...nestedItems[0]!, href: '/dashboard/tracking' }];
     assert.deepEqual(derivePanelNavSelectionFromUrl('/dashboard/tracking', withParentHref), {
       parentId: '',
       childId: '',

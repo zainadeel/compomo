@@ -87,15 +87,15 @@ test.describe('Managed application shell', () => {
     await expect(child).toHaveClass(/panel-nav__item--active/);
     await expect(child).toHaveAttribute('aria-current', 'page');
     await expect(otherParent).toHaveClass(/panel-nav__parent--muted/);
-    const tertiaryForeground = await otherParent.evaluate(element => {
+    const secondaryForeground = await otherParent.evaluate(element => {
       const probe = document.createElement('span');
-      probe.style.color = 'var(--color-foreground-tertiary)';
+      probe.style.color = 'var(--color-foreground-secondary)';
       document.body.append(probe);
       const color = getComputedStyle(probe).color;
       probe.remove();
       return color;
     });
-    await expect(otherParent).toHaveCSS('color', tertiaryForeground);
+    await expect(otherParent).toHaveCSS('color', secondaryForeground);
 
     const maintenanceParent = panel.getByRole('button', { name: 'Maintenance' });
     const trackingAccordion = panel
@@ -213,6 +213,185 @@ test.describe('Managed application shell', () => {
     await expect(shell.locator('#agent-draft')).toHaveValue('Keep this draft');
     await expect(shell.locator('ds-shell-tools')).toHaveAttribute('active-tool', 'agents');
     await expect(shell.locator('ds-shell-tools')).toHaveAttribute('open');
+  });
+
+  test(
+    'animates positional nested dividers without changing collapsed presentation',
+    chromiumOnly(
+      'component-composition',
+      'Nested branch divider placement is deterministic markup and token-backed CSS.'
+    ),
+    async ({ page }) => {
+      const shell = page.locator('#managed-shell');
+      await shell.evaluate(element => {
+        (element as HTMLDsShellAppElement).sectionNavigation = 'panel';
+      });
+      const panel = shell.locator('ds-panel-nav');
+      const trackingBranch = panel.locator('.panel-nav__branch').filter({ hasText: 'Tracking' });
+      const maintenanceBranch = panel
+        .locator('.panel-nav__branch')
+        .filter({ hasText: 'Maintenance' });
+      const reportsBranch = panel.locator('.panel-nav__branch').filter({ hasText: 'Reports' });
+      const trackingAfterDivider = trackingBranch.locator('.panel-nav__branch-divider--after');
+      const maintenanceBeforeDivider = maintenanceBranch.locator(
+        '.panel-nav__branch-divider--before'
+      );
+      const maintenanceAfterDivider = maintenanceBranch.locator(
+        '.panel-nav__branch-divider--after'
+      );
+      const reportsBeforeDivider = reportsBranch.locator('.panel-nav__branch-divider--before');
+
+      await expect(trackingBranch.locator('.panel-nav__branch-divider--before')).toHaveCount(0);
+      await expect(trackingAfterDivider).toHaveClass(/panel-nav__branch-divider--open/);
+      await expect(trackingAfterDivider).toHaveCSS('opacity', '1');
+      const [trackingAccordionBox, trackingDividerLineBox, safetyParentBox] = await Promise.all([
+        trackingBranch.locator('.panel-nav__children-accordion').boundingBox(),
+        trackingAfterDivider.locator('.panel-nav__branch-divider-line').boundingBox(),
+        panel.getByRole('button', { name: 'Safety', exact: true }).boundingBox(),
+      ]);
+      expect(trackingAccordionBox).not.toBeNull();
+      expect(trackingDividerLineBox).not.toBeNull();
+      expect(safetyParentBox).not.toBeNull();
+      const trackingDividerSpacing = {
+        before:
+          trackingDividerLineBox!.y - (trackingAccordionBox!.y + trackingAccordionBox!.height),
+        after: safetyParentBox!.y - (trackingDividerLineBox!.y + trackingDividerLineBox!.height),
+      };
+      expect(trackingDividerSpacing.before).toBeCloseTo(trackingDividerSpacing.after);
+      expect(trackingDividerSpacing.before).toBeCloseTo(8);
+
+      await expect(maintenanceBeforeDivider).toHaveCSS('grid-template-rows', '0px');
+      await expect(maintenanceAfterDivider).toHaveCSS('grid-template-rows', '0px');
+
+      await panel.getByRole('button', { name: 'Maintenance', exact: true }).click();
+      await expect(maintenanceBeforeDivider).toHaveClass(/panel-nav__branch-divider--open/);
+      await expect(maintenanceAfterDivider).toHaveClass(/panel-nav__branch-divider--open/);
+      await expect(maintenanceBeforeDivider).toHaveCSS(
+        'transition-property',
+        'grid-template-rows, opacity'
+      );
+      await expect(maintenanceBeforeDivider).toHaveCSS('opacity', '1');
+      await expect(maintenanceAfterDivider).toHaveCSS('opacity', '1');
+
+      await panel.getByRole('button', { name: 'Reports', exact: true }).click();
+      await expect(reportsBeforeDivider).toHaveClass(/panel-nav__branch-divider--open/);
+      await expect(reportsBeforeDivider).toHaveCSS('opacity', '1');
+      await expect(reportsBranch.locator('.panel-nav__branch-divider--after')).toHaveCount(0);
+      await panel.getByRole('button', { name: 'Tracking', exact: true }).click();
+      await expect(trackingAfterDivider).toHaveClass(/panel-nav__branch-divider--open/);
+      await expect(trackingAfterDivider).toHaveCSS('opacity', '1');
+      const expandedDividerHeight = await trackingAfterDivider.evaluate(
+        element => element.getBoundingClientRect().height
+      );
+      expect(expandedDividerHeight).toBeGreaterThan(0);
+      await trackingAfterDivider.evaluate(element => {
+        (element as HTMLElement).dataset.motionIdentity = 'stable';
+      });
+
+      await panel.evaluate(element => (element as HTMLDsPanelNavElement).toggleCollapsed());
+      const panelFrame = panel.locator('.panel-nav');
+      await expect(panelFrame).toHaveClass(/panel-nav--collapsed/);
+      await expect(panelFrame).toHaveClass(/panel-nav--animating/);
+      const [dividerCollapseDuration, panelCollapseDuration] = await Promise.all([
+        trackingAfterDivider.evaluate(element =>
+          Number.parseFloat(getComputedStyle(element).transitionDuration)
+        ),
+        panelFrame.evaluate(element =>
+          Number.parseFloat(getComputedStyle(element).transitionDuration)
+        ),
+      ]);
+      expect(dividerCollapseDuration).toBeGreaterThan(0);
+      expect(dividerCollapseDuration).toBeCloseTo(panelCollapseDuration);
+      await expect(panelFrame).not.toHaveClass(/panel-nav--animating/, { timeout: 5000 });
+      await expect(panel.locator('.panel-nav__branch-divider--open')).toHaveCount(0);
+      await expect(trackingAfterDivider).toHaveAttribute('data-motion-identity', 'stable');
+      await expect(trackingAfterDivider).toHaveCSS('grid-template-rows', '0px');
+      await expect(trackingAfterDivider).toHaveCSS('opacity', '0');
+
+      await panel.evaluate(element => (element as HTMLDsPanelNavElement).toggleCollapsed());
+      await expect(panelFrame).not.toHaveClass(/panel-nav--collapsed/);
+      await expect(panelFrame).toHaveClass(/panel-nav--animating/);
+      await expect(trackingAfterDivider).toHaveAttribute('data-motion-identity', 'stable');
+      const dividerExpandDuration = await trackingAfterDivider.evaluate(element =>
+        Number.parseFloat(getComputedStyle(element).transitionDuration)
+      );
+      expect(dividerExpandDuration).toBeGreaterThan(0);
+      expect(dividerExpandDuration).toBeCloseTo(panelCollapseDuration);
+      await expect(panelFrame).not.toHaveClass(/panel-nav--animating/, { timeout: 5000 });
+      await expect(trackingAfterDivider).toHaveAttribute('data-motion-identity', 'stable');
+      await expect(trackingAfterDivider).toHaveClass(/panel-nav__branch-divider--open/);
+      await expect(trackingAfterDivider).toHaveCSS('opacity', '1');
+      await expect
+        .poll(() =>
+          trackingAfterDivider.evaluate(element => element.getBoundingClientRect().height)
+        )
+        .toBeCloseTo(expandedDividerHeight);
+    }
+  );
+
+  test('resolves page content geometry from desktop title placement @cross-browser', async ({
+    page,
+  }) => {
+    const shell = page.locator('#managed-shell');
+    const shellPage = shell.locator('ds-shell-page');
+    const content = shellPage.locator('.shell-page__content');
+    const resolvedContentOffset = () =>
+      shellPage.evaluate(element => {
+        const probe = document.createElement('div');
+        probe.style.position = 'absolute';
+        probe.style.height = 'var(--ds-shell-page-content-block-start-offset)';
+        element.append(probe);
+        const height = probe.getBoundingClientRect().height;
+        probe.remove();
+        return height;
+      });
+    const reportedHeaderHeight = () =>
+      shellPage.evaluate(element =>
+        Number.parseFloat(
+          getComputedStyle(element).getPropertyValue('--ds-shell-page-sticky-header-block-size')
+        )
+      );
+
+    await shell.evaluate(element => {
+      const managed = element as HTMLDsShellAppElement;
+      managed.pageChrome = {
+        ...managed.pageChrome,
+        contentInsetBlockStart: 'default',
+        contentInsetBlockStartSize: 'var(--dimension-space-025)',
+        scrollCompaction: false,
+      };
+    });
+    await expect(content).toHaveCSS('padding-top', '2px');
+    await expect.poll(reportedHeaderHeight).toBeGreaterThan(48);
+
+    await shell.evaluate(element => {
+      (element as HTMLDsShellAppElement).sectionNavigation = 'panel';
+    });
+    await expect(shellPage).toHaveJSProperty('desktopHeaderPlacement', 'shell-bar');
+    await expect(shellPage).toHaveClass(/shell-page-host--header-compact/);
+    await expect(content).toHaveCSS('padding-top', '32px');
+    await expect.poll(reportedHeaderHeight).toBe(0);
+    await expect.poll(resolvedContentOffset).toBe(32);
+
+    await page.setViewportSize({ width: 1024, height: 760 });
+    await expect(shell).toHaveAttribute('responsive-mode', 'tablet');
+    await expect(content).toHaveCSS('padding-top', '16px');
+    await expect.poll(reportedHeaderHeight).toBe(0);
+    await expect.poll(resolvedContentOffset).toBe(16);
+
+    await page.setViewportSize({ width: 390, height: 760 });
+    await expect(shell).toHaveAttribute('responsive-mode', 'mobile');
+    await expect(content).toHaveCSS('padding-top', '16px');
+    await expect.poll(reportedHeaderHeight).toBeGreaterThan(0);
+    await expect.poll(resolvedContentOffset).toBeGreaterThan(16);
+
+    await page.setViewportSize({ width: 1440, height: 760 });
+    await shell.evaluate(element => {
+      (element as HTMLDsShellAppElement).sectionNavigation = 'bar';
+    });
+    await expect(shellPage).toHaveJSProperty('desktopHeaderPlacement', 'page');
+    await expect(content).toHaveCSS('padding-top', '2px');
+    await expect.poll(reportedHeaderHeight).toBeGreaterThan(48);
   });
 
   test('waits for a flyout child selection before collapsed parent navigation', async ({

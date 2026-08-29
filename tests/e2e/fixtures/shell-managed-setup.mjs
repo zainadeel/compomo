@@ -61,7 +61,10 @@ const groups = [
         id: 'reports',
         icon: 'Chart',
         label: 'Reports',
-        href: '/dashboard/reports',
+        children: [
+          { id: 'overview', label: 'Overview', href: '/dashboard/reports/overview' },
+          { id: 'custom', label: 'Custom reports', href: '/dashboard/reports/custom' },
+        ],
       },
     ],
   },

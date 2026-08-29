@@ -41,7 +41,7 @@
   "patterns": ["pattern:shell-page"],
   "accessibility": [
     "ShellPage exposes the routed page as the main landmark; render exactly one active ShellPage inside ShellApp.",
-    "Provide one BarTitle or BarWorkflow through the desktop header slot and one MobileHeader through mobile-header when the page participates in the mobile shell.",
+    "Provide one BarTitle or BarWorkflow through the desktop header slot when desktopHeaderPlacement=page, and one MobileHeader through mobile-header when the page participates in the mobile shell.",
     "Keep loading, empty, validation, error, progress, success, and failure communication in the default product-content slot.",
     "Responsive variant changes preserve the same heading, controls, accessible names, and keyboard focus targets."
   ],
@@ -49,6 +49,7 @@
     "headerCapacity=roomy, compact, or constrained is supplied before paint by the owning application shell and describes the page-header space available after viewport and shell-chrome policy are applied.",
     "headerPresentation=auto selects the matching header variant from headerCapacity and scroll position.",
     "expanded, compact, and constrained are explicit overrides for exceptional layouts and deterministic examples.",
+    "desktopHeaderPlacement=page preserves page-local sticky title geometry. shell-bar declares that desktop and tablet title chrome is external and compact, restores the responsive top gutter, reports zero page-header block size, and disables page-header scroll compaction while preserving downstream compact-header behavior and full-bleed content.",
     "contentInset=default supplies standard page gutters; none permits maps, canvases, and other full-bleed content.",
     "contentInsetBlockStart=none removes only the gutter adjacent to the page header while retaining the responsive inline and bottom gutters.",
     "contentInsetBlockStartSize can provide an exact roomy top seam, while compactContentInsetBlockStartSize independently defines the compact and constrained seam. ShellPage exposes their resolved sticky-header offset through --ds-shell-page-content-block-start-offset for viewport-fitted descendants.",
@@ -65,6 +66,7 @@
     "responsiveMode=mobile hides and inerts the desktop header, exposes mobile-header, and disables desktop scroll-compaction geometry.",
     "Update headerCapacity synchronously with shell layout state so opening tools or crossing application breakpoints cannot briefly render the wrong presentation.",
     "The default content inset is balanced on every side: 32px in desktop mode and 16px in tablet and mobile modes.",
+    "When desktopHeaderPlacement=shell-bar, desktop and tablet ignore page-header-specific block-start seam overrides and expose --ds-shell-page-content-block-start-offset as the responsive gutter only; mobile keeps its MobileHeader geometry and existing seam.",
     "contentInsetBlockStart can independently remove the top gutter for table and canvas pages that should meet the sticky header; exact roomy and compact block-start sizes support pages whose seam changes with header capacity.",
     "The selected content surface persists unchanged across desktop, tablet, and mobile modes.",
     "On a secondary desktop or tablet page, BarTitle matches the page canvas across capacity and scroll-driven variant changes; the separate mobile-header presentation remains primary.",
@@ -76,7 +78,7 @@
   ],
   "frameworkCaveats": {
     "customElements": [
-      "Import ShellPage with BarTitle or BarWorkflow in slot=header and MobileHeader in slot=mobile-header, then render route content as default children.",
+      "Import ShellPage with BarTitle or BarWorkflow in slot=header when desktopHeaderPlacement=page and MobileHeader in slot=mobile-header, then render route content as default children.",
       "Do not set BarTitle.variant while ShellPage owns headerPresentation."
     ],
     "react": [
