@@ -10,6 +10,17 @@
   background: var(--_shell-page-header-background, var(--color-background-primary));
 }
 
+:host([placement='shell-bar']) {
+  --_shell-page-header-background: var(--color-background-secondary);
+}
+
+:host-context(ds-shell-app:not([gradient-preset='none']))[placement='shell-bar'],
+:host-context(ds-shell-app:not([gradient-preset='none']))[placement='shell-bar'] .bar-title,
+:host-context(ds-shell-app.shell-app--paper-texture)[placement='shell-bar'],
+:host-context(ds-shell-app.shell-app--paper-texture)[placement='shell-bar'] .bar-title {
+  background: transparent;
+}
+
 :host([data-shell-page-syncing]) {
   visibility: hidden;
 }

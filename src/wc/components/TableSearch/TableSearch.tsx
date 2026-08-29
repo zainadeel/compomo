@@ -169,6 +169,9 @@ export class TableSearch {
   private openMenu(fromKeyboard: boolean): void {
     if (this.isInactive || this.menuOpen || this.availableFields.length === 0) return;
     this.menuQuery = '';
+    // The native value can be ahead of the controlled prop when slash follows input
+    // in the same frame, so clear it before the queued render can skip an equal value.
+    if (this.inputEl) this.inputEl.value = '';
     this.activeIndex = 0;
     this.focusRingVisible = fromKeyboard;
     this.positionReady = false;

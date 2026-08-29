@@ -803,7 +803,7 @@ test.describe('App shell chrome', () => {
     }
   );
 
-  test('keeps balanced panel insets, an 8px expanded footer gap, and the same animated user node', async ({
+  test('keeps balanced panel geometry, an 8px expanded footer gap, and the same animated user node', async ({
     page,
   }) => {
     const readGeometry = () =>
@@ -847,7 +847,9 @@ test.describe('App shell chrome', () => {
     await page.getByRole('button', { name: 'Collapse navigation' }).click();
     await expect.poll(readGeometry).toMatchObject({
       bodyLeft: 8,
-      bodyRight: 8,
+      // The collapsed content box returns 1px to compensate for the rail border,
+      // keeping its rendered controls exactly 32px wide.
+      bodyRight: 7,
       footerLeft: 8,
       horizontalGap: -32,
       verticalGap: 4,

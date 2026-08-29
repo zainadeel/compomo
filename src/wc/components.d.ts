@@ -13,7 +13,7 @@ import { BannerAnnouncement, BannerContrast, BannerIntent, BannerOrientation } f
 import { NavChromeStyle } from "./shell/nav-chrome";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
 import { BreadcrumbItem, BreadcrumbSelectDetail } from "./components/Breadcrumb/breadcrumb-types";
-import { BarTitleActionItem, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
+import { BarTitleActionItem, BarTitlePlacement, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
 import { BarWorkflowStep, BarWorkflowSubmitAction } from "./components/BarWorkflow/bar-workflow-types";
 import { MobileDestination, ShellResponsiveMode } from "./shell/shell-responsive";
 import { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledPopup, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
@@ -41,7 +41,7 @@ import { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
 import { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 import { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
 import { ButtonFilledIntent as ButtonFilledIntent1 } from "./components/ButtonFilled/ButtonFilled";
-import { PanelNavGroup, PanelNavItem, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
+import { PanelNavChildSelectDetail, PanelNavGroup, PanelNavItem, PanelNavPresentation, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
 import { MobileBarNavDestinationDetail } from "./components/MobileBarNav/mobile-bar-nav-types";
 import { MobileHeaderHeadingLevel, MobileHeaderSectionsPresentation, MobileHeaderTone } from "./components/MobileHeader/mobile-header-types";
 import { TabGroupItem, TabItem } from "./components/TabGroup/tab-item-utils";
@@ -56,9 +56,9 @@ import { PaperTextureConfig } from "./components/PaperTexture/paper-texture-type
 import { RadioOption, RadioSize } from "./components/Radio/Radio";
 import { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
 import { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
-import { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
+import { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellSectionNavigation, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
 import { ShellGradientPreset } from "./shell/shell-gradient-presets";
-import { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
+import { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageDesktopHeaderPlacement, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
 import { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from "./components/Slider/Slider";
@@ -83,7 +83,7 @@ export { BannerAnnouncement, BannerContrast, BannerIntent, BannerOrientation } f
 export { NavChromeStyle } from "./shell/nav-chrome";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
 export { BreadcrumbItem, BreadcrumbSelectDetail } from "./components/Breadcrumb/breadcrumb-types";
-export { BarTitleActionItem, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
+export { BarTitleActionItem, BarTitlePlacement, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
 export { BarWorkflowStep, BarWorkflowSubmitAction } from "./components/BarWorkflow/bar-workflow-types";
 export { MobileDestination, ShellResponsiveMode } from "./shell/shell-responsive";
 export { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledPopup, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
@@ -111,7 +111,7 @@ export { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
 export { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 export { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
 export { ButtonFilledIntent as ButtonFilledIntent1 } from "./components/ButtonFilled/ButtonFilled";
-export { PanelNavGroup, PanelNavItem, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
+export { PanelNavChildSelectDetail, PanelNavGroup, PanelNavItem, PanelNavPresentation, PanelNavRouterMode, PanelNavUserActionDetail } from "./components/PanelNav/panel-nav-types";
 export { MobileBarNavDestinationDetail } from "./components/MobileBarNav/mobile-bar-nav-types";
 export { MobileHeaderHeadingLevel, MobileHeaderSectionsPresentation, MobileHeaderTone } from "./components/MobileHeader/mobile-header-types";
 export { TabGroupItem, TabItem } from "./components/TabGroup/tab-item-utils";
@@ -126,9 +126,9 @@ export { PaperTextureConfig } from "./components/PaperTexture/paper-texture-type
 export { RadioOption, RadioSize } from "./components/Radio/Radio";
 export { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
 export { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
-export { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
+export { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellSectionNavigation, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
 export { ShellGradientPreset } from "./shell/shell-gradient-presets";
-export { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
+export { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageDesktopHeaderPlacement, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
 export { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from "./components/Slider/Slider";
@@ -459,6 +459,11 @@ export namespace Components {
           * The page's single visible h1.
          */
         "heading": string;
+        /**
+          * Page-header placement, or compact application-shell bar placement.
+          * @default 'page'
+         */
+        "placement": BarTitlePlacement;
         /**
           * The one highest-emphasis page action.
           * @default null
@@ -2015,6 +2020,11 @@ export namespace Components {
          */
         "accountMenuExpanded": boolean;
         /**
+          * ID of the active child route when URL matching is unavailable.
+          * @default ''
+         */
+        "activeChildId": string;
+        /**
           * ID of the currently active/selected nav item. Overridden by `currentUrl` matching when set.
           * @default ''
          */
@@ -2070,6 +2080,11 @@ export namespace Components {
           * @default 'Navigation items'
          */
         "navigationItemsLabel": string;
+        /**
+          * Flat primary destinations, or nested child-route disclosure.
+          * @default 'flat'
+         */
+        "presentation": PanelNavPresentation;
         /**
           * How items with `href` render: - `anchor` (default): native `<a href>` — works with routers that intercept anchors. - `event`: always `<button>`; host handles navigation via `dsNavSelect`.
           * @default 'anchor'
@@ -2615,6 +2630,11 @@ export namespace Components {
          */
         "paperTexture"?: PaperTextureConfig;
         /**
+          * Desktop/tablet route sections in BarNav, or nested beneath PanelNav parents.
+          * @default 'bar'
+         */
+        "sectionNavigation": ShellSectionNavigation;
+        /**
           * Request drawer or fullscreen presentation for the active managed tool.
          */
         "setToolPresentation": (presentation: "drawer" | "fullscreen") => Promise<void>;
@@ -2653,6 +2673,11 @@ export namespace Components {
           * @default 'primary'
          */
         "contentSurface": ShellPageContentSurface;
+        /**
+          * Desktop title chrome is rendered in this page or externally in the shell bar.
+          * @default 'page'
+         */
+        "desktopHeaderPlacement": ShellPageDesktopHeaderPlacement;
         /**
           * Available page-header capacity supplied by the owning application shell.
          */
@@ -4608,6 +4633,7 @@ declare global {
     };
     interface HTMLDsPanelNavElementEventMap {
         "dsNavSelect": string;
+        "dsNavChildSelect": PanelNavChildSelectDetail;
         "dsNavToggle": boolean;
         "dsChromeTransitionStart": ChromeTransitionDetail;
         "dsChromeTransitionEnd": ChromeTransitionDetail;
@@ -4778,6 +4804,7 @@ declare global {
         "dsResponsiveModeChange": { mode: ShellResponsiveMode };
         "dsNavSelect": string;
         "dsTabChange": string;
+        "dsNavChildSelect": PanelNavChildSelectDetail;
         "dsSubsectionChange": string;
         "dsPageBack": MouseEvent;
         "dsBreadcrumbSelect": BreadcrumbSelectDetail;
@@ -5558,6 +5585,11 @@ declare namespace LocalJSX {
           * Emitted with the newly selected page-section id.
          */
         "onDsSectionChange"?: (event: DsBarTitleCustomEvent<string>) => void;
+        /**
+          * Page-header placement, or compact application-shell bar placement.
+          * @default 'page'
+         */
+        "placement"?: BarTitlePlacement;
         /**
           * The one highest-emphasis page action.
           * @default null
@@ -7241,6 +7273,11 @@ declare namespace LocalJSX {
          */
         "accountMenuExpanded"?: boolean;
         /**
+          * ID of the active child route when URL matching is unavailable.
+          * @default ''
+         */
+        "activeChildId"?: string;
+        /**
           * ID of the currently active/selected nav item. Overridden by `currentUrl` matching when set.
           * @default ''
          */
@@ -7302,6 +7339,10 @@ declare namespace LocalJSX {
          */
         "onDsChromeTransitionStart"?: (event: DsPanelNavCustomEvent<ChromeTransitionDetail>) => void;
         /**
+          * Emitted when a nested child route is selected.
+         */
+        "onDsNavChildSelect"?: (event: DsPanelNavCustomEvent<PanelNavChildSelectDetail>) => void;
+        /**
           * Emitted when the footer left button (gear / dashboard) is clicked.
          */
         "onDsNavFooterAction"?: (event: DsPanelNavCustomEvent<void>) => void;
@@ -7317,6 +7358,11 @@ declare namespace LocalJSX {
           * Emitted when the footer user button is clicked. Detail includes the anchor for `ds-menu`.
          */
         "onDsNavUserAction"?: (event: DsPanelNavCustomEvent<PanelNavUserActionDetail>) => void;
+        /**
+          * Flat primary destinations, or nested child-route disclosure.
+          * @default 'flat'
+         */
+        "presentation"?: PanelNavPresentation;
         /**
           * How items with `href` render: - `anchor` (default): native `<a href>` — works with routers that intercept anchors. - `event`: always `<button>`; host handles navigation via `dsNavSelect`.
           * @default 'anchor'
@@ -7896,6 +7942,10 @@ declare namespace LocalJSX {
          */
         "onDsHeaderBack"?: (event: DsShellAppCustomEvent<{ tool: PanelToolsToolId }>) => void;
         /**
+          * Managed nested PanelNav child-route intent.
+         */
+        "onDsNavChildSelect"?: (event: DsShellAppCustomEvent<PanelNavChildSelectDetail>) => void;
+        /**
           * Managed account-footer action intent.
          */
         "onDsNavFooterAction"?: (event: DsShellAppCustomEvent<void>) => void;
@@ -7945,6 +7995,11 @@ declare namespace LocalJSX {
          */
         "paperTexture"?: PaperTextureConfig;
         /**
+          * Desktop/tablet route sections in BarNav, or nested beneath PanelNav parents.
+          * @default 'bar'
+         */
+        "sectionNavigation"?: ShellSectionNavigation;
+        /**
           * When `true` (default), registers global shell keyboard shortcuts. `[` toggles panel nav; `]` closes tools; K, A, S, M, N, and / toggle tool drawers. Modifiers are ignored so browser chords like ⌘N stay native.
           * @default true
          */
@@ -7979,6 +8034,11 @@ declare namespace LocalJSX {
           * @default 'primary'
          */
         "contentSurface"?: ShellPageContentSurface;
+        /**
+          * Desktop title chrome is rendered in this page or externally in the shell bar.
+          * @default 'page'
+         */
+        "desktopHeaderPlacement"?: ShellPageDesktopHeaderPlacement;
         /**
           * Available page-header capacity supplied by the owning application shell.
          */
@@ -9224,6 +9284,7 @@ declare namespace LocalJSX {
         "sectionsAriaLabel": string;
         "actionsAriaLabel": string;
         "variant": BarTitleVariant;
+        "placement": BarTitlePlacement;
         "showDivider": boolean;
         "showCompactDivider": boolean;
     }
@@ -9600,8 +9661,10 @@ declare namespace LocalJSX {
         "navStyle": NavChromeStyle;
         "disableViewTransition": boolean;
         "groups": string | PanelNavGroup[];
+        "presentation": PanelNavPresentation;
         "routerMode": PanelNavRouterMode;
         "activeId": string;
+        "activeChildId": string;
         "collapsed": boolean;
         "breakpoint": number;
         "storageKey": string;
@@ -9713,6 +9776,7 @@ declare namespace LocalJSX {
     }
     interface DsShellAppAttributes {
         "composition": ShellAppComposition;
+        "sectionNavigation": ShellSectionNavigation;
         "navStyle": NavChromeStyle;
         "gradientPreset": ShellGradientPreset;
         "shortcutsEnabled": boolean;
@@ -9722,6 +9786,7 @@ declare namespace LocalJSX {
     interface DsShellPageAttributes {
         "headerPresentation": ShellPageHeaderPresentation;
         "headerCapacity": ShellPageCapacity;
+        "desktopHeaderPlacement": ShellPageDesktopHeaderPlacement;
         "contentInset": ShellPageContentInset;
         "contentInsetBlockStart": ShellPageContentInset;
         "contentInsetBlockStartSize": string;

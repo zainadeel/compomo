@@ -4,6 +4,8 @@ import {
   NAV_STYLE_HINT_ATTR,
   countPanelNavItems,
   deriveActiveIdFromUrl,
+  derivePanelNavSelectionFromUrl,
+  firstEnabledPanelNavChild,
   hrefMatchesPath,
   parsePanelNavGroups,
   panelNavWidthTransitionMs,
@@ -154,5 +156,51 @@ describe('deriveActiveIdFromUrl', () => {
 
   it('returns empty for root', () => {
     assert.equal(deriveActiveIdFromUrl('/', ITEMS), '');
+  });
+});
+
+describe('nested PanelNav routes', () => {
+  const nestedItems: PanelNavItem[] = [
+    {
+      id: 'tracking',
+      icon: 'MapPage',
+      label: 'Tracking',
+      children: [
+        {
+          id: 'overview',
+          label: 'Overview',
+          href: '/dashboard/tracking/overview',
+          isInactive: true,
+        },
+        {
+          id: 'history',
+          label: 'History',
+          href: '/dashboard/tracking/history',
+        },
+      ],
+    },
+  ];
+
+  it('derives the active parent and child from the longest child route', () => {
+    assert.deepEqual(
+      derivePanelNavSelectionFromUrl('/dashboard/tracking/history/event-1', nestedItems),
+      { parentId: 'tracking', childId: 'history' }
+    );
+    assert.equal(
+      deriveActiveIdFromUrl('/dashboard/tracking/history/event-1', nestedItems),
+      'tracking'
+    );
+  });
+
+  it('chooses the first enabled child as the parent destination', () => {
+    assert.equal(firstEnabledPanelNavChild(nestedItems[0]?.children)?.id, 'history');
+  });
+
+  it('does not treat a nested parent href as a standalone destination', () => {
+    const withParentHref: PanelNavItem[] = [{ ...nestedItems[0]!, href: '/dashboard/tracking' }];
+    assert.deepEqual(derivePanelNavSelectionFromUrl('/dashboard/tracking', withParentHref), {
+      parentId: '',
+      childId: '',
+    });
   });
 });

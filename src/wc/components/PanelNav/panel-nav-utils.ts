@@ -1,4 +1,4 @@
-import type { PanelNavGroup, PanelNavItem } from './panel-nav-types';
+import type { PanelNavChildItem, PanelNavGroup, PanelNavItem } from './panel-nav-types';
 import { parseCssTimeMs } from '../../utils/resolve-css-time-ms';
 import {
   NAV_STYLE_HINT_ATTR,
@@ -24,22 +24,55 @@ export function hrefMatchesPath(path: string, href: string): boolean {
   return path === href || path.startsWith(`${href}/`);
 }
 
-/** Derive the active nav item id from a URL using longest segment-boundary prefix match. */
-export function deriveActiveIdFromUrl(path: string, items: PanelNavItem[]): string {
-  if (!path) return '';
+export interface PanelNavSelection {
+  parentId: string;
+  childId: string;
+}
 
-  let bestId = '';
+/** First child that can receive navigation intent. */
+export function firstEnabledPanelNavChild(
+  children: PanelNavChildItem[] | undefined
+): PanelNavChildItem | undefined {
+  return children?.find(child => !child.isInactive);
+}
+
+/** Derive active parent and child ids using longest segment-boundary URL matching. */
+export function derivePanelNavSelectionFromUrl(
+  path: string,
+  items: PanelNavItem[]
+): PanelNavSelection {
+  if (!path) return { parentId: '', childId: '' };
+
+  let bestParentId = '';
+  let bestChildId = '';
   let bestLen = 0;
 
   for (const item of items) {
-    if (!item.href) continue;
-    if (hrefMatchesPath(path, item.href) && item.href.length > bestLen) {
-      bestId = item.id;
-      bestLen = item.href.length;
+    const children = item.children ?? [];
+    for (const child of children) {
+      if (!child.href) continue;
+      if (hrefMatchesPath(path, child.href) && child.href.length > bestLen) {
+        bestParentId = item.id;
+        bestChildId = child.id;
+        bestLen = child.href.length;
+      }
+    }
+
+    if (children.length === 0 && item.href) {
+      if (hrefMatchesPath(path, item.href) && item.href.length > bestLen) {
+        bestParentId = item.id;
+        bestChildId = '';
+        bestLen = item.href.length;
+      }
     }
   }
 
-  return bestId;
+  return { parentId: bestParentId, childId: bestChildId };
+}
+
+/** Derive the active top-level nav item id from a URL. */
+export function deriveActiveIdFromUrl(path: string, items: PanelNavItem[]): string {
+  return derivePanelNavSelectionFromUrl(path, items).parentId;
 }
 
 /** Total nav item count across all groups. */

@@ -23,12 +23,12 @@
     },
     {
       "component": "component:ds-panel-nav",
-      "role": "Managed desktop and tablet primary-navigation presentation; remains public for advanced slotted shells.",
+      "role": "Managed desktop and tablet primary navigation; optionally presents route-section children inline or in a collapsed flyout.",
       "required": false
     },
     {
       "component": "component:ds-bar-nav",
-      "role": "Managed desktop and tablet route-section presentation; remains public for advanced slotted shells.",
+      "role": "Default managed desktop and tablet route-section presentation; omitted when nested PanelNav owns sections.",
       "required": false
     },
     {
@@ -60,6 +60,8 @@
   "stateOwnership": [
     "Lab or the consuming application supplies navigation, pageChrome, and tools objects to managed ShellApp.",
     "The application router owns authorization, current URLs, history, route changes, and the routed content placed in ShellApp's default slot.",
+    "The application controls sectionNavigation and its user preference. bar is the default; panel moves canonical route sections under their PanelNav parent and emits dsNavChildSelect.",
+    "ShellApp derives ShellPage desktop header placement from sectionNavigation so applications and routed pages never branch on navigation mode to repair content insets or sticky geometry.",
     "ShellApp emits stable navigation and page intent events; it never mutates router history.",
     "ShellApp owns responsive mode, PanelNav presentation, tool open state, active tool, direct mobile destinations, optional Inbox grouping, Menu state, fullscreen presentation, focus restoration, and breakpoint state preservation.",
     "Tool products and routed content are instantiated once by the application in named tool-view and default slots; ShellApp changes presentation without recreating those owners.",
@@ -77,12 +79,14 @@
   ],
   "responsiveBehavior": [
     "ShellApp automatically resolves desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
-    "Desktop and tablet use PanelNav, BarNav, PanelTools through ShellTools, and ShellPage chrome.",
+    "Desktop and tablet use PanelNav, PanelTools through ShellTools, and ShellPage chrome. sectionNavigation chooses either BarNav or nested PanelNav plus compact BarTitle in the shell bar.",
+    "Panel section navigation removes page-local desktop title geometry: standard inset pages begin 32px below the shell bar on desktop and 16px below it on tablet, while full-bleed pages remain full bleed.",
     "Mobile uses MobileSheetNav, MobileBarNav, MobileHeader, ShellTools mobile presentation, and the same routed content owner. MobileBarNav paints its primary surface through the bottom safe-area inset so light browser chrome and application chrome meet without a secondary-surface seam.",
     "Below 768px the application root owns a 100dvh fixed stage with a 100vh fallback while ShellApp continues to fill its owner with height 100%; JavaScript viewport measurement synchronizes only the chrome wash and does not own layout height.",
     "With viewport-fit=cover, ShellApp consumes the shared top safe-area inset once and MobileBarNav consumes the persistent bottom inset; nested routed, tool, sheet, and consumer headers do not duplicate either inset.",
     "An optional Banner spans the complete application above desktop navigation, workspace, tools, and mobile global surfaces while remaining below the operating-system top safe area.",
     "Switching breakpoints changes presentation and inert state without recreating route or tool elements.",
+    "Switching sectionNavigation changes only desktop and tablet chrome; mobile composition, current route, routed content, and tool state remain stable.",
     "Search, Activity, Messages, and Agents use direct mobile destinations; products may explicitly group review tools under Inbox instead."
   ],
   "implementations": {

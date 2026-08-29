@@ -51,6 +51,14 @@
   --_shell-page-content-block-start-inset: 0px;
 }
 
+:host(.shell-page-host--desktop-header-shell-bar) {
+  --ds-shell-page-sticky-header-block-size: 0px;
+}
+
+:host(.shell-page-host--desktop-header-shell-bar.shell-page-host--inset-default) {
+  --_shell-page-content-block-start-inset: var(--_shell-page-responsive-content-block-start-inset);
+}
+
 .shell-page__scroll-sentinel {
   position: absolute;
   inset-block-start: var(--ds-shell-page-header-travel, 0);

@@ -41,6 +41,10 @@ const meta: Meta = {
       control: 'select',
       options: ['roomy', 'compact', 'constrained'],
     },
+    desktopHeaderPlacement: {
+      control: 'select',
+      options: ['page', 'shell-bar'],
+    },
     contentInset: { control: 'select', options: ['default', 'none'] },
     contentInsetBlockStart: { control: 'select', options: ['default', 'none'] },
     contentInsetBlockStartSize: { control: 'text' },
@@ -51,6 +55,7 @@ const meta: Meta = {
   args: {
     headerPresentation: 'auto',
     headerCapacity: 'roomy',
+    desktopHeaderPlacement: 'page',
     contentInset: 'default',
     contentInsetBlockStart: 'default',
     contentInsetBlockStartSize: '',
@@ -130,6 +135,7 @@ export const Playground: Story = {
       <ds-shell-page
         header-presentation=${args['headerPresentation']}
         header-capacity=${args['headerCapacity']}
+        desktop-header-placement=${args['desktopHeaderPlacement']}
         content-inset=${args['contentInset']}
         content-inset-block-start=${args['contentInsetBlockStart']}
         .contentInsetBlockStartSize=${args['contentInsetBlockStartSize'] || undefined}
@@ -295,6 +301,32 @@ export const PinnedTablePage: Story = {
           .showCompactDivider=${true}
         ></ds-bar-title>
         <div class="shell-page-demo__full-bleed"></div>
+      </ds-shell-page>
+    </div>
+  `,
+};
+
+export const ShellBarOwnedHeader: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Models a managed panel-navigation shell: the compact title is outside ShellPage, so ' +
+          'the page ignores the page-header-only 2px seam and restores the standard desktop gutter.',
+      },
+    },
+  },
+  render: () => html`
+    ${demoStyles}
+    <div class="shell-page-demo">
+      <ds-bar-title placement="shell-bar" heading="Safety events"></ds-bar-title>
+      <ds-shell-page
+        header-capacity="roomy"
+        desktop-header-placement="shell-bar"
+        content-inset-block-start-size="var(--dimension-space-025)"
+        .scrollCompaction=${false}
+      >
+        ${pageContent}
       </ds-shell-page>
     </div>
   `,

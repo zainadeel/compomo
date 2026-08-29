@@ -40,6 +40,7 @@
   ],
   "commonlyComposedWith": [
     "component:ds-shell-page",
+    "component:ds-shell-app",
     "component:ds-button-filled",
     "component:ds-button-unfilled",
     "component:ds-breadcrumb",
@@ -62,11 +63,13 @@
     "The overflow trigger uses its bordered treatment whenever the primary action is visible beside it; overflow-only and auto-collapsed-primary presentations keep the trigger borderless.",
     "expanded renders the larger heading, optional description, inset divider, and a full-width caption breadcrumb row above the title. The breadcrumb begins after 32px top padding; the following title and right-side actions share one top alignment. Compact renders 48px chrome with the existing icon Back action; constrained uses compact chrome and moves an auto-collapse primary action into overflow.",
     "primaryAction collapse defaults to auto. Use never for exceptional actions whose hierarchy must remain visible in constrained layouts.",
-    "showDivider=false removes the bottom divider when the surrounding page composition supplies the boundary; showCompactDivider can independently restore or remove that boundary in compact and constrained variants."
+    "showDivider=false removes the bottom divider when the surrounding page composition supplies the boundary; showCompactDivider can independently restore or remove that boundary in compact and constrained variants.",
+    "placement=shell-bar is reserved for ShellApp panel section navigation. It remains compact, omits description and breadcrumb presentation, and preserves applicable Back, section, primary, and overflow controls."
   ],
   "responsiveBehavior": [
     "BarTitle does not observe viewport, shell, scroll, or container state. Its owner selects an explicit variant.",
     "ShellPage is the standard owner for automatic expanded, compact, and constrained selection.",
+    "ShellApp owns shell-bar placement and always selects compact presentation there; mobile continues to use MobileHeader.",
     "When ShellPage owns BarTitle on a secondary desktop or tablet page, its expanded, compact, and constrained presentations all match that canvas; the separate MobileHeader component remains primary.",
     "Compact titles use the shared compact-header geometry and md control inset so top-level headings align with BarNav and inline Back geometry aligns with PanelToolHeader. Long headings and section labels truncate independently while Back and action controls retain complete hit targets and accessible names.",
     "A never-collapse primary action remains visible in constrained mode; the title and section label yield space first."

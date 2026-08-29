@@ -13,7 +13,8 @@ import {
 import type { ChromeTransitionDetail } from '../../shell/chrome-transition';
 import type { NavChromeStyle } from '../../shell/nav-chrome';
 import {
-  deriveActiveIdFromUrl,
+  derivePanelNavSelectionFromUrl,
+  firstEnabledPanelNavChild,
   panelNavWidthTransitionMs,
   parsePanelNavGroups,
   resolvePanelNavDisableVt,
@@ -25,14 +26,25 @@ import {
 import {
   PANEL_NAV_USER_MENU_ANCHOR_ID,
   PANEL_NAV_USER_MENU_PLACEMENT,
+  type PanelNavChildItem,
+  type PanelNavChildSelectDetail,
   type PanelNavGroup,
   type PanelNavItem,
+  type PanelNavPresentation,
   type PanelNavRouterMode,
   type PanelNavUserActionDetail,
 } from './panel-nav-types';
+import { PANEL_NAV_CHILD_MENU_PLACEMENT } from '../Menu/menu-placement';
+import type { MenuItemData } from '../Menu/menu-types';
 import { scrollEdgeFadeClassMap } from '../../utils/scroll-edge-fade';
 import { prefersReducedMotion } from '../../utils/resolve-css-time-ms';
 import { resolveSafeUrl } from '../../utils/safe-url';
+
+type PanelNavRovingEntry =
+  | { kind: 'parent'; item: PanelNavItem }
+  | { kind: 'child'; parent: PanelNavItem; child: PanelNavChildItem };
+
+let nextPanelNavInstanceId = 0;
 
 @Component({
   tag: 'ds-panel-nav',
@@ -41,6 +53,7 @@ import { resolveSafeUrl } from '../../utils/safe-url';
   scoped: true,
 })
 export class PanelNav {
+  private readonly instanceId = nextPanelNavInstanceId++;
   /** Style slot: `dashboard` or `settings`. Colors match for now;
    *  class hooks reserved for texture/glyph layers. Property: `navStyle`. Attribute: `nav-style`. */
   @Prop({ attribute: 'nav-style', reflect: true }) navStyle: NavChromeStyle = 'dashboard';
@@ -51,6 +64,9 @@ export class PanelNav {
   /** Nav groups — set via JS property (`el.groups = [...]`) or JSON string attribute. */
   @Prop() groups: string | PanelNavGroup[] = '[]';
 
+  /** Flat primary destinations, or nested child-route disclosure. */
+  @Prop({ reflect: true }) presentation: PanelNavPresentation = 'flat';
+
   /** How items with `href` render:
    *  - `anchor` (default): native `<a href>` — works with routers that intercept anchors.
    *  - `event`: always `<button>`; host handles navigation via `dsNavSelect`. */
@@ -58,6 +74,9 @@ export class PanelNav {
 
   /** ID of the currently active/selected nav item. Overridden by `currentUrl` matching when set. */
   @Prop() activeId: string = '';
+
+  /** ID of the active child route when URL matching is unavailable. */
+  @Prop() activeChildId: string = '';
 
   /** Whether the nav is in collapsed (icon-only) state.
    *  Set `storageKey` to persist across reloads. `dsNavToggle` still fires on change. */
@@ -96,6 +115,9 @@ export class PanelNav {
   /** Emitted when a nav item is clicked. Detail = the item's `id`. */
   @Event() dsNavSelect!: EventEmitter<string>;
 
+  /** Emitted when a nested child route is selected. */
+  @Event() dsNavChildSelect!: EventEmitter<PanelNavChildSelectDetail>;
+
   /** Emitted when the collapse toggle is clicked. Detail = new collapsed state. */
   @Event() dsNavToggle!: EventEmitter<boolean>;
 
@@ -120,7 +142,12 @@ export class PanelNav {
   @State() private rovingIndex: number = 0;
   @State() private viewportNarrow: boolean = false;
   @State() private urlDerivedActiveId: string = '';
+  @State() private urlDerivedActiveChildId: string = '';
   @State() private bodyScrollable = false;
+  @State() private expandedParentId: string = '';
+  @State() private flyoutParentId: string = '';
+  @State() private flyoutOpen = false;
+  @State() private flyoutInitialFocusVisible = false;
 
   private transitionCompletionHandler?: (e: TransitionEvent) => void;
   private transitionFallbackTimer: number | null = null;
@@ -148,6 +175,14 @@ export class PanelNav {
     return this.urlDerivedActiveId || this.activeId;
   }
 
+  private get effectiveActiveChildId(): string {
+    return this.urlDerivedActiveChildId || this.activeChildId;
+  }
+
+  private get collapsedPresentation(): boolean {
+    return this.collapsed || this.viewportNarrow;
+  }
+
   private get effectiveDisableViewTransition(): boolean {
     return resolvePanelNavDisableVt(
       this.disableViewTransition,
@@ -158,13 +193,19 @@ export class PanelNav {
   @Watch('collapsed')
   onCollapsedChange(_next: boolean, prev: boolean | undefined) {
     if (prev === undefined || !this.initialRenderComplete) return;
+    this.flyoutParentId = '';
+    this.flyoutOpen = false;
+    this.syncExpandedParent();
+    this.rovingIndex = this.getFirstRovingIndex();
     this.startCollapseAnimation();
   }
 
   @Watch('viewportNarrow')
   onViewportNarrowChange(next: boolean, prev: boolean | undefined) {
     if (prev === undefined || !this.initialRenderComplete) return;
-    if (next && this.rovingIndex === 0) {
+    this.flyoutParentId = '';
+    this.flyoutOpen = false;
+    if (next || this.rovingIndex > this.getVisibleRovingEntries().length) {
       this.rovingIndex = this.getFirstRovingIndex();
     }
     this.startCollapseAnimation();
@@ -181,12 +222,23 @@ export class PanelNav {
     this.parsedGroups = parsePanelNavGroups(val);
     this.rovingIndex = 0;
     this.syncActiveFromUrl();
+    this.syncExpandedParent();
+  }
+
+  @Watch('presentation')
+  onPresentationChange() {
+    this.flyoutParentId = '';
+    this.flyoutOpen = false;
+    this.syncExpandedParent();
+    this.rovingIndex = this.getFirstRovingIndex();
   }
 
   @Watch('activeId')
+  @Watch('activeChildId')
   @Watch('urlDerivedActiveId')
+  @Watch('urlDerivedActiveChildId')
   onActiveIdChange() {
-    /* Active route updates aria-current only — roving tab stop stays user-controlled. */
+    this.syncExpandedParent();
   }
 
   @Watch('currentUrl')
@@ -247,10 +299,9 @@ export class PanelNav {
     this.isAnimating = true;
     this.dsChromeTransitionStart.emit({ source: 'panel-nav' });
     const panel = this.el.querySelector('.panel-nav') as HTMLElement | null;
-    const widthBefore = panel?.getBoundingClientRect().width ?? 0;
     this.clearCollapseAnimationCompletion(panel);
     this.transitionCompletionHandler = (e: TransitionEvent) => {
-      if (e.propertyName === 'width' || e.propertyName === 'min-width') {
+      if (e.target === panel && (e.propertyName === 'width' || e.propertyName === 'min-width')) {
         this.finishCollapseAnimation(panel);
       }
     };
@@ -259,11 +310,6 @@ export class PanelNav {
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         if (!this.isAnimating) return;
-        const widthAfter = panel?.getBoundingClientRect().width ?? 0;
-        if (Math.abs(widthAfter - widthBefore) < 1) {
-          this.finishCollapseAnimation(panel);
-          return;
-        }
         if (!panel) {
           this.finishCollapseAnimation(panel);
           return;
@@ -347,9 +393,18 @@ export class PanelNav {
   private syncActiveFromUrl() {
     if (!this.currentUrl) {
       this.urlDerivedActiveId = '';
+      this.urlDerivedActiveChildId = '';
       return;
     }
-    this.urlDerivedActiveId = deriveActiveIdFromUrl(this.currentUrl, this.getAllItems());
+    const selection = derivePanelNavSelectionFromUrl(this.currentUrl, this.getAllItems());
+    this.urlDerivedActiveId = selection.parentId;
+    this.urlDerivedActiveChildId = selection.childId;
+  }
+
+  private syncExpandedParent() {
+    const active = this.getAllItems().find(item => item.id === this.effectiveActiveId);
+    this.expandedParentId =
+      this.presentation === 'nested' && active?.children?.length ? active.id : '';
   }
 
   /** Re-parse props assigned by the host after componentWillLoad (Angular ngAfterViewInit). */
@@ -395,12 +450,32 @@ export class PanelNav {
     return this.parsedGroups.flatMap(g => g.items);
   }
 
+  private getVisibleRovingEntries(): PanelNavRovingEntry[] {
+    return this.getAllItems().flatMap<PanelNavRovingEntry>(item => {
+      const parent: PanelNavRovingEntry = { kind: 'parent', item };
+      if (
+        this.presentation !== 'nested' ||
+        this.collapsedPresentation ||
+        item.id !== this.expandedParentId ||
+        !item.children?.length
+      ) {
+        return [parent];
+      }
+      return [
+        parent,
+        ...item.children
+          .filter(child => !child.isInactive)
+          .map<PanelNavRovingEntry>(child => ({ kind: 'child', parent: item, child })),
+      ];
+    });
+  }
+
   private getFirstRovingIndex(): number {
     return this.viewportNarrow ? 1 : 0;
   }
 
   private getFooterRovingIndex(): number {
-    return 1 + this.getAllItems().length;
+    return 1 + this.getVisibleRovingEntries().length;
   }
 
   private getUserRovingIndex(): number {
@@ -408,12 +483,14 @@ export class PanelNav {
   }
 
   private getRovingElement(index: number): HTMLElement | null {
-    const itemCount = this.getAllItems().length;
+    const itemCount = this.getVisibleRovingEntries().length;
     if (index === 0) {
       return this.viewportNarrow ? null : this.el.querySelector('.panel-nav__header-btn');
     }
     if (index >= 1 && index <= itemCount) {
-      const items = this.el.querySelectorAll<HTMLElement>('.panel-nav__body .panel-nav__item');
+      const items = this.el.querySelectorAll<HTMLElement>(
+        '.panel-nav__body [data-panel-nav-roving]'
+      );
       return items[index - 1] ?? null;
     }
     if (index === this.getFooterRovingIndex()) {
@@ -430,15 +507,23 @@ export class PanelNav {
     this.getRovingElement(index)?.focus({ preventScroll: true });
   }
 
-  private activateRovingIndex(index: number) {
-    const itemCount = this.getAllItems().length;
-    const items = this.getAllItems();
+  private activateRovingIndex(index: number, keyboard = false) {
+    const entries = this.getVisibleRovingEntries();
+    const itemCount = entries.length;
     if (index === 0) {
       this.handleToggle();
       return;
     }
     if (index >= 1 && index <= itemCount) {
-      this.handleItemClick(items[index - 1].id);
+      const entry = entries[index - 1];
+      if (!entry) return;
+      if (entry.kind === 'child') {
+        this.emitChildSelect(entry.parent, entry.child);
+      } else if (entry.item.children?.length) {
+        this.activateParent(entry.item, keyboard);
+      } else {
+        this.handleItemClick(entry.item.id);
+      }
       return;
     }
     if (index === this.getFooterRovingIndex()) {
@@ -457,7 +542,7 @@ export class PanelNav {
   private handleRovingKeyDown(e: KeyboardEvent, index: number) {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      this.activateRovingIndex(index);
+      this.activateRovingIndex(index, true);
       return;
     }
 
@@ -506,6 +591,71 @@ export class PanelNav {
   private handleItemClick(id: string) {
     this.dsNavSelect.emit(id);
   }
+
+  private emitChildSelect(parent: PanelNavItem, child: PanelNavChildItem) {
+    if (child.isInactive) return;
+    this.dsNavChildSelect.emit({
+      parentId: parent.id,
+      childId: child.id,
+      href: child.href,
+    });
+  }
+
+  private followFlyoutAnchor(child: PanelNavChildItem) {
+    const href = resolveSafeUrl(child.href);
+    if (this.routerMode !== 'anchor' || !href) return;
+    const anchor = this.el.ownerDocument.createElement('a');
+    anchor.href = href;
+    anchor.hidden = true;
+    this.el.append(anchor);
+    anchor.click();
+    anchor.remove();
+  }
+
+  private activateParent(parent: PanelNavItem, keyboard = false) {
+    if (this.presentation === 'nested') {
+      this.expandedParentId = parent.id;
+      if (this.collapsedPresentation) {
+        if (this.flyoutParentId === parent.id && this.flyoutOpen) {
+          this.closeFlyout();
+          return;
+        }
+        this.flyoutInitialFocusVisible = keyboard;
+        this.flyoutParentId = parent.id;
+        this.flyoutOpen = true;
+        return;
+      }
+    }
+
+    const child = firstEnabledPanelNavChild(parent.children);
+    if (child) this.emitChildSelect(parent, child);
+  }
+
+  private parentAnchorId(parentId: string): string {
+    return `panel-nav-parent-${this.instanceId}-${parentId.replace(/[^a-zA-Z0-9_-]/g, '-')}`;
+  }
+
+  private childListId(parentId: string): string {
+    return `panel-nav-children-${this.instanceId}-${parentId.replace(/[^a-zA-Z0-9_-]/g, '-')}`;
+  }
+
+  private closeFlyout = () => {
+    this.flyoutOpen = false;
+    this.flyoutInitialFocusVisible = false;
+  };
+
+  private handleFlyoutAfterClose = () => {
+    if (!this.flyoutOpen) this.flyoutParentId = '';
+  };
+
+  private handleFlyoutSelect = (event: CustomEvent<MenuItemData>) => {
+    const parent = this.getAllItems().find(item => item.id === this.flyoutParentId);
+    const child = parent?.children?.find(item => item.id === event.detail?.value);
+    if (!parent || !child) return;
+    this.emitChildSelect(parent, child);
+    this.followFlyoutAnchor(child);
+    this.closeFlyout();
+  };
 
   private handleToggle() {
     const next = resolvePanelNavToggle(this.collapsed, this.viewportNarrow);
@@ -686,9 +836,15 @@ export class PanelNav {
     );
   }
 
-  private renderNavItem(item: PanelNavItem, idx: number, collapsed: boolean) {
+  private renderParentItem(item: PanelNavItem, rovingPosition: number, collapsed: boolean) {
     const isActive = item.id === this.effectiveActiveId;
-    const rovingPosition = idx + 1;
+    const hasChildRoutes = (item.children?.length ?? 0) > 0;
+    const disclosure = this.presentation === 'nested' && hasChildRoutes;
+    const expanded = disclosure
+      ? collapsed
+        ? this.flyoutParentId === item.id
+        : this.expandedParentId === item.id
+      : false;
 
     const itemContent = [
       <span class="panel-nav__item-icon">
@@ -712,23 +868,41 @@ export class PanelNav {
     ];
 
     const sharedProps = {
+      id: disclosure ? this.parentAnchorId(item.id) : undefined,
       class: {
         'panel-nav__item': true,
+        'panel-nav__parent': disclosure,
+        'panel-nav__parent--expanded': expanded,
+        'panel-nav__parent--flyout-active': collapsed && this.flyoutParentId === item.id,
+        'panel-nav__parent--muted':
+          this.presentation === 'nested' &&
+          !collapsed &&
+          this.expandedParentId !== '' &&
+          this.expandedParentId !== item.id,
         'panel-nav__item--active': isActive,
         'ds-focus-ring-inset': true,
         'ds-interaction-fill': true,
       },
-      'aria-current': isActive ? ('page' as const) : undefined,
+      'aria-current': !disclosure && isActive ? ('page' as const) : undefined,
+      'aria-expanded': disclosure ? String(expanded) : undefined,
+      'aria-controls': disclosure && expanded ? this.childListId(item.id) : undefined,
+      'aria-haspopup': disclosure && collapsed ? ('menu' as const) : undefined,
+      'data-panel-nav-roving': '',
       tabIndex: rovingPosition === this.rovingIndex ? 0 : -1,
-      onClick: () => this.handleItemClick(item.id),
+      onClick: (event: MouseEvent) =>
+        hasChildRoutes
+          ? this.activateParent(item, event.detail === 0)
+          : this.handleItemClick(item.id),
       onKeyDown: (e: KeyboardEvent) => this.handleRovingKeyDown(e, rovingPosition),
       onFocus: () => {
         this.rovingIndex = rovingPosition;
       },
     };
 
-    const href = resolveSafeUrl(item.href);
-    const useAnchor = this.routerMode === 'anchor' && href;
+    const href = resolveSafeUrl(
+      hasChildRoutes ? firstEnabledPanelNavChild(item.children)?.href : item.href
+    );
+    const useAnchor = this.routerMode === 'anchor' && href && !(disclosure && collapsed);
     const control = useAnchor ? (
       <a {...sharedProps} href={href}>
         {itemContent}
@@ -745,6 +919,107 @@ export class PanelNav {
       <ds-tooltip label={collapsed ? item.label : ''} side="right" size="sm">
         {control}
       </ds-tooltip>
+    );
+  }
+
+  private renderChildItem(
+    parent: PanelNavItem,
+    child: PanelNavChildItem,
+    rovingPosition: number | undefined,
+    childIndex: number,
+    childReverseIndex: number
+  ) {
+    const isActive =
+      parent.id === this.effectiveActiveId && child.id === this.effectiveActiveChildId;
+    const inactive = child.isInactive === true;
+    const content = [
+      <ds-text
+        class="panel-nav__item-label panel-nav__item-label-text ds-control--md"
+        as="span"
+        variant="text-body-medium"
+        emphasis={isActive}
+        color="inherit"
+        lineTruncation={1}
+      >
+        {child.label}
+      </ds-text>,
+      child.dot && (
+        <span class="panel-nav__child-dot" aria-hidden="true">
+          <ds-badge variant="dot" label="" />
+        </span>
+      ),
+    ];
+    const sharedProps = {
+      class: {
+        'panel-nav__item': true,
+        'panel-nav__child': true,
+        'panel-nav__child--active': isActive,
+        'panel-nav__child--inactive': inactive,
+        'panel-nav__item--active': isActive,
+        'ds-focus-ring-inset': !inactive,
+        'ds-interaction-fill': !inactive,
+      },
+      'aria-current': isActive ? ('page' as const) : undefined,
+      'aria-disabled': inactive ? 'true' : undefined,
+      'data-panel-nav-roving': inactive || rovingPosition === undefined ? undefined : '',
+      style: {
+        '--_panel-nav-child-index': String(childIndex),
+        '--_panel-nav-child-reverse-index': String(childReverseIndex),
+      },
+      tabIndex: !inactive && rovingPosition === this.rovingIndex ? 0 : -1,
+      onClick: () => this.emitChildSelect(parent, child),
+      onKeyDown: (event: KeyboardEvent) =>
+        rovingPosition === undefined ? undefined : this.handleRovingKeyDown(event, rovingPosition),
+      onFocus: () => {
+        if (rovingPosition !== undefined) this.rovingIndex = rovingPosition;
+      },
+    };
+    const href = resolveSafeUrl(child.href);
+    const useAnchor = !inactive && this.routerMode === 'anchor' && href;
+
+    return useAnchor ? (
+      <a {...sharedProps} href={href}>
+        {content}
+      </a>
+    ) : (
+      <button {...sharedProps} type="button" disabled={inactive}>
+        {content}
+      </button>
+    );
+  }
+
+  private renderFlyout() {
+    const parent = this.getAllItems().find(item => item.id === this.flyoutParentId);
+    if (!parent?.children?.length) return null;
+    return (
+      <ds-menu
+        id={this.childListId(parent.id)}
+        open={this.flyoutOpen}
+        side={PANEL_NAV_CHILD_MENU_PLACEMENT.side}
+        align={PANEL_NAV_CHILD_MENU_PLACEMENT.align}
+        anchorAlignment={PANEL_NAV_CHILD_MENU_PLACEMENT.anchorAlignment}
+        sideOffset={PANEL_NAV_CHILD_MENU_PLACEMENT.sideOffset}
+        alignOffset={PANEL_NAV_CHILD_MENU_PLACEMENT.alignOffset}
+        anchorId={this.parentAnchorId(parent.id)}
+        selectionMode="single"
+        menuLabel={`${parent.label} sections`}
+        initialFocusVisible={this.flyoutInitialFocusVisible}
+        sections={[
+          {
+            items: parent.children.map(child => ({
+              label: child.label,
+              value: child.id,
+              dot: child.dot,
+              isInactive: child.isInactive,
+              isSelected:
+                parent.id === this.effectiveActiveId && child.id === this.effectiveActiveChildId,
+            })),
+          },
+        ]}
+        onDsSelect={this.handleFlyoutSelect}
+        onDsClose={this.closeFlyout}
+        onDsAfterClose={this.handleFlyoutAfterClose}
+      />
     );
   }
 
@@ -837,9 +1112,9 @@ export class PanelNav {
           >
             <div class="panel-nav__sections">
               {(() => {
-                let flatIdx = 0;
+                let rovingPosition = 1;
                 return this.parsedGroups.map(group => (
-                  <div class="panel-nav__group">
+                  <div class="panel-nav__group" key={group.id ?? group.label}>
                     {group.label && (
                       <ds-text
                         class="panel-nav__group-label ds-control--md"
@@ -851,7 +1126,90 @@ export class PanelNav {
                         {group.label}
                       </ds-text>
                     )}
-                    {group.items.map(item => this.renderNavItem(item, flatIdx++, collapsed))}
+                    {group.items.map((item, itemIndex) => {
+                      const parentPosition = rovingPosition++;
+                      const expanded =
+                        !collapsed &&
+                        item.id === this.expandedParentId &&
+                        (item.children?.length ?? 0) > 0;
+                      const hasGroupSiblings = group.items.length > 1;
+                      const hasDividerBefore = hasGroupSiblings && itemIndex > 0;
+                      const hasDividerAfter =
+                        hasGroupSiblings && itemIndex < group.items.length - 1;
+                      const showBranchDividers = expanded && hasGroupSiblings;
+                      const hasInlineChildren =
+                        this.presentation === 'nested' &&
+                        (!collapsed || this.isAnimating) &&
+                        (item.children?.length ?? 0) > 0;
+                      const children = hasInlineChildren
+                        ? item.children?.map((child, childIndex) => {
+                            const childPosition =
+                              !expanded || child.isInactive ? undefined : rovingPosition++;
+                            return this.renderChildItem(
+                              item,
+                              child,
+                              childPosition,
+                              childIndex,
+                              (item.children?.length ?? 0) - childIndex - 1
+                            );
+                          })
+                        : null;
+                      return (
+                        <div class="panel-nav__branch" key={item.id}>
+                          {hasDividerBefore ? (
+                            <div
+                              key={`${item.id}-divider-before`}
+                              class={{
+                                'panel-nav__branch-divider': true,
+                                'panel-nav__branch-divider--before': true,
+                                'panel-nav__branch-divider--open': showBranchDividers,
+                              }}
+                              aria-hidden="true"
+                            >
+                              <div class="panel-nav__branch-divider-clip">
+                                <span class="panel-nav__branch-divider-line"></span>
+                              </div>
+                            </div>
+                          ) : null}
+                          {this.renderParentItem(item, parentPosition, collapsed)}
+                          {hasInlineChildren ? (
+                            <div
+                              key={`${item.id}-children`}
+                              class={{
+                                'panel-nav__children-accordion': true,
+                                'panel-nav__children-accordion--open': expanded,
+                              }}
+                              aria-hidden={expanded ? undefined : 'true'}
+                              inert={expanded ? undefined : true}
+                            >
+                              <div
+                                id={this.childListId(item.id)}
+                                class="panel-nav__children"
+                                role="group"
+                                aria-labelledby={this.parentAnchorId(item.id)}
+                              >
+                                {children}
+                              </div>
+                            </div>
+                          ) : null}
+                          {hasDividerAfter ? (
+                            <div
+                              key={`${item.id}-divider-after`}
+                              class={{
+                                'panel-nav__branch-divider': true,
+                                'panel-nav__branch-divider--after': true,
+                                'panel-nav__branch-divider--open': showBranchDividers,
+                              }}
+                              aria-hidden="true"
+                            >
+                              <div class="panel-nav__branch-divider-clip">
+                                <span class="panel-nav__branch-divider-line"></span>
+                              </div>
+                            </div>
+                          ) : null}
+                        </div>
+                      );
+                    })}
                   </div>
                 ));
               })()}
@@ -864,6 +1222,8 @@ export class PanelNav {
             {this.renderFooterUser(collapsed, userName, userInitial)}
           </div>
         </nav>
+
+        {this.renderFlyout()}
 
         {/* Drag-to-resize handle — always rendered, hidden only when auto-collapsed by breakpoint */}
         {!this.viewportNarrow && (

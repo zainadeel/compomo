@@ -5,7 +5,7 @@ import '../../../../dist/components/ds-panel-nav.js';
 import '../../../../dist/components/ds-icon.js';
 import '../../../../dist/components/ds-text.js';
 import type { NavChromeStyle } from '../../shell/nav-chrome';
-import type { PanelNavGroup } from './panel-nav-types';
+import type { PanelNavChildSelectDetail, PanelNavGroup } from './panel-nav-types';
 
 // ── Sample data (icon names verified against IcoMo) ───────────────────────
 
@@ -315,6 +315,137 @@ function sideBySide(): TemplateResult {
   `;
 }
 
+const NESTED_GROUPS: PanelNavGroup[] = [
+  {
+    label: 'Operations',
+    items: [
+      {
+        id: 'tracking',
+        icon: 'MapPage',
+        label: 'Fleet View',
+        children: [
+          { id: 'live-map', label: 'Live Map', href: '/tracking/live-map' },
+          { id: 'history', label: 'History', href: '/tracking/history', dot: true },
+          {
+            id: 'vehicles',
+            label: 'Vehicles with an intentionally long route label',
+            href: '/tracking/vehicles',
+          },
+        ],
+      },
+      {
+        id: 'safety',
+        icon: 'ShieldCircle',
+        label: 'Safety',
+        dot: true,
+        children: [
+          {
+            id: 'overview',
+            label: 'Overview unavailable',
+            href: '/safety/overview',
+            isInactive: true,
+          },
+          { id: 'events', label: 'Events', href: '/safety/events', dot: true },
+          { id: 'coaching', label: 'Coaching', href: '/safety/coaching' },
+        ],
+      },
+      {
+        id: 'reports',
+        icon: 'Chart',
+        label: 'Reports',
+        children: [
+          { id: 'overview', label: 'Overview', href: '/reports/overview' },
+          { id: 'custom', label: 'Custom reports', href: '/reports/custom' },
+        ],
+      },
+    ],
+  },
+  {
+    label: 'Account',
+    items: [
+      {
+        id: 'user-settings',
+        icon: 'Avatar',
+        label: 'User Settings',
+        children: [
+          { id: 'profile', label: 'Profile', href: '/settings/profile' },
+          { id: 'preferences', label: 'Preferences', href: '/settings/preferences' },
+        ],
+      },
+    ],
+  },
+];
+
+interface NestedAnimationTiming {
+  sectionDuration: number;
+  transitionWait: number;
+  childFadeDuration: number;
+  childStagger: number;
+}
+
+function nestedNavigationReview(
+  id: string,
+  collapsed = false,
+  breakpoint = 0,
+  animation?: NestedAnimationTiming
+): TemplateResult {
+  let currentUrl = '/tracking/history';
+  const animationStyle = animation
+    ? [
+        `--_panel-nav-nested-section-duration:${animation.sectionDuration}ms`,
+        `--_panel-nav-nested-transition-wait:${animation.transitionWait}ms`,
+        `--_panel-nav-nested-child-fade-duration:${animation.childFadeDuration}ms`,
+        `--_panel-nav-nested-child-stagger:${animation.childStagger}ms`,
+      ].join(';')
+    : '';
+  const updateRoute = (detail: PanelNavChildSelectDetail) => {
+    currentUrl = detail.href ?? currentUrl;
+    const nav = document.getElementById(id) as
+      | (HTMLDsPanelNavElement & { activeChildId: string })
+      | null;
+    if (nav) {
+      nav.activeId = detail.parentId;
+      nav.activeChildId = detail.childId;
+      nav.currentUrl = currentUrl;
+    }
+    const status = document.getElementById(`${id}-route`);
+    if (status) status.textContent = currentUrl;
+  };
+
+  return html`
+    <div
+      style="display:flex;height:100vh;background:var(--color-background-primary);font-family:var(--typography-font-family-ui,system-ui);"
+    >
+      <ds-panel-nav
+        id=${id}
+        presentation="nested"
+        router-mode="event"
+        .groups=${NESTED_GROUPS}
+        current-url=${currentUrl}
+        .breakpoint=${breakpoint}
+        ?collapsed=${collapsed}
+        style=${animationStyle}
+        user-name="User Name"
+        user-initial="U"
+        @dsNavChildSelect=${(event: CustomEvent<PanelNavChildSelectDetail>) =>
+          updateRoute(event.detail)}
+      ></ds-panel-nav>
+      <div
+        style="flex:1;min-width:0;padding:var(--dimension-space-300);color:var(--color-foreground-secondary);"
+      >
+        <ds-text as="h2" variant="text-title-small" emphasis>Nested navigation review</ds-text>
+        <ds-text as="p" variant="text-body-small">
+          Current route: <strong id="${id}-route">${currentUrl}</strong>
+        </ds-text>
+        <ds-text as="p" variant="text-body-small" color="secondary">
+          Expanded parent activation selects the first enabled child. In collapsed mode it opens the
+          child-only flyout and waits for a child selection. Activate the parent again to close.
+        </ds-text>
+      </div>
+    </div>
+  `;
+}
+
 // ── Meta ───────────────────────────────────────────────────────────────────
 
 const meta: Meta = {
@@ -337,6 +468,76 @@ export const Settings: Story = {
 export const BreakpointLocked: Story = {
   name: 'Breakpoint locked',
   render: () => interactiveDashboard('area-a', false, 1200),
+};
+
+export const NestedExpandedReview: Story = {
+  name: 'Nested — expanded review',
+  args: {
+    sectionDuration: 500,
+    transitionWait: 250,
+    childFadeDuration: 500,
+    childStagger: 50,
+  },
+  argTypes: {
+    sectionDuration: {
+      name: 'Section height duration (ms)',
+      control: { type: 'range', min: 0, max: 1000, step: 25 },
+    },
+    transitionWait: {
+      name: 'Expand/collapse wait (ms)',
+      control: { type: 'range', min: 0, max: 1000, step: 25 },
+    },
+    childFadeDuration: {
+      name: 'Child fade duration (ms)',
+      control: { type: 'range', min: 0, max: 1000, step: 25 },
+    },
+    childStagger: {
+      name: 'Progressive child offset (ms)',
+      control: { type: 'range', min: 0, max: 1000, step: 25 },
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Shows route-derived parent and child selection, one expanded branch, status dots, ' +
+          'secondary foreground on other destinations, inactive default handling, long-label ' +
+          'truncation, and fixed-size child rows that progressively fade after expansion and ' +
+          'before collapse. Expanded branches animate equal-space divider boundaries according to ' +
+          'their first, middle, or final position; a single-item group remains undivided.',
+      },
+    },
+  },
+  render: args =>
+    nestedNavigationReview('nested-expanded-review', false, 0, {
+      sectionDuration: Number(args['sectionDuration']),
+      transitionWait: Number(args['transitionWait']),
+      childFadeDuration: Number(args['childFadeDuration']),
+      childStagger: Number(args['childStagger']),
+    }),
+};
+
+export const NestedCollapsedFlyoutReview: Story = {
+  name: 'Nested — collapsed flyout review',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Activating a collapsed parent opens a child-only flyout without navigating. ' +
+          'The parent holds the pressed wash while open, activates again to close, and navigates ' +
+          'only after the user selects a child.',
+      },
+    },
+  },
+  render: () => nestedNavigationReview('nested-collapsed-review', true),
+};
+
+export const NestedTabletFlyoutReview: Story = {
+  name: 'Nested — tablet flyout review',
+  parameters: {
+    viewport: { defaultViewport: 'tablet' },
+  },
+  render: () => nestedNavigationReview('nested-tablet-review', false, 1200),
 };
 
 export const SideBySide: Story = {

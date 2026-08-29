@@ -7,6 +7,7 @@ import type {
   ShellPageCapacity,
   ShellPageContentInset,
   ShellPageContentSurface,
+  ShellPageDesktopHeaderPlacement,
   ShellPageHeaderPresentation,
 } from './shell-page-types';
 
@@ -28,6 +29,10 @@ export class ShellPage {
 
   /** Available page-header capacity supplied by the owning application shell. */
   @Prop() headerCapacity?: ShellPageCapacity;
+
+  /** Desktop title chrome is rendered in this page or externally in the shell bar. */
+  @Prop({ attribute: 'desktop-header-placement', reflect: true })
+  desktopHeaderPlacement: ShellPageDesktopHeaderPlacement = 'page';
 
   /** Standard page gutters, or no inset for full-bleed page content. */
   @Prop() contentInset: ShellPageContentInset = 'default';
@@ -79,7 +84,16 @@ export class ShellPage {
   @Watch('responsiveMode')
   handleResponsiveModeChange() {
     this.el.style.removeProperty('--ds-shell-page-sticky-header-block-size');
-    this.observeHeader(this.responsiveMode === 'mobile' ? null : this.findHeader());
+    this.observeHeader(
+      this.responsiveMode === 'mobile' || this.desktopHeaderExternal ? null : this.findHeader()
+    );
+    this.syncPageHeaderBlockSize();
+  }
+
+  @Watch('desktopHeaderPlacement')
+  handleDesktopHeaderPlacementChange() {
+    this.observeHeader(this.desktopHeaderExternal ? null : this.findHeader());
+    this.syncPageHeaderBlockSize();
   }
 
   componentDidLoad() {
@@ -89,6 +103,7 @@ export class ShellPage {
 
   componentDidRender() {
     this.syncHeaderVariant();
+    this.syncPageHeaderBlockSize();
   }
 
   connectedCallback() {
@@ -123,11 +138,20 @@ export class ShellPage {
   }
 
   private get effectiveVariant(): BarTitleVariant {
+    if (this.desktopHeaderExternal) return 'compact';
     return resolveShellPageHeaderVariant(
       this.headerPresentation,
       this.headerCapacity ?? 'roomy',
-      this.scrollCompaction ? this.pageTopVisible : true
+      this.effectiveScrollCompaction ? this.pageTopVisible : true
     );
+  }
+
+  private get desktopHeaderExternal(): boolean {
+    return this.responsiveMode !== 'mobile' && this.desktopHeaderPlacement === 'shell-bar';
+  }
+
+  private get effectiveScrollCompaction(): boolean {
+    return this.scrollCompaction && !this.desktopHeaderExternal;
   }
 
   private get headerContractResolved(): boolean {
@@ -136,7 +160,7 @@ export class ShellPage {
 
   private get isScrollCompacted(): boolean {
     return (
-      this.scrollCompaction &&
+      this.effectiveScrollCompaction &&
       this.headerPresentation === 'auto' &&
       this.headerCapacity === 'roomy' &&
       !this.pageTopVisible
@@ -191,7 +215,7 @@ export class ShellPage {
     this.syncHeaderDividerInset(rootTop);
     const nextPageTopVisible = this.sentinelEl.getBoundingClientRect().top >= rootTop;
     if (
-      this.scrollCompaction &&
+      this.effectiveScrollCompaction &&
       !nextPageTopVisible &&
       this.pageTopVisible &&
       this.headerEl?.classList.contains(this.variantClass('expanded'))
@@ -225,7 +249,7 @@ export class ShellPage {
     if (!header) return;
 
     const ownsScrollTransition =
-      this.scrollCompaction &&
+      this.effectiveScrollCompaction &&
       this.headerPresentation === 'auto' &&
       this.headerCapacity === 'roomy';
     const expandedInset = resolveCssLengthPx('--dimension-space-400', 0);
@@ -297,7 +321,7 @@ export class ShellPage {
     this.stickyHeaderEl?.style.setProperty(
       '--ds-shell-page-sticky-offset',
       renderedVariant === 'expanded' &&
-        this.scrollCompaction &&
+        this.effectiveScrollCompaction &&
         this.headerPresentation === 'auto' &&
         this.headerCapacity === 'roomy'
         ? `${-this.headerTravel}px`
@@ -306,9 +330,15 @@ export class ShellPage {
   }
 
   private syncPageHeaderBlockSize() {
+    if (this.desktopHeaderExternal) {
+      this.el.style.setProperty('--ds-shell-page-sticky-header-block-size', '0px');
+      return;
+    }
     const renderedHeight = this.stickyHeaderEl?.getBoundingClientRect().height ?? 0;
     if (renderedHeight > 0) {
       this.el.style.setProperty('--ds-shell-page-sticky-header-block-size', `${renderedHeight}px`);
+    } else {
+      this.el.style.removeProperty('--ds-shell-page-sticky-header-block-size');
     }
   }
 
@@ -507,6 +537,7 @@ export class ShellPage {
           'shell-page-host--surface-primary': this.contentSurface === 'primary',
           'shell-page-host--surface-secondary': this.contentSurface === 'secondary',
           'shell-page-host--mobile': mobile,
+          'shell-page-host--desktop-header-shell-bar': this.desktopHeaderExternal,
           [`shell-page-host--header-${this.effectiveVariant}`]: true,
         }}
       >

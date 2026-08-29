@@ -1,15 +1,23 @@
 export type { NavChromeStyle } from './nav-chrome';
-export type { PanelNavGroup, PanelNavItem } from '../components/PanelNav/panel-nav-types';
+export type {
+  PanelNavChildItem,
+  PanelNavChildSelectDetail,
+  PanelNavGroup,
+  PanelNavItem,
+  PanelNavPresentation,
+} from '../components/PanelNav/panel-nav-types';
 export type { BarNavTab } from '../components/BarNav/bar-nav-types';
 export type {
   ShellPageContentInset,
   ShellPageContentSurface,
+  ShellPageDesktopHeaderPlacement,
 } from '../components/ShellPage/shell-page-types';
 export type {
   ShellAppComposition,
   ShellNavigationConfig,
   ShellNavigationSelectDetail,
   ShellPageChromeConfig,
+  ShellSectionNavigation,
   ShellToolsConfig,
 } from '../components/ShellApp/shell-app-types';
 export type {
