@@ -1,5 +1,19 @@
 # Changelog
 
+## [14.22.0](https://github.com/zainadeel/compomo/compare/v14.21.0...v14.22.0) (2026-08-29)
+
+
+### Added
+
+* add nested panel navigation shell ([40e4df5](https://github.com/zainadeel/compomo/commit/40e4df5c932fcce7b27e17d28eb82067324e880a))
+* add nested panel navigation shell ([febc0dd](https://github.com/zainadeel/compomo/commit/febc0dd929e0de3a631d90ded5716dac63f4f007))
+* refine nested panel navigation shell ([0f171ae](https://github.com/zainadeel/compomo/commit/0f171aef47fc7b8fd9c45e5cf8369cc2c26f954a))
+
+
+### Fixed
+
+* synchronize slash menu input value ([0a25fec](https://github.com/zainadeel/compomo/commit/0a25fec3015126f05f7c2fcb18c1a551e8ab4205))
+
 ## [14.21.0](https://github.com/zainadeel/compomo/compare/v14.20.0...v14.21.0) (2026-08-27)
 
 
