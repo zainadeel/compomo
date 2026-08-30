@@ -306,6 +306,7 @@ export class Table {
   private readonly groupSentinelEls = new Map<string, HTMLElement>();
   private previousModelWarning = '';
   private modelWarningQueued = false;
+  private initialModelWarningFrame: number | undefined;
   private hasLoaded = false;
   private renderedModel: TableRenderModel | null = null;
   private stickyGroupConnected = false;
@@ -417,7 +418,6 @@ export class Table {
     this.syncFooterSlotPresence();
     this.loadController.initialize();
     this.groupLoadController.initialize();
-    this.warnModelIssues();
   }
 
   componentDidLoad(): void {
@@ -434,6 +434,7 @@ export class Table {
     this.connectCaptionCompactObserver();
     this.syncFitPageSize();
     this.connectTruncateTooltip();
+    this.scheduleInitialModelIssueWarning();
   }
 
   componentDidRender(): void {
@@ -488,6 +489,10 @@ export class Table {
     this.disconnectCaptionCompactObserver();
     this.disconnectTruncateTooltip();
     this.closeColumnCustomizer();
+    if (this.initialModelWarningFrame !== undefined) {
+      cancelAnimationFrame(this.initialModelWarningFrame);
+      this.initialModelWarningFrame = undefined;
+    }
   }
 
   private syncHeaderSlotPresence = () => {
@@ -617,6 +622,11 @@ export class Table {
 
   @Watch('totalCount')
   handleTotalCountChange(): void {
+    this.scheduleModelIssueWarning();
+  }
+
+  @Watch('caption')
+  handleCaptionChange(): void {
     this.scheduleModelIssueWarning();
   }
 
@@ -1125,6 +1135,16 @@ export class Table {
     this.modelWarningQueued = true;
     queueMicrotask(() => {
       this.modelWarningQueued = false;
+      this.warnModelIssues();
+    });
+  }
+
+  private scheduleInitialModelIssueWarning(): void {
+    if (this.initialModelWarningFrame !== undefined) {
+      cancelAnimationFrame(this.initialModelWarningFrame);
+    }
+    this.initialModelWarningFrame = requestAnimationFrame(() => {
+      this.initialModelWarningFrame = undefined;
       this.warnModelIssues();
     });
   }

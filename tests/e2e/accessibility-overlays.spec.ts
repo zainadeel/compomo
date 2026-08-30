@@ -540,8 +540,11 @@ test(
 
     await trigger.press('Enter');
     await expect(close).toBeFocused();
+    const closeTooltip = page.getByRole('tooltip', { name: 'Close' });
+    await expect(closeTooltip).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(dialog).toBeHidden();
+    await expect(closeTooltip).toHaveCount(0);
     await expect(trigger).toBeFocused();
     expect(
       await page.evaluate(
@@ -566,6 +569,29 @@ test(
     ).toBe(3);
   }
 );
+
+test('modal Escape dismissal remains authoritative while its close tooltip is open @cross-browser', async ({
+  page,
+}) => {
+  const trigger = page.locator('#modal-trigger');
+  const dialog = page.getByRole('dialog', { name: 'Confirm changes' });
+  const close = dialog.getByRole('button', { name: 'Close' });
+
+  await trigger.focus();
+  await trigger.press('Enter');
+  await expect(close).toBeFocused();
+  await expect(page.getByRole('tooltip', { name: 'Close' })).toBeVisible();
+
+  await page.keyboard.press('Escape');
+
+  await expect(dialog).toBeHidden();
+  await expect(trigger).toBeFocused();
+  expect(
+    await page.evaluate(
+      () => (window as typeof window & { __modalCloseReasons: string[] }).__modalCloseReasons
+    )
+  ).toEqual(['escape']);
+});
 
 test('modal omits the footer block when no footer actions are assigned', async ({ page }) => {
   const modal = page.locator('#modal-no-footer');

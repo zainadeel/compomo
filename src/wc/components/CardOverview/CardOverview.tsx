@@ -111,6 +111,7 @@ export class CardOverview {
 
   private layoutEl?: HTMLElement;
   private layoutResizeObserver: ResizeObserver | null = null;
+  private layoutResizeFrame: number | undefined;
   /** The node the observer is bound to, which a later render can replace. */
   private observedLayoutEl?: HTMLElement;
 
@@ -134,6 +135,8 @@ export class CardOverview {
   disconnectedCallback() {
     this.layoutResizeObserver?.disconnect();
     this.layoutResizeObserver = null;
+    if (this.layoutResizeFrame !== undefined) cancelAnimationFrame(this.layoutResizeFrame);
+    this.layoutResizeFrame = undefined;
     this.observedLayoutEl = undefined;
   }
 
@@ -177,7 +180,12 @@ export class CardOverview {
     this.layoutResizeObserver?.disconnect();
     this.layoutResizeObserver = new ResizeObserver(entries => {
       const rect = entries[0]?.contentRect;
-      if (rect) this.updateLayoutGeometry(rect.width, rect.height);
+      if (!rect) return;
+      if (this.layoutResizeFrame !== undefined) cancelAnimationFrame(this.layoutResizeFrame);
+      this.layoutResizeFrame = requestAnimationFrame(() => {
+        this.layoutResizeFrame = undefined;
+        this.updateLayoutGeometry(rect.width, rect.height);
+      });
     });
     this.layoutResizeObserver.observe(layout);
     this.observedLayoutEl = layout;
