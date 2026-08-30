@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.22.1](https://github.com/zainadeel/compomo/compare/v14.22.0...v14.22.1) (2026-08-30)
+
+
+### Fixed
+
+* stabilize observer and modal lifecycles ([#543](https://github.com/zainadeel/compomo/issues/543)) ([6397af2](https://github.com/zainadeel/compomo/commit/6397af21c02fd68e3337077a6732f2da91e93aad))
+
 ## [14.22.0](https://github.com/zainadeel/compomo/compare/v14.21.0...v14.22.0) (2026-08-29)
 
 
