@@ -147,6 +147,11 @@ export class Modal {
   }
 
   private handleKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.requestClose('escape', event);
+      return;
+    }
     if (event.key !== 'Tab' || !this.dialogEl) return;
     const focusables = Array.from(
       this.dialogEl.querySelectorAll<HTMLElement>(FOCUSABLE_SEL)

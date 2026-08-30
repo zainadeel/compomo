@@ -249,7 +249,7 @@ export class AnchoredPositionController {
     window.addEventListener('resize', this.scrollResizeHandler);
 
     if (this.options.observeResize && typeof ResizeObserver !== 'undefined') {
-      this.resizeObserver = new ResizeObserver(() => this.update());
+      this.resizeObserver = new ResizeObserver(() => this.scheduleLiveUpdate());
       this.observeResizeTargets();
     }
 
