@@ -145,6 +145,7 @@ export class PanelNav {
   @State() private urlDerivedActiveChildId: string = '';
   @State() private bodyScrollable = false;
   @State() private expandedParentId: string = '';
+  @State() private inlineChildrenExpansionReady = true;
   @State() private flyoutParentId: string = '';
   @State() private flyoutOpen = false;
   @State() private flyoutInitialFocusVisible = false;
@@ -155,6 +156,7 @@ export class PanelNav {
   private scrollRegionObserver?: ResizeObserver;
   private bodyEl?: HTMLElement;
   private initialRenderComplete = false;
+  private inlineChildrenExpansionFrame: number | null = null;
 
   // Drag-to-resize state (not @State — no re-render needed)
   private isDragging = false;
@@ -191,8 +193,11 @@ export class PanelNav {
   }
 
   @Watch('collapsed')
-  onCollapsedChange(_next: boolean, prev: boolean | undefined) {
+  onCollapsedChange(next: boolean, prev: boolean | undefined) {
     if (prev === undefined || !this.initialRenderComplete) return;
+    this.stageInlineChildrenExpansion(
+      prev && !next && !this.viewportNarrow && this.presentation === 'nested'
+    );
     this.flyoutParentId = '';
     this.flyoutOpen = false;
     this.syncExpandedParent();
@@ -203,6 +208,9 @@ export class PanelNav {
   @Watch('viewportNarrow')
   onViewportNarrowChange(next: boolean, prev: boolean | undefined) {
     if (prev === undefined || !this.initialRenderComplete) return;
+    this.stageInlineChildrenExpansion(
+      prev && !next && !this.collapsed && this.presentation === 'nested'
+    );
     this.flyoutParentId = '';
     this.flyoutOpen = false;
     if (next || this.rovingIndex > this.getVisibleRovingEntries().length) {
@@ -227,6 +235,7 @@ export class PanelNav {
 
   @Watch('presentation')
   onPresentationChange() {
+    this.stageInlineChildrenExpansion(false);
     this.flyoutParentId = '';
     this.flyoutOpen = false;
     this.syncExpandedParent();
@@ -277,11 +286,13 @@ export class PanelNav {
 
   componentDidRender() {
     this.updateBodyScrollable();
+    this.scheduleInlineChildrenExpansion();
   }
 
   disconnectedCallback() {
     this.disconnectResizeObserver();
     this.disconnectScrollRegionObserver();
+    this.clearInlineChildrenExpansionFrame();
     this.clearCollapseAnimationCompletion(
       this.el.querySelector('.panel-nav') as HTMLElement | null
     );
@@ -325,6 +336,31 @@ export class PanelNav {
         }, fallbackMs);
       });
     });
+  }
+
+  private stageInlineChildrenExpansion(stage: boolean) {
+    this.clearInlineChildrenExpansionFrame();
+    this.inlineChildrenExpansionReady = !stage;
+  }
+
+  private scheduleInlineChildrenExpansion() {
+    if (this.inlineChildrenExpansionReady || this.collapsedPresentation) return;
+    this.clearInlineChildrenExpansionFrame();
+    this.inlineChildrenExpansionFrame = requestAnimationFrame(() => {
+      this.inlineChildrenExpansionFrame = null;
+      if (this.collapsedPresentation) return;
+
+      // Commit the newly mounted accordion's closed geometry before opening it.
+      // Without this read, the browser can insert it directly at 1fr and skip motion.
+      this.el.querySelector<HTMLElement>('.panel-nav__children-accordion')?.getBoundingClientRect();
+      this.inlineChildrenExpansionReady = true;
+    });
+  }
+
+  private clearInlineChildrenExpansionFrame() {
+    if (this.inlineChildrenExpansionFrame === null) return;
+    cancelAnimationFrame(this.inlineChildrenExpansionFrame);
+    this.inlineChildrenExpansionFrame = null;
   }
 
   private finishCollapseAnimation(panel: HTMLElement | null) {
@@ -1130,6 +1166,7 @@ export class PanelNav {
                       const parentPosition = rovingPosition++;
                       const expanded =
                         !collapsed &&
+                        this.inlineChildrenExpansionReady &&
                         item.id === this.expandedParentId &&
                         (item.children?.length ?? 0) > 0;
                       const hasGroupSiblings = group.items.length > 1;
