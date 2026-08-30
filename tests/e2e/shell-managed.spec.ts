@@ -232,6 +232,7 @@ test.describe('Managed application shell', () => {
         .locator('.panel-nav__branch')
         .filter({ hasText: 'Maintenance' });
       const reportsBranch = panel.locator('.panel-nav__branch').filter({ hasText: 'Reports' });
+      const trackingAccordion = trackingBranch.locator('.panel-nav__children-accordion');
       const trackingAfterDivider = trackingBranch.locator('.panel-nav__branch-divider--after');
       const maintenanceBeforeDivider = maintenanceBranch.locator(
         '.panel-nav__branch-divider--before'
@@ -312,6 +313,13 @@ test.describe('Managed application shell', () => {
       await expect(panelFrame).not.toHaveClass(/panel-nav--collapsed/);
       await expect(panelFrame).toHaveClass(/panel-nav--animating/);
       await expect(trackingAfterDivider).toHaveAttribute('data-motion-identity', 'stable');
+      await expect(trackingAccordion).toHaveCount(1);
+      await page.waitForTimeout(100);
+      const midExpandHeight = await trackingAccordion.evaluate(
+        element => element.getBoundingClientRect().height
+      );
+      expect(midExpandHeight).toBeGreaterThan(0);
+      expect(midExpandHeight).toBeLessThan(trackingAccordionBox!.height);
       const dividerExpandDuration = await trackingAfterDivider.evaluate(element =>
         Number.parseFloat(getComputedStyle(element).transitionDuration)
       );
