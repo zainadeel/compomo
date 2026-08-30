@@ -580,6 +580,7 @@ test('modal Escape dismissal remains authoritative while its close tooltip is op
   await trigger.focus();
   await trigger.press('Enter');
   await expect(close).toBeFocused();
+  await close.hover();
   await expect(page.getByRole('tooltip', { name: 'Close' })).toBeVisible();
 
   await page.keyboard.press('Escape');
