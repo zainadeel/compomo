@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.22.2](https://github.com/zainadeel/compomo/compare/v14.22.1...v14.22.2) (2026-08-30)
+
+
+### Fixed
+
+* animate inline panel navigation expansion ([#545](https://github.com/zainadeel/compomo/issues/545)) ([a0d2e5d](https://github.com/zainadeel/compomo/commit/a0d2e5df3437e26a67fbfe9cbd7496459f1eba07))
+
 ## [14.22.1](https://github.com/zainadeel/compomo/compare/v14.22.0...v14.22.1) (2026-08-30)
 
 
