@@ -1,5 +1,13 @@
 # Changelog
 
+## [14.23.0](https://github.com/zainadeel/compomo/compare/v14.22.2...v14.23.0) (2026-08-31)
+
+
+### Added
+
+* add governed panel tools rail accessories ([31076b3](https://github.com/zainadeel/compomo/commit/31076b3b28482ab009d29bb6d4a389d8b83fcf6e))
+* add governed panel tools rail accessories ([d8614cf](https://github.com/zainadeel/compomo/commit/d8614cfd090ed46107da23a036fe5033dc86c86a))
+
 ## [14.22.2](https://github.com/zainadeel/compomo/compare/v14.22.1...v14.22.2) (2026-08-30)
 
 
