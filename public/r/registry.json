@@ -12,7 +12,7 @@
     "themeSetup": "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     "peerDependencies": {
       "required": [
-        "@ds-mo/tokens ^6.5.0",
+        "@ds-mo/tokens ^6.5.1",
         "@ds-mo/icons ^7.0.0"
       ],
       "optional": [],
@@ -5411,6 +5411,8 @@
             "Wheel, touch, keyboard navigation, selection, and transcript interaction release automatic following; Scroll to latest explicitly restores it.",
             "A newly appended outgoing Message marked scroll-anchor starts a turn near the top with the configurable previous-turn peek; mutations inside existing messages and prepended history do not re-anchor.",
             "Opening saved history, message jumps, and prepended history preserve deliberate position.",
+            "When a persistent scroller receives a cleared or wholly replaced transcript, it releases internal references to the previous message elements, invalidates their pending anchor work, and treats the replacement as a new baseline at defaultPosition rather than as an appended turn.",
+            "MessageScroller bounds its internal element tracking to the currently rendered transcript. The application still owns transcript data and must cap or window the rendered message collection when conversation history can grow without limit.",
             "The scroll-to-latest action is absent at the live edge, appears only after the reader moves away, and disappears again after returning to the newest message.",
             "Scroll to latest uses the shared md control-elevation wrapper with a pointer-transparent top highlight, preserving its transparent backdrop blur and borderless unfilled action while the press-scale modifier moves the complete elevated surface.",
             "Place a pending human-input surface in interaction and a composer container with 8px padding on every side in overlay; the shared scroll-overlay controller measures them as one stack, tracks every growth step, reserves matching transcript clearance, begins the fade before the stack, and keeps scroll-to-latest above it."
@@ -6947,7 +6949,7 @@
     {
       "name": "panel-tools",
       "title": "PanelTools",
-      "description": "Desktop and tablet utility rail-and-drawer primitive for explicitly defined application-wide tools, normally assembled by managed ShellApp through ShellTools.",
+      "description": "Desktop and tablet utility rail-and-drawer primitive for explicitly defined application-wide tools and governed application-owned rail accessories, normally assembled by managed ShellApp through ShellTools.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -6958,18 +6960,20 @@
         "intent": {
           "audience": "specialized",
           "status": "stable",
-          "summary": "Desktop and tablet utility rail-and-drawer primitive for explicitly defined application-wide tools, normally assembled by managed ShellApp through ShellTools.",
+          "summary": "Desktop and tablet utility rail-and-drawer primitive for explicitly defined application-wide tools and governed application-owned rail accessories, normally assembled by managed ShellApp through ShellTools.",
           "useWhen": [
             "An advanced slotted ShellApp needs the desktop and tablet global-tools primitive directly.",
             "Users need to move between application-wide utilities without losing each tool's in-progress state.",
-            "Search, AI conversations, user messages, review stacks, notifications, or help content must remain available alongside route content."
+            "Search, AI conversations, user messages, review stacks, notifications, or help content must remain available alongside route content.",
+            "A persistent desktop or tablet rail needs a generic direct-action status surface or shortcut that must not become a tool drawer."
           ],
           "avoidWhen": [
             "The action is specific to the current page or selected content rather than globally available across the application.",
             "The item navigates to a primary or secondary route; use PanelNav or BarNav instead.",
             "Tool definitions lack stable ids, visible labels, explicit rail placement, or application-owned view content.",
             "Building the mobile tools experience; use ShellTools or managed ShellApp.",
-            "PanelTools would be mounted outside the application's single ShellApp."
+            "PanelTools would be mounted outside the application's single ShellApp.",
+            "An application wants unrestricted rail markup that bypasses PanelTools ordering, geometry, focus, overflow, or action semantics."
           ],
           "alternatives": [
             {
@@ -7003,7 +7007,9 @@
             "When the shortcut rail overflows, its labeled body becomes a keyboard-focusable scroll region without changing the rail action order.",
             "Do not trigger global shortcuts while focus is in an editable control.",
             "Use notification dots only as supplemental unread or new-content status and never as the sole status indication.",
-            "Explain temporarily inactive tools through an accessible label or adjacent product guidance; omit unauthorized tools entirely."
+            "Explain temporarily inactive tools through an accessible label or adjacent product guidance; omit unauthorized tools entirely.",
+            "Give each interactive accessory a localized action label. Every transient surface requires short status text so its active or positive state is not color-only; shortcut notification dots remain supplemental and decorative accessory boundaries remain hidden from assistive technology.",
+            "Accessory primary and optional secondary actions participate in the same visual and roving keyboard order as tool actions."
           ],
           "states": [
             "Every tool has a stable explicit id and accessible label. The application filters definitions for authorization and entitlement.",
@@ -7021,6 +7027,11 @@
             "Tool view roots stay transparent so ShellApp's chrome wash remains visible; only explicitly designed child surfaces introduce a fill.",
             "Tools with search compose ds-panel-tool-search immediately below the shared header. Its 48px row always contains the md search control and must not be reduced to sm or xs.",
             "If an active optional tool becomes unavailable, PanelTools closes the drawer, clears activeTool, and emits its deselection.",
+            "Application-owned accessories are direct intents rather than tools. Activating one never selects a tool, changes activeTool, opens or closes the drawer, or changes mounted tool-view identity.",
+            "Accessory definitions use stable ids, explicit regions, and explicit order. The governed transient recipe is a 32px by 64px half-radius bold surface with 4px padding: a bordered 24px primary visual above an optional unbordered rounded 24px secondary icon action, separated by 8px. It requires accessible status text, supports active-brand or positive semantic tone, and never renders a notification dot.",
+            "The governed shortcut recipe is one standard-height action: a transparent 24px initial orb with a secondary token border centered in a 32px sizing frame, one or two caption-emphasis initials, an optional ds-badge notification dot aligned exactly with standard tool dots, circular hover and press paint, and no selected state or secondary control.",
+            "When transient status and shortcut groups coexist in one rail region, assign explicit orders that place the transient status first, then a decorative divider, then the shortcuts. Do not infer this grouping from application-specific ids.",
+            "Adding, removing, or reordering accessories preserves a surviving focused action when possible and moves focus to the nearest surviving rail action when the focused accessory is removed.",
             "Use isInactive only for a temporarily unavailable visible tool; omit tools the user is not authorized to access.",
             "Rail actions disable physical press scaling so notification-dot halos remain aligned to the shell gradient; hover and pressed washes continue to paint above the dot and halo.",
             "Rail tooltips are shell-owned and position against the viewport so the narrow tools-lane collision boundary cannot clamp them beyond the viewport edge.",
@@ -7033,22 +7044,23 @@
             "The open drawer reduces main-content width and uses --dimension-panel-width-xs (300px) on every supported desktop and tablet viewport.",
             "ShellApp owns the fixed drawer-width variable; consumers must not hardcode alternate drawer widths.",
             "Below 768px, do not reuse PanelTools directly; ShellTools and managed ShellApp present the same persistent tool owners through mobile chrome.",
+            "Rail accessories are intentionally desktop and tablet only. Consuming applications provide equivalent persistent mobile status through ShellApp's top banner or status region rather than converting an accessory into a tool view.",
             "Keep named-slot content mounted while tools switch or the drawer closes so users can return to in-progress global work.",
             "Conversation products may use fullscreenHeaderMode split for a 300px history rail beside a flexible detail pane, each with its own canonical header; the application owns that internal split layout.",
             "Use fixed drawer widths for now; do not add user resizing or width persistence."
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Assign items and headers as JavaScript properties and replace their references when collections change.",
+              "Assign items, accessories, and headers as JavaScript properties and replace their references when collections change.",
               "Assign headers as a JavaScript property and replace its object identity whenever an active tool changes title, depth, or actions.",
               "Keep PanelTools mounted at ShellApp scope across route changes and provide each product through its matching named slot."
             ],
             "react": [
-              "Pass a stable explicitly ordered item collection through the generated React wrapper and keep named-slot product content mounted at ShellApp scope.",
+              "Pass stable explicitly ordered tool and accessory collections through the generated React wrapper and keep named-slot product content mounted at ShellApp scope.",
               "Use storageKey only for same-browser last-tool continuity; do not persist the open drawer."
             ],
             "angular": [
-              "Import DsPanelTools from @ds-mo/ui/angular/ds-panel-tools and bind items as a property.",
+              "Import DsPanelTools from @ds-mo/ui/angular/ds-panel-tools and bind structured tool and accessory collections as properties.",
               "Bind headers as a replaced object and route dsHeaderBack and dsHeaderAction to the active tool owner.",
               "Keep the component in the persistent shell layout rather than recreating it in routed page components."
             ]
@@ -7069,6 +7081,10 @@
           ]
         },
         "props": {
+          "accessories": {
+            "type": "PanelToolsRailAccessory[]",
+            "required": false
+          },
           "activeTool": {
             "type": "PanelToolsToolId | ''",
             "required": false
@@ -7128,6 +7144,10 @@
             "detail": "{\n    presentation: 'drawer' | 'fullscreen';\n  }"
           },
           {
+            "name": "dsRailAccessoryAction",
+            "detail": "PanelToolsRailAccessoryActionDetail"
+          },
+          {
             "name": "dsToolChange",
             "detail": "{\n    id: PanelToolsToolId;\n    selected: boolean;\n  }"
           }
@@ -7142,11 +7162,16 @@
       },
       "dependencies": [
         "@ds-mo/ui",
-        "@ds-mo/tokens"
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
       ],
       "registryDependencies": [
+        "badge",
         "button-unfilled",
+        "divider",
+        "icon",
         "panel-tool-header",
+        "text",
         "tooltip"
       ]
     },
@@ -7865,6 +7890,8 @@
             "In panel mode, supply the same route sections as children on their PanelNav parent and handle dsNavChildSelect as structured parent, child, and href navigation intent.",
             "The application supplies each routed content owner and tool view once. ShellApp changes visibility, inert state, and presentation without recreating those nodes.",
             "The optional banner slot accepts one application-owned ds-banner above the complete shell row. The application owns its open state, orientation for the current shell capacity, action consequences, dismissal persistence, and resolution when several messages compete.",
+            "Managed tools may include governed desktop and tablet rail accessories for transient status or direct shortcuts. ShellApp forwards their intents without changing the selected tool, drawer state, or mounted tool views.",
+            "Consuming applications own accessory state, labels, timers, permissions, navigation, and action consequences; ShellApp owns only managed forwarding and responsive placement.",
             "Use composition=slotted only for advanced application architectures that intentionally own all lower-level chrome wiring.",
             "Set gradientPreset to the single resolved global chrome preference: neutral by default, none for solid chrome, or cool, neutral, warm, and fresh for token-based washes.",
             "The application owns gradient preference persistence, cross-tab synchronization, and server or account precedence; ShellApp owns rendering the resolved preset across authenticated routes.",
@@ -7891,6 +7918,7 @@
             "When the application enables viewport-fit=cover, ShellApp reserves the shared top safe-area inset once for the complete mobile stage; nested routed, sheet, and tool headers must not add a second top inset.",
             "A slotted Banner remains below the top safe-area inset and above routed, navigation, fullscreen-tool, and mobile global-surface presentations.",
             "Mobile global surfaces conceal and inert the routed workspace without unmounting it, preserving nested routes and scroll state.",
+            "Managed rail accessories are intentionally omitted below 768px. Applications that need equivalent persistent mobile status provide it through the top banner or status region; ShellApp does not convert rail accessories into mobile tool views.",
             "Keep PanelNav width, BarNav height, PanelTools chrome, and main-content origin stable except during intentional responsive or collapse transitions.",
             "The routed content cell and tools cell expose separate anchored-overlay collision boundaries, so top-layer menus and tooltips remain above local clipping without crossing into neighboring shell lanes. Full-screen modal overlays remain viewport-owned.",
             "Paper texture chrome is desktop/tablet-only and follows the fixed viewport phase of the shell chrome; mobile remains a solid primary stage.",
@@ -8024,6 +8052,10 @@
           {
             "name": "dsPresentationChange",
             "detail": "{ presentation: 'drawer' | 'fullscreen' }"
+          },
+          {
+            "name": "dsRailAccessoryAction",
+            "detail": "PanelToolsRailAccessoryActionDetail"
           },
           {
             "name": "dsResponsiveModeChange",
@@ -8281,21 +8313,24 @@
           "accessibility": [
             "Only the active mobile tool view participates in focus or the accessibility tree.",
             "Header Back and application-owned header actions preserve the PanelTools event contract.",
-            "A direct Activity destination renders its own named tool view; an explicitly grouped Inbox uses a named label-only TabGroup."
+            "A direct Activity destination renders its own named tool view; an explicitly grouped Inbox uses a named label-only TabGroup.",
+            "Desktop and tablet rail accessories retain PanelTools-owned labels, focus order, decorative-boundary semantics, and direct-action events."
           ],
           "states": [
             "The application owns open and activeTool and replaces headers when tool depth changes.",
             "Items with mobileDestination inbox map to one mobile Inbox destination while retaining the actual active tool id; the canonical recipe exposes Activity directly and keeps Inbox grouping opt-in.",
             "Stable tool ids own named slots; label, order, rail placement, shortcut, and mobile destination are explicit item data.",
+            "Application-owned rail accessories are forwarded unchanged to PanelTools on desktop and tablet and remain independent from activeTool and open.",
             "Switching responsive mode must not recreate application-owned slotted product elements."
           ],
           "responsiveBehavior": [
             "Desktop and tablet compose PanelTools-compatible rail and drawer chrome.",
-            "Mobile renders one centered MobileHeader for every direct tool; explicitly grouped Inbox tools use the large segmented section control."
+            "Mobile renders one centered MobileHeader for every direct tool; explicitly grouped Inbox tools use the large segmented section control.",
+            "Mobile intentionally omits desktop and tablet rail accessories instead of promoting them into tool views. Applications provide an equivalent persistent mobile status surface through ShellApp's top banner or status region."
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Assign items and headers as JavaScript properties and place each persistent owner in its named *-view slot."
+              "Assign items, accessories, and headers as JavaScript properties and place each persistent owner in its named *-view slot."
             ],
             "react": [
               "Keep stable keyed product owner elements in the generated wrapper's named slots."
@@ -8316,6 +8351,10 @@
           ]
         },
         "props": {
+          "accessories": {
+            "type": "PanelToolsRailAccessory[]",
+            "required": false
+          },
           "activeTool": {
             "type": "PanelToolsToolId | ''",
             "required": false
@@ -8377,6 +8416,10 @@
           {
             "name": "dsPresentationChange",
             "detail": "{\n    presentation: 'drawer' | 'fullscreen';\n  }"
+          },
+          {
+            "name": "dsRailAccessoryAction",
+            "detail": "PanelToolsRailAccessoryActionDetail"
           },
           {
             "name": "dsToolChange",

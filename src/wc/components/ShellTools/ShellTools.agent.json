@@ -33,25 +33,26 @@
   "accessibility": [
     "Only the active mobile tool view participates in focus or the accessibility tree.",
     "Header Back and application-owned header actions preserve the PanelTools event contract.",
-    "A direct Activity destination renders its own named tool view; an explicitly grouped Inbox uses a named label-only TabGroup."
+    "A direct Activity destination renders its own named tool view; an explicitly grouped Inbox uses a named label-only TabGroup.",
+    "Desktop and tablet rail accessories retain PanelTools-owned labels, focus order, decorative-boundary semantics, and direct-action events."
   ],
   "states": [
     "The application owns open and activeTool and replaces headers when tool depth changes.",
     "Items with mobileDestination inbox map to one mobile Inbox destination while retaining the actual active tool id; the canonical recipe exposes Activity directly and keeps Inbox grouping opt-in.",
     "Stable tool ids own named slots; label, order, rail placement, shortcut, and mobile destination are explicit item data.",
+    "Application-owned rail accessories are forwarded unchanged to PanelTools on desktop and tablet and remain independent from activeTool and open.",
     "Switching responsive mode must not recreate application-owned slotted product elements."
   ],
   "responsiveBehavior": [
     "Desktop and tablet compose PanelTools-compatible rail and drawer chrome.",
-    "Mobile renders one centered MobileHeader for every direct tool; explicitly grouped Inbox tools use the large segmented section control."
+    "Mobile renders one centered MobileHeader for every direct tool; explicitly grouped Inbox tools use the large segmented section control.",
+    "Mobile intentionally omits desktop and tablet rail accessories instead of promoting them into tool views. Applications provide an equivalent persistent mobile status surface through ShellApp's top banner or status region."
   ],
   "frameworkCaveats": {
     "customElements": [
-      "Assign items and headers as JavaScript properties and place each persistent owner in its named *-view slot."
+      "Assign items, accessories, and headers as JavaScript properties and place each persistent owner in its named *-view slot."
     ],
-    "react": [
-      "Keep stable keyed product owner elements in the generated wrapper's named slots."
-    ],
+    "react": ["Keep stable keyed product owner elements in the generated wrapper's named slots."],
     "angular": [
       "Bind structured items and headers as properties and keep each tool owner mounted under a named *-view slot."
     ]

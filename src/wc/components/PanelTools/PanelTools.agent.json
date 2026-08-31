@@ -7,18 +7,20 @@
   "tag": "ds-panel-tools",
   "audience": "specialized",
   "status": "stable",
-  "summary": "Desktop and tablet utility rail-and-drawer primitive for explicitly defined application-wide tools, normally assembled by managed ShellApp through ShellTools.",
+  "summary": "Desktop and tablet utility rail-and-drawer primitive for explicitly defined application-wide tools and governed application-owned rail accessories, normally assembled by managed ShellApp through ShellTools.",
   "useWhen": [
     "An advanced slotted ShellApp needs the desktop and tablet global-tools primitive directly.",
     "Users need to move between application-wide utilities without losing each tool's in-progress state.",
-    "Search, AI conversations, user messages, review stacks, notifications, or help content must remain available alongside route content."
+    "Search, AI conversations, user messages, review stacks, notifications, or help content must remain available alongside route content.",
+    "A persistent desktop or tablet rail needs a generic direct-action status surface or shortcut that must not become a tool drawer."
   ],
   "avoidWhen": [
     "The action is specific to the current page or selected content rather than globally available across the application.",
     "The item navigates to a primary or secondary route; use PanelNav or BarNav instead.",
     "Tool definitions lack stable ids, visible labels, explicit rail placement, or application-owned view content.",
     "Building the mobile tools experience; use ShellTools or managed ShellApp.",
-    "PanelTools would be mounted outside the application's single ShellApp."
+    "PanelTools would be mounted outside the application's single ShellApp.",
+    "An application wants unrestricted rail markup that bypasses PanelTools ordering, geometry, focus, overflow, or action semantics."
   ],
   "alternatives": [
     {
@@ -50,7 +52,9 @@
     "When the shortcut rail overflows, its labeled body becomes a keyboard-focusable scroll region without changing the rail action order.",
     "Do not trigger global shortcuts while focus is in an editable control.",
     "Use notification dots only as supplemental unread or new-content status and never as the sole status indication.",
-    "Explain temporarily inactive tools through an accessible label or adjacent product guidance; omit unauthorized tools entirely."
+    "Explain temporarily inactive tools through an accessible label or adjacent product guidance; omit unauthorized tools entirely.",
+    "Give each interactive accessory a localized action label. Every transient surface requires short status text so its active or positive state is not color-only; shortcut notification dots remain supplemental and decorative accessory boundaries remain hidden from assistive technology.",
+    "Accessory primary and optional secondary actions participate in the same visual and roving keyboard order as tool actions."
   ],
   "states": [
     "Every tool has a stable explicit id and accessible label. The application filters definitions for authorization and entitlement.",
@@ -68,6 +72,11 @@
     "Tool view roots stay transparent so ShellApp's chrome wash remains visible; only explicitly designed child surfaces introduce a fill.",
     "Tools with search compose ds-panel-tool-search immediately below the shared header. Its 48px row always contains the md search control and must not be reduced to sm or xs.",
     "If an active optional tool becomes unavailable, PanelTools closes the drawer, clears activeTool, and emits its deselection.",
+    "Application-owned accessories are direct intents rather than tools. Activating one never selects a tool, changes activeTool, opens or closes the drawer, or changes mounted tool-view identity.",
+    "Accessory definitions use stable ids, explicit regions, and explicit order. The governed transient recipe is a 32px by 64px half-radius bold surface with 4px padding: a bordered 24px primary visual above an optional unbordered rounded 24px secondary icon action, separated by 8px. It requires accessible status text, supports active-brand or positive semantic tone, and never renders a notification dot.",
+    "The governed shortcut recipe is one standard-height action: a transparent 24px initial orb with a secondary token border centered in a 32px sizing frame, one or two caption-emphasis initials, an optional ds-badge notification dot aligned exactly with standard tool dots, circular hover and press paint, and no selected state or secondary control.",
+    "When transient status and shortcut groups coexist in one rail region, assign explicit orders that place the transient status first, then a decorative divider, then the shortcuts. Do not infer this grouping from application-specific ids.",
+    "Adding, removing, or reordering accessories preserves a surviving focused action when possible and moves focus to the nearest surviving rail action when the focused accessory is removed.",
     "Use isInactive only for a temporarily unavailable visible tool; omit tools the user is not authorized to access.",
     "Rail actions disable physical press scaling so notification-dot halos remain aligned to the shell gradient; hover and pressed washes continue to paint above the dot and halo.",
     "Rail tooltips are shell-owned and position against the viewport so the narrow tools-lane collision boundary cannot clamp them beyond the viewport edge.",
@@ -80,22 +89,23 @@
     "The open drawer reduces main-content width and uses --dimension-panel-width-xs (300px) on every supported desktop and tablet viewport.",
     "ShellApp owns the fixed drawer-width variable; consumers must not hardcode alternate drawer widths.",
     "Below 768px, do not reuse PanelTools directly; ShellTools and managed ShellApp present the same persistent tool owners through mobile chrome.",
+    "Rail accessories are intentionally desktop and tablet only. Consuming applications provide equivalent persistent mobile status through ShellApp's top banner or status region rather than converting an accessory into a tool view.",
     "Keep named-slot content mounted while tools switch or the drawer closes so users can return to in-progress global work.",
     "Conversation products may use fullscreenHeaderMode split for a 300px history rail beside a flexible detail pane, each with its own canonical header; the application owns that internal split layout.",
     "Use fixed drawer widths for now; do not add user resizing or width persistence."
   ],
   "frameworkCaveats": {
     "customElements": [
-      "Assign items and headers as JavaScript properties and replace their references when collections change.",
+      "Assign items, accessories, and headers as JavaScript properties and replace their references when collections change.",
       "Assign headers as a JavaScript property and replace its object identity whenever an active tool changes title, depth, or actions.",
       "Keep PanelTools mounted at ShellApp scope across route changes and provide each product through its matching named slot."
     ],
     "react": [
-      "Pass a stable explicitly ordered item collection through the generated React wrapper and keep named-slot product content mounted at ShellApp scope.",
+      "Pass stable explicitly ordered tool and accessory collections through the generated React wrapper and keep named-slot product content mounted at ShellApp scope.",
       "Use storageKey only for same-browser last-tool continuity; do not persist the open drawer."
     ],
     "angular": [
-      "Import DsPanelTools from @ds-mo/ui/angular/ds-panel-tools and bind items as a property.",
+      "Import DsPanelTools from @ds-mo/ui/angular/ds-panel-tools and bind structured tool and accessory collections as properties.",
       "Bind headers as a replaced object and route dsHeaderBack and dsHeaderAction to the active tool owner.",
       "Keep the component in the persistent shell layout rather than recreating it in routed page components."
     ]

@@ -892,6 +892,119 @@ test.describe('Managed application shell', () => {
     expect(identity).toEqual({ page: true, tool: true });
   });
 
+  test('forwards rail accessory intents without changing the active drawer or mounted view @pr-critical', async ({
+    page,
+  }) => {
+    const shell = page.locator('#managed-shell');
+    await shell.getByRole('button', { name: 'Agents' }).click();
+    const draft = shell.locator('#agent-draft');
+    await draft.fill('Keep this accessory-independent draft');
+    await draft.evaluate(element => {
+      (window as typeof window & { accessoryToolOwner?: Element }).accessoryToolOwner = element;
+    });
+
+    await shell.evaluate(element => {
+      const managed = element as HTMLDsShellAppElement;
+      managed.tools = {
+        ...managed.tools,
+        accessories: [
+          {
+            type: 'divider',
+            id: 'session-boundary',
+            railPlacement: 'body',
+            order: 10,
+          },
+          {
+            type: 'transient',
+            id: 'active-session',
+            railPlacement: 'body',
+            order: 11,
+            ariaLabel: 'Active session',
+            visual: { type: 'initial', initial: 'AS' },
+            statusText: 'Active for 12 minutes',
+            statusTone: 'active',
+            primaryAction: { id: 'restore', ariaLabel: 'Restore active session' },
+          },
+        ],
+      };
+    });
+
+    const restore = shell.getByRole('button', {
+      name: 'Restore active session. Active for 12 minutes',
+    });
+    await expect(restore).toBeVisible();
+    await restore.click();
+    await expect(page.locator('html')).toHaveAttribute(
+      'data-last-event',
+      JSON.stringify({
+        type: 'dsRailAccessoryAction',
+        detail: {
+          accessoryId: 'active-session',
+          actionId: 'restore',
+          anchorTag: 'BUTTON',
+        },
+      })
+    );
+    await expect(shell.locator('ds-shell-tools')).toHaveAttribute('active-tool', 'agents');
+    await expect(shell.locator('ds-shell-tools')).toHaveAttribute('open');
+    await expect(draft).toHaveValue('Keep this accessory-independent draft');
+
+    await shell.evaluate(element => {
+      const managed = element as HTMLDsShellAppElement;
+      managed.tools = { ...managed.tools, accessories: [] };
+    });
+    await expect(restore).toHaveCount(0);
+    await expect(shell.locator('ds-shell-tools')).toHaveAttribute('active-tool', 'agents');
+    await expect(shell.locator('ds-shell-tools')).toHaveAttribute('open');
+    await expect(draft).toHaveValue('Keep this accessory-independent draft');
+    expect(
+      await draft.evaluate(
+        element =>
+          (window as typeof window & { accessoryToolOwner?: Element }).accessoryToolOwner ===
+          element
+      )
+    ).toBe(true);
+  });
+
+  test('intentionally omits rail accessories on mobile and restores them on tablet @pr-critical', async ({
+    page,
+  }) => {
+    const shell = page.locator('#managed-shell');
+    await shell.evaluate(element => {
+      const managed = element as HTMLDsShellAppElement;
+      managed.tools = {
+        ...managed.tools,
+        accessories: [
+          {
+            type: 'shortcut',
+            id: 'pinned-conversation',
+            railPlacement: 'body',
+            order: 10,
+            ariaLabel: 'Pinned conversation',
+            initials: 'PC',
+            dot: true,
+            action: { id: 'open', ariaLabel: 'Open pinned conversation' },
+          },
+        ],
+      };
+    });
+
+    const shortcut = shell.getByRole('button', { name: 'Open pinned conversation' });
+    await expect(shortcut).toBeVisible();
+    await page.setViewportSize({ width: 390, height: 760 });
+    await expect(shell).toHaveAttribute('responsive-mode', 'mobile');
+    await expect(shortcut).toHaveCount(0);
+    expect(
+      await shell.locator('ds-shell-tools').evaluate(element => {
+        return (element as HTMLDsShellToolsElement).accessories.length;
+      })
+    ).toBe(1);
+
+    await page.setViewportSize({ width: 1024, height: 760 });
+    await expect(shell).toHaveAttribute('responsive-mode', 'tablet');
+    await expect(shortcut).toBeVisible();
+  });
+
   test('preserves page chrome and routed content when tool items reorder after hydration', async ({
     page,
   }) => {

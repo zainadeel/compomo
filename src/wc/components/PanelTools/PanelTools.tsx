@@ -20,17 +20,27 @@ import {
   type PanelToolsHeaderConfig,
   type PanelToolsHeaders,
   type PanelToolsItem,
+  type PanelToolsRailAccessory,
+  type PanelToolsRailAccessoryAction,
+  type PanelToolsRailAccessoryActionDetail,
+  type PanelToolsRailShortcutAccessory,
+  type PanelToolsRailTransientAccessory,
   type PanelToolsToolId,
 } from './panel-tools-types';
 import {
   isPanelToolsToolId,
+  orderPanelToolsRailEntries,
   orderPanelToolsItems,
+  panelToolsRailAccessoryActionDetail,
+  panelToolsRailFocusKeys,
   panelToolsDrawerAtTerminal,
   panelToolsDrawerResting,
   panelToolsDrawerTransitionMs,
   panelToolsRailPlacement,
   reconcilePanelToolsAvailability,
+  reconcilePanelToolsRovingIndex,
   resolvePanelToolActivation,
+  type PanelToolsRailEntry,
 } from './panel-tools-utils';
 
 @Component({
@@ -60,6 +70,12 @@ export class PanelTools {
    * Set via JS property: `el.items = [...]`. Replace the array reference to update.
    */
   @Prop() items: PanelToolsItem[] = [];
+
+  /**
+   * Desktop/tablet-only application-owned rail boundaries and direct intents.
+   * Set via JS property and replace the array reference to update.
+   */
+  @Prop() accessories: PanelToolsRailAccessory[] = [];
 
   @Prop() toolsLabel: string = 'Tools';
   @Prop() toolShortcutsLabel: string = 'Tool shortcuts';
@@ -92,6 +108,10 @@ export class PanelTools {
   /** Requests one application-owned action from the active tool header. */
   @Event({ bubbles: true, composed: true })
   dsHeaderAction!: EventEmitter<PanelToolsHeaderActionDetail>;
+
+  /** Direct accessory intent. Emitting this event never changes the active tool or drawer. */
+  @Event({ bubbles: true, composed: true })
+  dsRailAccessoryAction!: EventEmitter<PanelToolsRailAccessoryActionDetail>;
 
   /** Bubbling lifecycle — `ds-bar-nav` defers overflow checks during drawer motion. */
   @Event({ bubbles: true, composed: true })
@@ -133,6 +153,14 @@ export class PanelTools {
 
   private get orderedRailItems(): PanelToolsItem[] {
     return orderPanelToolsItems(this.railItems);
+  }
+
+  private get railAccessories(): PanelToolsRailAccessory[] {
+    return this.accessories ?? [];
+  }
+
+  private get orderedRailEntries(): PanelToolsRailEntry[] {
+    return orderPanelToolsRailEntries(this.railItems, this.railAccessories);
   }
 
   disconnectedCallback() {
@@ -291,6 +319,28 @@ export class PanelTools {
     this.rovingIndex = 0;
     this.reconcileActiveTool();
     this.deferMotionEnable();
+  }
+
+  @Watch('accessories')
+  accessoriesChanged(
+    next: PanelToolsRailAccessory[] = [],
+    previous: PanelToolsRailAccessory[] = []
+  ) {
+    const previousKeys = panelToolsRailFocusKeys(
+      orderPanelToolsRailEntries(this.railItems, previous)
+    );
+    const nextKeys = panelToolsRailFocusKeys(orderPanelToolsRailEntries(this.railItems, next));
+    const activeElement = (this.renderRoot as ShadowRoot).activeElement as HTMLElement | null;
+    const focusedKey =
+      activeElement?.closest<HTMLElement>('[data-rail-focus-key]')?.dataset.railFocusKey;
+    const focusedIndex = focusedKey ? previousKeys.indexOf(focusedKey) : -1;
+    const currentIndex = focusedIndex >= 0 ? focusedIndex : this.rovingIndex;
+    const nextIndex = reconcilePanelToolsRovingIndex(previousKeys, nextKeys, currentIndex);
+    const restoreFocus = focusedIndex >= 0 && !nextKeys.includes(focusedKey ?? '');
+    this.rovingIndex = nextIndex;
+    if (restoreFocus && nextKeys.length) {
+      requestAnimationFrame(() => this.focusRailAt(nextIndex));
+    }
   }
 
   private restoreLastActiveTool() {
@@ -496,29 +546,32 @@ export class PanelTools {
   }
 
   private focusRailAt(index: number) {
-    const items = this.orderedRailItems;
-    if (!items.length) return;
-    const bounded = Math.max(0, Math.min(index, items.length - 1));
-    if (bounded === this.rovingIndex) return;
+    const keys = panelToolsRailFocusKeys(this.orderedRailEntries);
+    if (!keys.length) return;
+    const bounded = Math.max(0, Math.min(index, keys.length - 1));
     this.rovingIndex = bounded;
-    const actions = Array.from(
-      this.renderRoot.querySelectorAll<HTMLElement>('.panel-tools__rail-action .button-icon')
-    );
-    actions[bounded]?.focus({ preventScroll: true });
+    const action = this.renderRoot.querySelector(
+      `[data-rail-focus-key="${CSS.escape(keys[bounded])}"]`
+    ) as (HTMLElement & { setFocus?: () => Promise<void> }) | null;
+    if (action?.setFocus) {
+      void action.setFocus();
+    } else {
+      action?.focus({ preventScroll: true });
+    }
   }
 
-  private handleRailKeyDown = (e: KeyboardEvent, index: number) => {
-    const items = this.orderedRailItems;
-    if (!items.length) return;
+  private handleRailKeyDown = (e: KeyboardEvent, index: number, activate?: () => void) => {
+    const keys = panelToolsRailFocusKeys(this.orderedRailEntries);
+    if (!keys.length) return;
 
-    if (e.key === 'Enter' || e.key === ' ') {
+    if ((e.key === 'Enter' || e.key === ' ') && activate) {
       e.preventDefault();
-      this.handleToolChange(items[index].id);
+      activate();
       return;
     }
 
     if (e.key === 'ArrowDown') {
-      if (index >= items.length - 1) return;
+      if (index >= keys.length - 1) return;
       e.preventDefault();
       this.focusRailAt(index + 1);
       return;
@@ -532,6 +585,7 @@ export class PanelTools {
   };
 
   private renderRailAction(item: PanelToolsItem, index: number) {
+    const focusKey = `tool:${item.id}`;
     const label =
       item.ariaLabel ??
       item.label ??
@@ -559,16 +613,233 @@ export class PanelTools {
           dot={item.dot ?? false}
           isInactive={item.isInactive}
           focusTabIndex={index === this.rovingIndex ? 0 : -1}
+          data-rail-focus-key={focusKey}
           aria-label={label}
           pressed={this.isRailSelected(item.id)}
           onFocusin={() => {
             this.rovingIndex = index;
           }}
-          onKeyDown={(e: KeyboardEvent) => this.handleRailKeyDown(e, index)}
+          onKeyDown={(e: KeyboardEvent) =>
+            this.handleRailKeyDown(e, index, () => this.handleToolChange(item.id))
+          }
           onDsClick={() => this.handleToolChange(item.id)}
         />
       </ds-tooltip>
     );
+  }
+
+  private accessoryPrimaryLabel(accessory: PanelToolsRailTransientAccessory): string {
+    const actionLabel = accessory.primaryAction.ariaLabel?.trim() || accessory.ariaLabel;
+    const status = accessory.statusText.trim();
+    return status ? `${actionLabel}. ${status}` : actionLabel;
+  }
+
+  private emitAccessoryAction(
+    accessoryId: string,
+    action: PanelToolsRailAccessoryAction,
+    anchor: HTMLElement
+  ) {
+    if (action.isInactive) return;
+    this.dsRailAccessoryAction.emit(
+      panelToolsRailAccessoryActionDetail(accessoryId, action.id, anchor)
+    );
+  }
+
+  private renderAccessoryVisual(accessory: PanelToolsRailTransientAccessory) {
+    if (accessory.visual.type === 'image') {
+      return (
+        <img
+          class="panel-tools__accessory-image"
+          src={accessory.visual.src}
+          alt=""
+          aria-hidden="true"
+        />
+      );
+    }
+    if (accessory.visual.type === 'initial') {
+      const initial = [...accessory.visual.initial.trim()].slice(0, 2).join('');
+      return (
+        <ds-text
+          class="panel-tools__accessory-initial"
+          as="span"
+          variant="text-caption"
+          emphasis
+          color="inherit"
+          aria-hidden="true"
+        >
+          {initial}
+        </ds-text>
+      );
+    }
+    return <ds-icon name={accessory.visual.icon} size="sm" aria-hidden="true" />;
+  }
+
+  private renderRailShortcut(
+    accessory: PanelToolsRailShortcutAccessory,
+    focusIndexes: Map<string, number>
+  ) {
+    const focusKey = `accessory:${accessory.id}:${accessory.action.id}`;
+    const focusIndex = focusIndexes.get(focusKey);
+    const label = accessory.action.ariaLabel?.trim() || accessory.ariaLabel;
+    const initials = [...accessory.initials.trim()].slice(0, 2).join('');
+
+    return (
+      <div
+        key={`accessory:${accessory.id}`}
+        class="panel-tools__accessory panel-tools__accessory--shortcut"
+      >
+        <ds-tooltip label={label} side="left" size="sm" boundary="viewport">
+          <button
+            type="button"
+            class="panel-tools__shortcut ds-focus-ring-inset ds-interaction-fill"
+            disabled={accessory.action.isInactive}
+            tabIndex={focusIndex === this.rovingIndex ? 0 : -1}
+            data-rail-focus-key={focusKey}
+            aria-label={label}
+            onFocus={() => {
+              if (focusIndex !== undefined) this.rovingIndex = focusIndex;
+            }}
+            onKeyDown={(event: KeyboardEvent) =>
+              focusIndex === undefined ? undefined : this.handleRailKeyDown(event, focusIndex)
+            }
+            onClick={(event: MouseEvent) =>
+              this.emitAccessoryAction(
+                accessory.id,
+                accessory.action,
+                event.currentTarget as HTMLElement
+              )
+            }
+          >
+            <span class="panel-tools__shortcut-content ds-interaction-fill__content">
+              <ds-text
+                class="panel-tools__shortcut-orb"
+                as="span"
+                variant="text-caption"
+                emphasis
+                color="inherit"
+              >
+                {initials}
+              </ds-text>
+              {accessory.dot ? (
+                <ds-badge
+                  class="panel-tools__shortcut-dot"
+                  variant="dot"
+                  background="var(--color-background-secondary)"
+                  aria-hidden="true"
+                />
+              ) : null}
+            </span>
+          </button>
+        </ds-tooltip>
+      </div>
+    );
+  }
+
+  private renderRailAccessory(
+    accessory: PanelToolsRailAccessory,
+    focusIndexes: Map<string, number>
+  ) {
+    if (accessory.type === 'divider') {
+      return (
+        <div
+          key={`accessory:${accessory.id}`}
+          class="panel-tools__accessory-divider"
+          aria-hidden="true"
+        >
+          <ds-divider />
+        </div>
+      );
+    }
+
+    if (accessory.type === 'shortcut') {
+      return this.renderRailShortcut(accessory, focusIndexes);
+    }
+
+    const primaryKey = `accessory:${accessory.id}:${accessory.primaryAction.id}`;
+    const primaryIndex = focusIndexes.get(primaryKey);
+    const primaryLabel = this.accessoryPrimaryLabel(accessory);
+    const secondary = accessory.secondaryAction;
+    const secondaryKey = secondary ? `accessory:${accessory.id}:${secondary.id}` : '';
+    const secondaryIndex = secondary ? focusIndexes.get(secondaryKey) : undefined;
+
+    return (
+      <div
+        key={`accessory:${accessory.id}`}
+        class={{
+          'panel-tools__accessory': true,
+          'panel-tools__accessory--transient': true,
+          'panel-tools__accessory--transient-active': accessory.statusTone === 'active',
+          'panel-tools__accessory--transient-positive': accessory.statusTone === 'positive',
+        }}
+      >
+        <ds-tooltip label={primaryLabel} side="left" size="sm" boundary="viewport">
+          <button
+            type="button"
+            class="panel-tools__accessory-primary ds-focus-ring-inset ds-interaction-fill ds-interaction-fill--on-bold"
+            disabled={accessory.primaryAction.isInactive}
+            tabIndex={primaryIndex === this.rovingIndex ? 0 : -1}
+            data-rail-focus-key={primaryKey}
+            aria-label={primaryLabel}
+            onFocus={() => {
+              if (primaryIndex !== undefined) this.rovingIndex = primaryIndex;
+            }}
+            onKeyDown={(event: KeyboardEvent) =>
+              primaryIndex === undefined ? undefined : this.handleRailKeyDown(event, primaryIndex)
+            }
+            onClick={(event: MouseEvent) =>
+              this.emitAccessoryAction(
+                accessory.id,
+                accessory.primaryAction,
+                event.currentTarget as HTMLElement
+              )
+            }
+          >
+            <span class="panel-tools__accessory-primary-content ds-interaction-fill__content">
+              {this.renderAccessoryVisual(accessory)}
+            </span>
+          </button>
+        </ds-tooltip>
+        {secondary ? (
+          <ds-tooltip label={secondary.ariaLabel} side="left" size="sm" boundary="viewport">
+            <ds-button-unfilled
+              class="panel-tools__accessory-secondary"
+              variant="icon"
+              size="sm"
+              rounded
+              background="bold"
+              hasBorder={false}
+              icon={secondary.icon}
+              isInactive={secondary.isInactive}
+              focusTabIndex={secondaryIndex === this.rovingIndex ? 0 : -1}
+              data-rail-focus-key={secondaryKey}
+              aria-label={secondary.ariaLabel}
+              onFocusin={() => {
+                if (secondaryIndex !== undefined) this.rovingIndex = secondaryIndex;
+              }}
+              onKeyDown={(event: KeyboardEvent) =>
+                secondaryIndex === undefined
+                  ? undefined
+                  : this.handleRailKeyDown(event, secondaryIndex)
+              }
+              onDsClick={(event: CustomEvent<MouseEvent>) =>
+                this.emitAccessoryAction(
+                  accessory.id,
+                  secondary,
+                  event.currentTarget as HTMLElement
+                )
+              }
+            />
+          </ds-tooltip>
+        ) : null}
+      </div>
+    );
+  }
+
+  private renderRailEntry(entry: PanelToolsRailEntry, focusIndexes: Map<string, number>) {
+    if (entry.type === 'tool') {
+      return this.renderRailAction(entry.item, focusIndexes.get(`tool:${entry.id}`) ?? 0);
+    }
+    return this.renderRailAccessory(entry.accessory, focusIndexes);
   }
 
   render() {
@@ -577,11 +848,15 @@ export class PanelTools {
     const headerTitle = header.title?.trim() || headerLabel;
     const headerActions = header.actions ?? [];
     const orderedRailItems = this.orderedRailItems;
-    const headerItems = orderedRailItems.filter(item => panelToolsRailPlacement(item) === 'header');
-    const bodyItems = orderedRailItems.filter(item => panelToolsRailPlacement(item) === 'body');
-    const footerItems = orderedRailItems.filter(item => panelToolsRailPlacement(item) === 'footer');
-    const headerCount = headerItems.length;
-    const footerStart = headerCount + bodyItems.length;
+    const orderedRailEntries = this.orderedRailEntries;
+    const entryPlacement = (entry: PanelToolsRailEntry) =>
+      entry.type === 'tool' ? panelToolsRailPlacement(entry.item) : entry.accessory.railPlacement;
+    const headerEntries = orderedRailEntries.filter(entry => entryPlacement(entry) === 'header');
+    const bodyEntries = orderedRailEntries.filter(entry => entryPlacement(entry) === 'body');
+    const footerEntries = orderedRailEntries.filter(entry => entryPlacement(entry) === 'footer');
+    const focusIndexes = new Map(
+      panelToolsRailFocusKeys(orderedRailEntries).map((key, index) => [key, index])
+    );
     const showDrawerChrome = this.isDrawerPresent();
     const drawerResting = panelToolsDrawerResting(this.open, this.motion);
     const activeFullView = Boolean(
@@ -607,9 +882,17 @@ export class PanelTools {
       >
         <div class="panel-tools__layout">
           <nav class="panel-tools__rail" aria-label={this.toolShortcutsLabel}>
-            {headerItems.length ? (
-              <div class="panel-tools__rail-header ds-chrome-row ds-chrome-space--md">
-                {headerItems.map((item, index) => this.renderRailAction(item, index))}
+            {headerEntries.length ? (
+              <div
+                class={{
+                  'panel-tools__rail-header': true,
+                  'panel-tools__rail-section--stacked': headerEntries.length > 1,
+                  'ds-chrome-row': headerEntries.length === 1,
+                  'ds-chrome-column': headerEntries.length > 1,
+                  'ds-chrome-space--md': true,
+                }}
+              >
+                {headerEntries.map(entry => this.renderRailEntry(entry, focusIndexes))}
               </div>
             ) : null}
             <div
@@ -631,16 +914,20 @@ export class PanelTools {
               tabIndex={this.railBodyScrollable ? 0 : undefined}
             >
               <div class="panel-tools__rail-actions">
-                {bodyItems.map((item, bodyIdx) =>
-                  this.renderRailAction(item, headerCount + bodyIdx)
-                )}
+                {bodyEntries.map(entry => this.renderRailEntry(entry, focusIndexes))}
               </div>
             </div>
-            {footerItems.length ? (
-              <div class="panel-tools__rail-footer ds-chrome-row ds-chrome-space--md">
-                {footerItems.map((item, footerIdx) =>
-                  this.renderRailAction(item, footerStart + footerIdx)
-                )}
+            {footerEntries.length ? (
+              <div
+                class={{
+                  'panel-tools__rail-footer': true,
+                  'panel-tools__rail-section--stacked': footerEntries.length > 1,
+                  'ds-chrome-row': footerEntries.length === 1,
+                  'ds-chrome-column': footerEntries.length > 1,
+                  'ds-chrome-space--md': true,
+                }}
+              >
+                {footerEntries.map(entry => this.renderRailEntry(entry, focusIndexes))}
               </div>
             ) : null}
           </nav>

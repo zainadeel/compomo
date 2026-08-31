@@ -9,12 +9,12 @@ CompoMo (`@ds-mo/ui`) is a **Stencil web component library**. `npm run build` em
 
 **Consumption options:**
 
-| Host | Package subpath | Notes |
-| --- | --- | --- |
-| Any | `@ds-mo/ui/components/ds-*.js` | Canonical custom elements; tree-shake per tag |
-| Angular | `@ds-mo/ui/angular/ds-*` | Standalone adapter per component; preferred for tree shaking |
-| React | `@ds-mo/ui/react` | `DsButtonFilled`, `DsBarNav`, … |
-| Vue | `@ds-mo/ui/vue` | `DsButtonFilled`, `DsBarNav`, … |
+| Host    | Package subpath                | Notes                                                        |
+| ------- | ------------------------------ | ------------------------------------------------------------ |
+| Any     | `@ds-mo/ui/components/ds-*.js` | Canonical custom elements; tree-shake per tag                |
+| Angular | `@ds-mo/ui/angular/ds-*`       | Standalone adapter per component; preferred for tree shaking |
+| React   | `@ds-mo/ui/react`              | `DsButtonFilled`, `DsBarNav`, …                              |
+| Vue     | `@ds-mo/ui/vue`                | `DsButtonFilled`, `DsBarNav`, …                              |
 
 Generated proxy source never lands in the authored tree. The publish step
 retains the existing `dist/angular`, `dist/react`, `dist/vue`, and package
@@ -97,7 +97,8 @@ architecture. The application supplies:
   labels, and persistence options;
 - `pageChrome`: route-owned heading, sections, depth, subsections, and actions;
 - `tools`: explicit tool ids, labels, order, rail placement, shortcuts, mobile
-  grouping, headers, unread state, and persistence.
+  grouping, headers, unread state, persistence, and optional governed
+  desktop/tablet rail accessories.
 
 ```html
 <ds-shell-app
@@ -140,6 +141,34 @@ from tool ids.
 Global shell shortcuts are skipped while the user is typing in an editable
 control.
 
+### Desktop and tablet rail accessories
+
+Use `tools.accessories` for application-owned direct intents that belong in the
+desktop/tablet tools rail but must not select a tool or alter the active drawer.
+The typed union supports decorative group boundaries; a standard-height shortcut
+with a one- or two-initial orb, optional supplemental notification dot, and one
+action; and a transient bold active/positive surface with an icon, initial, or
+decorative image, required accessible status text, a bordered primary action,
+and an optional unbordered rounded secondary icon action. Transient surfaces do
+not render notification dots; that supplemental indicator belongs only to
+shortcuts.
+
+When a transient status and shortcut group coexist in one rail region, assign
+their explicit orders as status, decorative boundary, then shortcuts. This keeps
+the status above pinned destinations without introducing product-specific
+sorting inside PanelTools.
+
+Handle `dsRailAccessoryAction` by its accessory and action ids. Its action
+anchor can position an application-owned overlay. Replace the accessories array
+when status changes; adding, removing, or reordering entries does not change
+`activeTool`, close an unrelated drawer, or remount named tool views.
+
+ShellTools intentionally omits rail accessories below 768px rather than
+converting them into mobile tool views. If the product requires equivalent
+persistent mobile status, render an application-owned surface through
+ShellApp's top `banner` region. CompoMo does not own product call state,
+conversation state, timers, permissions, navigation, or mobile call UI.
+
 ### Advanced slotted composition
 
 Set `composition="slotted"` only when a specialized application intentionally
@@ -173,10 +202,7 @@ scroller, or independently apply viewport units to nested shell sections.
 Enable safe-area resolution with the production viewport declaration:
 
 ```html
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1, viewport-fit=cover"
-/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 ```
 
 The application also owns the browser-chrome color. For a system-selected
@@ -301,8 +327,8 @@ well as the framework dev server.
 
 ## `ds-panel-nav` first paint
 
-| Concern | Requirement |
-| --- | --- |
+| Concern           | Requirement                                                                                                            |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | Hard reload style | Set `data-nav-style` on `<html>` before importing nav components, **or** stamp `nav-style` before the element connects |
 
 ## Bootstrap snippet
@@ -389,10 +415,7 @@ Host apps render **external** `ds-menu` instances (not bundled inside `ds-panel-
 2. Bind the external menu:
 
 ```ts
-import {
-  PANEL_NAV_USER_MENU_PLACEMENT,
-  shellGradientPickerSections,
-} from '@ds-mo/ui/shell';
+import { PANEL_NAV_USER_MENU_PLACEMENT, shellGradientPickerSections } from '@ds-mo/ui/shell';
 import type { MenuSection } from '@ds-mo/ui';
 ```
 

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { chromiumOnly } from './browser-tier';
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/agent-conversations.html');
@@ -403,6 +404,107 @@ test('anchors only newly appended turns and clears the combined interaction and 
     .poll(async () => Math.abs((await relativeTop()) - beforePrependTop))
     .toBeLessThanOrEqual(50);
 });
+
+test('resets a replaced transcript baseline without retaining its previous turn anchor', async ({
+  page,
+}) => {
+  const scroller = page.locator('#scroller');
+  const viewport = scroller.locator('.message-scroller__viewport');
+  const distanceFromLiveEdge = () =>
+    viewport.evaluate(element => element.scrollHeight - element.clientHeight - element.scrollTop);
+
+  await page.evaluate(() =>
+    (window as unknown as { appendAnchoredTurn: () => HTMLElement }).appendAnchoredTurn()
+  );
+  await expect
+    .poll(() =>
+      scroller.evaluate(element => {
+        const anchor = element.querySelector('ds-message[scroll-anchor]');
+        const viewportElement = element.querySelector('.message-scroller__viewport');
+        if (!anchor || !viewportElement) return -1;
+        return anchor.getBoundingClientRect().top - viewportElement.getBoundingClientRect().top;
+      })
+    )
+    .toBeGreaterThanOrEqual(63);
+
+  const replacedCount = await page.evaluate(() =>
+    (window as unknown as { replaceTranscript: () => number }).replaceTranscript()
+  );
+  expect(replacedCount).toBe(13);
+  await expect
+    .poll(() =>
+      scroller.evaluate(element =>
+        [...element.querySelectorAll('ds-message')].map(
+          message => (message as HTMLElement & { messageId?: string }).messageId
+        )
+      )
+    )
+    .toEqual(Array.from({ length: 12 }, (_, index) => `replacement-${index}`));
+  await expect.poll(distanceFromLiveEdge).toBeLessThanOrEqual(24);
+  await expect
+    .poll(() =>
+      scroller.evaluate(element =>
+        getComputedStyle(element).getPropertyValue('--ds-message-scroller-turn-clearance').trim()
+      )
+    )
+    .toBe('');
+
+  await page.evaluate(() =>
+    (window as unknown as { appendAnchoredTurn: () => HTMLElement }).appendAnchoredTurn()
+  );
+  await expect
+    .poll(() =>
+      scroller.evaluate(element => {
+        const anchor = element.querySelector('ds-message[scroll-anchor]');
+        const viewportElement = element.querySelector('.message-scroller__viewport');
+        if (!anchor || !viewportElement) return -1;
+        return anchor.getBoundingClientRect().top - viewportElement.getBoundingClientRect().top;
+      })
+    )
+    .toBeGreaterThanOrEqual(63);
+});
+
+test(
+  'releases replaced transcript nodes after garbage collection',
+  chromiumOnly(
+    'interaction',
+    'The retention assertion requires Chromium CDP to request deterministic garbage collection.'
+  ),
+  async ({ page }) => {
+    await page.goto('/message-scroller-retention.html');
+    await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
+    await page.evaluate(() =>
+      (
+        window as unknown as {
+          replaceRetentionTranscript: () => number;
+        }
+      ).replaceRetentionTranscript()
+    );
+    await expect(page.locator('#retention-scroller ds-message')).toHaveCount(12);
+
+    const session = await page.context().newCDPSession(page);
+    await expect
+      .poll(
+        async () => {
+          await session.send('HeapProfiler.collectGarbage');
+          await page.evaluate(
+            () => new Promise<void>(resolve => requestAnimationFrame(() => resolve()))
+          );
+          return page.evaluate(
+            () =>
+              (
+                window as unknown as {
+                  replacedTranscriptWeakRefs: WeakRef<HTMLElement>[];
+                }
+              ).replacedTranscriptWeakRefs.filter(reference => reference.deref()).length
+          );
+        },
+        { timeout: 5000 }
+      )
+      .toBe(0);
+    await session.detach();
+  }
+);
 
 test('streams only while following and lets reader input release and restore the live edge', async ({
   page,

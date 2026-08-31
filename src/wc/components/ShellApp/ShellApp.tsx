@@ -13,7 +13,11 @@ import {
 } from '@stencil/core';
 import type { NavChromeStyle } from '../../shell/nav-chrome';
 import { isEditableShortcutTarget, resolveShellShortcut } from '../../shell/shell-shortcuts';
-import type { PanelToolsToolId, PanelToolsHeaderAction } from '../PanelTools/panel-tools-types';
+import type {
+  PanelToolsHeaderAction,
+  PanelToolsRailAccessoryActionDetail,
+  PanelToolsToolId,
+} from '../PanelTools/panel-tools-types';
 import { PANEL_TOOLS_DEFAULT_ITEMS } from '../PanelTools/panel-tools-types';
 import type { BarTitleSectionItem } from '../BarTitle/bar-title-types';
 import type { BarTitlePlacement } from '../BarTitle/bar-title-types';
@@ -156,6 +160,9 @@ export class ShellApp {
 
   /** Managed tool-header action intent. */
   @Event() dsHeaderAction!: EventEmitter<{ tool: PanelToolsToolId; id: string }>;
+
+  /** Managed desktop/tablet rail accessory intent. */
+  @Event() dsRailAccessoryAction!: EventEmitter<PanelToolsRailAccessoryActionDetail>;
 
   /** Managed drawer/fullscreen presentation state. */
   @Event() dsPresentationChange!: EventEmitter<{ presentation: 'drawer' | 'fullscreen' }>;
@@ -720,6 +727,13 @@ export class ShellApp {
     this.dsHeaderAction.emit(event.detail);
   };
 
+  private handleManagedRailAccessoryAction = (
+    event: CustomEvent<PanelToolsRailAccessoryActionDetail>
+  ) => {
+    event.stopPropagation();
+    this.dsRailAccessoryAction.emit(event.detail);
+  };
+
   private handleManagedSheetToggle = (event: CustomEvent<boolean>) => {
     event.stopPropagation();
     this.managedMobileSheetNavOpen = event.detail;
@@ -978,6 +992,7 @@ export class ShellApp {
         presentation={this.managedToolPresentation}
         fullscreenHeaderMode={tools.fullscreenHeaderMode ?? 'shared'}
         items={this.resolvedToolItems}
+        accessories={tools.accessories ?? []}
         headers={tools.headers ?? {}}
         storageKey={tools.storageKey ?? ''}
         toolsLabel={tools.toolsLabel ?? 'Tools'}
@@ -988,6 +1003,7 @@ export class ShellApp {
         onDsPresentationChange={this.handleManagedPresentationChange}
         onDsHeaderBack={this.handleManagedHeaderBack}
         onDsHeaderAction={this.handleManagedHeaderAction}
+        onDsRailAccessoryAction={this.handleManagedRailAccessoryAction}
       >
         {this.renderManagedToolSlots()}
       </ds-shell-tools>

@@ -12,7 +12,11 @@
     "Messages can append or stream and transcript position must remain respectful of reader intent."
   ],
   "avoidWhen": ["Content is static prose without message navigation or live updates."],
-  "commonlyComposedWith": ["component:ds-message", "component:ds-message-composer", "component:ds-agent-questionnaire"],
+  "commonlyComposedWith": [
+    "component:ds-message",
+    "component:ds-message-composer",
+    "component:ds-agent-questionnaire"
+  ],
   "patterns": ["pattern:conversation", "pattern:agent-chat"],
   "accessibility": [
     "Give each transcript a concise localized label.",
@@ -23,6 +27,8 @@
     "Wheel, touch, keyboard navigation, selection, and transcript interaction release automatic following; Scroll to latest explicitly restores it.",
     "A newly appended outgoing Message marked scroll-anchor starts a turn near the top with the configurable previous-turn peek; mutations inside existing messages and prepended history do not re-anchor.",
     "Opening saved history, message jumps, and prepended history preserve deliberate position.",
+    "When a persistent scroller receives a cleared or wholly replaced transcript, it releases internal references to the previous message elements, invalidates their pending anchor work, and treats the replacement as a new baseline at defaultPosition rather than as an appended turn.",
+    "MessageScroller bounds its internal element tracking to the currently rendered transcript. The application still owns transcript data and must cap or window the rendered message collection when conversation history can grow without limit.",
     "The scroll-to-latest action is absent at the live edge, appears only after the reader moves away, and disappears again after returning to the newest message.",
     "Scroll to latest uses the shared md control-elevation wrapper with a pointer-transparent top highlight, preserving its transparent backdrop blur and borderless unfilled action while the press-scale modifier moves the complete elevated surface.",
     "Place a pending human-input surface in interaction and a composer container with 8px padding on every side in overlay; the shared scroll-overlay controller measures them as one stack, tracks every growth step, reserves matching transcript clearance, begins the fade before the stack, and keeps scroll-to-latest above it."

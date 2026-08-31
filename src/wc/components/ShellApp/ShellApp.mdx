@@ -14,7 +14,8 @@ three typed data objects and persistent content:
 - `pageChrome` is route-owned heading, peer sections, depth/back state,
   subsections, and page actions.
 - `tools` is product-owned tool definitions, headers, unread state, shortcuts,
-  persistence, and fullscreen configuration.
+  persistence, fullscreen configuration, and optional desktop/tablet rail
+  accessories.
 - The optional `banner` slot holds one application-owned `ds-banner` above the
   complete navigation, workspace, and tools row.
 - Named `*-view` slots hold the product-owned tool views, and the default slot
@@ -37,6 +38,23 @@ Navigation events are intent-only. Handle `dsNavSelect` and `dsTabChange` with
 the application router, then replace `navigation` and `pageChrome` together
 from the completed route state. Do not conditionally recreate routed content or
 tool views when the responsive presentation changes.
+
+## Rail accessories
+
+Use the governed rail-accessory collection for desktop/tablet transient status
+surfaces and direct shortcuts that must not open or change the active tool
+drawer. PanelTools owns their ordering, divider semantics, standard-height
+initial-orb shortcut recipe, bold active/positive transient recipe, focus and
+overflow behavior, and action-intent event. Transient status text is required
+and announced with its primary action. Shortcut dots are supplemental; the
+application includes their meaning in the accessible action label when needed.
+The application owns state, localized labels, timers, permissions, navigation,
+and every action consequence.
+
+Rail accessories are intentionally absent below 768px because the tools rail
+does not exist. When the same status must remain persistent on mobile, provide
+an equivalent application-owned surface through ShellApp's top `banner` region.
+Do not model it as a mobile tool view.
 
 ## Section navigation mode
 

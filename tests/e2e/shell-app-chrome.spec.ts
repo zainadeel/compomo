@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { chromiumOnly } from './browser-tier';
+import { expectGeometryClose } from './rendered-geometry';
 
 test.describe('App shell chrome', () => {
   test.beforeEach(async ({ page }) => {
@@ -521,6 +522,365 @@ test.describe('App shell chrome', () => {
     await expect(scrollRegion).toBeFocused();
     await scrollRegion.press('PageDown');
     await expect.poll(() => scrollRegion.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
+  });
+
+  test('integrates rail accessories into keyboard order, overflow, focus, and reduced motion @pr-critical', async ({
+    page,
+  }) => {
+    const tools = page.locator('ds-panel-tools');
+    await page.getByRole('button', { name: 'Agents', exact: true }).click();
+    await tools.evaluate(element => {
+      const panelTools = element as HTMLDsPanelToolsElement;
+      panelTools.accessories = [
+        {
+          type: 'divider',
+          id: 'session-boundary',
+          railPlacement: 'body',
+          order: 1.5,
+        },
+        {
+          type: 'transient',
+          id: 'active-session',
+          railPlacement: 'body',
+          order: 1.6,
+          ariaLabel: 'Active session',
+          visual: { type: 'initial', initial: 'AS' },
+          statusText: 'Active for 12 minutes',
+          statusTone: 'active',
+          primaryAction: { id: 'restore', ariaLabel: 'Restore active session' },
+          secondaryAction: {
+            id: 'cancel',
+            icon: 'PhoneDisconnect',
+            ariaLabel: 'Cancel call',
+          },
+        },
+      ];
+      element.shadowRoot!.querySelector<HTMLElement>('.panel-tools__rail-body')!.style.maxHeight =
+        '96px';
+      panelTools.addEventListener('dsRailAccessoryAction', event => {
+        const detail = (event as CustomEvent).detail;
+        document.documentElement.dataset.lastAccessoryAction = JSON.stringify({
+          accessoryId: detail.accessoryId,
+          actionId: detail.actionId,
+          anchorTag: detail.anchor?.tagName,
+        });
+      });
+    });
+
+    const messages = page.getByRole('button', { name: 'Messages', exact: true });
+    const restore = page.getByRole('button', {
+      name: 'Restore active session. Active for 12 minutes',
+    });
+    const cancel = page.getByRole('button', { name: 'Cancel call' });
+    const activity = page.getByRole('button', { name: 'Activity', exact: true });
+    const divider = tools.locator('.panel-tools__accessory-divider');
+    await expect(divider).toHaveAttribute('aria-hidden', 'true');
+    const accessoryGeometry = await tools.evaluate(element => {
+      const root = element.shadowRoot!;
+      const rect = (selector: string) => {
+        const bounds = root.querySelector<HTMLElement>(selector)!.getBoundingClientRect();
+        return { left: bounds.left, top: bounds.top, width: bounds.width, height: bounds.height };
+      };
+      return {
+        actions: rect('.panel-tools__rail-actions'),
+        divider: rect('.panel-tools__accessory-divider'),
+        dividerLine: rect('.panel-tools__accessory-divider ds-divider'),
+        accessory: rect('.panel-tools__accessory'),
+        primary: rect('.panel-tools__accessory-primary'),
+        initial: rect('.panel-tools__accessory-initial'),
+        secondary: rect('.panel-tools__accessory-secondary'),
+      };
+    });
+    expectGeometryClose(
+      accessoryGeometry.dividerLine.left,
+      accessoryGeometry.divider.left,
+      'rail accessory divider left edge'
+    );
+    expectGeometryClose(
+      accessoryGeometry.dividerLine.width,
+      accessoryGeometry.actions.width,
+      'rail accessory divider width'
+    );
+    expectGeometryClose(accessoryGeometry.accessory.width, 32, 'rail accessory width');
+    expectGeometryClose(accessoryGeometry.accessory.height, 64, 'rail accessory height');
+    expectGeometryClose(accessoryGeometry.primary.width, 24, 'rail accessory primary action width');
+    expectGeometryClose(
+      accessoryGeometry.primary.height,
+      24,
+      'rail accessory primary action height'
+    );
+    expectGeometryClose(accessoryGeometry.initial.width, 24, 'rail accessory visual width');
+    expectGeometryClose(accessoryGeometry.initial.height, 24, 'rail accessory visual height');
+    expectGeometryClose(
+      accessoryGeometry.secondary.width,
+      24,
+      'rail accessory secondary action width'
+    );
+    expectGeometryClose(
+      accessoryGeometry.secondary.height,
+      24,
+      'rail accessory secondary action height'
+    );
+    expectGeometryClose(
+      accessoryGeometry.primary.left - accessoryGeometry.accessory.left,
+      4,
+      'rail accessory primary inline inset'
+    );
+    expectGeometryClose(
+      accessoryGeometry.primary.top - accessoryGeometry.accessory.top,
+      4,
+      'rail accessory primary block inset'
+    );
+    expectGeometryClose(
+      accessoryGeometry.secondary.left - accessoryGeometry.accessory.left,
+      4,
+      'rail accessory secondary inline inset'
+    );
+    expectGeometryClose(
+      accessoryGeometry.secondary.top - accessoryGeometry.primary.top,
+      32,
+      'rail accessory action rhythm'
+    );
+    await expect
+      .poll(() =>
+        cancel.locator('ds-icon').evaluate(element => (element as HTMLDsIconElement).name)
+      )
+      .toBe('PhoneDisconnect');
+    await expect(cancel).not.toHaveClass(/button-unfilled--bordered/);
+    await expect(tools.locator('.panel-tools__accessory--transient ds-badge')).toHaveCount(0);
+
+    const transientPaint = await tools.evaluate(element => {
+      const root = element.shadowRoot!;
+      const accessory = root.querySelector<HTMLElement>('.panel-tools__accessory--transient')!;
+      const primary = root.querySelector<HTMLElement>('.panel-tools__accessory-primary')!;
+      const probe = document.createElement('span');
+      root.append(probe);
+      probe.style.backgroundColor = 'var(--color-background-bold-brand)';
+      const active = getComputedStyle(probe).backgroundColor;
+      probe.style.backgroundColor = 'var(--color-background-bold-positive)';
+      const positive = getComputedStyle(probe).backgroundColor;
+      probe.style.color = 'var(--color-foreground-on-bold-background-secondary)';
+      const foreground = getComputedStyle(probe).color;
+      probe.style.color = 'var(--color-border-on-bold-background-secondary)';
+      const border = getComputedStyle(probe).color;
+      probe.remove();
+      return {
+        actual: getComputedStyle(accessory).backgroundColor,
+        active,
+        positive,
+        foreground,
+        primaryForeground: getComputedStyle(primary).color,
+        primaryBorder: getComputedStyle(primary, '::after').boxShadow,
+        border,
+      };
+    });
+    expect(transientPaint.actual).toBe(transientPaint.active);
+    expect(transientPaint.primaryForeground).toBe(transientPaint.foreground);
+    expect(transientPaint.primaryBorder).toContain(transientPaint.border);
+
+    await tools.evaluate(element => {
+      const panelTools = element as HTMLDsPanelToolsElement;
+      panelTools.accessories = panelTools.accessories.map(accessory =>
+        accessory.type === 'transient'
+          ? { ...accessory, statusTone: 'positive' as const }
+          : accessory
+      );
+    });
+    await expect
+      .poll(() =>
+        tools
+          .locator('.panel-tools__accessory--transient')
+          .evaluate(element => getComputedStyle(element).backgroundColor)
+      )
+      .toBe(transientPaint.positive);
+
+    await messages.focus();
+    await messages.press('ArrowDown');
+    await expect(restore).toBeFocused();
+    expect(
+      await restore.evaluate(element => getComputedStyle(element, '::after').outlineStyle)
+    ).toBe('solid');
+    await restore.press('ArrowDown');
+    await expect(cancel).toBeFocused();
+    await cancel.press('ArrowDown');
+    await expect(activity).toBeFocused();
+
+    await cancel.click();
+    await expect(page.locator('html')).toHaveAttribute(
+      'data-last-accessory-action',
+      JSON.stringify({
+        accessoryId: 'active-session',
+        actionId: 'cancel',
+        anchorTag: 'DS-BUTTON-UNFILLED',
+      })
+    );
+
+    const scrollRegion = page.getByRole('region', { name: 'Tool shortcuts' });
+    await expect(scrollRegion).toHaveAttribute('tabindex', '0');
+    await scrollRegion.focus();
+    await scrollRegion.press('PageDown');
+    await expect.poll(() => scrollRegion.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
+
+    await restore.click();
+    await expect(page.locator('html')).toHaveAttribute(
+      'data-last-accessory-action',
+      JSON.stringify({
+        accessoryId: 'active-session',
+        actionId: 'restore',
+        anchorTag: 'BUTTON',
+      })
+    );
+    await expect(tools).toHaveAttribute('active-tool', 'agents');
+    await expect(tools).toHaveAttribute('open');
+
+    await cancel.focus();
+    await tools.evaluate(element => {
+      (element as HTMLDsPanelToolsElement).accessories = [];
+    });
+    await expect(cancel).toHaveCount(0);
+    await expect(activity).toBeFocused();
+    await expect(tools).toHaveAttribute('active-tool', 'agents');
+    await expect(tools).toHaveAttribute('open');
+
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await tools.evaluate(element => {
+      const panelTools = element as HTMLDsPanelToolsElement;
+      panelTools.items = panelTools.items.map(item =>
+        item.id === 'messages' ? { ...item, dot: true } : item
+      );
+      panelTools.accessories = [
+        {
+          type: 'shortcut',
+          id: 'pinned-conversation',
+          railPlacement: 'body',
+          order: 1.6,
+          ariaLabel: 'Pinned conversation',
+          initials: 'PCX',
+          dot: true,
+          action: { id: 'open', ariaLabel: 'Open pinned conversation' },
+        },
+      ];
+    });
+    const pinned = page.getByRole('button', { name: 'Open pinned conversation' });
+    await expect(pinned).toBeVisible();
+    await expect(tools.locator('.panel-tools__shortcut-content ds-text')).toHaveText('PC');
+    const shortcutOrb = tools.locator('.panel-tools__shortcut-orb');
+    const shortcutDot = tools.locator('.panel-tools__shortcut-dot');
+    const toolDot = messages.locator('ds-badge');
+    await expect(shortcutOrb).toBeVisible();
+    await expect(shortcutDot).toBeVisible();
+    await expect(toolDot).toBeVisible();
+    const shortcutBounds = await pinned.boundingBox();
+    const orbBounds = await shortcutOrb.boundingBox();
+    const dotBounds = await shortcutDot.boundingBox();
+    const toolBounds = await messages.boundingBox();
+    const toolDotBounds = await toolDot.boundingBox();
+    expect(shortcutBounds).not.toBeNull();
+    expect(orbBounds).not.toBeNull();
+    expect(dotBounds).not.toBeNull();
+    expect(toolBounds).not.toBeNull();
+    expect(toolDotBounds).not.toBeNull();
+    if (!shortcutBounds || !orbBounds || !dotBounds || !toolBounds || !toolDotBounds) {
+      throw new Error('Shortcut geometry was not measurable');
+    }
+    expectGeometryClose(shortcutBounds.width, 32, 'rail shortcut width');
+    expectGeometryClose(shortcutBounds.height, 32, 'rail shortcut height');
+    expectGeometryClose(orbBounds.width, 24, 'rail shortcut orb width');
+    expectGeometryClose(orbBounds.height, 24, 'rail shortcut orb height');
+    expectGeometryClose(dotBounds.width, 6, 'rail shortcut dot width');
+    expectGeometryClose(dotBounds.height, 6, 'rail shortcut dot height');
+    expectGeometryClose(
+      dotBounds.x - shortcutBounds.x,
+      toolDotBounds.x - toolBounds.x,
+      'rail shortcut dot inline position'
+    );
+    expectGeometryClose(
+      dotBounds.y - shortcutBounds.y,
+      toolDotBounds.y - toolBounds.y,
+      'rail shortcut dot block position'
+    );
+
+    const shortcutStyle = await pinned.evaluate(element => {
+      const style = getComputedStyle(element);
+      const probe = document.createElement('span');
+      element.append(probe);
+      probe.style.color = 'var(--color-foreground-secondary)';
+      const foregroundSecondary = getComputedStyle(probe).color;
+      probe.remove();
+      return {
+        animationName: style.animationName,
+        backgroundColor: style.backgroundColor,
+        borderRadius: Number.parseFloat(style.borderRadius),
+        color: style.color,
+        foregroundSecondary,
+        pressed: element.getAttribute('aria-pressed'),
+        transitionDuration: style.transitionDuration,
+      };
+    });
+    expect(shortcutStyle).toMatchObject({
+      animationName: 'none',
+      backgroundColor: 'rgba(0, 0, 0, 0)',
+      color: shortcutStyle.foregroundSecondary,
+      pressed: null,
+      transitionDuration: '0s',
+    });
+    expect(shortcutStyle.borderRadius).toBeGreaterThanOrEqual(16);
+    const orbStyle = await shortcutOrb.evaluate(element => {
+      const style = getComputedStyle(element);
+      const probe = document.createElement('span');
+      element.append(probe);
+      probe.style.color = 'var(--color-border-secondary)';
+      const borderSecondary = getComputedStyle(probe).color;
+      probe.remove();
+      return {
+        backgroundColor: style.backgroundColor,
+        borderColor: style.borderTopColor,
+        borderSecondary,
+        borderWidth: style.borderTopWidth,
+      };
+    });
+    expect(orbStyle).toEqual({
+      backgroundColor: 'rgba(0, 0, 0, 0)',
+      borderColor: orbStyle.borderSecondary,
+      borderSecondary: orbStyle.borderSecondary,
+      borderWidth: '1px',
+    });
+
+    await pinned.hover();
+    const interactionPaint = () =>
+      pinned.evaluate(element => {
+        const probe = document.createElement('span');
+        element.append(probe);
+        probe.style.color = 'var(--ds-interaction-hover)';
+        const hover = getComputedStyle(probe).color;
+        probe.style.color = 'var(--ds-interaction-pressed)';
+        const pressed = getComputedStyle(probe).color;
+        probe.remove();
+        return {
+          actual: getComputedStyle(element, '::after').backgroundColor,
+          hover,
+          pressed,
+        };
+      });
+    expect((await interactionPaint()).actual).toBe((await interactionPaint()).hover);
+    await page.mouse.down();
+    expect((await interactionPaint()).actual).toBe((await interactionPaint()).pressed);
+    await page.mouse.up();
+
+    await pinned.click();
+    await expect(page.locator('html')).toHaveAttribute(
+      'data-last-accessory-action',
+      JSON.stringify({
+        accessoryId: 'pinned-conversation',
+        actionId: 'open',
+        anchorTag: 'BUTTON',
+      })
+    );
+    await expect(tools).toHaveAttribute('active-tool', 'agents');
+    await expect(tools).toHaveAttribute('open');
+    await expect(pinned).not.toHaveAttribute('aria-pressed');
+    await expect(pinned).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    await expect(pinned).toHaveCSS('color', shortcutStyle.foregroundSecondary);
   });
 
   test(

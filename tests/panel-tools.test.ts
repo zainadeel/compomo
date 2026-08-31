@@ -8,14 +8,19 @@ import {
   PANEL_TOOLS_PRIMARY_TOOL_ID,
   PANEL_TOOLS_SHORTCUTS,
   PANEL_TOOLS_TOOL_IDS,
+  type PanelToolsRailAccessory,
 } from '../src/wc/components/PanelTools/panel-tools-types';
 import {
   isPanelToolsToolId,
+  orderPanelToolsRailEntries,
   orderPanelToolsItems,
   panelToolsDrawerAtTerminal,
   panelToolsDrawerResting,
   panelToolsDrawerTransitionMs,
+  panelToolsRailAccessoryActionDetail,
+  panelToolsRailFocusKeys,
   reconcilePanelToolsAvailability,
+  reconcilePanelToolsRovingIndex,
   resolvePanelToolActivation,
 } from '../src/wc/components/PanelTools/panel-tools-utils';
 
@@ -99,6 +104,167 @@ describe('orderPanelToolsItems', () => {
   });
 });
 
+describe('orderPanelToolsRailEntries', () => {
+  const accessories: PanelToolsRailAccessory[] = [
+    { type: 'divider', id: 'session-boundary', railPlacement: 'body', order: 20 },
+    {
+      type: 'transient',
+      id: 'active-session',
+      railPlacement: 'body',
+      order: 21,
+      ariaLabel: 'Active session',
+      visual: { type: 'initial', initial: 'AS' },
+      statusText: 'In progress',
+      statusTone: 'active',
+      primaryAction: { id: 'restore' },
+    },
+  ];
+
+  it('interleaves accessories with tools by explicit region and order', () => {
+    const entries = orderPanelToolsRailEntries(
+      [
+        { id: 'search', icon: 'MagnifyingGlass', order: 30 },
+        { id: 'agents', icon: 'AI', railPlacement: 'header', order: 0 },
+        { id: 'messages', icon: 'MessageBubbleStack', order: 10 },
+        { id: 'help', icon: 'CircleQuestion', railPlacement: 'footer', order: 0 },
+      ],
+      accessories
+    );
+
+    assert.deepEqual(
+      entries.map(entry => [entry.type, entry.id]),
+      [
+        ['tool', 'agents'],
+        ['tool', 'messages'],
+        ['accessory', 'session-boundary'],
+        ['accessory', 'active-session'],
+        ['tool', 'search'],
+        ['tool', 'help'],
+      ]
+    );
+  });
+
+  it('orders a transient status group before a divided shortcut group', () => {
+    const entries = orderPanelToolsRailEntries(
+      [],
+      [
+        {
+          type: 'shortcut',
+          id: 'second-shortcut',
+          railPlacement: 'body',
+          order: 14,
+          ariaLabel: 'Second shortcut',
+          initials: 'S',
+          action: { id: 'open' },
+        },
+        {
+          type: 'divider',
+          id: 'shortcut-boundary',
+          railPlacement: 'body',
+          order: 12,
+        },
+        {
+          type: 'transient',
+          id: 'active-status',
+          railPlacement: 'body',
+          order: 11,
+          ariaLabel: 'Active status',
+          visual: { type: 'initial', initial: 'A' },
+          statusText: 'Active',
+          statusTone: 'positive',
+          primaryAction: { id: 'restore' },
+        },
+        {
+          type: 'shortcut',
+          id: 'first-shortcut',
+          railPlacement: 'body',
+          order: 13,
+          ariaLabel: 'First shortcut',
+          initials: 'F',
+          action: { id: 'open' },
+        },
+      ]
+    );
+
+    assert.deepEqual(
+      entries.map(entry => entry.id),
+      ['active-status', 'shortcut-boundary', 'first-shortcut', 'second-shortcut']
+    );
+  });
+
+  it('omits blank and duplicate accessory ids', () => {
+    const entries = orderPanelToolsRailEntries(
+      [],
+      [...accessories, { ...accessories[0], id: ' ' }, { ...accessories[0] }]
+    );
+    assert.deepEqual(
+      entries.map(entry => entry.id),
+      ['session-boundary', 'active-session']
+    );
+  });
+});
+
+describe('rail accessory focus reconciliation', () => {
+  const transient: PanelToolsRailAccessory = {
+    type: 'transient',
+    id: 'active-session',
+    railPlacement: 'body',
+    order: 1,
+    ariaLabel: 'Active session',
+    visual: { type: 'icon', icon: 'Phone' },
+    statusText: 'Active',
+    statusTone: 'active',
+    primaryAction: { id: 'restore' },
+    secondaryAction: { id: 'dismiss', icon: 'X', ariaLabel: 'Dismiss session' },
+  };
+  const shortcut: PanelToolsRailAccessory = {
+    type: 'shortcut',
+    id: 'pinned-conversation',
+    railPlacement: 'body',
+    order: 2,
+    ariaLabel: 'Pinned conversation',
+    initials: 'P',
+    dot: true,
+    action: { id: 'open' },
+  };
+
+  it('includes accessory actions and excludes decorative boundaries from keyboard order', () => {
+    const entries = orderPanelToolsRailEntries(
+      [{ id: 'search', icon: 'MagnifyingGlass', order: 0 }],
+      [{ type: 'divider', id: 'boundary', railPlacement: 'body', order: 0.5 }, transient, shortcut]
+    );
+    assert.deepEqual(panelToolsRailFocusKeys(entries), [
+      'tool:search',
+      'accessory:active-session:restore',
+      'accessory:active-session:dismiss',
+      'accessory:pinned-conversation:open',
+    ]);
+  });
+
+  it('preserves a surviving target and chooses the nearest target after dynamic removal', () => {
+    const previous = [
+      'tool:search',
+      'accessory:active-session:restore',
+      'accessory:active-session:dismiss',
+      'tool:help',
+    ];
+    const inserted = ['tool:agents', ...previous];
+    assert.equal(reconcilePanelToolsRovingIndex(previous, inserted, 1), 2);
+    assert.equal(reconcilePanelToolsRovingIndex(previous, ['tool:search', 'tool:help'], 1), 1);
+  });
+});
+
+describe('panelToolsRailAccessoryActionDetail', () => {
+  it('preserves the accessory id, action id, and rendered action anchor', () => {
+    const anchor = {} as HTMLElement;
+    assert.deepEqual(panelToolsRailAccessoryActionDetail('active-session', 'restore', anchor), {
+      accessoryId: 'active-session',
+      actionId: 'restore',
+      anchor,
+    });
+  });
+});
+
 describe('isPanelToolsToolId', () => {
   it('accepts application-owned tool ids while rejecting empty persisted state', () => {
     assert.equal(isPanelToolsToolId('agents'), true);
@@ -121,6 +287,20 @@ describe('reconcilePanelToolsAvailability', () => {
       reconcilePanelToolsAvailability([{ id: 'agents', icon: 'AI' }], true, 'agents'),
       { open: true, activeTool: 'agents', removedTool: '' }
     );
+  });
+
+  it('is independent from dynamic rail accessory collection changes', () => {
+    const items = [{ id: 'search', icon: 'MagnifyingGlass' }];
+    orderPanelToolsRailEntries(items, [
+      { type: 'divider', id: 'temporary-boundary', railPlacement: 'body', order: 1 },
+    ]);
+    orderPanelToolsRailEntries(items, []);
+
+    assert.deepEqual(reconcilePanelToolsAvailability(items, true, 'search'), {
+      open: true,
+      activeTool: 'search',
+      removedTool: '',
+    });
   });
 });
 

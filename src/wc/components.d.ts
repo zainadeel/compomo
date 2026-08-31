@@ -51,7 +51,7 @@ import { PaginationChangeDetail, PaginationPageSizeMode } from "./components/Pag
 import { ChromeTransitionDetail } from "./shell/chrome-transition";
 import { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 import { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
-import { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderActionDetail, PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
+import { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderActionDetail, PanelToolsHeaders, PanelToolsItem, PanelToolsRailAccessory, PanelToolsRailAccessoryActionDetail, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
 import { RadioOption, RadioSize } from "./components/Radio/Radio";
 import { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
@@ -121,7 +121,7 @@ export { PaginationChangeDetail, PaginationPageSizeMode } from "./components/Pag
 export { ChromeTransitionDetail } from "./shell/chrome-transition";
 export { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 export { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
-export { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderActionDetail, PanelToolsHeaders, PanelToolsItem, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
+export { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderActionDetail, PanelToolsHeaders, PanelToolsItem, PanelToolsRailAccessory, PanelToolsRailAccessoryActionDetail, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
 export { RadioOption, RadioSize } from "./components/Radio/Radio";
 export { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
@@ -2250,6 +2250,11 @@ export namespace Components {
     }
     interface DsPanelTools {
         /**
+          * Desktop/tablet-only application-owned rail boundaries and direct intents. Set via JS property and replace the array reference to update.
+          * @default []
+         */
+        "accessories": PanelToolsRailAccessory[];
+        /**
           * Toggle any rail tool open/closed — shell shortcuts K/A/S/M/N call this.
          */
         "activateTool": (id: PanelToolsToolId) => Promise<void>;
@@ -2699,6 +2704,11 @@ export namespace Components {
         "scrollCompaction": boolean;
     }
     interface DsShellTools {
+        /**
+          * Desktop/tablet rail accessories. Intentionally omitted from the mobile tool stage.
+          * @default []
+         */
+        "accessories": PanelToolsRailAccessory[];
         /**
           * Match PanelTools' imperative activation contract in every responsive mode.
          */
@@ -4721,6 +4731,7 @@ declare global {
     tool: PanelToolsToolId;
   };
         "dsHeaderAction": PanelToolsHeaderActionDetail;
+        "dsRailAccessoryAction": PanelToolsRailAccessoryActionDetail;
         "dsChromeTransitionStart": ChromeTransitionDetail;
         "dsChromeTransitionEnd": ChromeTransitionDetail;
     }
@@ -4812,6 +4823,7 @@ declare global {
         "dsToolChange": { id: PanelToolsToolId; selected: boolean };
         "dsHeaderBack": { tool: PanelToolsToolId };
         "dsHeaderAction": { tool: PanelToolsToolId; id: string };
+        "dsRailAccessoryAction": PanelToolsRailAccessoryActionDetail;
         "dsPresentationChange": { presentation: 'drawer' | 'fullscreen' };
         "dsBrowseContextChange": NavChromeStyle;
         "dsNavFooterAction": void;
@@ -4852,6 +4864,7 @@ declare global {
     tool: PanelToolsToolId;
     id: string;
   };
+        "dsRailAccessoryAction": PanelToolsRailAccessoryActionDetail;
     }
     interface HTMLDsShellToolsElement extends Components.DsShellTools, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsShellToolsElementEventMap>(type: K, listener: (this: HTMLDsShellToolsElement, ev: DsShellToolsCustomEvent<HTMLDsShellToolsElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -7528,6 +7541,11 @@ declare namespace LocalJSX {
     }
     interface DsPanelTools {
         /**
+          * Desktop/tablet-only application-owned rail boundaries and direct intents. Set via JS property and replace the array reference to update.
+          * @default []
+         */
+        "accessories"?: PanelToolsRailAccessory[];
+        /**
           * Active tool view — `search`, `agents`, `messages`, `stacks`, `activity`, or `help`.
           * @default ''
          */
@@ -7568,6 +7586,10 @@ declare namespace LocalJSX {
         "onDsPresentationChange"?: (event: DsPanelToolsCustomEvent<{
     presentation: 'drawer' | 'fullscreen';
   }>) => void;
+        /**
+          * Direct accessory intent. Emitting this event never changes the active tool or drawer.
+         */
+        "onDsRailAccessoryAction"?: (event: DsPanelToolsCustomEvent<PanelToolsRailAccessoryActionDetail>) => void;
         /**
           * Emitted when a rail button is toggled. Detail = { id, selected }.
          */
@@ -7970,6 +7992,10 @@ declare namespace LocalJSX {
          */
         "onDsPresentationChange"?: (event: DsShellAppCustomEvent<{ presentation: 'drawer' | 'fullscreen' }>) => void;
         /**
+          * Managed desktop/tablet rail accessory intent.
+         */
+        "onDsRailAccessoryAction"?: (event: DsShellAppCustomEvent<PanelToolsRailAccessoryActionDetail>) => void;
+        /**
           * Emitted after crossing the fixed 768px or 1200px shell boundaries.
          */
         "onDsResponsiveModeChange"?: (event: DsShellAppCustomEvent<{ mode: ShellResponsiveMode }>) => void;
@@ -8061,6 +8087,11 @@ declare namespace LocalJSX {
     }
     interface DsShellTools {
         /**
+          * Desktop/tablet rail accessories. Intentionally omitted from the mobile tool stage.
+          * @default []
+         */
+        "accessories"?: PanelToolsRailAccessory[];
+        /**
           * @default ''
          */
         "activeTool"?: PanelToolsToolId | '';
@@ -8094,6 +8125,7 @@ declare namespace LocalJSX {
         "onDsPresentationChange"?: (event: DsShellToolsCustomEvent<{
     presentation: 'drawer' | 'fullscreen';
   }>) => void;
+        "onDsRailAccessoryAction"?: (event: DsShellToolsCustomEvent<PanelToolsRailAccessoryActionDetail>) => void;
         "onDsToolChange"?: (event: DsShellToolsCustomEvent<{
     id: PanelToolsToolId;
     selected: boolean;
