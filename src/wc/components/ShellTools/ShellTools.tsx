@@ -14,6 +14,8 @@ import {
   type PanelToolsHeaderConfig,
   type PanelToolsHeaders,
   type PanelToolsItem,
+  type PanelToolsRailAccessory,
+  type PanelToolsRailAccessoryActionDetail,
   type PanelToolsToolId,
 } from '../PanelTools/panel-tools-types';
 import {
@@ -47,6 +49,8 @@ export class ShellTools {
   @Prop({ attribute: 'fullscreen-header-mode', reflect: true })
   fullscreenHeaderMode: 'shared' | 'split' = 'shared';
   @Prop() items: PanelToolsItem[] = [];
+  /** Desktop/tablet rail accessories. Intentionally omitted from the mobile tool stage. */
+  @Prop() accessories: PanelToolsRailAccessory[] = [];
   @Prop() headers: PanelToolsHeaders = {};
   @Prop({ attribute: 'storage-key' }) storageKey: string = '';
   @Prop() toolsLabel: string = 'Tools';
@@ -82,6 +86,8 @@ export class ShellTools {
     tool: PanelToolsToolId;
     id: string;
   }>;
+  @Event({ bubbles: true, composed: true })
+  dsRailAccessoryAction!: EventEmitter<PanelToolsRailAccessoryActionDetail>;
 
   private panelToolsEl: HTMLDsPanelToolsElement | null = null;
 
@@ -169,6 +175,13 @@ export class ShellTools {
     this.presentation = event.detail.presentation;
   };
 
+  private handlePanelRailAccessoryAction = (
+    event: CustomEvent<PanelToolsRailAccessoryActionDetail>
+  ) => {
+    event.stopPropagation();
+    this.dsRailAccessoryAction.emit(event.detail);
+  };
+
   private handleMobileHeaderAction = (
     tool: PanelToolsToolId,
     id: string,
@@ -234,6 +247,7 @@ export class ShellTools {
           presentation={this.presentation}
           fullscreenHeaderMode={this.fullscreenHeaderMode}
           items={this.resolvedItems}
+          accessories={this.accessories ?? []}
           headers={this.resolvedHeaders()}
           storageKey={this.storageKey}
           toolsLabel={this.toolsLabel}
@@ -243,6 +257,7 @@ export class ShellTools {
           }}
           onDsToolChange={this.handlePanelToolChange}
           onDsPresentationChange={this.handlePanelPresentationChange}
+          onDsRailAccessoryAction={this.handlePanelRailAccessoryAction}
         >
           {this.renderForwardedSlots()}
         </ds-panel-tools>

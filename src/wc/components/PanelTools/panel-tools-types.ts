@@ -43,6 +43,8 @@ export const PANEL_TOOLS_SHORTCUTS: Partial<Record<CanonicalPanelToolsToolId, st
   help: '/',
 };
 
+export type PanelToolsRailPlacement = 'header' | 'body' | 'footer';
+
 export interface PanelToolsItem {
   id: PanelToolsToolId;
   /** Icon name for <ds-icon>. */
@@ -50,7 +52,7 @@ export interface PanelToolsItem {
   /** Visible and accessible fallback label for custom tool ids. */
   label?: string;
   /** Explicit rail region; canonical Agents/Help placement is the fallback. */
-  railPlacement?: 'header' | 'body' | 'footer';
+  railPlacement?: PanelToolsRailPlacement;
   /** Stable ordering within the selected rail region. */
   order?: number;
   /** Optional shortcut label displayed by the tooltip. */
@@ -63,6 +65,86 @@ export interface PanelToolsItem {
   dot?: boolean;
   isInactive?: boolean;
   ariaLabel?: string;
+}
+
+export type PanelToolsRailAccessoryVisual =
+  | { type: 'icon'; icon: string }
+  | { type: 'initial'; initial: string }
+  | { type: 'image'; src: string };
+
+export interface PanelToolsRailAccessoryAction {
+  /** Stable application-owned action id emitted with the accessory id. */
+  id: string;
+  /** Overrides the accessory label for the primary action. */
+  ariaLabel?: string;
+  isInactive?: boolean;
+}
+
+export interface PanelToolsRailAccessorySecondaryAction {
+  id: string;
+  icon: string;
+  ariaLabel: string;
+  isInactive?: boolean;
+}
+
+export type PanelToolsRailTransientTone = 'active' | 'positive';
+
+interface PanelToolsRailAccessoryBase {
+  /** Stable application-owned identity. Duplicate or blank ids are omitted. */
+  id: string;
+  /** Explicit rail region; accessories never infer placement from their id. */
+  railPlacement: PanelToolsRailPlacement;
+  /** Stable ordering within the selected rail region. */
+  order: number;
+}
+
+/** Decorative boundary between application-owned rail accessory groups. */
+export interface PanelToolsRailDividerAccessory extends PanelToolsRailAccessoryBase {
+  type: 'divider';
+}
+
+/**
+ * A compact one-action shortcut that matches standard tool-button geometry.
+ * PanelTools owns its initial orb, notification dot, and transient interaction paint.
+ */
+export interface PanelToolsRailShortcutAccessory extends PanelToolsRailAccessoryBase {
+  type: 'shortcut';
+  /** Accessible shortcut name and action-label fallback. */
+  ariaLabel: string;
+  /** One or two displayed graphemes. Longer values are truncated visually. */
+  initials: string;
+  /** Supplemental notification dot. Include its meaning in the accessible label when needed. */
+  dot?: boolean;
+  action: PanelToolsRailAccessoryAction;
+}
+
+/**
+ * A direct application intent that never selects a tool or changes drawer state.
+ * PanelTools owns the two-control-height surface and its focus behavior.
+ */
+export interface PanelToolsRailTransientAccessory extends PanelToolsRailAccessoryBase {
+  type: 'transient';
+  /** Accessible accessory name and primary-action fallback label. */
+  ariaLabel: string;
+  visual: PanelToolsRailAccessoryVisual;
+  /** State announced with the primary action and shown in its tooltip. */
+  statusText: string;
+  /** Bold surface treatment. Active uses brand; positive uses positive semantic color. */
+  statusTone: PanelToolsRailTransientTone;
+  primaryAction: PanelToolsRailAccessoryAction;
+  secondaryAction?: PanelToolsRailAccessorySecondaryAction;
+}
+
+export type PanelToolsRailAccessory =
+  | PanelToolsRailDividerAccessory
+  | PanelToolsRailShortcutAccessory
+  | PanelToolsRailTransientAccessory;
+
+export interface PanelToolsRailAccessoryActionDetail {
+  accessoryId: string;
+  actionId: string;
+  /** Rendered action control, suitable for anchoring an application-owned overlay. */
+  anchor: HTMLElement;
 }
 
 /** Canonical shell recipe used by Lab and by managed ShellApp examples. */

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { ref } from 'lit/directives/ref.js';
 import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 import '../../../../dist/components/ds-message-scroller.js';
 import '../../../../dist/components/ds-message.js';
@@ -23,6 +24,8 @@ const meta: Meta = {
 };
 export default meta;
 type Story = StoryObj;
+
+const wiredThreadSwitchStories = new WeakSet<Element>();
 
 export const GenericConversation: Story = {
   render: () => html`
@@ -117,6 +120,93 @@ export const PersonToPersonReuse: Story = {
               aria-label="Add to message"
             ></ds-button-unfilled>
           </ds-message-composer>
+        </div>
+      </ds-message-scroller>
+    </div>
+  `,
+};
+
+export const ReusedAcrossConversations: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A persistent MessageScroller can replace its complete application-owned transcript when the active conversation changes. Removed message elements are released from internal tracking and the replacement begins from its own default position.',
+      },
+    },
+  },
+  render: () => html`
+    <div
+      style="display:grid; grid-template-rows:auto minmax(0, 1fr); gap:var(--dimension-space-100); height:640px; width:min(720px, 90vw);"
+      ${ref(root => {
+        if (!root || wiredThreadSwitchStories.has(root)) return;
+        wiredThreadSwitchStories.add(root);
+        const scroller = root.querySelector('ds-message-scroller');
+        const switchAction = root.querySelector('#switch-conversation');
+        const status = root.querySelector('#conversation-status');
+        if (!scroller || !switchAction || !status) return;
+
+        switchAction.addEventListener('dsClick', () => {
+          scroller.querySelectorAll(':scope > ds-message').forEach(message => message.remove());
+          [
+            ['incoming', 'Avery', 'The replacement conversation starts with its own history.'],
+            [
+              'outgoing',
+              'You',
+              'This scroller instance stayed mounted while its transcript changed.',
+            ],
+          ].forEach(([direction, author, text], index) => {
+            const message = document.createElement('ds-message');
+            message.setAttribute('message-id', `replacement-${index}`);
+            message.setAttribute('direction', direction);
+            message.setAttribute('author', author);
+            const bubble = document.createElement('ds-message-bubble');
+            bubble.setAttribute('variant', direction === 'outgoing' ? 'user' : 'received');
+            bubble.textContent = text;
+            message.append(bubble);
+            scroller.append(message);
+          });
+          scroller.setAttribute('messages-label', 'Conversation with Avery');
+          status.textContent = 'Showing conversation with Avery';
+        });
+      })}
+    >
+      <div
+        style="display:flex; align-items:center; gap:var(--dimension-space-100); padding-inline:var(--dimension-space-100);"
+      >
+        <ds-button-unfilled
+          id="switch-conversation"
+          label="Switch conversation"
+          size="sm"
+        ></ds-button-unfilled>
+        <ds-text id="conversation-status" as="span" variant="text-body-small" color="secondary">
+          Showing conversation with Morgan
+        </ds-text>
+      </div>
+      <ds-message-scroller messages-label="Conversation with Morgan" default-position="end">
+        <ds-message
+          message-id="initial-1"
+          direction="incoming"
+          author="Morgan"
+          group-position="single"
+        >
+          <ds-message-bubble variant="received">
+            The initial conversation remains application-owned.
+          </ds-message-bubble>
+        </ds-message>
+        <ds-message
+          message-id="initial-2"
+          direction="outgoing"
+          author="You"
+          group-position="single"
+          scroll-anchor
+        >
+          <ds-message-bubble variant="user">
+            Switch threads without recreating the scroller.
+          </ds-message-bubble>
+        </ds-message>
+        <div slot="overlay" style="padding:var(--dimension-space-100);">
+          <ds-message-composer label="Message Morgan"></ds-message-composer>
         </div>
       </ds-message-scroller>
     </div>

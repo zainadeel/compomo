@@ -7,6 +7,7 @@ import type {
   PanelToolsHeaders,
   PanelToolsHeaderAction,
   PanelToolsItem,
+  PanelToolsRailAccessory,
 } from '../PanelTools/panel-tools-types';
 import type { NavChromeStyle } from '../../shell/nav-chrome';
 import type { ShellPageContentInset, ShellPageContentSurface } from '../ShellPage/shell-page-types';
@@ -101,6 +102,8 @@ export interface ShellPageChromeConfig {
  */
 export interface ShellToolsConfig {
   items?: PanelToolsItem[];
+  /** Desktop/tablet-only direct rail intents and decorative group boundaries. */
+  accessories?: PanelToolsRailAccessory[];
   headers?: PanelToolsHeaders;
   storageKey?: string;
   fullscreenHeaderMode?: 'shared' | 'split';

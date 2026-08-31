@@ -8,15 +8,17 @@ import '/dist/components/ds-message-scroller.js';
 import '/dist/components/ds-message.js';
 import '/dist/components/ds-message-bubble.js';
 
-await Promise.all([
-  'ds-agent-questionnaire',
-  'ds-agent-tool-call',
-  'ds-agent-source-list',
-  'ds-message-composer',
-  'ds-agent-response',
-  'ds-message-scroller',
-  'ds-message',
-].map(tag => customElements.whenDefined(tag)));
+await Promise.all(
+  [
+    'ds-agent-questionnaire',
+    'ds-agent-tool-call',
+    'ds-agent-source-list',
+    'ds-message-composer',
+    'ds-agent-response',
+    'ds-message-scroller',
+    'ds-message',
+  ].map(tag => customElements.whenDefined(tag))
+);
 
 const questions = [
   {
@@ -26,7 +28,11 @@ const questions = [
     required: true,
     allowOther: true,
     choices: [
-      { value: 'battery', label: 'Repeated battery failures', description: 'Three matching visits.' },
+      {
+        value: 'battery',
+        label: 'Repeated battery failures',
+        description: 'Three matching visits.',
+      },
       { value: 'tires', label: 'Overdue tire inspections' },
     ],
   },
@@ -73,7 +79,12 @@ toolCustom.output = { should: 'not render' };
 
 const sources = document.querySelector('#sources');
 sources.items = [
-  { id: 'safe', title: 'Maintenance guide', description: 'Inspection guidance', url: 'https://docs.example.com/guide' },
+  {
+    id: 'safe',
+    title: 'Maintenance guide',
+    description: 'Inspection guidance',
+    url: 'https://docs.example.com/guide',
+  },
   { id: 'unsafe', title: 'Unsafe source', url: 'javascript:alert(1)' },
   { id: 'invalid', title: 'Malformed source', url: 'http://[' },
 ];
@@ -136,7 +147,10 @@ function createMessage(id, text, anchor = false) {
 
 for (let index = 0; index < 12; index += 1) {
   scroller.append(
-    createMessage(`history-${index}`, `Earlier transcript message ${index}. ${'Context '.repeat(8)}`),
+    createMessage(
+      `history-${index}`,
+      `Earlier transcript message ${index}. ${'Context '.repeat(8)}`
+    )
   );
 }
 scroller.busy = true;
@@ -151,6 +165,30 @@ window.appendAnchoredTurn = () => {
 window.prependHistory = () => {
   const message = createMessage('older-history', 'An older history item.');
   scroller.querySelector('ds-message').before(message);
+};
+
+function transcriptElements() {
+  return [...scroller.querySelectorAll('ds-message, ds-agent-response')].filter(element => {
+    if (element.closest('.message-scroller__interaction, .message-scroller__overlay-content')) {
+      return false;
+    }
+    return element.matches('ds-agent-response') || !element.closest('ds-agent-response');
+  });
+}
+
+window.replaceTranscript = () => {
+  const previous = transcriptElements();
+  window.replacedTranscriptWeakRefs = previous.map(element => new WeakRef(element));
+  previous.forEach(element => element.remove());
+  for (let index = 0; index < 12; index += 1) {
+    scroller.append(
+      createMessage(
+        `replacement-${index}`,
+        `Replacement transcript message ${index}. ${'New context '.repeat(8)}`
+      )
+    );
+  }
+  return previous.length;
 };
 
 let growth = 0;

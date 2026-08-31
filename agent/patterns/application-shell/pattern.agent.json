@@ -65,6 +65,8 @@
     "ShellApp emits stable navigation and page intent events; it never mutates router history.",
     "ShellApp owns responsive mode, PanelNav presentation, tool open state, active tool, direct mobile destinations, optional Inbox grouping, Menu state, fullscreen presentation, focus restoration, and breakpoint state preservation.",
     "Tool products and routed content are instantiated once by the application in named tool-view and default slots; ShellApp changes presentation without recreating those owners.",
+    "The application owns rail accessory state, labels, timers, permissions, navigation, and action consequences. ShellApp forwards governed desktop and tablet accessory definitions and intents without changing tool selection or drawer state.",
+    "When a transient status group and shortcut group coexist in the same rail region, the application assigns explicit orders for status, decorative boundary, then shortcuts; component behavior never infers grouping from product-specific ids.",
     "The application owns account menus, tool product data, page actions, and the consequences of every emitted intent event.",
     "The application owns viewport and theme-color metadata, the dynamic-viewport framework root, and containing document overscroll so body never becomes a second application scroller; ShellApp fills that owner and keeps its existing internal scrollers.",
     "The application resolves competing global messages to one Banner and owns its actions, controlled open state, orientation for the available shell capacity, dismissal persistence, and removal after exit motion.",
@@ -74,6 +76,7 @@
     "Render exactly one managed ShellApp and one active routed main landmark.",
     "Provide visible labels and accessible names in navigation, pageChrome, and tool definitions before passing them to ShellApp.",
     "Handle ShellApp intent events without replacing focusable owners during responsive or fullscreen transitions.",
+    "Pair accessory status indicators with accessible status text and keep decorative accessory boundaries out of the accessibility tree.",
     "Keep the canonical Agents and Help tools available; expose Activity directly on mobile unless the product explicitly opts into grouped Inbox behavior.",
     "Do not override browser keyboard chords when enabling shell shortcuts."
   ],
@@ -85,6 +88,7 @@
     "Below 768px the application root owns a 100dvh fixed stage with a 100vh fallback while ShellApp continues to fill its owner with height 100%; JavaScript viewport measurement synchronizes only the chrome wash and does not own layout height.",
     "With viewport-fit=cover, ShellApp consumes the shared top safe-area inset once and MobileBarNav consumes the persistent bottom inset; nested routed, tool, sheet, and consumer headers do not duplicate either inset.",
     "An optional Banner spans the complete application above desktop navigation, workspace, tools, and mobile global surfaces while remaining below the operating-system top safe area.",
+    "Desktop and tablet may render governed direct-action rail accessories. Mobile intentionally omits them, so applications provide equivalent persistent status in the top Banner lane when the product requires it.",
     "Switching breakpoints changes presentation and inert state without recreating route or tool elements.",
     "Switching sectionNavigation changes only desktop and tablet chrome; mobile composition, current route, routed content, and tool state remain stable.",
     "Search, Activity, Messages, and Agents use direct mobile destinations; products may explicitly group review tools under Inbox instead."
@@ -140,10 +144,7 @@
           ]
         }
       ],
-      "references": [
-        "src/wc/components/ShellApp/ShellApp.mdx",
-        "docs/framework-integration.md"
-      ]
+      "references": ["src/wc/components/ShellApp/ShellApp.mdx", "docs/framework-integration.md"]
     },
     "vue": {
       "status": "planned",
@@ -174,10 +175,7 @@
           ]
         }
       ],
-      "references": [
-        "scripts/verify-package-imports.mjs",
-        "docs/framework-integration.md"
-      ]
+      "references": ["scripts/verify-package-imports.mjs", "docs/framework-integration.md"]
     }
   },
   "references": [

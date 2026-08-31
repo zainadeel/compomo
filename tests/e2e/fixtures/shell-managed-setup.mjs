@@ -133,10 +133,19 @@ for (const type of [
   'dsTabChange',
   'dsSubsectionChange',
   'dsToolChange',
+  'dsRailAccessoryAction',
   'dsPresentationChange',
 ]) {
   shell.addEventListener(type, event => {
-    events.push({ type, detail: event.detail });
+    const detail =
+      type === 'dsRailAccessoryAction'
+        ? {
+            accessoryId: event.detail.accessoryId,
+            actionId: event.detail.actionId,
+            anchorTag: event.detail.anchor?.tagName,
+          }
+        : event.detail;
+    events.push({ type, detail });
     document.documentElement.dataset.lastEvent = JSON.stringify(events.at(-1));
   });
 }

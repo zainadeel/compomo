@@ -27,6 +27,16 @@ export type {
   PanelToolsHeaderConfig,
   PanelToolsHeaders,
   PanelToolsItem,
+  PanelToolsRailAccessory,
+  PanelToolsRailAccessoryAction,
+  PanelToolsRailAccessoryActionDetail,
+  PanelToolsRailAccessorySecondaryAction,
+  PanelToolsRailAccessoryVisual,
+  PanelToolsRailDividerAccessory,
+  PanelToolsRailPlacement,
+  PanelToolsRailShortcutAccessory,
+  PanelToolsRailTransientAccessory,
+  PanelToolsRailTransientTone,
   PanelToolsToolId,
 } from '../components/PanelTools/panel-tools-types';
 export { PANEL_TOOLS_DEFAULT_ITEMS } from '../components/PanelTools/panel-tools-types';

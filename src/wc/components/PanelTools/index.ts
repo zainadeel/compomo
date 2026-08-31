@@ -1,4 +1,17 @@
-export type { PanelToolsItem, PanelToolsToolId } from './panel-tools-types';
+export type {
+  PanelToolsItem,
+  PanelToolsRailAccessory,
+  PanelToolsRailAccessoryAction,
+  PanelToolsRailAccessoryActionDetail,
+  PanelToolsRailAccessorySecondaryAction,
+  PanelToolsRailAccessoryVisual,
+  PanelToolsRailDividerAccessory,
+  PanelToolsRailPlacement,
+  PanelToolsRailShortcutAccessory,
+  PanelToolsRailTransientAccessory,
+  PanelToolsRailTransientTone,
+  PanelToolsToolId,
+} from './panel-tools-types';
 export {
   PANEL_TOOLS_FOOTER_TOOL_ID,
   PANEL_TOOLS_DEFAULT_ITEMS,
