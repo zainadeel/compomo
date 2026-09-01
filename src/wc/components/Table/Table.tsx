@@ -55,6 +55,7 @@ import { TableLayoutController } from './table-layout-controller';
 import { TableLoadController } from './table-load-controller';
 import { TableGroupLoadController } from './table-group-load-controller';
 import {
+  estimateTableRowBlockSize,
   flattenTableVirtualItems,
   resolveTableVirtualPlan,
   TABLE_VIRTUAL_TOTAL_SUMMARY_LABEL,
@@ -1728,6 +1729,10 @@ export class Table {
       highlightFieldIds: this.highlightFieldIds,
       ariaRowIndex,
       variableVirtualSize,
+      intrinsicBlockSize:
+        this.dataMode !== 'virtual'
+          ? estimateTableRowBlockSize(row, this.visibleColumns)
+          : undefined,
       rowKey,
       renderSelectionControl: (label, checked, indeterminate, disabled, onActivate) =>
         this.renderSelectionControl(label, checked, indeterminate, disabled, onActivate),
@@ -2409,6 +2414,7 @@ export class Table {
                   'ds-table__table': true,
                   'ds-table__table--selectable': model.selectable,
                   'ds-table__table--grouped': model.grouped,
+                  'ds-table__table--deferred-rows': this.dataMode !== 'virtual',
                   'ds-table__table--virtual': virtualize,
                   'ds-table__table--native-group-sticky':
                     (model.grouped && this.stickyHeader && !this.documentStickyHeader) ||
