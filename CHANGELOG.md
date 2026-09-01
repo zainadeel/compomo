@@ -1,5 +1,13 @@
 # Changelog
 
+## [14.24.0](https://github.com/zainadeel/compomo/compare/v14.23.0...v14.24.0) (2026-09-01)
+
+
+### Added
+
+* add split button modes and focused header actions ([d9d3550](https://github.com/zainadeel/compomo/commit/d9d355000322a9f94f0ed6c31f183f8573797442))
+* add split button modes and focused header actions ([da9b465](https://github.com/zainadeel/compomo/commit/da9b46538c5df6e05a1fcb5ce8c4c2a6ebd9af86))
+
 ## [14.23.0](https://github.com/zainadeel/compomo/compare/v14.22.2...v14.23.0) (2026-08-31)
 
 
