@@ -13,6 +13,7 @@ import {
   BUTTON_STORY_VARIANTS as VARIANTS,
   BUTTON_STORY_WIDTHS as WIDTHS,
   wireButtonStoryMenuTriggers as wireMenuTriggers,
+  wireButtonStorySplitTriggers as wireSplitTriggers,
 } from '../../utils/button-story-foundation';
 
 const INTENTS = [
@@ -56,6 +57,8 @@ const meta: Meta = {
     hasBorder: { control: 'boolean' },
     background: { control: 'select', options: ['', ...BACKGROUNDS] },
     rounded: { control: 'boolean' },
+    split: { control: 'boolean' },
+    menuAriaLabel: { control: 'text' },
     pressScale: { control: 'boolean' },
     isInactive: { control: 'boolean' },
     isLoading: { control: 'boolean' },
@@ -77,6 +80,8 @@ const meta: Meta = {
     hasBorder: false,
     background: '',
     rounded: false,
+    split: false,
+    menuAriaLabel: 'More confirm options',
     pressScale: true,
     isInactive: false,
     isLoading: false,
@@ -121,6 +126,8 @@ export const Playground: Story = {
       .hasBorder=${args['hasBorder']}
       .background=${args['background'] || undefined}
       ?rounded=${args['rounded']}
+      ?split=${args['split']}
+      menu-aria-label=${args['menuAriaLabel']}
       ?press-scale=${args['pressScale']}
       ?is-inactive=${args['isInactive']}
       ?is-loading=${args['isLoading']}
@@ -212,6 +219,130 @@ export const Rounded: Story = {
   `,
 };
 
+export const SplitModes: Story = {
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'Split mode appends a dedicated menu segment to every content variant. Both default and rounded controls remain flush and use the matching tertiary border token as their separator.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="${COL}">
+      ${VARIANTS.map(
+        variant => html`
+          <div style="${ROW}">
+            <span style="${LABEL}">${variant}</span>
+            <ds-button-filled
+              split
+              variant=${variant}
+              label="Create"
+              icon="Plus"
+              aria-label=${variant === 'icon' ? 'Create' : undefined}
+              menu-aria-label="More create options"
+            ></ds-button-filled>
+            <ds-button-filled
+              split
+              rounded
+              variant=${variant}
+              label="Create"
+              icon="Plus"
+              aria-label=${variant === 'icon' ? 'Create rounded' : undefined}
+              menu-aria-label="More rounded create options"
+            ></ds-button-filled>
+          </div>
+        `
+      )}
+      <div style="${ROW}">
+        <span style="${LABEL}">contrast</span>
+        ${CONTRASTS.map(
+          contrast => html`
+            <ds-button-filled
+              split
+              label=${contrast}
+              contrast=${contrast}
+              menu-aria-label="More ${contrast} options"
+            ></ds-button-filled>
+          `
+        )}
+      </div>
+      <div style="${ROW}">
+        <span style="${LABEL}">intent</span>
+        ${INTENTS.map(
+          intent => html`
+            <ds-button-filled
+              split
+              variant="icon"
+              icon="Plus"
+              intent=${intent}
+              aria-label="${intent} action"
+              menu-aria-label="More ${intent} options"
+            ></ds-button-filled>
+          `
+        )}
+      </div>
+      <div style="${ROW}">
+        <span style="${LABEL}">state</span>
+        <ds-button-filled
+          split
+          label="Loading"
+          is-loading
+          menu-aria-label="More loading options"
+        ></ds-button-filled>
+        <ds-button-filled
+          split
+          label="Inactive"
+          is-inactive
+          menu-aria-label="More inactive options"
+        ></ds-button-filled>
+        <ds-button-filled
+          split
+          label="Bordered"
+          has-border
+          contrast="faint"
+          menu-aria-label="More bordered options"
+        ></ds-button-filled>
+      </div>
+    </div>
+  `,
+};
+
+export const SplitLive: Story = {
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'The primary segment emits dsClick. The ChevronDown segment emits dsMenuClick and shares its controlled expanded state with Menu.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="${COL};height:var(--dimension-panel-width-xs);" ${ref(el => wireSplitTriggers(el))}>
+      <ds-button-filled
+        split
+        data-split-menu-trigger="filled-split-menu"
+        variant="icon-label"
+        label="Add driver"
+        icon="Plus"
+        menu-aria-label="More add driver options"
+        controls="filled-split-menu"
+      ></ds-button-filled>
+      <ds-menu
+        id="filled-split-menu"
+        menu-label="More add driver options"
+        align="end"
+        .items=${[
+          { label: 'Import drivers', value: 'import' },
+          { label: 'Invite driver', value: 'invite' },
+        ]}
+      ></ds-menu>
+    </div>
+  `,
+};
+
 export const LoadingVariants: Story = {
   render: () => html`
     <div style="${ROW}">
@@ -298,6 +429,18 @@ export const Widths: Story = {
               icon=${args['icon']}
               intent=${args['intent']}
               contrast=${args['contrast']}
+            ></ds-button-filled>
+            <ds-button-filled
+              split
+              variant=${args['variant']}
+              size=${args['size']}
+              width=${width}
+              label=${args['label']}
+              icon=${args['icon']}
+              intent=${args['intent']}
+              contrast=${args['contrast']}
+              aria-label=${args['variant'] === 'icon' ? args['label'] : undefined}
+              menu-aria-label="More ${args['label']} options"
             ></ds-button-filled>
           </div>
         `

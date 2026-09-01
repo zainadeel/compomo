@@ -8,6 +8,23 @@ export type {
 } from '../components/PanelNav/panel-nav-types';
 export type { BarNavTab } from '../components/BarNav/bar-nav-types';
 export type {
+  BarTitleAction,
+  BarTitleActionAppearance,
+  BarTitleActionCollapse,
+  BarTitleActionConfigItem,
+  BarTitleActionItem,
+  BarTitleActionMobile,
+  BarTitleButtonAction,
+  BarTitleDivider,
+  BarTitleIconAction,
+  BarTitleMenuAction,
+  BarTitleMenuChoice,
+  BarTitleMenuChoiceItem,
+  BarTitleOverflowAction,
+  BarTitlePrimaryAction,
+  BarTitleSplitAction,
+} from '../components/BarTitle/bar-title-types';
+export type {
   ShellPageContentInset,
   ShellPageContentSurface,
   ShellPageDesktopHeaderPlacement,

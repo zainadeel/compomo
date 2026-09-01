@@ -19,10 +19,17 @@ import type {
   PanelToolsToolId,
 } from '../PanelTools/panel-tools-types';
 import { PANEL_TOOLS_DEFAULT_ITEMS } from '../PanelTools/panel-tools-types';
-import type { BarTitleSectionItem } from '../BarTitle/bar-title-types';
+import type { BarTitleActionConfigItem, BarTitleSectionItem } from '../BarTitle/bar-title-types';
 import type { BarTitlePlacement } from '../BarTitle/bar-title-types';
+import {
+  findBarTitleAction,
+  overflowBarTitleActionSections,
+  resolveBarTitleActionItems,
+  visibleBarTitleActions,
+} from '../BarTitle/bar-title-actions';
 import type { BarNavTab } from '../BarNav/bar-nav-types';
 import type { BreadcrumbSelectDetail } from '../Breadcrumb/breadcrumb-types';
+import type { MenuItemData } from '../Menu/menu-types';
 import {
   DEFAULT_SHELL_GRADIENT_PRESET,
   normalizeShellGradientPreset,
@@ -78,6 +85,9 @@ import type {
   ShellToolsConfig,
 } from './shell-app-types';
 import type { PaperTextureConfig } from '../PaperTexture/paper-texture-types';
+
+let nextShellAppId = 0;
+type FocusableButton = HTMLElement & { setFocus?: () => Promise<void> };
 
 @Component({
   tag: 'ds-shell-app',
@@ -186,7 +196,13 @@ export class ShellApp {
   @State() private managedMobileSheetNavOpen = false;
   @State() private managedInboxTool: ShellInboxToolId | '' = '';
   @State() private managedBrowseContext: NavChromeStyle = 'dashboard';
+  @State() private mobileActionMenuOpen = false;
+  @State() private mobileActionMenuInitialFocusVisible = false;
 
+  private readonly instanceId = nextShellAppId++;
+  private readonly mobileActionMenuTriggerId = `shell-app-mobile-action-trigger-${this.instanceId}`;
+  private readonly mobileActionMenuId = `shell-app-mobile-action-menu-${this.instanceId}`;
+  private mobileActionTriggerEl: FocusableButton | null = null;
   private resizeObserver: ResizeObserver | null = null;
   private hasLoaded = false;
   private foregroundRefreshTimer: number | null = null;
@@ -300,6 +316,11 @@ export class ShellApp {
   @Watch('navigation')
   handleNavigationChange() {
     this.managedBrowseContext = this.navigation.browseContext ?? this.navStyle;
+  }
+
+  @Watch('pageChrome')
+  handlePageChromeChange() {
+    if (this.mobileActionMenuSections.length === 0) this.mobileActionMenuOpen = false;
   }
 
   @Watch('tools')
@@ -1091,9 +1112,10 @@ export class ShellApp {
   }
 
   private renderManagedMobileActions() {
-    const actions = this.pageChrome.mobileActions ?? [];
+    const legacyActions = this.pageChrome.mobileActions ?? [];
+    const visibleActions = visibleBarTitleActions(this.resolvedHeaderActions, 'mobile');
     return [
-      ...actions.map((action: PanelToolsHeaderAction) => (
+      ...legacyActions.map((action: PanelToolsHeaderAction) => (
         <ds-tooltip
           slot="trailing"
           key={action.id}
@@ -1118,8 +1140,109 @@ export class ShellApp {
           />
         </ds-tooltip>
       )),
+      ...visibleActions.map(action => {
+        if (action.type !== 'icon') return null;
+        const button =
+          (action.appearance ?? 'unfilled') === 'filled' ? (
+            <ds-button-filled
+              variant="icon"
+              icon={action.icon}
+              aria-label={action.ariaLabel}
+              size="md"
+              intent={action.intent ?? 'brand'}
+              contrast={action.contrast ?? 'bold'}
+              isInactive={action.isInactive}
+              isLoading={action.isLoading}
+              onDsClick={() => this.dsPageAction.emit(action.id)}
+            />
+          ) : (
+            <ds-button-unfilled
+              variant="icon"
+              icon={action.icon}
+              aria-label={action.ariaLabel}
+              size="md"
+              isInactive={action.isInactive}
+              isLoading={action.isLoading}
+              activeFill={false}
+              hasBorder={false}
+              onDsClick={() => this.dsPageAction.emit(action.id)}
+            />
+          );
+        return (
+          <ds-tooltip slot="trailing" key={action.id} label={action.label} side="bottom" size="sm">
+            {button}
+          </ds-tooltip>
+        );
+      }),
+      ...(this.mobileActionMenuSections.length > 0
+        ? [
+            <ds-tooltip slot="trailing" label="Page options" side="bottom" size="sm">
+              <ds-button-unfilled
+                ref={el => {
+                  this.mobileActionTriggerEl = el ?? null;
+                }}
+                id={this.mobileActionMenuTriggerId}
+                variant="icon"
+                icon="Ellipses"
+                aria-label={this.pageChrome.actionsAriaLabel ?? 'More page actions'}
+                size="md"
+                activeFill={false}
+                hasBorder={false}
+                haspopup="menu"
+                controls={this.mobileActionMenuId}
+                expanded={this.mobileActionMenuOpen}
+                onDsClick={(event: CustomEvent<MouseEvent>) => {
+                  this.mobileActionMenuInitialFocusVisible = event.detail.detail === 0;
+                  this.mobileActionMenuOpen = !this.mobileActionMenuOpen;
+                }}
+              />
+            </ds-tooltip>,
+          ]
+        : []),
       <slot name="page-header-trailing" slot="trailing" />,
     ];
+  }
+
+  private get resolvedHeaderActions(): BarTitleActionConfigItem[] {
+    return resolveBarTitleActionItems(
+      this.pageChrome.actionItems,
+      this.pageChrome.primaryAction ?? null,
+      this.pageChrome.actions ?? []
+    );
+  }
+
+  private get mobileActionMenuSections() {
+    return overflowBarTitleActionSections(this.resolvedHeaderActions, 'mobile');
+  }
+
+  private closeMobileActionMenu = () => {
+    this.mobileActionMenuOpen = false;
+  };
+
+  private handleMobileActionSelect = (event: CustomEvent<MenuItemData>) => {
+    const id = String(event.detail.value ?? '');
+    const action = findBarTitleAction(this.resolvedHeaderActions, id);
+    if (!action || action.isInactive || ('isLoading' in action && action.isLoading)) return;
+    this.mobileActionMenuOpen = false;
+    this.dsPageAction.emit(id);
+    requestAnimationFrame(() => void this.mobileActionTriggerEl?.setFocus?.());
+  };
+
+  private renderManagedMobileActionMenu() {
+    if (this.mobileActionMenuSections.length === 0) return null;
+    return (
+      <ds-menu
+        id={this.mobileActionMenuId}
+        anchorId={this.mobileActionMenuTriggerId}
+        align="end"
+        menuLabel={this.pageChrome.actionsAriaLabel ?? 'More page actions'}
+        open={this.mobileActionMenuOpen}
+        initialFocusVisible={this.mobileActionMenuInitialFocusVisible}
+        sections={this.mobileActionMenuSections}
+        onDsClose={this.closeMobileActionMenu}
+        onDsSelect={this.handleMobileActionSelect}
+      />
+    );
   }
 
   private get barTitleSections(): BarTitleSectionItem[] {
@@ -1138,6 +1261,12 @@ export class ShellApp {
     const page = this.pageChrome;
     return (
       <ds-bar-title
+        ref={el => {
+          if (el) {
+            (el as HTMLElement & { actionItems?: BarTitleActionConfigItem[] }).actionItems =
+              page.actionItems;
+          }
+        }}
         slot={placement === 'page' ? 'header' : undefined}
         placement={placement}
         variant={placement === 'shell-bar' ? 'compact' : 'expanded'}
@@ -1167,7 +1296,7 @@ export class ShellApp {
   private renderManagedPage() {
     const page = this.pageChrome;
     const mobileSections = page.showBack ? [] : this.resolvedPageTabs;
-    return (
+    return [
       <ds-shell-page
         responsiveMode={this.resolvedMode}
         headerCapacity={resolveManagedShellPageCapacity(this.resolvedMode)}
@@ -1198,8 +1327,9 @@ export class ShellApp {
           {this.renderManagedMobileActions()}
         </ds-mobile-header>
         <slot />
-      </ds-shell-page>
-    );
+      </ds-shell-page>,
+      this.renderManagedMobileActionMenu(),
+    ];
   }
 
   private renderSlottedShell(

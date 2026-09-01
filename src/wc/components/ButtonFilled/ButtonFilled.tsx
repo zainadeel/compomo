@@ -114,6 +114,15 @@ export class ButtonFilled {
   @Prop() haspopup: ButtonFilledPopup | undefined;
 
   /**
+   * Append a separate ChevronDown menu segment while preserving this button's
+   * variant, size, intent, contrast, loading, inactive, and width treatment.
+   */
+  @Prop() split: boolean = false;
+
+  /** Accessible name for the appended menu segment in split mode. */
+  @Prop() menuAriaLabel: string = 'More options';
+
+  /**
    * This action *has* a menu: implies `aria-haspopup="menu"` and adds the trailing
    * chevron that carries the affordance.
    *
@@ -126,12 +135,14 @@ export class ButtonFilled {
   @Prop() hasMenu: boolean = false;
 
   @Event() dsClick!: EventEmitter<MouseEvent>;
+  @Event() dsMenuClick!: EventEmitter<MouseEvent>;
 
   private buttonEl: HTMLButtonElement | null = null;
+  private menuButtonEl: HTMLButtonElement | null = null;
 
   @Method()
-  async setFocus() {
-    this.buttonEl?.focus();
+  async setFocus(segment: 'primary' | 'menu' = 'primary') {
+    (segment === 'menu' ? this.menuButtonEl : this.buttonEl)?.focus();
   }
 
   private handleClick = (event: MouseEvent) => {
@@ -141,6 +152,15 @@ export class ButtonFilled {
       return;
     }
     this.dsClick.emit(event);
+  };
+
+  private handleMenuClick = (event: MouseEvent) => {
+    if (this.isInactive || this.isLoading) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    this.dsMenuClick.emit(event);
   };
 
   private get resolvedHaspopup(): ButtonFilledPopup | undefined {
@@ -157,22 +177,26 @@ export class ButtonFilled {
     return this.isInset && this.insetDepth === 'double' && this.size !== 'xs';
   }
 
-  render() {
+  private buttonClass(
+    variant: ButtonFilledVariant,
+    expanded: boolean,
+    bordered: boolean
+  ): Record<string, boolean> {
     const cls: Record<string, boolean> = {
       'button-filled': true,
       'ds-button': true,
       'ds-focus-ring-inset': true,
-      'ds-control-press-scale': this.pressScale,
+      'ds-control-press-scale': this.pressScale && !this.split,
       'ds-interaction-fill': !this.isInactive,
       /* Bold is the default filled contrast — on-bold interaction tokens. */
       'ds-interaction-fill--on-bold': this.contrast === 'bold',
       'ds-interaction-fill--on-strong': this.contrast === 'strong',
       'ds-interaction-fill--on-medium': this.contrast === 'medium',
       /* faint → default app interaction tokens (no --on-*). */
-      'button-filled--bordered': this.hasBorder,
-      'ds-button--bordered': this.hasBorder,
-      'button-filled--expanded': this.expanded === true && !this.isInactive,
-      'ds-button--expanded': this.expanded === true && !this.isInactive,
+      'button-filled--bordered': bordered,
+      'ds-button--bordered': bordered,
+      'button-filled--expanded': expanded && !this.isInactive,
+      'ds-button--expanded': expanded && !this.isInactive,
       'ds-control-inactive': this.isInactive,
       'ds-control--lg': this.size === 'lg',
       'ds-control--md': this.size === 'md',
@@ -181,23 +205,117 @@ export class ButtonFilled {
       'ds-control--inset': this.isInset && !this.doubleInset,
       'ds-control--inset-double': this.doubleInset,
       'ds-control-frame': true,
-      'button-filled--icon': this.variant === 'icon',
-      'ds-button--icon': this.variant === 'icon',
-      'button-filled--label': this.variant === 'label',
-      'button-filled--icon-label': this.variant === 'icon-label',
+      'button-filled--icon': variant === 'icon',
+      'ds-button--icon': variant === 'icon',
+      'button-filled--label': variant === 'label',
+      'button-filled--icon-label': variant === 'icon-label',
       'button-filled--rounded': this.rounded,
       'ds-button--rounded': this.rounded,
       [`button-filled--background-${this.background}`]: this.background !== undefined,
       [`button-filled--intent-${this.intent}`]: true,
       [`button-filled--contrast-${this.contrast}`]: true,
     };
+    return cls;
+  }
+
+  render() {
+    const primaryButton = (
+      <button
+        ref={el => {
+          this.buttonEl = el ?? null;
+        }}
+        type={this.type}
+        class={{
+          ...this.buttonClass(
+            this.variant,
+            !this.split && this.expanded === true,
+            this.hasBorder && !this.split
+          ),
+          'ds-button-split__primary': this.split,
+        }}
+        disabled={this.isInactive}
+        aria-label={this.accessibleName}
+        aria-busy={this.isLoading ? 'true' : undefined}
+        aria-disabled={this.isLoading ? 'true' : undefined}
+        aria-controls={this.split ? undefined : this.controls}
+        aria-expanded={
+          this.split || this.expanded === undefined ? undefined : String(this.expanded)
+        }
+        aria-haspopup={this.split ? undefined : this.resolvedHaspopup}
+        onPointerDown={event =>
+          beginElevatedControlPress(
+            event,
+            this.pressScale && !this.split && !this.isInactive && !this.isLoading
+          )
+        }
+        onClick={this.handleClick}
+      >
+        {renderButtonContent({
+          namespace: 'button-filled',
+          variant: this.variant,
+          size: this.size,
+          label: this.label,
+          labelEmphasis: this.labelEmphasis,
+          icon: this.icon,
+          hasMenu: !this.split && this.hasMenu,
+          isLoading: this.isLoading,
+        })}
+      </button>
+    );
+
+    const control = this.split ? (
+      <div
+        class={{
+          'ds-button-split': true,
+          'ds-button-split--rounded': this.rounded,
+        }}
+      >
+        {primaryButton}
+        <span class="ds-button-split__divider" aria-hidden="true" />
+        <button
+          ref={el => {
+            this.menuButtonEl = el ?? null;
+          }}
+          class={{
+            ...this.buttonClass('icon', this.expanded === true, false),
+            'ds-button-split__menu': true,
+          }}
+          type="button"
+          disabled={this.isInactive || this.isLoading}
+          aria-label={this.menuAriaLabel}
+          aria-controls={this.controls}
+          aria-expanded={String(this.expanded === true)}
+          aria-haspopup="menu"
+          onClick={this.handleMenuClick}
+        >
+          {renderButtonContent({
+            namespace: 'button-filled',
+            variant: 'icon',
+            size: this.size,
+            label: '',
+            labelEmphasis: true,
+            icon: 'ChevronDown',
+            hasMenu: false,
+            isLoading: false,
+          })}
+        </button>
+        {this.hasBorder ? <span class="ds-button-split__outline" aria-hidden="true" /> : null}
+      </div>
+    ) : (
+      primaryButton
+    );
 
     return (
       <Host
         class={{
           'button-filled-host': true,
-          'button-filled-host--icon': this.variant === 'icon',
-          'ds-button-host--icon': this.variant === 'icon',
+          'button-filled-host--icon': this.variant === 'icon' && !this.split,
+          'ds-button-host--icon': this.variant === 'icon' && !this.split,
+          'ds-button-split-host': this.split,
+          'ds-button-split-host--primary-icon': this.split && this.variant === 'icon',
+          [`button-filled-host--contrast-${this.contrast}`]: this.split,
+          [`button-filled-host--background-${this.background}`]:
+            this.split && this.background !== undefined,
           'ds-control--lg': this.size === 'lg',
           'ds-control--md': this.size === 'md',
           'ds-control--sm': this.size === 'sm',
@@ -208,35 +326,7 @@ export class ButtonFilled {
         }}
         tabIndex={-1}
       >
-        <button
-          ref={el => {
-            this.buttonEl = el ?? null;
-          }}
-          type={this.type}
-          class={cls}
-          disabled={this.isInactive}
-          aria-label={this.accessibleName}
-          aria-busy={this.isLoading ? 'true' : undefined}
-          aria-disabled={this.isLoading ? 'true' : undefined}
-          aria-controls={this.controls}
-          aria-expanded={this.expanded === undefined ? undefined : String(this.expanded)}
-          aria-haspopup={this.resolvedHaspopup}
-          onPointerDown={event =>
-            beginElevatedControlPress(event, this.pressScale && !this.isInactive && !this.isLoading)
-          }
-          onClick={this.handleClick}
-        >
-          {renderButtonContent({
-            namespace: 'button-filled',
-            variant: this.variant,
-            size: this.size,
-            label: this.label,
-            labelEmphasis: this.labelEmphasis,
-            icon: this.icon,
-            hasMenu: this.hasMenu,
-            isLoading: this.isLoading,
-          })}
-        </button>
+        {control}
       </Host>
     );
   }

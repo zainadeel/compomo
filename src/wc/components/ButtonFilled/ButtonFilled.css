@@ -1,9 +1,52 @@
 @import '../../utils/button-base.css';
+@import '../../utils/button-split.css';
 
 :host {
   --ds-button-filled-bg: var(--color-background-bold-brand);
   --ds-button-filled-fg: var(--color-foreground-faint-brand);
   --ds-button-filled-border: var(--color-border-secondary);
+  --ds-button-split-border: var(--color-border-secondary);
+  --ds-button-split-divider: var(--color-border-on-bold-background-tertiary);
+}
+
+:host(.button-filled-host--contrast-strong) {
+  --ds-button-split-divider: var(--color-border-on-strong-background-tertiary);
+}
+
+:host(.button-filled-host--contrast-medium) {
+  --ds-button-split-divider: var(--color-border-on-medium-background-tertiary);
+}
+
+:host(.button-filled-host--contrast-faint) {
+  --ds-button-split-divider: var(--color-border-tertiary);
+}
+
+:host(.button-filled-host--background-medium) {
+  --ds-button-split-border: var(--color-border-on-medium-background-secondary);
+}
+
+:host(.button-filled-host--background-bold) {
+  --ds-button-split-border: var(--color-border-on-bold-background-secondary);
+}
+
+:host(.button-filled-host--background-strong) {
+  --ds-button-split-border: var(--color-border-on-strong-background-secondary);
+}
+
+:host(.button-filled-host--background-translucent) {
+  --ds-button-split-border: var(--color-translucent-border-secondary);
+}
+
+:host(.button-filled-host--background-inverted) {
+  --ds-button-split-border: var(--color-inverted-border-secondary);
+}
+
+:host(.button-filled-host--background-media) {
+  --ds-button-split-border: var(--color-media-border-secondary);
+}
+
+:host(.button-filled-host--background-always-dark) {
+  --ds-button-split-border: var(--color-always-dark-border-secondary);
 }
 
 .button-filled {

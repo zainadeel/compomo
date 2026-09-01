@@ -164,11 +164,33 @@ const REVIEW_PAGE_CHROME: ShellPageChromeConfig = {
     { id: 'needs-review', label: 'Needs review' },
   ],
   subvalue: 'all-events',
-  primaryAction: { id: 'create-rule', label: 'Create rule', icon: 'Plus' },
-  actions: [
-    { id: 'export', label: 'Export events' },
+  actionItems: [
+    {
+      type: 'button',
+      id: 'create-rule',
+      label: 'Create rule',
+      icon: 'Plus',
+      appearance: 'filled',
+    },
+    {
+      type: 'icon',
+      id: 'refresh',
+      label: 'Refresh',
+      icon: 'Refresh',
+      ariaLabel: 'Refresh safety events',
+    },
+    {
+      type: 'menu',
+      id: 'export',
+      label: 'Export',
+      menuAriaLabel: 'Export safety events',
+      choices: [
+        { id: 'export-csv', label: 'Export CSV' },
+        { id: 'export-pdf', label: 'Export PDF' },
+      ],
+    },
     { type: 'divider' },
-    { id: 'archive', label: 'Archive reviewed events' },
+    { type: 'overflow', id: 'archive', label: 'Archive reviewed events' },
   ],
   actionsAriaLabel: 'Safety page actions',
   contentInsetBlockStartSize: 'var(--dimension-space-025)',

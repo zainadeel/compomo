@@ -7,6 +7,7 @@ await Promise.all([
 ]);
 
 window.__buttonClicks = 0;
+window.__buttonMenuClicks = 0;
 window.__buttonChanges = [];
 for (const button of document.querySelectorAll('ds-button-filled, ds-button-unfilled')) {
   button.addEventListener('dsClick', () => {
@@ -14,6 +15,9 @@ for (const button of document.querySelectorAll('ds-button-filled, ds-button-unfi
   });
   button.addEventListener('dsChange', event => {
     window.__buttonChanges.push({ id: button.id, detail: event.detail });
+  });
+  button.addEventListener('dsMenuClick', () => {
+    window.__buttonMenuClicks += 1;
   });
 }
 
