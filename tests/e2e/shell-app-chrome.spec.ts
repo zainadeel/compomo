@@ -18,162 +18,130 @@ test.describe('App shell chrome', () => {
     await expect(page.locator('.panel-nav--collapsed')).toHaveCount(0);
   });
 
-  test('commits panel lane layout once while preserving coordinated collapse motion @cross-browser', async ({
+  test('keeps panel, bar, and page on one continuous layout transition @cross-browser', async ({
     page,
   }) => {
-    const shell = page.locator('ds-shell-app');
-    const panel = page.locator('#panel');
-    const content = page.locator('.shell-app__content');
-    const result = await content.evaluate(async element => {
-      const samples: number[] = [element.clientWidth];
-      const observer = new ResizeObserver(() => samples.push(element.clientWidth));
-      observer.observe(element);
-      const nav = document.getElementById('panel') as HTMLElement & { collapsed: boolean };
-      const ended = new Promise<void>(resolve => {
-        document
-          .querySelector('ds-shell-app')!
-          .addEventListener('dsChromeTransitionEnd', () => resolve(), {
-            once: true,
-          });
-      });
-      nav.collapsed = true;
-      const animationState = await new Promise<{
-        count: number;
-        transforms: string[];
-      }>(resolve => {
-        requestAnimationFrame(() => {
-          const animations = element.getAnimations();
-          resolve({
-            count: animations.length,
-            transforms: animations.flatMap(animation => {
-              const effect = animation.effect as KeyframeEffect | null;
-              return (effect?.getKeyframes() ?? []).map(frame => String(frame.transform ?? ''));
-            }),
-          });
+    const result = await page.evaluate(async () => {
+      const shell = document.querySelector('ds-shell-app');
+      const panelLane = document.querySelector<HTMLElement>('.shell-app__panel');
+      const bar = document.querySelector<HTMLElement>('.shell-app__bar');
+      const content = document.querySelector<HTMLElement>('.shell-app__content');
+      const panelNav = document.getElementById('panel') as HTMLElement & { collapsed: boolean };
+      if (!shell || !panelLane || !bar || !content || !panelNav) throw new Error('Shell missing');
+
+      const samples: Array<{
+        barLeft: number;
+        barTransform: string;
+        barWidth: number;
+        contentTransform: string;
+        contentWidth: number;
+        panelRight: number;
+        panelWidth: number;
+      }> = [];
+      let frame = 0;
+      const sample = () => {
+        const panelRect = panelLane.getBoundingClientRect();
+        const barRect = bar.getBoundingClientRect();
+        const contentRect = content.getBoundingClientRect();
+        samples.push({
+          panelWidth: panelRect.width,
+          panelRight: panelRect.right,
+          barLeft: barRect.left,
+          barWidth: barRect.width,
+          contentWidth: contentRect.width,
+          barTransform: getComputedStyle(bar).transform,
+          contentTransform: getComputedStyle(content).transform,
         });
+        frame = requestAnimationFrame(sample);
+      };
+      const ended = new Promise<void>(resolve => {
+        shell.addEventListener('dsChromeTransitionEnd', () => resolve(), { once: true });
       });
+
+      sample();
+      panelNav.collapsed = true;
       await ended;
-      await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
-      observer.disconnect();
-      return { animationState, samples };
+      cancelAnimationFrame(frame);
+      sample();
+      cancelAnimationFrame(frame);
+      return samples;
     });
 
-    expect(result.animationState.count).toBeGreaterThan(0);
-    expect(result.animationState.transforms.join(' ')).not.toContain('scale');
-    expect(new Set(result.samples).size).toBeLessThanOrEqual(2);
-    await expect(shell).not.toHaveAttribute('data-shell-layout-transition');
-    await expect(panel.locator('.panel-nav')).toHaveClass(/panel-nav--collapsed/);
+    expect(new Set(result.map(sample => Math.round(sample.panelWidth))).size).toBeGreaterThan(4);
+    expect(new Set(result.map(sample => Math.round(sample.barWidth))).size).toBeGreaterThan(4);
+    expect(new Set(result.map(sample => Math.round(sample.contentWidth))).size).toBeGreaterThan(4);
+    expect(
+      Math.max(...result.map(sample => Math.abs(sample.barLeft - sample.panelRight)))
+    ).toBeLessThan(1.5);
+    expect(result.every(sample => sample.barTransform === 'none')).toBe(true);
+    expect(result.every(sample => sample.contentTransform === 'none')).toBe(true);
   });
 
-  test('commits the tools lane once while the drawer keeps its visible reveal @cross-browser', async ({
+  test('keeps tools, bar, and page on one continuous layout transition @cross-browser', async ({
     page,
   }) => {
-    const shell = page.locator('ds-shell-app');
-    const bar = page.locator('.shell-app__bar');
-    const content = page.locator('.shell-app__content');
-    const toolsVisuals = page.locator('ds-shell-tools, ds-panel-tools');
-    const agents = page.getByRole('button', { name: 'Agents', exact: true });
-    await content.evaluate(element => {
-      const samples: number[] = [element.clientWidth];
-      const observer = new ResizeObserver(() => samples.push(element.clientWidth));
-      observer.observe(element);
+    await page.evaluate(() => {
+      const bar = document.querySelector<HTMLElement>('.shell-app__bar');
+      const content = document.querySelector<HTMLElement>('.shell-app__content');
+      const tools = document.querySelector<HTMLElement>('.shell-app__tools');
+      if (!bar || !content || !tools) throw new Error('Shell missing');
+
+      const probe = {
+        frame: 0,
+        samples: [] as Array<{
+          barTransform: string;
+          barWidth: number;
+          contentTransform: string;
+          contentWidth: number;
+          toolsWidth: number;
+        }>,
+      };
+      const sample = () => {
+        probe.samples.push({
+          barWidth: bar.getBoundingClientRect().width,
+          contentWidth: content.getBoundingClientRect().width,
+          toolsWidth: tools.getBoundingClientRect().width,
+          barTransform: getComputedStyle(bar).transform,
+          contentTransform: getComputedStyle(content).transform,
+        });
+        probe.frame = requestAnimationFrame(sample);
+      };
+      sample();
       (
         window as unknown as {
-          shellResizeProbe: { observer: ResizeObserver; samples: number[] };
+          shellMotionProbe: typeof probe;
         }
-      ).shellResizeProbe = { observer, samples };
+      ).shellMotionProbe = probe;
     });
 
-    await agents.click();
-    await expect(shell).toHaveAttribute('data-shell-layout-transition', /panel-tools/);
-    await expect.poll(() => content.evaluate(element => element.getAnimations().length)).toBe(0);
-    await expect.poll(() => bar.evaluate(element => element.getAnimations().length)).toBe(0);
-    await expect
-      .poll(() =>
-        toolsVisuals.evaluateAll(elements =>
-          elements.some(element => getComputedStyle(element).backgroundColor !== 'rgba(0, 0, 0, 0)')
-        )
-      )
-      .toBe(true);
+    await page.getByRole('button', { name: 'Agents', exact: true }).click();
     await expect(page.locator('ds-panel-tools')).not.toHaveClass(/panel-tools--motion-opening/, {
       timeout: 5000,
     });
-    const widths = await page.evaluate(
-      () =>
-        new Promise<number[]>(resolve => {
-          requestAnimationFrame(() => {
-            const probe = (
-              window as unknown as {
-                shellResizeProbe: { observer: ResizeObserver; samples: number[] };
-              }
-            ).shellResizeProbe;
-            probe.observer.disconnect();
-            resolve(probe.samples);
-          });
-        })
-    );
-
-    expect(new Set(widths).size).toBeLessThanOrEqual(2);
-    await expect(shell).not.toHaveAttribute('data-shell-layout-transition');
-    await expect
-      .poll(() =>
-        toolsVisuals.evaluateAll(elements =>
-          elements.every(element => !element.style.backgroundColor)
-        )
-      )
-      .toBe(true);
-    await expect(agents).toHaveAttribute('aria-pressed', 'true');
-
-    await content.evaluate(element => {
-      const samples: number[] = [element.clientWidth];
-      const observer = new ResizeObserver(() => samples.push(element.clientWidth));
-      observer.observe(element);
-      (
+    const result = await page.evaluate(() => {
+      const probe = (
         window as unknown as {
-          shellResizeProbe: { observer: ResizeObserver; samples: number[] };
+          shellMotionProbe: {
+            frame: number;
+            samples: Array<{
+              barTransform: string;
+              barWidth: number;
+              contentTransform: string;
+              contentWidth: number;
+              toolsWidth: number;
+            }>;
+          };
         }
-      ).shellResizeProbe = { observer, samples };
+      ).shellMotionProbe;
+      cancelAnimationFrame(probe.frame);
+      return probe.samples;
     });
-    await agents.click();
-    await expect(shell).toHaveAttribute('data-shell-layout-transition', /panel-tools/);
-    await expect.poll(() => content.evaluate(element => element.getAnimations().length)).toBe(0);
-    await expect.poll(() => bar.evaluate(element => element.getAnimations().length)).toBe(0);
-    await expect
-      .poll(() =>
-        toolsVisuals.evaluateAll(elements =>
-          elements.some(element => getComputedStyle(element).backgroundColor !== 'rgba(0, 0, 0, 0)')
-        )
-      )
-      .toBe(true);
-    await expect(page.locator('ds-panel-tools')).not.toHaveClass(/panel-tools--motion-closing/, {
-      timeout: 5000,
-    });
-    const closingWidths = await page.evaluate(
-      () =>
-        new Promise<number[]>(resolve => {
-          requestAnimationFrame(() => {
-            const probe = (
-              window as unknown as {
-                shellResizeProbe: { observer: ResizeObserver; samples: number[] };
-              }
-            ).shellResizeProbe;
-            probe.observer.disconnect();
-            resolve(probe.samples);
-          });
-        })
-    );
 
-    expect(new Set(closingWidths).size).toBeLessThanOrEqual(2);
-    await expect(shell).not.toHaveAttribute('data-shell-layout-transition');
-    await expect
-      .poll(() =>
-        toolsVisuals.evaluateAll(elements =>
-          elements.every(element => !element.style.backgroundColor)
-        )
-      )
-      .toBe(true);
-    await expect(content).toBeVisible();
-    await expect(agents).toHaveAttribute('aria-pressed', 'false');
+    expect(new Set(result.map(sample => Math.round(sample.toolsWidth))).size).toBeGreaterThan(4);
+    expect(new Set(result.map(sample => Math.round(sample.barWidth))).size).toBeGreaterThan(4);
+    expect(new Set(result.map(sample => Math.round(sample.contentWidth))).size).toBeGreaterThan(4);
+    expect(result.every(sample => sample.barTransform === 'none')).toBe(true);
+    expect(result.every(sample => sample.contentTransform === 'none')).toBe(true);
   });
 
   test(

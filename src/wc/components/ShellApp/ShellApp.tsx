@@ -40,7 +40,6 @@ import {
   CHROME_TRANSITION_START,
   ChromeTransitionDepth,
   createRafCoalescer,
-  readChromeTransitionPhase,
   readChromeTransitionSource,
 } from '../../shell/chrome-transition';
 import {
@@ -86,7 +85,6 @@ import type {
   ShellToolsConfig,
 } from './shell-app-types';
 import type { PaperTextureConfig } from '../PaperTexture/paper-texture-types';
-import { ShellLayoutTransitionController } from './shell-layout-transition-controller';
 
 let nextShellAppId = 0;
 type FocusableButton = HTMLElement & { setFocus?: () => Promise<void> };
@@ -213,7 +211,6 @@ export class ShellApp {
   private panelWidthTokens: PanelNavWidthTokens = { expandedPx: 0, collapsedPx: 0 };
   private cachedViewportWidth = 0;
   private cachedViewportHeight = 0;
-  private shellLayoutTransition: ShellLayoutTransitionController | null = null;
   private onWindowResize = () => {
     this.updateResponsiveMode();
     if (this.panelNavTransition.isActive) return;
@@ -276,10 +273,6 @@ export class ShellApp {
 
   componentDidLoad() {
     this.hasLoaded = true;
-    this.shellLayoutTransition = new ShellLayoutTransitionController(
-      this.el,
-      () => this.resolvedMode === 'mobile' || this.toolsFullscreen
-    );
     this.syncSlottedNavStyle();
     this.syncSlottedMobileState();
     this.connectMetricsObserver();
@@ -307,8 +300,6 @@ export class ShellApp {
     this.disconnectPageLifecycleListeners();
     this.cancelForegroundRefresh();
     this.chromeSyncCoalescer.cancel();
-    this.shellLayoutTransition?.disconnect();
-    this.shellLayoutTransition = null;
     this.el.removeEventListener(CHROME_TRANSITION_START, this.onChromeTransitionStart);
     this.el.removeEventListener(CHROME_TRANSITION_END, this.onChromeTransitionEnd);
   }
@@ -382,10 +373,6 @@ export class ShellApp {
 
   private onChromeTransitionStart = (event: Event) => {
     const source = readChromeTransitionSource(event);
-    if (!source) return;
-
-    this.shellLayoutTransition?.start(source, readChromeTransitionPhase(event), event);
-
     if (source !== 'panel-nav') return;
 
     this.panelNavTransition.enter();
@@ -397,10 +384,6 @@ export class ShellApp {
 
   private onChromeTransitionEnd = (event: Event) => {
     const source = readChromeTransitionSource(event);
-    if (!source) return;
-
-    this.shellLayoutTransition?.finish(source);
-
     if (source !== 'panel-nav') return;
 
     this.panelNavTransition.exit();
