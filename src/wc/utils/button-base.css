@@ -35,6 +35,22 @@
   min-inline-size: var(--ds-control-height);
   border: none;
   border-radius: var(--ds-control-radius, var(--dimension-radius-025));
+  border-start-start-radius: var(
+    --ds-button-radius-start-start,
+    var(--ds-control-radius, var(--dimension-radius-025))
+  );
+  border-start-end-radius: var(
+    --ds-button-radius-start-end,
+    var(--ds-control-radius, var(--dimension-radius-025))
+  );
+  border-end-start-radius: var(
+    --ds-button-radius-end-start,
+    var(--ds-control-radius, var(--dimension-radius-025))
+  );
+  border-end-end-radius: var(
+    --ds-button-radius-end-end,
+    var(--ds-control-radius, var(--dimension-radius-025))
+  );
   cursor: default;
   -webkit-user-select: none;
   user-select: none;

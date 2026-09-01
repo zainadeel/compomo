@@ -63,6 +63,7 @@
     "Dashboard represents day-to-day operational work while Settings represents administrative and configuration work; route state selects the context.",
     "Replace navigation and pageChrome together from one completed route state.",
     "When pageChrome.showBack marks a detail depth, mobile chrome keeps the page heading as its identity and presents only local subsections; peer route tabs remain in desktop BarNav rather than replacing the detail heading.",
+    "Route-owned ordered page actions drive both BarTitle and MobileHeader. ShellApp forwards one flat page-action id and owns the derived mobile overflow menu so routes do not duplicate menu state or choices.",
     "Managed ShellApp keeps the selected desktop section-navigation presentation and ShellPage present and owns page header stickiness and the content scroller.",
     "Route-owned pageChrome independently selects ShellPage contentInset, page-header seams, scroll compaction, expanded and compact header-divider visibility, and contentSurface. ShellApp forwards them while resolving whether desktop title geometry is page-local or shell-bar-owned.",
     "The application filters unauthorized destinations, sections, and tools before passing them into shell components."
@@ -87,6 +88,7 @@
     "The routed content cell and tools cell expose separate anchored-overlay collision boundaries, so top-layer menus and tooltips remain above local clipping without crossing into neighboring shell lanes. Full-screen modal overlays remain viewport-owned.",
     "Paper texture chrome is desktop/tablet-only and follows the fixed viewport phase of the shell chrome; mobile remains a solid primary stage.",
     "Managed page-header capacity follows only the fixed shell breakpoint: roomy on desktop and compact on tablet. Opening PanelTools does not compact or constrain BarTitle.",
+    "Mobile keeps at most the first eligible ordered icon command visible and moves labeled buttons, menu choices, split actions, and explicit overflow commands into one shell-owned text-only page-actions menu.",
     "The bottom bar remains visible at all route and tool depths in the foundation release."
   ],
   "frameworkCaveats": {

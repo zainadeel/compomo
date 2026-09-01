@@ -12,7 +12,8 @@
     "A secondary command accompanies the single filled primary action in a local decision area.",
     "A toolbar, tool rail, overflow area, or shell region needs a compact icon action.",
     "A command represents a persistent toggle or mode whose active state remains meaningful after activation.",
-    "A row, card, or toolbar needs an overflow or more-options menu; this is the only component that carries that role."
+    "A row, card, or toolbar needs an overflow or more-options menu; this is the only component that carries that role.",
+    "A secondary command has closely related alternatives and needs split mode without losing its border, surface, active, variant, or loading treatment."
   ],
   "avoidWhen": [
     "The command is the single primary action in a local decision area; use ButtonFilled instead.",
@@ -42,11 +43,10 @@
     "component:ds-menu",
     "component:ds-panel-tools"
   ],
-  "patterns": [
-    "pattern:menu-trigger"
-  ],
+  "patterns": ["pattern:menu-trigger"],
   "accessibility": [
     "Provide an explicit accessible name for every icon-only action.",
+    "In split mode, provide menuAriaLabel for the appended ChevronDown segment, pass controls with the Menu id, and synchronize expanded with the Menu open state.",
     "Set hasMenu when the button triggers a Menu; it implies aria-haspopup of menu. Pass controls with the Menu id and expanded from the same open state given to Menu. Expanded popup triggers hold only the pressed wash while open, without changing their resting foreground; expanded disclosure controls without popup semantics retain the normal resting appearance.",
     "Give an icon-only menu button an accessible name that states the role, such as More options or Customize table, because no visible label or chevron carries it.",
     "Use haspopup directly for a non-menu popup such as a listbox or dialog; those cases get no chevron.",
@@ -72,7 +72,9 @@
     "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width.",
     "hasMenu covers two distinct menu-button shapes and the variant selects between them. With label or icon-label the action has a menu, and a trailing chevron carries the affordance. With icon the button is a menu and no chevron is added.",
     "Because the icon-only shape has no chevron, its glyph must convey the menu on its own. Use Ellipses for a generic more-options or overflow control. Use a specific icon when the menu has a named purpose, such as Table for Customize table.",
-    "An open popup is a transient pressed state rather than a selected one. While expanded is true and haspopup or hasMenu identifies a popup, the pressed wash is held for the popup's complete rendered lifecycle and survives hover without promoting foreground or selected fill, including when chrome opts out of selected fills with activeFill set to false. Expanded disclosure buttons without popup semantics remain visually neutral."
+    "An open popup is a transient pressed state rather than a selected one. While expanded is true and haspopup or hasMenu identifies a popup, the pressed wash is held for the popup's complete rendered lifecycle and survives hover without promoting foreground or selected fill, including when chrome opts out of selected fills with activeFill set to false. Expanded disclosure buttons without popup semantics remain visually neutral.",
+    "Split mode supports label, icon, and icon-label primary segments. The primary segment emits dsClick and the appended menu segment emits dsMenuClick.",
+    "Split mode keeps both segments flush and uses a tertiary surface-aware separator. Bordered mode also preserves the shared outer border; borderless mode limits the separator to the content line height."
   ],
   "responsiveBehavior": [
     "The consuming layout decides when an icon-label action becomes icon-only and must provide an explicit accessible name after changing variants. Table caption Customize is one such layout: below 900px it uses the icon shape while keeping the same neutral resting foreground regardless of the controlled column configuration.",

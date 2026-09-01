@@ -19,7 +19,7 @@
   "components": [
     {
       "component": "component:ds-button-unfilled",
-      "role": "Provides the visible trigger, popup relationship attributes, and focus target. Carries both shapes, and is the only component that carries the icon-only overflow role.",
+      "role": "Provides the visible trigger, popup relationship attributes, focus target, and optional split-menu segment. Carries both menu-button shapes, and is the only component that carries the icon-only overflow role.",
       "required": true
     },
     {
@@ -29,7 +29,7 @@
     },
     {
       "component": "component:ds-button-filled",
-      "role": "Substitutes for the trigger when the menu belongs to the single primary action in a local decision area, using the label or icon-label shape only.",
+      "role": "Substitutes for the trigger when the menu belongs to the single primary action in a local decision area, and supports split mode when the primary command must remain independently available.",
       "required": false
     }
   ],
@@ -39,6 +39,7 @@
     "An open popup is a transient pressed state, not a selected one. The trigger holds only its pressed wash for the popup's rendered lifecycle from expanded alone, without changing foreground, so never also set isActive to represent an open menu.",
     "Menu owns popup placement and keyboard navigation; the application never calculates popup coordinates or applies positional CSS.",
     "On dsSelect from a command or single-selection row, update the selected value, close the Menu, and restore focus to the trigger.",
+    "For button split mode, restore focus to the menu segment after a menu choice; the primary segment remains an independent command.",
     "Switch rows and reorderable rows report dsSelect or dsReorder without closing; replace the items array from those events.",
     "On dsClose, synchronize the application open state to false."
   ],
@@ -46,6 +47,7 @@
     "A button either has a menu or is a menu, and the trigger's variant selects between the two shapes.",
     "Has a menu: a label or icon-label action that opens a menu. Set hasMenu, which implies aria-haspopup of menu and renders the trailing chevron that communicates the popup. Both button primitives support this shape.",
     "Is a menu: an icon-only control. Set hasMenu, which adds no chevron, so the glyph must convey the menu alone. Use Ellipses for generic more-options or overflow. Use a specific icon when the menu has a named purpose, such as Table for Customize table. Only ButtonUnfilled carries this shape, because the role is chrome rather than a primary action.",
+    "Split mode: set split and menuAriaLabel on either button primitive. The selected variant continues to define the primary segment; the appended ChevronDown segment owns controls, expanded, aria-haspopup, and dsMenuClick.",
     "Set controls to the Menu id and expanded from the same open state passed to Menu.",
     "Give an icon-only trigger an accessible name that states the role, such as More options or Customize table, because no visible label or chevron carries it.",
     "Use haspopup directly instead of hasMenu for a non-menu popup such as a listbox or dialog; those cases get no chevron.",
@@ -111,10 +113,7 @@
           ]
         }
       ],
-      "references": [
-        "docs/framework-integration.md",
-        "src/wc/components/Menu/Menu.stories.ts"
-      ]
+      "references": ["docs/framework-integration.md", "src/wc/components/Menu/Menu.stories.ts"]
     },
     "vue": {
       "status": "verified",
@@ -136,10 +135,7 @@
           ]
         }
       ],
-      "references": [
-        "docs/framework-integration.md",
-        "src/wc/components/Menu/Menu.stories.ts"
-      ]
+      "references": ["docs/framework-integration.md", "src/wc/components/Menu/Menu.stories.ts"]
     },
     "angular": {
       "status": "verified",
@@ -166,10 +162,7 @@
           ]
         }
       ],
-      "references": [
-        "docs/framework-integration.md",
-        "src/wc/components/Menu/Menu.stories.ts"
-      ]
+      "references": ["docs/framework-integration.md", "src/wc/components/Menu/Menu.stories.ts"]
     }
   },
   "references": [

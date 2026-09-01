@@ -132,6 +132,7 @@ for (const type of [
   'dsNavChildSelect',
   'dsTabChange',
   'dsSubsectionChange',
+  'dsPageAction',
   'dsToolChange',
   'dsRailAccessoryAction',
   'dsPresentationChange',

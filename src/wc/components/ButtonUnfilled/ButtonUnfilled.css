@@ -1,4 +1,5 @@
 @import '../../utils/button-base.css';
+@import '../../utils/button-split.css';
 @import '../../utils/table-caption-control.css';
 
 :host {
@@ -6,6 +7,43 @@
   --ds-button-unfilled-fg-active: var(--color-foreground-primary);
   --ds-button-unfilled-dot-ring: var(--color-background-secondary);
   --ds-button-unfilled-border: var(--color-border-secondary);
+  --ds-button-split-border: var(--color-border-secondary);
+  --ds-button-split-divider: var(--color-border-tertiary);
+}
+
+:host(.button-unfilled-host--background-medium) {
+  --ds-button-split-border: var(--color-border-on-medium-background-secondary);
+  --ds-button-split-divider: var(--color-border-on-medium-background-tertiary);
+}
+
+:host(.button-unfilled-host--background-bold) {
+  --ds-button-split-border: var(--color-border-on-bold-background-secondary);
+  --ds-button-split-divider: var(--color-border-on-bold-background-tertiary);
+}
+
+:host(.button-unfilled-host--background-strong) {
+  --ds-button-split-border: var(--color-border-on-strong-background-secondary);
+  --ds-button-split-divider: var(--color-border-on-strong-background-tertiary);
+}
+
+:host(.button-unfilled-host--background-translucent) {
+  --ds-button-split-border: var(--color-translucent-border-secondary);
+  --ds-button-split-divider: var(--color-translucent-border-tertiary);
+}
+
+:host(.button-unfilled-host--background-inverted) {
+  --ds-button-split-border: var(--color-inverted-border-secondary);
+  --ds-button-split-divider: var(--color-inverted-border-tertiary);
+}
+
+:host(.button-unfilled-host--background-media) {
+  --ds-button-split-border: var(--color-media-border-secondary);
+  --ds-button-split-divider: var(--color-media-border-tertiary);
+}
+
+:host(.button-unfilled-host--background-always-dark) {
+  --ds-button-split-border: var(--color-always-dark-border-secondary);
+  --ds-button-split-divider: var(--color-always-dark-border-tertiary);
 }
 
 .button-unfilled {

@@ -11,10 +11,11 @@ export const BUTTON_STORY_SURFACE =
 
 type MenuTriggerElement = HTMLElement & {
   expanded: boolean;
-  setFocus: () => void;
+  setFocus: (segment?: 'primary' | 'menu') => void;
 };
 
 type MenuElement = HTMLElement & {
+  anchor?: HTMLElement;
   open: boolean;
   initialFocusVisible: boolean;
 };
@@ -43,6 +44,35 @@ export function wireButtonStoryMenuTriggers(root: Element | undefined) {
     menu.addEventListener('dsSelect', () => {
       setOpen(false);
       requestAnimationFrame(() => trigger.setFocus());
+    });
+  });
+}
+
+/** Shared Storybook wiring for native split mode on either button family. */
+export function wireButtonStorySplitTriggers(root: Element | undefined) {
+  if (!root) return;
+  root.querySelectorAll('[data-split-menu-trigger]').forEach(node => {
+    const trigger = node as MenuTriggerElement & { dataset: DOMStringMap };
+    if (trigger.dataset['splitWired'] === 'true') return;
+    trigger.dataset['splitWired'] = 'true';
+
+    const menu = root.querySelector<MenuElement>(`#${trigger.dataset['splitMenuTrigger']}`);
+    if (!menu) return;
+
+    const setOpen = (open: boolean) => {
+      trigger.expanded = open;
+      menu.anchor = trigger.querySelector<HTMLElement>('.ds-button-split__menu') ?? undefined;
+      menu.open = open;
+    };
+
+    trigger.addEventListener('dsMenuClick', event => {
+      menu.initialFocusVisible = (event as CustomEvent<MouseEvent>).detail.detail === 0;
+      setOpen(!menu.open);
+    });
+    menu.addEventListener('dsClose', () => setOpen(false));
+    menu.addEventListener('dsSelect', () => {
+      setOpen(false);
+      requestAnimationFrame(() => trigger.setFocus('menu'));
     });
   });
 }

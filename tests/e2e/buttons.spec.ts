@@ -21,6 +21,185 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
+test('filled and unfilled split modes preserve primary variants and separate menu intent @cross-browser', async ({
+  page,
+}) => {
+  for (const [prefix, label] of [
+    ['filled', 'Create'],
+    ['unfilled', 'Export'],
+  ] as const) {
+    for (const variant of ['label', 'icon', 'icon-label']) {
+      const host = page.locator(`#${prefix}-split-${variant}`);
+      const buttons = host.getByRole('button');
+      await expect(buttons).toHaveCount(2);
+      await expect(buttons.nth(0)).toHaveAccessibleName(label);
+      await expect(buttons.nth(1)).toHaveAccessibleName(`More ${label.toLowerCase()} options`);
+      await buttons.nth(0).click();
+      await buttons.nth(1).click();
+    }
+  }
+
+  expect(
+    await page.evaluate(() => (window as typeof window & { __buttonClicks: number }).__buttonClicks)
+  ).toBe(6);
+  expect(
+    await page.evaluate(
+      () => (window as typeof window & { __buttonMenuClicks: number }).__buttonMenuClicks
+    )
+  ).toBe(6);
+
+  const filled = page.locator('#filled-split-icon-label');
+  await filled.evaluate(element =>
+    (
+      element as HTMLElement & {
+        setFocus: (segment: 'primary' | 'menu') => Promise<void>;
+      }
+    ).setFocus('menu')
+  );
+  await expect(filled.getByRole('button').nth(1)).toBeFocused();
+});
+
+test('split segments stay flush and use border separators in default and rounded modes @cross-browser', async ({
+  page,
+}) => {
+  for (const prefix of ['filled', 'unfilled']) {
+    const joined = page.locator(`#${prefix}-split-label`);
+    const joinedMetrics = await joined.evaluate(element => {
+      const wrapper = element.querySelector<HTMLElement>('.ds-button-split')!;
+      const divider = element.querySelector<HTMLElement>('.ds-button-split__divider')!;
+      const [primary, menu] = Array.from(wrapper.querySelectorAll<HTMLElement>('button'));
+      const primaryBox = primary.getBoundingClientRect();
+      const menuBox = menu.getBoundingClientRect();
+      return {
+        gap: menuBox.left - primaryBox.right,
+        background: getComputedStyle(wrapper).backgroundColor,
+        dividerHeight: divider.getBoundingClientRect().height,
+        wrapperHeight: wrapper.getBoundingClientRect().height,
+        primaryEndRadius: getComputedStyle(primary).borderStartEndRadius,
+        menuStartRadius: getComputedStyle(menu).borderStartStartRadius,
+      };
+    });
+    expect(joinedMetrics.gap).toBe(0);
+    expect(joinedMetrics.background).toBe('rgba(0, 0, 0, 0)');
+    expect(joinedMetrics.dividerHeight).toBe(joinedMetrics.wrapperHeight);
+    expect(joinedMetrics.primaryEndRadius).toBe('0px');
+    expect(joinedMetrics.menuStartRadius).toBe('0px');
+
+    const rounded = page.locator(`#${prefix}-split-rounded`);
+    const roundedMetrics = await rounded.evaluate(element => {
+      const wrapper = element.querySelector<HTMLElement>('.ds-button-split')!;
+      const [primary, menu] = Array.from(wrapper.querySelectorAll<HTMLElement>('button'));
+      const primaryBox = primary.getBoundingClientRect();
+      const menuBox = menu.getBoundingClientRect();
+      return {
+        gap: menuBox.left - primaryBox.right,
+        primaryStartRadius: Number.parseFloat(getComputedStyle(primary).borderStartStartRadius),
+        primaryEndRadius: getComputedStyle(primary).borderStartEndRadius,
+        menuStartRadius: getComputedStyle(menu).borderStartStartRadius,
+        menuEndRadius: Number.parseFloat(getComputedStyle(menu).borderStartEndRadius),
+      };
+    });
+    expect(roundedMetrics.gap).toBe(0);
+    expect(roundedMetrics.primaryStartRadius).toBeGreaterThan(0);
+    expect(roundedMetrics.primaryEndRadius).toBe('0px');
+    expect(roundedMetrics.menuStartRadius).toBe('0px');
+    expect(roundedMetrics.menuEndRadius).toBeGreaterThan(0);
+  }
+
+  const bordered = page.locator('#unfilled-split-label');
+  const borderless = page.locator('#unfilled-split-borderless');
+  await expect(bordered.locator('.ds-button-split__outline')).toHaveCount(1);
+  await expect(borderless.locator('.ds-button-split__outline')).toHaveCount(0);
+  await expect(bordered.locator('.ds-button-split__divider')).toHaveCSS('height', '32px');
+  await expect(borderless.locator('.ds-button-split__divider')).toHaveCSS('height', '20px');
+});
+
+test('icon-only split primary and menu segments retain every control size @cross-browser', async ({
+  page,
+}) => {
+  const sizes = [
+    ['lg', 40],
+    ['md', 32],
+    ['sm', 24],
+    ['xs', 16],
+  ] as const;
+
+  for (const prefix of ['filled', 'unfilled']) {
+    const host = page.locator(`#${prefix}-split-icon`);
+    for (const [size, expected] of sizes) {
+      await host.evaluate((element, nextSize) => {
+        (element as HTMLElement & { size: string }).size = nextSize;
+      }, size);
+      const buttons = host.getByRole('button');
+      for (const button of [buttons.nth(0), buttons.nth(1)]) {
+        await expect(button).toHaveCSS('width', `${expected}px`);
+        await expect(button).toHaveCSS('height', `${expected}px`);
+      }
+    }
+  }
+});
+
+test('filled split segments inherit every intent and contrast recipe', async ({ page }) => {
+  const mismatches = await page.locator('#filled-split-label').evaluate(async element => {
+    const host = element as HTMLElement & { intent: string; contrast: string };
+    const intents = [
+      'neutral',
+      'brand',
+      'ai',
+      'negative',
+      'warning',
+      'caution',
+      'positive',
+      'guide',
+      'walkthrough',
+    ];
+    const contrasts = ['bold', 'strong', 'medium', 'faint'];
+    const failures: string[] = [];
+
+    for (const intent of intents) {
+      for (const contrast of contrasts) {
+        host.intent = intent;
+        host.contrast = contrast;
+        await new Promise(resolve => requestAnimationFrame(resolve));
+        const [primary, menu] = Array.from(host.querySelectorAll<HTMLElement>('button'));
+        const primaryStyle = getComputedStyle(primary);
+        const menuStyle = getComputedStyle(menu);
+        if (
+          primaryStyle.backgroundColor !== menuStyle.backgroundColor ||
+          primaryStyle.color !== menuStyle.color ||
+          primaryStyle.height !== menuStyle.height
+        ) {
+          failures.push(`${intent}/${contrast}`);
+        }
+      }
+    }
+
+    return failures;
+  });
+
+  expect(mismatches).toEqual([]);
+});
+
+test('split loading blocks both primary and menu activation', async ({ page }) => {
+  const host = page.locator('#filled-split-loading');
+  const buttons = host.getByRole('button');
+  await expect(buttons.nth(0)).toHaveAttribute('aria-busy', 'true');
+  await expect(buttons.nth(0)).toHaveAttribute('aria-disabled', 'true');
+  await expect(buttons.nth(1)).toBeDisabled();
+
+  await host.evaluate(element => {
+    element.querySelectorAll('button').forEach(button => button.click());
+  });
+  expect(
+    await page.evaluate(() => (window as typeof window & { __buttonClicks: number }).__buttonClicks)
+  ).toBe(0);
+  expect(
+    await page.evaluate(
+      () => (window as typeof window & { __buttonMenuClicks: number }).__buttonMenuClicks
+    )
+  ).toBe(0);
+});
+
 test('unfilled buttons only own a tooltip for the collapsible table-caption contract', async ({
   page,
 }) => {

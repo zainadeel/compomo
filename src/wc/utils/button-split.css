@@ -1,0 +1,80 @@
+.ds-button-split {
+  position: relative;
+  display: inline-flex;
+  align-items: stretch;
+  min-width: 0;
+  overflow: hidden;
+  gap: 0;
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
+  background: transparent;
+}
+
+:host(.ds-control-width--fill) .ds-button-split {
+  width: 100%;
+}
+
+.ds-button-split > .ds-button-split__primary {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+  border-start-end-radius: var(--dimension-radius-000);
+  border-end-end-radius: var(--dimension-radius-000);
+}
+
+.ds-button-split > .ds-button-split__menu {
+  flex: 0 0 var(--ds-control-height);
+  width: var(--ds-control-height);
+  min-width: var(--ds-control-height);
+  border-start-start-radius: var(--dimension-radius-000);
+  border-end-start-radius: var(--dimension-radius-000);
+}
+
+.ds-button-split__divider {
+  position: relative;
+  z-index: 3;
+  align-self: stretch;
+  flex: 0 0 0;
+  margin-inline-start: calc(-1 * var(--dimension-stroke-width-012));
+  border-inline-start: var(--dimension-stroke-width-012) solid var(--ds-button-split-divider);
+  pointer-events: none;
+}
+
+.ds-button-split__divider--content-height {
+  align-self: center;
+  block-size: var(--ds-button-split-divider-content-height);
+}
+
+.ds-button-split__outline {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  border: var(--dimension-stroke-width-012) solid var(--ds-button-split-border);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+:host(.ds-control--lg) {
+  --ds-button-split-divider-content-height: var(--dimension-size-300);
+}
+
+:host(.ds-control--md) {
+  --ds-button-split-divider-content-height: var(--dimension-size-250);
+}
+
+:host(.ds-control--sm),
+:host(.ds-control--xs) {
+  --ds-button-split-divider-content-height: var(--dimension-size-200);
+}
+
+:host(.ds-button-split-host--primary-icon.ds-control-width--hug)
+  .ds-button-split
+  > .ds-button-split__primary {
+  flex: 0 0 var(--ds-control-height);
+  width: var(--ds-control-height);
+  min-width: var(--ds-control-height);
+  height: var(--ds-control-height);
+}
+
+.ds-button-split--rounded {
+  border-radius: var(--dimension-radius-half);
+}

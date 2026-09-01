@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import type {
+  BarTitleActionConfigItem,
   BarTitleActionItem,
   BarTitlePrimaryAction,
   BarTitleSectionItem,
@@ -55,6 +56,7 @@ interface BarTitleReviewCase {
   value?: string;
   primaryAction?: BarTitlePrimaryAction;
   actions?: BarTitleActionItem[];
+  actionItems?: BarTitleActionConfigItem[];
 }
 
 const pageCases: BarTitleReviewCase[] = [
@@ -247,6 +249,7 @@ function renderHeader(reviewCase: BarTitleReviewCase, variant: BarTitleVariant =
       value=${reviewCase.value ?? ''}
       .primaryAction=${reviewCase.primaryAction ?? null}
       .actions=${reviewCase.actions ?? []}
+      .actionItems=${reviewCase.actionItems}
       @dsSectionChange=${updateValue}
     ></ds-bar-title>
   `;
@@ -484,6 +487,82 @@ export const ActionConfigurations: Story = {
               </div>
             </section>
           `
+        )}
+      </div>
+    `;
+  },
+};
+
+export const OrderedActionPresentation: Story = {
+  name: 'Review · Ordered action presentation',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'One ordered action model keeps only its first eligible command beside the title. Every remaining command becomes a text-only overflow row; overflowed split commands and alternatives are flattened into separate actions.',
+      },
+    },
+  },
+  render: () => {
+    const actionItems: BarTitleActionConfigItem[] = [
+      {
+        type: 'split',
+        id: 'add-event',
+        label: 'Add event',
+        icon: 'Plus',
+        menuAriaLabel: 'More add event options',
+        choices: [
+          { id: 'import-events', label: 'Import events' },
+          { id: 'schedule-import', label: 'Schedule import' },
+        ],
+      },
+      {
+        type: 'button',
+        id: 'create-rule',
+        label: 'Create rule',
+        icon: 'Plus',
+        appearance: 'filled',
+      },
+      {
+        type: 'button',
+        id: 'export',
+        label: 'Export',
+        appearance: 'unfilled',
+      },
+      {
+        type: 'icon',
+        id: 'refresh',
+        label: 'Refresh',
+        icon: 'Refresh',
+        ariaLabel: 'Refresh safety events',
+      },
+      {
+        type: 'menu',
+        id: 'view',
+        label: 'View',
+        appearance: 'unfilled',
+        menuAriaLabel: 'Choose event view',
+        choices: [
+          { id: 'view-list', label: 'List view' },
+          { id: 'view-map', label: 'Map view' },
+        ],
+      },
+      { type: 'divider' },
+      { type: 'overflow', id: 'archive', label: 'Archive reviewed events' },
+    ];
+    const reviewCase: BarTitleReviewCase = {
+      id: 'ordered-actions',
+      label: 'Ordered production actions',
+      rationale: 'One split primary stays visible while every later action moves into overflow.',
+      heading: 'Safety events',
+      actionItems,
+    };
+
+    return html`
+      ${demoStyles}
+      <div class="bar-title-review__variant-list">
+        ${(['expanded', 'compact', 'constrained'] as const).map(variant =>
+          renderVariant(reviewCase, variant)
         )}
       </div>
     `;

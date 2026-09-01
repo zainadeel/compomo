@@ -37,7 +37,7 @@
     }
   ],
   "stateOwnership": [
-    "The router owns heading copy, selected section, depth, available actions, content inset, divider visibility, scroll-compaction policy, content surface, route data, and product outcomes.",
+    "The router owns heading copy, selected section, depth, ordered available actions, content inset, divider visibility, scroll-compaction policy, content surface, route data, and product outcomes.",
     "The application replaces pageChrome from completed route state and handles ShellApp page intent events.",
     "ShellApp owns ShellPage, BarTitle, MobileHeader, the content scroller, sticky presentation, and responsive switching.",
     "The default slot contains application-owned routed content and is not recreated for header compaction or breakpoint changes.",
@@ -51,6 +51,7 @@
   ],
   "responsiveBehavior": [
     "ShellApp derives the desktop BarTitle and mobile MobileHeader from the same pageChrome object.",
+    "Ordered page actions keep icon commands visible on mobile by default and flatten labeled, menu, split, and explicit overflow commands into one ShellApp-owned mobile menu.",
     "Route-level sections remain pageChrome tabs; subordinate local views use subsections.",
     "Use contentInset none only for deliberately full-bleed products such as maps and canvases.",
     "Table pages can retain responsive inline and bottom gutters while tuning their roomy and compact block-start seams; set scrollCompaction false when their roomy title must stay pinned, and let shell capacity continue to compact it for tools or tablet layouts.",
@@ -71,7 +72,7 @@
             {
               "path": "drivers-page.ts",
               "language": "typescript",
-              "content": "import type { ShellPageChromeConfig } from '@ds-mo/ui/shell'\n\nconst shell = document.querySelector<HTMLDsShellAppElement>('ds-shell-app')!\nconst pageChrome: ShellPageChromeConfig = {\n  heading: 'Drivers',\n  tabs: [{ id: 'active', label: 'Active' }, { id: 'inactive', label: 'Inactive' }],\n  value: 'active',\n  primaryAction: { id: 'create', label: 'Create driver' },\n}\nshell.pageChrome = pageChrome\nshell.addEventListener('dsTabChange', event => appRouter.navigate(event.detail))\nshell.addEventListener('dsPageAction', event => driverActions.run(event.detail))"
+              "content": "import type { ShellPageChromeConfig } from '@ds-mo/ui/shell'\n\nconst shell = document.querySelector<HTMLDsShellAppElement>('ds-shell-app')!\nconst pageChrome: ShellPageChromeConfig = {\n  heading: 'Drivers',\n  tabs: [{ id: 'active', label: 'Active' }, { id: 'inactive', label: 'Inactive' }],\n  value: 'active',\n  actionItems: [\n    { type: 'button', id: 'create', label: 'Create driver', appearance: 'filled' },\n    { type: 'overflow', id: 'export', label: 'Export drivers' },\n  ],\n}\nshell.pageChrome = pageChrome\nshell.addEventListener('dsTabChange', event => appRouter.navigate(event.detail))\nshell.addEventListener('dsPageAction', event => driverActions.run(event.detail))"
             }
           ],
           "notes": [
@@ -96,7 +97,7 @@
             {
               "path": "DriversRoute.tsx",
               "language": "tsx",
-              "content": "import type { ShellPageChromeConfig } from '@ds-mo/ui/shell'\n\nexport const driversPageChrome: ShellPageChromeConfig = {\n  heading: 'Drivers',\n  tabs: [{ id: 'active', label: 'Active' }, { id: 'inactive', label: 'Inactive' }],\n  value: 'active',\n  primaryAction: { id: 'create', label: 'Create driver' },\n}\n\nexport function DriversRoute() {\n  return <section aria-label=\"Driver results\">Page content</section>\n}"
+              "content": "import type { ShellPageChromeConfig } from '@ds-mo/ui/shell'\n\nexport const driversPageChrome: ShellPageChromeConfig = {\n  heading: 'Drivers',\n  tabs: [{ id: 'active', label: 'Active' }, { id: 'inactive', label: 'Inactive' }],\n  value: 'active',\n  actionItems: [{ type: 'button', id: 'create', label: 'Create driver', appearance: 'filled' }],\n}\n\nexport function DriversRoute() {\n  return <section aria-label=\"Driver results\">Page content</section>\n}"
             }
           ],
           "notes": [
@@ -105,10 +106,7 @@
           ]
         }
       ],
-      "references": [
-        "src/wc/components/ShellApp/ShellApp.mdx",
-        "docs/framework-integration.md"
-      ]
+      "references": ["src/wc/components/ShellApp/ShellApp.mdx", "docs/framework-integration.md"]
     },
     "vue": {
       "status": "planned",
@@ -125,7 +123,7 @@
             {
               "path": "drivers-page-chrome.ts",
               "language": "typescript",
-              "content": "import type { ShellPageChromeConfig } from '@ds-mo/ui/shell'\n\nexport const DRIVERS_PAGE_CHROME: ShellPageChromeConfig = {\n  heading: 'Drivers',\n  tabs: [{ id: 'active', label: 'Active' }, { id: 'inactive', label: 'Inactive' }],\n  value: 'active',\n  primaryAction: { id: 'create', label: 'Create driver' },\n}"
+              "content": "import type { ShellPageChromeConfig } from '@ds-mo/ui/shell'\n\nexport const DRIVERS_PAGE_CHROME: ShellPageChromeConfig = {\n  heading: 'Drivers',\n  tabs: [{ id: 'active', label: 'Active' }, { id: 'inactive', label: 'Inactive' }],\n  value: 'active',\n  actionItems: [{ type: 'button', id: 'create', label: 'Create driver', appearance: 'filled' }],\n}"
             }
           ],
           "notes": [
@@ -134,10 +132,7 @@
           ]
         }
       ],
-      "references": [
-        "docs/framework-integration.md",
-        "scripts/verify-package-imports.mjs"
-      ]
+      "references": ["docs/framework-integration.md", "scripts/verify-package-imports.mjs"]
     }
   },
   "references": [

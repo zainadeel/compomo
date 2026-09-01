@@ -13,7 +13,7 @@ import { BannerAnnouncement, BannerContrast, BannerIntent, BannerOrientation } f
 import { NavChromeStyle } from "./shell/nav-chrome";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
 import { BreadcrumbItem, BreadcrumbSelectDetail } from "./components/Breadcrumb/breadcrumb-types";
-import { BarTitleActionItem, BarTitlePlacement, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
+import { BarTitleActionConfigItem, BarTitleActionItem, BarTitlePlacement, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
 import { BarWorkflowStep, BarWorkflowSubmitAction } from "./components/BarWorkflow/bar-workflow-types";
 import { MobileDestination, ShellResponsiveMode } from "./shell/shell-responsive";
 import { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledPopup, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
@@ -83,7 +83,7 @@ export { BannerAnnouncement, BannerContrast, BannerIntent, BannerOrientation } f
 export { NavChromeStyle } from "./shell/nav-chrome";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
 export { BreadcrumbItem, BreadcrumbSelectDetail } from "./components/Breadcrumb/breadcrumb-types";
-export { BarTitleActionItem, BarTitlePlacement, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
+export { BarTitleActionConfigItem, BarTitleActionItem, BarTitlePlacement, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
 export { BarWorkflowStep, BarWorkflowSubmitAction } from "./components/BarWorkflow/bar-workflow-types";
 export { MobileDestination, ShellResponsiveMode } from "./shell/shell-responsive";
 export { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledPopup, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
@@ -421,6 +421,10 @@ export namespace Components {
     }
     interface DsBarTitle {
         /**
+          * Ordered page-header actions. When supplied, this replaces the legacy primaryAction/actions presentation while preserving the same dsAction event.
+         */
+        "actionItems"?: BarTitleActionConfigItem[];
+        /**
           * Secondary page actions shown in the overflow menu. Dividers create groups.
           * @default []
          */
@@ -645,6 +649,11 @@ export namespace Components {
          */
         "labelEmphasis": boolean;
         /**
+          * Accessible name for the appended menu segment in split mode.
+          * @default 'More options'
+         */
+        "menuAriaLabel": string;
+        /**
           * Scale down during a physical pointer press. Disable when an owning composite requires fixed child or background geometry.
           * @default true
          */
@@ -654,12 +663,17 @@ export namespace Components {
           * @default false
          */
         "rounded": boolean;
-        "setFocus": () => Promise<void>;
+        "setFocus": (segment?: "primary" | "menu") => Promise<void>;
         /**
           * Control density (height, padding, icon, type).
           * @default 'md'
          */
         "size": ButtonFilledSize;
+        /**
+          * Append a separate ChevronDown menu segment while preserving this button's variant, size, intent, contrast, loading, inactive, and width treatment.
+          * @default false
+         */
+        "split": boolean;
         /**
           * Native button type.
           * @default 'button'
@@ -762,6 +776,11 @@ export namespace Components {
          */
         "labelEmphasis": boolean;
         /**
+          * Accessible name for the appended menu segment in split mode.
+          * @default 'More options'
+         */
+        "menuAriaLabel": string;
+        /**
           * Scale down during a physical pointer press. Disable when an owning composite requires fixed child or background geometry.
           * @default true
          */
@@ -775,12 +794,17 @@ export namespace Components {
           * @default false
          */
         "rounded": boolean;
-        "setFocus": () => Promise<void>;
+        "setFocus": (segment?: "primary" | "menu") => Promise<void>;
         /**
           * Control density (height, padding, icon, type).
           * @default 'md'
          */
         "size": ButtonUnfilledSize;
+        /**
+          * Append a separate ChevronDown menu segment while preserving this button's variant, size, surface, active, loading, border, and width treatment.
+          * @default false
+         */
+        "split": boolean;
         /**
           * Native button type.
           * @default 'button'
@@ -4166,6 +4190,7 @@ declare global {
     };
     interface HTMLDsButtonFilledElementEventMap {
         "dsClick": MouseEvent;
+        "dsMenuClick": MouseEvent;
     }
     interface HTMLDsButtonFilledElement extends Components.DsButtonFilled, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsButtonFilledElementEventMap>(type: K, listener: (this: HTMLDsButtonFilledElement, ev: DsButtonFilledCustomEvent<HTMLDsButtonFilledElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -4183,6 +4208,7 @@ declare global {
     };
     interface HTMLDsButtonUnfilledElementEventMap {
         "dsClick": MouseEvent;
+        "dsMenuClick": MouseEvent;
         "dsChange": boolean;
     }
     interface HTMLDsButtonUnfilledElement extends Components.DsButtonUnfilled, HTMLStencilElement {
@@ -5544,6 +5570,10 @@ declare namespace LocalJSX {
     }
     interface DsBarTitle {
         /**
+          * Ordered page-header actions. When supplied, this replaces the legacy primaryAction/actions presentation while preserving the same dsAction event.
+         */
+        "actionItems"?: BarTitleActionConfigItem[];
+        /**
           * Secondary page actions shown in the overflow menu. Dividers create groups.
           * @default []
          */
@@ -5799,7 +5829,13 @@ declare namespace LocalJSX {
           * @default true
          */
         "labelEmphasis"?: boolean;
+        /**
+          * Accessible name for the appended menu segment in split mode.
+          * @default 'More options'
+         */
+        "menuAriaLabel"?: string;
         "onDsClick"?: (event: DsButtonFilledCustomEvent<MouseEvent>) => void;
+        "onDsMenuClick"?: (event: DsButtonFilledCustomEvent<MouseEvent>) => void;
         /**
           * Scale down during a physical pointer press. Disable when an owning composite requires fixed child or background geometry.
           * @default true
@@ -5815,6 +5851,11 @@ declare namespace LocalJSX {
           * @default 'md'
          */
         "size"?: ButtonFilledSize;
+        /**
+          * Append a separate ChevronDown menu segment while preserving this button's variant, size, intent, contrast, loading, inactive, and width treatment.
+          * @default false
+         */
+        "split"?: boolean;
         /**
           * Native button type.
           * @default 'button'
@@ -5916,8 +5957,14 @@ declare namespace LocalJSX {
           * @default true
          */
         "labelEmphasis"?: boolean;
+        /**
+          * Accessible name for the appended menu segment in split mode.
+          * @default 'More options'
+         */
+        "menuAriaLabel"?: string;
         "onDsChange"?: (event: DsButtonUnfilledCustomEvent<boolean>) => void;
         "onDsClick"?: (event: DsButtonUnfilledCustomEvent<MouseEvent>) => void;
+        "onDsMenuClick"?: (event: DsButtonUnfilledCustomEvent<MouseEvent>) => void;
         /**
           * Scale down during a physical pointer press. Disable when an owning composite requires fixed child or background geometry.
           * @default true
@@ -5937,6 +5984,11 @@ declare namespace LocalJSX {
           * @default 'md'
          */
         "size"?: ButtonUnfilledSize;
+        /**
+          * Append a separate ChevronDown menu segment while preserving this button's variant, size, surface, active, loading, border, and width treatment.
+          * @default false
+         */
+        "split"?: boolean;
         /**
           * Native button type.
           * @default 'button'
@@ -9355,6 +9407,8 @@ declare namespace LocalJSX {
         "controls": string | undefined;
         "expanded": boolean | undefined;
         "haspopup": ButtonFilledPopup | undefined;
+        "split": boolean;
+        "menuAriaLabel": string;
         "hasMenu": boolean;
     }
     interface DsButtonUnfilledAttributes {
@@ -9380,6 +9434,8 @@ declare namespace LocalJSX {
         "controls": string | undefined;
         "expanded": boolean | undefined;
         "haspopup": ButtonUnfilledPopup | undefined;
+        "split": boolean;
+        "menuAriaLabel": string;
         "pressed": boolean | undefined;
         "collapseLabel": boolean;
         "hasMenu": boolean;

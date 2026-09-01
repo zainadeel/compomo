@@ -11,6 +11,7 @@ import {
   BUTTON_STORY_VARIANTS as VARIANTS,
   BUTTON_STORY_WIDTHS as WIDTHS,
   wireButtonStoryMenuTriggers as wireMenuTriggers,
+  wireButtonStorySplitTriggers as wireSplitTriggers,
 } from '../../utils/button-story-foundation';
 
 const meta: Meta = {
@@ -32,6 +33,8 @@ const meta: Meta = {
     activeFill: { control: 'boolean' },
     hasBorder: { control: 'boolean' },
     rounded: { control: 'boolean' },
+    split: { control: 'boolean' },
+    menuAriaLabel: { control: 'text' },
     pressScale: { control: 'boolean' },
     dot: { control: 'boolean' },
     isInactive: { control: 'boolean' },
@@ -69,6 +72,8 @@ const meta: Meta = {
     activeFill: true,
     hasBorder: true,
     rounded: false,
+    split: false,
+    menuAriaLabel: 'More action options',
     pressScale: true,
     dot: false,
     isInactive: false,
@@ -117,6 +122,8 @@ export const Playground: Story = {
       ?active-fill=${args['activeFill']}
       ?has-border=${args['hasBorder']}
       ?rounded=${args['rounded']}
+      ?split=${args['split']}
+      menu-aria-label=${args['menuAriaLabel']}
       ?press-scale=${args['pressScale']}
       ?dot=${args['dot']}
       ?is-inactive=${args['isInactive']}
@@ -212,6 +219,135 @@ export const Rounded: Story = {
   `,
 };
 
+export const SplitModes: Story = {
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'Split mode inherits every unfilled content, border, surface, active, and loading treatment. Both default and rounded controls remain flush; borderless controls keep a content-height separator.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="${COL}">
+      ${VARIANTS.map(
+        variant => html`
+          <div style="${ROW}">
+            <span style="${LABEL}">${variant}</span>
+            <ds-button-unfilled
+              split
+              variant=${variant}
+              label="Action"
+              icon="Bell"
+              aria-label=${variant === 'icon' ? 'Action' : undefined}
+              menu-aria-label="More action options"
+            ></ds-button-unfilled>
+            <ds-button-unfilled
+              split
+              rounded
+              variant=${variant}
+              label="Action"
+              icon="Bell"
+              aria-label=${variant === 'icon' ? 'Rounded action' : undefined}
+              menu-aria-label="More rounded action options"
+            ></ds-button-unfilled>
+          </div>
+        `
+      )}
+      <div style="${ROW}">
+        <span style="${LABEL}">border</span>
+        <ds-button-unfilled
+          split
+          label="Bordered"
+          menu-aria-label="More bordered options"
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          split
+          label="Borderless"
+          .hasBorder=${false}
+          menu-aria-label="More borderless options"
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          split
+          rounded
+          label="Rounded borderless"
+          .hasBorder=${false}
+          menu-aria-label="More rounded borderless options"
+        ></ds-button-unfilled>
+      </div>
+      <div style="${ROW}">
+        <span style="${LABEL}">state</span>
+        <ds-button-unfilled
+          split
+          label="Active"
+          is-active
+          menu-aria-label="More active options"
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          split
+          label="Loading"
+          is-loading
+          menu-aria-label="More loading options"
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          split
+          label="Inactive"
+          is-inactive
+          menu-aria-label="More inactive options"
+        ></ds-button-unfilled>
+      </div>
+      <div
+        style="${ROW};padding:var(--dimension-space-100);background:var(--color-background-bold-neutral);"
+      >
+        <span style="${LABEL};color:var(--color-foreground-on-bold-background-tertiary)"
+          >bold surface</span
+        >
+        <ds-button-unfilled
+          split
+          label="Action"
+          background="bold"
+          menu-aria-label="More action options"
+        ></ds-button-unfilled>
+      </div>
+    </div>
+  `,
+};
+
+export const SplitLive: Story = {
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'The primary segment emits dsClick. The ChevronDown segment emits dsMenuClick and shares its controlled expanded state with Menu.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="${COL};height:var(--dimension-panel-width-xs);" ${ref(el => wireSplitTriggers(el))}>
+      <ds-button-unfilled
+        split
+        data-split-menu-trigger="unfilled-split-menu"
+        variant="icon-label"
+        label="Export"
+        icon="Export"
+        menu-aria-label="More export options"
+        controls="unfilled-split-menu"
+      ></ds-button-unfilled>
+      <ds-menu
+        id="unfilled-split-menu"
+        menu-label="More export options"
+        align="end"
+        .items=${[
+          { label: 'Export CSV', value: 'csv' },
+          { label: 'Export PDF', value: 'pdf' },
+        ]}
+      ></ds-menu>
+    </div>
+  `,
+};
+
 export const LoadingVariants: Story = {
   render: () => html`
     <div style="${ROW}">
@@ -251,6 +387,20 @@ export const Widths: Story = {
               ?active-fill=${args['activeFill']}
               ?has-border=${args['hasBorder']}
               background=${args['background'] || ''}
+            ></ds-button-unfilled>
+            <ds-button-unfilled
+              split
+              variant=${args['variant']}
+              size=${args['size']}
+              width=${width}
+              label=${args['label']}
+              icon=${args['icon']}
+              ?is-active=${args['isActive']}
+              ?active-fill=${args['activeFill']}
+              ?has-border=${args['hasBorder']}
+              background=${args['background'] || ''}
+              aria-label=${args['variant'] === 'icon' ? args['label'] : undefined}
+              menu-aria-label="More ${args['label']} options"
             ></ds-button-unfilled>
           </div>
         `

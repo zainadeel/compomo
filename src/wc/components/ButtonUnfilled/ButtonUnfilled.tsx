@@ -117,6 +117,16 @@ export class ButtonUnfilled {
    */
   @Prop() expanded: boolean | undefined;
   @Prop() haspopup: ButtonUnfilledPopup | undefined;
+
+  /**
+   * Append a separate ChevronDown menu segment while preserving this button's
+   * variant, size, surface, active, loading, border, and width treatment.
+   */
+  @Prop() split: boolean = false;
+
+  /** Accessible name for the appended menu segment in split mode. */
+  @Prop() menuAriaLabel: string = 'More options';
+
   /**
    * Controlled state for a genuine toggle button. Adds aria-pressed, promotes
    * active styling, and makes activation emit dsChange with the requested state.
@@ -152,11 +162,13 @@ export class ButtonUnfilled {
   @Prop({ attribute: 'tab-index' }) focusTabIndex?: number;
 
   @Event() dsClick!: EventEmitter<MouseEvent>;
+  @Event() dsMenuClick!: EventEmitter<MouseEvent>;
   @Event() dsChange!: EventEmitter<boolean>;
 
   @State() private captionCompact = false;
 
   private buttonEl: HTMLButtonElement | null = null;
+  private menuButtonEl: HTMLButtonElement | null = null;
   private captionCompactDisconnect: (() => void) | undefined;
   private hasLoaded = false;
 
@@ -179,8 +191,8 @@ export class ButtonUnfilled {
   }
 
   @Method()
-  async setFocus() {
-    this.buttonEl?.focus();
+  async setFocus(segment: 'primary' | 'menu' = 'primary') {
+    (segment === 'menu' ? this.menuButtonEl : this.buttonEl)?.focus();
   }
 
   private handleClick = (event: MouseEvent) => {
@@ -191,6 +203,15 @@ export class ButtonUnfilled {
     }
     this.dsClick.emit(event);
     if (this.pressed !== undefined) this.dsChange.emit(!this.pressed);
+  };
+
+  private handleMenuClick = (event: MouseEvent) => {
+    if (this.isInactive || this.isLoading) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    this.dsMenuClick.emit(event);
   };
 
   private get captionIconOnly(): boolean {
@@ -257,13 +278,17 @@ export class ButtonUnfilled {
     return undefined;
   }
 
-  render() {
+  private buttonClass(
+    variant: ButtonUnfilledVariant,
+    expanded: boolean,
+    bordered: boolean
+  ): Record<string, boolean> {
     const bg = this.background;
     const cls: Record<string, boolean> = {
       'button-unfilled': true,
       'ds-button': true,
       'ds-focus-ring-inset': true,
-      'ds-control-press-scale': this.pressScale,
+      'ds-control-press-scale': this.pressScale && !this.split,
       'ds-interaction-fill': true,
       'ds-interaction-fill--selected':
         (this.isActive || this.pressed === true) && this.activeFill && !this.isInactive,
@@ -276,10 +301,10 @@ export class ButtonUnfilled {
       'ds-interaction-fill--on-media': bg === 'media',
       'ds-interaction-fill--on-always-dark': bg === 'always-dark',
       'button-unfilled--active': this.visuallyActive,
-      'button-unfilled--expanded': this.expandedPopup,
-      'ds-button--expanded': this.expandedPopup,
-      'button-unfilled--bordered': this.hasBorder,
-      'ds-button--bordered': this.hasBorder,
+      'button-unfilled--expanded': expanded,
+      'ds-button--expanded': expanded,
+      'button-unfilled--bordered': bordered,
+      'ds-button--bordered': bordered,
       'button-unfilled--rounded': this.rounded,
       'ds-button--rounded': this.rounded,
       'ds-control-inactive': this.isInactive,
@@ -290,10 +315,10 @@ export class ButtonUnfilled {
       'ds-control--inset': this.isInset && !this.doubleInset,
       'ds-control--inset-double': this.doubleInset,
       'ds-control-frame': true,
-      'button-unfilled--icon': this.visualVariant === 'icon',
-      'ds-button--icon': this.visualVariant === 'icon',
-      'button-unfilled--label': this.visualVariant === 'label',
-      'button-unfilled--icon-label': this.visualVariant === 'icon-label',
+      'button-unfilled--icon': variant === 'icon',
+      'ds-button--icon': variant === 'icon',
+      'button-unfilled--label': variant === 'label',
+      'button-unfilled--icon-label': variant === 'icon-label',
       'button-unfilled--background-faint': bg === 'faint',
       'button-unfilled--background-medium': bg === 'medium',
       'button-unfilled--background-bold': bg === 'bold',
@@ -303,25 +328,40 @@ export class ButtonUnfilled {
       'button-unfilled--background-media': bg === 'media',
       'button-unfilled--on-always-dark': bg === 'always-dark',
     };
+    return cls;
+  }
 
-    const button = (
+  render() {
+    const primaryButton = (
       <button
         ref={el => {
           this.buttonEl = el ?? null;
         }}
         type={this.type}
-        class={cls}
+        class={{
+          ...this.buttonClass(
+            this.visualVariant,
+            !this.split && this.expandedPopup,
+            this.hasBorder && !this.split
+          ),
+          'ds-button-split__primary': this.split,
+        }}
         disabled={this.isInactive}
         tabIndex={this.focusTabIndex ?? 0}
         aria-label={this.accessibleName}
         aria-busy={this.isLoading ? 'true' : undefined}
         aria-disabled={this.isLoading ? 'true' : undefined}
-        aria-controls={this.controls}
-        aria-expanded={this.expanded === undefined ? undefined : String(this.expanded)}
-        aria-haspopup={this.resolvedHaspopup}
+        aria-controls={this.split ? undefined : this.controls}
+        aria-expanded={
+          this.split || this.expanded === undefined ? undefined : String(this.expanded)
+        }
+        aria-haspopup={this.split ? undefined : this.resolvedHaspopup}
         aria-pressed={this.pressed === undefined ? undefined : String(this.pressed)}
         onPointerDown={event =>
-          beginElevatedControlPress(event, this.pressScale && !this.isInactive && !this.isLoading)
+          beginElevatedControlPress(
+            event,
+            this.pressScale && !this.split && !this.isInactive && !this.isLoading
+          )
         }
         onClick={this.handleClick}
       >
@@ -332,7 +372,7 @@ export class ButtonUnfilled {
           label: this.label,
           labelEmphasis: this.labelEmphasis,
           icon: this.icon,
-          hasMenu: this.hasMenu,
+          hasMenu: !this.split && this.hasMenu,
           isLoading: this.isLoading,
           dot: {
             visible: this.showDot,
@@ -342,12 +382,65 @@ export class ButtonUnfilled {
       </button>
     );
 
+    const control = this.split ? (
+      <div
+        class={{
+          'ds-button-split': true,
+          'ds-button-split--rounded': this.rounded,
+        }}
+      >
+        {primaryButton}
+        <span
+          class={{
+            'ds-button-split__divider': true,
+            'ds-button-split__divider--content-height': !this.hasBorder,
+          }}
+          aria-hidden="true"
+        />
+        <button
+          ref={el => {
+            this.menuButtonEl = el ?? null;
+          }}
+          class={{
+            ...this.buttonClass('icon', this.expanded === true && !this.isInactive, false),
+            'ds-button-split__menu': true,
+          }}
+          type="button"
+          disabled={this.isInactive || this.isLoading}
+          tabIndex={this.focusTabIndex ?? 0}
+          aria-label={this.menuAriaLabel}
+          aria-controls={this.controls}
+          aria-expanded={String(this.expanded === true)}
+          aria-haspopup="menu"
+          onClick={this.handleMenuClick}
+        >
+          {renderButtonContent({
+            namespace: 'button-unfilled',
+            variant: 'icon',
+            size: this.size,
+            label: '',
+            labelEmphasis: true,
+            icon: 'ChevronDown',
+            hasMenu: false,
+            isLoading: false,
+          })}
+        </button>
+        {this.hasBorder ? <span class="ds-button-split__outline" aria-hidden="true" /> : null}
+      </div>
+    ) : (
+      primaryButton
+    );
+
     return (
       <Host
         class={{
           'button-unfilled-host': true,
-          'button-unfilled-host--icon': this.visualVariant === 'icon',
-          'ds-button-host--icon': this.visualVariant === 'icon',
+          'button-unfilled-host--icon': this.visualVariant === 'icon' && !this.split,
+          'ds-button-host--icon': this.visualVariant === 'icon' && !this.split,
+          'ds-button-split-host': this.split,
+          'ds-button-split-host--primary-icon': this.split && this.visualVariant === 'icon',
+          [`button-unfilled-host--background-${this.background}`]:
+            this.split && this.background !== undefined,
           'ds-control--lg': this.size === 'lg',
           'ds-control--md': this.size === 'md',
           'ds-control--sm': this.size === 'sm',
@@ -366,10 +459,10 @@ export class ButtonUnfilled {
             side="top"
             size="sm"
           >
-            {button}
+            {control}
           </ds-tooltip>
         ) : (
-          button
+          control
         )}
       </Host>
     );

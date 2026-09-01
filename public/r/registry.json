@@ -1265,7 +1265,7 @@
     {
       "name": "bar-title",
       "title": "BarTitle",
-      "description": "Page-level title chrome with an optional expanded route breadcrumb, compact Back action, supporting description, inline active-section menu, one primary action, grouped overflow actions, and explicit expanded, compact, or constrained variants.",
+      "description": "Page-level title chrome with route identity, responsive ordered button, icon, menu, split, and overflow actions, plus explicit expanded, compact, or constrained variants.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -1276,12 +1276,12 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Page-level title chrome with an optional expanded route breadcrumb, compact Back action, supporting description, inline active-section menu, one primary action, grouped overflow actions, and explicit expanded, compact, or constrained variants.",
+          "summary": "Page-level title chrome with route identity, responsive ordered button, icon, menu, split, and overflow actions, plus explicit expanded, compact, or constrained variants.",
           "useWhen": [
             "A top-level page needs one h1 above its content.",
             "A list or detail page has multiple route-level sections that belong in the inline active-section menu.",
             "A detail page needs route ancestors in expanded presentation and a page-level Back action in compact chrome.",
-            "A page needs one primary action plus optional secondary or destructive overflow commands."
+            "A page needs an ordered set of primary, secondary, icon, menu, split, or overflow commands."
           ],
           "avoidWhen": [
             "The title belongs to a PanelTools drawer or fullscreen pane; use PanelToolHeader through PanelTools instead.",
@@ -1325,15 +1325,17 @@
             "Provide ordered breadcrumb items for deeper expanded paths and handle dsBreadcrumbSelect when native href navigation is not used; backLabel remains the single-parent expanded fallback.",
             "Keep value synchronized with the current child route; dsSectionChange returns the selected section id.",
             "Section and overflow triggers expose menu relationships and restore focus after selection or dismissal.",
-            "Use one filled primary action in the page decision area and mark destructive overflow actions explicitly."
+            "Use one filled primary action in the page decision area, give icon and menu triggers specific accessible names, and mark destructive overflow actions explicitly.",
+            "Keep every top-level action and nested menu-choice id non-empty and unique; dsAction emits the selected id without adding a parent prefix."
           ],
           "states": [
             "Omitting Back, sections, primaryAction, and actions produces the top-level title-only header.",
             "Two or more selectable sections add the inline section trigger; one section does not render a redundant menu.",
             "Dividers in sections or actions create separate Menu groups without becoming selectable rows.",
-            "The overflow trigger uses its bordered treatment whenever the primary action is visible beside it; overflow-only and auto-collapsed-primary presentations keep the trigger borderless.",
+            "The overflow trigger uses its bordered treatment whenever any visible action sits beside it; overflow-only presentations keep the trigger borderless.",
+            "Ordered actions preserve authored order, but only the first eligible filled button, unfilled button, icon button, labeled menu button, or split button renders beside the title. Remaining commands use the shared overflow, whose rows are text-only. Menu choices and overflowed split commands become separate rows and share the same flat action event.",
             "expanded renders the larger heading, optional description, inset divider, and a full-width caption breadcrumb row above the title. The breadcrumb begins after 32px top padding; the following title and right-side actions share one top alignment. Compact renders 48px chrome with the existing icon Back action; constrained uses compact chrome and moves an auto-collapse primary action into overflow.",
-            "primaryAction collapse defaults to auto. Use never for exceptional actions whose hierarchy must remain visible in constrained layouts.",
+            "The one visible ordered action collapses by default in constrained presentation. Use never for an exceptional action whose hierarchy must remain visible; explicit overflow actions never leave the shared menu.",
             "showDivider=false removes the bottom divider when the surrounding page composition supplies the boundary; showCompactDivider can independently restore or remove that boundary in compact and constrained variants.",
             "placement=shell-bar is reserved for ShellApp panel section navigation. It remains compact, omits description and breadcrumb presentation, and preserves applicable Back, section, primary, and overflow controls."
           ],
@@ -1343,15 +1345,16 @@
             "ShellApp owns shell-bar placement and always selects compact presentation there; mobile continues to use MobileHeader.",
             "When ShellPage owns BarTitle on a secondary desktop or tablet page, its expanded, compact, and constrained presentations all match that canvas; the separate MobileHeader component remains primary.",
             "Compact titles use the shared compact-header geometry and md control inset so top-level headings align with BarNav and inline Back geometry aligns with PanelToolHeader. Long headings and section labels truncate independently while Back and action controls retain complete hit targets and accessible names.",
-            "A never-collapse primary action remains visible in constrained mode; the title and section label yield space first."
+            "A never-collapse action remains visible in constrained mode; the title and section label yield space first.",
+            "On mobile, icon commands remain visible by default while labeled buttons, labeled menus, split buttons, and explicit overflow commands become one flat overflow menu derived by ShellApp."
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Assign breadcrumbs, sections, primaryAction, and actions as JavaScript properties and replace array or object identities when controlled state changes.",
+              "Assign breadcrumbs, sections, actionItems, primaryAction, and actions as JavaScript properties and replace array or object identities when controlled state changes.",
               "Handle dsBack for compact navigation and dsBreadcrumbSelect for application-owned expanded breadcrumb navigation, update value after dsSectionChange, and execute product commands from dsAction."
             ],
             "react": [
-              "Pass breadcrumb, section, and action arrays directly to DsBarTitle and keep value controlled from route state.",
+              "Pass breadcrumb, section, and ordered action arrays directly to DsBarTitle and keep value controlled from route state.",
               "Place DsBarTitle in DsShellPage with slot=header when automatic page behavior is required."
             ],
             "angular": [
@@ -1375,6 +1378,10 @@
           ]
         },
         "props": {
+          "actionItems": {
+            "type": "BarTitleActionConfigItem[]",
+            "required": false
+          },
           "actions": {
             "type": "BarTitleActionItem[]",
             "required": false
@@ -1789,7 +1796,8 @@
           "useWhen": [
             "The user initiates the single primary command in a local decision area.",
             "An action's consequence requires a matching semantic treatment.",
-            "A standalone compact primary action needs an icon-only presentation with an explicit accessible name."
+            "A standalone compact primary action needs an icon-only presentation with an explicit accessible name.",
+            "The primary command has closely related alternatives and needs split mode without losing its filled intent, contrast, variant, or loading treatment."
           ],
           "avoidWhen": [
             "Another filled action already exists in the same local decision area.",
@@ -1826,6 +1834,7 @@
           ],
           "accessibility": [
             "Provide an explicit accessible name for icon-only buttons.",
+            "In split mode, provide menuAriaLabel for the appended ChevronDown segment, pass controls with the Menu id, and synchronize expanded with the Menu open state.",
             "Set hasMenu when the action opens a Menu; it implies aria-haspopup of menu and renders the trailing chevron. Pass controls with the Menu id and expanded from the same open state given to Menu.",
             "Use haspopup directly for a non-menu popup such as a dialog; that case gets no chevron.",
             "Use inactive state only when the action must remain visible but unavailable.",
@@ -1849,7 +1858,9 @@
             "Visible labels are emphasized by default. Set labelEmphasis to false when a composed surface deliberately needs the button label to match adjacent regular-weight control labels; this does not change the action hierarchy, foreground, icon, or interaction states.",
             "ButtonFilled has no active, pressed, or selected state; a filled action is a command, not a toggle or a persistent selection.",
             "An open popup is a transient pressed state instead. While expanded is true the pressed wash is held for the popup's complete rendered lifecycle and survives hover, so the trigger reads as held open without introducing a selected treatment.",
-            "hasMenu supports only the label and icon-label variants. The chevron is what communicates that a menu will open, so an icon-only filled menu button would leave the affordance unstated."
+            "hasMenu supports only the label and icon-label variants. The chevron is what communicates that a menu will open, so an icon-only filled menu button would leave the affordance unstated.",
+            "Split mode supports label, icon, and icon-label primary segments. The primary segment emits dsClick and the appended menu segment emits dsMenuClick.",
+            "Split mode keeps both segments flush and uses a tertiary on-background separator. Rounded changes the shared outer radius without separating the segments."
           ],
           "responsiveBehavior": [
             "Use fill width only when the parent layout calls for a full-width action, commonly on narrow form layouts."
@@ -1937,6 +1948,10 @@
             "type": "boolean",
             "required": false
           },
+          "menuAriaLabel": {
+            "type": "string",
+            "required": false
+          },
           "pressScale": {
             "type": "boolean",
             "required": false
@@ -1947,6 +1962,10 @@
           },
           "size": {
             "type": "ButtonFilledSize",
+            "required": false
+          },
+          "split": {
+            "type": "boolean",
             "required": false
           },
           "type": {
@@ -1965,6 +1984,10 @@
         "events": [
           {
             "name": "dsClick",
+            "detail": "MouseEvent"
+          },
+          {
+            "name": "dsMenuClick",
             "detail": "MouseEvent"
           }
         ],
@@ -2007,7 +2030,8 @@
             "A secondary command accompanies the single filled primary action in a local decision area.",
             "A toolbar, tool rail, overflow area, or shell region needs a compact icon action.",
             "A command represents a persistent toggle or mode whose active state remains meaningful after activation.",
-            "A row, card, or toolbar needs an overflow or more-options menu; this is the only component that carries that role."
+            "A row, card, or toolbar needs an overflow or more-options menu; this is the only component that carries that role.",
+            "A secondary command has closely related alternatives and needs split mode without losing its border, surface, active, variant, or loading treatment."
           ],
           "avoidWhen": [
             "The command is the single primary action in a local decision area; use ButtonFilled instead.",
@@ -2042,6 +2066,7 @@
           ],
           "accessibility": [
             "Provide an explicit accessible name for every icon-only action.",
+            "In split mode, provide menuAriaLabel for the appended ChevronDown segment, pass controls with the Menu id, and synchronize expanded with the Menu open state.",
             "Set hasMenu when the button triggers a Menu; it implies aria-haspopup of menu. Pass controls with the Menu id and expanded from the same open state given to Menu. Expanded popup triggers hold only the pressed wash while open, without changing their resting foreground; expanded disclosure controls without popup semantics retain the normal resting appearance.",
             "Give an icon-only menu button an accessible name that states the role, such as More options or Customize table, because no visible label or chevron carries it.",
             "Use haspopup directly for a non-menu popup such as a listbox or dialog; those cases get no chevron.",
@@ -2067,7 +2092,9 @@
             "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width.",
             "hasMenu covers two distinct menu-button shapes and the variant selects between them. With label or icon-label the action has a menu, and a trailing chevron carries the affordance. With icon the button is a menu and no chevron is added.",
             "Because the icon-only shape has no chevron, its glyph must convey the menu on its own. Use Ellipses for a generic more-options or overflow control. Use a specific icon when the menu has a named purpose, such as Table for Customize table.",
-            "An open popup is a transient pressed state rather than a selected one. While expanded is true and haspopup or hasMenu identifies a popup, the pressed wash is held for the popup's complete rendered lifecycle and survives hover without promoting foreground or selected fill, including when chrome opts out of selected fills with activeFill set to false. Expanded disclosure buttons without popup semantics remain visually neutral."
+            "An open popup is a transient pressed state rather than a selected one. While expanded is true and haspopup or hasMenu identifies a popup, the pressed wash is held for the popup's complete rendered lifecycle and survives hover without promoting foreground or selected fill, including when chrome opts out of selected fills with activeFill set to false. Expanded disclosure buttons without popup semantics remain visually neutral.",
+            "Split mode supports label, icon, and icon-label primary segments. The primary segment emits dsClick and the appended menu segment emits dsMenuClick.",
+            "Split mode keeps both segments flush and uses a tertiary surface-aware separator. Bordered mode also preserves the shared outer border; borderless mode limits the separator to the content line height."
           ],
           "responsiveBehavior": [
             "The consuming layout decides when an icon-label action becomes icon-only and must provide an explicit accessible name after changing variants. Table caption Customize is one such layout: below 900px it uses the icon shape while keeping the same neutral resting foreground regardless of the controlled column configuration.",
@@ -2170,6 +2197,10 @@
             "type": "boolean",
             "required": false
           },
+          "menuAriaLabel": {
+            "type": "string",
+            "required": false
+          },
           "pressScale": {
             "type": "boolean",
             "required": false
@@ -2184,6 +2215,10 @@
           },
           "size": {
             "type": "ButtonUnfilledSize",
+            "required": false
+          },
+          "split": {
+            "type": "boolean",
             "required": false
           },
           "type": {
@@ -2206,6 +2241,10 @@
           },
           {
             "name": "dsClick",
+            "detail": "MouseEvent"
+          },
+          {
+            "name": "dsMenuClick",
             "detail": "MouseEvent"
           }
         ],
@@ -7899,6 +7938,7 @@
             "Dashboard represents day-to-day operational work while Settings represents administrative and configuration work; route state selects the context.",
             "Replace navigation and pageChrome together from one completed route state.",
             "When pageChrome.showBack marks a detail depth, mobile chrome keeps the page heading as its identity and presents only local subsections; peer route tabs remain in desktop BarNav rather than replacing the detail heading.",
+            "Route-owned ordered page actions drive both BarTitle and MobileHeader. ShellApp forwards one flat page-action id and owns the derived mobile overflow menu so routes do not duplicate menu state or choices.",
             "Managed ShellApp keeps the selected desktop section-navigation presentation and ShellPage present and owns page header stickiness and the content scroller.",
             "Route-owned pageChrome independently selects ShellPage contentInset, page-header seams, scroll compaction, expanded and compact header-divider visibility, and contentSurface. ShellApp forwards them while resolving whether desktop title geometry is page-local or shell-bar-owned.",
             "The application filters unauthorized destinations, sections, and tools before passing them into shell components."
@@ -7923,6 +7963,7 @@
             "The routed content cell and tools cell expose separate anchored-overlay collision boundaries, so top-layer menus and tooltips remain above local clipping without crossing into neighboring shell lanes. Full-screen modal overlays remain viewport-owned.",
             "Paper texture chrome is desktop/tablet-only and follows the fixed viewport phase of the shell chrome; mobile remains a solid primary stage.",
             "Managed page-header capacity follows only the fixed shell breakpoint: roomy on desktop and compact on tablet. Opening PanelTools does not compact or constrain BarTitle.",
+            "Mobile keeps at most the first eligible ordered icon command visible and moves labeled buttons, menu choices, split actions, and explicit overflow commands into one shell-owned text-only page-actions menu.",
             "The bottom bar remains visible at all route and tool depths in the foundation release."
           ],
           "frameworkCaveats": {
@@ -8089,7 +8130,9 @@
       "registryDependencies": [
         "bar-nav",
         "bar-title",
+        "button-filled",
         "button-unfilled",
+        "menu",
         "mobile-bar-nav",
         "mobile-header",
         "mobile-sheet-nav",

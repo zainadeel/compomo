@@ -855,6 +855,76 @@ test.describe('Managed application shell', () => {
     await expect(shell.getByRole('button', { name: /Current section: Overview/ })).toHaveCount(0);
   });
 
+  test('derives mobile icon and overflow actions from one page model @cross-browser', async ({
+    page,
+  }) => {
+    const shell = page.locator('#managed-shell');
+    await shell.evaluate(element => {
+      const managed = element as HTMLDsShellAppElement;
+      managed.pageChrome = {
+        ...managed.pageChrome,
+        actionsAriaLabel: 'Fleet page actions',
+        actionItems: [
+          {
+            type: 'button',
+            id: 'create',
+            label: 'Create driver',
+            appearance: 'filled',
+          },
+          {
+            type: 'icon',
+            id: 'refresh',
+            label: 'Refresh',
+            icon: 'Refresh',
+            ariaLabel: 'Refresh fleet',
+          },
+          {
+            type: 'menu',
+            id: 'export',
+            label: 'Export',
+            choices: [
+              { id: 'export-csv', label: 'Export CSV' },
+              { id: 'export-pdf', label: 'Export PDF' },
+            ],
+          },
+          {
+            type: 'split',
+            id: 'add',
+            label: 'Add driver',
+            menuAriaLabel: 'More add driver options',
+            choices: [{ id: 'import', label: 'Import drivers' }],
+          },
+          { type: 'divider' },
+          { type: 'overflow', id: 'archive', label: 'Archive drivers' },
+        ],
+      };
+    });
+
+    await page.setViewportSize({ width: 390, height: 760 });
+    await expect(shell).toHaveAttribute('responsive-mode', 'mobile');
+    await shell.getByRole('button', { name: 'Refresh fleet' }).click();
+    await expect(page.locator('html')).toHaveAttribute(
+      'data-last-event',
+      JSON.stringify({ type: 'dsPageAction', detail: 'refresh' })
+    );
+
+    const overflow = shell.getByRole('button', { name: 'Fleet page actions' });
+    await overflow.click();
+    await expect(page.getByRole('menuitem', { name: 'Create driver' })).toBeVisible();
+    await expect(page.getByRole('menuitem', { name: 'Export CSV' })).toBeVisible();
+    await expect(page.getByRole('menuitem', { name: 'Add driver' })).toBeVisible();
+    await expect(page.getByRole('menuitem', { name: 'Import drivers' })).toBeVisible();
+    await expect(shell.locator('ds-menu[id^="shell-app-mobile-action-menu-"] ds-icon')).toHaveCount(
+      0
+    );
+    await page.getByRole('menuitem', { name: 'Export PDF' }).click();
+    await expect(page.locator('html')).toHaveAttribute(
+      'data-last-event',
+      JSON.stringify({ type: 'dsPageAction', detail: 'export-pdf' })
+    );
+    await expect(overflow).toBeFocused();
+  });
+
   test('preserves routed and tool element identity across responsive presentation changes @pr-critical', async ({
     page,
   }) => {

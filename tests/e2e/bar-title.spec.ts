@@ -623,6 +623,109 @@ test(
   }
 );
 
+test('owns ordered button, menu, split, and overflow action behavior @cross-browser', async ({
+  page,
+}) => {
+  const shell = page.locator('#shell-page');
+  const header = page.locator('#detail-header');
+  await header.evaluate((element: HTMLDsBarTitleElement) => {
+    element.actionItems = [
+      {
+        type: 'split',
+        id: 'add',
+        label: 'Add driver',
+        appearance: 'unfilled',
+        menuAriaLabel: 'More add driver options',
+        choices: [{ id: 'import', label: 'Import drivers' }],
+      },
+      {
+        type: 'button',
+        id: 'create',
+        label: 'Create',
+        appearance: 'filled',
+        collapse: 'never',
+      },
+      { type: 'button', id: 'export', label: 'Export', appearance: 'unfilled' },
+      {
+        type: 'icon',
+        id: 'refresh',
+        label: 'Refresh',
+        icon: 'Refresh',
+        ariaLabel: 'Refresh drivers',
+      },
+      {
+        type: 'menu',
+        id: 'view',
+        label: 'View',
+        menuAriaLabel: 'Choose driver view',
+        choices: [
+          { id: 'view-list', label: 'List view' },
+          { id: 'view-map', label: 'Map view' },
+        ],
+      },
+      { type: 'divider' },
+      { type: 'overflow', id: 'archive', label: 'Archive drivers' },
+    ];
+  });
+
+  const split = header.locator('ds-button-unfilled.bar-title__split-action');
+  await expect(header.locator('.bar-title__action')).toHaveCount(1);
+  await split.getByRole('button', { name: 'Add driver', exact: true }).click();
+  const splitMenu = split.getByRole('button', { name: 'More add driver options' });
+  await splitMenu.click();
+  await expect(splitMenu).toHaveAttribute('aria-haspopup', 'menu');
+  await expect(splitMenu).toHaveAttribute('aria-expanded', 'true');
+  await page.getByRole('menuitem', { name: 'Import drivers' }).click();
+  await expect(splitMenu).toBeFocused();
+
+  const overflow = header.getByRole('button', { name: 'More driver actions' });
+  const overflowMenu = header.locator('.bar-title__action-menu');
+  await overflow.click();
+  await expect(overflowMenu.locator('ds-icon')).toHaveCount(0);
+  await page.getByRole('menuitem', { name: 'Create' }).click();
+
+  await overflow.click();
+  await page.getByRole('menuitem', { name: 'Export' }).click();
+
+  await overflow.click();
+  await page.getByRole('menuitem', { name: 'Refresh' }).click();
+
+  await overflow.click();
+  await page.getByRole('menuitem', { name: 'Map view' }).click();
+
+  await overflow.click();
+  await page.getByRole('menuitem', { name: 'Archive drivers' }).click();
+
+  expect(await readEvents(page)).toEqual([
+    { type: 'action', id: 'add' },
+    { type: 'action', id: 'import' },
+    { type: 'action', id: 'create' },
+    { type: 'action', id: 'export' },
+    { type: 'action', id: 'refresh' },
+    { type: 'action', id: 'view-map' },
+    { type: 'action', id: 'archive' },
+  ]);
+
+  await shell.evaluate((element: HTMLDsShellPageElement) => {
+    element.headerCapacity = 'constrained';
+  });
+  await expect(header.getByRole('button', { name: 'Create', exact: true })).toBeVisible();
+  await expect(header.getByRole('button', { name: 'Export', exact: true })).toHaveCount(0);
+  await overflow.click();
+  await expect(page.getByRole('menuitem', { name: 'Export' })).toBeVisible();
+  await expect(page.getByRole('menuitem', { name: 'Refresh' })).toBeVisible();
+  await expect(page.getByRole('menuitem', { name: 'List view' })).toBeVisible();
+  await expect(page.getByRole('menuitem', { name: 'Add driver' })).toBeVisible();
+  await expect(page.getByRole('menuitem', { name: 'Import drivers' })).toBeVisible();
+  await expect(page.getByRole('menuitem', { name: 'Create' })).toHaveCount(0);
+  await expect(overflowMenu.locator('ds-icon')).toHaveCount(0);
+  await page.keyboard.press('Escape');
+  await expect(overflow).toBeFocused();
+
+  const results = await new AxeBuilder({ page }).include('#detail-header').analyze();
+  expect(results.violations).toEqual([]);
+});
+
 test(
   'borders overflow only while a primary action is visible beside it',
   chromiumOnly('layout-geometry', 'This is a deterministic class and border-recipe state check.'),

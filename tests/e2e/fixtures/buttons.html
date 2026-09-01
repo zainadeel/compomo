@@ -28,6 +28,18 @@
       <ds-button-unfilled id="unfilled-no-press-scale" label="Stable" press-scale="false"></ds-button-unfilled>
       <ds-button-filled id="filled-inactive" label="Unavailable" is-inactive></ds-button-filled>
       <ds-button-unfilled id="unfilled-inactive" label="Unavailable" is-inactive></ds-button-unfilled>
+      <section id="split-buttons" aria-label="Split buttons">
+        <ds-button-filled id="filled-split-label" split label="Create" menu-aria-label="More create options"></ds-button-filled>
+        <ds-button-filled id="filled-split-icon" split variant="icon" icon="Plus" aria-label="Create" menu-aria-label="More create options"></ds-button-filled>
+        <ds-button-filled id="filled-split-icon-label" split variant="icon-label" icon="Plus" label="Create" menu-aria-label="More create options"></ds-button-filled>
+        <ds-button-filled id="filled-split-rounded" split rounded label="Create" menu-aria-label="More rounded create options"></ds-button-filled>
+        <ds-button-filled id="filled-split-loading" split label="Create" menu-aria-label="More loading options" is-loading></ds-button-filled>
+        <ds-button-unfilled id="unfilled-split-label" split label="Export" menu-aria-label="More export options"></ds-button-unfilled>
+        <ds-button-unfilled id="unfilled-split-icon" split variant="icon" icon="Export" aria-label="Export" menu-aria-label="More export options"></ds-button-unfilled>
+        <ds-button-unfilled id="unfilled-split-icon-label" split variant="icon-label" icon="Export" label="Export" menu-aria-label="More export options"></ds-button-unfilled>
+        <ds-button-unfilled id="unfilled-split-rounded" split rounded label="Export" menu-aria-label="More rounded export options"></ds-button-unfilled>
+        <ds-button-unfilled id="unfilled-split-borderless" split label="Export" menu-aria-label="More borderless export options" has-border="false"></ds-button-unfilled>
+      </section>
       <div id="hug-column" style="display:flex;flex-direction:column;align-items:stretch;width:240px;">
         <ds-button-filled id="filled-hug-column" label="Primary hug"></ds-button-filled>
         <ds-button-unfilled id="unfilled-hug-column" label="Secondary hug"></ds-button-unfilled>

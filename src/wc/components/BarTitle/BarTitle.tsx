@@ -13,18 +13,30 @@ import type { BreadcrumbItem, BreadcrumbSelectDetail } from '../Breadcrumb/bread
 import type { MenuItemData, MenuSection } from '../Menu/menu-types';
 import {
   isBarTitleDivider,
-  type BarTitleAction,
+  type BarTitleActionConfigItem,
   type BarTitleActionItem,
+  type BarTitleMenuAction,
   type BarTitlePrimaryAction,
   type BarTitleSection,
   type BarTitleSectionItem,
   type BarTitlePlacement,
+  type BarTitleSplitAction,
   type BarTitleVariant,
 } from './bar-title-types';
+import {
+  barTitleActionIdIssues,
+  barTitleChoiceSections,
+  findBarTitleAction,
+  overflowBarTitleActionSections,
+  resolveBarTitleActionItems,
+  visibleBarTitleActions,
+} from './bar-title-actions';
 
 let nextBarTitleId = 0;
 
-type FocusableButton = HTMLElement & { setFocus?: () => Promise<void> };
+type FocusableButton = HTMLElement & {
+  setFocus?: (segment?: 'primary' | 'menu') => Promise<void>;
+};
 
 @Component({
   tag: 'ds-bar-title',
@@ -70,6 +82,12 @@ export class BarTitle {
   /** Secondary page actions shown in the overflow menu. Dividers create groups. */
   @Prop() actions: BarTitleActionItem[] = [];
 
+  /**
+   * Ordered page-header actions. When supplied, this replaces the legacy
+   * primaryAction/actions presentation while preserving the same dsAction event.
+   */
+  @Prop() actionItems?: BarTitleActionConfigItem[];
+
   /** Accessible name for the page-actions menu. */
   @Prop() actionsAriaLabel: string = 'More page actions';
 
@@ -98,7 +116,7 @@ export class BarTitle {
   @Event() dsAction!: EventEmitter<string>;
 
   @State() private sectionMenuOpen = false;
-  @State() private actionMenuOpen = false;
+  @State() private openActionMenuId = '';
   @State() private sectionMenuInitialFocusVisible = false;
   @State() private actionMenuInitialFocusVisible = false;
 
@@ -109,11 +127,13 @@ export class BarTitle {
   private readonly actionMenuId = `bar-title-action-menu-${this.instanceId}`;
   private sectionTriggerEl: HTMLButtonElement | null = null;
   private actionTriggerEl: FocusableButton | null = null;
+  private actionTriggerEls = new Map<string, FocusableButton>();
 
   componentWillLoad() {
     if (this.el.closest('ds-shell-page')) {
       this.el.setAttribute('data-shell-page-syncing', '');
     }
+    this.reportActionIdIssues();
   }
 
   @Watch('sections')
@@ -123,8 +143,16 @@ export class BarTitle {
 
   @Watch('actions')
   @Watch('primaryAction')
+  @Watch('actionItems')
   handleActionsChange() {
-    if (!this.showActionMenuTrigger) this.closeActionMenu();
+    this.reportActionIdIssues();
+    if (!this.availableActionMenuIds.has(this.openActionMenuId)) this.closeActionMenu();
+  }
+
+  private reportActionIdIssues() {
+    for (const issue of barTitleActionIdIssues(this.resolvedActionItems)) {
+      console.warn(`[ds-bar-title] ${issue}`);
+    }
   }
 
   private get compact(): boolean {
@@ -158,6 +186,7 @@ export class BarTitle {
 
   private get primaryCollapsed(): boolean {
     return (
+      this.actionItems === undefined &&
       this.effectiveVariant === 'constrained' &&
       this.primaryAction !== null &&
       (this.primaryAction.collapse ?? 'auto') === 'auto'
@@ -186,10 +215,7 @@ export class BarTitle {
     return `${this.sectionsAriaLabel}. Current section: ${this.selectedSectionLabel}`;
   }
 
-  private groupsFromItems<T extends BarTitleSection | BarTitleAction>(
-    source: Array<T | { type: 'divider' }>,
-    map: (item: T) => MenuItemData
-  ): MenuSection[] {
+  private groupsFromSections(): MenuSection[] {
     const groups: MenuSection[] = [];
     let items: MenuItemData[] = [];
     const commit = () => {
@@ -197,11 +223,16 @@ export class BarTitle {
       items = [];
     };
 
-    for (const item of source) {
+    for (const item of this.sections) {
       if (isBarTitleDivider(item)) {
         commit();
       } else {
-        items.push(map(item));
+        items.push({
+          label: item.label,
+          value: item.id,
+          isSelected: item.id === this.effectiveValue,
+          isInactive: item.isInactive,
+        });
       }
     }
     commit();
@@ -209,43 +240,58 @@ export class BarTitle {
   }
 
   private get sectionMenuSections(): MenuSection[] {
-    return this.groupsFromItems(this.sections, section => ({
-      label: section.label,
-      value: section.id,
-      isSelected: section.id === this.effectiveValue,
-      isInactive: section.isInactive,
-    }));
+    return this.groupsFromSections();
   }
 
-  private get selectableActions(): BarTitleAction[] {
-    return this.actions.filter((item): item is BarTitleAction => !isBarTitleDivider(item));
+  private get resolvedActionItems(): BarTitleActionConfigItem[] {
+    return resolveBarTitleActionItems(this.actionItems, this.primaryAction, this.actions);
   }
 
-  private get showActionMenuTrigger(): boolean {
-    return (
-      this.selectableActions.length > 0 || (this.primaryCollapsed && this.primaryAction !== null)
-    );
-  }
-
-  private actionMenuItem(action: BarTitleAction | BarTitlePrimaryAction): MenuItemData {
-    const primary = action as BarTitlePrimaryAction;
-    return {
-      label: action.label,
-      value: action.id,
-      isInactive: action.isInactive || primary.isLoading,
-      isDestructive: action.isDestructive || primary.intent === 'negative',
-    };
+  private get visibleActions(): BarTitleActionConfigItem[] {
+    return visibleBarTitleActions(this.resolvedActionItems, this.effectiveVariant);
   }
 
   private get actionMenuSections(): MenuSection[] {
-    const groups = this.groupsFromItems(this.actions, action => this.actionMenuItem(action));
-    if (!this.primaryCollapsed || !this.primaryAction) return groups;
-    return [{ items: [this.actionMenuItem(this.primaryAction)] }, ...groups];
+    return overflowBarTitleActionSections(this.resolvedActionItems, this.effectiveVariant);
+  }
+
+  private get showActionMenuTrigger(): boolean {
+    return this.actionMenuSections.length > 0;
+  }
+
+  private get availableActionMenuIds(): Set<string> {
+    const ids = new Set<string>();
+    if (this.showActionMenuTrigger) ids.add('__overflow');
+    for (const item of this.visibleActions) {
+      if (!isBarTitleDivider(item) && (item.type === 'menu' || item.type === 'split')) {
+        ids.add(item.id);
+      }
+    }
+    return ids;
+  }
+
+  private actionMenuDomId(id: string): string {
+    const index = this.resolvedActionItems.findIndex(
+      item => !isBarTitleDivider(item) && item.id === id
+    );
+    return `bar-title-action-menu-${this.instanceId}-${index}`;
+  }
+
+  private actionMenuAnchor(id: string): HTMLElement | undefined {
+    if (id === '__overflow') return this.actionTriggerEl ?? undefined;
+    const trigger = this.actionTriggerEls.get(id);
+    if (!trigger) return undefined;
+    const splitMenu = trigger.querySelector<HTMLElement>('.ds-button-split__menu');
+    return splitMenu ?? trigger;
+  }
+
+  private menuSectionsForAction(action: BarTitleMenuAction | BarTitleSplitAction): MenuSection[] {
+    return barTitleChoiceSections(action.choices);
   }
 
   private toggleSectionMenu = (event: MouseEvent) => {
     this.sectionMenuInitialFocusVisible = event.detail === 0;
-    this.actionMenuOpen = false;
+    this.openActionMenuId = '';
     this.sectionMenuOpen = !this.sectionMenuOpen;
   };
 
@@ -262,30 +308,36 @@ export class BarTitle {
     requestAnimationFrame(() => this.sectionTriggerEl?.focus());
   };
 
-  private toggleActionMenu = (event: MouseEvent) => {
+  private toggleActionMenu = (id: string, event: MouseEvent) => {
     this.actionMenuInitialFocusVisible = event.detail === 0;
     this.sectionMenuOpen = false;
-    this.actionMenuOpen = !this.actionMenuOpen;
+    this.openActionMenuId = this.openActionMenuId === id ? '' : id;
   };
 
   private closeActionMenu = () => {
-    this.actionMenuOpen = false;
+    this.openActionMenuId = '';
   };
 
   private handleActionSelect = (event: CustomEvent<MenuItemData>) => {
     const id = String(event.detail?.value ?? '');
-    const primaryMatches = this.primaryCollapsed && this.primaryAction?.id === id;
-    const action = this.selectableActions.find(candidate => candidate.id === id);
-    if (!primaryMatches && !action) return;
-    if (
-      (primaryMatches && (this.primaryAction?.isInactive || this.primaryAction?.isLoading)) ||
-      action?.isInactive
-    ) {
-      return;
-    }
+    const action = findBarTitleAction(this.resolvedActionItems, id);
+    if (!action || action.isInactive || ('isLoading' in action && action.isLoading)) return;
+    const menuId = this.openActionMenuId;
     this.closeActionMenu();
     this.dsAction.emit(id);
-    requestAnimationFrame(() => void this.actionTriggerEl?.setFocus?.());
+    requestAnimationFrame(() => {
+      if (menuId === '__overflow') {
+        void this.actionTriggerEl?.setFocus?.();
+        return;
+      }
+      const trigger = this.actionTriggerEls.get(menuId);
+      if ('setFocus' in (trigger ?? {})) {
+        const split = this.resolvedActionItems.some(
+          item => !isBarTitleDivider(item) && item.id === menuId && item.type === 'split'
+        );
+        void trigger?.setFocus?.(split ? 'menu' : undefined);
+      }
+    });
   };
 
   private renderSectionSelector() {
@@ -334,27 +386,103 @@ export class BarTitle {
     ];
   }
 
+  private renderVisibleAction(action: BarTitleActionConfigItem) {
+    if (isBarTitleDivider(action) || action.type === 'overflow') return null;
+    const appearance = action.appearance ?? (action.type === 'split' ? 'filled' : 'unfilled');
+    const variant: 'icon' | 'icon-label' | 'label' =
+      action.type === 'icon' ? 'icon' : action.icon ? 'icon-label' : 'label';
+    const menu = action.type === 'menu';
+    const menuId = menu ? this.actionMenuDomId(action.id) : undefined;
+
+    if (action.type === 'split') {
+      const splitMenuId = this.actionMenuDomId(action.id);
+      const splitProps = {
+        key: action.id,
+        ref: (el: FocusableButton | undefined) => {
+          if (el) this.actionTriggerEls.set(action.id, el);
+          else this.actionTriggerEls.delete(action.id);
+        },
+        class: 'bar-title__action bar-title__split-action',
+        split: true,
+        variant,
+        label: action.label,
+        icon: action.icon ?? '',
+        menuAriaLabel: action.menuAriaLabel,
+        controls: splitMenuId,
+        expanded: this.openActionMenuId === action.id,
+        size: 'md' as const,
+        type: action.buttonType ?? 'button',
+        isInactive: action.isInactive,
+        isLoading: action.isLoading,
+        onDsClick: () => this.dsAction.emit(action.id),
+        onDsMenuClick: (event: CustomEvent<MouseEvent>) =>
+          this.toggleActionMenu(action.id, event.detail),
+      };
+      return appearance === 'filled' ? (
+        <ds-button-filled
+          {...splitProps}
+          intent={action.intent ?? 'brand'}
+          contrast={action.contrast ?? 'bold'}
+        />
+      ) : (
+        <ds-button-unfilled {...splitProps} />
+      );
+    }
+
+    const buttonProps = {
+      key: action.id,
+      ref: (el: FocusableButton | undefined) => {
+        if (el) this.actionTriggerEls.set(action.id, el);
+        else this.actionTriggerEls.delete(action.id);
+      },
+      class: `bar-title__action bar-title__action--${action.type}${
+        this.actionItems === undefined && action.id === this.primaryAction?.id
+          ? ' bar-title__primary-action'
+          : ''
+      }`,
+      variant,
+      icon: action.icon ?? '',
+      label: action.label,
+      ariaLabel: action.ariaLabel ?? (action.type === 'icon' ? action.label : undefined),
+      size: 'md' as const,
+      type: action.buttonType ?? 'button',
+      isInactive: action.isInactive,
+      isLoading: action.isLoading,
+      controls: menuId,
+      expanded: menu ? this.openActionMenuId === action.id : undefined,
+      hasMenu: menu,
+      onDsClick: (event: CustomEvent<MouseEvent>) => {
+        if (menu) this.toggleActionMenu(action.id, event.detail);
+        else this.dsAction.emit(action.id);
+      },
+    };
+
+    const button =
+      appearance === 'filled' ? (
+        <ds-button-filled
+          {...buttonProps}
+          intent={action.intent ?? 'brand'}
+          contrast={action.contrast ?? 'bold'}
+        />
+      ) : (
+        <ds-button-unfilled {...buttonProps} />
+      );
+
+    return action.type === 'icon' ? (
+      <ds-tooltip key={action.id} label={action.label} side="bottom" size="sm">
+        {button}
+      </ds-tooltip>
+    ) : (
+      button
+    );
+  }
+
   private renderActions() {
-    const primary = this.primaryAction;
-    if (!primary && !this.showActionMenuTrigger) return null;
+    if (this.visibleActions.length === 0 && !this.showActionMenuTrigger) return null;
 
     return (
       <div class="bar-title__actions">
-        {primary && !this.primaryCollapsed ? (
-          <ds-button-filled
-            class="bar-title__primary-action"
-            variant={primary.icon ? 'icon-label' : 'label'}
-            icon={primary.icon ?? ''}
-            label={primary.label}
-            intent={primary.intent ?? 'brand'}
-            contrast={primary.contrast ?? 'bold'}
-            size="md"
-            type={primary.type ?? 'button'}
-            isInactive={primary.isInactive}
-            isLoading={primary.isLoading}
-            onDsClick={() => this.dsAction.emit(primary.id)}
-          />
-        ) : null}
+        {this.visibleActions.map(action => this.renderVisibleAction(action))}
         {this.showActionMenuTrigger ? (
           <ds-tooltip label="Page options" side="bottom" size="sm">
             <ds-button-unfilled
@@ -368,16 +496,42 @@ export class BarTitle {
               aria-label={this.actionsAriaLabel}
               size="md"
               activeFill={!this.compact}
-              hasBorder={primary !== null && !this.primaryCollapsed}
+              hasBorder={this.visibleActions.length > 0}
               haspopup="menu"
               controls={this.actionMenuId}
-              expanded={this.actionMenuOpen}
-              onDsClick={(event: CustomEvent<MouseEvent>) => this.toggleActionMenu(event.detail)}
+              expanded={this.openActionMenuId === '__overflow'}
+              onDsClick={(event: CustomEvent<MouseEvent>) =>
+                this.toggleActionMenu('__overflow', event.detail)
+              }
             />
           </ds-tooltip>
         ) : null}
       </div>
     );
+  }
+
+  private renderActionMenus() {
+    return this.visibleActions.flatMap(action => {
+      if (isBarTitleDivider(action) || (action.type !== 'menu' && action.type !== 'split')) {
+        return [];
+      }
+      const menuLabel = action.menuAriaLabel ?? action.ariaLabel ?? action.label;
+      return [
+        <ds-menu
+          key={action.id}
+          id={this.actionMenuDomId(action.id)}
+          class="bar-title__action-menu"
+          anchor={this.actionMenuAnchor(action.id)}
+          align="end"
+          menuLabel={menuLabel}
+          open={this.openActionMenuId === action.id}
+          initialFocusVisible={this.actionMenuInitialFocusVisible}
+          sections={this.menuSectionsForAction(action)}
+          onDsClose={this.closeActionMenu}
+          onDsSelect={this.handleActionSelect}
+        />,
+      ];
+    });
   }
 
   private handleBreadcrumbSelect = (event: CustomEvent<BreadcrumbSelectDetail>) => {
@@ -493,6 +647,8 @@ export class BarTitle {
           />
         ) : null}
 
+        {this.renderActionMenus()}
+
         {this.showActionMenuTrigger ? (
           <ds-menu
             id={this.actionMenuId}
@@ -500,7 +656,7 @@ export class BarTitle {
             anchorId={this.actionMenuTriggerId}
             align="end"
             menuLabel={this.actionsAriaLabel}
-            open={this.actionMenuOpen}
+            open={this.openActionMenuId === '__overflow'}
             initialFocusVisible={this.actionMenuInitialFocusVisible}
             sections={this.actionMenuSections}
             onDsClose={this.closeActionMenu}

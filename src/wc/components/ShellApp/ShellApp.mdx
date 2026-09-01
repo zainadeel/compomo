@@ -39,6 +39,12 @@ the application router, then replace `navigation` and `pageChrome` together
 from the completed route state. Do not conditionally recreate routed content or
 tool views when the responsive presentation changes.
 
+Use `pageChrome.actionItems` for ordered page commands. The same collection
+drives desktop and tablet BarTitle controls plus mobile icon actions and
+overflow; applications handle every command through `dsPageAction` and do not
+author a second mobile menu. `primaryAction`, `actions`, and `mobileActions`
+remain supported for existing consumers.
+
 ## Rail accessories
 
 Use the governed rail-accessory collection for desktop/tablet transient status

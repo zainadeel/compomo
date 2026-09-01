@@ -1,5 +1,9 @@
 import type { BarNavTab } from '../BarNav/bar-nav-types';
-import type { BarTitleActionItem, BarTitlePrimaryAction } from '../BarTitle/bar-title-types';
+import type {
+  BarTitleActionConfigItem,
+  BarTitleActionItem,
+  BarTitlePrimaryAction,
+} from '../BarTitle/bar-title-types';
 import type { BreadcrumbItem } from '../Breadcrumb/breadcrumb-types';
 import type { MobileHeaderTone } from '../MobileHeader/mobile-header-types';
 import type { PanelNavGroup, PanelNavItem, PanelNavRouterMode } from '../PanelNav/panel-nav-types';
@@ -75,6 +79,8 @@ export interface ShellPageChromeConfig {
   breadcrumbAriaLabel?: string;
   primaryAction?: BarTitlePrimaryAction | null;
   actions?: BarTitleActionItem[];
+  /** Ordered desktop, tablet, and mobile page-action model. */
+  actionItems?: BarTitleActionConfigItem[];
   /** Icon actions rendered in the mobile header's trailing lane. */
   mobileActions?: PanelToolsHeaderAction[];
   actionsAriaLabel?: string;
