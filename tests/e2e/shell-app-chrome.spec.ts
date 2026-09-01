@@ -37,16 +37,29 @@ test.describe('App shell chrome', () => {
           });
       });
       nav.collapsed = true;
-      const animationCount = await new Promise<number>(resolve => {
-        requestAnimationFrame(() => resolve(element.getAnimations().length));
+      const animationState = await new Promise<{
+        count: number;
+        transforms: string[];
+      }>(resolve => {
+        requestAnimationFrame(() => {
+          const animations = element.getAnimations();
+          resolve({
+            count: animations.length,
+            transforms: animations.flatMap(animation => {
+              const effect = animation.effect as KeyframeEffect | null;
+              return (effect?.getKeyframes() ?? []).map(frame => String(frame.transform ?? ''));
+            }),
+          });
+        });
       });
       await ended;
       await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
       observer.disconnect();
-      return { animationCount, samples };
+      return { animationState, samples };
     });
 
-    expect(result.animationCount).toBeGreaterThan(0);
+    expect(result.animationState.count).toBeGreaterThan(0);
+    expect(result.animationState.transforms.join(' ')).not.toContain('scale');
     expect(new Set(result.samples).size).toBeLessThanOrEqual(2);
     await expect(shell).not.toHaveAttribute('data-shell-layout-transition');
     await expect(panel.locator('.panel-nav')).toHaveClass(/panel-nav--collapsed/);
@@ -56,7 +69,9 @@ test.describe('App shell chrome', () => {
     page,
   }) => {
     const shell = page.locator('ds-shell-app');
+    const bar = page.locator('.shell-app__bar');
     const content = page.locator('.shell-app__content');
+    const toolsVisuals = page.locator('ds-shell-tools, ds-panel-tools');
     const agents = page.getByRole('button', { name: 'Agents', exact: true });
     await content.evaluate(element => {
       const samples: number[] = [element.clientWidth];
@@ -71,9 +86,15 @@ test.describe('App shell chrome', () => {
 
     await agents.click();
     await expect(shell).toHaveAttribute('data-shell-layout-transition', /panel-tools/);
+    await expect.poll(() => content.evaluate(element => element.getAnimations().length)).toBe(0);
+    await expect.poll(() => bar.evaluate(element => element.getAnimations().length)).toBe(0);
     await expect
-      .poll(() => content.evaluate(element => element.getAnimations().length))
-      .toBeGreaterThan(0);
+      .poll(() =>
+        toolsVisuals.evaluateAll(elements =>
+          elements.some(element => getComputedStyle(element).backgroundColor !== 'rgba(0, 0, 0, 0)')
+        )
+      )
+      .toBe(true);
     await expect(page.locator('ds-panel-tools')).not.toHaveClass(/panel-tools--motion-opening/, {
       timeout: 5000,
     });
@@ -94,7 +115,65 @@ test.describe('App shell chrome', () => {
 
     expect(new Set(widths).size).toBeLessThanOrEqual(2);
     await expect(shell).not.toHaveAttribute('data-shell-layout-transition');
+    await expect
+      .poll(() =>
+        toolsVisuals.evaluateAll(elements =>
+          elements.every(element => !element.style.backgroundColor)
+        )
+      )
+      .toBe(true);
     await expect(agents).toHaveAttribute('aria-pressed', 'true');
+
+    await content.evaluate(element => {
+      const samples: number[] = [element.clientWidth];
+      const observer = new ResizeObserver(() => samples.push(element.clientWidth));
+      observer.observe(element);
+      (
+        window as unknown as {
+          shellResizeProbe: { observer: ResizeObserver; samples: number[] };
+        }
+      ).shellResizeProbe = { observer, samples };
+    });
+    await agents.click();
+    await expect(shell).toHaveAttribute('data-shell-layout-transition', /panel-tools/);
+    await expect.poll(() => content.evaluate(element => element.getAnimations().length)).toBe(0);
+    await expect.poll(() => bar.evaluate(element => element.getAnimations().length)).toBe(0);
+    await expect
+      .poll(() =>
+        toolsVisuals.evaluateAll(elements =>
+          elements.some(element => getComputedStyle(element).backgroundColor !== 'rgba(0, 0, 0, 0)')
+        )
+      )
+      .toBe(true);
+    await expect(page.locator('ds-panel-tools')).not.toHaveClass(/panel-tools--motion-closing/, {
+      timeout: 5000,
+    });
+    const closingWidths = await page.evaluate(
+      () =>
+        new Promise<number[]>(resolve => {
+          requestAnimationFrame(() => {
+            const probe = (
+              window as unknown as {
+                shellResizeProbe: { observer: ResizeObserver; samples: number[] };
+              }
+            ).shellResizeProbe;
+            probe.observer.disconnect();
+            resolve(probe.samples);
+          });
+        })
+    );
+
+    expect(new Set(closingWidths).size).toBeLessThanOrEqual(2);
+    await expect(shell).not.toHaveAttribute('data-shell-layout-transition');
+    await expect
+      .poll(() =>
+        toolsVisuals.evaluateAll(elements =>
+          elements.every(element => !element.style.backgroundColor)
+        )
+      )
+      .toBe(true);
+    await expect(content).toBeVisible();
+    await expect(agents).toHaveAttribute('aria-pressed', 'false');
   });
 
   test(

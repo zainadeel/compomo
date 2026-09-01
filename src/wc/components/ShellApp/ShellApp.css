@@ -143,18 +143,17 @@
 }
 
 /*
- * Shell chrome commits its terminal lane width once, then maps the routed bar
- * and content from their previous bounds with compositor-only transforms.
- * PanelNav and PanelTools keep painting their own width reveal above that
- * terminal layout, so the coordinated push remains visible without resizing
- * every routed descendant on each motion frame.
+ * Shell chrome commits its terminal lane width once. Routed content may be
+ * translated when PanelNav moves its origin, but it is never scaled to imitate
+ * a width transition: typography, spacing, and cards always paint at their
+ * final geometry. The shell bar is deliberately outside this mapping.
  */
-:host([data-shell-layout-transition]) .shell-app__bar,
 :host([data-shell-layout-transition]) .shell-app__content {
   will-change: transform;
 }
 
 :host([data-shell-tools-transition]) .shell-app__tools {
+  background-color: var(--_shell-chrome-bg);
   overflow: visible;
   z-index: 2;
 }
@@ -264,7 +263,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :host([data-shell-layout-transition]) .shell-app__bar,
   :host([data-shell-layout-transition]) .shell-app__content {
     will-change: auto;
   }

@@ -20,6 +20,7 @@ interface ShellLayoutTiming {
 
 interface ShellToolsVisualRestore {
   element: HTMLElement;
+  backgroundColor: string;
   blockSize: string;
   inlineSize: string;
   insetInlineEnd: string;
@@ -64,9 +65,10 @@ function transitionTimingForProperty(
 }
 
 /**
- * Commits terminal shell lane widths once, then visually maps persistent page
- * chrome between its previous and final bounds without resizing descendants on
- * every PanelNav or PanelTools motion frame.
+ * Commits terminal shell lane widths once, then translates routed content when
+ * its origin moves. Width changes are never approximated with scale: text,
+ * spacing, cards, and other page pixels paint at their final geometry while the
+ * surrounding chrome completes its own motion.
  */
 export class ShellLayoutTransitionController {
   private readonly activeSources = new Set<ChromeTransitionSource>();
@@ -151,10 +153,8 @@ export class ShellLayoutTransitionController {
   }
 
   private layoutTargets(): HTMLElement[] {
-    return [
-      this.shell.querySelector<HTMLElement>('.shell-app__bar'),
-      this.shell.querySelector<HTMLElement>('.shell-app__content'),
-    ].filter((element): element is HTMLElement => element !== null);
+    const content = this.shell.querySelector<HTMLElement>('.shell-app__content');
+    return content ? [content] : [];
   }
 
   private captureLayout(): ShellLayoutSnapshot[] {
@@ -195,14 +195,7 @@ export class ShellLayoutTransitionController {
 
         const deltaX = oldRect.left - newRect.left;
         const deltaY = oldRect.top - newRect.top;
-        const scaleX = oldRect.width / newRect.width;
-        const scaleY = oldRect.height / newRect.height;
-        if (
-          Math.abs(deltaX) < 0.01 &&
-          Math.abs(deltaY) < 0.01 &&
-          Math.abs(scaleX - 1) < 0.0001 &&
-          Math.abs(scaleY - 1) < 0.0001
-        ) {
+        if (Math.abs(deltaX) < 0.01 && Math.abs(deltaY) < 0.01) {
           return [];
         }
 
@@ -210,10 +203,9 @@ export class ShellLayoutTransitionController {
           element.animate(
             [
               {
-                transform: `translate3d(${deltaX}px, ${deltaY}px, 0) scale(${scaleX}, ${scaleY})`,
-                transformOrigin: '0 0',
+                transform: `translate3d(${deltaX}px, ${deltaY}px, 0)`,
               },
-              { transform: 'none', transformOrigin: '0 0' },
+              { transform: 'none' },
             ],
             {
               delay: timing.delay,
@@ -309,6 +301,7 @@ export class ShellLayoutTransitionController {
       this.restoreToolsVisual();
       this.toolsVisualRestore = {
         element: visual,
+        backgroundColor: visual.style.backgroundColor,
         position: visual.style.position,
         insetInlineEnd: visual.style.insetInlineEnd,
         inlineSize: visual.style.inlineSize,
@@ -316,6 +309,7 @@ export class ShellLayoutTransitionController {
       };
     }
     visual.style.position = 'absolute';
+    visual.style.backgroundColor = 'var(--_shell-chrome-bg)';
     visual.style.insetInlineEnd = '0';
     visual.style.inlineSize = `${railWidth + drawerWidth}px`;
     visual.style.blockSize = '100%';
@@ -326,6 +320,7 @@ export class ShellLayoutTransitionController {
   private restoreToolsVisual() {
     const restore = this.toolsVisualRestore;
     if (!restore) return;
+    restore.element.style.backgroundColor = restore.backgroundColor;
     restore.element.style.position = restore.position;
     restore.element.style.insetInlineEnd = restore.insetInlineEnd;
     restore.element.style.inlineSize = restore.inlineSize;
