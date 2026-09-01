@@ -18,6 +18,85 @@ test.describe('App shell chrome', () => {
     await expect(page.locator('.panel-nav--collapsed')).toHaveCount(0);
   });
 
+  test('commits panel lane layout once while preserving coordinated collapse motion @cross-browser', async ({
+    page,
+  }) => {
+    const shell = page.locator('ds-shell-app');
+    const panel = page.locator('#panel');
+    const content = page.locator('.shell-app__content');
+    const result = await content.evaluate(async element => {
+      const samples: number[] = [element.clientWidth];
+      const observer = new ResizeObserver(() => samples.push(element.clientWidth));
+      observer.observe(element);
+      const nav = document.getElementById('panel') as HTMLElement & { collapsed: boolean };
+      const ended = new Promise<void>(resolve => {
+        document
+          .querySelector('ds-shell-app')!
+          .addEventListener('dsChromeTransitionEnd', () => resolve(), {
+            once: true,
+          });
+      });
+      nav.collapsed = true;
+      const animationCount = await new Promise<number>(resolve => {
+        requestAnimationFrame(() => resolve(element.getAnimations().length));
+      });
+      await ended;
+      await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+      observer.disconnect();
+      return { animationCount, samples };
+    });
+
+    expect(result.animationCount).toBeGreaterThan(0);
+    expect(new Set(result.samples).size).toBeLessThanOrEqual(2);
+    await expect(shell).not.toHaveAttribute('data-shell-layout-transition');
+    await expect(panel.locator('.panel-nav')).toHaveClass(/panel-nav--collapsed/);
+  });
+
+  test('commits the tools lane once while the drawer keeps its visible reveal @cross-browser', async ({
+    page,
+  }) => {
+    const shell = page.locator('ds-shell-app');
+    const content = page.locator('.shell-app__content');
+    const agents = page.getByRole('button', { name: 'Agents', exact: true });
+    await content.evaluate(element => {
+      const samples: number[] = [element.clientWidth];
+      const observer = new ResizeObserver(() => samples.push(element.clientWidth));
+      observer.observe(element);
+      (
+        window as unknown as {
+          shellResizeProbe: { observer: ResizeObserver; samples: number[] };
+        }
+      ).shellResizeProbe = { observer, samples };
+    });
+
+    await agents.click();
+    await expect(shell).toHaveAttribute('data-shell-layout-transition', /panel-tools/);
+    await expect
+      .poll(() => content.evaluate(element => element.getAnimations().length))
+      .toBeGreaterThan(0);
+    await expect(page.locator('ds-panel-tools')).not.toHaveClass(/panel-tools--motion-opening/, {
+      timeout: 5000,
+    });
+    const widths = await page.evaluate(
+      () =>
+        new Promise<number[]>(resolve => {
+          requestAnimationFrame(() => {
+            const probe = (
+              window as unknown as {
+                shellResizeProbe: { observer: ResizeObserver; samples: number[] };
+              }
+            ).shellResizeProbe;
+            probe.observer.disconnect();
+            resolve(probe.samples);
+          });
+        })
+    );
+
+    expect(new Set(widths).size).toBeLessThanOrEqual(2);
+    await expect(shell).not.toHaveAttribute('data-shell-layout-transition');
+    await expect(agents).toHaveAttribute('aria-pressed', 'true');
+  });
+
   test(
     'panel nav controls inherit the shared md control radius',
     chromiumOnly(

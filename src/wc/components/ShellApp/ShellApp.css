@@ -142,6 +142,23 @@
   contain: layout;
 }
 
+/*
+ * Shell chrome commits its terminal lane width once, then maps the routed bar
+ * and content from their previous bounds with compositor-only transforms.
+ * PanelNav and PanelTools keep painting their own width reveal above that
+ * terminal layout, so the coordinated push remains visible without resizing
+ * every routed descendant on each motion frame.
+ */
+:host([data-shell-layout-transition]) .shell-app__bar,
+:host([data-shell-layout-transition]) .shell-app__content {
+  will-change: transform;
+}
+
+:host([data-shell-tools-transition]) .shell-app__tools {
+  overflow: visible;
+  z-index: 2;
+}
+
 /* Layout scroller, not a control: keep it keyboard-focusable without a page-sized ring. */
 .shell-app__content:focus,
 .shell-app__content:focus-visible {
@@ -244,6 +261,13 @@
 :host(.shell-app--mobile) .shell-app__content {
   z-index: 1;
   overflow: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host([data-shell-layout-transition]) .shell-app__bar,
+  :host([data-shell-layout-transition]) .shell-app__content {
+    will-change: auto;
+  }
 }
 
 :host(.shell-app--mobile) .shell-app__tools {
