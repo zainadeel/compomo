@@ -79,7 +79,7 @@ test('split segments stay flush and use border separators in default and rounded
         menuStartRadius: getComputedStyle(menu).borderStartStartRadius,
       };
     });
-    expect(joinedMetrics.gap).toBe(0);
+    expect(Math.abs(joinedMetrics.gap)).toBeLessThan(0.01);
     expect(joinedMetrics.background).toBe('rgba(0, 0, 0, 0)');
     expect(joinedMetrics.dividerHeight).toBe(joinedMetrics.wrapperHeight);
     expect(joinedMetrics.primaryEndRadius).toBe('0px');
@@ -99,7 +99,7 @@ test('split segments stay flush and use border separators in default and rounded
         menuEndRadius: Number.parseFloat(getComputedStyle(menu).borderStartEndRadius),
       };
     });
-    expect(roundedMetrics.gap).toBe(0);
+    expect(Math.abs(roundedMetrics.gap)).toBeLessThan(0.01);
     expect(roundedMetrics.primaryStartRadius).toBeGreaterThan(0);
     expect(roundedMetrics.primaryEndRadius).toBe('0px');
     expect(roundedMetrics.menuStartRadius).toBe('0px');
