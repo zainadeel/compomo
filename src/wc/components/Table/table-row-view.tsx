@@ -27,6 +27,7 @@ export interface TableRowViewOptions {
   highlightFieldIds: string[];
   ariaRowIndex?: number;
   variableVirtualSize?: boolean;
+  intrinsicBlockSize?: number;
   rowKey?: string;
   renderSelectionControl: (
     label: string,
@@ -55,6 +56,7 @@ export function renderTableRow({
   highlightFieldIds,
   ariaRowIndex,
   variableVirtualSize = false,
+  intrinsicBlockSize,
   rowKey = row.id,
   renderSelectionControl,
   renderStickyEdge,
@@ -102,6 +104,11 @@ export function renderTableRow({
       data-virtual-pool-key={ariaRowIndex != null ? rowKey : undefined}
       data-virtual-measure={ariaRowIndex != null && variableVirtualSize ? 'true' : undefined}
       data-selected={selected ? 'true' : undefined}
+      style={
+        intrinsicBlockSize != null
+          ? { '--_table-row-intrinsic-block-size': `${intrinsicBlockSize}px` }
+          : undefined
+      }
       aria-rowindex={ariaRowIndex}
       aria-disabled={row.disabled ? 'true' : undefined}
       tabIndex={row.interactive && !row.disabled ? 0 : undefined}

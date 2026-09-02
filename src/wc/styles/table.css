@@ -209,8 +209,20 @@
 }
 
 /* Bound style and layout invalidation to recycled row shells during window updates. */
-:where(.ds-table__table--virtual .ds-table__row) {
+:where(.ds-table__table--windowed .ds-table__row) {
   contain: layout style;
+}
+
+/*
+ * Pagination and infinite windows keep every loaded semantic row in the DOM.
+ * Let the browser skip off-screen row contents while retaining a stable scroll
+ * range from the same token-aligned row estimates used by virtual mode. The
+ * `auto` form caches each real height after the row has been laid out.
+ */
+:where(.ds-table__table--deferred-rows .ds-table__row) {
+  content-visibility: auto;
+  contain-intrinsic-block-size: auto
+    var(--_table-row-intrinsic-block-size, var(--_table-row-min-block-size));
 }
 
 :where(.ds-table__table--native-group-sticky .ds-table__header-row),

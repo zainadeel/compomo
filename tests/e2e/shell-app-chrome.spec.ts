@@ -18,6 +18,135 @@ test.describe('App shell chrome', () => {
     await expect(page.locator('.panel-nav--collapsed')).toHaveCount(0);
   });
 
+  test('keeps panel, bar, and page on one continuous layout transition @cross-browser', async ({
+    page,
+  }) => {
+    const result = await page.evaluate(async () => {
+      const shell = document.querySelector('ds-shell-app');
+      const panelLane = document.querySelector<HTMLElement>('.shell-app__panel');
+      const bar = document.querySelector<HTMLElement>('.shell-app__bar');
+      const content = document.querySelector<HTMLElement>('.shell-app__content');
+      const panelNav = document.getElementById('panel') as HTMLElement & { collapsed: boolean };
+      if (!shell || !panelLane || !bar || !content || !panelNav) throw new Error('Shell missing');
+      panelNav.style.setProperty('--ds-panel-nav-speed', '4');
+
+      const samples: Array<{
+        barLeft: number;
+        barTransform: string;
+        barWidth: number;
+        contentTransform: string;
+        contentWidth: number;
+        panelRight: number;
+        panelWidth: number;
+      }> = [];
+      let frame = 0;
+      const sample = () => {
+        const panelRect = panelLane.getBoundingClientRect();
+        const barRect = bar.getBoundingClientRect();
+        const contentRect = content.getBoundingClientRect();
+        samples.push({
+          panelWidth: panelRect.width,
+          panelRight: panelRect.right,
+          barLeft: barRect.left,
+          barWidth: barRect.width,
+          contentWidth: contentRect.width,
+          barTransform: getComputedStyle(bar).transform,
+          contentTransform: getComputedStyle(content).transform,
+        });
+        frame = requestAnimationFrame(sample);
+      };
+      const ended = new Promise<void>(resolve => {
+        shell.addEventListener('dsChromeTransitionEnd', () => resolve(), { once: true });
+      });
+
+      sample();
+      panelNav.collapsed = true;
+      await ended;
+      cancelAnimationFrame(frame);
+      sample();
+      cancelAnimationFrame(frame);
+      return samples;
+    });
+
+    expect(new Set(result.map(sample => Math.round(sample.panelWidth))).size).toBeGreaterThan(2);
+    expect(new Set(result.map(sample => Math.round(sample.barWidth))).size).toBeGreaterThan(2);
+    expect(new Set(result.map(sample => Math.round(sample.contentWidth))).size).toBeGreaterThan(2);
+    expect(
+      Math.max(...result.map(sample => Math.abs(sample.barLeft - sample.panelRight)))
+    ).toBeLessThan(1.5);
+    expect(result.every(sample => sample.barTransform === 'none')).toBe(true);
+    expect(result.every(sample => sample.contentTransform === 'none')).toBe(true);
+  });
+
+  test('keeps tools, bar, and page on one continuous layout transition @cross-browser', async ({
+    page,
+  }) => {
+    await page.evaluate(() => {
+      const bar = document.querySelector<HTMLElement>('.shell-app__bar');
+      const content = document.querySelector<HTMLElement>('.shell-app__content');
+      const tools = document.querySelector<HTMLElement>('.shell-app__tools');
+      if (!bar || !content || !tools) throw new Error('Shell missing');
+
+      const probe = {
+        frame: 0,
+        samples: [] as Array<{
+          barTransform: string;
+          barWidth: number;
+          contentTransform: string;
+          contentWidth: number;
+          toolsWidth: number;
+        }>,
+      };
+      const sample = () => {
+        probe.samples.push({
+          barWidth: bar.getBoundingClientRect().width,
+          contentWidth: content.getBoundingClientRect().width,
+          toolsWidth: tools.getBoundingClientRect().width,
+          barTransform: getComputedStyle(bar).transform,
+          contentTransform: getComputedStyle(content).transform,
+        });
+        probe.frame = requestAnimationFrame(sample);
+      };
+      sample();
+      (
+        window as unknown as {
+          shellMotionProbe: typeof probe;
+        }
+      ).shellMotionProbe = probe;
+    });
+
+    await page.getByRole('button', { name: 'Agents', exact: true }).click();
+    const panelTools = page.locator('ds-panel-tools');
+    await expect(panelTools).toHaveClass(/panel-tools--motion-opening/);
+    await expect(panelTools).not.toHaveClass(/panel-tools--motion-opening/, {
+      timeout: 5000,
+    });
+    const result = await page.evaluate(() => {
+      const probe = (
+        window as unknown as {
+          shellMotionProbe: {
+            frame: number;
+            samples: Array<{
+              barTransform: string;
+              barWidth: number;
+              contentTransform: string;
+              contentWidth: number;
+              toolsWidth: number;
+            }>;
+          };
+        }
+      ).shellMotionProbe;
+      cancelAnimationFrame(probe.frame);
+      return probe.samples;
+    });
+
+    expect(new Set(result.map(sample => Math.round(sample.toolsWidth))).size).toBeGreaterThan(2);
+    expect(new Set(result.map(sample => Math.round(sample.barWidth))).size).toBeGreaterThan(2);
+    expect(new Set(result.map(sample => Math.round(sample.contentWidth))).size).toBeGreaterThan(2);
+    expect(result.every(sample => sample.barTransform === 'none')).toBe(true);
+    expect(result.every(sample => sample.contentTransform === 'none')).toBe(true);
+  });
+
   test(
     'panel nav controls inherit the shared md control radius',
     chromiumOnly(

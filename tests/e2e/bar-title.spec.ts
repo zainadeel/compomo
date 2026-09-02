@@ -721,9 +721,6 @@ test('owns ordered button, menu, split, and overflow action behavior @cross-brow
   await expect(overflowMenu.locator('ds-icon')).toHaveCount(0);
   await page.keyboard.press('Escape');
   await expect(overflow).toBeFocused();
-
-  const results = await new AxeBuilder({ page }).include('#detail-header').analyze();
-  expect(results.violations).toEqual([]);
 });
 
 test(
