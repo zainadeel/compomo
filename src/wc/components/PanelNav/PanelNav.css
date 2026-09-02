@@ -292,9 +292,14 @@
 .panel-nav__children {
   display: flex;
   flex-direction: column;
-  gap: var(--dimension-space-025);
+  gap: var(--dimension-space-050, 4px);
   min-height: 0;
   overflow: hidden;
+}
+
+/* Margin lives on the first child so closed 0fr accordions still collapse to 0. */
+.panel-nav__children > .panel-nav__child:first-child {
+  margin-block-start: var(--dimension-space-050, 4px);
 }
 
 /*
