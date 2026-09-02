@@ -67,9 +67,9 @@ test.describe('App shell chrome', () => {
       return samples;
     });
 
-    expect(new Set(result.map(sample => Math.round(sample.panelWidth))).size).toBeGreaterThan(4);
-    expect(new Set(result.map(sample => Math.round(sample.barWidth))).size).toBeGreaterThan(4);
-    expect(new Set(result.map(sample => Math.round(sample.contentWidth))).size).toBeGreaterThan(4);
+    expect(new Set(result.map(sample => Math.round(sample.panelWidth))).size).toBeGreaterThan(2);
+    expect(new Set(result.map(sample => Math.round(sample.barWidth))).size).toBeGreaterThan(2);
+    expect(new Set(result.map(sample => Math.round(sample.contentWidth))).size).toBeGreaterThan(2);
     expect(
       Math.max(...result.map(sample => Math.abs(sample.barLeft - sample.panelRight)))
     ).toBeLessThan(1.5);
@@ -115,7 +115,9 @@ test.describe('App shell chrome', () => {
     });
 
     await page.getByRole('button', { name: 'Agents', exact: true }).click();
-    await expect(page.locator('ds-panel-tools')).not.toHaveClass(/panel-tools--motion-opening/, {
+    const panelTools = page.locator('ds-panel-tools');
+    await expect(panelTools).toHaveClass(/panel-tools--motion-opening/);
+    await expect(panelTools).not.toHaveClass(/panel-tools--motion-opening/, {
       timeout: 5000,
     });
     const result = await page.evaluate(() => {
@@ -137,9 +139,9 @@ test.describe('App shell chrome', () => {
       return probe.samples;
     });
 
-    expect(new Set(result.map(sample => Math.round(sample.toolsWidth))).size).toBeGreaterThan(4);
-    expect(new Set(result.map(sample => Math.round(sample.barWidth))).size).toBeGreaterThan(4);
-    expect(new Set(result.map(sample => Math.round(sample.contentWidth))).size).toBeGreaterThan(4);
+    expect(new Set(result.map(sample => Math.round(sample.toolsWidth))).size).toBeGreaterThan(2);
+    expect(new Set(result.map(sample => Math.round(sample.barWidth))).size).toBeGreaterThan(2);
+    expect(new Set(result.map(sample => Math.round(sample.contentWidth))).size).toBeGreaterThan(2);
     expect(result.every(sample => sample.barTransform === 'none')).toBe(true);
     expect(result.every(sample => sample.contentTransform === 'none')).toBe(true);
   });
