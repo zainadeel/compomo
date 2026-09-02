@@ -30,7 +30,12 @@ export const config: Config = {
       directivesProxyFile: 'src/.generated/angular/proxies.ts',
       directivesArrayFile: 'src/.generated/angular/index.ts',
       valueAccessorConfigs: [
-        { elementSelectors: 'ds-input', event: 'dsChange', targetAttr: 'value', type: 'text' },
+        {
+          elementSelectors: ['ds-input', 'ds-textarea'],
+          event: 'dsChange',
+          targetAttr: 'value',
+          type: 'text',
+        },
         { elementSelectors: 'ds-select', event: 'dsChange', targetAttr: 'value', type: 'select' },
         { elementSelectors: 'ds-radio', event: 'dsChange', targetAttr: 'value', type: 'radio' },
         {
@@ -54,7 +59,12 @@ export const config: Config = {
       customElementsDir: 'components',
       esModules: true,
       componentModels: [
-        { elements: ['ds-input'], event: 'dsChange', targetAttr: 'value', eventAttr: 'detail' },
+        {
+          elements: ['ds-input', 'ds-textarea'],
+          event: 'dsChange',
+          targetAttr: 'value',
+          eventAttr: 'detail',
+        },
         { elements: ['ds-select'], event: 'dsChange', targetAttr: 'value', eventAttr: 'detail' },
         { elements: ['ds-radio'], event: 'dsChange', targetAttr: 'value', eventAttr: 'detail' },
         {

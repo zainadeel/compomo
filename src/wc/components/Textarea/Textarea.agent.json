@@ -1,0 +1,78 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-textarea",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-textarea",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Form-associated multiline text control with shared Input density, focus, validation, and field-composition behavior.",
+  "useWhen": [
+    "A person needs to enter freeform text that may span several lines.",
+    "Notes, descriptions, comments, or explanations need native multiline editing and form submission.",
+    "A multiline control must compose with Field for its visible label, guidance, and error presentation."
+  ],
+  "avoidWhen": [
+    "The value is predictably one line; use Input instead.",
+    "The content is a conversational prompt with submit, stop, and tool actions; use MessageComposer instead.",
+    "The interface needs rich-text formatting, mentions, or structured blocks."
+  ],
+  "alternatives": [
+    {
+      "when": "The value is predictably one line.",
+      "component": "component:ds-input",
+      "reason": "Input supplies single-line semantics, adornments, search clearing, and numeric stepping."
+    },
+    {
+      "when": "The field is a conversational prompt with submission actions.",
+      "component": "component:ds-message-composer",
+      "reason": "MessageComposer owns chat-specific growth, submission, stop, tools, and recovery behavior."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-field",
+    "component:ds-text"
+  ],
+  "accessibility": [
+    "Give every Textarea an accessible name, preferably by wrapping it in Field with a persistent visible label.",
+    "Use description text for lasting guidance; placeholder text is an example or short prompt, not a label.",
+    "Required validation uses the native form contract and can provide a localized requiredMessage.",
+    "Read-only text remains focusable and submittable; inactive text is unavailable and omitted from form submission.",
+    "When Textarea renders its own errorMessage, it merges that message ID with authored aria-describedby references."
+  ],
+  "states": [
+    "Textarea exposes data-filled, data-focused, data-dirty, data-touched, data-invalid, data-disabled, data-readonly, and data-required state hooks.",
+    "The default four visible rows can be changed with rows; rows is clamped to at least one.",
+    "Vertical resizing is enabled by default and can be disabled when the surrounding layout owns the field height.",
+    "Size changes typography and inset spacing without changing the authored row count.",
+    "Border, focus, error, placeholder, inactive, hover, and pressed treatments follow the same shared recipes as Input."
+  ],
+  "responsiveBehavior": [
+    "Textarea fills its parent by default and follows the width supplied by Field or the form layout.",
+    "The native value wraps within the available width and scrolls when its content exceeds the visible rows.",
+    "Use width hug only in intrinsically sized layouts with an explicit surrounding constraint."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Listen for dsChange; its detail is the complete current string value.",
+      "Set value through the component property for controlled updates and use setFocus() for imperative focus."
+    ],
+    "react": [
+      "Use the generated Textarea adapter and read the full string from the dsChange detail."
+    ],
+    "angular": [
+      "Use the generated Textarea adapter with its text value accessor for form bindings."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/Textarea/Textarea.stories.ts"
+    },
+    {
+      "label": "Cross-browser form and accessibility coverage",
+      "path": "tests/e2e/forms.spec.ts"
+    }
+  ]
+}

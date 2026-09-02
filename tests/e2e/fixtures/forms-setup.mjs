@@ -1,4 +1,5 @@
 import '/dist/components/ds-input.js';
+import '/dist/components/ds-textarea.js';
 import '/dist/components/ds-field.js';
 import '/dist/components/ds-checkbox.js';
 import '/dist/components/ds-select.js';
@@ -10,7 +11,7 @@ import '/dist/components/ds-slider.js';
 import '/dist/components/ds-swatch-picker.js';
 
 await Promise.all([
-  'ds-input', 'ds-field', 'ds-checkbox', 'ds-select', 'ds-menu', 'ds-tag',
+  'ds-input', 'ds-textarea', 'ds-field', 'ds-checkbox', 'ds-select', 'ds-menu', 'ds-tag',
   'ds-radio', 'ds-switch', 'ds-slider', 'ds-swatch-picker',
 ].map(tag => customElements.whenDefined(tag)));
 

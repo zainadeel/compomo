@@ -72,6 +72,7 @@ import { TableGroupOption } from "./components/TableGroup/TableGroup";
 import { TableSavedView, TableSavedViewChangeDetail, TableSavedViewCreateDetail, TableSavedViewDiscardDetail, TableSavedViewRemoveDetail, TableSavedViewRenameDetail, TableSavedViewSaveDetail } from "./components/TableSavedViews/table-saved-views-types";
 import { TableSearchFieldsChangeDetail } from "./components/TableSearch/table-search-types";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
+import { TextareaResize, TextareaSize, TextareaWidth } from "./components/Textarea/Textarea";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
 import { AnchoredOverlayBoundary } from "./utils/anchored-overlay-boundary";
@@ -143,6 +144,7 @@ export { TableGroupOption } from "./components/TableGroup/TableGroup";
 export { TableSavedView, TableSavedViewChangeDetail, TableSavedViewCreateDetail, TableSavedViewDiscardDetail, TableSavedViewRemoveDetail, TableSavedViewRenameDetail, TableSavedViewSaveDetail } from "./components/TableSavedViews/table-saved-views-types";
 export { TableSearchFieldsChangeDetail } from "./components/TableSearch/table-search-types";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
+export { TextareaResize, TextareaSize, TextareaWidth } from "./components/Textarea/Textarea";
 export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
 export { AnchoredOverlayBoundary } from "./utils/anchored-overlay-boundary";
@@ -3655,6 +3657,105 @@ export namespace Components {
         "variant": TextVariant;
         "wrap": TextWrap | undefined;
     }
+    interface DsTextarea {
+        "ariaDescribedby": string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+        /**
+          * Native browser autofill hint.
+         */
+        "autoComplete": string | undefined;
+        /**
+          * @default false
+         */
+        "autoFocus": boolean;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Preferred virtual-keyboard action label.
+          * @default ''
+         */
+        "enterKeyHint": string;
+        /**
+          * @default false
+         */
+        "error": boolean;
+        "errorMessage": string | undefined;
+        "form": string | undefined;
+        /**
+          * Show the standard inset border, including focused and invalid strokes.
+          * @default true
+         */
+        "hasBorder": boolean;
+        /**
+          * Show the standard hover and pressed fill when the field is not embedded in interactive chrome.
+          * @default true
+         */
+        "hasInteractionFill": boolean;
+        /**
+          * Associates the internal textarea with an external <label>.
+         */
+        "inputId": string | undefined;
+        /**
+          * Preferred virtual keyboard without changing the value semantics.
+          * @default ''
+         */
+        "inputMode": string;
+        /**
+          * @default false
+         */
+        "isInactive": boolean;
+        "name": string | undefined;
+        "placeholder": string | undefined;
+        /**
+          * Keeps the value focusable and submittable while preventing edits.
+          * @default false
+         */
+        "readOnly": boolean;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage": string;
+        /**
+          * Whether the user can resize the field vertically.
+          * @default 'vertical'
+         */
+        "resize": TextareaResize;
+        /**
+          * Visible text rows before the field scrolls.
+          * @default 4
+         */
+        "rows": number;
+        "setFocus": () => Promise<void>;
+        /**
+          * Control density for typography and inset spacing.
+          * @default 'md'
+         */
+        "size": TextareaSize;
+        /**
+          * Whether the browser should check spelling and grammar.
+          * @default true
+         */
+        "spellCheck": boolean;
+        /**
+          * @default ''
+         */
+        "value": string;
+        /**
+          * Width fit — fill the parent (default) or hug the available content.
+          * @default 'fill'
+         */
+        "width": TextareaWidth;
+    }
     interface DsToast {
         /**
           * Keep the global stack 16px above the persistent mobile shell bar below 768px.
@@ -4020,6 +4121,10 @@ export interface DsTableSortCustomEvent<T> extends CustomEvent<T> {
 export interface DsTagCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsTagElement;
+}
+export interface DsTextareaCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsTextareaElement;
 }
 export interface DsToastCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -5170,6 +5275,23 @@ declare global {
         prototype: HTMLDsTextElement;
         new (): HTMLDsTextElement;
     };
+    interface HTMLDsTextareaElementEventMap {
+        "dsChange": string;
+    }
+    interface HTMLDsTextareaElement extends Components.DsTextarea, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsTextareaElementEventMap>(type: K, listener: (this: HTMLDsTextareaElement, ev: DsTextareaCustomEvent<HTMLDsTextareaElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsTextareaElementEventMap>(type: K, listener: (this: HTMLDsTextareaElement, ev: DsTextareaCustomEvent<HTMLDsTextareaElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsTextareaElement: {
+        prototype: HTMLDsTextareaElement;
+        new (): HTMLDsTextareaElement;
+    };
     interface HTMLDsToastElementEventMap {
         "dsToastClose": ToastCloseEventDetail;
         "dsToastRemove": ToastEventDetail;
@@ -5302,6 +5424,7 @@ declare global {
         "ds-table-toolbar": HTMLDsTableToolbarElement;
         "ds-tag": HTMLDsTagElement;
         "ds-text": HTMLDsTextElement;
+        "ds-textarea": HTMLDsTextareaElement;
         "ds-toast": HTMLDsToastElement;
         "ds-tooltip": HTMLDsTooltipElement;
         "ds-tooltip-chart": HTMLDsTooltipChartElement;
@@ -9191,6 +9314,105 @@ declare namespace LocalJSX {
         "variant"?: TextVariant;
         "wrap"?: TextWrap | undefined;
     }
+    interface DsTextarea {
+        "ariaDescribedby"?: string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        "ariaLabelledby"?: string | undefined;
+        /**
+          * Native browser autofill hint.
+         */
+        "autoComplete"?: string | undefined;
+        /**
+          * @default false
+         */
+        "autoFocus"?: boolean;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Preferred virtual-keyboard action label.
+          * @default ''
+         */
+        "enterKeyHint"?: string;
+        /**
+          * @default false
+         */
+        "error"?: boolean;
+        "errorMessage"?: string | undefined;
+        "form"?: string | undefined;
+        /**
+          * Show the standard inset border, including focused and invalid strokes.
+          * @default true
+         */
+        "hasBorder"?: boolean;
+        /**
+          * Show the standard hover and pressed fill when the field is not embedded in interactive chrome.
+          * @default true
+         */
+        "hasInteractionFill"?: boolean;
+        /**
+          * Associates the internal textarea with an external <label>.
+         */
+        "inputId"?: string | undefined;
+        /**
+          * Preferred virtual keyboard without changing the value semantics.
+          * @default ''
+         */
+        "inputMode"?: string;
+        /**
+          * @default false
+         */
+        "isInactive"?: boolean;
+        "name"?: string | undefined;
+        "onDsChange"?: (event: DsTextareaCustomEvent<string>) => void;
+        "placeholder"?: string | undefined;
+        /**
+          * Keeps the value focusable and submittable while preventing edits.
+          * @default false
+         */
+        "readOnly"?: boolean;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage"?: string;
+        /**
+          * Whether the user can resize the field vertically.
+          * @default 'vertical'
+         */
+        "resize"?: TextareaResize;
+        /**
+          * Visible text rows before the field scrolls.
+          * @default 4
+         */
+        "rows"?: number;
+        /**
+          * Control density for typography and inset spacing.
+          * @default 'md'
+         */
+        "size"?: TextareaSize;
+        /**
+          * Whether the browser should check spelling and grammar.
+          * @default true
+         */
+        "spellCheck"?: boolean;
+        /**
+          * @default ''
+         */
+        "value"?: string;
+        /**
+          * Width fit — fill the parent (default) or hug the available content.
+          * @default 'fill'
+         */
+        "width"?: TextareaWidth;
+    }
     interface DsToast {
         /**
           * Keep the global stack 16px above the persistent mobile shell bar below 768px.
@@ -10148,6 +10370,34 @@ declare namespace LocalJSX {
         "for": string | undefined;
         "textId": string | undefined;
     }
+    interface DsTextareaAttributes {
+        "value": string;
+        "name": string | undefined;
+        "form": string | undefined;
+        "disabled": boolean;
+        "readOnly": boolean;
+        "required": boolean;
+        "requiredMessage": string;
+        "placeholder": string | undefined;
+        "rows": number;
+        "resize": TextareaResize;
+        "autoComplete": string | undefined;
+        "inputMode": string;
+        "enterKeyHint": string;
+        "spellCheck": boolean;
+        "size": TextareaSize;
+        "width": TextareaWidth;
+        "hasBorder": boolean;
+        "hasInteractionFill": boolean;
+        "isInactive": boolean;
+        "autoFocus": boolean;
+        "error": boolean;
+        "errorMessage": string | undefined;
+        "inputId": string | undefined;
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+        "ariaDescribedby": string | undefined;
+    }
     interface DsToastAttributes {
         "limit": number;
         "timeout": string;
@@ -10256,6 +10506,7 @@ declare namespace LocalJSX {
         "ds-table-toolbar": Omit<DsTableToolbar, keyof DsTableToolbarAttributes> & { [K in keyof DsTableToolbar & keyof DsTableToolbarAttributes]?: DsTableToolbar[K] } & { [K in keyof DsTableToolbar & keyof DsTableToolbarAttributes as `attr:${K}`]?: DsTableToolbarAttributes[K] } & { [K in keyof DsTableToolbar & keyof DsTableToolbarAttributes as `prop:${K}`]?: DsTableToolbar[K] };
         "ds-tag": Omit<DsTag, keyof DsTagAttributes> & { [K in keyof DsTag & keyof DsTagAttributes]?: DsTag[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `attr:${K}`]?: DsTagAttributes[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `prop:${K}`]?: DsTag[K] } & OneOf<"label", DsTag["label"], DsTagAttributes["label"]>;
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
+        "ds-textarea": Omit<DsTextarea, keyof DsTextareaAttributes> & { [K in keyof DsTextarea & keyof DsTextareaAttributes]?: DsTextarea[K] } & { [K in keyof DsTextarea & keyof DsTextareaAttributes as `attr:${K}`]?: DsTextareaAttributes[K] } & { [K in keyof DsTextarea & keyof DsTextareaAttributes as `prop:${K}`]?: DsTextarea[K] };
         "ds-toast": Omit<DsToast, keyof DsToastAttributes> & { [K in keyof DsToast & keyof DsToastAttributes]?: DsToast[K] } & { [K in keyof DsToast & keyof DsToastAttributes as `attr:${K}`]?: DsToastAttributes[K] } & { [K in keyof DsToast & keyof DsToastAttributes as `prop:${K}`]?: DsToast[K] };
         "ds-tooltip": Omit<DsTooltip, keyof DsTooltipAttributes> & { [K in keyof DsTooltip & keyof DsTooltipAttributes]?: DsTooltip[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `attr:${K}`]?: DsTooltipAttributes[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `prop:${K}`]?: DsTooltip[K] } & OneOf<"label", DsTooltip["label"], DsTooltipAttributes["label"]>;
         "ds-tooltip-chart": Omit<DsTooltipChart, keyof DsTooltipChartAttributes> & { [K in keyof DsTooltipChart & keyof DsTooltipChartAttributes]?: DsTooltipChart[K] } & { [K in keyof DsTooltipChart & keyof DsTooltipChartAttributes as `attr:${K}`]?: DsTooltipChartAttributes[K] } & { [K in keyof DsTooltipChart & keyof DsTooltipChartAttributes as `prop:${K}`]?: DsTooltipChart[K] };
@@ -10356,6 +10607,7 @@ declare module "@stencil/core" {
             "ds-table-toolbar": LocalJSX.IntrinsicElements["ds-table-toolbar"] & JSXBase.HTMLAttributes<HTMLDsTableToolbarElement>;
             "ds-tag": LocalJSX.IntrinsicElements["ds-tag"] & JSXBase.HTMLAttributes<HTMLDsTagElement>;
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
+            "ds-textarea": LocalJSX.IntrinsicElements["ds-textarea"] & JSXBase.HTMLAttributes<HTMLDsTextareaElement>;
             "ds-toast": LocalJSX.IntrinsicElements["ds-toast"] & JSXBase.HTMLAttributes<HTMLDsToastElement>;
             /**
              * Imperative body portal for the popup.

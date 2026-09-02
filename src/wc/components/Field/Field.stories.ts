@@ -3,6 +3,7 @@ import { html } from 'lit';
 import '../../../../dist/components/ds-field.js';
 import '../../../../dist/components/ds-input.js';
 import '../../../../dist/components/ds-select.js';
+import '../../../../dist/components/ds-textarea.js';
 import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 
 const STATUS_OPTIONS = [
@@ -74,6 +75,19 @@ export const WithSelect: Story = {
     <div style="width:320px;">
       <ds-field label="Status" description="Choose the vehicle's current operating status.">
         <ds-select .options=${STATUS_OPTIONS} width="fill" placeholder="Select status"></ds-select>
+      </ds-field>
+    </div>
+  `,
+};
+
+export const WithTextarea: Story = {
+  render: () => html`
+    <div style="width:320px;">
+      <ds-field
+        label="Internal note"
+        description="Share context that will help the next person understand this event."
+      >
+        <ds-textarea name="note" placeholder="Add relevant context" required></ds-textarea>
       </ds-field>
     </div>
   `,
