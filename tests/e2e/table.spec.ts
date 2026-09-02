@@ -1062,18 +1062,22 @@ test('renders independently styled standard cell types', async ({ page }) => {
   await expect(empty.locator('.ds-table__cell-track')).toHaveCSS('padding-left', '4px');
   await expect(empty.locator('.ds-table__cell-track')).toHaveCSS('padding-right', '4px');
   await expect(primarySecondary).toHaveClass(/ds-table__cell--text-multi/);
-  await expect(primarySecondary).toHaveCSS('height', '62px');
+  await expect(primarySecondary).toHaveCSS('height', '64px');
   await expect(primarySecondary).toHaveCSS('padding-top', '8px');
   await expect(primarySecondary).toHaveCSS('padding-right', '8px');
   await expect(primarySecondary).toHaveCSS('padding-bottom', '8px');
   await expect(primarySecondary).toHaveCSS('padding-left', '8px');
   await expect(primarySecondary.locator('.ds-table__cell-content')).toHaveCSS('min-height', '0px');
-  await expect(primarySecondary.locator('.ds-table__cell-copy')).toHaveCSS('gap', '2px');
+  await expect(primarySecondary.locator('.ds-table__cell-copy')).toHaveCSS('gap', '0px');
+  await expect(primarySecondary.locator('.ds-table__cell-primary')).toHaveCSS('min-height', '0px');
+  await expect(primarySecondary.locator('.ds-table__cell-secondary')).toHaveCSS(
+    'min-height',
+    '24px'
+  );
   for (const track of [
     primarySecondary.locator('.ds-table__cell-primary'),
     primarySecondary.locator('.ds-table__cell-secondary'),
   ]) {
-    await expect(track).toHaveCSS('min-height', '0px');
     await expect(track).toHaveCSS('padding-left', '4px');
     await expect(track).toHaveCSS('padding-right', '4px');
   }
@@ -1102,11 +1106,11 @@ test('renders independently styled standard cell types', async ({ page }) => {
   await expect(primaryPair).toHaveCSS('padding-right', '8px');
   await expect(primaryPair).toHaveCSS('padding-bottom', '8px');
   await expect(primaryPair).toHaveCSS('padding-left', '8px');
-  await expect(primaryPair.locator('.ds-table__cell-copy')).toHaveCSS('gap', '2px');
+  await expect(primaryPair.locator('.ds-table__cell-copy')).toHaveCSS('gap', '0px');
   await expect(primaryPair.locator('.ds-table__cell-primary')).toHaveCSS('padding-top', '2px');
   await expect(primaryPair.locator('.ds-table__cell-primary')).toHaveCSS('padding-bottom', '2px');
-  await expect(primaryPair.locator('.ds-table__cell-secondary')).toHaveCSS('padding-top', '0px');
-  await expect(primaryPair.locator('.ds-table__cell-secondary')).toHaveCSS('padding-bottom', '0px');
+  await expect(primaryPair.locator('.ds-table__cell-secondary')).toHaveCSS('padding-top', '2px');
+  await expect(primaryPair.locator('.ds-table__cell-secondary')).toHaveCSS('padding-bottom', '2px');
   for (const track of [
     primaryPair.locator('.ds-table__cell-primary'),
     primaryPair.locator('.ds-table__cell-secondary'),
@@ -1123,7 +1127,7 @@ test('renders independently styled standard cell types', async ({ page }) => {
   await expect(event.locator('.ds-table__cell-run').nth(0)).toHaveText('High');
   await expect(event.locator('.ds-table__cell-run').nth(0)).toHaveJSProperty('color', 'negative');
   await expect(event.locator('.ds-table__cell-run').nth(1)).toHaveText('45 mph over');
-  await expect(event.locator('.ds-table__cell-secondary')).toHaveCSS('height', '20px');
+  await expect(event.locator('.ds-table__cell-secondary')).toHaveCSS('height', '24px');
   await expect(image).toHaveClass(/ds-table__cell--image/);
   await expect(image).toHaveClass(/ds-table__cell--image-multi/);
   await expect(image).toHaveAttribute('data-cell-variant', 'multi');
@@ -1132,10 +1136,10 @@ test('renders independently styled standard cell types', async ({ page }) => {
   await expect(image).toHaveCSS('padding-bottom', '8px');
   await expect(image).toHaveCSS('padding-left', '8px');
   await expectImageColumnToHugPreview(image);
-  await expect(image).toHaveCSS('height', '62px');
+  await expect(image).toHaveCSS('height', '64px');
   const imagePlaceholder = image.getByRole('img', { name: 'Safety event preview unavailable' });
   await expect(imagePlaceholder).toBeVisible();
-  await expect(imagePlaceholder.locator('..')).toHaveCSS('height', '46px');
+  await expect(imagePlaceholder.locator('..')).toHaveCSS('height', '48px');
   await expect(imagePlaceholder.locator('..')).toHaveCSS('border-radius', '2px');
   const imageGeometry = await image.locator('.ds-table__cell-image').evaluate(element => {
     const style = getComputedStyle(element);
@@ -1170,7 +1174,7 @@ test('renders independently styled standard cell types', async ({ page }) => {
   await expect(iconText).toHaveClass(/ds-table__cell--icon-text-multi/);
   await expect(iconText).not.toHaveClass(/ds-table__cell--text-multi/);
   await expect(iconText).toHaveAttribute('data-cell-variant', 'multi');
-  await expect(iconText).toHaveCSS('height', '62px');
+  await expect(iconText).toHaveCSS('height', '64px');
   await expect(iconText).toHaveCSS('padding-top', '8px');
   await expect(iconText).toHaveCSS('padding-right', '8px');
   await expect(iconText).toHaveCSS('padding-bottom', '8px');
@@ -1191,7 +1195,7 @@ test('renders independently styled standard cell types', async ({ page }) => {
   await expect(iconText.locator('ds-icon')).toHaveJSProperty('color', 'secondary');
   await expect(iconText.locator('ds-icon')).toHaveCSS('width', '20px');
   await expect(iconText.locator('ds-icon')).toHaveCSS('height', '20px');
-  await expect(iconText.locator('.ds-table__cell-copy')).toHaveCSS('gap', '2px');
+  await expect(iconText.locator('.ds-table__cell-copy')).toHaveCSS('gap', '0px');
   await expect(iconText.locator('.ds-table__cell-primary')).toHaveCSS('padding-left', '4px');
   await expect(iconText.locator('.ds-table__cell-primary')).toHaveCSS('padding-right', '4px');
   await expect(iconText.locator('.ds-table__cell-primary')).toHaveCSS('padding-top', '2px');
@@ -1254,7 +1258,7 @@ test('renders independently styled standard cell types', async ({ page }) => {
   await expect(tagWithText).toHaveCSS('padding-right', '8px');
   await expect(tagWithText).toHaveCSS('padding-bottom', '8px');
   await expect(tagWithText).toHaveCSS('padding-left', '8px');
-  await expect(tagWithText.locator('.ds-table__cell-tag-stack')).toHaveCSS('gap', '2px');
+  await expect(tagWithText.locator('.ds-table__cell-tag-stack')).toHaveCSS('gap', '0px');
   await expect(tagWithText.locator('ds-tag')).toHaveJSProperty('size', 'md');
   await expect(tagWithText.locator('ds-tag')).toHaveJSProperty('isInset', true);
   await expect(tagWithText.locator('ds-tag')).toHaveJSProperty('insetDepth', 'double');
@@ -1271,14 +1275,14 @@ test('renders independently styled standard cell types', async ({ page }) => {
   await expect(tagWithText.locator('.ds-table__cell-tag-text')).toHaveCSS('padding-right', '4px');
   await expect(tagWithText.locator('.ds-table__cell-tag-text')).toHaveCSS('padding-top', '2px');
   await expect(tagWithText.locator('.ds-table__cell-tag-text')).toHaveCSS('padding-bottom', '2px');
-  await expect(tagWithText.locator('.ds-table__cell-tag-text')).toHaveCSS('min-height', '0px');
+  await expect(tagWithText.locator('.ds-table__cell-tag-text')).toHaveCSS('min-height', '24px');
 
   await expect(textWithTag).toHaveClass(/ds-table__cell--tag-text-with-tag/);
   await expect(textWithTag).toHaveCSS('padding-top', '8px');
   await expect(textWithTag).toHaveCSS('padding-right', '8px');
   await expect(textWithTag).toHaveCSS('padding-bottom', '8px');
   await expect(textWithTag).toHaveCSS('padding-left', '8px');
-  await expect(textWithTag.locator('.ds-table__cell-tag-stack')).toHaveCSS('gap', '2px');
+  await expect(textWithTag.locator('.ds-table__cell-tag-stack')).toHaveCSS('gap', '0px');
   await expect(textWithTag.locator('.ds-table__cell-tag-text')).toHaveJSProperty(
     'variant',
     'text-body-medium'
@@ -1291,14 +1295,14 @@ test('renders independently styled standard cell types', async ({ page }) => {
   await expect(textWithTag.locator('.ds-table__cell-tag-text')).toHaveCSS('padding-right', '4px');
   await expect(textWithTag.locator('.ds-table__cell-tag-text')).toHaveCSS('padding-top', '2px');
   await expect(textWithTag.locator('.ds-table__cell-tag-text')).toHaveCSS('padding-bottom', '2px');
-  await expect(textWithTag.locator('.ds-table__cell-tag-text')).toHaveCSS('min-height', '0px');
+  await expect(textWithTag.locator('.ds-table__cell-tag-text')).toHaveCSS('min-height', '24px');
   await expect(textWithTag.locator('ds-tag')).toHaveJSProperty('size', 'sm');
   await expect(textWithTag.locator('ds-tag')).toHaveJSProperty('isInset', true);
   await expect(textWithTag.locator('ds-tag')).toHaveJSProperty('insetDepth', 'single');
   await expect(textWithTag.locator('ds-tag')).toHaveCSS('height', '20px');
   await expect(textWithTag.locator('.ds-table__cell-tag-control-track')).toHaveCSS(
     'height',
-    '20px'
+    '24px'
   );
 
   const orderAndTracks = await table.locator('[data-row-id="tag-variants"]').evaluate(row => {
@@ -1332,7 +1336,7 @@ test('renders independently styled standard cell types', async ({ page }) => {
 
   expect(orderAndTracks.tagWithText.children).toEqual(['tag', 'text']);
   expect(orderAndTracks.tagWithText.text!.top - orderAndTracks.tagWithText.tag.bottom).toBeCloseTo(
-    2,
+    0,
     0
   );
   expect(orderAndTracks.textWithTag.children).toEqual(['text', 'tag-track']);
@@ -1368,7 +1372,10 @@ test('renders independently styled standard cell types', async ({ page }) => {
     crossCellAlignment.singleText.height,
     0
   );
-  expect(crossCellAlignment.textWithTagTag.top).toBeCloseTo(crossCellAlignment.secondary.top, 0);
+  expect(crossCellAlignment.textWithTagTag.top).toBeCloseTo(
+    crossCellAlignment.secondary.top + 2,
+    0
+  );
   expect(crossCellAlignment.textWithTagTag.height).toBeCloseTo(20, 0);
   const iconCenter = (crossCellAlignment.icon.left + crossCellAlignment.icon.right) / 2;
   const iconCellCenter = (crossCellAlignment.iconCell.left + crossCellAlignment.iconCell.right) / 2;
@@ -1484,9 +1491,9 @@ test(
   async ({ page }) => {
     const table = page.locator('#multiple-tags');
     const cases = [
-      { id: 'multiple-tags-two-tracks', tracks: 2, rowHeight: 62, contentHeight: 46 },
-      { id: 'multiple-tags-three-tracks', tracks: 3, rowHeight: 84, contentHeight: 68 },
-      { id: 'multiple-tags-five-tracks', tracks: 5, rowHeight: 128, contentHeight: 112 },
+      { id: 'multiple-tags-two-tracks', tracks: 2, rowHeight: 64, contentHeight: 48 },
+      { id: 'multiple-tags-three-tracks', tracks: 3, rowHeight: 88, contentHeight: 72 },
+      { id: 'multiple-tags-five-tracks', tracks: 5, rowHeight: 136, contentHeight: 120 },
     ];
 
     for (const example of cases) {
@@ -1499,9 +1506,10 @@ test(
       await expect(cell).toHaveAttribute('data-cell-tracks', String(example.tracks));
       await expect(cell).toHaveAttribute('data-cell-variant', `${example.tracks}-track`);
       await expect(wrapper).toHaveCSS('min-height', `${example.contentHeight}px`);
-      await expect(wrapper).toHaveCSS('gap', '2px');
-      await expect(wrapper).toHaveCSS('padding-top', '2px');
-      await expect(wrapper).toHaveCSS('padding-bottom', '2px');
+      await expect(wrapper).toHaveCSS('column-gap', '2px');
+      await expect(wrapper).toHaveCSS('row-gap', '0px');
+      await expect(wrapper).toHaveCSS('padding-top', '0px');
+      await expect(wrapper).toHaveCSS('padding-bottom', '0px');
       await expect(tags).toHaveCount(example.tracks);
 
       for (const tag of await tags.all()) {
@@ -1522,7 +1530,7 @@ test(
   }
 );
 
-test('renders three-track text cells with a uniform 84px row', async ({ page }) => {
+test('renders three-track text cells with a uniform 88px row', async ({ page }) => {
   const table = page.locator('#three-track');
   const averyDriver = table.locator('[data-row-id="three-track-avery"] [data-column-id="driver"]');
   const jordanDriver = table.locator(
@@ -1538,13 +1546,13 @@ test('renders three-track text cells with a uniform 84px row', async ({ page }) 
   );
 
   await expect(averyDriver).toHaveClass(/ds-table__cell--text-triple/);
-  await expect(averyDriver).toHaveCSS('height', '84px');
-  await expect(jordanDriver).toHaveCSS('height', '84px');
-  await expect(averyVehicle).toHaveCSS('height', '84px');
-  await expect(averyEvent).toHaveCSS('height', '84px');
+  await expect(averyDriver).toHaveCSS('height', '88px');
+  await expect(jordanDriver).toHaveCSS('height', '88px');
+  await expect(averyVehicle).toHaveCSS('height', '88px');
+  await expect(averyEvent).toHaveCSS('height', '88px');
   await expect(averyDriver).toHaveCSS('padding-top', '8px');
   await expect(averyDriver).toHaveCSS('padding-bottom', '8px');
-  await expect(averyDriver.locator('.ds-table__cell-copy')).toHaveCSS('gap', '2px');
+  await expect(averyDriver.locator('.ds-table__cell-copy')).toHaveCSS('gap', '0px');
   await expect(averyDriver.locator('.ds-table__cell-primary')).toHaveCSS('padding-top', '2px');
   await expect(averyDriver.locator('.ds-table__cell-primary')).toHaveCSS('padding-bottom', '2px');
   await expect(averyDriver.locator('.ds-table__cell-primary')).toHaveCSS('padding-left', '4px');
@@ -1558,7 +1566,7 @@ test('renders three-track text cells with a uniform 84px row', async ({ page }) 
     await expect(track).toHaveCSS('padding-bottom', '2px');
     await expect(track).toHaveCSS('padding-left', '4px');
     await expect(track).toHaveCSS('padding-right', '4px');
-    await expect(track).toHaveCSS('height', '20px');
+    await expect(track).toHaveCSS('height', '24px');
   }
   await expect(averyDriver.locator('.ds-table__cell-primary')).toHaveText('Avery Chen');
   await expect(averyDriver.locator('.ds-table__cell-secondary')).toHaveText('DRV-1048');
@@ -1575,16 +1583,16 @@ test('renders three-track text cells with a uniform 84px row', async ({ page }) 
     'negative'
   );
   await expect(averyEvent.locator('.ds-table__cell-tertiary')).toHaveText('45 mph over');
-  await expect(averyEvent.locator('.ds-table__cell-secondary')).toHaveCSS('height', '20px');
-  await expect(averyEvent.locator('.ds-table__cell-tertiary')).toHaveCSS('height', '20px');
+  await expect(averyEvent.locator('.ds-table__cell-secondary')).toHaveCSS('height', '24px');
+  await expect(averyEvent.locator('.ds-table__cell-tertiary')).toHaveCSS('height', '24px');
   await expect(averyImage).toHaveClass(/ds-table__cell--image-triple/);
   await expect(averyImage).toHaveAttribute('data-cell-variant', 'triple');
-  await expect(averyImage).toHaveCSS('height', '84px');
+  await expect(averyImage).toHaveCSS('height', '88px');
   await expectImageColumnToHugPreview(averyImage);
-  await expect(averyImage.locator('.ds-table__cell-image')).toHaveCSS('height', '68px');
+  await expect(averyImage.locator('.ds-table__cell-image')).toHaveCSS('height', '72px');
   await expect(averyIconText).toHaveClass(/ds-table__cell--icon-text-triple/);
   await expect(averyIconText).not.toHaveClass(/ds-table__cell--text-triple/);
-  await expect(averyIconText).toHaveCSS('height', '84px');
+  await expect(averyIconText).toHaveCSS('height', '88px');
   await expect(averyIconText.locator('.ds-table__cell-icon-text')).toHaveCSS('gap', '2px');
   await expect(averyIconText.locator('.ds-table__cell-icon-text-icon')).toHaveCSS(
     'padding-top',
@@ -1602,7 +1610,7 @@ test('renders three-track text cells with a uniform 84px row', async ({ page }) 
     'padding-left',
     '2px'
   );
-  await expect(averyIconText.locator('.ds-table__cell-copy')).toHaveCSS('gap', '2px');
+  await expect(averyIconText.locator('.ds-table__cell-copy')).toHaveCSS('gap', '0px');
   await expect(averyIconText.locator('.ds-table__cell-primary')).toHaveCSS('padding-left', '4px');
   await expect(averyIconText.locator('.ds-table__cell-primary')).toHaveCSS('padding-right', '4px');
   await expect(averyIconText.locator('.ds-table__cell-primary')).toHaveCSS('padding-top', '2px');
@@ -1638,19 +1646,21 @@ test('wrapping primary occupies 2-track and 3-track row heights', async ({ page 
   expect(await lineCount(threeLine)).toBe(3);
 
   for (const cell of [oneLine, twoLine, threeLine]) {
-    await expect(cell.locator('.ds-table__cell-primary')).toHaveCSS('line-height', '22px');
-    await expect(cell.locator('.ds-table__cell-primary')).toHaveCSS('padding-top', '1px');
-    await expect(cell.locator('.ds-table__cell-primary')).toHaveCSS('padding-bottom', '1px');
+    await expect(cell.locator('.ds-table__cell-primary')).toHaveCSS('line-height', '24px');
+    await expect(cell.locator('.ds-table__cell-primary')).toHaveCSS('padding-top', '0px');
+    await expect(cell.locator('.ds-table__cell-primary')).toHaveCSS('padding-bottom', '0px');
+    await expect(cell.locator('.ds-table__cell-primary')).toHaveCSS('margin-top', '0px');
+    await expect(cell.locator('.ds-table__cell-primary')).toHaveCSS('margin-bottom', '0px');
   }
 
   await expect(oneLine).toHaveCSS('height', '40px');
   await expect(oneLine.locator('.ds-table__cell-primary')).toHaveCSS('height', '24px');
-  await expect(twoLine).toHaveCSS('height', '62px');
-  await expect(twoLine.locator('.ds-table__cell-primary')).toHaveCSS('height', '46px');
-  await expect(threeLine).toHaveCSS('height', '84px');
-  await expect(threeLine.locator('.ds-table__cell-primary')).toHaveCSS('height', '68px');
+  await expect(twoLine).toHaveCSS('height', '64px');
+  await expect(twoLine.locator('.ds-table__cell-primary')).toHaveCSS('height', '48px');
+  await expect(threeLine).toHaveCSS('height', '88px');
+  await expect(threeLine.locator('.ds-table__cell-primary')).toHaveCSS('height', '72px');
   await expect(threeTrack).toHaveClass(/ds-table__cell--text-triple/);
-  await expect(threeTrack).toHaveCSS('height', '84px');
+  await expect(threeTrack).toHaveCSS('height', '88px');
 });
 
 test('wrapping secondary occupies 3-track and 4-track row heights', async ({ page }) => {
@@ -1673,10 +1683,10 @@ test('wrapping secondary occupies 3-track and 4-track row heights', async ({ pag
     await expect(cell).toHaveClass(/ds-table__cell--text-wrap/);
     await expect(cell).toHaveClass(/ds-table__cell--text-multi/);
     await expect(cell.locator('.ds-table__cell-copy')).toHaveCSS('gap', '0px');
-    await expect(cell.locator('.ds-table__cell-secondary')).toHaveCSS('line-height', '22px');
+    await expect(cell.locator('.ds-table__cell-secondary')).toHaveCSS('line-height', '24px');
     await expect(cell.locator('.ds-table__cell-secondary')).toHaveCSS('padding-top', '0px');
     await expect(cell.locator('.ds-table__cell-secondary')).toHaveCSS('padding-bottom', '0px');
-    await expect(cell.locator('.ds-table__cell-primary')).toHaveCSS('line-height', '22px');
+    await expect(cell.locator('.ds-table__cell-primary')).toHaveCSS('line-height', '24px');
     await expect(cell.locator('.ds-table__cell-primary')).toHaveCSS('height', '24px');
   }
 
@@ -1684,12 +1694,12 @@ test('wrapping secondary occupies 3-track and 4-track row heights', async ({ pag
   expect(await secondaryLines(twoLine)).toBe(2);
   expect(await secondaryLines(threeLine)).toBe(3);
 
-  await expect(oneLine).toHaveCSS('height', '62px');
-  await expect(twoLine).toHaveCSS('height', '84px');
+  await expect(oneLine).toHaveCSS('height', '64px');
+  await expect(twoLine).toHaveCSS('height', '88px');
   await expect(threeTrack).toHaveClass(/ds-table__cell--text-triple/);
-  await expect(threeTrack).toHaveCSS('height', '84px');
-  await expect(threeLine).toHaveCSS('height', '106px');
-  await expect(threeLine.locator('.ds-table__cell-secondary')).toHaveCSS('height', '66px');
+  await expect(threeTrack).toHaveCSS('height', '88px');
+  await expect(threeLine).toHaveCSS('height', '112px');
+  await expect(threeLine.locator('.ds-table__cell-secondary')).toHaveCSS('height', '72px');
 });
 
 test('shows a truncation tooltip when 1-, 2-, or 3-line text overflows', async ({ page }) => {
@@ -1713,9 +1723,9 @@ test('shows a truncation tooltip when 1-, 2-, or 3-line text overflows', async (
   await expect(two).toHaveClass(/ds-table__cell--text-wrap/);
   await expect(two).toHaveCSS('width', '140px');
   await expect(two.locator('.ds-table__cell-primary')).toHaveClass(/ds-text--truncate-2/);
-  await expect(two).toHaveCSS('height', '62px');
+  await expect(two).toHaveCSS('height', '64px');
   await expect(three.locator('.ds-table__cell-primary')).toHaveClass(/ds-text--truncate-3/);
-  await expect(three).toHaveCSS('height', '84px');
+  await expect(three).toHaveCSS('height', '88px');
 
   await hoverNotes('truncate-one');
   await expect(tooltip).toBeVisible();
@@ -3263,11 +3273,11 @@ test('renders initial state bodies and passes an accessibility scan', async ({ p
   await expect(skeletonCells.nth(4)).toHaveAttribute('data-skeleton-kind', 'icon');
   await expect(skeletonCells.nth(5)).toHaveAttribute('data-skeleton-kind', 'action');
   await expect(skeletonCells.first()).toHaveClass(/ds-interaction-fill--grouped/);
-  await expect(skeletonRows.first()).toHaveCSS('height', '62px');
+  await expect(skeletonRows.first()).toHaveCSS('height', '64px');
   await expect(skeletonCells.nth(1)).toHaveClass(/ds-table__cell--image-multi/);
   await expect(skeletonCells.nth(1).locator('.ds-table__skeleton-image')).toHaveCSS(
     'height',
-    '46px'
+    '48px'
   );
   const dividerShadows = async (row: ReturnType<typeof page.locator>) =>
     row

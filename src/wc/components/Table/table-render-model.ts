@@ -99,20 +99,22 @@ export function createTableRenderModel(input: TableRenderModelInput): TableRende
     collapsedGroupIds,
     groups: input.groups.map(group => {
       const loadedCount = group.rows.length;
-      const totalPresentation = input.groupCountPresentation === 'total';
+      const collapsed = collapsedGroupIds.has(group.id);
       const count = resolvedTableGroupCount(group);
+      const showTotalOnly =
+        input.groupCountPresentation === 'total' || (collapsed && loadedCount === 0);
       const totalLabel = group.countLabel ?? `${count} ${count === 1 ? 'item' : 'items'}`;
       const intent = isTableGroupIntent(group.intent) ? group.intent : undefined;
       return {
         group,
         count,
         loadedCount,
-        visibleCountText: totalPresentation ? String(count) : `${loadedCount} of ${count}`,
-        countLabel: totalPresentation ? totalLabel : `${loadedCount} of ${totalLabel} loaded`,
+        visibleCountText: showTotalOnly ? String(count) : `${loadedCount} of ${count}`,
+        countLabel: showTotalOnly ? totalLabel : `${loadedCount} of ${totalLabel} loaded`,
         intent,
         intentClass: tableGroupIntentClass(intent),
         labelColor: tableGroupLabelColor(intent),
-        collapsed: collapsedGroupIds.has(group.id),
+        collapsed,
         selection: selectable ? deriveTableSelectionState(group.rows, input.selectedRowIds) : null,
       };
     }),

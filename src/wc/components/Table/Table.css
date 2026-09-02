@@ -89,8 +89,14 @@ ds-text.ds-table__cell-tertiary {
   padding-block: var(--dimension-space-025);
 }
 
+.ds-table__cell--text-multi ds-text.ds-table__cell-secondary,
+.ds-table__cell--text-triple ds-text.ds-table__cell-secondary,
+.ds-table__cell--text-triple ds-text.ds-table__cell-tertiary,
+.ds-table__cell--icon-text-multi ds-text.ds-table__cell-secondary,
+.ds-table__cell--icon-text-triple ds-text.ds-table__cell-secondary,
+.ds-table__cell--icon-text-triple ds-text.ds-table__cell-tertiary,
 .ds-table__cell--primary-text ds-text.ds-table__cell-secondary {
-  padding-block: 0;
+  min-block-size: var(--_table-cell-track-min-block-size);
 }
 
 ds-text.ds-table__cell-run,
@@ -98,14 +104,11 @@ ds-text.ds-table__cell-run-separator {
   display: flex;
 }
 
-.ds-table__cell-tag-stack--tag-with-text ds-text.ds-table__cell-tag-text {
-  padding-inline: var(--_table-cell-track-padding-inline);
-  padding-block: var(--dimension-space-025);
-}
-
+.ds-table__cell-tag-stack--tag-with-text ds-text.ds-table__cell-tag-text,
 .ds-table__cell-tag-stack--text-with-tag ds-text.ds-table__cell-tag-text {
   padding-inline: var(--_table-cell-track-padding-inline);
   padding-block: var(--dimension-space-025);
+  min-block-size: var(--_table-cell-track-min-block-size);
 }
 
 ds-text.ds-table__load-content {

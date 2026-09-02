@@ -2,14 +2,15 @@ import { resolveTableCellPresentation } from './table-cell-model';
 import type { TableColumn, TableGroup, TableRow } from './table-types';
 
 /**
- * Token-aligned body-row track contracts: 40 / 62 / 84, plus wrapping-secondary
- * 106. Estimates only; measured heights replace these after paint.
+ * Token-aligned body-row track contracts: 40 / 64 / 88, plus wrapping-secondary
+ * 112. Every track is 24px with no stack gap. Estimates only; measured heights
+ * replace these after paint.
  */
 export const TABLE_VIRTUAL_ROW_TRACK_SIZE = {
   1: 40,
-  2: 62,
-  3: 84,
-  4: 106,
+  2: 64,
+  3: 88,
+  4: 112,
 } as const;
 
 const TABLE_VIRTUAL_LATER_TRACK_INCREMENT =

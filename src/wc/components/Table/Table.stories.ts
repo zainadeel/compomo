@@ -1371,7 +1371,7 @@ export const AllCellTypes: Story = {
     docs: {
       description: {
         story:
-          'Three review tables, one height each. Image cells declare tracks 1, 2, or 3 so the 16:9 preview fills the matching content box (cell height minus 8px padding). Icon-and-text cells (`kind: icon-text`) place one md prefix icon beside the copy stack: 2px padding on every side of the icon, a 2px flex gap before the copy, and text-track padding staying on the copy. Single-track cells, including the 1-track image and icon-and-text, stay on a 40px row. Two-track text, 2-track image, 2-track icon-and-text, and wrapping multiple-Tag cells share a 62px row. Event in that table shows a two-line cell with middle-dot runs. Three-track text, 3-track image, and 3-track icon-and-text stay on an 84px row. Body cells share 8px outer padding; 20px content sits in a 24px track; later tracks are 20px with a 2px stack gap. Linked primary text uses a native anchor and the shared brand text-action treatment; secondary copy stays unlinked. Secondary tracks may split into middle-dot-separated runs. The third line uses the same subdued track recipe as the second. Unbordered action cells open the shared overflow ds-menu from the Ellipses trigger; the bordered column stays a single-shot control. Empty means the data applies but has no value and renders an em dash; Blank means the data is not applicable and intentionally renders nothing.',
+          'Three review tables, one height each. Image cells declare tracks 1, 2, or 3 so the 16:9 preview fills the matching content box (cell height minus 8px padding). Icon-and-text cells (`kind: icon-text`) place one md prefix icon beside the copy stack: 2px padding on every side of the icon, a 2px flex gap before the copy, and text-track padding staying on the copy. Single-track cells, including the 1-track image and icon-and-text, stay on a 40px row. Two-track text, 2-track image, 2-track icon-and-text, and wrapping multiple-Tag cells share a 64px row. Event in that table shows a two-line cell with middle-dot runs. Three-track text, 3-track image, and 3-track icon-and-text stay on a 88px row. Body cells share 8px outer padding; every track is 24px with no stack gap. Linked primary text uses a native anchor and the shared brand text-action treatment; secondary copy stays unlinked. Secondary tracks may split into middle-dot-separated runs. The third line uses the same subdued track recipe as the second. Unbordered action cells open the shared overflow ds-menu from the Ellipses trigger; the bordered column stays a single-shot control. Empty means the data applies but has no value and renders an em dash; Blank means the data is not applicable and intentionally renders nothing.',
       },
     },
   },
@@ -1411,7 +1411,7 @@ export const MultipleTags: Story = {
     docs: {
       description: {
         story:
-          'Multiple-Tag cells use `kind: tags` and declare their expected wrapped line count with `tracks`. Tags wrap naturally at the column edge. Each uses the 20px small single-inset recipe, with a 2px gap between tags and wrapped lines, so two tracks resolve a 62px row and three tracks resolve an 84px row. Track counts may continue beyond three; the tallest cell establishes the native row height and every sibling cell stretches to match.',
+          'Multiple-Tag cells use `kind: tags` and declare their expected wrapped line count with `tracks`. Tags wrap naturally at the column edge. Each uses the 20px small single-inset recipe inside a 24px wrap line with no stack gap, so two tracks resolve a 64px row and three tracks resolve a 88px row. Track counts may continue beyond three; the tallest cell establishes the native row height and every sibling cell stretches to match.',
       },
     },
   },
@@ -1594,7 +1594,7 @@ export const ContentPrimitives: Story = {
     docs: {
       description: {
         story:
-          'Scalar values, primary/secondary copy, null values, numeric alignment, truncation, and explicit wrapping share stable cell-layer classes. Wrapping 1-track primary occupies the same 62px and 84px rows as 2-track and 3-track cells. Wrapping secondary stays on track 1 for primary and consumes later tracks, including 106px when secondary wraps to three lines. Review secondary wrap on the last two rows of Wrapping content.',
+          'Scalar values, primary/secondary copy, null values, numeric alignment, truncation, and explicit wrapping share stable cell-layer classes. Wrapping 1-track primary occupies the same 64px and 88px rows as 2-track and 3-track cells. Wrapping secondary stays on track 1 for primary and consumes later tracks, including 112px when secondary wraps to three lines. Review secondary wrap on the last two rows of Wrapping content.',
       },
     },
   },

@@ -247,7 +247,7 @@ test('preserves declarative non-text cell kinds and variants', () => {
   assert.equal(resolveTableCellTagsTracks(4.8), 4);
   assert.equal(
     tableCellTrackStackBlockSize(3),
-    'calc(var(--_table-cell-track-min-block-size) + var(--dimension-space-025) + var(--dimension-size-250) + var(--dimension-space-025) + var(--dimension-size-250))'
+    'calc(3 * var(--_table-cell-track-min-block-size))'
   );
 });
 

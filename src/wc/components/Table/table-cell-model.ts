@@ -120,8 +120,8 @@ export function resolveTableCellTagsTracks(tracks: number): number {
 
 /** Token-backed content height for any named number of body-row tracks. */
 export function tableCellTrackStackBlockSize(tracks: number): string {
-  const laterTracks = Math.max(0, resolveTableCellTagsTracks(tracks) - 1);
-  return `calc(var(--_table-cell-track-min-block-size)${' + var(--dimension-space-025) + var(--dimension-size-250)'.repeat(laterTracks)})`;
+  const count = resolveTableCellTagsTracks(tracks);
+  return `calc(${count} * var(--_table-cell-track-min-block-size))`;
 }
 
 /** Collapse a consumer track into at most three non-empty runs. */

@@ -71,9 +71,9 @@ test('estimates named track stacks including unlimited wrap', () => {
       },
       columns
     ),
-    128
+    136
   );
-  assert.equal(tableVirtualRowTrackSize(5), 128);
+  assert.equal(tableVirtualRowTrackSize(5), 136);
 });
 
 test('flattens ungrouped rows and collapsed grouped sections', () => {

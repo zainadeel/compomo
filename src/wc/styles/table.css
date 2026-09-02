@@ -13,12 +13,8 @@
   --_table-cell-track-label-inset: var(--dimension-space-025);
   --_table-caption-bar-block-size: var(--dimension-size-600);
   --_table-image-block-size: var(--_table-cell-track-min-block-size);
-  --_table-image-block-size-multi: calc(
-    var(--_table-cell-track-min-block-size) + var(--dimension-space-025) + var(--dimension-size-250)
-  );
-  --_table-image-block-size-triple: calc(
-    var(--_table-image-block-size-multi) + var(--dimension-space-025) + var(--dimension-size-250)
-  );
+  --_table-image-block-size-multi: calc(2 * var(--_table-cell-track-min-block-size));
+  --_table-image-block-size-triple: calc(3 * var(--_table-cell-track-min-block-size));
   --_table-image-column-inline-size: calc(
     ((var(--_table-image-block-size) * 16) / 9) + (var(--_table-cell-padding-inline) * 2)
   );
@@ -29,27 +25,13 @@
     ((var(--_table-image-block-size-triple) * 16) / 9) + (var(--_table-cell-padding-inline) * 2)
   );
   /*
-   * Wrapping primary on a 1-track cell occupies later tracks instead of a
-   * private leading scale. Keep body-medium size; add the 2px stack gap to
-   * line-height and leave the leftover first-track inset as padding-block
-   * so 1 / 2 / 3 wrapped lines measure 40 / 62 / 84 like named tracks.
+   * Every body-row track is 24px with no stack gap (40 / 64 / 88 / 112).
+   * Wrapping primary and secondary use that same 24px as line-height so
+   * extra lines land on named tracks without a private leading scale.
    */
-  --_table-wrap-primary-line-height: calc(
-    var(--typography-lineheight-md) + var(--dimension-space-025)
-  );
-  --_table-wrap-primary-padding-block: calc(
-    (
-        var(--_table-cell-track-min-block-size) - var(--typography-lineheight-md) -
-          var(--dimension-space-025)
-      ) /
-      2
-  );
-  /*
-   * Wrapping secondary on a 2-track cell occupies later tracks. Zero the copy
-   * gap and use later-track + gap as line-height so 1 / 2 / 3 secondary lines
-   * land on 62 / 84 / 106 with primary remaining the first 24px track.
-   */
-  --_table-wrap-secondary-line-height: calc(var(--dimension-size-250) + var(--dimension-space-025));
+  --_table-wrap-primary-line-height: var(--_table-cell-track-min-block-size);
+  --_table-wrap-primary-padding-block: 0px;
+  --_table-wrap-secondary-line-height: var(--_table-cell-track-min-block-size);
   --_table-wrap-secondary-padding-block: 0;
   --_table-surface: var(--ds-table-surface, var(--color-background-primary));
   --_table-header-surface: var(--ds-table-header-surface, var(--color-background-primary));
@@ -894,18 +876,18 @@
 
 :where(.ds-table__cell--text-multi .ds-table__cell-copy),
 :where(.ds-table__cell--text-triple .ds-table__cell-copy) {
-  gap: var(--dimension-space-025);
+  gap: 0;
 }
 
 /*
- * Body cells share 8px chrome. 20px content (body-medium text, md icon,
- * checkbox) sits in a 24px track (2px block inset). Text tracks keep that
- * 2px plus the 2px label inset, so padding-inline is 4px and copy lines up
- * with column-header labels. Later body-small tracks stay 20px, stacked with
- * a 2px gap. Wrapping 1-track primary folds that gap into line-height so
- * extra lines land on the same 62px and 84px rows as 2- and 3-track cells.
- * Wrapping secondary keeps primary on track 1 and consumes later tracks the
- * same way, including a 106px fourth track when secondary wraps to three lines.
+ * Body cells share 8px chrome. Every named track is 24px with no stack gap,
+ * so 20px content (body-medium text, md icon, checkbox, sm tag) sits in that
+ * track with a 2px block inset. Text tracks keep that 2px plus the 2px label
+ * inset, so padding-inline is 4px and copy lines up with column-header labels.
+ * Wrapping 1-track primary uses the 24px track as line-height so extra lines
+ * land on the same 64px and 88px rows as 2- and 3-track cells. Wrapping
+ * secondary keeps primary on track 1 and consumes later tracks the same way,
+ * including a 112px fourth track when secondary wraps to three lines.
  * Header and group rows keep their own recipes.
  */
 :where(.ds-table__cell-primary),
@@ -915,12 +897,13 @@
 
 :where(.ds-table__cell--text-multi .ds-table__cell-secondary),
 :where(.ds-table__cell--text-triple .ds-table__cell-secondary),
-:where(.ds-table__cell--text-triple .ds-table__cell-tertiary) {
-  padding-block: var(--dimension-space-025);
-}
-
+:where(.ds-table__cell--text-triple .ds-table__cell-tertiary),
+:where(.ds-table__cell--icon-text-multi .ds-table__cell-secondary),
+:where(.ds-table__cell--icon-text-triple .ds-table__cell-secondary),
+:where(.ds-table__cell--icon-text-triple .ds-table__cell-tertiary),
 :where(.ds-table__cell--primary-text .ds-table__cell-secondary) {
-  padding-block: 0;
+  padding-block: var(--dimension-space-025);
+  min-block-size: var(--_table-cell-track-min-block-size);
 }
 
 :where(.ds-table__cell--tag-tag-only .ds-table__cell-content) {
@@ -928,10 +911,10 @@
 }
 
 /*
- * Multiple Tags use the 20px small single-inset control so each wrapped line
- * occupies one later-track slot. The 2px block inset forms the 24px first
- * track; subsequent lines add a 20px track and 2px gap, preserving the named
- * row ladder for any declared number of tracks.
+ * Multiple Tags use the 20px small single-inset control. Each wrap line is a
+ * 24px track (2px block margin around the tag) with no row-gap, so wrap lines
+ * land on the same 40 / 64 / 88 ladder as text. Same-line tags keep a 2px
+ * column gap.
  */
 :where(.ds-table__cell--tags .ds-table__cell-content) {
   min-block-size: 0;
@@ -942,18 +925,19 @@
   flex-wrap: wrap;
   align-content: flex-start;
   align-items: center;
-  gap: var(--dimension-space-025);
+  gap: 0 var(--dimension-space-025);
   box-sizing: border-box;
   inline-size: 100%;
   min-inline-size: 0;
   max-inline-size: 100%;
   min-block-size: var(--_table-cell-tags-min-block-size, var(--_table-cell-track-min-block-size));
-  padding-block: var(--dimension-space-025);
+  padding-block: 0;
 }
 
 :where(.ds-table__cell-tags > ds-tag) {
   flex: none;
   max-inline-size: 100%;
+  margin-block: var(--dimension-space-025);
 }
 
 :where(.ds-table__cell-tag-stack) {
@@ -972,21 +956,21 @@
 :where(.ds-table__cell-tag-stack--tag-with-text .ds-table__cell-tag-text) {
   padding-inline: var(--_table-cell-track-padding-inline);
   padding-block: var(--dimension-space-025);
-  min-block-size: 0;
+  min-block-size: var(--_table-cell-track-min-block-size);
 }
 
 :where(.ds-table__cell-tag-stack--tag-with-text) {
-  gap: var(--dimension-space-025);
+  gap: 0;
 }
 
 :where(.ds-table__cell-tag-stack--text-with-tag .ds-table__cell-tag-text) {
   padding-inline: var(--_table-cell-track-padding-inline);
   padding-block: var(--dimension-space-025);
-  min-block-size: 0;
+  min-block-size: var(--_table-cell-track-min-block-size);
 }
 
 :where(.ds-table__cell-tag-stack--text-with-tag) {
-  gap: var(--dimension-space-025);
+  gap: 0;
 }
 
 :where(.ds-table__cell-tag-control-track) {
@@ -995,9 +979,6 @@
   min-block-size: var(--_table-cell-track-min-block-size);
 }
 
-:where(.ds-table__cell-tag-stack--text-with-tag .ds-table__cell-tag-control-track) {
-  min-block-size: var(--dimension-size-250);
-}
 
 :where(.ds-table__cell--icon .ds-table__cell-content) {
   align-items: center;
@@ -1035,19 +1016,19 @@
 
 :where(.ds-table__cell--icon-text-multi .ds-table__cell-copy),
 :where(.ds-table__cell--icon-text-triple .ds-table__cell-copy) {
-  gap: var(--dimension-space-025);
+  gap: 0;
 }
 
 :where(.ds-table__cell--icon-text-multi .ds-table__cell-secondary),
 :where(.ds-table__cell--icon-text-triple .ds-table__cell-secondary),
 :where(.ds-table__cell--icon-text-triple .ds-table__cell-tertiary) {
   padding-block: var(--dimension-space-025);
+  min-block-size: var(--_table-cell-track-min-block-size);
 }
 
 /*
  * Image previews fill the matching body-row content box (cell height minus
- * 8px padding) at 16:9. Track 1 is the 24px first-track stack; tracks 2 and
- * 3 add the same 20px later-track and 2px gap as text.
+ * 8px padding) at 16:9. Each track is 24px with no stack gap.
  */
 :where(.ds-table__cell-image) {
   display: block;
