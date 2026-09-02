@@ -1449,17 +1449,41 @@
   block-size: var(--dimension-iconography-md);
 }
 
+:where(.ds-table__group-content--multi) {
+  align-items: flex-start;
+  min-block-size: calc(var(--_table-row-min-block-size) + var(--_table-cell-track-min-block-size));
+}
+
 :where(.ds-table__group-copy) {
-  /* The full-size sm count tag owns the 24px content height; inline padding
-   * preserves the shared text track without making the 40px section row grow. */
+  /* One or two 24px tracks; 8px chrome on group-content keeps 40 / 64 row height. */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-inline-size: 0;
+  flex: 1 1 auto;
+  gap: 0;
+  padding-block: 0;
+  padding-inline: var(--dimension-space-050);
+}
+
+:where(.ds-table__group-primary),
+:where(.ds-table__group-accessories) {
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   min-inline-size: 0;
-  flex: 1 1 auto;
+  min-block-size: var(--_table-cell-track-min-block-size);
   gap: var(--dimension-space-050);
-  padding-block: 0;
-  padding-inline: var(--dimension-space-050);
+}
+
+:where(.ds-table__group-accessories ds-tooltip),
+:where(.ds-table__group-accessory-tip) {
+  display: inline-flex;
+  align-items: center;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  min-block-size: var(--_table-cell-track-min-block-size);
 }
 
 :where(.ds-table__table--selectable .ds-table__group-copy),
@@ -1468,14 +1492,14 @@
 }
 
 :where(.ds-table__group-separator),
-:where(.ds-table__group-count) {
+:where(.ds-table__group-count),
+:where(.ds-table__group-accessory-separator) {
   flex: 0 0 auto;
 }
 
 :where(.ds-table__group-toggle) {
   --color-interaction-hover: transparent;
   --color-interaction-pressed: transparent;
-  align-self: center;
   flex: 0 0 auto;
   margin-inline-start: auto;
 }

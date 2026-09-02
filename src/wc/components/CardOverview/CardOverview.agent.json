@@ -32,6 +32,7 @@
     }
   ],
   "commonlyComposedWith": [
+    "component:ds-score",
     "component:ds-select",
     "component:ds-button-unfilled",
     "component:ds-text",
@@ -53,7 +54,7 @@
     "At most seven measures are shown. Keep larger collections outside the summary bar rather than turning it into a dense dashboard.",
     "The period and filter controls are slotted rather than owned. Use the period slot when the current range is selectable; otherwise periodLabel supplies fixed current copy in the same md control-frame and label-inset anatomy. Use the filter slot for the application-owned comparison-window control. Slotted Selects use hasBorder false so the 48px bar owns their surrounding boundary and allowClear false because both controls always require one selected reporting period.",
     "A numeric safety score infers fair from 0–50, good from 51–80, and excellent from 81–100. The level can be supplied explicitly when the displayed value is not numeric. The deprecated band field is ignored.",
-    "The safety score is the first grid cell and uses the same track, 8px outer inset, 6px inner padding, dividers, and responsive behavior as metric cells. The display value removes 8px from both block edges of its line box so it does not increase the shared row height. Score remains nonselectable and excluded from metric roving focus.",
+    "The safety score is the first grid cell and uses the same track, 8px outer inset, 6px inner padding, dividers, and responsive behavior as metric cells. It renders ds-score at lg. The 40px fill owns a fixed box so line-height does not increase the shared row height. Score remains nonselectable and excluded from metric roving focus.",
     "During page-controlled scroll collapse, the component preserves its expanded flow height and stationary reporting bar while the metric grid moves and clips beneath it. Elevation remains fitted to the visible surface.",
     "compact is exactly 48px high and renders only the reporting bar. It omits Score, measures, and footer."
   ],

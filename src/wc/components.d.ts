@@ -54,6 +54,8 @@ import { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 import { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderActionDetail, PanelToolsHeaders, PanelToolsItem, PanelToolsRailAccessory, PanelToolsRailAccessoryActionDetail, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
 import { RadioOption, RadioSize } from "./components/Radio/Radio";
+import { SafetyScoreLevel, ScoreSize } from "./components/Score/score-types";
+import { MetricTrend } from "./utils/metric-change";
 import { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
 import { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
 import { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellSectionNavigation, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
@@ -124,6 +126,8 @@ export { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 export { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderActionDetail, PanelToolsHeaders, PanelToolsItem, PanelToolsRailAccessory, PanelToolsRailAccessoryActionDetail, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
 export { RadioOption, RadioSize } from "./components/Radio/Radio";
+export { SafetyScoreLevel, ScoreSize } from "./components/Score/score-types";
+export { MetricTrend } from "./utils/metric-change";
 export { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
 export { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
 export { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellSectionNavigation, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
@@ -2403,6 +2407,36 @@ export namespace Components {
           * @default ''
          */
         "value": string;
+    }
+    interface DsScore {
+        /**
+          * Replace the figure and trend with skeletons while data resolves.
+          * @default false
+         */
+        "isLoading": boolean;
+        /**
+          * Accessible name prefix, for example “Safety score”.
+          * @default ''
+         */
+        "label": string;
+        /**
+          * Safety-score color level. Numeric values from 0–100 infer fair (0–50), good (51–80), or excellent (81–100) when this is omitted.
+         */
+        "level": SafetyScoreLevel | undefined;
+        /**
+          * Visual density matching control height: `sm` 24px, `md` 32px, `lg` 40px. `lg` is the Card Overview recipe.
+          * @default 'md'
+         */
+        "size": ScoreSize;
+        /**
+          * Change against the comparison period. Omit when there is nothing to report.
+         */
+        "trend": MetricTrend | undefined;
+        /**
+          * Display-ready headline figure.
+          * @default ''
+         */
+        "value": string | number;
     }
     interface DsScrollOverlay {
         /**
@@ -4798,6 +4832,12 @@ declare global {
         prototype: HTMLDsRadioElement;
         new (): HTMLDsRadioElement;
     };
+    interface HTMLDsScoreElement extends Components.DsScore, HTMLStencilElement {
+    }
+    var HTMLDsScoreElement: {
+        prototype: HTMLDsScoreElement;
+        new (): HTMLDsScoreElement;
+    };
     interface HTMLDsScrollOverlayElementEventMap {
         "dsScroll": ScrollOverlayScrollDetail;
     }
@@ -5248,6 +5288,7 @@ declare global {
         "ds-panel-tools": HTMLDsPanelToolsElement;
         "ds-paper-texture": HTMLDsPaperTextureElement;
         "ds-radio": HTMLDsRadioElement;
+        "ds-score": HTMLDsScoreElement;
         "ds-scroll-overlay": HTMLDsScrollOverlayElement;
         "ds-select": HTMLDsSelectElement;
         "ds-shell-app": HTMLDsShellAppElement;
@@ -7743,6 +7784,36 @@ declare namespace LocalJSX {
          */
         "value"?: string;
     }
+    interface DsScore {
+        /**
+          * Replace the figure and trend with skeletons while data resolves.
+          * @default false
+         */
+        "isLoading"?: boolean;
+        /**
+          * Accessible name prefix, for example “Safety score”.
+          * @default ''
+         */
+        "label"?: string;
+        /**
+          * Safety-score color level. Numeric values from 0–100 infer fair (0–50), good (51–80), or excellent (81–100) when this is omitted.
+         */
+        "level"?: SafetyScoreLevel | undefined;
+        /**
+          * Visual density matching control height: `sm` 24px, `md` 32px, `lg` 40px. `lg` is the Card Overview recipe.
+          * @default 'md'
+         */
+        "size"?: ScoreSize;
+        /**
+          * Change against the comparison period. Omit when there is nothing to report.
+         */
+        "trend"?: MetricTrend | undefined;
+        /**
+          * Display-ready headline figure.
+          * @default ''
+         */
+        "value"?: string | number;
+    }
     interface DsScrollOverlay {
         /**
           * Reports scroll position without exposing the internal scrollport element.
@@ -9821,6 +9892,13 @@ declare namespace LocalJSX {
         "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
     }
+    interface DsScoreAttributes {
+        "value": string;
+        "size": ScoreSize;
+        "level": SafetyScoreLevel | undefined;
+        "isLoading": boolean;
+        "label": string;
+    }
     interface DsScrollOverlayAttributes {
         "scrollLabel": string | undefined;
     }
@@ -10168,6 +10246,7 @@ declare namespace LocalJSX {
         "ds-panel-tools": Omit<DsPanelTools, keyof DsPanelToolsAttributes> & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes]?: DsPanelTools[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `attr:${K}`]?: DsPanelToolsAttributes[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `prop:${K}`]?: DsPanelTools[K] };
         "ds-paper-texture": DsPaperTexture;
         "ds-radio": Omit<DsRadio, keyof DsRadioAttributes> & { [K in keyof DsRadio & keyof DsRadioAttributes]?: DsRadio[K] } & { [K in keyof DsRadio & keyof DsRadioAttributes as `attr:${K}`]?: DsRadioAttributes[K] } & { [K in keyof DsRadio & keyof DsRadioAttributes as `prop:${K}`]?: DsRadio[K] };
+        "ds-score": Omit<DsScore, keyof DsScoreAttributes> & { [K in keyof DsScore & keyof DsScoreAttributes]?: DsScore[K] } & { [K in keyof DsScore & keyof DsScoreAttributes as `attr:${K}`]?: DsScoreAttributes[K] } & { [K in keyof DsScore & keyof DsScoreAttributes as `prop:${K}`]?: DsScore[K] };
         "ds-scroll-overlay": Omit<DsScrollOverlay, keyof DsScrollOverlayAttributes> & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes]?: DsScrollOverlay[K] } & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes as `attr:${K}`]?: DsScrollOverlayAttributes[K] } & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes as `prop:${K}`]?: DsScrollOverlay[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
         "ds-shell-app": Omit<DsShellApp, keyof DsShellAppAttributes> & { [K in keyof DsShellApp & keyof DsShellAppAttributes]?: DsShellApp[K] } & { [K in keyof DsShellApp & keyof DsShellAppAttributes as `attr:${K}`]?: DsShellAppAttributes[K] } & { [K in keyof DsShellApp & keyof DsShellAppAttributes as `prop:${K}`]?: DsShellApp[K] };
@@ -10267,6 +10346,7 @@ declare module "@stencil/core" {
             "ds-panel-tools": LocalJSX.IntrinsicElements["ds-panel-tools"] & JSXBase.HTMLAttributes<HTMLDsPanelToolsElement>;
             "ds-paper-texture": LocalJSX.IntrinsicElements["ds-paper-texture"] & JSXBase.HTMLAttributes<HTMLDsPaperTextureElement>;
             "ds-radio": LocalJSX.IntrinsicElements["ds-radio"] & JSXBase.HTMLAttributes<HTMLDsRadioElement>;
+            "ds-score": LocalJSX.IntrinsicElements["ds-score"] & JSXBase.HTMLAttributes<HTMLDsScoreElement>;
             "ds-scroll-overlay": LocalJSX.IntrinsicElements["ds-scroll-overlay"] & JSXBase.HTMLAttributes<HTMLDsScrollOverlayElement>;
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
             "ds-shell-app": LocalJSX.IntrinsicElements["ds-shell-app"] & JSXBase.HTMLAttributes<HTMLDsShellAppElement>;

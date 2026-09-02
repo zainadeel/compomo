@@ -31,6 +31,7 @@ export type {
   TableDataMode,
   TableDataModeChangeDetail,
   TableGroup,
+  TableGroupAccessory,
   TableGroupCollapseChangeDetail,
   TableGroupLoadMoreDetail,
   TableGroupIntent,

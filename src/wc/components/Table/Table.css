@@ -104,6 +104,15 @@ ds-text.ds-table__cell-run-separator {
   display: flex;
 }
 
+ds-text.ds-table__group-label,
+ds-text.ds-table__group-separator,
+ds-text.ds-table__group-count,
+ds-text.ds-table__group-accessory,
+ds-text.ds-table__group-accessory-separator {
+  display: flex;
+  align-items: center;
+}
+
 .ds-table__cell-tag-stack--tag-with-text ds-text.ds-table__cell-tag-text,
 .ds-table__cell-tag-stack--text-with-tag ds-text.ds-table__cell-tag-text {
   padding-inline: var(--_table-cell-track-padding-inline);

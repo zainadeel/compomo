@@ -370,6 +370,13 @@ export interface TableRow {
   interactive?: boolean;
 }
 
+/** Supporting copy on a group section header's second track. */
+export interface TableGroupAccessory {
+  text: string;
+  /** Optional tooltip. Uses the shared dotted underline when present. */
+  help?: string;
+}
+
 export interface TableGroup {
   /** Stable group identity. */
   id: string;
@@ -384,6 +391,11 @@ export interface TableGroup {
    * intent background and bold intent title color.
    */
   intent?: TableGroupIntent;
+  /**
+   * Optional accessory copy on a second 24px track under the label and count.
+   * Middle-dot separated. At most four items are shown.
+   */
+  accessories?: TableGroupAccessory[];
   /** Whether this group has more member rows available to load. */
   hasMore?: boolean;
   /** Controlled incremental loading state for this group's member rows. */

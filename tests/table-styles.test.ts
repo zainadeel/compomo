@@ -131,6 +131,9 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
     'ds-table__cell-track--runs',
     'ds-table__cell--text-wrap',
     'ds-table__group-content',
+    'ds-table__group-content--multi',
+    'ds-table__group-primary',
+    'ds-table__group-accessories',
     'ds-table__collapse-all-overlay',
     'ds-table__sticky-edge',
     'ds-table__skeleton-row',
@@ -257,8 +260,18 @@ test('retains the structural and accessibility fallbacks rendered tests depend o
   assert.doesNotMatch(componentCss, /cursor: pointer/);
   assert.match(css, /\.ds-table__group-content\)::after[\s\S]*?background: var\(--_table-border\)/);
   assert.match(css, /\.ds-table__group-content:hover\)::before[\s\S]*?--_table-row-hover/);
+  assert.match(
+    css,
+    /\.ds-table__group-content--multi[\s\S]*?align-items: flex-start[\s\S]*?--_table-row-min-block-size[\s\S]*?--_table-cell-track-min-block-size/
+  );
+  assert.match(css, /\.ds-table__group-copy\)[\s\S]*?gap: 0/);
+  assert.match(
+    css,
+    /\.ds-table__group-accessories ds-tooltip[\s\S]*?align-items: center[\s\S]*?--_table-cell-track-min-block-size/
+  );
   assert.match(css, /\.ds-table__group-toggle\)[\s\S]*?--color-interaction-hover: transparent/);
   assert.match(css, /\.ds-table__group-toggle\)[\s\S]*?--color-interaction-pressed: transparent/);
+  assert.doesNotMatch(css, /\.ds-table__group-toggle\)\s*\{[^}]*align-self:/);
   assert.match(
     css,
     /\.ds-table__group:last-child > \.ds-table__group-row:last-child[\s\S]*?\.ds-table__group-content[\s\S]*?::after/

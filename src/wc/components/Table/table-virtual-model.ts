@@ -1,4 +1,5 @@
 import { resolveTableCellPresentation } from './table-cell-model';
+import { tableGroupAccessories } from './table-model';
 import type { TableColumn, TableGroup, TableRow } from './table-types';
 
 /**
@@ -185,7 +186,7 @@ export function flattenTableVirtualItems(input: FlattenTableVirtualItemsInput): 
       kind: 'group',
       id: `group:${group.id}`,
       groupId: group.id,
-      estimatedSize: TABLE_VIRTUAL_GROUP_HEADER_SIZE,
+      estimatedSize: tableVirtualRowTrackSize(tableGroupAccessories(group).length > 0 ? 2 : 1),
       variableSize: false,
     });
     if (collapsed.has(group.id)) continue;

@@ -1,0 +1,105 @@
+import { Component, Prop, h, Host } from '@stencil/core';
+import type { TextColor } from '../Text/text-types';
+import type { MetricTrend } from '../../utils/metric-change';
+import { SCORE_TREND_VARIANT, SCORE_VALUE_VARIANT, resolveScoreLevel } from './score-model';
+import type { SafetyScoreLevel, ScoreSize } from './score-types';
+
+const TREND_COLORS: Record<MetricTrend['tone'], TextColor> = {
+  positive: 'positive',
+  negative: 'negative',
+  neutral: 'secondary',
+};
+
+@Component({
+  tag: 'ds-score',
+  styleUrl: 'Score.css',
+  scoped: true,
+})
+export class Score {
+  /** Display-ready headline figure. */
+  @Prop() value: string | number = '';
+  /**
+   * Visual density matching control height: `sm` 24px, `md` 32px, `lg` 40px.
+   * `lg` is the Card Overview recipe.
+   */
+  @Prop() size: ScoreSize = 'md';
+  /**
+   * Safety-score color level. Numeric values from 0–100 infer fair (0–50),
+   * good (51–80), or excellent (81–100) when this is omitted.
+   */
+  @Prop() level: SafetyScoreLevel | undefined;
+  /** Change against the comparison period. Omit when there is nothing to report. */
+  @Prop() trend: MetricTrend | undefined;
+  /** Replace the figure and trend with skeletons while data resolves. */
+  @Prop() isLoading: boolean = false;
+  /** Accessible name prefix, for example “Safety score”. */
+  @Prop() label: string = '';
+
+  render() {
+    const size = this.size;
+    const level = resolveScoreLevel(this.value, this.level);
+    const valueVariant = SCORE_VALUE_VARIANT[size];
+    const trendVariant = SCORE_TREND_VARIANT[size];
+    const accessibleName = [this.label.trim(), this.value].filter(Boolean).join(' ');
+
+    return (
+      <Host
+        class={{
+          score: true,
+          [`score--${size}`]: true,
+          'score--loading': this.isLoading,
+        }}
+        aria-busy={this.isLoading ? 'true' : undefined}
+        aria-label={accessibleName || undefined}
+      >
+        <span
+          class={{
+            score__badge: true,
+            [`score__badge--${level}`]: Boolean(level),
+            'score__badge--loading': this.isLoading,
+          }}
+        >
+          {this.isLoading ? (
+            <ds-skeleton
+              class="score__value"
+              variant="text"
+              textVariant={valueVariant}
+              background="bold"
+            />
+          ) : (
+            <ds-text
+              as="span"
+              class="score__value ds-control-label-box"
+              variant={valueVariant}
+              emphasis={true}
+              color="inherit"
+              fontFeature="tabular-nums"
+            >
+              {this.value}
+            </ds-text>
+          )}
+        </span>
+        {this.isLoading
+          ? this.trend && (
+              <ds-skeleton
+                class="score__trend"
+                variant="text"
+                textVariant={trendVariant}
+                width="28px"
+              />
+            )
+          : this.trend && (
+              <ds-text
+                as="span"
+                class="score__trend ds-control-label-box"
+                variant={trendVariant}
+                color={TREND_COLORS[this.trend.tone]}
+                fontFeature="tabular-nums"
+              >
+                {this.trend.direction === 'up' ? '↑' : '↓'} {this.trend.value}
+              </ds-text>
+            )}
+      </Host>
+    );
+  }
+}

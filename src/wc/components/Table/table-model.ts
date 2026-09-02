@@ -12,6 +12,7 @@ import type {
   TableCellValue,
   TableColumn,
   TableGroup,
+  TableGroupAccessory,
   TableRow,
   TableSortState,
 } from './table-types';
@@ -259,6 +260,22 @@ export function resolvedTableGroupCount(group: TableGroup): number {
   return Math.max(total, group.rows.length);
 }
 
+/** Accessory items shown on a group header's second track. */
+export const TABLE_GROUP_ACCESSORY_LIMIT = 4;
+
+/** Trim, drop empty copy, and cap accessories at the second-track limit. */
+export function tableGroupAccessories(group: TableGroup): TableGroupAccessory[] {
+  const resolved: TableGroupAccessory[] = [];
+  for (const item of group.accessories ?? []) {
+    const text = item?.text?.trim() ?? '';
+    if (!text) continue;
+    const help = item.help?.trim();
+    resolved.push(help ? { text, help } : { text });
+    if (resolved.length === TABLE_GROUP_ACCESSORY_LIMIT) break;
+  }
+  return resolved;
+}
+
 export const TABLE_GROUP_INTENTS = [
   'brand',
   'neutral',
@@ -373,6 +390,12 @@ export function tableModelIssues(
       }
       if (group.intent != null && !isTableGroupIntent(group.intent)) {
         issues.push(`Group ${group.id} has an unsupported intent.`);
+      }
+      const accessoryCount = (group.accessories ?? []).filter(
+        item => typeof item?.text === 'string' && item.text.trim()
+      ).length;
+      if (accessoryCount > TABLE_GROUP_ACCESSORY_LIMIT) {
+        issues.push(`Group ${group.id} has more than ${TABLE_GROUP_ACCESSORY_LIMIT} accessories.`);
       }
     }
   }

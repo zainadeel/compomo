@@ -6,6 +6,7 @@ import {
   tableColumnSize,
   tableElasticSpacerIndex,
   tableExplicitMinWidth,
+  tableGroupAccessories,
   tableGroupIntentClass,
   tableGroupLabelColor,
   tableRows,
@@ -15,6 +16,7 @@ import {
 import type {
   TableColumn,
   TableGroup,
+  TableGroupAccessory,
   TableGroupIntent,
   TableRow,
   TableSelectionMode,
@@ -32,6 +34,7 @@ export interface TableGroupRenderModel {
   intentClass: string | undefined;
   labelColor: ReturnType<typeof tableGroupLabelColor>;
   collapsed: boolean;
+  accessories: TableGroupAccessory[];
   selection: TableSelectionState | null;
 }
 
@@ -105,6 +108,7 @@ export function createTableRenderModel(input: TableRenderModelInput): TableRende
         input.groupCountPresentation === 'total' || (collapsed && loadedCount === 0);
       const totalLabel = group.countLabel ?? `${count} ${count === 1 ? 'item' : 'items'}`;
       const intent = isTableGroupIntent(group.intent) ? group.intent : undefined;
+      const accessories = tableGroupAccessories(group);
       return {
         group,
         count,
@@ -115,6 +119,7 @@ export function createTableRenderModel(input: TableRenderModelInput): TableRende
         intentClass: tableGroupIntentClass(intent),
         labelColor: tableGroupLabelColor(intent),
         collapsed,
+        accessories,
         selection: selectable ? deriveTableSelectionState(group.rows, input.selectedRowIds) : null,
       };
     }),

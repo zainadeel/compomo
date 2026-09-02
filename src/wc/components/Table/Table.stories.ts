@@ -855,14 +855,42 @@ const SEVERITY_GROUP_INTENT: Record<(typeof SEVERITY_GROUP_ORDER)[number], Table
 /** Collapsed empty groups so Storybook can review section-header surfaces alone. */
 const GROUP_ROW_REVIEW: TableGroup[] = (
   [
-    { label: 'Assigned', intent: 'brand', totalCount: 48, countLabel: '48 vehicles' },
+    {
+      label: 'Assigned',
+      intent: 'brand',
+      totalCount: 48,
+      countLabel: '48 vehicles',
+      accessories: [{ text: 'Kenworth T680 2020' }, { text: '2 groups' }],
+    },
     { label: 'Low', intent: 'neutral', totalCount: 12, countLabel: '12 events' },
-    { label: 'Critical', intent: 'negative', totalCount: 166, countLabel: '166 events' },
-    { label: 'High', intent: 'warning', totalCount: 84, countLabel: '84 events' },
+    {
+      label: 'Critical',
+      intent: 'negative',
+      totalCount: 166,
+      countLabel: '166 events',
+      accessories: [
+        { text: 'ID: 54321' },
+        { text: '2 groups', help: 'Assigned groups for this driver.' },
+      ],
+    },
+    {
+      label: 'High',
+      intent: 'warning',
+      totalCount: 84,
+      countLabel: '84 events',
+      accessories: [
+        { text: 'Region West' },
+        { text: 'Shift A' },
+        { text: 'Yard 12' },
+        { text: '2 groups' },
+      ],
+    },
     { label: 'Medium', intent: 'caution', totalCount: 32, countLabel: '32 events' },
     { label: 'Compliant', intent: 'positive', totalCount: 210, countLabel: '210 vehicles' },
     { label: 'Unassigned', totalCount: 7, countLabel: '7 vehicles' },
-  ] satisfies Array<Pick<TableGroup, 'label' | 'intent' | 'totalCount' | 'countLabel'>>
+  ] satisfies Array<
+    Pick<TableGroup, 'label' | 'intent' | 'totalCount' | 'countLabel' | 'accessories'>
+  >
 ).map(group => ({
   ...group,
   id: group.label.toLowerCase(),
@@ -1355,7 +1383,7 @@ export const GroupRows: Story = {
     docs: {
       description: {
         story:
-          'Group section headers only. Every intent and the default surface are collapsed with no member rows, so additional group-row data points can be designed against the current label, count, selection, and collapse chrome. Click anywhere on a header to expand or collapse it. Expand a section to review empty expanded count copy.',
+          'Group section headers only. Every intent and the default surface are collapsed with no member rows. Some sections stay on the single-track label and count; others add a second 24px accessory track with middle-dot text, including a dotted-underline tooltip. Click anywhere on a header to expand or collapse it. Expand a section to review empty expanded count copy.',
       },
     },
   },

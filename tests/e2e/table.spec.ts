@@ -651,6 +651,87 @@ test('keeps application group order fixed and exposes only member-row sorting', 
   );
 });
 
+test(
+  'matches two-track body-row height when a group has accessories',
+  chromiumOnly(
+    'layout-geometry',
+    'Group accessory tracks share the 40/64 body-row contract; Chromium is the token-backed geometry owner.'
+  ),
+  async ({ page }) => {
+    const table = page.locator('#grouped');
+    const header = table.locator('tbody[data-group-id="driving"] .ds-table__group-content');
+    const twoTrackRow = page.locator('#multiple-tags [data-row-id="multiple-tags-two-tracks"]');
+
+    await expect(header).toHaveCSS('height', '40px');
+
+    await table.evaluate((element: HTMLDsTableElement) => {
+      element.selectionMode = 'multiple';
+      element.groups = element.groups.map(group =>
+        group.id === 'driving'
+          ? {
+              ...group,
+              accessories: [
+                { text: 'ID: 54321' },
+                { text: '2 groups', help: 'Assigned groups for this driver.' },
+                { text: 'Shift A' },
+                { text: 'Yard 12' },
+                { text: 'Dropped fifth' },
+              ],
+            }
+          : group
+      );
+    });
+
+    await expect(header).toHaveClass(/ds-table__group-content--multi/);
+    await expect(header).toHaveCSS('height', '64px');
+    await expect(twoTrackRow).toHaveCSS('height', '64px');
+    await expect(header.locator('.ds-table__group-copy')).toHaveCSS('gap', '0px');
+    const chromeAlignment = await header.evaluate(element => {
+      const box = (selector: string) => {
+        const rect = element.querySelector(selector)!.getBoundingClientRect();
+        return { top: rect.top, height: rect.height, mid: rect.top + rect.height / 2 };
+      };
+      return {
+        primary: box('.ds-table__group-primary'),
+        accessories: box('.ds-table__group-accessories'),
+        accessory: box('.ds-table__group-accessory'),
+        selection: box('.ds-table__group-selection'),
+        toggle: box('.ds-table__group-toggle'),
+      };
+    });
+    expectGeometryClose(
+      chromeAlignment.selection.top,
+      chromeAlignment.primary.top,
+      'group checkbox top vs label track'
+    );
+    expectGeometryClose(
+      chromeAlignment.toggle.top,
+      chromeAlignment.primary.top,
+      'group disclosure top vs label track'
+    );
+    expectGeometryClose(
+      chromeAlignment.accessories.top,
+      chromeAlignment.primary.top + 24,
+      'group accessory track top vs label track'
+    );
+    expectGeometryClose(
+      chromeAlignment.accessory.mid,
+      chromeAlignment.accessories.mid,
+      'group accessory copy centered in 24px track'
+    );
+    await expect(
+      header.locator('.ds-table__group-accessories .ds-table__group-accessory')
+    ).toHaveText(['ID: 54321', '2 groups', 'Shift A', 'Yard 12']);
+    await expect(header.locator('.ds-table__group-accessory-separator')).toHaveCount(3);
+    const tooltipAccessory = header.locator('.ds-table__group-accessory-tip ds-text');
+    await expect(tooltipAccessory).toHaveJSProperty('decoration', 'dotted-underline');
+    await expect(header.locator('ds-tooltip')).toHaveJSProperty(
+      'label',
+      'Assigned groups for this driver.'
+    );
+  }
+);
+
 test('applies faint intent-to-neutral surfaces and bold titles to severity groups', async ({
   page,
 }) => {

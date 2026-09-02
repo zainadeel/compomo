@@ -1210,7 +1210,7 @@ export class Table {
     return !event.composedPath().some(target => {
       if (!(target instanceof HTMLElement) || target === currentTarget) return false;
       return target.matches(
-        'input, select, textarea, [role="checkbox"], .ds-table__selection-control, .ds-table__group-selection'
+        'input, select, textarea, [role="checkbox"], .ds-table__selection-control, .ds-table__group-selection, ds-tooltip'
       );
     });
   }
@@ -1784,6 +1784,33 @@ export class Table {
     });
   }
 
+  private renderGroupAccessory(
+    item: TableRenderModel['groups'][number]['accessories'][number],
+    index: number
+  ) {
+    const text = (
+      <ds-text
+        key={`acc-${index}`}
+        class="ds-table__group-accessory"
+        as="span"
+        variant="text-body-small"
+        color="secondary"
+        decoration={item.help ? 'dotted-underline' : undefined}
+        lineTruncation={1}
+      >
+        {item.text}
+      </ds-text>
+    );
+    if (!item.help) return text;
+    return (
+      <ds-tooltip key={`acc-${index}`} label={item.help} side="top" size="sm" wrapLabel={true}>
+        <span class="ds-table__group-accessory-tip" tabIndex={0}>
+          {text}
+        </span>
+      </ds-tooltip>
+    );
+  }
+
   private renderGroupContent(groupModel: TableRenderModel['groups'][number]) {
     const {
       group,
@@ -1791,10 +1818,14 @@ export class Table {
       collapsed: isCollapsed,
       labelColor,
       selection: groupSelection,
+      accessories,
     } = groupModel;
     return (
       <span
-        class="ds-table__group-content"
+        class={{
+          'ds-table__group-content': true,
+          'ds-table__group-content--multi': accessories.length > 0,
+        }}
         onClick={event => this.handleGroupRowClick(group, event)}
       >
         {groupSelection && (
@@ -1811,34 +1842,57 @@ export class Table {
           </span>
         )}
         <span class="ds-table__group-copy">
-          <ds-text
-            class="ds-table__group-label"
-            as="span"
-            variant="text-body-medium"
-            emphasis={true}
-            color={labelColor}
-          >
-            {group.label}
-          </ds-text>
-          <ds-text
-            class="ds-table__group-separator"
-            as="span"
-            variant="text-body-medium"
-            color="secondary"
-            aria-hidden="true"
-          >
-            ·
-          </ds-text>
-          <ds-text
-            class="ds-table__group-count"
-            as="span"
-            variant="text-body-medium"
-            color="secondary"
-            aria-hidden="true"
-          >
-            {groupModel.visibleCountText}
-          </ds-text>
-          <span class="ds-visually-hidden">{countLabel}</span>
+          <span class="ds-table__group-primary">
+            <ds-text
+              class="ds-table__group-label"
+              as="span"
+              variant="text-body-medium"
+              emphasis={true}
+              color={labelColor}
+            >
+              {group.label}
+            </ds-text>
+            <ds-text
+              class="ds-table__group-separator"
+              as="span"
+              variant="text-body-medium"
+              color="secondary"
+              aria-hidden="true"
+            >
+              ·
+            </ds-text>
+            <ds-text
+              class="ds-table__group-count"
+              as="span"
+              variant="text-body-medium"
+              color="secondary"
+              aria-hidden="true"
+            >
+              {groupModel.visibleCountText}
+            </ds-text>
+            <span class="ds-visually-hidden">{countLabel}</span>
+          </span>
+          {accessories.length > 0 && (
+            <span class="ds-table__group-accessories">
+              {accessories.flatMap((item, index) => [
+                ...(index > 0
+                  ? [
+                      <ds-text
+                        key={`sep-${index}`}
+                        class="ds-table__group-accessory-separator"
+                        as="span"
+                        variant="text-body-small"
+                        color="secondary"
+                        aria-hidden="true"
+                      >
+                        ·
+                      </ds-text>,
+                    ]
+                  : []),
+                this.renderGroupAccessory(item, index),
+              ])}
+            </span>
+          )}
         </span>
         <ds-button-unfilled
           class="ds-table__group-toggle"

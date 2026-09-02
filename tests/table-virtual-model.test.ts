@@ -148,6 +148,22 @@ test('flattens ungrouped rows and collapsed grouped sections', () => {
   );
   assert.equal(expanded[0]?.estimatedSize, TABLE_VIRTUAL_GROUP_HEADER_SIZE);
 
+  const accessoryHeader = flattenTableVirtualItems({
+    grouped: true,
+    rows: [],
+    groups: [
+      {
+        id: 'critical',
+        label: 'Critical',
+        rows: [row('a')],
+        accessories: [{ text: 'ID: 54321' }, { text: '2 groups' }],
+      },
+    ],
+    collapsedGroupIds: [],
+    columns,
+  });
+  assert.equal(accessoryHeader[0]?.estimatedSize, TABLE_VIRTUAL_ROW_TRACK_SIZE[2]);
+
   const collapsed = flattenTableVirtualItems({
     grouped: true,
     rows: [],

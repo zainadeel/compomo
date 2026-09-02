@@ -1,0 +1,82 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-score",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-score",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Safety-score figure in a semantic fill, with an optional comparison trend beside it, at the three control densities.",
+  "useWhen": [
+    "A driver or fleet safety score needs its fair, good, or excellent fill and the numeric figure in one place.",
+    "The same score treatment appears in Card Overview, an in-card summary, or a compact row such as a table group header.",
+    "An optional comparison trend should sit beside the fill without inheriting the fill's contrast."
+  ],
+  "avoidWhen": [
+    "The figure is an ordinary metric without a safety-score color band; use Text.",
+    "The score is one cell in a comparable measures grid that also needs period chrome; use CardOverview, which composes Score.",
+    "The mark is a notification count or status label; use Badge or Tag."
+  ],
+  "alternatives": [
+    {
+      "when": "The figure is one of several comparable measures under a shared period bar.",
+      "component": "component:ds-card-overview",
+      "reason": "CardOverview owns the summary grid, period chrome, and score-cell alignment; it renders Score at lg."
+    },
+    {
+      "when": "The quantity is ordinary readable content without a safety-score fill.",
+      "component": "component:ds-text",
+      "reason": "Text preserves the figure as body content."
+    },
+    {
+      "when": "The compact mark is unread count or notification presence.",
+      "component": "component:ds-badge",
+      "reason": "Badge owns supplemental notification chrome, not a scored figure."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-card-overview",
+    "component:ds-text",
+    "component:ds-skeleton"
+  ],
+  "accessibility": [
+    "Set label when the figure needs a spoken prefix such as Safety score; the visible number remains in the fill.",
+    "Colour never carries score meaning alone; the numeric figure stays visible inside the fill.",
+    "Trend includes both arrow direction and the formatted change, so tone is not carried by colour alone.",
+    "Score is not interactive and is not a tab stop.",
+    "While loading, the host exposes a busy state and skeletons whose type metrics match the resolved size."
+  ],
+  "states": [
+    "lg is the Card Overview fill: 56 by 40, display-small emphasis. md is the 32px control treatment: 40 by 32, title-large emphasis. sm is the 24px compact fill: 28 by 24, title-small emphasis. The fill box crops the type canvas so line-height does not change the declared size.",
+    "A numeric value from 0–100 infers fair from 0–50, good from 51–80, and excellent from 81–100. Supply level explicitly when the displayed value is not numeric.",
+    "Trend is supplied already resolved as a direction, a formatted value, and a tone. Derive it with resolveMetricTrend. Omit it when there is nothing to report.",
+    "The fill uses the safety-score background and on-fill foreground pair. Trend copy uses semantic positive, negative, or secondary tokens and follows the page theme.",
+    "isLoading replaces the figure and, when a trend object is present, the trend with skeletons at the matching type metrics. The figure skeleton sits in the fill and uses Skeleton's bold background context so its base and shimmer follow the on-bold foreground tokens. The trend skeleton stays on the page surface."
+  ],
+  "responsiveBehavior": [
+    "The owner selects sm, md, or lg to match the local layout. Score does not change size at breakpoints.",
+    "md is the density intended to sit in a two-track table row or an in-card summary. lg is reserved for the overview grid cell."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign trend as a JavaScript property; it is an object and cannot be expressed as an HTML attribute."
+    ],
+    "react": [
+      "Pass trend as a prop and derive it with resolveMetricTrend so tone stays an explicit product decision."
+    ],
+    "angular": [
+      "Bind [trend] as a property and derive it with resolveMetricTrend so tone stays an explicit product decision."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/Score/Score.stories.ts"
+    },
+    {
+      "label": "Safety-score level unit coverage",
+      "path": "tests/score-model.test.ts"
+    }
+  ]
+}

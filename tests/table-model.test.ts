@@ -21,6 +21,8 @@ import {
   tableExplicitMinWidth,
   tableGroupIntentClass,
   tableGroupLabelColor,
+  tableGroupAccessories,
+  TABLE_GROUP_ACCESSORY_LIMIT,
   tableModelIssues,
   tableRowSelectionLabel,
   toggleAllLoadedTableRows,
@@ -304,6 +306,32 @@ test('maps optional group intents to class and title color recipes', () => {
   assert.equal(tableGroupLabelColor('caution'), 'caution');
 });
 
+test('caps group accessories at four trimmed items', () => {
+  assert.deepEqual(tableGroupAccessories({ id: 'g', label: 'Group', rows: [] }), []);
+  assert.deepEqual(
+    tableGroupAccessories({
+      id: 'g',
+      label: 'Group',
+      rows: [],
+      accessories: [
+        { text: '  ID: 54321  ' },
+        { text: '' },
+        { text: '2 groups', help: '  Assigned groups  ' },
+        { text: 'Shift A' },
+        { text: 'Yard 12' },
+        { text: 'Ignored fifth' },
+      ],
+    }),
+    [
+      { text: 'ID: 54321' },
+      { text: '2 groups', help: 'Assigned groups' },
+      { text: 'Shift A' },
+      { text: 'Yard 12' },
+    ]
+  );
+  assert.equal(TABLE_GROUP_ACCESSORY_LIMIT, 4);
+});
+
 test('reports unstable model identities and impossible group counts', () => {
   const issues = tableModelIssues(
     [columns[0], { ...columns[0] }],
@@ -319,4 +347,27 @@ test('reports unstable model identities and impossible group counts', () => {
   assert.ok(issues.includes('Duplicate group id: same'));
   assert.ok(issues.includes('Duplicate row id: a'));
   assert.ok(issues.includes('Group same totalCount is smaller than its loaded row count.'));
+});
+
+test('reports group accessory overflow without dropping the extra copy from the input', () => {
+  const issues = tableModelIssues(
+    columns,
+    [],
+    [
+      {
+        id: 'critical',
+        label: 'Critical',
+        rows: [],
+        accessories: [
+          { text: 'One' },
+          { text: 'Two' },
+          { text: 'Three' },
+          { text: 'Four' },
+          { text: 'Five' },
+        ],
+      },
+    ],
+    true
+  );
+  assert.ok(issues.includes('Group critical has more than 4 accessories.'));
 });

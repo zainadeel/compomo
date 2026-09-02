@@ -1,0 +1,93 @@
+@import '../../utils/control-parts.css';
+@import '../../utils/forced-colors.css';
+
+:host {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-width: 0;
+  gap: var(--_score-gap);
+  --_score-gap: var(--dimension-space-050);
+  --_score-badge-inline-size: var(--dimension-size-500);
+  --_score-badge-block-size: var(--dimension-size-400);
+  /* Matches the text skeleton’s 75% bar so the fill inset is even on all sides. */
+  --_score-skeleton-inset: calc(var(--_score-badge-block-size) / 8);
+}
+
+:host(.score--sm) {
+  --_score-gap: var(--dimension-space-050);
+  --_score-badge-inline-size: calc(var(--dimension-size-400) - var(--dimension-space-050));
+  --_score-badge-block-size: var(--dimension-size-300);
+}
+
+:host(.score--md) {
+  --_score-gap: var(--dimension-space-050);
+  --_score-badge-inline-size: var(--dimension-size-500);
+  --_score-badge-block-size: var(--dimension-size-400);
+}
+
+:host(.score--lg) {
+  --_score-gap: var(--dimension-space-100);
+  --_score-badge-inline-size: calc(var(--dimension-size-600) + var(--dimension-space-100));
+  --_score-badge-block-size: var(--dimension-size-500);
+}
+
+.score__badge {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  inline-size: var(--_score-badge-inline-size);
+  block-size: var(--_score-badge-block-size);
+  overflow: hidden;
+  border-radius: var(--dimension-radius-025);
+  background: var(--color-background-bold-brand);
+  color: var(--color-foreground-on-bold-background-primary);
+}
+
+.score__badge--fair {
+  background: var(--color-safety-score-background-fair);
+  color: var(--color-safety-score-foreground-on-fair);
+}
+
+.score__badge--good {
+  background: var(--color-safety-score-background-good);
+  color: var(--color-safety-score-foreground-on-good);
+}
+
+.score__badge--excellent {
+  background: var(--color-safety-score-background-excellent);
+  color: var(--color-safety-score-foreground-on-excellent);
+}
+
+.score__value,
+.score__badge ds-skeleton {
+  flex: 0 0 auto;
+}
+
+.score__badge--loading {
+  padding-inline: var(--_score-skeleton-inset);
+}
+
+.score__badge--loading .score__value {
+  flex: 1 1 auto;
+  inline-size: 100%;
+  block-size: 100%;
+  max-inline-size: 100%;
+  max-block-size: 100%;
+  min-inline-size: 0;
+}
+
+.score__trend {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+@media (forced-colors: active) {
+  .score__badge {
+    border: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
+    background: var(--ds-forced-color-surface);
+    color: var(--ds-forced-color-content);
+  }
+}

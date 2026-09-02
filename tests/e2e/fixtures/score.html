@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <title>Score e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Score test</h1>
+      <ds-score id="lg" size="lg" value="87" label="Safety score"></ds-score>
+      <ds-score id="md" size="md" value="87" label="Safety score"></ds-score>
+      <ds-score id="sm" size="sm" value="87" label="Safety score"></ds-score>
+      <ds-score id="fair" value="42" label="Fair score"></ds-score>
+      <ds-score id="good" value="67" label="Good score"></ds-score>
+      <ds-score id="excellent" value="87" label="Excellent score"></ds-score>
+      <ds-score id="with-trend" size="lg" value="87" label="Safety score"></ds-score>
+      <ds-score id="loading-sm" size="sm" value="87" is-loading label="Safety score"></ds-score>
+      <ds-score id="loading-md" size="md" value="87" is-loading label="Safety score"></ds-score>
+      <ds-score id="loading-lg" size="lg" value="87" is-loading label="Safety score"></ds-score>
+    </main>
+    <script type="module" src="/score-setup.mjs"></script>
+  </body>
+</html>
