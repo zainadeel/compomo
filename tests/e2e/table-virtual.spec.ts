@@ -38,6 +38,60 @@ test('virtual mode mounts a window of rows and reports the full list to AT', asy
     .toBe(true);
 });
 
+test('large bounded pagination and infinite windows recycle row DOM without changing modes @pr-critical', async ({
+  page,
+}) => {
+  const paginated = page.locator('#paginated');
+  await paginated.evaluate(element => {
+    const table = element as HTMLDsTableElement;
+    const source = table.rows[0]!;
+    table.rows = Array.from({ length: 200 }, (_, index) => ({
+      ...source,
+      id: `large-page-${index}`,
+      selectable: true,
+      disabled: false,
+    }));
+    table.selectedRowIds = [];
+    table.pagination = {
+      ...table.pagination!,
+      pageIndex: 0,
+      pageSize: 200,
+      totalItems: 200,
+    };
+  });
+
+  await expect(paginated).toHaveJSProperty('dataMode', 'pagination');
+  await expect(paginated.locator('.ds-table__table--windowed')).toBeVisible();
+  await expect.poll(() => paginated.locator('.ds-table__row').count()).toBeLessThan(50);
+  await expect(paginated.locator('.ds-table__table')).toHaveAttribute('aria-rowcount', '201');
+  await paginated.getByRole('checkbox', { name: 'Select all loaded rows' }).click();
+  await expect
+    .poll(() =>
+      paginated.evaluate((element: HTMLDsTableElement) => element.selectedRowIds.length)
+    )
+    .toBe(200);
+
+  const infinite = page.locator('#lazy');
+  await infinite.evaluate(element => {
+    const table = element as HTMLDsTableElement;
+    const source = table.rows[0]!;
+    table.maxHeight = '480px';
+    table.rows = Array.from({ length: 200 }, (_, index) => ({
+      ...source,
+      id: `large-infinite-${index}`,
+    }));
+    table.displayedCount = 200;
+    table.totalCount = 200;
+    table.hasMore = false;
+  });
+
+  await expect(infinite).toHaveJSProperty('dataMode', 'infinite');
+  await expect(infinite.locator('.ds-table__table--windowed')).toBeVisible();
+  await expect.poll(() => infinite.locator('.ds-table__row').count()).toBeLessThan(50);
+  await expect(infinite.locator('.ds-table__table')).toHaveAttribute('aria-rowcount', '201');
+  await expect(infinite.locator('ds-pagination')).toHaveCount(0);
+});
+
 test('virtual mode reuses stable row shells when a pool slot re-enters the window', async ({
   page,
 }) => {
