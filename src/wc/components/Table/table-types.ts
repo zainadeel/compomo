@@ -1,5 +1,6 @@
 import type { TagContrast, TagIntent } from '../Tag/Tag';
 import type { IconColor } from '../Icon/Icon';
+import type { SafetyScoreLevel } from '../Score/score-types';
 import type { TextColor } from '../Text/text-types';
 import type { PaginationState } from '../Pagination/pagination-types';
 
@@ -377,6 +378,18 @@ export interface TableGroupAccessory {
   help?: string;
 }
 
+/** Leading group-header accessory. Score is the first supported hero. */
+export interface TableGroupHeroScore {
+  kind: 'score';
+  value: string | number;
+  level?: SafetyScoreLevel;
+  /** Accessible name prefix, for example “Safety score”. */
+  label?: string;
+  isLoading?: boolean;
+}
+
+export type TableGroupHero = TableGroupHeroScore;
+
 export interface TableGroup {
   /** Stable group identity. */
   id: string;
@@ -396,6 +409,11 @@ export interface TableGroup {
    * Middle-dot separated. At most four items are shown.
    */
   accessories?: TableGroupAccessory[];
+  /**
+   * Optional leading hero before the label and count. A score uses sm on both
+   * single-track and two-track headers and sits at the start of the copy stack.
+   */
+  hero?: TableGroupHero;
   /** Whether this group has more member rows available to load. */
   hasMore?: boolean;
   /** Controlled incremental loading state for this group's member rows. */

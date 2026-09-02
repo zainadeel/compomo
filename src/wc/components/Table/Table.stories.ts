@@ -857,21 +857,26 @@ const GROUP_ROW_REVIEW: TableGroup[] = (
   [
     {
       label: 'Assigned',
-      intent: 'brand',
       totalCount: 48,
       countLabel: '48 vehicles',
       accessories: [{ text: 'Kenworth T680 2020' }, { text: '2 groups' }],
+      hero: { kind: 'score', value: 87 },
     },
-    { label: 'Low', intent: 'neutral', totalCount: 12, countLabel: '12 events' },
+    {
+      label: 'Low',
+      totalCount: 12,
+      countLabel: '12 events',
+      hero: { kind: 'score', value: 42 },
+    },
     {
       label: 'Critical',
-      intent: 'negative',
       totalCount: 166,
       countLabel: '166 events',
       accessories: [
         { text: 'ID: 54321' },
         { text: '2 groups', help: 'Assigned groups for this driver.' },
       ],
+      hero: { kind: 'score', value: 67 },
     },
     {
       label: 'High',
@@ -889,7 +894,7 @@ const GROUP_ROW_REVIEW: TableGroup[] = (
     { label: 'Compliant', intent: 'positive', totalCount: 210, countLabel: '210 vehicles' },
     { label: 'Unassigned', totalCount: 7, countLabel: '7 vehicles' },
   ] satisfies Array<
-    Pick<TableGroup, 'label' | 'intent' | 'totalCount' | 'countLabel' | 'accessories'>
+    Pick<TableGroup, 'label' | 'intent' | 'totalCount' | 'countLabel' | 'accessories' | 'hero'>
   >
 ).map(group => ({
   ...group,
@@ -1383,7 +1388,7 @@ export const GroupRows: Story = {
     docs: {
       description: {
         story:
-          'Group section headers only. Every intent and the default surface are collapsed with no member rows. Some sections stay on the single-track label and count; others add a second 24px accessory track with middle-dot text, including a dotted-underline tooltip. Click anywhere on a header to expand or collapse it. Expand a section to review empty expanded count copy.',
+          'Group section headers only. Every intent and the default surface are collapsed with no member rows. Assigned, Low, and Critical show a leading sm score hero on the default surface — score headers do not use intent coloring. High keeps a two-track accessory row with intent. Click anywhere on a header to expand or collapse it. Expand a section to review empty expanded count copy.',
       },
     },
   },

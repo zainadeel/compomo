@@ -92,6 +92,7 @@ test('normalizes group presentation and selection without mutating inputs', () =
   assert.equal(model.groups[0].visibleCountText, '2 of 3');
   assert.equal(model.groups[0].countLabel, '2 of 3 events loaded');
   assert.deepEqual(model.groups[0].accessories, []);
+  assert.equal(model.groups[0].hero, undefined);
   assert.equal(model.groups[0].selection?.indeterminate, true);
   assert.equal(model.groups[1].intent, undefined);
   assert.equal(model.groups[1].intentClass, undefined);
@@ -219,4 +220,28 @@ test('resolves at most four group accessories onto the render snapshot', () => {
     { text: 'Shift A' },
     { text: 'Yard 12' },
   ]);
+});
+
+test('resolves a score hero onto the render snapshot', () => {
+  const groups: TableGroup[] = [
+    {
+      id: 'assigned',
+      label: 'Assigned',
+      intent: 'brand',
+      rows,
+      hero: { kind: 'score', value: 87, label: ' Safety score ' },
+    },
+  ];
+  const model = createTableRenderModel({
+    columns,
+    rows: [],
+    groups,
+    grouped: true,
+    selectionMode: 'none',
+    selectedRowIds: [],
+    collapsedGroupIds: [],
+  });
+  assert.deepEqual(model.groups[0].hero, { kind: 'score', value: 87, label: 'Safety score' });
+  assert.equal(model.groups[0].intent, undefined);
+  assert.equal(model.groups[0].intentClass, undefined);
 });

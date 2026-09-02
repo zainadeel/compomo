@@ -13,9 +13,11 @@ import type {
   TableColumn,
   TableGroup,
   TableGroupAccessory,
+  TableGroupHero,
   TableRow,
   TableSortState,
 } from './table-types';
+import { isSafetyScoreLevel } from '../Score/score-model';
 
 export interface TableSelectionState {
   selectableRowIds: string[];
@@ -276,6 +278,23 @@ export function tableGroupAccessories(group: TableGroup): TableGroupAccessory[] 
   return resolved;
 }
 
+/** Group-header score fill. Same sm density on one- and two-track headers. */
+export const TABLE_GROUP_HERO_SCORE_SIZE = 'sm' as const;
+
+/** Resolve a supported group-header hero, or undefined when none is supplied. */
+export function tableGroupHero(group: TableGroup): TableGroupHero | undefined {
+  const hero = group.hero;
+  if (!hero || hero.kind !== 'score') return undefined;
+  const label = hero.label?.trim();
+  return {
+    kind: 'score',
+    value: hero.value,
+    ...(isSafetyScoreLevel(hero.level) ? { level: hero.level } : {}),
+    ...(label ? { label } : {}),
+    ...(hero.isLoading ? { isLoading: true } : {}),
+  };
+}
+
 export const TABLE_GROUP_INTENTS = [
   'brand',
   'neutral',
@@ -396,6 +415,9 @@ export function tableModelIssues(
       ).length;
       if (accessoryCount > TABLE_GROUP_ACCESSORY_LIMIT) {
         issues.push(`Group ${group.id} has more than ${TABLE_GROUP_ACCESSORY_LIMIT} accessories.`);
+      }
+      if (group.hero != null && group.hero.kind !== 'score') {
+        issues.push(`Group ${group.id} has an unsupported hero.`);
       }
     }
   }

@@ -2,6 +2,7 @@
 @import '../../styles/control-elevation.css';
 @import '../../utils/chrome-header.css';
 @import '../../utils/control-density.css';
+@import '../../utils/forced-colors.css';
 @import '../../utils/text-decoration.css';
 
 :host {
@@ -183,4 +184,29 @@ ds-skeleton.ds-table__skeleton-checkbox {
 .ds-table__caption-customizer > ds-skeleton {
   position: absolute;
   inset: 0;
+}
+
+/*
+ * Public :where() descendant rings can drop under scoped CSS. Paint the
+ * tertiary edge on ::after so it sits over the score fill without growing it.
+ */
+.ds-table__group-hero {
+  position: relative;
+}
+
+.ds-table__group-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  box-sizing: border-box;
+  border-radius: var(--dimension-radius-025);
+  border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+  pointer-events: none;
+}
+
+@media (forced-colors: active) {
+  .ds-table__group-hero::after {
+    border-color: var(--ds-forced-color-content);
+  }
 }

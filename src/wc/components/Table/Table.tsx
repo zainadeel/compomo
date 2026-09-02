@@ -19,6 +19,7 @@ import {
   nextTableSortState,
   tableColumnSize,
   tableModelIssues,
+  TABLE_GROUP_HERO_SCORE_SIZE,
   tableRows,
   toggleAllLoadedTableRows,
   toggleTableGroupCollapsed,
@@ -1819,12 +1820,14 @@ export class Table {
       labelColor,
       selection: groupSelection,
       accessories,
+      hero,
     } = groupModel;
     return (
       <span
         class={{
           'ds-table__group-content': true,
           'ds-table__group-content--multi': accessories.length > 0,
+          'ds-table__group-content--hero': Boolean(hero),
         }}
         onClick={event => this.handleGroupRowClick(group, event)}
       >
@@ -1839,6 +1842,17 @@ export class Table {
               groupSelection.selectableRowIds.length === 0,
               () => this.emitGroupSelection(group)
             )}
+          </span>
+        )}
+        {hero?.kind === 'score' && (
+          <span class="ds-table__group-hero">
+            <ds-score
+              size={TABLE_GROUP_HERO_SCORE_SIZE}
+              value={hero.value}
+              level={hero.level}
+              label={hero.label ?? 'Safety score'}
+              isLoading={hero.isLoading === true}
+            />
           </span>
         )}
         <span class="ds-table__group-copy">

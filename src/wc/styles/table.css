@@ -1449,6 +1449,37 @@
   block-size: var(--dimension-iconography-md);
 }
 
+:where(.ds-table__group-content--hero) {
+  align-items: flex-start;
+}
+
+:where(.ds-table__group-hero) {
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-self: flex-start;
+  /* Same 6px as the extra group-copy inset so the sm figure sits on the text column. */
+  margin-inline-start: var(--dimension-space-075);
+}
+
+:where(.ds-table__group-hero)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  box-sizing: border-box;
+  border-radius: var(--dimension-radius-025);
+  border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+  pointer-events: none;
+}
+
+:where(.ds-table__table--selectable .ds-table__group-hero),
+:where(.ds-table__sticky-group--selectable .ds-table__group-hero) {
+  /* Margin, not padding: ::after inset:0 must hug the 24px sm fill. */
+  margin-inline-end: var(--dimension-space-100);
+}
+
 :where(.ds-table__group-content--multi) {
   align-items: flex-start;
   min-block-size: calc(var(--_table-row-min-block-size) + var(--_table-cell-track-min-block-size));
@@ -1488,7 +1519,15 @@
 
 :where(.ds-table__table--selectable .ds-table__group-copy),
 :where(.ds-table__sticky-group--selectable .ds-table__group-copy) {
-  padding-inline-start: calc(var(--dimension-space-100) + var(--_table-cell-track-label-inset));
+  /* 8px cell chrome + 4px text-track inset matches header 8+2+2 and body copy. */
+  padding-inline-start: calc(
+    var(--dimension-space-100) + var(--_table-cell-track-padding-inline)
+  );
+}
+
+:where(.ds-table__table--selectable .ds-table__group-content--hero .ds-table__group-copy),
+:where(.ds-table__sticky-group--selectable .ds-table__group-content--hero .ds-table__group-copy) {
+  padding-inline-start: var(--dimension-space-050);
 }
 
 :where(.ds-table__group-separator),
@@ -1650,6 +1689,10 @@
     outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-control-boundary);
     outline-offset: calc(-1 * var(--dimension-stroke-width-012));
     background: var(--ds-forced-color-surface);
+  }
+
+  :where(.ds-table__group-hero)::after {
+    border-color: var(--ds-forced-color-content);
   }
 
   :where(.ds-table__row--disabled) {

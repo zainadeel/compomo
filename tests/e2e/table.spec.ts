@@ -732,6 +732,159 @@ test(
   }
 );
 
+test(
+  'places a top-aligned sm score hero before group copy on one and two tracks',
+  chromiumOnly(
+    'layout-geometry',
+    'Group hero score stays sm on the 40/64 body-row contract; Chromium is the token-backed geometry owner.'
+  ),
+  async ({ page }) => {
+    const table = page.locator('#grouped');
+    const header = table.locator('tbody[data-group-id="driving"] .ds-table__group-content');
+
+    await table.evaluate((element: HTMLDsTableElement) => {
+      element.selectionMode = 'multiple';
+      element.groups = element.groups.map(group =>
+        group.id === 'driving' ? { ...group, hero: { kind: 'score', value: 87 } } : group
+      );
+    });
+
+    await expect(header).toHaveClass(/ds-table__group-content--hero/);
+    await expect(header).not.toHaveClass(/ds-table__group-content--multi/);
+    await expect(header).toHaveCSS('height', '40px');
+    await expect(header.locator('ds-score')).toHaveJSProperty('size', 'sm');
+    await expect(header.locator('ds-score')).toHaveJSProperty('value', 87);
+
+    const singleTrack = await header.evaluate(element => {
+      const cssPx = (value: string) => {
+        const probe = document.createElement('span');
+        probe.style.width = value;
+        document.body.append(probe);
+        const width = getComputedStyle(probe).width;
+        probe.remove();
+        return Number.parseFloat(width);
+      };
+      const hero = element.querySelector('.ds-table__group-hero')!;
+      const heroBox = hero.getBoundingClientRect();
+      const badge = element.querySelector('ds-score .score__badge')!.getBoundingClientRect();
+      const value = element.querySelector('ds-score .score__value')!.getBoundingClientRect();
+      const primary = element.querySelector('.ds-table__group-primary')!.getBoundingClientRect();
+      const selection = element.querySelector('.ds-table__group-selection')!.getBoundingClientRect();
+      const after = getComputedStyle(hero, '::after');
+      return {
+        heroTop: heroBox.top,
+        heroLeft: heroBox.left,
+        valueLeft: value.left,
+        badgeHeight: badge.height,
+        badgeWidth: badge.width,
+        selectionTop: selection.top,
+        selectionRight: selection.right,
+        primaryTop: primary.top,
+        afterWidth: after.borderTopWidth,
+        afterColor: after.borderTopColor,
+        expectedStartPad: cssPx('var(--dimension-space-075)'),
+        expectedSmHeight: cssPx('var(--dimension-size-300)'),
+        expectedSmWidth: cssPx('calc(var(--dimension-size-400) - var(--dimension-space-050))'),
+      };
+    });
+    expectGeometryClose(singleTrack.badgeHeight, singleTrack.expectedSmHeight, 'sm score height');
+    expectGeometryClose(singleTrack.badgeWidth, singleTrack.expectedSmWidth, 'sm score width');
+    expectGeometryClose(
+      singleTrack.heroTop,
+      singleTrack.primaryTop,
+      'sm score top-aligned with label track'
+    );
+    expectGeometryClose(
+      singleTrack.selectionTop,
+      singleTrack.primaryTop,
+      'group checkbox top vs label track with sm hero'
+    );
+    expectGeometryClose(
+      singleTrack.heroLeft - singleTrack.selectionRight,
+      singleTrack.expectedStartPad,
+      'sm score start inset after selection'
+    );
+
+    const columnAlign = await table.evaluate(element => {
+      const headerBox = element.querySelector(
+        '.ds-table__header-cell:not(.ds-table__selection-cell) .ds-table__header-label-box'
+      )!;
+      const groupLabel = element.querySelector(
+        'tbody[data-group-id="off-duty"] .ds-table__group-label'
+      )!;
+      const headerPad = Number.parseFloat(getComputedStyle(headerBox).paddingLeft);
+      return {
+        headerGlyphLeft: headerBox.getBoundingClientRect().left + headerPad,
+        groupGlyphLeft: groupLabel.getBoundingClientRect().left,
+      };
+    });
+    expectGeometryClose(
+      columnAlign.groupGlyphLeft,
+      columnAlign.headerGlyphLeft,
+      'group label vs column-header glyphs'
+    );
+    expect(singleTrack.afterWidth).not.toBe('0px');
+    expect(singleTrack.afterColor).not.toBe('rgba(0, 0, 0, 0)');
+
+    await table.evaluate((element: HTMLDsTableElement) => {
+      element.groups = element.groups.map(group =>
+        group.id === 'driving'
+          ? {
+              ...group,
+              accessories: [{ text: 'ID: 54321' }, { text: '2 groups' }],
+              hero: { kind: 'score', value: 67 },
+            }
+          : group
+      );
+    });
+
+    await expect(header).toHaveClass(/ds-table__group-content--multi/);
+    await expect(header).toHaveCSS('height', '64px');
+    await expect(header.locator('ds-score')).toHaveJSProperty('size', 'sm');
+    await expect(header.locator('ds-score')).toHaveJSProperty('value', 67);
+
+    const twoTrack = await header.evaluate(element => {
+      const cssPx = (value: string) => {
+        const probe = document.createElement('span');
+        probe.style.width = value;
+        document.body.append(probe);
+        const width = getComputedStyle(probe).width;
+        probe.remove();
+        return Number.parseFloat(width);
+      };
+      const hero = element.querySelector('.ds-table__group-hero')!;
+      const heroBox = hero.getBoundingClientRect();
+      const badge = element.querySelector('ds-score .score__badge')!.getBoundingClientRect();
+      const primary = element.querySelector('.ds-table__group-primary')!.getBoundingClientRect();
+      const selection = element.querySelector('.ds-table__group-selection')!.getBoundingClientRect();
+      const after = getComputedStyle(hero, '::after');
+      return {
+        heroTop: heroBox.top,
+        badgeHeight: badge.height,
+        badgeWidth: badge.width,
+        selectionTop: selection.top,
+        primaryTop: primary.top,
+        afterWidth: after.borderTopWidth,
+        expectedSmHeight: cssPx('var(--dimension-size-300)'),
+        expectedSmWidth: cssPx('calc(var(--dimension-size-400) - var(--dimension-space-050))'),
+      };
+    });
+    expectGeometryClose(twoTrack.badgeHeight, twoTrack.expectedSmHeight, 'sm score height on two tracks');
+    expectGeometryClose(twoTrack.badgeWidth, twoTrack.expectedSmWidth, 'sm score width on two tracks');
+    expectGeometryClose(
+      twoTrack.heroTop,
+      twoTrack.primaryTop,
+      'sm score top-aligned with two-track label'
+    );
+    expectGeometryClose(
+      twoTrack.selectionTop,
+      twoTrack.primaryTop,
+      'group checkbox top vs label track with sm hero'
+    );
+    expect(twoTrack.afterWidth).not.toBe('0px');
+  }
+);
+
 test('applies faint intent-to-neutral surfaces and bold titles to severity groups', async ({
   page,
 }) => {

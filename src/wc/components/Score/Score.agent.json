@@ -37,6 +37,7 @@
   ],
   "commonlyComposedWith": [
     "component:ds-card-overview",
+    "component:ds-table",
     "component:ds-text",
     "component:ds-skeleton"
   ],
@@ -54,7 +55,7 @@
   ],
   "responsiveBehavior": [
     "The owner selects sm, md, or lg to match the local layout. Score does not change size at breakpoints.",
-    "md is the density intended to sit in a two-track table row or an in-card summary. lg is reserved for the overview grid cell."
+    "sm is the density for table group headers. md is the in-card summary fill. lg is the Card Overview fill."
   ],
   "references": [
     {

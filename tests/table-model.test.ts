@@ -22,6 +22,8 @@ import {
   tableGroupIntentClass,
   tableGroupLabelColor,
   tableGroupAccessories,
+  tableGroupHero,
+  TABLE_GROUP_HERO_SCORE_SIZE,
   TABLE_GROUP_ACCESSORY_LIMIT,
   tableModelIssues,
   tableRowSelectionLabel,
@@ -332,6 +334,29 @@ test('caps group accessories at four trimmed items', () => {
   assert.equal(TABLE_GROUP_ACCESSORY_LIMIT, 4);
 });
 
+test('resolves a score hero and ignores unsupported kinds', () => {
+  assert.equal(tableGroupHero({ id: 'g', label: 'Group', rows: [] }), undefined);
+  assert.deepEqual(
+    tableGroupHero({
+      id: 'g',
+      label: 'Group',
+      rows: [],
+      hero: { kind: 'score', value: 87, label: '  Safety score  ', level: 'excellent' },
+    }),
+    { kind: 'score', value: 87, label: 'Safety score', level: 'excellent' }
+  );
+  assert.equal(
+    tableGroupHero({
+      id: 'g',
+      label: 'Group',
+      rows: [],
+      hero: { kind: 'avatar' as 'score', value: 87 },
+    }),
+    undefined
+  );
+  assert.equal(TABLE_GROUP_HERO_SCORE_SIZE, 'sm');
+});
+
 test('reports unstable model identities and impossible group counts', () => {
   const issues = tableModelIssues(
     [columns[0], { ...columns[0] }],
@@ -370,4 +395,21 @@ test('reports group accessory overflow without dropping the extra copy from the 
     true
   );
   assert.ok(issues.includes('Group critical has more than 4 accessories.'));
+});
+
+test('reports an unsupported group hero without dropping other group copy', () => {
+  const issues = tableModelIssues(
+    columns,
+    [],
+    [
+      {
+        id: 'assigned',
+        label: 'Assigned',
+        rows: [],
+        hero: { kind: 'avatar' as 'score', value: 87 },
+      },
+    ],
+    true
+  );
+  assert.ok(issues.includes('Group assigned has an unsupported hero.'));
 });
