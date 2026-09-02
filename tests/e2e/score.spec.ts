@@ -65,6 +65,15 @@ test('keeps an unavailable score on the faint neutral surface', async ({ page })
   );
 });
 
+test('keeps the displayed score from participating in text selection', async ({ page }) => {
+  const userSelect = await page.locator('#md .score__badge').evaluate(element => {
+    const style = getComputedStyle(element);
+    return style.getPropertyValue('user-select') || style.getPropertyValue('-webkit-user-select');
+  });
+
+  expect(userSelect).toBe('none');
+});
+
 test(
   'sizes the fill to the matching control height and declared width',
   chromiumOnly(

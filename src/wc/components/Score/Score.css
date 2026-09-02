@@ -39,6 +39,8 @@
   border-radius: var(--dimension-radius-025);
   background: var(--color-background-faint-neutral);
   color: var(--color-foreground-bold-neutral);
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .score__badge--fair {
