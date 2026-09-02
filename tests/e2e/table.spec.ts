@@ -514,6 +514,9 @@ test('keeps application group order fixed and exposes only member-row sorting', 
     });
   expect(groupCopyInsets).toEqual({ left: 4, right: 4 });
 
+  const groupContent = firstGroupHeader.locator('.ds-table__group-content');
+  await expect(groupContent).toHaveCSS('cursor', 'pointer');
+
   const toggle = firstGroupHeader.locator('.ds-table__group-toggle');
   await expect(toggle).toHaveJSProperty('variant', 'icon');
   await expect(toggle).toHaveJSProperty('size', 'md');
@@ -527,6 +530,7 @@ test('keeps application group order fixed and exposes only member-row sorting', 
   await expect(toggle.getByRole('button')).not.toHaveClass(/button-unfilled--active/);
   await expect(toggle.getByRole('button')).not.toHaveClass(/ds-button--expanded/);
   await expect(toggle).toHaveJSProperty('hasBorder', false);
+  await expect(toggle).toHaveJSProperty('pressScale', false);
   await expect(table.locator('tbody[data-group-id="driving"] .ds-table__row')).toHaveCount(2);
   await toggle.click();
   await expect
@@ -540,6 +544,36 @@ test('keeps application group order fixed and exposes only member-row sorting', 
   await expect(toggle).toHaveJSProperty('expanded', false);
   await expect(toggle.getByRole('button')).toHaveAttribute('aria-expanded', 'false');
   await expect(table.locator('tbody[data-group-id="driving"] .ds-table__row')).toHaveCount(0);
+
+  await firstGroupHeader.locator('.ds-table__group-copy').click();
+  await expect
+    .poll(() => table.evaluate((element: HTMLDsTableElement) => element.collapsedGroupIds))
+    .toEqual([]);
+  await expect(table.locator('tbody[data-group-id="driving"] .ds-table__row')).toHaveCount(2);
+
+  await toggle.getByRole('button').hover();
+  const groupHover = await groupContent.evaluate(element => {
+    const probe = document.createElement('span');
+    probe.style.background = 'var(--color-interaction-hover)';
+    document.body.append(probe);
+    const token = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return { overlay: getComputedStyle(element, '::before').backgroundColor, token };
+  });
+  expect(groupHover.overlay).toBe(groupHover.token);
+
+  const toggleWash = await toggle.evaluate(element => {
+    const button = element.querySelector('button');
+    if (!(button instanceof HTMLElement)) return null;
+    const probe = document.createElement('span');
+    probe.style.background = 'var(--color-interaction-hover)';
+    document.body.append(probe);
+    const token = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return { overlay: getComputedStyle(button, '::after').backgroundColor, token };
+  });
+  expect(toggleWash).not.toBeNull();
+  expect(toggleWash!.overlay).not.toBe(toggleWash!.token);
 
   const collapseAll = table.locator('.ds-table__collapse-all');
   await expect(collapseAll).toHaveJSProperty('variant', 'icon');
@@ -626,6 +660,15 @@ test('applies faint intent-to-neutral surfaces and bold titles to severity group
     { id: 'medium', intent: 'caution', label: 'Medium', count: 1 },
     { id: 'low', intent: 'neutral', label: 'Low', count: 1 },
   ] as const;
+
+  const criticalHeader = table.locator('tbody[data-group-id="critical"] .ds-table__group-content');
+  await criticalHeader.getByRole('checkbox').click();
+  await expect
+    .poll(() => table.evaluate((element: HTMLDsTableElement) => element.collapsedGroupIds))
+    .toEqual([]);
+  await expect
+    .poll(() => table.evaluate((element: HTMLDsTableElement) => element.selectedRowIds.length))
+    .toBeGreaterThan(0);
 
   for (const group of expected) {
     const body = table.locator(`tbody[data-group-id="${group.id}"]`);

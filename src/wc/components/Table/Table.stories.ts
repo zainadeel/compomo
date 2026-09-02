@@ -852,6 +852,23 @@ const SEVERITY_GROUP_INTENT: Record<(typeof SEVERITY_GROUP_ORDER)[number], Table
   Low: 'neutral',
 };
 
+/** Collapsed empty groups so Storybook can review section-header surfaces alone. */
+const GROUP_ROW_REVIEW: TableGroup[] = (
+  [
+    { label: 'Assigned', intent: 'brand', totalCount: 48, countLabel: '48 vehicles' },
+    { label: 'Low', intent: 'neutral', totalCount: 12, countLabel: '12 events' },
+    { label: 'Critical', intent: 'negative', totalCount: 166, countLabel: '166 events' },
+    { label: 'High', intent: 'warning', totalCount: 84, countLabel: '84 events' },
+    { label: 'Medium', intent: 'caution', totalCount: 32, countLabel: '32 events' },
+    { label: 'Compliant', intent: 'positive', totalCount: 210, countLabel: '210 vehicles' },
+    { label: 'Unassigned', totalCount: 7, countLabel: '7 vehicles' },
+  ] satisfies Array<Pick<TableGroup, 'label' | 'intent' | 'totalCount' | 'countLabel'>>
+).map(group => ({
+  ...group,
+  id: group.label.toLowerCase(),
+  rows: [],
+}));
+
 function severityGroupedRows(rows: TableRow[], sort: TableSortState | null): TableGroup[] {
   const bySeverity = new Map<string, TableRow[]>();
   for (const row of rows) {
@@ -1250,7 +1267,7 @@ export const GroupingAndMemberSorting: Story = {
     docs: {
       description: {
         story:
-          "The application supplies Status groups in its fixed order while Safety score remains the table's one interactive member-row sort. Group section headers expose a controlled collapse control matching the action-column ButtonUnfilled recipe. While any group is expanded and no action column exists, collapse-all floats at the visible header edge on a medium-elevation surface so horizontal scrolling never hides it.",
+          "The application supplies Status groups in its fixed order while Safety score remains the table's one interactive member-row sort. The complete group section header expands and collapses the section; the trailing ButtonUnfilled remains the accessible disclosure control and does not paint its own hover or press wash. While any group is expanded and no action column exists, collapse-all floats at the visible header edge on a medium-elevation surface so horizontal scrolling never hides it.",
       },
     },
   },
@@ -1318,6 +1335,45 @@ export const GroupingBySeverity: Story = {
         caption-visibility="hidden"
         @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
           updateArgs({ sort: event.detail.sort })}
+        @dsGroupCollapseChange=${(event: CustomEvent<{ collapsedGroupIds: string[] }>) =>
+          updateArgs({ collapsedGroupIds: event.detail.collapsedGroupIds })}
+        @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>
+          updateArgs({ selectedRowIds: event.detail.selectedRowIds })}
+      ></ds-table>
+    `;
+  },
+};
+
+export const GroupRows: Story = {
+  name: 'Group rows',
+  args: {
+    grouping: { columnId: 'status', direction: 'asc' },
+    collapsedGroupIds: GROUP_ROW_REVIEW.map(group => group.id),
+    selectedRowIds: [],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Group section headers only. Every intent and the default surface are collapsed with no member rows, so additional group-row data points can be designed against the current label, count, selection, and collapse chrome. Click anywhere on a header to expand or collapse it. Expand a section to review empty expanded count copy.',
+      },
+    },
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    const collapsedGroupIds = (args['collapsedGroupIds'] as string[]) ?? [];
+    const selectedRowIds = (args['selectedRowIds'] as string[]) ?? [];
+    return html`
+      <ds-table
+        data-a11y-fixture
+        .columns=${COLUMNS}
+        .groups=${GROUP_ROW_REVIEW}
+        .grouping=${args['grouping']}
+        .collapsedGroupIds=${collapsedGroupIds}
+        .selectedRowIds=${selectedRowIds}
+        selection-mode="multiple"
+        caption="Group section headers"
+        caption-visibility="hidden"
         @dsGroupCollapseChange=${(event: CustomEvent<{ collapsedGroupIds: string[] }>) =>
           updateArgs({ collapsedGroupIds: event.detail.collapsedGroupIds })}
         @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>

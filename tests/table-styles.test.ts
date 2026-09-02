@@ -150,10 +150,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
     css,
     /\.ds-table__match[\s\S]*?background-color: var\(--color-background-faint-brand\)[\s\S]*?color: var\(--color-foreground-bold-brand\)/
   );
-  assert.match(
-    css,
-    /--_table-wrap-primary-line-height: var\(--_table-cell-track-min-block-size\)/
-  );
+  assert.match(css, /--_table-wrap-primary-line-height: var\(--_table-cell-track-min-block-size\)/);
   assert.match(
     css,
     /\.ds-table__cell--text-wrap\.ds-table__cell--text-single \.ds-table__cell-primary\)[\s\S]*?line-height: var\(--_table-wrap-primary-line-height\)/
@@ -190,10 +187,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
     /\.ds-table__cell-track--text[\s\S]*?padding-inline: var\(--_table-cell-track-padding-inline\)/
   );
   assert.match(css, /\.ds-table__cell-primary[\s\S]*?padding-block: var\(--dimension-space-025\)/);
-  assert.match(
-    css,
-    /\.ds-table__cell--text-multi \.ds-table__cell-copy\)[\s\S]*?gap: 0/
-  );
+  assert.match(css, /\.ds-table__cell--text-multi \.ds-table__cell-copy\)[\s\S]*?gap: 0/);
   assert.match(css, /\.ds-table__cell-tags\)[\s\S]*?gap: 0 var\(--dimension-space-025\)/);
   assert.match(
     componentCss,
@@ -259,9 +253,15 @@ test('retains the structural and accessibility fallbacks rendered tests depend o
   assert.doesNotMatch(css, /ds-table__collapse-column|ds-table__collapse-cell/);
   assert.match(css, /\.ds-table__load-body \.ds-table__load-row:last-child \.ds-table__load-cell/);
   assert.doesNotMatch(css, /:where\(\.ds-table__load-row:last-child \.ds-table__load-cell\)/);
+  assert.match(css, /\.ds-table__group-content[\s\S]*?cursor: pointer/);
+  assert.match(componentCss, /\.ds-table__group-content \{[\s\S]*?cursor: pointer/);
+  assert.match(css, /\.ds-table__group-content\)::after[\s\S]*?background: var\(--_table-border\)/);
+  assert.match(css, /\.ds-table__group-content:hover\)::before[\s\S]*?--_table-row-hover/);
+  assert.match(css, /\.ds-table__group-toggle\)[\s\S]*?--color-interaction-hover: transparent/);
+  assert.match(css, /\.ds-table__group-toggle\)[\s\S]*?--color-interaction-pressed: transparent/);
   assert.match(
     css,
-    /\.ds-table__group:last-child > \.ds-table__group-row:last-child[\s\S]*?\.ds-table__group-content/
+    /\.ds-table__group:last-child > \.ds-table__group-row:last-child[\s\S]*?\.ds-table__group-content[\s\S]*?::after/
   );
   assert.match(
     css,

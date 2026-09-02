@@ -1205,6 +1205,21 @@ export class Table {
     });
   }
 
+  private groupRowEventOwnsCollapse(event: Event): boolean {
+    const currentTarget = event.currentTarget;
+    return !event.composedPath().some(target => {
+      if (!(target instanceof HTMLElement) || target === currentTarget) return false;
+      return target.matches(
+        'input, select, textarea, [role="checkbox"], .ds-table__selection-control, .ds-table__group-selection'
+      );
+    });
+  }
+
+  private handleGroupRowClick(group: TableGroup, event: Event): void {
+    if (!this.groupRowEventOwnsCollapse(event)) return;
+    this.emitGroupCollapse(group);
+  }
+
   private emitRowActivation(row: TableRow, event: Event): void {
     if (!row.interactive || row.disabled || !this.rowEventOwnsActivation(event)) return;
     this.dsRowActivate.emit({ rowId: row.id });
@@ -1778,7 +1793,10 @@ export class Table {
       selection: groupSelection,
     } = groupModel;
     return (
-      <span class="ds-table__group-content">
+      <span
+        class="ds-table__group-content"
+        onClick={event => this.handleGroupRowClick(group, event)}
+      >
         {groupSelection && (
           <span class="ds-table__group-selection">
             {this.renderSelectionControl(
@@ -1832,10 +1850,7 @@ export class Table {
           expanded={!isCollapsed}
           aria-label={isCollapsed ? `Expand ${group.label} group` : `Collapse ${group.label} group`}
           hasBorder={false}
-          onDsClick={event => {
-            event.stopPropagation();
-            this.emitGroupCollapse(group);
-          }}
+          pressScale={false}
         />
       </span>
     );

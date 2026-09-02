@@ -979,7 +979,6 @@
   min-block-size: var(--_table-cell-track-min-block-size);
 }
 
-
 :where(.ds-table__cell--icon .ds-table__cell-content) {
   align-items: center;
   justify-content: center;
@@ -1383,6 +1382,28 @@
   border-block-end: 0;
   background: var(--_table-group-surface);
   background-clip: border-box;
+  cursor: pointer;
+}
+
+/* Hover/press wash. Keep this on ::before so the dedicated trailing-edge
+ * separator on ::after stays the original 1px surface rule. */
+:where(.ds-table__group-content)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: transparent;
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :where(.ds-table__group-content:hover)::before {
+    background: var(--_table-row-hover);
+  }
+}
+
+:where(.ds-table__group-content:active)::before {
+  background: var(--_table-row-pressed);
 }
 
 :where(.ds-table__group-content)::after {
@@ -1390,6 +1411,7 @@
   position: absolute;
   inset-inline: 0;
   inset-block-end: 0;
+  z-index: 1;
   block-size: var(--dimension-stroke-width-012);
   background: var(--_table-border);
   pointer-events: none;
@@ -1451,6 +1473,8 @@
 }
 
 :where(.ds-table__group-toggle) {
+  --color-interaction-hover: transparent;
+  --color-interaction-pressed: transparent;
   align-self: center;
   flex: 0 0 auto;
   margin-inline-start: auto;
