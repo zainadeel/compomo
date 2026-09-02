@@ -92,27 +92,8 @@ test(
   }
 );
 
-test('renders an optional trend beside the fill and skeletons it while loading', async ({
-  page,
-}) => {
-  const trend = page.locator('#with-trend .score__trend');
-  await expect(trend).toHaveText('↑ 4');
-  const trendColor = await trend.evaluate(element => {
-    const probe = document.createElement('span');
-    probe.style.color = 'var(--color-foreground-bold-positive)';
-    document.body.append(probe);
-    const expected = getComputedStyle(probe).color;
-    probe.remove();
-    return { color: getComputedStyle(element).color, expected };
-  });
-  expect(trendColor.color).toBe(trendColor.expected);
-  await expect(page.locator('#lg .score__trend')).toHaveCount(0);
+test('replaces the figure with a bold-surface skeleton while loading', async ({ page }) => {
   await expect(page.locator('#loading-lg .score__badge ds-skeleton')).toHaveJSProperty(
-    'background',
-    'bold'
-  );
-  await expect(page.locator('#loading-lg .score__trend')).toHaveCount(1);
-  await expect(page.locator('#loading-lg .score__trend')).not.toHaveJSProperty(
     'background',
     'bold'
   );

@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-score.js';
 import '../../../../dist/components/ds-text.js';
-import { resolveMetricTrend } from '../../utils/metric-change';
 import { SAFETY_SCORE_LEVELS, SCORE_SIZES, type ScoreSize } from './score-types';
 
 const meta: Meta = {
@@ -26,8 +25,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'Safety-score figure in a semantic fill, with an optional comparison trend. ' +
-          'lg matches Card Overview. md is the 32px control treatment. sm is the 24px compact fill.',
+          'Safety-score figure in a semantic fill. lg matches Card Overview. md is the 32px control treatment. sm is the 24px compact fill.',
       },
     },
   },
@@ -36,8 +34,6 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-const TREND = resolveMetricTrend(87, 83) ?? undefined;
-
 export const Playground: Story = {
   render: args => html`
     <ds-score
@@ -45,7 +41,6 @@ export const Playground: Story = {
       size=${args['size']}
       level=${args['level'] || undefined}
       label=${args['label']}
-      .trend=${TREND}
       ?is-loading=${args['isLoading']}
     ></ds-score>
   `,
@@ -60,7 +55,7 @@ export const Sizes: Story = {
             <ds-text as="span" variant="text-body-small" color="secondary" style="width:2rem;"
               >${size}</ds-text
             >
-            <ds-score size=${size} value="87" .trend=${TREND} label="Safety score"></ds-score>
+            <ds-score size=${size} value="87" label="Safety score"></ds-score>
           </div>
         `
       )}
@@ -78,10 +73,6 @@ export const Levels: Story = {
   `,
 };
 
-export const WithoutTrend: Story = {
-  render: () => html` <ds-score size="lg" value="87" label="Safety score"></ds-score> `,
-};
-
 export const Loading: Story = {
   render: () => html`
     <div style="display:flex;flex-direction:column;gap:var(--dimension-space-200);">
@@ -91,13 +82,7 @@ export const Loading: Story = {
             <ds-text as="span" variant="text-body-small" color="secondary" style="width:2rem;"
               >${size}</ds-text
             >
-            <ds-score
-              size=${size}
-              value="87"
-              .trend=${TREND}
-              is-loading
-              label="Safety score"
-            ></ds-score>
+            <ds-score size=${size} value="87" is-loading label="Safety score"></ds-score>
           </div>
         `
       )}

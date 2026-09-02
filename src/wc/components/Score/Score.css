@@ -6,8 +6,6 @@
   align-items: center;
   box-sizing: border-box;
   min-width: 0;
-  gap: var(--_score-gap);
-  --_score-gap: var(--dimension-space-050);
   --_score-badge-inline-size: var(--dimension-size-500);
   --_score-badge-block-size: var(--dimension-size-400);
   /* Matches the text skeleton’s 75% bar so the fill inset is even on all sides. */
@@ -15,19 +13,16 @@
 }
 
 :host(.score--sm) {
-  --_score-gap: var(--dimension-space-050);
   --_score-badge-inline-size: calc(var(--dimension-size-400) - var(--dimension-space-050));
   --_score-badge-block-size: var(--dimension-size-300);
 }
 
 :host(.score--md) {
-  --_score-gap: var(--dimension-space-050);
   --_score-badge-inline-size: var(--dimension-size-500);
   --_score-badge-block-size: var(--dimension-size-400);
 }
 
 :host(.score--lg) {
-  --_score-gap: var(--dimension-space-100);
   --_score-badge-inline-size: calc(var(--dimension-size-600) + var(--dimension-space-100));
   --_score-badge-block-size: var(--dimension-size-500);
 }
@@ -77,11 +72,6 @@
   max-inline-size: 100%;
   max-block-size: 100%;
   min-inline-size: 0;
-}
-
-.score__trend {
-  flex: 0 0 auto;
-  white-space: nowrap;
 }
 
 @media (forced-colors: active) {

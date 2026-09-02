@@ -1,14 +1,6 @@
 import { Component, Prop, h, Host } from '@stencil/core';
-import type { TextColor } from '../Text/text-types';
-import type { MetricTrend } from '../../utils/metric-change';
-import { SCORE_TREND_VARIANT, SCORE_VALUE_VARIANT, resolveScoreLevel } from './score-model';
+import { SCORE_VALUE_VARIANT, resolveScoreLevel } from './score-model';
 import type { SafetyScoreLevel, ScoreSize } from './score-types';
-
-const TREND_COLORS: Record<MetricTrend['tone'], TextColor> = {
-  positive: 'positive',
-  negative: 'negative',
-  neutral: 'secondary',
-};
 
 @Component({
   tag: 'ds-score',
@@ -28,9 +20,7 @@ export class Score {
    * good (51–80), or excellent (81–100) when this is omitted.
    */
   @Prop() level: SafetyScoreLevel | undefined;
-  /** Change against the comparison period. Omit when there is nothing to report. */
-  @Prop() trend: MetricTrend | undefined;
-  /** Replace the figure and trend with skeletons while data resolves. */
+  /** Replace the figure with a skeleton while data resolves. */
   @Prop() isLoading: boolean = false;
   /** Accessible name prefix, for example “Safety score”. */
   @Prop() label: string = '';
@@ -39,7 +29,6 @@ export class Score {
     const size = this.size;
     const level = resolveScoreLevel(this.value, this.level);
     const valueVariant = SCORE_VALUE_VARIANT[size];
-    const trendVariant = SCORE_TREND_VARIANT[size];
     const accessibleName = [this.label.trim(), this.value].filter(Boolean).join(' ');
 
     return (
@@ -79,26 +68,6 @@ export class Score {
             </ds-text>
           )}
         </span>
-        {this.isLoading
-          ? this.trend && (
-              <ds-skeleton
-                class="score__trend"
-                variant="text"
-                textVariant={trendVariant}
-                width="28px"
-              />
-            )
-          : this.trend && (
-              <ds-text
-                as="span"
-                class="score__trend ds-control-label-box"
-                variant={trendVariant}
-                color={TREND_COLORS[this.trend.tone]}
-                fontFeature="tabular-nums"
-              >
-                {this.trend.direction === 'up' ? '↑' : '↓'} {this.trend.value}
-              </ds-text>
-            )}
       </Host>
     );
   }

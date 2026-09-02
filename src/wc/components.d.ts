@@ -55,7 +55,6 @@ import { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderAc
 import { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
 import { RadioOption, RadioSize } from "./components/Radio/Radio";
 import { SafetyScoreLevel, ScoreSize } from "./components/Score/score-types";
-import { MetricTrend } from "./utils/metric-change";
 import { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
 import { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
 import { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellSectionNavigation, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
@@ -127,7 +126,6 @@ export { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderAc
 export { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
 export { RadioOption, RadioSize } from "./components/Radio/Radio";
 export { SafetyScoreLevel, ScoreSize } from "./components/Score/score-types";
-export { MetricTrend } from "./utils/metric-change";
 export { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
 export { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
 export { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellSectionNavigation, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
@@ -2410,7 +2408,7 @@ export namespace Components {
     }
     interface DsScore {
         /**
-          * Replace the figure and trend with skeletons while data resolves.
+          * Replace the figure with a skeleton while data resolves.
           * @default false
          */
         "isLoading": boolean;
@@ -2428,10 +2426,6 @@ export namespace Components {
           * @default 'md'
          */
         "size": ScoreSize;
-        /**
-          * Change against the comparison period. Omit when there is nothing to report.
-         */
-        "trend": MetricTrend | undefined;
         /**
           * Display-ready headline figure.
           * @default ''
@@ -7786,7 +7780,7 @@ declare namespace LocalJSX {
     }
     interface DsScore {
         /**
-          * Replace the figure and trend with skeletons while data resolves.
+          * Replace the figure with a skeleton while data resolves.
           * @default false
          */
         "isLoading"?: boolean;
@@ -7804,10 +7798,6 @@ declare namespace LocalJSX {
           * @default 'md'
          */
         "size"?: ScoreSize;
-        /**
-          * Change against the comparison period. Omit when there is nothing to report.
-         */
-        "trend"?: MetricTrend | undefined;
         /**
           * Display-ready headline figure.
           * @default ''

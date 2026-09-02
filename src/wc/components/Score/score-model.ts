@@ -31,9 +31,3 @@ export const SCORE_VALUE_VARIANT = {
   ScoreSize,
   'text-title-small' | 'text-title-large' | 'text-display-small'
 >;
-
-export const SCORE_TREND_VARIANT = {
-  sm: 'text-body-small',
-  md: 'text-body-medium',
-  lg: 'text-body-medium',
-} as const satisfies Record<ScoreSize, 'text-body-small' | 'text-body-medium'>;

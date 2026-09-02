@@ -2442,11 +2442,11 @@
             "Trend is supplied already resolved as a direction, a formatted value, and a tone. Whether a rise reads well is a product decision, so the component never infers tone from the numbers. Derive it with resolveMetricTrend.",
             "Omit a trend when there is nothing to report; resolveMetricTrend returns null in that case so no zero change is rendered.",
             "Omit score to render a centered Score unavailable cell with a tertiary border and no score fill. Set scoreErrorMessage to replace that copy while the measures remain readable.",
-            "Loading replaces the score and measures with skeletons and does not alter the slotted period control. When measures are already supplied, their count preserves the resolved grid shape; otherwise five measure placeholders join the score in the standard six-cell grid.",
+            "Loading replaces the score and measures with skeletons and does not alter the slotted period control. Score loading replaces only the fill figure; the overview still skeletons the score-copy spacer and trend. When measures are already supplied, their count preserves the resolved grid shape; otherwise five measure placeholders join the score in the standard six-cell grid.",
             "At most seven measures are shown. Keep larger collections outside the summary bar rather than turning it into a dense dashboard.",
             "The period and filter controls are slotted rather than owned. Use the period slot when the current range is selectable; otherwise periodLabel supplies fixed current copy in the same md control-frame and label-inset anatomy. Use the filter slot for the application-owned comparison-window control. Slotted Selects use hasBorder false so the 48px bar owns their surrounding boundary and allowClear false because both controls always require one selected reporting period.",
             "A numeric safety score infers fair from 0–50, good from 51–80, and excellent from 81–100. The level can be supplied explicitly when the displayed value is not numeric. The deprecated band field is ignored.",
-            "The safety score is the first grid cell and uses the same track, 8px outer inset, 6px inner padding, dividers, and responsive behavior as metric cells. It renders ds-score at lg. The 40px fill owns a fixed box so line-height does not increase the shared row height. Score remains nonselectable and excluded from metric roving focus.",
+            "The safety score is the first grid cell and uses the same track, 8px outer inset, 6px inner padding, dividers, and responsive behavior as metric cells. It renders ds-score at lg for the fill only. Comparison trend stays in the score-copy column, using the same renderTrend path and always-dark tokens as measures so the score cell lines up with the rest of the grid. The 40px fill owns a fixed box so line-height does not increase the shared row height. Score remains nonselectable and excluded from metric roving focus.",
             "During page-controlled scroll collapse, the component preserves its expanded flow height and stationary reporting bar while the metric grid moves and clips beneath it. Elevation remains fitted to the visible surface.",
             "compact is exactly 48px high and renders only the reporting bar. It omits Score, measures, and footer."
           ],
@@ -7461,7 +7461,7 @@
     {
       "name": "score",
       "title": "Score",
-      "description": "Safety-score figure in a semantic fill, with an optional comparison trend beside it, at the three control densities.",
+      "description": "Safety-score figure in a semantic fill at the three control densities.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -7472,22 +7472,22 @@
         "intent": {
           "audience": "general",
           "status": "experimental",
-          "summary": "Safety-score figure in a semantic fill, with an optional comparison trend beside it, at the three control densities.",
+          "summary": "Safety-score figure in a semantic fill at the three control densities.",
           "useWhen": [
             "A driver or fleet safety score needs its fair, good, or excellent fill and the numeric figure in one place.",
-            "The same score treatment appears in Card Overview, an in-card summary, or a compact row such as a table group header.",
-            "An optional comparison trend should sit beside the fill without inheriting the fill's contrast."
+            "The same score treatment appears in Card Overview, an in-card summary, or a compact row such as a table group header."
           ],
           "avoidWhen": [
             "The figure is an ordinary metric without a safety-score color band; use Text.",
             "The score is one cell in a comparable measures grid that also needs period chrome; use CardOverview, which composes Score.",
-            "The mark is a notification count or status label; use Badge or Tag."
+            "The mark is a notification count or status label; use Badge or Tag.",
+            "A comparison trend should sit beside the fill; keep trend in the owner. Card Overview already renders score trend in its copy column."
           ],
           "alternatives": [
             {
               "when": "The figure is one of several comparable measures under a shared period bar.",
               "component": "component:ds-card-overview",
-              "reason": "CardOverview owns the summary grid, period chrome, and score-cell alignment; it renders Score at lg."
+              "reason": "CardOverview owns the summary grid, period chrome, score-cell alignment, and score trend; it renders Score at lg for the fill."
             },
             {
               "when": "The quantity is ordinary readable content without a safety-score fill.",
@@ -7508,32 +7508,19 @@
           "accessibility": [
             "Set label when the figure needs a spoken prefix such as Safety score; the visible number remains in the fill.",
             "Colour never carries score meaning alone; the numeric figure stays visible inside the fill.",
-            "Trend includes both arrow direction and the formatted change, so tone is not carried by colour alone.",
             "Score is not interactive and is not a tab stop.",
-            "While loading, the host exposes a busy state and skeletons whose type metrics match the resolved size."
+            "While loading, the host exposes a busy state and a skeleton whose type metrics match the resolved size."
           ],
           "states": [
             "lg is the Card Overview fill: 56 by 40, display-small emphasis. md is the 32px control treatment: 40 by 32, title-large emphasis. sm is the 24px compact fill: 28 by 24, title-small emphasis. The fill box crops the type canvas so line-height does not change the declared size.",
             "A numeric value from 0–100 infers fair from 0–50, good from 51–80, and excellent from 81–100. Supply level explicitly when the displayed value is not numeric.",
-            "Trend is supplied already resolved as a direction, a formatted value, and a tone. Derive it with resolveMetricTrend. Omit it when there is nothing to report.",
-            "The fill uses the safety-score background and on-fill foreground pair. Trend copy uses semantic positive, negative, or secondary tokens and follows the page theme.",
-            "isLoading replaces the figure and, when a trend object is present, the trend with skeletons at the matching type metrics. The figure skeleton sits in the fill and uses Skeleton's bold background context so its base and shimmer follow the on-bold foreground tokens. The trend skeleton stays on the page surface."
+            "The fill uses the safety-score background and on-fill foreground pair.",
+            "isLoading replaces the figure with a skeleton at the matching type metrics. The skeleton sits in the fill and uses Skeleton's bold background context so its base and shimmer follow the on-bold foreground tokens."
           ],
           "responsiveBehavior": [
             "The owner selects sm, md, or lg to match the local layout. Score does not change size at breakpoints.",
             "md is the density intended to sit in a two-track table row or an in-card summary. lg is reserved for the overview grid cell."
           ],
-          "frameworkCaveats": {
-            "customElements": [
-              "Assign trend as a JavaScript property; it is an object and cannot be expressed as an HTML attribute."
-            ],
-            "react": [
-              "Pass trend as a prop and derive it with resolveMetricTrend so tone stays an explicit product decision."
-            ],
-            "angular": [
-              "Bind [trend] as a property and derive it with resolveMetricTrend so tone stays an explicit product decision."
-            ]
-          },
           "references": [
             {
               "label": "Storybook examples",
@@ -7560,10 +7547,6 @@
           },
           "size": {
             "type": "ScoreSize",
-            "required": false
-          },
-          "trend": {
-            "type": "MetricTrend | undefined",
             "required": false
           },
           "value": {
