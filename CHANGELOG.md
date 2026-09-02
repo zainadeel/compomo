@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.25.0](https://github.com/zainadeel/compomo/compare/v14.24.0...v14.25.0) (2026-09-02)
+
+
+### Added
+
+* optimize shell and table transitions ([#559](https://github.com/zainadeel/compomo/issues/559)) ([c230e53](https://github.com/zainadeel/compomo/commit/c230e53163462ddfd686978f749023627b2d1ec2))
+
 ## [14.24.0](https://github.com/zainadeel/compomo/compare/v14.23.0...v14.24.0) (2026-09-01)
 
 
