@@ -119,7 +119,12 @@ function tableCellTrackCount(
     return presentation.variant === 'text-with-tag' ? 2 : 1;
   }
   if (presentation.kind === 'tags') return presentation.tracks;
-  if (presentation.kind !== 'text' && presentation.kind !== 'icon-text') return 1;
+  if (
+    presentation.kind !== 'text' &&
+    presentation.kind !== 'icon-text' &&
+    presentation.kind !== 'score-text'
+  )
+    return 1;
 
   const variantTracks =
     presentation.variant === 'triple'
@@ -150,7 +155,9 @@ function tableVirtualRowMetrics(
     const value = row.cells[column.id];
     const presentation = resolveTableCellPresentation(value, column);
     if (
-      (presentation.kind === 'text' || presentation.kind === 'icon-text') &&
+      (presentation.kind === 'text' ||
+        presentation.kind === 'icon-text' ||
+        presentation.kind === 'score-text') &&
       presentation.wraps &&
       presentation.lineClamp === 'none'
     ) {

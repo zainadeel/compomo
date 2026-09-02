@@ -178,6 +178,7 @@ function renderTableCell(options: TableCellViewOptions) {
   const tagsCell = cell.kind === 'tags';
   const iconCell = cell.kind === 'icon';
   const iconTextCell = cell.kind === 'icon-text';
+  const scoreTextCell = cell.kind === 'score-text';
   const imageCell = cell.kind === 'image';
   const actionCell = cell.kind === 'action';
   const actionMenuCell = actionCell && isRenderableTableActionMenu(cell.value);
@@ -191,7 +192,8 @@ function renderTableCell(options: TableCellViewOptions) {
   const textVariant = textCell ? cell.variant : undefined;
   const imageVariant = imageCell ? cell.variant : undefined;
   const iconTextVariant = iconTextCell ? cell.variant : undefined;
-  const wraps = (textCell || iconTextCell) && cell.wraps;
+  const scoreTextVariant = scoreTextCell ? cell.variant : undefined;
+  const wraps = (textCell || iconTextCell || scoreTextCell) && cell.wraps;
 
   return (
     <td
@@ -207,6 +209,9 @@ function renderTableCell(options: TableCellViewOptions) {
         'ds-table__cell--icon-text': iconTextCell,
         [`ds-table__cell--icon-text-${iconTextVariant}`]: iconTextCell,
         'ds-table__cell--icon-text-wrap': iconTextCell && wraps,
+        'ds-table__cell--score-text': scoreTextCell,
+        [`ds-table__cell--score-text-${scoreTextVariant}`]: scoreTextCell,
+        'ds-table__cell--score-text-wrap': scoreTextCell && wraps,
         'ds-table__cell--image': imageCell,
         [`ds-table__cell--image-${imageVariant}`]: imageCell,
         'ds-table__cell--action': actionCell,
@@ -227,7 +232,12 @@ function renderTableCell(options: TableCellViewOptions) {
       data-column-id={column.id}
       data-cell-type={cell.cellType}
       data-cell-variant={
-        tagVariant ?? tagsVariant ?? textVariant ?? imageVariant ?? iconTextVariant
+        tagVariant ??
+        tagsVariant ??
+        textVariant ??
+        imageVariant ??
+        iconTextVariant ??
+        scoreTextVariant
       }
       data-cell-tracks={tagsCell ? cell.tracks : undefined}
     >
@@ -284,6 +294,23 @@ function renderTableCellValue(cell: TableCellPresentation, options: TableCellVie
           />
         </span>
         {renderTextCopy(cell, options)}
+      </span>
+    );
+  }
+
+  if (cell.kind === 'score-text') {
+    return (
+      <span class="ds-table__cell-score-text">
+        {renderTextCopy(cell, options)}
+        <span class="ds-table__cell-score-text-score">
+          <ds-score
+            size="sm"
+            value={cell.score}
+            level={cell.scoreLevel}
+            label={cell.scoreLabel}
+            isLoading={cell.scoreLoading}
+          />
+        </span>
       </span>
     );
   }
@@ -405,7 +432,7 @@ function renderTableCellValue(cell: TableCellPresentation, options: TableCellVie
 }
 
 function renderTextCopy(
-  cell: Extract<TableCellPresentation, { kind: 'text' | 'icon-text' }>,
+  cell: Extract<TableCellPresentation, { kind: 'text' | 'icon-text' | 'score-text' }>,
   options: TableCellViewOptions
 ) {
   const text = cell.value;
@@ -469,7 +496,10 @@ function renderTextTrack(
     variant: 'text-body-medium' | 'text-body-small';
     defaultColor: 'primary' | 'secondary';
     wholeColor?: TableCellTextRun['color'];
-    lineClamp: Extract<TableCellPresentation, { kind: 'text' | 'icon-text' }>['lineClamp'];
+    lineClamp: Extract<
+      TableCellPresentation,
+      { kind: 'text' | 'icon-text' | 'score-text' }
+    >['lineClamp'];
     highlightMatcherForRun: (runIndex: number) => TableHighlightMatcher;
   }
 ) {
@@ -478,20 +508,38 @@ function renderTextTrack(
   const overflow = tableCellTextOverflowProps(options.lineClamp);
   const colorFor = (run: TableCellTextRun) =>
     run.color ?? options.wholeColor ?? options.defaultColor;
-  if (runs.length === 1) {
-    return (
+  const renderRun = (run: TableCellTextRun, index: number, className: string) => {
+    const copy = (
       <ds-text
-        class={trackClass}
+        class={className}
         as="span"
         variant={options.variant}
-        color={colorFor(runs[0])}
+        color={colorFor(run)}
+        decoration={run.help ? 'dotted-underline' : undefined}
         lineTruncation={overflow.lineTruncation}
         wrap={overflow.wrap}
         data-table-truncate={truncateAttr(options.lineClamp)}
       >
-        {renderHighlightedText(runs[0].text, options.highlightMatcherForRun(0))}
+        {renderHighlightedText(run.text, options.highlightMatcherForRun(index))}
       </ds-text>
     );
+    return run.help ? (
+      <ds-tooltip
+        key={`${options.track}-run-${index}`}
+        label={run.help}
+        side="bottom"
+        align="start"
+        size="sm"
+        wrapLabel={true}
+      >
+        {copy}
+      </ds-tooltip>
+    ) : (
+      copy
+    );
+  };
+  if (runs.length === 1) {
+    return renderRun(runs[0], 0, trackClass);
   }
 
   return (
@@ -509,18 +557,7 @@ function renderTextTrack(
             ·
           </ds-text>
         ),
-        <ds-text
-          key={`${options.track}-run-${index}`}
-          class="ds-table__cell-run"
-          as="span"
-          variant={options.variant}
-          color={colorFor(run)}
-          lineTruncation={overflow.lineTruncation}
-          wrap={overflow.wrap}
-          data-table-truncate={truncateAttr(options.lineClamp)}
-        >
-          {renderHighlightedText(run.text, options.highlightMatcherForRun(index))}
-        </ds-text>,
+        renderRun(run, index, 'ds-table__cell-run'),
       ])}
     </span>
   );
@@ -554,7 +591,10 @@ function tableCellFieldMatcher(
 }
 
 function truncateAttr(
-  lineClamp: Extract<TableCellPresentation, { kind: 'text' | 'icon-text' }>['lineClamp']
+  lineClamp: Extract<
+    TableCellPresentation,
+    { kind: 'text' | 'icon-text' | 'score-text' }
+  >['lineClamp']
 ) {
   return lineClamp === 'none' ? undefined : '';
 }

@@ -400,9 +400,11 @@ const THREE_TRACK_ROWS: TableRow[] = [
     selectionLabel: 'Avery Chen',
     cells: {
       driver: {
+        kind: 'score-text',
+        score: 87,
         primary: 'Avery Chen',
         secondary: 'DRV-1048',
-        tertiary: 'Dallas, TX',
+        tertiary: [{ text: '2 groups', help: 'Main operations\nWest Coast' }],
       },
       vehicle: {
         primary: 'Freightliner Cascadia',
@@ -431,6 +433,8 @@ const THREE_TRACK_ROWS: TableRow[] = [
     selectionLabel: 'Jordan Patel',
     cells: {
       driver: {
+        kind: 'score-text',
+        score: 67,
         primary: 'Jordan Patel',
         secondary: 'DRV-2210',
         tertiary: 'Oakland, CA',
@@ -1491,6 +1495,44 @@ export const AllCellTypes: Story = {
         caption-visibility="visible"
       ></ds-table>
     </div>
+  `,
+};
+
+export const ScoreTextCells: Story = {
+  name: 'Score with text',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Score-and-text cells (`kind: score-text`) place the 24px small safety score at the top-right of the cell while preserving the standard one-, two-, and three-track copy stack at the start edge. The score is aligned with primary copy and does not change the row-height contract. Multi-group summaries can remain on a later track and use the standard dotted tooltip treatment.',
+      },
+    },
+  },
+  render: () => html`
+    <ds-table
+      data-a11y-fixture
+      .columns=${[
+        {
+          id: 'driver',
+          header: 'Driver name / ID / Group',
+          size: 'sm',
+          skeleton: {
+            kind: 'score-text',
+            lines: 3,
+            primaryWidth: 'md',
+            secondaryWidth: 'sm',
+            tertiaryWidth: 'xs',
+          },
+        },
+      ] satisfies TableColumn[]}
+      .rows=${THREE_TRACK_ROWS.map(({ id, selectionLabel, cells }) => ({
+        id,
+        selectionLabel,
+        cells: { driver: cells.driver },
+      }))}
+      caption="Driver score prefix cells"
+      caption-visibility="visible"
+    ></ds-table>
   `,
 };
 

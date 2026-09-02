@@ -11,6 +11,7 @@ export type {
   TableCellLinkTarget,
   TableCellIcon,
   TableCellIconText,
+  TableCellScoreText,
   TableCellImage,
   TableCellImageTracks,
   TableCellPrimaryText,

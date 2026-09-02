@@ -4,6 +4,7 @@ import {
   isTableCellEmpty,
   isTableCellIcon,
   isTableCellIconText,
+  isTableCellScoreText,
   isTableCellImage,
   isTableCellPrimaryText,
   isTableCellTag,
@@ -29,6 +30,7 @@ import type {
   TableColumn,
 } from './table-types';
 import type { IconColor } from '../Icon/Icon';
+import type { SafetyScoreLevel } from '../Score/score-types';
 import type { TextColor } from '../Text/text-types';
 
 /** Maximum independently colored runs on one secondary or tertiary track. */
@@ -56,6 +58,18 @@ export type TableCellPresentation =
       icon: string;
       iconColor?: IconColor;
       iconLabel?: string;
+      value: ResolvedTableCellText;
+      variant: 'single' | 'multi' | 'triple';
+      wraps: boolean;
+      lineClamp: TableCellLineClamp;
+    }
+  | {
+      kind: 'score-text';
+      cellType: 'score-text';
+      score: string | number;
+      scoreLevel?: SafetyScoreLevel;
+      scoreLabel: string;
+      scoreLoading: boolean;
       value: ResolvedTableCellText;
       variant: 'single' | 'multi' | 'triple';
       wraps: boolean;
@@ -135,11 +149,14 @@ export function normalizeTableCellTextTrack(
     if (runs.length >= TABLE_CELL_TEXT_RUN_LIMIT) break;
     const text = trackText(item);
     if (text === undefined) continue;
-    runs.push(
-      typeof item === 'object' && item !== null && 'color' in item && item.color
-        ? { text, color: item.color }
-        : { text }
-    );
+    const run: TableCellTextRun = { text };
+    if (typeof item === 'object' && item !== null) {
+      if ('color' in item && item.color) run.color = item.color;
+      if ('help' in item && typeof item.help === 'string' && item.help.trim()) {
+        run.help = item.help.trim();
+      }
+    }
+    runs.push(run);
   }
   return runs.length ? runs : undefined;
 }
@@ -241,6 +258,24 @@ export function resolveTableCellPresentation(
       icon: value.icon,
       ...(value.iconColor ? { iconColor: value.iconColor } : {}),
       ...(value.iconLabel ? { iconLabel: value.iconLabel } : {}),
+      value: text.value,
+      variant: text.variant === 'primary-pair' ? 'single' : text.variant,
+      wraps: text.wraps,
+      lineClamp: text.lineClamp,
+    };
+  }
+  if (isTableCellScoreText(value)) {
+    const text = resolveTextPresentation(value, column, {
+      primaryText: false,
+      allowTertiary: true,
+    });
+    return {
+      kind: 'score-text',
+      cellType: 'score-text',
+      score: value.score,
+      ...(value.scoreLevel ? { scoreLevel: value.scoreLevel } : {}),
+      scoreLabel: value.scoreLabel?.trim() || 'Safety score',
+      scoreLoading: value.scoreLoading === true,
       value: text.value,
       variant: text.variant === 'primary-pair' ? 'single' : text.variant,
       wraps: text.wraps,

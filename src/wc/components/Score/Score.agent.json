@@ -49,9 +49,9 @@
   ],
   "states": [
     "lg is the Card Overview fill: 56 by 40, display-small emphasis. md is the 32px control treatment: 40 by 32, title-large emphasis. sm is the 24px compact fill: 28 by 24, title-small emphasis. The fill box crops the type canvas so line-height does not change the declared size.",
-    "A numeric value from 0–100 infers fair from 0–50, good from 51–80, and excellent from 81–100. Supply level explicitly when the displayed value is not numeric.",
+    "A numeric value from 0–100 infers fair from 0–50, good from 51–80, and excellent from 81–100. Empty or whitespace-only values stay on the faint neutral surface. Supply level explicitly when another displayed value needs a semantic fill.",
     "The fill uses the safety-score background and on-fill foreground pair.",
-    "isLoading replaces the figure with a skeleton at the matching type metrics. The skeleton sits in the fill and uses Skeleton's bold background context so its base and shimmer follow the on-bold foreground tokens."
+    "isLoading replaces the figure with a skeleton at the matching type metrics. The skeleton uses the faint context when no score level is known and the bold context when a known or explicitly supplied level keeps its semantic fill."
   ],
   "responsiveBehavior": [
     "The owner selects sm, md, or lg to match the local layout. Score does not change size at breakpoints.",

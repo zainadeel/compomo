@@ -37,6 +37,34 @@ test('maps score boundaries to matching semantic background and foreground pairs
   }
 });
 
+test('keeps an unavailable score on the faint neutral surface', async ({ page }) => {
+  const colors = await page.locator('#empty .score__badge').evaluate(element => {
+    const resolve = (property: string) => {
+      const probe = document.createElement('span');
+      probe.style.color = `var(${property})`;
+      document.body.append(probe);
+      const color = getComputedStyle(probe).color;
+      probe.remove();
+      return color;
+    };
+    const style = getComputedStyle(element);
+    return {
+      background: style.backgroundColor,
+      color: style.color,
+      expectedBackground: resolve('--color-background-faint-neutral'),
+      expectedColor: resolve('--color-foreground-bold-neutral'),
+    };
+  });
+
+  expect(colors.background).toBe(colors.expectedBackground);
+  expect(colors.color).toBe(colors.expectedColor);
+  await expect(page.locator('#empty .score__badge')).not.toHaveClass(/score__badge--fair/);
+  await expect(page.locator('#loading-empty .score__badge ds-skeleton')).toHaveJSProperty(
+    'background',
+    'faint'
+  );
+});
+
 test(
   'sizes the fill to the matching control height and declared width',
   chromiumOnly(

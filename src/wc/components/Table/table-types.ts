@@ -61,6 +61,8 @@ export interface TableCellTextRun {
   text: string;
   /** Defaults to the track’s standard color. */
   color?: TextColor;
+  /** Optional supplementary copy shown from a dotted-underlined tooltip trigger. */
+  help?: string;
 }
 
 /** A secondary or tertiary track: one string, or up to three colorable runs. */
@@ -136,6 +138,31 @@ export interface TableCellIconText {
   iconColor?: IconColor;
   /** Accessible name. Omit when the glyph is decorative. */
   iconLabel?: string;
+  primary: string | number;
+  secondary?: TableCellTextTrack;
+  tertiary?: TableCellTextTrack;
+  secondaryColor?: TextColor;
+  tertiaryColor?: TextColor;
+  href?: string;
+  target?: TableCellLinkTarget;
+  wrap?: boolean;
+  maxLines?: TableCellMaxLines;
+  fontFeature?: 'normal' | 'tabular-nums';
+}
+
+/**
+ * Compact safety-score fill at the top-right of a text copy stack. The score
+ * occupies one 24px track while the copy keeps the standard text-cell anatomy.
+ */
+export interface TableCellScoreText {
+  kind: 'score-text';
+  /** Display-ready safety score. Numeric values infer their semantic level. */
+  score: string | number;
+  scoreLevel?: SafetyScoreLevel;
+  /** Accessible name prefix. Defaults to “Safety score”. */
+  scoreLabel?: string;
+  /** Replace the score figure with its matching sm skeleton. */
+  scoreLoading?: boolean;
   primary: string | number;
   secondary?: TableCellTextTrack;
   tertiary?: TableCellTextTrack;
@@ -270,6 +297,7 @@ export type TableCellValue =
   | TableCellTags
   | TableCellIcon
   | TableCellIconText
+  | TableCellScoreText
   | TableCellImage
   | TableCellAction
   | TableCellEmpty
@@ -302,6 +330,13 @@ export type TableCellSkeleton =
     }
   | {
       kind: 'icon-text';
+      lines?: 1 | 2 | 3;
+      primaryWidth?: TableSkeletonWidth;
+      secondaryWidth?: TableSkeletonWidth;
+      tertiaryWidth?: TableSkeletonWidth;
+    }
+  | {
+      kind: 'score-text';
       lines?: 1 | 2 | 3;
       primaryWidth?: TableSkeletonWidth;
       secondaryWidth?: TableSkeletonWidth;

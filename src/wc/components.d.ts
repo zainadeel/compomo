@@ -3754,7 +3754,7 @@ export namespace Components {
          */
         "size": TooltipSize;
         /**
-          * Allow the label to wrap at a panel-xs max width instead of a single line.
+          * Allow wrapping at a panel-xs max width and preserve explicit line breaks.
           * @default false
          */
         "wrapLabel": boolean;
@@ -9285,7 +9285,7 @@ declare namespace LocalJSX {
          */
         "size"?: TooltipSize;
         /**
-          * Allow the label to wrap at a panel-xs max width instead of a single line.
+          * Allow wrapping at a panel-xs max width and preserve explicit line breaks.
           * @default false
          */
         "wrapLabel"?: boolean;

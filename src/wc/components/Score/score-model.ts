@@ -9,6 +9,7 @@ export function isSafetyScoreLevel(value: unknown): value is SafetyScoreLevel {
  * values return undefined so the owner can supply `level` explicitly.
  */
 export function resolveSafetyScoreLevel(value: string | number): SafetyScoreLevel | undefined {
+  if (typeof value === 'string' && value.trim() === '') return undefined;
   const numericValue = typeof value === 'number' ? value : Number(value);
   if (!Number.isFinite(numericValue) || numericValue < 0 || numericValue > 100) return undefined;
   if (numericValue <= 50) return 'fair';

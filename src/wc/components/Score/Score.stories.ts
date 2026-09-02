@@ -82,7 +82,7 @@ export const Loading: Story = {
             <ds-text as="span" variant="text-body-small" color="secondary" style="width:2rem;"
               >${size}</ds-text
             >
-            <ds-score size=${size} value="87" is-loading label="Safety score"></ds-score>
+            <ds-score size=${size} is-loading label="Safety score"></ds-score>
           </div>
         `
       )}

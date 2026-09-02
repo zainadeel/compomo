@@ -44,6 +44,33 @@ test('normalizes text cells once for markup and class recipes', () => {
   assert.deepEqual(
     resolveTableCellPresentation(
       {
+        kind: 'score-text',
+        score: 87,
+        primary: 'Avery Chen',
+        secondary: 'DRV-1048',
+        tertiary: [{ text: '2 groups', help: ' Main operations\nWest Coast ' }],
+      },
+      column
+    ),
+    {
+      kind: 'score-text',
+      cellType: 'score-text',
+      score: 87,
+      scoreLabel: 'Safety score',
+      scoreLoading: false,
+      value: {
+        primary: 'Avery Chen',
+        secondary: [{ text: 'DRV-1048' }],
+        tertiary: [{ text: '2 groups', help: 'Main operations\nWest Coast' }],
+      },
+      variant: 'triple',
+      wraps: false,
+      lineClamp: 1,
+    }
+  );
+  assert.deepEqual(
+    resolveTableCellPresentation(
+      {
         primary: 'Freightliner Cascadia',
         secondary: 'VEH-1042',
         href: '/vehicles/VEH-1042',
@@ -63,7 +90,7 @@ test('normalizes text cells once for markup and class recipes', () => {
       {
         primary: 'Avery Chen',
         secondary: 'DRV-1048',
-        tertiary: 'Dallas, TX',
+        tertiary: [{ text: '2 groups', help: ' Main operations\nWest Coast ' }],
       },
       column
     ),
@@ -73,7 +100,7 @@ test('normalizes text cells once for markup and class recipes', () => {
       value: {
         primary: 'Avery Chen',
         secondary: [{ text: 'DRV-1048' }],
-        tertiary: [{ text: 'Dallas, TX' }],
+        tertiary: [{ text: '2 groups', help: 'Main operations\nWest Coast' }],
       },
       primaryText: false,
       singleLine: false,

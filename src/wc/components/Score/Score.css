@@ -37,8 +37,8 @@
   block-size: var(--_score-badge-block-size);
   overflow: hidden;
   border-radius: var(--dimension-radius-025);
-  background: var(--color-background-bold-brand);
-  color: var(--color-foreground-on-bold-background-primary);
+  background: var(--color-background-faint-neutral);
+  color: var(--color-foreground-bold-neutral);
 }
 
 .score__badge--fair {

@@ -10,6 +10,7 @@ import {
   isOwnedTableFooterSlot,
   isTableCellIcon,
   isTableCellIconText,
+  isTableCellScoreText,
   isTableGroupIntent,
   nextTableGroupsCollapsed,
   nextTableSortState,
@@ -230,6 +231,14 @@ test('resolves labels, column constraints, and server group totals defensively',
   assert.equal(
     tableCellPrimary({ kind: 'icon-text', icon: 'VehicleTruck', primary: 'Freightliner Cascadia' }),
     'Freightliner Cascadia'
+  );
+  assert.equal(
+    isTableCellScoreText({ kind: 'score-text', score: 87, primary: 'Avery Chen' }),
+    true
+  );
+  assert.equal(
+    tableCellPrimary({ kind: 'score-text', score: 87, primary: 'Avery Chen' }),
+    'Avery Chen'
   );
   assert.equal(
     tableCellPrimary({ kind: 'image', alt: 'Road-facing preview' }),

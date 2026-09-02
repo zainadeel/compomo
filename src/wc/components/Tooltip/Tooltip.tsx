@@ -66,7 +66,7 @@ function styleTooltipLabel(el: HTMLElement, wrapLabel = false) {
   el.style.flexShrink = wrapLabel ? '1' : '0';
   el.style.minWidth = wrapLabel ? '0' : 'max-content';
   el.style.maxWidth = wrapLabel ? '100%' : 'none';
-  el.style.whiteSpace = wrapLabel ? 'normal' : '';
+  el.style.whiteSpace = wrapLabel ? 'pre-line' : '';
   el.style.padding = '0 var(--ds-control-label-inset, var(--dimension-space-025))';
   el.style.color = 'var(--color-foreground-primary)';
 }
@@ -116,7 +116,7 @@ export class Tooltip {
    * the label is already in the DOM, such as a truncated table cell.
    */
   @Prop() describedBy = true;
-  /** Allow the label to wrap at a panel-xs max width instead of a single line. */
+  /** Allow wrapping at a panel-xs max width and preserve explicit line breaks. */
   @Prop() wrapLabel = false;
 
   private tooltipId = `ds-tooltip-${++tooltipIdCounter}`;

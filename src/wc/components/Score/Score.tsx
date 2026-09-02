@@ -53,7 +53,7 @@ export class Score {
               class="score__value"
               variant="text"
               textVariant={valueVariant}
-              background="bold"
+              background={level ? 'bold' : 'faint'}
             />
           ) : (
             <ds-text

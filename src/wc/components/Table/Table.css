@@ -48,7 +48,8 @@ ds-text.ds-table__cell-track {
 }
 
 .ds-table__cell--text-wrap ds-text.ds-table__cell-track--text,
-.ds-table__cell--icon-text-wrap ds-text.ds-table__cell-track--text {
+.ds-table__cell--icon-text-wrap ds-text.ds-table__cell-track--text,
+.ds-table__cell--score-text-wrap ds-text.ds-table__cell-track--text {
   display: block;
 }
 
@@ -69,18 +70,22 @@ ds-text.ds-table__cell-primary,
 .ds-table__cell--text-wrap.ds-table__cell--text-single .ds-table__cell-primary,
 .ds-table__cell--text-wrap.ds-table__cell--text-multi .ds-table__cell-primary,
 .ds-table__cell--icon-text-wrap.ds-table__cell--icon-text-single .ds-table__cell-primary,
-.ds-table__cell--icon-text-wrap.ds-table__cell--icon-text-multi .ds-table__cell-primary {
+.ds-table__cell--icon-text-wrap.ds-table__cell--icon-text-multi .ds-table__cell-primary,
+.ds-table__cell--score-text-wrap.ds-table__cell--score-text-single .ds-table__cell-primary,
+.ds-table__cell--score-text-wrap.ds-table__cell--score-text-multi .ds-table__cell-primary {
   line-height: var(--_table-wrap-primary-line-height);
   padding-block: var(--_table-wrap-primary-padding-block);
 }
 
 .ds-table__cell--text-wrap.ds-table__cell--text-multi .ds-table__cell-copy,
-.ds-table__cell--icon-text-wrap.ds-table__cell--icon-text-multi .ds-table__cell-copy {
+.ds-table__cell--icon-text-wrap.ds-table__cell--icon-text-multi .ds-table__cell-copy,
+.ds-table__cell--score-text-wrap.ds-table__cell--score-text-multi .ds-table__cell-copy {
   gap: 0;
 }
 
 .ds-table__cell--text-wrap.ds-table__cell--text-multi .ds-table__cell-secondary,
-.ds-table__cell--icon-text-wrap.ds-table__cell--icon-text-multi .ds-table__cell-secondary {
+.ds-table__cell--icon-text-wrap.ds-table__cell--icon-text-multi .ds-table__cell-secondary,
+.ds-table__cell--score-text-wrap.ds-table__cell--score-text-multi .ds-table__cell-secondary {
   line-height: var(--_table-wrap-secondary-line-height);
   padding-block: var(--_table-wrap-secondary-padding-block);
 }
@@ -96,6 +101,9 @@ ds-text.ds-table__cell-tertiary {
 .ds-table__cell--icon-text-multi ds-text.ds-table__cell-secondary,
 .ds-table__cell--icon-text-triple ds-text.ds-table__cell-secondary,
 .ds-table__cell--icon-text-triple ds-text.ds-table__cell-tertiary,
+.ds-table__cell--score-text-multi ds-text.ds-table__cell-secondary,
+.ds-table__cell--score-text-triple ds-text.ds-table__cell-secondary,
+.ds-table__cell--score-text-triple ds-text.ds-table__cell-tertiary,
 .ds-table__cell--primary-text ds-text.ds-table__cell-secondary {
   min-block-size: var(--_table-cell-track-min-block-size);
 }

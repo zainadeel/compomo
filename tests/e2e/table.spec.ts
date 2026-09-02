@@ -769,7 +769,9 @@ test(
       const badge = element.querySelector('ds-score .score__badge')!.getBoundingClientRect();
       const value = element.querySelector('ds-score .score__value')!.getBoundingClientRect();
       const primary = element.querySelector('.ds-table__group-primary')!.getBoundingClientRect();
-      const selection = element.querySelector('.ds-table__group-selection')!.getBoundingClientRect();
+      const selection = element
+        .querySelector('.ds-table__group-selection')!
+        .getBoundingClientRect();
       const after = getComputedStyle(hero, '::after');
       return {
         heroTop: heroBox.top,
@@ -856,7 +858,9 @@ test(
       const heroBox = hero.getBoundingClientRect();
       const badge = element.querySelector('ds-score .score__badge')!.getBoundingClientRect();
       const primary = element.querySelector('.ds-table__group-primary')!.getBoundingClientRect();
-      const selection = element.querySelector('.ds-table__group-selection')!.getBoundingClientRect();
+      const selection = element
+        .querySelector('.ds-table__group-selection')!
+        .getBoundingClientRect();
       const after = getComputedStyle(hero, '::after');
       return {
         heroTop: heroBox.top,
@@ -869,8 +873,16 @@ test(
         expectedSmWidth: cssPx('calc(var(--dimension-size-400) - var(--dimension-space-050))'),
       };
     });
-    expectGeometryClose(twoTrack.badgeHeight, twoTrack.expectedSmHeight, 'sm score height on two tracks');
-    expectGeometryClose(twoTrack.badgeWidth, twoTrack.expectedSmWidth, 'sm score width on two tracks');
+    expectGeometryClose(
+      twoTrack.badgeHeight,
+      twoTrack.expectedSmHeight,
+      'sm score height on two tracks'
+    );
+    expectGeometryClose(
+      twoTrack.badgeWidth,
+      twoTrack.expectedSmWidth,
+      'sm score width on two tracks'
+    );
     expectGeometryClose(
       twoTrack.heroTop,
       twoTrack.primaryTop,
@@ -964,7 +976,7 @@ test('applies faint intent-to-neutral surfaces and bold titles to severity group
         right: Number.parseFloat(styles.paddingRight),
       };
     });
-  expect(selectableGroupCopyInsets).toEqual({ left: 10, right: 4 });
+  expect(selectableGroupCopyInsets).toEqual({ left: 12, right: 4 });
 
   const expandedGeometry = await table.locator('tbody[data-group-id="critical"]').evaluate(body => {
     const content = body.querySelector<HTMLElement>('.ds-table__group-content')!;
@@ -1210,8 +1222,8 @@ test('sorts compound columns by independent label-width controls', async ({ page
   expect(trackGeometry.checkbox.height).toBeCloseTo(24, 0);
   expect(trackGeometry.primary.height).toBeCloseTo(24, 0);
   expect(trackGeometry.tag.height).toBeCloseTo(24, 0);
-  expect(trackGeometry.secondary.top - trackGeometry.primary.bottom).toBeCloseTo(2, 0);
-  expect(trackGeometry.secondary.height).toBeCloseTo(20, 0);
+  expect(trackGeometry.secondary.top - trackGeometry.primary.bottom).toBeCloseTo(0, 0);
+  expect(trackGeometry.secondary.height).toBeCloseTo(24, 0);
 
   const geometry = await labels.evaluateAll(elements =>
     elements.map(element => {
@@ -1823,7 +1835,9 @@ test('renders three-track text cells with a uniform 88px row', async ({ page }) 
     '[data-row-id="three-track-avery"] [data-column-id="iconText"]'
   );
 
-  await expect(averyDriver).toHaveClass(/ds-table__cell--text-triple/);
+  await expect(averyDriver).toHaveClass(/ds-table__cell--score-text-triple/);
+  await expect(averyDriver).not.toHaveClass(/ds-table__cell--text-triple/);
+  await expect(averyDriver).toHaveAttribute('data-cell-type', 'score-text');
   await expect(averyDriver).toHaveCSS('height', '88px');
   await expect(jordanDriver).toHaveCSS('height', '88px');
   await expect(averyVehicle).toHaveCSS('height', '88px');
@@ -1831,6 +1845,37 @@ test('renders three-track text cells with a uniform 88px row', async ({ page }) 
   await expect(averyDriver).toHaveCSS('padding-top', '8px');
   await expect(averyDriver).toHaveCSS('padding-bottom', '8px');
   await expect(averyDriver.locator('.ds-table__cell-copy')).toHaveCSS('gap', '0px');
+  const driverScore = averyDriver.locator('ds-score');
+  await expect(driverScore).toHaveJSProperty('size', 'sm');
+  await expect(driverScore).toHaveJSProperty('value', 87);
+  await expect(driverScore).toHaveCSS('height', '24px');
+  await expect(averyDriver.locator('.ds-table__cell-score-text')).toHaveCSS('gap', '6px');
+  await expect(averyDriver.locator('.ds-table__cell-score-text-score')).toHaveCSS(
+    'min-height',
+    '24px'
+  );
+  const scoreTextGeometry = await averyDriver.evaluate(element => {
+    const copy = element
+      .querySelector<HTMLElement>('.ds-table__cell-copy')!
+      .getBoundingClientRect();
+    const score = element
+      .querySelector<HTMLElement>('.ds-table__cell-score-text-score')!
+      .getBoundingClientRect();
+    return {
+      copyRight: Math.round(copy.right),
+      copyTop: Math.round(copy.top),
+      scoreLeft: Math.round(score.left),
+      scoreRight: Math.round(score.right),
+      scoreTop: Math.round(score.top),
+      wrapperRight: Math.round(
+        element.querySelector<HTMLElement>('.ds-table__cell-score-text')!.getBoundingClientRect()
+          .right
+      ),
+    };
+  });
+  expect(scoreTextGeometry.scoreLeft - scoreTextGeometry.copyRight).toBe(6);
+  expect(scoreTextGeometry.scoreRight).toBe(scoreTextGeometry.wrapperRight);
+  expect(scoreTextGeometry.scoreTop).toBe(scoreTextGeometry.copyTop);
   await expect(averyDriver.locator('.ds-table__cell-primary')).toHaveCSS('padding-top', '2px');
   await expect(averyDriver.locator('.ds-table__cell-primary')).toHaveCSS('padding-bottom', '2px');
   await expect(averyDriver.locator('.ds-table__cell-primary')).toHaveCSS('padding-left', '4px');
@@ -1848,7 +1893,15 @@ test('renders three-track text cells with a uniform 88px row', async ({ page }) 
   }
   await expect(averyDriver.locator('.ds-table__cell-primary')).toHaveText('Avery Chen');
   await expect(averyDriver.locator('.ds-table__cell-secondary')).toHaveText('DRV-1048');
-  await expect(averyDriver.locator('.ds-table__cell-tertiary')).toHaveText('Dallas, TX');
+  const groupTrack = averyDriver.locator('.ds-table__cell-tertiary');
+  await expect(groupTrack).toHaveText('2 groups');
+  await expect(groupTrack).toHaveJSProperty('decoration', 'dotted-underline');
+  await groupTrack.hover();
+  const groupTooltip = page.getByRole('tooltip', { name: /Main operations\s+West Coast/ });
+  await expect(groupTooltip).toBeVisible();
+  await expect(groupTooltip).toHaveAttribute('data-side', 'bottom');
+  await expect(groupTooltip.locator('ds-text')).toHaveText('Main operations\nWest Coast');
+  await expect(groupTooltip.locator('ds-text')).toHaveCSS('white-space', 'pre-line');
   await expect(averyVehicle).toHaveClass(/ds-table__cell--text-triple/);
   await expect(averyVehicle.locator('.ds-table__cell-primary')).toHaveText('Freightliner Cascadia');
   await expect(averyVehicle.locator('.ds-table__cell-secondary')).toHaveText('VEH-1042');

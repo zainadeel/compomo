@@ -10,6 +10,8 @@ test('infers safety-score levels from 0–100 and ignores out-of-range values', 
   assert.equal(resolveSafetyScoreLevel(81), 'excellent');
   assert.equal(resolveSafetyScoreLevel(100), 'excellent');
   assert.equal(resolveSafetyScoreLevel('87'), 'excellent');
+  assert.equal(resolveSafetyScoreLevel(''), undefined);
+  assert.equal(resolveSafetyScoreLevel('   '), undefined);
   assert.equal(resolveSafetyScoreLevel('unavailable'), undefined);
   assert.equal(resolveSafetyScoreLevel(101), undefined);
 });

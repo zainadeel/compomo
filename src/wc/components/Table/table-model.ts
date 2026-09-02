@@ -4,6 +4,7 @@ import type {
   TableCellEmpty,
   TableCellIcon,
   TableCellIconText,
+  TableCellScoreText,
   TableCellImage,
   TableCellPrimaryText,
   TableCellText,
@@ -68,6 +69,12 @@ export function isTableCellIconText(value: TableCellValue): value is TableCellIc
   );
 }
 
+export function isTableCellScoreText(value: TableCellValue): value is TableCellScoreText {
+  return (
+    typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'score-text'
+  );
+}
+
 export function isTableCellImage(value: TableCellValue): value is TableCellImage {
   return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'image';
 }
@@ -90,6 +97,7 @@ export function tableCellPrimary(value: TableCellValue): string | number | null 
   if (isTableCellTags(value)) return value.items.map(item => item.label).join(', ');
   if (isTableCellIcon(value)) return null;
   if (isTableCellIconText(value)) return value.primary;
+  if (isTableCellScoreText(value)) return value.primary;
   if (isTableCellImage(value)) return value.alt;
   if (isTableCellAction(value)) return value.label ?? value.ariaLabel;
   if (isTableCellPrimaryText(value)) return value.primary;

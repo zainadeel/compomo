@@ -901,6 +901,9 @@
 :where(.ds-table__cell--icon-text-multi .ds-table__cell-secondary),
 :where(.ds-table__cell--icon-text-triple .ds-table__cell-secondary),
 :where(.ds-table__cell--icon-text-triple .ds-table__cell-tertiary),
+:where(.ds-table__cell--score-text-multi .ds-table__cell-secondary),
+:where(.ds-table__cell--score-text-triple .ds-table__cell-secondary),
+:where(.ds-table__cell--score-text-triple .ds-table__cell-tertiary),
 :where(.ds-table__cell--primary-text .ds-table__cell-secondary) {
   padding-block: var(--dimension-space-025);
   min-block-size: var(--_table-cell-track-min-block-size);
@@ -1026,6 +1029,45 @@
 }
 
 /*
+ * Score-and-text: copy fills from the start edge while the sm Score owns the
+ * top-right 24px track. The score has no padding that would enlarge or
+ * misalign its fill.
+ */
+:where(.ds-table__cell-score-text) {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--dimension-space-075);
+  inline-size: 100%;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+:where(.ds-table__cell-score-text-score) {
+  box-sizing: border-box;
+  display: flex;
+  flex: none;
+  align-items: flex-start;
+  min-block-size: var(--_table-cell-track-min-block-size);
+}
+
+:where(.ds-table__cell--score-text .ds-table__cell-content),
+:where(.ds-table__cell--score-text .ds-table__cell-track) {
+  min-block-size: 0;
+}
+
+:where(.ds-table__cell--score-text-multi .ds-table__cell-copy),
+:where(.ds-table__cell--score-text-triple .ds-table__cell-copy) {
+  gap: 0;
+}
+
+:where(.ds-table__cell--score-text-multi .ds-table__cell-secondary),
+:where(.ds-table__cell--score-text-triple .ds-table__cell-secondary),
+:where(.ds-table__cell--score-text-triple .ds-table__cell-tertiary) {
+  padding-block: var(--dimension-space-025);
+  min-block-size: var(--_table-cell-track-min-block-size);
+}
+
+/*
  * Image previews fill the matching body-row content box (cell height minus
  * 8px padding) at 16:9. Each track is 24px with no stack gap.
  */
@@ -1101,25 +1143,32 @@
  * to the 40px single-track row.
  */
 :where(.ds-table__cell--text-wrap .ds-table__cell-track--text),
-:where(.ds-table__cell--icon-text-wrap .ds-table__cell-track--text) {
+:where(.ds-table__cell--icon-text-wrap .ds-table__cell-track--text),
+:where(.ds-table__cell--score-text-wrap .ds-table__cell-track--text) {
   display: block;
 }
 
 :where(.ds-table__cell--text-wrap.ds-table__cell--text-single .ds-table__cell-primary),
 :where(.ds-table__cell--text-wrap.ds-table__cell--text-multi .ds-table__cell-primary),
 :where(.ds-table__cell--icon-text-wrap.ds-table__cell--icon-text-single .ds-table__cell-primary),
-:where(.ds-table__cell--icon-text-wrap.ds-table__cell--icon-text-multi .ds-table__cell-primary) {
+:where(.ds-table__cell--icon-text-wrap.ds-table__cell--icon-text-multi .ds-table__cell-primary),
+:where(.ds-table__cell--score-text-wrap.ds-table__cell--score-text-single .ds-table__cell-primary),
+:where(.ds-table__cell--score-text-wrap.ds-table__cell--score-text-multi .ds-table__cell-primary) {
   line-height: var(--_table-wrap-primary-line-height);
   padding-block: var(--_table-wrap-primary-padding-block);
 }
 
 :where(.ds-table__cell--text-wrap.ds-table__cell--text-multi .ds-table__cell-copy),
-:where(.ds-table__cell--icon-text-wrap.ds-table__cell--icon-text-multi .ds-table__cell-copy) {
+:where(.ds-table__cell--icon-text-wrap.ds-table__cell--icon-text-multi .ds-table__cell-copy),
+:where(.ds-table__cell--score-text-wrap.ds-table__cell--score-text-multi .ds-table__cell-copy) {
   gap: 0;
 }
 
 :where(.ds-table__cell--text-wrap.ds-table__cell--text-multi .ds-table__cell-secondary),
-:where(.ds-table__cell--icon-text-wrap.ds-table__cell--icon-text-multi .ds-table__cell-secondary) {
+:where(.ds-table__cell--icon-text-wrap.ds-table__cell--icon-text-multi .ds-table__cell-secondary),
+:where(
+  .ds-table__cell--score-text-wrap.ds-table__cell--score-text-multi .ds-table__cell-secondary
+) {
   line-height: var(--_table-wrap-secondary-line-height);
   padding-block: var(--_table-wrap-secondary-padding-block);
 }
@@ -1520,9 +1569,7 @@
 :where(.ds-table__table--selectable .ds-table__group-copy),
 :where(.ds-table__sticky-group--selectable .ds-table__group-copy) {
   /* 8px cell chrome + 4px text-track inset matches header 8+2+2 and body copy. */
-  padding-inline-start: calc(
-    var(--dimension-space-100) + var(--_table-cell-track-padding-inline)
-  );
+  padding-inline-start: calc(var(--dimension-space-100) + var(--_table-cell-track-padding-inline));
 }
 
 :where(.ds-table__table--selectable .ds-table__group-content--hero .ds-table__group-copy),

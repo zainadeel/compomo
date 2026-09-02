@@ -1804,7 +1804,14 @@ export class Table {
     );
     if (!item.help) return text;
     return (
-      <ds-tooltip key={`acc-${index}`} label={item.help} side="top" size="sm" wrapLabel={true}>
+      <ds-tooltip
+        key={`acc-${index}`}
+        label={item.help}
+        side="bottom"
+        align="start"
+        size="sm"
+        wrapLabel={true}
+      >
         <span class="ds-table__group-accessory-tip" tabIndex={0}>
           {text}
         </span>
