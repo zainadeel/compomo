@@ -245,6 +245,24 @@ test.describe('Managed application shell', () => {
       await expect(trackingBranch.locator('.panel-nav__branch-divider--before')).toHaveCount(0);
       await expect(trackingAfterDivider).toHaveClass(/panel-nav__branch-divider--open/);
       await expect(trackingAfterDivider).toHaveCSS('opacity', '1');
+      const trackingChildren = trackingAccordion.locator('.panel-nav__children');
+      const trackingFirstChild = trackingAccordion.locator('.panel-nav__child').first();
+      await expect(trackingChildren).toHaveCSS('row-gap', '4px');
+      await expect(trackingFirstChild).toHaveCSS('margin-block-start', '4px');
+      const [trackingParentBox, trackingFirstChildBox, trackingSecondChildBox] = await Promise.all([
+        trackingBranch.getByRole('button', { name: 'Tracking', exact: true }).boundingBox(),
+        trackingFirstChild.boundingBox(),
+        trackingAccordion.locator('.panel-nav__child').nth(1).boundingBox(),
+      ]);
+      expect(trackingParentBox).not.toBeNull();
+      expect(trackingFirstChildBox).not.toBeNull();
+      expect(trackingSecondChildBox).not.toBeNull();
+      expect(
+        trackingFirstChildBox!.y - (trackingParentBox!.y + trackingParentBox!.height)
+      ).toBeCloseTo(4);
+      expect(
+        trackingSecondChildBox!.y - (trackingFirstChildBox!.y + trackingFirstChildBox!.height)
+      ).toBeCloseTo(4);
       const [trackingAccordionBox, trackingDividerLineBox, safetyParentBox] = await Promise.all([
         trackingBranch.locator('.panel-nav__children-accordion').boundingBox(),
         trackingAfterDivider.locator('.panel-nav__branch-divider-line').boundingBox(),
