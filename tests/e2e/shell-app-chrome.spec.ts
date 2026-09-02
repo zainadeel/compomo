@@ -28,6 +28,7 @@ test.describe('App shell chrome', () => {
       const content = document.querySelector<HTMLElement>('.shell-app__content');
       const panelNav = document.getElementById('panel') as HTMLElement & { collapsed: boolean };
       if (!shell || !panelLane || !bar || !content || !panelNav) throw new Error('Shell missing');
+      panelNav.style.setProperty('--ds-panel-nav-speed', '4');
 
       const samples: Array<{
         barLeft: number;
