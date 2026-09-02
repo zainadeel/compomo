@@ -66,9 +66,7 @@ test('large bounded pagination and infinite windows recycle row DOM without chan
   await expect(paginated.locator('.ds-table__table')).toHaveAttribute('aria-rowcount', '201');
   await paginated.getByRole('checkbox', { name: 'Select all loaded rows' }).click();
   await expect
-    .poll(() =>
-      paginated.evaluate((element: HTMLDsTableElement) => element.selectedRowIds.length)
-    )
+    .poll(() => paginated.evaluate((element: HTMLDsTableElement) => element.selectedRowIds.length))
     .toBe(200);
 
   const infinite = page.locator('#lazy');
