@@ -515,7 +515,7 @@ test('keeps application group order fixed and exposes only member-row sorting', 
   expect(groupCopyInsets).toEqual({ left: 4, right: 4 });
 
   const groupContent = firstGroupHeader.locator('.ds-table__group-content');
-  await expect(groupContent).toHaveCSS('cursor', 'pointer');
+  await expect(groupContent).toHaveCSS('cursor', 'default');
 
   const toggle = firstGroupHeader.locator('.ds-table__group-toggle');
   await expect(toggle).toHaveJSProperty('variant', 'icon');
@@ -531,6 +531,7 @@ test('keeps application group order fixed and exposes only member-row sorting', 
   await expect(toggle.getByRole('button')).not.toHaveClass(/ds-button--expanded/);
   await expect(toggle).toHaveJSProperty('hasBorder', false);
   await expect(toggle).toHaveJSProperty('pressScale', false);
+  await expect(toggle.getByRole('button')).toHaveCSS('cursor', 'default');
   await expect(table.locator('tbody[data-group-id="driving"] .ds-table__row')).toHaveCount(2);
   await toggle.click();
   await expect

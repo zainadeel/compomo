@@ -1382,7 +1382,7 @@
   border-block-end: 0;
   background: var(--_table-group-surface);
   background-clip: border-box;
-  cursor: pointer;
+  cursor: default;
 }
 
 /* Hover/press wash. Keep this on ::before so the dedicated trailing-edge

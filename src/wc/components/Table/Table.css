@@ -32,14 +32,6 @@
 }
 
 /*
- * Interaction-fill defaults to cursor: default. The public :where() recipe
- * cannot win that collision, so the section header reasserts pointer here.
- */
-.ds-table__group-content {
-  cursor: pointer;
-}
-
-/*
  * The public table recipe stays at zero specificity for product-owned native
  * markup. Inside the component, these classes sit on ds-text hosts whose reset
  * intentionally owns display, padding, and border with higher specificity.

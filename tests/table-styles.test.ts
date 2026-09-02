@@ -253,8 +253,8 @@ test('retains the structural and accessibility fallbacks rendered tests depend o
   assert.doesNotMatch(css, /ds-table__collapse-column|ds-table__collapse-cell/);
   assert.match(css, /\.ds-table__load-body \.ds-table__load-row:last-child \.ds-table__load-cell/);
   assert.doesNotMatch(css, /:where\(\.ds-table__load-row:last-child \.ds-table__load-cell\)/);
-  assert.match(css, /\.ds-table__group-content[\s\S]*?cursor: pointer/);
-  assert.match(componentCss, /\.ds-table__group-content \{[\s\S]*?cursor: pointer/);
+  assert.match(css, /\.ds-table__group-content[\s\S]*?cursor: default/);
+  assert.doesNotMatch(componentCss, /cursor: pointer/);
   assert.match(css, /\.ds-table__group-content\)::after[\s\S]*?background: var\(--_table-border\)/);
   assert.match(css, /\.ds-table__group-content:hover\)::before[\s\S]*?--_table-row-hover/);
   assert.match(css, /\.ds-table__group-toggle\)[\s\S]*?--color-interaction-hover: transparent/);
