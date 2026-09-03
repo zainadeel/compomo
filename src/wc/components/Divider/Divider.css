@@ -2,7 +2,7 @@
 
 :host {
   --_divider-color: var(--color-divider-divider);
-  --_divider-inset: 0;
+  --_divider-inset: 0px;
   --_divider-length: 100%;
 
   display: block;
@@ -14,12 +14,24 @@
   background-color: var(--_divider-color);
 }
 
+/* Auto/full length fills the parent's content box; the inset margin must be
+   subtracted back out of that width, otherwise the rule overflows its
+   container by 2x the inset instead of sitting inline with it. Fixed custom
+   lengths are left as authored. */
+:host(:not(.divider--custom-length)) {
+  width: calc(var(--_divider-length) - (var(--_divider-inset) * 2));
+}
+
 :host(.divider--vertical) {
   width: var(--dimension-stroke-width-012);
   height: var(--_divider-length);
   min-height: var(--dimension-stroke-width-012);
   margin: var(--_divider-inset) 0;
   align-self: stretch;
+}
+
+:host(.divider--vertical:not(.divider--custom-length)) {
+  height: calc(var(--_divider-length) - (var(--_divider-inset) * 2));
 }
 
 :host(.divider--vertical.divider--custom-length) {

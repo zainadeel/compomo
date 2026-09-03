@@ -31,7 +31,7 @@ export type DividerInset = 'none' | DividerInsetToken | (string & {});
 export type DividerLength = 'auto' | 'full' | (string & {});
 
 const INSET_VALUE: Record<'none' | DividerInsetToken, string> = {
-  none: '0',
+  none: '0px',
   'space-000': 'var(--dimension-space-000)',
   'space-012': 'var(--dimension-space-012)',
   'space-025': 'var(--dimension-space-025)',
