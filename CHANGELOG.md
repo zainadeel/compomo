@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.28.0](https://github.com/zainadeel/compomo/compare/v14.27.1...v14.28.0) (2026-09-03)
+
+
+### Added
+
+* add settings cards and refine mobile navigation ([#569](https://github.com/zainadeel/compomo/issues/569)) ([30ec9d4](https://github.com/zainadeel/compomo/commit/30ec9d40b7821a92724830844172a2f1429cf910))
+
 ## [14.27.1](https://github.com/zainadeel/compomo/compare/v14.27.0...v14.27.1) (2026-09-03)
 
 
