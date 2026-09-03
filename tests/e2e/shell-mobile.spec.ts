@@ -563,9 +563,7 @@ test.describe('Responsive mobile shell foundation', () => {
       'Chooser alignment and selection emphasis are static component recipes.'
     ),
     async ({ page }) => {
-      await expect(
-        page.locator('ds-mobile-section-switcher button').getByText('Live Map')
-      ).toBeVisible();
+      await expect(page.getByRole('button', { name: /Current section: Live Map/ })).toBeVisible();
 
       await page
         .getByRole('navigation', { name: 'Primary' })
@@ -640,6 +638,142 @@ test.describe('Responsive mobile shell foundation', () => {
       ).toBeVisible();
     }
   );
+
+  test('opens primary sections in a modal top sheet and preserves local menus @cross-browser', async ({
+    page,
+  }) => {
+    const header = page.locator('#mobile-header');
+    await header.evaluate(element => {
+      const header = element as HTMLDsMobileHeaderElement;
+      header.sections = [
+        { id: 'overview', label: 'Overview' },
+        { id: 'inactive', label: 'Unavailable', isInactive: true },
+        { id: 'events', label: 'Events' },
+        { type: 'divider' },
+        { id: 'settings', label: 'Settings' },
+      ];
+      header.value = 'events';
+    });
+    const trigger = header.getByRole('button', { name: /Current section: Events/ });
+    await expect(trigger).toHaveAttribute('aria-haspopup', 'dialog');
+    await expect(trigger.locator('.mobile-section-switcher__position')).toHaveCount(0);
+    await expect(trigger).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    await expect(trigger).toHaveCSS('height', '40px');
+    await expect(trigger.locator('ds-text')).toHaveJSProperty('variant', 'text-body-large');
+    await trigger.click();
+    const sheet = header.getByRole('dialog');
+    const current = sheet.getByRole('menuitem', { name: 'Events', exact: true });
+    await expect(current).toBeFocused();
+    await expect(current).toHaveAttribute('aria-current', 'page');
+    await expect(sheet.getByRole('menuitem', { name: 'Unavailable' })).toBeDisabled();
+    await expect(sheet.locator('ds-icon')).toHaveCount(0);
+    await expect(sheet).toHaveCSS('border-radius', '0px');
+    await expect(sheet).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, 0)');
+    const bounds = await sheet.boundingBox();
+    expect(bounds!.x).toBe(0);
+    expect(bounds!.y).toBe(0);
+    expect(bounds!.width).toBe(390);
+    expect(bounds!.height).toBeLessThan(760);
+    await expect(current).toHaveCSS('height', '40px');
+    await expect(sheet.locator('[role="menu"]')).toHaveCSS('gap', '8px');
+    const backdrop = await sheet.evaluate(
+      element => getComputedStyle(element, '::backdrop').backgroundColor
+    );
+    expect(backdrop).not.toBe('rgba(0, 0, 0, 0)');
+    await current.press('ArrowUp');
+    await expect(sheet.getByRole('menuitem', { name: 'Overview' })).toBeFocused();
+    await page.keyboard.press('End');
+    await expect(sheet.getByRole('menuitem', { name: 'Settings' })).toBeFocused();
+    await page.keyboard.press('Tab');
+    await expect(sheet.getByRole('menuitem', { name: 'Settings' })).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(sheet).not.toBeVisible();
+    await expect(trigger).toBeFocused();
+    await expect(header).toHaveJSProperty('value', 'events');
+    await trigger.click();
+    await expect(current).toBeFocused();
+    await page.evaluate(() =>
+      document.documentElement.style.setProperty('--effect-motion-short-2', '1s linear')
+    );
+    const selection = await sheet.getByRole('menuitem', { name: 'Settings' }).evaluate(element => {
+      (element as HTMLButtonElement).click();
+      return {
+        value: (document.querySelector('#mobile-header') as HTMLDsMobileHeaderElement).value,
+        open: element.closest('dialog')!.open,
+      };
+    });
+    expect(selection).toEqual({ value: 'settings', open: true });
+    const settingsTrigger = header.getByRole('button', { name: /Current section: Settings/ });
+    await expect(settingsTrigger).toBeVisible();
+    await expect(sheet).toHaveClass(/mobile-section-sheet--closing/);
+    await expect(sheet).toBeVisible();
+    await expect(sheet).not.toBeVisible();
+    await page.evaluate(() =>
+      document.documentElement.style.removeProperty('--effect-motion-short-2')
+    );
+    await expect(settingsTrigger).toBeFocused();
+    await expect(header).toHaveJSProperty('value', 'settings');
+    await settingsTrigger.click();
+    await expect(sheet).toBeVisible();
+    await page.mouse.click(195, 650);
+    await expect(sheet).not.toBeVisible();
+    await expect(settingsTrigger).toBeFocused();
+    await settingsTrigger.click();
+    await expect(sheet).toBeVisible();
+    await page.setViewportSize({ width: 1024, height: 760 });
+    await expect(page.locator('dialog[open]')).toHaveCount(0);
+    await page.setViewportSize({ width: 390, height: 760 });
+    await header.evaluate(element => {
+      const header = element as HTMLDsMobileHeaderElement;
+      header.subsections = [
+        { id: 'one', label: 'One' },
+        { id: 'two', label: 'Two' },
+      ];
+      header.subvalue = 'one';
+    });
+    await expect(settingsTrigger).toHaveAttribute('aria-haspopup', 'menu');
+    await settingsTrigger.click();
+    await expect(page.getByRole('menuitem', { name: 'Overview' })).toBeVisible();
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+  });
+
+  test('bounds long section sheets and respects reduced motion and owner removal @cross-browser', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    const header = page.locator('#mobile-header');
+    await header.evaluate(element => {
+      const header = element as HTMLDsMobileHeaderElement;
+      header.sections = Array.from({ length: 30 }, (_, index) => ({
+        id: String(index),
+        label: `Section ${index}`,
+      }));
+      header.value = '29';
+    });
+    const trigger = header.getByRole('button', { name: /Current section: Section 29/ });
+    await trigger.click();
+    const sheet = header.getByRole('dialog');
+    await expect(sheet.getByRole('menuitem', { name: 'Section 29', exact: true })).toBeFocused();
+    await expect(sheet).toHaveCSS('animation-name', 'none');
+    const bounds = await sheet.boundingBox();
+    expect(bounds!.height).toBeLessThan(760);
+    const list = sheet.locator('[role="menu"]');
+    expect(await list.evaluate(element => element.scrollHeight > element.clientHeight)).toBe(true);
+    await page.keyboard.press('Home');
+    await expect(sheet.getByRole('menuitem', { name: 'Section 0', exact: true })).toBeInViewport();
+    await page.keyboard.press('Escape');
+    await expect(sheet).not.toBeVisible();
+    await expect(trigger).toBeFocused();
+    await trigger.click();
+    await expect(sheet).toBeVisible();
+    await header.evaluate(element => element.remove());
+    await expect(page.locator('dialog[open]')).toHaveCount(0);
+    await page
+      .getByRole('navigation', { name: 'Primary' })
+      .getByRole('button', { name: 'Menu', exact: true })
+      .click();
+    await expect(page.locator('ds-mobile-sheet-nav')).toBeVisible();
+  });
 
   test('preserves a slotted tool owner and form value across destination and breakpoint changes @pr-critical', async ({
     page,

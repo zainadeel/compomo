@@ -1,0 +1,75 @@
+/* Shared inline navigation motion; owners supply row density and indentation. */
+.ds-nav-disclosure,
+.ds-nav-disclosure-divider {
+  --ds-nav-disclosure-duration: calc(
+    var(--effect-animation-duration-short-3) * 2 + var(--effect-animation-duration-short-2)
+  );
+  --ds-nav-disclosure-wait: calc(
+    var(--effect-animation-duration-short-3) + var(--effect-animation-duration-short-1)
+  );
+  --ds-nav-disclosure-fade: var(--ds-nav-disclosure-duration);
+  --ds-nav-disclosure-stagger: var(--effect-animation-duration-short-1);
+}
+
+.ds-nav-disclosure {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--ds-nav-disclosure-duration)
+    var(--effect-animation-easing-ease-in-out) var(--ds-nav-disclosure-wait);
+}
+
+.ds-nav-disclosure--open {
+  grid-template-rows: 1fr;
+  transition-delay: var(--effect-animation-duration-instant);
+}
+
+.ds-nav-disclosure .ds-nav-disclosure__item {
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity var(--ds-nav-disclosure-fade) var(--effect-animation-easing-ease-out)
+      calc(var(--ds-nav-disclosure-reverse-index) * var(--ds-nav-disclosure-stagger)),
+    color var(--effect-motion-short-1);
+}
+
+.ds-nav-disclosure--open .ds-nav-disclosure__item {
+  opacity: 1;
+  pointer-events: auto;
+  transition-delay:
+    calc(
+      var(--ds-nav-disclosure-wait) + var(--ds-nav-disclosure-index) *
+        var(--ds-nav-disclosure-stagger)
+    ),
+    var(--effect-animation-duration-instant);
+}
+
+.ds-nav-disclosure-divider {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows var(--ds-nav-disclosure-duration) var(--effect-animation-easing-ease-in-out)
+      var(--ds-nav-disclosure-wait),
+    opacity var(--ds-nav-disclosure-duration) var(--effect-animation-easing-ease-out);
+}
+
+.ds-nav-disclosure-divider--open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition-delay:
+    var(--effect-animation-duration-instant), var(--effect-animation-duration-instant);
+}
+
+.ds-nav-disclosure-divider__clip {
+  min-height: 0;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-nav-disclosure,
+  .ds-nav-disclosure-divider,
+  .ds-nav-disclosure .ds-nav-disclosure__item {
+    transition-duration: var(--effect-animation-duration-instant) !important;
+    transition-delay: var(--effect-animation-duration-instant) !important;
+  }
+}

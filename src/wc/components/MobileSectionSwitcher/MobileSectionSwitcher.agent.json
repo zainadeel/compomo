@@ -7,7 +7,7 @@
   "tag": "ds-mobile-section-switcher",
   "audience": "specialized",
   "status": "experimental",
-  "summary": "Controlled mobile section chooser showing the current section, adjacent-position hints, and a complete tap menu.",
+  "summary": "Controlled mobile section chooser with a viewport-edge sheet for primary pages and an anchored menu for local views.",
   "useWhen": ["A mobile page or tool header must combine current-page identity with ordered peer-section navigation."],
   "avoidWhen": ["Rendering desktop BarNav.", "The destination collection is primary application navigation."],
   "commonlyComposedWith": ["component:ds-mobile-header"],
@@ -15,13 +15,16 @@
   "accessibility": [
     "The trigger exposes the current section, popup relationship, and expanded state.",
     "Decorative previous and next position hints are hidden from assistive technology.",
-    "The menu is always available so a future swipe gesture is never the only navigation mechanism.",
+    "The sheet is a native modal top-layer dialog: background content is inert, Escape and backdrop dismiss it, and focus returns to the trigger after exit motion. Arrow keys, Home, End, and initial-letter navigation move among enabled destinations.",
+    "The sheet initially focuses the current enabled destination, uses emphasis for selection, and never adds decorative icons to its rows.",
     "Peer destinations use menuitem semantics with aria-current on the active page; they do not present a radio-control affordance."
   ],
   "states": [
     "Selection is controlled and dsChange reports intent without mutating value.",
     "Dividers group menu items but never participate in previous or next resolution.",
-    "The first and last selectable sections expose only the available neighboring direction."
+    "The anchored local-view menu retains its neighboring-direction hints; the primary-page sheet uses an unfilled perimeter trigger without hints.",
+    "A sheet trigger can combine stable page identity and the current local view, separated by a decorative middle dot. The whole control opens only the supplied local destinations; long page names truncate before crowding out the active view.",
+    "Sheet selection emits navigation intent immediately while exit motion runs independently, so the controlled title can update without waiting for dismissal. Removing the owner or hiding its header closes the top layer without leaving the application blocked."
   ],
   "responsiveBehavior": ["Use only in the dedicated mobile header presentation."],
   "references": [

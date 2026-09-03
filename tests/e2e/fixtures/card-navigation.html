@@ -26,6 +26,15 @@
       >
         <button type="button">Body action</button>
       </ds-card-navigation>
+      <ds-card-settings-scope
+        profile-controls="profile-menu"
+        profile-popup="dialog"
+      ></ds-card-settings-scope>
+      <ds-menu
+        id="profile-menu"
+        menu-label="Settings profiles"
+        empty-message="You have no profiles to manage yet"
+      ></ds-menu>
     </main>
 
     <script type="module" src="/card-navigation-setup.mjs"></script>

@@ -5798,6 +5798,7 @@
           ],
           "states": [
             "The fixed groups are Menu plus current area, followed by Search, Activity, Messages, and Agents.",
+            "The shell may retain Help in the context position while another global tool is selected; context identity and active selection are independent.",
             "Consumers that intentionally group multiple review tools can replace the Activity destination with Inbox.",
             "Selection promotes foreground to primary without painting a selected fill; unselected destinations use tertiary foreground.",
             "Opening Mobile Sheet Nav replaces the Menu glyph with Cross while preserving its accessible name.",
@@ -5867,6 +5868,10 @@
           },
           "messagesLabel": {
             "type": "string",
+            "required": false
+          },
+          "primaryDestination": {
+            "type": "'area' | 'help'",
             "required": false
           },
           "searchDot": {
@@ -5950,8 +5955,10 @@
           "states": [
             "Without multiple sections the center renders heading.",
             "With multiple sections the center renders the controlled MobileSectionSwitcher by default or an explicitly requested segmented TabGroup.",
+            "Primary section switching without subordinate navigation uses the viewport-edge sheet. Headers exposing both peer sections and subordinate views retain their two-level navigation.",
             "The segmented presentation uses the shared fill-width TabGroup contract and divides its centered two-thirds top-bar lane equally between options.",
-            "Optional subsections render in a second row and emit dsSubsectionChange without changing the primary section.",
+            "Optional subsections use a second row by default. When navigation already exposes peer sections, local views can sit beside a stable page title in one row; they never replace that title or its semantic heading.",
+            "The combined local-view presentation joins the page identity and selected subsection in one outlined sheet trigger. The semantic heading remains the page identity, while Back and page actions stay outside the trigger.",
             "Sections represent peer destinations at the current navigation level; subsections represent local views beneath the selected page or detail identity.",
             "Brand tone changes surface and foreground without changing geometry or interaction ownership."
           ],
@@ -5999,6 +6006,10 @@
             "type": "string",
             "required": false
           },
+          "subsectionsPlacement": {
+            "type": "'below' | 'inline' | 'combined'",
+            "required": false
+          },
           "subvalue": {
             "type": "string",
             "required": false
@@ -6043,7 +6054,7 @@
     {
       "name": "mobile-section-switcher",
       "title": "MobileSectionSwitcher",
-      "description": "Controlled mobile section chooser showing the current section, adjacent-position hints, and a complete tap menu.",
+      "description": "Controlled mobile section chooser with a viewport-edge sheet for primary pages and an anchored menu for local views.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -6054,7 +6065,7 @@
         "intent": {
           "audience": "specialized",
           "status": "experimental",
-          "summary": "Controlled mobile section chooser showing the current section, adjacent-position hints, and a complete tap menu.",
+          "summary": "Controlled mobile section chooser with a viewport-edge sheet for primary pages and an anchored menu for local views.",
           "useWhen": [
             "A mobile page or tool header must combine current-page identity with ordered peer-section navigation."
           ],
@@ -6071,13 +6082,16 @@
           "accessibility": [
             "The trigger exposes the current section, popup relationship, and expanded state.",
             "Decorative previous and next position hints are hidden from assistive technology.",
-            "The menu is always available so a future swipe gesture is never the only navigation mechanism.",
+            "The sheet is a native modal top-layer dialog: background content is inert, Escape and backdrop dismiss it, and focus returns to the trigger after exit motion. Arrow keys, Home, End, and initial-letter navigation move among enabled destinations.",
+            "The sheet initially focuses the current enabled destination, uses emphasis for selection, and never adds decorative icons to its rows.",
             "Peer destinations use menuitem semantics with aria-current on the active page; they do not present a radio-control affordance."
           ],
           "states": [
             "Selection is controlled and dsChange reports intent without mutating value.",
             "Dividers group menu items but never participate in previous or next resolution.",
-            "The first and last selectable sections expose only the available neighboring direction."
+            "The anchored local-view menu retains its neighboring-direction hints; the primary-page sheet uses an unfilled perimeter trigger without hints.",
+            "A sheet trigger can combine stable page identity and the current local view, separated by a decorative middle dot. The whole control opens only the supplied local destinations; long page names truncate before crowding out the active view.",
+            "Sheet selection emits navigation intent immediately while exit motion runs independently, so the controlled title can update without waiting for dismissal. Removing the owner or hiding its header closes the top layer without leaving the application blocked."
           ],
           "responsiveBehavior": [
             "Use only in the dedicated mobile header presentation."
@@ -6092,6 +6106,14 @@
         "props": {
           "navigationLabel": {
             "type": "string",
+            "required": false
+          },
+          "pageLabel": {
+            "type": "string",
+            "required": false
+          },
+          "presentation": {
+            "type": "'menu' | 'sheet'",
             "required": false
           },
           "sections": {
@@ -6161,7 +6183,10 @@
             "Escape requests dismissal and opening moves focus to the selected or first available area."
           ],
           "states": [
-            "Dashboard and Settings change only the flat destination collection being browsed.",
+            "Dashboard and Settings change only the destination collection being browsed.",
+            "In nested mode, parents with child routes disclose inline without navigating. Only selecting a child emits route intent; parents without children retain direct navigation.",
+            "Nested branches use the same positional divider and staggered child motion as expanded desktop navigation, without adding disclosure chevrons. Dividers separate an expanded branch from its siblings, not from the outside edge of its group.",
+            "Opening the sheet reveals the current route's branch. Collapsed child groups are inert and hidden from assistive technology while the shared navigation motion runs; child targets keep the mobile row density.",
             "Area, Help, and Account events express intent while the application owns navigation and product behavior.",
             "Set routeSelectionActive to false while a global tool owns the mobile stage so the underlying router URL remains available without marking its area current.",
             "Set showAccount to false when account and user preferences already live in the supplied Settings navigation."
@@ -6212,6 +6237,10 @@
             "type": "boolean",
             "required": false
           },
+          "presentation": {
+            "type": "PanelNavPresentation",
+            "required": false
+          },
           "routeSelectionActive": {
             "type": "boolean",
             "required": false
@@ -6241,6 +6270,10 @@
           {
             "name": "dsClose",
             "detail": "void"
+          },
+          {
+            "name": "dsNavChildSelect",
+            "detail": "PanelNavChildSelectDetail"
           }
         ],
         "slots": [],
@@ -8309,8 +8342,9 @@
             "The optional paperTexture property adds a decorative Paper Design texture layer above the gradient or solid chrome frame; its color values are literal shader inputs rather than design tokens.",
             "Dashboard represents day-to-day operational work while Settings represents administrative and configuration work; route state selects the context.",
             "Replace navigation and pageChrome together from one completed route state.",
-            "When pageChrome.showBack marks a detail depth, mobile chrome keeps the page heading as its identity and presents only local subsections; peer route tabs remain in desktop BarNav rather than replacing the detail heading.",
+            "When pageChrome.showBack marks a detail depth, mobile chrome combines the page heading and active local subsection in one sheet trigger; peer route tabs remain in desktop BarNav rather than replacing the detail identity.",
             "Route-owned ordered page actions drive both BarTitle and MobileHeader. ShellApp forwards one flat page-action id and owns the derived mobile overflow menu so routes do not duplicate menu state or choices.",
+            "Managed mobile Back and page-action controls use the same large touch density as the mobile navigation header without increasing the shared header height.",
             "Managed ShellApp keeps the selected desktop section-navigation presentation and ShellPage present and owns page header stickiness and the content scroller.",
             "Route-owned pageChrome independently selects ShellPage contentInset, page-header seams, scroll compaction, expanded and compact header-divider visibility, and contentSurface. ShellApp forwards them while resolving whether desktop title geometry is page-local or shell-bar-owned.",
             "The application filters unauthorized destinations, sections, and tools before passing them into shell components."
@@ -8322,9 +8356,9 @@
             "On desktop and tablet, panel section navigation replaces BarNav with compact BarTitle; collapsed PanelNav exposes child sections through its anchored flyout.",
             "When panel section navigation moves BarTitle into the shell bar, routed content starts at the standard 32px desktop or 16px tablet gutter and ShellPage reports no page-local sticky-header height.",
             "On mobile, ShellApp hides and inerts desktop chrome, uses a solid primary stage, and composes MobileHeader, MobileSheetNav, ShellTools, and the persistent MobileBarNav around the same application-owned content.",
-            "Changing sectionNavigation never changes mobile chrome; the preference may still be edited by an application Settings page.",
+            "The section-navigation preference also selects mobile navigation: bar preserves flat area selection and the header section picker; panel expands child routes inline in MobileSheetNav and combines the page title with any local subsection in one sheet trigger.",
             "Opening MobileSheetNav temporarily overlays the active routed page or global tool; closing it without selecting an area restores that same destination and its nested state. The sheet exposes the router-derived current area only while the routed area owns the mobile stage, so a global tool never leaves an underlying route highlighted.",
-            "Selecting Help from the managed mobile sheet activates the configured Help tool and promotes Help to the primary mobile destination instead of forwarding it as route navigation.",
+            "Selecting Help from the managed mobile sheet activates the configured Help tool and retains Help as the primary mobile destination across other tool selections until a routed area is selected or navigation changes. This mobile context does not alter desktop or tablet routing.",
             "Set navigation.showMobileAccount to false when the Settings destination collection already includes account and user preferences.",
             "When a suspended mobile document returns to the foreground, ShellApp refreshes the complete stage paint layer without remounting routed content or tool owners.",
             "When the application enables viewport-fit=cover, ShellApp reserves the shared top safe-area inset once for the complete mobile stage; nested routed, sheet, and tool headers must not add a second top inset.",

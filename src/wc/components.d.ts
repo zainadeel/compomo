@@ -1878,6 +1878,11 @@ export namespace Components {
          */
         "messagesLabel": string;
         /**
+          * Context destination retained while a different global tool is active.
+          * @default 'area'
+         */
+        "primaryDestination": 'area' | 'help';
+        /**
           * @default false
          */
         "searchDot": boolean;
@@ -1932,6 +1937,11 @@ export namespace Components {
          */
         "subsectionsAriaLabel": string;
         /**
+          * Place local sections below, beside, or combined with the page title in one sheet trigger.
+          * @default 'below'
+         */
+        "subsectionsPlacement": 'below' | 'inline' | 'combined';
+        /**
           * Controlled selected child-section id.
           * @default ''
          */
@@ -1953,6 +1963,16 @@ export namespace Components {
           * @default 'Change page section'
          */
         "navigationLabel": string;
+        /**
+          * Stable page identity shown before the selected section in a sheet trigger.
+          * @default ''
+         */
+        "pageLabel": string;
+        /**
+          * Anchored local-view menu or viewport-edge sheet for primary page sections.
+          * @default 'menu'
+         */
+        "presentation": 'menu' | 'sheet';
         /**
           * Ordered controlled sections. Divider entries group the popup menu.
           * @default []
@@ -1997,6 +2017,11 @@ export namespace Components {
           * @default false
          */
         "open": boolean;
+        /**
+          * Flat area navigation or inline disclosure of each area's child routes.
+          * @default 'flat'
+         */
+        "presentation": PanelNavPresentation;
         /**
           * Whether the router-derived current area owns the active mobile stage.
           * @default true
@@ -2772,7 +2797,7 @@ export namespace Components {
          */
         "paperTexture"?: PaperTextureConfig;
         /**
-          * Desktop/tablet route sections in BarNav, or nested beneath PanelNav parents.
+          * Route sections in bar/header pickers, or nested beneath desktop and mobile menu parents.
           * @default 'bar'
          */
         "sectionNavigation": ShellSectionNavigation;
@@ -4873,6 +4898,7 @@ declare global {
     };
     interface HTMLDsMobileSheetNavElementEventMap {
         "dsAreaSelect": string;
+        "dsNavChildSelect": PanelNavChildSelectDetail;
         "dsBrowseContextChange": NavChromeStyle;
         "dsClose": void;
     }
@@ -7430,6 +7456,11 @@ declare namespace LocalJSX {
         "onDsDestinationChange"?: (event: DsMobileBarNavCustomEvent<MobileBarNavDestinationDetail>) => void;
         "onDsSheetNavToggle"?: (event: DsMobileBarNavCustomEvent<boolean>) => void;
         /**
+          * Context destination retained while a different global tool is active.
+          * @default 'area'
+         */
+        "primaryDestination"?: 'area' | 'help';
+        /**
           * @default false
          */
         "searchDot"?: boolean;
@@ -7492,6 +7523,11 @@ declare namespace LocalJSX {
          */
         "subsectionsAriaLabel"?: string;
         /**
+          * Place local sections below, beside, or combined with the page title in one sheet trigger.
+          * @default 'below'
+         */
+        "subsectionsPlacement"?: 'below' | 'inline' | 'combined';
+        /**
           * Controlled selected child-section id.
           * @default ''
          */
@@ -7517,6 +7553,16 @@ declare namespace LocalJSX {
           * Selection intent. The route, tool, or workflow owner updates `value`.
          */
         "onDsChange"?: (event: DsMobileSectionSwitcherCustomEvent<string>) => void;
+        /**
+          * Stable page identity shown before the selected section in a sheet trigger.
+          * @default ''
+         */
+        "pageLabel"?: string;
+        /**
+          * Anchored local-view menu or viewport-edge sheet for primary page sections.
+          * @default 'menu'
+         */
+        "presentation"?: 'menu' | 'sheet';
         /**
           * Ordered controlled sections. Divider entries group the popup menu.
           * @default []
@@ -7561,9 +7607,18 @@ declare namespace LocalJSX {
         "onDsBrowseContextChange"?: (event: DsMobileSheetNavCustomEvent<NavChromeStyle>) => void;
         "onDsClose"?: (event: DsMobileSheetNavCustomEvent<void>) => void;
         /**
+          * Selecting a child requests routing; expanding its parent never navigates.
+         */
+        "onDsNavChildSelect"?: (event: DsMobileSheetNavCustomEvent<PanelNavChildSelectDetail>) => void;
+        /**
           * @default false
          */
         "open"?: boolean;
+        /**
+          * Flat area navigation or inline disclosure of each area's child routes.
+          * @default 'flat'
+         */
+        "presentation"?: PanelNavPresentation;
         /**
           * Whether the router-derived current area owns the active mobile stage.
           * @default true
@@ -8471,7 +8526,7 @@ declare namespace LocalJSX {
          */
         "paperTexture"?: PaperTextureConfig;
         /**
-          * Desktop/tablet route sections in BarNav, or nested beneath PanelNav parents.
+          * Route sections in bar/header pickers, or nested beneath desktop and mobile menu parents.
           * @default 'bar'
          */
         "sectionNavigation"?: ShellSectionNavigation;
@@ -10195,6 +10250,7 @@ declare namespace LocalJSX {
     }
     interface DsMobileBarNavAttributes {
         "activeDestination": MobileDestination;
+        "primaryDestination": 'area' | 'help';
         "sheetNavExpanded": boolean;
         "menuLabel": string;
         "searchLabel": string;
@@ -10219,16 +10275,20 @@ declare namespace LocalJSX {
         "sectionsSize": TabGroupSize;
         "subvalue": string;
         "subsectionsAriaLabel": string;
+        "subsectionsPlacement": 'below' | 'inline' | 'combined';
         "tone": MobileHeaderTone;
     }
     interface DsMobileSectionSwitcherAttributes {
         "value": string;
         "navigationLabel": string;
+        "presentation": 'menu' | 'sheet';
+        "pageLabel": string;
     }
     interface DsMobileSheetNavAttributes {
         "open": boolean;
         "browseContext": NavChromeStyle;
         "currentUrl": string;
+        "presentation": PanelNavPresentation;
         "routeSelectionActive": boolean;
         "navigationLabel": string;
         "dashboardLabel": string;

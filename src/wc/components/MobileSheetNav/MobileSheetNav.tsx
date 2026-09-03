@@ -7,11 +7,18 @@ import {
   Host,
   Listen,
   Prop,
+  State,
   Watch,
 } from '@stencil/core';
 import type { NavChromeStyle } from '../../shell/nav-chrome';
-import { deriveActiveIdFromUrl } from '../PanelNav/panel-nav-utils';
-import type { PanelNavGroup, PanelNavItem } from '../PanelNav/panel-nav-types';
+import { derivePanelNavSelectionFromUrl } from '../PanelNav/panel-nav-utils';
+import type {
+  PanelNavChildItem,
+  PanelNavChildSelectDetail,
+  PanelNavGroup,
+  PanelNavItem,
+  PanelNavPresentation,
+} from '../PanelNav/panel-nav-types';
 
 type MobileSheetNavHeaderDestinationId = 'account' | 'help';
 
@@ -19,6 +26,7 @@ const CONTEXT_TABS = [
   { id: 'dashboard', label: 'Dashboard', icon: 'Dashboard', variant: 'icon' as const },
   { id: 'settings', label: 'Settings', icon: 'Gear', variant: 'icon' as const },
 ];
+let nextSheetId = 0;
 
 @Component({
   tag: 'ds-mobile-sheet-nav',
@@ -33,6 +41,8 @@ export class MobileSheetNav {
   @Prop() dashboardGroups: PanelNavGroup[] = [];
   @Prop() settingsGroups: PanelNavGroup[] = [];
   @Prop() currentUrl: string = '';
+  /** Flat area navigation or inline disclosure of each area's child routes. */
+  @Prop() presentation: PanelNavPresentation = 'flat';
   /** Whether the router-derived current area owns the active mobile stage. */
   @Prop() routeSelectionActive: boolean = true;
   @Prop() navigationLabel: string = 'Application navigation';
@@ -44,27 +54,43 @@ export class MobileSheetNav {
   @Prop() showAccount: boolean = true;
 
   @Event() dsAreaSelect!: EventEmitter<string>;
+  /** Selecting a child requests routing; expanding its parent never navigates. */
+  @Event() dsNavChildSelect!: EventEmitter<PanelNavChildSelectDetail>;
   @Event() dsBrowseContextChange!: EventEmitter<NavChromeStyle>;
   @Event() dsClose!: EventEmitter<void>;
+  @State() private expandedParentId = '';
+  private readonly instanceId = nextSheetId++;
 
   private get groups(): PanelNavGroup[] {
     return this.browseContext === 'settings' ? this.settingsGroups : this.dashboardGroups;
   }
 
-  private get activeId(): string {
-    if (!this.routeSelectionActive) return '';
-    return deriveActiveIdFromUrl(this.currentUrl, [
-      ...this.dashboardGroups.flatMap(group => group.items),
-      ...this.settingsGroups.flatMap(group => group.items),
-    ]);
+  private get selection() {
+    return derivePanelNavSelectionFromUrl(
+      this.routeSelectionActive ? this.currentUrl : '',
+      this.groups.flatMap(group => group.items)
+    );
+  }
+
+  componentWillLoad() {
+    this.syncExpandedParent();
+  }
+
+  @Watch('presentation')
+  @Watch('currentUrl')
+  @Watch('browseContext')
+  @Watch('routeSelectionActive')
+  syncExpandedParent() {
+    this.expandedParentId = this.presentation === 'nested' ? this.selection.parentId : '';
   }
 
   @Watch('open')
   handleOpenChange(open: boolean) {
     if (!open) return;
+    this.syncExpandedParent();
     requestAnimationFrame(() => {
       const selected = this.el.querySelector<HTMLElement>('[aria-current="page"]');
-      const first = this.el.querySelector<HTMLElement>('.mobile-sheet-nav__item');
+      const first = this.el.querySelector<HTMLElement>('.mobile-sheet-nav__item:not(:disabled)');
       (selected ?? first)?.focus({ preventScroll: true });
     });
   }
@@ -83,19 +109,32 @@ export class MobileSheetNav {
   };
 
   private renderItem(item: PanelNavItem) {
-    const selected = item.id === this.activeId;
+    const selected = item.id === this.selection.parentId;
+    const disclosure = this.presentation === 'nested' && !!item.children?.length;
+    const expanded = disclosure && item.id === this.expandedParentId;
     return (
       <button
+        id={this.parentId(item.id)}
         type="button"
         class={{
           'mobile-sheet-nav__item': true,
           'mobile-sheet-nav__item--selected': selected,
+          'mobile-sheet-nav__parent--muted':
+            this.presentation === 'nested' &&
+            this.expandedParentId !== '' &&
+            this.expandedParentId !== item.id,
           'ds-control--lg': true,
           'ds-focus-ring-inset': true,
           'ds-interaction-fill': true,
         }}
-        aria-current={selected ? 'page' : undefined}
-        onClick={() => this.dsAreaSelect.emit(item.id)}
+        aria-current={selected && !disclosure ? 'page' : undefined}
+        aria-expanded={disclosure ? String(expanded) : undefined}
+        aria-controls={disclosure ? this.childrenId(item.id) : undefined}
+        onClick={() =>
+          disclosure
+            ? (this.expandedParentId = expanded ? '' : item.id)
+            : this.dsAreaSelect.emit(item.id)
+        }
       >
         <ds-icon class="ds-interaction-fill__content" name={item.icon} size="lg" color="inherit" />
         <ds-text
@@ -104,6 +143,7 @@ export class MobileSheetNav {
           variant="text-body-large"
           emphasis={selected}
           color="inherit"
+          lineTruncation={1}
         >
           {item.label}
         </ds-text>
@@ -117,6 +157,118 @@ export class MobileSheetNav {
           />
         )}
       </button>
+    );
+  }
+
+  private parentId(id: string) {
+    return `mobile-sheet-${this.instanceId}-${encodeURIComponent(id)}`;
+  }
+  private childrenId(id: string) {
+    return `${this.parentId(id)}-children`;
+  }
+
+  private renderChild(parent: PanelNavItem, child: PanelNavChildItem, index: number) {
+    const selected = parent.id === this.selection.parentId && child.id === this.selection.childId;
+    return (
+      <button
+        type="button"
+        disabled={child.isInactive}
+        class={{
+          'mobile-sheet-nav__item': true,
+          'mobile-sheet-nav__child': true,
+          'mobile-sheet-nav__item--selected': selected,
+          'ds-nav-disclosure__item': true,
+          'ds-control--lg': true,
+          'ds-focus-ring-inset': true,
+          'ds-interaction-fill': true,
+        }}
+        style={{
+          '--ds-nav-disclosure-index': String(index),
+          '--ds-nav-disclosure-reverse-index': String((parent.children?.length ?? 0) - index - 1),
+        }}
+        aria-current={selected ? 'page' : undefined}
+        onClick={() => {
+          if (!child.isInactive)
+            this.dsNavChildSelect.emit({
+              parentId: parent.id,
+              childId: child.id,
+              href: child.href,
+            });
+        }}
+        onKeyDown={(event: KeyboardEvent) => {
+          if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            this.expandedParentId = '';
+            this.el.querySelector<HTMLElement>(`#${CSS.escape(this.parentId(parent.id))}`)?.focus();
+          }
+        }}
+      >
+        <ds-text
+          class="mobile-sheet-nav__item-label ds-interaction-fill__content"
+          as="span"
+          variant="text-body-large"
+          emphasis={selected}
+          color="inherit"
+          lineTruncation={1}
+        >
+          {child.label}
+        </ds-text>
+        {child.dot ? (
+          <ds-badge
+            class="mobile-sheet-nav__dot ds-interaction-fill__content"
+            variant="dot"
+            hasRing={false}
+            label=""
+            aria-hidden="true"
+          />
+        ) : null}
+      </button>
+    );
+  }
+
+  private renderBranchDivider(position: 'before' | 'after', expanded: boolean) {
+    return (
+      <div
+        class={{
+          'ds-nav-disclosure-divider': true,
+          'ds-nav-disclosure-divider--open': expanded,
+          'mobile-sheet-nav__divider': true,
+          [`mobile-sheet-nav__divider--${position}`]: true,
+        }}
+        aria-hidden="true"
+      >
+        <div class="ds-nav-disclosure-divider__clip">
+          <span class="mobile-sheet-nav__divider-line" />
+        </div>
+      </div>
+    );
+  }
+
+  private renderBranch(item: PanelNavItem, index: number, count: number) {
+    const hasChildren = this.presentation === 'nested' && !!item.children?.length;
+    const expanded = hasChildren && this.expandedParentId === item.id;
+    return (
+      <div key={item.id} class="mobile-sheet-nav__branch">
+        {hasChildren && index > 0 ? this.renderBranchDivider('before', expanded) : null}
+        {this.renderItem(item)}
+        {this.presentation === 'nested' && item.children?.length ? (
+          <div
+            class={{ 'ds-nav-disclosure': true, 'ds-nav-disclosure--open': expanded }}
+            inert={!expanded ? true : undefined}
+            aria-hidden={!expanded ? 'true' : undefined}
+          >
+            <div
+              class="mobile-sheet-nav__children"
+              id={this.childrenId(item.id)}
+              role="group"
+              aria-labelledby={this.parentId(item.id)}
+            >
+              {item.children.map((child, index) => this.renderChild(item, child, index))}
+            </div>
+          </div>
+        ) : null}
+        {hasChildren && index < count - 1 ? this.renderBranchDivider('after', expanded) : null}
+      </div>
     );
   }
 
@@ -205,7 +357,9 @@ export class MobileSheetNav {
                 .filter(group => group.items.length > 0)
                 .map(group => (
                   <div class="mobile-sheet-nav__items">
-                    {group.items.map(item => this.renderItem(item))}
+                    {group.items.map((item, index) =>
+                      this.renderBranch(item, index, group.items.length)
+                    )}
                   </div>
                 ))}
             </div>

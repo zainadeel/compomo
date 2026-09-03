@@ -21,8 +21,10 @@
   "states": [
     "Without multiple sections the center renders heading.",
     "With multiple sections the center renders the controlled MobileSectionSwitcher by default or an explicitly requested segmented TabGroup.",
+    "Primary section switching without subordinate navigation uses the viewport-edge sheet. Headers exposing both peer sections and subordinate views retain their two-level navigation.",
     "The segmented presentation uses the shared fill-width TabGroup contract and divides its centered two-thirds top-bar lane equally between options.",
-    "Optional subsections render in a second row and emit dsSubsectionChange without changing the primary section.",
+    "Optional subsections use a second row by default. When navigation already exposes peer sections, local views can sit beside a stable page title in one row; they never replace that title or its semantic heading.",
+    "The combined local-view presentation joins the page identity and selected subsection in one outlined sheet trigger. The semantic heading remains the page identity, while Back and page actions stay outside the trigger.",
     "Sections represent peer destinations at the current navigation level; subsections represent local views beneath the selected page or detail identity.",
     "Brand tone changes surface and foreground without changing geometry or interaction ownership."
   ],

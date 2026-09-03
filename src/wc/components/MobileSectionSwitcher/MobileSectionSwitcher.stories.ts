@@ -27,3 +27,28 @@ export const Foundation: Story = {
     ></ds-mobile-section-switcher>
   `,
 };
+
+export const PrimaryPageSheet: Story = {
+  render: () => html`
+    <ds-mobile-section-switcher
+      .sections=${sections}
+      value="location-history"
+      presentation="sheet"
+    ></ds-mobile-section-switcher>
+  `,
+};
+
+export const DetailPageSheet: Story = {
+  render: () => html`
+    <ds-mobile-section-switcher
+      .sections=${[
+        { id: 'summary', label: 'Summary' },
+        { id: 'history', label: 'History' },
+      ]}
+      value="summary"
+      page-label="John Smith"
+      presentation="sheet"
+      navigation-label="Change driver detail section"
+    ></ds-mobile-section-switcher>
+  `,
+};

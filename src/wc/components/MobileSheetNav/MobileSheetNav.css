@@ -2,6 +2,7 @@
 @import '../../utils/chrome-layout.css';
 @import '../../utils/focus-ring.css';
 @import '../../utils/interaction-fill.css';
+@import '../../utils/nav-disclosure.css';
 
 :host {
   display: block;
@@ -131,4 +132,46 @@
 
 .mobile-sheet-nav__dot {
   margin-inline-start: auto;
+}
+
+.mobile-sheet-nav__children {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dimension-space-100);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.mobile-sheet-nav__child {
+  flex: 0 0 var(--ds-control-height);
+  padding-inline-start: calc(
+    var(--ds-control-padding-inline) + var(--dimension-iconography-lg) + var(--ds-control-gap)
+  );
+}
+
+.mobile-sheet-nav__child:first-child {
+  margin-block-start: var(--dimension-space-100);
+}
+
+.mobile-sheet-nav__child:disabled {
+  color: var(--color-foreground-tertiary);
+}
+
+.mobile-sheet-nav__parent--muted {
+  color: var(--color-foreground-secondary);
+}
+
+.mobile-sheet-nav__divider-line {
+  display: block;
+  height: var(--dimension-stroke-width-012);
+  margin-inline: var(--dimension-space-100);
+  background: var(--color-border-tertiary);
+}
+
+.mobile-sheet-nav__divider--before .mobile-sheet-nav__divider-line {
+  margin-block: var(--dimension-space-050) var(--dimension-space-150);
+}
+
+.mobile-sheet-nav__divider--after .mobile-sheet-nav__divider-line {
+  margin-block: var(--dimension-space-150) var(--dimension-space-050);
 }

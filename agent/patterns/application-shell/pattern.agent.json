@@ -90,7 +90,7 @@
     "An optional Banner spans the complete application above desktop navigation, workspace, tools, and mobile global surfaces while remaining below the operating-system top safe area.",
     "Desktop and tablet may render governed direct-action rail accessories. Mobile intentionally omits them, so applications provide equivalent persistent status in the top Banner lane when the product requires it.",
     "Switching breakpoints changes presentation and inert state without recreating route or tool elements.",
-    "Switching sectionNavigation changes only desktop and tablet chrome; mobile composition, current route, routed content, and tool state remain stable.",
+    "Switching sectionNavigation changes where route sections live: panel expands them inside MobileSheetNav on mobile and combines the page title with any active local subsection in one sheet trigger. Detail pages use this combined trigger in both modes. The current route, routed content, and tool state remain stable.",
     "Search, Activity, Messages, and Agents use direct mobile destinations; products may explicitly group review tools under Inbox instead."
   ],
   "implementations": {

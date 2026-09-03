@@ -5,6 +5,25 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
+test('opens an accessible empty profiles popup and restores keyboard focus @cross-browser', async ({
+  page,
+}) => {
+  const scope = page.getByRole('region', { name: 'Settings scope' });
+  const trigger = scope.getByRole('button', { name: 'Organization' });
+  await expect(trigger).toHaveAttribute('aria-haspopup', 'dialog');
+  await trigger.focus();
+  await trigger.press('Enter');
+  const popup = page.getByRole('dialog', { name: 'Settings profiles' });
+  await expect(popup).toBeFocused();
+  await expect(popup).toHaveAccessibleDescription('You have no profiles to manage yet');
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  await expect(popup.getByRole('menuitem')).toHaveCount(0);
+  await page.keyboard.press('Escape');
+  await expect(popup).not.toBeVisible();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  await expect(trigger).toBeFocused();
+});
+
 test('uses the complete navigation-only card as one native link', async ({ page }) => {
   const card = page.locator('#navigation-only-card');
   const link = card.getByRole('link', {
