@@ -47,12 +47,34 @@ export class Field {
   @State() private touched = false;
   @State() private controlDisabled = false;
   @State() private controlRequired = false;
+  /**
+   * Bumped to force a render commit, which is what actually performs scoped-mode
+   * slot relocation. `slotchange` does not fire reliably in scoped (non-shadow)
+   * mode, so a control mounted into the light DOM after this component's initial
+   * render (e.g. a consumer that code-splits the field and its control into
+   * separate lazy chunks) is left as a trailing sibling — after the description —
+   * until some unrelated state change (like focus) happens to trigger a render.
+   * The childList MutationObserver below forces that render as soon as the
+   * control actually arrives, instead of waiting on it.
+   */
+  @State() private slotRevision = 0;
 
   private readonly generatedId = `ds-field-${++fieldCounter}`;
   private controlContainer?: HTMLDivElement;
   private control?: FieldControl;
   private initialValue = '';
   private authoredAria = new WeakMap<FieldControl, AuthoredAria>();
+  private childObserver?: MutationObserver;
+
+  connectedCallback() {
+    this.childObserver = new MutationObserver(() => this.slotRevision++);
+    this.childObserver.observe(this.el, { childList: true });
+  }
+
+  disconnectedCallback() {
+    this.childObserver?.disconnect();
+    this.childObserver = undefined;
+  }
 
   componentDidLoad() {
     this.syncControl();
@@ -173,6 +195,11 @@ export class Field {
     this.syncControl();
   };
 
+  private handleSlotChange = () => {
+    this.syncControl();
+    this.slotRevision++;
+  };
+
   render() {
     return (
       <Host
@@ -203,7 +230,7 @@ export class Field {
             {this.label}
           </ds-text>
           <div class="field__control" ref={el => (this.controlContainer = el)}>
-            <slot onSlotchange={this.syncControl} />
+            <slot onSlotchange={this.handleSlotChange} />
           </div>
           {this.renderedDescription && (
             <ds-text
