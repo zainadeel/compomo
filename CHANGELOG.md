@@ -1,5 +1,17 @@
 # Changelog
 
+## [14.26.0](https://github.com/zainadeel/compomo/compare/v14.25.0...v14.26.0) (2026-09-03)
+
+
+### Added
+
+* expand table grouping and add form textarea ([#563](https://github.com/zainadeel/compomo/issues/563)) ([e05d62c](https://github.com/zainadeel/compomo/commit/e05d62ca643beb6525c2a38c21f95b8eb814953e))
+
+
+### Fixed
+
+* space nested panel nav child rows from their parent ([#561](https://github.com/zainadeel/compomo/issues/561)) ([bc93f19](https://github.com/zainadeel/compomo/commit/bc93f191adc00a84a4ad88caf49efd873e3b43b0))
+
 ## [14.25.0](https://github.com/zainadeel/compomo/compare/v14.24.0...v14.25.0) (2026-09-02)
 
 
