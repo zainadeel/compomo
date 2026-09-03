@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.27.1](https://github.com/zainadeel/compomo/compare/v14.27.0...v14.27.1) (2026-09-03)
+
+
+### Fixed
+
+* relocate late-mounted slot content in ds-field ([#566](https://github.com/zainadeel/compomo/issues/566)) ([05c62db](https://github.com/zainadeel/compomo/commit/05c62db5a5c321fc15492341d3f32f49ead7639c))
+
 ## [14.27.0](https://github.com/zainadeel/compomo/compare/v14.26.0...v14.27.0) (2026-09-03)
 
 
