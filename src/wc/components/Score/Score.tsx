@@ -29,7 +29,9 @@ export class Score {
     const size = this.size;
     const level = resolveScoreLevel(this.value, this.level);
     const valueVariant = SCORE_VALUE_VARIANT[size];
-    const accessibleName = [this.label.trim(), this.value].filter(Boolean).join(' ');
+    const accessibleName = [this.label.trim(), this.isLoading ? '' : this.value]
+      .filter(Boolean)
+      .join(' ');
 
     return (
       <Host
@@ -38,6 +40,7 @@ export class Score {
           [`score--${size}`]: true,
           'score--loading': this.isLoading,
         }}
+        role={accessibleName ? 'img' : undefined}
         aria-busy={this.isLoading ? 'true' : undefined}
         aria-label={accessibleName || undefined}
       >

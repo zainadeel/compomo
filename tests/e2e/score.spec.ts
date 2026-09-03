@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('maps score boundaries to matching semantic background and foreground pairs', async ({
+test('maps score boundaries to accessible semantic background and foreground pairs', async ({
   page,
 }) => {
   for (const [id, level] of [
@@ -28,7 +28,11 @@ test('maps score boundaries to matching semantic background and foreground pairs
         background: style.backgroundColor,
         color: style.color,
         expectedBackground: resolve(`--color-safety-score-background-${resolvedLevel}`),
-        expectedColor: resolve(`--color-safety-score-foreground-on-${resolvedLevel}`),
+        expectedColor: resolve(
+          resolvedLevel === 'good'
+            ? '--color-foreground-primary'
+            : `--color-safety-score-foreground-on-${resolvedLevel}`
+        ),
       };
     }, level);
 
@@ -135,6 +139,8 @@ test('replaces the figure with a bold-surface skeleton while loading', async ({ 
     'bold'
   );
   await expect(page.locator('#loading-lg')).toHaveAttribute('aria-busy', 'true');
+  await expect(page.locator('#loading-lg')).toHaveAttribute('role', 'img');
+  await expect(page.locator('#loading-lg')).toHaveAttribute('aria-label', 'Safety score');
 });
 
 test(
