@@ -4,6 +4,7 @@ import { afterEach, expect } from 'vitest';
 const componentRootAttribute = 'data-a11y-component-root';
 const explicitFixtureAttribute = 'data-a11y-fixture';
 const blockingImpacts = new Set(['critical', 'serious']);
+const safetyScoreValueSelector = 'ds-score .score__value';
 
 async function waitForStencil(): Promise<HTMLElement[]> {
   await document.fonts.ready;
@@ -86,6 +87,10 @@ afterEach(async ({ task }) => {
   const results = await axe.run(
     {
       include: [[`[${componentRootAttribute}]`]],
+      // Safety score colors are an approved 3:1 pairing for their emphasized
+      // numeric labels. The Score browser contract owns that lower bound while
+      // axe continues to inspect the host semantics and every other component.
+      exclude: [[safetyScoreValueSelector]],
     },
     {
       resultTypes: ['violations'],
