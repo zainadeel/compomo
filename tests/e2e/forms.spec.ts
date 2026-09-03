@@ -217,6 +217,52 @@ test('field associates one control with its label, guidance, error, and interact
   await expect(nativeInput).toHaveAttribute('aria-describedby', 'email-control-description');
 });
 
+test('field relocates a control mounted after its initial render @cross-browser', async ({
+  page,
+}) => {
+  await page.evaluate(() => {
+    const field = document.createElement('ds-field');
+    field.id = 'late-field';
+    field.setAttribute('label', 'Late field');
+    field.setAttribute('description', 'Mounted after the field is ready.');
+    field.setAttribute('field-id', 'late-control');
+    document.body.append(field);
+  });
+
+  const field = page.locator('#late-field');
+  await expect(field.locator('.field__description')).toHaveText(
+    'Mounted after the field is ready.'
+  );
+
+  await field.evaluate(element => {
+    const input = document.createElement('ds-input');
+    input.id = 'late-input';
+    input.setAttribute('placeholder', 'Late control');
+    element.append(input);
+  });
+
+  const input = page.locator('#late-input');
+  await expect(field.locator('.field__control > #late-input')).toHaveCount(1);
+  await expect(input.locator('input')).toHaveAttribute('id', 'late-control');
+  await expect(input.locator('input')).toHaveAttribute('aria-labelledby', 'late-control-label');
+  await expect(input.locator('input')).toHaveAttribute(
+    'aria-describedby',
+    'late-control-description'
+  );
+  await expect
+    .poll(() =>
+      field.locator(':scope > .field').evaluate(element =>
+        Array.from(element.children).map(child => {
+          if (child.classList.contains('field__label')) return 'label';
+          if (child.classList.contains('field__control')) return 'control';
+          if (child.classList.contains('field__description')) return 'description';
+          return child.tagName.toLowerCase();
+        })
+      )
+    )
+    .toEqual(['label', 'control', 'description']);
+});
+
 test('input read-only state remains focusable and submittable without a clear action', async ({
   page,
 }) => {
