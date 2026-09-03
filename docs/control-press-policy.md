@@ -29,6 +29,10 @@ activation remains native and is not promised an equivalent held frame.
 
 ### No-scale targets
 
+`CardSettingsScope` keeps its native area and profile text buttons at stable
+geometry. They use the shared brand text-action hover underline and focus ring;
+neither the sentence nor its popup anchors scale during a press.
+
 | Component and exact target                                                              | Existing pressed/state paint                                                                | Transform ownership                                                   | Rationale and composition                                                                                                                                                   |
 | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `AgentActivity` — native `summary`                                                      | Native disclosure feedback                                                                  | Chevron rotation                                                      | Disclosure geometry/state must remain stable.                                                                                                                               |

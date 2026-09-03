@@ -20,8 +20,10 @@ import { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, Butto
 import { ControlInsetDepth, ControlSize } from "./utils/control-text";
 import { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 import { CardChartVariant, CardChartWidth } from "./components/CardChart/CardChart";
+import { CardNavigationDetail, CardNavigationVariant, CardNavigationWidth } from "./components/CardNavigation/CardNavigation";
 import { CardOverviewLayout, CardOverviewVariant, OverviewMetric, OverviewScore } from "./components/CardOverview/card-overview-types";
 import { CardSettingActionDetail, CardSettingWidth } from "./components/CardSetting/CardSetting";
+import { SettingsScopeRequest } from "./components/CardSettingsScope/CardSettingsScope";
 import { ChartDefinition } from "./utils/chart-grammar";
 import { ChartFocusChangeDetail } from "./components/Chart/Chart";
 import { ChartLegendItem } from "./utils/chart-types";
@@ -92,8 +94,10 @@ export { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, Butto
 export { ControlInsetDepth, ControlSize } from "./utils/control-text";
 export { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 export { CardChartVariant, CardChartWidth } from "./components/CardChart/CardChart";
+export { CardNavigationDetail, CardNavigationVariant, CardNavigationWidth } from "./components/CardNavigation/CardNavigation";
 export { CardOverviewLayout, CardOverviewVariant, OverviewMetric, OverviewScore } from "./components/CardOverview/card-overview-types";
 export { CardSettingActionDetail, CardSettingWidth } from "./components/CardSetting/CardSetting";
+export { SettingsScopeRequest } from "./components/CardSettingsScope/CardSettingsScope";
 export { ChartDefinition } from "./utils/chart-grammar";
 export { ChartFocusChangeDetail } from "./components/Chart/Chart";
 export { ChartLegendItem } from "./utils/chart-types";
@@ -854,6 +858,30 @@ export namespace Components {
          */
         "variant": CardChartVariant;
     }
+    interface DsCardNavigation {
+        /**
+          * Card width token (`sm` / `md` / `lg`).
+          * @default 'md'
+         */
+        "cardWidth": CardNavigationWidth;
+        /**
+          * Optional supporting copy shown below the heading.
+         */
+        "description": string | undefined;
+        /**
+          * Section or destination heading shown in the card header.
+         */
+        "heading": string;
+        /**
+          * Destination for the card's native link.
+         */
+        "href": string;
+        /**
+          * `navigation-only` makes the complete card the link. `content` keeps the header as the link and exposes a non-interactive body slot below it.
+          * @default 'navigation-only'
+         */
+        "variant": CardNavigationVariant;
+    }
     interface DsCardOverview {
         /**
           * Copy between the current period and comparison control, usually `vs.`.
@@ -936,6 +964,56 @@ export namespace Components {
           * @default 'Save'
          */
         "saveLabel": string;
+    }
+    interface DsCardSettingsScope {
+        /**
+          * ID of the application-owned product-area menu.
+         */
+        "areaControls": string | undefined;
+        /**
+          * Whether the product-area menu is open.
+          * @default false
+         */
+        "areaExpanded": boolean;
+        /**
+          * Current product area or the label for the combined settings view.
+          * @default 'All settings'
+         */
+        "areaLabel": string;
+        /**
+          * Sentence connector, supplied separately for localization.
+          * @default 'for'
+         */
+        "forLabel": string;
+        /**
+          * Sentence prefix, supplied separately for localization.
+          * @default 'Managing'
+         */
+        "managingLabel": string;
+        /**
+          * ID of the application-owned profiles popup.
+         */
+        "profileControls": string | undefined;
+        /**
+          * Whether the profiles popup is open.
+          * @default false
+         */
+        "profileExpanded": boolean;
+        /**
+          * Current organization or settings profile.
+          * @default 'Organization'
+         */
+        "profileLabel": string;
+        /**
+          * Empty informational profile popups use dialog semantics instead of a menu.
+          * @default 'menu'
+         */
+        "profilePopup": 'menu' | 'dialog';
+        /**
+          * Accessible name for this context region.
+          * @default 'Settings scope'
+         */
+        "scopeLabel": string;
     }
     interface DsChart {
         /**
@@ -1587,6 +1665,11 @@ export namespace Components {
          */
         "boundary": HTMLElement | undefined;
         /**
+          * Informational message shown when there are no choices. Uses a non-modal dialog, not a fake menu item.
+          * @default ''
+         */
+        "emptyMessage": string;
+        /**
           * Show a visible ring on the initially focused menu item. Use only when the opener was keyboard-driven.
           * @default false
          */
@@ -1795,6 +1878,11 @@ export namespace Components {
          */
         "messagesLabel": string;
         /**
+          * Context destination retained while a different global tool is active.
+          * @default 'area'
+         */
+        "primaryDestination": 'area' | 'help';
+        /**
           * @default false
          */
         "searchDot": boolean;
@@ -1849,6 +1937,11 @@ export namespace Components {
          */
         "subsectionsAriaLabel": string;
         /**
+          * Place local sections below, beside, or combined with the page title in one sheet trigger.
+          * @default 'below'
+         */
+        "subsectionsPlacement": 'below' | 'inline' | 'combined';
+        /**
           * Controlled selected child-section id.
           * @default ''
          */
@@ -1870,6 +1963,16 @@ export namespace Components {
           * @default 'Change page section'
          */
         "navigationLabel": string;
+        /**
+          * Stable page identity shown before the selected section in a sheet trigger.
+          * @default ''
+         */
+        "pageLabel": string;
+        /**
+          * Anchored local-view menu or viewport-edge sheet for primary page sections.
+          * @default 'menu'
+         */
+        "presentation": 'menu' | 'sheet';
         /**
           * Ordered controlled sections. Divider entries group the popup menu.
           * @default []
@@ -1914,6 +2017,11 @@ export namespace Components {
           * @default false
          */
         "open": boolean;
+        /**
+          * Flat area navigation or inline disclosure of each area's child routes.
+          * @default 'flat'
+         */
+        "presentation": PanelNavPresentation;
         /**
           * Whether the router-derived current area owns the active mobile stage.
           * @default true
@@ -2689,7 +2797,7 @@ export namespace Components {
          */
         "paperTexture"?: PaperTextureConfig;
         /**
-          * Desktop/tablet route sections in BarNav, or nested beneath PanelNav parents.
+          * Route sections in bar/header pickers, or nested beneath desktop and mobile menu parents.
           * @default 'bar'
          */
         "sectionNavigation": ShellSectionNavigation;
@@ -3962,6 +4070,10 @@ export interface DsCardChartCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsCardChartElement;
 }
+export interface DsCardNavigationCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsCardNavigationElement;
+}
 export interface DsCardOverviewCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsCardOverviewElement;
@@ -3969,6 +4081,10 @@ export interface DsCardOverviewCustomEvent<T> extends CustomEvent<T> {
 export interface DsCardSettingCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsCardSettingElement;
+}
+export interface DsCardSettingsScopeCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsCardSettingsScopeElement;
 }
 export interface DsChartCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -4379,6 +4495,23 @@ declare global {
         prototype: HTMLDsCardChartElement;
         new (): HTMLDsCardChartElement;
     };
+    interface HTMLDsCardNavigationElementEventMap {
+        "dsNavigate": CardNavigationDetail;
+    }
+    interface HTMLDsCardNavigationElement extends Components.DsCardNavigation, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsCardNavigationElementEventMap>(type: K, listener: (this: HTMLDsCardNavigationElement, ev: DsCardNavigationCustomEvent<HTMLDsCardNavigationElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsCardNavigationElementEventMap>(type: K, listener: (this: HTMLDsCardNavigationElement, ev: DsCardNavigationCustomEvent<HTMLDsCardNavigationElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsCardNavigationElement: {
+        prototype: HTMLDsCardNavigationElement;
+        new (): HTMLDsCardNavigationElement;
+    };
     interface HTMLDsCardOverviewElementEventMap {
         "dsMetricSelect": OverviewMetric;
     }
@@ -4412,6 +4545,23 @@ declare global {
     var HTMLDsCardSettingElement: {
         prototype: HTMLDsCardSettingElement;
         new (): HTMLDsCardSettingElement;
+    };
+    interface HTMLDsCardSettingsScopeElementEventMap {
+        "dsScopeRequest": SettingsScopeRequest;
+    }
+    interface HTMLDsCardSettingsScopeElement extends Components.DsCardSettingsScope, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsCardSettingsScopeElementEventMap>(type: K, listener: (this: HTMLDsCardSettingsScopeElement, ev: DsCardSettingsScopeCustomEvent<HTMLDsCardSettingsScopeElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsCardSettingsScopeElementEventMap>(type: K, listener: (this: HTMLDsCardSettingsScopeElement, ev: DsCardSettingsScopeCustomEvent<HTMLDsCardSettingsScopeElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsCardSettingsScopeElement: {
+        prototype: HTMLDsCardSettingsScopeElement;
+        new (): HTMLDsCardSettingsScopeElement;
     };
     interface HTMLDsChartElementEventMap {
         "dsChartFocusChange": ChartFocusChangeDetail;
@@ -4748,6 +4898,7 @@ declare global {
     };
     interface HTMLDsMobileSheetNavElementEventMap {
         "dsAreaSelect": string;
+        "dsNavChildSelect": PanelNavChildSelectDetail;
         "dsBrowseContextChange": NavChromeStyle;
         "dsClose": void;
     }
@@ -5367,8 +5518,10 @@ declare global {
         "ds-button-filled": HTMLDsButtonFilledElement;
         "ds-button-unfilled": HTMLDsButtonUnfilledElement;
         "ds-card-chart": HTMLDsCardChartElement;
+        "ds-card-navigation": HTMLDsCardNavigationElement;
         "ds-card-overview": HTMLDsCardOverviewElement;
         "ds-card-setting": HTMLDsCardSettingElement;
+        "ds-card-settings-scope": HTMLDsCardSettingsScopeElement;
         "ds-chart": HTMLDsChartElement;
         "ds-chart-legend": HTMLDsChartLegendElement;
         "ds-checkbox": HTMLDsCheckboxElement;
@@ -6196,6 +6349,34 @@ declare namespace LocalJSX {
          */
         "variant"?: CardChartVariant;
     }
+    interface DsCardNavigation {
+        /**
+          * Card width token (`sm` / `md` / `lg`).
+          * @default 'md'
+         */
+        "cardWidth"?: CardNavigationWidth;
+        /**
+          * Optional supporting copy shown below the heading.
+         */
+        "description"?: string | undefined;
+        /**
+          * Section or destination heading shown in the card header.
+         */
+        "heading": string;
+        /**
+          * Destination for the card's native link.
+         */
+        "href": string;
+        /**
+          * Emits before native navigation. Prevent this event to take over routing; the component will then prevent the original link navigation.
+         */
+        "onDsNavigate"?: (event: DsCardNavigationCustomEvent<CardNavigationDetail>) => void;
+        /**
+          * `navigation-only` makes the complete card the link. `content` keeps the header as the link and exposes a non-interactive body slot below it.
+          * @default 'navigation-only'
+         */
+        "variant"?: CardNavigationVariant;
+    }
     interface DsCardOverview {
         /**
           * Copy between the current period and comparison control, usually `vs.`.
@@ -6286,6 +6467,60 @@ declare namespace LocalJSX {
           * @default 'Save'
          */
         "saveLabel"?: string;
+    }
+    interface DsCardSettingsScope {
+        /**
+          * ID of the application-owned product-area menu.
+         */
+        "areaControls"?: string | undefined;
+        /**
+          * Whether the product-area menu is open.
+          * @default false
+         */
+        "areaExpanded"?: boolean;
+        /**
+          * Current product area or the label for the combined settings view.
+          * @default 'All settings'
+         */
+        "areaLabel"?: string;
+        /**
+          * Sentence connector, supplied separately for localization.
+          * @default 'for'
+         */
+        "forLabel"?: string;
+        /**
+          * Sentence prefix, supplied separately for localization.
+          * @default 'Managing'
+         */
+        "managingLabel"?: string;
+        /**
+          * Requests a popup; the owner supplies choices, open state, and selection.
+         */
+        "onDsScopeRequest"?: (event: DsCardSettingsScopeCustomEvent<SettingsScopeRequest>) => void;
+        /**
+          * ID of the application-owned profiles popup.
+         */
+        "profileControls"?: string | undefined;
+        /**
+          * Whether the profiles popup is open.
+          * @default false
+         */
+        "profileExpanded"?: boolean;
+        /**
+          * Current organization or settings profile.
+          * @default 'Organization'
+         */
+        "profileLabel"?: string;
+        /**
+          * Empty informational profile popups use dialog semantics instead of a menu.
+          * @default 'menu'
+         */
+        "profilePopup"?: 'menu' | 'dialog';
+        /**
+          * Accessible name for this context region.
+          * @default 'Settings scope'
+         */
+        "scopeLabel"?: string;
     }
     interface DsChart {
         /**
@@ -6991,6 +7226,11 @@ declare namespace LocalJSX {
          */
         "boundary"?: HTMLElement | undefined;
         /**
+          * Informational message shown when there are no choices. Uses a non-modal dialog, not a fake menu item.
+          * @default ''
+         */
+        "emptyMessage"?: string;
+        /**
           * Show a visible ring on the initially focused menu item. Use only when the opener was keyboard-driven.
           * @default false
          */
@@ -7216,6 +7456,11 @@ declare namespace LocalJSX {
         "onDsDestinationChange"?: (event: DsMobileBarNavCustomEvent<MobileBarNavDestinationDetail>) => void;
         "onDsSheetNavToggle"?: (event: DsMobileBarNavCustomEvent<boolean>) => void;
         /**
+          * Context destination retained while a different global tool is active.
+          * @default 'area'
+         */
+        "primaryDestination"?: 'area' | 'help';
+        /**
           * @default false
          */
         "searchDot"?: boolean;
@@ -7278,6 +7523,11 @@ declare namespace LocalJSX {
          */
         "subsectionsAriaLabel"?: string;
         /**
+          * Place local sections below, beside, or combined with the page title in one sheet trigger.
+          * @default 'below'
+         */
+        "subsectionsPlacement"?: 'below' | 'inline' | 'combined';
+        /**
           * Controlled selected child-section id.
           * @default ''
          */
@@ -7303,6 +7553,16 @@ declare namespace LocalJSX {
           * Selection intent. The route, tool, or workflow owner updates `value`.
          */
         "onDsChange"?: (event: DsMobileSectionSwitcherCustomEvent<string>) => void;
+        /**
+          * Stable page identity shown before the selected section in a sheet trigger.
+          * @default ''
+         */
+        "pageLabel"?: string;
+        /**
+          * Anchored local-view menu or viewport-edge sheet for primary page sections.
+          * @default 'menu'
+         */
+        "presentation"?: 'menu' | 'sheet';
         /**
           * Ordered controlled sections. Divider entries group the popup menu.
           * @default []
@@ -7347,9 +7607,18 @@ declare namespace LocalJSX {
         "onDsBrowseContextChange"?: (event: DsMobileSheetNavCustomEvent<NavChromeStyle>) => void;
         "onDsClose"?: (event: DsMobileSheetNavCustomEvent<void>) => void;
         /**
+          * Selecting a child requests routing; expanding its parent never navigates.
+         */
+        "onDsNavChildSelect"?: (event: DsMobileSheetNavCustomEvent<PanelNavChildSelectDetail>) => void;
+        /**
           * @default false
          */
         "open"?: boolean;
+        /**
+          * Flat area navigation or inline disclosure of each area's child routes.
+          * @default 'flat'
+         */
+        "presentation"?: PanelNavPresentation;
         /**
           * Whether the router-derived current area owns the active mobile stage.
           * @default true
@@ -8257,7 +8526,7 @@ declare namespace LocalJSX {
          */
         "paperTexture"?: PaperTextureConfig;
         /**
-          * Desktop/tablet route sections in BarNav, or nested beneath PanelNav parents.
+          * Route sections in bar/header pickers, or nested beneath desktop and mobile menu parents.
           * @default 'bar'
          */
         "sectionNavigation"?: ShellSectionNavigation;
@@ -9731,6 +10000,13 @@ declare namespace LocalJSX {
         "showFilter": boolean;
         "filterLabel": string;
     }
+    interface DsCardNavigationAttributes {
+        "href": string;
+        "heading": string;
+        "description": string | undefined;
+        "variant": CardNavigationVariant;
+        "cardWidth": CardNavigationWidth;
+    }
     interface DsCardOverviewAttributes {
         "variant": CardOverviewVariant;
         "layout": CardOverviewLayout;
@@ -9749,6 +10025,18 @@ declare namespace LocalJSX {
         "editLabel": string;
         "cancelLabel": string;
         "saveLabel": string;
+    }
+    interface DsCardSettingsScopeAttributes {
+        "areaLabel": string;
+        "profileLabel": string;
+        "managingLabel": string;
+        "forLabel": string;
+        "scopeLabel": string;
+        "areaControls": string | undefined;
+        "profileControls": string | undefined;
+        "areaExpanded": boolean;
+        "profileExpanded": boolean;
+        "profilePopup": 'menu' | 'dialog';
     }
     interface DsChartAttributes {
         "label": string;
@@ -9923,6 +10211,7 @@ declare namespace LocalJSX {
         "anchorId": string | undefined;
         "initialFocusVisible": boolean;
         "menuLabel": string;
+        "emptyMessage": string;
     }
     interface DsMessageAttributes {
         "messageId": string;
@@ -9961,6 +10250,7 @@ declare namespace LocalJSX {
     }
     interface DsMobileBarNavAttributes {
         "activeDestination": MobileDestination;
+        "primaryDestination": 'area' | 'help';
         "sheetNavExpanded": boolean;
         "menuLabel": string;
         "searchLabel": string;
@@ -9985,16 +10275,20 @@ declare namespace LocalJSX {
         "sectionsSize": TabGroupSize;
         "subvalue": string;
         "subsectionsAriaLabel": string;
+        "subsectionsPlacement": 'below' | 'inline' | 'combined';
         "tone": MobileHeaderTone;
     }
     interface DsMobileSectionSwitcherAttributes {
         "value": string;
         "navigationLabel": string;
+        "presentation": 'menu' | 'sheet';
+        "pageLabel": string;
     }
     interface DsMobileSheetNavAttributes {
         "open": boolean;
         "browseContext": NavChromeStyle;
         "currentUrl": string;
+        "presentation": PanelNavPresentation;
         "routeSelectionActive": boolean;
         "navigationLabel": string;
         "dashboardLabel": string;
@@ -10449,8 +10743,10 @@ declare namespace LocalJSX {
         "ds-button-filled": Omit<DsButtonFilled, keyof DsButtonFilledAttributes> & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes]?: DsButtonFilled[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `attr:${K}`]?: DsButtonFilledAttributes[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `prop:${K}`]?: DsButtonFilled[K] };
         "ds-button-unfilled": Omit<DsButtonUnfilled, keyof DsButtonUnfilledAttributes> & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes]?: DsButtonUnfilled[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `attr:${K}`]?: DsButtonUnfilledAttributes[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `prop:${K}`]?: DsButtonUnfilled[K] };
         "ds-card-chart": Omit<DsCardChart, keyof DsCardChartAttributes> & { [K in keyof DsCardChart & keyof DsCardChartAttributes]?: DsCardChart[K] } & { [K in keyof DsCardChart & keyof DsCardChartAttributes as `attr:${K}`]?: DsCardChartAttributes[K] } & { [K in keyof DsCardChart & keyof DsCardChartAttributes as `prop:${K}`]?: DsCardChart[K] } & OneOf<"heading", DsCardChart["heading"], DsCardChartAttributes["heading"]>;
+        "ds-card-navigation": Omit<DsCardNavigation, keyof DsCardNavigationAttributes> & { [K in keyof DsCardNavigation & keyof DsCardNavigationAttributes]?: DsCardNavigation[K] } & { [K in keyof DsCardNavigation & keyof DsCardNavigationAttributes as `attr:${K}`]?: DsCardNavigationAttributes[K] } & { [K in keyof DsCardNavigation & keyof DsCardNavigationAttributes as `prop:${K}`]?: DsCardNavigation[K] } & OneOf<"href", DsCardNavigation["href"], DsCardNavigationAttributes["href"]> & OneOf<"heading", DsCardNavigation["heading"], DsCardNavigationAttributes["heading"]>;
         "ds-card-overview": Omit<DsCardOverview, keyof DsCardOverviewAttributes> & { [K in keyof DsCardOverview & keyof DsCardOverviewAttributes]?: DsCardOverview[K] } & { [K in keyof DsCardOverview & keyof DsCardOverviewAttributes as `attr:${K}`]?: DsCardOverviewAttributes[K] } & { [K in keyof DsCardOverview & keyof DsCardOverviewAttributes as `prop:${K}`]?: DsCardOverview[K] };
         "ds-card-setting": Omit<DsCardSetting, keyof DsCardSettingAttributes> & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes]?: DsCardSetting[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `attr:${K}`]?: DsCardSettingAttributes[K] } & { [K in keyof DsCardSetting & keyof DsCardSettingAttributes as `prop:${K}`]?: DsCardSetting[K] } & OneOf<"heading", DsCardSetting["heading"], DsCardSettingAttributes["heading"]>;
+        "ds-card-settings-scope": Omit<DsCardSettingsScope, keyof DsCardSettingsScopeAttributes> & { [K in keyof DsCardSettingsScope & keyof DsCardSettingsScopeAttributes]?: DsCardSettingsScope[K] } & { [K in keyof DsCardSettingsScope & keyof DsCardSettingsScopeAttributes as `attr:${K}`]?: DsCardSettingsScopeAttributes[K] } & { [K in keyof DsCardSettingsScope & keyof DsCardSettingsScopeAttributes as `prop:${K}`]?: DsCardSettingsScope[K] };
         "ds-chart": Omit<DsChart, keyof DsChartAttributes> & { [K in keyof DsChart & keyof DsChartAttributes]?: DsChart[K] } & { [K in keyof DsChart & keyof DsChartAttributes as `attr:${K}`]?: DsChartAttributes[K] } & { [K in keyof DsChart & keyof DsChartAttributes as `prop:${K}`]?: DsChart[K] } & OneOf<"label", DsChart["label"], DsChartAttributes["label"]>;
         "ds-chart-legend": Omit<DsChartLegend, keyof DsChartLegendAttributes> & { [K in keyof DsChartLegend & keyof DsChartLegendAttributes]?: DsChartLegend[K] } & { [K in keyof DsChartLegend & keyof DsChartLegendAttributes as `attr:${K}`]?: DsChartLegendAttributes[K] } & { [K in keyof DsChartLegend & keyof DsChartLegendAttributes as `prop:${K}`]?: DsChartLegend[K] };
         "ds-checkbox": Omit<DsCheckbox, keyof DsCheckboxAttributes> & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes]?: DsCheckbox[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `attr:${K}`]?: DsCheckboxAttributes[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `prop:${K}`]?: DsCheckbox[K] } & OneOf<"label", DsCheckbox["label"], DsCheckboxAttributes["label"]>;
@@ -10538,8 +10834,10 @@ declare module "@stencil/core" {
              * only the chart/legend relationship; applications continue to own data.
              */
             "ds-card-chart": LocalJSX.IntrinsicElements["ds-card-chart"] & JSXBase.HTMLAttributes<HTMLDsCardChartElement>;
+            "ds-card-navigation": LocalJSX.IntrinsicElements["ds-card-navigation"] & JSXBase.HTMLAttributes<HTMLDsCardNavigationElement>;
             "ds-card-overview": LocalJSX.IntrinsicElements["ds-card-overview"] & JSXBase.HTMLAttributes<HTMLDsCardOverviewElement>;
             "ds-card-setting": LocalJSX.IntrinsicElements["ds-card-setting"] & JSXBase.HTMLAttributes<HTMLDsCardSettingElement>;
+            "ds-card-settings-scope": LocalJSX.IntrinsicElements["ds-card-settings-scope"] & JSXBase.HTMLAttributes<HTMLDsCardSettingsScopeElement>;
             "ds-chart": LocalJSX.IntrinsicElements["ds-chart"] & JSXBase.HTMLAttributes<HTMLDsChartElement>;
             /**
              * Base legend for `ds-chart-*` components. Webapp's Overview widgets each style

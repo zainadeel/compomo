@@ -42,6 +42,7 @@
   ],
   "patterns": ["pattern:menu-trigger"],
   "accessibility": [
+    "An empty choice collection can show informational copy in a focusable non-modal dialog instead of rendering a fake disabled action. Escape and Tab retain the normal popup dismissal and anchor-focus behavior.",
     "Anchor the menu to the control that opens it and return focus to that control when the menu closes.",
     "Open with visible initial focus only when the trigger was activated from the keyboard.",
     "Keep disabled items discoverable only when their unavailable state is meaningful.",

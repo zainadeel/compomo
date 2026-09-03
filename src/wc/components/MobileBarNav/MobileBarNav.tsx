@@ -34,6 +34,8 @@ export class MobileBarNav {
   @Element() el!: HTMLElement;
 
   @Prop() activeDestination: MobileDestination = 'area';
+  /** Context destination retained while a different global tool is active. */
+  @Prop() primaryDestination: 'area' | 'help' = 'area';
   @Prop() currentArea: PanelNavItem = {
     id: 'tracking',
     icon: 'MapPage',
@@ -125,7 +127,7 @@ export class MobileBarNav {
 
   private destinationConfig(): DestinationConfig[] {
     const currentArea =
-      this.activeDestination === 'help'
+      this.primaryDestination === 'help' || this.activeDestination === 'help'
         ? {
             id: 'help' as const,
             icon: 'CircleQuestion',

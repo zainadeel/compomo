@@ -3,6 +3,7 @@
 @import '../../utils/focus-ring.css';
 @import '../../utils/interaction-fill.css';
 @import '../../utils/scrollbar-hidden.css';
+@import '../../utils/nav-disclosure.css';
 
 /* ── Theme variables ──────────────────────────────────────────────────────── */
 
@@ -215,45 +216,6 @@
   flex-direction: column;
 }
 
-.panel-nav__branch-divider {
-  display: grid;
-  grid-template-rows: 0fr;
-  opacity: 0;
-  transition:
-    grid-template-rows
-      var(
-        --_panel-nav-nested-section-duration,
-        calc(
-          var(--effect-animation-duration-short-3) * 2 + var(--effect-animation-duration-short-2)
-        )
-      )
-      var(--effect-animation-easing-ease-in-out)
-      var(
-        --_panel-nav-nested-transition-wait,
-        calc(var(--effect-animation-duration-short-3) + var(--effect-animation-duration-short-1))
-      ),
-    opacity
-      var(
-        --_panel-nav-nested-section-duration,
-        calc(
-          var(--effect-animation-duration-short-3) * 2 + var(--effect-animation-duration-short-2)
-        )
-      )
-      var(--effect-animation-easing-ease-out);
-}
-
-.panel-nav__branch-divider--open {
-  grid-template-rows: 1fr;
-  opacity: 1;
-  transition-delay:
-    var(--effect-animation-duration-instant), var(--effect-animation-duration-instant);
-}
-
-.panel-nav__branch-divider-clip {
-  min-height: 0;
-  overflow: hidden;
-}
-
 .panel-nav__branch-divider-line {
   display: block;
   height: var(--dimension-stroke-width-012);
@@ -269,24 +231,24 @@
   margin-block: var(--dimension-space-100) var(--dimension-space-050);
 }
 
-.panel-nav__children-accordion {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows
-    var(
-      --_panel-nav-nested-section-duration,
-      calc(var(--effect-animation-duration-short-3) * 2 + var(--effect-animation-duration-short-2))
-    )
-    var(--effect-animation-easing-ease-in-out)
-    var(
-      --_panel-nav-nested-transition-wait,
-      calc(var(--effect-animation-duration-short-3) + var(--effect-animation-duration-short-1))
-    );
-}
-
-.panel-nav__children-accordion--open {
-  grid-template-rows: 1fr;
-  transition-delay: var(--effect-animation-duration-instant);
+.panel-nav__children-accordion,
+.panel-nav__branch-divider {
+  --ds-nav-disclosure-duration: var(
+    --_panel-nav-nested-section-duration,
+    calc(var(--effect-animation-duration-short-3) * 2 + var(--effect-animation-duration-short-2))
+  );
+  --ds-nav-disclosure-wait: var(
+    --_panel-nav-nested-transition-wait,
+    calc(var(--effect-animation-duration-short-3) + var(--effect-animation-duration-short-1))
+  );
+  --ds-nav-disclosure-fade: var(
+    --_panel-nav-nested-child-fade-duration,
+    var(--ds-nav-disclosure-duration)
+  );
+  --ds-nav-disclosure-stagger: var(
+    --_panel-nav-nested-child-stagger,
+    var(--effect-animation-duration-short-1)
+  );
 }
 
 .panel-nav__children {
@@ -374,37 +336,6 @@ ds-text.panel-nav__group-label {
   padding-inline-start: calc(
     var(--dimension-space-075, 6px) + var(--dimension-iconography-md) + var(--dimension-space-050)
   );
-  opacity: 0;
-  pointer-events: none;
-  transition:
-    opacity
-      var(
-        --_panel-nav-nested-child-fade-duration,
-        calc(
-          var(--effect-animation-duration-short-3) * 2 + var(--effect-animation-duration-short-2)
-        )
-      )
-      var(--effect-animation-easing-ease-out)
-      calc(
-        var(--_panel-nav-child-reverse-index) *
-          var(--_panel-nav-nested-child-stagger, var(--effect-animation-duration-short-1))
-      ),
-    color var(--effect-motion-short-1);
-}
-
-.panel-nav__children-accordion--open .panel-nav__child {
-  opacity: 1;
-  pointer-events: auto;
-  transition-delay:
-    calc(
-      var(
-          --_panel-nav-nested-transition-wait,
-          calc(var(--effect-animation-duration-short-3) + var(--effect-animation-duration-short-1))
-        ) +
-        var(--_panel-nav-child-index) *
-        var(--_panel-nav-nested-child-stagger, var(--effect-animation-duration-short-1))
-    ),
-    var(--effect-animation-duration-instant);
 }
 
 .panel-nav__children-accordion:not(.panel-nav__children-accordion--open) .panel-nav__child {

@@ -36,3 +36,11 @@ export const GroupedInbox: Story = {
     </div>
   `,
 };
+
+export const HelpContext: Story = {
+  render: () => html`
+    <div style="max-width: 430px; margin: 0 auto;">
+      <ds-mobile-bar-nav primary-destination="help" active-destination="search"></ds-mobile-bar-nav>
+    </div>
+  `,
+};

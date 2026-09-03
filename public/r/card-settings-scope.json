@@ -1,0 +1,314 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "card-settings-scope",
+  "title": "CardSettingsScope",
+  "description": "Compact, theme-aware settings context card with inline product-area and profile menu triggers.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-settings-scope",
+    "source": "src/wc/components/CardSettingsScope/CardSettingsScope.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Compact, theme-aware settings context card with inline product-area and profile menu triggers.",
+      "useWhen": [
+        "A settings workspace needs to show and change both its product area and the organization or profile being managed."
+      ],
+      "avoidWhen": [
+        "The content is a reporting period and metrics summary; use CardOverview.",
+        "The card edits settings in place; use CardSetting."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-menu",
+        "component:ds-card-setting"
+      ],
+      "accessibility": [
+        "Both scope values are native buttons with popup relationships and controlled expanded state.",
+        "Use the emitted native anchor for menu placement and focus return.",
+        "An empty informational profiles popup uses dialog semantics.",
+        "The shared text-action recipe supplies brand foreground, hover underline, and keyboard focus indication."
+      ],
+      "states": [
+        "The application owns the selected area, profile, available choices, permissions, and empty-state copy.",
+        "The card reports popup requests without changing selection or expanded state.",
+        "The surface follows the active theme rather than imposing always-dark colors."
+      ],
+      "responsiveBehavior": [
+        "The parent owns sticky positioning and shell offsets.",
+        "The compact sentence wraps when space is constrained so both controls remain available."
+      ],
+      "frameworkCaveats": {
+        "angular": [
+          "Import the generated standalone adapter; bind controlled labels and expanded states and handle dsScopeRequest."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/CardSettingsScope/CardSettingsScope.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "areaControls": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "area-controls",
+          "required": false,
+          "mutable": false,
+          "description": "ID of the application-owned product-area menu."
+        },
+        "areaExpanded": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "area-expanded",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Whether the product-area menu is open."
+        },
+        "areaLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "area-label",
+          "default": "'All settings'",
+          "required": false,
+          "mutable": false,
+          "description": "Current product area or the label for the combined settings view."
+        },
+        "forLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "for-label",
+          "default": "'for'",
+          "required": false,
+          "mutable": false,
+          "description": "Sentence connector, supplied separately for localization."
+        },
+        "managingLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "managing-label",
+          "default": "'Managing'",
+          "required": false,
+          "mutable": false,
+          "description": "Sentence prefix, supplied separately for localization."
+        },
+        "profileControls": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "profile-controls",
+          "required": false,
+          "mutable": false,
+          "description": "ID of the application-owned profiles popup."
+        },
+        "profileExpanded": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "profile-expanded",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Whether the profiles popup is open."
+        },
+        "profileLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "profile-label",
+          "default": "'Organization'",
+          "required": false,
+          "mutable": false,
+          "description": "Current organization or settings profile."
+        },
+        "profilePopup": {
+          "type": "'menu' | 'dialog'",
+          "resolvedType": "\"dialog\" | \"menu\"",
+          "attribute": "profile-popup",
+          "default": "'menu'",
+          "required": false,
+          "mutable": false,
+          "description": "Empty informational profile popups use dialog semantics instead of a menu."
+        },
+        "scopeLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "scope-label",
+          "default": "'Settings scope'",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name for this context region."
+        }
+      },
+      "events": [
+        {
+          "name": "dsScopeRequest",
+          "detail": "SettingsScopeRequest",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Requests a popup; the owner supplies choices, open state, and selection."
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "areaControls": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "area-controls",
+        "required": false,
+        "mutable": false,
+        "description": "ID of the application-owned product-area menu."
+      },
+      "areaExpanded": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "area-expanded",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Whether the product-area menu is open."
+      },
+      "areaLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "area-label",
+        "default": "'All settings'",
+        "required": false,
+        "mutable": false,
+        "description": "Current product area or the label for the combined settings view."
+      },
+      "forLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "for-label",
+        "default": "'for'",
+        "required": false,
+        "mutable": false,
+        "description": "Sentence connector, supplied separately for localization."
+      },
+      "managingLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "managing-label",
+        "default": "'Managing'",
+        "required": false,
+        "mutable": false,
+        "description": "Sentence prefix, supplied separately for localization."
+      },
+      "profileControls": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "profile-controls",
+        "required": false,
+        "mutable": false,
+        "description": "ID of the application-owned profiles popup."
+      },
+      "profileExpanded": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "profile-expanded",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Whether the profiles popup is open."
+      },
+      "profileLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "profile-label",
+        "default": "'Organization'",
+        "required": false,
+        "mutable": false,
+        "description": "Current organization or settings profile."
+      },
+      "profilePopup": {
+        "type": "'menu' | 'dialog'",
+        "resolvedType": "\"dialog\" | \"menu\"",
+        "attribute": "profile-popup",
+        "default": "'menu'",
+        "required": false,
+        "mutable": false,
+        "description": "Empty informational profile popups use dialog semantics instead of a menu."
+      },
+      "scopeLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "scope-label",
+        "default": "'Settings scope'",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name for this context region."
+      }
+    },
+    "events": [
+      {
+        "name": "dsScopeRequest",
+        "detail": "SettingsScopeRequest",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Requests a popup; the owner supplies choices, open state, and selection."
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-card-settings-scope",
+      "react": "DsCardSettingsScope",
+      "vue": "DsCardSettingsScope",
+      "angular": "DsCardSettingsScope"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-card-settings-scope.js';",
+        "example": "<ds-card-settings-scope></ds-card-settings-scope>"
+      },
+      "react": {
+        "import": "import { DsCardSettingsScope } from '@ds-mo/ui/react';",
+        "example": "<DsCardSettingsScope />"
+      },
+      "vue": {
+        "import": "import { DsCardSettingsScope } from '@ds-mo/ui/vue';",
+        "example": "<DsCardSettingsScope />"
+      },
+      "angular": {
+        "import": "import { DsCardSettingsScope } from '@ds-mo/ui/angular/ds-card-settings-scope';",
+        "example": "<ds-card-settings-scope></ds-card-settings-scope>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.5.1",
+          "@ds-mo/icons ^7.0.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/CardSettingsScope/CardSettingsScope.css",
+      "content": "@import '../../utils/text-decoration.css';\n@import '../../utils/focus-ring.css';\n@import '../../styles/control-elevation.css';\n\n:host {\n  display: block;\n  min-width: 0;\n  width: var(--dimension-card-width-md);\n  max-width: 100%;\n}\n\n.card-settings-scope {\n  display: flex;\n  align-items: center;\n  flex-wrap: wrap;\n  gap: 0 var(--dimension-space-050);\n  box-sizing: border-box;\n  min-height: var(--dimension-size-600);\n  padding: var(--dimension-space-100) var(--dimension-space-200);\n  border-radius: var(--dimension-radius-125);\n  background: var(--color-background-primary);\n  color: var(--color-foreground-primary);\n}\n\n.card-settings-scope__action {\n  display: inline-flex;\n  align-items: center;\n  min-height: var(--dimension-size-400);\n  max-width: 100%;\n  margin: 0;\n  padding: 0;\n  border: 0;\n  border-radius: var(--dimension-radius-025);\n  background: transparent;\n  cursor: pointer;\n}\n\n.card-settings-scope__action ds-text {\n  overflow-wrap: anywhere;\n  text-align: start;\n}\n\n@media (forced-colors: active) {\n  .card-settings-scope {\n    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);\n    outline-offset: calc(-1 * var(--dimension-stroke-width-012));\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/CardSettingsScope/CardSettingsScope.tsx",
+      "content": "import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\n\nexport interface SettingsScopeRequest {\n  scope: 'area' | 'profile';\n  anchor: HTMLButtonElement;\n  originalEvent: MouseEvent;\n}\n\n@Component({\n  tag: 'ds-card-settings-scope',\n  styleUrl: 'CardSettingsScope.css',\n  scoped: true,\n})\nexport class CardSettingsScope {\n  /** Current product area or the label for the combined settings view. */\n  @Prop() areaLabel: string = 'All settings';\n  /** Current organization or settings profile. */\n  @Prop() profileLabel: string = 'Organization';\n  /** Sentence prefix, supplied separately for localization. */\n  @Prop() managingLabel: string = 'Managing';\n  /** Sentence connector, supplied separately for localization. */\n  @Prop() forLabel: string = 'for';\n  /** Accessible name for this context region. */\n  @Prop() scopeLabel: string = 'Settings scope';\n  /** ID of the application-owned product-area menu. */\n  @Prop() areaControls: string | undefined;\n  /** ID of the application-owned profiles popup. */\n  @Prop() profileControls: string | undefined;\n  /** Whether the product-area menu is open. */\n  @Prop() areaExpanded: boolean = false;\n  /** Whether the profiles popup is open. */\n  @Prop() profileExpanded: boolean = false;\n  /** Empty informational profile popups use dialog semantics instead of a menu. */\n  @Prop() profilePopup: 'menu' | 'dialog' = 'menu';\n\n  /** Requests a popup; the owner supplies choices, open state, and selection. */\n  @Event() dsScopeRequest!: EventEmitter<SettingsScopeRequest>;\n\n  private request(scope: SettingsScopeRequest['scope'], event: MouseEvent) {\n    this.dsScopeRequest.emit({\n      scope,\n      anchor: event.currentTarget as HTMLButtonElement,\n      originalEvent: event,\n    });\n  }\n\n  render() {\n    return (\n      <Host>\n        <div\n          class=\"card-settings-scope ds-control-elevation ds-control-elevation--sm\"\n          role=\"region\"\n          aria-label={this.scopeLabel}\n        >\n          <ds-text as=\"span\" variant=\"text-body-medium\" color=\"primary\">\n            {this.managingLabel}\n          </ds-text>\n          <button\n            type=\"button\"\n            class=\"card-settings-scope__action ds-text-action ds-focus-ring\"\n            aria-haspopup=\"menu\"\n            aria-controls={this.areaControls}\n            aria-expanded={String(this.areaExpanded)}\n            onClick={event => this.request('area', event)}\n          >\n            <ds-text as=\"span\" variant=\"text-body-medium\" color=\"inherit\">\n              {this.areaLabel}\n            </ds-text>\n          </button>\n          <ds-text as=\"span\" variant=\"text-body-medium\" color=\"primary\">\n            {this.forLabel}\n          </ds-text>\n          <button\n            type=\"button\"\n            class=\"card-settings-scope__action ds-text-action ds-focus-ring\"\n            aria-haspopup={this.profilePopup}\n            aria-controls={this.profileControls}\n            aria-expanded={String(this.profileExpanded)}\n            onClick={event => this.request('profile', event)}\n          >\n            <ds-text as=\"span\" variant=\"text-body-medium\" color=\"inherit\">\n              {this.profileLabel}\n            </ds-text>\n          </button>\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

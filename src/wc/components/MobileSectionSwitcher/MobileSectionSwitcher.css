@@ -1,5 +1,6 @@
 @import '../../utils/focus-ring.css';
 @import '../../utils/interaction-fill.css';
+@import '../../utils/control-density.css';
 
 :host {
   display: block;
@@ -46,4 +47,160 @@
 
 .mobile-section-switcher__position--visible {
   opacity: 1;
+}
+
+.mobile-section-switcher--sheet {
+  grid-template-columns: minmax(0, auto);
+  min-height: var(--dimension-size-500);
+  padding-inline: var(--dimension-space-150);
+  border-radius: var(--dimension-radius-half);
+  background: transparent;
+  --ds-interaction-border-width: var(--dimension-stroke-width-012);
+  --ds-interaction-border-color: var(--color-border-tertiary);
+}
+
+.mobile-section-switcher--combined {
+  display: flex;
+}
+
+.mobile-section-switcher__page-label {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.mobile-section-switcher__separator {
+  flex: 0 0 auto;
+}
+
+.mobile-section-switcher--combined .mobile-section-switcher__label {
+  flex: 0 0 auto;
+  max-width: 50%;
+}
+
+.mobile-section-sheet {
+  position: fixed;
+  inset: 0 0 auto;
+  width: 100%;
+  max-width: none;
+  max-height: calc(100dvh - var(--dimension-size-500) - var(--dimension-space-200));
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: var(--color-background-primary);
+  color: var(--color-foreground-secondary);
+  box-shadow: var(--effect-elevation-elevated-floating);
+  outline: none;
+}
+
+.mobile-section-sheet[open] {
+  display: flex;
+  flex-direction: column;
+  animation: mobileSectionSheetIn var(--effect-motion-short-2) both;
+}
+
+.mobile-section-sheet::backdrop {
+  background: var(--color-background-shade);
+  animation: mobileSectionShadeIn var(--effect-motion-short-2) both;
+}
+
+.mobile-section-sheet--closing[open] {
+  animation-name: mobileSectionSheetOut;
+}
+
+.mobile-section-sheet--closing::backdrop {
+  animation-name: mobileSectionShadeOut;
+}
+
+.mobile-section-sheet__items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dimension-space-100);
+  min-height: 0;
+  padding: var(--dimension-space-100);
+  padding-block-start: max(var(--dimension-space-100), env(safe-area-inset-top, 0px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.mobile-section-sheet__item {
+  appearance: none;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  height: var(--ds-control-height);
+  width: 100%;
+  min-width: 0;
+  padding: 0 var(--ds-control-padding-inline);
+  box-sizing: border-box;
+  border: 0;
+  border-radius: var(--ds-control-radius);
+  background: transparent;
+  color: inherit;
+  text-align: start;
+}
+
+.mobile-section-sheet__item[aria-current='page'] {
+  color: var(--color-foreground-primary);
+}
+
+.mobile-section-sheet__item:disabled {
+  color: var(--color-foreground-tertiary);
+}
+
+.mobile-section-sheet__label {
+  min-width: 0;
+  padding-inline: var(--ds-control-label-inset);
+}
+
+.mobile-section-sheet__divider {
+  flex: 0 0 auto;
+  height: var(--dimension-stroke-width-012);
+  margin-inline: var(--dimension-space-100);
+  background: var(--color-border-tertiary);
+}
+
+@keyframes mobileSectionSheetIn {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes mobileSectionSheetOut {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes mobileSectionShadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mobileSectionShadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-section-sheet[open],
+  .mobile-section-sheet::backdrop {
+    animation: none;
+  }
 }

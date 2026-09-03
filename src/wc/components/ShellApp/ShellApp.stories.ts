@@ -377,8 +377,8 @@ export const NestedPanelMobileCompatibility: Story = {
     docs: {
       description: {
         story:
-          'The panel preference remains set while mobile continues to use MobileHeader, ' +
-          'MobileSheetNav, and MobileBarNav.',
+          'The panel preference expands child routes inside MobileSheetNav. MobileHeader keeps ' +
+          'the page identity and combines it with the active local subsection in one sheet trigger.',
       },
     },
   },

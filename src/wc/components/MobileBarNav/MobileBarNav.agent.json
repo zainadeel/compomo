@@ -18,6 +18,7 @@
   ],
   "states": [
     "The fixed groups are Menu plus current area, followed by Search, Activity, Messages, and Agents.",
+    "The shell may retain Help in the context position while another global tool is selected; context identity and active selection are independent.",
     "Consumers that intentionally group multiple review tools can replace the Activity destination with Inbox.",
     "Selection promotes foreground to primary without painting a selected fill; unselected destinations use tertiary foreground.",
     "Opening Mobile Sheet Nav replaces the Menu glyph with Cross while preserving its accessible name.",

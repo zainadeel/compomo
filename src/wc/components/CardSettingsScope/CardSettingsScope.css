@@ -1,0 +1,48 @@
+@import '../../utils/text-decoration.css';
+@import '../../utils/focus-ring.css';
+@import '../../styles/control-elevation.css';
+
+:host {
+  display: block;
+  min-width: 0;
+  width: var(--dimension-card-width-md);
+  max-width: 100%;
+}
+
+.card-settings-scope {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0 var(--dimension-space-050);
+  box-sizing: border-box;
+  min-height: var(--dimension-size-600);
+  padding: var(--dimension-space-100) var(--dimension-space-200);
+  border-radius: var(--dimension-radius-125);
+  background: var(--color-background-primary);
+  color: var(--color-foreground-primary);
+}
+
+.card-settings-scope__action {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--dimension-size-400);
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--dimension-radius-025);
+  background: transparent;
+  cursor: pointer;
+}
+
+.card-settings-scope__action ds-text {
+  overflow-wrap: anywhere;
+  text-align: start;
+}
+
+@media (forced-colors: active) {
+  .card-settings-scope {
+    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-012));
+  }
+}

@@ -989,6 +989,7 @@ export class PanelNav {
       class: {
         'panel-nav__item': true,
         'panel-nav__child': true,
+        'ds-nav-disclosure__item': true,
         'panel-nav__child--active': isActive,
         'panel-nav__child--inactive': inactive,
         'panel-nav__item--active': isActive,
@@ -1001,6 +1002,8 @@ export class PanelNav {
       style: {
         '--_panel-nav-child-index': String(childIndex),
         '--_panel-nav-child-reverse-index': String(childReverseIndex),
+        '--ds-nav-disclosure-index': String(childIndex),
+        '--ds-nav-disclosure-reverse-index': String(childReverseIndex),
       },
       tabIndex: !inactive && rovingPosition === this.rovingIndex ? 0 : -1,
       onClick: () => this.emitChildSelect(parent, child),
@@ -1200,10 +1203,12 @@ export class PanelNav {
                                 'panel-nav__branch-divider': true,
                                 'panel-nav__branch-divider--before': true,
                                 'panel-nav__branch-divider--open': showBranchDividers,
+                                'ds-nav-disclosure-divider': true,
+                                'ds-nav-disclosure-divider--open': showBranchDividers,
                               }}
                               aria-hidden="true"
                             >
-                              <div class="panel-nav__branch-divider-clip">
+                              <div class="panel-nav__branch-divider-clip ds-nav-disclosure-divider__clip">
                                 <span class="panel-nav__branch-divider-line"></span>
                               </div>
                             </div>
@@ -1215,6 +1220,8 @@ export class PanelNav {
                               class={{
                                 'panel-nav__children-accordion': true,
                                 'panel-nav__children-accordion--open': expanded,
+                                'ds-nav-disclosure': true,
+                                'ds-nav-disclosure--open': expanded,
                               }}
                               aria-hidden={expanded ? undefined : 'true'}
                               inert={expanded ? undefined : true}
@@ -1236,10 +1243,12 @@ export class PanelNav {
                                 'panel-nav__branch-divider': true,
                                 'panel-nav__branch-divider--after': true,
                                 'panel-nav__branch-divider--open': showBranchDividers,
+                                'ds-nav-disclosure-divider': true,
+                                'ds-nav-disclosure-divider--open': showBranchDividers,
                               }}
                               aria-hidden="true"
                             >
-                              <div class="panel-nav__branch-divider-clip">
+                              <div class="panel-nav__branch-divider-clip ds-nav-disclosure-divider__clip">
                                 <span class="panel-nav__branch-divider-line"></span>
                               </div>
                             </div>

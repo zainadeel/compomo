@@ -553,7 +553,253 @@ test.describe('Managed application shell', () => {
       .toBeLessThan(0.5);
   });
 
-  test('opens Help from the managed mobile sheet and omits the optional Account shortcut', async ({
+  test('expands mobile child routes without navigating in nested mode @pr-critical', async ({
+    page,
+  }) => {
+    const shell = page.locator('#managed-shell');
+    await page.setViewportSize({ width: 390, height: 760 });
+    await shell.evaluate(element => {
+      (element as HTMLDsShellAppElement).sectionNavigation = 'panel';
+    });
+    const header = shell.locator('ds-mobile-header[slot="mobile-header"]');
+    await expect(
+      header.getByRole('heading', { name: 'Fleet overview', exact: true })
+    ).toBeVisible();
+    await expect(header.getByRole('button', { name: /Current section: Overview/ })).toHaveCount(0);
+    await shell.getByRole('button', { name: 'Menu', exact: true }).click();
+    const sheet = shell.locator('ds-mobile-sheet-nav');
+    const tracking = sheet.getByRole('button', { name: 'Tracking', exact: true });
+    const maintenance = sheet.getByRole('button', { name: 'Maintenance', exact: true });
+    await expect(sheet.locator('ds-icon[name="ChevronDown"]')).toHaveCount(0);
+    const trackingBranch = sheet.locator('.mobile-sheet-nav__branch').filter({
+      has: page.getByRole('button', { name: 'Tracking', exact: true }),
+    });
+    const maintenanceBranch = sheet
+      .locator('.mobile-sheet-nav__branch')
+      .filter({ has: page.getByRole('button', { name: 'Maintenance', exact: true }) });
+    await expect(trackingBranch.locator('.mobile-sheet-nav__divider--before')).toHaveCount(0);
+    await expect(trackingBranch.locator('.mobile-sheet-nav__divider--after')).toHaveCSS(
+      'opacity',
+      '1'
+    );
+    await expect(tracking).toHaveAttribute('aria-expanded', 'true');
+    await expect(sheet.getByRole('button', { name: 'Overview', exact: true })).toHaveAttribute(
+      'aria-current',
+      'page'
+    );
+    const before = await page.locator('html').getAttribute('data-last-event');
+    await maintenance.click();
+    await expect(maintenance).toHaveAttribute('aria-expanded', 'true');
+    await expect(tracking).toHaveAttribute('aria-expanded', 'false');
+    for (const position of ['before', 'after']) {
+      const divider = maintenanceBranch.locator(`.mobile-sheet-nav__divider--${position}`);
+      await expect(divider).toHaveCSS('opacity', '1');
+      await expect(divider).toHaveCSS('transition-property', 'grid-template-rows, opacity');
+      await expect(divider).toHaveCSS('transition-duration', '0.5s, 0.5s');
+    }
+    await expect(trackingBranch.locator('.mobile-sheet-nav__divider--after')).toHaveCSS(
+      'grid-template-rows',
+      '0px'
+    );
+    expect(await page.locator('html').getAttribute('data-last-event')).toBe(before);
+    const group = sheet.getByRole('group', { name: 'Maintenance', exact: true });
+    const child = group.getByRole('button', { name: 'Schedules', exact: true });
+    await expect(child).toHaveCSS('height', '40px');
+    const animation = await child.evaluate(element => ({
+      duration: getComputedStyle(element).transitionDuration,
+      delay: getComputedStyle(element).transitionDelay,
+    }));
+    expect(animation.duration).toContain('0.5s');
+    expect(animation.delay).toContain('0.3s');
+    await child.focus();
+    await child.press('ArrowLeft');
+    await expect(maintenance).toBeFocused();
+    await expect(maintenance).toHaveAttribute('aria-expanded', 'false');
+    await expect(maintenanceBranch.locator('.mobile-sheet-nav__divider--before')).toHaveCSS(
+      'opacity',
+      '0'
+    );
+    await expect(maintenanceBranch.locator('.mobile-sheet-nav__divider--after')).toHaveCSS(
+      'grid-template-rows',
+      '0px'
+    );
+    await maintenance.press('Enter');
+    await child.click();
+    await expect(shell.getByRole('button', { name: 'Menu', exact: true })).toHaveAttribute(
+      'aria-expanded',
+      'false'
+    );
+    await expect
+      .poll(() =>
+        shell.evaluate(element => (element as HTMLDsShellAppElement).navigation.currentUrl)
+      )
+      .toBe('/dashboard/maintenance/schedules');
+    await shell.getByRole('button', { name: 'Menu', exact: true }).click();
+    await expect(maintenance).toHaveAttribute('aria-expanded', 'true');
+    await expect(child).toHaveAttribute('aria-current', 'page');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await expect(child).toHaveCSS('transition-duration', '0s');
+    await shell.evaluate(element => {
+      (element as HTMLDsShellAppElement).sectionNavigation = 'bar';
+    });
+    await expect(maintenance).not.toHaveAttribute('aria-expanded');
+    await expect(sheet.locator('.mobile-sheet-nav__child')).toHaveCount(0);
+    await sheet.getByRole('button', { name: 'Safety', exact: true }).click();
+    await expect(page.locator('html')).toHaveAttribute(
+      'data-last-event',
+      JSON.stringify({ type: 'dsNavSelect', detail: 'safety' })
+    );
+  });
+
+  test('combines detail identity and local tabs in one sheet trigger in both navigation modes @cross-browser', async ({
+    page,
+  }) => {
+    const shell = page.locator('#managed-shell');
+    await shell.evaluate(element => {
+      const managed = element as HTMLDsShellAppElement;
+      managed.sectionNavigation = 'panel';
+      managed.pageChrome = {
+        ...managed.pageChrome,
+        heading: 'John Smith',
+        showBack: true,
+        backAriaLabel: 'Back to People',
+        subsections: [
+          { id: 'summary', label: 'Summary' },
+          { id: 'history', label: 'History' },
+        ],
+        subvalue: 'summary',
+        primaryAction: { id: 'call-driver', label: 'Call driver' },
+        actions: [{ id: 'message-driver', label: 'Message driver' }],
+      };
+    });
+    const header = shell.locator('ds-mobile-header[slot="mobile-header"]');
+    for (const mode of ['bar', 'panel'] as const) {
+      await shell.evaluate((element, mode) => {
+        (element as HTMLDsShellAppElement).sectionNavigation = mode;
+      }, mode);
+      for (const width of [320, 390, 430]) {
+        await page.setViewportSize({ width, height: 760 });
+        await expect(header).toHaveJSProperty('subsectionsPlacement', 'combined');
+        await expect(header.locator('.mobile-header__subsections')).toHaveCount(0);
+        const title = header.getByRole('heading', { name: 'John Smith', exact: true });
+        const picker = header.getByRole('button', { name: /Current section: Summary/ });
+        await expect(title).toHaveCount(1);
+        await expect(picker).toHaveAttribute('aria-haspopup', 'dialog');
+        await expect(picker).toHaveText('John Smith·Summary');
+        await expect(picker).toHaveCSS('height', '40px');
+        const pickerBox = await picker.boundingBox();
+        const backBox = await header.getByRole('button', { name: 'Back to People' }).boundingBox();
+        const actionsBox = await header
+          .getByRole('button', { name: 'More page actions' })
+          .boundingBox();
+        expect([backBox!.width, backBox!.height]).toEqual([40, 40]);
+        expect([actionsBox!.width, actionsBox!.height]).toEqual([40, 40]);
+        await expect(header.locator('.mobile-header__primary')).toHaveCSS('height', '56px');
+        for (const label of ['Back to People', 'More page actions']) {
+          const icon = header.getByRole('button', { name: label }).locator('ds-icon');
+          await expect(icon).toHaveCSS('width', '24px');
+          await expect(icon).toHaveCSS('height', '24px');
+        }
+        expect(pickerBox!.x).toBeGreaterThanOrEqual(backBox!.x + backBox!.width);
+        expect(pickerBox!.x + pickerBox!.width).toBeLessThanOrEqual(actionsBox!.x);
+        await expect(header.getByRole('button', { name: 'Back to People' })).toBeVisible();
+        await expect(header.getByRole('button', { name: 'More page actions' })).toHaveCount(1);
+        const bounds = await header.evaluate(element => ({
+          width: element.clientWidth,
+          scrollWidth: element.scrollWidth,
+        }));
+        expect(bounds.scrollWidth).toBeLessThanOrEqual(bounds.width);
+        const label = picker.locator('.mobile-section-switcher__label .ds-text__element');
+        expect(await label.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(
+          true
+        );
+      }
+    }
+    // The identity portion and active tab are the same tap target.
+    await header.locator('.mobile-section-switcher__page-label').click();
+    const sheet = header.getByRole('dialog');
+    await expect(sheet.getByRole('menuitem', { name: 'Summary', exact: true })).toBeFocused();
+    await expect(sheet.getByRole('menuitem')).toHaveCount(2);
+    await page.getByRole('menuitem', { name: 'History', exact: true }).click();
+    await expect(page.locator('html')).toHaveAttribute(
+      'data-last-event',
+      JSON.stringify({ type: 'dsSubsectionChange', detail: 'history' })
+    );
+    await expect(sheet).not.toBeVisible();
+    await shell.evaluate(element => {
+      const shell = element as HTMLDsShellAppElement;
+      shell.pageChrome = { ...shell.pageChrome, subvalue: 'history' };
+    });
+    await expect(
+      header.getByRole('button', { name: /John Smith.*Current section: History/ })
+    ).toHaveText('John Smith·History');
+    await shell.evaluate(element => {
+      const shell = element as HTMLDsShellAppElement;
+      shell.pageChrome = {
+        ...shell.pageChrome,
+        heading: 'John Alexander Smith with a very long name',
+      };
+    });
+    await page.setViewportSize({ width: 320, height: 760 });
+    const longPicker = header.getByRole('button', {
+      name: /John Alexander Smith.*Current section: History/,
+    });
+    const localLabel = longPicker.locator('.mobile-section-switcher__label .ds-text__element');
+    expect(await localLabel.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(
+      true
+    );
+    expect(await longPicker.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(
+      true
+    );
+    await header.getByRole('button', { name: 'More page actions' }).click();
+    await expect(page.getByRole('menuitem', { name: 'Call driver', exact: true })).toBeVisible();
+    await expect(page.getByRole('menuitem', { name: 'Call driver', exact: true })).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(header.getByRole('button', { name: 'More page actions' })).toBeFocused();
+  });
+
+  test('centers mobile page titles with asymmetric actions @cross-browser', async ({ page }) => {
+    const shell = page.locator('#managed-shell');
+    await shell.evaluate(element => {
+      const managed = element as HTMLDsShellAppElement;
+      managed.sectionNavigation = 'panel';
+      managed.pageChrome = {
+        heading: 'People',
+        showBack: false,
+        subsections: [
+          { id: 'drivers', label: 'Drivers' },
+          { id: 'managers', label: 'Managers' },
+        ],
+        subvalue: 'drivers',
+        actions: [{ id: 'export', label: 'Export' }],
+      };
+    });
+    const header = shell.locator('ds-mobile-header[slot="mobile-header"]');
+    for (const width of [320, 390, 430]) {
+      await page.setViewportSize({ width, height: 760 });
+      const picker = header.getByRole('button', { name: /Current section: Drivers/ });
+      await expect(picker).toBeVisible();
+      const bounds = (await header.boundingBox())!;
+      const title = (await picker.boundingBox())!;
+      expect(Math.abs(title.x + title.width / 2 - bounds.x - bounds.width / 2)).toBeLessThan(0.5);
+      await expect(header.getByRole('button', { name: 'Back', exact: true })).toHaveCount(0);
+      await expect(header.getByRole('button', { name: 'More page actions' })).toHaveCSS(
+        'width',
+        '40px'
+      );
+    }
+    await shell.evaluate(element => {
+      const managed = element as HTMLDsShellAppElement;
+      managed.pageChrome = { ...managed.pageChrome, heading: 'Overview', subsections: [] };
+    });
+    await expect(header.locator('ds-text.mobile-header__heading')).toHaveJSProperty(
+      'variant',
+      'text-body-large'
+    );
+    await expect(header.locator('.mobile-header__primary')).toHaveCSS('height', '56px');
+  });
+
+  test('preserves Help as the primary mobile destination across tools @pr-critical', async ({
     page,
   }) => {
     const shell = page.locator('#managed-shell');
@@ -601,6 +847,33 @@ test.describe('Managed application shell', () => {
       JSON.stringify({ type: 'dsToolChange', detail: { id: 'help', selected: true } })
     );
 
+    const bar = shell.locator('ds-mobile-bar-nav');
+    const help = bar.getByRole('button', { name: 'Help & Support' });
+    const helpView = shell.getByText('Help view', { exact: true });
+    await helpView.evaluate(element => {
+      element.dataset.identity = 'preserved';
+    });
+    for (const tool of ['Search', 'Activity', 'Messages', 'Agents']) {
+      await bar.getByRole('button', { name: tool, exact: true }).click();
+      await expect(help).toBeVisible();
+      await expect(help).not.toHaveAttribute('aria-current', 'page');
+      await expect(bar.getByRole('button', { name: tool, exact: true })).toHaveAttribute(
+        'aria-current',
+        'page'
+      );
+      await bar.getByRole('button', { name: 'Menu' }).click();
+      await bar.getByRole('button', { name: 'Menu' }).click();
+      await expect(bar.getByRole('button', { name: tool, exact: true })).toHaveAttribute(
+        'aria-current',
+        'page'
+      );
+      await help.click();
+      await expect(helpView).toBeVisible();
+      await expect(helpView).toHaveAttribute('data-identity', 'preserved');
+      await expect(help).toHaveAttribute('aria-current', 'page');
+      await expect(help).toBeFocused();
+    }
+
     await shell.getByRole('button', { name: 'Menu' }).click();
     const trackingDestination = shell
       .locator('ds-mobile-sheet-nav')
@@ -612,6 +885,7 @@ test.describe('Managed application shell', () => {
       'aria-current',
       'page'
     );
+    await expect(help).toHaveCount(0);
   });
 
   test('supports a pinned roomy table-page header with flush content and optional divider', async ({

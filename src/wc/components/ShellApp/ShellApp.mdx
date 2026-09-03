@@ -75,9 +75,14 @@ Standard routed content therefore starts at the normal 32px desktop or 16px
 tablet gutter, while full-bleed pages remain full bleed. Route components do not
 need to branch on the navigation preference.
 
+On mobile, bar mode keeps flat area navigation and the header's section picker.
+Panel mode instead expands child routes inside the menu without navigating on
+parent taps. When local subsections exist, the header combines the page title
+and active subsection in one sheet trigger. Detail pages use this combined
+control in both modes and retain their separate Back and page actions.
+
 Keep this input controlled when users can change the preference. ShellApp does
-not store the preference, and changing it does not change mobile chrome or
-recreate routed and tool content.
+not store it, and switching modes does not recreate routed or tool content.
 
 Banner visibility is also application-owned. Handle its `dsClose` event by
 setting `open=false`, and keep it mounted until `dsAfterClose` when conditional

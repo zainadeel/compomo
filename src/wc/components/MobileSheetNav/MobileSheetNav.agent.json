@@ -18,7 +18,10 @@
     "Escape requests dismissal and opening moves focus to the selected or first available area."
   ],
   "states": [
-    "Dashboard and Settings change only the flat destination collection being browsed.",
+    "Dashboard and Settings change only the destination collection being browsed.",
+    "In nested mode, parents with child routes disclose inline without navigating. Only selecting a child emits route intent; parents without children retain direct navigation.",
+    "Nested branches use the same positional divider and staggered child motion as expanded desktop navigation, without adding disclosure chevrons. Dividers separate an expanded branch from its siblings, not from the outside edge of its group.",
+    "Opening the sheet reveals the current route's branch. Collapsed child groups are inert and hidden from assistive technology while the shared navigation motion runs; child targets keep the mobile row density.",
     "Area, Help, and Account events express intent while the application owns navigation and product behavior.",
     "Set routeSelectionActive to false while a global tool owns the mobile stage so the underlying router URL remains available without marking its area current.",
     "Set showAccount to false when account and user preferences already live in the supplied Settings navigation."

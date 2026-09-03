@@ -57,6 +57,44 @@ export const Foundation: Story = {
   `,
 };
 
+export const Nested: Story = {
+  render: () => html`
+    <div style="height: 720px; max-width: 430px; margin: 0 auto;">
+      <ds-mobile-sheet-nav
+        open
+        presentation="nested"
+        current-url="/dashboard/tracking/live-map"
+        .dashboardGroups=${[
+          {
+            items: [
+              {
+                id: 'tracking',
+                label: 'Tracking',
+                icon: 'MapPage',
+                children: [
+                  { id: 'live-map', label: 'Live Map', href: '/dashboard/tracking/live-map' },
+                  { id: 'history', label: 'Location History', href: '/dashboard/tracking/history' },
+                ],
+              },
+              {
+                id: 'safety',
+                label: 'Safety',
+                icon: 'ShieldCircle',
+                children: [
+                  { id: 'overview', label: 'Overview', href: '/dashboard/safety/overview' },
+                  { id: 'events', label: 'Events', href: '/dashboard/safety/events', dot: true },
+                  { id: 'settings', label: 'Settings', href: '/dashboard/safety/settings' },
+                ],
+              },
+            ],
+          },
+        ]}
+        .settingsGroups=${settingsGroups}
+      ></ds-mobile-sheet-nav>
+    </div>
+  `,
+};
+
 export const WithoutAccount: Story = {
   render: () => html`
     <div style="height: 720px; max-width: 430px; margin: 0 auto;">

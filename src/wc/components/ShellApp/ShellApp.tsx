@@ -103,7 +103,7 @@ export class ShellApp {
   /** Router-owned navigation data used by managed composition. */
   @Prop() navigation: ShellNavigationConfig = {};
 
-  /** Desktop/tablet route sections in BarNav, or nested beneath PanelNav parents. */
+  /** Route sections in bar/header pickers, or nested beneath desktop and mobile menu parents. */
   @Prop({ attribute: 'section-navigation', reflect: true })
   sectionNavigation: ShellSectionNavigation = 'bar';
 
@@ -193,6 +193,7 @@ export class ShellApp {
   @State() private managedActiveTool: PanelToolsToolId | '' = '';
   @State() private managedToolPresentation: 'drawer' | 'fullscreen' = 'drawer';
   @State() private managedMobileDestination: MobileDestination = 'area';
+  @State() private managedMobilePrimaryDestination: 'area' | 'help' = 'area';
   @State() private managedMobileSheetNavOpen = false;
   @State() private managedInboxTool: ShellInboxToolId | '' = '';
   @State() private managedBrowseContext: NavChromeStyle = 'dashboard';
@@ -314,8 +315,11 @@ export class ShellApp {
   }
 
   @Watch('navigation')
-  handleNavigationChange() {
+  handleNavigationChange(next: ShellNavigationConfig, previous: ShellNavigationConfig) {
     this.managedBrowseContext = this.navigation.browseContext ?? this.navStyle;
+    if (next.currentUrl !== previous.currentUrl || next.activeId !== previous.activeId) {
+      this.managedMobilePrimaryDestination = 'area';
+    }
   }
 
   @Watch('pageChrome')
@@ -325,6 +329,9 @@ export class ShellApp {
 
   @Watch('tools')
   handleToolsChange() {
+    if (!this.resolvedToolItems.some(item => item.id === 'help' && !item.isInactive)) {
+      this.managedMobilePrimaryDestination = 'area';
+    }
     if (
       this.managedActiveTool &&
       !this.resolvedToolItems.some(item => item.id === this.managedActiveTool)
@@ -778,6 +785,7 @@ export class ShellApp {
     this.managedActiveTool = id;
     this.managedToolsOpen = true;
     if (itemUsesShellInbox(item)) this.managedInboxTool = id;
+    if (destination === 'help') this.managedMobilePrimaryDestination = 'help';
     this.dsToolChange.emit({ id: id as PanelToolsToolId, selected: true });
     return true;
   }
@@ -806,8 +814,18 @@ export class ShellApp {
 
     this.managedMobileSheetNavOpen = false;
     this.managedMobileDestination = 'area';
+    this.managedMobilePrimaryDestination = 'area';
     this.managedToolsOpen = false;
     this.dsNavSelect.emit(event.detail);
+  };
+
+  private handleManagedMobileChildSelect = (event: CustomEvent<PanelNavChildSelectDetail>) => {
+    event.stopPropagation();
+    this.managedMobileSheetNavOpen = false;
+    this.managedMobileDestination = 'area';
+    this.managedMobilePrimaryDestination = 'area';
+    this.managedToolsOpen = false;
+    this.dsNavChildSelect.emit(event.detail);
   };
 
   private handleManagedBrowseContext = (event: CustomEvent<NavChromeStyle>) => {
@@ -1036,6 +1054,7 @@ export class ShellApp {
     return (
       <ds-mobile-sheet-nav
         open={this.managedMobileSheetNavOpen}
+        presentation={this.sectionNavigation === 'panel' ? 'nested' : 'flat'}
         browseContext={this.managedBrowseContext}
         dashboardGroups={navigation.dashboardGroups ?? navigation.groups ?? []}
         settingsGroups={navigation.settingsGroups ?? []}
@@ -1047,6 +1066,7 @@ export class ShellApp {
         accountLabel={navigation.accountLabel ?? 'Account'}
         showAccount={navigation.showMobileAccount ?? true}
         onDsAreaSelect={this.handleManagedAreaSelect}
+        onDsNavChildSelect={this.handleManagedMobileChildSelect}
         onDsBrowseContextChange={this.handleManagedBrowseContext}
         onDsClose={this.handleManagedSheetClose}
       />
@@ -1066,6 +1086,7 @@ export class ShellApp {
       <ds-mobile-bar-nav
         hidden={this.tools.mobileBarHidden ?? false}
         activeDestination={this.managedMobileDestination}
+        primaryDestination={this.managedMobilePrimaryDestination}
         currentArea={this.currentArea}
         sheetNavExpanded={this.managedMobileSheetNavOpen}
         searchLabel={label('search', 'Search')}
@@ -1100,7 +1121,7 @@ export class ShellApp {
         <ds-button-unfilled
           variant="icon"
           icon={this.pageChrome.backIcon ?? 'ChevronLeft'}
-          size="md"
+          size="lg"
           aria-label={this.pageChrome.backAriaLabel ?? 'Back'}
           activeFill={false}
           hasBorder={false}
@@ -1127,7 +1148,7 @@ export class ShellApp {
             id={action.triggerId || undefined}
             variant="icon"
             icon={action.icon}
-            size="md"
+            size="lg"
             aria-label={action.ariaLabel}
             haspopup={action.haspopup}
             controls={action.controls}
@@ -1148,7 +1169,7 @@ export class ShellApp {
               variant="icon"
               icon={action.icon}
               aria-label={action.ariaLabel}
-              size="md"
+              size="lg"
               intent={action.intent ?? 'brand'}
               contrast={action.contrast ?? 'bold'}
               isInactive={action.isInactive}
@@ -1160,7 +1181,7 @@ export class ShellApp {
               variant="icon"
               icon={action.icon}
               aria-label={action.ariaLabel}
-              size="md"
+              size="lg"
               isInactive={action.isInactive}
               isLoading={action.isLoading}
               activeFill={false}
@@ -1185,7 +1206,7 @@ export class ShellApp {
                 variant="icon"
                 icon="Ellipses"
                 aria-label={this.pageChrome.actionsAriaLabel ?? 'More page actions'}
-                size="md"
+                size="lg"
                 activeFill={false}
                 hasBorder={false}
                 haspopup="menu"
@@ -1295,7 +1316,8 @@ export class ShellApp {
 
   private renderManagedPage() {
     const page = this.pageChrome;
-    const mobileSections = page.showBack ? [] : this.resolvedPageTabs;
+    const nestedNavigation = this.sectionNavigation === 'panel';
+    const mobileSections = page.showBack || nestedNavigation ? [] : this.resolvedPageTabs;
     return [
       <ds-shell-page
         responsiveMode={this.resolvedMode}
@@ -1317,6 +1339,7 @@ export class ShellApp {
           value={page.showBack ? '' : (page.value ?? '')}
           sectionsAriaLabel={page.sectionsAriaLabel ?? 'Change page section'}
           subsections={page.subsections ?? []}
+          subsectionsPlacement={page.showBack || nestedNavigation ? 'combined' : 'below'}
           subvalue={page.subvalue ?? ''}
           subsectionsAriaLabel={page.subsectionsAriaLabel ?? 'Change page subsection'}
           tone={page.tone ?? 'default'}
