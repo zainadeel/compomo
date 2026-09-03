@@ -4,6 +4,12 @@
 
 /* Inactive: `.ds-control-inactive` (50% opacity). */
 
+.menu-empty {
+  padding: var(--dimension-space-200);
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+}
+
 .menu-item--destructive .menu-item__label {
   /* Beat ds-text color-* host classes for destructive rows. */
   color: var(--color-foreground-bold-negative) !important;

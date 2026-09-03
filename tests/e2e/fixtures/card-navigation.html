@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Navigation cards</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Settings</h1>
+      <ds-card-navigation
+        id="navigation-only-card"
+        heading="Profiles"
+        description="Manage product settings for groups."
+        href="/profiles"
+        card-width="sm"
+      ></ds-card-navigation>
+
+      <ds-card-navigation
+        id="content-card"
+        heading="Coaching"
+        description="Choose how you want to coach your drivers."
+        href="/coaching"
+        card-width="sm"
+        variant="content"
+      >
+        <button type="button">Body action</button>
+      </ds-card-navigation>
+    </main>
+
+    <script type="module" src="/card-navigation-setup.mjs"></script>
+  </body>
+</html>

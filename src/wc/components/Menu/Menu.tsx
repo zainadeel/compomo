@@ -45,6 +45,7 @@ import {
 
 export type MenuSelectionMode = 'none' | 'single';
 export type MenuSize = ControlSize;
+let menuId = 0;
 const MENU_ITEM_TAG_SIZE: Record<MenuSize, 'md' | 'sm' | 'xs'> = {
   lg: 'md',
   md: 'sm',
@@ -88,6 +89,8 @@ export class Menu {
   @Prop() initialFocusVisible: boolean = false;
   /** Accessible name for the popup menu. */
   @Prop() menuLabel: string = 'Menu';
+  /** Informational message shown when there are no choices. Uses a non-modal dialog, not a fake menu item. */
+  @Prop() emptyMessage: string = '';
 
   @State() private shouldRender: boolean = false;
   @State() private closing: boolean = false;
@@ -196,6 +199,8 @@ export class Menu {
   /** Last content actually painted while open; retained unchanged through exit motion. */
   private lastRenderedSections: MenuSection[] = [];
   private closingSections: MenuSection[] | null = null;
+  private readonly emptyMessageId = `ds-menu-empty-${++menuId}`;
+  private lastRenderedEmptyMessage = '';
 
   componentDidLoad() {
     if (this.open) this.onOpenChange(true);
@@ -363,6 +368,12 @@ export class Menu {
 
   /** Focus the selected item when present, otherwise the first enabled item. */
   private focusInitialItem() {
+    if (!this.hasCompositeSections && !this.flatItems.length && this.emptyMessage.trim()) {
+      requestAnimationFrame(() => {
+        if (this.open) this.el.querySelector<HTMLElement>('.menu-popup')?.focus();
+      });
+      return;
+    }
     if (this.hasCompositeSections) {
       requestAnimationFrame(() => {
         this.el.querySelector<HTMLElement>('.menu-popup [tabindex="0"]')?.focus();
@@ -649,7 +660,13 @@ export class Menu {
       ? (this.closingSections ?? this.lastRenderedSections)
       : this.activeSections;
     const hasCompositeSections = sections.some(isMenuPickerSection);
+    const emptyMessage = this.closing ? this.lastRenderedEmptyMessage : this.emptyMessage.trim();
+    const showEmpty =
+      Boolean(emptyMessage) &&
+      !hasCompositeSections &&
+      sections.every(section => !isMenuPickerSection(section) && section.items.length === 0);
     if (!this.closing) {
+      this.lastRenderedEmptyMessage = emptyMessage;
       this.lastRenderedSections = snapshotMenuSections(sections);
       this.closingSections = null;
     }
@@ -684,238 +701,256 @@ export class Menu {
             'menu-popup--closing': this.closing,
             'ds-choice-popup': true,
             'ds-choice-popup--closing': this.closing,
+            'ds-focus-ring': showEmpty,
+            'ds-focus-ring--visible': showEmpty && this.focusRingVisible,
           }}
           style={popupStyle}
-          role={hasCompositeSections ? 'dialog' : 'menu'}
+          role={hasCompositeSections || showEmpty ? 'dialog' : 'menu'}
           aria-label={this.menuLabel}
-          aria-orientation={hasCompositeSections ? undefined : 'vertical'}
+          aria-orientation={hasCompositeSections || showEmpty ? undefined : 'vertical'}
+          aria-describedby={showEmpty ? this.emptyMessageId : undefined}
+          tabIndex={showEmpty ? -1 : undefined}
         >
           <div class="ds-choice-list">
-            {sections.map((section, si) => (
-              <div
-                key={si}
-                class={{
-                  'menu-section': true,
-                  'menu-section--divided': si < sections.length - 1,
-                  'menu-section--swatch-picker': isMenuPickerSection(section),
-                  'ds-choice-section': true,
-                  'ds-chrome-column': true,
-                  'ds-chrome-space--sm': true,
-                  'ds-choice-section--divided': si < sections.length - 1,
-                  'ds-choice-section--headed-after-first': si > 0 && Boolean(section.header),
-                }}
-                role={section.header ? 'group' : undefined}
-                aria-label={section.header}
+            {showEmpty ? (
+              <ds-text
+                textId={this.emptyMessageId}
+                class="menu-empty"
+                as="p"
+                variant={CONTROL_TEXT_VARIANT[this.size]}
+                color="secondary"
               >
-                {section.header && (
-                  <ds-text
-                    class={`section-header ds-choice-section__header ds-control-section-heading ds-control--${this.size}`}
-                    as="span"
-                    variant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
-                    emphasis
-                    color="primary"
-                    aria-hidden="true"
-                  >
-                    <span class="ds-choice-section__header-label">{section.header}</span>
-                  </ds-text>
-                )}
-                {isMenuSwatchPickerSection(section) ? (
-                  <ds-swatch-picker
-                    value={section.value}
-                    groupLabel={section.groupLabel ?? section.header ?? 'Swatch options'}
-                    options={section.options ?? []}
-                    sections={section.sections ?? []}
-                    onDsChange={(e: CustomEvent<string>) => {
-                      e.stopPropagation();
-                      this.handleSwatchSelect(e.detail);
-                    }}
-                  />
-                ) : (
-                  section.items.map((item, itemIndex) => {
-                    const idx = flatIdx++;
-                    const isFocused = this.focusedIndex === idx;
-                    const isSingleSelectionItem =
-                      !hasCompositeSections && this.selectionMode === 'single' && !item.showSwitch;
-                    const usesLeading = section.items.some(
-                      candidate => candidate.reorderable || !!candidate.icon
-                    );
-                    const locked = !!item.isInactive && !item.reorderable;
-                    const dragging = this.reorderFromFlat === idx;
-                    const dropBefore =
-                      dragLocated?.sectionIndex === si &&
-                      dragRange !== null &&
-                      itemIndex <= dragRange.end &&
-                      this.reorderInsertBefore === itemIndex;
-                    const dropAfter =
-                      dragLocated?.sectionIndex === si &&
-                      dragRange !== null &&
-                      this.reorderInsertBefore === dragRange.end + 1 &&
-                      itemIndex === dragRange.end;
-                    return (
-                      <button
-                        key={item.value ?? `${si}-${item.label}`}
-                        type="button"
-                        class={{
-                          'menu-item': true,
-                          'ds-choice-item': true,
-                          'ds-control-frame': true,
-                          [`ds-control--${this.size}`]: true,
-                          'ds-focus-ring-inset': true,
-                          'ds-focus-ring--visible': isFocused && this.focusRingVisible,
-                          'ds-interaction-fill': !locked,
-                          'ds-interaction-fill--selected': !!item.isSelected && !locked,
-                          'menu-item--selected': !!item.isSelected,
-                          'menu-item--switch': !!item.showSwitch,
-                          'ds-control-inactive': locked,
-                          'menu-item--destructive': !!item.isDestructive,
-                          'menu-item--focused': isFocused,
-                          'menu-item--dragging': dragging,
-                        }}
-                        role={
-                          hasCompositeSections
-                            ? undefined
-                            : item.showSwitch
-                              ? 'menuitemcheckbox'
+                {emptyMessage}
+              </ds-text>
+            ) : (
+              sections.map((section, si) => (
+                <div
+                  key={si}
+                  class={{
+                    'menu-section': true,
+                    'menu-section--divided': si < sections.length - 1,
+                    'menu-section--swatch-picker': isMenuPickerSection(section),
+                    'ds-choice-section': true,
+                    'ds-chrome-column': true,
+                    'ds-chrome-space--sm': true,
+                    'ds-choice-section--divided': si < sections.length - 1,
+                    'ds-choice-section--headed-after-first': si > 0 && Boolean(section.header),
+                  }}
+                  role={section.header ? 'group' : undefined}
+                  aria-label={section.header}
+                >
+                  {section.header && (
+                    <ds-text
+                      class={`section-header ds-choice-section__header ds-control-section-heading ds-control--${this.size}`}
+                      as="span"
+                      variant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
+                      emphasis
+                      color="primary"
+                      aria-hidden="true"
+                    >
+                      <span class="ds-choice-section__header-label">{section.header}</span>
+                    </ds-text>
+                  )}
+                  {isMenuSwatchPickerSection(section) ? (
+                    <ds-swatch-picker
+                      value={section.value}
+                      groupLabel={section.groupLabel ?? section.header ?? 'Swatch options'}
+                      options={section.options ?? []}
+                      sections={section.sections ?? []}
+                      onDsChange={(e: CustomEvent<string>) => {
+                        e.stopPropagation();
+                        this.handleSwatchSelect(e.detail);
+                      }}
+                    />
+                  ) : (
+                    section.items.map((item, itemIndex) => {
+                      const idx = flatIdx++;
+                      const isFocused = this.focusedIndex === idx;
+                      const isSingleSelectionItem =
+                        !hasCompositeSections &&
+                        this.selectionMode === 'single' &&
+                        !item.showSwitch;
+                      const usesLeading = section.items.some(
+                        candidate => candidate.reorderable || !!candidate.icon
+                      );
+                      const locked = !!item.isInactive && !item.reorderable;
+                      const dragging = this.reorderFromFlat === idx;
+                      const dropBefore =
+                        dragLocated?.sectionIndex === si &&
+                        dragRange !== null &&
+                        itemIndex <= dragRange.end &&
+                        this.reorderInsertBefore === itemIndex;
+                      const dropAfter =
+                        dragLocated?.sectionIndex === si &&
+                        dragRange !== null &&
+                        this.reorderInsertBefore === dragRange.end + 1 &&
+                        itemIndex === dragRange.end;
+                      return (
+                        <button
+                          key={item.value ?? `${si}-${item.label}`}
+                          type="button"
+                          class={{
+                            'menu-item': true,
+                            'ds-choice-item': true,
+                            'ds-control-frame': true,
+                            [`ds-control--${this.size}`]: true,
+                            'ds-focus-ring-inset': true,
+                            'ds-focus-ring--visible': isFocused && this.focusRingVisible,
+                            'ds-interaction-fill': !locked,
+                            'ds-interaction-fill--selected': !!item.isSelected && !locked,
+                            'menu-item--selected': !!item.isSelected,
+                            'menu-item--switch': !!item.showSwitch,
+                            'ds-control-inactive': locked,
+                            'menu-item--destructive': !!item.isDestructive,
+                            'menu-item--focused': isFocused,
+                            'menu-item--dragging': dragging,
+                          }}
+                          role={
+                            hasCompositeSections
+                              ? undefined
+                              : item.showSwitch
+                                ? 'menuitemcheckbox'
+                                : isSingleSelectionItem
+                                  ? 'menuitemradio'
+                                  : 'menuitem'
+                          }
+                          aria-checked={
+                            !hasCompositeSections && item.showSwitch
+                              ? String(!!item.switchValue)
                               : isSingleSelectionItem
-                                ? 'menuitemradio'
-                                : 'menuitem'
-                        }
-                        aria-checked={
-                          !hasCompositeSections && item.showSwitch
-                            ? String(!!item.switchValue)
-                            : isSingleSelectionItem
-                              ? String(!!item.isSelected)
+                                ? String(!!item.isSelected)
+                                : undefined
+                          }
+                          aria-pressed={
+                            hasCompositeSections
+                              ? String(item.showSwitch ? !!item.switchValue : !!item.isSelected)
                               : undefined
-                        }
-                        aria-pressed={
-                          hasCompositeSections
-                            ? String(item.showSwitch ? !!item.switchValue : !!item.isSelected)
-                            : undefined
-                        }
-                        aria-current={
-                          !hasCompositeSections &&
-                          !item.showSwitch &&
-                          !isSingleSelectionItem &&
-                          item.isSelected
-                            ? 'true'
-                            : undefined
-                        }
-                        aria-description={
-                          item.reorderable
-                            ? item.isInactive
-                              ? 'Visibility cannot be changed. Alt + Arrow Up or Alt + Arrow Down moves this row.'
-                              : 'Drag to reorder. Alt + Arrow Up or Alt + Arrow Down moves this row.'
-                            : undefined
-                        }
-                        aria-disabled={item.isInactive ? 'true' : undefined}
-                        disabled={locked}
-                        tabIndex={hasCompositeSections ? 0 : isFocused ? 0 : -1}
-                        onMouseDown={() => {
-                          this.focusRingVisible = false;
-                        }}
-                        onClick={() => this.handleItemClick(item)}
-                        onFocus={() => {
-                          this.focusedIndex = idx;
-                        }}
-                      >
-                        {(dropBefore || dropAfter) && (
-                          <span
-                            class={{
-                              'menu-item__drop-rail': true,
-                              'menu-item__drop-rail--before': dropBefore,
-                              'menu-item__drop-rail--after': dropAfter,
-                            }}
-                            data-menu-drop-rail
-                            aria-hidden="true"
-                          />
-                        )}
-                        {item.reorderable ? (
-                          <span
-                            class="menu-item__handle ds-choice-item__icon ds-control-icon-box ds-interaction-fill__content"
-                            data-menu-handle
-                            aria-hidden="true"
-                            onPointerDown={event =>
-                              this.onReorderPointerDown(event, si, itemIndex, idx)
-                            }
-                            onClick={event => {
-                              event.preventDefault();
-                              event.stopPropagation();
-                            }}
-                          >
-                            <ds-icon name="Drag" size={this.size} color="inherit" />
-                          </span>
-                        ) : usesLeading && item.icon ? (
-                          <span
-                            class="menu-item__icon ds-choice-item__icon ds-control-icon-box ds-interaction-fill__content"
-                            aria-hidden="true"
-                          >
-                            <ds-icon name={item.icon} size={this.size} color="inherit" />
-                          </span>
-                        ) : usesLeading ? (
-                          <span
-                            class="menu-item__icon-spacer ds-choice-item__icon ds-control-icon-box"
-                            aria-hidden="true"
-                          />
-                        ) : null}
-                        <div class="menu-item__content ds-choice-item__content ds-interaction-fill__content">
-                          <ds-text
-                            class="menu-item__label ds-choice-item__label ds-control-label-box"
-                            as="span"
-                            variant={CONTROL_TEXT_VARIANT[this.size]}
-                            color={item.isSelected ? 'primary' : 'secondary'}
-                          >
-                            {item.label}
-                          </ds-text>
-                          {item.subtext && (
-                            <ds-text
-                              class="menu-item__subtext ds-choice-item__subtext ds-control-label-box"
-                              as="span"
-                              variant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
-                              color="secondary"
-                            >
-                              {item.subtext}
-                            </ds-text>
-                          )}
-                        </div>
-                        {item.tag && (
-                          <ds-tag
-                            class="ds-choice-item__tag ds-interaction-fill__content"
-                            label={item.tag.label}
-                            size={MENU_ITEM_TAG_SIZE[this.size]}
-                            intent={item.tag.intent ?? 'neutral'}
-                            contrast={item.tag.contrast ?? 'faint'}
-                            rounded={item.tag.rounded ?? false}
-                            isInset
-                          />
-                        )}
-                        {item.dot && (
-                          <span
-                            class="menu-item__dot-box ds-interaction-fill__content"
-                            aria-hidden="true"
-                          >
-                            <ds-badge
-                              class="menu-item__dot"
-                              variant="dot"
-                              hasRing={false}
-                              label=""
+                          }
+                          aria-current={
+                            !hasCompositeSections &&
+                            !item.showSwitch &&
+                            !isSingleSelectionItem &&
+                            item.isSelected
+                              ? 'true'
+                              : undefined
+                          }
+                          aria-description={
+                            item.reorderable
+                              ? item.isInactive
+                                ? 'Visibility cannot be changed. Alt + Arrow Up or Alt + Arrow Down moves this row.'
+                                : 'Drag to reorder. Alt + Arrow Up or Alt + Arrow Down moves this row.'
+                              : undefined
+                          }
+                          aria-disabled={item.isInactive ? 'true' : undefined}
+                          disabled={locked}
+                          tabIndex={hasCompositeSections ? 0 : isFocused ? 0 : -1}
+                          onMouseDown={() => {
+                            this.focusRingVisible = false;
+                          }}
+                          onClick={() => this.handleItemClick(item)}
+                          onFocus={() => {
+                            this.focusedIndex = idx;
+                          }}
+                        >
+                          {(dropBefore || dropAfter) && (
+                            <span
+                              class={{
+                                'menu-item__drop-rail': true,
+                                'menu-item__drop-rail--before': dropBefore,
+                                'menu-item__drop-rail--after': dropAfter,
+                              }}
+                              data-menu-drop-rail
+                              aria-hidden="true"
                             />
-                          </span>
-                        )}
-                        {item.showSwitch && (
-                          <ds-switch
-                            class="menu-item__switch ds-interaction-fill__content"
-                            size={this.size}
-                            checked={!!item.switchValue}
-                            isInactive={!!item.isInactive}
-                            presentation
-                          />
-                        )}
-                      </button>
-                    );
-                  })
-                )}
-              </div>
-            ))}
+                          )}
+                          {item.reorderable ? (
+                            <span
+                              class="menu-item__handle ds-choice-item__icon ds-control-icon-box ds-interaction-fill__content"
+                              data-menu-handle
+                              aria-hidden="true"
+                              onPointerDown={event =>
+                                this.onReorderPointerDown(event, si, itemIndex, idx)
+                              }
+                              onClick={event => {
+                                event.preventDefault();
+                                event.stopPropagation();
+                              }}
+                            >
+                              <ds-icon name="Drag" size={this.size} color="inherit" />
+                            </span>
+                          ) : usesLeading && item.icon ? (
+                            <span
+                              class="menu-item__icon ds-choice-item__icon ds-control-icon-box ds-interaction-fill__content"
+                              aria-hidden="true"
+                            >
+                              <ds-icon name={item.icon} size={this.size} color="inherit" />
+                            </span>
+                          ) : usesLeading ? (
+                            <span
+                              class="menu-item__icon-spacer ds-choice-item__icon ds-control-icon-box"
+                              aria-hidden="true"
+                            />
+                          ) : null}
+                          <div class="menu-item__content ds-choice-item__content ds-interaction-fill__content">
+                            <ds-text
+                              class="menu-item__label ds-choice-item__label ds-control-label-box"
+                              as="span"
+                              variant={CONTROL_TEXT_VARIANT[this.size]}
+                              color={item.isSelected ? 'primary' : 'secondary'}
+                            >
+                              {item.label}
+                            </ds-text>
+                            {item.subtext && (
+                              <ds-text
+                                class="menu-item__subtext ds-choice-item__subtext ds-control-label-box"
+                                as="span"
+                                variant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
+                                color="secondary"
+                              >
+                                {item.subtext}
+                              </ds-text>
+                            )}
+                          </div>
+                          {item.tag && (
+                            <ds-tag
+                              class="ds-choice-item__tag ds-interaction-fill__content"
+                              label={item.tag.label}
+                              size={MENU_ITEM_TAG_SIZE[this.size]}
+                              intent={item.tag.intent ?? 'neutral'}
+                              contrast={item.tag.contrast ?? 'faint'}
+                              rounded={item.tag.rounded ?? false}
+                              isInset
+                            />
+                          )}
+                          {item.dot && (
+                            <span
+                              class="menu-item__dot-box ds-interaction-fill__content"
+                              aria-hidden="true"
+                            >
+                              <ds-badge
+                                class="menu-item__dot"
+                                variant="dot"
+                                hasRing={false}
+                                label=""
+                              />
+                            </span>
+                          )}
+                          {item.showSwitch && (
+                            <ds-switch
+                              class="menu-item__switch ds-interaction-fill__content"
+                              size={this.size}
+                              checked={!!item.switchValue}
+                              isInactive={!!item.isInactive}
+                              presentation
+                            />
+                          )}
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
+              ))
+            )}
           </div>
         </div>
         <div class="ds-visually-hidden" role="status" aria-live="polite">

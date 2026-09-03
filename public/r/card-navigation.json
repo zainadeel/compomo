@@ -1,0 +1,255 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "card-navigation",
+  "title": "CardNavigation",
+  "description": "Settings-style navigation surface with a native destination link, optional supporting copy, a fixed ChevronRight affordance, and an optional application-owned body.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-navigation",
+    "source": "src/wc/components/CardNavigation/CardNavigation.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Settings-style navigation surface with a native destination link, optional supporting copy, a fixed ChevronRight affordance, and an optional application-owned body.",
+      "useWhen": [
+        "A settings page needs a card that leads to a deeper settings destination.",
+        "A compact destination card needs the complete surface to act as one link.",
+        "A settings summary must remain visible in a body while only the card header navigates."
+      ],
+      "avoidWhen": [
+        "The card edits its contents in place; use CardSetting for the edit-save-cancel workflow.",
+        "The destination is an action without a navigable URL.",
+        "The surface contains a chart, legend, metric visualization, or other data-visualization composition."
+      ],
+      "alternatives": [
+        {
+          "when": "The section switches between read-only and editable content in place.",
+          "component": "component:ds-card-setting",
+          "reason": "CardSetting owns the controlled edit-save-cancel workflow."
+        },
+        {
+          "when": "The surface contains a chart or specialized data-visualization composition.",
+          "component": "component:ds-card-chart",
+          "reason": "CardChart owns the independently evolving chart-card contract."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-text",
+        "component:ds-card-setting"
+      ],
+      "accessibility": [
+        "CardNavigation renders a native link whenever href resolves to an allowed URL, so Enter activation, link context menus, and modified-click behavior remain available.",
+        "The heading is rendered as an h2 and the optional description contributes to the link's accessible name.",
+        "The ChevronRight icon is decorative because the link text already names the destination.",
+        "Use the content variant only when interactive body content must remain outside the header link; never place interactive descendants inside the navigation-only card.",
+        "dsNavigate is cancelable so client-side routers can prevent native navigation after accepting an unmodified activation."
+      ],
+      "states": [
+        "The native link owns hover, pressed, and focus-visible states across the complete card in navigation-only mode.",
+        "In content mode, the native link owns those interaction states only across the header while the body remains application-owned.",
+        "An empty or unsafe href renders non-interactive card chrome without a false keyboard target.",
+        "The application owns destination loading, authorization, not-found, and recovery states after navigation."
+      ],
+      "responsiveBehavior": [
+        "Choose sm, md, or lg from the parent layout; the surface never exceeds its parent width.",
+        "Supporting copy wraps while the chevron remains visible at the trailing edge.",
+        "The parent owns wrapping, columns, stacking, and breakpoint changes between cards."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Set href to a valid relative or HTTP(S) URL.",
+          "Prevent dsNavigate only when an application router takes ownership of the same activation."
+        ],
+        "react": [
+          "Pass href for native link semantics and use onDsNavigate only when coordinating with a client-side router.",
+          "Use variant content when projecting interactive body content so those controls stay outside the link."
+        ],
+        "angular": [
+          "Bind href and prevent dsNavigate before calling Router.navigateByUrl for unmodified primary activations.",
+          "Use variant content when projecting interactive body content so those controls stay outside the link."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook navigation-only and content examples",
+          "path": "src/wc/components/CardNavigation/CardNavigation.stories.ts"
+        },
+        {
+          "label": "Rendered navigation and interaction coverage",
+          "path": "tests/e2e/card-navigation.spec.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "cardWidth": {
+          "type": "CardNavigationWidth",
+          "resolvedType": "\"lg\" | \"md\" | \"sm\"",
+          "attribute": "card-width",
+          "default": "'md'",
+          "required": false,
+          "mutable": false,
+          "description": "Card width token (`sm` / `md` / `lg`)."
+        },
+        "description": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "description",
+          "required": false,
+          "mutable": false,
+          "description": "Optional supporting copy shown below the heading."
+        },
+        "heading": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "heading",
+          "required": true,
+          "mutable": false,
+          "description": "Section or destination heading shown in the card header."
+        },
+        "href": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "href",
+          "required": true,
+          "mutable": false,
+          "description": "Destination for the card's native link."
+        },
+        "variant": {
+          "type": "CardNavigationVariant",
+          "resolvedType": "\"content\" | \"navigation-only\"",
+          "attribute": "variant",
+          "default": "'navigation-only'",
+          "required": false,
+          "mutable": false,
+          "description": "`navigation-only` makes the complete card the link. `content` keeps the\nheader as the link and exposes a non-interactive body slot below it."
+        }
+      },
+      "events": [
+        {
+          "name": "dsNavigate",
+          "detail": "CardNavigationDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emits before native navigation. Prevent this event to take over routing;\nthe component will then prevent the original link navigation."
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "cardWidth": {
+        "type": "CardNavigationWidth",
+        "resolvedType": "\"lg\" | \"md\" | \"sm\"",
+        "attribute": "card-width",
+        "default": "'md'",
+        "required": false,
+        "mutable": false,
+        "description": "Card width token (`sm` / `md` / `lg`)."
+      },
+      "description": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "description",
+        "required": false,
+        "mutable": false,
+        "description": "Optional supporting copy shown below the heading."
+      },
+      "heading": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "heading",
+        "required": true,
+        "mutable": false,
+        "description": "Section or destination heading shown in the card header."
+      },
+      "href": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "href",
+        "required": true,
+        "mutable": false,
+        "description": "Destination for the card's native link."
+      },
+      "variant": {
+        "type": "CardNavigationVariant",
+        "resolvedType": "\"content\" | \"navigation-only\"",
+        "attribute": "variant",
+        "default": "'navigation-only'",
+        "required": false,
+        "mutable": false,
+        "description": "`navigation-only` makes the complete card the link. `content` keeps the\nheader as the link and exposes a non-interactive body slot below it."
+      }
+    },
+    "events": [
+      {
+        "name": "dsNavigate",
+        "detail": "CardNavigationDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emits before native navigation. Prevent this event to take over routing;\nthe component will then prevent the original link navigation."
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-card-navigation",
+      "react": "DsCardNavigation",
+      "vue": "DsCardNavigation",
+      "angular": "DsCardNavigation"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-card-navigation.js';",
+        "example": "<ds-card-navigation></ds-card-navigation>"
+      },
+      "react": {
+        "import": "import { DsCardNavigation } from '@ds-mo/ui/react';",
+        "example": "<DsCardNavigation />"
+      },
+      "vue": {
+        "import": "import { DsCardNavigation } from '@ds-mo/ui/vue';",
+        "example": "<DsCardNavigation />"
+      },
+      "angular": {
+        "import": "import { DsCardNavigation } from '@ds-mo/ui/angular/ds-card-navigation';",
+        "example": "<ds-card-navigation></ds-card-navigation>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.5.1",
+          "@ds-mo/icons ^7.0.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "icon",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/CardNavigation/CardNavigation.css",
+      "content": "@import '../../utils/chrome-header.css';\n@import '../../utils/interaction-fill.css';\n@import '../../utils/focus-ring.css';\n@import '../../utils/forced-colors.css';\n\n:host {\n  position: relative;\n  display: flex;\n  flex-direction: column;\n  box-sizing: border-box;\n  width: var(--_card-navigation-width);\n  max-width: 100%;\n  overflow: hidden;\n  border: none;\n  border-radius: var(--dimension-radius-125);\n  background-color: var(--color-background-primary);\n  box-shadow: var(--effect-shadow-elevated-sm);\n}\n\n:host(.card-navigation--content) {\n  min-height: var(--_card-navigation-min-height);\n}\n\n:host::after {\n  content: '';\n  position: absolute;\n  inset: 0;\n  z-index: 4;\n  border-radius: inherit;\n  box-shadow: var(--effect-highlight-elevated-sm);\n  pointer-events: none;\n}\n\n.card-navigation__target {\n  color: inherit;\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.card-navigation__header {\n  flex: 0 0 auto;\n  border-radius: inherit;\n}\n\n:host(.card-navigation--content) .card-navigation__header {\n  border-radius: var(--dimension-radius-125) var(--dimension-radius-125) 0 0;\n  --ds-interaction-divider-width: var(--dimension-stroke-width-012);\n  --ds-interaction-divider-color: var(--color-border-tertiary);\n}\n\n.card-navigation__copy {\n  min-height: var(--dimension-size-400);\n  justify-content: center;\n}\n\nds-text.card-navigation__title,\nds-text.card-navigation__description {\n  overflow-wrap: anywhere;\n}\n\n.card-navigation__chevron {\n  justify-content: center;\n  width: var(--dimension-size-400);\n  color: var(--color-foreground-secondary);\n}\n\n.card-navigation__body {\n  display: flex;\n  flex: 1 1 auto;\n  flex-direction: column;\n  min-height: 0;\n  box-sizing: border-box;\n  background-color: var(--color-background-primary);\n  border-radius: 0 0 var(--dimension-radius-125) var(--dimension-radius-125);\n}\n\n@media (forced-colors: active) {\n  :host {\n    box-shadow: none;\n    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);\n    outline-offset: calc(-1 * var(--dimension-stroke-width-012));\n  }\n\n  :host::after {\n    box-shadow: none;\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/CardNavigation/CardNavigation.tsx",
+      "content": "import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\nimport { resolveSafeUrl } from '../../utils';\n\nexport type CardNavigationWidth = 'sm' | 'md' | 'lg';\nexport type CardNavigationVariant = 'navigation-only' | 'content';\n\nexport interface CardNavigationDetail {\n  href: string;\n  originalEvent: MouseEvent;\n}\n\nconst CARD_WIDTH_VARS: Record<CardNavigationWidth, string> = {\n  sm: 'var(--dimension-card-width-sm)',\n  md: 'var(--dimension-card-width-md)',\n  lg: 'var(--dimension-card-width-lg)',\n};\n\nconst CARD_HEIGHT_VARS: Record<CardNavigationWidth, string> = {\n  sm: 'var(--dimension-card-height-sm)',\n  md: 'var(--dimension-card-height-md)',\n  lg: 'var(--dimension-card-height-lg)',\n};\n\n@Component({\n  tag: 'ds-card-navigation',\n  styleUrl: 'CardNavigation.css',\n  scoped: true,\n})\nexport class CardNavigation {\n  /** Destination for the card's native link. */\n  @Prop() href!: string;\n\n  /** Section or destination heading shown in the card header. */\n  @Prop() heading!: string;\n\n  /** Optional supporting copy shown below the heading. */\n  @Prop() description: string | undefined;\n\n  /**\n   * `navigation-only` makes the complete card the link. `content` keeps the\n   * header as the link and exposes a non-interactive body slot below it.\n   */\n  @Prop() variant: CardNavigationVariant = 'navigation-only';\n\n  /** Card width token (`sm` / `md` / `lg`). */\n  @Prop() cardWidth: CardNavigationWidth = 'md';\n\n  /**\n   * Emits before native navigation. Prevent this event to take over routing;\n   * the component will then prevent the original link navigation.\n   */\n  @Event({ cancelable: true }) dsNavigate!: EventEmitter<CardNavigationDetail>;\n\n  private handleNavigation(href: string, originalEvent: MouseEvent) {\n    const navigateEvent = this.dsNavigate.emit({ href, originalEvent });\n    if (navigateEvent.defaultPrevented) originalEvent.preventDefault();\n  }\n\n  private renderHeader(href: string | undefined) {\n    const Target = href ? 'a' : 'div';\n    const description = this.description?.trim();\n\n    return (\n      <Target\n        class={{\n          'card-navigation__target': true,\n          'card-navigation__header': true,\n          'ds-chrome-header': true,\n          'ds-interaction-fill': !!href,\n          'ds-focus-ring-inset': !!href,\n        }}\n        href={href}\n        onClick={href ? (event: MouseEvent) => this.handleNavigation(href, event) : undefined}\n      >\n        <div\n          class={{\n            'card-navigation__copy': true,\n            'ds-chrome-header__copy': true,\n            'ds-chrome-header__copy--stacked': !!description,\n            'ds-control--md': true,\n            'ds-interaction-fill__content': true,\n          }}\n        >\n          <ds-text\n            class=\"card-navigation__title ds-chrome-header__heading\"\n            variant=\"text-title-small\"\n            emphasis\n            color=\"primary\"\n            as=\"h2\"\n          >\n            {this.heading}\n          </ds-text>\n          {description ? (\n            <ds-text\n              class=\"card-navigation__description ds-chrome-header__description\"\n              variant=\"text-body-small\"\n              color=\"secondary\"\n              as=\"span\"\n            >\n              {description}\n            </ds-text>\n          ) : null}\n        </div>\n        <span class=\"card-navigation__chevron ds-chrome-header__trailing ds-interaction-fill__content\">\n          <ds-icon name=\"ChevronRight\" size=\"md\" color=\"inherit\" aria-hidden=\"true\" />\n        </span>\n      </Target>\n    );\n  }\n\n  render() {\n    const href = resolveSafeUrl(this.href);\n    const hasContent = this.variant === 'content';\n\n    return (\n      <Host\n        class={{\n          'card-navigation': true,\n          'card-navigation--navigation-only': !hasContent,\n          'card-navigation--content': hasContent,\n        }}\n        style={{\n          '--_card-navigation-width': CARD_WIDTH_VARS[this.cardWidth],\n          '--_card-navigation-min-height': CARD_HEIGHT_VARS[this.cardWidth],\n        }}\n      >\n        {this.renderHeader(href)}\n        {hasContent ? (\n          <div class=\"card-navigation__body\">\n            <slot />\n          </div>\n        ) : null}\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

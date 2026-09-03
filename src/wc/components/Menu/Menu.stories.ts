@@ -79,6 +79,20 @@ export const Playground: Story = {
   `,
 };
 
+export const Empty: Story = {
+  render: () => html`
+    <div style="padding:var(--dimension-space-200); min-height:var(--dimension-card-height-sm)">
+      <button id="empty-menu-anchor" type="button" aria-haspopup="dialog">Organization</button>
+      <ds-menu
+        open
+        anchor-id="empty-menu-anchor"
+        menu-label="Settings profiles"
+        empty-message="You have no profiles to manage yet"
+      ></ds-menu>
+    </div>
+  `,
+};
+
 export const CollisionAwarePlacement: Story = {
   name: 'Collision-aware placement',
   render: () => html`

@@ -1,0 +1,45 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-card-settings-scope",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-card-settings-scope",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Compact, theme-aware settings context card with inline product-area and profile menu triggers.",
+  "useWhen": [
+    "A settings workspace needs to show and change both its product area and the organization or profile being managed."
+  ],
+  "avoidWhen": [
+    "The content is a reporting period and metrics summary; use CardOverview.",
+    "The card edits settings in place; use CardSetting."
+  ],
+  "commonlyComposedWith": ["component:ds-menu", "component:ds-card-setting"],
+  "accessibility": [
+    "Both scope values are native buttons with popup relationships and controlled expanded state.",
+    "Use the emitted native anchor for menu placement and focus return.",
+    "An empty informational profiles popup uses dialog semantics.",
+    "The shared text-action recipe supplies brand foreground, hover underline, and keyboard focus indication."
+  ],
+  "states": [
+    "The application owns the selected area, profile, available choices, permissions, and empty-state copy.",
+    "The card reports popup requests without changing selection or expanded state.",
+    "The surface follows the active theme rather than imposing always-dark colors."
+  ],
+  "responsiveBehavior": [
+    "The parent owns sticky positioning and shell offsets.",
+    "The compact sentence wraps when space is constrained so both controls remain available."
+  ],
+  "frameworkCaveats": {
+    "angular": [
+      "Import the generated standalone adapter; bind controlled labels and expanded states and handle dsScopeRequest."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/CardSettingsScope/CardSettingsScope.stories.ts"
+    }
+  ]
+}

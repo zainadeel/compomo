@@ -1,0 +1,76 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-card-navigation",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-card-navigation",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Settings-style navigation surface with a native destination link, optional supporting copy, a fixed ChevronRight affordance, and an optional application-owned body.",
+  "useWhen": [
+    "A settings page needs a card that leads to a deeper settings destination.",
+    "A compact destination card needs the complete surface to act as one link.",
+    "A settings summary must remain visible in a body while only the card header navigates."
+  ],
+  "avoidWhen": [
+    "The card edits its contents in place; use CardSetting for the edit-save-cancel workflow.",
+    "The destination is an action without a navigable URL.",
+    "The surface contains a chart, legend, metric visualization, or other data-visualization composition."
+  ],
+  "alternatives": [
+    {
+      "when": "The section switches between read-only and editable content in place.",
+      "component": "component:ds-card-setting",
+      "reason": "CardSetting owns the controlled edit-save-cancel workflow."
+    },
+    {
+      "when": "The surface contains a chart or specialized data-visualization composition.",
+      "component": "component:ds-card-chart",
+      "reason": "CardChart owns the independently evolving chart-card contract."
+    }
+  ],
+  "commonlyComposedWith": ["component:ds-text", "component:ds-card-setting"],
+  "accessibility": [
+    "CardNavigation renders a native link whenever href resolves to an allowed URL, so Enter activation, link context menus, and modified-click behavior remain available.",
+    "The heading is rendered as an h2 and the optional description contributes to the link's accessible name.",
+    "The ChevronRight icon is decorative because the link text already names the destination.",
+    "Use the content variant only when interactive body content must remain outside the header link; never place interactive descendants inside the navigation-only card.",
+    "dsNavigate is cancelable so client-side routers can prevent native navigation after accepting an unmodified activation."
+  ],
+  "states": [
+    "The native link owns hover, pressed, and focus-visible states across the complete card in navigation-only mode.",
+    "In content mode, the native link owns those interaction states only across the header while the body remains application-owned.",
+    "An empty or unsafe href renders non-interactive card chrome without a false keyboard target.",
+    "The application owns destination loading, authorization, not-found, and recovery states after navigation."
+  ],
+  "responsiveBehavior": [
+    "Choose sm, md, or lg from the parent layout; the surface never exceeds its parent width.",
+    "Supporting copy wraps while the chevron remains visible at the trailing edge.",
+    "The parent owns wrapping, columns, stacking, and breakpoint changes between cards."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Set href to a valid relative or HTTP(S) URL.",
+      "Prevent dsNavigate only when an application router takes ownership of the same activation."
+    ],
+    "react": [
+      "Pass href for native link semantics and use onDsNavigate only when coordinating with a client-side router.",
+      "Use variant content when projecting interactive body content so those controls stay outside the link."
+    ],
+    "angular": [
+      "Bind href and prevent dsNavigate before calling Router.navigateByUrl for unmodified primary activations.",
+      "Use variant content when projecting interactive body content so those controls stay outside the link."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook navigation-only and content examples",
+      "path": "src/wc/components/CardNavigation/CardNavigation.stories.ts"
+    },
+    {
+      "label": "Rendered navigation and interaction coverage",
+      "path": "tests/e2e/card-navigation.spec.ts"
+    }
+  ]
+}

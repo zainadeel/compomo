@@ -1,0 +1,87 @@
+@import '../../utils/chrome-header.css';
+@import '../../utils/interaction-fill.css';
+@import '../../utils/focus-ring.css';
+@import '../../utils/forced-colors.css';
+
+:host {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: var(--_card-navigation-width);
+  max-width: 100%;
+  overflow: hidden;
+  border: none;
+  border-radius: var(--dimension-radius-125);
+  background-color: var(--color-background-primary);
+  box-shadow: var(--effect-shadow-elevated-sm);
+}
+
+:host(.card-navigation--content) {
+  min-height: var(--_card-navigation-min-height);
+}
+
+:host::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border-radius: inherit;
+  box-shadow: var(--effect-highlight-elevated-sm);
+  pointer-events: none;
+}
+
+.card-navigation__target {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.card-navigation__header {
+  flex: 0 0 auto;
+  border-radius: inherit;
+}
+
+:host(.card-navigation--content) .card-navigation__header {
+  border-radius: var(--dimension-radius-125) var(--dimension-radius-125) 0 0;
+  --ds-interaction-divider-width: var(--dimension-stroke-width-012);
+  --ds-interaction-divider-color: var(--color-border-tertiary);
+}
+
+.card-navigation__copy {
+  min-height: var(--dimension-size-400);
+  justify-content: center;
+}
+
+ds-text.card-navigation__title,
+ds-text.card-navigation__description {
+  overflow-wrap: anywhere;
+}
+
+.card-navigation__chevron {
+  justify-content: center;
+  width: var(--dimension-size-400);
+  color: var(--color-foreground-secondary);
+}
+
+.card-navigation__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  box-sizing: border-box;
+  background-color: var(--color-background-primary);
+  border-radius: 0 0 var(--dimension-radius-125) var(--dimension-radius-125);
+}
+
+@media (forced-colors: active) {
+  :host {
+    box-shadow: none;
+    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-012));
+  }
+
+  :host::after {
+    box-shadow: none;
+  }
+}

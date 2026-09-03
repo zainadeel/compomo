@@ -2386,6 +2386,136 @@
       ]
     },
     {
+      "name": "card-navigation",
+      "title": "CardNavigation",
+      "description": "Settings-style navigation surface with a native destination link, optional supporting copy, a fixed ChevronRight affordance, and an optional application-owned body.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-navigation",
+        "source": "src/wc/components/CardNavigation/CardNavigation.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Settings-style navigation surface with a native destination link, optional supporting copy, a fixed ChevronRight affordance, and an optional application-owned body.",
+          "useWhen": [
+            "A settings page needs a card that leads to a deeper settings destination.",
+            "A compact destination card needs the complete surface to act as one link.",
+            "A settings summary must remain visible in a body while only the card header navigates."
+          ],
+          "avoidWhen": [
+            "The card edits its contents in place; use CardSetting for the edit-save-cancel workflow.",
+            "The destination is an action without a navigable URL.",
+            "The surface contains a chart, legend, metric visualization, or other data-visualization composition."
+          ],
+          "alternatives": [
+            {
+              "when": "The section switches between read-only and editable content in place.",
+              "component": "component:ds-card-setting",
+              "reason": "CardSetting owns the controlled edit-save-cancel workflow."
+            },
+            {
+              "when": "The surface contains a chart or specialized data-visualization composition.",
+              "component": "component:ds-card-chart",
+              "reason": "CardChart owns the independently evolving chart-card contract."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-text",
+            "component:ds-card-setting"
+          ],
+          "accessibility": [
+            "CardNavigation renders a native link whenever href resolves to an allowed URL, so Enter activation, link context menus, and modified-click behavior remain available.",
+            "The heading is rendered as an h2 and the optional description contributes to the link's accessible name.",
+            "The ChevronRight icon is decorative because the link text already names the destination.",
+            "Use the content variant only when interactive body content must remain outside the header link; never place interactive descendants inside the navigation-only card.",
+            "dsNavigate is cancelable so client-side routers can prevent native navigation after accepting an unmodified activation."
+          ],
+          "states": [
+            "The native link owns hover, pressed, and focus-visible states across the complete card in navigation-only mode.",
+            "In content mode, the native link owns those interaction states only across the header while the body remains application-owned.",
+            "An empty or unsafe href renders non-interactive card chrome without a false keyboard target.",
+            "The application owns destination loading, authorization, not-found, and recovery states after navigation."
+          ],
+          "responsiveBehavior": [
+            "Choose sm, md, or lg from the parent layout; the surface never exceeds its parent width.",
+            "Supporting copy wraps while the chevron remains visible at the trailing edge.",
+            "The parent owns wrapping, columns, stacking, and breakpoint changes between cards."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Set href to a valid relative or HTTP(S) URL.",
+              "Prevent dsNavigate only when an application router takes ownership of the same activation."
+            ],
+            "react": [
+              "Pass href for native link semantics and use onDsNavigate only when coordinating with a client-side router.",
+              "Use variant content when projecting interactive body content so those controls stay outside the link."
+            ],
+            "angular": [
+              "Bind href and prevent dsNavigate before calling Router.navigateByUrl for unmodified primary activations.",
+              "Use variant content when projecting interactive body content so those controls stay outside the link."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook navigation-only and content examples",
+              "path": "src/wc/components/CardNavigation/CardNavigation.stories.ts"
+            },
+            {
+              "label": "Rendered navigation and interaction coverage",
+              "path": "tests/e2e/card-navigation.spec.ts"
+            }
+          ]
+        },
+        "props": {
+          "cardWidth": {
+            "type": "CardNavigationWidth",
+            "required": false
+          },
+          "description": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "heading": {
+            "type": "string",
+            "required": true
+          },
+          "href": {
+            "type": "string",
+            "required": true
+          },
+          "variant": {
+            "type": "CardNavigationVariant",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsNavigate",
+            "detail": "CardNavigationDetail"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-card-navigation",
+          "react": "DsCardNavigation",
+          "vue": "DsCardNavigation",
+          "angular": "DsCardNavigation"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "icon",
+        "text"
+      ]
+    },
+    {
       "name": "card-overview",
       "title": "CardOverview",
       "description": "Page-level summary with a persistent 48px reporting bar above an equal-track grid of an optional safety score and comparable measures, plus an elevated page-controlled collapse surface.",
@@ -2705,6 +2835,123 @@
       "registryDependencies": [
         "button-filled",
         "button-unfilled",
+        "text"
+      ]
+    },
+    {
+      "name": "card-settings-scope",
+      "title": "CardSettingsScope",
+      "description": "Compact, theme-aware settings context card with inline product-area and profile menu triggers.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-settings-scope",
+        "source": "src/wc/components/CardSettingsScope/CardSettingsScope.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Compact, theme-aware settings context card with inline product-area and profile menu triggers.",
+          "useWhen": [
+            "A settings workspace needs to show and change both its product area and the organization or profile being managed."
+          ],
+          "avoidWhen": [
+            "The content is a reporting period and metrics summary; use CardOverview.",
+            "The card edits settings in place; use CardSetting."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-menu",
+            "component:ds-card-setting"
+          ],
+          "accessibility": [
+            "Both scope values are native buttons with popup relationships and controlled expanded state.",
+            "Use the emitted native anchor for menu placement and focus return.",
+            "An empty informational profiles popup uses dialog semantics.",
+            "The shared text-action recipe supplies brand foreground, hover underline, and keyboard focus indication."
+          ],
+          "states": [
+            "The application owns the selected area, profile, available choices, permissions, and empty-state copy.",
+            "The card reports popup requests without changing selection or expanded state.",
+            "The surface follows the active theme rather than imposing always-dark colors."
+          ],
+          "responsiveBehavior": [
+            "The parent owns sticky positioning and shell offsets.",
+            "The compact sentence wraps when space is constrained so both controls remain available."
+          ],
+          "frameworkCaveats": {
+            "angular": [
+              "Import the generated standalone adapter; bind controlled labels and expanded states and handle dsScopeRequest."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/CardSettingsScope/CardSettingsScope.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "areaControls": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "areaExpanded": {
+            "type": "boolean",
+            "required": false
+          },
+          "areaLabel": {
+            "type": "string",
+            "required": false
+          },
+          "forLabel": {
+            "type": "string",
+            "required": false
+          },
+          "managingLabel": {
+            "type": "string",
+            "required": false
+          },
+          "profileControls": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "profileExpanded": {
+            "type": "boolean",
+            "required": false
+          },
+          "profileLabel": {
+            "type": "string",
+            "required": false
+          },
+          "profilePopup": {
+            "type": "'menu' | 'dialog'",
+            "required": false
+          },
+          "scopeLabel": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsScopeRequest",
+            "detail": "SettingsScopeRequest"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-card-settings-scope",
+          "react": "DsCardSettingsScope",
+          "vue": "DsCardSettingsScope",
+          "angular": "DsCardSettingsScope"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
         "text"
       ]
     },
@@ -4850,6 +5097,7 @@
             "pattern:menu-trigger"
           ],
           "accessibility": [
+            "An empty choice collection can show informational copy in a focusable non-modal dialog instead of rendering a fake disabled action. Escape and Tab retain the normal popup dismissal and anchor-focus behavior.",
             "Anchor the menu to the control that opens it and return focus to that control when the menu closes.",
             "Open with visible initial focus only when the trigger was activated from the keyboard.",
             "Keep disabled items discoverable only when their unavailable state is meaningful.",
@@ -4929,6 +5177,10 @@
           },
           "boundary": {
             "type": "HTMLElement | undefined",
+            "required": false
+          },
+          "emptyMessage": {
+            "type": "string",
             "required": false
           },
           "initialFocusVisible": {
