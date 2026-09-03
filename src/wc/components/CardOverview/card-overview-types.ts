@@ -1,8 +1,10 @@
 import type { MetricTrend } from '../../utils/metric-change';
+import type { SafetyScoreLevel } from '../Score/score-types';
+
+export type { SafetyScoreLevel } from '../Score/score-types';
 
 export type CardOverviewVariant = 'default' | 'compact';
 export type CardOverviewLayout = 'auto' | 'stacked';
-export type SafetyScoreLevel = 'fair' | 'good' | 'excellent';
 
 /**
  * Leading summary block — the headline figure the rest of the bar contextualises.

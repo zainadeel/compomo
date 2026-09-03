@@ -131,6 +131,11 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
     'ds-table__cell-track--runs',
     'ds-table__cell--text-wrap',
     'ds-table__group-content',
+    'ds-table__group-content--multi',
+    'ds-table__group-content--hero',
+    'ds-table__group-primary',
+    'ds-table__group-hero',
+    'ds-table__group-accessories',
     'ds-table__collapse-all-overlay',
     'ds-table__sticky-edge',
     'ds-table__skeleton-row',
@@ -150,10 +155,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
     css,
     /\.ds-table__match[\s\S]*?background-color: var\(--color-background-faint-brand\)[\s\S]*?color: var\(--color-foreground-bold-brand\)/
   );
-  assert.match(
-    css,
-    /--_table-wrap-primary-line-height: calc\(\s*var\(--typography-lineheight-md\) \+ var\(--dimension-space-025\)\s*\)/
-  );
+  assert.match(css, /--_table-wrap-primary-line-height: var\(--_table-cell-track-min-block-size\)/);
   assert.match(
     css,
     /\.ds-table__cell--text-wrap\.ds-table__cell--text-single \.ds-table__cell-primary\)[\s\S]*?line-height: var\(--_table-wrap-primary-line-height\)/
@@ -164,7 +166,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   );
   assert.match(
     css,
-    /--_table-wrap-secondary-line-height: calc\(\s*var\(--dimension-size-250\) \+ var\(--dimension-space-025\)\s*\)/
+    /--_table-wrap-secondary-line-height: var\(--_table-cell-track-min-block-size\)/
   );
   assert.match(
     css,
@@ -190,10 +192,8 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
     /\.ds-table__cell-track--text[\s\S]*?padding-inline: var\(--_table-cell-track-padding-inline\)/
   );
   assert.match(css, /\.ds-table__cell-primary[\s\S]*?padding-block: var\(--dimension-space-025\)/);
-  assert.match(
-    css,
-    /\.ds-table__cell--text-multi \.ds-table__cell-copy\)[\s\S]*?gap: var\(--dimension-space-025\)/
-  );
+  assert.match(css, /\.ds-table__cell--text-multi \.ds-table__cell-copy\)[\s\S]*?gap: 0/);
+  assert.match(css, /\.ds-table__cell-tags\)[\s\S]*?gap: 0 var\(--dimension-space-025\)/);
   assert.match(
     componentCss,
     /ds-text\.ds-table__cell-track--text[\s\S]*?padding-inline: var\(--_table-cell-track-padding-inline\)/
@@ -258,9 +258,46 @@ test('retains the structural and accessibility fallbacks rendered tests depend o
   assert.doesNotMatch(css, /ds-table__collapse-column|ds-table__collapse-cell/);
   assert.match(css, /\.ds-table__load-body \.ds-table__load-row:last-child \.ds-table__load-cell/);
   assert.doesNotMatch(css, /:where\(\.ds-table__load-row:last-child \.ds-table__load-cell\)/);
+  assert.match(css, /\.ds-table__group-content[\s\S]*?cursor: default/);
+  assert.doesNotMatch(componentCss, /cursor: pointer/);
+  assert.match(css, /\.ds-table__group-content\)::after[\s\S]*?background: var\(--_table-border\)/);
+  assert.match(css, /\.ds-table__group-content:hover\)::before[\s\S]*?--_table-row-hover/);
   assert.match(
     css,
-    /\.ds-table__group:last-child > \.ds-table__group-row:last-child[\s\S]*?\.ds-table__group-content/
+    /\.ds-table__group-content--multi[\s\S]*?align-items: flex-start[\s\S]*?--_table-row-min-block-size[\s\S]*?--_table-cell-track-min-block-size/
+  );
+  assert.match(css, /\.ds-table__group-content--hero[\s\S]*?align-items: flex-start/);
+  assert.match(css, /\.ds-table__group-hero[\s\S]*?align-self: flex-start/);
+  assert.match(
+    css,
+    /\.ds-table__group-hero[\s\S]*?margin-inline-start: var\(--dimension-space-075\)/
+  );
+  assert.match(
+    css,
+    /\.ds-table__group-hero\)::after[\s\S]*?border: var\(--dimension-stroke-width-012\) solid var\(--color-border-tertiary\)/
+  );
+  assert.match(
+    css,
+    /\.ds-table__table--selectable \.ds-table__group-hero[\s\S]*?margin-inline-end: var\(--dimension-space-100\)/
+  );
+  assert.match(
+    css,
+    /\.ds-table__table--selectable \.ds-table__group-copy[\s\S]*?padding-inline-start: calc\(\s*var\(--dimension-space-100\) \+ var\(--_table-cell-track-padding-inline\)/
+  );
+  assert.match(
+    css,
+    /\.ds-table__group-content--hero \.ds-table__group-copy[\s\S]*?padding-inline-start: var\(--dimension-space-050\)/
+  );
+  assert.match(
+    css,
+    /\.ds-table__group-accessories ds-tooltip[\s\S]*?align-items: center[\s\S]*?--_table-cell-track-min-block-size/
+  );
+  assert.match(css, /\.ds-table__group-toggle\)[\s\S]*?--color-interaction-hover: transparent/);
+  assert.match(css, /\.ds-table__group-toggle\)[\s\S]*?--color-interaction-pressed: transparent/);
+  assert.doesNotMatch(css, /\.ds-table__group-toggle\)\s*\{[^}]*align-self:/);
+  assert.match(
+    css,
+    /\.ds-table__group:last-child > \.ds-table__group-row:last-child[\s\S]*?\.ds-table__group-content[\s\S]*?::after/
   );
   assert.match(
     css,

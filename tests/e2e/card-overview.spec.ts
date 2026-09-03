@@ -75,7 +75,7 @@ test('maps score boundaries to matching semantic background and foreground pairs
     ['excellent', 'excellent'],
   ] as const) {
     const colors = await page
-      .locator(`#${id} .card-overview__score-badge`)
+      .locator(`#${id} ds-score .score__badge`)
       .evaluate((element, resolvedLevel) => {
         const resolve = (property: string) => {
           const probe = document.createElement('span');
@@ -115,7 +115,7 @@ test('keeps equal-height cell content with the inset, content, and text balance 
     const actionBounds = action.getBoundingClientRect();
     const actionStyle = getComputedStyle(action);
     const scoreValueStyle = getComputedStyle(
-      element.querySelector<HTMLElement>('.card-overview__score-value')!
+      element.querySelector<HTMLElement>('ds-score .score__value')!
     );
     const scoreTrend = element.querySelector<HTMLElement>(
       '.card-overview__score .card-overview__trend'
@@ -126,7 +126,7 @@ test('keeps equal-height cell content with the inset, content, and text balance 
     const metricFigure = element.querySelector<HTMLElement>('.card-overview__metric-figure')!;
     const balancedText = [
       '.card-overview__score-label-spacer',
-      '.card-overview__score-value',
+      'ds-score .score__value',
       '.card-overview__metric-label',
       '.card-overview__metric-value',
       '.card-overview__trend',
@@ -160,9 +160,8 @@ test('keeps equal-height cell content with the inset, content, and text balance 
       balancedText,
       divider: getComputedStyle(metric).boxShadow,
       actionRadius: actionStyle.borderRadius,
-      scoreRadius: getComputedStyle(
-        element.querySelector<HTMLElement>('.card-overview__score-badge')!
-      ).borderRadius,
+      scoreRadius: getComputedStyle(element.querySelector<HTMLElement>('ds-score .score__badge')!)
+        .borderRadius,
       surfaceRadius: surfaceStyle.borderRadius,
     };
   });
@@ -174,8 +173,8 @@ test('keeps equal-height cell content with the inset, content, and text balance 
     Array.from({ length: 5 }, () => ({ top: '0px', right: '2px', bottom: '0px', left: '2px' }))
   );
   expect(Math.max(...geometry.cellHeights) - Math.min(...geometry.cellHeights)).toBeLessThan(0.1);
-  expect(geometry.scoreValueMarginTop).toBe('-8px');
-  expect(geometry.scoreValueMarginBottom).toBe('-8px');
+  expect(geometry.scoreValueMarginTop).toBe('0px');
+  expect(geometry.scoreValueMarginBottom).toBe('0px');
   expect(geometry.scoreTrendTop).toBeCloseTo(geometry.metricTrendTop, 1);
   expect(geometry.metricFigureGap).toBe('4px');
   expect(geometry.divider).not.toBe('none');
@@ -203,9 +202,7 @@ test('keeps loading placeholders in the resolved content geometry', async ({ pag
   const geometry = await card.evaluate(element => {
     const score = element.querySelector<HTMLElement>('.card-overview__score-content')!;
     // The figure placeholder now sits inside the level fill, which owns the crop.
-    const scoreFigure = element.querySelector<HTMLElement>(
-      '.card-overview__score-badge ds-skeleton'
-    )!;
+    const scoreFigure = element.querySelector<HTMLElement>('ds-score .score__badge ds-skeleton')!;
     const metricAction = element.querySelector<HTMLElement>('.card-overview__metric-action')!;
     const metricContent = element.querySelector<HTMLElement>('.card-overview__metric-content')!;
     return {
@@ -218,8 +215,8 @@ test('keeps loading placeholders in the resolved content geometry', async ({ pag
   });
 
   expect(geometry.scoreHeight).toBeGreaterThan(0);
-  expect(geometry.scoreFigureMarginTop).toBe('-8px');
-  expect(geometry.scoreFigureMarginBottom).toBe('-8px');
+  expect(geometry.scoreFigureMarginTop).toBe('0px');
+  expect(geometry.scoreFigureMarginBottom).toBe('0px');
   expect(geometry.metricContentWidth).toBe(geometry.metricActionWidth - 12);
   await expect(scoreContent).toBeVisible();
   await expect(metricContent).toBeVisible();

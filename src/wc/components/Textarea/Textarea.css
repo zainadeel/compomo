@@ -1,0 +1,115 @@
+@import '../../utils/interaction-fill.css';
+@import '../../utils/focus-ring.css';
+@import '../../utils/control-inactive.css';
+@import '../../utils/control-density.css';
+@import '../../utils/control-width.css';
+@import '../../utils/field-stack.css';
+@import '../../utils/typography.css';
+@import '../../utils/forced-colors.css';
+
+:host(.textarea-host) {
+  display: inline-flex;
+  --ds-textarea-fg: var(--color-foreground-primary);
+  --ds-textarea-placeholder: var(--color-foreground-secondary);
+  --ds-textarea-placeholder-active: var(--color-foreground-quaternary);
+  --ds-textarea-border: var(--color-border-secondary);
+}
+
+:host(.ds-control-width--fill),
+:host(.ds-control-width--fill) .textarea-control {
+  width: 100%;
+}
+
+.textarea-control {
+  display: flex;
+  box-sizing: border-box;
+  min-width: 0;
+  overflow: hidden;
+  background: transparent;
+  border: none;
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
+  color: var(--ds-textarea-fg);
+}
+
+.textarea-control--resizable {
+  padding-block-end: var(--dimension-space-025);
+  padding-inline-end: var(--dimension-space-025);
+}
+
+.textarea-control--bordered {
+  --ds-interaction-border-width: var(--dimension-stroke-width-012);
+  --ds-interaction-border-color: var(--ds-textarea-border);
+}
+
+.textarea-control--error {
+  --ds-interaction-border-width: var(--dimension-stroke-width-018);
+  --ds-interaction-border-color: var(--color-border-bold-negative);
+}
+
+.textarea-control--bordered:focus-within:not(.textarea-control--error) {
+  --ds-interaction-border-width: var(--dimension-stroke-width-018);
+  --ds-interaction-border-color: var(--color-border-bold-brand);
+}
+
+:host(.ds-control-inactive) .textarea-control::after {
+  background: transparent;
+}
+
+.native-textarea {
+  position: relative;
+  z-index: 2;
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
+  padding-block: var(--ds-control-padding-inline, var(--dimension-space-075));
+  padding-inline: calc(
+    var(--ds-control-padding-inline, var(--dimension-space-075)) +
+      var(--ds-control-label-inset, var(--dimension-space-025))
+  );
+  background: transparent;
+  border: none;
+  border-radius: inherit;
+  outline: none;
+  color: var(--ds-textarea-fg);
+  font-family: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.native-textarea--resize-vertical {
+  resize: vertical;
+}
+
+.native-textarea--resize-none {
+  resize: none;
+}
+
+.native-textarea:disabled {
+  cursor: not-allowed;
+}
+
+.native-textarea:read-only:not(:disabled) {
+  cursor: default;
+}
+
+.native-textarea::placeholder {
+  color: var(--ds-textarea-placeholder);
+}
+
+.native-textarea:focus::placeholder {
+  color: var(--ds-textarea-placeholder-active);
+}
+
+.error-text {
+  width: 100%;
+}
+
+@media (forced-colors: active) {
+  .textarea-control--bordered:focus-within:not(.textarea-control--error)::after {
+    outline-color: var(--ds-forced-color-selected);
+  }
+
+  .textarea-control--error::after {
+    outline-style: dashed;
+  }
+}

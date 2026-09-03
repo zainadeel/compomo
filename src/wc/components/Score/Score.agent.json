@@ -1,0 +1,70 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-score",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-score",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Safety-score figure in a semantic fill at the three control densities.",
+  "useWhen": [
+    "A driver or fleet safety score needs its fair, good, or excellent fill and the numeric figure in one place.",
+    "The same score treatment appears in Card Overview, an in-card summary, or a compact row such as a table group header."
+  ],
+  "avoidWhen": [
+    "The figure is an ordinary metric without a safety-score color band; use Text.",
+    "The score is one cell in a comparable measures grid that also needs period chrome; use CardOverview, which composes Score.",
+    "The mark is a notification count or status label; use Badge or Tag.",
+    "A comparison trend should sit beside the fill; keep trend in the owner. Card Overview already renders score trend in its copy column."
+  ],
+  "alternatives": [
+    {
+      "when": "The figure is one of several comparable measures under a shared period bar.",
+      "component": "component:ds-card-overview",
+      "reason": "CardOverview owns the summary grid, period chrome, score-cell alignment, and score trend; it renders Score at lg for the fill."
+    },
+    {
+      "when": "The quantity is ordinary readable content without a safety-score fill.",
+      "component": "component:ds-text",
+      "reason": "Text preserves the figure as body content."
+    },
+    {
+      "when": "The compact mark is unread count or notification presence.",
+      "component": "component:ds-badge",
+      "reason": "Badge owns supplemental notification chrome, not a scored figure."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-card-overview",
+    "component:ds-table",
+    "component:ds-text",
+    "component:ds-skeleton"
+  ],
+  "accessibility": [
+    "Set label when the atomic score graphic needs a spoken prefix such as Safety score; the visible number remains in the fill.",
+    "Colour never carries score meaning alone; the numeric figure stays visible inside the fill.",
+    "Score is not interactive and is not a tab stop.",
+    "While loading, the host exposes a busy state and a skeleton whose type metrics match the resolved size."
+  ],
+  "states": [
+    "lg is the Card Overview fill: 56 by 40, display-small emphasis. md is the 32px control treatment: 40 by 32, title-large emphasis. sm is the 24px compact fill: 28 by 24, title-small emphasis. The fill box crops the type canvas so line-height does not change the declared size.",
+    "A numeric value from 0–100 infers fair from 0–50, good from 51–80, and excellent from 81–100. Empty or whitespace-only values stay on the faint neutral surface. Supply level explicitly when another displayed value needs a semantic fill.",
+    "The fill uses the safety-score background and keeps its foreground at AA text contrast in light and dark themes.",
+    "isLoading replaces the figure with a skeleton at the matching type metrics. The skeleton uses the faint context when no score level is known and the bold context when a known or explicitly supplied level keeps its semantic fill."
+  ],
+  "responsiveBehavior": [
+    "The owner selects sm, md, or lg to match the local layout. Score does not change size at breakpoints.",
+    "sm is the density for table group headers. md is the in-card summary fill. lg is the Card Overview fill."
+  ],
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/Score/Score.stories.ts"
+    },
+    {
+      "label": "Safety-score level unit coverage",
+      "path": "tests/score-model.test.ts"
+    }
+  ]
+}

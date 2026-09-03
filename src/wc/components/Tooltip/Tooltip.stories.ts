@@ -138,6 +138,26 @@ export const Sides: Story = {
   `,
 };
 
+export const MultilineList: Story = {
+  name: 'Multiline list',
+  parameters: { controls: { disable: true } },
+  render: () => html`
+    <div style="display:flex;justify-content:center;padding:80px;">
+      <ds-tooltip
+        .label=${'Main operations\nWest Coast'}
+        side="bottom"
+        align="start"
+        size="sm"
+        wrap-label
+      >
+        <ds-text as="span" variant="text-body-small" decoration="dotted-underline">
+          2 groups
+        </ds-text>
+      </ds-tooltip>
+    </div>
+  `,
+};
+
 export const WithShortcut: Story = {
   render: () => html`
     <div

@@ -40,6 +40,16 @@ test('links aria-describedby only while the popup exists and preserves consumer 
   await expect(anchor).toBeFocused();
 });
 
+test('preserves explicit line breaks as a compact unbulleted list', async ({ page }) => {
+  const anchor = page.locator('#multiline-anchor');
+  await anchor.hover();
+  const popup = page.getByRole('tooltip', { name: /Main operations\s+West Coast/ });
+  await expect(popup).toBeVisible();
+  await expect(popup).toHaveAttribute('data-side', 'bottom');
+  await expect(popup.locator('ds-text')).toHaveText('Main operations\nWest Coast');
+  await expect(popup.locator('ds-text')).toHaveCSS('white-space', 'pre-line');
+});
+
 test('tracks its trigger through nested scrolling and viewport resize @pr-critical', async ({
   page,
 }) => {

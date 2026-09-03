@@ -6,6 +6,8 @@ import {
   tableColumnSize,
   tableElasticSpacerIndex,
   tableExplicitMinWidth,
+  tableGroupAccessories,
+  tableGroupHero,
   tableGroupIntentClass,
   tableGroupLabelColor,
   tableRows,
@@ -15,6 +17,8 @@ import {
 import type {
   TableColumn,
   TableGroup,
+  TableGroupAccessory,
+  TableGroupHero,
   TableGroupIntent,
   TableRow,
   TableSelectionMode,
@@ -32,6 +36,8 @@ export interface TableGroupRenderModel {
   intentClass: string | undefined;
   labelColor: ReturnType<typeof tableGroupLabelColor>;
   collapsed: boolean;
+  accessories: TableGroupAccessory[];
+  hero: TableGroupHero | undefined;
   selection: TableSelectionState | null;
 }
 
@@ -99,20 +105,26 @@ export function createTableRenderModel(input: TableRenderModelInput): TableRende
     collapsedGroupIds,
     groups: input.groups.map(group => {
       const loadedCount = group.rows.length;
-      const totalPresentation = input.groupCountPresentation === 'total';
+      const collapsed = collapsedGroupIds.has(group.id);
       const count = resolvedTableGroupCount(group);
+      const showTotalOnly =
+        input.groupCountPresentation === 'total' || (collapsed && loadedCount === 0);
       const totalLabel = group.countLabel ?? `${count} ${count === 1 ? 'item' : 'items'}`;
-      const intent = isTableGroupIntent(group.intent) ? group.intent : undefined;
+      const accessories = tableGroupAccessories(group);
+      const hero = tableGroupHero(group);
+      const intent = hero || !isTableGroupIntent(group.intent) ? undefined : group.intent;
       return {
         group,
         count,
         loadedCount,
-        visibleCountText: totalPresentation ? String(count) : `${loadedCount} of ${count}`,
-        countLabel: totalPresentation ? totalLabel : `${loadedCount} of ${totalLabel} loaded`,
+        visibleCountText: showTotalOnly ? String(count) : `${loadedCount} of ${count}`,
+        countLabel: showTotalOnly ? totalLabel : `${loadedCount} of ${totalLabel} loaded`,
         intent,
         intentClass: tableGroupIntentClass(intent),
         labelColor: tableGroupLabelColor(intent),
-        collapsed: collapsedGroupIds.has(group.id),
+        collapsed,
+        accessories,
+        hero,
         selection: selectable ? deriveTableSelectionState(group.rows, input.selectedRowIds) : null,
       };
     }),

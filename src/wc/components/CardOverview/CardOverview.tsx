@@ -23,7 +23,6 @@ import {
   resolveCardOverviewCollapseGeometry,
   resolveOverviewGridColumns,
   resolveOverviewRovingIndex,
-  resolveSafetyScoreLevel,
 } from './card-overview-controller';
 
 /**
@@ -322,7 +321,7 @@ export class CardOverview {
       return (
         <div class="card-overview__score" part="score">
           <div class="card-overview__score-content">
-            <div class="card-overview__score-badge">{this.bar('text-display-small', '40px')}</div>
+            <ds-score size="lg" isLoading></ds-score>
             <div class="card-overview__score-copy">
               {this.bar('text-body-small', '64px', 'card-overview__score-label-spacer')}
               {this.bar('text-body-medium', '28px')}
@@ -353,29 +352,11 @@ export class CardOverview {
 
     const score = this.score;
     if (!score) return null;
-    const level = score.level ?? resolveSafetyScoreLevel(score.value);
 
     return (
       <div class="card-overview__score" part="score">
         <div class="card-overview__score-content">
-          {/* eslint-disable-next-line local/prefer-direct-ds-text -- The fill owns its own box: it pads out to 52px and crops the display line box, which the text element cannot do to itself. */}
-          <div
-            class={{
-              'card-overview__score-badge': true,
-              [`card-overview__score-badge--${level}`]: Boolean(level),
-            }}
-          >
-            <ds-text
-              as="span"
-              class="card-overview__score-value ds-control-label-box"
-              variant="text-display-small"
-              emphasis
-              color="inherit"
-              fontFeature="tabular-nums"
-            >
-              {score.value}
-            </ds-text>
-          </div>
+          <ds-score size="lg" value={score.value} level={score.level} label="Safety score" />
           <div class="card-overview__score-copy">
             <ds-text
               as="span"

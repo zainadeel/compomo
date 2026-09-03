@@ -91,13 +91,15 @@ test('normalizes group presentation and selection without mutating inputs', () =
   assert.equal(model.groups[0].loadedCount, 2);
   assert.equal(model.groups[0].visibleCountText, '2 of 3');
   assert.equal(model.groups[0].countLabel, '2 of 3 events loaded');
+  assert.deepEqual(model.groups[0].accessories, []);
+  assert.equal(model.groups[0].hero, undefined);
   assert.equal(model.groups[0].selection?.indeterminate, true);
   assert.equal(model.groups[1].intent, undefined);
   assert.equal(model.groups[1].intentClass, undefined);
   assert.equal(model.groups[1].labelColor, 'primary');
   assert.equal(model.groups[1].loadedCount, 0);
-  assert.equal(model.groups[1].visibleCountText, '0 of 0');
-  assert.equal(model.groups[1].countLabel, '0 of 0 items loaded');
+  assert.equal(model.groups[1].visibleCountText, '0');
+  assert.equal(model.groups[1].countLabel, '0 items');
   assert.equal(model.groups[1].collapsed, true);
   assert.deepEqual(model.collapseAllHost, { columnId: 'action', mode: 'action' });
   assert.equal(model.allGroupsCollapsed, false);
@@ -131,4 +133,115 @@ test('uses supplied member totals without loaded-window phrasing', () => {
   assert.equal(model.groups[0].count, 166);
   assert.equal(model.groups[0].visibleCountText, '166');
   assert.equal(model.groups[0].countLabel, '166 events');
+});
+
+test('shows totals only when a collapsed section has no supplied members', () => {
+  const groups: TableGroup[] = [
+    {
+      id: 'critical',
+      label: 'Critical',
+      totalCount: 200,
+      countLabel: '200 events',
+      rows: [],
+    },
+    {
+      id: 'high',
+      label: 'High',
+      totalCount: 80,
+      countLabel: '80 events',
+      rows: [],
+    },
+    {
+      id: 'medium',
+      label: 'Medium',
+      totalCount: 3,
+      countLabel: '3 events',
+      rows,
+    },
+    {
+      id: 'empty',
+      label: 'Empty',
+      rows: [],
+    },
+  ];
+  const model = createTableRenderModel({
+    columns,
+    rows: [],
+    groups,
+    grouped: true,
+    selectionMode: 'none',
+    selectedRowIds: [],
+    collapsedGroupIds: ['critical', 'medium', 'empty'],
+  });
+
+  assert.equal(model.groups[0].collapsed, true);
+  assert.equal(model.groups[0].loadedCount, 0);
+  assert.equal(model.groups[0].visibleCountText, '200');
+  assert.equal(model.groups[0].countLabel, '200 events');
+  assert.equal(model.groups[1].collapsed, false);
+  assert.equal(model.groups[1].visibleCountText, '0 of 80');
+  assert.equal(model.groups[1].countLabel, '0 of 80 events loaded');
+  assert.equal(model.groups[2].collapsed, true);
+  assert.equal(model.groups[2].visibleCountText, '2 of 3');
+  assert.equal(model.groups[2].countLabel, '2 of 3 events loaded');
+  assert.equal(model.groups[3].collapsed, true);
+  assert.equal(model.groups[3].visibleCountText, '0');
+  assert.equal(model.groups[3].countLabel, '0 items');
+});
+
+test('resolves at most four group accessories onto the render snapshot', () => {
+  const groups: TableGroup[] = [
+    {
+      id: 'critical',
+      label: 'Critical',
+      rows,
+      accessories: [
+        { text: 'ID: 54321' },
+        { text: '  ' },
+        { text: '2 groups', help: 'Assigned groups' },
+        { text: 'Shift A' },
+        { text: 'Yard 12' },
+        { text: 'Dropped' },
+      ],
+    },
+  ];
+  const model = createTableRenderModel({
+    columns,
+    rows: [],
+    groups,
+    grouped: true,
+    selectionMode: 'none',
+    selectedRowIds: [],
+    collapsedGroupIds: [],
+  });
+  assert.deepEqual(model.groups[0].accessories, [
+    { text: 'ID: 54321' },
+    { text: '2 groups', help: 'Assigned groups' },
+    { text: 'Shift A' },
+    { text: 'Yard 12' },
+  ]);
+});
+
+test('resolves a score hero onto the render snapshot', () => {
+  const groups: TableGroup[] = [
+    {
+      id: 'assigned',
+      label: 'Assigned',
+      intent: 'brand',
+      rows,
+      hero: { kind: 'score', value: 87, label: ' Safety score ' },
+    },
+  ];
+  const model = createTableRenderModel({
+    columns,
+    rows: [],
+    groups,
+    grouped: true,
+    selectionMode: 'none',
+    selectedRowIds: [],
+    collapsedGroupIds: [],
+  });
+  assert.deepEqual(model.groups[0].hero, { kind: 'score', value: 87, label: 'Safety score' });
+  assert.equal(model.groups[0].intent, undefined);
+  assert.equal(model.groups[0].intentClass, undefined);
 });

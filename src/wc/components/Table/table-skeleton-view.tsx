@@ -69,7 +69,8 @@ function renderSkeletonCell(
   const align = column.align ?? 'start';
   const text = skeleton.kind === 'text';
   const iconText = skeleton.kind === 'icon-text';
-  const lines = text || iconText ? (skeleton.lines ?? 1) : 1;
+  const scoreText = skeleton.kind === 'score-text';
+  const lines = text || iconText || scoreText ? (skeleton.lines ?? 1) : 1;
   const tag = skeleton.kind === 'tag';
   const icon = skeleton.kind === 'icon';
   const image = skeleton.kind === 'image';
@@ -77,6 +78,13 @@ function renderSkeletonCell(
     ? tableCellImageVariant(resolveTableCellImageTracks(skeleton.tracks))
     : undefined;
   const iconTextVariant = iconText
+    ? lines === 3
+      ? 'triple'
+      : lines === 2
+        ? 'multi'
+        : 'single'
+    : undefined;
+  const scoreTextVariant = scoreText
     ? lines === 3
       ? 'triple'
       : lines === 2
@@ -100,6 +108,8 @@ function renderSkeletonCell(
         'ds-table__cell--icon': icon,
         'ds-table__cell--icon-text': iconText,
         [`ds-table__cell--icon-text-${iconTextVariant}`]: iconText,
+        'ds-table__cell--score-text': scoreText,
+        [`ds-table__cell--score-text-${scoreTextVariant}`]: scoreText,
         'ds-table__cell--image': image,
         [`ds-table__cell--image-${imageVariant}`]: image,
         'ds-table__cell--action': action,
@@ -111,7 +121,7 @@ function renderSkeletonCell(
       }}
       data-column-id={column.id}
       data-skeleton-kind={skeleton.kind}
-      data-cell-variant={imageVariant ?? iconTextVariant}
+      data-cell-variant={imageVariant ?? iconTextVariant ?? scoreTextVariant}
       key={`skeleton-${rowIndex}:${column.id}`}
     >
       <span class="ds-table__cell-content ds-interaction-fill__content">
@@ -194,6 +204,16 @@ function renderSkeletonCellContent(skeleton: TableCellSkeleton) {
           <ds-skeleton variant="icon" iconSize="md" />
         </span>
         {copy}
+      </span>
+    );
+  }
+  if (skeleton.kind === 'score-text') {
+    return (
+      <span class="ds-table__cell-score-text">
+        {copy}
+        <span class="ds-table__cell-score-text-score">
+          <ds-score size="sm" isLoading={true} label="Safety score" />
+        </span>
       </span>
     );
   }

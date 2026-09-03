@@ -60,7 +60,7 @@
   "responsiveBehavior": [
     "The portaled popup follows trigger and popup resize, viewport resize, and nested scrolling while open.",
     "Touch users rely on the trigger's accessible and visible context rather than tooltip disclosure.",
-    "Keep labels concise and non-wrapping by default; omitted table cell values may wrap at panel-xs."
+    "Keep labels concise and non-wrapping by default; wrapLabel allows panel-xs wrapping and preserves explicit line breaks for compact, non-interactive lists."
   ],
   "frameworkCaveats": {
     "customElements": [

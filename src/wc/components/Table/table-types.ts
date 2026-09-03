@@ -1,5 +1,6 @@
 import type { TagContrast, TagIntent } from '../Tag/Tag';
 import type { IconColor } from '../Icon/Icon';
+import type { SafetyScoreLevel } from '../Score/score-types';
 import type { TextColor } from '../Text/text-types';
 import type { PaginationState } from '../Pagination/pagination-types';
 
@@ -60,6 +61,8 @@ export interface TableCellTextRun {
   text: string;
   /** Defaults to the track’s standard color. */
   color?: TextColor;
+  /** Optional supplementary copy shown from a dotted-underlined tooltip trigger. */
+  help?: string;
 }
 
 /** A secondary or tertiary track: one string, or up to three colorable runs. */
@@ -135,6 +138,31 @@ export interface TableCellIconText {
   iconColor?: IconColor;
   /** Accessible name. Omit when the glyph is decorative. */
   iconLabel?: string;
+  primary: string | number;
+  secondary?: TableCellTextTrack;
+  tertiary?: TableCellTextTrack;
+  secondaryColor?: TextColor;
+  tertiaryColor?: TextColor;
+  href?: string;
+  target?: TableCellLinkTarget;
+  wrap?: boolean;
+  maxLines?: TableCellMaxLines;
+  fontFeature?: 'normal' | 'tabular-nums';
+}
+
+/**
+ * Compact safety-score fill at the top-right of a text copy stack. The score
+ * occupies one 24px track while the copy keeps the standard text-cell anatomy.
+ */
+export interface TableCellScoreText {
+  kind: 'score-text';
+  /** Display-ready safety score. Numeric values infer their semantic level. */
+  score: string | number;
+  scoreLevel?: SafetyScoreLevel;
+  /** Accessible name prefix. Defaults to “Safety score”. */
+  scoreLabel?: string;
+  /** Replace the score figure with its matching sm skeleton. */
+  scoreLoading?: boolean;
   primary: string | number;
   secondary?: TableCellTextTrack;
   tertiary?: TableCellTextTrack;
@@ -269,6 +297,7 @@ export type TableCellValue =
   | TableCellTags
   | TableCellIcon
   | TableCellIconText
+  | TableCellScoreText
   | TableCellImage
   | TableCellAction
   | TableCellEmpty
@@ -301,6 +330,13 @@ export type TableCellSkeleton =
     }
   | {
       kind: 'icon-text';
+      lines?: 1 | 2 | 3;
+      primaryWidth?: TableSkeletonWidth;
+      secondaryWidth?: TableSkeletonWidth;
+      tertiaryWidth?: TableSkeletonWidth;
+    }
+  | {
+      kind: 'score-text';
       lines?: 1 | 2 | 3;
       primaryWidth?: TableSkeletonWidth;
       secondaryWidth?: TableSkeletonWidth;
@@ -370,6 +406,25 @@ export interface TableRow {
   interactive?: boolean;
 }
 
+/** Supporting copy on a group section header's second track. */
+export interface TableGroupAccessory {
+  text: string;
+  /** Optional tooltip. Uses the shared dotted underline when present. */
+  help?: string;
+}
+
+/** Leading group-header accessory. Score is the first supported hero. */
+export interface TableGroupHeroScore {
+  kind: 'score';
+  value: string | number;
+  level?: SafetyScoreLevel;
+  /** Accessible name prefix, for example “Safety score”. */
+  label?: string;
+  isLoading?: boolean;
+}
+
+export type TableGroupHero = TableGroupHeroScore;
+
 export interface TableGroup {
   /** Stable group identity. */
   id: string;
@@ -384,6 +439,16 @@ export interface TableGroup {
    * intent background and bold intent title color.
    */
   intent?: TableGroupIntent;
+  /**
+   * Optional accessory copy on a second 24px track under the label and count.
+   * Middle-dot separated. At most four items are shown.
+   */
+  accessories?: TableGroupAccessory[];
+  /**
+   * Optional leading hero before the label and count. A score uses sm on both
+   * single-track and two-track headers and sits at the start of the copy stack.
+   */
+  hero?: TableGroupHero;
   /** Whether this group has more member rows available to load. */
   hasMore?: boolean;
   /** Controlled incremental loading state for this group's member rows. */

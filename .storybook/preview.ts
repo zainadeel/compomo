@@ -90,6 +90,7 @@ const preview: Preview = {
             'Tag',
             'Chip',
             'Badge',
+            'Score',
             'Divider',
             'Loader',
             'Skeleton',

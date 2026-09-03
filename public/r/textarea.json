@@ -1,0 +1,600 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "textarea",
+  "title": "Textarea",
+  "description": "Form-associated multiline text control with shared Input density, focus, validation, and field-composition behavior.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/textarea",
+    "source": "src/wc/components/Textarea/Textarea.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Form-associated multiline text control with shared Input density, focus, validation, and field-composition behavior.",
+      "useWhen": [
+        "A person needs to enter freeform text that may span several lines.",
+        "Notes, descriptions, comments, or explanations need native multiline editing and form submission.",
+        "A multiline control must compose with Field for its visible label, guidance, and error presentation."
+      ],
+      "avoidWhen": [
+        "The value is predictably one line; use Input instead.",
+        "The content is a conversational prompt with submit, stop, and tool actions; use MessageComposer instead.",
+        "The interface needs rich-text formatting, mentions, or structured blocks."
+      ],
+      "alternatives": [
+        {
+          "when": "The value is predictably one line.",
+          "component": "component:ds-input",
+          "reason": "Input supplies single-line semantics, adornments, search clearing, and numeric stepping."
+        },
+        {
+          "when": "The field is a conversational prompt with submission actions.",
+          "component": "component:ds-message-composer",
+          "reason": "MessageComposer owns chat-specific growth, submission, stop, tools, and recovery behavior."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-field",
+        "component:ds-text"
+      ],
+      "accessibility": [
+        "Give every Textarea an accessible name, preferably by wrapping it in Field with a persistent visible label.",
+        "Use description text for lasting guidance; placeholder text is an example or short prompt, not a label.",
+        "Required validation uses the native form contract and can provide a localized requiredMessage.",
+        "Read-only text remains focusable and submittable; inactive text is unavailable and omitted from form submission.",
+        "When Textarea renders its own errorMessage, it merges that message ID with authored aria-describedby references."
+      ],
+      "states": [
+        "Textarea exposes data-filled, data-focused, data-dirty, data-touched, data-invalid, data-disabled, data-readonly, and data-required state hooks.",
+        "The default four visible rows can be changed with rows; rows is clamped to at least one.",
+        "Vertical resizing is enabled by default and can be disabled when the surrounding layout owns the field height.",
+        "Size changes typography and inset spacing without changing the authored row count.",
+        "Border, focus, error, placeholder, inactive, hover, and pressed treatments follow the same shared recipes as Input."
+      ],
+      "responsiveBehavior": [
+        "Textarea fills its parent by default and follows the width supplied by Field or the form layout.",
+        "The native value wraps within the available width and scrolls when its content exceeds the visible rows.",
+        "Use width hug only in intrinsically sized layouts with an explicit surrounding constraint."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Listen for dsChange; its detail is the complete current string value.",
+          "Set value through the component property for controlled updates and use setFocus() for imperative focus."
+        ],
+        "react": [
+          "Use the generated Textarea adapter and read the full string from the dsChange detail."
+        ],
+        "angular": [
+          "Use the generated Textarea adapter with its text value accessor for form bindings."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/Textarea/Textarea.stories.ts"
+        },
+        {
+          "label": "Cross-browser form and accessibility coverage",
+          "path": "tests/e2e/forms.spec.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "ariaDescribedby": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "aria-describedby",
+          "required": false,
+          "mutable": false
+        },
+        "ariaLabel": {
+          "type": "string | null",
+          "resolvedType": "null | string",
+          "attribute": "aria-label",
+          "default": "null",
+          "required": false,
+          "mutable": false
+        },
+        "ariaLabelledby": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "aria-labelledby",
+          "required": false,
+          "mutable": false
+        },
+        "autoComplete": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "autocomplete",
+          "required": false,
+          "mutable": false,
+          "description": "Native browser autofill hint."
+        },
+        "autoFocus": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "auto-focus",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "disabled": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "disabled",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "enterKeyHint": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "enterkeyhint",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Preferred virtual-keyboard action label."
+        },
+        "error": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "error",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "errorMessage": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "error-message",
+          "required": false,
+          "mutable": false
+        },
+        "form": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "form",
+          "required": false,
+          "mutable": false
+        },
+        "hasBorder": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "has-border",
+          "default": "true",
+          "required": false,
+          "mutable": false,
+          "description": "Show the standard inset border, including focused and invalid strokes."
+        },
+        "hasInteractionFill": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "has-interaction-fill",
+          "default": "true",
+          "required": false,
+          "mutable": false,
+          "description": "Show the standard hover and pressed fill when the field is not embedded in interactive chrome."
+        },
+        "inputId": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "input-id",
+          "required": false,
+          "mutable": false,
+          "description": "Associates the internal textarea with an external <label>."
+        },
+        "inputMode": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "inputmode",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Preferred virtual keyboard without changing the value semantics."
+        },
+        "isInactive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-inactive",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "name": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "name",
+          "required": false,
+          "mutable": false
+        },
+        "placeholder": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "placeholder",
+          "required": false,
+          "mutable": false
+        },
+        "readOnly": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "read-only",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Keeps the value focusable and submittable while preventing edits."
+        },
+        "required": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "required",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "requiredMessage": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "required-message",
+          "default": "'This field is required.'",
+          "required": false,
+          "mutable": false
+        },
+        "resize": {
+          "type": "TextareaResize",
+          "resolvedType": "\"none\" | \"vertical\"",
+          "attribute": "resize",
+          "default": "'vertical'",
+          "required": false,
+          "mutable": false,
+          "description": "Whether the user can resize the field vertically."
+        },
+        "rows": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "rows",
+          "default": "4",
+          "required": false,
+          "mutable": false,
+          "description": "Visible text rows before the field scrolls."
+        },
+        "size": {
+          "type": "TextareaSize",
+          "resolvedType": "\"lg\" | \"md\" | \"sm\" | \"xs\"",
+          "attribute": "size",
+          "default": "'md'",
+          "required": false,
+          "mutable": false,
+          "description": "Control density for typography and inset spacing."
+        },
+        "spellCheck": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "spellcheck",
+          "default": "true",
+          "required": false,
+          "mutable": false,
+          "description": "Whether the browser should check spelling and grammar."
+        },
+        "value": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "value",
+          "default": "''",
+          "required": false,
+          "mutable": true
+        },
+        "width": {
+          "type": "TextareaWidth",
+          "resolvedType": "\"fill\" | \"hug\"",
+          "attribute": "width",
+          "default": "'fill'",
+          "required": false,
+          "mutable": false,
+          "description": "Width fit — fill the parent (default) or hug the available content."
+        }
+      },
+      "events": [
+        {
+          "name": "dsChange",
+          "detail": "string",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [
+        {
+          "name": "setFocus",
+          "signature": "setFocus() => Promise<void>"
+        }
+      ],
+      "slots": []
+    },
+    "props": {
+      "ariaDescribedby": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "aria-describedby",
+        "required": false,
+        "mutable": false
+      },
+      "ariaLabel": {
+        "type": "string | null",
+        "resolvedType": "null | string",
+        "attribute": "aria-label",
+        "default": "null",
+        "required": false,
+        "mutable": false
+      },
+      "ariaLabelledby": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "aria-labelledby",
+        "required": false,
+        "mutable": false
+      },
+      "autoComplete": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "autocomplete",
+        "required": false,
+        "mutable": false,
+        "description": "Native browser autofill hint."
+      },
+      "autoFocus": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "auto-focus",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "disabled": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "disabled",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "enterKeyHint": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "enterkeyhint",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Preferred virtual-keyboard action label."
+      },
+      "error": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "error",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "errorMessage": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "error-message",
+        "required": false,
+        "mutable": false
+      },
+      "form": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "form",
+        "required": false,
+        "mutable": false
+      },
+      "hasBorder": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "has-border",
+        "default": "true",
+        "required": false,
+        "mutable": false,
+        "description": "Show the standard inset border, including focused and invalid strokes."
+      },
+      "hasInteractionFill": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "has-interaction-fill",
+        "default": "true",
+        "required": false,
+        "mutable": false,
+        "description": "Show the standard hover and pressed fill when the field is not embedded in interactive chrome."
+      },
+      "inputId": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "input-id",
+        "required": false,
+        "mutable": false,
+        "description": "Associates the internal textarea with an external <label>."
+      },
+      "inputMode": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "inputmode",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Preferred virtual keyboard without changing the value semantics."
+      },
+      "isInactive": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-inactive",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "name": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "name",
+        "required": false,
+        "mutable": false
+      },
+      "placeholder": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "placeholder",
+        "required": false,
+        "mutable": false
+      },
+      "readOnly": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "read-only",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Keeps the value focusable and submittable while preventing edits."
+      },
+      "required": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "required",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "requiredMessage": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "required-message",
+        "default": "'This field is required.'",
+        "required": false,
+        "mutable": false
+      },
+      "resize": {
+        "type": "TextareaResize",
+        "resolvedType": "\"none\" | \"vertical\"",
+        "attribute": "resize",
+        "default": "'vertical'",
+        "required": false,
+        "mutable": false,
+        "description": "Whether the user can resize the field vertically."
+      },
+      "rows": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "rows",
+        "default": "4",
+        "required": false,
+        "mutable": false,
+        "description": "Visible text rows before the field scrolls."
+      },
+      "size": {
+        "type": "TextareaSize",
+        "resolvedType": "\"lg\" | \"md\" | \"sm\" | \"xs\"",
+        "attribute": "size",
+        "default": "'md'",
+        "required": false,
+        "mutable": false,
+        "description": "Control density for typography and inset spacing."
+      },
+      "spellCheck": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "spellcheck",
+        "default": "true",
+        "required": false,
+        "mutable": false,
+        "description": "Whether the browser should check spelling and grammar."
+      },
+      "value": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "value",
+        "default": "''",
+        "required": false,
+        "mutable": true
+      },
+      "width": {
+        "type": "TextareaWidth",
+        "resolvedType": "\"fill\" | \"hug\"",
+        "attribute": "width",
+        "default": "'fill'",
+        "required": false,
+        "mutable": false,
+        "description": "Width fit — fill the parent (default) or hug the available content."
+      }
+    },
+    "events": [
+      {
+        "name": "dsChange",
+        "detail": "string",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [
+      {
+        "name": "setFocus",
+        "signature": "setFocus() => Promise<void>"
+      }
+    ],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-textarea",
+      "react": "DsTextarea",
+      "vue": "DsTextarea",
+      "angular": "DsTextarea"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-textarea.js';",
+        "example": "<ds-textarea></ds-textarea>"
+      },
+      "react": {
+        "import": "import { DsTextarea } from '@ds-mo/ui/react';",
+        "example": "<DsTextarea />"
+      },
+      "vue": {
+        "import": "import { DsTextarea } from '@ds-mo/ui/vue';",
+        "example": "<DsTextarea />"
+      },
+      "angular": {
+        "import": "import { DsTextarea } from '@ds-mo/ui/angular/ds-textarea';",
+        "example": "<ds-textarea></ds-textarea>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.5.1",
+          "@ds-mo/icons ^7.0.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/Textarea/Textarea.css",
+      "content": "@import '../../utils/interaction-fill.css';\n@import '../../utils/focus-ring.css';\n@import '../../utils/control-inactive.css';\n@import '../../utils/control-density.css';\n@import '../../utils/control-width.css';\n@import '../../utils/field-stack.css';\n@import '../../utils/typography.css';\n@import '../../utils/forced-colors.css';\n\n:host(.textarea-host) {\n  display: inline-flex;\n  --ds-textarea-fg: var(--color-foreground-primary);\n  --ds-textarea-placeholder: var(--color-foreground-secondary);\n  --ds-textarea-placeholder-active: var(--color-foreground-quaternary);\n  --ds-textarea-border: var(--color-border-secondary);\n}\n\n:host(.ds-control-width--fill),\n:host(.ds-control-width--fill) .textarea-control {\n  width: 100%;\n}\n\n.textarea-control {\n  display: flex;\n  box-sizing: border-box;\n  min-width: 0;\n  overflow: hidden;\n  background: transparent;\n  border: none;\n  border-radius: var(--ds-control-radius, var(--dimension-radius-025));\n  color: var(--ds-textarea-fg);\n}\n\n.textarea-control--resizable {\n  padding-block-end: var(--dimension-space-025);\n  padding-inline-end: var(--dimension-space-025);\n}\n\n.textarea-control--bordered {\n  --ds-interaction-border-width: var(--dimension-stroke-width-012);\n  --ds-interaction-border-color: var(--ds-textarea-border);\n}\n\n.textarea-control--error {\n  --ds-interaction-border-width: var(--dimension-stroke-width-018);\n  --ds-interaction-border-color: var(--color-border-bold-negative);\n}\n\n.textarea-control--bordered:focus-within:not(.textarea-control--error) {\n  --ds-interaction-border-width: var(--dimension-stroke-width-018);\n  --ds-interaction-border-color: var(--color-border-bold-brand);\n}\n\n:host(.ds-control-inactive) .textarea-control::after {\n  background: transparent;\n}\n\n.native-textarea {\n  position: relative;\n  z-index: 2;\n  box-sizing: border-box;\n  min-width: 0;\n  width: 100%;\n  padding-block: var(--ds-control-padding-inline, var(--dimension-space-075));\n  padding-inline: calc(\n    var(--ds-control-padding-inline, var(--dimension-space-075)) +\n      var(--ds-control-label-inset, var(--dimension-space-025))\n  );\n  background: transparent;\n  border: none;\n  border-radius: inherit;\n  outline: none;\n  color: var(--ds-textarea-fg);\n  font-family: inherit;\n  -webkit-appearance: none;\n  appearance: none;\n}\n\n.native-textarea--resize-vertical {\n  resize: vertical;\n}\n\n.native-textarea--resize-none {\n  resize: none;\n}\n\n.native-textarea:disabled {\n  cursor: not-allowed;\n}\n\n.native-textarea:read-only:not(:disabled) {\n  cursor: default;\n}\n\n.native-textarea::placeholder {\n  color: var(--ds-textarea-placeholder);\n}\n\n.native-textarea:focus::placeholder {\n  color: var(--ds-textarea-placeholder-active);\n}\n\n.error-text {\n  width: 100%;\n}\n\n@media (forced-colors: active) {\n  .textarea-control--bordered:focus-within:not(.textarea-control--error)::after {\n    outline-color: var(--ds-forced-color-selected);\n  }\n\n  .textarea-control--error::after {\n    outline-style: dashed;\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/Textarea/Textarea.tsx",
+      "content": "import {\n  AttachInternals,\n  Component,\n  Element,\n  Event,\n  EventEmitter,\n  Method,\n  Prop,\n  State,\n  Watch,\n  h,\n  Host,\n} from '@stencil/core';\nimport {\n  controlWidthClass,\n  CONTROL_TEXT_VARIANT,\n  DEFAULT_REQUIRED_MESSAGE,\n  restoreStringFormState,\n  setFormControlValue,\n  setRequiredValidity,\n  type ControlWidth,\n} from '../../utils';\n\nexport type TextareaSize = 'lg' | 'md' | 'sm' | 'xs';\nexport type TextareaWidth = ControlWidth;\nexport type TextareaResize = 'vertical' | 'none';\n\nlet idCounter = 0;\n\n@Component({\n  tag: 'ds-textarea',\n  styleUrl: 'Textarea.css',\n  scoped: true,\n  formAssociated: true,\n})\nexport class Textarea {\n  @Element() el!: HTMLElement;\n  @AttachInternals() internals!: ElementInternals;\n\n  private generatedId = `ds-textarea-${++idCounter}`;\n  private errorId = `${this.generatedId}-error`;\n\n  @Prop({ mutable: true }) value: string = '';\n  @Prop({ reflect: true }) name: string | undefined;\n  @Prop({ reflect: true }) form: string | undefined;\n  @Prop({ reflect: true }) disabled: boolean = false;\n  /** Keeps the value focusable and submittable while preventing edits. */\n  @Prop({ reflect: true }) readOnly: boolean = false;\n  @Prop({ reflect: true }) required: boolean = false;\n  @Prop() requiredMessage: string = DEFAULT_REQUIRED_MESSAGE;\n  @Prop() placeholder: string | undefined;\n  /** Visible text rows before the field scrolls. */\n  @Prop() rows: number = 4;\n  /** Whether the user can resize the field vertically. */\n  @Prop() resize: TextareaResize = 'vertical';\n  /** Native browser autofill hint. */\n  @Prop({ attribute: 'autocomplete' }) autoComplete: string | undefined;\n  /** Preferred virtual keyboard without changing the value semantics. */\n  @Prop({ attribute: 'inputmode' }) inputMode: string = '';\n  /** Preferred virtual-keyboard action label. */\n  @Prop({ attribute: 'enterkeyhint' }) enterKeyHint: string = '';\n  /** Whether the browser should check spelling and grammar. */\n  @Prop({ attribute: 'spellcheck' }) spellCheck: boolean = true;\n  /** Control density for typography and inset spacing. */\n  @Prop() size: TextareaSize = 'md';\n  /** Width fit — fill the parent (default) or hug the available content. */\n  @Prop() width: TextareaWidth = 'fill';\n  /** Show the standard inset border, including focused and invalid strokes. */\n  @Prop() hasBorder: boolean = true;\n  /** Show the standard hover and pressed fill when the field is not embedded in interactive chrome. */\n  @Prop() hasInteractionFill: boolean = true;\n  @Prop() isInactive: boolean = false;\n  @Prop() autoFocus: boolean = false;\n  @Prop() error: boolean = false;\n  @Prop() errorMessage: string | undefined;\n  /** Associates the internal textarea with an external <label>. */\n  @Prop() inputId: string | undefined;\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n  @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;\n  @Prop({ attribute: 'aria-describedby' }) ariaDescribedby: string | undefined;\n\n  @Event() dsChange!: EventEmitter<string>;\n\n  private initialValue = '';\n  private textareaEl?: HTMLTextAreaElement;\n  @State() private formDisabled = false;\n  @State() private focused = false;\n  @State() private touched = false;\n\n  componentWillLoad() {\n    this.initialValue = this.value;\n    this.syncFormValue();\n  }\n\n  @Watch('value')\n  @Watch('disabled')\n  @Watch('isInactive')\n  @Watch('required')\n  syncFormValue() {\n    const inactive = this.isInactive || this.disabled || this.formDisabled;\n    setFormControlValue(this.internals, this.value, { inactive });\n    const missing = this.required && !inactive && this.value.length === 0;\n    setRequiredValidity(this.internals, missing, this.requiredMessage);\n  }\n\n  formDisabledCallback(disabled: boolean) {\n    this.formDisabled = disabled;\n    this.syncFormValue();\n  }\n\n  formResetCallback() {\n    this.value = this.initialValue;\n  }\n\n  formStateRestoreCallback(state: string | File | FormData | null) {\n    this.value = restoreStringFormState(state);\n  }\n\n  @Method()\n  async setFocus() {\n    this.textareaEl?.focus();\n  }\n\n  private handleInput = (event: Event) => {\n    this.value = (event.target as HTMLTextAreaElement).value;\n    this.dsChange.emit(this.value);\n  };\n\n  private handleFocus = () => {\n    this.focused = true;\n  };\n\n  private handleBlur = () => {\n    this.focused = false;\n    this.touched = true;\n  };\n\n  render() {\n    const inputId = this.inputId ?? this.generatedId;\n    const inactive = this.isInactive || this.disabled || this.formDisabled;\n    const filled = this.value.length > 0;\n    const dirty = this.value !== this.initialValue;\n    const showError = this.error && Boolean(this.errorMessage);\n    const textVariant = CONTROL_TEXT_VARIANT[this.size];\n    const rows = Number.isFinite(this.rows) ? Math.max(1, Math.floor(this.rows)) : 4;\n    const describedBy =\n      [this.ariaDescribedby, showError ? this.errorId : undefined].filter(Boolean).join(' ') ||\n      undefined;\n\n    return (\n      <Host\n        class={{\n          'textarea-host': true,\n          'ds-field-stack': true,\n          'ds-control-inactive': inactive,\n          [`ds-control--${this.size}`]: true,\n          ...controlWidthClass(this.width),\n        }}\n        data-disabled={inactive ? '' : undefined}\n        data-readonly={this.readOnly ? '' : undefined}\n        data-required={this.required ? '' : undefined}\n        data-invalid={this.error ? '' : undefined}\n        data-filled={filled ? '' : undefined}\n        data-focused={this.focused ? '' : undefined}\n        data-dirty={dirty ? '' : undefined}\n        data-touched={this.touched ? '' : undefined}\n      >\n        <div\n          class={{\n            'textarea-control': true,\n            'textarea-control--resizable': this.resize === 'vertical',\n            'textarea-control--bordered': this.hasBorder,\n            'textarea-control--error': this.hasBorder && this.error,\n            'ds-interaction-fill': this.hasInteractionFill,\n            [`ds-control--${this.size}`]: true,\n          }}\n        >\n          <textarea\n            ref={element => {\n              this.textareaEl = element;\n            }}\n            id={inputId}\n            value={this.value}\n            placeholder={this.placeholder}\n            rows={rows}\n            disabled={inactive}\n            readOnly={this.readOnly}\n            required={this.required}\n            autoFocus={this.autoFocus}\n            autoComplete={this.autoComplete}\n            inputMode={this.inputMode || undefined}\n            enterKeyHint={this.enterKeyHint || undefined}\n            spellcheck={this.spellCheck}\n            class={`native-textarea native-textarea--resize-${this.resize} ds-text--${textVariant.replace('text-', '')} ds-text--regular ds-interaction-fill__content`}\n            aria-label={this.ariaLabel}\n            aria-labelledby={this.ariaLabelledby}\n            aria-describedby={describedBy}\n            aria-invalid={this.error ? 'true' : undefined}\n            onInput={this.handleInput}\n            onFocus={this.handleFocus}\n            onBlur={this.handleBlur}\n          />\n        </div>\n        {showError && (\n          <ds-text\n            class=\"error-text\"\n            as=\"div\"\n            variant=\"text-body-small\"\n            color=\"negative\"\n            textId={this.errorId}\n            role=\"alert\"\n          >\n            {this.errorMessage}\n          </ds-text>\n        )}\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

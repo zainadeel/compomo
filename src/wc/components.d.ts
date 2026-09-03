@@ -54,6 +54,7 @@ import { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 import { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderActionDetail, PanelToolsHeaders, PanelToolsItem, PanelToolsRailAccessory, PanelToolsRailAccessoryActionDetail, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
 import { RadioOption, RadioSize } from "./components/Radio/Radio";
+import { SafetyScoreLevel, ScoreSize } from "./components/Score/score-types";
 import { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
 import { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
 import { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellSectionNavigation, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
@@ -71,6 +72,7 @@ import { TableGroupOption } from "./components/TableGroup/TableGroup";
 import { TableSavedView, TableSavedViewChangeDetail, TableSavedViewCreateDetail, TableSavedViewDiscardDetail, TableSavedViewRemoveDetail, TableSavedViewRenameDetail, TableSavedViewSaveDetail } from "./components/TableSavedViews/table-saved-views-types";
 import { TableSearchFieldsChangeDetail } from "./components/TableSearch/table-search-types";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
+import { TextareaResize, TextareaSize, TextareaWidth } from "./components/Textarea/Textarea";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 import { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
 import { AnchoredOverlayBoundary } from "./utils/anchored-overlay-boundary";
@@ -124,6 +126,7 @@ export { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 export { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderActionDetail, PanelToolsHeaders, PanelToolsItem, PanelToolsRailAccessory, PanelToolsRailAccessoryActionDetail, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
 export { RadioOption, RadioSize } from "./components/Radio/Radio";
+export { SafetyScoreLevel, ScoreSize } from "./components/Score/score-types";
 export { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
 export { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
 export { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellSectionNavigation, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
@@ -141,6 +144,7 @@ export { TableGroupOption } from "./components/TableGroup/TableGroup";
 export { TableSavedView, TableSavedViewChangeDetail, TableSavedViewCreateDetail, TableSavedViewDiscardDetail, TableSavedViewRemoveDetail, TableSavedViewRenameDetail, TableSavedViewSaveDetail } from "./components/TableSavedViews/table-saved-views-types";
 export { TableSearchFieldsChangeDetail } from "./components/TableSearch/table-search-types";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
+export { TextareaResize, TextareaSize, TextareaWidth } from "./components/Textarea/Textarea";
 export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
 export { TooltipAlign, TooltipSide, TooltipSize } from "./components/Tooltip/Tooltip";
 export { AnchoredOverlayBoundary } from "./utils/anchored-overlay-boundary";
@@ -2404,6 +2408,32 @@ export namespace Components {
          */
         "value": string;
     }
+    interface DsScore {
+        /**
+          * Replace the figure with a skeleton while data resolves.
+          * @default false
+         */
+        "isLoading": boolean;
+        /**
+          * Accessible name prefix, for example “Safety score”.
+          * @default ''
+         */
+        "label": string;
+        /**
+          * Safety-score color level. Numeric values from 0–100 infer fair (0–50), good (51–80), or excellent (81–100) when this is omitted.
+         */
+        "level": SafetyScoreLevel | undefined;
+        /**
+          * Visual density matching control height: `sm` 24px, `md` 32px, `lg` 40px. `lg` is the Card Overview recipe.
+          * @default 'md'
+         */
+        "size": ScoreSize;
+        /**
+          * Display-ready headline figure.
+          * @default ''
+         */
+        "value": string | number;
+    }
     interface DsScrollOverlay {
         /**
           * Re-measure footer geometry after an imperative slotted-content update.
@@ -3627,6 +3657,105 @@ export namespace Components {
         "variant": TextVariant;
         "wrap": TextWrap | undefined;
     }
+    interface DsTextarea {
+        "ariaDescribedby": string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+        /**
+          * Native browser autofill hint.
+         */
+        "autoComplete": string | undefined;
+        /**
+          * @default false
+         */
+        "autoFocus": boolean;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Preferred virtual-keyboard action label.
+          * @default ''
+         */
+        "enterKeyHint": string;
+        /**
+          * @default false
+         */
+        "error": boolean;
+        "errorMessage": string | undefined;
+        "form": string | undefined;
+        /**
+          * Show the standard inset border, including focused and invalid strokes.
+          * @default true
+         */
+        "hasBorder": boolean;
+        /**
+          * Show the standard hover and pressed fill when the field is not embedded in interactive chrome.
+          * @default true
+         */
+        "hasInteractionFill": boolean;
+        /**
+          * Associates the internal textarea with an external <label>.
+         */
+        "inputId": string | undefined;
+        /**
+          * Preferred virtual keyboard without changing the value semantics.
+          * @default ''
+         */
+        "inputMode": string;
+        /**
+          * @default false
+         */
+        "isInactive": boolean;
+        "name": string | undefined;
+        "placeholder": string | undefined;
+        /**
+          * Keeps the value focusable and submittable while preventing edits.
+          * @default false
+         */
+        "readOnly": boolean;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage": string;
+        /**
+          * Whether the user can resize the field vertically.
+          * @default 'vertical'
+         */
+        "resize": TextareaResize;
+        /**
+          * Visible text rows before the field scrolls.
+          * @default 4
+         */
+        "rows": number;
+        "setFocus": () => Promise<void>;
+        /**
+          * Control density for typography and inset spacing.
+          * @default 'md'
+         */
+        "size": TextareaSize;
+        /**
+          * Whether the browser should check spelling and grammar.
+          * @default true
+         */
+        "spellCheck": boolean;
+        /**
+          * @default ''
+         */
+        "value": string;
+        /**
+          * Width fit — fill the parent (default) or hug the available content.
+          * @default 'fill'
+         */
+        "width": TextareaWidth;
+    }
     interface DsToast {
         /**
           * Keep the global stack 16px above the persistent mobile shell bar below 768px.
@@ -3726,7 +3855,7 @@ export namespace Components {
          */
         "size": TooltipSize;
         /**
-          * Allow the label to wrap at a panel-xs max width instead of a single line.
+          * Allow wrapping at a panel-xs max width and preserve explicit line breaks.
           * @default false
          */
         "wrapLabel": boolean;
@@ -3992,6 +4121,10 @@ export interface DsTableSortCustomEvent<T> extends CustomEvent<T> {
 export interface DsTagCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsTagElement;
+}
+export interface DsTextareaCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsTextareaElement;
 }
 export interface DsToastCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -4798,6 +4931,12 @@ declare global {
         prototype: HTMLDsRadioElement;
         new (): HTMLDsRadioElement;
     };
+    interface HTMLDsScoreElement extends Components.DsScore, HTMLStencilElement {
+    }
+    var HTMLDsScoreElement: {
+        prototype: HTMLDsScoreElement;
+        new (): HTMLDsScoreElement;
+    };
     interface HTMLDsScrollOverlayElementEventMap {
         "dsScroll": ScrollOverlayScrollDetail;
     }
@@ -5136,6 +5275,23 @@ declare global {
         prototype: HTMLDsTextElement;
         new (): HTMLDsTextElement;
     };
+    interface HTMLDsTextareaElementEventMap {
+        "dsChange": string;
+    }
+    interface HTMLDsTextareaElement extends Components.DsTextarea, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsTextareaElementEventMap>(type: K, listener: (this: HTMLDsTextareaElement, ev: DsTextareaCustomEvent<HTMLDsTextareaElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsTextareaElementEventMap>(type: K, listener: (this: HTMLDsTextareaElement, ev: DsTextareaCustomEvent<HTMLDsTextareaElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsTextareaElement: {
+        prototype: HTMLDsTextareaElement;
+        new (): HTMLDsTextareaElement;
+    };
     interface HTMLDsToastElementEventMap {
         "dsToastClose": ToastCloseEventDetail;
         "dsToastRemove": ToastEventDetail;
@@ -5248,6 +5404,7 @@ declare global {
         "ds-panel-tools": HTMLDsPanelToolsElement;
         "ds-paper-texture": HTMLDsPaperTextureElement;
         "ds-radio": HTMLDsRadioElement;
+        "ds-score": HTMLDsScoreElement;
         "ds-scroll-overlay": HTMLDsScrollOverlayElement;
         "ds-select": HTMLDsSelectElement;
         "ds-shell-app": HTMLDsShellAppElement;
@@ -5267,6 +5424,7 @@ declare global {
         "ds-table-toolbar": HTMLDsTableToolbarElement;
         "ds-tag": HTMLDsTagElement;
         "ds-text": HTMLDsTextElement;
+        "ds-textarea": HTMLDsTextareaElement;
         "ds-toast": HTMLDsToastElement;
         "ds-tooltip": HTMLDsTooltipElement;
         "ds-tooltip-chart": HTMLDsTooltipChartElement;
@@ -7743,6 +7901,32 @@ declare namespace LocalJSX {
          */
         "value"?: string;
     }
+    interface DsScore {
+        /**
+          * Replace the figure with a skeleton while data resolves.
+          * @default false
+         */
+        "isLoading"?: boolean;
+        /**
+          * Accessible name prefix, for example “Safety score”.
+          * @default ''
+         */
+        "label"?: string;
+        /**
+          * Safety-score color level. Numeric values from 0–100 infer fair (0–50), good (51–80), or excellent (81–100) when this is omitted.
+         */
+        "level"?: SafetyScoreLevel | undefined;
+        /**
+          * Visual density matching control height: `sm` 24px, `md` 32px, `lg` 40px. `lg` is the Card Overview recipe.
+          * @default 'md'
+         */
+        "size"?: ScoreSize;
+        /**
+          * Display-ready headline figure.
+          * @default ''
+         */
+        "value"?: string | number;
+    }
     interface DsScrollOverlay {
         /**
           * Reports scroll position without exposing the internal scrollport element.
@@ -9130,6 +9314,105 @@ declare namespace LocalJSX {
         "variant"?: TextVariant;
         "wrap"?: TextWrap | undefined;
     }
+    interface DsTextarea {
+        "ariaDescribedby"?: string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        "ariaLabelledby"?: string | undefined;
+        /**
+          * Native browser autofill hint.
+         */
+        "autoComplete"?: string | undefined;
+        /**
+          * @default false
+         */
+        "autoFocus"?: boolean;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Preferred virtual-keyboard action label.
+          * @default ''
+         */
+        "enterKeyHint"?: string;
+        /**
+          * @default false
+         */
+        "error"?: boolean;
+        "errorMessage"?: string | undefined;
+        "form"?: string | undefined;
+        /**
+          * Show the standard inset border, including focused and invalid strokes.
+          * @default true
+         */
+        "hasBorder"?: boolean;
+        /**
+          * Show the standard hover and pressed fill when the field is not embedded in interactive chrome.
+          * @default true
+         */
+        "hasInteractionFill"?: boolean;
+        /**
+          * Associates the internal textarea with an external <label>.
+         */
+        "inputId"?: string | undefined;
+        /**
+          * Preferred virtual keyboard without changing the value semantics.
+          * @default ''
+         */
+        "inputMode"?: string;
+        /**
+          * @default false
+         */
+        "isInactive"?: boolean;
+        "name"?: string | undefined;
+        "onDsChange"?: (event: DsTextareaCustomEvent<string>) => void;
+        "placeholder"?: string | undefined;
+        /**
+          * Keeps the value focusable and submittable while preventing edits.
+          * @default false
+         */
+        "readOnly"?: boolean;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage"?: string;
+        /**
+          * Whether the user can resize the field vertically.
+          * @default 'vertical'
+         */
+        "resize"?: TextareaResize;
+        /**
+          * Visible text rows before the field scrolls.
+          * @default 4
+         */
+        "rows"?: number;
+        /**
+          * Control density for typography and inset spacing.
+          * @default 'md'
+         */
+        "size"?: TextareaSize;
+        /**
+          * Whether the browser should check spelling and grammar.
+          * @default true
+         */
+        "spellCheck"?: boolean;
+        /**
+          * @default ''
+         */
+        "value"?: string;
+        /**
+          * Width fit — fill the parent (default) or hug the available content.
+          * @default 'fill'
+         */
+        "width"?: TextareaWidth;
+    }
     interface DsToast {
         /**
           * Keep the global stack 16px above the persistent mobile shell bar below 768px.
@@ -9224,7 +9507,7 @@ declare namespace LocalJSX {
          */
         "size"?: TooltipSize;
         /**
-          * Allow the label to wrap at a panel-xs max width instead of a single line.
+          * Allow wrapping at a panel-xs max width and preserve explicit line breaks.
           * @default false
          */
         "wrapLabel"?: boolean;
@@ -9821,6 +10104,13 @@ declare namespace LocalJSX {
         "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
     }
+    interface DsScoreAttributes {
+        "value": string;
+        "size": ScoreSize;
+        "level": SafetyScoreLevel | undefined;
+        "isLoading": boolean;
+        "label": string;
+    }
     interface DsScrollOverlayAttributes {
         "scrollLabel": string | undefined;
     }
@@ -10080,6 +10370,34 @@ declare namespace LocalJSX {
         "for": string | undefined;
         "textId": string | undefined;
     }
+    interface DsTextareaAttributes {
+        "value": string;
+        "name": string | undefined;
+        "form": string | undefined;
+        "disabled": boolean;
+        "readOnly": boolean;
+        "required": boolean;
+        "requiredMessage": string;
+        "placeholder": string | undefined;
+        "rows": number;
+        "resize": TextareaResize;
+        "autoComplete": string | undefined;
+        "inputMode": string;
+        "enterKeyHint": string;
+        "spellCheck": boolean;
+        "size": TextareaSize;
+        "width": TextareaWidth;
+        "hasBorder": boolean;
+        "hasInteractionFill": boolean;
+        "isInactive": boolean;
+        "autoFocus": boolean;
+        "error": boolean;
+        "errorMessage": string | undefined;
+        "inputId": string | undefined;
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+        "ariaDescribedby": string | undefined;
+    }
     interface DsToastAttributes {
         "limit": number;
         "timeout": string;
@@ -10168,6 +10486,7 @@ declare namespace LocalJSX {
         "ds-panel-tools": Omit<DsPanelTools, keyof DsPanelToolsAttributes> & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes]?: DsPanelTools[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `attr:${K}`]?: DsPanelToolsAttributes[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `prop:${K}`]?: DsPanelTools[K] };
         "ds-paper-texture": DsPaperTexture;
         "ds-radio": Omit<DsRadio, keyof DsRadioAttributes> & { [K in keyof DsRadio & keyof DsRadioAttributes]?: DsRadio[K] } & { [K in keyof DsRadio & keyof DsRadioAttributes as `attr:${K}`]?: DsRadioAttributes[K] } & { [K in keyof DsRadio & keyof DsRadioAttributes as `prop:${K}`]?: DsRadio[K] };
+        "ds-score": Omit<DsScore, keyof DsScoreAttributes> & { [K in keyof DsScore & keyof DsScoreAttributes]?: DsScore[K] } & { [K in keyof DsScore & keyof DsScoreAttributes as `attr:${K}`]?: DsScoreAttributes[K] } & { [K in keyof DsScore & keyof DsScoreAttributes as `prop:${K}`]?: DsScore[K] };
         "ds-scroll-overlay": Omit<DsScrollOverlay, keyof DsScrollOverlayAttributes> & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes]?: DsScrollOverlay[K] } & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes as `attr:${K}`]?: DsScrollOverlayAttributes[K] } & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes as `prop:${K}`]?: DsScrollOverlay[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
         "ds-shell-app": Omit<DsShellApp, keyof DsShellAppAttributes> & { [K in keyof DsShellApp & keyof DsShellAppAttributes]?: DsShellApp[K] } & { [K in keyof DsShellApp & keyof DsShellAppAttributes as `attr:${K}`]?: DsShellAppAttributes[K] } & { [K in keyof DsShellApp & keyof DsShellAppAttributes as `prop:${K}`]?: DsShellApp[K] };
@@ -10187,6 +10506,7 @@ declare namespace LocalJSX {
         "ds-table-toolbar": Omit<DsTableToolbar, keyof DsTableToolbarAttributes> & { [K in keyof DsTableToolbar & keyof DsTableToolbarAttributes]?: DsTableToolbar[K] } & { [K in keyof DsTableToolbar & keyof DsTableToolbarAttributes as `attr:${K}`]?: DsTableToolbarAttributes[K] } & { [K in keyof DsTableToolbar & keyof DsTableToolbarAttributes as `prop:${K}`]?: DsTableToolbar[K] };
         "ds-tag": Omit<DsTag, keyof DsTagAttributes> & { [K in keyof DsTag & keyof DsTagAttributes]?: DsTag[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `attr:${K}`]?: DsTagAttributes[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `prop:${K}`]?: DsTag[K] } & OneOf<"label", DsTag["label"], DsTagAttributes["label"]>;
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
+        "ds-textarea": Omit<DsTextarea, keyof DsTextareaAttributes> & { [K in keyof DsTextarea & keyof DsTextareaAttributes]?: DsTextarea[K] } & { [K in keyof DsTextarea & keyof DsTextareaAttributes as `attr:${K}`]?: DsTextareaAttributes[K] } & { [K in keyof DsTextarea & keyof DsTextareaAttributes as `prop:${K}`]?: DsTextarea[K] };
         "ds-toast": Omit<DsToast, keyof DsToastAttributes> & { [K in keyof DsToast & keyof DsToastAttributes]?: DsToast[K] } & { [K in keyof DsToast & keyof DsToastAttributes as `attr:${K}`]?: DsToastAttributes[K] } & { [K in keyof DsToast & keyof DsToastAttributes as `prop:${K}`]?: DsToast[K] };
         "ds-tooltip": Omit<DsTooltip, keyof DsTooltipAttributes> & { [K in keyof DsTooltip & keyof DsTooltipAttributes]?: DsTooltip[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `attr:${K}`]?: DsTooltipAttributes[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `prop:${K}`]?: DsTooltip[K] } & OneOf<"label", DsTooltip["label"], DsTooltipAttributes["label"]>;
         "ds-tooltip-chart": Omit<DsTooltipChart, keyof DsTooltipChartAttributes> & { [K in keyof DsTooltipChart & keyof DsTooltipChartAttributes]?: DsTooltipChart[K] } & { [K in keyof DsTooltipChart & keyof DsTooltipChartAttributes as `attr:${K}`]?: DsTooltipChartAttributes[K] } & { [K in keyof DsTooltipChart & keyof DsTooltipChartAttributes as `prop:${K}`]?: DsTooltipChart[K] };
@@ -10267,6 +10587,7 @@ declare module "@stencil/core" {
             "ds-panel-tools": LocalJSX.IntrinsicElements["ds-panel-tools"] & JSXBase.HTMLAttributes<HTMLDsPanelToolsElement>;
             "ds-paper-texture": LocalJSX.IntrinsicElements["ds-paper-texture"] & JSXBase.HTMLAttributes<HTMLDsPaperTextureElement>;
             "ds-radio": LocalJSX.IntrinsicElements["ds-radio"] & JSXBase.HTMLAttributes<HTMLDsRadioElement>;
+            "ds-score": LocalJSX.IntrinsicElements["ds-score"] & JSXBase.HTMLAttributes<HTMLDsScoreElement>;
             "ds-scroll-overlay": LocalJSX.IntrinsicElements["ds-scroll-overlay"] & JSXBase.HTMLAttributes<HTMLDsScrollOverlayElement>;
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
             "ds-shell-app": LocalJSX.IntrinsicElements["ds-shell-app"] & JSXBase.HTMLAttributes<HTMLDsShellAppElement>;
@@ -10286,6 +10607,7 @@ declare module "@stencil/core" {
             "ds-table-toolbar": LocalJSX.IntrinsicElements["ds-table-toolbar"] & JSXBase.HTMLAttributes<HTMLDsTableToolbarElement>;
             "ds-tag": LocalJSX.IntrinsicElements["ds-tag"] & JSXBase.HTMLAttributes<HTMLDsTagElement>;
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
+            "ds-textarea": LocalJSX.IntrinsicElements["ds-textarea"] & JSXBase.HTMLAttributes<HTMLDsTextareaElement>;
             "ds-toast": LocalJSX.IntrinsicElements["ds-toast"] & JSXBase.HTMLAttributes<HTMLDsToastElement>;
             /**
              * Imperative body portal for the popup.

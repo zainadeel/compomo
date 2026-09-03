@@ -77,13 +77,43 @@ const columns = [
   { id: 'name', header: 'Driver', sortable: true, size: 'sm' },
   { id: 'status', header: 'Status', sortable: true, align: 'center', size: 'sm' },
   { id: 'vehicle', header: 'Vehicle', size: 'xs', help: 'Assigned vehicle identifier.' },
-  { id: 'score', header: 'Safety score', sortable: true, align: 'end', size: 'xs', help: 'Rolling 7-day safety score from 0 to 100.' },
+  {
+    id: 'score',
+    header: 'Safety score',
+    sortable: true,
+    align: 'end',
+    size: 'xs',
+    help: 'Rolling 7-day safety score from 0 to 100.',
+  },
 ];
 const rows = [
-  { id: 'avery', selectionLabel: 'Avery Chen', cells: { name: { primary: 'Avery Chen', secondary: 'avery@example.com' }, status: 'Driving', vehicle: 'V-2048', score: 98 } },
-  { id: 'jordan', selectionLabel: 'Jordan Patel', cells: { name: 'Jordan Patel', status: 'On duty', vehicle: 'V-1822', score: 94 } },
-  { id: 'sam', selectionLabel: 'Sam Rivera', selectable: false, cells: { name: 'Sam Rivera', status: 'Off duty', vehicle: null, score: 89 } },
-  { id: 'morgan', selectionLabel: 'Morgan Lee', disabled: true, cells: { name: 'Morgan Lee', status: 'Driving', vehicle: 'V-2105', score: 91 } },
+  {
+    id: 'avery',
+    selectionLabel: 'Avery Chen',
+    cells: {
+      name: { primary: 'Avery Chen', secondary: 'avery@example.com' },
+      status: 'Driving',
+      vehicle: 'V-2048',
+      score: 98,
+    },
+  },
+  {
+    id: 'jordan',
+    selectionLabel: 'Jordan Patel',
+    cells: { name: 'Jordan Patel', status: 'On duty', vehicle: 'V-1822', score: 94 },
+  },
+  {
+    id: 'sam',
+    selectionLabel: 'Sam Rivera',
+    selectable: false,
+    cells: { name: 'Sam Rivera', status: 'Off duty', vehicle: null, score: 89 },
+  },
+  {
+    id: 'morgan',
+    selectionLabel: 'Morgan Lee',
+    disabled: true,
+    cells: { name: 'Morgan Lee', status: 'Driving', vehicle: 'V-2105', score: 91 },
+  },
 ];
 
 const setBase = id => {
@@ -104,7 +134,10 @@ basic.addEventListener('dsSortChange', event => {
   basic.rows = [...rows].sort((a, b) => {
     const aValue = a.cells[columnId]?.primary ?? a.cells[columnId] ?? '';
     const bValue = b.cells[columnId]?.primary ?? b.cells[columnId] ?? '';
-    return String(aValue).localeCompare(String(bValue), undefined, { numeric: true }) * (direction === 'asc' ? 1 : -1);
+    return (
+      String(aValue).localeCompare(String(bValue), undefined, { numeric: true }) *
+      (direction === 'asc' ? 1 : -1)
+    );
   });
 });
 
@@ -132,10 +165,13 @@ const ascendingGroups = [
   { id: 'off-duty', label: 'Off duty', rows: [rows[2]] },
   { id: 'on-duty', label: 'On duty', rows: [rows[1]] },
 ];
-const orderMembers = groups => groups.map(group => ({
-  ...group,
-  rows: [...group.rows].sort((a, b) => (b.cells.score - a.cells.score) * (grouped.sort?.direction === 'asc' ? -1 : 1)),
-}));
+const orderMembers = groups =>
+  groups.map(group => ({
+    ...group,
+    rows: [...group.rows].sort(
+      (a, b) => (b.cells.score - a.cells.score) * (grouped.sort?.direction === 'asc' ? -1 : 1)
+    ),
+  }));
 grouped.groups = orderMembers(ascendingGroups);
 grouped.collapsedGroupIds = [];
 grouped.addEventListener('dsGroupCollapseChange', event => {
@@ -153,12 +189,36 @@ severityGrouped.columns = [
   { id: 'driver', header: 'Driver', size: 'sm' },
 ];
 const severityRows = [
-  { id: 'crit-1', selectionLabel: 'Close following Critical', cells: { behavior: 'Close following', severity: 'Critical', driver: 'John Smith' } },
-  { id: 'crit-2', selectionLabel: 'Stop sign Critical', cells: { behavior: 'Stop sign violation', severity: 'Critical', driver: 'Sarah Williams' } },
-  { id: 'high-1', selectionLabel: 'Lane cutoff High', cells: { behavior: 'Lane cutoff', severity: 'High', driver: 'Maria Garcia' } },
-  { id: 'high-2', selectionLabel: 'Distraction High', cells: { behavior: 'Distraction', severity: 'High', driver: 'David Chen' } },
-  { id: 'med-1', selectionLabel: 'Speeding Medium', cells: { behavior: 'Speeding', severity: 'Medium', driver: 'Priya Nair' } },
-  { id: 'low-1', selectionLabel: 'Unsafe lane Low', cells: { behavior: 'Unsafe lane change', severity: 'Low', driver: 'Noah Wilson' } },
+  {
+    id: 'crit-1',
+    selectionLabel: 'Close following Critical',
+    cells: { behavior: 'Close following', severity: 'Critical', driver: 'John Smith' },
+  },
+  {
+    id: 'crit-2',
+    selectionLabel: 'Stop sign Critical',
+    cells: { behavior: 'Stop sign violation', severity: 'Critical', driver: 'Sarah Williams' },
+  },
+  {
+    id: 'high-1',
+    selectionLabel: 'Lane cutoff High',
+    cells: { behavior: 'Lane cutoff', severity: 'High', driver: 'Maria Garcia' },
+  },
+  {
+    id: 'high-2',
+    selectionLabel: 'Distraction High',
+    cells: { behavior: 'Distraction', severity: 'High', driver: 'David Chen' },
+  },
+  {
+    id: 'med-1',
+    selectionLabel: 'Speeding Medium',
+    cells: { behavior: 'Speeding', severity: 'Medium', driver: 'Priya Nair' },
+  },
+  {
+    id: 'low-1',
+    selectionLabel: 'Unsafe lane Low',
+    cells: { behavior: 'Unsafe lane change', severity: 'Low', driver: 'Noah Wilson' },
+  },
 ];
 const severityIntent = {
   Critical: 'negative',
@@ -199,8 +259,28 @@ compound.columns = [
   { id: 'status', header: 'Status', size: 'sm' },
 ];
 const compoundRows = [
-  { id: 'event-a', cells: { behaviorDetails: { primary: 'Close following', secondary: 'Critical', secondaryColor: 'negative' }, behavior: 'Close following', severity: 'Critical', status: { kind: 'tag', label: 'Pending review', intent: 'caution' } } },
-  { id: 'event-b', cells: { behaviorDetails: { primary: 'Distraction', secondary: 'High', secondaryColor: 'warning' }, behavior: 'Distraction', severity: 'High', status: { kind: 'tag', label: 'Coachable', intent: 'negative' } } },
+  {
+    id: 'event-a',
+    cells: {
+      behaviorDetails: {
+        primary: 'Close following',
+        secondary: 'Critical',
+        secondaryColor: 'negative',
+      },
+      behavior: 'Close following',
+      severity: 'Critical',
+      status: { kind: 'tag', label: 'Pending review', intent: 'caution' },
+    },
+  },
+  {
+    id: 'event-b',
+    cells: {
+      behaviorDetails: { primary: 'Distraction', secondary: 'High', secondaryColor: 'warning' },
+      behavior: 'Distraction',
+      severity: 'High',
+      status: { kind: 'tag', label: 'Coachable', intent: 'negative' },
+    },
+  },
 ];
 compound.rows = compoundRows;
 compound.selectionMode = 'multiple';
@@ -211,8 +291,11 @@ compound.addEventListener('dsSortChange', event => {
     return;
   }
   const { columnId, direction } = event.detail.sort;
-  compound.rows = [...compoundRows].sort((a, b) =>
-    String(a.cells[columnId]).localeCompare(String(b.cells[columnId])) * (direction === 'asc' ? 1 : -1));
+  compound.rows = [...compoundRows].sort(
+    (a, b) =>
+      String(a.cells[columnId]).localeCompare(String(b.cells[columnId])) *
+      (direction === 'asc' ? 1 : -1)
+  );
 });
 
 const cellTypes = document.getElementById('cell-types');
@@ -229,7 +312,14 @@ cellTypes.columns = [
   { id: 'tagWithText', header: 'Tag with text', size: 'sm' },
   { id: 'textWithTag', header: 'Text with tag', size: 'sm' },
   { id: 'action', kind: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
-  { id: 'borderedAction', kind: 'action', header: '', headerLabel: 'Bordered action', align: 'center', size: 40 },
+  {
+    id: 'borderedAction',
+    kind: 'action',
+    header: '',
+    headerLabel: 'Bordered action',
+    align: 'center',
+    size: 40,
+  },
   { id: 'empty', header: 'Empty', size: 'xs' },
   { id: 'blank', header: 'Blank', size: 'xs' },
 ];
@@ -249,10 +339,7 @@ cellTypes.rows = [
       primaryPair: { kind: 'primary-text', primary: 'Vehicle', secondary: 'VH-2841' },
       event: {
         primary: 'Speeding',
-        secondary: [
-          { text: 'High', color: 'negative' },
-          { text: '45 mph over' },
-        ],
+        secondary: [{ text: 'High', color: 'negative' }, { text: '45 mph over' }],
       },
       image: { kind: 'image', tracks: 2, alt: 'Safety event preview unavailable' },
       icon: { kind: 'icon', icon: 'DocumentInverted', color: 'secondary', label: 'Has notes' },
@@ -261,10 +348,7 @@ cellTypes.rows = [
         icon: 'VehicleTruck',
         primary: 'Freightliner Cascadia',
         href: '/vehicles/VEH-1042',
-        secondary: [
-          { text: 'VEH-1042' },
-          { text: 'Class 8' },
-        ],
+        secondary: [{ text: 'VEH-1042' }, { text: 'Class 8' }],
       },
       tagOnly: { kind: 'tag', label: 'Pending', intent: 'caution' },
       tagWithText: {
@@ -322,9 +406,11 @@ threeTrack.rows = [
     selectionLabel: 'Avery Chen',
     cells: {
       driver: {
+        kind: 'score-text',
+        score: 87,
         primary: 'Avery Chen',
         secondary: 'DRV-1048',
-        tertiary: 'Dallas, TX',
+        tertiary: [{ text: '2 groups', help: 'Main operations\nWest Coast' }],
       },
       vehicle: {
         primary: 'Freightliner Cascadia',
@@ -353,6 +439,8 @@ threeTrack.rows = [
     selectionLabel: 'Jordan Patel',
     cells: {
       driver: {
+        kind: 'score-text',
+        score: 67,
         primary: 'Jordan Patel',
         secondary: 'DRV-2210',
         tertiary: 'Oakland, CA',
@@ -786,24 +874,35 @@ groupedPaginated.pagination = {
 renderGroupedPage(0, 25);
 groupedPaginated.addEventListener('dsPaginationChange', event => {
   const { pageIndex, pageSize, pageSizeMode } = event.detail;
-  groupedPaginated.pagination = { ...groupedPaginated.pagination, pageIndex, pageSize, pageSizeMode };
+  groupedPaginated.pagination = {
+    ...groupedPaginated.pagination,
+    pageIndex,
+    pageSize,
+    pageSizeMode,
+  };
   renderGroupedPage(pageIndex, pageSize);
 });
 groupedPaginated.addEventListener('dsGroupLoadMore', event => {
-  groupedPaginated.groups = groupedPaginated.groups.map(group => group.id === event.detail.groupId
-    ? { ...group, rows: groupedPageSource.find(source => source.id === group.id).rows, hasMore: false }
-    : group);
+  groupedPaginated.groups = groupedPaginated.groups.map(group =>
+    group.id === event.detail.groupId
+      ? {
+          ...group,
+          rows: groupedPageSource.find(source => source.id === group.id).rows,
+          hasMore: false,
+        }
+      : group
+  );
 });
 
 const overflow = document.getElementById('overflow');
-overflow.columns = [
-  ...columns,
-  { id: 'location', header: 'Last known location', size: 'md' },
-];
+overflow.columns = [...columns, { id: 'location', header: 'Last known location', size: 'md' }];
 overflow.rows = Array.from({ length: 12 }, (_, index) => ({
   ...rows[index % rows.length],
   id: `${rows[index % rows.length].id}-${index}`,
-  cells: { ...rows[index % rows.length].cells, location: `Location ${index + 1}, British Columbia` },
+  cells: {
+    ...rows[index % rows.length].cells,
+    location: `Location ${index + 1}, British Columbia`,
+  },
 }));
 
 const fixedHeight = document.getElementById('fixed-height');
@@ -857,7 +956,15 @@ documentSticky.rows = [];
 const customizer = document.getElementById('column-customizer');
 customizer.columns = [
   ...columns,
-  { id: 'action', kind: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40, sticky: 'end' },
+  {
+    id: 'action',
+    kind: 'action',
+    header: '',
+    headerLabel: 'Action',
+    align: 'center',
+    size: 40,
+    sticky: 'end',
+  },
 ];
 const customizerRows = rows.map(row => ({
   ...row,
@@ -956,9 +1063,7 @@ virtualTable.addEventListener('dsSelectionChange', event => {
 });
 virtualTable.addEventListener('dsSortChange', event => {
   virtualTable.sort = event.detail.sort;
-  virtualTable.rows = event.detail.sort
-    ? [...virtualRows].reverse()
-    : virtualRows;
+  virtualTable.rows = event.detail.sort ? [...virtualRows].reverse() : virtualRows;
 });
 
 const virtualGrouped = document.getElementById('virtual-grouped');

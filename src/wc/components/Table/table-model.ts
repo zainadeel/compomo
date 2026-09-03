@@ -4,6 +4,7 @@ import type {
   TableCellEmpty,
   TableCellIcon,
   TableCellIconText,
+  TableCellScoreText,
   TableCellImage,
   TableCellPrimaryText,
   TableCellText,
@@ -12,9 +13,12 @@ import type {
   TableCellValue,
   TableColumn,
   TableGroup,
+  TableGroupAccessory,
+  TableGroupHero,
   TableRow,
   TableSortState,
 } from './table-types';
+import { isSafetyScoreLevel } from '../Score/score-model';
 
 export interface TableSelectionState {
   selectableRowIds: string[];
@@ -65,6 +69,12 @@ export function isTableCellIconText(value: TableCellValue): value is TableCellIc
   );
 }
 
+export function isTableCellScoreText(value: TableCellValue): value is TableCellScoreText {
+  return (
+    typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'score-text'
+  );
+}
+
 export function isTableCellImage(value: TableCellValue): value is TableCellImage {
   return typeof value === 'object' && value !== null && 'kind' in value && value.kind === 'image';
 }
@@ -87,6 +97,7 @@ export function tableCellPrimary(value: TableCellValue): string | number | null 
   if (isTableCellTags(value)) return value.items.map(item => item.label).join(', ');
   if (isTableCellIcon(value)) return null;
   if (isTableCellIconText(value)) return value.primary;
+  if (isTableCellScoreText(value)) return value.primary;
   if (isTableCellImage(value)) return value.alt;
   if (isTableCellAction(value)) return value.label ?? value.ariaLabel;
   if (isTableCellPrimaryText(value)) return value.primary;
@@ -259,6 +270,39 @@ export function resolvedTableGroupCount(group: TableGroup): number {
   return Math.max(total, group.rows.length);
 }
 
+/** Accessory items shown on a group header's second track. */
+export const TABLE_GROUP_ACCESSORY_LIMIT = 4;
+
+/** Trim, drop empty copy, and cap accessories at the second-track limit. */
+export function tableGroupAccessories(group: TableGroup): TableGroupAccessory[] {
+  const resolved: TableGroupAccessory[] = [];
+  for (const item of group.accessories ?? []) {
+    const text = item?.text?.trim() ?? '';
+    if (!text) continue;
+    const help = item.help?.trim();
+    resolved.push(help ? { text, help } : { text });
+    if (resolved.length === TABLE_GROUP_ACCESSORY_LIMIT) break;
+  }
+  return resolved;
+}
+
+/** Group-header score fill. Same sm density on one- and two-track headers. */
+export const TABLE_GROUP_HERO_SCORE_SIZE = 'sm' as const;
+
+/** Resolve a supported group-header hero, or undefined when none is supplied. */
+export function tableGroupHero(group: TableGroup): TableGroupHero | undefined {
+  const hero = group.hero;
+  if (!hero || hero.kind !== 'score') return undefined;
+  const label = hero.label?.trim();
+  return {
+    kind: 'score',
+    value: hero.value,
+    ...(isSafetyScoreLevel(hero.level) ? { level: hero.level } : {}),
+    ...(label ? { label } : {}),
+    ...(hero.isLoading ? { isLoading: true } : {}),
+  };
+}
+
 export const TABLE_GROUP_INTENTS = [
   'brand',
   'neutral',
@@ -373,6 +417,15 @@ export function tableModelIssues(
       }
       if (group.intent != null && !isTableGroupIntent(group.intent)) {
         issues.push(`Group ${group.id} has an unsupported intent.`);
+      }
+      const accessoryCount = (group.accessories ?? []).filter(
+        item => typeof item?.text === 'string' && item.text.trim()
+      ).length;
+      if (accessoryCount > TABLE_GROUP_ACCESSORY_LIMIT) {
+        issues.push(`Group ${group.id} has more than ${TABLE_GROUP_ACCESSORY_LIMIT} accessories.`);
+      }
+      if (group.hero != null && group.hero.kind !== 'score') {
+        issues.push(`Group ${group.id} has an unsupported hero.`);
       }
     }
   }

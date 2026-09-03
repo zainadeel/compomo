@@ -1,4 +1,6 @@
-import type { CardOverviewVariant, OverviewMetric, SafetyScoreLevel } from './card-overview-types';
+import type { CardOverviewVariant, OverviewMetric } from './card-overview-types';
+
+export { resolveSafetyScoreLevel } from '../Score/score-model';
 
 export interface CardOverviewCollapseGeometry {
   active: boolean;
@@ -67,14 +69,6 @@ export function resolveCardOverviewCollapseGeometry(options: {
     offset,
     visibleHeight: expandedHeight - offset,
   };
-}
-
-export function resolveSafetyScoreLevel(value: string | number): SafetyScoreLevel | undefined {
-  const numericValue = typeof value === 'number' ? value : Number(value);
-  if (!Number.isFinite(numericValue) || numericValue < 0 || numericValue > 100) return undefined;
-  if (numericValue <= 50) return 'fair';
-  if (numericValue <= 80) return 'good';
-  return 'excellent';
 }
 
 export function resolveOverviewRovingIndex(

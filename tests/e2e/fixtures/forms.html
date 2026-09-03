@@ -13,7 +13,15 @@
         description="Use your work email address."
         field-id="email-control"
       >
-        <ds-input id="email" name="email" type="email" autocomplete="email" required></ds-input>
+      <ds-input id="email" name="email" type="email" autocomplete="email" required></ds-input>
+      </ds-field>
+      <ds-field
+        id="notes-field"
+        label="Review notes"
+        description="Add context for the reviewer."
+        field-id="notes-control"
+      >
+        <ds-textarea id="notes" name="notes" rows="3" required></ds-textarea>
       </ds-field>
       <ds-checkbox id="terms" name="terms" value="accepted" label="Terms" required></ds-checkbox>
       <ds-select id="region" required aria-label="Region"></ds-select>
@@ -23,6 +31,11 @@
       </fieldset>
       <button id="submit" type="submit">Submit</button>
       <button id="reset" type="reset">Reset</button>
+    </form>
+    <form id="textarea-state-form">
+      <ds-textarea id="textarea-readonly" name="readonly-note" value="Kept note" read-only aria-label="Read-only note"></ds-textarea>
+      <ds-textarea id="textarea-inactive" name="inactive-note" value="Omitted note" is-inactive aria-label="Inactive note"></ds-textarea>
+      <button id="textarea-reset" type="reset">Reset textareas</button>
     </form>
     <div id="checkbox-sizes">
       <ds-checkbox id="checkbox-lg" size="lg" label="Large checkbox" checked></ds-checkbox>

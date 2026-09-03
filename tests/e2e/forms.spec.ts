@@ -52,6 +52,7 @@ test('submits, validates, and resets form-associated controls @pr-critical', asy
   ).toBeUndefined();
 
   await page.locator('#email input').fill('person@example.com');
+  await page.locator('#notes textarea').fill('Reviewed with the fleet manager.');
   await page.locator('#terms').click();
   await page.locator('#region').evaluate((element: HTMLDsSelectElement) => {
     element.value = 'ca';
@@ -76,6 +77,7 @@ test('submits, validates, and resets form-associated controls @pr-critical', asy
     )
     .toEqual({
       email: 'person@example.com',
+      notes: 'Reviewed with the fleet manager.',
       terms: 'accepted',
       region: 'ca',
       tier: 'standard',
@@ -84,7 +86,85 @@ test('submits, validates, and resets form-associated controls @pr-critical', asy
 
   await page.locator('#reset').click();
   await expect(page.locator('#email input')).toHaveValue('');
+  await expect(page.locator('#notes textarea')).toHaveValue('');
   await expect(page.locator('#terms')).toHaveAttribute('aria-checked', 'false');
+});
+
+test('textarea composes with field and preserves multiline form behavior', async ({ page }) => {
+  const field = page.locator('#notes-field');
+  const textarea = page.locator('#notes');
+  const nativeTextarea = textarea.locator('textarea');
+  const label = field.locator('label');
+
+  await expect(label).toHaveAttribute('for', 'notes-control');
+  await expect(nativeTextarea).toHaveAttribute('id', 'notes-control');
+  await expect(nativeTextarea).toHaveAttribute('aria-labelledby', 'notes-control-label');
+  await expect(nativeTextarea).toHaveAttribute('aria-describedby', 'notes-control-description');
+  await expect(nativeTextarea).toHaveAttribute('rows', '3');
+  await expect(nativeTextarea).toHaveCSS('resize', 'vertical');
+  const resizeInset = await textarea.evaluate(element => {
+    const control = element
+      .querySelector<HTMLElement>('.textarea-control')!
+      .getBoundingClientRect();
+    const native = element.querySelector<HTMLTextAreaElement>('textarea')!.getBoundingClientRect();
+    return {
+      bottom: control.bottom - native.bottom,
+      right: control.right - native.right,
+    };
+  });
+  expect(resizeInset).toEqual({ bottom: 2, right: 2 });
+
+  await label.click();
+  await expect(nativeTextarea).toBeFocused();
+  const focusBorder = await textarea.locator('.textarea-control').evaluate(element => ({
+    width: getComputedStyle(element).getPropertyValue('--ds-interaction-border-width').trim(),
+    color: getComputedStyle(element).getPropertyValue('--ds-interaction-border-color').trim(),
+    expectedColor: getComputedStyle(element).getPropertyValue('--color-border-bold-brand').trim(),
+  }));
+  expect(focusBorder.width).toContain('3 / 16');
+  expect(focusBorder.color).toBe(focusBorder.expectedColor);
+  await nativeTextarea.fill('First line\nSecond line');
+  await expect(textarea).toHaveJSProperty('value', 'First line\nSecond line');
+  await expect(textarea).toHaveAttribute('data-filled', '');
+  await expect(textarea).toHaveAttribute('data-dirty', '');
+
+  await page.locator('#terms').focus();
+  await expect(textarea).toHaveAttribute('data-touched', '');
+  await expect(textarea).not.toHaveAttribute('data-focused');
+
+  await field.evaluate((element: HTMLDsFieldElement) => {
+    element.error = true;
+    element.errorMessage = 'Add review notes.';
+  });
+  await expect(nativeTextarea).toHaveAttribute('aria-invalid', 'true');
+  await expect(nativeTextarea).toHaveAttribute('aria-describedby', 'notes-control-error');
+  await expect(textarea.locator('.textarea-control')).toHaveClass(/textarea-control--error/);
+});
+
+test('textarea read-only and inactive states follow form submission semantics', async ({
+  page,
+}) => {
+  const readOnly = page.locator('#textarea-readonly');
+  const inactive = page.locator('#textarea-inactive');
+
+  await expect(readOnly.locator('textarea')).toHaveAttribute('readonly', '');
+  await readOnly.locator('textarea').focus();
+  await expect(readOnly.locator('textarea')).toBeFocused();
+  await expect(inactive.locator('textarea')).toBeDisabled();
+  await expect
+    .poll(() =>
+      page
+        .locator('#textarea-state-form')
+        .evaluate(form => Object.fromEntries(new FormData(form as HTMLFormElement).entries()))
+    )
+    .toEqual({ 'readonly-note': 'Kept note' });
+
+  await readOnly.evaluate((element: HTMLDsTextareaElement) => {
+    element.readOnly = false;
+    element.value = 'Changed note';
+  });
+  await page.locator('#textarea-reset').click();
+  await expect(readOnly.locator('textarea')).toHaveValue('Kept note');
 });
 
 test('field associates one control with its label, guidance, error, and interaction state', async ({

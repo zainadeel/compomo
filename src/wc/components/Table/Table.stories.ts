@@ -400,9 +400,11 @@ const THREE_TRACK_ROWS: TableRow[] = [
     selectionLabel: 'Avery Chen',
     cells: {
       driver: {
+        kind: 'score-text',
+        score: 87,
         primary: 'Avery Chen',
         secondary: 'DRV-1048',
-        tertiary: 'Dallas, TX',
+        tertiary: [{ text: '2 groups', help: 'Main operations\nWest Coast' }],
       },
       vehicle: {
         primary: 'Freightliner Cascadia',
@@ -431,6 +433,8 @@ const THREE_TRACK_ROWS: TableRow[] = [
     selectionLabel: 'Jordan Patel',
     cells: {
       driver: {
+        kind: 'score-text',
+        score: 67,
         primary: 'Jordan Patel',
         secondary: 'DRV-2210',
         tertiary: 'Oakland, CA',
@@ -852,6 +856,56 @@ const SEVERITY_GROUP_INTENT: Record<(typeof SEVERITY_GROUP_ORDER)[number], Table
   Low: 'neutral',
 };
 
+/** Collapsed empty groups so Storybook can review section-header surfaces alone. */
+const GROUP_ROW_REVIEW: TableGroup[] = (
+  [
+    {
+      label: 'Assigned',
+      totalCount: 48,
+      countLabel: '48 vehicles',
+      accessories: [{ text: 'Kenworth T680 2020' }, { text: '2 groups' }],
+      hero: { kind: 'score', value: 87 },
+    },
+    {
+      label: 'Low',
+      totalCount: 12,
+      countLabel: '12 events',
+      hero: { kind: 'score', value: 42 },
+    },
+    {
+      label: 'Critical',
+      totalCount: 166,
+      countLabel: '166 events',
+      accessories: [
+        { text: 'ID: 54321' },
+        { text: '2 groups', help: 'Assigned groups for this driver.' },
+      ],
+      hero: { kind: 'score', value: 67 },
+    },
+    {
+      label: 'High',
+      intent: 'warning',
+      totalCount: 84,
+      countLabel: '84 events',
+      accessories: [
+        { text: 'Region West' },
+        { text: 'Shift A' },
+        { text: 'Yard 12' },
+        { text: '2 groups' },
+      ],
+    },
+    { label: 'Medium', intent: 'caution', totalCount: 32, countLabel: '32 events' },
+    { label: 'Compliant', intent: 'positive', totalCount: 210, countLabel: '210 vehicles' },
+    { label: 'Unassigned', totalCount: 7, countLabel: '7 vehicles' },
+  ] satisfies Array<
+    Pick<TableGroup, 'label' | 'intent' | 'totalCount' | 'countLabel' | 'accessories' | 'hero'>
+  >
+).map(group => ({
+  ...group,
+  id: group.label.toLowerCase(),
+  rows: [],
+}));
+
 function severityGroupedRows(rows: TableRow[], sort: TableSortState | null): TableGroup[] {
   const bySeverity = new Map<string, TableRow[]>();
   for (const row of rows) {
@@ -1250,7 +1304,7 @@ export const GroupingAndMemberSorting: Story = {
     docs: {
       description: {
         story:
-          "The application supplies Status groups in its fixed order while Safety score remains the table's one interactive member-row sort. Group section headers expose a controlled collapse control matching the action-column ButtonUnfilled recipe. While any group is expanded and no action column exists, collapse-all floats at the visible header edge on a medium-elevation surface so horizontal scrolling never hides it.",
+          "The application supplies Status groups in its fixed order while Safety score remains the table's one interactive member-row sort. The complete group section header expands and collapses the section; the trailing ButtonUnfilled remains the accessible disclosure control and does not paint its own hover or press wash. While any group is expanded and no action column exists, collapse-all floats at the visible header edge on a medium-elevation surface so horizontal scrolling never hides it.",
       },
     },
   },
@@ -1327,6 +1381,45 @@ export const GroupingBySeverity: Story = {
   },
 };
 
+export const GroupRows: Story = {
+  name: 'Group rows',
+  args: {
+    grouping: { columnId: 'status', direction: 'asc' },
+    collapsedGroupIds: GROUP_ROW_REVIEW.map(group => group.id),
+    selectedRowIds: [],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Group section headers only. Every intent and the default surface are collapsed with no member rows. Assigned, Low, and Critical show a leading sm score hero on the default surface — score headers do not use intent coloring. High keeps a two-track accessory row with intent. Click anywhere on a header to expand or collapse it. Expand a section to review empty expanded count copy.',
+      },
+    },
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    const collapsedGroupIds = (args['collapsedGroupIds'] as string[]) ?? [];
+    const selectedRowIds = (args['selectedRowIds'] as string[]) ?? [];
+    return html`
+      <ds-table
+        data-a11y-fixture
+        .columns=${COLUMNS}
+        .groups=${GROUP_ROW_REVIEW}
+        .grouping=${args['grouping']}
+        .collapsedGroupIds=${collapsedGroupIds}
+        .selectedRowIds=${selectedRowIds}
+        selection-mode="multiple"
+        caption="Group section headers"
+        caption-visibility="hidden"
+        @dsGroupCollapseChange=${(event: CustomEvent<{ collapsedGroupIds: string[] }>) =>
+          updateArgs({ collapsedGroupIds: event.detail.collapsedGroupIds })}
+        @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>
+          updateArgs({ selectedRowIds: event.detail.selectedRowIds })}
+      ></ds-table>
+    `;
+  },
+};
+
 export const ControlledSelection: Story = {
   args: { selectedRowIds: ['driver-jordan', 'driver-not-loaded'] },
   parameters: {
@@ -1371,7 +1464,7 @@ export const AllCellTypes: Story = {
     docs: {
       description: {
         story:
-          'Three review tables, one height each. Image cells declare tracks 1, 2, or 3 so the 16:9 preview fills the matching content box (cell height minus 8px padding). Icon-and-text cells (`kind: icon-text`) place one md prefix icon beside the copy stack: 2px padding on every side of the icon, a 2px flex gap before the copy, and text-track padding staying on the copy. Single-track cells, including the 1-track image and icon-and-text, stay on a 40px row. Two-track text, 2-track image, 2-track icon-and-text, and wrapping multiple-Tag cells share a 62px row. Event in that table shows a two-line cell with middle-dot runs. Three-track text, 3-track image, and 3-track icon-and-text stay on an 84px row. Body cells share 8px outer padding; 20px content sits in a 24px track; later tracks are 20px with a 2px stack gap. Linked primary text uses a native anchor and the shared brand text-action treatment; secondary copy stays unlinked. Secondary tracks may split into middle-dot-separated runs. The third line uses the same subdued track recipe as the second. Unbordered action cells open the shared overflow ds-menu from the Ellipses trigger; the bordered column stays a single-shot control. Empty means the data applies but has no value and renders an em dash; Blank means the data is not applicable and intentionally renders nothing.',
+          'Three review tables, one height each. Image cells declare tracks 1, 2, or 3 so the 16:9 preview fills the matching content box (cell height minus 8px padding). Icon-and-text cells (`kind: icon-text`) place one md prefix icon beside the copy stack: 2px padding on every side of the icon, a 2px flex gap before the copy, and text-track padding staying on the copy. Single-track cells, including the 1-track image and icon-and-text, stay on a 40px row. Two-track text, 2-track image, 2-track icon-and-text, and wrapping multiple-Tag cells share a 64px row. Event in that table shows a two-line cell with middle-dot runs. Three-track text, 3-track image, and 3-track icon-and-text stay on a 88px row. Body cells share 8px outer padding; every track is 24px with no stack gap. Linked primary text uses a native anchor and the shared brand text-action treatment; secondary copy stays unlinked. Secondary tracks may split into middle-dot-separated runs. The third line uses the same subdued track recipe as the second. Unbordered action cells open the shared overflow ds-menu from the Ellipses trigger; the bordered column stays a single-shot control. Empty means the data applies but has no value and renders an em dash; Blank means the data is not applicable and intentionally renders nothing.',
       },
     },
   },
@@ -1405,13 +1498,51 @@ export const AllCellTypes: Story = {
   `,
 };
 
+export const ScoreTextCells: Story = {
+  name: 'Score with text',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Score-and-text cells (`kind: score-text`) place the 24px small safety score at the top-right of the cell while preserving the standard one-, two-, and three-track copy stack at the start edge. The score is aligned with primary copy and does not change the row-height contract. Multi-group summaries can remain on a later track and use the standard dotted tooltip treatment.',
+      },
+    },
+  },
+  render: () => html`
+    <ds-table
+      data-a11y-fixture
+      .columns=${[
+        {
+          id: 'driver',
+          header: 'Driver name / ID / Group',
+          size: 'sm',
+          skeleton: {
+            kind: 'score-text',
+            lines: 3,
+            primaryWidth: 'md',
+            secondaryWidth: 'sm',
+            tertiaryWidth: 'xs',
+          },
+        },
+      ] satisfies TableColumn[]}
+      .rows=${THREE_TRACK_ROWS.map(({ id, selectionLabel, cells }) => ({
+        id,
+        selectionLabel,
+        cells: { driver: cells.driver },
+      }))}
+      caption="Driver score prefix cells"
+      caption-visibility="visible"
+    ></ds-table>
+  `,
+};
+
 export const MultipleTags: Story = {
   name: 'Multiple tags',
   parameters: {
     docs: {
       description: {
         story:
-          'Multiple-Tag cells use `kind: tags` and declare their expected wrapped line count with `tracks`. Tags wrap naturally at the column edge. Each uses the 20px small single-inset recipe, with a 2px gap between tags and wrapped lines, so two tracks resolve a 62px row and three tracks resolve an 84px row. Track counts may continue beyond three; the tallest cell establishes the native row height and every sibling cell stretches to match.',
+          'Multiple-Tag cells use `kind: tags` and declare their expected wrapped line count with `tracks`. Tags wrap naturally at the column edge. Each uses the 20px small single-inset recipe inside a 24px wrap line with no stack gap, so two tracks resolve a 64px row and three tracks resolve a 88px row. Track counts may continue beyond three; the tallest cell establishes the native row height and every sibling cell stretches to match.',
       },
     },
   },
@@ -1594,7 +1725,7 @@ export const ContentPrimitives: Story = {
     docs: {
       description: {
         story:
-          'Scalar values, primary/secondary copy, null values, numeric alignment, truncation, and explicit wrapping share stable cell-layer classes. Wrapping 1-track primary occupies the same 62px and 84px rows as 2-track and 3-track cells. Wrapping secondary stays on track 1 for primary and consumes later tracks, including 106px when secondary wraps to three lines. Review secondary wrap on the last two rows of Wrapping content.',
+          'Scalar values, primary/secondary copy, null values, numeric alignment, truncation, and explicit wrapping share stable cell-layer classes. Wrapping 1-track primary occupies the same 64px and 88px rows as 2-track and 3-track cells. Wrapping secondary stays on track 1 for primary and consumes later tracks, including 112px when secondary wraps to three lines. Review secondary wrap on the last two rows of Wrapping content.',
       },
     },
   },

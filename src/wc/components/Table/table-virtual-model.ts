@@ -1,15 +1,17 @@
 import { resolveTableCellPresentation } from './table-cell-model';
+import { tableGroupAccessories } from './table-model';
 import type { TableColumn, TableGroup, TableRow } from './table-types';
 
 /**
- * Token-aligned body-row track contracts: 40 / 62 / 84, plus wrapping-secondary
- * 106. Estimates only; measured heights replace these after paint.
+ * Token-aligned body-row track contracts: 40 / 64 / 88, plus wrapping-secondary
+ * 112. Every track is 24px with no stack gap. Estimates only; measured heights
+ * replace these after paint.
  */
 export const TABLE_VIRTUAL_ROW_TRACK_SIZE = {
   1: 40,
-  2: 62,
-  3: 84,
-  4: 106,
+  2: 64,
+  3: 88,
+  4: 112,
 } as const;
 
 const TABLE_VIRTUAL_LATER_TRACK_INCREMENT =
@@ -117,7 +119,12 @@ function tableCellTrackCount(
     return presentation.variant === 'text-with-tag' ? 2 : 1;
   }
   if (presentation.kind === 'tags') return presentation.tracks;
-  if (presentation.kind !== 'text' && presentation.kind !== 'icon-text') return 1;
+  if (
+    presentation.kind !== 'text' &&
+    presentation.kind !== 'icon-text' &&
+    presentation.kind !== 'score-text'
+  )
+    return 1;
 
   const variantTracks =
     presentation.variant === 'triple'
@@ -148,7 +155,9 @@ function tableVirtualRowMetrics(
     const value = row.cells[column.id];
     const presentation = resolveTableCellPresentation(value, column);
     if (
-      (presentation.kind === 'text' || presentation.kind === 'icon-text') &&
+      (presentation.kind === 'text' ||
+        presentation.kind === 'icon-text' ||
+        presentation.kind === 'score-text') &&
       presentation.wraps &&
       presentation.lineClamp === 'none'
     ) {
@@ -184,7 +193,7 @@ export function flattenTableVirtualItems(input: FlattenTableVirtualItemsInput): 
       kind: 'group',
       id: `group:${group.id}`,
       groupId: group.id,
-      estimatedSize: TABLE_VIRTUAL_GROUP_HEADER_SIZE,
+      estimatedSize: tableVirtualRowTrackSize(tableGroupAccessories(group).length > 0 ? 2 : 1),
       variableSize: false,
     });
     if (collapsed.has(group.id)) continue;
