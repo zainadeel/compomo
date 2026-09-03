@@ -8,7 +8,16 @@ const OPTIONS = [
   { label: 'Behavior', value: 'behavior' },
   { label: 'Severity', value: 'severity' },
   { label: 'Status', value: 'status' },
-  { label: 'Driver name', value: 'driverName' },
+  {
+    label: 'Driver',
+    value: 'driverName',
+    orderOptions: [
+      { label: 'Name (ascending)', orderBy: 'driverName', direction: 'asc' },
+      { label: 'Name (descending)', orderBy: 'driverName', direction: 'desc' },
+      { label: 'Score (high to low)', orderBy: 'driverScore', direction: 'desc' },
+      { label: 'Score (low to high)', orderBy: 'driverScore', direction: 'asc' },
+    ],
+  },
 ];
 
 const meta: Meta = {
@@ -18,7 +27,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'A controlled two-panel table toolbar control. Data points stay in the left pane and the selected group’s ascending or descending section order stays in the right pane.',
+          'A controlled two-panel table toolbar control. Data points stay in the left pane and the selected group’s product-owned section-order choices stay in the right pane.',
       },
     },
   },
@@ -50,6 +59,12 @@ export const ActiveGrouping: Story = {
   name: 'Active grouping',
   parameters: { docs: { ...isolatedOverlayDocs('620px') } },
   render: () => renderGroup({ columnId: 'severity', direction: 'asc' }),
+};
+
+export const CustomOrderChoices: Story = {
+  name: 'Custom order choices',
+  parameters: { docs: { ...isolatedOverlayDocs('620px') } },
+  render: () => renderGroup({ columnId: 'driverName', orderBy: 'driverScore', direction: 'desc' }),
 };
 
 export const NoGrouping: Story = {

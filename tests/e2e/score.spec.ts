@@ -28,11 +28,7 @@ test('maps score boundaries to accessible semantic background and foreground pai
         background: style.backgroundColor,
         color: style.color,
         expectedBackground: resolve(`--color-safety-score-background-${resolvedLevel}`),
-        expectedColor: resolve(
-          resolvedLevel === 'good'
-            ? '--color-foreground-primary'
-            : `--color-safety-score-foreground-on-${resolvedLevel}`
-        ),
+        expectedColor: resolve(`--color-safety-score-foreground-on-${resolvedLevel}`),
       };
     }, level);
 

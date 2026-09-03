@@ -54,6 +54,8 @@ export interface TableSortState {
 export interface TableGroupingState {
   columnId: string;
   direction: TableSortDirection;
+  /** Optional application-owned data point used to order the group sections. */
+  orderBy?: string;
 }
 
 /** One independently colored run inside a secondary or tertiary track. */

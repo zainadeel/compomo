@@ -10022,7 +10022,7 @@
     {
       "name": "table-group",
       "title": "TableGroup",
-      "description": "Two-panel toolbar control for choosing one table grouping data point and the ascending or descending order of its group sections.",
+      "description": "Two-panel toolbar control for choosing one table grouping data point and the order of its group sections.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -10033,7 +10033,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Two-panel toolbar control for choosing one table grouping data point and the ascending or descending order of its group sections.",
+          "summary": "Two-panel toolbar control for choosing one table grouping data point and the order of its group sections.",
           "useWhen": [
             "A table toolbar needs explicit control of one grouping level and its section order.",
             "Grouping data-point labels differ from compact table-header labels."
@@ -10064,8 +10064,8 @@
             "The right pane remains present before a group is active as one complete empty state without the Order heading, and explains that a group must be selected."
           ],
           "states": [
-            "options and grouping are controlled. dsGroupChange reports a complete TableGroupingState and dsClear requests null grouping without mutating either input.",
-            "Selecting a new data point starts its order at ascending. Re-selecting the active data point preserves its direction.",
+            "options and grouping are controlled. A data option may supply product-owned orderOptions; otherwise Order defaults to Ascending and Descending. dsGroupChange reports a complete TableGroupingState and dsClear requests null grouping without mutating either input.",
+            "Selecting a new data point starts at its first custom order option, or ascending when it has no custom order options. Re-selecting the active data point preserves its complete order state.",
             "Selecting a data point or direction applies immediately and leaves the dialog open so the other pane can be changed."
           ],
           "responsiveBehavior": [
