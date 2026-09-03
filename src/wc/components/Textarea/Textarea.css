@@ -31,6 +31,11 @@
   color: var(--ds-textarea-fg);
 }
 
+.textarea-control--resizable {
+  padding-block-end: var(--dimension-space-025);
+  padding-inline-end: var(--dimension-space-025);
+}
+
 .textarea-control--bordered {
   --ds-interaction-border-width: var(--dimension-stroke-width-012);
   --ds-interaction-border-color: var(--ds-textarea-border);

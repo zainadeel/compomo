@@ -168,6 +168,7 @@ export class Textarea {
         <div
           class={{
             'textarea-control': true,
+            'textarea-control--resizable': this.resize === 'vertical',
             'textarea-control--bordered': this.hasBorder,
             'textarea-control--error': this.hasBorder && this.error,
             'ds-interaction-fill': this.hasInteractionFill,

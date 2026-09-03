@@ -102,6 +102,15 @@ test('textarea composes with field and preserves multiline form behavior', async
   await expect(nativeTextarea).toHaveAttribute('aria-describedby', 'notes-control-description');
   await expect(nativeTextarea).toHaveAttribute('rows', '3');
   await expect(nativeTextarea).toHaveCSS('resize', 'vertical');
+  const resizeInset = await textarea.evaluate(element => {
+    const control = element.querySelector<HTMLElement>('.textarea-control')!.getBoundingClientRect();
+    const native = element.querySelector<HTMLTextAreaElement>('textarea')!.getBoundingClientRect();
+    return {
+      bottom: control.bottom - native.bottom,
+      right: control.right - native.right,
+    };
+  });
+  expect(resizeInset).toEqual({ bottom: 2, right: 2 });
 
   await label.click();
   await expect(nativeTextarea).toBeFocused();
