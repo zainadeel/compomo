@@ -50,7 +50,7 @@
 
 .score__badge--good {
   background: var(--color-safety-score-background-good);
-  color: var(--color-foreground-primary);
+  color: var(--color-safety-score-foreground-on-good);
 }
 
 .score__badge--excellent {

@@ -52,7 +52,16 @@ const tableGroup = document.getElementById('table-group');
 tableGroup.options = [
   { label: 'Behavior', value: 'behavior' },
   { label: 'Severity', value: 'severity' },
-  { label: 'Driver name', value: 'driverName' },
+  {
+    label: 'Driver',
+    value: 'driverName',
+    orderOptions: [
+      { label: 'Name (ascending)', orderBy: 'driverName', direction: 'asc' },
+      { label: 'Name (descending)', orderBy: 'driverName', direction: 'desc' },
+      { label: 'Score (high to low)', orderBy: 'driverScore', direction: 'desc' },
+      { label: 'Score (low to high)', orderBy: 'driverScore', direction: 'asc' },
+    ],
+  },
 ];
 tableGroup.grouping = null;
 tableGroup.eventLog = [];

@@ -23,12 +23,26 @@ import { resolveAnchoredOverlayBoundaryRect } from '../../utils/anchored-overlay
 import { ChoiceListSection, ChoiceOptionRow } from '../../utils/choice-list-parts';
 import type { TableGroupingState, TableSortDirection } from '../Table/table-types';
 
+export interface TableGroupOrderOption {
+  label: string;
+  direction: TableSortDirection;
+  /** Optional application-owned data point used to order the group sections. */
+  orderBy?: string;
+}
+
 export interface TableGroupOption {
   label: string;
   value: string;
   description?: string;
   isInactive?: boolean;
+  /** Product-owned order choices for this grouping data point. */
+  orderOptions?: TableGroupOrderOption[];
 }
+
+const DEFAULT_ORDER_OPTIONS: TableGroupOrderOption[] = [
+  { label: 'Ascending', direction: 'asc' },
+  { label: 'Descending', direction: 'desc' },
+];
 
 let tableGroupSeq = 0;
 
@@ -228,15 +242,48 @@ export class TableGroup {
 
   private selectData(option: TableGroupOption) {
     if (option.isInactive) return;
+    if (this.grouping?.columnId === option.value) {
+      this.dsGroupChange.emit({ ...this.grouping });
+      return;
+    }
+    const initialOrder = option.orderOptions?.[0];
     this.dsGroupChange.emit({
       columnId: option.value,
-      direction: this.grouping?.columnId === option.value ? this.grouping.direction : 'asc',
+      direction: initialOrder?.direction ?? 'asc',
+      ...(initialOrder?.orderBy ? { orderBy: initialOrder.orderBy } : {}),
     });
   }
 
-  private selectDirection(direction: TableSortDirection) {
-    if (!this.grouping || this.grouping.direction === direction) return;
-    this.dsGroupChange.emit({ ...this.grouping, direction });
+  private get activeOrderOptions(): TableGroupOrderOption[] {
+    const configured = this.options.find(
+      option => option.value === this.grouping?.columnId
+    )?.orderOptions;
+    return configured?.length ? configured : DEFAULT_ORDER_OPTIONS;
+  }
+
+  private get selectedOrderIndex(): number {
+    if (!this.grouping) return -1;
+    const exact = this.activeOrderOptions.findIndex(
+      option =>
+        option.direction === this.grouping?.direction && option.orderBy === this.grouping?.orderBy
+    );
+    if (exact >= 0) return exact;
+    if (this.grouping.orderBy === undefined) {
+      return this.activeOrderOptions.findIndex(
+        option => option.direction === this.grouping?.direction
+      );
+    }
+    return -1;
+  }
+
+  private selectOrder(option: TableGroupOrderOption, index: number) {
+    if (!this.grouping || this.selectedOrderIndex === index) return;
+    const grouping: TableGroupingState = {
+      columnId: this.grouping.columnId,
+      direction: option.direction,
+    };
+    if (option.orderBy) grouping.orderBy = option.orderBy;
+    this.dsGroupChange.emit(grouping);
   }
 
   private moveFocus(
@@ -293,7 +340,7 @@ export class TableGroup {
               .filter(candidate => !candidate.isInactive)
               .findIndex(candidate => candidate.value === option.value),
             this.grouping
-              ? `[data-group-direction="${this.grouping.direction}"] [role="option"]`
+              ? `[data-group-order-index="${this.selectedOrderIndex}"] [role="option"]`
               : undefined
           );
         }}
@@ -301,12 +348,12 @@ export class TableGroup {
     );
   }
 
-  private renderDirection(direction: TableSortDirection, label: string, index: number) {
-    const selected = direction === this.grouping?.direction;
+  private renderOrder(option: TableGroupOrderOption, index: number) {
+    const selected = index === this.selectedOrderIndex;
     return (
       <ChoiceOptionRow
-        id={`${this.componentId}-direction-${direction}`}
-        option={{ label, value: direction }}
+        id={`${this.componentId}-order-${index}`}
+        option={{ label: option.label, value: String(index) }}
         selected={selected}
         active={selected}
         focusRingVisible={this.focusRingVisible}
@@ -315,16 +362,16 @@ export class TableGroup {
         onHover={() => {
           this.focusRingVisible = false;
         }}
-        onSelect={() => this.selectDirection(direction)}
+        onSelect={() => this.selectOrder(option, index)}
         onKeyDown={(event: KeyboardEvent) => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
-            this.selectDirection(direction);
+            this.selectOrder(option, index);
             return;
           }
           this.moveFocus(
             event,
-            '[data-group-direction] [role="option"]',
+            '[data-group-order-index] [role="option"]',
             index,
             `[data-group-value="${CSS.escape(this.grouping?.columnId ?? '')}"] [role="option"]`
           );
@@ -420,12 +467,9 @@ export class TableGroup {
                     ariaLabel="Group order"
                     className="table-group__list"
                   >
-                    <div data-group-direction="asc">
-                      {this.renderDirection('asc', 'Ascending', 0)}
-                    </div>
-                    <div data-group-direction="desc">
-                      {this.renderDirection('desc', 'Descending', 1)}
-                    </div>
+                    {this.activeOrderOptions.map((option, index) => (
+                      <div data-group-order-index={index}>{this.renderOrder(option, index)}</div>
+                    ))}
                   </ChoiceListSection>
                 ) : (
                   <div class="table-group__empty ds-choice-empty ds-empty-region">

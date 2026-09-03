@@ -48,6 +48,45 @@ test('groups through two dependent panes and keeps order unavailable until data 
   await expect(dialog.getByRole('listbox', { name: 'Group order' })).toHaveCount(0);
 });
 
+test('supports product-owned order choices for one grouping data point', async ({ page }) => {
+  const control = page.locator('#table-group');
+  await control.getByRole('button', { name: 'Group safety events' }).click();
+
+  const dialog = page.getByRole('dialog', { name: 'Group safety events' });
+  await dialog.getByRole('option', { name: 'Driver', exact: true }).click();
+  await expect(dialog.getByRole('option', { name: 'Name (ascending)' })).toHaveAttribute(
+    'aria-selected',
+    'true'
+  );
+  await expect(dialog.getByRole('option', { name: 'Name (descending)' })).toBeVisible();
+  await expect(dialog.getByRole('option', { name: 'Score (high to low)' })).toBeVisible();
+  await expect(dialog.getByRole('option', { name: 'Score (low to high)' })).toBeVisible();
+
+  await dialog.getByRole('option', { name: 'Score (high to low)' }).click();
+  await expect(dialog.getByRole('option', { name: 'Score (high to low)' })).toHaveAttribute(
+    'aria-selected',
+    'true'
+  );
+  await expect
+    .poll(() =>
+      control.evaluate(element => (element as HTMLElement & { eventLog: unknown[] }).eventLog)
+    )
+    .toEqual([
+      {
+        type: 'change',
+        columnId: 'driverName',
+        direction: 'asc',
+        orderBy: 'driverName',
+      },
+      {
+        type: 'change',
+        columnId: 'driverName',
+        direction: 'desc',
+        orderBy: 'driverScore',
+      },
+    ]);
+});
+
 test('owns a caption-bar column customizer menu for live show/hide and reorder', async ({
   page,
 }) => {

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
 import { chromiumOnly } from './browser-tier';
 
 test.beforeEach(async ({ page }) => {
@@ -9,35 +10,61 @@ test.beforeEach(async ({ page }) => {
 test('maps score boundaries to accessible semantic background and foreground pairs', async ({
   page,
 }) => {
-  for (const [id, level] of [
-    ['fair', 'fair'],
-    ['good', 'good'],
-    ['excellent', 'excellent'],
-  ] as const) {
-    const colors = await page.locator(`#${id} .score__badge`).evaluate((element, resolvedLevel) => {
-      const resolve = (property: string) => {
-        const probe = document.createElement('span');
-        probe.style.color = `var(${property})`;
-        document.body.append(probe);
-        const color = getComputedStyle(probe).color;
-        probe.remove();
-        return color;
-      };
-      const style = getComputedStyle(element);
-      return {
-        background: style.backgroundColor,
-        color: style.color,
-        expectedBackground: resolve(`--color-safety-score-background-${resolvedLevel}`),
-        expectedColor: resolve(
-          resolvedLevel === 'good'
-            ? '--color-foreground-primary'
-            : `--color-safety-score-foreground-on-${resolvedLevel}`
-        ),
-      };
-    }, level);
+  for (const theme of ['light', 'dark'] as const) {
+    await page.locator('html').evaluate((element, resolvedTheme) => {
+      element.dataset['theme'] = resolvedTheme;
+    }, theme);
 
-    expect(colors.background).toBe(colors.expectedBackground);
-    expect(colors.color).toBe(colors.expectedColor);
+    for (const [id, level] of [
+      ['fair', 'fair'],
+      ['good', 'good'],
+      ['excellent', 'excellent'],
+    ] as const) {
+      const colors = await page
+        .locator(`#${id} .score__badge`)
+        .evaluate((element, resolvedLevel) => {
+          const resolve = (property: string) => {
+            const probe = document.createElement('span');
+            probe.style.color = `var(${property})`;
+            document.body.append(probe);
+            const color = getComputedStyle(probe).color;
+            probe.remove();
+            return color;
+          };
+          const style = getComputedStyle(element);
+          return {
+            background: style.backgroundColor,
+            color: style.color,
+            expectedBackground: resolve(`--color-safety-score-background-${resolvedLevel}`),
+            expectedColor: resolve(`--color-safety-score-foreground-on-${resolvedLevel}`),
+          };
+        }, level);
+
+      expect(colors.background).toBe(colors.expectedBackground);
+      expect(colors.color).toBe(colors.expectedColor);
+
+      const accessibility = await new AxeBuilder({ page })
+        .include(`#${id}`)
+        .withRules(['color-contrast'])
+        .analyze();
+      const contrastViolation = accessibility.violations.find(
+        violation => violation.id === 'color-contrast'
+      );
+      const contrastData = contrastViolation?.nodes
+        .flatMap(node => node.any)
+        .find(check => check.id === 'color-contrast')?.data as
+        | { contrastRatio?: number }
+        | undefined;
+
+      // No axe violation means the pairing already exceeds 4.5:1. Approved
+      // emphasized safety-score pairings that fall below it must remain >= 3:1.
+      if (contrastViolation) {
+        expect(
+          contrastData?.contrastRatio,
+          `${theme} ${level} score contrast`
+        ).toBeGreaterThanOrEqual(3);
+      }
+    }
   }
 });
 
