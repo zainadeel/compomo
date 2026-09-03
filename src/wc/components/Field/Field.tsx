@@ -47,15 +47,30 @@ export class Field {
   @State() private touched = false;
   @State() private controlDisabled = false;
   @State() private controlRequired = false;
+  /** Bumped to let Stencil relocate a control added after the initial render. */
+  @State() private slotRevision = 0;
 
   private readonly generatedId = `ds-field-${++fieldCounter}`;
   private controlContainer?: HTMLDivElement;
   private control?: FieldControl;
   private initialValue = '';
   private authoredAria = new WeakMap<FieldControl, AuthoredAria>();
+  private childObserver?: MutationObserver;
+  private didLoad = false;
+
+  connectedCallback() {
+    if (this.didLoad) this.observeLateControls();
+  }
+
+  disconnectedCallback() {
+    this.childObserver?.disconnect();
+    this.childObserver = undefined;
+  }
 
   componentDidLoad() {
     this.syncControl();
+    this.didLoad = true;
+    this.observeLateControls();
     requestAnimationFrame(() => this.syncControl());
   }
 
@@ -110,6 +125,17 @@ export class Field {
 
   private findControl(): FieldControl | undefined {
     return this.controlContainer?.querySelector<FieldControl>(':scope > :not(slot)') ?? undefined;
+  }
+
+  private observeLateControls() {
+    if (this.childObserver || typeof MutationObserver === 'undefined') return;
+    this.childObserver = new MutationObserver(records => {
+      const addedControl = records.some(record =>
+        Array.from(record.addedNodes).some(node => node.nodeType === 1)
+      );
+      if (addedControl) this.slotRevision++;
+    });
+    this.childObserver.observe(this.el, { childList: true });
   }
 
   private syncControl = () => {
