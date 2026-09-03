@@ -24,7 +24,7 @@ test('opens an accessible empty profiles popup and restores keyboard focus @cros
   await expect(trigger).toBeFocused();
 });
 
-test('uses the complete navigation-only card as one native link', async ({ page }) => {
+test('uses the complete navigation-only card as one native link', async ({ page, browserName }) => {
   const card = page.locator('#navigation-only-card');
   const link = card.getByRole('link', {
     name: 'Profiles Manage product settings for groups.',
@@ -35,7 +35,10 @@ test('uses the complete navigation-only card as one native link', async ({ page 
   await expect(card.locator('.card-navigation__body')).toHaveCount(0);
 
   await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
-  await page.keyboard.press('Tab');
+  // macOS WebKit uses Option+Tab to include native links in keyboard traversal.
+  await page.keyboard.press(
+    browserName === 'webkit' && process.platform === 'darwin' ? 'Alt+Tab' : 'Tab'
+  );
   await expect(link).toBeFocused();
   await link.press('Enter');
 
@@ -51,14 +54,16 @@ test('uses the complete navigation-only card as one native link', async ({ page 
   await expect(page).toHaveURL(/card-navigation\.html$/);
 });
 
-test('paints distinct hover, pressed, and keyboard-focus states', async ({ page }) => {
+test('paints distinct hover, pressed, and keyboard-focus states', async ({ page, browserName }) => {
   const link = page
     .locator('#navigation-only-card')
     .getByRole('link', { name: 'Profiles Manage product settings for groups.' });
   const interactionFill = () =>
     link.evaluate(element => getComputedStyle(element, '::after').backgroundColor);
 
-  await page.keyboard.press('Tab');
+  await page.keyboard.press(
+    browserName === 'webkit' && process.platform === 'darwin' ? 'Alt+Tab' : 'Tab'
+  );
   await expect(link).toBeFocused();
   const focusOutline = await link.evaluate(
     element => getComputedStyle(element, '::after').outlineWidth
