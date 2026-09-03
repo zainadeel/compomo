@@ -74,12 +74,7 @@ export const WithField: Story = {
         label="Internal note"
         description="Share context that will help the next person understand this event."
       >
-        <ds-textarea
-          name="note"
-          placeholder="Add relevant context"
-          rows="4"
-          required
-        ></ds-textarea>
+        <ds-textarea name="note" placeholder="Add relevant context" rows="4" required></ds-textarea>
       </ds-field>
     </div>
   `,
@@ -87,9 +82,7 @@ export const WithField: Story = {
 
 export const Sizes: Story = {
   render: () => html`
-    <div
-      style="width:360px;display:flex;flex-direction:column;gap:var(--dimension-space-200);"
-    >
+    <div style="width:360px;display:flex;flex-direction:column;gap:var(--dimension-space-200);">
       ${(['lg', 'md', 'sm', 'xs'] as const).map(
         size => html`
           <ds-field label=${`${size.toUpperCase()} textarea`}>
@@ -108,9 +101,7 @@ export const Sizes: Story = {
 
 export const States: Story = {
   render: () => html`
-    <div
-      style="width:360px;display:flex;flex-direction:column;gap:var(--dimension-space-200);"
-    >
+    <div style="width:360px;display:flex;flex-direction:column;gap:var(--dimension-space-200);">
       <ds-field label="Default" description="Vertical resizing is available by default.">
         <ds-textarea placeholder="Add a note"></ds-textarea>
       </ds-field>

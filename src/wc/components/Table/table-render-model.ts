@@ -112,8 +112,7 @@ export function createTableRenderModel(input: TableRenderModelInput): TableRende
       const totalLabel = group.countLabel ?? `${count} ${count === 1 ? 'item' : 'items'}`;
       const accessories = tableGroupAccessories(group);
       const hero = tableGroupHero(group);
-      const intent =
-        hero || !isTableGroupIntent(group.intent) ? undefined : group.intent;
+      const intent = hero || !isTableGroupIntent(group.intent) ? undefined : group.intent;
       return {
         group,
         count,

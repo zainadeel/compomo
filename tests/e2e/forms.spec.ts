@@ -103,7 +103,9 @@ test('textarea composes with field and preserves multiline form behavior', async
   await expect(nativeTextarea).toHaveAttribute('rows', '3');
   await expect(nativeTextarea).toHaveCSS('resize', 'vertical');
   const resizeInset = await textarea.evaluate(element => {
-    const control = element.querySelector<HTMLElement>('.textarea-control')!.getBoundingClientRect();
+    const control = element
+      .querySelector<HTMLElement>('.textarea-control')!
+      .getBoundingClientRect();
     const native = element.querySelector<HTMLTextAreaElement>('textarea')!.getBoundingClientRect();
     return {
       bottom: control.bottom - native.bottom,
@@ -139,7 +141,9 @@ test('textarea composes with field and preserves multiline form behavior', async
   await expect(textarea.locator('.textarea-control')).toHaveClass(/textarea-control--error/);
 });
 
-test('textarea read-only and inactive states follow form submission semantics', async ({ page }) => {
+test('textarea read-only and inactive states follow form submission semantics', async ({
+  page,
+}) => {
   const readOnly = page.locator('#textarea-readonly');
   const inactive = page.locator('#textarea-inactive');
 
@@ -149,9 +153,9 @@ test('textarea read-only and inactive states follow form submission semantics', 
   await expect(inactive.locator('textarea')).toBeDisabled();
   await expect
     .poll(() =>
-      page.locator('#textarea-state-form').evaluate(form =>
-        Object.fromEntries(new FormData(form as HTMLFormElement).entries())
-      )
+      page
+        .locator('#textarea-state-form')
+        .evaluate(form => Object.fromEntries(new FormData(form as HTMLFormElement).entries()))
     )
     .toEqual({ 'readonly-note': 'Kept note' });
 
