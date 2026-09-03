@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.27.0](https://github.com/zainadeel/compomo/compare/v14.26.0...v14.27.0) (2026-09-03)
+
+
+### Added
+
+* support custom table group ordering ([#564](https://github.com/zainadeel/compomo/issues/564)) ([2e6bf43](https://github.com/zainadeel/compomo/commit/2e6bf43591d8bec81c7026cd40d00b83975c6d90))
+
 ## [14.26.0](https://github.com/zainadeel/compomo/compare/v14.25.0...v14.26.0) (2026-09-03)
 
 
