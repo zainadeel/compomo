@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.31.0](https://github.com/zainadeel/compomo/compare/v14.30.0...v14.31.0) (2026-09-04)
+
+
+### Added
+
+* refine grouped table score presentation ([#579](https://github.com/zainadeel/compomo/issues/579)) ([e1efa1a](https://github.com/zainadeel/compomo/commit/e1efa1abbd329d9c16e05febba44cefa90ce1609))
+
 ## [14.30.0](https://github.com/zainadeel/compomo/compare/v14.29.2...v14.30.0) (2026-09-04)
 
 
