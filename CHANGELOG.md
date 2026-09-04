@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.29.1](https://github.com/zainadeel/compomo/compare/v14.29.0...v14.29.1) (2026-09-04)
+
+
+### Fixed
+
+* keep routed content beneath shell headers ([#573](https://github.com/zainadeel/compomo/issues/573)) ([466eb73](https://github.com/zainadeel/compomo/commit/466eb7365dc9a673be4457415e7e1fbaaa93ef40))
+
 ## [14.29.0](https://github.com/zainadeel/compomo/compare/v14.28.0...v14.29.0) (2026-09-04)
 
 
