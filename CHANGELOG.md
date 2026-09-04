@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.29.0](https://github.com/zainadeel/compomo/compare/v14.28.0...v14.29.0) (2026-09-04)
+
+
+### Added
+
+* standardize surface ownership feedback ([#571](https://github.com/zainadeel/compomo/issues/571)) ([84c1f58](https://github.com/zainadeel/compomo/commit/84c1f58f946764963027f22031e1a701d2528d50))
+
 ## [14.28.0](https://github.com/zainadeel/compomo/compare/v14.27.1...v14.28.0) (2026-09-03)
 
 
