@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.29.2](https://github.com/zainadeel/compomo/compare/v14.29.1...v14.29.2) (2026-09-04)
+
+
+### Fixed
+
+* preserve modal shell layering ([#575](https://github.com/zainadeel/compomo/issues/575)) ([ae53f2b](https://github.com/zainadeel/compomo/commit/ae53f2bd202f22707922aa4755a1913096e7e5b4))
+
 ## [14.29.1](https://github.com/zainadeel/compomo/compare/v14.29.0...v14.29.1) (2026-09-04)
 
 
