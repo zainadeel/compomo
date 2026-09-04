@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.30.0](https://github.com/zainadeel/compomo/compare/v14.29.2...v14.30.0) (2026-09-04)
+
+
+### Added
+
+* reveal table rows by identity ([#577](https://github.com/zainadeel/compomo/issues/577)) ([cd4eddc](https://github.com/zainadeel/compomo/commit/cd4eddc4182bcc9a733bda1da0183401b025dafa))
+
 ## [14.29.2](https://github.com/zainadeel/compomo/compare/v14.29.1...v14.29.2) (2026-09-04)
 
 
