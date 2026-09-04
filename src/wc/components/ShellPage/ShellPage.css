@@ -104,6 +104,7 @@
   min-width: 0;
   box-sizing: border-box;
   background: var(--_shell-page-content-background);
+  isolation: isolate;
 }
 
 :host(.shell-page-host--inset-default) .shell-page__content {
