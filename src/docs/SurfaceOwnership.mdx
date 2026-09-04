@@ -54,6 +54,15 @@ reports activation intent and renders the supplied identity; it does not open
 or close application panels. Stable row identity preserves the relationship
 when rows are sorted, grouped, or recycled during scrolling.
 
+When an open details surface moves between records, call
+`scrollRowIntoView(rowId)` after supplying the new row identity. The table moves
+its vertical scroll owner only when needed, accounts for sticky table chrome,
+and can reveal a virtual row before that row has a DOM node. The method does not
+move focus, so keyboard navigation can remain in the details surface. It returns
+`false` when the row is not present in the supplied, expanded table model; the
+application must first load its data, change the controlled page, or expand its
+group.
+
 ## Migrate existing triggers
 
 Existing buttons and interactive tags preserve their expanded-derived wash

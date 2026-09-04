@@ -3444,6 +3444,10 @@ export namespace Components {
          */
         "scrollLabel": string | undefined;
         /**
+          * Scroll the nearest vertical owner only enough to reveal a supplied row. Resolves false when the row is absent from the supplied, expanded table model. This method never moves focus.
+         */
+        "scrollRowIntoView": (rowId: string) => Promise<boolean>;
+        /**
           * Controlled selected row identities. IDs outside the loaded rows are preserved.
           * @default []
          */

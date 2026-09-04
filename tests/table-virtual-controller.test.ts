@@ -195,6 +195,40 @@ test('resetToTop clears measures and returns the window to the start', () => {
   assert.equal(controller.currentPlan()?.start, 0);
 });
 
+test('reveals an unmounted row with nearest scrolling and keeps visible rows stationary', () => {
+  const viewport = createViewport();
+  const items = flattenTableVirtualItems({
+    grouped: false,
+    rows,
+    groups: [],
+    collapsedGroupIds: [],
+    columns,
+  });
+  const controller = new TableVirtualController({
+    state: () => ({
+      enabled: true,
+      items,
+      pinnedRowIds: new Set(),
+      viewport,
+      viewportSize: viewport.clientHeight,
+    }),
+    windowChanged: () => undefined,
+    requestAnimationFrame: callback => {
+      callback(0);
+      return 1;
+    },
+    cancelAnimationFrame: () => undefined,
+  });
+  controller.connect();
+
+  assert.equal(controller.scrollRowIntoView('r2', 32, 32), true);
+  assert.equal(viewport.scrollTop, 0);
+  assert.equal(controller.scrollRowIntoView('r20', 32, 32), true);
+  assert.equal(viewport.scrollTop, 672);
+  assert.ok(controller.currentPlan()?.mountedIds.has('row:r20'));
+  assert.equal(controller.scrollRowIntoView('missing', 32, 32), false);
+});
+
 test('reuses dataset-wide lookup state while scrolling a 10,000-row list', () => {
   const viewport = createViewport(600);
   let propertyReads = 0;

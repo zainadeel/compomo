@@ -38,6 +38,50 @@ test('virtual mode mounts a window of rows and reports the full list to AT', asy
     .toBe(true);
 });
 
+test('scrollRowIntoView reveals recycled rows with nearest scrolling and preserves focus @pr-critical @cross-browser', async ({
+  page,
+}) => {
+  const table = page.locator('#virtual');
+  const viewport = table.locator('.ds-table__viewport');
+  await viewport.focus();
+  const initialScrollTop = await viewport.evaluate(element => element.scrollTop);
+
+  await expect
+    .poll(() =>
+      table.evaluate((element: HTMLDsTableElement) => element.scrollRowIntoView('virtual-0'))
+    )
+    .toBe(true);
+  expect(await viewport.evaluate(element => element.scrollTop)).toBe(initialScrollTop);
+
+  await expect
+    .poll(() =>
+      table.evaluate((element: HTMLDsTableElement) => element.scrollRowIntoView('virtual-80'))
+    )
+    .toBe(true);
+  const target = table.locator('[data-row-id="virtual-80"]');
+  await expect(target).toHaveCount(1);
+  await expect(viewport).toBeFocused();
+  await expect
+    .poll(async () => {
+      const [viewportBox, headerBox, rowBox] = await Promise.all([
+        viewport.boundingBox(),
+        table.locator('thead').boundingBox(),
+        target.boundingBox(),
+      ]);
+      if (!viewportBox || !headerBox || !rowBox) return false;
+      return (
+        rowBox.y >= headerBox.y + headerBox.height - 0.5 &&
+        rowBox.y + rowBox.height <= viewportBox.y + viewportBox.height + 0.5
+      );
+    })
+    .toBe(true);
+
+  const missing = await table.evaluate((element: HTMLDsTableElement) =>
+    element.scrollRowIntoView('missing')
+  );
+  expect(missing).toBe(false);
+});
+
 test('large bounded pagination and infinite windows recycle row DOM without changing modes @pr-critical', async ({
   page,
 }) => {

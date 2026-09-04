@@ -137,6 +137,42 @@ export class TableVirtualController {
     return this.viewportSize;
   }
 
+  /** Reveal a supplied row without requiring its recycled DOM node to exist first. */
+  scrollRowIntoView(rowId: string, contentOffset = 0, stickyInset = 0): boolean {
+    const state = this.options.state();
+    const viewport = this.connectedViewport ?? state.viewport;
+    if (!state.enabled || !viewport) return false;
+
+    const index = this.ensureIndex(state.items);
+    const rowIndex = index.rowIndexById.get(rowId);
+    if (rowIndex == null) return false;
+
+    const item = state.items[rowIndex];
+    const groupHeaderIndex = item?.groupId ? index.headerIndexByGroup.get(item.groupId) : undefined;
+    const groupInset = groupHeaderIndex == null ? 0 : (index.sizes[groupHeaderIndex] ?? 0);
+    const leadingInset = Math.max(0, stickyInset) + groupInset;
+    const itemStart = Math.max(0, contentOffset) + (index.prefix[rowIndex] ?? 0);
+    const itemEnd = Math.max(0, contentOffset) + (index.prefix[rowIndex + 1] ?? itemStart);
+    const viewportSize = this.viewportSize || state.viewportSize || viewport.clientHeight || 0;
+    const currentOffset = viewport.scrollTop;
+    const visibleStart = currentOffset + leadingInset;
+    const visibleEnd = currentOffset + viewportSize;
+    let nextOffset: number;
+
+    if (itemStart < visibleStart) nextOffset = itemStart - leadingInset;
+    else if (itemEnd > visibleEnd) nextOffset = itemEnd - viewportSize;
+    else return true;
+
+    const maxOffset = Math.max(0, Math.max(0, contentOffset) + index.totalSize - viewportSize);
+    nextOffset = Math.max(0, Math.min(nextOffset, maxOffset));
+    this.scrollDirection =
+      nextOffset > currentOffset ? 'forward' : nextOffset < currentOffset ? 'backward' : 'none';
+    viewport.scrollTop = nextOffset;
+    this.scrollOffset = viewport.scrollTop;
+    this.sync();
+    return true;
+  }
+
   /** Measure painted rows and correct scroll when estimates were wrong. */
   collectMeasurements(root: ParentNode | null): void {
     if (!root || !this.connected || !this.options.state().enabled) return;
