@@ -578,7 +578,7 @@ export class Select {
         active={active}
         focusRingVisible={this.focusRingVisible}
         usesSubtext={usesSubtext}
-        actionOpen={option.action?.expanded}
+        actionOpen={option.action?.surfaceOpen ?? option.action?.expanded}
         popupRole={this.popupRole}
         leading={
           this.multiple ? (
@@ -664,6 +664,7 @@ export class Select {
                 haspopup="menu"
                 controls={option.action.controls}
                 expanded={option.action.expanded}
+                surfaceOpen={option.action.surfaceOpen}
                 onKeyDown={event => {
                   event.stopPropagation();
                   if (event.key === 'Escape' || event.key === 'ArrowLeft') {
@@ -778,6 +779,7 @@ export class Select {
               'ds-interaction-fill': true,
               'ds-interaction-fill--selected': !inactive && this.activeFill && this.hasSelection,
               'trigger--expanded': !inactive && this.open,
+              'ds-interaction-fill--surface-open': !inactive && this.open,
               'trigger--bordered': this.hasBorder,
               'trigger--placeholder': showPlaceholder && !this.multiple,
               'trigger--has-value': this.hasSelection,

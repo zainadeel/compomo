@@ -49,7 +49,8 @@
     "Range selection applies the first date immediately as a one-day range; while an end is pending, that selected start retains its bold treatment and hovering or focusing another day paints the rest of the provisional inclusive span faint without emitting a value. A second activation completes an ordered inclusive range and gives both edges the bold treatment. A new activation after completion starts a replacement range.",
     "Selection applies immediately and does not close the popup.",
     "Changing category replaces the option-pane subtree so checkbox and other option visuals mount in their new state instead of transitioning from the previous category's row state.",
-    "The trigger reports how many filter categories have selections. footerLayout=summary adds a full-width selected-count footer only while values are selected; footerLayout=categories-clear always reserves the category-pane footer height while keeping its inactive divider hidden, then reveals the divider and only its left-aligned Clear action while values are selected."
+    "The trigger reports how many filter categories have selections. footerLayout=summary adds a full-width selected-count footer only while values are selected; footerLayout=categories-clear always reserves the category-pane footer height while keeping its inactive divider hidden, then reveals the divider and only its left-aligned Clear action while values are selected.",
+    "The built-in trigger derives the shared surface-open wash from the rendered popup lifecycle, including closing. For an external trigger, the application owns that relationship and retains the wash until dsAfterClose; selected filter values remain independent."
   ],
   "responsiveBehavior": [
     "The popup defaults to the large menu-width token and clamps to the nearest data-ds-overlay-boundary rectangle or the viewport fallback.",
@@ -72,6 +73,10 @@
     {
       "label": "Storybook example",
       "path": "src/wc/components/FilterMenu/FilterMenu.stories.ts"
+    },
+    {
+      "label": "Surface ownership and trigger state",
+      "path": "src/docs/SurfaceOwnership.mdx"
     }
   ]
 }

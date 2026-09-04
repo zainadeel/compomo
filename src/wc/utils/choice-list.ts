@@ -24,6 +24,8 @@ export interface ChoiceOptionAction {
   controls?: string;
   /** Keep the action visible and expose its controlled popup state. */
   expanded?: boolean;
+  /** Keep the action visible and held while its associated surface is rendered. */
+  surfaceOpen?: boolean;
 }
 
 export interface ChoiceSection {

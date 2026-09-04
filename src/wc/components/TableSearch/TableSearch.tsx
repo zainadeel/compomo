@@ -415,6 +415,7 @@ export class TableSearch {
                 haspopup="listbox"
                 controls={this.menuOpen ? this.listboxId : undefined}
                 expanded={this.menuOpen}
+                surfaceOpen={this.menuOpen}
                 isInactive={this.isInactive || available.length === 0}
                 onMouseDown={(event: MouseEvent) => event.preventDefault()}
                 onDsClick={() => {

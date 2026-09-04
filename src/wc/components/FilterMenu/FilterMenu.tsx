@@ -1229,6 +1229,7 @@ export class FilterMenu {
                   'ds-interaction-fill': true,
                   'ds-interaction-fill--selected': this.activeFill && hasActiveFilters,
                   'trigger--expanded': this.open || this.closing,
+                  'ds-interaction-fill--surface-open': this.open || this.closing,
                   'trigger--bordered': this.hasBorder,
                   'trigger--has-value': hasActiveFilters,
                   [`ds-control--${this.size}`]: true,

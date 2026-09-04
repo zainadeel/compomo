@@ -1,0 +1,67 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Docs/Surface ownership" />
+
+# Keep the owner of an open surface visible
+
+When a control opens a menu, picker, flyout, or details panel, its pressed wash
+stays visible while that surface is rendered. This connects the surface to its
+owner even when they appear far apart on the screen. The wash indicates a
+current relationship, not a history of the last clicked control.
+
+## Separate the states
+
+- **Physical press:** momentary pointer feedback. Eligible buttons can scale
+  while physically pressed; an open surface never holds that scale.
+- **Surface open:** the control owns a visible contextual surface. Retain the
+  pressed wash without changing its resting foreground.
+- **Selected or toggled:** an option or mode is chosen. This has its own active
+  treatment and semantics, independent of whether a surface is open.
+- **Inline expansion:** an accordion or table group reveals content in place.
+  Its expanded state does not call for a held pressed wash.
+
+Use this relationship for surfaces opened by deliberate activation, not hover
+help, ordinary navigation, or completed commands.
+
+## Let the surface owner manage its lifetime
+
+For an application-owned menu or panel, set the trigger's `surfaceOpen` when
+opening it. Keep it true through exit motion and clear it after the surface has
+finished closing. Menu exposes `dsAfterClose` for this completion boundary. If
+the surface reopens before an exit finishes, an older completion must not clear
+the new state.
+
+Use `expanded`, `controls`, and `haspopup` separately where the interaction calls
+for their accessibility semantics. `surfaceOpen` does not invent ARIA roles or
+relationships: an inline disclosure, a menu button, and a distant detail panel
+need different semantics despite sharing some visual feedback.
+
+Select and other components that own their built-in popup derive this state
+internally. Consumers do not need to synchronize another flag for that popup.
+Composed header actions forward the application's surface state to their button.
+In a split button, only the menu segment owns the associated menu's wash.
+
+## Connect table rows to details
+
+Supply `surfaceOpenRowId` for the interactive row whose record is displayed in
+an associated surface. Keep checkbox selection independent. If the surface has
+previous/next navigation, move the identity to the displayed record. Keep the
+identity through closing and clear it at completion.
+
+The application decides whether activating the same row closes the surface,
+activating another row switches its content, and where focus returns. The table
+reports activation intent and renders the supplied identity; it does not open
+or close application panels. Stable row identity preserves the relationship
+when rows are sorted, grouped, or recycled during scrolling.
+
+## Migrate existing triggers
+
+Existing buttons and interactive tags preserve their expanded-derived wash
+when `surfaceOpen` is omitted. That styling fallback is deprecated; `expanded`
+itself remains supported for disclosure semantics. Set `surfaceOpen` explicitly
+in new and migrated compositions. Explicit false suppresses the fallback.
+
+For a simple menu, synchronize `expanded` with its logical open state and
+`surfaceOpen` with its rendered lifetime. Avoid using `pressed`, `isActive`, or
+checkbox selection merely to indicate an open surface. See the Menu trigger
+composition recipes and the Button and Table stories for executable examples.

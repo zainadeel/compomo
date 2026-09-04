@@ -41,7 +41,8 @@
     "The application replaces pageChrome from completed route state and handles ShellApp page intent events.",
     "ShellApp owns ShellPage, BarTitle, MobileHeader, the content scroller, sticky presentation, and responsive switching.",
     "The default slot contains application-owned routed content and is not recreated for header compaction or breakpoint changes.",
-    "Use a directly slotted ShellPage only inside composition=\"slotted\"."
+    "Use a directly slotted ShellPage only inside composition=\"slotted\".",
+    "Keep external surface ownership separate from selected routes, toggled modes, and inline expansion. Forward surfaceOpen on header actions while their associated menu or panel remains rendered, including exit motion; clear it after closing. Internal popup controls manage this relationship themselves."
   ],
   "accessibility": [
     "Keep exactly one active routed main landmark, supplied by the managed ShellPage.",
@@ -138,6 +139,7 @@
   "references": [
     "src/wc/components/ShellPage/ShellPage.agent.json",
     "src/wc/components/BarTitle/BarTitle.agent.json",
-    "src/wc/components/ShellApp/ShellApp.agent.json"
+    "src/wc/components/ShellApp/ShellApp.agent.json",
+    "src/docs/SurfaceOwnership.mdx"
   ]
 }

@@ -103,8 +103,11 @@ export class PanelNav {
   @Prop() dashboardLabel: string = 'Dashboard';
   @Prop() settingsLabel: string = 'Settings';
   @Prop() accountLabel: string = 'Account';
-  /** Keep the account-menu trigger visually pressed while its popup is open or closing. */
+  /** Account disclosure state. Expanded-derived styling is deprecated; use accountMenuSurfaceOpen for the rendered lifetime. */
   @Prop() accountMenuExpanded: boolean = false;
+  /** External account surface is visible, including exit motion. Omission
+   * preserves the deprecated accountMenuExpanded-derived wash. */
+  @Prop() accountMenuSurfaceOpen: boolean | undefined;
   @Prop() dashboardNavigationLabel: string = 'Dashboard navigation';
   @Prop() settingsNavigationLabel: string = 'Settings navigation';
   @Prop() expandNavigationLabel: string = 'Expand navigation';
@@ -821,6 +824,8 @@ export class PanelNav {
           'panel-nav__item': true,
           'panel-nav__footer-user': true,
           'panel-nav__footer-user--menu-expanded': this.accountMenuExpanded,
+          'ds-interaction-fill--surface-open':
+            this.accountMenuSurfaceOpen ?? this.accountMenuExpanded,
           'ds-focus-ring-inset': true,
           'ds-interaction-fill': true,
         }}
@@ -910,6 +915,7 @@ export class PanelNav {
         'panel-nav__parent': disclosure,
         'panel-nav__parent--expanded': expanded,
         'panel-nav__parent--flyout-active': collapsed && this.flyoutParentId === item.id,
+        'ds-interaction-fill--surface-open': collapsed && this.flyoutParentId === item.id,
         'panel-nav__parent--muted':
           this.presentation === 'nested' &&
           !collapsed &&

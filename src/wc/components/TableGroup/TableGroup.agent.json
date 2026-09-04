@@ -38,7 +38,8 @@
   "states": [
     "options and grouping are controlled. A data option may supply product-owned orderOptions; otherwise Order defaults to Ascending and Descending. dsGroupChange reports a complete TableGroupingState and dsClear requests null grouping without mutating either input.",
     "Selecting a new data point starts at its first custom order option, or ascending when it has no custom order options. Re-selecting the active data point preserves its complete order state.",
-    "Selecting a data point or direction applies immediately and leaves the dialog open so the other pane can be changed."
+    "Selecting a data point or direction applies immediately and leaves the dialog open so the other pane can be changed.",
+    "The grouping picker automatically holds the shared surface-open wash through exit. Opening this picker is separate from expanding an inline table group."
   ],
   "responsiveBehavior": [
     "Use in the trailing region of ds-table-toolbar.",
@@ -46,12 +47,28 @@
     "Both panes remain present and their choice lists scroll within the collision-constrained popup."
   ],
   "frameworkCaveats": {
-    "customElements": ["Assign options and grouping as JavaScript properties and replace grouping from dsGroupChange or dsClear."],
-    "react": ["Keep grouping in application state and replace it from dsGroupChange; set it to null from dsClear."],
-    "angular": ["Import the generated DsTableGroup adapter and bind options and grouping as properties."]
+    "customElements": [
+      "Assign options and grouping as JavaScript properties and replace grouping from dsGroupChange or dsClear."
+    ],
+    "react": [
+      "Keep grouping in application state and replace it from dsGroupChange; set it to null from dsClear."
+    ],
+    "angular": [
+      "Import the generated DsTableGroup adapter and bind options and grouping as properties."
+    ]
   },
   "references": [
-    { "label": "Review states", "path": "src/wc/components/TableGroup/TableGroup.stories.ts" },
-    { "label": "Toolbar composition owner", "path": "src/wc/components/TableToolbar/TableToolbar.agent.json" }
+    {
+      "label": "Review states",
+      "path": "src/wc/components/TableGroup/TableGroup.stories.ts"
+    },
+    {
+      "label": "Toolbar composition owner",
+      "path": "src/wc/components/TableToolbar/TableToolbar.agent.json"
+    },
+    {
+      "label": "Surface ownership and trigger state",
+      "path": "src/docs/SurfaceOwnership.mdx"
+    }
   ]
 }

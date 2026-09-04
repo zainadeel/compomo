@@ -44,6 +44,9 @@ export class Tag {
   @Prop() interactive: boolean = false;
   /** Controlled open state for the menu triggered by an interactive Tag. */
   @Prop() expanded: boolean = false;
+  /** Associated menu remains visible, including exit motion. Omission preserves
+   * the deprecated expanded-derived wash; explicit false suppresses it. */
+  @Prop() surfaceOpen: boolean | undefined;
   /** ID of the menu controlled by an interactive Tag. */
   @Prop() ariaControls: string | undefined;
   /** Disable an interactive Tag and apply the shared inactive treatment. */
@@ -109,6 +112,8 @@ export class Tag {
           class={{
             tag__button: true,
             'tag__button--expanded': this.expanded,
+            'ds-interaction-fill--surface-open':
+              (this.surfaceOpen ?? this.expanded) && !this.isInactive,
             'ds-interaction-fill': true,
             'ds-focus-ring-inset': true,
           }}

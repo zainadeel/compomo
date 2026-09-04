@@ -83,7 +83,8 @@
     "The application owns slotted tool products and data while PanelTools owns rail ordering, drawer selection, open state, motion, and shell events.",
     "Opening and closing clip an already-rendered fixed-width surface. Header and tool content remain fully opaque and retained during width motion; transition completion is accepted only at the measured terminal clip width, after which the closed surface becomes inert and paint-skipped.",
     "Entering and exiting fullscreen snaps without borrowing the drawer open or close animation.",
-    "When fullscreenHeaderMode is split, PanelTools suppresses only its fullscreen shared header. The application renders exactly two canonical ds-panel-tool-header instances: a tool-title/list-actions header over the 300px history pane and a chat-title/Exit-fullscreen/chat-actions header over the detail pane. The detail header omits Back because the list remains visible."
+    "When fullscreenHeaderMode is split, PanelTools suppresses only its fullscreen shared header. The application renders exactly two canonical ds-panel-tool-header instances: a tool-title/list-actions header over the 300px history pane and a chat-title/Exit-fullscreen/chat-actions header over the detail pane. The detail header omits Back because the list remains visible.",
+    "Header action surfaceOpen identifies the owner of an external menu or panel without turning that action into a selected tool or toggle. The application owns this surface lifecycle."
   ],
   "responsiveBehavior": [
     "The open drawer reduces main-content width and uses --dimension-panel-width-xs (300px) on every supported desktop and tablet viewport.",
@@ -122,6 +123,10 @@
     {
       "label": "Application shell composition",
       "path": "agent/patterns/application-shell/pattern.agent.json"
+    },
+    {
+      "label": "Surface ownership and trigger state",
+      "path": "src/docs/SurfaceOwnership.mdx"
     }
   ]
 }

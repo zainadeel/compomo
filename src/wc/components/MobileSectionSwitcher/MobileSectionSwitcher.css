@@ -27,10 +27,6 @@
   cursor: default;
 }
 
-.mobile-section-switcher--expanded {
-  background: var(--color-background-tertiary);
-}
-
 .mobile-section-switcher__label {
   min-width: 0;
   max-width: 100%;

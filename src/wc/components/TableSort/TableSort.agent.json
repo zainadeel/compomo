@@ -32,9 +32,7 @@
     "component:ds-button-unfilled",
     "component:ds-menu"
   ],
-  "patterns": [
-    "pattern:menu-trigger"
-  ],
+  "patterns": ["pattern:menu-trigger"],
   "accessibility": [
     "The trigger is an icon-label menu button named Sort table unless a product aria-label is supplied. Compact caption widths keep that accessible name after the visible label is omitted.",
     "The start-aligned menu has two sections, Data and Direction. Each section presents one selected row through isSelected; the menu is not a single radio group because field and direction are independent.",
@@ -44,7 +42,8 @@
     "columns and sort are controlled. dsSortChange reports the next TableSortState and never mutates those inputs. The same sort object is what column headers emit through the table.",
     "Selecting a different data field keeps the current direction, or starts ascending when no sort exists. Selecting a direction applies it to the current field, or to the first sortable field when no sort exists. Selecting the already-active field or direction is a no-op and does not toggle the way a header click does.",
     "The trigger stays Sort in regular-weight resting secondary chrome. Field and direction selection live in the menu and on column headers, so the trigger never uses active primary emphasis. It keeps pressed interaction paint without physically scaling inside the stable table caption row.",
-    "Compound sortable headers contribute one Data row per segment. Action columns never appear."
+    "Compound sortable headers contribute one Data row per segment. Action columns never appear.",
+    "The trigger automatically holds the shared surface-open wash through menu exit while the selected sort remains independently controlled."
   ],
   "responsiveBehavior": [
     "Place the control in the trailing region of ds-table-toolbar with Filter and Group.",
@@ -70,6 +69,10 @@
     {
       "label": "Toolbar composition owner",
       "path": "src/wc/components/TableToolbar/TableToolbar.agent.json"
+    },
+    {
+      "label": "Surface ownership and trigger state",
+      "path": "src/docs/SurfaceOwnership.mdx"
     }
   ]
 }

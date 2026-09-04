@@ -177,6 +177,14 @@ export class Table {
   /** Controlled selected row identities. IDs outside the loaded rows are preserved. */
   @Prop() selectedRowIds: string[] = [];
 
+  /**
+   * Identity of the interactive row whose associated surface is visible.
+   * Holds its pressed wash independently of checkbox selection. Keep the ID
+   * through exit motion and clear it after close; the application owns toggling
+   * and switching the surface. Off-window identities survive virtualization.
+   */
+  @Prop() surfaceOpenRowId: string | undefined;
+
   /** Initial loading state. Existing rows stay visible; incremental loading uses loadingMore. */
   @Prop() loading: boolean = false;
   /** Replace opted-in table-owned caption controls with same-size visual skeletons. */
@@ -252,11 +260,14 @@ export class Table {
   @State() private fitPageSize: number | undefined;
   @State() private actionMenu: { rowId: string; columnId: string } | null = null;
   @State() private actionMenuInitialFocusVisible = false;
+  @State() private actionMenuSurface: { rowId: string; columnId: string } | null = null;
   @State() private truncateTooltipLabel = '';
   @State() private captionCompact = false;
   @State() private columnCustomizerOpen = false;
+  @State() private columnCustomizerSurfaceOpen = false;
   @State() private columnCustomizerInitialFocusVisible = false;
   @State() private dataModeSwitcherOpen = false;
+  @State() private dataModeSwitcherSurfaceOpen = false;
   @State() private dataModeSwitcherInitialFocusVisible = false;
   @State() private virtualWindow: TableVirtualPlan | null = null;
 
@@ -692,13 +703,19 @@ export class Table {
   @Watch('columnCustomizer')
   @Watch('captionVisibility')
   handleColumnCustomizerAvailability(): void {
-    if (!this.showsColumnCustomizer) this.closeColumnCustomizer();
+    if (!this.showsColumnCustomizer) {
+      this.closeColumnCustomizer();
+      this.columnCustomizerSurfaceOpen = false;
+    }
   }
 
   @Watch('dataModeSwitcher')
   @Watch('captionVisibility')
   handleDataModeSwitcherAvailability(): void {
-    if (!this.showsDataModeSwitcher) this.closeDataModeSwitcher();
+    if (!this.showsDataModeSwitcher) {
+      this.closeDataModeSwitcher();
+      this.dataModeSwitcherSurfaceOpen = false;
+    }
   }
 
   @Watch('chromeLoading')
@@ -706,6 +723,8 @@ export class Table {
     if (!loading) return;
     this.closeColumnCustomizer();
     this.closeDataModeSwitcher();
+    this.columnCustomizerSurfaceOpen = false;
+    this.dataModeSwitcherSurfaceOpen = false;
   }
 
   private get grouped(): boolean {
@@ -1265,10 +1284,11 @@ export class Table {
     const open = this.actionMenu?.rowId === row.id && this.actionMenu?.columnId === column.id;
     this.actionMenuInitialFocusVisible = event.detail === 0;
     this.actionMenu = open ? null : { rowId: row.id, columnId: column.id };
+    if (this.actionMenu) this.actionMenuSurface = this.actionMenu;
   }
 
   private renderOverflowActionMenu() {
-    const open = this.actionMenu;
+    const open = this.actionMenu ?? this.actionMenuSurface;
     const row = open
       ? tableRows(this.rows, this.groups, this.grouped).find(
           candidate => candidate.id === open.rowId
@@ -1284,7 +1304,7 @@ export class Table {
     return (
       <ds-menu
         id={this.actionMenuElementId}
-        open={Boolean(open && sections.length)}
+        open={Boolean(this.actionMenu && sections.length)}
         anchorId={triggerId}
         align="end"
         side="bottom"
@@ -1292,6 +1312,9 @@ export class Table {
         initialFocusVisible={this.actionMenuInitialFocusVisible}
         sections={sections}
         onDsClose={() => this.closeActionMenu()}
+        onDsAfterClose={() => {
+          if (!this.actionMenu) this.actionMenuSurface = null;
+        }}
         onDsSelect={event => this.handleActionMenuSelect(event.detail)}
       />
     );
@@ -1744,6 +1767,8 @@ export class Table {
       emptyCellLabel: this.emptyCellLabel,
       actionMenuElementId: this.actionMenuElementId,
       actionMenu: this.actionMenu,
+      actionMenuSurface: this.actionMenuSurface,
+      surfaceOpenRowId: this.surfaceOpenRowId,
       highlightMatcher: this.highlightMatcher,
       highlightFieldIds: this.highlightFieldIds,
       ariaRowIndex,
@@ -2251,6 +2276,7 @@ export class Table {
             aria-label={this.dataModeSwitcherLabel}
             hasMenu={true}
             expanded={this.dataModeSwitcherOpen}
+            surfaceOpen={this.dataModeSwitcherSurfaceOpen}
             controls={this.dataModeSwitcherElementId}
             activeFill={false}
             pressScale={false}
@@ -2280,6 +2306,9 @@ export class Table {
           virtual: this.virtualModeLabel,
         })}
         onDsClose={() => this.closeDataModeSwitcher()}
+        onDsAfterClose={() => {
+          if (!this.dataModeSwitcherOpen) this.dataModeSwitcherSurfaceOpen = false;
+        }}
         onDsSelect={event => this.handleDataModeSwitcherSelect(event.detail)}
       />
     );
@@ -2295,6 +2324,7 @@ export class Table {
     this.closeColumnCustomizer();
     this.dataModeSwitcherInitialFocusVisible = fromKeyboard;
     this.dataModeSwitcherOpen = true;
+    this.dataModeSwitcherSurfaceOpen = true;
   }
 
   private closeDataModeSwitcher(): void {
@@ -2337,6 +2367,7 @@ export class Table {
             aria-label="Customize table"
             hasMenu={true}
             expanded={this.columnCustomizerOpen}
+            surfaceOpen={this.columnCustomizerSurfaceOpen}
             controls={this.columnCustomizerElementId}
             onDsClick={(event: CustomEvent<MouseEvent>) => {
               if (this.chromeLoading) return;
@@ -2364,6 +2395,9 @@ export class Table {
         initialFocusVisible={this.columnCustomizerInitialFocusVisible}
         items={tableColumnCustomizerMenuItems(this.columns, this.hiddenColumnIds, this.columnOrder)}
         onDsClose={() => this.closeColumnCustomizer()}
+        onDsAfterClose={() => {
+          if (!this.columnCustomizerOpen) this.columnCustomizerSurfaceOpen = false;
+        }}
         onDsSelect={event => this.handleColumnCustomizerSelect(event.detail)}
         onDsReorder={event => this.handleColumnCustomizerReorder(event.detail)}
       />
@@ -2380,6 +2414,7 @@ export class Table {
     this.closeDataModeSwitcher();
     this.columnCustomizerInitialFocusVisible = fromKeyboard;
     this.columnCustomizerOpen = true;
+    this.columnCustomizerSurfaceOpen = true;
   }
 
   private closeColumnCustomizer(): void {

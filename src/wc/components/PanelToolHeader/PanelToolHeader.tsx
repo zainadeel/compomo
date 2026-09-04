@@ -30,6 +30,8 @@ export class PanelToolHeader {
   @Prop() menuControls: string | undefined;
   /** Whether the controlled menu is open. */
   @Prop() menuExpanded: boolean = false;
+  /** Associated menu surface is visible, including exit motion. */
+  @Prop() menuSurfaceOpen: boolean | undefined;
   /** Trailing application-owned icon actions. When present, these replace the legacy menu action. */
   @Prop() actions: PanelToolsHeaderAction[] = [];
 
@@ -58,6 +60,7 @@ export class PanelToolHeader {
               triggerId: this.menuTriggerId,
               controls: this.menuControls,
               expanded: this.menuExpanded,
+              surfaceOpen: this.menuSurfaceOpen,
               haspopup: 'menu',
             },
           ]
@@ -109,6 +112,7 @@ export class PanelToolHeader {
                   haspopup={action.haspopup}
                   controls={action.controls}
                   expanded={action.expanded}
+                  surfaceOpen={action.surfaceOpen}
                   pressed={action.pressed}
                   isInactive={action.isInactive}
                   activeFill={false}

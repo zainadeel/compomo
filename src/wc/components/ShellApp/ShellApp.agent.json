@@ -68,7 +68,8 @@
     "Managed mobile Back and page-action controls use the same large touch density as the mobile navigation header without increasing the shared header height.",
     "Managed ShellApp keeps the selected desktop section-navigation presentation and ShellPage present and owns page header stickiness and the content scroller.",
     "Route-owned pageChrome independently selects ShellPage contentInset, page-header seams, scroll compaction, expanded and compact header-divider visibility, and contentSurface. ShellApp forwards them while resolving whether desktop title geometry is page-local or shell-bar-owned.",
-    "The application filters unauthorized destinations, sections, and tools before passing them into shell components."
+    "The application filters unauthorized destinations, sections, and tools before passing them into shell components.",
+    "Application-owned header actions and the account trigger retain surface ownership across shell presentations. Supply surfaceOpen on header actions and accountMenuSurfaceOpen on navigation for rendered surface lifetimes; keep disclosure and selected-route state separate."
   ],
   "responsiveBehavior": [
     "ShellApp owns the fixed system breakpoints and resolves desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
@@ -127,6 +128,10 @@
     {
       "label": "Application shell contract",
       "path": "agent/patterns/application-shell/pattern.agent.json"
+    },
+    {
+      "label": "Surface ownership and trigger state",
+      "path": "src/docs/SurfaceOwnership.mdx"
     }
   ]
 }

@@ -41,7 +41,8 @@
     "Items with mobileDestination inbox map to one mobile Inbox destination while retaining the actual active tool id; the canonical recipe exposes Activity directly and keeps Inbox grouping opt-in.",
     "Stable tool ids own named slots; label, order, rail placement, shortcut, and mobile destination are explicit item data.",
     "Application-owned rail accessories are forwarded unchanged to PanelTools on desktop and tablet and remain independent from activeTool and open.",
-    "Switching responsive mode must not recreate application-owned slotted product elements."
+    "Switching responsive mode must not recreate application-owned slotted product elements.",
+    "Header actions forward application-owned surfaceOpen through each presentation, independently of expanded semantics and pressed toggles."
   ],
   "responsiveBehavior": [
     "Desktop and tablet compose PanelTools-compatible rail and drawer chrome.",
@@ -65,6 +66,10 @@
     {
       "label": "PanelTools contract",
       "path": "src/wc/components/PanelTools/PanelTools.agent.json"
+    },
+    {
+      "label": "Surface ownership and trigger state",
+      "path": "src/docs/SurfaceOwnership.mdx"
     }
   ]
 }

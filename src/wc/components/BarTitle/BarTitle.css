@@ -146,15 +146,6 @@
   user-select: none;
 }
 
-.bar-title__section-trigger--expanded {
-  color: var(--color-foreground-primary);
-  --ds-interaction-hover: var(--ds-interaction-pressed);
-}
-
-.bar-title__section-trigger--expanded::after {
-  background: var(--ds-interaction-pressed);
-}
-
 .bar-title__section-label {
   min-width: 0;
   padding-inline: var(--ds-control-label-inset);
