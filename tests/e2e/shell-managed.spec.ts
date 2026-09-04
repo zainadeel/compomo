@@ -553,6 +553,41 @@ test.describe('Managed application shell', () => {
       .toBeLessThan(0.5);
   });
 
+  test('keeps raised routed content beneath the sticky mobile header @pr-critical', async ({
+    page,
+  }) => {
+    const shell = page.locator('#managed-shell');
+    const shellPage = shell.locator('ds-shell-page');
+    const scroller = shell.locator('.shell-app__content');
+    const stickyHeader = shellPage.locator('.shell-page__sticky-header');
+
+    await page.setViewportSize({ width: 390, height: 760 });
+    await expect(shell).toHaveAttribute('responsive-mode', 'mobile');
+    await shell.locator('#managed-page-content').evaluate(element => {
+      element.style.position = 'relative';
+      element.style.zIndex = 'var(--dimension-z-index-raised)';
+    });
+    await scroller.evaluate(element => {
+      element.scrollTop = 300;
+    });
+
+    await expect
+      .poll(() =>
+        stickyHeader.evaluate(element => {
+          const bounds = element.getBoundingClientRect();
+          const stack = document.elementsFromPoint(
+            bounds.left + bounds.width / 2,
+            bounds.top + bounds.height / 2
+          );
+          const routedContent = document.querySelector('#managed-page-content');
+          const headerIndex = stack.indexOf(element);
+          const contentIndex = routedContent ? stack.indexOf(routedContent) : -1;
+          return headerIndex >= 0 && contentIndex > headerIndex;
+        })
+      )
+      .toBe(true);
+  });
+
   test('expands mobile child routes without navigating in nested mode @pr-critical', async ({
     page,
   }) => {
