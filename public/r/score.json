@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "score",
   "title": "Score",
-  "description": "Safety-score figure in a semantic fill at the three control densities.",
+  "description": "Safety-score figure in a semantic fill at three control densities and an optional dense value treatment.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
@@ -13,7 +13,7 @@
     "intent": {
       "audience": "general",
       "status": "experimental",
-      "summary": "Safety-score figure in a semantic fill at the three control densities.",
+      "summary": "Safety-score figure in a semantic fill at three control densities and an optional dense value treatment.",
       "useWhen": [
         "A driver or fleet safety score needs its fair, good, or excellent fill and the numeric figure in one place.",
         "The same score treatment appears in Card Overview, an in-card summary, or a compact row such as a table group header."
@@ -28,7 +28,7 @@
         {
           "when": "The figure is one of several comparable measures under a shared period bar.",
           "component": "component:ds-card-overview",
-          "reason": "CardOverview owns the summary grid, period chrome, score-cell alignment, and score trend; it renders Score at lg for the fill."
+          "reason": "CardOverview owns the summary grid, period chrome, score-cell alignment, and score trend; it renders Score at lg with the dense figure treatment."
         },
         {
           "when": "The quantity is ordinary readable content without a safety-score fill.",
@@ -51,17 +51,19 @@
         "Set label when the atomic score graphic needs a spoken prefix such as Safety score; the visible number remains in the fill.",
         "Colour never carries score meaning alone; the numeric figure stays visible inside the fill.",
         "Score is not interactive and is not a tab stop.",
-        "While loading, the host exposes a busy state and a skeleton whose type metrics match the resolved size."
+        "While loading, the host exposes a busy state and a skeleton whose type metrics match the resolved size and variant."
       ],
       "states": [
-        "lg is the Card Overview fill: 56 by 40, display-small emphasis. md is the 32px control treatment: 40 by 32, title-large emphasis. sm is the 24px compact fill: 28 by 24, title-small emphasis. The fill box crops the type canvas so line-height does not change the declared size.",
+        "The default figure uses emphasized title typography: lg uses title-large, md uses title-medium, and sm uses title-small. Use the default treatment for standalone, table, and in-card scores.",
+        "The dense variant preserves the selected fill dimensions and uses a larger emphasized figure: lg uses display-small, md uses title-large, and sm uses title-medium. Use dense when a composition intentionally needs less space around the value; Card Overview owns this treatment for its headline score.",
+        "The fill dimensions remain 56 by 40 at lg, 40 by 32 at md, and 28 by 24 at sm. The fill box crops the type canvas so line-height does not change the declared size.",
         "A numeric value from 0–100 infers fair from 0–50, good from 51–80, and excellent from 81–100. Empty or whitespace-only values stay on the faint neutral surface. Supply level explicitly when another displayed value needs a semantic fill.",
         "The fill uses the safety-score background and keeps its foreground at AA text contrast in light and dark themes.",
-        "isLoading replaces the figure with a skeleton at the matching type metrics. The skeleton uses the faint context when no score level is known and the bold context when a known or explicitly supplied level keeps its semantic fill."
+        "isLoading replaces the figure with a skeleton at the matching size and variant type metrics. The skeleton uses the faint context when no score level is known and the bold context when a known or explicitly supplied level keeps its semantic fill."
       ],
       "responsiveBehavior": [
         "The owner selects sm, md, or lg to match the local layout. Score does not change size at breakpoints.",
-        "sm is the density for table group headers. md is the in-card summary fill. lg is the Card Overview fill."
+        "Table group heroes and in-card summaries use the default figure treatment. Card Overview composes the dense lg treatment for its headline score."
       ],
       "references": [
         {
@@ -119,6 +121,15 @@
           "required": false,
           "mutable": false,
           "description": "Display-ready headline figure."
+        },
+        "variant": {
+          "type": "ScoreVariant",
+          "resolvedType": "\"default\" | \"dense\"",
+          "attribute": "variant",
+          "default": "'default'",
+          "required": false,
+          "mutable": false,
+          "description": "Value typography recipe. `dense` keeps the selected size's fill dimensions\nand uses a larger emphasized figure with tighter surrounding space."
         }
       },
       "events": [],
@@ -169,6 +180,15 @@
         "required": false,
         "mutable": false,
         "description": "Display-ready headline figure."
+      },
+      "variant": {
+        "type": "ScoreVariant",
+        "resolvedType": "\"default\" | \"dense\"",
+        "attribute": "variant",
+        "default": "'default'",
+        "required": false,
+        "mutable": false,
+        "description": "Value typography recipe. `dense` keeps the selected size's fill dimensions\nand uses a larger emphasized figure with tighter surrounding space."
       }
     },
     "events": [],
@@ -224,17 +244,17 @@
     },
     {
       "path": "src/wc/components/Score/Score.tsx",
-      "content": "import { Component, Prop, h, Host } from '@stencil/core';\nimport { SCORE_VALUE_VARIANT, resolveScoreLevel } from './score-model';\nimport type { SafetyScoreLevel, ScoreSize } from './score-types';\n\n@Component({\n  tag: 'ds-score',\n  styleUrl: 'Score.css',\n  scoped: true,\n})\nexport class Score {\n  /** Display-ready headline figure. */\n  @Prop() value: string | number = '';\n  /**\n   * Visual density matching control height: `sm` 24px, `md` 32px, `lg` 40px.\n   * `lg` is the Card Overview recipe.\n   */\n  @Prop() size: ScoreSize = 'md';\n  /**\n   * Safety-score color level. Numeric values from 0–100 infer fair (0–50),\n   * good (51–80), or excellent (81–100) when this is omitted.\n   */\n  @Prop() level: SafetyScoreLevel | undefined;\n  /** Replace the figure with a skeleton while data resolves. */\n  @Prop() isLoading: boolean = false;\n  /** Accessible name prefix, for example “Safety score”. */\n  @Prop() label: string = '';\n\n  render() {\n    const size = this.size;\n    const level = resolveScoreLevel(this.value, this.level);\n    const valueVariant = SCORE_VALUE_VARIANT[size];\n    const accessibleName = [this.label.trim(), this.isLoading ? '' : this.value]\n      .filter(Boolean)\n      .join(' ');\n\n    return (\n      <Host\n        class={{\n          score: true,\n          [`score--${size}`]: true,\n          'score--loading': this.isLoading,\n        }}\n        role={accessibleName ? 'img' : undefined}\n        aria-busy={this.isLoading ? 'true' : undefined}\n        aria-label={accessibleName || undefined}\n      >\n        <span\n          class={{\n            score__badge: true,\n            [`score__badge--${level}`]: Boolean(level),\n            'score__badge--loading': this.isLoading,\n          }}\n        >\n          {this.isLoading ? (\n            <ds-skeleton\n              class=\"score__value\"\n              variant=\"text\"\n              textVariant={valueVariant}\n              background={level ? 'bold' : 'faint'}\n            />\n          ) : (\n            <ds-text\n              as=\"span\"\n              class=\"score__value ds-control-label-box\"\n              variant={valueVariant}\n              emphasis={true}\n              color=\"inherit\"\n              fontFeature=\"tabular-nums\"\n            >\n              {this.value}\n            </ds-text>\n          )}\n        </span>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Prop, h, Host } from '@stencil/core';\nimport { SCORE_VALUE_VARIANT, resolveScoreLevel } from './score-model';\nimport type { SafetyScoreLevel, ScoreSize, ScoreVariant } from './score-types';\n\n@Component({\n  tag: 'ds-score',\n  styleUrl: 'Score.css',\n  scoped: true,\n})\nexport class Score {\n  /** Display-ready headline figure. */\n  @Prop() value: string | number = '';\n  /**\n   * Visual density matching control height: `sm` 24px, `md` 32px, `lg` 40px.\n   * `lg` is the Card Overview recipe.\n   */\n  @Prop() size: ScoreSize = 'md';\n  /**\n   * Value typography recipe. `dense` keeps the selected size's fill dimensions\n   * and uses a larger emphasized figure with tighter surrounding space.\n   */\n  @Prop() variant: ScoreVariant = 'default';\n  /**\n   * Safety-score color level. Numeric values from 0–100 infer fair (0–50),\n   * good (51–80), or excellent (81–100) when this is omitted.\n   */\n  @Prop() level: SafetyScoreLevel | undefined;\n  /** Replace the figure with a skeleton while data resolves. */\n  @Prop() isLoading: boolean = false;\n  /** Accessible name prefix, for example “Safety score”. */\n  @Prop() label: string = '';\n\n  render() {\n    const size = this.size;\n    const variant = this.variant;\n    const level = resolveScoreLevel(this.value, this.level);\n    const valueVariant = SCORE_VALUE_VARIANT[variant][size];\n    const accessibleName = [this.label.trim(), this.isLoading ? '' : this.value]\n      .filter(Boolean)\n      .join(' ');\n\n    return (\n      <Host\n        class={{\n          score: true,\n          [`score--${size}`]: true,\n          [`score--${variant}`]: true,\n          'score--loading': this.isLoading,\n        }}\n        role={accessibleName ? 'img' : undefined}\n        aria-busy={this.isLoading ? 'true' : undefined}\n        aria-label={accessibleName || undefined}\n      >\n        <span\n          class={{\n            score__badge: true,\n            [`score__badge--${level}`]: Boolean(level),\n            'score__badge--loading': this.isLoading,\n          }}\n        >\n          {this.isLoading ? (\n            <ds-skeleton\n              class=\"score__value\"\n              variant=\"text\"\n              textVariant={valueVariant}\n              background={level ? 'bold' : 'faint'}\n            />\n          ) : (\n            <ds-text\n              as=\"span\"\n              class=\"score__value ds-control-label-box\"\n              variant={valueVariant}\n              emphasis={true}\n              color=\"inherit\"\n              fontFeature=\"tabular-nums\"\n            >\n              {this.value}\n            </ds-text>\n          )}\n        </span>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/Score/score-model.ts",
-      "content": "import { SAFETY_SCORE_LEVELS, type SafetyScoreLevel, type ScoreSize } from './score-types';\n\nexport function isSafetyScoreLevel(value: unknown): value is SafetyScoreLevel {\n  return typeof value === 'string' && (SAFETY_SCORE_LEVELS as readonly string[]).includes(value);\n}\n\n/**\n * Infer a safety-score color level from a 0–100 figure. Non-numeric or out-of-range\n * values return undefined so the owner can supply `level` explicitly.\n */\nexport function resolveSafetyScoreLevel(value: string | number): SafetyScoreLevel | undefined {\n  if (typeof value === 'string' && value.trim() === '') return undefined;\n  const numericValue = typeof value === 'number' ? value : Number(value);\n  if (!Number.isFinite(numericValue) || numericValue < 0 || numericValue > 100) return undefined;\n  if (numericValue <= 50) return 'fair';\n  if (numericValue <= 80) return 'good';\n  return 'excellent';\n}\n\nexport function resolveScoreLevel(\n  value: string | number,\n  level?: SafetyScoreLevel\n): SafetyScoreLevel | undefined {\n  return isSafetyScoreLevel(level) ? level : resolveSafetyScoreLevel(value);\n}\n\nexport const SCORE_VALUE_VARIANT = {\n  sm: 'text-title-small',\n  md: 'text-title-large',\n  lg: 'text-display-small',\n} as const satisfies Record<\n  ScoreSize,\n  'text-title-small' | 'text-title-large' | 'text-display-small'\n>;\n",
+      "content": "import {\n  SAFETY_SCORE_LEVELS,\n  type SafetyScoreLevel,\n  type ScoreSize,\n  type ScoreVariant,\n} from './score-types';\n\nexport function isSafetyScoreLevel(value: unknown): value is SafetyScoreLevel {\n  return typeof value === 'string' && (SAFETY_SCORE_LEVELS as readonly string[]).includes(value);\n}\n\n/**\n * Infer a safety-score color level from a 0–100 figure. Non-numeric or out-of-range\n * values return undefined so the owner can supply `level` explicitly.\n */\nexport function resolveSafetyScoreLevel(value: string | number): SafetyScoreLevel | undefined {\n  if (typeof value === 'string' && value.trim() === '') return undefined;\n  const numericValue = typeof value === 'number' ? value : Number(value);\n  if (!Number.isFinite(numericValue) || numericValue < 0 || numericValue > 100) return undefined;\n  if (numericValue <= 50) return 'fair';\n  if (numericValue <= 80) return 'good';\n  return 'excellent';\n}\n\nexport function resolveScoreLevel(\n  value: string | number,\n  level?: SafetyScoreLevel\n): SafetyScoreLevel | undefined {\n  return isSafetyScoreLevel(level) ? level : resolveSafetyScoreLevel(value);\n}\n\nexport const SCORE_VALUE_VARIANT = {\n  default: {\n    sm: 'text-title-small',\n    md: 'text-title-medium',\n    lg: 'text-title-large',\n  },\n  dense: {\n    sm: 'text-title-medium',\n    md: 'text-title-large',\n    lg: 'text-display-small',\n  },\n} as const satisfies Record<\n  ScoreVariant,\n  Record<\n    ScoreSize,\n    'text-title-small' | 'text-title-medium' | 'text-title-large' | 'text-display-small'\n  >\n>;\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/Score/score-types.ts",
-      "content": "export type SafetyScoreLevel = 'fair' | 'good' | 'excellent';\nexport type ScoreSize = 'sm' | 'md' | 'lg';\n\nexport const SCORE_SIZES = ['sm', 'md', 'lg'] as const;\nexport const SAFETY_SCORE_LEVELS = ['fair', 'good', 'excellent'] as const;\n",
+      "content": "export type SafetyScoreLevel = 'fair' | 'good' | 'excellent';\nexport type ScoreSize = 'sm' | 'md' | 'lg';\nexport type ScoreVariant = 'default' | 'dense';\n\nexport const SCORE_SIZES = ['sm', 'md', 'lg'] as const;\nexport const SCORE_VARIANTS = ['default', 'dense'] as const;\nexport const SAFETY_SCORE_LEVELS = ['fair', 'good', 'excellent'] as const;\n",
       "type": "registry:ui"
     }
   ]

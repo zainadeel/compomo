@@ -35,7 +35,7 @@
   --_table-wrap-secondary-padding-block: 0;
   --_table-surface: var(--ds-table-surface, var(--color-background-primary));
   --_table-header-surface: var(--ds-table-header-surface, var(--color-background-primary));
-  --_table-group-surface: var(--ds-table-group-surface, var(--color-background-faint-neutral));
+  --_table-group-surface: var(--ds-table-group-surface, var(--color-background-secondary));
   --_table-row-hover: var(--ds-table-row-hover, var(--color-interaction-hover));
   --_table-row-pressed: var(--ds-table-row-pressed, var(--color-interaction-pressed));
   --_table-row-selected: var(--ds-table-row-selected, var(--color-interaction-active-brand));
@@ -1463,7 +1463,7 @@
   inset-block-end: 0;
   z-index: 1;
   block-size: var(--dimension-stroke-width-012);
-  background: var(--_table-border);
+  background: var(--_table-column-border);
   pointer-events: none;
 }
 
@@ -1504,7 +1504,6 @@
 }
 
 :where(.ds-table__group-hero) {
-  position: relative;
   box-sizing: border-box;
   display: inline-flex;
   flex: 0 0 auto;
@@ -1513,20 +1512,30 @@
   margin-inline-start: var(--dimension-space-075);
 }
 
-:where(.ds-table__group-hero)::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  box-sizing: border-box;
-  border-radius: var(--dimension-radius-025);
-  border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
-  pointer-events: none;
+:where(.ds-table__group-content--hero-two-track .ds-table__group-hero) {
+  align-self: center;
+}
+
+:where(.ds-table__table):not(:where(.ds-table__table--selectable))
+  :where(.ds-table__group-content--hero):not(:where(.ds-table__group-content--hero-two-track))
+  :where(.ds-table__group-hero),
+:where(.ds-table__sticky-group):not(:where(.ds-table__sticky-group--selectable))
+  :where(.ds-table__group-content--hero):not(:where(.ds-table__group-content--hero-two-track))
+  :where(.ds-table__group-hero) {
+  /* Without a selection lane, the sm figure shares the content's top and start inset. */
+  margin-inline-start: 0;
+}
+
+:where(.ds-table__table--selectable .ds-table__group-content--hero-two-track .ds-table__group-hero),
+:where(
+  .ds-table__sticky-group--selectable .ds-table__group-content--hero-two-track .ds-table__group-hero
+) {
+  /* The lg two-track figure starts exactly at the selection-column boundary. */
+  margin-inline-start: 0;
 }
 
 :where(.ds-table__table--selectable .ds-table__group-hero),
 :where(.ds-table__sticky-group--selectable .ds-table__group-hero) {
-  /* Margin, not padding: ::after inset:0 must hug the 24px sm fill. */
   margin-inline-end: var(--dimension-space-100);
 }
 
@@ -1578,17 +1587,48 @@
   padding-inline-start: var(--dimension-space-050);
 }
 
-:where(.ds-table__group-separator),
 :where(.ds-table__group-count),
 :where(.ds-table__group-accessory-separator) {
   flex: 0 0 auto;
+}
+
+:where(.ds-table__group-trailing) {
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-self: flex-start;
+  align-items: flex-start;
+  gap: var(--dimension-space-100);
+  min-block-size: var(--_table-cell-track-min-block-size);
+}
+
+:where(.ds-table__group-action) {
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: 0 0 calc(var(--dimension-size-500) - var(--dimension-space-100));
+  inline-size: calc(var(--dimension-size-500) - var(--dimension-space-100));
+  align-self: flex-start;
+  align-items: flex-start;
+  justify-content: flex-end;
+  min-block-size: var(--_table-cell-track-min-block-size);
+}
+
+:where(.ds-table__group-action)::before {
+  content: '';
+  position: absolute;
+  inset-block-start: var(--dimension-space-025);
+  inset-inline-start: 0;
+  inline-size: var(--dimension-stroke-width-012);
+  block-size: calc(var(--_table-cell-track-min-block-size) - (2 * var(--dimension-space-025)));
+  background: var(--_table-column-border);
+  pointer-events: none;
 }
 
 :where(.ds-table__group-toggle) {
   --color-interaction-hover: transparent;
   --color-interaction-pressed: transparent;
   flex: 0 0 auto;
-  margin-inline-start: auto;
 }
 
 :where(.ds-table__load-cell),
@@ -1737,10 +1777,6 @@
     outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-control-boundary);
     outline-offset: calc(-1 * var(--dimension-stroke-width-012));
     background: var(--ds-forced-color-surface);
-  }
-
-  :where(.ds-table__group-hero)::after {
-    border-color: var(--ds-forced-color-content);
   }
 
   :where(.ds-table__row--disabled) {

@@ -321,7 +321,7 @@ export class CardOverview {
       return (
         <div class="card-overview__score" part="score">
           <div class="card-overview__score-content">
-            <ds-score size="lg" isLoading></ds-score>
+            <ds-score size="lg" variant="dense" isLoading></ds-score>
             <div class="card-overview__score-copy">
               {this.bar('text-body-small', '64px', 'card-overview__score-label-spacer')}
               {this.bar('text-body-medium', '28px')}
@@ -356,7 +356,13 @@ export class CardOverview {
     return (
       <div class="card-overview__score" part="score">
         <div class="card-overview__score-content">
-          <ds-score size="lg" value={score.value} level={score.level} label="Safety score" />
+          <ds-score
+            size="lg"
+            variant="dense"
+            value={score.value}
+            level={score.level}
+            label="Safety score"
+          />
           <div class="card-overview__score-copy">
             <ds-text
               as="span"

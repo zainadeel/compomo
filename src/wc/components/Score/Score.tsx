@@ -1,6 +1,6 @@
 import { Component, Prop, h, Host } from '@stencil/core';
 import { SCORE_VALUE_VARIANT, resolveScoreLevel } from './score-model';
-import type { SafetyScoreLevel, ScoreSize } from './score-types';
+import type { SafetyScoreLevel, ScoreSize, ScoreVariant } from './score-types';
 
 @Component({
   tag: 'ds-score',
@@ -16,6 +16,11 @@ export class Score {
    */
   @Prop() size: ScoreSize = 'md';
   /**
+   * Value typography recipe. `dense` keeps the selected size's fill dimensions
+   * and uses a larger emphasized figure with tighter surrounding space.
+   */
+  @Prop() variant: ScoreVariant = 'default';
+  /**
    * Safety-score color level. Numeric values from 0–100 infer fair (0–50),
    * good (51–80), or excellent (81–100) when this is omitted.
    */
@@ -27,8 +32,9 @@ export class Score {
 
   render() {
     const size = this.size;
+    const variant = this.variant;
     const level = resolveScoreLevel(this.value, this.level);
-    const valueVariant = SCORE_VALUE_VARIANT[size];
+    const valueVariant = SCORE_VALUE_VARIANT[variant][size];
     const accessibleName = [this.label.trim(), this.isLoading ? '' : this.value]
       .filter(Boolean)
       .join(' ');
@@ -38,6 +44,7 @@ export class Score {
         class={{
           score: true,
           [`score--${size}`]: true,
+          [`score--${variant}`]: true,
           'score--loading': this.isLoading,
         }}
         role={accessibleName ? 'img' : undefined}

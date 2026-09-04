@@ -20,7 +20,7 @@ import {
   nextTableSortState,
   tableColumnSize,
   tableModelIssues,
-  TABLE_GROUP_HERO_SCORE_SIZE,
+  TABLE_GROUP_HERO_SCORE_PRESENTATION,
   tableRows,
   toggleAllLoadedTableRows,
   toggleTableGroupCollapsed,
@@ -1920,12 +1920,15 @@ export class Table {
       accessories,
       hero,
     } = groupModel;
+    const heroTracks = hero?.kind === 'score' && hero.tracks === 2 ? 2 : 1;
+    const heroPresentation = TABLE_GROUP_HERO_SCORE_PRESENTATION[heroTracks];
     return (
       <span
         class={{
           'ds-table__group-content': true,
-          'ds-table__group-content--multi': accessories.length > 0,
+          'ds-table__group-content--multi': accessories.length > 0 || heroTracks === 2,
           'ds-table__group-content--hero': Boolean(hero),
+          'ds-table__group-content--hero-two-track': Boolean(hero) && heroTracks === 2,
         }}
         onClick={event => this.handleGroupRowClick(group, event)}
       >
@@ -1945,7 +1948,8 @@ export class Table {
         {hero?.kind === 'score' && (
           <span class="ds-table__group-hero">
             <ds-score
-              size={TABLE_GROUP_HERO_SCORE_SIZE}
+              size={heroPresentation.size}
+              variant={heroPresentation.variant}
               value={hero.value}
               level={hero.level}
               label={hero.label ?? 'Safety score'}
@@ -1963,24 +1967,6 @@ export class Table {
               color={labelColor}
             >
               {group.label}
-            </ds-text>
-            <ds-text
-              class="ds-table__group-separator"
-              as="span"
-              variant="text-body-medium"
-              color="secondary"
-              aria-hidden="true"
-            >
-              ·
-            </ds-text>
-            <ds-text
-              class="ds-table__group-count"
-              as="span"
-              variant="text-body-medium"
-              color="secondary"
-              aria-hidden="true"
-            >
-              {groupModel.visibleCountText}
             </ds-text>
             <span class="ds-visually-hidden">{countLabel}</span>
           </span>
@@ -2006,18 +1992,33 @@ export class Table {
             </span>
           )}
         </span>
-        <ds-button-unfilled
-          class="ds-table__group-toggle"
-          variant="icon"
-          size="md"
-          isInset={true}
-          insetDepth="double"
-          icon={isCollapsed ? 'ChevronDown' : 'ChevronUp'}
-          expanded={!isCollapsed}
-          aria-label={isCollapsed ? `Expand ${group.label} group` : `Collapse ${group.label} group`}
-          hasBorder={false}
-          pressScale={false}
-        />
+        <span class="ds-table__group-trailing">
+          <ds-text
+            class="ds-table__group-count"
+            as="span"
+            variant="text-body-medium"
+            color="secondary"
+            aria-hidden="true"
+          >
+            {groupModel.visibleCountText}
+          </ds-text>
+          <span class="ds-table__group-action">
+            <ds-button-unfilled
+              class="ds-table__group-toggle"
+              variant="icon"
+              size="md"
+              isInset={true}
+              insetDepth="double"
+              icon={isCollapsed ? 'ChevronDown' : 'ChevronUp'}
+              expanded={!isCollapsed}
+              aria-label={
+                isCollapsed ? `Expand ${group.label} group` : `Collapse ${group.label} group`
+              }
+              hasBorder={false}
+              pressScale={false}
+            />
+          </span>
+        </span>
       </span>
     );
   }

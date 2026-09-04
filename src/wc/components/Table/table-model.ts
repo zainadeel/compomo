@@ -286,8 +286,11 @@ export function tableGroupAccessories(group: TableGroup): TableGroupAccessory[] 
   return resolved;
 }
 
-/** Group-header score fill. Same sm density on one- and two-track headers. */
-export const TABLE_GROUP_HERO_SCORE_SIZE = 'sm' as const;
+/** Score recipes for a leading group-header hero spanning one or two tracks. */
+export const TABLE_GROUP_HERO_SCORE_PRESENTATION = {
+  1: { size: 'sm', variant: 'default' },
+  2: { size: 'lg', variant: 'default' },
+} as const;
 
 /** Resolve a supported group-header hero, or undefined when none is supplied. */
 export function tableGroupHero(group: TableGroup): TableGroupHero | undefined {
@@ -298,6 +301,7 @@ export function tableGroupHero(group: TableGroup): TableGroupHero | undefined {
     kind: 'score',
     value: hero.value,
     ...(isSafetyScoreLevel(hero.level) ? { level: hero.level } : {}),
+    ...(hero.tracks === 2 ? { tracks: 2 as const } : {}),
     ...(label ? { label } : {}),
     ...(hero.isLoading ? { isLoading: true } : {}),
   };

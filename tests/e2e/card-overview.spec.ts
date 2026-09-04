@@ -9,6 +9,7 @@ test('renders the safety score as the first equal-track, nonselectable grid cell
   page,
 }) => {
   const card = page.locator('#default');
+  await expect(card.locator('ds-score')).toHaveJSProperty('variant', 'dense');
   const cells = card.locator('.card-overview__score, .card-overview__metric');
   const widths = await cells.evaluateAll(elements =>
     elements.map(element => element.getBoundingClientRect().width)
@@ -191,6 +192,7 @@ test('keeps equal-height cell content with the inset, content, and text balance 
 
 test('keeps loading placeholders in the resolved content geometry', async ({ page }) => {
   const card = page.locator('#loading-overview');
+  await expect(card.locator('ds-score')).toHaveJSProperty('variant', 'dense');
   const scoreContent = card.locator('.card-overview__score-content');
   const metricAction = card.locator('.card-overview__metric-action').first();
   const metricContent = metricAction.locator('.card-overview__metric-content');

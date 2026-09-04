@@ -114,16 +114,34 @@ test(
   async ({ page }) => {
     await expect(page.locator('#lg ds-text.score__value')).toHaveJSProperty(
       'variant',
-      'text-display-small'
+      'text-title-large'
     );
     await expect(page.locator('#md ds-text.score__value')).toHaveJSProperty(
       'variant',
-      'text-title-large'
+      'text-title-medium'
     );
     await expect(page.locator('#sm ds-text.score__value')).toHaveJSProperty(
       'variant',
       'text-title-small'
     );
+    await expect(page.locator('#dense-lg ds-text.score__value')).toHaveJSProperty(
+      'variant',
+      'text-display-small'
+    );
+    await expect(page.locator('#dense-md ds-text.score__value')).toHaveJSProperty(
+      'variant',
+      'text-title-large'
+    );
+    await expect(page.locator('#dense-sm ds-text.score__value')).toHaveJSProperty(
+      'variant',
+      'text-title-medium'
+    );
+    for (const size of ['sm', 'md', 'lg'] as const) {
+      await expect(page.locator(`#dense-${size} ds-text.score__value`)).toHaveJSProperty(
+        'emphasis',
+        true
+      );
+    }
 
     const geometry = await page.evaluate(() => {
       const cssPx = (value: string) => {
@@ -142,6 +160,9 @@ test(
         sm: box('sm'),
         md: box('md'),
         lg: box('lg'),
+        denseSm: box('dense-sm'),
+        denseMd: box('dense-md'),
+        denseLg: box('dense-lg'),
         widthSm: cssPx('calc(var(--dimension-size-400) - var(--dimension-space-050))'),
         widthMd: cssPx('var(--dimension-size-500)'),
         widthLg: cssPx('calc(var(--dimension-size-600) + var(--dimension-space-100))'),
@@ -157,6 +178,9 @@ test(
     expect(geometry.md.height).toBeCloseTo(geometry.heightMd, 1);
     expect(geometry.lg.width).toBeCloseTo(geometry.widthLg, 1);
     expect(geometry.lg.height).toBeCloseTo(geometry.heightLg, 1);
+    expect(geometry.denseSm).toEqual(geometry.sm);
+    expect(geometry.denseMd).toEqual(geometry.md);
+    expect(geometry.denseLg).toEqual(geometry.lg);
   }
 );
 

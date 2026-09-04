@@ -1,4 +1,9 @@
-import { SAFETY_SCORE_LEVELS, type SafetyScoreLevel, type ScoreSize } from './score-types';
+import {
+  SAFETY_SCORE_LEVELS,
+  type SafetyScoreLevel,
+  type ScoreSize,
+  type ScoreVariant,
+} from './score-types';
 
 export function isSafetyScoreLevel(value: unknown): value is SafetyScoreLevel {
   return typeof value === 'string' && (SAFETY_SCORE_LEVELS as readonly string[]).includes(value);
@@ -25,10 +30,20 @@ export function resolveScoreLevel(
 }
 
 export const SCORE_VALUE_VARIANT = {
-  sm: 'text-title-small',
-  md: 'text-title-large',
-  lg: 'text-display-small',
+  default: {
+    sm: 'text-title-small',
+    md: 'text-title-medium',
+    lg: 'text-title-large',
+  },
+  dense: {
+    sm: 'text-title-medium',
+    md: 'text-title-large',
+    lg: 'text-display-small',
+  },
 } as const satisfies Record<
-  ScoreSize,
-  'text-title-small' | 'text-title-large' | 'text-display-small'
+  ScoreVariant,
+  Record<
+    ScoreSize,
+    'text-title-small' | 'text-title-medium' | 'text-title-large' | 'text-display-small'
+  >
 >;

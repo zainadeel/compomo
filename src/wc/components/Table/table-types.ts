@@ -420,6 +420,8 @@ export interface TableGroupHeroScore {
   kind: 'score';
   value: string | number;
   level?: SafetyScoreLevel;
+  /** Span one label track by default, or center a larger score across two tracks. */
+  tracks?: 1 | 2;
   /** Accessible name prefix, for example “Safety score”. */
   label?: string;
   isLoading?: boolean;
