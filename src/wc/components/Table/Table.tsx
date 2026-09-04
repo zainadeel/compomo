@@ -6,6 +6,7 @@ import {
   h,
   Host,
   Listen,
+  Method,
   Prop,
   State,
   Watch,
@@ -471,6 +472,32 @@ export class Table {
     this.connectCaptionCompactObserver();
     this.syncFitPageSize();
     if (this.stickyGroupConnected) this.updateStickyGroup();
+  }
+
+  /**
+   * Scroll the nearest vertical owner only enough to reveal a supplied row.
+   * Resolves false when the row is absent from the supplied, expanded table model.
+   * This method never moves focus.
+   */
+  @Method()
+  async scrollRowIntoView(rowId: string): Promise<boolean> {
+    if (!rowId) return false;
+
+    if (this.rowWindowingEnabled) {
+      const headerSize = this.tableEl?.tHead?.getBoundingClientRect().height ?? 0;
+      const revealed = this.virtualController.scrollRowIntoView(
+        rowId,
+        headerSize,
+        this.stickyHeader ? headerSize : 0
+      );
+      if (!revealed) return false;
+      await this.nextAnimationFrame();
+    }
+
+    const row = this.findRenderedRow(rowId);
+    if (!row) return false;
+    this.revealRenderedRow(row);
+    return true;
   }
 
   connectedCallback(): void {
@@ -1048,6 +1075,45 @@ export class Table {
     if (this.focusedRowId) pinned.add(this.focusedRowId);
     if (this.actionMenu?.rowId) pinned.add(this.actionMenu.rowId);
     return pinned;
+  }
+
+  private findRenderedRow(rowId: string): HTMLElement | null {
+    return (
+      [...this.el.querySelectorAll<HTMLElement>('[data-row-id]')].find(
+        candidate => candidate.dataset.rowId === rowId
+      ) ?? null
+    );
+  }
+
+  private revealRenderedRow(row: HTMLElement): void {
+    if (!this.containedScroll || !this.viewportEl) {
+      row.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      return;
+    }
+
+    const viewportRect = this.viewportEl.getBoundingClientRect();
+    const rowRect = row.getBoundingClientRect();
+    let visibleStart = viewportRect.top;
+    if (this.stickyHeader) {
+      visibleStart = Math.max(
+        visibleStart,
+        this.tableEl?.tHead?.getBoundingClientRect().bottom ?? visibleStart
+      );
+    }
+    const groupRow = row.closest('tbody')?.querySelector<HTMLElement>('.ds-table__group-row');
+    if (groupRow && getComputedStyle(groupRow).position === 'sticky') {
+      visibleStart = Math.max(visibleStart, groupRow.getBoundingClientRect().bottom);
+    }
+
+    if (rowRect.top < visibleStart) {
+      this.viewportEl.scrollTop += rowRect.top - visibleStart;
+    } else if (rowRect.bottom > viewportRect.bottom) {
+      this.viewportEl.scrollTop += rowRect.bottom - viewportRect.bottom;
+    }
+  }
+
+  private nextAnimationFrame(): Promise<void> {
+    return new Promise(resolve => requestAnimationFrame(() => resolve()));
   }
 
   private syncVirtualItems(model: TableRenderModel): void {
