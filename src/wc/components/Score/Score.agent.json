@@ -7,7 +7,7 @@
   "tag": "ds-score",
   "audience": "general",
   "status": "experimental",
-  "summary": "Safety-score figure in a semantic fill at the three control densities.",
+  "summary": "Safety-score figure in a semantic fill at three control densities and an optional dense value treatment.",
   "useWhen": [
     "A driver or fleet safety score needs its fair, good, or excellent fill and the numeric figure in one place.",
     "The same score treatment appears in Card Overview, an in-card summary, or a compact row such as a table group header."
@@ -22,7 +22,7 @@
     {
       "when": "The figure is one of several comparable measures under a shared period bar.",
       "component": "component:ds-card-overview",
-      "reason": "CardOverview owns the summary grid, period chrome, score-cell alignment, and score trend; it renders Score at lg for the fill."
+      "reason": "CardOverview owns the summary grid, period chrome, score-cell alignment, and score trend; it renders Score at lg with the dense figure treatment."
     },
     {
       "when": "The quantity is ordinary readable content without a safety-score fill.",
@@ -45,17 +45,19 @@
     "Set label when the atomic score graphic needs a spoken prefix such as Safety score; the visible number remains in the fill.",
     "Colour never carries score meaning alone; the numeric figure stays visible inside the fill.",
     "Score is not interactive and is not a tab stop.",
-    "While loading, the host exposes a busy state and a skeleton whose type metrics match the resolved size."
+    "While loading, the host exposes a busy state and a skeleton whose type metrics match the resolved size and variant."
   ],
   "states": [
-    "lg is the Card Overview fill: 56 by 40, display-small emphasis. md is the 32px control treatment: 40 by 32, title-large emphasis. sm is the 24px compact fill: 28 by 24, title-small emphasis. The fill box crops the type canvas so line-height does not change the declared size.",
+    "The default figure uses emphasized title typography: lg uses title-large, md uses title-medium, and sm uses title-small. Use the default treatment for standalone, table, and in-card scores.",
+    "The dense variant preserves the selected fill dimensions and uses a larger emphasized figure: lg uses display-small, md uses title-large, and sm uses title-medium. Use dense when a composition intentionally needs less space around the value; Card Overview owns this treatment for its headline score.",
+    "The fill dimensions remain 56 by 40 at lg, 40 by 32 at md, and 28 by 24 at sm. The fill box crops the type canvas so line-height does not change the declared size.",
     "A numeric value from 0–100 infers fair from 0–50, good from 51–80, and excellent from 81–100. Empty or whitespace-only values stay on the faint neutral surface. Supply level explicitly when another displayed value needs a semantic fill.",
     "The fill uses the safety-score background and keeps its foreground at AA text contrast in light and dark themes.",
-    "isLoading replaces the figure with a skeleton at the matching type metrics. The skeleton uses the faint context when no score level is known and the bold context when a known or explicitly supplied level keeps its semantic fill."
+    "isLoading replaces the figure with a skeleton at the matching size and variant type metrics. The skeleton uses the faint context when no score level is known and the bold context when a known or explicitly supplied level keeps its semantic fill."
   ],
   "responsiveBehavior": [
     "The owner selects sm, md, or lg to match the local layout. Score does not change size at breakpoints.",
-    "sm is the density for table group headers. md is the in-card summary fill. lg is the Card Overview fill."
+    "Table group heroes and in-card summaries use the default figure treatment. Card Overview composes the dense lg treatment for its headline score."
   ],
   "references": [
     {

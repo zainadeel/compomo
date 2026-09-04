@@ -24,7 +24,7 @@ import {
   tableGroupLabelColor,
   tableGroupAccessories,
   tableGroupHero,
-  TABLE_GROUP_HERO_SCORE_SIZE,
+  TABLE_GROUP_HERO_SCORE_PRESENTATION,
   TABLE_GROUP_ACCESSORY_LIMIT,
   tableModelIssues,
   tableRowSelectionLabel,
@@ -350,9 +350,15 @@ test('resolves a score hero and ignores unsupported kinds', () => {
       id: 'g',
       label: 'Group',
       rows: [],
-      hero: { kind: 'score', value: 87, label: '  Safety score  ', level: 'excellent' },
+      hero: {
+        kind: 'score',
+        value: 87,
+        label: '  Safety score  ',
+        level: 'excellent',
+        tracks: 2,
+      },
     }),
-    { kind: 'score', value: 87, label: 'Safety score', level: 'excellent' }
+    { kind: 'score', value: 87, label: 'Safety score', level: 'excellent', tracks: 2 }
   );
   assert.equal(
     tableGroupHero({
@@ -363,7 +369,10 @@ test('resolves a score hero and ignores unsupported kinds', () => {
     }),
     undefined
   );
-  assert.equal(TABLE_GROUP_HERO_SCORE_SIZE, 'sm');
+  assert.deepEqual(TABLE_GROUP_HERO_SCORE_PRESENTATION, {
+    1: { size: 'sm', variant: 'default' },
+    2: { size: 'lg', variant: 'default' },
+  });
 });
 
 test('reports unstable model identities and impossible group counts', () => {

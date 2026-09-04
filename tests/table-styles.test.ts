@@ -260,7 +260,10 @@ test('retains the structural and accessibility fallbacks rendered tests depend o
   assert.doesNotMatch(css, /:where\(\.ds-table__load-row:last-child \.ds-table__load-cell\)/);
   assert.match(css, /\.ds-table__group-content[\s\S]*?cursor: default/);
   assert.doesNotMatch(componentCss, /cursor: pointer/);
-  assert.match(css, /\.ds-table__group-content\)::after[\s\S]*?background: var\(--_table-border\)/);
+  assert.match(
+    css,
+    /\.ds-table__group-content\)::after[\s\S]*?background: var\(--_table-column-border\)/
+  );
   assert.match(css, /\.ds-table__group-content:hover\)::before[\s\S]*?--_table-row-hover/);
   assert.match(
     css,
@@ -270,12 +273,22 @@ test('retains the structural and accessibility fallbacks rendered tests depend o
   assert.match(css, /\.ds-table__group-hero[\s\S]*?align-self: flex-start/);
   assert.match(
     css,
-    /\.ds-table__group-hero[\s\S]*?margin-inline-start: var\(--dimension-space-075\)/
+    /\.ds-table__group-content--hero-two-track \.ds-table__group-hero[\s\S]*?align-self: center/
   );
   assert.match(
     css,
-    /\.ds-table__group-hero\)::after[\s\S]*?border: var\(--dimension-stroke-width-012\) solid var\(--color-border-tertiary\)/
+    /\.ds-table__table[\s\S]*?:not\(:where\(\.ds-table__table--selectable\)\)[\s\S]*?\.ds-table__group-content--hero[\s\S]*?:not\([\s\S]*?\.ds-table__group-content--hero-two-track[\s\S]*?\.ds-table__group-hero[\s\S]*?margin-inline-start: 0/
   );
+  assert.match(
+    css,
+    /\.ds-table__table--selectable[\s\S]*?\.ds-table__group-content--hero-two-track[\s\S]*?\.ds-table__group-hero[\s\S]*?margin-inline-start: 0/
+  );
+  assert.match(
+    css,
+    /\.ds-table__group-hero[\s\S]*?margin-inline-start: var\(--dimension-space-075\)/
+  );
+  assert.doesNotMatch(css, /\.ds-table__group-hero\)::after/);
+  assert.doesNotMatch(componentCss, /\.ds-table__group-hero::after/);
   assert.match(
     css,
     /\.ds-table__table--selectable \.ds-table__group-hero[\s\S]*?margin-inline-end: var\(--dimension-space-100\)/
@@ -295,6 +308,18 @@ test('retains the structural and accessibility fallbacks rendered tests depend o
   assert.match(css, /\.ds-table__group-toggle\)[\s\S]*?--color-interaction-hover: transparent/);
   assert.match(css, /\.ds-table__group-toggle\)[\s\S]*?--color-interaction-pressed: transparent/);
   assert.doesNotMatch(css, /\.ds-table__group-toggle\)\s*\{[^}]*align-self:/);
+  assert.match(
+    css,
+    /\.ds-table__group-action\)[\s\S]*?dimension-size-500[\s\S]*?dimension-space-100/
+  );
+  assert.match(
+    css,
+    /\.ds-table__group-action\)::before[\s\S]*?background: var\(--_table-column-border\)/
+  );
+  assert.match(
+    componentCss,
+    /ds-text\.ds-table__group-count[\s\S]*?min-block-size: var\(--_table-cell-track-min-block-size\)[\s\S]*?padding-inline-end: var\(--dimension-space-050\)/
+  );
   assert.match(
     css,
     /\.ds-table__group:last-child > \.ds-table__group-row:last-child[\s\S]*?\.ds-table__group-content[\s\S]*?::after/

@@ -496,11 +496,17 @@ test('keeps application group order fixed and exposes only member-row sorting', 
   const groupLabel = firstGroupHeader.locator('.ds-table__group-label');
   await expect(groupLabel).toHaveJSProperty('variant', 'text-body-medium');
   await expect(groupLabel).toHaveJSProperty('emphasis', true);
-  await expect(firstGroupHeader.locator('.ds-table__group-separator')).toHaveText('·');
+  await expect(firstGroupHeader.locator('.ds-table__group-separator')).toHaveCount(0);
   const countText = firstGroupHeader.locator('.ds-table__group-count');
   await expect(countText).toHaveText('2 of 3');
   await expect(countText).toHaveJSProperty('variant', 'text-body-medium');
   await expect(countText).toHaveJSProperty('color', 'secondary');
+  await expect(
+    firstGroupHeader.locator('.ds-table__group-trailing .ds-table__group-count')
+  ).toHaveCount(1);
+  await expect(
+    firstGroupHeader.locator('.ds-table__group-copy .ds-table__group-count')
+  ).toHaveCount(0);
   await expect(firstGroupHeader.locator('.ds-table__group-copy ds-tag')).toHaveCount(0);
   await expect(firstGroupHeader.locator('.ds-visually-hidden')).toHaveText('2 of 3 items loaded');
   const groupCopyInsets = await firstGroupHeader
@@ -516,6 +522,24 @@ test('keeps application group order fixed and exposes only member-row sorting', 
 
   const groupContent = firstGroupHeader.locator('.ds-table__group-content');
   await expect(groupContent).toHaveCSS('cursor', 'default');
+  const defaultGroupSurface = await groupContent.evaluate(element => {
+    const probe = document.createElement('span');
+    probe.style.background = 'var(--color-background-secondary)';
+    element.append(probe);
+    const secondary = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    const styles = getComputedStyle(element);
+    return {
+      backgroundColor: styles.backgroundColor,
+      backgroundImage: styles.backgroundImage,
+      secondary,
+    };
+  });
+  expect(defaultGroupSurface).toEqual({
+    backgroundColor: defaultGroupSurface.secondary,
+    backgroundImage: 'none',
+    secondary: defaultGroupSurface.secondary,
+  });
 
   const toggle = firstGroupHeader.locator('.ds-table__group-toggle');
   await expect(toggle).toHaveJSProperty('variant', 'icon');
@@ -524,6 +548,10 @@ test('keeps application group order fixed and exposes only member-row sorting', 
   await expect(toggle).toHaveJSProperty('insetDepth', 'double');
   await expect(toggle).toHaveCSS('width', '24px');
   await expect(toggle).toHaveCSS('height', '24px');
+  await expect(firstGroupHeader.locator('.ds-table__group-count')).toHaveCSS(
+    'padding-right',
+    '4px'
+  );
   await expect(toggle).toHaveJSProperty('icon', 'ChevronUp');
   await expect(toggle).toHaveJSProperty('expanded', true);
   await expect(toggle.getByRole('button')).toHaveAttribute('aria-expanded', 'true');
@@ -532,6 +560,61 @@ test('keeps application group order fixed and exposes only member-row sorting', 
   await expect(toggle).toHaveJSProperty('hasBorder', false);
   await expect(toggle).toHaveJSProperty('pressScale', false);
   await expect(toggle.getByRole('button')).toHaveCSS('cursor', 'default');
+  const trailingGeometry = await groupContent.evaluate(element => {
+    const content = element.getBoundingClientRect();
+    const action = element.querySelector<HTMLElement>('.ds-table__group-action')!;
+    const actionRect = action.getBoundingClientRect();
+    const toggleRect = element
+      .querySelector<HTMLElement>('.ds-table__group-toggle')!
+      .getBoundingClientRect();
+    const countRect = element
+      .querySelector<HTMLElement>('.ds-table__group-count')!
+      .getBoundingClientRect();
+    const labelRect = element
+      .querySelector<HTMLElement>('.ds-table__group-label')!
+      .getBoundingClientRect();
+    const primaryRect = element
+      .querySelector<HTMLElement>('.ds-table__group-primary')!
+      .getBoundingClientRect();
+    const probe = document.createElement('span');
+    probe.style.width = 'var(--dimension-size-500)';
+    element.append(probe);
+    const actionColumnWidth = Number.parseFloat(getComputedStyle(probe).width);
+    probe.remove();
+    return {
+      actionLeft: actionRect.left,
+      expectedActionLeft: content.right - actionColumnWidth,
+      actionRight: actionRect.right,
+      expectedActionRight:
+        content.right - Number.parseFloat(getComputedStyle(element).paddingRight),
+      dividerHeight: Number.parseFloat(getComputedStyle(action, '::before').height),
+      countMid: countRect.top + countRect.height / 2,
+      labelMid: labelRect.top + labelRect.height / 2,
+      primaryTop: primaryRect.top,
+      toggleTop: toggleRect.top,
+    };
+  });
+  expectGeometryClose(
+    trailingGeometry.actionLeft,
+    trailingGeometry.expectedActionLeft,
+    'group action divider vs action column start'
+  );
+  expectGeometryClose(
+    trailingGeometry.actionRight,
+    trailingGeometry.expectedActionRight,
+    'group action lane vs content end inset'
+  );
+  expectGeometryClose(trailingGeometry.dividerHeight, 20, 'group action divider height');
+  expectGeometryClose(
+    trailingGeometry.countMid,
+    trailingGeometry.labelMid,
+    'group count vs label text midpoint'
+  );
+  expectGeometryClose(
+    trailingGeometry.toggleTop,
+    trailingGeometry.primaryTop,
+    'group disclosure vs label track'
+  );
   await expect(table.locator('tbody[data-group-id="driving"] .ds-table__row')).toHaveCount(2);
   await toggle.click();
   await expect
@@ -696,6 +779,14 @@ test(
         accessories: box('.ds-table__group-accessories'),
         accessory: box('.ds-table__group-accessory'),
         selection: box('.ds-table__group-selection'),
+        count: box('.ds-table__group-count'),
+        label: box('.ds-table__group-label'),
+        actionDividerHeight: Number.parseFloat(
+          getComputedStyle(
+            element.querySelector<HTMLElement>('.ds-table__group-action')!,
+            '::before'
+          ).height
+        ),
         toggle: box('.ds-table__group-toggle'),
       };
     });
@@ -708,6 +799,16 @@ test(
       chromeAlignment.toggle.top,
       chromeAlignment.primary.top,
       'group disclosure top vs label track'
+    );
+    expectGeometryClose(
+      chromeAlignment.count.mid,
+      chromeAlignment.label.mid,
+      'group count midpoint vs label midpoint'
+    );
+    expectGeometryClose(
+      chromeAlignment.actionDividerHeight,
+      20,
+      'group action divider height on two-track row'
     );
     expectGeometryClose(
       chromeAlignment.accessories.top,
@@ -733,10 +834,10 @@ test(
 );
 
 test(
-  'places a top-aligned sm score hero before group copy on one and two tracks',
+  'supports first-track and two-track score hero presentations',
   chromiumOnly(
     'layout-geometry',
-    'Group hero score stays sm on the 40/64 body-row contract; Chromium is the token-backed geometry owner.'
+    'Group hero score placement follows the 40/64 body-row contract; Chromium is the token-backed geometry owner.'
   ),
   async ({ page }) => {
     const table = page.locator('#grouped');
@@ -767,23 +868,18 @@ test(
       const hero = element.querySelector('.ds-table__group-hero')!;
       const heroBox = hero.getBoundingClientRect();
       const badge = element.querySelector('ds-score .score__badge')!.getBoundingClientRect();
-      const value = element.querySelector('ds-score .score__value')!.getBoundingClientRect();
       const primary = element.querySelector('.ds-table__group-primary')!.getBoundingClientRect();
       const selection = element
         .querySelector('.ds-table__group-selection')!
         .getBoundingClientRect();
-      const after = getComputedStyle(hero, '::after');
       return {
         heroTop: heroBox.top,
         heroLeft: heroBox.left,
-        valueLeft: value.left,
         badgeHeight: badge.height,
         badgeWidth: badge.width,
         selectionTop: selection.top,
         selectionRight: selection.right,
         primaryTop: primary.top,
-        afterWidth: after.borderTopWidth,
-        afterColor: after.borderTopColor,
         expectedStartPad: cssPx('var(--dimension-space-075)'),
         expectedSmHeight: cssPx('var(--dimension-size-300)'),
         expectedSmWidth: cssPx('calc(var(--dimension-size-400) - var(--dimension-space-050))'),
@@ -825,9 +921,6 @@ test(
       columnAlign.headerGlyphLeft,
       'group label vs column-header glyphs'
     );
-    expect(singleTrack.afterWidth).not.toBe('0px');
-    expect(singleTrack.afterColor).not.toBe('rgba(0, 0, 0, 0)');
-
     await table.evaluate((element: HTMLDsTableElement) => {
       element.groups = element.groups.map(group =>
         group.id === 'driving'
@@ -861,14 +954,12 @@ test(
       const selection = element
         .querySelector('.ds-table__group-selection')!
         .getBoundingClientRect();
-      const after = getComputedStyle(hero, '::after');
       return {
         heroTop: heroBox.top,
         badgeHeight: badge.height,
         badgeWidth: badge.width,
         selectionTop: selection.top,
         primaryTop: primary.top,
-        afterWidth: after.borderTopWidth,
         expectedSmHeight: cssPx('var(--dimension-size-300)'),
         expectedSmWidth: cssPx('calc(var(--dimension-size-400) - var(--dimension-space-050))'),
       };
@@ -893,7 +984,73 @@ test(
       twoTrack.primaryTop,
       'group checkbox top vs label track with sm hero'
     );
-    expect(twoTrack.afterWidth).not.toBe('0px');
+    await table.evaluate((element: HTMLDsTableElement) => {
+      element.groups = element.groups.map(group =>
+        group.id === 'driving' ? { ...group, hero: { kind: 'score', value: 67, tracks: 2 } } : group
+      );
+    });
+
+    await expect(header).toHaveClass(/ds-table__group-content--hero-two-track/);
+    const twoTrackScore = header.locator('ds-score');
+    await expect(twoTrackScore).toHaveJSProperty('size', 'lg');
+    await expect(twoTrackScore).toHaveJSProperty('variant', 'default');
+    await expect(twoTrackScore.locator('ds-text.score__value')).toHaveJSProperty(
+      'variant',
+      'text-title-large'
+    );
+    await expect(twoTrackScore.locator('ds-text.score__value')).toHaveJSProperty('emphasis', true);
+
+    const spanningHero = await header.evaluate(element => {
+      const box = (selector: string) => {
+        const rect = element.querySelector(selector)!.getBoundingClientRect();
+        return {
+          top: rect.top,
+          left: rect.left,
+          right: rect.right,
+          height: rect.height,
+          mid: rect.top + rect.height / 2,
+        };
+      };
+      return {
+        copy: box('.ds-table__group-copy'),
+        hero: box('.ds-table__group-hero'),
+        badge: box('ds-score .score__badge'),
+        selection: box('.ds-table__group-selection'),
+      };
+    });
+    expectGeometryClose(spanningHero.badge.height, 40, 'default lg score height');
+    expectGeometryClose(
+      spanningHero.hero.left,
+      spanningHero.selection.right,
+      'two-track score start vs selection-column divider'
+    );
+    expectGeometryClose(
+      spanningHero.hero.mid,
+      spanningHero.copy.mid,
+      'default lg score centered across two tracks'
+    );
+
+    await table.evaluate((element: HTMLDsTableElement) => {
+      element.selectionMode = 'none';
+      element.groups = element.groups.map(group =>
+        group.id === 'driving' ? { ...group, hero: { kind: 'score', value: 67 } } : group
+      );
+    });
+
+    await expect(header).not.toHaveClass(/ds-table__group-content--hero-two-track/);
+    const noSelectionInsets = await header.evaluate(element => {
+      const content = element.getBoundingClientRect();
+      const hero = element.querySelector('.ds-table__group-hero')!.getBoundingClientRect();
+      return {
+        start: hero.left - content.left,
+        top: hero.top - content.top,
+      };
+    });
+    expectGeometryClose(
+      noSelectionInsets.start,
+      noSelectionInsets.top,
+      'one-track score equal start and top insets without selection'
+    );
   }
 );
 
@@ -955,7 +1112,7 @@ test('applies faint intent-to-neutral surfaces and bold titles to severity group
     } else {
       await expect(label).toHaveJSProperty('color', group.intent);
     }
-    await expect(header.locator('.ds-table__group-separator')).toHaveText('·');
+    await expect(header.locator('.ds-table__group-separator')).toHaveCount(0);
     const countText = header.locator('.ds-table__group-count');
     await expect(countText).toHaveText(`${group.count} of ${group.count}`);
     await expect(countText).toHaveJSProperty('variant', 'text-body-medium');
@@ -1000,16 +1157,16 @@ test('applies faint intent-to-neutral surfaces and bold titles to severity group
     .locator('tbody[data-group-id="critical"] .ds-table__group-content')
     .evaluate(element => {
       const probe = document.createElement('span');
-      probe.style.background = 'var(--color-border-secondary)';
+      probe.style.background = 'var(--color-border-tertiary)';
       document.body.append(probe);
-      const secondary = getComputedStyle(probe).backgroundColor;
+      const tertiary = getComputedStyle(probe).backgroundColor;
       probe.remove();
       return {
         actual: getComputedStyle(element, '::after').backgroundColor,
-        secondary,
+        tertiary,
       };
     });
-  expect(sectionDivider.actual).toBe(sectionDivider.secondary);
+  expect(sectionDivider.actual).toBe(sectionDivider.tertiary);
 
   await table.locator('.ds-table__collapse-all').click();
   const collapsedContents = table.locator('tbody[data-group-id] .ds-table__group-content');

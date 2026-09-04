@@ -114,12 +114,16 @@ ds-text.ds-table__cell-run-separator {
 }
 
 ds-text.ds-table__group-label,
-ds-text.ds-table__group-separator,
 ds-text.ds-table__group-count,
 ds-text.ds-table__group-accessory,
 ds-text.ds-table__group-accessory-separator {
   display: flex;
   align-items: center;
+}
+
+ds-text.ds-table__group-count {
+  min-block-size: var(--_table-cell-track-min-block-size);
+  padding-inline-end: var(--dimension-space-050);
 }
 
 .ds-table__cell-tag-stack--tag-with-text ds-text.ds-table__cell-tag-text,
@@ -192,29 +196,4 @@ ds-skeleton.ds-table__skeleton-checkbox {
 .ds-table__caption-customizer > ds-skeleton {
   position: absolute;
   inset: 0;
-}
-
-/*
- * Public :where() descendant rings can drop under scoped CSS. Paint the
- * tertiary edge on ::after so it sits over the score fill without growing it.
- */
-.ds-table__group-hero {
-  position: relative;
-}
-
-.ds-table__group-hero::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  box-sizing: border-box;
-  border-radius: var(--dimension-radius-025);
-  border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
-  pointer-events: none;
-}
-
-@media (forced-colors: active) {
-  .ds-table__group-hero::after {
-    border-color: var(--ds-forced-color-content);
-  }
 }

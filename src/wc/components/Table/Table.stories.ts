@@ -1346,7 +1346,7 @@ export const GroupingBySeverity: Story = {
     docs: {
       description: {
         story:
-          'Safety events grouped by severity with intentful section headers: Critical → negative, High → warning, Medium → caution, Low → neutral. Each colored group transitions from its faint intent surface at the label edge into faint neutral at the trailing edge, with a bold intent title followed by plain loaded progress such as “Critical · 2 of 2”. With multi-selection enabled, each section also exposes a checkbox that selects or clears that group.',
+          'Safety events grouped by severity with intentful section headers: Critical → negative, High → warning, Medium → caution, Low → neutral. Each colored group transitions from its faint intent surface at the label edge into faint neutral at the trailing edge. Loaded progress sits at the trailing edge beside the disclosure, separated by the action-column divider. With multi-selection enabled, each section also exposes a checkbox that selects or clears that group.',
       },
     },
   },
@@ -1392,7 +1392,7 @@ export const GroupRows: Story = {
     docs: {
       description: {
         story:
-          'Group section headers only. Every intent and the default surface are collapsed with no member rows. Assigned, Low, and Critical show a leading sm score hero on the default surface — score headers do not use intent coloring. High keeps a two-track accessory row with intent. Click anywhere on a header to expand or collapse it. Expand a section to review empty expanded count copy.',
+          'Group section headers only. Every intent and the default secondary surface are collapsed with no member rows. Assigned, Low, and Critical show a leading sm score hero on the default surface — score headers do not use intent coloring. High keeps a two-track accessory row with intent. Click anywhere on a header to expand or collapse it. Expand a section to review empty expanded count copy.',
       },
     },
   },
@@ -1418,6 +1418,114 @@ export const GroupRows: Story = {
       ></ds-table>
     `;
   },
+};
+
+const GROUP_SCORE_HERO_REVIEW = {
+  id: 'avery-chen',
+  label: 'Avery Chen',
+  totalCount: 166,
+  countLabel: '166 events',
+  accessories: [
+    { text: 'DRV4012' },
+    { text: '2 groups', help: 'Assigned groups for this driver.' },
+  ],
+  rows: [],
+} satisfies TableGroup;
+
+export const GroupScoreHeroVariants: Story = {
+  name: 'Group score hero variants',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The same driver group compares the default one-track score hero with the larger default score spanning two tracks. The first stays sm and aligns to the label track. Setting hero.tracks to 2 uses Score at lg and centers it across the label and accessory tracks. Both presentations are repeated without row selection to show the grouped layouts without a checkbox column.',
+      },
+    },
+  },
+  render: () => html`
+    <div style="display:grid;gap:var(--dimension-space-300);">
+      <div style="display:grid;gap:var(--dimension-space-100);">
+        <ds-text as="span" variant="text-body-medium" emphasis>Default · first track</ds-text>
+        <ds-table
+          data-a11y-fixture
+          .columns=${COLUMNS}
+          .groups=${[
+            {
+              ...GROUP_SCORE_HERO_REVIEW,
+              id: 'avery-chen-first-track',
+              hero: { kind: 'score', value: 87 },
+            },
+          ] satisfies TableGroup[]}
+          .grouping=${{ columnId: 'driver', direction: 'asc' } satisfies TableGroupingState}
+          .collapsedGroupIds=${['avery-chen-first-track']}
+          selection-mode="multiple"
+          caption="Default first-track group score"
+          caption-visibility="hidden"
+        ></ds-table>
+      </div>
+      <div style="display:grid;gap:var(--dimension-space-100);">
+        <ds-text as="span" variant="text-body-medium" emphasis>Default · two tracks</ds-text>
+        <ds-table
+          data-a11y-fixture
+          .columns=${COLUMNS}
+          .groups=${[
+            {
+              ...GROUP_SCORE_HERO_REVIEW,
+              id: 'avery-chen-two-tracks',
+              hero: { kind: 'score', value: 87, tracks: 2 },
+            },
+          ] satisfies TableGroup[]}
+          .grouping=${{ columnId: 'driver', direction: 'asc' } satisfies TableGroupingState}
+          .collapsedGroupIds=${['avery-chen-two-tracks']}
+          selection-mode="multiple"
+          caption="Default two-track group score"
+          caption-visibility="hidden"
+        ></ds-table>
+      </div>
+      <div style="display:grid;gap:var(--dimension-space-100);">
+        <ds-text as="span" variant="text-body-medium" emphasis
+          >Default · first track · no selection</ds-text
+        >
+        <ds-table
+          data-a11y-fixture
+          .columns=${COLUMNS}
+          .groups=${[
+            {
+              ...GROUP_SCORE_HERO_REVIEW,
+              id: 'avery-chen-first-track-no-selection',
+              hero: { kind: 'score', value: 87 },
+            },
+          ] satisfies TableGroup[]}
+          .grouping=${{ columnId: 'driver', direction: 'asc' } satisfies TableGroupingState}
+          .collapsedGroupIds=${['avery-chen-first-track-no-selection']}
+          selection-mode="none"
+          caption="Default first-track group score without row selection"
+          caption-visibility="hidden"
+        ></ds-table>
+      </div>
+      <div style="display:grid;gap:var(--dimension-space-100);">
+        <ds-text as="span" variant="text-body-medium" emphasis
+          >Default · two tracks · no selection</ds-text
+        >
+        <ds-table
+          data-a11y-fixture
+          .columns=${COLUMNS}
+          .groups=${[
+            {
+              ...GROUP_SCORE_HERO_REVIEW,
+              id: 'avery-chen-two-tracks-no-selection',
+              hero: { kind: 'score', value: 87, tracks: 2 },
+            },
+          ] satisfies TableGroup[]}
+          .grouping=${{ columnId: 'driver', direction: 'asc' } satisfies TableGroupingState}
+          .collapsedGroupIds=${['avery-chen-two-tracks-no-selection']}
+          selection-mode="none"
+          caption="Default two-track group score without row selection"
+          caption-visibility="hidden"
+        ></ds-table>
+      </div>
+    </div>
+  `,
 };
 
 export const ControlledSelection: Story = {

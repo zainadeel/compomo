@@ -56,7 +56,7 @@ import { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 import { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderActionDetail, PanelToolsHeaders, PanelToolsItem, PanelToolsRailAccessory, PanelToolsRailAccessoryActionDetail, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
 import { RadioOption, RadioSize } from "./components/Radio/Radio";
-import { SafetyScoreLevel, ScoreSize } from "./components/Score/score-types";
+import { SafetyScoreLevel, ScoreSize, ScoreVariant } from "./components/Score/score-types";
 import { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
 import { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
 import { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellSectionNavigation, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
@@ -130,7 +130,7 @@ export { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 export { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderActionDetail, PanelToolsHeaders, PanelToolsItem, PanelToolsRailAccessory, PanelToolsRailAccessoryActionDetail, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
 export { RadioOption, RadioSize } from "./components/Radio/Radio";
-export { SafetyScoreLevel, ScoreSize } from "./components/Score/score-types";
+export { SafetyScoreLevel, ScoreSize, ScoreVariant } from "./components/Score/score-types";
 export { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
 export { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
 export { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellSectionNavigation, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
@@ -2561,6 +2561,11 @@ export namespace Components {
           * @default ''
          */
         "value": string | number;
+        /**
+          * Value typography recipe. `dense` keeps the selected size's fill dimensions and uses a larger emphasized figure with tighter surrounding space.
+          * @default 'default'
+         */
+        "variant": ScoreVariant;
     }
     interface DsScrollOverlay {
         /**
@@ -8247,6 +8252,11 @@ declare namespace LocalJSX {
           * @default ''
          */
         "value"?: string | number;
+        /**
+          * Value typography recipe. `dense` keeps the selected size's fill dimensions and uses a larger emphasized figure with tighter surrounding space.
+          * @default 'default'
+         */
+        "variant"?: ScoreVariant;
     }
     interface DsScrollOverlay {
         /**
@@ -10466,6 +10476,7 @@ declare namespace LocalJSX {
     interface DsScoreAttributes {
         "value": string;
         "size": ScoreSize;
+        "variant": ScoreVariant;
         "level": SafetyScoreLevel | undefined;
         "isLoading": boolean;
         "label": string;

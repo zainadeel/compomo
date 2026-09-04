@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-score.js';
 import '../../../../dist/components/ds-text.js';
-import { SAFETY_SCORE_LEVELS, SCORE_SIZES, type ScoreSize } from './score-types';
+import { SAFETY_SCORE_LEVELS, SCORE_SIZES, SCORE_VARIANTS, type ScoreSize } from './score-types';
 
 const meta: Meta = {
   title: 'Primitives/Score',
@@ -10,6 +10,7 @@ const meta: Meta = {
   argTypes: {
     value: { control: 'text' },
     size: { control: 'select', options: [...SCORE_SIZES] },
+    variant: { control: 'select', options: [...SCORE_VARIANTS] },
     level: { control: 'select', options: ['', ...SAFETY_SCORE_LEVELS] },
     isLoading: { control: 'boolean' },
     label: { control: 'text' },
@@ -17,6 +18,7 @@ const meta: Meta = {
   args: {
     value: 87,
     size: 'md',
+    variant: 'default',
     level: '',
     isLoading: false,
     label: 'Safety score',
@@ -25,7 +27,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'Safety-score figure in a semantic fill. lg matches Card Overview. md is the 32px control treatment. sm is the 24px compact fill.',
+          'Safety-score figure in a semantic fill. Default uses emphasized title-large at lg, title-medium at md, and title-small at sm. Dense preserves the fill geometry while using display-small at lg, title-large at md, and title-medium at sm.',
       },
     },
   },
@@ -39,10 +41,29 @@ export const Playground: Story = {
     <ds-score
       value=${args['value']}
       size=${args['size']}
+      variant=${args['variant']}
       level=${args['level'] || undefined}
       label=${args['label']}
       ?is-loading=${args['isLoading']}
     ></ds-score>
+  `,
+};
+
+export const Variants: Story = {
+  render: () => html`
+    <div style="display:flex;flex-direction:column;gap:var(--dimension-space-200);">
+      ${SCORE_SIZES.map(
+        (size: ScoreSize) => html`
+          <div style="display:flex;align-items:center;gap:var(--dimension-space-200);">
+            <ds-text as="span" variant="text-body-small" color="secondary" style="width:2rem;"
+              >${size}</ds-text
+            >
+            <ds-score size=${size} value="87" label="Default safety score"></ds-score>
+            <ds-score size=${size} variant="dense" value="87" label="Dense safety score"></ds-score>
+          </div>
+        `
+      )}
+    </div>
   `,
 };
 
