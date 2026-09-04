@@ -71,7 +71,7 @@
 .shell-page__sticky-header {
   position: sticky;
   inset-block-start: var(--ds-shell-page-sticky-offset, 0);
-  z-index: var(--dimension-z-index-raised);
+  z-index: var(--dimension-z-index-overlay);
   min-width: 0;
   background: var(--_shell-page-header-background);
   overflow: visible;
@@ -104,7 +104,6 @@
   min-width: 0;
   box-sizing: border-box;
   background: var(--_shell-page-content-background);
-  isolation: isolate;
 }
 
 :host(.shell-page-host--inset-default) .shell-page__content {

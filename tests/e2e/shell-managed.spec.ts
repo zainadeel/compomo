@@ -553,7 +553,7 @@ test.describe('Managed application shell', () => {
       .toBeLessThan(0.5);
   });
 
-  test('keeps raised routed content beneath the sticky mobile header @pr-critical', async ({
+  test('layers raised content beneath the mobile header and modal surfaces above it @pr-critical', async ({
     page,
   }) => {
     const shell = page.locator('#managed-shell');
@@ -566,6 +566,15 @@ test.describe('Managed application shell', () => {
     await shell.locator('#managed-page-content').evaluate(element => {
       element.style.position = 'relative';
       element.style.zIndex = 'var(--dimension-z-index-raised)';
+    });
+    await shellPage.evaluate(element => {
+      const modalProbe = document.createElement('button');
+      modalProbe.id = 'managed-modal-probe';
+      modalProbe.textContent = 'Modal probe';
+      modalProbe.style.position = 'fixed';
+      modalProbe.style.inset = '0';
+      modalProbe.style.zIndex = 'var(--dimension-z-index-modal)';
+      element.append(modalProbe);
     });
     await scroller.evaluate(element => {
       element.scrollTop = 300;
@@ -580,9 +589,11 @@ test.describe('Managed application shell', () => {
             bounds.top + bounds.height / 2
           );
           const routedContent = document.querySelector('#managed-page-content');
+          const modalProbe = document.querySelector('#managed-modal-probe');
           const headerIndex = stack.indexOf(element);
           const contentIndex = routedContent ? stack.indexOf(routedContent) : -1;
-          return headerIndex >= 0 && contentIndex > headerIndex;
+          const modalIndex = modalProbe ? stack.indexOf(modalProbe) : -1;
+          return modalIndex >= 0 && headerIndex > modalIndex && contentIndex > headerIndex;
         })
       )
       .toBe(true);

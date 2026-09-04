@@ -73,7 +73,7 @@
     "The flow-preservation spacer follows contentSurface so compacting a secondary page cannot expose a primary strip before its content.",
     "On roomy pages, the expanded header scrolls upward until its title and action row reaches the compact row position, while its bottom divider progressively extends from the expanded inset to edge-to-edge; it then snaps variants without moving that shared visual anchor.",
     "Scroll compaction preserves the expanded page flow offset so content never jumps beneath the sticky header.",
-    "The sticky header paints above the isolated routed-content layer, so product surfaces and callouts scroll beneath its opaque boundary instead of covering page chrome.",
+    "The sticky header uses the overlay layer: raised product surfaces and callouts scroll beneath its opaque boundary, while modal, floating, and tooltip surfaces remain above page chrome.",
     "ShellPage relies on ShellApp's content scroller and never introduces nested scrolling.",
     "BarWorkflow remains compact and is not assigned BarTitle's capacity or scroll variants."
   ],
