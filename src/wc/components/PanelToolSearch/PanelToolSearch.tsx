@@ -29,6 +29,8 @@ export class PanelToolSearch {
   @Prop() filterControls: string | undefined;
   /** Whether the controlled filter menu is open. */
   @Prop() filterExpanded: boolean = false;
+  /** Associated filter surface is visible, including exit motion. */
+  @Prop() filterSurfaceOpen: boolean | undefined;
   /** Promote the trigger foreground when one or more filters are applied. */
   @Prop() filterActive: boolean = false;
 
@@ -95,6 +97,7 @@ export class PanelToolSearch {
                   haspopup="menu"
                   controls={this.filterControls}
                   expanded={this.filterExpanded}
+                  surfaceOpen={this.filterSurfaceOpen}
                   isActive={this.filterActive}
                   isInactive={this.isInactive}
                   activeFill={false}

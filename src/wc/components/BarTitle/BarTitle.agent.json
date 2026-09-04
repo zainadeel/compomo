@@ -66,7 +66,8 @@
     "expanded renders the larger heading, optional description, inset divider, and a full-width caption breadcrumb row above the title. The breadcrumb begins after 32px top padding; the following title and right-side actions share one top alignment. Compact renders 48px chrome with the existing icon Back action; constrained uses compact chrome and moves an auto-collapse primary action into overflow.",
     "The one visible ordered action collapses by default in constrained presentation. Use never for an exceptional action whose hierarchy must remain visible; explicit overflow actions never leave the shared menu.",
     "showDivider=false removes the bottom divider when the surrounding page composition supplies the boundary; showCompactDivider can independently restore or remove that boundary in compact and constrained variants.",
-    "placement=shell-bar is reserved for ShellApp panel section navigation. It remains compact, omits description and breadcrumb presentation, and preserves applicable Back, section, primary, and overflow controls."
+    "placement=shell-bar is reserved for ShellApp panel section navigation. It remains compact, omits description and breadcrumb presentation, and preserves applicable Back, section, primary, and overflow controls.",
+    "Section, action, split-menu, and overflow triggers automatically retain the shared surface-open wash through exit. The expanded header presentation is layout, not surface ownership, and does not itself acquire a pressed wash."
   ],
   "responsiveBehavior": [
     "BarTitle does not observe viewport, shell, scroll, or container state. Its owner selects an explicit variant.",
@@ -103,6 +104,10 @@
     {
       "label": "Cross-browser shell-page and header coverage",
       "path": "tests/e2e/bar-title.spec.ts"
+    },
+    {
+      "label": "Surface ownership and trigger state",
+      "path": "src/docs/SurfaceOwnership.mdx"
     }
   ]
 }

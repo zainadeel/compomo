@@ -44,6 +44,7 @@ export class MobileSectionSwitcher {
   @Event() dsChange!: EventEmitter<string>;
 
   @State() private menuOpen = false;
+  @State() private menuSurfaceOpen = false;
   @State() private initialFocusVisible = false;
   @State() private sheetClosing = false;
   @State() private focusedSection = '';
@@ -84,10 +85,16 @@ export class MobileSectionSwitcher {
 
   disconnectedCallback() {
     this.visibilityObserver?.disconnect();
+    this.menuSurfaceOpen = false;
     this.finishSheetClose(false);
   }
 
   @Watch('presentation')
+  handlePresentationChange() {
+    this.menuSurfaceOpen = false;
+    this.closeMenu();
+  }
+
   @Watch('value')
   @Watch('pageLabel')
   handleContextChange() {
@@ -209,8 +216,10 @@ export class MobileSectionSwitcher {
 
   @Watch('sections')
   handleSectionsChange() {
-    if (this.selectableSections.length <= 1) this.closeMenu();
-    else if (this.dialogEl?.open && !this.sheetClosing) this.focusSheetItem(this.focusedSection);
+    if (this.selectableSections.length <= 1) {
+      this.closeMenu();
+      this.menuSurfaceOpen = false;
+    } else if (this.dialogEl?.open && !this.sheetClosing) this.focusSheetItem(this.focusedSection);
   }
 
   private toggleMenu = (event: MouseEvent) => {
@@ -225,6 +234,7 @@ export class MobileSectionSwitcher {
       return;
     }
     this.menuOpen = !this.menuOpen;
+    if (this.menuOpen) this.menuSurfaceOpen = true;
   };
 
   private closeMenu = () => {
@@ -330,6 +340,8 @@ export class MobileSectionSwitcher {
           class={{
             'mobile-section-switcher': true,
             'mobile-section-switcher--expanded': this.menuOpen,
+            'ds-interaction-fill--surface-open':
+              this.menuSurfaceOpen || this.menuOpen || this.sheetClosing,
             'mobile-section-switcher--sheet': this.presentation === 'sheet',
             'mobile-section-switcher--combined': combined,
             'ds-focus-ring-inset': true,
@@ -409,6 +421,9 @@ export class MobileSectionSwitcher {
             initialFocusVisible={this.initialFocusVisible}
             sections={this.menuSections}
             onDsClose={this.closeMenu}
+            onDsAfterClose={() => {
+              if (!this.menuOpen) this.menuSurfaceOpen = false;
+            }}
             onDsSelect={this.handleSelect}
           />
         ) : null}

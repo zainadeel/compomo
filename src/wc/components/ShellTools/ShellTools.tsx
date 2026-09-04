@@ -327,6 +327,7 @@ export class ShellTools {
               haspopup={action.haspopup}
               controls={action.controls}
               expanded={action.expanded}
+              surfaceOpen={action.surfaceOpen}
               pressed={action.pressed}
               isInactive={action.isInactive}
               activeFill={false}

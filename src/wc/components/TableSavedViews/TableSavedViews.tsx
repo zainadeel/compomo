@@ -100,6 +100,7 @@ export class TableSavedViews {
         label: `Options for ${view.label}`,
         controls: this.actionMenuId,
         expanded: this.actionViewId === view.id && this.actionMenuOpen,
+        surfaceOpen: this.actionViewId === view.id,
       },
     }));
     const templates = {

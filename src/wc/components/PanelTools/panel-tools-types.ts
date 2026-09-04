@@ -200,6 +200,8 @@ export interface PanelToolsHeaderAction {
   triggerId?: string;
   controls?: string;
   expanded?: boolean;
+  /** Associated surface remains visible, including exit motion. */
+  surfaceOpen?: boolean;
   haspopup?: 'menu' | 'dialog' | 'listbox' | 'tree' | 'grid';
   pressed?: boolean;
   isInactive?: boolean;

@@ -323,14 +323,6 @@ ds-text.panel-nav__group-label {
   color: var(--_nav-fg-secondary);
 }
 
-.panel-nav__parent--flyout-active {
-  --ds-interaction-hover: var(--_nav-pressed);
-}
-
-.panel-nav__parent--flyout-active::after {
-  background: var(--_nav-pressed);
-}
-
 .panel-nav__child {
   flex: 0 0 var(--_nav-item-height);
   padding-inline-start: calc(
@@ -515,15 +507,6 @@ ds-text.panel-nav__group-label {
     left var(--_nav-expand-motion),
     right var(--_nav-expand-motion),
     top var(--_nav-expand-motion);
-}
-
-/* Popup-open state keeps the native footer trigger visibly pressed. */
-.panel-nav__footer-user--menu-expanded::after {
-  background: var(--_nav-pressed);
-}
-
-.panel-nav__footer-user--menu-expanded {
-  --ds-interaction-hover: var(--_nav-pressed);
 }
 
 .panel-nav--collapsed .panel-nav__footer-user {

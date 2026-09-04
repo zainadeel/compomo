@@ -111,11 +111,19 @@ export class ButtonUnfilled {
   @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;
   @Prop() controls: string | undefined;
   /**
-   * Controlled disclosure or popup state forwarded to `aria-expanded`.
-   * Popup triggers hold only the pressed wash while open; their resting
-   * foreground is unchanged. Ordinary disclosures remain visually neutral.
+   * Controlled disclosure state forwarded to aria-expanded.
+   * Using expanded alone for surface-open styling is deprecated; set surfaceOpen
+   * explicitly to separate the rendered surface lifecycle from disclosure state.
    */
   @Prop() expanded: boolean | undefined;
+
+  /**
+   * The associated menu, picker, or panel is visible, including its exit motion.
+   * Holds only the pressed wash; does not set ARIA, selection, or press scaling.
+   * In split mode this applies only to the menu segment. Explicit false disables
+   * the legacy expanded-derived wash; omission preserves that compatibility path.
+   */
+  @Prop() surfaceOpen: boolean | undefined;
   @Prop() haspopup: ButtonUnfilledPopup | undefined;
 
   /**
@@ -255,9 +263,9 @@ export class ButtonUnfilled {
     return this.isInset && this.insetDepth === 'double' && this.size !== 'xs';
   }
 
-  /** Only popup triggers hold a pressed visual while expanded. */
-  private get expandedPopup(): boolean {
-    return this.expanded === true && this.resolvedHaspopup !== undefined && !this.isInactive;
+  private get resolvedSurfaceOpen(): boolean {
+    const legacy = this.expanded === true && (this.split || this.resolvedHaspopup !== undefined);
+    return (this.surfaceOpen ?? legacy) && !this.isInactive;
   }
 
   private get visuallyActive(): boolean {
@@ -302,6 +310,7 @@ export class ButtonUnfilled {
       'ds-interaction-fill--on-always-dark': bg === 'always-dark',
       'button-unfilled--active': this.visuallyActive,
       'button-unfilled--expanded': expanded,
+      'ds-interaction-fill--surface-open': expanded,
       'ds-button--expanded': expanded,
       'button-unfilled--bordered': bordered,
       'ds-button--bordered': bordered,
@@ -341,7 +350,7 @@ export class ButtonUnfilled {
         class={{
           ...this.buttonClass(
             this.visualVariant,
-            !this.split && this.expandedPopup,
+            !this.split && this.resolvedSurfaceOpen,
             this.hasBorder && !this.split
           ),
           'ds-button-split__primary': this.split,
@@ -402,7 +411,7 @@ export class ButtonUnfilled {
             this.menuButtonEl = el ?? null;
           }}
           class={{
-            ...this.buttonClass('icon', this.expanded === true && !this.isInactive, false),
+            ...this.buttonClass('icon', this.resolvedSurfaceOpen, false),
             'ds-button-split__menu': true,
           }}
           type="button"

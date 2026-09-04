@@ -2600,3 +2600,65 @@ export const NativeCssRecipe: Story = {
     </div>
   `,
 };
+
+export const AssociatedSurface: Story = {
+  name: 'Associated detail surface',
+  args: { surfaceOpenRowId: undefined, selectedRowIds: [] },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Activate a row to open its associated detail surface; activate it again to close, or another row to switch records. The pressed wash identifies the displayed record independently of checkbox selection. Applications with exit motion retain surfaceOpenRowId until closing completes.',
+      },
+    },
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    const surfaceOpenRowId = args['surfaceOpenRowId'] as string | undefined;
+    const rows = ROWS.slice(0, 5).map(row => ({ ...row, interactive: true }));
+    return html`
+      <ds-table
+        id="surface-owner-table"
+        caption="Drivers"
+        .columns=${COLUMNS.slice(0, 4)}
+        .rows=${rows}
+        selection-mode="multiple"
+        .selectedRowIds=${args['selectedRowIds'] as string[]}
+        .surfaceOpenRowId=${surfaceOpenRowId}
+        @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>
+          updateArgs({ selectedRowIds: event.detail.selectedRowIds })}
+        @dsRowActivate=${(event: CustomEvent<{ rowId: string }>) =>
+          updateArgs({
+            surfaceOpenRowId:
+              event.detail.rowId === surfaceOpenRowId ? undefined : event.detail.rowId,
+          })}
+      ></ds-table>
+      ${surfaceOpenRowId
+        ? html`
+            <aside
+              aria-label="Driver details"
+              style="padding:var(--dimension-space-200);background:var(--color-background-secondary);"
+            >
+              <ds-text as="p" variant="text-body-medium"
+                >Details for
+                ${rows.find(row => row.id === surfaceOpenRowId)?.selectionLabel ??
+                surfaceOpenRowId}</ds-text
+              >
+              <ds-button-unfilled
+                label="Close details"
+                @dsClick=${() => {
+                  updateArgs({ surfaceOpenRowId: undefined });
+                  requestAnimationFrame(() => {
+                    const table = document.querySelector<
+                      HTMLElement & { focusRow: (id: string) => Promise<void> }
+                    >('#surface-owner-table');
+                    void table?.focusRow(surfaceOpenRowId);
+                  });
+                }}
+              ></ds-button-unfilled>
+            </aside>
+          `
+        : ''}
+    `;
+  },
+};

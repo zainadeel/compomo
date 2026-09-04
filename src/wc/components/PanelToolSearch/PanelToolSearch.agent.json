@@ -32,7 +32,8 @@
     "The search icon stays foreground-secondary at rest, hover, focus, active, and while the query is filled.",
     "The row and control surface remain transparent so the ShellApp chrome wash is visible behind them.",
     "The row divider remains the same tertiary 1px boundary while the input is focused because it belongs to the 48px container rather than the input control.",
-    "With filtering enabled, the md search control, decorative vertical divider, and borderless md Filter action are separated by 8px; filterActive promotes only the trigger foreground without adding a selected fill."
+    "With filtering enabled, the md search control, decorative vertical divider, and borderless md Filter action are separated by 8px; filterActive promotes only the trigger foreground without adding a selected fill.",
+    "Applied filters and an open filter surface are independent states. Use filterSurfaceOpen through the external surface exit while filterExpanded describes disclosure and filterActive describes applied values."
   ],
   "responsiveBehavior": [
     "The row fills the available drawer or fullscreen width, allows its search region to shrink inside a 300px drawer without pushing the filter trigger under the tool rail, and does not reduce its control below md density."
@@ -55,6 +56,10 @@
     {
       "label": "Storybook examples",
       "path": "src/wc/components/PanelToolSearch/PanelToolSearch.stories.ts"
+    },
+    {
+      "label": "Surface ownership and trigger state",
+      "path": "src/docs/SurfaceOwnership.mdx"
     }
   ]
 }

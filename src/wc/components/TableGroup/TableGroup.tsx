@@ -409,6 +409,7 @@ export class TableGroup {
             hasMenu={true}
             collapseLabel={true}
             expanded={this.open}
+            surfaceOpen={this.open || this.closing}
             controls={this.popupId}
             onDsClick={(event: CustomEvent<MouseEvent>) => this.toggle(event.detail.detail === 0)}
           />

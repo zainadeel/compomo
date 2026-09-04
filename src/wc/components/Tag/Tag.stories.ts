@@ -35,6 +35,7 @@ const meta: Meta = {
     maxWidth: { control: 'text' },
     interactive: { control: 'boolean' },
     expanded: { control: 'boolean' },
+    surfaceOpen: { control: 'boolean' },
     ariaControls: { control: 'text' },
     isInactive: { control: 'boolean' },
   },
@@ -72,6 +73,7 @@ export const Playground: Story = {
       ?rounded=${args['rounded']}
       ?interactive=${args['interactive']}
       ?expanded=${args['expanded']}
+      .surfaceOpen=${args['surfaceOpen']}
       aria-controls=${args['ariaControls'] || undefined}
       ?is-inactive=${args['isInactive']}
     ></ds-tag>
@@ -247,10 +249,12 @@ export const InteractiveMenuTrigger: Story = {
           icon="Filters"
           interactive
           ?expanded=${Boolean(args['expanded'])}
+          .surfaceOpen=${Boolean(args['surfaceOpen'])}
           aria-controls="vehicle-status-menu"
           @dsClick=${(event: CustomEvent<MouseEvent>) =>
             updateArgs({
               expanded: !args['expanded'],
+              surfaceOpen: true,
               initialFocusVisible: event.detail.detail === 0,
             })}
         ></ds-tag>
@@ -264,6 +268,9 @@ export const InteractiveMenuTrigger: Story = {
           ?open=${Boolean(args['expanded'])}
           .items=${items}
           @dsClose=${() => updateArgs({ expanded: false })}
+          @dsAfterClose=${() => {
+            if (!args['expanded']) updateArgs({ surfaceOpen: false });
+          }}
           @dsSelect=${(event: CustomEvent<{ value?: string }>) => {
             updateArgs({
               expanded: false,

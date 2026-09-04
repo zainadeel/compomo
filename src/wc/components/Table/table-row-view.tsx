@@ -23,8 +23,10 @@ export interface TableRowViewOptions {
   emptyCellLabel: string;
   actionMenuElementId: string;
   actionMenu: { rowId: string; columnId: string } | null;
+  actionMenuSurface?: { rowId: string; columnId: string } | null;
   highlightMatcher: TableHighlightMatcher;
   highlightFieldIds: string[];
+  surfaceOpenRowId?: string;
   ariaRowIndex?: number;
   variableVirtualSize?: boolean;
   intrinsicBlockSize?: number;
@@ -52,8 +54,10 @@ export function renderTableRow({
   emptyCellLabel,
   actionMenuElementId,
   actionMenu,
+  actionMenuSurface,
   highlightMatcher,
   highlightFieldIds,
+  surfaceOpenRowId,
   ariaRowIndex,
   variableVirtualSize = false,
   intrinsicBlockSize,
@@ -67,6 +71,7 @@ export function renderTableRow({
   onActionMenuToggle,
 }: TableRowViewOptions) {
   const selected = model.selectedRowIds.has(row.id);
+  const surfaceOpen = row.id === surfaceOpenRowId && !!row.interactive && !row.disabled;
   const rowSelectable = row.selectable !== false && !row.disabled;
   const beforeSpacer =
     model.elasticSpacerIndex == null
@@ -79,9 +84,11 @@ export function renderTableRow({
       row,
       column,
       selected,
+      surfaceOpen,
       emptyCellLabel,
       actionMenuElementId,
       actionMenu,
+      actionMenuSurface,
       highlightMatcher,
       highlightFieldIds,
       renderStickyEdge,
@@ -104,6 +111,7 @@ export function renderTableRow({
       data-virtual-pool-key={ariaRowIndex != null ? rowKey : undefined}
       data-virtual-measure={ariaRowIndex != null && variableVirtualSize ? 'true' : undefined}
       data-selected={selected ? 'true' : undefined}
+      data-surface-open={surfaceOpen ? 'true' : undefined}
       style={
         intrinsicBlockSize != null
           ? { '--_table-row-intrinsic-block-size': `${intrinsicBlockSize}px` }
@@ -124,6 +132,7 @@ export function renderTableRow({
             'ds-interaction-fill': true,
             'ds-interaction-fill--grouped': true,
             'ds-interaction-fill--selected': selected,
+            'ds-interaction-fill--surface-open': surfaceOpen,
           }}
         >
           {renderSelectionControl(
@@ -145,6 +154,7 @@ export function renderTableRow({
             'ds-interaction-fill': true,
             'ds-interaction-fill--grouped': true,
             'ds-interaction-fill--selected': selected,
+            'ds-interaction-fill--surface-open': surfaceOpen,
           }}
           aria-hidden="true"
           role="presentation"
@@ -160,9 +170,11 @@ interface TableCellViewOptions {
   row: TableRow;
   column: TableColumn;
   selected: boolean;
+  surfaceOpen: boolean;
   emptyCellLabel: string;
   actionMenuElementId: string;
   actionMenu: { rowId: string; columnId: string } | null;
+  actionMenuSurface?: { rowId: string; columnId: string } | null;
   highlightMatcher: TableHighlightMatcher;
   highlightFieldIds: string[];
   renderStickyEdge: (sticky: TableColumn['sticky']) => unknown;
@@ -171,7 +183,7 @@ interface TableCellViewOptions {
 }
 
 function renderTableCell(options: TableCellViewOptions) {
-  const { row, column, selected, renderStickyEdge } = options;
+  const { row, column, selected, surfaceOpen, renderStickyEdge } = options;
   const align = column.align ?? 'start';
   const cell = resolveTableCellPresentation(row.cells[column.id], column);
   const tagCell = cell.kind === 'tag';
@@ -228,6 +240,7 @@ function renderTableCell(options: TableCellViewOptions) {
         'ds-interaction-fill': true,
         'ds-interaction-fill--grouped': true,
         'ds-interaction-fill--selected': selected,
+        'ds-interaction-fill--surface-open': surfaceOpen,
       }}
       data-column-id={column.id}
       data-cell-type={cell.cellType}
@@ -256,6 +269,7 @@ function renderTableCellValue(cell: TableCellPresentation, options: TableCellVie
     emptyCellLabel,
     actionMenuElementId,
     actionMenu,
+    actionMenuSurface,
     onCellAction,
     onActionMenuToggle,
   } = options;
@@ -353,6 +367,9 @@ function renderTableCellValue(cell: TableCellPresentation, options: TableCellVie
         isLoading={value.isLoading ?? false}
         hasMenu={menu}
         expanded={menu ? expanded : undefined}
+        surfaceOpen={
+          menu && actionMenuSurface?.rowId === row.id && actionMenuSurface?.columnId === column.id
+        }
         controls={menu ? actionMenuElementId : undefined}
         onDsClick={event => {
           event.stopPropagation();

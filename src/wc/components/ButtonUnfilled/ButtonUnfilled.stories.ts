@@ -29,6 +29,7 @@ const meta: Meta = {
     isActive: { control: 'boolean' },
     pressed: { control: 'boolean' },
     expanded: { control: 'boolean' },
+    surfaceOpen: { control: 'boolean' },
     hasMenu: { control: 'boolean' },
     activeFill: { control: 'boolean' },
     hasBorder: { control: 'boolean' },
@@ -118,6 +119,7 @@ export const Playground: Story = {
       ?is-active=${args['isActive']}
       .pressed=${args['pressed']}
       ?expanded=${args['expanded']}
+      .surfaceOpen=${args['surfaceOpen']}
       ?has-menu=${args['hasMenu']}
       ?active-fill=${args['activeFill']}
       ?has-border=${args['hasBorder']}
@@ -496,6 +498,7 @@ export const States: Story = {
           aria-label="Options menu open"
           haspopup="menu"
           expanded
+          surface-open
           .activeFill=${false}
           .hasBorder=${false}
         ></ds-button-unfilled>
@@ -848,7 +851,7 @@ export const MenuTrigger: Story = {
 };
 
 /**
- * An open popup is a transient *pressed* state, not a selected one. `expanded`
+ * An open popup is a transient *pressed* state, not a selected one. `surfaceOpen`
  * holds the pressed wash for the popup's rendered lifecycle — including through
  * hover — and works even when chrome opts out of selected fills.
  */
@@ -858,7 +861,7 @@ export const MenuTriggerOpenState: Story = {
     docs: {
       description: {
         story:
-          'Resting left, open right. `expanded` keeps the pressed wash applied for as long as the menu is ' +
+          'Resting left, open right. `surfaceOpen` keeps the pressed wash applied for as long as the menu is ' +
           'rendered, so the trigger reads as held down. It survives hover, and it is independent of `isActive`: ' +
           'chrome passing `activeFill={false}` still gets the open treatment.',
       },
@@ -869,7 +872,13 @@ export const MenuTriggerOpenState: Story = {
       <div style="${ROW}">
         <span style="${LABEL}">has a menu</span>
         <ds-button-unfilled variant="label" label="View" has-menu></ds-button-unfilled>
-        <ds-button-unfilled variant="label" label="View" has-menu expanded></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="label"
+          label="View"
+          has-menu
+          expanded
+          surface-open
+        ></ds-button-unfilled>
       </div>
       <div style="${ROW}">
         <span style="${LABEL}">icon-label</span>
@@ -885,6 +894,7 @@ export const MenuTriggerOpenState: Story = {
           label="Filter"
           has-menu
           expanded
+          surface-open
         ></ds-button-unfilled>
       </div>
       <div style="${ROW}">
@@ -900,6 +910,7 @@ export const MenuTriggerOpenState: Story = {
           icon="Ellipses"
           has-menu
           expanded
+          surface-open
           aria-label="More options open"
         ></ds-button-unfilled>
       </div>
@@ -920,6 +931,7 @@ export const MenuTriggerOpenState: Story = {
           has-menu
           rounded
           expanded
+          surface-open
           .hasBorder=${false}
           .activeFill=${false}
           aria-label="More options open"
@@ -933,6 +945,7 @@ export const MenuTriggerOpenState: Story = {
           label="View"
           has-menu
           expanded
+          surface-open
           is-inactive
         ></ds-button-unfilled>
       </div>
@@ -961,7 +974,7 @@ export const MenuTriggerLive: Story = {
     docs: {
       description: {
         story:
-          'Click each trigger. One application-owned open boolean drives both `ButtonUnfilled.expanded` and ' +
+          'Click each trigger. Application state synchronizes `ButtonUnfilled.expanded` and ' +
           '`Menu.open`; `Menu` resolves placement from `anchorId`. The application never positions the popup.',
       },
     },

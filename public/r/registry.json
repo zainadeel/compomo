@@ -1171,7 +1171,8 @@
             "On non-tab detail routes, show the parent PanelNav destination label in BarNav while the detail-page title remains in page content.",
             "Dividers and groups visually organize peer route sections only and do not create hierarchy.",
             "The application filters unauthorized sections before passing tabs to BarNav.",
-            "Dashboard and Settings route state updates PanelNav groups, BarNav tabs, heading, basePath, currentUrl, and navStyle as one coordinated change."
+            "Dashboard and Settings route state updates PanelNav groups, BarNav tabs, heading, basePath, currentUrl, and navStyle as one coordinated change.",
+            "The overflow trigger automatically retains the shared surface-open wash through menu exit, separately from the selected route."
           ],
           "responsiveBehavior": [
             "Keep the BarNav region present so shell height and main-content origin remain stable across routes.",
@@ -1204,6 +1205,10 @@
             {
               "label": "Application shell composition",
               "path": "agent/patterns/application-shell/pattern.agent.json"
+            },
+            {
+              "label": "Surface ownership and trigger state",
+              "path": "src/docs/SurfaceOwnership.mdx"
             }
           ]
         },
@@ -1337,7 +1342,8 @@
             "expanded renders the larger heading, optional description, inset divider, and a full-width caption breadcrumb row above the title. The breadcrumb begins after 32px top padding; the following title and right-side actions share one top alignment. Compact renders 48px chrome with the existing icon Back action; constrained uses compact chrome and moves an auto-collapse primary action into overflow.",
             "The one visible ordered action collapses by default in constrained presentation. Use never for an exceptional action whose hierarchy must remain visible; explicit overflow actions never leave the shared menu.",
             "showDivider=false removes the bottom divider when the surrounding page composition supplies the boundary; showCompactDivider can independently restore or remove that boundary in compact and constrained variants.",
-            "placement=shell-bar is reserved for ShellApp panel section navigation. It remains compact, omits description and breadcrumb presentation, and preserves applicable Back, section, primary, and overflow controls."
+            "placement=shell-bar is reserved for ShellApp panel section navigation. It remains compact, omits description and breadcrumb presentation, and preserves applicable Back, section, primary, and overflow controls.",
+            "Section, action, split-menu, and overflow triggers automatically retain the shared surface-open wash through exit. The expanded header presentation is layout, not surface ownership, and does not itself acquire a pressed wash."
           ],
           "responsiveBehavior": [
             "BarTitle does not observe viewport, shell, scroll, or container state. Its owner selects an explicit variant.",
@@ -1374,6 +1380,10 @@
             {
               "label": "Cross-browser shell-page and header coverage",
               "path": "tests/e2e/bar-title.spec.ts"
+            },
+            {
+              "label": "Surface ownership and trigger state",
+              "path": "src/docs/SurfaceOwnership.mdx"
             }
           ]
         },
@@ -1857,10 +1867,11 @@
             "Physical press scaling is on by default. Disable it only when an owning composite must keep child or background geometry fixed; hover and pressed interaction washes remain available.",
             "Visible labels are emphasized by default. Set labelEmphasis to false when a composed surface deliberately needs the button label to match adjacent regular-weight control labels; this does not change the action hierarchy, foreground, icon, or interaction states.",
             "ButtonFilled has no active, pressed, or selected state; a filled action is a command, not a toggle or a persistent selection.",
-            "An open popup is a transient pressed state instead. While expanded is true the pressed wash is held for the popup's complete rendered lifecycle and survives hover, so the trigger reads as held open without introducing a selected treatment.",
+            "An open popup is a transient pressed state instead. While surfaceOpen is true the pressed wash is held for the popup's complete rendered lifecycle and survives hover, so the trigger reads as held open without introducing a selected treatment.",
             "hasMenu supports only the label and icon-label variants. The chevron is what communicates that a menu will open, so an icon-only filled menu button would leave the affordance unstated.",
             "Split mode supports label, icon, and icon-label primary segments. The primary segment emits dsClick and the appended menu segment emits dsMenuClick.",
-            "Split mode keeps both segments flush and uses a tertiary on-background separator. Rounded changes the shared outer radius without separating the segments."
+            "Split mode keeps both segments flush and uses a tertiary on-background separator. Rounded changes the shared outer radius without separating the segments.",
+            "Use surfaceOpen to identify this command as the owner of a visible menu, picker, or panel, even when that surface is distant. Keep the pressed wash through exit motion without adding selected styling or sustained physical scaling. Inline expansion and completed commands do not acquire this treatment."
           ],
           "responsiveBehavior": [
             "Use fill width only when the parent layout calls for a full-width action, commonly on narrow form layouts."
@@ -1880,6 +1891,10 @@
             {
               "label": "Storybook examples",
               "path": "src/wc/components/ButtonFilled/ButtonFilled.stories.ts"
+            },
+            {
+              "label": "Surface ownership and trigger state",
+              "path": "src/docs/SurfaceOwnership.mdx"
             }
           ]
         },
@@ -1966,6 +1981,10 @@
           },
           "split": {
             "type": "boolean",
+            "required": false
+          },
+          "surfaceOpen": {
+            "type": "boolean | undefined",
             "required": false
           },
           "type": {
@@ -2067,7 +2086,7 @@
           "accessibility": [
             "Provide an explicit accessible name for every icon-only action.",
             "In split mode, provide menuAriaLabel for the appended ChevronDown segment, pass controls with the Menu id, and synchronize expanded with the Menu open state.",
-            "Set hasMenu when the button triggers a Menu; it implies aria-haspopup of menu. Pass controls with the Menu id and expanded from the same open state given to Menu. Expanded popup triggers hold only the pressed wash while open, without changing their resting foreground; expanded disclosure controls without popup semantics retain the normal resting appearance.",
+            "Set hasMenu when the button triggers a Menu; it implies aria-haspopup of menu. Pass controls with the Menu id and expanded from the same open state given to Menu. Surface-open popup triggers hold only the pressed wash while rendered, without changing their resting foreground; expanded disclosure controls without popup semantics retain the normal resting appearance.",
             "Give an icon-only menu button an accessible name that states the role, such as More options or Customize table, because no visible label or chevron carries it.",
             "Use haspopup directly for a non-menu popup such as a listbox or dialog; those cases get no chevron.",
             "Use pressed only for a genuine toggle button; it supplies aria-pressed and dsChange intent. Use isActive only for owner-controlled visual emphasis inside a composite whose selection semantics live on the owner.",
@@ -2092,9 +2111,10 @@
             "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width.",
             "hasMenu covers two distinct menu-button shapes and the variant selects between them. With label or icon-label the action has a menu, and a trailing chevron carries the affordance. With icon the button is a menu and no chevron is added.",
             "Because the icon-only shape has no chevron, its glyph must convey the menu on its own. Use Ellipses for a generic more-options or overflow control. Use a specific icon when the menu has a named purpose, such as Table for Customize table.",
-            "An open popup is a transient pressed state rather than a selected one. While expanded is true and haspopup or hasMenu identifies a popup, the pressed wash is held for the popup's complete rendered lifecycle and survives hover without promoting foreground or selected fill, including when chrome opts out of selected fills with activeFill set to false. Expanded disclosure buttons without popup semantics remain visually neutral.",
+            "An open popup is a transient pressed state rather than a selected one. While surfaceOpen is true, the pressed wash is held for the popup's complete rendered lifecycle and survives hover without promoting foreground or selected fill, including when chrome opts out of selected fills with activeFill set to false. Expanded disclosure buttons without popup semantics remain visually neutral.",
             "Split mode supports label, icon, and icon-label primary segments. The primary segment emits dsClick and the appended menu segment emits dsMenuClick.",
-            "Split mode keeps both segments flush and uses a tertiary surface-aware separator. Bordered mode also preserves the shared outer border; borderless mode limits the separator to the content line height."
+            "Split mode keeps both segments flush and uses a tertiary surface-aware separator. Bordered mode also preserves the shared outer border; borderless mode limits the separator to the content line height.",
+            "Use surfaceOpen to identify the owner of a visible menu, picker, or panel, even when it is distant. Preserve it through exit motion independently of expanded semantics, pressed toggles, and isActive selection. It preserves resting foreground and does not hold physical scaling. Inline expansion and last-click history do not acquire this treatment."
           ],
           "responsiveBehavior": [
             "The consuming layout decides when an icon-label action becomes icon-only and must provide an explicit accessible name after changing variants. Table caption Customize is one such layout: below 900px it uses the icon shape while keeping the same neutral resting foreground regardless of the controlled column configuration.",
@@ -2117,6 +2137,10 @@
             {
               "label": "Storybook examples",
               "path": "src/wc/components/ButtonUnfilled/ButtonUnfilled.stories.ts"
+            },
+            {
+              "label": "Surface ownership and trigger state",
+              "path": "src/docs/SurfaceOwnership.mdx"
             }
           ]
         },
@@ -2219,6 +2243,10 @@
           },
           "split": {
             "type": "boolean",
+            "required": false
+          },
+          "surfaceOpen": {
+            "type": "boolean | undefined",
             "required": false
           },
           "type": {
@@ -4268,7 +4296,8 @@
             "Range selection applies the first date immediately as a one-day range; while an end is pending, that selected start retains its bold treatment and hovering or focusing another day paints the rest of the provisional inclusive span faint without emitting a value. A second activation completes an ordered inclusive range and gives both edges the bold treatment. A new activation after completion starts a replacement range.",
             "Selection applies immediately and does not close the popup.",
             "Changing category replaces the option-pane subtree so checkbox and other option visuals mount in their new state instead of transitioning from the previous category's row state.",
-            "The trigger reports how many filter categories have selections. footerLayout=summary adds a full-width selected-count footer only while values are selected; footerLayout=categories-clear always reserves the category-pane footer height while keeping its inactive divider hidden, then reveals the divider and only its left-aligned Clear action while values are selected."
+            "The trigger reports how many filter categories have selections. footerLayout=summary adds a full-width selected-count footer only while values are selected; footerLayout=categories-clear always reserves the category-pane footer height while keeping its inactive divider hidden, then reveals the divider and only its left-aligned Clear action while values are selected.",
+            "The built-in trigger derives the shared surface-open wash from the rendered popup lifecycle, including closing. For an external trigger, the application owns that relationship and retains the wash until dsAfterClose; selected filter values remain independent."
           ],
           "responsiveBehavior": [
             "The popup defaults to the large menu-width token and clamps to the nearest data-ds-overlay-boundary rectangle or the viewport fallback.",
@@ -4291,6 +4320,10 @@
             {
               "label": "Storybook example",
               "path": "src/wc/components/FilterMenu/FilterMenu.stories.ts"
+            },
+            {
+              "label": "Surface ownership and trigger state",
+              "path": "src/docs/SurfaceOwnership.mdx"
             }
           ]
         },
@@ -6091,7 +6124,8 @@
             "Dividers group menu items but never participate in previous or next resolution.",
             "The anchored local-view menu retains its neighboring-direction hints; the primary-page sheet uses an unfilled perimeter trigger without hints.",
             "A sheet trigger can combine stable page identity and the current local view, separated by a decorative middle dot. The whole control opens only the supplied local destinations; long page names truncate before crowding out the active view.",
-            "Sheet selection emits navigation intent immediately while exit motion runs independently, so the controlled title can update without waiting for dismissal. Removing the owner or hiding its header closes the top layer without leaving the application blocked."
+            "Sheet selection emits navigation intent immediately while exit motion runs independently, so the controlled title can update without waiting for dismissal. Removing the owner or hiding its header closes the top layer without leaving the application blocked.",
+            "The trigger automatically retains the shared surface-open pressed wash through menu or sheet exit. Selecting a destination remains separate from owning the open surface."
           ],
           "responsiveBehavior": [
             "Use only in the dedicated mobile header presentation."
@@ -6100,6 +6134,10 @@
             {
               "label": "Storybook",
               "path": "src/wc/components/MobileSectionSwitcher/MobileSectionSwitcher.stories.ts"
+            },
+            {
+              "label": "Surface ownership and trigger state",
+              "path": "src/docs/SurfaceOwnership.mdx"
             }
           ]
         },
@@ -6693,9 +6731,10 @@
             "Dashboard presents day-to-day operational destinations; Settings presents administrative and configuration destinations.",
             "The standard footer switches the entire destination collection and navStyle between Dashboard and Settings and exposes the user/account entry.",
             "The host owns the external user menu opened from dsNavUserAction.",
-            "While the external user menu is open or closing, accountMenuExpanded keeps its trigger visibly pressed without applying selected-destination foreground treatment in either expanded or collapsed presentation.",
+            "While the external user menu is open or closing, accountMenuSurfaceOpen keeps its trigger visibly pressed without applying selected-destination foreground treatment in either expanded or collapsed presentation.",
             "Item and header controls inherit the shared md control radius while local shell geometry continues to own collapsed layout and footer animation positioning.",
-            "On desktop, allow user-controlled expand and collapse and persist the preference with storageKey when cross-session persistence is appropriate."
+            "On desktop, allow user-controlled expand and collapse and persist the preference with storageKey when cross-session persistence is appropriate.",
+            "Flyout triggers automatically hold the shared surface-open wash through exit; expanded inline branches do not. For the external account surface, the application supplies accountMenuSurfaceOpen for its rendered lifetime and keeps accountMenuExpanded tied to disclosure semantics."
           ],
           "responsiveBehavior": [
             "At 1200px and wider, default to expanded, allow the user to expand or collapse, and restore the locally persisted desktop preference when available.",
@@ -6733,6 +6772,10 @@
             {
               "label": "Application shell composition",
               "path": "agent/patterns/application-shell/pattern.agent.json"
+            },
+            {
+              "label": "Surface ownership and trigger state",
+              "path": "src/docs/SurfaceOwnership.mdx"
             }
           ]
         },
@@ -6743,6 +6786,10 @@
           },
           "accountMenuExpanded": {
             "type": "boolean",
+            "required": false
+          },
+          "accountMenuSurfaceOpen": {
+            "type": "boolean | undefined",
             "required": false
           },
           "activeChildId": {
@@ -7043,7 +7090,8 @@
             "Header chrome text is not selectable; actions remain keyboard focusable and interactive.",
             "Adjacent trailing actions keep the shared 4px control gap in drawer and fullscreen presentations.",
             "When fullscreen and overflow actions appear together, author fullscreen before overflow so Ellipses remains the rightmost action.",
-            "PanelTools supplies application-owned actions and relays their ids through its shared dsHeaderAction event."
+            "PanelTools supplies application-owned actions and relays their ids through its shared dsHeaderAction event.",
+            "Application-owned action surfaces carry surfaceOpen independently from expanded disclosure and pressed toggle state. Retain surfaceOpen until the associated surface completes closing; the header forwards this relationship without owning the menu or panel."
           ],
           "responsiveBehavior": [
             "The title truncates between optional leading navigation and trailing action zones."
@@ -7052,6 +7100,10 @@
             {
               "label": "Standalone examples",
               "path": "src/wc/components/PanelToolHeader/PanelToolHeader.stories.ts"
+            },
+            {
+              "label": "Surface ownership and trigger state",
+              "path": "src/docs/SurfaceOwnership.mdx"
             }
           ]
         },
@@ -7082,6 +7134,10 @@
           },
           "menuExpanded": {
             "type": "boolean",
+            "required": false
+          },
+          "menuSurfaceOpen": {
+            "type": "boolean | undefined",
             "required": false
           },
           "menuTriggerId": {
@@ -7168,7 +7224,8 @@
             "The search icon stays foreground-secondary at rest, hover, focus, active, and while the query is filled.",
             "The row and control surface remain transparent so the ShellApp chrome wash is visible behind them.",
             "The row divider remains the same tertiary 1px boundary while the input is focused because it belongs to the 48px container rather than the input control.",
-            "With filtering enabled, the md search control, decorative vertical divider, and borderless md Filter action are separated by 8px; filterActive promotes only the trigger foreground without adding a selected fill."
+            "With filtering enabled, the md search control, decorative vertical divider, and borderless md Filter action are separated by 8px; filterActive promotes only the trigger foreground without adding a selected fill.",
+            "Applied filters and an open filter surface are independent states. Use filterSurfaceOpen through the external surface exit while filterExpanded describes disclosure and filterActive describes applied values."
           ],
           "responsiveBehavior": [
             "The row fills the available drawer or fullscreen width, allows its search region to shrink inside a 300px drawer without pushing the filter trigger under the tool rail, and does not reduce its control below md density."
@@ -7191,6 +7248,10 @@
             {
               "label": "Storybook examples",
               "path": "src/wc/components/PanelToolSearch/PanelToolSearch.stories.ts"
+            },
+            {
+              "label": "Surface ownership and trigger state",
+              "path": "src/docs/SurfaceOwnership.mdx"
             }
           ]
         },
@@ -7217,6 +7278,10 @@
           },
           "filterExpanded": {
             "type": "boolean",
+            "required": false
+          },
+          "filterSurfaceOpen": {
+            "type": "boolean | undefined",
             "required": false
           },
           "filterTriggerId": {
@@ -7366,7 +7431,8 @@
             "The application owns slotted tool products and data while PanelTools owns rail ordering, drawer selection, open state, motion, and shell events.",
             "Opening and closing clip an already-rendered fixed-width surface. Header and tool content remain fully opaque and retained during width motion; transition completion is accepted only at the measured terminal clip width, after which the closed surface becomes inert and paint-skipped.",
             "Entering and exiting fullscreen snaps without borrowing the drawer open or close animation.",
-            "When fullscreenHeaderMode is split, PanelTools suppresses only its fullscreen shared header. The application renders exactly two canonical ds-panel-tool-header instances: a tool-title/list-actions header over the 300px history pane and a chat-title/Exit-fullscreen/chat-actions header over the detail pane. The detail header omits Back because the list remains visible."
+            "When fullscreenHeaderMode is split, PanelTools suppresses only its fullscreen shared header. The application renders exactly two canonical ds-panel-tool-header instances: a tool-title/list-actions header over the 300px history pane and a chat-title/Exit-fullscreen/chat-actions header over the detail pane. The detail header omits Back because the list remains visible.",
+            "Header action surfaceOpen identifies the owner of an external menu or panel without turning that action into a selected tool or toggle. The application owns this surface lifecycle."
           ],
           "responsiveBehavior": [
             "The open drawer reduces main-content width and uses --dimension-panel-width-xs (300px) on every supported desktop and tablet viewport.",
@@ -7405,6 +7471,10 @@
             {
               "label": "Application shell composition",
               "path": "agent/patterns/application-shell/pattern.agent.json"
+            },
+            {
+              "label": "Surface ownership and trigger state",
+              "path": "src/docs/SurfaceOwnership.mdx"
             }
           ]
         },
@@ -8012,7 +8082,7 @@
             "Create sections only for categories that are meaningful to customers, not merely to break a long list into arbitrary chunks.",
             "When any option supplies subtext, every row uses the same subtext structure and missing values render an em dash. Subtext should disambiguate or add decision-helpful information.",
             "Option labels and the selected trigger label stay on one line and truncate when constrained. Option subtext may wrap to at most two lines.",
-            "Use an option action only for a contextual menu about that user-managed option. The fixed ellipsis action appears on hover, keyboard activity, focus, and touch; expanded keeps it visible while its controlled menu is open. Activating it emits dsOptionAction without selecting the option or closing the Select popup.",
+            "Use an option action only for a contextual menu about that user-managed option. The fixed ellipsis action appears on hover, keyboard activity, focus, and touch; surfaceOpen keeps it visible while its controlled menu is rendered. Activating it emits dsOptionAction without selecting the option or closing the Select popup.",
             "Use option subtextActions for a compact set of immediate actions that belong to one option. They render beneath only that option's label using the standard supporting-text inset and rhythm, use action or negative semantic color, and emit dsOptionSubtextAction without selecting the option or closing the popup. Unlike descriptive subtext, they do not reserve a blank supporting line on neighboring options.",
             "The optional prefix icon and trailing indicator always use the parent surface's secondary foreground color, including when a selected value promotes the label to primary. When collapseLabel compact icon-only chrome is active, a selected value promotes the prefix icon to primary instead. The default down indicator communicates disclosure; up-down is reserved for compact value steppers such as pagination page size.",
             "While the popup is open, the trigger holds the pressed interaction wash without changing its resting foreground or selected-value treatment.",
@@ -8026,7 +8096,8 @@
             "The error trigger uses a 1.5px bold-negative inset stroke so invalid state remains distinguishable from the normal 1px border without changing control geometry. Set hasBorder to false for chrome where the trigger must remain borderless at rest, when selected or focused, and when invalid; error semantics and supporting copy remain available.",
             "An initially empty option set is not an expected Select use case. The no-results state describes a search with no matches, not a source with no choices.",
             "Use options for a flat list or sections for grouped choices; when sections are present they take precedence.",
-            "The background prop describes the actual parent surface and uses the same surface set as ButtonUnfilled."
+            "The background prop describes the actual parent surface and uses the same surface set as ButtonUnfilled.",
+            "Select owns its associated popup and automatically retains the shared surface-open pressed wash. Consumers do not synchronize a second flag for the built-in picker. Contextual option actions are externally owned: their surfaceOpen state keeps the action visible through the associated menu exit, independently of the selected option."
           ],
           "responsiveBehavior": [
             "Use width fill for form fields and width hug for compact filter bars. Override those defaults only when the owning layout has a clear constraint.",
@@ -8057,6 +8128,10 @@
             {
               "label": "Selection patterns",
               "path": "src/docs/SelectionPatterns.mdx"
+            },
+            {
+              "label": "Surface ownership and trigger state",
+              "path": "src/docs/SurfaceOwnership.mdx"
             }
           ]
         },
@@ -8347,7 +8422,8 @@
             "Managed mobile Back and page-action controls use the same large touch density as the mobile navigation header without increasing the shared header height.",
             "Managed ShellApp keeps the selected desktop section-navigation presentation and ShellPage present and owns page header stickiness and the content scroller.",
             "Route-owned pageChrome independently selects ShellPage contentInset, page-header seams, scroll compaction, expanded and compact header-divider visibility, and contentSurface. ShellApp forwards them while resolving whether desktop title geometry is page-local or shell-bar-owned.",
-            "The application filters unauthorized destinations, sections, and tools before passing them into shell components."
+            "The application filters unauthorized destinations, sections, and tools before passing them into shell components.",
+            "Application-owned header actions and the account trigger retain surface ownership across shell presentations. Supply surfaceOpen on header actions and accountMenuSurfaceOpen on navigation for rendered surface lifetimes; keep disclosure and selected-route state separate."
           ],
           "responsiveBehavior": [
             "ShellApp owns the fixed system breakpoints and resolves desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
@@ -8406,6 +8482,10 @@
             {
               "label": "Application shell contract",
               "path": "agent/patterns/application-shell/pattern.agent.json"
+            },
+            {
+              "label": "Surface ownership and trigger state",
+              "path": "src/docs/SurfaceOwnership.mdx"
             }
           ]
         },
@@ -8770,7 +8850,8 @@
             "Items with mobileDestination inbox map to one mobile Inbox destination while retaining the actual active tool id; the canonical recipe exposes Activity directly and keeps Inbox grouping opt-in.",
             "Stable tool ids own named slots; label, order, rail placement, shortcut, and mobile destination are explicit item data.",
             "Application-owned rail accessories are forwarded unchanged to PanelTools on desktop and tablet and remain independent from activeTool and open.",
-            "Switching responsive mode must not recreate application-owned slotted product elements."
+            "Switching responsive mode must not recreate application-owned slotted product elements.",
+            "Header actions forward application-owned surfaceOpen through each presentation, independently of expanded semantics and pressed toggles."
           ],
           "responsiveBehavior": [
             "Desktop and tablet compose PanelTools-compatible rail and drawer chrome.",
@@ -8796,6 +8877,10 @@
             {
               "label": "PanelTools contract",
               "path": "src/wc/components/PanelTools/PanelTools.agent.json"
+            },
+            {
+              "label": "Surface ownership and trigger state",
+              "path": "src/docs/SurfaceOwnership.mdx"
             }
           ]
         },
@@ -9769,7 +9854,8 @@
             "Row selection owns the single sticky start lane. One explicitly sized application column can own the sticky end lane, or the start lane when selection is absent. Each sticky boundary owns one fixed divider and a row-clipped directional shadow that paints into the adjacent scrolling columns only while more inline content remains beyond that edge.",
             "Cells accept scalar content, standard primary-and-secondary or dual-primary text primitives, declarative Tag, wrapping multiple-Tag content, icon-only, icon-and-text, 16:9 Image, or ButtonUnfilled Action content, or explicit Empty and Blank absence values. Text objects may declare an optional href (and target) on the primary track only; the table renders a native anchor with the shared brand text-action treatment when the URL is safe, and leaves scalars unlinked. Standard secondary copy defaults to the secondary foreground and may declare a semantic Text color when the application data carries intent; an optional tertiary track uses the same subdued body-small recipe as secondary. Secondary and tertiary may also be a short list of colorable runs, rendered on one line with the table's middle-dot separator. A run may supply help to add the shared dotted underline and a bottom-start Tooltip when compact visible copy summarizes supplementary details; explicit line breaks create a compact unbulleted list without obscuring the current cell's earlier tracks. Dual-primary copy keeps both tracks primary unless explicitly colored and does not gain a tertiary track. Body data cells share 8px outer padding; header and group rows keep their own geometry. Text tracks, including Empty, keep 4px inline padding so copy lines up with column-header labels; Tag and icon-only tracks stay on the 8px cell chrome alone. Icon-and-text cells (`kind: 'icon-text'`) place one md prefix icon beside the same copy stack as a text cell. The icon slot takes 2px padding on every side, then a 2px flex gap before the copy; text-track padding stays on the copy. Omit iconLabel when the glyph is decorative. 20px content (body-medium text, md icon, and the row checkbox) sits in a 24px track so it stays optically aligned with 24px Tag and Action content. Single-track text, selection, tag-only, icon-only, icon-and-text, Action, Empty, Blank, and 1-track Image cells resolve a 40px base contract while two-track cells grow to 64px and three-track cells grow to 88px. Every later track adds 24px, so four tracks resolve to 112px, five to 136px, and the sequence may continue. Tracks stack with no gap. Wrapping primary on a 1-track cell uses that same rhythm: two wrapped lines share the 64px row and three wrapped lines share the 88px row. Wrapping secondary keeps primary on the first track and consumes later tracks: two secondary lines share the 88px row and three secondary lines share a 112px fourth track. Keep the same track count in every row of a table or group when those rows should share one height. Tag cells use the inset Tag recipe: md double-inset is a 24px control for tag-only and tag-with-text, while text-with-tag uses sm single-inset at 20px so the second-track pill sits in the same 24px lane. Multiple-Tag cells use `kind: 'tags'`, a positive `tracks` count, and small single-inset Tags that wrap naturally at the column edge. Each wrap line is a 24px track with no stack gap, matching text. The tallest cell establishes the native row height, so all sibling cells match even at four, five, or more tracks; virtual tables use the declared count as the initial estimate and measure responsive wrapping after paint. Action cells primarily use an icon-only Ellipses treatment, render a 24px small ButtonUnfilled, default to unbordered, and emit row, column, and action identities through dsCellAction. When an action cell declares items, that Ellipses trigger opens the shared ds-menu for commands, dividers, inactive rows, and destructive rows instead of emitting on click; choosing a command emits dsCellAction with that item's actionId. Omit items to keep a single-shot control. Image cells declare tracks 1, 2, or 3 so the 16:9 bordered preview fills that body-row content box (cell height minus 8px padding) and the column hugs the resulting width; omit tracks for the 1-track recipe, and keep image tracks aligned with the other cells in the table or group. Image cells fall back to an accessible placeholder when no source is supplied. Empty means the data applies but has no value and renders an em dash with localized assistive text; Blank means the data is not applicable and renders no content. Nullish values remain backward-compatible Empty values. Stable type, variant, and track-count hooks keep every cell family independently styleable.",
             "Score-and-text cells (`kind: score-text`) place the small 24px safety score at the top-right of the cell while the same one-, two-, or three-track copy stack as a standard text cell fills from the start edge. The score is top-aligned with the first text track, adds no inner padding, and defaults its accessible name prefix to Safety score. Score-and-text loading geometry uses the matching small score skeleton and declared copy tracks.",
-            "The public @ds-mo/ui/table.css export is the authoritative zero-specificity visual recipe. Override its --ds-table-* properties or target its stable element classes for product-specific styling."
+            "The public @ds-mo/ui/table.css export is the authoritative zero-specificity visual recipe. Override its --ds-table-* properties or target its stable element classes for product-specific styling.",
+            "Use surfaceOpenRowId to identify the interactive row associated with a visible detail panel or other contextual surface. The application owns opening, same-row toggling, switching records, and closing; retain the identity through exit motion, then clear it. Move it when panel navigation changes the displayed record. This pressed wash spans sticky and scrolling cells, follows stable row identity through virtualization, and never checks a checkbox or changes selectedRowIds. Group expansion remains an inline disclosure."
           ],
           "responsiveBehavior": [
             "The table keeps native semantics at narrow widths and scrolls horizontally instead of transforming into cards.",
@@ -9812,6 +9898,10 @@
             {
               "label": "Menu trigger composition",
               "path": "agent/patterns/menu-trigger/pattern.agent.json"
+            },
+            {
+              "label": "Surface ownership and trigger state",
+              "path": "src/docs/SurfaceOwnership.mdx"
             }
           ]
         },
@@ -10038,6 +10128,10 @@
           },
           "stickyHeader": {
             "type": "boolean",
+            "required": false
+          },
+          "surfaceOpenRowId": {
+            "type": "string | undefined",
             "required": false
           },
           "totalCount": {
@@ -10352,7 +10446,8 @@
           "states": [
             "options and grouping are controlled. A data option may supply product-owned orderOptions; otherwise Order defaults to Ascending and Descending. dsGroupChange reports a complete TableGroupingState and dsClear requests null grouping without mutating either input.",
             "Selecting a new data point starts at its first custom order option, or ascending when it has no custom order options. Re-selecting the active data point preserves its complete order state.",
-            "Selecting a data point or direction applies immediately and leaves the dialog open so the other pane can be changed."
+            "Selecting a data point or direction applies immediately and leaves the dialog open so the other pane can be changed.",
+            "The grouping picker automatically holds the shared surface-open wash through exit. Opening this picker is separate from expanding an inline table group."
           ],
           "responsiveBehavior": [
             "Use in the trailing region of ds-table-toolbar.",
@@ -10378,6 +10473,10 @@
             {
               "label": "Toolbar composition owner",
               "path": "src/wc/components/TableToolbar/TableToolbar.agent.json"
+            },
+            {
+              "label": "Surface ownership and trigger state",
+              "path": "src/docs/SurfaceOwnership.mdx"
             }
           ]
         },
@@ -10481,7 +10580,8 @@
           "states": [
             "views, value, and dirty are controlled. Dirty state is presented only for a selected custom view; the default template never shows the trigger dot or save/discard actions even if dirty is supplied. Selection, create, save, discard, rename, and remove events communicate intent and never mutate application records.",
             "The component owns only transient interaction state: the contextual menu, naming dialog, draft name, duplicate-name validation, and focus restoration.",
-            "The default view is a non-editable template. Application-owned custom views appear in a separate section with Rename and Remove actions. New view opens the naming dialog. When an editable selected view is dirty, that view row shows Save and negative Discard supporting actions while the footer remains dedicated to New view. The application decides which table state to capture, restore, and persist."
+            "The default view is a non-editable template. Application-owned custom views appear in a separate section with Rename and Remove actions. New view opens the naming dialog. When an editable selected view is dirty, that view row shows Save and negative Discard supporting actions while the footer remains dedicated to New view. The application decides which table state to capture, restore, and persist.",
+            "The built-in picker and contextual option menu each retain their own surface-open treatment. Opening a view menu does not select that view."
           ],
           "responsiveBehavior": [
             "The control remains a single toolbar item and relies on Select, Menu, and Modal collision and viewport behavior. Its trigger hugs short view names and is capped at the compact menu-width token so long names truncate while the dirty dot stays visible. Its choice popup keeps that same token as the minimum width.",
@@ -10506,6 +10606,10 @@
             {
               "label": "Toolbar composition owner",
               "path": "src/wc/components/TableToolbar/TableToolbar.agent.json"
+            },
+            {
+              "label": "Surface ownership and trigger state",
+              "path": "src/docs/SurfaceOwnership.mdx"
             }
           ]
         },
@@ -10636,7 +10740,8 @@
             "Selected scopes render as neutral md Chips using the double-inset recipe so they remain 24px high inside the 32px md search control and each can be removed directly.",
             "Backspace edits a non-empty field-picker query, then closes the open slash listbox when that query is empty. When the table query is empty and the listbox is already closed, the next Backspace removes the last selected field. Ordinary Backspace edits table query text when the listbox is closed.",
             "Duplicate, blank, and unknown field identities are ignored for presentation. Selected fields preserve the consumer's order.",
-            "Inactive search leaves the tab order, closes the field listbox, and does not emit query or field changes."
+            "Inactive search leaves the tab order, closes the field listbox, and does not emit query or field changes.",
+            "The field-picker action holds the shared surface-open wash while its listbox is visible; chosen search fields remain independent."
           ],
           "responsiveBehavior": [
             "The control fills the available inline size supplied by the table toolbar search slot. Selected Chips and the editable query share one horizontal editor lane so the md control does not grow vertically.",
@@ -10663,6 +10768,10 @@
             {
               "label": "Toolbar composition owner",
               "path": "src/wc/components/TableToolbar/TableToolbar.agent.json"
+            },
+            {
+              "label": "Surface ownership and trigger state",
+              "path": "src/docs/SurfaceOwnership.mdx"
             }
           ]
         },
@@ -10787,7 +10896,8 @@
             "columns and sort are controlled. dsSortChange reports the next TableSortState and never mutates those inputs. The same sort object is what column headers emit through the table.",
             "Selecting a different data field keeps the current direction, or starts ascending when no sort exists. Selecting a direction applies it to the current field, or to the first sortable field when no sort exists. Selecting the already-active field or direction is a no-op and does not toggle the way a header click does.",
             "The trigger stays Sort in regular-weight resting secondary chrome. Field and direction selection live in the menu and on column headers, so the trigger never uses active primary emphasis. It keeps pressed interaction paint without physically scaling inside the stable table caption row.",
-            "Compound sortable headers contribute one Data row per segment. Action columns never appear."
+            "Compound sortable headers contribute one Data row per segment. Action columns never appear.",
+            "The trigger automatically holds the shared surface-open wash through menu exit while the selected sort remains independently controlled."
           ],
           "responsiveBehavior": [
             "Place the control in the trailing region of ds-table-toolbar with Filter and Group.",
@@ -10813,6 +10923,10 @@
             {
               "label": "Toolbar composition owner",
               "path": "src/wc/components/TableToolbar/TableToolbar.agent.json"
+            },
+            {
+              "label": "Surface ownership and trigger state",
+              "path": "src/docs/SurfaceOwnership.mdx"
             }
           ]
         },
@@ -11018,7 +11132,8 @@
             "isInset opts into reduced outer geometry only when Tag is nested inside a control of the same density. The default single inset removes 4px overall; insetDepth double removes 8px overall and falls back to single at xs to protect minimum icon geometry. Semantic styling, typography, icons, gaps, radius, and interaction remain unchanged.",
             "Labels stay on one line and truncate only when the owner supplies a maximum width.",
             "Omitted interactive renders static metadata with no focus, event, or suffix. Interactive adds the fixed ChevronUpDown suffix and emits dsClick without toggling expanded internally.",
-            "isInactive disables only the interactive button and applies the shared inactive treatment."
+            "isInactive disables only the interactive button and applies the shared inactive treatment.",
+            "Interactive tags use surfaceOpen for the associated menu lifecycle, including exit motion. This holds the shared pressed wash without changing the intent that describes the metadata value. Static tags never acquire surface ownership."
           ],
           "responsiveBehavior": [
             "The owner selects md, sm, or xs density to match its local layout and owns collection wrapping, overflow, and condensation. Use isInset only for same-density control nesting.",
@@ -11039,6 +11154,10 @@
             {
               "label": "Storybook examples",
               "path": "src/wc/components/Tag/Tag.stories.ts"
+            },
+            {
+              "label": "Surface ownership and trigger state",
+              "path": "src/docs/SurfaceOwnership.mdx"
             }
           ]
         },
@@ -11093,6 +11212,10 @@
           },
           "size": {
             "type": "TagSize",
+            "required": false
+          },
+          "surfaceOpen": {
+            "type": "boolean | undefined",
             "required": false
           }
         },

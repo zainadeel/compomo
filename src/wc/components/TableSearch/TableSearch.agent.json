@@ -38,7 +38,8 @@
     "Selected scopes render as neutral md Chips using the double-inset recipe so they remain 24px high inside the 32px md search control and each can be removed directly.",
     "Backspace edits a non-empty field-picker query, then closes the open slash listbox when that query is empty. When the table query is empty and the listbox is already closed, the next Backspace removes the last selected field. Ordinary Backspace edits table query text when the listbox is closed.",
     "Duplicate, blank, and unknown field identities are ignored for presentation. Selected fields preserve the consumer's order.",
-    "Inactive search leaves the tab order, closes the field listbox, and does not emit query or field changes."
+    "Inactive search leaves the tab order, closes the field listbox, and does not emit query or field changes.",
+    "The field-picker action holds the shared surface-open wash while its listbox is visible; chosen search fields remain independent."
   ],
   "responsiveBehavior": [
     "The control fills the available inline size supplied by the table toolbar search slot. Selected Chips and the editable query share one horizontal editor lane so the md control does not grow vertically.",
@@ -65,6 +66,10 @@
     {
       "label": "Toolbar composition owner",
       "path": "src/wc/components/TableToolbar/TableToolbar.agent.json"
+    },
+    {
+      "label": "Surface ownership and trigger state",
+      "path": "src/docs/SurfaceOwnership.mdx"
     }
   ]
 }

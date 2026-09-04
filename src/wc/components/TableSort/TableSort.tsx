@@ -38,6 +38,7 @@ export class TableSort {
   @Event({ bubbles: false }) dsSortChange!: EventEmitter<TableSortChangeDetail>;
 
   @State() private menuOpen = false;
+  @State() private menuSurfaceOpen = false;
   @State() private initialFocusVisible = false;
 
   private readonly componentId = `ds-table-sort-${++tableSortSeq}`;
@@ -71,6 +72,7 @@ export class TableSort {
             hasMenu={true}
             collapseLabel={true}
             expanded={this.menuOpen}
+            surfaceOpen={this.menuSurfaceOpen}
             controls={this.menuId}
             onDsClick={(event: CustomEvent<MouseEvent>) => {
               this.toggle(event.detail.detail === 0);
@@ -89,6 +91,9 @@ export class TableSort {
             initialFocusVisible={this.initialFocusVisible}
             sections={tableSortMenuSections(this.columns, this.sort)}
             onDsClose={() => this.close()}
+            onDsAfterClose={() => {
+              if (!this.menuOpen) this.menuSurfaceOpen = false;
+            }}
             onDsSelect={event => this.handleSelect(event.detail)}
           />
         )}
@@ -105,6 +110,7 @@ export class TableSort {
     if (this.menuOpen) return;
     this.initialFocusVisible = fromKeyboard;
     this.menuOpen = true;
+    this.menuSurfaceOpen = true;
   }
 
   private close(): void {

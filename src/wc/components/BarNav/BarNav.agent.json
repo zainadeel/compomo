@@ -42,9 +42,7 @@
     "component:ds-panel-nav",
     "component:ds-panel-tools"
   ],
-  "patterns": [
-    "pattern:application-shell"
-  ],
+  "patterns": ["pattern:application-shell"],
   "accessibility": [
     "Use concise localized labels for every route section.",
     "Keep section navigation keyboard accessible through BarNav's built-in horizontal roving focus and overflow menu.",
@@ -61,7 +59,8 @@
     "On non-tab detail routes, show the parent PanelNav destination label in BarNav while the detail-page title remains in page content.",
     "Dividers and groups visually organize peer route sections only and do not create hierarchy.",
     "The application filters unauthorized sections before passing tabs to BarNav.",
-    "Dashboard and Settings route state updates PanelNav groups, BarNav tabs, heading, basePath, currentUrl, and navStyle as one coordinated change."
+    "Dashboard and Settings route state updates PanelNav groups, BarNav tabs, heading, basePath, currentUrl, and navStyle as one coordinated change.",
+    "The overflow trigger automatically retains the shared surface-open wash through menu exit, separately from the selected route."
   ],
   "responsiveBehavior": [
     "Keep the BarNav region present so shell height and main-content origin remain stable across routes.",
@@ -94,6 +93,10 @@
     {
       "label": "Application shell composition",
       "path": "agent/patterns/application-shell/pattern.agent.json"
+    },
+    {
+      "label": "Surface ownership and trigger state",
+      "path": "src/docs/SurfaceOwnership.mdx"
     }
   ]
 }

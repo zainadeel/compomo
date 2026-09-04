@@ -117,6 +117,8 @@ export class BarTitle {
 
   @State() private sectionMenuOpen = false;
   @State() private openActionMenuId = '';
+  @State() private surfaceActionMenuId = '';
+  @State() private sectionSurfaceOpen = false;
   @State() private sectionMenuInitialFocusVisible = false;
   @State() private actionMenuInitialFocusVisible = false;
 
@@ -138,7 +140,10 @@ export class BarTitle {
 
   @Watch('sections')
   handleSectionsChange() {
-    if (!this.hasSectionSelector) this.closeSectionMenu();
+    if (!this.hasSectionSelector) {
+      this.closeSectionMenu();
+      this.sectionSurfaceOpen = false;
+    }
   }
 
   @Watch('actions')
@@ -147,6 +152,7 @@ export class BarTitle {
   handleActionsChange() {
     this.reportActionIdIssues();
     if (!this.availableActionMenuIds.has(this.openActionMenuId)) this.closeActionMenu();
+    if (!this.availableActionMenuIds.has(this.surfaceActionMenuId)) this.surfaceActionMenuId = '';
   }
 
   private reportActionIdIssues() {
@@ -293,6 +299,7 @@ export class BarTitle {
     this.sectionMenuInitialFocusVisible = event.detail === 0;
     this.openActionMenuId = '';
     this.sectionMenuOpen = !this.sectionMenuOpen;
+    if (this.sectionMenuOpen) this.sectionSurfaceOpen = true;
   };
 
   private closeSectionMenu = () => {
@@ -312,6 +319,15 @@ export class BarTitle {
     this.actionMenuInitialFocusVisible = event.detail === 0;
     this.sectionMenuOpen = false;
     this.openActionMenuId = this.openActionMenuId === id ? '' : id;
+    if (this.openActionMenuId) this.surfaceActionMenuId = this.openActionMenuId;
+  };
+
+  private finishActionMenuClose = (event: CustomEvent<void>) => {
+    const id = this.surfaceActionMenuId;
+    const domId = id === '__overflow' ? this.actionMenuId : this.actionMenuDomId(id);
+    if (this.openActionMenuId !== id && (event.target as HTMLElement).id === domId) {
+      this.surfaceActionMenuId = '';
+    }
   };
 
   private closeActionMenu = () => {
@@ -353,6 +369,7 @@ export class BarTitle {
           class={{
             'bar-title__section-trigger': true,
             'bar-title__section-trigger--expanded': this.sectionMenuOpen,
+            'ds-interaction-fill--surface-open': this.sectionSurfaceOpen,
             'ds-control--md': true,
             'ds-focus-ring-inset': true,
             'ds-interaction-fill': true,
@@ -410,6 +427,7 @@ export class BarTitle {
         menuAriaLabel: action.menuAriaLabel,
         controls: splitMenuId,
         expanded: this.openActionMenuId === action.id,
+        surfaceOpen: this.surfaceActionMenuId === action.id,
         size: 'md' as const,
         type: action.buttonType ?? 'button',
         isInactive: action.isInactive,
@@ -450,6 +468,7 @@ export class BarTitle {
       isLoading: action.isLoading,
       controls: menuId,
       expanded: menu ? this.openActionMenuId === action.id : undefined,
+      surfaceOpen: menu && this.surfaceActionMenuId === action.id,
       hasMenu: menu,
       onDsClick: (event: CustomEvent<MouseEvent>) => {
         if (menu) this.toggleActionMenu(action.id, event.detail);
@@ -500,6 +519,7 @@ export class BarTitle {
               haspopup="menu"
               controls={this.actionMenuId}
               expanded={this.openActionMenuId === '__overflow'}
+              surfaceOpen={this.surfaceActionMenuId === '__overflow'}
               onDsClick={(event: CustomEvent<MouseEvent>) =>
                 this.toggleActionMenu('__overflow', event.detail)
               }
@@ -528,6 +548,7 @@ export class BarTitle {
           initialFocusVisible={this.actionMenuInitialFocusVisible}
           sections={this.menuSectionsForAction(action)}
           onDsClose={this.closeActionMenu}
+          onDsAfterClose={this.finishActionMenuClose}
           onDsSelect={this.handleActionSelect}
         />,
       ];
@@ -643,6 +664,9 @@ export class BarTitle {
             initialFocusVisible={this.sectionMenuInitialFocusVisible}
             sections={this.sectionMenuSections}
             onDsClose={this.closeSectionMenu}
+            onDsAfterClose={() => {
+              if (!this.sectionMenuOpen) this.sectionSurfaceOpen = false;
+            }}
             onDsSelect={this.handleSectionSelect}
           />
         ) : null}
@@ -660,6 +684,7 @@ export class BarTitle {
             initialFocusVisible={this.actionMenuInitialFocusVisible}
             sections={this.actionMenuSections}
             onDsClose={this.closeActionMenu}
+            onDsAfterClose={this.finishActionMenuClose}
             onDsSelect={this.handleActionSelect}
           />
         ) : null}

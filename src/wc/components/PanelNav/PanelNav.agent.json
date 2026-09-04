@@ -68,9 +68,10 @@
     "Dashboard presents day-to-day operational destinations; Settings presents administrative and configuration destinations.",
     "The standard footer switches the entire destination collection and navStyle between Dashboard and Settings and exposes the user/account entry.",
     "The host owns the external user menu opened from dsNavUserAction.",
-    "While the external user menu is open or closing, accountMenuExpanded keeps its trigger visibly pressed without applying selected-destination foreground treatment in either expanded or collapsed presentation.",
+    "While the external user menu is open or closing, accountMenuSurfaceOpen keeps its trigger visibly pressed without applying selected-destination foreground treatment in either expanded or collapsed presentation.",
     "Item and header controls inherit the shared md control radius while local shell geometry continues to own collapsed layout and footer animation positioning.",
-    "On desktop, allow user-controlled expand and collapse and persist the preference with storageKey when cross-session persistence is appropriate."
+    "On desktop, allow user-controlled expand and collapse and persist the preference with storageKey when cross-session persistence is appropriate.",
+    "Flyout triggers automatically hold the shared surface-open wash through exit; expanded inline branches do not. For the external account surface, the application supplies accountMenuSurfaceOpen for its rendered lifetime and keeps accountMenuExpanded tied to disclosure semantics."
   ],
   "responsiveBehavior": [
     "At 1200px and wider, default to expanded, allow the user to expand or collapse, and restore the locally persisted desktop preference when available.",
@@ -108,6 +109,10 @@
     {
       "label": "Application shell composition",
       "path": "agent/patterns/application-shell/pattern.agent.json"
+    },
+    {
+      "label": "Surface ownership and trigger state",
+      "path": "src/docs/SurfaceOwnership.mdx"
     }
   ]
 }

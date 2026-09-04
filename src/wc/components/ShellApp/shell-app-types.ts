@@ -43,6 +43,8 @@ export interface ShellNavigationConfig {
   userName?: string;
   userInitial?: string;
   accountMenuExpanded?: boolean;
+  /** Associated account surface remains visible, including exit motion. */
+  accountMenuSurfaceOpen?: boolean;
   dashboardLabel?: string;
   settingsLabel?: string;
   accountLabel?: string;

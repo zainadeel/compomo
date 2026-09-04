@@ -11,6 +11,7 @@ export const BUTTON_STORY_SURFACE =
 
 type MenuTriggerElement = HTMLElement & {
   expanded: boolean;
+  surfaceOpen: boolean;
   setFocus: (segment?: 'primary' | 'menu') => void;
 };
 
@@ -33,12 +34,17 @@ export function wireButtonStoryMenuTriggers(root: Element | undefined) {
 
     const setOpen = (open: boolean) => {
       trigger.expanded = open;
+      if (open) trigger.surfaceOpen = true;
       menu.open = open;
     };
 
     trigger.addEventListener('dsClick', event => {
       menu.initialFocusVisible = (event as CustomEvent<MouseEvent>).detail.detail === 0;
       setOpen(!menu.open);
+    });
+    trigger.surfaceOpen = false;
+    menu.addEventListener('dsAfterClose', () => {
+      if (!menu.open) trigger.surfaceOpen = false;
     });
     menu.addEventListener('dsClose', () => setOpen(false));
     menu.addEventListener('dsSelect', () => {
@@ -61,6 +67,7 @@ export function wireButtonStorySplitTriggers(root: Element | undefined) {
 
     const setOpen = (open: boolean) => {
       trigger.expanded = open;
+      if (open) trigger.surfaceOpen = true;
       menu.anchor = trigger.querySelector<HTMLElement>('.ds-button-split__menu') ?? undefined;
       menu.open = open;
     };
@@ -68,6 +75,10 @@ export function wireButtonStorySplitTriggers(root: Element | undefined) {
     trigger.addEventListener('dsMenuClick', event => {
       menu.initialFocusVisible = (event as CustomEvent<MouseEvent>).detail.detail === 0;
       setOpen(!menu.open);
+    });
+    trigger.surfaceOpen = false;
+    menu.addEventListener('dsAfterClose', () => {
+      if (!menu.open) trigger.surfaceOpen = false;
     });
     menu.addEventListener('dsClose', () => setOpen(false));
     menu.addEventListener('dsSelect', () => {

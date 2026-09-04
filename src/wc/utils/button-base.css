@@ -66,14 +66,6 @@
   --ds-control-radius: var(--dimension-radius-half);
 }
 
-.ds-button--expanded {
-  --ds-interaction-hover: var(--ds-interaction-pressed);
-}
-
-.ds-button--expanded::after {
-  background: var(--ds-interaction-pressed);
-}
-
 .ds-button--bordered {
   --ds-interaction-border-width: var(--dimension-stroke-width-012);
 }

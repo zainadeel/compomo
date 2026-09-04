@@ -60,7 +60,8 @@
     "isInset opts into reduced outer geometry only when Tag is nested inside a control of the same density. The default single inset removes 4px overall; insetDepth double removes 8px overall and falls back to single at xs to protect minimum icon geometry. Semantic styling, typography, icons, gaps, radius, and interaction remain unchanged.",
     "Labels stay on one line and truncate only when the owner supplies a maximum width.",
     "Omitted interactive renders static metadata with no focus, event, or suffix. Interactive adds the fixed ChevronUpDown suffix and emits dsClick without toggling expanded internally.",
-    "isInactive disables only the interactive button and applies the shared inactive treatment."
+    "isInactive disables only the interactive button and applies the shared inactive treatment.",
+    "Interactive tags use surfaceOpen for the associated menu lifecycle, including exit motion. This holds the shared pressed wash without changing the intent that describes the metadata value. Static tags never acquire surface ownership."
   ],
   "responsiveBehavior": [
     "The owner selects md, sm, or xs density to match its local layout and owns collection wrapping, overflow, and condensation. Use isInset only for same-density control nesting.",
@@ -81,6 +82,10 @@
     {
       "label": "Storybook examples",
       "path": "src/wc/components/Tag/Tag.stories.ts"
+    },
+    {
+      "label": "Surface ownership and trigger state",
+      "path": "src/docs/SurfaceOwnership.mdx"
     }
   ]
 }

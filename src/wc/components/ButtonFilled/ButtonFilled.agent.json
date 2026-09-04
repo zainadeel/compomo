@@ -66,10 +66,11 @@
     "Physical press scaling is on by default. Disable it only when an owning composite must keep child or background geometry fixed; hover and pressed interaction washes remain available.",
     "Visible labels are emphasized by default. Set labelEmphasis to false when a composed surface deliberately needs the button label to match adjacent regular-weight control labels; this does not change the action hierarchy, foreground, icon, or interaction states.",
     "ButtonFilled has no active, pressed, or selected state; a filled action is a command, not a toggle or a persistent selection.",
-    "An open popup is a transient pressed state instead. While expanded is true the pressed wash is held for the popup's complete rendered lifecycle and survives hover, so the trigger reads as held open without introducing a selected treatment.",
+    "An open popup is a transient pressed state instead. While surfaceOpen is true the pressed wash is held for the popup's complete rendered lifecycle and survives hover, so the trigger reads as held open without introducing a selected treatment.",
     "hasMenu supports only the label and icon-label variants. The chevron is what communicates that a menu will open, so an icon-only filled menu button would leave the affordance unstated.",
     "Split mode supports label, icon, and icon-label primary segments. The primary segment emits dsClick and the appended menu segment emits dsMenuClick.",
-    "Split mode keeps both segments flush and uses a tertiary on-background separator. Rounded changes the shared outer radius without separating the segments."
+    "Split mode keeps both segments flush and uses a tertiary on-background separator. Rounded changes the shared outer radius without separating the segments.",
+    "Use surfaceOpen to identify this command as the owner of a visible menu, picker, or panel, even when that surface is distant. Keep the pressed wash through exit motion without adding selected styling or sustained physical scaling. Inline expansion and completed commands do not acquire this treatment."
   ],
   "responsiveBehavior": [
     "Use fill width only when the parent layout calls for a full-width action, commonly on narrow form layouts."
@@ -89,6 +90,10 @@
     {
       "label": "Storybook examples",
       "path": "src/wc/components/ButtonFilled/ButtonFilled.stories.ts"
+    },
+    {
+      "label": "Surface ownership and trigger state",
+      "path": "src/docs/SurfaceOwnership.mdx"
     }
   ]
 }

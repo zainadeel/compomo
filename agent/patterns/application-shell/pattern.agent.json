@@ -70,7 +70,8 @@
     "The application owns account menus, tool product data, page actions, and the consequences of every emitted intent event.",
     "The application owns viewport and theme-color metadata, the dynamic-viewport framework root, and containing document overscroll so body never becomes a second application scroller; ShellApp fills that owner and keeps its existing internal scrollers.",
     "The application resolves competing global messages to one Banner and owns its actions, controlled open state, orientation for the available shell capacity, dismissal persistence, and removal after exit motion.",
-    "Use composition=\"slotted\" only when a team intentionally needs to assemble the public lower-level chrome components itself."
+    "Use composition=\"slotted\" only when a team intentionally needs to assemble the public lower-level chrome components itself.",
+    "Keep external surface ownership separate from selected routes, toggled modes, and inline expansion. Forward surfaceOpen on header actions while their associated menu or panel remains rendered, including exit motion; clear it after closing. Internal popup controls manage this relationship themselves."
   ],
   "accessibility": [
     "Render exactly one managed ShellApp and one active routed main landmark.",
@@ -181,6 +182,7 @@
   "references": [
     "src/wc/components/ShellApp/ShellApp.mdx",
     "docs/framework-integration.md",
-    "docs/migrations/v13.md"
+    "docs/migrations/v13.md",
+    "src/docs/SurfaceOwnership.mdx"
   ]
 }

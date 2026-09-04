@@ -64,6 +64,7 @@ const meta: Meta = {
     isLoading: { control: 'boolean' },
     hasMenu: { control: 'boolean' },
     expanded: { control: 'boolean' },
+    surfaceOpen: { control: 'boolean' },
     ariaLabel: { control: 'text' },
   },
   args: {
@@ -133,6 +134,7 @@ export const Playground: Story = {
       ?is-loading=${args['isLoading']}
       ?has-menu=${args['hasMenu']}
       ?expanded=${args['expanded']}
+      .surfaceOpen=${args['surfaceOpen']}
       aria-label=${args['ariaLabel'] || undefined}
     ></ds-button-filled>
   `,
@@ -646,7 +648,7 @@ export const MenuTrigger: Story = {
 
 /**
  * ButtonFilled has no selected state by design. An open popup is a *transient
- * pressed* state, so `expanded` holds the pressed wash for the popup's lifecycle
+ * pressed* state, so `surfaceOpen` holds the pressed wash for the popup's lifecycle
  * rather than promoting any active treatment.
  */
 export const MenuTriggerOpenState: Story = {
@@ -656,7 +658,7 @@ export const MenuTriggerOpenState: Story = {
       description: {
         story:
           'ButtonFilled intentionally has no active/selected state — filled actions are commands, not toggles. ' +
-          'While `expanded` is true the pressed wash stays applied (and survives hover), matching how shell chrome ' +
+          'While `surfaceOpen` is true the pressed wash stays applied (and survives hover), matching how shell chrome ' +
           'holds a trigger down for the life of its menu. Compare each pair: resting left, open right.',
       },
     },
@@ -666,7 +668,13 @@ export const MenuTriggerOpenState: Story = {
       <div style="${ROW}">
         <span style="${LABEL}">label</span>
         <ds-button-filled variant="label" label="Add" has-menu></ds-button-filled>
-        <ds-button-filled variant="label" label="Add" has-menu expanded></ds-button-filled>
+        <ds-button-filled
+          variant="label"
+          label="Add"
+          has-menu
+          expanded
+          surface-open
+        ></ds-button-filled>
       </div>
       <div style="${ROW}">
         <span style="${LABEL}">icon-label</span>
@@ -677,6 +685,7 @@ export const MenuTriggerOpenState: Story = {
           label="Add"
           has-menu
           expanded
+          surface-open
         ></ds-button-filled>
       </div>
       <div style="${ROW}">
@@ -687,6 +696,7 @@ export const MenuTriggerOpenState: Story = {
           label="Add"
           has-menu
           expanded
+          surface-open
           is-inactive
         ></ds-button-filled>
       </div>
@@ -720,6 +730,7 @@ export const MenuTriggerOpenState: Story = {
                 contrast=${contrast}
                 has-menu
                 expanded
+                surface-open
               ></ds-button-filled>
             </div>
           `
@@ -744,6 +755,7 @@ export const MenuTriggerOpenState: Story = {
                 intent=${intent}
                 has-menu
                 expanded
+                surface-open
               ></ds-button-filled>
             </div>
           `
@@ -763,7 +775,7 @@ export const MenuTriggerLive: Story = {
     docs: {
       description: {
         story:
-          'Click each trigger to open its menu. One application-owned open boolean drives both ' +
+          'Click each trigger to open its menu. Application state synchronizes ' +
           '`ButtonFilled.expanded` and `Menu.open`; `Menu` resolves placement from `anchorId`.',
       },
     },

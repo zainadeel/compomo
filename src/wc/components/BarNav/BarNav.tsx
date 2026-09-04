@@ -835,7 +835,8 @@ export class BarNav {
                 this.triggerEl = (el as HTMLElement & { setFocus?: () => Promise<void> }) ?? null;
               }}
               haspopup="menu"
-              expanded={this.menuTriggerActive}
+              expanded={this.menuOpen}
+              surfaceOpen={this.menuTriggerActive}
               aria-label={this.moreTabsLabel}
               onDsClick={() => this.toggleTabMenu({ focusVisible: false })}
               onFocusin={this.handleOverflowFocus}

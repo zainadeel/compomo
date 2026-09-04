@@ -252,6 +252,13 @@
   --ds-focus-ring-color: var(--color-navigation-interaction-focus);
 }
 
+/* The associated surface stays visible after activation. Selection and ARIA
+ * remain owned by the component; only the pressed overlay is retained here. */
+:host(.ds-interaction-fill.ds-interaction-fill--surface-open:not(:disabled))::after,
+.ds-interaction-fill.ds-interaction-fill--surface-open:not(:disabled)::after {
+  background: var(--ds-interaction-pressed);
+}
+
 @media (forced-colors: active) {
   /*
    * Forced-colors removes box-shadows and remaps translucent fills. Restore
@@ -264,6 +271,18 @@
     box-shadow: none;
     outline: var(--ds-interaction-border-width) solid var(--ds-forced-color-control-boundary);
     outline-offset: calc(-1 * var(--ds-interaction-border-width));
+  }
+
+  :host(
+    .ds-interaction-fill--surface-open:not(:disabled):not(:focus-visible):not(:focus-within):not(
+        .ds-focus-ring--visible
+      )
+  )::after,
+  .ds-interaction-fill--surface-open:not(:disabled):not(:focus-visible):not(:focus-within):not(
+      .ds-focus-ring--visible
+    )::after {
+    outline: var(--dimension-stroke-width-025) dashed var(--ds-forced-color-control-boundary);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-025));
   }
 
   :host(.ds-interaction-fill--selected)::before,

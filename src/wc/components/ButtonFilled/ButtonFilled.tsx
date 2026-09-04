@@ -104,11 +104,19 @@ export class ButtonFilled {
   @Prop() controls: string | undefined;
 
   /**
-   * Controlled open state of the popup this button triggers. Holds the pressed
-   * wash for the popup's rendered lifecycle. ButtonFilled has no selected state,
-   * so an open popup never promotes to an active treatment.
+   * Controlled disclosure state forwarded to aria-expanded.
+   * Using expanded alone for surface-open styling is deprecated; set surfaceOpen
+   * explicitly to separate the rendered surface lifecycle from disclosure state.
    */
   @Prop() expanded: boolean | undefined;
+
+  /**
+   * The associated menu, picker, or panel is visible, including its exit motion.
+   * Holds only the pressed wash; does not set ARIA, selection, or press scaling.
+   * In split mode this applies only to the menu segment. Explicit false disables
+   * the legacy expanded-derived wash; omission preserves that compatibility path.
+   */
+  @Prop() surfaceOpen: boolean | undefined;
 
   /** Popup type exposed to assistive technology. */
   @Prop() haspopup: ButtonFilledPopup | undefined;
@@ -167,6 +175,10 @@ export class ButtonFilled {
     return this.haspopup ?? (this.hasMenu ? 'menu' : undefined);
   }
 
+  private get resolvedSurfaceOpen(): boolean {
+    return (this.surfaceOpen ?? this.expanded === true) && !this.isInactive;
+  }
+
   private get accessibleName(): string | undefined {
     if (this.ariaLabel) return this.ariaLabel;
     if (this.isLoading && this.variant === 'label' && this.label) return this.label;
@@ -196,6 +208,7 @@ export class ButtonFilled {
       'button-filled--bordered': bordered,
       'ds-button--bordered': bordered,
       'button-filled--expanded': expanded && !this.isInactive,
+      'ds-interaction-fill--surface-open': expanded,
       'ds-button--expanded': expanded && !this.isInactive,
       'ds-control-inactive': this.isInactive,
       'ds-control--lg': this.size === 'lg',
@@ -228,7 +241,7 @@ export class ButtonFilled {
         class={{
           ...this.buttonClass(
             this.variant,
-            !this.split && this.expanded === true,
+            !this.split && this.resolvedSurfaceOpen,
             this.hasBorder && !this.split
           ),
           'ds-button-split__primary': this.split,
@@ -277,7 +290,7 @@ export class ButtonFilled {
             this.menuButtonEl = el ?? null;
           }}
           class={{
-            ...this.buttonClass('icon', this.expanded === true, false),
+            ...this.buttonClass('icon', this.resolvedSurfaceOpen, false),
             'ds-button-split__menu': true,
           }}
           type="button"

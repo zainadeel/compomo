@@ -198,6 +198,7 @@ export class ShellApp {
   @State() private managedInboxTool: ShellInboxToolId | '' = '';
   @State() private managedBrowseContext: NavChromeStyle = 'dashboard';
   @State() private mobileActionMenuOpen = false;
+  @State() private mobileActionSurfaceOpen = false;
   @State() private mobileActionMenuInitialFocusVisible = false;
 
   private readonly instanceId = nextShellAppId++;
@@ -324,7 +325,10 @@ export class ShellApp {
 
   @Watch('pageChrome')
   handlePageChromeChange() {
-    if (this.mobileActionMenuSections.length === 0) this.mobileActionMenuOpen = false;
+    if (this.mobileActionMenuSections.length === 0) {
+      this.mobileActionMenuOpen = false;
+      this.mobileActionSurfaceOpen = false;
+    }
   }
 
   @Watch('tools')
@@ -975,6 +979,7 @@ export class ShellApp {
         userName={navigation.userName ?? ''}
         userInitial={navigation.userInitial ?? ''}
         accountMenuExpanded={navigation.accountMenuExpanded ?? false}
+        accountMenuSurfaceOpen={navigation.accountMenuSurfaceOpen}
         dashboardLabel={navigation.dashboardLabel ?? 'Dashboard'}
         settingsLabel={navigation.settingsLabel ?? 'Settings'}
         accountLabel={navigation.accountLabel ?? 'Account'}
@@ -1153,6 +1158,7 @@ export class ShellApp {
             haspopup={action.haspopup}
             controls={action.controls}
             expanded={action.expanded}
+            surfaceOpen={action.surfaceOpen}
             pressed={action.pressed}
             isInactive={action.isInactive}
             activeFill={false}
@@ -1212,9 +1218,11 @@ export class ShellApp {
                 haspopup="menu"
                 controls={this.mobileActionMenuId}
                 expanded={this.mobileActionMenuOpen}
+                surfaceOpen={this.mobileActionSurfaceOpen}
                 onDsClick={(event: CustomEvent<MouseEvent>) => {
                   this.mobileActionMenuInitialFocusVisible = event.detail.detail === 0;
                   this.mobileActionMenuOpen = !this.mobileActionMenuOpen;
+                  if (this.mobileActionMenuOpen) this.mobileActionSurfaceOpen = true;
                 }}
               />
             </ds-tooltip>,
@@ -1261,6 +1269,9 @@ export class ShellApp {
         initialFocusVisible={this.mobileActionMenuInitialFocusVisible}
         sections={this.mobileActionMenuSections}
         onDsClose={this.closeMobileActionMenu}
+        onDsAfterClose={() => {
+          if (!this.mobileActionMenuOpen) this.mobileActionSurfaceOpen = false;
+        }}
         onDsSelect={this.handleMobileActionSelect}
       />
     );

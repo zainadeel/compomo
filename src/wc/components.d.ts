@@ -599,7 +599,7 @@ export namespace Components {
          */
         "controls": string | undefined;
         /**
-          * Controlled open state of the popup this button triggers. Holds the pressed wash for the popup's rendered lifecycle. ButtonFilled has no selected state, so an open popup never promotes to an active treatment.
+          * Controlled disclosure state forwarded to aria-expanded. Using expanded alone for surface-open styling is deprecated; set surfaceOpen explicitly to separate the rendered surface lifecycle from disclosure state.
          */
         "expanded": boolean | undefined;
         /**
@@ -683,6 +683,10 @@ export namespace Components {
          */
         "split": boolean;
         /**
+          * The associated menu, picker, or panel is visible, including its exit motion. Holds only the pressed wash; does not set ARIA, selection, or press scaling. In split mode this applies only to the menu segment. Explicit false disables the legacy expanded-derived wash; omission preserves that compatibility path.
+         */
+        "surfaceOpen": boolean | undefined;
+        /**
           * Native button type.
           * @default 'button'
          */
@@ -725,7 +729,7 @@ export namespace Components {
          */
         "dot": boolean;
         /**
-          * Controlled disclosure or popup state forwarded to `aria-expanded`. Popup triggers hold only the pressed wash while open; their resting foreground is unchanged. Ordinary disclosures remain visually neutral.
+          * Controlled disclosure state forwarded to aria-expanded. Using expanded alone for surface-open styling is deprecated; set surfaceOpen explicitly to separate the rendered surface lifecycle from disclosure state.
          */
         "expanded": boolean | undefined;
         /**
@@ -813,6 +817,10 @@ export namespace Components {
           * @default false
          */
         "split": boolean;
+        /**
+          * The associated menu, picker, or panel is visible, including its exit motion. Holds only the pressed wash; does not set ARIA, selection, or press scaling. In split mode this applies only to the menu segment. Explicit false disables the legacy expanded-derived wash; omission preserves that compatibility path.
+         */
+        "surfaceOpen": boolean | undefined;
         /**
           * Native button type.
           * @default 'button'
@@ -2151,10 +2159,14 @@ export namespace Components {
          */
         "accountLabel": string;
         /**
-          * Keep the account-menu trigger visually pressed while its popup is open or closing.
+          * Account disclosure state. Expanded-derived styling is deprecated; use accountMenuSurfaceOpen for the rendered lifetime.
           * @default false
          */
         "accountMenuExpanded": boolean;
+        /**
+          * External account surface is visible, including exit motion. Omission preserves the deprecated accountMenuExpanded-derived wash.
+         */
+        "accountMenuSurfaceOpen": boolean | undefined;
         /**
           * ID of the active child route when URL matching is unavailable.
           * @default ''
@@ -2312,6 +2324,10 @@ export namespace Components {
          */
         "menuExpanded": boolean;
         /**
+          * Associated menu surface is visible, including exit motion.
+         */
+        "menuSurfaceOpen": boolean | undefined;
+        /**
           * Stable id placed on the menu trigger host for ds-menu anchoring.
           * @default ''
          */
@@ -2356,6 +2372,10 @@ export namespace Components {
           * @default false
          */
         "filterExpanded": boolean;
+        /**
+          * Associated filter surface is visible, including exit motion.
+         */
+        "filterSurfaceOpen": boolean | undefined;
         /**
           * Stable id placed on the filter trigger for ds-menu anchoring.
           * @default ''
@@ -3446,6 +3466,10 @@ export namespace Components {
           * @default false
          */
         "stickyHeader": boolean;
+        /**
+          * Identity of the interactive row whose associated surface is visible. Holds its pressed wash independently of checkbox selection. Keep the ID through exit motion and clear it after close; the application owns toggling and switching the surface. Off-window identities survive virtualization.
+         */
+        "surfaceOpenRowId": string | undefined;
         "totalCount": number | undefined;
         /**
           * Reserved space below a viewport-fitted table.
@@ -3713,6 +3737,10 @@ export namespace Components {
           * @default 'md'
          */
         "size": TagSize;
+        /**
+          * Associated menu remains visible, including exit motion. Omission preserves the deprecated expanded-derived wash; explicit false suppresses it.
+         */
+        "surfaceOpen": boolean | undefined;
     }
     interface DsText {
         "align": TextAlign | undefined;
@@ -6083,7 +6111,7 @@ declare namespace LocalJSX {
          */
         "controls"?: string | undefined;
         /**
-          * Controlled open state of the popup this button triggers. Holds the pressed wash for the popup's rendered lifecycle. ButtonFilled has no selected state, so an open popup never promotes to an active treatment.
+          * Controlled disclosure state forwarded to aria-expanded. Using expanded alone for surface-open styling is deprecated; set surfaceOpen explicitly to separate the rendered surface lifecycle from disclosure state.
          */
         "expanded"?: boolean | undefined;
         /**
@@ -6168,6 +6196,10 @@ declare namespace LocalJSX {
          */
         "split"?: boolean;
         /**
+          * The associated menu, picker, or panel is visible, including its exit motion. Holds only the pressed wash; does not set ARIA, selection, or press scaling. In split mode this applies only to the menu segment. Explicit false disables the legacy expanded-derived wash; omission preserves that compatibility path.
+         */
+        "surfaceOpen"?: boolean | undefined;
+        /**
           * Native button type.
           * @default 'button'
          */
@@ -6210,7 +6242,7 @@ declare namespace LocalJSX {
          */
         "dot"?: boolean;
         /**
-          * Controlled disclosure or popup state forwarded to `aria-expanded`. Popup triggers hold only the pressed wash while open; their resting foreground is unchanged. Ordinary disclosures remain visually neutral.
+          * Controlled disclosure state forwarded to aria-expanded. Using expanded alone for surface-open styling is deprecated; set surfaceOpen explicitly to separate the rendered surface lifecycle from disclosure state.
          */
         "expanded"?: boolean | undefined;
         /**
@@ -6300,6 +6332,10 @@ declare namespace LocalJSX {
           * @default false
          */
         "split"?: boolean;
+        /**
+          * The associated menu, picker, or panel is visible, including its exit motion. Holds only the pressed wash; does not set ARIA, selection, or press scaling. In split mode this applies only to the menu segment. Explicit false disables the legacy expanded-derived wash; omission preserves that compatibility path.
+         */
+        "surfaceOpen"?: boolean | undefined;
         /**
           * Native button type.
           * @default 'button'
@@ -7760,10 +7796,14 @@ declare namespace LocalJSX {
          */
         "accountLabel"?: string;
         /**
-          * Keep the account-menu trigger visually pressed while its popup is open or closing.
+          * Account disclosure state. Expanded-derived styling is deprecated; use accountMenuSurfaceOpen for the rendered lifetime.
           * @default false
          */
         "accountMenuExpanded"?: boolean;
+        /**
+          * External account surface is visible, including exit motion. Omission preserves the deprecated accountMenuExpanded-derived wash.
+         */
+        "accountMenuSurfaceOpen"?: boolean | undefined;
         /**
           * ID of the active child route when URL matching is unavailable.
           * @default ''
@@ -7942,6 +7982,10 @@ declare namespace LocalJSX {
          */
         "menuExpanded"?: boolean;
         /**
+          * Associated menu surface is visible, including exit motion.
+         */
+        "menuSurfaceOpen"?: boolean | undefined;
+        /**
           * Stable id placed on the menu trigger host for ds-menu anchoring.
           * @default ''
          */
@@ -7989,6 +8033,10 @@ declare namespace LocalJSX {
           * @default false
          */
         "filterExpanded"?: boolean;
+        /**
+          * Associated filter surface is visible, including exit motion.
+         */
+        "filterSurfaceOpen"?: boolean | undefined;
         /**
           * Stable id placed on the filter trigger for ds-menu anchoring.
           * @default ''
@@ -9194,6 +9242,10 @@ declare namespace LocalJSX {
           * @default false
          */
         "stickyHeader"?: boolean;
+        /**
+          * Identity of the interactive row whose associated surface is visible. Holds its pressed wash independently of checkbox selection. Keep the ID through exit motion and clear it after close; the application owns toggling and switching the surface. Off-window identities survive virtualization.
+         */
+        "surfaceOpenRowId"?: string | undefined;
         "totalCount"?: number | undefined;
         /**
           * Reserved space below a viewport-fitted table.
@@ -9531,6 +9583,10 @@ declare namespace LocalJSX {
           * @default 'md'
          */
         "size"?: TagSize;
+        /**
+          * Associated menu remains visible, including exit motion. Omission preserves the deprecated expanded-derived wash; explicit false suppresses it.
+         */
+        "surfaceOpen"?: boolean | undefined;
     }
     interface DsText {
         "align"?: TextAlign | undefined;
@@ -9958,6 +10014,7 @@ declare namespace LocalJSX {
         "ariaLabel": string | null;
         "controls": string | undefined;
         "expanded": boolean | undefined;
+        "surfaceOpen": boolean | undefined;
         "haspopup": ButtonFilledPopup | undefined;
         "split": boolean;
         "menuAriaLabel": string;
@@ -9985,6 +10042,7 @@ declare namespace LocalJSX {
         "ariaLabel": string | null;
         "controls": string | undefined;
         "expanded": boolean | undefined;
+        "surfaceOpen": boolean | undefined;
         "haspopup": ButtonUnfilledPopup | undefined;
         "split": boolean;
         "menuAriaLabel": string;
@@ -10340,6 +10398,7 @@ declare namespace LocalJSX {
         "settingsLabel": string;
         "accountLabel": string;
         "accountMenuExpanded": boolean;
+        "accountMenuSurfaceOpen": boolean | undefined;
         "dashboardNavigationLabel": string;
         "settingsNavigationLabel": string;
         "expandNavigationLabel": string;
@@ -10362,6 +10421,7 @@ declare namespace LocalJSX {
         "menuTriggerId": string;
         "menuControls": string | undefined;
         "menuExpanded": boolean;
+        "menuSurfaceOpen": boolean | undefined;
     }
     interface DsPanelToolSearchAttributes {
         "value": string;
@@ -10374,6 +10434,7 @@ declare namespace LocalJSX {
         "filterTriggerId": string;
         "filterControls": string | undefined;
         "filterExpanded": boolean;
+        "filterSurfaceOpen": boolean | undefined;
         "filterActive": boolean;
     }
     interface DsPanelToolsAttributes {
@@ -10560,6 +10621,7 @@ declare namespace LocalJSX {
         "viewportInsetBlockEnd": string;
         "scrollLabel": string | undefined;
         "selectionMode": TableSelectionMode;
+        "surfaceOpenRowId": string | undefined;
         "loading": boolean;
         "chromeLoading": boolean;
         "skeletonRows": number;
@@ -10646,6 +10708,7 @@ declare namespace LocalJSX {
         "maxWidth": string;
         "interactive": boolean;
         "expanded": boolean;
+        "surfaceOpen": boolean | undefined;
         "ariaControls": string | undefined;
         "isInactive": boolean;
     }

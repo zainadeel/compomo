@@ -27,7 +27,8 @@
     "Header chrome text is not selectable; actions remain keyboard focusable and interactive.",
     "Adjacent trailing actions keep the shared 4px control gap in drawer and fullscreen presentations.",
     "When fullscreen and overflow actions appear together, author fullscreen before overflow so Ellipses remains the rightmost action.",
-    "PanelTools supplies application-owned actions and relays their ids through its shared dsHeaderAction event."
+    "PanelTools supplies application-owned actions and relays their ids through its shared dsHeaderAction event.",
+    "Application-owned action surfaces carry surfaceOpen independently from expanded disclosure and pressed toggle state. Retain surfaceOpen until the associated surface completes closing; the header forwards this relationship without owning the menu or panel."
   ],
   "responsiveBehavior": [
     "The title truncates between optional leading navigation and trailing action zones."
@@ -36,6 +37,10 @@
     {
       "label": "Standalone examples",
       "path": "src/wc/components/PanelToolHeader/PanelToolHeader.stories.ts"
+    },
+    {
+      "label": "Surface ownership and trigger state",
+      "path": "src/docs/SurfaceOwnership.mdx"
     }
   ]
 }
