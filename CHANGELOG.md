@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.31.1](https://github.com/zainadeel/compomo/compare/v14.31.0...v14.31.1) (2026-09-05)
+
+
+### Fixed
+
+* preserve mobile touch focus and match shell edge colors ([#581](https://github.com/zainadeel/compomo/issues/581)) ([488773d](https://github.com/zainadeel/compomo/commit/488773d5d701106988232ca9932680f9edb21656))
+
 ## [14.31.0](https://github.com/zainadeel/compomo/compare/v14.30.0...v14.31.0) (2026-09-04)
 
 
