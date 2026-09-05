@@ -131,7 +131,7 @@ export class Select {
   /** Replace the prefix with a loader and disable option interaction. */
   @Prop() isLoading: boolean = false;
   /** Show the selected interaction fill when a valid value exists. */
-  @Prop() activeFill: boolean = true;
+  @Prop() activeFill: boolean = false;
   /**
    * Opt into table-caption icon-only chrome below 900px. The trigger omits its
    * visible label and chevron; keep an accessible name via aria-label.

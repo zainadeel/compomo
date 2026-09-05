@@ -38,10 +38,10 @@ test.describe('renderer-neutral prose foundation', () => {
           spacing: heading.letterSpacing,
         },
         expectedHeading: {
-          size: root.getPropertyValue('--typography-fontsize-xl').trim(),
-          lineHeight: root.getPropertyValue('--typography-lineheight-xl').trim(),
+          size: root.getPropertyValue('--typography-fontsize-lg').trim(),
+          lineHeight: root.getPropertyValue('--typography-lineheight-lg').trim(),
           weight: root.getPropertyValue('--typography-weight-semibold').trim(),
-          spacing: root.getPropertyValue('--typography-letterspacing-negative-double').trim(),
+          spacing: root.getPropertyValue('--typography-letterspacing-negative').trim(),
         },
       };
     });

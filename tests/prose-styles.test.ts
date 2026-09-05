@@ -22,7 +22,9 @@ describe('public prose style contract', () => {
 
   it('keeps streaming flow one-directional and append-stable', () => {
     assert.match(css, /margin-block-start/);
-    assert.doesNotMatch(css, /:last-child|:empty|:has\(/);
+    // A first-child heading marker stays stable as later content is appended.
+    const flowCss = css.replaceAll(':has(> :is(h3, h4):first-child)', '');
+    assert.doesNotMatch(flowCss, /:last-child|:empty|:has\(/);
     assert.doesNotMatch(css, /margin-block-end/);
   });
 

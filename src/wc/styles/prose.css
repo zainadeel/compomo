@@ -51,6 +51,13 @@
 }
 
 :where(.ds-prose) :where(h3, h4):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  font-size: var(--typography-fontsize-md);
+  line-height: var(--typography-lineheight-md);
+  font-weight: var(--typography-weight-medium);
+  letter-spacing: var(--typography-letterspacing-negative-half);
+}
+
+:where(.ds-prose) :where(h2):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
   font-size: var(--typography-fontsize-lg);
   line-height: var(--typography-lineheight-lg);
   letter-spacing: var(--typography-letterspacing-negative);
@@ -93,6 +100,19 @@
 
 :where(.ds-prose) :where(ul, ol):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
   padding-inline-start: var(--dimension-space-300);
+}
+
+:where(.ds-prose) :where(ol > li):not(:where([data-ds-prose='off'], [data-ds-prose='off'] *)) {
+  padding-block-end: var(--dimension-space-100);
+}
+
+:where(.ds-prose)
+  :where(ol > li:has(> :is(h3, h4):first-child)):not(
+    :where([data-ds-prose='off'], [data-ds-prose='off'] *)
+  )::marker {
+  color: var(--color-foreground-primary);
+  font-size: var(--typography-fontsize-md);
+  font-weight: var(--typography-weight-medium);
 }
 
 :where(.ds-prose)

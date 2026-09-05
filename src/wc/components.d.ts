@@ -2588,7 +2588,7 @@ export namespace Components {
     interface DsSelect {
         /**
           * Show the selected interaction fill when a valid value exists.
-          * @default true
+          * @default false
          */
         "activeFill": boolean;
         /**
@@ -8271,7 +8271,7 @@ declare namespace LocalJSX {
     interface DsSelect {
         /**
           * Show the selected interaction fill when a valid value exists.
-          * @default true
+          * @default false
          */
         "activeFill"?: boolean;
         /**

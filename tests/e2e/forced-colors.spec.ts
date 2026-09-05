@@ -127,6 +127,12 @@ test('preserves control boundaries, state, focus, invalid, and disabled meaning'
   await expect(select.locator('.select-popup')).toHaveCSS('outline-style', 'solid');
   await select.getByRole('option', { name: 'Canada' }).click();
   await expect
+    .poll(() => trigger.evaluate(element => getComputedStyle(element, '::before').outlineStyle))
+    .toBe('none');
+  await select.evaluate((element: HTMLDsSelectElement) => {
+    element.activeFill = true;
+  });
+  await expect
     .poll(() =>
       trigger.evaluate(element => {
         const style = getComputedStyle(element, '::before');
