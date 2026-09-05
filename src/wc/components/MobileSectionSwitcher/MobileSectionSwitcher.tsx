@@ -142,7 +142,10 @@ export class MobileSectionSwitcher {
     context.fillStyle = shade;
     context.fillRect(0, 0, 1, 1);
     const [red, green, blue] = context.getImageData(0, 0, 1, 1).data;
-    this.browserEdgeEl.style.backgroundColor = `rgb(${red}, ${green}, ${blue})`;
+    this.browserEdgeEl.style.setProperty(
+      '--_mobile-section-edge-color',
+      `rgb(${red}, ${green}, ${blue})`
+    );
     this.browserEdgeColors = colors;
   };
 

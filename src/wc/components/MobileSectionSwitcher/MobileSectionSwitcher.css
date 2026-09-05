@@ -214,15 +214,34 @@
   height: max(var(--dimension-space-200), env(safe-area-inset-bottom, 0px));
   pointer-events: none;
   color: var(--color-background-primary);
-  background-color: var(--color-background-primary);
+  background-color: var(--_mobile-section-edge-color, var(--color-background-primary));
 }
 
 .mobile-section-sheet[open] .mobile-section-sheet__browser-edge {
-  animation: mobileSectionShadeIn var(--effect-motion-short-2) both;
+  animation: mobileSectionEdgeIn var(--effect-motion-short-2) both;
 }
 
 .mobile-section-sheet--closing[open] .mobile-section-sheet__browser-edge {
-  animation-name: mobileSectionShadeOut;
+  animation-name: mobileSectionEdgeOut;
+}
+
+/* Animate the opaque color, not opacity: the backdrop is already fading below. */
+@keyframes mobileSectionEdgeIn {
+  from {
+    background-color: var(--color-background-primary);
+  }
+  to {
+    background-color: var(--_mobile-section-edge-color, var(--color-background-primary));
+  }
+}
+
+@keyframes mobileSectionEdgeOut {
+  from {
+    background-color: var(--_mobile-section-edge-color, var(--color-background-primary));
+  }
+  to {
+    background-color: var(--color-background-primary);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

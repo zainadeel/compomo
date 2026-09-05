@@ -1060,9 +1060,20 @@ test.describe('Mobile section browser-edge tint', () => {
         'rgba(20, 40, 60, 0.5)'
       );
     });
+    await page.evaluate(() =>
+      document.documentElement.style.setProperty('--effect-motion-short-2', '1s linear')
+    );
     await trigger.tap();
     const sheet = header.getByRole('dialog');
     const edge = sheet.locator('.mobile-section-sheet__browser-edge');
+    await edge.evaluate(element => {
+      const animation = element.getAnimations()[0];
+      animation.pause();
+      animation.currentTime = 500;
+    });
+    await expect(edge).toHaveCSS('opacity', '1');
+    await expect(edge).toHaveCSS('background-color', 'rgb(155, 175, 195)');
+    await edge.evaluate(element => element.getAnimations()[0].finish());
     await expect(edge).toHaveCSS('background-color', 'rgb(110, 130, 150)');
     await expect(sheet.locator('[role="menu"]')).toHaveCSS(
       'background-color',
