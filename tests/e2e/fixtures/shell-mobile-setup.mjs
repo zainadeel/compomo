@@ -1,3 +1,4 @@
+import '/dist/components/ds-banner.js';
 import '/dist/components/ds-shell-app.js';
 import '/dist/components/ds-panel-nav.js';
 import '/dist/components/ds-bar-nav.js';

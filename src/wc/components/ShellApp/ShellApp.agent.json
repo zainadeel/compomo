@@ -32,7 +32,10 @@
     "component:ds-swatch-picker",
     "component:ds-paper-texture"
   ],
-  "patterns": ["pattern:application-shell", "pattern:shell-page"],
+  "patterns": [
+    "pattern:application-shell",
+    "pattern:shell-page"
+  ],
   "accessibility": [
     "Supply primary destinations through navigation and secondary route sections through pageChrome so managed ShellApp preserves their correct semantics.",
     "Ensure the default content region contains the page's single main landmark.",
@@ -92,7 +95,8 @@
     "Paper texture chrome is desktop/tablet-only and follows the fixed viewport phase of the shell chrome; mobile remains a solid primary stage.",
     "Managed page-header capacity follows only the fixed shell breakpoint: roomy on desktop and compact on tablet. Opening PanelTools does not compact or constrain BarTitle.",
     "Mobile keeps at most the first eligible ordered icon command visible and moves labeled buttons, menu choices, split actions, and explicit overflow commands into one shell-owned text-only page-actions menu.",
-    "The bottom bar remains visible at all route and tool depths in the foundation release."
+    "The bottom bar remains visible at all route and tool depths in the foundation release.",
+    "A mobile shell banner paints a fixed top edge with its resolved background through exit motion. Color variants and theme changes follow the banner automatically; native Safari status-area tint remains a device-verified browser behavior."
   ],
   "frameworkCaveats": {
     "customElements": [

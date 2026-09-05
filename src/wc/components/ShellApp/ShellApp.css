@@ -27,6 +27,7 @@
 }
 
 .shell-app__banner {
+  --_shell-banner-edge-display: none;
   flex: 0 0 auto;
   min-width: 0;
   position: relative;
@@ -208,6 +209,10 @@
   --_shell-chrome-bg: var(--color-background-primary);
   padding-block-start: env(safe-area-inset-top);
   background: var(--ds-shell-safe-area-background, var(--color-background-primary));
+}
+
+:host(.shell-app--mobile) .shell-app__banner {
+  --_shell-banner-edge-display: block;
 }
 
 /* Refresh the Mobile WebKit stage layer without remounting app content. */

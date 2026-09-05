@@ -159,6 +159,7 @@ export class Banner {
 
     return (
       <Host class={hostClass}>
+        <div class="banner-browser-edge" aria-hidden="true" />
         <div class="banner-overflow">
           <section
             class="banner-surface ds-chrome-header ds-chrome-header--wrapping"

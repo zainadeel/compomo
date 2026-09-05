@@ -247,20 +247,20 @@ export const VerticalLongDescriptionAndActions: Story = {
 };
 
 export const ShellIntegration: Story = {
-  render: () => html`
+  render: args => html`
     <div style="height:560px;">
       <ds-shell-app composition="slotted">
         <ds-banner
           slot="banner"
           heading="Scheduled maintenance"
           description="The application remains available while reporting data catches up."
-          intent="brand"
-          contrast="faint"
+          intent=${args['intent']}
+          contrast=${args['contrast']}
         >
           <ds-button-unfilled
             slot="actions"
             label="Learn more"
-            background="faint"
+            background=${args['contrast']}
           ></ds-button-unfilled>
         </ds-banner>
         <div
@@ -274,4 +274,9 @@ export const ShellIntegration: Story = {
       </ds-shell-app>
     </div>
   `,
+};
+
+export const MobileShellIntegration: Story = {
+  ...ShellIntegration,
+  parameters: { viewport: { defaultViewport: 'mobile1' } },
 };
