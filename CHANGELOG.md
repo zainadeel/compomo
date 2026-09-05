@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.31.3](https://github.com/zainadeel/compomo/compare/v14.31.2...v14.31.3) (2026-09-05)
+
+
+### Fixed
+
+* refine select defaults and prose typography ([#585](https://github.com/zainadeel/compomo/issues/585)) ([3a0c822](https://github.com/zainadeel/compomo/commit/3a0c8226681a61ffa5779d15550f0bc1bfb677b2))
+
 ## [14.31.2](https://github.com/zainadeel/compomo/compare/v14.31.1...v14.31.2) (2026-09-05)
 
 
