@@ -605,6 +605,11 @@ test('supports buffered local typeahead and clear while preserving the open popu
   await expect
     .poll(() => select.evaluate((element: HTMLDsSelectElement) => element.value))
     .toBe('apple');
+  await expect(trigger).not.toHaveClass(/ds-interaction-fill--selected/);
+
+  await select.evaluate((element: HTMLDsSelectElement) => {
+    element.activeFill = true;
+  });
   await expect(trigger).toHaveClass(/ds-interaction-fill--selected/);
 
   await trigger.click();

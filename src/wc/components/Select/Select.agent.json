@@ -49,6 +49,7 @@
     "Use errorMessage with error so the trigger is described by the rendered alert."
   ],
   "states": [
+    "Selected trigger foreground communicates the current value independently of fill. Opt into activeFill when the trigger needs additional selected emphasis; popup option selection keeps its own treatment.",
     "The multiple property changes cardinality without changing the component family: scalar mode selects and closes, while multiple mode toggles array values and keeps the popup open.",
     "Every size applies one complete control-density recipe across trigger height, inline padding, icon zones, text-container inset, gap, and radius; error content follows the shared 4px field flow.",
     "Value is controlled through the mutable value property as a string in scalar mode or a string array in multiple mode; dsChange reports the matching shape.",

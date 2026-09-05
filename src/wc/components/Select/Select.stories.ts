@@ -65,6 +65,7 @@ const meta: Meta = {
     icon: { control: 'text' },
     indicator: { control: 'select', options: ['down', 'up-down'] },
     hasBorder: { control: 'boolean' },
+    activeFill: { control: 'boolean' },
     searchable: { control: 'boolean' },
     isLoading: { control: 'boolean' },
     allowClear: { control: 'boolean' },
@@ -95,6 +96,7 @@ const meta: Meta = {
     icon: 'Chart',
     indicator: 'down',
     hasBorder: true,
+    activeFill: false,
     searchable: false,
     isLoading: false,
     allowClear: true,
@@ -124,6 +126,7 @@ export const Playground: Story = {
           icon=${args['icon']}
           indicator=${args['indicator']}
           .hasBorder=${args['hasBorder']}
+          .activeFill=${args['activeFill']}
           background=${args['background']}
           ?searchable=${args['searchable']}
           ?is-loading=${args['isLoading']}
