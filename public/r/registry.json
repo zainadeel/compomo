@@ -6128,7 +6128,8 @@
             "The trigger automatically retains the shared surface-open pressed wash through menu or sheet exit. Selecting a destination remains separate from owning the open surface."
           ],
           "responsiveBehavior": [
-            "Use only in the dedicated mobile header presentation."
+            "Use only in the dedicated mobile header presentation.",
+            "While a section sheet is open or closing, an opaque bottom-edge surface matches the shade composited over the primary mobile bar background, allowing browsers that sample fixed edges to tint their controls independently of the top sheet. Browser tint remains best-effort and requires native-device verification."
           ],
           "references": [
             {
