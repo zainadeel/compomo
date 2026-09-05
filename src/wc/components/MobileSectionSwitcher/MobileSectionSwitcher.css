@@ -84,16 +84,18 @@
   border: 0;
   border-radius: 0;
   box-sizing: border-box;
-  overflow: hidden;
-  background: var(--color-background-primary);
+  overflow: visible;
+  background: transparent;
   color: var(--color-foreground-secondary);
-  box-shadow: var(--effect-elevation-elevated-floating);
   outline: none;
 }
 
 .mobile-section-sheet[open] {
   display: flex;
   flex-direction: column;
+}
+
+.mobile-section-sheet[open] .mobile-section-sheet__items {
   animation: mobileSectionSheetIn var(--effect-motion-short-2) both;
 }
 
@@ -102,7 +104,7 @@
   animation: mobileSectionShadeIn var(--effect-motion-short-2) both;
 }
 
-.mobile-section-sheet--closing[open] {
+.mobile-section-sheet--closing[open] .mobile-section-sheet__items {
   animation-name: mobileSectionSheetOut;
 }
 
@@ -115,6 +117,10 @@
   flex-direction: column;
   gap: var(--dimension-space-100);
   min-height: 0;
+  max-height: inherit;
+  box-sizing: border-box;
+  background: var(--color-background-primary);
+  box-shadow: var(--effect-elevation-elevated-floating);
   padding: var(--dimension-space-100);
   padding-block-start: max(var(--dimension-space-100), env(safe-area-inset-top, 0px));
   overflow-y: auto;
@@ -194,8 +200,53 @@
   }
 }
 
+/* Safari can preserve :focus-visible across modal entry and focus return after
+ * a tap. Track the actual input, while leaving focus and keyboard access intact. */
+:host(.mobile-section-switcher--pointer-focus) .ds-focus-ring-inset::after {
+  outline: none;
+}
+
+/* Keep this opaque strip in the modal top layer, outside the moving sheet.
+ * Safari samples fixed edge backgrounds to tint its browser controls. */
+.mobile-section-sheet__browser-edge {
+  position: fixed;
+  inset: auto 0 0;
+  height: max(var(--dimension-space-200), env(safe-area-inset-bottom, 0px));
+  pointer-events: none;
+  color: var(--color-background-primary);
+  background-color: var(--_mobile-section-edge-color, var(--color-background-primary));
+}
+
+.mobile-section-sheet[open] .mobile-section-sheet__browser-edge {
+  animation: mobileSectionEdgeIn var(--effect-motion-short-2) both;
+}
+
+.mobile-section-sheet--closing[open] .mobile-section-sheet__browser-edge {
+  animation-name: mobileSectionEdgeOut;
+}
+
+/* Animate the opaque color, not opacity: the backdrop is already fading below. */
+@keyframes mobileSectionEdgeIn {
+  from {
+    background-color: var(--color-background-primary);
+  }
+  to {
+    background-color: var(--_mobile-section-edge-color, var(--color-background-primary));
+  }
+}
+
+@keyframes mobileSectionEdgeOut {
+  from {
+    background-color: var(--_mobile-section-edge-color, var(--color-background-primary));
+  }
+  to {
+    background-color: var(--color-background-primary);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .mobile-section-sheet[open],
+  .mobile-section-sheet[open] .mobile-section-sheet__items,
+  .mobile-section-sheet[open] .mobile-section-sheet__browser-edge,
   .mobile-section-sheet::backdrop {
     animation: none;
   }

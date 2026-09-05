@@ -207,6 +207,7 @@
 :host(.shell-app--mobile) {
   --_shell-chrome-bg: var(--color-background-primary);
   padding-block-start: env(safe-area-inset-top);
+  background: var(--ds-shell-safe-area-background, var(--color-background-primary));
 }
 
 /* Refresh the Mobile WebKit stage layer without remounting app content. */
