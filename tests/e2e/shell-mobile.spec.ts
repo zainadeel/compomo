@@ -668,7 +668,7 @@ test.describe('Responsive mobile shell foundation', () => {
     await expect(sheet.getByRole('menuitem', { name: 'Unavailable' })).toBeDisabled();
     await expect(sheet.locator('ds-icon')).toHaveCount(0);
     await expect(sheet).toHaveCSS('border-radius', '0px');
-    await expect(sheet).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, 0)');
+    await expect(sheet.locator('[role="menu"]')).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, 0)');
     const bounds = await sheet.boundingBox();
     expect(bounds!.x).toBe(0);
     expect(bounds!.y).toBe(0);
@@ -754,7 +754,7 @@ test.describe('Responsive mobile shell foundation', () => {
     await trigger.click();
     const sheet = header.getByRole('dialog');
     await expect(sheet.getByRole('menuitem', { name: 'Section 29', exact: true })).toBeFocused();
-    await expect(sheet).toHaveCSS('animation-name', 'none');
+    await expect(sheet.locator('[role="menu"]')).toHaveCSS('animation-name', 'none');
     const bounds = await sheet.boundingBox();
     expect(bounds!.height).toBeLessThan(760);
     const list = sheet.locator('[role="menu"]');
@@ -982,3 +982,131 @@ declare global {
     __persistentSearchInput?: HTMLInputElement;
   }
 }
+
+test.describe('Mobile section input modality', () => {
+  test.use({ viewport: { width: 390, height: 760 }, hasTouch: true });
+
+  test('keeps touch focus unpainted through sheet entry and return, then restores keyboard rings @cross-browser', async ({
+    page,
+  }) => {
+    await page.goto('/shell-mobile.html');
+    await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
+    const header = page.locator('#mobile-header');
+    const trigger = header.getByRole('button', { name: /Current section:/ }).first();
+    const outline = (control: Locator) =>
+      control.evaluate(element => getComputedStyle(element, '::after').outlineStyle);
+    // Begin in keyboard modality to reproduce WebKit's inherited focus-visible state.
+    await trigger.focus();
+    await trigger.press('Enter');
+    const sheet = header.getByRole('dialog');
+    await expect(sheet).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(sheet).not.toBeVisible();
+    await trigger.tap();
+    const current = sheet.locator('[aria-current="page"]');
+    await expect(current).toBeFocused();
+    await expect.poll(() => outline(current)).toBe('none');
+    await current.tap();
+    await expect(sheet).not.toBeVisible();
+    await expect(trigger).toBeFocused();
+    await expect.poll(() => outline(trigger)).toBe('none');
+    await trigger.press('Enter');
+    await expect(current).toBeFocused();
+    await expect.poll(() => outline(current)).toBe('solid');
+    await page.keyboard.press('ArrowDown');
+    await expect.poll(() => outline(sheet.locator('button:focus'))).toBe('solid');
+  });
+
+  test('paints the mobile safe area with the supplied banner surface @cross-browser', async ({
+    page,
+  }) => {
+    await page.goto('/shell-mobile.html');
+    const shell = page.locator('#shell');
+    await expect(shell).toHaveAttribute('responsive-mode', 'mobile');
+    const primary = await shell.evaluate(element => getComputedStyle(element).backgroundColor);
+    const brand = await shell.evaluate(element => {
+      (element as HTMLElement).style.setProperty(
+        '--ds-shell-safe-area-background',
+        'var(--color-background-faint-brand)'
+      );
+      return getComputedStyle(element).getPropertyValue('--color-background-faint-brand').trim();
+    });
+    await expect(shell).not.toHaveCSS('background-color', primary);
+    expect(brand).not.toBe('');
+    await shell.evaluate(element =>
+      (element as HTMLElement).style.removeProperty('--ds-shell-safe-area-background')
+    );
+    await expect(shell).toHaveCSS('background-color', primary);
+  });
+});
+
+test.describe('Mobile section browser-edge tint', () => {
+  test.use({ viewport: { width: 390, height: 760 }, hasTouch: true });
+
+  test('composites the bottom color independently of the sheet and cleans up through exit @cross-browser', async ({
+    page,
+  }) => {
+    await page.goto('/shell-mobile.html');
+    await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
+    const header = page.locator('#mobile-header');
+    const trigger = header.getByRole('button', { name: /Current section:/ }).first();
+    await page.evaluate(() => {
+      document.documentElement.style.setProperty(
+        '--color-background-primary',
+        'rgb(200, 220, 240)'
+      );
+      document.documentElement.style.setProperty(
+        '--color-background-shade',
+        'rgba(20, 40, 60, 0.5)'
+      );
+    });
+    await trigger.tap();
+    const sheet = header.getByRole('dialog');
+    const edge = sheet.locator('.mobile-section-sheet__browser-edge');
+    await expect(edge).toHaveCSS('background-color', 'rgb(110, 130, 150)');
+    await expect(sheet.locator('[role="menu"]')).toHaveCSS(
+      'background-color',
+      'rgb(200, 220, 240)'
+    );
+    await expect(edge).toHaveCSS('pointer-events', 'none');
+    await expect(edge).toHaveAttribute('aria-hidden', 'true');
+    await expect
+      .poll(async () => {
+        const bounds = await edge.boundingBox();
+        return bounds && [bounds.x, bounds.width, bounds.y + bounds.height];
+      })
+      .toEqual([0, 390, 760]);
+    // A containing theme can change while the modal remains open.
+    await page.evaluate(() =>
+      document.documentElement.style.setProperty('--color-background-primary', 'rgb(40, 60, 80)')
+    );
+    await expect(edge).toHaveCSS('background-color', 'rgb(30, 50, 70)');
+    await page.setViewportSize({ width: 390, height: 640 });
+    await expect
+      .poll(async () => {
+        const bounds = await edge.boundingBox();
+        return bounds && bounds.y + bounds.height;
+      })
+      .toBe(640);
+    await page.evaluate(() =>
+      document.documentElement.style.setProperty('--effect-motion-short-2', '1s linear')
+    );
+    await sheet.locator('[aria-current="page"]').tap();
+    await expect(sheet).toHaveClass(/closing/);
+    await expect(edge).toBeVisible();
+    await expect(sheet).not.toBeVisible();
+    await expect(edge).not.toBeVisible();
+    await expect(trigger).toBeFocused();
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await trigger.tap();
+    await expect(edge).toHaveCSS('animation-name', 'none');
+    await expect(edge).toHaveCSS('background-color', 'rgb(30, 50, 70)');
+    // The strip must not intercept backdrop dismissal at the bottom edge.
+    await page.touchscreen.tap(195, 638);
+    await expect(sheet).not.toBeVisible();
+    await trigger.tap();
+    await header.evaluate(element => element.remove());
+    await expect(page.locator('dialog:modal')).toHaveCount(0);
+    await expect(page.locator('.mobile-section-sheet__browser-edge')).toHaveCount(0);
+  });
+});

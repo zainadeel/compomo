@@ -46,6 +46,7 @@ export class MobileSectionSwitcher {
   @State() private menuOpen = false;
   @State() private menuSurfaceOpen = false;
   @State() private initialFocusVisible = false;
+  @State() private pointerFocus = false;
   @State() private sheetClosing = false;
   @State() private focusedSection = '';
 
@@ -54,10 +55,19 @@ export class MobileSectionSwitcher {
   private readonly menuId = `ds-mobile-section-switcher-menu-${this.instanceId}`;
   private triggerEl: HTMLButtonElement | null = null;
   private dialogEl: HTMLDialogElement | null = null;
+  private browserEdgeEl: HTMLDivElement | null = null;
+  private browserEdgeColors = '';
+  private themeObserver?: MutationObserver;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
   private visibilityObserver?: ResizeObserver;
 
+  private readonly handleDocumentKeyDown = (event: KeyboardEvent) => {
+    if (['Shift', 'Control', 'Alt', 'Meta'].includes(event.key)) return;
+    this.pointerFocus = false;
+  };
+
   componentDidLoad() {
+    this.el.ownerDocument.addEventListener('keydown', this.handleDocumentKeyDown, true);
     this.visibilityObserver = new ResizeObserver(() => {
       if (this.dialogEl?.open && !this.triggerEl?.getClientRects().length) {
         this.finishSheetClose(false);
@@ -70,6 +80,8 @@ export class MobileSectionSwitcher {
     if (!this.dialogEl) return;
     if (this.presentation === 'sheet' && this.menuOpen && !this.dialogEl.open) {
       const initialSection = this.focusedSection;
+      this.updateBrowserEdgeColor();
+      this.observeBrowserEdgeTheme();
       this.dialogEl.showModal();
       this.focusSheetItem(initialSection);
     }
@@ -84,6 +96,7 @@ export class MobileSectionSwitcher {
   }
 
   disconnectedCallback() {
+    this.el.ownerDocument.removeEventListener('keydown', this.handleDocumentKeyDown, true);
     this.visibilityObserver?.disconnect();
     this.menuSurfaceOpen = false;
     this.finishSheetClose(false);
@@ -106,9 +119,42 @@ export class MobileSectionSwitcher {
     this.closeTimer = null;
     const wasOpen = this.dialogEl?.open;
     this.dialogEl?.close();
+    this.themeObserver?.disconnect();
     this.menuOpen = false;
     this.sheetClosing = false;
     if (wasOpen && restoreFocus && this.triggerEl?.getClientRects().length) this.triggerEl.focus();
+  }
+
+  private updateBrowserEdgeColor = () => {
+    if (!this.browserEdgeEl || !this.dialogEl) return;
+    const base = getComputedStyle(this.browserEdgeEl).color;
+    const shade = getComputedStyle(this.dialogEl, '::backdrop').backgroundColor;
+    const colors = `${base}|${shade}`;
+    if (colors === this.browserEdgeColors) return;
+    // Let the browser resolve token colors, including alpha and non-sRGB syntax,
+    // then flatten the shade over the bar into the opaque color Safari samples.
+    const canvas = this.el.ownerDocument.createElement('canvas');
+    canvas.width = canvas.height = 1;
+    const context = canvas.getContext('2d');
+    if (!context) return;
+    context.fillStyle = base;
+    context.fillRect(0, 0, 1, 1);
+    context.fillStyle = shade;
+    context.fillRect(0, 0, 1, 1);
+    const [red, green, blue] = context.getImageData(0, 0, 1, 1).data;
+    this.browserEdgeEl.style.backgroundColor = `rgb(${red}, ${green}, ${blue})`;
+    this.browserEdgeColors = colors;
+  };
+
+  private observeBrowserEdgeTheme() {
+    this.themeObserver ??= new MutationObserver(this.updateBrowserEdgeColor);
+    // Token themes are inherited from the page or a containing theme scope.
+    for (let ancestor: HTMLElement | null = this.el; ancestor; ancestor = ancestor.parentElement) {
+      this.themeObserver.observe(ancestor, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme'],
+      });
+    }
   }
 
   private focusSheetItem(id: string) {
@@ -312,6 +358,14 @@ export class MobileSectionSwitcher {
             )
           )}
         </div>
+        <div
+          ref={element => {
+            if (this.browserEdgeEl !== element) this.browserEdgeColors = '';
+            this.browserEdgeEl = element ?? null;
+          }}
+          class="mobile-section-sheet__browser-edge"
+          aria-hidden="true"
+        />
       </dialog>
     );
   }
@@ -331,7 +385,13 @@ export class MobileSectionSwitcher {
     const combined = this.presentation === 'sheet' && !!this.pageLabel;
 
     return (
-      <Host>
+      <Host
+        class={{ 'mobile-section-switcher--pointer-focus': this.pointerFocus }}
+        onPointerDown={() => {
+          this.pointerFocus = true;
+          this.initialFocusVisible = false;
+        }}
+      >
         <button
           ref={element => {
             this.triggerEl = element ?? null;

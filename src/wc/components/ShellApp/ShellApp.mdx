@@ -107,3 +107,8 @@ precedence; ShellApp paints the resolved preference.
 See the [managed application story](/?path=/story/layout-shellapp--managed),
 the [Introduction](/?path=/docs/docs-introduction--docs), and the
 [framework integration guide](https://github.com/zainadeel/compomo/blob/main/docs/framework-integration.md).
+
+The mobile top safe-area surface can follow an application-owned banner through
+`--ds-shell-safe-area-background`. Supply the banner's background token while it
+is visible and remove the override when dismissed. Safari owns the tint of its
+browser controls; the page's safe-area surface does not guarantee that tint.
