@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.31.2](https://github.com/zainadeel/compomo/compare/v14.31.1...v14.31.2) (2026-09-05)
+
+
+### Fixed
+
+* match mobile browser top edge to active banner ([#583](https://github.com/zainadeel/compomo/issues/583)) ([855ad8f](https://github.com/zainadeel/compomo/commit/855ad8f2618ff285a563a127a8d70807daa16893))
+
 ## [14.31.1](https://github.com/zainadeel/compomo/compare/v14.31.0...v14.31.1) (2026-09-05)
 
 
