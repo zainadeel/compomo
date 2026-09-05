@@ -1017,6 +1017,87 @@ test.describe('Mobile section input modality', () => {
     await expect.poll(() => outline(sheet.locator('button:focus'))).toBe('solid');
   });
 
+  test('matches the mobile banner edge across colors, themes, dismissal and replacement @cross-browser', async ({
+    page,
+  }) => {
+    await page.goto('/shell-mobile.html');
+    await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
+    await page.evaluate(() => {
+      const wrapper = document.querySelector('#banner-slot')!;
+      wrapper.innerHTML =
+        '<ds-banner id="edge-banner" description="Shell notice" intent="brand"></ds-banner>';
+    });
+    const banner = page.locator('#edge-banner');
+    const edge = banner.locator('.banner-browser-edge');
+    const surface = banner.locator('.banner-surface');
+    await expect(edge).toBeVisible();
+    await expect(edge).toHaveCSS('position', 'fixed');
+    await expect(edge).toHaveCSS('pointer-events', 'none');
+    await expect(edge).toHaveAttribute('aria-hidden', 'true');
+    const box = (await edge.boundingBox())!;
+    expect(box.x).toBe(0);
+    expect(box.y).toBe(0);
+    expect(box.width).toBe(390);
+    expect(box.height).toBeGreaterThan(10);
+    const matchesSurface = async () => {
+      await expect
+        .poll(async () => {
+          const colors = await banner.evaluate(element =>
+            [...element.querySelectorAll('.banner-browser-edge, .banner-surface')].map(
+              node => getComputedStyle(node).backgroundColor
+            )
+          );
+          return colors[0] === colors[1] && colors[0] !== 'rgba(0, 0, 0, 0)';
+        })
+        .toBe(true);
+    };
+    for (const intent of ['neutral', 'brand', 'positive', 'warning', 'caution', 'negative']) {
+      for (const contrast of ['faint', 'medium', 'strong', 'bold']) {
+        await banner.evaluate(
+          (element, values) => {
+            element.setAttribute('intent', values.intent);
+            element.setAttribute('contrast', values.contrast);
+          },
+          { intent, contrast }
+        );
+        await expect(banner).toHaveClass(new RegExp('banner--contrast-' + contrast));
+        await expect(banner).toHaveClass(new RegExp('banner--intent-' + intent));
+        await matchesSurface();
+      }
+    }
+    await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
+    await matchesSurface();
+    await banner.evaluate(element =>
+      (element as HTMLElement).style.setProperty(
+        '--ds-banner-background',
+        'var(--color-background-faint-warning)'
+      )
+    );
+    await matchesSurface();
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await expect(edge).toBeHidden();
+    await page.setViewportSize({ width: 390, height: 760 });
+    await expect(edge).toBeVisible();
+    await banner.evaluate(element => {
+      (element as HTMLElement & { open: boolean }).open = false;
+    });
+    await expect(edge).toBeHidden();
+    await banner.evaluate(element => {
+      (element as HTMLElement & { open: boolean }).open = true;
+    });
+    await expect(edge).toBeVisible();
+    await matchesSurface();
+    await expect(surface).toBeVisible();
+    await banner.evaluate(element => element.remove());
+    await expect(page.locator('.banner-browser-edge')).toHaveCount(0);
+    await page.evaluate(() => {
+      const banner = document.createElement('ds-banner');
+      banner.setAttribute('description', 'Standalone notice');
+      document.body.append(banner);
+    });
+    await expect(page.locator('.banner-browser-edge')).toBeHidden();
+  });
+
   test('paints the mobile safe area with the supplied banner surface @cross-browser', async ({
     page,
   }) => {

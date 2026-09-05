@@ -40,6 +40,22 @@
   overflow: visible;
 }
 
+/* ShellApp enables this surface only in its mobile banner lane. Keep it outside
+ * the translated copy surface so fixed positioning stays viewport-owned. */
+.banner-browser-edge {
+  display: none;
+  position: fixed;
+  inset: 0 0 auto;
+  height: max(var(--dimension-space-200), env(safe-area-inset-top, 0px));
+  pointer-events: none;
+  background-color: var(--ds-banner-background);
+}
+
+:host(.banner--open) .banner-browser-edge,
+:host(.banner--closing) .banner-browser-edge {
+  display: var(--_shell-banner-edge-display, none);
+}
+
 .banner-surface {
   display: flex;
   position: relative;
@@ -257,6 +273,10 @@
 }
 
 @media (forced-colors: active) {
+  .banner-browser-edge {
+    background-color: var(--ds-forced-color-surface);
+  }
+
   .banner-surface {
     color: var(--ds-forced-color-content);
     background-color: var(--ds-forced-color-surface);

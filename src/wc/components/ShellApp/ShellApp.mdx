@@ -108,7 +108,11 @@ See the [managed application story](/?path=/story/layout-shellapp--managed),
 the [Introduction](/?path=/docs/docs-introduction--docs), and the
 [framework integration guide](https://github.com/zainadeel/compomo/blob/main/docs/framework-integration.md).
 
-The mobile top safe-area surface can follow an application-owned banner through
-`--ds-shell-safe-area-background`. Supply the banner's background token while it
-is visible and remove the override when dismissed. Safari owns the tint of its
-browser controls; the page's safe-area surface does not guarantee that tint.
+A Banner in the mobile banner slot paints a fixed top-edge surface using its own
+background. Intent, contrast, theme, and banner background overrides therefore
+stay synchronized without an application color mapping. The surface remains
+through dismissal motion and disappears with the banner. Safari can sample it
+for the status-area tint; native browser tint still needs verification on a device.
+
+`--ds-shell-safe-area-background` remains available for the shell's underlying
+safe-area background when no Banner is present.
