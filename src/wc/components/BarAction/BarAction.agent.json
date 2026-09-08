@@ -44,9 +44,9 @@
     "The application updates the selected identities after dsClear, then moves focus to a stable collection control before the empty bar disappears; the bar never mutates selection or guesses a focus target."
   ],
   "states": [
-    "The bar is hidden while the selected count is below one and appears as the compact bold-brand elevated surface once at least one item is selected.",
+    "The bar is hidden while the selected count is below one and appears as the compact pill bold-brand elevated surface once at least one item is selected.",
     "Clear reports intent only. The application replaces the controlled selected identities.",
-    "Slotted actions stay application-owned. Pass background matching the bold parent surface so those controls remain readable.",
+    "Slotted actions stay application-owned. Use the rounded ButtonFilled or ButtonUnfilled variant on a background matching the bold parent surface so those controls remain readable.",
     "The component-owned visible surface owns medium control-elevation and removes the empty actions lane. Overlay inset, footer clearance, and stacking remain application layout."
   ],
   "responsiveBehavior": [
@@ -56,7 +56,7 @@
   "frameworkCaveats": {
     "customElements": [
       "Bind count from the current selected set, replace that set after dsClear, and return focus to a stable collection control.",
-      "Project command controls through slot=actions with background matching the bold parent surface."
+      "Project rounded command controls through slot=actions with background matching the bold parent surface."
     ],
     "react": [
       "Pass count from selected row or item state, clear that state from onDsClear, and return focus to a stable collection control.",
@@ -64,7 +64,7 @@
     ],
     "angular": [
       "Bind count from the controlled selected identities, handle dsClear in the collection owner, and return focus to a stable collection control.",
-      "Project ds-button-unfilled or ds-button-filled into slot=actions with background matching the bold parent surface."
+      "Project the rounded ds-button-unfilled or ds-button-filled variant into slot=actions with background matching the bold parent surface."
     ]
   },
   "references": [

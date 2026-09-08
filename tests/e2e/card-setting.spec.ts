@@ -17,7 +17,7 @@ test('owns settings shell chrome without composing ds-card', async ({ page }) =>
     const header = element.querySelector<HTMLElement>('.card-setting__header')!;
     const headerStyle = getComputedStyle(header);
     const radiusProbe = document.createElement('div');
-    radiusProbe.style.borderRadius = 'var(--dimension-radius-125)';
+    radiusProbe.style.borderRadius = 'var(--ds-radius-card)';
     element.append(radiusProbe);
     const expectedBorderRadius = getComputedStyle(radiusProbe).borderRadius;
     radiusProbe.remove();

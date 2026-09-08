@@ -1,3 +1,4 @@
+@import '../../utils/radius.css';
 @import '../../utils/chrome-header.css';
 @import '../../utils/interaction-fill.css';
 @import '../../utils/focus-ring.css';
@@ -12,7 +13,7 @@
   max-width: 100%;
   overflow: hidden;
   border: none;
-  border-radius: var(--dimension-radius-125);
+  border-radius: var(--ds-radius-card);
   background-color: var(--color-background-primary);
   box-shadow: var(--effect-shadow-elevated-sm);
 }
@@ -43,7 +44,7 @@
 }
 
 :host(.card-navigation--content) .card-navigation__header {
-  border-radius: var(--dimension-radius-125) var(--dimension-radius-125) 0 0;
+  border-radius: var(--ds-radius-card) var(--ds-radius-card) 0 0;
   --ds-interaction-divider-width: var(--dimension-stroke-width-012);
   --ds-interaction-divider-color: var(--color-border-tertiary);
 }
@@ -71,7 +72,7 @@ ds-text.card-navigation__description {
   min-height: 0;
   box-sizing: border-box;
   background-color: var(--color-background-primary);
-  border-radius: 0 0 var(--dimension-radius-125) var(--dimension-radius-125);
+  border-radius: 0 0 var(--ds-radius-card) var(--ds-radius-card);
 }
 
 @media (forced-colors: active) {

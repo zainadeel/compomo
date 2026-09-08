@@ -24,7 +24,7 @@
 .ds-control--sm,
 :host(.ds-control--xs),
 .ds-control--xs {
-  --ds-control-radius: var(--dimension-radius-025);
+  --ds-control-radius: var(--ds-radius-control);
 }
 
 :host(.ds-control--lg),

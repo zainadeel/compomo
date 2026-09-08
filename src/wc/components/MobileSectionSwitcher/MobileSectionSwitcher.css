@@ -1,5 +1,6 @@
 @import '../../utils/focus-ring.css';
 @import '../../utils/interaction-fill.css';
+@import '../../utils/radius.css';
 @import '../../utils/control-density.css';
 
 :host {

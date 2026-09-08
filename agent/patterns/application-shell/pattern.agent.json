@@ -32,6 +32,11 @@
       "required": false
     },
     {
+      "component": "component:ds-bar-page-title",
+      "role": "Managed panel-mode shell-bar page chrome with all-or-nothing page-section tabs.",
+      "required": false
+    },
+    {
       "component": "component:ds-shell-tools",
       "role": "Managed responsive adapter that presents persistent product-owned tool views through PanelTools or the mobile stage.",
       "required": false
@@ -83,7 +88,7 @@
   ],
   "responsiveBehavior": [
     "ShellApp automatically resolves desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
-    "Desktop and tablet use PanelNav, PanelTools through ShellTools, and ShellPage chrome. sectionNavigation chooses either BarNav or nested PanelNav plus compact BarTitle in the shell bar.",
+    "Desktop and tablet use PanelNav, PanelTools through ShellTools, and ShellPage chrome. sectionNavigation chooses either BarNav or nested PanelNav plus BarPageTitle in the shell bar.",
     "Panel section navigation removes page-local desktop title geometry: standard inset pages begin 32px below the shell bar on desktop and 16px below it on tablet, while full-bleed pages remain full bleed.",
     "Mobile uses MobileSheetNav, MobileBarNav, MobileHeader, ShellTools mobile presentation, and the same routed content owner. MobileBarNav paints its primary surface through the bottom safe-area inset so light browser chrome and application chrome meet without a secondary-surface seam.",
     "Below 768px the application root owns a 100dvh fixed stage with a 100vh fallback while ShellApp continues to fill its owner with height 100%; JavaScript viewport measurement synchronizes only the chrome wash and does not own layout height.",

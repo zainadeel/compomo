@@ -1,3 +1,4 @@
+@import '../../utils/radius.css';
 @import '../../utils/control-density.css';
 @import '../../utils/key-hint.css';
 @import '../../utils/forced-colors.css';
@@ -5,7 +6,7 @@
 .tooltip-popup {
   box-sizing: border-box;
   background-color: var(--color-background-primary);
-  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
+  border-radius: var(--ds-radius-tooltip-control, var(--dimension-radius-025));
   box-shadow: var(--effect-elevation-elevated-floating);
   white-space: nowrap;
   pointer-events: none;

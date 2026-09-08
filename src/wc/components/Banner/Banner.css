@@ -1,4 +1,5 @@
 @import '../../utils/forced-colors.css';
+@import '../../utils/radius.css';
 @import '../../utils/chrome-header.css';
 
 :host {

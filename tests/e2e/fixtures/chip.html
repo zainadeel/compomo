@@ -10,6 +10,8 @@
     <main>
       <h1>Chip test</h1>
       <ds-chip id="chip" label="Vehicle: 452" removable="false"></ds-chip>
+      <ds-chip id="sm-chip" label="Small value" size="sm"></ds-chip>
+      <ds-chip id="xs-chip" label="Tiny value" size="xs"></ds-chip>
       <ds-chip id="inactive-chip" label="Inactive value" is-inactive></ds-chip>
       <ds-chip id="single-inset-chip" label="Single inset value" size="md" is-inset></ds-chip>
       <ds-chip
@@ -23,6 +25,9 @@
         id="long-chip"
         label="A very long user-applied filter value that must truncate"
       ></ds-chip>
+      <div style="width: var(--dimension-form-width-sm)">
+        <ds-chip id="wide-chip" label="Short" style="width: 100%"></ds-chip>
+      </div>
     </main>
     <script type="module" src="/chip-setup.mjs"></script>
   </body>

@@ -23,6 +23,15 @@ the same size. That option reduces only the nested control's outer geometry;
 it does not define a new typography or icon scale. Do not apply inset density
 to ordinary standalone controls.
 
+## Radius
+
+Named corner-radius roles keep cards, tables, dialogs, menus, and tooltips on
+the same scale. Cards, tables, modals, and toasts share the bounded-surface
+family. Menus and chart tooltips share the menu-surface family. Chip tooltips
+stay on the control-sized role.
+
+See **Utility → Radius** for the role table.
+
 ## Fields
 
 Field, Input, Select, and Slider share a 4px vertical flow between
@@ -49,5 +58,5 @@ search focus, typeahead, and listbox keyboard traversal. Their selection and
 form contracts differ by mode: scalar Select commits one value and closes, while multiple Select
 toggles an array and remains open.
 
-See **Utility → ControlDensity**, **Utility → ChromeLayout**, and the component
+See **Utility → ControlDensity**, **Utility → Radius**, **Utility → ChromeLayout**, and the component
 stories for rendered examples.

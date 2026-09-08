@@ -69,12 +69,11 @@ test.describe('Managed application shell', () => {
     });
 
     const panel = shell.locator('ds-panel-nav');
-    const shellBarTitle = shell.locator('.shell-app__bar > ds-bar-title');
+    const shellBarTitle = shell.locator('.shell-app__bar > ds-bar-page-title');
     await expect(panel).toHaveJSProperty('presentation', 'nested');
     await expect(shell.locator('.shell-app__bar > ds-bar-nav')).toHaveCount(0);
     await expect(shellBarTitle).toBeVisible();
-    await expect(shellBarTitle).toHaveJSProperty('placement', 'shell-bar');
-    await expect(shellBarTitle).toHaveJSProperty('variant', 'compact');
+    await expect(shell.locator('.shell-app__bar > ds-bar-title')).toHaveCount(0);
     await expect(shell.locator('ds-shell-page ds-bar-title')).toHaveCount(0);
     await expect(shell.getByText('Current fleet status.', { exact: true })).toHaveCount(0);
 
@@ -1485,5 +1484,153 @@ test.describe('Managed application shell', () => {
       ).setToolPresentation('drawer');
     });
     await expect(shell).not.toHaveClass(/shell-app--tools-fullscreen/);
+  });
+
+  test('anchors tool filter and header menus to the history pane in drawer and fullscreen @cross-browser', async ({
+    page,
+  }) => {
+    const shell = page.locator('#managed-shell');
+    const toolsLane = page.locator('.shell-app__tools');
+    const panelTools = shell.locator('ds-panel-tools');
+
+    const overlayOwner = (anchor: ReturnType<typeof page.locator>) =>
+      anchor.evaluate(element => {
+        let current: Element | null = element;
+        while (current) {
+          if (current instanceof HTMLElement && current.hasAttribute('data-ds-overlay-boundary')) {
+            const rect = current.getBoundingClientRect();
+            return {
+              tag: current.tagName.toLowerCase(),
+              width: rect.width,
+              left: rect.left,
+              right: rect.right,
+            };
+          }
+          if (current.assignedSlot) current = current.assignedSlot;
+          else if (current.parentElement) current = current.parentElement;
+          else {
+            const root = current.getRootNode();
+            current = root instanceof ShadowRoot ? root.host : null;
+          }
+        }
+        return null;
+      });
+
+    const assertPopupBesideTrigger = async (
+      trigger: ReturnType<typeof page.locator>,
+      menuHost: ReturnType<typeof page.locator>,
+      menuName: string,
+      toolsLaneMustNotContainMenu: boolean
+    ) => {
+      await trigger.click();
+      const menu = page.getByRole('menu', { name: menuName });
+      await expect(menu).toBeVisible();
+      expect(await menu.evaluate(element => element.matches(':popover-open'))).toBe(true);
+      await expect
+        .poll(async () => {
+          const triggerBox = await trigger.boundingBox();
+          const menuBox = await menu.boundingBox();
+          if (!triggerBox || !menuBox) return null;
+          const horizontallyNear =
+            menuBox.x < triggerBox.x + triggerBox.width + 16 &&
+            menuBox.x + menuBox.width > triggerBox.x - 16;
+          const verticallyNear =
+            menuBox.y + menuBox.height > triggerBox.y - 16 &&
+            menuBox.y < triggerBox.y + triggerBox.height + 24;
+          return horizontallyNear && verticallyNear;
+        })
+        .toBe(true);
+
+      if (toolsLaneMustNotContainMenu) {
+        const menuBox = await menu.boundingBox();
+        const laneBox = await toolsLane.boundingBox();
+        expect(menuBox).not.toBeNull();
+        expect(laneBox).not.toBeNull();
+        if (!menuBox || !laneBox) throw new Error('Missing menu or tools-lane bounds');
+        if (laneBox.width > 48) {
+          expect(menuBox.x + menuBox.width / 2).toBeLessThan(laneBox.x);
+        }
+      }
+
+      await menuHost.evaluate(element => {
+        (element as HTMLDsMenuElement).open = false;
+      });
+      await expect(menu).toHaveCount(0);
+    };
+
+    await page.getByRole('button', { name: 'Agents', exact: true }).click();
+    await expect(panelTools).toHaveJSProperty('open', true);
+    await expect(panelTools).not.toHaveClass(/panel-tools--motion-opening/, { timeout: 5000 });
+    expect(
+      await toolsLane.evaluate(element => element.hasAttribute('data-ds-overlay-boundary'))
+    ).toBe(true);
+    await expect
+      .poll(async () => overlayOwner(page.locator('#agents-filter-trigger')))
+      .toEqual(expect.objectContaining({ tag: 'ds-panel-tools' }));
+
+    await assertPopupBesideTrigger(
+      page.locator('#agents-filter-trigger'),
+      page.locator('#agents-filter-menu'),
+      'Chat filter',
+      false
+    );
+    await assertPopupBesideTrigger(
+      page.getByRole('button', { name: 'Chat options', exact: true }),
+      page.locator('#agents-header-menu'),
+      'Chat options',
+      false
+    );
+
+    await shell.evaluate(async element => {
+      const managed = element as HTMLDsShellAppElement;
+      managed.tools = { ...managed.tools, fullscreenHeaderMode: 'split' };
+      await managed.setToolPresentation('fullscreen');
+    });
+    await expect(shell).toHaveClass(/shell-app--tools-fullscreen/);
+    await expect(panelTools).toHaveAttribute('presentation', 'fullscreen');
+    expect(
+      await toolsLane.evaluate(element => element.hasAttribute('data-ds-overlay-boundary'))
+    ).toBe(false);
+
+    const fullscreenOwner = await overlayOwner(page.locator('#agents-filter-trigger'));
+    const viewportWidth = page.viewportSize()?.width ?? 0;
+    expect(fullscreenOwner?.tag).toBe('ds-panel-tools');
+    expect(fullscreenOwner?.width ?? 0).toBeGreaterThan(viewportWidth - 8);
+
+    await assertPopupBesideTrigger(
+      page.locator('#agents-filter-trigger'),
+      page.locator('#agents-filter-menu'),
+      'Chat filter',
+      true
+    );
+    await assertPopupBesideTrigger(
+      page.getByRole('button', { name: 'Chat options', exact: true }),
+      page.locator('#agents-header-menu'),
+      'Chat options',
+      true
+    );
+
+    await page.keyboard.press('Escape');
+    await expect(shell).not.toHaveClass(/shell-app--tools-fullscreen/);
+    await page.getByRole('button', { name: 'Messages', exact: true }).click();
+    await expect(panelTools).toHaveJSProperty('activeTool', 'messages');
+    await shell.evaluate(async element => {
+      const managed = element as HTMLDsShellAppElement;
+      managed.tools = { ...managed.tools, fullscreenHeaderMode: 'split' };
+      await managed.setToolPresentation('fullscreen');
+    });
+    await expect(shell).toHaveClass(/shell-app--tools-fullscreen/);
+    await assertPopupBesideTrigger(
+      page.locator('#messages-filter-trigger'),
+      page.locator('#messages-filter-menu'),
+      'Message filter',
+      true
+    );
+    await assertPopupBesideTrigger(
+      page.getByRole('button', { name: 'Inbox options', exact: true }),
+      page.locator('#messages-header-menu'),
+      'Inbox options',
+      true
+    );
   });
 });

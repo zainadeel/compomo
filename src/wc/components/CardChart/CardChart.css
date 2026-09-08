@@ -1,3 +1,4 @@
+@import '../../utils/radius.css';
 @import '../../utils/chrome-header.css';
 @import '../../utils/forced-colors.css';
 
@@ -11,7 +12,7 @@
   max-width: 100%;
   overflow: visible;
   border: none;
-  border-radius: var(--dimension-radius-125);
+  border-radius: var(--ds-radius-card);
   background-color: var(--color-background-primary);
   box-shadow: var(--effect-shadow-elevated-sm);
 }
@@ -61,7 +62,7 @@ ds-text.card-chart__title {
 }
 
 .card-chart__body {
-  border-radius: 0 0 var(--dimension-radius-125) var(--dimension-radius-125);
+  border-radius: 0 0 var(--ds-radius-card) var(--ds-radius-card);
   background-color: var(--color-background-primary);
 }
 

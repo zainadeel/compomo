@@ -12,6 +12,7 @@ import {
   Host,
 } from '@stencil/core';
 import type { ChromeTransitionDetail } from '../../shell/chrome-transition';
+import { ANCHORED_OVERLAY_BOUNDARY_ATTRIBUTE } from '../../utils/anchored-overlay-boundary';
 import {
   PANEL_TOOLS_LABELS,
   PANEL_TOOLS_SHORTCUTS,
@@ -235,6 +236,7 @@ export class PanelTools {
   }
 
   connectedCallback() {
+    this.el.setAttribute(ANCHORED_OVERLAY_BOUNDARY_ATTRIBUTE, '');
     this.el.addEventListener('transitionend', this.handleTransitionEnd);
     this.el.addEventListener('transitioncancel', this.handleTransitionEnd);
     this.el.addEventListener('dsAction', this.handleComposedHeaderAction);
@@ -876,6 +878,7 @@ export class PanelTools {
           'panel-tools--fullscreen': this.presentation === 'fullscreen',
           'panel-tools--presentation-snap': this.presentationMotionSuppressed,
         }}
+        data-ds-overlay-boundary
         role={this.presentation === 'fullscreen' ? 'dialog' : 'complementary'}
         aria-modal={this.presentation === 'fullscreen' ? 'true' : undefined}
         aria-label={this.toolsLabel}

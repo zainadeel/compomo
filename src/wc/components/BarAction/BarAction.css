@@ -20,7 +20,7 @@
   min-width: 0;
   box-sizing: border-box;
   height: var(--dimension-size-600);
-  border-radius: var(--dimension-radius-125);
+  border-radius: var(--dimension-radius-half);
   background: var(--color-background-bold-brand);
   color: var(--color-foreground-on-bold-background-secondary);
   --ds-focus-ring-color: var(--color-interaction-on-bold-background-focus);
@@ -72,7 +72,7 @@
   margin: 0;
   padding: var(--dimension-space-025);
   border: 0;
-  border-radius: var(--dimension-radius-050);
+  border-radius: var(--dimension-radius-half);
   background: transparent;
   cursor: pointer;
 }

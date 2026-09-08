@@ -1,3 +1,4 @@
+@import '../../utils/radius.css';
 @import '../../utils/chrome-header.css';
 @import '../../utils/forced-colors.css';
 
@@ -11,7 +12,7 @@
   max-width: 100%;
   overflow: hidden;
   border: none;
-  border-radius: var(--dimension-radius-125);
+  border-radius: var(--ds-radius-card);
   background-color: var(--color-background-primary);
   box-shadow: var(--effect-shadow-elevated-sm);
 }
@@ -67,11 +68,11 @@ ds-text.card-setting__title {
   min-height: 0;
   box-sizing: border-box;
   background-color: var(--color-background-primary);
-  border-radius: 0 0 var(--dimension-radius-125) var(--dimension-radius-125);
+  border-radius: 0 0 var(--ds-radius-card) var(--ds-radius-card);
 }
 
 :host(.card-setting--editing) .card-setting__body {
-  border-radius: var(--dimension-radius-125);
+  border-radius: var(--ds-radius-card);
 }
 
 @media (forced-colors: active) {

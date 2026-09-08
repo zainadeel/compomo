@@ -182,8 +182,6 @@ export class Pagination {
     const state = this.resolvedState;
     const atStart = state.pageIndex === 0;
     const atEnd = state.pageIndex === state.totalPages - 1;
-    const visibleItems = state.totalItems === 0 ? 0 : state.lastItem - state.firstItem + 1;
-    const total = `${visibleItems} of ${state.totalItems}`;
     const page = `${state.pageIndex + 1} of ${state.totalPages}`;
     const announcedRange = `${state.firstItem}–${state.lastItem} of ${state.totalItems}`;
     const announcedPage = `Page ${state.pageIndex + 1} of ${state.totalPages}`;
@@ -240,15 +238,6 @@ export class Pagination {
                 this.requestPageSize(event.detail);
               }}
             />
-            <ds-text
-              class="pagination__total"
-              as="span"
-              variant="text-body-medium"
-              color="secondary"
-              fontFeature="tabular-nums"
-            >
-              {total}
-            </ds-text>
           </div>
           <ds-divider
             class="pagination__divider"

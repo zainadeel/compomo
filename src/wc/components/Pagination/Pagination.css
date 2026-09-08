@@ -24,7 +24,7 @@
 .pagination {
   width: max-content;
   min-width: 100%;
-  gap: var(--dimension-space-200);
+  gap: var(--dimension-space-100);
 }
 
 .pagination__page-size,
@@ -34,24 +34,18 @@
 
 .pagination__page-size {
   gap: 0;
-  padding-inline-end: var(--dimension-space-100);
 }
 
 .pagination__navigation {
   gap: var(--dimension-space-050);
 }
 
-.pagination__total,
 .pagination__page,
 .pagination__label {
   display: inline-flex;
   align-items: center;
   flex: 0 0 auto;
   white-space: nowrap;
-}
-
-.pagination__total {
-  margin-inline-start: var(--dimension-space-100);
 }
 
 .pagination .pagination__page-size-select {
@@ -64,15 +58,6 @@
   padding-inline: var(--dimension-space-100);
 }
 
-.pagination--table-compact .pagination__total,
 .pagination--table-compact .pagination__boundary {
   display: none;
-}
-
-.pagination--table-compact {
-  gap: var(--dimension-space-100);
-}
-
-.pagination--table-compact .pagination__page-size {
-  padding-inline-end: 0;
 }

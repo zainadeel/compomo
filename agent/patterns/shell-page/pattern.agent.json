@@ -27,7 +27,12 @@
     },
     {
       "component": "component:ds-bar-title",
-      "role": "Managed desktop/tablet page-header presentation; remains public for advanced slotted composition.",
+      "role": "Managed desktop/tablet page-header presentation in bar mode; remains public for advanced slotted composition.",
+      "required": false
+    },
+    {
+      "component": "component:ds-bar-page-title",
+      "role": "Managed panel-mode shell-bar page chrome, including all-or-nothing page-section tabs.",
       "required": false
     },
     {
@@ -39,7 +44,7 @@
   "stateOwnership": [
     "The router owns heading copy, selected section, depth, ordered available actions, content inset, divider visibility, scroll-compaction policy, content surface, route data, and product outcomes.",
     "The application replaces pageChrome from completed route state and handles ShellApp page intent events.",
-    "ShellApp owns ShellPage, BarTitle, MobileHeader, the content scroller, sticky presentation, and responsive switching.",
+    "ShellApp owns ShellPage, BarTitle, BarPageTitle, MobileHeader, the content scroller, sticky presentation, and responsive switching.",
     "The default slot contains application-owned routed content and is not recreated for header compaction or breakpoint changes.",
     "Use a directly slotted ShellPage only inside composition=\"slotted\".",
     "Keep external surface ownership separate from selected routes, toggled modes, and inline expansion. Forward surfaceOpen on header actions while their associated menu or panel remains rendered, including exit motion; clear it after closing. Internal popup controls manage this relationship themselves."
@@ -51,7 +56,7 @@
     "Handle section and Back intent through the router without replacing focused tool or page owners unnecessarily."
   ],
   "responsiveBehavior": [
-    "ShellApp derives the desktop BarTitle and mobile MobileHeader from the same pageChrome object.",
+    "ShellApp derives the desktop BarTitle or BarPageTitle and mobile MobileHeader from the same pageChrome object.",
     "Ordered page actions keep icon commands visible on mobile by default and flatten labeled, menu, split, and explicit overflow commands into one ShellApp-owned mobile menu.",
     "Route-level sections remain pageChrome tabs; subordinate local views use subsections.",
     "Use contentInset none only for deliberately full-bleed products such as maps and canvases.",

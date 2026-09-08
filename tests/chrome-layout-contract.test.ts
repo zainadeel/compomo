@@ -75,6 +75,7 @@ test('compact headers share one geometry and copy-zone anatomy', () => {
     Modal: /modal-header ds-chrome-header ds-chrome-header--bounded/,
     PanelToolHeader: /panel-tool-header ds-chrome-header ds-chrome-header--bounded/,
     BarTitle: /'ds-chrome-header': compact/,
+    BarPageTitle: /'ds-chrome-header': true/,
     CardChart: /card-chart__header ds-chrome-header/,
     CardSetting: /card-setting__header ds-chrome-header/,
     Table: /ds-table__footer ds-table__bar ds-chrome-header ds-control--md/,

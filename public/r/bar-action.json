@@ -50,9 +50,9 @@
         "The application updates the selected identities after dsClear, then moves focus to a stable collection control before the empty bar disappears; the bar never mutates selection or guesses a focus target."
       ],
       "states": [
-        "The bar is hidden while the selected count is below one and appears as the compact bold-brand elevated surface once at least one item is selected.",
+        "The bar is hidden while the selected count is below one and appears as the compact pill bold-brand elevated surface once at least one item is selected.",
         "Clear reports intent only. The application replaces the controlled selected identities.",
-        "Slotted actions stay application-owned. Pass background matching the bold parent surface so those controls remain readable.",
+        "Slotted actions stay application-owned. Use the rounded ButtonFilled or ButtonUnfilled variant on a background matching the bold parent surface so those controls remain readable.",
         "The component-owned visible surface owns medium control-elevation and removes the empty actions lane. Overlay inset, footer clearance, and stacking remain application layout."
       ],
       "responsiveBehavior": [
@@ -62,7 +62,7 @@
       "frameworkCaveats": {
         "customElements": [
           "Bind count from the current selected set, replace that set after dsClear, and return focus to a stable collection control.",
-          "Project command controls through slot=actions with background matching the bold parent surface."
+          "Project rounded command controls through slot=actions with background matching the bold parent surface."
         ],
         "react": [
           "Pass count from selected row or item state, clear that state from onDsClear, and return focus to a stable collection control.",
@@ -70,7 +70,7 @@
         ],
         "angular": [
           "Bind count from the controlled selected identities, handle dsClear in the collection owner, and return focus to a stable collection control.",
-          "Project ds-button-unfilled or ds-button-filled into slot=actions with background matching the bold parent surface."
+          "Project the rounded ds-button-unfilled or ds-button-filled variant into slot=actions with background matching the bold parent surface."
         ]
       },
       "references": [
@@ -230,7 +230,7 @@
   "files": [
     {
       "path": "src/wc/components/BarAction/BarAction.css",
-      "content": "@import '../../styles/control-elevation.css';\n@import '../../utils/chrome-layout.css';\n@import '../../utils/focus-ring.css';\n@import '../../utils/forced-colors.css';\n@import '../../utils/text-decoration.css';\n@import '../../utils/visually-hidden.css';\n\n:host {\n  display: block;\n  min-width: 0;\n  box-sizing: border-box;\n}\n\n:host([hidden]) {\n  display: none;\n}\n\n.bar-action {\n  width: 100%;\n  min-width: 0;\n  box-sizing: border-box;\n  height: var(--dimension-size-600);\n  border-radius: var(--dimension-radius-125);\n  background: var(--color-background-bold-brand);\n  color: var(--color-foreground-on-bold-background-secondary);\n  --ds-focus-ring-color: var(--color-interaction-on-bold-background-focus);\n}\n\n.bar-action[hidden],\n.bar-action__actions:not(:has([slot='actions'])) {\n  display: none;\n}\n\n.bar-action__copy,\n.bar-action__actions {\n  display: flex;\n  align-items: center;\n  min-width: 0;\n  gap: var(--dimension-space-050);\n}\n\n.bar-action__copy {\n  flex: 1 1 auto;\n  padding-inline: var(--dimension-space-100);\n}\n\n.bar-action__count {\n  flex: 0 1 auto;\n  min-width: 0;\n}\n\n.bar-action__separator,\n.bar-action__clear,\n.bar-action__actions {\n  flex: 0 0 auto;\n}\n\n.bar-action__actions {\n  margin-inline-start: auto;\n}\n\n.bar-action__actions slot {\n  display: contents;\n}\n\n.bar-action__clear {\n  appearance: none;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  min-block-size: var(--dimension-size-400);\n  margin: 0;\n  padding: var(--dimension-space-025);\n  border: 0;\n  border-radius: var(--dimension-radius-050);\n  background: transparent;\n  cursor: pointer;\n}\n\n@media (forced-colors: active) {\n  .bar-action {\n    --ds-control-elevation-shadow: none;\n    --ds-control-elevation-highlight: none;\n    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-control-boundary);\n    outline-offset: calc(-1 * var(--dimension-stroke-width-012));\n  }\n}\n",
+      "content": "@import '../../styles/control-elevation.css';\n@import '../../utils/chrome-layout.css';\n@import '../../utils/focus-ring.css';\n@import '../../utils/forced-colors.css';\n@import '../../utils/text-decoration.css';\n@import '../../utils/visually-hidden.css';\n\n:host {\n  display: block;\n  min-width: 0;\n  box-sizing: border-box;\n}\n\n:host([hidden]) {\n  display: none;\n}\n\n.bar-action {\n  width: 100%;\n  min-width: 0;\n  box-sizing: border-box;\n  height: var(--dimension-size-600);\n  border-radius: var(--dimension-radius-half);\n  background: var(--color-background-bold-brand);\n  color: var(--color-foreground-on-bold-background-secondary);\n  --ds-focus-ring-color: var(--color-interaction-on-bold-background-focus);\n}\n\n.bar-action[hidden],\n.bar-action__actions:not(:has([slot='actions'])) {\n  display: none;\n}\n\n.bar-action__copy,\n.bar-action__actions {\n  display: flex;\n  align-items: center;\n  min-width: 0;\n  gap: var(--dimension-space-050);\n}\n\n.bar-action__copy {\n  flex: 1 1 auto;\n  padding-inline: var(--dimension-space-100);\n}\n\n.bar-action__count {\n  flex: 0 1 auto;\n  min-width: 0;\n}\n\n.bar-action__separator,\n.bar-action__clear,\n.bar-action__actions {\n  flex: 0 0 auto;\n}\n\n.bar-action__actions {\n  margin-inline-start: auto;\n}\n\n.bar-action__actions slot {\n  display: contents;\n}\n\n.bar-action__clear {\n  appearance: none;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  min-block-size: var(--dimension-size-400);\n  margin: 0;\n  padding: var(--dimension-space-025);\n  border: 0;\n  border-radius: var(--dimension-radius-half);\n  background: transparent;\n  cursor: pointer;\n}\n\n@media (forced-colors: active) {\n  .bar-action {\n    --ds-control-elevation-shadow: none;\n    --ds-control-elevation-highlight: none;\n    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-control-boundary);\n    outline-offset: calc(-1 * var(--dimension-stroke-width-012));\n  }\n}\n",
       "type": "registry:ui"
     },
     {

@@ -8,7 +8,10 @@ test.beforeEach(async ({ page }) => {
 test('opens an accessible empty profiles popup and restores keyboard focus @cross-browser', async ({
   page,
 }) => {
-  const scope = page.getByRole('region', { name: 'Settings scope' });
+  const scope = page.getByRole('region', { name: 'Settings scope', exact: true });
+  await expect(scope.getByRole('button', { name: 'All', exact: true })).toBeVisible();
+  await expect(scope.getByRole('button', { name: 'All settings' })).toHaveCount(0);
+  await expect(scope.getByText('settings', { exact: true })).toBeVisible();
   const trigger = scope.getByRole('button', { name: 'Organization' });
   await expect(trigger).toHaveAttribute('aria-haspopup', 'dialog');
   await trigger.focus();
@@ -22,6 +25,14 @@ test('opens an accessible empty profiles popup and restores keyboard focus @cros
   await expect(popup).not.toBeVisible();
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
   await expect(trigger).toBeFocused();
+});
+
+test('preserves complete legacy area labels unless split sentence copy is requested', async ({
+  page,
+}) => {
+  const scope = page.getByRole('region', { name: 'Legacy settings scope', exact: true });
+  await expect(scope.getByRole('button', { name: 'All settings', exact: true })).toBeVisible();
+  await expect(scope.getByText('settings', { exact: true })).toHaveCount(0);
 });
 
 test('uses the complete navigation-only card as one native link', async ({ page, browserName }) => {

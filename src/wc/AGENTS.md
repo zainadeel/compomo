@@ -46,6 +46,7 @@ at the line where they occur.
 ## Internal recipes
 
 - `control-density.css`: lg/md/sm/xs control metrics.
+- `radius.css`: shared corner-radius roles (control, card, modal, menu, tooltip, table). Import it from the component stylesheet before `control-density.css`; Stencil cannot resolve a nested import from another util.
 - `control-density-inset.css`: opt-in reduced outer geometry for same-density nested controls.
 - `control-parts.css`: frame, icon box, and label box anatomy.
 - `field-stack.css`: label/control/supporting-message flow.

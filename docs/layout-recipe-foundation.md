@@ -27,6 +27,30 @@ control's outer box and outer inline padding. The base recipe continues to own
 its icon, text inset, gap, radius, and typography. Components must expose an
 intentional API before opting into this modifier; it is not a default density.
 
+## Corner radius
+
+`src/wc/utils/radius.css` owns named corner-radius roles. Components consume
+`--ds-radius-*` instead of picking a `--dimension-radius-*` token per surface.
+Import `radius.css` from the component stylesheet before `control-density.css`.
+Control density aliases `--ds-control-radius` from `--ds-radius-control`;
+pill controls still override to `--dimension-radius-half`.
+
+| Role                          | Ownership                     |
+| ----------------------------- | ----------------------------- |
+| `--ds-radius-control`         | Standard control corners      |
+| `--ds-radius-card`            | Card surfaces                 |
+| `--ds-radius-modal`           | Modal and toast surfaces      |
+| `--ds-radius-menu`            | Choice and action menus       |
+| `--ds-radius-tooltip-control` | Control-scale tooltips        |
+| `--ds-radius-tooltip-menu`    | Menu-scale and chart tooltips |
+| `--ds-radius-table`           | Table outer surfaces          |
+
+Modal and Toast share `--ds-radius-modal`. `ds-tooltip` uses
+`--ds-radius-tooltip-control`; `ds-tooltip-chart` uses
+`--ds-radius-tooltip-menu`. Table defaults to `--ds-radius-table` and still
+accepts `--ds-table-radius` as a product override.
+The authoritative role-to-token mapping remains in `src/wc/utils/radius.css`.
+
 ## Field flow
 
 `src/wc/utils/field-stack.css` owns the 4px vertical flow shared by a field
@@ -37,7 +61,7 @@ validation timing, or form semantics.
 ## Compact header anatomy
 
 `src/wc/utils/chrome-header.css` owns the geometry repeated by Banner, Modal,
-PanelToolHeader, and compact BarTitle:
+PanelToolHeader, compact BarTitle, and BarPageTitle:
 
 - a 48px compact minimum with an 8px outer inset and 8px zone gap;
 - the md row's 6px all-side copy-container inset and 2px balanced inline text inset;

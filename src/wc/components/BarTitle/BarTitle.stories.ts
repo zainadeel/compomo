@@ -389,7 +389,7 @@ export const ShellBarPlacement: Story = {
     docs: {
       description: {
         story:
-          'The compact page title used when nested PanelNav owns route sections. Description copy ' +
+          'Compact shell-bar chrome used by slotted ShellApp composition. Managed panel mode uses BarPageTitle. Description copy ' +
           'is intentionally omitted while Back, subsection, primary, and overflow controls remain.',
       },
     },

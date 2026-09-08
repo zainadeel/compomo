@@ -1,0 +1,99 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-bar-page-title",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-bar-page-title",
+  "audience": "specialized",
+  "status": "experimental",
+  "summary": "Compact shell-bar page chrome that shows every page-level section as a tab row after the title divider, and replaces that row with the compact section button when the complete set cannot fit.",
+  "useWhen": [
+    "Managed ShellApp is in panel section navigation and the routed page has page-level subsections such as People or driver detail.",
+    "The shell bar must keep page identity, Back, and page actions while presenting every page section together or not at all."
+  ],
+  "avoidWhen": [
+    "The chrome is a page-placed header; use BarTitle through ShellPage instead.",
+    "The choices are peer area routes in bar-mode ShellApp; use BarNav instead.",
+    "The choices are nested PanelNav child routes; keep those on PanelNav.",
+    "Local in-page views should remain selectable as tabs inside content; use TabGroup instead."
+  ],
+  "alternatives": [
+    {
+      "when": "The header sits in page content rather than the shell bar.",
+      "component": "component:ds-bar-title",
+      "reason": "BarTitle owns expanded, compact, and constrained page headers, including the compact section button without a tab row."
+    },
+    {
+      "when": "The choices are peer routes of the active PanelNav destination.",
+      "component": "component:ds-bar-nav",
+      "reason": "BarNav owns area-level route sections and partial overflow rather than page subsections."
+    },
+    {
+      "when": "The choices switch local content without changing page sections.",
+      "component": "component:ds-tab-group",
+      "reason": "TabGroup is the local content-view control rather than shell-bar page chrome."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-shell-app",
+    "component:ds-bar-title",
+    "component:ds-panel-nav",
+    "component:ds-menu",
+    "component:ds-text"
+  ],
+  "patterns": ["pattern:application-shell", "pattern:shell-page"],
+  "accessibility": [
+    "Provide one concise heading; BarPageTitle renders exactly one h1.",
+    "Give compact Back a destination-specific accessible name and handle dsBack in the route owner.",
+    "Keep value synchronized with the current page section; dsSectionChange returns the selected section id.",
+    "The tab row is a tablist with horizontal roving tabindex. The collapsed control exposes the current section, menu relationship, and expanded state, then restores focus after selection or dismissal.",
+    "Use one filled primary action in the page decision area and keep every top-level action and nested menu-choice id non-empty and unique."
+  ],
+  "states": [
+    "Fewer than two selectable sections render title chrome only: no divider, tabs, or section button.",
+    "Two or more selectable sections default to every tab after the compact title divider.",
+    "When the unconstrained title, divider, and complete tab row cannot sit beside trailing actions, every tab is replaced by the compact section button and menu. BarPageTitle never keeps some tabs visible while overflowing the rest.",
+    "Dividers in sections or actions create separate Menu groups without becoming selectable rows.",
+    "Ordered actions preserve authored order with the same compact visible-action and overflow rules as compact BarTitle.",
+    "showDivider=false removes the bottom seam; showCompactDivider can independently restore or remove that boundary.",
+    "Section, action, split-menu, and overflow triggers retain the shared surface-open wash through exit."
+  ],
+  "responsiveBehavior": [
+    "BarPageTitle is compact-only shell-bar chrome. It does not offer expanded or constrained variants.",
+    "ShellApp owns the managed panel-mode path and feeds pageChrome.subsections through the same section contract as BarTitle.",
+    "Measurement uses a hidden unconstrained probe of Back, heading, divider, and every tab, compared with the width left after trailing actions, plus hysteresis so the control does not flicker at the boundary.",
+    "Mobile continues to use MobileHeader; BarPageTitle is desktop and tablet shell-bar chrome.",
+    "Long headings truncate while Back, tabs or the section button, and action controls retain complete hit targets and accessible names."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign sections, actionItems, primaryAction, and actions as JavaScript properties and replace array or object identities when controlled state changes.",
+      "Handle dsBack, update value after dsSectionChange, and execute product commands from dsAction."
+    ],
+    "react": [
+      "Pass section and ordered action arrays directly to DsBarPageTitle and keep value controlled from route state."
+    ],
+    "angular": [
+      "Bind complex values on the standalone DsBarPageTitle adapter and handle Back, section, and action intent events in the route shell."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook",
+      "path": "src/wc/components/BarPageTitle/BarPageTitle.stories.ts"
+    },
+    {
+      "label": "Managed panel-mode shell bar",
+      "path": "src/wc/components/ShellApp/ShellApp.mdx"
+    },
+    {
+      "label": "All-or-nothing resize coverage",
+      "path": "tests/e2e/bar-page-title.spec.ts"
+    },
+    {
+      "label": "Surface ownership and trigger state",
+      "path": "src/docs/SurfaceOwnership.mdx"
+    }
+  ]
+}

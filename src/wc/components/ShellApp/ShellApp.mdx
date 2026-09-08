@@ -21,7 +21,7 @@ three typed data objects and persistent content:
 - Named `*-view` slots hold the product-owned tool views, and the default slot
   holds the router-owned page content.
 
-ShellApp assembles PanelNav, BarNav, ShellTools/PanelTools, MobileSheetNav,
+ShellApp assembles PanelNav, BarNav, BarPageTitle, ShellTools/PanelTools, MobileSheetNav,
 MobileBarNav, MobileHeader, BarTitle, and ShellPage. It owns presentation state,
 responsive mode, active global surfaces, direct mobile destinations, optional
 Inbox grouping, focus return,
@@ -40,7 +40,7 @@ from the completed route state. Do not conditionally recreate routed content or
 tool views when the responsive presentation changes.
 
 Use `pageChrome.actionItems` for ordered page commands. The same collection
-drives desktop and tablet BarTitle controls plus mobile icon actions and
+drives desktop and tablet BarTitle or BarPageTitle controls plus mobile icon actions and
 overflow; applications handle every command through `dsPageAction` and do not
 author a second mobile menu. `primaryAction`, `actions`, and `mobileActions`
 remain supported for existing consumers.
@@ -66,7 +66,7 @@ Do not model it as a mobile tool view.
 
 `sectionNavigation="bar"` is the default desktop and tablet presentation.
 Applications can instead set `sectionNavigation="panel"` to render the active
-parent's route sections as nested PanelNav children and place compact BarTitle
+parent's route sections as nested PanelNav children and place BarPageTitle
 in the shell bar. In panel mode, handle `dsNavChildSelect` as structured parent,
 child, and optional href intent.
 

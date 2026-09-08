@@ -2550,20 +2550,27 @@ test('forwards controlled pagination while preserving off-page selection', async
 
   await expect(table.locator('.ds-table__footer-summary')).toHaveCount(0);
   await expect(pagination).toContainText('Rows:');
-  await expect(pagination.locator('.pagination__total')).toHaveText('25 of 63');
+  await expect(pagination.locator('.pagination__total')).toHaveCount(0);
   await expect(pagination.locator('.pagination__page')).toHaveText('1 of 3');
-  await expect(pagination.locator('ds-divider')).toHaveJSProperty('orientation', 'vertical');
-  await expect(pagination.locator('ds-divider')).toHaveCSS('height', '20px');
-  await expect(pagination.locator('.pagination__page')).toHaveCSS('min-width', '0px');
-  await expect(pagination.locator('.pagination__page')).toHaveCSS('padding-left', '8px');
-  await expect(pagination.locator('.pagination__page')).toHaveCSS('padding-right', '8px');
-  const [labelBox, selectBox] = await Promise.all([
+  await expect(pagination.locator('ds-divider')).toHaveCount(1);
+  await expect(pagination.locator('.pagination__divider')).toHaveJSProperty(
+    'orientation',
+    'vertical'
+  );
+  await expect(pagination.locator('.pagination__divider')).toHaveCSS('height', '20px');
+  const [labelBox, selectBox, dividerBox] = await Promise.all([
     pagination.locator('.pagination__label').boundingBox(),
     pagination.locator('ds-select').boundingBox(),
+    pagination.locator('.pagination__divider').boundingBox(),
   ]);
   expect(labelBox).not.toBeNull();
   expect(selectBox).not.toBeNull();
+  expect(dividerBox).not.toBeNull();
   expectGeometryClose(selectBox!.x - (labelBox!.x + labelBox!.width), 0);
+  expectGeometryClose(dividerBox!.x - (selectBox!.x + selectBox!.width), 8);
+  await expect(pagination.locator('.pagination__page')).toHaveCSS('min-width', '0px');
+  await expect(pagination.locator('.pagination__page')).toHaveCSS('padding-left', '8px');
+  await expect(pagination.locator('.pagination__page')).toHaveCSS('padding-right', '8px');
   await expect(pagination.locator('ds-select .trigger__chevron ds-icon')).toHaveJSProperty(
     'name',
     'ChevronUpDown'
@@ -2597,7 +2604,6 @@ test('forwards controlled pagination while preserving off-page selection', async
   await expect(pagination.getByRole('button', { name: 'Previous page' })).toBeDisabled();
 
   await pagination.getByRole('button', { name: 'Next page' }).click();
-  await expect(pagination.locator('.pagination__total')).toHaveText('25 of 63');
   await expect(pagination.locator('.pagination__page')).toHaveText('2 of 3');
   await expect(table.locator('tbody .ds-table__row').first()).toHaveAttribute(
     'data-row-id',
@@ -2646,7 +2652,7 @@ test('compacts table pagination without dropping adjacent-page navigation', asyn
 
   await expect(pagination.locator('.pagination__label')).toBeVisible();
   await expect(pagination.locator('ds-select')).toBeVisible();
-  await expect(pagination.locator('.pagination__total')).toBeHidden();
+  await expect(pagination.locator('.pagination__divider')).toBeVisible();
   await expect(pagination.locator('.pagination__boundary')).toHaveCount(2);
   await expect(pagination.locator('.pagination__boundary').first()).toBeHidden();
   await expect(pagination.getByRole('button', { name: 'Previous page' })).toBeVisible();
@@ -2655,7 +2661,7 @@ test('compacts table pagination without dropping adjacent-page navigation', asyn
   await expect(pagination.locator('.pagination__boundary').last()).toBeHidden();
   const [compactSelectBox, compactDividerBox] = await Promise.all([
     pagination.locator('ds-select').boundingBox(),
-    pagination.locator('ds-divider').boundingBox(),
+    pagination.locator('.pagination__divider').boundingBox(),
   ]);
   expect(compactSelectBox).not.toBeNull();
   expect(compactDividerBox).not.toBeNull();
@@ -2665,7 +2671,6 @@ test('compacts table pagination without dropping adjacent-page navigation', asyn
     element.style.inlineSize = '900px';
   });
 
-  await expect(pagination.locator('.pagination__total')).toBeVisible();
   await expect(pagination.getByRole('button', { name: 'First page' })).toBeVisible();
   await expect(pagination.getByRole('button', { name: 'Last page' })).toBeVisible();
 });
@@ -2678,7 +2683,7 @@ test('resets to page one after a controlled page-size request', async ({ page })
   await pagination.getByRole('combobox', { name: 'Rows per page' }).click();
   await page.getByRole('option', { name: '50', exact: true }).click();
 
-  await expect(pagination.locator('.pagination__total')).toHaveText('50 of 63');
+  await expect(pagination.getByRole('combobox', { name: 'Rows per page' })).toHaveText('50');
   await expect(pagination.locator('.pagination__page')).toHaveText('1 of 2');
   await expect
     .poll(() => page.evaluate(() => window.__tablePaginationEvents.at(-1)))
@@ -2726,7 +2731,6 @@ test('supports keyboard focus and terminal page boundaries @pr-critical', async 
   const last = pagination.getByRole('button', { name: 'Last page' });
   await last.focus();
   await page.keyboard.press('Enter');
-  await expect(pagination.locator('.pagination__total')).toHaveText('13 of 63');
   await expect(pagination.locator('.pagination__page')).toHaveText('3 of 3');
   await expect(next).toBeDisabled();
   await expect(last).toBeDisabled();
@@ -2867,7 +2871,6 @@ test('paginates parent groups while each group loads members independently', asy
 
   await expect(table.locator('tbody[data-group-id]')).toHaveCount(25);
   await expect(pagination).toContainText('Groups:');
-  await expect(pagination.locator('.pagination__total')).toHaveText('25 of 30');
   await expect(pagination.locator('.pagination__page')).toHaveText('1 of 2');
   await expect(table.locator('.ds-table__load-body')).toHaveCount(0);
 
@@ -2879,7 +2882,6 @@ test('paginates parent groups while each group loads members independently', asy
 
   await pagination.getByRole('button', { name: 'Next page' }).click();
   await expect(table.locator('tbody[data-group-id]')).toHaveCount(5);
-  await expect(pagination.locator('.pagination__total')).toHaveText('5 of 30');
   await expect(pagination.locator('.pagination__page')).toHaveText('2 of 2');
   await pagination.getByRole('button', { name: 'Previous page' }).click();
   await expect(table.locator('tbody[data-group-id="group-1"] .ds-table__row')).toHaveCount(1);
@@ -3138,12 +3140,17 @@ test('bounds the complete header, frame, and footer composition with height', as
   await expect(table.locator('.ds-table__frame')).toHaveCSS('height', '224px');
   await expect(table.locator('.ds-table__footer')).toHaveCSS('height', '48px');
   await expect(table.locator('.ds-table__head')).toHaveCSS('position', 'sticky');
+  await expect(table.locator('.ds-table__caption-bar')).toHaveCSS(
+    'border-start-start-radius',
+    '4px'
+  );
+  await expect(table.locator('.ds-table__footer')).toHaveCSS('border-end-start-radius', '4px');
   await expect(table.locator('.ds-table__frame')).toHaveCSS('border-radius', '0px');
   await expect(table.locator('.ds-table__viewport')).toHaveCSS('border-radius', '0px');
   await expect(table.locator('.ds-table__frame')).toHaveCSS('overflow', 'clip');
 
-  // Radius remains opt-in. When a consumer sets it, the outer bars own the
-  // corners and the frame is flat where those bars meet—no rounded notch.
+  // Default radius is 4px. When a consumer overrides it, the outer bars own
+  // the corners and the frame is flat where those bars meet—no rounded notch.
   await table.evaluate(element => element.style.setProperty('--ds-table-radius', '10px'));
   await expect(table.locator('.ds-table__caption-bar')).toHaveCSS(
     'border-start-start-radius',

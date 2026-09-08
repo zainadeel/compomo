@@ -22,6 +22,7 @@ test(
     await expect(single.locator('.tooltip-chart__item')).toHaveCSS('height', '32px');
     await expect(single.locator('.tooltip-chart__item')).toHaveCSS('border-radius', '2px');
     await expect(single).toHaveCSS('padding', '4px');
+    await expect(single).toHaveCSS('border-radius', '6px');
     await expect(single).toHaveCSS('pointer-events', 'none');
     await expect(single.locator('button, a, input, select, textarea, [tabindex]')).toHaveCount(0);
 

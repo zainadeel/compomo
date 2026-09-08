@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <title>Shell-bar page title</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+    <style>
+      html,
+      body {
+        width: 100%;
+        margin: 0;
+        font-family: var(--typography-font-family-ui, system-ui);
+        background: var(--color-background-secondary);
+      }
+
+      #wide-frame,
+      #narrow-frame,
+      #resize-frame {
+        box-sizing: border-box;
+        background: var(--color-background-secondary);
+      }
+
+      #wide-frame,
+      #resize-frame {
+        width: 960px;
+      }
+
+      #narrow-frame {
+        width: 280px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="wide-frame">
+      <ds-bar-page-title
+        id="wide-header"
+        heading="People"
+        value="drivers"
+        sections-aria-label="Change People view"
+      ></ds-bar-page-title>
+    </div>
+    <div id="narrow-frame">
+      <ds-bar-page-title
+        id="narrow-header"
+        heading="People"
+        value="drivers"
+        sections-aria-label="Change People view"
+      ></ds-bar-page-title>
+    </div>
+    <div id="resize-frame">
+      <ds-bar-page-title
+        id="resize-header"
+        heading="People"
+        value="drivers"
+        sections-aria-label="Change People view"
+      ></ds-bar-page-title>
+    </div>
+    <script type="module" src="/bar-page-title-setup.mjs"></script>
+  </body>
+</html>

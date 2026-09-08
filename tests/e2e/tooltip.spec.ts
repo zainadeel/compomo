@@ -31,6 +31,7 @@ test('links aria-describedby only while the popup exists and preserves consumer 
   await focusByKeyboard(anchor);
   const popup = page.getByRole('tooltip', { name: 'Supplementary label' });
   await expect(popup).toBeVisible();
+  await expect(popup).toHaveCSS('border-radius', '2px');
   const popupId = await popup.getAttribute('id');
   await expect(anchor).toHaveAttribute('aria-describedby', `existing-description ${popupId}`);
 

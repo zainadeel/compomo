@@ -10,7 +10,8 @@ const meta: Meta = {
   title: 'Cards/CardSettingsScope',
   tags: ['autodocs'],
   args: {
-    areaLabel: 'All settings',
+    areaLabel: 'All',
+    settingsLabel: 'settings',
     profileLabel: 'Organization',
     openScope: null,
     anchor: undefined,
@@ -26,6 +27,7 @@ export const Playground: Story = {
     return html`
       <ds-card-settings-scope
         area-label=${args['areaLabel']}
+        settings-label=${args['settingsLabel']}
         profile-label=${args['profileLabel']}
         area-controls="scope-area-menu"
         profile-controls="scope-profile-menu"
@@ -46,7 +48,7 @@ export const Playground: Story = {
         .anchor=${args['anchor']}
         .open=${args['openScope'] === 'area'}
         .initialFocusVisible=${args['initialFocusVisible'] ?? false}
-        .items=${['All settings', 'Safety', 'Tracking'].map(label => ({
+        .items=${['All', 'Safety', 'Tracking'].map(label => ({
           label,
           value: label,
           isSelected: args['areaLabel'] === label,
@@ -73,7 +75,8 @@ export const Narrow: Story = {
   render: () =>
     html`<div style="max-width:var(--dimension-card-width-sm)">
       <ds-card-settings-scope
-        area-label="Unsafe behavior detection settings"
+        area-label="Unsafe behavior detection"
+        settings-label="settings"
         profile-label="Western regional drivers"
       ></ds-card-settings-scope>
     </div>`,
