@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.32.0](https://github.com/zainadeel/compomo/compare/v14.31.3...v14.32.0) (2026-09-08)
+
+
+### Added
+
+* add panel bar page title and shell layout fixes ([#587](https://github.com/zainadeel/compomo/issues/587)) ([baa43e2](https://github.com/zainadeel/compomo/commit/baa43e26abef8a85c5336aea28cf46e5b5bf3493))
+
 ## [14.31.3](https://github.com/zainadeel/compomo/compare/v14.31.2...v14.31.3) (2026-09-05)
 
 
