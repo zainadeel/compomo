@@ -1427,7 +1427,7 @@ export class ShellApp {
             </div>
             <div
               class="shell-app__tools"
-              data-ds-overlay-boundary
+              data-ds-overlay-boundary={fullscreen ? undefined : true}
               aria-hidden={
                 mobile && (!mobileToolActive || this.mobileSheetNavOpen) ? 'true' : undefined
               }
@@ -1520,7 +1520,7 @@ export class ShellApp {
             </div>
             <div
               class="shell-app__tools"
-              data-ds-overlay-boundary
+              data-ds-overlay-boundary={fullscreen ? undefined : true}
               aria-hidden={
                 mobile && (!mobileToolActive || this.effectiveMobileSheetNavOpen)
                   ? 'true'

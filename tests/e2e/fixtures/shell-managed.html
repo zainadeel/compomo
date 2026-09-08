@@ -29,16 +29,95 @@
         min-height: 100%;
         padding: var(--dimension-space-200);
       }
+
+      .tool-history-pane {
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        width: var(--dimension-panel-width-xs);
+        height: 100%;
+        min-height: 0;
+        background: var(--color-background-primary);
+      }
+
+      .tool-history-body {
+        flex: 0 0 auto;
+        padding: var(--dimension-space-200);
+      }
     </style>
   </head>
   <body>
     <ds-shell-app id="managed-shell">
       <section slot="search-view" class="fixture-view">Search view</section>
       <section slot="agents-view" id="managed-agents-view" class="fixture-view">
-        <label for="agent-draft">Agent draft</label>
-        <input id="agent-draft" />
+        <div class="tool-history-pane">
+          <ds-panel-tool-header
+            id="agents-history-header"
+            heading="Agents"
+            menu-aria-label="Chat options"
+            menu-trigger-id="agents-header-menu-trigger"
+            menu-controls="agents-header-menu"
+          ></ds-panel-tool-header>
+          <ds-panel-tool-search
+            id="agents-history-search"
+            aria-label="Search chats"
+            placeholder="Search chats"
+            show-filter
+            filter-trigger-id="agents-filter-trigger"
+            filter-controls="agents-filter-menu"
+            filter-aria-label="Filter chats"
+          ></ds-panel-tool-search>
+          <ds-menu
+            id="agents-filter-menu"
+            anchor-id="agents-filter-trigger"
+            menu-label="Chat filter"
+          ></ds-menu>
+          <ds-menu
+            id="agents-header-menu"
+            anchor-id="agents-header-menu-trigger"
+            menu-label="Chat options"
+            side="bottom"
+            align="end"
+          ></ds-menu>
+          <div class="tool-history-body">
+            <label for="agent-draft">Agent draft</label>
+            <input id="agent-draft" />
+          </div>
+        </div>
       </section>
-      <section slot="messages-view" class="fixture-view">Messages view</section>
+      <section slot="messages-view" id="managed-messages-view" class="fixture-view">
+        <div class="tool-history-pane">
+          <ds-panel-tool-header
+            id="messages-history-header"
+            heading="Messages"
+            menu-aria-label="Inbox options"
+            menu-trigger-id="messages-header-menu-trigger"
+            menu-controls="messages-header-menu"
+          ></ds-panel-tool-header>
+          <ds-panel-tool-search
+            id="messages-history-search"
+            aria-label="Search messages"
+            placeholder="Search messages"
+            show-filter
+            filter-trigger-id="messages-filter-trigger"
+            filter-controls="messages-filter-menu"
+            filter-aria-label="Filter messages"
+          ></ds-panel-tool-search>
+          <ds-menu
+            id="messages-filter-menu"
+            anchor-id="messages-filter-trigger"
+            menu-label="Message filter"
+          ></ds-menu>
+          <ds-menu
+            id="messages-header-menu"
+            anchor-id="messages-header-menu-trigger"
+            menu-label="Inbox options"
+            side="bottom"
+            align="end"
+          ></ds-menu>
+          <div class="tool-history-body">Messages history</div>
+        </div>
+      </section>
       <section slot="stacks-view" class="fixture-view">Stacks view</section>
       <section slot="activity-view" class="fixture-view">Activity view</section>
       <section slot="help-view" class="fixture-view">Help view</section>

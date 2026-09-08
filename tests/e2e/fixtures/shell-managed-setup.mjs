@@ -10,6 +10,8 @@ import '/dist/components/ds-shell-page.js';
 import '/dist/components/ds-shell-tools.js';
 import '/dist/components/ds-panel-tools.js';
 import '/dist/components/ds-panel-tool-header.js';
+import '/dist/components/ds-panel-tool-search.js';
+import '/dist/components/ds-menu.js';
 
 await Promise.all([
   customElements.whenDefined('ds-shell-app'),
@@ -19,6 +21,8 @@ await Promise.all([
   customElements.whenDefined('ds-mobile-header'),
   customElements.whenDefined('ds-mobile-bar-nav'),
   customElements.whenDefined('ds-shell-tools'),
+  customElements.whenDefined('ds-panel-tool-search'),
+  customElements.whenDefined('ds-menu'),
 ]);
 
 const shell = document.getElementById('managed-shell');
@@ -165,6 +169,80 @@ shell.addEventListener('dsNavChildSelect', event => {
     value: childId,
     currentUrl: href ?? shell.pageChrome.currentUrl,
   };
+});
+
+function wireToolPopup({
+  searchId,
+  filterMenuId,
+  headerId,
+  headerMenuId,
+  filterItems,
+  headerItems,
+}) {
+  const search = document.getElementById(searchId);
+  const filterMenu = document.getElementById(filterMenuId);
+  const header = document.getElementById(headerId);
+  const headerMenu = document.getElementById(headerMenuId);
+
+  filterMenu.items = filterItems;
+  headerMenu.items = headerItems;
+
+  search.addEventListener('dsFilterToggle', () => {
+    const next = !filterMenu.open;
+    if (next) search.filterSurfaceOpen = true;
+    search.filterExpanded = next;
+    filterMenu.open = next;
+  });
+  filterMenu.addEventListener('dsClose', () => {
+    filterMenu.open = false;
+    search.filterExpanded = false;
+  });
+  filterMenu.addEventListener('dsAfterClose', () => {
+    if (!filterMenu.open) search.filterSurfaceOpen = false;
+  });
+
+  header.addEventListener('dsMenuToggle', () => {
+    const next = !headerMenu.open;
+    if (next) header.menuSurfaceOpen = true;
+    header.menuExpanded = next;
+    headerMenu.open = next;
+  });
+  headerMenu.addEventListener('dsClose', () => {
+    headerMenu.open = false;
+    header.menuExpanded = false;
+  });
+  headerMenu.addEventListener('dsAfterClose', () => {
+    if (!headerMenu.open) header.menuSurfaceOpen = false;
+  });
+}
+
+wireToolPopup({
+  searchId: 'agents-history-search',
+  filterMenuId: 'agents-filter-menu',
+  headerId: 'agents-history-header',
+  headerMenuId: 'agents-header-menu',
+  filterItems: [
+    { label: 'All chats', value: 'all', isSelected: true },
+    { label: 'Unread', value: 'unread' },
+  ],
+  headerItems: [
+    { label: 'Rename', value: 'rename' },
+    { label: 'Delete', value: 'delete' },
+  ],
+});
+wireToolPopup({
+  searchId: 'messages-history-search',
+  filterMenuId: 'messages-filter-menu',
+  headerId: 'messages-history-header',
+  headerMenuId: 'messages-header-menu',
+  filterItems: [
+    { label: 'All messages', value: 'all', isSelected: true },
+    { label: 'Unread', value: 'unread' },
+  ],
+  headerItems: [
+    { label: 'Mark all read', value: 'mark-read' },
+    { label: 'Settings', value: 'settings' },
+  ],
 });
 
 await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));

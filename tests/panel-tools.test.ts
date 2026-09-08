@@ -412,6 +412,7 @@ describe('tool view composition contract', () => {
     assert.match(source, /class="panel-tools__header"/);
     assert.match(source, /dsHeaderBack/);
     assert.match(source, /dsHeaderAction/);
+    assert.match(source, /data-ds-overlay-boundary/);
     assert.match(source, /fullscreenHeaderMode === 'shared'/);
     assert.match(stories, /fullscreen-header-mode=/);
     assert.match(stories, /heading="Agents"/);
