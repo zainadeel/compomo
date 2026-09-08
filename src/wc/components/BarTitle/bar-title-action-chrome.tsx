@@ -18,9 +18,7 @@ export function barTitleActionMenuDomId(
   resolvedActionItems: BarTitleActionConfigItem[],
   id: string
 ): string {
-  const index = resolvedActionItems.findIndex(
-    item => !isBarTitleDivider(item) && item.id === id
-  );
+  const index = resolvedActionItems.findIndex(item => !isBarTitleDivider(item) && item.id === id);
   return `bar-title-action-menu-${instanceId}-${index}`;
 }
 

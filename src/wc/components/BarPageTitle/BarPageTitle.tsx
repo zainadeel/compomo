@@ -340,7 +340,7 @@ export class BarPageTitle {
       this.panelToolsTransition.exit();
       this.scheduleOverflowCheck();
     }
-  }
+  };
 
   private setupOverflowObserver() {
     if (typeof ResizeObserver === 'undefined' || !this.chromeEl) return;

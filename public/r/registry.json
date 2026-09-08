@@ -3099,7 +3099,7 @@
             "The shared text-action recipe supplies brand foreground, hover underline, and keyboard focus indication."
           ],
           "states": [
-            "The application owns the selected area, profile, available choices, permissions, and empty-state copy.",
+            "The application owns the selected area, profile, available choices, permissions, and empty-state copy. The area trigger is only the selected area token; a localizable settings noun follows it in the sentence and is not part of the control.",
             "The card reports popup requests without changing selection or expanded state.",
             "The surface follows the active theme rather than imposing always-dark colors."
           ],
@@ -3157,6 +3157,10 @@
             "required": false
           },
           "scopeLabel": {
+            "type": "string",
+            "required": false
+          },
+          "settingsLabel": {
             "type": "string",
             "required": false
           }
@@ -3659,8 +3663,9 @@
             "Semantic state describes the represented value; active does not mean selected or pressed.",
             "The dismiss action is the chip's only interaction, and the parent owns data mutation after dsRemove.",
             "Long labels remain on one line and truncate only when the consuming layout supplies a maximum width; otherwise the chip sizes to its content.",
+            "When the chip is wider than its label, the dismiss control stays on the trailing edge.",
             "Rounded shape is a visual choice and does not change semantics or interaction.",
-            "isInset opts into reduced outer geometry only when Chip is nested inside a control of the same density. The dismiss button applies the same inset depth again inside the Chip's already-reduced height, and its trailing padding matches the resulting top and bottom space. The default single inset removes 4px overall; insetDepth double removes 8px overall and falls back to single at xs.",
+            "The dismiss orb is 4px smaller than the chip on every recipe, including single and double inset, with 2px on top, bottom, and the trailing edge. isInset opts into reduced outer geometry only when Chip is nested inside a control of the same density. The default single inset removes 4px overall; insetDepth double removes 8px overall and falls back to single at xs.",
             "Chip is designed only for primary surfaces and has no surface-context API."
           ],
           "responsiveBehavior": [
@@ -7629,6 +7634,8 @@
             "Use isInactive only for a temporarily unavailable visible tool; omit tools the user is not authorized to access.",
             "Rail actions disable physical press scaling so notification-dot halos remain aligned to the shell gradient; hover and pressed washes continue to paint above the dot and halo.",
             "Rail tooltips are shell-owned and position against the viewport so the narrow tools-lane collision boundary cannot clamp them beyond the viewport edge.",
+            "The PanelTools host is the composed-tree overlay collision owner for menus and filter popups inside tool views. Drawer presentation keeps that rectangle on the rail-and-drawer column. Fullscreen presentation uses the fixed fullscreen surface, not the leftover ShellApp tools-lane box, so history-pane and header menus stay next to their triggers.",
+            "ds-menu and ds-filter-menu remain on the native popover top layer. Applications must not set boundary=viewport or position those popups to work around fullscreen collision.",
             "The application owns slotted tool products and data while PanelTools owns rail ordering, drawer selection, open state, motion, and shell events.",
             "Opening and closing clip an already-rendered fixed-width surface. Header and tool content remain fully opaque and retained during width motion; transition completion is accepted only at the measured terminal clip width, after which the closed surface becomes inert and paint-skipped.",
             "Entering and exiting fullscreen snaps without borrowing the drawer open or close animation.",
@@ -8651,7 +8658,7 @@
             "Mobile global surfaces conceal and inert the routed workspace without unmounting it, preserving nested routes and scroll state.",
             "Managed rail accessories are intentionally omitted below 768px. Applications that need equivalent persistent mobile status provide it through the top banner or status region; ShellApp does not convert rail accessories into mobile tool views.",
             "Keep PanelNav width, BarNav height, PanelTools chrome, and main-content origin stable except during intentional responsive or collapse transitions.",
-            "The routed content cell and tools cell expose separate anchored-overlay collision boundaries, so top-layer menus and tooltips remain above local clipping without crossing into neighboring shell lanes. Full-screen modal overlays remain viewport-owned.",
+            "The routed content cell and tools cell expose separate anchored-overlay collision boundaries, so top-layer menus and tooltips remain above local clipping without crossing into neighboring shell lanes. Full-screen modal overlays remain viewport-owned. While PanelTools is fullscreen, the tools-lane marker is omitted so collision follows the fullscreen PanelTools surface (or the viewport fallback) instead of the in-flow drawer-width tools column.",
             "Paper texture chrome is desktop/tablet-only and follows the fixed viewport phase of the shell chrome; mobile remains a solid primary stage.",
             "Managed page-header capacity follows only the fixed shell breakpoint: roomy on desktop and compact on tablet. Opening PanelTools does not compact or constrain BarTitle.",
             "Mobile keeps at most the first eligible ordered icon command visible and moves labeled buttons, menu choices, split actions, and explicit overflow commands into one shell-owned text-only page-actions menu.",

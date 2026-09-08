@@ -50,10 +50,7 @@ test('narrow chrome shows the section button and emits dsSectionChange @cross-br
 
 test(
   'resizing swaps the complete tab row for the section button',
-  chromiumOnly(
-    'layout-geometry',
-    'All-or-nothing tab collapse is a measured layout contract.'
-  ),
+  chromiumOnly('layout-geometry', 'All-or-nothing tab collapse is a measured layout contract.'),
   async ({ page }) => {
     const header = page.locator('#resize-header');
     await expect(header.getByRole('tablist', { name: 'Change People view' })).toBeVisible({

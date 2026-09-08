@@ -1,6 +1,10 @@
 import type { MenuItemData, MenuSection } from '../Menu/menu-types';
 import type { TabItem } from '../TabGroup/tab-item-utils';
-import { isBarTitleDivider, type BarTitleSection, type BarTitleSectionItem } from './bar-title-types';
+import {
+  isBarTitleDivider,
+  type BarTitleSection,
+  type BarTitleSectionItem,
+} from './bar-title-types';
 
 export function selectableBarTitleSections(sections: BarTitleSectionItem[]): BarTitleSection[] {
   return sections.filter((item): item is BarTitleSection => !isBarTitleDivider(item));
@@ -11,9 +15,7 @@ export function effectiveBarTitleSectionValue(
   value: string
 ): string {
   const selectable = selectableBarTitleSections(sections);
-  return selectable.some(section => section.id === value)
-    ? value
-    : (selectable[0]?.id ?? '');
+  return selectable.some(section => section.id === value) ? value : (selectable[0]?.id ?? '');
 }
 
 export function selectedBarTitleSectionLabel(
@@ -21,7 +23,9 @@ export function selectedBarTitleSectionLabel(
   value: string
 ): string {
   const selectedId = effectiveBarTitleSectionValue(sections, value);
-  return selectableBarTitleSections(sections).find(section => section.id === selectedId)?.label ?? '';
+  return (
+    selectableBarTitleSections(sections).find(section => section.id === selectedId)?.label ?? ''
+  );
 }
 
 export function barTitleSectionTriggerAriaLabel(

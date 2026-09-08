@@ -109,8 +109,7 @@ test(
         trailingGap: host.right - action.right,
         paddingEnd,
         actionAfterLabel:
-          action.left >
-          element.querySelector('.tag__label')!.getBoundingClientRect().right,
+          action.left > element.querySelector('.tag__label')!.getBoundingClientRect().right,
       };
     });
 
