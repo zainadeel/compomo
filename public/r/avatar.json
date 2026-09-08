@@ -166,7 +166,7 @@
   "files": [
     {
       "path": "src/wc/components/Avatar/Avatar.css",
-      "content": "@import '../../utils/control-density.css';\n\n:host {\n  display: inline-flex;\n  flex-shrink: 0;\n  width: var(--ds-control-height);\n  height: var(--ds-control-height);\n}\n\n:host(.avatar--md) {\n  --_avatar-stroke: var(--dimension-stroke-width-015);\n}\n\n:host(.avatar--sm) {\n  --_avatar-stroke: var(--dimension-stroke-width-012);\n}\n\n:host(.avatar--xs) {\n  --_avatar-stroke: calc(var(--dimension-stroke-width-base) * 3 / 32);\n}\n\n.avatar {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  width: 100%;\n  height: 100%;\n  border-radius: var(--dimension-radius-half);\n  box-shadow: inset 0 0 0 var(--_avatar-stroke) var(--color-foreground-quaternary);\n}\n",
+      "content": "@import '../../utils/radius.css';\n@import '../../utils/control-density.css';\n\n:host {\n  display: inline-flex;\n  flex-shrink: 0;\n  width: var(--ds-control-height);\n  height: var(--ds-control-height);\n}\n\n:host(.avatar--md) {\n  --_avatar-stroke: var(--dimension-stroke-width-015);\n}\n\n:host(.avatar--sm) {\n  --_avatar-stroke: var(--dimension-stroke-width-012);\n}\n\n:host(.avatar--xs) {\n  --_avatar-stroke: calc(var(--dimension-stroke-width-base) * 3 / 32);\n}\n\n.avatar {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  width: 100%;\n  height: 100%;\n  border-radius: var(--dimension-radius-half);\n  box-shadow: inset 0 0 0 var(--_avatar-stroke) var(--color-foreground-quaternary);\n}\n",
       "type": "registry:ui"
     },
     {

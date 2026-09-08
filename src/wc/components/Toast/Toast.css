@@ -1,5 +1,6 @@
 @import '../../utils/visually-hidden.css';
 @import '../../utils/forced-colors.css';
+@import '../../utils/radius.css';
 
 :host {
   display: contents;
@@ -75,7 +76,7 @@
   overflow: hidden;
   color: var(--color-foreground-primary);
   background-color: var(--color-background-primary);
-  border-radius: var(--dimension-radius-050);
+  border-radius: var(--ds-radius-modal);
   box-shadow: var(--effect-elevation-elevated-floating);
   transform: translate(var(--toast-swipe-movement-x), var(--toast-swipe-movement-y));
   animation: toast-enter var(--effect-motion-short-2) both;

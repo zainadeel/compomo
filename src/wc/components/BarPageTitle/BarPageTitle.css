@@ -1,0 +1,265 @@
+@import '../../utils/radius.css';
+@import '../../utils/control-density.css';
+@import '../../utils/control-parts.css';
+@import '../../utils/chrome-header.css';
+@import '../../utils/focus-ring.css';
+@import '../../utils/interaction-fill.css';
+@import '../../utils/control-inactive.css';
+
+:host {
+  display: block;
+  min-width: 0;
+  box-sizing: border-box;
+  background: var(--color-background-secondary);
+  --_bar-page-title-fg-primary: var(--color-foreground-primary);
+  --_bar-page-title-fg-secondary: var(--color-foreground-secondary);
+  --_bar-page-title-hover: var(--color-interaction-hover);
+  --_bar-page-title-pressed: var(--color-interaction-pressed);
+  --_bar-page-title-focus: var(--color-interaction-focus);
+  --_bar-page-title-border: var(--color-border-tertiary);
+  --ds-focus-ring-color: var(--_bar-page-title-focus);
+}
+
+:host-context(ds-shell-app:not([gradient-preset='none'])),
+:host-context(ds-shell-app:not([gradient-preset='none'])) .bar-page-title,
+:host-context(ds-shell-app.shell-app--paper-texture),
+:host-context(ds-shell-app.shell-app--paper-texture) .bar-page-title {
+  background: transparent;
+}
+
+.bar-page-title {
+  position: relative;
+  height: var(--dimension-size-600);
+  min-width: 0;
+  box-sizing: border-box;
+  background: var(--color-background-secondary);
+}
+
+.bar-page-title::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: var(--dimension-stroke-width-012);
+  background: var(--color-border-tertiary);
+  pointer-events: none;
+}
+
+.bar-page-title--divider-hidden::after {
+  display: none;
+}
+
+.bar-page-title__inner {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  height: 100%;
+  min-width: 0;
+  padding: 0;
+  gap: 0;
+}
+
+.bar-page-title__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--dimension-space-100);
+  height: 100%;
+  min-width: 0;
+}
+
+.bar-page-title__title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--dimension-space-100);
+  min-width: 0;
+  min-height: var(--dimension-size-400);
+  flex: 1 1 auto;
+}
+
+.bar-page-title__identity {
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+  gap: var(--dimension-space-050);
+  min-width: 0;
+  height: var(--dimension-size-400);
+}
+
+.bar-page-title__back,
+.bar-page-title__section-chevron {
+  flex: 0 0 auto;
+}
+
+.bar-page-title__heading {
+  display: inline-flex;
+  flex: 1 1 auto;
+  align-items: center;
+  width: auto;
+  min-width: 0;
+  height: var(--dimension-size-400);
+  padding-inline: calc(var(--ds-control-padding-inline) + var(--ds-control-label-inset));
+  box-sizing: border-box;
+  user-select: none;
+}
+
+.bar-page-title__divider {
+  width: var(--dimension-stroke-width-012);
+  height: var(--dimension-size-250);
+  flex: 0 0 var(--dimension-stroke-width-012);
+  background: var(--color-border-tertiary);
+}
+
+.bar-page-title__section-selector {
+  display: flex;
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: var(--dimension-panel-width-sm);
+}
+
+.bar-page-title__section-trigger {
+  --ds-control-radius: var(--dimension-radius-half);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-control-gap);
+  height: var(--ds-control-height);
+  min-width: 0;
+  max-width: 100%;
+  padding-inline: var(--ds-control-padding-inline);
+  border: none;
+  border-radius: var(--ds-control-radius);
+  box-sizing: border-box;
+  background: transparent;
+  color: var(--color-foreground-secondary);
+  cursor: default;
+  font-family: inherit;
+  user-select: none;
+}
+
+.bar-page-title__section-label {
+  min-width: 0;
+  padding-inline: var(--ds-control-label-inset);
+}
+
+.bar-page-title__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--dimension-space-100);
+  flex: 0 0 auto;
+}
+
+.bar-page-title__probe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  visibility: hidden;
+  pointer-events: none;
+  overflow: visible;
+  width: max-content;
+  max-width: none;
+  z-index: -1;
+}
+
+.bar-page-title__probe-row {
+  display: flex;
+  align-items: center;
+  gap: var(--dimension-space-100);
+  width: max-content;
+  max-width: none;
+}
+
+.bar-page-title__probe .bar-page-title__identity,
+.bar-page-title__probe .bar-page-title__heading {
+  flex: 0 0 auto;
+  width: max-content;
+  min-width: 0;
+  max-width: none;
+}
+
+.bar-page-title__tabs-pending {
+  flex: 0 0 auto;
+  width: var(--dimension-size-400);
+  height: var(--ds-control-height);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.bar-page-title__tab-list {
+  display: flex;
+  align-items: center;
+  gap: var(--dimension-space-050);
+  position: relative;
+  width: max-content;
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.bar-page-title__tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-control-gap);
+  height: var(--ds-control-height);
+  min-width: var(--ds-control-height);
+  padding: 0 var(--ds-control-padding-inline);
+  box-sizing: border-box;
+  border: none;
+  border-radius: var(--ds-control-radius);
+  background-color: transparent;
+  color: var(--_bar-page-title-fg-secondary);
+  cursor: default;
+  position: relative;
+  flex-shrink: 0;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: color var(--effect-motion-short-2);
+}
+
+.bar-page-title__tab::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--ds-control-radius);
+  background: transparent;
+  pointer-events: none;
+  cursor: inherit;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .bar-page-title__tab:hover::after {
+    background: var(--_bar-page-title-hover);
+  }
+}
+
+.bar-page-title__tab:active::after {
+  background: var(--_bar-page-title-pressed);
+}
+
+.bar-page-title__tab--selected {
+  color: var(--_bar-page-title-fg-primary);
+}
+
+.bar-page-title__tab-label {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.bar-page-title__tab-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: var(--dimension-space-100);
+  height: var(--ds-control-height);
+  padding-block: var(--ds-control-padding-inline);
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.bar-page-title__tab-divider-line {
+  width: var(--dimension-stroke-width-012);
+  align-self: stretch;
+  background-color: var(--_bar-page-title-border);
+}

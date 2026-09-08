@@ -1,0 +1,433 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "bar-page-title",
+  "title": "BarPageTitle",
+  "description": "Compact shell-bar page chrome that shows every page-level section as a tab row after the title divider, and replaces that row with the compact section button when the complete set cannot fit.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/bar-page-title",
+    "source": "src/wc/components/BarPageTitle/BarPageTitle.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "specialized",
+      "status": "experimental",
+      "summary": "Compact shell-bar page chrome that shows every page-level section as a tab row after the title divider, and replaces that row with the compact section button when the complete set cannot fit.",
+      "useWhen": [
+        "Managed ShellApp is in panel section navigation and the routed page has page-level subsections such as People or driver detail.",
+        "The shell bar must keep page identity, Back, and page actions while presenting every page section together or not at all."
+      ],
+      "avoidWhen": [
+        "The chrome is a page-placed header; use BarTitle through ShellPage instead.",
+        "The choices are peer area routes in bar-mode ShellApp; use BarNav instead.",
+        "The choices are nested PanelNav child routes; keep those on PanelNav.",
+        "Local in-page views should remain selectable as tabs inside content; use TabGroup instead."
+      ],
+      "alternatives": [
+        {
+          "when": "The header sits in page content rather than the shell bar.",
+          "component": "component:ds-bar-title",
+          "reason": "BarTitle owns expanded, compact, and constrained page headers, including the compact section button without a tab row."
+        },
+        {
+          "when": "The choices are peer routes of the active PanelNav destination.",
+          "component": "component:ds-bar-nav",
+          "reason": "BarNav owns area-level route sections and partial overflow rather than page subsections."
+        },
+        {
+          "when": "The choices switch local content without changing page sections.",
+          "component": "component:ds-tab-group",
+          "reason": "TabGroup is the local content-view control rather than shell-bar page chrome."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-shell-app",
+        "component:ds-bar-title",
+        "component:ds-panel-nav",
+        "component:ds-menu",
+        "component:ds-text"
+      ],
+      "patterns": [
+        "pattern:application-shell",
+        "pattern:shell-page"
+      ],
+      "accessibility": [
+        "Provide one concise heading; BarPageTitle renders exactly one h1.",
+        "Give compact Back a destination-specific accessible name and handle dsBack in the route owner.",
+        "Keep value synchronized with the current page section; dsSectionChange returns the selected section id.",
+        "The tab row is a tablist with horizontal roving tabindex. The collapsed control exposes the current section, menu relationship, and expanded state, then restores focus after selection or dismissal.",
+        "Use one filled primary action in the page decision area and keep every top-level action and nested menu-choice id non-empty and unique."
+      ],
+      "states": [
+        "Fewer than two selectable sections render title chrome only: no divider, tabs, or section button.",
+        "Two or more selectable sections default to every tab after the compact title divider.",
+        "When the unconstrained title, divider, and complete tab row cannot sit beside trailing actions, every tab is replaced by the compact section button and menu. BarPageTitle never keeps some tabs visible while overflowing the rest.",
+        "Dividers in sections or actions create separate Menu groups without becoming selectable rows.",
+        "Ordered actions preserve authored order with the same compact visible-action and overflow rules as compact BarTitle.",
+        "showDivider=false removes the bottom seam; showCompactDivider can independently restore or remove that boundary.",
+        "Section, action, split-menu, and overflow triggers retain the shared surface-open wash through exit."
+      ],
+      "responsiveBehavior": [
+        "BarPageTitle is compact-only shell-bar chrome. It does not offer expanded or constrained variants.",
+        "ShellApp owns the managed panel-mode path and feeds pageChrome.subsections through the same section contract as BarTitle.",
+        "Measurement uses a hidden unconstrained probe of Back, heading, divider, and every tab, compared with the width left after trailing actions, plus hysteresis so the control does not flicker at the boundary.",
+        "Mobile continues to use MobileHeader; BarPageTitle is desktop and tablet shell-bar chrome.",
+        "Long headings truncate while Back, tabs or the section button, and action controls retain complete hit targets and accessible names."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign sections, actionItems, primaryAction, and actions as JavaScript properties and replace array or object identities when controlled state changes.",
+          "Handle dsBack, update value after dsSectionChange, and execute product commands from dsAction."
+        ],
+        "react": [
+          "Pass section and ordered action arrays directly to DsBarPageTitle and keep value controlled from route state."
+        ],
+        "angular": [
+          "Bind complex values on the standalone DsBarPageTitle adapter and handle Back, section, and action intent events in the route shell."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook",
+          "path": "src/wc/components/BarPageTitle/BarPageTitle.stories.ts"
+        },
+        {
+          "label": "Managed panel-mode shell bar",
+          "path": "src/wc/components/ShellApp/ShellApp.mdx"
+        },
+        {
+          "label": "All-or-nothing resize coverage",
+          "path": "tests/e2e/bar-page-title.spec.ts"
+        },
+        {
+          "label": "Surface ownership and trigger state",
+          "path": "src/docs/SurfaceOwnership.mdx"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "actionItems": {
+          "type": "BarTitleActionConfigItem[]",
+          "resolvedType": "BarTitleActionConfigItem[] | undefined",
+          "required": false,
+          "mutable": false,
+          "description": "Ordered page-header actions. When supplied, this replaces the legacy\nprimaryAction/actions presentation while preserving the same dsAction event."
+        },
+        "actions": {
+          "type": "BarTitleActionItem[]",
+          "resolvedType": "BarTitleActionItem[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Secondary page actions shown in the overflow menu. Dividers create groups."
+        },
+        "actionsAriaLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "actions-aria-label",
+          "default": "'More page actions'",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name for the page-actions menu."
+        },
+        "backAriaLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "back-aria-label",
+          "default": "'Back'",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name for the leading Back action."
+        },
+        "heading": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "heading",
+          "required": true,
+          "mutable": false,
+          "description": "The page's single visible h1."
+        },
+        "primaryAction": {
+          "type": "BarTitlePrimaryAction | null",
+          "resolvedType": "BarTitlePrimaryAction | null",
+          "default": "null",
+          "required": false,
+          "mutable": false,
+          "description": "The one highest-emphasis page action."
+        },
+        "sections": {
+          "type": "BarTitleSectionItem[]",
+          "resolvedType": "BarTitleSectionItem[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Optional page sections shown as an all-or-nothing tab row, or the compact section button."
+        },
+        "sectionsAriaLabel": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "sections-aria-label",
+          "default": "'Change page section'",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name for the page-section tablist and menu."
+        },
+        "showBack": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "show-back",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Show the leading page-level Back action."
+        },
+        "showCompactDivider": {
+          "type": "boolean",
+          "resolvedType": "boolean | undefined",
+          "attribute": "show-compact-divider",
+          "required": false,
+          "mutable": false,
+          "description": "Override divider visibility for the compact shell-bar presentation."
+        },
+        "showDivider": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "show-divider",
+          "default": "true",
+          "required": false,
+          "mutable": false,
+          "description": "Draw the compact bottom divider beneath the header."
+        },
+        "value": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "value",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Id of the active page section."
+        }
+      },
+      "events": [
+        {
+          "name": "dsAction",
+          "detail": "string",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emitted with the activated primary or overflow action id."
+        },
+        {
+          "name": "dsBack",
+          "detail": "MouseEvent",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emitted when the leading Back action is activated."
+        },
+        {
+          "name": "dsSectionChange",
+          "detail": "string",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emitted with the newly selected page-section id."
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "actionItems": {
+        "type": "BarTitleActionConfigItem[]",
+        "resolvedType": "BarTitleActionConfigItem[] | undefined",
+        "required": false,
+        "mutable": false,
+        "description": "Ordered page-header actions. When supplied, this replaces the legacy\nprimaryAction/actions presentation while preserving the same dsAction event."
+      },
+      "actions": {
+        "type": "BarTitleActionItem[]",
+        "resolvedType": "BarTitleActionItem[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Secondary page actions shown in the overflow menu. Dividers create groups."
+      },
+      "actionsAriaLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "actions-aria-label",
+        "default": "'More page actions'",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name for the page-actions menu."
+      },
+      "backAriaLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "back-aria-label",
+        "default": "'Back'",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name for the leading Back action."
+      },
+      "heading": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "heading",
+        "required": true,
+        "mutable": false,
+        "description": "The page's single visible h1."
+      },
+      "primaryAction": {
+        "type": "BarTitlePrimaryAction | null",
+        "resolvedType": "BarTitlePrimaryAction | null",
+        "default": "null",
+        "required": false,
+        "mutable": false,
+        "description": "The one highest-emphasis page action."
+      },
+      "sections": {
+        "type": "BarTitleSectionItem[]",
+        "resolvedType": "BarTitleSectionItem[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Optional page sections shown as an all-or-nothing tab row, or the compact section button."
+      },
+      "sectionsAriaLabel": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "sections-aria-label",
+        "default": "'Change page section'",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name for the page-section tablist and menu."
+      },
+      "showBack": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "show-back",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Show the leading page-level Back action."
+      },
+      "showCompactDivider": {
+        "type": "boolean",
+        "resolvedType": "boolean | undefined",
+        "attribute": "show-compact-divider",
+        "required": false,
+        "mutable": false,
+        "description": "Override divider visibility for the compact shell-bar presentation."
+      },
+      "showDivider": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "show-divider",
+        "default": "true",
+        "required": false,
+        "mutable": false,
+        "description": "Draw the compact bottom divider beneath the header."
+      },
+      "value": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "value",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Id of the active page section."
+      }
+    },
+    "events": [
+      {
+        "name": "dsAction",
+        "detail": "string",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emitted with the activated primary or overflow action id."
+      },
+      {
+        "name": "dsBack",
+        "detail": "MouseEvent",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emitted when the leading Back action is activated."
+      },
+      {
+        "name": "dsSectionChange",
+        "detail": "string",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emitted with the newly selected page-section id."
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-bar-page-title",
+      "react": "DsBarPageTitle",
+      "vue": "DsBarPageTitle",
+      "angular": "DsBarPageTitle"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-bar-page-title.js';",
+        "example": "<ds-bar-page-title></ds-bar-page-title>"
+      },
+      "react": {
+        "import": "import { DsBarPageTitle } from '@ds-mo/ui/react';",
+        "example": "<DsBarPageTitle />"
+      },
+      "vue": {
+        "import": "import { DsBarPageTitle } from '@ds-mo/ui/vue';",
+        "example": "<DsBarPageTitle />"
+      },
+      "angular": {
+        "import": "import { DsBarPageTitle } from '@ds-mo/ui/angular/ds-bar-page-title';",
+        "example": "<ds-bar-page-title></ds-bar-page-title>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: actionItems, actions, primaryAction, sections.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.5.1",
+          "@ds-mo/icons ^7.0.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "button-filled",
+    "button-unfilled",
+    "icon",
+    "menu",
+    "text",
+    "tooltip"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/BarPageTitle/BarPageTitle.css",
+      "content": "@import '../../utils/radius.css';\n@import '../../utils/control-density.css';\n@import '../../utils/control-parts.css';\n@import '../../utils/chrome-header.css';\n@import '../../utils/focus-ring.css';\n@import '../../utils/interaction-fill.css';\n@import '../../utils/control-inactive.css';\n\n:host {\n  display: block;\n  min-width: 0;\n  box-sizing: border-box;\n  background: var(--color-background-secondary);\n  --_bar-page-title-fg-primary: var(--color-foreground-primary);\n  --_bar-page-title-fg-secondary: var(--color-foreground-secondary);\n  --_bar-page-title-hover: var(--color-interaction-hover);\n  --_bar-page-title-pressed: var(--color-interaction-pressed);\n  --_bar-page-title-focus: var(--color-interaction-focus);\n  --_bar-page-title-border: var(--color-border-tertiary);\n  --ds-focus-ring-color: var(--_bar-page-title-focus);\n}\n\n:host-context(ds-shell-app:not([gradient-preset='none'])),\n:host-context(ds-shell-app:not([gradient-preset='none'])) .bar-page-title,\n:host-context(ds-shell-app.shell-app--paper-texture),\n:host-context(ds-shell-app.shell-app--paper-texture) .bar-page-title {\n  background: transparent;\n}\n\n.bar-page-title {\n  position: relative;\n  height: var(--dimension-size-600);\n  min-width: 0;\n  box-sizing: border-box;\n  background: var(--color-background-secondary);\n}\n\n.bar-page-title::after {\n  content: '';\n  position: absolute;\n  inset: auto 0 0;\n  height: var(--dimension-stroke-width-012);\n  background: var(--color-border-tertiary);\n  pointer-events: none;\n}\n\n.bar-page-title--divider-hidden::after {\n  display: none;\n}\n\n.bar-page-title__inner {\n  position: relative;\n  z-index: 1;\n  flex: 1 1 auto;\n  height: 100%;\n  min-width: 0;\n  padding: 0;\n  gap: 0;\n}\n\n.bar-page-title__row {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--dimension-space-100);\n  height: 100%;\n  min-width: 0;\n}\n\n.bar-page-title__title-row {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-100);\n  min-width: 0;\n  min-height: var(--dimension-size-400);\n  flex: 1 1 auto;\n}\n\n.bar-page-title__identity {\n  display: flex;\n  flex: 0 1 auto;\n  align-items: center;\n  gap: var(--dimension-space-050);\n  min-width: 0;\n  height: var(--dimension-size-400);\n}\n\n.bar-page-title__back,\n.bar-page-title__section-chevron {\n  flex: 0 0 auto;\n}\n\n.bar-page-title__heading {\n  display: inline-flex;\n  flex: 1 1 auto;\n  align-items: center;\n  width: auto;\n  min-width: 0;\n  height: var(--dimension-size-400);\n  padding-inline: calc(var(--ds-control-padding-inline) + var(--ds-control-label-inset));\n  box-sizing: border-box;\n  user-select: none;\n}\n\n.bar-page-title__divider {\n  width: var(--dimension-stroke-width-012);\n  height: var(--dimension-size-250);\n  flex: 0 0 var(--dimension-stroke-width-012);\n  background: var(--color-border-tertiary);\n}\n\n.bar-page-title__section-selector {\n  display: flex;\n  flex: 0 1 auto;\n  min-width: 0;\n  max-width: var(--dimension-panel-width-sm);\n}\n\n.bar-page-title__section-trigger {\n  --ds-control-radius: var(--dimension-radius-half);\n\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: var(--ds-control-gap);\n  height: var(--ds-control-height);\n  min-width: 0;\n  max-width: 100%;\n  padding-inline: var(--ds-control-padding-inline);\n  border: none;\n  border-radius: var(--ds-control-radius);\n  box-sizing: border-box;\n  background: transparent;\n  color: var(--color-foreground-secondary);\n  cursor: default;\n  font-family: inherit;\n  user-select: none;\n}\n\n.bar-page-title__section-label {\n  min-width: 0;\n  padding-inline: var(--ds-control-label-inset);\n}\n\n.bar-page-title__actions {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-100);\n  flex: 0 0 auto;\n}\n\n.bar-page-title__probe {\n  position: absolute;\n  left: 0;\n  top: 0;\n  visibility: hidden;\n  pointer-events: none;\n  overflow: visible;\n  width: max-content;\n  max-width: none;\n  z-index: -1;\n}\n\n.bar-page-title__probe-row {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-100);\n  width: max-content;\n  max-width: none;\n}\n\n.bar-page-title__probe .bar-page-title__identity,\n.bar-page-title__probe .bar-page-title__heading {\n  flex: 0 0 auto;\n  width: max-content;\n  min-width: 0;\n  max-width: none;\n}\n\n.bar-page-title__tabs-pending {\n  flex: 0 0 auto;\n  width: var(--dimension-size-400);\n  height: var(--ds-control-height);\n  visibility: hidden;\n  pointer-events: none;\n}\n\n.bar-page-title__tab-list {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-050);\n  position: relative;\n  width: max-content;\n  flex: 0 0 auto;\n  min-width: 0;\n}\n\n.bar-page-title__tab {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: var(--ds-control-gap);\n  height: var(--ds-control-height);\n  min-width: var(--ds-control-height);\n  padding: 0 var(--ds-control-padding-inline);\n  box-sizing: border-box;\n  border: none;\n  border-radius: var(--ds-control-radius);\n  background-color: transparent;\n  color: var(--_bar-page-title-fg-secondary);\n  cursor: default;\n  position: relative;\n  flex-shrink: 0;\n  -webkit-user-select: none;\n  user-select: none;\n  transition: color var(--effect-motion-short-2);\n}\n\n.bar-page-title__tab::after {\n  content: '';\n  position: absolute;\n  inset: 0;\n  border-radius: var(--ds-control-radius);\n  background: transparent;\n  pointer-events: none;\n  cursor: inherit;\n}\n\n@media (hover: hover) and (pointer: fine) {\n  .bar-page-title__tab:hover::after {\n    background: var(--_bar-page-title-hover);\n  }\n}\n\n.bar-page-title__tab:active::after {\n  background: var(--_bar-page-title-pressed);\n}\n\n.bar-page-title__tab--selected {\n  color: var(--_bar-page-title-fg-primary);\n}\n\n.bar-page-title__tab-label {\n  display: inline-flex;\n  align-items: center;\n  white-space: nowrap;\n}\n\n.bar-page-title__tab-divider {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  width: var(--dimension-space-100);\n  height: var(--ds-control-height);\n  padding-block: var(--ds-control-padding-inline);\n  flex-shrink: 0;\n  pointer-events: none;\n}\n\n.bar-page-title__tab-divider-line {\n  width: var(--dimension-stroke-width-012);\n  align-self: stretch;\n  background-color: var(--_bar-page-title-border);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/BarPageTitle/BarPageTitle.tsx",
+      "content": "import {\n  Component,\n  Element,\n  Event,\n  EventEmitter,\n  h,\n  Host,\n  Prop,\n  State,\n  Watch,\n} from '@stencil/core';\nimport {\n  CHROME_TRANSITION_END,\n  CHROME_TRANSITION_START,\n  ChromeTransitionGate,\n  createRafCoalescer,\n  readChromeTransitionPhase,\n  readChromeTransitionSource,\n} from '../../shell/chrome-transition';\nimport type { MenuItemData } from '../Menu/menu-types';\nimport { tabsOverflowContainer } from '../BarNav/bar-nav-tabs-menu-utils';\nimport { getSelectableTabs, isTabDivider, type TabItemTab } from '../TabGroup/tab-item-utils';\nimport {\n  availableBarTitleActionMenuIds,\n  barTitleActionIdIssues,\n  findBarTitleAction,\n  overflowBarTitleActionSections,\n  resolveBarTitleActionItems,\n  visibleBarTitleActions,\n} from '../BarTitle/bar-title-actions';\nimport {\n  type FocusableBarTitleButton,\n  barTitleActionMenuDomId,\n  renderBarTitleActionMenus,\n  renderBarTitleActions,\n  renderBarTitleBack,\n  renderBarTitleOverflowMenu,\n  renderBarTitleSectionTrigger,\n  restoreBarTitleActionFocus,\n} from '../BarTitle/bar-title-action-chrome';\nimport {\n  barTitleSectionMenuSections,\n  barTitleSectionTriggerAriaLabel,\n  barTitleSectionsToTabs,\n  effectiveBarTitleSectionValue,\n  selectableBarTitleSections,\n  selectedBarTitleSectionLabel,\n} from '../BarTitle/bar-title-sections';\nimport type {\n  BarTitleActionConfigItem,\n  BarTitleActionItem,\n  BarTitlePrimaryAction,\n  BarTitleSectionItem,\n} from '../BarTitle/bar-title-types';\n\nlet nextBarPageTitleId = 0;\n\n@Component({\n  tag: 'ds-bar-page-title',\n  styleUrl: 'BarPageTitle.css',\n  scoped: true,\n})\nexport class BarPageTitle {\n  private static readonly INTRINSIC_WIDTH_RETRY_MAX = 3;\n  private static readonly TAB_LAYOUT_COMMIT_MAX_FRAMES = 16;\n  private static readonly OVERFLOW_HYSTERESIS_PX = 8;\n\n  @Element() el!: HTMLElement;\n\n  /** The page's single visible h1. */\n  @Prop() heading!: string;\n\n  /** Show the leading page-level Back action. */\n  @Prop({ attribute: 'show-back' }) showBack: boolean = false;\n\n  /** Accessible name for the leading Back action. */\n  @Prop() backAriaLabel: string = 'Back';\n\n  /** Optional page sections shown as an all-or-nothing tab row, or the compact section button. */\n  @Prop() sections: BarTitleSectionItem[] = [];\n\n  /** Id of the active page section. */\n  @Prop() value: string = '';\n\n  /** Accessible name for the page-section tablist and menu. */\n  @Prop() sectionsAriaLabel: string = 'Change page section';\n\n  /** The one highest-emphasis page action. */\n  @Prop() primaryAction: BarTitlePrimaryAction | null = null;\n\n  /** Secondary page actions shown in the overflow menu. Dividers create groups. */\n  @Prop() actions: BarTitleActionItem[] = [];\n\n  /**\n   * Ordered page-header actions. When supplied, this replaces the legacy\n   * primaryAction/actions presentation while preserving the same dsAction event.\n   */\n  @Prop() actionItems?: BarTitleActionConfigItem[];\n\n  /** Accessible name for the page-actions menu. */\n  @Prop() actionsAriaLabel: string = 'More page actions';\n\n  /** Draw the compact bottom divider beneath the header. */\n  @Prop() showDivider: boolean = true;\n\n  /** Override divider visibility for the compact shell-bar presentation. */\n  @Prop() showCompactDivider?: boolean;\n\n  /** Emitted when the leading Back action is activated. */\n  @Event() dsBack!: EventEmitter<MouseEvent>;\n\n  /** Emitted with the newly selected page-section id. */\n  @Event() dsSectionChange!: EventEmitter<string>;\n\n  /** Emitted with the activated primary or overflow action id. */\n  @Event() dsAction!: EventEmitter<string>;\n\n  @State() private sectionMenuOpen = false;\n  @State() private openActionMenuId = '';\n  @State() private surfaceActionMenuId = '';\n  @State() private sectionSurfaceOpen = false;\n  @State() private sectionMenuInitialFocusVisible = false;\n  @State() private actionMenuInitialFocusVisible = false;\n  @State() private sectionsCollapsed = false;\n  @State() private layoutCommitted = false;\n  @State() private focusedTabId = '';\n\n  private readonly instanceId = nextBarPageTitleId++;\n  private readonly sectionMenuTriggerId = `bar-page-title-section-trigger-${this.instanceId}`;\n  private readonly sectionMenuId = `bar-page-title-section-menu-${this.instanceId}`;\n  private readonly actionMenuTriggerId = `bar-page-title-action-trigger-${this.instanceId}`;\n  private readonly actionMenuId = `bar-page-title-action-menu-${this.instanceId}`;\n  private sectionTriggerEl: HTMLButtonElement | null = null;\n  private actionTriggerEl: FocusableBarTitleButton | null = null;\n  private actionTriggerEls = new Map<string, FocusableBarTitleButton>();\n  private chromeEl: HTMLElement | null = null;\n  private rowEl: HTMLElement | null = null;\n  private probeRowEl: HTMLElement | null = null;\n  private visibleTabListEl: HTMLElement | null = null;\n  private resizeObserver: ResizeObserver | null = null;\n  private intrinsicWidthRetryCount = 0;\n  private tabLayoutPendingFrames = 0;\n  private readonly panelNavTransition = new ChromeTransitionGate();\n  private readonly panelToolsTransition = new ChromeTransitionGate();\n  private readonly overflowCoalescer = createRafCoalescer(() => {\n    this.updateSectionsCollapsed();\n  });\n  private chromeTransitionShell: HTMLElement | null = null;\n\n  componentWillLoad() {\n    this.reportActionIdIssues();\n    this.syncFocusedTabId(this.effectiveValue, this.selectableTabs);\n  }\n\n  componentDidLoad() {\n    this.setupOverflowObserver();\n    this.bindChromeTransitionListeners();\n    this.scheduleOverflowCheck();\n  }\n\n  componentDidRender() {\n    if (this.chromeOverflowPaused()) return;\n    this.scheduleOverflowCheck();\n  }\n\n  disconnectedCallback() {\n    this.resizeObserver?.disconnect();\n    this.resizeObserver = null;\n    this.overflowCoalescer.cancel();\n    this.unbindChromeTransitionListeners();\n  }\n\n  @Watch('sections')\n  handleSectionsChange() {\n    if (!this.hasSectionSelector) {\n      this.closeSectionMenu();\n      this.sectionSurfaceOpen = false;\n      this.sectionsCollapsed = false;\n      this.layoutCommitted = true;\n      this.intrinsicWidthRetryCount = 0;\n      this.tabLayoutPendingFrames = 0;\n      return;\n    }\n    this.resetSectionLayout();\n    this.syncFocusedTabId(this.effectiveValue, this.selectableTabs);\n    this.scheduleOverflowCheck();\n  }\n\n  @Watch('value')\n  handleValueChange() {\n    this.syncFocusedTabId(this.effectiveValue, this.selectableTabs);\n  }\n\n  @Watch('heading')\n  @Watch('showBack')\n  @Watch('primaryAction')\n  @Watch('actions')\n  @Watch('actionItems')\n  handleLayoutInputsChange() {\n    this.reportActionIdIssues();\n    if (!this.availableActionMenuIds.has(this.openActionMenuId)) this.closeActionMenu();\n    if (!this.availableActionMenuIds.has(this.surfaceActionMenuId)) this.surfaceActionMenuId = '';\n    this.scheduleOverflowCheck();\n  }\n\n  private reportActionIdIssues() {\n    for (const issue of barTitleActionIdIssues(this.resolvedActionItems)) {\n      console.warn(`[ds-bar-page-title] ${issue}`);\n    }\n  }\n\n  private get dividerVisible(): boolean {\n    return this.showCompactDivider ?? this.showDivider;\n  }\n\n  private get selectableSections() {\n    return selectableBarTitleSections(this.sections);\n  }\n\n  private get hasSectionSelector(): boolean {\n    return this.selectableSections.length > 1;\n  }\n\n  private get sectionTabs() {\n    return barTitleSectionsToTabs(this.sections);\n  }\n\n  private get selectableTabs(): TabItemTab[] {\n    return getSelectableTabs(this.sectionTabs);\n  }\n\n  private get effectiveValue(): string {\n    return effectiveBarTitleSectionValue(this.sections, this.value);\n  }\n\n  private get selectedSectionLabel(): string {\n    return selectedBarTitleSectionLabel(this.sections, this.value);\n  }\n\n  private get sectionTriggerAriaLabel(): string {\n    return barTitleSectionTriggerAriaLabel(this.sectionsAriaLabel, this.selectedSectionLabel);\n  }\n\n  private get sectionMenuSections() {\n    return barTitleSectionMenuSections(this.sections, this.effectiveValue);\n  }\n\n  private get resolvedActionItems(): BarTitleActionConfigItem[] {\n    return resolveBarTitleActionItems(this.actionItems, this.primaryAction, this.actions);\n  }\n\n  private get visibleActions(): BarTitleActionConfigItem[] {\n    return visibleBarTitleActions(this.resolvedActionItems, 'compact');\n  }\n\n  private get actionMenuSections() {\n    return overflowBarTitleActionSections(this.resolvedActionItems, 'compact');\n  }\n\n  private get showActionMenuTrigger(): boolean {\n    return this.actionMenuSections.length > 0;\n  }\n\n  private get availableActionMenuIds(): Set<string> {\n    return availableBarTitleActionMenuIds(this.visibleActions, this.showActionMenuTrigger);\n  }\n\n  private get showSectionTabs(): boolean {\n    return this.hasSectionSelector && this.layoutCommitted && !this.sectionsCollapsed;\n  }\n\n  private get showSectionButton(): boolean {\n    return this.hasSectionSelector && this.layoutCommitted && this.sectionsCollapsed;\n  }\n\n  private resetSectionLayout() {\n    this.layoutCommitted = false;\n    this.sectionsCollapsed = false;\n    this.sectionMenuOpen = false;\n    this.sectionMenuInitialFocusVisible = false;\n    this.intrinsicWidthRetryCount = 0;\n    this.tabLayoutPendingFrames = 0;\n  }\n\n  private bindChromeTransitionListeners() {\n    const shell = this.el.closest<HTMLElement>('ds-shell-app');\n    if (!shell) return;\n    this.chromeTransitionShell = shell;\n    shell.addEventListener(CHROME_TRANSITION_START, this.onChromeTransitionStart);\n    shell.addEventListener(CHROME_TRANSITION_END, this.onChromeTransitionEnd);\n  }\n\n  private unbindChromeTransitionListeners() {\n    if (!this.chromeTransitionShell) return;\n    this.chromeTransitionShell.removeEventListener(\n      CHROME_TRANSITION_START,\n      this.onChromeTransitionStart\n    );\n    this.chromeTransitionShell.removeEventListener(\n      CHROME_TRANSITION_END,\n      this.onChromeTransitionEnd\n    );\n    this.chromeTransitionShell = null;\n  }\n\n  private onChromeTransitionStart = (event: Event) => {\n    const source = readChromeTransitionSource(event);\n    if (source === 'panel-nav') {\n      this.panelNavTransition.enter();\n      return;\n    }\n    if (source === 'panel-tools') {\n      const phase = readChromeTransitionPhase(event) ?? 'opening';\n      if (phase === 'closing') {\n        this.panelToolsTransition.enter();\n      }\n    }\n  };\n\n  private chromeOverflowPaused(): boolean {\n    return this.panelNavTransition.isActive || this.panelToolsTransition.isActive;\n  }\n\n  private onChromeTransitionEnd = (event: Event) => {\n    const source = readChromeTransitionSource(event);\n    if (source === 'panel-nav') {\n      this.panelNavTransition.exit();\n      if (!this.panelNavTransition.isActive) {\n        this.scheduleOverflowCheck();\n      }\n      return;\n    }\n    if (source === 'panel-tools') {\n      this.panelToolsTransition.exit();\n      this.scheduleOverflowCheck();\n    }\n  }\n\n  private setupOverflowObserver() {\n    if (typeof ResizeObserver === 'undefined' || !this.chromeEl) return;\n    this.resizeObserver?.disconnect();\n    this.resizeObserver = new ResizeObserver(() => {\n      if (this.chromeOverflowPaused()) return;\n      this.scheduleOverflowCheck();\n    });\n    this.resizeObserver.observe(this.chromeEl);\n  }\n\n  private scheduleOverflowCheck() {\n    if (this.chromeOverflowPaused()) return;\n    this.overflowCoalescer.schedule();\n  }\n\n  private scheduleIntrinsicWidthRetry() {\n    if (this.intrinsicWidthRetryCount >= BarPageTitle.INTRINSIC_WIDTH_RETRY_MAX) return;\n    this.intrinsicWidthRetryCount++;\n    requestAnimationFrame(() => this.scheduleOverflowCheck());\n  }\n\n  private forceTabLayoutCommit(collapsed: boolean) {\n    this.intrinsicWidthRetryCount = 0;\n    this.tabLayoutPendingFrames = 0;\n    if (this.sectionsCollapsed !== collapsed) this.sectionsCollapsed = collapsed;\n    if (!collapsed) {\n      this.closeSectionMenu();\n      this.sectionSurfaceOpen = false;\n    }\n    this.layoutCommitted = true;\n  }\n\n  private getAvailableWidth(): number {\n    if (!this.rowEl) return 0;\n    const rowWidth = this.rowEl.clientWidth;\n    const actions = this.rowEl.querySelector<HTMLElement>('.bar-page-title__actions');\n    const actionsWidth = actions?.getBoundingClientRect().width ?? 0;\n    const style = getComputedStyle(this.rowEl);\n    const gap = parseFloat(style.columnGap || style.gap) || 0;\n    return Math.max(0, rowWidth - actionsWidth - (actionsWidth > 0 ? gap : 0));\n  }\n\n  private updateSectionsCollapsed() {\n    if (!this.hasSectionSelector) {\n      if (this.sectionsCollapsed) this.sectionsCollapsed = false;\n      this.intrinsicWidthRetryCount = 0;\n      this.tabLayoutPendingFrames = 0;\n      this.layoutCommitted = true;\n      return;\n    }\n\n    const probeWidth = this.probeRowEl?.scrollWidth ?? 0;\n    const available = this.getAvailableWidth();\n    if (!this.probeRowEl || !this.rowEl || probeWidth === 0) {\n      this.tabLayoutPendingFrames += 1;\n      if (\n        this.intrinsicWidthRetryCount >= BarPageTitle.INTRINSIC_WIDTH_RETRY_MAX ||\n        this.tabLayoutPendingFrames >= BarPageTitle.TAB_LAYOUT_COMMIT_MAX_FRAMES\n      ) {\n        this.forceTabLayoutCommit(false);\n      } else {\n        this.scheduleIntrinsicWidthRetry();\n      }\n      return;\n    }\n\n    this.intrinsicWidthRetryCount = 0;\n    this.tabLayoutPendingFrames = 0;\n    const shouldCollapse = tabsOverflowContainer(\n      probeWidth,\n      available,\n      this.sectionsCollapsed,\n      BarPageTitle.OVERFLOW_HYSTERESIS_PX\n    );\n    this.forceTabLayoutCommit(shouldCollapse);\n  }\n\n  private syncFocusedTabId(preferred: string, tabs: TabItemTab[]) {\n    if (tabs.some(tab => tab.id === preferred && !tab.isInactive)) {\n      this.focusedTabId = preferred;\n      return;\n    }\n    const first = tabs.find(tab => !tab.isInactive);\n    this.focusedTabId = first?.id ?? '';\n  }\n\n  private selectSection(id: string) {\n    const selected = this.selectableSections.find(section => section.id === id);\n    if (!selected || selected.isInactive) return;\n    this.dsSectionChange.emit(id);\n  }\n\n  private toggleSectionMenu = (event: MouseEvent) => {\n    this.sectionMenuInitialFocusVisible = event.detail === 0;\n    this.openActionMenuId = '';\n    this.sectionMenuOpen = !this.sectionMenuOpen;\n    if (this.sectionMenuOpen) this.sectionSurfaceOpen = true;\n  };\n\n  private closeSectionMenu = () => {\n    this.sectionMenuOpen = false;\n  };\n\n  private handleSectionSelect = (event: CustomEvent<MenuItemData>) => {\n    const id = String(event.detail?.value ?? '');\n    this.closeSectionMenu();\n    this.selectSection(id);\n    requestAnimationFrame(() => this.sectionTriggerEl?.focus());\n  };\n\n  private toggleActionMenu = (id: string, event: MouseEvent) => {\n    this.actionMenuInitialFocusVisible = event.detail === 0;\n    this.sectionMenuOpen = false;\n    this.openActionMenuId = this.openActionMenuId === id ? '' : id;\n    if (this.openActionMenuId) this.surfaceActionMenuId = this.openActionMenuId;\n  };\n\n  private finishActionMenuClose = (event: CustomEvent<void>) => {\n    const id = this.surfaceActionMenuId;\n    const domId =\n      id === '__overflow'\n        ? this.actionMenuId\n        : barTitleActionMenuDomId(this.instanceId, this.resolvedActionItems, id);\n    if (this.openActionMenuId !== id && (event.target as HTMLElement).id === domId) {\n      this.surfaceActionMenuId = '';\n    }\n  };\n\n  private closeActionMenu = () => {\n    this.openActionMenuId = '';\n  };\n\n  private handleActionSelect = (event: CustomEvent<MenuItemData>) => {\n    const id = String(event.detail?.value ?? '');\n    const action = findBarTitleAction(this.resolvedActionItems, id);\n    if (!action || action.isInactive || ('isLoading' in action && action.isLoading)) return;\n    const menuId = this.openActionMenuId;\n    this.closeActionMenu();\n    this.dsAction.emit(id);\n    requestAnimationFrame(() => {\n      void restoreBarTitleActionFocus({\n        menuId,\n        overflowTrigger: this.actionTriggerEl,\n        actionTriggers: this.actionTriggerEls,\n        resolvedActionItems: this.resolvedActionItems,\n      });\n    });\n  };\n\n  private focusVisibleTab(id: string) {\n    this.focusedTabId = id;\n    const tab = this.visibleTabListEl?.querySelector(`[data-tab-id=\"${id}\"]`) as HTMLElement | null;\n    tab?.focus({ preventScroll: true });\n  }\n\n  private findEnabledTab(from: number, step: 1 | -1): number | null {\n    const tabs = this.selectableTabs;\n    for (let index = from + step; index >= 0 && index < tabs.length; index += step) {\n      if (!tabs[index]?.isInactive) return index;\n    }\n    return null;\n  }\n\n  private handleTabKeyDown(event: KeyboardEvent) {\n    const tabs = this.selectableTabs;\n    if (!tabs.length) return;\n    const targetId = (event.target as HTMLElement | null)?.getAttribute('data-tab-id');\n    const focusedId = targetId ?? this.focusedTabId;\n\n    if (event.key === 'Enter' || event.key === ' ') {\n      const focused = tabs.find(tab => tab.id === focusedId);\n      if (!focused || focused.isInactive) return;\n      event.preventDefault();\n      this.selectSection(focused.id);\n      return;\n    }\n\n    const currentIndex = tabs.findIndex(tab => tab.id === focusedId);\n    if (currentIndex < 0) return;\n\n    let nextIndex: number | null;\n    if (event.key === 'ArrowRight') {\n      nextIndex = this.findEnabledTab(currentIndex, 1);\n    } else if (event.key === 'ArrowLeft') {\n      nextIndex = this.findEnabledTab(currentIndex, -1);\n    } else if (event.key === 'Home') {\n      nextIndex = tabs.findIndex(tab => !tab.isInactive);\n    } else if (event.key === 'End') {\n      const reversedIndex = [...tabs].reverse().findIndex(tab => !tab.isInactive);\n      nextIndex = reversedIndex < 0 ? null : tabs.length - 1 - reversedIndex;\n    } else {\n      return;\n    }\n\n    if (nextIndex === null || nextIndex < 0 || nextIndex === currentIndex) return;\n    event.preventDefault();\n    this.focusVisibleTab(tabs[nextIndex].id);\n  }\n\n  private chromeActionOptions() {\n    return {\n      classPrefix: 'bar-page-title',\n      compact: true,\n      visibleActions: this.visibleActions,\n      showOverflowTrigger: this.showActionMenuTrigger,\n      actionItems: this.actionItems,\n      primaryAction: this.primaryAction,\n      resolvedActionItems: this.resolvedActionItems,\n      instanceId: this.instanceId,\n      openActionMenuId: this.openActionMenuId,\n      surfaceActionMenuId: this.surfaceActionMenuId,\n      actionsAriaLabel: this.actionsAriaLabel,\n      actionMenuTriggerId: this.actionMenuTriggerId,\n      actionMenuId: this.actionMenuId,\n      actionTriggers: this.actionTriggerEls,\n      setOverflowTriggerEl: (el: FocusableBarTitleButton | null) => {\n        this.actionTriggerEl = el;\n      },\n      toggleActionMenu: this.toggleActionMenu,\n      emitAction: (id: string) => this.dsAction.emit(id),\n    };\n  }\n\n  private renderHeading(probe: boolean) {\n    return (\n      <ds-text\n        class=\"bar-page-title__heading ds-control--md\"\n        variant=\"text-title-small\"\n        emphasis\n        color=\"primary\"\n        as={probe ? 'span' : 'h1'}\n        wrap={probe ? 'nowrap' : undefined}\n        lineTruncation={probe ? 'none' : 1}\n      >\n        {this.heading}\n      </ds-text>\n    );\n  }\n\n  private renderTabList(probe: boolean) {\n    return (\n      <div\n        role={probe ? undefined : 'tablist'}\n        class=\"bar-page-title__tab-list\"\n        aria-label={probe ? undefined : this.sectionsAriaLabel}\n        ref={el => {\n          if (!probe) this.visibleTabListEl = (el as HTMLElement) ?? null;\n        }}\n        onKeyDown={probe ? undefined : (event: KeyboardEvent) => this.handleTabKeyDown(event)}\n      >\n        {this.sectionTabs.map((tab, index) => {\n          if (isTabDivider(tab)) {\n            return (\n              <div class=\"bar-page-title__tab-divider\" key={`divider-${index}`} aria-hidden=\"true\">\n                <div class=\"bar-page-title__tab-divider-line\" />\n              </div>\n            );\n          }\n\n          const isSelected = tab.id === this.effectiveValue;\n          return (\n            <button\n              key={tab.id}\n              type=\"button\"\n              role={probe ? undefined : 'tab'}\n              data-tab-id={tab.id}\n              class={{\n                'bar-page-title__tab': true,\n                'bar-page-title__tab--selected': isSelected,\n                'ds-control--md': true,\n                'ds-focus-ring-inset': true,\n                'ds-control-inactive': !!tab.isInactive,\n              }}\n              aria-selected={isSelected ? 'true' : 'false'}\n              aria-disabled={tab.isInactive ? 'true' : undefined}\n              disabled={tab.isInactive}\n              tabIndex={!probe && tab.id === this.focusedTabId ? 0 : -1}\n              onClick={() => !probe && this.selectSection(tab.id)}\n              onFocus={() => {\n                if (!probe) this.focusedTabId = tab.id;\n              }}\n            >\n              <span class=\"bar-page-title__tab-label ds-control-label-box\">\n                <ds-text\n                  as=\"span\"\n                  variant=\"text-body-medium\"\n                  emphasis={isSelected}\n                  color=\"inherit\"\n                >\n                  {tab.label}\n                </ds-text>\n              </span>\n            </button>\n          );\n        })}\n      </div>\n    );\n  }\n\n  private renderIdentity(probe: boolean) {\n    return (\n      <div class=\"bar-page-title__identity\">\n        {renderBarTitleBack({\n          classPrefix: 'bar-page-title',\n          showBack: this.showBack,\n          backAriaLabel: this.backAriaLabel,\n          onBack: event => this.dsBack.emit(event),\n        })}\n        {this.renderHeading(probe)}\n      </div>\n    );\n  }\n\n  private renderSectionRegion() {\n    if (!this.hasSectionSelector) return null;\n    if (!this.layoutCommitted) {\n      return [\n        <div class=\"bar-page-title__divider\" aria-hidden=\"true\" />,\n        <div class=\"bar-page-title__tabs-pending\" aria-hidden=\"true\" />,\n      ];\n    }\n    if (this.showSectionTabs) {\n      return [\n        <div class=\"bar-page-title__divider\" aria-hidden=\"true\" />,\n        this.renderTabList(false),\n      ];\n    }\n    return [\n      <div class=\"bar-page-title__divider\" aria-hidden=\"true\" />,\n      renderBarTitleSectionTrigger({\n        classPrefix: 'bar-page-title',\n        triggerId: this.sectionMenuTriggerId,\n        menuId: this.sectionMenuId,\n        open: this.sectionMenuOpen,\n        surfaceOpen: this.sectionSurfaceOpen,\n        ariaLabel: this.sectionTriggerAriaLabel,\n        selectedLabel: this.selectedSectionLabel,\n        setTriggerEl: el => {\n          this.sectionTriggerEl = el;\n        },\n        onToggle: this.toggleSectionMenu,\n      }),\n    ];\n  }\n\n  render() {\n    return (\n      <Host>\n        <div\n          class={{\n            'bar-page-title': true,\n            'bar-page-title--divider-hidden': !this.dividerVisible,\n            'ds-chrome-header': true,\n          }}\n          ref={el => {\n            this.chromeEl = (el as HTMLElement) ?? null;\n            if (el && !this.resizeObserver) this.setupOverflowObserver();\n          }}\n        >\n          {this.hasSectionSelector ? (\n            <div class=\"bar-page-title__probe\" aria-hidden=\"true\" inert>\n              <div\n                class=\"bar-page-title__probe-row\"\n                ref={el => {\n                  const next = (el as HTMLElement) ?? null;\n                  if (next === this.probeRowEl) return;\n                  this.probeRowEl = next;\n                  if (next) {\n                    this.intrinsicWidthRetryCount = 0;\n                    this.tabLayoutPendingFrames = 0;\n                    this.scheduleOverflowCheck();\n                  }\n                }}\n              >\n                {this.renderIdentity(true)}\n                <div class=\"bar-page-title__divider\" />\n                {this.renderTabList(true)}\n              </div>\n            </div>\n          ) : null}\n\n          <div class=\"bar-page-title__inner\">\n            <div\n              class=\"bar-page-title__row\"\n              ref={el => {\n                this.rowEl = (el as HTMLElement) ?? null;\n              }}\n            >\n              <div class=\"bar-page-title__title-row\">\n                {this.renderIdentity(false)}\n                {this.renderSectionRegion()}\n              </div>\n              {renderBarTitleActions(this.chromeActionOptions())}\n            </div>\n          </div>\n        </div>\n\n        {this.showSectionButton ? (\n          <ds-menu\n            id={this.sectionMenuId}\n            class=\"bar-page-title__section-menu\"\n            anchorId={this.sectionMenuTriggerId}\n            menuLabel={this.sectionsAriaLabel}\n            open={this.sectionMenuOpen}\n            initialFocusVisible={this.sectionMenuInitialFocusVisible}\n            sections={this.sectionMenuSections}\n            onDsClose={this.closeSectionMenu}\n            onDsAfterClose={() => {\n              if (!this.sectionMenuOpen) this.sectionSurfaceOpen = false;\n            }}\n            onDsSelect={this.handleSectionSelect}\n          />\n        ) : null}\n\n        {renderBarTitleActionMenus({\n          classPrefix: 'bar-page-title',\n          visibleActions: this.visibleActions,\n          instanceId: this.instanceId,\n          resolvedActionItems: this.resolvedActionItems,\n          openActionMenuId: this.openActionMenuId,\n          actionMenuInitialFocusVisible: this.actionMenuInitialFocusVisible,\n          overflowTrigger: this.actionTriggerEl,\n          actionTriggers: this.actionTriggerEls,\n          closeActionMenu: this.closeActionMenu,\n          finishActionMenuClose: this.finishActionMenuClose,\n          handleActionSelect: this.handleActionSelect,\n        })}\n\n        {renderBarTitleOverflowMenu({\n          classPrefix: 'bar-page-title',\n          showOverflowTrigger: this.showActionMenuTrigger,\n          actionMenuId: this.actionMenuId,\n          actionMenuTriggerId: this.actionMenuTriggerId,\n          actionsAriaLabel: this.actionsAriaLabel,\n          open: this.openActionMenuId === '__overflow',\n          actionMenuInitialFocusVisible: this.actionMenuInitialFocusVisible,\n          actionMenuSections: this.actionMenuSections,\n          closeActionMenu: this.closeActionMenu,\n          finishActionMenuClose: this.finishActionMenuClose,\n          handleActionSelect: this.handleActionSelect,\n        })}\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

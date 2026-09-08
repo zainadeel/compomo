@@ -21,7 +21,7 @@
   padding: 0;
   border: 0;
   background-color: var(--color-background-primary);
-  border-radius: var(--dimension-radius-075);
+  border-radius: var(--ds-radius-menu);
   box-shadow: var(--effect-shadow-elevated-floating);
   color: var(--color-foreground-secondary);
   animation: dsChoiceFadeIn var(--effect-motion-short-2) forwards;

@@ -12,7 +12,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'A controlled pagination surface for application-owned data windows. It reports page and page-size intent without fetching or slicing data.',
+          'A controlled pagination surface for application-owned data windows. Full-width layout is page-size picker, vertical divider, then page position. It reports page and page-size intent without fetching or slicing data.',
       },
     },
   },

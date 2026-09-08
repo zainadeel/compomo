@@ -13,7 +13,7 @@ const read = (relativePath: string) => fs.readFileSync(path.join(root, relativeP
 
 test('all control densities share one default radius declaration', () => {
   const css = read('src/wc/utils/control-density.css');
-  assert.equal(css.match(/--ds-control-radius:\s*var\(--dimension-radius-025\);/g)?.length, 1);
+  assert.equal(css.match(/--ds-control-radius:\s*var\(--ds-radius-control\);/g)?.length, 1);
   for (const size of ['lg', 'md', 'sm', 'xs']) {
     assert.match(css, new RegExp(`:host\\(\\.ds-control--${size}\\)[\\s\\S]*?--ds-control-radius`));
   }

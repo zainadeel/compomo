@@ -1,5 +1,6 @@
 @import '../../utils/interaction-fill.css';
 @import '../../utils/focus-ring.css';
+@import '../../utils/radius.css';
 @import '../../utils/control-density.css';
 @import '../../utils/control-parts.css';
 @import '../../styles/control-elevation.css';
@@ -20,7 +21,7 @@
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
-  border-radius: var(--dimension-radius-125);
+  border-radius: var(--ds-radius-card);
   background: var(--color-always-dark-background);
   color: var(--color-always-dark-foreground-primary);
   overflow-anchor: none;

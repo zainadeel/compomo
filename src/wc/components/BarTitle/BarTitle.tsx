@@ -12,31 +12,40 @@ import {
 import type { BreadcrumbItem, BreadcrumbSelectDetail } from '../Breadcrumb/breadcrumb-types';
 import type { MenuItemData, MenuSection } from '../Menu/menu-types';
 import {
-  isBarTitleDivider,
   type BarTitleActionConfigItem,
   type BarTitleActionItem,
-  type BarTitleMenuAction,
   type BarTitlePrimaryAction,
-  type BarTitleSection,
   type BarTitleSectionItem,
   type BarTitlePlacement,
-  type BarTitleSplitAction,
   type BarTitleVariant,
 } from './bar-title-types';
 import {
+  availableBarTitleActionMenuIds,
   barTitleActionIdIssues,
-  barTitleChoiceSections,
   findBarTitleAction,
   overflowBarTitleActionSections,
   resolveBarTitleActionItems,
   visibleBarTitleActions,
 } from './bar-title-actions';
+import {
+  type FocusableBarTitleButton,
+  barTitleActionMenuDomId,
+  renderBarTitleActionMenus,
+  renderBarTitleActions,
+  renderBarTitleBack,
+  renderBarTitleOverflowMenu,
+  renderBarTitleSectionTrigger,
+  restoreBarTitleActionFocus,
+} from './bar-title-action-chrome';
+import {
+  barTitleSectionMenuSections,
+  barTitleSectionTriggerAriaLabel,
+  effectiveBarTitleSectionValue,
+  selectableBarTitleSections,
+  selectedBarTitleSectionLabel,
+} from './bar-title-sections';
 
 let nextBarTitleId = 0;
-
-type FocusableButton = HTMLElement & {
-  setFocus?: (segment?: 'primary' | 'menu') => Promise<void>;
-};
 
 @Component({
   tag: 'ds-bar-title',
@@ -128,8 +137,8 @@ export class BarTitle {
   private readonly actionMenuTriggerId = `bar-title-action-trigger-${this.instanceId}`;
   private readonly actionMenuId = `bar-title-action-menu-${this.instanceId}`;
   private sectionTriggerEl: HTMLButtonElement | null = null;
-  private actionTriggerEl: FocusableButton | null = null;
-  private actionTriggerEls = new Map<string, FocusableButton>();
+  private actionTriggerEl: FocusableBarTitleButton | null = null;
+  private actionTriggerEls = new Map<string, FocusableBarTitleButton>();
 
   componentWillLoad() {
     if (this.el.closest('ds-shell-page')) {
@@ -185,11 +194,6 @@ export class BarTitle {
     ];
   }
 
-  /** Tooltip copy is fixed and generic; backAriaLabel/actionsAriaLabel stay page-specific. */
-  private get backTooltipLabel(): string {
-    return 'Go back';
-  }
-
   private get primaryCollapsed(): boolean {
     return (
       this.actionItems === undefined &&
@@ -199,8 +203,8 @@ export class BarTitle {
     );
   }
 
-  private get selectableSections(): BarTitleSection[] {
-    return this.sections.filter((item): item is BarTitleSection => !isBarTitleDivider(item));
+  private get selectableSections() {
+    return selectableBarTitleSections(this.sections);
   }
 
   private get hasSectionSelector(): boolean {
@@ -208,45 +212,19 @@ export class BarTitle {
   }
 
   private get effectiveValue(): string {
-    return this.selectableSections.some(section => section.id === this.value)
-      ? this.value
-      : (this.selectableSections[0]?.id ?? '');
+    return effectiveBarTitleSectionValue(this.sections, this.value);
   }
 
   private get selectedSectionLabel(): string {
-    return this.selectableSections.find(section => section.id === this.effectiveValue)?.label ?? '';
+    return selectedBarTitleSectionLabel(this.sections, this.value);
   }
 
   private get sectionTriggerAriaLabel(): string {
-    return `${this.sectionsAriaLabel}. Current section: ${this.selectedSectionLabel}`;
+    return barTitleSectionTriggerAriaLabel(this.sectionsAriaLabel, this.selectedSectionLabel);
   }
 
-  private groupsFromSections(): MenuSection[] {
-    const groups: MenuSection[] = [];
-    let items: MenuItemData[] = [];
-    const commit = () => {
-      if (items.length > 0) groups.push({ items });
-      items = [];
-    };
-
-    for (const item of this.sections) {
-      if (isBarTitleDivider(item)) {
-        commit();
-      } else {
-        items.push({
-          label: item.label,
-          value: item.id,
-          isSelected: item.id === this.effectiveValue,
-          isInactive: item.isInactive,
-        });
-      }
-    }
-    commit();
-    return groups;
-  }
-
-  private get sectionMenuSections(): MenuSection[] {
-    return this.groupsFromSections();
+  private get sectionMenuSections() {
+    return barTitleSectionMenuSections(this.sections, this.effectiveValue);
   }
 
   private get resolvedActionItems(): BarTitleActionConfigItem[] {
@@ -266,33 +244,7 @@ export class BarTitle {
   }
 
   private get availableActionMenuIds(): Set<string> {
-    const ids = new Set<string>();
-    if (this.showActionMenuTrigger) ids.add('__overflow');
-    for (const item of this.visibleActions) {
-      if (!isBarTitleDivider(item) && (item.type === 'menu' || item.type === 'split')) {
-        ids.add(item.id);
-      }
-    }
-    return ids;
-  }
-
-  private actionMenuDomId(id: string): string {
-    const index = this.resolvedActionItems.findIndex(
-      item => !isBarTitleDivider(item) && item.id === id
-    );
-    return `bar-title-action-menu-${this.instanceId}-${index}`;
-  }
-
-  private actionMenuAnchor(id: string): HTMLElement | undefined {
-    if (id === '__overflow') return this.actionTriggerEl ?? undefined;
-    const trigger = this.actionTriggerEls.get(id);
-    if (!trigger) return undefined;
-    const splitMenu = trigger.querySelector<HTMLElement>('.ds-button-split__menu');
-    return splitMenu ?? trigger;
-  }
-
-  private menuSectionsForAction(action: BarTitleMenuAction | BarTitleSplitAction): MenuSection[] {
-    return barTitleChoiceSections(action.choices);
+    return availableBarTitleActionMenuIds(this.visibleActions, this.showActionMenuTrigger);
   }
 
   private toggleSectionMenu = (event: MouseEvent) => {
@@ -324,7 +276,10 @@ export class BarTitle {
 
   private finishActionMenuClose = (event: CustomEvent<void>) => {
     const id = this.surfaceActionMenuId;
-    const domId = id === '__overflow' ? this.actionMenuId : this.actionMenuDomId(id);
+    const domId =
+      id === '__overflow'
+        ? this.actionMenuId
+        : barTitleActionMenuDomId(this.instanceId, this.resolvedActionItems, id);
     if (this.openActionMenuId !== id && (event.target as HTMLElement).id === domId) {
       this.surfaceActionMenuId = '';
     }
@@ -342,216 +297,76 @@ export class BarTitle {
     this.closeActionMenu();
     this.dsAction.emit(id);
     requestAnimationFrame(() => {
-      if (menuId === '__overflow') {
-        void this.actionTriggerEl?.setFocus?.();
-        return;
-      }
-      const trigger = this.actionTriggerEls.get(menuId);
-      if ('setFocus' in (trigger ?? {})) {
-        const split = this.resolvedActionItems.some(
-          item => !isBarTitleDivider(item) && item.id === menuId && item.type === 'split'
-        );
-        void trigger?.setFocus?.(split ? 'menu' : undefined);
-      }
+      void restoreBarTitleActionFocus({
+        menuId,
+        overflowTrigger: this.actionTriggerEl,
+        actionTriggers: this.actionTriggerEls,
+        resolvedActionItems: this.resolvedActionItems,
+      });
     });
   };
+
+  private chromeActionOptions() {
+    return {
+      classPrefix: 'bar-title',
+      compact: this.compact,
+      visibleActions: this.visibleActions,
+      showOverflowTrigger: this.showActionMenuTrigger,
+      actionItems: this.actionItems,
+      primaryAction: this.primaryAction,
+      resolvedActionItems: this.resolvedActionItems,
+      instanceId: this.instanceId,
+      openActionMenuId: this.openActionMenuId,
+      surfaceActionMenuId: this.surfaceActionMenuId,
+      actionsAriaLabel: this.actionsAriaLabel,
+      actionMenuTriggerId: this.actionMenuTriggerId,
+      actionMenuId: this.actionMenuId,
+      actionTriggers: this.actionTriggerEls,
+      setOverflowTriggerEl: (el: FocusableBarTitleButton | null) => {
+        this.actionTriggerEl = el;
+      },
+      toggleActionMenu: this.toggleActionMenu,
+      emitAction: (id: string) => this.dsAction.emit(id),
+    };
+  }
 
   private renderSectionSelector() {
     if (!this.hasSectionSelector) return null;
     return [
       <div class="bar-title__divider" aria-hidden="true" />,
-      <div class="bar-title__section-selector">
-        <button
-          ref={el => {
-            this.sectionTriggerEl = el ?? null;
-          }}
-          id={this.sectionMenuTriggerId}
-          class={{
-            'bar-title__section-trigger': true,
-            'bar-title__section-trigger--expanded': this.sectionMenuOpen,
-            'ds-interaction-fill--surface-open': this.sectionSurfaceOpen,
-            'ds-control--md': true,
-            'ds-focus-ring-inset': true,
-            'ds-interaction-fill': true,
-          }}
-          type="button"
-          aria-haspopup="menu"
-          aria-controls={this.sectionMenuId}
-          aria-expanded={String(this.sectionMenuOpen)}
-          aria-label={this.sectionTriggerAriaLabel}
-          onClick={this.toggleSectionMenu}
-        >
-          <ds-text
-            class="bar-title__section-label ds-interaction-fill__content"
-            as="span"
-            variant="text-body-medium"
-            emphasis
-            color="primary"
-            lineTruncation={1}
-          >
-            {this.selectedSectionLabel}
-          </ds-text>
-          <ds-icon
-            class="bar-title__section-chevron ds-interaction-fill__content"
-            name="ChevronUpDown"
-            size="md"
-            color="inherit"
-            aria-hidden="true"
-          />
-        </button>
-      </div>,
+      renderBarTitleSectionTrigger({
+        classPrefix: 'bar-title',
+        triggerId: this.sectionMenuTriggerId,
+        menuId: this.sectionMenuId,
+        open: this.sectionMenuOpen,
+        surfaceOpen: this.sectionSurfaceOpen,
+        ariaLabel: this.sectionTriggerAriaLabel,
+        selectedLabel: this.selectedSectionLabel,
+        setTriggerEl: el => {
+          this.sectionTriggerEl = el;
+        },
+        onToggle: this.toggleSectionMenu,
+      }),
     ];
   }
 
-  private renderVisibleAction(action: BarTitleActionConfigItem) {
-    if (isBarTitleDivider(action) || action.type === 'overflow') return null;
-    const appearance = action.appearance ?? (action.type === 'split' ? 'filled' : 'unfilled');
-    const variant: 'icon' | 'icon-label' | 'label' =
-      action.type === 'icon' ? 'icon' : action.icon ? 'icon-label' : 'label';
-    const menu = action.type === 'menu';
-    const menuId = menu ? this.actionMenuDomId(action.id) : undefined;
-
-    if (action.type === 'split') {
-      const splitMenuId = this.actionMenuDomId(action.id);
-      const splitProps = {
-        key: action.id,
-        ref: (el: FocusableButton | undefined) => {
-          if (el) this.actionTriggerEls.set(action.id, el);
-          else this.actionTriggerEls.delete(action.id);
-        },
-        class: 'bar-title__action bar-title__split-action',
-        split: true,
-        variant,
-        label: action.label,
-        icon: action.icon ?? '',
-        menuAriaLabel: action.menuAriaLabel,
-        controls: splitMenuId,
-        expanded: this.openActionMenuId === action.id,
-        surfaceOpen: this.surfaceActionMenuId === action.id,
-        size: 'md' as const,
-        type: action.buttonType ?? 'button',
-        isInactive: action.isInactive,
-        isLoading: action.isLoading,
-        onDsClick: () => this.dsAction.emit(action.id),
-        onDsMenuClick: (event: CustomEvent<MouseEvent>) =>
-          this.toggleActionMenu(action.id, event.detail),
-      };
-      return appearance === 'filled' ? (
-        <ds-button-filled
-          {...splitProps}
-          intent={action.intent ?? 'brand'}
-          contrast={action.contrast ?? 'bold'}
-        />
-      ) : (
-        <ds-button-unfilled {...splitProps} />
-      );
-    }
-
-    const buttonProps = {
-      key: action.id,
-      ref: (el: FocusableButton | undefined) => {
-        if (el) this.actionTriggerEls.set(action.id, el);
-        else this.actionTriggerEls.delete(action.id);
-      },
-      class: `bar-title__action bar-title__action--${action.type}${
-        this.actionItems === undefined && action.id === this.primaryAction?.id
-          ? ' bar-title__primary-action'
-          : ''
-      }`,
-      variant,
-      icon: action.icon ?? '',
-      label: action.label,
-      ariaLabel: action.ariaLabel ?? (action.type === 'icon' ? action.label : undefined),
-      size: 'md' as const,
-      type: action.buttonType ?? 'button',
-      isInactive: action.isInactive,
-      isLoading: action.isLoading,
-      controls: menuId,
-      expanded: menu ? this.openActionMenuId === action.id : undefined,
-      surfaceOpen: menu && this.surfaceActionMenuId === action.id,
-      hasMenu: menu,
-      onDsClick: (event: CustomEvent<MouseEvent>) => {
-        if (menu) this.toggleActionMenu(action.id, event.detail);
-        else this.dsAction.emit(action.id);
-      },
-    };
-
-    const button =
-      appearance === 'filled' ? (
-        <ds-button-filled
-          {...buttonProps}
-          intent={action.intent ?? 'brand'}
-          contrast={action.contrast ?? 'bold'}
-        />
-      ) : (
-        <ds-button-unfilled {...buttonProps} />
-      );
-
-    return action.type === 'icon' ? (
-      <ds-tooltip key={action.id} label={action.label} side="bottom" size="sm">
-        {button}
-      </ds-tooltip>
-    ) : (
-      button
-    );
-  }
-
   private renderActions() {
-    if (this.visibleActions.length === 0 && !this.showActionMenuTrigger) return null;
-
-    return (
-      <div class="bar-title__actions">
-        {this.visibleActions.map(action => this.renderVisibleAction(action))}
-        {this.showActionMenuTrigger ? (
-          <ds-tooltip label="Page options" side="bottom" size="sm">
-            <ds-button-unfilled
-              ref={el => {
-                this.actionTriggerEl = el ?? null;
-              }}
-              id={this.actionMenuTriggerId}
-              class="bar-title__more-actions"
-              variant="icon"
-              icon="Ellipses"
-              aria-label={this.actionsAriaLabel}
-              size="md"
-              activeFill={!this.compact}
-              hasBorder={this.visibleActions.length > 0}
-              haspopup="menu"
-              controls={this.actionMenuId}
-              expanded={this.openActionMenuId === '__overflow'}
-              surfaceOpen={this.surfaceActionMenuId === '__overflow'}
-              onDsClick={(event: CustomEvent<MouseEvent>) =>
-                this.toggleActionMenu('__overflow', event.detail)
-              }
-            />
-          </ds-tooltip>
-        ) : null}
-      </div>
-    );
+    return renderBarTitleActions(this.chromeActionOptions());
   }
 
   private renderActionMenus() {
-    return this.visibleActions.flatMap(action => {
-      if (isBarTitleDivider(action) || (action.type !== 'menu' && action.type !== 'split')) {
-        return [];
-      }
-      const menuLabel = action.menuAriaLabel ?? action.ariaLabel ?? action.label;
-      return [
-        <ds-menu
-          key={action.id}
-          id={this.actionMenuDomId(action.id)}
-          class="bar-title__action-menu"
-          anchor={this.actionMenuAnchor(action.id)}
-          align="end"
-          menuLabel={menuLabel}
-          open={this.openActionMenuId === action.id}
-          initialFocusVisible={this.actionMenuInitialFocusVisible}
-          sections={this.menuSectionsForAction(action)}
-          onDsClose={this.closeActionMenu}
-          onDsAfterClose={this.finishActionMenuClose}
-          onDsSelect={this.handleActionSelect}
-        />,
-      ];
+    return renderBarTitleActionMenus({
+      classPrefix: 'bar-title',
+      visibleActions: this.visibleActions,
+      instanceId: this.instanceId,
+      resolvedActionItems: this.resolvedActionItems,
+      openActionMenuId: this.openActionMenuId,
+      actionMenuInitialFocusVisible: this.actionMenuInitialFocusVisible,
+      overflowTrigger: this.actionTriggerEl,
+      actionTriggers: this.actionTriggerEls,
+      closeActionMenu: this.closeActionMenu,
+      finishActionMenuClose: this.finishActionMenuClose,
+      handleActionSelect: this.handleActionSelect,
     });
   }
 
@@ -578,21 +393,12 @@ export class BarTitle {
   }
 
   private renderBack() {
-    if (!this.showBack) return null;
-    return (
-      <ds-tooltip label={this.backTooltipLabel} side="bottom" size="sm">
-        <ds-button-unfilled
-          class="bar-title__back"
-          variant="icon"
-          icon="ChevronLeft"
-          aria-label={this.backAriaLabel}
-          size="md"
-          activeFill={false}
-          hasBorder={false}
-          onDsClick={(event: CustomEvent<MouseEvent>) => this.dsBack.emit(event.detail)}
-        />
-      </ds-tooltip>
-    );
+    return renderBarTitleBack({
+      classPrefix: 'bar-title',
+      showBack: this.showBack,
+      backAriaLabel: this.backAriaLabel,
+      onBack: event => this.dsBack.emit(event),
+    });
   }
 
   render() {
@@ -673,21 +479,19 @@ export class BarTitle {
 
         {this.renderActionMenus()}
 
-        {this.showActionMenuTrigger ? (
-          <ds-menu
-            id={this.actionMenuId}
-            class="bar-title__action-menu"
-            anchorId={this.actionMenuTriggerId}
-            align="end"
-            menuLabel={this.actionsAriaLabel}
-            open={this.openActionMenuId === '__overflow'}
-            initialFocusVisible={this.actionMenuInitialFocusVisible}
-            sections={this.actionMenuSections}
-            onDsClose={this.closeActionMenu}
-            onDsAfterClose={this.finishActionMenuClose}
-            onDsSelect={this.handleActionSelect}
-          />
-        ) : null}
+        {renderBarTitleOverflowMenu({
+          classPrefix: 'bar-title',
+          showOverflowTrigger: this.showActionMenuTrigger,
+          actionMenuId: this.actionMenuId,
+          actionMenuTriggerId: this.actionMenuTriggerId,
+          actionsAriaLabel: this.actionsAriaLabel,
+          open: this.openActionMenuId === '__overflow',
+          actionMenuInitialFocusVisible: this.actionMenuInitialFocusVisible,
+          actionMenuSections: this.actionMenuSections,
+          closeActionMenu: this.closeActionMenu,
+          finishActionMenuClose: this.finishActionMenuClose,
+          handleActionSelect: this.handleActionSelect,
+        })}
       </Host>
     );
   }

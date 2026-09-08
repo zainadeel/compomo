@@ -81,7 +81,7 @@ export const WithActions: Story = {
       ...isolatedOverlayDocs('280px'),
       description: {
         story:
-          'Product commands project through the actions slot. Menus remain application-owned and anchored to those controls.',
+          'Product commands project through the actions slot as the rounded button variant. Menus remain application-owned and anchored to those controls.',
       },
     },
   },
@@ -96,6 +96,7 @@ export const WithActions: Story = {
           size="md"
           background="bold"
           has-menu
+          rounded
           controls="bar-action-coaching-menu"
         ></ds-button-unfilled>
       </ds-bar-action>

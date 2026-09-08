@@ -16,12 +16,18 @@
   ],
   "avoidWhen": [
     "The title belongs to a PanelTools drawer or fullscreen pane; use PanelToolHeader through PanelTools instead.",
+    "The chrome is the managed panel-mode shell bar; use BarPageTitle.",
     "The choices are primary application destinations or BarNav destinations rather than sections within the current page.",
     "The heading belongs to a card, modal, or other bounded region rather than the page.",
     "Local panels inside page content should remain directly selectable; use TabGroup instead.",
     "Automatic sticky or responsive page orchestration is required; compose BarTitle in ShellPage rather than implementing it in the header."
   ],
   "alternatives": [
+    {
+      "when": "The chrome is the managed panel-mode shell bar with page-level sections.",
+      "component": "component:ds-bar-page-title",
+      "reason": "BarPageTitle owns compact shell-bar identity and all-or-nothing page-section tabs."
+    },
     {
       "when": "A create or edit workflow needs Exit, persistent step navigation, and a final Save or Submit action.",
       "component": "component:ds-bar-workflow",
@@ -66,13 +72,13 @@
     "expanded renders the larger heading, optional description, inset divider, and a full-width caption breadcrumb row above the title. The breadcrumb begins after 32px top padding; the following title and right-side actions share one top alignment. Compact renders 48px chrome with the existing icon Back action; constrained uses compact chrome and moves an auto-collapse primary action into overflow.",
     "The one visible ordered action collapses by default in constrained presentation. Use never for an exceptional action whose hierarchy must remain visible; explicit overflow actions never leave the shared menu.",
     "showDivider=false removes the bottom divider when the surrounding page composition supplies the boundary; showCompactDivider can independently restore or remove that boundary in compact and constrained variants.",
-    "placement=shell-bar is reserved for ShellApp panel section navigation. It remains compact, omits description and breadcrumb presentation, and preserves applicable Back, section, primary, and overflow controls.",
+    "placement=shell-bar remains compact slotted chrome for advanced ShellApp composition. Managed panel-mode ShellApp uses BarPageTitle instead. It omits description and breadcrumb presentation and preserves applicable Back, section, primary, and overflow controls.",
     "Section, action, split-menu, and overflow triggers automatically retain the shared surface-open wash through exit. The expanded header presentation is layout, not surface ownership, and does not itself acquire a pressed wash."
   ],
   "responsiveBehavior": [
     "BarTitle does not observe viewport, shell, scroll, or container state. Its owner selects an explicit variant.",
     "ShellPage is the standard owner for automatic expanded, compact, and constrained selection.",
-    "ShellApp owns shell-bar placement and always selects compact presentation there; mobile continues to use MobileHeader.",
+    "ShellApp owns shell-bar placement for slotted composition and always selects compact presentation there; managed panel mode uses BarPageTitle. Mobile continues to use MobileHeader.",
     "When ShellPage owns BarTitle on a secondary desktop or tablet page, its expanded, compact, and constrained presentations all match that canvas; the separate MobileHeader component remains primary.",
     "Compact titles use the shared compact-header geometry and md control inset so top-level headings align with BarNav and inline Back geometry aligns with PanelToolHeader. Long headings and section labels truncate independently while Back and action controls retain complete hit targets and accessible names.",
     "A never-collapse action remains visible in constrained mode; the title and section label yield space first.",

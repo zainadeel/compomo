@@ -69,12 +69,11 @@ test.describe('Managed application shell', () => {
     });
 
     const panel = shell.locator('ds-panel-nav');
-    const shellBarTitle = shell.locator('.shell-app__bar > ds-bar-title');
+    const shellBarTitle = shell.locator('.shell-app__bar > ds-bar-page-title');
     await expect(panel).toHaveJSProperty('presentation', 'nested');
     await expect(shell.locator('.shell-app__bar > ds-bar-nav')).toHaveCount(0);
     await expect(shellBarTitle).toBeVisible();
-    await expect(shellBarTitle).toHaveJSProperty('placement', 'shell-bar');
-    await expect(shellBarTitle).toHaveJSProperty('variant', 'compact');
+    await expect(shell.locator('.shell-app__bar > ds-bar-title')).toHaveCount(0);
     await expect(shell.locator('ds-shell-page ds-bar-title')).toHaveCount(0);
     await expect(shell.getByText('Current fleet status.', { exact: true })).toHaveCount(0);
 

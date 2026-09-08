@@ -2,6 +2,7 @@ import '/dist/components/ds-shell-app.js';
 import '/dist/components/ds-panel-nav.js';
 import '/dist/components/ds-bar-nav.js';
 import '/dist/components/ds-bar-title.js';
+import '/dist/components/ds-bar-page-title.js';
 import '/dist/components/ds-mobile-sheet-nav.js';
 import '/dist/components/ds-mobile-header.js';
 import '/dist/components/ds-mobile-bar-nav.js';
@@ -14,6 +15,7 @@ await Promise.all([
   customElements.whenDefined('ds-shell-app'),
   customElements.whenDefined('ds-panel-nav'),
   customElements.whenDefined('ds-bar-nav'),
+  customElements.whenDefined('ds-bar-page-title'),
   customElements.whenDefined('ds-mobile-header'),
   customElements.whenDefined('ds-mobile-bar-nav'),
   customElements.whenDefined('ds-shell-tools'),

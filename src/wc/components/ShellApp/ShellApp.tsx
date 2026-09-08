@@ -880,7 +880,7 @@ export class ShellApp {
   private syncChrome() {
     const panelNav = this.el.querySelector('ds-panel-nav') as HTMLElement | null;
     const bar = this.el.querySelector(
-      'ds-bar-nav, ds-bar-title[placement="shell-bar"]'
+      'ds-bar-nav, ds-bar-page-title, ds-bar-title[placement="shell-bar"]'
     ) as HTMLElement | null;
     const targets = [this.el, panelNav, bar].filter((el): el is HTMLElement => el !== null);
 
@@ -1010,7 +1010,7 @@ export class ShellApp {
 
   private renderManagedTopBar() {
     return this.sectionNavigation === 'panel'
-      ? this.renderManagedBarTitle('shell-bar')
+      ? this.renderManagedBarPageTitle()
       : this.renderManagedBarNav();
   }
 
@@ -1286,6 +1286,34 @@ export class ShellApp {
             label: item.label,
             isInactive: item.isInactive,
           }
+    );
+  }
+
+  private renderManagedBarPageTitle() {
+    const page = this.pageChrome;
+    return (
+      <ds-bar-page-title
+        ref={el => {
+          if (el) {
+            (el as HTMLElement & { actionItems?: BarTitleActionConfigItem[] }).actionItems =
+              page.actionItems;
+          }
+        }}
+        heading={page.heading ?? ''}
+        showBack={page.showBack ?? false}
+        backAriaLabel={page.backAriaLabel ?? 'Back'}
+        sections={this.barTitleSections}
+        value={page.subvalue ?? ''}
+        sectionsAriaLabel={page.subsectionsAriaLabel ?? 'Change page subsection'}
+        primaryAction={page.primaryAction ?? null}
+        actions={page.actions ?? []}
+        actionsAriaLabel={page.actionsAriaLabel ?? 'More page actions'}
+        showDivider={page.showHeaderDivider ?? true}
+        showCompactDivider={page.showCompactHeaderDivider}
+        onDsBack={this.handleManagedPageBack}
+        onDsSectionChange={this.handleManagedSubsectionChange}
+        onDsAction={this.handleManagedPageAction}
+      />
     );
   }
 

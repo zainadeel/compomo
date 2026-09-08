@@ -1,6 +1,7 @@
 @import '../../styles/table.css';
 @import '../../styles/control-elevation.css';
 @import '../../utils/chrome-header.css';
+@import '../../utils/radius.css';
 @import '../../utils/control-density.css';
 @import '../../utils/forced-colors.css';
 @import '../../utils/text-decoration.css';

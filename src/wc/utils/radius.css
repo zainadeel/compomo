@@ -1,0 +1,27 @@
+/**
+ * Shared corner-radius roles. Components consume these vars instead of
+ * picking `--dimension-radius-*` per surface.
+ *
+ * `--ds-control-radius` continues to come from control-density, which aliases
+ * `--ds-radius-control`. Import this file before control-density so that alias
+ * resolves. Pill controls still override to `--dimension-radius-half`.
+ *
+ * `:host` covers Stencil components. `:where(.ds-table)` covers the public
+ * table recipe. `:where(.tooltip-popup)` covers the body-portaled tooltip chip.
+ * `:where(.ds-radius)` is the non-host opt-in for stories and native recipes.
+ *
+ * @see AGENTS.md — "Internal recipes"
+ */
+
+:host,
+:where(.ds-table),
+:where(.tooltip-popup),
+:where(.ds-radius) {
+  --ds-radius-control: var(--dimension-radius-025);
+  --ds-radius-card: var(--dimension-radius-050);
+  --ds-radius-modal: var(--dimension-radius-050);
+  --ds-radius-menu: var(--dimension-radius-075);
+  --ds-radius-tooltip-control: var(--dimension-radius-025);
+  --ds-radius-tooltip-menu: var(--dimension-radius-075);
+  --ds-radius-table: var(--dimension-radius-050);
+}

@@ -176,6 +176,20 @@ export function overflowBarTitleActionSections(
   return toSections(rows);
 }
 
+export function availableBarTitleActionMenuIds(
+  visibleActions: BarTitleActionConfigItem[],
+  showOverflowTrigger: boolean
+): Set<string> {
+  const ids = new Set<string>();
+  if (showOverflowTrigger) ids.add('__overflow');
+  for (const item of visibleActions) {
+    if (!isBarTitleActionDivider(item) && (item.type === 'menu' || item.type === 'split')) {
+      ids.add(item.id);
+    }
+  }
+  return ids;
+}
+
 export function findBarTitleAction(
   items: BarTitleActionConfigItem[],
   id: string

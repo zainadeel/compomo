@@ -12,8 +12,8 @@ import { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 import { BannerAnnouncement, BannerContrast, BannerIntent, BannerOrientation } from "./components/Banner/Banner";
 import { NavChromeStyle } from "./shell/nav-chrome";
 import { BarNavTab } from "./components/BarNav/bar-nav-types";
-import { BreadcrumbItem, BreadcrumbSelectDetail } from "./components/Breadcrumb/breadcrumb-types";
 import { BarTitleActionConfigItem, BarTitleActionItem, BarTitlePlacement, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
+import { BreadcrumbItem, BreadcrumbSelectDetail } from "./components/Breadcrumb/breadcrumb-types";
 import { BarWorkflowStep, BarWorkflowSubmitAction } from "./components/BarWorkflow/bar-workflow-types";
 import { MobileDestination, ShellResponsiveMode } from "./shell/shell-responsive";
 import { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledPopup, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
@@ -86,8 +86,8 @@ export { BadgeSurface, BadgeVariant } from "./components/Badge/Badge";
 export { BannerAnnouncement, BannerContrast, BannerIntent, BannerOrientation } from "./components/Banner/Banner";
 export { NavChromeStyle } from "./shell/nav-chrome";
 export { BarNavTab } from "./components/BarNav/bar-nav-types";
-export { BreadcrumbItem, BreadcrumbSelectDetail } from "./components/Breadcrumb/breadcrumb-types";
 export { BarTitleActionConfigItem, BarTitleActionItem, BarTitlePlacement, BarTitlePrimaryAction, BarTitleSectionItem, BarTitleVariant } from "./components/BarTitle/bar-title-types";
+export { BreadcrumbItem, BreadcrumbSelectDetail } from "./components/Breadcrumb/breadcrumb-types";
 export { BarWorkflowStep, BarWorkflowSubmitAction } from "./components/BarWorkflow/bar-workflow-types";
 export { MobileDestination, ShellResponsiveMode } from "./shell/shell-responsive";
 export { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledPopup, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
@@ -423,6 +423,65 @@ export namespace Components {
         "tabs": BarNavTab[];
         /**
           * ID of the currently active tab. Overridden when `currentUrl` + `basePath` are set.
+          * @default ''
+         */
+        "value": string;
+    }
+    interface DsBarPageTitle {
+        /**
+          * Ordered page-header actions. When supplied, this replaces the legacy primaryAction/actions presentation while preserving the same dsAction event.
+         */
+        "actionItems"?: BarTitleActionConfigItem[];
+        /**
+          * Secondary page actions shown in the overflow menu. Dividers create groups.
+          * @default []
+         */
+        "actions": BarTitleActionItem[];
+        /**
+          * Accessible name for the page-actions menu.
+          * @default 'More page actions'
+         */
+        "actionsAriaLabel": string;
+        /**
+          * Accessible name for the leading Back action.
+          * @default 'Back'
+         */
+        "backAriaLabel": string;
+        /**
+          * The page's single visible h1.
+         */
+        "heading": string;
+        /**
+          * The one highest-emphasis page action.
+          * @default null
+         */
+        "primaryAction": BarTitlePrimaryAction | null;
+        /**
+          * Optional page sections shown as an all-or-nothing tab row, or the compact section button.
+          * @default []
+         */
+        "sections": BarTitleSectionItem[];
+        /**
+          * Accessible name for the page-section tablist and menu.
+          * @default 'Change page section'
+         */
+        "sectionsAriaLabel": string;
+        /**
+          * Show the leading page-level Back action.
+          * @default false
+         */
+        "showBack": boolean;
+        /**
+          * Override divider visibility for the compact shell-bar presentation.
+         */
+        "showCompactDivider"?: boolean;
+        /**
+          * Draw the compact bottom divider beneath the header.
+          * @default true
+         */
+        "showDivider": boolean;
+        /**
+          * Id of the active page section.
           * @default ''
          */
         "value": string;
@@ -4083,6 +4142,10 @@ export interface DsBarNavCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsBarNavElement;
 }
+export interface DsBarPageTitleCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsBarPageTitleElement;
+}
 export interface DsBarTitleCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsBarTitleElement;
@@ -4417,6 +4480,25 @@ declare global {
     var HTMLDsBarNavElement: {
         prototype: HTMLDsBarNavElement;
         new (): HTMLDsBarNavElement;
+    };
+    interface HTMLDsBarPageTitleElementEventMap {
+        "dsBack": MouseEvent;
+        "dsSectionChange": string;
+        "dsAction": string;
+    }
+    interface HTMLDsBarPageTitleElement extends Components.DsBarPageTitle, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsBarPageTitleElementEventMap>(type: K, listener: (this: HTMLDsBarPageTitleElement, ev: DsBarPageTitleCustomEvent<HTMLDsBarPageTitleElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsBarPageTitleElementEventMap>(type: K, listener: (this: HTMLDsBarPageTitleElement, ev: DsBarPageTitleCustomEvent<HTMLDsBarPageTitleElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsBarPageTitleElement: {
+        prototype: HTMLDsBarPageTitleElement;
+        new (): HTMLDsBarPageTitleElement;
     };
     interface HTMLDsBarTitleElementEventMap {
         "dsBack": MouseEvent;
@@ -5549,6 +5631,7 @@ declare global {
         "ds-banner": HTMLDsBannerElement;
         "ds-bar-action": HTMLDsBarActionElement;
         "ds-bar-nav": HTMLDsBarNavElement;
+        "ds-bar-page-title": HTMLDsBarPageTitleElement;
         "ds-bar-title": HTMLDsBarTitleElement;
         "ds-bar-workflow": HTMLDsBarWorkflowElement;
         "ds-breadcrumb": HTMLDsBreadcrumbElement;
@@ -5912,6 +5995,77 @@ declare namespace LocalJSX {
         "tabs"?: BarNavTab[];
         /**
           * ID of the currently active tab. Overridden when `currentUrl` + `basePath` are set.
+          * @default ''
+         */
+        "value"?: string;
+    }
+    interface DsBarPageTitle {
+        /**
+          * Ordered page-header actions. When supplied, this replaces the legacy primaryAction/actions presentation while preserving the same dsAction event.
+         */
+        "actionItems"?: BarTitleActionConfigItem[];
+        /**
+          * Secondary page actions shown in the overflow menu. Dividers create groups.
+          * @default []
+         */
+        "actions"?: BarTitleActionItem[];
+        /**
+          * Accessible name for the page-actions menu.
+          * @default 'More page actions'
+         */
+        "actionsAriaLabel"?: string;
+        /**
+          * Accessible name for the leading Back action.
+          * @default 'Back'
+         */
+        "backAriaLabel"?: string;
+        /**
+          * The page's single visible h1.
+         */
+        "heading": string;
+        /**
+          * Emitted with the activated primary or overflow action id.
+         */
+        "onDsAction"?: (event: DsBarPageTitleCustomEvent<string>) => void;
+        /**
+          * Emitted when the leading Back action is activated.
+         */
+        "onDsBack"?: (event: DsBarPageTitleCustomEvent<MouseEvent>) => void;
+        /**
+          * Emitted with the newly selected page-section id.
+         */
+        "onDsSectionChange"?: (event: DsBarPageTitleCustomEvent<string>) => void;
+        /**
+          * The one highest-emphasis page action.
+          * @default null
+         */
+        "primaryAction"?: BarTitlePrimaryAction | null;
+        /**
+          * Optional page sections shown as an all-or-nothing tab row, or the compact section button.
+          * @default []
+         */
+        "sections"?: BarTitleSectionItem[];
+        /**
+          * Accessible name for the page-section tablist and menu.
+          * @default 'Change page section'
+         */
+        "sectionsAriaLabel"?: string;
+        /**
+          * Show the leading page-level Back action.
+          * @default false
+         */
+        "showBack"?: boolean;
+        /**
+          * Override divider visibility for the compact shell-bar presentation.
+         */
+        "showCompactDivider"?: boolean;
+        /**
+          * Draw the compact bottom divider beneath the header.
+          * @default true
+         */
+        "showDivider"?: boolean;
+        /**
+          * Id of the active page section.
           * @default ''
          */
         "value"?: string;
@@ -9979,6 +10133,16 @@ declare namespace LocalJSX {
         "currentUrl": string;
         "moreTabsLabel": string;
     }
+    interface DsBarPageTitleAttributes {
+        "heading": string;
+        "showBack": boolean;
+        "backAriaLabel": string;
+        "value": string;
+        "sectionsAriaLabel": string;
+        "actionsAriaLabel": string;
+        "showDivider": boolean;
+        "showCompactDivider": boolean;
+    }
     interface DsBarTitleAttributes {
         "heading": string;
         "description": string;
@@ -10815,6 +10979,7 @@ declare namespace LocalJSX {
         "ds-banner": Omit<DsBanner, keyof DsBannerAttributes> & { [K in keyof DsBanner & keyof DsBannerAttributes]?: DsBanner[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `attr:${K}`]?: DsBannerAttributes[K] } & { [K in keyof DsBanner & keyof DsBannerAttributes as `prop:${K}`]?: DsBanner[K] } & OneOf<"description", DsBanner["description"], DsBannerAttributes["description"]>;
         "ds-bar-action": Omit<DsBarAction, keyof DsBarActionAttributes> & { [K in keyof DsBarAction & keyof DsBarActionAttributes]?: DsBarAction[K] } & { [K in keyof DsBarAction & keyof DsBarActionAttributes as `attr:${K}`]?: DsBarActionAttributes[K] } & { [K in keyof DsBarAction & keyof DsBarActionAttributes as `prop:${K}`]?: DsBarAction[K] };
         "ds-bar-nav": Omit<DsBarNav, keyof DsBarNavAttributes> & { [K in keyof DsBarNav & keyof DsBarNavAttributes]?: DsBarNav[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `attr:${K}`]?: DsBarNavAttributes[K] } & { [K in keyof DsBarNav & keyof DsBarNavAttributes as `prop:${K}`]?: DsBarNav[K] };
+        "ds-bar-page-title": Omit<DsBarPageTitle, keyof DsBarPageTitleAttributes> & { [K in keyof DsBarPageTitle & keyof DsBarPageTitleAttributes]?: DsBarPageTitle[K] } & { [K in keyof DsBarPageTitle & keyof DsBarPageTitleAttributes as `attr:${K}`]?: DsBarPageTitleAttributes[K] } & { [K in keyof DsBarPageTitle & keyof DsBarPageTitleAttributes as `prop:${K}`]?: DsBarPageTitle[K] } & OneOf<"heading", DsBarPageTitle["heading"], DsBarPageTitleAttributes["heading"]>;
         "ds-bar-title": Omit<DsBarTitle, keyof DsBarTitleAttributes> & { [K in keyof DsBarTitle & keyof DsBarTitleAttributes]?: DsBarTitle[K] } & { [K in keyof DsBarTitle & keyof DsBarTitleAttributes as `attr:${K}`]?: DsBarTitleAttributes[K] } & { [K in keyof DsBarTitle & keyof DsBarTitleAttributes as `prop:${K}`]?: DsBarTitle[K] } & OneOf<"heading", DsBarTitle["heading"], DsBarTitleAttributes["heading"]>;
         "ds-bar-workflow": Omit<DsBarWorkflow, keyof DsBarWorkflowAttributes> & { [K in keyof DsBarWorkflow & keyof DsBarWorkflowAttributes]?: DsBarWorkflow[K] } & { [K in keyof DsBarWorkflow & keyof DsBarWorkflowAttributes as `attr:${K}`]?: DsBarWorkflowAttributes[K] } & { [K in keyof DsBarWorkflow & keyof DsBarWorkflowAttributes as `prop:${K}`]?: DsBarWorkflow[K] } & OneOf<"heading", DsBarWorkflow["heading"], DsBarWorkflowAttributes["heading"]>;
         "ds-breadcrumb": Omit<DsBreadcrumb, keyof DsBreadcrumbAttributes> & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes]?: DsBreadcrumb[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `attr:${K}`]?: DsBreadcrumbAttributes[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `prop:${K}`]?: DsBreadcrumb[K] };
@@ -10902,6 +11067,7 @@ declare module "@stencil/core" {
             "ds-banner": LocalJSX.IntrinsicElements["ds-banner"] & JSXBase.HTMLAttributes<HTMLDsBannerElement>;
             "ds-bar-action": LocalJSX.IntrinsicElements["ds-bar-action"] & JSXBase.HTMLAttributes<HTMLDsBarActionElement>;
             "ds-bar-nav": LocalJSX.IntrinsicElements["ds-bar-nav"] & JSXBase.HTMLAttributes<HTMLDsBarNavElement>;
+            "ds-bar-page-title": LocalJSX.IntrinsicElements["ds-bar-page-title"] & JSXBase.HTMLAttributes<HTMLDsBarPageTitleElement>;
             "ds-bar-title": LocalJSX.IntrinsicElements["ds-bar-title"] & JSXBase.HTMLAttributes<HTMLDsBarTitleElement>;
             "ds-bar-workflow": LocalJSX.IntrinsicElements["ds-bar-workflow"] & JSXBase.HTMLAttributes<HTMLDsBarWorkflowElement>;
             "ds-breadcrumb": LocalJSX.IntrinsicElements["ds-breadcrumb"] & JSXBase.HTMLAttributes<HTMLDsBreadcrumbElement>;

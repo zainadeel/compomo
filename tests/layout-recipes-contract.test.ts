@@ -15,7 +15,7 @@ test('one chart card owns every chart body anatomy', () => {
   assert.match(css, /\.card-chart__chart > \*/);
   assert.match(css, /\.card-chart__chart > ds-chart[\s\S]*--ds-chart-container-height:\s*100%/);
   assert.match(css, /padding: var\(--dimension-space-200\) var\(--dimension-space-200\) 0/);
-  assert.match(css, /border-radius: var\(--dimension-radius-125\)/);
+  assert.match(css, /border-radius: var\(--ds-radius-card\)/);
   assert.match(css, /box-shadow: var\(--effect-shadow-elevated-sm\)/);
   assert.match(css, /overflow:\s*visible/);
   assert.doesNotMatch(css, /box-shadow: 0 0 0 var\(--dimension-stroke-width-012\)/);
@@ -37,7 +37,7 @@ test('chart tooltip reuses menu section and medium control anatomy', () => {
   assert.match(source, /usesSwatches/);
   assert.match(css, /chrome-layout\.css/);
   assert.match(css, /\.tooltip-chart__items\s*{\s*display: contents/);
-  assert.match(css, /border-radius: var\(--dimension-radius-075\)/);
+  assert.match(css, /border-radius: var\(--ds-radius-tooltip-menu\)/);
   assert.match(parts, /\.ds-control-section-heading/);
   assert.doesNotMatch(css, /\.tooltip-chart__heading\s*{/);
 });

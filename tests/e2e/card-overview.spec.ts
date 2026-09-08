@@ -181,7 +181,7 @@ test('keeps equal-height cell content with the inset, content, and text balance 
   expect(geometry.divider).not.toBe('none');
   expect(geometry.actionRadius).toBe('2px');
   expect(geometry.scoreRadius).toBe('2px');
-  expect(geometry.surfaceRadius).toBe('10px');
+  expect(geometry.surfaceRadius).toBe('4px');
 
   await action.hover();
   const hoverFill = await action.evaluate(

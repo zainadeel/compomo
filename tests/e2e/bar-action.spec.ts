@@ -121,4 +121,11 @@ test('paints compact bold-brand chrome with medium elevation', async ({ page }) 
   expect(chrome.background).toBe(chrome.expectedBackground);
   expect(chrome.shadow).toBe(chrome.expectedShadow);
   expect(chrome.highlight).toBe(chrome.expectedHighlight);
+  await expect(surface).toHaveCSS('border-radius', '9999px');
+  await expect(bar.getByRole('button', { name: 'Clear' })).toHaveCSS('border-radius', '9999px');
+  await expect(bar.locator('ds-button-unfilled[slot="actions"]')).toHaveJSProperty('rounded', true);
+  await expect(bar.getByRole('button', { name: 'Coaching status' })).toHaveCSS(
+    'border-radius',
+    '9999px'
+  );
 });

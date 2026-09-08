@@ -1030,9 +1030,9 @@
             "The application updates the selected identities after dsClear, then moves focus to a stable collection control before the empty bar disappears; the bar never mutates selection or guesses a focus target."
           ],
           "states": [
-            "The bar is hidden while the selected count is below one and appears as the compact bold-brand elevated surface once at least one item is selected.",
+            "The bar is hidden while the selected count is below one and appears as the compact pill bold-brand elevated surface once at least one item is selected.",
             "Clear reports intent only. The application replaces the controlled selected identities.",
-            "Slotted actions stay application-owned. Pass background matching the bold parent surface so those controls remain readable.",
+            "Slotted actions stay application-owned. Use the rounded ButtonFilled or ButtonUnfilled variant on a background matching the bold parent surface so those controls remain readable.",
             "The component-owned visible surface owns medium control-elevation and removes the empty actions lane. Overlay inset, footer clearance, and stacking remain application layout."
           ],
           "responsiveBehavior": [
@@ -1042,7 +1042,7 @@
           "frameworkCaveats": {
             "customElements": [
               "Bind count from the current selected set, replace that set after dsClear, and return focus to a stable collection control.",
-              "Project command controls through slot=actions with background matching the bold parent surface."
+              "Project rounded command controls through slot=actions with background matching the bold parent surface."
             ],
             "react": [
               "Pass count from selected row or item state, clear that state from onDsClear, and return focus to a stable collection control.",
@@ -1050,7 +1050,7 @@
             ],
             "angular": [
               "Bind count from the controlled selected identities, handle dsClear in the collection owner, and return focus to a stable collection control.",
-              "Project ds-button-unfilled or ds-button-filled into slot=actions with background matching the bold parent surface."
+              "Project the rounded ds-button-unfilled or ds-button-filled variant into slot=actions with background matching the bold parent surface."
             ]
           },
           "references": [
@@ -1269,6 +1269,199 @@
       ]
     },
     {
+      "name": "bar-page-title",
+      "title": "BarPageTitle",
+      "description": "Compact shell-bar page chrome that shows every page-level section as a tab row after the title divider, and replaces that row with the compact section button when the complete set cannot fit.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/bar-page-title",
+        "source": "src/wc/components/BarPageTitle/BarPageTitle.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "specialized",
+          "status": "experimental",
+          "summary": "Compact shell-bar page chrome that shows every page-level section as a tab row after the title divider, and replaces that row with the compact section button when the complete set cannot fit.",
+          "useWhen": [
+            "Managed ShellApp is in panel section navigation and the routed page has page-level subsections such as People or driver detail.",
+            "The shell bar must keep page identity, Back, and page actions while presenting every page section together or not at all."
+          ],
+          "avoidWhen": [
+            "The chrome is a page-placed header; use BarTitle through ShellPage instead.",
+            "The choices are peer area routes in bar-mode ShellApp; use BarNav instead.",
+            "The choices are nested PanelNav child routes; keep those on PanelNav.",
+            "Local in-page views should remain selectable as tabs inside content; use TabGroup instead."
+          ],
+          "alternatives": [
+            {
+              "when": "The header sits in page content rather than the shell bar.",
+              "component": "component:ds-bar-title",
+              "reason": "BarTitle owns expanded, compact, and constrained page headers, including the compact section button without a tab row."
+            },
+            {
+              "when": "The choices are peer routes of the active PanelNav destination.",
+              "component": "component:ds-bar-nav",
+              "reason": "BarNav owns area-level route sections and partial overflow rather than page subsections."
+            },
+            {
+              "when": "The choices switch local content without changing page sections.",
+              "component": "component:ds-tab-group",
+              "reason": "TabGroup is the local content-view control rather than shell-bar page chrome."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-shell-app",
+            "component:ds-bar-title",
+            "component:ds-panel-nav",
+            "component:ds-menu",
+            "component:ds-text"
+          ],
+          "patterns": [
+            "pattern:application-shell",
+            "pattern:shell-page"
+          ],
+          "accessibility": [
+            "Provide one concise heading; BarPageTitle renders exactly one h1.",
+            "Give compact Back a destination-specific accessible name and handle dsBack in the route owner.",
+            "Keep value synchronized with the current page section; dsSectionChange returns the selected section id.",
+            "The tab row is a tablist with horizontal roving tabindex. The collapsed control exposes the current section, menu relationship, and expanded state, then restores focus after selection or dismissal.",
+            "Use one filled primary action in the page decision area and keep every top-level action and nested menu-choice id non-empty and unique."
+          ],
+          "states": [
+            "Fewer than two selectable sections render title chrome only: no divider, tabs, or section button.",
+            "Two or more selectable sections default to every tab after the compact title divider.",
+            "When the unconstrained title, divider, and complete tab row cannot sit beside trailing actions, every tab is replaced by the compact section button and menu. BarPageTitle never keeps some tabs visible while overflowing the rest.",
+            "Dividers in sections or actions create separate Menu groups without becoming selectable rows.",
+            "Ordered actions preserve authored order with the same compact visible-action and overflow rules as compact BarTitle.",
+            "showDivider=false removes the bottom seam; showCompactDivider can independently restore or remove that boundary.",
+            "Section, action, split-menu, and overflow triggers retain the shared surface-open wash through exit."
+          ],
+          "responsiveBehavior": [
+            "BarPageTitle is compact-only shell-bar chrome. It does not offer expanded or constrained variants.",
+            "ShellApp owns the managed panel-mode path and feeds pageChrome.subsections through the same section contract as BarTitle.",
+            "Measurement uses a hidden unconstrained probe of Back, heading, divider, and every tab, compared with the width left after trailing actions, plus hysteresis so the control does not flicker at the boundary.",
+            "Mobile continues to use MobileHeader; BarPageTitle is desktop and tablet shell-bar chrome.",
+            "Long headings truncate while Back, tabs or the section button, and action controls retain complete hit targets and accessible names."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign sections, actionItems, primaryAction, and actions as JavaScript properties and replace array or object identities when controlled state changes.",
+              "Handle dsBack, update value after dsSectionChange, and execute product commands from dsAction."
+            ],
+            "react": [
+              "Pass section and ordered action arrays directly to DsBarPageTitle and keep value controlled from route state."
+            ],
+            "angular": [
+              "Bind complex values on the standalone DsBarPageTitle adapter and handle Back, section, and action intent events in the route shell."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook",
+              "path": "src/wc/components/BarPageTitle/BarPageTitle.stories.ts"
+            },
+            {
+              "label": "Managed panel-mode shell bar",
+              "path": "src/wc/components/ShellApp/ShellApp.mdx"
+            },
+            {
+              "label": "All-or-nothing resize coverage",
+              "path": "tests/e2e/bar-page-title.spec.ts"
+            },
+            {
+              "label": "Surface ownership and trigger state",
+              "path": "src/docs/SurfaceOwnership.mdx"
+            }
+          ]
+        },
+        "props": {
+          "actionItems": {
+            "type": "BarTitleActionConfigItem[]",
+            "required": false
+          },
+          "actions": {
+            "type": "BarTitleActionItem[]",
+            "required": false
+          },
+          "actionsAriaLabel": {
+            "type": "string",
+            "required": false
+          },
+          "backAriaLabel": {
+            "type": "string",
+            "required": false
+          },
+          "heading": {
+            "type": "string",
+            "required": true
+          },
+          "primaryAction": {
+            "type": "BarTitlePrimaryAction | null",
+            "required": false
+          },
+          "sections": {
+            "type": "BarTitleSectionItem[]",
+            "required": false
+          },
+          "sectionsAriaLabel": {
+            "type": "string",
+            "required": false
+          },
+          "showBack": {
+            "type": "boolean",
+            "required": false
+          },
+          "showCompactDivider": {
+            "type": "boolean",
+            "required": false
+          },
+          "showDivider": {
+            "type": "boolean",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsAction",
+            "detail": "string"
+          },
+          {
+            "name": "dsBack",
+            "detail": "MouseEvent"
+          },
+          {
+            "name": "dsSectionChange",
+            "detail": "string"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-bar-page-title",
+          "react": "DsBarPageTitle",
+          "vue": "DsBarPageTitle",
+          "angular": "DsBarPageTitle"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "button-filled",
+        "button-unfilled",
+        "icon",
+        "menu",
+        "text",
+        "tooltip"
+      ]
+    },
+    {
       "name": "bar-title",
       "title": "BarTitle",
       "description": "Page-level title chrome with route identity, responsive ordered button, icon, menu, split, and overflow actions, plus explicit expanded, compact, or constrained variants.",
@@ -1291,12 +1484,18 @@
           ],
           "avoidWhen": [
             "The title belongs to a PanelTools drawer or fullscreen pane; use PanelToolHeader through PanelTools instead.",
+            "The chrome is the managed panel-mode shell bar; use BarPageTitle.",
             "The choices are primary application destinations or BarNav destinations rather than sections within the current page.",
             "The heading belongs to a card, modal, or other bounded region rather than the page.",
             "Local panels inside page content should remain directly selectable; use TabGroup instead.",
             "Automatic sticky or responsive page orchestration is required; compose BarTitle in ShellPage rather than implementing it in the header."
           ],
           "alternatives": [
+            {
+              "when": "The chrome is the managed panel-mode shell bar with page-level sections.",
+              "component": "component:ds-bar-page-title",
+              "reason": "BarPageTitle owns compact shell-bar identity and all-or-nothing page-section tabs."
+            },
             {
               "when": "A create or edit workflow needs Exit, persistent step navigation, and a final Save or Submit action.",
               "component": "component:ds-bar-workflow",
@@ -1343,13 +1542,13 @@
             "expanded renders the larger heading, optional description, inset divider, and a full-width caption breadcrumb row above the title. The breadcrumb begins after 32px top padding; the following title and right-side actions share one top alignment. Compact renders 48px chrome with the existing icon Back action; constrained uses compact chrome and moves an auto-collapse primary action into overflow.",
             "The one visible ordered action collapses by default in constrained presentation. Use never for an exceptional action whose hierarchy must remain visible; explicit overflow actions never leave the shared menu.",
             "showDivider=false removes the bottom divider when the surrounding page composition supplies the boundary; showCompactDivider can independently restore or remove that boundary in compact and constrained variants.",
-            "placement=shell-bar is reserved for ShellApp panel section navigation. It remains compact, omits description and breadcrumb presentation, and preserves applicable Back, section, primary, and overflow controls.",
+            "placement=shell-bar remains compact slotted chrome for advanced ShellApp composition. Managed panel-mode ShellApp uses BarPageTitle instead. It omits description and breadcrumb presentation and preserves applicable Back, section, primary, and overflow controls.",
             "Section, action, split-menu, and overflow triggers automatically retain the shared surface-open wash through exit. The expanded header presentation is layout, not surface ownership, and does not itself acquire a pressed wash."
           ],
           "responsiveBehavior": [
             "BarTitle does not observe viewport, shell, scroll, or container state. Its owner selects an explicit variant.",
             "ShellPage is the standard owner for automatic expanded, compact, and constrained selection.",
-            "ShellApp owns shell-bar placement and always selects compact presentation there; mobile continues to use MobileHeader.",
+            "ShellApp owns shell-bar placement for slotted composition and always selects compact presentation there; managed panel mode uses BarPageTitle. Mobile continues to use MobileHeader.",
             "When ShellPage owns BarTitle on a secondary desktop or tablet page, its expanded, compact, and constrained presentations all match that canvas; the separate MobileHeader component remains primary.",
             "Compact titles use the shared compact-header geometry and md control inset so top-level headings align with BarNav and inline Back geometry aligns with PanelToolHeader. Long headings and section labels truncate independently while Back and action controls retain complete hit targets and accessible names.",
             "A never-collapse action remains visible in constrained mode; the title and section label yield space first.",
@@ -6502,7 +6701,7 @@
     {
       "name": "pagination",
       "title": "Pagination",
-      "description": "Controlled fixed or fitted page-size, compact range, adjacent-page navigation, and optional first/last controls for application-owned data windows.",
+      "description": "Controlled fixed or fitted page-size, page position, adjacent-page navigation, and optional first/last controls for application-owned data windows.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -6513,10 +6712,10 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Controlled fixed or fitted page-size, compact range, adjacent-page navigation, and optional first/last controls for application-owned data windows.",
+          "summary": "Controlled fixed or fitted page-size, page position, adjacent-page navigation, and optional first/last controls for application-owned data windows.",
           "useWhen": [
             "A result set is divided into discrete pages and the application owns fetching or slicing each page.",
-            "A table or list needs a compact page-size selector, result range, and boundary-aware navigation.",
+            "A table or list needs a compact page-size selector, page position, and boundary-aware navigation.",
             "Direct first-page and last-page navigation is useful enough to opt into alongside the default Previous and Next controls."
           ],
           "avoidWhen": [
@@ -6530,7 +6729,7 @@
           ],
           "accessibility": [
             "The component renders a named navigation region, gives its compact page-size noun a complete accessible label, and gives every icon-only boundary control an explicit page action name.",
-            "The visible page-size cluster states the localized noun, selected size, and current-page count of total, for example Rows: [25] 25 of 500. The page position uses compact ‘of’ phrasing, for example 1 of 20. A polite atomic status update retains the complete current range and ‘Page’ phrasing with the localized item noun.",
+            "The visible page-size cluster states the localized noun and selected size, then a vertical divider, then page position, for example Rows: [25] | 1 of 20. A polite atomic status update retains the complete current range and ‘Page’ phrasing with the localized item noun.",
             "Left and Right Arrow request the adjacent page while focus is within pagination navigation controls. The page-size combobox retains its own arrow-key behavior.",
             "Inactive boundary controls and every control during loading remain non-interactive while retaining their accessible names.",
             "showFirstLastButtons adds explicitly named First page and Last page controls; Previous and Next remain present in either mode."
@@ -6538,14 +6737,14 @@
           "states": [
             "pageIndex, numeric effective pageSize, pageSizeMode, totalItems, and pageSizeOptions are controlled inputs. dsChange reports the complete next pagination state, previous index, size, and mode, and whether the request changed the page, page size, or fitted capacity; it never mutates controlled inputs.",
             "Page-size changes request the first page. Out-of-range page indexes and invalid numeric inputs normalize only for presentation; the owner remains authoritative.",
-            "Zero results display 0–0 of 0 and Page 1 of 1. A partial final page caps the visible range at totalItems.",
+            "Zero results display Page 1 of 1. A partial final page still derives from totalItems. Assistive status keeps the complete item range.",
             "loading preserves the full pagination surface, applies aria-busy to the navigation region, and prevents page or page-size requests.",
-            "fitToPage appends a Fit to page choice. fitPageSize supplies its effective whole-item capacity; the closed trigger says Fit while the range continues to expose the resulting count. fitToPageInactive keeps that choice visible but unavailable when fitting is not meaningful for the current data shape. Pagination does not measure layouts itself.",
+            "fitToPage appends a Fit to page choice. fitPageSize supplies its effective whole-item capacity; the closed trigger says Fit while page position reflects the resulting window. fitToPageInactive keeps that choice visible but unavailable when fitting is not meaningful for the current data shape. Pagination does not measure layouts itself.",
             "showFirstLastButtons defaults to false. Enable it when direct jumps to both result boundaries materially help the workflow."
           ],
           "responsiveBehavior": [
-            "The full-width controls remain on one line with noun, selected size, current-page count of total, a vertical divider, page position, Previous and Next, plus optional First and Last navigation.",
-            "Inside a ds-table container narrower than 900px, pagination hides the visible current-page count and any opted-in first/last controls while retaining the page-size noun and selector plus Previous, page position, and Next. The complete current range remains available to assistive technology."
+            "The full-width controls remain on one line with noun, selected size, a vertical divider, page position, Previous and Next, plus optional First and Last navigation.",
+            "Inside a ds-table container narrower than 900px, pagination hides any opted-in first/last controls while retaining the page-size noun and selector plus Previous, page position, and Next. The complete current range remains available to assistive technology."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -8381,6 +8580,7 @@
           "commonlyComposedWith": [
             "component:ds-panel-nav",
             "component:ds-bar-nav",
+            "component:ds-bar-page-title",
             "component:ds-bar-title",
             "component:ds-panel-tools",
             "component:ds-shell-tools",
@@ -8412,7 +8612,7 @@
             "ShellApp renders the lower-level desktop, tablet, and mobile chrome, coordinates layout, gradient alignment, transitions, shortcuts, global surfaces, optional Inbox state, focus restoration, and mobile-stage visibility.",
             "Desktop and tablet PanelNav and PanelTools width motion is one continuous layout transition: the shell bar or title and routed page must follow the same intermediate lane widths without terminal-state snapping, overlapping chrome, transform scaling, or temporary replacement backgrounds.",
             "The application router owns authorization, current URLs, history, and route execution; ShellApp forwards navigation and page intent events without routing.",
-            "sectionNavigation is an application-controlled preference: bar keeps route sections in BarNav, while panel renders them as nested PanelNav children and places compact BarTitle in the shell bar.",
+            "sectionNavigation is an application-controlled preference: bar keeps route sections in BarNav, while panel renders them as nested PanelNav children and places BarPageTitle in the shell bar.",
             "Managed ShellApp derives ShellPage desktop header placement from sectionNavigation. Panel mode removes page-local title geometry, restores the standard responsive top gutter, and preserves full-bleed page content without requiring route-specific navigation branches.",
             "Switch sectionNavigation at runtime without replacing routed content or tool owners; the application owns preference storage and defaults new users to bar unless product policy says otherwise.",
             "In panel mode, supply the same route sections as children on their PanelNav parent and handle dsNavChildSelect as structured parent, child, and href navigation intent.",
@@ -8427,7 +8627,7 @@
             "Dashboard represents day-to-day operational work while Settings represents administrative and configuration work; route state selects the context.",
             "Replace navigation and pageChrome together from one completed route state.",
             "When pageChrome.showBack marks a detail depth, mobile chrome combines the page heading and active local subsection in one sheet trigger; peer route tabs remain in desktop BarNav rather than replacing the detail identity.",
-            "Route-owned ordered page actions drive both BarTitle and MobileHeader. ShellApp forwards one flat page-action id and owns the derived mobile overflow menu so routes do not duplicate menu state or choices.",
+            "Route-owned ordered page actions drive BarTitle, BarPageTitle, and MobileHeader. ShellApp forwards one flat page-action id and owns the derived mobile overflow menu so routes do not duplicate menu state or choices.",
             "Managed mobile Back and page-action controls use the same large touch density as the mobile navigation header without increasing the shared header height.",
             "Managed ShellApp keeps the selected desktop section-navigation presentation and ShellPage present and owns page header stickiness and the content scroller.",
             "Route-owned pageChrome independently selects ShellPage contentInset, page-header seams, scroll compaction, expanded and compact header-divider visibility, and contentSurface. ShellApp forwards them while resolving whether desktop title geometry is page-local or shell-bar-owned.",
@@ -8438,8 +8638,8 @@
             "ShellApp owns the fixed system breakpoints and resolves desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
             "On desktop, PanelNav defaults expanded, permits user collapse or expansion, and respects the locally persisted desktop preference.",
             "On tablet, ShellApp keeps PanelNav permanently collapsed and prevents user expansion without overwriting the desktop preference.",
-            "On desktop and tablet, panel section navigation replaces BarNav with compact BarTitle; collapsed PanelNav exposes child sections through its anchored flyout.",
-            "When panel section navigation moves BarTitle into the shell bar, routed content starts at the standard 32px desktop or 16px tablet gutter and ShellPage reports no page-local sticky-header height.",
+            "On desktop and tablet, panel section navigation replaces BarNav with BarPageTitle; collapsed PanelNav exposes child sections through its anchored flyout.",
+            "When panel section navigation moves BarPageTitle into the shell bar, routed content starts at the standard 32px desktop or 16px tablet gutter and ShellPage reports no page-local sticky-header height.",
             "On mobile, ShellApp hides and inerts desktop chrome, uses a solid primary stage, and composes MobileHeader, MobileSheetNav, ShellTools, and the persistent MobileBarNav around the same application-owned content.",
             "The section-navigation preference also selects mobile navigation: bar preserves flat area selection and the header section picker; panel expands child routes inline in MobileSheetNav and combines the page title with any local subsection in one sheet trigger.",
             "Opening MobileSheetNav temporarily overlays the active routed page or global tool; closing it without selecting an area restores that same destination and its nested state. The sheet exposes the router-derived current area only while the routed area owns the mobile stage, so a global tool never leaves an underlying route highlighted.",
@@ -8625,6 +8825,7 @@
       ],
       "registryDependencies": [
         "bar-nav",
+        "bar-page-title",
         "bar-title",
         "button-filled",
         "button-unfilled",
@@ -9850,7 +10051,7 @@
             "Scrollable table regions become keyboard focusable and named only when overflow exists.",
             "Incremental loading, newly appended row counts, failures, and end-of-results transitions are announced through a polite status region without replacing visible state. In grouped tables, announcements name the independently loading group.",
             "Applications may pass their controlled literal search terms through highlightTerms after applying their own filtering. When TableSearch scopes the query, pass the same selected field identities through highlightFieldIds. A compound column maps its ordered headerSegments to primary, secondary-run, and tertiary-run data points; simple columns map their column ID to every owned text track. With no highlightFieldIds every text track remains eligible. Matching text is rendered with semantic mark elements, so the emphasis is identifiable independently of its faint-brand background and bold-brand foreground. Highlight markup preserves source order, the cell's complete accessible text, and does not create extra announcements.",
-            "Static and infinite tables may show an optional result summary footer when displayedCount and totalCount are finite. Virtual mode shows a total-only summary and ignores displayedCount. Pagination mode instead renders a named Pagination control with a compact selected-size total, vertical divider, and page position; range changes are announced independently with complete phrasing. Unmodified Left and Right Arrow request the adjacent page while focus is inside a paginated table or on a containing page scroller that owns it; editable fields, choice controls, sliders, open menus, and modified key combinations retain their own keyboard behavior. A table-owned footer slot can replace summary copy, while footer-leading and footer-trailing remain available in the same compact-bar anatomy. Nested dialog footers are ignored."
+            "Static and infinite tables may show an optional result summary footer when displayedCount and totalCount are finite. Virtual mode shows a total-only summary and ignores displayedCount. Pagination mode instead renders a named Pagination control with a page-size picker, vertical divider, and page position; range changes are announced independently with complete phrasing. Unmodified Left and Right Arrow request the adjacent page while focus is inside a paginated table or on a containing page scroller that owns it; editable fields, choice controls, sliders, open menus, and modified key combinations retain their own keyboard behavior. A table-owned footer slot can replace summary copy, while footer-leading and footer-trailing remain available in the same compact-bar anatomy. Nested dialog footers are ignored."
           ],
           "states": [
             "Columns, rows, groups, grouping, sorting, selected row IDs, collapsed group IDs, highlightTerms, highlightFieldIds, hiddenColumnIds, columnOrder, dataMode, pagination, displayedCount, totalCount, and incremental-loading state are controlled inputs. Events communicate intent and never mutate those inputs. The optional header is one composable table-local surface: the component owns its 48px chrome, 8px inset on every side, and sticky placement while the application owns the leading slot's internal layout, controls, labels, filtering behavior, and action handling. highlightTerms only marks matching table-owned text and never filters rows, changes query semantics, or highlights Tag labels. highlightFieldIds optionally narrows that marking to matching column IDs or compound header-segment sort keys. Opting into dataModeSwitcher and columnCustomizer adds their trailing Menu triggers and requires caption visibility. When both are present, Customize precedes a decorative divider and the data-mode trigger remains the final action. The Customize trigger keeps one stable label and neutral resting foreground whether or not hiddenColumnIds or columnOrder differ from the catalog default; the configured state remains visible inside the Menu. The table closes one trailing Menu before opening the other. The footer retains its compact-bar composition: application-owned leading status sits left while a controlled result summary or Pagination aligns right, before any trailing action. Content-sized tables remain natural for sparse or fixed-count results. height bounds the complete header, frame, and footer composition. fitViewport reserves the compact-state composition height in the nearest vertical scrollport while growing the visible table into that reservation as surrounding page chrome collapses.",

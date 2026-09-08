@@ -1232,6 +1232,7 @@ export const SafetyEvents: Story = {
             label="Coaching status"
             size="md"
             background="bold"
+            rounded
           ></ds-button-unfilled>
         </ds-bar-action>
       </div>
@@ -2263,6 +2264,173 @@ export const GroupParentPagination: Story = {
           });
         }}
       ></ds-table>
+    `;
+  },
+};
+
+export const FooterReview: Story = {
+  name: 'Footer review',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Footer chrome by table variation. Infinite reports the loaded window. Virtual reports a total only. Pagination replaces that summary with the page-size picker and page position, separated by a vertical divider. Grouped pagination uses the Groups noun. Below 900px opted-in first/last controls hide while Previous, page position, and Next remain.',
+      },
+    },
+  },
+  render: () => {
+    const previewRows = ROWS.slice(0, 2);
+    const previewGroups = PAGINATED_GROUP_SOURCE.slice(0, 2).map(group => ({
+      ...group,
+      rows: group.rows.slice(0, 1),
+      hasMore: true,
+    }));
+    const rowsPagination = {
+      pageIndex: 0,
+      pageSize: 25,
+      totalItems: 500,
+      pageSizeOptions: [25, 50, 100, 200],
+      fitToPage: true,
+      itemLabel: 'rows',
+      pageSizeLabel: 'Rows',
+    };
+    const groupsPagination = {
+      ...rowsPagination,
+      totalItems: 30,
+      itemLabel: 'groups',
+      pageSizeLabel: 'Groups',
+    };
+    return html`
+      <div style="display:grid;gap:var(--dimension-space-300);">
+        <div style="display:grid;gap:var(--dimension-space-100);">
+          <ds-text as="span" variant="text-body-medium" emphasis>Infinite scroll</ds-text>
+          <ds-table
+            data-a11y-fixture
+            .columns=${ASYNC_COLUMNS}
+            .rows=${previewRows}
+            data-mode="infinite"
+            .displayedCount=${previewRows.length}
+            .totalCount=${500}
+            caption="Infinite scroll footer"
+            caption-visibility="visible"
+          ></ds-table>
+        </div>
+        <div style="display:grid;gap:var(--dimension-space-100);">
+          <ds-text as="span" variant="text-body-medium" emphasis>Virtual scroll</ds-text>
+          <ds-table
+            data-a11y-fixture
+            .columns=${ASYNC_COLUMNS}
+            .rows=${previewRows}
+            data-mode="virtual"
+            height="var(--dimension-card-height-sm)"
+            .totalCount=${500}
+            caption="Virtual scroll footer"
+            caption-visibility="visible"
+          ></ds-table>
+        </div>
+        <div style="display:grid;gap:var(--dimension-space-100);">
+          <ds-text as="span" variant="text-body-medium" emphasis>Pagination · rows</ds-text>
+          <ds-table
+            data-a11y-fixture
+            .columns=${ASYNC_COLUMNS}
+            .rows=${previewRows}
+            data-mode="pagination"
+            .pagination=${rowsPagination}
+            caption="Pagination rows footer"
+            caption-visibility="visible"
+          >
+            <ds-text
+              slot="footer-leading"
+              as="span"
+              variant="text-body-medium"
+              color="secondary"
+              line-truncation="1"
+            >
+              Last updated: just now
+            </ds-text>
+          </ds-table>
+        </div>
+        <div style="display:grid;gap:var(--dimension-space-100);">
+          <ds-text as="span" variant="text-body-medium" emphasis
+            >Pagination + infinite groups</ds-text
+          >
+          <ds-table
+            data-a11y-fixture
+            .columns=${ASYNC_COLUMNS}
+            .groups=${previewGroups}
+            .grouping=${{ columnId: 'status', direction: 'asc' } satisfies TableGroupingState}
+            data-mode="pagination"
+            load-more-mode="manual"
+            .pagination=${groupsPagination}
+            caption="Pagination groups footer"
+            caption-visibility="visible"
+          ></ds-table>
+        </div>
+        <div style="display:grid;gap:var(--dimension-space-100);">
+          <ds-text as="span" variant="text-body-medium" emphasis>Pagination · compact</ds-text>
+          <div style="max-inline-size:898px;">
+            <ds-table
+              data-a11y-fixture
+              .columns=${ASYNC_COLUMNS}
+              .rows=${previewRows}
+              data-mode="pagination"
+              .pagination=${{
+                ...rowsPagination,
+                showFirstLastButtons: true,
+              }}
+              caption="Pagination compact footer"
+              caption-visibility="visible"
+            ></ds-table>
+          </div>
+        </div>
+        <div style="display:grid;gap:var(--dimension-space-100);">
+          <ds-text as="span" variant="text-body-medium" emphasis
+            >Pagination · first and last</ds-text
+          >
+          <ds-table
+            data-a11y-fixture
+            .columns=${ASYNC_COLUMNS}
+            .rows=${previewRows}
+            data-mode="pagination"
+            .pagination=${{
+              ...rowsPagination,
+              pageIndex: 4,
+              showFirstLastButtons: true,
+            }}
+            caption="Pagination first and last footer"
+            caption-visibility="visible"
+          ></ds-table>
+        </div>
+        <div style="display:grid;gap:var(--dimension-space-100);">
+          <ds-text as="span" variant="text-body-medium" emphasis>Pagination · loading</ds-text>
+          <ds-table
+            data-a11y-fixture
+            .columns=${ASYNC_COLUMNS}
+            .rows=${previewRows}
+            data-mode="pagination"
+            .pagination=${rowsPagination}
+            loading
+            caption="Pagination loading footer"
+            caption-visibility="visible"
+          ></ds-table>
+        </div>
+        <div style="display:grid;gap:var(--dimension-space-100);">
+          <ds-text as="span" variant="text-body-medium" emphasis>Pagination · empty</ds-text>
+          <ds-table
+            data-a11y-fixture
+            .columns=${ASYNC_COLUMNS}
+            data-mode="pagination"
+            .pagination=${{
+              ...rowsPagination,
+              totalItems: 0,
+            }}
+            caption="Pagination empty footer"
+            caption-visibility="visible"
+            empty-heading="No matching drivers"
+            empty-body="Try changing the active filters."
+          ></ds-table>
+        </div>
+      </div>
     `;
   },
 };

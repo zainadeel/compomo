@@ -10,7 +10,7 @@ test('owns chart heading, actions, body, and token-based dimensions', async ({ p
   await expect(shell.locator('.card-chart__actions ds-button-unfilled')).toHaveCount(1);
   await expect(shell.locator('.card-chart__body #viz-content')).toHaveText('Visualization content');
   await expect(shell).toHaveCSS('width', '400px');
-  await expect(shell).toHaveCSS('border-radius', '10px');
+  await expect(shell).toHaveCSS('border-radius', '4px');
   await expect(shell).toHaveCSS('overflow', 'visible');
   await expect(shell).not.toHaveCSS('box-shadow', 'none');
 });
