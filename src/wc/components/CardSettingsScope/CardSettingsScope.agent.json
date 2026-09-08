@@ -23,7 +23,7 @@
     "The shared text-action recipe supplies brand foreground, hover underline, and keyboard focus indication."
   ],
   "states": [
-    "The application owns the selected area, profile, available choices, permissions, and empty-state copy.",
+    "The application owns the selected area, profile, available choices, permissions, and empty-state copy. The area trigger is only the selected area token; a localizable settings noun follows it in the sentence and is not part of the control.",
     "The card reports popup requests without changing selection or expanded state.",
     "The surface follows the active theme rather than imposing always-dark colors."
   ],

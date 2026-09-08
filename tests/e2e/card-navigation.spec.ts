@@ -9,6 +9,9 @@ test('opens an accessible empty profiles popup and restores keyboard focus @cros
   page,
 }) => {
   const scope = page.getByRole('region', { name: 'Settings scope' });
+  await expect(scope.getByRole('button', { name: 'All', exact: true })).toBeVisible();
+  await expect(scope.getByRole('button', { name: 'All settings' })).toHaveCount(0);
+  await expect(scope.getByText('settings', { exact: true })).toBeVisible();
   const trigger = scope.getByRole('button', { name: 'Organization' });
   await expect(trigger).toHaveAttribute('aria-haspopup', 'dialog');
   await trigger.focus();

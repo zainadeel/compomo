@@ -1043,8 +1043,8 @@ export namespace Components {
          */
         "areaExpanded": boolean;
         /**
-          * Current product area or the label for the combined settings view.
-          * @default 'All settings'
+          * Current product area or the combined-view token in the sentence trigger.
+          * @default 'All'
          */
         "areaLabel": string;
         /**
@@ -1081,6 +1081,11 @@ export namespace Components {
           * @default 'Settings scope'
          */
         "scopeLabel": string;
+        /**
+          * Sentence noun after the area trigger, supplied separately for localization.
+          * @default 'settings'
+         */
+        "settingsLabel": string;
     }
     interface DsChart {
         /**
@@ -6678,8 +6683,8 @@ declare namespace LocalJSX {
          */
         "areaExpanded"?: boolean;
         /**
-          * Current product area or the label for the combined settings view.
-          * @default 'All settings'
+          * Current product area or the combined-view token in the sentence trigger.
+          * @default 'All'
          */
         "areaLabel"?: string;
         /**
@@ -6720,6 +6725,11 @@ declare namespace LocalJSX {
           * @default 'Settings scope'
          */
         "scopeLabel"?: string;
+        /**
+          * Sentence noun after the area trigger, supplied separately for localization.
+          * @default 'settings'
+         */
+        "settingsLabel"?: string;
     }
     interface DsChart {
         /**
@@ -10266,6 +10276,7 @@ declare namespace LocalJSX {
         "areaLabel": string;
         "profileLabel": string;
         "managingLabel": string;
+        "settingsLabel": string;
         "forLabel": string;
         "scopeLabel": string;
         "areaControls": string | undefined;
