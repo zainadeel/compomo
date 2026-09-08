@@ -14,12 +14,13 @@ export type FocusableBarTitleButton = HTMLElement & {
 };
 
 export function barTitleActionMenuDomId(
+  classPrefix: string,
   instanceId: number,
   resolvedActionItems: BarTitleActionConfigItem[],
   id: string
 ): string {
   const index = resolvedActionItems.findIndex(item => !isBarTitleDivider(item) && item.id === id);
-  return `bar-title-action-menu-${instanceId}-${index}`;
+  return `${classPrefix}-action-menu-${instanceId}-${index}`;
 }
 
 export function barTitleActionMenuAnchor(
@@ -157,12 +158,18 @@ function renderVisibleAction(
     action.type === 'icon' ? 'icon' : action.icon ? 'icon-label' : 'label';
   const menu = action.type === 'menu';
   const menuId = menu
-    ? barTitleActionMenuDomId(options.instanceId, options.resolvedActionItems, action.id)
+    ? barTitleActionMenuDomId(
+        options.classPrefix,
+        options.instanceId,
+        options.resolvedActionItems,
+        action.id
+      )
     : undefined;
   const prefix = options.classPrefix;
 
   if (action.type === 'split') {
     const splitMenuId = barTitleActionMenuDomId(
+      options.classPrefix,
       options.instanceId,
       options.resolvedActionItems,
       action.id
@@ -326,7 +333,12 @@ export function renderBarTitleActionMenus(options: {
     return [
       <ds-menu
         key={action.id}
-        id={barTitleActionMenuDomId(options.instanceId, options.resolvedActionItems, action.id)}
+        id={barTitleActionMenuDomId(
+          options.classPrefix,
+          options.instanceId,
+          options.resolvedActionItems,
+          action.id
+        )}
         class={className(prefix, 'action-menu')}
         anchor={barTitleActionMenuAnchor(
           action.id,

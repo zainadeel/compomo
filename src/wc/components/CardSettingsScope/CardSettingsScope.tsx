@@ -12,14 +12,14 @@ export interface SettingsScopeRequest {
   scoped: true,
 })
 export class CardSettingsScope {
-  /** Current product area or the combined-view token in the sentence trigger. */
-  @Prop() areaLabel: string = 'All';
+  /** Current product area or complete combined-view label in the sentence trigger. */
+  @Prop() areaLabel: string = 'All settings';
   /** Current organization or settings profile. */
   @Prop() profileLabel: string = 'Organization';
   /** Sentence prefix, supplied separately for localization. */
   @Prop() managingLabel: string = 'Managing';
-  /** Sentence noun after the area trigger, supplied separately for localization. */
-  @Prop() settingsLabel: string = 'settings';
+  /** Optional sentence noun after an area-only trigger label, supplied separately for localization. */
+  @Prop() settingsLabel: string = '';
   /** Sentence connector, supplied separately for localization. */
   @Prop() forLabel: string = 'for';
   /** Accessible name for this context region. */

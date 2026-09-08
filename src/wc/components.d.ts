@@ -1043,8 +1043,8 @@ export namespace Components {
          */
         "areaExpanded": boolean;
         /**
-          * Current product area or the combined-view token in the sentence trigger.
-          * @default 'All'
+          * Current product area or complete combined-view label in the sentence trigger.
+          * @default 'All settings'
          */
         "areaLabel": string;
         /**
@@ -1082,8 +1082,8 @@ export namespace Components {
          */
         "scopeLabel": string;
         /**
-          * Sentence noun after the area trigger, supplied separately for localization.
-          * @default 'settings'
+          * Optional sentence noun after an area-only trigger label, supplied separately for localization.
+          * @default ''
          */
         "settingsLabel": string;
     }
@@ -6683,8 +6683,8 @@ declare namespace LocalJSX {
          */
         "areaExpanded"?: boolean;
         /**
-          * Current product area or the combined-view token in the sentence trigger.
-          * @default 'All'
+          * Current product area or complete combined-view label in the sentence trigger.
+          * @default 'All settings'
          */
         "areaLabel"?: string;
         /**
@@ -6726,8 +6726,8 @@ declare namespace LocalJSX {
          */
         "scopeLabel"?: string;
         /**
-          * Sentence noun after the area trigger, supplied separately for localization.
-          * @default 'settings'
+          * Optional sentence noun after an area-only trigger label, supplied separately for localization.
+          * @default ''
          */
         "settingsLabel"?: string;
     }

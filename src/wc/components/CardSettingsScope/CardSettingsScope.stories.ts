@@ -76,6 +76,7 @@ export const Narrow: Story = {
     html`<div style="max-width:var(--dimension-card-width-sm)">
       <ds-card-settings-scope
         area-label="Unsafe behavior detection"
+        settings-label="settings"
         profile-label="Western regional drivers"
       ></ds-card-settings-scope>
     </div>`,

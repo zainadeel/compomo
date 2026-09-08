@@ -469,7 +469,7 @@ export class BarPageTitle {
     const domId =
       id === '__overflow'
         ? this.actionMenuId
-        : barTitleActionMenuDomId(this.instanceId, this.resolvedActionItems, id);
+        : barTitleActionMenuDomId('bar-page-title', this.instanceId, this.resolvedActionItems, id);
     if (this.openActionMenuId !== id && (event.target as HTMLElement).id === domId) {
       this.surfaceActionMenuId = '';
     }

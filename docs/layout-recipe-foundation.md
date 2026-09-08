@@ -35,20 +35,21 @@ Import `radius.css` from the component stylesheet before `control-density.css`.
 Control density aliases `--ds-control-radius` from `--ds-radius-control`;
 pill controls still override to `--dimension-radius-half`.
 
-| Role                          | Default |
-| ----------------------------- | ------- |
-| `--ds-radius-control`         | 2px     |
-| `--ds-radius-card`            | 4px     |
-| `--ds-radius-modal`           | 4px     |
-| `--ds-radius-menu`            | 6px     |
-| `--ds-radius-tooltip-control` | 2px     |
-| `--ds-radius-tooltip-menu`    | 6px     |
-| `--ds-radius-table`           | 4px     |
+| Role                          | Ownership                     |
+| ----------------------------- | ----------------------------- |
+| `--ds-radius-control`         | Standard control corners      |
+| `--ds-radius-card`            | Card surfaces                 |
+| `--ds-radius-modal`           | Modal and toast surfaces      |
+| `--ds-radius-menu`            | Choice and action menus       |
+| `--ds-radius-tooltip-control` | Control-scale tooltips        |
+| `--ds-radius-tooltip-menu`    | Menu-scale and chart tooltips |
+| `--ds-radius-table`           | Table outer surfaces          |
 
 Modal and Toast share `--ds-radius-modal`. `ds-tooltip` uses
 `--ds-radius-tooltip-control`; `ds-tooltip-chart` uses
 `--ds-radius-tooltip-menu`. Table defaults to `--ds-radius-table` and still
 accepts `--ds-table-radius` as a product override.
+The authoritative role-to-token mapping remains in `src/wc/utils/radius.css`.
 
 ## Field flow
 

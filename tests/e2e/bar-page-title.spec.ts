@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import type { BarTitleActionConfigItem } from '../../src/wc/components/BarTitle/bar-title-types';
 import { chromiumOnly } from './browser-tier';
 
 type BarPageTitleEventRecord = { type: string; id?: string; host?: string };
@@ -79,5 +80,59 @@ test(
       timeout: 5000,
     });
     await expect(header.locator('.bar-page-title__section-trigger')).toHaveCount(0);
+  }
+);
+
+test(
+  'namespaces action-menu ids across BarTitle and BarPageTitle',
+  chromiumOnly(
+    'controlled-behavior',
+    'Document-wide menu relationships are engine-neutral component composition.'
+  ),
+  async ({ page }) => {
+    await page.goto('/bar-action.html');
+    const actionItems: BarTitleActionConfigItem[] = [
+      {
+        type: 'menu',
+        id: 'export',
+        label: 'Export',
+        choices: [{ id: 'csv', label: 'CSV' }],
+      },
+    ];
+
+    const relationships = await page.evaluate(async items => {
+      await Promise.all([
+        import('/dist/components/ds-bar-title.js'),
+        import('/dist/components/ds-bar-page-title.js'),
+      ]);
+      await Promise.all([
+        customElements.whenDefined('ds-bar-title'),
+        customElements.whenDefined('ds-bar-page-title'),
+      ]);
+
+      const pageTitle = document.createElement('ds-bar-page-title');
+      const title = document.createElement('ds-bar-title');
+      pageTitle.heading = 'Page title';
+      pageTitle.actionItems = items;
+      title.heading = 'Title';
+      title.actionItems = items;
+      document.body.append(pageTitle, title);
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+      return [pageTitle, title].map(host => {
+        const trigger = host.querySelector('ds-button-unfilled');
+        const menu = host.querySelector('ds-menu');
+        return { controls: trigger?.controls, menuId: menu?.id };
+      });
+    }, actionItems);
+
+    expect(relationships).toEqual([
+      {
+        controls: 'bar-page-title-action-menu-0-0',
+        menuId: 'bar-page-title-action-menu-0-0',
+      },
+      { controls: 'bar-title-action-menu-0-0', menuId: 'bar-title-action-menu-0-0' },
+    ]);
+    expect(new Set(relationships.map(({ menuId }) => menuId)).size).toBe(2);
   }
 );
