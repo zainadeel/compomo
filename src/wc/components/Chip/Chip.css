@@ -28,12 +28,18 @@
 /*
  * Label↔dismiss uses host gap, mirroring Tag icon↔label spacing:
  * [inset][text][inset][gap][icon].
+ *
+ * The dismiss orb is 4px smaller than the chip on every recipe, including
+ * single and double inset, with 2px on top, bottom, and the trailing edge.
+ * Extra inline space keeps the label at the start and the orb at the end.
  */
 .tag__remove {
-  --ds-chip-remove-size: var(--ds-control-height);
+  --ds-chip-remove-size: calc(var(--ds-control-height) - var(--dimension-space-050));
 
   padding: 0;
-  margin: 0;
+  margin-block: 0;
+  margin-inline-end: 0;
+  margin-inline-start: auto;
   border: none;
   box-sizing: border-box;
   background: none;
@@ -50,21 +56,13 @@
   border-radius: var(--dimension-radius-half);
 }
 
-/* The dismiss action nests inside the already-inset chip, so its reduction is additive. */
-:host(.ds-control--inset) .tag__remove {
-  --ds-chip-remove-size: calc(var(--ds-control-height) - var(--dimension-space-050));
-}
-
-:host(.ds-control--inset) {
+:host {
+  justify-content: flex-start;
   padding-inline-end: var(--dimension-space-025);
 }
 
-:host(.ds-control--inset-double) .tag__remove {
-  --ds-chip-remove-size: calc(var(--ds-control-height) - var(--dimension-space-100));
-}
-
-:host(.ds-control--inset-double) {
-  padding-inline-end: var(--dimension-space-050);
+.tag__label {
+  flex: 1 1 auto;
 }
 
 .tag__remove::before {

@@ -78,18 +78,50 @@ export const Sizes: Story = {
   `,
 };
 
+const SIZE_HEIGHT = {
+  md: 'var(--dimension-size-400)',
+  sm: 'var(--dimension-size-300)',
+  xs: 'var(--dimension-size-200)',
+} as const;
+
 export const Inset: Story = {
+  name: 'Inset density',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Chip always includes the dismiss control. Single and double inset nest inside a same-density parent so the X can be reviewed at the reduced height.',
+      },
+    },
+  },
   render: () => html`
-    <div style="display:flex;gap:var(--dimension-space-100);align-items:center;">
-      <ds-chip label="Default" state="default" size="md"></ds-chip>
-      <ds-chip label="Single inset" state="default" size="md" is-inset></ds-chip>
-      <ds-chip
-        label="Double inset"
-        state="default"
-        size="md"
-        is-inset
-        inset-depth="double"
-      ></ds-chip>
+    <div style="display: flex; flex-direction: column; gap: var(--dimension-space-150)">
+      ${SIZES.map(size => {
+        const parentHeight = SIZE_HEIGHT[size];
+        return html`
+          <div
+            style="display: grid; grid-template-columns: minmax(var(--dimension-size-600), auto) auto auto; gap: var(--dimension-space-100); align-items: center"
+          >
+            <span
+              style="font-size: var(--typography-fontsize-xs); color: var(--color-foreground-tertiary)"
+              >${size}</span
+            >
+            <ds-chip label="Default" state="active" size=${size}></ds-chip>
+            <div
+              style="display: inline-flex; align-items: center; box-sizing: border-box; width: fit-content; height: ${parentHeight}; padding: var(--dimension-space-025); border-radius: var(--dimension-radius-050); background: var(--color-background-secondary)"
+            >
+              <ds-chip label="Inset" state="active" size=${size} is-inset></ds-chip>
+              <ds-chip
+                label="Double"
+                state="active"
+                size=${size}
+                is-inset
+                inset-depth="double"
+              ></ds-chip>
+            </div>
+          </div>
+        `;
+      })}
     </div>
   `,
 };
@@ -112,6 +144,22 @@ export const Inactive: Story = {
     >
       <ds-chip label="Default" state="default"></ds-chip>
       <ds-chip label="Inactive" state="default" is-inactive></ds-chip>
+    </div>
+  `,
+};
+
+export const FullWidth: Story = {
+  name: 'Full width',
+  render: () => html`
+    <div
+      style="display: flex; flex-direction: column; gap: var(--dimension-space-100); width: var(--dimension-form-width-sm)"
+    >
+      <ds-chip label="Short" state="active" style="width: 100%"></ds-chip>
+      <ds-chip
+        label="A long assigned value that must truncate"
+        state="default"
+        style="width: 100%"
+      ></ds-chip>
     </div>
   `,
 };

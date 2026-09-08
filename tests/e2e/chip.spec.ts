@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { chromiumOnly } from './browser-tier';
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/chip.html');
@@ -51,6 +52,8 @@ test('keeps inactive metadata visible without an interactive dismiss action', as
 
 test('supports compact inset geometry inside a control of the same density', async ({ page }) => {
   const defaultChip = page.locator('#chip');
+  const smChip = page.locator('#sm-chip');
+  const xsChip = page.locator('#xs-chip');
   const singleInsetChip = page.locator('#single-inset-chip');
   const doubleInsetChip = page.locator('#inset-chip');
 
@@ -59,9 +62,11 @@ test('supports compact inset geometry inside a control of the same density', asy
   await expect(doubleInsetChip).toHaveJSProperty('insetDepth', 'double');
 
   for (const [chip, expectedChipSize, expectedRemoveSize, expectedTrailingPadding] of [
-    [defaultChip, '32px', '32px', '6px'],
+    [defaultChip, '32px', '28px', '2px'],
+    [smChip, '24px', '20px', '2px'],
+    [xsChip, '16px', '12px', '2px'],
     [singleInsetChip, '28px', '24px', '2px'],
-    [doubleInsetChip, '24px', '16px', '4px'],
+    [doubleInsetChip, '24px', '20px', '2px'],
   ] as const) {
     await expect(chip).toHaveCSS('height', expectedChipSize);
     await expect(chip).toHaveCSS('padding-right', expectedTrailingPadding);
@@ -84,6 +89,37 @@ test('truncates one line only when constrained by maxWidth', async ({ page }) =>
     await label.locator('span').evaluate(element => element.scrollWidth > element.clientWidth)
   ).toBe(true);
 });
+
+test(
+  'pins the dismiss control to the trailing edge when the chip is wider than its label',
+  chromiumOnly(
+    'layout-geometry',
+    'Token-backed flex alignment of the Chip dismiss control in a stretched host.'
+  ),
+  async ({ page }) => {
+    const chip = page.locator('#wide-chip');
+    const remove = chip.getByRole('button');
+
+    const metrics = await chip.evaluate(element => {
+      const host = element.getBoundingClientRect();
+      const action = element.querySelector('.tag__remove')!.getBoundingClientRect();
+      const paddingEnd = parseFloat(getComputedStyle(element).paddingRight);
+      return {
+        hostWidth: host.width,
+        trailingGap: host.right - action.right,
+        paddingEnd,
+        actionAfterLabel:
+          action.left >
+          element.querySelector('.tag__label')!.getBoundingClientRect().right,
+      };
+    });
+
+    expect(metrics.hostWidth).toBeGreaterThan(180);
+    expect(metrics.trailingGap).toBeCloseTo(metrics.paddingEnd, 0);
+    expect(metrics.actionAfterLabel).toBe(true);
+    await expect(remove).toBeVisible();
+  }
+);
 
 test('shows hover and active feedback for a fine pointer', async ({ page }) => {
   const remove = page.locator('#chip .tag__remove');
