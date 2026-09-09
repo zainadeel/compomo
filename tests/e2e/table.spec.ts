@@ -2423,6 +2423,52 @@ test('activates interactive rows without stealing nested control intent', async 
     .toEqual(['avery']);
 });
 
+test('toggles rows during selection and restores activation when empty @pr-critical', async ({
+  page,
+}) => {
+  const table = page.locator('#interactive');
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.selectionMode = 'multiple';
+    element.selectedRowIds = [];
+    element.addEventListener('dsSelectionChange', event => {
+      element.selectedRowIds = (
+        event as CustomEvent<{ selectedRowIds: string[] }>
+      ).detail.selectedRowIds;
+    });
+  });
+  const first = table.locator('[data-row-id="avery"]');
+  const second = table.locator('[data-row-id="jordan"]');
+  await first.getByRole('checkbox').click();
+  await second.locator('[data-column-id="name"]').click();
+  await expect(table).toHaveJSProperty('selectedRowIds', ['avery', 'jordan']);
+  await second.getByRole('button', { name: 'More actions for Jordan Patel' }).click();
+  await expect(table).toHaveJSProperty('selectedRowIds', ['avery', 'jordan']);
+  await second.focus();
+  await second.press('Enter');
+  await expect(table).toHaveJSProperty('selectedRowIds', ['avery']);
+  await first.focus();
+  await first.press('Space');
+  await expect(table).toHaveJSProperty('selectedRowIds', []);
+  expect(await page.evaluate(() => window.__tableRowActivationEvents)).toEqual([]);
+  await first.locator('[data-column-id="name"]').click();
+  await expect
+    .poll(() => page.evaluate(() => window.__tableRowActivationEvents))
+    .toEqual(['avery']);
+
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.selectedRowIds = ['off-page'];
+    element.rows = element.rows.map((row, index) => ({
+      ...row,
+      selectable: index !== 0,
+      disabled: index === 1,
+    }));
+  });
+  await first.locator('[data-column-id="name"]').click();
+  await second.locator('[data-column-id="name"]').click();
+  await expect(table).toHaveJSProperty('selectedRowIds', ['off-page']);
+  expect(await page.evaluate(() => window.__tableRowActivationEvents)).toEqual(['avery']);
+});
+
 test('links primary text without stealing interactive row activation', async ({ page }) => {
   const table = page.locator('#linked-text');
   const relative = table.locator('[data-row-id="veh-1042"] [data-column-id="vehicle"] a');

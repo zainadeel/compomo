@@ -73,6 +73,9 @@ export function renderTableRow({
   const selected = model.selectedRowIds.has(row.id);
   const surfaceOpen = row.id === surfaceOpenRowId && !!row.interactive && !row.disabled;
   const rowSelectable = row.selectable !== false && !row.disabled;
+  const rowInteractive =
+    !row.disabled &&
+    (model.selectable && model.selectedRowIds.size > 0 ? rowSelectable : !!row.interactive);
   const beforeSpacer =
     model.elasticSpacerIndex == null
       ? visibleColumns
@@ -103,8 +106,8 @@ export function renderTableRow({
         'ds-table__row': true,
         'ds-table__row--selected': selected,
         'ds-table__row--disabled': !!row.disabled,
-        'ds-table__row--interactive': !!row.interactive && !row.disabled,
-        'ds-focus-ring': !!row.interactive && !row.disabled,
+        'ds-table__row--interactive': rowInteractive,
+        'ds-focus-ring': rowInteractive,
       }}
       data-row-id={row.id}
       data-virtual-id={ariaRowIndex != null ? `row:${row.id}` : undefined}
@@ -119,7 +122,7 @@ export function renderTableRow({
       }
       aria-rowindex={ariaRowIndex}
       aria-disabled={row.disabled ? 'true' : undefined}
-      tabIndex={row.interactive && !row.disabled ? 0 : undefined}
+      tabIndex={rowInteractive ? 0 : undefined}
       onClick={event => onRowActivate(row, event)}
       onKeyDown={event => onRowKeyDown(row, event)}
     >

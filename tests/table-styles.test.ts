@@ -59,7 +59,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   assert.doesNotMatch(componentTsx, /scroll-edge-fade\.css|ds-table__overflow-shadow/);
   assert.match(componentTsx, /ds-table__selection-control ds-focus-ring/);
   assert.match(componentTsx, /ds-table__header-label--interactive ds-focus-ring/);
-  assert.match(rowViewTsx, /'ds-focus-ring': !!row\.interactive && !row\.disabled/);
+  assert.match(rowViewTsx, /'ds-focus-ring': rowInteractive/);
   assert.match(componentTsx, /'ds-focus-ring': this\.scrollable/);
   assert.match(componentTsx, /<slot\s+name="header"/);
   assert.match(componentTsx, /ds-table__caption-leading/);
