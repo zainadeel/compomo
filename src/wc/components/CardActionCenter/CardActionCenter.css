@@ -1,0 +1,114 @@
+@import '../../utils/radius.css';
+@import '../../utils/interaction-fill.css';
+@import '../../utils/focus-ring.css';
+@import '../../utils/control-inactive.css';
+@import '../../utils/forced-colors.css';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+  padding: calc(var(--dimension-space-100) - var(--dimension-stroke-width-012));
+  box-sizing: border-box;
+  border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+  border-radius: var(--ds-radius-card);
+  background: var(--color-background-primary);
+}
+
+.card-action-center__group,
+.card-action-center__section {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.card-action-center__section {
+  gap: var(--dimension-space-050);
+}
+
+.card-action-center__divider {
+  display: flex;
+  flex: 0 0 var(--dimension-space-400);
+  align-items: center;
+  min-width: 0;
+}
+
+.card-action-center__section-heading {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  min-width: 0;
+  min-height: var(--dimension-size-400);
+  padding-inline: var(--dimension-space-100);
+  box-sizing: border-box;
+  user-select: none;
+}
+
+.card-action-center__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dimension-space-050);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card-action-center__item {
+  display: flex;
+  align-items: center;
+  gap: var(--dimension-space-050);
+  width: 100%;
+  height: var(--dimension-size-400);
+  padding: 0 var(--dimension-space-075);
+  overflow: hidden;
+  box-sizing: border-box;
+  appearance: none;
+  border: none;
+  border-radius: var(--dimension-radius-025);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  text-decoration: none;
+}
+
+.card-action-center__item--tagged {
+  padding-inline-end: var(--dimension-space-075);
+}
+
+.card-action-center__item-content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--dimension-space-025);
+  min-width: 0;
+  padding-inline: var(--dimension-space-025);
+}
+
+.card-action-center__item-label {
+  display: block;
+  min-width: 0;
+}
+
+.card-action-center__item-value {
+  flex: 0 0 auto;
+}
+
+ds-tag.card-action-center__item-value {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+.card-action-center__empty {
+  margin: 0;
+  padding: var(--dimension-space-100);
+  text-align: center;
+}
+
+@media (forced-colors: active) {
+  :host {
+    border-color: var(--ds-forced-color-content);
+    background: var(--ds-forced-color-surface);
+  }
+}

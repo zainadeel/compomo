@@ -1,0 +1,206 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "card-action-center",
+  "title": "CardActionCenter",
+  "description": "Compact bordered card that groups overview-page actions, optional values or status tags, and native destinations into named sections.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/card-action-center",
+    "source": "src/wc/components/CardActionCenter/CardActionCenter.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Compact bordered card that groups overview-page actions, optional values or status tags, and native destinations into named sections.",
+      "useWhen": [
+        "An overview rail needs a compact action center with multiple named groups.",
+        "Action rows need optional counts or short values aligned at the trailing edge.",
+        "Related reports or resource destinations belong beside attention items in one bounded surface."
+      ],
+      "avoidWhen": [
+        "The complete card leads to one destination; use CardNavigation.",
+        "The surface edits settings in place; use CardSetting.",
+        "The content is a chart, legend, metric visualization, or other data-visualization composition; use CardChart or CardOverview.",
+        "Rows require descriptions, nested controls, menus, or selection state instead of one direct action."
+      ],
+      "alternatives": [
+        {
+          "when": "The entire surface represents one destination.",
+          "component": "component:ds-card-navigation",
+          "reason": "CardNavigation provides the single native-link card contract."
+        },
+        {
+          "when": "The card presents page-level score and metric summaries.",
+          "component": "component:ds-card-overview",
+          "reason": "CardOverview owns summary metrics, comparison periods, and selectable metric cells."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-tag",
+        "component:ds-text"
+      ],
+      "accessibility": [
+        "Each non-empty group is a section labelled by an h2 heading, and each row is a native button or link.",
+        "Use href for real destinations so link context menus, modified clicks, and native browser semantics remain available.",
+        "Prevent the cancelable dsAction event only when an application router takes ownership of the same link activation.",
+        "Inactive items become disabled buttons and are removed from keyboard navigation rather than exposing a false destination.",
+        "Keep item labels concise; a visible trailing value participates in the action's accessible name."
+      ],
+      "states": [
+        "Rows expose distinct rest, hover, pressed, keyboard-focus, and inactive states.",
+        "An empty sections array or groups with no items render the configured empty message.",
+        "The application owns loading, error, permission, routing, and post-activation consequences and reflects availability through the supplied item data."
+      ],
+      "responsiveBehavior": [
+        "The card fills its parent width and never establishes a product breakpoint.",
+        "Long labels wrap while trailing values remain visible; the page owns rail width and movement below primary content.",
+        "Groups retain their order when the parent layout moves the complete card between desktop and mobile regions."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign sections as a JavaScript property; complex arrays are not supported as string attributes.",
+          "Listen for dsAction and inspect sectionId, itemId, item, and the original pointer event."
+        ],
+        "react": [
+          "Pass sections as an array and handle onDsAction for product actions or client-side routing.",
+          "Prevent the event only when replacing native navigation for an item with href."
+        ],
+        "angular": [
+          "Bind [sections] through the generated standalone adapter and inspect $event.detail from (dsAction).",
+          "Keep product data and activation consequences in the Angular owner rather than embedding them in the component contract."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook grouped, value, and empty examples",
+          "path": "src/wc/components/CardActionCenter/CardActionCenter.stories.ts"
+        },
+        {
+          "label": "Rendered semantics, interaction, and geometry coverage",
+          "path": "tests/e2e/card-action-center.spec.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "emptyMessage": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "empty-message",
+          "default": "'No actions available'",
+          "required": false,
+          "mutable": false,
+          "description": "Copy shown when no section contains an action."
+        },
+        "sections": {
+          "type": "ReadonlyArray<CardActionCenterSection>",
+          "resolvedType": "readonly CardActionCenterSection[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Ordered groups of actions rendered in the card. Empty groups are omitted."
+        }
+      },
+      "events": [
+        {
+          "name": "dsAction",
+          "detail": "CardActionCenterActionDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emitted when an available row is activated. When a row has an `href`,\nprevent this event to take over navigation with an application router."
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "emptyMessage": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "empty-message",
+        "default": "'No actions available'",
+        "required": false,
+        "mutable": false,
+        "description": "Copy shown when no section contains an action."
+      },
+      "sections": {
+        "type": "ReadonlyArray<CardActionCenterSection>",
+        "resolvedType": "readonly CardActionCenterSection[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Ordered groups of actions rendered in the card. Empty groups are omitted."
+      }
+    },
+    "events": [
+      {
+        "name": "dsAction",
+        "detail": "CardActionCenterActionDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emitted when an available row is activated. When a row has an `href`,\nprevent this event to take over navigation with an application router."
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-card-action-center",
+      "react": "DsCardActionCenter",
+      "vue": "DsCardActionCenter",
+      "angular": "DsCardActionCenter"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-card-action-center.js';",
+        "example": "<ds-card-action-center></ds-card-action-center>"
+      },
+      "react": {
+        "import": "import { DsCardActionCenter } from '@ds-mo/ui/react';",
+        "example": "<DsCardActionCenter />"
+      },
+      "vue": {
+        "import": "import { DsCardActionCenter } from '@ds-mo/ui/vue';",
+        "example": "<DsCardActionCenter />"
+      },
+      "angular": {
+        "import": "import { DsCardActionCenter } from '@ds-mo/ui/angular/ds-card-action-center';",
+        "example": "<ds-card-action-center></ds-card-action-center>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: sections.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.5.1",
+          "@ds-mo/icons ^7.0.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "divider",
+    "tag",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/CardActionCenter/CardActionCenter.css",
+      "content": "@import '../../utils/radius.css';\n@import '../../utils/interaction-fill.css';\n@import '../../utils/focus-ring.css';\n@import '../../utils/control-inactive.css';\n@import '../../utils/forced-colors.css';\n\n:host {\n  display: flex;\n  flex-direction: column;\n  gap: 0;\n  min-width: 0;\n  padding: calc(var(--dimension-space-100) - var(--dimension-stroke-width-012));\n  box-sizing: border-box;\n  border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);\n  border-radius: var(--ds-radius-card);\n  background: var(--color-background-primary);\n}\n\n.card-action-center__group,\n.card-action-center__section {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n}\n\n.card-action-center__section {\n  gap: var(--dimension-space-050);\n}\n\n.card-action-center__divider {\n  display: flex;\n  flex: 0 0 var(--dimension-space-400);\n  align-items: center;\n  min-width: 0;\n}\n\n.card-action-center__section-heading {\n  display: flex;\n  flex: 1 1 auto;\n  align-items: center;\n  min-width: 0;\n  min-height: var(--dimension-size-400);\n  padding-inline: var(--dimension-space-100);\n  box-sizing: border-box;\n  user-select: none;\n}\n\n.card-action-center__list {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-050);\n  margin: 0;\n  padding: 0;\n  list-style: none;\n}\n\n.card-action-center__item {\n  display: flex;\n  align-items: center;\n  gap: var(--dimension-space-050);\n  width: 100%;\n  height: var(--dimension-size-400);\n  padding: 0 var(--dimension-space-075);\n  overflow: hidden;\n  box-sizing: border-box;\n  appearance: none;\n  border: none;\n  border-radius: var(--dimension-radius-025);\n  background: transparent;\n  color: inherit;\n  font: inherit;\n  text-align: start;\n  text-decoration: none;\n}\n\n.card-action-center__item--tagged {\n  padding-inline-end: var(--dimension-space-075);\n}\n\n.card-action-center__item-content {\n  display: flex;\n  flex: 1 1 auto;\n  flex-direction: column;\n  gap: var(--dimension-space-025);\n  min-width: 0;\n  padding-inline: var(--dimension-space-025);\n}\n\n.card-action-center__item-label {\n  display: block;\n  min-width: 0;\n}\n\n.card-action-center__item-value {\n  flex: 0 0 auto;\n}\n\nds-tag.card-action-center__item-value {\n  font-variant-numeric: tabular-nums;\n  font-feature-settings: 'tnum';\n}\n\n.card-action-center__empty {\n  margin: 0;\n  padding: var(--dimension-space-100);\n  text-align: center;\n}\n\n@media (forced-colors: active) {\n  :host {\n    border-color: var(--ds-forced-color-content);\n    background: var(--ds-forced-color-surface);\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/CardActionCenter/CardActionCenter.tsx",
+      "content": "import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\nimport { resolveSafeUrl } from '../../utils';\nimport type { TagContrast, TagIntent } from '../Tag/Tag';\n\nexport interface CardActionCenterTag {\n  intent?: TagIntent;\n  contrast?: TagContrast;\n}\n\nexport interface CardActionCenterItem {\n  id: string;\n  label: string;\n  value?: string | number;\n  tag?: CardActionCenterTag;\n  href?: string;\n  isInactive?: boolean;\n}\n\nexport interface CardActionCenterSection {\n  id: string;\n  heading: string;\n  items: ReadonlyArray<CardActionCenterItem>;\n}\n\nexport interface CardActionCenterActionDetail {\n  sectionId: string;\n  itemId: string;\n  item: CardActionCenterItem;\n  href?: string;\n  originalEvent: MouseEvent;\n}\n\nlet nextCardActionCenterId = 0;\n\n@Component({\n  tag: 'ds-card-action-center',\n  styleUrl: 'CardActionCenter.css',\n  scoped: true,\n})\nexport class CardActionCenter {\n  /** Ordered groups of actions rendered in the card. Empty groups are omitted. */\n  @Prop() sections: ReadonlyArray<CardActionCenterSection> = [];\n\n  /** Copy shown when no section contains an action. */\n  @Prop() emptyMessage: string = 'No actions available';\n\n  /**\n   * Emitted when an available row is activated. When a row has an `href`,\n   * prevent this event to take over navigation with an application router.\n   */\n  @Event({ cancelable: true }) dsAction!: EventEmitter<CardActionCenterActionDetail>;\n\n  private readonly instanceId = ++nextCardActionCenterId;\n\n  private get visibleSections(): ReadonlyArray<CardActionCenterSection> {\n    return this.sections.filter(section => section.items.length > 0);\n  }\n\n  private headingId(section: CardActionCenterSection, index: number): string {\n    const sectionId = section.id.replace(/[^a-zA-Z0-9_-]/g, '-');\n    return `ds-card-action-center-${this.instanceId}-${index}-${sectionId}`;\n  }\n\n  private handleAction(\n    section: CardActionCenterSection,\n    item: CardActionCenterItem,\n    href: string | undefined,\n    originalEvent: MouseEvent\n  ) {\n    if (item.isInactive) return;\n\n    const actionEvent = this.dsAction.emit({\n      sectionId: section.id,\n      itemId: item.id,\n      item,\n      href,\n      originalEvent,\n    });\n    if (href && actionEvent.defaultPrevented) originalEvent.preventDefault();\n  }\n\n  private renderValue(item: CardActionCenterItem) {\n    if (item.value === undefined || item.value === null) return null;\n    const value = String(item.value);\n\n    if (item.tag) {\n      return (\n        <ds-tag\n          class=\"card-action-center__item-value ds-interaction-fill__content\"\n          label={value}\n          intent={item.tag.intent ?? 'neutral'}\n          contrast={item.tag.contrast ?? 'faint'}\n          size=\"sm\"\n          isInset\n          rounded\n        ></ds-tag>\n      );\n    }\n\n    return (\n      <ds-text\n        class=\"card-action-center__item-value ds-interaction-fill__content\"\n        variant=\"text-body-medium\"\n        color=\"secondary\"\n        emphasis\n        wrap=\"nowrap\"\n        fontFeature=\"tabular-nums\"\n        as=\"span\"\n      >\n        {value}\n      </ds-text>\n    );\n  }\n\n  private renderItem(section: CardActionCenterSection, item: CardActionCenterItem) {\n    const href = item.isInactive ? undefined : resolveSafeUrl(item.href);\n    const classes = {\n      'card-action-center__item': true,\n      'card-action-center__item--tagged': !!item.tag && item.value != null,\n      'ds-interaction-fill': true,\n      'ds-focus-ring-inset': true,\n      'ds-control-inactive': !!item.isInactive,\n    };\n    const content = [\n      <ds-text\n        class=\"card-action-center__item-content card-action-center__item-label ds-interaction-fill__content\"\n        variant=\"text-body-medium\"\n        color=\"secondary\"\n        wrap=\"balance\"\n        as=\"span\"\n      >\n        {item.label}\n      </ds-text>,\n      this.renderValue(item),\n    ];\n\n    if (href) {\n      return (\n        <a\n          class={classes}\n          href={href}\n          onClick={(event: MouseEvent) => this.handleAction(section, item, href, event)}\n        >\n          {content}\n        </a>\n      );\n    }\n\n    return (\n      <button\n        type=\"button\"\n        class={classes}\n        disabled={item.isInactive || undefined}\n        onClick={(event: MouseEvent) => this.handleAction(section, item, undefined, event)}\n      >\n        {content}\n      </button>\n    );\n  }\n\n  render() {\n    const sections = this.visibleSections;\n\n    return (\n      <Host>\n        {sections.length ? (\n          sections.map((section, sectionIndex) => (\n            <div class=\"card-action-center__group\">\n              {sectionIndex > 0 ? (\n                <div class=\"card-action-center__divider\">\n                  <ds-divider\n                    inset=\"space-100\"\n                    length=\"calc(100% - var(--dimension-space-200))\"\n                  ></ds-divider>\n                </div>\n              ) : null}\n              <section\n                class=\"card-action-center__section\"\n                aria-labelledby={this.headingId(section, sectionIndex)}\n              >\n                <ds-text\n                  id={this.headingId(section, sectionIndex)}\n                  class=\"card-action-center__section-heading\"\n                  variant=\"text-title-small\"\n                  emphasis\n                  color=\"primary\"\n                  wrap=\"balance\"\n                  as=\"h2\"\n                >\n                  {section.heading}\n                </ds-text>\n                <ul class=\"card-action-center__list\">\n                  {section.items.map(item => (\n                    <li>{this.renderItem(section, item)}</li>\n                  ))}\n                </ul>\n              </section>\n            </div>\n          ))\n        ) : (\n          <ds-text\n            class=\"card-action-center__empty\"\n            variant=\"text-body-medium\"\n            color=\"secondary\"\n            wrap=\"balance\"\n            as=\"p\"\n          >\n            {this.emptyMessage}\n          </ds-text>\n        )}\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}
