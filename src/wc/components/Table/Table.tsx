@@ -1307,8 +1307,12 @@ export class Table {
   }
 
   private emitRowActivation(row: TableRow, event: Event): void {
-    if (!row.interactive || row.disabled || !this.rowEventOwnsActivation(event)) return;
-    this.dsRowActivate.emit({ rowId: row.id });
+    if (row.disabled || !this.rowEventOwnsActivation(event)) return;
+    if (this.selectionMode === 'multiple' && this.selectedRowIds.length > 0) {
+      if (row.selectable !== false) this.emitRowSelection(row);
+      return;
+    }
+    if (row.interactive) this.dsRowActivate.emit({ rowId: row.id });
   }
 
   private syncActionMenu(): void {

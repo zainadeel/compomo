@@ -2884,7 +2884,7 @@ export const AssociatedSurface: Story = {
     docs: {
       description: {
         story:
-          'Activate a row to open its associated detail surface; activate it again to close, or another row to switch records. The pressed wash identifies the displayed record independently of checkbox selection. Applications with exit motion retain surfaceOpenRowId until closing completes.',
+          'Activate a row to open its associated detail surface; activate it again to close, or another row to switch records. After selecting a checkbox, row clicks and Enter or Space toggle selection until the selection is empty. Nested controls retain their own actions. The pressed wash identifies the displayed record independently of checkbox selection. Applications with exit motion retain surfaceOpenRowId until closing completes.',
       },
     },
   },
