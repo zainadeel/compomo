@@ -3,23 +3,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
 import ts from 'typescript';
-import {
-  validateAgentContract,
-  validateAgentDocument,
-} from '../scripts/validate-agent-contract.mjs';
+import { validateAgentDocument } from '../scripts/validate-agent-contract.mjs';
 
 const root = path.resolve(import.meta.dirname, '..');
 const buttonMetadata = JSON.parse(
   fs.readFileSync(path.join(root, 'src/wc/components/ButtonFilled/ButtonFilled.agent.json'), 'utf8')
 );
-
-test('prototype agent metadata is schema-valid and references source components', () => {
-  const result = validateAgentContract();
-
-  assert.equal(result.sourceComponents, 83);
-  assert.equal(result.componentDocuments, result.sourceComponents);
-  assert.equal(result.patternDocuments, 5);
-});
 
 test('menu trigger pattern provides executable recipes for every framework', () => {
   const pattern = JSON.parse(

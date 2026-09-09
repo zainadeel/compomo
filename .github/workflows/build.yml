@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       browser: ${{ steps.scope.outputs.browser }}
+      storybook: ${{ steps.scope.outputs.storybook }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -50,7 +51,7 @@ jobs:
         run: npm run build
 
       - name: Upload browser build
-        if: ${{ steps.scope.outputs.browser == 'true' && !startsWith(github.head_ref, 'release-please--') }}
+        if: ${{ (steps.scope.outputs.browser == 'true' || steps.scope.outputs.storybook == 'true') && !startsWith(github.head_ref, 'release-please--') }}
         uses: actions/upload-artifact@v7
         with:
           name: browser-build
@@ -133,7 +134,7 @@ jobs:
     name: Storybook accessibility
     runs-on: ubuntu-latest
     needs: build
-    if: ${{ needs.build.outputs.browser == 'true' && !startsWith(github.head_ref, 'release-please--') }}
+    if: ${{ needs.build.outputs.storybook == 'true' && !startsWith(github.head_ref, 'release-please--') }}
     steps:
       - uses: actions/checkout@v7
 
