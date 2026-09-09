@@ -2526,7 +2526,7 @@ export namespace Components {
          */
         "open": boolean;
         /**
-          * Drawer presentation or viewport-covering presentation for the active tool.
+          * Drawer presentation or presentation covering the shell stage for the active tool.
           * @default 'drawer'
          */
         "presentation": 'drawer' | 'fullscreen';
@@ -8355,7 +8355,7 @@ declare namespace LocalJSX {
          */
         "open"?: boolean;
         /**
-          * Drawer presentation or viewport-covering presentation for the active tool.
+          * Drawer presentation or presentation covering the shell stage for the active tool.
           * @default 'drawer'
          */
         "presentation"?: 'drawer' | 'fullscreen';

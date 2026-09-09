@@ -55,7 +55,7 @@ export class PanelTools {
   /** When false, only the icon rail is shown. */
   @Prop({ mutable: true, reflect: true }) open: boolean = false;
 
-  /** Drawer presentation or viewport-covering presentation for the active tool. */
+  /** Drawer presentation or presentation covering the shell stage for the active tool. */
   @Prop({ mutable: true, reflect: true }) presentation: 'drawer' | 'fullscreen' = 'drawer';
 
   /** Let a fullscreen product supply independent master/detail headers inside its view. */
