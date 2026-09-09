@@ -1,0 +1,76 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-card-action-center",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-card-action-center",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Compact bordered card that groups overview-page actions, optional values or status tags, and native destinations into named sections.",
+  "useWhen": [
+    "An overview rail needs a compact action center with multiple named groups.",
+    "Action rows need optional counts or short values aligned at the trailing edge.",
+    "Related reports or resource destinations belong beside attention items in one bounded surface."
+  ],
+  "avoidWhen": [
+    "The complete card leads to one destination; use CardNavigation.",
+    "The surface edits settings in place; use CardSetting.",
+    "The content is a chart, legend, metric visualization, or other data-visualization composition; use CardChart or CardOverview.",
+    "Rows require descriptions, nested controls, menus, or selection state instead of one direct action."
+  ],
+  "alternatives": [
+    {
+      "when": "The entire surface represents one destination.",
+      "component": "component:ds-card-navigation",
+      "reason": "CardNavigation provides the single native-link card contract."
+    },
+    {
+      "when": "The card presents page-level score and metric summaries.",
+      "component": "component:ds-card-overview",
+      "reason": "CardOverview owns summary metrics, comparison periods, and selectable metric cells."
+    }
+  ],
+  "commonlyComposedWith": ["component:ds-tag", "component:ds-text"],
+  "accessibility": [
+    "Each non-empty group is a section labelled by an h2 heading, and each row is a native button or link.",
+    "Use href for real destinations so link context menus, modified clicks, and native browser semantics remain available.",
+    "Prevent the cancelable dsAction event only when an application router takes ownership of the same link activation.",
+    "Inactive items become disabled buttons and are removed from keyboard navigation rather than exposing a false destination.",
+    "Keep item labels concise; a visible trailing value participates in the action's accessible name."
+  ],
+  "states": [
+    "Rows expose distinct rest, hover, pressed, keyboard-focus, and inactive states.",
+    "An empty sections array or groups with no items render the configured empty message.",
+    "The application owns loading, error, permission, routing, and post-activation consequences and reflects availability through the supplied item data."
+  ],
+  "responsiveBehavior": [
+    "The card fills its parent width and never establishes a product breakpoint.",
+    "Long labels wrap while trailing values remain visible; the page owns rail width and movement below primary content.",
+    "Groups retain their order when the parent layout moves the complete card between desktop and mobile regions."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign sections as a JavaScript property; complex arrays are not supported as string attributes.",
+      "Listen for dsAction and inspect sectionId, itemId, item, and the original pointer event."
+    ],
+    "react": [
+      "Pass sections as an array and handle onDsAction for product actions or client-side routing.",
+      "Prevent the event only when replacing native navigation for an item with href."
+    ],
+    "angular": [
+      "Bind [sections] through the generated standalone adapter and inspect $event.detail from (dsAction).",
+      "Keep product data and activation consequences in the Angular owner rather than embedding them in the component contract."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook grouped, value, and empty examples",
+      "path": "src/wc/components/CardActionCenter/CardActionCenter.stories.ts"
+    },
+    {
+      "label": "Rendered semantics, interaction, and geometry coverage",
+      "path": "tests/e2e/card-action-center.spec.ts"
+    }
+  ]
+}

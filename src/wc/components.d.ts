@@ -19,6 +19,7 @@ import { MobileDestination, ShellResponsiveMode } from "./shell/shell-responsive
 import { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledPopup, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 import { ControlInsetDepth, ControlSize } from "./utils/control-text";
 import { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
+import { CardActionCenterActionDetail, CardActionCenterSection } from "./components/CardActionCenter/CardActionCenter";
 import { CardChartVariant, CardChartWidth } from "./components/CardChart/CardChart";
 import { CardNavigationDetail, CardNavigationVariant, CardNavigationWidth } from "./components/CardNavigation/CardNavigation";
 import { CardOverviewLayout, CardOverviewVariant, OverviewMetric, OverviewScore } from "./components/CardOverview/card-overview-types";
@@ -93,6 +94,7 @@ export { MobileDestination, ShellResponsiveMode } from "./shell/shell-responsive
 export { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledPopup, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 export { ControlInsetDepth, ControlSize } from "./utils/control-text";
 export { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
+export { CardActionCenterActionDetail, CardActionCenterSection } from "./components/CardActionCenter/CardActionCenter";
 export { CardChartVariant, CardChartWidth } from "./components/CardChart/CardChart";
 export { CardNavigationDetail, CardNavigationVariant, CardNavigationWidth } from "./components/CardNavigation/CardNavigation";
 export { CardOverviewLayout, CardOverviewVariant, OverviewMetric, OverviewScore } from "./components/CardOverview/card-overview-types";
@@ -895,6 +897,18 @@ export namespace Components {
           * @default 'hug'
          */
         "width": ButtonUnfilledWidth;
+    }
+    interface DsCardActionCenter {
+        /**
+          * Copy shown when no section contains an action.
+          * @default 'No actions available'
+         */
+        "emptyMessage": string;
+        /**
+          * Ordered groups of actions rendered in the card. Empty groups are omitted.
+          * @default []
+         */
+        "sections": ReadonlyArray<CardActionCenterSection>;
     }
     /**
      * Standard chart card chrome and composition. The variant owns
@@ -4171,6 +4185,10 @@ export interface DsButtonUnfilledCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonUnfilledElement;
 }
+export interface DsCardActionCenterCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsCardActionCenterElement;
+}
 export interface DsCardChartCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsCardChartElement;
@@ -4597,6 +4615,23 @@ declare global {
     var HTMLDsButtonUnfilledElement: {
         prototype: HTMLDsButtonUnfilledElement;
         new (): HTMLDsButtonUnfilledElement;
+    };
+    interface HTMLDsCardActionCenterElementEventMap {
+        "dsAction": CardActionCenterActionDetail;
+    }
+    interface HTMLDsCardActionCenterElement extends Components.DsCardActionCenter, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsCardActionCenterElementEventMap>(type: K, listener: (this: HTMLDsCardActionCenterElement, ev: DsCardActionCenterCustomEvent<HTMLDsCardActionCenterElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsCardActionCenterElementEventMap>(type: K, listener: (this: HTMLDsCardActionCenterElement, ev: DsCardActionCenterCustomEvent<HTMLDsCardActionCenterElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsCardActionCenterElement: {
+        prototype: HTMLDsCardActionCenterElement;
+        new (): HTMLDsCardActionCenterElement;
     };
     interface HTMLDsCardChartElementEventMap {
         "dsFilterClick": void;
@@ -5642,6 +5677,7 @@ declare global {
         "ds-breadcrumb": HTMLDsBreadcrumbElement;
         "ds-button-filled": HTMLDsButtonFilledElement;
         "ds-button-unfilled": HTMLDsButtonUnfilledElement;
+        "ds-card-action-center": HTMLDsCardActionCenterElement;
         "ds-card-chart": HTMLDsCardChartElement;
         "ds-card-navigation": HTMLDsCardNavigationElement;
         "ds-card-overview": HTMLDsCardOverviewElement;
@@ -6519,6 +6555,22 @@ declare namespace LocalJSX {
           * @default 'hug'
          */
         "width"?: ButtonUnfilledWidth;
+    }
+    interface DsCardActionCenter {
+        /**
+          * Copy shown when no section contains an action.
+          * @default 'No actions available'
+         */
+        "emptyMessage"?: string;
+        /**
+          * Emitted when an available row is activated. When a row has an `href`, prevent this event to take over navigation with an application router.
+         */
+        "onDsAction"?: (event: DsCardActionCenterCustomEvent<CardActionCenterActionDetail>) => void;
+        /**
+          * Ordered groups of actions rendered in the card. Empty groups are omitted.
+          * @default []
+         */
+        "sections"?: ReadonlyArray<CardActionCenterSection>;
     }
     /**
      * Standard chart card chrome and composition. The variant owns
@@ -10239,6 +10291,9 @@ declare namespace LocalJSX {
         "hasMenu": boolean;
         "focusTabIndex": number;
     }
+    interface DsCardActionCenterAttributes {
+        "emptyMessage": string;
+    }
     interface DsCardChartAttributes {
         "heading": string;
         "variant": CardChartVariant;
@@ -10996,6 +11051,7 @@ declare namespace LocalJSX {
         "ds-breadcrumb": Omit<DsBreadcrumb, keyof DsBreadcrumbAttributes> & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes]?: DsBreadcrumb[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `attr:${K}`]?: DsBreadcrumbAttributes[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `prop:${K}`]?: DsBreadcrumb[K] };
         "ds-button-filled": Omit<DsButtonFilled, keyof DsButtonFilledAttributes> & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes]?: DsButtonFilled[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `attr:${K}`]?: DsButtonFilledAttributes[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `prop:${K}`]?: DsButtonFilled[K] };
         "ds-button-unfilled": Omit<DsButtonUnfilled, keyof DsButtonUnfilledAttributes> & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes]?: DsButtonUnfilled[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `attr:${K}`]?: DsButtonUnfilledAttributes[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `prop:${K}`]?: DsButtonUnfilled[K] };
+        "ds-card-action-center": Omit<DsCardActionCenter, keyof DsCardActionCenterAttributes> & { [K in keyof DsCardActionCenter & keyof DsCardActionCenterAttributes]?: DsCardActionCenter[K] } & { [K in keyof DsCardActionCenter & keyof DsCardActionCenterAttributes as `attr:${K}`]?: DsCardActionCenterAttributes[K] } & { [K in keyof DsCardActionCenter & keyof DsCardActionCenterAttributes as `prop:${K}`]?: DsCardActionCenter[K] };
         "ds-card-chart": Omit<DsCardChart, keyof DsCardChartAttributes> & { [K in keyof DsCardChart & keyof DsCardChartAttributes]?: DsCardChart[K] } & { [K in keyof DsCardChart & keyof DsCardChartAttributes as `attr:${K}`]?: DsCardChartAttributes[K] } & { [K in keyof DsCardChart & keyof DsCardChartAttributes as `prop:${K}`]?: DsCardChart[K] } & OneOf<"heading", DsCardChart["heading"], DsCardChartAttributes["heading"]>;
         "ds-card-navigation": Omit<DsCardNavigation, keyof DsCardNavigationAttributes> & { [K in keyof DsCardNavigation & keyof DsCardNavigationAttributes]?: DsCardNavigation[K] } & { [K in keyof DsCardNavigation & keyof DsCardNavigationAttributes as `attr:${K}`]?: DsCardNavigationAttributes[K] } & { [K in keyof DsCardNavigation & keyof DsCardNavigationAttributes as `prop:${K}`]?: DsCardNavigation[K] } & OneOf<"href", DsCardNavigation["href"], DsCardNavigationAttributes["href"]> & OneOf<"heading", DsCardNavigation["heading"], DsCardNavigationAttributes["heading"]>;
         "ds-card-overview": Omit<DsCardOverview, keyof DsCardOverviewAttributes> & { [K in keyof DsCardOverview & keyof DsCardOverviewAttributes]?: DsCardOverview[K] } & { [K in keyof DsCardOverview & keyof DsCardOverviewAttributes as `attr:${K}`]?: DsCardOverviewAttributes[K] } & { [K in keyof DsCardOverview & keyof DsCardOverviewAttributes as `prop:${K}`]?: DsCardOverview[K] };
@@ -11084,6 +11140,7 @@ declare module "@stencil/core" {
             "ds-breadcrumb": LocalJSX.IntrinsicElements["ds-breadcrumb"] & JSXBase.HTMLAttributes<HTMLDsBreadcrumbElement>;
             "ds-button-filled": LocalJSX.IntrinsicElements["ds-button-filled"] & JSXBase.HTMLAttributes<HTMLDsButtonFilledElement>;
             "ds-button-unfilled": LocalJSX.IntrinsicElements["ds-button-unfilled"] & JSXBase.HTMLAttributes<HTMLDsButtonUnfilledElement>;
+            "ds-card-action-center": LocalJSX.IntrinsicElements["ds-card-action-center"] & JSXBase.HTMLAttributes<HTMLDsCardActionCenterElement>;
             /**
              * Standard chart card chrome and composition. The variant owns
              * only the chart/legend relationship; applications continue to own data.

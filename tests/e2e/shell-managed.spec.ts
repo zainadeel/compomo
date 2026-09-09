@@ -1486,6 +1486,54 @@ test.describe('Managed application shell', () => {
     await expect(shell).not.toHaveClass(/shell-app--tools-fullscreen/);
   });
 
+  test('layers fullscreen tools above retained routed overlays @pr-critical', async ({ page }) => {
+    await page.getByRole('button', { name: 'Agents' }).click();
+    const shell = page.locator('#managed-shell');
+    const routedContent = shell.locator('#managed-page-content');
+
+    await routedContent.evaluate(element => {
+      const overlay = document.createElement('aside');
+      overlay.id = 'managed-routed-overlay';
+      overlay.textContent = 'Retained routed overlay';
+      overlay.style.position = 'fixed';
+      overlay.style.inset = '0';
+      overlay.style.zIndex = 'var(--dimension-z-index-overlay)';
+      overlay.style.visibility = 'visible';
+      element.append(overlay);
+      (window as typeof window & { routedOverlayOwner?: Element }).routedOverlayOwner = overlay;
+    });
+
+    await shell.evaluate(async element => {
+      await (element as HTMLDsShellAppElement).setToolPresentation('fullscreen');
+    });
+
+    const routedOverlay = shell.locator('#managed-routed-overlay');
+    await expect(routedOverlay).toHaveCSS('visibility', 'visible');
+    const fullscreenLayerOrder = await shell.evaluate(element => {
+      const readZIndex = (selector: string) =>
+        Number.parseInt(getComputedStyle(element.querySelector<HTMLElement>(selector)!).zIndex, 10);
+      return {
+        main: readZIndex('.shell-app__main'),
+        panel: readZIndex('.shell-app__panel'),
+        content: readZIndex('.shell-app__content'),
+        tools: readZIndex('.shell-app__tools'),
+      };
+    });
+    expect(fullscreenLayerOrder.main).toBeGreaterThan(fullscreenLayerOrder.panel);
+    expect(fullscreenLayerOrder.tools).toBeGreaterThan(fullscreenLayerOrder.content);
+
+    await shell.evaluate(async element => {
+      await (element as HTMLDsShellAppElement).setToolPresentation('drawer');
+    });
+    expect(
+      await routedOverlay.evaluate(
+        element =>
+          (window as typeof window & { routedOverlayOwner?: Element }).routedOverlayOwner ===
+          element
+      )
+    ).toBe(true);
+  });
+
   test('anchors tool filter and header menus to the history pane in drawer and fullscreen @cross-browser', async ({
     page,
   }) => {

@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Action center card</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Safety</h1>
+      <aside aria-label="Safety action center and resources">
+        <ds-card-action-center id="action-center"></ds-card-action-center>
+      </aside>
+      <ds-card-action-center
+        id="empty-action-center"
+        empty-message="No actions need attention"
+      ></ds-card-action-center>
+    </main>
+
+    <script type="module" src="/card-action-center-setup.mjs"></script>
+  </body>
+</html>
