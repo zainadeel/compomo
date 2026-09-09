@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.33.0](https://github.com/zainadeel/compomo/compare/v14.32.1...v14.33.0) (2026-09-09)
+
+
+### Added
+
+* add action center card ([#591](https://github.com/zainadeel/compomo/issues/591)) ([1b70c5a](https://github.com/zainadeel/compomo/commit/1b70c5a0d76b02fdfd9377e08f82f61ab3e3bff6))
+
 ## [14.32.1](https://github.com/zainadeel/compomo/compare/v14.32.0...v14.32.1) (2026-09-09)
 
 
