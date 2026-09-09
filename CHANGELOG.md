@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.34.0](https://github.com/zainadeel/compomo/compare/v14.33.2...v14.34.0) (2026-09-09)
+
+
+### Added
+
+* add inline multiple-tag table cells ([#598](https://github.com/zainadeel/compomo/issues/598)) ([183d1ef](https://github.com/zainadeel/compomo/commit/183d1ef8277c31446be625f8f4a2161628a3928e))
+
 ## [14.33.2](https://github.com/zainadeel/compomo/compare/v14.33.1...v14.33.2) (2026-09-09)
 
 
