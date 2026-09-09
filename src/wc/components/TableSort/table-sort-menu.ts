@@ -57,7 +57,7 @@ export function tableSortMenuSections(
       })),
     },
     {
-      header: 'Direction',
+      header: 'Order',
       items: [
         {
           label: 'Ascending',

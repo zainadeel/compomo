@@ -33,11 +33,11 @@ test('lists sortable columns and compound header segments, skipping action colum
   ]);
 });
 
-test('builds Data and Direction menu sections from the controlled sort', () => {
+test('builds Data and Order menu sections from the controlled sort', () => {
   const sections = tableSortMenuSections(columns, { columnId: 'severity', direction: 'desc' });
   assert.deepEqual(
     sections.map(section => section.header),
-    ['Data', 'Direction']
+    ['Data', 'Order']
   );
   assert.equal(sections[0]?.items.find(item => item.label === 'Severity')?.isSelected, true);
   assert.equal(

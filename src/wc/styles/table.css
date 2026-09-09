@@ -1072,14 +1072,24 @@
  * 8px padding) at 16:9. Each track is 24px with no stack gap.
  */
 :where(.ds-table__cell-image) {
+  position: relative;
   display: block;
   box-sizing: border-box;
   flex: none;
   block-size: var(--_table-image-block-size);
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
   border-radius: var(--dimension-radius-025);
+}
+
+:where(.ds-table__cell-image)::after {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  border: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+  border-radius: inherit;
+  content: '';
+  pointer-events: none;
 }
 
 :where(.ds-table__cell--image-multi .ds-table__cell-image) {
@@ -1099,6 +1109,7 @@
 
 :where(.ds-table__cell-image-content) {
   object-fit: cover;
+  border-radius: inherit;
 }
 
 :where(.ds-table__cell--action .ds-table__cell-content) {

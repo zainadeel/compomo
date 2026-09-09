@@ -7,7 +7,7 @@
   "tag": "ds-table-sort",
   "audience": "general",
   "status": "stable",
-  "summary": "Toolbar companion for the table's one controlled member-row sort, with a two-section menu for the sort field and direction that mirrors header sorting.",
+  "summary": "Toolbar companion for the table's one controlled member-row sort, with Data and Order menu sections that mirror header sorting.",
   "useWhen": [
     "A table toolbar needs an explicit Sort control alongside Filter and Group.",
     "Sortable columns or compound header segments should be choosable without relying only on column-header clicks."
@@ -35,7 +35,7 @@
   "patterns": ["pattern:menu-trigger"],
   "accessibility": [
     "The trigger is an icon-label menu button named Sort table unless a product aria-label is supplied. Compact caption widths keep that accessible name after the visible label is omitted.",
-    "The start-aligned menu has two sections, Data and Direction. Each section presents one selected row through isSelected; the menu is not a single radio group because field and direction are independent.",
+    "The start-aligned menu has two sections, Data and Order. Each section presents one selected row through isSelected; the menu is not a single radio group because field and direction are independent.",
     "Choosing a row applies immediately and keeps the menu open so the other section can be changed. Escape and outside activation close the menu and restore trigger focus."
   ],
   "states": [

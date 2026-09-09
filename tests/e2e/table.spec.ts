@@ -1584,12 +1584,14 @@ test('renders independently styled standard cell types', async ({ page }) => {
   await expect(image).toHaveCSS('padding-left', '8px');
   await expectImageColumnToHugPreview(image);
   await expect(image).toHaveCSS('height', '64px');
-  const imagePlaceholder = image.getByRole('img', { name: 'Safety event preview unavailable' });
-  await expect(imagePlaceholder).toBeVisible();
-  await expect(imagePlaceholder.locator('..')).toHaveCSS('height', '48px');
-  await expect(imagePlaceholder.locator('..')).toHaveCSS('border-radius', '2px');
+  const imageContent = image.getByRole('img', { name: 'Safety event preview' });
+  await expect(imageContent).toBeVisible();
+  await expect(imageContent.locator('..')).toHaveCSS('height', '48px');
+  await expect(imageContent.locator('..')).toHaveCSS('border-radius', '2px');
+  await expect(imageContent).toHaveCSS('border-radius', '2px');
   const imageGeometry = await image.locator('.ds-table__cell-image').evaluate(element => {
     const style = getComputedStyle(element);
+    const insetBorder = getComputedStyle(element, '::after');
     const rect = element.getBoundingClientRect();
     const probe = document.createElement('span');
     probe.style.color = 'var(--color-border-tertiary)';
@@ -1599,12 +1601,20 @@ test('renders independently styled standard cell types', async ({ page }) => {
     return {
       width: rect.width,
       height: rect.height,
-      borderColor: style.borderColor,
+      borderRadius: style.borderRadius,
+      borderWidth: style.borderWidth,
+      insetBorderColor: insetBorder.borderColor,
+      insetBorderWidth: insetBorder.borderWidth,
+      insetBorderPointerEvents: insetBorder.pointerEvents,
       tertiaryBorder,
     };
   });
   expect(imageGeometry.width / imageGeometry.height).toBeCloseTo(16 / 9, 2);
-  expect(imageGeometry.borderColor).toBe(imageGeometry.tertiaryBorder);
+  expect(imageGeometry.borderRadius).toBe('2px');
+  expect(imageGeometry.borderWidth).toBe('0px');
+  expect(imageGeometry.insetBorderColor).toBe(imageGeometry.tertiaryBorder);
+  expect(imageGeometry.insetBorderWidth).toBe('1px');
+  expect(imageGeometry.insetBorderPointerEvents).toBe('none');
   await expect(icon).toHaveClass(/ds-table__cell--icon/);
   await expect(icon).toHaveCSS('padding-top', '8px');
   await expect(icon).toHaveCSS('padding-right', '8px');
@@ -2051,10 +2061,21 @@ test('renders three-track text cells with a uniform 88px row', async ({ page }) 
   await expect(averyDriver.locator('.ds-table__cell-primary')).toHaveText('Avery Chen');
   await expect(averyDriver.locator('.ds-table__cell-secondary')).toHaveText('DRV-1048');
   const groupTrack = averyDriver.locator('.ds-table__cell-tertiary');
+  const groupHelp = groupTrack.locator('ds-text');
   await expect(groupTrack).toHaveText('2 groups');
-  await expect(groupTrack).toHaveJSProperty('decoration', 'dotted-underline');
-  await groupTrack.hover();
+  await expect(groupHelp).toHaveJSProperty('decoration', 'dotted-underline');
+  const [trackBox, helpBox] = await Promise.all([
+    groupTrack.boundingBox(),
+    groupHelp.boundingBox(),
+  ]);
+  expect(trackBox).not.toBeNull();
+  expect(helpBox).not.toBeNull();
+  expect(helpBox!.width).toBeLessThan(trackBox!.width);
+  await groupTrack.hover({ position: { x: trackBox!.width - 1, y: trackBox!.height / 2 } });
   const groupTooltip = page.getByRole('tooltip', { name: /Main operations\s+West Coast/ });
+  await page.waitForTimeout(1100);
+  await expect(groupTooltip).toHaveCount(0);
+  await groupHelp.hover();
   await expect(groupTooltip).toBeVisible();
   await expect(groupTooltip).toHaveAttribute('data-side', 'bottom');
   await expect(groupTooltip.locator('ds-text')).toHaveText('Main operations\nWest Coast');
