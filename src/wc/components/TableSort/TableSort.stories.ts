@@ -26,7 +26,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'A toolbar companion for the table’s one controlled sort. The trigger stays Sort in resting secondary chrome. The menu has Data and Direction sections. Keep the same sort value on ds-table so header clicks stay in sync.',
+          'A toolbar companion for the table’s one controlled sort. The trigger stays Sort in resting secondary chrome. The menu has Data and Order sections. Keep the same sort value on ds-table so header clicks stay in sync.',
       },
     },
   },

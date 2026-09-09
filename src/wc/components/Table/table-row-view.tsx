@@ -556,7 +556,9 @@ function renderTextTrack(
     );
   };
   if (runs.length === 1) {
-    return renderRun(runs[0], 0, trackClass);
+    const run = runs[0];
+    if (!run.help) return renderRun(run, 0, trackClass);
+    return <span class={trackClass}>{renderRun(run, 0, 'ds-table__cell-run')}</span>;
   }
 
   return (

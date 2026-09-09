@@ -350,7 +350,12 @@ cellTypes.rows = [
         primary: 'Speeding',
         secondary: [{ text: 'High', color: 'negative' }, { text: '45 mph over' }],
       },
-      image: { kind: 'image', tracks: 2, alt: 'Safety event preview unavailable' },
+      image: {
+        kind: 'image',
+        tracks: 2,
+        src: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=',
+        alt: 'Safety event preview',
+      },
       icon: { kind: 'icon', icon: 'DocumentInverted', color: 'secondary', label: 'Has notes' },
       iconText: {
         kind: 'icon-text',
