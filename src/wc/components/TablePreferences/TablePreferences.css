@@ -1,0 +1,49 @@
+@import '../../utils/radius.css';
+
+:host {
+  display: inline-flex;
+}
+
+.table-preferences {
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ds-radius-menu);
+  width: min(var(--dimension-menu-width-lg), calc(100vw - var(--dimension-space-200)));
+  max-height: calc(100dvh - var(--dimension-space-400));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-background-primary);
+  color: var(--color-foreground-secondary);
+  box-shadow: var(--effect-shadow-elevated-floating);
+}
+
+.table-preferences::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--effect-highlight-elevated-floating);
+  pointer-events: none;
+  z-index: 4;
+}
+
+.table-preferences__tabs {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  flex: 0 0 var(--dimension-size-500);
+  min-block-size: var(--dimension-size-500);
+  padding: var(--dimension-space-050);
+  background: var(--color-background-primary);
+  border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+}
+
+.table-preferences__body {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}

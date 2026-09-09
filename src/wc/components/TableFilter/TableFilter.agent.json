@@ -31,7 +31,9 @@
     "component:ds-table-sort",
     "component:ds-filter-menu"
   ],
-  "patterns": ["pattern:menu-trigger"],
+  "patterns": [
+    "pattern:menu-trigger"
+  ],
   "accessibility": [
     "The trigger is an icon-label combobox named Filter table unless a product aria-label supplies the table context. Compact caption widths preserve that accessible name after the visible label and chevron are omitted.",
     "The popup retains ds-filter-menu category navigation, option semantics, focus entry, dismissal, and focus return, and aligns its start edge with the trigger.",
@@ -39,16 +41,19 @@
   ],
   "states": [
     "filters, values, matchModes, and activeFilterId are controlled. dsChange, dsMatchModeChange, dsClear, and dsActiveFilterChange report intent without changing those inputs; the application applies query consequences and returns replacement values.",
-    "The visible trigger label stays singular Filter without appending an active-count suffix. Active criteria promote only the visible label from secondary to primary, matching the other table caption controls without redefining generic button active semantics.",
+    "The visible trigger label stays singular Filter without appending an active-count suffix. Active criteria retain the same neutral label and icon colors.",
     "The popup reserves a visually empty footer row inside the category pane for every state. Active criteria reveal its divider and only a left-aligned Clear action, without adding popup height or showing redundant selected-count copy; the option pane retains its full column.",
     "Every multiple-choice category exposes a right-pane footer where the blue any or all word toggles its controlled match mode. any is the default OR mode; the application applies the requested mode to its query.",
     "Every non-date category exposes a 40px secondary-background search header that filters its displayed option labels and descriptions without changing controlled filter values. Date retains only its Relative and Range header.",
     "Date categories use the shared compact-header Range and Relative experience. Persist relative values semantically and resolve them from the product's current date whenever rows or saved views are applied.",
-    "Popup visibility follows the same mutable open and dsOpenChange contract as ds-filter-menu."
+    "Popup visibility follows the same mutable open and dsOpenChange contract as ds-filter-menu.",
+    "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback.",
+    "Expanded toolbar triggers use an icon and regular-weight text without a trailing chevron.",
+    "Selected views and applied filters do not promote trigger icon or label colors. Trigger colors remain neutral across value changes."
   ],
   "responsiveBehavior": [
     "Place the control in the trailing region of ds-table-toolbar.",
-    "Inside a named ds-table container narrower than 900px, the trigger becomes icon-only, exposes its visible label through a hover and keyboard-focus tooltip, and active criteria promote the Filters icon to primary."
+    "Inside a named ds-table container narrower than 900px, the trigger becomes icon-only, exposes its visible label through a hover and keyboard-focus tooltip, and the Filters icon remains neutral with active criteria."
   ],
   "frameworkCaveats": {
     "customElements": [

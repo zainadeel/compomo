@@ -66,7 +66,8 @@
     "Use a swatch-picker section for a small curated visual preference and apply dsSwatchSelect immediately without closing the popup.",
     "Ordinary rows, section headings, and supporting text consume the Menu size. At xs, both the primary label and supporting text use caption metrics.",
     "A trailing tag resolves one density smaller than its menu row and uses the inset recipe so it nests without changing row height. Do not combine tag, dot, and switch suffixes on one item.",
-    "Reorderable rows use the Drag prefix and ignore icon. Prefix and drag-handle icons inherit the choice-popup secondary foreground, matching Select. When any row in a section has an icon or is reorderable, the remaining rows get a spacer so labels align."
+    "Reorderable rows use the Drag prefix and ignore icon. Prefix and drag-handle icons inherit the choice-popup secondary foreground, matching Select. When any row in a section has an icon or is reorderable, the remaining rows get a spacer so labels align.",
+    "Embedded mode renders the same controlled content inside a parent-owned surface; the parent owns positioning, initial focus, Escape, Tab exit, and dismissal."
   ],
   "responsiveBehavior": [
     "Keep the default choice-cell anchor alignment so the first or last interactive row edge aligns with its trigger, matching Select; use popup-frame only for deliberate custom frame geometry.",

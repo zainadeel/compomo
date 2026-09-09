@@ -109,6 +109,8 @@ export class FilterMenu {
   @Element() el!: HTMLElement;
 
   /** Controlled popup visibility. */
+  /** Render content inside a parent-owned surface; the parent owns dismissal and positioning. */
+  @Prop() embedded: boolean = false;
   @Prop({ mutable: true }) open: boolean = false;
   /** Select trigger text. */
   @Prop() triggerLabel: string = 'Filters';
@@ -121,8 +123,12 @@ export class FilterMenu {
   /** Select trigger width fit. */
   @Prop() width: FilterMenuWidth = 'hug';
   /** Show the surface-aware inset border around the select trigger. */
+  /** Show the trigger chevron. */
+  @Prop() showIndicator: boolean = true;
   @Prop() hasBorder: boolean = true;
   /** Show selected interaction fill when one or more criteria are active. */
+  /** Keep trigger colors neutral when a value is selected. */
+  @Prop() neutralTrigger: boolean = false;
   @Prop() activeFill: boolean = false;
   /**
    * Opt into table-caption icon-only chrome below 900px. The trigger omits its
@@ -281,6 +287,7 @@ export class FilterMenu {
 
   @Watch('open')
   onOpenChange(isOpen: boolean) {
+    if (this.embedded) return;
     if (isOpen) {
       this.teardownListeners();
       this.closingSnapshot = null;
@@ -323,7 +330,8 @@ export class FilterMenu {
 
   @Listen('keydown')
   handleKeyDown(event: KeyboardEvent) {
-    if (!this.shouldRender || this.closing) return;
+    if (this.embedded && (event.key === 'Escape' || event.key === 'Tab')) return;
+    if ((!this.shouldRender && !this.embedded) || this.closing) return;
     if (event.key === 'Escape') {
       event.preventDefault();
       this.close();
@@ -342,7 +350,7 @@ export class FilterMenu {
   }
 
   private get usesInternalTrigger(): boolean {
-    return !this.anchor && !this.anchorId;
+    return !this.embedded && !this.anchor && !this.anchorId;
   }
 
   private get viewportPad(): number {
@@ -1231,7 +1239,7 @@ export class FilterMenu {
                   'trigger--expanded': this.open || this.closing,
                   'ds-interaction-fill--surface-open': this.open || this.closing,
                   'trigger--bordered': this.hasBorder,
-                  'trigger--has-value': hasActiveFilters,
+                  'trigger--has-value': hasActiveFilters && !this.neutralTrigger,
                   [`ds-control--${this.size}`]: true,
                 }}
                 role="combobox"
@@ -1261,7 +1269,7 @@ export class FilterMenu {
                     {label}
                   </ds-text>
                 )}
-                {this.captionIconOnly ? null : (
+                {this.captionIconOnly || !this.showIndicator ? null : (
                   <span
                     class="trigger__chevron ds-control-icon-box ds-interaction-fill__content"
                     aria-hidden="true"
@@ -1274,16 +1282,17 @@ export class FilterMenu {
             )
           : null}
 
-        {this.shouldRender ? (
+        {this.shouldRender || this.embedded ? (
           <div
             id={popupId}
-            popover="manual"
+            popover={this.embedded ? undefined : 'manual'}
             class={{
               'filter-menu-popup': true,
-              'ds-choice-popup': true,
+              'ds-choice-popup': !this.embedded,
+              'table-preferences-embedded': this.embedded,
               'ds-choice-popup--closing': this.closing,
             }}
-            style={popupStyle}
+            style={this.embedded ? undefined : popupStyle}
             role="dialog"
             aria-label={this.menuLabel}
           >

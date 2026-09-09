@@ -29,7 +29,7 @@
     "Typing slash opens the field listbox without inserting slash into the table query. Text typed while it is open filters data points by complete label, Up and Down change the active match, Enter selects it, Escape closes it, and Left and Right retain native text-cursor behavior because focus never leaves the input. Backspace edits the field-picker query first and closes the listbox when that query is empty.",
     "The query disables browser autocomplete history, automatic capitalization, autocorrection, and spellchecking so browser-owned suggestions never obscure the product-owned field menu or table results.",
     "Selected field Chips have individually labeled remove actions and are also described by the search input. Polite announcements report additions, removals, and clearing without duplicating the visible query.",
-    "The slash suffix is a labeled double-inset md button excluded from sequential keyboard navigation; the search input exposes the same action through aria-keyshortcuts and its description.",
+    "The search input exposes the slash command through aria-keyshortcuts and its description, without a visible suffix button.",
     "The clear action removes both free text and every selected field. It restores focus to the search input; each Chip's own remove action remains scoped to that field."
   ],
   "states": [
@@ -39,12 +39,13 @@
     "Backspace edits a non-empty field-picker query, then closes the open slash listbox when that query is empty. When the table query is empty and the listbox is already closed, the next Backspace removes the last selected field. Ordinary Backspace edits table query text when the listbox is closed.",
     "Duplicate, blank, and unknown field identities are ignored for presentation. Selected fields preserve the consumer's order.",
     "Inactive search leaves the tab order, closes the field listbox, and does not emit query or field changes.",
-    "The field-picker action holds the shared surface-open wash while its listbox is visible; chosen search fields remain independent."
+    "The field-picker action holds the shared surface-open wash while its listbox is visible; chosen search fields remain independent.",
+    "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback."
   ],
   "responsiveBehavior": [
     "The control fills the available inline size supplied by the table toolbar search slot. Selected Chips and the editable query share one horizontal editor lane so the md control does not grow vertically.",
     "The field popup enters the top layer, aligns its first choice cell with the search control, flips or clamps to the viewport or nearest overlay boundary, and scrolls internally when its catalog is taller than available space.",
-    "Long selected field labels truncate inside their Chips while the input remains available at the inline end of the editor lane. Both suffix actions resolve to the same 24px height as selected Chips. Clear follows the standard md Input recipe—a non-inset sm icon button—while slash is a double-inset md label button. Slash remains rightmost; when query text exposes Clear, a vertical divider separates the two actions."
+    "Clear appears when query text is present and uses the standard sm icon button treatment."
   ],
   "frameworkCaveats": {
     "customElements": [

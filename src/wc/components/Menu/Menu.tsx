@@ -61,6 +61,8 @@ const MENU_ITEM_TAG_SIZE: Record<MenuSize, 'md' | 'sm' | 'xs'> = {
 export class Menu {
   @Element() el!: HTMLElement;
 
+  /** Render content inside a parent-owned surface; the parent owns dismissal and positioning. */
+  @Prop() embedded: boolean = false;
   @Prop({ mutable: true }) open: boolean = false;
   @Prop() items: MenuItemData[] = [];
   /** Choice-row density. */
@@ -215,6 +217,7 @@ export class Menu {
 
   @Watch('open')
   onOpenChange(isOpen: boolean) {
+    if (this.embedded) return;
     if (isOpen) {
       this.teardownListeners();
       this.closingSections = null;
@@ -416,7 +419,8 @@ export class Menu {
 
   @Listen('keydown')
   handleKeyDown(e: KeyboardEvent) {
-    if (!this.shouldRender || this.closing) return;
+    if (this.embedded && (e.key === 'Escape' || e.key === 'Tab')) return;
+    if ((!this.shouldRender && !this.embedded) || this.closing) return;
 
     if (e.key === 'Escape') {
       e.preventDefault();
@@ -654,7 +658,7 @@ export class Menu {
   }
 
   render() {
-    if (!this.shouldRender) return <Host style={{ display: 'contents' }} />;
+    if (!this.shouldRender && !this.embedded) return <Host style={{ display: 'contents' }} />;
 
     const sections = this.closing
       ? (this.closingSections ?? this.lastRenderedSections)
@@ -695,16 +699,17 @@ export class Menu {
     return (
       <Host style={{ display: 'contents' }}>
         <div
-          popover="manual"
+          popover={this.embedded ? undefined : 'manual'}
           class={{
             'menu-popup': true,
             'menu-popup--closing': this.closing,
-            'ds-choice-popup': true,
+            'ds-choice-popup': !this.embedded,
+            'table-preferences-embedded': this.embedded,
             'ds-choice-popup--closing': this.closing,
             'ds-focus-ring': showEmpty,
             'ds-focus-ring--visible': showEmpty && this.focusRingVisible,
           }}
-          style={popupStyle}
+          style={this.embedded ? undefined : popupStyle}
           role={hasCompositeSections || showEmpty ? 'dialog' : 'menu'}
           aria-label={this.menuLabel}
           aria-orientation={hasCompositeSections || showEmpty ? undefined : 'vertical'}
@@ -843,7 +848,13 @@ export class Menu {
                           }
                           aria-disabled={item.isInactive ? 'true' : undefined}
                           disabled={locked}
-                          tabIndex={hasCompositeSections ? 0 : isFocused ? 0 : -1}
+                          tabIndex={
+                            hasCompositeSections || (this.embedded && idx === 0)
+                              ? 0
+                              : isFocused
+                                ? 0
+                                : -1
+                          }
                           onMouseDown={() => {
                             this.focusRingVisible = false;
                           }}

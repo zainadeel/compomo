@@ -365,3 +365,14 @@ export const SizesAndStates: Story = {
     </div>
   `,
 };
+
+export const IconOnlyViews: Story = {
+  render: () =>
+    html`<ds-select
+      icon="ViewMenu"
+      icon-only
+      aria-label="Saved views"
+      .options=${[{ label: 'Default', value: 'default' }]}
+      value="default"
+    ></ds-select>`,
+};

@@ -1,3 +1,5 @@
+import '../../../../dist/components/ds-table-preferences.js';
+import '../../../../dist/components/ds-table-search.js';
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
@@ -222,4 +224,13 @@ export const NarrowOverflow: Story = {
       </ds-table-toolbar>
     </div>
   `,
+};
+
+export const Borderless: Story = {
+  render: () =>
+    html`<ds-table-toolbar borderless>
+      <ds-table-saved-views slot="start" .hasBorder=${false}></ds-table-saved-views>
+      <ds-table-search slot="search" .hasBorder=${false}></ds-table-search>
+      <ds-table-preferences slot="trailing" .hasBorder=${false}></ds-table-preferences>
+    </ds-table-toolbar>`,
 };

@@ -273,3 +273,15 @@
     outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
   }
 }
+
+.table-preferences-embedded {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  color: var(--color-foreground-secondary);
+}
+
+.table-preferences-embedded .filter-menu__body {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}

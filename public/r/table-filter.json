@@ -47,16 +47,19 @@
       ],
       "states": [
         "filters, values, matchModes, and activeFilterId are controlled. dsChange, dsMatchModeChange, dsClear, and dsActiveFilterChange report intent without changing those inputs; the application applies query consequences and returns replacement values.",
-        "The visible trigger label stays singular Filter without appending an active-count suffix. Active criteria promote only the visible label from secondary to primary, matching the other table caption controls without redefining generic button active semantics.",
+        "The visible trigger label stays singular Filter without appending an active-count suffix. Active criteria retain the same neutral label and icon colors.",
         "The popup reserves a visually empty footer row inside the category pane for every state. Active criteria reveal its divider and only a left-aligned Clear action, without adding popup height or showing redundant selected-count copy; the option pane retains its full column.",
         "Every multiple-choice category exposes a right-pane footer where the blue any or all word toggles its controlled match mode. any is the default OR mode; the application applies the requested mode to its query.",
         "Every non-date category exposes a 40px secondary-background search header that filters its displayed option labels and descriptions without changing controlled filter values. Date retains only its Relative and Range header.",
         "Date categories use the shared compact-header Range and Relative experience. Persist relative values semantically and resolve them from the product's current date whenever rows or saved views are applied.",
-        "Popup visibility follows the same mutable open and dsOpenChange contract as ds-filter-menu."
+        "Popup visibility follows the same mutable open and dsOpenChange contract as ds-filter-menu.",
+        "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback.",
+        "Expanded toolbar triggers use an icon and regular-weight text without a trailing chevron.",
+        "Selected views and applied filters do not promote trigger icon or label colors. Trigger colors remain neutral across value changes."
       ],
       "responsiveBehavior": [
         "Place the control in the trailing region of ds-table-toolbar.",
-        "Inside a named ds-table container narrower than 900px, the trigger becomes icon-only, exposes its visible label through a hover and keyboard-focus tooltip, and active criteria promote the Filters icon to primary."
+        "Inside a named ds-table container narrower than 900px, the trigger becomes icon-only, exposes its visible label through a hover and keyboard-focus tooltip, and the Filters icon remains neutral with active criteria."
       ],
       "frameworkCaveats": {
         "customElements": [
@@ -122,8 +125,16 @@
           "resolvedType": "FilterMenuFilter[]",
           "default": "[]",
           "required": false,
+          "mutable": false
+        },
+        "hasBorder": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "has-border",
+          "default": "true",
+          "required": false,
           "mutable": false,
-          "description": "Product-owned filter categories and option definitions."
+          "description": "Show the trigger border."
         },
         "label": {
           "type": "string",
@@ -289,8 +300,16 @@
         "resolvedType": "FilterMenuFilter[]",
         "default": "[]",
         "required": false,
+        "mutable": false
+      },
+      "hasBorder": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "has-border",
+        "default": "true",
+        "required": false,
         "mutable": false,
-        "description": "Product-owned filter categories and option definitions."
+        "description": "Show the trigger border."
       },
       "label": {
         "type": "string",
@@ -464,7 +483,7 @@
     },
     {
       "path": "src/wc/components/TableFilter/TableFilter.tsx",
-      "content": "import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\nimport type {\n  FilterMenuChangeDetail,\n  FilterMenuFilter,\n  FilterMenuMatchModeChangeDetail,\n  FilterMenuMatchModes,\n  FilterMenuValues,\n} from '../FilterMenu/FilterMenu';\n\n@Component({\n  tag: 'ds-table-filter',\n  styleUrl: 'TableFilter.css',\n  scoped: true,\n})\nexport class TableFilter {\n  /** Controlled popup visibility. */\n  @Prop({ mutable: true }) open: boolean = false;\n  /** Product-owned filter categories and option definitions. */\n  @Prop() filters: FilterMenuFilter[] = [];\n  /** Controlled values keyed by filter id. */\n  @Prop() values: FilterMenuValues = {};\n  /** Controlled any/all match mode keyed by multiple-choice filter id. Defaults to any. */\n  @Prop() matchModes: FilterMenuMatchModes = {};\n  /** Controlled category shown in the option pane. */\n  @Prop() activeFilterId: string | undefined;\n  /** Visible trigger label. */\n  @Prop() label: string = 'Filter';\n  /** Accessible name for the trigger. Defaults to Filter table. */\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n  /** Accessible name for the non-modal filter dialog. Defaults to the trigger name. */\n  @Prop() menuLabel: string | null = null;\n  /** Accessible name for the category tab list. */\n  @Prop() categoriesLabel: string = 'Filter categories';\n  /** Footer action and date-clear accessible label. */\n  @Prop() clearLabel: string = 'Clear';\n  /** Placeholder shown in each non-date option search header. */\n  @Prop() searchPlaceholder: string = 'Search';\n  /** Empty-state text shown when an option search has no matches. */\n  @Prop() noResultsText: string = 'No results';\n\n  /** Requests a controlled value replacement without closing the popup. */\n  @Event() dsChange!: EventEmitter<FilterMenuChangeDetail>;\n  /** Requests that the consumer clear every filter value. */\n  @Event() dsClear!: EventEmitter<void>;\n  /** Requests a controlled any/all mode replacement for a multiple-choice filter. */\n  @Event() dsMatchModeChange!: EventEmitter<FilterMenuMatchModeChangeDetail>;\n  /** Requests a controlled active-category replacement. */\n  @Event() dsActiveFilterChange!: EventEmitter<string>;\n  /** Requests that the controlled popup close. */\n  @Event() dsClose!: EventEmitter<void>;\n  /** Emitted whenever trigger activation changes popup visibility. */\n  @Event() dsOpenChange!: EventEmitter<boolean>;\n  /** Emitted after exit motion and rendered popup removal complete. */\n  @Event() dsAfterClose!: EventEmitter<void>;\n\n  render() {\n    const name = this.ariaLabel?.trim() || 'Filter table';\n    const menuName = this.menuLabel?.trim() || name;\n\n    return (\n      <Host>\n        <ds-filter-menu\n          open={this.open}\n          triggerLabel={this.label}\n          showSelectedCount={false}\n          icon=\"Filters\"\n          size=\"md\"\n          width=\"hug\"\n          hasBorder={true}\n          activeFill={false}\n          collapseLabel={true}\n          align=\"start\"\n          aria-label={name}\n          filters={this.filters}\n          values={this.values}\n          matchModes={this.matchModes}\n          activeFilterId={this.activeFilterId}\n          menuLabel={menuName}\n          categoriesLabel={this.categoriesLabel}\n          clearLabel={this.clearLabel}\n          searchPlaceholder={this.searchPlaceholder}\n          noResultsText={this.noResultsText}\n          footerLayout=\"categories-clear\"\n          onDsChange={event => this.forward(event, this.dsChange)}\n          onDsClear={event => this.forward(event, this.dsClear)}\n          onDsMatchModeChange={event => this.forward(event, this.dsMatchModeChange)}\n          onDsActiveFilterChange={event => this.forward(event, this.dsActiveFilterChange)}\n          onDsClose={event => this.forward(event, this.dsClose)}\n          onDsOpenChange={event => {\n            event.stopPropagation();\n            this.open = event.detail;\n            this.dsOpenChange.emit(event.detail);\n          }}\n          onDsAfterClose={event => this.forward(event, this.dsAfterClose)}\n        />\n      </Host>\n    );\n  }\n\n  private forward<T>(event: CustomEvent<T>, emitter: EventEmitter<T>): void {\n    event.stopPropagation();\n    emitter.emit(event.detail);\n  }\n}\n",
+      "content": "import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\nimport type {\n  FilterMenuChangeDetail,\n  FilterMenuFilter,\n  FilterMenuMatchModeChangeDetail,\n  FilterMenuMatchModes,\n  FilterMenuValues,\n} from '../FilterMenu/FilterMenu';\n\n@Component({\n  tag: 'ds-table-filter',\n  styleUrl: 'TableFilter.css',\n  scoped: true,\n})\nexport class TableFilter {\n  /** Controlled popup visibility. */\n  @Prop({ mutable: true }) open: boolean = false;\n  /** Product-owned filter categories and option definitions. */\n  /** Show the trigger border. */\n  @Prop() hasBorder: boolean = true;\n  @Prop() filters: FilterMenuFilter[] = [];\n  /** Controlled values keyed by filter id. */\n  @Prop() values: FilterMenuValues = {};\n  /** Controlled any/all match mode keyed by multiple-choice filter id. Defaults to any. */\n  @Prop() matchModes: FilterMenuMatchModes = {};\n  /** Controlled category shown in the option pane. */\n  @Prop() activeFilterId: string | undefined;\n  /** Visible trigger label. */\n  @Prop() label: string = 'Filter';\n  /** Accessible name for the trigger. Defaults to Filter table. */\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n  /** Accessible name for the non-modal filter dialog. Defaults to the trigger name. */\n  @Prop() menuLabel: string | null = null;\n  /** Accessible name for the category tab list. */\n  @Prop() categoriesLabel: string = 'Filter categories';\n  /** Footer action and date-clear accessible label. */\n  @Prop() clearLabel: string = 'Clear';\n  /** Placeholder shown in each non-date option search header. */\n  @Prop() searchPlaceholder: string = 'Search';\n  /** Empty-state text shown when an option search has no matches. */\n  @Prop() noResultsText: string = 'No results';\n\n  /** Requests a controlled value replacement without closing the popup. */\n  @Event() dsChange!: EventEmitter<FilterMenuChangeDetail>;\n  /** Requests that the consumer clear every filter value. */\n  @Event() dsClear!: EventEmitter<void>;\n  /** Requests a controlled any/all mode replacement for a multiple-choice filter. */\n  @Event() dsMatchModeChange!: EventEmitter<FilterMenuMatchModeChangeDetail>;\n  /** Requests a controlled active-category replacement. */\n  @Event() dsActiveFilterChange!: EventEmitter<string>;\n  /** Requests that the controlled popup close. */\n  @Event() dsClose!: EventEmitter<void>;\n  /** Emitted whenever trigger activation changes popup visibility. */\n  @Event() dsOpenChange!: EventEmitter<boolean>;\n  /** Emitted after exit motion and rendered popup removal complete. */\n  @Event() dsAfterClose!: EventEmitter<void>;\n\n  render() {\n    const name = this.ariaLabel?.trim() || 'Filter table';\n    const menuName = this.menuLabel?.trim() || name;\n\n    return (\n      <Host>\n        <ds-filter-menu\n          neutralTrigger\n          open={this.open}\n          triggerLabel={this.label}\n          showSelectedCount={false}\n          showIndicator={false}\n          icon=\"Filters\"\n          size=\"md\"\n          width=\"hug\"\n          hasBorder={this.hasBorder}\n          activeFill={false}\n          collapseLabel={true}\n          align=\"start\"\n          aria-label={name}\n          filters={this.filters}\n          values={this.values}\n          matchModes={this.matchModes}\n          activeFilterId={this.activeFilterId}\n          menuLabel={menuName}\n          categoriesLabel={this.categoriesLabel}\n          clearLabel={this.clearLabel}\n          searchPlaceholder={this.searchPlaceholder}\n          noResultsText={this.noResultsText}\n          footerLayout=\"categories-clear\"\n          onDsChange={event => this.forward(event, this.dsChange)}\n          onDsClear={event => this.forward(event, this.dsClear)}\n          onDsMatchModeChange={event => this.forward(event, this.dsMatchModeChange)}\n          onDsActiveFilterChange={event => this.forward(event, this.dsActiveFilterChange)}\n          onDsClose={event => this.forward(event, this.dsClose)}\n          onDsOpenChange={event => {\n            event.stopPropagation();\n            this.open = event.detail;\n            this.dsOpenChange.emit(event.detail);\n          }}\n          onDsAfterClose={event => this.forward(event, this.dsAfterClose)}\n        />\n      </Host>\n    );\n  }\n\n  private forward<T>(event: CustomEvent<T>, emitter: EventEmitter<T>): void {\n    event.stopPropagation();\n    emitter.emit(event.detail);\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

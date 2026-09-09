@@ -1,0 +1,403 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "table-preferences",
+  "title": "TablePreferences",
+  "description": "Compact table preferences dialog with Filters, Sort, Group, and Customize tabs.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/table-preferences",
+    "source": "src/wc/components/TablePreferences/TablePreferences.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Compact table preferences dialog with Filters, Sort, Group, and Customize tabs.",
+      "useWhen": [
+        "A narrow table toolbar or a user preference calls for one result-shaping control."
+      ],
+      "avoidWhen": [
+        "The application needs unrelated actions or a submitted form."
+      ],
+      "states": [
+        "The application owns all filter, sort, grouping, and column configuration values. Apply emitted changes to the table and replace the matching preferences inputs.",
+        "The component owns popup visibility, active tab, positioning, and dismissal; embedded controls reuse the same content as their standalone popups.",
+        "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback."
+      ],
+      "accessibility": [
+        "An icon-only Preferences trigger opens a named dialog. TabGroup owns section keyboard navigation; Escape and outside activation dismiss, returning focus to the trigger."
+      ],
+      "responsiveBehavior": [
+        "The popup fits the viewport and scrolls internally. The application chooses whether to show it instead of separate controls. Hide the table-owned Customize trigger while retaining column customization."
+      ],
+      "patterns": [],
+      "commonlyComposedWith": [
+        "component:ds-table",
+        "component:ds-table-toolbar",
+        "component:ds-filter-menu",
+        "component:ds-menu",
+        "component:ds-table-group",
+        "component:ds-tab-group"
+      ]
+    },
+    "api": {
+      "props": {
+        "activeFilterId": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "active-filter-id",
+          "required": false,
+          "mutable": false
+        },
+        "columnOrder": {
+          "type": "string[]",
+          "resolvedType": "string[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false
+        },
+        "columns": {
+          "type": "TableColumn[]",
+          "resolvedType": "TableColumn[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false
+        },
+        "filters": {
+          "type": "FilterMenuFilter[]",
+          "resolvedType": "FilterMenuFilter[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false
+        },
+        "grouping": {
+          "type": "TableGroupingState | null",
+          "resolvedType": "TableGroupingState | null",
+          "default": "null",
+          "required": false,
+          "mutable": false
+        },
+        "groupingOptions": {
+          "type": "TableGroupOption[]",
+          "resolvedType": "TableGroupOption[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false
+        },
+        "hasBorder": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "has-border",
+          "default": "true",
+          "required": false,
+          "mutable": false,
+          "description": "Show the trigger border."
+        },
+        "hiddenColumnIds": {
+          "type": "string[]",
+          "resolvedType": "string[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false
+        },
+        "label": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "label",
+          "default": "'Table preferences'",
+          "required": false,
+          "mutable": false
+        },
+        "matchModes": {
+          "type": "FilterMenuMatchModes",
+          "resolvedType": "{ [x: string]: FilterMenuMatchMode | undefined; }",
+          "default": "{}",
+          "required": false,
+          "mutable": false
+        },
+        "sort": {
+          "type": "TableSortState | null",
+          "resolvedType": "TableSortState | null",
+          "default": "null",
+          "required": false,
+          "mutable": false
+        },
+        "values": {
+          "type": "FilterMenuValues",
+          "resolvedType": "{ [x: string]: FilterMenuValue | undefined; }",
+          "default": "{}",
+          "required": false,
+          "mutable": false
+        }
+      },
+      "events": [
+        {
+          "name": "dsActiveFilterChange",
+          "detail": "string",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsColumnsConfigChange",
+          "detail": "TableColumnsConfigChangeDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsFilterChange",
+          "detail": "FilterMenuChangeDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsFilterMatchModeChange",
+          "detail": "FilterMenuMatchModeChangeDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsFiltersClear",
+          "detail": "void",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsGroupChange",
+          "detail": "TableGroupingState",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsGroupClear",
+          "detail": "void",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsSortChange",
+          "detail": "TableSortChangeDetail",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "activeFilterId": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "active-filter-id",
+        "required": false,
+        "mutable": false
+      },
+      "columnOrder": {
+        "type": "string[]",
+        "resolvedType": "string[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false
+      },
+      "columns": {
+        "type": "TableColumn[]",
+        "resolvedType": "TableColumn[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false
+      },
+      "filters": {
+        "type": "FilterMenuFilter[]",
+        "resolvedType": "FilterMenuFilter[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false
+      },
+      "grouping": {
+        "type": "TableGroupingState | null",
+        "resolvedType": "TableGroupingState | null",
+        "default": "null",
+        "required": false,
+        "mutable": false
+      },
+      "groupingOptions": {
+        "type": "TableGroupOption[]",
+        "resolvedType": "TableGroupOption[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false
+      },
+      "hasBorder": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "has-border",
+        "default": "true",
+        "required": false,
+        "mutable": false,
+        "description": "Show the trigger border."
+      },
+      "hiddenColumnIds": {
+        "type": "string[]",
+        "resolvedType": "string[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false
+      },
+      "label": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "label",
+        "default": "'Table preferences'",
+        "required": false,
+        "mutable": false
+      },
+      "matchModes": {
+        "type": "FilterMenuMatchModes",
+        "resolvedType": "{ [x: string]: FilterMenuMatchMode | undefined; }",
+        "default": "{}",
+        "required": false,
+        "mutable": false
+      },
+      "sort": {
+        "type": "TableSortState | null",
+        "resolvedType": "TableSortState | null",
+        "default": "null",
+        "required": false,
+        "mutable": false
+      },
+      "values": {
+        "type": "FilterMenuValues",
+        "resolvedType": "{ [x: string]: FilterMenuValue | undefined; }",
+        "default": "{}",
+        "required": false,
+        "mutable": false
+      }
+    },
+    "events": [
+      {
+        "name": "dsActiveFilterChange",
+        "detail": "string",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsColumnsConfigChange",
+        "detail": "TableColumnsConfigChangeDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsFilterChange",
+        "detail": "FilterMenuChangeDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsFilterMatchModeChange",
+        "detail": "FilterMenuMatchModeChangeDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsFiltersClear",
+        "detail": "void",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsGroupChange",
+        "detail": "TableGroupingState",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsGroupClear",
+        "detail": "void",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsSortChange",
+        "detail": "TableSortChangeDetail",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-table-preferences",
+      "react": "DsTablePreferences",
+      "vue": "DsTablePreferences",
+      "angular": "DsTablePreferences"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-table-preferences.js';",
+        "example": "<ds-table-preferences></ds-table-preferences>"
+      },
+      "react": {
+        "import": "import { DsTablePreferences } from '@ds-mo/ui/react';",
+        "example": "<DsTablePreferences />"
+      },
+      "vue": {
+        "import": "import { DsTablePreferences } from '@ds-mo/ui/vue';",
+        "example": "<DsTablePreferences />"
+      },
+      "angular": {
+        "import": "import { DsTablePreferences } from '@ds-mo/ui/angular/ds-table-preferences';",
+        "example": "<ds-table-preferences></ds-table-preferences>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: columnOrder, columns, filters, grouping, groupingOptions, hiddenColumnIds, matchModes, sort, values.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.5.1",
+          "@ds-mo/icons ^7.0.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "button-unfilled",
+    "filter-menu",
+    "menu",
+    "tab-group",
+    "table-group",
+    "tooltip"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/TablePreferences/TablePreferences.css",
+      "content": "@import '../../utils/radius.css';\n\n:host {\n  display: inline-flex;\n}\n\n.table-preferences {\n  position: fixed;\n  margin: 0;\n  padding: 0;\n  border: 0;\n  border-radius: var(--ds-radius-menu);\n  width: min(var(--dimension-menu-width-lg), calc(100vw - var(--dimension-space-200)));\n  max-height: calc(100dvh - var(--dimension-space-400));\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n  background: var(--color-background-primary);\n  color: var(--color-foreground-secondary);\n  box-shadow: var(--effect-shadow-elevated-floating);\n}\n\n.table-preferences::after {\n  content: '';\n  position: absolute;\n  inset: 0;\n  border-radius: inherit;\n  box-shadow: var(--effect-highlight-elevated-floating);\n  pointer-events: none;\n  z-index: 4;\n}\n\n.table-preferences__tabs {\n  display: flex;\n  align-items: center;\n  justify-content: flex-start;\n  box-sizing: border-box;\n  flex: 0 0 var(--dimension-size-500);\n  min-block-size: var(--dimension-size-500);\n  padding: var(--dimension-space-050);\n  background: var(--color-background-primary);\n  border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);\n}\n\n.table-preferences__body {\n  min-height: 0;\n  overflow: auto;\n  overscroll-behavior: contain;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/TablePreferences/TablePreferences.tsx",
+      "content": "import {\n  Component,\n  Element,\n  Event,\n  EventEmitter,\n  h,\n  Host,\n  Listen,\n  Prop,\n  State,\n} from '@stencil/core';\nimport type {\n  FilterMenuFilter,\n  FilterMenuValues,\n  FilterMenuMatchModes,\n  FilterMenuChangeDetail,\n  FilterMenuMatchModeChangeDetail,\n} from '../FilterMenu/FilterMenu';\nimport type {\n  TableColumn,\n  TableSortState,\n  TableSortChangeDetail,\n  TableGroupingState,\n  TableColumnsConfigChangeDetail,\n} from '../Table/table-types';\nimport type { TableGroupOption } from '../TableGroup/TableGroup';\nimport {\n  tableSortMenuSections,\n  nextTableSortStateFromMenuItem,\n} from '../TableSort/table-sort-menu';\nimport {\n  tableColumnCustomizerMenuItems,\n  toggleTableColumnHidden,\n  resolveTableColumnOrder,\n} from '../Table/table-column-customizer';\nimport { AnchoredPositionController } from '../../utils/anchored-position-controller';\nimport { AnchoredOverlayInteractionController } from '../../utils/anchored-overlay-interaction-controller';\nimport { resolveCssLengthPx } from '../../utils/resolve-css-length-px';\nimport { TOKEN_DEFAULTS } from '../../utils/token-defaults';\n\ntype PreferencesTab = 'filters' | 'sort' | 'group' | 'customize';\nlet preferencesSequence = 0;\n\n@Component({ tag: 'ds-table-preferences', styleUrl: 'TablePreferences.css', scoped: true })\nexport class TablePreferences {\n  @Element() el!: HTMLElement;\n  /** Show the trigger border. */\n  @Prop() hasBorder: boolean = true;\n  @Prop() filters: FilterMenuFilter[] = [];\n  @Prop() values: FilterMenuValues = {};\n  @Prop() matchModes: FilterMenuMatchModes = {};\n  @Prop() activeFilterId: string | undefined;\n  @Prop() columns: TableColumn[] = [];\n  @Prop() sort: TableSortState | null = null;\n  @Prop() groupingOptions: TableGroupOption[] = [];\n  @Prop() grouping: TableGroupingState | null = null;\n  @Prop() hiddenColumnIds: string[] = [];\n  @Prop() columnOrder: string[] = [];\n  @Prop() label = 'Table preferences';\n  @Event() dsFilterChange!: EventEmitter<FilterMenuChangeDetail>;\n  @Event() dsFilterMatchModeChange!: EventEmitter<FilterMenuMatchModeChangeDetail>;\n  @Event() dsActiveFilterChange!: EventEmitter<string>;\n  @Event() dsFiltersClear!: EventEmitter<void>;\n  @Event() dsSortChange!: EventEmitter<TableSortChangeDetail>;\n  @Event() dsGroupChange!: EventEmitter<TableGroupingState>;\n  @Event() dsGroupClear!: EventEmitter<void>;\n  @Event() dsColumnsConfigChange!: EventEmitter<TableColumnsConfigChangeDetail>;\n  @State() private open = false;\n  @State() private tab: PreferencesTab = 'filters';\n  @State() private pos = { x: 0, y: 0 };\n  @State() private ready = false;\n  private readonly popupId = `ds-table-preferences-${++preferencesSequence}`;\n  private trigger?: HTMLDsButtonUnfilledElement;\n  private popup?: HTMLElement;\n  private readonly position = new AnchoredPositionController({\n    getAnchor: () => this.trigger ?? null,\n    getPopup: () => this.popup ?? null,\n    getOwnerDocument: () => this.el.ownerDocument,\n    measure: (anchor, popup) => ({\n      anchorRect: anchor.getBoundingClientRect(),\n      popupWidth: popup.offsetWidth,\n      popupHeight: popup.offsetHeight,\n      side: 'bottom',\n      align: 'end',\n      sideOffsetPx: resolveCssLengthPx(TOKEN_DEFAULTS.space050, 4),\n      alignOffsetPx: 0,\n      viewportPadPx: resolveCssLengthPx(TOKEN_DEFAULTS.space100, 8),\n      viewportWidth: window.innerWidth,\n      viewportHeight: window.innerHeight,\n    }),\n    apply: ({ x, y }) => {\n      this.pos = { x, y };\n    },\n    onReady: () => {\n      this.ready = true;\n    },\n    topLayer: true,\n    observeResize: true,\n    observeAnchorMotion: true,\n    liveUpdate: 'double-frame',\n  });\n  private readonly interaction = new AnchoredOverlayInteractionController({\n    getAnchor: () => this.trigger ?? null,\n    getPopup: () => this.popup ?? null,\n    getOwnerDocument: () => this.el.ownerDocument,\n    onOutsideActivation: () => this.close(),\n  });\n  disconnectedCallback() {\n    this.position.unobserve();\n    this.interaction.disconnect();\n  }\n  private close() {\n    this.position.unobserve();\n    this.interaction.disconnect();\n    if (this.popup?.matches(':popover-open')) this.popup.hidePopover();\n    this.open = false;\n    void this.trigger?.setFocus();\n  }\n  private toggle() {\n    if (this.open) {\n      this.close();\n      return;\n    }\n    this.open = true;\n    this.ready = false;\n    this.position.observe();\n    this.interaction.connect();\n    this.position.schedule(async () => {\n      await this.popup?.querySelector('ds-tab-group')?.componentOnReady?.();\n      requestAnimationFrame(() => {\n        if (this.open)\n          this.popup?.querySelector<HTMLElement>('[role=\"tab\"][aria-selected=\"true\"]')?.focus();\n      });\n    });\n  }\n  @Listen('keydown')\n  onKeydown(event: KeyboardEvent) {\n    if (!this.open || event.defaultPrevented) return;\n    if (event.key === 'Escape') {\n      event.preventDefault();\n      event.stopPropagation();\n      this.close();\n    } else if (event.key === 'Tab' && this.interaction.tabLeavesPopup(event)) {\n      event.preventDefault();\n      this.close();\n      this.interaction.moveFocusAfterTab(event.shiftKey);\n    }\n  }\n  private forward<T>(event: CustomEvent<T>, emitter: EventEmitter<T>) {\n    event.stopPropagation();\n    emitter.emit(event.detail);\n  }\n  render() {\n    const tabs = ['filters', 'sort', 'group', 'customize'].map(id => ({\n      id,\n      label: id === 'filters' ? 'Filters' : id[0].toUpperCase() + id.slice(1),\n      panelId: `${this.popupId}-${id}`,\n    }));\n    return (\n      <Host>\n        <ds-tooltip label={this.label} side=\"bottom\" size=\"sm\">\n          <ds-button-unfilled\n            hasBorder={this.hasBorder}\n            ref={el => {\n              this.trigger = el;\n            }}\n            variant=\"icon\"\n            icon=\"Preferences\"\n            size=\"md\"\n            ariaLabel={this.label}\n            haspopup=\"dialog\"\n            expanded={this.open}\n            surfaceOpen={this.open}\n            controls={this.popupId}\n            onDsClick={() => this.toggle()}\n          />\n        </ds-tooltip>\n        {this.open && (\n          <div\n            ref={el => {\n              this.popup = el;\n            }}\n            id={this.popupId}\n            popover=\"manual\"\n            role=\"dialog\"\n            aria-label={this.label}\n            class=\"table-preferences\"\n            style={{\n              left: `${this.pos.x}px`,\n              top: `${this.pos.y}px`,\n              visibility: this.ready ? 'visible' : 'hidden',\n            }}\n          >\n            <div class=\"table-preferences__tabs\">\n              <ds-tab-group\n                ariaLabel=\"Table preference sections\"\n                size=\"md\"\n                presentation=\"tabs\"\n                width=\"hug\"\n                tabs={tabs}\n                value={this.tab}\n                onDsChange={event => {\n                  event.stopPropagation();\n                  this.tab = event.detail as PreferencesTab;\n                }}\n              />\n            </div>\n            <div\n              class=\"table-preferences__body\"\n              id={`${this.popupId}-${this.tab}`}\n              role=\"tabpanel\"\n              aria-label={tabs.find(tab => tab.id === this.tab)?.label}\n            >\n              {this.tab === 'filters' && (\n                <ds-filter-menu\n                  embedded\n                  filters={this.filters}\n                  values={this.values}\n                  matchModes={this.matchModes}\n                  activeFilterId={this.activeFilterId}\n                  footerLayout=\"categories-clear\"\n                  onDsChange={e => this.forward(e, this.dsFilterChange)}\n                  onDsMatchModeChange={e => this.forward(e, this.dsFilterMatchModeChange)}\n                  onDsActiveFilterChange={e => this.forward(e, this.dsActiveFilterChange)}\n                  onDsClear={e => this.forward(e, this.dsFiltersClear)}\n                />\n              )}\n              {this.tab === 'sort' && (\n                <ds-menu\n                  embedded\n                  menuLabel=\"Sort table\"\n                  sections={tableSortMenuSections(this.columns, this.sort)}\n                  onDsSelect={e => {\n                    e.stopPropagation();\n                    this.dsSortChange.emit({\n                      sort: nextTableSortStateFromMenuItem(this.columns, this.sort, e.detail),\n                    });\n                  }}\n                />\n              )}\n              {this.tab === 'group' && (\n                <ds-table-group\n                  embedded\n                  options={this.groupingOptions}\n                  grouping={this.grouping}\n                  onDsGroupChange={e => this.forward(e, this.dsGroupChange)}\n                  onDsClear={e => this.forward(e, this.dsGroupClear)}\n                />\n              )}\n              {this.tab === 'customize' && (\n                <ds-menu\n                  embedded\n                  menuLabel=\"Customize table\"\n                  items={tableColumnCustomizerMenuItems(\n                    this.columns,\n                    this.hiddenColumnIds,\n                    this.columnOrder\n                  )}\n                  onDsSelect={e => {\n                    e.stopPropagation();\n                    if (!e.detail.value || e.detail.isInactive) return;\n                    this.dsColumnsConfigChange.emit({\n                      hiddenColumnIds: toggleTableColumnHidden(\n                        this.columns,\n                        this.hiddenColumnIds,\n                        e.detail.value\n                      ),\n                      columnOrder: resolveTableColumnOrder(this.columns, this.columnOrder),\n                    });\n                  }}\n                  onDsReorder={e => {\n                    e.stopPropagation();\n                    this.dsColumnsConfigChange.emit({\n                      hiddenColumnIds: this.hiddenColumnIds,\n                      columnOrder: e.detail.items\n                        .filter(item => item.reorderable)\n                        .map(item => item.value!)\n                        .filter(Boolean),\n                    });\n                  }}\n                />\n              )}\n            </div>\n          </div>\n        )}\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

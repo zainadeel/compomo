@@ -191,7 +191,7 @@ test('keeps the Customize control neutral when columns are customized at typical
   expect(colors.button).toBe(colors.secondary);
   expect(colors.icon).toBe(colors.secondary);
   expect(colors.label).toBe(colors.secondary);
-  expect(colors.chevron).toBe(colors.secondary);
+  expect(colors.chevron).toBeNull();
 });
 
 test('uses an icon-only neutral Customize control below 900px when customized', async ({
@@ -241,9 +241,7 @@ test('uses an icon-only neutral Customize control below 900px when customized', 
   expect(colors.icon).toBe(colors.secondary);
 });
 
-test('keeps labeled Filter, Group, and Sort chrome at typical width and promotes only the label when active', async ({
-  page,
-}) => {
+test('keeps table filter trigger colors neutral at typical width', async ({ page }) => {
   const table = page.locator('#column-customizer');
   const filter = table.getByRole('combobox', { name: 'Filter fleet' });
   const group = table.getByRole('combobox', { name: 'Group fleet' });
@@ -253,12 +251,12 @@ test('keeps labeled Filter, Group, and Sort chrome at typical width and promotes
   await expect(group).toContainText('Group');
   await expect(sort).toContainText('Sort');
   await expect(filter.locator('.trigger__label-box')).toBeVisible();
-  await expect(filter.locator('.trigger__chevron')).toBeVisible();
+  await expect(filter.locator('.trigger__chevron')).toHaveCount(0);
   await expect(group.locator('.trigger__label-box')).toBeVisible();
   await expect(group.locator('.trigger__chevron')).toBeVisible();
   await expect(sort.locator('.ds-button__label')).toBeVisible();
   await expect(sort.locator('.ds-button__label')).toHaveJSProperty('emphasis', false);
-  await expect(sort.locator('.ds-button__chevron')).toBeVisible();
+  await expect(sort.locator('.ds-button__chevron')).toHaveCount(0);
   await expect(sort.locator('xpath=ancestor::ds-button-unfilled[1]')).toHaveJSProperty(
     'pressScale',
     false
@@ -303,7 +301,7 @@ test('keeps labeled Filter, Group, and Sort chrome at typical width and promotes
     .poll(() =>
       filter.evaluate(element => {
         const probe = document.createElement('span');
-        probe.style.color = 'var(--color-foreground-primary)';
+        probe.style.color = 'var(--color-foreground-secondary)';
         document.body.append(probe);
         const primary = getComputedStyle(probe).color;
         probe.remove();
@@ -312,7 +310,7 @@ test('keeps labeled Filter, Group, and Sort chrome at typical width and promotes
       })
     )
     .toBe(true);
-  expect(colors.chevron).toBe(colors.secondary);
+  expect(colors.chevron).toBeNull();
 
   const groupColors = await group.evaluate(element => {
     const tokenColor = (token: string) => {
@@ -372,7 +370,7 @@ test('keeps labeled Filter, Group, and Sort chrome at typical width and promotes
   });
   expect(sortColors.icon).toBe(sortColors.secondary);
   expect(sortColors.label).toBe(sortColors.secondary);
-  expect(sortColors.chevron).toBe(sortColors.secondary);
+  expect(sortColors.chevron).toBeNull();
 });
 
 test('reports table filter intent from the dedicated host without mutating controlled values', async ({
@@ -915,10 +913,10 @@ test('uses icon-only Filter, Group, and Sort below 900px and promotes the icon w
     const prefix = element.querySelector('.trigger__prefix');
     return {
       prefix: prefix ? getComputedStyle(prefix).color : null,
-      primary: tokenColor('--color-foreground-primary'),
+      secondary: tokenColor('--color-foreground-secondary'),
     };
   });
-  expect(filterColors.prefix).toBe(filterColors.primary);
+  expect(filterColors.prefix).toBe(filterColors.secondary);
 
   const groupColors = await group.evaluate(element => {
     const tokenColor = (token: string) => {
@@ -1009,7 +1007,7 @@ test('keeps the bounded table surface within its host while the complete caption
   );
 
   await table.evaluate(element => {
-    (element as HTMLElement).style.inlineSize = '320px';
+    (element as HTMLElement).style.inlineSize = '280px';
   });
   await expect
     .poll(() => caption.evaluate(element => element.scrollWidth > element.clientWidth))
@@ -1306,8 +1304,16 @@ test('lays out application-owned table controls in start and spanning middle gro
   expect(layout.startBeforeLeading).toBe(true);
   expect(layout.startControlInCluster).toBe(true);
   expect(layout.startClusterWidth).toBeCloseTo(layout.startControlWidth, 0);
-  expect(layout.dividerVisible).toBe(true);
-  expect(layout.dividerHeight).toBe(32);
+  expect(layout.dividerVisible).toBe(false);
+  await toolbar.evaluate((element: HTMLDsTableToolbarElement) => {
+    element.borderless = true;
+    const search = document.createElement('div');
+    search.slot = 'search';
+    search.textContent = 'Search';
+    element.append(search);
+  });
+  await expect(toolbar.locator('.table-toolbar__rule:visible')).toHaveCount(2);
+  await expect(toolbar.locator('.table-toolbar__rule:visible').first()).toHaveCSS('height', '20px');
 
   const probe = await toolbar.evaluate(element => {
     const control = document.createElement('ds-button-unfilled') as HTMLElement & {
@@ -1488,4 +1494,65 @@ test('owns controlled saved-view selection, naming validation, and mutation inte
       { type: 'rename', viewId: 'attention', name: 'Needs review' },
       { type: 'remove', viewId: 'west' },
     ]);
+});
+
+test('shows an icon-only saved views trigger in compact mode', async ({ page }) => {
+  const control = page.locator('#saved-views');
+  const trigger = control.getByRole('combobox', { name: 'Saved views' });
+  await expect(trigger.locator('.trigger__prefix ds-icon')).toBeVisible();
+  await expect(trigger.locator('.trigger__prefix ds-icon')).toHaveJSProperty('name', 'ViewMenu');
+  await control.evaluate((el: HTMLDsTableSavedViewsElement) => {
+    el.compact = true;
+  });
+  await expect(trigger.locator('.trigger__chevron')).toHaveCount(0);
+  await expect(trigger).not.toContainText('Needs attention');
+  await expect
+    .poll(() =>
+      trigger.evaluate(
+        el =>
+          getComputedStyle(el.querySelector('.trigger__prefix')!).color ===
+          getComputedStyle(el).color
+      )
+    )
+    .toBe(true);
+  await control.evaluate((el: HTMLDsTableSavedViewsElement) => {
+    el.value = '__default__';
+  });
+  await expect
+    .poll(() =>
+      trigger.evaluate(el => {
+        const icon = el.querySelector('.trigger__prefix')!;
+        return getComputedStyle(icon).color === getComputedStyle(el).color;
+      })
+    )
+    .toBe(true);
+  const bounds = await trigger.boundingBox();
+  expect(bounds!.width).toBeCloseTo(bounds!.height, 0);
+  await trigger.click();
+  await expect(page.getByRole('button', { name: 'New view' })).toBeVisible();
+});
+
+test('removes the search border in borderless mode while retaining focus feedback', async ({
+  page,
+}) => {
+  await page.evaluate(async () => {
+    const modulePath = '/dist/components/ds-table-search.js';
+    await import(modulePath);
+    const search = document.createElement('ds-table-search');
+    search.id = 'borderless-search';
+    search.hasBorder = false;
+    document.body.prepend(search);
+  });
+  const control = page.locator('#borderless-search .table-search__control');
+  await expect(control).toHaveCSS('--ds-interaction-border-width', '0px');
+  await page.locator('#borderless-search input').focus();
+  await expect(control).not.toHaveCSS('--ds-interaction-border-width', '0px');
+});
+
+test('omits trailing chevrons from table toolbar triggers', async ({ page }) => {
+  for (const selector of ['#saved-views', 'ds-table-filter', 'ds-table-sort', 'ds-table-group']) {
+    const control = page.locator(selector).first();
+    await expect(control).toBeVisible();
+    await expect(control.locator('.trigger__chevron, .ds-button__chevron')).toHaveCount(0);
+  }
 });

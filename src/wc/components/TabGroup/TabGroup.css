@@ -248,3 +248,17 @@
   flex-shrink: 0;
   background-color: var(--_tab-group-divider);
 }
+
+:host(.tab-group-host--tabs) .tab-list {
+  gap: var(--dimension-space-050);
+  border-radius: 0;
+}
+
+:host(.tab-group-host--tabs) .tab {
+  border-radius: var(--ds-control-radius);
+}
+
+:host(.tab-group-host--tabs) .tab--selected {
+  background-color: transparent;
+  --ds-interaction-border-width: 0px;
+}

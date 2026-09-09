@@ -72,6 +72,7 @@ import { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./c
 import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableColumnsConfigChangeDetail, TableDataMode, TableDataModeChangeDetail, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 import { FilterMenuChangeDetail as FilterMenuChangeDetail1, FilterMenuFilter as FilterMenuFilter1, FilterMenuMatchModeChangeDetail as FilterMenuMatchModeChangeDetail1, FilterMenuMatchModes as FilterMenuMatchModes1, FilterMenuValues as FilterMenuValues1 } from "./components/FilterMenu/FilterMenu";
 import { TableGroupOption } from "./components/TableGroup/TableGroup";
+import { TableGroupOption as TableGroupOption1 } from "./components/TableGroup/TableGroup";
 import { TableSavedView, TableSavedViewChangeDetail, TableSavedViewCreateDetail, TableSavedViewDiscardDetail, TableSavedViewRemoveDetail, TableSavedViewRenameDetail, TableSavedViewSaveDetail } from "./components/TableSavedViews/table-saved-views-types";
 import { TableSearchFieldsChangeDetail } from "./components/TableSearch/table-search-types";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
@@ -147,6 +148,7 @@ export { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./c
 export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableColumnsConfigChangeDetail, TableDataMode, TableDataModeChangeDetail, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
 export { FilterMenuChangeDetail as FilterMenuChangeDetail1, FilterMenuFilter as FilterMenuFilter1, FilterMenuMatchModeChangeDetail as FilterMenuMatchModeChangeDetail1, FilterMenuMatchModes as FilterMenuMatchModes1, FilterMenuValues as FilterMenuValues1 } from "./components/FilterMenu/FilterMenu";
 export { TableGroupOption } from "./components/TableGroup/TableGroup";
+export { TableGroupOption as TableGroupOption1 } from "./components/TableGroup/TableGroup";
 export { TableSavedView, TableSavedViewChangeDetail, TableSavedViewCreateDetail, TableSavedViewDiscardDetail, TableSavedViewRemoveDetail, TableSavedViewRenameDetail, TableSavedViewSaveDetail } from "./components/TableSavedViews/table-saved-views-types";
 export { TableSearchFieldsChangeDetail } from "./components/TableSearch/table-search-types";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
@@ -1410,7 +1412,6 @@ export namespace Components {
     }
     interface DsFilterMenu {
         /**
-          * Show selected interaction fill when one or more criteria are active.
           * @default false
          */
         "activeFill": boolean;
@@ -1461,6 +1462,11 @@ export namespace Components {
          */
         "collapseLabel": boolean;
         /**
+          * Render content inside a parent-owned surface; the parent owns dismissal and positioning.
+          * @default false
+         */
+        "embedded": boolean;
+        /**
           * Product-owned filter categories and option definitions.
           * @default []
          */
@@ -1471,7 +1477,6 @@ export namespace Components {
          */
         "footerLayout": FilterMenuFooterLayout;
         /**
-          * Show the surface-aware inset border around the select trigger.
           * @default true
          */
         "hasBorder": boolean;
@@ -1505,12 +1510,16 @@ export namespace Components {
          */
         "menuWidth": string;
         /**
+          * Keep trigger colors neutral when a value is selected.
+          * @default false
+         */
+        "neutralTrigger": boolean;
+        /**
           * Empty-state text shown when an option search has no matches.
           * @default 'No results'
          */
         "noResultsText": string;
         /**
-          * Controlled popup visibility.
           * @default false
          */
         "open": boolean;
@@ -1519,6 +1528,11 @@ export namespace Components {
           * @default 'Search'
          */
         "searchPlaceholder": string;
+        /**
+          * Show the trigger chevron.
+          * @default true
+         */
+        "showIndicator": boolean;
         /**
           * Append the active-filter count to the visible trigger label.
           * @default true
@@ -1750,6 +1764,11 @@ export namespace Components {
           * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
          */
         "boundary": HTMLElement | undefined;
+        /**
+          * Render content inside a parent-owned surface; the parent owns dismissal and positioning.
+          * @default false
+         */
+        "embedded": boolean;
         /**
           * Informational message shown when there are no choices. Uses a non-modal dialog, not a fake menu item.
           * @default ''
@@ -2665,7 +2684,6 @@ export namespace Components {
     }
     interface DsSelect {
         /**
-          * Show the selected interaction fill when a valid value exists.
           * @default false
          */
         "activeFill": boolean;
@@ -2738,6 +2756,11 @@ export namespace Components {
          */
         "icon": string | undefined;
         /**
+          * Always show only the prefix icon; retain an accessible name via aria-label.
+          * @default false
+         */
+        "iconOnly": boolean;
+        /**
           * Trailing choice indicator. Use up-down for compact value steppers such as page size.
           * @default 'down'
          */
@@ -2770,6 +2793,11 @@ export namespace Components {
           * Native form field name.
          */
         "name": string | undefined;
+        /**
+          * Keep trigger colors neutral when a value is selected.
+          * @default false
+         */
+        "neutralTrigger": boolean;
         /**
           * Localized empty-filter result text.
           * @default 'No results found'
@@ -3273,10 +3301,14 @@ export namespace Components {
         "ariaLabelledby": string | undefined;
         "background": TabBackground | undefined;
         /**
-          * Show the segmented control's outer background, border, and inset.
           * @default true
          */
         "hasContainer": boolean;
+        /**
+          * Show the segmented control's outer background, border, and inset.
+          * @default 'segmented'
+         */
+        "presentation": 'segmented' | 'tabs';
         /**
           * Control density: 24px small, 32px medium, or 40px large track.
           * @default 'md'
@@ -3301,6 +3333,11 @@ export namespace Components {
           * Required accessible table name, retained as a native caption.
          */
         "caption": string;
+        /**
+          * Remove borders from table-owned caption controls.
+          * @default false
+         */
+        "captionControlsBorderless": boolean;
         /**
           * Shows a matching presentational title bar above the native table frame.
           * @default 'hidden'
@@ -3439,6 +3476,10 @@ export namespace Components {
           * @default []
          */
         "hiddenColumnIds": string[];
+        /**
+          * @default false
+         */
+        "hideColumnCustomizerTrigger": boolean;
         /**
           * Optional TableSearch field identities that restrict which data-point tracks are highlighted.
           * @default []
@@ -3594,10 +3635,14 @@ export namespace Components {
          */
         "clearLabel": string;
         /**
-          * Product-owned filter categories and option definitions.
           * @default []
          */
         "filters": FilterMenuFilter1[];
+        /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder": boolean;
         /**
           * Visible trigger label.
           * @default 'Filter'
@@ -3646,6 +3691,10 @@ export namespace Components {
          */
         "clearLabel": string;
         /**
+          * @default false
+         */
+        "embedded": boolean;
+        /**
           * Empty message kept in the order pane until a grouping data point is selected.
           * @default 'Select a group to choose its order.'
          */
@@ -3656,17 +3705,74 @@ export namespace Components {
          */
         "grouping": TableGroupingState | null;
         /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder": boolean;
+        /**
           * Controlled popup visibility.
           * @default false
          */
         "open": boolean;
         /**
-          * Product-owned data points that may group the table.
           * @default []
          */
         "options": TableGroupOption[];
     }
+    interface DsTablePreferences {
+        "activeFilterId": string | undefined;
+        /**
+          * @default []
+         */
+        "columnOrder": string[];
+        /**
+          * @default []
+         */
+        "columns": TableColumn[];
+        /**
+          * @default []
+         */
+        "filters": FilterMenuFilter1[];
+        /**
+          * @default null
+         */
+        "grouping": TableGroupingState | null;
+        /**
+          * @default []
+         */
+        "groupingOptions": TableGroupOption1[];
+        /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder": boolean;
+        /**
+          * @default []
+         */
+        "hiddenColumnIds": string[];
+        /**
+          * @default 'Table preferences'
+         */
+        "label": string;
+        /**
+          * @default {}
+         */
+        "matchModes": FilterMenuMatchModes1;
+        /**
+          * @default null
+         */
+        "sort": TableSortState | null;
+        /**
+          * @default {}
+         */
+        "values": FilterMenuValues1;
+    }
     interface DsTableSavedViews {
+        /**
+          * Use an icon-only trigger in an explicitly compact toolbar.
+          * @default false
+         */
+        "compact": boolean;
         /**
           * Footer action label that opens the create-view dialog.
           * @default 'New view'
@@ -3688,6 +3794,11 @@ export namespace Components {
          */
         "dirty": boolean;
         /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder": boolean;
+        /**
           * Accessible name for the saved-views select.
           * @default 'Saved views'
          */
@@ -3703,7 +3814,6 @@ export namespace Components {
          */
         "value": string;
         /**
-          * Application-owned custom saved views. Assign arrays through the JavaScript property.
           * @default []
          */
         "views": TableSavedView[];
@@ -3726,6 +3836,11 @@ export namespace Components {
           * @default 'Choose search fields'
          */
         "fieldMenuLabel": string;
+        /**
+          * Show the resting field border; keyboard focus remains visible.
+          * @default true
+         */
+        "hasBorder": boolean;
         /**
           * @default false
          */
@@ -3753,10 +3868,14 @@ export namespace Components {
          */
         "ariaLabel": string | null;
         /**
-          * Catalog used to derive sortable fields, including compound header segments.
           * @default []
          */
         "columns": TableColumn[];
+        /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder": boolean;
         "setFocus": () => Promise<void>;
         /**
           * Controlled table sort. Header sorting and this menu share the same value.
@@ -3765,6 +3884,11 @@ export namespace Components {
         "sort": TableSortState | null;
     }
     interface DsTableToolbar {
+        /**
+          * Use separators between regions when composing borderless controls.
+          * @default false
+         */
+        "borderless": boolean;
         /**
           * Accessible name for the grouped table controls.
           * @default 'Table controls'
@@ -4344,6 +4468,10 @@ export interface DsTableFilterCustomEvent<T> extends CustomEvent<T> {
 export interface DsTableGroupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsTableGroupElement;
+}
+export interface DsTablePreferencesCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsTablePreferencesElement;
 }
 export interface DsTableSavedViewsCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -5498,6 +5626,30 @@ declare global {
         prototype: HTMLDsTableGroupElement;
         new (): HTMLDsTableGroupElement;
     };
+    interface HTMLDsTablePreferencesElementEventMap {
+        "dsFilterChange": FilterMenuChangeDetail1;
+        "dsFilterMatchModeChange": FilterMenuMatchModeChangeDetail1;
+        "dsActiveFilterChange": string;
+        "dsFiltersClear": void;
+        "dsSortChange": TableSortChangeDetail;
+        "dsGroupChange": TableGroupingState;
+        "dsGroupClear": void;
+        "dsColumnsConfigChange": TableColumnsConfigChangeDetail;
+    }
+    interface HTMLDsTablePreferencesElement extends Components.DsTablePreferences, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsTablePreferencesElementEventMap>(type: K, listener: (this: HTMLDsTablePreferencesElement, ev: DsTablePreferencesCustomEvent<HTMLDsTablePreferencesElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsTablePreferencesElementEventMap>(type: K, listener: (this: HTMLDsTablePreferencesElement, ev: DsTablePreferencesCustomEvent<HTMLDsTablePreferencesElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsTablePreferencesElement: {
+        prototype: HTMLDsTablePreferencesElement;
+        new (): HTMLDsTablePreferencesElement;
+    };
     interface HTMLDsTableSavedViewsElementEventMap {
         "dsViewChange": TableSavedViewChangeDetail;
         "dsViewCreate": TableSavedViewCreateDetail;
@@ -5732,6 +5884,7 @@ declare global {
         "ds-table": HTMLDsTableElement;
         "ds-table-filter": HTMLDsTableFilterElement;
         "ds-table-group": HTMLDsTableGroupElement;
+        "ds-table-preferences": HTMLDsTablePreferencesElement;
         "ds-table-saved-views": HTMLDsTableSavedViewsElement;
         "ds-table-search": HTMLDsTableSearchElement;
         "ds-table-sort": HTMLDsTableSortElement;
@@ -7117,7 +7270,6 @@ declare namespace LocalJSX {
     }
     interface DsFilterMenu {
         /**
-          * Show selected interaction fill when one or more criteria are active.
           * @default false
          */
         "activeFill"?: boolean;
@@ -7168,6 +7320,11 @@ declare namespace LocalJSX {
          */
         "collapseLabel"?: boolean;
         /**
+          * Render content inside a parent-owned surface; the parent owns dismissal and positioning.
+          * @default false
+         */
+        "embedded"?: boolean;
+        /**
           * Product-owned filter categories and option definitions.
           * @default []
          */
@@ -7178,7 +7335,6 @@ declare namespace LocalJSX {
          */
         "footerLayout"?: FilterMenuFooterLayout;
         /**
-          * Show the surface-aware inset border around the select trigger.
           * @default true
          */
         "hasBorder"?: boolean;
@@ -7211,6 +7367,11 @@ declare namespace LocalJSX {
           * @default TOKEN_CSS_LENGTHS.menuWidthLg
          */
         "menuWidth"?: string;
+        /**
+          * Keep trigger colors neutral when a value is selected.
+          * @default false
+         */
+        "neutralTrigger"?: boolean;
         /**
           * Empty-state text shown when an option search has no matches.
           * @default 'No results'
@@ -7245,7 +7406,6 @@ declare namespace LocalJSX {
          */
         "onDsOpenChange"?: (event: DsFilterMenuCustomEvent<boolean>) => void;
         /**
-          * Controlled popup visibility.
           * @default false
          */
         "open"?: boolean;
@@ -7254,6 +7414,11 @@ declare namespace LocalJSX {
           * @default 'Search'
          */
         "searchPlaceholder"?: string;
+        /**
+          * Show the trigger chevron.
+          * @default true
+         */
+        "showIndicator"?: boolean;
         /**
           * Append the active-filter count to the visible trigger label.
           * @default true
@@ -7486,6 +7651,11 @@ declare namespace LocalJSX {
           * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
          */
         "boundary"?: HTMLElement | undefined;
+        /**
+          * Render content inside a parent-owned surface; the parent owns dismissal and positioning.
+          * @default false
+         */
+        "embedded"?: boolean;
         /**
           * Informational message shown when there are no choices. Uses a non-modal dialog, not a fake menu item.
           * @default ''
@@ -8486,7 +8656,6 @@ declare namespace LocalJSX {
     }
     interface DsSelect {
         /**
-          * Show the selected interaction fill when a valid value exists.
           * @default false
          */
         "activeFill"?: boolean;
@@ -8563,6 +8732,11 @@ declare namespace LocalJSX {
          */
         "icon"?: string | undefined;
         /**
+          * Always show only the prefix icon; retain an accessible name via aria-label.
+          * @default false
+         */
+        "iconOnly"?: boolean;
+        /**
           * Trailing choice indicator. Use up-down for compact value steppers such as page size.
           * @default 'down'
          */
@@ -8595,6 +8769,11 @@ declare namespace LocalJSX {
           * Native form field name.
          */
         "name"?: string | undefined;
+        /**
+          * Keep trigger colors neutral when a value is selected.
+          * @default false
+         */
+        "neutralTrigger"?: boolean;
         /**
           * Localized empty-filter result text.
           * @default 'No results found'
@@ -9185,11 +9364,15 @@ declare namespace LocalJSX {
         "ariaLabelledby"?: string | undefined;
         "background"?: TabBackground | undefined;
         /**
-          * Show the segmented control's outer background, border, and inset.
           * @default true
          */
         "hasContainer"?: boolean;
         "onDsChange"?: (event: DsTabGroupCustomEvent<string>) => void;
+        /**
+          * Show the segmented control's outer background, border, and inset.
+          * @default 'segmented'
+         */
+        "presentation"?: 'segmented' | 'tabs';
         /**
           * Control density: 24px small, 32px medium, or 40px large track.
           * @default 'md'
@@ -9214,6 +9397,11 @@ declare namespace LocalJSX {
           * Required accessible table name, retained as a native caption.
          */
         "caption": string;
+        /**
+          * Remove borders from table-owned caption controls.
+          * @default false
+         */
+        "captionControlsBorderless"?: boolean;
         /**
           * Shows a matching presentational title bar above the native table frame.
           * @default 'hidden'
@@ -9352,6 +9540,10 @@ declare namespace LocalJSX {
           * @default []
          */
         "hiddenColumnIds"?: string[];
+        /**
+          * @default false
+         */
+        "hideColumnCustomizerTrigger"?: boolean;
         /**
           * Optional TableSearch field identities that restrict which data-point tracks are highlighted.
           * @default []
@@ -9513,10 +9705,14 @@ declare namespace LocalJSX {
          */
         "clearLabel"?: string;
         /**
-          * Product-owned filter categories and option definitions.
           * @default []
          */
         "filters"?: FilterMenuFilter1[];
+        /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder"?: boolean;
         /**
           * Visible trigger label.
           * @default 'Filter'
@@ -9593,6 +9789,10 @@ declare namespace LocalJSX {
          */
         "clearLabel"?: string;
         /**
+          * @default false
+         */
+        "embedded"?: boolean;
+        /**
           * Empty message kept in the order pane until a grouping data point is selected.
           * @default 'Select a group to choose its order.'
          */
@@ -9602,6 +9802,11 @@ declare namespace LocalJSX {
           * @default null
          */
         "grouping"?: TableGroupingState | null;
+        /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder"?: boolean;
         /**
           * Requests removal of the controlled grouping state.
          */
@@ -9620,12 +9825,72 @@ declare namespace LocalJSX {
          */
         "open"?: boolean;
         /**
-          * Product-owned data points that may group the table.
           * @default []
          */
         "options"?: TableGroupOption[];
     }
+    interface DsTablePreferences {
+        "activeFilterId"?: string | undefined;
+        /**
+          * @default []
+         */
+        "columnOrder"?: string[];
+        /**
+          * @default []
+         */
+        "columns"?: TableColumn[];
+        /**
+          * @default []
+         */
+        "filters"?: FilterMenuFilter1[];
+        /**
+          * @default null
+         */
+        "grouping"?: TableGroupingState | null;
+        /**
+          * @default []
+         */
+        "groupingOptions"?: TableGroupOption1[];
+        /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder"?: boolean;
+        /**
+          * @default []
+         */
+        "hiddenColumnIds"?: string[];
+        /**
+          * @default 'Table preferences'
+         */
+        "label"?: string;
+        /**
+          * @default {}
+         */
+        "matchModes"?: FilterMenuMatchModes1;
+        "onDsActiveFilterChange"?: (event: DsTablePreferencesCustomEvent<string>) => void;
+        "onDsColumnsConfigChange"?: (event: DsTablePreferencesCustomEvent<TableColumnsConfigChangeDetail>) => void;
+        "onDsFilterChange"?: (event: DsTablePreferencesCustomEvent<FilterMenuChangeDetail1>) => void;
+        "onDsFilterMatchModeChange"?: (event: DsTablePreferencesCustomEvent<FilterMenuMatchModeChangeDetail1>) => void;
+        "onDsFiltersClear"?: (event: DsTablePreferencesCustomEvent<void>) => void;
+        "onDsGroupChange"?: (event: DsTablePreferencesCustomEvent<TableGroupingState>) => void;
+        "onDsGroupClear"?: (event: DsTablePreferencesCustomEvent<void>) => void;
+        "onDsSortChange"?: (event: DsTablePreferencesCustomEvent<TableSortChangeDetail>) => void;
+        /**
+          * @default null
+         */
+        "sort"?: TableSortState | null;
+        /**
+          * @default {}
+         */
+        "values"?: FilterMenuValues1;
+    }
     interface DsTableSavedViews {
+        /**
+          * Use an icon-only trigger in an explicitly compact toolbar.
+          * @default false
+         */
+        "compact"?: boolean;
         /**
           * Footer action label that opens the create-view dialog.
           * @default 'New view'
@@ -9646,6 +9911,11 @@ declare namespace LocalJSX {
           * @default false
          */
         "dirty"?: boolean;
+        /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder"?: boolean;
         /**
           * Accessible name for the saved-views select.
           * @default 'Saved views'
@@ -9686,7 +9956,6 @@ declare namespace LocalJSX {
          */
         "value"?: string;
         /**
-          * Application-owned custom saved views. Assign arrays through the JavaScript property.
           * @default []
          */
         "views"?: TableSavedView[];
@@ -9709,6 +9978,11 @@ declare namespace LocalJSX {
           * @default 'Choose search fields'
          */
         "fieldMenuLabel"?: string;
+        /**
+          * Show the resting field border; keyboard focus remains visible.
+          * @default true
+         */
+        "hasBorder"?: boolean;
         /**
           * @default false
          */
@@ -9738,10 +10012,14 @@ declare namespace LocalJSX {
          */
         "ariaLabel"?: string | null;
         /**
-          * Catalog used to derive sortable fields, including compound header segments.
           * @default []
          */
         "columns"?: TableColumn[];
+        /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder"?: boolean;
         "onDsSortChange"?: (event: DsTableSortCustomEvent<TableSortChangeDetail>) => void;
         /**
           * Controlled table sort. Header sorting and this menu share the same value.
@@ -9750,6 +10028,11 @@ declare namespace LocalJSX {
         "sort"?: TableSortState | null;
     }
     interface DsTableToolbar {
+        /**
+          * Use separators between regions when composing borderless controls.
+          * @default false
+         */
+        "borderless"?: boolean;
         /**
           * Accessible name for the grouped table controls.
           * @default 'Table controls'
@@ -10424,13 +10707,16 @@ declare namespace LocalJSX {
         "errorMessage": string | undefined;
     }
     interface DsFilterMenuAttributes {
+        "embedded": boolean;
         "open": boolean;
         "triggerLabel": string;
         "showSelectedCount": boolean;
         "icon": string | undefined;
         "size": FilterMenuSize;
         "width": FilterMenuWidth;
+        "showIndicator": boolean;
         "hasBorder": boolean;
+        "neutralTrigger": boolean;
         "activeFill": boolean;
         "collapseLabel": boolean;
         "inputId": string | undefined;
@@ -10500,6 +10786,7 @@ declare namespace LocalJSX {
         "streaming": boolean;
     }
     interface DsMenuAttributes {
+        "embedded": boolean;
         "open": boolean;
         "size": MenuSize;
         "selectionMode": MenuSelectionMode;
@@ -10731,8 +11018,10 @@ declare namespace LocalJSX {
         "popupAlign": SelectPopupAlign;
         "isInactive": boolean;
         "isLoading": boolean;
+        "neutralTrigger": boolean;
         "activeFill": boolean;
         "collapseLabel": boolean;
+        "iconOnly": boolean;
         "hasBorder": boolean;
         "icon": string | undefined;
         "indicator": SelectIndicator;
@@ -10845,6 +11134,7 @@ declare namespace LocalJSX {
         "value": string;
         "size": TabGroupSize;
         "width": TabGroupWidth;
+        "presentation": 'segmented' | 'tabs';
         "hasContainer": boolean;
         "background": TabBackground | undefined;
         "ariaLabel": string | null;
@@ -10854,6 +11144,8 @@ declare namespace LocalJSX {
         "caption": string;
         "captionVisibility": TableCaptionVisibility;
         "columnCustomizer": boolean;
+        "captionControlsBorderless": boolean;
+        "hideColumnCustomizerTrigger": boolean;
         "displayedCount": number | undefined;
         "totalCount": number | undefined;
         "resultSummaryLabel": string;
@@ -10903,6 +11195,7 @@ declare namespace LocalJSX {
     }
     interface DsTableFilterAttributes {
         "open": boolean;
+        "hasBorder": boolean;
         "activeFilterId": string | undefined;
         "label": string;
         "ariaLabel": string | null;
@@ -10913,21 +11206,31 @@ declare namespace LocalJSX {
         "noResultsText": string;
     }
     interface DsTableGroupAttributes {
+        "hasBorder": boolean;
+        "embedded": boolean;
         "ariaLabel": string | null;
         "open": boolean;
         "emptyMessage": string;
         "clearLabel": string;
     }
+    interface DsTablePreferencesAttributes {
+        "hasBorder": boolean;
+        "activeFilterId": string | undefined;
+        "label": string;
+    }
     interface DsTableSavedViewsAttributes {
+        "hasBorder": boolean;
         "value": string;
         "dirty": boolean;
         "defaultViewId": string;
         "defaultViewLabel": string;
         "label": string;
         "triggerLabel": string;
+        "compact": boolean;
         "createLabel": string;
     }
     interface DsTableSearchAttributes {
+        "hasBorder": boolean;
         "value": string;
         "placeholder": string;
         "ariaLabel": string;
@@ -10936,10 +11239,12 @@ declare namespace LocalJSX {
         "isInactive": boolean;
     }
     interface DsTableSortAttributes {
+        "hasBorder": boolean;
         "ariaLabel": string | null;
     }
     interface DsTableToolbarAttributes {
         "label": string;
+        "borderless": boolean;
     }
     interface DsTagAttributes {
         "label": string;
@@ -11106,6 +11411,7 @@ declare namespace LocalJSX {
         "ds-table": Omit<DsTable, keyof DsTableAttributes> & { [K in keyof DsTable & keyof DsTableAttributes]?: DsTable[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `attr:${K}`]?: DsTableAttributes[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `prop:${K}`]?: DsTable[K] } & OneOf<"caption", DsTable["caption"], DsTableAttributes["caption"]>;
         "ds-table-filter": Omit<DsTableFilter, keyof DsTableFilterAttributes> & { [K in keyof DsTableFilter & keyof DsTableFilterAttributes]?: DsTableFilter[K] } & { [K in keyof DsTableFilter & keyof DsTableFilterAttributes as `attr:${K}`]?: DsTableFilterAttributes[K] } & { [K in keyof DsTableFilter & keyof DsTableFilterAttributes as `prop:${K}`]?: DsTableFilter[K] };
         "ds-table-group": Omit<DsTableGroup, keyof DsTableGroupAttributes> & { [K in keyof DsTableGroup & keyof DsTableGroupAttributes]?: DsTableGroup[K] } & { [K in keyof DsTableGroup & keyof DsTableGroupAttributes as `attr:${K}`]?: DsTableGroupAttributes[K] } & { [K in keyof DsTableGroup & keyof DsTableGroupAttributes as `prop:${K}`]?: DsTableGroup[K] };
+        "ds-table-preferences": Omit<DsTablePreferences, keyof DsTablePreferencesAttributes> & { [K in keyof DsTablePreferences & keyof DsTablePreferencesAttributes]?: DsTablePreferences[K] } & { [K in keyof DsTablePreferences & keyof DsTablePreferencesAttributes as `attr:${K}`]?: DsTablePreferencesAttributes[K] } & { [K in keyof DsTablePreferences & keyof DsTablePreferencesAttributes as `prop:${K}`]?: DsTablePreferences[K] };
         "ds-table-saved-views": Omit<DsTableSavedViews, keyof DsTableSavedViewsAttributes> & { [K in keyof DsTableSavedViews & keyof DsTableSavedViewsAttributes]?: DsTableSavedViews[K] } & { [K in keyof DsTableSavedViews & keyof DsTableSavedViewsAttributes as `attr:${K}`]?: DsTableSavedViewsAttributes[K] } & { [K in keyof DsTableSavedViews & keyof DsTableSavedViewsAttributes as `prop:${K}`]?: DsTableSavedViews[K] };
         "ds-table-search": Omit<DsTableSearch, keyof DsTableSearchAttributes> & { [K in keyof DsTableSearch & keyof DsTableSearchAttributes]?: DsTableSearch[K] } & { [K in keyof DsTableSearch & keyof DsTableSearchAttributes as `attr:${K}`]?: DsTableSearchAttributes[K] } & { [K in keyof DsTableSearch & keyof DsTableSearchAttributes as `prop:${K}`]?: DsTableSearch[K] };
         "ds-table-sort": Omit<DsTableSort, keyof DsTableSortAttributes> & { [K in keyof DsTableSort & keyof DsTableSortAttributes]?: DsTableSort[K] } & { [K in keyof DsTableSort & keyof DsTableSortAttributes as `attr:${K}`]?: DsTableSortAttributes[K] } & { [K in keyof DsTableSort & keyof DsTableSortAttributes as `prop:${K}`]?: DsTableSort[K] };
@@ -11211,6 +11517,7 @@ declare module "@stencil/core" {
             "ds-table": LocalJSX.IntrinsicElements["ds-table"] & JSXBase.HTMLAttributes<HTMLDsTableElement>;
             "ds-table-filter": LocalJSX.IntrinsicElements["ds-table-filter"] & JSXBase.HTMLAttributes<HTMLDsTableFilterElement>;
             "ds-table-group": LocalJSX.IntrinsicElements["ds-table-group"] & JSXBase.HTMLAttributes<HTMLDsTableGroupElement>;
+            "ds-table-preferences": LocalJSX.IntrinsicElements["ds-table-preferences"] & JSXBase.HTMLAttributes<HTMLDsTablePreferencesElement>;
             "ds-table-saved-views": LocalJSX.IntrinsicElements["ds-table-saved-views"] & JSXBase.HTMLAttributes<HTMLDsTableSavedViewsElement>;
             "ds-table-search": LocalJSX.IntrinsicElements["ds-table-search"] & JSXBase.HTMLAttributes<HTMLDsTableSearchElement>;
             "ds-table-sort": LocalJSX.IntrinsicElements["ds-table-sort"] & JSXBase.HTMLAttributes<HTMLDsTableSortElement>;

@@ -55,6 +55,10 @@ export class TableGroup {
   @Element() private el!: HTMLElement;
 
   /** Product-owned data points that may group the table. */
+  /** Render content inside a parent-owned surface; the parent owns dismissal and positioning. */
+  /** Show the trigger border. */
+  @Prop() hasBorder: boolean = true;
+  @Prop() embedded: boolean = false;
   @Prop() options: TableGroupOption[] = [];
   /** Controlled grouping field and the order of its group sections. */
   @Prop() grouping: TableGroupingState | null = null;
@@ -142,6 +146,7 @@ export class TableGroup {
 
   @Watch('open')
   onOpenChange(isOpen: boolean) {
+    if (this.embedded) return;
     if (isOpen) {
       this.teardown();
       this.shouldRender = true;
@@ -168,7 +173,8 @@ export class TableGroup {
 
   @Listen('keydown')
   handleKeyDown(event: KeyboardEvent) {
-    if (!this.shouldRender || this.closing) return;
+    if (this.embedded && (event.key === 'Escape' || event.key === 'Tab')) return;
+    if ((!this.shouldRender && !this.embedded) || this.closing) return;
     if (event.key === 'Escape') {
       event.preventDefault();
       this.close();
@@ -393,8 +399,9 @@ export class TableGroup {
 
     return (
       <Host hidden={this.options.length === 0 ? true : undefined}>
-        {this.options.length ? (
+        {this.options.length && !this.embedded ? (
           <ds-button-unfilled
+            hasBorder={this.hasBorder}
             ref={element => {
               this.triggerElement = (element as HTMLElement) ?? null;
             }}
@@ -406,7 +413,7 @@ export class TableGroup {
             labelEmphasis={false}
             pressScale={false}
             aria-label={name}
-            hasMenu={true}
+            haspopup="dialog"
             collapseLabel={true}
             expanded={this.open}
             surfaceOpen={this.open || this.closing}
@@ -415,16 +422,17 @@ export class TableGroup {
           />
         ) : null}
 
-        {this.shouldRender ? (
+        {this.shouldRender || this.embedded ? (
           <div
             id={this.popupId}
-            popover="manual"
+            popover={this.embedded ? undefined : 'manual'}
             class={{
               'table-group-popup': true,
-              'ds-choice-popup': true,
+              'ds-choice-popup': !this.embedded,
+              'table-preferences-embedded': this.embedded,
               'ds-choice-popup--closing': this.closing,
             }}
-            style={popupStyle}
+            style={this.embedded ? undefined : popupStyle}
             role="dialog"
             aria-label={name}
           >
