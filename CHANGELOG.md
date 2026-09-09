@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.32.1](https://github.com/zainadeel/compomo/compare/v14.32.0...v14.32.1) (2026-09-09)
+
+
+### Fixed
+
+* **table:** refine menu and cell presentation ([#589](https://github.com/zainadeel/compomo/issues/589)) ([9d515e9](https://github.com/zainadeel/compomo/commit/9d515e99a75ea15ea97ce740a465b00ea1748ee0))
+
 ## [14.32.0](https://github.com/zainadeel/compomo/compare/v14.31.3...v14.32.0) (2026-09-08)
 
 
