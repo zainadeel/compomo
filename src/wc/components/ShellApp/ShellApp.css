@@ -201,6 +201,16 @@
   min-height: 100%;
 }
 
+:host(.shell-app--tools-fullscreen) .shell-app__main {
+  /* Above panel chrome while remaining below the global banner layer. */
+  z-index: 3;
+}
+
+:host(.shell-app--tools-fullscreen) .shell-app__tools {
+  /* Fullscreen tools must outrank retained page-owned overlays in content. */
+  z-index: 2;
+}
+
 :host(.shell-app--tools-fullscreen) .shell-app__panel,
 :host(.shell-app--tools-fullscreen) .shell-app__bar,
 :host(.shell-app--tools-fullscreen) .shell-app__content {
