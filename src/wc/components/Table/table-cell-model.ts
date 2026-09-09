@@ -93,7 +93,7 @@ export type TableCellPresentation =
       cellType: 'tags';
       value: TableCellTags;
       tracks: number;
-      variant: `${number}-track`;
+      variant: `${number}-track` | 'inline';
     }
   | {
       kind: 'text';
@@ -300,13 +300,14 @@ export function resolveTableCellPresentation(
     };
   }
   if (isTableCellTags(value)) {
-    const tracks = resolveTableCellTagsTracks(value.tracks);
+    const inline = value.variant === 'inline';
+    const tracks = inline ? (value.text?.trim() ? 2 : 1) : resolveTableCellTagsTracks(value.tracks);
     return {
       kind: 'tags',
       cellType: 'tags',
-      value,
+      value: inline ? { ...value, items: value.items.slice(0, 3) as typeof value.items } : value,
       tracks,
-      variant: `${tracks}-track`,
+      variant: inline ? 'inline' : `${tracks}-track`,
     };
   }
 

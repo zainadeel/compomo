@@ -193,7 +193,7 @@ test('publishes one renderer-neutral table recipe consumed by the component', ()
   );
   assert.match(css, /\.ds-table__cell-primary[\s\S]*?padding-block: var\(--dimension-space-025\)/);
   assert.match(css, /\.ds-table__cell--text-multi \.ds-table__cell-copy\)[\s\S]*?gap: 0/);
-  assert.match(css, /\.ds-table__cell-tags\)[\s\S]*?gap: 0 var\(--dimension-space-025\)/);
+  assert.match(css, /\.ds-table__cell-tags\)[\s\S]*?gap: 0 var\(--dimension-space-050\)/);
   assert.match(
     componentCss,
     /ds-text\.ds-table__cell-track--text[\s\S]*?padding-inline: var\(--_table-cell-track-padding-inline\)/

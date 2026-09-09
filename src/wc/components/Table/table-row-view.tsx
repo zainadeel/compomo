@@ -425,6 +425,50 @@ function renderTableCellValue(cell: TableCellPresentation, options: TableCellVie
   }
 
   if (cell.kind === 'tags') {
+    if (cell.value.variant === 'inline') {
+      return (
+        <span class="ds-table__cell-tag-stack ds-table__cell-tag-stack--tag-with-text ds-table__cell-inline-tags-stack">
+          <span class="ds-table__cell-inline-tags">
+            {cell.value.items.map((item, index) => [
+              index > 0 && (
+                <ds-text
+                  class="ds-table__cell-tag-separator"
+                  as="span"
+                  variant="text-body-medium"
+                  color="quaternary"
+                  aria-hidden="true"
+                >
+                  /
+                </ds-text>
+              ),
+              <ds-tag
+                key={`${item.label}-${index}`}
+                label={item.label}
+                intent={item.intent ?? 'neutral'}
+                contrast={item.contrast ?? 'faint'}
+                size="md"
+                icon={item.icon ?? ''}
+                rounded={item.rounded ?? false}
+                isInset
+                insetDepth="double"
+              />,
+            ])}
+          </span>
+          {cell.tracks === 2 && (
+            <ds-text
+              class="ds-table__cell-tag-text ds-table__cell-track"
+              as="span"
+              variant="text-body-small"
+              color="secondary"
+              lineTruncation={1}
+              data-table-truncate=""
+            >
+              {renderHighlightedText(cell.value.text, tableCellFieldMatcher(options, 1))}
+            </ds-text>
+          )}
+        </span>
+      );
+    }
     return (
       <span
         class="ds-table__cell-tags"
