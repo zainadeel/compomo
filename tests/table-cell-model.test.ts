@@ -316,3 +316,24 @@ test('resolves wrap and maxLines into wrap geometry and a line clamp', () => {
     false
   );
 });
+
+test('inline tags cap runtime items and derive tracks from optional supporting text', () => {
+  const items = Array.from({ length: 4 }, (_, index) => ({ label: `Tag ${index}` }));
+  for (const text of [undefined, '', '   ', 'Supporting text']) {
+    const cell = resolveTableCellPresentation(
+      {
+        kind: 'tags',
+        variant: 'inline',
+        items,
+        text,
+      } as unknown as import('../src/wc/components/Table/table-types').TableCellTags,
+      column
+    );
+    assert.equal(cell.kind, 'tags');
+    if (cell.kind !== 'tags') throw new Error('Expected tags');
+    assert.equal(cell.variant, 'inline');
+    assert.equal(cell.tracks, text?.trim() ? 2 : 1);
+    assert.equal(cell.value.items.length, 3);
+    assert.equal(items.length, 4);
+  }
+});

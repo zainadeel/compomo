@@ -916,7 +916,7 @@
 /*
  * Multiple Tags use the 20px small single-inset control. Each wrap line is a
  * 24px track (2px block margin around the tag) with no row-gap, so wrap lines
- * land on the same 40 / 64 / 88 ladder as text. Same-line tags keep a 2px
+ * land on the same 40 / 64 / 88 ladder as text. Same-line tags keep a 4px
  * column gap.
  */
 :where(.ds-table__cell--tags .ds-table__cell-content) {
@@ -928,7 +928,7 @@
   flex-wrap: wrap;
   align-content: flex-start;
   align-items: center;
-  gap: 0 var(--dimension-space-025);
+  gap: 0 var(--dimension-space-050);
   box-sizing: border-box;
   inline-size: 100%;
   min-inline-size: 0;
@@ -1806,4 +1806,28 @@
   :where(.ds-table__viewport:focus-visible) {
     outline-color: var(--ds-forced-color-selected);
   }
+}
+
+/* Inline tag groups share the primary-tag recipe and shrink within one track. */
+:where(.ds-table__cell-inline-tags-stack) {
+  inline-size: 100%;
+}
+
+:where(.ds-table__cell-inline-tags) {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: var(--dimension-space-050);
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: var(--_table-cell-track-min-block-size);
+}
+
+:where(.ds-table__cell-inline-tags > ds-tag) {
+  flex: 0 1 auto;
+  max-inline-size: 100%;
+}
+
+:where(.ds-table__cell-tag-separator) {
+  flex: none;
 }

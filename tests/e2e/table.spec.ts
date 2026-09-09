@@ -1963,7 +1963,7 @@ test(
       await expect(cell).toHaveAttribute('data-cell-tracks', String(example.tracks));
       await expect(cell).toHaveAttribute('data-cell-variant', `${example.tracks}-track`);
       await expect(wrapper).toHaveCSS('min-height', `${example.contentHeight}px`);
-      await expect(wrapper).toHaveCSS('column-gap', '2px');
+      await expect(wrapper).toHaveCSS('column-gap', '4px');
       await expect(wrapper).toHaveCSS('row-gap', '0px');
       await expect(wrapper).toHaveCSS('padding-top', '0px');
       await expect(wrapper).toHaveCSS('padding-bottom', '0px');
@@ -3907,5 +3907,63 @@ test(
         2
       );
     }
+  }
+);
+
+test(
+  'inline tags truncate in one track with optional secondary text',
+  chromiumOnly(
+    'layout-geometry',
+    'Inline tag flex sizing uses engine-neutral CSS and existing Tag truncation.'
+  ),
+  async ({ page }) => {
+    const table = page.locator('#multiple-tags');
+    await table.evaluate(element => {
+      const target = element as HTMLElement & { columns: unknown[]; rows: unknown[] };
+      target.columns = [{ id: 'tags', header: 'Tags', size: 240 }];
+      target.rows = [undefined, 'Secondary details'].map((text, index) => ({
+        id: `inline-${index}`,
+        cells: {
+          tags: {
+            kind: 'tags',
+            variant: 'inline',
+            text,
+            items: [
+              { label: 'Harsh braking', intent: 'warning' },
+              { label: 'Close following', intent: 'negative' },
+              { label: 'Lane departure', intent: 'caution' },
+              { label: 'Must not render' },
+            ],
+          },
+        },
+      }));
+    });
+    for (const [index, height] of [40, 64].entries()) {
+      const cell = table.locator(`[data-row-id="inline-${index}"] td[data-column-id="tags"]`);
+      await expect(cell).toHaveCSS('height', `${height}px`);
+      await expect(cell.locator('ds-tag')).toHaveCount(3);
+      await expect(cell.locator('.ds-table__cell-tag-separator')).toHaveCount(2);
+      for (const tag of await cell.locator('ds-tag').all()) {
+        await expect(tag).toHaveCSS('height', '24px');
+      }
+      const geometry = await cell.evaluate(element => {
+        const tags = [...element.querySelectorAll('ds-tag')];
+        const labels = tags.map(tag => tag.querySelector('.tag__label .ds-text__element')!);
+        return {
+          tops: tags.map(tag => tag.getBoundingClientRect().top),
+          truncated: labels.every(label => label.scrollWidth > label.clientWidth),
+          fits: tags.every(
+            tag => tag.getBoundingClientRect().right <= element.getBoundingClientRect().right
+          ),
+        };
+      });
+      expect(new Set(geometry.tops).size).toBe(1);
+      expect(geometry.truncated, JSON.stringify(geometry)).toBe(true);
+      expect(geometry.fits).toBe(true);
+    }
+    await expect(table.locator('[data-row-id="inline-0"] .ds-table__cell-tag-text')).toHaveCount(0);
+    await expect(table.locator('[data-row-id="inline-1"] .ds-table__cell-tag-text')).toHaveText(
+      'Secondary details'
+    );
   }
 );

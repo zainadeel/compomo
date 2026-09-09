@@ -1666,6 +1666,129 @@ export const MultipleTags: Story = {
   `,
 };
 
+export const TagVariations: Story = {
+  name: 'Tag variations',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Compare wrapping tags, non-wrapping slash-separated tags with optional secondary text, a primary tag with secondary text, and primary text with a secondary tag. Inline tags share the primary-tag recipe and truncate within the column.',
+      },
+    },
+  },
+  render: () => {
+    const columns: TableColumn[] = [
+      { id: 'multipleTags', header: 'Multiple tags', size: 'lg' },
+      { id: 'inlineTags', header: 'Inline tags', size: 'lg' },
+      { id: 'inlineTagsWithText', header: 'Inline tags / secondary text', size: 'lg' },
+      { id: 'tagWithText', header: 'Primary tag / secondary text', size: 'lg' },
+      { id: 'textWithTag', header: 'Primary text / secondary tag', size: 'lg' },
+    ];
+    const rows: TableRow[] = [
+      {
+        id: 'needs-review',
+        cells: {
+          inlineTags: {
+            kind: 'tags',
+            variant: 'inline',
+            items: [
+              { label: 'Harsh braking', intent: 'warning' },
+              { label: 'Close following', intent: 'negative' },
+              { label: 'Lane departure', intent: 'caution' },
+            ],
+          },
+          inlineTagsWithText: {
+            kind: 'tags',
+            variant: 'inline',
+            items: [
+              { label: 'Coachable', intent: 'negative' },
+              { label: 'Pending review', intent: 'caution' },
+            ],
+            text: 'Review the detected behaviors',
+          },
+          multipleTags: {
+            kind: 'tags',
+            tracks: 2,
+            items: [
+              { label: 'Harsh braking', intent: 'warning' },
+              { label: 'Close following', intent: 'negative' },
+              { label: 'Lane departure', intent: 'caution' },
+            ],
+          },
+          tagWithText: {
+            kind: 'tag',
+            variant: 'tag-with-text',
+            label: 'Coachable',
+            intent: 'negative',
+            text: 'Needs review',
+          },
+          textWithTag: {
+            kind: 'tag',
+            variant: 'text-with-tag',
+            text: 'Review pending',
+            label: 'Uncoached',
+            intent: 'caution',
+          },
+        },
+      },
+      {
+        id: 'review-complete',
+        cells: {
+          inlineTags: {
+            kind: 'tags',
+            variant: 'inline',
+            items: [
+              { label: 'Harsh braking', intent: 'warning' },
+              { label: 'Close following', intent: 'negative' },
+              { label: 'Lane departure', intent: 'caution' },
+            ],
+          },
+          inlineTagsWithText: {
+            kind: 'tags',
+            variant: 'inline',
+            items: [
+              { label: 'Coachable', intent: 'negative' },
+              { label: 'Pending review', intent: 'caution' },
+            ],
+            text: 'Review the detected behaviors',
+          },
+          multipleTags: {
+            kind: 'tags',
+            tracks: 2,
+            items: [
+              { label: 'Reviewed', intent: 'neutral' },
+              { label: 'Coached', intent: 'positive' },
+            ],
+          },
+          tagWithText: {
+            kind: 'tag',
+            variant: 'tag-with-text',
+            label: 'Resolved',
+            intent: 'positive',
+            text: 'Coaching completed',
+          },
+          textWithTag: {
+            kind: 'tag',
+            variant: 'text-with-tag',
+            text: 'Review complete',
+            label: 'Coached',
+            intent: 'positive',
+          },
+        },
+      },
+    ];
+    return html`
+      <ds-table
+        data-a11y-fixture
+        .columns=${columns}
+        .rows=${rows}
+        caption="Tag cell variations"
+        caption-visibility="visible"
+      ></ds-table>
+    `;
+  },
+};
+
 export const OverflowActionMenu: Story = {
   name: 'Overflow action menu',
   args: {

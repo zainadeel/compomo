@@ -280,13 +280,27 @@ export type TableCellTag = TableCellTagItem & { kind: 'tag' } & (
       }
   );
 
-/** Multiple Tags that wrap inline while retaining the table's named track rhythm. */
-export interface TableCellTags {
-  kind: 'tags';
-  items: TableCellTagItem[];
-  /** Expected positive wrapped-line count used for row geometry and virtual estimates. */
-  tracks: number;
-}
+/** Multiple Tags in wrapping tracks or a compact slash-separated primary track. */
+export type TableCellTags = { kind: 'tags' } & (
+  | {
+      variant?: 'wrap';
+      items: TableCellTagItem[];
+      /** Expected positive wrapped-line count used for row geometry and virtual estimates. */
+      tracks: number;
+      text?: never;
+    }
+  | {
+      variant: 'inline';
+      /** One to three tags. Runtime inputs beyond three are capped. */
+      items:
+        | [TableCellTagItem]
+        | [TableCellTagItem, TableCellTagItem]
+        | [TableCellTagItem, TableCellTagItem, TableCellTagItem];
+      /** Optional secondary text beneath the non-wrapping tag track. */
+      text?: string;
+      tracks?: never;
+    }
+);
 
 export type TableCellValue =
   | string
