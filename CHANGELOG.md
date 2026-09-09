@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.33.2](https://github.com/zainadeel/compomo/compare/v14.33.1...v14.33.2) (2026-09-09)
+
+
+### Fixed
+
+* toggle table rows while selection is active ([#596](https://github.com/zainadeel/compomo/issues/596)) ([8275a5a](https://github.com/zainadeel/compomo/commit/8275a5aa39faf557c1f67379cb6ccc4a672a7c3d))
+
 ## [14.33.1](https://github.com/zainadeel/compomo/compare/v14.33.0...v14.33.1) (2026-09-09)
 
 
