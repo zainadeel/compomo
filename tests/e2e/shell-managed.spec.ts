@@ -1486,10 +1486,16 @@ test.describe('Managed application shell', () => {
     await expect(shell).not.toHaveClass(/shell-app--tools-fullscreen/);
   });
 
-  test('layers fullscreen tools above retained routed overlays @pr-critical', async ({ page }) => {
+  test('conceals retained routed overlays behind fullscreen tools @cross-browser', async ({
+    page,
+  }) => {
     await page.getByRole('button', { name: 'Agents' }).click();
     const shell = page.locator('#managed-shell');
     const routedContent = shell.locator('#managed-page-content');
+
+    // Fullscreen moves the header action under the old rail pointer position.
+    // Keep its delayed tooltip out of the retained-overlay paint comparison.
+    await page.mouse.move(0, 0);
 
     await routedContent.evaluate(element => {
       const overlay = document.createElement('aside');
@@ -1499,6 +1505,7 @@ test.describe('Managed application shell', () => {
       overlay.style.inset = '0';
       overlay.style.zIndex = 'var(--dimension-z-index-overlay)';
       overlay.style.visibility = 'visible';
+      overlay.style.background = 'red';
       element.append(overlay);
       (window as typeof window & { routedOverlayOwner?: Element }).routedOverlayOwner = overlay;
     });
@@ -1508,6 +1515,7 @@ test.describe('Managed application shell', () => {
     });
 
     const routedOverlay = shell.locator('#managed-routed-overlay');
+    await expect(shell).toHaveClass(/shell-app--tools-fullscreen/);
     await expect(routedOverlay).toHaveCSS('visibility', 'visible');
     const fullscreenLayerOrder = await shell.evaluate(element => {
       const readZIndex = (selector: string) =>
@@ -1521,6 +1529,13 @@ test.describe('Managed application shell', () => {
     });
     expect(fullscreenLayerOrder.main).toBeGreaterThan(fullscreenLayerOrder.panel);
     expect(fullscreenLayerOrder.tools).toBeGreaterThan(fullscreenLayerOrder.content);
+    expect(await routedOverlay.evaluate(element => element.checkVisibility())).toBe(false);
+    await expect(page.getByRole('tooltip')).toHaveCount(0);
+    const withRetainedOverlay = await page.screenshot({ animations: 'disabled' });
+    await routedOverlay.evaluate(element => (element.style.display = 'none'));
+    const withoutOverlay = await page.screenshot({ animations: 'disabled' });
+    expect(withRetainedOverlay.equals(withoutOverlay)).toBe(true);
+    await routedOverlay.evaluate(element => (element.style.display = ''));
 
     await shell.evaluate(async element => {
       await (element as HTMLDsShellAppElement).setToolPresentation('drawer');
@@ -1532,6 +1547,52 @@ test.describe('Managed application shell', () => {
           element
       )
     ).toBe(true);
+    await expect(routedOverlay).toBeVisible();
+  });
+
+  test('fits fullscreen tools below a changing banner without replacing owners @cross-browser', async ({
+    page,
+  }) => {
+    const shell = page.locator('#managed-shell');
+    await page.getByRole('button', { name: 'Agents' }).click();
+    await shell.locator('#agent-draft').fill('Keep this draft');
+    await shell.evaluate(async element => {
+      const banner = element.querySelector<HTMLElement>('#fullscreen-banner')!;
+      banner.style.height = '72px';
+      banner.textContent = 'Shell notice';
+      await (element as HTMLDsShellAppElement).setToolPresentation('fullscreen');
+    });
+    const assertStageBounds = async () => {
+      await expect
+        .poll(async () =>
+          shell.evaluate(element => {
+            const row = element.querySelector('.shell-app__row')!.getBoundingClientRect();
+            const tools = element
+              .querySelector('ds-shell-tools')!
+              .shadowRoot!.querySelector('ds-panel-tools')!
+              .getBoundingClientRect();
+            const banner = element.querySelector('#fullscreen-banner')!.getBoundingClientRect();
+            return Math.max(
+              Math.abs(tools.top - banner.bottom),
+              Math.abs(tools.left - row.left),
+              Math.abs(tools.right - row.right),
+              Math.abs(tools.bottom - row.bottom)
+            );
+          })
+        )
+        .toBeLessThan(0.5);
+    };
+    await assertStageBounds();
+    await page.setViewportSize({ width: 1024, height: 760 });
+    await assertStageBounds();
+    await shell.locator('#fullscreen-banner').evaluate(element => (element.style.height = '144px'));
+    await assertStageBounds();
+    await shell.locator('#fullscreen-banner').evaluate(element => (element.style.height = '0px'));
+    await assertStageBounds();
+    await shell.evaluate(async element => {
+      await (element as HTMLDsShellAppElement).setToolPresentation('drawer');
+    });
+    await expect(shell.locator('#agent-draft')).toHaveValue('Keep this draft');
   });
 
   test('anchors tool filter and header menus to the history pane in drawer and fullscreen @cross-browser', async ({

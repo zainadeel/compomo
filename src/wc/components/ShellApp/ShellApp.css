@@ -201,6 +201,11 @@
   min-height: 100%;
 }
 
+:host(.shell-app--tools-fullscreen) .shell-app__row {
+  /* Anchor fixed fullscreen tools to the available stage below the banner. */
+  contain: layout;
+}
+
 :host(.shell-app--tools-fullscreen) .shell-app__main {
   /* Above panel chrome while remaining below the global banner layer. */
   z-index: 3;
@@ -215,6 +220,8 @@
 :host(.shell-app--tools-fullscreen) .shell-app__bar,
 :host(.shell-app--tools-fullscreen) .shell-app__content {
   visibility: hidden;
+  /* Descendants can override visibility, but must not paint through tools. */
+  content-visibility: hidden;
 }
 
 :host(.shell-app--mobile) {
