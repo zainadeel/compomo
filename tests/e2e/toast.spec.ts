@@ -123,8 +123,11 @@ test('centers one copy line in the 48px compact geometry', async ({ page }) => {
   const surface = page.locator('[data-toast-id="copied"] .toast-surface');
   const copy = surface.locator('.toast-copy');
   await expect(copy).toBeVisible();
-  const [surfaceBox, copyBox] = await Promise.all([surface.boundingBox(), copy.boundingBox()]);
-  if (!surfaceBox || !copyBox) throw new Error('Compact Toast geometry did not render');
+  // Sample both boxes in one frame while the toast is entering.
+  const { surfaceBox, copyBox } = await surface.evaluate(element => ({
+    surfaceBox: element.getBoundingClientRect().toJSON(),
+    copyBox: element.querySelector('.toast-copy')!.getBoundingClientRect().toJSON(),
+  }));
   expect(surfaceBox.height).toBeCloseTo(48, 0);
   expect(copyBox.y + copyBox.height / 2).toBeCloseTo(surfaceBox.y + surfaceBox.height / 2, 0);
 });

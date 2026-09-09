@@ -16,7 +16,28 @@ export function isBrowserNeutralPath(filePath) {
 }
 
 export function requiresBrowserValidation(filePaths) {
-  return filePaths.length === 0 || filePaths.some(filePath => !isBrowserNeutralPath(filePath));
+  return (
+    filePaths.length === 0 ||
+    filePaths.some(
+      filePath =>
+        !isBrowserNeutralPath(filePath) &&
+        !/^tests\/[^/]+\.test\.ts$/.test(filePath) &&
+        !/\.stories\.ts$/.test(filePath) &&
+        !filePath.startsWith('.storybook/')
+    )
+  );
+}
+
+export function requiresStorybookValidation(filePaths) {
+  return (
+    filePaths.length === 0 ||
+    filePaths.some(
+      filePath =>
+        !isBrowserNeutralPath(filePath) &&
+        !filePath.startsWith('tests/e2e/') &&
+        !/^tests\/[^/]+\.test\.ts$/.test(filePath)
+    )
+  );
 }
 
 async function run() {
@@ -24,8 +45,10 @@ async function run() {
   for await (const chunk of process.stdin) chunks.push(chunk);
   const filePaths = Buffer.concat(chunks).toString('utf8').split('\0').filter(Boolean);
   const browser = requiresBrowserValidation(filePaths);
+  const storybook = requiresStorybookValidation(filePaths);
 
   process.stdout.write(`browser=${browser}\n`);
+  process.stdout.write(`storybook=${storybook}\n`);
   process.stderr.write(
     `${browser ? 'Running' : 'Skipping'} browser validation for ${filePaths.length} changed path(s).\n`
   );
