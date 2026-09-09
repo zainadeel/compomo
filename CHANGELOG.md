@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.33.1](https://github.com/zainadeel/compomo/compare/v14.33.0...v14.33.1) (2026-09-09)
+
+
+### Fixed
+
+* keep fullscreen tools within the available shell stage ([#593](https://github.com/zainadeel/compomo/issues/593)) ([8f9c249](https://github.com/zainadeel/compomo/commit/8f9c249f770728d38c3d94e469c580ae81f88765))
+
 ## [14.33.0](https://github.com/zainadeel/compomo/compare/v14.32.1...v14.33.0) (2026-09-09)
 
 
