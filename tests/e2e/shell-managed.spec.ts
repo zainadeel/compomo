@@ -1493,6 +1493,10 @@ test.describe('Managed application shell', () => {
     const shell = page.locator('#managed-shell');
     const routedContent = shell.locator('#managed-page-content');
 
+    // Fullscreen moves the header action under the old rail pointer position.
+    // Keep its delayed tooltip out of the retained-overlay paint comparison.
+    await page.mouse.move(0, 0);
+
     await routedContent.evaluate(element => {
       const overlay = document.createElement('aside');
       overlay.id = 'managed-routed-overlay';
@@ -1526,6 +1530,7 @@ test.describe('Managed application shell', () => {
     expect(fullscreenLayerOrder.main).toBeGreaterThan(fullscreenLayerOrder.panel);
     expect(fullscreenLayerOrder.tools).toBeGreaterThan(fullscreenLayerOrder.content);
     expect(await routedOverlay.evaluate(element => element.checkVisibility())).toBe(false);
+    await expect(page.getByRole('tooltip')).toHaveCount(0);
     const withRetainedOverlay = await page.screenshot({ animations: 'disabled' });
     await routedOverlay.evaluate(element => (element.style.display = 'none'));
     const withoutOverlay = await page.screenshot({ animations: 'disabled' });
