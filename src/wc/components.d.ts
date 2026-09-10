@@ -38,6 +38,8 @@ import { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuFooterLayout, Filte
 import { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
 import { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
 import { InputSize, InputTextAlign, InputType, InputWidth } from "./components/Input/Input";
+import { InputDateSize, InputDateWidth } from "./components/InputDate/InputDate";
+import { InputTimeSize, InputTimeWidth } from "./components/InputTime/InputTime";
 import { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 import { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
 import { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
@@ -115,6 +117,8 @@ export { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuFooterLayout, Filte
 export { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
 export { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
 export { InputSize, InputTextAlign, InputType, InputWidth } from "./components/Input/Input";
+export { InputDateSize, InputDateWidth } from "./components/InputDate/InputDate";
+export { InputTimeSize, InputTimeWidth } from "./components/InputTime/InputTime";
 export { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 export { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
 export { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
@@ -1722,6 +1726,137 @@ export namespace Components {
           * @default 'fill'
          */
         "width": InputWidth;
+    }
+    interface DsInputDate {
+        "ariaDescribedby": string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+        /**
+          * @default false
+         */
+        "autoFocus": boolean;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * @default false
+         */
+        "error": boolean;
+        "errorMessage": string | undefined;
+        "form": string | undefined;
+        /**
+          * @default true
+         */
+        "hasBorder": boolean;
+        /**
+          * @default true
+         */
+        "hasInteractionFill": boolean;
+        "inputId": string | undefined;
+        /**
+          * @default false
+         */
+        "isInactive": boolean;
+        "max": string | undefined;
+        "min": string | undefined;
+        "name": string | undefined;
+        /**
+          * @default false
+         */
+        "readOnly": boolean;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage": string;
+        "setFocus": () => Promise<void>;
+        /**
+          * @default 'md'
+         */
+        "size": InputDateSize;
+        /**
+          * @default ''
+         */
+        "value": string;
+        /**
+          * @default 'fill'
+         */
+        "width": InputDateWidth;
+    }
+    interface DsInputTime {
+        "ariaDescribedby": string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+        /**
+          * @default false
+         */
+        "autoFocus": boolean;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * @default false
+         */
+        "error": boolean;
+        "errorMessage": string | undefined;
+        "form": string | undefined;
+        /**
+          * @default true
+         */
+        "hasBorder": boolean;
+        /**
+          * @default true
+         */
+        "hasInteractionFill": boolean;
+        "inputId": string | undefined;
+        /**
+          * @default false
+         */
+        "isInactive": boolean;
+        "max": string | undefined;
+        "min": string | undefined;
+        "name": string | undefined;
+        /**
+          * @default false
+         */
+        "readOnly": boolean;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage": string;
+        "setFocus": () => Promise<void>;
+        /**
+          * @default 'md'
+         */
+        "size": InputTimeSize;
+        /**
+          * Native time step in seconds. Defaults to minutes (`60`).
+          * @default 60
+         */
+        "step": string | number;
+        /**
+          * @default ''
+         */
+        "value": string;
+        /**
+          * @default 'fill'
+         */
+        "width": InputTimeWidth;
     }
     interface DsLoader {
         /**
@@ -4404,6 +4539,14 @@ export interface DsInputCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsInputElement;
 }
+export interface DsInputDateCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsInputDateElement;
+}
+export interface DsInputTimeCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsInputTimeElement;
+}
 export interface DsMenuCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsMenuElement;
@@ -5073,6 +5216,40 @@ declare global {
     var HTMLDsInputElement: {
         prototype: HTMLDsInputElement;
         new (): HTMLDsInputElement;
+    };
+    interface HTMLDsInputDateElementEventMap {
+        "dsChange": string;
+    }
+    interface HTMLDsInputDateElement extends Components.DsInputDate, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsInputDateElementEventMap>(type: K, listener: (this: HTMLDsInputDateElement, ev: DsInputDateCustomEvent<HTMLDsInputDateElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsInputDateElementEventMap>(type: K, listener: (this: HTMLDsInputDateElement, ev: DsInputDateCustomEvent<HTMLDsInputDateElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsInputDateElement: {
+        prototype: HTMLDsInputDateElement;
+        new (): HTMLDsInputDateElement;
+    };
+    interface HTMLDsInputTimeElementEventMap {
+        "dsChange": string;
+    }
+    interface HTMLDsInputTimeElement extends Components.DsInputTime, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsInputTimeElementEventMap>(type: K, listener: (this: HTMLDsInputTimeElement, ev: DsInputTimeCustomEvent<HTMLDsInputTimeElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsInputTimeElementEventMap>(type: K, listener: (this: HTMLDsInputTimeElement, ev: DsInputTimeCustomEvent<HTMLDsInputTimeElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsInputTimeElement: {
+        prototype: HTMLDsInputTimeElement;
+        new (): HTMLDsInputTimeElement;
     };
     interface HTMLDsLoaderElement extends Components.DsLoader, HTMLStencilElement {
     }
@@ -5895,6 +6072,8 @@ declare global {
         "ds-filter-menu": HTMLDsFilterMenuElement;
         "ds-icon": HTMLDsIconElement;
         "ds-input": HTMLDsInputElement;
+        "ds-input-date": HTMLDsInputDateElement;
+        "ds-input-time": HTMLDsInputTimeElement;
         "ds-loader": HTMLDsLoaderElement;
         "ds-markdown": HTMLDsMarkdownElement;
         "ds-menu": HTMLDsMenuElement;
@@ -7653,6 +7832,137 @@ declare namespace LocalJSX {
           * @default 'fill'
          */
         "width"?: InputWidth;
+    }
+    interface DsInputDate {
+        "ariaDescribedby"?: string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        "ariaLabelledby"?: string | undefined;
+        /**
+          * @default false
+         */
+        "autoFocus"?: boolean;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * @default false
+         */
+        "error"?: boolean;
+        "errorMessage"?: string | undefined;
+        "form"?: string | undefined;
+        /**
+          * @default true
+         */
+        "hasBorder"?: boolean;
+        /**
+          * @default true
+         */
+        "hasInteractionFill"?: boolean;
+        "inputId"?: string | undefined;
+        /**
+          * @default false
+         */
+        "isInactive"?: boolean;
+        "max"?: string | undefined;
+        "min"?: string | undefined;
+        "name"?: string | undefined;
+        "onDsChange"?: (event: DsInputDateCustomEvent<string>) => void;
+        /**
+          * @default false
+         */
+        "readOnly"?: boolean;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage"?: string;
+        /**
+          * @default 'md'
+         */
+        "size"?: InputDateSize;
+        /**
+          * @default ''
+         */
+        "value"?: string;
+        /**
+          * @default 'fill'
+         */
+        "width"?: InputDateWidth;
+    }
+    interface DsInputTime {
+        "ariaDescribedby"?: string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        "ariaLabelledby"?: string | undefined;
+        /**
+          * @default false
+         */
+        "autoFocus"?: boolean;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * @default false
+         */
+        "error"?: boolean;
+        "errorMessage"?: string | undefined;
+        "form"?: string | undefined;
+        /**
+          * @default true
+         */
+        "hasBorder"?: boolean;
+        /**
+          * @default true
+         */
+        "hasInteractionFill"?: boolean;
+        "inputId"?: string | undefined;
+        /**
+          * @default false
+         */
+        "isInactive"?: boolean;
+        "max"?: string | undefined;
+        "min"?: string | undefined;
+        "name"?: string | undefined;
+        "onDsChange"?: (event: DsInputTimeCustomEvent<string>) => void;
+        /**
+          * @default false
+         */
+        "readOnly"?: boolean;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage"?: string;
+        /**
+          * @default 'md'
+         */
+        "size"?: InputTimeSize;
+        /**
+          * Native time step in seconds. Defaults to minutes (`60`).
+          * @default 60
+         */
+        "step"?: string | number;
+        /**
+          * @default ''
+         */
+        "value"?: string;
+        /**
+          * @default 'fill'
+         */
+        "width"?: InputTimeWidth;
     }
     interface DsLoader {
         /**
@@ -10868,6 +11178,53 @@ declare namespace LocalJSX {
         "ariaControls": string | undefined;
         "ariaActiveDescendant": string | undefined;
     }
+    interface DsInputDateAttributes {
+        "value": string;
+        "name": string | undefined;
+        "form": string | undefined;
+        "disabled": boolean;
+        "readOnly": boolean;
+        "required": boolean;
+        "requiredMessage": string;
+        "min": string | undefined;
+        "max": string | undefined;
+        "size": InputDateSize;
+        "width": InputDateWidth;
+        "hasBorder": boolean;
+        "hasInteractionFill": boolean;
+        "isInactive": boolean;
+        "autoFocus": boolean;
+        "error": boolean;
+        "errorMessage": string | undefined;
+        "inputId": string | undefined;
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+        "ariaDescribedby": string | undefined;
+    }
+    interface DsInputTimeAttributes {
+        "value": string;
+        "name": string | undefined;
+        "form": string | undefined;
+        "disabled": boolean;
+        "readOnly": boolean;
+        "required": boolean;
+        "requiredMessage": string;
+        "step": string;
+        "min": string | undefined;
+        "max": string | undefined;
+        "size": InputTimeSize;
+        "width": InputTimeWidth;
+        "hasBorder": boolean;
+        "hasInteractionFill": boolean;
+        "isInactive": boolean;
+        "autoFocus": boolean;
+        "error": boolean;
+        "errorMessage": string | undefined;
+        "inputId": string | undefined;
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+        "ariaDescribedby": string | undefined;
+    }
     interface DsLoaderAttributes {
         "size": LoaderSize;
         "color": LoaderColor;
@@ -11471,6 +11828,8 @@ declare namespace LocalJSX {
         "ds-filter-menu": Omit<DsFilterMenu, keyof DsFilterMenuAttributes> & { [K in keyof DsFilterMenu & keyof DsFilterMenuAttributes]?: DsFilterMenu[K] } & { [K in keyof DsFilterMenu & keyof DsFilterMenuAttributes as `attr:${K}`]?: DsFilterMenuAttributes[K] } & { [K in keyof DsFilterMenu & keyof DsFilterMenuAttributes as `prop:${K}`]?: DsFilterMenu[K] };
         "ds-icon": Omit<DsIcon, keyof DsIconAttributes> & { [K in keyof DsIcon & keyof DsIconAttributes]?: DsIcon[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `attr:${K}`]?: DsIconAttributes[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `prop:${K}`]?: DsIcon[K] };
         "ds-input": Omit<DsInput, keyof DsInputAttributes> & { [K in keyof DsInput & keyof DsInputAttributes]?: DsInput[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `attr:${K}`]?: DsInputAttributes[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `prop:${K}`]?: DsInput[K] };
+        "ds-input-date": Omit<DsInputDate, keyof DsInputDateAttributes> & { [K in keyof DsInputDate & keyof DsInputDateAttributes]?: DsInputDate[K] } & { [K in keyof DsInputDate & keyof DsInputDateAttributes as `attr:${K}`]?: DsInputDateAttributes[K] } & { [K in keyof DsInputDate & keyof DsInputDateAttributes as `prop:${K}`]?: DsInputDate[K] };
+        "ds-input-time": Omit<DsInputTime, keyof DsInputTimeAttributes> & { [K in keyof DsInputTime & keyof DsInputTimeAttributes]?: DsInputTime[K] } & { [K in keyof DsInputTime & keyof DsInputTimeAttributes as `attr:${K}`]?: DsInputTimeAttributes[K] } & { [K in keyof DsInputTime & keyof DsInputTimeAttributes as `prop:${K}`]?: DsInputTime[K] };
         "ds-loader": Omit<DsLoader, keyof DsLoaderAttributes> & { [K in keyof DsLoader & keyof DsLoaderAttributes]?: DsLoader[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `attr:${K}`]?: DsLoaderAttributes[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `prop:${K}`]?: DsLoader[K] };
         "ds-markdown": Omit<DsMarkdown, keyof DsMarkdownAttributes> & { [K in keyof DsMarkdown & keyof DsMarkdownAttributes]?: DsMarkdown[K] } & { [K in keyof DsMarkdown & keyof DsMarkdownAttributes as `attr:${K}`]?: DsMarkdownAttributes[K] } & { [K in keyof DsMarkdown & keyof DsMarkdownAttributes as `prop:${K}`]?: DsMarkdown[K] };
         "ds-menu": Omit<DsMenu, keyof DsMenuAttributes> & { [K in keyof DsMenu & keyof DsMenuAttributes]?: DsMenu[K] } & { [K in keyof DsMenu & keyof DsMenuAttributes as `attr:${K}`]?: DsMenuAttributes[K] } & { [K in keyof DsMenu & keyof DsMenuAttributes as `prop:${K}`]?: DsMenu[K] };
@@ -11577,6 +11936,8 @@ declare module "@stencil/core" {
             "ds-filter-menu": LocalJSX.IntrinsicElements["ds-filter-menu"] & JSXBase.HTMLAttributes<HTMLDsFilterMenuElement>;
             "ds-icon": LocalJSX.IntrinsicElements["ds-icon"] & JSXBase.HTMLAttributes<HTMLDsIconElement>;
             "ds-input": LocalJSX.IntrinsicElements["ds-input"] & JSXBase.HTMLAttributes<HTMLDsInputElement>;
+            "ds-input-date": LocalJSX.IntrinsicElements["ds-input-date"] & JSXBase.HTMLAttributes<HTMLDsInputDateElement>;
+            "ds-input-time": LocalJSX.IntrinsicElements["ds-input-time"] & JSXBase.HTMLAttributes<HTMLDsInputTimeElement>;
             "ds-loader": LocalJSX.IntrinsicElements["ds-loader"] & JSXBase.HTMLAttributes<HTMLDsLoaderElement>;
             "ds-markdown": LocalJSX.IntrinsicElements["ds-markdown"] & JSXBase.HTMLAttributes<HTMLDsMarkdownElement>;
             "ds-menu": LocalJSX.IntrinsicElements["ds-menu"] & JSXBase.HTMLAttributes<HTMLDsMenuElement>;

@@ -1,0 +1,524 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "input-time",
+  "title": "InputTime",
+  "description": "Form-associated clock time field that reuses Input density, focus, validation, and field composition with a native time value.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/input-time",
+    "source": "src/wc/components/InputTime/InputTime.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Form-associated clock time field that reuses Input density, focus, validation, and field composition with a native time value.",
+      "useWhen": [
+        "A user must enter or edit a clock time as a native time string.",
+        "The time must participate in native, Angular, React, or Vue form state.",
+        "The control should match Input geometry, typography, and field composition rather than a one-off native time input."
+      ],
+      "avoidWhen": [
+        "The value is freeform text, a number, or a search query.",
+        "The value is a calendar date without a clock time.",
+        "The user chooses from a finite set of named schedule options rather than an exact time."
+      ],
+      "alternatives": [
+        {
+          "when": "The value is one line of text, email, search, or an exact number.",
+          "component": "component:ds-input",
+          "reason": "Input owns those native types, adornments, search clearing, and numeric stepping."
+        },
+        {
+          "when": "The value is a calendar date.",
+          "component": "component:ds-input-date",
+          "reason": "InputDate owns native date semantics and the calendar picker affordance."
+        },
+        {
+          "when": "The user chooses from a finite set of named times or cadences.",
+          "component": "component:ds-select",
+          "reason": "Select exposes the available values and owns listbox selection behavior."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-field",
+        "component:ds-icon",
+        "component:ds-text",
+        "component:ds-input-date"
+      ],
+      "accessibility": [
+        "Provide a persistent visible label through the owning field or an external native label.",
+        "The native time input remains the keyboard and assistive-technology control; the clock icon only opens the browser picker and is hidden from the accessibility tree.",
+        "Error text is associated with the native input and announced as an alert when the invalid state is rendered.",
+        "Read-only fields remain focusable and submittable while preventing edits; inactive or disabled fields leave the tab order and are omitted from form submission."
+      ],
+      "states": [
+        "Every size applies the shared control-density recipe, including md body-medium text, across frame height, inline padding, icon zones, and radius.",
+        "The default step is one minute so the field matches ordinary schedule entry; override step only when seconds or another increment is required.",
+        "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry.",
+        "The host exposes focused, filled, dirty, touched, invalid, disabled, read-only, and required data attributes for Field integration and diagnostics.",
+        "The trailing clock action is a pointer affordance; it does not replace the field label or the native time value."
+      ],
+      "responsiveBehavior": [
+        "Form fields normally fill their parent; use hug width only in a compact toolbar or filter layout with an explicit width constraint.",
+        "Choose density from the containing layout: md for ordinary forms, lg for a touch-primary layout, and sm or xs only where surrounding controls use the same compact recipe."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Listen for dsChange for user edits. The detail is the native time string, typically HH:MM.",
+          "Use the form attribute on the host when associating a time field rendered outside its owning form."
+        ],
+        "react": [
+          "Use DsInputTime, bind value for controlled application state, and handle onDsChange."
+        ],
+        "vue": [
+          "Use DsInputTime with v-model for the value, and listen for dsChange."
+        ],
+        "angular": [
+          "Import DsInputTime with TextValueAccessor when integrating with Angular Forms."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/InputTime/InputTime.stories.ts"
+        },
+        {
+          "label": "Cross-browser form and accessibility coverage",
+          "path": "tests/e2e/forms.spec.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "ariaDescribedby": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "aria-describedby",
+          "required": false,
+          "mutable": false
+        },
+        "ariaLabel": {
+          "type": "string | null",
+          "resolvedType": "null | string",
+          "attribute": "aria-label",
+          "default": "null",
+          "required": false,
+          "mutable": false
+        },
+        "ariaLabelledby": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "aria-labelledby",
+          "required": false,
+          "mutable": false
+        },
+        "autoFocus": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "auto-focus",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "disabled": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "disabled",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "error": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "error",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "errorMessage": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "error-message",
+          "required": false,
+          "mutable": false
+        },
+        "form": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "form",
+          "required": false,
+          "mutable": false
+        },
+        "hasBorder": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "has-border",
+          "default": "true",
+          "required": false,
+          "mutable": false
+        },
+        "hasInteractionFill": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "has-interaction-fill",
+          "default": "true",
+          "required": false,
+          "mutable": false
+        },
+        "inputId": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "input-id",
+          "required": false,
+          "mutable": false
+        },
+        "isInactive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-inactive",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "max": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "max",
+          "required": false,
+          "mutable": false
+        },
+        "min": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "min",
+          "required": false,
+          "mutable": false
+        },
+        "name": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "name",
+          "required": false,
+          "mutable": false
+        },
+        "readOnly": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "read-only",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "required": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "required",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "requiredMessage": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "required-message",
+          "default": "'This field is required.'",
+          "required": false,
+          "mutable": false
+        },
+        "size": {
+          "type": "InputTimeSize",
+          "resolvedType": "\"lg\" | \"md\" | \"sm\" | \"xs\"",
+          "attribute": "size",
+          "default": "'md'",
+          "required": false,
+          "mutable": false
+        },
+        "step": {
+          "type": "string | number",
+          "resolvedType": "number | string",
+          "attribute": "step",
+          "default": "60",
+          "required": false,
+          "mutable": false,
+          "description": "Native time step in seconds. Defaults to minutes (`60`)."
+        },
+        "value": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "value",
+          "default": "''",
+          "required": false,
+          "mutable": true
+        },
+        "width": {
+          "type": "InputTimeWidth",
+          "resolvedType": "\"fill\" | \"hug\"",
+          "attribute": "width",
+          "default": "'fill'",
+          "required": false,
+          "mutable": false
+        }
+      },
+      "events": [
+        {
+          "name": "dsChange",
+          "detail": "string",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [
+        {
+          "name": "setFocus",
+          "signature": "setFocus() => Promise<void>"
+        }
+      ],
+      "slots": []
+    },
+    "props": {
+      "ariaDescribedby": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "aria-describedby",
+        "required": false,
+        "mutable": false
+      },
+      "ariaLabel": {
+        "type": "string | null",
+        "resolvedType": "null | string",
+        "attribute": "aria-label",
+        "default": "null",
+        "required": false,
+        "mutable": false
+      },
+      "ariaLabelledby": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "aria-labelledby",
+        "required": false,
+        "mutable": false
+      },
+      "autoFocus": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "auto-focus",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "disabled": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "disabled",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "error": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "error",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "errorMessage": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "error-message",
+        "required": false,
+        "mutable": false
+      },
+      "form": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "form",
+        "required": false,
+        "mutable": false
+      },
+      "hasBorder": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "has-border",
+        "default": "true",
+        "required": false,
+        "mutable": false
+      },
+      "hasInteractionFill": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "has-interaction-fill",
+        "default": "true",
+        "required": false,
+        "mutable": false
+      },
+      "inputId": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "input-id",
+        "required": false,
+        "mutable": false
+      },
+      "isInactive": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-inactive",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "max": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "max",
+        "required": false,
+        "mutable": false
+      },
+      "min": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "min",
+        "required": false,
+        "mutable": false
+      },
+      "name": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "name",
+        "required": false,
+        "mutable": false
+      },
+      "readOnly": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "read-only",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "required": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "required",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "requiredMessage": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "required-message",
+        "default": "'This field is required.'",
+        "required": false,
+        "mutable": false
+      },
+      "size": {
+        "type": "InputTimeSize",
+        "resolvedType": "\"lg\" | \"md\" | \"sm\" | \"xs\"",
+        "attribute": "size",
+        "default": "'md'",
+        "required": false,
+        "mutable": false
+      },
+      "step": {
+        "type": "string | number",
+        "resolvedType": "number | string",
+        "attribute": "step",
+        "default": "60",
+        "required": false,
+        "mutable": false,
+        "description": "Native time step in seconds. Defaults to minutes (`60`)."
+      },
+      "value": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "value",
+        "default": "''",
+        "required": false,
+        "mutable": true
+      },
+      "width": {
+        "type": "InputTimeWidth",
+        "resolvedType": "\"fill\" | \"hug\"",
+        "attribute": "width",
+        "default": "'fill'",
+        "required": false,
+        "mutable": false
+      }
+    },
+    "events": [
+      {
+        "name": "dsChange",
+        "detail": "string",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [
+      {
+        "name": "setFocus",
+        "signature": "setFocus() => Promise<void>"
+      }
+    ],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-input-time",
+      "react": "DsInputTime",
+      "vue": "DsInputTime",
+      "angular": "DsInputTime"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-input-time.js';",
+        "example": "<ds-input-time></ds-input-time>"
+      },
+      "react": {
+        "import": "import { DsInputTime } from '@ds-mo/ui/react';",
+        "example": "<DsInputTime />"
+      },
+      "vue": {
+        "import": "import { DsInputTime } from '@ds-mo/ui/vue';",
+        "example": "<DsInputTime />"
+      },
+      "angular": {
+        "import": "import { DsInputTime } from '@ds-mo/ui/angular/ds-input-time';",
+        "example": "<ds-input-time></ds-input-time>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.5.1",
+          "@ds-mo/icons ^7.0.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "icon",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/InputTime/InputTime.css",
+      "content": "@import '../../utils/datetime-input-control.css';\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/InputTime/InputTime.tsx",
+      "content": "import {\n  AttachInternals,\n  Component,\n  Prop,\n  State,\n  Event,\n  EventEmitter,\n  Method,\n  Watch,\n  h,\n  Host,\n} from '@stencil/core';\nimport {\n  controlWidthClass,\n  CONTROL_TEXT_VARIANT,\n  DEFAULT_REQUIRED_MESSAGE,\n  restoreStringFormState,\n  setFormControlValue,\n  setRequiredValidity,\n  type ControlSize,\n  type ControlWidth,\n} from '../../utils';\n\nexport type InputTimeSize = ControlSize;\nexport type InputTimeWidth = ControlWidth;\n\nconst ICON_SIZE: Record<InputTimeSize, 'lg' | 'md' | 'sm' | 'xs'> = {\n  lg: 'lg',\n  md: 'md',\n  sm: 'sm',\n  xs: 'xs',\n};\n\nlet idCounter = 0;\n\n@Component({\n  tag: 'ds-input-time',\n  styleUrl: 'InputTime.css',\n  scoped: true,\n  formAssociated: true,\n})\nexport class InputTime {\n  @AttachInternals() internals!: ElementInternals;\n\n  private generatedId = `ds-input-time-${++idCounter}`;\n  private errorId = `${this.generatedId}-error`;\n\n  @Prop({ mutable: true }) value: string = '';\n  @Prop({ reflect: true }) name: string | undefined;\n  @Prop({ reflect: true }) form: string | undefined;\n  @Prop({ reflect: true }) disabled: boolean = false;\n  @Prop({ reflect: true }) readOnly: boolean = false;\n  @Prop({ reflect: true }) required: boolean = false;\n  @Prop() requiredMessage: string = DEFAULT_REQUIRED_MESSAGE;\n  /** Native time step in seconds. Defaults to minutes (`60`). */\n  @Prop() step: string | number = 60;\n  @Prop() min: string | undefined;\n  @Prop() max: string | undefined;\n  @Prop() size: InputTimeSize = 'md';\n  @Prop() width: InputTimeWidth = 'fill';\n  @Prop() hasBorder: boolean = true;\n  @Prop() hasInteractionFill: boolean = true;\n  @Prop() isInactive: boolean = false;\n  @Prop() autoFocus: boolean = false;\n  @Prop() error: boolean = false;\n  @Prop() errorMessage: string | undefined;\n  @Prop() inputId: string | undefined;\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n  @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;\n  @Prop({ attribute: 'aria-describedby' }) ariaDescribedby: string | undefined;\n\n  @Event() dsChange!: EventEmitter<string>;\n\n  private initialValue = '';\n  private inputEl?: HTMLInputElement;\n  @State() private formDisabled = false;\n  @State() private focused = false;\n  @State() private touched = false;\n\n  componentWillLoad() {\n    this.initialValue = this.value;\n    this.syncFormValue();\n  }\n\n  @Watch('value')\n  @Watch('disabled')\n  @Watch('isInactive')\n  @Watch('required')\n  syncFormValue() {\n    const inactive = this.isInactive || this.disabled || this.formDisabled;\n    setFormControlValue(this.internals, this.value, { inactive });\n    const missing = this.required && !inactive && this.value.length === 0;\n    setRequiredValidity(this.internals, missing, this.requiredMessage);\n  }\n\n  formDisabledCallback(disabled: boolean) {\n    this.formDisabled = disabled;\n    this.syncFormValue();\n  }\n\n  formResetCallback() {\n    this.value = this.initialValue;\n  }\n\n  formStateRestoreCallback(state: string | File | FormData | null) {\n    this.value = restoreStringFormState(state);\n  }\n\n  @Method()\n  async setFocus() {\n    this.inputEl?.focus();\n  }\n\n  private handleInput = (event: Event) => {\n    this.value = (event.target as HTMLInputElement).value;\n    this.dsChange.emit(this.value);\n  };\n\n  private handleFocus = () => {\n    this.focused = true;\n  };\n\n  private handleBlur = () => {\n    this.focused = false;\n    this.touched = true;\n  };\n\n  private openPicker = () => {\n    if (this.isInactive || this.disabled || this.formDisabled || this.readOnly) return;\n    this.inputEl?.showPicker?.();\n    this.inputEl?.focus({ preventScroll: true });\n  };\n\n  render() {\n    const inputId = this.inputId ?? this.generatedId;\n    const inactive = this.isInactive || this.disabled || this.formDisabled;\n    const filled = this.value.length > 0;\n    const dirty = this.value !== this.initialValue;\n    const showError = this.error && Boolean(this.errorMessage);\n    const textVariant = CONTROL_TEXT_VARIANT[this.size];\n    const iconSize = ICON_SIZE[this.size];\n    const describedBy =\n      [this.ariaDescribedby, showError ? this.errorId : undefined].filter(Boolean).join(' ') ||\n      undefined;\n\n    return (\n      <Host\n        class={{\n          'input-host': true,\n          'ds-field-stack': true,\n          'ds-control-inactive': inactive,\n          [`ds-control--${this.size}`]: true,\n          ...controlWidthClass(this.width),\n        }}\n        data-disabled={inactive ? '' : undefined}\n        data-readonly={this.readOnly ? '' : undefined}\n        data-required={this.required ? '' : undefined}\n        data-invalid={this.error ? '' : undefined}\n        data-filled={filled ? '' : undefined}\n        data-focused={this.focused ? '' : undefined}\n        data-dirty={dirty ? '' : undefined}\n        data-touched={this.touched ? '' : undefined}\n      >\n        <div\n          class={{\n            'input-control': true,\n            'ds-control-frame': true,\n            'input-control--bordered': this.hasBorder,\n            'input-control--error': this.hasBorder && this.error,\n            'ds-interaction-fill': this.hasInteractionFill,\n            [`ds-control--${this.size}`]: true,\n          }}\n        >\n          <input\n            ref={element => {\n              this.inputEl = element;\n            }}\n            type=\"time\"\n            id={inputId}\n            value={this.value}\n            min={this.min}\n            max={this.max}\n            step={this.step}\n            disabled={inactive}\n            readOnly={this.readOnly}\n            required={this.required}\n            autoFocus={this.autoFocus}\n            class={`native-input native-input--align-start ds-control-label-box ds-text--${textVariant.replace('text-', '')} ds-text--regular ds-interaction-fill__content`}\n            aria-label={this.ariaLabel}\n            aria-labelledby={this.ariaLabelledby}\n            aria-describedby={describedBy}\n            aria-invalid={this.error ? 'true' : undefined}\n            onInput={this.handleInput}\n            onFocus={this.handleFocus}\n            onBlur={this.handleBlur}\n          />\n          <button\n            type=\"button\"\n            class=\"input-control__picker ds-control-icon-box ds-focus-ring-inset ds-interaction-fill__content\"\n            disabled={inactive || this.readOnly}\n            tabIndex={-1}\n            aria-hidden=\"true\"\n            onClick={this.openPicker}\n          >\n            <ds-icon name=\"Clock\" size={iconSize} color=\"inherit\" />\n          </button>\n        </div>\n        {showError && (\n          <ds-text\n            class=\"error-text\"\n            as=\"div\"\n            variant=\"text-body-small\"\n            color=\"negative\"\n            textId={this.errorId}\n            role=\"alert\"\n          >\n            {this.errorMessage}\n          </ds-text>\n        )}\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

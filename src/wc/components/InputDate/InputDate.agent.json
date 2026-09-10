@@ -1,0 +1,87 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-input-date",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-input-date",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Form-associated calendar date field that reuses Input density, focus, validation, and field composition with a native date value.",
+  "useWhen": [
+    "A user must enter or edit a calendar date as an ISO date string.",
+    "The date must participate in native, Angular, React, or Vue form state.",
+    "The control should match Input geometry, typography, and field composition rather than a one-off native date input."
+  ],
+  "avoidWhen": [
+    "The value is freeform text, a number, or a search query.",
+    "The value is a clock time without a calendar date.",
+    "The user chooses a predefined relative range such as last 7 days."
+  ],
+  "alternatives": [
+    {
+      "when": "The value is one line of text, email, search, or an exact number.",
+      "component": "component:ds-input",
+      "reason": "Input owns those native types, adornments, search clearing, and numeric stepping."
+    },
+    {
+      "when": "The value is a clock time.",
+      "component": "component:ds-input-time",
+      "reason": "InputTime owns native time semantics and the clock picker affordance."
+    },
+    {
+      "when": "The user chooses a relative or bounded date range from presets.",
+      "component": "component:ds-table-filter",
+      "reason": "TableFilter owns relative date presets and range selection rather than a single calendar date."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-field",
+    "component:ds-icon",
+    "component:ds-text",
+    "component:ds-input-time"
+  ],
+  "accessibility": [
+    "Provide a persistent visible label through the owning field or an external native label.",
+    "The native date input remains the keyboard and assistive-technology control; the calendar icon only opens the browser picker and is hidden from the accessibility tree.",
+    "Filled values keep YYYY-MM-DD as the native and form value. Visible text uses a short-month calendar label such as Sep 10, 2026 so the field does not show ISO chrome.",
+    "Error text is associated with the native input and announced as an alert when the invalid state is rendered.",
+    "Read-only fields remain focusable and submittable while preventing edits; inactive or disabled fields leave the tab order and are omitted from form submission."
+  ],
+  "states": [
+    "Every size applies the shared control-density recipe, including md body-medium text, across frame height, inline padding, icon zones, and radius.",
+    "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry.",
+    "The host exposes focused, filled, dirty, touched, invalid, disabled, read-only, and required data attributes for Field integration and diagnostics.",
+    "The trailing calendar action is a pointer affordance; it does not replace the field label or the native date value.",
+    "A filled field paints the readable calendar label over the native date text. Empty fields keep the browser empty-date chrome."
+  ],
+  "responsiveBehavior": [
+    "Form fields normally fill their parent; use hug width only in a compact toolbar or filter layout with an explicit width constraint.",
+    "Choose density from the containing layout: md for ordinary forms, lg for a touch-primary layout, and sm or xs only where surrounding controls use the same compact recipe."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Listen for dsChange for user edits. The detail is the native date string, typically YYYY-MM-DD.",
+      "Use the form attribute on the host when associating a date field rendered outside its owning form."
+    ],
+    "react": [
+      "Use DsInputDate, bind value for controlled application state, and handle onDsChange."
+    ],
+    "vue": [
+      "Use DsInputDate with v-model for the value, and listen for dsChange."
+    ],
+    "angular": [
+      "Import DsInputDate with TextValueAccessor when integrating with Angular Forms."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/InputDate/InputDate.stories.ts"
+    },
+    {
+      "label": "Cross-browser form and accessibility coverage",
+      "path": "tests/e2e/forms.spec.ts"
+    }
+  ]
+}

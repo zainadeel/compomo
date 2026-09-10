@@ -24,6 +24,13 @@ export type ParsedDateFilterValue =
 
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
+const ISO_CALENDAR_DATE_LABEL = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+
 export function isIsoCalendarDate(value: string): boolean {
   if (!ISO_DATE_PATTERN.test(value)) return false;
   const [year, month, day] = value.split('-').map(Number);
@@ -31,6 +38,12 @@ export function isIsoCalendarDate(value: string): boolean {
   return (
     date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day
   );
+}
+
+/** Readable calendar date for filled ISO values such as `2026-09-10` → `Sep 10, 2026`. */
+export function formatIsoCalendarDateLabel(value: string): string {
+  if (!isIsoCalendarDate(value)) return '';
+  return ISO_CALENDAR_DATE_LABEL.format(new Date(`${value}T00:00:00Z`));
 }
 
 export function shiftIsoCalendarDate(value: string, days: number): string {

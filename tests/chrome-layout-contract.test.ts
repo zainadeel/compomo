@@ -77,6 +77,7 @@ test('compact headers share one geometry and copy-zone anatomy', () => {
     BarTitle: /'ds-chrome-header': compact/,
     BarPageTitle: /'ds-chrome-header': true/,
     CardChart: /card-chart__header ds-chrome-header/,
+    CardNavigation: /card-navigation__header[\s\S]*?ds-chrome-header/,
     CardSetting: /card-setting__header ds-chrome-header/,
     Table: /ds-table__footer ds-table__bar ds-chrome-header ds-control--md/,
   } as const;
@@ -90,6 +91,15 @@ test('compact headers share one geometry and copy-zone anatomy', () => {
       component
     );
   }
+
+  assert.match(
+    read('src/wc/components/CardNavigation/CardNavigation.tsx'),
+    /'ds-chrome-header__copy--stacked': true/
+  );
+  assert.match(
+    read('src/wc/components/CardNavigation/CardNavigation.css'),
+    /\.card-navigation__header\s*{[\s\S]*?align-items: flex-start;/
+  );
 });
 
 test('migrated chrome consumes shared recipes while retaining nested rhythms', () => {
@@ -159,6 +169,10 @@ test('migrated chrome consumes shared recipes while retaining nested rhythms', (
   assert.match(modal, /modal-copy ds-chrome-header__copy ds-chrome-header__copy--stacked/);
   assert.match(modal, /variant="text-title-small"/);
   assert.match(modal, /class="modal-footer__actions"/);
+  assert.match(modal, /modal-footer[\s\S]*?ds-chrome-row[\s\S]*?ds-chrome-space--lg/);
+
+  const modalCss = read('src/wc/components/Modal/Modal.css');
+  assert.match(modalCss, /\.modal-footer__actions\s*{[\s\S]*?gap: var\(--dimension-space-100\);/);
 });
 
 test('choice sections migrate last to the shared sm column recipe', () => {

@@ -2783,10 +2783,12 @@
             "The native link owns hover, pressed, and focus-visible states across the complete card in navigation-only mode.",
             "In content mode, the native link owns those interaction states only across the header while the body remains application-owned.",
             "An empty or unsafe href renders non-interactive card chrome without a false keyboard target.",
+            "Copy is always stacked, so a missing description keeps the heading at the start of the column instead of centering it in the header.",
             "The application owns destination loading, authorization, not-found, and recovery states after navigation."
           ],
           "responsiveBehavior": [
             "Choose sm, md, or lg from the parent layout; the surface never exceeds its parent width.",
+            "The heading stays at the start of the stacked copy column whether or not supporting copy is present, so mixed destination lists keep titles aligned. The chevron stays vertically centered in the header.",
             "Supporting copy wraps while the chevron remains visible at the trailing edge.",
             "The parent owns wrapping, columns, stacking, and breakpoint changes between cards."
           ],
@@ -4444,7 +4446,7 @@
     {
       "name": "field",
       "title": "Field",
-      "description": "Accessible form-field composition that gives one Input, Textarea, or Select a persistent label, optional guidance, shared error presentation, stable IDs, and observable interaction state.",
+      "description": "Accessible form-field composition that gives one Input, InputDate, InputTime, Textarea, or Select a persistent label, optional guidance, shared error presentation, stable IDs, and observable interaction state.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -4455,9 +4457,9 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Accessible form-field composition that gives one Input, Textarea, or Select a persistent label, optional guidance, shared error presentation, stable IDs, and observable interaction state.",
+          "summary": "Accessible form-field composition that gives one Input, InputDate, InputTime, Textarea, or Select a persistent label, optional guidance, shared error presentation, stable IDs, and observable interaction state.",
           "useWhen": [
-            "An Input, Textarea, or Select needs a persistent visible label in a form.",
+            "An Input, InputDate, InputTime, Textarea, or Select needs a persistent visible label in a form.",
             "Help text or an error message must be programmatically associated with one control.",
             "A form layout needs one consistent label-control-message rhythm."
           ],
@@ -4475,6 +4477,8 @@
           ],
           "commonlyComposedWith": [
             "component:ds-input",
+            "component:ds-input-date",
+            "component:ds-input-time",
             "component:ds-textarea",
             "component:ds-select",
             "component:ds-text"
@@ -4503,7 +4507,7 @@
               "Assign child component values and option arrays through their normal JavaScript properties."
             ],
             "react": [
-              "Compose one DsInput, DsTextarea, or DsSelect child and control validation timing in the form owner."
+              "Compose one DsInput, DsInputDate, DsInputTime, DsTextarea, or DsSelect child and control validation timing in the form owner."
             ],
             "angular": [
               "Compose the generated Field adapter around the control adapter and its matching Angular value accessor."
@@ -4999,13 +5003,24 @@
           "avoidWhen": [
             "The user chooses from a finite set of known values.",
             "The user must enter multiple paragraphs or formatted content.",
-            "The value is adjusted primarily by dragging within a numeric range."
+            "The value is adjusted primarily by dragging within a numeric range.",
+            "The value is a calendar date or a clock time."
           ],
           "alternatives": [
             {
               "when": "The value comes from a finite set of known choices.",
               "component": "component:ds-select",
               "reason": "Select exposes the available values and owns listbox selection behavior."
+            },
+            {
+              "when": "The value is a calendar date.",
+              "component": "component:ds-input-date",
+              "reason": "InputDate owns native date semantics, shared Input density, and the calendar picker affordance."
+            },
+            {
+              "when": "The value is a clock time.",
+              "component": "component:ds-input-time",
+              "reason": "InputTime owns native time semantics, shared Input density, and the clock picker affordance."
             },
             {
               "when": "The value is an immediate on/off setting.",
@@ -5232,6 +5247,411 @@
       ],
       "registryDependencies": [
         "button-unfilled",
+        "icon",
+        "text"
+      ]
+    },
+    {
+      "name": "input-date",
+      "title": "InputDate",
+      "description": "Form-associated calendar date field that reuses Input density, focus, validation, and field composition with a native date value.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/input-date",
+        "source": "src/wc/components/InputDate/InputDate.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Form-associated calendar date field that reuses Input density, focus, validation, and field composition with a native date value.",
+          "useWhen": [
+            "A user must enter or edit a calendar date as an ISO date string.",
+            "The date must participate in native, Angular, React, or Vue form state.",
+            "The control should match Input geometry, typography, and field composition rather than a one-off native date input."
+          ],
+          "avoidWhen": [
+            "The value is freeform text, a number, or a search query.",
+            "The value is a clock time without a calendar date.",
+            "The user chooses a predefined relative range such as last 7 days."
+          ],
+          "alternatives": [
+            {
+              "when": "The value is one line of text, email, search, or an exact number.",
+              "component": "component:ds-input",
+              "reason": "Input owns those native types, adornments, search clearing, and numeric stepping."
+            },
+            {
+              "when": "The value is a clock time.",
+              "component": "component:ds-input-time",
+              "reason": "InputTime owns native time semantics and the clock picker affordance."
+            },
+            {
+              "when": "The user chooses a relative or bounded date range from presets.",
+              "component": "component:ds-table-filter",
+              "reason": "TableFilter owns relative date presets and range selection rather than a single calendar date."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-field",
+            "component:ds-icon",
+            "component:ds-text",
+            "component:ds-input-time"
+          ],
+          "accessibility": [
+            "Provide a persistent visible label through the owning field or an external native label.",
+            "The native date input remains the keyboard and assistive-technology control; the calendar icon only opens the browser picker and is hidden from the accessibility tree.",
+            "Error text is associated with the native input and announced as an alert when the invalid state is rendered.",
+            "Read-only fields remain focusable and submittable while preventing edits; inactive or disabled fields leave the tab order and are omitted from form submission."
+          ],
+          "states": [
+            "Every size applies the shared control-density recipe, including md body-medium text, across frame height, inline padding, icon zones, and radius.",
+            "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry.",
+            "The host exposes focused, filled, dirty, touched, invalid, disabled, read-only, and required data attributes for Field integration and diagnostics.",
+            "The trailing calendar action is a pointer affordance; it does not replace the field label or the native date value."
+          ],
+          "responsiveBehavior": [
+            "Form fields normally fill their parent; use hug width only in a compact toolbar or filter layout with an explicit width constraint.",
+            "Choose density from the containing layout: md for ordinary forms, lg for a touch-primary layout, and sm or xs only where surrounding controls use the same compact recipe."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Listen for dsChange for user edits. The detail is the native date string, typically YYYY-MM-DD.",
+              "Use the form attribute on the host when associating a date field rendered outside its owning form."
+            ],
+            "react": [
+              "Use DsInputDate, bind value for controlled application state, and handle onDsChange."
+            ],
+            "vue": [
+              "Use DsInputDate with v-model for the value, and listen for dsChange."
+            ],
+            "angular": [
+              "Import DsInputDate with TextValueAccessor when integrating with Angular Forms."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/InputDate/InputDate.stories.ts"
+            },
+            {
+              "label": "Cross-browser form and accessibility coverage",
+              "path": "tests/e2e/forms.spec.ts"
+            }
+          ]
+        },
+        "props": {
+          "ariaDescribedby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "ariaLabelledby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "autoFocus": {
+            "type": "boolean",
+            "required": false
+          },
+          "disabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "error": {
+            "type": "boolean",
+            "required": false
+          },
+          "errorMessage": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "form": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "hasBorder": {
+            "type": "boolean",
+            "required": false
+          },
+          "hasInteractionFill": {
+            "type": "boolean",
+            "required": false
+          },
+          "inputId": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "max": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "min": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "name": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "readOnly": {
+            "type": "boolean",
+            "required": false
+          },
+          "required": {
+            "type": "boolean",
+            "required": false
+          },
+          "requiredMessage": {
+            "type": "string",
+            "required": false
+          },
+          "size": {
+            "type": "InputDateSize",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          },
+          "width": {
+            "type": "InputDateWidth",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "string"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-input-date",
+          "react": "DsInputDate",
+          "vue": "DsInputDate",
+          "angular": "DsInputDate"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "icon",
+        "text"
+      ]
+    },
+    {
+      "name": "input-time",
+      "title": "InputTime",
+      "description": "Form-associated clock time field that reuses Input density, focus, validation, and field composition with a native time value.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/input-time",
+        "source": "src/wc/components/InputTime/InputTime.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Form-associated clock time field that reuses Input density, focus, validation, and field composition with a native time value.",
+          "useWhen": [
+            "A user must enter or edit a clock time as a native time string.",
+            "The time must participate in native, Angular, React, or Vue form state.",
+            "The control should match Input geometry, typography, and field composition rather than a one-off native time input."
+          ],
+          "avoidWhen": [
+            "The value is freeform text, a number, or a search query.",
+            "The value is a calendar date without a clock time.",
+            "The user chooses from a finite set of named schedule options rather than an exact time."
+          ],
+          "alternatives": [
+            {
+              "when": "The value is one line of text, email, search, or an exact number.",
+              "component": "component:ds-input",
+              "reason": "Input owns those native types, adornments, search clearing, and numeric stepping."
+            },
+            {
+              "when": "The value is a calendar date.",
+              "component": "component:ds-input-date",
+              "reason": "InputDate owns native date semantics and the calendar picker affordance."
+            },
+            {
+              "when": "The user chooses from a finite set of named times or cadences.",
+              "component": "component:ds-select",
+              "reason": "Select exposes the available values and owns listbox selection behavior."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-field",
+            "component:ds-icon",
+            "component:ds-text",
+            "component:ds-input-date"
+          ],
+          "accessibility": [
+            "Provide a persistent visible label through the owning field or an external native label.",
+            "The native time input remains the keyboard and assistive-technology control; the clock icon only opens the browser picker and is hidden from the accessibility tree.",
+            "Error text is associated with the native input and announced as an alert when the invalid state is rendered.",
+            "Read-only fields remain focusable and submittable while preventing edits; inactive or disabled fields leave the tab order and are omitted from form submission."
+          ],
+          "states": [
+            "Every size applies the shared control-density recipe, including md body-medium text, across frame height, inline padding, icon zones, and radius.",
+            "The default step is one minute so the field matches ordinary schedule entry; override step only when seconds or another increment is required.",
+            "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry.",
+            "The host exposes focused, filled, dirty, touched, invalid, disabled, read-only, and required data attributes for Field integration and diagnostics.",
+            "The trailing clock action is a pointer affordance; it does not replace the field label or the native time value."
+          ],
+          "responsiveBehavior": [
+            "Form fields normally fill their parent; use hug width only in a compact toolbar or filter layout with an explicit width constraint.",
+            "Choose density from the containing layout: md for ordinary forms, lg for a touch-primary layout, and sm or xs only where surrounding controls use the same compact recipe."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Listen for dsChange for user edits. The detail is the native time string, typically HH:MM.",
+              "Use the form attribute on the host when associating a time field rendered outside its owning form."
+            ],
+            "react": [
+              "Use DsInputTime, bind value for controlled application state, and handle onDsChange."
+            ],
+            "vue": [
+              "Use DsInputTime with v-model for the value, and listen for dsChange."
+            ],
+            "angular": [
+              "Import DsInputTime with TextValueAccessor when integrating with Angular Forms."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/InputTime/InputTime.stories.ts"
+            },
+            {
+              "label": "Cross-browser form and accessibility coverage",
+              "path": "tests/e2e/forms.spec.ts"
+            }
+          ]
+        },
+        "props": {
+          "ariaDescribedby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "ariaLabelledby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "autoFocus": {
+            "type": "boolean",
+            "required": false
+          },
+          "disabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "error": {
+            "type": "boolean",
+            "required": false
+          },
+          "errorMessage": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "form": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "hasBorder": {
+            "type": "boolean",
+            "required": false
+          },
+          "hasInteractionFill": {
+            "type": "boolean",
+            "required": false
+          },
+          "inputId": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "max": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "min": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "name": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "readOnly": {
+            "type": "boolean",
+            "required": false
+          },
+          "required": {
+            "type": "boolean",
+            "required": false
+          },
+          "requiredMessage": {
+            "type": "string",
+            "required": false
+          },
+          "size": {
+            "type": "InputTimeSize",
+            "required": false
+          },
+          "step": {
+            "type": "string | number",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          },
+          "width": {
+            "type": "InputTimeWidth",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "string"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-input-time",
+          "react": "DsInputTime",
+          "vue": "DsInputTime",
+          "angular": "DsInputTime"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
         "icon",
         "text"
       ]

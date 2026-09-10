@@ -143,6 +143,7 @@ export {
   DATE_FILTER_RELATIVE_PRESETS,
   dateFilterRangeValue,
   dateFilterRelativeValue,
+  formatIsoCalendarDateLabel,
   isIsoCalendarDate,
   normalizeDateFilterValue,
   parseDateFilterValue,

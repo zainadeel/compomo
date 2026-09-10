@@ -266,3 +266,26 @@ test('PanelTools search uses the shared Select search control at md density', ()
     /background-color: var\(--color-background-(?:primary|secondary)\)/
   );
 });
+
+test('date and time inputs share Input density, typography, and picker chrome', () => {
+  const dateSource = read('src/wc/components/InputDate/InputDate.tsx');
+  const timeSource = read('src/wc/components/InputTime/InputTime.tsx');
+  const dateCss = read('src/wc/components/InputDate/InputDate.css');
+  const timeCss = read('src/wc/components/InputTime/InputTime.css');
+  const datetimeCss = read('src/wc/utils/datetime-input-control.css');
+
+  assert.match(dateCss, /@import ['"]\.\.\/\.\.\/utils\/datetime-input-control\.css['"];/);
+  assert.match(timeCss, /@import ['"]\.\.\/\.\.\/utils\/datetime-input-control\.css['"];/);
+  assert.match(datetimeCss, /@import ['"]\.\/typography\.css['"];/);
+  assert.match(datetimeCss, /@import ['"]\.\/control-density\.css['"];/);
+  assert.match(datetimeCss, /::-webkit-calendar-picker-indicator/);
+  assert.match(datetimeCss, /::-webkit-datetime-edit/);
+  assert.match(dateSource, /CONTROL_TEXT_VARIANT\[this\.size\]/);
+  assert.match(timeSource, /CONTROL_TEXT_VARIANT\[this\.size\]/);
+  assert.match(dateSource, /type="date"/);
+  assert.match(dateSource, /formatIsoCalendarDateLabel/);
+  assert.match(dateCss, /input-control__formatted-date/);
+  assert.match(timeSource, /type="time"/);
+  assert.match(dateSource, /name="Calendar"/);
+  assert.match(timeSource, /name="Clock"/);
+});

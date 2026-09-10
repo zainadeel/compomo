@@ -377,8 +377,9 @@ Do not add `CUSTOM_ELEMENTS_SCHEMA` when using adapters; Angular should validate
 ## Vue
 
 Import generated wrappers from `@ds-mo/ui/vue`. Form controls that participate
-in native value state also support `v-model` (`ds-input`, `ds-select`,
-`ds-radio`, `ds-checkbox`, and `ds-switch`). Listen for the original custom
+in native value state also support `v-model` (`ds-input`, `ds-input-date`,
+`ds-input-time`, `ds-textarea`, `ds-select`, `ds-radio`, `ds-checkbox`, and
+`ds-switch`). Listen for the original custom
 events such as `dsChange` rather than inventing framework-specific names.
 
 ```vue

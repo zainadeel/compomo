@@ -40,6 +40,30 @@ export const NavigationOnly: Story = {
   `,
 };
 
+export const HeadingOnly: Story = {
+  args: {
+    heading: 'Lane watch',
+    description: '',
+  },
+  render: args => html`
+    <div style="display:grid;gap:var(--dimension-space-200);width:var(--dimension-card-width-md);">
+      <ds-card-navigation
+        heading="Test agent"
+        description="Testing how agent building looks like"
+        href=${args['href']}
+        card-width=${args['cardWidth']}
+        variant="navigation-only"
+      ></ds-card-navigation>
+      <ds-card-navigation
+        heading=${args['heading']}
+        href=${args['href']}
+        card-width=${args['cardWidth']}
+        variant="navigation-only"
+      ></ds-card-navigation>
+    </div>
+  `,
+};
+
 export const WithContent: Story = {
   args: {
     heading: 'Unsafe Behavior Detection and Event Intelligence',

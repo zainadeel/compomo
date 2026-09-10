@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
   dateFilterRangeValue,
+  formatIsoCalendarDateLabel,
   normalizeDateFilterValue,
   parseDateFilterValue,
   resolveDateFilterRange,
@@ -11,6 +12,13 @@ describe('date filter values', () => {
   it('normalizes ordered ranges and the legacy single-date value', () => {
     assert.equal(dateFilterRangeValue('2026-08-26', '2026-08-20'), 'range:2026-08-20/2026-08-26');
     assert.equal(normalizeDateFilterValue('2026-08-26'), 'range:2026-08-26/2026-08-26');
+  });
+
+  it('formats valid ISO calendar dates as short-month labels', () => {
+    assert.equal(formatIsoCalendarDateLabel('2026-09-10'), 'Sep 10, 2026');
+    assert.equal(formatIsoCalendarDateLabel('2026-08-07'), 'Aug 7, 2026');
+    assert.equal(formatIsoCalendarDateLabel('2026-02-30'), '');
+    assert.equal(formatIsoCalendarDateLabel(''), '');
   });
 
   it('rejects invalid dates and unsupported relative presets', () => {

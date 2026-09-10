@@ -42,10 +42,12 @@
     "The native link owns hover, pressed, and focus-visible states across the complete card in navigation-only mode.",
     "In content mode, the native link owns those interaction states only across the header while the body remains application-owned.",
     "An empty or unsafe href renders non-interactive card chrome without a false keyboard target.",
+    "Copy is always stacked, so a missing description keeps the heading at the start of the column instead of centering it in the header.",
     "The application owns destination loading, authorization, not-found, and recovery states after navigation."
   ],
   "responsiveBehavior": [
     "Choose sm, md, or lg from the parent layout; the surface never exceeds its parent width.",
+    "The heading stays at the start of the stacked copy column whether or not supporting copy is present, so mixed destination lists keep titles aligned. The chevron stays vertically centered in the header.",
     "Supporting copy wraps while the chevron remains visible at the trailing edge.",
     "The parent owns wrapping, columns, stacking, and breakpoint changes between cards."
   ],

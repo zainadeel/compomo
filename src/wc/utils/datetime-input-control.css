@@ -1,0 +1,147 @@
+@import './interaction-fill.css';
+@import './focus-ring.css';
+@import './control-inactive.css';
+@import './radius.css';
+@import './control-density.css';
+@import './control-parts.css';
+@import './control-width.css';
+@import './field-stack.css';
+@import './typography.css';
+@import './forced-colors.css';
+
+:host(.input-host) {
+  display: inline-flex;
+  --ds-input-fg: var(--color-foreground-primary);
+  --ds-input-placeholder: var(--color-foreground-secondary);
+  --ds-input-placeholder-active: var(--color-foreground-quaternary);
+  --ds-input-adornment-fg: var(--color-foreground-secondary);
+  --ds-input-border: var(--color-border-secondary);
+}
+
+:host(.ds-control-width--fill),
+:host(.ds-control-width--fill) .input-control {
+  width: 100%;
+}
+
+.input-control {
+  overflow: hidden;
+  background: transparent;
+  border: none;
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
+  color: var(--ds-input-fg);
+}
+
+.input-control--bordered {
+  --ds-interaction-border-width: var(--dimension-stroke-width-012);
+  --ds-interaction-border-color: var(--ds-input-border);
+}
+
+.input-control--error {
+  --ds-interaction-border-width: var(--dimension-stroke-width-018);
+  --ds-interaction-border-color: var(--color-border-bold-negative);
+}
+
+.input-control--bordered:focus-within:not(.input-control--error) {
+  --ds-interaction-border-width: var(--dimension-stroke-width-018);
+  --ds-interaction-border-color: var(--color-border-bold-brand);
+}
+
+:host(.ds-control-inactive) .input-control::after {
+  background: transparent;
+}
+
+.native-input {
+  position: relative;
+  z-index: 2;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  background: transparent;
+  border: none;
+  border-radius: inherit;
+  outline: none;
+  color: var(--ds-input-fg);
+  font-family: inherit;
+  letter-spacing: inherit;
+  text-overflow: ellipsis;
+  -webkit-appearance: none;
+  appearance: none;
+  color-scheme: inherit;
+}
+
+.native-input--align-start {
+  text-align: start;
+}
+
+.native-input:disabled {
+  cursor: not-allowed;
+}
+
+.native-input:read-only:not(:disabled) {
+  cursor: default;
+}
+
+.native-input::-webkit-calendar-picker-indicator {
+  display: none;
+}
+
+.native-input::-webkit-inner-spin-button,
+.native-input::-webkit-clear-button {
+  display: none;
+}
+
+.native-input::-webkit-datetime-edit,
+.native-input::-webkit-datetime-edit-fields-wrapper,
+.native-input::-webkit-datetime-edit-text,
+.native-input::-webkit-datetime-edit-month-field,
+.native-input::-webkit-datetime-edit-day-field,
+.native-input::-webkit-datetime-edit-year-field,
+.native-input::-webkit-datetime-edit-hour-field,
+.native-input::-webkit-datetime-edit-minute-field,
+.native-input::-webkit-datetime-edit-second-field,
+.native-input::-webkit-datetime-edit-ampm-field {
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+.input-control__prefix,
+.input-control__picker {
+  position: relative;
+  z-index: 2;
+  color: var(--ds-input-adornment-fg);
+}
+
+.input-control__picker {
+  all: unset;
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  width: var(--ds-control-icon, var(--dimension-iconography-md));
+  height: var(--ds-control-icon, var(--dimension-iconography-md));
+  color: var(--ds-input-adornment-fg);
+  cursor: pointer;
+}
+
+.input-control__picker:disabled {
+  cursor: not-allowed;
+}
+
+.error-text {
+  width: 100%;
+}
+
+@media (forced-colors: active) {
+  .input-control--bordered:focus-within:not(.input-control--error)::after {
+    outline-color: var(--ds-forced-color-selected);
+  }
+
+  .input-control--error::after {
+    outline-style: dashed;
+  }
+}

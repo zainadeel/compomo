@@ -22,13 +22,24 @@
       "avoidWhen": [
         "The user chooses from a finite set of known values.",
         "The user must enter multiple paragraphs or formatted content.",
-        "The value is adjusted primarily by dragging within a numeric range."
+        "The value is adjusted primarily by dragging within a numeric range.",
+        "The value is a calendar date or a clock time."
       ],
       "alternatives": [
         {
           "when": "The value comes from a finite set of known choices.",
           "component": "component:ds-select",
           "reason": "Select exposes the available values and owns listbox selection behavior."
+        },
+        {
+          "when": "The value is a calendar date.",
+          "component": "component:ds-input-date",
+          "reason": "InputDate owns native date semantics, shared Input density, and the calendar picker affordance."
+        },
+        {
+          "when": "The value is a clock time.",
+          "component": "component:ds-input-time",
+          "reason": "InputTime owns native time semantics, shared Input density, and the clock picker affordance."
         },
         {
           "when": "The value is an immediate on/off setting.",

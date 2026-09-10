@@ -16,13 +16,24 @@
   "avoidWhen": [
     "The user chooses from a finite set of known values.",
     "The user must enter multiple paragraphs or formatted content.",
-    "The value is adjusted primarily by dragging within a numeric range."
+    "The value is adjusted primarily by dragging within a numeric range.",
+    "The value is a calendar date or a clock time."
   ],
   "alternatives": [
     {
       "when": "The value comes from a finite set of known choices.",
       "component": "component:ds-select",
       "reason": "Select exposes the available values and owns listbox selection behavior."
+    },
+    {
+      "when": "The value is a calendar date.",
+      "component": "component:ds-input-date",
+      "reason": "InputDate owns native date semantics, shared Input density, and the calendar picker affordance."
+    },
+    {
+      "when": "The value is a clock time.",
+      "component": "component:ds-input-time",
+      "reason": "InputTime owns native time semantics, shared Input density, and the clock picker affordance."
     },
     {
       "when": "The value is an immediate on/off setting.",
@@ -35,11 +46,7 @@
       "reason": "Slider supports direct range adjustment and communicates the current position."
     }
   ],
-  "commonlyComposedWith": [
-    "component:ds-field",
-    "component:ds-icon",
-    "component:ds-text"
-  ],
+  "commonlyComposedWith": ["component:ds-field", "component:ds-icon", "component:ds-text"],
   "accessibility": [
     "Provide a persistent visible label through the owning field or an external native label; placeholder text is guidance and must not be the field's only label.",
     "Choose the native input type that matches the value so browsers and assistive technology can provide appropriate semantics and keyboards.",
@@ -76,12 +83,8 @@
     "react": [
       "Use DsInput, bind value for controlled application state, and handle onDsChange and onDsClear."
     ],
-    "vue": [
-      "Use DsInput with v-model for the value, and listen for dsChange and dsClear."
-    ],
-    "angular": [
-      "Import DsInput with TextValueAccessor when integrating with Angular Forms."
-    ]
+    "vue": ["Use DsInput with v-model for the value, and listen for dsChange and dsClear."],
+    "angular": ["Import DsInput with TextValueAccessor when integrating with Angular Forms."]
   },
   "references": [
     {

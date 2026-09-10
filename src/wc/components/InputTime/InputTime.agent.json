@@ -1,0 +1,86 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-input-time",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-input-time",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Form-associated clock time field that reuses Input density, focus, validation, and field composition with a native time value.",
+  "useWhen": [
+    "A user must enter or edit a clock time as a native time string.",
+    "The time must participate in native, Angular, React, or Vue form state.",
+    "The control should match Input geometry, typography, and field composition rather than a one-off native time input."
+  ],
+  "avoidWhen": [
+    "The value is freeform text, a number, or a search query.",
+    "The value is a calendar date without a clock time.",
+    "The user chooses from a finite set of named schedule options rather than an exact time."
+  ],
+  "alternatives": [
+    {
+      "when": "The value is one line of text, email, search, or an exact number.",
+      "component": "component:ds-input",
+      "reason": "Input owns those native types, adornments, search clearing, and numeric stepping."
+    },
+    {
+      "when": "The value is a calendar date.",
+      "component": "component:ds-input-date",
+      "reason": "InputDate owns native date semantics and the calendar picker affordance."
+    },
+    {
+      "when": "The user chooses from a finite set of named times or cadences.",
+      "component": "component:ds-select",
+      "reason": "Select exposes the available values and owns listbox selection behavior."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-field",
+    "component:ds-icon",
+    "component:ds-text",
+    "component:ds-input-date"
+  ],
+  "accessibility": [
+    "Provide a persistent visible label through the owning field or an external native label.",
+    "The native time input remains the keyboard and assistive-technology control; the clock icon only opens the browser picker and is hidden from the accessibility tree.",
+    "Error text is associated with the native input and announced as an alert when the invalid state is rendered.",
+    "Read-only fields remain focusable and submittable while preventing edits; inactive or disabled fields leave the tab order and are omitted from form submission."
+  ],
+  "states": [
+    "Every size applies the shared control-density recipe, including md body-medium text, across frame height, inline padding, icon zones, and radius.",
+    "The default step is one minute so the field matches ordinary schedule entry; override step only when seconds or another increment is required.",
+    "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry.",
+    "The host exposes focused, filled, dirty, touched, invalid, disabled, read-only, and required data attributes for Field integration and diagnostics.",
+    "The trailing clock action is a pointer affordance; it does not replace the field label or the native time value."
+  ],
+  "responsiveBehavior": [
+    "Form fields normally fill their parent; use hug width only in a compact toolbar or filter layout with an explicit width constraint.",
+    "Choose density from the containing layout: md for ordinary forms, lg for a touch-primary layout, and sm or xs only where surrounding controls use the same compact recipe."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Listen for dsChange for user edits. The detail is the native time string, typically HH:MM.",
+      "Use the form attribute on the host when associating a time field rendered outside its owning form."
+    ],
+    "react": [
+      "Use DsInputTime, bind value for controlled application state, and handle onDsChange."
+    ],
+    "vue": [
+      "Use DsInputTime with v-model for the value, and listen for dsChange."
+    ],
+    "angular": [
+      "Import DsInputTime with TextValueAccessor when integrating with Angular Forms."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/InputTime/InputTime.stories.ts"
+    },
+    {
+      "label": "Cross-browser form and accessibility coverage",
+      "path": "tests/e2e/forms.spec.ts"
+    }
+  ]
+}

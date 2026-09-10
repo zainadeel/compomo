@@ -31,7 +31,7 @@ export const config: Config = {
       directivesArrayFile: 'src/.generated/angular/index.ts',
       valueAccessorConfigs: [
         {
-          elementSelectors: ['ds-input', 'ds-textarea'],
+          elementSelectors: ['ds-input', 'ds-input-date', 'ds-input-time', 'ds-textarea'],
           event: 'dsChange',
           targetAttr: 'value',
           type: 'text',
@@ -60,7 +60,7 @@ export const config: Config = {
       esModules: true,
       componentModels: [
         {
-          elements: ['ds-input', 'ds-textarea'],
+          elements: ['ds-input', 'ds-input-date', 'ds-input-time', 'ds-textarea'],
           event: 'dsChange',
           targetAttr: 'value',
           eventAttr: 'detail',

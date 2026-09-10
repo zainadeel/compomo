@@ -489,6 +489,63 @@ test('input follows shared control density, focus, and search-clear recipes', as
   await expect(search.locator('ds-button-unfilled')).toHaveCount(0);
 });
 
+test('date and time inputs follow Input density, body text, and form association', async ({
+  page,
+}) => {
+  const expected = {
+    lg: { height: 40, icon: 24, textClass: 'ds-text--body-large' },
+    md: { height: 32, icon: 20, textClass: 'ds-text--body-medium' },
+    sm: { height: 24, icon: 16, textClass: 'ds-text--body-small' },
+    xs: { height: 16, icon: 12, textClass: 'ds-text--caption' },
+  } as const;
+
+  for (const [size, dimensions] of Object.entries(expected)) {
+    const input = page.locator(`#input-date-${size}`);
+    const actual = await input.evaluate(element => {
+      const control = element.querySelector<HTMLElement>('.input-control')!;
+      const picker = element.querySelector<HTMLElement>('.input-control__picker')!;
+      const nativeInput = element.querySelector<HTMLInputElement>('input')!;
+      return {
+        height: Math.round(control.getBoundingClientRect().height),
+        icon: Math.round(picker.getBoundingClientRect().width),
+        type: nativeInput.type,
+        classes: [...nativeInput.classList],
+      };
+    });
+
+    expect(actual).toMatchObject({
+      height: dimensions.height,
+      icon: dimensions.icon,
+      type: 'date',
+    });
+    expect(actual.classes).toContain(dimensions.textClass);
+  }
+
+  const time = await page.locator('#input-time-md').evaluate(element => {
+    const control = element.querySelector<HTMLElement>('.input-control')!;
+    const nativeInput = element.querySelector<HTMLInputElement>('input')!;
+    return {
+      height: Math.round(control.getBoundingClientRect().height),
+      type: nativeInput.type,
+      step: nativeInput.step,
+      classes: [...nativeInput.classList],
+    };
+  });
+  expect(time).toMatchObject({ height: 32, type: 'time', step: '60' });
+  expect(time.classes).toContain('ds-text--body-medium');
+
+  await expect
+    .poll(() =>
+      page
+        .locator('#datetime-input-form')
+        .evaluate(form => Object.fromEntries(new FormData(form as HTMLFormElement)))
+    )
+    .toEqual({
+      'start-date': '2026-09-10',
+      'start-time': '09:00',
+    });
+});
+
 test('input truncates single-line values and placeholder guidance when constrained', async ({
   page,
 }) => {
