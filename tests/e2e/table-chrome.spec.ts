@@ -392,6 +392,7 @@ test('reports table filter intent from the dedicated host without mutating contr
   await trigger.click();
   await expect(control).toHaveJSProperty('open', true);
   await control.getByRole('option', { name: 'Driving' }).click();
+  await control.getByRole('button', { name: 'Apply', exact: true }).click();
 
   await expect
     .poll(() =>
@@ -406,87 +407,30 @@ test('reports table filter intent from the dedicated host without mutating contr
   await expect(control).toHaveJSProperty('values', {});
 });
 
-test('reserves a category-pane Clear footer for every table filter @pr-critical', async ({
+test('shows filter actions only with selections and clears immediately @pr-critical', async ({
   page,
 }) => {
   const control = page.locator('#column-customizer-filter');
-  const trigger = control.getByRole('combobox', { name: 'Filter fleet' });
-
   await control.evaluate(element => {
-    (window as typeof window & { __tableFilterClears?: number }).__tableFilterClears = 0;
-    element.addEventListener('dsClear', () => {
-      (window as typeof window & { __tableFilterClears?: number }).__tableFilterClears! += 1;
-    });
+    (window as typeof window & { __tableFilterClears: number }).__tableFilterClears = 0;
+    element.addEventListener(
+      'dsClear',
+      () => (window as typeof window & { __tableFilterClears: number }).__tableFilterClears++
+    );
   });
-  await trigger.click();
-
-  const popup = control.getByRole('dialog', { name: 'Filter fleet' });
-  const categoryPane = popup.locator('.filter-menu__category-pane');
-  const footer = categoryPane.locator('.filter-menu__footer');
-  const options = popup.locator('.filter-menu__options');
-  await expect(footer).toBeVisible();
-  await expect(footer).toHaveAttribute('aria-hidden', 'true');
-  await expect(footer.locator('.ds-choice-footer__summary')).toHaveCount(0);
-  await expect(control.getByRole('button', { name: 'Clear' })).toHaveCount(0);
-  await expect
-    .poll(() => footer.evaluate(element => getComputedStyle(element, '::before').visibility))
-    .toBe('hidden');
-
-  const idleGeometry = await Promise.all([
-    popup.boundingBox(),
-    categoryPane.boundingBox(),
-    footer.boundingBox(),
-    options.boundingBox(),
-  ]);
-  expect(idleGeometry.every(rect => rect !== null)).toBe(true);
-
-  await control.evaluate((element: HTMLDsTableFilterElement) => {
-    element.values = { status: ['driving'] };
-  });
-
-  const clear = control.getByRole('button', { name: 'Clear' });
-  await expect(footer).not.toHaveAttribute('aria-hidden');
-  await expect(clear).toBeVisible();
-  await expect(footer.locator('.ds-choice-footer__summary')).toHaveCount(0);
-  await expect
-    .poll(() => footer.evaluate(element => getComputedStyle(element, '::before').visibility))
-    .toBe('visible');
-  await expect(footer.locator('.ds-choice-footer__content')).toHaveCSS(
-    'justify-content',
-    'flex-start'
-  );
-
-  const activeGeometry = await Promise.all([
-    popup.boundingBox(),
-    categoryPane.boundingBox(),
-    footer.boundingBox(),
-    clear.boundingBox(),
-  ]);
-  const categoryDividerWidth = await categoryPane.evaluate(element =>
-    Number.parseFloat(getComputedStyle(element).borderInlineEndWidth)
-  );
-  expect(activeGeometry.every(rect => rect !== null)).toBe(true);
-  expect(activeGeometry[0]!.height).toBeCloseTo(idleGeometry[0]!.height, 3);
-  expect(activeGeometry[2]!.x).toBeCloseTo(activeGeometry[1]!.x, 3);
-  expect(activeGeometry[2]!.x + activeGeometry[2]!.width).toBeCloseTo(
-    activeGeometry[1]!.x + activeGeometry[1]!.width - categoryDividerWidth,
-    3
-  );
-  expect(activeGeometry[3]!.x).toBeLessThan(activeGeometry[2]!.x + activeGeometry[2]!.width / 2);
-  expect(idleGeometry[3]!.y + idleGeometry[3]!.height).toBeCloseTo(
-    idleGeometry[0]!.y + idleGeometry[0]!.height,
-    3
-  );
-
-  await clear.click();
+  await control.getByRole('combobox', { name: 'Filter fleet' }).click();
+  await expect(control.locator('.filter-menu__category-pane .filter-menu__footer')).toHaveCount(0);
+  await control.getByRole('option', { name: 'Driving' }).click();
+  await expect(control.getByRole('button', { name: 'Apply', exact: true })).toBeEnabled();
+  await control.getByRole('button', { name: 'Clear', exact: true }).click();
   await expect
     .poll(() =>
       page.evaluate(
-        () => (window as typeof window & { __tableFilterClears?: number }).__tableFilterClears
+        () => (window as typeof window & { __tableFilterClears: number }).__tableFilterClears
       )
     )
     .toBe(1);
-  await expect(control).toHaveJSProperty('values', { status: ['driving'] });
+  await expect(control).toHaveJSProperty('values', {});
 });
 
 test('searches labels and descriptions within every non-date filter category @pr-critical', async ({
@@ -643,8 +587,14 @@ test('requests a controlled any or all mode from the multiple-filter footer @pr-
       })
     )
   );
-  expect(toggleDecoration).toEqual(clearDecoration);
+  expect(toggleDecoration.thickness).toEqual(clearDecoration.thickness);
+  expect(toggleDecoration.offset).toEqual(clearDecoration.offset);
+  await expect(clear).toHaveCSS(
+    'text-decoration-color',
+    await clear.evaluate(e => getComputedStyle(e).color)
+  );
   await toggle.click();
+  await popup.getByRole('button', { name: 'Apply', exact: true }).click();
   await expect(
     footer.getByRole('button', { name: 'Limit Status results to any selected' })
   ).toHaveText('all');
@@ -715,6 +665,7 @@ test('supports semantic relative dates and fixed calendar ranges @pr-critical', 
   ]);
 
   await popup.getByRole('option', { name: 'Last 7 days' }).click();
+  await popup.getByRole('button', { name: 'Apply', exact: true }).click();
   const dateCategory = popup.locator('[data-filter-category="event-date"]');
   await expect(dateCategory.locator('ds-badge')).toHaveJSProperty('variant', 'dot');
   await expect(dateCategory.locator('ds-tag')).toHaveCount(0);
@@ -790,6 +741,7 @@ test('supports semantic relative dates and fixed calendar ranges @pr-critical', 
   expect(firstDate).toBeTruthy();
   expect(secondDate).toBeTruthy();
   await calendarDays.nth(10).click();
+  await popup.getByRole('button', { name: 'Apply', exact: true }).click();
   await calendarDays.nth(15).hover();
   await expect(popup.locator('.filter-menu__calendar-day--range-preview')).toHaveCount(6);
   await expect(popup.locator('.filter-menu__calendar-day--range-edge')).toHaveCount(1);
@@ -807,6 +759,7 @@ test('supports semantic relative dates and fixed calendar ranges @pr-critical', 
       { filterId: 'event-date', value: `range:${firstDate}/${firstDate}` },
     ]);
   await calendarDays.nth(15).click();
+  await popup.getByRole('button', { name: 'Apply', exact: true }).click();
   await expect(popup.locator('.filter-menu__calendar-day--range-preview')).toHaveCount(0);
   await expect(
     popup.locator('.filter-menu__calendar-day--range-edge ds-text').first()
