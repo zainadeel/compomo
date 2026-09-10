@@ -198,3 +198,17 @@ ds-skeleton.ds-table__skeleton-checkbox {
   position: absolute;
   inset: 0;
 }
+
+.ds-table__caption-bar:has([slot='header-after']) {
+  flex-direction: column;
+  align-items: stretch;
+  block-size: auto;
+  padding: 0;
+  gap: 0;
+}
+
+.ds-table__caption-bar:has([slot='header-after']) .ds-table__caption-content {
+  flex: 0 0 auto;
+  min-block-size: var(--dimension-size-600);
+  padding: var(--dimension-space-100);
+}

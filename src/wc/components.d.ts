@@ -3374,6 +3374,11 @@ export namespace Components {
          */
         "columns": TableColumn[];
         /**
+          * Additional toggle options in the column customizer.
+          * @default []
+         */
+        "customizeOptions": MenuItemData[];
+        /**
           * Top-level data-window strategy. Virtual mode recycles row DOM only.
           * @default 'infinite'
          */
@@ -3735,6 +3740,11 @@ export namespace Components {
          */
         "columns": TableColumn[];
         /**
+          * Additional toggle options in the column customizer.
+          * @default []
+         */
+        "customizeOptions": MenuItemData[];
+        /**
           * @default []
          */
         "filters": FilterMenuFilter1[];
@@ -3767,6 +3777,10 @@ export namespace Components {
           * @default null
          */
         "sort": TableSortState | null;
+        /**
+          * Optional sort fields when they differ from customizable content.
+         */
+        "sortColumns"?: TableColumn[];
         /**
           * @default {}
          */
@@ -5564,6 +5578,7 @@ declare global {
         new (): HTMLDsTabGroupElement;
     };
     interface HTMLDsTableElementEventMap {
+        "dsCustomizeOptionChange": string;
         "dsSortChange": TableSortChangeDetail;
         "dsGroupCollapseChange": TableGroupCollapseChangeDetail;
         "dsSelectionChange": TableSelectionChangeDetail;
@@ -5632,6 +5647,7 @@ declare global {
         new (): HTMLDsTableGroupElement;
     };
     interface HTMLDsTablePreferencesElementEventMap {
+        "dsCustomizeOptionChange": string;
         "dsFilterChange": FilterMenuChangeDetail1;
         "dsFilterMatchModeChange": FilterMenuMatchModeChangeDetail1;
         "dsActiveFilterChange": string;
@@ -9443,6 +9459,11 @@ declare namespace LocalJSX {
          */
         "columns"?: TableColumn[];
         /**
+          * Additional toggle options in the column customizer.
+          * @default []
+         */
+        "customizeOptions"?: MenuItemData[];
+        /**
           * Top-level data-window strategy. Virtual mode recycles row DOM only.
           * @default 'infinite'
          */
@@ -9606,6 +9627,7 @@ declare namespace LocalJSX {
         "maxHeight"?: string | number | undefined;
         "onDsCellAction"?: (event: DsTableCustomEvent<TableCellActionDetail>) => void;
         "onDsColumnsConfigChange"?: (event: DsTableCustomEvent<TableColumnsConfigChangeDetail>) => void;
+        "onDsCustomizeOptionChange"?: (event: DsTableCustomEvent<string>) => void;
         "onDsDataModeChange"?: (event: DsTableCustomEvent<TableDataModeChangeDetail>) => void;
         "onDsGroupCollapseChange"?: (event: DsTableCustomEvent<TableGroupCollapseChangeDetail>) => void;
         "onDsGroupLoadMore"?: (event: DsTableCustomEvent<TableGroupLoadMoreDetail>) => void;
@@ -9850,6 +9872,11 @@ declare namespace LocalJSX {
          */
         "columns"?: TableColumn[];
         /**
+          * Additional toggle options in the column customizer.
+          * @default []
+         */
+        "customizeOptions"?: MenuItemData[];
+        /**
           * @default []
          */
         "filters"?: FilterMenuFilter1[];
@@ -9880,6 +9907,7 @@ declare namespace LocalJSX {
         "matchModes"?: FilterMenuMatchModes1;
         "onDsActiveFilterChange"?: (event: DsTablePreferencesCustomEvent<string>) => void;
         "onDsColumnsConfigChange"?: (event: DsTablePreferencesCustomEvent<TableColumnsConfigChangeDetail>) => void;
+        "onDsCustomizeOptionChange"?: (event: DsTablePreferencesCustomEvent<string>) => void;
         "onDsFilterChange"?: (event: DsTablePreferencesCustomEvent<FilterMenuChangeDetail1>) => void;
         "onDsFilterMatchModeChange"?: (event: DsTablePreferencesCustomEvent<FilterMenuMatchModeChangeDetail1>) => void;
         "onDsFiltersClear"?: (event: DsTablePreferencesCustomEvent<void>) => void;
@@ -9890,6 +9918,10 @@ declare namespace LocalJSX {
           * @default null
          */
         "sort"?: TableSortState | null;
+        /**
+          * Optional sort fields when they differ from customizable content.
+         */
+        "sortColumns"?: TableColumn[];
         /**
           * @default {}
          */

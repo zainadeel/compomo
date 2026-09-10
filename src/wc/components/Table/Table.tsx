@@ -119,6 +119,9 @@ export class Table {
   @Element() el!: HTMLElement;
   /** Stable column definitions. Assign through JavaScript. */
   @Prop() columns: TableColumn[] = [];
+  /** Additional toggle options in the column customizer. */
+  @Prop() customizeOptions: MenuItemData[] = [];
+  @Event() dsCustomizeOptionChange!: EventEmitter<string>;
   /** Ungrouped row data. Ignored while grouping is active. Assign through JavaScript. */
   @Prop() rows: TableRow[] = [];
   /** One level of application-owned grouped data. Assign through JavaScript. */
@@ -2321,6 +2324,7 @@ export class Table {
           </div>
           {this.renderCaptionTrailing()}
         </div>
+        <slot name="header-after" />
       </div>
     );
   }
@@ -2476,12 +2480,28 @@ export class Table {
         side="bottom"
         menuLabel="Customize table"
         initialFocusVisible={this.columnCustomizerInitialFocusVisible}
-        items={tableColumnCustomizerMenuItems(this.columns, this.hiddenColumnIds, this.columnOrder)}
+        sections={[
+          {
+            header: 'Columns',
+            items: tableColumnCustomizerMenuItems(
+              this.columns,
+              this.hiddenColumnIds,
+              this.columnOrder
+            ),
+          },
+          ...(this.customizeOptions.length
+            ? [{ header: 'Options', items: this.customizeOptions }]
+            : []),
+        ]}
         onDsClose={() => this.closeColumnCustomizer()}
         onDsAfterClose={() => {
           if (!this.columnCustomizerOpen) this.columnCustomizerSurfaceOpen = false;
         }}
-        onDsSelect={event => this.handleColumnCustomizerSelect(event.detail)}
+        onDsSelect={event => {
+          if (this.customizeOptions.some(option => option.value === event.detail.value)) {
+            this.dsCustomizeOptionChange.emit(event.detail.value!);
+          } else this.handleColumnCustomizerSelect(event.detail);
+        }}
         onDsReorder={event => this.handleColumnCustomizerReorder(event.detail)}
       />
     );

@@ -10316,6 +10316,10 @@
             "type": "TableColumn[]",
             "required": false
           },
+          "customizeOptions": {
+            "type": "MenuItemData[]",
+            "required": false
+          },
           "dataMode": {
             "type": "TableDataMode",
             "required": false
@@ -10545,6 +10549,10 @@
           {
             "name": "dsColumnsConfigChange",
             "detail": "TableColumnsConfigChangeDetail"
+          },
+          {
+            "name": "dsCustomizeOptionChange",
+            "detail": "string"
           },
           {
             "name": "dsDataModeChange",
@@ -11000,6 +11008,10 @@
             "type": "TableColumn[]",
             "required": false
           },
+          "customizeOptions": {
+            "type": "MenuItemData[]",
+            "required": false
+          },
           "filters": {
             "type": "FilterMenuFilter[]",
             "required": false
@@ -11032,6 +11044,10 @@
             "type": "TableSortState | null",
             "required": false
           },
+          "sortColumns": {
+            "type": "TableColumn[]",
+            "required": false
+          },
           "values": {
             "type": "FilterMenuValues",
             "required": false
@@ -11045,6 +11061,10 @@
           {
             "name": "dsColumnsConfigChange",
             "detail": "TableColumnsConfigChangeDetail"
+          },
+          {
+            "name": "dsCustomizeOptionChange",
+            "detail": "string"
           },
           {
             "name": "dsFilterChange",

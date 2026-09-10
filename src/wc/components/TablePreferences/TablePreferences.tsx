@@ -1,3 +1,4 @@
+import type { MenuItemData } from '../Menu/menu-types';
 import { resolveAnchoredOverlayBoundaryRect } from '../../utils/anchored-overlay-boundary';
 import {
   Component,
@@ -52,6 +53,11 @@ export class TablePreferences {
   @Prop() matchModes: FilterMenuMatchModes = {};
   @Prop() activeFilterId: string | undefined;
   @Prop() columns: TableColumn[] = [];
+  /** Additional toggle options in the column customizer. */
+  @Prop() customizeOptions: MenuItemData[] = [];
+  @Event() dsCustomizeOptionChange!: EventEmitter<string>;
+  /** Optional sort fields when they differ from customizable content. */
+  @Prop() sortColumns?: TableColumn[];
   @Prop() sort: TableSortState | null = null;
   @Prop() groupingOptions: TableGroupOption[] = [];
   @Prop() grouping: TableGroupingState | null = null;
@@ -238,11 +244,15 @@ export class TablePreferences {
                 <ds-menu
                   embedded
                   menuLabel="Sort table"
-                  sections={tableSortMenuSections(this.columns, this.sort)}
+                  sections={tableSortMenuSections(this.sortColumns ?? this.columns, this.sort)}
                   onDsSelect={e => {
                     e.stopPropagation();
                     this.dsSortChange.emit({
-                      sort: nextTableSortStateFromMenuItem(this.columns, this.sort, e.detail),
+                      sort: nextTableSortStateFromMenuItem(
+                        this.sortColumns ?? this.columns,
+                        this.sort,
+                        e.detail
+                      ),
                     });
                   }}
                 />
@@ -260,14 +270,26 @@ export class TablePreferences {
                 <ds-menu
                   embedded
                   menuLabel="Customize table"
-                  items={tableColumnCustomizerMenuItems(
-                    this.columns,
-                    this.hiddenColumnIds,
-                    this.columnOrder
-                  )}
+                  sections={[
+                    {
+                      header: this.customizeOptions.length ? 'Columns' : undefined,
+                      items: tableColumnCustomizerMenuItems(
+                        this.columns,
+                        this.hiddenColumnIds,
+                        this.columnOrder
+                      ),
+                    },
+                    ...(this.customizeOptions.length
+                      ? [{ header: 'Options', items: this.customizeOptions }]
+                      : []),
+                  ]}
                   onDsSelect={e => {
                     e.stopPropagation();
                     if (!e.detail.value || e.detail.isInactive) return;
+                    if (this.customizeOptions.some(option => option.value === e.detail.value)) {
+                      this.dsCustomizeOptionChange.emit(e.detail.value);
+                      return;
+                    }
                     this.dsColumnsConfigChange.emit({
                       hiddenColumnIds: toggleTableColumnHidden(
                         this.columns,

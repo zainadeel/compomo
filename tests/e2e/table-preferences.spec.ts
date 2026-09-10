@@ -26,6 +26,7 @@ test('shares controlled preferences across tabs and restores focus @cross-browse
   await dialog.getByRole('tab', { name: 'Sort', exact: true }).click();
   await dialog.getByRole('menuitem', { name: 'Status', exact: true }).click();
   await dialog.getByRole('tab', { name: 'Group', exact: true }).click();
+  await expect.poll(async () => (await dialog.locator('.table-group__body').evaluate(el => getComputedStyle(el).gridTemplateColumns))).toBe('200px 300px');
   await dialog.getByRole('option', { name: 'Status', exact: true }).click();
   await dialog.getByRole('option', { name: 'Descending', exact: true }).click();
   await dialog.getByRole('tab', { name: 'Customize', exact: true }).click();

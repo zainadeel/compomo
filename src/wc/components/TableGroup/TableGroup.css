@@ -75,5 +75,5 @@
   max-inline-size: none;
 }
 .table-preferences-embedded .table-group__body {
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: min(var(--dimension-menu-width-xs), 40%) minmax(0, 1fr);
 }
