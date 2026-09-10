@@ -103,7 +103,7 @@ test('inset density reduces only same-size outer geometry', () => {
   const tabGroupSource = read('src/wc/components/TabGroup/TabGroup.tsx');
   assert.match(tabGroupCss, /@import ['"]\.\.\/\.\.\/utils\/control-density-inset\.css['"];/);
   assert.match(tabGroupSource, /\[`ds-control--\$\{this\.size\}`\]: true/);
-  assert.match(tabGroupSource, /['"]ds-control--inset['"]: true/);
+  assert.match(tabGroupSource, /['"]ds-control--inset['"]: this\.presentation !== ['"]tabs['"]/);
 });
 
 test('choice rows derive primary and supporting type from control density', () => {

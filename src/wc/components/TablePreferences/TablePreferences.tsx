@@ -1,4 +1,4 @@
-import type { MenuItemData } from '../Menu/menu-types';
+import type { MenuItemData, MenuSection } from '../Menu/menu-types';
 import { resolveAnchoredOverlayBoundaryRect } from '../../utils/anchored-overlay-boundary';
 import {
   Component,
@@ -40,7 +40,7 @@ import { AnchoredOverlayInteractionController } from '../../utils/anchored-overl
 import { resolveCssLengthPx } from '../../utils/resolve-css-length-px';
 import { TOKEN_DEFAULTS } from '../../utils/token-defaults';
 
-type PreferencesTab = 'filters' | 'sort' | 'group' | 'customize';
+export type PreferencesTab = 'filters' | 'sort' | 'group' | 'customize';
 let preferencesSequence = 0;
 
 @Component({ tag: 'ds-table-preferences', styleUrl: 'TablePreferences.css', scoped: true })
@@ -55,6 +55,7 @@ export class TablePreferences {
   @Prop() columns: TableColumn[] = [];
   /** Additional toggle options in the column customizer. */
   @Prop() customizeOptions: MenuItemData[] = [];
+  @Prop() customizeSections: MenuSection[] = [];
   @Event() dsCustomizeOptionChange!: EventEmitter<string>;
   /** Optional sort fields when they differ from customizable content. */
   @Prop() sortColumns?: TableColumn[];
@@ -63,6 +64,10 @@ export class TablePreferences {
   @Prop() grouping: TableGroupingState | null = null;
   @Prop() hiddenColumnIds: string[] = [];
   @Prop() columnOrder: string[] = [];
+  /** Render shared content without its popup or trigger. */
+  @Prop() embedded = false;
+  @Prop() activeTab: PreferencesTab = 'filters';
+  @Event() dsPreferencesTabChange!: EventEmitter<PreferencesTab>;
   @Prop() label = 'Configure view';
   @Event() dsFilterChange!: EventEmitter<FilterMenuChangeDetail>;
   @Event() dsFilterMatchModeChange!: EventEmitter<FilterMenuMatchModeChangeDetail>;
@@ -149,7 +154,7 @@ export class TablePreferences {
   }
   @Listen('keydown')
   onKeydown(event: KeyboardEvent) {
-    if (!this.open || event.defaultPrevented) return;
+    if (this.embedded || !this.open || event.defaultPrevented) return;
     if (event.key === 'Escape') {
       event.preventDefault();
       event.stopPropagation();
@@ -165,6 +170,7 @@ export class TablePreferences {
     emitter.emit(event.detail);
   }
   render() {
+    const currentTab = this.embedded ? this.activeTab : this.tab;
     const tabs = ['filters', 'sort', 'group', 'customize'].map(id => ({
       id,
       label: id === 'filters' ? 'Filters' : id[0].toUpperCase() + id.slice(1),
@@ -172,63 +178,74 @@ export class TablePreferences {
     }));
     return (
       <Host>
-        <ds-tooltip label={this.label} side="bottom" size="sm">
-          <ds-button-unfilled
-            hasBorder={this.hasBorder}
-            ref={el => {
-              this.trigger = el;
-            }}
-            variant="icon"
-            icon="Preferences"
-            size="md"
-            ariaLabel={this.label}
-            haspopup="dialog"
-            expanded={this.open}
-            surfaceOpen={this.open}
-            controls={this.popupId}
-            onDsClick={() => this.toggle()}
-          />
-        </ds-tooltip>
-        {this.open && (
+        {!this.embedded && (
+          <ds-tooltip label={this.label} side="bottom" size="sm">
+            <ds-button-unfilled
+              hasBorder={this.hasBorder}
+              ref={el => {
+                this.trigger = el;
+              }}
+              variant="icon"
+              icon="Preferences"
+              size="md"
+              ariaLabel={this.label}
+              haspopup="dialog"
+              expanded={this.open}
+              surfaceOpen={this.open}
+              controls={this.popupId}
+              onDsClick={() => this.toggle()}
+            />
+          </ds-tooltip>
+        )}
+        {(this.open || this.embedded) && (
           <div
             ref={el => {
               this.popup = el;
             }}
             id={this.popupId}
-            popover="manual"
-            role="dialog"
+            popover={this.embedded ? undefined : 'manual'}
+            role={this.embedded ? undefined : 'dialog'}
             aria-label={this.label}
-            class="table-preferences"
-            style={{
-              left: `${this.pos.x}px`,
-              top: `${this.pos.y}px`,
-              visibility: this.ready ? 'visible' : 'hidden',
+            class={{
+              'table-preferences': !this.embedded,
+              'table-preferences-panel': this.embedded,
             }}
+            style={
+              this.embedded
+                ? undefined
+                : {
+                    left: `${this.pos.x}px`,
+                    top: `${this.pos.y}px`,
+                    visibility: this.ready ? 'visible' : 'hidden',
+                  }
+            }
           >
             <div class="table-preferences__tabs">
               <ds-tab-group
                 ariaLabel="Table preference sections"
                 size="md"
-                presentation="tabs"
-                width="hug"
+                presentation={this.embedded ? 'segmented' : 'tabs'}
+                width={this.embedded ? 'fill' : 'hug'}
                 tabs={tabs}
-                value={this.tab}
+                value={currentTab}
                 onDsChange={event => {
                   event.stopPropagation();
                   this.tab = event.detail as PreferencesTab;
+                  this.dsPreferencesTabChange.emit(this.tab);
                 }}
               />
             </div>
             <div
               class="table-preferences__body"
-              id={`${this.popupId}-${this.tab}`}
+              id={`${this.popupId}-${currentTab}`}
               role="tabpanel"
-              aria-label={tabs.find(tab => tab.id === this.tab)?.label}
+              aria-label={tabs.find(tab => tab.id === currentTab)?.label}
             >
-              <div hidden={this.tab !== 'filters'}>
+              <div hidden={currentTab !== 'filters'}>
                 <ds-filter-menu
                   embedded
-                  applyRequired
+                  vertical={this.embedded}
+                  applyRequired={!this.embedded}
                   filters={this.filters}
                   values={this.values}
                   matchModes={this.matchModes}
@@ -240,7 +257,7 @@ export class TablePreferences {
                   onDsClear={e => this.forward(e, this.dsFiltersClear)}
                 />
               </div>
-              {this.tab === 'sort' && (
+              {currentTab === 'sort' && (
                 <ds-menu
                   embedded
                   menuLabel="Sort table"
@@ -257,28 +274,34 @@ export class TablePreferences {
                   }}
                 />
               )}
-              {this.tab === 'group' && (
+              {currentTab === 'group' && (
                 <ds-table-group
                   embedded
+                  vertical={this.embedded}
                   options={this.groupingOptions}
                   grouping={this.grouping}
                   onDsGroupChange={e => this.forward(e, this.dsGroupChange)}
                   onDsClear={e => this.forward(e, this.dsGroupClear)}
                 />
               )}
-              {this.tab === 'customize' && (
+              {currentTab === 'customize' && (
                 <ds-menu
                   embedded
                   menuLabel="Customize table"
                   sections={[
-                    {
-                      header: this.customizeOptions.length ? 'Columns' : undefined,
-                      items: tableColumnCustomizerMenuItems(
-                        this.columns,
-                        this.hiddenColumnIds,
-                        this.columnOrder
-                      ),
-                    },
+                    ...(this.columns.length
+                      ? [
+                          {
+                            header: this.customizeOptions.length ? 'Columns' : undefined,
+                            items: tableColumnCustomizerMenuItems(
+                              this.columns,
+                              this.hiddenColumnIds,
+                              this.columnOrder
+                            ),
+                          },
+                        ]
+                      : []),
+                    ...this.customizeSections,
                     ...(this.customizeOptions.length
                       ? [{ header: 'Options', items: this.customizeOptions }]
                       : []),
@@ -286,7 +309,14 @@ export class TablePreferences {
                   onDsSelect={e => {
                     e.stopPropagation();
                     if (!e.detail.value || e.detail.isInactive) return;
-                    if (this.customizeOptions.some(option => option.value === e.detail.value)) {
+                    if (
+                      [
+                        ...this.customizeOptions,
+                        ...this.customizeSections.flatMap(section =>
+                          'items' in section ? section.items : []
+                        ),
+                      ].some(option => option.value === e.detail.value)
+                    ) {
                       this.dsCustomizeOptionChange.emit(e.detail.value);
                       return;
                     }

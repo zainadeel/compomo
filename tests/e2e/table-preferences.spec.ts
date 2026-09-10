@@ -19,14 +19,23 @@ test('shares controlled preferences across tabs and restores focus @cross-browse
     'background-color',
     'rgba(0, 0, 0, 0)'
   );
-  await expect.poll(async () => (await dialog.locator('.filter-menu__category-pane').boundingBox())?.width).toBe(200);
+  await expect
+    .poll(async () => (await dialog.locator('.filter-menu__category-pane').boundingBox())?.width)
+    .toBe(200);
   await dialog.getByRole('option', { name: 'Driving', exact: true }).click();
   await expect(page.locator('#preferences')).toHaveJSProperty('values', {});
   await dialog.getByRole('button', { name: 'Apply', exact: true }).click();
   await dialog.getByRole('tab', { name: 'Sort', exact: true }).click();
   await dialog.getByRole('menuitem', { name: 'Status', exact: true }).click();
   await dialog.getByRole('tab', { name: 'Group', exact: true }).click();
-  await expect.poll(async () => (await dialog.locator('.table-group__body').evaluate(el => getComputedStyle(el).gridTemplateColumns))).toBe('200px 300px');
+  await expect
+    .poll(
+      async () =>
+        await dialog
+          .locator('.table-group__body')
+          .evaluate(el => getComputedStyle(el).gridTemplateColumns)
+    )
+    .toBe('200px 300px');
   await dialog.getByRole('option', { name: 'Status', exact: true }).click();
   await dialog.getByRole('option', { name: 'Descending', exact: true }).click();
   await dialog.getByRole('tab', { name: 'Customize', exact: true }).click();
@@ -117,8 +126,9 @@ test('stages filter changes and keeps Apply visible and inactive until changed',
   await expect(apply).toHaveCount(0);
 });
 
-
-test('keeps the menu inside its page boundary instead of covering shell navigation @cross-browser', async ({ page }) => {
+test('keeps the menu inside its page boundary instead of covering shell navigation @cross-browser', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1200, height: 800 });
   await page.locator('#preferences').evaluate(el => {
     const boundary = document.createElement('div');

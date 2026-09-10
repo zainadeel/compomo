@@ -47,3 +47,20 @@
   overflow: auto;
   overscroll-behavior: contain;
 }
+
+:host:has(.table-preferences-panel) {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+.table-preferences-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+.table-preferences-panel .table-preferences__tabs {
+  flex: 0 0 auto;
+  padding: var(--dimension-space-200);
+}

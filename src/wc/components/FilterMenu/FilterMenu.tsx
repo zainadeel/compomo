@@ -111,6 +111,8 @@ export class FilterMenu {
   /** Controlled popup visibility. */
   /** Render content inside a parent-owned surface; the parent owns dismissal and positioning. */
   @Prop() embedded: boolean = false;
+  /** Stacked, collapsible sections for a configuration panel. */
+  @Prop() vertical: boolean = false;
   @Prop({ mutable: true }) open: boolean = false;
   /** Select trigger text. */
   @Prop() triggerLabel: string = 'Filters';
@@ -1278,6 +1280,31 @@ export class FilterMenu {
   }
 
   render() {
+    if (this.vertical)
+      return (
+        <Host class="filter-menu-vertical">
+          {this.filters.map(filter => (
+            <details open key={filter.id} class="filter-menu-vertical__section">
+              <summary>
+                <ds-icon class="filter-menu-vertical__chevron" name="ChevronDown" size="md" />
+                <ds-text variant="text-body-medium" emphasis>
+                  {filter.label}
+                </ds-text>
+              </summary>
+              {filter.kind !== 'date' && this.renderOptionSearch(filter)}
+              <div
+                role={filter.kind === 'date' ? undefined : 'listbox'}
+                aria-label={filter.label}
+                aria-multiselectable={filter.kind === 'multiple' ? 'true' : undefined}
+                class="ds-choice-list ds-chrome-column ds-chrome-space--sm"
+              >
+                {this.renderOptions(filter, this.values)}
+              </div>
+              {filter.kind === 'multiple' && this.renderMatchModeFooter(filter, this.matchModes)}
+            </details>
+          ))}
+        </Host>
+      );
     const state =
       this.closing && this.closingSnapshot
         ? this.closingSnapshot

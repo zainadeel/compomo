@@ -73,6 +73,7 @@ import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableColumn
 import { FilterMenuChangeDetail as FilterMenuChangeDetail1, FilterMenuFilter as FilterMenuFilter1, FilterMenuMatchModeChangeDetail as FilterMenuMatchModeChangeDetail1, FilterMenuMatchModes as FilterMenuMatchModes1, FilterMenuValues as FilterMenuValues1 } from "./components/FilterMenu/FilterMenu";
 import { TableGroupOption } from "./components/TableGroup/TableGroup";
 import { TableGroupOption as TableGroupOption1 } from "./components/TableGroup/TableGroup";
+import { PreferencesTab } from "./components/TablePreferences/TablePreferences";
 import { TableSavedView, TableSavedViewChangeDetail, TableSavedViewCreateDetail, TableSavedViewDiscardDetail, TableSavedViewRemoveDetail, TableSavedViewRenameDetail, TableSavedViewSaveDetail } from "./components/TableSavedViews/table-saved-views-types";
 import { TableSearchFieldsChangeDetail } from "./components/TableSearch/table-search-types";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
@@ -149,6 +150,7 @@ export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableColumn
 export { FilterMenuChangeDetail as FilterMenuChangeDetail1, FilterMenuFilter as FilterMenuFilter1, FilterMenuMatchModeChangeDetail as FilterMenuMatchModeChangeDetail1, FilterMenuMatchModes as FilterMenuMatchModes1, FilterMenuValues as FilterMenuValues1 } from "./components/FilterMenu/FilterMenu";
 export { TableGroupOption } from "./components/TableGroup/TableGroup";
 export { TableGroupOption as TableGroupOption1 } from "./components/TableGroup/TableGroup";
+export { PreferencesTab } from "./components/TablePreferences/TablePreferences";
 export { TableSavedView, TableSavedViewChangeDetail, TableSavedViewCreateDetail, TableSavedViewDiscardDetail, TableSavedViewRemoveDetail, TableSavedViewRenameDetail, TableSavedViewSaveDetail } from "./components/TableSavedViews/table-saved-views-types";
 export { TableSearchFieldsChangeDetail } from "./components/TableSearch/table-search-types";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
@@ -1568,6 +1570,11 @@ export namespace Components {
           * @default {}
          */
         "values": FilterMenuValues;
+        /**
+          * Stacked, collapsible sections for a configuration panel.
+          * @default false
+         */
+        "vertical": boolean;
         /**
           * Select trigger width fit.
           * @default 'hug'
@@ -3728,9 +3735,17 @@ export namespace Components {
           * @default []
          */
         "options": TableGroupOption[];
+        /**
+          * @default false
+         */
+        "vertical": boolean;
     }
     interface DsTablePreferences {
         "activeFilterId": string | undefined;
+        /**
+          * @default 'filters'
+         */
+        "activeTab": PreferencesTab;
         /**
           * @default []
          */
@@ -3744,6 +3759,15 @@ export namespace Components {
           * @default []
          */
         "customizeOptions": MenuItemData[];
+        /**
+          * @default []
+         */
+        "customizeSections": MenuSection[];
+        /**
+          * Render shared content without its popup or trigger.
+          * @default false
+         */
+        "embedded": boolean;
         /**
           * @default []
          */
@@ -5648,6 +5672,7 @@ declare global {
     };
     interface HTMLDsTablePreferencesElementEventMap {
         "dsCustomizeOptionChange": string;
+        "dsPreferencesTabChange": PreferencesTab;
         "dsFilterChange": FilterMenuChangeDetail1;
         "dsFilterMatchModeChange": FilterMenuMatchModeChangeDetail1;
         "dsActiveFilterChange": string;
@@ -7475,6 +7500,11 @@ declare namespace LocalJSX {
           * @default {}
          */
         "values"?: FilterMenuValues;
+        /**
+          * Stacked, collapsible sections for a configuration panel.
+          * @default false
+         */
+        "vertical"?: boolean;
         /**
           * Select trigger width fit.
           * @default 'hug'
@@ -9860,9 +9890,17 @@ declare namespace LocalJSX {
           * @default []
          */
         "options"?: TableGroupOption[];
+        /**
+          * @default false
+         */
+        "vertical"?: boolean;
     }
     interface DsTablePreferences {
         "activeFilterId"?: string | undefined;
+        /**
+          * @default 'filters'
+         */
+        "activeTab"?: PreferencesTab;
         /**
           * @default []
          */
@@ -9876,6 +9914,15 @@ declare namespace LocalJSX {
           * @default []
          */
         "customizeOptions"?: MenuItemData[];
+        /**
+          * @default []
+         */
+        "customizeSections"?: MenuSection[];
+        /**
+          * Render shared content without its popup or trigger.
+          * @default false
+         */
+        "embedded"?: boolean;
         /**
           * @default []
          */
@@ -9913,6 +9960,7 @@ declare namespace LocalJSX {
         "onDsFiltersClear"?: (event: DsTablePreferencesCustomEvent<void>) => void;
         "onDsGroupChange"?: (event: DsTablePreferencesCustomEvent<TableGroupingState>) => void;
         "onDsGroupClear"?: (event: DsTablePreferencesCustomEvent<void>) => void;
+        "onDsPreferencesTabChange"?: (event: DsTablePreferencesCustomEvent<PreferencesTab>) => void;
         "onDsSortChange"?: (event: DsTablePreferencesCustomEvent<TableSortChangeDetail>) => void;
         /**
           * @default null
@@ -10750,6 +10798,7 @@ declare namespace LocalJSX {
     }
     interface DsFilterMenuAttributes {
         "embedded": boolean;
+        "vertical": boolean;
         "open": boolean;
         "triggerLabel": string;
         "showSelectedCount": boolean;
@@ -11250,6 +11299,7 @@ declare namespace LocalJSX {
     }
     interface DsTableGroupAttributes {
         "hasBorder": boolean;
+        "vertical": boolean;
         "embedded": boolean;
         "ariaLabel": string | null;
         "open": boolean;
@@ -11259,6 +11309,8 @@ declare namespace LocalJSX {
     interface DsTablePreferencesAttributes {
         "hasBorder": boolean;
         "activeFilterId": string | undefined;
+        "embedded": boolean;
+        "activeTab": PreferencesTab;
         "label": string;
     }
     interface DsTableSavedViewsAttributes {

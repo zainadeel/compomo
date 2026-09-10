@@ -29,9 +29,7 @@
     "component:ds-table-filter",
     "component:ds-table-sort"
   ],
-  "patterns": [
-    "pattern:menu-trigger"
-  ],
+  "patterns": ["pattern:menu-trigger"],
   "accessibility": [
     "The trigger opens a named non-modal dialog. Data and Order are independently named single-selection listboxes.",
     "Up and Down move within the focused pane. Right moves from Data to Order when a group is active, Left returns to the selected Data row, and Escape closes the dialog and restores trigger focus.",
@@ -44,7 +42,8 @@
     "The grouping picker automatically holds the shared surface-open wash through exit. Opening this picker is separate from expanding an inline table group.",
     "Embedded mode renders the same controlled content inside a parent-owned surface; the parent owns positioning, initial focus, Escape, Tab exit, and dismissal.",
     "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback.",
-    "Expanded toolbar triggers use an icon and regular-weight text without a trailing chevron."
+    "Expanded toolbar triggers use an icon and regular-weight text without a trailing chevron.",
+    "Vertical presentation stacks grouping data and ordering, with an explicit No grouping choice and no Clear footer."
   ],
   "responsiveBehavior": [
     "Use in the trailing region of ds-table-toolbar.",

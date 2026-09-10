@@ -58,6 +58,7 @@ export class TableGroup {
   /** Render content inside a parent-owned surface; the parent owns dismissal and positioning. */
   /** Show the trigger border. */
   @Prop() hasBorder: boolean = true;
+  @Prop() vertical: boolean = false;
   @Prop() embedded: boolean = false;
   @Prop() options: TableGroupOption[] = [];
   /** Controlled grouping field and the order of its group sections. */
@@ -247,6 +248,10 @@ export class TableGroup {
   }
 
   private selectData(option: TableGroupOption) {
+    if (option.value === '__none__') {
+      this.dsClear.emit();
+      return;
+    }
     if (option.isInactive) return;
     if (this.grouping?.columnId === option.value) {
       this.dsGroupChange.emit({ ...this.grouping });
@@ -319,7 +324,8 @@ export class TableGroup {
   }
 
   private renderDataOption(option: TableGroupOption, index: number) {
-    const selected = option.value === this.grouping?.columnId;
+    const selected =
+      option.value === '__none__' ? !this.grouping : option.value === this.grouping?.columnId;
     return (
       <ChoiceOptionRow
         id={`${this.componentId}-data-${index}`}
@@ -398,7 +404,10 @@ export class TableGroup {
     };
 
     return (
-      <Host hidden={this.options.length === 0 ? true : undefined}>
+      <Host
+        class={{ 'table-group-vertical': this.vertical }}
+        hidden={this.options.length === 0 ? true : undefined}
+      >
         {this.options.length && !this.embedded ? (
           <ds-button-unfilled
             hasBorder={this.hasBorder}
@@ -443,6 +452,8 @@ export class TableGroup {
                   ariaLabel="Group data"
                   className="table-group__list"
                 >
+                  {this.vertical &&
+                    this.renderDataOption({ label: 'No grouping', value: '__none__' }, -1)}
                   {this.options.map((option, index) => (
                     <div data-group-value={option.value}>
                       {this.renderDataOption(option, index)}
@@ -450,6 +461,7 @@ export class TableGroup {
                   ))}
                 </ChoiceListSection>
                 <div
+                  hidden={this.vertical}
                   class="table-group__footer ds-choice-footer"
                   aria-hidden={!this.grouping ? 'true' : undefined}
                 >

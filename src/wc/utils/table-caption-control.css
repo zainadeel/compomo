@@ -29,7 +29,8 @@
   padding-inline: 0;
 }
 
-:host(.ds-table-caption-control.ds-table-caption-control--compact) .trigger--has-value:not(.trigger--label-placeholder) {
+:host(.ds-table-caption-control.ds-table-caption-control--compact)
+  .trigger--has-value:not(.trigger--label-placeholder) {
   --ds-select-prefix-fg: var(--ds-select-fg-active);
 }
 

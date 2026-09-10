@@ -77,3 +77,14 @@
 .table-preferences-embedded .table-group__body {
   grid-template-columns: min(var(--dimension-menu-width-xs), 40%) minmax(0, 1fr);
 }
+
+:host(.table-group-vertical) .table-group__body {
+  grid-template-columns: minmax(0, 1fr);
+}
+:host(.table-group-vertical) .table-group__data-pane {
+  border-inline-end: 0;
+}
+
+:host(.table-group-vertical) .table-group__footer {
+  display: none;
+}

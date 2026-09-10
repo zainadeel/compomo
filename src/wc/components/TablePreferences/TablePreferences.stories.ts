@@ -51,3 +51,33 @@ export const Compact: Story = {
       }}
     ></ds-table-preferences>`,
 };
+
+export const PanelContent: Story = {
+  render: () =>
+    html`<div style="height: 70vh; width: var(--dimension-panel-width-sm); display: flex;">
+      <ds-table-preferences
+        embedded
+        .activeTab=${'filters'}
+        .filters=${[
+          {
+            id: 'status',
+            label: 'Motion status',
+            kind: 'multiple',
+            options: [
+              { label: 'Moving', value: 'moving' },
+              { label: 'Idle', value: 'idle' },
+            ],
+          },
+        ]}
+        .columns=${[{ id: 'name', header: 'Name', sortable: true }]}
+        .groupingOptions=${[{ label: 'Motion status', value: 'status' }]}
+        @dsPreferencesTabChange=${(e: CustomEvent) => {
+          (e.currentTarget as HTMLDsTablePreferencesElement).activeTab = e.detail;
+        }}
+        @dsFilterChange=${(e: CustomEvent) => {
+          const el = e.currentTarget as HTMLDsTablePreferencesElement;
+          el.values = { ...el.values, [e.detail.filterId]: e.detail.value };
+        }}
+      ></ds-table-preferences>
+    </div>`,
+};
