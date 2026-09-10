@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.35.0](https://github.com/zainadeel/compomo/compare/v14.34.0...v14.35.0) (2026-09-10)
+
+
+### Added
+
+* add shared view configuration and toolbar controls ([#600](https://github.com/zainadeel/compomo/issues/600)) ([2540a86](https://github.com/zainadeel/compomo/commit/2540a86e1f724aa7e54bebee57962e4a3fdb44c3))
+
 ## [14.34.0](https://github.com/zainadeel/compomo/compare/v14.33.2...v14.34.0) (2026-09-09)
 
 
