@@ -1293,6 +1293,7 @@ export class FilterMenu {
               </summary>
               {filter.kind !== 'date' && this.renderOptionSearch(filter)}
               <div
+                id={`${this.generatedId}-${filter.id}-options`}
                 role={filter.kind === 'date' ? undefined : 'listbox'}
                 aria-label={filter.label}
                 aria-multiselectable={filter.kind === 'multiple' ? 'true' : undefined}
