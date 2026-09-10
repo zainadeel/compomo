@@ -1438,6 +1438,11 @@ export namespace Components {
          */
         "anchorId": string | undefined;
         /**
+          * Stage filter edits until Apply is pressed.
+          * @default false
+         */
+        "applyRequired": boolean;
+        /**
           * Direct accessible name for the internal select trigger.
           * @default null
          */
@@ -3751,7 +3756,7 @@ export namespace Components {
          */
         "hiddenColumnIds": string[];
         /**
-          * @default 'Table preferences'
+          * @default 'Configure view'
          */
         "label": string;
         /**
@@ -7296,6 +7301,11 @@ declare namespace LocalJSX {
          */
         "anchorId"?: string | undefined;
         /**
+          * Stage filter edits until Apply is pressed.
+          * @default false
+         */
+        "applyRequired"?: boolean;
+        /**
           * Direct accessible name for the internal select trigger.
           * @default null
          */
@@ -9861,7 +9871,7 @@ declare namespace LocalJSX {
          */
         "hiddenColumnIds"?: string[];
         /**
-          * @default 'Table preferences'
+          * @default 'Configure view'
          */
         "label"?: string;
         /**
@@ -10717,6 +10727,7 @@ declare namespace LocalJSX {
         "showIndicator": boolean;
         "hasBorder": boolean;
         "neutralTrigger": boolean;
+        "applyRequired": boolean;
         "activeFill": boolean;
         "collapseLabel": boolean;
         "inputId": string | undefined;

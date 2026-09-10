@@ -1,3 +1,4 @@
+import { resolveAnchoredOverlayBoundaryRect } from '../../utils/anchored-overlay-boundary';
 import {
   Component,
   Element,
@@ -56,7 +57,7 @@ export class TablePreferences {
   @Prop() grouping: TableGroupingState | null = null;
   @Prop() hiddenColumnIds: string[] = [];
   @Prop() columnOrder: string[] = [];
-  @Prop() label = 'Table preferences';
+  @Prop() label = 'Configure view';
   @Event() dsFilterChange!: EventEmitter<FilterMenuChangeDetail>;
   @Event() dsFilterMatchModeChange!: EventEmitter<FilterMenuMatchModeChangeDetail>;
   @Event() dsActiveFilterChange!: EventEmitter<string>;
@@ -76,18 +77,25 @@ export class TablePreferences {
     getAnchor: () => this.trigger ?? null,
     getPopup: () => this.popup ?? null,
     getOwnerDocument: () => this.el.ownerDocument,
-    measure: (anchor, popup) => ({
-      anchorRect: anchor.getBoundingClientRect(),
-      popupWidth: popup.offsetWidth,
-      popupHeight: popup.offsetHeight,
-      side: 'bottom',
-      align: 'end',
-      sideOffsetPx: resolveCssLengthPx(TOKEN_DEFAULTS.space050, 4),
-      alignOffsetPx: 0,
-      viewportPadPx: resolveCssLengthPx(TOKEN_DEFAULTS.space100, 8),
-      viewportWidth: window.innerWidth,
-      viewportHeight: window.innerHeight,
-    }),
+    measure: (anchor, popup) => {
+      const collisionRect = resolveAnchoredOverlayBoundaryRect(anchor);
+      const pad = resolveCssLengthPx(TOKEN_DEFAULTS.space100, 8);
+      popup.style.maxWidth = `${Math.max(0, Math.min(window.innerWidth, collisionRect?.width ?? window.innerWidth) - pad * 2)}px`;
+      popup.style.maxHeight = `${Math.max(0, Math.min(window.innerHeight, collisionRect?.height ?? window.innerHeight) - pad * 2)}px`;
+      return {
+        anchorRect: anchor.getBoundingClientRect(),
+        popupWidth: popup.offsetWidth,
+        popupHeight: popup.offsetHeight,
+        side: 'bottom',
+        align: 'end',
+        sideOffsetPx: resolveCssLengthPx(TOKEN_DEFAULTS.space050, 4),
+        alignOffsetPx: 0,
+        viewportPadPx: resolveCssLengthPx(TOKEN_DEFAULTS.space100, 8),
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+        collisionRect,
+      };
+    },
     apply: ({ x, y }) => {
       this.pos = { x, y };
     },
@@ -211,9 +219,10 @@ export class TablePreferences {
               role="tabpanel"
               aria-label={tabs.find(tab => tab.id === this.tab)?.label}
             >
-              {this.tab === 'filters' && (
+              <div hidden={this.tab !== 'filters'}>
                 <ds-filter-menu
                   embedded
+                  applyRequired
                   filters={this.filters}
                   values={this.values}
                   matchModes={this.matchModes}
@@ -224,7 +233,7 @@ export class TablePreferences {
                   onDsActiveFilterChange={e => this.forward(e, this.dsActiveFilterChange)}
                   onDsClear={e => this.forward(e, this.dsFiltersClear)}
                 />
-              )}
+              </div>
               {this.tab === 'sort' && (
                 <ds-menu
                   embedded

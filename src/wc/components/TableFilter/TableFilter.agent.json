@@ -49,7 +49,8 @@
     "Popup visibility follows the same mutable open and dsOpenChange contract as ds-filter-menu.",
     "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback.",
     "Expanded toolbar triggers use an icon and regular-weight text without a trailing chevron.",
-    "Selected views and applied filters do not promote trigger icon or label colors. Trigger colors remain neutral across value changes."
+    "Selected views and applied filters do not promote trigger icon or label colors. Trigger colors remain neutral across value changes.",
+    "Apply-required filtering stages edits locally, including match mode. Clear immediately clears all filters and discards pending edits. The footer appears when filters are selected or applied; Apply stays in place and inactive without pending changes; applying emits controlled changes. Closing discards unapplied edits."
   ],
   "responsiveBehavior": [
     "Place the control in the trailing region of ds-table-toolbar.",

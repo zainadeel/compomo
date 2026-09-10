@@ -129,6 +129,63 @@ export class FilterMenu {
   /** Show selected interaction fill when one or more criteria are active. */
   /** Keep trigger colors neutral when a value is selected. */
   @Prop() neutralTrigger: boolean = false;
+  /** Stage filter edits until Apply is pressed. */
+  @Prop() applyRequired: boolean = false;
+  @State() private draftValues?: FilterMenuValues;
+  @State() private draftModes?: FilterMenuMatchModes;
+
+  private changeValue(detail: FilterMenuChangeDetail): void {
+    if (this.applyRequired)
+      this.draftValues = { ...(this.draftValues ?? this.values), [detail.filterId]: detail.value };
+    else this.dsChange.emit(detail);
+  }
+  private changeMode(detail: FilterMenuMatchModeChangeDetail): void {
+    if (this.applyRequired)
+      this.draftModes = { ...(this.draftModes ?? this.matchModes), [detail.filterId]: detail.mode };
+    else this.dsMatchModeChange.emit(detail);
+  }
+  private get hasPendingChanges(): boolean {
+    const normalize = (value: FilterMenuValue | undefined) =>
+      Array.isArray(value) ? (value.length ? [...value].sort() : undefined) : value || undefined;
+    const values = this.draftValues ?? this.values;
+    const modes = this.draftModes ?? this.matchModes;
+    return this.filters.some(
+      filter =>
+        JSON.stringify(normalize(values[filter.id])) !==
+          JSON.stringify(normalize(this.values[filter.id])) ||
+        (modes[filter.id] ?? 'any') !== (this.matchModes[filter.id] ?? 'any')
+    );
+  }
+  private applyDraft(): void {
+    if (!this.hasPendingChanges) return;
+    if (this.draftValues && Object.keys(this.draftValues).length === 0) {
+      this.dsClear.emit();
+    } else if (this.draftValues) {
+      for (const id of new Set([...Object.keys(this.values), ...Object.keys(this.draftValues)])) {
+        if (JSON.stringify(this.values[id]) !== JSON.stringify(this.draftValues[id]))
+          this.dsChange.emit({
+            filterId: id,
+            value:
+              this.draftValues[id] ??
+              (Array.isArray(this.values[id])
+                ? []
+                : typeof this.values[id] === 'boolean'
+                  ? false
+                  : ''),
+          });
+      }
+    }
+    if (this.draftModes) {
+      for (const filterId of new Set([
+        ...Object.keys(this.matchModes),
+        ...Object.keys(this.draftModes),
+      ])) {
+        const mode = this.draftModes[filterId] ?? 'any';
+        if ((this.matchModes[filterId] ?? 'any') !== mode)
+          this.dsMatchModeChange.emit({ filterId, mode });
+      }
+    }
+  }
   @Prop() activeFill: boolean = false;
   /**
    * Opt into table-caption icon-only chrome below 900px. The trigger omits its
@@ -287,6 +344,10 @@ export class FilterMenu {
 
   @Watch('open')
   onOpenChange(isOpen: boolean) {
+    if (!isOpen) {
+      this.draftValues = undefined;
+      this.draftModes = undefined;
+    }
     if (this.embedded) return;
     if (isOpen) {
       this.teardownListeners();
@@ -628,7 +689,7 @@ export class FilterMenu {
     const ordered = (filter.options ?? [])
       .map(candidate => candidate.value)
       .filter(value => selected.has(value));
-    this.dsChange.emit({ filterId: filter.id, value: ordered });
+    this.changeValue({ filterId: filter.id, value: ordered });
   }
 
   private selectOption(
@@ -638,7 +699,7 @@ export class FilterMenu {
   ) {
     if (option.isInactive) return;
     if (filter.kind === 'single') {
-      this.dsChange.emit({ filterId: filter.id, value: option.value });
+      this.changeValue({ filterId: filter.id, value: option.value });
       return;
     }
     const selected = Array.isArray(values[filter.id])
@@ -692,7 +753,7 @@ export class FilterMenu {
     if (pendingStart) delete next[filterId];
     else next[filterId] = value;
     this.pendingRangeStartByFilter = next;
-    this.dsChange.emit({
+    this.changeValue({
       filterId,
       value: dateFilterRangeValue(pendingStart ?? value, value),
     });
@@ -788,7 +849,7 @@ export class FilterMenu {
               this.focusRingVisible = false;
               this.activeOptionIndex = index;
             }}
-            onSelect={() => this.dsChange.emit({ filterId: filter.id, value: option.value })}
+            onSelect={() => this.changeValue({ filterId: filter.id, value: option.value })}
           />
         ))}
       </div>
@@ -1065,13 +1126,13 @@ export class FilterMenu {
             if (event.key === 'ArrowLeft') this.handlePanelKeyDown(event, filter.id);
             else if (event.key === 'Enter' || event.key === ' ') {
               event.preventDefault();
-              this.dsChange.emit({ filterId: filter.id, value: value !== true });
+              this.changeValue({ filterId: filter.id, value: value !== true });
             }
           }}
           onHover={() => {
             this.focusRingVisible = false;
           }}
-          onSelect={() => this.dsChange.emit({ filterId: filter.id, value: value !== true })}
+          onSelect={() => this.changeValue({ filterId: filter.id, value: value !== true })}
         />
       );
     }
@@ -1111,6 +1172,8 @@ export class FilterMenu {
   }
 
   private renderFooter(totalSelected: number, categoriesClear: boolean) {
+    const appliedCount = this.totalSelected(this.filters, this.values);
+    if (this.applyRequired && totalSelected === 0 && appliedCount === 0) return null;
     return (
       <div
         class={{
@@ -1118,7 +1181,15 @@ export class FilterMenu {
           'filter-menu__footer--categories-clear': categoriesClear,
           'ds-choice-footer': true,
         }}
-        aria-hidden={categoriesClear && totalSelected === 0 ? 'true' : undefined}
+        aria-hidden={
+          !this.applyRequired &&
+          categoriesClear &&
+          totalSelected === 0 &&
+          !this.draftValues &&
+          !this.draftModes
+            ? 'true'
+            : undefined
+        }
       >
         <div class="ds-choice-footer__content ds-control--md">
           {!categoriesClear ? (
@@ -1132,12 +1203,39 @@ export class FilterMenu {
               {totalSelected} selected
             </ds-text>
           ) : null}
-          {totalSelected > 0 ? (
+          {this.applyRequired ? (
+            <button
+              class="filter-menu__apply ds-choice-footer__clear ds-text-action"
+              type="button"
+              disabled={!this.hasPendingChanges}
+              onClick={() => this.applyDraft()}
+            >
+              <ds-text as="span" variant="text-body-medium" color="inherit">
+                Apply
+              </ds-text>
+            </button>
+          ) : null}
+          {this.applyRequired && (totalSelected > 0 || appliedCount > 0) ? (
+            <ds-text
+              class="filter-menu__action-separator"
+              as="span"
+              variant="text-body-medium"
+              color="tertiary"
+              aria-hidden="true"
+            >
+              ·
+            </ds-text>
+          ) : null}
+          {totalSelected > 0 || (this.applyRequired && appliedCount > 0) ? (
             <button
               class="filter-menu__clear ds-choice-footer__clear ds-text-action"
               type="button"
               onClick={() => {
                 this.pendingRangeStartByFilter = {};
+                if (this.applyRequired) {
+                  this.draftValues = {};
+                  this.draftModes = {};
+                }
                 this.dsClear.emit();
               }}
             >
@@ -1164,7 +1262,7 @@ export class FilterMenu {
             class="filter-menu__match-mode-toggle ds-text-action ds-focus-ring"
             type="button"
             aria-label={`Limit ${filter.label} results to ${nextMode} selected`}
-            onClick={() => this.dsMatchModeChange.emit({ filterId: filter.id, mode: nextMode })}
+            onClick={() => this.changeMode({ filterId: filter.id, mode: nextMode })}
             onKeyDown={(event: KeyboardEvent) => this.handlePanelKeyDown(event, filter.id)}
           >
             <ds-text as="span" variant="text-body-medium" color="inherit">
@@ -1185,8 +1283,8 @@ export class FilterMenu {
         ? this.closingSnapshot
         : {
             filters: this.filters,
-            values: this.values,
-            matchModes: this.matchModes,
+            values: this.draftValues ?? this.values,
+            matchModes: this.draftModes ?? this.matchModes,
             activeFilterId: this.activeFilterId,
           };
     const activeFilter = this.selectedFilter(state.filters, state.activeFilterId);

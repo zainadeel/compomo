@@ -63,6 +63,7 @@ export class TableFilter {
       <Host>
         <ds-filter-menu
           neutralTrigger
+          applyRequired
           open={this.open}
           triggerLabel={this.label}
           showSelectedCount={false}

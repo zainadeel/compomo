@@ -17,7 +17,8 @@
   "states": [
     "The application owns all filter, sort, grouping, and column configuration values. Apply emitted changes to the table and replace the matching preferences inputs.",
     "The component owns popup visibility, active tab, positioning, and dismissal; embedded controls reuse the same content as their standalone popups.",
-    "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback."
+    "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback.",
+    "Apply-required filtering stages edits locally, including match mode. Clear immediately clears all filters and discards pending edits. The footer appears when filters are selected or applied; Apply stays in place and inactive without pending changes; applying emits controlled changes. Closing discards unapplied edits."
   ],
   "accessibility": [
     "An icon-only Preferences trigger opens a named dialog. TabGroup owns section keyboard navigation; Escape and outside activation dismiss, returning focus to the trigger."
