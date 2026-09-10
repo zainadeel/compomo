@@ -16,6 +16,9 @@ export class TableToolbar {
   /** Accessible name for the grouped table controls. */
   @Prop() label: string = 'Table controls';
 
+  /** Use separators between regions when composing borderless controls. */
+  @Prop() borderless: boolean = false;
+
   @State() private slotPresence = 0;
 
   componentWillLoad(): void {
@@ -57,10 +60,11 @@ export class TableToolbar {
           <ds-divider
             class={{
               'table-toolbar__rule': true,
-              'table-toolbar__slot--empty': !hasStart,
+              'table-toolbar__slot--empty':
+                !this.borderless || !hasStart || !(hasSearch || hasLeading || hasTrailing),
             }}
             orientation="vertical"
-            length="32px"
+            length="var(--dimension-space-250)"
           />
           <div
             class={{
@@ -70,6 +74,15 @@ export class TableToolbar {
           >
             <slot name="search" onSlotchange={this.syncSlotPresence} />
           </div>
+          <ds-divider
+            class={{
+              'table-toolbar__rule': true,
+              'table-toolbar__slot--empty':
+                !this.borderless || !hasSearch || !(hasLeading || hasTrailing),
+            }}
+            orientation="vertical"
+            length="var(--dimension-space-250)"
+          />
           <div
             class={{
               'table-toolbar__leading': true,

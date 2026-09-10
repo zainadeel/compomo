@@ -16,6 +16,8 @@ export class TableFilter {
   /** Controlled popup visibility. */
   @Prop({ mutable: true }) open: boolean = false;
   /** Product-owned filter categories and option definitions. */
+  /** Show the trigger border. */
+  @Prop() hasBorder: boolean = true;
   @Prop() filters: FilterMenuFilter[] = [];
   /** Controlled values keyed by filter id. */
   @Prop() values: FilterMenuValues = {};
@@ -60,13 +62,16 @@ export class TableFilter {
     return (
       <Host>
         <ds-filter-menu
+          neutralTrigger
+          applyRequired
           open={this.open}
           triggerLabel={this.label}
           showSelectedCount={false}
+          showIndicator={false}
           icon="Filters"
           size="md"
           width="hug"
-          hasBorder={true}
+          hasBorder={this.hasBorder}
           activeFill={false}
           collapseLabel={true}
           align="start"

@@ -32,7 +32,8 @@
         "component:ds-table-group",
         "component:ds-select",
         "component:ds-table-sort",
-        "component:ds-button-unfilled"
+        "component:ds-button-unfilled",
+        "component:ds-table-preferences"
       ],
       "patterns": [],
       "accessibility": [
@@ -43,14 +44,15 @@
       "states": [
         "The component owns layout only. It never mutates slotted control props, values, menus, loading, persistence, or consequences. Use ds-table-saved-views and ds-table-filter when those interactions need the shared CompoMo behavior while application data and persistence remain external.",
         "Buttons in the toolbar keep their hover and pressed interaction paint without physically scaling, so pointer feedback does not disturb the stable caption geometry.",
-        "The start cluster is followed by a decorative vertical divider, then Search, optional leading controls, and one trailing action cluster. The start cluster and divider hide when nothing is projected. Search is a dedicated slot that hides when nothing is projected and grows to consume available row space. Empty leading or trailing clusters add no placeholder chrome. Search is the only toolbar region that grows and shrinks; all action controls retain their control geometry and align directly before the table-owned actions.",
-        "Column customizer and data-mode switching stay table-owned caption actions. Do not recreate those menus in the toolbar. When slotted into a table header, the table caption owns overflow for the complete toolbar and table-owned action row."
+        "The start cluster is followed by Search, optional leading controls, and one trailing action cluster. The start cluster hides when nothing is projected. Search is a dedicated slot that hides when nothing is projected and grows to consume available row space. Empty leading or trailing clusters add no placeholder chrome. Search is the only toolbar region that grows and shrinks; all action controls retain their control geometry and align directly before the table-owned actions.",
+        "Data-mode switching remains a table-owned caption action. Column customization normally uses the table caption trigger; compact compositions use the shared ds-table-preferences control and hide that trigger. When slotted into a table header, the table caption owns overflow for the complete toolbar and table-owned action row.",
+        "Standard toolbars omit region dividers. Borderless compositions show dividers after populated start and search regions when another region follows; the application supplies borderless controls."
       ],
       "responsiveBehavior": [
         "The start cluster, search, trailing Filter/Sort/Group, and table caption trailing actions stay on one line. Saved views hug their current trigger content up to the compact menu-width token rather than reserving that full width; long names truncate while the dirty dot stays visible. Filter, Sort, and Group triggers cap at the same token, and Sort and Group popups keep that compact menu-width floor. A standalone toolbar owns its horizontal scrolling; inside a table, the complete caption row is the single overflow owner so table-owned actions never remain pinned over scrolling toolbar controls.",
-        "Search consumes the row space left between fixed control groups and flexes smaller when the complete row needs space. Inside a named ds-table container narrower than 900px, ds-table-filter, ds-table-group, and ds-table-sort omit their labels and chevrons; each exposes its label through a hover and keyboard-focus tooltip. Empty leading and trailing slot groups do not add spacing. Active filtering promotes its prefix icon to primary. Group and Sort keep resting secondary chrome. Table-owned Customize also becomes the icon-only Table menu button at that width with the same tooltip behavior.",
+        "Search consumes the row space left between fixed control groups and flexes smaller when the complete row needs space. Inside a named ds-table container narrower than 900px, ds-table-filter, ds-table-group, and ds-table-sort omit their labels and chevrons; each exposes its label through a hover and keyboard-focus tooltip. Empty leading and trailing slot groups do not add spacing. Active filtering retains neutral trigger colors. Group and Sort keep resting secondary chrome. Table-owned Customize also becomes the icon-only Table menu button at that width with the same tooltip behavior.",
         "The scrollbar is visually suppressed without removing touch, trackpad, mouse-wheel, or keyboard scrolling from the overflow container.",
-        "Trailing controls remain grouped after leading controls; the toolbar does not collapse controls into an application-specific overflow menu."
+        "For compact toolbars, the application can replace Filter, Sort, Group and the table Customize trigger with ds-table-preferences in the trailing slot. Share the same controlled values and events; the toolbar remains a data-agnostic layout."
       ],
       "frameworkCaveats": {
         "customElements": [
@@ -76,6 +78,15 @@
     },
     "api": {
       "props": {
+        "borderless": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "borderless",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Use separators between regions when composing borderless controls."
+        },
         "label": {
           "type": "string",
           "resolvedType": "string",
@@ -91,6 +102,15 @@
       "slots": []
     },
     "props": {
+      "borderless": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "borderless",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Use separators between regions when composing borderless controls."
+      },
       "label": {
         "type": "string",
         "resolvedType": "string",
@@ -153,7 +173,7 @@
     },
     {
       "path": "src/wc/components/TableToolbar/TableToolbar.tsx",
-      "content": "import { Component, Element, h, Host, Prop, State } from '@stencil/core';\n\nconst TABLE_TOOLBAR_SLOT_START = 1 << 0;\nconst TABLE_TOOLBAR_SLOT_SEARCH = 1 << 1;\nconst TABLE_TOOLBAR_SLOT_LEADING = 1 << 2;\nconst TABLE_TOOLBAR_SLOT_TRAILING = 1 << 3;\n\n@Component({\n  tag: 'ds-table-toolbar',\n  styleUrl: 'TableToolbar.css',\n  scoped: true,\n})\nexport class TableToolbar {\n  @Element() el!: HTMLElement;\n\n  /** Accessible name for the grouped table controls. */\n  @Prop() label: string = 'Table controls';\n\n  @State() private slotPresence = 0;\n\n  componentWillLoad(): void {\n    this.syncSlotPresence();\n  }\n\n  private hasOwnedSlot(name: string): boolean {\n    return Array.from(this.el.querySelectorAll<HTMLElement>(`[slot=\"${name}\"]`)).some(\n      element => element.closest('ds-table-toolbar') === this.el\n    );\n  }\n\n  private syncSlotPresence = () => {\n    let presence = 0;\n    if (this.hasOwnedSlot('start')) presence |= TABLE_TOOLBAR_SLOT_START;\n    if (this.hasOwnedSlot('search')) presence |= TABLE_TOOLBAR_SLOT_SEARCH;\n    if (this.hasOwnedSlot('leading')) presence |= TABLE_TOOLBAR_SLOT_LEADING;\n    if (this.hasOwnedSlot('trailing')) presence |= TABLE_TOOLBAR_SLOT_TRAILING;\n    if (presence !== this.slotPresence) this.slotPresence = presence;\n  };\n\n  render() {\n    const hasStart = (this.slotPresence & TABLE_TOOLBAR_SLOT_START) !== 0;\n    const hasSearch = (this.slotPresence & TABLE_TOOLBAR_SLOT_SEARCH) !== 0;\n    const hasLeading = (this.slotPresence & TABLE_TOOLBAR_SLOT_LEADING) !== 0;\n    const hasTrailing = (this.slotPresence & TABLE_TOOLBAR_SLOT_TRAILING) !== 0;\n\n    return (\n      <Host>\n        <div class=\"table-toolbar\" role=\"toolbar\" aria-label={this.label}>\n          <div\n            class={{\n              'table-toolbar__start': true,\n              'table-toolbar__slot--empty': !hasStart,\n            }}\n          >\n            <slot name=\"start\" onSlotchange={this.syncSlotPresence} />\n          </div>\n          <ds-divider\n            class={{\n              'table-toolbar__rule': true,\n              'table-toolbar__slot--empty': !hasStart,\n            }}\n            orientation=\"vertical\"\n            length=\"32px\"\n          />\n          <div\n            class={{\n              'table-toolbar__search': true,\n              'table-toolbar__slot--empty': !hasSearch,\n            }}\n          >\n            <slot name=\"search\" onSlotchange={this.syncSlotPresence} />\n          </div>\n          <div\n            class={{\n              'table-toolbar__leading': true,\n              'table-toolbar__slot--empty': !hasLeading,\n            }}\n          >\n            <slot name=\"leading\" onSlotchange={this.syncSlotPresence} />\n          </div>\n          <div\n            class={{\n              'table-toolbar__trailing': true,\n              'table-toolbar__slot--empty': !hasTrailing,\n            }}\n          >\n            <slot name=\"trailing\" onSlotchange={this.syncSlotPresence} />\n          </div>\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Element, h, Host, Prop, State } from '@stencil/core';\n\nconst TABLE_TOOLBAR_SLOT_START = 1 << 0;\nconst TABLE_TOOLBAR_SLOT_SEARCH = 1 << 1;\nconst TABLE_TOOLBAR_SLOT_LEADING = 1 << 2;\nconst TABLE_TOOLBAR_SLOT_TRAILING = 1 << 3;\n\n@Component({\n  tag: 'ds-table-toolbar',\n  styleUrl: 'TableToolbar.css',\n  scoped: true,\n})\nexport class TableToolbar {\n  @Element() el!: HTMLElement;\n\n  /** Accessible name for the grouped table controls. */\n  @Prop() label: string = 'Table controls';\n\n  /** Use separators between regions when composing borderless controls. */\n  @Prop() borderless: boolean = false;\n\n  @State() private slotPresence = 0;\n\n  componentWillLoad(): void {\n    this.syncSlotPresence();\n  }\n\n  private hasOwnedSlot(name: string): boolean {\n    return Array.from(this.el.querySelectorAll<HTMLElement>(`[slot=\"${name}\"]`)).some(\n      element => element.closest('ds-table-toolbar') === this.el\n    );\n  }\n\n  private syncSlotPresence = () => {\n    let presence = 0;\n    if (this.hasOwnedSlot('start')) presence |= TABLE_TOOLBAR_SLOT_START;\n    if (this.hasOwnedSlot('search')) presence |= TABLE_TOOLBAR_SLOT_SEARCH;\n    if (this.hasOwnedSlot('leading')) presence |= TABLE_TOOLBAR_SLOT_LEADING;\n    if (this.hasOwnedSlot('trailing')) presence |= TABLE_TOOLBAR_SLOT_TRAILING;\n    if (presence !== this.slotPresence) this.slotPresence = presence;\n  };\n\n  render() {\n    const hasStart = (this.slotPresence & TABLE_TOOLBAR_SLOT_START) !== 0;\n    const hasSearch = (this.slotPresence & TABLE_TOOLBAR_SLOT_SEARCH) !== 0;\n    const hasLeading = (this.slotPresence & TABLE_TOOLBAR_SLOT_LEADING) !== 0;\n    const hasTrailing = (this.slotPresence & TABLE_TOOLBAR_SLOT_TRAILING) !== 0;\n\n    return (\n      <Host>\n        <div class=\"table-toolbar\" role=\"toolbar\" aria-label={this.label}>\n          <div\n            class={{\n              'table-toolbar__start': true,\n              'table-toolbar__slot--empty': !hasStart,\n            }}\n          >\n            <slot name=\"start\" onSlotchange={this.syncSlotPresence} />\n          </div>\n          <ds-divider\n            class={{\n              'table-toolbar__rule': true,\n              'table-toolbar__slot--empty':\n                !this.borderless || !hasStart || !(hasSearch || hasLeading || hasTrailing),\n            }}\n            orientation=\"vertical\"\n            length=\"var(--dimension-space-250)\"\n          />\n          <div\n            class={{\n              'table-toolbar__search': true,\n              'table-toolbar__slot--empty': !hasSearch,\n            }}\n          >\n            <slot name=\"search\" onSlotchange={this.syncSlotPresence} />\n          </div>\n          <ds-divider\n            class={{\n              'table-toolbar__rule': true,\n              'table-toolbar__slot--empty':\n                !this.borderless || !hasSearch || !(hasLeading || hasTrailing),\n            }}\n            orientation=\"vertical\"\n            length=\"var(--dimension-space-250)\"\n          />\n          <div\n            class={{\n              'table-toolbar__leading': true,\n              'table-toolbar__slot--empty': !hasLeading,\n            }}\n          >\n            <slot name=\"leading\" onSlotchange={this.syncSlotPresence} />\n          </div>\n          <div\n            class={{\n              'table-toolbar__trailing': true,\n              'table-toolbar__slot--empty': !hasTrailing,\n            }}\n          >\n            <slot name=\"trailing\" onSlotchange={this.syncSlotPresence} />\n          </div>\n        </div>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

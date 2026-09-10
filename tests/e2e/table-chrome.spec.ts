@@ -191,7 +191,7 @@ test('keeps the Customize control neutral when columns are customized at typical
   expect(colors.button).toBe(colors.secondary);
   expect(colors.icon).toBe(colors.secondary);
   expect(colors.label).toBe(colors.secondary);
-  expect(colors.chevron).toBe(colors.secondary);
+  expect(colors.chevron).toBeNull();
 });
 
 test('uses an icon-only neutral Customize control below 900px when customized', async ({
@@ -241,9 +241,7 @@ test('uses an icon-only neutral Customize control below 900px when customized', 
   expect(colors.icon).toBe(colors.secondary);
 });
 
-test('keeps labeled Filter, Group, and Sort chrome at typical width and promotes only the label when active', async ({
-  page,
-}) => {
+test('keeps table filter trigger colors neutral at typical width', async ({ page }) => {
   const table = page.locator('#column-customizer');
   const filter = table.getByRole('combobox', { name: 'Filter fleet' });
   const group = table.getByRole('combobox', { name: 'Group fleet' });
@@ -253,12 +251,12 @@ test('keeps labeled Filter, Group, and Sort chrome at typical width and promotes
   await expect(group).toContainText('Group');
   await expect(sort).toContainText('Sort');
   await expect(filter.locator('.trigger__label-box')).toBeVisible();
-  await expect(filter.locator('.trigger__chevron')).toBeVisible();
+  await expect(filter.locator('.trigger__chevron')).toHaveCount(0);
   await expect(group.locator('.trigger__label-box')).toBeVisible();
   await expect(group.locator('.trigger__chevron')).toBeVisible();
   await expect(sort.locator('.ds-button__label')).toBeVisible();
   await expect(sort.locator('.ds-button__label')).toHaveJSProperty('emphasis', false);
-  await expect(sort.locator('.ds-button__chevron')).toBeVisible();
+  await expect(sort.locator('.ds-button__chevron')).toHaveCount(0);
   await expect(sort.locator('xpath=ancestor::ds-button-unfilled[1]')).toHaveJSProperty(
     'pressScale',
     false
@@ -303,7 +301,7 @@ test('keeps labeled Filter, Group, and Sort chrome at typical width and promotes
     .poll(() =>
       filter.evaluate(element => {
         const probe = document.createElement('span');
-        probe.style.color = 'var(--color-foreground-primary)';
+        probe.style.color = 'var(--color-foreground-secondary)';
         document.body.append(probe);
         const primary = getComputedStyle(probe).color;
         probe.remove();
@@ -312,7 +310,7 @@ test('keeps labeled Filter, Group, and Sort chrome at typical width and promotes
       })
     )
     .toBe(true);
-  expect(colors.chevron).toBe(colors.secondary);
+  expect(colors.chevron).toBeNull();
 
   const groupColors = await group.evaluate(element => {
     const tokenColor = (token: string) => {
@@ -372,7 +370,7 @@ test('keeps labeled Filter, Group, and Sort chrome at typical width and promotes
   });
   expect(sortColors.icon).toBe(sortColors.secondary);
   expect(sortColors.label).toBe(sortColors.secondary);
-  expect(sortColors.chevron).toBe(sortColors.secondary);
+  expect(sortColors.chevron).toBeNull();
 });
 
 test('reports table filter intent from the dedicated host without mutating controlled values', async ({
@@ -394,6 +392,7 @@ test('reports table filter intent from the dedicated host without mutating contr
   await trigger.click();
   await expect(control).toHaveJSProperty('open', true);
   await control.getByRole('option', { name: 'Driving' }).click();
+  await control.getByRole('button', { name: 'Apply', exact: true }).click();
 
   await expect
     .poll(() =>
@@ -408,87 +407,30 @@ test('reports table filter intent from the dedicated host without mutating contr
   await expect(control).toHaveJSProperty('values', {});
 });
 
-test('reserves a category-pane Clear footer for every table filter @pr-critical', async ({
+test('shows filter actions only with selections and clears immediately @pr-critical', async ({
   page,
 }) => {
   const control = page.locator('#column-customizer-filter');
-  const trigger = control.getByRole('combobox', { name: 'Filter fleet' });
-
   await control.evaluate(element => {
-    (window as typeof window & { __tableFilterClears?: number }).__tableFilterClears = 0;
-    element.addEventListener('dsClear', () => {
-      (window as typeof window & { __tableFilterClears?: number }).__tableFilterClears! += 1;
-    });
+    (window as typeof window & { __tableFilterClears: number }).__tableFilterClears = 0;
+    element.addEventListener(
+      'dsClear',
+      () => (window as typeof window & { __tableFilterClears: number }).__tableFilterClears++
+    );
   });
-  await trigger.click();
-
-  const popup = control.getByRole('dialog', { name: 'Filter fleet' });
-  const categoryPane = popup.locator('.filter-menu__category-pane');
-  const footer = categoryPane.locator('.filter-menu__footer');
-  const options = popup.locator('.filter-menu__options');
-  await expect(footer).toBeVisible();
-  await expect(footer).toHaveAttribute('aria-hidden', 'true');
-  await expect(footer.locator('.ds-choice-footer__summary')).toHaveCount(0);
-  await expect(control.getByRole('button', { name: 'Clear' })).toHaveCount(0);
-  await expect
-    .poll(() => footer.evaluate(element => getComputedStyle(element, '::before').visibility))
-    .toBe('hidden');
-
-  const idleGeometry = await Promise.all([
-    popup.boundingBox(),
-    categoryPane.boundingBox(),
-    footer.boundingBox(),
-    options.boundingBox(),
-  ]);
-  expect(idleGeometry.every(rect => rect !== null)).toBe(true);
-
-  await control.evaluate((element: HTMLDsTableFilterElement) => {
-    element.values = { status: ['driving'] };
-  });
-
-  const clear = control.getByRole('button', { name: 'Clear' });
-  await expect(footer).not.toHaveAttribute('aria-hidden');
-  await expect(clear).toBeVisible();
-  await expect(footer.locator('.ds-choice-footer__summary')).toHaveCount(0);
-  await expect
-    .poll(() => footer.evaluate(element => getComputedStyle(element, '::before').visibility))
-    .toBe('visible');
-  await expect(footer.locator('.ds-choice-footer__content')).toHaveCSS(
-    'justify-content',
-    'flex-start'
-  );
-
-  const activeGeometry = await Promise.all([
-    popup.boundingBox(),
-    categoryPane.boundingBox(),
-    footer.boundingBox(),
-    clear.boundingBox(),
-  ]);
-  const categoryDividerWidth = await categoryPane.evaluate(element =>
-    Number.parseFloat(getComputedStyle(element).borderInlineEndWidth)
-  );
-  expect(activeGeometry.every(rect => rect !== null)).toBe(true);
-  expect(activeGeometry[0]!.height).toBeCloseTo(idleGeometry[0]!.height, 3);
-  expect(activeGeometry[2]!.x).toBeCloseTo(activeGeometry[1]!.x, 3);
-  expect(activeGeometry[2]!.x + activeGeometry[2]!.width).toBeCloseTo(
-    activeGeometry[1]!.x + activeGeometry[1]!.width - categoryDividerWidth,
-    3
-  );
-  expect(activeGeometry[3]!.x).toBeLessThan(activeGeometry[2]!.x + activeGeometry[2]!.width / 2);
-  expect(idleGeometry[3]!.y + idleGeometry[3]!.height).toBeCloseTo(
-    idleGeometry[0]!.y + idleGeometry[0]!.height,
-    3
-  );
-
-  await clear.click();
+  await control.getByRole('combobox', { name: 'Filter fleet' }).click();
+  await expect(control.locator('.filter-menu__category-pane .filter-menu__footer')).toHaveCount(0);
+  await control.getByRole('option', { name: 'Driving' }).click();
+  await expect(control.getByRole('button', { name: 'Apply', exact: true })).toBeEnabled();
+  await control.getByRole('button', { name: 'Clear', exact: true }).click();
   await expect
     .poll(() =>
       page.evaluate(
-        () => (window as typeof window & { __tableFilterClears?: number }).__tableFilterClears
+        () => (window as typeof window & { __tableFilterClears: number }).__tableFilterClears
       )
     )
     .toBe(1);
-  await expect(control).toHaveJSProperty('values', { status: ['driving'] });
+  await expect(control).toHaveJSProperty('values', {});
 });
 
 test('searches labels and descriptions within every non-date filter category @pr-critical', async ({
@@ -645,8 +587,14 @@ test('requests a controlled any or all mode from the multiple-filter footer @pr-
       })
     )
   );
-  expect(toggleDecoration).toEqual(clearDecoration);
+  expect(toggleDecoration.thickness).toEqual(clearDecoration.thickness);
+  expect(toggleDecoration.offset).toEqual(clearDecoration.offset);
+  await expect(clear).toHaveCSS(
+    'text-decoration-color',
+    await clear.evaluate(e => getComputedStyle(e).color)
+  );
   await toggle.click();
+  await popup.getByRole('button', { name: 'Apply', exact: true }).click();
   await expect(
     footer.getByRole('button', { name: 'Limit Status results to any selected' })
   ).toHaveText('all');
@@ -717,6 +665,7 @@ test('supports semantic relative dates and fixed calendar ranges @pr-critical', 
   ]);
 
   await popup.getByRole('option', { name: 'Last 7 days' }).click();
+  await popup.getByRole('button', { name: 'Apply', exact: true }).click();
   const dateCategory = popup.locator('[data-filter-category="event-date"]');
   await expect(dateCategory.locator('ds-badge')).toHaveJSProperty('variant', 'dot');
   await expect(dateCategory.locator('ds-tag')).toHaveCount(0);
@@ -792,6 +741,7 @@ test('supports semantic relative dates and fixed calendar ranges @pr-critical', 
   expect(firstDate).toBeTruthy();
   expect(secondDate).toBeTruthy();
   await calendarDays.nth(10).click();
+  await popup.getByRole('button', { name: 'Apply', exact: true }).click();
   await calendarDays.nth(15).hover();
   await expect(popup.locator('.filter-menu__calendar-day--range-preview')).toHaveCount(6);
   await expect(popup.locator('.filter-menu__calendar-day--range-edge')).toHaveCount(1);
@@ -809,6 +759,7 @@ test('supports semantic relative dates and fixed calendar ranges @pr-critical', 
       { filterId: 'event-date', value: `range:${firstDate}/${firstDate}` },
     ]);
   await calendarDays.nth(15).click();
+  await popup.getByRole('button', { name: 'Apply', exact: true }).click();
   await expect(popup.locator('.filter-menu__calendar-day--range-preview')).toHaveCount(0);
   await expect(
     popup.locator('.filter-menu__calendar-day--range-edge ds-text').first()
@@ -915,10 +866,10 @@ test('uses icon-only Filter, Group, and Sort below 900px and promotes the icon w
     const prefix = element.querySelector('.trigger__prefix');
     return {
       prefix: prefix ? getComputedStyle(prefix).color : null,
-      primary: tokenColor('--color-foreground-primary'),
+      secondary: tokenColor('--color-foreground-secondary'),
     };
   });
-  expect(filterColors.prefix).toBe(filterColors.primary);
+  expect(filterColors.prefix).toBe(filterColors.secondary);
 
   const groupColors = await group.evaluate(element => {
     const tokenColor = (token: string) => {
@@ -1009,7 +960,7 @@ test('keeps the bounded table surface within its host while the complete caption
   );
 
   await table.evaluate(element => {
-    (element as HTMLElement).style.inlineSize = '320px';
+    (element as HTMLElement).style.inlineSize = '280px';
   });
   await expect
     .poll(() => caption.evaluate(element => element.scrollWidth > element.clientWidth))
@@ -1306,8 +1257,16 @@ test('lays out application-owned table controls in start and spanning middle gro
   expect(layout.startBeforeLeading).toBe(true);
   expect(layout.startControlInCluster).toBe(true);
   expect(layout.startClusterWidth).toBeCloseTo(layout.startControlWidth, 0);
-  expect(layout.dividerVisible).toBe(true);
-  expect(layout.dividerHeight).toBe(32);
+  expect(layout.dividerVisible).toBe(false);
+  await toolbar.evaluate((element: HTMLDsTableToolbarElement) => {
+    element.borderless = true;
+    const search = document.createElement('div');
+    search.slot = 'search';
+    search.textContent = 'Search';
+    element.append(search);
+  });
+  await expect(toolbar.locator('.table-toolbar__rule:visible')).toHaveCount(2);
+  await expect(toolbar.locator('.table-toolbar__rule:visible').first()).toHaveCSS('height', '20px');
 
   const probe = await toolbar.evaluate(element => {
     const control = document.createElement('ds-button-unfilled') as HTMLElement & {
@@ -1488,4 +1447,65 @@ test('owns controlled saved-view selection, naming validation, and mutation inte
       { type: 'rename', viewId: 'attention', name: 'Needs review' },
       { type: 'remove', viewId: 'west' },
     ]);
+});
+
+test('shows an icon-only saved views trigger in compact mode', async ({ page }) => {
+  const control = page.locator('#saved-views');
+  const trigger = control.getByRole('combobox', { name: 'Saved views' });
+  await expect(trigger.locator('.trigger__prefix ds-icon')).toBeVisible();
+  await expect(trigger.locator('.trigger__prefix ds-icon')).toHaveJSProperty('name', 'ViewMenu');
+  await control.evaluate((el: HTMLDsTableSavedViewsElement) => {
+    el.compact = true;
+  });
+  await expect(trigger.locator('.trigger__chevron')).toHaveCount(0);
+  await expect(trigger).not.toContainText('Needs attention');
+  await expect
+    .poll(() =>
+      trigger.evaluate(
+        el =>
+          getComputedStyle(el.querySelector('.trigger__prefix')!).color ===
+          getComputedStyle(el).color
+      )
+    )
+    .toBe(true);
+  await control.evaluate((el: HTMLDsTableSavedViewsElement) => {
+    el.value = '__default__';
+  });
+  await expect
+    .poll(() =>
+      trigger.evaluate(el => {
+        const icon = el.querySelector('.trigger__prefix')!;
+        return getComputedStyle(icon).color === getComputedStyle(el).color;
+      })
+    )
+    .toBe(true);
+  const bounds = await trigger.boundingBox();
+  expect(bounds!.width).toBeCloseTo(bounds!.height, 0);
+  await trigger.click();
+  await expect(page.getByRole('button', { name: 'New view' })).toBeVisible();
+});
+
+test('removes the search border in borderless mode while retaining focus feedback', async ({
+  page,
+}) => {
+  await page.evaluate(async () => {
+    const modulePath = '/dist/components/ds-table-search.js';
+    await import(modulePath);
+    const search = document.createElement('ds-table-search');
+    search.id = 'borderless-search';
+    search.hasBorder = false;
+    document.body.prepend(search);
+  });
+  const control = page.locator('#borderless-search .table-search__control');
+  await expect(control).toHaveCSS('--ds-interaction-border-width', '0px');
+  await page.locator('#borderless-search input').focus();
+  await expect(control).not.toHaveCSS('--ds-interaction-border-width', '0px');
+});
+
+test('omits trailing chevrons from table toolbar triggers', async ({ page }) => {
+  for (const selector of ['#saved-views', 'ds-table-filter', 'ds-table-sort', 'ds-table-group']) {
+    const control = page.locator(selector).first();
+    await expect(control).toBeVisible();
+    await expect(control.locator('.trigger__chevron, .ds-button__chevron')).toHaveCount(0);
+  }
 });

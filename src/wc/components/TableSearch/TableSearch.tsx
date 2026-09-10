@@ -39,6 +39,9 @@ let tableSearchSequence = 0;
 export class TableSearch {
   @Element() private el!: HTMLElement;
 
+  /** Show the resting field border; keyboard focus remains visible. */
+  @Prop({ reflect: true }) hasBorder: boolean = true;
+
   /** Controlled free-text query. */
   @Prop() value: string = '';
   /** Table column catalog used to derive searchable data points and their complete labels. */
@@ -322,6 +325,7 @@ export class TableSearch {
       <Host
         class={{
           'table-search-host': true,
+          'table-search-host--borderless': !this.hasBorder,
           'ds-control--md': true,
           'ds-control-inactive': this.isInactive,
         }}
@@ -380,50 +384,17 @@ export class TableSearch {
               onKeyDown={event => this.handleKeyDown(event)}
             />
           </div>
-          {this.searchFields.length > 0 && (
-            <div class="table-search__actions ds-interaction-fill__content">
-              {inputValue.length > 0 && !this.isInactive && (
-                <ds-button-unfilled
-                  class="table-search__clear"
-                  variant="icon"
-                  size="sm"
-                  icon="CrossCircle"
-                  hasBorder={false}
-                  rounded
-                  ariaLabel={this.clearLabel}
-                  onDsClick={() => this.clearSearch()}
-                />
-              )}
-              {inputValue.length > 0 && !this.isInactive && (
-                <ds-divider
-                  class="table-search__action-divider"
-                  orientation="vertical"
-                  length="var(--dimension-size-200)"
-                />
-              )}
-              <ds-button-unfilled
-                class="table-search__slash"
-                variant="label"
-                size="md"
-                label="/"
-                labelEmphasis={false}
-                isInset
-                insetDepth="double"
-                hasBorder={false}
-                ariaLabel={this.fieldMenuLabel}
-                focusTabIndex={-1}
-                haspopup="listbox"
-                controls={this.menuOpen ? this.listboxId : undefined}
-                expanded={this.menuOpen}
-                surfaceOpen={this.menuOpen}
-                isInactive={this.isInactive || available.length === 0}
-                onMouseDown={(event: MouseEvent) => event.preventDefault()}
-                onDsClick={() => {
-                  this.inputEl?.focus({ preventScroll: true });
-                  this.openMenu(false);
-                }}
-              />
-            </div>
+          {inputValue.length > 0 && !this.isInactive && (
+            <ds-button-unfilled
+              class="table-search__clear ds-interaction-fill__content"
+              variant="icon"
+              size="sm"
+              icon="CrossCircle"
+              hasBorder={false}
+              rounded
+              ariaLabel={this.clearLabel}
+              onDsClick={() => this.clearSearch()}
+            />
           )}
         </div>
         <span id={this.descriptionId} class="ds-visually-hidden">

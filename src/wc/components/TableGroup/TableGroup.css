@@ -61,3 +61,30 @@
     border-inline-end-color: var(--ds-forced-color-content);
   }
 }
+
+.table-preferences-embedded {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  color: var(--color-foreground-secondary);
+}
+
+:host:has(.table-preferences-embedded) {
+  display: block;
+  max-inline-size: none;
+}
+.table-preferences-embedded .table-group__body {
+  grid-template-columns: min(var(--dimension-menu-width-xs), 40%) minmax(0, 1fr);
+}
+
+:host(.table-group-vertical) .table-group__body {
+  grid-template-columns: minmax(0, 1fr);
+}
+:host(.table-group-vertical) .table-group__data-pane {
+  border-inline-end: 0;
+}
+
+:host(.table-group-vertical) .table-group__footer {
+  display: none;
+}

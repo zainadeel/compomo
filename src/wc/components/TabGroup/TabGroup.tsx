@@ -45,6 +45,7 @@ export class TabGroup {
   /** Width fit — hug content (default) or fill the parent with equal-width segments. */
   @Prop() width: TabGroupWidth = 'hug';
   /** Show the segmented control's outer background, border, and inset. */
+  @Prop() presentation: 'segmented' | 'tabs' = 'segmented';
   @Prop() hasContainer: boolean = true;
   @Prop() background: TabBackground | undefined;
   @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;
@@ -162,7 +163,8 @@ export class TabGroup {
           'tab-group-host': true,
           [`tab-group-host--${this.size}`]: true,
           [`ds-control--${this.size}`]: true,
-          'tab-group-host--containerless': !this.hasContainer,
+          'tab-group-host--containerless': !this.hasContainer || this.presentation === 'tabs',
+          'tab-group-host--tabs': this.presentation === 'tabs',
           'tab-group-host--surface': !!bgClass,
           [`tab-group-host--${bgClass}`]: !!bgClass,
           ...controlWidthClass(this.width),
@@ -198,7 +200,7 @@ export class TabGroup {
                   tab: true,
                   'tab--selected': isSelected,
                   [`ds-control--${this.size}`]: true,
-                  'ds-control--inset': true,
+                  'ds-control--inset': this.presentation !== 'tabs',
                   'ds-focus-ring-inset': true,
                   'ds-interaction-fill': !tab.isInactive,
                   'ds-interaction-fill--on-faint': bgClass === 'on-faint',

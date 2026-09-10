@@ -28,6 +28,8 @@ export class TableSavedViews {
   @Element() el!: HTMLElement;
 
   /** Application-owned custom saved views. Assign arrays through the JavaScript property. */
+  /** Show the trigger border. */
+  @Prop() hasBorder: boolean = true;
   @Prop() views: TableSavedView[] = [];
   /** ID of the controlled active view, including the default view ID. */
   @Prop() value: string = '__default__';
@@ -41,6 +43,8 @@ export class TableSavedViews {
   @Prop() label: string = 'Saved views';
   /** Trigger label shown while the default view is selected. */
   @Prop() triggerLabel: string = 'Views';
+  /** Use an icon-only trigger in an explicitly compact toolbar. */
+  @Prop() compact: boolean = false;
   /** Footer action label that opens the create-view dialog. */
   @Prop() createLabel: string = 'New view';
 
@@ -207,8 +211,14 @@ export class TableSavedViews {
     return (
       <Host>
         <ds-select
+          neutralTrigger
+          hasBorder={this.hasBorder}
           id={this.selectId}
           size="md"
+          icon="ViewMenu"
+          indicator="none"
+          collapseLabel
+          iconOnly={this.compact}
           width="fill"
           placeholder={this.label}
           aria-label={this.label}

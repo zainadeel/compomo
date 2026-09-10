@@ -52,7 +52,7 @@ export type SelectSize = 'lg' | 'md' | 'sm' | 'xs';
 export type SelectWidth = ControlWidth;
 export type SelectPopupAlign = 'start' | 'end';
 export type SelectValue = string | string[];
-export type SelectIndicator = 'down' | 'up-down';
+export type SelectIndicator = 'down' | 'up-down' | 'none';
 
 export interface SelectOptionActionDetail {
   value: string;
@@ -131,12 +131,16 @@ export class Select {
   /** Replace the prefix with a loader and disable option interaction. */
   @Prop() isLoading: boolean = false;
   /** Show the selected interaction fill when a valid value exists. */
+  /** Keep trigger colors neutral when a value is selected. */
+  @Prop() neutralTrigger: boolean = false;
   @Prop() activeFill: boolean = false;
   /**
    * Opt into table-caption icon-only chrome below 900px. The trigger omits its
    * visible label and chevron; keep an accessible name via aria-label.
    */
   @Prop({ reflect: true }) collapseLabel: boolean = false;
+  /** Always show only the prefix icon; retain an accessible name via aria-label. */
+  @Prop() iconOnly: boolean = false;
   /** Show the surface-aware inset border, including focused and invalid strokes. */
   @Prop() hasBorder: boolean = true;
   /** Optional trigger prefix icon name. */
@@ -694,7 +698,10 @@ export class Select {
   }
 
   private get captionIconOnly(): boolean {
-    return this.collapseLabel && this.captionCompact && Boolean(this.icon || this.isLoading);
+    return (
+      (this.iconOnly || (this.collapseLabel && this.captionCompact)) &&
+      Boolean(this.icon || this.isLoading)
+    );
   }
 
   private syncCaptionCompactObserver(): void {
@@ -782,7 +789,7 @@ export class Select {
               'ds-interaction-fill--surface-open': !inactive && this.open,
               'trigger--bordered': this.hasBorder,
               'trigger--placeholder': showPlaceholder && !this.multiple,
-              'trigger--has-value': this.hasSelection,
+              'trigger--has-value': this.hasSelection && !this.neutralTrigger,
               'trigger--label-placeholder':
                 !this.multiple && Boolean(this.triggerLabel) && this.triggerLabelPlaceholder,
               'wrapper--error': this.hasBorder && this.error,
@@ -867,7 +874,7 @@ export class Select {
                 </span>
               </span>
             )}
-            {this.captionIconOnly ? null : (
+            {this.captionIconOnly || this.indicator === 'none' ? null : (
               <span
                 class="trigger__chevron ds-control-icon-box ds-interaction-fill__content"
                 aria-hidden="true"

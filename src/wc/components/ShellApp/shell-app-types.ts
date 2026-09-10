@@ -14,7 +14,11 @@ import type {
   PanelToolsRailAccessory,
 } from '../PanelTools/panel-tools-types';
 import type { NavChromeStyle } from '../../shell/nav-chrome';
-import type { ShellPageContentInset, ShellPageContentSurface } from '../ShellPage/shell-page-types';
+import type {
+  ShellPageContentInset,
+  ShellPageContentSurface,
+  ShellPageHeaderPresentation,
+} from '../ShellPage/shell-page-types';
 
 export type ShellAppComposition = 'managed' | 'slotted';
 export type ShellSectionNavigation = 'bar' | 'panel';
@@ -60,6 +64,8 @@ export interface ShellNavigationConfig {
  * the intentionally different mobile MobileHeader presentation.
  */
 export interface ShellPageChromeConfig {
+  /** Explicit presentation for the page-local title. */
+  headerPresentation?: ShellPageHeaderPresentation;
   heading?: string;
   /** Desktop/tablet route-navigation heading when it differs from the page h1. */
   routeHeading?: string;

@@ -427,3 +427,18 @@ export const WithDivider: Story = {
     ></ds-tab-group>
   `,
 };
+
+export const NavigationTabs: Story = {
+  render: () =>
+    html`<ds-tab-group
+      presentation="tabs"
+      size="md"
+      value="filters"
+      .tabs=${[
+        { id: 'filters', label: 'Filters' },
+        { id: 'sort', label: 'Sort' },
+        { id: 'group', label: 'Group' },
+        { id: 'customize', label: 'Customize' },
+      ]}
+    ></ds-tab-group>`,
+};

@@ -65,3 +65,7 @@ export const SavedViews: Story = {
     `;
   },
 };
+
+export const Compact: Story = {
+  render: () => html`<ds-table-saved-views compact></ds-table-saved-views>`,
+};

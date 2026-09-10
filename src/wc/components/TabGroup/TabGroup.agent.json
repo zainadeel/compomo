@@ -42,10 +42,7 @@
       "reason": "Menu owns temporary popup collections rather than persistent local views."
     }
   ],
-  "commonlyComposedWith": [
-    "component:ds-text",
-    "component:ds-icon"
-  ],
+  "commonlyComposedWith": ["component:ds-text", "component:ds-icon"],
   "accessibility": [
     "Provide an accessible tab-list name with aria-label or aria-labelledby.",
     "Keep exactly one valid enabled tab selected whenever enabled tabs exist, and keep its controlled view synchronized.",
@@ -65,7 +62,8 @@
     "Use one consistent content variant across every selectable tab in a group.",
     "Omitted background is for primary and secondary surfaces; pass the faint context explicitly on faint surfaces.",
     "Only the omitted default context emphasizes visible selected label text and keeps the filled track; every explicit surface context uses a transparent track, stable text weight, surface border, and its context-matched neutral active fill rather than a brand active fill.",
-    "Dividers visually separate related subsets inside one tab list but do not create nested navigation or independent selection groups."
+    "Dividers visually separate related subsets inside one tab list but do not create nested navigation or independent selection groups.",
+    "Simple navigation-style tabs use regular control geometry and selected text emphasis, without a selected pill fill or border."
   ],
   "responsiveBehavior": [
     "The component remains a single horizontal row and does not become vertical or wrap.",

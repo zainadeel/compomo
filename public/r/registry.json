@@ -4620,7 +4620,10 @@
             "Selection applies immediately and does not close the popup.",
             "Changing category replaces the option-pane subtree so checkbox and other option visuals mount in their new state instead of transitioning from the previous category's row state.",
             "The trigger reports how many filter categories have selections. footerLayout=summary adds a full-width selected-count footer only while values are selected; footerLayout=categories-clear always reserves the category-pane footer height while keeping its inactive divider hidden, then reveals the divider and only its left-aligned Clear action while values are selected.",
-            "The built-in trigger derives the shared surface-open wash from the rendered popup lifecycle, including closing. For an external trigger, the application owns that relationship and retains the wash until dsAfterClose; selected filter values remain independent."
+            "The built-in trigger derives the shared surface-open wash from the rendered popup lifecycle, including closing. For an external trigger, the application owns that relationship and retains the wash until dsAfterClose; selected filter values remain independent.",
+            "Embedded mode renders the same controlled content inside a parent-owned surface; the parent owns positioning, initial focus, Escape, Tab exit, and dismissal.",
+            "Apply-required filtering stages edits locally, including match mode. Clear immediately emits dsClear and discards pending edits. The footer appears when filters are selected or applied; Apply stays in place and inactive without pending changes; applying emits controlled changes. Closing discards unapplied edits.",
+            "Vertical presentation renders initially expanded, independently collapsible filter categories and emits edits immediately to its controlled owner. The owning panel supplies the draft and action footer."
           ],
           "responsiveBehavior": [
             "The popup defaults to the large menu-width token and clamps to the nearest data-ds-overlay-boundary rectangle or the viewport fallback.",
@@ -4675,6 +4678,10 @@
             "type": "string | undefined",
             "required": false
           },
+          "applyRequired": {
+            "type": "boolean",
+            "required": false
+          },
           "ariaLabel": {
             "type": "string | null",
             "required": false
@@ -4692,6 +4699,10 @@
             "required": false
           },
           "collapseLabel": {
+            "type": "boolean",
+            "required": false
+          },
+          "embedded": {
             "type": "boolean",
             "required": false
           },
@@ -4731,6 +4742,10 @@
             "type": "string",
             "required": false
           },
+          "neutralTrigger": {
+            "type": "boolean",
+            "required": false
+          },
           "noResultsText": {
             "type": "string",
             "required": false
@@ -4741,6 +4756,10 @@
           },
           "searchPlaceholder": {
             "type": "string",
+            "required": false
+          },
+          "showIndicator": {
+            "type": "boolean",
             "required": false
           },
           "showSelectedCount": {
@@ -4765,6 +4784,10 @@
           },
           "values": {
             "type": "FilterMenuValues",
+            "required": false
+          },
+          "vertical": {
+            "type": "boolean",
             "required": false
           },
           "width": {
@@ -5477,7 +5500,8 @@
             "Use a swatch-picker section for a small curated visual preference and apply dsSwatchSelect immediately without closing the popup.",
             "Ordinary rows, section headings, and supporting text consume the Menu size. At xs, both the primary label and supporting text use caption metrics.",
             "A trailing tag resolves one density smaller than its menu row and uses the inset recipe so it nests without changing row height. Do not combine tag, dot, and switch suffixes on one item.",
-            "Reorderable rows use the Drag prefix and ignore icon. Prefix and drag-handle icons inherit the choice-popup secondary foreground, matching Select. When any row in a section has an icon or is reorderable, the remaining rows get a spacer so labels align."
+            "Reorderable rows use the Drag prefix and ignore icon. Prefix and drag-handle icons inherit the choice-popup secondary foreground, matching Select. When any row in a section has an icon or is reorderable, the remaining rows get a spacer so labels align.",
+            "Embedded mode renders the same controlled content inside a parent-owned surface; the parent owns positioning, initial focus, Escape, Tab exit, and dismissal."
           ],
           "responsiveBehavior": [
             "Keep the default choice-cell anchor alignment so the first or last interactive row edge aligns with its trigger, matching Select; use popup-frame only for deliberate custom frame geometry.",
@@ -5533,6 +5557,10 @@
           },
           "boundary": {
             "type": "HTMLElement | undefined",
+            "required": false
+          },
+          "embedded": {
+            "type": "boolean",
             "required": false
           },
           "emptyMessage": {
@@ -8437,7 +8465,8 @@
             "When collapseLabel is set inside a named ds-table container narrower than 900px, the trigger omits its label and chevron, becomes icon-only, and exposes its label through a hover and keyboard-focus tooltip. A selected value promotes the prefix icon to primary.",
             "The popup matches the trigger minimum width, may grow for content, and clamps to the nearest data-ds-overlay-boundary rectangle or the viewport fallback. Assign boundary as an HTMLElement only for an explicit override.",
             "Keep popupAlign at start for ordinary fields and filters. Use end when a control sits against a right layout edge and the popup should grow inward.",
-            "Long option collections scroll inside the popup; virtualization and remote search are not part of this component."
+            "Long option collections scroll inside the popup; virtualization and remote search are not part of this component.",
+            "An explicitly compact composition can keep only the prefix icon while preserving the accessible name and tooltip."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -8533,6 +8562,10 @@
             "type": "string | undefined",
             "required": false
           },
+          "iconOnly": {
+            "type": "boolean",
+            "required": false
+          },
           "indicator": {
             "type": "SelectIndicator",
             "required": false
@@ -8559,6 +8592,10 @@
           },
           "name": {
             "type": "string | undefined",
+            "required": false
+          },
+          "neutralTrigger": {
+            "type": "boolean",
             "required": false
           },
           "noResultsText": {
@@ -8757,7 +8794,8 @@
             "Managed ShellApp keeps the selected desktop section-navigation presentation and ShellPage present and owns page header stickiness and the content scroller.",
             "Route-owned pageChrome independently selects ShellPage contentInset, page-header seams, scroll compaction, expanded and compact header-divider visibility, and contentSurface. ShellApp forwards them while resolving whether desktop title geometry is page-local or shell-bar-owned.",
             "The application filters unauthorized destinations, sections, and tools before passing them into shell components.",
-            "Application-owned header actions and the account trigger retain surface ownership across shell presentations. Supply surfaceOpen on header actions and accountMenuSurfaceOpen on navigation for rendered surface lifetimes; keep disclosure and selected-route state separate."
+            "Application-owned header actions and the account trigger retain surface ownership across shell presentations. Supply surfaceOpen on header actions and accountMenuSurfaceOpen on navigation for rendered surface lifetimes; keep disclosure and selected-route state separate.",
+            "Managed page chrome can explicitly choose page-local title presentation for pages that must remain compact rather than following capacity and scrolling."
           ],
           "responsiveBehavior": [
             "ShellApp owns the fixed system breakpoints and resolves desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
@@ -10035,7 +10073,8 @@
             "Use one consistent content variant across every selectable tab in a group.",
             "Omitted background is for primary and secondary surfaces; pass the faint context explicitly on faint surfaces.",
             "Only the omitted default context emphasizes visible selected label text and keeps the filled track; every explicit surface context uses a transparent track, stable text weight, surface border, and its context-matched neutral active fill rather than a brand active fill.",
-            "Dividers visually separate related subsets inside one tab list but do not create nested navigation or independent selection groups."
+            "Dividers visually separate related subsets inside one tab list but do not create nested navigation or independent selection groups.",
+            "Simple navigation-style tabs use regular control geometry and selected text emphasis, without a selected pill fill or border."
           ],
           "responsiveBehavior": [
             "The component remains a single horizontal row and does not become vertical or wrap.",
@@ -10076,6 +10115,10 @@
           },
           "hasContainer": {
             "type": "boolean",
+            "required": false
+          },
+          "presentation": {
+            "type": "'segmented' | 'tabs'",
             "required": false
           },
           "size": {
@@ -10193,7 +10236,9 @@
             "Score-and-text cells (`kind: score-text`) place the small 24px safety score at the top-right of the cell while the same one-, two-, or three-track copy stack as a standard text cell fills from the start edge. The score is top-aligned with the first text track, adds no inner padding, and defaults its accessible name prefix to Safety score. Score-and-text loading geometry uses the matching small score skeleton and declared copy tracks.",
             "The public @ds-mo/ui/table.css export is the authoritative zero-specificity visual recipe. Override its --ds-table-* properties or target its stable element classes for product-specific styling.",
             "While any checkbox selection is active, row activation toggles selection instead of opening details. Clearing the selection restores ordinary row activation. Nested controls retain their own intent, and disabled or non-selectable rows cannot be selected by activating their row.",
-            "Use surfaceOpenRowId to identify the interactive row associated with a visible detail panel or other contextual surface. The application owns opening, same-row toggling, switching records, and closing; retain the identity through exit motion, then clear it. Move it when panel navigation changes the displayed record. This pressed wash spans sticky and scrolling cells, follows stable row identity through virtualization, and never checks a checkbox or changes selectedRowIds. Group expansion remains an inline disclosure."
+            "Use surfaceOpenRowId to identify the interactive row associated with a visible detail panel or other contextual surface. The application owns opening, same-row toggling, switching records, and closing; retain the identity through exit motion, then clear it. Move it when panel navigation changes the displayed record. This pressed wash spans sticky and scrolling cells, follows stable row identity through virtualization, and never checks a checkbox or changes selectedRowIds. Group expansion remains an inline disclosure.",
+            "An external ds-table-preferences may own column controls. Hide only the built-in Customize trigger, keep column customization enabled, and share hidden-column and ordering state with the external surface.",
+            "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback."
           ],
           "responsiveBehavior": [
             "The table keeps native semantics at narrow widths and scrolls horizontally instead of transforming into cards.",
@@ -10248,6 +10293,10 @@
             "type": "string",
             "required": true
           },
+          "captionControlsBorderless": {
+            "type": "boolean",
+            "required": false
+          },
           "captionVisibility": {
             "type": "TableCaptionVisibility",
             "required": false
@@ -10270,6 +10319,10 @@
           },
           "columns": {
             "type": "TableColumn[]",
+            "required": false
+          },
+          "customizeOptions": {
+            "type": "MenuItemData[]",
             "required": false
           },
           "dataMode": {
@@ -10366,6 +10419,10 @@
           },
           "hiddenColumnIds": {
             "type": "string[]",
+            "required": false
+          },
+          "hideColumnCustomizerTrigger": {
+            "type": "boolean",
             "required": false
           },
           "highlightFieldIds": {
@@ -10499,6 +10556,10 @@
             "detail": "TableColumnsConfigChangeDetail"
           },
           {
+            "name": "dsCustomizeOptionChange",
+            "detail": "string"
+          },
+          {
             "name": "dsDataModeChange",
             "detail": "TableDataModeChangeDetail"
           },
@@ -10608,16 +10669,20 @@
           ],
           "states": [
             "filters, values, matchModes, and activeFilterId are controlled. dsChange, dsMatchModeChange, dsClear, and dsActiveFilterChange report intent without changing those inputs; the application applies query consequences and returns replacement values.",
-            "The visible trigger label stays singular Filter without appending an active-count suffix. Active criteria promote only the visible label from secondary to primary, matching the other table caption controls without redefining generic button active semantics.",
+            "The visible trigger label stays singular Filter without appending an active-count suffix. Active criteria retain the same neutral label and icon colors.",
             "The popup reserves a visually empty footer row inside the category pane for every state. Active criteria reveal its divider and only a left-aligned Clear action, without adding popup height or showing redundant selected-count copy; the option pane retains its full column.",
             "Every multiple-choice category exposes a right-pane footer where the blue any or all word toggles its controlled match mode. any is the default OR mode; the application applies the requested mode to its query.",
             "Every non-date category exposes a 40px secondary-background search header that filters its displayed option labels and descriptions without changing controlled filter values. Date retains only its Relative and Range header.",
             "Date categories use the shared compact-header Range and Relative experience. Persist relative values semantically and resolve them from the product's current date whenever rows or saved views are applied.",
-            "Popup visibility follows the same mutable open and dsOpenChange contract as ds-filter-menu."
+            "Popup visibility follows the same mutable open and dsOpenChange contract as ds-filter-menu.",
+            "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback.",
+            "Expanded toolbar triggers use an icon and regular-weight text without a trailing chevron.",
+            "Selected views and applied filters do not promote trigger icon or label colors. Trigger colors remain neutral across value changes.",
+            "Apply-required filtering stages edits locally, including match mode. Clear immediately clears all filters and discards pending edits. The footer appears when filters are selected or applied; Apply stays in place and inactive without pending changes; applying emits controlled changes. Closing discards unapplied edits."
           ],
           "responsiveBehavior": [
             "Place the control in the trailing region of ds-table-toolbar.",
-            "Inside a named ds-table container narrower than 900px, the trigger becomes icon-only, exposes its visible label through a hover and keyboard-focus tooltip, and active criteria promote the Filters icon to primary."
+            "Inside a named ds-table container narrower than 900px, the trigger becomes icon-only, exposes its visible label through a hover and keyboard-focus tooltip, and the Filters icon remains neutral with active criteria."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -10660,6 +10725,10 @@
           },
           "filters": {
             "type": "FilterMenuFilter[]",
+            "required": false
+          },
+          "hasBorder": {
+            "type": "boolean",
             "required": false
           },
           "label": {
@@ -10785,7 +10854,11 @@
             "options and grouping are controlled. A data option may supply product-owned orderOptions; otherwise Order defaults to Ascending and Descending. dsGroupChange reports a complete TableGroupingState and dsClear requests null grouping without mutating either input.",
             "Selecting a new data point starts at its first custom order option, or ascending when it has no custom order options. Re-selecting the active data point preserves its complete order state.",
             "Selecting a data point or direction applies immediately and leaves the dialog open so the other pane can be changed.",
-            "The grouping picker automatically holds the shared surface-open wash through exit. Opening this picker is separate from expanding an inline table group."
+            "The grouping picker automatically holds the shared surface-open wash through exit. Opening this picker is separate from expanding an inline table group.",
+            "Embedded mode renders the same controlled content inside a parent-owned surface; the parent owns positioning, initial focus, Escape, Tab exit, and dismissal.",
+            "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback.",
+            "Expanded toolbar triggers use an icon and regular-weight text without a trailing chevron.",
+            "Vertical presentation stacks grouping data and ordering, with an explicit No grouping choice and no Clear footer."
           ],
           "responsiveBehavior": [
             "Use in the trailing region of ds-table-toolbar.",
@@ -10827,6 +10900,10 @@
             "type": "string",
             "required": false
           },
+          "embedded": {
+            "type": "boolean",
+            "required": false
+          },
           "emptyMessage": {
             "type": "string",
             "required": false
@@ -10835,12 +10912,20 @@
             "type": "TableGroupingState | null",
             "required": false
           },
+          "hasBorder": {
+            "type": "boolean",
+            "required": false
+          },
           "open": {
             "type": "boolean",
             "required": false
           },
           "options": {
             "type": "TableGroupOption[]",
+            "required": false
+          },
+          "vertical": {
+            "type": "boolean",
             "required": false
           }
         },
@@ -10875,6 +10960,183 @@
         "empty-state",
         "input",
         "text"
+      ]
+    },
+    {
+      "name": "table-preferences",
+      "title": "TablePreferences",
+      "description": "Compact table preferences dialog with Filters, Sort, Group, and Customize tabs.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/table-preferences",
+        "source": "src/wc/components/TablePreferences/TablePreferences.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Compact table preferences dialog with Filters, Sort, Group, and Customize tabs.",
+          "useWhen": [
+            "A narrow table toolbar or a user preference calls for one result-shaping control."
+          ],
+          "avoidWhen": [
+            "The application needs unrelated actions or a submitted form."
+          ],
+          "states": [
+            "The application owns all filter, sort, grouping, and column configuration values. Apply emitted changes to the table and replace the matching preferences inputs.",
+            "The component owns popup visibility, active tab, positioning, and dismissal; embedded controls reuse the same content as their standalone popups.",
+            "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback.",
+            "Apply-required filtering stages edits locally, including match mode. Clear immediately clears all filters and discards pending edits. The footer appears when filters are selected or applied; Apply stays in place and inactive without pending changes; applying emits controlled changes. Closing discards unapplied edits.",
+            "Embedded presentation delegates its active tab, draft state, Apply, Reset, and dismissal to the owning panel; it renders vertical filter and grouping content without a popup trigger."
+          ],
+          "accessibility": [
+            "An icon-only Preferences trigger opens a named dialog. TabGroup owns section keyboard navigation; Escape and outside activation dismiss, returning focus to the trigger."
+          ],
+          "responsiveBehavior": [
+            "The popup fits the viewport and scrolls internally. The application chooses whether to show it instead of separate controls. Hide the table-owned Customize trigger while retaining column customization."
+          ],
+          "patterns": [],
+          "commonlyComposedWith": [
+            "component:ds-table",
+            "component:ds-table-toolbar",
+            "component:ds-filter-menu",
+            "component:ds-menu",
+            "component:ds-table-group",
+            "component:ds-tab-group"
+          ]
+        },
+        "props": {
+          "activeFilterId": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "activeTab": {
+            "type": "PreferencesTab",
+            "required": false
+          },
+          "columnOrder": {
+            "type": "string[]",
+            "required": false
+          },
+          "columns": {
+            "type": "TableColumn[]",
+            "required": false
+          },
+          "customizeOptions": {
+            "type": "MenuItemData[]",
+            "required": false
+          },
+          "customizeSections": {
+            "type": "MenuSection[]",
+            "required": false
+          },
+          "embedded": {
+            "type": "boolean",
+            "required": false
+          },
+          "filters": {
+            "type": "FilterMenuFilter[]",
+            "required": false
+          },
+          "grouping": {
+            "type": "TableGroupingState | null",
+            "required": false
+          },
+          "groupingOptions": {
+            "type": "TableGroupOption[]",
+            "required": false
+          },
+          "hasBorder": {
+            "type": "boolean",
+            "required": false
+          },
+          "hiddenColumnIds": {
+            "type": "string[]",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": false
+          },
+          "matchModes": {
+            "type": "FilterMenuMatchModes",
+            "required": false
+          },
+          "sort": {
+            "type": "TableSortState | null",
+            "required": false
+          },
+          "sortColumns": {
+            "type": "TableColumn[]",
+            "required": false
+          },
+          "values": {
+            "type": "FilterMenuValues",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsActiveFilterChange",
+            "detail": "string"
+          },
+          {
+            "name": "dsColumnsConfigChange",
+            "detail": "TableColumnsConfigChangeDetail"
+          },
+          {
+            "name": "dsCustomizeOptionChange",
+            "detail": "string"
+          },
+          {
+            "name": "dsFilterChange",
+            "detail": "FilterMenuChangeDetail"
+          },
+          {
+            "name": "dsFilterMatchModeChange",
+            "detail": "FilterMenuMatchModeChangeDetail"
+          },
+          {
+            "name": "dsFiltersClear",
+            "detail": "void"
+          },
+          {
+            "name": "dsGroupChange",
+            "detail": "TableGroupingState"
+          },
+          {
+            "name": "dsGroupClear",
+            "detail": "void"
+          },
+          {
+            "name": "dsPreferencesTabChange",
+            "detail": "PreferencesTab"
+          },
+          {
+            "name": "dsSortChange",
+            "detail": "TableSortChangeDetail"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-table-preferences",
+          "react": "DsTablePreferences",
+          "vue": "DsTablePreferences",
+          "angular": "DsTablePreferences"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "button-unfilled",
+        "filter-menu",
+        "menu",
+        "tab-group",
+        "table-group",
+        "tooltip"
       ]
     },
     {
@@ -10919,11 +11181,15 @@
             "views, value, and dirty are controlled. Dirty state is presented only for a selected custom view; the default template never shows the trigger dot or save/discard actions even if dirty is supplied. Selection, create, save, discard, rename, and remove events communicate intent and never mutate application records.",
             "The component owns only transient interaction state: the contextual menu, naming dialog, draft name, duplicate-name validation, and focus restoration.",
             "The default view is a non-editable template. Application-owned custom views appear in a separate section with Rename and Remove actions. New view opens the naming dialog. When an editable selected view is dirty, that view row shows Save and negative Discard supporting actions while the footer remains dedicated to New view. The application decides which table state to capture, restore, and persist.",
-            "The built-in picker and contextual option menu each retain their own surface-open treatment. Opening a view menu does not select that view."
+            "The built-in picker and contextual option menu each retain their own surface-open treatment. Opening a view menu does not select that view.",
+            "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback.",
+            "Expanded toolbar triggers use an icon and regular-weight text without a trailing chevron.",
+            "Selected views and applied filters do not promote trigger icon or label colors. Trigger colors remain neutral across value changes."
           ],
           "responsiveBehavior": [
             "The control remains a single toolbar item and relies on Select, Menu, and Modal collision and viewport behavior. Its trigger hugs short view names and is capped at the compact menu-width token so long names truncate while the dirty dot stays visible. Its choice popup keeps that same token as the minimum width.",
-            "Place it in the start region of ds-table-toolbar so the middle region can keep left-side and right-side controls on one spanning cluster."
+            "Place it in the start region of ds-table-toolbar so the middle region can keep left-side and right-side controls on one spanning cluster.",
+            "The ViewMenu prefix identifies saved views. Compact compositions and narrow table captions show only the icon while retaining the accessible name and tooltip."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -10952,6 +11218,10 @@
           ]
         },
         "props": {
+          "compact": {
+            "type": "boolean",
+            "required": false
+          },
           "createLabel": {
             "type": "string",
             "required": false
@@ -10965,6 +11235,10 @@
             "required": false
           },
           "dirty": {
+            "type": "boolean",
+            "required": false
+          },
+          "hasBorder": {
             "type": "boolean",
             "required": false
           },
@@ -11069,7 +11343,7 @@
             "Typing slash opens the field listbox without inserting slash into the table query. Text typed while it is open filters data points by complete label, Up and Down change the active match, Enter selects it, Escape closes it, and Left and Right retain native text-cursor behavior because focus never leaves the input. Backspace edits the field-picker query first and closes the listbox when that query is empty.",
             "The query disables browser autocomplete history, automatic capitalization, autocorrection, and spellchecking so browser-owned suggestions never obscure the product-owned field menu or table results.",
             "Selected field Chips have individually labeled remove actions and are also described by the search input. Polite announcements report additions, removals, and clearing without duplicating the visible query.",
-            "The slash suffix is a labeled double-inset md button excluded from sequential keyboard navigation; the search input exposes the same action through aria-keyshortcuts and its description.",
+            "The search input exposes the slash command through aria-keyshortcuts and its description, without a visible suffix button.",
             "The clear action removes both free text and every selected field. It restores focus to the search input; each Chip's own remove action remains scoped to that field."
           ],
           "states": [
@@ -11079,12 +11353,13 @@
             "Backspace edits a non-empty field-picker query, then closes the open slash listbox when that query is empty. When the table query is empty and the listbox is already closed, the next Backspace removes the last selected field. Ordinary Backspace edits table query text when the listbox is closed.",
             "Duplicate, blank, and unknown field identities are ignored for presentation. Selected fields preserve the consumer's order.",
             "Inactive search leaves the tab order, closes the field listbox, and does not emit query or field changes.",
-            "The field-picker action holds the shared surface-open wash while its listbox is visible; chosen search fields remain independent."
+            "The field-picker action holds the shared surface-open wash while its listbox is visible; chosen search fields remain independent.",
+            "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback."
           ],
           "responsiveBehavior": [
             "The control fills the available inline size supplied by the table toolbar search slot. Selected Chips and the editable query share one horizontal editor lane so the md control does not grow vertically.",
             "The field popup enters the top layer, aligns its first choice cell with the search control, flips or clamps to the viewport or nearest overlay boundary, and scrolls internally when its catalog is taller than available space.",
-            "Long selected field labels truncate inside their Chips while the input remains available at the inline end of the editor lane. Both suffix actions resolve to the same 24px height as selected Chips. Clear follows the standard md Input recipe—a non-inset sm icon button—while slash is a double-inset md label button. Slash remains rightmost; when query text exposes Clear, a vertical divider separates the two actions."
+            "Clear appears when query text is present and uses the standard sm icon button treatment."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -11128,6 +11403,10 @@
           },
           "fieldMenuLabel": {
             "type": "string",
+            "required": false
+          },
+          "hasBorder": {
+            "type": "boolean",
             "required": false
           },
           "isInactive": {
@@ -11177,7 +11456,6 @@
       "registryDependencies": [
         "button-unfilled",
         "chip",
-        "divider",
         "empty-state",
         "icon",
         "text"
@@ -11235,7 +11513,9 @@
             "Selecting a different data field keeps the current direction, or starts ascending when no sort exists. Selecting a direction applies it to the current field, or to the first sortable field when no sort exists. Selecting the already-active field or direction is a no-op and does not toggle the way a header click does.",
             "The trigger stays Sort in regular-weight resting secondary chrome. Field and direction selection live in the menu and on column headers, so the trigger never uses active primary emphasis. It keeps pressed interaction paint without physically scaling inside the stable table caption row.",
             "Compound sortable headers contribute one Data row per segment. Action columns never appear.",
-            "The trigger automatically holds the shared surface-open wash through menu exit while the selected sort remains independently controlled."
+            "The trigger automatically holds the shared surface-open wash through menu exit while the selected sort remains independently controlled.",
+            "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback.",
+            "Expanded toolbar triggers use an icon and regular-weight text without a trailing chevron."
           ],
           "responsiveBehavior": [
             "Place the control in the trailing region of ds-table-toolbar with Filter and Group.",
@@ -11275,6 +11555,10 @@
           },
           "columns": {
             "type": "TableColumn[]",
+            "required": false
+          },
+          "hasBorder": {
+            "type": "boolean",
             "required": false
           },
           "sort": {
@@ -11338,7 +11622,8 @@
             "component:ds-table-group",
             "component:ds-select",
             "component:ds-table-sort",
-            "component:ds-button-unfilled"
+            "component:ds-button-unfilled",
+            "component:ds-table-preferences"
           ],
           "patterns": [],
           "accessibility": [
@@ -11349,14 +11634,15 @@
           "states": [
             "The component owns layout only. It never mutates slotted control props, values, menus, loading, persistence, or consequences. Use ds-table-saved-views and ds-table-filter when those interactions need the shared CompoMo behavior while application data and persistence remain external.",
             "Buttons in the toolbar keep their hover and pressed interaction paint without physically scaling, so pointer feedback does not disturb the stable caption geometry.",
-            "The start cluster is followed by a decorative vertical divider, then Search, optional leading controls, and one trailing action cluster. The start cluster and divider hide when nothing is projected. Search is a dedicated slot that hides when nothing is projected and grows to consume available row space. Empty leading or trailing clusters add no placeholder chrome. Search is the only toolbar region that grows and shrinks; all action controls retain their control geometry and align directly before the table-owned actions.",
-            "Column customizer and data-mode switching stay table-owned caption actions. Do not recreate those menus in the toolbar. When slotted into a table header, the table caption owns overflow for the complete toolbar and table-owned action row."
+            "The start cluster is followed by Search, optional leading controls, and one trailing action cluster. The start cluster hides when nothing is projected. Search is a dedicated slot that hides when nothing is projected and grows to consume available row space. Empty leading or trailing clusters add no placeholder chrome. Search is the only toolbar region that grows and shrinks; all action controls retain their control geometry and align directly before the table-owned actions.",
+            "Data-mode switching remains a table-owned caption action. Column customization normally uses the table caption trigger; compact compositions use the shared ds-table-preferences control and hide that trigger. When slotted into a table header, the table caption owns overflow for the complete toolbar and table-owned action row.",
+            "Standard toolbars omit region dividers. Borderless compositions show dividers after populated start and search regions when another region follows; the application supplies borderless controls."
           ],
           "responsiveBehavior": [
             "The start cluster, search, trailing Filter/Sort/Group, and table caption trailing actions stay on one line. Saved views hug their current trigger content up to the compact menu-width token rather than reserving that full width; long names truncate while the dirty dot stays visible. Filter, Sort, and Group triggers cap at the same token, and Sort and Group popups keep that compact menu-width floor. A standalone toolbar owns its horizontal scrolling; inside a table, the complete caption row is the single overflow owner so table-owned actions never remain pinned over scrolling toolbar controls.",
-            "Search consumes the row space left between fixed control groups and flexes smaller when the complete row needs space. Inside a named ds-table container narrower than 900px, ds-table-filter, ds-table-group, and ds-table-sort omit their labels and chevrons; each exposes its label through a hover and keyboard-focus tooltip. Empty leading and trailing slot groups do not add spacing. Active filtering promotes its prefix icon to primary. Group and Sort keep resting secondary chrome. Table-owned Customize also becomes the icon-only Table menu button at that width with the same tooltip behavior.",
+            "Search consumes the row space left between fixed control groups and flexes smaller when the complete row needs space. Inside a named ds-table container narrower than 900px, ds-table-filter, ds-table-group, and ds-table-sort omit their labels and chevrons; each exposes its label through a hover and keyboard-focus tooltip. Empty leading and trailing slot groups do not add spacing. Active filtering retains neutral trigger colors. Group and Sort keep resting secondary chrome. Table-owned Customize also becomes the icon-only Table menu button at that width with the same tooltip behavior.",
             "The scrollbar is visually suppressed without removing touch, trackpad, mouse-wheel, or keyboard scrolling from the overflow container.",
-            "Trailing controls remain grouped after leading controls; the toolbar does not collapse controls into an application-specific overflow menu."
+            "For compact toolbars, the application can replace Filter, Sort, Group and the table Customize trigger with ds-table-preferences in the trailing slot. Share the same controlled values and events; the toolbar remains a data-agnostic layout."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -11381,6 +11667,10 @@
           ]
         },
         "props": {
+          "borderless": {
+            "type": "boolean",
+            "required": false
+          },
           "label": {
             "type": "string",
             "required": false

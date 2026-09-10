@@ -50,7 +50,10 @@
     "Selection applies immediately and does not close the popup.",
     "Changing category replaces the option-pane subtree so checkbox and other option visuals mount in their new state instead of transitioning from the previous category's row state.",
     "The trigger reports how many filter categories have selections. footerLayout=summary adds a full-width selected-count footer only while values are selected; footerLayout=categories-clear always reserves the category-pane footer height while keeping its inactive divider hidden, then reveals the divider and only its left-aligned Clear action while values are selected.",
-    "The built-in trigger derives the shared surface-open wash from the rendered popup lifecycle, including closing. For an external trigger, the application owns that relationship and retains the wash until dsAfterClose; selected filter values remain independent."
+    "The built-in trigger derives the shared surface-open wash from the rendered popup lifecycle, including closing. For an external trigger, the application owns that relationship and retains the wash until dsAfterClose; selected filter values remain independent.",
+    "Embedded mode renders the same controlled content inside a parent-owned surface; the parent owns positioning, initial focus, Escape, Tab exit, and dismissal.",
+    "Apply-required filtering stages edits locally, including match mode. Clear immediately emits dsClear and discards pending edits. The footer appears when filters are selected or applied; Apply stays in place and inactive without pending changes; applying emits controlled changes. Closing discards unapplied edits.",
+    "Vertical presentation renders initially expanded, independently collapsible filter categories and emits edits immediately to its controlled owner. The owning panel supplies the draft and action footer."
   ],
   "responsiveBehavior": [
     "The popup defaults to the large menu-width token and clamps to the nearest data-ds-overlay-boundary rectangle or the viewport fallback.",

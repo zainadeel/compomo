@@ -119,6 +119,9 @@ export class Table {
   @Element() el!: HTMLElement;
   /** Stable column definitions. Assign through JavaScript. */
   @Prop() columns: TableColumn[] = [];
+  /** Additional toggle options in the column customizer. */
+  @Prop() customizeOptions: MenuItemData[] = [];
+  @Event() dsCustomizeOptionChange!: EventEmitter<string>;
   /** Ungrouped row data. Ignored while grouping is active. Assign through JavaScript. */
   @Prop() rows: TableRow[] = [];
   /** One level of application-owned grouped data. Assign through JavaScript. */
@@ -144,6 +147,10 @@ export class Table {
    * opens the shared Menu of live show/hide switch rows.
    */
   @Prop() columnCustomizer: boolean = false;
+  /** Hide only the built-in Customize trigger when an external preferences surface owns it. */
+  /** Remove borders from table-owned caption controls. */
+  @Prop() captionControlsBorderless: boolean = false;
+  @Prop() hideColumnCustomizerTrigger: boolean = false;
   /** Controlled hidden data-column identities. Action ids are ignored. */
   @Prop() hiddenColumnIds: string[] = [];
   /** Controlled data-column identities in display order. Omitted ids append in catalog order. */
@@ -804,7 +811,10 @@ export class Table {
   }
 
   private get showsCaptionTrailing(): boolean {
-    return this.showsDataModeSwitcher || this.showsColumnCustomizer;
+    return (
+      this.showsDataModeSwitcher ||
+      (this.showsColumnCustomizer && !this.hideColumnCustomizerTrigger)
+    );
   }
 
   private get documentStickyHeader(): boolean {
@@ -2314,6 +2324,7 @@ export class Table {
           </div>
           {this.renderCaptionTrailing()}
         </div>
+        <slot name="header-after" />
       </div>
     );
   }
@@ -2323,7 +2334,9 @@ export class Table {
     return (
       <div class="ds-table__caption-trailing">
         {this.renderColumnCustomizerTrigger()}
-        {this.showsColumnCustomizer && this.showsDataModeSwitcher ? (
+        {this.showsColumnCustomizer &&
+        !this.hideColumnCustomizerTrigger &&
+        this.showsDataModeSwitcher ? (
           <ds-divider orientation="vertical" length="32px" />
         ) : null}
         {this.renderDataModeSwitcherTrigger()}
@@ -2340,6 +2353,7 @@ export class Table {
       <span class="ds-table__caption-mode-switcher">
         <ds-tooltip label={this.dataModeSwitcherLabel} side="top" size="sm">
           <ds-button-unfilled
+            hasBorder={!this.captionControlsBorderless}
             id={`${this.dataModeSwitcherElementId}-trigger`}
             variant="icon"
             size="md"
@@ -2417,6 +2431,7 @@ export class Table {
   }
 
   private renderColumnCustomizerTrigger() {
+    if (this.hideColumnCustomizerTrigger) return null;
     if (!this.showsColumnCustomizer) return null;
     return (
       <div
@@ -2428,6 +2443,7 @@ export class Table {
       >
         <ds-tooltip label={this.captionCompact ? 'Customize' : ''} side="top" size="sm">
           <ds-button-unfilled
+            hasBorder={!this.captionControlsBorderless}
             id={`${this.columnCustomizerElementId}-trigger`}
             variant={this.captionCompact ? 'icon' : 'icon-label'}
             size="md"
@@ -2436,7 +2452,7 @@ export class Table {
             labelEmphasis={false}
             pressScale={false}
             aria-label="Customize table"
-            hasMenu={true}
+            haspopup="menu"
             expanded={this.columnCustomizerOpen}
             surfaceOpen={this.columnCustomizerSurfaceOpen}
             controls={this.columnCustomizerElementId}
@@ -2464,12 +2480,28 @@ export class Table {
         side="bottom"
         menuLabel="Customize table"
         initialFocusVisible={this.columnCustomizerInitialFocusVisible}
-        items={tableColumnCustomizerMenuItems(this.columns, this.hiddenColumnIds, this.columnOrder)}
+        sections={[
+          {
+            header: 'Columns',
+            items: tableColumnCustomizerMenuItems(
+              this.columns,
+              this.hiddenColumnIds,
+              this.columnOrder
+            ),
+          },
+          ...(this.customizeOptions.length
+            ? [{ header: 'Options', items: this.customizeOptions }]
+            : []),
+        ]}
         onDsClose={() => this.closeColumnCustomizer()}
         onDsAfterClose={() => {
           if (!this.columnCustomizerOpen) this.columnCustomizerSurfaceOpen = false;
         }}
-        onDsSelect={event => this.handleColumnCustomizerSelect(event.detail)}
+        onDsSelect={event => {
+          if (this.customizeOptions.some(option => option.value === event.detail.value)) {
+            this.dsCustomizeOptionChange.emit(event.detail.value!);
+          } else this.handleColumnCustomizerSelect(event.detail);
+        }}
         onDsReorder={event => this.handleColumnCustomizerReorder(event.detail)}
       />
     );

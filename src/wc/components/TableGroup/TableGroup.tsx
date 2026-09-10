@@ -55,6 +55,11 @@ export class TableGroup {
   @Element() private el!: HTMLElement;
 
   /** Product-owned data points that may group the table. */
+  /** Render content inside a parent-owned surface; the parent owns dismissal and positioning. */
+  /** Show the trigger border. */
+  @Prop() hasBorder: boolean = true;
+  @Prop() vertical: boolean = false;
+  @Prop() embedded: boolean = false;
   @Prop() options: TableGroupOption[] = [];
   /** Controlled grouping field and the order of its group sections. */
   @Prop() grouping: TableGroupingState | null = null;
@@ -142,6 +147,7 @@ export class TableGroup {
 
   @Watch('open')
   onOpenChange(isOpen: boolean) {
+    if (this.embedded) return;
     if (isOpen) {
       this.teardown();
       this.shouldRender = true;
@@ -168,7 +174,8 @@ export class TableGroup {
 
   @Listen('keydown')
   handleKeyDown(event: KeyboardEvent) {
-    if (!this.shouldRender || this.closing) return;
+    if (this.embedded && (event.key === 'Escape' || event.key === 'Tab')) return;
+    if ((!this.shouldRender && !this.embedded) || this.closing) return;
     if (event.key === 'Escape') {
       event.preventDefault();
       this.close();
@@ -241,6 +248,10 @@ export class TableGroup {
   }
 
   private selectData(option: TableGroupOption) {
+    if (option.value === '__none__') {
+      this.dsClear.emit();
+      return;
+    }
     if (option.isInactive) return;
     if (this.grouping?.columnId === option.value) {
       this.dsGroupChange.emit({ ...this.grouping });
@@ -313,7 +324,8 @@ export class TableGroup {
   }
 
   private renderDataOption(option: TableGroupOption, index: number) {
-    const selected = option.value === this.grouping?.columnId;
+    const selected =
+      option.value === '__none__' ? !this.grouping : option.value === this.grouping?.columnId;
     return (
       <ChoiceOptionRow
         id={`${this.componentId}-data-${index}`}
@@ -392,9 +404,13 @@ export class TableGroup {
     };
 
     return (
-      <Host hidden={this.options.length === 0 ? true : undefined}>
-        {this.options.length ? (
+      <Host
+        class={{ 'table-group-vertical': this.vertical }}
+        hidden={this.options.length === 0 ? true : undefined}
+      >
+        {this.options.length && !this.embedded ? (
           <ds-button-unfilled
+            hasBorder={this.hasBorder}
             ref={element => {
               this.triggerElement = (element as HTMLElement) ?? null;
             }}
@@ -406,7 +422,7 @@ export class TableGroup {
             labelEmphasis={false}
             pressScale={false}
             aria-label={name}
-            hasMenu={true}
+            haspopup="dialog"
             collapseLabel={true}
             expanded={this.open}
             surfaceOpen={this.open || this.closing}
@@ -415,16 +431,17 @@ export class TableGroup {
           />
         ) : null}
 
-        {this.shouldRender ? (
+        {this.shouldRender || this.embedded ? (
           <div
             id={this.popupId}
-            popover="manual"
+            popover={this.embedded ? undefined : 'manual'}
             class={{
               'table-group-popup': true,
-              'ds-choice-popup': true,
+              'ds-choice-popup': !this.embedded,
+              'table-preferences-embedded': this.embedded,
               'ds-choice-popup--closing': this.closing,
             }}
-            style={popupStyle}
+            style={this.embedded ? undefined : popupStyle}
             role="dialog"
             aria-label={name}
           >
@@ -435,6 +452,8 @@ export class TableGroup {
                   ariaLabel="Group data"
                   className="table-group__list"
                 >
+                  {this.vertical &&
+                    this.renderDataOption({ label: 'No grouping', value: '__none__' }, -1)}
                   {this.options.map((option, index) => (
                     <div data-group-value={option.value}>
                       {this.renderDataOption(option, index)}
@@ -442,6 +461,7 @@ export class TableGroup {
                   ))}
                 </ChoiceListSection>
                 <div
+                  hidden={this.vertical}
                   class="table-group__footer ds-choice-footer"
                   aria-hidden={!this.grouping ? 'true' : undefined}
                 >

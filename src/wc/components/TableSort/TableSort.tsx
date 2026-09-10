@@ -29,6 +29,8 @@ export class TableSort {
   @Element() private el!: HTMLElement;
 
   /** Catalog used to derive sortable fields, including compound header segments. */
+  /** Show the trigger border. */
+  @Prop() hasBorder: boolean = true;
   @Prop() columns: TableColumn[] = [];
   /** Controlled table sort. Header sorting and this menu share the same value. */
   @Prop() sort: TableSortState | null = null;
@@ -61,6 +63,7 @@ export class TableSort {
       <Host hidden={fields.length === 0 ? true : undefined}>
         {fields.length === 0 ? null : (
           <ds-button-unfilled
+            hasBorder={this.hasBorder}
             id={this.triggerId}
             variant="icon-label"
             size="md"
@@ -69,7 +72,7 @@ export class TableSort {
             labelEmphasis={false}
             pressScale={false}
             aria-label={name}
-            hasMenu={true}
+            haspopup="menu"
             collapseLabel={true}
             expanded={this.menuOpen}
             surfaceOpen={this.menuSurfaceOpen}
