@@ -28,12 +28,12 @@
     {
       "when": "The value is a calendar date.",
       "component": "component:ds-input-date",
-      "reason": "InputDate owns native date semantics, shared Input density, and the calendar picker affordance."
+      "reason": "InputDate owns calendar date form values, shared Input density, and the Calendar picker."
     },
     {
       "when": "The value is a clock time.",
       "component": "component:ds-input-time",
-      "reason": "InputTime owns native time semantics, shared Input density, and the clock picker affordance."
+      "reason": "InputTime owns clock time form values, shared Input density, and the TimePicker."
     },
     {
       "when": "The value is an immediate on/off setting.",
@@ -46,24 +46,32 @@
       "reason": "Slider supports direct range adjustment and communicates the current position."
     }
   ],
-  "commonlyComposedWith": ["component:ds-field", "component:ds-icon", "component:ds-text"],
+  "commonlyComposedWith": [
+    "component:ds-field",
+    "component:ds-icon",
+    "component:ds-text",
+    "component:ds-select"
+  ],
   "accessibility": [
     "Provide a persistent visible label through the owning field or an external native label; placeholder text is guidance and must not be the field's only label.",
     "Choose the native input type that matches the value so browsers and assistive technology can provide appropriate semantics and keyboards.",
     "Error text is associated with the native input and announced as an alert when the invalid state is rendered.",
     "Read-only fields remain focusable and submittable while preventing edits; inactive or disabled fields leave the tab order and are omitted from form submission.",
+    "Password fields keep a named show-or-hide action beside the value. Revealing the value changes only the native input type; the submitted string does not change. The action restores focus to the field after activation.",
     "Number stepper actions are pointer affordances hidden from the accessibility tree; the native spinbutton remains the single keyboard and assistive-technology control.",
-    "Suffix content must not carry information that is otherwise absent from the field's visible label, value, or description."
+    "Prefix and suffix content must not carry information that is otherwise absent from the field's visible label, value, or description.",
+    "A nested prefix or suffix Select is a separate control from the editable value and must have its own accessible name."
   ],
   "states": [
     "Every size applies one complete control-density recipe across frame height, inline padding, icon zones, text-container inset, gap, and radius; supporting error content follows the shared 4px field flow.",
-    "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry. Set hasBorder to false only in chrome that supplies enough surrounding structure; set hasInteractionFill to false when that containing chrome also owns hover and pressed feedback.",
+    "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry. Set hasBorder to false only in chrome that supplies enough surrounding structure; supporting error copy then insets to the field's text origin rather than the resting border box. Set hasInteractionFill to false when that containing chrome also owns hover and pressed feedback.",
     "Placeholder text is secondary at rest and quaternary while the editable field is focused because it becomes decorative once typing begins. Single-line placeholder and entered value text truncate with an ellipsis when the field is narrower than its content.",
-    "Entered values use the parent surface's primary foreground; prefix icons, suffix content, and resting placeholder text use its secondary foreground.",
+    "Entered values use the parent surface's primary foreground; prefix icons, prefix text, suffix content, and resting placeholder text use its secondary foreground.",
     "Search fields show a standard borderless CrossCircle icon action only while they contain a value. Clearing emits the empty value and restores focus to the native field.",
+    "Password fields show a standard inset Eye action at the field's density. EyeDisabled replaces it while the value is visible. The action stays available on read-only fields and is inactive with the field.",
     "Search fields disable browser autocomplete history, automatic capitalization, autocorrection, and spellchecking by default so browser-owned suggestions do not compete with product-owned results. Consumers can explicitly provide autoComplete when a different native history behavior is required.",
     "Search fields used with owned result sets forward aria-controls and aria-activedescendant to the native field so keyboard focus can remain in the query while assistive technology tracks the active result.",
-    "The suffix slot is for compact units or decorations. The optional leading icon is decorative and does not replace the field label.",
+    "The prefix and suffix slots host compact leading or trailing units such as a currency code, or a nested same-size inset Select. Text adornments use the control's balanced text inset. Nested Selects match the field density, set isInset, hasBorder false, width hug, and indicator up-down, keep a selected value, set allowClear false so the menu has no clear footer, set neutralTrigger so the selected unit stays on the secondary adornment foreground, and do not carry the field's error message. Configurable prefix and suffix controls are separated from the editable value by a vertical divider at the density icon height. The nested inset keeps its 2px remainder toward the line; the editable value keeps the same inline padding from the line as a non-prefixed field keeps from its border. The optional leading icon is decorative and does not replace the field label. Password, search-clear, and date or time actions stay type-owned trailing buttons rather than suffix-slot content.",
     "Use autoComplete, inputMode, and enterKeyHint to provide browser and virtual-keyboard hints without changing the value's semantic type.",
     "Number fields preserve native spinbutton semantics, keyboard stepping, and min/max constraint behavior while dsChange continues to report the native string value. Two borderless inset chevron actions split the available inner height, disable independently at their numeric bound, and restore focus to the spinbutton after pointer activation.",
     "textAlign positions the editable value while the numeric stepper stays on the opposite inline edge, keeping the actions clear of the number: start-aligned values use an inline-end stepper and end-aligned values use an inline-start stepper.",

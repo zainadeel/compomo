@@ -140,11 +140,26 @@ export type { ControlInsetDepth, ControlSize } from './control-text';
 export { choicePopupMinWidth, resolveChoicePopupAlignOffset } from './choice-popup-alignment';
 export type { ChoicePopupAnchorAlignment } from './choice-popup-alignment';
 export {
+  CLOCK_HOURS,
+  CLOCK_PERIODS,
+  clockMinuteStep,
+  clockMinutes,
+  formatClockTimeLabel,
+  isClockTime,
+  isClockTimeOutOfRange,
+  joinClockTime,
+  parseLooseClockTime,
+  splitClockTime,
+  stepBoundedIndex,
+} from './clock-time';
+export type { ClockPeriod, ClockTimeParts } from './clock-time';
+export {
   DATE_FILTER_RELATIVE_PRESETS,
   dateFilterRangeValue,
   dateFilterRelativeValue,
   formatIsoCalendarDateLabel,
   isIsoCalendarDate,
+  parseLooseCalendarDate,
   normalizeDateFilterValue,
   parseDateFilterValue,
   resolveDateFilterRange,

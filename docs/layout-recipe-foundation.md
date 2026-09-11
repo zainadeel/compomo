@@ -26,6 +26,23 @@ nested inside another control at the same density. It reduces only the nested
 control's outer box and outer inline padding. The base recipe continues to own
 its icon, text inset, gap, radius, and typography. Components must expose an
 intentional API before opting into this modifier; it is not a default density.
+ButtonFilled, ButtonUnfilled, Chip, Tag, and Select expose `isInset` with
+optional `insetDepth`. Select applies the modifier only on the trigger. The
+host keeps the selected size density and the popup does not opt into inset, so
+option rows, search, and footer stay on the ordinary menu recipe. Choice lists
+use `ds-chrome-space--sm` at every size: 4px padding and 4px gap.
+
+Input prefix and suffix slots host either compact text or a nested same-size
+inset control. When the slotted content is a control, the field keeps 2px on
+that outer edge so a single-inset Select or trailing action sits equally from
+the top, start or end, and bottom. Configurable prefix and suffix controls are
+separated from the editable value by a vertical Divider at the density icon
+height. The nested inset keeps its 2px remainder toward the line; the editable
+value keeps the same inline padding from the line as a non-prefixed field
+keeps from its border.
+
+A rounded Select overrides only the trigger's `--ds-control-radius` to
+`--dimension-radius-half`; the popup stays on `--ds-radius-menu`.
 
 ## Corner radius
 
@@ -54,9 +71,12 @@ The authoritative role-to-token mapping remains in `src/wc/utils/radius.css`.
 ## Field flow
 
 `src/wc/utils/field-stack.css` owns the 4px vertical flow shared by a field
-label, control, description, and error message. Field, Input, Select,
-Select in either cardinality mode, and Slider use the same recipe. It does not impose width,
-validation timing, or form semantics.
+label, control, description, and error message. Field, Input, InputDate,
+InputTime, Textarea, Select in either cardinality mode, and Slider use the
+same recipe. It does not impose width, validation timing, or form semantics.
+When the control is borderless, supporting description and error copy inset
+to the control's text origin (frame padding plus label inset) so they align
+with content rather than the resting border box.
 
 ## Compact header anatomy
 

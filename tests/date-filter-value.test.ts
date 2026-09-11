@@ -5,6 +5,7 @@ import {
   formatIsoCalendarDateLabel,
   normalizeDateFilterValue,
   parseDateFilterValue,
+  parseLooseCalendarDate,
   resolveDateFilterRange,
 } from '../src/wc/utils/date-filter-value';
 
@@ -19,6 +20,15 @@ describe('date filter values', () => {
     assert.equal(formatIsoCalendarDateLabel('2026-08-07'), 'Aug 7, 2026');
     assert.equal(formatIsoCalendarDateLabel('2026-02-30'), '');
     assert.equal(formatIsoCalendarDateLabel(''), '');
+  });
+
+  it('parses typed ISO, numeric, and short-month calendar dates', () => {
+    assert.equal(parseLooseCalendarDate('2026-09-10'), '2026-09-10');
+    assert.equal(parseLooseCalendarDate('9/10/2026'), '2026-09-10');
+    assert.equal(parseLooseCalendarDate('Sep 10, 2026'), '2026-09-10');
+    assert.equal(parseLooseCalendarDate('sep 7, 2026'), '2026-09-07');
+    assert.equal(parseLooseCalendarDate('2026-02-30'), '');
+    assert.equal(parseLooseCalendarDate('not a date'), '');
   });
 
   it('rejects invalid dates and unsupported relative presets', () => {

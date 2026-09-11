@@ -49,12 +49,14 @@ at the line where they occur.
 - `radius.css`: shared corner-radius roles (control, card, modal, menu, tooltip, table). Import it from the component stylesheet before `control-density.css`; Stencil cannot resolve a nested import from another util.
 - `control-density-inset.css`: opt-in reduced outer geometry for same-density nested controls.
 - `control-parts.css`: frame, icon box, and label box anatomy.
-- `field-stack.css`: label/control/supporting-message flow.
+- `field-stack.css`: label/control/supporting-message flow; borderless
+  supporting copy uses the control text origin.
 - `empty-region.css`: bounded empty-region centering.
 - `chrome-layout.css`: spacing-only row/column/grid chrome.
 - `chrome-header.css`: compact header anatomy and copy/control alignment.
 - `CardChart`: one component-owned chart/legend card anatomy.
-- `select-controller.ts`: single and multiple Select popup lifecycle and traversal.
+- `choice-list.css`: shared option-list anatomy for Select, Menu, and FilterMenu.
+- `choice-popup.css`: shared anchored choice-popup chrome, including InputDate's calendar dialog and InputTime's time dialog.
 - `anchored-position.ts`: pure element-anchored popup geometry (flip + clamp).
 - `anchored-position-controller.ts`: anchored-popup lifecycle — listener binding,
   measurement retries, frame coalescing, teardown. Owning components keep their

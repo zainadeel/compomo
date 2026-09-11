@@ -42,6 +42,10 @@
   --ds-interaction-border-color: var(--ds-select-border);
 }
 
+.trigger--rounded {
+  --ds-control-radius: var(--dimension-radius-half);
+}
+
 .trigger--has-value .trigger__label-box {
   color: var(--ds-select-fg-active);
 }

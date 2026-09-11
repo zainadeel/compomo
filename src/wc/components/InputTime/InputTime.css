@@ -1,1 +1,8 @@
 @import '../../utils/datetime-input-control.css';
+@import '../../utils/choice-popup.css';
+@import '../../utils/chrome-layout.css';
+
+.input-time-popup.ds-choice-popup {
+  --ds-time-picker-padding: 0;
+  padding: var(--dimension-space-050);
+}

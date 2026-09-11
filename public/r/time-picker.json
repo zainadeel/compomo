@@ -1,0 +1,259 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "time-picker",
+  "title": "TimePicker",
+  "description": "Bounded 12-hour clock lists for choosing hour, minute, and AM/PM, reused by form time fields.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/time-picker",
+    "source": "src/wc/components/TimePicker/TimePicker.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Bounded 12-hour clock lists for choosing hour, minute, and AM/PM, reused by form time fields.",
+      "useWhen": [
+        "A user picks a clock time from hour, minute, and AM/PM lists.",
+        "A time field needs 32px clock tiles that match calendar day geometry and the shared choice-list selected treatment."
+      ],
+      "avoidWhen": [
+        "The user types a time without opening a picker; the owning field keeps that editable value.",
+        "The value is a calendar date rather than a clock time.",
+        "The user chooses from a finite set of named schedule options rather than an exact time."
+      ],
+      "alternatives": [
+        {
+          "when": "The time is a form field that can be typed or picked.",
+          "component": "component:ds-input-time",
+          "reason": "InputTime owns the editable field, form association, and the time-picker popup."
+        },
+        {
+          "when": "The value is a calendar date.",
+          "component": "component:ds-calendar",
+          "reason": "Calendar owns the month grid for single dates and ranges."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-input-time",
+        "component:ds-text"
+      ],
+      "accessibility": [
+        "Hour, minute, and AM/PM are separate labelled listboxes without visible column headings. Each list keeps one tab stop on the selected option.",
+        "Arrow keys move to the next or previous option and stop at the first and last values; they do not wrap. Home and End jump to those ends. Left and Right move between columns and stop at Hour and AM/PM.",
+        "Inactive pickers disable every option. Optional min and max times disable combinations outside that inclusive bound."
+      ],
+      "states": [
+        "Selected hour, minute, and period tiles use the shared interaction-fill selected wash and primary text. Resting tiles use secondary text on a transparent 32px square.",
+        "Lists are finite. Hour runs 1 through 12, minutes follow the step, and AM/PM has two values. Scrolling and keyboard movement stop at those ends instead of looping.",
+        "An empty value highlights 12:00 AM so the lists have a resting selection without inventing a second empty state."
+      ],
+      "responsiveBehavior": [
+        "The three columns fill the width supplied by the owner. Tile size, 4px gaps, and the seven-tile list viewport are owned here; the owner supplies the popup or pane width."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Listen for dsChange. The detail is the clock time string HH:MM."
+        ],
+        "react": [
+          "Use DsTimePicker, bind value, and handle onDsChange."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/TimePicker/TimePicker.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "autoFocus": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "auto-focus",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Move keyboard focus into the hour list after the picker is rendered."
+        },
+        "isInactive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-inactive",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "max": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "max",
+          "required": false,
+          "mutable": false
+        },
+        "min": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "min",
+          "required": false,
+          "mutable": false
+        },
+        "step": {
+          "type": "string | number",
+          "resolvedType": "number | string",
+          "attribute": "step",
+          "default": "60",
+          "required": false,
+          "mutable": false,
+          "description": "Native time step in seconds. Defaults to minutes (`60`)."
+        },
+        "value": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "value",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Clock value as `HH:MM`."
+        }
+      },
+      "events": [
+        {
+          "name": "dsChange",
+          "detail": "string",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [
+        {
+          "name": "setFocus",
+          "signature": "setFocus() => Promise<void>"
+        }
+      ],
+      "slots": []
+    },
+    "props": {
+      "autoFocus": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "auto-focus",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Move keyboard focus into the hour list after the picker is rendered."
+      },
+      "isInactive": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-inactive",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "max": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "max",
+        "required": false,
+        "mutable": false
+      },
+      "min": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "min",
+        "required": false,
+        "mutable": false
+      },
+      "step": {
+        "type": "string | number",
+        "resolvedType": "number | string",
+        "attribute": "step",
+        "default": "60",
+        "required": false,
+        "mutable": false,
+        "description": "Native time step in seconds. Defaults to minutes (`60`)."
+      },
+      "value": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "value",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Clock value as `HH:MM`."
+      }
+    },
+    "events": [
+      {
+        "name": "dsChange",
+        "detail": "string",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [
+      {
+        "name": "setFocus",
+        "signature": "setFocus() => Promise<void>"
+      }
+    ],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-time-picker",
+      "react": "DsTimePicker",
+      "vue": "DsTimePicker",
+      "angular": "DsTimePicker"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-time-picker.js';",
+        "example": "<ds-time-picker></ds-time-picker>"
+      },
+      "react": {
+        "import": "import { DsTimePicker } from '@ds-mo/ui/react';",
+        "example": "<DsTimePicker />"
+      },
+      "vue": {
+        "import": "import { DsTimePicker } from '@ds-mo/ui/vue';",
+        "example": "<DsTimePicker />"
+      },
+      "angular": {
+        "import": "import { DsTimePicker } from '@ds-mo/ui/angular/ds-time-picker';",
+        "example": "<ds-time-picker></ds-time-picker>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.5.1",
+          "@ds-mo/icons ^7.0.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/TimePicker/TimePicker.css",
+      "content": "@import '../../utils/radius.css';\n@import '../../utils/control-density.css';\n@import '../../utils/focus-ring.css';\n@import '../../utils/interaction-fill.css';\n@import '../../utils/forced-colors.css';\n\n:host {\n  display: flex;\n  min-height: 0;\n  flex-direction: column;\n}\n\n.time-picker {\n  display: grid;\n  grid-template-columns: repeat(3, minmax(var(--dimension-size-400), 1fr));\n  column-gap: var(--dimension-space-050);\n  min-width: calc(\n    (var(--dimension-size-400) * 3) + (var(--dimension-space-050) * 2) +\n      (var(--ds-time-picker-padding, var(--dimension-space-100)) * 2)\n  );\n  padding: var(--ds-time-picker-padding, var(--dimension-space-100));\n}\n\n.time-picker__column {\n  display: flex;\n  min-width: 0;\n  flex-direction: column;\n}\n\n.time-picker__list {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-050);\n  max-height: calc((var(--dimension-size-400) * 7) + (var(--dimension-space-050) * 6));\n  overflow-x: hidden;\n  overflow-y: auto;\n  overscroll-behavior: contain;\n}\n\n.time-picker-tile {\n  appearance: none;\n  position: relative;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  min-width: 0;\n  width: 100%;\n  height: var(--dimension-size-400);\n  padding: 0;\n  border: 0;\n  border-radius: var(--dimension-radius-025);\n  background: transparent;\n  color: var(--color-foreground-primary);\n  cursor: default;\n}\n\n.time-picker-tile:disabled {\n  cursor: not-allowed;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/TimePicker/TimePicker.tsx",
+      "content": "import {\n  Component,\n  Element,\n  Event,\n  EventEmitter,\n  Method,\n  Prop,\n  Watch,\n  h,\n  Host,\n} from '@stencil/core';\nimport {\n  CLOCK_HOURS,\n  CLOCK_PERIODS,\n  clockMinuteStep,\n  clockMinutes,\n  isClockTimeOutOfRange,\n  joinClockTime,\n  splitClockTime,\n  stepBoundedIndex,\n  type ClockPeriod,\n  type ClockTimeParts,\n} from '../../utils';\n\ntype TimePickerColumn = 'hour' | 'minute' | 'period';\n\n@Component({\n  tag: 'ds-time-picker',\n  styleUrl: 'TimePicker.css',\n  scoped: true,\n})\nexport class TimePicker {\n  @Element() el!: HTMLElement;\n\n  /** Clock value as `HH:MM`. */\n  @Prop() value: string = '';\n  @Prop() min: string | undefined;\n  @Prop() max: string | undefined;\n  /** Native time step in seconds. Defaults to minutes (`60`). */\n  @Prop() step: string | number = 60;\n  @Prop() isInactive: boolean = false;\n  /** Move keyboard focus into the hour list after the picker is rendered. */\n  @Prop() autoFocus: boolean = false;\n\n  @Event() dsChange!: EventEmitter<string>;\n\n  componentDidLoad() {\n    this.scrollSelectedIntoView();\n    if (this.autoFocus) void this.setFocus();\n  }\n\n  @Watch('value')\n  onValueChange() {\n    this.scrollSelectedIntoView();\n  }\n\n  @Method()\n  async setFocus() {\n    this.optionEl('hour', this.parts().hour12)?.focus();\n  }\n\n  private parts(): ClockTimeParts {\n    return splitClockTime(this.value) ?? { hour12: 12, minute: 0, period: 'AM' };\n  }\n\n  private minutes(): number[] {\n    return clockMinutes(clockMinuteStep(this.step));\n  }\n\n  private isDisabledTime(iso: string): boolean {\n    if (this.isInactive) return true;\n    return isClockTimeOutOfRange(iso, this.min, this.max);\n  }\n\n  private isDisabledPart(next: Partial<ClockTimeParts>): boolean {\n    return this.isDisabledTime(joinClockTime({ ...this.parts(), ...next }));\n  }\n\n  private commit(next: Partial<ClockTimeParts>) {\n    const iso = joinClockTime({ ...this.parts(), ...next });\n    if (this.isDisabledTime(iso)) return;\n    this.dsChange.emit(iso);\n  }\n\n  private optionEl(column: TimePickerColumn, value: number | ClockPeriod): HTMLElement | null {\n    return this.el.querySelector<HTMLElement>(`[data-${column}-option=\"${value}\"]`);\n  }\n\n  private scrollSelectedIntoView() {\n    const parts = this.parts();\n    this.optionEl('hour', parts.hour12)?.scrollIntoView({ block: 'nearest' });\n    this.optionEl('minute', parts.minute)?.scrollIntoView({ block: 'nearest' });\n    this.optionEl('period', parts.period)?.scrollIntoView({ block: 'nearest' });\n  }\n\n  private focusOption(column: TimePickerColumn, value: number | ClockPeriod) {\n    requestAnimationFrame(() => {\n      this.optionEl(column, value)?.focus();\n    });\n  }\n\n  private handleColumnKeyDown = (\n    event: KeyboardEvent,\n    column: TimePickerColumn,\n    values: ReadonlyArray<number | ClockPeriod>,\n    current: number | ClockPeriod\n  ) => {\n    const columns: TimePickerColumn[] = ['hour', 'minute', 'period'];\n    const columnIndex = columns.indexOf(column);\n    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {\n      const nextColumn =\n        columns[stepBoundedIndex(columnIndex, event.key === 'ArrowLeft' ? -1 : 1, columns.length)];\n      if (!nextColumn || nextColumn === column) {\n        event.preventDefault();\n        return;\n      }\n      event.preventDefault();\n      const parts = this.parts();\n      const nextValue =\n        nextColumn === 'hour'\n          ? parts.hour12\n          : nextColumn === 'minute'\n            ? parts.minute\n            : parts.period;\n      this.focusOption(nextColumn, nextValue);\n      return;\n    }\n\n    let offset: number | null = null;\n    if (event.key === 'ArrowUp') offset = -1;\n    else if (event.key === 'ArrowDown') offset = 1;\n    else if (event.key === 'Home') offset = -values.length;\n    else if (event.key === 'End') offset = values.length;\n    if (offset === null) return;\n    event.preventDefault();\n    const index = values.indexOf(current);\n    const next = values[stepBoundedIndex(index < 0 ? 0 : index, offset, values.length)];\n    if (next === undefined) return;\n    this.focusOption(column, next);\n  };\n\n  private renderTile(\n    column: TimePickerColumn,\n    value: number | ClockPeriod,\n    selected: boolean,\n    label: string,\n    values: ReadonlyArray<number | ClockPeriod>\n  ) {\n    const next =\n      column === 'hour'\n        ? { hour12: value as number }\n        : column === 'minute'\n          ? { minute: value as number }\n          : { period: value as ClockPeriod };\n    const disabled = this.isDisabledPart(next);\n    return (\n      <button\n        type=\"button\"\n        role=\"option\"\n        data-hour-option={column === 'hour' ? String(value) : undefined}\n        data-minute-option={column === 'minute' ? String(value) : undefined}\n        data-period-option={column === 'period' ? String(value) : undefined}\n        class={{\n          'time-picker-tile': true,\n          'time-picker-tile--selected': selected,\n          'ds-focus-ring-inset': true,\n          'ds-interaction-fill': !disabled,\n          'ds-interaction-fill--selected': selected && !disabled,\n        }}\n        disabled={disabled}\n        aria-selected={selected ? 'true' : 'false'}\n        tabIndex={selected ? 0 : -1}\n        onClick={() => this.commit(next)}\n        onKeyDown={event => this.handleColumnKeyDown(event, column, values, value)}\n      >\n        <ds-text\n          class=\"ds-interaction-fill__content\"\n          as=\"span\"\n          variant=\"text-body-medium\"\n          color={selected ? 'primary' : 'secondary'}\n        >\n          {label}\n        </ds-text>\n      </button>\n    );\n  }\n\n  render() {\n    const parts = this.parts();\n    const minutes = this.minutes();\n    const minuteValues = minutes.includes(parts.minute)\n      ? minutes\n      : [...minutes, parts.minute].sort((a, b) => a - b);\n\n    return (\n      <Host>\n        <div class=\"time-picker\" role=\"group\" aria-label=\"Choose time\">\n          <div class=\"time-picker__column\">\n            <div class=\"time-picker__list\" role=\"listbox\" aria-label=\"Hour\">\n              {CLOCK_HOURS.map(hour =>\n                this.renderTile('hour', hour, hour === parts.hour12, String(hour), CLOCK_HOURS)\n              )}\n            </div>\n          </div>\n          <div class=\"time-picker__column\">\n            <div class=\"time-picker__list\" role=\"listbox\" aria-label=\"Minute\">\n              {minuteValues.map(minute =>\n                this.renderTile(\n                  'minute',\n                  minute,\n                  minute === parts.minute,\n                  String(minute).padStart(2, '0'),\n                  minuteValues\n                )\n              )}\n            </div>\n          </div>\n          <div class=\"time-picker__column\">\n            <div class=\"time-picker__list\" role=\"listbox\" aria-label=\"AM/PM\">\n              {CLOCK_PERIODS.map(period =>\n                this.renderTile('period', period, period === parts.period, period, CLOCK_PERIODS)\n              )}\n            </div>\n          </div>\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

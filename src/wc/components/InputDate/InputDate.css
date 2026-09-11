@@ -1,33 +1,8 @@
 @import '../../utils/datetime-input-control.css';
+@import '../../utils/choice-popup.css';
+@import '../../utils/chrome-layout.css';
 
-.input-control {
-  position: relative;
-}
-
-.native-input--date-filled,
-.native-input--date-filled::-webkit-datetime-edit,
-.native-input--date-filled::-webkit-datetime-edit-fields-wrapper,
-.native-input--date-filled::-webkit-datetime-edit-text,
-.native-input--date-filled::-webkit-datetime-edit-month-field,
-.native-input--date-filled::-webkit-datetime-edit-day-field,
-.native-input--date-filled::-webkit-datetime-edit-year-field {
-  color: transparent;
-}
-
-.input-control__formatted-date {
-  position: absolute;
-  inset-block: 0;
-  inset-inline-start: 0;
-  inset-inline-end: calc(
-    var(--ds-control-icon, var(--dimension-iconography-md)) +
-      var(--ds-control-gap, var(--dimension-space-050))
-  );
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 3;
-  color: var(--ds-input-fg);
-  white-space: nowrap;
-  text-overflow: ellipsis;
+.input-date-popup.ds-choice-popup {
+  --ds-calendar-padding: 0;
+  padding: var(--dimension-space-050);
 }

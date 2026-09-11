@@ -1,0 +1,273 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "calendar",
+  "title": "Calendar",
+  "description": "Month calendar grid for choosing one calendar date or an inclusive date range, reused by form date fields and filter range selection.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/calendar",
+    "source": "src/wc/components/Calendar/Calendar.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Month calendar grid for choosing one calendar date or an inclusive date range, reused by form date fields and filter range selection.",
+      "useWhen": [
+        "A user picks one calendar day from a month grid.",
+        "A user builds an inclusive start and end date by choosing two days.",
+        "A date field or filter needs the shared month navigation, weekday headings, and selected-day treatment."
+      ],
+      "avoidWhen": [
+        "The user types a date without opening a calendar; the owning field keeps that editable value.",
+        "The user chooses a relative preset such as last 7 days rather than fixed calendar days.",
+        "The popup also has to host filter categories, search, or apply actions; that surface stays with FilterMenu."
+      ],
+      "alternatives": [
+        {
+          "when": "The date is a form field that can be typed or picked.",
+          "component": "component:ds-input-date",
+          "reason": "InputDate owns the editable field, form association, and the calendar popup."
+        },
+        {
+          "when": "The value is a clock time rather than a calendar date.",
+          "component": "component:ds-time-picker",
+          "reason": "TimePicker owns bounded hour, minute, and AM/PM lists with the same 32px tile geometry."
+        },
+        {
+          "when": "The user chooses relative presets or mixed filter families from one trigger.",
+          "component": "component:ds-filter-menu",
+          "reason": "FilterMenu owns relative date presets and hosts this calendar only for fixed ranges."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-input-date",
+        "component:ds-filter-menu",
+        "component:ds-button-unfilled",
+        "component:ds-text"
+      ],
+      "accessibility": [
+        "The month grid is labelled with the visible month and year. Days are grid cells with an accessible date name.",
+        "The grid keeps one tab stop. Arrow keys move by day or week, Home and End move within the week, and Page Up or Page Down change month.",
+        "In range mode, the first chosen day applies immediately as a one-day range. Hovering or focusing another day previews the inclusive span without changing the value until the second activation.",
+        "Month navigation buttons are named Previous month and Next month. Inactive calendars disable day and month controls."
+      ],
+      "states": [
+        "Single selection paints the current value with the shared interaction-fill selected wash and primary text. A committed range paints inclusive days with the faint brand fill and both edges boldly.",
+        "Today uses emphasized primary text without becoming selected on its own.",
+        "Days outside the visible month remain in the six-week grid and use tertiary text. Optional min and max dates disable days outside that inclusive bound.",
+        "After the first range day is chosen, that day keeps the shared pressed overlay. Hovering or focusing toward another day paints the inclusive span with the shared hover overlay on top of the previous committed range, which stays visible until the replacement is completed. Completing the end day orders the two dates inclusively and replaces those overlays with brand fill."
+      ],
+      "responsiveBehavior": [
+        "The grid fills the width supplied by its owner. Seven equal day columns and the shared 4px gaps are owned here; the owner supplies the popup or pane width."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Listen for dsChange. Single mode emits YYYY-MM-DD. Range mode emits range:start/end using the shared date-filter string."
+        ],
+        "react": [
+          "Use DsCalendar, bind value, and handle onDsChange."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/Calendar/Calendar.stories.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "autoFocus": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "auto-focus",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Move keyboard focus into the grid after the calendar is rendered."
+        },
+        "isInactive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-inactive",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "max": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "max",
+          "required": false,
+          "mutable": false
+        },
+        "min": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "min",
+          "required": false,
+          "mutable": false
+        },
+        "selectionMode": {
+          "type": "CalendarSelectionMode",
+          "resolvedType": "\"range\" | \"single\"",
+          "attribute": "selection-mode",
+          "default": "'single'",
+          "required": false,
+          "mutable": false,
+          "description": "Single date emits YYYY-MM-DD. Range emits the shared `range:start/end` string."
+        },
+        "value": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "value",
+          "default": "''",
+          "required": false,
+          "mutable": false
+        }
+      },
+      "events": [
+        {
+          "name": "dsChange",
+          "detail": "string",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [
+        {
+          "name": "setFocus",
+          "signature": "setFocus() => Promise<void>"
+        }
+      ],
+      "slots": []
+    },
+    "props": {
+      "autoFocus": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "auto-focus",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Move keyboard focus into the grid after the calendar is rendered."
+      },
+      "isInactive": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-inactive",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "max": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "max",
+        "required": false,
+        "mutable": false
+      },
+      "min": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "min",
+        "required": false,
+        "mutable": false
+      },
+      "selectionMode": {
+        "type": "CalendarSelectionMode",
+        "resolvedType": "\"range\" | \"single\"",
+        "attribute": "selection-mode",
+        "default": "'single'",
+        "required": false,
+        "mutable": false,
+        "description": "Single date emits YYYY-MM-DD. Range emits the shared `range:start/end` string."
+      },
+      "value": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "value",
+        "default": "''",
+        "required": false,
+        "mutable": false
+      }
+    },
+    "events": [
+      {
+        "name": "dsChange",
+        "detail": "string",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [
+      {
+        "name": "setFocus",
+        "signature": "setFocus() => Promise<void>"
+      }
+    ],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-calendar",
+      "react": "DsCalendar",
+      "vue": "DsCalendar",
+      "angular": "DsCalendar"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-calendar.js';",
+        "example": "<ds-calendar></ds-calendar>"
+      },
+      "react": {
+        "import": "import { DsCalendar } from '@ds-mo/ui/react';",
+        "example": "<DsCalendar />"
+      },
+      "vue": {
+        "import": "import { DsCalendar } from '@ds-mo/ui/vue';",
+        "example": "<DsCalendar />"
+      },
+      "angular": {
+        "import": "import { DsCalendar } from '@ds-mo/ui/angular/ds-calendar';",
+        "example": "<ds-calendar></ds-calendar>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.5.1",
+          "@ds-mo/icons ^7.0.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "button-unfilled",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/Calendar/Calendar.css",
+      "content": "@import '../../utils/radius.css';\n@import '../../utils/control-density.css';\n@import '../../utils/focus-ring.css';\n@import '../../utils/interaction-fill.css';\n@import '../../utils/forced-colors.css';\n\n:host {\n  display: flex;\n  min-height: 0;\n  flex-direction: column;\n}\n\n.calendar {\n  display: flex;\n  min-height: 0;\n  flex-direction: column;\n  min-width: calc(\n    (var(--dimension-size-400) * 7) + (var(--dimension-space-050) * 6) +\n      (var(--dimension-space-100) * 2)\n  );\n  padding: var(--ds-calendar-padding, var(--dimension-space-100));\n}\n\n.calendar-heading {\n  display: grid;\n  grid-template-columns: var(--dimension-size-400) minmax(0, 1fr) var(--dimension-size-400);\n  align-items: center;\n  text-align: center;\n}\n\n.calendar-nav--previous {\n  justify-self: start;\n}\n\n.calendar-nav--next {\n  justify-self: end;\n}\n\n.calendar-weekdays,\n.calendar-grid {\n  display: grid;\n  grid-template-columns: repeat(7, minmax(0, 1fr));\n  column-gap: var(--dimension-space-050);\n}\n\n.calendar-grid {\n  row-gap: var(--dimension-space-050);\n}\n\n.calendar-weekdays {\n  align-items: center;\n  min-height: var(--dimension-size-400);\n  margin-block-start: var(--dimension-space-050);\n  color: var(--color-foreground-secondary);\n  text-align: center;\n}\n\n.calendar-day {\n  appearance: none;\n  position: relative;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-width: 0;\n  width: 100%;\n  height: var(--dimension-size-400);\n  padding: 0;\n  border: 0;\n  border-radius: var(--dimension-radius-025);\n  background: transparent;\n  color: var(--color-foreground-primary);\n  cursor: default;\n}\n\n.calendar-day:disabled {\n  cursor: not-allowed;\n}\n\n.calendar-day--outside {\n  color: var(--color-foreground-tertiary);\n}\n\n.calendar-day--in-range {\n  background: var(--color-background-faint-brand);\n  color: var(--color-foreground-primary);\n}\n\n/* In-progress span uses the shared hover overlay; the first day keeps pressed via --surface-open. */\n.calendar-day.ds-interaction-fill.calendar-day--range-preview:not(:disabled)::after {\n  background: var(--ds-interaction-hover);\n}\n\n.calendar-day.ds-interaction-fill.calendar-day--range-preview:active:not(:disabled)::after {\n  background: var(--ds-interaction-pressed);\n}\n\n.calendar-day--today {\n  color: var(--color-foreground-primary);\n}\n\n.calendar-day--range-edge {\n  background: var(--color-background-bold-brand);\n  color: var(--color-foreground-on-bold-background-primary);\n}\n\n@media (forced-colors: active) {\n  .calendar-day--range-edge {\n    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/Calendar/Calendar.tsx",
+      "content": "import {\n  Component,\n  Element,\n  Event,\n  EventEmitter,\n  Method,\n  Prop,\n  State,\n  Watch,\n  h,\n  Host,\n} from '@stencil/core';\nimport {\n  dateFilterRangeValue,\n  isIsoCalendarDate,\n  parseDateFilterValue,\n  shiftIsoCalendarDate,\n} from '../../utils';\nimport {\n  CALENDAR_WEEKDAYS,\n  calendarDays,\n  calendarMonth,\n  calendarMonthLabel,\n  calendarPaintedRange,\n  calendarToday,\n  shiftCalendarMonth,\n  type CalendarDateRange,\n} from './calendar-grid';\n\nexport type CalendarSelectionMode = 'single' | 'range';\n\n@Component({\n  tag: 'ds-calendar',\n  styleUrl: 'Calendar.css',\n  scoped: true,\n})\nexport class Calendar {\n  @Element() el!: HTMLElement;\n\n  /** Single date emits YYYY-MM-DD. Range emits the shared `range:start/end` string. */\n  @Prop() selectionMode: CalendarSelectionMode = 'single';\n  @Prop() value: string = '';\n  @Prop() min: string | undefined;\n  @Prop() max: string | undefined;\n  @Prop() isInactive: boolean = false;\n  /** Move keyboard focus into the grid after the calendar is rendered. */\n  @Prop() autoFocus: boolean = false;\n\n  @Event() dsChange!: EventEmitter<string>;\n\n  @State() private month = calendarMonth(calendarToday());\n  @State() private pendingStart = '';\n  @State() private previewEnd = '';\n  @State() private heldRange: CalendarDateRange | null = null;\n\n  componentWillLoad() {\n    this.month = calendarMonth(this.anchorDate());\n  }\n\n  componentDidLoad() {\n    if (this.autoFocus) void this.setFocus();\n  }\n\n  @Watch('value')\n  onValueChange() {\n    this.month = calendarMonth(this.anchorDate());\n  }\n\n  @Method()\n  async setFocus() {\n    this.el.querySelector<HTMLElement>('.calendar-day[tabindex=\"0\"]')?.focus();\n  }\n\n  private anchorDate(): string {\n    if (this.selectionMode === 'range') {\n      const parsed = parseDateFilterValue(this.value);\n      if (parsed?.kind === 'range') return parsed.start;\n      return calendarToday();\n    }\n    return isIsoCalendarDate(this.value) ? this.value : calendarToday();\n  }\n\n  private isDisabled(day: string): boolean {\n    if (this.isInactive) return true;\n    if (this.min && isIsoCalendarDate(this.min) && day < this.min) return true;\n    if (this.max && isIsoCalendarDate(this.max) && day > this.max) return true;\n    return false;\n  }\n\n  private moveMonth = (offset: number) => {\n    this.previewEnd = '';\n    this.month = shiftCalendarMonth(this.month, offset);\n  };\n\n  private selectDate = (day: string) => {\n    if (this.isDisabled(day)) return;\n    this.previewEnd = '';\n    if (this.selectionMode === 'single') {\n      this.pendingStart = '';\n      this.heldRange = null;\n      this.dsChange.emit(day);\n      return;\n    }\n    const pending = this.pendingStart;\n    if (pending) {\n      this.pendingStart = '';\n      this.heldRange = null;\n      this.dsChange.emit(dateFilterRangeValue(pending, day));\n      return;\n    }\n    const current = parseDateFilterValue(this.value);\n    this.heldRange = current?.kind === 'range' ? { start: current.start, end: current.end } : null;\n    this.pendingStart = day;\n    this.dsChange.emit(dateFilterRangeValue(day, day));\n  };\n\n  private previewRange = (day: string) => {\n    if (!this.pendingStart || this.previewEnd === day) return;\n    this.previewEnd = day;\n  };\n\n  private clearPreview = () => {\n    if (!this.previewEnd) return;\n    this.previewEnd = '';\n  };\n\n  private focusDate(day: string) {\n    this.previewRange(day);\n    const targetMonth = calendarMonth(day);\n    if (this.month !== targetMonth) this.month = targetMonth;\n    requestAnimationFrame(() => {\n      this.el.querySelector<HTMLElement>(`[data-date-option=\"${day}\"]`)?.focus();\n    });\n  }\n\n  private handleDayKeyDown = (event: KeyboardEvent, day: string) => {\n    let offset: number | null = null;\n    if (event.key === 'ArrowLeft') offset = -1;\n    else if (event.key === 'ArrowRight') offset = 1;\n    else if (event.key === 'ArrowUp') offset = -7;\n    else if (event.key === 'ArrowDown') offset = 7;\n    else if (event.key === 'Home') {\n      offset = -new Date(`${day}T00:00:00Z`).getUTCDay();\n    } else if (event.key === 'End') {\n      offset = 6 - new Date(`${day}T00:00:00Z`).getUTCDay();\n    } else if (event.key === 'PageUp' || event.key === 'PageDown') {\n      const month = shiftCalendarMonth(calendarMonth(day), event.key === 'PageUp' ? -1 : 1);\n      const candidate = `${month}-${day.slice(8, 10)}`;\n      event.preventDefault();\n      this.focusDate(isIsoCalendarDate(candidate) ? candidate : `${month}-01`);\n      return;\n    }\n    if (offset === null) return;\n    event.preventDefault();\n    this.focusDate(shiftIsoCalendarDate(day, offset));\n  };\n\n  render() {\n    const liveRange = this.selectionMode === 'range' ? parseDateFilterValue(this.value) : null;\n    const liveRangeValue = liveRange?.kind === 'range' ? liveRange : null;\n    const rangeValue = calendarPaintedRange(this.pendingStart, this.heldRange, liveRangeValue);\n    const days = calendarDays(this.month);\n    const today = calendarToday();\n    const previewStart =\n      this.pendingStart && this.previewEnd ? [this.pendingStart, this.previewEnd].sort()[0] : null;\n    const previewFinish =\n      this.pendingStart && this.previewEnd ? [this.pendingStart, this.previewEnd].sort()[1] : null;\n    const selectedSingle =\n      this.selectionMode === 'single' && isIsoCalendarDate(this.value) ? this.value : '';\n    const preferredFocus =\n      this.pendingStart ||\n      selectedSingle ||\n      rangeValue?.end ||\n      (this.month === today.slice(0, 7) ? today : '');\n    const focusDate = days.some(day => day.value === preferredFocus)\n      ? preferredFocus\n      : (days.find(day => day.inMonth)?.value ?? days[0]?.value);\n\n    return (\n      <Host>\n        <div class=\"calendar\">\n          <div class=\"calendar-heading ds-control--md\">\n            <ds-button-unfilled\n              class=\"calendar-nav calendar-nav--previous\"\n              variant=\"icon\"\n              icon=\"ChevronLeft\"\n              size=\"md\"\n              hasBorder={false}\n              isInactive={this.isInactive}\n              ariaLabel=\"Previous month\"\n              onDsClick={() => this.moveMonth(-1)}\n            />\n            <ds-text as=\"span\" variant=\"text-body-medium\" emphasis color=\"primary\">\n              {calendarMonthLabel(this.month)}\n            </ds-text>\n            <ds-button-unfilled\n              class=\"calendar-nav calendar-nav--next\"\n              variant=\"icon\"\n              icon=\"ChevronRight\"\n              size=\"md\"\n              hasBorder={false}\n              isInactive={this.isInactive}\n              ariaLabel=\"Next month\"\n              onDsClick={() => this.moveMonth(1)}\n            />\n          </div>\n          <div class=\"calendar-weekdays\" aria-hidden=\"true\">\n            {CALENDAR_WEEKDAYS.map(day => (\n              <ds-text as=\"span\" variant=\"text-body-small\" color=\"secondary\">\n                {day}\n              </ds-text>\n            ))}\n          </div>\n          <div\n            class=\"calendar-grid\"\n            role=\"grid\"\n            aria-label={calendarMonthLabel(this.month)}\n            onMouseLeave={this.clearPreview}\n          >\n            {days.map(day => {\n              const selectedInRange = Boolean(\n                liveRangeValue &&\n                day.value >= liveRangeValue.start &&\n                day.value <= liveRangeValue.end\n              );\n              const paintedInRange = Boolean(\n                rangeValue && day.value >= rangeValue.start && day.value <= rangeValue.end\n              );\n              const pendingStartDay =\n                this.selectionMode === 'range' &&\n                Boolean(this.pendingStart) &&\n                day.value === this.pendingStart;\n              const previewInRange = Boolean(\n                this.pendingStart &&\n                previewStart &&\n                previewFinish &&\n                day.value >= previewStart &&\n                day.value <= previewFinish &&\n                day.value !== this.pendingStart\n              );\n              const inRange = this.selectionMode === 'range' && paintedInRange;\n              const rangeEdge = Boolean(\n                this.selectionMode === 'range' &&\n                rangeValue &&\n                (day.value === rangeValue.start || day.value === rangeValue.end)\n              );\n              const selected = this.selectionMode === 'single' && day.value === selectedSingle;\n              const textColor = rangeEdge\n                ? 'on-bold'\n                : selected || inRange || pendingStartDay || previewInRange || day.value === today\n                  ? 'primary'\n                  : day.inMonth\n                    ? 'secondary'\n                    : 'tertiary';\n              return (\n                <button\n                  type=\"button\"\n                  role=\"gridcell\"\n                  data-date-option={day.value}\n                  class={{\n                    'calendar-day': true,\n                    'calendar-day--outside': !day.inMonth,\n                    'calendar-day--today': day.value === today,\n                    'calendar-day--in-range': inRange,\n                    'calendar-day--range-preview': previewInRange,\n                    'calendar-day--range-edge': rangeEdge,\n                    'calendar-day--selected': selected,\n                    'ds-focus-ring-inset': true,\n                    'ds-interaction-fill': true,\n                    'ds-interaction-fill--on-bold': rangeEdge,\n                    'ds-interaction-fill--surface-open':\n                      pendingStartDay && !this.isDisabled(day.value),\n                    'ds-interaction-fill--selected': selected && !this.isDisabled(day.value),\n                  }}\n                  disabled={this.isDisabled(day.value)}\n                  aria-label={day.label}\n                  aria-selected={selectedInRange || selected ? 'true' : 'false'}\n                  tabIndex={day.value === focusDate ? 0 : -1}\n                  onMouseEnter={() => this.previewRange(day.value)}\n                  onFocus={() => this.previewRange(day.value)}\n                  onClick={() => this.selectDate(day.value)}\n                  onKeyDown={event => this.handleDayKeyDown(event, day.value)}\n                >\n                  <ds-text\n                    class=\"ds-interaction-fill__content\"\n                    as=\"span\"\n                    variant=\"text-body-medium\"\n                    color={textColor}\n                    emphasis={day.value === today}\n                  >\n                    {day.day}\n                  </ds-text>\n                </button>\n              );\n            })}\n          </div>\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/Calendar/calendar-grid.ts",
+      "content": "import { isIsoCalendarDate, shiftIsoCalendarDate } from '../../utils';\n\nexport interface CalendarDateRange {\n  start: string;\n  end: string;\n}\n\nexport interface CalendarDay {\n  value: string;\n  day: number;\n  inMonth: boolean;\n  label: string;\n}\n\nexport const CALENDAR_WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];\n\nconst MONTH_FORMATTER = new Intl.DateTimeFormat('en-US', {\n  month: 'long',\n  year: 'numeric',\n  timeZone: 'UTC',\n});\nconst DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {\n  weekday: 'long',\n  month: 'long',\n  day: 'numeric',\n  year: 'numeric',\n  timeZone: 'UTC',\n});\n\nexport function calendarToday(): string {\n  const today = new Date();\n  const year = today.getFullYear();\n  const month = String(today.getMonth() + 1).padStart(2, '0');\n  const day = String(today.getDate()).padStart(2, '0');\n  return `${year}-${month}-${day}`;\n}\n\nexport function calendarMonth(value: string): string {\n  return isIsoCalendarDate(value) ? value.slice(0, 7) : calendarToday().slice(0, 7);\n}\n\nexport function shiftCalendarMonth(value: string, offset: number): string {\n  const [year, month] = value.split('-').map(Number);\n  const date = new Date(Date.UTC(year, month - 1 + offset, 1));\n  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}`;\n}\n\nexport function calendarMonthLabel(value: string): string {\n  const [year, month] = value.split('-').map(Number);\n  return MONTH_FORMATTER.format(new Date(Date.UTC(year, month - 1, 1)));\n}\n\nexport function calendarDays(value: string): CalendarDay[] {\n  const [year, month] = value.split('-').map(Number);\n  const firstOfMonth = `${year}-${String(month).padStart(2, '0')}-01`;\n  const firstWeekday = new Date(`${firstOfMonth}T00:00:00Z`).getUTCDay();\n  const gridStart = shiftIsoCalendarDate(firstOfMonth, -firstWeekday);\n  return Array.from({ length: 42 }, (_, index) => {\n    const dateValue = shiftIsoCalendarDate(gridStart, index);\n    const date = new Date(`${dateValue}T00:00:00Z`);\n    return {\n      value: dateValue,\n      day: date.getUTCDate(),\n      inMonth: dateValue.startsWith(`${value}-`),\n      label: DATE_FORMATTER.format(date),\n    };\n  });\n}\n\n/** Keep the previous committed range visible while a replacement range is being chosen. */\nexport function calendarPaintedRange(\n  pendingStart: string,\n  heldRange: CalendarDateRange | null,\n  valueRange: CalendarDateRange | null\n): CalendarDateRange | null {\n  return pendingStart ? heldRange : valueRange;\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

@@ -144,85 +144,10 @@
   flex: 1 1 auto;
 }
 
-.filter-menu__calendar {
-  display: flex;
-  min-height: 0;
-  flex-direction: column;
-  padding: var(--dimension-space-100);
-}
-
-.filter-menu__calendar-heading {
-  display: grid;
-  grid-template-columns: var(--dimension-size-400) minmax(0, 1fr) var(--dimension-size-400);
-  align-items: center;
-  text-align: center;
-}
-
-.filter-menu__calendar-nav--previous {
-  justify-self: start;
-}
-
-.filter-menu__calendar-nav--next {
-  justify-self: end;
-}
-
-.filter-menu__calendar-weekdays,
-.filter-menu__calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  column-gap: var(--dimension-space-050);
-}
-
-.filter-menu__calendar-grid {
-  row-gap: var(--dimension-space-050);
-}
-
-.filter-menu__calendar-weekdays {
-  align-items: center;
-  min-height: var(--dimension-size-400);
-  margin-block-start: var(--dimension-space-050);
-  color: var(--color-foreground-secondary);
-  text-align: center;
-}
-
-.filter-menu__calendar-day {
-  appearance: none;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.filter-menu__date-body > ds-calendar {
+  flex: 1 1 auto;
   min-width: 0;
-  width: 100%;
-  height: var(--dimension-size-400);
-  padding: 0;
-  border: 0;
-  border-radius: var(--dimension-radius-025);
-  background: transparent;
-  color: var(--color-foreground-primary);
-  cursor: default;
-}
-
-.filter-menu__calendar-day--outside {
-  color: var(--color-foreground-tertiary);
-}
-
-.filter-menu__calendar-day--in-range {
-  background: var(--color-background-faint-brand);
-  color: var(--color-foreground-primary);
-}
-
-/* Pending range preview stays faint while the already-selected start keeps its bold edge. */
-.filter-menu__calendar-day--range-preview {
-  background: var(--color-background-faint-brand);
-}
-
-.filter-menu__calendar-day--today {
-  color: var(--color-foreground-primary);
-}
-
-.filter-menu__calendar-day--range-edge {
-  background: var(--color-background-bold-brand);
-  color: var(--color-foreground-on-bold-background-primary);
+  min-height: 0;
 }
 
 .filter-menu__footer {
@@ -290,10 +215,6 @@
 @media (forced-colors: active) {
   .filter-menu__category-pane {
     border-inline-end-color: var(--ds-forced-color-content);
-  }
-
-  .filter-menu__calendar-day--range-edge {
-    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
   }
 }
 

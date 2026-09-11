@@ -1,4 +1,5 @@
 import '/dist/components/ds-input.js';
+import '/dist/components/ds-divider.js';
 import '/dist/components/ds-input-date.js';
 import '/dist/components/ds-input-time.js';
 import '/dist/components/ds-textarea.js';
@@ -11,17 +12,53 @@ import '/dist/components/ds-radio.js';
 import '/dist/components/ds-switch.js';
 import '/dist/components/ds-slider.js';
 import '/dist/components/ds-swatch-picker.js';
+import '/dist/components/ds-text.js';
 
-await Promise.all([
-  'ds-input', 'ds-input-date', 'ds-input-time', 'ds-textarea', 'ds-field', 'ds-checkbox', 'ds-select', 'ds-menu', 'ds-tag',
-  'ds-radio', 'ds-switch', 'ds-slider', 'ds-swatch-picker',
-].map(tag => customElements.whenDefined(tag)));
+await Promise.all(
+  [
+    'ds-input',
+    'ds-divider',
+    'ds-input-date',
+    'ds-input-time',
+    'ds-textarea',
+    'ds-field',
+    'ds-checkbox',
+    'ds-select',
+    'ds-menu',
+    'ds-tag',
+    'ds-radio',
+    'ds-switch',
+    'ds-slider',
+    'ds-swatch-picker',
+    'ds-text',
+  ].map(tag => customElements.whenDefined(tag))
+);
 
 document.getElementById('region').name = 'region';
 document.getElementById('region').options = [
   { label: 'Canada', value: 'ca' },
   { label: 'United States', value: 'us' },
 ];
+const prefixSelect = document.getElementById('input-prefix-select-control');
+prefixSelect.hasBorder = false;
+prefixSelect.allowClear = false;
+prefixSelect.indicator = 'up-down';
+prefixSelect.neutralTrigger = true;
+prefixSelect.options = [
+  { label: 'USD', value: 'usd' },
+  { label: 'EUR', value: 'eur' },
+];
+prefixSelect.value = 'usd';
+const suffixSelect = document.getElementById('input-suffix-select-control');
+suffixSelect.hasBorder = false;
+suffixSelect.allowClear = false;
+suffixSelect.indicator = 'up-down';
+suffixSelect.neutralTrigger = true;
+suffixSelect.options = [
+  { label: 'px', value: 'px' },
+  { label: '%', value: 'percent' },
+];
+suffixSelect.value = 'px';
 const densityOptions = [
   { label: 'Primary', value: 'primary', subtext: 'Supporting detail' },
   { label: 'Secondary', value: 'secondary', subtext: 'Another detail' },

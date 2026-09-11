@@ -1,10 +1,12 @@
 import {
   AttachInternals,
   Component,
+  Element,
   Prop,
   State,
   Event,
   EventEmitter,
+  Listen,
   Method,
   Watch,
   h,
@@ -15,22 +17,24 @@ import {
   CONTROL_TEXT_VARIANT,
   DEFAULT_REQUIRED_MESSAGE,
   formatIsoCalendarDateLabel,
+  isIsoCalendarDate,
+  parseLooseCalendarDate,
+  resolveChoicePopupAlignOffset,
+  resolveCssLengthPx,
+  resolveMotionTimeMs,
   restoreStringFormState,
   setFormControlValue,
   setRequiredValidity,
+  TOKEN_DEFAULTS,
   type ControlSize,
   type ControlWidth,
 } from '../../utils';
+import { AnchoredPositionController } from '../../utils/anchored-position-controller';
+import { AnchoredOverlayInteractionController } from '../../utils/anchored-overlay-interaction-controller';
+import { resolveAnchoredOverlayBoundaryRect } from '../../utils/anchored-overlay-boundary';
 
 export type InputDateSize = ControlSize;
 export type InputDateWidth = ControlWidth;
-
-const ICON_SIZE: Record<InputDateSize, 'lg' | 'md' | 'sm' | 'xs'> = {
-  lg: 'lg',
-  md: 'md',
-  sm: 'sm',
-  xs: 'xs',
-};
 
 let idCounter = 0;
 
@@ -41,10 +45,12 @@ let idCounter = 0;
   formAssociated: true,
 })
 export class InputDate {
+  @Element() el!: HTMLElement;
   @AttachInternals() internals!: ElementInternals;
 
   private generatedId = `ds-input-date-${++idCounter}`;
   private errorId = `${this.generatedId}-error`;
+  private popupId = `${this.generatedId}-popup`;
 
   @Prop({ mutable: true }) value: string = '';
   @Prop({ reflect: true }) name: string | undefined;
@@ -72,13 +78,78 @@ export class InputDate {
 
   private initialValue = '';
   private inputEl?: HTMLInputElement;
+  private controlEl?: HTMLElement;
+  private calendarButton?: HTMLDsButtonUnfilledElement;
+  private closeTimer: ReturnType<typeof setTimeout> | null = null;
   @State() private formDisabled = false;
   @State() private focused = false;
   @State() private touched = false;
+  @State() private draftText = '';
+  @State() private open = false;
+  @State() private shouldRender = false;
+  @State() private closing = false;
+  @State() private positionReady = false;
+  @State() private pos = { x: 0, y: 0 };
+
+  private readonly position = new AnchoredPositionController({
+    getAnchor: () => this.controlEl ?? null,
+    getPopup: () => this.el.querySelector<HTMLElement>('.input-date-popup'),
+    getOwnerDocument: () => this.el.ownerDocument,
+    measure: (anchor, popup) => {
+      if (!this.open) return null;
+      const sectionInsetPx = resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050);
+      return {
+        anchorRect: anchor.getBoundingClientRect(),
+        popupWidth: popup.offsetWidth || this.popupFallbackWidth,
+        popupHeight: popup.offsetHeight || this.popupFallbackHeight,
+        side: 'bottom',
+        align: 'end',
+        sideOffsetPx: resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050),
+        alignOffsetPx: resolveChoicePopupAlignOffset({
+          align: 'end',
+          alignOffsetPx: 0,
+          sectionInsetPx,
+          anchorAlignment: 'popup-frame',
+        }),
+        viewportPadPx: resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050),
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+        collisionRect: resolveAnchoredOverlayBoundaryRect(anchor),
+      };
+    },
+    apply: ({ x, y }) => {
+      this.pos = { x, y };
+    },
+    onReady: () => {
+      this.positionReady = true;
+    },
+    liveUpdate: 'double-frame',
+    observeResize: true,
+    topLayer: true,
+  });
+  private readonly interaction = new AnchoredOverlayInteractionController({
+    getAnchor: () => this.controlEl ?? null,
+    getPopup: () => this.el.querySelector<HTMLElement>('.input-date-popup'),
+    getOwnerDocument: () => this.el.ownerDocument,
+    onOutsideActivation: () => this.closePicker(false),
+  });
+
+  private get popupFallbackWidth(): number {
+    return resolveCssLengthPx(TOKEN_DEFAULTS.menuWidthXs, TOKEN_DEFAULTS.menuWidthXs);
+  }
+
+  private get popupFallbackHeight(): number {
+    return resolveCssLengthPx(TOKEN_DEFAULTS.menuFallbackHeight, TOKEN_DEFAULTS.menuFallbackHeight);
+  }
 
   componentWillLoad() {
     this.initialValue = this.value;
     this.syncFormValue();
+  }
+
+  disconnectedCallback() {
+    this.position.unobserve();
+    this.teardownListeners();
   }
 
   @Watch('value')
@@ -99,10 +170,12 @@ export class InputDate {
 
   formResetCallback() {
     this.value = this.initialValue;
+    this.draftText = this.displayValue;
   }
 
   formStateRestoreCallback(state: string | File | FormData | null) {
     this.value = restoreStringFormState(state);
+    this.draftText = this.displayValue;
   }
 
   @Method()
@@ -110,24 +183,129 @@ export class InputDate {
     this.inputEl?.focus();
   }
 
+  @Listen('keydown')
+  handleHostKeyDown(event: KeyboardEvent) {
+    if (!this.shouldRender || this.closing) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.closePicker('button');
+      return;
+    }
+    if (event.key !== 'Tab') return;
+    const popup = this.el.querySelector<HTMLElement>('.input-date-popup');
+    if (!popup || !event.composedPath().includes(popup)) return;
+    if (!this.interaction.tabLeavesPopup(event)) return;
+    event.preventDefault();
+    this.closePicker(false);
+    this.interaction.moveFocusAfterTab(event.shiftKey);
+  }
+
+  private get displayValue(): string {
+    return formatIsoCalendarDateLabel(this.value);
+  }
+
+  private parseDraft(text: string): string | null {
+    const trimmed = text.trim();
+    if (!trimmed) return '';
+    const iso = parseLooseCalendarDate(trimmed);
+    if (!iso) return null;
+    if (this.min && isIsoCalendarDate(this.min) && iso < this.min) return null;
+    if (this.max && isIsoCalendarDate(this.max) && iso > this.max) return null;
+    return iso;
+  }
+
+  private commitIso(iso: string, emit = true) {
+    if (this.value !== iso) {
+      this.value = iso;
+      if (emit) this.dsChange.emit(iso);
+    }
+    this.draftText = formatIsoCalendarDateLabel(iso);
+  }
+
+  private teardownListeners() {
+    this.position.unobserve();
+    this.interaction.disconnect();
+    if (this.closeTimer) {
+      clearTimeout(this.closeTimer);
+      this.closeTimer = null;
+    }
+  }
+
+  private openPicker() {
+    const inactive = this.isInactive || this.disabled || this.formDisabled || this.readOnly;
+    if (inactive || this.open) return;
+    this.shouldRender = true;
+    this.closing = false;
+    this.positionReady = false;
+    this.open = true;
+    this.teardownListeners();
+    this.interaction.connect();
+    this.position.observe();
+    this.position.schedule();
+  }
+
+  private closePicker(restore: 'input' | 'button' | false) {
+    if (!this.shouldRender || this.closing) return;
+    this.open = false;
+    this.position.cancel();
+    this.closing = true;
+    this.interaction.disconnect();
+    this.position.unobserve();
+    if (restore === 'input') this.inputEl?.focus();
+    if (restore === 'button') void this.calendarButton?.setFocus();
+    const duration = resolveMotionTimeMs(
+      TOKEN_DEFAULTS.motionShort2,
+      TOKEN_DEFAULTS.animationDurationShort3
+    );
+    if (duration <= 0) {
+      this.finishClose();
+      return;
+    }
+    this.closeTimer = setTimeout(() => this.finishClose(), duration);
+  }
+
+  private finishClose() {
+    const popup = this.el.querySelector<HTMLElement>('.input-date-popup');
+    if (popup?.matches(':popover-open')) popup.hidePopover();
+    this.shouldRender = false;
+    this.closing = false;
+    this.closeTimer = null;
+  }
+
+  private togglePicker = () => {
+    if (this.isInactive || this.disabled || this.formDisabled || this.readOnly) return;
+    if (this.open) this.closePicker('button');
+    else this.openPicker();
+  };
+
   private handleInput = (event: Event) => {
-    this.value = (event.target as HTMLInputElement).value;
-    this.dsChange.emit(this.value);
+    this.draftText = (event.target as HTMLInputElement).value;
+    const parsed = this.parseDraft(this.draftText);
+    if (parsed === null) return;
+    this.commitIso(parsed);
   };
 
   private handleFocus = () => {
+    this.draftText = this.displayValue || this.value;
     this.focused = true;
   };
 
   private handleBlur = () => {
     this.focused = false;
     this.touched = true;
+    const parsed = this.parseDraft(this.draftText);
+    if (parsed === null) {
+      this.draftText = this.displayValue;
+      return;
+    }
+    this.commitIso(parsed);
   };
 
-  private openPicker = () => {
-    if (this.isInactive || this.disabled || this.formDisabled || this.readOnly) return;
-    this.inputEl?.showPicker?.();
-    this.inputEl?.focus({ preventScroll: true });
+  private handleCalendarChange = (event: CustomEvent<string>) => {
+    event.stopPropagation();
+    if (!isIsoCalendarDate(event.detail)) return;
+    this.commitIso(event.detail);
+    this.closePicker('input');
   };
 
   render() {
@@ -137,17 +315,25 @@ export class InputDate {
     const dirty = this.value !== this.initialValue;
     const showError = this.error && Boolean(this.errorMessage);
     const textVariant = CONTROL_TEXT_VARIANT[this.size];
-    const iconSize = ICON_SIZE[this.size];
-    const displayLabel = formatIsoCalendarDateLabel(this.value);
+    const textClass = `ds-text--${textVariant.replace('text-', '')}`;
     const describedBy =
       [this.ariaDescribedby, showError ? this.errorId : undefined].filter(Boolean).join(' ') ||
       undefined;
+    const popupStyle = {
+      position: 'fixed',
+      left: '0',
+      top: '0',
+      transform: `translate(${Math.round(this.pos.x)}px, ${Math.round(this.pos.y)}px)`,
+      zIndex: 'var(--dimension-z-index-floating)',
+      visibility: this.positionReady ? 'visible' : 'hidden',
+    };
 
     return (
       <Host
         class={{
           'input-host': true,
           'ds-field-stack': true,
+          'ds-field-stack--supporting-inset': !this.hasBorder,
           'ds-control-inactive': inactive,
           [`ds-control--${this.size}`]: true,
           ...controlWidthClass(this.width),
@@ -162,6 +348,9 @@ export class InputDate {
         data-touched={this.touched ? '' : undefined}
       >
         <div
+          ref={element => {
+            this.controlEl = element;
+          }}
           class={{
             'input-control': true,
             'ds-control-frame': true,
@@ -175,23 +364,21 @@ export class InputDate {
             ref={element => {
               this.inputEl = element;
             }}
-            type="date"
+            type="text"
             id={inputId}
-            value={this.value}
-            min={this.min}
-            max={this.max}
+            value={this.focused ? this.draftText : this.displayValue}
             disabled={inactive}
             readOnly={this.readOnly}
             required={this.required}
             autoFocus={this.autoFocus}
+            autoComplete="off"
+            spellcheck={false}
             class={{
               'native-input': true,
               'native-input--align-start': true,
-              'native-input--date-filled': Boolean(displayLabel),
               'ds-control-label-box': true,
-              [`ds-text--${textVariant.replace('text-', '')}`]: true,
+              [textClass]: true,
               'ds-text--regular': true,
-              'ds-interaction-fill__content': true,
             }}
             aria-label={this.ariaLabel}
             aria-labelledby={this.ariaLabelledby}
@@ -201,25 +388,50 @@ export class InputDate {
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}
           />
-          {displayLabel ? (
-            <span
-              class={`input-control__formatted-date ds-control-label-box ds-text--${textVariant.replace('text-', '')} ds-text--regular`}
-              aria-hidden="true"
-            >
-              {displayLabel}
-            </span>
-          ) : null}
-          <button
-            type="button"
-            class="input-control__picker ds-control-icon-box ds-focus-ring-inset ds-interaction-fill__content"
-            disabled={inactive || this.readOnly}
-            tabIndex={-1}
-            aria-hidden="true"
-            onClick={this.openPicker}
-          >
-            <ds-icon name="Calendar" size={iconSize} color="inherit" />
-          </button>
+          <ds-button-unfilled
+            ref={element => {
+              this.calendarButton = element as HTMLDsButtonUnfilledElement | undefined;
+            }}
+            class="input-control__datetime-action"
+            variant="icon"
+            size={this.size}
+            icon="Calendar"
+            hasBorder={false}
+            isInset
+            isInactive={inactive || this.readOnly}
+            ariaLabel="Choose date"
+            haspopup="dialog"
+            expanded={this.open}
+            surfaceOpen={this.open || this.closing}
+            controls={this.open ? this.popupId : undefined}
+            onDsClick={this.togglePicker}
+          />
         </div>
+        {this.shouldRender ? (
+          <div
+            id={this.popupId}
+            popover="manual"
+            class={{
+              'input-date-popup': true,
+              'ds-choice-popup': true,
+              'ds-choice-popup--closing': this.closing,
+              'ds-chrome-column': true,
+              'ds-chrome-space--sm': true,
+            }}
+            style={popupStyle}
+            role="dialog"
+            aria-label="Choose date"
+          >
+            <ds-calendar
+              selectionMode="single"
+              value={this.value}
+              min={this.min}
+              max={this.max}
+              autoFocus
+              onDsChange={this.handleCalendarChange}
+            />
+          </div>
+        ) : null}
         {showError && (
           <ds-text
             class="error-text"

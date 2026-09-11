@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Form-associated components</title>
-    <link rel="stylesheet" href="/tokens/index.css">
+    <link rel="stylesheet" href="/tokens/index.css" />
   </head>
   <body>
     <form id="profile">
@@ -13,7 +13,7 @@
         description="Use your work email address."
         field-id="email-control"
       >
-      <ds-input id="email" name="email" type="email" autocomplete="email" required></ds-input>
+        <ds-input id="email" name="email" type="email" autocomplete="email" required></ds-input>
       </ds-field>
       <ds-field
         id="notes-field"
@@ -33,8 +33,20 @@
       <button id="reset" type="reset">Reset</button>
     </form>
     <form id="textarea-state-form">
-      <ds-textarea id="textarea-readonly" name="readonly-note" value="Kept note" read-only aria-label="Read-only note"></ds-textarea>
-      <ds-textarea id="textarea-inactive" name="inactive-note" value="Omitted note" is-inactive aria-label="Inactive note"></ds-textarea>
+      <ds-textarea
+        id="textarea-readonly"
+        name="readonly-note"
+        value="Kept note"
+        read-only
+        aria-label="Read-only note"
+      ></ds-textarea>
+      <ds-textarea
+        id="textarea-inactive"
+        name="inactive-note"
+        value="Omitted note"
+        is-inactive
+        aria-label="Inactive note"
+      ></ds-textarea>
       <button id="textarea-reset" type="reset">Reset textareas</button>
     </form>
     <div id="checkbox-sizes">
@@ -58,36 +70,179 @@
       <ds-radio id="radio-xs" size="xs" value="selected" aria-label="Extra-small radio"></ds-radio>
     </div>
     <div id="input-sizes">
-      <ds-input id="input-lg" size="lg" value="Large input" icon="MagnifyingGlass" aria-label="Large input"></ds-input>
-      <ds-input id="input-md" size="md" value="Medium input" icon="MagnifyingGlass" aria-label="Medium input"></ds-input>
-      <ds-input id="input-sm" size="sm" value="Small input" icon="MagnifyingGlass" aria-label="Small input"></ds-input>
-      <ds-input id="input-xs" size="xs" value="Extra-small input" icon="MagnifyingGlass" aria-label="Extra-small input"></ds-input>
-      <ds-input id="input-search" type="search" value="Search query" icon="MagnifyingGlass" aria-label="Search input"></ds-input>
-      <ds-input id="input-search-sm" type="search" size="sm" value="Search query" icon="MagnifyingGlass" aria-label="Small search input"></ds-input>
-      <ds-input id="input-search-xs" type="search" size="xs" value="Search query" icon="MagnifyingGlass" aria-label="Extra-small search input"></ds-input>
+      <ds-input
+        id="input-lg"
+        size="lg"
+        value="Large input"
+        icon="MagnifyingGlass"
+        aria-label="Large input"
+      ></ds-input>
+      <ds-input
+        id="input-md"
+        size="md"
+        value="Medium input"
+        icon="MagnifyingGlass"
+        aria-label="Medium input"
+      ></ds-input>
+      <ds-input
+        id="input-sm"
+        size="sm"
+        value="Small input"
+        icon="MagnifyingGlass"
+        aria-label="Small input"
+      ></ds-input>
+      <ds-input
+        id="input-xs"
+        size="xs"
+        value="Extra-small input"
+        icon="MagnifyingGlass"
+        aria-label="Extra-small input"
+      ></ds-input>
+      <ds-input
+        id="input-search"
+        type="search"
+        value="Search query"
+        icon="MagnifyingGlass"
+        aria-label="Search input"
+      ></ds-input>
+      <ds-input
+        id="input-search-sm"
+        type="search"
+        size="sm"
+        value="Search query"
+        icon="MagnifyingGlass"
+        aria-label="Small search input"
+      ></ds-input>
+      <ds-input
+        id="input-search-xs"
+        type="search"
+        size="xs"
+        value="Search query"
+        icon="MagnifyingGlass"
+        aria-label="Extra-small search input"
+      ></ds-input>
+      <ds-input id="input-prefix" value="1200" aria-label="Amount in USD">
+        <ds-text slot="prefix" as="span" variant="text-body-medium" color="inherit">USD</ds-text>
+      </ds-input>
+      <ds-input id="input-prefix-select" value="1200" aria-label="Amount">
+        <ds-select
+          id="input-prefix-select-control"
+          slot="prefix"
+          size="md"
+          width="hug"
+          is-inset
+          indicator="up-down"
+          neutral-trigger
+          aria-label="Currency"
+        ></ds-select>
+      </ds-input>
+      <ds-input id="input-suffix-select" value="48" aria-label="Measure">
+        <ds-select
+          id="input-suffix-select-control"
+          slot="suffix"
+          size="md"
+          width="hug"
+          is-inset
+          indicator="up-down"
+          neutral-trigger
+          aria-label="Unit"
+        ></ds-select>
+      </ds-input>
+      <ds-input
+        id="input-password"
+        type="password"
+        value="secret-value"
+        aria-label="Password"
+      ></ds-input>
       <form id="readonly-input-form">
-        <ds-input id="input-readonly" name="readonly-input" value="Kept value" read-only aria-label="Read-only input"></ds-input>
+        <ds-input
+          id="input-readonly"
+          name="readonly-input"
+          value="Kept value"
+          read-only
+          aria-label="Read-only input"
+        ></ds-input>
       </form>
       <form id="number-input-form">
         <label for="number-input-control">Exact quantity</label>
-        <ds-input id="input-number" input-id="number-input-control" name="quantity" type="number" value="5" min="0" max="10" step="0.5"></ds-input>
-        <ds-input id="input-number-end" type="number" value="5" min="0" max="10" step="0.5" text-align="end" aria-label="End-aligned quantity"></ds-input>
+        <ds-input
+          id="input-number"
+          input-id="number-input-control"
+          name="quantity"
+          type="number"
+          value="5"
+          min="0"
+          max="10"
+          step="0.5"
+        ></ds-input>
+        <ds-input
+          id="input-number-end"
+          type="number"
+          value="5"
+          min="0"
+          max="10"
+          step="0.5"
+          text-align="end"
+          aria-label="End-aligned quantity"
+        ></ds-input>
       </form>
       <form id="datetime-input-form">
-        <ds-input-date id="input-date-md" name="start-date" size="md" value="2026-09-10" aria-label="Start date"></ds-input-date>
-        <ds-input-time id="input-time-md" name="start-time" size="md" value="09:00" aria-label="Start time"></ds-input-time>
-        <ds-input-date id="input-date-lg" size="lg" value="2026-09-10" aria-label="Large date"></ds-input-date>
-        <ds-input-date id="input-date-sm" size="sm" value="2026-09-10" aria-label="Small date"></ds-input-date>
-        <ds-input-date id="input-date-xs" size="xs" value="2026-09-10" aria-label="Extra-small date"></ds-input-date>
+        <ds-input-date
+          id="input-date-md"
+          name="start-date"
+          size="md"
+          value="2026-09-10"
+          aria-label="Start date"
+        ></ds-input-date>
+        <ds-input-time
+          id="input-time-md"
+          name="start-time"
+          size="md"
+          value="09:00"
+          aria-label="Start time"
+        ></ds-input-time>
+        <ds-input-date
+          id="input-date-lg"
+          size="lg"
+          value="2026-09-10"
+          aria-label="Large date"
+        ></ds-input-date>
+        <ds-input-date
+          id="input-date-sm"
+          size="sm"
+          value="2026-09-10"
+          aria-label="Small date"
+        ></ds-input-date>
+        <ds-input-date
+          id="input-date-xs"
+          size="xs"
+          value="2026-09-10"
+          aria-label="Extra-small date"
+        ></ds-input-date>
       </form>
     </div>
     <div id="choice-density">
       <ds-select id="select-lg" size="lg" searchable aria-label="Large choices"></ds-select>
-      <ds-select id="select-multi-lg" multiple size="lg" aria-label="Large multi choices"></ds-select>
+      <ds-select
+        id="select-multi-lg"
+        multiple
+        size="lg"
+        aria-label="Large multi choices"
+      ></ds-select>
       <span id="menu-xs-anchor">Menu anchor</span>
-      <ds-menu id="menu-xs" size="xs" anchor-id="menu-xs-anchor" menu-label="Extra-small menu"></ds-menu>
+      <ds-menu
+        id="menu-xs"
+        size="xs"
+        anchor-id="menu-xs-anchor"
+        menu-label="Extra-small menu"
+      ></ds-menu>
       <span id="menu-tag-anchor">Tagged menu anchor</span>
-      <ds-menu id="menu-tag" size="md" anchor-id="menu-tag-anchor" menu-label="Tagged menu"></ds-menu>
+      <ds-menu
+        id="menu-tag"
+        size="md"
+        anchor-id="menu-tag-anchor"
+        menu-label="Tagged menu"
+      ></ds-menu>
     </div>
     <form id="switch-form">
       <span id="readonly-switch-label">Read-only switch</span>
@@ -111,12 +266,7 @@
         required
         aria-label="Required switch"
       ></ds-switch>
-      <ds-switch
-        id="presentation-switch"
-        name="presentation"
-        checked
-        presentation
-      ></ds-switch>
+      <ds-switch id="presentation-switch" name="presentation" checked presentation></ds-switch>
     </form>
     <ds-switch
       id="external-switch"
@@ -131,10 +281,22 @@
     <form id="slider-form">
       <ds-slider id="slider-single" name="volume" value="40" label="Volume"></ds-slider>
       <ds-slider id="slider-range" name="price" label="Price range"></ds-slider>
-      <ds-slider id="slider-readonly" name="locked" value="70" label="Read-only slider" read-only></ds-slider>
+      <ds-slider
+        id="slider-readonly"
+        name="locked"
+        value="70"
+        label="Read-only slider"
+        read-only
+      ></ds-slider>
       <button id="slider-reset" type="reset">Reset sliders</button>
     </form>
-    <ds-slider id="slider-external" form="slider-form" name="external-slider" value="25" label="External slider"></ds-slider>
+    <ds-slider
+      id="slider-external"
+      form="slider-form"
+      name="external-slider"
+      value="25"
+      label="External slider"
+    ></ds-slider>
     <label for="slider-external-label">Externally labeled slider</label>
     <ds-slider id="slider-external-label" value="15" show-value="false"></ds-slider>
     <div id="slider-sizes">
@@ -142,12 +304,42 @@
       <ds-slider id="slider-sm" size="sm" value="40" label="Small slider"></ds-slider>
       <ds-slider id="slider-xs" size="xs" value="40" label="Extra-small slider"></ds-slider>
     </div>
-    <ds-slider id="slider-vertical" orientation="vertical" value="35" label="Vertical slider"></ds-slider>
+    <ds-slider
+      id="slider-vertical"
+      orientation="vertical"
+      value="35"
+      label="Vertical slider"
+    ></ds-slider>
     <ds-swatch-picker
       id="press-policy-swatch"
       value="blue"
       group-label="Press policy swatches"
     ></ds-swatch-picker>
+    <div id="borderless-supporting">
+      <ds-input
+        id="input-borderless-error"
+        value="Borderless"
+        has-border="false"
+        error
+        error-message="Enter a complete value."
+        aria-label="Borderless error input"
+      ></ds-input>
+      <ds-input
+        id="input-bordered-error"
+        value="Bordered"
+        error
+        error-message="Enter a complete value."
+        aria-label="Bordered error input"
+      ></ds-input>
+      <ds-field id="field-borderless-helper" description="Use the same left edge as the value.">
+        <ds-input
+          id="input-field-borderless"
+          has-border="false"
+          value="Borderless"
+          aria-label="Borderless labeled value"
+        ></ds-input>
+      </ds-field>
+    </div>
     <script type="module" src="/forms-setup.mjs"></script>
   </body>
 </html>

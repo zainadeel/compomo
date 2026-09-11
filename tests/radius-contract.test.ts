@@ -26,8 +26,8 @@ test('radius recipe maps each role to one TokoMo token', () => {
 
 test('surfaces consume named radius roles instead of raw tokens', () => {
   const table = readFileSync(new URL('../src/wc/styles/table.css', import.meta.url), 'utf8');
-  const choiceList = readFileSync(
-    new URL('../src/wc/utils/choice-list.css', import.meta.url),
+  const choicePopup = readFileSync(
+    new URL('../src/wc/utils/choice-popup.css', import.meta.url),
     'utf8'
   );
   const density = readFileSync(
@@ -38,6 +38,22 @@ test('surfaces consume named radius roles instead of raw tokens', () => {
     table,
     /--_table-radius: var\(--ds-table-radius, var\(--ds-radius-table, var\(--dimension-radius-050\)\)\)/
   );
-  assert.match(choiceList, /border-radius: var\(--ds-radius-menu\)/);
+  assert.match(choicePopup, /border-radius: var\(--ds-radius-menu\)/);
   assert.match(density, /--ds-control-radius:\s*var\(--ds-radius-control\)/);
+  const selectTrigger = readFileSync(
+    new URL('../src/wc/utils/select-trigger.css', import.meta.url),
+    'utf8'
+  );
+  const buttonBase = readFileSync(
+    new URL('../src/wc/utils/button-base.css', import.meta.url),
+    'utf8'
+  );
+  assert.match(
+    selectTrigger,
+    /\.trigger--rounded\s*\{\s*--ds-control-radius:\s*var\(--dimension-radius-half\)/
+  );
+  assert.match(
+    buttonBase,
+    /\.ds-button--rounded\s*\{\s*--ds-control-radius:\s*var\(--dimension-radius-half\)/
+  );
 });

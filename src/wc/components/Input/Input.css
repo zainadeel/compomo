@@ -163,14 +163,59 @@
 }
 
 .input-control__prefix,
+.input-control__prefix-text,
 .input-control__suffix {
   position: relative;
   z-index: 2;
   color: var(--ds-input-adornment-fg);
 }
 
+.input-control__prefix-text,
+.input-control__suffix {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.input-control__prefix-text--control,
+.input-control__suffix--control {
+  align-self: stretch;
+  min-width: 0;
+  white-space: normal;
+  gap: var(--dimension-space-025);
+}
+
+.input-control__prefix-text--empty,
 .input-control__suffix--empty {
   display: none;
+}
+
+/* Nested inset controls keep 2px on the outer edge, matching trailing actions. */
+.input-control--prefix-control {
+  padding-inline-start: var(--dimension-space-025);
+}
+
+.input-control--suffix-control {
+  padding-inline-end: var(--dimension-space-025);
+}
+
+.input-control__adornment-divider {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/*
+ * Select side stays on the 2px inset remainder. Value side matches a
+ * non-prefixed field's inline padding from its border.
+ */
+.input-control__prefix-text--control .input-control__adornment-divider {
+  margin-inline-end: calc(var(--ds-control-padding-inline) - var(--ds-control-gap));
+}
+
+.input-control__suffix--control .input-control__adornment-divider {
+  margin-inline-start: calc(var(--ds-control-padding-inline) - var(--ds-control-gap));
 }
 
 /* The input frame owns the nested clear action's cross-axis alignment. */
@@ -189,6 +234,22 @@
 
 .input-control.ds-control--xs:has(.input-control__clear) {
   padding-right: 0;
+}
+
+/* Same-size inset trailing action as date/time: 2px remaining on the end edges. */
+.input-control > .input-control__trailing-action {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+:host(.ds-control-inactive) .input-control > .input-control__trailing-action {
+  --effect-opacity-medium: 1;
+}
+
+.input-control:has(.input-control__trailing-action) {
+  padding-inline-end: var(--dimension-space-025);
 }
 
 .error-text {

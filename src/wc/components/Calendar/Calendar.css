@@ -1,0 +1,110 @@
+@import '../../utils/radius.css';
+@import '../../utils/control-density.css';
+@import '../../utils/focus-ring.css';
+@import '../../utils/interaction-fill.css';
+@import '../../utils/forced-colors.css';
+
+:host {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.calendar {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  min-width: calc(
+    (var(--dimension-size-400) * 7) + (var(--dimension-space-050) * 6) +
+      (var(--dimension-space-100) * 2)
+  );
+  padding: var(--ds-calendar-padding, var(--dimension-space-100));
+}
+
+.calendar-heading {
+  display: grid;
+  grid-template-columns: var(--dimension-size-400) minmax(0, 1fr) var(--dimension-size-400);
+  align-items: center;
+  text-align: center;
+}
+
+.calendar-nav--previous {
+  justify-self: start;
+}
+
+.calendar-nav--next {
+  justify-self: end;
+}
+
+.calendar-weekdays,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  column-gap: var(--dimension-space-050);
+}
+
+.calendar-grid {
+  row-gap: var(--dimension-space-050);
+}
+
+.calendar-weekdays {
+  align-items: center;
+  min-height: var(--dimension-size-400);
+  margin-block-start: var(--dimension-space-050);
+  color: var(--color-foreground-secondary);
+  text-align: center;
+}
+
+.calendar-day {
+  appearance: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  width: 100%;
+  height: var(--dimension-size-400);
+  padding: 0;
+  border: 0;
+  border-radius: var(--dimension-radius-025);
+  background: transparent;
+  color: var(--color-foreground-primary);
+  cursor: default;
+}
+
+.calendar-day:disabled {
+  cursor: not-allowed;
+}
+
+.calendar-day--outside {
+  color: var(--color-foreground-tertiary);
+}
+
+.calendar-day--in-range {
+  background: var(--color-background-faint-brand);
+  color: var(--color-foreground-primary);
+}
+
+/* In-progress span uses the shared hover overlay; the first day keeps pressed via --surface-open. */
+.calendar-day.ds-interaction-fill.calendar-day--range-preview:not(:disabled)::after {
+  background: var(--ds-interaction-hover);
+}
+
+.calendar-day.ds-interaction-fill.calendar-day--range-preview:active:not(:disabled)::after {
+  background: var(--ds-interaction-pressed);
+}
+
+.calendar-day--today {
+  color: var(--color-foreground-primary);
+}
+
+.calendar-day--range-edge {
+  background: var(--color-background-bold-brand);
+  color: var(--color-foreground-on-bold-background-primary);
+}
+
+@media (forced-colors: active) {
+  .calendar-day--range-edge {
+    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
+  }
+}

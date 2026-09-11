@@ -1,0 +1,60 @@
+@import '../../utils/radius.css';
+@import '../../utils/control-density.css';
+@import '../../utils/focus-ring.css';
+@import '../../utils/interaction-fill.css';
+@import '../../utils/forced-colors.css';
+
+:host {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.time-picker {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(var(--dimension-size-400), 1fr));
+  column-gap: var(--dimension-space-050);
+  min-width: calc(
+    (var(--dimension-size-400) * 3) + (var(--dimension-space-050) * 2) +
+      (var(--ds-time-picker-padding, var(--dimension-space-100)) * 2)
+  );
+  padding: var(--ds-time-picker-padding, var(--dimension-space-100));
+}
+
+.time-picker__column {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.time-picker__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dimension-space-050);
+  max-height: calc((var(--dimension-size-400) * 7) + (var(--dimension-space-050) * 6));
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.time-picker-tile {
+  appearance: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 0;
+  width: 100%;
+  height: var(--dimension-size-400);
+  padding: 0;
+  border: 0;
+  border-radius: var(--dimension-radius-025);
+  background: transparent;
+  color: var(--color-foreground-primary);
+  cursor: default;
+}
+
+.time-picker-tile:disabled {
+  cursor: not-allowed;
+}

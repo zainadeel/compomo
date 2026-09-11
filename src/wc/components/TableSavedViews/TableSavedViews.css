@@ -11,10 +11,3 @@ ds-select {
   min-inline-size: 0;
   max-inline-size: 100%;
 }
-
-.table-saved-views__dialog-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: var(--dimension-space-100);
-}

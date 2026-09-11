@@ -152,6 +152,7 @@ export class Textarea {
         class={{
           'textarea-host': true,
           'ds-field-stack': true,
+          'ds-field-stack--supporting-inset': !this.hasBorder,
           'ds-control-inactive': inactive,
           [`ds-control--${this.size}`]: true,
           ...controlWidthClass(this.width),

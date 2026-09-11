@@ -106,30 +106,31 @@
   letter-spacing: inherit;
 }
 
-.input-control__prefix,
-.input-control__picker {
+.input-control__prefix {
   position: relative;
   z-index: 2;
   color: var(--ds-input-adornment-fg);
 }
 
-.input-control__picker {
-  all: unset;
+/* The input frame owns the nested calendar/clock action's cross-axis alignment. */
+.input-control > .input-control__datetime-action {
   position: relative;
   z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   flex-shrink: 0;
-  box-sizing: border-box;
-  width: var(--ds-control-icon, var(--dimension-iconography-md));
-  height: var(--ds-control-icon, var(--dimension-iconography-md));
-  color: var(--ds-input-adornment-fg);
-  cursor: pointer;
+  align-self: center;
 }
 
-.input-control__picker:disabled {
-  cursor: not-allowed;
+/*
+ * Host `.ds-control-inactive` already fades the field. The nested action stays
+ * disabled, but must not apply a second 50% opacity on top of that.
+ */
+:host(.ds-control-inactive) .input-control > .input-control__datetime-action {
+  --effect-opacity-medium: 1;
+}
+
+/* Same-size inset button: 2px remaining on the top, end, and bottom edges. */
+.input-control:has(.input-control__datetime-action) {
+  padding-inline-end: var(--dimension-space-025);
 }
 
 .error-text {

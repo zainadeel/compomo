@@ -217,6 +217,37 @@ test('field associates one control with its label, guidance, error, and interact
   await expect(nativeInput).toHaveAttribute('aria-describedby', 'email-control-description');
 });
 
+test('field can omit the visible label when the control already has an accessible name', async ({
+  page,
+}) => {
+  await page.evaluate(() => {
+    const field = document.createElement('ds-field');
+    field.id = 'heading-named-field';
+    field.setAttribute('field-id', 'heading-named-control');
+    const input = document.createElement('ds-input');
+    input.id = 'heading-named-input';
+    input.setAttribute('aria-label', 'Name');
+    input.setAttribute('placeholder', 'Enter a unique name');
+    field.append(input);
+    document.body.append(field);
+  });
+
+  const field = page.locator('#heading-named-field');
+  const nativeInput = page.locator('#heading-named-input input');
+
+  await expect(field.locator('.field__label')).toHaveCount(0);
+  await expect(nativeInput).toHaveAccessibleName('Name');
+  await expect(nativeInput).not.toHaveAttribute('aria-labelledby');
+
+  await field.evaluate((element: HTMLDsFieldElement) => {
+    element.error = true;
+    element.errorMessage = 'View name is required.';
+  });
+  await expect(nativeInput).toHaveAttribute('aria-invalid', 'true');
+  await expect(nativeInput).toHaveAttribute('aria-describedby', 'heading-named-control-error');
+  await expect(field.getByRole('alert')).toHaveText('View name is required.');
+});
+
 test('field relocates a control mounted after its initial render @cross-browser', async ({
   page,
 }) => {
@@ -489,50 +520,375 @@ test('input follows shared control density, focus, and search-clear recipes', as
   await expect(search.locator('ds-button-unfilled')).toHaveCount(0);
 });
 
-test('date and time inputs follow Input density, body text, and form association', async ({
+test('input prefix slot hugs compact leading units without replacing the field name', async ({
+  page,
+}) => {
+  const input = page.locator('#input-prefix');
+  const prefix = input.locator('.input-control__prefix-text');
+  const nativeInput = input.locator('input');
+
+  await expect(prefix).toHaveText('USD');
+  await expect(prefix).toHaveClass(/ds-control-label-box/);
+  await expect(prefix).not.toHaveClass(/input-control__prefix-text--empty/);
+  await expect(input.locator('ds-divider')).toHaveCount(0);
+  await expect(nativeInput).toHaveAccessibleName('Amount in USD');
+
+  const paint = await input.evaluate(element => {
+    const prefixText = element.querySelector<HTMLElement>('.input-control__prefix-text')!;
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--color-foreground-secondary)';
+    element.append(probe);
+    const expected = getComputedStyle(probe).color;
+    probe.remove();
+    return {
+      color: getComputedStyle(prefixText).color,
+      expected,
+      width: Math.round(prefixText.getBoundingClientRect().width),
+    };
+  });
+  expect(paint.color).toBe(paint.expected);
+  expect(paint.width).toBeGreaterThan(20);
+
+  await expect(page.locator('#input-md .input-control__prefix-text')).toHaveClass(
+    /input-control__prefix-text--empty/
+  );
+});
+
+test(
+  'input prefix and suffix selects use inset trigger geometry without changing the menu',
+  chromiumOnly(
+    'layout-geometry',
+    'Joined-field inset hosting is token-backed geometry shared by Input and Select.'
+  ),
+  async ({ page }) => {
+    const measureHostedSelect = async (inputSelector: string, edge: 'left' | 'right') => {
+      const input = page.locator(inputSelector);
+      const select = input.locator('ds-select');
+      const trigger = select.getByRole('combobox');
+      const control = input.locator('.input-control');
+      const slot = input.locator(
+        edge === 'left' ? '.input-control__prefix-text' : '.input-control__suffix'
+      );
+
+      await expect(select).toHaveJSProperty('isInset', true);
+      await expect(select).toHaveJSProperty('hasBorder', false);
+      await expect(select).toHaveJSProperty('allowClear', false);
+      await expect(select).toHaveJSProperty('indicator', 'up-down');
+      await expect(select).toHaveJSProperty('neutralTrigger', true);
+      await expect(select).toHaveJSProperty('rounded', false);
+      await expect(select).toHaveJSProperty('width', 'hug');
+      await expect
+        .poll(() =>
+          select
+            .locator('.trigger__chevron ds-icon')
+            .evaluate(element => (element as HTMLElement & { name: string }).name)
+        )
+        .toBe('ChevronUpDown');
+      await expect(trigger).toHaveClass(/ds-control--inset(?:\s|$)/);
+      await expect(trigger).not.toHaveClass(/ds-control--inset-double/);
+      await expect(trigger).not.toHaveClass(/trigger--has-value/);
+      await expect(trigger).not.toHaveClass(/trigger--rounded/);
+      await expect(trigger).not.toHaveClass(/trigger--bordered/);
+      await expect(slot).toHaveClass(/--control/);
+      await expect(slot).not.toHaveClass(/ds-control-label-box/);
+      await expect(control).toHaveClass(
+        edge === 'left' ? /input-control--prefix-control/ : /input-control--suffix-control/
+      );
+      const divider = slot.locator('ds-divider');
+      await expect(divider).toHaveCount(1);
+      await expect(divider).toHaveJSProperty('orientation', 'vertical');
+      await expect(divider).toHaveJSProperty('length', 'var(--ds-control-icon)');
+
+      const inset = await page.evaluate(
+        ({ inputSel, edgeName }) => {
+          const host = document.querySelector(inputSel)!;
+          const frame = host.querySelector<HTMLElement>('.input-control')!;
+          const button = host.querySelector<HTMLElement>('ds-select .trigger')!;
+          const label = host.querySelector<HTMLElement>('ds-select .trigger__label-box')!;
+          const divider = host.querySelector<HTMLElement>('ds-divider')!;
+          const nativeInput = host.querySelector<HTMLElement>('input')!;
+          const frameBox = frame.getBoundingClientRect();
+          const buttonBox = button.getBoundingClientRect();
+          const dividerBox = divider.getBoundingClientRect();
+          const inputBox = nativeInput.getBoundingClientRect();
+          const probe = document.createElement('span');
+          probe.style.color = 'var(--color-foreground-secondary)';
+          host.append(probe);
+          const secondary = getComputedStyle(probe).color;
+          probe.style.color = 'var(--color-foreground-primary)';
+          const primary = getComputedStyle(probe).color;
+          probe.remove();
+          const metric = document.createElement('div');
+          metric.style.height = 'var(--ds-control-icon)';
+          frame.append(metric);
+          const iconHeight = metric.getBoundingClientRect().height;
+          metric.style.height = 'var(--dimension-space-025)';
+          const insetPad = metric.getBoundingClientRect().height;
+          metric.style.height = 'var(--ds-control-padding-inline)';
+          const paddingInline = metric.getBoundingClientRect().height;
+          metric.remove();
+          return {
+            height: buttonBox.height,
+            top: buttonBox.top - frameBox.top,
+            bottom: frameBox.bottom - buttonBox.bottom,
+            start:
+              edgeName === 'left'
+                ? buttonBox.left - frameBox.left
+                : frameBox.right - buttonBox.right,
+            labelColor: getComputedStyle(label).color,
+            secondary,
+            primary,
+            dividerHeight: dividerBox.height,
+            iconHeight,
+            insetPad,
+            paddingInline,
+            dividerTop: dividerBox.top - frameBox.top,
+            dividerBottom: frameBox.bottom - dividerBox.bottom,
+            dividerToControl:
+              edgeName === 'left'
+                ? dividerBox.left - buttonBox.right
+                : buttonBox.left - dividerBox.right,
+            dividerToValue:
+              edgeName === 'left'
+                ? inputBox.left - dividerBox.right
+                : dividerBox.left - inputBox.right,
+          };
+        },
+        { inputSel: inputSelector, edgeName: edge }
+      );
+      expect(inset.height).toBeCloseTo(28, 1);
+      expect(inset.top).toBeCloseTo(2, 1);
+      expect(inset.bottom).toBeCloseTo(2, 1);
+      expect(inset.labelColor).toBe(inset.secondary);
+      expect(inset.labelColor).not.toBe(inset.primary);
+      expect(inset.start).toBeCloseTo(2, 1);
+      expect(inset.dividerHeight).toBeCloseTo(inset.iconHeight, 1);
+      expect(inset.dividerToControl).toBeCloseTo(inset.insetPad, 1);
+      expect(inset.dividerToValue).toBeCloseTo(inset.paddingInline, 1);
+
+      await trigger.click();
+      const option = select.locator('.select-option').first();
+      await expect(option).toBeVisible();
+      await expect(option).toHaveCSS('height', '32px');
+      await expect(option).not.toHaveClass(/ds-control--inset/);
+      await expect(select.locator('.select-popup')).not.toHaveClass(/ds-control--inset/);
+      await expect(select.locator('.select-popup')).not.toHaveCSS('border-radius', '9999px');
+      await expect(select.getByRole('option', { selected: true })).toHaveCount(1);
+      await expect(select.getByRole('button', { name: 'Clear' })).toHaveCount(0);
+      await page.keyboard.press('Escape');
+    };
+
+    await measureHostedSelect('#input-prefix-select', 'left');
+    await measureHostedSelect('#input-suffix-select', 'right');
+  }
+);
+
+test('password fields toggle visibility with the inset trailing action', async ({ page }) => {
+  const field = page.locator('#input-password');
+  const native = field.locator('input');
+  const show = field.getByRole('button', { name: 'Show password' });
+
+  await expect(native).toHaveAttribute('type', 'password');
+  await expect(native).toHaveValue('secret-value');
+  await expect(field.locator('ds-button-unfilled')).toHaveJSProperty('icon', 'Eye');
+  await expect(field.locator('ds-button-unfilled')).toHaveJSProperty('hasBorder', false);
+  await expect(field.locator('ds-button-unfilled')).toHaveJSProperty('isInset', true);
+  await expect(field.locator('ds-button-unfilled')).toHaveJSProperty('rounded', false);
+
+  await show.click();
+  await expect(native).toHaveAttribute('type', 'text');
+  await expect(native).toHaveValue('secret-value');
+  await expect(native).toBeFocused();
+  await expect(field.locator('ds-button-unfilled')).toHaveJSProperty('icon', 'EyeDisabled');
+
+  await field.getByRole('button', { name: 'Hide password' }).click();
+  await expect(native).toHaveAttribute('type', 'password');
+  await expect(native).toBeFocused();
+});
+
+test(
+  'borderless supporting copy aligns with control text instead of the resting border box',
+  chromiumOnly(
+    'layout-geometry',
+    'Borderless supporting-copy inset is token-backed field-stack geometry.'
+  ),
+  async ({ page }) => {
+    const readEdges = (host: string, controlSelector: string, messageSelector: string) =>
+      page.locator(host).evaluate(
+        (element, selectors) => {
+          const control = element.querySelector<HTMLElement>(selectors.control)!;
+          const message = element.querySelector<HTMLElement>(selectors.message)!;
+          const controlStart =
+            control.getBoundingClientRect().left +
+            Number.parseFloat(getComputedStyle(control).paddingInlineStart);
+          const messageStart =
+            message.getBoundingClientRect().left +
+            Number.parseFloat(getComputedStyle(message).paddingInlineStart);
+          return {
+            controlStart,
+            messageStart,
+            messagePadding: Number.parseFloat(getComputedStyle(message).paddingInlineStart),
+          };
+        },
+        { control: controlSelector, message: messageSelector }
+      );
+
+    await expect(page.locator('#input-borderless-error')).toHaveClass(
+      /ds-field-stack--supporting-inset/
+    );
+    const borderless = await readEdges('#input-borderless-error', 'input', '.error-text');
+    expect(borderless.messagePadding).toBeGreaterThan(0);
+    expect(borderless.messageStart).toBeCloseTo(borderless.controlStart, 0);
+
+    const bordered = await readEdges('#input-bordered-error', 'input', '.error-text');
+    expect(bordered.messagePadding).toBe(0);
+    expect(bordered.messageStart).toBeLessThan(bordered.controlStart - 4);
+
+    await expect(page.locator('#field-borderless-helper .field')).toHaveClass(
+      /ds-field-stack--supporting-inset/
+    );
+    const field = await readEdges('#field-borderless-helper', 'input', '.field__description');
+    expect(field.messagePadding).toBeGreaterThan(0);
+    expect(field.messageStart).toBeCloseTo(field.controlStart, 0);
+  }
+);
+
+test('date and time inputs follow Input density, body text, and form association @cross-browser', async ({
   page,
 }) => {
   const expected = {
-    lg: { height: 40, icon: 24, textClass: 'ds-text--body-large' },
-    md: { height: 32, icon: 20, textClass: 'ds-text--body-medium' },
-    sm: { height: 24, icon: 16, textClass: 'ds-text--body-small' },
-    xs: { height: 16, icon: 12, textClass: 'ds-text--caption' },
+    lg: { height: 40, button: 36, textClass: 'ds-text--body-large' },
+    md: { height: 32, button: 28, textClass: 'ds-text--body-medium' },
+    sm: { height: 24, button: 20, textClass: 'ds-text--body-small' },
+    xs: { height: 16, button: 12, textClass: 'ds-text--caption' },
   } as const;
 
   for (const [size, dimensions] of Object.entries(expected)) {
     const input = page.locator(`#input-date-${size}`);
     const actual = await input.evaluate(element => {
       const control = element.querySelector<HTMLElement>('.input-control')!;
-      const picker = element.querySelector<HTMLElement>('.input-control__picker')!;
+      const calendar = element.querySelector<HTMLElement>('ds-button-unfilled')!;
       const nativeInput = element.querySelector<HTMLInputElement>('input')!;
+      const nativeStyles = getComputedStyle(nativeInput);
       return {
         height: Math.round(control.getBoundingClientRect().height),
-        icon: Math.round(picker.getBoundingClientRect().width),
+        button: Math.round(calendar.getBoundingClientRect().height),
         type: nativeInput.type,
+        value: nativeInput.value,
         classes: [...nativeInput.classList],
+        typography: {
+          fontSize: nativeStyles.fontSize,
+          fontWeight: nativeStyles.fontWeight,
+          lineHeight: nativeStyles.lineHeight,
+          letterSpacing: nativeStyles.letterSpacing,
+          fontFamily: nativeStyles.fontFamily,
+          paddingInlineStart: nativeStyles.paddingInlineStart,
+        },
       };
     });
 
     expect(actual).toMatchObject({
       height: dimensions.height,
-      icon: dimensions.icon,
-      type: 'date',
+      button: dimensions.button,
+      type: 'text',
+      value: 'Sep 10, 2026',
     });
     expect(actual.classes).toContain(dimensions.textClass);
+    expect(actual.classes).toContain('ds-control-label-box');
+  }
+
+  await page.evaluate(() => {
+    const buttonStyles = [...document.querySelectorAll('style')].find(style =>
+      style.textContent?.includes('.ds-button-host--icon')
+    );
+    if (!buttonStyles) throw new Error('ButtonUnfilled styles were not rendered');
+    document.head.append(buttonStyles);
+  });
+  for (const id of ['input-date-lg', 'input-date-md', 'input-date-sm', 'input-date-xs']) {
+    const calendarAlignment = await page.locator(`#${id}`).evaluate(element => {
+      const control = element.querySelector<HTMLElement>('.input-control')!.getBoundingClientRect();
+      const calendarAction = element.querySelector<HTMLElement>('ds-button-unfilled')!;
+      const calendar = calendarAction.getBoundingClientRect();
+      const glyph = calendarAction.querySelector<HTMLElement>('ds-icon')!.getBoundingClientRect();
+      return {
+        alignSelf: getComputedStyle(calendarAction).alignSelf,
+        action: {
+          top: calendar.top - control.top,
+          right: control.right - calendar.right,
+          bottom: control.bottom - calendar.bottom,
+        },
+        glyph: {
+          top: glyph.top - control.top,
+          right: control.right - glyph.right,
+          bottom: control.bottom - glyph.bottom,
+        },
+      };
+    });
+    await expect(page.locator(`#${id} ds-button-unfilled`)).toHaveJSProperty('icon', 'Calendar');
+    await expect(page.locator(`#${id} ds-button-unfilled`)).toHaveJSProperty('hasBorder', false);
+    await expect(page.locator(`#${id} ds-button-unfilled`)).toHaveJSProperty('rounded', false);
+    await expect(page.locator(`#${id} ds-button-unfilled`)).toHaveJSProperty('isInset', true);
+    expect(calendarAlignment.alignSelf).toBe('center');
+    expect(calendarAlignment.action.right).toBeCloseTo(calendarAlignment.action.top, 1);
+    expect(calendarAlignment.action.right).toBeCloseTo(calendarAlignment.action.bottom, 1);
+    expect(calendarAlignment.action.top).toBeCloseTo(2, 1);
+    expect(calendarAlignment.glyph.right).toBeCloseTo(calendarAlignment.glyph.top, 1);
+    expect(calendarAlignment.glyph.right).toBeCloseTo(calendarAlignment.glyph.bottom, 1);
   }
 
   const time = await page.locator('#input-time-md').evaluate(element => {
     const control = element.querySelector<HTMLElement>('.input-control')!;
+    const clock = element.querySelector<HTMLElement>('ds-button-unfilled')!;
     const nativeInput = element.querySelector<HTMLInputElement>('input')!;
     return {
       height: Math.round(control.getBoundingClientRect().height),
+      button: Math.round(clock.getBoundingClientRect().height),
       type: nativeInput.type,
-      step: nativeInput.step,
+      value: nativeInput.value,
       classes: [...nativeInput.classList],
     };
   });
-  expect(time).toMatchObject({ height: 32, type: 'time', step: '60' });
+  expect(time).toMatchObject({ height: 32, button: 28, type: 'text', value: '9:00 AM' });
   expect(time.classes).toContain('ds-text--body-medium');
+  await expect(page.locator('#input-time-md ds-button-unfilled')).toHaveJSProperty('icon', 'Clock');
+  await expect(page.locator('#input-time-md ds-button-unfilled')).toHaveJSProperty(
+    'hasBorder',
+    false
+  );
+  await expect(page.locator('#input-time-md ds-button-unfilled')).toHaveJSProperty(
+    'rounded',
+    false
+  );
+  await expect(page.locator('#input-time-md ds-button-unfilled')).toHaveJSProperty('isInset', true);
+  await expect(
+    page.locator('#input-time-md').getByRole('button', { name: 'Choose time' })
+  ).toBeVisible();
+
+  const timeAlignment = await page.locator('#input-time-md').evaluate(element => {
+    const control = element.querySelector<HTMLElement>('.input-control')!.getBoundingClientRect();
+    const clockAction = element.querySelector<HTMLElement>('ds-button-unfilled')!;
+    const clock = clockAction.getBoundingClientRect();
+    const glyph = clockAction.querySelector<HTMLElement>('ds-icon')!.getBoundingClientRect();
+    return {
+      alignSelf: getComputedStyle(clockAction).alignSelf,
+      action: {
+        top: clock.top - control.top,
+        right: control.right - clock.right,
+        bottom: control.bottom - clock.bottom,
+      },
+      glyph: {
+        top: glyph.top - control.top,
+        right: control.right - glyph.right,
+        bottom: control.bottom - glyph.bottom,
+      },
+    };
+  });
+  expect(timeAlignment.alignSelf).toBe('center');
+  expect(timeAlignment.action.right).toBeCloseTo(timeAlignment.action.top, 1);
+  expect(timeAlignment.action.right).toBeCloseTo(timeAlignment.action.bottom, 1);
+  expect(timeAlignment.action.top).toBeCloseTo(2, 1);
+  expect(timeAlignment.glyph.right).toBeCloseTo(timeAlignment.glyph.top, 1);
+  expect(timeAlignment.glyph.right).toBeCloseTo(timeAlignment.glyph.bottom, 1);
 
   await expect
     .poll(() =>
@@ -543,6 +899,102 @@ test('date and time inputs follow Input density, body text, and form association
     .toEqual({
       'start-date': '2026-09-10',
       'start-time': '09:00',
+    });
+
+  const dateField = page.locator('#input-date-md');
+  await dateField.getByRole('button', { name: 'Choose date' }).click();
+  const picker = page.getByRole('dialog', { name: 'Choose date' });
+  await expect(picker).toBeVisible();
+  const pickerAlignment = await dateField.evaluate(element => {
+    const control = element.querySelector<HTMLElement>('.input-control')!.getBoundingClientRect();
+    const popup = element.querySelector<HTMLElement>('.input-date-popup')!.getBoundingClientRect();
+    return { controlRight: control.right, popupRight: popup.right };
+  });
+  expect(pickerAlignment.popupRight).toBeCloseTo(pickerAlignment.controlRight, 1);
+  await picker.locator('[data-date-option="2026-09-16"]').click();
+  await expect(dateField.locator('ds-calendar')).toHaveCount(0);
+  await expect(dateField.locator('input')).toHaveValue('Sep 16, 2026');
+  await expect
+    .poll(() =>
+      page
+        .locator('#datetime-input-form')
+        .evaluate(form => Object.fromEntries(new FormData(form as HTMLFormElement)))
+    )
+    .toEqual({
+      'start-date': '2026-09-16',
+      'start-time': '09:00',
+    });
+
+  await dateField.locator('input').fill('9/11/2026');
+  await dateField.locator('input').blur();
+  await expect(dateField.locator('input')).toHaveValue('Sep 11, 2026');
+  await expect
+    .poll(() =>
+      page
+        .locator('#datetime-input-form')
+        .evaluate(form => Object.fromEntries(new FormData(form as HTMLFormElement)))
+    )
+    .toEqual({
+      'start-date': '2026-09-11',
+      'start-time': '09:00',
+    });
+
+  const timeField = page.locator('#input-time-md');
+  await timeField.getByRole('button', { name: 'Choose time' }).click();
+  const timePicker = page.getByRole('dialog', { name: 'Choose time' });
+  await expect(timePicker).toBeVisible();
+  const timePickerAlignment = await timeField.evaluate(element => {
+    const control = element.querySelector<HTMLElement>('.input-control')!.getBoundingClientRect();
+    const popup = element.querySelector<HTMLElement>('.input-time-popup')!.getBoundingClientRect();
+    return { controlRight: control.right, popupRight: popup.right };
+  });
+  expect(timePickerAlignment.popupRight).toBeCloseTo(timePickerAlignment.controlRight, 1);
+  await expect(timePicker.locator('.time-picker-tile').first()).toHaveCSS('height', '32px');
+
+  const hourList = timePicker.getByRole('listbox', { name: 'Hour' });
+  await hourList.getByRole('option', { name: '1', exact: true }).focus();
+  await page.keyboard.press('ArrowUp');
+  await expect(hourList.getByRole('option', { name: '1', exact: true })).toBeFocused();
+  await hourList.getByRole('option', { name: '12', exact: true }).focus();
+  await page.keyboard.press('ArrowDown');
+  await expect(hourList.getByRole('option', { name: '12', exact: true })).toBeFocused();
+
+  const minuteList = timePicker.getByRole('listbox', { name: 'Minute' });
+  await minuteList.getByRole('option', { name: '00', exact: true }).focus();
+  await page.keyboard.press('ArrowUp');
+  await expect(minuteList.getByRole('option', { name: '00', exact: true })).toBeFocused();
+  await minuteList.getByRole('option', { name: '59', exact: true }).focus();
+  await page.keyboard.press('ArrowDown');
+  await expect(minuteList.getByRole('option', { name: '59', exact: true })).toBeFocused();
+
+  await hourList.getByRole('option', { name: '10', exact: true }).click();
+  await expect(timeField.locator('input')).toHaveValue('10:00 AM');
+  await expect(timePicker).toBeVisible();
+  await timeField.getByRole('button', { name: 'Choose time' }).click();
+  await expect(timeField.locator('ds-time-picker')).toHaveCount(0);
+  await expect
+    .poll(() =>
+      page
+        .locator('#datetime-input-form')
+        .evaluate(form => Object.fromEntries(new FormData(form as HTMLFormElement)))
+    )
+    .toEqual({
+      'start-date': '2026-09-11',
+      'start-time': '10:00',
+    });
+
+  await timeField.locator('input').fill('1:15 PM');
+  await timeField.locator('input').blur();
+  await expect(timeField.locator('input')).toHaveValue('1:15 PM');
+  await expect
+    .poll(() =>
+      page
+        .locator('#datetime-input-form')
+        .evaluate(form => Object.fromEntries(new FormData(form as HTMLFormElement)))
+    )
+    .toEqual({
+      'start-date': '2026-09-11',
+      'start-time': '13:15',
     });
 });
 
@@ -607,6 +1059,8 @@ test(
       .toEqual({ gap: '4px', padding: '4px' });
     const menuRow = page.locator('#menu-xs .menu-item').first();
     await expect(menuRow).toHaveClass(/ds-control--xs/);
+    await expect(menuRow).toHaveCSS('padding-top', '0px');
+    await expect(menuRow).toHaveCSS('padding-bottom', '0px');
     await expect(menuRow.locator('.menu-item__label')).toHaveJSProperty('variant', 'text-caption');
     await expect(menuRow.locator('.menu-item__subtext')).toHaveJSProperty(
       'variant',

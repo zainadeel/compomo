@@ -7,7 +7,7 @@
   "tag": "ds-input-date",
   "audience": "general",
   "status": "experimental",
-  "summary": "Form-associated calendar date field that reuses Input density, focus, validation, and field composition with a native date value.",
+  "summary": "Form-associated calendar date field that reuses Input density, focus, validation, and field composition, with a typeable value and a Calendar picker.",
   "useWhen": [
     "A user must enter or edit a calendar date as an ISO date string.",
     "The date must participate in native, Angular, React, or Vue form state.",
@@ -27,52 +27,57 @@
     {
       "when": "The value is a clock time.",
       "component": "component:ds-input-time",
-      "reason": "InputTime owns native time semantics and the clock picker affordance."
+      "reason": "InputTime owns clock time form values and the TimePicker."
     },
     {
       "when": "The user chooses a relative or bounded date range from presets.",
-      "component": "component:ds-table-filter",
-      "reason": "TableFilter owns relative date presets and range selection rather than a single calendar date."
+      "component": "component:ds-filter-menu",
+      "reason": "FilterMenu owns relative date presets and range selection rather than a single calendar date."
+    },
+    {
+      "when": "The month grid is needed without a form field.",
+      "component": "component:ds-calendar",
+      "reason": "Calendar owns the shared month grid and can select a single date or a range."
     }
   ],
   "commonlyComposedWith": [
     "component:ds-field",
+    "component:ds-calendar",
+    "component:ds-button-unfilled",
     "component:ds-icon",
     "component:ds-text",
     "component:ds-input-time"
   ],
   "accessibility": [
     "Provide a persistent visible label through the owning field or an external native label.",
-    "The native date input remains the keyboard and assistive-technology control; the calendar icon only opens the browser picker and is hidden from the accessibility tree.",
-    "Filled values keep YYYY-MM-DD as the native and form value. Visible text uses a short-month calendar label such as Sep 10, 2026 so the field does not show ISO chrome.",
-    "Error text is associated with the native input and announced as an alert when the invalid state is rendered.",
+    "The text field remains the keyboard and assistive-technology value control. Users can type an ISO date, a numeric M/D/YYYY date, or a short-month label such as Sep 10, 2026.",
+    "The trailing calendar button is a named disclosure that opens a non-modal calendar dialog. It shares the field's density, uses the single inset recipe, and reports expanded state while the picker is open.",
+    "Filled values keep YYYY-MM-DD as the form value. Visible text uses a short-month calendar label such as Sep 10, 2026 so the field does not show ISO chrome. That label reuses Input's value typography and text-container inset.",
+    "Error text is associated with the text field and announced as an alert when the invalid state is rendered.",
     "Read-only fields remain focusable and submittable while preventing edits; inactive or disabled fields leave the tab order and are omitted from form submission."
   ],
   "states": [
     "Every size applies the shared control-density recipe, including md body-medium text, across frame height, inline padding, icon zones, and radius.",
-    "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry.",
+    "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry. When hasBorder is false, supporting error copy insets to the field's text origin rather than the resting border box.",
     "The host exposes focused, filled, dirty, touched, invalid, disabled, read-only, and required data attributes for Field integration and diagnostics.",
-    "The trailing calendar action is a pointer affordance; it does not replace the field label or the native date value.",
-    "A filled field paints the readable calendar label over the native date text. Empty fields keep the browser empty-date chrome."
+    "The trailing calendar action is an unfilled icon button of the same density as the field, borderless and square, with the single inset recipe so the 4px height reduction insets it equally from the field's top, end, and bottom edges. It does not replace the field label or the submitted date value. Inactive or disabled fields apply that treatment on the host only, so the nested button is not faded a second time.",
+    "Activating the calendar button opens the shared Calendar grid in a choice-popup dialog anchored to the field's end edge, beside the trailing calendar action. Choosing a day commits that date and closes the dialog. Typing in the field commits a parsed date without requiring the picker. Invalid typed text reverts to the last committed value on blur."
   ],
   "responsiveBehavior": [
     "Form fields normally fill their parent; use hug width only in a compact toolbar or filter layout with an explicit width constraint.",
-    "Choose density from the containing layout: md for ordinary forms, lg for a touch-primary layout, and sm or xs only where surrounding controls use the same compact recipe."
+    "Choose density from the containing layout: md for ordinary forms, lg for a touch-primary layout, and sm or xs only where surrounding controls use the same compact recipe.",
+    "The calendar dialog uses the shared choice-popup recipe with the same 4px sm chrome inset as choice lists, aligns to the field's end edge, flips when the field collides with the overlay boundary, and stays in the top layer."
   ],
   "frameworkCaveats": {
     "customElements": [
-      "Listen for dsChange for user edits. The detail is the native date string, typically YYYY-MM-DD.",
+      "Listen for dsChange for user edits. The detail is the ISO calendar date string YYYY-MM-DD.",
       "Use the form attribute on the host when associating a date field rendered outside its owning form."
     ],
     "react": [
       "Use DsInputDate, bind value for controlled application state, and handle onDsChange."
     ],
-    "vue": [
-      "Use DsInputDate with v-model for the value, and listen for dsChange."
-    ],
-    "angular": [
-      "Import DsInputDate with TextValueAccessor when integrating with Angular Forms."
-    ]
+    "vue": ["Use DsInputDate with v-model for the value, and listen for dsChange."],
+    "angular": ["Import DsInputDate with TextValueAccessor when integrating with Angular Forms."]
   },
   "references": [
     {

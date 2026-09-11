@@ -22,6 +22,7 @@ import {
   setFormControlValue,
   setRepeatedFormControlValue,
   setRequiredValidity,
+  type ControlInsetDepth,
   type ControlWidth,
 } from '../../utils';
 import {
@@ -120,6 +121,10 @@ export class Select {
   @Prop() dot: boolean = false;
   /** Control density. */
   @Prop() size: SelectSize = 'md';
+  /** Use reduced outer geometry when nested inside a control of the same size. */
+  @Prop() isInset: boolean = false;
+  /** Single removes 4px overall; double removes 8px overall (xs stays single). */
+  @Prop() insetDepth: ControlInsetDepth = 'single';
   /** Width fit — hug content (default) or fill the parent. */
   @Prop() width: SelectWidth = 'hug';
   /** Align the popup's choice edge to the trigger start or end edge. */
@@ -143,6 +148,8 @@ export class Select {
   @Prop() iconOnly: boolean = false;
   /** Show the surface-aware inset border, including focused and invalid strokes. */
   @Prop() hasBorder: boolean = true;
+  /** Use a pill radius on the trigger. Popup chrome stays on the menu radius. */
+  @Prop() rounded: boolean = false;
   /** Optional trigger prefix icon name. */
   @Prop() icon: string | undefined;
   /** Trailing choice indicator. Use up-down for compact value steppers such as page size. */
@@ -704,6 +711,10 @@ export class Select {
     );
   }
 
+  private get doubleInset(): boolean {
+    return this.isInset && this.insetDepth === 'double' && this.size !== 'xs';
+  }
+
   private syncCaptionCompactObserver(): void {
     this.disconnectCaptionCompactObserver();
     if (!this.collapseLabel) {
@@ -763,6 +774,7 @@ export class Select {
           'ds-select-trigger-host': true,
           'select-host--multiple': this.multiple,
           'ds-field-stack': true,
+          'ds-field-stack--supporting-inset': !this.hasBorder,
           'ds-control-inactive': inactive,
           [`ds-control--${this.size}`]: true,
           'ds-table-caption-control': this.collapseLabel,
@@ -788,12 +800,15 @@ export class Select {
               'trigger--expanded': !inactive && this.open,
               'ds-interaction-fill--surface-open': !inactive && this.open,
               'trigger--bordered': this.hasBorder,
+              'trigger--rounded': this.rounded,
               'trigger--placeholder': showPlaceholder && !this.multiple,
               'trigger--has-value': this.hasSelection && !this.neutralTrigger,
               'trigger--label-placeholder':
                 !this.multiple && Boolean(this.triggerLabel) && this.triggerLabelPlaceholder,
               'wrapper--error': this.hasBorder && this.error,
               [`ds-control--${this.size}`]: true,
+              'ds-control--inset': this.isInset && !this.doubleInset,
+              'ds-control--inset-double': this.doubleInset,
               ...choiceBackgroundClassMap(this.background),
             }}
             disabled={inactive}

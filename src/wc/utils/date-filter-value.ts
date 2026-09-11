@@ -46,6 +46,41 @@ export function formatIsoCalendarDateLabel(value: string): string {
   return ISO_CALENDAR_DATE_LABEL.format(new Date(`${value}T00:00:00Z`));
 }
 
+const MONTH_LABELS = [
+  'jan',
+  'feb',
+  'mar',
+  'apr',
+  'may',
+  'jun',
+  'jul',
+  'aug',
+  'sep',
+  'oct',
+  'nov',
+  'dec',
+];
+
+/** Parse a typed calendar date: ISO, `M/D/YYYY`, or a short-month label such as `Sep 10, 2026`. */
+export function parseLooseCalendarDate(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  if (isIsoCalendarDate(trimmed)) return trimmed;
+
+  const numeric = trimmed.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (numeric) {
+    const iso = `${numeric[3]}-${numeric[1].padStart(2, '0')}-${numeric[2].padStart(2, '0')}`;
+    return isIsoCalendarDate(iso) ? iso : '';
+  }
+
+  const labelled = trimmed.match(/^([A-Za-z]{3})\s+(\d{1,2}),\s+(\d{4})$/);
+  if (!labelled) return '';
+  const monthIndex = MONTH_LABELS.indexOf(labelled[1].toLowerCase());
+  if (monthIndex < 0) return '';
+  const iso = `${labelled[3]}-${String(monthIndex + 1).padStart(2, '0')}-${labelled[2].padStart(2, '0')}`;
+  return isIsoCalendarDate(iso) ? iso : '';
+}
+
 export function shiftIsoCalendarDate(value: string, days: number): string {
   if (!isIsoCalendarDate(value)) return '';
   const [year, month, day] = value.split('-').map(Number);

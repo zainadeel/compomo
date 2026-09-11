@@ -7,9 +7,10 @@
   "tag": "ds-field",
   "audience": "general",
   "status": "stable",
-  "summary": "Accessible form-field composition that gives one Input, InputDate, InputTime, Textarea, or Select a persistent label, optional guidance, shared error presentation, stable IDs, and observable interaction state.",
+  "summary": "Accessible form-field composition that gives one Input, InputDate, InputTime, Textarea, or Select an optional visible label, optional guidance, shared error presentation, stable IDs, and observable interaction state.",
   "useWhen": [
     "An Input, InputDate, InputTime, Textarea, or Select needs a persistent visible label in a form.",
+    "A nearby heading already names the field, and the control still needs Field's error association and message rhythm.",
     "Help text or an error message must be programmatically associated with one control.",
     "A form layout needs one consistent label-control-message rhythm."
   ],
@@ -34,14 +35,16 @@
     "component:ds-text"
   ],
   "accessibility": [
-    "Slot exactly one form control. Field assigns its stable control ID and connects the visible label automatically.",
+    "Slot exactly one form control. When a visible label is provided, Field assigns its stable control ID and connects that label automatically.",
+    "Omit the visible label when a nearby heading already names the field. Keep a programmatic name on the slotted control, such as aria-label, and do not set aria-labelledby to an empty value.",
     "The visible description or error ID is merged with any authored aria-describedby references; a rendered error replaces the description.",
     "The error prop forwards aria-invalid and supported design-system control error styling; put visible error text on Field, not again on the child control.",
     "Clicking the label focuses the slotted design-system control without opening a Select popup.",
     "Do not use placeholder text as the only label. Keep label text concise and put format or consequence guidance in description."
   ],
   "states": [
-    "Label, control, description, and error content follow the shared 4px vertical field flow without changing the slotted control's width or semantics.",
+    "The visible label is optional. Omit it when a nearby heading already names the field; Field still associates description and error text with the slotted control.",
+    "Label, control, description, and error content follow the shared 4px vertical field flow without changing the slotted control's width or semantics. When the slotted control is borderless, description and error copy inset to that control's text origin instead of the resting bordered edge.",
     "Field exposes data-focused, data-filled, data-dirty, data-touched, data-invalid, data-disabled, and data-required hooks while the slotted control remains the source of value and interaction behavior.",
     "A rendered error replaces the description; preserve essential guidance in the error message so users retain what they need to correct the field.",
     "Field owns validation presentation but not validation timing; the form decides when to set error and errorMessage.",

@@ -93,6 +93,16 @@ export const WithTextarea: Story = {
   `,
 };
 
+export const WithoutVisibleLabel: Story = {
+  render: () => html`
+    <div style="width:320px;">
+      <ds-field error error-message="View name is required.">
+        <ds-input aria-label="Name" placeholder="Enter a unique name"></ds-input>
+      </ds-field>
+    </div>
+  `,
+};
+
 export const Error: Story = {
   render: () => html`
     <div style="width:320px;">

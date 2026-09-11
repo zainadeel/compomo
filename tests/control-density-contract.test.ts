@@ -104,6 +104,29 @@ test('inset density reduces only same-size outer geometry', () => {
   assert.match(tabGroupCss, /@import ['"]\.\.\/\.\.\/utils\/control-density-inset\.css['"];/);
   assert.match(tabGroupSource, /\[`ds-control--\$\{this\.size\}`\]: true/);
   assert.match(tabGroupSource, /['"]ds-control--inset['"]: this\.presentation !== ['"]tabs['"]/);
+
+  const selectCss = read('src/wc/components/Select/Select.css');
+  const selectSource = read('src/wc/components/Select/Select.tsx');
+  const selectHostClass = selectSource.match(/<Host\s+class=\{\{([\s\S]*?)\}\}/)?.[1];
+  assert.match(selectCss, /@import ['"]\.\.\/\.\.\/utils\/control-density-inset\.css['"];/);
+  assert.match(selectSource, /@Prop\(\) isInset: boolean = false/);
+  assert.match(selectSource, /@Prop\(\) insetDepth: ControlInsetDepth = 'single'/);
+  assert.match(selectSource, /@Prop\(\) rounded: boolean = false/);
+  assert.match(selectSource, /['"]trigger--rounded['"]: this\.rounded/);
+  assert.match(
+    selectSource,
+    /private get doubleInset\(\): boolean \{\s*return this\.isInset && this\.insetDepth === 'double' && this\.size !== 'xs';/
+  );
+  assert.equal(
+    selectSource.match(/['"]ds-control--inset['"]: this\.isInset && !this\.doubleInset/g)?.length,
+    1
+  );
+  assert.equal(
+    selectSource.match(/['"]ds-control--inset-double['"]: this\.doubleInset/g)?.length,
+    1
+  );
+  assert.ok(selectHostClass);
+  assert.doesNotMatch(selectHostClass, /ds-control--inset/);
 });
 
 test('choice rows derive primary and supporting type from control density', () => {
@@ -245,6 +268,29 @@ test('PanelTools search uses the shared Select search control at md density', ()
   );
   assert.match(searchParts, /icon="MagnifyingGlass"/);
   assert.match(inputCss, /--ds-input-adornment-fg: var\(--color-foreground-secondary\);/);
+  assert.match(inputCss, /\.input-control__prefix-text--empty/);
+  assert.match(read('src/wc/components/Input/Input.tsx'), /<slot name="prefix"/);
+  assert.match(
+    read('src/wc/components/Input/Input.tsx'),
+    /'input-control__prefix-text': true,[\s\S]*?'ds-control-label-box': !this\.hasPrefixControl/
+  );
+  assert.match(
+    read('src/wc/components/Input/Input.tsx'),
+    /'input-control__suffix': true,[\s\S]*?'ds-control-label-box': !this\.hasSuffixControl/
+  );
+  assert.match(inputCss, /\.input-control--prefix-control/);
+  assert.match(inputCss, /\.input-control--suffix-control/);
+  assert.match(inputCss, /gap: var\(--dimension-space-025\)/);
+  assert.match(
+    inputCss,
+    /margin-inline-end: calc\(var\(--ds-control-padding-inline\) - var\(--ds-control-gap\)\)/
+  );
+  assert.match(
+    read('src/wc/components/Input/Input.tsx'),
+    /<ds-divider[\s\S]*?orientation="vertical"[\s\S]*?length="var\(--ds-control-icon\)"/
+  );
+  assert.match(inputCss, /padding-inline-start: var\(--dimension-space-025\)/);
+  assert.match(read('src/wc/components/Input/Input.tsx'), /ds-select, ds-button-unfilled/);
   assert.match(css, /height: var\(--dimension-size-600\);/);
   assert.match(source, /panel-tool-search ds-chrome-row ds-chrome-space--md/);
   assert.match(css, /@import ['"]\.\.\/\.\.\/utils\/chrome-layout\.css['"];/);
@@ -272,20 +318,94 @@ test('date and time inputs share Input density, typography, and picker chrome', 
   const timeSource = read('src/wc/components/InputTime/InputTime.tsx');
   const dateCss = read('src/wc/components/InputDate/InputDate.css');
   const timeCss = read('src/wc/components/InputTime/InputTime.css');
+  const timePickerCss = read('src/wc/components/TimePicker/TimePicker.css');
+  const timePickerSource = read('src/wc/components/TimePicker/TimePicker.tsx');
+  const filterMenuCss = read('src/wc/components/FilterMenu/FilterMenu.css');
   const datetimeCss = read('src/wc/utils/datetime-input-control.css');
 
   assert.match(dateCss, /@import ['"]\.\.\/\.\.\/utils\/datetime-input-control\.css['"];/);
+  assert.match(dateCss, /@import ['"]\.\.\/\.\.\/utils\/choice-popup\.css['"];/);
+  assert.match(dateCss, /@import ['"]\.\.\/\.\.\/utils\/chrome-layout\.css['"];/);
+  assert.match(dateCss, /--ds-calendar-padding: 0;/);
+  assert.match(dateCss, /padding: var\(--dimension-space-050\);/);
   assert.match(timeCss, /@import ['"]\.\.\/\.\.\/utils\/datetime-input-control\.css['"];/);
+  assert.match(timeCss, /@import ['"]\.\.\/\.\.\/utils\/choice-popup\.css['"];/);
+  assert.match(timeCss, /@import ['"]\.\.\/\.\.\/utils\/chrome-layout\.css['"];/);
+  assert.match(timeCss, /--ds-time-picker-padding: 0;/);
+  assert.match(timeCss, /padding: var\(--dimension-space-050\);/);
   assert.match(datetimeCss, /@import ['"]\.\/typography\.css['"];/);
   assert.match(datetimeCss, /@import ['"]\.\/control-density\.css['"];/);
   assert.match(datetimeCss, /::-webkit-calendar-picker-indicator/);
   assert.match(datetimeCss, /::-webkit-datetime-edit/);
   assert.match(dateSource, /CONTROL_TEXT_VARIANT\[this\.size\]/);
   assert.match(timeSource, /CONTROL_TEXT_VARIANT\[this\.size\]/);
-  assert.match(dateSource, /type="date"/);
+  assert.match(dateSource, /type="text"/);
   assert.match(dateSource, /formatIsoCalendarDateLabel/);
-  assert.match(dateCss, /input-control__formatted-date/);
-  assert.match(timeSource, /type="time"/);
-  assert.match(dateSource, /name="Calendar"/);
-  assert.match(timeSource, /name="Clock"/);
+  assert.match(dateSource, /<ds-calendar[\s\S]*?selectionMode="single"/);
+  assert.match(timeSource, /<ds-time-picker[\s\S]*?step=\{this\.step\}/);
+  assert.match(dateSource, /'ds-chrome-space--sm': true/);
+  assert.match(timeSource, /'ds-chrome-space--sm': true/);
+  assert.match(timePickerSource, /'ds-interaction-fill--selected': selected && !disabled/);
+  assert.doesNotMatch(filterMenuCss, /ds-calendar-padding/);
+  const calendarCss = read('src/wc/components/Calendar/Calendar.css');
+  assert.match(
+    calendarCss,
+    /min-width: calc\(\s*\(var\(--dimension-size-400\) \* 7\) \+ \(var\(--dimension-space-050\) \* 6\) \+\s*\(var\(--dimension-space-100\) \* 2\)\s*\)/
+  );
+  assert.match(calendarCss, /\.calendar-day--in-range\s*\{[\s\S]*?color-background-faint-brand/);
+  assert.match(
+    calendarCss,
+    /calendar-day--range-preview:not\(:disabled\)::after[\s\S]*?--ds-interaction-hover/
+  );
+  assert.match(
+    calendarCss,
+    /calendar-day--range-preview:active:not\(:disabled\)::after[\s\S]*?--ds-interaction-pressed/
+  );
+  assert.doesNotMatch(calendarCss, /calendar-day--selected[\s\S]*?color-background-bold-brand/);
+  assert.doesNotMatch(
+    calendarCss,
+    /\.calendar-day--range-preview\s*\{[\s\S]*?color-background-faint-brand/
+  );
+  assert.match(
+    read('src/wc/components/Calendar/Calendar.tsx'),
+    /'ds-interaction-fill--surface-open':[\s\S]*pendingStartDay && !this\.isDisabled\(day\.value\)/
+  );
+  assert.match(
+    read('src/wc/components/Calendar/Calendar.tsx'),
+    /'ds-interaction-fill--selected': selected && !this\.isDisabled\(day\.value\)/
+  );
+  assert.match(timeSource, /formatClockTimeLabel/);
+  assert.match(datetimeCss, /input-control__datetime-action/);
+  assert.match(datetimeCss, /padding-inline-end: var\(--dimension-space-025\)/);
+  assert.match(
+    datetimeCss,
+    /:host\(\.ds-control-inactive\) \.input-control > \.input-control__datetime-action/
+  );
+  assert.match(dateSource, /class="input-control__datetime-action"/);
+  assert.match(timeSource, /class="input-control__datetime-action"/);
+  assert.match(timeSource, /type="text"/);
+  assert.match(timePickerCss, /height: var\(--dimension-size-400\)/);
+  assert.match(timePickerCss, /overscroll-behavior: contain/);
+  assert.match(timePickerCss, /ds-time-picker-padding/);
+  assert.doesNotMatch(timePickerCss, /color-background-faint-brand/);
+  assert.match(
+    dateSource,
+    /<ds-button-unfilled[\s\S]*?icon="Calendar"[\s\S]*?hasBorder={false}[\s\S]*?isInset/
+  );
+  assert.match(
+    timeSource,
+    /<ds-button-unfilled[\s\S]*?icon="Clock"[\s\S]*?hasBorder={false}[\s\S]*?isInset/
+  );
+  assert.doesNotMatch(dateSource, /CALENDAR_BUTTON_SIZE/);
+  assert.doesNotMatch(dateSource, /rounded/);
+  assert.doesNotMatch(timeSource, /ICON_SIZE/);
+  assert.doesNotMatch(timeSource, /rounded/);
+  const inputSource = read('src/wc/components/Input/Input.tsx');
+  const inputFieldCss = read('src/wc/components/Input/Input.css');
+  assert.match(
+    inputSource,
+    /<ds-button-unfilled[\s\S]*?icon=\{this\.passwordRevealed \? 'EyeDisabled' : 'Eye'\}[\s\S]*?hasBorder=\{false\}[\s\S]*?isInset/
+  );
+  assert.match(inputFieldCss, /input-control__trailing-action/);
+  assert.match(inputFieldCss, /padding-inline-end: var\(--dimension-space-025\)/);
 });

@@ -187,6 +187,11 @@ test('choice sections migrate last to the shared sm column recipe', () => {
   const css = read('src/wc/utils/choice-list.css');
   assert.match(css, /@import ['"]\.\/chrome-layout\.css['"];/);
   assert.doesNotMatch(css, /\.ds-choice-section\s*{[^}]*(?:gap|padding):/);
+  assert.match(
+    css,
+    /\.ds-choice-item\.ds-control--xs:has\(\.ds-choice-item__subtext\)\s*{[\s\S]*?padding-block: 0;/
+  );
+  assert.match(css, /\.select-option-row\s*{[\s\S]*?display: flex;[\s\S]*?flex-direction: column;/);
 });
 
 test('mobile shell owns the top safe area while the primary bottom bar owns the bottom', () => {

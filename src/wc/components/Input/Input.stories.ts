@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-input.js';
+import '../../../../dist/components/ds-select.js';
+import '../../../../dist/components/ds-divider.js';
 
 const meta: Meta = {
   title: 'Form/Input',
@@ -106,10 +108,16 @@ export const SizesAndStates: Story = {
         step="100"
         aria-label="Number input"
       ></ds-input>
+      <ds-text variant="text-body-small" color="secondary">Prefix</ds-text>
+      <ds-input value="1,200.00" aria-label="Amount in USD">
+        <ds-text slot="prefix" as="span" variant="text-body-medium" color="inherit">USD</ds-text>
+      </ds-input>
       <ds-text variant="text-body-small" color="secondary">Suffix</ds-text>
       <ds-input value="48" aria-label="Input with suffix">
         <ds-text slot="suffix" as="span" variant="text-body-medium" color="inherit">%</ds-text>
       </ds-input>
+      <ds-text variant="text-body-small" color="secondary">Password</ds-text>
+      <ds-input type="password" value="secret-value" aria-label="Password input"></ds-input>
       <ds-text variant="text-body-small" color="secondary">Error</ds-text>
       <ds-input
         error
@@ -265,6 +273,95 @@ export const NumberSteppers: Story = {
         read-only
         aria-label="Read-only number"
       ></ds-input>
+    </div>
+  `,
+};
+
+const CURRENCY_OPTIONS = [
+  { label: 'USD', value: 'usd' },
+  { label: 'EUR', value: 'eur' },
+  { label: 'GBP', value: 'gbp' },
+];
+
+const UNIT_OPTIONS = [
+  { label: 'px', value: 'px' },
+  { label: '%', value: 'percent' },
+  { label: 'em', value: 'em' },
+];
+
+const INPUT_SIZES = ['lg', 'md', 'sm', 'xs'] as const;
+
+export const PrefixAndSuffixSelects: Story = {
+  name: 'Prefix and suffix selects',
+  render: () => html`
+    <div
+      style="display:grid;grid-template-columns:max-content minmax(12rem,20rem);align-items:center;gap:var(--dimension-space-100) var(--dimension-space-200);"
+    >
+      ${INPUT_SIZES.map(
+        size => html`
+          <ds-text variant="text-body-small" color="secondary">${size} prefix</ds-text>
+          <ds-input size=${size} value="1,200.00" aria-label="${size} amount">
+            <ds-select
+              slot="prefix"
+              size=${size}
+              width="hug"
+              is-inset
+              indicator="up-down"
+              .hasBorder=${false}
+              .allowClear=${false}
+              .neutralTrigger=${true}
+              value="usd"
+              .options=${CURRENCY_OPTIONS}
+              aria-label="${size} currency"
+            ></ds-select>
+          </ds-input>
+          <ds-text variant="text-body-small" color="secondary">${size} suffix</ds-text>
+          <ds-input size=${size} value="48" aria-label="${size} measure">
+            <ds-select
+              slot="suffix"
+              size=${size}
+              width="hug"
+              is-inset
+              indicator="up-down"
+              .hasBorder=${false}
+              .allowClear=${false}
+              .neutralTrigger=${true}
+              value="px"
+              .options=${UNIT_OPTIONS}
+              aria-label="${size} unit"
+            ></ds-select>
+          </ds-input>
+        `
+      )}
+      <ds-text variant="text-body-small" color="secondary">Both</ds-text>
+      <ds-input value="24" aria-label="Token size">
+        <ds-select
+          slot="prefix"
+          size="md"
+          width="hug"
+          is-inset
+          indicator="up-down"
+          .hasBorder=${false}
+          .allowClear=${false}
+          .neutralTrigger=${true}
+          value="usd"
+          .options=${CURRENCY_OPTIONS}
+          aria-label="Token currency"
+        ></ds-select>
+        <ds-select
+          slot="suffix"
+          size="md"
+          width="hug"
+          is-inset
+          indicator="up-down"
+          .hasBorder=${false}
+          .allowClear=${false}
+          .neutralTrigger=${true}
+          value="px"
+          .options=${UNIT_OPTIONS}
+          aria-label="Token unit"
+        ></ds-select>
+      </ds-input>
     </div>
   `,
 };

@@ -684,8 +684,8 @@ test('supports semantic relative dates and fixed calendar ranges @pr-critical', 
   const nextMonth = popup.getByRole('button', { name: 'Next month' });
   await expect(previousMonth).toHaveClass(/ds-control--md/);
   await expect(nextMonth).toHaveClass(/ds-control--md/);
-  const calendarHeading = popup.locator('.filter-menu__calendar-heading');
-  const weekdays = popup.locator('.filter-menu__calendar-weekdays');
+  const calendarHeading = popup.locator('.calendar-heading');
+  const weekdays = popup.locator('.calendar-weekdays');
   const [headingBounds, previousBounds, nextBounds] = await Promise.all([
     calendarHeading.boundingBox(),
     previousMonth.boundingBox(),
@@ -721,17 +721,15 @@ test('supports semantic relative dates and fixed calendar ranges @pr-critical', 
   await expect(
     popup
       .locator(
-        '.filter-menu__calendar-day:not(.filter-menu__calendar-day--outside):not(.filter-menu__calendar-day--today):not(.filter-menu__calendar-day--in-range) ds-text'
+        '.calendar-day:not(.calendar-day--outside):not(.calendar-day--today):not(.calendar-day--in-range) ds-text'
       )
       .first()
   ).toHaveJSProperty('color', 'secondary');
-  await expect(
-    popup.locator('.filter-menu__calendar-day--outside ds-text').first()
-  ).toHaveJSProperty('color', 'tertiary');
-  await expect(popup.locator('.filter-menu__calendar-day--today ds-text')).toHaveJSProperty(
+  await expect(popup.locator('.calendar-day--outside ds-text').first()).toHaveJSProperty(
     'color',
-    'primary'
+    'tertiary'
   );
+  await expect(popup.locator('.calendar-day--today ds-text')).toHaveJSProperty('color', 'primary');
   await expect(calendarDays.first().locator('ds-text')).toHaveJSProperty(
     'variant',
     'text-body-medium'
@@ -743,9 +741,14 @@ test('supports semantic relative dates and fixed calendar ranges @pr-critical', 
   await calendarDays.nth(10).click();
   await popup.getByRole('button', { name: 'Apply', exact: true }).click();
   await calendarDays.nth(15).hover();
-  await expect(popup.locator('.filter-menu__calendar-day--range-preview')).toHaveCount(6);
-  await expect(popup.locator('.filter-menu__calendar-day--range-edge')).toHaveCount(1);
-  await expect(calendarDays.nth(10).locator('ds-text')).toHaveJSProperty('color', 'on-bold');
+  await expect(popup.locator('.calendar-day--range-preview')).toHaveCount(5);
+  await expect(popup.locator('.calendar-day--range-edge')).toHaveCount(0);
+  await expect(calendarDays.nth(10)).toHaveClass(/ds-interaction-fill--surface-open/);
+  await expect(calendarDays.nth(10)).not.toHaveClass(/calendar-day--range-preview/);
+  await expect(calendarDays.nth(10)).not.toHaveClass(/calendar-day--in-range/);
+  await expect(calendarDays.nth(15)).toHaveClass(/calendar-day--range-preview/);
+  await expect(calendarDays.nth(15)).not.toHaveClass(/calendar-day--in-range/);
+  await expect(calendarDays.nth(10).locator('ds-text')).toHaveJSProperty('color', 'primary');
   await expect(calendarDays.nth(15).locator('ds-text')).toHaveJSProperty('color', 'primary');
   await expect(calendarDays.nth(15)).toHaveAttribute('aria-selected', 'false');
   await expect
@@ -760,16 +763,14 @@ test('supports semantic relative dates and fixed calendar ranges @pr-critical', 
     ]);
   await calendarDays.nth(15).click();
   await popup.getByRole('button', { name: 'Apply', exact: true }).click();
-  await expect(popup.locator('.filter-menu__calendar-day--range-preview')).toHaveCount(0);
+  await expect(popup.locator('.calendar-day--range-preview')).toHaveCount(0);
+  await expect(popup.locator('.ds-interaction-fill--surface-open')).toHaveCount(0);
+  await expect(popup.locator('.calendar-day--range-edge ds-text').first()).toHaveJSProperty(
+    'color',
+    'on-bold'
+  );
   await expect(
-    popup.locator('.filter-menu__calendar-day--range-edge ds-text').first()
-  ).toHaveJSProperty('color', 'on-bold');
-  await expect(
-    popup
-      .locator(
-        '.filter-menu__calendar-day--in-range:not(.filter-menu__calendar-day--range-edge) ds-text'
-      )
-      .first()
+    popup.locator('.calendar-day--in-range:not(.calendar-day--range-edge) ds-text').first()
   ).toHaveJSProperty('color', 'primary');
   const start = firstDate! < secondDate! ? firstDate! : secondDate!;
   const end = firstDate! < secondDate! ? secondDate! : firstDate!;
@@ -1411,6 +1412,10 @@ test('owns controlled saved-view selection, naming validation, and mutation inte
   const dialog = page.getByRole('dialog', { name: 'Save as new view' });
   const name = dialog.getByRole('textbox', { name: 'Name' });
   await expect(name).toBeFocused();
+  await expect(dialog.locator('.field__label')).toHaveCount(0);
+  await expect(dialog.locator('.table-saved-views__dialog-actions')).toHaveCount(0);
+  await dialog.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(dialog.getByText('View name is required.')).toBeVisible();
   await name.fill('Default');
   await dialog.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(dialog.getByText('A view with this name already exists.')).toBeVisible();
@@ -1427,6 +1432,7 @@ test('owns controlled saved-view selection, naming validation, and mutation inte
   const renameDialog = page.getByRole('dialog', { name: 'Rename view' });
   const renameName = renameDialog.getByRole('textbox', { name: 'Name' });
   await expect(renameName).toBeFocused();
+  await expect(renameDialog.locator('.field__label')).toHaveCount(0);
   await renameName.fill('Needs review');
   await renameDialog.getByRole('button', { name: 'Rename', exact: true }).click();
   await expect(renameDialog).toHaveCount(0);

@@ -7,7 +7,7 @@
   "tag": "ds-input-time",
   "audience": "general",
   "status": "experimental",
-  "summary": "Form-associated clock time field that reuses Input density, focus, validation, and field composition with a native time value.",
+  "summary": "Form-associated clock time field that reuses Input density, focus, validation, and field composition, with a typeable value and a TimePicker.",
   "useWhen": [
     "A user must enter or edit a clock time as a native time string.",
     "The time must participate in native, Angular, React, or Vue form state.",
@@ -27,7 +27,12 @@
     {
       "when": "The value is a calendar date.",
       "component": "component:ds-input-date",
-      "reason": "InputDate owns native date semantics and the calendar picker affordance."
+      "reason": "InputDate owns calendar date form values and the Calendar picker."
+    },
+    {
+      "when": "The hour, minute, and AM/PM lists are needed without a form field.",
+      "component": "component:ds-time-picker",
+      "reason": "TimePicker owns the bounded 12-hour lists and selected-tile treatment."
     },
     {
       "when": "The user chooses from a finite set of named times or cadences.",
@@ -37,41 +42,43 @@
   ],
   "commonlyComposedWith": [
     "component:ds-field",
+    "component:ds-time-picker",
+    "component:ds-button-unfilled",
     "component:ds-icon",
     "component:ds-text",
     "component:ds-input-date"
   ],
   "accessibility": [
     "Provide a persistent visible label through the owning field or an external native label.",
-    "The native time input remains the keyboard and assistive-technology control; the clock icon only opens the browser picker and is hidden from the accessibility tree.",
-    "Error text is associated with the native input and announced as an alert when the invalid state is rendered.",
+    "The text field remains the keyboard and assistive-technology value control. Users can type HH:MM, H:MM, or a 12-hour label such as 9:00 AM.",
+    "The trailing clock button is a named disclosure that opens a non-modal time dialog. It shares the field's density, uses the single inset recipe, and reports expanded state while the picker is open.",
+    "Filled values keep HH:MM as the form value. Visible text uses a 12-hour label such as 9:00 AM so the field does not show 24-hour chrome. That label reuses Input's value typography and text-container inset.",
+    "Error text is associated with the text field and announced as an alert when the invalid state is rendered.",
     "Read-only fields remain focusable and submittable while preventing edits; inactive or disabled fields leave the tab order and are omitted from form submission."
   ],
   "states": [
     "Every size applies the shared control-density recipe, including md body-medium text, across frame height, inline padding, icon zones, and radius.",
-    "The default step is one minute so the field matches ordinary schedule entry; override step only when seconds or another increment is required.",
-    "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry.",
+    "The default step is one minute so the field matches ordinary schedule entry; override step only when a coarser minute increment is required.",
+    "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry. When hasBorder is false, supporting error copy insets to the field's text origin rather than the resting border box.",
     "The host exposes focused, filled, dirty, touched, invalid, disabled, read-only, and required data attributes for Field integration and diagnostics.",
-    "The trailing clock action is a pointer affordance; it does not replace the field label or the native time value."
+    "The trailing clock action is an unfilled icon button of the same density as the field, borderless and square, with the single inset recipe so the 4px height reduction insets it equally from the field's top, end, and bottom edges. It does not replace the field label or the submitted time value. Inactive or disabled fields apply that treatment on the host only, so the nested button is not faded a second time.",
+    "Activating the clock button opens the shared TimePicker in a choice-popup dialog anchored to the field's end edge, beside the trailing clock action. Choosing hour, minute, or AM/PM commits that part of the time and leaves the dialog open so the other columns can be adjusted. Typing in the field commits a parsed time without requiring the picker. Invalid typed text reverts to the last committed value on blur."
   ],
   "responsiveBehavior": [
     "Form fields normally fill their parent; use hug width only in a compact toolbar or filter layout with an explicit width constraint.",
-    "Choose density from the containing layout: md for ordinary forms, lg for a touch-primary layout, and sm or xs only where surrounding controls use the same compact recipe."
+    "Choose density from the containing layout: md for ordinary forms, lg for a touch-primary layout, and sm or xs only where surrounding controls use the same compact recipe.",
+    "The time dialog uses the shared choice-popup recipe with the same 4px sm chrome inset as choice lists, aligns to the field's end edge, flips when the field collides with the overlay boundary, and stays in the top layer."
   ],
   "frameworkCaveats": {
     "customElements": [
-      "Listen for dsChange for user edits. The detail is the native time string, typically HH:MM.",
+      "Listen for dsChange for user edits. The detail is the clock time string HH:MM.",
       "Use the form attribute on the host when associating a time field rendered outside its owning form."
     ],
     "react": [
       "Use DsInputTime, bind value for controlled application state, and handle onDsChange."
     ],
-    "vue": [
-      "Use DsInputTime with v-model for the value, and listen for dsChange."
-    ],
-    "angular": [
-      "Import DsInputTime with TextValueAccessor when integrating with Angular Forms."
-    ]
+    "vue": ["Use DsInputTime with v-model for the value, and listen for dsChange."],
+    "angular": ["Import DsInputTime with TextValueAccessor when integrating with Angular Forms."]
   },
   "references": [
     {

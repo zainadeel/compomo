@@ -2498,6 +2498,133 @@
       ]
     },
     {
+      "name": "calendar",
+      "title": "Calendar",
+      "description": "Month calendar grid for choosing one calendar date or an inclusive date range, reused by form date fields and filter range selection.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/calendar",
+        "source": "src/wc/components/Calendar/Calendar.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Month calendar grid for choosing one calendar date or an inclusive date range, reused by form date fields and filter range selection.",
+          "useWhen": [
+            "A user picks one calendar day from a month grid.",
+            "A user builds an inclusive start and end date by choosing two days.",
+            "A date field or filter needs the shared month navigation, weekday headings, and selected-day treatment."
+          ],
+          "avoidWhen": [
+            "The user types a date without opening a calendar; the owning field keeps that editable value.",
+            "The user chooses a relative preset such as last 7 days rather than fixed calendar days.",
+            "The popup also has to host filter categories, search, or apply actions; that surface stays with FilterMenu."
+          ],
+          "alternatives": [
+            {
+              "when": "The date is a form field that can be typed or picked.",
+              "component": "component:ds-input-date",
+              "reason": "InputDate owns the editable field, form association, and the calendar popup."
+            },
+            {
+              "when": "The value is a clock time rather than a calendar date.",
+              "component": "component:ds-time-picker",
+              "reason": "TimePicker owns bounded hour, minute, and AM/PM lists with the same 32px tile geometry."
+            },
+            {
+              "when": "The user chooses relative presets or mixed filter families from one trigger.",
+              "component": "component:ds-filter-menu",
+              "reason": "FilterMenu owns relative date presets and hosts this calendar only for fixed ranges."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-input-date",
+            "component:ds-filter-menu",
+            "component:ds-button-unfilled",
+            "component:ds-text"
+          ],
+          "accessibility": [
+            "The month grid is labelled with the visible month and year. Days are grid cells with an accessible date name.",
+            "The grid keeps one tab stop. Arrow keys move by day or week, Home and End move within the week, and Page Up or Page Down change month.",
+            "In range mode, the first chosen day applies immediately as a one-day range. Hovering or focusing another day previews the inclusive span without changing the value until the second activation.",
+            "Month navigation buttons are named Previous month and Next month. Inactive calendars disable day and month controls."
+          ],
+          "states": [
+            "Single selection paints the current value with the shared interaction-fill selected wash and primary text. A committed range paints inclusive days with the faint brand fill and both edges boldly.",
+            "Today uses emphasized primary text without becoming selected on its own.",
+            "Days outside the visible month remain in the six-week grid and use tertiary text. Optional min and max dates disable days outside that inclusive bound.",
+            "After the first range day is chosen, that day keeps the shared pressed overlay. Hovering or focusing toward another day paints the inclusive span with the shared hover overlay on top of the previous committed range, which stays visible until the replacement is completed. Completing the end day orders the two dates inclusively and replaces those overlays with brand fill."
+          ],
+          "responsiveBehavior": [
+            "The grid fills the width supplied by its owner. Seven equal day columns and the shared 4px gaps are owned here; the owner supplies the popup or pane width."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Listen for dsChange. Single mode emits YYYY-MM-DD. Range mode emits range:start/end using the shared date-filter string."
+            ],
+            "react": [
+              "Use DsCalendar, bind value, and handle onDsChange."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/Calendar/Calendar.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "autoFocus": {
+            "type": "boolean",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "max": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "min": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "selectionMode": {
+            "type": "CalendarSelectionMode",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "string"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-calendar",
+          "react": "DsCalendar",
+          "vue": "DsCalendar",
+          "angular": "DsCalendar"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "button-unfilled",
+        "text"
+      ]
+    },
+    {
       "name": "card-action-center",
       "title": "CardActionCenter",
       "description": "Compact bordered card that groups overview-page actions, optional values or status tags, and native destinations into named sections.",
@@ -4446,7 +4573,7 @@
     {
       "name": "field",
       "title": "Field",
-      "description": "Accessible form-field composition that gives one Input, InputDate, InputTime, Textarea, or Select a persistent label, optional guidance, shared error presentation, stable IDs, and observable interaction state.",
+      "description": "Accessible form-field composition that gives one Input, InputDate, InputTime, Textarea, or Select an optional visible label, optional guidance, shared error presentation, stable IDs, and observable interaction state.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -4457,9 +4584,10 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Accessible form-field composition that gives one Input, InputDate, InputTime, Textarea, or Select a persistent label, optional guidance, shared error presentation, stable IDs, and observable interaction state.",
+          "summary": "Accessible form-field composition that gives one Input, InputDate, InputTime, Textarea, or Select an optional visible label, optional guidance, shared error presentation, stable IDs, and observable interaction state.",
           "useWhen": [
             "An Input, InputDate, InputTime, Textarea, or Select needs a persistent visible label in a form.",
+            "A nearby heading already names the field, and the control still needs Field's error association and message rhythm.",
             "Help text or an error message must be programmatically associated with one control.",
             "A form layout needs one consistent label-control-message rhythm."
           ],
@@ -4484,14 +4612,16 @@
             "component:ds-text"
           ],
           "accessibility": [
-            "Slot exactly one form control. Field assigns its stable control ID and connects the visible label automatically.",
+            "Slot exactly one form control. When a visible label is provided, Field assigns its stable control ID and connects that label automatically.",
+            "Omit the visible label when a nearby heading already names the field. Keep a programmatic name on the slotted control, such as aria-label, and do not set aria-labelledby to an empty value.",
             "The visible description or error ID is merged with any authored aria-describedby references; a rendered error replaces the description.",
             "The error prop forwards aria-invalid and supported design-system control error styling; put visible error text on Field, not again on the child control.",
             "Clicking the label focuses the slotted design-system control without opening a Select popup.",
             "Do not use placeholder text as the only label. Keep label text concise and put format or consequence guidance in description."
           ],
           "states": [
-            "Label, control, description, and error content follow the shared 4px vertical field flow without changing the slotted control's width or semantics.",
+            "The visible label is optional. Omit it when a nearby heading already names the field; Field still associates description and error text with the slotted control.",
+            "Label, control, description, and error content follow the shared 4px vertical field flow without changing the slotted control's width or semantics. When the slotted control is borderless, description and error copy inset to that control's text origin instead of the resting bordered edge.",
             "Field exposes data-focused, data-filled, data-dirty, data-touched, data-invalid, data-disabled, and data-required hooks while the slotted control remains the source of value and interaction behavior.",
             "A rendered error replaces the description; preserve essential guidance in the error message so users retain what they need to correct the field.",
             "Field owns validation presentation but not validation timing; the form decides when to set error and errorMessage.",
@@ -4543,7 +4673,7 @@
           },
           "label": {
             "type": "string",
-            "required": true
+            "required": false
           }
         },
         "events": [],
@@ -4602,14 +4732,15 @@
           "commonlyComposedWith": [
             "component:ds-select",
             "component:ds-table",
-            "component:ds-checkbox"
+            "component:ds-checkbox",
+            "component:ds-calendar"
           ],
           "accessibility": [
             "The built-in select trigger exposes combobox semantics with a dialog popup, synchronizes expanded state, holds the pressed interaction wash without changing resting foreground while open, and restores focus after dismissal.",
             "The category pane is a vertical tab list. Arrow Up and Arrow Down wrap, Home and End jump, Arrow Right enters the option pane, and Arrow Left returns to the active category.",
             "Every non-date category begins with a labelled search field. Arrow Down and Arrow Up enter the first or last visible option, while Left and Right retain native text-caret behavior. Search matches option labels and descriptions without changing selected values.",
             "Escape and outside activation close the popup and restore trigger focus. Tab moves through option controls and closes only when it leaves the popup boundary.",
-            "Date filters expose containerless Range and Relative tabs in a secondary-background header with 4px padding around the 32px medium control. Relative presets use listbox semantics; the range calendar exposes a labelled grid, one tab stop, arrow-key day navigation, Home and End week navigation, and Page Up or Page Down month navigation. After a range start is chosen, pointer hover and keyboard focus preview the possible inclusive range without changing selection semantics.",
+            "Date filters expose containerless Range and Relative tabs in a secondary-background header with 4px padding around the 32px medium control. Relative presets use listbox semantics. Range selection hosts Calendar, which owns the labelled month grid, one tab stop, arrow-key day navigation, Home and End week navigation, and Page Up or Page Down month navigation. After a range start is chosen, pointer hover and keyboard focus preview the possible inclusive range without changing selection semantics.",
             "When an external trigger is inside an open shadow tree, pass its HTMLElement through anchor so outside activation, focus return, and Tab continuation use the composed tree.",
             "The trigger count reports active filter categories. Multiple-choice category tags report individual selected criteria, while an applied Date category uses a visual dot because its value is singular. The default summary footer announces the total; the categories-clear footer recipe reserves a visually empty category-pane action row and exposes its divider and only Clear when criteria are active."
           ],
@@ -4844,7 +4975,7 @@
       ],
       "registryDependencies": [
         "badge",
-        "button-unfilled",
+        "calendar",
         "checkbox",
         "empty-state",
         "icon",
@@ -5015,12 +5146,12 @@
             {
               "when": "The value is a calendar date.",
               "component": "component:ds-input-date",
-              "reason": "InputDate owns native date semantics, shared Input density, and the calendar picker affordance."
+              "reason": "InputDate owns calendar date form values, shared Input density, and the Calendar picker."
             },
             {
               "when": "The value is a clock time.",
               "component": "component:ds-input-time",
-              "reason": "InputTime owns native time semantics, shared Input density, and the clock picker affordance."
+              "reason": "InputTime owns clock time form values, shared Input density, and the TimePicker."
             },
             {
               "when": "The value is an immediate on/off setting.",
@@ -5036,25 +5167,29 @@
           "commonlyComposedWith": [
             "component:ds-field",
             "component:ds-icon",
-            "component:ds-text"
+            "component:ds-text",
+            "component:ds-select"
           ],
           "accessibility": [
             "Provide a persistent visible label through the owning field or an external native label; placeholder text is guidance and must not be the field's only label.",
             "Choose the native input type that matches the value so browsers and assistive technology can provide appropriate semantics and keyboards.",
             "Error text is associated with the native input and announced as an alert when the invalid state is rendered.",
             "Read-only fields remain focusable and submittable while preventing edits; inactive or disabled fields leave the tab order and are omitted from form submission.",
+            "Password fields keep a named show-or-hide action beside the value. Revealing the value changes only the native input type; the submitted string does not change. The action restores focus to the field after activation.",
             "Number stepper actions are pointer affordances hidden from the accessibility tree; the native spinbutton remains the single keyboard and assistive-technology control.",
-            "Suffix content must not carry information that is otherwise absent from the field's visible label, value, or description."
+            "Prefix and suffix content must not carry information that is otherwise absent from the field's visible label, value, or description.",
+            "A nested prefix or suffix Select is a separate control from the editable value and must have its own accessible name."
           ],
           "states": [
             "Every size applies one complete control-density recipe across frame height, inline padding, icon zones, text-container inset, gap, and radius; supporting error content follows the shared 4px field flow.",
-            "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry. Set hasBorder to false only in chrome that supplies enough surrounding structure; set hasInteractionFill to false when that containing chrome also owns hover and pressed feedback.",
+            "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry. Set hasBorder to false only in chrome that supplies enough surrounding structure; supporting error copy then insets to the field's text origin rather than the resting border box. Set hasInteractionFill to false when that containing chrome also owns hover and pressed feedback.",
             "Placeholder text is secondary at rest and quaternary while the editable field is focused because it becomes decorative once typing begins. Single-line placeholder and entered value text truncate with an ellipsis when the field is narrower than its content.",
-            "Entered values use the parent surface's primary foreground; prefix icons, suffix content, and resting placeholder text use its secondary foreground.",
+            "Entered values use the parent surface's primary foreground; prefix icons, prefix text, suffix content, and resting placeholder text use its secondary foreground.",
             "Search fields show a standard borderless CrossCircle icon action only while they contain a value. Clearing emits the empty value and restores focus to the native field.",
+            "Password fields show a standard inset Eye action at the field's density. EyeDisabled replaces it while the value is visible. The action stays available on read-only fields and is inactive with the field.",
             "Search fields disable browser autocomplete history, automatic capitalization, autocorrection, and spellchecking by default so browser-owned suggestions do not compete with product-owned results. Consumers can explicitly provide autoComplete when a different native history behavior is required.",
             "Search fields used with owned result sets forward aria-controls and aria-activedescendant to the native field so keyboard focus can remain in the query while assistive technology tracks the active result.",
-            "The suffix slot is for compact units or decorations. The optional leading icon is decorative and does not replace the field label.",
+            "The prefix and suffix slots host compact leading or trailing units such as a currency code, or a nested same-size inset Select. Text adornments use the control's balanced text inset. Nested Selects match the field density, set isInset, hasBorder false, and width hug, and do not carry the field's error message. The optional leading icon is decorative and does not replace the field label. Password, search-clear, and date or time actions stay type-owned trailing buttons rather than suffix-slot content.",
             "Use autoComplete, inputMode, and enterKeyHint to provide browser and virtual-keyboard hints without changing the value's semantic type.",
             "Number fields preserve native spinbutton semantics, keyboard stepping, and min/max constraint behavior while dsChange continues to report the native string value. Two borderless inset chevron actions split the available inner height, disable independently at their numeric bound, and restore focus to the spinbutton after pointer activation.",
             "textAlign positions the editable value while the numeric stepper stays on the opposite inline edge, keeping the actions clear of the number: start-aligned values use an inline-end stepper and end-aligned values use an inline-start stepper.",
@@ -5153,6 +5288,10 @@
             "type": "boolean",
             "required": false
           },
+          "hidePasswordLabel": {
+            "type": "string",
+            "required": false
+          },
           "icon": {
             "type": "string | undefined",
             "required": false
@@ -5194,6 +5333,10 @@
             "required": false
           },
           "requiredMessage": {
+            "type": "string",
+            "required": false
+          },
+          "showPasswordLabel": {
             "type": "string",
             "required": false
           },
@@ -5254,7 +5397,7 @@
     {
       "name": "input-date",
       "title": "InputDate",
-      "description": "Form-associated calendar date field that reuses Input density, focus, validation, and field composition with a native date value.",
+      "description": "Form-associated calendar date field that reuses Input density, focus, validation, and field composition, with a typeable value and a Calendar picker.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -5265,7 +5408,7 @@
         "intent": {
           "audience": "general",
           "status": "experimental",
-          "summary": "Form-associated calendar date field that reuses Input density, focus, validation, and field composition with a native date value.",
+          "summary": "Form-associated calendar date field that reuses Input density, focus, validation, and field composition, with a typeable value and a Calendar picker.",
           "useWhen": [
             "A user must enter or edit a calendar date as an ISO date string.",
             "The date must participate in native, Angular, React, or Vue form state.",
@@ -5285,39 +5428,50 @@
             {
               "when": "The value is a clock time.",
               "component": "component:ds-input-time",
-              "reason": "InputTime owns native time semantics and the clock picker affordance."
+              "reason": "InputTime owns clock time form values and the TimePicker."
             },
             {
               "when": "The user chooses a relative or bounded date range from presets.",
-              "component": "component:ds-table-filter",
-              "reason": "TableFilter owns relative date presets and range selection rather than a single calendar date."
+              "component": "component:ds-filter-menu",
+              "reason": "FilterMenu owns relative date presets and range selection rather than a single calendar date."
+            },
+            {
+              "when": "The month grid is needed without a form field.",
+              "component": "component:ds-calendar",
+              "reason": "Calendar owns the shared month grid and can select a single date or a range."
             }
           ],
           "commonlyComposedWith": [
             "component:ds-field",
+            "component:ds-calendar",
+            "component:ds-button-unfilled",
             "component:ds-icon",
             "component:ds-text",
             "component:ds-input-time"
           ],
           "accessibility": [
             "Provide a persistent visible label through the owning field or an external native label.",
-            "The native date input remains the keyboard and assistive-technology control; the calendar icon only opens the browser picker and is hidden from the accessibility tree.",
-            "Error text is associated with the native input and announced as an alert when the invalid state is rendered.",
+            "The text field remains the keyboard and assistive-technology value control. Users can type an ISO date, a numeric M/D/YYYY date, or a short-month label such as Sep 10, 2026.",
+            "The trailing calendar button is a named disclosure that opens a non-modal calendar dialog. It shares the field's density, uses the single inset recipe, and reports expanded state while the picker is open.",
+            "Filled values keep YYYY-MM-DD as the form value. Visible text uses a short-month calendar label such as Sep 10, 2026 so the field does not show ISO chrome. That label reuses Input's value typography and text-container inset.",
+            "Error text is associated with the text field and announced as an alert when the invalid state is rendered.",
             "Read-only fields remain focusable and submittable while preventing edits; inactive or disabled fields leave the tab order and are omitted from form submission."
           ],
           "states": [
             "Every size applies the shared control-density recipe, including md body-medium text, across frame height, inline padding, icon zones, and radius.",
-            "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry.",
+            "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry. When hasBorder is false, supporting error copy insets to the field's text origin rather than the resting border box.",
             "The host exposes focused, filled, dirty, touched, invalid, disabled, read-only, and required data attributes for Field integration and diagnostics.",
-            "The trailing calendar action is a pointer affordance; it does not replace the field label or the native date value."
+            "The trailing calendar action is an unfilled icon button of the same density as the field, borderless and square, with the single inset recipe so the 4px height reduction insets it equally from the field's top, end, and bottom edges. It does not replace the field label or the submitted date value. Inactive or disabled fields apply that treatment on the host only, so the nested button is not faded a second time.",
+            "Activating the calendar button opens the shared Calendar grid in a choice-popup dialog anchored to the field's end edge, beside the trailing calendar action. Choosing a day commits that date and closes the dialog. Typing in the field commits a parsed date without requiring the picker. Invalid typed text reverts to the last committed value on blur."
           ],
           "responsiveBehavior": [
             "Form fields normally fill their parent; use hug width only in a compact toolbar or filter layout with an explicit width constraint.",
-            "Choose density from the containing layout: md for ordinary forms, lg for a touch-primary layout, and sm or xs only where surrounding controls use the same compact recipe."
+            "Choose density from the containing layout: md for ordinary forms, lg for a touch-primary layout, and sm or xs only where surrounding controls use the same compact recipe.",
+            "The calendar dialog uses the shared choice-popup recipe with the same 4px sm chrome inset as choice lists, aligns to the field's end edge, flips when the field collides with the overlay boundary, and stays in the top layer."
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Listen for dsChange for user edits. The detail is the native date string, typically YYYY-MM-DD.",
+              "Listen for dsChange for user edits. The detail is the ISO calendar date string YYYY-MM-DD.",
               "Use the form attribute on the host when associating a date field rendered outside its owning form."
             ],
             "react": [
@@ -5443,18 +5597,18 @@
       },
       "dependencies": [
         "@ds-mo/ui",
-        "@ds-mo/tokens",
-        "@ds-mo/icons"
+        "@ds-mo/tokens"
       ],
       "registryDependencies": [
-        "icon",
+        "button-unfilled",
+        "calendar",
         "text"
       ]
     },
     {
       "name": "input-time",
       "title": "InputTime",
-      "description": "Form-associated clock time field that reuses Input density, focus, validation, and field composition with a native time value.",
+      "description": "Form-associated clock time field that reuses Input density, focus, validation, and field composition, with a typeable value and a TimePicker.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -5465,7 +5619,7 @@
         "intent": {
           "audience": "general",
           "status": "experimental",
-          "summary": "Form-associated clock time field that reuses Input density, focus, validation, and field composition with a native time value.",
+          "summary": "Form-associated clock time field that reuses Input density, focus, validation, and field composition, with a typeable value and a TimePicker.",
           "useWhen": [
             "A user must enter or edit a clock time as a native time string.",
             "The time must participate in native, Angular, React, or Vue form state.",
@@ -5485,7 +5639,12 @@
             {
               "when": "The value is a calendar date.",
               "component": "component:ds-input-date",
-              "reason": "InputDate owns native date semantics and the calendar picker affordance."
+              "reason": "InputDate owns calendar date form values and the Calendar picker."
+            },
+            {
+              "when": "The hour, minute, and AM/PM lists are needed without a form field.",
+              "component": "component:ds-time-picker",
+              "reason": "TimePicker owns the bounded 12-hour lists and selected-tile treatment."
             },
             {
               "when": "The user chooses from a finite set of named times or cadences.",
@@ -5495,30 +5654,36 @@
           ],
           "commonlyComposedWith": [
             "component:ds-field",
+            "component:ds-time-picker",
+            "component:ds-button-unfilled",
             "component:ds-icon",
             "component:ds-text",
             "component:ds-input-date"
           ],
           "accessibility": [
             "Provide a persistent visible label through the owning field or an external native label.",
-            "The native time input remains the keyboard and assistive-technology control; the clock icon only opens the browser picker and is hidden from the accessibility tree.",
-            "Error text is associated with the native input and announced as an alert when the invalid state is rendered.",
+            "The text field remains the keyboard and assistive-technology value control. Users can type HH:MM, H:MM, or a 12-hour label such as 9:00 AM.",
+            "The trailing clock button is a named disclosure that opens a non-modal time dialog. It shares the field's density, uses the single inset recipe, and reports expanded state while the picker is open.",
+            "Filled values keep HH:MM as the form value. Visible text uses a 12-hour label such as 9:00 AM so the field does not show 24-hour chrome. That label reuses Input's value typography and text-container inset.",
+            "Error text is associated with the text field and announced as an alert when the invalid state is rendered.",
             "Read-only fields remain focusable and submittable while preventing edits; inactive or disabled fields leave the tab order and are omitted from form submission."
           ],
           "states": [
             "Every size applies the shared control-density recipe, including md body-medium text, across frame height, inline padding, icon zones, and radius.",
-            "The default step is one minute so the field matches ordinary schedule entry; override step only when seconds or another increment is required.",
-            "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry.",
+            "The default step is one minute so the field matches ordinary schedule entry; override step only when a coarser minute increment is required.",
+            "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry. When hasBorder is false, supporting error copy insets to the field's text origin rather than the resting border box.",
             "The host exposes focused, filled, dirty, touched, invalid, disabled, read-only, and required data attributes for Field integration and diagnostics.",
-            "The trailing clock action is a pointer affordance; it does not replace the field label or the native time value."
+            "The trailing clock action is an unfilled icon button of the same density as the field, borderless and square, with the single inset recipe so the 4px height reduction insets it equally from the field's top, end, and bottom edges. It does not replace the field label or the submitted time value. Inactive or disabled fields apply that treatment on the host only, so the nested button is not faded a second time.",
+            "Activating the clock button opens the shared TimePicker in a choice-popup dialog anchored to the field's end edge, beside the trailing clock action. Choosing hour, minute, or AM/PM commits that part of the time and leaves the dialog open so the other columns can be adjusted. Typing in the field commits a parsed time without requiring the picker. Invalid typed text reverts to the last committed value on blur."
           ],
           "responsiveBehavior": [
             "Form fields normally fill their parent; use hug width only in a compact toolbar or filter layout with an explicit width constraint.",
-            "Choose density from the containing layout: md for ordinary forms, lg for a touch-primary layout, and sm or xs only where surrounding controls use the same compact recipe."
+            "Choose density from the containing layout: md for ordinary forms, lg for a touch-primary layout, and sm or xs only where surrounding controls use the same compact recipe.",
+            "The time dialog uses the shared choice-popup recipe with the same 4px sm chrome inset as choice lists, aligns to the field's end edge, flips when the field collides with the overlay boundary, and stays in the top layer."
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Listen for dsChange for user edits. The detail is the native time string, typically HH:MM.",
+              "Listen for dsChange for user edits. The detail is the clock time string HH:MM.",
               "Use the form attribute on the host when associating a time field rendered outside its owning form."
             ],
             "react": [
@@ -5648,12 +5813,12 @@
       },
       "dependencies": [
         "@ds-mo/ui",
-        "@ds-mo/tokens",
-        "@ds-mo/icons"
+        "@ds-mo/tokens"
       ],
       "registryDependencies": [
-        "icon",
-        "text"
+        "button-unfilled",
+        "text",
+        "time-picker"
       ]
     },
     {
@@ -8834,7 +8999,8 @@
             "component:ds-text",
             "component:ds-icon",
             "component:ds-empty-state",
-            "component:ds-loader"
+            "component:ds-loader",
+            "component:ds-input"
           ],
           "accessibility": [
             "In forms, provide a persistent visible external field label; placeholder text is guidance and must not be the field's only label. In a compact filter bar, the trigger's visible text may supply the accessible name.",
@@ -8851,6 +9017,7 @@
             "Selected trigger foreground communicates the current value independently of fill. Opt into activeFill when the trigger needs additional selected emphasis; popup option selection keeps its own treatment.",
             "The multiple property changes cardinality without changing the component family: scalar mode selects and closes, while multiple mode toggles array values and keeps the popup open.",
             "Every size applies one complete control-density recipe across trigger height, inline padding, icon zones, text-container inset, gap, and radius; error content follows the shared 4px field flow.",
+            "Set isInset only when the trigger is nested inside a same-size control, including an Input prefix or suffix. Match the host field's size, set hasBorder to false, and use width hug. The default single inset removes 4px overall; insetDepth double removes 8px overall so the parent can add 4px per edge while preserving its outer alignment box. Double inset falls back to single at xs to protect minimum icon geometry. Inset changes only the trigger's outer box. Popup option rows, search, and footer always use the selected size recipe and do not change for single or double inset. Do not put error copy on the nested Select; the owning Input keeps validation.",
             "Value is controlled through the mutable value property as a string in scalar mode or a string array in multiple mode; dsChange reports the matching shape.",
             "Multiple mode keeps the persistent placeholder label visible, appends the selected count, and submits one repeated form entry per selected value.",
             "Required Selects begin without an automatic selection and require the user to make an explicit choice; do not preselect the first option merely to satisfy validity.",
@@ -8874,7 +9041,7 @@
             "An empty filtered list composes the message-only body variant of EmptyState. Keep the default neutral no-results message unless localized product guidance makes the outcome clearer.",
             "Enable searchable for more than roughly 20 options, user-managed listings, large domains such as addresses, or sets users cannot efficiently scan. Local matching includes option labels, subtext, and section headings; the owner resolves remote data before assigning options.",
             "Validation timing belongs to the form owner and may be immediate or deferred until blur or submit; the Select exposes validity and error presentation without imposing that policy.",
-            "The error trigger uses a 1.5px bold-negative inset stroke so invalid state remains distinguishable from the normal 1px border without changing control geometry. Set hasBorder to false for chrome where the trigger must remain borderless at rest, when selected or focused, and when invalid; error semantics and supporting copy remain available.",
+            "The error trigger uses a 1.5px bold-negative inset stroke so invalid state remains distinguishable from the normal 1px border without changing control geometry. Set hasBorder to false for chrome where the trigger must remain borderless at rest, when selected or focused, and when invalid; error semantics remain available, and supporting error copy insets to the trigger text origin rather than the resting border box.",
             "An initially empty option set is not an expected Select use case. The no-results state describes a search with no matches, not a source with no choices.",
             "Use options for a flat list or sections for grouped choices; when sections are present they take precedence.",
             "The background prop describes the actual parent surface and uses the same surface set as ButtonUnfilled.",
@@ -8994,7 +9161,15 @@
             "type": "string | undefined",
             "required": false
           },
+          "insetDepth": {
+            "type": "ControlInsetDepth",
+            "required": false
+          },
           "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "isInset": {
             "type": "boolean",
             "required": false
           },
@@ -11587,7 +11762,8 @@
             "component:ds-table",
             "component:ds-select",
             "component:ds-menu",
-            "component:ds-modal"
+            "component:ds-modal",
+            "component:ds-field"
           ],
           "patterns": [
             "pattern:menu-trigger"
@@ -11595,7 +11771,8 @@
           "accessibility": [
             "The primary control retains combobox semantics and exposes a direct accessible name.",
             "Each custom view exposes a separately named options trigger. The options menu supports keyboard navigation and returns focus through the shared Select and Menu behavior.",
-            "The naming dialog traps focus through Modal behavior, associates validation text with the input through Field, and restores focus to the saved-views control after closing."
+            "The naming dialog traps focus through Modal behavior. The dialog heading names the task, so the name field omits a visible label; the input keeps aria-label Name, Field associates validation text, and focus returns to the saved-views control after closing.",
+            "Footer actions are assigned with slot=\"footer\" on each button so Modal owns the two-action layout."
           ],
           "states": [
             "views, value, and dirty are controlled. Dirty state is presented only for a selected custom view; the default template never shows the trigger dot or save/discard actions even if dirty is supplied. Selection, create, save, discard, rename, and remove events communicate intent and never mutate application records.",
@@ -12504,7 +12681,7 @@
             "The default four visible rows can be changed with rows; rows is clamped to at least one.",
             "Vertical resizing is enabled by default and can be disabled when the surrounding layout owns the field height.",
             "Size changes typography and inset spacing without changing the authored row count.",
-            "Border, focus, error, placeholder, inactive, hover, and pressed treatments follow the same shared recipes as Input."
+            "Border, focus, error, placeholder, inactive, hover, and pressed treatments follow the same shared recipes as Input. When hasBorder is false, supporting error copy insets to the text origin rather than the resting border box."
           ],
           "responsiveBehavior": [
             "Textarea fills its parent by default and follows the width supplied by Field or the form layout.",
@@ -12652,6 +12829,122 @@
           "react": "DsTextarea",
           "vue": "DsTextarea",
           "angular": "DsTextarea"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
+      "name": "time-picker",
+      "title": "TimePicker",
+      "description": "Bounded 12-hour clock lists for choosing hour, minute, and AM/PM, reused by form time fields.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/time-picker",
+        "source": "src/wc/components/TimePicker/TimePicker.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Bounded 12-hour clock lists for choosing hour, minute, and AM/PM, reused by form time fields.",
+          "useWhen": [
+            "A user picks a clock time from hour, minute, and AM/PM lists.",
+            "A time field needs 32px clock tiles that match calendar day geometry and the shared choice-list selected treatment."
+          ],
+          "avoidWhen": [
+            "The user types a time without opening a picker; the owning field keeps that editable value.",
+            "The value is a calendar date rather than a clock time.",
+            "The user chooses from a finite set of named schedule options rather than an exact time."
+          ],
+          "alternatives": [
+            {
+              "when": "The time is a form field that can be typed or picked.",
+              "component": "component:ds-input-time",
+              "reason": "InputTime owns the editable field, form association, and the time-picker popup."
+            },
+            {
+              "when": "The value is a calendar date.",
+              "component": "component:ds-calendar",
+              "reason": "Calendar owns the month grid for single dates and ranges."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-input-time",
+            "component:ds-text"
+          ],
+          "accessibility": [
+            "Hour, minute, and AM/PM are separate labelled listboxes without visible column headings. Each list keeps one tab stop on the selected option.",
+            "Arrow keys move to the next or previous option and stop at the first and last values; they do not wrap. Home and End jump to those ends. Left and Right move between columns and stop at Hour and AM/PM.",
+            "Inactive pickers disable every option. Optional min and max times disable combinations outside that inclusive bound."
+          ],
+          "states": [
+            "Selected hour, minute, and period tiles use the shared interaction-fill selected wash and primary text. Resting tiles use secondary text on a transparent 32px square.",
+            "Lists are finite. Hour runs 1 through 12, minutes follow the step, and AM/PM has two values. Scrolling and keyboard movement stop at those ends instead of looping.",
+            "An empty value highlights 12:00 AM so the lists have a resting selection without inventing a second empty state."
+          ],
+          "responsiveBehavior": [
+            "The three columns fill the width supplied by the owner. Tile size, 4px gaps, and the seven-tile list viewport are owned here; the owner supplies the popup or pane width."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Listen for dsChange. The detail is the clock time string HH:MM."
+            ],
+            "react": [
+              "Use DsTimePicker, bind value, and handle onDsChange."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/TimePicker/TimePicker.stories.ts"
+            }
+          ]
+        },
+        "props": {
+          "autoFocus": {
+            "type": "boolean",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "max": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "min": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "step": {
+            "type": "string | number",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "string"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-time-picker",
+          "react": "DsTimePicker",
+          "vue": "DsTimePicker",
+          "angular": "DsTimePicker"
         }
       },
       "dependencies": [

@@ -29,13 +29,18 @@
       "reason": "Menu provides the appropriate action-menu semantics and keyboard model."
     }
   ],
-  "commonlyComposedWith": ["component:ds-select", "component:ds-table", "component:ds-checkbox"],
+  "commonlyComposedWith": [
+    "component:ds-select",
+    "component:ds-table",
+    "component:ds-checkbox",
+    "component:ds-calendar"
+  ],
   "accessibility": [
     "The built-in select trigger exposes combobox semantics with a dialog popup, synchronizes expanded state, holds the pressed interaction wash without changing resting foreground while open, and restores focus after dismissal.",
     "The category pane is a vertical tab list. Arrow Up and Arrow Down wrap, Home and End jump, Arrow Right enters the option pane, and Arrow Left returns to the active category.",
     "Every non-date category begins with a labelled search field. Arrow Down and Arrow Up enter the first or last visible option, while Left and Right retain native text-caret behavior. Search matches option labels and descriptions without changing selected values.",
     "Escape and outside activation close the popup and restore trigger focus. Tab moves through option controls and closes only when it leaves the popup boundary.",
-    "Date filters expose containerless Range and Relative tabs in a secondary-background header with 4px padding around the 32px medium control. Relative presets use listbox semantics; the range calendar exposes a labelled grid, one tab stop, arrow-key day navigation, Home and End week navigation, and Page Up or Page Down month navigation. After a range start is chosen, pointer hover and keyboard focus preview the possible inclusive range without changing selection semantics.",
+    "Date filters expose containerless Range and Relative tabs in a secondary-background header with 4px padding around the 32px medium control. Relative presets use listbox semantics. Range selection hosts Calendar, which owns the labelled month grid, one tab stop, arrow-key day navigation, Home and End week navigation, and Page Up or Page Down month navigation. After a range start is chosen, pointer hover and keyboard focus preview the possible inclusive range without changing selection semantics.",
     "When an external trigger is inside an open shadow tree, pass its HTMLElement through anchor so outside activation, focus return, and Tab continuation use the composed tree.",
     "The trigger count reports active filter categories. Multiple-choice category tags report individual selected criteria, while an applied Date category uses a visual dot because its value is singular. The default summary footer announces the total; the categories-clear footer recipe reserves a visually empty category-pane action row and exposes its divider and only Clear when criteria are active."
   ],

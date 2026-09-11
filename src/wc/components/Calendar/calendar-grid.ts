@@ -1,13 +1,18 @@
 import { isIsoCalendarDate, shiftIsoCalendarDate } from '../../utils';
 
-export interface FilterMenuCalendarDay {
+export interface CalendarDateRange {
+  start: string;
+  end: string;
+}
+
+export interface CalendarDay {
   value: string;
   day: number;
   inMonth: boolean;
   label: string;
 }
 
-export const FILTER_MENU_WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+export const CALENDAR_WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 const MONTH_FORMATTER = new Intl.DateTimeFormat('en-US', {
   month: 'long',
@@ -22,7 +27,7 @@ const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
   timeZone: 'UTC',
 });
 
-export function filterMenuToday(): string {
+export function calendarToday(): string {
   const today = new Date();
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -30,22 +35,22 @@ export function filterMenuToday(): string {
   return `${year}-${month}-${day}`;
 }
 
-export function filterMenuCalendarMonth(value: string): string {
-  return isIsoCalendarDate(value) ? value.slice(0, 7) : filterMenuToday().slice(0, 7);
+export function calendarMonth(value: string): string {
+  return isIsoCalendarDate(value) ? value.slice(0, 7) : calendarToday().slice(0, 7);
 }
 
-export function shiftFilterMenuCalendarMonth(value: string, offset: number): string {
+export function shiftCalendarMonth(value: string, offset: number): string {
   const [year, month] = value.split('-').map(Number);
   const date = new Date(Date.UTC(year, month - 1 + offset, 1));
   return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}`;
 }
 
-export function filterMenuCalendarMonthLabel(value: string): string {
+export function calendarMonthLabel(value: string): string {
   const [year, month] = value.split('-').map(Number);
   return MONTH_FORMATTER.format(new Date(Date.UTC(year, month - 1, 1)));
 }
 
-export function filterMenuCalendarDays(value: string): FilterMenuCalendarDay[] {
+export function calendarDays(value: string): CalendarDay[] {
   const [year, month] = value.split('-').map(Number);
   const firstOfMonth = `${year}-${String(month).padStart(2, '0')}-01`;
   const firstWeekday = new Date(`${firstOfMonth}T00:00:00Z`).getUTCDay();
@@ -60,4 +65,13 @@ export function filterMenuCalendarDays(value: string): FilterMenuCalendarDay[] {
       label: DATE_FORMATTER.format(date),
     };
   });
+}
+
+/** Keep the previous committed range visible while a replacement range is being chosen. */
+export function calendarPaintedRange(
+  pendingStart: string,
+  heldRange: CalendarDateRange | null,
+  valueRange: CalendarDateRange | null
+): CalendarDateRange | null {
+  return pendingStart ? heldRange : valueRange;
 }
