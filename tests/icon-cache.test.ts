@@ -4,25 +4,25 @@ import { iconCache, iconCacheKey, registerIcons } from '../src/wc/components/Ico
 
 describe('icon cache', () => {
   it('namespaces system and flag icons separately', () => {
-    assert.notEqual(iconCacheKey('US', false), iconCacheKey('US', true));
+    assert.notEqual(iconCacheKey('US', 'system'), iconCacheKey('US', 'flag'));
   });
 
   it('registerIcons fills the shared cache for synchronous resolution', () => {
     registerIcons({ Bell: '<svg data-test="bell"/>' });
     registerIcons({ FlagUnitedStates: '<svg data-test="us-flag"/>' });
 
-    assert.equal(iconCache().get(iconCacheKey('Bell', false)), '<svg data-test="bell"/>');
+    assert.equal(iconCache().get(iconCacheKey('Bell', 'system')), '<svg data-test="bell"/>');
     assert.equal(
-      iconCache().get(iconCacheKey('FlagUnitedStates', true)),
+      iconCache().get(iconCacheKey('FlagUnitedStates', 'flag')),
       '<svg data-test="us-flag"/>'
     );
-    assert.equal(iconCache().get(iconCacheKey('FlagUnitedStates', false)), undefined);
+    assert.equal(iconCache().get(iconCacheKey('FlagUnitedStates', 'system')), undefined);
   });
 
   it('shares one cache across module instances via the global symbol key', () => {
     registerIcons({ SharedProbe: '<svg/>' });
     const g = globalThis as { [k: symbol]: Map<string, string> | undefined };
     const shared = g[Symbol.for('ds-mo.icon-svg-cache')];
-    assert.ok(shared?.has(iconCacheKey('SharedProbe', false)));
+    assert.ok(shared?.has(iconCacheKey('SharedProbe', 'system')));
   });
 });

@@ -82,57 +82,98 @@ describe('icon loader catalogs', () => {
 describe('icon catalog routing', () => {
   /** Mirrors how ds-icon picks a catalog, so these assert the shipped resolution path. */
   async function resolve(name: string): Promise<string> {
-    const { isFlagIconName } = await import('../src/wc/components/Icon/icon-cache.ts');
+    const { resolveIconCategory } = await import('../src/wc/components/Icon/icon-cache.ts');
     const { systemIconLoaders } = await import('../src/wc/components/Icon/system-icon-catalog.ts');
     const { flagIconLoaders } = await import('../src/wc/components/Icon/flag-icon-catalog.ts');
+    const { mapIconLoaders } = await import('../src/wc/components/Icon/map-icon-catalog.ts');
 
-    const loaders = isFlagIconName(name) ? flagIconLoaders : systemIconLoaders;
+    const loaders = { system: systemIconLoaders, flag: flagIconLoaders, map: mapIconLoaders }[
+      resolveIconCategory(name)
+    ];
     const load = Object.prototype.hasOwnProperty.call(loaders, name) ? loaders[name] : undefined;
     return load ? await load() : '';
   }
 
-  // Regression: a `name.startsWith('Flag')` test routed these system icons to the
-  // country-flag catalog, where they do not exist, so they rendered blank.
-  for (const name of ['Flag', 'FlagFilled']) {
+  // Regression: a prefix test routes these system icons to a catalog that does not
+  // contain them, so they render blank. Flag/FlagFilled shipped broken that way; the
+  // four Map* names would have broken identically once the map category landed.
+  for (const name of ['Flag', 'FlagFilled', 'MapNavigation', 'MapPage', 'MapPin', 'MapStreet']) {
     it(`resolves the ${name} system icon to non-empty SVG`, async () => {
       assert.match(await resolve(name), /^<svg /);
     });
   }
 
-  it('still resolves country flags from the flag catalog', async () => {
-    const { isFlagIconName } = await import('../src/wc/components/Icon/icon-cache.ts');
+  it('resolves country flags and map glyphs from their own catalogs', async () => {
+    const { resolveIconCategory } = await import('../src/wc/components/Icon/icon-cache.ts');
 
-    assert.equal(isFlagIconName('FlagCanada'), true);
+    assert.equal(resolveIconCategory('FlagCanada'), 'flag');
     assert.match(await resolve('FlagCanada'), /^<svg /);
+
+    assert.equal(resolveIconCategory('MapGeofence'), 'map');
+    assert.match(await resolve('MapGeofence'), /^<svg /);
   });
 
   it('routes every icon to the catalog its IcoMo category names', async () => {
-    const { isFlagIconName } = await import('../src/wc/components/Icon/icon-cache.ts');
+    const { resolveIconCategory } = await import('../src/wc/components/Icon/icon-cache.ts');
 
     for (const icon of meta.icons as { name: string; category: string }[]) {
       assert.equal(
-        isFlagIconName(icon.name),
-        icon.category === 'flag',
-        `${icon.name} (${icon.category}) routed to the wrong catalog`
+        resolveIconCategory(icon.name),
+        icon.category,
+        `${icon.name} routed away from its ${icon.category} catalog`
       );
     }
   });
 
+  it('keys each category separately so same-named glyphs cannot collide', async () => {
+    const { iconCacheKey } = await import('../src/wc/components/Icon/icon-cache.ts');
+    const keys = new Set(
+      (['system', 'flag', 'map'] as const).map(category => iconCacheKey('Probe', category))
+    );
+
+    assert.equal(keys.size, 3);
+  });
+
   it('classifies identically for registerIcons and resolution, so cache keys agree', async () => {
-    const { iconCache, iconCacheKey, isFlagIconName, registerIcons } =
+    const { iconCache, iconCacheKey, resolveIconCategory, registerIcons } =
       await import('../src/wc/components/Icon/icon-cache.ts');
 
     // A pre-registered glyph must be readable under the key the resolver derives.
-    registerIcons({ Flag: '<svg data-test="generic-flag"/>' });
+    for (const name of ['Flag', 'FlagCanada', 'MapGeofence']) {
+      registerIcons({ [name]: `<svg data-test="${name}"/>` });
+      assert.equal(
+        iconCache().get(iconCacheKey(name, resolveIconCategory(name))),
+        `<svg data-test="${name}"/>`,
+        `${name} was registered under a key the resolver does not read`
+      );
+    }
+  });
+
+  it('keeps the pre-map { flag } option working for existing callers', async () => {
+    const { iconCache, iconCacheKey, registerIcons } =
+      await import('../src/wc/components/Icon/icon-cache.ts');
+
+    registerIcons({ LegacyForcedFlag: '<svg data-test="forced-flag"/>' }, { flag: true });
     assert.equal(
-      iconCache().get(iconCacheKey('Flag', isFlagIconName('Flag'))),
-      '<svg data-test="generic-flag"/>'
+      iconCache().get(iconCacheKey('LegacyForcedFlag', 'flag')),
+      '<svg data-test="forced-flag"/>'
     );
 
-    registerIcons({ FlagCanada: '<svg data-test="ca-flag"/>' });
+    registerIcons({ LegacyForcedSystem: '<svg data-test="forced-system"/>' }, { flag: false });
     assert.equal(
-      iconCache().get(iconCacheKey('FlagCanada', isFlagIconName('FlagCanada'))),
-      '<svg data-test="ca-flag"/>'
+      iconCache().get(iconCacheKey('LegacyForcedSystem', 'system')),
+      '<svg data-test="forced-system"/>'
+    );
+  });
+
+  it('honours an explicit category override', async () => {
+    const { iconCache, iconCacheKey, registerIcons } =
+      await import('../src/wc/components/Icon/icon-cache.ts');
+
+    registerIcons({ CustomMarker: '<svg data-test="custom-marker"/>' }, { category: 'map' });
+    assert.equal(
+      iconCache().get(iconCacheKey('CustomMarker', 'map')),
+      '<svg data-test="custom-marker"/>'
     );
   });
 });

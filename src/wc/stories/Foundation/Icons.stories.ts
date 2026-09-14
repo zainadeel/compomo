@@ -3,12 +3,20 @@ import { html } from 'lit';
 import type { TemplateResult } from 'lit';
 import * as SvgIcons from '@ds-mo/icons/svg';
 import * as SvgFlags from '@ds-mo/icons/svg/flags';
+import * as SvgMap from '@ds-mo/icons/svg/map';
 import '../../../../dist/components/ds-icon.js';
 
 type SvgRecord = Record<string, string>;
 
-const ALL_ICONS: string[] = Object.keys(SvgIcons as SvgRecord).sort();
 const ALL_FLAGS: string[] = Object.keys(SvgFlags as SvgRecord).sort();
+const ALL_MAP: string[] = Object.keys(SvgMap as SvgRecord).sort();
+
+// `@ds-mo/icons/svg` is an everything-barrel — it re-exports flags and map too.
+// Subtract them so each tab shows exactly one category.
+const CATEGORISED = new Set([...ALL_FLAGS, ...ALL_MAP]);
+const ALL_ICONS: string[] = Object.keys(SvgIcons as SvgRecord)
+  .filter(name => !CATEGORISED.has(name))
+  .sort();
 
 const PAGE =
   'font-family: var(--typography-font-family-ui); padding: var(--dimension-space-300); background: var(--color-background-primary); color: var(--color-foreground-primary); min-height: 100vh; box-sizing: border-box;';
@@ -50,4 +58,9 @@ export const System: Story = {
 export const Flag: Story = {
   name: 'Flag',
   render: () => gallery(ALL_FLAGS),
+};
+
+export const Map: Story = {
+  name: 'Map',
+  render: () => gallery(ALL_MAP),
 };

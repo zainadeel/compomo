@@ -40,10 +40,12 @@ ${entries}
 
 const system = meta.icons.filter(i => i.category === 'system');
 const flags = meta.icons.filter(i => i.category === 'flag');
+const maps = meta.icons.filter(i => i.category === 'map');
 
 writeCatalog('system-icon-catalog.ts', 'systemIconLoaders', system, '@ds-mo/icons/svg');
 writeCatalog('flag-icon-catalog.ts', 'flagIconLoaders', flags, '@ds-mo/icons/svg/flags');
+writeCatalog('map-icon-catalog.ts', 'mapIconLoaders', maps, '@ds-mo/icons/svg/map');
 
 console.log(
-  `  Verified lazy icon-loader catalogs (${system.length} system, ${flags.length} flag) from @ds-mo/icons@${meta.version}`
+  `  Verified lazy icon-loader catalogs (${system.length} system, ${flags.length} flag, ${maps.length} map) from @ds-mo/icons@${meta.version}`
 );
