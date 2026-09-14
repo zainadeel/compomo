@@ -42,7 +42,7 @@ const groups = [
       },
       {
         id: 'safety',
-        icon: 'Safety',
+        icon: 'ShieldCircle',
         label: 'Safety',
         href: '/dashboard/safety',
       },

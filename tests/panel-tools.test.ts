@@ -96,9 +96,9 @@ describe('orderPanelToolsItems', () => {
   it('enforces canonical order and removes duplicate semantic tools', () => {
     const help = { id: 'help' as const, icon: 'QuestionCircle' };
     const agents = { id: 'agents' as const, icon: 'AIAsterisk' };
-    const messages = { id: 'messages' as const, icon: 'Messages' };
+    const messages = { id: 'messages' as const, icon: 'MessageBubble' };
     assert.deepEqual(
-      orderPanelToolsItems([help, messages, agents, { ...messages, icon: 'Duplicate' }]),
+      orderPanelToolsItems([help, messages, agents, { ...messages, icon: 'Copy' }]),
       [agents, messages, help]
     );
   });
@@ -215,7 +215,7 @@ describe('rail accessory focus reconciliation', () => {
     statusText: 'Active',
     statusTone: 'active',
     primaryAction: { id: 'restore' },
-    secondaryAction: { id: 'dismiss', icon: 'X', ariaLabel: 'Dismiss session' },
+    secondaryAction: { id: 'dismiss', icon: 'Cross', ariaLabel: 'Dismiss session' },
   };
   const shortcut: PanelToolsRailAccessory = {
     type: 'shortcut',

@@ -618,7 +618,7 @@ test.describe('App shell chrome', () => {
           items: Array.from({ length: 20 }, (_, index) => ({
             id: `item-${index}`,
             label: `Item ${index}`,
-            icon: 'Map',
+            icon: 'MapPage',
             href: `/item-${index}`,
           })),
         },

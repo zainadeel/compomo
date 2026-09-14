@@ -68,7 +68,7 @@ const SETTINGS_GROUPS: PanelNavGroup[] = [
   {
     label: 'Section 5',
     items: [
-      { id: 'item-9', icon: 'Mobile', label: 'Item 9' },
+      { id: 'item-9', icon: 'DeviceMobile', label: 'Item 9' },
       { id: 'item-10', icon: 'LockClosed', label: 'Item 10' },
       { id: 'item-11', icon: 'BackslashBrackets', label: 'Item 11' },
       { id: 'item-12', icon: 'DocumentPencil', label: 'Item 12' },
