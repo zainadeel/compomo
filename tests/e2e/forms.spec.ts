@@ -699,7 +699,7 @@ test('password fields toggle visibility with the inset trailing action', async (
   await expect(native).toHaveAttribute('type', 'text');
   await expect(native).toHaveValue('secret-value');
   await expect(native).toBeFocused();
-  await expect(field.locator('ds-button-unfilled')).toHaveJSProperty('icon', 'EyeDisabled');
+  await expect(field.locator('ds-button-unfilled')).toHaveJSProperty('icon', 'EyeStrikethrough');
 
   await field.getByRole('button', { name: 'Hide password' }).click();
   await expect(native).toHaveAttribute('type', 'password');

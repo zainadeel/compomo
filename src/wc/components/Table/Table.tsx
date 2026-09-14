@@ -2139,7 +2139,7 @@ export class Table {
           <td class="ds-table__state-cell" colSpan={totalColumns}>
             <div class="ds-table__viewport-band ds-table__state-band">
               <ds-empty-state
-                icon={error ? 'ErrorTriangle' : 'Inbox'}
+                icon={error ? 'ExclamationTriangle' : 'Inbox'}
                 heading={heading}
                 body={body}
               />

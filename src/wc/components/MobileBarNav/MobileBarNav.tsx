@@ -130,7 +130,7 @@ export class MobileBarNav {
       this.primaryDestination === 'help' || this.activeDestination === 'help'
         ? {
             id: 'help' as const,
-            icon: 'CircleQuestion',
+            icon: 'QuestionCircle',
             label: this.helpLabel,
             dot: false,
           }
@@ -166,7 +166,7 @@ export class MobileBarNav {
         label: this.messagesLabel,
         dot: this.messagesDot,
       },
-      { id: 'agents', icon: 'AI', label: this.agentsLabel, dot: this.agentsDot },
+      { id: 'agents', icon: 'AIAsterisk', label: this.agentsLabel, dot: this.agentsDot },
     ];
   }
 

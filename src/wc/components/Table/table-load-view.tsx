@@ -20,7 +20,7 @@ export function renderTableLoadContent(options: TableLoadContentOptions) {
     return (
       <span class="ds-table__load-content ds-table__load-content--error">
         <span class="ds-table__load-copy">
-          <ds-icon name="ErrorTriangle" size="md" color="secondary" aria-hidden="true" />
+          <ds-icon name="ExclamationTriangle" size="md" color="secondary" aria-hidden="true" />
           <ds-text as="span" variant="text-body-medium" color="secondary">
             {options.error}
           </ds-text>

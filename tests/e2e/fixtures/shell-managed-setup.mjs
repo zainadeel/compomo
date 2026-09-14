@@ -85,7 +85,7 @@ shell.navigation = {
       items: [
         {
           id: 'user-settings',
-          icon: 'Avatar',
+          icon: 'PersonCircle',
           label: 'User Settings',
           href: '/settings/user',
         },

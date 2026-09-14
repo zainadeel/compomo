@@ -13,7 +13,7 @@
     "peerDependencies": {
       "required": [
         "@ds-mo/tokens ^6.5.1",
-        "@ds-mo/icons ^7.0.0"
+        "@ds-mo/icons ^8.0.0"
       ],
       "optional": [],
       "frameworks": "None required for Custom Elements; generated React, Vue, and Angular adapters are included."

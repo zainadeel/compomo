@@ -402,7 +402,7 @@ export class AgentQuestionnaire {
         )}
         {this.validation[question.id] ? (
           <div id={errorId} class="questionnaire__error" role="alert">
-            <ds-icon name="ErrorTriangle" size="xs" color="inherit" />
+            <ds-icon name="ExclamationTriangle" size="xs" color="inherit" />
             <ds-text variant="text-body-small" color="negative">
               {this.validation[question.id]}
             </ds-text>
@@ -484,7 +484,7 @@ export class AgentQuestionnaire {
           {this.renderQuestion(question)}
           {this.status === 'error' && this.errorMessage ? (
             <div class="questionnaire__submission-error" role="alert">
-              <ds-icon name="ErrorTriangle" size="xs" color="inherit" />
+              <ds-icon name="ExclamationTriangle" size="xs" color="inherit" />
               <ds-text variant="text-body-small" color="negative">
                 {this.errorMessage}
               </ds-text>

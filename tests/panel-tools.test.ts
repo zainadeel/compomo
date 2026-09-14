@@ -94,8 +94,8 @@ describe('PANEL_TOOLS_SHORTCUTS', () => {
 
 describe('orderPanelToolsItems', () => {
   it('enforces canonical order and removes duplicate semantic tools', () => {
-    const help = { id: 'help' as const, icon: 'CircleQuestion' };
-    const agents = { id: 'agents' as const, icon: 'AI' };
+    const help = { id: 'help' as const, icon: 'QuestionCircle' };
+    const agents = { id: 'agents' as const, icon: 'AIAsterisk' };
     const messages = { id: 'messages' as const, icon: 'Messages' };
     assert.deepEqual(
       orderPanelToolsItems([help, messages, agents, { ...messages, icon: 'Duplicate' }]),
@@ -124,9 +124,9 @@ describe('orderPanelToolsRailEntries', () => {
     const entries = orderPanelToolsRailEntries(
       [
         { id: 'search', icon: 'MagnifyingGlass', order: 30 },
-        { id: 'agents', icon: 'AI', railPlacement: 'header', order: 0 },
+        { id: 'agents', icon: 'AIAsterisk', railPlacement: 'header', order: 0 },
         { id: 'messages', icon: 'MessageBubbleStack', order: 10 },
-        { id: 'help', icon: 'CircleQuestion', railPlacement: 'footer', order: 0 },
+        { id: 'help', icon: 'QuestionCircle', railPlacement: 'footer', order: 0 },
       ],
       accessories
     );
@@ -284,7 +284,7 @@ describe('reconcilePanelToolsAvailability', () => {
 
   it('preserves an available active tool and its open state', () => {
     assert.deepEqual(
-      reconcilePanelToolsAvailability([{ id: 'agents', icon: 'AI' }], true, 'agents'),
+      reconcilePanelToolsAvailability([{ id: 'agents', icon: 'AIAsterisk' }], true, 'agents'),
       { open: true, activeTool: 'agents', removedTool: '' }
     );
   });

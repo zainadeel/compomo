@@ -18,10 +18,10 @@ const groups = [
 const toolsItems = [
   { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
   { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages' },
-  { id: 'agents', icon: 'AI', ariaLabel: 'Agents' },
+  { id: 'agents', icon: 'AIAsterisk', ariaLabel: 'Agents' },
   { id: 'stacks', icon: 'ViewMenu', ariaLabel: 'Stacks' },
   { id: 'activity', icon: 'Bell', ariaLabel: 'Activity', dot: true },
-  { id: 'help', icon: 'CircleQuestion', ariaLabel: 'Help & Support' },
+  { id: 'help', icon: 'QuestionCircle', ariaLabel: 'Help & Support' },
 ];
 
 await Promise.all([

@@ -26,7 +26,7 @@ const DASHBOARD_GROUPS: PanelNavGroup[] = [
     items: [
       { id: 'area-h', icon: 'Whistle', label: 'Area H' },
       { id: 'area-i', icon: 'ShieldLock', label: 'Area I' },
-      { id: 'area-j', icon: 'WorkflowA', label: 'Area J' },
+      { id: 'area-j', icon: 'PathNodes', label: 'Area J' },
       { id: 'area-k', icon: 'LocationPinArrows', label: 'Area K' },
       { id: 'area-l', icon: 'Devices', label: 'Area L' },
     ],
@@ -34,7 +34,7 @@ const DASHBOARD_GROUPS: PanelNavGroup[] = [
   {
     label: 'Section 2',
     items: [
-      { id: 'area-m', icon: 'AI', label: 'Area M' },
+      { id: 'area-m', icon: 'AIAsterisk', label: 'Area M' },
       { id: 'area-n', icon: 'MessageBubbleStack', label: 'Area N', dot: true },
       { id: 'area-o', icon: 'Document', label: 'Area O' },
       { id: 'area-p', icon: 'GraphArrow', label: 'Area P' },
@@ -46,7 +46,7 @@ const DASHBOARD_GROUPS: PanelNavGroup[] = [
 
 const SETTINGS_GROUPS: PanelNavGroup[] = [
   {
-    items: [{ id: 'item-1', icon: 'Avatar', label: 'Item 1' }],
+    items: [{ id: 'item-1', icon: 'PersonCircle', label: 'Item 1' }],
   },
   {
     label: 'Section 3',
@@ -365,7 +365,7 @@ const NESTED_GROUPS: PanelNavGroup[] = [
     items: [
       {
         id: 'user-settings',
-        icon: 'Avatar',
+        icon: 'PersonCircle',
         label: 'User Settings',
         children: [
           { id: 'profile', label: 'Profile', href: '/settings/profile' },

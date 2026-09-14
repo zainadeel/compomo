@@ -24,7 +24,7 @@ const settingsGroups = [
   {
     id: 'personal',
     items: [
-      { id: 'account', label: 'Account', icon: 'Avatar', href: '/settings/account' },
+      { id: 'account', label: 'Account', icon: 'PersonCircle', href: '/settings/account' },
       { id: 'preferences', label: 'Preferences', icon: 'Gear', href: '/settings/preferences' },
     ],
   },

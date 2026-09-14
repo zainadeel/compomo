@@ -60,7 +60,7 @@ export const GroupedHistory: Story = {
         <ds-button-filled
           slot="actions"
           variant="icon-label"
-          icon="SquarePencil"
+          icon="PencilSquare"
           label="New conversation"
           rounded
           width="fill"
@@ -84,7 +84,7 @@ export const Empty: Story = {
         <ds-button-filled
           slot="actions"
           variant="icon"
-          icon="SquarePencil"
+          icon="PencilSquare"
           rounded
           .hasBorder=${false}
           aria-label="New conversation"

@@ -3,11 +3,11 @@ import { html } from 'lit';
 import '../../../../dist/components/ds-shell-tools.js';
 
 const items = [
-  { id: 'agents', icon: 'AI', ariaLabel: 'Agents', railPlacement: 'header' },
+  { id: 'agents', icon: 'AIAsterisk', ariaLabel: 'Agents', railPlacement: 'header' },
   { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages' },
   { id: 'activity', icon: 'Bell', ariaLabel: 'Activity', dot: true, mobileDestination: 'activity' },
   { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
-  { id: 'help', icon: 'CircleQuestion', ariaLabel: 'Help & Support' },
+  { id: 'help', icon: 'QuestionCircle', ariaLabel: 'Help & Support' },
 ];
 
 const inboxItems = [

@@ -887,7 +887,7 @@ export class Menu {
                                 event.stopPropagation();
                               }}
                             >
-                              <ds-icon name="Drag" size={this.size} color="inherit" />
+                              <ds-icon name="DragDots" size={this.size} color="inherit" />
                             </span>
                           ) : usesLeading && item.icon ? (
                             <span

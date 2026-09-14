@@ -423,7 +423,7 @@ export class Input {
               class="input-control__trailing-action"
               variant="icon"
               size={this.size}
-              icon={this.passwordRevealed ? 'EyeDisabled' : 'Eye'}
+              icon={this.passwordRevealed ? 'EyeStrikethrough' : 'Eye'}
               hasBorder={false}
               isInset
               isInactive={inactive}

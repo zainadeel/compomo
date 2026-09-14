@@ -32,7 +32,7 @@ const settingsGroups = [
     items: [
       {
         id: 'user-settings',
-        icon: 'Avatar',
+        icon: 'PersonCircle',
         label: 'User Settings',
         href: '/settings/user-settings',
       },
@@ -40,11 +40,11 @@ const settingsGroups = [
   },
 ];
 const toolItems = [
-  { id: 'agents', icon: 'AI', ariaLabel: 'Agents', railPlacement: 'header', mobileDestination: 'agents' },
+  { id: 'agents', icon: 'AIAsterisk', ariaLabel: 'Agents', railPlacement: 'header', mobileDestination: 'agents' },
   { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages', mobileDestination: 'messages' },
   { id: 'activity', icon: 'Bell', ariaLabel: 'Activity', dot: true, mobileDestination: 'activity' },
   { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search', dot: true, mobileDestination: 'search' },
-  { id: 'help', icon: 'CircleQuestion', ariaLabel: 'Help & Support' },
+  { id: 'help', icon: 'QuestionCircle', ariaLabel: 'Help & Support' },
 ];
 const sectionTabs = [
   { id: 'overview', label: 'Overview' },
