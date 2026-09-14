@@ -7,6 +7,8 @@ interface FieldControl extends HTMLElement {
   disabled?: boolean;
   isInactive?: boolean;
   required?: boolean;
+  hasBorder?: boolean;
+  size?: string;
   setFocus?: () => Promise<void> | void;
 }
 
@@ -22,6 +24,14 @@ const tokens = (value: string | null | undefined): string[] =>
 
 const uniqueTokens = (...groups: string[][]): string[] => [...new Set(groups.flat())];
 
+const CONTROL_SIZES = ['lg', 'md', 'sm', 'xs'] as const;
+type FieldControlSize = (typeof CONTROL_SIZES)[number];
+
+const readControlSize = (control: FieldControl): FieldControlSize =>
+  CONTROL_SIZES.includes(control.size as FieldControlSize)
+    ? (control.size as FieldControlSize)
+    : 'md';
+
 @Component({
   tag: 'ds-field',
   styleUrl: 'Field.css',
@@ -30,8 +40,8 @@ const uniqueTokens = (...groups: string[][]): string[] => [...new Set(groups.fla
 export class Field {
   @Element() el!: HTMLElement;
 
-  /** Persistent visible label for the single slotted control. */
-  @Prop() label!: string;
+  /** Visible label for the slotted control. Omit when a nearby heading already names the field. */
+  @Prop() label?: string;
   /** Explicit ID for the slotted control; generated when omitted. */
   @Prop() fieldId: string | undefined;
   /** Optional guidance associated with the slotted control while no visible error is shown. */
@@ -47,6 +57,8 @@ export class Field {
   @State() private touched = false;
   @State() private controlDisabled = false;
   @State() private controlRequired = false;
+  @State() private controlBorderless = false;
+  @State() private controlSize: 'lg' | 'md' | 'sm' | 'xs' = 'md';
   /** Bumped to let Stencil relocate a control added after the initial render. */
   @State() private slotRevision = 0;
 
@@ -56,6 +68,7 @@ export class Field {
   private initialValue = '';
   private authoredAria = new WeakMap<FieldControl, AuthoredAria>();
   private childObserver?: MutationObserver;
+  private controlAttrObserver?: MutationObserver;
   private didLoad = false;
 
   connectedCallback() {
@@ -65,6 +78,8 @@ export class Field {
   disconnectedCallback() {
     this.childObserver?.disconnect();
     this.childObserver = undefined;
+    this.controlAttrObserver?.disconnect();
+    this.controlAttrObserver = undefined;
   }
 
   componentDidLoad() {
@@ -79,11 +94,16 @@ export class Field {
   }
 
   @Watch('fieldId')
+  @Watch('label')
   @Watch('description')
   @Watch('error')
   @Watch('errorMessage')
   onFieldContractChange() {
     this.syncControl();
+  }
+
+  private get hasLabel(): boolean {
+    return Boolean(this.label?.trim());
   }
 
   private get controlId(): string {
@@ -149,6 +169,7 @@ export class Field {
         labelledby: tokens(control.getAttribute('aria-labelledby')),
         describedby: tokens(control.getAttribute('aria-describedby')),
       });
+      this.observeControlAttributes(control);
     }
 
     const isDsControl = control.tagName.startsWith('DS-');
@@ -156,14 +177,16 @@ export class Field {
     else this.updateControlAttribute(control, 'id', this.controlId);
 
     const authored = this.authoredAria.get(control) ?? { labelledby: [], describedby: [] };
-    const labelledby = uniqueTokens(authored.labelledby, [this.labelId]).join(' ');
+    const labelledby = uniqueTokens(authored.labelledby, this.hasLabel ? [this.labelId] : []).join(
+      ' '
+    );
     const describedby = uniqueTokens(
       authored.describedby,
       this.renderedDescription ? [this.descriptionId] : [],
       this.renderedError ? [this.errorId] : []
     ).join(' ');
 
-    this.updateControlAttribute(control, 'aria-labelledby', labelledby);
+    this.updateControlAttribute(control, 'aria-labelledby', labelledby || undefined);
     this.updateControlAttribute(control, 'aria-describedby', describedby || undefined);
     this.updateControlAttribute(control, 'aria-invalid', this.error ? 'true' : undefined);
 
@@ -177,7 +200,18 @@ export class Field {
       control.disabled || control.isInactive || control.hasAttribute('disabled')
     );
     this.controlRequired = Boolean(control.required || control.hasAttribute('required'));
+    this.controlBorderless = control.hasBorder === false;
+    this.controlSize = readControlSize(control);
   };
+
+  private observeControlAttributes(control: FieldControl) {
+    this.controlAttrObserver?.disconnect();
+    this.controlAttrObserver = new MutationObserver(() => this.syncControl());
+    this.controlAttrObserver.observe(control, {
+      attributes: true,
+      attributeFilter: ['has-border', 'size', 'class'],
+    });
+  }
 
   private handleLabelClick = (event: MouseEvent) => {
     if (!this.control?.tagName.startsWith('DS-')) return;
@@ -215,19 +249,28 @@ export class Field {
         onChange={this.handleValueChange}
         onDsChange={this.handleValueChange}
       >
-        <div class="field ds-field-stack">
-          <ds-text
-            class="field__label"
-            as="label"
-            variant="text-body-small"
-            color="primary"
-            emphasis
-            for={this.controlId}
-            textId={this.labelId}
-            onClick={this.handleLabelClick}
-          >
-            {this.label}
-          </ds-text>
+        <div
+          class={{
+            field: true,
+            'ds-field-stack': true,
+            'ds-field-stack--supporting-inset': this.controlBorderless,
+            [`ds-control--${this.controlSize}`]: true,
+          }}
+        >
+          {this.hasLabel ? (
+            <ds-text
+              class="field__label"
+              as="label"
+              variant="text-body-small"
+              color="primary"
+              emphasis
+              for={this.controlId}
+              textId={this.labelId}
+              onClick={this.handleLabelClick}
+            >
+              {this.label}
+            </ds-text>
+          ) : null}
           <div class="field__control" ref={el => (this.controlContainer = el)}>
             <slot onSlotchange={this.syncControl} />
           </div>

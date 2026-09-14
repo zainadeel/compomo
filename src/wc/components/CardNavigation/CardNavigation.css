@@ -40,6 +40,7 @@
 
 .card-navigation__header {
   flex: 0 0 auto;
+  align-items: flex-start;
   border-radius: inherit;
 }
 
@@ -51,7 +52,7 @@
 
 .card-navigation__copy {
   min-height: var(--dimension-size-400);
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 ds-text.card-navigation__title,
@@ -60,6 +61,7 @@ ds-text.card-navigation__description {
 }
 
 .card-navigation__chevron {
+  align-self: center;
   justify-content: center;
   width: var(--dimension-size-400);
   color: var(--color-foreground-secondary);

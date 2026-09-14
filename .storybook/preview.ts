@@ -86,6 +86,7 @@ const preview: Preview = {
             'Text',
             'Icon',
             'ButtonFilled',
+            'ButtonInverted',
             'ButtonUnfilled',
             'Tag',
             'Chip',

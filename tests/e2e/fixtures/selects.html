@@ -21,7 +21,12 @@
       <h1>Select foundations test</h1>
 
       <ds-select id="single" aria-label="Fruit"></ds-select>
-      <ds-select id="collapsible-single" icon="Chart" collapse-label aria-label="Collapsible fruit"></ds-select>
+      <ds-select
+        id="collapsible-single"
+        icon="Chart"
+        collapse-label
+        aria-label="Collapsible fruit"
+      ></ds-select>
       <ds-select id="searchable" searchable aria-label="Search fruit"></ds-select>
       <ds-select id="loading" icon="Chart" is-loading aria-label="Loading fruit"></ds-select>
       <ds-select id="surface" background="bold" aria-label="Bold fruit"></ds-select>
@@ -60,10 +65,7 @@
       ></ds-filter-menu>
       <div id="shadow-select-host"></div>
       <div id="shadow-filter-anchor-host"></div>
-      <ds-filter-menu
-        id="shadow-external-filters"
-        menu-label="External filters"
-      ></ds-filter-menu>
+      <ds-filter-menu id="shadow-external-filters" menu-label="External filters"></ds-filter-menu>
 
       <form id="selection-form">
         <ds-select
@@ -93,6 +95,28 @@
           aria-label="Contained entities"
         ></ds-select>
       </section>
+
+      <ds-select id="select-density-md" size="md" aria-label="Density fruit"></ds-select>
+      <ds-select id="select-inset-md" is-inset size="md" aria-label="Inset fruit"></ds-select>
+      <ds-select
+        id="select-double-inset-md"
+        is-inset
+        inset-depth="double"
+        size="md"
+        aria-label="Double inset fruit"
+      ></ds-select>
+      <ds-select
+        id="select-density-xs"
+        size="xs"
+        aria-label="Density extra small fruit"
+      ></ds-select>
+      <ds-select
+        id="select-double-inset-xs"
+        is-inset
+        inset-depth="double"
+        size="xs"
+        aria-label="Double inset extra small fruit"
+      ></ds-select>
     </main>
 
     <script type="module" src="/selects-setup.mjs"></script>

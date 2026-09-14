@@ -60,11 +60,14 @@ const meta: Meta = {
     dot: { control: 'boolean' },
     footerActionLabel: { control: 'text' },
     size: { control: 'select', options: ['lg', 'md', 'sm', 'xs'] },
+    isInset: { control: 'boolean' },
+    insetDepth: { control: 'select', options: ['single', 'double'] },
     width: { control: 'select', options: ['fill', 'hug'] },
     popupAlign: { control: 'select', options: ['start', 'end'] },
     icon: { control: 'text' },
     indicator: { control: 'select', options: ['down', 'up-down'] },
     hasBorder: { control: 'boolean' },
+    rounded: { control: 'boolean' },
     activeFill: { control: 'boolean' },
     searchable: { control: 'boolean' },
     isLoading: { control: 'boolean' },
@@ -91,11 +94,14 @@ const meta: Meta = {
     dot: false,
     triggerLabelPlaceholder: false,
     size: 'md',
+    isInset: false,
+    insetDepth: 'single',
     width: 'hug',
     popupAlign: 'start',
     icon: 'Chart',
     indicator: 'down',
     hasBorder: true,
+    rounded: false,
     activeFill: false,
     searchable: false,
     isLoading: false,
@@ -121,11 +127,14 @@ export const Playground: Story = {
           .dot=${args['dot']}
           .footerActionLabel=${args['footerActionLabel'] || undefined}
           size=${args['size']}
+          ?is-inset=${args['isInset']}
+          inset-depth=${args['insetDepth']}
           width=${args['width']}
           popup-align=${args['popupAlign']}
           icon=${args['icon']}
           indicator=${args['indicator']}
           .hasBorder=${args['hasBorder']}
+          ?rounded=${args['rounded']}
           .activeFill=${args['activeFill']}
           background=${args['background']}
           ?searchable=${args['searchable']}
@@ -361,6 +370,83 @@ export const SizesAndStates: Story = {
         error
         error-message="Choose a valid fruit."
         aria-label="Invalid borderless fruit"
+      ></ds-select>
+    </div>
+  `,
+};
+
+const SELECT_SIZES = ['lg', 'md', 'sm', 'xs'] as const;
+const SIZE_HEIGHT = {
+  lg: 'var(--dimension-size-500)',
+  md: 'var(--dimension-size-400)',
+  sm: 'var(--dimension-size-300)',
+  xs: 'var(--dimension-size-200)',
+} as const;
+
+export const InsetDensity: Story = {
+  name: 'Inset density',
+  render: () => html`
+    <div style="display:flex;flex-direction:column;gap:var(--dimension-space-150);">
+      ${SELECT_SIZES.map(size => {
+        const parentHeight = SIZE_HEIGHT[size];
+        return html`
+          <div
+            style="display:grid;grid-template-columns:minmax(var(--dimension-size-600),auto) auto auto;gap:var(--dimension-space-100);align-items:center;"
+          >
+            <span
+              style="font-size:var(--typography-fontsize-xs);color:var(--color-foreground-tertiary);"
+              >${size}</span
+            >
+            <ds-select
+              .options=${OPTIONS}
+              value="cherry"
+              size=${size}
+              width="hug"
+              aria-label="${size} fruit"
+            ></ds-select>
+            <div
+              style="display:inline-flex;align-items:center;box-sizing:border-box;width:fit-content;height:${parentHeight};padding:var(--dimension-space-025);border-radius:var(--dimension-radius-050);background:var(--color-background-secondary);"
+            >
+              <ds-select
+                .options=${OPTIONS}
+                value="cherry"
+                size=${size}
+                width="hug"
+                is-inset
+                aria-label="${size} inset fruit"
+              ></ds-select>
+              <ds-select
+                .options=${OPTIONS}
+                value="cherry"
+                size=${size}
+                width="hug"
+                is-inset
+                inset-depth="double"
+                aria-label="${size} double inset fruit"
+              ></ds-select>
+            </div>
+          </div>
+        `;
+      })}
+    </div>
+  `,
+};
+
+export const Rounded: Story = {
+  render: () => html`
+    <div style="display:flex;gap:var(--dimension-space-100);align-items:center;">
+      <ds-select
+        .options=${OPTIONS}
+        value="cherry"
+        width="hug"
+        aria-label="Default fruit"
+      ></ds-select>
+      <ds-select
+        .options=${OPTIONS}
+        value="cherry"
+        width="hug"
+        rounded
+        aria-label="Rounded fruit"
       ></ds-select>
     </div>
   `,

@@ -29,6 +29,20 @@ for (const id of [
 ]) {
   document.getElementById(id).options = options;
 }
+const insetOptions = [
+  { label: 'Apple', value: 'apple' },
+  { label: 'Banana', value: 'banana' },
+  { label: 'Cherry', value: 'cherry' },
+];
+for (const id of [
+  'select-density-md',
+  'select-inset-md',
+  'select-double-inset-md',
+  'select-density-xs',
+  'select-double-inset-xs',
+]) {
+  document.getElementById(id).options = insetOptions;
+}
 for (const id of ['multi', 'multi-search', 'required-multi', 'contained-multi']) {
   document.getElementById(id).sections = sections;
 }
@@ -65,7 +79,9 @@ collapsibleFilterMenu.filters = filterMenu.filters;
 collapsibleFilterMenu.values = filterMenu.values;
 collapsibleFilterMenu.activeFilterId = filterMenu.activeFilterId;
 
-const shadowSelectRoot = document.getElementById('shadow-select-host').attachShadow({ mode: 'open' });
+const shadowSelectRoot = document
+  .getElementById('shadow-select-host')
+  .attachShadow({ mode: 'open' });
 shadowSelectRoot.innerHTML = '<ds-select id="shadow-select" aria-label="Shadow fruit"></ds-select>';
 const shadowSelect = shadowSelectRoot.getElementById('shadow-select');
 shadowSelect.options = options;

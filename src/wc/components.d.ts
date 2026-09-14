@@ -18,7 +18,9 @@ import { BarWorkflowStep, BarWorkflowSubmitAction } from "./components/BarWorkfl
 import { MobileDestination, ShellResponsiveMode } from "./shell/shell-responsive";
 import { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledPopup, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 import { ControlInsetDepth, ControlSize } from "./utils/control-text";
+import { ButtonInvertedPopup, ButtonInvertedSize, ButtonInvertedVariant, ButtonInvertedWidth } from "./components/ButtonInverted/ButtonInverted";
 import { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
+import { CalendarSelectionMode } from "./components/Calendar/Calendar";
 import { CardActionCenterActionDetail, CardActionCenterSection } from "./components/CardActionCenter/CardActionCenter";
 import { CardChartVariant, CardChartWidth } from "./components/CardChart/CardChart";
 import { CardNavigationDetail, CardNavigationVariant, CardNavigationWidth } from "./components/CardNavigation/CardNavigation";
@@ -38,6 +40,8 @@ import { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuFooterLayout, Filte
 import { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
 import { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
 import { InputSize, InputTextAlign, InputType, InputWidth } from "./components/Input/Input";
+import { InputDateSize, InputDateWidth } from "./components/InputDate/InputDate";
+import { InputTimeSize, InputTimeWidth } from "./components/InputTime/InputTime";
 import { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 import { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
 import { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
@@ -95,7 +99,9 @@ export { BarWorkflowStep, BarWorkflowSubmitAction } from "./components/BarWorkfl
 export { MobileDestination, ShellResponsiveMode } from "./shell/shell-responsive";
 export { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledPopup, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 export { ControlInsetDepth, ControlSize } from "./utils/control-text";
+export { ButtonInvertedPopup, ButtonInvertedSize, ButtonInvertedVariant, ButtonInvertedWidth } from "./components/ButtonInverted/ButtonInverted";
 export { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
+export { CalendarSelectionMode } from "./components/Calendar/Calendar";
 export { CardActionCenterActionDetail, CardActionCenterSection } from "./components/CardActionCenter/CardActionCenter";
 export { CardChartVariant, CardChartWidth } from "./components/CardChart/CardChart";
 export { CardNavigationDetail, CardNavigationVariant, CardNavigationWidth } from "./components/CardNavigation/CardNavigation";
@@ -115,6 +121,8 @@ export { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuFooterLayout, Filte
 export { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
 export { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
 export { InputSize, InputTextAlign, InputType, InputWidth } from "./components/Input/Input";
+export { InputDateSize, InputDateWidth } from "./components/InputDate/InputDate";
+export { InputTimeSize, InputTimeWidth } from "./components/InputTime/InputTime";
 export { LoaderColor, LoaderSize } from "./components/Loader/Loader";
 export { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
 export { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
@@ -767,6 +775,110 @@ export namespace Components {
          */
         "width": ButtonFilledWidth;
     }
+    interface DsButtonInverted {
+        /**
+          * Accessible name override. Required for icon-only buttons.
+          * @default null
+         */
+        "ariaLabel": string | null;
+        /**
+          * ID of the popup this button controls.
+         */
+        "controls": string | undefined;
+        /**
+          * Controlled disclosure state forwarded to aria-expanded.
+         */
+        "expanded": boolean | undefined;
+        /**
+          * This action has a menu: implies `aria-haspopup="menu"` and adds the trailing chevron that carries the affordance.  Only `label` and `icon-label` are supported. Icon-only menu triggers belong to ButtonUnfilled so the glyph can communicate the overflow affordance.
+          * @default false
+         */
+        "hasMenu": boolean;
+        /**
+          * Popup type exposed to assistive technology.
+         */
+        "haspopup": ButtonInvertedPopup | undefined;
+        /**
+          * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
+          * @default ''
+         */
+        "icon": string;
+        /**
+          * Single removes 4px overall; double removes 8px overall (xs stays single).
+          * @default 'single'
+         */
+        "insetDepth": ControlInsetDepth;
+        /**
+          * Disables interaction.
+          * @default false
+         */
+        "isInactive": boolean;
+        /**
+          * Use reduced outer geometry when nested inside a control of the same size.
+          * @default false
+         */
+        "isInset": boolean;
+        /**
+          * Shows an inline loader and prevents interaction without applying inactive opacity.
+          * @default false
+         */
+        "isLoading": boolean;
+        /**
+          * Visible text for `label` / `icon-label` variants.
+          * @default ''
+         */
+        "label": string;
+        /**
+          * Whether the visible label uses the emphasized weight.
+          * @default true
+         */
+        "labelEmphasis": boolean;
+        /**
+          * Accessible name for the appended menu segment in split mode.
+          * @default 'More options'
+         */
+        "menuAriaLabel": string;
+        /**
+          * Scale down during a physical pointer press. Disable when an owning composite requires fixed child or background geometry.
+          * @default true
+         */
+        "pressScale": boolean;
+        /**
+          * Use the half-radius treatment instead of the default control radius.
+          * @default false
+         */
+        "rounded": boolean;
+        "setFocus": (segment?: "primary" | "menu") => Promise<void>;
+        /**
+          * Control density (height, padding, icon, type).
+          * @default 'md'
+         */
+        "size": ButtonInvertedSize;
+        /**
+          * Append a separate ChevronDown menu segment while preserving the inverted recipe, variant, size, loading, inactive, and width treatment.
+          * @default false
+         */
+        "split": boolean;
+        /**
+          * The associated menu, picker, or panel is visible, including its exit motion. Holds only the pressed wash and does not set ARIA or selection state.
+         */
+        "surfaceOpen": boolean | undefined;
+        /**
+          * Native button type.
+          * @default 'button'
+         */
+        "type": 'button' | 'submit' | 'reset';
+        /**
+          * Content layout. Default is label-only; pass `icon` for icon-only chrome or `icon-label` for leading icon + text.
+          * @default 'label'
+         */
+        "variant": ButtonInvertedVariant;
+        /**
+          * Width fit — hug content (default) or fill the parent.
+          * @default 'hug'
+         */
+        "width": ButtonInvertedWidth;
+    }
     interface DsButtonUnfilled {
         /**
           * When active, render the selected interaction fill. Default `true` for general UI. Shell chrome (nav / tool rails) should pass `false` so selection is foreground-only (primary color, no fill).
@@ -901,6 +1013,29 @@ export namespace Components {
           * @default 'hug'
          */
         "width": ButtonUnfilledWidth;
+    }
+    interface DsCalendar {
+        /**
+          * Move keyboard focus into the grid after the calendar is rendered.
+          * @default false
+         */
+        "autoFocus": boolean;
+        /**
+          * @default false
+         */
+        "isInactive": boolean;
+        "max": string | undefined;
+        "min": string | undefined;
+        /**
+          * Single date emits YYYY-MM-DD. Range emits the shared `range:start/end` string.
+          * @default 'single'
+         */
+        "selectionMode": CalendarSelectionMode;
+        "setFocus": () => Promise<void>;
+        /**
+          * @default ''
+         */
+        "value": string;
     }
     interface DsCardActionCenter {
         /**
@@ -1408,9 +1543,9 @@ export namespace Components {
          */
         "fieldId": string | undefined;
         /**
-          * Persistent visible label for the single slotted control.
+          * Visible label for the slotted control. Omit when a nearby heading already names the field.
          */
-        "label": string;
+        "label"?: string;
     }
     interface DsFilterMenu {
         /**
@@ -1655,6 +1790,10 @@ export namespace Components {
          */
         "hasInteractionFill": boolean;
         /**
+          * @default 'Hide password'
+         */
+        "hidePasswordLabel": string;
+        /**
           * Optional leading icon name.
          */
         "icon": string | undefined;
@@ -1696,6 +1835,10 @@ export namespace Components {
         "requiredMessage": string;
         "setFocus": () => Promise<void>;
         /**
+          * @default 'Show password'
+         */
+        "showPasswordLabel": string;
+        /**
           * Control density.
           * @default 'md'
          */
@@ -1722,6 +1865,137 @@ export namespace Components {
           * @default 'fill'
          */
         "width": InputWidth;
+    }
+    interface DsInputDate {
+        "ariaDescribedby": string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+        /**
+          * @default false
+         */
+        "autoFocus": boolean;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * @default false
+         */
+        "error": boolean;
+        "errorMessage": string | undefined;
+        "form": string | undefined;
+        /**
+          * @default true
+         */
+        "hasBorder": boolean;
+        /**
+          * @default true
+         */
+        "hasInteractionFill": boolean;
+        "inputId": string | undefined;
+        /**
+          * @default false
+         */
+        "isInactive": boolean;
+        "max": string | undefined;
+        "min": string | undefined;
+        "name": string | undefined;
+        /**
+          * @default false
+         */
+        "readOnly": boolean;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage": string;
+        "setFocus": () => Promise<void>;
+        /**
+          * @default 'md'
+         */
+        "size": InputDateSize;
+        /**
+          * @default ''
+         */
+        "value": string;
+        /**
+          * @default 'fill'
+         */
+        "width": InputDateWidth;
+    }
+    interface DsInputTime {
+        "ariaDescribedby": string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+        /**
+          * @default false
+         */
+        "autoFocus": boolean;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * @default false
+         */
+        "error": boolean;
+        "errorMessage": string | undefined;
+        "form": string | undefined;
+        /**
+          * @default true
+         */
+        "hasBorder": boolean;
+        /**
+          * @default true
+         */
+        "hasInteractionFill": boolean;
+        "inputId": string | undefined;
+        /**
+          * @default false
+         */
+        "isInactive": boolean;
+        "max": string | undefined;
+        "min": string | undefined;
+        "name": string | undefined;
+        /**
+          * @default false
+         */
+        "readOnly": boolean;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage": string;
+        "setFocus": () => Promise<void>;
+        /**
+          * @default 'md'
+         */
+        "size": InputTimeSize;
+        /**
+          * Native time step in seconds. Defaults to minutes (`60`).
+          * @default 60
+         */
+        "step": string | number;
+        /**
+          * @default ''
+         */
+        "value": string;
+        /**
+          * @default 'fill'
+         */
+        "width": InputTimeWidth;
     }
     interface DsLoader {
         /**
@@ -2782,10 +3056,20 @@ export namespace Components {
          */
         "inputId": string | undefined;
         /**
+          * Single removes 4px overall; double removes 8px overall (xs stays single).
+          * @default 'single'
+         */
+        "insetDepth": ControlInsetDepth1;
+        /**
           * Shared inactive treatment; removes interaction and form submission.
           * @default false
          */
         "isInactive": boolean;
+        /**
+          * Use reduced outer geometry when nested inside a control of the same size.
+          * @default false
+         */
+        "isInset": boolean;
         /**
           * Replace the prefix with a loader and disable option interaction.
           * @default false
@@ -2845,6 +3129,11 @@ export namespace Components {
           * @default 'This field is required.'
          */
         "requiredMessage": string;
+        /**
+          * Use a pill radius on the trigger. Popup chrome stays on the menu radius.
+          * @default false
+         */
+        "rounded": boolean;
         /**
           * Localized search-field placeholder and accessible name.
           * @default 'Search'
@@ -4146,6 +4435,30 @@ export namespace Components {
          */
         "width": TextareaWidth;
     }
+    interface DsTimePicker {
+        /**
+          * Move keyboard focus into the hour list after the picker is rendered.
+          * @default false
+         */
+        "autoFocus": boolean;
+        /**
+          * @default false
+         */
+        "isInactive": boolean;
+        "max": string | undefined;
+        "min": string | undefined;
+        "setFocus": () => Promise<void>;
+        /**
+          * Native time step in seconds. Defaults to minutes (`60`).
+          * @default 60
+         */
+        "step": string | number;
+        /**
+          * Clock value as `HH:MM`.
+          * @default ''
+         */
+        "value": string;
+    }
     interface DsToast {
         /**
           * Keep the global stack 16px above the persistent mobile shell bar below 768px.
@@ -4348,9 +4661,17 @@ export interface DsButtonFilledCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonFilledElement;
 }
+export interface DsButtonInvertedCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsButtonInvertedElement;
+}
 export interface DsButtonUnfilledCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonUnfilledElement;
+}
+export interface DsCalendarCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsCalendarElement;
 }
 export interface DsCardActionCenterCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -4403,6 +4724,14 @@ export interface DsFilterMenuCustomEvent<T> extends CustomEvent<T> {
 export interface DsInputCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsInputElement;
+}
+export interface DsInputDateCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsInputDateElement;
+}
+export interface DsInputTimeCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsInputTimeElement;
 }
 export interface DsMenuCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -4535,6 +4864,10 @@ export interface DsTagCustomEvent<T> extends CustomEvent<T> {
 export interface DsTextareaCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsTextareaElement;
+}
+export interface DsTimePickerCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsTimePickerElement;
 }
 export interface DsToastCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -4768,6 +5101,24 @@ declare global {
         prototype: HTMLDsButtonFilledElement;
         new (): HTMLDsButtonFilledElement;
     };
+    interface HTMLDsButtonInvertedElementEventMap {
+        "dsClick": MouseEvent;
+        "dsMenuClick": MouseEvent;
+    }
+    interface HTMLDsButtonInvertedElement extends Components.DsButtonInverted, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsButtonInvertedElementEventMap>(type: K, listener: (this: HTMLDsButtonInvertedElement, ev: DsButtonInvertedCustomEvent<HTMLDsButtonInvertedElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsButtonInvertedElementEventMap>(type: K, listener: (this: HTMLDsButtonInvertedElement, ev: DsButtonInvertedCustomEvent<HTMLDsButtonInvertedElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsButtonInvertedElement: {
+        prototype: HTMLDsButtonInvertedElement;
+        new (): HTMLDsButtonInvertedElement;
+    };
     interface HTMLDsButtonUnfilledElementEventMap {
         "dsClick": MouseEvent;
         "dsMenuClick": MouseEvent;
@@ -4786,6 +5137,23 @@ declare global {
     var HTMLDsButtonUnfilledElement: {
         prototype: HTMLDsButtonUnfilledElement;
         new (): HTMLDsButtonUnfilledElement;
+    };
+    interface HTMLDsCalendarElementEventMap {
+        "dsChange": string;
+    }
+    interface HTMLDsCalendarElement extends Components.DsCalendar, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsCalendarElementEventMap>(type: K, listener: (this: HTMLDsCalendarElement, ev: DsCalendarCustomEvent<HTMLDsCalendarElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsCalendarElementEventMap>(type: K, listener: (this: HTMLDsCalendarElement, ev: DsCalendarCustomEvent<HTMLDsCalendarElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsCalendarElement: {
+        prototype: HTMLDsCalendarElement;
+        new (): HTMLDsCalendarElement;
     };
     interface HTMLDsCardActionCenterElementEventMap {
         "dsAction": CardActionCenterActionDetail;
@@ -5073,6 +5441,40 @@ declare global {
     var HTMLDsInputElement: {
         prototype: HTMLDsInputElement;
         new (): HTMLDsInputElement;
+    };
+    interface HTMLDsInputDateElementEventMap {
+        "dsChange": string;
+    }
+    interface HTMLDsInputDateElement extends Components.DsInputDate, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsInputDateElementEventMap>(type: K, listener: (this: HTMLDsInputDateElement, ev: DsInputDateCustomEvent<HTMLDsInputDateElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsInputDateElementEventMap>(type: K, listener: (this: HTMLDsInputDateElement, ev: DsInputDateCustomEvent<HTMLDsInputDateElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsInputDateElement: {
+        prototype: HTMLDsInputDateElement;
+        new (): HTMLDsInputDateElement;
+    };
+    interface HTMLDsInputTimeElementEventMap {
+        "dsChange": string;
+    }
+    interface HTMLDsInputTimeElement extends Components.DsInputTime, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsInputTimeElementEventMap>(type: K, listener: (this: HTMLDsInputTimeElement, ev: DsInputTimeCustomEvent<HTMLDsInputTimeElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsInputTimeElementEventMap>(type: K, listener: (this: HTMLDsInputTimeElement, ev: DsInputTimeCustomEvent<HTMLDsInputTimeElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsInputTimeElement: {
+        prototype: HTMLDsInputTimeElement;
+        new (): HTMLDsInputTimeElement;
     };
     interface HTMLDsLoaderElement extends Components.DsLoader, HTMLStencilElement {
     }
@@ -5800,6 +6202,23 @@ declare global {
         prototype: HTMLDsTextareaElement;
         new (): HTMLDsTextareaElement;
     };
+    interface HTMLDsTimePickerElementEventMap {
+        "dsChange": string;
+    }
+    interface HTMLDsTimePickerElement extends Components.DsTimePicker, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsTimePickerElementEventMap>(type: K, listener: (this: HTMLDsTimePickerElement, ev: DsTimePickerCustomEvent<HTMLDsTimePickerElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsTimePickerElementEventMap>(type: K, listener: (this: HTMLDsTimePickerElement, ev: DsTimePickerCustomEvent<HTMLDsTimePickerElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsTimePickerElement: {
+        prototype: HTMLDsTimePickerElement;
+        new (): HTMLDsTimePickerElement;
+    };
     interface HTMLDsToastElementEventMap {
         "dsToastClose": ToastCloseEventDetail;
         "dsToastRemove": ToastEventDetail;
@@ -5874,7 +6293,9 @@ declare global {
         "ds-bar-workflow": HTMLDsBarWorkflowElement;
         "ds-breadcrumb": HTMLDsBreadcrumbElement;
         "ds-button-filled": HTMLDsButtonFilledElement;
+        "ds-button-inverted": HTMLDsButtonInvertedElement;
         "ds-button-unfilled": HTMLDsButtonUnfilledElement;
+        "ds-calendar": HTMLDsCalendarElement;
         "ds-card-action-center": HTMLDsCardActionCenterElement;
         "ds-card-chart": HTMLDsCardChartElement;
         "ds-card-navigation": HTMLDsCardNavigationElement;
@@ -5895,6 +6316,8 @@ declare global {
         "ds-filter-menu": HTMLDsFilterMenuElement;
         "ds-icon": HTMLDsIconElement;
         "ds-input": HTMLDsInputElement;
+        "ds-input-date": HTMLDsInputDateElement;
+        "ds-input-time": HTMLDsInputTimeElement;
         "ds-loader": HTMLDsLoaderElement;
         "ds-markdown": HTMLDsMarkdownElement;
         "ds-menu": HTMLDsMenuElement;
@@ -5938,6 +6361,7 @@ declare global {
         "ds-tag": HTMLDsTagElement;
         "ds-text": HTMLDsTextElement;
         "ds-textarea": HTMLDsTextareaElement;
+        "ds-time-picker": HTMLDsTimePickerElement;
         "ds-toast": HTMLDsToastElement;
         "ds-tooltip": HTMLDsTooltipElement;
         "ds-tooltip-chart": HTMLDsTooltipChartElement;
@@ -6618,6 +7042,111 @@ declare namespace LocalJSX {
          */
         "width"?: ButtonFilledWidth;
     }
+    interface DsButtonInverted {
+        /**
+          * Accessible name override. Required for icon-only buttons.
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        /**
+          * ID of the popup this button controls.
+         */
+        "controls"?: string | undefined;
+        /**
+          * Controlled disclosure state forwarded to aria-expanded.
+         */
+        "expanded"?: boolean | undefined;
+        /**
+          * This action has a menu: implies `aria-haspopup="menu"` and adds the trailing chevron that carries the affordance.  Only `label` and `icon-label` are supported. Icon-only menu triggers belong to ButtonUnfilled so the glyph can communicate the overflow affordance.
+          * @default false
+         */
+        "hasMenu"?: boolean;
+        /**
+          * Popup type exposed to assistive technology.
+         */
+        "haspopup"?: ButtonInvertedPopup | undefined;
+        /**
+          * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
+          * @default ''
+         */
+        "icon"?: string;
+        /**
+          * Single removes 4px overall; double removes 8px overall (xs stays single).
+          * @default 'single'
+         */
+        "insetDepth"?: ControlInsetDepth;
+        /**
+          * Disables interaction.
+          * @default false
+         */
+        "isInactive"?: boolean;
+        /**
+          * Use reduced outer geometry when nested inside a control of the same size.
+          * @default false
+         */
+        "isInset"?: boolean;
+        /**
+          * Shows an inline loader and prevents interaction without applying inactive opacity.
+          * @default false
+         */
+        "isLoading"?: boolean;
+        /**
+          * Visible text for `label` / `icon-label` variants.
+          * @default ''
+         */
+        "label"?: string;
+        /**
+          * Whether the visible label uses the emphasized weight.
+          * @default true
+         */
+        "labelEmphasis"?: boolean;
+        /**
+          * Accessible name for the appended menu segment in split mode.
+          * @default 'More options'
+         */
+        "menuAriaLabel"?: string;
+        "onDsClick"?: (event: DsButtonInvertedCustomEvent<MouseEvent>) => void;
+        "onDsMenuClick"?: (event: DsButtonInvertedCustomEvent<MouseEvent>) => void;
+        /**
+          * Scale down during a physical pointer press. Disable when an owning composite requires fixed child or background geometry.
+          * @default true
+         */
+        "pressScale"?: boolean;
+        /**
+          * Use the half-radius treatment instead of the default control radius.
+          * @default false
+         */
+        "rounded"?: boolean;
+        /**
+          * Control density (height, padding, icon, type).
+          * @default 'md'
+         */
+        "size"?: ButtonInvertedSize;
+        /**
+          * Append a separate ChevronDown menu segment while preserving the inverted recipe, variant, size, loading, inactive, and width treatment.
+          * @default false
+         */
+        "split"?: boolean;
+        /**
+          * The associated menu, picker, or panel is visible, including its exit motion. Holds only the pressed wash and does not set ARIA or selection state.
+         */
+        "surfaceOpen"?: boolean | undefined;
+        /**
+          * Native button type.
+          * @default 'button'
+         */
+        "type"?: 'button' | 'submit' | 'reset';
+        /**
+          * Content layout. Default is label-only; pass `icon` for icon-only chrome or `icon-label` for leading icon + text.
+          * @default 'label'
+         */
+        "variant"?: ButtonInvertedVariant;
+        /**
+          * Width fit — hug content (default) or fill the parent.
+          * @default 'hug'
+         */
+        "width"?: ButtonInvertedWidth;
+    }
     interface DsButtonUnfilled {
         /**
           * When active, render the selected interaction fill. Default `true` for general UI. Shell chrome (nav / tool rails) should pass `false` so selection is foreground-only (primary color, no fill).
@@ -6754,6 +7283,29 @@ declare namespace LocalJSX {
           * @default 'hug'
          */
         "width"?: ButtonUnfilledWidth;
+    }
+    interface DsCalendar {
+        /**
+          * Move keyboard focus into the grid after the calendar is rendered.
+          * @default false
+         */
+        "autoFocus"?: boolean;
+        /**
+          * @default false
+         */
+        "isInactive"?: boolean;
+        "max"?: string | undefined;
+        "min"?: string | undefined;
+        "onDsChange"?: (event: DsCalendarCustomEvent<string>) => void;
+        /**
+          * Single date emits YYYY-MM-DD. Range emits the shared `range:start/end` string.
+          * @default 'single'
+         */
+        "selectionMode"?: CalendarSelectionMode;
+        /**
+          * @default ''
+         */
+        "value"?: string;
     }
     interface DsCardActionCenter {
         /**
@@ -7310,9 +7862,9 @@ declare namespace LocalJSX {
          */
         "fieldId"?: string | undefined;
         /**
-          * Persistent visible label for the single slotted control.
+          * Visible label for the slotted control. Omit when a nearby heading already names the field.
          */
-        "label": string;
+        "label"?: string;
     }
     interface DsFilterMenu {
         /**
@@ -7585,6 +8137,10 @@ declare namespace LocalJSX {
          */
         "hasInteractionFill"?: boolean;
         /**
+          * @default 'Hide password'
+         */
+        "hidePasswordLabel"?: string;
+        /**
           * Optional leading icon name.
          */
         "icon"?: string | undefined;
@@ -7627,6 +8183,10 @@ declare namespace LocalJSX {
          */
         "requiredMessage"?: string;
         /**
+          * @default 'Show password'
+         */
+        "showPasswordLabel"?: string;
+        /**
           * Control density.
           * @default 'md'
          */
@@ -7653,6 +8213,137 @@ declare namespace LocalJSX {
           * @default 'fill'
          */
         "width"?: InputWidth;
+    }
+    interface DsInputDate {
+        "ariaDescribedby"?: string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        "ariaLabelledby"?: string | undefined;
+        /**
+          * @default false
+         */
+        "autoFocus"?: boolean;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * @default false
+         */
+        "error"?: boolean;
+        "errorMessage"?: string | undefined;
+        "form"?: string | undefined;
+        /**
+          * @default true
+         */
+        "hasBorder"?: boolean;
+        /**
+          * @default true
+         */
+        "hasInteractionFill"?: boolean;
+        "inputId"?: string | undefined;
+        /**
+          * @default false
+         */
+        "isInactive"?: boolean;
+        "max"?: string | undefined;
+        "min"?: string | undefined;
+        "name"?: string | undefined;
+        "onDsChange"?: (event: DsInputDateCustomEvent<string>) => void;
+        /**
+          * @default false
+         */
+        "readOnly"?: boolean;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage"?: string;
+        /**
+          * @default 'md'
+         */
+        "size"?: InputDateSize;
+        /**
+          * @default ''
+         */
+        "value"?: string;
+        /**
+          * @default 'fill'
+         */
+        "width"?: InputDateWidth;
+    }
+    interface DsInputTime {
+        "ariaDescribedby"?: string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        "ariaLabelledby"?: string | undefined;
+        /**
+          * @default false
+         */
+        "autoFocus"?: boolean;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * @default false
+         */
+        "error"?: boolean;
+        "errorMessage"?: string | undefined;
+        "form"?: string | undefined;
+        /**
+          * @default true
+         */
+        "hasBorder"?: boolean;
+        /**
+          * @default true
+         */
+        "hasInteractionFill"?: boolean;
+        "inputId"?: string | undefined;
+        /**
+          * @default false
+         */
+        "isInactive"?: boolean;
+        "max"?: string | undefined;
+        "min"?: string | undefined;
+        "name"?: string | undefined;
+        "onDsChange"?: (event: DsInputTimeCustomEvent<string>) => void;
+        /**
+          * @default false
+         */
+        "readOnly"?: boolean;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage"?: string;
+        /**
+          * @default 'md'
+         */
+        "size"?: InputTimeSize;
+        /**
+          * Native time step in seconds. Defaults to minutes (`60`).
+          * @default 60
+         */
+        "step"?: string | number;
+        /**
+          * @default ''
+         */
+        "value"?: string;
+        /**
+          * @default 'fill'
+         */
+        "width"?: InputTimeWidth;
     }
     interface DsLoader {
         /**
@@ -8802,10 +9493,20 @@ declare namespace LocalJSX {
          */
         "inputId"?: string | undefined;
         /**
+          * Single removes 4px overall; double removes 8px overall (xs stays single).
+          * @default 'single'
+         */
+        "insetDepth"?: ControlInsetDepth1;
+        /**
           * Shared inactive treatment; removes interaction and form submission.
           * @default false
          */
         "isInactive"?: boolean;
+        /**
+          * Use reduced outer geometry when nested inside a control of the same size.
+          * @default false
+         */
+        "isInset"?: boolean;
         /**
           * Replace the prefix with a loader and disable option interaction.
           * @default false
@@ -8889,6 +9590,11 @@ declare namespace LocalJSX {
           * @default 'This field is required.'
          */
         "requiredMessage"?: string;
+        /**
+          * Use a pill radius on the trigger. Popup chrome stays on the menu radius.
+          * @default false
+         */
+        "rounded"?: boolean;
         /**
           * Localized search-field placeholder and accessible name.
           * @default 'Search'
@@ -10341,6 +11047,30 @@ declare namespace LocalJSX {
          */
         "width"?: TextareaWidth;
     }
+    interface DsTimePicker {
+        /**
+          * Move keyboard focus into the hour list after the picker is rendered.
+          * @default false
+         */
+        "autoFocus"?: boolean;
+        /**
+          * @default false
+         */
+        "isInactive"?: boolean;
+        "max"?: string | undefined;
+        "min"?: string | undefined;
+        "onDsChange"?: (event: DsTimePickerCustomEvent<string>) => void;
+        /**
+          * Native time step in seconds. Defaults to minutes (`60`).
+          * @default 60
+         */
+        "step"?: string | number;
+        /**
+          * Clock value as `HH:MM`.
+          * @default ''
+         */
+        "value"?: string;
+    }
     interface DsToast {
         /**
           * Keep the global stack 16px above the persistent mobile shell bar below 768px.
@@ -10633,6 +11363,29 @@ declare namespace LocalJSX {
         "menuAriaLabel": string;
         "hasMenu": boolean;
     }
+    interface DsButtonInvertedAttributes {
+        "variant": ButtonInvertedVariant;
+        "size": ButtonInvertedSize;
+        "isInset": boolean;
+        "insetDepth": ControlInsetDepth;
+        "width": ButtonInvertedWidth;
+        "label": string;
+        "labelEmphasis": boolean;
+        "icon": string;
+        "rounded": boolean;
+        "pressScale": boolean;
+        "isInactive": boolean;
+        "isLoading": boolean;
+        "type": 'button' | 'submit' | 'reset';
+        "ariaLabel": string | null;
+        "controls": string | undefined;
+        "expanded": boolean | undefined;
+        "surfaceOpen": boolean | undefined;
+        "haspopup": ButtonInvertedPopup | undefined;
+        "split": boolean;
+        "menuAriaLabel": string;
+        "hasMenu": boolean;
+    }
     interface DsButtonUnfilledAttributes {
         "variant": ButtonUnfilledVariant;
         "size": ButtonUnfilledSize;
@@ -10663,6 +11416,14 @@ declare namespace LocalJSX {
         "collapseLabel": boolean;
         "hasMenu": boolean;
         "focusTabIndex": number;
+    }
+    interface DsCalendarAttributes {
+        "selectionMode": CalendarSelectionMode;
+        "value": string;
+        "min": string | undefined;
+        "max": string | undefined;
+        "isInactive": boolean;
+        "autoFocus": boolean;
     }
     interface DsCardActionCenterAttributes {
         "emptyMessage": string;
@@ -10843,6 +11604,8 @@ declare namespace LocalJSX {
         "required": boolean;
         "requiredMessage": string;
         "clearLabel": string;
+        "showPasswordLabel": string;
+        "hidePasswordLabel": string;
         "placeholder": string | undefined;
         "type": InputType;
         "min": number | undefined;
@@ -10867,6 +11630,53 @@ declare namespace LocalJSX {
         "ariaDescribedby": string | undefined;
         "ariaControls": string | undefined;
         "ariaActiveDescendant": string | undefined;
+    }
+    interface DsInputDateAttributes {
+        "value": string;
+        "name": string | undefined;
+        "form": string | undefined;
+        "disabled": boolean;
+        "readOnly": boolean;
+        "required": boolean;
+        "requiredMessage": string;
+        "min": string | undefined;
+        "max": string | undefined;
+        "size": InputDateSize;
+        "width": InputDateWidth;
+        "hasBorder": boolean;
+        "hasInteractionFill": boolean;
+        "isInactive": boolean;
+        "autoFocus": boolean;
+        "error": boolean;
+        "errorMessage": string | undefined;
+        "inputId": string | undefined;
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+        "ariaDescribedby": string | undefined;
+    }
+    interface DsInputTimeAttributes {
+        "value": string;
+        "name": string | undefined;
+        "form": string | undefined;
+        "disabled": boolean;
+        "readOnly": boolean;
+        "required": boolean;
+        "requiredMessage": string;
+        "step": string;
+        "min": string | undefined;
+        "max": string | undefined;
+        "size": InputTimeSize;
+        "width": InputTimeWidth;
+        "hasBorder": boolean;
+        "hasInteractionFill": boolean;
+        "isInactive": boolean;
+        "autoFocus": boolean;
+        "error": boolean;
+        "errorMessage": string | undefined;
+        "inputId": string | undefined;
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+        "ariaDescribedby": string | undefined;
     }
     interface DsLoaderAttributes {
         "size": LoaderSize;
@@ -11106,6 +11916,8 @@ declare namespace LocalJSX {
         "triggerLabelPlaceholder": boolean;
         "dot": boolean;
         "size": SelectSize;
+        "isInset": boolean;
+        "insetDepth": ControlInsetDepth;
         "width": SelectWidth;
         "popupAlign": SelectPopupAlign;
         "isInactive": boolean;
@@ -11115,6 +11927,7 @@ declare namespace LocalJSX {
         "collapseLabel": boolean;
         "iconOnly": boolean;
         "hasBorder": boolean;
+        "rounded": boolean;
         "icon": string | undefined;
         "indicator": SelectIndicator;
         "allowClear": boolean;
@@ -11400,6 +12213,14 @@ declare namespace LocalJSX {
         "ariaLabelledby": string | undefined;
         "ariaDescribedby": string | undefined;
     }
+    interface DsTimePickerAttributes {
+        "value": string;
+        "min": string | undefined;
+        "max": string | undefined;
+        "step": string;
+        "isInactive": boolean;
+        "autoFocus": boolean;
+    }
     interface DsToastAttributes {
         "limit": number;
         "timeout": string;
@@ -11450,7 +12271,9 @@ declare namespace LocalJSX {
         "ds-bar-workflow": Omit<DsBarWorkflow, keyof DsBarWorkflowAttributes> & { [K in keyof DsBarWorkflow & keyof DsBarWorkflowAttributes]?: DsBarWorkflow[K] } & { [K in keyof DsBarWorkflow & keyof DsBarWorkflowAttributes as `attr:${K}`]?: DsBarWorkflowAttributes[K] } & { [K in keyof DsBarWorkflow & keyof DsBarWorkflowAttributes as `prop:${K}`]?: DsBarWorkflow[K] } & OneOf<"heading", DsBarWorkflow["heading"], DsBarWorkflowAttributes["heading"]>;
         "ds-breadcrumb": Omit<DsBreadcrumb, keyof DsBreadcrumbAttributes> & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes]?: DsBreadcrumb[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `attr:${K}`]?: DsBreadcrumbAttributes[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `prop:${K}`]?: DsBreadcrumb[K] };
         "ds-button-filled": Omit<DsButtonFilled, keyof DsButtonFilledAttributes> & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes]?: DsButtonFilled[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `attr:${K}`]?: DsButtonFilledAttributes[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `prop:${K}`]?: DsButtonFilled[K] };
+        "ds-button-inverted": Omit<DsButtonInverted, keyof DsButtonInvertedAttributes> & { [K in keyof DsButtonInverted & keyof DsButtonInvertedAttributes]?: DsButtonInverted[K] } & { [K in keyof DsButtonInverted & keyof DsButtonInvertedAttributes as `attr:${K}`]?: DsButtonInvertedAttributes[K] } & { [K in keyof DsButtonInverted & keyof DsButtonInvertedAttributes as `prop:${K}`]?: DsButtonInverted[K] };
         "ds-button-unfilled": Omit<DsButtonUnfilled, keyof DsButtonUnfilledAttributes> & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes]?: DsButtonUnfilled[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `attr:${K}`]?: DsButtonUnfilledAttributes[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `prop:${K}`]?: DsButtonUnfilled[K] };
+        "ds-calendar": Omit<DsCalendar, keyof DsCalendarAttributes> & { [K in keyof DsCalendar & keyof DsCalendarAttributes]?: DsCalendar[K] } & { [K in keyof DsCalendar & keyof DsCalendarAttributes as `attr:${K}`]?: DsCalendarAttributes[K] } & { [K in keyof DsCalendar & keyof DsCalendarAttributes as `prop:${K}`]?: DsCalendar[K] };
         "ds-card-action-center": Omit<DsCardActionCenter, keyof DsCardActionCenterAttributes> & { [K in keyof DsCardActionCenter & keyof DsCardActionCenterAttributes]?: DsCardActionCenter[K] } & { [K in keyof DsCardActionCenter & keyof DsCardActionCenterAttributes as `attr:${K}`]?: DsCardActionCenterAttributes[K] } & { [K in keyof DsCardActionCenter & keyof DsCardActionCenterAttributes as `prop:${K}`]?: DsCardActionCenter[K] };
         "ds-card-chart": Omit<DsCardChart, keyof DsCardChartAttributes> & { [K in keyof DsCardChart & keyof DsCardChartAttributes]?: DsCardChart[K] } & { [K in keyof DsCardChart & keyof DsCardChartAttributes as `attr:${K}`]?: DsCardChartAttributes[K] } & { [K in keyof DsCardChart & keyof DsCardChartAttributes as `prop:${K}`]?: DsCardChart[K] } & OneOf<"heading", DsCardChart["heading"], DsCardChartAttributes["heading"]>;
         "ds-card-navigation": Omit<DsCardNavigation, keyof DsCardNavigationAttributes> & { [K in keyof DsCardNavigation & keyof DsCardNavigationAttributes]?: DsCardNavigation[K] } & { [K in keyof DsCardNavigation & keyof DsCardNavigationAttributes as `attr:${K}`]?: DsCardNavigationAttributes[K] } & { [K in keyof DsCardNavigation & keyof DsCardNavigationAttributes as `prop:${K}`]?: DsCardNavigation[K] } & OneOf<"href", DsCardNavigation["href"], DsCardNavigationAttributes["href"]> & OneOf<"heading", DsCardNavigation["heading"], DsCardNavigationAttributes["heading"]>;
@@ -11467,10 +12290,12 @@ declare namespace LocalJSX {
         "ds-conversation-list-section": Omit<DsConversationListSection, keyof DsConversationListSectionAttributes> & { [K in keyof DsConversationListSection & keyof DsConversationListSectionAttributes]?: DsConversationListSection[K] } & { [K in keyof DsConversationListSection & keyof DsConversationListSectionAttributes as `attr:${K}`]?: DsConversationListSectionAttributes[K] } & { [K in keyof DsConversationListSection & keyof DsConversationListSectionAttributes as `prop:${K}`]?: DsConversationListSection[K] };
         "ds-divider": Omit<DsDivider, keyof DsDividerAttributes> & { [K in keyof DsDivider & keyof DsDividerAttributes]?: DsDivider[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `attr:${K}`]?: DsDividerAttributes[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `prop:${K}`]?: DsDivider[K] };
         "ds-empty-state": Omit<DsEmptyState, keyof DsEmptyStateAttributes> & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes]?: DsEmptyState[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `attr:${K}`]?: DsEmptyStateAttributes[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `prop:${K}`]?: DsEmptyState[K] };
-        "ds-field": Omit<DsField, keyof DsFieldAttributes> & { [K in keyof DsField & keyof DsFieldAttributes]?: DsField[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `attr:${K}`]?: DsFieldAttributes[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `prop:${K}`]?: DsField[K] } & OneOf<"label", DsField["label"], DsFieldAttributes["label"]>;
+        "ds-field": Omit<DsField, keyof DsFieldAttributes> & { [K in keyof DsField & keyof DsFieldAttributes]?: DsField[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `attr:${K}`]?: DsFieldAttributes[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `prop:${K}`]?: DsField[K] };
         "ds-filter-menu": Omit<DsFilterMenu, keyof DsFilterMenuAttributes> & { [K in keyof DsFilterMenu & keyof DsFilterMenuAttributes]?: DsFilterMenu[K] } & { [K in keyof DsFilterMenu & keyof DsFilterMenuAttributes as `attr:${K}`]?: DsFilterMenuAttributes[K] } & { [K in keyof DsFilterMenu & keyof DsFilterMenuAttributes as `prop:${K}`]?: DsFilterMenu[K] };
         "ds-icon": Omit<DsIcon, keyof DsIconAttributes> & { [K in keyof DsIcon & keyof DsIconAttributes]?: DsIcon[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `attr:${K}`]?: DsIconAttributes[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `prop:${K}`]?: DsIcon[K] };
         "ds-input": Omit<DsInput, keyof DsInputAttributes> & { [K in keyof DsInput & keyof DsInputAttributes]?: DsInput[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `attr:${K}`]?: DsInputAttributes[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `prop:${K}`]?: DsInput[K] };
+        "ds-input-date": Omit<DsInputDate, keyof DsInputDateAttributes> & { [K in keyof DsInputDate & keyof DsInputDateAttributes]?: DsInputDate[K] } & { [K in keyof DsInputDate & keyof DsInputDateAttributes as `attr:${K}`]?: DsInputDateAttributes[K] } & { [K in keyof DsInputDate & keyof DsInputDateAttributes as `prop:${K}`]?: DsInputDate[K] };
+        "ds-input-time": Omit<DsInputTime, keyof DsInputTimeAttributes> & { [K in keyof DsInputTime & keyof DsInputTimeAttributes]?: DsInputTime[K] } & { [K in keyof DsInputTime & keyof DsInputTimeAttributes as `attr:${K}`]?: DsInputTimeAttributes[K] } & { [K in keyof DsInputTime & keyof DsInputTimeAttributes as `prop:${K}`]?: DsInputTime[K] };
         "ds-loader": Omit<DsLoader, keyof DsLoaderAttributes> & { [K in keyof DsLoader & keyof DsLoaderAttributes]?: DsLoader[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `attr:${K}`]?: DsLoaderAttributes[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `prop:${K}`]?: DsLoader[K] };
         "ds-markdown": Omit<DsMarkdown, keyof DsMarkdownAttributes> & { [K in keyof DsMarkdown & keyof DsMarkdownAttributes]?: DsMarkdown[K] } & { [K in keyof DsMarkdown & keyof DsMarkdownAttributes as `attr:${K}`]?: DsMarkdownAttributes[K] } & { [K in keyof DsMarkdown & keyof DsMarkdownAttributes as `prop:${K}`]?: DsMarkdown[K] };
         "ds-menu": Omit<DsMenu, keyof DsMenuAttributes> & { [K in keyof DsMenu & keyof DsMenuAttributes]?: DsMenu[K] } & { [K in keyof DsMenu & keyof DsMenuAttributes as `attr:${K}`]?: DsMenuAttributes[K] } & { [K in keyof DsMenu & keyof DsMenuAttributes as `prop:${K}`]?: DsMenu[K] };
@@ -11514,6 +12339,7 @@ declare namespace LocalJSX {
         "ds-tag": Omit<DsTag, keyof DsTagAttributes> & { [K in keyof DsTag & keyof DsTagAttributes]?: DsTag[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `attr:${K}`]?: DsTagAttributes[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `prop:${K}`]?: DsTag[K] } & OneOf<"label", DsTag["label"], DsTagAttributes["label"]>;
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
         "ds-textarea": Omit<DsTextarea, keyof DsTextareaAttributes> & { [K in keyof DsTextarea & keyof DsTextareaAttributes]?: DsTextarea[K] } & { [K in keyof DsTextarea & keyof DsTextareaAttributes as `attr:${K}`]?: DsTextareaAttributes[K] } & { [K in keyof DsTextarea & keyof DsTextareaAttributes as `prop:${K}`]?: DsTextarea[K] };
+        "ds-time-picker": Omit<DsTimePicker, keyof DsTimePickerAttributes> & { [K in keyof DsTimePicker & keyof DsTimePickerAttributes]?: DsTimePicker[K] } & { [K in keyof DsTimePicker & keyof DsTimePickerAttributes as `attr:${K}`]?: DsTimePickerAttributes[K] } & { [K in keyof DsTimePicker & keyof DsTimePickerAttributes as `prop:${K}`]?: DsTimePicker[K] };
         "ds-toast": Omit<DsToast, keyof DsToastAttributes> & { [K in keyof DsToast & keyof DsToastAttributes]?: DsToast[K] } & { [K in keyof DsToast & keyof DsToastAttributes as `attr:${K}`]?: DsToastAttributes[K] } & { [K in keyof DsToast & keyof DsToastAttributes as `prop:${K}`]?: DsToast[K] };
         "ds-tooltip": Omit<DsTooltip, keyof DsTooltipAttributes> & { [K in keyof DsTooltip & keyof DsTooltipAttributes]?: DsTooltip[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `attr:${K}`]?: DsTooltipAttributes[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `prop:${K}`]?: DsTooltip[K] } & OneOf<"label", DsTooltip["label"], DsTooltipAttributes["label"]>;
         "ds-tooltip-chart": Omit<DsTooltipChart, keyof DsTooltipChartAttributes> & { [K in keyof DsTooltipChart & keyof DsTooltipChartAttributes]?: DsTooltipChart[K] } & { [K in keyof DsTooltipChart & keyof DsTooltipChartAttributes as `attr:${K}`]?: DsTooltipChartAttributes[K] } & { [K in keyof DsTooltipChart & keyof DsTooltipChartAttributes as `prop:${K}`]?: DsTooltipChart[K] };
@@ -11540,7 +12366,9 @@ declare module "@stencil/core" {
             "ds-bar-workflow": LocalJSX.IntrinsicElements["ds-bar-workflow"] & JSXBase.HTMLAttributes<HTMLDsBarWorkflowElement>;
             "ds-breadcrumb": LocalJSX.IntrinsicElements["ds-breadcrumb"] & JSXBase.HTMLAttributes<HTMLDsBreadcrumbElement>;
             "ds-button-filled": LocalJSX.IntrinsicElements["ds-button-filled"] & JSXBase.HTMLAttributes<HTMLDsButtonFilledElement>;
+            "ds-button-inverted": LocalJSX.IntrinsicElements["ds-button-inverted"] & JSXBase.HTMLAttributes<HTMLDsButtonInvertedElement>;
             "ds-button-unfilled": LocalJSX.IntrinsicElements["ds-button-unfilled"] & JSXBase.HTMLAttributes<HTMLDsButtonUnfilledElement>;
+            "ds-calendar": LocalJSX.IntrinsicElements["ds-calendar"] & JSXBase.HTMLAttributes<HTMLDsCalendarElement>;
             "ds-card-action-center": LocalJSX.IntrinsicElements["ds-card-action-center"] & JSXBase.HTMLAttributes<HTMLDsCardActionCenterElement>;
             /**
              * Standard chart card chrome and composition. The variant owns
@@ -11577,6 +12405,8 @@ declare module "@stencil/core" {
             "ds-filter-menu": LocalJSX.IntrinsicElements["ds-filter-menu"] & JSXBase.HTMLAttributes<HTMLDsFilterMenuElement>;
             "ds-icon": LocalJSX.IntrinsicElements["ds-icon"] & JSXBase.HTMLAttributes<HTMLDsIconElement>;
             "ds-input": LocalJSX.IntrinsicElements["ds-input"] & JSXBase.HTMLAttributes<HTMLDsInputElement>;
+            "ds-input-date": LocalJSX.IntrinsicElements["ds-input-date"] & JSXBase.HTMLAttributes<HTMLDsInputDateElement>;
+            "ds-input-time": LocalJSX.IntrinsicElements["ds-input-time"] & JSXBase.HTMLAttributes<HTMLDsInputTimeElement>;
             "ds-loader": LocalJSX.IntrinsicElements["ds-loader"] & JSXBase.HTMLAttributes<HTMLDsLoaderElement>;
             "ds-markdown": LocalJSX.IntrinsicElements["ds-markdown"] & JSXBase.HTMLAttributes<HTMLDsMarkdownElement>;
             "ds-menu": LocalJSX.IntrinsicElements["ds-menu"] & JSXBase.HTMLAttributes<HTMLDsMenuElement>;
@@ -11620,6 +12450,7 @@ declare module "@stencil/core" {
             "ds-tag": LocalJSX.IntrinsicElements["ds-tag"] & JSXBase.HTMLAttributes<HTMLDsTagElement>;
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
             "ds-textarea": LocalJSX.IntrinsicElements["ds-textarea"] & JSXBase.HTMLAttributes<HTMLDsTextareaElement>;
+            "ds-time-picker": LocalJSX.IntrinsicElements["ds-time-picker"] & JSXBase.HTMLAttributes<HTMLDsTimePickerElement>;
             "ds-toast": LocalJSX.IntrinsicElements["ds-toast"] & JSXBase.HTMLAttributes<HTMLDsToastElement>;
             /**
              * Imperative body portal for the popup.

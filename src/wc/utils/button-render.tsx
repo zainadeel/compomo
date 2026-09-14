@@ -10,7 +10,7 @@ import {
 } from './button-types';
 
 interface ButtonContentOptions {
-  namespace: 'button-filled' | 'button-unfilled';
+  namespace: 'button-filled' | 'button-inverted' | 'button-unfilled';
   variant: ButtonVariant;
   size: ButtonSize;
   label: string;

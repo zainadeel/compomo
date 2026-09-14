@@ -1,0 +1,56 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-time-picker",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-time-picker",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Bounded 12-hour clock lists for choosing hour, minute, and AM/PM, reused by form time fields.",
+  "useWhen": [
+    "A user picks a clock time from hour, minute, and AM/PM lists.",
+    "A time field needs 32px clock tiles that match calendar day geometry and the shared choice-list selected treatment."
+  ],
+  "avoidWhen": [
+    "The user types a time without opening a picker; the owning field keeps that editable value.",
+    "The value is a calendar date rather than a clock time.",
+    "The user chooses from a finite set of named schedule options rather than an exact time."
+  ],
+  "alternatives": [
+    {
+      "when": "The time is a form field that can be typed or picked.",
+      "component": "component:ds-input-time",
+      "reason": "InputTime owns the editable field, form association, and the time-picker popup."
+    },
+    {
+      "when": "The value is a calendar date.",
+      "component": "component:ds-calendar",
+      "reason": "Calendar owns the month grid for single dates and ranges."
+    }
+  ],
+  "commonlyComposedWith": ["component:ds-input-time", "component:ds-text"],
+  "accessibility": [
+    "Hour, minute, and AM/PM are separate labelled listboxes without visible column headings. Each list keeps one tab stop on the selected option.",
+    "Arrow keys move to the next or previous option and stop at the first and last values; they do not wrap. Home and End jump to those ends. Left and Right move between columns and stop at Hour and AM/PM.",
+    "Inactive pickers disable every option. Optional min and max times disable combinations outside that inclusive bound."
+  ],
+  "states": [
+    "Selected hour, minute, and period tiles use the shared interaction-fill selected wash and primary text. Resting tiles use secondary text on a transparent 32px square.",
+    "Lists are finite. Hour runs 1 through 12, minutes follow the step, and AM/PM has two values. Scrolling and keyboard movement stop at those ends instead of looping.",
+    "An empty value highlights 12:00 AM so the lists have a resting selection without inventing a second empty state."
+  ],
+  "responsiveBehavior": [
+    "The three columns fill the width supplied by the owner. Tile size, 4px gaps, and the seven-tile list viewport are owned here; the owner supplies the popup or pane width."
+  ],
+  "frameworkCaveats": {
+    "customElements": ["Listen for dsChange. The detail is the clock time string HH:MM."],
+    "react": ["Use DsTimePicker, bind value, and handle onDsChange."]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/TimePicker/TimePicker.stories.ts"
+    }
+  ]
+}

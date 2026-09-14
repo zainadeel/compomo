@@ -1,0 +1,75 @@
+.ds-choice-popup {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-width: var(--ds-choice-popup-min-inline-size, var(--dimension-menu-width-xs));
+  max-width: min(var(--dimension-panel-width-lg), calc(100vw - var(--dimension-space-200)));
+  max-height: calc(100vh - var(--dimension-space-200));
+  overflow: hidden;
+  inset: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background-color: var(--color-background-primary);
+  border-radius: var(--ds-radius-menu);
+  box-shadow: var(--effect-shadow-elevated-floating);
+  color: var(--color-foreground-secondary);
+  animation: dsChoiceFadeIn var(--effect-motion-short-2) forwards;
+  backface-visibility: hidden;
+  will-change: transform;
+  text-align: start;
+}
+
+.ds-choice-popup::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: var(--effect-highlight-elevated-floating);
+}
+
+.ds-choice-popup--closing {
+  animation: dsChoiceFadeOut var(--effect-motion-short-2) forwards;
+}
+
+@keyframes dsChoiceFadeIn {
+  from {
+    opacity: 0;
+    transform: inherit scale(0.97);
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dsChoiceFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-choice-popup {
+    animation: none;
+    opacity: 1;
+  }
+
+  .ds-choice-popup--closing {
+    opacity: 0;
+  }
+}
+
+@media (forced-colors: active) {
+  .ds-choice-popup {
+    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-012));
+  }
+
+  .ds-choice-popup::after {
+    box-shadow: none;
+  }
+}

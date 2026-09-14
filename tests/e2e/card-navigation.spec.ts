@@ -65,6 +65,22 @@ test('uses the complete navigation-only card as one native link', async ({ page,
   await expect(page).toHaveURL(/card-navigation\.html$/);
 });
 
+test('keeps heading-only titles aligned with described titles', async ({ page }) => {
+  const alignment = await page.evaluate(() => {
+    const offset = (id: string) => {
+      const card = document.querySelector(`#${id}`)!;
+      const title = card.querySelector<HTMLElement>('.card-navigation__title')!;
+      return title.getBoundingClientRect().top - card.getBoundingClientRect().top;
+    };
+    return {
+      described: offset('navigation-only-card'),
+      headingOnly: offset('heading-only-card'),
+    };
+  });
+
+  expect(alignment.headingOnly).toBeCloseTo(alignment.described, 1);
+});
+
 test('paints distinct hover, pressed, and keyboard-focus states', async ({ page, browserName }) => {
   const link = page
     .locator('#navigation-only-card')

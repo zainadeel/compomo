@@ -1,0 +1,71 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-calendar",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-calendar",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Month calendar grid for choosing one calendar date or an inclusive date range, reused by form date fields and filter range selection.",
+  "useWhen": [
+    "A user picks one calendar day from a month grid.",
+    "A user builds an inclusive start and end date by choosing two days.",
+    "A date field or filter needs the shared month navigation, weekday headings, and selected-day treatment."
+  ],
+  "avoidWhen": [
+    "The user types a date without opening a calendar; the owning field keeps that editable value.",
+    "The user chooses a relative preset such as last 7 days rather than fixed calendar days.",
+    "The popup also has to host filter categories, search, or apply actions; that surface stays with FilterMenu."
+  ],
+  "alternatives": [
+    {
+      "when": "The date is a form field that can be typed or picked.",
+      "component": "component:ds-input-date",
+      "reason": "InputDate owns the editable field, form association, and the calendar popup."
+    },
+    {
+      "when": "The value is a clock time rather than a calendar date.",
+      "component": "component:ds-time-picker",
+      "reason": "TimePicker owns bounded hour, minute, and AM/PM lists with the same 32px tile geometry."
+    },
+    {
+      "when": "The user chooses relative presets or mixed filter families from one trigger.",
+      "component": "component:ds-filter-menu",
+      "reason": "FilterMenu owns relative date presets and hosts this calendar only for fixed ranges."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-input-date",
+    "component:ds-filter-menu",
+    "component:ds-button-unfilled",
+    "component:ds-text"
+  ],
+  "accessibility": [
+    "The month grid is labelled with the visible month and year. Days are grid cells with an accessible date name.",
+    "The grid keeps one tab stop. Arrow keys move by day or week, Home and End move within the week, and Page Up or Page Down change month.",
+    "In range mode, the first chosen day applies immediately as a one-day range. Hovering or focusing another day previews the inclusive span without changing the value until the second activation.",
+    "Month navigation buttons are named Previous month and Next month. Inactive calendars disable day and month controls."
+  ],
+  "states": [
+    "Single selection paints the current value with the shared interaction-fill selected wash and primary text. A committed range paints inclusive days with the faint brand fill and both edges boldly.",
+    "Today uses emphasized primary text without becoming selected on its own.",
+    "Days outside the visible month remain in the six-week grid and use tertiary text. Optional min and max dates disable days outside that inclusive bound.",
+    "After the first range day is chosen, that day keeps the shared pressed overlay. Hovering or focusing toward another day paints the inclusive span with the shared hover overlay on top of the previous committed range, which stays visible until the replacement is completed. Completing the end day orders the two dates inclusively and replaces those overlays with brand fill."
+  ],
+  "responsiveBehavior": [
+    "The grid fills the width supplied by its owner. Seven equal day columns and the shared 4px gaps are owned here; the owner supplies the popup or pane width."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Listen for dsChange. Single mode emits YYYY-MM-DD. Range mode emits range:start/end using the shared date-filter string."
+    ],
+    "react": ["Use DsCalendar, bind value, and handle onDsChange."]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/Calendar/Calendar.stories.ts"
+    }
+  ]
+}

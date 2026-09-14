@@ -268,7 +268,6 @@ export class TableSavedViews {
           onDsAfterClose={() => this.finishDialogClose()}
         >
           <ds-field
-            label="Name"
             fieldId={this.fieldId}
             error={this.nameError.length > 0}
             errorMessage={this.nameError}
@@ -276,6 +275,7 @@ export class TableSavedViews {
             <ds-input
               id={this.inputId}
               size="md"
+              aria-label="Name"
               placeholder="Enter a unique name"
               value={this.nameDraft}
               autoFocus={true}
@@ -289,18 +289,18 @@ export class TableSavedViews {
             />
           </ds-field>
 
-          <div slot="footer" class="table-saved-views__dialog-actions">
-            <ds-button-filled
-              label={this.dialogMode === 'rename' ? 'Rename' : 'Save'}
-              size="md"
-              onDsClick={() => this.submitDialog()}
-            />
-            <ds-button-unfilled
-              label="Cancel"
-              size="md"
-              onDsClick={() => (this.dialogOpen = false)}
-            />
-          </div>
+          <ds-button-filled
+            slot="footer"
+            label={this.dialogMode === 'rename' ? 'Rename' : 'Save'}
+            size="md"
+            onDsClick={() => this.submitDialog()}
+          />
+          <ds-button-unfilled
+            slot="footer"
+            label="Cancel"
+            size="md"
+            onDsClick={() => (this.dialogOpen = false)}
+          />
         </ds-modal>
       </Host>
     );

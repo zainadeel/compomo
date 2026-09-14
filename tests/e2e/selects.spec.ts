@@ -75,6 +75,156 @@ test('keeps external FilterMenu anchors inside and continues Tab through compose
 });
 
 test(
+  'opts into single and double inset density on the trigger only',
+  chromiumOnly(
+    'layout-geometry',
+    'Select inset shrinks only the trigger; popup rows keep the selected density.'
+  ),
+  async ({ page }) => {
+    const measurePopup = async (selector: string) => {
+      const select = page.locator(selector);
+      await select.evaluate((element: HTMLDsSelectElement) => {
+        element.searchable = true;
+      });
+      const trigger = select.getByRole('combobox');
+      await trigger.click();
+      const popup = select.locator('.select-popup');
+      const option = select.locator('.select-option').first();
+      const search = select.locator('ds-input.select-search__control');
+      await expect(option).toBeVisible();
+      const metrics = await option.evaluate(element => {
+        const styles = getComputedStyle(element);
+        return {
+          height: styles.height,
+          paddingLeft: styles.paddingLeft,
+          paddingRight: styles.paddingRight,
+          fontSize: styles.fontSize,
+          gap: styles.gap,
+          controlHeight: styles.getPropertyValue('--ds-control-height').trim(),
+          controlPadding: styles.getPropertyValue('--ds-control-padding-inline').trim(),
+        };
+      });
+      const searchHeight = await search.evaluate(element => getComputedStyle(element).height);
+      const popupClass = (await popup.getAttribute('class')) ?? '';
+      const section = select.locator('.ds-choice-section').first();
+      const chrome = await section.evaluate(element => {
+        const styles = getComputedStyle(element);
+        return {
+          gap: styles.gap,
+          paddingTop: styles.paddingTop,
+          paddingRight: styles.paddingRight,
+          paddingBottom: styles.paddingBottom,
+          paddingLeft: styles.paddingLeft,
+        };
+      });
+      await expect(option).not.toHaveClass(/ds-control--inset/);
+      await page.keyboard.press('Escape');
+      await expect(popup).toHaveCount(0);
+      return { metrics, searchHeight, popupClass, chrome };
+    };
+
+    const defaultMd = page.locator('#select-density-md');
+    const single = page.locator('#select-inset-md');
+    const double = page.locator('#select-double-inset-md');
+    const defaultXs = page.locator('#select-density-xs');
+    const xsDouble = page.locator('#select-double-inset-xs');
+
+    await expect(defaultMd.getByRole('combobox')).toHaveCSS('height', '32px');
+    await expect(single).toHaveJSProperty('isInset', true);
+    await expect(single).toHaveJSProperty('insetDepth', 'single');
+    await expect(single).not.toHaveClass(/ds-control--inset/);
+    await expect(single.getByRole('combobox')).toHaveClass(/ds-control--inset(?:\s|$)/);
+    await expect(single.getByRole('combobox')).not.toHaveClass(/ds-control--inset-double/);
+    await expect(single.getByRole('combobox')).toHaveCSS('height', '28px');
+    await expect(single.getByRole('combobox')).toHaveCSS('padding-left', '4px');
+
+    await expect(double).toHaveJSProperty('isInset', true);
+    await expect(double).toHaveJSProperty('insetDepth', 'double');
+    await expect(double).not.toHaveClass(/ds-control--inset/);
+    await expect(double.getByRole('combobox')).toHaveClass(/ds-control--inset-double/);
+    await expect(double.getByRole('combobox')).toHaveCSS('height', '24px');
+    await expect(double.getByRole('combobox')).toHaveCSS('padding-left', '2px');
+
+    await expect(defaultXs.getByRole('combobox')).toHaveCSS('height', '16px');
+    await expect(xsDouble).toHaveJSProperty('size', 'xs');
+    await expect(xsDouble).toHaveJSProperty('insetDepth', 'double');
+    await expect(xsDouble.getByRole('combobox')).toHaveClass(/ds-control--inset(?:\s|$)/);
+    await expect(xsDouble.getByRole('combobox')).not.toHaveClass(/ds-control--inset-double/);
+    await expect(xsDouble.getByRole('combobox')).toHaveCSS('height', '12px');
+    await expect(xsDouble.getByRole('combobox')).toHaveCSS('padding-left', '0px');
+
+    const defaultMdPopup = await measurePopup('#select-density-md');
+    const singlePopup = await measurePopup('#select-inset-md');
+    const doublePopup = await measurePopup('#select-double-inset-md');
+    expect(singlePopup.metrics).toEqual(defaultMdPopup.metrics);
+    expect(doublePopup.metrics).toEqual(defaultMdPopup.metrics);
+    expect(singlePopup.searchHeight).toBe(defaultMdPopup.searchHeight);
+    expect(doublePopup.searchHeight).toBe(defaultMdPopup.searchHeight);
+    expect(defaultMdPopup.metrics.height).toBe('32px');
+    expect(defaultMdPopup.searchHeight).toBe('32px');
+    expect(defaultMdPopup.popupClass).not.toMatch(/ds-control--(?:lg|md|sm|xs|inset)/);
+    expect(singlePopup.popupClass).not.toMatch(/ds-control--(?:lg|md|sm|xs|inset)/);
+    expect(doublePopup.popupClass).not.toMatch(/ds-control--(?:lg|md|sm|xs|inset)/);
+    expect(defaultMdPopup.chrome).toEqual({
+      gap: '4px',
+      paddingTop: '4px',
+      paddingRight: '4px',
+      paddingBottom: '4px',
+      paddingLeft: '4px',
+    });
+    expect(singlePopup.chrome).toEqual(defaultMdPopup.chrome);
+    expect(doublePopup.chrome).toEqual(defaultMdPopup.chrome);
+
+    const defaultXsPopup = await measurePopup('#select-density-xs');
+    const xsDoublePopup = await measurePopup('#select-double-inset-xs');
+    expect(xsDoublePopup.metrics).toEqual(defaultXsPopup.metrics);
+    expect(xsDoublePopup.searchHeight).toBe(defaultXsPopup.searchHeight);
+    expect(defaultXsPopup.metrics.height).toBe('16px');
+    expect(defaultXsPopup.searchHeight).toBe('16px');
+    expect(xsDoublePopup.popupClass).not.toMatch(/ds-control--(?:lg|md|sm|xs|inset)/);
+    expect(defaultXsPopup.chrome).toEqual(defaultMdPopup.chrome);
+    expect(xsDoublePopup.chrome).toEqual(defaultMdPopup.chrome);
+
+    await defaultXs.evaluate((element: HTMLDsSelectElement) => {
+      element.searchable = false;
+      element.options = [
+        { label: 'Apple', value: 'apple', subtext: 'One' },
+        { label: 'Banana', value: 'banana', subtext: 'Two' },
+        { label: 'Cherry', value: 'cherry', subtext: 'Three' },
+      ];
+    });
+    await defaultXs.getByRole('combobox').click();
+    const xsPopup = defaultXs.locator('.select-popup');
+    const xsOptions = defaultXs.locator('.select-option');
+    await expect(xsOptions.first()).toBeVisible();
+    const subtextSpacing = await defaultXs.evaluate(element => {
+      const popup = element.querySelector('.select-popup');
+      const options = [...element.querySelectorAll('.select-option')];
+      if (!popup || options.length < 2) return null;
+      const popupBox = popup.getBoundingClientRect();
+      const first = options[0].getBoundingClientRect();
+      const second = options[1].getBoundingClientRect();
+      const firstStyle = getComputedStyle(options[0]);
+      return {
+        paddingTop: firstStyle.paddingTop,
+        paddingBottom: firstStyle.paddingBottom,
+        topInset: first.top - popupBox.top,
+        leftInset: first.left - popupBox.left,
+        rightInset: popupBox.right - first.right,
+        itemGap: second.top - first.bottom,
+      };
+    });
+    expect(subtextSpacing).not.toBeNull();
+    expect(subtextSpacing?.paddingTop).toBe('0px');
+    expect(subtextSpacing?.paddingBottom).toBe('0px');
+    expect(subtextSpacing?.topInset).toBeCloseTo(4, 1);
+    expect(subtextSpacing?.leftInset).toBeCloseTo(4, 1);
+    expect(subtextSpacing?.rightInset).toBeCloseTo(4, 1);
+    expect(subtextSpacing?.itemGap).toBeCloseTo(4, 1);
+  }
+);
+
+test(
   'defaults both select triggers to hug width and supports explicit fill',
   chromiumOnly('layout-geometry', 'Explicit width props map to deterministic trigger geometry.'),
   async ({ page }) => {

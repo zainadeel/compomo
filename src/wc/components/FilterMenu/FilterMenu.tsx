@@ -15,13 +15,11 @@ import {
   CONTROL_TEXT_VARIANT,
   DATE_FILTER_RELATIVE_PRESETS,
   controlWidthClass,
-  dateFilterRangeValue,
   dateFilterRelativeValue,
   parseDateFilterValue,
   resolveChoicePopupAlignOffset,
   resolveCssLengthPx,
   resolveMotionTimeMs,
-  shiftIsoCalendarDate,
   TOKEN_CSS_LENGTHS,
   TOKEN_DEFAULTS,
   type ControlWidth,
@@ -33,14 +31,6 @@ import { AnchoredOverlayInteractionController } from '../../utils/anchored-overl
 import { resolveAnchoredOverlayBoundaryRect } from '../../utils/anchored-overlay-boundary';
 import { ChoiceOptionRow, ChoiceSearch } from '../../utils/choice-list-parts';
 import { choiceListUsesSubtext } from '../../utils/choice-list';
-import {
-  FILTER_MENU_WEEKDAYS,
-  filterMenuCalendarDays,
-  filterMenuCalendarMonth,
-  filterMenuCalendarMonthLabel,
-  filterMenuToday,
-  shiftFilterMenuCalendarMonth,
-} from './filter-menu-calendar';
 
 export type FilterMenuFilterKind = 'single' | 'multiple' | 'boolean' | 'date';
 export type FilterMenuSize = 'lg' | 'md' | 'sm' | 'xs';
@@ -245,9 +235,6 @@ export class FilterMenu {
   @State() private activeOptionIndex = 0;
   @State() private captionCompact = false;
   @State() private dateModeByFilter: Record<string, FilterMenuDateMode> = {};
-  @State() private calendarMonthByFilter: Record<string, string> = {};
-  @State() private pendingRangeStartByFilter: Record<string, string> = {};
-  @State() private previewRangeEndByFilter: Record<string, string> = {};
   @State() private optionQueryByFilter: Record<string, string> = {};
 
   /** Requests a controlled value replacement without closing the popup. */
@@ -479,9 +466,6 @@ export class FilterMenu {
     this.closingSnapshot = null;
     this.closeTimer = null;
     this.dateModeByFilter = {};
-    this.calendarMonthByFilter = {};
-    this.pendingRangeStartByFilter = {};
-    this.previewRangeEndByFilter = {};
     this.optionQueryByFilter = {};
     this.dsAfterClose.emit();
   }
@@ -714,107 +698,10 @@ export class FilterMenu {
     return this.dateModeByFilter[filterId] ?? parseDateFilterValue(value)?.kind ?? 'relative';
   }
 
-  private setDateMode(filter: FilterMenuFilter, value: FilterMenuValue | undefined, mode: string) {
+  private setDateMode(filter: FilterMenuFilter, mode: string) {
     if (mode !== 'range' && mode !== 'relative') return;
     this.dateModeByFilter = { ...this.dateModeByFilter, [filter.id]: mode };
     this.activeOptionIndex = 0;
-    if (mode === 'range' && !this.calendarMonthByFilter[filter.id]) {
-      const parsed = parseDateFilterValue(value);
-      const initialDate = parsed?.kind === 'range' ? parsed.start : filterMenuToday();
-      this.calendarMonthByFilter = {
-        ...this.calendarMonthByFilter,
-        [filter.id]: filterMenuCalendarMonth(initialDate),
-      };
-    }
-    if (mode === 'relative' && this.pendingRangeStartByFilter[filter.id]) {
-      const next = { ...this.pendingRangeStartByFilter };
-      delete next[filter.id];
-      this.pendingRangeStartByFilter = next;
-    }
-    if (mode === 'relative') this.clearCalendarRangePreview(filter.id);
-  }
-
-  private calendarMonth(filterId: string, value: FilterMenuValue | undefined): string {
-    const parsed = parseDateFilterValue(value);
-    const initialDate = parsed?.kind === 'range' ? parsed.start : filterMenuToday();
-    return this.calendarMonthByFilter[filterId] ?? filterMenuCalendarMonth(initialDate);
-  }
-
-  private moveCalendarMonth(filterId: string, month: string, offset: number) {
-    this.clearCalendarRangePreview(filterId);
-    this.calendarMonthByFilter = {
-      ...this.calendarMonthByFilter,
-      [filterId]: shiftFilterMenuCalendarMonth(month, offset),
-    };
-  }
-
-  private selectCalendarDate(filterId: string, value: string) {
-    this.clearCalendarRangePreview(filterId);
-    const pendingStart = this.pendingRangeStartByFilter[filterId];
-    const next = { ...this.pendingRangeStartByFilter };
-    if (pendingStart) delete next[filterId];
-    else next[filterId] = value;
-    this.pendingRangeStartByFilter = next;
-    this.changeValue({
-      filterId,
-      value: dateFilterRangeValue(pendingStart ?? value, value),
-    });
-  }
-
-  private previewCalendarRange(filterId: string, value: string) {
-    if (!this.pendingRangeStartByFilter[filterId]) return;
-    if (this.previewRangeEndByFilter[filterId] === value) return;
-    this.previewRangeEndByFilter = { ...this.previewRangeEndByFilter, [filterId]: value };
-  }
-
-  private clearCalendarRangePreview(filterId: string) {
-    if (!this.previewRangeEndByFilter[filterId]) return;
-    const next = { ...this.previewRangeEndByFilter };
-    delete next[filterId];
-    this.previewRangeEndByFilter = next;
-  }
-
-  private focusCalendarDate(filterId: string, value: string) {
-    this.previewCalendarRange(filterId, value);
-    const targetMonth = filterMenuCalendarMonth(value);
-    if (this.calendarMonthByFilter[filterId] !== targetMonth) {
-      this.calendarMonthByFilter = { ...this.calendarMonthByFilter, [filterId]: targetMonth };
-    }
-    requestAnimationFrame(() => {
-      this.el.querySelector<HTMLElement>(`[data-date-option="${value}"]`)?.focus();
-    });
-  }
-
-  private handleCalendarDayKeyDown(event: KeyboardEvent, filterId: string, value: string) {
-    let offset: number | null = null;
-    if (event.key === 'ArrowLeft') offset = -1;
-    else if (event.key === 'ArrowRight') offset = 1;
-    else if (event.key === 'ArrowUp') offset = -7;
-    else if (event.key === 'ArrowDown') offset = 7;
-    else if (event.key === 'Home') {
-      offset = -new Date(`${value}T00:00:00Z`).getUTCDay();
-    } else if (event.key === 'End') {
-      offset = 6 - new Date(`${value}T00:00:00Z`).getUTCDay();
-    } else if (event.key === 'PageUp') {
-      const month = shiftFilterMenuCalendarMonth(filterMenuCalendarMonth(value), -1);
-      const day = value.slice(8, 10);
-      const candidate = `${month}-${day}`;
-      const target = parseDateFilterValue(candidate) ? candidate : `${month}-01`;
-      event.preventDefault();
-      this.focusCalendarDate(filterId, target);
-      return;
-    } else if (event.key === 'PageDown') {
-      const month = shiftFilterMenuCalendarMonth(filterMenuCalendarMonth(value), 1);
-      const day = value.slice(8, 10);
-      const candidate = `${month}-${day}`;
-      const target = parseDateFilterValue(candidate) ? candidate : `${month}-01`;
-      event.preventDefault();
-      this.focusCalendarDate(filterId, target);
-      return;
-    }
-    if (offset === null) return;
-    event.preventDefault();
-    this.focusCalendarDate(filterId, shiftIsoCalendarDate(value, offset));
   }
 
   private renderRelativeDateOptions(filter: FilterMenuFilter, value: FilterMenuValue | undefined) {
@@ -859,123 +746,15 @@ export class FilterMenu {
   }
 
   private renderDateCalendar(filter: FilterMenuFilter, value: FilterMenuValue | undefined) {
-    const parsed = parseDateFilterValue(value);
-    const range = parsed?.kind === 'range' ? parsed : null;
-    const month = this.calendarMonth(filter.id, value);
-    const days = filterMenuCalendarDays(month);
-    const today = filterMenuToday();
-    const pendingStart = this.pendingRangeStartByFilter[filter.id];
-    const previewEnd = this.previewRangeEndByFilter[filter.id];
-    const previewStart = pendingStart && previewEnd ? [pendingStart, previewEnd].sort()[0] : null;
-    const previewFinish = pendingStart && previewEnd ? [pendingStart, previewEnd].sort()[1] : null;
-    const preferredFocus =
-      this.pendingRangeStartByFilter[filter.id] ??
-      range?.end ??
-      (month === today.slice(0, 7) ? today : '');
-    const focusDate = days.some(day => day.value === preferredFocus)
-      ? preferredFocus
-      : (days.find(day => day.inMonth)?.value ?? days[0]?.value);
-
     return (
-      <div class="filter-menu__calendar">
-        <div class="filter-menu__calendar-heading ds-control--md">
-          <ds-button-unfilled
-            class="filter-menu__calendar-nav filter-menu__calendar-nav--previous"
-            variant="icon"
-            icon="ChevronLeft"
-            size="md"
-            hasBorder={false}
-            ariaLabel="Previous month"
-            onDsClick={() => this.moveCalendarMonth(filter.id, month, -1)}
-          />
-          <ds-text as="span" variant="text-body-medium" emphasis color="primary">
-            {filterMenuCalendarMonthLabel(month)}
-          </ds-text>
-          <ds-button-unfilled
-            class="filter-menu__calendar-nav filter-menu__calendar-nav--next"
-            variant="icon"
-            icon="ChevronRight"
-            size="md"
-            hasBorder={false}
-            ariaLabel="Next month"
-            onDsClick={() => this.moveCalendarMonth(filter.id, month, 1)}
-          />
-        </div>
-        <div class="filter-menu__calendar-weekdays" aria-hidden="true">
-          {FILTER_MENU_WEEKDAYS.map(day => (
-            <ds-text as="span" variant="text-body-small" color="secondary">
-              {day}
-            </ds-text>
-          ))}
-        </div>
-        <div
-          class="filter-menu__calendar-grid"
-          role="grid"
-          aria-label={filterMenuCalendarMonthLabel(month)}
-          onMouseLeave={() => this.clearCalendarRangePreview(filter.id)}
-        >
-          {days.map(day => {
-            const selectedInRange = Boolean(
-              range && day.value >= range.start && day.value <= range.end
-            );
-            const previewInRange = Boolean(
-              previewStart &&
-              previewFinish &&
-              day.value >= previewStart &&
-              day.value <= previewFinish
-            );
-            const inRange = previewInRange || selectedInRange;
-            const rangeEdge = Boolean(
-              previewStart
-                ? day.value === pendingStart
-                : range && (day.value === range.start || day.value === range.end)
-            );
-            const textColor = rangeEdge
-              ? 'on-bold'
-              : inRange || day.value === today
-                ? 'primary'
-                : day.inMonth
-                  ? 'secondary'
-                  : 'tertiary';
-            return (
-              <button
-                type="button"
-                role="gridcell"
-                data-date-option={day.value}
-                class={{
-                  'filter-menu__calendar-day': true,
-                  'filter-menu__calendar-day--outside': !day.inMonth,
-                  'filter-menu__calendar-day--today': day.value === today,
-                  'filter-menu__calendar-day--in-range': inRange,
-                  'filter-menu__calendar-day--range-preview': previewInRange,
-                  'filter-menu__calendar-day--range-edge': rangeEdge,
-                  'ds-focus-ring-inset': true,
-                  'ds-interaction-fill': true,
-                }}
-                aria-label={day.label}
-                aria-selected={selectedInRange ? 'true' : 'false'}
-                tabIndex={day.value === focusDate ? 0 : -1}
-                onMouseEnter={() => this.previewCalendarRange(filter.id, day.value)}
-                onFocus={() => this.previewCalendarRange(filter.id, day.value)}
-                onClick={() => this.selectCalendarDate(filter.id, day.value)}
-                onKeyDown={(event: KeyboardEvent) =>
-                  this.handleCalendarDayKeyDown(event, filter.id, day.value)
-                }
-              >
-                <ds-text
-                  class="ds-interaction-fill__content"
-                  as="span"
-                  variant="text-body-medium"
-                  color={textColor}
-                  emphasis={day.value === today}
-                >
-                  {day.day}
-                </ds-text>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      <ds-calendar
+        selectionMode="range"
+        value={typeof value === 'string' ? value : ''}
+        onDsChange={(event: CustomEvent<string>) => {
+          event.stopPropagation();
+          this.changeValue({ filterId: filter.id, value: event.detail });
+        }}
+      />
     );
   }
 
@@ -993,7 +772,7 @@ export class FilterMenu {
             tabs={DATE_MODE_TABS}
             onDsChange={(event: CustomEvent<string>) => {
               event.stopPropagation();
-              this.setDateMode(filter, value, event.detail);
+              this.setDateMode(filter, event.detail);
             }}
           />
         </header>
@@ -1233,7 +1012,6 @@ export class FilterMenu {
               class="filter-menu__clear ds-choice-footer__clear ds-text-action"
               type="button"
               onClick={() => {
-                this.pendingRangeStartByFilter = {};
                 if (this.applyRequired) {
                   this.draftValues = {};
                   this.draftModes = {};

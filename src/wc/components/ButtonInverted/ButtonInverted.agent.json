@@ -1,0 +1,88 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-button-inverted",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-button-inverted",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Single-recipe filled command button with an inverted background and primary foreground for actions that must remain legible across ordinary surfaces.",
+  "useWhen": [
+    "A command needs the filled button structure with the fixed inverted background treatment.",
+    "The action should use primary foreground content on the inverted surface without exposing intent or contrast choices.",
+    "A compact, icon-only inverted action needs an explicit accessible name.",
+    "The command has closely related alternatives and needs split mode while keeping the same inverted recipe."
+  ],
+  "avoidWhen": [
+    "The action needs semantic intent or contrast-specific filled treatments; use ButtonFilled.",
+    "The action is unfilled icon-only shell, navigation, overflow, or tool-rail chrome; use ButtonUnfilled.",
+    "The element represents navigation rather than a command.",
+    "The content is a persistent selected state rather than an action."
+  ],
+  "alternatives": [
+    {
+      "when": "The action's consequence needs a semantic intent or the fill must adapt through contrast.",
+      "component": "component:ds-button-filled",
+      "reason": "ButtonFilled owns intent and contrast-aware filled command treatments."
+    },
+    {
+      "when": "The action is shell, navigation, overflow, or tool-rail chrome.",
+      "component": "component:ds-button-unfilled",
+      "reason": "ButtonUnfilled owns unfilled chrome, active state, borders, and surface-aware interaction states."
+    },
+    {
+      "when": "The user is choosing a destination in application navigation.",
+      "component": "component:ds-panel-nav",
+      "reason": "PanelNav owns destination selection and navigation semantics."
+    }
+  ],
+  "commonlyComposedWith": ["component:ds-modal", "component:ds-field", "component:ds-menu"],
+  "patterns": ["pattern:menu-trigger"],
+  "accessibility": [
+    "Provide an explicit accessible name for icon-only buttons.",
+    "In split mode, provide menuAriaLabel for the appended ChevronDown segment, pass controls with the Menu id, and synchronize expanded with the Menu open state.",
+    "Set hasMenu when the action opens a Menu; it implies aria-haspopup of menu and renders the trailing chevron. Pass controls with the Menu id and expanded from the same open state given to Menu.",
+    "Use haspopup directly for a non-menu popup such as a dialog; that case gets no chevron.",
+    "Loading keeps the action focused and named, exposes busy and disabled state, and blocks activation.",
+    "Use native submit behavior for form submission and handle the form submit event rather than submitting from the button click event."
+  ],
+  "states": [
+    "Every size applies one complete control-density recipe across frame height, inline padding, icon zone, text-container inset, gap, and radius.",
+    "The inverted background and primary foreground are fixed; ButtonInverted has no intent, contrast, parent-surface, or optional-border props.",
+    "Every button has a minimum inline size equal to its resolved height. Short labels therefore form a square control while longer labels continue to hug their content.",
+    "Set isInset only when the button is nested inside a same-size control. The default single inset removes 4px overall; insetDepth double removes 8px overall and falls back to single at xs.",
+    "Rounded changes only the control radius to the half-radius treatment; it does not change the inverted recipe, size, variant, or interaction semantics.",
+    "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
+    "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width.",
+    "Physical press scaling is on by default. Disable it only when an owning composite must keep child or background geometry fixed; hover and pressed interaction washes remain available.",
+    "ButtonInverted has no active, pressed, or selected state; a filled action is a command, not a toggle or persistent selection.",
+    "An open popup is a transient pressed state. While surfaceOpen is true the pressed wash is held for the popup's complete rendered lifecycle without introducing selected styling.",
+    "Split mode supports label, icon, and icon-label primary segments. The primary segment emits dsClick and the appended menu segment emits dsMenuClick."
+  ],
+  "responsiveBehavior": [
+    "Use fill width only when the parent layout calls for a full-width action, commonly on narrow form layouts.",
+    "Choose density from the containing layout so the inverted action matches neighboring controls."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "For form submission, use the native submit type and listen to the form submit event; use dsClick for non-submit commands."
+    ],
+    "react": [
+      "Keep async state in the owner and pass it to the loading state until the command settles."
+    ],
+    "angular": [
+      "Keep async state in the owner and pass it to the loading state until the command settles."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/ButtonInverted/ButtonInverted.stories.ts"
+    },
+    {
+      "label": "Surface ownership and trigger state",
+      "path": "src/docs/SurfaceOwnership.mdx"
+    }
+  ]
+}

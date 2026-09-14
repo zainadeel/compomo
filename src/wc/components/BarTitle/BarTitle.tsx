@@ -47,6 +47,9 @@ import {
 
 let nextBarTitleId = 0;
 
+const BAR_TITLE_SHELL_BAR_MENU_SIDE_OFFSET =
+  'calc(var(--dimension-space-100) + var(--dimension-space-050))';
+
 @Component({
   tag: 'ds-bar-title',
   styleUrl: 'BarTitle.css',
@@ -172,6 +175,10 @@ export class BarTitle {
 
   private get compact(): boolean {
     return this.effectiveVariant !== 'expanded';
+  }
+
+  private get menuSideOffset(): string | undefined {
+    return this.placement === 'shell-bar' ? BAR_TITLE_SHELL_BAR_MENU_SIDE_OFFSET : undefined;
   }
 
   private get effectiveVariant(): BarTitleVariant {
@@ -360,6 +367,7 @@ export class BarTitle {
       visibleActions: this.visibleActions,
       instanceId: this.instanceId,
       resolvedActionItems: this.resolvedActionItems,
+      sideOffset: this.menuSideOffset,
       openActionMenuId: this.openActionMenuId,
       actionMenuInitialFocusVisible: this.actionMenuInitialFocusVisible,
       overflowTrigger: this.actionTriggerEl,
@@ -465,6 +473,7 @@ export class BarTitle {
             id={this.sectionMenuId}
             class="bar-title__section-menu"
             anchorId={this.sectionMenuTriggerId}
+            sideOffset={this.menuSideOffset}
             menuLabel={this.sectionsAriaLabel}
             open={this.sectionMenuOpen}
             initialFocusVisible={this.sectionMenuInitialFocusVisible}
@@ -484,6 +493,7 @@ export class BarTitle {
           showOverflowTrigger: this.showActionMenuTrigger,
           actionMenuId: this.actionMenuId,
           actionMenuTriggerId: this.actionMenuTriggerId,
+          sideOffset: this.menuSideOffset,
           actionsAriaLabel: this.actionsAriaLabel,
           open: this.openActionMenuId === '__overflow',
           actionMenuInitialFocusVisible: this.actionMenuInitialFocusVisible,

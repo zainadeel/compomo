@@ -21,15 +21,15 @@
     "component:ds-table",
     "component:ds-select",
     "component:ds-menu",
-    "component:ds-modal"
+    "component:ds-modal",
+    "component:ds-field"
   ],
-  "patterns": [
-    "pattern:menu-trigger"
-  ],
+  "patterns": ["pattern:menu-trigger"],
   "accessibility": [
     "The primary control retains combobox semantics and exposes a direct accessible name.",
     "Each custom view exposes a separately named options trigger. The options menu supports keyboard navigation and returns focus through the shared Select and Menu behavior.",
-    "The naming dialog traps focus through Modal behavior, associates validation text with the input through Field, and restores focus to the saved-views control after closing."
+    "The naming dialog traps focus through Modal behavior. The dialog heading names the task, so the name field omits a visible label; the input keeps aria-label Name, Field associates validation text, and focus returns to the saved-views control after closing.",
+    "Footer actions are assigned with slot=\"footer\" on each button so Modal owns the two-action layout."
   ],
   "states": [
     "views, value, and dirty are controlled. Dirty state is presented only for a selected custom view; the default template never shows the trigger dot or save/discard actions even if dirty is supplied. Selection, create, save, discard, rename, and remove events communicate intent and never mutate application records.",

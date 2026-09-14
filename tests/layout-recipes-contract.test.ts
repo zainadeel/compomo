@@ -93,6 +93,22 @@ test('field owners consume one vertical field flow recipe', () => {
   }
 });
 
+test('borderless field stacks inset supporting copy to the control text origin', () => {
+  const css = read('src/wc/utils/field-stack.css');
+  assert.match(css, /ds-field-stack--supporting-inset/);
+  assert.match(css, /--ds-control-padding-inline/);
+  assert.match(css, /--ds-control-label-inset/);
+
+  for (const name of ['Input', 'Select', 'Textarea', 'InputDate', 'InputTime']) {
+    const source = read(`src/wc/components/${name}/${name}.tsx`);
+    assert.match(source, /ds-field-stack--supporting-inset['"]:\s*!this\.hasBorder/);
+  }
+
+  const field = read('src/wc/components/Field/Field.tsx');
+  assert.match(field, /ds-field-stack--supporting-inset/);
+  assert.match(field, /controlBorderless/);
+});
+
 test('both Select cardinality modes delegate interaction behavior to SelectController', () => {
   const source = read('src/wc/components/Select/Select.tsx');
   assert.match(source, /new SelectController/);

@@ -1,0 +1,15 @@
+@import '../../utils/radius.css';
+@import '../../utils/button-base.css';
+@import '../../utils/button-split.css';
+
+:host {
+  --ds-button-split-divider: var(--color-inverted-border-tertiary);
+}
+
+.button-inverted {
+  background-color: var(--color-inverted-background);
+  color: var(--color-inverted-foreground-primary);
+  transition:
+    background-color var(--effect-motion-short-2),
+    color var(--effect-motion-short-2);
+}

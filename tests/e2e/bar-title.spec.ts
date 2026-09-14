@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { chromiumOnly } from './browser-tier';
+import { expectDefiniteBounds, expectGeometryClose } from './rendered-geometry';
 
 type BarTitleEventRecord = { type: string; id?: string };
 
@@ -483,6 +484,74 @@ test('keeps inline section state controlled and restores trigger focus', async (
 
   const events = await readEvents(page);
   expect(events).toContainEqual({ type: 'section', id: 'history' });
+});
+
+test('uses shell-bar menu spacing while preserving page spacing @cross-browser', async ({
+  page,
+}) => {
+  const header = page.locator('#detail-header');
+  const sectionTrigger = header.getByRole('button', {
+    name: 'Change driver section. Current section: Summary',
+  });
+  const sectionMenu = page.getByRole('menu', { name: 'Change driver section' });
+  const overflowTrigger = header.getByRole('button', { name: 'More driver actions' });
+  const overflowMenu = page.getByRole('menu', { name: 'More driver actions' });
+
+  const measureMenu = async (
+    trigger: import('@playwright/test').Locator,
+    menu: import('@playwright/test').Locator,
+    label: string
+  ) => {
+    await trigger.click();
+    await expect(menu).toBeVisible();
+    const triggerBounds = await expectDefiniteBounds(trigger, { label: `${label} trigger` });
+    const menuBounds = await expectDefiniteBounds(menu, { label: `${label} menu` });
+    const geometry = {
+      triggerBottom: triggerBounds.y + triggerBounds.height,
+      menuTop: menuBounds.y,
+    };
+    await page.keyboard.press('Escape');
+    await expect(menu).not.toBeVisible();
+    await expect(trigger).toBeFocused();
+    return geometry;
+  };
+
+  const pageSection = await measureMenu(sectionTrigger, sectionMenu, 'page section');
+  const pageOverflow = await measureMenu(overflowTrigger, overflowMenu, 'page overflow');
+  expectGeometryClose(pageSection.menuTop - pageSection.triggerBottom, 4, 'page section menu gap');
+  expectGeometryClose(
+    pageOverflow.menuTop - pageOverflow.triggerBottom,
+    4,
+    'page overflow menu gap'
+  );
+
+  await header.evaluate((element: HTMLDsBarTitleElement) => {
+    element.placement = 'shell-bar';
+  });
+  await expect(header).toHaveClass(/bar-title-host--shell-bar/);
+  await expect(header).toHaveClass(/bar-title-host--compact/);
+  const shellBounds = await expectDefiniteBounds(header, {
+    label: 'shell-bar title',
+    height: 48,
+  });
+
+  const shellSection = await measureMenu(sectionTrigger, sectionMenu, 'shell-bar section');
+  const shellOverflow = await measureMenu(overflowTrigger, overflowMenu, 'shell-bar overflow');
+  expectGeometryClose(
+    shellSection.menuTop - shellSection.triggerBottom,
+    12,
+    'shell-bar section menu gap'
+  );
+  expectGeometryClose(
+    shellOverflow.menuTop - shellOverflow.triggerBottom,
+    12,
+    'shell-bar overflow menu gap'
+  );
+  expectGeometryClose(
+    shellOverflow.menuTop - (shellBounds.y + shellBounds.height),
+    4,
+    'shell-bar overflow menu clearance'
+  );
 });
 
 test(

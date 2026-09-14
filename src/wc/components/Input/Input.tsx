@@ -26,6 +26,12 @@ export type InputSize = 'lg' | 'md' | 'sm' | 'xs';
 export type InputWidth = ControlWidth;
 export type InputTextAlign = 'start' | 'end';
 
+const CONTROL_ADORNMENT = 'ds-select, ds-button-unfilled, ds-button-filled';
+
+function isControlAdornment(element: Element): boolean {
+  return element.matches(CONTROL_ADORNMENT) || Boolean(element.querySelector(CONTROL_ADORNMENT));
+}
+
 const ICON_SIZE: Record<InputSize, 'lg' | 'md' | 'sm' | 'xs'> = {
   lg: 'lg',
   md: 'md',
@@ -64,6 +70,8 @@ export class Input {
   @Prop({ reflect: true }) required: boolean = false;
   @Prop() requiredMessage: string = DEFAULT_REQUIRED_MESSAGE;
   @Prop() clearLabel: string = 'Clear';
+  @Prop() showPasswordLabel: string = 'Show password';
+  @Prop() hidePasswordLabel: string = 'Hide password';
   @Prop() placeholder: string | undefined;
   @Prop() type: InputType = 'text';
   /** Minimum accepted value when type is number. */
@@ -110,19 +118,44 @@ export class Input {
   private initialValue = '';
   private inputEl?: HTMLInputElement;
   @State() private formDisabled = false;
+  @State() private hasPrefix = false;
+  @State() private hasPrefixControl = false;
   @State() private hasSuffix = false;
+  @State() private hasSuffixControl = false;
   @State() private focused = false;
   @State() private touched = false;
+  @State() private passwordRevealed = false;
+  private restorePasswordFocus = false;
 
   componentWillLoad() {
     this.initialValue = this.value;
-    this.hasSuffix = Boolean(this.el.querySelector('[slot="suffix"]'));
+    this.syncAdornmentSlots();
     this.syncFormValue();
   }
 
   componentDidRender() {
-    const hasSuffix = Boolean(this.el.querySelector('[slot="suffix"]'));
+    this.syncAdornmentSlots();
+    if (!this.restorePasswordFocus) return;
+    this.restorePasswordFocus = false;
+    this.inputEl?.focus({ preventScroll: true });
+  }
+
+  @Watch('type')
+  onTypeChange() {
+    if (this.type !== 'password') this.passwordRevealed = false;
+  }
+
+  private syncAdornmentSlots() {
+    const prefixNodes = [...this.el.querySelectorAll('[slot="prefix"]')];
+    const suffixNodes = [...this.el.querySelectorAll('[slot="suffix"]')];
+    const hasPrefix = prefixNodes.length > 0;
+    const hasPrefixControl = prefixNodes.some(isControlAdornment);
+    const hasSuffix = suffixNodes.length > 0;
+    const hasSuffixControl = suffixNodes.some(isControlAdornment);
+    if (hasPrefix !== this.hasPrefix) this.hasPrefix = hasPrefix;
+    if (hasPrefixControl !== this.hasPrefixControl) this.hasPrefixControl = hasPrefixControl;
     if (hasSuffix !== this.hasSuffix) this.hasSuffix = hasSuffix;
+    if (hasSuffixControl !== this.hasSuffixControl) this.hasSuffixControl = hasSuffixControl;
   }
 
   @Watch('value')
@@ -143,6 +176,7 @@ export class Input {
 
   formResetCallback() {
     this.value = this.initialValue;
+    this.passwordRevealed = false;
   }
 
   formStateRestoreCallback(state: string | File | FormData | null) {
@@ -173,6 +207,11 @@ export class Input {
     this.dsChange.emit('');
     this.dsClear.emit();
     this.inputEl?.focus();
+  };
+
+  private handleTogglePassword = () => {
+    this.passwordRevealed = !this.passwordRevealed;
+    this.restorePasswordFocus = true;
   };
 
   private numericStepDisabled(direction: 1 | -1): boolean {
@@ -244,11 +283,14 @@ export class Input {
     const filled = this.value.length > 0;
     const dirty = this.value !== this.initialValue;
     const showClear = this.type === 'search' && filled && !inactive && !this.readOnly;
+    const showPasswordToggle = this.type === 'password';
+    const nativeType = showPasswordToggle && this.passwordRevealed ? 'text' : this.type;
     const showError = this.error && Boolean(this.errorMessage);
     const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const iconSize = ICON_SIZE[this.size];
     const numeric = this.type === 'number';
     const resolvedAutoComplete = this.autoComplete ?? (this.type === 'search' ? 'off' : undefined);
+    const suppressBrowserChrome = this.type === 'search' || this.type === 'password';
 
     const describedBy =
       [this.ariaDescribedby, showError ? this.errorId : undefined].filter(Boolean).join(' ') ||
@@ -259,6 +301,7 @@ export class Input {
         class={{
           'input-host': true,
           'ds-field-stack': true,
+          'ds-field-stack--supporting-inset': !this.hasBorder,
           'ds-control-inactive': inactive,
           [`ds-control--${this.size}`]: true,
           ...controlWidthClass(this.width),
@@ -281,6 +324,8 @@ export class Input {
             'ds-control-frame': true,
             'input-control--bordered': this.hasBorder,
             'input-control--error': this.hasBorder && this.error,
+            'input-control--prefix-control': this.hasPrefixControl,
+            'input-control--suffix-control': this.hasSuffixControl,
             'ds-interaction-fill': this.hasInteractionFill,
             [`ds-control--${this.size}`]: true,
           }}
@@ -294,11 +339,29 @@ export class Input {
               <ds-icon name={this.icon} size={iconSize} color="inherit" />
             </span>
           )}
+          <span
+            class={{
+              'input-control__prefix-text': true,
+              'ds-control-label-box': !this.hasPrefixControl,
+              'ds-interaction-fill__content': true,
+              'input-control__prefix-text--control': this.hasPrefixControl,
+              'input-control__prefix-text--empty': !this.hasPrefix,
+            }}
+          >
+            <slot name="prefix" onSlotchange={() => this.syncAdornmentSlots()} />
+            {this.hasPrefixControl && (
+              <ds-divider
+                class="input-control__adornment-divider"
+                orientation="vertical"
+                length="var(--ds-control-icon)"
+              />
+            )}
+          </span>
           <input
             ref={element => {
               this.inputEl = element;
             }}
-            type={this.type}
+            type={nativeType}
             id={inputId}
             value={this.value}
             placeholder={this.placeholder}
@@ -310,9 +373,9 @@ export class Input {
             required={this.required}
             autoFocus={this.autoFocus}
             autoComplete={resolvedAutoComplete}
-            autoCapitalize={this.type === 'search' ? 'none' : undefined}
-            autoCorrect={this.type === 'search' ? 'off' : undefined}
-            spellcheck={this.type === 'search' ? false : undefined}
+            autoCapitalize={suppressBrowserChrome ? 'none' : undefined}
+            autoCorrect={suppressBrowserChrome ? 'off' : undefined}
+            spellcheck={suppressBrowserChrome ? false : undefined}
             inputMode={this.inputMode || undefined}
             enterKeyHint={this.enterKeyHint || undefined}
             class={`native-input native-input--align-${this.textAlign} ds-control-label-box ds-text--${textVariant.replace('text-', '')} ds-text--regular ds-interaction-fill__content`}
@@ -329,11 +392,19 @@ export class Input {
           <span
             class={{
               'input-control__suffix': true,
-              'ds-control-icon-box': true,
+              'ds-control-label-box': !this.hasSuffixControl,
+              'input-control__suffix--control': this.hasSuffixControl,
               'input-control__suffix--empty': !this.hasSuffix,
             }}
           >
-            <slot name="suffix" />
+            {this.hasSuffixControl && (
+              <ds-divider
+                class="input-control__adornment-divider"
+                orientation="vertical"
+                length="var(--ds-control-icon)"
+              />
+            )}
+            <slot name="suffix" onSlotchange={() => this.syncAdornmentSlots()} />
           </span>
           {showClear && (
             <ds-button-unfilled
@@ -345,6 +416,19 @@ export class Input {
               rounded
               ariaLabel={this.clearLabel}
               onDsClick={this.handleClear}
+            />
+          )}
+          {showPasswordToggle && (
+            <ds-button-unfilled
+              class="input-control__trailing-action"
+              variant="icon"
+              size={this.size}
+              icon={this.passwordRevealed ? 'EyeDisabled' : 'Eye'}
+              hasBorder={false}
+              isInset
+              isInactive={inactive}
+              ariaLabel={this.passwordRevealed ? this.hidePasswordLabel : this.showPasswordLabel}
+              onDsClick={this.handleTogglePassword}
             />
           )}
           {numeric && this.textAlign === 'start' && this.renderNumericStepper(inactive)}

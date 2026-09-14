@@ -76,7 +76,7 @@ export class CardNavigation {
           class={{
             'card-navigation__copy': true,
             'ds-chrome-header__copy': true,
-            'ds-chrome-header__copy--stacked': !!description,
+            'ds-chrome-header__copy--stacked': true,
             'ds-control--md': true,
             'ds-interaction-fill__content': true,
           }}
