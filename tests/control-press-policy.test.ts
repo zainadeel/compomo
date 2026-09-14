@@ -26,7 +26,7 @@ test('shared press utility owns scale, eligibility, motion, and reduced motion',
   assert.doesNotMatch(css, /\btransform\s*:/);
 });
 
-test('only filled and unfilled buttons opt into press scaling', () => {
+test('only filled, inverted, and unfilled buttons opt into press scaling', () => {
   const componentRoot = path.join(root, 'src/wc/components');
   const sourceFiles = fs
     .readdirSync(componentRoot, { recursive: true })
@@ -37,6 +37,7 @@ test('only filled and unfilled buttons opt into press scaling', () => {
 
   assert.deepEqual(consumers, [
     'ButtonFilled/ButtonFilled.tsx',
+    'ButtonInverted/ButtonInverted.tsx',
     'ButtonUnfilled/ButtonUnfilled.tsx',
   ]);
 });

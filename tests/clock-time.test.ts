@@ -6,6 +6,7 @@ import {
   formatClockTimeLabel,
   isClockTime,
   isClockTimeOutOfRange,
+  isClockTimeStepAligned,
   joinClockTime,
   parseLooseClockTime,
   splitClockTime,
@@ -53,6 +54,12 @@ describe('clock time values', () => {
       clockMinutes(clockMinuteStep(300)),
       [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]
     );
+    assert.equal(clockMinuteStep(3600), 60);
+    assert.deepEqual(clockMinutes(clockMinuteStep(3600)), [0]);
+    assert.deepEqual(clockMinutes(clockMinuteStep(3600), 30), [30]);
+    assert.equal(isClockTimeStepAligned('10:00', 3600), true);
+    assert.equal(isClockTimeStepAligned('10:30', 3600), false);
+    assert.equal(isClockTimeStepAligned('10:30', 3600, '09:30'), true);
     assert.equal(stepBoundedIndex(0, -1, 12), 0);
     assert.equal(stepBoundedIndex(11, 1, 12), 11);
     assert.equal(stepBoundedIndex(0, 1, 12), 1);

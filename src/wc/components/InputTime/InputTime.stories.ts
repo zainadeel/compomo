@@ -82,3 +82,21 @@ export const SizesAndStates: Story = {
     </div>
   `,
 };
+
+export const BoundsAndStep: Story = {
+  render: () => html`
+    <div
+      style="display:grid;grid-template-columns:max-content 320px;align-items:center;gap:var(--dimension-space-100) var(--dimension-space-200);"
+    >
+      <ds-text variant="text-body-small" color="secondary">Narrow bounds</ds-text>
+      <ds-input-time
+        value="08:00"
+        min="09:30"
+        max="09:45"
+        aria-label="Narrow bounded time"
+      ></ds-input-time>
+      <ds-text variant="text-body-small" color="secondary">Hourly step</ds-text>
+      <ds-input-time value="09:00" step="3600" aria-label="Hourly time"></ds-input-time>
+    </div>
+  `,
+};

@@ -18,13 +18,13 @@ import {
   DEFAULT_REQUIRED_MESSAGE,
   formatClockTimeLabel,
   isClockTime,
+  isClockTimeStepAligned,
   parseLooseClockTime,
   resolveChoicePopupAlignOffset,
   resolveCssLengthPx,
   resolveMotionTimeMs,
   restoreStringFormState,
   setFormControlValue,
-  setRequiredValidity,
   TOKEN_DEFAULTS,
   type ControlSize,
   type ControlWidth,
@@ -37,6 +37,11 @@ export type InputTimeSize = ControlSize;
 export type InputTimeWidth = ControlWidth;
 
 let idCounter = 0;
+
+const INVALID_TIME_MESSAGE = 'Enter a valid time.';
+const TIME_BEFORE_MIN_MESSAGE = 'Time is before the minimum allowed time.';
+const TIME_AFTER_MAX_MESSAGE = 'Time is after the maximum allowed time.';
+const TIME_STEP_MESSAGE = 'Time does not match the allowed interval.';
 
 @Component({
   tag: 'ds-input-time',
@@ -144,6 +149,30 @@ export class InputTime {
     return resolveCssLengthPx(TOKEN_DEFAULTS.menuFallbackHeight, TOKEN_DEFAULTS.menuFallbackHeight);
   }
 
+  private get formInactive(): boolean {
+    return this.isInactive || this.disabled || this.formDisabled;
+  }
+
+  private get pickerInactive(): boolean {
+    return this.formInactive || this.readOnly;
+  }
+
+  private get hasConstraintError(): boolean {
+    if (!this.value) return false;
+    if (!isClockTime(this.value)) return true;
+    if (this.min && isClockTime(this.min) && this.value < this.min) return true;
+    if (this.max && isClockTime(this.max) && this.value > this.max) return true;
+    return !isClockTimeStepAligned(this.value, this.step, this.min);
+  }
+
+  private get isInvalid(): boolean {
+    return (
+      this.error ||
+      (!this.formInactive &&
+        ((this.required && this.value.length === 0) || this.hasConstraintError))
+    );
+  }
+
   componentWillLoad() {
     this.initialValue = this.value;
     this.syncFormValue();
@@ -155,19 +184,48 @@ export class InputTime {
   }
 
   @Watch('value')
+  @Watch('required')
+  @Watch('requiredMessage')
+  @Watch('min')
+  @Watch('max')
+  @Watch('step')
+  syncFormValue() {
+    const inactive = this.formInactive;
+    setFormControlValue(this.internals, this.value, { inactive });
+    const flags: ValidityStateFlags = {};
+    let message = '';
+    if (!inactive) {
+      if (this.required && this.value.length === 0) {
+        flags.valueMissing = true;
+        message = this.requiredMessage;
+      } else if (this.value && !isClockTime(this.value)) {
+        flags.badInput = true;
+        message = INVALID_TIME_MESSAGE;
+      } else if (this.value && this.min && isClockTime(this.min) && this.value < this.min) {
+        flags.rangeUnderflow = true;
+        message = TIME_BEFORE_MIN_MESSAGE;
+      } else if (this.value && this.max && isClockTime(this.max) && this.value > this.max) {
+        flags.rangeOverflow = true;
+        message = TIME_AFTER_MAX_MESSAGE;
+      } else if (this.value && !isClockTimeStepAligned(this.value, this.step, this.min)) {
+        flags.stepMismatch = true;
+        message = TIME_STEP_MESSAGE;
+      }
+    }
+    this.internals.setValidity(flags, message);
+  }
+
   @Watch('disabled')
   @Watch('isInactive')
-  @Watch('required')
-  syncFormValue() {
-    const inactive = this.isInactive || this.disabled || this.formDisabled;
-    setFormControlValue(this.internals, this.value, { inactive });
-    const missing = this.required && !inactive && this.value.length === 0;
-    setRequiredValidity(this.internals, missing, this.requiredMessage);
+  @Watch('readOnly')
+  onInteractionStateChange() {
+    this.syncFormValue();
+    if (this.pickerInactive && this.shouldRender) this.closePicker(false);
   }
 
   formDisabledCallback(disabled: boolean) {
     this.formDisabled = disabled;
-    this.syncFormValue();
+    this.onInteractionStateChange();
   }
 
   formResetCallback() {
@@ -213,6 +271,7 @@ export class InputTime {
     if (!iso) return null;
     if (this.min && isClockTime(this.min) && iso < this.min) return null;
     if (this.max && isClockTime(this.max) && iso > this.max) return null;
+    if (!isClockTimeStepAligned(iso, this.step, this.min)) return null;
     return iso;
   }
 
@@ -281,6 +340,7 @@ export class InputTime {
   };
 
   private handleInput = (event: Event) => {
+    if (this.pickerInactive) return;
     this.draftText = (event.target as HTMLInputElement).value;
     const parsed = this.parseDraft(this.draftText);
     if (parsed === null) return;
@@ -295,6 +355,10 @@ export class InputTime {
   private handleBlur = () => {
     this.focused = false;
     this.touched = true;
+    if (this.pickerInactive) {
+      this.draftText = this.displayValue;
+      return;
+    }
     const parsed = this.parseDraft(this.draftText);
     if (parsed === null) {
       this.draftText = this.displayValue;
@@ -305,13 +369,16 @@ export class InputTime {
 
   private handleTimeChange = (event: CustomEvent<string>) => {
     event.stopPropagation();
-    if (!isClockTime(event.detail)) return;
-    this.commitIso(event.detail);
+    if (this.pickerInactive) return;
+    const parsed = this.parseDraft(event.detail);
+    if (parsed === null) return;
+    this.commitIso(parsed);
   };
 
   render() {
     const inputId = this.inputId ?? this.generatedId;
-    const inactive = this.isInactive || this.disabled || this.formDisabled;
+    const inactive = this.formInactive;
+    const pickerInactive = this.pickerInactive;
     const filled = this.value.length > 0;
     const dirty = this.value !== this.initialValue;
     const showError = this.error && Boolean(this.errorMessage);
@@ -342,7 +409,7 @@ export class InputTime {
         data-disabled={inactive ? '' : undefined}
         data-readonly={this.readOnly ? '' : undefined}
         data-required={this.required ? '' : undefined}
-        data-invalid={this.error ? '' : undefined}
+        data-invalid={this.isInvalid ? '' : undefined}
         data-filled={filled ? '' : undefined}
         data-focused={this.focused ? '' : undefined}
         data-dirty={dirty ? '' : undefined}
@@ -384,7 +451,7 @@ export class InputTime {
             aria-label={this.ariaLabel}
             aria-labelledby={this.ariaLabelledby}
             aria-describedby={describedBy}
-            aria-invalid={this.error ? 'true' : undefined}
+            aria-invalid={this.isInvalid ? 'true' : undefined}
             onInput={this.handleInput}
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}
@@ -399,7 +466,7 @@ export class InputTime {
             icon="Clock"
             hasBorder={false}
             isInset
-            isInactive={inactive || this.readOnly}
+            isInactive={pickerInactive}
             ariaLabel="Choose time"
             haspopup="dialog"
             expanded={this.open}
@@ -428,6 +495,7 @@ export class InputTime {
               min={this.min}
               max={this.max}
               step={this.step}
+              isInactive={pickerInactive}
               autoFocus
               onDsChange={this.handleTimeChange}
             />

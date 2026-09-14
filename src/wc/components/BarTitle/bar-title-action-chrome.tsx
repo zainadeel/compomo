@@ -315,6 +315,7 @@ export function renderBarTitleActionMenus(options: {
   visibleActions: BarTitleActionConfigItem[];
   instanceId: number;
   resolvedActionItems: BarTitleActionConfigItem[];
+  sideOffset?: number | string;
   openActionMenuId: string;
   actionMenuInitialFocusVisible: boolean;
   overflowTrigger: FocusableBarTitleButton | null;
@@ -346,6 +347,7 @@ export function renderBarTitleActionMenus(options: {
           options.actionTriggers
         )}
         align="end"
+        sideOffset={options.sideOffset}
         menuLabel={menuLabel}
         open={options.openActionMenuId === action.id}
         initialFocusVisible={options.actionMenuInitialFocusVisible}
@@ -363,6 +365,7 @@ export function renderBarTitleOverflowMenu(options: {
   showOverflowTrigger: boolean;
   actionMenuId: string;
   actionMenuTriggerId: string;
+  sideOffset?: number | string;
   actionsAriaLabel: string;
   open: boolean;
   actionMenuInitialFocusVisible: boolean;
@@ -378,6 +381,7 @@ export function renderBarTitleOverflowMenu(options: {
       class={className(options.classPrefix, 'action-menu')}
       anchorId={options.actionMenuTriggerId}
       align="end"
+      sideOffset={options.sideOffset}
       menuLabel={options.actionsAriaLabel}
       open={options.open}
       initialFocusVisible={options.actionMenuInitialFocusVisible}

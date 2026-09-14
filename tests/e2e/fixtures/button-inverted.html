@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <title>Button inverted e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+  </head>
+  <body>
+    <main>
+      <ds-button-inverted id="label" label="Continue"></ds-button-inverted>
+      <ds-button-inverted
+        id="icon"
+        variant="icon"
+        icon="ArrowRight"
+        aria-label="Continue"
+      ></ds-button-inverted>
+      <ds-button-inverted
+        id="icon-label"
+        variant="icon-label"
+        icon="ArrowRight"
+        label="Continue"
+      ></ds-button-inverted>
+      <ds-button-inverted id="loading" label="Loading" is-loading></ds-button-inverted>
+      <ds-button-inverted id="inactive" label="Unavailable" is-inactive></ds-button-inverted>
+      <ds-button-inverted
+        id="split"
+        split
+        label="Create"
+        menu-aria-label="More create options"
+      ></ds-button-inverted>
+    </main>
+    <script type="module" src="/button-inverted-setup.mjs"></script>
+  </body>
+</html>

@@ -49,3 +49,12 @@ export const Bounds: Story = {
     </div>
   `,
 };
+
+export const NarrowBounds: Story = {
+  render: () => html`
+    <div style="width:200px;background:var(--color-background-primary);">
+      <ds-text variant="text-body-small" color="secondary"> Bounded 9:30 AM–9:45 AM </ds-text>
+      <ds-time-picker value="08:00" min="09:30" max="09:45"></ds-time-picker>
+    </div>
+  `,
+};

@@ -18,6 +18,7 @@ import { BarWorkflowStep, BarWorkflowSubmitAction } from "./components/BarWorkfl
 import { MobileDestination, ShellResponsiveMode } from "./shell/shell-responsive";
 import { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledPopup, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 import { ControlInsetDepth, ControlSize } from "./utils/control-text";
+import { ButtonInvertedPopup, ButtonInvertedSize, ButtonInvertedVariant, ButtonInvertedWidth } from "./components/ButtonInverted/ButtonInverted";
 import { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 import { CalendarSelectionMode } from "./components/Calendar/Calendar";
 import { CardActionCenterActionDetail, CardActionCenterSection } from "./components/CardActionCenter/CardActionCenter";
@@ -98,6 +99,7 @@ export { BarWorkflowStep, BarWorkflowSubmitAction } from "./components/BarWorkfl
 export { MobileDestination, ShellResponsiveMode } from "./shell/shell-responsive";
 export { ButtonFilledBackground, ButtonFilledContrast, ButtonFilledIntent, ButtonFilledPopup, ButtonFilledSize, ButtonFilledVariant, ButtonFilledWidth } from "./components/ButtonFilled/ButtonFilled";
 export { ControlInsetDepth, ControlSize } from "./utils/control-text";
+export { ButtonInvertedPopup, ButtonInvertedSize, ButtonInvertedVariant, ButtonInvertedWidth } from "./components/ButtonInverted/ButtonInverted";
 export { ButtonUnfilledBackground, ButtonUnfilledPopup, ButtonUnfilledSize, ButtonUnfilledVariant, ButtonUnfilledWidth } from "./components/ButtonUnfilled/ButtonUnfilled";
 export { CalendarSelectionMode } from "./components/Calendar/Calendar";
 export { CardActionCenterActionDetail, CardActionCenterSection } from "./components/CardActionCenter/CardActionCenter";
@@ -772,6 +774,110 @@ export namespace Components {
           * @default 'hug'
          */
         "width": ButtonFilledWidth;
+    }
+    interface DsButtonInverted {
+        /**
+          * Accessible name override. Required for icon-only buttons.
+          * @default null
+         */
+        "ariaLabel": string | null;
+        /**
+          * ID of the popup this button controls.
+         */
+        "controls": string | undefined;
+        /**
+          * Controlled disclosure state forwarded to aria-expanded.
+         */
+        "expanded": boolean | undefined;
+        /**
+          * This action has a menu: implies `aria-haspopup="menu"` and adds the trailing chevron that carries the affordance.  Only `label` and `icon-label` are supported. Icon-only menu triggers belong to ButtonUnfilled so the glyph can communicate the overflow affordance.
+          * @default false
+         */
+        "hasMenu": boolean;
+        /**
+          * Popup type exposed to assistive technology.
+         */
+        "haspopup": ButtonInvertedPopup | undefined;
+        /**
+          * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
+          * @default ''
+         */
+        "icon": string;
+        /**
+          * Single removes 4px overall; double removes 8px overall (xs stays single).
+          * @default 'single'
+         */
+        "insetDepth": ControlInsetDepth;
+        /**
+          * Disables interaction.
+          * @default false
+         */
+        "isInactive": boolean;
+        /**
+          * Use reduced outer geometry when nested inside a control of the same size.
+          * @default false
+         */
+        "isInset": boolean;
+        /**
+          * Shows an inline loader and prevents interaction without applying inactive opacity.
+          * @default false
+         */
+        "isLoading": boolean;
+        /**
+          * Visible text for `label` / `icon-label` variants.
+          * @default ''
+         */
+        "label": string;
+        /**
+          * Whether the visible label uses the emphasized weight.
+          * @default true
+         */
+        "labelEmphasis": boolean;
+        /**
+          * Accessible name for the appended menu segment in split mode.
+          * @default 'More options'
+         */
+        "menuAriaLabel": string;
+        /**
+          * Scale down during a physical pointer press. Disable when an owning composite requires fixed child or background geometry.
+          * @default true
+         */
+        "pressScale": boolean;
+        /**
+          * Use the half-radius treatment instead of the default control radius.
+          * @default false
+         */
+        "rounded": boolean;
+        "setFocus": (segment?: "primary" | "menu") => Promise<void>;
+        /**
+          * Control density (height, padding, icon, type).
+          * @default 'md'
+         */
+        "size": ButtonInvertedSize;
+        /**
+          * Append a separate ChevronDown menu segment while preserving the inverted recipe, variant, size, loading, inactive, and width treatment.
+          * @default false
+         */
+        "split": boolean;
+        /**
+          * The associated menu, picker, or panel is visible, including its exit motion. Holds only the pressed wash and does not set ARIA or selection state.
+         */
+        "surfaceOpen": boolean | undefined;
+        /**
+          * Native button type.
+          * @default 'button'
+         */
+        "type": 'button' | 'submit' | 'reset';
+        /**
+          * Content layout. Default is label-only; pass `icon` for icon-only chrome or `icon-label` for leading icon + text.
+          * @default 'label'
+         */
+        "variant": ButtonInvertedVariant;
+        /**
+          * Width fit — hug content (default) or fill the parent.
+          * @default 'hug'
+         */
+        "width": ButtonInvertedWidth;
     }
     interface DsButtonUnfilled {
         /**
@@ -4555,6 +4661,10 @@ export interface DsButtonFilledCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonFilledElement;
 }
+export interface DsButtonInvertedCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsButtonInvertedElement;
+}
 export interface DsButtonUnfilledCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonUnfilledElement;
@@ -4990,6 +5100,24 @@ declare global {
     var HTMLDsButtonFilledElement: {
         prototype: HTMLDsButtonFilledElement;
         new (): HTMLDsButtonFilledElement;
+    };
+    interface HTMLDsButtonInvertedElementEventMap {
+        "dsClick": MouseEvent;
+        "dsMenuClick": MouseEvent;
+    }
+    interface HTMLDsButtonInvertedElement extends Components.DsButtonInverted, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsButtonInvertedElementEventMap>(type: K, listener: (this: HTMLDsButtonInvertedElement, ev: DsButtonInvertedCustomEvent<HTMLDsButtonInvertedElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsButtonInvertedElementEventMap>(type: K, listener: (this: HTMLDsButtonInvertedElement, ev: DsButtonInvertedCustomEvent<HTMLDsButtonInvertedElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsButtonInvertedElement: {
+        prototype: HTMLDsButtonInvertedElement;
+        new (): HTMLDsButtonInvertedElement;
     };
     interface HTMLDsButtonUnfilledElementEventMap {
         "dsClick": MouseEvent;
@@ -6165,6 +6293,7 @@ declare global {
         "ds-bar-workflow": HTMLDsBarWorkflowElement;
         "ds-breadcrumb": HTMLDsBreadcrumbElement;
         "ds-button-filled": HTMLDsButtonFilledElement;
+        "ds-button-inverted": HTMLDsButtonInvertedElement;
         "ds-button-unfilled": HTMLDsButtonUnfilledElement;
         "ds-calendar": HTMLDsCalendarElement;
         "ds-card-action-center": HTMLDsCardActionCenterElement;
@@ -6912,6 +7041,111 @@ declare namespace LocalJSX {
           * @default 'hug'
          */
         "width"?: ButtonFilledWidth;
+    }
+    interface DsButtonInverted {
+        /**
+          * Accessible name override. Required for icon-only buttons.
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        /**
+          * ID of the popup this button controls.
+         */
+        "controls"?: string | undefined;
+        /**
+          * Controlled disclosure state forwarded to aria-expanded.
+         */
+        "expanded"?: boolean | undefined;
+        /**
+          * This action has a menu: implies `aria-haspopup="menu"` and adds the trailing chevron that carries the affordance.  Only `label` and `icon-label` are supported. Icon-only menu triggers belong to ButtonUnfilled so the glyph can communicate the overflow affordance.
+          * @default false
+         */
+        "hasMenu"?: boolean;
+        /**
+          * Popup type exposed to assistive technology.
+         */
+        "haspopup"?: ButtonInvertedPopup | undefined;
+        /**
+          * Icon name passed to <ds-icon> for `icon` / `icon-label` variants.
+          * @default ''
+         */
+        "icon"?: string;
+        /**
+          * Single removes 4px overall; double removes 8px overall (xs stays single).
+          * @default 'single'
+         */
+        "insetDepth"?: ControlInsetDepth;
+        /**
+          * Disables interaction.
+          * @default false
+         */
+        "isInactive"?: boolean;
+        /**
+          * Use reduced outer geometry when nested inside a control of the same size.
+          * @default false
+         */
+        "isInset"?: boolean;
+        /**
+          * Shows an inline loader and prevents interaction without applying inactive opacity.
+          * @default false
+         */
+        "isLoading"?: boolean;
+        /**
+          * Visible text for `label` / `icon-label` variants.
+          * @default ''
+         */
+        "label"?: string;
+        /**
+          * Whether the visible label uses the emphasized weight.
+          * @default true
+         */
+        "labelEmphasis"?: boolean;
+        /**
+          * Accessible name for the appended menu segment in split mode.
+          * @default 'More options'
+         */
+        "menuAriaLabel"?: string;
+        "onDsClick"?: (event: DsButtonInvertedCustomEvent<MouseEvent>) => void;
+        "onDsMenuClick"?: (event: DsButtonInvertedCustomEvent<MouseEvent>) => void;
+        /**
+          * Scale down during a physical pointer press. Disable when an owning composite requires fixed child or background geometry.
+          * @default true
+         */
+        "pressScale"?: boolean;
+        /**
+          * Use the half-radius treatment instead of the default control radius.
+          * @default false
+         */
+        "rounded"?: boolean;
+        /**
+          * Control density (height, padding, icon, type).
+          * @default 'md'
+         */
+        "size"?: ButtonInvertedSize;
+        /**
+          * Append a separate ChevronDown menu segment while preserving the inverted recipe, variant, size, loading, inactive, and width treatment.
+          * @default false
+         */
+        "split"?: boolean;
+        /**
+          * The associated menu, picker, or panel is visible, including its exit motion. Holds only the pressed wash and does not set ARIA or selection state.
+         */
+        "surfaceOpen"?: boolean | undefined;
+        /**
+          * Native button type.
+          * @default 'button'
+         */
+        "type"?: 'button' | 'submit' | 'reset';
+        /**
+          * Content layout. Default is label-only; pass `icon` for icon-only chrome or `icon-label` for leading icon + text.
+          * @default 'label'
+         */
+        "variant"?: ButtonInvertedVariant;
+        /**
+          * Width fit — hug content (default) or fill the parent.
+          * @default 'hug'
+         */
+        "width"?: ButtonInvertedWidth;
     }
     interface DsButtonUnfilled {
         /**
@@ -11129,6 +11363,29 @@ declare namespace LocalJSX {
         "menuAriaLabel": string;
         "hasMenu": boolean;
     }
+    interface DsButtonInvertedAttributes {
+        "variant": ButtonInvertedVariant;
+        "size": ButtonInvertedSize;
+        "isInset": boolean;
+        "insetDepth": ControlInsetDepth;
+        "width": ButtonInvertedWidth;
+        "label": string;
+        "labelEmphasis": boolean;
+        "icon": string;
+        "rounded": boolean;
+        "pressScale": boolean;
+        "isInactive": boolean;
+        "isLoading": boolean;
+        "type": 'button' | 'submit' | 'reset';
+        "ariaLabel": string | null;
+        "controls": string | undefined;
+        "expanded": boolean | undefined;
+        "surfaceOpen": boolean | undefined;
+        "haspopup": ButtonInvertedPopup | undefined;
+        "split": boolean;
+        "menuAriaLabel": string;
+        "hasMenu": boolean;
+    }
     interface DsButtonUnfilledAttributes {
         "variant": ButtonUnfilledVariant;
         "size": ButtonUnfilledSize;
@@ -12014,6 +12271,7 @@ declare namespace LocalJSX {
         "ds-bar-workflow": Omit<DsBarWorkflow, keyof DsBarWorkflowAttributes> & { [K in keyof DsBarWorkflow & keyof DsBarWorkflowAttributes]?: DsBarWorkflow[K] } & { [K in keyof DsBarWorkflow & keyof DsBarWorkflowAttributes as `attr:${K}`]?: DsBarWorkflowAttributes[K] } & { [K in keyof DsBarWorkflow & keyof DsBarWorkflowAttributes as `prop:${K}`]?: DsBarWorkflow[K] } & OneOf<"heading", DsBarWorkflow["heading"], DsBarWorkflowAttributes["heading"]>;
         "ds-breadcrumb": Omit<DsBreadcrumb, keyof DsBreadcrumbAttributes> & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes]?: DsBreadcrumb[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `attr:${K}`]?: DsBreadcrumbAttributes[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `prop:${K}`]?: DsBreadcrumb[K] };
         "ds-button-filled": Omit<DsButtonFilled, keyof DsButtonFilledAttributes> & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes]?: DsButtonFilled[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `attr:${K}`]?: DsButtonFilledAttributes[K] } & { [K in keyof DsButtonFilled & keyof DsButtonFilledAttributes as `prop:${K}`]?: DsButtonFilled[K] };
+        "ds-button-inverted": Omit<DsButtonInverted, keyof DsButtonInvertedAttributes> & { [K in keyof DsButtonInverted & keyof DsButtonInvertedAttributes]?: DsButtonInverted[K] } & { [K in keyof DsButtonInverted & keyof DsButtonInvertedAttributes as `attr:${K}`]?: DsButtonInvertedAttributes[K] } & { [K in keyof DsButtonInverted & keyof DsButtonInvertedAttributes as `prop:${K}`]?: DsButtonInverted[K] };
         "ds-button-unfilled": Omit<DsButtonUnfilled, keyof DsButtonUnfilledAttributes> & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes]?: DsButtonUnfilled[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `attr:${K}`]?: DsButtonUnfilledAttributes[K] } & { [K in keyof DsButtonUnfilled & keyof DsButtonUnfilledAttributes as `prop:${K}`]?: DsButtonUnfilled[K] };
         "ds-calendar": Omit<DsCalendar, keyof DsCalendarAttributes> & { [K in keyof DsCalendar & keyof DsCalendarAttributes]?: DsCalendar[K] } & { [K in keyof DsCalendar & keyof DsCalendarAttributes as `attr:${K}`]?: DsCalendarAttributes[K] } & { [K in keyof DsCalendar & keyof DsCalendarAttributes as `prop:${K}`]?: DsCalendar[K] };
         "ds-card-action-center": Omit<DsCardActionCenter, keyof DsCardActionCenterAttributes> & { [K in keyof DsCardActionCenter & keyof DsCardActionCenterAttributes]?: DsCardActionCenter[K] } & { [K in keyof DsCardActionCenter & keyof DsCardActionCenterAttributes as `attr:${K}`]?: DsCardActionCenterAttributes[K] } & { [K in keyof DsCardActionCenter & keyof DsCardActionCenterAttributes as `prop:${K}`]?: DsCardActionCenter[K] };
@@ -12108,6 +12366,7 @@ declare module "@stencil/core" {
             "ds-bar-workflow": LocalJSX.IntrinsicElements["ds-bar-workflow"] & JSXBase.HTMLAttributes<HTMLDsBarWorkflowElement>;
             "ds-breadcrumb": LocalJSX.IntrinsicElements["ds-breadcrumb"] & JSXBase.HTMLAttributes<HTMLDsBreadcrumbElement>;
             "ds-button-filled": LocalJSX.IntrinsicElements["ds-button-filled"] & JSXBase.HTMLAttributes<HTMLDsButtonFilledElement>;
+            "ds-button-inverted": LocalJSX.IntrinsicElements["ds-button-inverted"] & JSXBase.HTMLAttributes<HTMLDsButtonInvertedElement>;
             "ds-button-unfilled": LocalJSX.IntrinsicElements["ds-button-unfilled"] & JSXBase.HTMLAttributes<HTMLDsButtonUnfilledElement>;
             "ds-calendar": LocalJSX.IntrinsicElements["ds-calendar"] & JSXBase.HTMLAttributes<HTMLDsCalendarElement>;
             "ds-card-action-center": LocalJSX.IntrinsicElements["ds-card-action-center"] & JSXBase.HTMLAttributes<HTMLDsCardActionCenterElement>;

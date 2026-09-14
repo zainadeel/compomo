@@ -160,6 +160,7 @@ export class Calendar {
     const liveRangeValue = liveRange?.kind === 'range' ? liveRange : null;
     const rangeValue = calendarPaintedRange(this.pendingStart, this.heldRange, liveRangeValue);
     const days = calendarDays(this.month);
+    const weeks = Array.from({ length: 6 }, (_, index) => days.slice(index * 7, index * 7 + 7));
     const today = calendarToday();
     const previewStart =
       this.pendingStart && this.previewEnd ? [this.pendingStart, this.previewEnd].sort()[0] : null;
@@ -217,82 +218,90 @@ export class Calendar {
             aria-label={calendarMonthLabel(this.month)}
             onMouseLeave={this.clearPreview}
           >
-            {days.map(day => {
-              const selectedInRange = Boolean(
-                liveRangeValue &&
-                day.value >= liveRangeValue.start &&
-                day.value <= liveRangeValue.end
-              );
-              const paintedInRange = Boolean(
-                rangeValue && day.value >= rangeValue.start && day.value <= rangeValue.end
-              );
-              const pendingStartDay =
-                this.selectionMode === 'range' &&
-                Boolean(this.pendingStart) &&
-                day.value === this.pendingStart;
-              const previewInRange = Boolean(
-                this.pendingStart &&
-                previewStart &&
-                previewFinish &&
-                day.value >= previewStart &&
-                day.value <= previewFinish &&
-                day.value !== this.pendingStart
-              );
-              const inRange = this.selectionMode === 'range' && paintedInRange;
-              const rangeEdge = Boolean(
-                this.selectionMode === 'range' &&
-                rangeValue &&
-                (day.value === rangeValue.start || day.value === rangeValue.end)
-              );
-              const selected = this.selectionMode === 'single' && day.value === selectedSingle;
-              const textColor = rangeEdge
-                ? 'on-bold'
-                : selected || inRange || pendingStartDay || previewInRange || day.value === today
-                  ? 'primary'
-                  : day.inMonth
-                    ? 'secondary'
-                    : 'tertiary';
-              return (
-                <button
-                  type="button"
-                  role="gridcell"
-                  data-date-option={day.value}
-                  class={{
-                    'calendar-day': true,
-                    'calendar-day--outside': !day.inMonth,
-                    'calendar-day--today': day.value === today,
-                    'calendar-day--in-range': inRange,
-                    'calendar-day--range-preview': previewInRange,
-                    'calendar-day--range-edge': rangeEdge,
-                    'calendar-day--selected': selected,
-                    'ds-focus-ring-inset': true,
-                    'ds-interaction-fill': true,
-                    'ds-interaction-fill--on-bold': rangeEdge,
-                    'ds-interaction-fill--surface-open':
-                      pendingStartDay && !this.isDisabled(day.value),
-                    'ds-interaction-fill--selected': selected && !this.isDisabled(day.value),
-                  }}
-                  disabled={this.isDisabled(day.value)}
-                  aria-label={day.label}
-                  aria-selected={selectedInRange || selected ? 'true' : 'false'}
-                  tabIndex={day.value === focusDate ? 0 : -1}
-                  onMouseEnter={() => this.previewRange(day.value)}
-                  onFocus={() => this.previewRange(day.value)}
-                  onClick={() => this.selectDate(day.value)}
-                  onKeyDown={event => this.handleDayKeyDown(event, day.value)}
-                >
-                  <ds-text
-                    class="ds-interaction-fill__content"
-                    as="span"
-                    variant="text-body-medium"
-                    color={textColor}
-                    emphasis={day.value === today}
-                  >
-                    {day.day}
-                  </ds-text>
-                </button>
-              );
-            })}
+            {weeks.map((week, weekIndex) => (
+              <div class="calendar-grid__row" role="row" key={`week-${weekIndex}`}>
+                {week.map(day => {
+                  const selectedInRange = Boolean(
+                    liveRangeValue &&
+                    day.value >= liveRangeValue.start &&
+                    day.value <= liveRangeValue.end
+                  );
+                  const paintedInRange = Boolean(
+                    rangeValue && day.value >= rangeValue.start && day.value <= rangeValue.end
+                  );
+                  const pendingStartDay =
+                    this.selectionMode === 'range' &&
+                    Boolean(this.pendingStart) &&
+                    day.value === this.pendingStart;
+                  const previewInRange = Boolean(
+                    this.pendingStart &&
+                    previewStart &&
+                    previewFinish &&
+                    day.value >= previewStart &&
+                    day.value <= previewFinish &&
+                    day.value !== this.pendingStart
+                  );
+                  const inRange = this.selectionMode === 'range' && paintedInRange;
+                  const rangeEdge = Boolean(
+                    this.selectionMode === 'range' &&
+                    rangeValue &&
+                    (day.value === rangeValue.start || day.value === rangeValue.end)
+                  );
+                  const selected = this.selectionMode === 'single' && day.value === selectedSingle;
+                  const textColor = rangeEdge
+                    ? 'on-bold'
+                    : selected ||
+                        inRange ||
+                        pendingStartDay ||
+                        previewInRange ||
+                        day.value === today
+                      ? 'primary'
+                      : day.inMonth
+                        ? 'secondary'
+                        : 'tertiary';
+                  return (
+                    <button
+                      type="button"
+                      role="gridcell"
+                      data-date-option={day.value}
+                      class={{
+                        'calendar-day': true,
+                        'calendar-day--outside': !day.inMonth,
+                        'calendar-day--today': day.value === today,
+                        'calendar-day--in-range': inRange,
+                        'calendar-day--range-preview': previewInRange,
+                        'calendar-day--range-edge': rangeEdge,
+                        'calendar-day--selected': selected,
+                        'ds-focus-ring-inset': true,
+                        'ds-interaction-fill': true,
+                        'ds-interaction-fill--on-bold': rangeEdge,
+                        'ds-interaction-fill--surface-open':
+                          pendingStartDay && !this.isDisabled(day.value),
+                        'ds-interaction-fill--selected': selected && !this.isDisabled(day.value),
+                      }}
+                      disabled={this.isDisabled(day.value)}
+                      aria-label={day.label}
+                      aria-selected={selectedInRange || selected ? 'true' : 'false'}
+                      tabIndex={day.value === focusDate ? 0 : -1}
+                      onMouseEnter={() => this.previewRange(day.value)}
+                      onFocus={() => this.previewRange(day.value)}
+                      onClick={() => this.selectDate(day.value)}
+                      onKeyDown={event => this.handleDayKeyDown(event, day.value)}
+                    >
+                      <ds-text
+                        class="ds-interaction-fill__content"
+                        as="span"
+                        variant="text-body-medium"
+                        color={textColor}
+                        emphasis={day.value === today}
+                      >
+                        {day.day}
+                      </ds-text>
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
           </div>
         </div>
       </Host>

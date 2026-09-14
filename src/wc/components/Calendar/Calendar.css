@@ -37,13 +37,15 @@
 }
 
 .calendar-weekdays,
-.calendar-grid {
+.calendar-grid__row {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   column-gap: var(--dimension-space-050);
 }
 
 .calendar-grid {
+  display: flex;
+  flex-direction: column;
   row-gap: var(--dimension-space-050);
 }
 

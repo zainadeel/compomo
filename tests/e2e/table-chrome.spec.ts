@@ -705,11 +705,16 @@ test('supports semantic relative dates and fixed calendar ranges @pr-critical', 
   await expect(calendarDays).toHaveCount(42);
   const dateBounds = await calendarDays.nth(10).boundingBox();
   const calendarGrid = popup.getByRole('grid');
+  await expect(calendarGrid.getByRole('row')).toHaveCount(6);
+  await expect(calendarGrid.getByRole('row').first().getByRole('gridcell')).toHaveCount(7);
   const calendarGridBounds = await calendarGrid.boundingBox();
-  const calendarGap = await calendarGrid.evaluate(element => ({
-    column: Number.parseFloat(getComputedStyle(element).columnGap),
-    row: Number.parseFloat(getComputedStyle(element).rowGap),
-  }));
+  const calendarGap = await calendarGrid.evaluate(element => {
+    const row = element.querySelector<HTMLElement>('[role="row"]');
+    return {
+      column: Number.parseFloat(getComputedStyle(row!).columnGap),
+      row: Number.parseFloat(getComputedStyle(element).rowGap),
+    };
+  });
   expect(calendarGap.column).toBeCloseTo(4, 1);
   expect(calendarGap.row).toBeCloseTo(4, 1);
   expectGeometryClose(

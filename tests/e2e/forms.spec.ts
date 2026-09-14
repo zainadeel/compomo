@@ -998,6 +998,123 @@ test('date and time inputs follow Input density, body text, and form association
     });
 });
 
+test('date and time pickers close and ignore changes after becoming inactive @cross-browser', async ({
+  page,
+}) => {
+  const timeField = page.locator('#input-time-md');
+  await timeField.getByRole('button', { name: 'Choose time' }).click();
+  await expect(page.getByRole('dialog', { name: 'Choose time' })).toBeVisible();
+
+  await timeField.evaluate(element => {
+    const control = element as HTMLDsInputTimeElement;
+    control.disabled = true;
+    element.querySelector('ds-time-picker')?.dispatchEvent(
+      new CustomEvent('dsChange', {
+        detail: '10:00',
+        bubbles: true,
+        composed: true,
+      })
+    );
+  });
+  await expect(timeField).toHaveJSProperty('value', '09:00');
+  await expect(timeField.locator('ds-time-picker')).toHaveCount(0);
+
+  const dateField = page.locator('#input-date-md');
+  await dateField.getByRole('button', { name: 'Choose date' }).click();
+  await expect(page.getByRole('dialog', { name: 'Choose date' })).toBeVisible();
+
+  await dateField.evaluate(element => {
+    const control = element as HTMLDsInputDateElement;
+    control.readOnly = true;
+    element.querySelector('ds-calendar')?.dispatchEvent(
+      new CustomEvent('dsChange', {
+        detail: '2026-09-16',
+        bubbles: true,
+        composed: true,
+      })
+    );
+  });
+  await expect(dateField).toHaveJSProperty('value', '2026-09-10');
+  await expect(dateField.locator('ds-calendar')).toHaveCount(0);
+});
+
+test('time picker reaches bounded values and honors coarse steps @cross-browser', async ({
+  page,
+}) => {
+  const timeField = page.locator('#input-time-md');
+  await timeField.evaluate(element => {
+    const control = element as HTMLDsInputTimeElement;
+    control.value = '08:00';
+    control.min = '09:30';
+    control.max = '09:45';
+    control.step = 60;
+  });
+  await timeField.getByRole('button', { name: 'Choose time' }).click();
+
+  const picker = timeField.locator('ds-time-picker');
+  await expect(picker.locator('[data-hour-option="9"]')).toBeEnabled();
+  await expect(picker.locator('[data-minute-option="30"]')).toBeEnabled();
+  await picker.locator('[data-hour-option="9"]').click();
+  await expect(timeField).toHaveJSProperty('value', '09:30');
+  await timeField.getByRole('button', { name: 'Choose time' }).click();
+  await expect(picker).toHaveCount(0);
+
+  await timeField.evaluate(element => {
+    const control = element as HTMLDsInputTimeElement;
+    control.value = '09:00';
+    control.min = '';
+    control.max = '';
+    control.step = 3600;
+  });
+  await timeField.getByRole('button', { name: 'Choose time' }).click();
+  await expect(timeField.locator('ds-time-picker [data-minute-option]')).toHaveCount(1);
+  await expect(timeField.getByRole('option', { name: '00', exact: true })).toBeVisible();
+
+  await timeField.locator('input').fill('9:30');
+  await timeField.locator('input').blur();
+  await expect(timeField).toHaveJSProperty('value', '09:00');
+});
+
+test('date and time constraints participate in form validity @cross-browser', async ({ page }) => {
+  const form = page.locator('#datetime-input-form');
+  const dateField = page.locator('#input-date-md');
+  const timeField = page.locator('#input-time-md');
+
+  await dateField.evaluate(element => {
+    const control = element as HTMLDsInputDateElement;
+    control.value = '2026-09-01';
+    control.min = '2026-09-10';
+  });
+  await timeField.evaluate(element => {
+    const control = element as HTMLDsInputTimeElement;
+    control.value = '08:00';
+    control.min = '09:00';
+    control.max = '17:00';
+    control.step = 60;
+  });
+  await expect.poll(() => form.evaluate(element => element.checkValidity())).toBe(false);
+
+  await dateField.evaluate(element => {
+    (element as HTMLDsInputDateElement).value = '2026-09-10';
+  });
+  await timeField.evaluate(element => {
+    (element as HTMLDsInputTimeElement).value = '10:00';
+  });
+  await expect.poll(() => form.evaluate(element => element.checkValidity())).toBe(true);
+
+  await timeField.evaluate(element => {
+    const control = element as HTMLDsInputTimeElement;
+    control.value = '09:30';
+    control.step = 3600;
+  });
+  await expect.poll(() => form.evaluate(element => element.checkValidity())).toBe(false);
+
+  await timeField.evaluate(element => {
+    (element as HTMLDsInputTimeElement).value = '10:00';
+  });
+  await expect.poll(() => form.evaluate(element => element.checkValidity())).toBe(true);
+});
+
 test('input truncates single-line values and placeholder guidance when constrained', async ({
   page,
 }) => {

@@ -2231,6 +2231,221 @@
       ]
     },
     {
+      "name": "button-inverted",
+      "title": "ButtonInverted",
+      "description": "Single-recipe filled command button with an inverted background and primary foreground for actions that must remain legible across ordinary surfaces.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/button-inverted",
+        "source": "src/wc/components/ButtonInverted/ButtonInverted.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Single-recipe filled command button with an inverted background and primary foreground for actions that must remain legible across ordinary surfaces.",
+          "useWhen": [
+            "A command needs the filled button structure with the fixed inverted background treatment.",
+            "The action should use primary foreground content on the inverted surface without exposing intent or contrast choices.",
+            "A compact, icon-only inverted action needs an explicit accessible name.",
+            "The command has closely related alternatives and needs split mode while keeping the same inverted recipe."
+          ],
+          "avoidWhen": [
+            "The action needs semantic intent or contrast-specific filled treatments; use ButtonFilled.",
+            "The action is unfilled icon-only shell, navigation, overflow, or tool-rail chrome; use ButtonUnfilled.",
+            "The element represents navigation rather than a command.",
+            "The content is a persistent selected state rather than an action."
+          ],
+          "alternatives": [
+            {
+              "when": "The action's consequence needs a semantic intent or the fill must adapt through contrast.",
+              "component": "component:ds-button-filled",
+              "reason": "ButtonFilled owns intent and contrast-aware filled command treatments."
+            },
+            {
+              "when": "The action is shell, navigation, overflow, or tool-rail chrome.",
+              "component": "component:ds-button-unfilled",
+              "reason": "ButtonUnfilled owns unfilled chrome, active state, borders, and surface-aware interaction states."
+            },
+            {
+              "when": "The user is choosing a destination in application navigation.",
+              "component": "component:ds-panel-nav",
+              "reason": "PanelNav owns destination selection and navigation semantics."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-modal",
+            "component:ds-field",
+            "component:ds-menu"
+          ],
+          "patterns": [
+            "pattern:menu-trigger"
+          ],
+          "accessibility": [
+            "Provide an explicit accessible name for icon-only buttons.",
+            "In split mode, provide menuAriaLabel for the appended ChevronDown segment, pass controls with the Menu id, and synchronize expanded with the Menu open state.",
+            "Set hasMenu when the action opens a Menu; it implies aria-haspopup of menu and renders the trailing chevron. Pass controls with the Menu id and expanded from the same open state given to Menu.",
+            "Use haspopup directly for a non-menu popup such as a dialog; that case gets no chevron.",
+            "Loading keeps the action focused and named, exposes busy and disabled state, and blocks activation.",
+            "Use native submit behavior for form submission and handle the form submit event rather than submitting from the button click event."
+          ],
+          "states": [
+            "Every size applies one complete control-density recipe across frame height, inline padding, icon zone, text-container inset, gap, and radius.",
+            "The inverted background and primary foreground are fixed; ButtonInverted has no intent, contrast, parent-surface, or optional-border props.",
+            "Every button has a minimum inline size equal to its resolved height. Short labels therefore form a square control while longer labels continue to hug their content.",
+            "Set isInset only when the button is nested inside a same-size control. The default single inset removes 4px overall; insetDepth double removes 8px overall and falls back to single at xs.",
+            "Rounded changes only the control radius to the half-radius treatment; it does not change the inverted recipe, size, variant, or interaction semantics.",
+            "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
+            "Icon and icon-label loading replace the icon in place. Label-only loading centers the loader while preserving the button's measured width.",
+            "Physical press scaling is on by default. Disable it only when an owning composite must keep child or background geometry fixed; hover and pressed interaction washes remain available.",
+            "ButtonInverted has no active, pressed, or selected state; a filled action is a command, not a toggle or persistent selection.",
+            "An open popup is a transient pressed state. While surfaceOpen is true the pressed wash is held for the popup's complete rendered lifecycle without introducing selected styling.",
+            "Split mode supports label, icon, and icon-label primary segments. The primary segment emits dsClick and the appended menu segment emits dsMenuClick."
+          ],
+          "responsiveBehavior": [
+            "Use fill width only when the parent layout calls for a full-width action, commonly on narrow form layouts.",
+            "Choose density from the containing layout so the inverted action matches neighboring controls."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "For form submission, use the native submit type and listen to the form submit event; use dsClick for non-submit commands."
+            ],
+            "react": [
+              "Keep async state in the owner and pass it to the loading state until the command settles."
+            ],
+            "angular": [
+              "Keep async state in the owner and pass it to the loading state until the command settles."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/ButtonInverted/ButtonInverted.stories.ts"
+            },
+            {
+              "label": "Surface ownership and trigger state",
+              "path": "src/docs/SurfaceOwnership.mdx"
+            }
+          ]
+        },
+        "props": {
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "controls": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "expanded": {
+            "type": "boolean | undefined",
+            "required": false
+          },
+          "hasMenu": {
+            "type": "boolean",
+            "required": false
+          },
+          "haspopup": {
+            "type": "ButtonInvertedPopup | undefined",
+            "required": false
+          },
+          "icon": {
+            "type": "string",
+            "required": false
+          },
+          "insetDepth": {
+            "type": "ControlInsetDepth",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "isInset": {
+            "type": "boolean",
+            "required": false
+          },
+          "isLoading": {
+            "type": "boolean",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": false
+          },
+          "labelEmphasis": {
+            "type": "boolean",
+            "required": false
+          },
+          "menuAriaLabel": {
+            "type": "string",
+            "required": false
+          },
+          "pressScale": {
+            "type": "boolean",
+            "required": false
+          },
+          "rounded": {
+            "type": "boolean",
+            "required": false
+          },
+          "size": {
+            "type": "ButtonInvertedSize",
+            "required": false
+          },
+          "split": {
+            "type": "boolean",
+            "required": false
+          },
+          "surfaceOpen": {
+            "type": "boolean | undefined",
+            "required": false
+          },
+          "type": {
+            "type": "'button' | 'submit' | 'reset'",
+            "required": false
+          },
+          "variant": {
+            "type": "ButtonInvertedVariant",
+            "required": false
+          },
+          "width": {
+            "type": "ButtonInvertedWidth",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsClick",
+            "detail": "MouseEvent"
+          },
+          {
+            "name": "dsMenuClick",
+            "detail": "MouseEvent"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-button-inverted",
+          "react": "DsButtonInverted",
+          "vue": "DsButtonInverted",
+          "angular": "DsButtonInverted"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "badge",
+        "icon",
+        "loader",
+        "text"
+      ]
+    },
+    {
       "name": "button-unfilled",
       "title": "ButtonUnfilled",
       "description": "Secondary command and compact chrome button with optional persistent toggle state, surface-aware interaction treatment, and async progress.",
@@ -5189,7 +5404,7 @@
             "Password fields show a standard inset Eye action at the field's density. EyeDisabled replaces it while the value is visible. The action stays available on read-only fields and is inactive with the field.",
             "Search fields disable browser autocomplete history, automatic capitalization, autocorrection, and spellchecking by default so browser-owned suggestions do not compete with product-owned results. Consumers can explicitly provide autoComplete when a different native history behavior is required.",
             "Search fields used with owned result sets forward aria-controls and aria-activedescendant to the native field so keyboard focus can remain in the query while assistive technology tracks the active result.",
-            "The prefix and suffix slots host compact leading or trailing units such as a currency code, or a nested same-size inset Select. Text adornments use the control's balanced text inset. Nested Selects match the field density, set isInset, hasBorder false, and width hug, and do not carry the field's error message. The optional leading icon is decorative and does not replace the field label. Password, search-clear, and date or time actions stay type-owned trailing buttons rather than suffix-slot content.",
+            "The prefix and suffix slots host compact leading or trailing units such as a currency code, or a nested same-size inset Select. Text adornments use the control's balanced text inset. Nested Selects match the field density, set isInset, hasBorder false, width hug, and indicator up-down, keep a selected value, set allowClear false so the menu has no clear footer, set neutralTrigger so the selected unit stays on the secondary adornment foreground, and do not carry the field's error message. Configurable prefix and suffix controls are separated from the editable value by a vertical divider at the density icon height. The nested inset keeps its 2px remainder toward the line; the editable value keeps the same inline padding from the line as a non-prefixed field keeps from its border. The optional leading icon is decorative and does not replace the field label. Password, search-clear, and date or time actions stay type-owned trailing buttons rather than suffix-slot content.",
             "Use autoComplete, inputMode, and enterKeyHint to provide browser and virtual-keyboard hints without changing the value's semantic type.",
             "Number fields preserve native spinbutton semantics, keyboard stepping, and min/max constraint behavior while dsChange continues to report the native string value. Two borderless inset chevron actions split the available inner height, disable independently at their numeric bound, and restore focus to the spinbutton after pointer activation.",
             "textAlign positions the editable value while the numeric stepper stays on the opposite inline edge, keeping the actions clear of the number: start-aligned values use an inline-end stepper and end-aligned values use an inline-start stepper.",
@@ -5390,6 +5605,7 @@
       ],
       "registryDependencies": [
         "button-unfilled",
+        "divider",
         "icon",
         "text"
       ]
@@ -9014,10 +9230,10 @@
             "Use errorMessage with error so the trigger is described by the rendered alert."
           ],
           "states": [
-            "Selected trigger foreground communicates the current value independently of fill. Opt into activeFill when the trigger needs additional selected emphasis; popup option selection keeps its own treatment.",
+            "Selected trigger foreground communicates the current value independently of fill. Opt into activeFill when the trigger needs additional selected emphasis; popup option selection keeps its own treatment. Set neutralTrigger to keep the selected label on the resting secondary foreground, including Input prefix and suffix units.",
             "The multiple property changes cardinality without changing the component family: scalar mode selects and closes, while multiple mode toggles array values and keeps the popup open.",
-            "Every size applies one complete control-density recipe across trigger height, inline padding, icon zones, text-container inset, gap, and radius; error content follows the shared 4px field flow.",
-            "Set isInset only when the trigger is nested inside a same-size control, including an Input prefix or suffix. Match the host field's size, set hasBorder to false, and use width hug. The default single inset removes 4px overall; insetDepth double removes 8px overall so the parent can add 4px per edge while preserving its outer alignment box. Double inset falls back to single at xs to protect minimum icon geometry. Inset changes only the trigger's outer box. Popup option rows, search, and footer always use the selected size recipe and do not change for single or double inset. Do not put error copy on the nested Select; the owning Input keeps validation.",
+            "Every size applies one complete control-density recipe across trigger height, inline padding, icon zones, text-container inset, gap, and radius; error content follows the shared 4px field flow. Set rounded to use the same half-radius pill as buttons on the trigger only; the popup keeps the menu radius.",
+            "Set isInset only when the trigger is nested inside a same-size control, including an Input prefix or suffix. Match the host field's size, set hasBorder to false, use width hug, and set indicator to up-down. Prefix and suffix Selects keep a selected value, set allowClear false so the menu has no clear footer, and set neutralTrigger so the selected unit stays secondary like prefix text. The owning Input draws a vertical divider between the nested control and the editable value at the density icon height. The nested inset keeps its 2px remainder toward the line; the editable value keeps the same inline padding from the line as a non-prefixed field keeps from its border. The default single inset removes 4px overall; insetDepth double removes 8px overall so the parent can add 4px per edge while preserving its outer alignment box. Double inset falls back to single at xs to protect minimum icon geometry. Inset and rounded change only the trigger's outer box. Popup option rows, search, and footer always use the selected size recipe and do not change for single or double inset or for rounded. Do not put error copy on the nested Select; the owning Input keeps validation.",
             "Value is controlled through the mutable value property as a string in scalar mode or a string array in multiple mode; dsChange reports the matching shape.",
             "Multiple mode keeps the persistent placeholder label visible, appends the selected count, and submits one repeated form entry per selected value.",
             "Required Selects begin without an automatic selection and require the user to make an explicit choice; do not preselect the first option merely to satisfy validity.",
@@ -9032,7 +9248,7 @@
             "Option labels and the selected trigger label stay on one line and truncate when constrained. Option subtext may wrap to at most two lines.",
             "Use an option action only for a contextual menu about that user-managed option. The fixed ellipsis action appears on hover, keyboard activity, focus, and touch; surfaceOpen keeps it visible while its controlled menu is rendered. Activating it emits dsOptionAction without selecting the option or closing the Select popup.",
             "Use option subtextActions for a compact set of immediate actions that belong to one option. They render beneath only that option's label using the standard supporting-text inset and rhythm, use action or negative semantic color, and emit dsOptionSubtextAction without selecting the option or closing the popup. Unlike descriptive subtext, they do not reserve a blank supporting line on neighboring options.",
-            "The optional prefix icon and trailing indicator always use the parent surface's secondary foreground color, including when a selected value promotes the label to primary. When collapseLabel compact icon-only chrome is active, a selected value promotes the prefix icon to primary instead. The default down indicator communicates disclosure; up-down is reserved for compact value steppers such as pagination page size.",
+            "The optional prefix icon and trailing indicator always use the parent surface's secondary foreground color, including when a selected value promotes the label to primary. When collapseLabel compact icon-only chrome is active, a selected value promotes the prefix icon to primary instead. The default down indicator communicates disclosure; up-down is for compact always-selected value pickers such as pagination page size and Input prefix or suffix units.",
             "While the popup is open, the trigger holds the pressed interaction wash without changing its resting foreground or selected-value treatment.",
             "The shared popup search control follows the Select density, using the same text, icon, and internal spacing as a borderless trigger. Its container uses menu-item padding on every side and owns a 1px bottom divider that becomes a 1.5px bold-brand stroke while search has focus. Search placeholder text is secondary at rest and quaternary while focused because it becomes decorative once the editable field is active.",
             "When search contains text, the shared control shows a rounded icon-only ButtonUnfilled with the CrossCircle icon and no border, sized to remain inset within the current row density. It clears the local term, stays hidden for an empty term, and returns focus to search.",
@@ -9219,6 +9435,10 @@
           },
           "requiredMessage": {
             "type": "string",
+            "required": false
+          },
+          "rounded": {
+            "type": "boolean",
             "required": false
           },
           "searchPlaceholder": {

@@ -147,6 +147,7 @@ export {
   formatClockTimeLabel,
   isClockTime,
   isClockTimeOutOfRange,
+  isClockTimeStepAligned,
   joinClockTime,
   parseLooseClockTime,
   splitClockTime,

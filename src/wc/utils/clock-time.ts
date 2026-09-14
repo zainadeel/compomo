@@ -21,14 +21,17 @@ export function clockMinuteStep(step: string | number = 60): number {
   const seconds = typeof step === 'number' ? step : Number(step);
   if (!Number.isFinite(seconds) || seconds <= 0) return 1;
   if (seconds < 60) return 1;
-  return Math.min(30, Math.max(1, Math.round(seconds / 60)));
+  return Math.max(1, Math.round(seconds / 60));
 }
 
-export function clockMinutes(step: number = 1): number[] {
-  const stride = Number.isFinite(step) && step > 0 ? Math.min(30, Math.floor(step)) : 1;
-  const minutes: number[] = [];
-  for (let minute = 0; minute < 60; minute += stride) minutes.push(minute);
-  return minutes;
+export function clockMinutes(step: number = 1, baseMinute: number = 0): number[] {
+  const stride = Number.isFinite(step) && step > 0 ? Math.floor(step) : 1;
+  const normalizedBase = ((Math.floor(baseMinute) % 60) + 60) % 60;
+  const values = new Set<number>();
+  for (let offset = 0; offset < 1440; offset += stride) {
+    values.add((normalizedBase + offset) % 60);
+  }
+  return [...values].sort((a, b) => a - b);
 }
 
 export function splitClockTime(value: string): ClockTimeParts | null {
@@ -86,6 +89,21 @@ export function isClockTimeOutOfRange(value: string, min?: string, max?: string)
   if (min && isClockTime(min) && value < min) return true;
   if (max && isClockTime(max) && value > max) return true;
   return false;
+}
+
+/** Whether a minute-precision clock value aligns to the configured native step. */
+export function isClockTimeStepAligned(
+  value: string,
+  step: string | number = 60,
+  min?: string
+): boolean {
+  if (!isClockTime(value)) return false;
+  const valueParts = value.split(':').map(Number);
+  const baseParts = min && isClockTime(min) ? min.split(':').map(Number) : [0, 0];
+  const stride = clockMinuteStep(step);
+  const valueMinutes = valueParts[0] * 60 + valueParts[1];
+  const baseMinutes = baseParts[0] * 60 + baseParts[1];
+  return (valueMinutes - baseMinutes) % stride === 0;
 }
 
 /** Move within a finite list without wrapping past the first or last item. */

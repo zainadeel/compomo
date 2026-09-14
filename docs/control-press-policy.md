@@ -14,9 +14,10 @@ targets are ineligible. Reduced motion fixes the target at resting scale with no
 transition.
 
 Apply `.ds-control-press-scale` to the actual interactive hit target. The only
-approved consumers are the native buttons inside `ButtonFilled` and
-`ButtonUnfilled`. CSS `:active` defines transient physical feedback; keyboard
-activation remains native and is not promised an equivalent held frame.
+approved consumers are the native buttons inside `ButtonFilled`,
+`ButtonInverted`, and `ButtonUnfilled`. CSS `:active` defines transient physical
+feedback; keyboard activation remains native and is not promised an equivalent
+held frame.
 
 ## Policy matrix
 
@@ -25,6 +26,7 @@ activation remains native and is not promised an equivalent held frame.
 | Component and target                         | Existing pressed/state paint                                                    | Transform ownership  | Policy and rationale                              | Composition                                                                                                                                                                                                                                 |
 | -------------------------------------------- | ------------------------------------------------------------------------------- | -------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `ButtonFilled` — native `.button-filled`     | `interaction-fill` pressed wash                                                 | None after migration | **scale** — momentary action primitive            | The native hit target scales. An elevated owner adds `ds-control-elevation--press-scale` so the wrapper surface, shadow, highlight, and button scale together without compounding.                                                          |
+| `ButtonInverted` — native `.button-inverted` | `interaction-fill` pressed wash on the fixed inverted recipe                    | None                 | **scale** — momentary action primitive            | The native hit target scales with the same eligibility and reduced-motion policy as ButtonFilled; its background and primary foreground remain fixed by the inverted recipe.                                                                |
 | `ButtonUnfilled` — native `.button-unfilled` | `interaction-fill` pressed wash; expanded and selected paint remain independent | None                 | **scale by default** — momentary action primitive | Applies to label, icon, and icon-label variants. Owning composites may disable `pressScale` only when fixed child or background geometry must remain aligned; the pressed wash remains active. Popup-open state does not keep scale active. |
 
 ### No-scale targets
@@ -45,7 +47,7 @@ neither the sentence nor its popup anchors scale during a press.
 | `BarTitle` — native back button and composed action/menu buttons                        | `interaction-fill` wash                                                                       | None                                                                  | The back/navigation target stays stable; composed button primitives follow their own policy.                                                                                |
 | `BarPageTitle` — native back button and composed action/menu buttons                    | `interaction-fill` wash                                                                       | None                                                                  | Compact shell-bar chrome stays stable; composed button primitives follow their own policy.                                                                                  |
 | `Breadcrumb` — item anchors and buttons                                                 | Link underline/focus feedback                                                                 | None                                                                  | Hierarchical navigation does not scale.                                                                                                                                     |
-| `ButtonFilled` / `ButtonUnfilled` — split-mode segments                                 | Native button interaction washes                                                              | Joined segment geometry                                               | Both segments disable scale so the shared separator and outer boundary remain fixed for default and rounded split controls.                                                 |
+| `ButtonFilled` / `ButtonInverted` / `ButtonUnfilled` — split-mode segments              | Native button interaction washes                                                              | Joined segment geometry                                               | All segments disable scale so the shared separator and outer boundary remain fixed for default and rounded split controls.                                                  |
 | `CardActionCenter` — grouped action buttons and links                                   | `interaction-fill` wash; inactive state                                                       | None                                                                  | Compact overview-rail rows stay aligned with section headings and trailing values, so their hit geometry does not scale.                                                    |
 | `CardOverview` — selectable `.card-overview__metric` cells                              | `interaction-fill` wash; roving focus state                                                   | None                                                                  | Summary measures are selection targets in a shared grid; every column must stay aligned, so cell geometry cannot move.                                                      |
 | `Calendar` — `.calendar-day` cells and month-navigation composition                     | `interaction-fill`, selected, range, and today state                                          | None                                                                  | Day cells stay on a fixed seven-column grid. Composed previous/next month `ButtonUnfilled` controls follow their primitive policy.                                          |
@@ -101,7 +103,7 @@ remain outside this utility.
 
 `BarWorkflow`, `CodeBlock`, `MessageComposer`, `MobileHeader`,
 `PanelToolHeader`, `PanelTools`, and shell/tool actions may render or receive
-`ButtonFilled` or `ButtonUnfilled`. They inherit the button primitive policy
+`ButtonFilled`, `ButtonInverted`, or `ButtonUnfilled`. They inherit the button primitive policy
 unless fixed child or background geometry requires the unfilled button's
 explicit `pressScale={false}` opt-out; their containers must not add another
 press transform. PanelTools rail actions use that opt-out so notification-dot
