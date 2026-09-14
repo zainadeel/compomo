@@ -78,3 +78,61 @@ describe('icon loader catalogs', () => {
     }
   });
 });
+
+describe('icon catalog routing', () => {
+  /** Mirrors how ds-icon picks a catalog, so these assert the shipped resolution path. */
+  async function resolve(name: string): Promise<string> {
+    const { isFlagIconName } = await import('../src/wc/components/Icon/icon-cache.ts');
+    const { systemIconLoaders } = await import('../src/wc/components/Icon/system-icon-catalog.ts');
+    const { flagIconLoaders } = await import('../src/wc/components/Icon/flag-icon-catalog.ts');
+
+    const loaders = isFlagIconName(name) ? flagIconLoaders : systemIconLoaders;
+    const load = Object.prototype.hasOwnProperty.call(loaders, name) ? loaders[name] : undefined;
+    return load ? await load() : '';
+  }
+
+  // Regression: a `name.startsWith('Flag')` test routed these system icons to the
+  // country-flag catalog, where they do not exist, so they rendered blank.
+  for (const name of ['Flag', 'FlagFilled']) {
+    it(`resolves the ${name} system icon to non-empty SVG`, async () => {
+      assert.match(await resolve(name), /^<svg /);
+    });
+  }
+
+  it('still resolves country flags from the flag catalog', async () => {
+    const { isFlagIconName } = await import('../src/wc/components/Icon/icon-cache.ts');
+
+    assert.equal(isFlagIconName('FlagCanada'), true);
+    assert.match(await resolve('FlagCanada'), /^<svg /);
+  });
+
+  it('routes every icon to the catalog its IcoMo category names', async () => {
+    const { isFlagIconName } = await import('../src/wc/components/Icon/icon-cache.ts');
+
+    for (const icon of meta.icons as { name: string; category: string }[]) {
+      assert.equal(
+        isFlagIconName(icon.name),
+        icon.category === 'flag',
+        `${icon.name} (${icon.category}) routed to the wrong catalog`
+      );
+    }
+  });
+
+  it('classifies identically for registerIcons and resolution, so cache keys agree', async () => {
+    const { iconCache, iconCacheKey, isFlagIconName, registerIcons } =
+      await import('../src/wc/components/Icon/icon-cache.ts');
+
+    // A pre-registered glyph must be readable under the key the resolver derives.
+    registerIcons({ Flag: '<svg data-test="generic-flag"/>' });
+    assert.equal(
+      iconCache().get(iconCacheKey('Flag', isFlagIconName('Flag'))),
+      '<svg data-test="generic-flag"/>'
+    );
+
+    registerIcons({ FlagCanada: '<svg data-test="ca-flag"/>' });
+    assert.equal(
+      iconCache().get(iconCacheKey('FlagCanada', isFlagIconName('FlagCanada'))),
+      '<svg data-test="ca-flag"/>'
+    );
+  });
+});

@@ -1,7 +1,7 @@
 import { Component, Prop, Element, State, Watch, h, Host } from '@stencil/core';
 import { flagIconLoaders } from './flag-icon-catalog';
 import { systemIconLoaders } from './system-icon-catalog';
-import { iconCache, iconCacheKey } from './icon-cache';
+import { iconCache, iconCacheKey, isFlagIconName } from './icon-cache';
 import { parseIconSvg } from './icon-svg';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
@@ -96,7 +96,7 @@ export class Icon {
    * ds-icon instance.
    */
   private resolveSvg() {
-    const flag = this.name.startsWith('Flag');
+    const flag = isFlagIconName(this.name);
     const key = iconCacheKey(this.name, flag);
     const token = ++this.loadToken;
 
