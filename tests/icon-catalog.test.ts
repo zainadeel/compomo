@@ -149,31 +149,30 @@ describe('icon catalog routing', () => {
     }
   });
 
-  it('keeps the pre-map { flag } option working for existing callers', async () => {
-    const { iconCache, iconCacheKey, registerIcons } =
+  it('registers an app-supplied custom name where ds-icon reads it', async () => {
+    const { iconCache, iconCacheKey, resolveIconCategory, registerIcons } =
       await import('../src/wc/components/Icon/icon-cache.ts');
 
-    registerIcons({ LegacyForcedFlag: '<svg data-test="forced-flag"/>' }, { flag: true });
+    // Names IcoMo does not ship fall to system, which is the key ds-icon reads.
+    registerIcons({ AppOwnedMarker: '<svg data-test="app-owned"/>' });
+    assert.equal(resolveIconCategory('AppOwnedMarker'), 'system');
     assert.equal(
-      iconCache().get(iconCacheKey('LegacyForcedFlag', 'flag')),
-      '<svg data-test="forced-flag"/>'
-    );
-
-    registerIcons({ LegacyForcedSystem: '<svg data-test="forced-system"/>' }, { flag: false });
-    assert.equal(
-      iconCache().get(iconCacheKey('LegacyForcedSystem', 'system')),
-      '<svg data-test="forced-system"/>'
+      iconCache().get(iconCacheKey('AppOwnedMarker', 'system')),
+      '<svg data-test="app-owned"/>'
     );
   });
 
-  it('honours an explicit category override', async () => {
-    const { iconCache, iconCacheKey, registerIcons } =
-      await import('../src/wc/components/Icon/icon-cache.ts');
+  it('keeps names unique across categories so routing has no tie to break', () => {
+    const categoriesByName = new Map<string, Set<string>>();
+    for (const { name, category } of meta.icons as { name: string; category: string }[]) {
+      if (!categoriesByName.has(name)) categoriesByName.set(name, new Set());
+      categoriesByName.get(name)!.add(category);
+    }
 
-    registerIcons({ CustomMarker: '<svg data-test="custom-marker"/>' }, { category: 'map' });
-    assert.equal(
-      iconCache().get(iconCacheKey('CustomMarker', 'map')),
-      '<svg data-test="custom-marker"/>'
-    );
+    const collisions = [...categoriesByName]
+      .filter(([, categories]) => categories.size > 1)
+      .map(([name, categories]) => `${name} (${[...categories].sort().join(', ')})`);
+
+    assert.deepEqual(collisions, [], 'generate-icon-catalog.mjs fails the build on these');
   });
 });

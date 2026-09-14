@@ -38,6 +38,40 @@ ${entries}
   fs.writeFileSync(outputPath, content);
 }
 
+/**
+ * ds-icon routes a name to its catalog by membership, so a name that exists in
+ * two categories has no single correct answer — whichever catalog is consulted
+ * first would silently win and change what an existing `name` renders.
+ *
+ * IcoMo makes this structurally possible: system icons are unprefixed while
+ * flag/map exports carry a category prefix, so a future `src/map/Pin.svg` would
+ * build to `MapPin` and collide with the existing `MapPin` system icon.
+ *
+ * Fail the build instead of letting precedence decide. Resolving this needs a
+ * human — an upstream rename, or an explicit disambiguation in ds-icon.
+ */
+function assertNamesAreUniqueAcrossCategories(icons) {
+  const categoriesByName = new Map();
+  for (const { name, category } of icons) {
+    if (!categoriesByName.has(name)) categoriesByName.set(name, new Set());
+    categoriesByName.get(name).add(category);
+  }
+
+  const collisions = [...categoriesByName]
+    .filter(([, categories]) => categories.size > 1)
+    .map(([name, categories]) => `  ${name} — ${[...categories].sort().join(' and ')}`);
+
+  if (collisions.length > 0) {
+    throw new Error(
+      `@ds-mo/icons@${meta.version} ships ${collisions.length} name(s) in more than one category:\n` +
+        `${collisions.join('\n')}\n` +
+        'ds-icon resolves a catalog from the name alone, so these are ambiguous.'
+    );
+  }
+}
+
+assertNamesAreUniqueAcrossCategories(meta.icons);
+
 const system = meta.icons.filter(i => i.category === 'system');
 const flags = meta.icons.filter(i => i.category === 'flag');
 const maps = meta.icons.filter(i => i.category === 'map');

@@ -8,7 +8,6 @@
  */
 import { flagIconLoaders } from './flag-icon-catalog';
 import { mapIconLoaders } from './map-icon-catalog';
-import { systemIconLoaders } from './system-icon-catalog';
 
 const CACHE_KEY = Symbol.for('ds-mo.icon-svg-cache');
 
@@ -36,20 +35,20 @@ function hasOwn(loaders: Record<string, unknown>, name: string): boolean {
  * flag/map export carries the category prefix. So `startsWith('Flag')` or
  * `startsWith('Map')` misroutes those six to a catalog that does not contain
  * them, the own-key lookup misses, and ds-icon renders nothing with no error.
- * Membership needs no special case and stays correct as IcoMo adds names.
  *
- * System is tested first so that if a future release ever does ship one name in
- * two categories, the collision degrades predictably toward the system glyph
- * rather than silently flipping behaviour.
+ * Only the two prefixed catalogs are consulted; anything else is system. That
+ * keeps the system catalog — 400 loaders, by far the largest — out of the
+ * `@ds-mo/ui/utils` entry, which exists to hand apps `registerIcons`.
  *
- * The resolver and `registerIcons` must classify identically, otherwise a
- * pre-registered glyph is written under one key and read under another.
+ * Test order is not a tie-break: `generate-icon-catalog.mjs` fails the build if
+ * IcoMo ever ships one name in two categories, so at most one can match.
+ *
+ * Names in no catalog resolve as system, which is what lets an app register a
+ * glyph of its own under a custom name and have ds-icon read it back.
  */
 export function resolveIconCategory(name: string): IconCategory {
-  if (hasOwn(systemIconLoaders, name)) return 'system';
   if (hasOwn(flagIconLoaders, name)) return 'flag';
   if (hasOwn(mapIconLoaders, name)) return 'map';
-  // Unknown names resolve as system so the miss surfaces on the default catalog.
   return 'system';
 }
 
@@ -74,23 +73,21 @@ export function iconCache(): IconCacheMap {
  * registerIcons({ MapGeofence });
  * ```
  *
- * The category is inferred from the name, so the calls above need no options.
- * Pass `{ category }` only to register a glyph under a category its name does
- * not resolve to — for example app-supplied markup under a custom name.
+ * The category comes from the name, exactly as ds-icon derives it, so a
+ * registration is always readable by the element that needs it. Glyphs under a
+ * name IcoMo does not ship — an app's own marker artwork, say — register as
+ * system and resolve the same way.
+ *
+ * There is deliberately no category override. ds-icon has no such override when
+ * it reads, so forcing a different category on write could only produce an
+ * entry nothing ever reads.
  *
  * Icons that are not registered still work — they lazy-load on first render
  * and stay cached afterwards.
  */
-export function registerIcons(
-  icons: Record<string, string>,
-  /** `flag` predates the map category; it still forces flag/system as before. */
-  options?: { category?: IconCategory; flag?: boolean }
-): void {
+export function registerIcons(icons: Record<string, string>): void {
   const cache = iconCache();
   for (const [name, svg] of Object.entries(icons)) {
-    const category =
-      options?.category ??
-      (options?.flag === undefined ? resolveIconCategory(name) : options.flag ? 'flag' : 'system');
-    cache.set(iconCacheKey(name, category), svg);
+    cache.set(iconCacheKey(name, resolveIconCategory(name)), svg);
   }
 }
