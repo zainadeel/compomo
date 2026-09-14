@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.36.0](https://github.com/zainadeel/compomo/compare/v14.35.0...v14.36.0) (2026-09-14)
+
+
+### Added
+
+* add date time controls and inverted button ([#603](https://github.com/zainadeel/compomo/issues/603)) ([bd877ca](https://github.com/zainadeel/compomo/commit/bd877caeb01c81fe67ac763efbd6cc3aac36346c))
+
 ## [14.35.0](https://github.com/zainadeel/compomo/compare/v14.34.0...v14.35.0) (2026-09-10)
 
 
