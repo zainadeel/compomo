@@ -1,0 +1,374 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "data-customize",
+  "title": "DataCustomize",
+  "description": "Trigger and menu that shows, hides and optionally reorders the data points a view renders.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/data-customize",
+    "source": "src/wc/components/DataCustomize/DataCustomize.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Trigger and menu that shows, hides and optionally reorders the data points a view renders.",
+      "useWhen": [
+        "A card list, map overlay or other non-table view lets the viewer choose which data points appear.",
+        "A toolbar needs Customize as a peer of Filter, Sort and Group rather than a tab inside Preferences."
+      ],
+      "avoidWhen": [
+        "The view is a ds-table. Table owns its column customizer through columnCustomizer, which locks the last visible column and reorders columns."
+      ],
+      "alternatives": [
+        {
+          "when": "The choice is one submitted form value.",
+          "component": "component:ds-select",
+          "reason": "Select owns form-value and listbox semantics, not table sort state."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-data-toolbar",
+        "component:ds-menu",
+        "component:ds-button-unfilled"
+      ],
+      "patterns": [
+        "pattern:menu-trigger"
+      ],
+      "accessibility": [
+        "The trigger and menu share one accessible name; pass aria-label when Customize is ambiguous on the page.",
+        "Rows are switches, so each one announces its own checked state."
+      ],
+      "states": [
+        "reorderable is off by default, so rows are switches with no drag handle. Turn it on only where a display order exists.",
+        "minVisible is zero by default, so every field may be hidden. Raise it when the view needs a data point to stay visible.",
+        "catalogHeader labels the field rows; it is omitted unless options supply a second section, in which case it defaults to Data.",
+        "options render as their own Options section and emit dsOptionChange rather than a field config change.",
+        "dsFieldsConfigChange emits hiddenFieldIds and fieldOrder together, so a consumer that never reorders can ignore fieldOrder."
+      ],
+      "responsiveBehavior": [
+        "The trigger collapses to its icon when the toolbar runs out of room, matching the other data controls."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign columns and sort as JavaScript properties. Replace sort from both dsSortChange on this control and dsSortChange on the table."
+        ],
+        "react": [
+          "Keep one sort state and pass it to both ds-table and ds-data-sort; update it from either event."
+        ],
+        "angular": [
+          "Import the generated DsTableSort adapter, bind columns and sort, and handle dsSortChange with the same owner that handles table header sorting."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook review states",
+          "path": "src/wc/components/DataCustomize/DataCustomize.stories.ts"
+        },
+        {
+          "label": "Toolbar composition owner",
+          "path": "src/wc/components/DataToolbar/DataToolbar.agent.json"
+        },
+        {
+          "label": "Shared catalog state",
+          "path": "src/wc/utils/list-customizer.ts"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "ariaLabel": {
+          "type": "string | null",
+          "resolvedType": "null | string",
+          "attribute": "aria-label",
+          "default": "null",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name for the trigger and menu."
+        },
+        "catalogHeader": {
+          "type": "string",
+          "resolvedType": "string | undefined",
+          "attribute": "catalog-header",
+          "required": false,
+          "mutable": false,
+          "description": "Section header above the catalog rows. Omitted when there is no second section."
+        },
+        "fieldOrder": {
+          "type": "string[]",
+          "resolvedType": "string[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Controlled display order. Ids missing from it keep catalog order."
+        },
+        "fields": {
+          "type": "DataField[]",
+          "resolvedType": "DataField[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Catalog of data points the view can render."
+        },
+        "hasBorder": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "has-border",
+          "default": "true",
+          "required": false,
+          "mutable": false,
+          "description": "Show the trigger border."
+        },
+        "hiddenFieldIds": {
+          "type": "string[]",
+          "resolvedType": "string[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Controlled hidden field ids."
+        },
+        "label": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "label",
+          "default": "'Customize'",
+          "required": false,
+          "mutable": false,
+          "description": "Visible trigger label. Collapses to the icon when space is tight."
+        },
+        "minVisible": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "min-visible",
+          "default": "0",
+          "required": false,
+          "mutable": false,
+          "description": "Fields that must stay visible. Zero by default, so a view whose identity\nlives outside this catalog can hide every entry in it."
+        },
+        "options": {
+          "type": "MenuItemData[]",
+          "resolvedType": "MenuItemData[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Extra switch rows rendered in their own Options section."
+        },
+        "optionsHeader": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "options-header",
+          "default": "'Options'",
+          "required": false,
+          "mutable": false,
+          "description": "Header for the options section."
+        },
+        "reorderable": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "reorderable",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Drag-reorder the catalog rows. Off by default: most surfaces only show and\nhide, and a card layout has no column order to express."
+        }
+      },
+      "events": [
+        {
+          "name": "dsFieldsConfigChange",
+          "detail": "DataCustomizeChangeDetail",
+          "bubbles": false,
+          "cancelable": true,
+          "composed": true
+        },
+        {
+          "name": "dsOptionChange",
+          "detail": "string",
+          "bubbles": false,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [
+        {
+          "name": "setFocus",
+          "signature": "setFocus() => Promise<void>"
+        }
+      ],
+      "slots": []
+    },
+    "props": {
+      "ariaLabel": {
+        "type": "string | null",
+        "resolvedType": "null | string",
+        "attribute": "aria-label",
+        "default": "null",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name for the trigger and menu."
+      },
+      "catalogHeader": {
+        "type": "string",
+        "resolvedType": "string | undefined",
+        "attribute": "catalog-header",
+        "required": false,
+        "mutable": false,
+        "description": "Section header above the catalog rows. Omitted when there is no second section."
+      },
+      "fieldOrder": {
+        "type": "string[]",
+        "resolvedType": "string[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Controlled display order. Ids missing from it keep catalog order."
+      },
+      "fields": {
+        "type": "DataField[]",
+        "resolvedType": "DataField[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Catalog of data points the view can render."
+      },
+      "hasBorder": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "has-border",
+        "default": "true",
+        "required": false,
+        "mutable": false,
+        "description": "Show the trigger border."
+      },
+      "hiddenFieldIds": {
+        "type": "string[]",
+        "resolvedType": "string[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Controlled hidden field ids."
+      },
+      "label": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "label",
+        "default": "'Customize'",
+        "required": false,
+        "mutable": false,
+        "description": "Visible trigger label. Collapses to the icon when space is tight."
+      },
+      "minVisible": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "min-visible",
+        "default": "0",
+        "required": false,
+        "mutable": false,
+        "description": "Fields that must stay visible. Zero by default, so a view whose identity\nlives outside this catalog can hide every entry in it."
+      },
+      "options": {
+        "type": "MenuItemData[]",
+        "resolvedType": "MenuItemData[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Extra switch rows rendered in their own Options section."
+      },
+      "optionsHeader": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "options-header",
+        "default": "'Options'",
+        "required": false,
+        "mutable": false,
+        "description": "Header for the options section."
+      },
+      "reorderable": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "reorderable",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Drag-reorder the catalog rows. Off by default: most surfaces only show and\nhide, and a card layout has no column order to express."
+      }
+    },
+    "events": [
+      {
+        "name": "dsFieldsConfigChange",
+        "detail": "DataCustomizeChangeDetail",
+        "bubbles": false,
+        "cancelable": true,
+        "composed": true
+      },
+      {
+        "name": "dsOptionChange",
+        "detail": "string",
+        "bubbles": false,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [
+      {
+        "name": "setFocus",
+        "signature": "setFocus() => Promise<void>"
+      }
+    ],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-data-customize",
+      "react": "DsDataCustomize",
+      "vue": "DsDataCustomize",
+      "angular": "DsDataCustomize"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-data-customize.js';",
+        "example": "<ds-data-customize></ds-data-customize>"
+      },
+      "react": {
+        "import": "import { DsDataCustomize } from '@ds-mo/ui/react';",
+        "example": "<DsDataCustomize />"
+      },
+      "vue": {
+        "import": "import { DsDataCustomize } from '@ds-mo/ui/vue';",
+        "example": "<DsDataCustomize />"
+      },
+      "angular": {
+        "import": "import { DsDataCustomize } from '@ds-mo/ui/angular/ds-data-customize';",
+        "example": "<ds-data-customize></ds-data-customize>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: fieldOrder, fields, hiddenFieldIds, options.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.5.1",
+          "@ds-mo/icons ^8.1.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "button-unfilled",
+    "menu"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/DataCustomize/DataCustomize.css",
+      "content": ":host {\n  display: inline-flex;\n  min-inline-size: 0;\n  max-inline-size: var(--dimension-menu-width-xs);\n}\n\n:host([hidden]) {\n  display: none;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/DataCustomize/DataCustomize.tsx",
+      "content": "import {\n  Component,\n  Element,\n  Event,\n  EventEmitter,\n  h,\n  Host,\n  Method,\n  Prop,\n  State,\n} from '@stencil/core';\nimport type { DataField } from '../../utils/data-field';\nimport type { MenuItemData, MenuSection } from '../Menu/menu-types';\nimport {\n  listCustomizerMenuItems,\n  resolveListOrder,\n  toggleListHidden,\n  type ListCustomizerOptions,\n} from '../../utils/list-customizer';\n\nexport interface DataCustomizeChangeDetail {\n  /** Fields the viewer has hidden, in the order they were hidden. */\n  hiddenFieldIds: string[];\n  /** Field ids in display order. Unchanged unless the catalog reorders. */\n  fieldOrder: string[];\n}\n\nlet dataCustomizeSeq = 0;\n\n/**\n * Show, hide and optionally reorder the data points a view renders.\n *\n * The table owns its own column customizer inside the caption, because a table\n * locks its last visible column and reorders columns. This control is the same\n * catalog for every other surface — a card list, a map overlay — where the\n * fields are independent and usually only show and hide.\n */\n@Component({\n  tag: 'ds-data-customize',\n  styleUrl: 'DataCustomize.css',\n  scoped: true,\n})\nexport class DataCustomize {\n  @Element() private el!: HTMLElement;\n\n  /** Show the trigger border. */\n  @Prop() hasBorder: boolean = true;\n  /** Catalog of data points the view can render. */\n  @Prop() fields: DataField[] = [];\n  /** Controlled hidden field ids. */\n  @Prop() hiddenFieldIds: string[] = [];\n  /** Controlled display order. Ids missing from it keep catalog order. */\n  @Prop() fieldOrder: string[] = [];\n  /**\n   * Drag-reorder the catalog rows. Off by default: most surfaces only show and\n   * hide, and a card layout has no column order to express.\n   */\n  @Prop() reorderable: boolean = false;\n  /**\n   * Fields that must stay visible. Zero by default, so a view whose identity\n   * lives outside this catalog can hide every entry in it.\n   */\n  @Prop() minVisible: number = 0;\n  /** Section header above the catalog rows. Omitted when there is no second section. */\n  @Prop() catalogHeader?: string;\n  /** Extra switch rows rendered in their own Options section. */\n  @Prop() options: MenuItemData[] = [];\n  /** Header for the options section. */\n  @Prop() optionsHeader: string = 'Options';\n  /** Accessible name for the trigger and menu. */\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n  /** Visible trigger label. Collapses to the icon when space is tight. */\n  @Prop() label: string = 'Customize';\n\n  @Event({ bubbles: false }) dsFieldsConfigChange!: EventEmitter<DataCustomizeChangeDetail>;\n  @Event({ bubbles: false }) dsOptionChange!: EventEmitter<string>;\n\n  @State() private menuOpen = false;\n  @State() private menuSurfaceOpen = false;\n  @State() private initialFocusVisible = false;\n\n  private readonly componentId = `ds-data-customize-${++dataCustomizeSeq}`;\n  private readonly triggerId = `${this.componentId}-trigger`;\n  private readonly menuId = `${this.componentId}-menu`;\n\n  @Method()\n  async setFocus() {\n    const trigger = this.el.querySelector<HTMLElement & { setFocus?: () => Promise<void> }>(\n      `#${CSS.escape(this.triggerId)}`\n    );\n    await trigger?.setFocus?.();\n  }\n\n  private get customizerOptions(): ListCustomizerOptions {\n    return { minVisible: this.minVisible, reorderable: this.reorderable };\n  }\n\n  private get catalog(): { id: string; label: string }[] {\n    return this.fields.map(field => ({\n      id: field.id,\n      label: field.label.trim() || field.accessibleLabel?.trim() || field.id,\n    }));\n  }\n\n  private get sections(): MenuSection[] {\n    const rows = listCustomizerMenuItems(\n      this.catalog,\n      this.hiddenFieldIds,\n      this.fieldOrder,\n      this.customizerOptions\n    );\n\n    return [\n      ...(rows.length\n        ? [\n            {\n              header: this.catalogHeader ?? (this.options.length ? 'Data' : undefined),\n              items: rows,\n            },\n          ]\n        : []),\n      ...(this.options.length ? [{ header: this.optionsHeader, items: this.options }] : []),\n    ];\n  }\n\n  render() {\n    const name = this.ariaLabel?.trim() || 'Customize';\n    const empty = this.fields.length === 0 && this.options.length === 0;\n\n    return (\n      <Host hidden={empty ? true : undefined}>\n        {empty ? null : (\n          <ds-button-unfilled\n            hasBorder={this.hasBorder}\n            id={this.triggerId}\n            variant=\"icon-label\"\n            size=\"md\"\n            icon=\"ViewMenu\"\n            label={this.label}\n            labelEmphasis={false}\n            pressScale={false}\n            aria-label={name}\n            haspopup=\"menu\"\n            collapseLabel={true}\n            expanded={this.menuOpen}\n            surfaceOpen={this.menuSurfaceOpen}\n            controls={this.menuId}\n            onDsClick={(event: CustomEvent<MouseEvent>) => {\n              this.toggle(event.detail.detail === 0);\n            }}\n          />\n        )}\n        {empty ? null : (\n          <ds-menu\n            id={this.menuId}\n            open={this.menuOpen}\n            anchorId={this.triggerId}\n            align=\"start\"\n            side=\"bottom\"\n            menuLabel={name}\n            selectionMode=\"none\"\n            initialFocusVisible={this.initialFocusVisible}\n            sections={this.sections}\n            onDsClose={() => this.close()}\n            onDsAfterClose={() => {\n              if (!this.menuOpen) this.menuSurfaceOpen = false;\n            }}\n            onDsSelect={event => this.handleSelect(event.detail)}\n            onDsReorder={event => this.handleReorder(event.detail.items)}\n          />\n        )}\n      </Host>\n    );\n  }\n\n  private toggle(fromKeyboard = false): void {\n    if (this.menuOpen) this.close();\n    else this.open(fromKeyboard);\n  }\n\n  private open(fromKeyboard = false): void {\n    if (this.menuOpen) return;\n    this.initialFocusVisible = fromKeyboard;\n    this.menuOpen = true;\n    this.menuSurfaceOpen = true;\n  }\n\n  private close(): void {\n    this.menuOpen = false;\n  }\n\n  private handleSelect(item: MenuItemData): void {\n    const value = item.value;\n    if (!value || item.isInactive) return;\n\n    if (this.options.some(option => option.value === value)) {\n      this.dsOptionChange.emit(value);\n      return;\n    }\n\n    const ids = this.catalog.map(entry => entry.id);\n    this.dsFieldsConfigChange.emit({\n      hiddenFieldIds: toggleListHidden(ids, this.hiddenFieldIds, value, this.customizerOptions),\n      fieldOrder: resolveListOrder(ids, this.fieldOrder),\n    });\n  }\n\n  private handleReorder(items: MenuItemData[]): void {\n    if (!this.reorderable) return;\n\n    // Menu reports the new order of the reorderable run. resolveListOrder\n    // rebuilds the full order from it, appending anything the run omitted.\n    const next = items\n      .filter(item => item.reorderable && item.value)\n      .map(item => item.value as string);\n    if (next.length === 0) return;\n\n    this.dsFieldsConfigChange.emit({\n      hiddenFieldIds: this.hiddenFieldIds,\n      fieldOrder: resolveListOrder(\n        this.catalog.map(entry => entry.id),\n        next\n      ),\n    });\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

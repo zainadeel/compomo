@@ -1,0 +1,70 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-data-customize",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-data-customize",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Trigger and menu that shows, hides and optionally reorders the data points a view renders.",
+  "useWhen": [
+    "A card list, map overlay or other non-table view lets the viewer choose which data points appear.",
+    "A toolbar needs Customize as a peer of Filter, Sort and Group rather than a tab inside Preferences."
+  ],
+  "avoidWhen": [
+    "The view is a ds-table. Table owns its column customizer through columnCustomizer, which locks the last visible column and reorders columns."
+  ],
+  "alternatives": [
+    {
+      "when": "The choice is one submitted form value.",
+      "component": "component:ds-select",
+      "reason": "Select owns form-value and listbox semantics, not table sort state."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-data-toolbar",
+    "component:ds-menu",
+    "component:ds-button-unfilled"
+  ],
+  "patterns": ["pattern:menu-trigger"],
+  "accessibility": [
+    "The trigger and menu share one accessible name; pass aria-label when Customize is ambiguous on the page.",
+    "Rows are switches, so each one announces its own checked state."
+  ],
+  "states": [
+    "reorderable is off by default, so rows are switches with no drag handle. Turn it on only where a display order exists.",
+    "minVisible is zero by default, so every field may be hidden. Raise it when the view needs a data point to stay visible.",
+    "catalogHeader labels the field rows; it is omitted unless options supply a second section, in which case it defaults to Data.",
+    "options render as their own Options section and emit dsOptionChange rather than a field config change.",
+    "dsFieldsConfigChange emits hiddenFieldIds and fieldOrder together, so a consumer that never reorders can ignore fieldOrder."
+  ],
+  "responsiveBehavior": [
+    "The trigger collapses to its icon when the toolbar runs out of room, matching the other data controls."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign columns and sort as JavaScript properties. Replace sort from both dsSortChange on this control and dsSortChange on the table."
+    ],
+    "react": [
+      "Keep one sort state and pass it to both ds-table and ds-data-sort; update it from either event."
+    ],
+    "angular": [
+      "Import the generated DsTableSort adapter, bind columns and sort, and handle dsSortChange with the same owner that handles table header sorting."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook review states",
+      "path": "src/wc/components/DataCustomize/DataCustomize.stories.ts"
+    },
+    {
+      "label": "Toolbar composition owner",
+      "path": "src/wc/components/DataToolbar/DataToolbar.agent.json"
+    },
+    {
+      "label": "Shared catalog state",
+      "path": "src/wc/utils/list-customizer.ts"
+    }
+  ]
+}

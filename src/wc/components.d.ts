@@ -34,11 +34,12 @@ import { ChartLegendDirection, ChartLegendPercentageDecimals } from "./component
 import { CheckboxSize } from "./components/Checkbox/Checkbox";
 import { ChipSize, ChipState } from "./components/Chip/Chip";
 import { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
+import { DataField } from "./utils/data-field";
+import { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
+import { DataCustomizeChangeDetail } from "./components/DataCustomize/DataCustomize";
 import { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuMatchModeChangeDetail, FilterMenuMatchModes, FilterMenuValues } from "./components/FilterMenu/FilterMenu";
 import { DataGroupOption } from "./components/DataGroup/DataGroup";
 import { DataFieldsConfigChangeDetail, DataGroup, DataGroupingState, DataSortChangeDetail, DataSortState, TableCaptionVisibility, TableCellActionDetail, TableColumn, TableDataMode, TableDataModeChangeDetail, TableGroupCollapseChangeDetail, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode } from "./components/Table/table-types";
-import { DataField } from "./utils/data-field";
-import { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
 import { DataGroupOption as DataGroupOption1 } from "./components/DataGroup/DataGroup";
 import { PreferencesTab } from "./components/DataPreferences/DataPreferences";
 import { DataSavedView, DataSavedViewChangeDetail, DataSavedViewCreateDetail, DataSavedViewDiscardDetail, DataSavedViewRemoveDetail, DataSavedViewRenameDetail, DataSavedViewSaveDetail } from "./components/DataSavedViews/data-saved-views-types";
@@ -115,11 +116,12 @@ export { ChartLegendDirection, ChartLegendPercentageDecimals } from "./component
 export { CheckboxSize } from "./components/Checkbox/Checkbox";
 export { ChipSize, ChipState } from "./components/Chip/Chip";
 export { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
+export { DataField } from "./utils/data-field";
+export { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
+export { DataCustomizeChangeDetail } from "./components/DataCustomize/DataCustomize";
 export { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuMatchModeChangeDetail, FilterMenuMatchModes, FilterMenuValues } from "./components/FilterMenu/FilterMenu";
 export { DataGroupOption } from "./components/DataGroup/DataGroup";
 export { DataFieldsConfigChangeDetail, DataGroup, DataGroupingState, DataSortChangeDetail, DataSortState, TableCaptionVisibility, TableCellActionDetail, TableColumn, TableDataMode, TableDataModeChangeDetail, TableGroupCollapseChangeDetail, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode } from "./components/Table/table-types";
-export { DataField } from "./utils/data-field";
-export { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
 export { DataGroupOption as DataGroupOption1 } from "./components/DataGroup/DataGroup";
 export { PreferencesTab } from "./components/DataPreferences/DataPreferences";
 export { DataSavedView, DataSavedViewChangeDetail, DataSavedViewCreateDetail, DataSavedViewDiscardDetail, DataSavedViewRemoveDetail, DataSavedViewRenameDetail, DataSavedViewSaveDetail } from "./components/DataSavedViews/data-saved-views-types";
@@ -1477,6 +1479,70 @@ export namespace Components {
           * @default ''
          */
         "sectionId": string;
+    }
+    /**
+     * Show, hide and optionally reorder the data points a view renders.
+     * The table owns its own column customizer inside the caption, because a table
+     * locks its last visible column and reorders columns. This control is the same
+     * catalog for every other surface — a card list, a map overlay — where the
+     * fields are independent and usually only show and hide.
+     */
+    interface DsDataCustomize {
+        /**
+          * Accessible name for the trigger and menu.
+          * @default null
+         */
+        "ariaLabel": string | null;
+        /**
+          * Section header above the catalog rows. Omitted when there is no second section.
+         */
+        "catalogHeader"?: string;
+        /**
+          * Controlled display order. Ids missing from it keep catalog order.
+          * @default []
+         */
+        "fieldOrder": string[];
+        /**
+          * Catalog of data points the view can render.
+          * @default []
+         */
+        "fields": DataField[];
+        /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder": boolean;
+        /**
+          * Controlled hidden field ids.
+          * @default []
+         */
+        "hiddenFieldIds": string[];
+        /**
+          * Visible trigger label. Collapses to the icon when space is tight.
+          * @default 'Customize'
+         */
+        "label": string;
+        /**
+          * Fields that must stay visible. Zero by default, so a view whose identity lives outside this catalog can hide every entry in it.
+          * @default 0
+         */
+        "minVisible": number;
+        /**
+          * Extra switch rows rendered in their own Options section.
+          * @default []
+         */
+        "options": MenuItemData[];
+        /**
+          * Header for the options section.
+          * @default 'Options'
+         */
+        "optionsHeader": string;
+        /**
+          * Drag-reorder the catalog rows. Off by default: most surfaces only show and hide, and a card layout has no column order to express.
+          * @default false
+         */
+        "reorderable": boolean;
+        "setFocus": () => Promise<void>;
     }
     interface DsDataFilter {
         /**
@@ -4726,6 +4792,10 @@ export interface DsConversationListItemCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsConversationListItemElement;
 }
+export interface DsDataCustomizeCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsDataCustomizeElement;
+}
 export interface DsDataFilterCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsDataFilterElement;
@@ -5385,6 +5455,31 @@ declare global {
     var HTMLDsConversationListSectionElement: {
         prototype: HTMLDsConversationListSectionElement;
         new (): HTMLDsConversationListSectionElement;
+    };
+    interface HTMLDsDataCustomizeElementEventMap {
+        "dsFieldsConfigChange": DataCustomizeChangeDetail;
+        "dsOptionChange": string;
+    }
+    /**
+     * Show, hide and optionally reorder the data points a view renders.
+     * The table owns its own column customizer inside the caption, because a table
+     * locks its last visible column and reorders columns. This control is the same
+     * catalog for every other surface — a card list, a map overlay — where the
+     * fields are independent and usually only show and hide.
+     */
+    interface HTMLDsDataCustomizeElement extends Components.DsDataCustomize, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsDataCustomizeElementEventMap>(type: K, listener: (this: HTMLDsDataCustomizeElement, ev: DsDataCustomizeCustomEvent<HTMLDsDataCustomizeElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsDataCustomizeElementEventMap>(type: K, listener: (this: HTMLDsDataCustomizeElement, ev: DsDataCustomizeCustomEvent<HTMLDsDataCustomizeElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsDataCustomizeElement: {
+        prototype: HTMLDsDataCustomizeElement;
+        new (): HTMLDsDataCustomizeElement;
     };
     interface HTMLDsDataFilterElementEventMap {
         "dsChange": FilterMenuChangeDetail;
@@ -6319,6 +6414,7 @@ declare global {
         "ds-conversation-list": HTMLDsConversationListElement;
         "ds-conversation-list-item": HTMLDsConversationListItemElement;
         "ds-conversation-list-section": HTMLDsConversationListSectionElement;
+        "ds-data-customize": HTMLDsDataCustomizeElement;
         "ds-data-filter": HTMLDsDataFilterElement;
         "ds-data-group": HTMLDsDataGroupElement;
         "ds-data-preferences": HTMLDsDataPreferencesElement;
@@ -7805,6 +7901,71 @@ declare namespace LocalJSX {
           * @default ''
          */
         "sectionId"?: string;
+    }
+    /**
+     * Show, hide and optionally reorder the data points a view renders.
+     * The table owns its own column customizer inside the caption, because a table
+     * locks its last visible column and reorders columns. This control is the same
+     * catalog for every other surface — a card list, a map overlay — where the
+     * fields are independent and usually only show and hide.
+     */
+    interface DsDataCustomize {
+        /**
+          * Accessible name for the trigger and menu.
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        /**
+          * Section header above the catalog rows. Omitted when there is no second section.
+         */
+        "catalogHeader"?: string;
+        /**
+          * Controlled display order. Ids missing from it keep catalog order.
+          * @default []
+         */
+        "fieldOrder"?: string[];
+        /**
+          * Catalog of data points the view can render.
+          * @default []
+         */
+        "fields"?: DataField[];
+        /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder"?: boolean;
+        /**
+          * Controlled hidden field ids.
+          * @default []
+         */
+        "hiddenFieldIds"?: string[];
+        /**
+          * Visible trigger label. Collapses to the icon when space is tight.
+          * @default 'Customize'
+         */
+        "label"?: string;
+        /**
+          * Fields that must stay visible. Zero by default, so a view whose identity lives outside this catalog can hide every entry in it.
+          * @default 0
+         */
+        "minVisible"?: number;
+        "onDsFieldsConfigChange"?: (event: DsDataCustomizeCustomEvent<DataCustomizeChangeDetail>) => void;
+        "onDsOptionChange"?: (event: DsDataCustomizeCustomEvent<string>) => void;
+        /**
+          * Extra switch rows rendered in their own Options section.
+          * @default []
+         */
+        "options"?: MenuItemData[];
+        /**
+          * Header for the options section.
+          * @default 'Options'
+         */
+        "optionsHeader"?: string;
+        /**
+          * Drag-reorder the catalog rows. Off by default: most surfaces only show and hide, and a card layout has no column order to express.
+          * @default false
+         */
+        "reorderable"?: boolean;
     }
     interface DsDataFilter {
         /**
@@ -11553,6 +11714,15 @@ declare namespace LocalJSX {
         "heading": string;
         "sectionId": string;
     }
+    interface DsDataCustomizeAttributes {
+        "hasBorder": boolean;
+        "reorderable": boolean;
+        "minVisible": number;
+        "catalogHeader": string;
+        "optionsHeader": string;
+        "ariaLabel": string | null;
+        "label": string;
+    }
     interface DsDataFilterAttributes {
         "open": boolean;
         "hasBorder": boolean;
@@ -12306,6 +12476,7 @@ declare namespace LocalJSX {
         "ds-conversation-list": DsConversationList;
         "ds-conversation-list-item": Omit<DsConversationListItem, keyof DsConversationListItemAttributes> & { [K in keyof DsConversationListItem & keyof DsConversationListItemAttributes]?: DsConversationListItem[K] } & { [K in keyof DsConversationListItem & keyof DsConversationListItemAttributes as `attr:${K}`]?: DsConversationListItemAttributes[K] } & { [K in keyof DsConversationListItem & keyof DsConversationListItemAttributes as `prop:${K}`]?: DsConversationListItem[K] };
         "ds-conversation-list-section": Omit<DsConversationListSection, keyof DsConversationListSectionAttributes> & { [K in keyof DsConversationListSection & keyof DsConversationListSectionAttributes]?: DsConversationListSection[K] } & { [K in keyof DsConversationListSection & keyof DsConversationListSectionAttributes as `attr:${K}`]?: DsConversationListSectionAttributes[K] } & { [K in keyof DsConversationListSection & keyof DsConversationListSectionAttributes as `prop:${K}`]?: DsConversationListSection[K] };
+        "ds-data-customize": Omit<DsDataCustomize, keyof DsDataCustomizeAttributes> & { [K in keyof DsDataCustomize & keyof DsDataCustomizeAttributes]?: DsDataCustomize[K] } & { [K in keyof DsDataCustomize & keyof DsDataCustomizeAttributes as `attr:${K}`]?: DsDataCustomizeAttributes[K] } & { [K in keyof DsDataCustomize & keyof DsDataCustomizeAttributes as `prop:${K}`]?: DsDataCustomize[K] };
         "ds-data-filter": Omit<DsDataFilter, keyof DsDataFilterAttributes> & { [K in keyof DsDataFilter & keyof DsDataFilterAttributes]?: DsDataFilter[K] } & { [K in keyof DsDataFilter & keyof DsDataFilterAttributes as `attr:${K}`]?: DsDataFilterAttributes[K] } & { [K in keyof DsDataFilter & keyof DsDataFilterAttributes as `prop:${K}`]?: DsDataFilter[K] };
         "ds-data-group": Omit<DsDataGroup, keyof DsDataGroupAttributes> & { [K in keyof DsDataGroup & keyof DsDataGroupAttributes]?: DsDataGroup[K] } & { [K in keyof DsDataGroup & keyof DsDataGroupAttributes as `attr:${K}`]?: DsDataGroupAttributes[K] } & { [K in keyof DsDataGroup & keyof DsDataGroupAttributes as `prop:${K}`]?: DsDataGroup[K] };
         "ds-data-preferences": Omit<DsDataPreferences, keyof DsDataPreferencesAttributes> & { [K in keyof DsDataPreferences & keyof DsDataPreferencesAttributes]?: DsDataPreferences[K] } & { [K in keyof DsDataPreferences & keyof DsDataPreferencesAttributes as `attr:${K}`]?: DsDataPreferencesAttributes[K] } & { [K in keyof DsDataPreferences & keyof DsDataPreferencesAttributes as `prop:${K}`]?: DsDataPreferences[K] };
@@ -12417,6 +12588,14 @@ declare module "@stencil/core" {
             "ds-conversation-list": LocalJSX.IntrinsicElements["ds-conversation-list"] & JSXBase.HTMLAttributes<HTMLDsConversationListElement>;
             "ds-conversation-list-item": LocalJSX.IntrinsicElements["ds-conversation-list-item"] & JSXBase.HTMLAttributes<HTMLDsConversationListItemElement>;
             "ds-conversation-list-section": LocalJSX.IntrinsicElements["ds-conversation-list-section"] & JSXBase.HTMLAttributes<HTMLDsConversationListSectionElement>;
+            /**
+             * Show, hide and optionally reorder the data points a view renders.
+             * The table owns its own column customizer inside the caption, because a table
+             * locks its last visible column and reorders columns. This control is the same
+             * catalog for every other surface — a card list, a map overlay — where the
+             * fields are independent and usually only show and hide.
+             */
+            "ds-data-customize": LocalJSX.IntrinsicElements["ds-data-customize"] & JSXBase.HTMLAttributes<HTMLDsDataCustomizeElement>;
             "ds-data-filter": LocalJSX.IntrinsicElements["ds-data-filter"] & JSXBase.HTMLAttributes<HTMLDsDataFilterElement>;
             "ds-data-group": LocalJSX.IntrinsicElements["ds-data-group"] & JSXBase.HTMLAttributes<HTMLDsDataGroupElement>;
             "ds-data-preferences": LocalJSX.IntrinsicElements["ds-data-preferences"] & JSXBase.HTMLAttributes<HTMLDsDataPreferencesElement>;
