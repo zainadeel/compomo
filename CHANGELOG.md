@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.1.0](https://github.com/zainadeel/compomo/compare/v15.0.0...v15.1.0) (2026-09-15)
+
+
+### Added
+
+* unify design-system linting in eslint ([#610](https://github.com/zainadeel/compomo/issues/610)) ([0e6af8e](https://github.com/zainadeel/compomo/commit/0e6af8ecb017f755e96354608f9ca11feb274c88))
+
 ## [15.0.0](https://github.com/zainadeel/compomo/compare/v14.36.0...v15.0.0) (2026-09-15)
 
 
