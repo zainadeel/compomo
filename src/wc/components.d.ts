@@ -52,6 +52,7 @@ import { InputSize, InputTextAlign, InputType, InputWidth } from "./components/I
 import { InputDateSize, InputDateWidth } from "./components/InputDate/InputDate";
 import { InputTimeSize, InputTimeWidth } from "./components/InputTime/InputTime";
 import { LoaderColor, LoaderSize } from "./components/Loader/Loader";
+import { MapEntityMarkerState } from "./components/MapEntityMarker/MapEntityMarker";
 import { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
 import { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 import { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
@@ -134,6 +135,7 @@ export { InputSize, InputTextAlign, InputType, InputWidth } from "./components/I
 export { InputDateSize, InputDateWidth } from "./components/InputDate/InputDate";
 export { InputTimeSize, InputTimeWidth } from "./components/InputTime/InputTime";
 export { LoaderColor, LoaderSize } from "./components/Loader/Loader";
+export { MapEntityMarkerState } from "./components/MapEntityMarker/MapEntityMarker";
 export { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
 export { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 export { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
@@ -2394,6 +2396,71 @@ export namespace Components {
           * @default 'md'
          */
         "size": LoaderSize;
+    }
+    interface DsMapClusterMarker {
+        /**
+          * Short visible cluster identifier revealed on hover or keyboard focus.
+          * @default ''
+         */
+        "caption": string;
+        /**
+          * Number of represented entities, compacted at one thousand and above.
+          * @default 0
+         */
+        "count": number;
+        /**
+          * De-emphasizes this cluster when an owner-managed selection is active elsewhere.
+          * @default false
+         */
+        "dimmed": boolean;
+        /**
+          * Accessible action label. Describe the cluster and what activation does.
+         */
+        "label": string;
+        /**
+          * Moves keyboard focus to the cluster button.
+         */
+        "setFocus": () => Promise<void>;
+    }
+    interface DsMapEntityMarker {
+        /**
+          * Short visible identifier revealed on hover or keyboard focus.
+          * @default ''
+         */
+        "caption": string;
+        /**
+          * De-emphasizes this marker when an owner-managed selection is active elsewhere.
+          * @default false
+         */
+        "dimmed": boolean;
+        /**
+          * Clockwise map heading for travel-group and vehicle icons. Values are normalized to 0–359.
+          * @default 0
+         */
+        "heading": number;
+        /**
+          * Canonical IcoMo icon name for the represented map entity. Immobilized state uses MapKey.
+          * @default 'MapEntityTravelGroup'
+         */
+        "icon": string;
+        /**
+          * Accessible action label. Describe what activating the marker opens.
+         */
+        "label": string;
+        /**
+          * Moves keyboard focus to the marker button.
+         */
+        "setFocus": () => Promise<void>;
+        /**
+          * Adds the stale-data outline while preserving the last known operating state.
+          * @default false
+         */
+        "stale": boolean;
+        /**
+          * Semantic operating state that selects the marker background.
+          * @default 'in-motion'
+         */
+        "state": MapEntityMarkerState;
     }
     interface DsMarkdown {
         /**
@@ -4836,6 +4903,14 @@ export interface DsInputTimeCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsInputTimeElement;
 }
+export interface DsMapClusterMarkerCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsMapClusterMarkerElement;
+}
+export interface DsMapEntityMarkerCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsMapEntityMarkerElement;
+}
 export interface DsMenuCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsMenuElement;
@@ -5718,6 +5793,40 @@ declare global {
         prototype: HTMLDsLoaderElement;
         new (): HTMLDsLoaderElement;
     };
+    interface HTMLDsMapClusterMarkerElementEventMap {
+        "dsClick": MouseEvent;
+    }
+    interface HTMLDsMapClusterMarkerElement extends Components.DsMapClusterMarker, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsMapClusterMarkerElementEventMap>(type: K, listener: (this: HTMLDsMapClusterMarkerElement, ev: DsMapClusterMarkerCustomEvent<HTMLDsMapClusterMarkerElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsMapClusterMarkerElementEventMap>(type: K, listener: (this: HTMLDsMapClusterMarkerElement, ev: DsMapClusterMarkerCustomEvent<HTMLDsMapClusterMarkerElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsMapClusterMarkerElement: {
+        prototype: HTMLDsMapClusterMarkerElement;
+        new (): HTMLDsMapClusterMarkerElement;
+    };
+    interface HTMLDsMapEntityMarkerElementEventMap {
+        "dsClick": MouseEvent;
+    }
+    interface HTMLDsMapEntityMarkerElement extends Components.DsMapEntityMarker, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsMapEntityMarkerElementEventMap>(type: K, listener: (this: HTMLDsMapEntityMarkerElement, ev: DsMapEntityMarkerCustomEvent<HTMLDsMapEntityMarkerElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsMapEntityMarkerElementEventMap>(type: K, listener: (this: HTMLDsMapEntityMarkerElement, ev: DsMapEntityMarkerCustomEvent<HTMLDsMapEntityMarkerElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsMapEntityMarkerElement: {
+        prototype: HTMLDsMapEntityMarkerElement;
+        new (): HTMLDsMapEntityMarkerElement;
+    };
     interface HTMLDsMarkdownElement extends Components.DsMarkdown, HTMLStencilElement {
     }
     var HTMLDsMarkdownElement: {
@@ -6431,6 +6540,8 @@ declare global {
         "ds-input-date": HTMLDsInputDateElement;
         "ds-input-time": HTMLDsInputTimeElement;
         "ds-loader": HTMLDsLoaderElement;
+        "ds-map-cluster-marker": HTMLDsMapClusterMarkerElement;
+        "ds-map-entity-marker": HTMLDsMapEntityMarkerElement;
         "ds-markdown": HTMLDsMarkdownElement;
         "ds-menu": HTMLDsMenuElement;
         "ds-message": HTMLDsMessageElement;
@@ -8922,6 +9033,71 @@ declare namespace LocalJSX {
           * @default 'md'
          */
         "size"?: LoaderSize;
+    }
+    interface DsMapClusterMarker {
+        /**
+          * Short visible cluster identifier revealed on hover or keyboard focus.
+          * @default ''
+         */
+        "caption"?: string;
+        /**
+          * Number of represented entities, compacted at one thousand and above.
+          * @default 0
+         */
+        "count"?: number;
+        /**
+          * De-emphasizes this cluster when an owner-managed selection is active elsewhere.
+          * @default false
+         */
+        "dimmed"?: boolean;
+        /**
+          * Accessible action label. Describe the cluster and what activation does.
+         */
+        "label": string;
+        /**
+          * Fired when the cluster's native button is activated.
+         */
+        "onDsClick"?: (event: DsMapClusterMarkerCustomEvent<MouseEvent>) => void;
+    }
+    interface DsMapEntityMarker {
+        /**
+          * Short visible identifier revealed on hover or keyboard focus.
+          * @default ''
+         */
+        "caption"?: string;
+        /**
+          * De-emphasizes this marker when an owner-managed selection is active elsewhere.
+          * @default false
+         */
+        "dimmed"?: boolean;
+        /**
+          * Clockwise map heading for travel-group and vehicle icons. Values are normalized to 0–359.
+          * @default 0
+         */
+        "heading"?: number;
+        /**
+          * Canonical IcoMo icon name for the represented map entity. Immobilized state uses MapKey.
+          * @default 'MapEntityTravelGroup'
+         */
+        "icon"?: string;
+        /**
+          * Accessible action label. Describe what activating the marker opens.
+         */
+        "label": string;
+        /**
+          * Fired when the marker's native button is activated.
+         */
+        "onDsClick"?: (event: DsMapEntityMarkerCustomEvent<MouseEvent>) => void;
+        /**
+          * Adds the stale-data outline while preserving the last known operating state.
+          * @default false
+         */
+        "stale"?: boolean;
+        /**
+          * Semantic operating state that selects the marker background.
+          * @default 'in-motion'
+         */
+        "state"?: MapEntityMarkerState;
     }
     interface DsMarkdown {
         /**
@@ -11927,6 +12103,21 @@ declare namespace LocalJSX {
         "color": LoaderColor;
         "label": string | undefined;
     }
+    interface DsMapClusterMarkerAttributes {
+        "label": string;
+        "caption": string;
+        "count": number;
+        "dimmed": boolean;
+    }
+    interface DsMapEntityMarkerAttributes {
+        "label": string;
+        "caption": string;
+        "icon": string;
+        "state": MapEntityMarkerState;
+        "stale": boolean;
+        "heading": number;
+        "dimmed": boolean;
+    }
     interface DsMarkdownAttributes {
         "content": string;
         "streaming": boolean;
@@ -12493,6 +12684,8 @@ declare namespace LocalJSX {
         "ds-input-date": Omit<DsInputDate, keyof DsInputDateAttributes> & { [K in keyof DsInputDate & keyof DsInputDateAttributes]?: DsInputDate[K] } & { [K in keyof DsInputDate & keyof DsInputDateAttributes as `attr:${K}`]?: DsInputDateAttributes[K] } & { [K in keyof DsInputDate & keyof DsInputDateAttributes as `prop:${K}`]?: DsInputDate[K] };
         "ds-input-time": Omit<DsInputTime, keyof DsInputTimeAttributes> & { [K in keyof DsInputTime & keyof DsInputTimeAttributes]?: DsInputTime[K] } & { [K in keyof DsInputTime & keyof DsInputTimeAttributes as `attr:${K}`]?: DsInputTimeAttributes[K] } & { [K in keyof DsInputTime & keyof DsInputTimeAttributes as `prop:${K}`]?: DsInputTime[K] };
         "ds-loader": Omit<DsLoader, keyof DsLoaderAttributes> & { [K in keyof DsLoader & keyof DsLoaderAttributes]?: DsLoader[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `attr:${K}`]?: DsLoaderAttributes[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `prop:${K}`]?: DsLoader[K] };
+        "ds-map-cluster-marker": Omit<DsMapClusterMarker, keyof DsMapClusterMarkerAttributes> & { [K in keyof DsMapClusterMarker & keyof DsMapClusterMarkerAttributes]?: DsMapClusterMarker[K] } & { [K in keyof DsMapClusterMarker & keyof DsMapClusterMarkerAttributes as `attr:${K}`]?: DsMapClusterMarkerAttributes[K] } & { [K in keyof DsMapClusterMarker & keyof DsMapClusterMarkerAttributes as `prop:${K}`]?: DsMapClusterMarker[K] } & OneOf<"label", DsMapClusterMarker["label"], DsMapClusterMarkerAttributes["label"]>;
+        "ds-map-entity-marker": Omit<DsMapEntityMarker, keyof DsMapEntityMarkerAttributes> & { [K in keyof DsMapEntityMarker & keyof DsMapEntityMarkerAttributes]?: DsMapEntityMarker[K] } & { [K in keyof DsMapEntityMarker & keyof DsMapEntityMarkerAttributes as `attr:${K}`]?: DsMapEntityMarkerAttributes[K] } & { [K in keyof DsMapEntityMarker & keyof DsMapEntityMarkerAttributes as `prop:${K}`]?: DsMapEntityMarker[K] } & OneOf<"label", DsMapEntityMarker["label"], DsMapEntityMarkerAttributes["label"]>;
         "ds-markdown": Omit<DsMarkdown, keyof DsMarkdownAttributes> & { [K in keyof DsMarkdown & keyof DsMarkdownAttributes]?: DsMarkdown[K] } & { [K in keyof DsMarkdown & keyof DsMarkdownAttributes as `attr:${K}`]?: DsMarkdownAttributes[K] } & { [K in keyof DsMarkdown & keyof DsMarkdownAttributes as `prop:${K}`]?: DsMarkdown[K] };
         "ds-menu": Omit<DsMenu, keyof DsMenuAttributes> & { [K in keyof DsMenu & keyof DsMenuAttributes]?: DsMenu[K] } & { [K in keyof DsMenu & keyof DsMenuAttributes as `attr:${K}`]?: DsMenuAttributes[K] } & { [K in keyof DsMenu & keyof DsMenuAttributes as `prop:${K}`]?: DsMenu[K] };
         "ds-message": Omit<DsMessage, keyof DsMessageAttributes> & { [K in keyof DsMessage & keyof DsMessageAttributes]?: DsMessage[K] } & { [K in keyof DsMessage & keyof DsMessageAttributes as `attr:${K}`]?: DsMessageAttributes[K] } & { [K in keyof DsMessage & keyof DsMessageAttributes as `prop:${K}`]?: DsMessage[K] };
@@ -12612,6 +12805,8 @@ declare module "@stencil/core" {
             "ds-input-date": LocalJSX.IntrinsicElements["ds-input-date"] & JSXBase.HTMLAttributes<HTMLDsInputDateElement>;
             "ds-input-time": LocalJSX.IntrinsicElements["ds-input-time"] & JSXBase.HTMLAttributes<HTMLDsInputTimeElement>;
             "ds-loader": LocalJSX.IntrinsicElements["ds-loader"] & JSXBase.HTMLAttributes<HTMLDsLoaderElement>;
+            "ds-map-cluster-marker": LocalJSX.IntrinsicElements["ds-map-cluster-marker"] & JSXBase.HTMLAttributes<HTMLDsMapClusterMarkerElement>;
+            "ds-map-entity-marker": LocalJSX.IntrinsicElements["ds-map-entity-marker"] & JSXBase.HTMLAttributes<HTMLDsMapEntityMarkerElement>;
             "ds-markdown": LocalJSX.IntrinsicElements["ds-markdown"] & JSXBase.HTMLAttributes<HTMLDsMarkdownElement>;
             "ds-menu": LocalJSX.IntrinsicElements["ds-menu"] & JSXBase.HTMLAttributes<HTMLDsMenuElement>;
             "ds-message": LocalJSX.IntrinsicElements["ds-message"] & JSXBase.HTMLAttributes<HTMLDsMessageElement>;

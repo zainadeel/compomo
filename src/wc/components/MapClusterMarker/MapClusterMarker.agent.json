@@ -1,0 +1,83 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-map-cluster-marker",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-map-cluster-marker",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Engine-independent map cluster button with compact count formatting and a hover or focus caption.",
+  "useWhen": [
+    "An application map needs one interactive marker to represent several nearby entities.",
+    "The map engine can mount a custom element and retain ownership of clustering, coordinates, anchoring, and camera behavior."
+  ],
+  "avoidWhen": [
+    "The marker represents one vehicle, asset, person, or travel group; use MapEntityMarker.",
+    "The count is a notification attached to another control; use Badge.",
+    "The component would be asked to calculate clusters or own geographic and selected-entity business state."
+  ],
+  "alternatives": [
+    {
+      "when": "One map entity needs operating state, heading, and stale treatment.",
+      "component": "component:ds-map-entity-marker",
+      "reason": "MapEntityMarker owns single-entity marker semantics and geometry."
+    },
+    {
+      "when": "A count supplements another non-map control.",
+      "component": "component:ds-badge",
+      "reason": "Badge owns compact notification and counter indicators."
+    }
+  ],
+  "commonlyComposedWith": ["component:ds-map-entity-marker", "component:ds-text"],
+  "accessibility": [
+    "The component renders a native button and label is its accessible action name. Prefer a label that includes the full count and outcome, such as ‘Zoom to 24 vehicles’.",
+    "Caption is a supplemental visual identifier and is hidden from assistive technology to avoid duplicating label.",
+    "Keyboard focus reveals the same caption as hover and uses the shared visible focus ring.",
+    "The compact displayed count does not replace the full count in label."
+  ],
+  "states": [
+    "count is rounded to a non-negative whole number and compacts with a k suffix at one thousand and above.",
+    "dimmed is visual de-emphasis only. The map owner decides when selection context should dim cluster peers and keeps every cluster operable. A dimmed cluster returns to full opacity while hovered or keyboard-focused so its revealed caption remains legible.",
+    "Activation emits dsClick without calculating a cluster expansion or changing camera state internally."
+  ],
+  "responsiveBehavior": [
+    "Marker height and minimum width stay fixed across breakpoints so map-engine anchors remain stable; width grows only for the compact count.",
+    "The map owner controls collision handling, overlays, and viewport-aware caption placement."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "A map engine that accepts an Element for a custom marker or div icon can mount ds-map-cluster-marker directly.",
+      "Listen for dsClick and keep cluster membership, expansion zoom, z-index, coordinates, and camera movement in application state."
+    ],
+    "react": ["Pass count as a number and handle dsClick through the generated event binding."],
+    "angular": [
+      "Bind count as a number and keep map-engine marker lifecycle in the owning map adapter."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/MapClusterMarker/MapClusterMarker.stories.ts"
+    }
+  ],
+  "styling": {
+    "rationale": "The component owns stable map anchoring geometry and semantic cluster recipes; the map engine owns host placement and stacking.",
+    "protected": [
+      {
+        "properties": [
+          "height",
+          "min-width",
+          "padding",
+          "border-radius",
+          "background",
+          "color",
+          "opacity"
+        ],
+        "reason": "Cluster geometry, count legibility, interaction treatment, and de-emphasis are one accessible visual recipe.",
+        "props": ["count", "dimmed"]
+      }
+    ],
+    "customProperties": []
+  }
+}

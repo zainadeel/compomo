@@ -8584,6 +8584,294 @@
       "registryDependencies": []
     },
     {
+      "name": "map-cluster-marker",
+      "title": "MapClusterMarker",
+      "description": "Engine-independent map cluster button with compact count formatting and a hover or focus caption.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/map-cluster-marker",
+        "source": "src/wc/components/MapClusterMarker/MapClusterMarker.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Engine-independent map cluster button with compact count formatting and a hover or focus caption.",
+          "useWhen": [
+            "An application map needs one interactive marker to represent several nearby entities.",
+            "The map engine can mount a custom element and retain ownership of clustering, coordinates, anchoring, and camera behavior."
+          ],
+          "avoidWhen": [
+            "The marker represents one vehicle, asset, person, or travel group; use MapEntityMarker.",
+            "The count is a notification attached to another control; use Badge.",
+            "The component would be asked to calculate clusters or own geographic and selected-entity business state."
+          ],
+          "alternatives": [
+            {
+              "when": "One map entity needs operating state, heading, and stale treatment.",
+              "component": "component:ds-map-entity-marker",
+              "reason": "MapEntityMarker owns single-entity marker semantics and geometry."
+            },
+            {
+              "when": "A count supplements another non-map control.",
+              "component": "component:ds-badge",
+              "reason": "Badge owns compact notification and counter indicators."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-map-entity-marker",
+            "component:ds-text"
+          ],
+          "accessibility": [
+            "The component renders a native button and label is its accessible action name. Prefer a label that includes the full count and outcome, such as ‘Zoom to 24 vehicles’.",
+            "Caption is a supplemental visual identifier and is hidden from assistive technology to avoid duplicating label.",
+            "Keyboard focus reveals the same caption as hover and uses the shared visible focus ring.",
+            "The compact displayed count does not replace the full count in label."
+          ],
+          "states": [
+            "count is rounded to a non-negative whole number and compacts with a k suffix at one thousand and above.",
+            "dimmed is visual de-emphasis only. The map owner decides when selection context should dim cluster peers and keeps every cluster operable. A dimmed cluster returns to full opacity while hovered or keyboard-focused so its revealed caption remains legible.",
+            "Activation emits dsClick without calculating a cluster expansion or changing camera state internally."
+          ],
+          "responsiveBehavior": [
+            "Marker height and minimum width stay fixed across breakpoints so map-engine anchors remain stable; width grows only for the compact count.",
+            "The map owner controls collision handling, overlays, and viewport-aware caption placement."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "A map engine that accepts an Element for a custom marker or div icon can mount ds-map-cluster-marker directly.",
+              "Listen for dsClick and keep cluster membership, expansion zoom, z-index, coordinates, and camera movement in application state."
+            ],
+            "react": [
+              "Pass count as a number and handle dsClick through the generated event binding."
+            ],
+            "angular": [
+              "Bind count as a number and keep map-engine marker lifecycle in the owning map adapter."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/MapClusterMarker/MapClusterMarker.stories.ts"
+            }
+          ],
+          "styling": {
+            "rationale": "The component owns stable map anchoring geometry and semantic cluster recipes; the map engine owns host placement and stacking.",
+            "protected": [
+              {
+                "properties": [
+                  "height",
+                  "min-width",
+                  "padding",
+                  "border-radius",
+                  "background",
+                  "color",
+                  "opacity"
+                ],
+                "reason": "Cluster geometry, count legibility, interaction treatment, and de-emphasis are one accessible visual recipe.",
+                "props": [
+                  "count",
+                  "dimmed"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
+        },
+        "props": {
+          "caption": {
+            "type": "string",
+            "required": false
+          },
+          "count": {
+            "type": "number",
+            "required": false
+          },
+          "dimmed": {
+            "type": "boolean",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": true
+          }
+        },
+        "events": [
+          {
+            "name": "dsClick",
+            "detail": "MouseEvent"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-map-cluster-marker",
+          "react": "DsMapClusterMarker",
+          "vue": "DsMapClusterMarker",
+          "angular": "DsMapClusterMarker"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
+      "name": "map-entity-marker",
+      "title": "MapEntityMarker",
+      "description": "Engine-independent map marker button for a vehicle, asset, person, or travel group with operating-state color, heading, stale treatment, and a hover or focus caption.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/map-entity-marker",
+        "source": "src/wc/components/MapEntityMarker/MapEntityMarker.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Engine-independent map marker button for a vehicle, asset, person, or travel group with operating-state color, heading, stale treatment, and a hover or focus caption.",
+          "useWhen": [
+            "An application map needs a consistent interactive marker for one entity.",
+            "The map engine can mount a custom element and retain ownership of coordinates, anchoring, and camera behavior."
+          ],
+          "avoidWhen": [
+            "Several nearby entities must be represented as one count; use MapClusterMarker.",
+            "The content is a legend item or non-interactive status swatch.",
+            "The component would be asked to own geographic coordinates, clustering, map-engine adapters, or selected-entity business state."
+          ],
+          "alternatives": [
+            {
+              "when": "Several nearby entities are represented by a compact count.",
+              "component": "component:ds-map-cluster-marker",
+              "reason": "MapClusterMarker owns cluster count formatting and cluster interaction geometry."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-map-cluster-marker",
+            "component:ds-icon"
+          ],
+          "accessibility": [
+            "The component renders a native button and label is its accessible action name. Prefer an action-oriented label such as ‘Open vehicle 412’.",
+            "Caption is a supplemental visual identifier and is hidden from assistive technology to avoid duplicating label.",
+            "Keyboard focus reveals the same caption as hover and uses the shared visible focus ring.",
+            "State and stale meaning must be present in nearby map legend or application detail content; do not rely on marker color alone.",
+            "The stale outline remains differentiated by a dashed border in forced-colors mode."
+          ],
+          "states": [
+            "state selects the semantic operating-state color. Use stale as a standalone state only when no last-known operating state is available.",
+            "stale adds a dashed outline while preserving state, matching last-known map data.",
+            "immobilized always renders the upright MapKey glyph instead of the entity icon so the state is identifiable without interpreting heading.",
+            "heading rotates only MapEntityTravelGroup and MapEntityVehicle glyphs and is normalized to a clockwise value from 0 through 359 degrees. Immobilized, asset, person, and other glyphs remain upright.",
+            "dimmed is visual de-emphasis only. The map owner decides when selection context should dim peer markers and keeps every marker operable. A dimmed marker returns to full opacity while hovered or keyboard-focused so its revealed caption remains legible.",
+            "Activation emits dsClick without changing application selection internally."
+          ],
+          "responsiveBehavior": [
+            "Marker geometry stays fixed across breakpoints so map-engine anchors remain stable.",
+            "The map owner controls collision handling, overlays, and viewport-aware caption placement."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "A map engine that accepts an Element for a custom marker or div icon can mount ds-map-entity-marker directly.",
+              "Listen for dsClick and keep selected entity, z-index, coordinates, and camera movement in application state."
+            ],
+            "react": [
+              "Pass numeric heading as a property and handle dsClick through the generated event binding."
+            ],
+            "angular": [
+              "Bind heading as a number and keep map-engine marker lifecycle in the owning map adapter."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/MapEntityMarker/MapEntityMarker.stories.ts"
+            }
+          ],
+          "styling": {
+            "rationale": "The component owns stable map anchoring geometry and semantic marker recipes; the map engine owns host placement and stacking.",
+            "protected": [
+              {
+                "properties": [
+                  "width",
+                  "height",
+                  "min-width",
+                  "padding",
+                  "border",
+                  "border-radius",
+                  "background",
+                  "color",
+                  "opacity"
+                ],
+                "reason": "Marker geometry, operating-state colors, stale distinction, and de-emphasis are one accessible visual recipe.",
+                "props": [
+                  "state",
+                  "stale",
+                  "dimmed"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
+        },
+        "props": {
+          "caption": {
+            "type": "string",
+            "required": false
+          },
+          "dimmed": {
+            "type": "boolean",
+            "required": false
+          },
+          "heading": {
+            "type": "number",
+            "required": false
+          },
+          "icon": {
+            "type": "string",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": true
+          },
+          "stale": {
+            "type": "boolean",
+            "required": false
+          },
+          "state": {
+            "type": "MapEntityMarkerState",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsClick",
+            "detail": "MouseEvent"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-map-entity-marker",
+          "react": "DsMapEntityMarker",
+          "vue": "DsMapEntityMarker",
+          "angular": "DsMapEntityMarker"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "icon",
+        "text"
+      ]
+    },
+    {
       "name": "markdown",
       "title": "Markdown",
       "description": "Optional safe CommonMark and GFM renderer that emits semantic nodes without raw HTML injection and consumes the shared prose CSS contract.",
