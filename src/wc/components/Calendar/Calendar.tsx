@@ -288,6 +288,7 @@ export class Calendar {
                       onClick={() => this.selectDate(day.value)}
                       onKeyDown={event => this.handleDayKeyDown(event, day.value)}
                     >
+                      {/* eslint-disable compomo/no-selected-fill-emphasis-change -- Today emphasis is date-driven and remains unchanged when selection changes. */}
                       <ds-text
                         class="ds-interaction-fill__content"
                         as="span"
@@ -297,6 +298,7 @@ export class Calendar {
                       >
                         {day.day}
                       </ds-text>
+                      {/* eslint-enable compomo/no-selected-fill-emphasis-change */}
                     </button>
                   );
                 })}
