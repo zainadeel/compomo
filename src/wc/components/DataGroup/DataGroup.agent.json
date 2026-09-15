@@ -1,0 +1,78 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-data-group",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-data-group",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Two-panel toolbar control for choosing one grouping data point and the order of its group sections.",
+  "useWhen": [
+    "A data view needs explicit control of one grouping level and its section order.",
+    "Grouping data-point labels differ from compact table-header labels."
+  ],
+  "avoidWhen": [
+    "The data view is not groupable.",
+    "The application expects the component to rearrange rows or create group sections internally."
+  ],
+  "alternatives": [
+    {
+      "when": "The choice is one submitted form value with no dependent order pane.",
+      "component": "component:ds-select",
+      "reason": "Select owns form-value semantics rather than table grouping state."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-table",
+    "component:ds-data-toolbar",
+    "component:ds-data-filter",
+    "component:ds-data-sort"
+  ],
+  "patterns": ["pattern:menu-trigger"],
+  "accessibility": [
+    "The trigger opens a named non-modal dialog. Data and Order are independently named single-selection listboxes.",
+    "Up and Down move within the focused pane. Right moves from Data to Order when a group is active, Left returns to the selected Data row, and Escape closes the dialog and restores trigger focus.",
+    "The right pane remains present before a group is active as one complete empty state without the Order heading, and explains that a group must be selected."
+  ],
+  "states": [
+    "options and grouping are controlled. A data option may supply product-owned orderOptions; otherwise Order defaults to Ascending and Descending. dsGroupChange reports a complete DataGroupingState and dsClear requests null grouping without mutating either input.",
+    "Selecting a new data point starts at its first custom order option, or ascending when it has no custom order options. Re-selecting the active data point preserves its complete order state.",
+    "Selecting a data point or direction applies immediately and leaves the dialog open so the other pane can be changed.",
+    "The grouping picker automatically holds the shared surface-open wash through exit. Opening this picker is separate from expanding an inline table group.",
+    "Embedded mode renders the same controlled content inside a parent-owned surface; the parent owns positioning, initial focus, Escape, Tab exit, and dismissal.",
+    "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback.",
+    "Expanded toolbar triggers use an icon and regular-weight text without a trailing chevron.",
+    "Vertical presentation stacks grouping data and ordering, with an explicit No grouping choice and no Clear footer."
+  ],
+  "responsiveBehavior": [
+    "Use in the trailing region of ds-data-toolbar.",
+    "The trigger uses the shared caption-control button behavior and becomes icon-only in compact table captions or standalone data toolbars.",
+    "Both panes remain present and their choice lists scroll within the collision-constrained popup."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign options and grouping as JavaScript properties and replace grouping from dsGroupChange or dsClear."
+    ],
+    "react": [
+      "Keep grouping in application state and replace it from dsGroupChange; set it to null from dsClear."
+    ],
+    "angular": [
+      "Import the generated DsDataGroup adapter and bind options and grouping as properties."
+    ]
+  },
+  "references": [
+    {
+      "label": "Review states",
+      "path": "src/wc/components/DataGroup/DataGroup.stories.ts"
+    },
+    {
+      "label": "Toolbar composition owner",
+      "path": "src/wc/components/DataToolbar/DataToolbar.agent.json"
+    },
+    {
+      "label": "Surface ownership and trigger state",
+      "path": "src/docs/SurfaceOwnership.mdx"
+    }
+  ]
+}

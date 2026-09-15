@@ -1,0 +1,181 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "data-toolbar",
+  "title": "DataToolbar",
+  "description": "Shared layout for application-owned data-view controls, with a start cluster, optional search, trailing Filter/Sort/Group, and narrow-width horizontal overflow.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/data-toolbar",
+    "source": "src/wc/components/DataToolbar/DataToolbar.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Shared layout for application-owned data-view controls, with a start cluster, optional search, trailing Filter/Sort/Group, and narrow-width horizontal overflow.",
+      "useWhen": [
+        "Several data views repeat the same saved-view cluster, middle discovery and result-shaping controls, and table-owned caption actions.",
+        "A ds-table header slot needs consistent control spacing, alignment, grouping, and narrow-width overflow without moving product behavior into the table."
+      ],
+      "avoidWhen": [
+        "The controls do not operate on a table or structured result set.",
+        "The application expects the toolbar to define filters, saved views, grouping choices, persistence, or data transformations.",
+        "Only one standalone control is present and needs no grouped toolbar semantics."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-table",
+        "component:ds-data-saved-views",
+        "component:ds-divider",
+        "component:ds-input",
+        "component:ds-data-filter",
+        "component:ds-data-group",
+        "component:ds-select",
+        "component:ds-data-sort",
+        "component:ds-data-customize",
+        "component:ds-button-unfilled",
+        "component:ds-data-preferences"
+      ],
+      "patterns": [],
+      "accessibility": [
+        "The component exposes a named toolbar while each slotted control retains its own accessible name and native keyboard behavior.",
+        "Use the start slot for saved views. Use search for the optional discovery field, leading for any additional left-side middle controls, and trailing for Filter, Sort, and Group. Table-owned column customizer and data-mode actions remain in the table caption trailing cluster and participate in the same caption overflow row.",
+        "Tab order follows authored DOM order. The toolbar does not add roving focus because it may contain heterogeneous form and popup controls."
+      ],
+      "states": [
+        "The component owns layout only. It never mutates slotted control props, values, menus, loading, persistence, or consequences. Use ds-data-saved-views and ds-data-filter when those interactions need the shared CompoMo behavior while application data and persistence remain external.",
+        "Buttons in the toolbar keep their hover and pressed interaction paint without physically scaling, so pointer feedback does not disturb the stable caption geometry.",
+        "The start cluster is followed by Search, optional leading controls, and one trailing action cluster. The start cluster hides when nothing is projected. Search is a dedicated slot that hides when nothing is projected and grows to consume available row space. Empty leading or trailing clusters add no placeholder chrome. Search is the only toolbar region that grows and shrinks; all action controls retain their control geometry and align directly before the table-owned actions.",
+        "Data-mode switching remains a table-owned caption action. Column customization normally uses the table caption trigger; compact compositions use the shared ds-data-preferences control and hide that trigger. When slotted into a table header, the table caption owns overflow for the complete toolbar and table-owned action row.",
+        "Standard toolbars omit region dividers. Borderless compositions show dividers after populated start and search regions when another region follows; the application supplies borderless controls."
+      ],
+      "responsiveBehavior": [
+        "The start cluster, search, trailing Filter/Sort/Group, and table caption trailing actions stay on one line. Saved views hug their current trigger content up to the compact menu-width token rather than reserving that full width; long names truncate while the dirty dot stays visible. Filter, Sort, and Group triggers cap at the same token, and Sort and Group popups keep that compact menu-width floor. A standalone toolbar owns its horizontal scrolling; inside a table, the complete caption row is the single overflow owner so table-owned actions never remain pinned over scrolling toolbar controls.",
+        "Search consumes the row space left between fixed control groups and flexes smaller when the complete row needs space. The owning table caption or standalone toolbar determines when data controls omit their labels and chevrons; each exposes its label through a hover and keyboard-focus tooltip. Empty leading and trailing slot groups do not add spacing. Active filtering retains neutral trigger colors. Group and Sort keep resting secondary chrome. Standalone Customize follows the same compact treatment; table-owned Customize remains part of the caption.",
+        "The scrollbar is visually suppressed without removing touch, trackpad, mouse-wheel, or keyboard scrolling from the overflow container.",
+        "For compact toolbars, the application can replace Filter, Sort, Group and the table Customize trigger with ds-data-preferences in the trailing slot. Share the same controlled values and events; the toolbar remains a data-agnostic layout."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Project saved views through slot=start, search through slot=search, additional left-side middle controls through slot=leading, and ds-data-filter, ds-data-group, and ds-data-sort through slot=trailing. Provide a contextual accessible name for the data view."
+        ],
+        "react": [
+          "Set slot=start, slot=search, slot=leading, or slot=trailing on each child control. Use ds-data-filter and ds-data-group for the standard Filter and Group recipes, and keep values and event handlers in the application."
+        ],
+        "angular": [
+          "Set slot=start, slot=search, slot=leading, or slot=trailing on each child control, use DsDataFilter and DsDataGroup for the standard Filter and Group recipes, and import the generated adapters."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook review states",
+          "path": "src/wc/components/DataToolbar/DataToolbar.stories.ts"
+        },
+        {
+          "label": "Table composition owner",
+          "path": "src/wc/components/Table/Table.agent.json"
+        }
+      ]
+    },
+    "api": {
+      "props": {
+        "borderless": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "borderless",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Use separators between regions when composing borderless controls."
+        },
+        "label": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "label",
+          "default": "'Controls'",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name for the grouped controls. Pass a contextual name such as Table controls or Map controls."
+        }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "borderless": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "borderless",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Use separators between regions when composing borderless controls."
+      },
+      "label": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "label",
+        "default": "'Controls'",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name for the grouped controls. Pass a contextual name such as Table controls or Map controls."
+      }
+    },
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-data-toolbar",
+      "react": "DsDataToolbar",
+      "vue": "DsDataToolbar",
+      "angular": "DsDataToolbar"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-data-toolbar.js';",
+        "example": "<ds-data-toolbar></ds-data-toolbar>"
+      },
+      "react": {
+        "import": "import { DsDataToolbar } from '@ds-mo/ui/react';",
+        "example": "<DsDataToolbar />"
+      },
+      "vue": {
+        "import": "import { DsDataToolbar } from '@ds-mo/ui/vue';",
+        "example": "<DsDataToolbar />"
+      },
+      "angular": {
+        "import": "import { DsDataToolbar } from '@ds-mo/ui/angular/ds-data-toolbar';",
+        "example": "<ds-data-toolbar></ds-data-toolbar>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.5.1",
+          "@ds-mo/icons ^8.1.0"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "divider"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/DataToolbar/DataToolbar.css",
+      "content": ":host {\n  --ds-control-press-active-scale: var(--dimension-scale-default);\n\n  display: block;\n  min-inline-size: 0;\n  max-inline-size: 100%;\n}\n\n/* A table caption owns overflow for the complete application + table control row. */\n:host([slot='header']) {\n  display: contents;\n  max-inline-size: none;\n}\n\n.data-toolbar {\n  box-sizing: border-box;\n  display: flex;\n  align-items: center;\n  inline-size: 100%;\n  min-inline-size: 0;\n  gap: var(--dimension-space-100);\n  overflow-x: auto;\n  overflow-y: hidden;\n  scrollbar-width: none;\n}\n\n:host([slot='header']) .data-toolbar {\n  display: contents;\n}\n\n.data-toolbar::-webkit-scrollbar {\n  display: none;\n}\n\n.data-toolbar__start,\n.data-toolbar__search,\n.data-toolbar__leading,\n.data-toolbar__trailing {\n  display: flex;\n  align-items: center;\n  min-inline-size: 0;\n  gap: var(--dimension-space-100);\n}\n\n.data-toolbar__start {\n  flex: 0 0 auto;\n  min-inline-size: 0;\n  max-inline-size: var(--dimension-menu-width-xs);\n  overflow: hidden;\n}\n\n.data-toolbar__rule {\n  flex: 0 0 auto;\n}\n\n.data-toolbar__search {\n  flex: 1 1 0;\n  max-inline-size: none;\n  contain: inline-size;\n}\n\n.data-toolbar__slot--empty {\n  display: none;\n}\n\n.data-toolbar__leading {\n  flex: 0 0 auto;\n}\n\n.data-toolbar__trailing {\n  flex: 0 0 auto;\n  margin-inline-start: auto;\n}\n\n.data-toolbar__trailing > *,\n.data-toolbar [slot='start'],\n.data-toolbar ds-data-filter,\n.data-toolbar ds-filter-menu,\n.data-toolbar ds-select,\n.data-toolbar ds-data-group,\n.data-toolbar ds-data-sort {\n  min-inline-size: 0;\n  max-inline-size: var(--dimension-menu-width-xs);\n  --ds-choice-popup-min-inline-size: var(--dimension-menu-width-xs);\n}\n\n.data-toolbar__trailing > * {\n  flex: 0 0 auto;\n}\n\n.data-toolbar__start slot,\n.data-toolbar__search slot,\n.data-toolbar__leading slot,\n.data-toolbar__trailing slot {\n  display: contents;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/DataToolbar/DataToolbar.tsx",
+      "content": "import { Component, Element, h, Host, Prop, State } from '@stencil/core';\n\nconst TOOLBAR_SLOT_START = 1 << 0;\nconst TOOLBAR_SLOT_SEARCH = 1 << 1;\nconst TOOLBAR_SLOT_LEADING = 1 << 2;\nconst TOOLBAR_SLOT_TRAILING = 1 << 3;\n\n@Component({\n  tag: 'ds-data-toolbar',\n  styleUrl: 'DataToolbar.css',\n  scoped: true,\n})\nexport class DataToolbar {\n  @Element() el!: HTMLElement;\n\n  /** Accessible name for the grouped controls. Pass a contextual name such as Table controls or Map controls. */\n  @Prop() label: string = 'Controls';\n\n  /** Use separators between regions when composing borderless controls. */\n  @Prop() borderless: boolean = false;\n\n  @State() private slotPresence = 0;\n\n  componentWillLoad(): void {\n    this.syncSlotPresence();\n  }\n\n  private hasOwnedSlot(name: string): boolean {\n    return Array.from(this.el.querySelectorAll<HTMLElement>(`[slot=\"${name}\"]`)).some(\n      element => element.closest('ds-data-toolbar') === this.el\n    );\n  }\n\n  private syncSlotPresence = () => {\n    let presence = 0;\n    if (this.hasOwnedSlot('start')) presence |= TOOLBAR_SLOT_START;\n    if (this.hasOwnedSlot('search')) presence |= TOOLBAR_SLOT_SEARCH;\n    if (this.hasOwnedSlot('leading')) presence |= TOOLBAR_SLOT_LEADING;\n    if (this.hasOwnedSlot('trailing')) presence |= TOOLBAR_SLOT_TRAILING;\n    if (presence !== this.slotPresence) this.slotPresence = presence;\n  };\n\n  render() {\n    const hasStart = (this.slotPresence & TOOLBAR_SLOT_START) !== 0;\n    const hasSearch = (this.slotPresence & TOOLBAR_SLOT_SEARCH) !== 0;\n    const hasLeading = (this.slotPresence & TOOLBAR_SLOT_LEADING) !== 0;\n    const hasTrailing = (this.slotPresence & TOOLBAR_SLOT_TRAILING) !== 0;\n\n    return (\n      <Host>\n        <div class=\"data-toolbar\" role=\"toolbar\" aria-label={this.label}>\n          <div\n            class={{\n              'data-toolbar__start': true,\n              'data-toolbar__slot--empty': !hasStart,\n            }}\n          >\n            <slot name=\"start\" onSlotchange={this.syncSlotPresence} />\n          </div>\n          <ds-divider\n            class={{\n              'data-toolbar__rule': true,\n              'data-toolbar__slot--empty':\n                !this.borderless || !hasStart || !(hasSearch || hasLeading || hasTrailing),\n            }}\n            orientation=\"vertical\"\n            length=\"var(--dimension-space-250)\"\n          />\n          <div\n            class={{\n              'data-toolbar__search': true,\n              'data-toolbar__slot--empty': !hasSearch,\n            }}\n          >\n            <slot name=\"search\" onSlotchange={this.syncSlotPresence} />\n          </div>\n          <ds-divider\n            class={{\n              'data-toolbar__rule': true,\n              'data-toolbar__slot--empty':\n                !this.borderless || !hasSearch || !(hasLeading || hasTrailing),\n            }}\n            orientation=\"vertical\"\n            length=\"var(--dimension-space-250)\"\n          />\n          <div\n            class={{\n              'data-toolbar__leading': true,\n              'data-toolbar__slot--empty': !hasLeading,\n            }}\n          >\n            <slot name=\"leading\" onSlotchange={this.syncSlotPresence} />\n          </div>\n          <div\n            class={{\n              'data-toolbar__trailing': true,\n              'data-toolbar__slot--empty': !hasTrailing,\n            }}\n          >\n            <slot name=\"trailing\" onSlotchange={this.syncSlotPresence} />\n          </div>\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

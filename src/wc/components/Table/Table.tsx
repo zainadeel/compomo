@@ -17,7 +17,7 @@ import {
   formatTableTotalSummary,
   hasOwnedTableFooterSlot,
   isTableCellAction,
-  nextTableSortState,
+  nextDataSortState,
   tableColumnSize,
   tableModelIssues,
   TABLE_GROUP_HERO_SCORE_PRESENTATION,
@@ -87,13 +87,13 @@ import type {
   TableCaptionVisibility,
   TableCellActionDetail,
   TableColumn,
-  TableColumnsConfigChangeDetail,
+  DataFieldsConfigChangeDetail,
   TableDataMode,
   TableDataModeChangeDetail,
-  TableGroup,
+  DataGroup,
   TableGroupCollapseChangeDetail,
   TableGroupLoadMoreDetail,
-  TableGroupingState,
+  DataGroupingState,
   TableLoadMoreDetail,
   TableLoadMoreMode,
   TablePaginationState,
@@ -101,8 +101,8 @@ import type {
   TableRowActivateDetail,
   TableSelectionChangeDetail,
   TableSelectionMode,
-  TableSortChangeDetail,
-  TableSortState,
+  DataSortChangeDetail,
+  DataSortState,
 } from './table-types';
 
 const TABLE_FOOTER_SLOT_LEADING = 1;
@@ -125,16 +125,16 @@ export class Table {
   /** Ungrouped row data. Ignored while grouping is active. Assign through JavaScript. */
   @Prop() rows: TableRow[] = [];
   /** One level of application-owned grouped data. Assign through JavaScript. */
-  @Prop() groups: TableGroup[] = [];
+  @Prop() groups: DataGroup[] = [];
   /** Controlled grouping column. Applications supply groups in their final fixed order. */
-  @Prop() grouping: TableGroupingState | null = null;
+  @Prop() grouping: DataGroupingState | null = null;
   /** Controlled member-row sort state. */
-  @Prop() sort: TableSortState | null = null;
+  @Prop() sort: DataSortState | null = null;
   /** Controlled collapsed group identities. Groups not listed remain expanded. */
   @Prop() collapsedGroupIds: string[] = [];
   /** Literal terms to highlight in table-owned text cells. Applications still own filtering. */
   @Prop() highlightTerms: string[] = [];
-  /** Optional TableSearch field identities that restrict which data-point tracks are highlighted. */
+  /** Optional DataSearch field identities that restrict which data-point tracks are highlighted. */
   @Prop() highlightFieldIds: string[] = [];
 
   /** Required accessible table name, retained as a native caption. */
@@ -152,9 +152,9 @@ export class Table {
   @Prop() captionControlsBorderless: boolean = false;
   @Prop() hideColumnCustomizerTrigger: boolean = false;
   /** Controlled hidden data-column identities. Action ids are ignored. */
-  @Prop() hiddenColumnIds: string[] = [];
+  @Prop() hiddenFieldIds: string[] = [];
   /** Controlled data-column identities in display order. Omitted ids append in catalog order. */
-  @Prop() columnOrder: string[] = [];
+  @Prop() fieldOrder: string[] = [];
   /**
    * Optional result summary footer. When both `displayedCount` and `totalCount`
    * are finite numbers, infinite mode shows “Displaying {displayed} of {total}”.
@@ -245,7 +245,7 @@ export class Table {
   @Prop() groupRowsLoadedLabel: string =
     '{count} more rows loaded in {group}. {loaded} of {total} rows loaded.';
 
-  @Event() dsSortChange!: EventEmitter<TableSortChangeDetail>;
+  @Event() dsSortChange!: EventEmitter<DataSortChangeDetail>;
   @Event() dsGroupCollapseChange!: EventEmitter<TableGroupCollapseChangeDetail>;
   @Event() dsSelectionChange!: EventEmitter<TableSelectionChangeDetail>;
   @Event() dsLoadMore!: EventEmitter<TableLoadMoreDetail>;
@@ -253,7 +253,7 @@ export class Table {
   @Event() dsPaginationChange!: EventEmitter<PaginationChangeDetail>;
   @Event() dsCellAction!: EventEmitter<TableCellActionDetail>;
   @Event() dsRowActivate!: EventEmitter<TableRowActivateDetail>;
-  @Event() dsColumnsConfigChange!: EventEmitter<TableColumnsConfigChangeDetail>;
+  @Event() dsFieldsConfigChange!: EventEmitter<DataFieldsConfigChangeDetail>;
   @Event() dsDataModeChange!: EventEmitter<TableDataModeChangeDetail>;
 
   @State() private overflowStart = false;
@@ -290,14 +290,14 @@ export class Table {
   private visibleColumnsCache: {
     columns: TableColumn[];
     columnCustomizer: boolean;
-    hiddenColumnIds: string[];
-    columnOrder: string[];
+    hiddenFieldIds: string[];
+    fieldOrder: string[];
     value: TableColumn[];
   } | null = null;
   private renderModelCache: {
     columns: TableColumn[];
     rows: TableRow[];
-    groups: TableGroup[];
+    groups: DataGroup[];
     grouped: boolean;
     selectionMode: TableSelectionMode;
     selectedRowIds: string[];
@@ -312,7 +312,7 @@ export class Table {
   private virtualItemsCache: {
     columns: TableColumn[];
     rows: TableRow[];
-    groups: TableGroup[];
+    groups: DataGroup[];
     grouped: boolean;
     collapsedGroupIds: string[];
   } | null = null;
@@ -546,7 +546,7 @@ export class Table {
   private syncHeaderSlotPresence = () => {
     const header = this.el.querySelector<HTMLElement>('[slot="header"]');
     this.headerPresent = !!header;
-    this.headerUsesToolbar = header?.tagName === 'DS-TABLE-TOOLBAR';
+    this.headerUsesToolbar = header?.tagName === 'DS-DATA-TOOLBAR';
   };
 
   private connectHeaderSlotObserver(): void {
@@ -648,8 +648,8 @@ export class Table {
 
   @Watch('columns')
   @Watch('grouping')
-  @Watch('hiddenColumnIds')
-  @Watch('columnOrder')
+  @Watch('hiddenFieldIds')
+  @Watch('fieldOrder')
   @Watch('columnCustomizer')
   handleStructureChange(): void {
     this.scheduleModelIssueWarning();
@@ -782,21 +782,21 @@ export class Table {
       cached &&
       cached.columns === this.columns &&
       cached.columnCustomizer === this.columnCustomizer &&
-      cached.hiddenColumnIds === this.hiddenColumnIds &&
-      cached.columnOrder === this.columnOrder
+      cached.hiddenFieldIds === this.hiddenFieldIds &&
+      cached.fieldOrder === this.fieldOrder
     ) {
       return cached.value;
     }
     const value = resolveTableVisibleColumns(this.columns, {
       columnCustomizer: this.columnCustomizer,
-      hiddenColumnIds: this.hiddenColumnIds,
-      columnOrder: this.columnOrder,
+      hiddenFieldIds: this.hiddenFieldIds,
+      fieldOrder: this.fieldOrder,
     });
     this.visibleColumnsCache = {
       columns: this.columns,
       columnCustomizer: this.columnCustomizer,
-      hiddenColumnIds: this.hiddenColumnIds,
-      columnOrder: this.columnOrder,
+      hiddenFieldIds: this.hiddenFieldIds,
+      fieldOrder: this.fieldOrder,
       value,
     };
     return value;
@@ -1182,23 +1182,23 @@ export class Table {
     const visibleColumns = this.visibleColumns;
     if (!this.caption?.trim()) issues.unshift('A non-empty caption is required.');
     if (this.grouping) {
-      const groupingColumn = this.columns.find(column => column.id === this.grouping!.columnId);
+      const groupingColumn = this.columns.find(column => column.id === this.grouping!.fieldId);
       if (!groupingColumn) {
-        issues.push(`Grouping references unknown column id: ${this.grouping.columnId}`);
+        issues.push(`Grouping references unknown column id: ${this.grouping.fieldId}`);
       } else if (!visibleColumns.some(column => column.id === groupingColumn.id)) {
-        issues.push(`Grouping references hidden column id: ${this.grouping.columnId}`);
+        issues.push(`Grouping references hidden column id: ${this.grouping.fieldId}`);
       }
     }
     if (this.sort) {
       const sortColumn = this.columns.find(
         column =>
-          column.id === this.sort!.columnId ||
-          column.headerSegments?.some(segment => segment.sortKey === this.sort!.columnId)
+          column.id === this.sort!.fieldId ||
+          column.segments?.some(segment => segment.sortKey === this.sort!.fieldId)
       );
       if (!sortColumn) {
-        issues.push(`Sorting references unknown column id: ${this.sort.columnId}`);
+        issues.push(`Sorting references unknown column id: ${this.sort.fieldId}`);
       } else if (!visibleColumns.some(column => column.id === sortColumn.id)) {
-        issues.push(`Sorting references hidden column id: ${this.sort.columnId}`);
+        issues.push(`Sorting references hidden column id: ${this.sort.fieldId}`);
       }
     }
     if (
@@ -1251,11 +1251,11 @@ export class Table {
 
   private emitSort(column: TableColumn, sortKey = column.id): void {
     if (!column.sortable) return;
-    this.dsSortChange.emit({ sort: nextTableSortState(this.sort, sortKey) });
+    this.dsSortChange.emit({ sort: nextDataSortState(this.sort, sortKey) });
   }
 
-  private sortButtonLabel(column: TableColumn, sortKey = column.id, label = column.header): string {
-    if (this.sort?.columnId !== sortKey) return `Sort ${label} ascending`;
+  private sortButtonLabel(column: TableColumn, sortKey = column.id, label = column.label): string {
+    if (this.sort?.fieldId !== sortKey) return `Sort ${label} ascending`;
     if (this.sort.direction === 'asc') return `Sort ${label} descending. Currently ascending.`;
     return `Sort ${label} ascending. Currently descending.`;
   }
@@ -1281,7 +1281,7 @@ export class Table {
     });
   }
 
-  private emitGroupSelection(group: TableGroup): void {
+  private emitGroupSelection(group: DataGroup): void {
     const state = deriveTableSelectionState(group.rows, this.selectedRowIds);
     this.dsSelectionChange.emit({
       selectedRowIds: toggleTableGroupSelection(this.selectedRowIds, group.rows),
@@ -1311,7 +1311,7 @@ export class Table {
     });
   }
 
-  private handleGroupRowClick(group: TableGroup, event: Event): void {
+  private handleGroupRowClick(group: DataGroup, event: Event): void {
     if (!this.groupRowEventOwnsCollapse(event)) return;
     this.emitGroupCollapse(group);
   }
@@ -1581,13 +1581,11 @@ export class Table {
     interactive = true,
     presentational = false
   ) {
-    const groupedColumn = this.grouping?.columnId === column.id;
-    const headerSegments = column.headerSegments?.length
-      ? column.headerSegments
-      : [{ label: column.header, sortKey: column.id }];
-    const activeMemberSegment = headerSegments.find(
-      segment => segment.sortKey === this.sort?.columnId
-    );
+    const groupedColumn = this.grouping?.fieldId === column.id;
+    const segments = column.segments?.length
+      ? column.segments
+      : [{ label: column.label, sortKey: column.id }];
+    const activeMemberSegment = segments.find(segment => segment.sortKey === this.sort?.fieldId);
     const activeMemberSort = !!activeMemberSegment;
     const activeSort = activeMemberSort;
     const align = column.align ?? 'start';
@@ -1605,7 +1603,7 @@ export class Table {
         tabIndex={interactive && help && !column.sortable ? 0 : undefined}
         data-header-help={help ? '' : undefined}
       >
-        {headerSegments.map((segment, index) => {
+        {segments.map((segment, index) => {
           const segmentActive = activeMemberSegment?.sortKey === segment.sortKey;
           const segmentInteractive = interactive && !!column.sortable;
           const label = (
@@ -1644,7 +1642,7 @@ export class Table {
           return (
             <span class="ds-table__header-segment" key={segment.sortKey}>
               {control}
-              {index < headerSegments.length - 1 && (
+              {index < segments.length - 1 && (
                 <ds-text
                   class="ds-table__header-separator"
                   as="span"
@@ -1679,7 +1677,7 @@ export class Table {
             aria-label={this.sortButtonLabel(
               column,
               activeMemberSegment?.sortKey ?? column.id,
-              activeMemberSegment?.label ?? column.header
+              activeMemberSegment?.label ?? column.label
             )}
             hasBorder={false}
             activeFill={false}
@@ -1695,7 +1693,7 @@ export class Table {
     const actionCollapseHost =
       collapseHost?.mode === 'action' && collapseHost.columnId === column.id;
     const blankActionCollapseHost =
-      actionCollapseHost && !column.header.trim() && !column.headerSegments?.length;
+      actionCollapseHost && !column.label.trim() && !column.segments?.length;
     const collapseControl =
       interactive && actionCollapseHost ? (
         <span class="ds-table__collapse-slot">{this.renderCollapseAllButton()}</span>
@@ -1717,8 +1715,8 @@ export class Table {
         data-grouped={groupedColumn ? 'true' : undefined}
         data-sort-active={activeSort ? 'true' : undefined}
       >
-        {!column.header.trim() && column.headerLabel?.trim() && (
-          <span class="ds-visually-hidden">{column.headerLabel}</span>
+        {!column.label.trim() && column.accessibleLabel?.trim() && (
+          <span class="ds-visually-hidden">{column.accessibleLabel}</span>
         )}
         {blankActionCollapseHost ? (
           <span class="ds-table__header-content ds-table__header-content--collapse-all">
@@ -1870,7 +1868,7 @@ export class Table {
     });
   }
 
-  private emitGroupCollapse(group: TableGroup) {
+  private emitGroupCollapse(group: DataGroup) {
     const collapsedGroupIds = toggleTableGroupCollapsed(this.collapsedGroupIds, group.id);
     this.dsGroupCollapseChange.emit({
       scope: 'group',
@@ -2037,11 +2035,11 @@ export class Table {
     );
   }
 
-  private formatGroupLoadLabel(template: string, group: TableGroup): string {
+  private formatGroupLoadLabel(template: string, group: DataGroup): string {
     return template.split('{group}').join(group.label);
   }
 
-  private renderGroupLoadRow(group: TableGroup, totalColumns: number) {
+  private renderGroupLoadRow(group: DataGroup, totalColumns: number) {
     const error = group.loadMoreError?.trim();
     if (!error && !group.loadingMore && !group.hasMore) return null;
     const manualFallback =
@@ -2485,8 +2483,8 @@ export class Table {
             header: 'Columns',
             items: tableColumnCustomizerMenuItems(
               this.columns,
-              this.hiddenColumnIds,
-              this.columnOrder
+              this.hiddenFieldIds,
+              this.fieldOrder
             ),
           },
           ...(this.customizeOptions.length
@@ -2524,10 +2522,10 @@ export class Table {
     this.columnCustomizerOpen = false;
   }
 
-  private emitColumnsConfigChange(hiddenColumnIds: string[], columnOrder: string[]): void {
-    this.dsColumnsConfigChange.emit({
-      hiddenColumnIds: resolveTableHiddenColumnIds(this.columns, hiddenColumnIds),
-      columnOrder: resolveTableColumnOrder(this.columns, columnOrder),
+  private emitColumnsConfigChange(hiddenFieldIds: string[], fieldOrder: string[]): void {
+    this.dsFieldsConfigChange.emit({
+      hiddenFieldIds: resolveTableHiddenColumnIds(this.columns, hiddenFieldIds),
+      fieldOrder: resolveTableColumnOrder(this.columns, fieldOrder),
     });
   }
 
@@ -2536,15 +2534,15 @@ export class Table {
       .filter(item => item.reorderable)
       .map(item => item.value)
       .filter((id): id is string => !!id);
-    this.emitColumnsConfigChange(this.hiddenColumnIds, order);
+    this.emitColumnsConfigChange(this.hiddenFieldIds, order);
   }
 
   private handleColumnCustomizerSelect(item: MenuItemData): void {
-    const columnId = item.value;
-    if (!columnId || item.isInactive) return;
+    const fieldId = item.value;
+    if (!fieldId || item.isInactive) return;
     this.emitColumnsConfigChange(
-      toggleTableColumnHidden(this.columns, this.hiddenColumnIds, columnId),
-      resolveTableColumnOrder(this.columns, this.columnOrder)
+      toggleTableColumnHidden(this.columns, this.hiddenFieldIds, fieldId),
+      resolveTableColumnOrder(this.columns, this.fieldOrder)
     );
   }
 

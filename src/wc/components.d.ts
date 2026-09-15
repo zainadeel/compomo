@@ -34,15 +34,24 @@ import { ChartLegendDirection, ChartLegendPercentageDecimals } from "./component
 import { CheckboxSize } from "./components/Checkbox/Checkbox";
 import { ChipSize, ChipState } from "./components/Chip/Chip";
 import { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
+import { DataField } from "./utils/data-field";
+import { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
+import { DataCustomizeChangeDetail } from "./components/DataCustomize/DataCustomize";
+import { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuMatchModeChangeDetail, FilterMenuMatchModes, FilterMenuValues } from "./components/FilterMenu/FilterMenu";
+import { DataGroupOption } from "./components/DataGroup/DataGroup";
+import { DataFieldsConfigChangeDetail, DataGroup, DataGroupingState, DataSortChangeDetail, DataSortState, TableCaptionVisibility, TableCellActionDetail, TableColumn, TableDataMode, TableDataModeChangeDetail, TableGroupCollapseChangeDetail, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode } from "./components/Table/table-types";
+import { DataGroupOption as DataGroupOption1 } from "./components/DataGroup/DataGroup";
+import { PreferencesTab } from "./components/DataPreferences/DataPreferences";
+import { DataSavedView, DataSavedViewChangeDetail, DataSavedViewCreateDetail, DataSavedViewDiscardDetail, DataSavedViewRemoveDetail, DataSavedViewRenameDetail, DataSavedViewSaveDetail } from "./components/DataSavedViews/data-saved-views-types";
+import { DataSearchFieldsChangeDetail } from "./components/DataSearch/data-search-types";
 import { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
-import { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuFooterLayout, FilterMenuMatchModeChangeDetail, FilterMenuMatchModes, FilterMenuSize, FilterMenuValues, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
+import { FilterMenuChangeDetail as FilterMenuChangeDetail1, FilterMenuFilter as FilterMenuFilter1, FilterMenuFooterLayout, FilterMenuMatchModeChangeDetail as FilterMenuMatchModeChangeDetail1, FilterMenuMatchModes as FilterMenuMatchModes1, FilterMenuSize, FilterMenuValues as FilterMenuValues1, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
 import { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
 import { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
 import { InputSize, InputTextAlign, InputType, InputWidth } from "./components/Input/Input";
 import { InputDateSize, InputDateWidth } from "./components/InputDate/InputDate";
 import { InputTimeSize, InputTimeWidth } from "./components/InputTime/InputTime";
 import { LoaderColor, LoaderSize } from "./components/Loader/Loader";
-import { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
 import { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
 import { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 import { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
@@ -72,13 +81,6 @@ import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 import { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 import { SwitchSize } from "./components/Switch/Switch";
 import { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
-import { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableColumnsConfigChangeDetail, TableDataMode, TableDataModeChangeDetail, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
-import { FilterMenuChangeDetail as FilterMenuChangeDetail1, FilterMenuFilter as FilterMenuFilter1, FilterMenuMatchModeChangeDetail as FilterMenuMatchModeChangeDetail1, FilterMenuMatchModes as FilterMenuMatchModes1, FilterMenuValues as FilterMenuValues1 } from "./components/FilterMenu/FilterMenu";
-import { TableGroupOption } from "./components/TableGroup/TableGroup";
-import { TableGroupOption as TableGroupOption1 } from "./components/TableGroup/TableGroup";
-import { PreferencesTab } from "./components/TablePreferences/TablePreferences";
-import { TableSavedView, TableSavedViewChangeDetail, TableSavedViewCreateDetail, TableSavedViewDiscardDetail, TableSavedViewRemoveDetail, TableSavedViewRenameDetail, TableSavedViewSaveDetail } from "./components/TableSavedViews/table-saved-views-types";
-import { TableSearchFieldsChangeDetail } from "./components/TableSearch/table-search-types";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { TextareaResize, TextareaSize, TextareaWidth } from "./components/Textarea/Textarea";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
@@ -114,15 +116,24 @@ export { ChartLegendDirection, ChartLegendPercentageDecimals } from "./component
 export { CheckboxSize } from "./components/Checkbox/Checkbox";
 export { ChipSize, ChipState } from "./components/Chip/Chip";
 export { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
+export { DataField } from "./utils/data-field";
+export { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
+export { DataCustomizeChangeDetail } from "./components/DataCustomize/DataCustomize";
+export { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuMatchModeChangeDetail, FilterMenuMatchModes, FilterMenuValues } from "./components/FilterMenu/FilterMenu";
+export { DataGroupOption } from "./components/DataGroup/DataGroup";
+export { DataFieldsConfigChangeDetail, DataGroup, DataGroupingState, DataSortChangeDetail, DataSortState, TableCaptionVisibility, TableCellActionDetail, TableColumn, TableDataMode, TableDataModeChangeDetail, TableGroupCollapseChangeDetail, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode } from "./components/Table/table-types";
+export { DataGroupOption as DataGroupOption1 } from "./components/DataGroup/DataGroup";
+export { PreferencesTab } from "./components/DataPreferences/DataPreferences";
+export { DataSavedView, DataSavedViewChangeDetail, DataSavedViewCreateDetail, DataSavedViewDiscardDetail, DataSavedViewRemoveDetail, DataSavedViewRenameDetail, DataSavedViewSaveDetail } from "./components/DataSavedViews/data-saved-views-types";
+export { DataSearchFieldsChangeDetail } from "./components/DataSearch/data-search-types";
 export { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
-export { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuFooterLayout, FilterMenuMatchModeChangeDetail, FilterMenuMatchModes, FilterMenuSize, FilterMenuValues, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
+export { FilterMenuChangeDetail as FilterMenuChangeDetail1, FilterMenuFilter as FilterMenuFilter1, FilterMenuFooterLayout, FilterMenuMatchModeChangeDetail as FilterMenuMatchModeChangeDetail1, FilterMenuMatchModes as FilterMenuMatchModes1, FilterMenuSize, FilterMenuValues as FilterMenuValues1, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
 export { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
 export { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
 export { InputSize, InputTextAlign, InputType, InputWidth } from "./components/Input/Input";
 export { InputDateSize, InputDateWidth } from "./components/InputDate/InputDate";
 export { InputTimeSize, InputTimeWidth } from "./components/InputTime/InputTime";
 export { LoaderColor, LoaderSize } from "./components/Loader/Loader";
-export { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
 export { MenuSelectionMode, MenuSize } from "./components/Menu/Menu";
 export { MenuAlign, MenuSide } from "./components/Menu/menu-position";
 export { MessageBubbleVariant } from "./components/MessageBubble/MessageBubble";
@@ -152,13 +163,6 @@ export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from
 export { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 export { SwitchSize } from "./components/Switch/Switch";
 export { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
-export { TableCaptionVisibility, TableCellActionDetail, TableColumn, TableColumnsConfigChangeDetail, TableDataMode, TableDataModeChangeDetail, TableGroup, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
-export { FilterMenuChangeDetail as FilterMenuChangeDetail1, FilterMenuFilter as FilterMenuFilter1, FilterMenuMatchModeChangeDetail as FilterMenuMatchModeChangeDetail1, FilterMenuMatchModes as FilterMenuMatchModes1, FilterMenuValues as FilterMenuValues1 } from "./components/FilterMenu/FilterMenu";
-export { TableGroupOption } from "./components/TableGroup/TableGroup";
-export { TableGroupOption as TableGroupOption1 } from "./components/TableGroup/TableGroup";
-export { PreferencesTab } from "./components/TablePreferences/TablePreferences";
-export { TableSavedView, TableSavedViewChangeDetail, TableSavedViewCreateDetail, TableSavedViewDiscardDetail, TableSavedViewRemoveDetail, TableSavedViewRenameDetail, TableSavedViewSaveDetail } from "./components/TableSavedViews/table-saved-views-types";
-export { TableSearchFieldsChangeDetail } from "./components/TableSearch/table-search-types";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { TextareaResize, TextareaSize, TextareaWidth } from "./components/Textarea/Textarea";
 export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
@@ -1476,6 +1480,391 @@ export namespace Components {
          */
         "sectionId": string;
     }
+    /**
+     * Show, hide and optionally reorder the data points a view renders.
+     * The table owns its own column customizer inside the caption, because a table
+     * locks its last visible column and reorders columns. This control is the same
+     * catalog for every other surface — a card list, a map overlay — where the
+     * fields are independent and usually only show and hide.
+     */
+    interface DsDataCustomize {
+        /**
+          * Accessible name for the trigger and menu.
+          * @default null
+         */
+        "ariaLabel": string | null;
+        /**
+          * Section header above the catalog rows. Omitted when there is no second section.
+         */
+        "catalogHeader"?: string;
+        /**
+          * Controlled display order. Ids missing from it keep catalog order.
+          * @default []
+         */
+        "fieldOrder": string[];
+        /**
+          * Catalog of data points the view can render.
+          * @default []
+         */
+        "fields": DataField[];
+        /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder": boolean;
+        /**
+          * Controlled hidden field ids.
+          * @default []
+         */
+        "hiddenFieldIds": string[];
+        /**
+          * Visible trigger label. Collapses to the icon when space is tight.
+          * @default 'Customize'
+         */
+        "label": string;
+        /**
+          * Fields that must stay visible. Zero by default, so a view whose identity lives outside this catalog can hide every entry in it.
+          * @default 0
+         */
+        "minVisible": number;
+        /**
+          * Extra switch rows rendered in their own Options section.
+          * @default []
+         */
+        "options": MenuItemData[];
+        /**
+          * Header for the options section.
+          * @default 'Options'
+         */
+        "optionsHeader": string;
+        /**
+          * Drag-reorder the catalog rows. Off by default: most surfaces only show and hide, and a card layout has no column order to express.
+          * @default false
+         */
+        "reorderable": boolean;
+        "setFocus": () => Promise<void>;
+    }
+    interface DsDataFilter {
+        /**
+          * Controlled category shown in the option pane.
+         */
+        "activeFilterId": string | undefined;
+        /**
+          * Accessible name for the trigger. Defaults to Filter table.
+          * @default null
+         */
+        "ariaLabel": string | null;
+        /**
+          * Accessible name for the category tab list.
+          * @default 'Filter categories'
+         */
+        "categoriesLabel": string;
+        /**
+          * Footer action and date-clear accessible label.
+          * @default 'Clear'
+         */
+        "clearLabel": string;
+        /**
+          * @default []
+         */
+        "filters": FilterMenuFilter[];
+        /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder": boolean;
+        /**
+          * Visible trigger label.
+          * @default 'Filter'
+         */
+        "label": string;
+        /**
+          * Controlled any/all match mode keyed by multiple-choice filter id. Defaults to any.
+          * @default {}
+         */
+        "matchModes": FilterMenuMatchModes;
+        /**
+          * Accessible name for the non-modal filter dialog. Defaults to the trigger name.
+          * @default null
+         */
+        "menuLabel": string | null;
+        /**
+          * Empty-state text shown when an option search has no matches.
+          * @default 'No results'
+         */
+        "noResultsText": string;
+        /**
+          * Controlled popup visibility.
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * Placeholder shown in each non-date option search header.
+          * @default 'Search'
+         */
+        "searchPlaceholder": string;
+        /**
+          * Controlled values keyed by filter id.
+          * @default {}
+         */
+        "values": FilterMenuValues;
+    }
+    interface DsDataGroup {
+        /**
+          * Accessible name for the trigger and non-modal dialog.
+          * @default null
+         */
+        "ariaLabel": string | null;
+        /**
+          * Clear action label.
+          * @default 'Clear'
+         */
+        "clearLabel": string;
+        /**
+          * @default false
+         */
+        "embedded": boolean;
+        /**
+          * Empty message kept in the order pane until a grouping data point is selected.
+          * @default 'Select a group to choose its order.'
+         */
+        "emptyMessage": string;
+        /**
+          * Controlled grouping field and the order of its group sections.
+          * @default null
+         */
+        "grouping": DataGroupingState | null;
+        /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder": boolean;
+        /**
+          * Controlled popup visibility.
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * @default []
+         */
+        "options": DataGroupOption[];
+        /**
+          * @default false
+         */
+        "vertical": boolean;
+    }
+    interface DsDataPreferences {
+        "activeFilterId": string | undefined;
+        /**
+          * @default 'filters'
+         */
+        "activeTab": PreferencesTab;
+        /**
+          * Section header above the catalog rows. Defaults to Columns when customizeOptions supply a second section, matching the table.
+         */
+        "catalogHeader"?: string;
+        /**
+          * Drag-reorder the catalog rows and keep the last visible entry locked, as a table requires. Pass false for a catalog that only shows and hides, where every entry may be hidden and rows carry no drag handle.
+          * @default true
+         */
+        "catalogReorderable": boolean;
+        /**
+          * Accessible name for the Customize menu.
+          * @default 'Customize table'
+         */
+        "customizeLabel": string;
+        /**
+          * Additional toggle options in the column customizer.
+          * @default []
+         */
+        "customizeOptions": MenuItemData[];
+        /**
+          * @default []
+         */
+        "customizeSections": MenuSection[];
+        /**
+          * Render shared content without its popup or trigger.
+          * @default false
+         */
+        "embedded": boolean;
+        /**
+          * @default []
+         */
+        "fieldOrder": string[];
+        /**
+          * @default []
+         */
+        "fields": DataField[];
+        /**
+          * @default []
+         */
+        "filters": FilterMenuFilter[];
+        /**
+          * @default null
+         */
+        "grouping": DataGroupingState | null;
+        /**
+          * @default []
+         */
+        "groupingOptions": DataGroupOption1[];
+        /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder": boolean;
+        /**
+          * @default []
+         */
+        "hiddenFieldIds": string[];
+        /**
+          * @default 'Configure view'
+         */
+        "label": string;
+        /**
+          * @default {}
+         */
+        "matchModes": FilterMenuMatchModes;
+        /**
+          * @default null
+         */
+        "sort": DataSortState | null;
+        /**
+          * Optional sort fields when they differ from customizable content.
+         */
+        "sortColumns"?: TableColumn[];
+        /**
+          * @default {}
+         */
+        "values": FilterMenuValues;
+    }
+    interface DsDataSavedViews {
+        /**
+          * Use an icon-only trigger in an explicitly compact toolbar.
+          * @default false
+         */
+        "compact": boolean;
+        /**
+          * Footer action label that opens the create-view dialog.
+          * @default 'New view'
+         */
+        "createLabel": string;
+        /**
+          * ID used for the built-in default view.
+          * @default '__default__'
+         */
+        "defaultViewId": string;
+        /**
+          * Label used for the built-in default view.
+          * @default 'Default'
+         */
+        "defaultViewLabel": string;
+        /**
+          * Whether the current table state differs from the selected custom view. Ignored for the default view.
+          * @default false
+         */
+        "dirty": boolean;
+        /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder": boolean;
+        /**
+          * Accessible name for the saved-views select.
+          * @default 'Saved views'
+         */
+        "label": string;
+        /**
+          * Trigger label shown while the default view is selected.
+          * @default 'Views'
+         */
+        "triggerLabel": string;
+        /**
+          * ID of the controlled active view, including the default view ID.
+          * @default '__default__'
+         */
+        "value": string;
+        /**
+          * @default []
+         */
+        "views": DataSavedView[];
+    }
+    interface DsDataSearch {
+        /**
+          * @default 'Search table'
+         */
+        "ariaLabel": string;
+        /**
+          * @default 'Clear search'
+         */
+        "clearLabel": string;
+        /**
+          * @default 'Choose search fields'
+         */
+        "fieldMenuLabel": string;
+        /**
+          * Table column catalog used to derive searchable data points and their complete labels.
+          * @default []
+         */
+        "fields": DataField[];
+        /**
+          * Show the resting field border; keyboard focus remains visible.
+          * @default true
+         */
+        "hasBorder": boolean;
+        /**
+          * @default false
+         */
+        "isInactive": boolean;
+        /**
+          * @default 'Search'
+         */
+        "placeholder": string;
+        /**
+          * Controlled ordered field scopes rendered as Tags.
+          * @default []
+         */
+        "selectedFieldIds": string[];
+        "setFocus": () => Promise<void>;
+        /**
+          * Controlled free-text query.
+          * @default ''
+         */
+        "value": string;
+    }
+    interface DsDataSort {
+        /**
+          * Accessible name for the trigger and menu.
+          * @default null
+         */
+        "ariaLabel": string | null;
+        /**
+          * @default []
+         */
+        "fields": DataField[];
+        /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder": boolean;
+        "setFocus": () => Promise<void>;
+        /**
+          * Controlled table sort. Header sorting and this menu share the same value.
+          * @default null
+         */
+        "sort": DataSortState | null;
+    }
+    interface DsDataToolbar {
+        /**
+          * Use separators between regions when composing borderless controls.
+          * @default false
+         */
+        "borderless": boolean;
+        /**
+          * Accessible name for the grouped controls. Pass a contextual name such as Table controls or Map controls.
+          * @default 'Controls'
+         */
+        "label": string;
+    }
     interface DsDivider {
         /**
           * Actual parent surface context. Omit on primary and secondary surfaces.
@@ -1605,7 +1994,7 @@ export namespace Components {
           * Product-owned filter categories and option definitions.
           * @default []
          */
-        "filters": FilterMenuFilter[];
+        "filters": FilterMenuFilter1[];
         /**
           * Footer recipe: full-width selected summary or reserved category-pane Clear action.
           * @default 'summary'
@@ -1633,7 +2022,7 @@ export namespace Components {
           * Controlled any/all match mode keyed by multiple-choice filter id. Defaults to any.
           * @default {}
          */
-        "matchModes": FilterMenuMatchModes;
+        "matchModes": FilterMenuMatchModes1;
         /**
           * Accessible name for the non-modal filter dialog.
           * @default 'Filters'
@@ -1697,7 +2086,7 @@ export namespace Components {
           * Controlled values keyed by filter id.
           * @default {}
          */
-        "values": FilterMenuValues;
+        "values": FilterMenuValues1;
         /**
           * Stacked, collapsible sections for a configuration panel.
           * @default false
@@ -3653,11 +4042,6 @@ export namespace Components {
          */
         "columnCustomizer": boolean;
         /**
-          * Controlled data-column identities in display order. Omitted ids append in catalog order.
-          * @default []
-         */
-        "columnOrder": string[];
-        /**
           * Stable column definitions. Assign through JavaScript.
           * @default []
          */
@@ -3719,6 +4103,11 @@ export namespace Components {
          */
         "errorHeading": string;
         /**
+          * Controlled data-column identities in display order. Omitted ids append in catalog order.
+          * @default []
+         */
+        "fieldOrder": string[];
+        /**
           * Fit the complete table composition to its nearest vertical scrollport.
           * @default false
          */
@@ -3756,12 +4145,12 @@ export namespace Components {
           * Controlled grouping column. Applications supply groups in their final fixed order.
           * @default null
          */
-        "grouping": TableGroupingState | null;
+        "grouping": DataGroupingState | null;
         /**
           * One level of application-owned grouped data. Assign through JavaScript.
           * @default []
          */
-        "groups": TableGroup[];
+        "groups": DataGroup[];
         /**
           * @default false
          */
@@ -3774,13 +4163,13 @@ export namespace Components {
           * Controlled hidden data-column identities. Action ids are ignored.
           * @default []
          */
-        "hiddenColumnIds": string[];
+        "hiddenFieldIds": string[];
         /**
           * @default false
          */
         "hideColumnCustomizerTrigger": boolean;
         /**
-          * Optional TableSearch field identities that restrict which data-point tracks are highlighted.
+          * Optional DataSearch field identities that restrict which data-point tracks are highlighted.
           * @default []
          */
         "highlightFieldIds": string[];
@@ -3888,7 +4277,7 @@ export namespace Components {
           * Controlled member-row sort state.
           * @default null
          */
-        "sort": TableSortState | null;
+        "sort": DataSortState | null;
         /**
           * @default false
          */
@@ -3912,313 +4301,6 @@ export namespace Components {
           * @default 'Virtual scroll'
          */
         "virtualModeLabel": string;
-    }
-    interface DsTableFilter {
-        /**
-          * Controlled category shown in the option pane.
-         */
-        "activeFilterId": string | undefined;
-        /**
-          * Accessible name for the trigger. Defaults to Filter table.
-          * @default null
-         */
-        "ariaLabel": string | null;
-        /**
-          * Accessible name for the category tab list.
-          * @default 'Filter categories'
-         */
-        "categoriesLabel": string;
-        /**
-          * Footer action and date-clear accessible label.
-          * @default 'Clear'
-         */
-        "clearLabel": string;
-        /**
-          * @default []
-         */
-        "filters": FilterMenuFilter1[];
-        /**
-          * Show the trigger border.
-          * @default true
-         */
-        "hasBorder": boolean;
-        /**
-          * Visible trigger label.
-          * @default 'Filter'
-         */
-        "label": string;
-        /**
-          * Controlled any/all match mode keyed by multiple-choice filter id. Defaults to any.
-          * @default {}
-         */
-        "matchModes": FilterMenuMatchModes1;
-        /**
-          * Accessible name for the non-modal filter dialog. Defaults to the trigger name.
-          * @default null
-         */
-        "menuLabel": string | null;
-        /**
-          * Empty-state text shown when an option search has no matches.
-          * @default 'No results'
-         */
-        "noResultsText": string;
-        /**
-          * Controlled popup visibility.
-          * @default false
-         */
-        "open": boolean;
-        /**
-          * Placeholder shown in each non-date option search header.
-          * @default 'Search'
-         */
-        "searchPlaceholder": string;
-        /**
-          * Controlled values keyed by filter id.
-          * @default {}
-         */
-        "values": FilterMenuValues1;
-    }
-    interface DsTableGroup {
-        /**
-          * Accessible name for the trigger and non-modal dialog.
-          * @default null
-         */
-        "ariaLabel": string | null;
-        /**
-          * Clear action label.
-          * @default 'Clear'
-         */
-        "clearLabel": string;
-        /**
-          * @default false
-         */
-        "embedded": boolean;
-        /**
-          * Empty message kept in the order pane until a grouping data point is selected.
-          * @default 'Select a group to choose its order.'
-         */
-        "emptyMessage": string;
-        /**
-          * Controlled grouping field and the order of its group sections.
-          * @default null
-         */
-        "grouping": TableGroupingState | null;
-        /**
-          * Show the trigger border.
-          * @default true
-         */
-        "hasBorder": boolean;
-        /**
-          * Controlled popup visibility.
-          * @default false
-         */
-        "open": boolean;
-        /**
-          * @default []
-         */
-        "options": TableGroupOption[];
-        /**
-          * @default false
-         */
-        "vertical": boolean;
-    }
-    interface DsTablePreferences {
-        "activeFilterId": string | undefined;
-        /**
-          * @default 'filters'
-         */
-        "activeTab": PreferencesTab;
-        /**
-          * @default []
-         */
-        "columnOrder": string[];
-        /**
-          * @default []
-         */
-        "columns": TableColumn[];
-        /**
-          * Additional toggle options in the column customizer.
-          * @default []
-         */
-        "customizeOptions": MenuItemData[];
-        /**
-          * @default []
-         */
-        "customizeSections": MenuSection[];
-        /**
-          * Render shared content without its popup or trigger.
-          * @default false
-         */
-        "embedded": boolean;
-        /**
-          * @default []
-         */
-        "filters": FilterMenuFilter1[];
-        /**
-          * @default null
-         */
-        "grouping": TableGroupingState | null;
-        /**
-          * @default []
-         */
-        "groupingOptions": TableGroupOption1[];
-        /**
-          * Show the trigger border.
-          * @default true
-         */
-        "hasBorder": boolean;
-        /**
-          * @default []
-         */
-        "hiddenColumnIds": string[];
-        /**
-          * @default 'Configure view'
-         */
-        "label": string;
-        /**
-          * @default {}
-         */
-        "matchModes": FilterMenuMatchModes1;
-        /**
-          * @default null
-         */
-        "sort": TableSortState | null;
-        /**
-          * Optional sort fields when they differ from customizable content.
-         */
-        "sortColumns"?: TableColumn[];
-        /**
-          * @default {}
-         */
-        "values": FilterMenuValues1;
-    }
-    interface DsTableSavedViews {
-        /**
-          * Use an icon-only trigger in an explicitly compact toolbar.
-          * @default false
-         */
-        "compact": boolean;
-        /**
-          * Footer action label that opens the create-view dialog.
-          * @default 'New view'
-         */
-        "createLabel": string;
-        /**
-          * ID used for the built-in default view.
-          * @default '__default__'
-         */
-        "defaultViewId": string;
-        /**
-          * Label used for the built-in default view.
-          * @default 'Default'
-         */
-        "defaultViewLabel": string;
-        /**
-          * Whether the current table state differs from the selected custom view. Ignored for the default view.
-          * @default false
-         */
-        "dirty": boolean;
-        /**
-          * Show the trigger border.
-          * @default true
-         */
-        "hasBorder": boolean;
-        /**
-          * Accessible name for the saved-views select.
-          * @default 'Saved views'
-         */
-        "label": string;
-        /**
-          * Trigger label shown while the default view is selected.
-          * @default 'Views'
-         */
-        "triggerLabel": string;
-        /**
-          * ID of the controlled active view, including the default view ID.
-          * @default '__default__'
-         */
-        "value": string;
-        /**
-          * @default []
-         */
-        "views": TableSavedView[];
-    }
-    interface DsTableSearch {
-        /**
-          * @default 'Search table'
-         */
-        "ariaLabel": string;
-        /**
-          * @default 'Clear search'
-         */
-        "clearLabel": string;
-        /**
-          * Table column catalog used to derive searchable data points and their complete labels.
-          * @default []
-         */
-        "columns": TableColumn[];
-        /**
-          * @default 'Choose search fields'
-         */
-        "fieldMenuLabel": string;
-        /**
-          * Show the resting field border; keyboard focus remains visible.
-          * @default true
-         */
-        "hasBorder": boolean;
-        /**
-          * @default false
-         */
-        "isInactive": boolean;
-        /**
-          * @default 'Search'
-         */
-        "placeholder": string;
-        /**
-          * Controlled ordered field scopes rendered as Tags.
-          * @default []
-         */
-        "selectedFieldIds": string[];
-        "setFocus": () => Promise<void>;
-        /**
-          * Controlled free-text query.
-          * @default ''
-         */
-        "value": string;
-    }
-    interface DsTableSort {
-        /**
-          * Accessible name for the trigger and menu.
-          * @default null
-         */
-        "ariaLabel": string | null;
-        /**
-          * @default []
-         */
-        "columns": TableColumn[];
-        /**
-          * Show the trigger border.
-          * @default true
-         */
-        "hasBorder": boolean;
-        "setFocus": () => Promise<void>;
-        /**
-          * Controlled table sort. Header sorting and this menu share the same value.
-          * @default null
-         */
-        "sort": TableSortState | null;
-    }
-    interface DsTableToolbar {
-        /**
-          * Use separators between regions when composing borderless controls.
-          * @default false
-         */
-        "borderless": boolean;
-        /**
-          * Accessible name for the grouped table controls.
-          * @default 'Table controls'
-         */
-        "label": string;
     }
     interface DsTag {
         /**
@@ -4710,6 +4792,34 @@ export interface DsConversationListItemCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsConversationListItemElement;
 }
+export interface DsDataCustomizeCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsDataCustomizeElement;
+}
+export interface DsDataFilterCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsDataFilterElement;
+}
+export interface DsDataGroupCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsDataGroupElement;
+}
+export interface DsDataPreferencesCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsDataPreferencesElement;
+}
+export interface DsDataSavedViewsCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsDataSavedViewsElement;
+}
+export interface DsDataSearchCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsDataSearchElement;
+}
+export interface DsDataSortCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsDataSortElement;
+}
 export interface DsFilterMenuCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsFilterMenuElement;
@@ -4825,30 +4935,6 @@ export interface DsTabGroupCustomEvent<T> extends CustomEvent<T> {
 export interface DsTableCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsTableElement;
-}
-export interface DsTableFilterCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsTableFilterElement;
-}
-export interface DsTableGroupCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsTableGroupElement;
-}
-export interface DsTablePreferencesCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsTablePreferencesElement;
-}
-export interface DsTableSavedViewsCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsTableSavedViewsElement;
-}
-export interface DsTableSearchCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsTableSearchElement;
-}
-export interface DsTableSortCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsTableSortElement;
 }
 export interface DsTagCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -5370,6 +5456,163 @@ declare global {
         prototype: HTMLDsConversationListSectionElement;
         new (): HTMLDsConversationListSectionElement;
     };
+    interface HTMLDsDataCustomizeElementEventMap {
+        "dsFieldsConfigChange": DataCustomizeChangeDetail;
+        "dsOptionChange": string;
+    }
+    /**
+     * Show, hide and optionally reorder the data points a view renders.
+     * The table owns its own column customizer inside the caption, because a table
+     * locks its last visible column and reorders columns. This control is the same
+     * catalog for every other surface — a card list, a map overlay — where the
+     * fields are independent and usually only show and hide.
+     */
+    interface HTMLDsDataCustomizeElement extends Components.DsDataCustomize, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsDataCustomizeElementEventMap>(type: K, listener: (this: HTMLDsDataCustomizeElement, ev: DsDataCustomizeCustomEvent<HTMLDsDataCustomizeElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsDataCustomizeElementEventMap>(type: K, listener: (this: HTMLDsDataCustomizeElement, ev: DsDataCustomizeCustomEvent<HTMLDsDataCustomizeElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsDataCustomizeElement: {
+        prototype: HTMLDsDataCustomizeElement;
+        new (): HTMLDsDataCustomizeElement;
+    };
+    interface HTMLDsDataFilterElementEventMap {
+        "dsChange": FilterMenuChangeDetail;
+        "dsClear": void;
+        "dsMatchModeChange": FilterMenuMatchModeChangeDetail;
+        "dsActiveFilterChange": string;
+        "dsClose": void;
+        "dsOpenChange": boolean;
+        "dsAfterClose": void;
+    }
+    interface HTMLDsDataFilterElement extends Components.DsDataFilter, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsDataFilterElementEventMap>(type: K, listener: (this: HTMLDsDataFilterElement, ev: DsDataFilterCustomEvent<HTMLDsDataFilterElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsDataFilterElementEventMap>(type: K, listener: (this: HTMLDsDataFilterElement, ev: DsDataFilterCustomEvent<HTMLDsDataFilterElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsDataFilterElement: {
+        prototype: HTMLDsDataFilterElement;
+        new (): HTMLDsDataFilterElement;
+    };
+    interface HTMLDsDataGroupElementEventMap {
+        "dsGroupChange": DataGroupingState;
+        "dsClear": void;
+        "dsOpenChange": boolean;
+    }
+    interface HTMLDsDataGroupElement extends Components.DsDataGroup, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsDataGroupElementEventMap>(type: K, listener: (this: HTMLDsDataGroupElement, ev: DsDataGroupCustomEvent<HTMLDsDataGroupElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsDataGroupElementEventMap>(type: K, listener: (this: HTMLDsDataGroupElement, ev: DsDataGroupCustomEvent<HTMLDsDataGroupElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsDataGroupElement: {
+        prototype: HTMLDsDataGroupElement;
+        new (): HTMLDsDataGroupElement;
+    };
+    interface HTMLDsDataPreferencesElementEventMap {
+        "dsCustomizeOptionChange": string;
+        "dsPreferencesTabChange": PreferencesTab;
+        "dsFilterChange": FilterMenuChangeDetail;
+        "dsFilterMatchModeChange": FilterMenuMatchModeChangeDetail;
+        "dsActiveFilterChange": string;
+        "dsFiltersClear": void;
+        "dsSortChange": DataSortChangeDetail;
+        "dsGroupChange": DataGroupingState;
+        "dsGroupClear": void;
+        "dsFieldsConfigChange": DataFieldsConfigChangeDetail;
+    }
+    interface HTMLDsDataPreferencesElement extends Components.DsDataPreferences, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsDataPreferencesElementEventMap>(type: K, listener: (this: HTMLDsDataPreferencesElement, ev: DsDataPreferencesCustomEvent<HTMLDsDataPreferencesElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsDataPreferencesElementEventMap>(type: K, listener: (this: HTMLDsDataPreferencesElement, ev: DsDataPreferencesCustomEvent<HTMLDsDataPreferencesElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsDataPreferencesElement: {
+        prototype: HTMLDsDataPreferencesElement;
+        new (): HTMLDsDataPreferencesElement;
+    };
+    interface HTMLDsDataSavedViewsElementEventMap {
+        "dsViewChange": DataSavedViewChangeDetail;
+        "dsViewCreate": DataSavedViewCreateDetail;
+        "dsViewRename": DataSavedViewRenameDetail;
+        "dsViewRemove": DataSavedViewRemoveDetail;
+        "dsViewSave": DataSavedViewSaveDetail;
+        "dsViewDiscard": DataSavedViewDiscardDetail;
+    }
+    interface HTMLDsDataSavedViewsElement extends Components.DsDataSavedViews, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsDataSavedViewsElementEventMap>(type: K, listener: (this: HTMLDsDataSavedViewsElement, ev: DsDataSavedViewsCustomEvent<HTMLDsDataSavedViewsElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsDataSavedViewsElementEventMap>(type: K, listener: (this: HTMLDsDataSavedViewsElement, ev: DsDataSavedViewsCustomEvent<HTMLDsDataSavedViewsElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsDataSavedViewsElement: {
+        prototype: HTMLDsDataSavedViewsElement;
+        new (): HTMLDsDataSavedViewsElement;
+    };
+    interface HTMLDsDataSearchElementEventMap {
+        "dsChange": string;
+        "dsFieldsChange": DataSearchFieldsChangeDetail;
+        "dsClear": void;
+    }
+    interface HTMLDsDataSearchElement extends Components.DsDataSearch, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsDataSearchElementEventMap>(type: K, listener: (this: HTMLDsDataSearchElement, ev: DsDataSearchCustomEvent<HTMLDsDataSearchElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsDataSearchElementEventMap>(type: K, listener: (this: HTMLDsDataSearchElement, ev: DsDataSearchCustomEvent<HTMLDsDataSearchElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsDataSearchElement: {
+        prototype: HTMLDsDataSearchElement;
+        new (): HTMLDsDataSearchElement;
+    };
+    interface HTMLDsDataSortElementEventMap {
+        "dsSortChange": DataSortChangeDetail;
+    }
+    interface HTMLDsDataSortElement extends Components.DsDataSort, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsDataSortElementEventMap>(type: K, listener: (this: HTMLDsDataSortElement, ev: DsDataSortCustomEvent<HTMLDsDataSortElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsDataSortElementEventMap>(type: K, listener: (this: HTMLDsDataSortElement, ev: DsDataSortCustomEvent<HTMLDsDataSortElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsDataSortElement: {
+        prototype: HTMLDsDataSortElement;
+        new (): HTMLDsDataSortElement;
+    };
+    interface HTMLDsDataToolbarElement extends Components.DsDataToolbar, HTMLStencilElement {
+    }
+    var HTMLDsDataToolbarElement: {
+        prototype: HTMLDsDataToolbarElement;
+        new (): HTMLDsDataToolbarElement;
+    };
     interface HTMLDsDividerElement extends Components.DsDivider, HTMLStencilElement {
     }
     var HTMLDsDividerElement: {
@@ -5389,9 +5632,9 @@ declare global {
         new (): HTMLDsFieldElement;
     };
     interface HTMLDsFilterMenuElementEventMap {
-        "dsChange": FilterMenuChangeDetail;
+        "dsChange": FilterMenuChangeDetail1;
         "dsClear": void;
-        "dsMatchModeChange": FilterMenuMatchModeChangeDetail;
+        "dsMatchModeChange": FilterMenuMatchModeChangeDetail1;
         "dsActiveFilterChange": string;
         "dsClose": void;
         "dsOpenChange": boolean;
@@ -5998,7 +6241,7 @@ declare global {
     };
     interface HTMLDsTableElementEventMap {
         "dsCustomizeOptionChange": string;
-        "dsSortChange": TableSortChangeDetail;
+        "dsSortChange": DataSortChangeDetail;
         "dsGroupCollapseChange": TableGroupCollapseChangeDetail;
         "dsSelectionChange": TableSelectionChangeDetail;
         "dsLoadMore": TableLoadMoreDetail;
@@ -6006,7 +6249,7 @@ declare global {
         "dsPaginationChange": PaginationChangeDetail;
         "dsCellAction": TableCellActionDetail;
         "dsRowActivate": TableRowActivateDetail;
-        "dsColumnsConfigChange": TableColumnsConfigChangeDetail;
+        "dsFieldsConfigChange": DataFieldsConfigChangeDetail;
         "dsDataModeChange": TableDataModeChangeDetail;
     }
     interface HTMLDsTableElement extends Components.DsTable, HTMLStencilElement {
@@ -6022,138 +6265,6 @@ declare global {
     var HTMLDsTableElement: {
         prototype: HTMLDsTableElement;
         new (): HTMLDsTableElement;
-    };
-    interface HTMLDsTableFilterElementEventMap {
-        "dsChange": FilterMenuChangeDetail1;
-        "dsClear": void;
-        "dsMatchModeChange": FilterMenuMatchModeChangeDetail1;
-        "dsActiveFilterChange": string;
-        "dsClose": void;
-        "dsOpenChange": boolean;
-        "dsAfterClose": void;
-    }
-    interface HTMLDsTableFilterElement extends Components.DsTableFilter, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsTableFilterElementEventMap>(type: K, listener: (this: HTMLDsTableFilterElement, ev: DsTableFilterCustomEvent<HTMLDsTableFilterElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsTableFilterElementEventMap>(type: K, listener: (this: HTMLDsTableFilterElement, ev: DsTableFilterCustomEvent<HTMLDsTableFilterElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsTableFilterElement: {
-        prototype: HTMLDsTableFilterElement;
-        new (): HTMLDsTableFilterElement;
-    };
-    interface HTMLDsTableGroupElementEventMap {
-        "dsGroupChange": TableGroupingState;
-        "dsClear": void;
-        "dsOpenChange": boolean;
-    }
-    interface HTMLDsTableGroupElement extends Components.DsTableGroup, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsTableGroupElementEventMap>(type: K, listener: (this: HTMLDsTableGroupElement, ev: DsTableGroupCustomEvent<HTMLDsTableGroupElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsTableGroupElementEventMap>(type: K, listener: (this: HTMLDsTableGroupElement, ev: DsTableGroupCustomEvent<HTMLDsTableGroupElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsTableGroupElement: {
-        prototype: HTMLDsTableGroupElement;
-        new (): HTMLDsTableGroupElement;
-    };
-    interface HTMLDsTablePreferencesElementEventMap {
-        "dsCustomizeOptionChange": string;
-        "dsPreferencesTabChange": PreferencesTab;
-        "dsFilterChange": FilterMenuChangeDetail1;
-        "dsFilterMatchModeChange": FilterMenuMatchModeChangeDetail1;
-        "dsActiveFilterChange": string;
-        "dsFiltersClear": void;
-        "dsSortChange": TableSortChangeDetail;
-        "dsGroupChange": TableGroupingState;
-        "dsGroupClear": void;
-        "dsColumnsConfigChange": TableColumnsConfigChangeDetail;
-    }
-    interface HTMLDsTablePreferencesElement extends Components.DsTablePreferences, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsTablePreferencesElementEventMap>(type: K, listener: (this: HTMLDsTablePreferencesElement, ev: DsTablePreferencesCustomEvent<HTMLDsTablePreferencesElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsTablePreferencesElementEventMap>(type: K, listener: (this: HTMLDsTablePreferencesElement, ev: DsTablePreferencesCustomEvent<HTMLDsTablePreferencesElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsTablePreferencesElement: {
-        prototype: HTMLDsTablePreferencesElement;
-        new (): HTMLDsTablePreferencesElement;
-    };
-    interface HTMLDsTableSavedViewsElementEventMap {
-        "dsViewChange": TableSavedViewChangeDetail;
-        "dsViewCreate": TableSavedViewCreateDetail;
-        "dsViewRename": TableSavedViewRenameDetail;
-        "dsViewRemove": TableSavedViewRemoveDetail;
-        "dsViewSave": TableSavedViewSaveDetail;
-        "dsViewDiscard": TableSavedViewDiscardDetail;
-    }
-    interface HTMLDsTableSavedViewsElement extends Components.DsTableSavedViews, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsTableSavedViewsElementEventMap>(type: K, listener: (this: HTMLDsTableSavedViewsElement, ev: DsTableSavedViewsCustomEvent<HTMLDsTableSavedViewsElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsTableSavedViewsElementEventMap>(type: K, listener: (this: HTMLDsTableSavedViewsElement, ev: DsTableSavedViewsCustomEvent<HTMLDsTableSavedViewsElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsTableSavedViewsElement: {
-        prototype: HTMLDsTableSavedViewsElement;
-        new (): HTMLDsTableSavedViewsElement;
-    };
-    interface HTMLDsTableSearchElementEventMap {
-        "dsChange": string;
-        "dsFieldsChange": TableSearchFieldsChangeDetail;
-        "dsClear": void;
-    }
-    interface HTMLDsTableSearchElement extends Components.DsTableSearch, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsTableSearchElementEventMap>(type: K, listener: (this: HTMLDsTableSearchElement, ev: DsTableSearchCustomEvent<HTMLDsTableSearchElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsTableSearchElementEventMap>(type: K, listener: (this: HTMLDsTableSearchElement, ev: DsTableSearchCustomEvent<HTMLDsTableSearchElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsTableSearchElement: {
-        prototype: HTMLDsTableSearchElement;
-        new (): HTMLDsTableSearchElement;
-    };
-    interface HTMLDsTableSortElementEventMap {
-        "dsSortChange": TableSortChangeDetail;
-    }
-    interface HTMLDsTableSortElement extends Components.DsTableSort, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsTableSortElementEventMap>(type: K, listener: (this: HTMLDsTableSortElement, ev: DsTableSortCustomEvent<HTMLDsTableSortElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsTableSortElementEventMap>(type: K, listener: (this: HTMLDsTableSortElement, ev: DsTableSortCustomEvent<HTMLDsTableSortElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsTableSortElement: {
-        prototype: HTMLDsTableSortElement;
-        new (): HTMLDsTableSortElement;
-    };
-    interface HTMLDsTableToolbarElement extends Components.DsTableToolbar, HTMLStencilElement {
-    }
-    var HTMLDsTableToolbarElement: {
-        prototype: HTMLDsTableToolbarElement;
-        new (): HTMLDsTableToolbarElement;
     };
     interface HTMLDsTagElementEventMap {
         "dsClick": MouseEvent;
@@ -6303,6 +6414,14 @@ declare global {
         "ds-conversation-list": HTMLDsConversationListElement;
         "ds-conversation-list-item": HTMLDsConversationListItemElement;
         "ds-conversation-list-section": HTMLDsConversationListSectionElement;
+        "ds-data-customize": HTMLDsDataCustomizeElement;
+        "ds-data-filter": HTMLDsDataFilterElement;
+        "ds-data-group": HTMLDsDataGroupElement;
+        "ds-data-preferences": HTMLDsDataPreferencesElement;
+        "ds-data-saved-views": HTMLDsDataSavedViewsElement;
+        "ds-data-search": HTMLDsDataSearchElement;
+        "ds-data-sort": HTMLDsDataSortElement;
+        "ds-data-toolbar": HTMLDsDataToolbarElement;
         "ds-divider": HTMLDsDividerElement;
         "ds-empty-state": HTMLDsEmptyStateElement;
         "ds-field": HTMLDsFieldElement;
@@ -6344,13 +6463,6 @@ declare global {
         "ds-switch": HTMLDsSwitchElement;
         "ds-tab-group": HTMLDsTabGroupElement;
         "ds-table": HTMLDsTableElement;
-        "ds-table-filter": HTMLDsTableFilterElement;
-        "ds-table-group": HTMLDsTableGroupElement;
-        "ds-table-preferences": HTMLDsTablePreferencesElement;
-        "ds-table-saved-views": HTMLDsTableSavedViewsElement;
-        "ds-table-search": HTMLDsTableSearchElement;
-        "ds-table-sort": HTMLDsTableSortElement;
-        "ds-table-toolbar": HTMLDsTableToolbarElement;
         "ds-tag": HTMLDsTagElement;
         "ds-text": HTMLDsTextElement;
         "ds-textarea": HTMLDsTextareaElement;
@@ -7790,6 +7902,468 @@ declare namespace LocalJSX {
          */
         "sectionId"?: string;
     }
+    /**
+     * Show, hide and optionally reorder the data points a view renders.
+     * The table owns its own column customizer inside the caption, because a table
+     * locks its last visible column and reorders columns. This control is the same
+     * catalog for every other surface — a card list, a map overlay — where the
+     * fields are independent and usually only show and hide.
+     */
+    interface DsDataCustomize {
+        /**
+          * Accessible name for the trigger and menu.
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        /**
+          * Section header above the catalog rows. Omitted when there is no second section.
+         */
+        "catalogHeader"?: string;
+        /**
+          * Controlled display order. Ids missing from it keep catalog order.
+          * @default []
+         */
+        "fieldOrder"?: string[];
+        /**
+          * Catalog of data points the view can render.
+          * @default []
+         */
+        "fields"?: DataField[];
+        /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder"?: boolean;
+        /**
+          * Controlled hidden field ids.
+          * @default []
+         */
+        "hiddenFieldIds"?: string[];
+        /**
+          * Visible trigger label. Collapses to the icon when space is tight.
+          * @default 'Customize'
+         */
+        "label"?: string;
+        /**
+          * Fields that must stay visible. Zero by default, so a view whose identity lives outside this catalog can hide every entry in it.
+          * @default 0
+         */
+        "minVisible"?: number;
+        "onDsFieldsConfigChange"?: (event: DsDataCustomizeCustomEvent<DataCustomizeChangeDetail>) => void;
+        "onDsOptionChange"?: (event: DsDataCustomizeCustomEvent<string>) => void;
+        /**
+          * Extra switch rows rendered in their own Options section.
+          * @default []
+         */
+        "options"?: MenuItemData[];
+        /**
+          * Header for the options section.
+          * @default 'Options'
+         */
+        "optionsHeader"?: string;
+        /**
+          * Drag-reorder the catalog rows. Off by default: most surfaces only show and hide, and a card layout has no column order to express.
+          * @default false
+         */
+        "reorderable"?: boolean;
+    }
+    interface DsDataFilter {
+        /**
+          * Controlled category shown in the option pane.
+         */
+        "activeFilterId"?: string | undefined;
+        /**
+          * Accessible name for the trigger. Defaults to Filter table.
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        /**
+          * Accessible name for the category tab list.
+          * @default 'Filter categories'
+         */
+        "categoriesLabel"?: string;
+        /**
+          * Footer action and date-clear accessible label.
+          * @default 'Clear'
+         */
+        "clearLabel"?: string;
+        /**
+          * @default []
+         */
+        "filters"?: FilterMenuFilter[];
+        /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder"?: boolean;
+        /**
+          * Visible trigger label.
+          * @default 'Filter'
+         */
+        "label"?: string;
+        /**
+          * Controlled any/all match mode keyed by multiple-choice filter id. Defaults to any.
+          * @default {}
+         */
+        "matchModes"?: FilterMenuMatchModes;
+        /**
+          * Accessible name for the non-modal filter dialog. Defaults to the trigger name.
+          * @default null
+         */
+        "menuLabel"?: string | null;
+        /**
+          * Empty-state text shown when an option search has no matches.
+          * @default 'No results'
+         */
+        "noResultsText"?: string;
+        /**
+          * Requests a controlled active-category replacement.
+         */
+        "onDsActiveFilterChange"?: (event: DsDataFilterCustomEvent<string>) => void;
+        /**
+          * Emitted after exit motion and rendered popup removal complete.
+         */
+        "onDsAfterClose"?: (event: DsDataFilterCustomEvent<void>) => void;
+        /**
+          * Requests a controlled value replacement without closing the popup.
+         */
+        "onDsChange"?: (event: DsDataFilterCustomEvent<FilterMenuChangeDetail>) => void;
+        /**
+          * Requests that the consumer clear every filter value.
+         */
+        "onDsClear"?: (event: DsDataFilterCustomEvent<void>) => void;
+        /**
+          * Requests that the controlled popup close.
+         */
+        "onDsClose"?: (event: DsDataFilterCustomEvent<void>) => void;
+        /**
+          * Requests a controlled any/all mode replacement for a multiple-choice filter.
+         */
+        "onDsMatchModeChange"?: (event: DsDataFilterCustomEvent<FilterMenuMatchModeChangeDetail>) => void;
+        /**
+          * Emitted whenever trigger activation changes popup visibility.
+         */
+        "onDsOpenChange"?: (event: DsDataFilterCustomEvent<boolean>) => void;
+        /**
+          * Controlled popup visibility.
+          * @default false
+         */
+        "open"?: boolean;
+        /**
+          * Placeholder shown in each non-date option search header.
+          * @default 'Search'
+         */
+        "searchPlaceholder"?: string;
+        /**
+          * Controlled values keyed by filter id.
+          * @default {}
+         */
+        "values"?: FilterMenuValues;
+    }
+    interface DsDataGroup {
+        /**
+          * Accessible name for the trigger and non-modal dialog.
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        /**
+          * Clear action label.
+          * @default 'Clear'
+         */
+        "clearLabel"?: string;
+        /**
+          * @default false
+         */
+        "embedded"?: boolean;
+        /**
+          * Empty message kept in the order pane until a grouping data point is selected.
+          * @default 'Select a group to choose its order.'
+         */
+        "emptyMessage"?: string;
+        /**
+          * Controlled grouping field and the order of its group sections.
+          * @default null
+         */
+        "grouping"?: DataGroupingState | null;
+        /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder"?: boolean;
+        /**
+          * Requests removal of the controlled grouping state.
+         */
+        "onDsClear"?: (event: DsDataGroupCustomEvent<void>) => void;
+        /**
+          * Requests replacement of the complete controlled grouping state.
+         */
+        "onDsGroupChange"?: (event: DsDataGroupCustomEvent<DataGroupingState>) => void;
+        /**
+          * Reports controlled popup visibility changes.
+         */
+        "onDsOpenChange"?: (event: DsDataGroupCustomEvent<boolean>) => void;
+        /**
+          * Controlled popup visibility.
+          * @default false
+         */
+        "open"?: boolean;
+        /**
+          * @default []
+         */
+        "options"?: DataGroupOption[];
+        /**
+          * @default false
+         */
+        "vertical"?: boolean;
+    }
+    interface DsDataPreferences {
+        "activeFilterId"?: string | undefined;
+        /**
+          * @default 'filters'
+         */
+        "activeTab"?: PreferencesTab;
+        /**
+          * Section header above the catalog rows. Defaults to Columns when customizeOptions supply a second section, matching the table.
+         */
+        "catalogHeader"?: string;
+        /**
+          * Drag-reorder the catalog rows and keep the last visible entry locked, as a table requires. Pass false for a catalog that only shows and hides, where every entry may be hidden and rows carry no drag handle.
+          * @default true
+         */
+        "catalogReorderable"?: boolean;
+        /**
+          * Accessible name for the Customize menu.
+          * @default 'Customize table'
+         */
+        "customizeLabel"?: string;
+        /**
+          * Additional toggle options in the column customizer.
+          * @default []
+         */
+        "customizeOptions"?: MenuItemData[];
+        /**
+          * @default []
+         */
+        "customizeSections"?: MenuSection[];
+        /**
+          * Render shared content without its popup or trigger.
+          * @default false
+         */
+        "embedded"?: boolean;
+        /**
+          * @default []
+         */
+        "fieldOrder"?: string[];
+        /**
+          * @default []
+         */
+        "fields"?: DataField[];
+        /**
+          * @default []
+         */
+        "filters"?: FilterMenuFilter[];
+        /**
+          * @default null
+         */
+        "grouping"?: DataGroupingState | null;
+        /**
+          * @default []
+         */
+        "groupingOptions"?: DataGroupOption1[];
+        /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder"?: boolean;
+        /**
+          * @default []
+         */
+        "hiddenFieldIds"?: string[];
+        /**
+          * @default 'Configure view'
+         */
+        "label"?: string;
+        /**
+          * @default {}
+         */
+        "matchModes"?: FilterMenuMatchModes;
+        "onDsActiveFilterChange"?: (event: DsDataPreferencesCustomEvent<string>) => void;
+        "onDsCustomizeOptionChange"?: (event: DsDataPreferencesCustomEvent<string>) => void;
+        "onDsFieldsConfigChange"?: (event: DsDataPreferencesCustomEvent<DataFieldsConfigChangeDetail>) => void;
+        "onDsFilterChange"?: (event: DsDataPreferencesCustomEvent<FilterMenuChangeDetail>) => void;
+        "onDsFilterMatchModeChange"?: (event: DsDataPreferencesCustomEvent<FilterMenuMatchModeChangeDetail>) => void;
+        "onDsFiltersClear"?: (event: DsDataPreferencesCustomEvent<void>) => void;
+        "onDsGroupChange"?: (event: DsDataPreferencesCustomEvent<DataGroupingState>) => void;
+        "onDsGroupClear"?: (event: DsDataPreferencesCustomEvent<void>) => void;
+        "onDsPreferencesTabChange"?: (event: DsDataPreferencesCustomEvent<PreferencesTab>) => void;
+        "onDsSortChange"?: (event: DsDataPreferencesCustomEvent<DataSortChangeDetail>) => void;
+        /**
+          * @default null
+         */
+        "sort"?: DataSortState | null;
+        /**
+          * Optional sort fields when they differ from customizable content.
+         */
+        "sortColumns"?: TableColumn[];
+        /**
+          * @default {}
+         */
+        "values"?: FilterMenuValues;
+    }
+    interface DsDataSavedViews {
+        /**
+          * Use an icon-only trigger in an explicitly compact toolbar.
+          * @default false
+         */
+        "compact"?: boolean;
+        /**
+          * Footer action label that opens the create-view dialog.
+          * @default 'New view'
+         */
+        "createLabel"?: string;
+        /**
+          * ID used for the built-in default view.
+          * @default '__default__'
+         */
+        "defaultViewId"?: string;
+        /**
+          * Label used for the built-in default view.
+          * @default 'Default'
+         */
+        "defaultViewLabel"?: string;
+        /**
+          * Whether the current table state differs from the selected custom view. Ignored for the default view.
+          * @default false
+         */
+        "dirty"?: boolean;
+        /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder"?: boolean;
+        /**
+          * Accessible name for the saved-views select.
+          * @default 'Saved views'
+         */
+        "label"?: string;
+        /**
+          * Emitted when a view selection is requested.
+         */
+        "onDsViewChange"?: (event: DsDataSavedViewsCustomEvent<DataSavedViewChangeDetail>) => void;
+        /**
+          * Emitted after a valid create-view name is submitted.
+         */
+        "onDsViewCreate"?: (event: DsDataSavedViewsCustomEvent<DataSavedViewCreateDetail>) => void;
+        /**
+          * Emitted when the active custom view's stored payload should be restored.
+         */
+        "onDsViewDiscard"?: (event: DsDataSavedViewsCustomEvent<DataSavedViewDiscardDetail>) => void;
+        /**
+          * Emitted when a custom view removal is requested.
+         */
+        "onDsViewRemove"?: (event: DsDataSavedViewsCustomEvent<DataSavedViewRemoveDetail>) => void;
+        /**
+          * Emitted after a valid renamed view name is submitted.
+         */
+        "onDsViewRename"?: (event: DsDataSavedViewsCustomEvent<DataSavedViewRenameDetail>) => void;
+        /**
+          * Emitted when changes to the active custom view should replace its stored payload.
+         */
+        "onDsViewSave"?: (event: DsDataSavedViewsCustomEvent<DataSavedViewSaveDetail>) => void;
+        /**
+          * Trigger label shown while the default view is selected.
+          * @default 'Views'
+         */
+        "triggerLabel"?: string;
+        /**
+          * ID of the controlled active view, including the default view ID.
+          * @default '__default__'
+         */
+        "value"?: string;
+        /**
+          * @default []
+         */
+        "views"?: DataSavedView[];
+    }
+    interface DsDataSearch {
+        /**
+          * @default 'Search table'
+         */
+        "ariaLabel"?: string;
+        /**
+          * @default 'Clear search'
+         */
+        "clearLabel"?: string;
+        /**
+          * @default 'Choose search fields'
+         */
+        "fieldMenuLabel"?: string;
+        /**
+          * Table column catalog used to derive searchable data points and their complete labels.
+          * @default []
+         */
+        "fields"?: DataField[];
+        /**
+          * Show the resting field border; keyboard focus remains visible.
+          * @default true
+         */
+        "hasBorder"?: boolean;
+        /**
+          * @default false
+         */
+        "isInactive"?: boolean;
+        "onDsChange"?: (event: DsDataSearchCustomEvent<string>) => void;
+        "onDsClear"?: (event: DsDataSearchCustomEvent<void>) => void;
+        "onDsFieldsChange"?: (event: DsDataSearchCustomEvent<DataSearchFieldsChangeDetail>) => void;
+        /**
+          * @default 'Search'
+         */
+        "placeholder"?: string;
+        /**
+          * Controlled ordered field scopes rendered as Tags.
+          * @default []
+         */
+        "selectedFieldIds"?: string[];
+        /**
+          * Controlled free-text query.
+          * @default ''
+         */
+        "value"?: string;
+    }
+    interface DsDataSort {
+        /**
+          * Accessible name for the trigger and menu.
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        /**
+          * @default []
+         */
+        "fields"?: DataField[];
+        /**
+          * Show the trigger border.
+          * @default true
+         */
+        "hasBorder"?: boolean;
+        "onDsSortChange"?: (event: DsDataSortCustomEvent<DataSortChangeDetail>) => void;
+        /**
+          * Controlled table sort. Header sorting and this menu share the same value.
+          * @default null
+         */
+        "sort"?: DataSortState | null;
+    }
+    interface DsDataToolbar {
+        /**
+          * Use separators between regions when composing borderless controls.
+          * @default false
+         */
+        "borderless"?: boolean;
+        /**
+          * Accessible name for the grouped controls. Pass a contextual name such as Table controls or Map controls.
+          * @default 'Controls'
+         */
+        "label"?: string;
+    }
     interface DsDivider {
         /**
           * Actual parent surface context. Omit on primary and secondary surfaces.
@@ -7919,7 +8493,7 @@ declare namespace LocalJSX {
           * Product-owned filter categories and option definitions.
           * @default []
          */
-        "filters"?: FilterMenuFilter[];
+        "filters"?: FilterMenuFilter1[];
         /**
           * Footer recipe: full-width selected summary or reserved category-pane Clear action.
           * @default 'summary'
@@ -7947,7 +8521,7 @@ declare namespace LocalJSX {
           * Controlled any/all match mode keyed by multiple-choice filter id. Defaults to any.
           * @default {}
          */
-        "matchModes"?: FilterMenuMatchModes;
+        "matchModes"?: FilterMenuMatchModes1;
         /**
           * Accessible name for the non-modal filter dialog.
           * @default 'Filters'
@@ -7979,7 +8553,7 @@ declare namespace LocalJSX {
         /**
           * Requests a controlled value replacement without closing the popup.
          */
-        "onDsChange"?: (event: DsFilterMenuCustomEvent<FilterMenuChangeDetail>) => void;
+        "onDsChange"?: (event: DsFilterMenuCustomEvent<FilterMenuChangeDetail1>) => void;
         /**
           * Requests that the consumer clear every filter value.
          */
@@ -7991,7 +8565,7 @@ declare namespace LocalJSX {
         /**
           * Requests a controlled any/all mode replacement for a multiple-choice filter.
          */
-        "onDsMatchModeChange"?: (event: DsFilterMenuCustomEvent<FilterMenuMatchModeChangeDetail>) => void;
+        "onDsMatchModeChange"?: (event: DsFilterMenuCustomEvent<FilterMenuMatchModeChangeDetail1>) => void;
         /**
           * Emitted whenever internal select-trigger activation changes popup visibility.
          */
@@ -8039,7 +8613,7 @@ declare namespace LocalJSX {
           * Controlled values keyed by filter id.
           * @default {}
          */
-        "values"?: FilterMenuValues;
+        "values"?: FilterMenuValues1;
         /**
           * Stacked, collapsible sections for a configuration panel.
           * @default false
@@ -10173,11 +10747,6 @@ declare namespace LocalJSX {
          */
         "columnCustomizer"?: boolean;
         /**
-          * Controlled data-column identities in display order. Omitted ids append in catalog order.
-          * @default []
-         */
-        "columnOrder"?: string[];
-        /**
           * Stable column definitions. Assign through JavaScript.
           * @default []
          */
@@ -10239,6 +10808,11 @@ declare namespace LocalJSX {
          */
         "errorHeading"?: string;
         /**
+          * Controlled data-column identities in display order. Omitted ids append in catalog order.
+          * @default []
+         */
+        "fieldOrder"?: string[];
+        /**
           * Fit the complete table composition to its nearest vertical scrollport.
           * @default false
          */
@@ -10276,12 +10850,12 @@ declare namespace LocalJSX {
           * Controlled grouping column. Applications supply groups in their final fixed order.
           * @default null
          */
-        "grouping"?: TableGroupingState | null;
+        "grouping"?: DataGroupingState | null;
         /**
           * One level of application-owned grouped data. Assign through JavaScript.
           * @default []
          */
-        "groups"?: TableGroup[];
+        "groups"?: DataGroup[];
         /**
           * @default false
          */
@@ -10294,13 +10868,13 @@ declare namespace LocalJSX {
           * Controlled hidden data-column identities. Action ids are ignored.
           * @default []
          */
-        "hiddenColumnIds"?: string[];
+        "hiddenFieldIds"?: string[];
         /**
           * @default false
          */
         "hideColumnCustomizerTrigger"?: boolean;
         /**
-          * Optional TableSearch field identities that restrict which data-point tracks are highlighted.
+          * Optional DataSearch field identities that restrict which data-point tracks are highlighted.
           * @default []
          */
         "highlightFieldIds"?: string[];
@@ -10350,16 +10924,16 @@ declare namespace LocalJSX {
          */
         "maxHeight"?: string | number | undefined;
         "onDsCellAction"?: (event: DsTableCustomEvent<TableCellActionDetail>) => void;
-        "onDsColumnsConfigChange"?: (event: DsTableCustomEvent<TableColumnsConfigChangeDetail>) => void;
         "onDsCustomizeOptionChange"?: (event: DsTableCustomEvent<string>) => void;
         "onDsDataModeChange"?: (event: DsTableCustomEvent<TableDataModeChangeDetail>) => void;
+        "onDsFieldsConfigChange"?: (event: DsTableCustomEvent<DataFieldsConfigChangeDetail>) => void;
         "onDsGroupCollapseChange"?: (event: DsTableCustomEvent<TableGroupCollapseChangeDetail>) => void;
         "onDsGroupLoadMore"?: (event: DsTableCustomEvent<TableGroupLoadMoreDetail>) => void;
         "onDsLoadMore"?: (event: DsTableCustomEvent<TableLoadMoreDetail>) => void;
         "onDsPaginationChange"?: (event: DsTableCustomEvent<PaginationChangeDetail>) => void;
         "onDsRowActivate"?: (event: DsTableCustomEvent<TableRowActivateDetail>) => void;
         "onDsSelectionChange"?: (event: DsTableCustomEvent<TableSelectionChangeDetail>) => void;
-        "onDsSortChange"?: (event: DsTableCustomEvent<TableSortChangeDetail>) => void;
+        "onDsSortChange"?: (event: DsTableCustomEvent<DataSortChangeDetail>) => void;
         /**
           * Controlled top-level pagination state. Required when dataMode is pagination.
           * @default null
@@ -10415,7 +10989,7 @@ declare namespace LocalJSX {
           * Controlled member-row sort state.
           * @default null
          */
-        "sort"?: TableSortState | null;
+        "sort"?: DataSortState | null;
         /**
           * @default false
          */
@@ -10439,389 +11013,6 @@ declare namespace LocalJSX {
           * @default 'Virtual scroll'
          */
         "virtualModeLabel"?: string;
-    }
-    interface DsTableFilter {
-        /**
-          * Controlled category shown in the option pane.
-         */
-        "activeFilterId"?: string | undefined;
-        /**
-          * Accessible name for the trigger. Defaults to Filter table.
-          * @default null
-         */
-        "ariaLabel"?: string | null;
-        /**
-          * Accessible name for the category tab list.
-          * @default 'Filter categories'
-         */
-        "categoriesLabel"?: string;
-        /**
-          * Footer action and date-clear accessible label.
-          * @default 'Clear'
-         */
-        "clearLabel"?: string;
-        /**
-          * @default []
-         */
-        "filters"?: FilterMenuFilter1[];
-        /**
-          * Show the trigger border.
-          * @default true
-         */
-        "hasBorder"?: boolean;
-        /**
-          * Visible trigger label.
-          * @default 'Filter'
-         */
-        "label"?: string;
-        /**
-          * Controlled any/all match mode keyed by multiple-choice filter id. Defaults to any.
-          * @default {}
-         */
-        "matchModes"?: FilterMenuMatchModes1;
-        /**
-          * Accessible name for the non-modal filter dialog. Defaults to the trigger name.
-          * @default null
-         */
-        "menuLabel"?: string | null;
-        /**
-          * Empty-state text shown when an option search has no matches.
-          * @default 'No results'
-         */
-        "noResultsText"?: string;
-        /**
-          * Requests a controlled active-category replacement.
-         */
-        "onDsActiveFilterChange"?: (event: DsTableFilterCustomEvent<string>) => void;
-        /**
-          * Emitted after exit motion and rendered popup removal complete.
-         */
-        "onDsAfterClose"?: (event: DsTableFilterCustomEvent<void>) => void;
-        /**
-          * Requests a controlled value replacement without closing the popup.
-         */
-        "onDsChange"?: (event: DsTableFilterCustomEvent<FilterMenuChangeDetail1>) => void;
-        /**
-          * Requests that the consumer clear every filter value.
-         */
-        "onDsClear"?: (event: DsTableFilterCustomEvent<void>) => void;
-        /**
-          * Requests that the controlled popup close.
-         */
-        "onDsClose"?: (event: DsTableFilterCustomEvent<void>) => void;
-        /**
-          * Requests a controlled any/all mode replacement for a multiple-choice filter.
-         */
-        "onDsMatchModeChange"?: (event: DsTableFilterCustomEvent<FilterMenuMatchModeChangeDetail1>) => void;
-        /**
-          * Emitted whenever trigger activation changes popup visibility.
-         */
-        "onDsOpenChange"?: (event: DsTableFilterCustomEvent<boolean>) => void;
-        /**
-          * Controlled popup visibility.
-          * @default false
-         */
-        "open"?: boolean;
-        /**
-          * Placeholder shown in each non-date option search header.
-          * @default 'Search'
-         */
-        "searchPlaceholder"?: string;
-        /**
-          * Controlled values keyed by filter id.
-          * @default {}
-         */
-        "values"?: FilterMenuValues1;
-    }
-    interface DsTableGroup {
-        /**
-          * Accessible name for the trigger and non-modal dialog.
-          * @default null
-         */
-        "ariaLabel"?: string | null;
-        /**
-          * Clear action label.
-          * @default 'Clear'
-         */
-        "clearLabel"?: string;
-        /**
-          * @default false
-         */
-        "embedded"?: boolean;
-        /**
-          * Empty message kept in the order pane until a grouping data point is selected.
-          * @default 'Select a group to choose its order.'
-         */
-        "emptyMessage"?: string;
-        /**
-          * Controlled grouping field and the order of its group sections.
-          * @default null
-         */
-        "grouping"?: TableGroupingState | null;
-        /**
-          * Show the trigger border.
-          * @default true
-         */
-        "hasBorder"?: boolean;
-        /**
-          * Requests removal of the controlled grouping state.
-         */
-        "onDsClear"?: (event: DsTableGroupCustomEvent<void>) => void;
-        /**
-          * Requests replacement of the complete controlled grouping state.
-         */
-        "onDsGroupChange"?: (event: DsTableGroupCustomEvent<TableGroupingState>) => void;
-        /**
-          * Reports controlled popup visibility changes.
-         */
-        "onDsOpenChange"?: (event: DsTableGroupCustomEvent<boolean>) => void;
-        /**
-          * Controlled popup visibility.
-          * @default false
-         */
-        "open"?: boolean;
-        /**
-          * @default []
-         */
-        "options"?: TableGroupOption[];
-        /**
-          * @default false
-         */
-        "vertical"?: boolean;
-    }
-    interface DsTablePreferences {
-        "activeFilterId"?: string | undefined;
-        /**
-          * @default 'filters'
-         */
-        "activeTab"?: PreferencesTab;
-        /**
-          * @default []
-         */
-        "columnOrder"?: string[];
-        /**
-          * @default []
-         */
-        "columns"?: TableColumn[];
-        /**
-          * Additional toggle options in the column customizer.
-          * @default []
-         */
-        "customizeOptions"?: MenuItemData[];
-        /**
-          * @default []
-         */
-        "customizeSections"?: MenuSection[];
-        /**
-          * Render shared content without its popup or trigger.
-          * @default false
-         */
-        "embedded"?: boolean;
-        /**
-          * @default []
-         */
-        "filters"?: FilterMenuFilter1[];
-        /**
-          * @default null
-         */
-        "grouping"?: TableGroupingState | null;
-        /**
-          * @default []
-         */
-        "groupingOptions"?: TableGroupOption1[];
-        /**
-          * Show the trigger border.
-          * @default true
-         */
-        "hasBorder"?: boolean;
-        /**
-          * @default []
-         */
-        "hiddenColumnIds"?: string[];
-        /**
-          * @default 'Configure view'
-         */
-        "label"?: string;
-        /**
-          * @default {}
-         */
-        "matchModes"?: FilterMenuMatchModes1;
-        "onDsActiveFilterChange"?: (event: DsTablePreferencesCustomEvent<string>) => void;
-        "onDsColumnsConfigChange"?: (event: DsTablePreferencesCustomEvent<TableColumnsConfigChangeDetail>) => void;
-        "onDsCustomizeOptionChange"?: (event: DsTablePreferencesCustomEvent<string>) => void;
-        "onDsFilterChange"?: (event: DsTablePreferencesCustomEvent<FilterMenuChangeDetail1>) => void;
-        "onDsFilterMatchModeChange"?: (event: DsTablePreferencesCustomEvent<FilterMenuMatchModeChangeDetail1>) => void;
-        "onDsFiltersClear"?: (event: DsTablePreferencesCustomEvent<void>) => void;
-        "onDsGroupChange"?: (event: DsTablePreferencesCustomEvent<TableGroupingState>) => void;
-        "onDsGroupClear"?: (event: DsTablePreferencesCustomEvent<void>) => void;
-        "onDsPreferencesTabChange"?: (event: DsTablePreferencesCustomEvent<PreferencesTab>) => void;
-        "onDsSortChange"?: (event: DsTablePreferencesCustomEvent<TableSortChangeDetail>) => void;
-        /**
-          * @default null
-         */
-        "sort"?: TableSortState | null;
-        /**
-          * Optional sort fields when they differ from customizable content.
-         */
-        "sortColumns"?: TableColumn[];
-        /**
-          * @default {}
-         */
-        "values"?: FilterMenuValues1;
-    }
-    interface DsTableSavedViews {
-        /**
-          * Use an icon-only trigger in an explicitly compact toolbar.
-          * @default false
-         */
-        "compact"?: boolean;
-        /**
-          * Footer action label that opens the create-view dialog.
-          * @default 'New view'
-         */
-        "createLabel"?: string;
-        /**
-          * ID used for the built-in default view.
-          * @default '__default__'
-         */
-        "defaultViewId"?: string;
-        /**
-          * Label used for the built-in default view.
-          * @default 'Default'
-         */
-        "defaultViewLabel"?: string;
-        /**
-          * Whether the current table state differs from the selected custom view. Ignored for the default view.
-          * @default false
-         */
-        "dirty"?: boolean;
-        /**
-          * Show the trigger border.
-          * @default true
-         */
-        "hasBorder"?: boolean;
-        /**
-          * Accessible name for the saved-views select.
-          * @default 'Saved views'
-         */
-        "label"?: string;
-        /**
-          * Emitted when a view selection is requested.
-         */
-        "onDsViewChange"?: (event: DsTableSavedViewsCustomEvent<TableSavedViewChangeDetail>) => void;
-        /**
-          * Emitted after a valid create-view name is submitted.
-         */
-        "onDsViewCreate"?: (event: DsTableSavedViewsCustomEvent<TableSavedViewCreateDetail>) => void;
-        /**
-          * Emitted when the active custom view's stored payload should be restored.
-         */
-        "onDsViewDiscard"?: (event: DsTableSavedViewsCustomEvent<TableSavedViewDiscardDetail>) => void;
-        /**
-          * Emitted when a custom view removal is requested.
-         */
-        "onDsViewRemove"?: (event: DsTableSavedViewsCustomEvent<TableSavedViewRemoveDetail>) => void;
-        /**
-          * Emitted after a valid renamed view name is submitted.
-         */
-        "onDsViewRename"?: (event: DsTableSavedViewsCustomEvent<TableSavedViewRenameDetail>) => void;
-        /**
-          * Emitted when changes to the active custom view should replace its stored payload.
-         */
-        "onDsViewSave"?: (event: DsTableSavedViewsCustomEvent<TableSavedViewSaveDetail>) => void;
-        /**
-          * Trigger label shown while the default view is selected.
-          * @default 'Views'
-         */
-        "triggerLabel"?: string;
-        /**
-          * ID of the controlled active view, including the default view ID.
-          * @default '__default__'
-         */
-        "value"?: string;
-        /**
-          * @default []
-         */
-        "views"?: TableSavedView[];
-    }
-    interface DsTableSearch {
-        /**
-          * @default 'Search table'
-         */
-        "ariaLabel"?: string;
-        /**
-          * @default 'Clear search'
-         */
-        "clearLabel"?: string;
-        /**
-          * Table column catalog used to derive searchable data points and their complete labels.
-          * @default []
-         */
-        "columns"?: TableColumn[];
-        /**
-          * @default 'Choose search fields'
-         */
-        "fieldMenuLabel"?: string;
-        /**
-          * Show the resting field border; keyboard focus remains visible.
-          * @default true
-         */
-        "hasBorder"?: boolean;
-        /**
-          * @default false
-         */
-        "isInactive"?: boolean;
-        "onDsChange"?: (event: DsTableSearchCustomEvent<string>) => void;
-        "onDsClear"?: (event: DsTableSearchCustomEvent<void>) => void;
-        "onDsFieldsChange"?: (event: DsTableSearchCustomEvent<TableSearchFieldsChangeDetail>) => void;
-        /**
-          * @default 'Search'
-         */
-        "placeholder"?: string;
-        /**
-          * Controlled ordered field scopes rendered as Tags.
-          * @default []
-         */
-        "selectedFieldIds"?: string[];
-        /**
-          * Controlled free-text query.
-          * @default ''
-         */
-        "value"?: string;
-    }
-    interface DsTableSort {
-        /**
-          * Accessible name for the trigger and menu.
-          * @default null
-         */
-        "ariaLabel"?: string | null;
-        /**
-          * @default []
-         */
-        "columns"?: TableColumn[];
-        /**
-          * Show the trigger border.
-          * @default true
-         */
-        "hasBorder"?: boolean;
-        "onDsSortChange"?: (event: DsTableSortCustomEvent<TableSortChangeDetail>) => void;
-        /**
-          * Controlled table sort. Header sorting and this menu share the same value.
-          * @default null
-         */
-        "sort"?: TableSortState | null;
-    }
-    interface DsTableToolbar {
-        /**
-          * Use separators between regions when composing borderless controls.
-          * @default false
-         */
-        "borderless"?: boolean;
-        /**
-          * Accessible name for the grouped table controls.
-          * @default 'Table controls'
-         */
-        "label"?: string;
     }
     interface DsTag {
         /**
@@ -11523,6 +11714,74 @@ declare namespace LocalJSX {
         "heading": string;
         "sectionId": string;
     }
+    interface DsDataCustomizeAttributes {
+        "hasBorder": boolean;
+        "reorderable": boolean;
+        "minVisible": number;
+        "catalogHeader": string;
+        "optionsHeader": string;
+        "ariaLabel": string | null;
+        "label": string;
+    }
+    interface DsDataFilterAttributes {
+        "open": boolean;
+        "hasBorder": boolean;
+        "activeFilterId": string | undefined;
+        "label": string;
+        "ariaLabel": string | null;
+        "menuLabel": string | null;
+        "categoriesLabel": string;
+        "clearLabel": string;
+        "searchPlaceholder": string;
+        "noResultsText": string;
+    }
+    interface DsDataGroupAttributes {
+        "hasBorder": boolean;
+        "vertical": boolean;
+        "embedded": boolean;
+        "ariaLabel": string | null;
+        "open": boolean;
+        "emptyMessage": string;
+        "clearLabel": string;
+    }
+    interface DsDataPreferencesAttributes {
+        "hasBorder": boolean;
+        "activeFilterId": string | undefined;
+        "customizeLabel": string;
+        "catalogHeader": string;
+        "catalogReorderable": boolean;
+        "embedded": boolean;
+        "activeTab": PreferencesTab;
+        "label": string;
+    }
+    interface DsDataSavedViewsAttributes {
+        "hasBorder": boolean;
+        "value": string;
+        "dirty": boolean;
+        "defaultViewId": string;
+        "defaultViewLabel": string;
+        "label": string;
+        "triggerLabel": string;
+        "compact": boolean;
+        "createLabel": string;
+    }
+    interface DsDataSearchAttributes {
+        "hasBorder": boolean;
+        "value": string;
+        "placeholder": string;
+        "ariaLabel": string;
+        "clearLabel": string;
+        "fieldMenuLabel": string;
+        "isInactive": boolean;
+    }
+    interface DsDataSortAttributes {
+        "hasBorder": boolean;
+        "ariaLabel": string | null;
+    }
+    interface DsDataToolbarAttributes {
+        "label": string;
+        "borderless": boolean;
+    }
     interface DsDividerAttributes {
         "orientation": DividerOrientation;
         "background": DividerBackground | undefined;
@@ -12083,62 +12342,6 @@ declare namespace LocalJSX {
         "groupEndOfResultsLabel": string;
         "groupRowsLoadedLabel": string;
     }
-    interface DsTableFilterAttributes {
-        "open": boolean;
-        "hasBorder": boolean;
-        "activeFilterId": string | undefined;
-        "label": string;
-        "ariaLabel": string | null;
-        "menuLabel": string | null;
-        "categoriesLabel": string;
-        "clearLabel": string;
-        "searchPlaceholder": string;
-        "noResultsText": string;
-    }
-    interface DsTableGroupAttributes {
-        "hasBorder": boolean;
-        "vertical": boolean;
-        "embedded": boolean;
-        "ariaLabel": string | null;
-        "open": boolean;
-        "emptyMessage": string;
-        "clearLabel": string;
-    }
-    interface DsTablePreferencesAttributes {
-        "hasBorder": boolean;
-        "activeFilterId": string | undefined;
-        "embedded": boolean;
-        "activeTab": PreferencesTab;
-        "label": string;
-    }
-    interface DsTableSavedViewsAttributes {
-        "hasBorder": boolean;
-        "value": string;
-        "dirty": boolean;
-        "defaultViewId": string;
-        "defaultViewLabel": string;
-        "label": string;
-        "triggerLabel": string;
-        "compact": boolean;
-        "createLabel": string;
-    }
-    interface DsTableSearchAttributes {
-        "hasBorder": boolean;
-        "value": string;
-        "placeholder": string;
-        "ariaLabel": string;
-        "clearLabel": string;
-        "fieldMenuLabel": string;
-        "isInactive": boolean;
-    }
-    interface DsTableSortAttributes {
-        "hasBorder": boolean;
-        "ariaLabel": string | null;
-    }
-    interface DsTableToolbarAttributes {
-        "label": string;
-        "borderless": boolean;
-    }
     interface DsTagAttributes {
         "label": string;
         "icon": string;
@@ -12273,6 +12476,14 @@ declare namespace LocalJSX {
         "ds-conversation-list": DsConversationList;
         "ds-conversation-list-item": Omit<DsConversationListItem, keyof DsConversationListItemAttributes> & { [K in keyof DsConversationListItem & keyof DsConversationListItemAttributes]?: DsConversationListItem[K] } & { [K in keyof DsConversationListItem & keyof DsConversationListItemAttributes as `attr:${K}`]?: DsConversationListItemAttributes[K] } & { [K in keyof DsConversationListItem & keyof DsConversationListItemAttributes as `prop:${K}`]?: DsConversationListItem[K] };
         "ds-conversation-list-section": Omit<DsConversationListSection, keyof DsConversationListSectionAttributes> & { [K in keyof DsConversationListSection & keyof DsConversationListSectionAttributes]?: DsConversationListSection[K] } & { [K in keyof DsConversationListSection & keyof DsConversationListSectionAttributes as `attr:${K}`]?: DsConversationListSectionAttributes[K] } & { [K in keyof DsConversationListSection & keyof DsConversationListSectionAttributes as `prop:${K}`]?: DsConversationListSection[K] };
+        "ds-data-customize": Omit<DsDataCustomize, keyof DsDataCustomizeAttributes> & { [K in keyof DsDataCustomize & keyof DsDataCustomizeAttributes]?: DsDataCustomize[K] } & { [K in keyof DsDataCustomize & keyof DsDataCustomizeAttributes as `attr:${K}`]?: DsDataCustomizeAttributes[K] } & { [K in keyof DsDataCustomize & keyof DsDataCustomizeAttributes as `prop:${K}`]?: DsDataCustomize[K] };
+        "ds-data-filter": Omit<DsDataFilter, keyof DsDataFilterAttributes> & { [K in keyof DsDataFilter & keyof DsDataFilterAttributes]?: DsDataFilter[K] } & { [K in keyof DsDataFilter & keyof DsDataFilterAttributes as `attr:${K}`]?: DsDataFilterAttributes[K] } & { [K in keyof DsDataFilter & keyof DsDataFilterAttributes as `prop:${K}`]?: DsDataFilter[K] };
+        "ds-data-group": Omit<DsDataGroup, keyof DsDataGroupAttributes> & { [K in keyof DsDataGroup & keyof DsDataGroupAttributes]?: DsDataGroup[K] } & { [K in keyof DsDataGroup & keyof DsDataGroupAttributes as `attr:${K}`]?: DsDataGroupAttributes[K] } & { [K in keyof DsDataGroup & keyof DsDataGroupAttributes as `prop:${K}`]?: DsDataGroup[K] };
+        "ds-data-preferences": Omit<DsDataPreferences, keyof DsDataPreferencesAttributes> & { [K in keyof DsDataPreferences & keyof DsDataPreferencesAttributes]?: DsDataPreferences[K] } & { [K in keyof DsDataPreferences & keyof DsDataPreferencesAttributes as `attr:${K}`]?: DsDataPreferencesAttributes[K] } & { [K in keyof DsDataPreferences & keyof DsDataPreferencesAttributes as `prop:${K}`]?: DsDataPreferences[K] };
+        "ds-data-saved-views": Omit<DsDataSavedViews, keyof DsDataSavedViewsAttributes> & { [K in keyof DsDataSavedViews & keyof DsDataSavedViewsAttributes]?: DsDataSavedViews[K] } & { [K in keyof DsDataSavedViews & keyof DsDataSavedViewsAttributes as `attr:${K}`]?: DsDataSavedViewsAttributes[K] } & { [K in keyof DsDataSavedViews & keyof DsDataSavedViewsAttributes as `prop:${K}`]?: DsDataSavedViews[K] };
+        "ds-data-search": Omit<DsDataSearch, keyof DsDataSearchAttributes> & { [K in keyof DsDataSearch & keyof DsDataSearchAttributes]?: DsDataSearch[K] } & { [K in keyof DsDataSearch & keyof DsDataSearchAttributes as `attr:${K}`]?: DsDataSearchAttributes[K] } & { [K in keyof DsDataSearch & keyof DsDataSearchAttributes as `prop:${K}`]?: DsDataSearch[K] };
+        "ds-data-sort": Omit<DsDataSort, keyof DsDataSortAttributes> & { [K in keyof DsDataSort & keyof DsDataSortAttributes]?: DsDataSort[K] } & { [K in keyof DsDataSort & keyof DsDataSortAttributes as `attr:${K}`]?: DsDataSortAttributes[K] } & { [K in keyof DsDataSort & keyof DsDataSortAttributes as `prop:${K}`]?: DsDataSort[K] };
+        "ds-data-toolbar": Omit<DsDataToolbar, keyof DsDataToolbarAttributes> & { [K in keyof DsDataToolbar & keyof DsDataToolbarAttributes]?: DsDataToolbar[K] } & { [K in keyof DsDataToolbar & keyof DsDataToolbarAttributes as `attr:${K}`]?: DsDataToolbarAttributes[K] } & { [K in keyof DsDataToolbar & keyof DsDataToolbarAttributes as `prop:${K}`]?: DsDataToolbar[K] };
         "ds-divider": Omit<DsDivider, keyof DsDividerAttributes> & { [K in keyof DsDivider & keyof DsDividerAttributes]?: DsDivider[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `attr:${K}`]?: DsDividerAttributes[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `prop:${K}`]?: DsDivider[K] };
         "ds-empty-state": Omit<DsEmptyState, keyof DsEmptyStateAttributes> & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes]?: DsEmptyState[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `attr:${K}`]?: DsEmptyStateAttributes[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `prop:${K}`]?: DsEmptyState[K] };
         "ds-field": Omit<DsField, keyof DsFieldAttributes> & { [K in keyof DsField & keyof DsFieldAttributes]?: DsField[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `attr:${K}`]?: DsFieldAttributes[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `prop:${K}`]?: DsField[K] };
@@ -12314,13 +12525,6 @@ declare namespace LocalJSX {
         "ds-switch": Omit<DsSwitch, keyof DsSwitchAttributes> & { [K in keyof DsSwitch & keyof DsSwitchAttributes]?: DsSwitch[K] } & { [K in keyof DsSwitch & keyof DsSwitchAttributes as `attr:${K}`]?: DsSwitchAttributes[K] } & { [K in keyof DsSwitch & keyof DsSwitchAttributes as `prop:${K}`]?: DsSwitch[K] };
         "ds-tab-group": Omit<DsTabGroup, keyof DsTabGroupAttributes> & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes]?: DsTabGroup[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `attr:${K}`]?: DsTabGroupAttributes[K] } & { [K in keyof DsTabGroup & keyof DsTabGroupAttributes as `prop:${K}`]?: DsTabGroup[K] };
         "ds-table": Omit<DsTable, keyof DsTableAttributes> & { [K in keyof DsTable & keyof DsTableAttributes]?: DsTable[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `attr:${K}`]?: DsTableAttributes[K] } & { [K in keyof DsTable & keyof DsTableAttributes as `prop:${K}`]?: DsTable[K] } & OneOf<"caption", DsTable["caption"], DsTableAttributes["caption"]>;
-        "ds-table-filter": Omit<DsTableFilter, keyof DsTableFilterAttributes> & { [K in keyof DsTableFilter & keyof DsTableFilterAttributes]?: DsTableFilter[K] } & { [K in keyof DsTableFilter & keyof DsTableFilterAttributes as `attr:${K}`]?: DsTableFilterAttributes[K] } & { [K in keyof DsTableFilter & keyof DsTableFilterAttributes as `prop:${K}`]?: DsTableFilter[K] };
-        "ds-table-group": Omit<DsTableGroup, keyof DsTableGroupAttributes> & { [K in keyof DsTableGroup & keyof DsTableGroupAttributes]?: DsTableGroup[K] } & { [K in keyof DsTableGroup & keyof DsTableGroupAttributes as `attr:${K}`]?: DsTableGroupAttributes[K] } & { [K in keyof DsTableGroup & keyof DsTableGroupAttributes as `prop:${K}`]?: DsTableGroup[K] };
-        "ds-table-preferences": Omit<DsTablePreferences, keyof DsTablePreferencesAttributes> & { [K in keyof DsTablePreferences & keyof DsTablePreferencesAttributes]?: DsTablePreferences[K] } & { [K in keyof DsTablePreferences & keyof DsTablePreferencesAttributes as `attr:${K}`]?: DsTablePreferencesAttributes[K] } & { [K in keyof DsTablePreferences & keyof DsTablePreferencesAttributes as `prop:${K}`]?: DsTablePreferences[K] };
-        "ds-table-saved-views": Omit<DsTableSavedViews, keyof DsTableSavedViewsAttributes> & { [K in keyof DsTableSavedViews & keyof DsTableSavedViewsAttributes]?: DsTableSavedViews[K] } & { [K in keyof DsTableSavedViews & keyof DsTableSavedViewsAttributes as `attr:${K}`]?: DsTableSavedViewsAttributes[K] } & { [K in keyof DsTableSavedViews & keyof DsTableSavedViewsAttributes as `prop:${K}`]?: DsTableSavedViews[K] };
-        "ds-table-search": Omit<DsTableSearch, keyof DsTableSearchAttributes> & { [K in keyof DsTableSearch & keyof DsTableSearchAttributes]?: DsTableSearch[K] } & { [K in keyof DsTableSearch & keyof DsTableSearchAttributes as `attr:${K}`]?: DsTableSearchAttributes[K] } & { [K in keyof DsTableSearch & keyof DsTableSearchAttributes as `prop:${K}`]?: DsTableSearch[K] };
-        "ds-table-sort": Omit<DsTableSort, keyof DsTableSortAttributes> & { [K in keyof DsTableSort & keyof DsTableSortAttributes]?: DsTableSort[K] } & { [K in keyof DsTableSort & keyof DsTableSortAttributes as `attr:${K}`]?: DsTableSortAttributes[K] } & { [K in keyof DsTableSort & keyof DsTableSortAttributes as `prop:${K}`]?: DsTableSort[K] };
-        "ds-table-toolbar": Omit<DsTableToolbar, keyof DsTableToolbarAttributes> & { [K in keyof DsTableToolbar & keyof DsTableToolbarAttributes]?: DsTableToolbar[K] } & { [K in keyof DsTableToolbar & keyof DsTableToolbarAttributes as `attr:${K}`]?: DsTableToolbarAttributes[K] } & { [K in keyof DsTableToolbar & keyof DsTableToolbarAttributes as `prop:${K}`]?: DsTableToolbar[K] };
         "ds-tag": Omit<DsTag, keyof DsTagAttributes> & { [K in keyof DsTag & keyof DsTagAttributes]?: DsTag[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `attr:${K}`]?: DsTagAttributes[K] } & { [K in keyof DsTag & keyof DsTagAttributes as `prop:${K}`]?: DsTag[K] } & OneOf<"label", DsTag["label"], DsTagAttributes["label"]>;
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
         "ds-textarea": Omit<DsTextarea, keyof DsTextareaAttributes> & { [K in keyof DsTextarea & keyof DsTextareaAttributes]?: DsTextarea[K] } & { [K in keyof DsTextarea & keyof DsTextareaAttributes as `attr:${K}`]?: DsTextareaAttributes[K] } & { [K in keyof DsTextarea & keyof DsTextareaAttributes as `prop:${K}`]?: DsTextarea[K] };
@@ -12384,6 +12588,21 @@ declare module "@stencil/core" {
             "ds-conversation-list": LocalJSX.IntrinsicElements["ds-conversation-list"] & JSXBase.HTMLAttributes<HTMLDsConversationListElement>;
             "ds-conversation-list-item": LocalJSX.IntrinsicElements["ds-conversation-list-item"] & JSXBase.HTMLAttributes<HTMLDsConversationListItemElement>;
             "ds-conversation-list-section": LocalJSX.IntrinsicElements["ds-conversation-list-section"] & JSXBase.HTMLAttributes<HTMLDsConversationListSectionElement>;
+            /**
+             * Show, hide and optionally reorder the data points a view renders.
+             * The table owns its own column customizer inside the caption, because a table
+             * locks its last visible column and reorders columns. This control is the same
+             * catalog for every other surface — a card list, a map overlay — where the
+             * fields are independent and usually only show and hide.
+             */
+            "ds-data-customize": LocalJSX.IntrinsicElements["ds-data-customize"] & JSXBase.HTMLAttributes<HTMLDsDataCustomizeElement>;
+            "ds-data-filter": LocalJSX.IntrinsicElements["ds-data-filter"] & JSXBase.HTMLAttributes<HTMLDsDataFilterElement>;
+            "ds-data-group": LocalJSX.IntrinsicElements["ds-data-group"] & JSXBase.HTMLAttributes<HTMLDsDataGroupElement>;
+            "ds-data-preferences": LocalJSX.IntrinsicElements["ds-data-preferences"] & JSXBase.HTMLAttributes<HTMLDsDataPreferencesElement>;
+            "ds-data-saved-views": LocalJSX.IntrinsicElements["ds-data-saved-views"] & JSXBase.HTMLAttributes<HTMLDsDataSavedViewsElement>;
+            "ds-data-search": LocalJSX.IntrinsicElements["ds-data-search"] & JSXBase.HTMLAttributes<HTMLDsDataSearchElement>;
+            "ds-data-sort": LocalJSX.IntrinsicElements["ds-data-sort"] & JSXBase.HTMLAttributes<HTMLDsDataSortElement>;
+            "ds-data-toolbar": LocalJSX.IntrinsicElements["ds-data-toolbar"] & JSXBase.HTMLAttributes<HTMLDsDataToolbarElement>;
             "ds-divider": LocalJSX.IntrinsicElements["ds-divider"] & JSXBase.HTMLAttributes<HTMLDsDividerElement>;
             "ds-empty-state": LocalJSX.IntrinsicElements["ds-empty-state"] & JSXBase.HTMLAttributes<HTMLDsEmptyStateElement>;
             "ds-field": LocalJSX.IntrinsicElements["ds-field"] & JSXBase.HTMLAttributes<HTMLDsFieldElement>;
@@ -12425,13 +12644,6 @@ declare module "@stencil/core" {
             "ds-switch": LocalJSX.IntrinsicElements["ds-switch"] & JSXBase.HTMLAttributes<HTMLDsSwitchElement>;
             "ds-tab-group": LocalJSX.IntrinsicElements["ds-tab-group"] & JSXBase.HTMLAttributes<HTMLDsTabGroupElement>;
             "ds-table": LocalJSX.IntrinsicElements["ds-table"] & JSXBase.HTMLAttributes<HTMLDsTableElement>;
-            "ds-table-filter": LocalJSX.IntrinsicElements["ds-table-filter"] & JSXBase.HTMLAttributes<HTMLDsTableFilterElement>;
-            "ds-table-group": LocalJSX.IntrinsicElements["ds-table-group"] & JSXBase.HTMLAttributes<HTMLDsTableGroupElement>;
-            "ds-table-preferences": LocalJSX.IntrinsicElements["ds-table-preferences"] & JSXBase.HTMLAttributes<HTMLDsTablePreferencesElement>;
-            "ds-table-saved-views": LocalJSX.IntrinsicElements["ds-table-saved-views"] & JSXBase.HTMLAttributes<HTMLDsTableSavedViewsElement>;
-            "ds-table-search": LocalJSX.IntrinsicElements["ds-table-search"] & JSXBase.HTMLAttributes<HTMLDsTableSearchElement>;
-            "ds-table-sort": LocalJSX.IntrinsicElements["ds-table-sort"] & JSXBase.HTMLAttributes<HTMLDsTableSortElement>;
-            "ds-table-toolbar": LocalJSX.IntrinsicElements["ds-table-toolbar"] & JSXBase.HTMLAttributes<HTMLDsTableToolbarElement>;
             "ds-tag": LocalJSX.IntrinsicElements["ds-tag"] & JSXBase.HTMLAttributes<HTMLDsTagElement>;
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
             "ds-textarea": LocalJSX.IntrinsicElements["ds-textarea"] & JSXBase.HTMLAttributes<HTMLDsTextareaElement>;

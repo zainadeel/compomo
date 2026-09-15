@@ -46,8 +46,8 @@ export function tableActionMenuSections(items: TableCellActionMenuEntry[]): Menu
   return sections;
 }
 
-export function tableActionTriggerId(menuId: string, rowId: string, columnId: string): string {
-  return `${menuId}-${sanitizeId(rowId)}-${sanitizeId(columnId)}`;
+export function tableActionTriggerId(menuId: string, rowId: string, fieldId: string): string {
+  return `${menuId}-${sanitizeId(rowId)}-${sanitizeId(fieldId)}`;
 }
 
 function sanitizeId(value: string): string {

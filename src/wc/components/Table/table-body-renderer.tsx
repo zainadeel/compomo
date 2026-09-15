@@ -1,6 +1,6 @@
 import { h } from '@stencil/core';
 import type { TableGroupRenderModel, TableRenderModel } from './table-render-model';
-import type { TableGroup, TableRow } from './table-types';
+import type { DataGroup, TableRow } from './table-types';
 import type { TableVirtualNode, TableVirtualPlan } from './table-virtual-model';
 
 export interface TableVirtualRowPoolState {
@@ -23,7 +23,7 @@ export interface TableBodyRenderOptions {
     rowKey?: string
   ) => unknown;
   renderGroupContent: (group: TableGroupRenderModel) => unknown;
-  renderGroupLoadRow: (group: TableGroup, totalColumns: number) => unknown;
+  renderGroupLoadRow: (group: DataGroup, totalColumns: number) => unknown;
 }
 
 /**

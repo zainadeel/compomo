@@ -1193,7 +1193,7 @@ export class FilterMenu {
             class={{
               'filter-menu-popup': true,
               'ds-choice-popup': !this.embedded,
-              'table-preferences-embedded': this.embedded,
+              'data-preferences-embedded': this.embedded,
               'ds-choice-popup--closing': this.closing,
             }}
             style={this.embedded ? undefined : popupStyle}

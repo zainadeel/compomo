@@ -16,16 +16,16 @@ import {
 import type { TableColumn } from '../src/wc/components/Table/table-types';
 
 const columns: TableColumn[] = [
-  { id: 'driver', header: 'Driver' },
-  { id: 'status', header: 'Status' },
-  { id: 'vehicle', header: 'Vehicle' },
-  { id: 'action', kind: 'action', header: '', headerLabel: 'Action' },
+  { id: 'driver', label: 'Driver' },
+  { id: 'status', label: 'Status' },
+  { id: 'vehicle', label: 'Vehicle' },
+  { id: 'action', kind: 'action', label: '', accessibleLabel: 'Action' },
 ];
 
-test('labels prefer a visible header, then headerLabel, then id', () => {
+test('labels prefer a visible label, then accessibleLabel, then id', () => {
   assert.equal(tableColumnCustomizerLabel(columns[0]), 'Driver');
   assert.equal(tableColumnCustomizerLabel(columns[3]), 'Action');
-  assert.equal(tableColumnCustomizerLabel({ id: 'notes', header: '  ' }), 'notes');
+  assert.equal(tableColumnCustomizerLabel({ id: 'notes', label: '  ' }), 'notes');
 });
 
 test('treats kind action as a non-data column', () => {
@@ -55,8 +55,8 @@ test('strips action ids from hidden state and keeps one data column visible', ()
 test('passes columns through until the customizer is opted in', () => {
   assert.deepEqual(
     resolveTableVisibleColumns(columns, {
-      hiddenColumnIds: ['status'],
-      columnOrder: ['vehicle', 'driver'],
+      hiddenFieldIds: ['status'],
+      fieldOrder: ['vehicle', 'driver'],
     }).map(column => column.id),
     ['driver', 'status', 'vehicle', 'action']
   );
@@ -66,8 +66,8 @@ test('renders data columns in order minus hidden, then locked action columns', (
   assert.deepEqual(
     resolveTableVisibleColumns(columns, {
       columnCustomizer: true,
-      hiddenColumnIds: ['status'],
-      columnOrder: ['vehicle', 'driver'],
+      hiddenFieldIds: ['status'],
+      fieldOrder: ['vehicle', 'driver'],
     }).map(column => column.id),
     ['vehicle', 'driver', 'action']
   );

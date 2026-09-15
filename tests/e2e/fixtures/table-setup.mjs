@@ -1,20 +1,20 @@
 import '/dist/components/ds-table.js';
-import '/dist/components/ds-table-toolbar.js';
-import '/dist/components/ds-table-saved-views.js';
-import '/dist/components/ds-table-filter.js';
-import '/dist/components/ds-table-group.js';
-import '/dist/components/ds-table-sort.js';
+import '/dist/components/ds-data-toolbar.js';
+import '/dist/components/ds-data-saved-views.js';
+import '/dist/components/ds-data-filter.js';
+import '/dist/components/ds-data-group.js';
+import '/dist/components/ds-data-sort.js';
 import '/dist/components/ds-menu.js';
 import '/dist/components/ds-select.js';
 import '/dist/components/ds-filter-menu.js';
 import '/dist/components/ds-tooltip.js';
 
 await customElements.whenDefined('ds-table');
-await customElements.whenDefined('ds-table-toolbar');
-await customElements.whenDefined('ds-table-saved-views');
-await customElements.whenDefined('ds-table-filter');
-await customElements.whenDefined('ds-table-group');
-await customElements.whenDefined('ds-table-sort');
+await customElements.whenDefined('ds-data-toolbar');
+await customElements.whenDefined('ds-data-saved-views');
+await customElements.whenDefined('ds-data-filter');
+await customElements.whenDefined('ds-data-group');
+await customElements.whenDefined('ds-data-sort');
 await customElements.whenDefined('ds-filter-menu');
 await customElements.whenDefined('ds-select');
 
@@ -48,7 +48,7 @@ savedViews.addEventListener('dsViewDiscard', event => {
   savedViews.dirty = false;
 });
 
-const tableGroup = document.getElementById('table-group');
+const tableGroup = document.getElementById('data-group');
 tableGroup.options = [
   { label: 'Behavior', value: 'behavior' },
   { label: 'Severity', value: 'severity' },
@@ -83,12 +83,12 @@ const overflowActionItems = [
 ];
 
 const columns = [
-  { id: 'name', header: 'Driver', sortable: true, size: 'sm' },
-  { id: 'status', header: 'Status', sortable: true, align: 'center', size: 'sm' },
-  { id: 'vehicle', header: 'Vehicle', size: 'xs', help: 'Assigned vehicle identifier.' },
+  { id: 'name', label: 'Driver', sortable: true, size: 'sm' },
+  { id: 'status', label: 'Status', sortable: true, align: 'center', size: 'sm' },
+  { id: 'vehicle', label: 'Vehicle', size: 'xs', help: 'Assigned vehicle identifier.' },
   {
     id: 'score',
-    header: 'Safety score',
+    label: 'Safety score',
     sortable: true,
     align: 'end',
     size: 'xs',
@@ -139,10 +139,10 @@ basic.addEventListener('dsSortChange', event => {
     basic.rows = rows;
     return;
   }
-  const { columnId, direction } = event.detail.sort;
+  const { fieldId, direction } = event.detail.sort;
   basic.rows = [...rows].sort((a, b) => {
-    const aValue = a.cells[columnId]?.primary ?? a.cells[columnId] ?? '';
-    const bValue = b.cells[columnId]?.primary ?? b.cells[columnId] ?? '';
+    const aValue = a.cells[fieldId]?.primary ?? a.cells[fieldId] ?? '';
+    const bValue = b.cells[fieldId]?.primary ?? b.cells[fieldId] ?? '';
     return (
       String(aValue).localeCompare(String(bValue), undefined, { numeric: true }) *
       (direction === 'asc' ? 1 : -1)
@@ -161,14 +161,14 @@ footer.totalCount = 1500;
 const footerNested = setBase('footer-nested');
 footerNested.displayedCount = 50;
 footerNested.totalCount = 1500;
-footerNested.querySelector('ds-table-saved-views').views = [
+footerNested.querySelector('ds-data-saved-views').views = [
   { id: 'attention', label: 'Needs attention' },
 ];
 
 const grouped = document.getElementById('grouped');
 grouped.columns = columns;
-grouped.grouping = { columnId: 'status', direction: 'asc' };
-grouped.sort = { columnId: 'score', direction: 'desc' };
+grouped.grouping = { fieldId: 'status', direction: 'asc' };
+grouped.sort = { fieldId: 'score', direction: 'desc' };
 const ascendingGroups = [
   { id: 'driving', label: 'Driving', totalCount: 3, rows: [rows[0], rows[3]] },
   { id: 'off-duty', label: 'Off duty', rows: [rows[2]] },
@@ -193,9 +193,9 @@ grouped.addEventListener('dsSortChange', event => {
 
 const severityGrouped = document.getElementById('severity-grouped');
 severityGrouped.columns = [
-  { id: 'behavior', header: 'Behavior', size: 'sm' },
-  { id: 'severity', header: 'Severity', sortable: true, size: 'xs' },
-  { id: 'driver', header: 'Driver', size: 'sm' },
+  { id: 'behavior', label: 'Behavior', size: 'sm' },
+  { id: 'severity', label: 'Severity', sortable: true, size: 'xs' },
+  { id: 'driver', label: 'Driver', size: 'sm' },
 ];
 const severityRows = [
   {
@@ -237,7 +237,7 @@ const severityIntent = {
 };
 severityGrouped.selectionMode = 'multiple';
 severityGrouped.selectedRowIds = [];
-severityGrouped.grouping = { columnId: 'severity', direction: 'asc' };
+severityGrouped.grouping = { fieldId: 'severity', direction: 'asc' };
 severityGrouped.groups = ['Critical', 'High', 'Medium', 'Low'].map(label => ({
   id: label.toLowerCase(),
   label,
@@ -257,15 +257,15 @@ const compound = document.getElementById('compound');
 compound.columns = [
   {
     id: 'behaviorDetails',
-    header: 'Behavior / Severity',
-    headerSegments: [
+    label: 'Behavior / Severity',
+    segments: [
       { label: 'Behavior', sortKey: 'behavior', separator: '/' },
       { label: 'Severity', sortKey: 'severity' },
     ],
     sortable: true,
     size: 'sm',
   },
-  { id: 'status', header: 'Status', size: 'sm' },
+  { id: 'status', label: 'Status', size: 'sm' },
 ];
 const compoundRows = [
   {
@@ -299,38 +299,38 @@ compound.addEventListener('dsSortChange', event => {
     compound.rows = compoundRows;
     return;
   }
-  const { columnId, direction } = event.detail.sort;
+  const { fieldId, direction } = event.detail.sort;
   compound.rows = [...compoundRows].sort(
     (a, b) =>
-      String(a.cells[columnId]).localeCompare(String(b.cells[columnId])) *
+      String(a.cells[fieldId]).localeCompare(String(b.cells[fieldId])) *
       (direction === 'asc' ? 1 : -1)
   );
 });
 
 const cellTypes = document.getElementById('cell-types');
 cellTypes.columns = [
-  { id: 'singleText', header: 'Single text', size: 'sm' },
-  { id: 'primarySecondary', header: 'Primary + secondary', size: 'sm' },
-  { id: 'linkedText', header: 'Linked text', size: 'sm' },
-  { id: 'primaryPair', header: 'Primary + primary', size: 'sm' },
-  { id: 'event', header: 'Event', size: 'sm' },
-  { id: 'image', header: 'Image', imageTracks: 2 },
-  { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
-  { id: 'iconText', header: 'Icon + text', size: 'sm' },
-  { id: 'tagOnly', header: 'Tag only', size: 'sm' },
-  { id: 'tagWithText', header: 'Tag with text', size: 'sm' },
-  { id: 'textWithTag', header: 'Text with tag', size: 'sm' },
-  { id: 'action', kind: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
+  { id: 'singleText', label: 'Single text', size: 'sm' },
+  { id: 'primarySecondary', label: 'Primary + secondary', size: 'sm' },
+  { id: 'linkedText', label: 'Linked text', size: 'sm' },
+  { id: 'primaryPair', label: 'Primary + primary', size: 'sm' },
+  { id: 'event', label: 'Event', size: 'sm' },
+  { id: 'image', label: 'Image', imageTracks: 2 },
+  { id: 'icon', label: 'Icon only', align: 'center', size: 'xs' },
+  { id: 'iconText', label: 'Icon + text', size: 'sm' },
+  { id: 'tagOnly', label: 'Tag only', size: 'sm' },
+  { id: 'tagWithText', label: 'Tag with text', size: 'sm' },
+  { id: 'textWithTag', label: 'Text with tag', size: 'sm' },
+  { id: 'action', kind: 'action', label: '', accessibleLabel: 'Action', align: 'center', size: 40 },
   {
     id: 'borderedAction',
     kind: 'action',
-    header: '',
-    headerLabel: 'Bordered action',
+    label: '',
+    accessibleLabel: 'Bordered action',
     align: 'center',
     size: 40,
   },
-  { id: 'empty', header: 'Empty', size: 'xs' },
-  { id: 'blank', header: 'Blank', size: 'xs' },
+  { id: 'empty', label: 'Empty', size: 'xs' },
+  { id: 'blank', label: 'Blank', size: 'xs' },
 ];
 cellTypes.rows = [
   {
@@ -408,11 +408,11 @@ cellTypes.addEventListener('dsRowActivate', event => {
 
 const threeTrack = document.getElementById('three-track');
 threeTrack.columns = [
-  { id: 'image', header: 'Image', imageTracks: 3 },
-  { id: 'iconText', header: 'Icon + text', size: 'sm' },
-  { id: 'driver', header: 'Driver', size: 'sm' },
-  { id: 'vehicle', header: 'Vehicle', size: 'sm' },
-  { id: 'event', header: 'Event', size: 'sm' },
+  { id: 'image', label: 'Image', imageTracks: 3 },
+  { id: 'iconText', label: 'Icon + text', size: 'sm' },
+  { id: 'driver', label: 'Driver', size: 'sm' },
+  { id: 'vehicle', label: 'Vehicle', size: 'sm' },
+  { id: 'event', label: 'Event', size: 'sm' },
 ];
 threeTrack.rows = [
   {
@@ -485,9 +485,9 @@ threeTrack.rows = [
 
 const multipleTags = document.getElementById('multiple-tags');
 multipleTags.columns = [
-  { id: 'vehicle', header: 'Vehicle', size: 160 },
-  { id: 'behaviors', header: 'Detected behaviors', size: 160 },
-  { id: 'status', header: 'Status', size: 120 },
+  { id: 'vehicle', label: 'Vehicle', size: 160 },
+  { id: 'behaviors', label: 'Detected behaviors', size: 160 },
+  { id: 'status', label: 'Status', size: 120 },
 ];
 multipleTags.rows = [
   {
@@ -543,8 +543,8 @@ multipleTags.rows = [
 
 const wrapTwo = document.getElementById('wrap-two');
 wrapTwo.columns = [
-  { id: 'name', header: 'Tracks' },
-  { id: 'notes', header: 'Wrapping primary', wrap: true, size: 140 },
+  { id: 'name', label: 'Tracks' },
+  { id: 'notes', label: 'Wrapping primary', wrap: true, size: 140 },
 ];
 wrapTwo.rows = [
   {
@@ -565,8 +565,8 @@ wrapTwo.rows = [
 
 const wrapThree = document.getElementById('wrap-three');
 wrapThree.columns = [
-  { id: 'name', header: 'Tracks' },
-  { id: 'notes', header: 'Wrapping primary', wrap: true, size: 200 },
+  { id: 'name', label: 'Tracks' },
+  { id: 'notes', label: 'Wrapping primary', wrap: true, size: 200 },
 ];
 wrapThree.rows = [
   {
@@ -584,8 +584,8 @@ wrapThree.rows = [
 
 const wrapSecondaryTwo = document.getElementById('wrap-secondary-two');
 wrapSecondaryTwo.columns = [
-  { id: 'name', header: 'Tracks' },
-  { id: 'notes', header: 'Wrapping secondary', wrap: true, size: 180 },
+  { id: 'name', label: 'Tracks' },
+  { id: 'notes', label: 'Wrapping secondary', wrap: true, size: 180 },
 ];
 wrapSecondaryTwo.rows = [
   {
@@ -613,8 +613,8 @@ wrapSecondaryTwo.rows = [
 
 const wrapSecondaryThree = document.getElementById('wrap-secondary-three');
 wrapSecondaryThree.columns = [
-  { id: 'name', header: 'Tracks' },
-  { id: 'notes', header: 'Wrapping secondary', wrap: true, size: 140 },
+  { id: 'name', label: 'Tracks' },
+  { id: 'notes', label: 'Wrapping secondary', wrap: true, size: 140 },
 ];
 wrapSecondaryThree.rows = [
   {
@@ -640,8 +640,8 @@ const LONG_LOCATION =
 
 const truncateTooltip = document.getElementById('truncate-tooltip');
 truncateTooltip.columns = [
-  { id: 'case', header: 'Case' },
-  { id: 'notes', header: 'Notes', size: 140 },
+  { id: 'case', label: 'Case' },
+  { id: 'notes', label: 'Notes', size: 140 },
 ];
 truncateTooltip.rows = [
   {
@@ -680,12 +680,12 @@ truncateTooltip.rows = [
 
 const singleTrack = document.getElementById('single-track');
 singleTrack.columns = [
-  { id: 'scalar', header: 'Scalar text', size: 'sm' },
-  { id: 'image', header: 'Image', imageTracks: 1 },
-  { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
-  { id: 'iconText', header: 'Icon + text', size: 'sm' },
-  { id: 'tagOnly', header: 'Tag only', size: 'sm' },
-  { id: 'action', kind: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
+  { id: 'scalar', label: 'Scalar text', size: 'sm' },
+  { id: 'image', label: 'Image', imageTracks: 1 },
+  { id: 'icon', label: 'Icon only', align: 'center', size: 'xs' },
+  { id: 'iconText', label: 'Icon + text', size: 'sm' },
+  { id: 'tagOnly', label: 'Tag only', size: 'sm' },
+  { id: 'action', kind: 'action', label: '', accessibleLabel: 'Action', align: 'center', size: 40 },
 ];
 singleTrack.rows = [
   {
@@ -722,8 +722,8 @@ interactive.columns = [
   {
     id: 'actions',
     kind: 'action',
-    header: '',
-    headerLabel: 'Actions',
+    label: '',
+    accessibleLabel: 'Actions',
     align: 'center',
     size: 40,
     sticky: 'end',
@@ -750,8 +750,8 @@ interactive.addEventListener('dsRowActivate', event => {
 
 const linkedText = document.getElementById('linked-text');
 linkedText.columns = [
-  { id: 'vehicle', header: 'Vehicle', size: 'sm' },
-  { id: 'status', header: 'Status', size: 'xs' },
+  { id: 'vehicle', label: 'Vehicle', size: 'sm' },
+  { id: 'status', label: 'Status', size: 'xs' },
 ];
 linkedText.rows = [
   {
@@ -874,7 +874,7 @@ const renderGroupedPage = (pageIndex, pageSize) => {
     }));
 };
 groupedPaginated.columns = columns;
-groupedPaginated.grouping = { columnId: 'status', direction: 'asc' };
+groupedPaginated.grouping = { fieldId: 'status', direction: 'asc' };
 groupedPaginated.pagination = {
   pageIndex: 0,
   pageSize: 25,
@@ -909,7 +909,7 @@ groupedPaginated.addEventListener('dsGroupLoadMore', event => {
 });
 
 const overflow = document.getElementById('overflow');
-overflow.columns = [...columns, { id: 'location', header: 'Last known location', size: 'md' }];
+overflow.columns = [...columns, { id: 'location', label: 'Last known location', size: 'md' }];
 overflow.rows = Array.from({ length: 12 }, (_, index) => ({
   ...rows[index % rows.length],
   id: `${rows[index % rows.length].id}-${index}`,
@@ -930,7 +930,7 @@ fixedHeight.totalCount = 40;
 
 const viewportFit = document.getElementById('viewport-fit');
 viewportFit.columns = interactive.columns;
-viewportFit.grouping = { columnId: 'status', direction: 'asc' };
+viewportFit.grouping = { fieldId: 'status', direction: 'asc' };
 viewportFit.groups = [
   {
     id: 'fit-first',
@@ -955,12 +955,12 @@ viewportFit.totalCount = 40;
 setBase('standard');
 const documentSticky = document.getElementById('document-sticky');
 documentSticky.columns = interactive.columns;
-documentSticky.sort = { columnId: 'name', direction: 'desc' };
+documentSticky.sort = { fieldId: 'name', direction: 'desc' };
 const documentRows = Array.from({ length: 16 }, (_, index) => ({
   ...interactive.rows[index % interactive.rows.length],
   id: `document-row-${index}`,
 }));
-documentSticky.grouping = { columnId: 'status', direction: 'asc' };
+documentSticky.grouping = { fieldId: 'status', direction: 'asc' };
 documentSticky.groups = [
   { id: 'first-section', label: 'First section', rows: documentRows.slice(0, 8) },
   { id: 'second-section', label: 'Second section', rows: documentRows.slice(8) },
@@ -973,8 +973,8 @@ customizer.columns = [
   {
     id: 'action',
     kind: 'action',
-    header: '',
-    headerLabel: 'Action',
+    label: '',
+    accessibleLabel: 'Action',
     align: 'center',
     size: 40,
     sticky: 'end',
@@ -992,12 +992,12 @@ const customizerRows = rows.map(row => ({
   },
 }));
 customizer.rows = customizerRows;
-customizer.hiddenColumnIds = [];
-customizer.columnOrder = [];
-customizer.sort = { columnId: 'name', direction: 'asc' };
-customizer.addEventListener('dsColumnsConfigChange', event => {
-  customizer.hiddenColumnIds = event.detail.hiddenColumnIds;
-  customizer.columnOrder = event.detail.columnOrder;
+customizer.hiddenFieldIds = [];
+customizer.fieldOrder = [];
+customizer.sort = { fieldId: 'name', direction: 'asc' };
+customizer.addEventListener('dsFieldsConfigChange', event => {
+  customizer.hiddenFieldIds = event.detail.hiddenFieldIds;
+  customizer.fieldOrder = event.detail.fieldOrder;
 });
 customizer.addEventListener('dsDataModeChange', event => {
   customizer.dataMode = event.detail.dataMode;
@@ -1008,7 +1008,7 @@ customizer.addEventListener('dsSortChange', event => {
 });
 
 const customizerSort = document.getElementById('column-customizer-sort');
-customizerSort.columns = customizer.columns;
+customizerSort.fields = customizer.columns;
 customizerSort.sort = customizer.sort;
 customizerSort.addEventListener('dsSortChange', event => {
   customizer.sort = event.detail.sort;
@@ -1042,8 +1042,8 @@ const virtualColumns = [
   {
     id: 'action',
     kind: 'action',
-    header: '',
-    headerLabel: 'Action',
+    label: '',
+    accessibleLabel: 'Action',
     align: 'center',
     size: 40,
     sticky: 'end',
@@ -1082,7 +1082,7 @@ virtualTable.addEventListener('dsSortChange', event => {
 
 const virtualGrouped = document.getElementById('virtual-grouped');
 virtualGrouped.columns = virtualColumns;
-virtualGrouped.grouping = { columnId: 'status', direction: 'asc' };
+virtualGrouped.grouping = { fieldId: 'status', direction: 'asc' };
 virtualGrouped.groups = [
   {
     id: 'virtual-first',
@@ -1122,19 +1122,19 @@ for (const id of ['loading', 'empty', 'error']) {
 const loading = document.getElementById('loading');
 loading.selectionMode = 'multiple';
 loading.columns = [
-  { id: 'preview', header: 'Preview', size: 98, skeleton: { kind: 'image', tracks: 2 } },
+  { id: 'preview', label: 'Preview', size: 98, skeleton: { kind: 'image', tracks: 2 } },
   {
     id: 'details',
-    header: 'Details',
+    label: 'Details',
     size: 'sm',
     skeleton: { kind: 'text', lines: 2, primaryWidth: '76%', secondaryWidth: '48%' },
   },
-  { id: 'status', header: 'Status', size: 'xs', skeleton: { kind: 'tag', width: '64%' } },
-  { id: 'notes', header: 'Notes', size: 'xs', align: 'center', skeleton: { kind: 'icon' } },
+  { id: 'status', label: 'Status', size: 'xs', skeleton: { kind: 'tag', width: '64%' } },
+  { id: 'notes', label: 'Notes', size: 'xs', align: 'center', skeleton: { kind: 'icon' } },
   {
     id: 'actions',
-    header: '',
-    headerLabel: 'Actions',
+    label: '',
+    accessibleLabel: 'Actions',
     kind: 'action',
     size: 40,
     align: 'center',

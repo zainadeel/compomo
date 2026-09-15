@@ -16,14 +16,14 @@ import type {
   TableCellAction,
   TableCellActionMenuEntry,
   TableColumn,
-  TableColumnsConfigChangeDetail,
+  DataFieldsConfigChangeDetail,
   TableDataMode,
   TableDataModeChangeDetail,
-  TableGroup,
+  DataGroup,
   TableGroupIntent,
-  TableGroupingState,
+  DataGroupingState,
   TableRow,
-  TableSortState,
+  DataSortState,
 } from './table-types';
 import type { PaginationChangeDetail } from '../Pagination/pagination-types';
 
@@ -47,12 +47,12 @@ function overflowAction(name: string): TableCellAction {
 
 function applyColumnsConfig(event: Event) {
   const table = event.currentTarget as HTMLElement & {
-    hiddenColumnIds: string[];
-    columnOrder: string[];
+    hiddenFieldIds: string[];
+    fieldOrder: string[];
   };
-  const detail = (event as CustomEvent<TableColumnsConfigChangeDetail>).detail;
-  table.hiddenColumnIds = detail.hiddenColumnIds;
-  table.columnOrder = detail.columnOrder;
+  const detail = (event as CustomEvent<DataFieldsConfigChangeDetail>).detail;
+  table.hiddenFieldIds = detail.hiddenFieldIds;
+  table.fieldOrder = detail.fieldOrder;
 }
 
 function tableRowSearchText(row: TableRow): string {
@@ -67,19 +67,19 @@ function tableRowSearchText(row: TableRow): string {
 }
 
 const COLUMNS: TableColumn[] = [
-  { id: 'driver', header: 'Driver', sortable: true, size: 'sm' },
-  { id: 'status', header: 'Status', sortable: true, size: 'xs' },
-  { id: 'vehicle', header: 'Vehicle', sortable: true, size: 'xs' },
-  { id: 'location', header: 'Last known location', size: 'sm' },
+  { id: 'driver', label: 'Driver', sortable: true, size: 'sm' },
+  { id: 'status', label: 'Status', sortable: true, size: 'xs' },
+  { id: 'vehicle', label: 'Vehicle', sortable: true, size: 'xs' },
+  { id: 'location', label: 'Last known location', size: 'sm' },
   {
     id: 'safetyScore',
-    header: 'Safety score',
+    label: 'Safety score',
     sortable: true,
     align: 'end',
     size: 'xs',
     help: 'Rolling 7-day safety score from 0 to 100.',
   },
-  { id: 'driveTime', header: 'Drive time', sortable: true, align: 'end', size: 'xs' },
+  { id: 'driveTime', label: 'Drive time', sortable: true, align: 'end', size: 'xs' },
 ];
 
 const ROWS: TableRow[] = [
@@ -158,25 +158,25 @@ const ROWS: TableRow[] = [
 ];
 
 const ASYNC_COLUMNS: TableColumn[] = [
-  { id: 'driver', header: 'Driver', size: 'sm' },
-  { id: 'status', header: 'Status', size: 'xs' },
-  { id: 'vehicle', header: 'Vehicle', size: 'xs' },
+  { id: 'driver', label: 'Driver', size: 'sm' },
+  { id: 'status', label: 'Status', size: 'xs' },
+  { id: 'vehicle', label: 'Vehicle', size: 'xs' },
 ];
 
 const COMPOSED_SKELETON_COLUMNS: TableColumn[] = [
-  { id: 'preview', header: 'Preview', imageTracks: 2, skeleton: { kind: 'image', tracks: 2 } },
+  { id: 'preview', label: 'Preview', imageTracks: 2, skeleton: { kind: 'image', tracks: 2 } },
   {
     id: 'event',
-    header: 'Event',
+    label: 'Event',
     size: 'sm',
     skeleton: { kind: 'text', lines: 2, primaryWidth: '78%', secondaryWidth: '42%' },
   },
-  { id: 'status', header: 'Status', size: 'xs', skeleton: { kind: 'tag', width: '64%' } },
-  { id: 'notes', header: 'Notes', size: 'xs', align: 'center', skeleton: { kind: 'icon' } },
+  { id: 'status', label: 'Status', size: 'xs', skeleton: { kind: 'tag', width: '64%' } },
+  { id: 'notes', label: 'Notes', size: 'xs', align: 'center', skeleton: { kind: 'icon' } },
   {
     id: 'actions',
-    header: '',
-    headerLabel: 'Actions',
+    label: '',
+    accessibleLabel: 'Actions',
     kind: 'action',
     size: 40,
     align: 'center',
@@ -185,9 +185,9 @@ const COMPOSED_SKELETON_COLUMNS: TableColumn[] = [
 ];
 
 const ALIGNMENT_COLUMNS: TableColumn[] = [
-  { id: 'driver', header: 'Start aligned', sortable: true, align: 'start', size: 'sm' },
-  { id: 'status', header: 'Center aligned', sortable: true, align: 'center', size: 'sm' },
-  { id: 'score', header: 'End aligned', sortable: true, align: 'end', size: 'sm' },
+  { id: 'driver', label: 'Start aligned', sortable: true, align: 'start', size: 'sm' },
+  { id: 'status', label: 'Center aligned', sortable: true, align: 'center', size: 'sm' },
+  { id: 'score', label: 'End aligned', sortable: true, align: 'end', size: 'sm' },
 ];
 
 const ALIGNMENT_ROWS: TableRow[] = [
@@ -197,13 +197,13 @@ const ALIGNMENT_ROWS: TableRow[] = [
 ];
 
 const ELASTIC_SPACER_COLUMNS: TableColumn[] = [
-  { id: 'driver', header: 'Driver', size: 'sm' },
-  { id: 'status', header: 'Status', size: 'xs' },
-  { id: 'vehicle', header: 'Vehicle', size: 'xs' },
+  { id: 'driver', label: 'Driver', size: 'sm' },
+  { id: 'status', label: 'Status', size: 'xs' },
+  { id: 'vehicle', label: 'Vehicle', size: 'xs' },
   {
     id: 'actions',
-    header: '',
-    headerLabel: 'Actions',
+    label: '',
+    accessibleLabel: 'Actions',
     kind: 'action',
     size: 40,
     align: 'center',
@@ -222,49 +222,49 @@ const ELASTIC_SPACER_ROWS: TableRow[] = ROWS.slice(0, 3).map(row => ({
 }));
 
 const ALL_CELL_TYPE_COLUMNS: TableColumn[] = [
-  { id: 'scalar', header: 'Scalar text', size: 'sm' },
-  { id: 'primarySecondary', header: 'Primary + secondary', size: 'sm' },
-  { id: 'linkedText', header: 'Linked text', size: 'sm' },
-  { id: 'primaryPair', header: 'Primary + primary', size: 'sm' },
-  { id: 'event', header: 'Event', size: 'sm' },
-  { id: 'image', header: 'Image', imageTracks: 2 },
-  { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
-  { id: 'iconText', header: 'Icon + text', size: 'sm' },
-  { id: 'tagOnly', header: 'Tag only', size: 'sm' },
-  { id: 'tagWithText', header: 'Tag + text', size: 'sm' },
-  { id: 'textWithTag', header: 'Text + tag', size: 'sm' },
-  { id: 'multipleTags', header: 'Multiple tags', size: 160 },
-  { id: 'action', kind: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
+  { id: 'scalar', label: 'Scalar text', size: 'sm' },
+  { id: 'primarySecondary', label: 'Primary + secondary', size: 'sm' },
+  { id: 'linkedText', label: 'Linked text', size: 'sm' },
+  { id: 'primaryPair', label: 'Primary + primary', size: 'sm' },
+  { id: 'event', label: 'Event', size: 'sm' },
+  { id: 'image', label: 'Image', imageTracks: 2 },
+  { id: 'icon', label: 'Icon only', align: 'center', size: 'xs' },
+  { id: 'iconText', label: 'Icon + text', size: 'sm' },
+  { id: 'tagOnly', label: 'Tag only', size: 'sm' },
+  { id: 'tagWithText', label: 'Tag + text', size: 'sm' },
+  { id: 'textWithTag', label: 'Text + tag', size: 'sm' },
+  { id: 'multipleTags', label: 'Multiple tags', size: 160 },
+  { id: 'action', kind: 'action', label: '', accessibleLabel: 'Action', align: 'center', size: 40 },
   {
     id: 'borderedAction',
     kind: 'action',
-    header: '',
-    headerLabel: 'Bordered action',
+    label: '',
+    accessibleLabel: 'Bordered action',
     align: 'center',
     size: 40,
   },
-  { id: 'empty', header: 'Empty', size: 'xs' },
-  { id: 'blank', header: 'Blank', size: 'xs' },
+  { id: 'empty', label: 'Empty', size: 'xs' },
+  { id: 'blank', label: 'Blank', size: 'xs' },
 ];
 
 const SINGLE_TRACK_COLUMNS: TableColumn[] = [
-  { id: 'scalar', header: 'Scalar text', size: 'sm' },
-  { id: 'linkedText', header: 'Linked text', size: 'sm' },
-  { id: 'image', header: 'Image', imageTracks: 1 },
-  { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
-  { id: 'iconText', header: 'Icon + text', size: 'sm' },
-  { id: 'tagOnly', header: 'Tag only', size: 'sm' },
-  { id: 'action', kind: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
+  { id: 'scalar', label: 'Scalar text', size: 'sm' },
+  { id: 'linkedText', label: 'Linked text', size: 'sm' },
+  { id: 'image', label: 'Image', imageTracks: 1 },
+  { id: 'icon', label: 'Icon only', align: 'center', size: 'xs' },
+  { id: 'iconText', label: 'Icon + text', size: 'sm' },
+  { id: 'tagOnly', label: 'Tag only', size: 'sm' },
+  { id: 'action', kind: 'action', label: '', accessibleLabel: 'Action', align: 'center', size: 40 },
   {
     id: 'borderedAction',
     kind: 'action',
-    header: '',
-    headerLabel: 'Bordered action',
+    label: '',
+    accessibleLabel: 'Bordered action',
     align: 'center',
     size: 40,
   },
-  { id: 'empty', header: 'Empty', size: 'xs' },
-  { id: 'blank', header: 'Blank', size: 'xs' },
+  { id: 'empty', label: 'Empty', size: 'xs' },
+  { id: 'blank', label: 'Blank', size: 'xs' },
 ];
 
 const SINGLE_TRACK_ROWS: TableRow[] = [
@@ -387,11 +387,11 @@ const ALL_CELL_TYPE_ROWS: TableRow[] = [
 ];
 
 const THREE_TRACK_COLUMNS: TableColumn[] = [
-  { id: 'image', header: 'Image', imageTracks: 3 },
-  { id: 'iconText', header: 'Icon + text', size: 'sm' },
-  { id: 'driver', header: 'Driver', size: 'sm' },
-  { id: 'vehicle', header: 'Vehicle', size: 'sm' },
-  { id: 'event', header: 'Event', size: 'sm' },
+  { id: 'image', label: 'Image', imageTracks: 3 },
+  { id: 'iconText', label: 'Icon + text', size: 'sm' },
+  { id: 'driver', label: 'Driver', size: 'sm' },
+  { id: 'vehicle', label: 'Vehicle', size: 'sm' },
+  { id: 'event', label: 'Event', size: 'sm' },
 ];
 
 const THREE_TRACK_ROWS: TableRow[] = [
@@ -464,9 +464,9 @@ const THREE_TRACK_ROWS: TableRow[] = [
 ];
 
 const MULTIPLE_TAG_COLUMNS: TableColumn[] = [
-  { id: 'vehicle', header: 'Vehicle', size: 160 },
-  { id: 'behaviors', header: 'Detected behaviors', size: 160 },
-  { id: 'status', header: 'Status', size: 120 },
+  { id: 'vehicle', label: 'Vehicle', size: 160 },
+  { id: 'behaviors', label: 'Detected behaviors', size: 160 },
+  { id: 'status', label: 'Status', size: 120 },
 ];
 
 const MULTIPLE_TAG_ROWS: TableRow[] = [
@@ -504,11 +504,11 @@ const MULTIPLE_TAG_ROWS: TableRow[] = [
 ];
 
 const SAFETY_EVENT_COLUMNS: TableColumn[] = [
-  { id: 'preview', header: 'Preview', imageTracks: 2 },
+  { id: 'preview', label: 'Preview', imageTracks: 2 },
   {
     id: 'behaviorDetails',
-    header: 'Behavior / Severity',
-    headerSegments: [
+    label: 'Behavior / Severity',
+    segments: [
       { label: 'Behavior', sortKey: 'behavior', separator: '/' },
       { label: 'Severity', sortKey: 'severity' },
     ],
@@ -517,8 +517,8 @@ const SAFETY_EVENT_COLUMNS: TableColumn[] = [
   },
   {
     id: 'driverDetails',
-    header: 'Driver name / ID',
-    headerSegments: [
+    label: 'Driver name / ID',
+    segments: [
       { label: 'Driver name', sortKey: 'driverName', separator: '/' },
       { label: 'ID', sortKey: 'driverId' },
     ],
@@ -527,8 +527,8 @@ const SAFETY_EVENT_COLUMNS: TableColumn[] = [
   },
   {
     id: 'vehicleDetails',
-    header: 'Vehicle ID / Make · Model · Year',
-    headerSegments: [
+    label: 'Vehicle ID / Make · Model · Year',
+    segments: [
       { label: 'Vehicle ID', sortKey: 'vehicleId', separator: '/' },
       { label: 'Make', sortKey: 'vehicleMake', separator: '·' },
       { label: 'Model', sortKey: 'vehicleModel', separator: '·' },
@@ -539,21 +539,21 @@ const SAFETY_EVENT_COLUMNS: TableColumn[] = [
   },
   {
     id: 'dateLocation',
-    header: 'Date-time (PT) / Location',
-    headerSegments: [
+    label: 'Date-time (PT) / Location',
+    segments: [
       { label: 'Date-time (PT)', sortKey: 'eventTime', separator: '/' },
       { label: 'Location', sortKey: 'location' },
     ],
     sortable: true,
     size: 'sm',
   },
-  { id: 'status', header: 'Status', sortable: true, size: 'sm' },
-  { id: 'notes', header: 'Notes', align: 'center', sortable: true, size: 'xs' },
+  { id: 'status', label: 'Status', sortable: true, size: 'sm' },
+  { id: 'notes', label: 'Notes', align: 'center', sortable: true, size: 'xs' },
   {
     id: 'actions',
     kind: 'action',
-    header: '',
-    headerLabel: 'Actions',
+    label: '',
+    accessibleLabel: 'Actions',
     align: 'center',
     size: 40,
     sticky: 'end',
@@ -792,7 +792,7 @@ const VIRTUAL_ROWS: TableRow[] = Array.from({ length: 2000 }, (_, index) => {
   };
 });
 
-const PAGINATED_GROUP_SOURCE: TableGroup[] = Array.from({ length: 30 }, (_, groupIndex) => ({
+const PAGINATED_GROUP_SOURCE: DataGroup[] = Array.from({ length: 30 }, (_, groupIndex) => ({
   id: `fleet-${groupIndex + 1}`,
   label: `Fleet ${String(groupIndex + 1).padStart(2, '0')}`,
   totalCount: 6,
@@ -806,9 +806,9 @@ const PAGINATED_GROUP_SOURCE: TableGroup[] = Array.from({ length: 30 }, (_, grou
   }),
 }));
 
-function compareCell(a: TableRow, b: TableRow, columnId: string): number {
+function compareCell(a: TableRow, b: TableRow, fieldId: string): number {
   const primitive = (row: TableRow) => {
-    const value = row.cells[columnId];
+    const value = row.cells[fieldId];
     if (!value || typeof value !== 'object') return value;
     if ('primary' in value) return value.primary;
     if (value.kind === 'tag') return value.label;
@@ -821,20 +821,20 @@ function compareCell(a: TableRow, b: TableRow, columnId: string): number {
   });
 }
 
-function orderedRows(rows: TableRow[], sort: TableSortState | null): TableRow[] {
+function orderedRows(rows: TableRow[], sort: DataSortState | null): TableRow[] {
   if (!sort) return rows;
   const direction = sort.direction === 'asc' ? 1 : -1;
-  return [...rows].sort((a, b) => compareCell(a, b, sort.columnId) * direction);
+  return [...rows].sort((a, b) => compareCell(a, b, sort.fieldId) * direction);
 }
 
 function groupedRows(
   rows: TableRow[],
-  grouping: TableGroupingState,
-  sort: TableSortState | null
-): TableGroup[] {
+  grouping: DataGroupingState,
+  sort: DataSortState | null
+): DataGroup[] {
   const byStatus = new Map<string, TableRow[]>();
   for (const row of rows) {
-    const status = String(row.cells[grouping.columnId] ?? 'Unassigned');
+    const status = String(row.cells[grouping.fieldId] ?? 'Unassigned');
     byStatus.set(status, [...(byStatus.get(status) ?? []), row]);
   }
 
@@ -857,7 +857,7 @@ const SEVERITY_GROUP_INTENT: Record<(typeof SEVERITY_GROUP_ORDER)[number], Table
 };
 
 /** Collapsed empty groups so Storybook can review section-header surfaces alone. */
-const GROUP_ROW_REVIEW: TableGroup[] = (
+const GROUP_ROW_REVIEW: DataGroup[] = (
   [
     {
       label: 'Assigned',
@@ -898,7 +898,7 @@ const GROUP_ROW_REVIEW: TableGroup[] = (
     { label: 'Compliant', intent: 'positive', totalCount: 210, countLabel: '210 vehicles' },
     { label: 'Unassigned', totalCount: 7, countLabel: '7 vehicles' },
   ] satisfies Array<
-    Pick<TableGroup, 'label' | 'intent' | 'totalCount' | 'countLabel' | 'accessories' | 'hero'>
+    Pick<DataGroup, 'label' | 'intent' | 'totalCount' | 'countLabel' | 'accessories' | 'hero'>
   >
 ).map(group => ({
   ...group,
@@ -906,7 +906,7 @@ const GROUP_ROW_REVIEW: TableGroup[] = (
   rows: [],
 }));
 
-function severityGroupedRows(rows: TableRow[], sort: TableSortState | null): TableGroup[] {
+function severityGroupedRows(rows: TableRow[], sort: DataSortState | null): DataGroup[] {
   const bySeverity = new Map<string, TableRow[]>();
   for (const row of rows) {
     const severity = String(row.cells.severity ?? 'Unassigned');
@@ -928,8 +928,8 @@ function severityGroupedRows(rows: TableRow[], sort: TableSortState | null): Tab
 function lazySeverityGroups(
   loadedByGroup: Record<string, number>,
   loadingGroupId: string | null,
-  sort: TableSortState | null
-): TableGroup[] {
+  sort: DataSortState | null
+): DataGroup[] {
   return severityGroupedRows(SAFETY_EVENT_ROWS, sort).map(group => {
     const totalCount = group.rows.length;
     const loadedCount = Math.min(loadedByGroup[group.id] ?? 1, totalCount);
@@ -989,7 +989,7 @@ type Story = StoryObj;
 export const Playground: Story = {
   render: args => {
     const [, updateArgs] = useArgs();
-    const sort = (args['sort'] as TableSortState | null) ?? null;
+    const sort = (args['sort'] as DataSortState | null) ?? null;
     const selectedRowIds = (args['selectedRowIds'] as string[]) ?? [];
     return html`
       <ds-table
@@ -1008,7 +1008,7 @@ export const Playground: Story = {
         data-mode=${args['dataMode']}
         load-more-mode=${args['loadMoreMode']}
         .hasMore=${args['dataMode'] === 'infinite'}
-        @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
+        @dsSortChange=${(event: CustomEvent<{ sort: DataSortState | null }>) =>
           updateArgs({ sort: event.detail.sort })}
         @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>
           updateArgs({ selectedRowIds: event.detail.selectedRowIds })}
@@ -1020,8 +1020,8 @@ export const Playground: Story = {
 export const ColumnHeaderAlignment: Story = {
   name: 'Column header alignment',
   args: {
-    grouping: { columnId: 'status', direction: 'asc' },
-    sort: { columnId: 'score', direction: 'desc' },
+    grouping: { fieldId: 'status', direction: 'asc' },
+    sort: { fieldId: 'score', direction: 'desc' },
     collapsedGroupIds: [],
   },
   parameters: {
@@ -1034,8 +1034,8 @@ export const ColumnHeaderAlignment: Story = {
   },
   render: args => {
     const [, updateArgs] = useArgs();
-    const grouping = args['grouping'] as TableGroupingState;
-    const sort = (args['sort'] as TableSortState | null) ?? null;
+    const grouping = args['grouping'] as DataGroupingState;
+    const sort = (args['sort'] as DataSortState | null) ?? null;
     const collapsedGroupIds = (args['collapsedGroupIds'] as string[]) ?? [];
     return html`
       <ds-table
@@ -1046,7 +1046,7 @@ export const ColumnHeaderAlignment: Story = {
         .collapsedGroupIds=${collapsedGroupIds}
         caption="Column header alignment"
         caption-visibility="visible"
-        @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
+        @dsSortChange=${(event: CustomEvent<{ sort: DataSortState | null }>) =>
           updateArgs({ sort: event.detail.sort })}
         @dsGroupCollapseChange=${(event: CustomEvent<{ collapsedGroupIds: string[] }>) =>
           updateArgs({ collapsedGroupIds: event.detail.collapsedGroupIds })}
@@ -1099,7 +1099,7 @@ export const SearchMatchHighlighting: Story = {
     docs: {
       description: {
         story:
-          'The application owns the search query and row filtering, then supplies the same literal query through highlightTerms. When TableSearch has selected fields, pass those IDs through highlightFieldIds so only the matching data-point tracks are marked. With no field IDs, all table-owned text tracks remain eligible. Highlighting does not change the cell’s accessible name or guess how the application tokenizes search.',
+          'The application owns the search query and row filtering, then supplies the same literal query through highlightTerms. When DataSearch has selected fields, pass those IDs through highlightFieldIds so only the matching data-point tracks are marked. With no field IDs, all table-owned text tracks remain eligible. Highlighting does not change the cell’s accessible name or guess how the application tokenizes search.',
       },
     },
   },
@@ -1141,7 +1141,7 @@ export const SearchMatchHighlighting: Story = {
 export const SafetyEvents: Story = {
   name: 'Safety events',
   args: {
-    sort: { columnId: 'eventTime', direction: 'desc' },
+    sort: { fieldId: 'eventTime', direction: 'desc' },
     selectedRowIds: [],
     grouping: null,
   },
@@ -1155,9 +1155,9 @@ export const SafetyEvents: Story = {
   },
   render: args => {
     const [, updateArgs] = useArgs();
-    const sort = (args['sort'] as TableSortState | null) ?? null;
+    const sort = (args['sort'] as DataSortState | null) ?? null;
     const selectedRowIds = (args['selectedRowIds'] as string[]) ?? [];
-    const grouping = (args['grouping'] as TableGroupingState | null) ?? null;
+    const grouping = (args['grouping'] as DataGroupingState | null) ?? null;
     const ordered = orderedRows(SAFETY_EVENT_ROWS, sort);
     return html`
       <div style="position:relative;min-width:0;">
@@ -1177,7 +1177,7 @@ export const SafetyEvents: Story = {
           sticky-header
           caption="Safety events"
           caption-visibility="visible"
-          @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
+          @dsSortChange=${(event: CustomEvent<{ sort: DataSortState | null }>) =>
             updateArgs({ sort: event.detail.sort })}
           @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>
             updateArgs({ selectedRowIds: event.detail.selectedRowIds })}
@@ -1193,11 +1193,11 @@ export const SafetyEvents: Story = {
                 aria-label="Group safety events"
                 placeholder="No grouping"
                 .options=${[{ label: 'Severity', value: 'severity' }]}
-                .value=${grouping?.columnId ?? ''}
+                .value=${grouping?.fieldId ?? ''}
                 .allowClear=${grouping !== null}
                 @dsChange=${(event: CustomEvent<string | string[]>) => {
                   if (event.detail !== 'severity') return;
-                  updateArgs({ grouping: { columnId: 'severity', direction: 'asc' } });
+                  updateArgs({ grouping: { fieldId: 'severity', direction: 'asc' } });
                 }}
                 @dsClear=${() => updateArgs({ grouping: null })}
               ></ds-select>
@@ -1243,7 +1243,7 @@ export const SafetyEvents: Story = {
 export const DocumentFlowStickyLanes: Story = {
   name: 'Document flow with sticky lanes',
   args: {
-    sort: { columnId: 'eventTime', direction: 'desc' },
+    sort: { fieldId: 'eventTime', direction: 'desc' },
     selectedRowIds: [],
     lastActivated: 'None',
   },
@@ -1257,7 +1257,7 @@ export const DocumentFlowStickyLanes: Story = {
   },
   render: args => {
     const [, updateArgs] = useArgs();
-    const sort = (args['sort'] as TableSortState | null) ?? null;
+    const sort = (args['sort'] as DataSortState | null) ?? null;
     const selectedRowIds = (args['selectedRowIds'] as string[]) ?? [];
     const repeatedRows = Array.from({ length: 3 }, (_, copy) =>
       SAFETY_EVENT_ROWS.map(row => ({ ...row, id: `${row.id}-${copy}` }))
@@ -1282,7 +1282,7 @@ export const DocumentFlowStickyLanes: Story = {
           caption="Document-flow safety events"
           caption-visibility="hidden"
           scroll-label="Scrollable safety event columns"
-          @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
+          @dsSortChange=${(event: CustomEvent<{ sort: DataSortState | null }>) =>
             updateArgs({ sort: event.detail.sort })}
           @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) =>
             updateArgs({ selectedRowIds: event.detail.selectedRowIds })}
@@ -1297,8 +1297,8 @@ export const DocumentFlowStickyLanes: Story = {
 export const GroupingAndMemberSorting: Story = {
   name: 'Grouping and member sorting',
   args: {
-    grouping: { columnId: 'status', direction: 'asc' },
-    sort: { columnId: 'safetyScore', direction: 'desc' },
+    grouping: { fieldId: 'status', direction: 'asc' },
+    sort: { fieldId: 'safetyScore', direction: 'desc' },
     collapsedGroupIds: [],
   },
   parameters: {
@@ -1311,8 +1311,8 @@ export const GroupingAndMemberSorting: Story = {
   },
   render: args => {
     const [, updateArgs] = useArgs();
-    const grouping = (args['grouping'] as TableGroupingState | null) ?? null;
-    const sort = (args['sort'] as TableSortState | null) ?? null;
+    const grouping = (args['grouping'] as DataGroupingState | null) ?? null;
+    const sort = (args['sort'] as DataSortState | null) ?? null;
     const collapsedGroupIds = (args['collapsedGroupIds'] as string[]) ?? [];
     return html`
       <ds-table
@@ -1326,7 +1326,7 @@ export const GroupingAndMemberSorting: Story = {
         .totalCount=${1500}
         caption="Drivers grouped by status"
         caption-visibility="visible"
-        @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
+        @dsSortChange=${(event: CustomEvent<{ sort: DataSortState | null }>) =>
           updateArgs({ sort: event.detail.sort })}
         @dsGroupCollapseChange=${(event: CustomEvent<{ collapsedGroupIds: string[] }>) =>
           updateArgs({ collapsedGroupIds: event.detail.collapsedGroupIds })}
@@ -1338,8 +1338,8 @@ export const GroupingAndMemberSorting: Story = {
 export const GroupingBySeverity: Story = {
   name: 'Grouping by severity',
   args: {
-    grouping: { columnId: 'severity', direction: 'asc' },
-    sort: { columnId: 'eventTime', direction: 'desc' },
+    grouping: { fieldId: 'severity', direction: 'asc' },
+    sort: { fieldId: 'eventTime', direction: 'desc' },
     collapsedGroupIds: [],
     selectedRowIds: [],
   },
@@ -1353,7 +1353,7 @@ export const GroupingBySeverity: Story = {
   },
   render: args => {
     const [, updateArgs] = useArgs();
-    const sort = (args['sort'] as TableSortState | null) ?? null;
+    const sort = (args['sort'] as DataSortState | null) ?? null;
     const collapsedGroupIds = (args['collapsedGroupIds'] as string[]) ?? [];
     const selectedRowIds = (args['selectedRowIds'] as string[]) ?? [];
     const groups = severityGroupedRows(SAFETY_EVENT_ROWS, sort);
@@ -1371,7 +1371,7 @@ export const GroupingBySeverity: Story = {
         sticky-header
         caption="Safety events by severity"
         caption-visibility="hidden"
-        @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
+        @dsSortChange=${(event: CustomEvent<{ sort: DataSortState | null }>) =>
           updateArgs({ sort: event.detail.sort })}
         @dsGroupCollapseChange=${(event: CustomEvent<{ collapsedGroupIds: string[] }>) =>
           updateArgs({ collapsedGroupIds: event.detail.collapsedGroupIds })}
@@ -1385,7 +1385,7 @@ export const GroupingBySeverity: Story = {
 export const GroupRows: Story = {
   name: 'Group rows',
   args: {
-    grouping: { columnId: 'status', direction: 'asc' },
+    grouping: { fieldId: 'status', direction: 'asc' },
     collapsedGroupIds: GROUP_ROW_REVIEW.map(group => group.id),
     selectedRowIds: [],
   },
@@ -1431,7 +1431,7 @@ const GROUP_SCORE_HERO_REVIEW = {
     { text: '2 groups', help: 'Assigned groups for this driver.' },
   ],
   rows: [],
-} satisfies TableGroup;
+} satisfies DataGroup;
 
 export const GroupScoreHeroVariants: Story = {
   name: 'Group score hero variants',
@@ -1456,8 +1456,8 @@ export const GroupScoreHeroVariants: Story = {
               id: 'avery-chen-first-track',
               hero: { kind: 'score', value: 87 },
             },
-          ] satisfies TableGroup[]}
-          .grouping=${{ columnId: 'driver', direction: 'asc' } satisfies TableGroupingState}
+          ] satisfies DataGroup[]}
+          .grouping=${{ fieldId: 'driver', direction: 'asc' } satisfies DataGroupingState}
           .collapsedGroupIds=${['avery-chen-first-track']}
           selection-mode="multiple"
           caption="Default first-track group score"
@@ -1475,8 +1475,8 @@ export const GroupScoreHeroVariants: Story = {
               id: 'avery-chen-two-tracks',
               hero: { kind: 'score', value: 87, tracks: 2 },
             },
-          ] satisfies TableGroup[]}
-          .grouping=${{ columnId: 'driver', direction: 'asc' } satisfies TableGroupingState}
+          ] satisfies DataGroup[]}
+          .grouping=${{ fieldId: 'driver', direction: 'asc' } satisfies DataGroupingState}
           .collapsedGroupIds=${['avery-chen-two-tracks']}
           selection-mode="multiple"
           caption="Default two-track group score"
@@ -1496,8 +1496,8 @@ export const GroupScoreHeroVariants: Story = {
               id: 'avery-chen-first-track-no-selection',
               hero: { kind: 'score', value: 87 },
             },
-          ] satisfies TableGroup[]}
-          .grouping=${{ columnId: 'driver', direction: 'asc' } satisfies TableGroupingState}
+          ] satisfies DataGroup[]}
+          .grouping=${{ fieldId: 'driver', direction: 'asc' } satisfies DataGroupingState}
           .collapsedGroupIds=${['avery-chen-first-track-no-selection']}
           selection-mode="none"
           caption="Default first-track group score without row selection"
@@ -1517,8 +1517,8 @@ export const GroupScoreHeroVariants: Story = {
               id: 'avery-chen-two-tracks-no-selection',
               hero: { kind: 'score', value: 87, tracks: 2 },
             },
-          ] satisfies TableGroup[]}
-          .grouping=${{ columnId: 'driver', direction: 'asc' } satisfies TableGroupingState}
+          ] satisfies DataGroup[]}
+          .grouping=${{ fieldId: 'driver', direction: 'asc' } satisfies DataGroupingState}
           .collapsedGroupIds=${['avery-chen-two-tracks-no-selection']}
           selection-mode="none"
           caption="Default two-track group score without row selection"
@@ -1623,7 +1623,7 @@ export const ScoreTextCells: Story = {
       .columns=${[
         {
           id: 'driver',
-          header: 'Driver name / ID / Group',
+          label: 'Driver name / ID / Group',
           size: 'sm',
           skeleton: {
             kind: 'score-text',
@@ -1678,11 +1678,11 @@ export const TagVariations: Story = {
   },
   render: () => {
     const columns: TableColumn[] = [
-      { id: 'multipleTags', header: 'Multiple tags', size: 'lg' },
-      { id: 'inlineTags', header: 'Inline tags', size: 'lg' },
-      { id: 'inlineTagsWithText', header: 'Inline tags / secondary text', size: 'lg' },
-      { id: 'tagWithText', header: 'Primary tag / secondary text', size: 'lg' },
-      { id: 'textWithTag', header: 'Primary text / secondary tag', size: 'lg' },
+      { id: 'multipleTags', label: 'Multiple tags', size: 'lg' },
+      { id: 'inlineTags', label: 'Inline tags', size: 'lg' },
+      { id: 'inlineTagsWithText', label: 'Inline tags / secondary text', size: 'lg' },
+      { id: 'tagWithText', label: 'Primary tag / secondary text', size: 'lg' },
+      { id: 'textWithTag', label: 'Primary text / secondary tag', size: 'lg' },
     ];
     const rows: TableRow[] = [
       {
@@ -1819,15 +1819,15 @@ export const OverflowActionMenu: Story = {
       <ds-table
         data-a11y-fixture
         .columns=${[
-          { id: 'driver', header: 'Driver', sortable: true, size: 'sm' },
-          { id: 'status', header: 'Status', size: 'xs' },
-          { id: 'vehicle', header: 'Vehicle', size: 'xs' },
-          { id: 'location', header: 'Last known location', size: 'sm' },
+          { id: 'driver', label: 'Driver', sortable: true, size: 'sm' },
+          { id: 'status', label: 'Status', size: 'xs' },
+          { id: 'vehicle', label: 'Vehicle', size: 'xs' },
+          { id: 'location', label: 'Last known location', size: 'sm' },
           {
             id: 'action',
             kind: 'action',
-            header: '',
-            headerLabel: 'Action',
+            label: '',
+            accessibleLabel: 'Action',
             align: 'center',
             size: 40,
             sticky: 'end',
@@ -1862,7 +1862,7 @@ export const ColumnCustomizer: Story = {
     docs: {
       description: {
         story:
-          'Opt-in columnCustomizer keeps columns as the catalog. hiddenColumnIds and columnOrder are controlled; dsColumnsConfigChange reports live show/hide and data-column reorder. The trailing neutral Customize control opens the shared Menu of reorderable switch rows and stays open while toggling or dragging. Its label and resting foreground do not change when the controlled column configuration differs from the catalog default. Below 900px it becomes the icon-only Table menu button with the same neutral resting foreground. Selection and action columns are omitted from the menu, action columns stay fixed last, and the last remaining visible data column cannot be hidden. Persistence stays in the application.',
+          'Opt-in columnCustomizer keeps columns as the catalog. hiddenFieldIds and fieldOrder are controlled; dsFieldsConfigChange reports live show/hide and data-column reorder. The trailing neutral Customize control opens the shared Menu of reorderable switch rows and stays open while toggling or dragging. Its label and resting foreground do not change when the controlled column configuration differs from the catalog default. Below 900px it becomes the icon-only Table menu button with the same neutral resting foreground. Selection and action columns are omitted from the menu, action columns stay fixed last, and the last remaining visible data column cannot be hidden. Persistence stays in the application.',
       },
       ...isolatedOverlayDocs('480px'),
     },
@@ -1879,15 +1879,15 @@ export const ColumnCustomizer: Story = {
       <ds-table
         data-a11y-fixture
         .columns=${[
-          { id: 'driver', header: 'Driver', sortable: true, size: 'sm' },
-          { id: 'status', header: 'Status', size: 'xs' },
-          { id: 'vehicle', header: 'Vehicle', size: 'xs' },
-          { id: 'location', header: 'Last known location', size: 'sm' },
+          { id: 'driver', label: 'Driver', sortable: true, size: 'sm' },
+          { id: 'status', label: 'Status', size: 'xs' },
+          { id: 'vehicle', label: 'Vehicle', size: 'xs' },
+          { id: 'location', label: 'Last known location', size: 'sm' },
           {
             id: 'action',
             kind: 'action',
-            header: '',
-            headerLabel: 'Action',
+            label: '',
+            accessibleLabel: 'Action',
             align: 'center',
             size: 40,
             sticky: 'end',
@@ -1898,7 +1898,7 @@ export const ColumnCustomizer: Story = {
         selection-mode="multiple"
         caption="Customizable drivers"
         caption-visibility="visible"
-        @dsColumnsConfigChange=${applyColumnsConfig}
+        @dsFieldsConfigChange=${applyColumnsConfig}
       ></ds-table>
     `;
   },
@@ -1965,9 +1965,9 @@ export const ContentPrimitives: Story = {
     <div style="max-inline-size:var(--dimension-panel-width-sm);">
       <ds-table
         .columns=${[
-          { id: 'name', header: 'Primary and secondary', size: 'sm' },
-          { id: 'notes', header: 'Wrapping content', wrap: true, size: 'sm' },
-          { id: 'quantity', header: 'Quantity', align: 'end', size: 'xs' },
+          { id: 'name', label: 'Primary and secondary', size: 'sm' },
+          { id: 'notes', label: 'Wrapping content', wrap: true, size: 'sm' },
+          { id: 'quantity', label: 'Quantity', align: 'end', size: 'xs' },
         ] satisfies TableColumn[]}
         .rows=${[
           {
@@ -2088,22 +2088,22 @@ export const HeaderHelp: Story = {
       .columns=${[
         {
           id: 'driver',
-          header: 'Driver',
+          label: 'Driver',
           sortable: true,
           size: 'sm',
           help: 'Legal name used on the driver profile.',
         },
-        { id: 'status', header: 'Status', sortable: true, align: 'center', size: 'xs' },
+        { id: 'status', label: 'Status', sortable: true, align: 'center', size: 'xs' },
         {
           id: 'vehicle',
-          header: 'Vehicle',
+          label: 'Vehicle',
           size: 'xs',
           help: 'Assigned vehicle identifier.',
         },
         {
           id: 'behaviorDetails',
-          header: 'Behavior / Severity',
-          headerSegments: [
+          label: 'Behavior / Severity',
+          segments: [
             { label: 'Behavior', sortKey: 'behavior', separator: '/' },
             { label: 'Severity', sortKey: 'severity' },
           ],
@@ -2113,7 +2113,7 @@ export const HeaderHelp: Story = {
         },
         {
           id: 'safetyScore',
-          header: 'Safety score',
+          label: 'Safety score',
           sortable: true,
           align: 'end',
           size: 'xs',
@@ -2322,7 +2322,7 @@ export const GroupParentPagination: Story = {
     pageSize: 25,
     pageSizeMode: 'fixed',
     loadedByGroup: {},
-    grouping: { columnId: 'status', direction: 'asc' },
+    grouping: { fieldId: 'status', direction: 'asc' },
   },
   parameters: {
     docs: {
@@ -2481,7 +2481,7 @@ export const FooterReview: Story = {
             data-a11y-fixture
             .columns=${ASYNC_COLUMNS}
             .groups=${previewGroups}
-            .grouping=${{ columnId: 'status', direction: 'asc' } satisfies TableGroupingState}
+            .grouping=${{ fieldId: 'status', direction: 'asc' } satisfies DataGroupingState}
             data-mode="pagination"
             load-more-mode="manual"
             .pagination=${groupsPagination}
@@ -2563,8 +2563,8 @@ export const WorkingGroupedLazyLoading: Story = {
   args: {
     loadedByGroup: {},
     loadingGroupId: null,
-    grouping: { columnId: 'severity', direction: 'asc' },
-    sort: { columnId: 'eventTime', direction: 'desc' },
+    grouping: { fieldId: 'severity', direction: 'asc' },
+    sort: { fieldId: 'eventTime', direction: 'desc' },
     collapsedGroupIds: [],
   },
   parameters: {
@@ -2579,7 +2579,7 @@ export const WorkingGroupedLazyLoading: Story = {
     const [, updateArgs] = useArgs();
     const loadedByGroup = args['loadedByGroup'] as Record<string, number>;
     const loadingGroupId = (args['loadingGroupId'] as string | null) ?? null;
-    const sort = (args['sort'] as TableSortState | null) ?? null;
+    const sort = (args['sort'] as DataSortState | null) ?? null;
     const collapsedGroupIds = (args['collapsedGroupIds'] as string[]) ?? [];
     const groups = lazySeverityGroups(loadedByGroup, loadingGroupId, sort);
     return html`
@@ -2597,7 +2597,7 @@ export const WorkingGroupedLazyLoading: Story = {
         max-height="520px"
         caption="Lazy-loaded safety events by severity"
         caption-visibility="visible"
-        @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) =>
+        @dsSortChange=${(event: CustomEvent<{ sort: DataSortState | null }>) =>
           updateArgs({ sort: event.detail.sort, loadedByGroup: {} })}
         @dsGroupCollapseChange=${(event: CustomEvent<{ collapsedGroupIds: string[] }>) =>
           updateArgs({ collapsedGroupIds: event.detail.collapsedGroupIds })}
@@ -2674,7 +2674,7 @@ export const NativeGroupedStickyPerformance: Story = {
             };
           }),
           totalCount: 250,
-        }) satisfies TableGroup
+        }) satisfies DataGroup
     );
 
     return html`
@@ -2682,7 +2682,7 @@ export const NativeGroupedStickyPerformance: Story = {
         <ds-table
           .columns=${COLUMNS}
           .groups=${groups}
-          .grouping=${{ columnId: 'status', direction: 'asc' }}
+          .grouping=${{ fieldId: 'status', direction: 'asc' }}
           selection-mode="multiple"
           sticky-header
           height="var(--dimension-card-height-lg)"
@@ -2738,14 +2738,14 @@ export const VirtualGroupedRows: Story = {
           label,
           rows: VIRTUAL_ROWS.slice(groupIndex * 500, groupIndex * 500 + 500),
           totalCount: 500,
-        }) satisfies TableGroup
+        }) satisfies DataGroup
     );
 
     return html`
       <ds-table
         .columns=${COLUMNS}
         .groups=${groups}
-        .grouping=${{ columnId: 'status', direction: 'asc' }}
+        .grouping=${{ fieldId: 'status', direction: 'asc' }}
         data-mode="virtual"
         selection-mode="multiple"
         sticky-header
@@ -2831,8 +2831,8 @@ export const NarrowAndLongContent: Story = {
     <div style="max-inline-size:var(--dimension-panel-width-xs);">
       <ds-table
         .columns=${[
-          { id: 'case', header: 'Case', size: 'xs' },
-          { id: 'notes', header: 'Notes', size: 'sm' },
+          { id: 'case', label: 'Case', size: 'xs' },
+          { id: 'notes', label: 'Notes', size: 'sm' },
         ] satisfies TableColumn[]}
         .rows=${[
           {
@@ -2925,14 +2925,14 @@ export const RestyledVisualPrimitives: Story = {
     <ds-table
       style="
         --ds-table-header-surface:var(--color-background-faint-brand);
-        --ds-table-group-surface:var(--color-background-faint-positive);
+        --ds-data-group-surface:var(--color-background-faint-positive);
         --ds-table-row-selected:var(--color-background-faint-positive);
         --ds-table-radius:var(--dimension-radius-150);
         --ds-table-cell-padding-inline:var(--dimension-space-200);
       "
       .columns=${COLUMNS.slice(0, 4)}
-      .groups=${groupedRows(ROWS.slice(0, 5), { columnId: 'status', direction: 'asc' }, null)}
-      .grouping=${{ columnId: 'status', direction: 'asc' }}
+      .groups=${groupedRows(ROWS.slice(0, 5), { fieldId: 'status', direction: 'asc' }, null)}
+      .grouping=${{ fieldId: 'status', direction: 'asc' }}
       .selectedRowIds=${['driver-jordan']}
       selection-mode="multiple"
       caption="Restyled grouped drivers"

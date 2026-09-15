@@ -2,31 +2,31 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import type { TableColumn } from '../src/wc/components/Table/table-types';
 import {
-  nextTableSortStateFromMenuItem,
+  nextDataSortStateFromMenuItem,
   TABLE_SORT_DIRECTION_ASC,
   TABLE_SORT_DIRECTION_DESC,
-  tableSortFields,
-  tableSortMenuSections,
-  tableSortStatesEqual,
-} from '../src/wc/components/TableSort/table-sort-menu';
+  dataSortFields,
+  dataSortMenuSections,
+  dataSortStatesEqual,
+} from '../src/wc/components/DataSort/data-sort-menu';
 
 const columns: TableColumn[] = [
-  { id: 'preview', header: 'Preview' },
+  { id: 'preview', label: 'Preview' },
   {
     id: 'behaviorDetails',
-    header: 'Behavior / Severity',
-    headerSegments: [
+    label: 'Behavior / Severity',
+    segments: [
       { label: 'Behavior', sortKey: 'behavior', separator: '/' },
       { label: 'Level', dataLabel: 'Severity', sortKey: 'severity' },
     ],
     sortable: true,
   },
-  { id: 'status', header: 'State', dataLabel: 'Status', sortable: true },
-  { id: 'action', kind: 'action', header: '', headerLabel: 'Action' },
+  { id: 'status', label: 'State', dataLabel: 'Status', sortable: true },
+  { id: 'action', kind: 'action', label: '', accessibleLabel: 'Action' },
 ];
 
 test('lists sortable columns and compound header segments, skipping action columns', () => {
-  assert.deepEqual(tableSortFields(columns), [
+  assert.deepEqual(dataSortFields(columns), [
     { id: 'behavior', label: 'Behavior' },
     { id: 'severity', label: 'Severity' },
     { id: 'status', label: 'Status' },
@@ -34,7 +34,7 @@ test('lists sortable columns and compound header segments, skipping action colum
 });
 
 test('builds Data and Order menu sections from the controlled sort', () => {
-  const sections = tableSortMenuSections(columns, { columnId: 'severity', direction: 'desc' });
+  const sections = dataSortMenuSections(columns, { fieldId: 'severity', direction: 'desc' });
   assert.deepEqual(
     sections.map(section => section.header),
     ['Data', 'Order']
@@ -47,79 +47,79 @@ test('builds Data and Order menu sections from the controlled sort', () => {
 });
 
 test('changes field while keeping direction and does not toggle the active field', () => {
-  const current = { columnId: 'behavior', direction: 'desc' as const };
-  const sections = tableSortMenuSections(columns, current);
+  const current = { fieldId: 'behavior', direction: 'desc' as const };
+  const sections = dataSortMenuSections(columns, current);
   const status = sections[0]?.items.find(item => item.label === 'Status');
   const behavior = sections[0]?.items.find(item => item.label === 'Behavior');
   assert.ok(status);
   assert.ok(behavior);
-  assert.deepEqual(nextTableSortStateFromMenuItem(columns, current, status), {
-    columnId: 'status',
+  assert.deepEqual(nextDataSortStateFromMenuItem(columns, current, status), {
+    fieldId: 'status',
     direction: 'desc',
   });
-  assert.deepEqual(nextTableSortStateFromMenuItem(columns, current, behavior), current);
-  assert.deepEqual(nextTableSortStateFromMenuItem(columns, null, status), {
-    columnId: 'status',
+  assert.deepEqual(nextDataSortStateFromMenuItem(columns, current, behavior), current);
+  assert.deepEqual(nextDataSortStateFromMenuItem(columns, null, status), {
+    fieldId: 'status',
     direction: 'asc',
   });
 });
 
 test('applies direction to the current field or the first sortable field', () => {
-  const current = { columnId: 'status', direction: 'asc' as const };
+  const current = { fieldId: 'status', direction: 'asc' as const };
   assert.deepEqual(
-    nextTableSortStateFromMenuItem(columns, current, {
+    nextDataSortStateFromMenuItem(columns, current, {
       label: 'Descending',
       value: TABLE_SORT_DIRECTION_DESC,
     }),
-    { columnId: 'status', direction: 'desc' }
+    { fieldId: 'status', direction: 'desc' }
   );
   assert.deepEqual(
-    nextTableSortStateFromMenuItem(columns, null, {
+    nextDataSortStateFromMenuItem(columns, null, {
       label: 'Ascending',
       value: TABLE_SORT_DIRECTION_ASC,
     }),
-    { columnId: 'behavior', direction: 'asc' }
+    { fieldId: 'behavior', direction: 'asc' }
   );
   assert.deepEqual(
-    nextTableSortStateFromMenuItem(
+    nextDataSortStateFromMenuItem(
       columns,
-      { columnId: 'removed', direction: 'asc' },
+      { fieldId: 'removed', direction: 'asc' },
       {
         label: 'Descending',
         value: TABLE_SORT_DIRECTION_DESC,
       }
     ),
-    { columnId: 'behavior', direction: 'desc' }
+    { fieldId: 'behavior', direction: 'desc' }
   );
 });
 
 test('keeps application column ids separate from direction command values', () => {
   const collidingColumns: TableColumn[] = [
-    { id: TABLE_SORT_DIRECTION_DESC, header: 'Direction data', sortable: true },
+    { id: TABLE_SORT_DIRECTION_DESC, label: 'Direction data', sortable: true },
   ];
-  const fieldItem = tableSortMenuSections(collidingColumns, null)[0]?.items[0];
+  const fieldItem = dataSortMenuSections(collidingColumns, null)[0]?.items[0];
   assert.ok(fieldItem);
   assert.notEqual(fieldItem.value, TABLE_SORT_DIRECTION_DESC);
-  assert.deepEqual(nextTableSortStateFromMenuItem(collidingColumns, null, fieldItem), {
-    columnId: TABLE_SORT_DIRECTION_DESC,
+  assert.deepEqual(nextDataSortStateFromMenuItem(collidingColumns, null, fieldItem), {
+    fieldId: TABLE_SORT_DIRECTION_DESC,
     direction: 'asc',
   });
 });
 
 test('compares sort states by column and direction', () => {
   assert.equal(
-    tableSortStatesEqual(
-      { columnId: 'status', direction: 'asc' },
-      { columnId: 'status', direction: 'asc' }
+    dataSortStatesEqual(
+      { fieldId: 'status', direction: 'asc' },
+      { fieldId: 'status', direction: 'asc' }
     ),
     true
   );
   assert.equal(
-    tableSortStatesEqual(
-      { columnId: 'status', direction: 'asc' },
-      { columnId: 'status', direction: 'desc' }
+    dataSortStatesEqual(
+      { fieldId: 'status', direction: 'asc' },
+      { fieldId: 'status', direction: 'desc' }
     ),
     false
   );
-  assert.equal(tableSortStatesEqual(null, null), true);
+  assert.equal(dataSortStatesEqual(null, null), true);
 });

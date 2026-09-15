@@ -1,5 +1,5 @@
 import type {
-  TableGroup,
+  DataGroup,
   TableGroupLoadMoreDetail,
   TableLoadMoreMode,
   TableLoadMoreReason,
@@ -10,7 +10,7 @@ export interface TableGroupLoadControllerState {
   loadMoreMode: TableLoadMoreMode;
   loadMoreThreshold: number;
   containedScroll: boolean;
-  groups: TableGroup[];
+  groups: DataGroup[];
   viewport: HTMLElement | null;
   sentinels: ReadonlyMap<string, HTMLElement>;
   loadingMoreLabel: string;
@@ -32,11 +32,11 @@ interface GroupSnapshot {
   identity: string | number;
 }
 
-function groupIdentity(group: TableGroup): string | number {
+function groupIdentity(group: DataGroup): string | number {
   return group.loadIdentity ?? group.id;
 }
 
-function formatGroupLabel(template: string, group: TableGroup, count?: number): string {
+function formatGroupLabel(template: string, group: DataGroup, count?: number): string {
   return template
     .split('{group}')
     .join(group.label)
@@ -189,7 +189,7 @@ export class TableGroupLoadController {
     return new Map(this.options.state().groups.map(group => [group.id, this.snapshot(group)]));
   }
 
-  private snapshot(group: TableGroup): GroupSnapshot {
+  private snapshot(group: DataGroup): GroupSnapshot {
     return {
       count: group.rows.length,
       hasMore: !!group.hasMore,

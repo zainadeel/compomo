@@ -1,4 +1,4 @@
-/** Matches `@container ds-table (max-width: 899px)` on caption Filter/Group/Sort. */
+/** Shared compact breakpoint for table captions and standalone data toolbars. */
 export const TABLE_CAPTION_COMPACT_MAX_PX = 899;
 
 export function isTableCaptionCompact(width: number): boolean {
@@ -18,8 +18,10 @@ export function observeTableCaptionCompact(
     return () => undefined;
   }
 
-  const table = host.closest('ds-table');
-  if (!table) {
+  // Table captions own the complete control row; their slotted toolbar uses
+  // display: contents and has no measurable box. Standalone toolbars own theirs.
+  const owner = host.closest('ds-table') ?? host.closest('ds-data-toolbar');
+  if (!owner) {
     onChange(false);
     return () => undefined;
   }
@@ -32,7 +34,7 @@ export function observeTableCaptionCompact(
   const observer = new ResizeObserver(entries => {
     sync(entries[0] ? tableCaptionInlineSize(entries[0]) : 0);
   });
-  observer.observe(table);
-  sync(table.clientWidth);
+  observer.observe(owner);
+  sync(owner.clientWidth);
   return () => observer.disconnect();
 }

@@ -8,7 +8,7 @@ import {
 } from '../src/wc/components/Table/table-cell-model';
 import type { TableColumn } from '../src/wc/components/Table/table-types';
 
-const column: TableColumn = { id: 'value', header: 'Value' };
+const column: TableColumn = { id: 'value', label: 'Value' };
 
 test('normalizes text cells once for markup and class recipes', () => {
   assert.deepEqual(resolveTableCellPresentation(42, column), {

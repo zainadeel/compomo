@@ -13,7 +13,7 @@ import {
   isTableCellScoreText,
   isTableGroupIntent,
   nextTableGroupsCollapsed,
-  nextTableSortState,
+  nextDataSortState,
   resolvedTableGroupCount,
   tableCellPrimary,
   tableCollapseAllHost,
@@ -36,8 +36,8 @@ import {
 import type { TableColumn, TableRow } from '../src/wc/components/Table/table-types';
 
 const columns: TableColumn[] = [
-  { id: 'name', header: 'Name', size: 160, minSize: 120, maxSize: 200 },
-  { id: 'score', header: 'Score', size: 80, align: 'end', sortable: true },
+  { id: 'name', label: 'Name', size: 160, minSize: 120, maxSize: 200 },
+  { id: 'score', label: 'Score', size: 80, align: 'end', sortable: true },
 ];
 
 const rows: TableRow[] = [
@@ -48,17 +48,17 @@ const rows: TableRow[] = [
 ];
 
 test('keeps controlled member sorting binary', () => {
-  assert.deepEqual(nextTableSortState(null, 'score'), { columnId: 'score', direction: 'asc' });
-  assert.deepEqual(nextTableSortState({ columnId: 'score', direction: 'asc' }, 'score'), {
-    columnId: 'score',
+  assert.deepEqual(nextDataSortState(null, 'score'), { fieldId: 'score', direction: 'asc' });
+  assert.deepEqual(nextDataSortState({ fieldId: 'score', direction: 'asc' }, 'score'), {
+    fieldId: 'score',
     direction: 'desc',
   });
-  assert.deepEqual(nextTableSortState({ columnId: 'score', direction: 'desc' }, 'score'), {
-    columnId: 'score',
+  assert.deepEqual(nextDataSortState({ fieldId: 'score', direction: 'desc' }, 'score'), {
+    fieldId: 'score',
     direction: 'asc',
   });
-  assert.deepEqual(nextTableSortState({ columnId: 'name', direction: 'desc' }, 'score'), {
-    columnId: 'score',
+  assert.deepEqual(nextDataSortState({ fieldId: 'name', direction: 'desc' }, 'score'), {
+    fieldId: 'score',
     direction: 'asc',
   });
 });
@@ -110,8 +110,8 @@ test('collapses or expands every group from the current collapsed set', () => {
 
 test('hosts collapse-all on the trailing action column or a scrollport overlay', () => {
   const actionColumns: TableColumn[] = [
-    { id: 'name', header: 'Name' },
-    { id: 'actions', kind: 'action', header: '', headerLabel: 'Actions' },
+    { id: 'name', label: 'Name' },
+    { id: 'actions', kind: 'action', label: '', accessibleLabel: 'Actions' },
   ];
   assert.deepEqual(tableCollapseAllHost(actionColumns), {
     columnId: 'actions',
@@ -119,10 +119,10 @@ test('hosts collapse-all on the trailing action column or a scrollport overlay',
   });
 
   const dualActionColumns: TableColumn[] = [
-    { id: 'name', header: 'Name' },
-    { id: 'action', kind: 'action', header: '', headerLabel: 'Action' },
-    { id: 'borderedAction', kind: 'action', header: '', headerLabel: 'Bordered action' },
-    { id: 'empty', header: 'Empty' },
+    { id: 'name', label: 'Name' },
+    { id: 'action', kind: 'action', label: '', accessibleLabel: 'Action' },
+    { id: 'borderedAction', kind: 'action', label: '', accessibleLabel: 'Bordered action' },
+    { id: 'empty', label: 'Empty' },
   ];
   assert.deepEqual(tableCollapseAllHost(dualActionColumns), {
     columnId: 'borderedAction',
@@ -130,8 +130,8 @@ test('hosts collapse-all on the trailing action column or a scrollport overlay',
   });
 
   const plainColumns: TableColumn[] = [
-    { id: 'name', header: 'Name' },
-    { id: 'score', header: 'Score' },
+    { id: 'name', label: 'Name' },
+    { id: 'score', label: 'Score' },
   ];
   assert.deepEqual(tableCollapseAllHost(plainColumns), { mode: 'floating' });
 });
@@ -140,31 +140,31 @@ test('places an elastic spacer before trailing fixed lanes only when every colum
   assert.equal(tableElasticSpacerIndex(columns), 2);
   assert.equal(
     tableElasticSpacerIndex([
-      { id: 'name', header: 'Name', size: 160 },
-      { id: 'notes', header: 'Notes' },
-      { id: 'actions', kind: 'action', header: '', headerLabel: 'Actions' },
+      { id: 'name', label: 'Name', size: 160 },
+      { id: 'notes', label: 'Notes' },
+      { id: 'actions', kind: 'action', label: '', accessibleLabel: 'Actions' },
     ]),
     undefined
   );
   assert.equal(
     tableElasticSpacerIndex([
-      { id: 'name', header: 'Name', size: 160 },
-      { id: 'status', header: 'Status', size: 120 },
-      { id: 'identifier', header: 'Identifier', size: 140, sticky: true },
-      { id: 'actions', kind: 'action', header: '', headerLabel: 'Actions' },
+      { id: 'name', label: 'Name', size: 160 },
+      { id: 'status', label: 'Status', size: 120 },
+      { id: 'identifier', label: 'Identifier', size: 140, sticky: true },
+      { id: 'actions', kind: 'action', label: '', accessibleLabel: 'Actions' },
     ]),
     3
   );
   assert.equal(
     tableElasticSpacerIndex([
-      { id: 'name', header: 'Name', size: 160 },
-      { id: 'identifier', header: 'Identifier', size: 140, sticky: 'end' },
-      { id: 'actions', kind: 'action', header: '', headerLabel: 'Actions' },
+      { id: 'name', label: 'Name', size: 160 },
+      { id: 'identifier', label: 'Identifier', size: 140, sticky: 'end' },
+      { id: 'actions', kind: 'action', label: '', accessibleLabel: 'Actions' },
     ]),
     1
   );
   assert.equal(
-    tableColumnSize({ id: 'actions', kind: 'action', header: '', headerLabel: 'Actions' }),
+    tableColumnSize({ id: 'actions', kind: 'action', label: '', accessibleLabel: 'Actions' }),
     'var(--dimension-size-500)'
   );
 });
@@ -178,22 +178,22 @@ test('resolves labels, column constraints, and server group totals defensively',
   assert.equal(clampTableColumnSize({ ...columns[0], size: 80 }), 120);
   assert.equal(clampTableColumnSize({ ...columns[0], size: 240 }), 200);
   assert.equal(
-    tableColumnSize({ id: 'token', header: 'Token', size: 'sm' }),
+    tableColumnSize({ id: 'token', label: 'Token', size: 'sm' }),
     'var(--dimension-table-column-width-sm)'
   );
   assert.equal(
-    tableColumnSize({ id: 'preview', header: 'Preview', imageTracks: 2 }),
+    tableColumnSize({ id: 'preview', label: 'Preview', imageTracks: 2 }),
     'var(--_table-image-column-inline-size-multi)'
   );
   assert.equal(
-    tableColumnSize({ id: 'preview', header: 'Preview', size: 102, imageTracks: 2 }),
+    tableColumnSize({ id: 'preview', label: 'Preview', size: 102, imageTracks: 2 }),
     '102px'
   );
   assert.equal(tableExplicitMinWidth(columns), 'calc(160px + 80px)');
   assert.equal(
     tableExplicitMinWidth([
-      { id: 'token-a', header: 'A', size: 'xs' },
-      { id: 'token-b', header: 'B', size: 'md' },
+      { id: 'token-a', label: 'A', size: 'xs' },
+      { id: 'token-b', label: 'B', size: 'md' },
     ]),
     'calc(var(--dimension-table-column-width-xs) + var(--dimension-table-column-width-md))'
   );

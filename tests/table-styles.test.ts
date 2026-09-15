@@ -15,8 +15,8 @@ const buttonUnfilledTsx = fs.readFileSync(
 );
 const selectTsx = fs.readFileSync('src/wc/components/Select/Select.tsx', 'utf8');
 const filterMenuTsx = fs.readFileSync('src/wc/components/FilterMenu/FilterMenu.tsx', 'utf8');
-const tableFilterTsx = fs.readFileSync('src/wc/components/TableFilter/TableFilter.tsx', 'utf8');
-const tableSortTsx = fs.readFileSync('src/wc/components/TableSort/TableSort.tsx', 'utf8');
+const tableFilterTsx = fs.readFileSync('src/wc/components/DataFilter/DataFilter.tsx', 'utf8');
+const tableSortTsx = fs.readFileSync('src/wc/components/DataSort/DataSort.tsx', 'utf8');
 const layoutController = fs.readFileSync(
   'src/wc/components/Table/table-layout-controller.ts',
   'utf8'
@@ -218,7 +218,7 @@ test('keeps public table selectors and custom properties override-friendly', () 
   for (const property of [
     '--ds-table-surface',
     '--ds-table-header-surface',
-    '--ds-table-group-surface',
+    '--ds-data-group-surface',
     '--ds-table-row-selected',
     '--ds-table-border',
     '--ds-table-column-border',

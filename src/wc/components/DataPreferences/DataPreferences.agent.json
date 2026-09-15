@@ -1,0 +1,38 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-data-preferences",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-data-preferences",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Compact data-view preferences dialog with Filters, Sort, Group, and Customize tabs.",
+  "useWhen": ["A narrow data toolbar or a user preference calls for one result-shaping control."],
+  "avoidWhen": ["The application needs unrelated actions or a submitted form."],
+  "states": [
+    "The application owns all filter, sort, grouping, and field configuration values. Apply emitted changes to the data view and replace the matching preferences inputs.",
+    "The component owns popup visibility, active tab, positioning, and dismissal; embedded controls reuse the same content as their standalone popups.",
+    "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback.",
+    "Apply-required filtering stages edits locally, including match mode. Clear immediately clears all filters and discards pending edits. The footer appears when filters are selected or applied; Apply stays in place and inactive without pending changes; applying emits controlled changes. Closing discards unapplied edits.",
+    "Embedded presentation delegates its active tab, draft state, Apply, Reset, and dismissal to the owning panel; it renders vertical filter and grouping content without a popup trigger.",
+    "Customize builds its catalog from fields. catalogReorderable defaults to true for a table: rows drag to reorder and the last visible entry stays locked. Pass false for a show-and-hide catalog, where rows are switches with no drag handle and every entry may be hidden.",
+    "catalogHeader overrides the catalog section header, which otherwise reads Columns whenever customizeOptions supply a second section. customizeLabel names the Customize menu, so a non-table surface can announce Customize view rather than Customize table.",
+    "Both catalog modes emit dsFieldsConfigChange with hiddenFieldIds and fieldOrder, so a consumer that never reorders can ignore fieldOrder and keep using hiddenFieldIds."
+  ],
+  "accessibility": [
+    "An icon-only Preferences trigger opens a named dialog. TabGroup owns section keyboard navigation; Escape and outside activation dismiss, returning focus to the trigger."
+  ],
+  "responsiveBehavior": [
+    "The popup fits the viewport and scrolls internally. The application chooses whether to show it instead of separate controls. Hide the table-owned Customize trigger while retaining column customization."
+  ],
+  "patterns": [],
+  "commonlyComposedWith": [
+    "component:ds-table",
+    "component:ds-data-toolbar",
+    "component:ds-filter-menu",
+    "component:ds-menu",
+    "component:ds-data-group",
+    "component:ds-tab-group"
+  ]
+}

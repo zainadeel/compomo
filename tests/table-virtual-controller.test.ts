@@ -4,7 +4,7 @@ import { TableVirtualController } from '../src/wc/components/Table/table-virtual
 import { flattenTableVirtualItems } from '../src/wc/components/Table/table-virtual-model';
 import type { TableColumn, TableRow } from '../src/wc/components/Table/table-types';
 
-const columns: TableColumn[] = [{ id: 'name', header: 'Name', size: 160 }];
+const columns: TableColumn[] = [{ id: 'name', label: 'Name', size: 160 }];
 const rows: TableRow[] = Array.from({ length: 40 }, (_, index) => ({
   id: `r${index}`,
   cells: { name: `Row ${index}` },

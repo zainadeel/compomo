@@ -1,0 +1,70 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-data-customize",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-data-customize",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Trigger and menu that shows, hides and optionally reorders the data points a view renders.",
+  "useWhen": [
+    "A card list, map overlay or other non-table view lets the viewer choose which data points appear.",
+    "A toolbar needs Customize as a peer of Filter, Sort and Group rather than a tab inside Preferences."
+  ],
+  "avoidWhen": [
+    "The view is a ds-table. Table owns its column customizer through columnCustomizer, which locks the last visible column and reorders columns."
+  ],
+  "alternatives": [
+    {
+      "when": "The choice is one submitted form value.",
+      "component": "component:ds-select",
+      "reason": "Select owns form-value and listbox semantics rather than view customization."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-data-toolbar",
+    "component:ds-menu",
+    "component:ds-button-unfilled"
+  ],
+  "patterns": ["pattern:menu-trigger"],
+  "accessibility": [
+    "The trigger and menu share an accessible name derived from the visible label unless the application supplies a more contextual name.",
+    "Rows are switches, so each one announces its own checked state."
+  ],
+  "states": [
+    "reorderable is off by default, so rows are switches with no drag handle. Turn it on only where a display order exists.",
+    "minVisible is zero by default, so every field may be hidden. Raise it when the view needs a data point to stay visible.",
+    "catalogHeader labels the field rows; it is omitted unless options supply a second section, in which case it defaults to Data.",
+    "options render as their own Options section and emit dsOptionChange rather than a field config change.",
+    "dsFieldsConfigChange emits hiddenFieldIds and fieldOrder together, so a consumer that never reorders can ignore fieldOrder."
+  ],
+  "responsiveBehavior": [
+    "The owning standalone data toolbar determines when the trigger becomes icon-only; its accessible name and focus tooltip preserve the action label."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign the field catalog and configuration arrays as JavaScript properties. Apply field visibility and order changes to the view, then replace the controlled inputs; handle extra option changes separately."
+    ],
+    "react": [
+      "Keep field visibility and display order in application state, pass new array references after changes, and use the same state to render the view."
+    ],
+    "angular": [
+      "Bind the field catalog and configuration arrays as properties through the generated adapter. Replace the controlled configuration from event.detail and keep extra option state in the application."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook review states",
+      "path": "src/wc/components/DataCustomize/DataCustomize.stories.ts"
+    },
+    {
+      "label": "Toolbar composition owner",
+      "path": "src/wc/components/DataToolbar/DataToolbar.agent.json"
+    },
+    {
+      "label": "Shared catalog state",
+      "path": "src/wc/utils/list-customizer.ts"
+    }
+  ]
+}

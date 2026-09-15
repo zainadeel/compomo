@@ -1,0 +1,43 @@
+import '/dist/components/ds-data-search.js';
+
+await customElements.whenDefined('ds-data-search');
+
+const search = document.getElementById('search');
+search.fields = [
+  {
+    id: 'vehicleDetails',
+    label: 'Vehicle ID / Make · Model · Year',
+    segments: [
+      { label: 'Vehicle ID', dataLabel: 'Vehicle ID', sortKey: 'vehicleId', separator: '/' },
+      { label: 'Make', dataLabel: 'Vehicle make', sortKey: 'vehicleMake', separator: '·' },
+      { label: 'Model', dataLabel: 'Vehicle model', sortKey: 'vehicleModel', separator: '·' },
+      { label: 'Year', dataLabel: 'Vehicle year', sortKey: 'vehicleYear' },
+    ],
+  },
+  {
+    id: 'driverDetails',
+    label: 'Driver name / ID',
+    segments: [
+      { label: 'Driver name', dataLabel: 'Driver name', sortKey: 'driverName', separator: '/' },
+      { label: 'ID', dataLabel: 'Driver ID', sortKey: 'driverId' },
+    ],
+  },
+  { id: 'preview', label: 'Preview', searchable: false },
+  { id: 'actions', kind: 'action', label: '', accessibleLabel: 'Actions' },
+];
+search.value = '';
+search.selectedFieldIds = [];
+search.eventLog = [];
+search.addEventListener('dsChange', event => {
+  search.eventLog.push({ type: 'change', value: event.detail });
+  search.value = event.detail;
+});
+search.addEventListener('dsFieldsChange', event => {
+  search.eventLog.push({ type: 'fields', selectedFieldIds: event.detail.selectedFieldIds });
+  search.selectedFieldIds = event.detail.selectedFieldIds;
+});
+search.addEventListener('dsClear', () => {
+  search.eventLog.push({ type: 'clear' });
+});
+
+document.documentElement.dataset.ready = 'true';

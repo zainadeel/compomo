@@ -35,7 +35,7 @@
   --_table-wrap-secondary-padding-block: 0;
   --_table-surface: var(--ds-table-surface, var(--color-background-primary));
   --_table-header-surface: var(--ds-table-header-surface, var(--color-background-primary));
-  --_table-group-surface: var(--ds-table-group-surface, var(--color-background-secondary));
+  --_data-group-surface: var(--ds-data-group-surface, var(--color-background-secondary));
   --_table-row-hover: var(--ds-table-row-hover, var(--color-interaction-hover));
   --_table-row-pressed: var(--ds-table-row-pressed, var(--color-interaction-pressed));
   --_table-row-selected: var(--ds-table-row-selected, var(--color-interaction-active-brand));
@@ -1395,35 +1395,35 @@
 :where(.ds-table__group-cell--intent-warning),
 :where(.ds-table__group-cell--intent-caution),
 :where(.ds-table__group-cell--intent-positive) {
-  --_table-group-surface: linear-gradient(
+  --_data-group-surface: linear-gradient(
     to right,
-    var(--_table-group-intent-surface),
+    var(--_data-group-intent-surface),
     var(--color-background-faint-neutral)
   );
 }
 
 :where(.ds-table__group-cell--intent-brand) {
-  --_table-group-intent-surface: var(--color-background-faint-brand);
+  --_data-group-intent-surface: var(--color-background-faint-brand);
 }
 
 :where(.ds-table__group-cell--intent-neutral) {
-  --_table-group-surface: var(--color-background-faint-neutral);
+  --_data-group-surface: var(--color-background-faint-neutral);
 }
 
 :where(.ds-table__group-cell--intent-negative) {
-  --_table-group-intent-surface: var(--color-background-faint-negative);
+  --_data-group-intent-surface: var(--color-background-faint-negative);
 }
 
 :where(.ds-table__group-cell--intent-warning) {
-  --_table-group-intent-surface: var(--color-background-faint-warning);
+  --_data-group-intent-surface: var(--color-background-faint-warning);
 }
 
 :where(.ds-table__group-cell--intent-caution) {
-  --_table-group-intent-surface: var(--color-background-faint-caution);
+  --_data-group-intent-surface: var(--color-background-faint-caution);
 }
 
 :where(.ds-table__group-cell--intent-positive) {
-  --_table-group-intent-surface: var(--color-background-faint-positive);
+  --_data-group-intent-surface: var(--color-background-faint-positive);
 }
 
 :where(.ds-table__group-content) {
@@ -1441,7 +1441,7 @@
   min-block-size: var(--_table-row-min-block-size);
   padding: var(--dimension-space-100);
   border-block-end: 0;
-  background: var(--_table-group-surface);
+  background: var(--_data-group-surface);
   background-clip: border-box;
   cursor: default;
 }
@@ -1770,7 +1770,7 @@
   :where(.ds-table) {
     --_table-surface: var(--ds-forced-color-surface);
     --_table-header-surface: var(--ds-forced-color-surface);
-    --_table-group-surface: var(--ds-forced-color-surface);
+    --_data-group-surface: var(--ds-forced-color-surface);
     --_table-border: var(--ds-forced-color-control-boundary);
     --_table-column-border: var(--ds-forced-color-control-boundary);
     --_table-border-strong: var(--ds-forced-color-control-boundary);

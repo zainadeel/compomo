@@ -704,7 +704,7 @@ export class Menu {
             'menu-popup': true,
             'menu-popup--closing': this.closing,
             'ds-choice-popup': !this.embedded,
-            'table-preferences-embedded': this.embedded,
+            'data-preferences-embedded': this.embedded,
             'ds-choice-popup--closing': this.closing,
             'ds-focus-ring': showEmpty,
             'ds-focus-ring--visible': showEmpty && this.focusRingVisible,
