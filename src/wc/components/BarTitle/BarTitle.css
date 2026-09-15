@@ -36,7 +36,7 @@
 .bar-title::after {
   content: '';
   position: absolute;
-  inset: auto var(--ds-bar-title-divider-inset, var(--dimension-space-400)) 0;
+  inset: auto var(--ds-bar-title-divider-inset, var(--dimension-space-200)) 0;
   height: var(--dimension-stroke-width-012);
   background: var(--color-border-tertiary);
   pointer-events: none;
@@ -52,7 +52,7 @@
   flex-direction: column;
   align-items: stretch;
   gap: var(--dimension-space-100);
-  padding: var(--dimension-space-400);
+  padding: var(--dimension-space-200);
   box-sizing: border-box;
 }
 

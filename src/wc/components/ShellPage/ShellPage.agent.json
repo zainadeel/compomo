@@ -65,7 +65,7 @@
     "A ShellPage-managed BarTitle remains concealed until headerCapacity is available and its rendered variant matches the resolved presentation, preventing a default-variant flash during route activation.",
     "responsiveMode=mobile hides and inerts the desktop header, exposes mobile-header, and disables desktop scroll-compaction geometry.",
     "Update headerCapacity synchronously with shell layout state so opening tools or crossing application breakpoints cannot briefly render the wrong presentation.",
-    "The default content inset is balanced on every side: 32px in desktop mode and 16px in tablet and mobile modes.",
+    "The default content inset is balanced at 16px on every side in desktop, tablet, and mobile modes.",
     "When desktopHeaderPlacement=shell-bar, desktop and tablet ignore page-header-specific block-start seam overrides and expose --ds-shell-page-content-block-start-offset as the responsive gutter only; mobile keeps its MobileHeader geometry and existing seam.",
     "contentInsetBlockStart can independently remove the top gutter for table and canvas pages that should meet the sticky header; exact roomy and compact block-start sizes support pages whose seam changes with header capacity.",
     "The selected content surface persists unchanged across desktop, tablet, and mobile modes.",

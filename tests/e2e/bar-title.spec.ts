@@ -97,22 +97,22 @@ test(
     });
 
     expect(geometry.contentOffset).toBe(geometry.headerHeight);
-    expect(geometry.paddingTop).toBe(32);
-    expect(geometry.paddingRight).toBe(32);
-    expect(geometry.paddingBottom).toBe(32);
-    expect(geometry.paddingLeft).toBe(32);
-    expect(geometry.headingLeftInset).toBe(32);
-    expect(geometry.breadcrumbTop).toBe(32);
-    expect(geometry.breadcrumbLeft).toBe(32);
-    expect(geometry.breadcrumbRightInset).toBe(32);
+    expect(geometry.paddingTop).toBe(16);
+    expect(geometry.paddingRight).toBe(16);
+    expect(geometry.paddingBottom).toBe(16);
+    expect(geometry.paddingLeft).toBe(16);
+    expect(geometry.headingLeftInset).toBe(16);
+    expect(geometry.breadcrumbTop).toBe(16);
+    expect(geometry.breadcrumbLeft).toBe(16);
+    expect(geometry.breadcrumbRightInset).toBe(16);
     expect(geometry.breadcrumbAboveHeading).toBe(true);
-    expect(geometry.dividerLeft).toBe(32);
-    expect(geometry.dividerRight).toBe(32);
+    expect(geometry.dividerLeft).toBe(16);
+    expect(geometry.dividerRight).toBe(16);
   }
 );
 
 test(
-  'reduces the default page inset for tablet and mobile modes',
+  'keeps the default page inset at 16px for tablet and mobile modes',
   chromiumOnly(
     'responsive-shell',
     'Explicit responsive-mode rendering checks token-backed insets without viewport measurement.'
@@ -196,15 +196,15 @@ test(
     });
 
     expect(withBreadcrumb).toEqual({
-      breadcrumbTop: 32,
-      breadcrumbLeft: 32,
-      breadcrumbRightInset: 32,
-      actionsTop: 52,
-      titleTop: 52,
+      breadcrumbTop: 16,
+      breadcrumbLeft: 16,
+      breadcrumbRightInset: 16,
+      actionsTop: 36,
+      titleTop: 36,
       breadcrumbToTitle: 8,
       titleToDescription: 8,
     });
-    expect(withoutBreadcrumb).toEqual({ actionsTop: 32, titleTop: 32 });
+    expect(withoutBreadcrumb).toEqual({ actionsTop: 16, titleTop: 16 });
   }
 );
 
@@ -1003,7 +1003,7 @@ test('snaps only when the expanded title and actions reach their compact positio
       const divider = bar ? getComputedStyle(bar, '::after') : null;
       return divider ? Number.parseFloat(divider.left) : 0;
     });
-  expect(await readDividerInset()).toBe(32);
+  expect(await readDividerInset()).toBe(16);
   await expect
     .poll(() =>
       shell.evaluate(element =>
@@ -1028,7 +1028,7 @@ test('snaps only when the expanded title and actions reach their compact positio
     },
     initialScrollTop + (snapScrollTop - initialScrollTop) / 2
   );
-  await expect.poll(readDividerInset).toBeCloseTo(16, 0);
+  await expect.poll(readDividerInset).toBeCloseTo(8, 0);
 
   await scroller.evaluate((element: HTMLElement, distance) => {
     element.scrollTop = distance - 1;
@@ -1126,7 +1126,7 @@ test('measures a shorter snap distance when the expanded header has no breadcrum
         };
       })
     )
-    .toEqual({ travel: 24, expected: 24 });
+    .toEqual({ travel: 8, expected: 8 });
   const snapScrollTop = await shell.evaluate(element => {
     const root = element.closest('ds-shell-app')?.querySelector<HTMLElement>('.shell-app__content');
     const sentinel = element.querySelector<HTMLElement>('.shell-page__scroll-sentinel');
