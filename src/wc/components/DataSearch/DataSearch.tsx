@@ -302,7 +302,6 @@ export class DataSearch {
 
   render() {
     const selected = this.selectedFields;
-    const available = this.availableFields;
     const visible = this.visibleFields;
     const inputValue = this.menuOpen ? this.menuQuery : this.value;
     const hasValue = this.value.length > 0 || selected.length > 0;
