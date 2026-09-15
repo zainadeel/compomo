@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.1.1](https://github.com/zainadeel/compomo/compare/v15.1.0...v15.1.1) (2026-09-15)
+
+
+### Fixed
+
+* clear ui eslint warnings ([#612](https://github.com/zainadeel/compomo/issues/612)) ([4f2d80f](https://github.com/zainadeel/compomo/commit/4f2d80f00d38e26dde3cd35784e9c3dbcdb99fd9))
+
 ## [15.1.0](https://github.com/zainadeel/compomo/compare/v15.0.0...v15.1.0) (2026-09-15)
 
 
