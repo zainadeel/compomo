@@ -1,10 +1,10 @@
 import '/dist/components/ds-data-preferences.js';
 await customElements.whenDefined('ds-data-preferences');
 const control = document.querySelector('#preferences');
-control.columns = [
-  { id: 'driver', header: 'Driver', sortable: true },
-  { id: 'status', header: 'Status', sortable: true },
-  { id: 'vehicle', header: 'Vehicle' },
+control.fields = [
+  { id: 'driver', label: 'Driver', sortable: true },
+  { id: 'status', label: 'Status', sortable: true },
+  { id: 'vehicle', label: 'Vehicle' },
 ];
 control.filters = [
   {

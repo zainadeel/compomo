@@ -11,15 +11,15 @@ import {
 const columns = [
   {
     id: 'driverDetails',
-    header: 'Driver name / ID',
-    headerSegments: [
+    label: 'Driver name / ID',
+    segments: [
       { label: 'Driver name', dataLabel: 'Driver name', sortKey: 'driverName', separator: '/' },
       { label: 'ID', dataLabel: 'Driver ID', sortKey: 'driverId' },
     ],
   },
-  { id: 'location', header: 'Place', dataLabel: 'Location' },
-  { id: 'preview', header: 'Preview', searchable: false },
-  { id: 'actions', kind: 'action' as const, header: '', headerLabel: 'Actions' },
+  { id: 'location', label: 'Place', dataLabel: 'Location' },
+  { id: 'preview', label: 'Preview', searchable: false },
+  { id: 'actions', kind: 'action' as const, label: '', accessibleLabel: 'Actions' },
 ];
 const fields = tableSearchFields(columns);
 

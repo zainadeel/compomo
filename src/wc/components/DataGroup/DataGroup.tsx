@@ -21,16 +21,16 @@ import { AnchoredPositionController } from '../../utils/anchored-position-contro
 import { AnchoredOverlayInteractionController } from '../../utils/anchored-overlay-interaction-controller';
 import { resolveAnchoredOverlayBoundaryRect } from '../../utils/anchored-overlay-boundary';
 import { ChoiceListSection, ChoiceOptionRow } from '../../utils/choice-list-parts';
-import type { TableGroupingState, TableSortDirection } from '../Table/table-types';
+import type { DataGroupingState, DataSortDirection } from '../Table/table-types';
 
 export interface TableGroupOrderOption {
   label: string;
-  direction: TableSortDirection;
+  direction: DataSortDirection;
   /** Optional application-owned data point used to order the group sections. */
   orderBy?: string;
 }
 
-export interface TableGroupOption {
+export interface DataGroupOption {
   label: string;
   value: string;
   description?: string;
@@ -60,9 +60,9 @@ export class DataGroup {
   @Prop() hasBorder: boolean = true;
   @Prop() vertical: boolean = false;
   @Prop() embedded: boolean = false;
-  @Prop() options: TableGroupOption[] = [];
+  @Prop() options: DataGroupOption[] = [];
   /** Controlled grouping field and the order of its group sections. */
-  @Prop() grouping: TableGroupingState | null = null;
+  @Prop() grouping: DataGroupingState | null = null;
   /** Accessible name for the trigger and non-modal dialog. */
   @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;
   /** Controlled popup visibility. */
@@ -73,7 +73,7 @@ export class DataGroup {
   @Prop() clearLabel = 'Clear';
 
   /** Requests replacement of the complete controlled grouping state. */
-  @Event() dsGroupChange!: EventEmitter<TableGroupingState>;
+  @Event() dsGroupChange!: EventEmitter<DataGroupingState>;
   /** Requests removal of the controlled grouping state. */
   @Event() dsClear!: EventEmitter<void>;
   /** Reports controlled popup visibility changes. */
@@ -247,7 +247,7 @@ export class DataGroup {
     });
   }
 
-  private selectData(option: TableGroupOption) {
+  private selectData(option: DataGroupOption) {
     if (option.value === '__none__') {
       this.dsClear.emit();
       return;
@@ -289,7 +289,7 @@ export class DataGroup {
 
   private selectOrder(option: TableGroupOrderOption, index: number) {
     if (!this.grouping || this.selectedOrderIndex === index) return;
-    const grouping: TableGroupingState = {
+    const grouping: DataGroupingState = {
       columnId: this.grouping.columnId,
       direction: option.direction,
     };
@@ -323,7 +323,7 @@ export class DataGroup {
     items[next]?.focus();
   }
 
-  private renderDataOption(option: TableGroupOption, index: number) {
+  private renderDataOption(option: DataGroupOption, index: number) {
     const selected =
       option.value === '__none__' ? !this.grouping : option.value === this.grouping?.columnId;
     return (

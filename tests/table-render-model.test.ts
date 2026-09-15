@@ -4,8 +4,8 @@ import { createTableRenderModel } from '../src/wc/components/Table/table-render-
 import type { TableColumn, DataGroup, TableRow } from '../src/wc/components/Table/table-types';
 
 const columns: TableColumn[] = [
-  { id: 'name', header: 'Name', size: 160 },
-  { id: 'action', header: '', headerLabel: 'Actions', kind: 'action', sticky: 'end' },
+  { id: 'name', label: 'Name', size: 160 },
+  { id: 'action', label: '', accessibleLabel: 'Actions', kind: 'action', sticky: 'end' },
 ];
 const rows: TableRow[] = [
   { id: 'a', cells: { name: 'A', action: { kind: 'blank' } } },
@@ -40,8 +40,8 @@ test('creates one complete derived snapshot for an ungrouped render', () => {
 test('leaves intentionally unsized columns flexible without adding a spacer', () => {
   const model = createTableRenderModel({
     columns: [
-      { id: 'name', header: 'Name', size: 160 },
-      { id: 'notes', header: 'Notes' },
+      { id: 'name', label: 'Name', size: 160 },
+      { id: 'notes', label: 'Notes' },
     ],
     rows,
     groups: [],

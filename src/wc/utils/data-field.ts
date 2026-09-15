@@ -23,19 +23,16 @@ export interface DataFieldSegment {
 export interface DataField {
   /** Stable field identity. */
   id: string;
-  /**
-   * Visible field label. May be empty when accessibleLabel supplies a
-   * non-visual name. Named `header` because table columns established it.
-   */
-  header: string;
+  /** Visible field label. May be empty when accessibleLabel supplies a non-visual name. */
+  label: string;
   /** Complete data-point label used by controls such as Sort and Search. */
   dataLabel?: string;
   /** Screen-reader-only name for an intentionally blank visible label. */
-  headerLabel?: string;
+  accessibleLabel?: string;
   /** Whether this data point is offered by Search. Defaults to true. */
   searchable?: boolean;
   /** Whether Sort offers this field. */
   sortable?: boolean;
   /** Labels for a field that presents and sorts several related data points. */
-  headerSegments?: DataFieldSegment[];
+  segments?: DataFieldSegment[];
 }

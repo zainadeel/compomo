@@ -2,13 +2,13 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 import '../../../../dist/components/ds-data-sort.js';
-import type { TableSortState } from '../Table/table-types';
+import type { DataSortState } from '../Table/table-types';
 
 const COLUMNS = [
-  { id: 'driver', header: 'Driver', sortable: true, size: 'sm' },
+  { id: 'driver', label: 'Driver', sortable: true, size: 'sm' },
   {
     id: 'behaviorDetails',
-    header: 'Behavior / Severity',
+    label: 'Behavior / Severity',
     headerSegments: [
       { label: 'Behavior', sortKey: 'behavior', separator: '/' },
       { label: 'Severity', sortKey: 'severity' },
@@ -16,7 +16,7 @@ const COLUMNS = [
     sortable: true,
     size: 'sm',
   },
-  { id: 'status', header: 'Status', sortable: true, size: 'xs' },
+  { id: 'status', label: 'Status', sortable: true, size: 'xs' },
 ];
 
 const meta: Meta = {
@@ -50,11 +50,11 @@ export const SortMenu: Story = {
     <div style="padding:var(--dimension-space-200);">
       <ds-data-sort
         data-a11y-fixture
-        .columns=${COLUMNS}
+        .fields=${COLUMNS}
         .sort=${{ columnId: 'driver', direction: 'asc' }}
         aria-label="Sort fleet"
-        @dsSortChange=${(event: CustomEvent<{ sort: TableSortState | null }>) => {
-          const control = event.currentTarget as HTMLElement & { sort: TableSortState | null };
+        @dsSortChange=${(event: CustomEvent<{ sort: DataSortState | null }>) => {
+          const control = event.currentTarget as HTMLElement & { sort: DataSortState | null };
           control.sort = event.detail.sort;
         }}
       ></ds-data-sort>
@@ -76,9 +76,9 @@ export const LongColumnCatalog: Story = {
   render: () => html`
     <div style="padding:var(--dimension-space-200);">
       <ds-data-sort
-        .columns=${Array.from({ length: 18 }, (_, index) => ({
+        .fields=${Array.from({ length: 18 }, (_, index) => ({
           id: `column-${index + 1}`,
-          header: `Sortable column ${index + 1}`,
+          label: `Sortable column ${index + 1}`,
           sortable: true,
           size: 'sm',
         }))}

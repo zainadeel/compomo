@@ -10,12 +10,12 @@ import '../../../../dist/components/ds-data-filter.js';
 import '../../../../dist/components/ds-data-sort.js';
 import '../../../../dist/components/ds-select.js';
 import '../../../../dist/components/ds-input.js';
-import type { TableColumnsConfigChangeDetail, TableSortState } from '../Table/table-types';
+import type { DataFieldsConfigChangeDetail, DataSortState } from '../Table/table-types';
 
 const COLUMNS = [
-  { id: 'driver', header: 'Driver', sortable: true, size: 'sm' },
-  { id: 'status', header: 'Status', sortable: true, size: 'xs' },
-  { id: 'vehicle', header: 'Vehicle', size: 'xs' },
+  { id: 'driver', label: 'Driver', sortable: true, size: 'sm' },
+  { id: 'status', label: 'Status', sortable: true, size: 'xs' },
+  { id: 'vehicle', label: 'Vehicle', size: 'xs' },
 ];
 
 const ROWS = [
@@ -49,12 +49,12 @@ const GROUPING_OPTIONS = [
 ];
 
 const applySort = (event: Event) => {
-  const detail = (event as CustomEvent<{ sort: TableSortState | null }>).detail;
+  const detail = (event as CustomEvent<{ sort: DataSortState | null }>).detail;
   const table = (event.currentTarget as HTMLElement).closest('ds-table') as
-    | (HTMLElement & { sort: TableSortState | null })
+    | (HTMLElement & { sort: DataSortState | null })
     | null;
   const control = table?.querySelector('ds-data-sort') as
-    | (HTMLElement & { sort: TableSortState | null })
+    | (HTMLElement & { sort: DataSortState | null })
     | null;
   if (table) table.sort = detail.sort;
   if (control) control.sort = detail.sort;
@@ -65,7 +65,7 @@ const applyColumnsConfig = (event: Event) => {
     hiddenColumnIds: string[];
     columnOrder: string[];
   };
-  const detail = (event as CustomEvent<TableColumnsConfigChangeDetail>).detail;
+  const detail = (event as CustomEvent<DataFieldsConfigChangeDetail>).detail;
   table.hiddenColumnIds = detail.hiddenColumnIds;
   table.columnOrder = detail.columnOrder;
 };
@@ -100,7 +100,7 @@ const renderToolbar = (options?: {
     ></ds-data-filter>
     <ds-data-sort
       slot="trailing"
-      .columns=${COLUMNS}
+      .fields=${COLUMNS}
       .sort=${{ columnId: 'driver', direction: 'asc' }}
       aria-label="Sort fleet"
       @dsSortChange=${applySort}
@@ -220,7 +220,7 @@ export const NarrowOverflow: Story = {
           aria-label="Group fleet"
           .activeFill=${false}
         ></ds-select>
-        <ds-data-sort slot="trailing" .columns=${COLUMNS} aria-label="Sort fleet"></ds-data-sort>
+        <ds-data-sort slot="trailing" .fields=${COLUMNS} aria-label="Sort fleet"></ds-data-sort>
       </ds-data-toolbar>
     </div>
   `,

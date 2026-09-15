@@ -8,10 +8,10 @@ toggleOnly.activeTab = 'customize';
 toggleOnly.customizeLabel = 'Customize view';
 toggleOnly.catalogHeader = 'Data';
 toggleOnly.catalogReorderable = false;
-toggleOnly.columns = [
-  { id: 'driverId', header: 'Driver ID' },
-  { id: 'vehicleMmy', header: 'Vehicle MMY' },
-  { id: 'motion', header: 'Motion detail' },
+toggleOnly.fields = [
+  { id: 'driverId', label: 'Driver ID' },
+  { id: 'vehicleMmy', label: 'Vehicle MMY' },
+  { id: 'motion', label: 'Motion detail' },
 ];
 toggleOnly.customizeOptions = [
   { label: 'Show applied filters', value: 'show-filters', showSwitch: true },
@@ -24,10 +24,10 @@ toggleOnly.addEventListener('dsColumnsConfigChange', e => {
 const tableCatalog = document.querySelector('#table-catalog');
 tableCatalog.embedded = true;
 tableCatalog.activeTab = 'customize';
-tableCatalog.columns = [
-  { id: 'driver', header: 'Driver' },
-  { id: 'status', header: 'Status' },
-  { id: 'vehicle', header: 'Vehicle' },
+tableCatalog.fields = [
+  { id: 'driver', label: 'Driver' },
+  { id: 'status', label: 'Status' },
+  { id: 'vehicle', label: 'Vehicle' },
 ];
 tableCatalog.hiddenColumnIds = ['status', 'vehicle'];
 tableCatalog.addEventListener('dsColumnsConfigChange', e => {

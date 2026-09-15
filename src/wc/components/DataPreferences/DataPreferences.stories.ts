@@ -7,9 +7,9 @@ type Story = StoryObj;
 export const Compact: Story = {
   render: () =>
     html`<ds-data-preferences
-      .columns=${[
-        { id: 'driver', header: 'Driver', sortable: true },
-        { id: 'status', header: 'Status', sortable: true },
+      .fields=${[
+        { id: 'driver', label: 'Driver', sortable: true },
+        { id: 'status', label: 'Status', sortable: true },
       ]}
       .filters=${[
         {
@@ -69,7 +69,7 @@ export const PanelContent: Story = {
             ],
           },
         ]}
-        .columns=${[{ id: 'name', header: 'Name', sortable: true }]}
+        .fields=${[{ id: 'name', label: 'Name', sortable: true }]}
         .groupingOptions=${[{ label: 'Motion status', value: 'status' }]}
         @dsPreferencesTabChange=${(e: CustomEvent) => {
           (e.currentTarget as HTMLDsDataPreferencesElement).activeTab = e.detail;
@@ -97,12 +97,12 @@ export const ToggleOnlyCatalog: Story = {
         catalog-header="Data"
         .catalogReorderable=${false}
         .hiddenColumnIds=${['assetType']}
-        .columns=${[
-          { id: 'driverId', header: 'Driver ID' },
-          { id: 'vehicleMmy', header: 'Vehicle MMY' },
-          { id: 'assetType', header: 'Asset Type · MMY' },
-          { id: 'motion', header: 'Motion detail' },
-          { id: 'lastUpdated', header: 'Last updated' },
+        .fields=${[
+          { id: 'driverId', label: 'Driver ID' },
+          { id: 'vehicleMmy', label: 'Vehicle MMY' },
+          { id: 'assetType', label: 'Asset Type · MMY' },
+          { id: 'motion', label: 'Motion detail' },
+          { id: 'lastUpdated', label: 'Last updated' },
         ]}
         .customizeOptions=${[
           { label: 'Show applied filters', value: 'show-filters', showSwitch: true },

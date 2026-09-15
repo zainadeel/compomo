@@ -21,12 +21,12 @@ import type {
 } from '../FilterMenu/FilterMenu';
 import type {
   TableColumn,
-  TableSortState,
-  TableSortChangeDetail,
-  TableGroupingState,
-  TableColumnsConfigChangeDetail,
+  DataSortState,
+  DataSortChangeDetail,
+  DataGroupingState,
+  DataFieldsConfigChangeDetail,
 } from '../Table/table-types';
-import type { TableGroupOption } from '../DataGroup/DataGroup';
+import type { DataGroupOption } from '../DataGroup/DataGroup';
 import { tableSortMenuSections, nextTableSortStateFromMenuItem } from '../DataSort/data-sort-menu';
 import {
   tableColumnCustomizerLabel,
@@ -61,7 +61,7 @@ export class DataPreferences {
   @Prop() values: FilterMenuValues = {};
   @Prop() matchModes: FilterMenuMatchModes = {};
   @Prop() activeFilterId: string | undefined;
-  @Prop() columns: DataField[] = [];
+  @Prop() fields: DataField[] = [];
   /** Additional toggle options in the column customizer. */
   @Prop() customizeOptions: MenuItemData[] = [];
   @Prop() customizeSections: MenuSection[] = [];
@@ -81,9 +81,9 @@ export class DataPreferences {
   @Event() dsCustomizeOptionChange!: EventEmitter<string>;
   /** Optional sort fields when they differ from customizable content. */
   @Prop() sortColumns?: TableColumn[];
-  @Prop() sort: TableSortState | null = null;
-  @Prop() groupingOptions: TableGroupOption[] = [];
-  @Prop() grouping: TableGroupingState | null = null;
+  @Prop() sort: DataSortState | null = null;
+  @Prop() groupingOptions: DataGroupOption[] = [];
+  @Prop() grouping: DataGroupingState | null = null;
   @Prop() hiddenColumnIds: string[] = [];
   @Prop() columnOrder: string[] = [];
   /** Render shared content without its popup or trigger. */
@@ -95,14 +95,14 @@ export class DataPreferences {
   @Event() dsFilterMatchModeChange!: EventEmitter<FilterMenuMatchModeChangeDetail>;
   @Event() dsActiveFilterChange!: EventEmitter<string>;
   @Event() dsFiltersClear!: EventEmitter<void>;
-  @Event() dsSortChange!: EventEmitter<TableSortChangeDetail>;
-  @Event() dsGroupChange!: EventEmitter<TableGroupingState>;
+  @Event() dsSortChange!: EventEmitter<DataSortChangeDetail>;
+  @Event() dsGroupChange!: EventEmitter<DataGroupingState>;
   @Event() dsGroupClear!: EventEmitter<void>;
-  @Event() dsColumnsConfigChange!: EventEmitter<TableColumnsConfigChangeDetail>;
+  @Event() dsColumnsConfigChange!: EventEmitter<DataFieldsConfigChangeDetail>;
 
   /** Catalog rows as domain-neutral items, so a non-table catalog needs no column shape. */
   private catalogItems(): { id: string; label: string }[] {
-    return tableDataColumns(this.columns).map(column => ({
+    return tableDataColumns(this.fields).map(column => ({
       id: column.id,
       label: tableColumnCustomizerLabel(column),
     }));
@@ -291,12 +291,12 @@ export class DataPreferences {
                 <ds-menu
                   embedded
                   menuLabel="Sort table"
-                  sections={tableSortMenuSections(this.sortColumns ?? this.columns, this.sort)}
+                  sections={tableSortMenuSections(this.sortColumns ?? this.fields, this.sort)}
                   onDsSelect={e => {
                     e.stopPropagation();
                     this.dsSortChange.emit({
                       sort: nextTableSortStateFromMenuItem(
-                        this.sortColumns ?? this.columns,
+                        this.sortColumns ?? this.fields,
                         this.sort,
                         e.detail
                       ),
@@ -319,7 +319,7 @@ export class DataPreferences {
                   embedded
                   menuLabel={this.customizeLabel}
                   sections={[
-                    ...(this.columns.length
+                    ...(this.fields.length
                       ? [
                           {
                             header:
@@ -327,7 +327,7 @@ export class DataPreferences {
                               (this.customizeOptions.length ? 'Columns' : undefined),
                             items: this.catalogReorderable
                               ? tableColumnCustomizerMenuItems(
-                                  this.columns,
+                                  this.fields,
                                   this.hiddenColumnIds,
                                   this.columnOrder
                                 )
@@ -374,11 +374,11 @@ export class DataPreferences {
                     }
                     this.dsColumnsConfigChange.emit({
                       hiddenColumnIds: toggleTableColumnHidden(
-                        this.columns,
+                        this.fields,
                         this.hiddenColumnIds,
                         e.detail.value
                       ),
-                      columnOrder: resolveTableColumnOrder(this.columns, this.columnOrder),
+                      columnOrder: resolveTableColumnOrder(this.fields, this.columnOrder),
                     });
                   }}
                   onDsReorder={e => {

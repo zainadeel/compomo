@@ -69,7 +69,7 @@ export type {
   DataGroup,
   TableHeaderSegment,
   TableGroupingChangeDetail,
-  TableGroupingState,
+  DataGroupingState,
   TableLoadMoreDetail,
   TableLoadMoreMode,
   TableLoadMoreReason,
@@ -77,9 +77,9 @@ export type {
   TableRow,
   TableSelectionChangeDetail,
   TableSelectionMode,
-  TableSortChangeDetail,
-  TableSortDirection,
-  TableSortState,
+  DataSortChangeDetail,
+  DataSortDirection,
+  DataSortState,
 } from '../types/components/Table/table-types';
 export type {
   PaginationChangeDetail,

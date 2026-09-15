@@ -83,12 +83,12 @@ const overflowActionItems = [
 ];
 
 const columns = [
-  { id: 'name', header: 'Driver', sortable: true, size: 'sm' },
-  { id: 'status', header: 'Status', sortable: true, align: 'center', size: 'sm' },
-  { id: 'vehicle', header: 'Vehicle', size: 'xs', help: 'Assigned vehicle identifier.' },
+  { id: 'name', label: 'Driver', sortable: true, size: 'sm' },
+  { id: 'status', label: 'Status', sortable: true, align: 'center', size: 'sm' },
+  { id: 'vehicle', label: 'Vehicle', size: 'xs', help: 'Assigned vehicle identifier.' },
   {
     id: 'score',
-    header: 'Safety score',
+    label: 'Safety score',
     sortable: true,
     align: 'end',
     size: 'xs',
@@ -193,9 +193,9 @@ grouped.addEventListener('dsSortChange', event => {
 
 const severityGrouped = document.getElementById('severity-grouped');
 severityGrouped.columns = [
-  { id: 'behavior', header: 'Behavior', size: 'sm' },
-  { id: 'severity', header: 'Severity', sortable: true, size: 'xs' },
-  { id: 'driver', header: 'Driver', size: 'sm' },
+  { id: 'behavior', label: 'Behavior', size: 'sm' },
+  { id: 'severity', label: 'Severity', sortable: true, size: 'xs' },
+  { id: 'driver', label: 'Driver', size: 'sm' },
 ];
 const severityRows = [
   {
@@ -257,7 +257,7 @@ const compound = document.getElementById('compound');
 compound.columns = [
   {
     id: 'behaviorDetails',
-    header: 'Behavior / Severity',
+    label: 'Behavior / Severity',
     headerSegments: [
       { label: 'Behavior', sortKey: 'behavior', separator: '/' },
       { label: 'Severity', sortKey: 'severity' },
@@ -265,7 +265,7 @@ compound.columns = [
     sortable: true,
     size: 'sm',
   },
-  { id: 'status', header: 'Status', size: 'sm' },
+  { id: 'status', label: 'Status', size: 'sm' },
 ];
 const compoundRows = [
   {
@@ -309,28 +309,28 @@ compound.addEventListener('dsSortChange', event => {
 
 const cellTypes = document.getElementById('cell-types');
 cellTypes.columns = [
-  { id: 'singleText', header: 'Single text', size: 'sm' },
-  { id: 'primarySecondary', header: 'Primary + secondary', size: 'sm' },
-  { id: 'linkedText', header: 'Linked text', size: 'sm' },
-  { id: 'primaryPair', header: 'Primary + primary', size: 'sm' },
-  { id: 'event', header: 'Event', size: 'sm' },
-  { id: 'image', header: 'Image', imageTracks: 2 },
-  { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
-  { id: 'iconText', header: 'Icon + text', size: 'sm' },
-  { id: 'tagOnly', header: 'Tag only', size: 'sm' },
-  { id: 'tagWithText', header: 'Tag with text', size: 'sm' },
-  { id: 'textWithTag', header: 'Text with tag', size: 'sm' },
-  { id: 'action', kind: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
+  { id: 'singleText', label: 'Single text', size: 'sm' },
+  { id: 'primarySecondary', label: 'Primary + secondary', size: 'sm' },
+  { id: 'linkedText', label: 'Linked text', size: 'sm' },
+  { id: 'primaryPair', label: 'Primary + primary', size: 'sm' },
+  { id: 'event', label: 'Event', size: 'sm' },
+  { id: 'image', label: 'Image', imageTracks: 2 },
+  { id: 'icon', label: 'Icon only', align: 'center', size: 'xs' },
+  { id: 'iconText', label: 'Icon + text', size: 'sm' },
+  { id: 'tagOnly', label: 'Tag only', size: 'sm' },
+  { id: 'tagWithText', label: 'Tag with text', size: 'sm' },
+  { id: 'textWithTag', label: 'Text with tag', size: 'sm' },
+  { id: 'action', kind: 'action', label: '', headerLabel: 'Action', align: 'center', size: 40 },
   {
     id: 'borderedAction',
     kind: 'action',
-    header: '',
+    label: '',
     headerLabel: 'Bordered action',
     align: 'center',
     size: 40,
   },
-  { id: 'empty', header: 'Empty', size: 'xs' },
-  { id: 'blank', header: 'Blank', size: 'xs' },
+  { id: 'empty', label: 'Empty', size: 'xs' },
+  { id: 'blank', label: 'Blank', size: 'xs' },
 ];
 cellTypes.rows = [
   {
@@ -408,11 +408,11 @@ cellTypes.addEventListener('dsRowActivate', event => {
 
 const threeTrack = document.getElementById('three-track');
 threeTrack.columns = [
-  { id: 'image', header: 'Image', imageTracks: 3 },
-  { id: 'iconText', header: 'Icon + text', size: 'sm' },
-  { id: 'driver', header: 'Driver', size: 'sm' },
-  { id: 'vehicle', header: 'Vehicle', size: 'sm' },
-  { id: 'event', header: 'Event', size: 'sm' },
+  { id: 'image', label: 'Image', imageTracks: 3 },
+  { id: 'iconText', label: 'Icon + text', size: 'sm' },
+  { id: 'driver', label: 'Driver', size: 'sm' },
+  { id: 'vehicle', label: 'Vehicle', size: 'sm' },
+  { id: 'event', label: 'Event', size: 'sm' },
 ];
 threeTrack.rows = [
   {
@@ -485,9 +485,9 @@ threeTrack.rows = [
 
 const multipleTags = document.getElementById('multiple-tags');
 multipleTags.columns = [
-  { id: 'vehicle', header: 'Vehicle', size: 160 },
-  { id: 'behaviors', header: 'Detected behaviors', size: 160 },
-  { id: 'status', header: 'Status', size: 120 },
+  { id: 'vehicle', label: 'Vehicle', size: 160 },
+  { id: 'behaviors', label: 'Detected behaviors', size: 160 },
+  { id: 'status', label: 'Status', size: 120 },
 ];
 multipleTags.rows = [
   {
@@ -543,8 +543,8 @@ multipleTags.rows = [
 
 const wrapTwo = document.getElementById('wrap-two');
 wrapTwo.columns = [
-  { id: 'name', header: 'Tracks' },
-  { id: 'notes', header: 'Wrapping primary', wrap: true, size: 140 },
+  { id: 'name', label: 'Tracks' },
+  { id: 'notes', label: 'Wrapping primary', wrap: true, size: 140 },
 ];
 wrapTwo.rows = [
   {
@@ -565,8 +565,8 @@ wrapTwo.rows = [
 
 const wrapThree = document.getElementById('wrap-three');
 wrapThree.columns = [
-  { id: 'name', header: 'Tracks' },
-  { id: 'notes', header: 'Wrapping primary', wrap: true, size: 200 },
+  { id: 'name', label: 'Tracks' },
+  { id: 'notes', label: 'Wrapping primary', wrap: true, size: 200 },
 ];
 wrapThree.rows = [
   {
@@ -584,8 +584,8 @@ wrapThree.rows = [
 
 const wrapSecondaryTwo = document.getElementById('wrap-secondary-two');
 wrapSecondaryTwo.columns = [
-  { id: 'name', header: 'Tracks' },
-  { id: 'notes', header: 'Wrapping secondary', wrap: true, size: 180 },
+  { id: 'name', label: 'Tracks' },
+  { id: 'notes', label: 'Wrapping secondary', wrap: true, size: 180 },
 ];
 wrapSecondaryTwo.rows = [
   {
@@ -613,8 +613,8 @@ wrapSecondaryTwo.rows = [
 
 const wrapSecondaryThree = document.getElementById('wrap-secondary-three');
 wrapSecondaryThree.columns = [
-  { id: 'name', header: 'Tracks' },
-  { id: 'notes', header: 'Wrapping secondary', wrap: true, size: 140 },
+  { id: 'name', label: 'Tracks' },
+  { id: 'notes', label: 'Wrapping secondary', wrap: true, size: 140 },
 ];
 wrapSecondaryThree.rows = [
   {
@@ -640,8 +640,8 @@ const LONG_LOCATION =
 
 const truncateTooltip = document.getElementById('truncate-tooltip');
 truncateTooltip.columns = [
-  { id: 'case', header: 'Case' },
-  { id: 'notes', header: 'Notes', size: 140 },
+  { id: 'case', label: 'Case' },
+  { id: 'notes', label: 'Notes', size: 140 },
 ];
 truncateTooltip.rows = [
   {
@@ -680,12 +680,12 @@ truncateTooltip.rows = [
 
 const singleTrack = document.getElementById('single-track');
 singleTrack.columns = [
-  { id: 'scalar', header: 'Scalar text', size: 'sm' },
-  { id: 'image', header: 'Image', imageTracks: 1 },
-  { id: 'icon', header: 'Icon only', align: 'center', size: 'xs' },
-  { id: 'iconText', header: 'Icon + text', size: 'sm' },
-  { id: 'tagOnly', header: 'Tag only', size: 'sm' },
-  { id: 'action', kind: 'action', header: '', headerLabel: 'Action', align: 'center', size: 40 },
+  { id: 'scalar', label: 'Scalar text', size: 'sm' },
+  { id: 'image', label: 'Image', imageTracks: 1 },
+  { id: 'icon', label: 'Icon only', align: 'center', size: 'xs' },
+  { id: 'iconText', label: 'Icon + text', size: 'sm' },
+  { id: 'tagOnly', label: 'Tag only', size: 'sm' },
+  { id: 'action', kind: 'action', label: '', headerLabel: 'Action', align: 'center', size: 40 },
 ];
 singleTrack.rows = [
   {
@@ -722,7 +722,7 @@ interactive.columns = [
   {
     id: 'actions',
     kind: 'action',
-    header: '',
+    label: '',
     headerLabel: 'Actions',
     align: 'center',
     size: 40,
@@ -750,8 +750,8 @@ interactive.addEventListener('dsRowActivate', event => {
 
 const linkedText = document.getElementById('linked-text');
 linkedText.columns = [
-  { id: 'vehicle', header: 'Vehicle', size: 'sm' },
-  { id: 'status', header: 'Status', size: 'xs' },
+  { id: 'vehicle', label: 'Vehicle', size: 'sm' },
+  { id: 'status', label: 'Status', size: 'xs' },
 ];
 linkedText.rows = [
   {
@@ -909,7 +909,7 @@ groupedPaginated.addEventListener('dsGroupLoadMore', event => {
 });
 
 const overflow = document.getElementById('overflow');
-overflow.columns = [...columns, { id: 'location', header: 'Last known location', size: 'md' }];
+overflow.columns = [...columns, { id: 'location', label: 'Last known location', size: 'md' }];
 overflow.rows = Array.from({ length: 12 }, (_, index) => ({
   ...rows[index % rows.length],
   id: `${rows[index % rows.length].id}-${index}`,
@@ -973,7 +973,7 @@ customizer.columns = [
   {
     id: 'action',
     kind: 'action',
-    header: '',
+    label: '',
     headerLabel: 'Action',
     align: 'center',
     size: 40,
@@ -1042,7 +1042,7 @@ const virtualColumns = [
   {
     id: 'action',
     kind: 'action',
-    header: '',
+    label: '',
     headerLabel: 'Action',
     align: 'center',
     size: 40,
@@ -1122,18 +1122,18 @@ for (const id of ['loading', 'empty', 'error']) {
 const loading = document.getElementById('loading');
 loading.selectionMode = 'multiple';
 loading.columns = [
-  { id: 'preview', header: 'Preview', size: 98, skeleton: { kind: 'image', tracks: 2 } },
+  { id: 'preview', label: 'Preview', size: 98, skeleton: { kind: 'image', tracks: 2 } },
   {
     id: 'details',
-    header: 'Details',
+    label: 'Details',
     size: 'sm',
     skeleton: { kind: 'text', lines: 2, primaryWidth: '76%', secondaryWidth: '48%' },
   },
-  { id: 'status', header: 'Status', size: 'xs', skeleton: { kind: 'tag', width: '64%' } },
-  { id: 'notes', header: 'Notes', size: 'xs', align: 'center', skeleton: { kind: 'icon' } },
+  { id: 'status', label: 'Status', size: 'xs', skeleton: { kind: 'tag', width: '64%' } },
+  { id: 'notes', label: 'Notes', size: 'xs', align: 'center', skeleton: { kind: 'icon' } },
   {
     id: 'actions',
-    header: '',
+    label: '',
     headerLabel: 'Actions',
     kind: 'action',
     size: 40,

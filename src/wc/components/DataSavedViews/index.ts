@@ -1,9 +1,9 @@
 export type {
-  TableSavedView,
-  TableSavedViewChangeDetail,
-  TableSavedViewCreateDetail,
-  TableSavedViewDiscardDetail,
-  TableSavedViewRemoveDetail,
-  TableSavedViewRenameDetail,
-  TableSavedViewSaveDetail,
+  DataSavedView,
+  DataSavedViewChangeDetail,
+  DataSavedViewCreateDetail,
+  DataSavedViewDiscardDetail,
+  DataSavedViewRemoveDetail,
+  DataSavedViewRenameDetail,
+  DataSavedViewSaveDetail,
 } from './data-saved-views-types';

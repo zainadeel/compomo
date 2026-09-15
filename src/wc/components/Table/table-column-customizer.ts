@@ -31,7 +31,7 @@ export function isTableActionColumn(column: TableColumn): boolean {
 }
 
 export function tableColumnCustomizerLabel(column: TableColumn): string {
-  return column.header.trim() || column.headerLabel?.trim() || column.id;
+  return column.label.trim() || column.accessibleLabel?.trim() || column.id;
 }
 
 export function tableDataColumns(columns: TableColumn[]): TableColumn[] {

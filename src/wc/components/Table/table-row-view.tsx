@@ -650,7 +650,7 @@ function tableCellFieldMatcher(
   if (selected.length === 0 || selected.includes(options.column.id)) {
     return options.highlightMatcher;
   }
-  const fieldId = options.column.headerSegments?.[fieldIndex]?.sortKey;
+  const fieldId = options.column.segments?.[fieldIndex]?.sortKey;
   return fieldId && selected.includes(fieldId)
     ? options.highlightMatcher
     : TABLE_NO_HIGHLIGHT_MATCHER;

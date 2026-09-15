@@ -87,13 +87,13 @@ import type {
   TableCaptionVisibility,
   TableCellActionDetail,
   TableColumn,
-  TableColumnsConfigChangeDetail,
+  DataFieldsConfigChangeDetail,
   TableDataMode,
   TableDataModeChangeDetail,
   DataGroup,
   TableGroupCollapseChangeDetail,
   TableGroupLoadMoreDetail,
-  TableGroupingState,
+  DataGroupingState,
   TableLoadMoreDetail,
   TableLoadMoreMode,
   TablePaginationState,
@@ -101,8 +101,8 @@ import type {
   TableRowActivateDetail,
   TableSelectionChangeDetail,
   TableSelectionMode,
-  TableSortChangeDetail,
-  TableSortState,
+  DataSortChangeDetail,
+  DataSortState,
 } from './table-types';
 
 const TABLE_FOOTER_SLOT_LEADING = 1;
@@ -127,9 +127,9 @@ export class Table {
   /** One level of application-owned grouped data. Assign through JavaScript. */
   @Prop() groups: DataGroup[] = [];
   /** Controlled grouping column. Applications supply groups in their final fixed order. */
-  @Prop() grouping: TableGroupingState | null = null;
+  @Prop() grouping: DataGroupingState | null = null;
   /** Controlled member-row sort state. */
-  @Prop() sort: TableSortState | null = null;
+  @Prop() sort: DataSortState | null = null;
   /** Controlled collapsed group identities. Groups not listed remain expanded. */
   @Prop() collapsedGroupIds: string[] = [];
   /** Literal terms to highlight in table-owned text cells. Applications still own filtering. */
@@ -245,7 +245,7 @@ export class Table {
   @Prop() groupRowsLoadedLabel: string =
     '{count} more rows loaded in {group}. {loaded} of {total} rows loaded.';
 
-  @Event() dsSortChange!: EventEmitter<TableSortChangeDetail>;
+  @Event() dsSortChange!: EventEmitter<DataSortChangeDetail>;
   @Event() dsGroupCollapseChange!: EventEmitter<TableGroupCollapseChangeDetail>;
   @Event() dsSelectionChange!: EventEmitter<TableSelectionChangeDetail>;
   @Event() dsLoadMore!: EventEmitter<TableLoadMoreDetail>;
@@ -253,7 +253,7 @@ export class Table {
   @Event() dsPaginationChange!: EventEmitter<PaginationChangeDetail>;
   @Event() dsCellAction!: EventEmitter<TableCellActionDetail>;
   @Event() dsRowActivate!: EventEmitter<TableRowActivateDetail>;
-  @Event() dsColumnsConfigChange!: EventEmitter<TableColumnsConfigChangeDetail>;
+  @Event() dsColumnsConfigChange!: EventEmitter<DataFieldsConfigChangeDetail>;
   @Event() dsDataModeChange!: EventEmitter<TableDataModeChangeDetail>;
 
   @State() private overflowStart = false;
@@ -1193,7 +1193,7 @@ export class Table {
       const sortColumn = this.columns.find(
         column =>
           column.id === this.sort!.columnId ||
-          column.headerSegments?.some(segment => segment.sortKey === this.sort!.columnId)
+          column.segments?.some(segment => segment.sortKey === this.sort!.columnId)
       );
       if (!sortColumn) {
         issues.push(`Sorting references unknown column id: ${this.sort.columnId}`);
@@ -1254,7 +1254,7 @@ export class Table {
     this.dsSortChange.emit({ sort: nextTableSortState(this.sort, sortKey) });
   }
 
-  private sortButtonLabel(column: TableColumn, sortKey = column.id, label = column.header): string {
+  private sortButtonLabel(column: TableColumn, sortKey = column.id, label = column.label): string {
     if (this.sort?.columnId !== sortKey) return `Sort ${label} ascending`;
     if (this.sort.direction === 'asc') return `Sort ${label} descending. Currently ascending.`;
     return `Sort ${label} ascending. Currently descending.`;
@@ -1582,12 +1582,10 @@ export class Table {
     presentational = false
   ) {
     const groupedColumn = this.grouping?.columnId === column.id;
-    const headerSegments = column.headerSegments?.length
-      ? column.headerSegments
-      : [{ label: column.header, sortKey: column.id }];
-    const activeMemberSegment = headerSegments.find(
-      segment => segment.sortKey === this.sort?.columnId
-    );
+    const segments = column.segments?.length
+      ? column.segments
+      : [{ label: column.label, sortKey: column.id }];
+    const activeMemberSegment = segments.find(segment => segment.sortKey === this.sort?.columnId);
     const activeMemberSort = !!activeMemberSegment;
     const activeSort = activeMemberSort;
     const align = column.align ?? 'start';
@@ -1605,7 +1603,7 @@ export class Table {
         tabIndex={interactive && help && !column.sortable ? 0 : undefined}
         data-header-help={help ? '' : undefined}
       >
-        {headerSegments.map((segment, index) => {
+        {segments.map((segment, index) => {
           const segmentActive = activeMemberSegment?.sortKey === segment.sortKey;
           const segmentInteractive = interactive && !!column.sortable;
           const label = (
@@ -1644,7 +1642,7 @@ export class Table {
           return (
             <span class="ds-table__header-segment" key={segment.sortKey}>
               {control}
-              {index < headerSegments.length - 1 && (
+              {index < segments.length - 1 && (
                 <ds-text
                   class="ds-table__header-separator"
                   as="span"
@@ -1679,7 +1677,7 @@ export class Table {
             aria-label={this.sortButtonLabel(
               column,
               activeMemberSegment?.sortKey ?? column.id,
-              activeMemberSegment?.label ?? column.header
+              activeMemberSegment?.label ?? column.label
             )}
             hasBorder={false}
             activeFill={false}
@@ -1695,7 +1693,7 @@ export class Table {
     const actionCollapseHost =
       collapseHost?.mode === 'action' && collapseHost.columnId === column.id;
     const blankActionCollapseHost =
-      actionCollapseHost && !column.header.trim() && !column.headerSegments?.length;
+      actionCollapseHost && !column.label.trim() && !column.segments?.length;
     const collapseControl =
       interactive && actionCollapseHost ? (
         <span class="ds-table__collapse-slot">{this.renderCollapseAllButton()}</span>
@@ -1717,8 +1715,8 @@ export class Table {
         data-grouped={groupedColumn ? 'true' : undefined}
         data-sort-active={activeSort ? 'true' : undefined}
       >
-        {!column.header.trim() && column.headerLabel?.trim() && (
-          <span class="ds-visually-hidden">{column.headerLabel}</span>
+        {!column.label.trim() && column.accessibleLabel?.trim() && (
+          <span class="ds-visually-hidden">{column.accessibleLabel}</span>
         )}
         {blankActionCollapseHost ? (
           <span class="ds-table__header-content ds-table__header-content--collapse-all">

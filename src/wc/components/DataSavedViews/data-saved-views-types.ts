@@ -1,29 +1,29 @@
-export interface TableSavedView {
+export interface DataSavedView {
   id: string;
   label: string;
 }
 
-export interface TableSavedViewChangeDetail {
+export interface DataSavedViewChangeDetail {
   viewId: string;
 }
 
-export interface TableSavedViewCreateDetail {
+export interface DataSavedViewCreateDetail {
   name: string;
 }
 
-export interface TableSavedViewRenameDetail {
+export interface DataSavedViewRenameDetail {
   viewId: string;
   name: string;
 }
 
-export interface TableSavedViewRemoveDetail {
+export interface DataSavedViewRemoveDetail {
   viewId: string;
 }
 
-export interface TableSavedViewSaveDetail {
+export interface DataSavedViewSaveDetail {
   viewId: string;
 }
 
-export interface TableSavedViewDiscardDetail {
+export interface DataSavedViewDiscardDetail {
   viewId: string;
 }

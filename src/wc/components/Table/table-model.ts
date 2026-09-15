@@ -16,7 +16,7 @@ import type {
   TableGroupAccessory,
   TableGroupHero,
   TableRow,
-  TableSortState,
+  DataSortState,
 } from './table-types';
 import { isSafetyScoreLevel } from '../Score/score-model';
 
@@ -118,9 +118,9 @@ export function tableRowSelectionLabel(row: TableRow, columns: TableColumn[]): s
 }
 
 export function nextTableSortState(
-  current: TableSortState | null | undefined,
+  current: DataSortState | null | undefined,
   columnId: string
-): TableSortState {
+): DataSortState {
   if (current?.columnId !== columnId) return { columnId, direction: 'asc' };
   if (current.direction === 'asc') return { columnId, direction: 'desc' };
   return { columnId, direction: 'asc' };
@@ -402,9 +402,9 @@ export function tableModelIssues(
   for (const column of columns) {
     if (!column.id.trim()) issues.push('Every column requires a non-empty id.');
     else if (columnIds.has(column.id)) issues.push(`Duplicate column id: ${column.id}`);
-    if (!column.header.trim() && !column.headerLabel?.trim()) {
+    if (!column.label.trim() && !column.accessibleLabel?.trim()) {
       issues.push(
-        `Column ${column.id || '(missing id)'} requires a visible header or headerLabel.`
+        `Column ${column.id || '(missing id)'} requires a visible header or accessibleLabel.`
       );
     }
     columnIds.add(column.id);

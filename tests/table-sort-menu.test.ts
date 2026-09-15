@@ -11,18 +11,18 @@ import {
 } from '../src/wc/components/DataSort/data-sort-menu';
 
 const columns: TableColumn[] = [
-  { id: 'preview', header: 'Preview' },
+  { id: 'preview', label: 'Preview' },
   {
     id: 'behaviorDetails',
-    header: 'Behavior / Severity',
-    headerSegments: [
+    label: 'Behavior / Severity',
+    segments: [
       { label: 'Behavior', sortKey: 'behavior', separator: '/' },
       { label: 'Level', dataLabel: 'Severity', sortKey: 'severity' },
     ],
     sortable: true,
   },
-  { id: 'status', header: 'State', dataLabel: 'Status', sortable: true },
-  { id: 'action', kind: 'action', header: '', headerLabel: 'Action' },
+  { id: 'status', label: 'State', dataLabel: 'Status', sortable: true },
+  { id: 'action', kind: 'action', label: '', accessibleLabel: 'Action' },
 ];
 
 test('lists sortable columns and compound header segments, skipping action columns', () => {
@@ -95,7 +95,7 @@ test('applies direction to the current field or the first sortable field', () =>
 
 test('keeps application column ids separate from direction command values', () => {
   const collidingColumns: TableColumn[] = [
-    { id: TABLE_SORT_DIRECTION_DESC, header: 'Direction data', sortable: true },
+    { id: TABLE_SORT_DIRECTION_DESC, label: 'Direction data', sortable: true },
   ];
   const fieldItem = tableSortMenuSections(collidingColumns, null)[0]?.items[0];
   assert.ok(fieldItem);

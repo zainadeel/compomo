@@ -18,8 +18,8 @@ import {
 import type { TableColumn, DataGroup, TableRow } from '../src/wc/components/Table/table-types';
 
 const columns: TableColumn[] = [
-  { id: 'name', header: 'Name', size: 160 },
-  { id: 'score', header: 'Score', size: 80 },
+  { id: 'name', label: 'Name', size: 160 },
+  { id: 'score', label: 'Score', size: 80 },
 ];
 
 function row(id: string, extra?: Partial<TableRow>): TableRow {

@@ -1,6 +1,6 @@
 import type { MenuItemData, MenuSection } from '../Menu/menu-types';
 import { isTableActionColumn } from '../Table/table-column-customizer';
-import type { TableColumn, TableSortState } from '../Table/table-types';
+import type { TableColumn, DataSortState } from '../Table/table-types';
 
 export const TABLE_SORT_DIRECTION_ASC = 'direction:asc';
 export const TABLE_SORT_DIRECTION_DESC = 'direction:desc';
@@ -18,7 +18,7 @@ export function tableSortFields(columns: readonly TableColumn[]): TableSortField
 
   for (const column of columns) {
     if (isTableActionColumn(column) || !column.sortable) continue;
-    const segments = column.headerSegments?.filter(segment => segment.sortKey.trim()) ?? [];
+    const segments = column.segments?.filter(segment => segment.sortKey.trim()) ?? [];
     if (segments.length > 0) {
       for (const segment of segments) {
         if (seen.has(segment.sortKey)) continue;
@@ -35,7 +35,10 @@ export function tableSortFields(columns: readonly TableColumn[]): TableSortField
     fields.push({
       id: column.id,
       label:
-        column.dataLabel?.trim() || column.header.trim() || column.headerLabel?.trim() || column.id,
+        column.dataLabel?.trim() ||
+        column.label.trim() ||
+        column.accessibleLabel?.trim() ||
+        column.id,
     });
   }
 
@@ -44,7 +47,7 @@ export function tableSortFields(columns: readonly TableColumn[]): TableSortField
 
 export function tableSortMenuSections(
   columns: readonly TableColumn[],
-  sort: TableSortState | null | undefined
+  sort: DataSortState | null | undefined
 ): MenuSection[] {
   const fields = tableSortFields(columns);
   return [
@@ -77,8 +80,8 @@ export function tableSortMenuSections(
 }
 
 export function tableSortStatesEqual(
-  left: TableSortState | null | undefined,
-  right: TableSortState | null | undefined
+  left: DataSortState | null | undefined,
+  right: DataSortState | null | undefined
 ): boolean {
   if (left === right) return true;
   if (!left || !right) return false;
@@ -88,9 +91,9 @@ export function tableSortStatesEqual(
 /** Next controlled sort from a Sort menu selection. Does not toggle like a header click. */
 export function nextTableSortStateFromMenuItem(
   columns: readonly TableColumn[],
-  current: TableSortState | null | undefined,
+  current: DataSortState | null | undefined,
   item: MenuItemData
-): TableSortState | null {
+): DataSortState | null {
   const fields = tableSortFields(columns);
   if (fields.length === 0) return current ?? null;
 

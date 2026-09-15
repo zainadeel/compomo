@@ -1324,7 +1324,7 @@ test('uses declared action-column metadata without replacing a visible header', 
       {
         id: 'actions',
         kind: 'action',
-        header: 'Row actions',
+        label: 'Row actions',
         align: 'center',
         size: 120,
       },
@@ -3920,7 +3920,7 @@ test(
     const table = page.locator('#multiple-tags');
     await table.evaluate(element => {
       const target = element as HTMLElement & { columns: unknown[]; rows: unknown[] };
-      target.columns = [{ id: 'tags', header: 'Tags', size: 240 }];
+      target.columns = [{ id: 'tags', label: 'Tags', size: 240 }];
       target.rows = [undefined, 'Secondary details'].map((text, index) => ({
         id: `inline-${index}`,
         cells: {

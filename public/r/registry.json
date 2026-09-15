@@ -4773,7 +4773,7 @@
             "The right pane remains present before a group is active as one complete empty state without the Order heading, and explains that a group must be selected."
           ],
           "states": [
-            "options and grouping are controlled. A data option may supply product-owned orderOptions; otherwise Order defaults to Ascending and Descending. dsGroupChange reports a complete TableGroupingState and dsClear requests null grouping without mutating either input.",
+            "options and grouping are controlled. A data option may supply product-owned orderOptions; otherwise Order defaults to Ascending and Descending. dsGroupChange reports a complete DataGroupingState and dsClear requests null grouping without mutating either input.",
             "Selecting a new data point starts at its first custom order option, or ascending when it has no custom order options. Re-selecting the active data point preserves its complete order state.",
             "Selecting a data point or direction applies immediately and leaves the dialog open so the other pane can be changed.",
             "The grouping picker automatically holds the shared surface-open wash through exit. Opening this picker is separate from expanding an inline table group.",
@@ -4831,7 +4831,7 @@
             "required": false
           },
           "grouping": {
-            "type": "TableGroupingState | null",
+            "type": "DataGroupingState | null",
             "required": false
           },
           "hasBorder": {
@@ -4843,7 +4843,7 @@
             "required": false
           },
           "options": {
-            "type": "TableGroupOption[]",
+            "type": "DataGroupOption[]",
             "required": false
           },
           "vertical": {
@@ -4858,7 +4858,7 @@
           },
           {
             "name": "dsGroupChange",
-            "detail": "TableGroupingState"
+            "detail": "DataGroupingState"
           },
           {
             "name": "dsOpenChange",
@@ -4952,10 +4952,6 @@
             "type": "string[]",
             "required": false
           },
-          "columns": {
-            "type": "DataField[]",
-            "required": false
-          },
           "customizeLabel": {
             "type": "string",
             "required": false
@@ -4972,16 +4968,20 @@
             "type": "boolean",
             "required": false
           },
+          "fields": {
+            "type": "DataField[]",
+            "required": false
+          },
           "filters": {
             "type": "FilterMenuFilter[]",
             "required": false
           },
           "grouping": {
-            "type": "TableGroupingState | null",
+            "type": "DataGroupingState | null",
             "required": false
           },
           "groupingOptions": {
-            "type": "TableGroupOption[]",
+            "type": "DataGroupOption[]",
             "required": false
           },
           "hasBorder": {
@@ -5001,7 +5001,7 @@
             "required": false
           },
           "sort": {
-            "type": "TableSortState | null",
+            "type": "DataSortState | null",
             "required": false
           },
           "sortColumns": {
@@ -5020,7 +5020,7 @@
           },
           {
             "name": "dsColumnsConfigChange",
-            "detail": "TableColumnsConfigChangeDetail"
+            "detail": "DataFieldsConfigChangeDetail"
           },
           {
             "name": "dsCustomizeOptionChange",
@@ -5040,7 +5040,7 @@
           },
           {
             "name": "dsGroupChange",
-            "detail": "TableGroupingState"
+            "detail": "DataGroupingState"
           },
           {
             "name": "dsGroupClear",
@@ -5052,7 +5052,7 @@
           },
           {
             "name": "dsSortChange",
-            "detail": "TableSortChangeDetail"
+            "detail": "DataSortChangeDetail"
           }
         ],
         "slots": [],
@@ -5194,34 +5194,34 @@
             "required": false
           },
           "views": {
-            "type": "TableSavedView[]",
+            "type": "DataSavedView[]",
             "required": false
           }
         },
         "events": [
           {
             "name": "dsViewChange",
-            "detail": "TableSavedViewChangeDetail"
+            "detail": "DataSavedViewChangeDetail"
           },
           {
             "name": "dsViewCreate",
-            "detail": "TableSavedViewCreateDetail"
+            "detail": "DataSavedViewCreateDetail"
           },
           {
             "name": "dsViewDiscard",
-            "detail": "TableSavedViewDiscardDetail"
+            "detail": "DataSavedViewDiscardDetail"
           },
           {
             "name": "dsViewRemove",
-            "detail": "TableSavedViewRemoveDetail"
+            "detail": "DataSavedViewRemoveDetail"
           },
           {
             "name": "dsViewRename",
-            "detail": "TableSavedViewRenameDetail"
+            "detail": "DataSavedViewRenameDetail"
           },
           {
             "name": "dsViewSave",
-            "detail": "TableSavedViewSaveDetail"
+            "detail": "DataSavedViewSaveDetail"
           }
         ],
         "slots": [],
@@ -5337,12 +5337,12 @@
             "type": "string",
             "required": false
           },
-          "columns": {
-            "type": "DataField[]",
-            "required": false
-          },
           "fieldMenuLabel": {
             "type": "string",
+            "required": false
+          },
+          "fields": {
+            "type": "DataField[]",
             "required": false
           },
           "hasBorder": {
@@ -5377,7 +5377,7 @@
           },
           {
             "name": "dsFieldsChange",
-            "detail": "TableSearchFieldsChangeDetail"
+            "detail": "DataSearchFieldsChangeDetail"
           }
         ],
         "slots": [],
@@ -5449,7 +5449,7 @@
             "Choosing a row applies immediately and keeps the menu open so the other section can be changed. Escape and outside activation close the menu and restore trigger focus."
           ],
           "states": [
-            "columns and sort are controlled. dsSortChange reports the next TableSortState and never mutates those inputs. The same sort object is what column headers emit through the table.",
+            "columns and sort are controlled. dsSortChange reports the next DataSortState and never mutates those inputs. The same sort object is what column headers emit through the table.",
             "Selecting a different data field keeps the current direction, or starts ascending when no sort exists. Selecting a direction applies it to the current field, or to the first sortable field when no sort exists. Selecting the already-active field or direction is a no-op and does not toggle the way a header click does.",
             "The trigger stays Sort in regular-weight resting secondary chrome. Field and direction selection live in the menu and on column headers, so the trigger never uses active primary emphasis. It keeps pressed interaction paint without physically scaling inside the stable table caption row.",
             "Compound sortable headers contribute one Data row per segment. Action columns never appear.",
@@ -5494,7 +5494,7 @@
             "type": "string | null",
             "required": false
           },
-          "columns": {
+          "fields": {
             "type": "DataField[]",
             "required": false
           },
@@ -5503,14 +5503,14 @@
             "required": false
           },
           "sort": {
-            "type": "TableSortState | null",
+            "type": "DataSortState | null",
             "required": false
           }
         },
         "events": [
           {
             "name": "dsSortChange",
-            "detail": "TableSortChangeDetail"
+            "detail": "DataSortChangeDetail"
           }
         ],
         "slots": [],
@@ -12302,7 +12302,7 @@
             "required": false
           },
           "grouping": {
-            "type": "TableGroupingState | null",
+            "type": "DataGroupingState | null",
             "required": false
           },
           "groups": {
@@ -12418,7 +12418,7 @@
             "required": false
           },
           "sort": {
-            "type": "TableSortState | null",
+            "type": "DataSortState | null",
             "required": false
           },
           "stickyHeader": {
@@ -12453,7 +12453,7 @@
           },
           {
             "name": "dsColumnsConfigChange",
-            "detail": "TableColumnsConfigChangeDetail"
+            "detail": "DataFieldsConfigChangeDetail"
           },
           {
             "name": "dsCustomizeOptionChange",
@@ -12489,7 +12489,7 @@
           },
           {
             "name": "dsSortChange",
-            "detail": "TableSortChangeDetail"
+            "detail": "DataSortChangeDetail"
           }
         ],
         "slots": [],

@@ -3,12 +3,12 @@ import { html } from 'lit';
 import { useArgs } from 'storybook/preview-api';
 import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 import '../../../../dist/components/ds-data-search.js';
-import type { TableSearchFieldsChangeDetail } from './data-search-types';
+import type { DataSearchFieldsChangeDetail } from './data-search-types';
 
 const COLUMNS = [
   {
     id: 'vehicleDetails',
-    header: 'Vehicle ID / Make · Model · Year',
+    label: 'Vehicle ID / Make · Model · Year',
     headerSegments: [
       { label: 'Vehicle ID', dataLabel: 'Vehicle ID', sortKey: 'vehicleId', separator: '/' },
       { label: 'Make', dataLabel: 'Vehicle make', sortKey: 'vehicleMake', separator: '·' },
@@ -18,15 +18,15 @@ const COLUMNS = [
   },
   {
     id: 'driverDetails',
-    header: 'Driver name / ID',
+    label: 'Driver name / ID',
     headerSegments: [
       { label: 'Driver name', dataLabel: 'Driver name', sortKey: 'driverName', separator: '/' },
       { label: 'ID', dataLabel: 'Driver ID', sortKey: 'driverId' },
     ],
   },
-  { id: 'location', header: 'Location', dataLabel: 'Location' },
-  { id: 'updatedAt', header: 'Updated', dataLabel: 'Last updated' },
-  { id: 'actions', kind: 'action', header: '', headerLabel: 'Actions' },
+  { id: 'location', label: 'Location', dataLabel: 'Location' },
+  { id: 'updatedAt', label: 'Updated', dataLabel: 'Last updated' },
+  { id: 'actions', kind: 'action', label: '', headerLabel: 'Actions' },
 ];
 
 const meta: Meta = {
@@ -68,13 +68,13 @@ export const SlashFieldMenu: Story = {
       >
         <ds-data-search
           data-a11y-fixture
-          .columns=${COLUMNS}
+          .fields=${COLUMNS}
           .selectedFieldIds=${args['selectedFieldIds']}
           .value=${args['value']}
           placeholder="Search vehicles"
           aria-label="Search vehicles"
           @dsChange=${(event: CustomEvent<string>) => updateArgs({ value: event.detail })}
-          @dsFieldsChange=${(event: CustomEvent<TableSearchFieldsChangeDetail>) =>
+          @dsFieldsChange=${(event: CustomEvent<DataSearchFieldsChangeDetail>) =>
             updateArgs({ selectedFieldIds: event.detail.selectedFieldIds })}
           @dsClear=${() => updateArgs({ value: '', selectedFieldIds: [] })}
         ></ds-data-search>
@@ -94,13 +94,13 @@ export const ScopedQuery: Story = {
     return html`
       <div style="max-inline-size:var(--dimension-panel-width-xs);">
         <ds-data-search
-          .columns=${COLUMNS}
+          .fields=${COLUMNS}
           .selectedFieldIds=${args['selectedFieldIds']}
           .value=${args['value']}
           placeholder="Search vehicles"
           aria-label="Search vehicles"
           @dsChange=${(event: CustomEvent<string>) => updateArgs({ value: event.detail })}
-          @dsFieldsChange=${(event: CustomEvent<TableSearchFieldsChangeDetail>) =>
+          @dsFieldsChange=${(event: CustomEvent<DataSearchFieldsChangeDetail>) =>
             updateArgs({ selectedFieldIds: event.detail.selectedFieldIds })}
           @dsClear=${() => updateArgs({ value: '', selectedFieldIds: [] })}
         ></ds-data-search>

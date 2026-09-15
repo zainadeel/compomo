@@ -6,13 +6,13 @@ import type {
   SelectValue,
 } from '../Select/Select';
 import type {
-  TableSavedView,
-  TableSavedViewChangeDetail,
-  TableSavedViewCreateDetail,
-  TableSavedViewDiscardDetail,
-  TableSavedViewRemoveDetail,
-  TableSavedViewRenameDetail,
-  TableSavedViewSaveDetail,
+  DataSavedView,
+  DataSavedViewChangeDetail,
+  DataSavedViewCreateDetail,
+  DataSavedViewDiscardDetail,
+  DataSavedViewRemoveDetail,
+  DataSavedViewRenameDetail,
+  DataSavedViewSaveDetail,
 } from './data-saved-views-types';
 
 type SavedViewDialogMode = 'create' | 'rename';
@@ -30,7 +30,7 @@ export class DataSavedViews {
   /** Application-owned custom saved views. Assign arrays through the JavaScript property. */
   /** Show the trigger border. */
   @Prop() hasBorder: boolean = true;
-  @Prop() views: TableSavedView[] = [];
+  @Prop() views: DataSavedView[] = [];
   /** ID of the controlled active view, including the default view ID. */
   @Prop() value: string = '__default__';
   /** Whether the current table state differs from the selected custom view. Ignored for the default view. */
@@ -49,17 +49,17 @@ export class DataSavedViews {
   @Prop() createLabel: string = 'New view';
 
   /** Emitted when a view selection is requested. */
-  @Event() dsViewChange!: EventEmitter<TableSavedViewChangeDetail>;
+  @Event() dsViewChange!: EventEmitter<DataSavedViewChangeDetail>;
   /** Emitted after a valid create-view name is submitted. */
-  @Event() dsViewCreate!: EventEmitter<TableSavedViewCreateDetail>;
+  @Event() dsViewCreate!: EventEmitter<DataSavedViewCreateDetail>;
   /** Emitted after a valid renamed view name is submitted. */
-  @Event() dsViewRename!: EventEmitter<TableSavedViewRenameDetail>;
+  @Event() dsViewRename!: EventEmitter<DataSavedViewRenameDetail>;
   /** Emitted when a custom view removal is requested. */
-  @Event() dsViewRemove!: EventEmitter<TableSavedViewRemoveDetail>;
+  @Event() dsViewRemove!: EventEmitter<DataSavedViewRemoveDetail>;
   /** Emitted when changes to the active custom view should replace its stored payload. */
-  @Event() dsViewSave!: EventEmitter<TableSavedViewSaveDetail>;
+  @Event() dsViewSave!: EventEmitter<DataSavedViewSaveDetail>;
   /** Emitted when the active custom view's stored payload should be restored. */
-  @Event() dsViewDiscard!: EventEmitter<TableSavedViewDiscardDetail>;
+  @Event() dsViewDiscard!: EventEmitter<DataSavedViewDiscardDetail>;
 
   @State() private actionViewId: string | null = null;
   @State() private actionAnchorId: string | undefined;
@@ -81,11 +81,11 @@ export class DataSavedViews {
     { label: 'Remove', value: 'remove', isDestructive: true },
   ];
 
-  private get selectedCustomView(): TableSavedView | undefined {
+  private get selectedCustomView(): DataSavedView | undefined {
     return this.views.find(view => view.id === this.value);
   }
 
-  private get dialogView(): TableSavedView | undefined {
+  private get dialogView(): DataSavedView | undefined {
     return this.views.find(view => view.id === this.dialogViewId);
   }
 

@@ -5,7 +5,7 @@ import type { SafetyScoreLevel } from '../Score/score-types';
 import type { TextColor } from '../Text/text-types';
 import type { PaginationState } from '../Pagination/pagination-types';
 
-export type TableSortDirection = 'asc' | 'desc';
+export type DataSortDirection = 'asc' | 'desc';
 export type TableSelectionMode = 'none' | 'multiple';
 export type TableCellAlign = 'start' | 'center' | 'end';
 export type TableCellLinkTarget = '_self' | '_blank';
@@ -38,15 +38,15 @@ export interface TableHeaderSegment extends DataFieldSegment {
 }
 
 /** Controlled member-row sort state. Group order is controlled separately. */
-export interface TableSortState {
+export interface DataSortState {
   columnId: string;
-  direction: TableSortDirection;
+  direction: DataSortDirection;
 }
 
 /** One controlled grouping level. Applications supply groups in their final fixed order. */
-export interface TableGroupingState {
+export interface DataGroupingState {
   columnId: string;
-  direction: TableSortDirection;
+  direction: DataSortDirection;
   /** Optional application-owned data point used to order the group sections. */
   orderBy?: string;
 }
@@ -362,8 +362,7 @@ export type TableCellSkeleton =
     };
 
 export interface TableColumn extends DataField {
-  /** Labels for columns that present and sort multiple related data points. */
-  headerSegments?: TableHeaderSegment[];
+  segments?: TableHeaderSegment[];
   /** Supplementary header help. Does not replace the visible or accessible column name. */
   help?: string;
   align?: TableCellAlign;
@@ -460,8 +459,8 @@ export interface DataGroup {
   rows: TableRow[];
 }
 
-export interface TableSortChangeDetail {
-  sort: TableSortState | null;
+export interface DataSortChangeDetail {
+  sort: DataSortState | null;
 }
 
 export interface TableSelectionChangeDetail {
@@ -502,7 +501,7 @@ export interface TableRowActivateDetail {
 }
 
 /** Controlled show/hide and data-column order for the table-owned customizer. */
-export interface TableColumnsConfigChangeDetail {
+export interface DataFieldsConfigChangeDetail {
   hiddenColumnIds: string[];
   columnOrder: string[];
 }

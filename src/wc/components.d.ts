@@ -35,14 +35,14 @@ import { CheckboxSize } from "./components/Checkbox/Checkbox";
 import { ChipSize, ChipState } from "./components/Chip/Chip";
 import { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
 import { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuMatchModeChangeDetail, FilterMenuMatchModes, FilterMenuValues } from "./components/FilterMenu/FilterMenu";
-import { TableGroupOption } from "./components/DataGroup/DataGroup";
-import { DataGroup, TableCaptionVisibility, TableCellActionDetail, TableColumn, TableColumnsConfigChangeDetail, TableDataMode, TableDataModeChangeDetail, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+import { DataGroupOption } from "./components/DataGroup/DataGroup";
+import { DataFieldsConfigChangeDetail, DataGroup, DataGroupingState, DataSortChangeDetail, DataSortState, TableCaptionVisibility, TableCellActionDetail, TableColumn, TableDataMode, TableDataModeChangeDetail, TableGroupCollapseChangeDetail, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode } from "./components/Table/table-types";
 import { DataField } from "./utils/data-field";
 import { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
-import { TableGroupOption as TableGroupOption1 } from "./components/DataGroup/DataGroup";
+import { DataGroupOption as DataGroupOption1 } from "./components/DataGroup/DataGroup";
 import { PreferencesTab } from "./components/DataPreferences/DataPreferences";
-import { TableSavedView, TableSavedViewChangeDetail, TableSavedViewCreateDetail, TableSavedViewDiscardDetail, TableSavedViewRemoveDetail, TableSavedViewRenameDetail, TableSavedViewSaveDetail } from "./components/DataSavedViews/data-saved-views-types";
-import { TableSearchFieldsChangeDetail } from "./components/DataSearch/data-search-types";
+import { DataSavedView, DataSavedViewChangeDetail, DataSavedViewCreateDetail, DataSavedViewDiscardDetail, DataSavedViewRemoveDetail, DataSavedViewRenameDetail, DataSavedViewSaveDetail } from "./components/DataSavedViews/data-saved-views-types";
+import { DataSearchFieldsChangeDetail } from "./components/DataSearch/data-search-types";
 import { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
 import { FilterMenuChangeDetail as FilterMenuChangeDetail1, FilterMenuFilter as FilterMenuFilter1, FilterMenuFooterLayout, FilterMenuMatchModeChangeDetail as FilterMenuMatchModeChangeDetail1, FilterMenuMatchModes as FilterMenuMatchModes1, FilterMenuSize, FilterMenuValues as FilterMenuValues1, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
 import { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
@@ -116,14 +116,14 @@ export { CheckboxSize } from "./components/Checkbox/Checkbox";
 export { ChipSize, ChipState } from "./components/Chip/Chip";
 export { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
 export { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuMatchModeChangeDetail, FilterMenuMatchModes, FilterMenuValues } from "./components/FilterMenu/FilterMenu";
-export { TableGroupOption } from "./components/DataGroup/DataGroup";
-export { DataGroup, TableCaptionVisibility, TableCellActionDetail, TableColumn, TableColumnsConfigChangeDetail, TableDataMode, TableDataModeChangeDetail, TableGroupCollapseChangeDetail, TableGroupingState, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode, TableSortChangeDetail, TableSortState } from "./components/Table/table-types";
+export { DataGroupOption } from "./components/DataGroup/DataGroup";
+export { DataFieldsConfigChangeDetail, DataGroup, DataGroupingState, DataSortChangeDetail, DataSortState, TableCaptionVisibility, TableCellActionDetail, TableColumn, TableDataMode, TableDataModeChangeDetail, TableGroupCollapseChangeDetail, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode } from "./components/Table/table-types";
 export { DataField } from "./utils/data-field";
 export { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
-export { TableGroupOption as TableGroupOption1 } from "./components/DataGroup/DataGroup";
+export { DataGroupOption as DataGroupOption1 } from "./components/DataGroup/DataGroup";
 export { PreferencesTab } from "./components/DataPreferences/DataPreferences";
-export { TableSavedView, TableSavedViewChangeDetail, TableSavedViewCreateDetail, TableSavedViewDiscardDetail, TableSavedViewRemoveDetail, TableSavedViewRenameDetail, TableSavedViewSaveDetail } from "./components/DataSavedViews/data-saved-views-types";
-export { TableSearchFieldsChangeDetail } from "./components/DataSearch/data-search-types";
+export { DataSavedView, DataSavedViewChangeDetail, DataSavedViewCreateDetail, DataSavedViewDiscardDetail, DataSavedViewRemoveDetail, DataSavedViewRenameDetail, DataSavedViewSaveDetail } from "./components/DataSavedViews/data-saved-views-types";
+export { DataSearchFieldsChangeDetail } from "./components/DataSearch/data-search-types";
 export { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
 export { FilterMenuChangeDetail as FilterMenuChangeDetail1, FilterMenuFilter as FilterMenuFilter1, FilterMenuFooterLayout, FilterMenuMatchModeChangeDetail as FilterMenuMatchModeChangeDetail1, FilterMenuMatchModes as FilterMenuMatchModes1, FilterMenuSize, FilterMenuValues as FilterMenuValues1, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
 export { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
@@ -1567,7 +1567,7 @@ export namespace Components {
           * Controlled grouping field and the order of its group sections.
           * @default null
          */
-        "grouping": TableGroupingState | null;
+        "grouping": DataGroupingState | null;
         /**
           * Show the trigger border.
           * @default true
@@ -1581,7 +1581,7 @@ export namespace Components {
         /**
           * @default []
          */
-        "options": TableGroupOption[];
+        "options": DataGroupOption[];
         /**
           * @default false
          */
@@ -1607,10 +1607,6 @@ export namespace Components {
          */
         "columnOrder": string[];
         /**
-          * @default []
-         */
-        "columns": DataField[];
-        /**
           * Accessible name for the Customize menu.
           * @default 'Customize table'
          */
@@ -1632,15 +1628,19 @@ export namespace Components {
         /**
           * @default []
          */
+        "fields": DataField[];
+        /**
+          * @default []
+         */
         "filters": FilterMenuFilter[];
         /**
           * @default null
          */
-        "grouping": TableGroupingState | null;
+        "grouping": DataGroupingState | null;
         /**
           * @default []
          */
-        "groupingOptions": TableGroupOption1[];
+        "groupingOptions": DataGroupOption1[];
         /**
           * Show the trigger border.
           * @default true
@@ -1661,7 +1661,7 @@ export namespace Components {
         /**
           * @default null
          */
-        "sort": TableSortState | null;
+        "sort": DataSortState | null;
         /**
           * Optional sort fields when they differ from customizable content.
          */
@@ -1720,7 +1720,7 @@ export namespace Components {
         /**
           * @default []
          */
-        "views": TableSavedView[];
+        "views": DataSavedView[];
     }
     interface DsDataSearch {
         /**
@@ -1732,14 +1732,14 @@ export namespace Components {
          */
         "clearLabel": string;
         /**
-          * Table column catalog used to derive searchable data points and their complete labels.
-          * @default []
-         */
-        "columns": DataField[];
-        /**
           * @default 'Choose search fields'
          */
         "fieldMenuLabel": string;
+        /**
+          * Table column catalog used to derive searchable data points and their complete labels.
+          * @default []
+         */
+        "fields": DataField[];
         /**
           * Show the resting field border; keyboard focus remains visible.
           * @default true
@@ -1774,7 +1774,7 @@ export namespace Components {
         /**
           * @default []
          */
-        "columns": DataField[];
+        "fields": DataField[];
         /**
           * Show the trigger border.
           * @default true
@@ -1785,7 +1785,7 @@ export namespace Components {
           * Controlled table sort. Header sorting and this menu share the same value.
           * @default null
          */
-        "sort": TableSortState | null;
+        "sort": DataSortState | null;
     }
     interface DsDataToolbar {
         /**
@@ -4079,7 +4079,7 @@ export namespace Components {
           * Controlled grouping column. Applications supply groups in their final fixed order.
           * @default null
          */
-        "grouping": TableGroupingState | null;
+        "grouping": DataGroupingState | null;
         /**
           * One level of application-owned grouped data. Assign through JavaScript.
           * @default []
@@ -4211,7 +4211,7 @@ export namespace Components {
           * Controlled member-row sort state.
           * @default null
          */
-        "sort": TableSortState | null;
+        "sort": DataSortState | null;
         /**
           * @default false
          */
@@ -5410,7 +5410,7 @@ declare global {
         new (): HTMLDsDataFilterElement;
     };
     interface HTMLDsDataGroupElementEventMap {
-        "dsGroupChange": TableGroupingState;
+        "dsGroupChange": DataGroupingState;
         "dsClear": void;
         "dsOpenChange": boolean;
     }
@@ -5435,10 +5435,10 @@ declare global {
         "dsFilterMatchModeChange": FilterMenuMatchModeChangeDetail;
         "dsActiveFilterChange": string;
         "dsFiltersClear": void;
-        "dsSortChange": TableSortChangeDetail;
-        "dsGroupChange": TableGroupingState;
+        "dsSortChange": DataSortChangeDetail;
+        "dsGroupChange": DataGroupingState;
         "dsGroupClear": void;
-        "dsColumnsConfigChange": TableColumnsConfigChangeDetail;
+        "dsColumnsConfigChange": DataFieldsConfigChangeDetail;
     }
     interface HTMLDsDataPreferencesElement extends Components.DsDataPreferences, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsDataPreferencesElementEventMap>(type: K, listener: (this: HTMLDsDataPreferencesElement, ev: DsDataPreferencesCustomEvent<HTMLDsDataPreferencesElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -5455,12 +5455,12 @@ declare global {
         new (): HTMLDsDataPreferencesElement;
     };
     interface HTMLDsDataSavedViewsElementEventMap {
-        "dsViewChange": TableSavedViewChangeDetail;
-        "dsViewCreate": TableSavedViewCreateDetail;
-        "dsViewRename": TableSavedViewRenameDetail;
-        "dsViewRemove": TableSavedViewRemoveDetail;
-        "dsViewSave": TableSavedViewSaveDetail;
-        "dsViewDiscard": TableSavedViewDiscardDetail;
+        "dsViewChange": DataSavedViewChangeDetail;
+        "dsViewCreate": DataSavedViewCreateDetail;
+        "dsViewRename": DataSavedViewRenameDetail;
+        "dsViewRemove": DataSavedViewRemoveDetail;
+        "dsViewSave": DataSavedViewSaveDetail;
+        "dsViewDiscard": DataSavedViewDiscardDetail;
     }
     interface HTMLDsDataSavedViewsElement extends Components.DsDataSavedViews, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsDataSavedViewsElementEventMap>(type: K, listener: (this: HTMLDsDataSavedViewsElement, ev: DsDataSavedViewsCustomEvent<HTMLDsDataSavedViewsElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -5478,7 +5478,7 @@ declare global {
     };
     interface HTMLDsDataSearchElementEventMap {
         "dsChange": string;
-        "dsFieldsChange": TableSearchFieldsChangeDetail;
+        "dsFieldsChange": DataSearchFieldsChangeDetail;
         "dsClear": void;
     }
     interface HTMLDsDataSearchElement extends Components.DsDataSearch, HTMLStencilElement {
@@ -5496,7 +5496,7 @@ declare global {
         new (): HTMLDsDataSearchElement;
     };
     interface HTMLDsDataSortElementEventMap {
-        "dsSortChange": TableSortChangeDetail;
+        "dsSortChange": DataSortChangeDetail;
     }
     interface HTMLDsDataSortElement extends Components.DsDataSort, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsDataSortElementEventMap>(type: K, listener: (this: HTMLDsDataSortElement, ev: DsDataSortCustomEvent<HTMLDsDataSortElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -6146,7 +6146,7 @@ declare global {
     };
     interface HTMLDsTableElementEventMap {
         "dsCustomizeOptionChange": string;
-        "dsSortChange": TableSortChangeDetail;
+        "dsSortChange": DataSortChangeDetail;
         "dsGroupCollapseChange": TableGroupCollapseChangeDetail;
         "dsSelectionChange": TableSelectionChangeDetail;
         "dsLoadMore": TableLoadMoreDetail;
@@ -6154,7 +6154,7 @@ declare global {
         "dsPaginationChange": PaginationChangeDetail;
         "dsCellAction": TableCellActionDetail;
         "dsRowActivate": TableRowActivateDetail;
-        "dsColumnsConfigChange": TableColumnsConfigChangeDetail;
+        "dsColumnsConfigChange": DataFieldsConfigChangeDetail;
         "dsDataModeChange": TableDataModeChangeDetail;
     }
     interface HTMLDsTableElement extends Components.DsTable, HTMLStencilElement {
@@ -7923,7 +7923,7 @@ declare namespace LocalJSX {
           * Controlled grouping field and the order of its group sections.
           * @default null
          */
-        "grouping"?: TableGroupingState | null;
+        "grouping"?: DataGroupingState | null;
         /**
           * Show the trigger border.
           * @default true
@@ -7936,7 +7936,7 @@ declare namespace LocalJSX {
         /**
           * Requests replacement of the complete controlled grouping state.
          */
-        "onDsGroupChange"?: (event: DsDataGroupCustomEvent<TableGroupingState>) => void;
+        "onDsGroupChange"?: (event: DsDataGroupCustomEvent<DataGroupingState>) => void;
         /**
           * Reports controlled popup visibility changes.
          */
@@ -7949,7 +7949,7 @@ declare namespace LocalJSX {
         /**
           * @default []
          */
-        "options"?: TableGroupOption[];
+        "options"?: DataGroupOption[];
         /**
           * @default false
          */
@@ -7975,10 +7975,6 @@ declare namespace LocalJSX {
          */
         "columnOrder"?: string[];
         /**
-          * @default []
-         */
-        "columns"?: DataField[];
-        /**
           * Accessible name for the Customize menu.
           * @default 'Customize table'
          */
@@ -8000,15 +7996,19 @@ declare namespace LocalJSX {
         /**
           * @default []
          */
+        "fields"?: DataField[];
+        /**
+          * @default []
+         */
         "filters"?: FilterMenuFilter[];
         /**
           * @default null
          */
-        "grouping"?: TableGroupingState | null;
+        "grouping"?: DataGroupingState | null;
         /**
           * @default []
          */
-        "groupingOptions"?: TableGroupOption1[];
+        "groupingOptions"?: DataGroupOption1[];
         /**
           * Show the trigger border.
           * @default true
@@ -8027,19 +8027,19 @@ declare namespace LocalJSX {
          */
         "matchModes"?: FilterMenuMatchModes;
         "onDsActiveFilterChange"?: (event: DsDataPreferencesCustomEvent<string>) => void;
-        "onDsColumnsConfigChange"?: (event: DsDataPreferencesCustomEvent<TableColumnsConfigChangeDetail>) => void;
+        "onDsColumnsConfigChange"?: (event: DsDataPreferencesCustomEvent<DataFieldsConfigChangeDetail>) => void;
         "onDsCustomizeOptionChange"?: (event: DsDataPreferencesCustomEvent<string>) => void;
         "onDsFilterChange"?: (event: DsDataPreferencesCustomEvent<FilterMenuChangeDetail>) => void;
         "onDsFilterMatchModeChange"?: (event: DsDataPreferencesCustomEvent<FilterMenuMatchModeChangeDetail>) => void;
         "onDsFiltersClear"?: (event: DsDataPreferencesCustomEvent<void>) => void;
-        "onDsGroupChange"?: (event: DsDataPreferencesCustomEvent<TableGroupingState>) => void;
+        "onDsGroupChange"?: (event: DsDataPreferencesCustomEvent<DataGroupingState>) => void;
         "onDsGroupClear"?: (event: DsDataPreferencesCustomEvent<void>) => void;
         "onDsPreferencesTabChange"?: (event: DsDataPreferencesCustomEvent<PreferencesTab>) => void;
-        "onDsSortChange"?: (event: DsDataPreferencesCustomEvent<TableSortChangeDetail>) => void;
+        "onDsSortChange"?: (event: DsDataPreferencesCustomEvent<DataSortChangeDetail>) => void;
         /**
           * @default null
          */
-        "sort"?: TableSortState | null;
+        "sort"?: DataSortState | null;
         /**
           * Optional sort fields when they differ from customizable content.
          */
@@ -8088,27 +8088,27 @@ declare namespace LocalJSX {
         /**
           * Emitted when a view selection is requested.
          */
-        "onDsViewChange"?: (event: DsDataSavedViewsCustomEvent<TableSavedViewChangeDetail>) => void;
+        "onDsViewChange"?: (event: DsDataSavedViewsCustomEvent<DataSavedViewChangeDetail>) => void;
         /**
           * Emitted after a valid create-view name is submitted.
          */
-        "onDsViewCreate"?: (event: DsDataSavedViewsCustomEvent<TableSavedViewCreateDetail>) => void;
+        "onDsViewCreate"?: (event: DsDataSavedViewsCustomEvent<DataSavedViewCreateDetail>) => void;
         /**
           * Emitted when the active custom view's stored payload should be restored.
          */
-        "onDsViewDiscard"?: (event: DsDataSavedViewsCustomEvent<TableSavedViewDiscardDetail>) => void;
+        "onDsViewDiscard"?: (event: DsDataSavedViewsCustomEvent<DataSavedViewDiscardDetail>) => void;
         /**
           * Emitted when a custom view removal is requested.
          */
-        "onDsViewRemove"?: (event: DsDataSavedViewsCustomEvent<TableSavedViewRemoveDetail>) => void;
+        "onDsViewRemove"?: (event: DsDataSavedViewsCustomEvent<DataSavedViewRemoveDetail>) => void;
         /**
           * Emitted after a valid renamed view name is submitted.
          */
-        "onDsViewRename"?: (event: DsDataSavedViewsCustomEvent<TableSavedViewRenameDetail>) => void;
+        "onDsViewRename"?: (event: DsDataSavedViewsCustomEvent<DataSavedViewRenameDetail>) => void;
         /**
           * Emitted when changes to the active custom view should replace its stored payload.
          */
-        "onDsViewSave"?: (event: DsDataSavedViewsCustomEvent<TableSavedViewSaveDetail>) => void;
+        "onDsViewSave"?: (event: DsDataSavedViewsCustomEvent<DataSavedViewSaveDetail>) => void;
         /**
           * Trigger label shown while the default view is selected.
           * @default 'Views'
@@ -8122,7 +8122,7 @@ declare namespace LocalJSX {
         /**
           * @default []
          */
-        "views"?: TableSavedView[];
+        "views"?: DataSavedView[];
     }
     interface DsDataSearch {
         /**
@@ -8134,14 +8134,14 @@ declare namespace LocalJSX {
          */
         "clearLabel"?: string;
         /**
-          * Table column catalog used to derive searchable data points and their complete labels.
-          * @default []
-         */
-        "columns"?: DataField[];
-        /**
           * @default 'Choose search fields'
          */
         "fieldMenuLabel"?: string;
+        /**
+          * Table column catalog used to derive searchable data points and their complete labels.
+          * @default []
+         */
+        "fields"?: DataField[];
         /**
           * Show the resting field border; keyboard focus remains visible.
           * @default true
@@ -8153,7 +8153,7 @@ declare namespace LocalJSX {
         "isInactive"?: boolean;
         "onDsChange"?: (event: DsDataSearchCustomEvent<string>) => void;
         "onDsClear"?: (event: DsDataSearchCustomEvent<void>) => void;
-        "onDsFieldsChange"?: (event: DsDataSearchCustomEvent<TableSearchFieldsChangeDetail>) => void;
+        "onDsFieldsChange"?: (event: DsDataSearchCustomEvent<DataSearchFieldsChangeDetail>) => void;
         /**
           * @default 'Search'
          */
@@ -8178,18 +8178,18 @@ declare namespace LocalJSX {
         /**
           * @default []
          */
-        "columns"?: DataField[];
+        "fields"?: DataField[];
         /**
           * Show the trigger border.
           * @default true
          */
         "hasBorder"?: boolean;
-        "onDsSortChange"?: (event: DsDataSortCustomEvent<TableSortChangeDetail>) => void;
+        "onDsSortChange"?: (event: DsDataSortCustomEvent<DataSortChangeDetail>) => void;
         /**
           * Controlled table sort. Header sorting and this menu share the same value.
           * @default null
          */
-        "sort"?: TableSortState | null;
+        "sort"?: DataSortState | null;
     }
     interface DsDataToolbar {
         /**
@@ -10689,7 +10689,7 @@ declare namespace LocalJSX {
           * Controlled grouping column. Applications supply groups in their final fixed order.
           * @default null
          */
-        "grouping"?: TableGroupingState | null;
+        "grouping"?: DataGroupingState | null;
         /**
           * One level of application-owned grouped data. Assign through JavaScript.
           * @default []
@@ -10763,7 +10763,7 @@ declare namespace LocalJSX {
          */
         "maxHeight"?: string | number | undefined;
         "onDsCellAction"?: (event: DsTableCustomEvent<TableCellActionDetail>) => void;
-        "onDsColumnsConfigChange"?: (event: DsTableCustomEvent<TableColumnsConfigChangeDetail>) => void;
+        "onDsColumnsConfigChange"?: (event: DsTableCustomEvent<DataFieldsConfigChangeDetail>) => void;
         "onDsCustomizeOptionChange"?: (event: DsTableCustomEvent<string>) => void;
         "onDsDataModeChange"?: (event: DsTableCustomEvent<TableDataModeChangeDetail>) => void;
         "onDsGroupCollapseChange"?: (event: DsTableCustomEvent<TableGroupCollapseChangeDetail>) => void;
@@ -10772,7 +10772,7 @@ declare namespace LocalJSX {
         "onDsPaginationChange"?: (event: DsTableCustomEvent<PaginationChangeDetail>) => void;
         "onDsRowActivate"?: (event: DsTableCustomEvent<TableRowActivateDetail>) => void;
         "onDsSelectionChange"?: (event: DsTableCustomEvent<TableSelectionChangeDetail>) => void;
-        "onDsSortChange"?: (event: DsTableCustomEvent<TableSortChangeDetail>) => void;
+        "onDsSortChange"?: (event: DsTableCustomEvent<DataSortChangeDetail>) => void;
         /**
           * Controlled top-level pagination state. Required when dataMode is pagination.
           * @default null
@@ -10828,7 +10828,7 @@ declare namespace LocalJSX {
           * Controlled member-row sort state.
           * @default null
          */
-        "sort"?: TableSortState | null;
+        "sort"?: DataSortState | null;
         /**
           * @default false
          */

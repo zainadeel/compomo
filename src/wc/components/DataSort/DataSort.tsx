@@ -11,7 +11,7 @@ import {
 } from '@stencil/core';
 import type { DataField } from '../../utils/data-field';
 import type { MenuItemData } from '../Menu/menu-types';
-import type { TableSortChangeDetail, TableSortState } from '../Table/table-types';
+import type { DataSortChangeDetail, DataSortState } from '../Table/table-types';
 import {
   nextTableSortStateFromMenuItem,
   tableSortFields,
@@ -32,13 +32,13 @@ export class DataSort {
   /** Catalog used to derive sortable fields, including compound header segments. */
   /** Show the trigger border. */
   @Prop() hasBorder: boolean = true;
-  @Prop() columns: DataField[] = [];
+  @Prop() fields: DataField[] = [];
   /** Controlled table sort. Header sorting and this menu share the same value. */
-  @Prop() sort: TableSortState | null = null;
+  @Prop() sort: DataSortState | null = null;
   /** Accessible name for the trigger and menu. */
   @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;
 
-  @Event({ bubbles: false }) dsSortChange!: EventEmitter<TableSortChangeDetail>;
+  @Event({ bubbles: false }) dsSortChange!: EventEmitter<DataSortChangeDetail>;
 
   @State() private menuOpen = false;
   @State() private menuSurfaceOpen = false;
@@ -57,7 +57,7 @@ export class DataSort {
   }
 
   render() {
-    const fields = tableSortFields(this.columns);
+    const fields = tableSortFields(this.fields);
     const name = this.ariaLabel?.trim() || 'Sort table';
 
     return (
@@ -93,7 +93,7 @@ export class DataSort {
             menuLabel={name}
             selectionMode="none"
             initialFocusVisible={this.initialFocusVisible}
-            sections={tableSortMenuSections(this.columns, this.sort)}
+            sections={tableSortMenuSections(this.fields, this.sort)}
             onDsClose={() => this.close()}
             onDsAfterClose={() => {
               if (!this.menuOpen) this.menuSurfaceOpen = false;
@@ -122,7 +122,7 @@ export class DataSort {
   }
 
   private handleSelect(item: MenuItemData): void {
-    const next = nextTableSortStateFromMenuItem(this.columns, this.sort, item);
+    const next = nextTableSortStateFromMenuItem(this.fields, this.sort, item);
     if (tableSortStatesEqual(this.sort, next)) return;
     this.dsSortChange.emit({ sort: next });
   }

@@ -493,7 +493,7 @@ export class PanelTools {
     return this.el.shadowRoot ?? this.el;
   }
 
-  private headerLabel(): string {
+  private accessibleLabel(): string {
     if (!this.isDrawerPresent() || !this.activeTool) return '';
     const item = this.railItems.find(candidate => candidate.id === this.activeTool);
     return (
@@ -845,9 +845,9 @@ export class PanelTools {
   }
 
   render() {
-    const headerLabel = this.headerLabel();
+    const accessibleLabel = this.accessibleLabel();
     const header = this.activeHeader();
-    const headerTitle = header.title?.trim() || headerLabel;
+    const headerTitle = header.title?.trim() || accessibleLabel;
     const headerActions = header.actions ?? [];
     const orderedRailItems = this.orderedRailItems;
     const orderedRailEntries = this.orderedRailEntries;

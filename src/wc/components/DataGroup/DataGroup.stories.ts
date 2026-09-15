@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
 import '../../../../dist/components/ds-data-group.js';
-import type { TableGroupingState } from '../Table/table-types';
+import type { DataGroupingState } from '../Table/table-types';
 
 const OPTIONS = [
   { label: 'Behavior', value: 'behavior' },
@@ -36,14 +36,14 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-const renderGroup = (grouping: TableGroupingState | null) => html`
+const renderGroup = (grouping: DataGroupingState | null) => html`
   <div style="padding:var(--dimension-space-200);">
     <ds-data-group
       .options=${OPTIONS}
       .grouping=${grouping}
       .open=${true}
       aria-label="Group safety events"
-      @dsGroupChange=${(event: CustomEvent<TableGroupingState>) => {
+      @dsGroupChange=${(event: CustomEvent<DataGroupingState>) => {
         const control = event.currentTarget as HTMLDsDataGroupElement;
         control.grouping = event.detail;
       }}

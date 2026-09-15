@@ -1,15 +1,15 @@
 import { isTableActionColumn } from '../Table/table-column-customizer';
 import type { TableColumn } from '../Table/table-types';
-import type { TableSearchField } from './data-search-types';
+import type { DataSearchField } from './data-search-types';
 
 /** Searchable data points from the table catalog, including compound header segments. */
-export function tableSearchFields(columns: readonly TableColumn[]): TableSearchField[] {
-  const resolved: TableSearchField[] = [];
+export function tableSearchFields(columns: readonly TableColumn[]): DataSearchField[] {
+  const resolved: DataSearchField[] = [];
   const seen = new Set<string>();
 
   for (const column of columns) {
     if (isTableActionColumn(column) || column.searchable === false) continue;
-    const segments = column.headerSegments ?? [];
+    const segments = column.segments ?? [];
     if (segments.length > 0) {
       for (const segment of segments) {
         const id = segment.sortKey.trim();
@@ -23,7 +23,7 @@ export function tableSearchFields(columns: readonly TableColumn[]): TableSearchF
 
     const id = column.id.trim();
     const label =
-      column.dataLabel?.trim() || column.header.trim() || column.headerLabel?.trim() || id;
+      column.dataLabel?.trim() || column.label.trim() || column.accessibleLabel?.trim() || id;
     if (!id || !label || seen.has(id)) continue;
     seen.add(id);
     resolved.push({ id, label });
@@ -33,11 +33,11 @@ export function tableSearchFields(columns: readonly TableColumn[]): TableSearchF
 }
 
 export function selectedTableSearchFields(
-  fields: readonly TableSearchField[],
+  fields: readonly DataSearchField[],
   selectedFieldIds: string[]
-): TableSearchField[] {
+): DataSearchField[] {
   const byId = new Map(fields.map(field => [field.id, field]));
-  const selected: TableSearchField[] = [];
+  const selected: DataSearchField[] = [];
   const seen = new Set<string>();
 
   for (const fieldId of selectedFieldIds) {
@@ -52,18 +52,18 @@ export function selectedTableSearchFields(
 }
 
 export function availableTableSearchFields(
-  fields: readonly TableSearchField[],
+  fields: readonly DataSearchField[],
   selectedFieldIds: string[]
-): TableSearchField[] {
+): DataSearchField[] {
   const selected = new Set(selectedFieldIds);
   return fields.filter(field => !selected.has(field.id));
 }
 
 /** Matches the field-picker query against the complete visible label and canonical identity. */
 export function filterTableSearchFields(
-  fields: readonly TableSearchField[],
+  fields: readonly DataSearchField[],
   query: string
-): TableSearchField[] {
+): DataSearchField[] {
   const normalizedQuery = query.trim().toLocaleLowerCase();
   if (!normalizedQuery) return [...fields];
 

@@ -27,7 +27,7 @@ import {
   selectedTableSearchFields,
   tableSearchFields,
 } from './data-search-model';
-import type { TableSearchField, TableSearchFieldsChangeDetail } from './data-search-types';
+import type { DataSearchField, DataSearchFieldsChangeDetail } from './data-search-types';
 
 let tableSearchSequence = 0;
 
@@ -45,7 +45,7 @@ export class DataSearch {
   /** Controlled free-text query. */
   @Prop() value: string = '';
   /** Table column catalog used to derive searchable data points and their complete labels. */
-  @Prop() columns: DataField[] = [];
+  @Prop() fields: DataField[] = [];
   /** Controlled ordered field scopes rendered as Tags. */
   @Prop() selectedFieldIds: string[] = [];
   @Prop() placeholder: string = 'Search';
@@ -55,7 +55,7 @@ export class DataSearch {
   @Prop() isInactive: boolean = false;
 
   @Event({ bubbles: false }) dsChange!: EventEmitter<string>;
-  @Event({ bubbles: false }) dsFieldsChange!: EventEmitter<TableSearchFieldsChangeDetail>;
+  @Event({ bubbles: false }) dsFieldsChange!: EventEmitter<DataSearchFieldsChangeDetail>;
   @Event({ bubbles: false }) dsClear!: EventEmitter<void>;
 
   @State() private menuOpen = false;
@@ -147,20 +147,20 @@ export class DataSearch {
     this.inputEl?.focus();
   }
 
-  private get selectedFields(): TableSearchField[] {
+  private get selectedFields(): DataSearchField[] {
     return selectedTableSearchFields(this.searchFields, this.selectedFieldIds);
   }
 
-  private get availableFields(): TableSearchField[] {
+  private get availableFields(): DataSearchField[] {
     return availableTableSearchFields(this.searchFields, this.selectedFieldIds);
   }
 
-  private get visibleFields(): TableSearchField[] {
+  private get visibleFields(): DataSearchField[] {
     return filterTableSearchFields(this.availableFields, this.menuQuery);
   }
 
-  private get searchFields(): TableSearchField[] {
-    return tableSearchFields(this.columns);
+  private get searchFields(): DataSearchField[] {
+    return tableSearchFields(this.fields);
   }
 
   private get activeOptionId(): string | undefined {
@@ -212,7 +212,7 @@ export class DataSearch {
     this.dsChange.emit(nextValue);
   }
 
-  private selectField(field: TableSearchField): void {
+  private selectField(field: DataSearchField): void {
     this.dsFieldsChange.emit({ selectedFieldIds: [...this.selectedFieldIds, field.id] });
     this.announcement = `${field.label} search field added.`;
     this.closeMenu();
@@ -229,7 +229,7 @@ export class DataSearch {
     this.announcement = `${removed.label} search field removed.`;
   }
 
-  private removeField(field: TableSearchField): void {
+  private removeField(field: DataSearchField): void {
     this.dsFieldsChange.emit({
       selectedFieldIds: this.selectedFieldIds.filter(fieldId => fieldId !== field.id),
     });

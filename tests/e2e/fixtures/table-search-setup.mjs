@@ -3,10 +3,10 @@ import '/dist/components/ds-data-search.js';
 await customElements.whenDefined('ds-data-search');
 
 const search = document.getElementById('search');
-search.columns = [
+search.fields = [
   {
     id: 'vehicleDetails',
-    header: 'Vehicle ID / Make · Model · Year',
+    label: 'Vehicle ID / Make · Model · Year',
     headerSegments: [
       { label: 'Vehicle ID', dataLabel: 'Vehicle ID', sortKey: 'vehicleId', separator: '/' },
       { label: 'Make', dataLabel: 'Vehicle make', sortKey: 'vehicleMake', separator: '·' },
@@ -16,14 +16,14 @@ search.columns = [
   },
   {
     id: 'driverDetails',
-    header: 'Driver name / ID',
+    label: 'Driver name / ID',
     headerSegments: [
       { label: 'Driver name', dataLabel: 'Driver name', sortKey: 'driverName', separator: '/' },
       { label: 'ID', dataLabel: 'Driver ID', sortKey: 'driverId' },
     ],
   },
-  { id: 'preview', header: 'Preview', searchable: false },
-  { id: 'actions', kind: 'action', header: '', headerLabel: 'Actions' },
+  { id: 'preview', label: 'Preview', searchable: false },
+  { id: 'actions', kind: 'action', label: '', headerLabel: 'Actions' },
 ];
 search.value = '';
 search.selectedFieldIds = [];
