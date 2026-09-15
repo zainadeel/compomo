@@ -88,7 +88,28 @@
           "label": "Typography contract",
           "path": "AGENTS.md"
         }
-      ]
+      ],
+      "styling": {
+        "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+        "protected": [
+          {
+            "properties": [
+              "font",
+              "font-size",
+              "font-weight",
+              "font-family",
+              "line-height",
+              "letter-spacing"
+            ],
+            "reason": "Typography metrics form one atomic variant; choose variant and emphasis. Layout and inherited foreground remain consumer-owned.",
+            "props": [
+              "variant",
+              "emphasis"
+            ]
+          }
+        ],
+        "customProperties": []
+      }
     },
     "api": {
       "props": {

@@ -35,11 +35,7 @@
       "reason": "Button semantics communicate an action rather than persistent state."
     }
   ],
-  "commonlyComposedWith": [
-    "component:ds-field",
-    "component:ds-menu",
-    "component:ds-text"
-  ],
+  "commonlyComposedWith": ["component:ds-field", "component:ds-menu", "component:ds-text"],
   "accessibility": [
     "Every standalone switch requires an accessible name from a native label, aria-label, or aria-labelledby.",
     "Checked state is exposed through switch semantics and thumb position, so state does not rely on color alone.",
@@ -67,9 +63,7 @@
     "react": [
       "Use DsSwitch and handle onDsChange; checked is mutable and updates immediately when the component is activated."
     ],
-    "vue": [
-      "Use DsSwitch with v-model for checked, and listen for dsChange."
-    ],
+    "vue": ["Use DsSwitch with v-model for checked, and listen for dsChange."],
     "angular": [
       "Use DsSwitch with checked binding and dsChange, or the generated boolean value accessor in Angular forms."
     ]
@@ -83,5 +77,30 @@
       "label": "Cross-browser form and accessibility coverage",
       "path": "tests/e2e/forms.spec.ts"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+    "protected": [
+      {
+        "properties": [
+          "font",
+          "font-size",
+          "font-weight",
+          "font-family",
+          "line-height",
+          "letter-spacing",
+          "padding",
+          "border-radius"
+        ],
+        "reason": "The field primitive owns its density and selection anatomy; use size and presentation props without replacing the recipe.",
+        "props": ["size", "presentation"]
+      },
+      {
+        "properties": ["background", "border", "box-shadow", "color"],
+        "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+        "props": ["size", "presentation"]
+      }
+    ],
+    "customProperties": []
+  }
 }

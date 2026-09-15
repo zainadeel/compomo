@@ -2,13 +2,13 @@ import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
-import local from './eslint-plugin-local/index.js';
+import { createConfig } from './lint/index.js';
 
 // eslint-plugin-react (v7) does not support ESLint 10 and is unnecessary here —
 // CompoMo is a Stencil web-components library. We keep react-hooks (v7, ESLint
 // 10-compatible) for the story files that use React hooks.
 
-export default tseslint.config(
+const sourceConfig = tseslint.config(
   {
     ignores: [
       'dist/**',
@@ -17,7 +17,7 @@ export default tseslint.config(
       'scripts/**',
       'src/.generated/**',
       'src/angular/**',
-      'eslint-plugin-local/**',
+      'lint/**',
     ],
   },
   js.configs.recommended,
@@ -36,7 +36,6 @@ export default tseslint.config(
     },
     plugins: {
       'react-hooks': reactHooks,
-      local,
     },
     rules: {
       'react-hooks/rules-of-hooks': 'error',
@@ -50,11 +49,6 @@ export default tseslint.config(
           varsIgnorePattern: '^(?:_|h$)',
         },
       ],
-      // Primitives — warn only (same posture as stylelint). Prefer ds-text / ds-icon.
-      'local/prefer-ds-text': 'warn',
-      'local/prefer-ds-icon': 'warn',
-      'local/prefer-direct-ds-text': 'warn',
-      'local/no-selected-fill-emphasis-change': 'warn',
     },
   },
   {
@@ -71,3 +65,16 @@ export default tseslint.config(
     },
   }
 );
+
+export default [
+  ...sourceConfig.map(config =>
+    config.files || (Object.keys(config).length === 1 && config.ignores)
+      ? config
+      : { ...config, files: ['**/*.{js,jsx,ts,tsx}'] }
+  ),
+  ...createConfig({
+    mode: 'authoring',
+    cssFiles: ['src/wc/components/**/*.css', 'src/wc/styles/**/*.css', 'src/wc/utils/**/*.css'],
+    jsxFiles: ['src/**/*.{ts,tsx}'],
+  }),
+];

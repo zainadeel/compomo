@@ -53,7 +53,12 @@
           "label": "Font ownership and loading",
           "path": "docs/font-ownership.md"
         }
-      ]
+      ],
+      "styling": {
+        "rationale": "Slotted tool summaries and results retain application-owned styling and layout.",
+        "protected": [],
+        "customProperties": []
+      }
     },
     "api": {
       "props": {

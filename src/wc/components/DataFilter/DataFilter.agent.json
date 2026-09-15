@@ -31,9 +31,7 @@
     "component:ds-data-sort",
     "component:ds-filter-menu"
   ],
-  "patterns": [
-    "pattern:menu-trigger"
-  ],
+  "patterns": ["pattern:menu-trigger"],
   "accessibility": [
     "The trigger is an icon-label combobox named Filter table unless a product aria-label supplies the table context. Compact caption widths preserve that accessible name after the visible label and chevron are omitted.",
     "The popup retains ds-filter-menu category navigation, option semantics, focus entry, dismissal, and focus return, and aligns its start edge with the trigger.",
@@ -76,5 +74,21 @@
       "label": "Toolbar composition owner",
       "path": "src/wc/components/DataToolbar/DataToolbar.agent.json"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+    "protected": [
+      {
+        "properties": ["background", "border", "box-shadow", "color"],
+        "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+        "props": ["hasBorder"]
+      },
+      {
+        "properties": ["border-radius"],
+        "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+        "props": []
+      }
+    ],
+    "customProperties": []
+  }
 }

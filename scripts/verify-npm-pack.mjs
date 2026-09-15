@@ -6,6 +6,11 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 const REQUIRED_PATHS = [
+  'dist/lint/index.js',
+  'dist/lint/index.d.ts',
+  'dist/lint/types.d.ts',
+  'dist/lint/STYLELINT-LICENSE',
+  'dist/lint/THIRD-PARTY-NOTICES',
   'dist/components/index.js',
   'dist/types/components.d.ts',
   'dist/lib/shell/index.js',

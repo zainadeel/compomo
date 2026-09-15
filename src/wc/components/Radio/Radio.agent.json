@@ -35,10 +35,7 @@
       "reason": "Select keeps a larger one-of-many choice set compact."
     }
   ],
-  "commonlyComposedWith": [
-    "component:ds-field",
-    "component:ds-text"
-  ],
+  "commonlyComposedWith": ["component:ds-field", "component:ds-text"],
   "accessibility": [
     "The host exposes radiogroup semantics and requires an accessible group name from aria-label or aria-labelledby.",
     "Each visible option exposes radio semantics, its checked state, its label text, optional supporting description, and any inactive state.",
@@ -80,5 +77,30 @@
       "label": "Cross-browser form and accessibility coverage",
       "path": "tests/e2e/forms.spec.ts"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+    "protected": [
+      {
+        "properties": [
+          "font",
+          "font-size",
+          "font-weight",
+          "font-family",
+          "line-height",
+          "letter-spacing",
+          "padding",
+          "border-radius"
+        ],
+        "reason": "The field primitive owns its density and selection anatomy; use size and presentation props without replacing the recipe.",
+        "props": ["size"]
+      },
+      {
+        "properties": ["background", "border", "box-shadow", "color"],
+        "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+        "props": ["size"]
+      }
+    ],
+    "customProperties": []
+  }
 }

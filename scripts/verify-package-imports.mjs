@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 /** Install the packed tarball and load every supported public runtime surface. */
+import { verifyLintPackage } from './verify-lint-package.mjs';
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -360,6 +361,7 @@ try {
     clientOptions: undefined,
     expectedEra: 'legacy',
   });
+  verifyLintPackage(smokeDir, repoRoot, npmEnv);
   console.log(
     '✅ Packed native, Angular, React, Vue, shell, toast, utils, agent, and MCP entry points load successfully.'
   );

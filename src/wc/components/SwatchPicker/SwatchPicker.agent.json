@@ -36,10 +36,7 @@
       "reason": "Select scales a larger named choice set into an anchored listbox."
     }
   ],
-  "commonlyComposedWith": [
-    "component:ds-menu",
-    "component:ds-shell-app"
-  ],
+  "commonlyComposedWith": ["component:ds-menu", "component:ds-shell-app"],
   "accessibility": [
     "Provide a localized groupLabel describing the complete choice.",
     "Give every option a meaningful label because its visual preview is never its accessible name.",
@@ -60,9 +57,7 @@
     "customElements": [
       "Assign options or sections as JavaScript properties, bind value, and listen for dsChange."
     ],
-    "react": [
-      "Use DsSwatchPicker, pass option arrays as props, and handle onDsChange."
-    ],
+    "react": ["Use DsSwatchPicker, pass option arrays as props, and handle onDsChange."],
     "angular": [
       "Use property bindings for options or sections and handle dsChange to update application state."
     ]
@@ -72,5 +67,21 @@
       "label": "Executable stories",
       "path": "src/wc/components/SwatchPicker/SwatchPicker.stories.ts"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+    "protected": [
+      {
+        "properties": ["background", "border", "box-shadow", "color"],
+        "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+        "props": []
+      },
+      {
+        "properties": ["border-radius"],
+        "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+        "props": []
+      }
+    ],
+    "customProperties": []
+  }
 }

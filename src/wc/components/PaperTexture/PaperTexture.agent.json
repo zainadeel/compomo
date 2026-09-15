@@ -44,5 +44,10 @@
       "label": "Storybook parameter playground",
       "path": "src/wc/components/PaperTexture/PaperTexture.stories.ts"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "The decorative shader intentionally accepts custom parameters and observes application-owned host dimensions.",
+    "protected": [],
+    "customProperties": []
+  }
 }

@@ -49,7 +49,12 @@
           "label": "Storybook examples",
           "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
         }
-      ]
+      ],
+      "styling": {
+        "rationale": "The row composes content whose presentation is owned by its children and the transcript layout.",
+        "protected": [],
+        "customProperties": []
+      }
     },
     "api": {
       "props": {

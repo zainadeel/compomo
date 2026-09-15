@@ -170,7 +170,7 @@ export class Banner {
             inert={closing ? true : undefined}
             data-phase={this.phase}
           >
-            {/* eslint-disable-next-line local/prefer-direct-ds-text -- The header-copy lane owns the 6px container inset separately from the inline text flow's 2px inset. */}
+            {/* eslint-disable-next-line compomo/prefer-direct-ds-text -- The header-copy lane owns the 6px container inset separately from the inline text flow's 2px inset. */}
             <div class="banner-copy ds-chrome-header__copy ds-chrome-header__copy--wrapping ds-control--md">
               <ds-text class="banner-copy-flow" as="div" variant="text-body-medium" color="inherit">
                 {this.heading && (

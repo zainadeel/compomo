@@ -12,9 +12,7 @@
     "A product needs a responsive line, area, bar, scatter, pie, donut, gauge, radar, heatmap, histogram, density, or boxplot visualization.",
     "Several mark layers must share scales and semantic interaction points."
   ],
-  "avoidWhen": [
-    "The visualization needs maps, networks, brushing, zooming, selection, or Canvas."
-  ],
+  "avoidWhen": ["The visualization needs maps, networks, brushing, zooming, selection, or Canvas."],
   "alternatives": [],
   "commonlyComposedWith": [
     "component:ds-chart-legend",
@@ -45,9 +43,7 @@
     "react": [
       "Pass the typed definition object as a property; do not serialize it to an attribute."
     ],
-    "angular": [
-      "Bind definition as a property so accessors and D3 factories remain intact."
-    ]
+    "angular": ["Bind definition as a property so accessors and D3 factories remain intact."]
   },
   "references": [
     {
@@ -58,5 +54,10 @@
       "label": "Chart guide",
       "path": "src/docs/Charts.mdx"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "The renderer observes the host; application-supplied dimensions and chart definition remain authoritative.",
+    "protected": [],
+    "customProperties": []
+  }
 }

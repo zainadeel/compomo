@@ -78,7 +78,27 @@
           "label": "Storybook examples",
           "path": "src/wc/components/Loader/Loader.stories.ts"
         }
-      ]
+      ],
+      "styling": {
+        "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+        "protected": [
+          {
+            "properties": [
+              "width",
+              "height",
+              "min-width",
+              "min-height",
+              "max-width",
+              "max-height"
+            ],
+            "reason": "The primitive owns its size recipe; select size and position it through the parent layout.",
+            "props": [
+              "size"
+            ]
+          }
+        ],
+        "customProperties": []
+      }
     },
     "api": {
       "props": {

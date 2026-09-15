@@ -335,7 +335,7 @@ export class CardOverview {
       this.scoreErrorMessage || (!this.score ? 'Score unavailable' : undefined);
     if (unavailableMessage) {
       return (
-        /* eslint-disable-next-line local/prefer-direct-ds-text -- The score track owns the grid divider and 8px outer inset. */
+        /* eslint-disable-next-line compomo/prefer-direct-ds-text -- The score track owns the grid divider and 8px outer inset. */
         <div class="card-overview__score" part="score">
           <ds-text
             as="span"
@@ -525,7 +525,7 @@ export class CardOverview {
                     <div class="card-overview__period-current">
                       <slot name="period">
                         {this.periodLabel && (
-                          /* eslint-disable-next-line local/prefer-direct-ds-text -- Fixed copy uses the same structural frame and label inset as a slotted Select. */
+                          /* eslint-disable-next-line compomo/prefer-direct-ds-text -- Fixed copy uses the same structural frame and label inset as a slotted Select. */
                           <div class="card-overview__period-fixed ds-control-frame">
                             <ds-text
                               as="span"

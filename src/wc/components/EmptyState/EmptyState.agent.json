@@ -79,5 +79,10 @@
       "label": "Shared layout recipe foundation",
       "path": "docs/layout-recipe-foundation.md"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "The application explicitly owns available width, height and surrounding padding.",
+    "protected": [],
+    "customProperties": []
+  }
 }

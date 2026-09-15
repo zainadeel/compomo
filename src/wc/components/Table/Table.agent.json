@@ -36,9 +36,7 @@
     "component:ds-score",
     "component:ds-icon"
   ],
-  "patterns": [
-    "pattern:menu-trigger"
-  ],
+  "patterns": ["pattern:menu-trigger"],
   "accessibility": [
     "The rendered structure uses a native table, caption, column headers, row groups, and data cells; keep the caption non-empty. The native caption remains visually hidden as the table's accessible name. When caption visibility is enabled, a 48px header bar renders as component chrome outside the data scrollport. It defaults to a presentational caption title that does not duplicate the accessible name. Application-owned labeled controls supplied through the single named header slot replace that fallback and share one horizontal caption overflow row with table-owned actions inside the component-owned 8px inset. Table caption buttons keep pressed interaction paint without physically scaling. When columnCustomizer is enabled, the table adds a trailing Customize control named Customize table. Its label uses regular weight and its resting foreground remains neutral when hidden or reordered columns differ from the catalog default. The control is icon-label at typical widths and the icon-only Table menu button below 900px, where a tooltip preserves the Customize label. The always-icon-only table-variant control also exposes its label through a tooltip. Otherwise the header slot receives the complete content width.",
     "The data-mode switcher is the shared Menu of the table's supported infinite, pagination, and virtual modes. It uses an Ellipses trigger. The switcher is the final caption-bar action; when the column customizer is also present, a decorative vertical divider separates the two controls. dataMode remains controlled, and the application responds to change intent by supplying the matching records, pagination state, loading behavior, and query consequences. Escape, dismissal, and selection return focus to the trigger.",
@@ -116,5 +114,106 @@
       "label": "Surface ownership and trigger state",
       "path": "src/docs/SurfaceOwnership.mdx"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "The public table stylesheet intentionally supports product-specific styling through documented custom properties and stable element classes.",
+    "protected": [],
+    "customProperties": [
+      {
+        "name": "--ds-table-border",
+        "source": "src/wc/styles/table.css",
+        "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+      },
+      {
+        "name": "--ds-table-border-strong",
+        "source": "src/wc/styles/table.css",
+        "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+      },
+      {
+        "name": "--ds-table-cell-padding-block",
+        "source": "src/wc/styles/table.css",
+        "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+      },
+      {
+        "name": "--ds-table-cell-padding-inline",
+        "source": "src/wc/styles/table.css",
+        "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+      },
+      {
+        "name": "--ds-table-collapse-all-block-offset",
+        "source": "src/wc/styles/table.css",
+        "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+      },
+      {
+        "name": "--ds-table-column-border",
+        "source": "src/wc/styles/table.css",
+        "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+      },
+      {
+        "name": "--ds-table-header-min-block-size",
+        "source": "src/wc/styles/table.css",
+        "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+      },
+      {
+        "name": "--ds-table-header-surface",
+        "source": "src/wc/styles/table.css",
+        "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+      },
+      {
+        "name": "--ds-table-inline-scroll-max-offset",
+        "source": "src/wc/styles/table.css",
+        "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+      },
+      {
+        "name": "--ds-table-max-block-size",
+        "source": "src/wc/styles/table.css",
+        "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+      },
+      {
+        "name": "--ds-table-radius",
+        "source": "src/wc/styles/table.css",
+        "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+      },
+      {
+        "name": "--ds-table-row-hover",
+        "source": "src/wc/styles/table.css",
+        "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+      },
+      {
+        "name": "--ds-table-row-min-block-size",
+        "source": "src/wc/styles/table.css",
+        "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+      },
+      {
+        "name": "--ds-table-row-pressed",
+        "source": "src/wc/styles/table.css",
+        "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+      },
+      {
+        "name": "--ds-table-row-selected",
+        "source": "src/wc/styles/table.css",
+        "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+      },
+      {
+        "name": "--ds-table-sticky-border",
+        "source": "src/wc/styles/table.css",
+        "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+      },
+      {
+        "name": "--ds-table-sticky-header-offset",
+        "source": "src/wc/styles/table.css",
+        "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+      },
+      {
+        "name": "--ds-table-surface",
+        "source": "src/wc/styles/table.css",
+        "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+      },
+      {
+        "name": "--ds-table-visible-inline-size",
+        "source": "src/wc/styles/table.css",
+        "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+      }
+    ]
+  }
 }

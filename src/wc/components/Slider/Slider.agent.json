@@ -35,10 +35,7 @@
       "reason": "Switch communicates an immediate on/off state without implying intermediate values."
     }
   ],
-  "commonlyComposedWith": [
-    "component:ds-text",
-    "component:ds-input"
-  ],
+  "commonlyComposedWith": ["component:ds-text", "component:ds-input"],
   "accessibility": [
     "Each thumb contains a native range input and must have an accessible name; a visible label names a single thumb, while startLabel and endLabel distinguish a two-thumb range.",
     "Arrow keys adjust one step, Home and End reach the allowed bounds, and browser-supported Page Up and Page Down make larger changes.",
@@ -84,5 +81,36 @@
       "label": "Cross-browser form and interaction coverage",
       "path": "tests/e2e/forms.spec.ts"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+    "protected": [
+      {
+        "properties": [
+          "font",
+          "font-size",
+          "font-weight",
+          "font-family",
+          "line-height",
+          "letter-spacing",
+          "padding",
+          "border-radius"
+        ],
+        "reason": "The field primitive owns its density and selection anatomy; use size and presentation props without replacing the recipe.",
+        "props": ["size", "orientation"]
+      },
+      {
+        "properties": ["background", "border", "box-shadow", "color"],
+        "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+        "props": ["size"]
+      }
+    ],
+    "customProperties": [
+      {
+        "name": "--ds-slider-vertical-length",
+        "source": "src/wc/components/Slider/Slider.css",
+        "reason": "Application-owned length of a vertical slider."
+      }
+    ]
+  }
 }

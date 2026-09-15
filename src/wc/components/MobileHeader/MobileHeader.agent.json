@@ -8,9 +8,19 @@
   "audience": "specialized",
   "status": "experimental",
   "summary": "Consistent mobile top chrome with symmetric action lanes, a centered page identity or peer-section chooser, and an optional subordinate page-section row.",
-  "useWhen": ["A routed page, persistent tool, account surface, or workflow needs the canonical mobile header presentation."],
-  "avoidWhen": ["Rendering desktop BarTitle, BarNav, or PanelToolHeader.", "Rendering the Mobile Sheet Nav utility lane."],
-  "commonlyComposedWith": ["component:ds-mobile-section-switcher", "component:ds-tab-group", "component:ds-shell-page", "component:ds-shell-tools"],
+  "useWhen": [
+    "A routed page, persistent tool, account surface, or workflow needs the canonical mobile header presentation."
+  ],
+  "avoidWhen": [
+    "Rendering desktop BarTitle, BarNav, or PanelToolHeader.",
+    "Rendering the Mobile Sheet Nav utility lane."
+  ],
+  "commonlyComposedWith": [
+    "component:ds-mobile-section-switcher",
+    "component:ds-tab-group",
+    "component:ds-shell-page",
+    "component:ds-shell-tools"
+  ],
   "patterns": ["pattern:application-shell"],
   "accessibility": [
     "Static screens render a real h1 or h2 according to headingLevel.",
@@ -37,5 +47,21 @@
       "label": "Storybook",
       "path": "src/wc/components/MobileHeader/MobileHeader.stories.ts"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+    "protected": [
+      {
+        "properties": ["background", "border", "box-shadow", "color"],
+        "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+        "props": ["tone"]
+      },
+      {
+        "properties": ["border-radius"],
+        "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+        "props": []
+      }
+    ],
+    "customProperties": []
+  }
 }

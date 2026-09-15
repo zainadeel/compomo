@@ -56,7 +56,12 @@
           "label": "Agent chat composition",
           "path": "agent/patterns/agent-chat/pattern.agent.json"
         }
-      ]
+      ],
+      "styling": {
+        "rationale": "Question and action components own their recipes; the questionnaire host remains a responsive layout box.",
+        "protected": [],
+        "customProperties": []
+      }
     },
     "api": {
       "props": {

@@ -28,5 +28,10 @@
       "label": "Storybook examples",
       "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "Disclosure composition owns its rows; the host remains an application layout box.",
+    "protected": [],
+    "customProperties": []
+  }
 }

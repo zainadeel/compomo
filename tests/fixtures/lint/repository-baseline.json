@@ -1,0 +1,502 @@
+[
+  {
+    "file": "src/wc/utils/button-base.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/button-split.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/choice-list.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/choice-popup.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/chrome-header.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/chrome-layout.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/control-density-inset.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/control-density.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/control-inactive.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/control-parts.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/control-press.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/control-width.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/datetime-input-control.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/empty-region.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/field-stack.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/focus-ring.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/forced-colors.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/interaction-fill.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/key-hint.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/nav-disclosure.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/radius.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/scroll-edge-fade.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/scrollbar-hidden.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/search-control.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/select-trigger.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/shimmer.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/table-caption-control.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/tag-chip.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/text-decoration.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/typography.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/utils/visually-hidden.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/styles/control-elevation.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/styles/prose.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/styles/table.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/TypingIndicator/TypingIndicator.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/TooltipChart/TooltipChart.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Tooltip/Tooltip.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Toast/Toast.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/TimePicker/TimePicker.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Textarea/Textarea.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Text/Text.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Tag/Tag.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Table/Table.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/TabGroup/TabGroup.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Switch/Switch.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/SwatchPicker/SwatchPicker.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Slider/Slider.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Skeleton/Skeleton.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/ShellTools/ShellTools.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/ShellPage/ShellPage.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/ShellApp/ShellApp.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Select/Select.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/ScrollOverlay/ScrollOverlay.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Score/Score.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Radio/Radio.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/PaperTexture/PaperTexture.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/PanelTools/PanelTools.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/PanelToolSearch/PanelToolSearch.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/PanelToolHeader/PanelToolHeader.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/PanelSubNav/PanelSubNav.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/PanelNav/PanelNav.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Pagination/Pagination.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Modal/Modal.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/MobileSheetNav/MobileSheetNav.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/MobileSectionSwitcher/MobileSectionSwitcher.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/MobileHeader/MobileHeader.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/MobileBarNav/MobileBarNav.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/MessageScroller/AgentChatReview.stories.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/MessageScroller/MessageScroller.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/MessageComposer/MessageComposer.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/MessageBubble/MessageBubble.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/MessageActions/MessageActions.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Message/Message.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Menu/Menu.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Markdown/Markdown.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Loader/Loader.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/InputTime/InputTime.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/InputDate/InputDate.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Input/Input.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Icon/Icon.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/FilterMenu/FilterMenu.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Field/Field.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/EmptyState/EmptyState.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Divider/Divider.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/DataToolbar/DataToolbar.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/DataSort/DataSort.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/DataSearch/DataSearch.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/DataSavedViews/DataSavedViews.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/DataPreferences/DataPreferences.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/DataGroup/DataGroup.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/DataFilter/DataFilter.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/DataCustomize/DataCustomize.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/ConversationListSection/ConversationListSection.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/ConversationListItem/ConversationListItem.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/ConversationList/ConversationList.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/CodeBlock/CodeBlock.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Chip/Chip.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Checkbox/Checkbox.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/ChartLegend/ChartLegend.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Chart/Chart.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/CardSettingsScope/CardSettingsScope.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/CardSetting/CardSetting.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/CardOverview/CardOverview.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/CardNavigation/CardNavigation.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/CardChart/CardChart.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/CardActionCenter/CardActionCenter.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Calendar/Calendar.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/ButtonUnfilled/ButtonUnfilled.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/ButtonInverted/ButtonInverted.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/ButtonFilled/ButtonFilled.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Breadcrumb/Breadcrumb.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/BarWorkflow/BarWorkflow.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/BarTitle/BarTitle.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/BarPageTitle/BarPageTitle.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/BarNav/BarNav.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/BarAction/BarAction.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Banner/Banner.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Badge/Badge.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/Avatar/Avatar.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/AttachmentList/AttachmentList.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/AgentToolCall/AgentToolCall.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/AgentSourceList/AgentSourceList.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/AgentResponse/AgentResponse.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/AgentQuestionnaire/AgentQuestionnaire.css",
+    "warnings": []
+  },
+  {
+    "file": "src/wc/components/AgentActivity/AgentActivity.css",
+    "warnings": []
+  }
+]

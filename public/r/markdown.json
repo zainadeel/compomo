@@ -49,7 +49,23 @@
           "label": "Prose distribution decision",
           "path": "docs/prose-foundation.md"
         }
-      ]
+      ],
+      "styling": {
+        "rationale": "The public prose stylesheet intentionally owns typography and exposes consumer customization.",
+        "protected": [],
+        "customProperties": [
+          {
+            "name": "--ds-prose-text-max-inline-size",
+            "source": "src/wc/styles/prose.css",
+            "reason": "Application-owned readable prose measure."
+          },
+          {
+            "name": "--ds-code-font-variant-ligatures",
+            "source": "src/wc/styles/prose.css",
+            "reason": "Application-owned code ligature preference."
+          }
+        ]
+      }
     },
     "api": {
       "props": {

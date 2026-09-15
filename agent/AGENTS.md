@@ -11,10 +11,15 @@ Agent JSON contains curated design intent:
 - alternatives and common compositions;
 - accessibility and responsive intent;
 - application versus component state ownership;
+- structured styling ownership, supported customization hooks and correction guidance;
 - irreducible framework caveats.
 
 Do not duplicate generated facts such as tag names, props, defaults, events,
 methods, slots, package versions, adapter paths, or token values.
+
+Every public component requires a structured styling contract; property choices
+and adapter names remain compiler-derived. Validate referenced props and actual
+CSS hook consumption with the metadata build.
 
 Every source component requires exactly one co-located agent JSON file validated
 by `agent/schemas/component-agent.schema.json`.

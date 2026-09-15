@@ -104,5 +104,10 @@
       "label": "Reusable framework composition",
       "path": "agent/patterns/shell-page/pattern.agent.json"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "Content insets and surfaces are public props; the host remains part of the application-owned bounded layout.",
+    "protected": [],
+    "customProperties": []
+  }
 }

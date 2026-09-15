@@ -44,7 +44,12 @@
           "label": "Storybook example",
           "path": "src/wc/components/TypingIndicator/TypingIndicator.stories.ts"
         }
-      ]
+      ],
+      "styling": {
+        "rationale": "The indicator composes loader and text recipes inside an application-positioned host.",
+        "protected": [],
+        "customProperties": []
+      }
     },
     "api": {
       "props": {

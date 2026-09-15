@@ -69,5 +69,16 @@
       "label": "Table composition owner",
       "path": "src/wc/components/Table/Table.agent.json"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+    "protected": [
+      {
+        "properties": ["gap"],
+        "reason": "The component owns spacing between its immediate content regions; the application controls surrounding margins and placement.",
+        "props": []
+      }
+    ],
+    "customProperties": []
+  }
 }

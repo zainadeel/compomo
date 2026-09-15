@@ -62,5 +62,26 @@
       "label": "Storybook examples",
       "path": "src/wc/components/CardChart/CardChart.stories.ts"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+    "protected": [
+      {
+        "properties": ["background", "border", "box-shadow", "color"],
+        "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+        "props": ["variant"]
+      },
+      {
+        "properties": ["border-radius"],
+        "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+        "props": []
+      },
+      {
+        "properties": ["width", "min-height"],
+        "reason": "Card width selects the component geometry; use cardWidth and let the parent constrain available space.",
+        "props": ["cardWidth"]
+      }
+    ],
+    "customProperties": []
+  }
 }

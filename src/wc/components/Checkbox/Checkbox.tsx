@@ -141,7 +141,7 @@ export class Checkbox {
         <span class="checkbox__placement ds-interaction-fill__content" aria-hidden="true">
           <span class={{ box: true, 'box--marked': isMarked }}>
             {isMarked && (
-              // eslint-disable-next-line local/prefer-ds-icon -- Checkbox owns this fixed state-mark geometry.
+              // eslint-disable-next-line compomo/prefer-ds-icon -- Checkbox owns this fixed state-mark geometry.
               <svg class="checkbox__mark" viewBox="0 0 16 16" fill="currentColor" focusable="false">
                 <path
                   d={

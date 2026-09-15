@@ -43,7 +43,12 @@
           "label": "Source safety and disclosure stories",
           "path": "src/wc/components/AgentSourceList/AgentSourceList.stories.ts"
         }
-      ]
+      ],
+      "styling": {
+        "rationale": "Source rows own their recipes; the disclosure host remains an application layout box.",
+        "protected": [],
+        "customProperties": []
+      }
     },
     "api": {
       "props": {

@@ -81,7 +81,20 @@
           "label": "Cross-browser form and accessibility coverage",
           "path": "tests/e2e/forms.spec.ts"
         }
-      ]
+      ],
+      "styling": {
+        "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+        "protected": [
+          {
+            "properties": [
+              "gap"
+            ],
+            "reason": "The component owns spacing between its immediate content regions; the application controls surrounding margins and placement.",
+            "props": []
+          }
+        ],
+        "customProperties": []
+      }
     },
     "api": {
       "props": {

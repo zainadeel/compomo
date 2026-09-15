@@ -82,7 +82,12 @@
           "label": "Expanded page-header composition",
           "path": "src/wc/components/BarTitle/BarTitle.tsx"
         }
-      ]
+      ],
+      "styling": {
+        "rationale": "The breadcrumb owns internal truncation; the application supplies the host width and placement.",
+        "protected": [],
+        "customProperties": []
+      }
     },
     "api": {
       "props": {

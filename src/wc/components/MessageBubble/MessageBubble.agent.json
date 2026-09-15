@@ -1,1 +1,53 @@
-{"$schema":"../../../../agent/schemas/component-agent.schema.json","schemaVersion":"1.0.0","id":"component:ds-message-bubble","kind":"component","package":"@ds-mo/ui","tag":"ds-message-bubble","audience":"general","status":"experimental","summary":"Visible plain-message surface with a body-medium default, separated from message-row direction and metadata.","useWhen":["Plain user-sent or received person-to-person message copy needs a visible surface within a Message row.","Plain conversation copy should use the shared body-medium regular typography recipe without application styling."],"avoidWhen":["The surface is a general card, callout, or form container.","The content is a rich agent response; compose AgentResponse directly in Message.","The state only indicates that another participant is typing; use TypingIndicator."],"commonlyComposedWith":["component:ds-message"],"patterns":["pattern:conversation"],"accessibility":["Surface styling does not add semantics; failed delivery belongs in Message metadata below the unchanged bubble rather than in an error bubble treatment."],"states":["The user variant represents user-sent copy in agent and person-to-person channels and uses secondary foreground.","The received variant represents ordinary incoming person-to-person copy.","Typing and rich agent output are not MessageBubble variants."],"responsiveBehavior":["The bubble wraps plain message copy within the transcript width."],"references":[{"label":"Storybook examples","path":"src/wc/components/MessageScroller/MessageScroller.stories.ts"}]}
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-message-bubble",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-message-bubble",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Visible plain-message surface with a body-medium default, separated from message-row direction and metadata.",
+  "useWhen": [
+    "Plain user-sent or received person-to-person message copy needs a visible surface within a Message row.",
+    "Plain conversation copy should use the shared body-medium regular typography recipe without application styling."
+  ],
+  "avoidWhen": [
+    "The surface is a general card, callout, or form container.",
+    "The content is a rich agent response; compose AgentResponse directly in Message.",
+    "The state only indicates that another participant is typing; use TypingIndicator."
+  ],
+  "commonlyComposedWith": ["component:ds-message"],
+  "patterns": ["pattern:conversation"],
+  "accessibility": [
+    "Surface styling does not add semantics; failed delivery belongs in Message metadata below the unchanged bubble rather than in an error bubble treatment."
+  ],
+  "states": [
+    "The user variant represents user-sent copy in agent and person-to-person channels and uses secondary foreground.",
+    "The received variant represents ordinary incoming person-to-person copy.",
+    "Typing and rich agent output are not MessageBubble variants."
+  ],
+  "responsiveBehavior": ["The bubble wraps plain message copy within the transcript width."],
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
+    }
+  ],
+  "styling": {
+    "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+    "protected": [
+      {
+        "properties": ["background", "border", "box-shadow", "color"],
+        "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+        "props": ["variant"]
+      },
+      {
+        "properties": ["border-radius"],
+        "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+        "props": []
+      }
+    ],
+    "customProperties": []
+  }
+}

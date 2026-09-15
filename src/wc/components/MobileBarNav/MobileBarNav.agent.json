@@ -9,7 +9,10 @@
   "status": "experimental",
   "summary": "Persistent mobile shell navigation for Menu, the router-derived current area, Search, Activity, Messages, and Agents, with optional Inbox grouping.",
   "useWhen": ["ShellApp is rendering its dedicated below-768px application composition."],
-  "avoidWhen": ["Rendering desktop or tablet shell chrome.", "An arbitrary set of product tabs is required."],
+  "avoidWhen": [
+    "Rendering desktop or tablet shell chrome.",
+    "An arbitrary set of product tabs is required."
+  ],
   "commonlyComposedWith": ["component:ds-shell-app"],
   "patterns": ["pattern:application-shell"],
   "accessibility": [
@@ -35,5 +38,21 @@
       "label": "Storybook",
       "path": "src/wc/components/MobileBarNav/MobileBarNav.stories.ts"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+    "protected": [
+      {
+        "properties": ["background", "border", "box-shadow", "color"],
+        "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+        "props": []
+      },
+      {
+        "properties": ["border-radius"],
+        "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+        "props": []
+      }
+    ],
+    "customProperties": []
+  }
 }

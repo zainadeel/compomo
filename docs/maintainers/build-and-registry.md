@@ -9,7 +9,7 @@
 3. Generates and verifies Angular, React, and Vue adapters.
 4. Compiles public `/angular`, `/react`, `/vue`, `/shell`, `/toast`, and `/utils` entries.
 5. Copies public CSS surfaces.
-6. Regenerates registry and agent manifests.
+6. Regenerates registry and agent manifests, then compiles the optional Node lint entry with validated styling contracts.
 7. Bundles the published MCP executable and registry snapshot.
 8. Atomically writes `dist/.package-ready.json` after the publish-shaped output
    is complete.

@@ -63,7 +63,12 @@
           "label": "Storybook review states",
           "path": "src/wc/components/Pagination/Pagination.stories.ts"
         }
-      ]
+      ],
+      "styling": {
+        "rationale": "The host is a layout composition of controls; individual controls own their recipes.",
+        "protected": [],
+        "customProperties": []
+      }
     },
     "api": {
       "props": {

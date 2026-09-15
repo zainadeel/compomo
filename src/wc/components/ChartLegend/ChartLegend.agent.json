@@ -30,10 +30,7 @@
       "reason": "The chart variant places the external legend and disables decorative local hover highlighting."
     }
   ],
-  "commonlyComposedWith": [
-    "component:ds-chart",
-    "component:ds-card-chart"
-  ],
+  "commonlyComposedWith": ["component:ds-chart", "component:ds-card-chart"],
   "accessibility": [
     "Rows remain non-interactive unless the item supplies an actual link destination.",
     "Optional highlight changes opacity only and never moves focus or announces selection.",
@@ -72,5 +69,10 @@
       "label": "Rendered interaction tests",
       "path": "tests/e2e/chart-legend.spec.ts"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "Legend content owns internal rows; application layout may constrain and position its host.",
+    "protected": [],
+    "customProperties": []
+  }
 }

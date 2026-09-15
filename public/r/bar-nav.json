@@ -106,7 +106,12 @@
           "label": "Surface ownership and trigger state",
           "path": "src/docs/SurfaceOwnership.mdx"
         }
-      ]
+      ],
+      "styling": {
+        "rationale": "The host participates in shell-owned layout; internal tabs and chrome own their recipes.",
+        "protected": [],
+        "customProperties": []
+      }
     },
     "api": {
       "props": {

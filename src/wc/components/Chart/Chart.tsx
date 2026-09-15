@@ -498,7 +498,7 @@ export class Chart {
           </span>
         )}
         {scene && (
-          /* eslint-disable-next-line local/prefer-ds-icon -- SVG is the chart renderer. */
+          /* eslint-disable-next-line compomo/prefer-ds-icon -- SVG is the chart renderer. */
           <svg
             class="chart__surface"
             width={scene.width}

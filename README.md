@@ -104,3 +104,10 @@ MCP hosts no longer require an initialize-based connection.
 Package versions, components, props, events, and exports are intentionally not
 duplicated here. Read `package.json`, Storybook, or the generated registry for
 current facts.
+
+## Optional design-system linting
+
+CompoMo ships an opt-in `@ds-mo/ui/lint` ESLint configuration for standalone CSS
+and JSX. Installing the UI package does not activate it. See
+[lint setup and supported syntax](docs/maintainers/linting.md) for installation,
+consumer contracts, CSS-only adoption and strict mode.
