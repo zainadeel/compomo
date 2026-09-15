@@ -394,9 +394,9 @@ test.describe('Managed application shell', () => {
     });
     await expect(shellPage).toHaveJSProperty('desktopHeaderPlacement', 'shell-bar');
     await expect(shellPage).toHaveClass(/shell-page-host--header-compact/);
-    await expect(content).toHaveCSS('padding-top', '32px');
+    await expect(content).toHaveCSS('padding-top', '16px');
     await expect.poll(reportedHeaderHeight).toBe(0);
-    await expect.poll(resolvedContentOffset).toBe(32);
+    await expect.poll(resolvedContentOffset).toBe(16);
 
     await page.setViewportSize({ width: 1024, height: 760 });
     await expect(shell).toHaveAttribute('responsive-mode', 'tablet');
@@ -963,9 +963,9 @@ test.describe('Managed application shell', () => {
     await expect(barTitle).toHaveJSProperty('showDivider', false);
     await expect(barTitle).toHaveJSProperty('showCompactDivider', true);
     await expect(content).toHaveCSS('padding-top', '2px');
-    await expect(content).toHaveCSS('padding-right', '32px');
-    await expect(content).toHaveCSS('padding-bottom', '32px');
-    await expect(content).toHaveCSS('padding-left', '32px');
+    await expect(content).toHaveCSS('padding-right', '16px');
+    await expect(content).toHaveCSS('padding-bottom', '16px');
+    await expect(content).toHaveCSS('padding-left', '16px');
     await expect(barTitle).toHaveClass(/bar-title-host--expanded/);
     expect(
       await barTitle
@@ -1050,7 +1050,7 @@ test.describe('Managed application shell', () => {
     await expect(shellPage).toHaveJSProperty('contentSurface', 'secondary');
     await expect(shellPage).toHaveCSS('background-color', surfaces.secondary);
     await expect(content).toHaveCSS('background-color', surfaces.secondary);
-    await expect(content).toHaveCSS('padding-top', '32px');
+    await expect(content).toHaveCSS('padding-top', '16px');
     await expect(barTitle).toHaveClass(/bar-title-host--expanded/);
     await expect(stickyHeader).toHaveCSS('background-color', surfaces.secondary);
     await expect(barTitle).toHaveCSS('background-color', surfaces.secondary);

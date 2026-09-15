@@ -1,0 +1,128 @@
+:host {
+  --_map-marker-background: var(--color-entity-marker-background-in-motion);
+  --_map-marker-foreground: var(--color-entity-marker-foreground);
+  --_map-marker-interaction-hover: var(--color-entity-marker-interaction-hover);
+  --_map-marker-interaction-pressed: var(--color-entity-marker-interaction-pressed);
+
+  position: relative;
+  display: inline-flex;
+  width: max-content;
+  overflow: visible;
+  vertical-align: middle;
+  transition: var(--effect-transition-interaction-opacity-short-2);
+}
+
+:host(.map-marker--dimmed) {
+  opacity: var(--effect-opacity-medium);
+}
+
+:host(.map-marker--dimmed:focus-within) {
+  opacity: 1;
+}
+
+.map-marker__button {
+  all: unset;
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: var(--dimension-size-300);
+  min-width: var(--dimension-size-300);
+  overflow: hidden;
+  color: var(--_map-marker-foreground);
+  background: var(--_map-marker-background);
+  box-shadow: 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);
+  cursor: pointer;
+  transition: var(--effect-transition-interaction-opacity-short-2);
+}
+
+.map-marker__button::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.map-marker__button::after {
+  content: '';
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  border-radius: inherit;
+  outline: var(--dimension-stroke-width-018) solid currentColor;
+  outline-offset: calc(-1 * var(--dimension-stroke-width-037));
+  pointer-events: none;
+}
+
+.map-marker__caption {
+  position: absolute;
+  z-index: 2;
+  top: calc(100% + var(--dimension-space-050));
+  left: 50%;
+  display: none;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  max-width: calc(var(--dimension-size-800) * 4);
+  height: var(--dimension-size-200);
+  padding: 0 var(--dimension-space-050);
+  overflow: visible;
+  border-radius: var(--dimension-radius-025);
+  color: var(--_map-marker-foreground);
+  background: var(--_map-marker-background);
+  pointer-events: none;
+  transform: translateX(-50%);
+  line-height: 0;
+  white-space: nowrap;
+}
+
+:host(:focus-within) .map-marker__caption {
+  display: inline-flex;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :host(.map-marker--dimmed:hover) {
+    opacity: 1;
+  }
+
+  :host(:hover) .map-marker__caption {
+    display: inline-flex;
+  }
+
+  .map-marker__button:hover::before {
+    background: var(--_map-marker-interaction-hover);
+  }
+}
+
+.map-marker__button:active::before {
+  background: var(--_map-marker-interaction-pressed);
+}
+
+@media (forced-colors: active) {
+  .map-marker__button {
+    border: var(--dimension-stroke-width-012) solid var(--ds-forced-color-control-boundary);
+    color: var(--ds-forced-color-content);
+    background: var(--ds-forced-color-surface);
+    box-shadow: none;
+  }
+
+  .map-marker__button::before {
+    display: none;
+  }
+
+  .map-marker__button::after {
+    outline-color: var(--ds-forced-color-control-boundary);
+  }
+
+  .map-marker__caption {
+    border: var(--dimension-stroke-width-012) solid var(--ds-forced-color-control-boundary);
+    color: var(--ds-forced-color-content);
+    background: var(--ds-forced-color-surface);
+  }
+}

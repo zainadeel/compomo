@@ -1,0 +1,64 @@
+@import '../../utils/focus-ring.css';
+@import '../../utils/map-marker.css';
+
+:host([state='in-motion']) {
+  --_map-marker-background: var(--color-entity-marker-background-in-motion);
+}
+
+:host([state='idling']) {
+  --_map-marker-background: var(--color-entity-marker-background-idling);
+}
+
+:host([state='stationary']) {
+  --_map-marker-background: var(--color-entity-marker-background-stationary);
+}
+
+:host([state='immobilized']) {
+  --_map-marker-background: var(--color-entity-marker-background-immobilized);
+}
+
+:host([state='stale']) {
+  --_map-marker-background: var(--color-entity-marker-background-stale);
+}
+
+.map-marker__button {
+  width: var(--dimension-size-300);
+  border-radius: var(--dimension-radius-half);
+}
+
+:host(.map-entity-marker--stale) .map-marker__button::after {
+  display: none;
+}
+
+.map-entity-marker__stale-outline {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  transform: rotate(-90deg);
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 1;
+  stroke-linecap: butt;
+}
+
+.map-entity-marker__glyph {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  transform: rotate(var(--ds-map-entity-marker-heading));
+}
+
+@media (forced-colors: active) {
+  :host(.map-entity-marker--stale) .map-marker__button::after {
+    display: block;
+    outline-style: dashed;
+  }
+
+  .map-entity-marker__stale-outline {
+    display: none;
+  }
+}

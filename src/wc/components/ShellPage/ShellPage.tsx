@@ -252,7 +252,7 @@ export class ShellPage {
       this.effectiveScrollCompaction &&
       this.headerPresentation === 'auto' &&
       this.headerCapacity === 'roomy';
-    const expandedInset = resolveCssLengthPx('--dimension-space-400', 0);
+    const expandedInset = resolveCssLengthPx('--dimension-space-200', 0);
     if (
       !ownsScrollTransition ||
       !this.sentinelEl ||

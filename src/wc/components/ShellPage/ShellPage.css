@@ -1,7 +1,7 @@
 :host {
   --_shell-page-content-background: var(--color-background-primary);
   --_shell-page-header-background: var(--color-background-primary);
-  --_shell-page-responsive-content-block-start-inset: var(--dimension-space-400);
+  --_shell-page-responsive-content-block-start-inset: var(--dimension-space-200);
   --_shell-page-content-block-start-inset: var(
     --ds-shell-page-content-block-start-inset,
     var(--_shell-page-responsive-content-block-start-inset)
@@ -107,7 +107,7 @@
 }
 
 :host(.shell-page-host--inset-default) .shell-page__content {
-  padding: var(--dimension-space-400);
+  padding: var(--dimension-space-200);
   padding-block-start: var(--_shell-page-content-block-start-inset);
 }
 

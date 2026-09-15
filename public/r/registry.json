@@ -1700,7 +1700,7 @@
             "Dividers in sections or actions create separate Menu groups without becoming selectable rows.",
             "The overflow trigger uses its bordered treatment whenever any visible action sits beside it; overflow-only presentations keep the trigger borderless.",
             "Ordered actions preserve authored order, but only the first eligible filled button, unfilled button, icon button, labeled menu button, or split button renders beside the title. Remaining commands use the shared overflow, whose rows are text-only. Menu choices and overflowed split commands become separate rows and share the same flat action event.",
-            "expanded renders the larger heading, optional description, inset divider, and a full-width caption breadcrumb row above the title. The breadcrumb begins after 32px top padding; the following title and right-side actions share one top alignment. Compact renders 48px chrome with the existing icon Back action; constrained uses compact chrome and moves an auto-collapse primary action into overflow.",
+            "expanded renders the larger heading, optional description, inset divider, and a full-width caption breadcrumb row above the title. The breadcrumb begins after 16px top padding; the following title and right-side actions share one top alignment. Compact renders 48px chrome with the existing icon Back action; constrained uses compact chrome and moves an auto-collapse primary action into overflow.",
             "The one visible ordered action collapses by default in constrained presentation. Use never for an exceptional action whose hierarchy must remain visible; explicit overflow actions never leave the shared menu.",
             "showDivider=false removes the bottom divider when the surrounding page composition supplies the boundary; showCompactDivider can independently restore or remove that boundary in compact and constrained variants.",
             "placement=shell-bar remains compact slotted chrome for advanced ShellApp composition. Managed panel-mode ShellApp uses BarPageTitle instead. It omits description and breadcrumb presentation and preserves applicable Back, section, primary, and overflow controls.",
@@ -8584,6 +8584,294 @@
       "registryDependencies": []
     },
     {
+      "name": "map-cluster-marker",
+      "title": "MapClusterMarker",
+      "description": "Engine-independent map cluster button with compact count formatting and a hover or focus caption.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/map-cluster-marker",
+        "source": "src/wc/components/MapClusterMarker/MapClusterMarker.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Engine-independent map cluster button with compact count formatting and a hover or focus caption.",
+          "useWhen": [
+            "An application map needs one interactive marker to represent several nearby entities.",
+            "The map engine can mount a custom element and retain ownership of clustering, coordinates, anchoring, and camera behavior."
+          ],
+          "avoidWhen": [
+            "The marker represents one vehicle, asset, person, or travel group; use MapEntityMarker.",
+            "The count is a notification attached to another control; use Badge.",
+            "The component would be asked to calculate clusters or own geographic and selected-entity business state."
+          ],
+          "alternatives": [
+            {
+              "when": "One map entity needs operating state, heading, and stale treatment.",
+              "component": "component:ds-map-entity-marker",
+              "reason": "MapEntityMarker owns single-entity marker semantics and geometry."
+            },
+            {
+              "when": "A count supplements another non-map control.",
+              "component": "component:ds-badge",
+              "reason": "Badge owns compact notification and counter indicators."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-map-entity-marker",
+            "component:ds-text"
+          ],
+          "accessibility": [
+            "The component renders a native button and label is its accessible action name. Prefer a label that includes the full count and outcome, such as ‘Zoom to 24 vehicles’.",
+            "Caption is a supplemental visual identifier and is hidden from assistive technology to avoid duplicating label.",
+            "Keyboard focus reveals the same caption as hover and uses the shared visible focus ring.",
+            "The compact displayed count does not replace the full count in label."
+          ],
+          "states": [
+            "count is rounded to a non-negative whole number and compacts with a k suffix at one thousand and above.",
+            "dimmed is visual de-emphasis only. The map owner decides when selection context should dim cluster peers and keeps every cluster operable. A dimmed cluster returns to full opacity while hovered or keyboard-focused so its revealed caption remains legible.",
+            "Activation emits dsClick without calculating a cluster expansion or changing camera state internally."
+          ],
+          "responsiveBehavior": [
+            "Marker height and minimum width stay fixed across breakpoints so map-engine anchors remain stable; width grows only for the compact count.",
+            "The map owner controls collision handling, overlays, and viewport-aware caption placement."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "A map engine that accepts an Element for a custom marker or div icon can mount ds-map-cluster-marker directly.",
+              "Listen for dsClick and keep cluster membership, expansion zoom, z-index, coordinates, and camera movement in application state."
+            ],
+            "react": [
+              "Pass count as a number and handle dsClick through the generated event binding."
+            ],
+            "angular": [
+              "Bind count as a number and keep map-engine marker lifecycle in the owning map adapter."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/MapClusterMarker/MapClusterMarker.stories.ts"
+            }
+          ],
+          "styling": {
+            "rationale": "The component owns stable map anchoring geometry and semantic cluster recipes; the map engine owns host placement and stacking.",
+            "protected": [
+              {
+                "properties": [
+                  "height",
+                  "min-width",
+                  "padding",
+                  "border-radius",
+                  "background",
+                  "color",
+                  "opacity"
+                ],
+                "reason": "Cluster geometry, count legibility, interaction treatment, and de-emphasis are one accessible visual recipe.",
+                "props": [
+                  "count",
+                  "dimmed"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
+        },
+        "props": {
+          "caption": {
+            "type": "string",
+            "required": false
+          },
+          "count": {
+            "type": "number",
+            "required": false
+          },
+          "dimmed": {
+            "type": "boolean",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": true
+          }
+        },
+        "events": [
+          {
+            "name": "dsClick",
+            "detail": "MouseEvent"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-map-cluster-marker",
+          "react": "DsMapClusterMarker",
+          "vue": "DsMapClusterMarker",
+          "angular": "DsMapClusterMarker"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
+      "name": "map-entity-marker",
+      "title": "MapEntityMarker",
+      "description": "Engine-independent map marker button for a vehicle, asset, person, or travel group with operating-state color, heading, stale treatment, and a hover or focus caption.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/map-entity-marker",
+        "source": "src/wc/components/MapEntityMarker/MapEntityMarker.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Engine-independent map marker button for a vehicle, asset, person, or travel group with operating-state color, heading, stale treatment, and a hover or focus caption.",
+          "useWhen": [
+            "An application map needs a consistent interactive marker for one entity.",
+            "The map engine can mount a custom element and retain ownership of coordinates, anchoring, and camera behavior."
+          ],
+          "avoidWhen": [
+            "Several nearby entities must be represented as one count; use MapClusterMarker.",
+            "The content is a legend item or non-interactive status swatch.",
+            "The component would be asked to own geographic coordinates, clustering, map-engine adapters, or selected-entity business state."
+          ],
+          "alternatives": [
+            {
+              "when": "Several nearby entities are represented by a compact count.",
+              "component": "component:ds-map-cluster-marker",
+              "reason": "MapClusterMarker owns cluster count formatting and cluster interaction geometry."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-map-cluster-marker",
+            "component:ds-icon"
+          ],
+          "accessibility": [
+            "The component renders a native button and label is its accessible action name. Prefer an action-oriented label such as ‘Open vehicle 412’.",
+            "Caption is a supplemental visual identifier and is hidden from assistive technology to avoid duplicating label.",
+            "Keyboard focus reveals the same caption as hover and uses the shared visible focus ring.",
+            "State and stale meaning must be present in nearby map legend or application detail content; do not rely on marker color alone.",
+            "The stale outline remains differentiated by a dashed border in forced-colors mode."
+          ],
+          "states": [
+            "state selects the semantic operating-state color. Use stale as a standalone state only when no last-known operating state is available.",
+            "stale adds a dashed outline while preserving state, matching last-known map data.",
+            "immobilized always renders the upright MapKey glyph instead of the entity icon so the state is identifiable without interpreting heading.",
+            "heading rotates only MapEntityTravelGroup and MapEntityVehicle glyphs and is normalized to a clockwise value from 0 through 359 degrees. Immobilized, asset, person, and other glyphs remain upright.",
+            "dimmed is visual de-emphasis only. The map owner decides when selection context should dim peer markers and keeps every marker operable. A dimmed marker returns to full opacity while hovered or keyboard-focused so its revealed caption remains legible.",
+            "Activation emits dsClick without changing application selection internally."
+          ],
+          "responsiveBehavior": [
+            "Marker geometry stays fixed across breakpoints so map-engine anchors remain stable.",
+            "The map owner controls collision handling, overlays, and viewport-aware caption placement."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "A map engine that accepts an Element for a custom marker or div icon can mount ds-map-entity-marker directly.",
+              "Listen for dsClick and keep selected entity, z-index, coordinates, and camera movement in application state."
+            ],
+            "react": [
+              "Pass numeric heading as a property and handle dsClick through the generated event binding."
+            ],
+            "angular": [
+              "Bind heading as a number and keep map-engine marker lifecycle in the owning map adapter."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/MapEntityMarker/MapEntityMarker.stories.ts"
+            }
+          ],
+          "styling": {
+            "rationale": "The component owns stable map anchoring geometry and semantic marker recipes; the map engine owns host placement and stacking.",
+            "protected": [
+              {
+                "properties": [
+                  "width",
+                  "height",
+                  "min-width",
+                  "padding",
+                  "border",
+                  "border-radius",
+                  "background",
+                  "color",
+                  "opacity"
+                ],
+                "reason": "Marker geometry, operating-state colors, stale distinction, and de-emphasis are one accessible visual recipe.",
+                "props": [
+                  "state",
+                  "stale",
+                  "dimmed"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
+        },
+        "props": {
+          "caption": {
+            "type": "string",
+            "required": false
+          },
+          "dimmed": {
+            "type": "boolean",
+            "required": false
+          },
+          "heading": {
+            "type": "number",
+            "required": false
+          },
+          "icon": {
+            "type": "string",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": true
+          },
+          "stale": {
+            "type": "boolean",
+            "required": false
+          },
+          "state": {
+            "type": "MapEntityMarkerState",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsClick",
+            "detail": "MouseEvent"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-map-entity-marker",
+          "react": "DsMapEntityMarker",
+          "vue": "DsMapEntityMarker",
+          "angular": "DsMapEntityMarker"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "icon",
+        "text"
+      ]
+    },
+    {
       "name": "markdown",
       "title": "Markdown",
       "description": "Optional safe CommonMark and GFM renderer that emits semantic nodes without raw HTML injection and consumes the shared prose CSS contract.",
@@ -12542,7 +12830,7 @@
             "On desktop, PanelNav defaults expanded, permits user collapse or expansion, and respects the locally persisted desktop preference.",
             "On tablet, ShellApp keeps PanelNav permanently collapsed and prevents user expansion without overwriting the desktop preference.",
             "On desktop and tablet, panel section navigation replaces BarNav with BarPageTitle; collapsed PanelNav exposes child sections through its anchored flyout.",
-            "When panel section navigation moves BarPageTitle into the shell bar, routed content starts at the standard 32px desktop or 16px tablet gutter and ShellPage reports no page-local sticky-header height.",
+            "When panel section navigation moves BarPageTitle into the shell bar, routed content starts at the standard 16px desktop and tablet gutter and ShellPage reports no page-local sticky-header height.",
             "On mobile, ShellApp hides and inerts desktop chrome, uses a solid primary stage, and composes MobileHeader, MobileSheetNav, ShellTools, and the persistent MobileBarNav around the same application-owned content.",
             "The section-navigation preference also selects mobile navigation: bar preserves flat area selection and the header section picker; panel expands child routes inline in MobileSheetNav and combines the page title with any local subsection in one sheet trigger.",
             "Opening MobileSheetNav temporarily overlays the active routed page or global tool; closing it without selecting an area restores that same destination and its nested state. The sheet exposes the router-derived current area only while the routed area owns the mobile stage, so a global tool never leaves an underlying route highlighted.",
@@ -12842,7 +13130,7 @@
             "A ShellPage-managed BarTitle remains concealed until headerCapacity is available and its rendered variant matches the resolved presentation, preventing a default-variant flash during route activation.",
             "responsiveMode=mobile hides and inerts the desktop header, exposes mobile-header, and disables desktop scroll-compaction geometry.",
             "Update headerCapacity synchronously with shell layout state so opening tools or crossing application breakpoints cannot briefly render the wrong presentation.",
-            "The default content inset is balanced on every side: 32px in desktop mode and 16px in tablet and mobile modes.",
+            "The default content inset is balanced at 16px on every side in desktop, tablet, and mobile modes.",
             "When desktopHeaderPlacement=shell-bar, desktop and tablet ignore page-header-specific block-start seam overrides and expose --ds-shell-page-content-block-start-offset as the responsive gutter only; mobile keeps its MobileHeader geometry and existing seam.",
             "contentInsetBlockStart can independently remove the top gutter for table and canvas pages that should meet the sticky header; exact roomy and compact block-start sizes support pages whose seam changes with header capacity.",
             "The selected content surface persists unchanged across desktop, tablet, and mobile modes.",

@@ -192,7 +192,7 @@ const demoStyles = html`
       display: flex;
       align-items: center;
       min-height: var(--dimension-size-600);
-      padding-inline: var(--dimension-space-400);
+      padding-inline: var(--dimension-space-200);
       box-sizing: border-box;
       border-top: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
       background: var(--color-background-faint-neutral);

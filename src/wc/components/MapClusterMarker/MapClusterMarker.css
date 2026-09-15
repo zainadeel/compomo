@@ -1,0 +1,32 @@
+@import '../../utils/focus-ring.css';
+@import '../../utils/map-marker.css';
+
+:host {
+  --_map-marker-background: var(--color-entity-cluster-marker-background);
+  --_map-marker-foreground: var(--color-entity-cluster-marker-foreground);
+  --_map-marker-interaction-hover: var(--color-entity-cluster-marker-interaction-hover);
+  --_map-marker-interaction-pressed: var(--color-entity-cluster-marker-interaction-pressed);
+}
+
+.map-marker__button {
+  width: max-content;
+  padding-inline: 0;
+  border-radius: var(--dimension-radius-half);
+}
+
+.map-marker__button,
+.map-marker__caption {
+  -webkit-backdrop-filter: blur(var(--effect-blur-md));
+  backdrop-filter: blur(var(--effect-blur-md));
+}
+
+.map-cluster-marker__button--padded {
+  padding-inline: var(--dimension-space-100);
+}
+
+.map-cluster-marker__count {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  white-space: nowrap;
+}
