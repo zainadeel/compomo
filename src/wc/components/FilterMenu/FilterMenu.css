@@ -218,7 +218,7 @@
   }
 }
 
-.table-preferences-embedded {
+.data-preferences-embedded {
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -226,7 +226,7 @@
   color: var(--color-foreground-secondary);
 }
 
-.table-preferences-embedded .filter-menu__body {
+.data-preferences-embedded .filter-menu__body {
   grid-template-columns: min(var(--dimension-menu-width-xs), 40%) minmax(0, 1fr);
 }
 

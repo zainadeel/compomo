@@ -8,7 +8,7 @@ import {
   tableSortFields,
   tableSortMenuSections,
   tableSortStatesEqual,
-} from '../src/wc/components/TableSort/table-sort-menu';
+} from '../src/wc/components/DataSort/data-sort-menu';
 
 const columns: TableColumn[] = [
   { id: 'preview', header: 'Preview' },

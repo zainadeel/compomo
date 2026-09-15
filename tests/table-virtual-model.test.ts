@@ -15,7 +15,7 @@ import {
   tableVirtualOverscanPx,
   type TableVirtualItem,
 } from '../src/wc/components/Table/table-virtual-model';
-import type { TableColumn, TableGroup, TableRow } from '../src/wc/components/Table/table-types';
+import type { TableColumn, DataGroup, TableRow } from '../src/wc/components/Table/table-types';
 
 const columns: TableColumn[] = [
   { id: 'name', header: 'Name', size: 160 },
@@ -131,7 +131,7 @@ test('flattens ungrouped rows and collapsed grouped sections', () => {
   });
   assert.equal(clamped[0]?.variableSize, false);
 
-  const groups: TableGroup[] = [
+  const groups: DataGroup[] = [
     { id: 'critical', label: 'Critical', rows: [row('a'), row('b')] },
     { id: 'high', label: 'High', rows: [row('c')] },
   ];
@@ -263,7 +263,7 @@ test('keeps more overscan ahead of the active scroll direction', () => {
 });
 
 test('keeps intersecting group headers and the next header for sticky push-off', () => {
-  const groups: TableGroup[] = [
+  const groups: DataGroup[] = [
     {
       id: 'a',
       label: 'A',

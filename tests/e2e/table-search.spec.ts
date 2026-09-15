@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('/table-search.html');
+  await page.goto('/data-search.html');
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
@@ -113,7 +113,7 @@ test('edits query before Backspace removes the last field and supports multiple 
       )
     )
     .toEqual([]);
-  await expect(search.locator('.table-search__action-divider')).toHaveCount(0);
+  await expect(search.locator('.data-search__action-divider')).toHaveCount(0);
   await expect(input).toBeFocused();
 });
 
@@ -159,11 +159,11 @@ test('has no detectable accessibility violations in the open field menu', async 
 });
 
 test('keeps the native input borderless and fills the search editor', async ({ page }) => {
-  const input = page.locator('ds-table-search input').first();
+  const input = page.locator('ds-data-search input').first();
   await expect(input).toHaveCSS('border-top-width', '0px');
   await expect(input).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-  await expect(page.locator('.table-search__editor').first()).toHaveCSS('display', 'flex');
+  await expect(page.locator('.data-search__editor').first()).toHaveCSS('display', 'flex');
   const inputBox = await input.boundingBox();
-  const editorBox = await page.locator('.table-search__editor').first().boundingBox();
+  const editorBox = await page.locator('.data-search__editor').first().boundingBox();
   expect(inputBox!.width).toBeCloseTo(editorBox!.width, 0);
 });

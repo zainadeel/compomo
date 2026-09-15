@@ -12,7 +12,7 @@ import type {
   TableCellTags,
   TableCellValue,
   TableColumn,
-  TableGroup,
+  DataGroup,
   TableGroupAccessory,
   TableGroupHero,
   TableRow,
@@ -204,7 +204,7 @@ export function tableExplicitMinWidth(columns: TableColumn[]): string | undefine
   return widths.length === 1 ? widths[0] : `calc(${widths.join(' + ')})`;
 }
 
-export function tableRows(rows: TableRow[], groups: TableGroup[], grouped: boolean): TableRow[] {
+export function tableRows(rows: TableRow[], groups: DataGroup[], grouped: boolean): TableRow[] {
   return grouped ? groups.flatMap(group => group.rows) : rows;
 }
 
@@ -265,7 +265,7 @@ export function toggleTableGroupSelection(
   return toggleAllLoadedTableRows(selectedRowIds, groupRows);
 }
 
-export function resolvedTableGroupCount(group: TableGroup): number {
+export function resolvedTableGroupCount(group: DataGroup): number {
   const total = Number.isFinite(group.totalCount) ? Math.max(0, group.totalCount!) : 0;
   return Math.max(total, group.rows.length);
 }
@@ -274,7 +274,7 @@ export function resolvedTableGroupCount(group: TableGroup): number {
 export const TABLE_GROUP_ACCESSORY_LIMIT = 4;
 
 /** Trim, drop empty copy, and cap accessories at the second-track limit. */
-export function tableGroupAccessories(group: TableGroup): TableGroupAccessory[] {
+export function tableGroupAccessories(group: DataGroup): TableGroupAccessory[] {
   const resolved: TableGroupAccessory[] = [];
   for (const item of group.accessories ?? []) {
     const text = item?.text?.trim() ?? '';
@@ -293,7 +293,7 @@ export const TABLE_GROUP_HERO_SCORE_PRESENTATION = {
 } as const;
 
 /** Resolve a supported group-header hero, or undefined when none is supplied. */
-export function tableGroupHero(group: TableGroup): TableGroupHero | undefined {
+export function tableGroupHero(group: DataGroup): TableGroupHero | undefined {
   const hero = group.hero;
   if (!hero || hero.kind !== 'score') return undefined;
   const label = hero.label?.trim();
@@ -394,7 +394,7 @@ export function hasOwnedTableFooterSlot(host: Element, slotName: string): boolea
 export function tableModelIssues(
   columns: TableColumn[],
   rows: TableRow[],
-  groups: TableGroup[],
+  groups: DataGroup[],
   grouped: boolean
 ): string[] {
   const issues: string[] = [];

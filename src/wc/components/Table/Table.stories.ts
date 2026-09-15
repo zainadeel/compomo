@@ -19,7 +19,7 @@ import type {
   TableColumnsConfigChangeDetail,
   TableDataMode,
   TableDataModeChangeDetail,
-  TableGroup,
+  DataGroup,
   TableGroupIntent,
   TableGroupingState,
   TableRow,
@@ -792,7 +792,7 @@ const VIRTUAL_ROWS: TableRow[] = Array.from({ length: 2000 }, (_, index) => {
   };
 });
 
-const PAGINATED_GROUP_SOURCE: TableGroup[] = Array.from({ length: 30 }, (_, groupIndex) => ({
+const PAGINATED_GROUP_SOURCE: DataGroup[] = Array.from({ length: 30 }, (_, groupIndex) => ({
   id: `fleet-${groupIndex + 1}`,
   label: `Fleet ${String(groupIndex + 1).padStart(2, '0')}`,
   totalCount: 6,
@@ -831,7 +831,7 @@ function groupedRows(
   rows: TableRow[],
   grouping: TableGroupingState,
   sort: TableSortState | null
-): TableGroup[] {
+): DataGroup[] {
   const byStatus = new Map<string, TableRow[]>();
   for (const row of rows) {
     const status = String(row.cells[grouping.columnId] ?? 'Unassigned');
@@ -857,7 +857,7 @@ const SEVERITY_GROUP_INTENT: Record<(typeof SEVERITY_GROUP_ORDER)[number], Table
 };
 
 /** Collapsed empty groups so Storybook can review section-header surfaces alone. */
-const GROUP_ROW_REVIEW: TableGroup[] = (
+const GROUP_ROW_REVIEW: DataGroup[] = (
   [
     {
       label: 'Assigned',
@@ -898,7 +898,7 @@ const GROUP_ROW_REVIEW: TableGroup[] = (
     { label: 'Compliant', intent: 'positive', totalCount: 210, countLabel: '210 vehicles' },
     { label: 'Unassigned', totalCount: 7, countLabel: '7 vehicles' },
   ] satisfies Array<
-    Pick<TableGroup, 'label' | 'intent' | 'totalCount' | 'countLabel' | 'accessories' | 'hero'>
+    Pick<DataGroup, 'label' | 'intent' | 'totalCount' | 'countLabel' | 'accessories' | 'hero'>
   >
 ).map(group => ({
   ...group,
@@ -906,7 +906,7 @@ const GROUP_ROW_REVIEW: TableGroup[] = (
   rows: [],
 }));
 
-function severityGroupedRows(rows: TableRow[], sort: TableSortState | null): TableGroup[] {
+function severityGroupedRows(rows: TableRow[], sort: TableSortState | null): DataGroup[] {
   const bySeverity = new Map<string, TableRow[]>();
   for (const row of rows) {
     const severity = String(row.cells.severity ?? 'Unassigned');
@@ -929,7 +929,7 @@ function lazySeverityGroups(
   loadedByGroup: Record<string, number>,
   loadingGroupId: string | null,
   sort: TableSortState | null
-): TableGroup[] {
+): DataGroup[] {
   return severityGroupedRows(SAFETY_EVENT_ROWS, sort).map(group => {
     const totalCount = group.rows.length;
     const loadedCount = Math.min(loadedByGroup[group.id] ?? 1, totalCount);
@@ -1099,7 +1099,7 @@ export const SearchMatchHighlighting: Story = {
     docs: {
       description: {
         story:
-          'The application owns the search query and row filtering, then supplies the same literal query through highlightTerms. When TableSearch has selected fields, pass those IDs through highlightFieldIds so only the matching data-point tracks are marked. With no field IDs, all table-owned text tracks remain eligible. Highlighting does not change the cell’s accessible name or guess how the application tokenizes search.',
+          'The application owns the search query and row filtering, then supplies the same literal query through highlightTerms. When DataSearch has selected fields, pass those IDs through highlightFieldIds so only the matching data-point tracks are marked. With no field IDs, all table-owned text tracks remain eligible. Highlighting does not change the cell’s accessible name or guess how the application tokenizes search.',
       },
     },
   },
@@ -1431,7 +1431,7 @@ const GROUP_SCORE_HERO_REVIEW = {
     { text: '2 groups', help: 'Assigned groups for this driver.' },
   ],
   rows: [],
-} satisfies TableGroup;
+} satisfies DataGroup;
 
 export const GroupScoreHeroVariants: Story = {
   name: 'Group score hero variants',
@@ -1456,7 +1456,7 @@ export const GroupScoreHeroVariants: Story = {
               id: 'avery-chen-first-track',
               hero: { kind: 'score', value: 87 },
             },
-          ] satisfies TableGroup[]}
+          ] satisfies DataGroup[]}
           .grouping=${{ columnId: 'driver', direction: 'asc' } satisfies TableGroupingState}
           .collapsedGroupIds=${['avery-chen-first-track']}
           selection-mode="multiple"
@@ -1475,7 +1475,7 @@ export const GroupScoreHeroVariants: Story = {
               id: 'avery-chen-two-tracks',
               hero: { kind: 'score', value: 87, tracks: 2 },
             },
-          ] satisfies TableGroup[]}
+          ] satisfies DataGroup[]}
           .grouping=${{ columnId: 'driver', direction: 'asc' } satisfies TableGroupingState}
           .collapsedGroupIds=${['avery-chen-two-tracks']}
           selection-mode="multiple"
@@ -1496,7 +1496,7 @@ export const GroupScoreHeroVariants: Story = {
               id: 'avery-chen-first-track-no-selection',
               hero: { kind: 'score', value: 87 },
             },
-          ] satisfies TableGroup[]}
+          ] satisfies DataGroup[]}
           .grouping=${{ columnId: 'driver', direction: 'asc' } satisfies TableGroupingState}
           .collapsedGroupIds=${['avery-chen-first-track-no-selection']}
           selection-mode="none"
@@ -1517,7 +1517,7 @@ export const GroupScoreHeroVariants: Story = {
               id: 'avery-chen-two-tracks-no-selection',
               hero: { kind: 'score', value: 87, tracks: 2 },
             },
-          ] satisfies TableGroup[]}
+          ] satisfies DataGroup[]}
           .grouping=${{ columnId: 'driver', direction: 'asc' } satisfies TableGroupingState}
           .collapsedGroupIds=${['avery-chen-two-tracks-no-selection']}
           selection-mode="none"
@@ -2674,7 +2674,7 @@ export const NativeGroupedStickyPerformance: Story = {
             };
           }),
           totalCount: 250,
-        }) satisfies TableGroup
+        }) satisfies DataGroup
     );
 
     return html`
@@ -2738,7 +2738,7 @@ export const VirtualGroupedRows: Story = {
           label,
           rows: VIRTUAL_ROWS.slice(groupIndex * 500, groupIndex * 500 + 500),
           totalCount: 500,
-        }) satisfies TableGroup
+        }) satisfies DataGroup
     );
 
     return html`
@@ -2925,7 +2925,7 @@ export const RestyledVisualPrimitives: Story = {
     <ds-table
       style="
         --ds-table-header-surface:var(--color-background-faint-brand);
-        --ds-table-group-surface:var(--color-background-faint-positive);
+        --ds-data-group-surface:var(--color-background-faint-positive);
         --ds-table-row-selected:var(--color-background-faint-positive);
         --ds-table-radius:var(--dimension-radius-150);
         --ds-table-cell-padding-inline:var(--dimension-space-200);

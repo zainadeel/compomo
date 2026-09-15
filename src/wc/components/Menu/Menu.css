@@ -79,7 +79,7 @@
   }
 }
 
-.table-preferences-embedded {
+.data-preferences-embedded {
   display: flex;
   flex-direction: column;
   min-width: 0;

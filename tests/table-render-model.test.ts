@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createTableRenderModel } from '../src/wc/components/Table/table-render-model';
-import type { TableColumn, TableGroup, TableRow } from '../src/wc/components/Table/table-types';
+import type { TableColumn, DataGroup, TableRow } from '../src/wc/components/Table/table-types';
 
 const columns: TableColumn[] = [
   { id: 'name', header: 'Name', size: 160 },
@@ -60,7 +60,7 @@ test('leaves intentionally unsized columns flexible without adding a spacer', ()
 });
 
 test('normalizes group presentation and selection without mutating inputs', () => {
-  const groups: TableGroup[] = [
+  const groups: DataGroup[] = [
     {
       id: 'critical',
       label: 'Critical',
@@ -72,7 +72,7 @@ test('normalizes group presentation and selection without mutating inputs', () =
     {
       id: 'invalid',
       label: 'Invalid',
-      intent: 'unsupported' as TableGroup['intent'],
+      intent: 'unsupported' as DataGroup['intent'],
       rows: [],
     },
   ];
@@ -110,7 +110,7 @@ test('normalizes group presentation and selection without mutating inputs', () =
 });
 
 test('uses supplied member totals without loaded-window phrasing', () => {
-  const groups: TableGroup[] = [
+  const groups: DataGroup[] = [
     {
       id: 'critical',
       label: 'Critical',
@@ -136,7 +136,7 @@ test('uses supplied member totals without loaded-window phrasing', () => {
 });
 
 test('shows totals only when a collapsed section has no supplied members', () => {
-  const groups: TableGroup[] = [
+  const groups: DataGroup[] = [
     {
       id: 'critical',
       label: 'Critical',
@@ -190,7 +190,7 @@ test('shows totals only when a collapsed section has no supplied members', () =>
 });
 
 test('resolves at most four group accessories onto the render snapshot', () => {
-  const groups: TableGroup[] = [
+  const groups: DataGroup[] = [
     {
       id: 'critical',
       label: 'Critical',
@@ -223,7 +223,7 @@ test('resolves at most four group accessories onto the render snapshot', () => {
 });
 
 test('resolves a score hero onto the render snapshot', () => {
-  const groups: TableGroup[] = [
+  const groups: DataGroup[] = [
     {
       id: 'assigned',
       label: 'Assigned',

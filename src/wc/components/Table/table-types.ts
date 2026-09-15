@@ -1,3 +1,4 @@
+import type { DataField, DataFieldSegment } from '../../utils/data-field';
 import type { TagContrast, TagIntent } from '../Tag/Tag';
 import type { IconColor } from '../Icon/Icon';
 import type { SafetyScoreLevel } from '../Score/score-types';
@@ -31,15 +32,7 @@ export type TableGroupIntent =
   | 'positive';
 
 /** Independently sortable label within a compound column header. */
-export interface TableHeaderSegment {
-  /** Compact label rendered inside the table header. */
-  label: string;
-  /** Complete data-point label used when the segment is named outside the table header. */
-  dataLabel?: string;
-  /** Whether this data point is offered by TableSearch. Defaults to true. */
-  searchable?: boolean;
-  /** Stable key emitted through TableSortState.columnId. */
-  sortKey: string;
+export interface TableHeaderSegment extends DataFieldSegment {
   /** Visible separator rendered after this label when another segment follows. */
   separator?: string;
 }
@@ -368,23 +361,12 @@ export type TableCellSkeleton =
       kind: 'blank';
     };
 
-export interface TableColumn {
-  /** Stable column identity. */
-  id: string;
-  /** Visible column label. May be empty when headerLabel supplies a non-visual name. */
-  header: string;
-  /** Complete data-point label used by controls such as Sort and Search. */
-  dataLabel?: string;
-  /** Whether this data point is offered by TableSearch. Defaults to true for data columns. */
-  searchable?: boolean;
-  /** Screen-reader-only column name for an intentionally blank visual header. */
-  headerLabel?: string;
+export interface TableColumn extends DataField {
+  /** Labels for columns that present and sort multiple related data points. */
+  headerSegments?: TableHeaderSegment[];
   /** Supplementary header help. Does not replace the visible or accessible column name. */
   help?: string;
-  /** Optional labels for columns that present and sort multiple related data points. */
-  headerSegments?: TableHeaderSegment[];
   align?: TableCellAlign;
-  sortable?: boolean;
   /** Preferred TokoMo table-column width. Numbers remain available for exceptional custom pixel widths. */
   size?: TableColumnWidth | number;
   /** Derive a fixed image-column width from the matching 1, 2, or 3 track cell geometry. Ignored when size is set. */
@@ -443,7 +425,7 @@ export interface TableGroupHeroScore {
 
 export type TableGroupHero = TableGroupHeroScore;
 
-export interface TableGroup {
+export interface DataGroup {
   /** Stable group identity. */
   id: string;
   label: string;

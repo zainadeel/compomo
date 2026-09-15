@@ -1,6 +1,6 @@
 import { resolveTableCellPresentation } from './table-cell-model';
 import { tableGroupAccessories } from './table-model';
-import type { TableColumn, TableGroup, TableRow } from './table-types';
+import type { TableColumn, DataGroup, TableRow } from './table-types';
 
 /**
  * Token-aligned body-row track contracts: 40 / 64 / 88, plus wrapping-secondary
@@ -66,7 +66,7 @@ export interface TableVirtualPlan {
 export interface FlattenTableVirtualItemsInput {
   grouped: boolean;
   rows: TableRow[];
-  groups: TableGroup[];
+  groups: DataGroup[];
   collapsedGroupIds: ReadonlySet<string> | readonly string[];
   columns: TableColumn[];
 }

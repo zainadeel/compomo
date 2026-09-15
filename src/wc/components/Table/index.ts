@@ -31,7 +31,7 @@ export type {
   TableColumnWidth,
   TableDataMode,
   TableDataModeChangeDetail,
-  TableGroup,
+  DataGroup,
   TableGroupAccessory,
   TableGroupHero,
   TableGroupCollapseChangeDetail,

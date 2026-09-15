@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('/table-preferences.html');
+  await page.goto('/data-preferences.html');
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
@@ -32,7 +32,7 @@ test('shares controlled preferences across tabs and restores focus @cross-browse
     .poll(
       async () =>
         await dialog
-          .locator('.table-group__body')
+          .locator('.data-group__body')
           .evaluate(el => getComputedStyle(el).gridTemplateColumns)
     )
     .toBe('200px 300px');
@@ -42,7 +42,7 @@ test('shares controlled preferences across tabs and restores focus @cross-browse
   await dialog.getByRole('menuitemcheckbox', { name: 'Vehicle', exact: true }).click();
   await expect
     .poll(() =>
-      page.locator('#preferences').evaluate((el: HTMLDsTablePreferencesElement) => ({
+      page.locator('#preferences').evaluate((el: HTMLDsDataPreferencesElement) => ({
         values: el.values,
         sort: el.sort,
         grouping: el.grouping,

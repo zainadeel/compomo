@@ -1,20 +1,20 @@
 import '/dist/components/ds-table.js';
-import '/dist/components/ds-table-toolbar.js';
-import '/dist/components/ds-table-saved-views.js';
-import '/dist/components/ds-table-filter.js';
-import '/dist/components/ds-table-group.js';
-import '/dist/components/ds-table-sort.js';
+import '/dist/components/ds-data-toolbar.js';
+import '/dist/components/ds-data-saved-views.js';
+import '/dist/components/ds-data-filter.js';
+import '/dist/components/ds-data-group.js';
+import '/dist/components/ds-data-sort.js';
 import '/dist/components/ds-menu.js';
 import '/dist/components/ds-select.js';
 import '/dist/components/ds-filter-menu.js';
 import '/dist/components/ds-tooltip.js';
 
 await customElements.whenDefined('ds-table');
-await customElements.whenDefined('ds-table-toolbar');
-await customElements.whenDefined('ds-table-saved-views');
-await customElements.whenDefined('ds-table-filter');
-await customElements.whenDefined('ds-table-group');
-await customElements.whenDefined('ds-table-sort');
+await customElements.whenDefined('ds-data-toolbar');
+await customElements.whenDefined('ds-data-saved-views');
+await customElements.whenDefined('ds-data-filter');
+await customElements.whenDefined('ds-data-group');
+await customElements.whenDefined('ds-data-sort');
 await customElements.whenDefined('ds-filter-menu');
 await customElements.whenDefined('ds-select');
 
@@ -48,7 +48,7 @@ savedViews.addEventListener('dsViewDiscard', event => {
   savedViews.dirty = false;
 });
 
-const tableGroup = document.getElementById('table-group');
+const tableGroup = document.getElementById('data-group');
 tableGroup.options = [
   { label: 'Behavior', value: 'behavior' },
   { label: 'Severity', value: 'severity' },
@@ -161,7 +161,7 @@ footer.totalCount = 1500;
 const footerNested = setBase('footer-nested');
 footerNested.displayedCount = 50;
 footerNested.totalCount = 1500;
-footerNested.querySelector('ds-table-saved-views').views = [
+footerNested.querySelector('ds-data-saved-views').views = [
   { id: 'attention', label: 'Needs attention' },
 ];
 

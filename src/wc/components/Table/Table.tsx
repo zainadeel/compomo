@@ -90,7 +90,7 @@ import type {
   TableColumnsConfigChangeDetail,
   TableDataMode,
   TableDataModeChangeDetail,
-  TableGroup,
+  DataGroup,
   TableGroupCollapseChangeDetail,
   TableGroupLoadMoreDetail,
   TableGroupingState,
@@ -125,7 +125,7 @@ export class Table {
   /** Ungrouped row data. Ignored while grouping is active. Assign through JavaScript. */
   @Prop() rows: TableRow[] = [];
   /** One level of application-owned grouped data. Assign through JavaScript. */
-  @Prop() groups: TableGroup[] = [];
+  @Prop() groups: DataGroup[] = [];
   /** Controlled grouping column. Applications supply groups in their final fixed order. */
   @Prop() grouping: TableGroupingState | null = null;
   /** Controlled member-row sort state. */
@@ -134,7 +134,7 @@ export class Table {
   @Prop() collapsedGroupIds: string[] = [];
   /** Literal terms to highlight in table-owned text cells. Applications still own filtering. */
   @Prop() highlightTerms: string[] = [];
-  /** Optional TableSearch field identities that restrict which data-point tracks are highlighted. */
+  /** Optional DataSearch field identities that restrict which data-point tracks are highlighted. */
   @Prop() highlightFieldIds: string[] = [];
 
   /** Required accessible table name, retained as a native caption. */
@@ -297,7 +297,7 @@ export class Table {
   private renderModelCache: {
     columns: TableColumn[];
     rows: TableRow[];
-    groups: TableGroup[];
+    groups: DataGroup[];
     grouped: boolean;
     selectionMode: TableSelectionMode;
     selectedRowIds: string[];
@@ -312,7 +312,7 @@ export class Table {
   private virtualItemsCache: {
     columns: TableColumn[];
     rows: TableRow[];
-    groups: TableGroup[];
+    groups: DataGroup[];
     grouped: boolean;
     collapsedGroupIds: string[];
   } | null = null;
@@ -546,7 +546,7 @@ export class Table {
   private syncHeaderSlotPresence = () => {
     const header = this.el.querySelector<HTMLElement>('[slot="header"]');
     this.headerPresent = !!header;
-    this.headerUsesToolbar = header?.tagName === 'DS-TABLE-TOOLBAR';
+    this.headerUsesToolbar = header?.tagName === 'DS-DATA-TOOLBAR';
   };
 
   private connectHeaderSlotObserver(): void {
@@ -1281,7 +1281,7 @@ export class Table {
     });
   }
 
-  private emitGroupSelection(group: TableGroup): void {
+  private emitGroupSelection(group: DataGroup): void {
     const state = deriveTableSelectionState(group.rows, this.selectedRowIds);
     this.dsSelectionChange.emit({
       selectedRowIds: toggleTableGroupSelection(this.selectedRowIds, group.rows),
@@ -1311,7 +1311,7 @@ export class Table {
     });
   }
 
-  private handleGroupRowClick(group: TableGroup, event: Event): void {
+  private handleGroupRowClick(group: DataGroup, event: Event): void {
     if (!this.groupRowEventOwnsCollapse(event)) return;
     this.emitGroupCollapse(group);
   }
@@ -1870,7 +1870,7 @@ export class Table {
     });
   }
 
-  private emitGroupCollapse(group: TableGroup) {
+  private emitGroupCollapse(group: DataGroup) {
     const collapsedGroupIds = toggleTableGroupCollapsed(this.collapsedGroupIds, group.id);
     this.dsGroupCollapseChange.emit({
       scope: 'group',
@@ -2037,11 +2037,11 @@ export class Table {
     );
   }
 
-  private formatGroupLoadLabel(template: string, group: TableGroup): string {
+  private formatGroupLoadLabel(template: string, group: DataGroup): string {
     return template.split('{group}').join(group.label);
   }
 
-  private renderGroupLoadRow(group: TableGroup, totalColumns: number) {
+  private renderGroupLoadRow(group: DataGroup, totalColumns: number) {
     const error = group.loadMoreError?.trim();
     if (!error && !group.loadingMore && !group.hasMore) return null;
     const manualFallback =

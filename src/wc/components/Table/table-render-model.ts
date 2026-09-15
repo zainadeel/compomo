@@ -16,7 +16,7 @@ import {
 } from './table-model';
 import type {
   TableColumn,
-  TableGroup,
+  DataGroup,
   TableGroupAccessory,
   TableGroupHero,
   TableGroupIntent,
@@ -27,7 +27,7 @@ import type {
 export type TableGroupCountPresentation = 'loaded-progress' | 'total';
 
 export interface TableGroupRenderModel {
-  group: TableGroup;
+  group: DataGroup;
   count: number;
   loadedCount: number;
   visibleCountText: string;
@@ -61,7 +61,7 @@ export interface TableRenderModel {
 export interface TableRenderModelInput {
   columns: TableColumn[];
   rows: TableRow[];
-  groups: TableGroup[];
+  groups: DataGroup[];
   grouped: boolean;
   selectionMode: TableSelectionMode;
   selectedRowIds: string[];

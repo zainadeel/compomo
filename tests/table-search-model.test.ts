@@ -6,7 +6,7 @@ import {
   nextTableSearchActiveIndex,
   selectedTableSearchFields,
   tableSearchFields,
-} from '../src/wc/components/TableSearch/table-search-model';
+} from '../src/wc/components/DataSearch/data-search-model';
 
 const columns = [
   {

@@ -1,6 +1,6 @@
-import '/dist/components/ds-table-search.js';
+import '/dist/components/ds-data-search.js';
 
-await customElements.whenDefined('ds-table-search');
+await customElements.whenDefined('ds-data-search');
 
 const search = document.getElementById('search');
 search.columns = [

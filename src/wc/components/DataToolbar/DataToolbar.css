@@ -1,0 +1,96 @@
+:host {
+  --ds-control-press-active-scale: var(--dimension-scale-default);
+
+  display: block;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+/* A table caption owns overflow for the complete application + table control row. */
+:host([slot='header']) {
+  display: contents;
+  max-inline-size: none;
+}
+
+.data-toolbar {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  inline-size: 100%;
+  min-inline-size: 0;
+  gap: var(--dimension-space-100);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+:host([slot='header']) .data-toolbar {
+  display: contents;
+}
+
+.data-toolbar::-webkit-scrollbar {
+  display: none;
+}
+
+.data-toolbar__start,
+.data-toolbar__search,
+.data-toolbar__leading,
+.data-toolbar__trailing {
+  display: flex;
+  align-items: center;
+  min-inline-size: 0;
+  gap: var(--dimension-space-100);
+}
+
+.data-toolbar__start {
+  flex: 0 0 auto;
+  min-inline-size: 0;
+  max-inline-size: var(--dimension-menu-width-xs);
+  overflow: hidden;
+}
+
+.data-toolbar__rule {
+  flex: 0 0 auto;
+}
+
+.data-toolbar__search {
+  flex: 1 1 0;
+  max-inline-size: none;
+  contain: inline-size;
+}
+
+.data-toolbar__slot--empty {
+  display: none;
+}
+
+.data-toolbar__leading {
+  flex: 0 0 auto;
+}
+
+.data-toolbar__trailing {
+  flex: 0 0 auto;
+  margin-inline-start: auto;
+}
+
+.data-toolbar__trailing > *,
+.data-toolbar [slot='start'],
+.data-toolbar ds-data-filter,
+.data-toolbar ds-filter-menu,
+.data-toolbar ds-select,
+.data-toolbar ds-data-group,
+.data-toolbar ds-data-sort {
+  min-inline-size: 0;
+  max-inline-size: var(--dimension-menu-width-xs);
+  --ds-choice-popup-min-inline-size: var(--dimension-menu-width-xs);
+}
+
+.data-toolbar__trailing > * {
+  flex: 0 0 auto;
+}
+
+.data-toolbar__start slot,
+.data-toolbar__search slot,
+.data-toolbar__leading slot,
+.data-toolbar__trailing slot {
+  display: contents;
+}

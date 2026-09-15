@@ -66,7 +66,7 @@ export type {
   TableColumn,
   TableColumnWidth,
   TableDataMode,
-  TableGroup,
+  DataGroup,
   TableHeaderSegment,
   TableGroupingChangeDetail,
   TableGroupingState,

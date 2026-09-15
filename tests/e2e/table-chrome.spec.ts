@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
 test('groups through two dependent panes and keeps order unavailable until data is selected', async ({
   page,
 }) => {
-  const control = page.locator('#table-group');
+  const control = page.locator('#data-group');
   const trigger = control.getByRole('button', { name: 'Group safety events' });
   await trigger.click();
 
@@ -49,7 +49,7 @@ test('groups through two dependent panes and keeps order unavailable until data 
 });
 
 test('supports product-owned order choices for one grouping data point', async ({ page }) => {
-  const control = page.locator('#table-group');
+  const control = page.locator('#data-group');
   await control.getByRole('button', { name: 'Group safety events' }).click();
 
   const dialog = page.getByRole('dialog', { name: 'Group safety events' });
@@ -437,7 +437,7 @@ test('searches labels and descriptions within every non-date filter category @pr
   page,
 }) => {
   const control = page.locator('#column-customizer-filter');
-  await control.evaluate((element: HTMLDsTableFilterElement) => {
+  await control.evaluate((element: HTMLDsDataFilterElement) => {
     element.filters = [
       {
         id: 'group',
@@ -549,7 +549,7 @@ test('requests a controlled any or all mode from the multiple-filter footer @pr-
   page,
 }) => {
   const control = page.locator('#column-customizer-filter');
-  await control.evaluate((element: HTMLDsTableFilterElement) => {
+  await control.evaluate((element: HTMLDsDataFilterElement) => {
     element.values = { status: ['driving'] };
     element.matchModes = {};
     (window as typeof window & { __filterMatchModeChanges?: unknown[] }).__filterMatchModeChanges =
@@ -614,7 +614,7 @@ test('supports semantic relative dates and fixed calendar ranges @pr-critical', 
   page,
 }) => {
   const control = page.locator('#column-customizer-filter');
-  await control.evaluate((element: HTMLDsTableFilterElement) => {
+  await control.evaluate((element: HTMLDsDataFilterElement) => {
     element.filters = [{ id: 'event-date', label: 'Date', kind: 'date' }];
     element.activeFilterId = 'event-date';
     element.values = {};
@@ -918,7 +918,7 @@ test('keeps the bounded table surface within its host while the complete caption
 }) => {
   const table = page.locator('#column-customizer');
   const caption = table.locator('.ds-table__caption-content');
-  const toolbar = table.locator('ds-table-toolbar .table-toolbar');
+  const toolbar = table.locator('ds-data-toolbar .data-toolbar');
   const search = table.locator('#column-customizer-search');
   const group = table.locator('#column-customizer-group');
   const customize = table.locator('.ds-table__caption-customizer');
@@ -928,7 +928,7 @@ test('keeps the bounded table surface within its host while the complete caption
 
   const expandedGeometry = await table.evaluate(element => {
     const caption = element.querySelector<HTMLElement>('.ds-table__caption-content')!;
-    const toolbar = element.querySelector<HTMLElement>('.table-toolbar')!;
+    const toolbar = element.querySelector<HTMLElement>('.data-toolbar')!;
     const search = element.querySelector<HTMLElement>('#column-customizer-search')!;
     return {
       captionGap: Number.parseFloat(getComputedStyle(caption).columnGap),
@@ -1006,7 +1006,7 @@ test('restores compact caption observation after controls are reinserted', async
   await expect(sortButtonHost).toHaveClass(/ds-table-caption-control--compact/);
 
   await table.evaluate(element => {
-    const toolbar = element.querySelector('ds-table-toolbar')!;
+    const toolbar = element.querySelector('ds-data-toolbar')!;
     const controls = [
       toolbar.querySelector('#column-customizer-filter')!,
       toolbar.querySelector('#column-customizer-group')!,
@@ -1234,13 +1234,13 @@ test('lays out application-owned table controls in start and spanning middle gro
   await expect(toolbar.getByRole('button')).toHaveCount(4);
 
   const layout = await toolbar.evaluate(element => {
-    const surface = element.querySelector<HTMLElement>('.table-toolbar')!;
-    const leading = element.querySelector<HTMLElement>('.table-toolbar__leading')!;
-    const trailing = element.querySelector<HTMLElement>('.table-toolbar__trailing')!;
+    const surface = element.querySelector<HTMLElement>('.data-toolbar')!;
+    const leading = element.querySelector<HTMLElement>('.data-toolbar__leading')!;
+    const trailing = element.querySelector<HTMLElement>('.data-toolbar__trailing')!;
     const divider = element.querySelector('ds-divider');
     const leadingRect = leading.getBoundingClientRect();
     const trailingRect = trailing.getBoundingClientRect();
-    const start = element.querySelector<HTMLElement>('.table-toolbar__start')!;
+    const start = element.querySelector<HTMLElement>('.data-toolbar__start')!;
     const startRect = start.getBoundingClientRect();
     const startControl = element.querySelector<HTMLElement>('[slot="start"]')!;
     return {
@@ -1264,15 +1264,15 @@ test('lays out application-owned table controls in start and spanning middle gro
   expect(layout.startControlInCluster).toBe(true);
   expect(layout.startClusterWidth).toBeCloseTo(layout.startControlWidth, 0);
   expect(layout.dividerVisible).toBe(false);
-  await toolbar.evaluate((element: HTMLDsTableToolbarElement) => {
+  await toolbar.evaluate((element: HTMLDsDataToolbarElement) => {
     element.borderless = true;
     const search = document.createElement('div');
     search.slot = 'search';
     search.textContent = 'Search';
     element.append(search);
   });
-  await expect(toolbar.locator('.table-toolbar__rule:visible')).toHaveCount(2);
-  await expect(toolbar.locator('.table-toolbar__rule:visible').first()).toHaveCSS('height', '20px');
+  await expect(toolbar.locator('.data-toolbar__rule:visible')).toHaveCount(2);
+  await expect(toolbar.locator('.data-toolbar__rule:visible').first()).toHaveCSS('height', '20px');
 
   const probe = await toolbar.evaluate(element => {
     const control = document.createElement('ds-button-unfilled') as HTMLElement & {
@@ -1418,7 +1418,7 @@ test('owns controlled saved-view selection, naming validation, and mutation inte
   const name = dialog.getByRole('textbox', { name: 'Name' });
   await expect(name).toBeFocused();
   await expect(dialog.locator('.field__label')).toHaveCount(0);
-  await expect(dialog.locator('.table-saved-views__dialog-actions')).toHaveCount(0);
+  await expect(dialog.locator('.data-saved-views__dialog-actions')).toHaveCount(0);
   await dialog.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(dialog.getByText('View name is required.')).toBeVisible();
   await name.fill('Default');
@@ -1465,7 +1465,7 @@ test('shows an icon-only saved views trigger in compact mode', async ({ page }) 
   const trigger = control.getByRole('combobox', { name: 'Saved views' });
   await expect(trigger.locator('.trigger__prefix ds-icon')).toBeVisible();
   await expect(trigger.locator('.trigger__prefix ds-icon')).toHaveJSProperty('name', 'ViewMenu');
-  await control.evaluate((el: HTMLDsTableSavedViewsElement) => {
+  await control.evaluate((el: HTMLDsDataSavedViewsElement) => {
     el.compact = true;
   });
   await expect(trigger.locator('.trigger__chevron')).toHaveCount(0);
@@ -1479,7 +1479,7 @@ test('shows an icon-only saved views trigger in compact mode', async ({ page }) 
       )
     )
     .toBe(true);
-  await control.evaluate((el: HTMLDsTableSavedViewsElement) => {
+  await control.evaluate((el: HTMLDsDataSavedViewsElement) => {
     el.value = '__default__';
   });
   await expect
@@ -1500,21 +1500,21 @@ test('removes the search border in borderless mode while retaining focus feedbac
   page,
 }) => {
   await page.evaluate(async () => {
-    const modulePath = '/dist/components/ds-table-search.js';
+    const modulePath = '/dist/components/ds-data-search.js';
     await import(modulePath);
-    const search = document.createElement('ds-table-search');
+    const search = document.createElement('ds-data-search');
     search.id = 'borderless-search';
     search.hasBorder = false;
     document.body.prepend(search);
   });
-  const control = page.locator('#borderless-search .table-search__control');
+  const control = page.locator('#borderless-search .data-search__control');
   await expect(control).toHaveCSS('--ds-interaction-border-width', '0px');
   await page.locator('#borderless-search input').focus();
   await expect(control).not.toHaveCSS('--ds-interaction-border-width', '0px');
 });
 
 test('omits trailing chevrons from table toolbar triggers', async ({ page }) => {
-  for (const selector of ['#saved-views', 'ds-table-filter', 'ds-table-sort', 'ds-table-group']) {
+  for (const selector of ['#saved-views', 'ds-data-filter', 'ds-data-sort', 'ds-data-group']) {
     const control = page.locator(selector).first();
     await expect(control).toBeVisible();
     await expect(control.locator('.trigger__chevron, .ds-button__chevron')).toHaveCount(0);

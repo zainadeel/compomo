@@ -22,15 +22,15 @@
   <body>
     <main>
       <div style="inline-size: 240px;">
-        <ds-table-toolbar id="table-toolbar" label="Fleet table controls">
+        <ds-data-toolbar id="table-toolbar" label="Fleet table controls">
           <button slot="start" type="button">Saved views</button>
           <button slot="leading" type="button">Search fleet records</button>
           <button slot="trailing" type="button">Filter</button>
           <button slot="trailing" type="button">Group</button>
-        </ds-table-toolbar>
+        </ds-data-toolbar>
       </div>
-      <ds-table-saved-views id="saved-views"></ds-table-saved-views>
-      <ds-table-group id="table-group" aria-label="Group safety events"></ds-table-group>
+      <ds-data-saved-views id="saved-views"></ds-data-saved-views>
+      <ds-data-group id="data-group" aria-label="Group safety events"></ds-data-group>
       <ds-table id="basic" caption="Workforce overview" caption-visibility="visible"></ds-table>
       <ds-table id="composable" caption="Composable drivers" caption-visibility="visible">
         <div
@@ -49,9 +49,9 @@
         </ds-text>
       </ds-table>
       <ds-table id="footer-nested" caption="Drivers with nested dialog footer" caption-visibility="hidden">
-        <ds-table-toolbar slot="header" label="Driver table controls">
-          <ds-table-saved-views slot="start"></ds-table-saved-views>
-        </ds-table-toolbar>
+        <ds-data-toolbar slot="header" label="Driver table controls">
+          <ds-data-saved-views slot="start"></ds-data-saved-views>
+        </ds-data-toolbar>
         <ds-text slot="footer-leading" as="span" variant="text-body-medium" color="secondary" line-truncation="1">
           Last updated: Aug 13, 2026  7:00 PM PT
         </ds-text>
@@ -123,7 +123,7 @@
         column-customizer
         data-mode-switcher
       >
-        <ds-table-toolbar slot="header" label="Customizable driver controls">
+        <ds-data-toolbar slot="header" label="Customizable driver controls">
           <button slot="start" type="button">Saved views</button>
           <ds-input
             slot="search"
@@ -134,13 +134,13 @@
             placeholder="Search drivers"
             aria-label="Search drivers"
           ></ds-input>
-          <ds-table-filter
+          <ds-data-filter
             slot="trailing"
             id="column-customizer-filter"
             aria-label="Filter fleet"
             menu-label="Filter fleet"
-          ></ds-table-filter>
-          <ds-table-sort slot="trailing" id="column-customizer-sort"></ds-table-sort>
+          ></ds-data-filter>
+          <ds-data-sort slot="trailing" id="column-customizer-sort"></ds-data-sort>
           <ds-select
             slot="trailing"
             id="column-customizer-group"
@@ -150,7 +150,7 @@
             placeholder="Group"
             aria-label="Group fleet"
           ></ds-select>
-        </ds-table-toolbar>
+        </ds-data-toolbar>
       </ds-table>
       <div style="width: 360px;">
         <ds-table

@@ -1,5 +1,5 @@
-import '/dist/components/ds-table-preferences.js';
-await customElements.whenDefined('ds-table-preferences');
+import '/dist/components/ds-data-preferences.js';
+await customElements.whenDefined('ds-data-preferences');
 const control = document.querySelector('#preferences');
 control.columns = [
   { id: 'driver', header: 'Driver', sortable: true },
