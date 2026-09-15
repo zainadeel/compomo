@@ -34,7 +34,6 @@ import { ChartLegendDirection, ChartLegendPercentageDecimals } from "./component
 import { CheckboxSize } from "./components/Checkbox/Checkbox";
 import { ChipSize, ChipState } from "./components/Chip/Chip";
 import { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
-import { ConversationListActionLayout } from "./components/ConversationList/ConversationList";
 import { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
 import { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuFooterLayout, FilterMenuMatchModeChangeDetail, FilterMenuMatchModes, FilterMenuSize, FilterMenuValues, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
 import { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
@@ -115,7 +114,6 @@ export { ChartLegendDirection, ChartLegendPercentageDecimals } from "./component
 export { CheckboxSize } from "./components/Checkbox/Checkbox";
 export { ChipSize, ChipState } from "./components/Chip/Chip";
 export { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
-export { ConversationListActionLayout } from "./components/ConversationList/ConversationList";
 export { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
 export { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuFooterLayout, FilterMenuMatchModeChangeDetail, FilterMenuMatchModes, FilterMenuSize, FilterMenuValues, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
 export { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
@@ -1424,11 +1422,6 @@ export namespace Components {
         "language": string;
     }
     interface DsConversationList {
-        /**
-          * Corner icon action or full-width persistent footer action.
-          * @default 'floating'
-         */
-        "actionLayout": ConversationListActionLayout;
     }
     interface DsConversationListItem {
         /**
@@ -7742,11 +7735,6 @@ declare namespace LocalJSX {
         "language"?: string;
     }
     interface DsConversationList {
-        /**
-          * Corner icon action or full-width persistent footer action.
-          * @default 'floating'
-         */
-        "actionLayout"?: ConversationListActionLayout;
     }
     interface DsConversationListItem {
         /**
@@ -11520,9 +11508,6 @@ declare namespace LocalJSX {
         "language": string;
         "filename": string;
     }
-    interface DsConversationListAttributes {
-        "actionLayout": ConversationListActionLayout;
-    }
     interface DsConversationListItemAttributes {
         "conversationId": string;
         "conversationTitle": string;
@@ -12285,7 +12270,7 @@ declare namespace LocalJSX {
         "ds-checkbox": Omit<DsCheckbox, keyof DsCheckboxAttributes> & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes]?: DsCheckbox[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `attr:${K}`]?: DsCheckboxAttributes[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `prop:${K}`]?: DsCheckbox[K] } & OneOf<"label", DsCheckbox["label"], DsCheckboxAttributes["label"]>;
         "ds-chip": Omit<DsChip, keyof DsChipAttributes> & { [K in keyof DsChip & keyof DsChipAttributes]?: DsChip[K] } & { [K in keyof DsChip & keyof DsChipAttributes as `attr:${K}`]?: DsChipAttributes[K] } & { [K in keyof DsChip & keyof DsChipAttributes as `prop:${K}`]?: DsChip[K] } & OneOf<"label", DsChip["label"], DsChipAttributes["label"]>;
         "ds-code-block": Omit<DsCodeBlock, keyof DsCodeBlockAttributes> & { [K in keyof DsCodeBlock & keyof DsCodeBlockAttributes]?: DsCodeBlock[K] } & { [K in keyof DsCodeBlock & keyof DsCodeBlockAttributes as `attr:${K}`]?: DsCodeBlockAttributes[K] } & { [K in keyof DsCodeBlock & keyof DsCodeBlockAttributes as `prop:${K}`]?: DsCodeBlock[K] };
-        "ds-conversation-list": Omit<DsConversationList, keyof DsConversationListAttributes> & { [K in keyof DsConversationList & keyof DsConversationListAttributes]?: DsConversationList[K] } & { [K in keyof DsConversationList & keyof DsConversationListAttributes as `attr:${K}`]?: DsConversationListAttributes[K] } & { [K in keyof DsConversationList & keyof DsConversationListAttributes as `prop:${K}`]?: DsConversationList[K] };
+        "ds-conversation-list": DsConversationList;
         "ds-conversation-list-item": Omit<DsConversationListItem, keyof DsConversationListItemAttributes> & { [K in keyof DsConversationListItem & keyof DsConversationListItemAttributes]?: DsConversationListItem[K] } & { [K in keyof DsConversationListItem & keyof DsConversationListItemAttributes as `attr:${K}`]?: DsConversationListItemAttributes[K] } & { [K in keyof DsConversationListItem & keyof DsConversationListItemAttributes as `prop:${K}`]?: DsConversationListItem[K] };
         "ds-conversation-list-section": Omit<DsConversationListSection, keyof DsConversationListSectionAttributes> & { [K in keyof DsConversationListSection & keyof DsConversationListSectionAttributes]?: DsConversationListSection[K] } & { [K in keyof DsConversationListSection & keyof DsConversationListSectionAttributes as `attr:${K}`]?: DsConversationListSectionAttributes[K] } & { [K in keyof DsConversationListSection & keyof DsConversationListSectionAttributes as `prop:${K}`]?: DsConversationListSection[K] };
         "ds-divider": Omit<DsDivider, keyof DsDividerAttributes> & { [K in keyof DsDivider & keyof DsDividerAttributes]?: DsDivider[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `attr:${K}`]?: DsDividerAttributes[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `prop:${K}`]?: DsDivider[K] };
