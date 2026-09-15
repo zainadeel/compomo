@@ -7,9 +7,9 @@
   "tag": "ds-data-filter",
   "audience": "general",
   "status": "stable",
-  "summary": "Standard table-toolbar Filter control that owns the shared trigger, searchable non-date filter options, accessible defaults, and compact-caption behavior while the application controls data and values.",
+  "summary": "Standard data-toolbar Filter control that owns the shared trigger, searchable non-date filter options, accessible defaults, and compact-caption behavior while the application controls data and values.",
   "useWhen": [
-    "A table toolbar should expose the standard singular Filter control and shared filter-menu interaction.",
+    "A data toolbar should expose the standard singular Filter control and shared filter-menu interaction.",
     "A product supplies filter definitions and controlled values but should not recreate the toolbar trigger, category navigation, or responsive treatment."
   ],
   "avoidWhen": [
@@ -19,9 +19,9 @@
   ],
   "alternatives": [
     {
-      "when": "A non-table surface needs the generic filter interaction or custom trigger recipe.",
+      "when": "A surface needs a custom filter trigger recipe.",
       "component": "component:ds-filter-menu",
-      "reason": "FilterMenu exposes generic trigger geometry and popup positioning rather than the fixed table-toolbar recipe."
+      "reason": "FilterMenu exposes generic trigger geometry and popup positioning rather than the standard data-toolbar recipe."
     }
   ],
   "commonlyComposedWith": [
@@ -54,7 +54,7 @@
   ],
   "responsiveBehavior": [
     "Place the control in the trailing region of ds-data-toolbar.",
-    "Inside a named ds-table container narrower than 900px, the trigger becomes icon-only, exposes its visible label through a hover and keyboard-focus tooltip, and the Filters icon remains neutral with active criteria."
+    "In a compact table caption or standalone data toolbar, the trigger becomes icon-only, exposes its visible label through a hover and keyboard-focus tooltip, and the Filters icon remains neutral with active criteria."
   ],
   "frameworkCaveats": {
     "customElements": [
@@ -64,7 +64,7 @@
       "Keep filters, values, and matchModes in application state and replace them from the typed dsChange, dsMatchModeChange, and dsClear events."
     ],
     "angular": [
-      "Import the generated DsTableFilter adapter, bind filters, values, and matchModes, and handle dsChange, dsMatchModeChange, dsClear, and dsActiveFilterChange."
+      "Import the generated DsDataFilter adapter, bind filters, values, and matchModes, and handle dsChange, dsMatchModeChange, dsClear, and dsActiveFilterChange."
     ]
   },
   "references": [

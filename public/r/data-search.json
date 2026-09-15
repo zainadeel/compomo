@@ -15,7 +15,7 @@
       "status": "stable",
       "summary": "Controlled data-search editor with slash-invoked field scoping, removable inset field Chips, and an input-focused listbox keyboard model.",
       "useWhen": [
-        "A data-table search needs optional field-specific scopes without replacing the application's filtering logic.",
+        "A data-view search needs optional field-specific scopes without replacing the application's filtering logic.",
         "People should be able to add one or more searchable data points through a slash command while continuing to type one free-text query."
       ],
       "avoidWhen": [
@@ -32,38 +32,38 @@
       ],
       "accessibility": [
         "The native search input remains the one Tab stop and exposes combobox, expanded, controls, and active-descendant relationships to the field listbox.",
-        "Typing slash opens the field listbox without inserting slash into the table query. Text typed while it is open filters data points by complete label, Up and Down change the active match, Enter selects it, Escape closes it, and Left and Right retain native text-cursor behavior because focus never leaves the input. Backspace edits the field-picker query first and closes the listbox when that query is empty.",
-        "The query disables browser autocomplete history, automatic capitalization, autocorrection, and spellchecking so browser-owned suggestions never obscure the product-owned field menu or table results.",
+        "Typing slash opens the field listbox without inserting slash into the view query. Text typed while it is open filters data points by complete label, Up and Down change the active match, Enter selects it, Escape closes it, and Left and Right retain native text-cursor behavior because focus never leaves the input. Backspace edits the field-picker query first and closes the listbox when that query is empty.",
+        "The query disables browser autocomplete history, automatic capitalization, autocorrection, and spellchecking so browser-owned suggestions never obscure the product-owned field menu or view results.",
         "Selected field Chips have individually labeled remove actions and are also described by the search input. Polite announcements report additions, removals, and clearing without duplicating the visible query.",
         "The search input exposes the slash command through aria-keyshortcuts and its description, without a visible suffix button.",
         "The clear action removes both free text and every selected field. It restores focus to the search input; each Chip's own remove action remains scoped to that field."
       ],
       "states": [
-        "value and selectedFieldIds are controlled. columns supplies the same table catalog used by Table and DataSort; dataLabel provides the complete out-of-context name while header and header segment label may remain compact. dsChange reports query edits, dsFieldsChange reports the next ordered field identities, and dsClear reports a complete clear. The component never filters rows or mutates consumer inputs.",
+        "value and selectedFieldIds are controlled. fields supplies the searchable data catalog; dataLabel provides the complete out-of-context name while label and segment labels may remain compact. dsChange reports query edits, dsFieldsChange reports the next ordered field identities, and dsClear reports a complete clear. The component never filters rows or mutates consumer inputs.",
         "The field menu excludes already-selected identities and closes after one selection. Typing slash again reopens the remaining fields so multiple scopes can be added.",
         "Selected scopes render as neutral md Chips using the double-inset recipe so they remain 24px high inside the 32px md search control and each can be removed directly.",
-        "Backspace edits a non-empty field-picker query, then closes the open slash listbox when that query is empty. When the table query is empty and the listbox is already closed, the next Backspace removes the last selected field. Ordinary Backspace edits table query text when the listbox is closed.",
+        "Backspace edits a non-empty field-picker query, then closes the open slash listbox when that query is empty. When the view query is empty and the listbox is already closed, the next Backspace removes the last selected field. Ordinary Backspace edits view query text when the listbox is closed.",
         "Duplicate, blank, and unknown field identities are ignored for presentation. Selected fields preserve the consumer's order.",
         "Inactive search leaves the tab order, closes the field listbox, and does not emit query or field changes.",
         "The field-picker action holds the shared surface-open wash while its listbox is visible; chosen search fields remain independent.",
         "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback.",
-        "columns accepts any DataField, not only table columns: a non-table surface supplies id, header and searchable, and segments still expands into separate search fields."
+        "fields accepts a DataField catalog for any data view: a non-table surface supplies id, label and searchable, and segments still expands into separate search fields."
       ],
       "responsiveBehavior": [
-        "The control fills the available inline size supplied by the table toolbar search slot. Selected Chips and the editable query share one horizontal editor lane so the md control does not grow vertically.",
+        "The control fills the available inline size supplied by the table toolbar search slot. Selected Chips and the ediview query share one horizontal editor lane so the md control does not grow vertically.",
         "The field popup enters the top layer, aligns its first choice cell with the search control, flips or clamps to the viewport or nearest overlay boundary, and scrolls internally when its catalog is taller than available space.",
         "Clear appears when query text is present and uses the standard sm icon button treatment."
       ],
       "frameworkCaveats": {
         "customElements": [
-          "Assign columns and selectedFieldIds through JavaScript properties and replace controlled values from dsChange and dsFieldsChange.",
+          "Assign fields and selectedFieldIds through JavaScript properties and replace controlled values from dsChange and dsFieldsChange.",
           "Keep field IDs aligned with the application search index; the component treats IDs as opaque values."
         ],
         "react": [
-          "Pass new array references for columns and selectedFieldIds and update controlled state from onDsChange and onDsFieldsChange."
+          "Pass new array references for fields and selectedFieldIds and update controlled state from onDsChange and onDsFieldsChange."
         ],
         "angular": [
-          "Import DsTableSearch, bind columns, selectedFieldIds, and value, then update application signals from dsChange and dsFieldsChange."
+          "Import DsDataSearch, bind fields, selectedFieldIds, and value, then update application signals from dsChange and dsFieldsChange."
         ]
       },
       "references": [

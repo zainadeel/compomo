@@ -124,7 +124,7 @@ export class DataCustomize {
   }
 
   render() {
-    const name = this.ariaLabel?.trim() || 'Customize';
+    const name = this.ariaLabel?.trim() || this.label?.trim() || 'Customize';
     const empty = this.fields.length === 0 && this.options.length === 0;
 
     return (

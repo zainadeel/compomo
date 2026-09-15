@@ -4569,7 +4569,7 @@
             {
               "when": "The choice is one submitted form value.",
               "component": "component:ds-select",
-              "reason": "Select owns form-value and listbox semantics, not table sort state."
+              "reason": "Select owns form-value and listbox semantics rather than view customization."
             }
           ],
           "commonlyComposedWith": [
@@ -4581,7 +4581,7 @@
             "pattern:menu-trigger"
           ],
           "accessibility": [
-            "The trigger and menu share one accessible name; pass aria-label when Customize is ambiguous on the page.",
+            "The trigger and menu share an accessible name derived from the visible label unless the application supplies a more contextual name.",
             "Rows are switches, so each one announces its own checked state."
           ],
           "states": [
@@ -4592,17 +4592,17 @@
             "dsFieldsConfigChange emits hiddenFieldIds and fieldOrder together, so a consumer that never reorders can ignore fieldOrder."
           ],
           "responsiveBehavior": [
-            "The trigger collapses to its icon when the toolbar runs out of room, matching the other data controls."
+            "The owning standalone data toolbar determines when the trigger becomes icon-only; its accessible name and focus tooltip preserve the action label."
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Assign columns and sort as JavaScript properties. Replace sort from both dsSortChange on this control and dsSortChange on the table."
+              "Assign the field catalog and configuration arrays as JavaScript properties. Apply field visibility and order changes to the view, then replace the controlled inputs; handle extra option changes separately."
             ],
             "react": [
-              "Keep one sort state and pass it to both ds-table and ds-data-sort; update it from either event."
+              "Keep field visibility and display order in application state, pass new array references after changes, and use the same state to render the view."
             ],
             "angular": [
-              "Import the generated DsTableSort adapter, bind columns and sort, and handle dsSortChange with the same owner that handles table header sorting."
+              "Bind the field catalog and configuration arrays as properties through the generated adapter. Replace the controlled configuration from event.detail and keep extra option state in the application."
             ]
           },
           "references": [
@@ -4696,7 +4696,7 @@
     {
       "name": "data-filter",
       "title": "DataFilter",
-      "description": "Standard table-toolbar Filter control that owns the shared trigger, searchable non-date filter options, accessible defaults, and compact-caption behavior while the application controls data and values.",
+      "description": "Standard data-toolbar Filter control that owns the shared trigger, searchable non-date filter options, accessible defaults, and compact-caption behavior while the application controls data and values.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -4707,9 +4707,9 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Standard table-toolbar Filter control that owns the shared trigger, searchable non-date filter options, accessible defaults, and compact-caption behavior while the application controls data and values.",
+          "summary": "Standard data-toolbar Filter control that owns the shared trigger, searchable non-date filter options, accessible defaults, and compact-caption behavior while the application controls data and values.",
           "useWhen": [
-            "A table toolbar should expose the standard singular Filter control and shared filter-menu interaction.",
+            "A data toolbar should expose the standard singular Filter control and shared filter-menu interaction.",
             "A product supplies filter definitions and controlled values but should not recreate the toolbar trigger, category navigation, or responsive treatment."
           ],
           "avoidWhen": [
@@ -4719,9 +4719,9 @@
           ],
           "alternatives": [
             {
-              "when": "A non-table surface needs the generic filter interaction or custom trigger recipe.",
+              "when": "A surface needs a custom filter trigger recipe.",
               "component": "component:ds-filter-menu",
-              "reason": "FilterMenu exposes generic trigger geometry and popup positioning rather than the fixed table-toolbar recipe."
+              "reason": "FilterMenu exposes generic trigger geometry and popup positioning rather than the standard data-toolbar recipe."
             }
           ],
           "commonlyComposedWith": [
@@ -4754,7 +4754,7 @@
           ],
           "responsiveBehavior": [
             "Place the control in the trailing region of ds-data-toolbar.",
-            "Inside a named ds-table container narrower than 900px, the trigger becomes icon-only, exposes its visible label through a hover and keyboard-focus tooltip, and the Filters icon remains neutral with active criteria."
+            "In a compact table caption or standalone data toolbar, the trigger becomes icon-only, exposes its visible label through a hover and keyboard-focus tooltip, and the Filters icon remains neutral with active criteria."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -4764,7 +4764,7 @@
               "Keep filters, values, and matchModes in application state and replace them from the typed dsChange, dsMatchModeChange, and dsClear events."
             ],
             "angular": [
-              "Import the generated DsTableFilter adapter, bind filters, values, and matchModes, and handle dsChange, dsMatchModeChange, dsClear, and dsActiveFilterChange."
+              "Import the generated DsDataFilter adapter, bind filters, values, and matchModes, and handle dsChange, dsMatchModeChange, dsClear, and dsActiveFilterChange."
             ]
           },
           "references": [
@@ -4881,7 +4881,7 @@
     {
       "name": "data-group",
       "title": "DataGroup",
-      "description": "Two-panel toolbar control for choosing one table grouping data point and the order of its group sections.",
+      "description": "Two-panel toolbar control for choosing one grouping data point and the order of its group sections.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -4892,13 +4892,13 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Two-panel toolbar control for choosing one table grouping data point and the order of its group sections.",
+          "summary": "Two-panel toolbar control for choosing one grouping data point and the order of its group sections.",
           "useWhen": [
-            "A table toolbar needs explicit control of one grouping level and its section order.",
+            "A data view needs explicit control of one grouping level and its section order.",
             "Grouping data-point labels differ from compact table-header labels."
           ],
           "avoidWhen": [
-            "The table is not groupable.",
+            "The data view is not groupable.",
             "The application expects the component to rearrange rows or create group sections internally."
           ],
           "alternatives": [
@@ -4934,7 +4934,7 @@
           ],
           "responsiveBehavior": [
             "Use in the trailing region of ds-data-toolbar.",
-            "The trigger uses the shared caption-control button behavior and becomes icon-only in compact named table containers.",
+            "The trigger uses the shared caption-control button behavior and becomes icon-only in compact table captions or standalone data toolbars.",
             "Both panes remain present and their choice lists scroll within the collision-constrained popup."
           ],
           "frameworkCaveats": {
@@ -4945,7 +4945,7 @@
               "Keep grouping in application state and replace it from dsGroupChange; set it to null from dsClear."
             ],
             "angular": [
-              "Import the generated DsTableGroup adapter and bind options and grouping as properties."
+              "Import the generated DsDataGroup adapter and bind options and grouping as properties."
             ]
           },
           "references": [
@@ -5037,7 +5037,7 @@
     {
       "name": "data-preferences",
       "title": "DataPreferences",
-      "description": "Compact table preferences dialog with Filters, Sort, Group, and Customize tabs.",
+      "description": "Compact data-view preferences dialog with Filters, Sort, Group, and Customize tabs.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -5048,20 +5048,20 @@
         "intent": {
           "audience": "general",
           "status": "experimental",
-          "summary": "Compact table preferences dialog with Filters, Sort, Group, and Customize tabs.",
+          "summary": "Compact data-view preferences dialog with Filters, Sort, Group, and Customize tabs.",
           "useWhen": [
-            "A narrow table toolbar or a user preference calls for one result-shaping control."
+            "A narrow data toolbar or a user preference calls for one result-shaping control."
           ],
           "avoidWhen": [
             "The application needs unrelated actions or a submitted form."
           ],
           "states": [
-            "The application owns all filter, sort, grouping, and column configuration values. Apply emitted changes to the table and replace the matching preferences inputs.",
+            "The application owns all filter, sort, grouping, and field configuration values. Apply emitted changes to the data view and replace the matching preferences inputs.",
             "The component owns popup visibility, active tab, positioning, and dismissal; embedded controls reuse the same content as their standalone popups.",
             "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback.",
             "Apply-required filtering stages edits locally, including match mode. Clear immediately clears all filters and discards pending edits. The footer appears when filters are selected or applied; Apply stays in place and inactive without pending changes; applying emits controlled changes. Closing discards unapplied edits.",
             "Embedded presentation delegates its active tab, draft state, Apply, Reset, and dismissal to the owning panel; it renders vertical filter and grouping content without a popup trigger.",
-            "Customize builds its catalog from columns. catalogReorderable defaults to true for a table: rows drag to reorder and the last visible entry stays locked. Pass false for a show-and-hide catalog, where rows are switches with no drag handle and every entry may be hidden.",
+            "Customize builds its catalog from fields. catalogReorderable defaults to true for a table: rows drag to reorder and the last visible entry stays locked. Pass false for a show-and-hide catalog, where rows are switches with no drag handle and every entry may be hidden.",
             "catalogHeader overrides the catalog section header, which otherwise reads Columns whenever customizeOptions supply a second section. customizeLabel names the Customize menu, so a non-table surface can announce Customize view rather than Customize table.",
             "Both catalog modes emit dsFieldsConfigChange with hiddenFieldIds and fieldOrder, so a consumer that never reorders can ignore fieldOrder and keep using hiddenFieldIds."
           ],
@@ -5229,7 +5229,7 @@
     {
       "name": "data-saved-views",
       "title": "DataSavedViews",
-      "description": "Controlled saved-views UI for table toolbars, including selection, dirty state, create, save, discard, rename, remove, validation, and focus behavior without owning table configuration or persistence.",
+      "description": "Controlled saved-views UI for data toolbars, including selection, dirty state, create, save, discard, rename, remove, validation, and focus behavior without owning view configuration or persistence.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -5240,13 +5240,13 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Controlled saved-views UI for table toolbars, including selection, dirty state, create, save, discard, rename, remove, validation, and focus behavior without owning table configuration or persistence.",
+          "summary": "Controlled saved-views UI for data toolbars, including selection, dirty state, create, save, discard, rename, remove, validation, and focus behavior without owning view configuration or persistence.",
           "useWhen": [
-            "A table workspace lets people recall and manage named combinations of table controls.",
+            "A data view lets people recall and manage named combinations of filters, sorting, grouping, and presentation preferences.",
             "Several products need the same saved-view interaction while retaining different view payloads and storage systems."
           ],
           "avoidWhen": [
-            "The choices do not represent restorable table configurations.",
+            "The choices do not represent restorable view configurations.",
             "The application expects the component to serialize filters, grouping, sorting, columns, pagination, or product-specific state."
           ],
           "commonlyComposedWith": [
@@ -5269,7 +5269,7 @@
           "states": [
             "views, value, and dirty are controlled. Dirty state is presented only for a selected custom view; the default template never shows the trigger dot or save/discard actions even if dirty is supplied. Selection, create, save, discard, rename, and remove events communicate intent and never mutate application records.",
             "The component owns only transient interaction state: the contextual menu, naming dialog, draft name, duplicate-name validation, and focus restoration.",
-            "The default view is a non-editable template. Application-owned custom views appear in a separate section with Rename and Remove actions. New view opens the naming dialog. When an editable selected view is dirty, that view row shows Save and negative Discard supporting actions while the footer remains dedicated to New view. The application decides which table state to capture, restore, and persist.",
+            "The default view is a non-editable template. Application-owned custom views appear in a separate section with Rename and Remove actions. New view opens the naming dialog. When an editable selected view is dirty, that view row shows Save and negative Discard supporting actions while the footer remains dedicated to New view. The application decides which view state to capture, restore, and persist.",
             "The built-in picker and contextual option menu each retain their own surface-open treatment. Opening a view menu does not select that view.",
             "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback.",
             "Expanded toolbar triggers use an icon and regular-weight text without a trailing chevron.",
@@ -5278,17 +5278,17 @@
           "responsiveBehavior": [
             "The control remains a single toolbar item and relies on Select, Menu, and Modal collision and viewport behavior. Its trigger hugs short view names and is capped at the compact menu-width token so long names truncate while the dirty dot stays visible. Its choice popup keeps that same token as the minimum width.",
             "Place it in the start region of ds-data-toolbar so the middle region can keep left-side and right-side controls on one spanning cluster.",
-            "The ViewMenu prefix identifies saved views. Compact compositions and narrow table captions show only the icon while retaining the accessible name and tooltip."
+            "The ViewMenu prefix identifies saved views. Compact compositions, narrow table captions, and narrow standalone data toolbars show only the icon while retaining the accessible name and tooltip."
           ],
           "frameworkCaveats": {
             "customElements": [
               "Assign views through the JavaScript property and update value after handling dsViewChange."
             ],
             "react": [
-              "Keep view records and serialized table configuration in application state; update controlled props in response to the component events."
+              "Keep view records and serialized view configuration in application state; update controlled props in response to the component events."
             ],
             "angular": [
-              "Import the generated DsTableSavedViews adapter and bind views, value, and dirty; handle event.detail for selection and mutations."
+              "Import the generated DsDataSavedViews adapter and bind views, value, and dirty; handle event.detail for selection and mutations."
             ]
           },
           "references": [
@@ -5412,7 +5412,7 @@
           "status": "stable",
           "summary": "Controlled data-search editor with slash-invoked field scoping, removable inset field Chips, and an input-focused listbox keyboard model.",
           "useWhen": [
-            "A data-table search needs optional field-specific scopes without replacing the application's filtering logic.",
+            "A data-view search needs optional field-specific scopes without replacing the application's filtering logic.",
             "People should be able to add one or more searchable data points through a slash command while continuing to type one free-text query."
           ],
           "avoidWhen": [
@@ -5429,38 +5429,38 @@
           ],
           "accessibility": [
             "The native search input remains the one Tab stop and exposes combobox, expanded, controls, and active-descendant relationships to the field listbox.",
-            "Typing slash opens the field listbox without inserting slash into the table query. Text typed while it is open filters data points by complete label, Up and Down change the active match, Enter selects it, Escape closes it, and Left and Right retain native text-cursor behavior because focus never leaves the input. Backspace edits the field-picker query first and closes the listbox when that query is empty.",
-            "The query disables browser autocomplete history, automatic capitalization, autocorrection, and spellchecking so browser-owned suggestions never obscure the product-owned field menu or table results.",
+            "Typing slash opens the field listbox without inserting slash into the view query. Text typed while it is open filters data points by complete label, Up and Down change the active match, Enter selects it, Escape closes it, and Left and Right retain native text-cursor behavior because focus never leaves the input. Backspace edits the field-picker query first and closes the listbox when that query is empty.",
+            "The query disables browser autocomplete history, automatic capitalization, autocorrection, and spellchecking so browser-owned suggestions never obscure the product-owned field menu or view results.",
             "Selected field Chips have individually labeled remove actions and are also described by the search input. Polite announcements report additions, removals, and clearing without duplicating the visible query.",
             "The search input exposes the slash command through aria-keyshortcuts and its description, without a visible suffix button.",
             "The clear action removes both free text and every selected field. It restores focus to the search input; each Chip's own remove action remains scoped to that field."
           ],
           "states": [
-            "value and selectedFieldIds are controlled. columns supplies the same table catalog used by Table and DataSort; dataLabel provides the complete out-of-context name while header and header segment label may remain compact. dsChange reports query edits, dsFieldsChange reports the next ordered field identities, and dsClear reports a complete clear. The component never filters rows or mutates consumer inputs.",
+            "value and selectedFieldIds are controlled. fields supplies the searchable data catalog; dataLabel provides the complete out-of-context name while label and segment labels may remain compact. dsChange reports query edits, dsFieldsChange reports the next ordered field identities, and dsClear reports a complete clear. The component never filters rows or mutates consumer inputs.",
             "The field menu excludes already-selected identities and closes after one selection. Typing slash again reopens the remaining fields so multiple scopes can be added.",
             "Selected scopes render as neutral md Chips using the double-inset recipe so they remain 24px high inside the 32px md search control and each can be removed directly.",
-            "Backspace edits a non-empty field-picker query, then closes the open slash listbox when that query is empty. When the table query is empty and the listbox is already closed, the next Backspace removes the last selected field. Ordinary Backspace edits table query text when the listbox is closed.",
+            "Backspace edits a non-empty field-picker query, then closes the open slash listbox when that query is empty. When the view query is empty and the listbox is already closed, the next Backspace removes the last selected field. Ordinary Backspace edits view query text when the listbox is closed.",
             "Duplicate, blank, and unknown field identities are ignored for presentation. Selected fields preserve the consumer's order.",
             "Inactive search leaves the tab order, closes the field listbox, and does not emit query or field changes.",
             "The field-picker action holds the shared surface-open wash while its listbox is visible; chosen search fields remain independent.",
             "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback.",
-            "columns accepts any DataField, not only table columns: a non-table surface supplies id, header and searchable, and segments still expands into separate search fields."
+            "fields accepts a DataField catalog for any data view: a non-table surface supplies id, label and searchable, and segments still expands into separate search fields."
           ],
           "responsiveBehavior": [
-            "The control fills the available inline size supplied by the table toolbar search slot. Selected Chips and the editable query share one horizontal editor lane so the md control does not grow vertically.",
+            "The control fills the available inline size supplied by the table toolbar search slot. Selected Chips and the ediview query share one horizontal editor lane so the md control does not grow vertically.",
             "The field popup enters the top layer, aligns its first choice cell with the search control, flips or clamps to the viewport or nearest overlay boundary, and scrolls internally when its catalog is taller than available space.",
             "Clear appears when query text is present and uses the standard sm icon button treatment."
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Assign columns and selectedFieldIds through JavaScript properties and replace controlled values from dsChange and dsFieldsChange.",
+              "Assign fields and selectedFieldIds through JavaScript properties and replace controlled values from dsChange and dsFieldsChange.",
               "Keep field IDs aligned with the application search index; the component treats IDs as opaque values."
             ],
             "react": [
-              "Pass new array references for columns and selectedFieldIds and update controlled state from onDsChange and onDsFieldsChange."
+              "Pass new array references for fields and selectedFieldIds and update controlled state from onDsChange and onDsFieldsChange."
             ],
             "angular": [
-              "Import DsTableSearch, bind columns, selectedFieldIds, and value, then update application signals from dsChange and dsFieldsChange."
+              "Import DsDataSearch, bind fields, selectedFieldIds, and value, then update application signals from dsChange and dsFieldsChange."
             ]
           },
           "references": [
@@ -5554,7 +5554,7 @@
     {
       "name": "data-sort",
       "title": "DataSort",
-      "description": "Toolbar companion for the table's one controlled member-row sort, with Data and Order menu sections that mirror header sorting.",
+      "description": "Toolbar control for one application-owned sort, with separate field and direction choices that can also mirror table-header sorting.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -5565,13 +5565,13 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Toolbar companion for the table's one controlled member-row sort, with Data and Order menu sections that mirror header sorting.",
+          "summary": "Toolbar control for one application-owned sort, with separate field and direction choices that can also mirror table-header sorting.",
           "useWhen": [
-            "A table toolbar needs an explicit Sort control alongside Filter and Group.",
+            "A data view needs an explicit Sort control alongside Filter and Group.",
             "Sortable columns or compound header segments should be choosable without relying only on column-header clicks."
           ],
           "avoidWhen": [
-            "The table has no sortable columns; the control hides itself.",
+            "The data view has no sortable fields.",
             "The application expects the control to sort rows internally or persist preferences.",
             "The popup should submit a form value; use Select."
           ],
@@ -5599,29 +5599,29 @@
             "Choosing a row applies immediately and keeps the menu open so the other section can be changed. Escape and outside activation close the menu and restore trigger focus."
           ],
           "states": [
-            "columns and sort are controlled. dsSortChange reports the next DataSortState and never mutates those inputs. The same sort object is what column headers emit through the table.",
+            "fields and sort are controlled. dsSortChange reports the next DataSortState and never mutates those inputs. The same sort object is what column headers emit through the table.",
             "Selecting a different data field keeps the current direction, or starts ascending when no sort exists. Selecting a direction applies it to the current field, or to the first sortable field when no sort exists. Selecting the already-active field or direction is a no-op and does not toggle the way a header click does.",
             "The trigger stays Sort in regular-weight resting secondary chrome. Field and direction selection live in the menu and on column headers, so the trigger never uses active primary emphasis. It keeps pressed interaction paint without physically scaling inside the stable table caption row.",
             "Compound sortable headers contribute one Data row per segment. Action columns never appear.",
             "The trigger automatically holds the shared surface-open wash through menu exit while the selected sort remains independently controlled.",
             "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback.",
             "Expanded toolbar triggers use an icon and regular-weight text without a trailing chevron.",
-            "columns accepts any DataField, not only table columns: a card list or map overlay supplies id, header and sortable without describing itself as a table."
+            "fields accepts a DataField catalog for any data view: a card list or map overlay supplies id, label and sortable without describing itself as a table."
           ],
           "responsiveBehavior": [
             "Place the control in the trailing region of ds-data-toolbar with Filter and Group.",
-            "Inside a named ds-table container narrower than 900px, the trigger omits its label and chevron and becomes icon-only. A hover and keyboard-focus tooltip preserves the label, and the icon keeps the resting secondary foreground.",
+            "The owning table caption or standalone data toolbar determines when the trigger becomes icon-only. A hover and keyboard-focus tooltip preserves the label, and the icon keeps the resting secondary foreground.",
             "Long sortable-field catalogs inherit Menu's collision-aware height cap and internal choice scrolling instead of extending beyond the available viewport space."
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Assign columns and sort as JavaScript properties. Replace sort from both dsSortChange on this control and dsSortChange on the table."
+              "Assign fields and sort as JavaScript properties. Replace sort from both dsSortChange on this control and dsSortChange on the table."
             ],
             "react": [
               "Keep one sort state and pass it to both ds-table and ds-data-sort; update it from either event."
             ],
             "angular": [
-              "Import the generated DsTableSort adapter, bind columns and sort, and handle dsSortChange with the same owner that handles table header sorting."
+              "Import the generated DsDataSort adapter, bind fields and sort, and handle dsSortChange with the same owner that handles table header sorting."
             ]
           },
           "references": [
@@ -5683,7 +5683,7 @@
     {
       "name": "data-toolbar",
       "title": "DataToolbar",
-      "description": "Data-agnostic companion layout for application-owned table caption controls, with a start cluster, optional search, trailing Filter/Sort/Group, and narrow-width horizontal overflow.",
+      "description": "Shared layout for application-owned data-view controls, with a start cluster, optional search, trailing Filter/Sort/Group, and narrow-width horizontal overflow.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -5694,9 +5694,9 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Data-agnostic companion layout for application-owned table caption controls, with a start cluster, optional search, trailing Filter/Sort/Group, and narrow-width horizontal overflow.",
+          "summary": "Shared layout for application-owned data-view controls, with a start cluster, optional search, trailing Filter/Sort/Group, and narrow-width horizontal overflow.",
           "useWhen": [
-            "Several table pages repeat the same saved-view cluster, middle discovery and result-shaping controls, and table-owned caption actions.",
+            "Several data views repeat the same saved-view cluster, middle discovery and result-shaping controls, and table-owned caption actions.",
             "A ds-table header slot needs consistent control spacing, alignment, grouping, and narrow-width overflow without moving product behavior into the table."
           ],
           "avoidWhen": [
@@ -5713,6 +5713,7 @@
             "component:ds-data-group",
             "component:ds-select",
             "component:ds-data-sort",
+            "component:ds-data-customize",
             "component:ds-button-unfilled",
             "component:ds-data-preferences"
           ],
@@ -5731,19 +5732,19 @@
           ],
           "responsiveBehavior": [
             "The start cluster, search, trailing Filter/Sort/Group, and table caption trailing actions stay on one line. Saved views hug their current trigger content up to the compact menu-width token rather than reserving that full width; long names truncate while the dirty dot stays visible. Filter, Sort, and Group triggers cap at the same token, and Sort and Group popups keep that compact menu-width floor. A standalone toolbar owns its horizontal scrolling; inside a table, the complete caption row is the single overflow owner so table-owned actions never remain pinned over scrolling toolbar controls.",
-            "Search consumes the row space left between fixed control groups and flexes smaller when the complete row needs space. Inside a named ds-table container narrower than 900px, ds-data-filter, ds-data-group, and ds-data-sort omit their labels and chevrons; each exposes its label through a hover and keyboard-focus tooltip. Empty leading and trailing slot groups do not add spacing. Active filtering retains neutral trigger colors. Group and Sort keep resting secondary chrome. Table-owned Customize also becomes the icon-only Table menu button at that width with the same tooltip behavior.",
+            "Search consumes the row space left between fixed control groups and flexes smaller when the complete row needs space. The owning table caption or standalone toolbar determines when data controls omit their labels and chevrons; each exposes its label through a hover and keyboard-focus tooltip. Empty leading and trailing slot groups do not add spacing. Active filtering retains neutral trigger colors. Group and Sort keep resting secondary chrome. Standalone Customize follows the same compact treatment; table-owned Customize remains part of the caption.",
             "The scrollbar is visually suppressed without removing touch, trackpad, mouse-wheel, or keyboard scrolling from the overflow container.",
             "For compact toolbars, the application can replace Filter, Sort, Group and the table Customize trigger with ds-data-preferences in the trailing slot. Share the same controlled values and events; the toolbar remains a data-agnostic layout."
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Project saved views through slot=start, search through slot=search, additional left-side middle controls through slot=leading, and ds-data-filter, ds-data-group, and ds-data-sort through slot=trailing. Provide contextual accessible names when Table controls is insufficient."
+              "Project saved views through slot=start, search through slot=search, additional left-side middle controls through slot=leading, and ds-data-filter, ds-data-group, and ds-data-sort through slot=trailing. Provide a contextual accessible name for the data view."
             ],
             "react": [
               "Set slot=start, slot=search, slot=leading, or slot=trailing on each child control. Use ds-data-filter and ds-data-group for the standard Filter and Group recipes, and keep values and event handlers in the application."
             ],
             "angular": [
-              "Set slot=start, slot=search, slot=leading, or slot=trailing on each child control, use DsTableFilter and DsTableGroup for the standard Filter and Group recipes, and import the generated adapters."
+              "Set slot=start, slot=search, slot=leading, or slot=trailing on each child control, use DsDataFilter and DsDataGroup for the standard Filter and Group recipes, and import the generated adapters."
             ]
           },
           "references": [

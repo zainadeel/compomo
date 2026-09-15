@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "data-group",
   "title": "DataGroup",
-  "description": "Two-panel toolbar control for choosing one table grouping data point and the order of its group sections.",
+  "description": "Two-panel toolbar control for choosing one grouping data point and the order of its group sections.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
@@ -13,13 +13,13 @@
     "intent": {
       "audience": "general",
       "status": "stable",
-      "summary": "Two-panel toolbar control for choosing one table grouping data point and the order of its group sections.",
+      "summary": "Two-panel toolbar control for choosing one grouping data point and the order of its group sections.",
       "useWhen": [
-        "A table toolbar needs explicit control of one grouping level and its section order.",
+        "A data view needs explicit control of one grouping level and its section order.",
         "Grouping data-point labels differ from compact table-header labels."
       ],
       "avoidWhen": [
-        "The table is not groupable.",
+        "The data view is not groupable.",
         "The application expects the component to rearrange rows or create group sections internally."
       ],
       "alternatives": [
@@ -55,7 +55,7 @@
       ],
       "responsiveBehavior": [
         "Use in the trailing region of ds-data-toolbar.",
-        "The trigger uses the shared caption-control button behavior and becomes icon-only in compact named table containers.",
+        "The trigger uses the shared caption-control button behavior and becomes icon-only in compact table captions or standalone data toolbars.",
         "Both panes remain present and their choice lists scroll within the collision-constrained popup."
       ],
       "frameworkCaveats": {
@@ -66,7 +66,7 @@
           "Keep grouping in application state and replace it from dsGroupChange; set it to null from dsClear."
         ],
         "angular": [
-          "Import the generated DsTableGroup adapter and bind options and grouping as properties."
+          "Import the generated DsDataGroup adapter and bind options and grouping as properties."
         ]
       },
       "references": [

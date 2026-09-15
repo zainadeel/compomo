@@ -19,7 +19,7 @@
     {
       "when": "The choice is one submitted form value.",
       "component": "component:ds-select",
-      "reason": "Select owns form-value and listbox semantics, not table sort state."
+      "reason": "Select owns form-value and listbox semantics rather than view customization."
     }
   ],
   "commonlyComposedWith": [
@@ -29,7 +29,7 @@
   ],
   "patterns": ["pattern:menu-trigger"],
   "accessibility": [
-    "The trigger and menu share one accessible name; pass aria-label when Customize is ambiguous on the page.",
+    "The trigger and menu share an accessible name derived from the visible label unless the application supplies a more contextual name.",
     "Rows are switches, so each one announces its own checked state."
   ],
   "states": [
@@ -40,17 +40,17 @@
     "dsFieldsConfigChange emits hiddenFieldIds and fieldOrder together, so a consumer that never reorders can ignore fieldOrder."
   ],
   "responsiveBehavior": [
-    "The trigger collapses to its icon when the toolbar runs out of room, matching the other data controls."
+    "The owning standalone data toolbar determines when the trigger becomes icon-only; its accessible name and focus tooltip preserve the action label."
   ],
   "frameworkCaveats": {
     "customElements": [
-      "Assign columns and sort as JavaScript properties. Replace sort from both dsSortChange on this control and dsSortChange on the table."
+      "Assign the field catalog and configuration arrays as JavaScript properties. Apply field visibility and order changes to the view, then replace the controlled inputs; handle extra option changes separately."
     ],
     "react": [
-      "Keep one sort state and pass it to both ds-table and ds-data-sort; update it from either event."
+      "Keep field visibility and display order in application state, pass new array references after changes, and use the same state to render the view."
     ],
     "angular": [
-      "Import the generated DsTableSort adapter, bind columns and sort, and handle dsSortChange with the same owner that handles table header sorting."
+      "Bind the field catalog and configuration arrays as properties through the generated adapter. Replace the controlled configuration from event.detail and keep extra option state in the application."
     ]
   },
   "references": [
