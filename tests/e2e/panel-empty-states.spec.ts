@@ -23,21 +23,22 @@ test('centers a generic empty state in the visible space above its footer', asyn
   expect(geometry.actual).toBeCloseTo(geometry.expected, 0);
 });
 
-test('centers a conversation empty state above its persistent action', async ({ page }) => {
+test('centers a conversation empty state in the full viewport under its corner action', async ({
+  page,
+}) => {
   const list = page.locator('#conversations');
   await expect(list.getByRole('button', { name: 'New conversation' })).toBeVisible();
 
+  // The corner action floats and reserves no clearance, so the empty state uses
+  // the whole viewport rather than the space above a full-width footer.
   const geometry = await list.evaluate(element => {
     const viewport = element.querySelector<HTMLElement>('.conversation-list__viewport')!;
     const empty = element.querySelector<HTMLElement>('ds-empty-state')!;
     const viewportRect = viewport.getBoundingClientRect();
     const emptyRect = empty.getBoundingClientRect();
-    const overlay = Number.parseFloat(
-      getComputedStyle(element).getPropertyValue('--ds-scroll-overlay-block-size')
-    );
     return {
       actual: (emptyRect.top + emptyRect.bottom) / 2,
-      expected: viewportRect.top + (viewportRect.height - overlay) / 2,
+      expected: (viewportRect.top + viewportRect.bottom) / 2,
     };
   });
 
@@ -62,12 +63,8 @@ test('centers an empty list in the full viewport when no action exists', async (
     return {
       actual: (emptyRect.top + emptyRect.bottom) / 2,
       expected: (viewportRect.top + viewportRect.bottom) / 2,
-      overlay: Number.parseFloat(
-        getComputedStyle(element).getPropertyValue('--ds-scroll-overlay-block-size')
-      ),
     };
   });
 
-  expect(geometry.overlay).toBe(0);
   expect(geometry.actual).toBeCloseTo(geometry.expected, 0);
 });
