@@ -126,19 +126,16 @@ test('overlays a centered rounded action at the 8px right inset', async ({ page 
   await expect(trigger.locator('button')).toHaveCSS('border-radius', '9999px');
 });
 
-test('keeps contextual backdrop blur outside the persistent footer fade root', async ({ page }) => {
+test('keeps contextual backdrop blur out of any masked ancestor', async ({ page }) => {
   const list = page.locator('#conversation-list');
   const item = page.locator('#overlay-conversation');
   const row = item.locator('.conversation-list-item__row');
   const actions = item.locator('.conversation-list-item__actions');
   const content = list.locator('.conversation-list__content');
-  const fade = list.locator('.conversation-list__fade');
 
   await row.hover();
   await expect(actions).toHaveCSS('opacity', '1');
   await expect(content).toHaveCSS('mask-image', 'none');
-  await expect(fade).not.toHaveCSS('mask-image', 'none');
-  await expect(fade).toHaveCSS('height', '48px');
 
   const compositing = await item.evaluate(element => {
     const action = element.querySelector<HTMLElement>('.conversation-list-item__actions')!;
@@ -156,16 +153,15 @@ test('keeps contextual backdrop blur outside the persistent footer fade root', a
       backdropFilter: actionStyles.backdropFilter,
       blurToken: actionStyles.getPropertyValue('--effect-blur-sm').trim(),
       maskedAncestor,
-      hostZIndex: getComputedStyle(element).zIndex,
-      fadeZIndex: getComputedStyle(
-        element.closest('ds-conversation-list')!.querySelector('.conversation-list__fade')!
-      ).zIndex,
     };
   });
 
   expect(compositing.backdropFilter).toBe(`blur(${compositing.blurToken})`);
+  // A masked ancestor would flatten the blur into its own layer and kill the backdrop.
   expect(compositing.maskedAncestor).toBeNull();
-  expect(Number(compositing.hostZIndex)).toBeGreaterThan(Number(compositing.fadeZIndex));
+
+  // The list paints no fade layer, so rows scroll straight under the corner action.
+  await expect(list.locator('.conversation-list__fade')).toHaveCount(0);
 });
 
 test('reveals the action for keyboard focus without selecting the conversation', async ({
