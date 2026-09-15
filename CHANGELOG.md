@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.2.0](https://github.com/zainadeel/compomo/compare/v15.1.1...v15.2.0) (2026-09-15)
+
+
+### Added
+
+* add map markers and standardize page gutters ([#614](https://github.com/zainadeel/compomo/issues/614)) ([07bc614](https://github.com/zainadeel/compomo/commit/07bc614766cc12eca62927040e5af2ef19cbb908))
+
 ## [15.1.1](https://github.com/zainadeel/compomo/compare/v15.1.0...v15.1.1) (2026-09-15)
 
 
