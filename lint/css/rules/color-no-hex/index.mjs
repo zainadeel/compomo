@@ -1,0 +1,85 @@
+import { executeRule } from '../../runtime.js';
+import valueParser from 'postcss-value-parser';
+
+import { declarationValueIndex } from '../../utils/nodeFieldIndices.mjs';
+import getDeclarationValue from '../../utils/getDeclarationValue.mjs';
+import isUrlFunction from '../../utils/isUrlFunction.mjs';
+import { isValueWord } from '../../utils/typeGuards.mjs';
+import { mayIncludeRegexes } from '../../utils/regexes.mjs';
+import report from '../../utils/report.mjs';
+import ruleMessages from '../../utils/ruleMessages.mjs';
+import validateOptions from '../../utils/validateOptions.mjs';
+
+const ruleName = 'color-no-hex';
+
+const messages = ruleMessages(ruleName, {
+  rejected: hex => `Disallowed hex color "${hex}"`,
+});
+
+const meta = {
+  url: 'https://stylelint.io/user-guide/rules/color-no-hex',
+};
+
+const HEX = /^#[\da-z]+$/i;
+
+/** @type {import('stylelint').CoreRules[ruleName]} */
+const rule = {
+  meta: {
+    type: 'problem',
+    docs: { url: meta.url },
+    schema: [{}, {}],
+    ...(meta.fixable ? { fixable: 'code' } : {}),
+  },
+  create(eslintContext) {
+    const primary = eslintContext.options[0];
+
+    return {
+      'StyleSheet:exit'() {
+        return executeRule(eslintContext, (root, result) => {
+          const validOptions = validateOptions(result, ruleName, { actual: primary });
+
+          if (!validOptions) {
+            return;
+          }
+
+          root.walkDecls(decl => {
+            if (!mayIncludeRegexes.hexColor.test(decl.value)) return;
+
+            const parsedValue = valueParser(getDeclarationValue(decl));
+
+            parsedValue.walk(node => {
+              if (isUrlFunction(node)) return false;
+
+              if (!isHexColor(node)) return;
+
+              const index = declarationValueIndex(decl) + node.sourceIndex;
+              const endIndex = index + node.value.length;
+
+              report({
+                message: messages.rejected,
+                messageArgs: [node.value],
+                node: decl,
+                index,
+                endIndex,
+                result,
+                ruleName,
+              });
+            });
+          });
+        });
+      },
+    };
+  },
+};
+
+/**
+ * @param {import('postcss-value-parser').Node} node
+ */
+function isHexColor(node) {
+  return isValueWord(node) && HEX.test(node.value);
+}
+
+rule.ruleName = ruleName;
+rule.messages = messages;
+
+export default rule;

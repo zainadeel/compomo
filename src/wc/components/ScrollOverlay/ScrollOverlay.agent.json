@@ -16,10 +16,7 @@
     "The footer belongs in normal document flow rather than overlaying content.",
     "Another component already owns scrolling and cannot delegate its scrollport to this component."
   ],
-  "commonlyComposedWith": [
-    "component:ds-button-filled",
-    "component:ds-message-composer"
-  ],
+  "commonlyComposedWith": ["component:ds-button-filled", "component:ds-message-composer"],
   "accessibility": [
     "Provide scrollLabel when the scrollport needs its own named, keyboard-focusable region.",
     "Keep footer actions keyboard accessible and explicitly named; the fade is decorative and never intercepts pointer input."
@@ -48,5 +45,10 @@
       "label": "Storybook examples",
       "path": "src/wc/components/ScrollOverlay/ScrollOverlay.stories.ts"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "The application explicitly owns responsive sizing and overlay insets.",
+    "protected": [],
+    "customProperties": []
+  }
 }

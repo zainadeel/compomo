@@ -68,5 +68,10 @@
       "label": "Storybook examples",
       "path": "src/wc/components/Divider/Divider.stories.ts"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "Orientation and length are public props; the host supports application layout around the internal divider.",
+    "protected": [],
+    "customProperties": []
+  }
 }

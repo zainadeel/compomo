@@ -2,7 +2,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { Linter } from 'eslint';
 import tseslint from 'typescript-eslint';
-import local from '../eslint-plugin-local/index.js';
+import { plugin as compomo } from '../lint/index.js';
 
 function lint(code: string, rule = 'prefer-direct-ds-text') {
   const linter = new Linter({ configType: 'flat' });
@@ -15,21 +15,21 @@ function lint(code: string, rule = 'prefer-direct-ds-text') {
           parser: tseslint.parser,
           parserOptions: { ecmaFeatures: { jsx: true } },
         },
-        plugins: { local },
-        rules: { [`local/${rule}`]: 'warn' },
+        plugins: { compomo },
+        rules: { [`compomo/${rule}`]: 'warn' },
       },
     ],
     { filename: 'src/wc/components/Example/Example.tsx' }
   );
 }
 
-describe('local/prefer-direct-ds-text', () => {
+describe('compomo/prefer-direct-ds-text', () => {
   it('flags a neutral wrapper whose only child is ds-text', () => {
     const messages = lint(`
       const view = <span class="label"><ds-text as="span">Label</ds-text></span>;
     `);
     assert.equal(
-      messages.filter(message => message.ruleId === 'local/prefer-direct-ds-text').length,
+      messages.filter(message => message.ruleId === 'compomo/prefer-direct-ds-text').length,
       1
     );
   });
@@ -39,7 +39,7 @@ describe('local/prefer-direct-ds-text', () => {
       const view = <ds-text class="label" as="span">Label</ds-text>;
     `);
     assert.equal(
-      messages.filter(message => message.ruleId === 'local/prefer-direct-ds-text').length,
+      messages.filter(message => message.ruleId === 'compomo/prefer-direct-ds-text').length,
       0
     );
   });
@@ -54,7 +54,7 @@ describe('local/prefer-direct-ds-text', () => {
       );
     `);
     assert.equal(
-      messages.filter(message => message.ruleId === 'local/prefer-direct-ds-text').length,
+      messages.filter(message => message.ruleId === 'compomo/prefer-direct-ds-text').length,
       0
     );
   });
@@ -68,7 +68,7 @@ describe('local/prefer-direct-ds-text', () => {
       );
     `);
     assert.equal(
-      messages.filter(message => message.ruleId === 'local/prefer-direct-ds-text').length,
+      messages.filter(message => message.ruleId === 'compomo/prefer-direct-ds-text').length,
       1
     );
   });
@@ -87,13 +87,13 @@ describe('local/prefer-direct-ds-text', () => {
       );
     `);
     assert.equal(
-      messages.filter(message => message.ruleId === 'local/prefer-direct-ds-text').length,
+      messages.filter(message => message.ruleId === 'compomo/prefer-direct-ds-text').length,
       0
     );
   });
 });
 
-describe('local/no-selected-fill-emphasis-change', () => {
+describe('compomo/no-selected-fill-emphasis-change', () => {
   const rule = 'no-selected-fill-emphasis-change';
 
   it('flags selection-driven emphasis inside the active fill utility', () => {
@@ -113,7 +113,7 @@ describe('local/no-selected-fill-emphasis-change', () => {
       rule
     );
 
-    assert.equal(messages.filter(message => message.ruleId === `local/${rule}`).length, 1);
+    assert.equal(messages.filter(message => message.ruleId === `compomo/${rule}`).length, 1);
   });
 
   it('accepts a stable text weight with selected foreground color', () => {
@@ -131,7 +131,7 @@ describe('local/no-selected-fill-emphasis-change', () => {
       rule
     );
 
-    assert.equal(messages.filter(message => message.ruleId === `local/${rule}`).length, 0);
+    assert.equal(messages.filter(message => message.ruleId === `compomo/${rule}`).length, 0);
   });
 
   it('accepts always-emphasis as part of the base control recipe', () => {
@@ -146,6 +146,6 @@ describe('local/no-selected-fill-emphasis-change', () => {
       rule
     );
 
-    assert.equal(messages.filter(message => message.ruleId === `local/${rule}`).length, 0);
+    assert.equal(messages.filter(message => message.ruleId === `compomo/${rule}`).length, 0);
   });
 });

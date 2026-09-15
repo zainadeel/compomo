@@ -421,7 +421,7 @@ export class DataSearch {
               {visible.map((field, index) => {
                 const active = index === this.activeIndex;
                 return (
-                  /* eslint-disable-next-line local/prefer-direct-ds-text -- The option owns listbox semantics and pointer interaction while ds-text remains its typography child. */
+                  /* eslint-disable-next-line compomo/prefer-direct-ds-text -- The option owns listbox semantics and pointer interaction while ds-text remains its typography child. */
                   <div
                     id={`${this.componentId}-option-${index}`}
                     key={field.id}

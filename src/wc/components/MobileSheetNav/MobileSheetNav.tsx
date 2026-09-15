@@ -275,7 +275,7 @@ export class MobileSheetNav {
   private renderLogo() {
     return (
       <span class="mobile-sheet-nav__logo" aria-hidden="true">
-        {/* eslint-disable-next-line local/prefer-ds-icon -- Motive brand mark is not part of the IcoMo runtime catalog. */}
+        {/* eslint-disable-next-line compomo/prefer-ds-icon -- Motive brand mark is not part of the IcoMo runtime catalog. */}
         <svg
           class="mobile-sheet-nav__logo-mark"
           viewBox="0 0 20 20"

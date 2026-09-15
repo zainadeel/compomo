@@ -24,7 +24,7 @@ adding component-local geometry that may already have an owner.
 - Reuse `src/wc/utils/` only when several components share the same structural
   contract. Utilities must not take over component semantics or public API.
 
-Follow the local ESLint and Stylelint messages. Justify unavoidable exceptions
+Follow the CompoMo ESLint messages for CSS and JSX. Justify unavoidable exceptions
 at the line where they occur.
 
 ## Components

@@ -39,7 +39,12 @@
           "label": "Storybook examples",
           "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
         }
-      ]
+      ],
+      "styling": {
+        "rationale": "Attachment items own their recipes; the list host permits application layout.",
+        "protected": [],
+        "customProperties": []
+      }
     },
     "api": {
       "props": {

@@ -16,22 +16,54 @@
     "summary",
     "useWhen",
     "avoidWhen",
-    "accessibility"
+    "accessibility",
+    "styling"
   ],
   "properties": {
-    "$schema": { "const": "../../../../agent/schemas/component-agent.schema.json" },
-    "schemaVersion": { "const": "1.0.0" },
-    "id": { "type": "string", "pattern": "^component:ds-[a-z0-9-]+$" },
-    "kind": { "const": "component" },
-    "package": { "const": "@ds-mo/ui" },
-    "tag": { "type": "string", "pattern": "^ds-[a-z0-9-]+$" },
-    "audience": { "enum": ["general", "specialized", "internal"] },
-    "status": { "enum": ["experimental", "stable", "deprecated", "removed"] },
-    "replacedBy": { "type": "string", "pattern": "^component:ds-[a-z0-9-]+$" },
-    "replacementReason": { "type": "string", "minLength": 1 },
-    "summary": { "type": "string", "minLength": 1 },
-    "useWhen": { "$ref": "#/$defs/guidance" },
-    "avoidWhen": { "$ref": "#/$defs/guidance" },
+    "$schema": {
+      "const": "../../../../agent/schemas/component-agent.schema.json"
+    },
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^component:ds-[a-z0-9-]+$"
+    },
+    "kind": {
+      "const": "component"
+    },
+    "package": {
+      "const": "@ds-mo/ui"
+    },
+    "tag": {
+      "type": "string",
+      "pattern": "^ds-[a-z0-9-]+$"
+    },
+    "audience": {
+      "enum": ["general", "specialized", "internal"]
+    },
+    "status": {
+      "enum": ["experimental", "stable", "deprecated", "removed"]
+    },
+    "replacedBy": {
+      "type": "string",
+      "pattern": "^component:ds-[a-z0-9-]+$"
+    },
+    "replacementReason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "useWhen": {
+      "$ref": "#/$defs/guidance"
+    },
+    "avoidWhen": {
+      "$ref": "#/$defs/guidance"
+    },
     "alternatives": {
       "type": "array",
       "items": {
@@ -39,33 +71,62 @@
         "additionalProperties": false,
         "required": ["when", "component", "reason"],
         "properties": {
-          "when": { "type": "string", "minLength": 1 },
-          "component": { "type": "string", "pattern": "^component:ds-[a-z0-9-]+$" },
-          "reason": { "type": "string", "minLength": 1 }
+          "when": {
+            "type": "string",
+            "minLength": 1
+          },
+          "component": {
+            "type": "string",
+            "pattern": "^component:ds-[a-z0-9-]+$"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
     "commonlyComposedWith": {
       "type": "array",
       "uniqueItems": true,
-      "items": { "type": "string", "pattern": "^component:ds-[a-z0-9-]+$" }
+      "items": {
+        "type": "string",
+        "pattern": "^component:ds-[a-z0-9-]+$"
+      }
     },
     "patterns": {
       "type": "array",
       "uniqueItems": true,
-      "items": { "type": "string", "pattern": "^pattern:[a-z0-9-]+$" }
+      "items": {
+        "type": "string",
+        "pattern": "^pattern:[a-z0-9-]+$"
+      }
     },
-    "accessibility": { "$ref": "#/$defs/guidance" },
-    "states": { "$ref": "#/$defs/guidance" },
-    "responsiveBehavior": { "$ref": "#/$defs/guidance" },
+    "accessibility": {
+      "$ref": "#/$defs/guidance"
+    },
+    "states": {
+      "$ref": "#/$defs/guidance"
+    },
+    "responsiveBehavior": {
+      "$ref": "#/$defs/guidance"
+    },
     "frameworkCaveats": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "customElements": { "$ref": "#/$defs/guidanceOptional" },
-        "react": { "$ref": "#/$defs/guidanceOptional" },
-        "vue": { "$ref": "#/$defs/guidanceOptional" },
-        "angular": { "$ref": "#/$defs/guidanceOptional" }
+        "customElements": {
+          "$ref": "#/$defs/guidanceOptional"
+        },
+        "react": {
+          "$ref": "#/$defs/guidanceOptional"
+        },
+        "vue": {
+          "$ref": "#/$defs/guidanceOptional"
+        },
+        "angular": {
+          "$ref": "#/$defs/guidanceOptional"
+        }
       }
     },
     "references": {
@@ -75,18 +136,97 @@
         "additionalProperties": false,
         "required": ["label", "path"],
         "properties": {
-          "label": { "type": "string", "minLength": 1 },
-          "path": { "type": "string", "minLength": 1 }
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "styling": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rationale", "protected", "customProperties"],
+      "properties": {
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "protected": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["properties", "reason", "props"],
+            "properties": {
+              "properties": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              },
+              "props": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        },
+        "customProperties": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "source", "reason"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "source": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
         }
       }
     }
   },
   "allOf": [
     {
-      "if": { "properties": { "status": { "enum": ["deprecated", "removed"] } } },
+      "if": {
+        "properties": {
+          "status": {
+            "enum": ["deprecated", "removed"]
+          }
+        }
+      },
       "then": {
         "properties": {
-          "replacementReason": { "type": "string", "minLength": 1 }
+          "replacementReason": {
+            "type": "string",
+            "minLength": 1
+          }
         },
         "required": ["replacementReason"]
       }
@@ -97,12 +237,18 @@
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": { "type": "string", "minLength": 1 }
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
     },
     "guidanceOptional": {
       "type": "array",
       "uniqueItems": true,
-      "items": { "type": "string", "minLength": 1 }
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
     }
   }
 }

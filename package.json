@@ -75,7 +75,12 @@
     "./agent": "./dist/agent.json",
     "./agent/patterns": "./dist/agent-patterns.json",
     "./dist/components/*": "./dist/components/*",
-    "./components/*": "./dist/components/*"
+    "./components/*": "./dist/components/*",
+    "./lint": {
+      "types": "./dist/lint/index.d.ts",
+      "import": "./dist/lint/index.js",
+      "default": "./dist/lint/index.js"
+    }
   },
   "files": [
     "dist",
@@ -85,7 +90,7 @@
     "prebuild": "npm run clean && npm run clean:framework-proxies && node scripts/generate-icon-catalog.mjs",
     "pretypecheck": "node scripts/generate-icon-catalog.mjs",
     "pretest": "node scripts/generate-icon-catalog.mjs",
-    "build": "stencil build && node scripts/verify-framework-proxies.mjs && node scripts/patch-index-types.mjs && node scripts/verify-icons-externalized.mjs && node scripts/build-lib-exports.mjs && node scripts/build-style-exports.mjs && node scripts/build-framework-exports.mjs && node scripts/build-registry.mjs && node scripts/build-agent-manifest.mjs && node scripts/build-mcp.mjs && node scripts/verify-framework-proxies.mjs && node scripts/write-build-stamp.mjs",
+    "build": "stencil build && node scripts/verify-framework-proxies.mjs && node scripts/patch-index-types.mjs && node scripts/verify-icons-externalized.mjs && node scripts/build-lib-exports.mjs && node scripts/build-style-exports.mjs && node scripts/build-framework-exports.mjs && node scripts/build-registry.mjs && node scripts/build-agent-manifest.mjs && node scripts/build-lint.mjs && node scripts/build-mcp.mjs && node scripts/verify-framework-proxies.mjs && node scripts/write-build-stamp.mjs",
     "verify:pack": "node scripts/verify-framework-proxies.mjs && node scripts/verify-npm-pack.mjs && node scripts/verify-package-imports.mjs",
     "verify:local": "npm run format:check && npm run typecheck && npm run typecheck:storybook && npm run lint && npm test && npm run build && npm run agent:validate && npm run verify:pack",
     "verify:local:full": "npm run verify:local && npm run test:e2e:chromium",
@@ -114,8 +119,8 @@
     "clean:framework-proxies": "node scripts/clean-framework-proxies.mjs",
     "typecheck": "tsc --noEmit",
     "typecheck:storybook": "tsc -p tsconfig.storybook-tests.json",
-    "lint": "eslint src/ .storybook/vitest.setup.ts vitest.config.ts tests/ci-browser-scope.test.ts && npm run lint:css",
-    "lint:css": "stylelint \"src/wc/components/**/*.css\" \"src/wc/styles/**/*.css\" \"src/wc/utils/**/*.css\"",
+    "lint": "eslint src/ .storybook/vitest.setup.ts vitest.config.ts tests/ci-browser-scope.test.ts",
+    "lint:css": "eslint \"src/wc/components/**/*.css\" \"src/wc/styles/**/*.css\" \"src/wc/utils/**/*.css\"",
     "registry:build": "node scripts/build-registry.mjs",
     "agent:validate": "node scripts/validate-agent-contract.mjs",
     "agent:validate:trilogy": "node scripts/validate-trilogy-manifests.mjs",
@@ -126,6 +131,8 @@
     "@angular/forms": ">=19 <23",
     "@ds-mo/icons": "^8.1.0",
     "@ds-mo/tokens": "^6.5.1",
+    "@eslint/css": "^2.0.0",
+    "eslint": "^10.7.0",
     "react": "^18 || ^19",
     "react-dom": "^18 || ^19",
     "rxjs": "^7.8.0",
@@ -149,6 +156,12 @@
     },
     "vue": {
       "optional": true
+    },
+    "eslint": {
+      "optional": true
+    },
+    "@eslint/css": {
+      "optional": true
     }
   },
   "devDependencies": {
@@ -157,8 +170,14 @@
     "@angular/core": "^22.0.7",
     "@angular/forms": "^22.0.7",
     "@axe-core/playwright": "^4.12.1",
+    "@csstools/css-calc": "^3.3.0",
+    "@csstools/css-parser-algorithms": "^4.0.0",
+    "@csstools/css-syntax-patches-for-csstree": "^1.1.7",
+    "@csstools/css-tokenizer": "^4.0.0",
+    "@csstools/media-query-list-parser": "^5.0.0",
     "@ds-mo/icons": "^8.1.0",
     "@ds-mo/tokens": "^6.5.1",
+    "@eslint/css": "^2.0.0",
     "@eslint/js": "^10.0.1",
     "@fontsource-variable/inter": "^5.3.0",
     "@fontsource/fira-code": "^5.3.0",
@@ -183,18 +202,24 @@
     "@vitest/browser-playwright": "^4.1.10",
     "ajv": "^8.20.0",
     "axe-core": "^4.12.1",
+    "colord": "^2.9.3",
     "concurrently": "^10.0.3",
+    "css-tree": "^3.2.1",
     "esbuild": "^0.28.1",
     "eslint": "^10.7.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^17.7.0",
+    "html-tags": "^5.1.0",
     "lit": "^3.3.3",
+    "mathml-tag-names": "^4.0.0",
+    "postcss": "^8.5.26",
+    "postcss-selector-parser": "^7.1.4",
+    "postcss-value-parser": "^4.2.0",
     "prettier": "3.8.3",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "storybook": "^10.5.0",
-    "stylelint": "^17.14.0",
-    "stylelint-config-standard": "^40.0.0",
+    "svg-tags": "^1.0.0",
     "tsx": "^4.23.0",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.63.0",

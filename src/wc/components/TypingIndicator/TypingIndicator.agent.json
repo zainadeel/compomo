@@ -15,13 +15,8 @@
     "An operation is loading or streaming a response; use Loader or the owning region's busy state.",
     "The status represents persisted message content; use Message and MessageBubble."
   ],
-  "commonlyComposedWith": [
-    "component:ds-message",
-    "component:ds-message-scroller"
-  ],
-  "patterns": [
-    "pattern:conversation"
-  ],
+  "commonlyComposedWith": ["component:ds-message", "component:ds-message-scroller"],
+  "patterns": ["pattern:conversation"],
   "accessibility": [
     "Provide concise localized status text; the standard label is Typing followed by a single Unicode ellipsis.",
     "The polite atomic status announces typing without representing it as a message bubble."
@@ -38,5 +33,10 @@
       "label": "Storybook example",
       "path": "src/wc/components/TypingIndicator/TypingIndicator.stories.ts"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "The indicator composes loader and text recipes inside an application-positioned host.",
+    "protected": [],
+    "customProperties": []
+  }
 }

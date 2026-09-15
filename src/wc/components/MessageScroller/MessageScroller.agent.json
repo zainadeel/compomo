@@ -43,5 +43,16 @@
       "label": "Storybook examples",
       "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "The application owns host dimensions and may customize the transcript measure through its public hook.",
+    "protected": [],
+    "customProperties": [
+      {
+        "name": "--ds-message-scroller-content-max-width",
+        "source": "src/wc/components/MessageScroller/MessageScroller.css",
+        "reason": "Readable transcript measure inside a full-width scrollport."
+      }
+    ]
+  }
 }

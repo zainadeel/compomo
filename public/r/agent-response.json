@@ -56,7 +56,18 @@
           "label": "Prose distribution decision",
           "path": "docs/prose-foundation.md"
         }
-      ]
+      ],
+      "styling": {
+        "rationale": "Structured response parts own their recipes; the host permits application layout and the public prose measure.",
+        "protected": [],
+        "customProperties": [
+          {
+            "name": "--ds-prose-text-max-inline-size",
+            "source": "src/wc/styles/prose.css",
+            "reason": "Application-owned readable prose measure."
+          }
+        ]
+      }
     },
     "api": {
       "props": {

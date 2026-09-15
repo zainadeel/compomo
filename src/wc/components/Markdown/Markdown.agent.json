@@ -1,1 +1,58 @@
-{"$schema":"../../../../agent/schemas/component-agent.schema.json","schemaVersion":"1.0.0","id":"component:ds-markdown","kind":"component","package":"@ds-mo/ui","tag":"ds-markdown","audience":"specialized","status":"experimental","summary":"Optional safe CommonMark and GFM renderer that emits semantic nodes without raw HTML injection and consumes the shared prose CSS contract.","useWhen":["A serializable Markdown string needs the design system's safe, opinionated renderer for headings, lists, links, tables, tasks, quotes, and code."],"avoidWhen":["The application already owns a safe semantic-DOM renderer and only needs @ds-mo/ui/prose.css.","The application needs arbitrary HTML, custom plugins, or a full document CMS renderer."],"commonlyComposedWith":["component:ds-agent-response","component:ds-code-block"],"patterns":["pattern:agent-chat"],"accessibility":["Semantic parsed elements preserve heading, list, table, quote, and code relationships.","Raw HTML is ignored and unsafe link schemes are not made interactive.","Link text must remain descriptive in authored content."],"states":["Streaming updates are coalesced to one parse and render per animation frame.","Typography, rhythm, opt-out, and overflow styling come from the renderer-neutral .ds-prose source rather than a Markdown-only recipe."],"responsiveBehavior":["Tables and code scroll horizontally instead of forcing the transcript wider."],"references":[{"label":"Storybook examples","path":"src/wc/components/AgentResponse/AgentResponse.stories.ts"},{"label":"Prose distribution decision","path":"docs/prose-foundation.md"}]}
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-markdown",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-markdown",
+  "audience": "specialized",
+  "status": "experimental",
+  "summary": "Optional safe CommonMark and GFM renderer that emits semantic nodes without raw HTML injection and consumes the shared prose CSS contract.",
+  "useWhen": [
+    "A serializable Markdown string needs the design system's safe, opinionated renderer for headings, lists, links, tables, tasks, quotes, and code."
+  ],
+  "avoidWhen": [
+    "The application already owns a safe semantic-DOM renderer and only needs @ds-mo/ui/prose.css.",
+    "The application needs arbitrary HTML, custom plugins, or a full document CMS renderer."
+  ],
+  "commonlyComposedWith": ["component:ds-agent-response", "component:ds-code-block"],
+  "patterns": ["pattern:agent-chat"],
+  "accessibility": [
+    "Semantic parsed elements preserve heading, list, table, quote, and code relationships.",
+    "Raw HTML is ignored and unsafe link schemes are not made interactive.",
+    "Link text must remain descriptive in authored content."
+  ],
+  "states": [
+    "Streaming updates are coalesced to one parse and render per animation frame.",
+    "Typography, rhythm, opt-out, and overflow styling come from the renderer-neutral .ds-prose source rather than a Markdown-only recipe."
+  ],
+  "responsiveBehavior": [
+    "Tables and code scroll horizontally instead of forcing the transcript wider."
+  ],
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/AgentResponse/AgentResponse.stories.ts"
+    },
+    {
+      "label": "Prose distribution decision",
+      "path": "docs/prose-foundation.md"
+    }
+  ],
+  "styling": {
+    "rationale": "The public prose stylesheet intentionally owns typography and exposes consumer customization.",
+    "protected": [],
+    "customProperties": [
+      {
+        "name": "--ds-prose-text-max-inline-size",
+        "source": "src/wc/styles/prose.css",
+        "reason": "Application-owned readable prose measure."
+      },
+      {
+        "name": "--ds-code-font-variant-ligatures",
+        "source": "src/wc/styles/prose.css",
+        "reason": "Application-owned code ligature preference."
+      }
+    ]
+  }
+}

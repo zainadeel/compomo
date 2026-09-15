@@ -38,5 +38,10 @@
       "label": "Message metadata composition",
       "path": "src/wc/components/Message/Message.stories.ts"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "The application may position the action group; child buttons own their appearance.",
+    "protected": [],
+    "customProperties": []
+  }
 }

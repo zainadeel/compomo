@@ -5,18 +5,18 @@ live in source, package manifests, compiler output, and generated registries.
 
 ## Consumers
 
-| Need                                           | Read                                                                           |
-| ---------------------------------------------- | ------------------------------------------------------------------------------ |
-| Install and first component                    | [README](../README.md), [Storybook introduction](../src/docs/Introduction.mdx) |
+| Need                                                | Read                                                                           |
+| --------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Install and first component                         | [README](../README.md), [Storybook introduction](../src/docs/Introduction.mdx) |
 | Angular, React, Vue, routing, forms, or first paint | [Framework integration](framework-integration.md)                              |
-| Color                                          | [Color usage](../src/docs/ColorUsage.mdx)                                      |
-| Typography                                     | [Typography usage](../src/docs/TypographyUsage.mdx)                            |
-| Font ownership and loading                     | [Font ownership](font-ownership.md)                                             |
-| Elevation                                      | [Elevation usage](../src/docs/ElevationUsage.mdx)                              |
-| Shared layout recipes                          | [Layout recipes](../src/docs/LayoutRecipes.mdx)                                |
-| Selection composition                          | [Selection patterns](../src/docs/SelectionPatterns.mdx)                        |
-| Semantic prose                                 | [Prose foundation](prose-foundation.md)                                        |
-| Upgrade to v13                                 | [v13 migration guide](migrations/v13.md)                                       |
+| Color                                               | [Color usage](../src/docs/ColorUsage.mdx)                                      |
+| Typography                                          | [Typography usage](../src/docs/TypographyUsage.mdx)                            |
+| Font ownership and loading                          | [Font ownership](font-ownership.md)                                            |
+| Elevation                                           | [Elevation usage](../src/docs/ElevationUsage.mdx)                              |
+| Shared layout recipes                               | [Layout recipes](../src/docs/LayoutRecipes.mdx)                                |
+| Selection composition                               | [Selection patterns](../src/docs/SelectionPatterns.mdx)                        |
+| Semantic prose                                      | [Prose foundation](prose-foundation.md)                                        |
+| Upgrade to v13                                      | [v13 migration guide](migrations/v13.md)                                       |
 
 Component props, events, methods, slots, stories, and intent are discoverable
 from Storybook and `public/r/`.
@@ -54,3 +54,5 @@ from Storybook and `public/r/`.
 - Historical changes belong in `CHANGELOG.md` and Git history.
 
 Delete stale guidance instead of labeling it “legacy” indefinitely.
+
+- [Design-system linting](maintainers/linting.md): optional consumer setup and maintainer rules.

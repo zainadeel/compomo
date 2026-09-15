@@ -1,0 +1,138 @@
+import { describe, it } from 'node:test';
+import assert from 'node:assert/strict';
+import { Linter } from 'eslint';
+import css from '@eslint/css';
+import rules from '../lint/css/plugin.js';
+const ruleName = 'compomo/no-ds-text-metric-overrides';
+const reducedMotionRuleName = 'compomo/require-reduced-motion';
+const rawOpacityRuleName = 'compomo/no-raw-opacity';
+function check(code: string, rule: string, filename = 'src/wc/components/Example/Example.css') {
+  return new Linter()
+    .verify(
+      code,
+      [
+        {
+          files: ['**/*.css'],
+          language: 'css/css',
+          plugins: { css, compomo: { rules } },
+          rules: { [rule]: ['warn', true] },
+        },
+      ] as any,
+      { filename }
+    )
+    .map(m => ({ ...m, rule: m.ruleId }));
+}
+const lint = (code: string, filename?: string) => check(code, ruleName, filename);
+const lintMotion = (code: string) => check(code, reducedMotionRuleName);
+const lintOpacity = (code: string) => check(code, rawOpacityRuleName);
+
+describe(ruleName, () => {
+  it('rejects typography metric overrides on a ds-text consumer', async () => {
+    const warnings = await lint(`
+      ds-text.user-initial,
+      ds-text.user-initial.ds-text--caption {
+        line-height: 1;
+        font-size: 10px;
+      }
+    `);
+
+    assert.deepEqual(
+      warnings.map(warning => warning.rule),
+      [ruleName, ruleName]
+    );
+  });
+
+  it('allows consumer layout and color declarations', async () => {
+    const warnings = await lint(`
+      ds-text.card-title {
+        display: flex;
+        align-items: center;
+        padding-inline: var(--dimension-space-100);
+        color: var(--color-foreground-primary);
+      }
+    `);
+
+    assert.equal(warnings.length, 0);
+  });
+
+  it('allows ds-text to own its metrics inside the Text component', async () => {
+    const warnings = await lint(
+      `.ds-text__element { font: inherit; line-height: inherit; }`,
+      'src/wc/components/Text/Text.css'
+    );
+
+    assert.equal(warnings.length, 0);
+  });
+});
+
+describe(reducedMotionRuleName, () => {
+  it('rejects animation without a reduced-motion override', async () => {
+    const warnings = await lintMotion(`
+      .loader { animation: spin var(--effect-motion-short-3) infinite; }
+    `);
+    assert.deepEqual(
+      warnings.map(warning => warning.rule),
+      [reducedMotionRuleName]
+    );
+  });
+
+  it('rejects spatial and opacity transitions without an override', async () => {
+    const warnings = await lintMotion(`
+      .drawer { transition: max-width var(--effect-motion-medium-1), opacity var(--effect-motion-short-2); }
+      .thumb { transition-property: transform; }
+    `);
+    assert.deepEqual(
+      warnings.map(warning => warning.rule),
+      [reducedMotionRuleName, reducedMotionRuleName]
+    );
+  });
+
+  it('allows color-only micro-transitions', async () => {
+    const warnings = await lintMotion(`
+      .button {
+        transition:
+          color var(--effect-motion-short-2),
+          background-color var(--effect-motion-short-2),
+          border-color var(--effect-motion-short-2);
+      }
+    `);
+    assert.equal(warnings.length, 0);
+  });
+
+  it('allows motion when the stylesheet defines a reduced-motion override', async () => {
+    const warnings = await lintMotion(`
+      .thumb { transition: transform var(--effect-motion-short-3); }
+      @media (prefers-reduced-motion: reduce) {
+        .thumb { transition: none; }
+      }
+    `);
+    assert.equal(warnings.length, 0);
+  });
+});
+
+describe(rawOpacityRuleName, () => {
+  it('rejects raw intermediate opacity values', async () => {
+    const warnings = await lintOpacity(`
+      .decimal { opacity: 0.5; }
+      .short-decimal { opacity: .5; }
+      .percentage { opacity: 50%; }
+    `);
+
+    assert.deepEqual(
+      warnings.map(warning => warning.rule),
+      [rawOpacityRuleName, rawOpacityRuleName, rawOpacityRuleName]
+    );
+  });
+
+  it('allows structural endpoints, global values, and token-backed opacity', async () => {
+    const warnings = await lintOpacity(`
+      .hidden { opacity: 0; }
+      .visible { opacity: 1; }
+      .inactive { opacity: var(--effect-opacity-medium); }
+      .configurable { opacity: var(--component-opacity, var(--effect-opacity-medium)); }
+      .inherited { opacity: inherit; }
+    `);
+
+    assert.equal(warnings.length, 0);
+  });
+});

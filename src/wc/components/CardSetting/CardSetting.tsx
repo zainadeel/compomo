@@ -66,7 +66,7 @@ export class CardSetting {
         }}
       >
         <header class="card-setting__header ds-chrome-header">
-          {/* eslint-disable-next-line local/prefer-direct-ds-text -- Shared header copy owns the control-density geometry around the semantic heading. */}
+          {/* eslint-disable-next-line compomo/prefer-direct-ds-text -- Shared header copy owns the control-density geometry around the semantic heading. */}
           <div class="card-setting__copy ds-chrome-header__copy ds-control--md">
             <ds-text
               class="card-setting__title ds-chrome-header__heading"

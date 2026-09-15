@@ -90,7 +90,48 @@
           "label": "Cross-browser form and interaction coverage",
           "path": "tests/e2e/forms.spec.ts"
         }
-      ]
+      ],
+      "styling": {
+        "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+        "protected": [
+          {
+            "properties": [
+              "font",
+              "font-size",
+              "font-weight",
+              "font-family",
+              "line-height",
+              "letter-spacing",
+              "padding",
+              "border-radius"
+            ],
+            "reason": "The field primitive owns its density and selection anatomy; use size and presentation props without replacing the recipe.",
+            "props": [
+              "size",
+              "orientation"
+            ]
+          },
+          {
+            "properties": [
+              "background",
+              "border",
+              "box-shadow",
+              "color"
+            ],
+            "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+            "props": [
+              "size"
+            ]
+          }
+        ],
+        "customProperties": [
+          {
+            "name": "--ds-slider-vertical-length",
+            "source": "src/wc/components/Slider/Slider.css",
+            "reason": "Application-owned length of a vertical slider."
+          }
+        ]
+      }
     },
     "api": {
       "props": {

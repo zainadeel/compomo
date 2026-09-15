@@ -377,9 +377,9 @@ ds-text.panel-nav__group-label {
   height: var(--typography-lineheight-md, 20px);
   opacity: 1;
   /* Gradient wipe: mask sweeps left-to-right on expand, right-to-left on collapse */
-  /* stylelint-disable-next-line color-named -- mask luminance stops, not theme colors */
+  /* eslint-disable-next-line compomo/color-named -- mask luminance stops, not theme colors */
   mask-image: linear-gradient(to right, black 50%, transparent 100%);
-  /* stylelint-disable-next-line color-named -- mask luminance stops, not theme colors */
+  /* eslint-disable-next-line compomo/color-named -- mask luminance stops, not theme colors */
   -webkit-mask-image: linear-gradient(to right, black 50%, transparent 100%);
   mask-size: 200% 100%;
   -webkit-mask-size: 200% 100%;
@@ -638,7 +638,7 @@ ds-text.panel-nav__user-initial.ds-text--caption {
   content: '';
   position: absolute;
   inset: 0;
-  /* stylelint-disable-next-line color-named -- near-invisible hit-test fill; not a theme color */
+  /* eslint-disable-next-line compomo/color-named -- near-invisible hit-test fill; not a theme color */
   background: rgba(0, 0, 0, 0.001);
 }
 

@@ -1,1 +1,57 @@
-{"$schema":"../../../../agent/schemas/component-agent.schema.json","schemaVersion":"1.0.0","id":"component:ds-code-block","kind":"component","package":"@ds-mo/ui","tag":"ds-code-block","audience":"general","status":"experimental","summary":"Scrollable code surface with optional language or filename context and copy action.","useWhen":["A message or document displays fenced code that readers may copy."],"avoidWhen":["A live editor, terminal, diff viewer, or syntax-highlighting environment is required."],"commonlyComposedWith":["component:ds-markdown","component:ds-button-unfilled"],"accessibility":["The copy action has matching accessible-name and visible-tooltip status wording, and the code remains selectable text.","Language and filename labels supplement rather than replace the code content.","The semantic code-family token retains a system-monospace fallback when an application does not load Fira Code; applications may disable programming ligatures through the shared code-surface custom property."],"states":["Applications load font assets once at their root. The component consumes --typography-font-family-code and never fetches or packages a font."],"responsiveBehavior":["Long lines scroll horizontally and do not widen the owning transcript."],"references":[{"label":"Storybook examples","path":"src/wc/components/CodeBlock/CodeBlock.stories.ts"},{"label":"Font ownership and loading","path":"docs/font-ownership.md"}]}
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-code-block",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-code-block",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Scrollable code surface with optional language or filename context and copy action.",
+  "useWhen": ["A message or document displays fenced code that readers may copy."],
+  "avoidWhen": [
+    "A live editor, terminal, diff viewer, or syntax-highlighting environment is required."
+  ],
+  "commonlyComposedWith": ["component:ds-markdown", "component:ds-button-unfilled"],
+  "accessibility": [
+    "The copy action has matching accessible-name and visible-tooltip status wording, and the code remains selectable text.",
+    "Language and filename labels supplement rather than replace the code content.",
+    "The semantic code-family token retains a system-monospace fallback when an application does not load Fira Code; applications may disable programming ligatures through the shared code-surface custom property."
+  ],
+  "states": [
+    "Applications load font assets once at their root. The component consumes --typography-font-family-code and never fetches or packages a font."
+  ],
+  "responsiveBehavior": ["Long lines scroll horizontally and do not widen the owning transcript."],
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/CodeBlock/CodeBlock.stories.ts"
+    },
+    {
+      "label": "Font ownership and loading",
+      "path": "docs/font-ownership.md"
+    }
+  ],
+  "styling": {
+    "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+    "protected": [
+      {
+        "properties": ["background", "border", "box-shadow", "color"],
+        "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+        "props": []
+      },
+      {
+        "properties": ["border-radius"],
+        "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+        "props": []
+      }
+    ],
+    "customProperties": [
+      {
+        "name": "--ds-code-font-variant-ligatures",
+        "source": "src/wc/components/CodeBlock/CodeBlock.css",
+        "reason": "Application-owned code ligature preference."
+      }
+    ]
+  }
+}

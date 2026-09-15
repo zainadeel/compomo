@@ -79,7 +79,7 @@ export class CardChart {
         }}
       >
         <header class="card-chart__header ds-chrome-header">
-          {/* eslint-disable-next-line local/prefer-direct-ds-text -- Shared header copy owns the control-density geometry around the semantic heading. */}
+          {/* eslint-disable-next-line compomo/prefer-direct-ds-text -- Shared header copy owns the control-density geometry around the semantic heading. */}
           <div class="card-chart__copy ds-chrome-header__copy ds-control--md">
             <ds-text
               class="card-chart__title ds-chrome-header__heading"

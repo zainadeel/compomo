@@ -44,7 +44,36 @@
           "label": "Font ownership and loading",
           "path": "docs/font-ownership.md"
         }
-      ]
+      ],
+      "styling": {
+        "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+        "protected": [
+          {
+            "properties": [
+              "background",
+              "border",
+              "box-shadow",
+              "color"
+            ],
+            "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+            "props": []
+          },
+          {
+            "properties": [
+              "border-radius"
+            ],
+            "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+            "props": []
+          }
+        ],
+        "customProperties": [
+          {
+            "name": "--ds-code-font-variant-ligatures",
+            "source": "src/wc/components/CodeBlock/CodeBlock.css",
+            "reason": "Application-owned code ligature preference."
+          }
+        ]
+      }
     },
     "api": {
       "props": {

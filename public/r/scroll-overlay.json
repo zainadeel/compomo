@@ -54,7 +54,12 @@
           "label": "Storybook examples",
           "path": "src/wc/components/ScrollOverlay/ScrollOverlay.stories.ts"
         }
-      ]
+      ],
+      "styling": {
+        "rationale": "The application explicitly owns responsive sizing and overlay insets.",
+        "protected": [],
+        "customProperties": []
+      }
     },
     "api": {
       "props": {

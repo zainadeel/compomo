@@ -78,7 +78,12 @@
           "label": "Rendered interaction tests",
           "path": "tests/e2e/chart-legend.spec.ts"
         }
-      ]
+      ],
+      "styling": {
+        "rationale": "Legend content owns internal rows; application layout may constrain and position its host.",
+        "protected": [],
+        "customProperties": []
+      }
     },
     "api": {
       "props": {

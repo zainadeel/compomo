@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createLintContracts } from './lint-contracts.mjs';
 import Ajv2020 from 'ajv/dist/2020.js';
 import {
   COMPILER_DOCS_PATH,
@@ -48,6 +49,11 @@ export function validateAgentContract() {
   const inventory = discoverComponents(ROOT);
   const knownComponents = new Map(inventory.map(component => [component.id, component]));
   const errors = [];
+  try {
+    createLintContracts({ requireCompiler: true });
+  } catch (error) {
+    errors.push(error.message);
+  }
   const ids = new Set();
   const componentDocuments = walk('src/wc/components', '.agent.json');
   const patternDocuments = walk('agent/patterns', '.agent.json');

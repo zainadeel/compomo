@@ -1,0 +1,65 @@
+import { executeRule } from '../../runtime.js';
+import isStandardSyntaxComment from '../../utils/isStandardSyntaxComment.mjs';
+import report from '../../utils/report.mjs';
+import ruleMessages from '../../utils/ruleMessages.mjs';
+import validateOptions from '../../utils/validateOptions.mjs';
+
+const ruleName = 'comment-no-empty';
+
+const messages = ruleMessages(ruleName, {
+  rejected: 'Empty comment',
+});
+
+const meta = {
+  url: 'https://stylelint.io/user-guide/rules/comment-no-empty',
+};
+
+/** @type {import('stylelint').CoreRules[ruleName]} */
+const rule = {
+  meta: {
+    type: 'problem',
+    docs: { url: meta.url },
+    schema: [{}, {}],
+    ...(meta.fixable ? { fixable: 'code' } : {}),
+  },
+  create(eslintContext) {
+    const primary = eslintContext.options[0];
+
+    return {
+      'StyleSheet:exit'() {
+        return executeRule(eslintContext, (root, result) => {
+          const validOptions = validateOptions(result, ruleName, { actual: primary });
+
+          if (!validOptions) {
+            return;
+          }
+
+          root.walkComments(comment => {
+            // To ignore non-standard comments
+            if (!isStandardSyntaxComment(comment)) {
+              return;
+            }
+
+            // To ignore comments that are not empty
+            if (comment.text && comment.text.length !== 0) {
+              return;
+            }
+
+            report({
+              message: messages.rejected,
+              messageArgs: [],
+              node: comment,
+              result,
+              ruleName,
+            });
+          });
+        });
+      },
+    };
+  },
+};
+
+rule.ruleName = ruleName;
+rule.messages = messages;
+
+export default rule;

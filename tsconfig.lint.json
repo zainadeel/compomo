@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "skipLibCheck": true,
+    "outDir": "dist/lint-types",
+    "rootDir": "lint"
+  },
+  "include": ["lint/public-api.ts", "lint/types.ts"]
+}

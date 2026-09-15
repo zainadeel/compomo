@@ -64,7 +64,12 @@
               "label": "Storybook examples",
               "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "Disclosure composition owns its rows; the host remains an application layout box.",
+            "protected": [],
+            "customProperties": []
+          }
         },
         "props": {
           "heading": {
@@ -157,7 +162,12 @@
               "label": "Agent chat composition",
               "path": "agent/patterns/agent-chat/pattern.agent.json"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "Question and action components own their recipes; the questionnaire host remains a responsive layout box.",
+            "protected": [],
+            "customProperties": []
+          }
         },
         "props": {
           "allowCancel": {
@@ -280,7 +290,18 @@
               "label": "Prose distribution decision",
               "path": "docs/prose-foundation.md"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "Structured response parts own their recipes; the host permits application layout and the public prose measure.",
+            "protected": [],
+            "customProperties": [
+              {
+                "name": "--ds-prose-text-max-inline-size",
+                "source": "src/wc/styles/prose.css",
+                "reason": "Application-owned readable prose measure."
+              }
+            ]
+          }
         },
         "props": {
           "author": {
@@ -383,7 +404,12 @@
               "label": "Source safety and disclosure stories",
               "path": "src/wc/components/AgentSourceList/AgentSourceList.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "Source rows own their recipes; the disclosure host remains an application layout box.",
+            "protected": [],
+            "customProperties": []
+          }
         },
         "props": {
           "heading": {
@@ -477,7 +503,12 @@
               "label": "Font ownership and loading",
               "path": "docs/font-ownership.md"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "Slotted tool summaries and results retain application-owned styling and layout.",
+            "protected": [],
+            "customProperties": []
+          }
         },
         "props": {
           "error": {
@@ -578,7 +609,12 @@
               "label": "Storybook examples",
               "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "Attachment items own their recipes; the list host permits application layout.",
+            "protected": [],
+            "customProperties": []
+          }
         },
         "props": {
           "items": {
@@ -647,7 +683,27 @@
               "label": "Storybook examples",
               "path": "src/wc/components/Avatar/Avatar.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "width",
+                  "height",
+                  "min-width",
+                  "min-height",
+                  "max-width",
+                  "max-height"
+                ],
+                "reason": "The primitive owns its size recipe; select size and position it through the parent layout.",
+                "props": [
+                  "size"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "icon": {
@@ -770,7 +826,35 @@
               "label": "Storybook examples",
               "path": "src/wc/components/Badge/Badge.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "background",
+                  "surface",
+                  "variant",
+                  "hasRing"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "background": {
@@ -915,7 +999,33 @@
               "label": "Application shell contract",
               "path": "agent/patterns/application-shell/pattern.agent.json"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "intent",
+                  "contrast"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "announcement": {
@@ -1062,7 +1172,30 @@
               "label": "Rendered behavior coverage",
               "path": "tests/e2e/bar-action.spec.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": []
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "clearLabel": {
@@ -1211,7 +1344,12 @@
               "label": "Surface ownership and trigger state",
               "path": "src/docs/SurfaceOwnership.mdx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The host participates in shell-owned layout; internal tabs and chrome own their recipes.",
+            "protected": [],
+            "customProperties": []
+          }
         },
         "props": {
           "basePath": {
@@ -1373,7 +1511,30 @@
               "label": "Surface ownership and trigger state",
               "path": "src/docs/SurfaceOwnership.mdx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": []
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "actionItems": {
@@ -1585,7 +1746,32 @@
               "label": "Surface ownership and trigger state",
               "path": "src/docs/SurfaceOwnership.mdx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "variant"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "actionItems": {
@@ -1793,7 +1979,30 @@
               "label": "Cross-browser workflow behavior",
               "path": "tests/e2e/bar-workflow.spec.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": []
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "exitAriaLabel": {
@@ -1954,7 +2163,12 @@
               "label": "Expanded page-header composition",
               "path": "src/wc/components/BarTitle/BarTitle.tsx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The breadcrumb owns internal truncation; the application supplies the host width and placement.",
+            "protected": [],
+            "customProperties": []
+          }
         },
         "props": {
           "ariaLabel": {
@@ -2096,7 +2310,74 @@
               "label": "Surface ownership and trigger state",
               "path": "src/docs/SurfaceOwnership.mdx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "font",
+                  "font-size",
+                  "font-weight",
+                  "font-family",
+                  "line-height",
+                  "letter-spacing",
+                  "height",
+                  "min-height",
+                  "max-height",
+                  "padding",
+                  "gap"
+                ],
+                "reason": "The control density is one atomic recipe; use the size and inset props instead of replacing internal metrics.",
+                "props": [
+                  "size",
+                  "isInset",
+                  "insetDepth",
+                  "labelEmphasis"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its corner treatment; select the supported radius treatment.",
+                "props": [
+                  "rounded",
+                  "size"
+                ]
+              },
+              {
+                "properties": [
+                  "width",
+                  "min-width",
+                  "max-width"
+                ],
+                "reason": "The button owns hug/fill sizing and its minimum square geometry; use width and constrain the surrounding layout.",
+                "props": [
+                  "width",
+                  "size"
+                ]
+              },
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "intent",
+                  "contrast",
+                  "background",
+                  "variant",
+                  "hasBorder",
+                  "size"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "ariaLabel": {
@@ -2327,7 +2608,70 @@
               "label": "Surface ownership and trigger state",
               "path": "src/docs/SurfaceOwnership.mdx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "font",
+                  "font-size",
+                  "font-weight",
+                  "font-family",
+                  "line-height",
+                  "letter-spacing",
+                  "height",
+                  "min-height",
+                  "max-height",
+                  "padding",
+                  "gap"
+                ],
+                "reason": "The control density is one atomic recipe; use the size and inset props instead of replacing internal metrics.",
+                "props": [
+                  "size",
+                  "isInset",
+                  "insetDepth",
+                  "labelEmphasis"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its corner treatment; select the supported radius treatment.",
+                "props": [
+                  "rounded",
+                  "size"
+                ]
+              },
+              {
+                "properties": [
+                  "width",
+                  "min-width",
+                  "max-width"
+                ],
+                "reason": "The button owns hug/fill sizing and its minimum square geometry; use width and constrain the surrounding layout.",
+                "props": [
+                  "width",
+                  "size"
+                ]
+              },
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "variant",
+                  "size"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "ariaLabel": {
@@ -2557,7 +2901,72 @@
               "label": "Surface ownership and trigger state",
               "path": "src/docs/SurfaceOwnership.mdx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "font",
+                  "font-size",
+                  "font-weight",
+                  "font-family",
+                  "line-height",
+                  "letter-spacing",
+                  "height",
+                  "min-height",
+                  "max-height",
+                  "padding",
+                  "gap"
+                ],
+                "reason": "The control density is one atomic recipe; use the size and inset props instead of replacing internal metrics.",
+                "props": [
+                  "size",
+                  "isInset",
+                  "insetDepth",
+                  "labelEmphasis"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its corner treatment; select the supported radius treatment.",
+                "props": [
+                  "rounded",
+                  "size"
+                ]
+              },
+              {
+                "properties": [
+                  "width",
+                  "min-width",
+                  "max-width"
+                ],
+                "reason": "The button owns hug/fill sizing and its minimum square geometry; use width and constrain the surrounding layout.",
+                "props": [
+                  "width",
+                  "size"
+                ]
+              },
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "background",
+                  "variant",
+                  "hasBorder",
+                  "size"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "activeFill": {
@@ -2788,7 +3197,20 @@
               "label": "Storybook examples",
               "path": "src/wc/components/Calendar/Calendar.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "gap"
+                ],
+                "reason": "The component owns spacing between its immediate content regions; the application controls surrounding margins and placement.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "autoFocus": {
@@ -2921,7 +3343,30 @@
               "label": "Rendered semantics, interaction, and geometry coverage",
               "path": "tests/e2e/card-action-center.spec.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": []
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "emptyMessage": {
@@ -3026,7 +3471,42 @@
               "label": "Storybook examples",
               "path": "src/wc/components/CardChart/CardChart.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "variant"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              },
+              {
+                "properties": [
+                  "width",
+                  "min-height"
+                ],
+                "reason": "Card width selects the component geometry; use cardWidth and let the parent constrain available space.",
+                "props": [
+                  "cardWidth"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "cardWidth": {
@@ -3157,7 +3637,42 @@
               "label": "Rendered navigation and interaction coverage",
               "path": "tests/e2e/card-navigation.spec.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "variant"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              },
+              {
+                "properties": [
+                  "width",
+                  "min-height"
+                ],
+                "reason": "Card width selects the component geometry; use cardWidth and let the parent constrain available space.",
+                "props": [
+                  "cardWidth"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "cardWidth": {
@@ -3307,7 +3822,32 @@
               "label": "Trend resolution unit coverage",
               "path": "tests/metric-change.test.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "variant"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "comparisonLabel": {
@@ -3476,7 +4016,40 @@
               "label": "Cross-browser shell and action coverage",
               "path": "tests/e2e/card-setting.spec.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": []
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              },
+              {
+                "properties": [
+                  "width",
+                  "min-height"
+                ],
+                "reason": "Card width selects the component geometry; use cardWidth and let the parent constrain available space.",
+                "props": [
+                  "cardWidth"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "cancelLabel": {
@@ -3579,7 +4152,30 @@
               "label": "Storybook examples",
               "path": "src/wc/components/CardSettingsScope/CardSettingsScope.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": []
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "areaControls": {
@@ -3714,7 +4310,12 @@
               "label": "Chart guide",
               "path": "src/docs/Charts.mdx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The renderer observes the host; application-supplied dimensions and chart definition remain authoritative.",
+            "protected": [],
+            "customProperties": []
+          }
         },
         "props": {
           "aspectRatio": {
@@ -3847,7 +4448,12 @@
               "label": "Rendered interaction tests",
               "path": "tests/e2e/chart-legend.spec.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "Legend content owns internal rows; application layout may constrain and position its host.",
+            "protected": [],
+            "customProperties": []
+          }
         },
         "props": {
           "activeLabel": {
@@ -3994,7 +4600,43 @@
               "label": "Cross-browser form and accessibility coverage",
               "path": "tests/e2e/forms.spec.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "font",
+                  "font-size",
+                  "font-weight",
+                  "font-family",
+                  "line-height",
+                  "letter-spacing",
+                  "padding",
+                  "border-radius"
+                ],
+                "reason": "The field primitive owns its density and selection anatomy; use size and presentation props without replacing the recipe.",
+                "props": [
+                  "size",
+                  "presentation"
+                ]
+              },
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "size",
+                  "presentation"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "checked": {
@@ -4150,7 +4792,56 @@
               "label": "Storybook examples",
               "path": "src/wc/components/Chip/Chip.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "font",
+                  "font-size",
+                  "font-weight",
+                  "font-family",
+                  "line-height",
+                  "letter-spacing",
+                  "height",
+                  "min-height",
+                  "max-height",
+                  "padding",
+                  "gap"
+                ],
+                "reason": "The control density is one atomic recipe; use the size and inset props instead of replacing internal metrics.",
+                "props": [
+                  "size",
+                  "isInset",
+                  "insetDepth"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its corner treatment; select the supported radius treatment.",
+                "props": [
+                  "rounded",
+                  "size"
+                ]
+              },
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "size"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "insetDepth": {
@@ -4259,7 +4950,36 @@
               "label": "Font ownership and loading",
               "path": "docs/font-ownership.md"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": []
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": [
+              {
+                "name": "--ds-code-font-variant-ligatures",
+                "source": "src/wc/components/CodeBlock/CodeBlock.css",
+                "reason": "Application-owned code ligature preference."
+              }
+            ]
+          }
         },
         "props": {
           "code": {
@@ -4341,7 +5061,12 @@
               "label": "Storybook examples",
               "path": "src/wc/components/ConversationList/ConversationList.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The application supplies the bounded list region; internal scroll and action geometry are implementation-owned.",
+            "protected": [],
+            "customProperties": []
+          }
         },
         "props": {},
         "events": [],
@@ -4411,7 +5136,30 @@
               "label": "Storybook examples",
               "path": "src/wc/components/ConversationList/ConversationList.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": []
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "actionsOpen": {
@@ -4514,7 +5262,20 @@
               "label": "Storybook examples",
               "path": "src/wc/components/ConversationList/ConversationList.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "gap"
+                ],
+                "reason": "The component owns spacing between its immediate content regions; the application controls surrounding margins and placement.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "heading": {
@@ -4618,7 +5379,32 @@
               "label": "Shared catalog state",
               "path": "src/wc/utils/list-customizer.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "hasBorder"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "ariaLabel": {
@@ -4776,7 +5562,32 @@
               "label": "Toolbar composition owner",
               "path": "src/wc/components/DataToolbar/DataToolbar.agent.json"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "hasBorder"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "activeFilterId": {
@@ -4961,7 +5772,32 @@
               "label": "Surface ownership and trigger state",
               "path": "src/docs/SurfaceOwnership.mdx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "hasBorder"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "ariaLabel": {
@@ -5079,7 +5915,32 @@
             "component:ds-menu",
             "component:ds-data-group",
             "component:ds-tab-group"
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "hasBorder"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "activeFilterId": {
@@ -5304,7 +6165,32 @@
               "label": "Surface ownership and trigger state",
               "path": "src/docs/SurfaceOwnership.mdx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "hasBorder"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "compact": {
@@ -5476,7 +6362,32 @@
               "label": "Surface ownership and trigger state",
               "path": "src/docs/SurfaceOwnership.mdx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "hasBorder"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "ariaLabel": {
@@ -5637,7 +6548,32 @@
               "label": "Surface ownership and trigger state",
               "path": "src/docs/SurfaceOwnership.mdx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "hasBorder"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "ariaLabel": {
@@ -5756,7 +6692,20 @@
               "label": "Table composition owner",
               "path": "src/wc/components/Table/Table.agent.json"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "gap"
+                ],
+                "reason": "The component owns spacing between its immediate content regions; the application controls surrounding margins and placement.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "borderless": {
@@ -5860,7 +6809,12 @@
               "label": "Storybook examples",
               "path": "src/wc/components/Divider/Divider.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "Orientation and length are public props; the host supports application layout around the internal divider.",
+            "protected": [],
+            "customProperties": []
+          }
         },
         "props": {
           "background": {
@@ -5985,7 +6939,12 @@
               "label": "Shared layout recipe foundation",
               "path": "docs/layout-recipe-foundation.md"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The application explicitly owns available width, height and surrounding padding.",
+            "protected": [],
+            "customProperties": []
+          }
         },
         "props": {
           "body": {
@@ -6102,7 +7061,20 @@
               "label": "Cross-browser form and accessibility coverage",
               "path": "tests/e2e/forms.spec.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "gap"
+                ],
+                "reason": "The component owns spacing between its immediate content regions; the application controls surrounding margins and placement.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "description": {
@@ -6236,7 +7208,54 @@
               "label": "Surface ownership and trigger state",
               "path": "src/docs/SurfaceOwnership.mdx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "font",
+                  "font-size",
+                  "font-weight",
+                  "font-family",
+                  "line-height",
+                  "letter-spacing",
+                  "height",
+                  "min-height",
+                  "max-height",
+                  "padding",
+                  "gap"
+                ],
+                "reason": "The control density is one atomic recipe; use the size and inset props instead of replacing internal metrics.",
+                "props": [
+                  "size"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its corner treatment; select the supported radius treatment.",
+                "props": [
+                  "size"
+                ]
+              },
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "hasBorder",
+                  "size"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "activeFill": {
@@ -6526,7 +7545,27 @@
               "label": "Preload API guidance",
               "path": "src/wc/components/Icon/icon-cache.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "width",
+                  "height",
+                  "min-width",
+                  "min-height",
+                  "max-width",
+                  "max-height"
+                ],
+                "reason": "The primitive owns its size recipe; select size and position it through the parent layout.",
+                "props": [
+                  "size"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "color": {
@@ -6676,7 +7715,54 @@
               "label": "Cross-browser form and accessibility coverage",
               "path": "tests/e2e/forms.spec.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "font",
+                  "font-size",
+                  "font-weight",
+                  "font-family",
+                  "line-height",
+                  "letter-spacing",
+                  "height",
+                  "min-height",
+                  "max-height",
+                  "padding",
+                  "gap"
+                ],
+                "reason": "The control density is one atomic recipe; use the size and inset props instead of replacing internal metrics.",
+                "props": [
+                  "size"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its corner treatment; select the supported radius treatment.",
+                "props": [
+                  "size"
+                ]
+              },
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "hasBorder",
+                  "size"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "ariaActiveDescendant": {
@@ -6945,7 +8031,54 @@
               "label": "Cross-browser form and accessibility coverage",
               "path": "tests/e2e/forms.spec.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "font",
+                  "font-size",
+                  "font-weight",
+                  "font-family",
+                  "line-height",
+                  "letter-spacing",
+                  "height",
+                  "min-height",
+                  "max-height",
+                  "padding",
+                  "gap"
+                ],
+                "reason": "The control density is one atomic recipe; use the size and inset props instead of replacing internal metrics.",
+                "props": [
+                  "size"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its corner treatment; select the supported radius treatment.",
+                "props": [
+                  "size"
+                ]
+              },
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "hasBorder",
+                  "size"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "ariaDescribedby": {
@@ -7157,7 +8290,54 @@
               "label": "Cross-browser form and accessibility coverage",
               "path": "tests/e2e/forms.spec.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "font",
+                  "font-size",
+                  "font-weight",
+                  "font-family",
+                  "line-height",
+                  "letter-spacing",
+                  "height",
+                  "min-height",
+                  "max-height",
+                  "padding",
+                  "gap"
+                ],
+                "reason": "The control density is one atomic recipe; use the size and inset props instead of replacing internal metrics.",
+                "props": [
+                  "size"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its corner treatment; select the supported radius treatment.",
+                "props": [
+                  "size"
+                ]
+              },
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "hasBorder",
+                  "size"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "ariaDescribedby": {
@@ -7352,7 +8532,27 @@
               "label": "Storybook examples",
               "path": "src/wc/components/Loader/Loader.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "width",
+                  "height",
+                  "min-width",
+                  "min-height",
+                  "max-width",
+                  "max-height"
+                ],
+                "reason": "The primitive owns its size recipe; select size and position it through the parent layout.",
+                "props": [
+                  "size"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "color": {
@@ -7433,7 +8633,23 @@
               "label": "Prose distribution decision",
               "path": "docs/prose-foundation.md"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The public prose stylesheet intentionally owns typography and exposes consumer customization.",
+            "protected": [],
+            "customProperties": [
+              {
+                "name": "--ds-prose-text-max-inline-size",
+                "source": "src/wc/styles/prose.css",
+                "reason": "Application-owned readable prose measure."
+              },
+              {
+                "name": "--ds-code-font-variant-ligatures",
+                "source": "src/wc/styles/prose.css",
+                "reason": "Application-owned code ligature preference."
+              }
+            ]
+          }
         },
         "props": {
           "content": {
@@ -7569,7 +8785,32 @@
               "label": "Framework integration",
               "path": "docs/framework-integration.md"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "size"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "align": {
@@ -7743,7 +8984,12 @@
               "label": "Storybook examples",
               "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The row composes content whose presentation is owned by its children and the transcript layout.",
+            "protected": [],
+            "customProperties": []
+          }
         },
         "props": {
           "author": {
@@ -7852,7 +9098,12 @@
               "label": "Message metadata composition",
               "path": "src/wc/components/Message/Message.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The application may position the action group; child buttons own their appearance.",
+            "protected": [],
+            "customProperties": []
+          }
         },
         "props": {
           "copyText": {
@@ -7941,7 +9192,32 @@
               "label": "Storybook examples",
               "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "variant"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "variant": {
@@ -8020,7 +9296,30 @@
               "label": "Scroller overlay composition",
               "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": []
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "errorMessage": {
@@ -8142,7 +9441,18 @@
               "label": "Storybook examples",
               "path": "src/wc/components/MessageScroller/MessageScroller.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The application owns host dimensions and may customize the transcript measure through its public hook.",
+            "protected": [],
+            "customProperties": [
+              {
+                "name": "--ds-message-scroller-content-max-width",
+                "source": "src/wc/components/MessageScroller/MessageScroller.css",
+                "reason": "Readable transcript measure inside a full-width scrollport."
+              }
+            ]
+          }
         },
         "props": {
           "autoFollow": {
@@ -8236,7 +9546,30 @@
               "label": "Storybook",
               "path": "src/wc/components/MobileBarNav/MobileBarNav.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": []
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "activeDestination": {
@@ -8392,7 +9725,32 @@
               "label": "Storybook",
               "path": "src/wc/components/MobileHeader/MobileHeader.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "tone"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "heading": {
@@ -8528,7 +9886,32 @@
               "label": "Surface ownership and trigger state",
               "path": "src/docs/SurfaceOwnership.mdx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "presentation"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "navigationLabel": {
@@ -8629,7 +10012,32 @@
               "label": "Storybook",
               "path": "src/wc/components/MobileSheetNav/MobileSheetNav.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "presentation"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "accountLabel": {
@@ -8830,7 +10238,30 @@
               "label": "Reduced-motion overlay coverage",
               "path": "tests/e2e/reduced-motion.spec.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": []
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "ariaDescribedby": {
@@ -8950,7 +10381,12 @@
               "label": "Storybook review states",
               "path": "src/wc/components/Pagination/Pagination.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The host is a layout composition of controls; individual controls own their recipes.",
+            "protected": [],
+            "customProperties": []
+          }
         },
         "props": {
           "fitPageSize": {
@@ -9166,7 +10602,33 @@
               "label": "Surface ownership and trigger state",
               "path": "src/docs/SurfaceOwnership.mdx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "presentation",
+                  "navStyle"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "accountLabel": {
@@ -9397,6 +10859,31 @@
             "angular": [
               "Bind items and a valid value as properties, and handle dsChange to synchronize the visible panel."
             ]
+          },
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "background"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
           }
         },
         "props": {
@@ -9494,7 +10981,30 @@
               "label": "Surface ownership and trigger state",
               "path": "src/docs/SurfaceOwnership.mdx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": []
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "actions": {
@@ -9642,7 +11152,30 @@
               "label": "Surface ownership and trigger state",
               "path": "src/docs/SurfaceOwnership.mdx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": []
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "ariaLabel": {
@@ -9867,7 +11400,31 @@
               "label": "Surface ownership and trigger state",
               "path": "src/docs/SurfaceOwnership.mdx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "presentation"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "accessories": {
@@ -10021,7 +11578,12 @@
               "label": "Storybook parameter playground",
               "path": "src/wc/components/PaperTexture/PaperTexture.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The decorative shader intentionally accepts custom parameters and observes application-owned host dimensions.",
+            "protected": [],
+            "customProperties": []
+          }
         },
         "props": {
           "config": {
@@ -10131,7 +11693,41 @@
               "label": "Cross-browser form and accessibility coverage",
               "path": "tests/e2e/forms.spec.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "font",
+                  "font-size",
+                  "font-weight",
+                  "font-family",
+                  "line-height",
+                  "letter-spacing",
+                  "padding",
+                  "border-radius"
+                ],
+                "reason": "The field primitive owns its density and selection anatomy; use size and presentation props without replacing the recipe.",
+                "props": [
+                  "size"
+                ]
+              },
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "size"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "ariaLabel": {
@@ -10280,7 +11876,44 @@
               "label": "Safety-score level unit coverage",
               "path": "tests/score-model.test.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "font",
+                  "font-size",
+                  "font-weight",
+                  "font-family",
+                  "line-height",
+                  "letter-spacing",
+                  "height",
+                  "padding",
+                  "border-radius"
+                ],
+                "reason": "The selected presentation owns its metric canvas; use the supported size or variant props and keep placement in the parent.",
+                "props": [
+                  "size",
+                  "variant"
+                ]
+              },
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "variant",
+                  "size"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "isLoading": {
@@ -10381,7 +12014,12 @@
               "label": "Storybook examples",
               "path": "src/wc/components/ScrollOverlay/ScrollOverlay.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The application explicitly owns responsive sizing and overlay insets.",
+            "protected": [],
+            "customProperties": []
+          }
         },
         "props": {
           "scrollLabel": {
@@ -10534,7 +12172,58 @@
               "label": "Surface ownership and trigger state",
               "path": "src/docs/SurfaceOwnership.mdx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "font",
+                  "font-size",
+                  "font-weight",
+                  "font-family",
+                  "line-height",
+                  "letter-spacing",
+                  "height",
+                  "min-height",
+                  "max-height",
+                  "padding",
+                  "gap"
+                ],
+                "reason": "The control density is one atomic recipe; use the size and inset props instead of replacing internal metrics.",
+                "props": [
+                  "size",
+                  "isInset",
+                  "insetDepth"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its corner treatment; select the supported radius treatment.",
+                "props": [
+                  "rounded",
+                  "size"
+                ]
+              },
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "background",
+                  "hasBorder",
+                  "size"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "activeFill": {
@@ -10911,7 +12600,32 @@
               "label": "Surface ownership and trigger state",
               "path": "src/docs/SurfaceOwnership.mdx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "navStyle",
+                  "gradientPreset"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "composition": {
@@ -11167,7 +12881,12 @@
               "label": "Reusable framework composition",
               "path": "agent/patterns/shell-page/pattern.agent.json"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "Content insets and surfaces are public props; the host remains part of the application-owned bounded layout.",
+            "protected": [],
+            "customProperties": []
+          }
         },
         "props": {
           "compactContentInsetBlockStartSize": {
@@ -11308,7 +13027,31 @@
               "label": "Surface ownership and trigger state",
               "path": "src/docs/SurfaceOwnership.mdx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "presentation"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "accessories": {
@@ -11487,7 +13230,47 @@
               "label": "Storybook examples",
               "path": "src/wc/components/Skeleton/Skeleton.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "font",
+                  "font-size",
+                  "font-weight",
+                  "font-family",
+                  "line-height",
+                  "letter-spacing",
+                  "height",
+                  "padding",
+                  "border-radius"
+                ],
+                "reason": "The selected presentation owns its metric canvas; use the supported size or variant props and keep placement in the parent.",
+                "props": [
+                  "variant",
+                  "textVariant",
+                  "iconSize",
+                  "controlSize",
+                  "rounded"
+                ]
+              },
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "background",
+                  "variant"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "background": {
@@ -11629,7 +13412,48 @@
               "label": "Cross-browser form and interaction coverage",
               "path": "tests/e2e/forms.spec.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "font",
+                  "font-size",
+                  "font-weight",
+                  "font-family",
+                  "line-height",
+                  "letter-spacing",
+                  "padding",
+                  "border-radius"
+                ],
+                "reason": "The field primitive owns its density and selection anatomy; use size and presentation props without replacing the recipe.",
+                "props": [
+                  "size",
+                  "orientation"
+                ]
+              },
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "size"
+                ]
+              }
+            ],
+            "customProperties": [
+              {
+                "name": "--ds-slider-vertical-length",
+                "source": "src/wc/components/Slider/Slider.css",
+                "reason": "Application-owned length of a vertical slider."
+              }
+            ]
+          }
         },
         "props": {
           "ariaDescribedby": {
@@ -11850,7 +13674,30 @@
               "label": "Executable stories",
               "path": "src/wc/components/SwatchPicker/SwatchPicker.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": []
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "groupLabel": {
@@ -11980,7 +13827,43 @@
               "label": "Cross-browser form and accessibility coverage",
               "path": "tests/e2e/forms.spec.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "font",
+                  "font-size",
+                  "font-weight",
+                  "font-family",
+                  "line-height",
+                  "letter-spacing",
+                  "padding",
+                  "border-radius"
+                ],
+                "reason": "The field primitive owns its density and selection anatomy; use size and presentation props without replacing the recipe.",
+                "props": [
+                  "size",
+                  "presentation"
+                ]
+              },
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "size",
+                  "presentation"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "checked": {
@@ -12149,7 +14032,55 @@
               "label": "Storybook examples",
               "path": "src/wc/components/TabGroup/TabGroup.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "font",
+                  "font-size",
+                  "font-weight",
+                  "font-family",
+                  "line-height",
+                  "letter-spacing",
+                  "height",
+                  "min-height",
+                  "max-height",
+                  "padding",
+                  "gap"
+                ],
+                "reason": "The control density is one atomic recipe; use the size and inset props instead of replacing internal metrics.",
+                "props": [
+                  "size"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its corner treatment; select the supported radius treatment.",
+                "props": [
+                  "size"
+                ]
+              },
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "background",
+                  "size",
+                  "presentation"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "ariaLabel": {
@@ -12337,7 +14268,108 @@
               "label": "Surface ownership and trigger state",
               "path": "src/docs/SurfaceOwnership.mdx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The public table stylesheet intentionally supports product-specific styling through documented custom properties and stable element classes.",
+            "protected": [],
+            "customProperties": [
+              {
+                "name": "--ds-table-border",
+                "source": "src/wc/styles/table.css",
+                "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+              },
+              {
+                "name": "--ds-table-border-strong",
+                "source": "src/wc/styles/table.css",
+                "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+              },
+              {
+                "name": "--ds-table-cell-padding-block",
+                "source": "src/wc/styles/table.css",
+                "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+              },
+              {
+                "name": "--ds-table-cell-padding-inline",
+                "source": "src/wc/styles/table.css",
+                "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+              },
+              {
+                "name": "--ds-table-collapse-all-block-offset",
+                "source": "src/wc/styles/table.css",
+                "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+              },
+              {
+                "name": "--ds-table-column-border",
+                "source": "src/wc/styles/table.css",
+                "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+              },
+              {
+                "name": "--ds-table-header-min-block-size",
+                "source": "src/wc/styles/table.css",
+                "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+              },
+              {
+                "name": "--ds-table-header-surface",
+                "source": "src/wc/styles/table.css",
+                "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+              },
+              {
+                "name": "--ds-table-inline-scroll-max-offset",
+                "source": "src/wc/styles/table.css",
+                "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+              },
+              {
+                "name": "--ds-table-max-block-size",
+                "source": "src/wc/styles/table.css",
+                "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+              },
+              {
+                "name": "--ds-table-radius",
+                "source": "src/wc/styles/table.css",
+                "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+              },
+              {
+                "name": "--ds-table-row-hover",
+                "source": "src/wc/styles/table.css",
+                "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+              },
+              {
+                "name": "--ds-table-row-min-block-size",
+                "source": "src/wc/styles/table.css",
+                "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+              },
+              {
+                "name": "--ds-table-row-pressed",
+                "source": "src/wc/styles/table.css",
+                "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+              },
+              {
+                "name": "--ds-table-row-selected",
+                "source": "src/wc/styles/table.css",
+                "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+              },
+              {
+                "name": "--ds-table-sticky-border",
+                "source": "src/wc/styles/table.css",
+                "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+              },
+              {
+                "name": "--ds-table-sticky-header-offset",
+                "source": "src/wc/styles/table.css",
+                "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+              },
+              {
+                "name": "--ds-table-surface",
+                "source": "src/wc/styles/table.css",
+                "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+              },
+              {
+                "name": "--ds-table-visible-inline-size",
+                "source": "src/wc/styles/table.css",
+                "reason": "Public table recipe customization; preserve semantic table and scroll behavior."
+              }
+            ]
+          }
         },
         "props": {
           "caption": {
@@ -12766,7 +14798,58 @@
               "label": "Surface ownership and trigger state",
               "path": "src/docs/SurfaceOwnership.mdx"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "font",
+                  "font-size",
+                  "font-weight",
+                  "font-family",
+                  "line-height",
+                  "letter-spacing",
+                  "height",
+                  "min-height",
+                  "max-height",
+                  "padding",
+                  "gap"
+                ],
+                "reason": "The control density is one atomic recipe; use the size and inset props instead of replacing internal metrics.",
+                "props": [
+                  "size",
+                  "isInset",
+                  "insetDepth"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its corner treatment; select the supported radius treatment.",
+                "props": [
+                  "rounded",
+                  "size"
+                ]
+              },
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "intent",
+                  "contrast",
+                  "size"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "ariaControls": {
@@ -12939,7 +15022,28 @@
               "label": "Typography contract",
               "path": "AGENTS.md"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "font",
+                  "font-size",
+                  "font-weight",
+                  "font-family",
+                  "line-height",
+                  "letter-spacing"
+                ],
+                "reason": "Typography metrics form one atomic variant; choose variant and emphasis. Layout and inherited foreground remain consumer-owned.",
+                "props": [
+                  "variant",
+                  "emphasis"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "align": {
@@ -13091,7 +15195,44 @@
               "label": "Cross-browser form and accessibility coverage",
               "path": "tests/e2e/forms.spec.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "font",
+                  "font-size",
+                  "font-weight",
+                  "font-family",
+                  "line-height",
+                  "letter-spacing",
+                  "padding",
+                  "border-radius"
+                ],
+                "reason": "Size selects the text and inset recipe; rows and resize retain their documented height ownership.",
+                "props": [
+                  "size",
+                  "rows",
+                  "resize"
+                ]
+              },
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "hasBorder",
+                  "size"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "ariaDescribedby": {
@@ -13287,7 +15428,20 @@
               "label": "Storybook examples",
               "path": "src/wc/components/TimePicker/TimePicker.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "gap"
+                ],
+                "reason": "The component owns spacing between its immediate content regions; the application controls surrounding margins and placement.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "autoFocus": {
@@ -13442,7 +15596,30 @@
               "label": "Cross-browser behavior coverage",
               "path": "tests/e2e/toast.spec.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": []
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "avoidMobileShellBar": {
@@ -13602,7 +15779,32 @@
               "label": "Positioning unit coverage",
               "path": "tests/anchored-position.test.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": [
+                  "size"
+                ]
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "align": {
@@ -13747,7 +15949,30 @@
               "label": "Storybook example",
               "path": "src/wc/components/TooltipChart/TooltipChart.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+                "props": []
+              },
+              {
+                "properties": [
+                  "border-radius"
+                ],
+                "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
         },
         "props": {
           "delay": {
@@ -13841,7 +16066,12 @@
               "label": "Storybook example",
               "path": "src/wc/components/TypingIndicator/TypingIndicator.stories.ts"
             }
-          ]
+          ],
+          "styling": {
+            "rationale": "The indicator composes loader and text recipes inside an application-positioned host.",
+            "protected": [],
+            "customProperties": []
+          }
         },
         "props": {
           "label": {

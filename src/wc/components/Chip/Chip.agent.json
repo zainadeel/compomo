@@ -36,10 +36,7 @@
       "reason": "ButtonUnfilled owns command and toggle semantics."
     }
   ],
-  "commonlyComposedWith": [
-    "component:ds-input",
-    "component:ds-select"
-  ],
+  "commonlyComposedWith": ["component:ds-input", "component:ds-select"],
   "accessibility": [
     "Keep the visible label meaningful without relying on semantic color alone.",
     "Give the dismiss action a name that identifies the represented value.",
@@ -75,5 +72,38 @@
       "label": "Storybook examples",
       "path": "src/wc/components/Chip/Chip.stories.ts"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+    "protected": [
+      {
+        "properties": [
+          "font",
+          "font-size",
+          "font-weight",
+          "font-family",
+          "line-height",
+          "letter-spacing",
+          "height",
+          "min-height",
+          "max-height",
+          "padding",
+          "gap"
+        ],
+        "reason": "The control density is one atomic recipe; use the size and inset props instead of replacing internal metrics.",
+        "props": ["size", "isInset", "insetDepth"]
+      },
+      {
+        "properties": ["border-radius"],
+        "reason": "The component owns its corner treatment; select the supported radius treatment.",
+        "props": ["rounded", "size"]
+      },
+      {
+        "properties": ["background", "border", "box-shadow", "color"],
+        "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+        "props": ["size"]
+      }
+    ],
+    "customProperties": []
+  }
 }

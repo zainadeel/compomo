@@ -30,13 +30,8 @@
       "reason": "EmptyState explains an empty result without creating global application urgency."
     }
   ],
-  "commonlyComposedWith": [
-    "component:ds-shell-app",
-    "component:ds-button-unfilled"
-  ],
-  "patterns": [
-    "pattern:application-shell"
-  ],
+  "commonlyComposedWith": ["component:ds-shell-app", "component:ds-button-unfilled"],
+  "patterns": ["pattern:application-shell"],
   "accessibility": [
     "Choose announcement=none for content present at page load, polite for non-urgent dynamic changes, and assertive only when immediate interruption is necessary.",
     "Visual intent never chooses live-region urgency; a negative banner can be persistent and non-urgent, while a neutral banner can require prompt attention.",
@@ -85,5 +80,21 @@
       "label": "Application shell contract",
       "path": "agent/patterns/application-shell/pattern.agent.json"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+    "protected": [
+      {
+        "properties": ["background", "border", "box-shadow", "color"],
+        "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+        "props": ["intent", "contrast"]
+      },
+      {
+        "properties": ["border-radius"],
+        "reason": "The component owns its surface radius; retain the shared recipe and customize an outer wrapper when needed.",
+        "props": []
+      }
+    ],
+    "customProperties": []
+  }
 }

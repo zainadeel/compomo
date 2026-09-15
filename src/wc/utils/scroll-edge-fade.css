@@ -14,28 +14,28 @@
 @property --ds-scroll-edge-fade-top {
   syntax: '<length-percentage>';
   inherits: false;
-  /* stylelint-disable-next-line length-zero-no-unit -- @property requires a unit-compatible initial value. */
+  /* eslint-disable-next-line compomo/length-zero-no-unit -- @property requires a unit-compatible initial value. */
   initial-value: 0px;
 }
 
 @property --ds-scroll-edge-fade-bottom {
   syntax: '<length-percentage>';
   inherits: false;
-  /* stylelint-disable-next-line length-zero-no-unit -- @property requires a unit-compatible initial value. */
+  /* eslint-disable-next-line compomo/length-zero-no-unit -- @property requires a unit-compatible initial value. */
   initial-value: 0px;
 }
 
 @property --ds-scroll-edge-fade-left {
   syntax: '<length-percentage>';
   inherits: false;
-  /* stylelint-disable-next-line length-zero-no-unit -- @property requires a unit-compatible initial value. */
+  /* eslint-disable-next-line compomo/length-zero-no-unit -- @property requires a unit-compatible initial value. */
   initial-value: 0px;
 }
 
 @property --ds-scroll-edge-fade-right {
   syntax: '<length-percentage>';
   inherits: false;
-  /* stylelint-disable-next-line length-zero-no-unit -- @property requires a unit-compatible initial value. */
+  /* eslint-disable-next-line compomo/length-zero-no-unit -- @property requires a unit-compatible initial value. */
   initial-value: 0px;
 }
 
@@ -76,7 +76,7 @@
 }
 
 /* Mask gradients use #000 / transparent as alpha stops — not theme colors. */
-/* stylelint-disable color-no-hex */
+/* eslint-disable compomo/color-no-hex */
 
 .scroll-edge-fade {
   --ds-scroll-edge-fade-size: var(--dimension-size-600);
@@ -153,7 +153,7 @@
     animation-name:
       ds-scroll-edge-fade-reveal-top, ds-scroll-edge-fade-reveal-bottom,
       ds-scroll-edge-fade-reveal-left, ds-scroll-edge-fade-reveal-right;
-    /* stylelint-disable-next-line declaration-property-value-disallowed-list -- scroll timelines require a nonzero sentinel duration; elapsed time is ignored. */
+    /* eslint-disable-next-line compomo/declaration-property-value-disallowed-list -- scroll timelines require a nonzero sentinel duration; elapsed time is ignored. */
     animation-duration: 1ms;
     animation-timing-function: ease-in-out;
     animation-fill-mode: both;
@@ -204,4 +204,4 @@
   mask-repeat: no-repeat;
 }
 
-/* stylelint-enable color-no-hex */
+/* eslint-enable compomo/color-no-hex */

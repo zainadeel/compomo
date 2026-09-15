@@ -12,6 +12,7 @@ const postBuildScripts = [
   'build-framework-exports.mjs',
   'build-registry.mjs',
   'build-agent-manifest.mjs',
+  'build-lint.mjs',
   'build-mcp.mjs',
   'verify-framework-proxies.mjs',
   'write-build-stamp.mjs',

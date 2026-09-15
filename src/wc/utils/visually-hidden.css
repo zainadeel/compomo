@@ -15,7 +15,7 @@
 :host(.ds-visually-hidden),
 .ds-visually-hidden {
   position: absolute;
-  /* stylelint-disable declaration-property-value-disallowed-list -- classic visually-hidden clip pattern */
+  /* eslint-disable compomo/declaration-property-value-disallowed-list -- classic visually-hidden clip pattern */
   width: 1px;
   height: 1px;
   padding: 0;
@@ -24,5 +24,5 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
-  /* stylelint-enable declaration-property-value-disallowed-list */
+  /* eslint-enable compomo/declaration-property-value-disallowed-list */
 }

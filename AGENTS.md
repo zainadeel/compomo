@@ -9,18 +9,18 @@ changed.
 
 ## Read this when
 
-| Task | Guidance |
-| --- | --- |
-| Set up or consume the package | [README](README.md), [Storybook introduction](src/docs/Introduction.mdx) |
-| Add or change a component | [Web component guidance](src/wc/AGENTS.md), [component authoring](docs/maintainers/component-authoring.md), then the component's source, story, and agent JSON |
-| Change forced-colors or high-contrast behavior | [Forced-colors accessibility](docs/maintainers/forced-colors.md), then the affected shared utility and component sources |
-| Change shared component composition | Applicable pattern under [agent/patterns](agent/patterns/) |
-| Change component lifecycle status | [Component lifecycle](docs/maintainers/component-lifecycle.md), [agent guidance](agent/AGENTS.md) |
-| Change agent metadata, patterns, registry, or MCP | [Agent guidance](agent/AGENTS.md), [build and registry](docs/maintainers/build-and-registry.md) |
-| Change framework integration or package exports | [Framework integration](docs/framework-integration.md), [build and registry](docs/maintainers/build-and-registry.md) |
-| Choose verification | [Testing strategy](docs/maintainers/testing.md) |
-| Change CI, release, or publishing | [CI guidance](.github/AGENTS.md), [releasing](docs/maintainers/releasing.md) |
-| Find other documentation | [Documentation index](docs/index.md) |
+| Task                                              | Guidance                                                                                                                                                       |
+| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Set up or consume the package                     | [README](README.md), [Storybook introduction](src/docs/Introduction.mdx)                                                                                       |
+| Add or change a component                         | [Web component guidance](src/wc/AGENTS.md), [component authoring](docs/maintainers/component-authoring.md), then the component's source, story, and agent JSON |
+| Change forced-colors or high-contrast behavior    | [Forced-colors accessibility](docs/maintainers/forced-colors.md), then the affected shared utility and component sources                                       |
+| Change shared component composition               | Applicable pattern under [agent/patterns](agent/patterns/)                                                                                                     |
+| Change component lifecycle status                 | [Component lifecycle](docs/maintainers/component-lifecycle.md), [agent guidance](agent/AGENTS.md)                                                              |
+| Change agent metadata, patterns, registry, or MCP | [Agent guidance](agent/AGENTS.md), [build and registry](docs/maintainers/build-and-registry.md)                                                                |
+| Change framework integration or package exports   | [Framework integration](docs/framework-integration.md), [build and registry](docs/maintainers/build-and-registry.md)                                           |
+| Choose verification                               | [Testing strategy](docs/maintainers/testing.md)                                                                                                                |
+| Change CI, release, or publishing                 | [CI guidance](.github/AGENTS.md), [releasing](docs/maintainers/releasing.md)                                                                                   |
+| Find other documentation                          | [Documentation index](docs/index.md)                                                                                                                           |
 
 ## Architecture
 
@@ -61,10 +61,10 @@ npm run verify:pack
 
 Node and npm are both pinned, and CI uses exactly these:
 
-| | Version | Pinned by |
-|---|---|---|
-| Node | `24.15.0` | `.nvmrc` |
-| npm | `11.12.1` | `packageManager` (Corepack) |
+|      | Version   | Pinned by                   |
+| ---- | --------- | --------------------------- |
+| Node | `24.15.0` | `.nvmrc`                    |
+| npm  | `11.12.1` | `packageManager` (Corepack) |
 
 Interactive shells with an `.nvmrc` hook pick Node up on `cd`. **Agent and CI
 shells usually do not** — they inherit whatever Node started the session. Select
@@ -111,7 +111,7 @@ Do not hand-edit:
 - generated registry content in `public/r/`
 
 Edit the owning source and run the appropriate build or registry command.
-Public non-component APIs belong in compiled `/shell`, `/toast`, or `/utils`
+Public non-component APIs belong in compiled `/shell`, `/toast`, `/utils`, or Node-only `/lint`
 entries, never in generated component declarations.
 
 ## Component changes

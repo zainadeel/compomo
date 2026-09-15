@@ -8,3 +8,9 @@ https://shaders.paper.design
 
 The bundled shader code is available under the Apache License, Version 2.0.
 The complete license text is distributed with the @paper-design/shaders runtime dependency.
+
+The optional @ds-mo/ui/lint entry includes rule algorithms adapted from
+Stylelint 17.14.1 under the MIT License. Copyright (c) 2015 - present
+Maxime Thirouin, David Clark & Richard Hallows. The complete license is
+in dist/lint/STYLELINT-LICENSE. Bundled lint utility licenses are in
+dist/lint/THIRD-PARTY-NOTICES.

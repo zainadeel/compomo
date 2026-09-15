@@ -36,11 +36,7 @@
       "reason": "Icon renders actual glyph content rather than loading geometry."
     }
   ],
-  "commonlyComposedWith": [
-    "component:ds-card-setting",
-    "component:ds-text",
-    "component:ds-icon"
-  ],
+  "commonlyComposedWith": ["component:ds-card-setting", "component:ds-text", "component:ds-icon"],
   "accessibility": [
     "Skeleton remains hidden from assistive technology because its shapes do not represent content.",
     "The owning content region exposes busy state and a contextual loading status when an announcement is needed.",
@@ -75,5 +71,31 @@
       "label": "Storybook examples",
       "path": "src/wc/components/Skeleton/Skeleton.stories.ts"
     }
-  ]
+  ],
+  "styling": {
+    "rationale": "The component owns the protected recipes below; unspecified host properties and application layout remain customizable.",
+    "protected": [
+      {
+        "properties": [
+          "font",
+          "font-size",
+          "font-weight",
+          "font-family",
+          "line-height",
+          "letter-spacing",
+          "height",
+          "padding",
+          "border-radius"
+        ],
+        "reason": "The selected presentation owns its metric canvas; use the supported size or variant props and keep placement in the parent.",
+        "props": ["variant", "textVariant", "iconSize", "controlSize", "rounded"]
+      },
+      {
+        "properties": ["background", "border", "box-shadow", "color"],
+        "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
+        "props": ["background", "variant"]
+      }
+    ],
+    "customProperties": []
+  }
 }
