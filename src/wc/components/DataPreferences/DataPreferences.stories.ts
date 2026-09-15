@@ -46,7 +46,7 @@ export const Compact: Story = {
       @dsGroupChange=${(event: CustomEvent) => {
         (event.currentTarget as HTMLDsDataPreferencesElement).grouping = event.detail;
       }}
-      @dsColumnsConfigChange=${(event: CustomEvent) => {
+      @dsFieldsConfigChange=${(event: CustomEvent) => {
         Object.assign(event.currentTarget!, event.detail);
       }}
     ></ds-data-preferences>`,
@@ -96,7 +96,7 @@ export const ToggleOnlyCatalog: Story = {
         customize-label="Customize view"
         catalog-header="Data"
         .catalogReorderable=${false}
-        .hiddenColumnIds=${['assetType']}
+        .hiddenFieldIds=${['assetType']}
         .fields=${[
           { id: 'driverId', label: 'Driver ID' },
           { id: 'vehicleMmy', label: 'Vehicle MMY' },
@@ -107,9 +107,9 @@ export const ToggleOnlyCatalog: Story = {
         .customizeOptions=${[
           { label: 'Show applied filters', value: 'show-filters', showSwitch: true },
         ]}
-        @dsColumnsConfigChange=${(e: CustomEvent) => {
+        @dsFieldsConfigChange=${(e: CustomEvent) => {
           const el = e.currentTarget as HTMLDsDataPreferencesElement;
-          el.hiddenColumnIds = e.detail.hiddenColumnIds;
+          el.hiddenFieldIds = e.detail.hiddenFieldIds;
         }}
       ></ds-data-preferences>
     </div>`,

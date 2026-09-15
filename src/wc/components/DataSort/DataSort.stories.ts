@@ -9,7 +9,7 @@ const COLUMNS = [
   {
     id: 'behaviorDetails',
     label: 'Behavior / Severity',
-    headerSegments: [
+    segments: [
       { label: 'Behavior', sortKey: 'behavior', separator: '/' },
       { label: 'Severity', sortKey: 'severity' },
     ],
@@ -51,7 +51,7 @@ export const SortMenu: Story = {
       <ds-data-sort
         data-a11y-fixture
         .fields=${COLUMNS}
-        .sort=${{ columnId: 'driver', direction: 'asc' }}
+        .sort=${{ fieldId: 'driver', direction: 'asc' }}
         aria-label="Sort fleet"
         @dsSortChange=${(event: CustomEvent<{ sort: DataSortState | null }>) => {
           const control = event.currentTarget as HTMLElement & { sort: DataSortState | null };
@@ -82,7 +82,7 @@ export const LongColumnCatalog: Story = {
           sortable: true,
           size: 'sm',
         }))}
-        .sort=${{ columnId: 'column-1', direction: 'asc' }}
+        .sort=${{ fieldId: 'column-1', direction: 'asc' }}
         aria-label="Sort large table"
       ></ds-data-sort>
     </div>

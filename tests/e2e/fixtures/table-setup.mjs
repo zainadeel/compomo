@@ -139,10 +139,10 @@ basic.addEventListener('dsSortChange', event => {
     basic.rows = rows;
     return;
   }
-  const { columnId, direction } = event.detail.sort;
+  const { fieldId, direction } = event.detail.sort;
   basic.rows = [...rows].sort((a, b) => {
-    const aValue = a.cells[columnId]?.primary ?? a.cells[columnId] ?? '';
-    const bValue = b.cells[columnId]?.primary ?? b.cells[columnId] ?? '';
+    const aValue = a.cells[fieldId]?.primary ?? a.cells[fieldId] ?? '';
+    const bValue = b.cells[fieldId]?.primary ?? b.cells[fieldId] ?? '';
     return (
       String(aValue).localeCompare(String(bValue), undefined, { numeric: true }) *
       (direction === 'asc' ? 1 : -1)
@@ -167,8 +167,8 @@ footerNested.querySelector('ds-data-saved-views').views = [
 
 const grouped = document.getElementById('grouped');
 grouped.columns = columns;
-grouped.grouping = { columnId: 'status', direction: 'asc' };
-grouped.sort = { columnId: 'score', direction: 'desc' };
+grouped.grouping = { fieldId: 'status', direction: 'asc' };
+grouped.sort = { fieldId: 'score', direction: 'desc' };
 const ascendingGroups = [
   { id: 'driving', label: 'Driving', totalCount: 3, rows: [rows[0], rows[3]] },
   { id: 'off-duty', label: 'Off duty', rows: [rows[2]] },
@@ -237,7 +237,7 @@ const severityIntent = {
 };
 severityGrouped.selectionMode = 'multiple';
 severityGrouped.selectedRowIds = [];
-severityGrouped.grouping = { columnId: 'severity', direction: 'asc' };
+severityGrouped.grouping = { fieldId: 'severity', direction: 'asc' };
 severityGrouped.groups = ['Critical', 'High', 'Medium', 'Low'].map(label => ({
   id: label.toLowerCase(),
   label,
@@ -258,7 +258,7 @@ compound.columns = [
   {
     id: 'behaviorDetails',
     label: 'Behavior / Severity',
-    headerSegments: [
+    segments: [
       { label: 'Behavior', sortKey: 'behavior', separator: '/' },
       { label: 'Severity', sortKey: 'severity' },
     ],
@@ -299,10 +299,10 @@ compound.addEventListener('dsSortChange', event => {
     compound.rows = compoundRows;
     return;
   }
-  const { columnId, direction } = event.detail.sort;
+  const { fieldId, direction } = event.detail.sort;
   compound.rows = [...compoundRows].sort(
     (a, b) =>
-      String(a.cells[columnId]).localeCompare(String(b.cells[columnId])) *
+      String(a.cells[fieldId]).localeCompare(String(b.cells[fieldId])) *
       (direction === 'asc' ? 1 : -1)
   );
 });
@@ -320,12 +320,12 @@ cellTypes.columns = [
   { id: 'tagOnly', label: 'Tag only', size: 'sm' },
   { id: 'tagWithText', label: 'Tag with text', size: 'sm' },
   { id: 'textWithTag', label: 'Text with tag', size: 'sm' },
-  { id: 'action', kind: 'action', label: '', headerLabel: 'Action', align: 'center', size: 40 },
+  { id: 'action', kind: 'action', label: '', accessibleLabel: 'Action', align: 'center', size: 40 },
   {
     id: 'borderedAction',
     kind: 'action',
     label: '',
-    headerLabel: 'Bordered action',
+    accessibleLabel: 'Bordered action',
     align: 'center',
     size: 40,
   },
@@ -685,7 +685,7 @@ singleTrack.columns = [
   { id: 'icon', label: 'Icon only', align: 'center', size: 'xs' },
   { id: 'iconText', label: 'Icon + text', size: 'sm' },
   { id: 'tagOnly', label: 'Tag only', size: 'sm' },
-  { id: 'action', kind: 'action', label: '', headerLabel: 'Action', align: 'center', size: 40 },
+  { id: 'action', kind: 'action', label: '', accessibleLabel: 'Action', align: 'center', size: 40 },
 ];
 singleTrack.rows = [
   {
@@ -723,7 +723,7 @@ interactive.columns = [
     id: 'actions',
     kind: 'action',
     label: '',
-    headerLabel: 'Actions',
+    accessibleLabel: 'Actions',
     align: 'center',
     size: 40,
     sticky: 'end',
@@ -874,7 +874,7 @@ const renderGroupedPage = (pageIndex, pageSize) => {
     }));
 };
 groupedPaginated.columns = columns;
-groupedPaginated.grouping = { columnId: 'status', direction: 'asc' };
+groupedPaginated.grouping = { fieldId: 'status', direction: 'asc' };
 groupedPaginated.pagination = {
   pageIndex: 0,
   pageSize: 25,
@@ -930,7 +930,7 @@ fixedHeight.totalCount = 40;
 
 const viewportFit = document.getElementById('viewport-fit');
 viewportFit.columns = interactive.columns;
-viewportFit.grouping = { columnId: 'status', direction: 'asc' };
+viewportFit.grouping = { fieldId: 'status', direction: 'asc' };
 viewportFit.groups = [
   {
     id: 'fit-first',
@@ -955,12 +955,12 @@ viewportFit.totalCount = 40;
 setBase('standard');
 const documentSticky = document.getElementById('document-sticky');
 documentSticky.columns = interactive.columns;
-documentSticky.sort = { columnId: 'name', direction: 'desc' };
+documentSticky.sort = { fieldId: 'name', direction: 'desc' };
 const documentRows = Array.from({ length: 16 }, (_, index) => ({
   ...interactive.rows[index % interactive.rows.length],
   id: `document-row-${index}`,
 }));
-documentSticky.grouping = { columnId: 'status', direction: 'asc' };
+documentSticky.grouping = { fieldId: 'status', direction: 'asc' };
 documentSticky.groups = [
   { id: 'first-section', label: 'First section', rows: documentRows.slice(0, 8) },
   { id: 'second-section', label: 'Second section', rows: documentRows.slice(8) },
@@ -974,7 +974,7 @@ customizer.columns = [
     id: 'action',
     kind: 'action',
     label: '',
-    headerLabel: 'Action',
+    accessibleLabel: 'Action',
     align: 'center',
     size: 40,
     sticky: 'end',
@@ -992,12 +992,12 @@ const customizerRows = rows.map(row => ({
   },
 }));
 customizer.rows = customizerRows;
-customizer.hiddenColumnIds = [];
-customizer.columnOrder = [];
-customizer.sort = { columnId: 'name', direction: 'asc' };
-customizer.addEventListener('dsColumnsConfigChange', event => {
-  customizer.hiddenColumnIds = event.detail.hiddenColumnIds;
-  customizer.columnOrder = event.detail.columnOrder;
+customizer.hiddenFieldIds = [];
+customizer.fieldOrder = [];
+customizer.sort = { fieldId: 'name', direction: 'asc' };
+customizer.addEventListener('dsFieldsConfigChange', event => {
+  customizer.hiddenFieldIds = event.detail.hiddenFieldIds;
+  customizer.fieldOrder = event.detail.fieldOrder;
 });
 customizer.addEventListener('dsDataModeChange', event => {
   customizer.dataMode = event.detail.dataMode;
@@ -1008,7 +1008,7 @@ customizer.addEventListener('dsSortChange', event => {
 });
 
 const customizerSort = document.getElementById('column-customizer-sort');
-customizerSort.columns = customizer.columns;
+customizerSort.fields = customizer.columns;
 customizerSort.sort = customizer.sort;
 customizerSort.addEventListener('dsSortChange', event => {
   customizer.sort = event.detail.sort;
@@ -1043,7 +1043,7 @@ const virtualColumns = [
     id: 'action',
     kind: 'action',
     label: '',
-    headerLabel: 'Action',
+    accessibleLabel: 'Action',
     align: 'center',
     size: 40,
     sticky: 'end',
@@ -1082,7 +1082,7 @@ virtualTable.addEventListener('dsSortChange', event => {
 
 const virtualGrouped = document.getElementById('virtual-grouped');
 virtualGrouped.columns = virtualColumns;
-virtualGrouped.grouping = { columnId: 'status', direction: 'asc' };
+virtualGrouped.grouping = { fieldId: 'status', direction: 'asc' };
 virtualGrouped.groups = [
   {
     id: 'virtual-first',
@@ -1134,7 +1134,7 @@ loading.columns = [
   {
     id: 'actions',
     label: '',
-    headerLabel: 'Actions',
+    accessibleLabel: 'Actions',
     kind: 'action',
     size: 40,
     align: 'center',

@@ -58,13 +58,13 @@ const renderGroup = (grouping: DataGroupingState | null) => html`
 export const ActiveGrouping: Story = {
   name: 'Active grouping',
   parameters: { docs: { ...isolatedOverlayDocs('620px') } },
-  render: () => renderGroup({ columnId: 'severity', direction: 'asc' }),
+  render: () => renderGroup({ fieldId: 'severity', direction: 'asc' }),
 };
 
 export const CustomOrderChoices: Story = {
   name: 'Custom order choices',
   parameters: { docs: { ...isolatedOverlayDocs('620px') } },
-  render: () => renderGroup({ columnId: 'driverName', orderBy: 'driverScore', direction: 'desc' }),
+  render: () => renderGroup({ fieldId: 'driverName', orderBy: 'driverScore', direction: 'desc' }),
 };
 
 export const NoGrouping: Story = {

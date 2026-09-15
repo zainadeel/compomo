@@ -1428,7 +1428,7 @@ test('sorts compound columns by independent label-width controls', async ({ page
   await expect
     .poll(() => table.evaluate((element: HTMLDsTableElement) => element.sort))
     .toEqual({
-      columnId: 'severity',
+      fieldId: 'severity',
       direction: 'asc',
     });
   await expect(labels.nth(1).locator('ds-text')).toHaveJSProperty('emphasis', true);
@@ -1438,7 +1438,7 @@ test('sorts compound columns by independent label-width controls', async ({ page
   await expect
     .poll(() => table.evaluate((element: HTMLDsTableElement) => element.sort))
     .toEqual({
-      columnId: 'behavior',
+      fieldId: 'behavior',
       direction: 'asc',
     });
 });
@@ -1476,9 +1476,9 @@ test('renders independently styled standard cell types', async ({ page }) => {
     '.ds-table__header-cell[data-column-id="borderedAction"]'
   );
 
-  const headerLabel = table.locator('.ds-table__header-label-box').first();
-  await expect(headerLabel).toHaveCSS('padding-left', '2px');
-  await expect(headerLabel).toHaveCSS('padding-right', '2px');
+  const accessibleLabel = table.locator('.ds-table__header-label-box').first();
+  await expect(accessibleLabel).toHaveCSS('padding-left', '2px');
+  await expect(accessibleLabel).toHaveCSS('padding-right', '2px');
 
   for (const cell of [tagOnly, tagWithText, textWithTag]) {
     await expect(cell).toHaveAttribute('data-cell-type', 'tag');
@@ -2266,8 +2266,8 @@ test('shows a truncation tooltip when 1-, 2-, or 3-line text overflows', async (
 
 test('positions sort controls according to column alignment', async ({ page }) => {
   const geometry = await page.locator('#grouped').evaluate(element => {
-    const measure = (columnId: string) => {
-      const cell = element.querySelector<HTMLElement>(`th[data-column-id="${columnId}"]`)!;
+    const measure = (fieldId: string) => {
+      const cell = element.querySelector<HTMLElement>(`th[data-column-id="${fieldId}"]`)!;
       const labels = cell.querySelector<HTMLElement>('.ds-table__header-labels')!;
       const slot = cell.querySelector<HTMLElement>(
         '.ds-table__sort-slot:not(.ds-table__sort-slot--balance)'

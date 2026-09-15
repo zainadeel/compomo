@@ -46,13 +46,13 @@ test('shares controlled preferences across tabs and restores focus @cross-browse
         values: el.values,
         sort: el.sort,
         grouping: el.grouping,
-        hidden: el.hiddenColumnIds,
+        hidden: el.hiddenFieldIds,
       }))
     )
     .toEqual({
       values: { status: ['driving'] },
-      sort: { columnId: 'status', direction: 'asc' },
-      grouping: { columnId: 'status', direction: 'desc' },
+      sort: { fieldId: 'status', direction: 'asc' },
+      grouping: { fieldId: 'status', direction: 'desc' },
       hidden: ['vehicle'],
     });
   await dialog.getByRole('tab', { name: 'Filters', exact: true }).click();

@@ -13,10 +13,10 @@ import type { DataField } from '../../utils/data-field';
 import type { MenuItemData } from '../Menu/menu-types';
 import type { DataSortChangeDetail, DataSortState } from '../Table/table-types';
 import {
-  nextTableSortStateFromMenuItem,
-  tableSortFields,
-  tableSortMenuSections,
-  tableSortStatesEqual,
+  nextDataSortStateFromMenuItem,
+  dataSortFields,
+  dataSortMenuSections,
+  dataSortStatesEqual,
 } from './data-sort-menu';
 
 let tableSortSeq = 0;
@@ -57,7 +57,7 @@ export class DataSort {
   }
 
   render() {
-    const fields = tableSortFields(this.fields);
+    const fields = dataSortFields(this.fields);
     const name = this.ariaLabel?.trim() || 'Sort table';
 
     return (
@@ -93,7 +93,7 @@ export class DataSort {
             menuLabel={name}
             selectionMode="none"
             initialFocusVisible={this.initialFocusVisible}
-            sections={tableSortMenuSections(this.fields, this.sort)}
+            sections={dataSortMenuSections(this.fields, this.sort)}
             onDsClose={() => this.close()}
             onDsAfterClose={() => {
               if (!this.menuOpen) this.menuSurfaceOpen = false;
@@ -122,8 +122,8 @@ export class DataSort {
   }
 
   private handleSelect(item: MenuItemData): void {
-    const next = nextTableSortStateFromMenuItem(this.fields, this.sort, item);
-    if (tableSortStatesEqual(this.sort, next)) return;
+    const next = nextDataSortStateFromMenuItem(this.fields, this.sort, item);
+    if (dataSortStatesEqual(this.sort, next)) return;
     this.dsSortChange.emit({ sort: next });
   }
 }

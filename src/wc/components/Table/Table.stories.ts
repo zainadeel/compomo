@@ -47,12 +47,12 @@ function overflowAction(name: string): TableCellAction {
 
 function applyColumnsConfig(event: Event) {
   const table = event.currentTarget as HTMLElement & {
-    hiddenColumnIds: string[];
-    columnOrder: string[];
+    hiddenFieldIds: string[];
+    fieldOrder: string[];
   };
   const detail = (event as CustomEvent<DataFieldsConfigChangeDetail>).detail;
-  table.hiddenColumnIds = detail.hiddenColumnIds;
-  table.columnOrder = detail.columnOrder;
+  table.hiddenFieldIds = detail.hiddenFieldIds;
+  table.fieldOrder = detail.fieldOrder;
 }
 
 function tableRowSearchText(row: TableRow): string {
@@ -806,9 +806,9 @@ const PAGINATED_GROUP_SOURCE: DataGroup[] = Array.from({ length: 30 }, (_, group
   }),
 }));
 
-function compareCell(a: TableRow, b: TableRow, columnId: string): number {
+function compareCell(a: TableRow, b: TableRow, fieldId: string): number {
   const primitive = (row: TableRow) => {
-    const value = row.cells[columnId];
+    const value = row.cells[fieldId];
     if (!value || typeof value !== 'object') return value;
     if ('primary' in value) return value.primary;
     if (value.kind === 'tag') return value.label;
@@ -824,7 +824,7 @@ function compareCell(a: TableRow, b: TableRow, columnId: string): number {
 function orderedRows(rows: TableRow[], sort: DataSortState | null): TableRow[] {
   if (!sort) return rows;
   const direction = sort.direction === 'asc' ? 1 : -1;
-  return [...rows].sort((a, b) => compareCell(a, b, sort.columnId) * direction);
+  return [...rows].sort((a, b) => compareCell(a, b, sort.fieldId) * direction);
 }
 
 function groupedRows(
@@ -834,7 +834,7 @@ function groupedRows(
 ): DataGroup[] {
   const byStatus = new Map<string, TableRow[]>();
   for (const row of rows) {
-    const status = String(row.cells[grouping.columnId] ?? 'Unassigned');
+    const status = String(row.cells[grouping.fieldId] ?? 'Unassigned');
     byStatus.set(status, [...(byStatus.get(status) ?? []), row]);
   }
 
@@ -1020,8 +1020,8 @@ export const Playground: Story = {
 export const ColumnHeaderAlignment: Story = {
   name: 'Column header alignment',
   args: {
-    grouping: { columnId: 'status', direction: 'asc' },
-    sort: { columnId: 'score', direction: 'desc' },
+    grouping: { fieldId: 'status', direction: 'asc' },
+    sort: { fieldId: 'score', direction: 'desc' },
     collapsedGroupIds: [],
   },
   parameters: {
@@ -1141,7 +1141,7 @@ export const SearchMatchHighlighting: Story = {
 export const SafetyEvents: Story = {
   name: 'Safety events',
   args: {
-    sort: { columnId: 'eventTime', direction: 'desc' },
+    sort: { fieldId: 'eventTime', direction: 'desc' },
     selectedRowIds: [],
     grouping: null,
   },
@@ -1193,11 +1193,11 @@ export const SafetyEvents: Story = {
                 aria-label="Group safety events"
                 placeholder="No grouping"
                 .options=${[{ label: 'Severity', value: 'severity' }]}
-                .value=${grouping?.columnId ?? ''}
+                .value=${grouping?.fieldId ?? ''}
                 .allowClear=${grouping !== null}
                 @dsChange=${(event: CustomEvent<string | string[]>) => {
                   if (event.detail !== 'severity') return;
-                  updateArgs({ grouping: { columnId: 'severity', direction: 'asc' } });
+                  updateArgs({ grouping: { fieldId: 'severity', direction: 'asc' } });
                 }}
                 @dsClear=${() => updateArgs({ grouping: null })}
               ></ds-select>
@@ -1243,7 +1243,7 @@ export const SafetyEvents: Story = {
 export const DocumentFlowStickyLanes: Story = {
   name: 'Document flow with sticky lanes',
   args: {
-    sort: { columnId: 'eventTime', direction: 'desc' },
+    sort: { fieldId: 'eventTime', direction: 'desc' },
     selectedRowIds: [],
     lastActivated: 'None',
   },
@@ -1297,8 +1297,8 @@ export const DocumentFlowStickyLanes: Story = {
 export const GroupingAndMemberSorting: Story = {
   name: 'Grouping and member sorting',
   args: {
-    grouping: { columnId: 'status', direction: 'asc' },
-    sort: { columnId: 'safetyScore', direction: 'desc' },
+    grouping: { fieldId: 'status', direction: 'asc' },
+    sort: { fieldId: 'safetyScore', direction: 'desc' },
     collapsedGroupIds: [],
   },
   parameters: {
@@ -1338,8 +1338,8 @@ export const GroupingAndMemberSorting: Story = {
 export const GroupingBySeverity: Story = {
   name: 'Grouping by severity',
   args: {
-    grouping: { columnId: 'severity', direction: 'asc' },
-    sort: { columnId: 'eventTime', direction: 'desc' },
+    grouping: { fieldId: 'severity', direction: 'asc' },
+    sort: { fieldId: 'eventTime', direction: 'desc' },
     collapsedGroupIds: [],
     selectedRowIds: [],
   },
@@ -1385,7 +1385,7 @@ export const GroupingBySeverity: Story = {
 export const GroupRows: Story = {
   name: 'Group rows',
   args: {
-    grouping: { columnId: 'status', direction: 'asc' },
+    grouping: { fieldId: 'status', direction: 'asc' },
     collapsedGroupIds: GROUP_ROW_REVIEW.map(group => group.id),
     selectedRowIds: [],
   },
@@ -1457,7 +1457,7 @@ export const GroupScoreHeroVariants: Story = {
               hero: { kind: 'score', value: 87 },
             },
           ] satisfies DataGroup[]}
-          .grouping=${{ columnId: 'driver', direction: 'asc' } satisfies DataGroupingState}
+          .grouping=${{ fieldId: 'driver', direction: 'asc' } satisfies DataGroupingState}
           .collapsedGroupIds=${['avery-chen-first-track']}
           selection-mode="multiple"
           caption="Default first-track group score"
@@ -1476,7 +1476,7 @@ export const GroupScoreHeroVariants: Story = {
               hero: { kind: 'score', value: 87, tracks: 2 },
             },
           ] satisfies DataGroup[]}
-          .grouping=${{ columnId: 'driver', direction: 'asc' } satisfies DataGroupingState}
+          .grouping=${{ fieldId: 'driver', direction: 'asc' } satisfies DataGroupingState}
           .collapsedGroupIds=${['avery-chen-two-tracks']}
           selection-mode="multiple"
           caption="Default two-track group score"
@@ -1497,7 +1497,7 @@ export const GroupScoreHeroVariants: Story = {
               hero: { kind: 'score', value: 87 },
             },
           ] satisfies DataGroup[]}
-          .grouping=${{ columnId: 'driver', direction: 'asc' } satisfies DataGroupingState}
+          .grouping=${{ fieldId: 'driver', direction: 'asc' } satisfies DataGroupingState}
           .collapsedGroupIds=${['avery-chen-first-track-no-selection']}
           selection-mode="none"
           caption="Default first-track group score without row selection"
@@ -1518,7 +1518,7 @@ export const GroupScoreHeroVariants: Story = {
               hero: { kind: 'score', value: 87, tracks: 2 },
             },
           ] satisfies DataGroup[]}
-          .grouping=${{ columnId: 'driver', direction: 'asc' } satisfies DataGroupingState}
+          .grouping=${{ fieldId: 'driver', direction: 'asc' } satisfies DataGroupingState}
           .collapsedGroupIds=${['avery-chen-two-tracks-no-selection']}
           selection-mode="none"
           caption="Default two-track group score without row selection"
@@ -1862,7 +1862,7 @@ export const ColumnCustomizer: Story = {
     docs: {
       description: {
         story:
-          'Opt-in columnCustomizer keeps columns as the catalog. hiddenColumnIds and columnOrder are controlled; dsColumnsConfigChange reports live show/hide and data-column reorder. The trailing neutral Customize control opens the shared Menu of reorderable switch rows and stays open while toggling or dragging. Its label and resting foreground do not change when the controlled column configuration differs from the catalog default. Below 900px it becomes the icon-only Table menu button with the same neutral resting foreground. Selection and action columns are omitted from the menu, action columns stay fixed last, and the last remaining visible data column cannot be hidden. Persistence stays in the application.',
+          'Opt-in columnCustomizer keeps columns as the catalog. hiddenFieldIds and fieldOrder are controlled; dsFieldsConfigChange reports live show/hide and data-column reorder. The trailing neutral Customize control opens the shared Menu of reorderable switch rows and stays open while toggling or dragging. Its label and resting foreground do not change when the controlled column configuration differs from the catalog default. Below 900px it becomes the icon-only Table menu button with the same neutral resting foreground. Selection and action columns are omitted from the menu, action columns stay fixed last, and the last remaining visible data column cannot be hidden. Persistence stays in the application.',
       },
       ...isolatedOverlayDocs('480px'),
     },
@@ -1898,7 +1898,7 @@ export const ColumnCustomizer: Story = {
         selection-mode="multiple"
         caption="Customizable drivers"
         caption-visibility="visible"
-        @dsColumnsConfigChange=${applyColumnsConfig}
+        @dsFieldsConfigChange=${applyColumnsConfig}
       ></ds-table>
     `;
   },
@@ -2322,7 +2322,7 @@ export const GroupParentPagination: Story = {
     pageSize: 25,
     pageSizeMode: 'fixed',
     loadedByGroup: {},
-    grouping: { columnId: 'status', direction: 'asc' },
+    grouping: { fieldId: 'status', direction: 'asc' },
   },
   parameters: {
     docs: {
@@ -2481,7 +2481,7 @@ export const FooterReview: Story = {
             data-a11y-fixture
             .columns=${ASYNC_COLUMNS}
             .groups=${previewGroups}
-            .grouping=${{ columnId: 'status', direction: 'asc' } satisfies DataGroupingState}
+            .grouping=${{ fieldId: 'status', direction: 'asc' } satisfies DataGroupingState}
             data-mode="pagination"
             load-more-mode="manual"
             .pagination=${groupsPagination}
@@ -2563,8 +2563,8 @@ export const WorkingGroupedLazyLoading: Story = {
   args: {
     loadedByGroup: {},
     loadingGroupId: null,
-    grouping: { columnId: 'severity', direction: 'asc' },
-    sort: { columnId: 'eventTime', direction: 'desc' },
+    grouping: { fieldId: 'severity', direction: 'asc' },
+    sort: { fieldId: 'eventTime', direction: 'desc' },
     collapsedGroupIds: [],
   },
   parameters: {
@@ -2682,7 +2682,7 @@ export const NativeGroupedStickyPerformance: Story = {
         <ds-table
           .columns=${COLUMNS}
           .groups=${groups}
-          .grouping=${{ columnId: 'status', direction: 'asc' }}
+          .grouping=${{ fieldId: 'status', direction: 'asc' }}
           selection-mode="multiple"
           sticky-header
           height="var(--dimension-card-height-lg)"
@@ -2745,7 +2745,7 @@ export const VirtualGroupedRows: Story = {
       <ds-table
         .columns=${COLUMNS}
         .groups=${groups}
-        .grouping=${{ columnId: 'status', direction: 'asc' }}
+        .grouping=${{ fieldId: 'status', direction: 'asc' }}
         data-mode="virtual"
         selection-mode="multiple"
         sticky-header
@@ -2931,8 +2931,8 @@ export const RestyledVisualPrimitives: Story = {
         --ds-table-cell-padding-inline:var(--dimension-space-200);
       "
       .columns=${COLUMNS.slice(0, 4)}
-      .groups=${groupedRows(ROWS.slice(0, 5), { columnId: 'status', direction: 'asc' }, null)}
-      .grouping=${{ columnId: 'status', direction: 'asc' }}
+      .groups=${groupedRows(ROWS.slice(0, 5), { fieldId: 'status', direction: 'asc' }, null)}
+      .grouping=${{ fieldId: 'status', direction: 'asc' }}
       .selectedRowIds=${['driver-jordan']}
       selection-mode="multiple"
       caption="Restyled grouped drivers"

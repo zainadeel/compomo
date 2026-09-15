@@ -7,7 +7,7 @@ search.fields = [
   {
     id: 'vehicleDetails',
     label: 'Vehicle ID / Make · Model · Year',
-    headerSegments: [
+    segments: [
       { label: 'Vehicle ID', dataLabel: 'Vehicle ID', sortKey: 'vehicleId', separator: '/' },
       { label: 'Make', dataLabel: 'Vehicle make', sortKey: 'vehicleMake', separator: '·' },
       { label: 'Model', dataLabel: 'Vehicle model', sortKey: 'vehicleModel', separator: '·' },
@@ -17,13 +17,13 @@ search.fields = [
   {
     id: 'driverDetails',
     label: 'Driver name / ID',
-    headerSegments: [
+    segments: [
       { label: 'Driver name', dataLabel: 'Driver name', sortKey: 'driverName', separator: '/' },
       { label: 'ID', dataLabel: 'Driver ID', sortKey: 'driverId' },
     ],
   },
   { id: 'preview', label: 'Preview', searchable: false },
-  { id: 'actions', kind: 'action', label: '', headerLabel: 'Actions' },
+  { id: 'actions', kind: 'action', label: '', accessibleLabel: 'Actions' },
 ];
 search.value = '';
 search.selectedFieldIds = [];

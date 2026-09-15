@@ -33,7 +33,7 @@ control.addEventListener('dsGroupChange', e => {
 control.addEventListener('dsGroupClear', () => {
   control.grouping = null;
 });
-control.addEventListener('dsColumnsConfigChange', e => {
+control.addEventListener('dsFieldsConfigChange', e => {
   Object.assign(control, e.detail);
 });
 document.documentElement.dataset.ready = 'true';

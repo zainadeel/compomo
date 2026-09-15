@@ -9,7 +9,7 @@ const COLUMNS = [
   {
     id: 'vehicleDetails',
     label: 'Vehicle ID / Make · Model · Year',
-    headerSegments: [
+    segments: [
       { label: 'Vehicle ID', dataLabel: 'Vehicle ID', sortKey: 'vehicleId', separator: '/' },
       { label: 'Make', dataLabel: 'Vehicle make', sortKey: 'vehicleMake', separator: '·' },
       { label: 'Model', dataLabel: 'Vehicle model', sortKey: 'vehicleModel', separator: '·' },
@@ -19,14 +19,14 @@ const COLUMNS = [
   {
     id: 'driverDetails',
     label: 'Driver name / ID',
-    headerSegments: [
+    segments: [
       { label: 'Driver name', dataLabel: 'Driver name', sortKey: 'driverName', separator: '/' },
       { label: 'ID', dataLabel: 'Driver ID', sortKey: 'driverId' },
     ],
   },
   { id: 'location', label: 'Location', dataLabel: 'Location' },
   { id: 'updatedAt', label: 'Updated', dataLabel: 'Last updated' },
-  { id: 'actions', kind: 'action', label: '', headerLabel: 'Actions' },
+  { id: 'actions', kind: 'action', label: '', accessibleLabel: 'Actions' },
 ];
 
 const meta: Meta = {

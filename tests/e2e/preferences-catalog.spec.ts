@@ -26,9 +26,7 @@ test('customizes a non-table catalog with toggle-only rows', async ({ page }) =>
     await rows.filter({ hasText: label }).click();
   }
   await expect
-    .poll(() =>
-      control.evaluate((element: HTMLDsDataPreferencesElement) => element.hiddenColumnIds)
-    )
+    .poll(() => control.evaluate((element: HTMLDsDataPreferencesElement) => element.hiddenFieldIds))
     .toEqual(['driverId', 'vehicleMmy', 'motion']);
 });
 
@@ -50,8 +48,6 @@ test('keeps the table catalog reorderable with its last column locked', async ({
   await expect(status).not.toHaveAttribute('aria-disabled', 'true');
   await status.click();
   await expect
-    .poll(() =>
-      control.evaluate((element: HTMLDsDataPreferencesElement) => element.hiddenColumnIds)
-    )
+    .poll(() => control.evaluate((element: HTMLDsDataPreferencesElement) => element.hiddenFieldIds))
     .toEqual(['vehicle']);
 });

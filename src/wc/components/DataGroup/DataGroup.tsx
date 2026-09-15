@@ -234,7 +234,7 @@ export class DataGroup {
     requestAnimationFrame(() => {
       const selected = this.grouping
         ? this.el.querySelector<HTMLElement>(
-            `[data-group-value="${CSS.escape(this.grouping.columnId)}"] [role="option"]`
+            `[data-group-value="${CSS.escape(this.grouping.fieldId)}"] [role="option"]`
           )
         : null;
       const initial =
@@ -253,13 +253,13 @@ export class DataGroup {
       return;
     }
     if (option.isInactive) return;
-    if (this.grouping?.columnId === option.value) {
+    if (this.grouping?.fieldId === option.value) {
       this.dsGroupChange.emit({ ...this.grouping });
       return;
     }
     const initialOrder = option.orderOptions?.[0];
     this.dsGroupChange.emit({
-      columnId: option.value,
+      fieldId: option.value,
       direction: initialOrder?.direction ?? 'asc',
       ...(initialOrder?.orderBy ? { orderBy: initialOrder.orderBy } : {}),
     });
@@ -267,7 +267,7 @@ export class DataGroup {
 
   private get activeOrderOptions(): TableGroupOrderOption[] {
     const configured = this.options.find(
-      option => option.value === this.grouping?.columnId
+      option => option.value === this.grouping?.fieldId
     )?.orderOptions;
     return configured?.length ? configured : DEFAULT_ORDER_OPTIONS;
   }
@@ -290,7 +290,7 @@ export class DataGroup {
   private selectOrder(option: TableGroupOrderOption, index: number) {
     if (!this.grouping || this.selectedOrderIndex === index) return;
     const grouping: DataGroupingState = {
-      columnId: this.grouping.columnId,
+      fieldId: this.grouping.fieldId,
       direction: option.direction,
     };
     if (option.orderBy) grouping.orderBy = option.orderBy;
@@ -325,7 +325,7 @@ export class DataGroup {
 
   private renderDataOption(option: DataGroupOption, index: number) {
     const selected =
-      option.value === '__none__' ? !this.grouping : option.value === this.grouping?.columnId;
+      option.value === '__none__' ? !this.grouping : option.value === this.grouping?.fieldId;
     return (
       <ChoiceOptionRow
         id={`${this.componentId}-data-${index}`}
@@ -385,7 +385,7 @@ export class DataGroup {
             event,
             '[data-group-order-index] [role="option"]',
             index,
-            `[data-group-value="${CSS.escape(this.grouping?.columnId ?? '')}"] [role="option"]`
+            `[data-group-value="${CSS.escape(this.grouping?.fieldId ?? '')}"] [role="option"]`
           );
         }}
       />

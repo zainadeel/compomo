@@ -12,7 +12,7 @@ export interface TableSortField {
 }
 
 /** Sortable data fields from the catalog, including compound header segments. */
-export function tableSortFields(columns: readonly TableColumn[]): TableSortField[] {
+export function dataSortFields(columns: readonly TableColumn[]): TableSortField[] {
   const fields: TableSortField[] = [];
   const seen = new Set<string>();
 
@@ -45,18 +45,18 @@ export function tableSortFields(columns: readonly TableColumn[]): TableSortField
   return fields;
 }
 
-export function tableSortMenuSections(
+export function dataSortMenuSections(
   columns: readonly TableColumn[],
   sort: DataSortState | null | undefined
 ): MenuSection[] {
-  const fields = tableSortFields(columns);
+  const fields = dataSortFields(columns);
   return [
     {
       header: 'Data',
       items: fields.map(field => ({
         label: field.label,
         value: `${TABLE_SORT_FIELD_PREFIX}${encodeURIComponent(field.id)}`,
-        isSelected: sort?.columnId === field.id,
+        isSelected: sort?.fieldId === field.id,
       })),
     },
     {
@@ -79,40 +79,40 @@ export function tableSortMenuSections(
   ];
 }
 
-export function tableSortStatesEqual(
+export function dataSortStatesEqual(
   left: DataSortState | null | undefined,
   right: DataSortState | null | undefined
 ): boolean {
   if (left === right) return true;
   if (!left || !right) return false;
-  return left.columnId === right.columnId && left.direction === right.direction;
+  return left.fieldId === right.fieldId && left.direction === right.direction;
 }
 
 /** Next controlled sort from a Sort menu selection. Does not toggle like a header click. */
-export function nextTableSortStateFromMenuItem(
+export function nextDataSortStateFromMenuItem(
   columns: readonly TableColumn[],
   current: DataSortState | null | undefined,
   item: MenuItemData
 ): DataSortState | null {
-  const fields = tableSortFields(columns);
+  const fields = dataSortFields(columns);
   if (fields.length === 0) return current ?? null;
 
   if (item.value === TABLE_SORT_DIRECTION_ASC || item.value === TABLE_SORT_DIRECTION_DESC) {
     const direction = item.value === TABLE_SORT_DIRECTION_ASC ? 'asc' : 'desc';
-    const columnId = fields.some(field => field.id === current?.columnId)
-      ? current!.columnId
+    const fieldId = fields.some(field => field.id === current?.fieldId)
+      ? current!.fieldId
       : fields[0]!.id;
-    return { columnId, direction };
+    return { fieldId, direction };
   }
 
   if (!item.value?.startsWith(TABLE_SORT_FIELD_PREFIX)) return current ?? null;
-  let columnId: string;
+  let fieldId: string;
   try {
-    columnId = decodeURIComponent(item.value.slice(TABLE_SORT_FIELD_PREFIX.length));
+    fieldId = decodeURIComponent(item.value.slice(TABLE_SORT_FIELD_PREFIX.length));
   } catch {
     return current ?? null;
   }
-  if (!fields.some(field => field.id === columnId)) return current ?? null;
-  if (current?.columnId === columnId) return current ?? null;
-  return { columnId, direction: current?.direction ?? 'asc' };
+  if (!fields.some(field => field.id === fieldId)) return current ?? null;
+  if (current?.fieldId === fieldId) return current ?? null;
+  return { fieldId, direction: current?.direction ?? 'asc' };
 }

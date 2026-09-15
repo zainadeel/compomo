@@ -41,11 +41,11 @@ export function tableDataColumns(columns: TableColumn[]): TableColumn[] {
 /** Data-column ids in display order. Unknown, duplicate, and action ids are ignored. */
 export function resolveTableColumnOrder(
   columns: TableColumn[],
-  columnOrder: string[] | undefined
+  fieldOrder: string[] | undefined
 ): string[] {
   return resolveListOrder(
     tableDataColumns(columns).map(column => column.id),
-    columnOrder
+    fieldOrder
   );
 }
 
@@ -55,11 +55,11 @@ export function resolveTableColumnOrder(
  */
 export function resolveTableHiddenColumnIds(
   columns: TableColumn[],
-  hiddenColumnIds: string[] | undefined
+  hiddenFieldIds: string[] | undefined
 ): string[] {
   return resolveListHiddenIds(
     tableDataColumns(columns).map(column => column.id),
-    hiddenColumnIds,
+    hiddenFieldIds,
     TABLE_COLUMN_CUSTOMIZER
   );
 }
@@ -68,15 +68,15 @@ export function resolveTableVisibleColumns(
   columns: TableColumn[],
   options: {
     columnCustomizer?: boolean;
-    hiddenColumnIds?: string[];
-    columnOrder?: string[];
+    hiddenFieldIds?: string[];
+    fieldOrder?: string[];
   } = {}
 ): TableColumn[] {
   if (!options.columnCustomizer) return columns;
 
   const byId = new Map(columns.map(column => [column.id, column]));
-  const hidden = new Set(resolveTableHiddenColumnIds(columns, options.hiddenColumnIds));
-  const visibleData = resolveTableColumnOrder(columns, options.columnOrder)
+  const hidden = new Set(resolveTableHiddenColumnIds(columns, options.hiddenFieldIds));
+  const visibleData = resolveTableColumnOrder(columns, options.fieldOrder)
     .map(id => byId.get(id))
     .filter((column): column is TableColumn => !!column && !hidden.has(column.id));
 
@@ -85,34 +85,34 @@ export function resolveTableVisibleColumns(
 
 export function canToggleTableColumnHidden(
   columns: TableColumn[],
-  hiddenColumnIds: string[] | undefined,
-  columnId: string
+  hiddenFieldIds: string[] | undefined,
+  fieldId: string
 ): boolean {
-  const column = columns.find(candidate => candidate.id === columnId);
+  const column = columns.find(candidate => candidate.id === fieldId);
   if (!column || isTableActionColumn(column)) return false;
 
   return canToggleListHidden(
     tableDataColumns(columns).map(candidate => candidate.id),
-    hiddenColumnIds,
-    columnId,
+    hiddenFieldIds,
+    fieldId,
     TABLE_COLUMN_CUSTOMIZER
   );
 }
 
 export function toggleTableColumnHidden(
   columns: TableColumn[],
-  hiddenColumnIds: string[] | undefined,
-  columnId: string
+  hiddenFieldIds: string[] | undefined,
+  fieldId: string
 ): string[] {
-  const column = columns.find(candidate => candidate.id === columnId);
+  const column = columns.find(candidate => candidate.id === fieldId);
   if (!column || isTableActionColumn(column)) {
-    return resolveTableHiddenColumnIds(columns, hiddenColumnIds);
+    return resolveTableHiddenColumnIds(columns, hiddenFieldIds);
   }
 
   return toggleListHidden(
     tableDataColumns(columns).map(candidate => candidate.id),
-    hiddenColumnIds,
-    columnId,
+    hiddenFieldIds,
+    fieldId,
     TABLE_COLUMN_CUSTOMIZER
   );
 }
@@ -121,12 +121,8 @@ export function moveTableColumnOrder(order: string[], fromId: string, toId: stri
   return moveListOrder(order, fromId, toId);
 }
 
-export function moveTableColumnInOrder(
-  order: string[],
-  columnId: string,
-  offset: number
-): string[] {
-  return moveListOrderBy(order, columnId, offset);
+export function moveTableColumnInOrder(order: string[], fieldId: string, offset: number): string[] {
+  return moveListOrderBy(order, fieldId, offset);
 }
 
 export interface TableColumnCustomizerItem {
@@ -139,13 +135,13 @@ export interface TableColumnCustomizerItem {
 
 export function tableColumnCustomizerItems(
   columns: TableColumn[],
-  hiddenColumnIds: string[] | undefined,
-  columnOrder: string[] | undefined
+  hiddenFieldIds: string[] | undefined,
+  fieldOrder: string[] | undefined
 ): TableColumnCustomizerItem[] {
   const byId = new Map(columns.map(column => [column.id, column]));
-  const resolvedHidden = resolveTableHiddenColumnIds(columns, hiddenColumnIds);
+  const resolvedHidden = resolveTableHiddenColumnIds(columns, hiddenFieldIds);
   const hidden = new Set(resolvedHidden);
-  const dataItems = resolveTableColumnOrder(columns, columnOrder).flatMap(id => {
+  const dataItems = resolveTableColumnOrder(columns, fieldOrder).flatMap(id => {
     const column = byId.get(id);
     if (!column) return [];
     return [
@@ -164,16 +160,16 @@ export function tableColumnCustomizerItems(
 /** Menu switch rows for the table-owned column customizer. */
 export function tableColumnCustomizerMenuItems(
   columns: TableColumn[],
-  hiddenColumnIds: string[] | undefined,
-  columnOrder: string[] | undefined
+  hiddenFieldIds: string[] | undefined,
+  fieldOrder: string[] | undefined
 ): MenuItemData[] {
   return listCustomizerMenuItems(
     tableDataColumns(columns).map(column => ({
       id: column.id,
       label: tableColumnCustomizerLabel(column),
     })),
-    hiddenColumnIds,
-    columnOrder,
+    hiddenFieldIds,
+    fieldOrder,
     TABLE_COLUMN_CUSTOMIZER
   );
 }

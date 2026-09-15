@@ -16,7 +16,7 @@ toggleOnly.fields = [
 toggleOnly.customizeOptions = [
   { label: 'Show applied filters', value: 'show-filters', showSwitch: true },
 ];
-toggleOnly.addEventListener('dsColumnsConfigChange', e => {
+toggleOnly.addEventListener('dsFieldsConfigChange', e => {
   Object.assign(toggleOnly, e.detail);
 });
 
@@ -29,8 +29,8 @@ tableCatalog.fields = [
   { id: 'status', label: 'Status' },
   { id: 'vehicle', label: 'Vehicle' },
 ];
-tableCatalog.hiddenColumnIds = ['status', 'vehicle'];
-tableCatalog.addEventListener('dsColumnsConfigChange', e => {
+tableCatalog.hiddenFieldIds = ['status', 'vehicle'];
+tableCatalog.addEventListener('dsFieldsConfigChange', e => {
   Object.assign(tableCatalog, e.detail);
 });
 

@@ -39,13 +39,13 @@ export interface TableHeaderSegment extends DataFieldSegment {
 
 /** Controlled member-row sort state. Group order is controlled separately. */
 export interface DataSortState {
-  columnId: string;
+  fieldId: string;
   direction: DataSortDirection;
 }
 
 /** One controlled grouping level. Applications supply groups in their final fixed order. */
 export interface DataGroupingState {
-  columnId: string;
+  fieldId: string;
   direction: DataSortDirection;
   /** Optional application-owned data point used to order the group sections. */
   orderBy?: string;
@@ -502,8 +502,8 @@ export interface TableRowActivateDetail {
 
 /** Controlled show/hide and data-column order for the table-owned customizer. */
 export interface DataFieldsConfigChangeDetail {
-  hiddenColumnIds: string[];
-  columnOrder: string[];
+  hiddenFieldIds: string[];
+  fieldOrder: string[];
 }
 
 /** Controlled top-level pagination state. Rows or groups contain only the active page. */

@@ -41,7 +41,7 @@
     "Inactive search leaves the tab order, closes the field listbox, and does not emit query or field changes.",
     "The field-picker action holds the shared surface-open wash while its listbox is visible; chosen search fields remain independent.",
     "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback.",
-    "columns accepts any DataField, not only table columns: a non-table surface supplies id, header and searchable, and headerSegments still expands into separate search fields."
+    "columns accepts any DataField, not only table columns: a non-table surface supplies id, header and searchable, and segments still expands into separate search fields."
   ],
   "responsiveBehavior": [
     "The control fills the available inline size supplied by the table toolbar search slot. Selected Chips and the editable query share one horizontal editor lane so the md control does not grow vertically.",

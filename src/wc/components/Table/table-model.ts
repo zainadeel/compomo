@@ -117,13 +117,13 @@ export function tableRowSelectionLabel(row: TableRow, columns: TableColumn[]): s
   return row.id;
 }
 
-export function nextTableSortState(
+export function nextDataSortState(
   current: DataSortState | null | undefined,
-  columnId: string
+  fieldId: string
 ): DataSortState {
-  if (current?.columnId !== columnId) return { columnId, direction: 'asc' };
-  if (current.direction === 'asc') return { columnId, direction: 'desc' };
-  return { columnId, direction: 'asc' };
+  if (current?.fieldId !== fieldId) return { fieldId, direction: 'asc' };
+  if (current.direction === 'asc') return { fieldId, direction: 'desc' };
+  return { fieldId, direction: 'asc' };
 }
 
 export function toggleTableGroupCollapsed(collapsedGroupIds: string[], groupId: string): string[] {
@@ -404,7 +404,7 @@ export function tableModelIssues(
     else if (columnIds.has(column.id)) issues.push(`Duplicate column id: ${column.id}`);
     if (!column.label.trim() && !column.accessibleLabel?.trim()) {
       issues.push(
-        `Column ${column.id || '(missing id)'} requires a visible header or accessibleLabel.`
+        `Column ${column.id || '(missing id)'} requires a visible label or accessibleLabel.`
       );
     }
     columnIds.add(column.id);

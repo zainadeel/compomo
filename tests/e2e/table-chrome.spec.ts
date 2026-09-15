@@ -39,8 +39,8 @@ test('groups through two dependent panes and keeps order unavailable until data 
       control.evaluate(element => (element as HTMLElement & { eventLog: unknown[] }).eventLog)
     )
     .toEqual([
-      { type: 'change', columnId: 'severity', direction: 'asc' },
-      { type: 'change', columnId: 'severity', direction: 'desc' },
+      { type: 'change', fieldId: 'severity', direction: 'asc' },
+      { type: 'change', fieldId: 'severity', direction: 'desc' },
     ]);
 
   await dialog.getByRole('button', { name: 'Clear' }).click();
@@ -74,13 +74,13 @@ test('supports product-owned order choices for one grouping data point', async (
     .toEqual([
       {
         type: 'change',
-        columnId: 'driverName',
+        fieldId: 'driverName',
         direction: 'asc',
         orderBy: 'driverName',
       },
       {
         type: 'change',
-        columnId: 'driverName',
+        fieldId: 'driverName',
         direction: 'desc',
         orderBy: 'driverScore',
       },
@@ -1039,14 +1039,14 @@ test('mirrors table sort through the toolbar Sort menu and column headers', asyn
 
   await menu.getByRole('menuitem', { name: 'Status' }).click();
   await expect(menu).toBeVisible();
-  await expect(table).toHaveJSProperty('sort', { columnId: 'status', direction: 'asc' });
+  await expect(table).toHaveJSProperty('sort', { fieldId: 'status', direction: 'asc' });
   await expect(table.locator('th[data-column-id="status"]')).toHaveAttribute(
     'aria-sort',
     'ascending'
   );
 
   await menu.getByRole('menuitem', { name: 'Descending' }).click();
-  await expect(table).toHaveJSProperty('sort', { columnId: 'status', direction: 'desc' });
+  await expect(table).toHaveJSProperty('sort', { fieldId: 'status', direction: 'desc' });
   await expect(table.locator('th[data-column-id="status"]')).toHaveAttribute(
     'aria-sort',
     'descending'
@@ -1054,7 +1054,7 @@ test('mirrors table sort through the toolbar Sort menu and column headers', asyn
 
   await page.keyboard.press('Escape');
   await table.getByRole('button', { name: /Sort Driver/ }).click();
-  await expect(table).toHaveJSProperty('sort', { columnId: 'name', direction: 'asc' });
+  await expect(table).toHaveJSProperty('sort', { fieldId: 'name', direction: 'asc' });
 
   await sortTrigger.click();
   await expect(

@@ -27,7 +27,7 @@ import type {
   DataFieldsConfigChangeDetail,
 } from '../Table/table-types';
 import type { DataGroupOption } from '../DataGroup/DataGroup';
-import { tableSortMenuSections, nextTableSortStateFromMenuItem } from '../DataSort/data-sort-menu';
+import { dataSortMenuSections, nextDataSortStateFromMenuItem } from '../DataSort/data-sort-menu';
 import {
   tableColumnCustomizerLabel,
   tableColumnCustomizerMenuItems,
@@ -84,8 +84,8 @@ export class DataPreferences {
   @Prop() sort: DataSortState | null = null;
   @Prop() groupingOptions: DataGroupOption[] = [];
   @Prop() grouping: DataGroupingState | null = null;
-  @Prop() hiddenColumnIds: string[] = [];
-  @Prop() columnOrder: string[] = [];
+  @Prop() hiddenFieldIds: string[] = [];
+  @Prop() fieldOrder: string[] = [];
   /** Render shared content without its popup or trigger. */
   @Prop() embedded = false;
   @Prop() activeTab: PreferencesTab = 'filters';
@@ -98,7 +98,7 @@ export class DataPreferences {
   @Event() dsSortChange!: EventEmitter<DataSortChangeDetail>;
   @Event() dsGroupChange!: EventEmitter<DataGroupingState>;
   @Event() dsGroupClear!: EventEmitter<void>;
-  @Event() dsColumnsConfigChange!: EventEmitter<DataFieldsConfigChangeDetail>;
+  @Event() dsFieldsConfigChange!: EventEmitter<DataFieldsConfigChangeDetail>;
 
   /** Catalog rows as domain-neutral items, so a non-table catalog needs no column shape. */
   private catalogItems(): { id: string; label: string }[] {
@@ -291,11 +291,11 @@ export class DataPreferences {
                 <ds-menu
                   embedded
                   menuLabel="Sort table"
-                  sections={tableSortMenuSections(this.sortColumns ?? this.fields, this.sort)}
+                  sections={dataSortMenuSections(this.sortColumns ?? this.fields, this.sort)}
                   onDsSelect={e => {
                     e.stopPropagation();
                     this.dsSortChange.emit({
-                      sort: nextTableSortStateFromMenuItem(
+                      sort: nextDataSortStateFromMenuItem(
                         this.sortColumns ?? this.fields,
                         this.sort,
                         e.detail
@@ -328,13 +328,13 @@ export class DataPreferences {
                             items: this.catalogReorderable
                               ? tableColumnCustomizerMenuItems(
                                   this.fields,
-                                  this.hiddenColumnIds,
-                                  this.columnOrder
+                                  this.hiddenFieldIds,
+                                  this.fieldOrder
                                 )
                               : listCustomizerMenuItems(
                                   this.catalogItems(),
-                                  this.hiddenColumnIds,
-                                  this.columnOrder,
+                                  this.hiddenFieldIds,
+                                  this.fieldOrder,
                                   TOGGLE_ONLY_CATALOG
                                 ),
                           },
@@ -361,32 +361,32 @@ export class DataPreferences {
                     }
                     if (!this.catalogReorderable) {
                       const ids = this.catalogItems().map(item => item.id);
-                      this.dsColumnsConfigChange.emit({
-                        hiddenColumnIds: toggleListHidden(
+                      this.dsFieldsConfigChange.emit({
+                        hiddenFieldIds: toggleListHidden(
                           ids,
-                          this.hiddenColumnIds,
+                          this.hiddenFieldIds,
                           e.detail.value,
                           TOGGLE_ONLY_CATALOG
                         ),
-                        columnOrder: resolveListOrder(ids, this.columnOrder),
+                        fieldOrder: resolveListOrder(ids, this.fieldOrder),
                       });
                       return;
                     }
-                    this.dsColumnsConfigChange.emit({
-                      hiddenColumnIds: toggleTableColumnHidden(
+                    this.dsFieldsConfigChange.emit({
+                      hiddenFieldIds: toggleTableColumnHidden(
                         this.fields,
-                        this.hiddenColumnIds,
+                        this.hiddenFieldIds,
                         e.detail.value
                       ),
-                      columnOrder: resolveTableColumnOrder(this.fields, this.columnOrder),
+                      fieldOrder: resolveTableColumnOrder(this.fields, this.fieldOrder),
                     });
                   }}
                   onDsReorder={e => {
                     e.stopPropagation();
                     if (!this.catalogReorderable) return;
-                    this.dsColumnsConfigChange.emit({
-                      hiddenColumnIds: this.hiddenColumnIds,
-                      columnOrder: e.detail.items
+                    this.dsFieldsConfigChange.emit({
+                      hiddenFieldIds: this.hiddenFieldIds,
+                      fieldOrder: e.detail.items
                         .filter(item => item.reorderable)
                         .map(item => item.value!)
                         .filter(Boolean),

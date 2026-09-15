@@ -55,8 +55,8 @@ test('strips action ids from hidden state and keeps one data column visible', ()
 test('passes columns through until the customizer is opted in', () => {
   assert.deepEqual(
     resolveTableVisibleColumns(columns, {
-      hiddenColumnIds: ['status'],
-      columnOrder: ['vehicle', 'driver'],
+      hiddenFieldIds: ['status'],
+      fieldOrder: ['vehicle', 'driver'],
     }).map(column => column.id),
     ['driver', 'status', 'vehicle', 'action']
   );
@@ -66,8 +66,8 @@ test('renders data columns in order minus hidden, then locked action columns', (
   assert.deepEqual(
     resolveTableVisibleColumns(columns, {
       columnCustomizer: true,
-      hiddenColumnIds: ['status'],
-      columnOrder: ['vehicle', 'driver'],
+      hiddenFieldIds: ['status'],
+      fieldOrder: ['vehicle', 'driver'],
     }).map(column => column.id),
     ['vehicle', 'driver', 'action']
   );

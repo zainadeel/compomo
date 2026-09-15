@@ -18,7 +18,7 @@
     "Embedded presentation delegates its active tab, draft state, Apply, Reset, and dismissal to the owning panel; it renders vertical filter and grouping content without a popup trigger.",
     "Customize builds its catalog from columns. catalogReorderable defaults to true for a table: rows drag to reorder and the last visible entry stays locked. Pass false for a show-and-hide catalog, where rows are switches with no drag handle and every entry may be hidden.",
     "catalogHeader overrides the catalog section header, which otherwise reads Columns whenever customizeOptions supply a second section. customizeLabel names the Customize menu, so a non-table surface can announce Customize view rather than Customize table.",
-    "Both catalog modes emit dsColumnsConfigChange with hiddenColumnIds and columnOrder, so a consumer that never reorders can ignore columnOrder and keep using hiddenColumnIds."
+    "Both catalog modes emit dsFieldsConfigChange with hiddenFieldIds and fieldOrder, so a consumer that never reorders can ignore fieldOrder and keep using hiddenFieldIds."
   ],
   "accessibility": [
     "An icon-only Preferences trigger opens a named dialog. TabGroup owns section keyboard navigation; Escape and outside activation dismiss, returning focus to the trigger."

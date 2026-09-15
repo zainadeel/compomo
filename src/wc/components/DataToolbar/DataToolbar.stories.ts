@@ -62,12 +62,12 @@ const applySort = (event: Event) => {
 
 const applyColumnsConfig = (event: Event) => {
   const table = event.currentTarget as HTMLElement & {
-    hiddenColumnIds: string[];
-    columnOrder: string[];
+    hiddenFieldIds: string[];
+    fieldOrder: string[];
   };
   const detail = (event as CustomEvent<DataFieldsConfigChangeDetail>).detail;
-  table.hiddenColumnIds = detail.hiddenColumnIds;
-  table.columnOrder = detail.columnOrder;
+  table.hiddenFieldIds = detail.hiddenFieldIds;
+  table.fieldOrder = detail.fieldOrder;
 };
 
 const renderToolbar = (options?: {
@@ -101,7 +101,7 @@ const renderToolbar = (options?: {
     <ds-data-sort
       slot="trailing"
       .fields=${COLUMNS}
-      .sort=${{ columnId: 'driver', direction: 'asc' }}
+      .sort=${{ fieldId: 'driver', direction: 'asc' }}
       aria-label="Sort fleet"
       @dsSortChange=${applySort}
     ></ds-data-sort>
@@ -157,9 +157,9 @@ export const Controls: Story = {
         data-mode-switcher
         .columns=${COLUMNS}
         .rows=${ROWS}
-        .sort=${{ columnId: 'driver', direction: 'asc' }}
+        .sort=${{ fieldId: 'driver', direction: 'asc' }}
         @dsSortChange=${applySort}
-        @dsColumnsConfigChange=${applyColumnsConfig}
+        @dsFieldsConfigChange=${applyColumnsConfig}
       >
         ${renderToolbar()}
       </ds-table>
@@ -186,9 +186,9 @@ export const CompactCaption: Story = {
         data-mode-switcher
         .columns=${COLUMNS}
         .rows=${ROWS}
-        .sort=${{ columnId: 'driver', direction: 'asc' }}
+        .sort=${{ fieldId: 'driver', direction: 'asc' }}
         @dsSortChange=${applySort}
-        @dsColumnsConfigChange=${applyColumnsConfig}
+        @dsFieldsConfigChange=${applyColumnsConfig}
       >
         ${renderToolbar({ filterValues: { status: ['driving'] }, groupValue: 'status' })}
       </ds-table>

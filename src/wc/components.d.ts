@@ -1669,10 +1669,6 @@ export namespace Components {
          */
         "catalogReorderable": boolean;
         /**
-          * @default []
-         */
-        "columnOrder": string[];
-        /**
           * Accessible name for the Customize menu.
           * @default 'Customize table'
          */
@@ -1691,6 +1687,10 @@ export namespace Components {
           * @default false
          */
         "embedded": boolean;
+        /**
+          * @default []
+         */
+        "fieldOrder": string[];
         /**
           * @default []
          */
@@ -1715,7 +1715,7 @@ export namespace Components {
         /**
           * @default []
          */
-        "hiddenColumnIds": string[];
+        "hiddenFieldIds": string[];
         /**
           * @default 'Configure view'
          */
@@ -4042,11 +4042,6 @@ export namespace Components {
          */
         "columnCustomizer": boolean;
         /**
-          * Controlled data-column identities in display order. Omitted ids append in catalog order.
-          * @default []
-         */
-        "columnOrder": string[];
-        /**
           * Stable column definitions. Assign through JavaScript.
           * @default []
          */
@@ -4108,6 +4103,11 @@ export namespace Components {
          */
         "errorHeading": string;
         /**
+          * Controlled data-column identities in display order. Omitted ids append in catalog order.
+          * @default []
+         */
+        "fieldOrder": string[];
+        /**
           * Fit the complete table composition to its nearest vertical scrollport.
           * @default false
          */
@@ -4163,7 +4163,7 @@ export namespace Components {
           * Controlled hidden data-column identities. Action ids are ignored.
           * @default []
          */
-        "hiddenColumnIds": string[];
+        "hiddenFieldIds": string[];
         /**
           * @default false
          */
@@ -5533,7 +5533,7 @@ declare global {
         "dsSortChange": DataSortChangeDetail;
         "dsGroupChange": DataGroupingState;
         "dsGroupClear": void;
-        "dsColumnsConfigChange": DataFieldsConfigChangeDetail;
+        "dsFieldsConfigChange": DataFieldsConfigChangeDetail;
     }
     interface HTMLDsDataPreferencesElement extends Components.DsDataPreferences, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsDataPreferencesElementEventMap>(type: K, listener: (this: HTMLDsDataPreferencesElement, ev: DsDataPreferencesCustomEvent<HTMLDsDataPreferencesElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -6249,7 +6249,7 @@ declare global {
         "dsPaginationChange": PaginationChangeDetail;
         "dsCellAction": TableCellActionDetail;
         "dsRowActivate": TableRowActivateDetail;
-        "dsColumnsConfigChange": DataFieldsConfigChangeDetail;
+        "dsFieldsConfigChange": DataFieldsConfigChangeDetail;
         "dsDataModeChange": TableDataModeChangeDetail;
     }
     interface HTMLDsTableElement extends Components.DsTable, HTMLStencilElement {
@@ -8132,10 +8132,6 @@ declare namespace LocalJSX {
          */
         "catalogReorderable"?: boolean;
         /**
-          * @default []
-         */
-        "columnOrder"?: string[];
-        /**
           * Accessible name for the Customize menu.
           * @default 'Customize table'
          */
@@ -8154,6 +8150,10 @@ declare namespace LocalJSX {
           * @default false
          */
         "embedded"?: boolean;
+        /**
+          * @default []
+         */
+        "fieldOrder"?: string[];
         /**
           * @default []
          */
@@ -8178,7 +8178,7 @@ declare namespace LocalJSX {
         /**
           * @default []
          */
-        "hiddenColumnIds"?: string[];
+        "hiddenFieldIds"?: string[];
         /**
           * @default 'Configure view'
          */
@@ -8188,8 +8188,8 @@ declare namespace LocalJSX {
          */
         "matchModes"?: FilterMenuMatchModes;
         "onDsActiveFilterChange"?: (event: DsDataPreferencesCustomEvent<string>) => void;
-        "onDsColumnsConfigChange"?: (event: DsDataPreferencesCustomEvent<DataFieldsConfigChangeDetail>) => void;
         "onDsCustomizeOptionChange"?: (event: DsDataPreferencesCustomEvent<string>) => void;
+        "onDsFieldsConfigChange"?: (event: DsDataPreferencesCustomEvent<DataFieldsConfigChangeDetail>) => void;
         "onDsFilterChange"?: (event: DsDataPreferencesCustomEvent<FilterMenuChangeDetail>) => void;
         "onDsFilterMatchModeChange"?: (event: DsDataPreferencesCustomEvent<FilterMenuMatchModeChangeDetail>) => void;
         "onDsFiltersClear"?: (event: DsDataPreferencesCustomEvent<void>) => void;
@@ -10747,11 +10747,6 @@ declare namespace LocalJSX {
          */
         "columnCustomizer"?: boolean;
         /**
-          * Controlled data-column identities in display order. Omitted ids append in catalog order.
-          * @default []
-         */
-        "columnOrder"?: string[];
-        /**
           * Stable column definitions. Assign through JavaScript.
           * @default []
          */
@@ -10813,6 +10808,11 @@ declare namespace LocalJSX {
          */
         "errorHeading"?: string;
         /**
+          * Controlled data-column identities in display order. Omitted ids append in catalog order.
+          * @default []
+         */
+        "fieldOrder"?: string[];
+        /**
           * Fit the complete table composition to its nearest vertical scrollport.
           * @default false
          */
@@ -10868,7 +10868,7 @@ declare namespace LocalJSX {
           * Controlled hidden data-column identities. Action ids are ignored.
           * @default []
          */
-        "hiddenColumnIds"?: string[];
+        "hiddenFieldIds"?: string[];
         /**
           * @default false
          */
@@ -10924,9 +10924,9 @@ declare namespace LocalJSX {
          */
         "maxHeight"?: string | number | undefined;
         "onDsCellAction"?: (event: DsTableCustomEvent<TableCellActionDetail>) => void;
-        "onDsColumnsConfigChange"?: (event: DsTableCustomEvent<DataFieldsConfigChangeDetail>) => void;
         "onDsCustomizeOptionChange"?: (event: DsTableCustomEvent<string>) => void;
         "onDsDataModeChange"?: (event: DsTableCustomEvent<TableDataModeChangeDetail>) => void;
+        "onDsFieldsConfigChange"?: (event: DsTableCustomEvent<DataFieldsConfigChangeDetail>) => void;
         "onDsGroupCollapseChange"?: (event: DsTableCustomEvent<TableGroupCollapseChangeDetail>) => void;
         "onDsGroupLoadMore"?: (event: DsTableCustomEvent<TableGroupLoadMoreDetail>) => void;
         "onDsLoadMore"?: (event: DsTableCustomEvent<TableLoadMoreDetail>) => void;

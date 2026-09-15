@@ -13,7 +13,7 @@ import {
   isTableCellScoreText,
   isTableGroupIntent,
   nextTableGroupsCollapsed,
-  nextTableSortState,
+  nextDataSortState,
   resolvedTableGroupCount,
   tableCellPrimary,
   tableCollapseAllHost,
@@ -48,17 +48,17 @@ const rows: TableRow[] = [
 ];
 
 test('keeps controlled member sorting binary', () => {
-  assert.deepEqual(nextTableSortState(null, 'score'), { columnId: 'score', direction: 'asc' });
-  assert.deepEqual(nextTableSortState({ columnId: 'score', direction: 'asc' }, 'score'), {
-    columnId: 'score',
+  assert.deepEqual(nextDataSortState(null, 'score'), { fieldId: 'score', direction: 'asc' });
+  assert.deepEqual(nextDataSortState({ fieldId: 'score', direction: 'asc' }, 'score'), {
+    fieldId: 'score',
     direction: 'desc',
   });
-  assert.deepEqual(nextTableSortState({ columnId: 'score', direction: 'desc' }, 'score'), {
-    columnId: 'score',
+  assert.deepEqual(nextDataSortState({ fieldId: 'score', direction: 'desc' }, 'score'), {
+    fieldId: 'score',
     direction: 'asc',
   });
-  assert.deepEqual(nextTableSortState({ columnId: 'name', direction: 'desc' }, 'score'), {
-    columnId: 'score',
+  assert.deepEqual(nextDataSortState({ fieldId: 'name', direction: 'desc' }, 'score'), {
+    fieldId: 'score',
     direction: 'asc',
   });
 });
