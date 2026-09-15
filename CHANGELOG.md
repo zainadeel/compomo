@@ -1,5 +1,24 @@
 # Changelog
 
+## [15.0.0](https://github.com/zainadeel/compomo/compare/v14.36.0...v15.0.0) (2026-09-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* generalize the table toolbar into reusable ds-data controls ([#607](https://github.com/zainadeel/compomo/issues/607))
+* **conversation-list:** make the persistent action a corner icon button ([#609](https://github.com/zainadeel/compomo/issues/609))
+* **icons:** adopt ds-mo icons 8.1 and fix silent catalog routing ([#605](https://github.com/zainadeel/compomo/issues/605))
+
+### Added
+
+* **conversation-list:** make the persistent action a corner icon button ([#609](https://github.com/zainadeel/compomo/issues/609)) ([db3702f](https://github.com/zainadeel/compomo/commit/db3702f13f52149da40f7f1cb2feb033b57a0d47))
+* **icons:** adopt ds-mo icons 8.1 and fix silent catalog routing ([#605](https://github.com/zainadeel/compomo/issues/605)) ([05d00c9](https://github.com/zainadeel/compomo/commit/05d00c9f0e93766f53da8c804715ed8f95f5f198))
+
+
+### Changed
+
+* generalize the table toolbar into reusable ds-data controls ([#607](https://github.com/zainadeel/compomo/issues/607)) ([0cf0935](https://github.com/zainadeel/compomo/commit/0cf09359646e954e4ad3e8f0981ae80914c8f339))
+
 ## [14.36.0](https://github.com/zainadeel/compomo/compare/v14.35.0...v14.36.0) (2026-09-14)
 
 
