@@ -42,7 +42,7 @@ const groups = [
       },
       {
         id: 'safety',
-        icon: 'Safety',
+        icon: 'ShieldCircle',
         label: 'Safety',
         href: '/dashboard/safety',
       },
@@ -85,7 +85,7 @@ shell.navigation = {
       items: [
         {
           id: 'user-settings',
-          icon: 'Avatar',
+          icon: 'PersonCircle',
           label: 'User Settings',
           href: '/settings/user',
         },

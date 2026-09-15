@@ -94,7 +94,7 @@ export class AgentToolCall {
     if (this.state === 'waiting-for-user') {
       return <ds-icon name="Clock" size="xs" color="inherit" />;
     }
-    return <ds-icon name="ErrorTriangle" size="xs" color="inherit" />;
+    return <ds-icon name="ExclamationTriangle" size="xs" color="inherit" />;
   }
 
   private renderSummary(expandable: boolean) {

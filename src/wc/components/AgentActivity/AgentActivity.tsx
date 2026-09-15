@@ -66,7 +66,7 @@ export class AgentActivity {
                     <span class="agent-activity__pending-dot" />
                   ) : (
                     <ds-icon
-                      name={item.state === 'error' ? 'ErrorTriangle' : 'Check'}
+                      name={item.state === 'error' ? 'ExclamationTriangle' : 'Check'}
                       size="xs"
                       color="inherit"
                     />

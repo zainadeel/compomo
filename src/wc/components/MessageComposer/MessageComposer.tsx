@@ -80,7 +80,7 @@ export class MessageComposer {
             {error ? (
               <div class="message-composer__error-support">
                 <div id={this.errorId} class="message-composer__error-message" role="alert">
-                  <ds-icon name="ErrorTriangle" size="xs" color="inherit" />
+                  <ds-icon name="ExclamationTriangle" size="xs" color="inherit" />
                   <ds-text variant="text-body-small" color="negative">
                     {visibleErrorMessage}
                   </ds-text>

@@ -578,7 +578,7 @@ export const ToggleSemantics: Story = {
       ></ds-button-unfilled>
       <ds-button-unfilled
         variant="icon-label"
-        icon="ViewList"
+        icon="ViewMenu"
         label="Composite active view"
         is-active
       ></ds-button-unfilled>

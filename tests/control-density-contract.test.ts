@@ -404,7 +404,7 @@ test('date and time inputs share Input density, typography, and picker chrome', 
   const inputFieldCss = read('src/wc/components/Input/Input.css');
   assert.match(
     inputSource,
-    /<ds-button-unfilled[\s\S]*?icon=\{this\.passwordRevealed \? 'EyeDisabled' : 'Eye'\}[\s\S]*?hasBorder=\{false\}[\s\S]*?isInset/
+    /<ds-button-unfilled[\s\S]*?icon=\{this\.passwordRevealed \? 'EyeStrikethrough' : 'Eye'\}[\s\S]*?hasBorder=\{false\}[\s\S]*?isInset/
   );
   assert.match(inputFieldCss, /input-control__trailing-action/);
   assert.match(inputFieldCss, /padding-inline-end: var\(--dimension-space-025\)/);

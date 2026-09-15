@@ -127,7 +127,7 @@ export const Playground: Story = {
       { id: 'overview', label: 'Overview', icon: 'Bookmark', variant },
       { id: 'activity', label: 'Activity', icon: 'Bolt', variant, dot: true },
       { id: 'settings', label: 'Settings', icon: 'Bell', variant },
-      { id: 'members', label: 'Members', icon: 'Avatar', variant },
+      { id: 'members', label: 'Members', icon: 'PersonCircle', variant },
     ];
     return html`
       <div style="width: 400px">

@@ -341,9 +341,9 @@ export class MobileSheetNav {
               onDsChange={this.handleContextChange}
             />
             <div class="mobile-sheet-nav__actions">
-              {this.renderHeaderDestination('help', 'CircleQuestion', this.helpLabel)}
+              {this.renderHeaderDestination('help', 'QuestionCircle', this.helpLabel)}
               {this.showAccount
-                ? this.renderHeaderDestination('account', 'Avatar', this.accountLabel)
+                ? this.renderHeaderDestination('account', 'PersonCircle', this.accountLabel)
                 : null}
             </div>
           </header>

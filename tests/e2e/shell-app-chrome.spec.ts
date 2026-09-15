@@ -618,7 +618,7 @@ test.describe('App shell chrome', () => {
           items: Array.from({ length: 20 }, (_, index) => ({
             id: `item-${index}`,
             label: `Item ${index}`,
-            icon: 'Map',
+            icon: 'MapPage',
             href: `/item-${index}`,
           })),
         },
@@ -679,7 +679,7 @@ test.describe('App shell chrome', () => {
           primaryAction: { id: 'restore', ariaLabel: 'Restore active session' },
           secondaryAction: {
             id: 'cancel',
-            icon: 'PhoneDisconnect',
+            icon: 'PhoneStrikethrough',
             ariaLabel: 'Cancel call',
           },
         },
@@ -774,7 +774,7 @@ test.describe('App shell chrome', () => {
       .poll(() =>
         cancel.locator('ds-icon').evaluate(element => (element as HTMLDsIconElement).name)
       )
-      .toBe('PhoneDisconnect');
+      .toBe('PhoneStrikethrough');
     await expect(cancel).not.toHaveClass(/button-unfilled--bordered/);
     await expect(tools.locator('.panel-tools__accessory--transient ds-badge')).toHaveCount(0);
 
@@ -1698,7 +1698,7 @@ test.describe('App shell chrome', () => {
       };
       tools.items = [
         { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
-        { id: 'help', icon: 'CircleQuestion', ariaLabel: 'Help & Support' },
+        { id: 'help', icon: 'QuestionCircle', ariaLabel: 'Help & Support' },
       ];
     });
 

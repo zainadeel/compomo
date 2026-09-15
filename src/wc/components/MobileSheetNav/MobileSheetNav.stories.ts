@@ -7,7 +7,12 @@ const dashboardGroups = [
     id: 'operations',
     items: [
       { id: 'tracking', label: 'Tracking', icon: 'MapPage', href: '/dashboard/tracking' },
-      { id: 'operations', label: 'Operations', icon: 'Task', href: '/dashboard/operations' },
+      {
+        id: 'operations',
+        label: 'Operations',
+        icon: 'BracketsCircle',
+        href: '/dashboard/operations',
+      },
       { id: 'workforce', label: 'Workforce', icon: 'Person', href: '/dashboard/workforce' },
     ],
   },
@@ -24,7 +29,7 @@ const settingsGroups = [
   {
     id: 'personal',
     items: [
-      { id: 'account', label: 'Account', icon: 'Avatar', href: '/settings/account' },
+      { id: 'account', label: 'Account', icon: 'PersonCircle', href: '/settings/account' },
       { id: 'preferences', label: 'Preferences', icon: 'Gear', href: '/settings/preferences' },
     ],
   },

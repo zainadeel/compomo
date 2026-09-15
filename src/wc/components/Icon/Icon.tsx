@@ -1,8 +1,17 @@
 import { Component, Prop, Element, State, Watch, h, Host } from '@stencil/core';
 import { flagIconLoaders } from './flag-icon-catalog';
 import { systemIconLoaders } from './system-icon-catalog';
-import { iconCache, iconCacheKey } from './icon-cache';
+import { mapIconLoaders } from './map-icon-catalog';
+import { iconCache, iconCacheKey, resolveIconCategory } from './icon-cache';
+import type { IconCategory } from './icon-cache';
 import { parseIconSvg } from './icon-svg';
+
+/** One lazy-loader catalog per IcoMo category, keyed so routing stays a lookup. */
+const ICON_LOADERS: Record<IconCategory, Record<string, () => Promise<string>>> = {
+  system: systemIconLoaders,
+  flag: flagIconLoaders,
+  map: mapIconLoaders,
+};
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
 
@@ -96,8 +105,8 @@ export class Icon {
    * ds-icon instance.
    */
   private resolveSvg() {
-    const flag = this.name.startsWith('Flag');
-    const key = iconCacheKey(this.name, flag);
+    const category = resolveIconCategory(this.name);
+    const key = iconCacheKey(this.name, category);
     const token = ++this.loadToken;
 
     const cached = iconCache().get(key);
@@ -109,7 +118,7 @@ export class Icon {
     // Own-key lookup only: names resolve by exact canonical IcoMo export key —
     // never meta.json aliases (not in the maps) and never inherited prototype
     // keys ('constructor', 'toString', …) that a bare index access would hit.
-    const loaders = flag ? flagIconLoaders : systemIconLoaders;
+    const loaders = ICON_LOADERS[category];
     const loader = Object.prototype.hasOwnProperty.call(loaders, this.name)
       ? loaders[this.name]
       : undefined;

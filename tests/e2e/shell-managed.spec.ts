@@ -1429,11 +1429,11 @@ test.describe('Managed application shell', () => {
         ...managed.tools,
         items: [
           { id: 'search', icon: 'MagnifyingGlass', ariaLabel: 'Search' },
-          { id: 'agents', icon: 'AI', ariaLabel: 'Agents' },
+          { id: 'agents', icon: 'AIAsterisk', ariaLabel: 'Agents' },
           { id: 'messages', icon: 'MessageBubbleStack', ariaLabel: 'Messages' },
           { id: 'stacks', icon: 'ViewMenu', ariaLabel: 'Stacks' },
           { id: 'activity', icon: 'Bell', ariaLabel: 'Activity' },
-          { id: 'help', icon: 'CircleQuestion', ariaLabel: 'Help & Support' },
+          { id: 'help', icon: 'QuestionCircle', ariaLabel: 'Help & Support' },
         ],
       };
     });

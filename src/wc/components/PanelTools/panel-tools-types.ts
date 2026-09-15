@@ -151,7 +151,7 @@ export interface PanelToolsRailAccessoryActionDetail {
 export const PANEL_TOOLS_DEFAULT_ITEMS: PanelToolsItem[] = [
   {
     id: 'agents',
-    icon: 'AI',
+    icon: 'AIAsterisk',
     label: PANEL_TOOLS_LABELS.agents,
     railPlacement: 'header',
     order: 0,
@@ -184,7 +184,7 @@ export const PANEL_TOOLS_DEFAULT_ITEMS: PanelToolsItem[] = [
   },
   {
     id: 'help',
-    icon: 'CircleQuestion',
+    icon: 'QuestionCircle',
     label: PANEL_TOOLS_LABELS.help,
     railPlacement: 'footer',
     order: 0,

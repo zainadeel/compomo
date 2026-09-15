@@ -7,10 +7,11 @@
   "tag": "ds-icon",
   "audience": "general",
   "status": "stable",
-  "summary": "Secure, lazily loaded renderer for canonical IcoMo system and flag glyphs, decorative by default with optional graphic semantics.",
+  "summary": "Secure, lazily loaded renderer for canonical IcoMo system, flag, and map glyphs, decorative by default with optional graphic semantics.",
   "useWhen": [
     "An approved IcoMo system glyph supplements visible text or control chrome.",
     "A canonical flag glyph communicates a country or region with adjacent text or an explicit localized label.",
+    "A canonical map glyph marks an entity or state on a map surface.",
     "A standalone non-interactive symbol conveys meaning that is unavailable from nearby text."
   ],
   "avoidWhen": [
@@ -53,7 +54,7 @@
   "states": [
     "Omitted color inherits currentColor from the owning context. Explicit semantic aliases and CSS-variable references are available when the icon has an independent color role.",
     "Prefer the owning control's isInactive or native disabled state over manually selecting tertiary or quaternary so visual treatment and inactive semantics remain synchronized.",
-    "Built-in glyph lookup accepts exact canonical IcoMo export names only. Names beginning with Flag select the flag catalog automatically.",
+    "Built-in glyph lookup accepts exact canonical IcoMo export names only. The system, flag, and map catalogs are selected by which one owns the name, never by its prefix, so system glyphs such as Flag, FlagFilled, MapPage, and MapPin resolve correctly.",
     "A cache miss lazy-loads into a fixed-size box without layout shift. Unknown names, failed loads, and rejected markup leave that box empty.",
     "Critical first-paint glyphs may be pre-registered before rendering; all resolved glyphs share a global cache.",
     "Every SVG is validated at the render boundary and injected as parsed DOM nodes so app-registered markup cannot bypass executable-content or external-reference checks."
