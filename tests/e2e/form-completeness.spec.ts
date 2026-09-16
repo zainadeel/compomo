@@ -232,9 +232,11 @@ test('irregular ticks snap keyboard and pointer values while ranges cannot cross
   await expect(host).toHaveJSProperty('value', 100);
   await slider.press('Home');
   await expect(host).toHaveJSProperty('value', 0);
-  const box = await host.locator('.slider__control').boundingBox();
+  const control = host.locator('.slider__control');
+  await control.scrollIntoViewIfNeeded();
+  const box = await control.boundingBox();
   expect(box).not.toBeNull();
-  await page.mouse.click(box!.x + box!.width * 0.7, box!.y + box!.height / 2);
+  await control.click({ position: { x: box!.width * 0.7, y: box!.height / 2 } });
   await expect(host).toHaveJSProperty('value', 75);
   const range = page.locator('#tick-range');
   await range.getByRole('slider').first().press('End');
@@ -250,6 +252,8 @@ test('irregular ticks snap keyboard and pointer values while ranges cannot cross
 test('counters align opposite supporting text or begin at the field edge when alone @cross-browser', async ({
   page,
 }) => {
+  await expect(page.locator('#soft-field .text-field-count')).toBeVisible();
+  await expect(page.locator('ds-field:has(#notes) .text-field-count')).toBeVisible();
   const measure = () =>
     page.evaluate(() => {
       return ['#soft-field', 'ds-field:has(#notes)'].map(selector => {
