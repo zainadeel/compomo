@@ -7,6 +7,7 @@ const meta: Meta = {
   tags: ['autodocs'],
   argTypes: {
     value: { control: 'text' },
+    hourFormat: { control: 'select', options: ['12', '24'] },
     min: { control: 'text' },
     max: { control: 'text' },
     step: { control: 'text' },
@@ -39,6 +40,7 @@ export const Playground: Story = {
     <div style="width:320px;">
       <ds-input-time
         value=${args['value'] ?? ''}
+        hour-format=${args['hourFormat'] ?? '12'}
         min=${args['min'] ?? ''}
         max=${args['max'] ?? ''}
         step=${args['step'] ?? '60'}
@@ -97,6 +99,22 @@ export const BoundsAndStep: Story = {
       ></ds-input-time>
       <ds-text variant="text-body-small" color="secondary">Hourly step</ds-text>
       <ds-input-time value="09:00" step="3600" aria-label="Hourly time"></ds-input-time>
+    </div>
+  `,
+};
+
+export const TwentyFourHour: Story = {
+  render: () => html`
+    <div style="width:320px;display:grid;gap:var(--dimension-space-200)">
+      <ds-input-time hour-format="24" value="00:00" aria-label="Midnight"></ds-input-time>
+      <ds-input-time
+        hour-format="24"
+        value="14:30"
+        min="08:30"
+        max="18:00"
+        aria-label="Business hours"
+      ></ds-input-time>
+      <ds-input-time hour-format="24" value="23:45" aria-label="Late evening"></ds-input-time>
     </div>
   `,
 };

@@ -1,0 +1,14 @@
+.text-field-support {
+  display: flex;
+  align-items: baseline;
+  gap: var(--dimension-space-100);
+  width: 100%;
+}
+.text-field-support > :first-child:not(.text-field-count) {
+  flex: 1;
+  min-width: 0;
+}
+.text-field-count {
+  flex: none;
+  white-space: nowrap;
+}

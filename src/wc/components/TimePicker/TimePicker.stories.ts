@@ -7,6 +7,7 @@ const meta: Meta = {
   tags: ['autodocs'],
   argTypes: {
     value: { control: 'text' },
+    hourFormat: { control: 'select', options: ['12', '24'] },
     min: { control: 'text' },
     max: { control: 'text' },
     step: { control: 'text' },
@@ -26,6 +27,7 @@ export const Playground: Story = {
     <div style="width:200px;background:var(--color-background-primary);">
       <ds-time-picker
         value=${args['value'] ?? ''}
+        hour-format=${args['hourFormat'] ?? '12'}
         min=${args['min'] ?? ''}
         max=${args['max'] ?? ''}
         step=${args['step'] ?? '60'}
@@ -55,6 +57,39 @@ export const NarrowBounds: Story = {
     <div style="width:200px;background:var(--color-background-primary);">
       <ds-text variant="text-body-small" color="secondary"> Bounded 9:30 AM–9:45 AM </ds-text>
       <ds-time-picker value="08:00" min="09:30" max="09:45"></ds-time-picker>
+    </div>
+  `,
+};
+
+export const TwentyFourHour: Story = {
+  render: () => html`
+    <div style="width:320px;display:grid;gap:var(--dimension-space-200)">
+      <ds-time-picker
+        @dsChange=${(event: CustomEvent<string>) => {
+          (event.currentTarget as HTMLDsTimePickerElement).value = event.detail;
+        }}
+        hour-format="24"
+        value="00:00"
+        aria-label="Midnight"
+      ></ds-time-picker>
+      <ds-time-picker
+        @dsChange=${(event: CustomEvent<string>) => {
+          (event.currentTarget as HTMLDsTimePickerElement).value = event.detail;
+        }}
+        hour-format="24"
+        value="14:30"
+        min="08:30"
+        max="18:00"
+        aria-label="Business hours"
+      ></ds-time-picker>
+      <ds-time-picker
+        @dsChange=${(event: CustomEvent<string>) => {
+          (event.currentTarget as HTMLDsTimePickerElement).value = event.detail;
+        }}
+        hour-format="24"
+        value="23:45"
+        aria-label="Late evening"
+      ></ds-time-picker>
     </div>
   `,
 };

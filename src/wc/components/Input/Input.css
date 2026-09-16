@@ -1,13 +1,10 @@
-@import '../../utils/interaction-fill.css';
-@import '../../utils/focus-ring.css';
-@import '../../utils/control-inactive.css';
 @import '../../utils/radius.css';
-@import '../../utils/control-density.css';
+@import '../../utils/choice-list.css';
 @import '../../utils/control-parts.css';
+@import '../../utils/text-field-support.css';
 @import '../../utils/control-width.css';
 @import '../../utils/field-stack.css';
 @import '../../utils/typography.css';
-@import '../../utils/forced-colors.css';
 
 :host(.input-host) {
   display: inline-flex;
@@ -230,4 +227,44 @@
   .input-control--error::after {
     outline-style: dashed;
   }
+}
+
+.input-control--tokenized .native-input {
+  box-sizing: border-box;
+  padding-block: 0;
+}
+
+.input-control--has-tokens {
+  --ds-input-token-inset: var(--dimension-space-050);
+
+  height: auto;
+  min-height: var(--ds-control-height);
+  flex-wrap: wrap;
+  padding: var(--ds-input-token-inset);
+  row-gap: var(--dimension-space-050);
+}
+
+/* Chip stops at md; xs retains the shared single-inset fallback. */
+.input-control--has-tokens.ds-control--lg {
+  --ds-input-token-inset: var(--dimension-space-100);
+}
+.input-control--has-tokens.ds-control--xs {
+  --ds-input-token-inset: var(--dimension-space-025);
+}
+
+.input-control--has-tokens .native-input {
+  flex: 1 1 var(--dimension-size-800);
+  width: 0;
+  min-width: min(var(--dimension-size-800), 100%);
+  height: calc(var(--ds-control-height) - var(--ds-input-token-inset) * 2);
+}
+.input-token {
+  position: relative;
+  z-index: 2;
+  max-width: 100%;
+}
+.input-suggestions__list {
+  overflow: auto;
+  max-height: calc(var(--dimension-size-base) * 20);
+  padding: var(--dimension-space-050);
 }

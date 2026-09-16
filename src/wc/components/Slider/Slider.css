@@ -267,3 +267,66 @@
     outline-color: var(--ds-forced-color-selected);
   }
 }
+
+.slider__tick {
+  position: absolute;
+  top: calc(
+    50% + var(--ds-slider-track-size) / 2 + var(--dimension-space-050) + var(--dimension-space-012)
+  );
+  left: calc(
+    var(--ds-slider-thumb-size) / 2 + (var(--ds-slider-tick-pct) / 100) *
+      (100% - var(--ds-slider-thumb-size))
+  );
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.slider__tick-mark {
+  display: block;
+  width: var(--dimension-stroke-width-025);
+  height: var(--dimension-stroke-width-025);
+  border-radius: var(--dimension-radius-half);
+  background: var(--color-foreground-tertiary);
+}
+.slider__tick-label {
+  width: max-content;
+  max-width: none;
+  position: absolute;
+  top: calc(100% + var(--dimension-space-050));
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+:host(:not(.slider--vertical)) .slider__control {
+  container-type: inline-size;
+}
+:host(:not(.slider--vertical)) .slider__tick-label {
+  /* Center on the tick, clamping only when the text reaches the control edges. */
+  --ds-slider-label-anchor: calc(
+    var(--ds-slider-thumb-size) / 2 + (var(--ds-slider-tick-pct) / 100) *
+      (100cqw - var(--ds-slider-thumb-size))
+  );
+  transform: translateX(
+    clamp(
+      calc(-1 * var(--ds-slider-label-anchor)),
+      -50%,
+      calc(100cqw - var(--ds-slider-label-anchor) - 100%)
+    )
+  );
+}
+:host(.slider--tick-labels:not(.slider--vertical)) .slider__control {
+  margin-bottom: var(--dimension-space-200);
+}
+:host(.slider--vertical) .slider__tick {
+  top: auto;
+  bottom: calc(
+    var(--ds-slider-thumb-size) / 2 + (var(--ds-slider-tick-pct) / 100) *
+      (100% - var(--ds-slider-thumb-size))
+  );
+  left: calc(50% + var(--ds-slider-track-size) / 2 + var(--dimension-space-050));
+  transform: translateY(50%);
+}
+:host(.slider--vertical) .slider__tick-label {
+  top: 50%;
+  left: calc(100% + var(--dimension-space-050));
+  transform: translateY(-50%);
+}

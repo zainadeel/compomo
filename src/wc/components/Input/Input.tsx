@@ -16,10 +16,19 @@ import {
   CONTROL_TEXT_VARIANT,
   DEFAULT_REQUIRED_MESSAGE,
   restoreStringFormState,
+  restoreStringArrayFormState,
+  setRepeatedFormControlValue,
+  resolveCssLengthPx,
+  TOKEN_DEFAULTS,
   setFormControlValue,
-  setRequiredValidity,
   type ControlWidth,
 } from '../../utils';
+
+import { AnchoredPositionController } from '../../utils/anchored-position-controller';
+import { AnchoredOverlayInteractionController } from '../../utils/anchored-overlay-interaction-controller';
+import { resolveAnchoredOverlayBoundaryRect } from '../../utils/anchored-overlay-boundary';
+import { ChoiceOptionRow } from '../../utils/choice-list-parts';
+import { lengthLimit, textConstraintValidity } from '../../utils/text-constraints';
 
 export type InputType = 'text' | 'email' | 'tel' | 'url' | 'search' | 'password' | 'number';
 export type InputSize = 'lg' | 'md' | 'sm' | 'xs';
@@ -72,6 +81,23 @@ export class Input {
   @Prop() clearLabel: string = 'Clear';
   @Prop() showPasswordLabel: string = 'Show password';
   @Prop() hidePasswordLabel: string = 'Hide password';
+  /** Minimum non-empty text length, in native UTF-16 code units. */
+  @Prop() minLength: number | undefined;
+  /** Maximum text length. A visible counter accompanies this constraint by default. */
+  @Prop() maxLength: number | undefined;
+  /** Error preserves extra text; restrict uses the browser's hard input limit. */
+  @Prop() lengthBehavior: 'error' | 'restrict' = 'error';
+  @Prop() showCharacterCount: boolean = true;
+  /** Native whole-value regular expression for text-like input types. */
+  @Prop() pattern: string | undefined;
+  @Prop() patternMessage: string | undefined;
+  /** Optional local suggestions; free text always remains valid. Used with text/search fields. */
+  @Prop() suggestions: string[] = [];
+  /** Free-text tokens entered with Enter/comma and removable chips. Used with text/search fields. */
+  @Prop({ reflect: true }) tokenized: boolean = false;
+  /** Committed values; value remains the editable draft when tokenized. */
+  @Prop({ mutable: true }) tokens: string[] = [];
+  @Prop() removeTokenLabel: string = 'Remove {label}';
   @Prop() placeholder: string | undefined;
   @Prop() type: InputType = 'text';
   /** Minimum accepted value when type is number. */
@@ -117,7 +143,86 @@ export class Input {
   @Prop({ attribute: 'aria-activedescendant' }) ariaActiveDescendant: string | undefined;
 
   @Event() dsChange!: EventEmitter<string>;
+  @Event() dsTokensChange!: EventEmitter<string[]>;
+  @Event() dsSuggestionSelect!: EventEmitter<string>;
   @Event() dsClear!: EventEmitter<void>;
+
+  @State() private constraintMessage = '';
+  @State() private submitted = false;
+  private get managedByField(): boolean {
+    return Boolean(this.el.closest('ds-field'));
+  }
+  private get visibleConstraintMessage(): string {
+    return this.touched ||
+      this.submitted ||
+      (this.maxLength !== undefined && this.value.length > this.maxLength)
+      ? this.constraintMessage
+      : '';
+  }
+  private get hasCounter(): boolean {
+    return (
+      this.showCharacterCount && lengthLimit(this.maxLength) !== undefined && this.type !== 'number'
+    );
+  }
+
+  @State() private suggestionsOpen = false;
+  @State() private activeSuggestion = -1;
+  @State() private suggestionPosition = { x: 0, y: 0 };
+  @State() private suggestionsReady = false;
+  private controlEl?: HTMLElement;
+  private initialTokens: string[] = [];
+  private get supportsTextFeatures(): boolean {
+    return this.type === 'text' || this.type === 'search';
+  }
+  private get isTokenized(): boolean {
+    return this.tokenized && this.supportsTextFeatures;
+  }
+  private get filteredSuggestions(): string[] {
+    if (!this.supportsTextFeatures) return [];
+    const query = this.value.trim().toLocaleLowerCase();
+    return [...new Set(this.suggestions)].filter(
+      value =>
+        value.toLocaleLowerCase().includes(query) &&
+        (!this.isTokenized || !this.tokens.includes(value))
+    );
+  }
+  private readonly suggestionPlacement = new AnchoredPositionController({
+    getAnchor: () => this.controlEl ?? null,
+    getPopup: () => this.el.querySelector<HTMLElement>('.input-suggestions'),
+    getOwnerDocument: () => this.el.ownerDocument,
+    measure: (anchor, popup) => {
+      if (!this.suggestionsOpen) return null;
+      const gap = resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050);
+      return {
+        anchorRect: anchor.getBoundingClientRect(),
+        popupWidth: popup.offsetWidth,
+        popupHeight: popup.offsetHeight,
+        side: 'bottom',
+        align: 'start',
+        sideOffsetPx: gap,
+        alignOffsetPx: 0,
+        viewportPadPx: gap,
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+        collisionRect: resolveAnchoredOverlayBoundaryRect(anchor),
+      };
+    },
+    apply: ({ x, y }) => {
+      this.suggestionPosition = { x, y };
+    },
+    onReady: () => {
+      this.suggestionsReady = true;
+    },
+    topLayer: true,
+    observeResize: true,
+    liveUpdate: 'frame',
+  });
+  private readonly suggestionInteraction = new AnchoredOverlayInteractionController({
+    getAnchor: () => this.controlEl ?? null,
+    getPopup: () => this.el.querySelector<HTMLElement>('.input-suggestions'),
+    getOwnerDocument: () => this.el.ownerDocument,
+    onOutsideActivation: () => this.closeSuggestions(),
+  });
 
   private initialValue = '';
   private inputEl?: HTMLInputElement;
@@ -132,13 +237,21 @@ export class Input {
   private restorePasswordFocus = false;
 
   componentWillLoad() {
+    this.value = String(this.value ?? '');
+    this.tokens = Array.isArray(this.tokens) ? this.tokens : [];
     this.initialValue = this.value;
+    this.initialTokens = [...this.tokens];
     this.syncAdornmentSlots();
     this.syncFormValue();
   }
 
+  disconnectedCallback() {
+    this.closeSuggestions();
+  }
+
   componentDidRender() {
     this.syncAdornmentSlots();
+    if (this.suggestionsOpen) this.suggestionPlacement.schedule();
     if (!this.restorePasswordFocus) return;
     this.restorePasswordFocus = false;
     this.inputEl?.focus({ preventScroll: true });
@@ -162,15 +275,68 @@ export class Input {
     if (hasSuffixControl !== this.hasSuffixControl) this.hasSuffixControl = hasSuffixControl;
   }
 
+  @Watch('tokens')
+  @Watch('tokenized')
+  @Watch('name')
   @Watch('value')
   @Watch('disabled')
   @Watch('isInactive')
   @Watch('required')
+  @Watch('readOnly')
+  @Watch('minLength')
+  @Watch('maxLength')
+  @Watch('requiredMessage')
+  @Watch('pattern')
+  @Watch('patternMessage')
+  @Watch('type')
+  @Watch('min')
+  @Watch('max')
+  @Watch('step')
   syncFormValue() {
+    if (typeof this.value !== 'string') {
+      this.value = String(this.value ?? '');
+    }
+    if (!Array.isArray(this.tokens)) this.tokens = [];
     const inactive = this.isInactive || this.disabled || this.formDisabled;
-    setFormControlValue(this.internals, this.value, { inactive });
-    const missing = this.required && !inactive && this.value.length === 0;
-    setRequiredValidity(this.internals, missing, this.requiredMessage);
+    if (this.isTokenized)
+      setRepeatedFormControlValue(this.internals, this.name, this.tokens, { inactive });
+    else setFormControlValue(this.internals, this.value, { inactive });
+    let validity =
+      inactive || this.readOnly
+        ? { flags: {}, message: '' }
+        : textConstraintValidity({
+            ...this.textConstraints(),
+            required: this.required && !this.isTokenized,
+          });
+    if (this.isTokenized && !inactive && !this.readOnly) {
+      const invalidToken = this.tokens
+        .map(value => textConstraintValidity({ ...this.textConstraints(), value, required: false }))
+        .find(result => result.message);
+      if (invalidToken) validity = invalidToken;
+      else if (this.required && this.tokens.length === 0)
+        validity = { flags: { valueMissing: true }, message: this.requiredMessage };
+      else if (this.value.trim() && !validity.message)
+        validity = { flags: { customError: true }, message: 'Press Enter to add this value.' };
+    }
+    if (inactive || this.readOnly) this.closeSuggestions();
+    this.constraintMessage = validity.message;
+    this.internals.setValidity(validity.flags, validity.message);
+  }
+
+  private textConstraints() {
+    return {
+      value: this.value,
+      type: this.type,
+      required: this.required,
+      requiredMessage: this.requiredMessage,
+      minLength: this.minLength,
+      maxLength: this.maxLength,
+      pattern: this.pattern,
+      patternMessage: this.patternMessage,
+      min: this.min,
+      max: this.max,
+      step: this.step,
+    };
   }
 
   formDisabledCallback(disabled: boolean) {
@@ -180,11 +346,16 @@ export class Input {
 
   formResetCallback() {
     this.value = this.initialValue;
+    this.tokens = [...this.initialTokens];
+    this.closeSuggestions();
+    this.touched = false;
+    this.submitted = false;
     this.passwordRevealed = false;
   }
 
   formStateRestoreCallback(state: string | File | FormData | null) {
-    this.value = restoreStringFormState(state);
+    if (this.isTokenized) this.tokens = restoreStringArrayFormState(state);
+    else this.value = restoreStringFormState(state);
   }
 
   @Method()
@@ -195,6 +366,8 @@ export class Input {
   private handleInput = (e: Event) => {
     this.value = (e.target as HTMLInputElement).value;
     this.dsChange.emit(this.value);
+    this.activeSuggestion = -1;
+    this.openSuggestions();
   };
 
   private handleFocus = () => {
@@ -204,10 +377,16 @@ export class Input {
   private handleBlur = () => {
     this.focused = false;
     this.touched = true;
+    this.closeSuggestions();
   };
 
   private handleClear = () => {
     this.value = '';
+    if (this.isTokenized) {
+      this.tokens = [];
+      this.dsTokensChange.emit([]);
+    }
+    this.closeSuggestions();
     this.dsChange.emit('');
     this.dsClear.emit();
     this.inputEl?.focus();
@@ -216,6 +395,126 @@ export class Input {
   private handleTogglePassword = () => {
     this.passwordRevealed = !this.passwordRevealed;
     this.restorePasswordFocus = true;
+  };
+
+  @Watch('suggestions')
+  onSuggestionsChanged() {
+    this.activeSuggestion = -1;
+    if (this.focused && this.value) this.openSuggestions();
+  }
+
+  private openSuggestions() {
+    if (
+      this.disabled ||
+      this.formDisabled ||
+      this.isInactive ||
+      this.readOnly ||
+      !this.filteredSuggestions.length
+    ) {
+      this.closeSuggestions();
+      return;
+    }
+    if (this.suggestionsOpen) return;
+    this.suggestionsReady = false;
+    this.suggestionsOpen = true;
+    this.suggestionInteraction.connect();
+    this.suggestionPlacement.observe();
+    this.suggestionPlacement.schedule();
+  }
+  private closeSuggestions() {
+    this.suggestionPlacement.unobserve();
+    this.suggestionInteraction.disconnect();
+    const popup = this.el.querySelector<HTMLElement>('.input-suggestions');
+    if (popup?.matches(':popover-open')) popup.hidePopover();
+    this.suggestionsOpen = false;
+    this.activeSuggestion = -1;
+  }
+  private addTokens(text: string) {
+    if (this.readOnly || this.disabled || this.isInactive || this.formDisabled) return;
+    const values = text
+      .split(/[,\n\r]+/)
+      .map(value => {
+        const trimmed = value.trim();
+        const max = lengthLimit(this.maxLength);
+        return this.lengthBehavior === 'restrict' && max !== undefined
+          ? trimmed.slice(0, max)
+          : trimmed;
+      })
+      .filter(Boolean);
+    if (!values.length) return;
+    this.tokens = [...new Set([...this.tokens, ...values])];
+    this.value = '';
+    this.dsTokensChange.emit([...this.tokens]);
+    this.dsChange.emit('');
+    this.closeSuggestions();
+  }
+  private removeToken(index: number) {
+    if (this.readOnly || this.disabled || this.isInactive || this.formDisabled) return;
+    this.tokens = this.tokens.filter((_, tokenIndex) => index !== tokenIndex);
+    this.dsTokensChange.emit([...this.tokens]);
+    this.inputEl?.focus();
+  }
+  private selectSuggestion(value: string) {
+    if (this.isTokenized) this.addTokens(value);
+    else {
+      const max = lengthLimit(this.maxLength);
+      this.value =
+        this.lengthBehavior === 'restrict' && max !== undefined ? value.slice(0, max) : value;
+      this.dsChange.emit(this.value);
+    }
+    this.dsSuggestionSelect.emit(value);
+    this.closeSuggestions();
+    this.inputEl?.focus();
+  }
+  private handleTextKeyDown = (event: KeyboardEvent) => {
+    if (event.isComposing || this.readOnly || this.disabled || this.isInactive || this.formDisabled)
+      return;
+    if ((event.key === 'ArrowDown' || event.key === 'ArrowUp') && this.filteredSuggestions.length) {
+      event.preventDefault();
+      this.openSuggestions();
+      const length = this.filteredSuggestions.length;
+      this.activeSuggestion =
+        this.activeSuggestion < 0
+          ? event.key === 'ArrowDown'
+            ? 0
+            : length - 1
+          : Math.max(
+              0,
+              Math.min(length - 1, this.activeSuggestion + (event.key === 'ArrowDown' ? 1 : -1))
+            );
+      requestAnimationFrame(() =>
+        this.el
+          .querySelector(`#${this.generatedId}-suggestion-${this.activeSuggestion}`)
+          ?.scrollIntoView({ block: 'nearest' })
+      );
+    } else if (event.key === 'Escape' && this.suggestionsOpen) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.closeSuggestions();
+    } else if (event.key === 'Enter' && this.suggestionsOpen && this.activeSuggestion >= 0) {
+      event.preventDefault();
+      this.selectSuggestion(this.filteredSuggestions[this.activeSuggestion]);
+    } else if (
+      this.isTokenized &&
+      (event.key === 'Enter' || event.key === ',') &&
+      this.value.trim()
+    ) {
+      event.preventDefault();
+      this.addTokens(this.value);
+    } else if (this.isTokenized && event.key === 'Backspace' && !this.value && this.tokens.length) {
+      event.preventDefault();
+      this.removeToken(this.tokens.length - 1);
+    } else if (event.key === 'Tab') this.closeSuggestions();
+  };
+  private handlePaste = (event: ClipboardEvent) => {
+    if (!this.isTokenized || this.readOnly || this.disabled || this.isInactive || this.formDisabled)
+      return;
+    const pasted = event.clipboardData?.getData('text') ?? '';
+    if (!/[,\r\n]/.test(pasted)) return;
+    event.preventDefault();
+    const start = this.inputEl?.selectionStart ?? this.value.length;
+    const end = this.inputEl?.selectionEnd ?? start;
+    this.addTokens(this.value.slice(0, start) + pasted + this.value.slice(end));
   };
 
   private numericStepDisabled(direction: 1 | -1): boolean {
@@ -277,12 +576,18 @@ export class Input {
   render() {
     const inputId = this.inputId ?? this.generatedId;
     const inactive = this.isInactive || this.disabled || this.formDisabled;
-    const filled = this.value.length > 0;
-    const dirty = this.value !== this.initialValue;
+    const filled = this.value.length > 0 || (this.isTokenized && this.tokens.length > 0);
+    const dirty =
+      this.value !== this.initialValue ||
+      (this.isTokenized && JSON.stringify(this.tokens) !== JSON.stringify(this.initialTokens));
     const showClear = this.type === 'search' && filled && !inactive && !this.readOnly;
     const showPasswordToggle = this.type === 'password';
     const nativeType = showPasswordToggle && this.passwordRevealed ? 'text' : this.type;
-    const showError = this.error && Boolean(this.errorMessage);
+    const message =
+      this.error && this.errorMessage ? this.errorMessage : this.visibleConstraintMessage;
+    const invalid = this.error || Boolean(this.visibleConstraintMessage);
+    const showError = Boolean(message) && !this.managedByField;
+    const showCounter = this.hasCounter && !this.managedByField;
     const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const iconSize = ICON_SIZE[this.size];
     const numeric = this.type === 'number';
@@ -291,8 +596,13 @@ export class Input {
     const suppressBrowserChrome = this.type === 'search' || this.type === 'password';
 
     const describedBy =
-      [this.ariaDescribedby, showError ? this.errorId : undefined].filter(Boolean).join(' ') ||
-      undefined;
+      [
+        this.ariaDescribedby,
+        showError ? this.errorId : undefined,
+        showCounter ? `${this.generatedId}-count` : undefined,
+      ]
+        .filter(Boolean)
+        .join(' ') || undefined;
 
     return (
       <Host
@@ -307,14 +617,25 @@ export class Input {
         data-disabled={inactive ? '' : undefined}
         data-readonly={this.readOnly ? '' : undefined}
         data-required={this.required ? '' : undefined}
-        data-invalid={this.error ? '' : undefined}
+        data-invalid={invalid ? '' : undefined}
+        data-constraint-message={this.visibleConstraintMessage || undefined}
+        data-character-count={this.hasCounter ? String(this.value.length) : undefined}
+        data-character-limit={this.hasCounter ? String(lengthLimit(this.maxLength)) : undefined}
+        onInvalid={() => {
+          this.submitted = true;
+        }}
         data-filled={filled ? '' : undefined}
         data-focused={this.focused ? '' : undefined}
         data-dirty={dirty ? '' : undefined}
         data-touched={this.touched ? '' : undefined}
       >
         <div
+          ref={element => {
+            this.controlEl = element;
+          }}
           class={{
+            'input-control--tokenized': this.isTokenized,
+            'input-control--has-tokens': this.isTokenized && this.tokens.length > 0,
             'input-control': true,
             'input-control--number': numeric,
             'input-control--stepper': showNumericStepper,
@@ -322,7 +643,7 @@ export class Input {
             'input-control--align-end': this.textAlign === 'end',
             'ds-control-frame': true,
             'input-control--bordered': this.hasBorder,
-            'input-control--error': this.hasBorder && this.error,
+            'input-control--error': this.hasBorder && invalid,
             'input-control--prefix-control': this.hasPrefixControl,
             'input-control--suffix-control': this.hasSuffixControl,
             'ds-interaction-fill': this.hasInteractionFill,
@@ -356,6 +677,32 @@ export class Input {
               />
             )}
           </span>
+          {this.isTokenized &&
+            this.tokens.map((token, index) => (
+              <ds-chip
+                key={`${index}-${token}`}
+                class="input-token"
+                label={token}
+                size={this.size === 'lg' ? 'md' : this.size}
+                isInset
+                insetDepth="double"
+                isInactive={inactive || this.readOnly}
+                removeLabel={this.removeTokenLabel}
+                state={
+                  textConstraintValidity({
+                    ...this.textConstraints(),
+                    value: token,
+                    required: false,
+                  }).message
+                    ? 'error'
+                    : 'default'
+                }
+                onDsRemove={event => {
+                  event.stopPropagation();
+                  this.removeToken(index);
+                }}
+              />
+            ))}
           <input
             ref={element => {
               this.inputEl = element;
@@ -369,7 +716,10 @@ export class Input {
             step={numeric ? this.step : undefined}
             disabled={inactive}
             readOnly={this.readOnly}
-            required={this.required}
+            required={this.required && !this.isTokenized}
+            minLength={lengthLimit(this.minLength)}
+            maxLength={this.lengthBehavior === 'restrict' ? lengthLimit(this.maxLength) : undefined}
+            pattern={this.pattern}
             autoFocus={this.autoFocus}
             autoComplete={resolvedAutoComplete}
             autoCapitalize={suppressBrowserChrome ? 'none' : undefined}
@@ -381,10 +731,27 @@ export class Input {
             aria-label={this.ariaLabel}
             aria-labelledby={this.ariaLabelledby}
             aria-describedby={describedBy}
-            aria-controls={this.ariaControls}
-            aria-activedescendant={this.ariaActiveDescendant}
-            aria-invalid={this.error ? 'true' : undefined}
+            role={this.suggestions.length && this.supportsTextFeatures ? 'combobox' : undefined}
+            aria-autocomplete={
+              this.suggestions.length && this.supportsTextFeatures ? 'list' : undefined
+            }
+            aria-expanded={
+              this.suggestions.length && this.supportsTextFeatures
+                ? String(this.suggestionsOpen)
+                : undefined
+            }
+            aria-controls={
+              this.suggestionsOpen ? `${this.generatedId}-suggestions` : this.ariaControls
+            }
+            aria-activedescendant={
+              this.suggestionsOpen && this.activeSuggestion >= 0
+                ? `${this.generatedId}-suggestion-${this.activeSuggestion}`
+                : this.ariaActiveDescendant
+            }
+            aria-invalid={invalid ? 'true' : undefined}
             onInput={this.handleInput}
+            onKeyDown={this.handleTextKeyDown}
+            onPaste={this.handlePaste}
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}
           />
@@ -432,17 +799,70 @@ export class Input {
           )}
           {showNumericStepper && this.textAlign === 'start' && this.renderNumericStepper(inactive)}
         </div>
-        {showError && (
-          <ds-text
-            class="error-text"
-            as="div"
-            variant="text-body-small"
-            color="negative"
-            textId={this.errorId}
-            role="alert"
+        {this.suggestionsOpen && (
+          <div
+            popover="manual"
+            class="input-suggestions ds-choice-popup"
+            style={{
+              position: 'fixed',
+              left: `${this.suggestionPosition.x}px`,
+              top: `${this.suggestionPosition.y}px`,
+              width: `${this.controlEl?.getBoundingClientRect().width ?? 0}px`,
+              visibility: this.suggestionsReady ? 'visible' : 'hidden',
+            }}
+            onMouseDown={event => event.preventDefault()}
           >
-            {this.errorMessage}
-          </ds-text>
+            <div
+              class="input-suggestions__list ds-choice-list"
+              id={`${this.generatedId}-suggestions`}
+              role="listbox"
+              aria-label="Suggestions"
+            >
+              {this.filteredSuggestions.map((value, index) => (
+                <ChoiceOptionRow
+                  size={this.size}
+                  id={`${this.generatedId}-suggestion-${index}`}
+                  option={{ label: value, value }}
+                  selected={false}
+                  active={index === this.activeSuggestion}
+                  focusRingVisible={false}
+                  usesSubtext={false}
+                  tabIndex={-1}
+                  onHover={() => {
+                    this.activeSuggestion = index;
+                  }}
+                  onSelect={() => this.selectSuggestion(value)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+        {(showError || showCounter) && (
+          <div class="text-field-support">
+            {showError && (
+              <ds-text
+                class="error-text"
+                as="div"
+                variant="text-body-small"
+                color="negative"
+                textId={this.errorId}
+                role="alert"
+              >
+                {message}
+              </ds-text>
+            )}
+            {showCounter && (
+              <ds-text
+                as="span"
+                class="text-field-count"
+                variant="text-body-small"
+                color={invalid ? 'negative' : 'secondary'}
+                textId={`${this.generatedId}-count`}
+              >
+                {this.value.length}/{lengthLimit(this.maxLength)}
+              </ds-text>
+            )}
+          </div>
         )}
       </Host>
     );

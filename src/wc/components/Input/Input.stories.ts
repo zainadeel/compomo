@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-input.js';
+import '../../../../dist/components/ds-field.js';
 import '../../../../dist/components/ds-select.js';
 import '../../../../dist/components/ds-divider.js';
 
@@ -9,6 +10,10 @@ const meta: Meta = {
   tags: ['autodocs'],
   argTypes: {
     value: { control: 'text' },
+    minLength: { control: 'number' },
+    maxLength: { control: 'number' },
+    lengthBehavior: { control: 'select', options: ['error', 'restrict'] },
+    showCharacterCount: { control: 'boolean' },
     placeholder: { control: 'text' },
     type: {
       control: 'select',
@@ -53,6 +58,10 @@ export const Playground: Story = {
   render: args => html`
     <div style="width:320px;">
       <ds-input
+        .minLength=${args['minLength']}
+        .maxLength=${args['maxLength']}
+        length-behavior=${args['lengthBehavior'] ?? 'error'}
+        .showCharacterCount=${args['showCharacterCount'] ?? true}
         value=${args['value'] ?? ''}
         placeholder=${args['placeholder'] ?? ''}
         type=${args['type'] ?? 'text'}
@@ -383,4 +392,79 @@ export const PrefixAndSuffixSelects: Story = {
       </ds-input>
     </div>
   `,
+};
+
+export const LengthConstraints: Story = {
+  render: () => html`
+    <div style="width:360px;display:grid;gap:var(--dimension-space-300)">
+      <ds-field label="With guidance" description="Use between 5 and 25 characters.">
+        <ds-input min-length="5" max-length="25" value="A short note"></ds-input>
+      </ds-field>
+      <ds-field label="Counter without guidance">
+        <ds-input max-length="25" value="Exactly twenty-five chars"></ds-input>
+      </ds-field>
+      <ds-field label="Preserve extra text" description="Extra text is kept so you can edit it.">
+        <ds-input max-length="25" value="This text is longer than the allowed limit."></ds-input>
+      </ds-field>
+      <ds-field label="Hard limit" description="Typing and paste stop at 25 characters.">
+        <ds-input max-length="25" length-behavior="restrict"></ds-input>
+      </ds-field>
+    </div>
+  `,
+};
+
+export const PatternValidation: Story = {
+  render: () =>
+    html`<div style="width:320px">
+      <ds-field label="Reference" description="Three capital letters, a dash, and four digits."
+        ><ds-input
+          pattern="[A-Z]{3}-[0-9]{4}"
+          pattern-message="Use a reference such as ABC-1234."
+          placeholder="ABC-1234"
+          required
+        ></ds-input
+      ></ds-field>
+    </div>`,
+};
+
+export const Suggestions: Story = {
+  render: () =>
+    html`<div style="width:360px">
+      <ds-field label="City" description="Choose a suggestion or enter any city."
+        ><ds-input
+          type="search"
+          .suggestions=${['Vancouver', 'Victoria', 'Seattle', 'Portland', 'San Francisco']}
+          placeholder="Start typing a city"
+        ></ds-input
+      ></ds-field>
+    </div>`,
+};
+export const Tokens: Story = {
+  render: () =>
+    html`<div style="width:360px;display:grid;gap:var(--dimension-space-300)">
+      <ds-field label="Empty token input"
+        ><ds-input tokenized placeholder="Add keyword"></ds-input
+      ></ds-field>
+      <ds-field label="Keywords" description="Press Enter or comma to add a keyword."
+        ><ds-input tokenized .tokens=${['Fleet', 'Safety']} placeholder="Add keyword"></ds-input
+      ></ds-field>
+      <ds-field label="Tags with suggestions"
+        ><ds-input
+          tokenized
+          .suggestions=${['Operations', 'Safety', 'Maintenance']}
+          .tokens=${['Operations']}
+        ></ds-input
+      ></ds-field>
+      <ds-field label="Restricted token lengths" description="Up to 12 characters per token."
+        ><ds-input
+          tokenized
+          max-length="12"
+          .tokens=${['North', 'An overlong token']}
+          placeholder="Add region"
+        ></ds-input
+      ></ds-field>
+      <ds-field label="Read-only"
+        ><ds-input tokenized read-only .tokens=${['Fleet', 'Safety']}></ds-input
+      ></ds-field>
+    </div>`,
 };

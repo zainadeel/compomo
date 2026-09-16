@@ -7,7 +7,7 @@
   "tag": "ds-input",
   "audience": "general",
   "status": "stable",
-  "summary": "Form-associated single-line text and number field for primary and secondary application backgrounds, with native input behavior, four control densities, optional leading and trailing content, search clearing, and validation.",
+  "summary": "Form-associated text and number input with constraints, optional free-text suggestions, token entry, and character counts.",
   "useWhen": [
     "A user must enter or edit one line of text, an email address, telephone number, URL, search query, password, or exact number.",
     "The value must participate in native, Angular, React, or Vue form state.",
@@ -76,7 +76,10 @@
     "Number fields preserve native spinbutton semantics, keyboard stepping, and min/max constraint behavior while dsChange continues to report the native string value. Optional borderless inset Plus and Minus buttons share the field density, appear in that order, disable independently at their numeric bound, and restore focus to the spinbutton after activation. Hide them when direct numeric entry is preferable; browser spinner chrome stays hidden.",
     "textAlign positions the editable value while the numeric stepper stays on the opposite inline edge, keeping the actions clear of the number: start-aligned values use an inline-end stepper and end-aligned values use an inline-start stepper.",
     "The host exposes focused, filled, dirty, touched, invalid, disabled, read-only, and required data attributes for Field integration and diagnostics.",
-    "Use Input only on primary or secondary application backgrounds. It intentionally does not expose alternate surface contexts."
+    "Use Input only on primary or secondary application backgrounds. It intentionally does not expose alternate surface contexts.",
+    "Length constraints validate both typed and programmatic values. By default excess text is retained and shown as an error; restrict mode uses a hard input limit. Counters show the draft length and maximum below the field, beside helper or error text when present.",
+    "Suggestions assist free text rather than constrain selection. Arrow keys highlight suggestions, Enter accepts one, and Escape dismisses the popup without changing the value.",
+    "Tokenized text and search fields use removable double-inset chips and commit trimmed, unique values with Enter or comma, accept delimited paste, and remove the last token with Backspace on an empty draft. Committed tokens submit as repeated entries; value remains the draft and must be committed before submission. Length and pattern constraints apply per token."
   ],
   "responsiveBehavior": [
     "Form fields normally fill their parent; use hug width only in a compact toolbar or filter layout with an explicit width constraint.",
@@ -86,13 +89,21 @@
   "frameworkCaveats": {
     "customElements": [
       "Listen for dsChange for user edits and dsClear for the search clear action.",
-      "Use the form attribute on the host when associating an input rendered outside its owning form."
+      "Use the form attribute on the host when associating an input rendered outside its owning form.",
+      "Bind committed token arrays through tokens and dsTokensChange, separately from the draft value. Assign suggestions as a JavaScript array."
     ],
     "react": [
-      "Use DsInput, bind value for controlled application state, and handle onDsChange and onDsClear."
+      "Use DsInput, bind value for controlled application state, and handle onDsChange and onDsClear.",
+      "Bind committed token arrays through tokens and dsTokensChange, separately from the draft value. Assign suggestions as a JavaScript array."
     ],
-    "vue": ["Use DsInput with v-model for the value, and listen for dsChange and dsClear."],
-    "angular": ["Import DsInput with TextValueAccessor when integrating with Angular Forms."]
+    "vue": [
+      "Use DsInput with v-model for the value, and listen for dsChange and dsClear.",
+      "Bind committed token arrays through tokens and dsTokensChange, separately from the draft value. Assign suggestions as a JavaScript array."
+    ],
+    "angular": [
+      "Use TextValueAccessor for text inputs and NumericValueAccessor for a statically declared type=\"number\" input. Numeric forms receive numbers or null while the component event remains a string.",
+      "For tokenized input bind tokens and dsTokensChange explicitly; value and dsChange represent only the draft. Do not attach a scalar form value accessor to token mode."
+    ]
   },
   "references": [
     {

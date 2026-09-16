@@ -23,6 +23,8 @@ import {
   type ClockTimeParts,
 } from '../../utils';
 
+const HOURS_24 = Array.from({ length: 24 }, (_, hour) => hour);
+
 type TimePickerColumn = 'hour' | 'minute' | 'period';
 
 @Component({
@@ -35,6 +37,8 @@ export class TimePicker {
 
   /** Clock value as `HH:MM`. */
   @Prop() value: string = '';
+  /** Display 12-hour lists with AM/PM or a 24-hour clock. Stored values remain HH:MM. */
+  @Prop() hourFormat: '12' | '24' = '12';
   @Prop() min: string | undefined;
   @Prop() max: string | undefined;
   /** Native time step in seconds. Defaults to minutes (`60`). */
@@ -51,17 +55,29 @@ export class TimePicker {
   }
 
   @Watch('value')
+  @Watch('hourFormat')
   onValueChange() {
     this.scrollSelectedIntoView();
   }
 
   @Method()
   async setFocus() {
-    this.focusColumn('hour', CLOCK_HOURS);
+    this.focusColumn('hour', this.hours());
   }
 
   private parts(): ClockTimeParts {
     return splitClockTime(this.value) ?? { hour12: 12, minute: 0, period: 'AM' };
+  }
+
+  private hours(): readonly number[] {
+    return this.hourFormat === '24' ? HOURS_24 : CLOCK_HOURS;
+  }
+
+  private displayHour(): number {
+    const parts = this.parts();
+    return this.hourFormat === '24'
+      ? (parts.hour12 % 12) + (parts.period === 'PM' ? 12 : 0)
+      : parts.hour12;
   }
 
   private minutes(): number[] {
@@ -82,7 +98,9 @@ export class TimePicker {
     value: number | ClockPeriod
   ): Partial<ClockTimeParts> {
     return column === 'hour'
-      ? { hour12: value as number }
+      ? this.hourFormat === '24'
+        ? { hour12: Number(value) % 12 || 12, period: Number(value) >= 12 ? 'PM' : 'AM' }
+        : { hour12: value as number }
       : column === 'minute'
         ? { minute: value as number }
         : { period: value as ClockPeriod };
@@ -95,7 +113,9 @@ export class TimePicker {
     const hours: ReadonlyArray<number> = column === 'hour' ? [current.hour12] : CLOCK_HOURS;
     const minutes: ReadonlyArray<number> = column === 'minute' ? [current.minute] : this.minutes();
     const periods: ReadonlyArray<ClockPeriod> =
-      column === 'period' ? [current.period] : CLOCK_PERIODS;
+      column === 'period' || (column === 'hour' && this.hourFormat === '24')
+        ? [current.period]
+        : CLOCK_PERIODS;
 
     return !hours.some(hour =>
       minutes.some(minute =>
@@ -117,7 +137,9 @@ export class TimePicker {
     const minutes =
       column === 'minute' ? [current.minute] : this.orderedValues(current.minute, this.minutes());
     const periods =
-      column === 'period' ? [current.period] : this.orderedValues(current.period, CLOCK_PERIODS);
+      column === 'period' || (column === 'hour' && this.hourFormat === '24')
+        ? [current.period]
+        : this.orderedValues(current.period, CLOCK_PERIODS);
 
     for (const hour of hours) {
       for (const minute of minutes) {
@@ -138,7 +160,7 @@ export class TimePicker {
 
   private scrollSelectedIntoView() {
     const parts = this.parts();
-    this.optionEl('hour', parts.hour12)?.scrollIntoView({ block: 'nearest' });
+    this.optionEl('hour', this.displayHour())?.scrollIntoView({ block: 'nearest' });
     this.optionEl('minute', parts.minute)?.scrollIntoView({ block: 'nearest' });
     this.optionEl('period', parts.period)?.scrollIntoView({ block: 'nearest' });
   }
@@ -155,7 +177,11 @@ export class TimePicker {
   ): number | ClockPeriod | undefined {
     const current = this.parts();
     const currentValue =
-      column === 'hour' ? current.hour12 : column === 'minute' ? current.minute : current.period;
+      column === 'hour'
+        ? this.displayHour()
+        : column === 'minute'
+          ? current.minute
+          : current.period;
     if (!this.isDisabledPart(column, this.optionParts(column, currentValue))) return currentValue;
     return values.find(value => !this.isDisabledPart(column, this.optionParts(column, value)));
   }
@@ -171,7 +197,8 @@ export class TimePicker {
     values: ReadonlyArray<number | ClockPeriod>,
     current: number | ClockPeriod
   ) => {
-    const columns: TimePickerColumn[] = ['hour', 'minute', 'period'];
+    const columns: TimePickerColumn[] =
+      this.hourFormat === '24' ? ['hour', 'minute'] : ['hour', 'minute', 'period'];
     const columnIndex = columns.indexOf(column);
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
       const nextColumn =
@@ -183,7 +210,7 @@ export class TimePicker {
       event.preventDefault();
       const nextValues =
         nextColumn === 'hour'
-          ? CLOCK_HOURS
+          ? this.hours()
           : nextColumn === 'minute'
             ? this.minutes()
             : CLOCK_PERIODS;
@@ -277,23 +304,27 @@ export class TimePicker {
     const minuteValues = minutes.includes(parts.minute)
       ? minutes
       : [...minutes, parts.minute].sort((a, b) => a - b);
-    const hourFocus = this.focusValue('hour', CLOCK_HOURS);
+    const hourFocus = this.focusValue('hour', this.hours());
     const minuteFocus = this.focusValue('minute', minuteValues);
     const periodFocus = this.focusValue('period', CLOCK_PERIODS);
 
     return (
       <Host>
-        <div class="time-picker" role="group" aria-label="Choose time">
+        <div
+          class={{ 'time-picker': true, 'time-picker--24': this.hourFormat === '24' }}
+          role="group"
+          aria-label="Choose time"
+        >
           <div class="time-picker__column">
             <div class="time-picker__list" role="listbox" aria-label="Hour">
-              {CLOCK_HOURS.map(hour =>
+              {this.hours().map(hour =>
                 this.renderTile(
                   'hour',
                   hour,
-                  hour === parts.hour12,
+                  hour === this.displayHour(),
                   hour === hourFocus,
-                  String(hour),
-                  CLOCK_HOURS
+                  this.hourFormat === '24' ? String(hour).padStart(2, '0') : String(hour),
+                  this.hours()
                 )
               )}
             </div>
@@ -312,20 +343,22 @@ export class TimePicker {
               )}
             </div>
           </div>
-          <div class="time-picker__column">
-            <div class="time-picker__list" role="listbox" aria-label="AM/PM">
-              {CLOCK_PERIODS.map(period =>
-                this.renderTile(
-                  'period',
-                  period,
-                  period === parts.period,
-                  period === periodFocus,
-                  period,
-                  CLOCK_PERIODS
-                )
-              )}
+          {this.hourFormat !== '24' && (
+            <div class="time-picker__column">
+              <div class="time-picker__list" role="listbox" aria-label="AM/PM">
+                {CLOCK_PERIODS.map(period =>
+                  this.renderTile(
+                    'period',
+                    period,
+                    period === parts.period,
+                    period === periodFocus,
+                    period,
+                    CLOCK_PERIODS
+                  )
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </Host>
     );

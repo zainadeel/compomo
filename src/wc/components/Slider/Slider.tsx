@@ -18,6 +18,11 @@ import {
   setRepeatedFormControlValue,
 } from '../../utils';
 
+export interface SliderTick {
+  value: number;
+  label?: string;
+}
+
 export type SliderValue = number | number[];
 export type SliderSize = 'md' | 'sm' | 'xs';
 export type SliderOrientation = 'horizontal' | 'vertical';
@@ -40,7 +45,9 @@ export class Slider {
   @Prop({ mutable: true }) value: SliderValue = 0;
   @Prop() min: number = 0;
   @Prop() max: number = 100;
-  @Prop() step: number = 1;
+  @Prop() step: number | 'any' = 1;
+  /** Explicit ticks are the selectable snap points. Empty ticks with step='any' allow smooth adjustment. */
+  @Prop() ticks: SliderTick[] = [];
   /** Minimum number of steps kept between two range thumbs. */
   @Prop() minStepsBetweenValues: number = 0;
   /** Visible field label. Supply aria-label when the label is intentionally hidden. */
@@ -115,6 +122,7 @@ export class Slider {
   @Watch('min')
   @Watch('max')
   @Watch('step')
+  @Watch('ticks')
   @Watch('minStepsBetweenValues')
   @Watch('name')
   @Watch('disabled')
@@ -173,7 +181,17 @@ export class Slider {
   }
 
   private get safeStep(): number {
-    return Number.isFinite(this.step) && this.step > 0 ? this.step : 1;
+    const step = Number(this.step);
+    return Number.isFinite(step) && step > 0 ? step : 1;
+  }
+
+  private get resolvedTicks(): SliderTick[] {
+    const unique = new Map<number, SliderTick>();
+    for (const tick of this.ticks) {
+      if (Number.isFinite(tick.value) && tick.value >= this.safeMin && tick.value <= this.safeMax)
+        unique.set(tick.value, tick);
+    }
+    return [...unique.values()].sort((a, b) => a.value - b.value);
   }
 
   private get safeMin(): number {
@@ -189,7 +207,11 @@ export class Slider {
     const steps = Number.isFinite(this.minStepsBetweenValues)
       ? Math.max(0, Math.floor(this.minStepsBetweenValues))
       : 0;
-    return steps * this.safeStep;
+    const ticks = this.resolvedTicks;
+    const span = ticks.length
+      ? ticks[ticks.length - 1].value - ticks[0].value
+      : this.safeMax - this.safeMin;
+    return Math.min(span, steps * this.safeStep);
   }
 
   private get resolvedValues(): number[] {
@@ -206,6 +228,13 @@ export class Slider {
     if (upper - lower < gap) {
       upper = Math.min(maximum, this.snap(lower + gap));
       lower = Math.max(minimum, this.snap(upper - gap));
+      const ticks = this.resolvedTicks;
+      if (ticks.length && upper - lower < gap) {
+        upper =
+          ticks.find(tick => tick.value >= lower + gap)?.value ?? ticks[ticks.length - 1].value;
+        lower =
+          [...ticks].reverse().find(tick => tick.value <= upper - gap)?.value ?? ticks[0].value;
+      }
     }
     return [lower, upper];
   }
@@ -232,9 +261,14 @@ export class Slider {
     return text.includes('.') ? text.split('.')[1].length : 0;
   }
 
-  private snap(value: number): number {
-    const minimum = this.safeMin;
-    const maximum = this.safeMax;
+  private snap(value: number, minimum = this.safeMin, maximum = this.safeMax): number {
+    const ticks = this.resolvedTicks.filter(tick => tick.value >= minimum && tick.value <= maximum);
+    if (ticks.length)
+      return ticks.reduce((nearest, tick) =>
+        Math.abs(tick.value - value) < Math.abs(nearest.value - value) ? tick : nearest
+      ).value;
+    if (this.step === 'any')
+      return Math.min(maximum, Math.max(minimum, Number.isFinite(value) ? value : minimum));
     const candidate = Number.isFinite(value) ? value : minimum;
     const stepped = minimum + Math.round((candidate - minimum) / this.safeStep) * this.safeStep;
     const precision = Math.min(
@@ -269,7 +303,10 @@ export class Slider {
     const values = this.resolvedValues;
     const constrained = Math.min(
       this.allowedMax(index, values),
-      Math.max(this.allowedMin(index, values), this.snap(next))
+      Math.max(
+        this.allowedMin(index, values),
+        this.snap(next, this.allowedMin(index, values), this.allowedMax(index, values))
+      )
     );
     values[index] = constrained;
     const nextValue: SliderValue = this.isRange ? [...values] : values[0];
@@ -297,7 +334,10 @@ export class Slider {
   }
 
   private formattedValue(value: number, index: number): string {
-    const authored = this.valueTexts[index] ?? this.valueText;
+    const authored =
+      this.valueTexts[index] ??
+      this.valueText ??
+      this.resolvedTicks.find(tick => tick.value === value)?.label;
     if (authored) return authored;
     let number: string;
     try {
@@ -310,6 +350,7 @@ export class Slider {
 
   private ariaValueText(value: number, index: number): string | undefined {
     if (
+      this.resolvedTicks.some(tick => tick.value === value && tick.label) ||
       this.valueTexts[index] ||
       this.valueText ||
       this.valuePrefix ||
@@ -335,7 +376,36 @@ export class Slider {
     if (!this.readOnly && !this.isDisabled) this.commitIfChanged();
   };
 
-  private handleKeyDown = (event: KeyboardEvent) => {
+  private handleKeyDown = (event: KeyboardEvent, index: number) => {
+    const keys = [
+      'ArrowLeft',
+      'ArrowRight',
+      'ArrowUp',
+      'ArrowDown',
+      'Home',
+      'End',
+      'PageUp',
+      'PageDown',
+    ];
+    if (!this.readOnly && this.resolvedTicks.length && keys.includes(event.key)) {
+      event.preventDefault();
+      if (this.isDisabled) return;
+      const ticks = this.resolvedTicks.filter(
+        tick => tick.value >= this.allowedMin(index) && tick.value <= this.allowedMax(index)
+      );
+      const current = this.resolvedValues[index];
+      const forward = ['ArrowRight', 'ArrowUp', 'PageUp'].includes(event.key);
+      const next =
+        event.key === 'Home'
+          ? ticks[0]
+          : event.key === 'End'
+            ? ticks[ticks.length - 1]
+            : forward
+              ? ticks.find(tick => tick.value > current)
+              : [...ticks].reverse().find(tick => tick.value < current);
+      if (next && this.setValueAt(index, next.value)) this.commitIfChanged();
+      return;
+    }
     if (!this.readOnly) return;
     if (
       [
@@ -473,7 +543,7 @@ export class Slider {
           id={inputId}
           min={this.allowedMin(index)}
           max={this.allowedMax(index)}
-          step={this.safeStep}
+          step={this.resolvedTicks.length || this.step === 'any' ? 'any' : this.safeStep}
           value={value}
           disabled={this.isDisabled}
           aria-label={directLabel}
@@ -484,7 +554,7 @@ export class Slider {
           aria-readonly={this.readOnly ? 'true' : undefined}
           onInput={(event: Event) => this.handleNativeInput(event, index)}
           onChange={this.handleNativeChange}
-          onKeyDown={this.handleKeyDown}
+          onKeyDown={event => this.handleKeyDown(event, index)}
           onFocus={() => this.handleFocus(index)}
           onBlur={this.handleBlur}
         />
@@ -515,6 +585,8 @@ export class Slider {
           [`slider--${this.orientation}`]: true,
           [`slider--thumb-${this.thumbAlignment}`]: true,
           'slider--range': this.isRange,
+          'slider--ticks': this.resolvedTicks.length > 0,
+          'slider--tick-labels': this.resolvedTicks.some(tick => Boolean(tick.label)),
           'slider--readonly': this.readOnly,
           'ds-control-inactive': this.isDisabled,
         }}
@@ -576,6 +648,32 @@ export class Slider {
           <div class="slider__rail" aria-hidden="true">
             <div class="slider__indicator" />
           </div>
+          {this.resolvedTicks.map(tick => (
+            <span
+              class="slider__tick"
+              data-edge={
+                tick.value === this.safeMin
+                  ? 'start'
+                  : tick.value === this.safeMax
+                    ? 'end'
+                    : undefined
+              }
+              aria-hidden="true"
+              style={{ '--ds-slider-tick-pct': String(this.percent(tick.value)) }}
+            >
+              <span class="slider__tick-mark" />
+              {tick.label && (
+                <ds-text
+                  class="slider__tick-label"
+                  as="span"
+                  variant="text-caption"
+                  color="secondary"
+                >
+                  {tick.label}
+                </ds-text>
+              )}
+            </span>
+          ))}
           {values.map((value, index) => this.renderThumb(value, index))}
         </div>
       </Host>

@@ -70,6 +70,7 @@ import { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 import { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderActionDetail, PanelToolsHeaders, PanelToolsItem, PanelToolsRailAccessory, PanelToolsRailAccessoryActionDetail, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
 import { RadioOption, RadioSize } from "./components/Radio/Radio";
+import { RadioTileOption } from "./components/RadioTile/RadioTile";
 import { SafetyScoreLevel, ScoreSize, ScoreVariant } from "./components/Score/score-types";
 import { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
 import { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
@@ -78,7 +79,7 @@ import { ShellGradientPreset } from "./shell/shell-gradient-presets";
 import { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageDesktopHeaderPlacement, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
 import { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
-import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from "./components/Slider/Slider";
+import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderTick, SliderValue } from "./components/Slider/Slider";
 import { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 import { SwitchSize } from "./components/Switch/Switch";
 import { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
@@ -153,6 +154,7 @@ export { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 export { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderActionDetail, PanelToolsHeaders, PanelToolsItem, PanelToolsRailAccessory, PanelToolsRailAccessoryActionDetail, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
 export { RadioOption, RadioSize } from "./components/Radio/Radio";
+export { RadioTileOption } from "./components/RadioTile/RadioTile";
 export { SafetyScoreLevel, ScoreSize, ScoreVariant } from "./components/Score/score-types";
 export { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
 export { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
@@ -161,7 +163,7 @@ export { ShellGradientPreset } from "./shell/shell-gradient-presets";
 export { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageDesktopHeaderPlacement, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
 export { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
-export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderValue } from "./components/Slider/Slider";
+export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderTick, SliderValue } from "./components/Slider/Slider";
 export { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 export { SwitchSize } from "./components/Switch/Switch";
 export { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
@@ -2208,20 +2210,42 @@ export namespace Components {
          */
         "isInactive": boolean;
         /**
+          * Error preserves extra text; restrict uses the browser's hard input limit.
+          * @default 'error'
+         */
+        "lengthBehavior": 'error' | 'restrict';
+        /**
           * Maximum accepted value when type is number.
          */
         "max": number | undefined;
         /**
+          * Maximum text length. A visible counter accompanies this constraint by default.
+         */
+        "maxLength": number | undefined;
+        /**
           * Minimum accepted value when type is number.
          */
         "min": number | undefined;
+        /**
+          * Minimum non-empty text length, in native UTF-16 code units.
+         */
+        "minLength": number | undefined;
         "name": string | undefined;
+        /**
+          * Native whole-value regular expression for text-like input types.
+         */
+        "pattern": string | undefined;
+        "patternMessage": string | undefined;
         "placeholder": string | undefined;
         /**
           * Keeps the value focusable and submittable while preventing edits.
           * @default false
          */
         "readOnly": boolean;
+        /**
+          * @default 'Remove {label}'
+         */
+        "removeTokenLabel": string;
         /**
           * @default false
          */
@@ -2231,6 +2255,10 @@ export namespace Components {
          */
         "requiredMessage": string;
         "setFocus": () => Promise<void>;
+        /**
+          * @default true
+         */
+        "showCharacterCount": boolean;
         /**
           * @default 'Show password'
          */
@@ -2250,10 +2278,25 @@ export namespace Components {
          */
         "step": number | undefined;
         /**
+          * Optional local suggestions; free text always remains valid. Used with text/search fields.
+          * @default []
+         */
+        "suggestions": string[];
+        /**
           * Align the editable value; number steppers sit on the opposite inline edge.
           * @default 'start'
          */
         "textAlign": InputTextAlign;
+        /**
+          * Free-text tokens entered with Enter/comma and removable chips. Used with text/search fields.
+          * @default false
+         */
+        "tokenized": boolean;
+        /**
+          * Committed values; value remains the editable draft when tokenized.
+          * @default []
+         */
+        "tokens": string[];
         /**
           * @default 'text'
          */
@@ -2360,6 +2403,11 @@ export namespace Components {
           * @default true
          */
         "hasInteractionFill": boolean;
+        /**
+          * Display format; submitted values remain HH:MM in either format.
+          * @default '12'
+         */
+        "hourFormat": '12' | '24';
         "inputId": string | undefined;
         /**
           * @default false
@@ -3386,6 +3434,51 @@ export namespace Components {
          */
         "value": string;
     }
+    interface DsRadioTile {
+        "ariaDescribedby": string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+        /**
+          * @default 'vertical'
+         */
+        "direction": 'horizontal' | 'vertical';
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * @default false
+         */
+        "error": boolean;
+        "form": string | undefined;
+        "inputId": string | undefined;
+        /**
+          * @default false
+         */
+        "isInactive": boolean;
+        "name": string | undefined;
+        /**
+          * One-of-many choices displayed as fully clickable tiles.
+          * @default []
+         */
+        "options": RadioTileOption[];
+        /**
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage": string;
+        "setFocus": () => Promise<void>;
+        /**
+          * @default ''
+         */
+        "value": string;
+    }
     interface DsScore {
         /**
           * Replace the figure with a skeleton while data resolves.
@@ -3983,12 +4076,17 @@ export namespace Components {
         /**
           * @default 1
          */
-        "step": number;
+        "step": number | 'any';
         /**
           * Align the thumb edge with full-width rail endpoints, or its center with inset rail endpoints.
           * @default 'edge'
          */
         "thumbAlignment": SliderThumbAlignment;
+        /**
+          * Explicit ticks are the selectable snap points. Empty ticks with step='any' allow smooth adjustment.
+          * @default []
+         */
+        "ticks": SliderTick[];
         /**
           * Current value. Assign a two-number array through the JavaScript property for a range slider.
           * @default 0
@@ -4572,6 +4670,19 @@ export namespace Components {
           * @default false
          */
         "isInactive": boolean;
+        /**
+          * Error preserves extra text; restrict uses the browser's hard input limit.
+          * @default 'error'
+         */
+        "lengthBehavior": 'error' | 'restrict';
+        /**
+          * Maximum text length. A visible counter accompanies this constraint by default.
+         */
+        "maxLength": number | undefined;
+        /**
+          * Minimum non-empty text length, in native UTF-16 code units.
+         */
+        "minLength": number | undefined;
         "name": string | undefined;
         "placeholder": string | undefined;
         /**
@@ -4599,6 +4710,10 @@ export namespace Components {
         "rows": number;
         "setFocus": () => Promise<void>;
         /**
+          * @default true
+         */
+        "showCharacterCount": boolean;
+        /**
           * Control density for typography and inset spacing.
           * @default 'md'
          */
@@ -4624,6 +4739,11 @@ export namespace Components {
           * @default false
          */
         "autoFocus": boolean;
+        /**
+          * Display 12-hour lists with AM/PM or a 24-hour clock. Stored values remain HH:MM.
+          * @default '12'
+         */
+        "hourFormat": '12' | '24';
         /**
           * @default false
          */
@@ -5015,6 +5135,10 @@ export interface DsPanelToolsCustomEvent<T> extends CustomEvent<T> {
 export interface DsRadioCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsRadioElement;
+}
+export interface DsRadioTileCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsRadioTileElement;
 }
 export interface DsScrollOverlayCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -5782,6 +5906,8 @@ declare global {
     };
     interface HTMLDsInputElementEventMap {
         "dsChange": string;
+        "dsTokensChange": string[];
+        "dsSuggestionSelect": string;
         "dsClear": void;
     }
     interface HTMLDsInputElement extends Components.DsInput, HTMLStencilElement {
@@ -6203,6 +6329,23 @@ declare global {
     var HTMLDsRadioElement: {
         prototype: HTMLDsRadioElement;
         new (): HTMLDsRadioElement;
+    };
+    interface HTMLDsRadioTileElementEventMap {
+        "dsChange": string;
+    }
+    interface HTMLDsRadioTileElement extends Components.DsRadioTile, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsRadioTileElementEventMap>(type: K, listener: (this: HTMLDsRadioTileElement, ev: DsRadioTileCustomEvent<HTMLDsRadioTileElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsRadioTileElementEventMap>(type: K, listener: (this: HTMLDsRadioTileElement, ev: DsRadioTileCustomEvent<HTMLDsRadioTileElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsRadioTileElement: {
+        prototype: HTMLDsRadioTileElement;
+        new (): HTMLDsRadioTileElement;
     };
     interface HTMLDsScoreElement extends Components.DsScore, HTMLStencilElement {
     }
@@ -6627,6 +6770,7 @@ declare global {
         "ds-panel-tools": HTMLDsPanelToolsElement;
         "ds-paper-texture": HTMLDsPaperTextureElement;
         "ds-radio": HTMLDsRadioElement;
+        "ds-radio-tile": HTMLDsRadioTileElement;
         "ds-score": HTMLDsScoreElement;
         "ds-scroll-overlay": HTMLDsScrollOverlayElement;
         "ds-select": HTMLDsSelectElement;
@@ -8910,22 +9054,46 @@ declare namespace LocalJSX {
          */
         "isInactive"?: boolean;
         /**
+          * Error preserves extra text; restrict uses the browser's hard input limit.
+          * @default 'error'
+         */
+        "lengthBehavior"?: 'error' | 'restrict';
+        /**
           * Maximum accepted value when type is number.
          */
         "max"?: number | undefined;
         /**
+          * Maximum text length. A visible counter accompanies this constraint by default.
+         */
+        "maxLength"?: number | undefined;
+        /**
           * Minimum accepted value when type is number.
          */
         "min"?: number | undefined;
+        /**
+          * Minimum non-empty text length, in native UTF-16 code units.
+         */
+        "minLength"?: number | undefined;
         "name"?: string | undefined;
         "onDsChange"?: (event: DsInputCustomEvent<string>) => void;
         "onDsClear"?: (event: DsInputCustomEvent<void>) => void;
+        "onDsSuggestionSelect"?: (event: DsInputCustomEvent<string>) => void;
+        "onDsTokensChange"?: (event: DsInputCustomEvent<string[]>) => void;
+        /**
+          * Native whole-value regular expression for text-like input types.
+         */
+        "pattern"?: string | undefined;
+        "patternMessage"?: string | undefined;
         "placeholder"?: string | undefined;
         /**
           * Keeps the value focusable and submittable while preventing edits.
           * @default false
          */
         "readOnly"?: boolean;
+        /**
+          * @default 'Remove {label}'
+         */
+        "removeTokenLabel"?: string;
         /**
           * @default false
          */
@@ -8934,6 +9102,10 @@ declare namespace LocalJSX {
           * @default 'This field is required.'
          */
         "requiredMessage"?: string;
+        /**
+          * @default true
+         */
+        "showCharacterCount"?: boolean;
         /**
           * @default 'Show password'
          */
@@ -8953,10 +9125,25 @@ declare namespace LocalJSX {
          */
         "step"?: number | undefined;
         /**
+          * Optional local suggestions; free text always remains valid. Used with text/search fields.
+          * @default []
+         */
+        "suggestions"?: string[];
+        /**
           * Align the editable value; number steppers sit on the opposite inline edge.
           * @default 'start'
          */
         "textAlign"?: InputTextAlign;
+        /**
+          * Free-text tokens entered with Enter/comma and removable chips. Used with text/search fields.
+          * @default false
+         */
+        "tokenized"?: boolean;
+        /**
+          * Committed values; value remains the editable draft when tokenized.
+          * @default []
+         */
+        "tokens"?: string[];
         /**
           * @default 'text'
          */
@@ -9063,6 +9250,11 @@ declare namespace LocalJSX {
           * @default true
          */
         "hasInteractionFill"?: boolean;
+        /**
+          * Display format; submitted values remain HH:MM in either format.
+          * @default '12'
+         */
+        "hourFormat"?: '12' | '24';
         "inputId"?: string | undefined;
         /**
           * @default false
@@ -10182,6 +10374,51 @@ declare namespace LocalJSX {
          */
         "value"?: string;
     }
+    interface DsRadioTile {
+        "ariaDescribedby"?: string | undefined;
+        /**
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        "ariaLabelledby"?: string | undefined;
+        /**
+          * @default 'vertical'
+         */
+        "direction"?: 'horizontal' | 'vertical';
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * @default false
+         */
+        "error"?: boolean;
+        "form"?: string | undefined;
+        "inputId"?: string | undefined;
+        /**
+          * @default false
+         */
+        "isInactive"?: boolean;
+        "name"?: string | undefined;
+        "onDsChange"?: (event: DsRadioTileCustomEvent<string>) => void;
+        /**
+          * One-of-many choices displayed as fully clickable tiles.
+          * @default []
+         */
+        "options"?: RadioTileOption[];
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * @default 'This field is required.'
+         */
+        "requiredMessage"?: string;
+        /**
+          * @default ''
+         */
+        "value"?: string;
+    }
     interface DsScore {
         /**
           * Replace the figure with a skeleton while data resolves.
@@ -10864,12 +11101,17 @@ declare namespace LocalJSX {
         /**
           * @default 1
          */
-        "step"?: number;
+        "step"?: number | 'any';
         /**
           * Align the thumb edge with full-width rail endpoints, or its center with inset rail endpoints.
           * @default 'edge'
          */
         "thumbAlignment"?: SliderThumbAlignment;
+        /**
+          * Explicit ticks are the selectable snap points. Empty ticks with step='any' allow smooth adjustment.
+          * @default []
+         */
+        "ticks"?: SliderTick[];
         /**
           * Current value. Assign a two-number array through the JavaScript property for a range slider.
           * @default 0
@@ -11467,6 +11709,19 @@ declare namespace LocalJSX {
           * @default false
          */
         "isInactive"?: boolean;
+        /**
+          * Error preserves extra text; restrict uses the browser's hard input limit.
+          * @default 'error'
+         */
+        "lengthBehavior"?: 'error' | 'restrict';
+        /**
+          * Maximum text length. A visible counter accompanies this constraint by default.
+         */
+        "maxLength"?: number | undefined;
+        /**
+          * Minimum non-empty text length, in native UTF-16 code units.
+         */
+        "minLength"?: number | undefined;
         "name"?: string | undefined;
         "onDsChange"?: (event: DsTextareaCustomEvent<string>) => void;
         "placeholder"?: string | undefined;
@@ -11494,6 +11749,10 @@ declare namespace LocalJSX {
          */
         "rows"?: number;
         /**
+          * @default true
+         */
+        "showCharacterCount"?: boolean;
+        /**
           * Control density for typography and inset spacing.
           * @default 'md'
          */
@@ -11519,6 +11778,11 @@ declare namespace LocalJSX {
           * @default false
          */
         "autoFocus"?: boolean;
+        /**
+          * Display 12-hour lists with AM/PM or a 24-hour clock. Stored values remain HH:MM.
+          * @default '12'
+         */
+        "hourFormat"?: '12' | '24';
         /**
           * @default false
          */
@@ -12138,6 +12402,14 @@ declare namespace LocalJSX {
         "clearLabel": string;
         "showPasswordLabel": string;
         "hidePasswordLabel": string;
+        "minLength": number | undefined;
+        "maxLength": number | undefined;
+        "lengthBehavior": 'error' | 'restrict';
+        "showCharacterCount": boolean;
+        "pattern": string | undefined;
+        "patternMessage": string | undefined;
+        "tokenized": boolean;
+        "removeTokenLabel": string;
         "placeholder": string | undefined;
         "type": InputType;
         "min": number | undefined;
@@ -12198,6 +12470,7 @@ declare namespace LocalJSX {
         "required": boolean;
         "requiredMessage": string;
         "step": string;
+        "hourFormat": '12' | '24';
         "min": string | undefined;
         "max": string | undefined;
         "size": InputTimeSize;
@@ -12442,6 +12715,21 @@ declare namespace LocalJSX {
         "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
     }
+    interface DsRadioTileAttributes {
+        "value": string;
+        "name": string | undefined;
+        "form": string | undefined;
+        "disabled": boolean;
+        "isInactive": boolean;
+        "required": boolean;
+        "requiredMessage": string;
+        "direction": 'horizontal' | 'vertical';
+        "inputId": string | undefined;
+        "error": boolean;
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+        "ariaDescribedby": string | undefined;
+    }
     interface DsScoreAttributes {
         "value": string;
         "size": ScoreSize;
@@ -12549,7 +12837,7 @@ declare namespace LocalJSX {
         "value": SliderValue;
         "min": number;
         "max": number;
-        "step": number;
+        "step": string;
         "minStepsBetweenValues": number;
         "label": string | undefined;
         "showValue": boolean;
@@ -12693,6 +12981,10 @@ declare namespace LocalJSX {
         "readOnly": boolean;
         "required": boolean;
         "requiredMessage": string;
+        "minLength": number | undefined;
+        "maxLength": number | undefined;
+        "lengthBehavior": 'error' | 'restrict';
+        "showCharacterCount": boolean;
         "placeholder": string | undefined;
         "rows": number;
         "resize": TextareaResize;
@@ -12715,6 +13007,7 @@ declare namespace LocalJSX {
     }
     interface DsTimePickerAttributes {
         "value": string;
+        "hourFormat": '12' | '24';
         "min": string | undefined;
         "max": string | undefined;
         "step": string;
@@ -12827,6 +13120,7 @@ declare namespace LocalJSX {
         "ds-panel-tools": Omit<DsPanelTools, keyof DsPanelToolsAttributes> & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes]?: DsPanelTools[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `attr:${K}`]?: DsPanelToolsAttributes[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `prop:${K}`]?: DsPanelTools[K] };
         "ds-paper-texture": DsPaperTexture;
         "ds-radio": Omit<DsRadio, keyof DsRadioAttributes> & { [K in keyof DsRadio & keyof DsRadioAttributes]?: DsRadio[K] } & { [K in keyof DsRadio & keyof DsRadioAttributes as `attr:${K}`]?: DsRadioAttributes[K] } & { [K in keyof DsRadio & keyof DsRadioAttributes as `prop:${K}`]?: DsRadio[K] };
+        "ds-radio-tile": Omit<DsRadioTile, keyof DsRadioTileAttributes> & { [K in keyof DsRadioTile & keyof DsRadioTileAttributes]?: DsRadioTile[K] } & { [K in keyof DsRadioTile & keyof DsRadioTileAttributes as `attr:${K}`]?: DsRadioTileAttributes[K] } & { [K in keyof DsRadioTile & keyof DsRadioTileAttributes as `prop:${K}`]?: DsRadioTile[K] };
         "ds-score": Omit<DsScore, keyof DsScoreAttributes> & { [K in keyof DsScore & keyof DsScoreAttributes]?: DsScore[K] } & { [K in keyof DsScore & keyof DsScoreAttributes as `attr:${K}`]?: DsScoreAttributes[K] } & { [K in keyof DsScore & keyof DsScoreAttributes as `prop:${K}`]?: DsScore[K] };
         "ds-scroll-overlay": Omit<DsScrollOverlay, keyof DsScrollOverlayAttributes> & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes]?: DsScrollOverlay[K] } & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes as `attr:${K}`]?: DsScrollOverlayAttributes[K] } & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes as `prop:${K}`]?: DsScrollOverlay[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
@@ -12949,6 +13243,7 @@ declare module "@stencil/core" {
             "ds-panel-tools": LocalJSX.IntrinsicElements["ds-panel-tools"] & JSXBase.HTMLAttributes<HTMLDsPanelToolsElement>;
             "ds-paper-texture": LocalJSX.IntrinsicElements["ds-paper-texture"] & JSXBase.HTMLAttributes<HTMLDsPaperTextureElement>;
             "ds-radio": LocalJSX.IntrinsicElements["ds-radio"] & JSXBase.HTMLAttributes<HTMLDsRadioElement>;
+            "ds-radio-tile": LocalJSX.IntrinsicElements["ds-radio-tile"] & JSXBase.HTMLAttributes<HTMLDsRadioTileElement>;
             "ds-score": LocalJSX.IntrinsicElements["ds-score"] & JSXBase.HTMLAttributes<HTMLDsScoreElement>;
             "ds-scroll-overlay": LocalJSX.IntrinsicElements["ds-scroll-overlay"] & JSXBase.HTMLAttributes<HTMLDsScrollOverlayElement>;
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;

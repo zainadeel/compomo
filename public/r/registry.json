@@ -7046,7 +7046,8 @@
             "Field exposes data-focused, data-filled, data-dirty, data-touched, data-invalid, data-disabled, and data-required hooks while the slotted control remains the source of value and interaction behavior.",
             "A rendered error replaces the description; preserve essential guidance in the error message so users retain what they need to correct the field.",
             "Field owns validation presentation but not validation timing; the form decides when to set error and errorMessage.",
-            "The label uses primary body-small emphasis, description uses secondary body-small text, and error uses negative body-small text."
+            "The label uses primary body-small emphasis, description uses secondary body-small text, and error uses negative body-small text.",
+            "Input and Textarea contribute constraint messages and character counts to the supporting row. Helper text yields to an error, with the count at the opposite edge; a count alone begins at the text origin."
           ],
           "responsiveBehavior": [
             "Field fills the width supplied by its parent and makes the slotted control fill that field width.",
@@ -7616,7 +7617,7 @@
     {
       "name": "input",
       "title": "Input",
-      "description": "Form-associated single-line text and number field for primary and secondary application backgrounds, with native input behavior, four control densities, optional leading and trailing content, search clearing, and validation.",
+      "description": "Form-associated text and number input with constraints, optional free-text suggestions, token entry, and character counts.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -7627,7 +7628,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Form-associated single-line text and number field for primary and secondary application backgrounds, with native input behavior, four control densities, optional leading and trailing content, search clearing, and validation.",
+          "summary": "Form-associated text and number input with constraints, optional free-text suggestions, token entry, and character counts.",
           "useWhen": [
             "A user must enter or edit one line of text, an email address, telephone number, URL, search query, password, or exact number.",
             "The value must participate in native, Angular, React, or Vue form state.",
@@ -7696,7 +7697,10 @@
             "Number fields preserve native spinbutton semantics, keyboard stepping, and min/max constraint behavior while dsChange continues to report the native string value. Optional borderless inset Plus and Minus buttons share the field density, appear in that order, disable independently at their numeric bound, and restore focus to the spinbutton after activation. Hide them when direct numeric entry is preferable; browser spinner chrome stays hidden.",
             "textAlign positions the editable value while the numeric stepper stays on the opposite inline edge, keeping the actions clear of the number: start-aligned values use an inline-end stepper and end-aligned values use an inline-start stepper.",
             "The host exposes focused, filled, dirty, touched, invalid, disabled, read-only, and required data attributes for Field integration and diagnostics.",
-            "Use Input only on primary or secondary application backgrounds. It intentionally does not expose alternate surface contexts."
+            "Use Input only on primary or secondary application backgrounds. It intentionally does not expose alternate surface contexts.",
+            "Length constraints validate both typed and programmatic values. By default excess text is retained and shown as an error; restrict mode uses a hard input limit. Counters show the draft length and maximum below the field, beside helper or error text when present.",
+            "Suggestions assist free text rather than constrain selection. Arrow keys highlight suggestions, Enter accepts one, and Escape dismisses the popup without changing the value.",
+            "Tokenized text and search fields use removable double-inset chips and commit trimmed, unique values with Enter or comma, accept delimited paste, and remove the last token with Backspace on an empty draft. Committed tokens submit as repeated entries; value remains the draft and must be committed before submission. Length and pattern constraints apply per token."
           ],
           "responsiveBehavior": [
             "Form fields normally fill their parent; use hug width only in a compact toolbar or filter layout with an explicit width constraint.",
@@ -7706,16 +7710,20 @@
           "frameworkCaveats": {
             "customElements": [
               "Listen for dsChange for user edits and dsClear for the search clear action.",
-              "Use the form attribute on the host when associating an input rendered outside its owning form."
+              "Use the form attribute on the host when associating an input rendered outside its owning form.",
+              "Bind committed token arrays through tokens and dsTokensChange, separately from the draft value. Assign suggestions as a JavaScript array."
             ],
             "react": [
-              "Use DsInput, bind value for controlled application state, and handle onDsChange and onDsClear."
+              "Use DsInput, bind value for controlled application state, and handle onDsChange and onDsClear.",
+              "Bind committed token arrays through tokens and dsTokensChange, separately from the draft value. Assign suggestions as a JavaScript array."
             ],
             "vue": [
-              "Use DsInput with v-model for the value, and listen for dsChange and dsClear."
+              "Use DsInput with v-model for the value, and listen for dsChange and dsClear.",
+              "Bind committed token arrays through tokens and dsTokensChange, separately from the draft value. Assign suggestions as a JavaScript array."
             ],
             "angular": [
-              "Import DsInput with TextValueAccessor when integrating with Angular Forms."
+              "Use TextValueAccessor for text inputs and NumericValueAccessor for a statically declared type=\"number\" input. Numeric forms receive numbers or null while the component event remains a string.",
+              "For tokenized input bind tokens and dsTokensChange explicitly; value and dsChange represent only the draft. Do not attach a scalar form value accessor to token mode."
             ]
           },
           "references": [
@@ -7865,7 +7873,15 @@
             "type": "boolean",
             "required": false
           },
+          "lengthBehavior": {
+            "type": "'error' | 'restrict'",
+            "required": false
+          },
           "max": {
+            "type": "number | undefined",
+            "required": false
+          },
+          "maxLength": {
             "type": "number | undefined",
             "required": false
           },
@@ -7873,7 +7889,19 @@
             "type": "number | undefined",
             "required": false
           },
+          "minLength": {
+            "type": "number | undefined",
+            "required": false
+          },
           "name": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "pattern": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "patternMessage": {
             "type": "string | undefined",
             "required": false
           },
@@ -7885,12 +7913,20 @@
             "type": "boolean",
             "required": false
           },
+          "removeTokenLabel": {
+            "type": "string",
+            "required": false
+          },
           "required": {
             "type": "boolean",
             "required": false
           },
           "requiredMessage": {
             "type": "string",
+            "required": false
+          },
+          "showCharacterCount": {
+            "type": "boolean",
             "required": false
           },
           "showPasswordLabel": {
@@ -7909,8 +7945,20 @@
             "type": "number | undefined",
             "required": false
           },
+          "suggestions": {
+            "type": "string[]",
+            "required": false
+          },
           "textAlign": {
             "type": "InputTextAlign",
+            "required": false
+          },
+          "tokenized": {
+            "type": "boolean",
+            "required": false
+          },
+          "tokens": {
+            "type": "string[]",
             "required": false
           },
           "type": {
@@ -7934,6 +7982,14 @@
           {
             "name": "dsClear",
             "detail": "void"
+          },
+          {
+            "name": "dsSuggestionSelect",
+            "detail": "string"
+          },
+          {
+            "name": "dsTokensChange",
+            "detail": "string[]"
           }
         ],
         "slots": [],
@@ -7951,8 +8007,10 @@
       ],
       "registryDependencies": [
         "button-unfilled",
+        "chip",
         "divider",
         "icon",
+        "input",
         "text"
       ]
     },
@@ -8253,7 +8311,7 @@
             {
               "when": "The hour, minute, and AM/PM lists are needed without a form field.",
               "component": "component:ds-time-picker",
-              "reason": "TimePicker owns the bounded 12-hour lists and selected-tile treatment."
+              "reason": "TimePicker owns the bounded clock lists and selected-tile treatment."
             },
             {
               "when": "The user chooses from a finite set of named times or cadences.",
@@ -8271,9 +8329,9 @@
           ],
           "accessibility": [
             "Provide a persistent visible label through the owning field or an external native label.",
-            "The text field remains the keyboard and assistive-technology value control. Users can type HH:MM, H:MM, or a 12-hour label such as 9:00 AM.",
+            "The text field remains the keyboard and assistive-technology value control. Users can type HH:MM, H:MM, or a 12- or 24-hour label such as 9:00 AM.",
             "The trailing clock button is a named disclosure that opens a non-modal time dialog. It shares the field's density, uses the single inset recipe, and reports expanded state while the picker is open.",
-            "Filled values keep HH:MM as the form value. Visible text uses a 12-hour label such as 9:00 AM so the field does not show 24-hour chrome. That label reuses Input's value typography and text-container inset.",
+            "Filled values keep HH:MM as the form value. Visible text uses a 12- or 24-hour label such as 9:00 AM so the field does not show 24-hour chrome. That label reuses Input's value typography and text-container inset.",
             "Error text is associated with the text field and announced as an alert when the invalid state is rendered.",
             "Read-only fields remain focusable and submittable while preventing edits; inactive or disabled fields leave the tab order and are omitted from form submission."
           ],
@@ -8283,7 +8341,8 @@
             "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry. When hasBorder is false, supporting error copy insets to the field's text origin rather than the resting border box.",
             "The host exposes focused, filled, dirty, touched, invalid, disabled, read-only, and required data attributes for Field integration and diagnostics.",
             "The trailing clock action is an unfilled icon button of the same density as the field, borderless and square, with the single inset recipe so the 4px height reduction insets it equally from the field's top, end, and bottom edges. It does not replace the field label or the submitted time value. Inactive or disabled fields apply that treatment on the host only, so the nested button is not faded a second time.",
-            "Activating the clock button opens the shared TimePicker in a choice-popup dialog anchored to the field's end edge, beside the trailing clock action. Choosing hour, minute, or AM/PM commits that part of the time and leaves the dialog open so the other columns can be adjusted. Typing in the field commits a parsed time without requiring the picker. Invalid typed text reverts to the last committed value on blur."
+            "Activating the clock button opens the shared TimePicker in a choice-popup dialog anchored to the field's end edge, beside the trailing clock action. Choosing hour, minute, or AM/PM commits that part of the time and leaves the dialog open so the other columns can be adjusted. Typing in the field commits a parsed time without requiring the picker. Invalid typed text reverts to the last committed value on blur.",
+            "The default twelve-hour presentation includes AM/PM. Twenty-four-hour presentation uses hours 00–23 and omits the period column; both keep HH:MM form values and the same time bounds."
           ],
           "responsiveBehavior": [
             "Form fields normally fill their parent; use hug width only in a compact toolbar or filter layout with an explicit width constraint.",
@@ -8402,6 +8461,10 @@
           },
           "hasInteractionFill": {
             "type": "boolean",
+            "required": false
+          },
+          "hourFormat": {
+            "type": "'12' | '24'",
             "required": false
           },
           "inputId": {
@@ -12114,6 +12177,176 @@
       ]
     },
     {
+      "name": "radio-tile",
+      "title": "RadioTile",
+      "description": "A form-associated group of fully clickable radio tiles with labels and optional descriptions.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/radio-tile",
+        "source": "src/wc/components/RadioTile/RadioTile.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "A form-associated group of fully clickable radio tiles with labels and optional descriptions.",
+          "useWhen": [
+            "A small set of mutually exclusive choices benefits from descriptive cards and large click targets."
+          ],
+          "avoidWhen": [
+            "The choices are brief and compact; use Radio.",
+            "More than one value may be chosen."
+          ],
+          "alternatives": [
+            {
+              "when": "A user may select zero or multiple independent choices.",
+              "component": "component:ds-checkbox",
+              "reason": "Checkbox communicates independent selection rather than one-of-many choice."
+            },
+            {
+              "when": "A binary setting applies immediately.",
+              "component": "component:ds-switch",
+              "reason": "Switch communicates an immediately applied on/off setting."
+            },
+            {
+              "when": "The option list is long or the available space is constrained.",
+              "component": "component:ds-select",
+              "reason": "Select keeps a larger one-of-many choice set compact."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-field",
+            "component:ds-text"
+          ],
+          "accessibility": [
+            "Native radio inputs own keyboard selection, focus, and checked semantics; the complete tile activates its input.",
+            "Label the group with Field or an accessible name. Descriptions name each option separately."
+          ],
+          "states": [
+            "Selection is shown by the radio indicator while the tile keeps its neutral border. Error retains the negative border, and keyboard focus keeps the focus-token outline. Inactive options cannot be selected.",
+            "The component owns form values, required validation, reset, and disabled-fieldset behavior."
+          ],
+          "responsiveBehavior": [
+            "Horizontal tiles wrap to available space; use a vertical group when descriptions need more room."
+          ],
+          "frameworkCaveats": {
+            "angular": [
+              "Use the generated radio value accessor with the standalone adapter."
+            ],
+            "vue": [
+              "Bind value with v-model."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook review",
+              "path": "src/wc/components/RadioTile/RadioTile.stories.ts"
+            }
+          ],
+          "styling": {
+            "rationale": "Tile anatomy and radio treatment belong to the component; the owner controls group width.",
+            "protected": [
+              {
+                "properties": [
+                  "padding",
+                  "gap",
+                  "border-radius",
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "Use the supported group direction and state instead of replacing tile internals.",
+                "props": [
+                  "direction"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
+        },
+        "props": {
+          "ariaDescribedby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "ariaLabelledby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "direction": {
+            "type": "'horizontal' | 'vertical'",
+            "required": false
+          },
+          "disabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "error": {
+            "type": "boolean",
+            "required": false
+          },
+          "form": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "inputId": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "name": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "options": {
+            "type": "RadioTileOption[]",
+            "required": false
+          },
+          "required": {
+            "type": "boolean",
+            "required": false
+          },
+          "requiredMessage": {
+            "type": "string",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "string"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-radio-tile",
+          "react": "DsRadioTile",
+          "vue": "DsRadioTile",
+          "angular": "DsRadioTile"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
       "name": "score",
       "title": "Score",
       "description": "Safety-score figure in a semantic fill at three control densities and an optional dense value treatment.",
@@ -13793,14 +14026,15 @@
             "Assign a two-number array through the JavaScript value property to create a range; values are ordered, clamped, stepped, and prevented from crossing.",
             "minStepsBetweenValues reserves a minimum stepped distance between range thumbs.",
             "The initial normalized value is the native form-reset baseline and range values submit as repeated entries under the same name.",
-            "Focused, filled, dirty, touched, dragging, valid, disabled, read-only, and orientation data hooks expose interaction state without changing the value contract."
+            "Focused, filled, dirty, touched, dragging, valid, disabled, read-only, and orientation data hooks expose interaction state without changing the value contract.",
+            "Explicit ticks define the only selectable snap points and may carry labels. Marks sit below a horizontal track, or beside a vertical track, with labels beyond the marks. Horizontal labels center on their marks and shift inward only when they reach the control edges. Without ticks, step=\"any\" permits smooth adjustment; ordinary stepped behavior remains available. Arrow keys traverse adjacent ticks and Home/End reach the available extremes."
           ],
           "responsiveBehavior": [
             "The visible label uses the same primary emphasized text-body-small recipe as Field at every density; the value uses the same primary metric without emphasis.",
             "Horizontal Slider fills the width supplied by its parent; the parent chooses an appropriate readable track length.",
             "Vertical Slider owns a token-based default length that may be overridden with --ds-slider-vertical-length in layout-specific compositions.",
             "Use md in ordinary forms and sm or xs only when the surrounding control density uses the same recipe.",
-            "Track thickness scales with density: 8px at md, 6px at sm, and 4px at xs. The unfilled track is transparent with a tertiary-foreground inset outline, the filled range is brand, and the square thumb uses a 2px radius with a 1.5px brand inset ring.",
+            "Track thickness scales with density. The unfilled track has a neutral border, the filled range uses brand color, and the thumb uses the primary surface with subtle elevation.",
             "Horizontal value direction is left-to-right; the design system does not author RTL-specific component behavior."
           ],
           "frameworkCaveats": {
@@ -13812,7 +14046,10 @@
               "Use DsSlider with a number or two-number value array and handle onDsChange and onDsCommit custom events."
             ],
             "angular": [
-              "Use DsSlider with property binding for range arrays; the generated number value accessor is appropriate only for a single numeric value."
+              "Use DsSlider with SelectValueAccessor for Angular Forms; it preserves either a number or a two-number array."
+            ],
+            "vue": [
+              "Use v-model for a number or a two-number array. Assign ticks through property binding."
             ]
           },
           "references": [
@@ -13953,11 +14190,15 @@
             "required": false
           },
           "step": {
-            "type": "number",
+            "type": "number | 'any'",
             "required": false
           },
           "thumbAlignment": {
             "type": "SliderThumbAlignment",
+            "required": false
+          },
+          "ticks": {
+            "type": "SliderTick[]",
             "required": false
           },
           "value": {
@@ -15579,7 +15820,8 @@
             "The default four visible rows can be changed with rows; rows is clamped to at least one.",
             "Vertical resizing is enabled by default and can be disabled when the surrounding layout owns the field height.",
             "Size changes typography and inset spacing without changing the authored row count.",
-            "Border, focus, error, placeholder, inactive, hover, and pressed treatments follow the same shared recipes as Input. When hasBorder is false, supporting error copy insets to the text origin rather than the resting border box."
+            "Border, focus, error, placeholder, inactive, hover, and pressed treatments follow the same shared recipes as Input. When hasBorder is false, supporting error copy insets to the text origin rather than the resting border box.",
+            "Length constraints validate typed and programmatic text. Excess content is retained with an error by default; restrict mode enforces the maximum during editing. A character count appears below the field, right of supporting text or left when no supporting text exists."
           ],
           "responsiveBehavior": [
             "Textarea fills its parent by default and follows the width supplied by Field or the form layout.",
@@ -15707,6 +15949,18 @@
             "type": "boolean",
             "required": false
           },
+          "lengthBehavior": {
+            "type": "'error' | 'restrict'",
+            "required": false
+          },
+          "maxLength": {
+            "type": "number | undefined",
+            "required": false
+          },
+          "minLength": {
+            "type": "number | undefined",
+            "required": false
+          },
           "name": {
             "type": "string | undefined",
             "required": false
@@ -15733,6 +15987,10 @@
           },
           "rows": {
             "type": "number",
+            "required": false
+          },
+          "showCharacterCount": {
+            "type": "boolean",
             "required": false
           },
           "size": {
@@ -15777,7 +16035,7 @@
     {
       "name": "time-picker",
       "title": "TimePicker",
-      "description": "Bounded 12-hour clock lists for choosing hour, minute, and AM/PM, reused by form time fields.",
+      "description": "Bounded 12- or 24-hour clock lists for choosing hour, minute, and AM/PM, reused by form time fields.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -15788,7 +16046,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Bounded 12-hour clock lists for choosing hour, minute, and AM/PM, reused by form time fields.",
+          "summary": "Bounded 12- or 24-hour clock lists for choosing hour, minute, and AM/PM, reused by form time fields.",
           "useWhen": [
             "A user picks a clock time from hour, minute, and AM/PM lists.",
             "A time field needs 32px clock tiles that match calendar day geometry and the shared choice-list selected treatment."
@@ -15816,13 +16074,14 @@
           ],
           "accessibility": [
             "Hour, minute, and AM/PM are separate labelled listboxes without visible column headings. Each list keeps one tab stop on the selected option.",
-            "Arrow keys move to the next or previous option and stop at the first and last values; they do not wrap. Home and End jump to those ends. Left and Right move between columns and stop at Hour and AM/PM.",
+            "Arrow keys move to the next or previous option and stop at the first and last values; they do not wrap. Home and End jump to those ends. Left and Right move between columns and stop at the first and last visible columns.",
             "Inactive pickers disable every option. Optional min and max times disable combinations outside that inclusive bound."
           ],
           "states": [
             "Selected hour, minute, and period tiles use the shared interaction-fill selected wash and primary text. Resting tiles use secondary text on a transparent 32px square.",
-            "Lists are finite. Hour runs 1 through 12, minutes follow the step, and AM/PM has two values. Scrolling and keyboard movement stop at those ends instead of looping.",
-            "An empty value highlights 12:00 AM so the lists have a resting selection without inventing a second empty state."
+            "Lists are finite. Hours follow the selected clock format, minutes follow the step, and the twelve-hour period list has two values. Scrolling and keyboard movement stop at those ends instead of looping.",
+            "An empty value highlights 12:00 AM so the lists have a resting selection without inventing a second empty state.",
+            "The default twelve-hour presentation includes AM/PM. Twenty-four-hour presentation uses hours 00–23 and omits the period column; both keep HH:MM form values and the same time bounds."
           ],
           "responsiveBehavior": [
             "The three columns fill the width supplied by the owner. Tile size, 4px gaps, and the seven-tile list viewport are owned here; the owner supplies the popup or pane width."
@@ -15858,6 +16117,10 @@
         "props": {
           "autoFocus": {
             "type": "boolean",
+            "required": false
+          },
+          "hourFormat": {
+            "type": "'12' | '24'",
             "required": false
           },
           "isInactive": {

@@ -7,7 +7,7 @@
   "tag": "ds-time-picker",
   "audience": "general",
   "status": "stable",
-  "summary": "Bounded 12-hour clock lists for choosing hour, minute, and AM/PM, reused by form time fields.",
+  "summary": "Bounded 12- or 24-hour clock lists for choosing hour, minute, and AM/PM, reused by form time fields.",
   "useWhen": [
     "A user picks a clock time from hour, minute, and AM/PM lists.",
     "A time field needs 32px clock tiles that match calendar day geometry and the shared choice-list selected treatment."
@@ -32,13 +32,14 @@
   "commonlyComposedWith": ["component:ds-input-time", "component:ds-text"],
   "accessibility": [
     "Hour, minute, and AM/PM are separate labelled listboxes without visible column headings. Each list keeps one tab stop on the selected option.",
-    "Arrow keys move to the next or previous option and stop at the first and last values; they do not wrap. Home and End jump to those ends. Left and Right move between columns and stop at Hour and AM/PM.",
+    "Arrow keys move to the next or previous option and stop at the first and last values; they do not wrap. Home and End jump to those ends. Left and Right move between columns and stop at the first and last visible columns.",
     "Inactive pickers disable every option. Optional min and max times disable combinations outside that inclusive bound."
   ],
   "states": [
     "Selected hour, minute, and period tiles use the shared interaction-fill selected wash and primary text. Resting tiles use secondary text on a transparent 32px square.",
-    "Lists are finite. Hour runs 1 through 12, minutes follow the step, and AM/PM has two values. Scrolling and keyboard movement stop at those ends instead of looping.",
-    "An empty value highlights 12:00 AM so the lists have a resting selection without inventing a second empty state."
+    "Lists are finite. Hours follow the selected clock format, minutes follow the step, and the twelve-hour period list has two values. Scrolling and keyboard movement stop at those ends instead of looping.",
+    "An empty value highlights 12:00 AM so the lists have a resting selection without inventing a second empty state.",
+    "The default twelve-hour presentation includes AM/PM. Twenty-four-hour presentation uses hours 00\u201323 and omits the period column; both keep HH:MM form values and the same time bounds."
   ],
   "responsiveBehavior": [
     "The three columns fill the width supplied by the owner. Tile size, 4px gaps, and the seven-tile list viewport are owned here; the owner supplies the popup or pane width."

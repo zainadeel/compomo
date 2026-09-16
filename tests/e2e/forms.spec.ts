@@ -286,7 +286,11 @@ test('field relocates a control mounted after its initial render @cross-browser'
         Array.from(element.children).map(child => {
           if (child.classList.contains('field__label')) return 'label';
           if (child.classList.contains('field__control')) return 'control';
-          if (child.classList.contains('field__description')) return 'description';
+          if (
+            child.classList.contains('field__description') ||
+            child.querySelector('.field__description')
+          )
+            return 'description';
           return child.tagName.toLowerCase();
         })
       )

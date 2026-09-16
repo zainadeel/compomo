@@ -58,3 +58,11 @@
 .time-picker-tile:disabled {
   cursor: not-allowed;
 }
+
+.time-picker--24 {
+  grid-template-columns: repeat(2, minmax(var(--dimension-size-400), 1fr));
+  min-width: calc(
+    var(--dimension-size-400) * 2 + var(--dimension-space-050) +
+      var(--ds-time-picker-padding, var(--dimension-space-100)) * 2
+  );
+}

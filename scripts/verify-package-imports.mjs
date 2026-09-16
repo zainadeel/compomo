@@ -256,6 +256,25 @@ try {
     const utils = await import('@ds-mo/ui/utils');
     const agent = await import('@ds-mo/ui/agent', { with: { type: 'json' } });
     const patterns = await import('@ds-mo/ui/agent/patterns', { with: { type: 'json' } });
+    const numericElement = { value: '', disabled: false };
+    const numericAccessor = new angular.NumericValueAccessor({ nativeElement: numericElement });
+    let numericResult;
+    numericAccessor.registerOnChange(value => { numericResult = value; });
+    numericAccessor.writeValue(12.5);
+    if (numericElement.value !== 12.5) throw new Error('Numeric form write lost its number');
+    numericAccessor.handleChangeEvent('7.25');
+    if (numericResult !== 7.25) throw new Error('Numeric form edits must emit numbers');
+    numericAccessor.handleChangeEvent('');
+    if (numericResult !== null) throw new Error('Empty numeric form edits must emit null');
+    const sliderElement = { value: 0, disabled: false };
+    const sliderAccessor = new angular.SelectValueAccessor({ nativeElement: sliderElement });
+    let sliderResult;
+    sliderAccessor.registerOnChange(value => { sliderResult = value; });
+    sliderAccessor.writeValue([20, 75]);
+    sliderAccessor.handleChangeEvent([0, 100]);
+    if (JSON.stringify(sliderElement.value) !== '[20,75]' || JSON.stringify(sliderResult) !== '[0,100]') {
+      throw new Error('Slider range form values must preserve both numbers');
+    }
     const { readFileSync } = await import('node:fs');
     const controlElevationCss = readFileSync(
       new URL(import.meta.resolve('@ds-mo/ui/control-elevation.css')),
@@ -270,6 +289,10 @@ try {
       ['angular', angular.DsButtonFilled],
       ['angular component subpath', angularComponent.DsButtonFilled],
       ['angular forms', angular.TextValueAccessor],
+      ['angular numeric forms', angular.NumericValueAccessor],
+      ['angular radio tile', angular.DsRadioTile],
+      ['react radio tile', react.DsRadioTile],
+      ['vue radio tile', vue.DsRadioTile],
       ['react', react.DsButtonFilled],
       ['vue', vue.DsButtonFilled],
       ['shell', shell.normalizeShellGradientPreset],

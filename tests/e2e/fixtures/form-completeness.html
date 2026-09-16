@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Form completeness</title><link rel="stylesheet" href="/tokens/index.css"></head>
+<body style="padding:32px;max-width:600px">
+<form id="length-form">
+<ds-field id="soft-field" label="Short name" description="Enter a name." field-id="short-name"><ds-input id="soft" name="soft" min-length="3" max-length="5"></ds-input></ds-field>
+<ds-field label="Notes"><ds-textarea id="notes" name="notes" max-length="5"></ds-textarea></ds-field>
+<ds-input id="hard" name="hard" max-length="5" length-behavior="restrict" aria-label="Hard limit"></ds-input>
+<ds-textarea id="hard-notes" max-length="5" length-behavior="restrict" aria-label="Hard notes"></ds-textarea>
+<button type="reset" id="length-reset">Reset lengths</button><button type="submit">Save lengths</button>
+</form>
+<form id="external-form"></form>
+<ds-input id="external" form="external-form" name="code" pattern="[A-Z]{3}" pattern-message="Use three capital letters." required aria-label="Code"></ds-input>
+<ds-input id="suggestions" type="search" aria-label="City"></ds-input>
+<form id="tokens-form"><ds-input id="tokens" tokenized name="tag" aria-label="Tags"></ds-input><button type="reset" id="tokens-reset">Reset tags</button></form>
+<form id="tile-form"><fieldset id="tile-fieldset"><ds-field label="Plan"><ds-radio-tile id="tiles" name="plan" required></ds-radio-tile></ds-field></fieldset><button type="reset" id="tile-reset">Reset tiles</button></form>
+<form id="time-form"><ds-input-time id="time" name="time" value="13:30" hour-format="24" aria-label="Time"></ds-input-time></form>
+<ds-time-picker id="picker" value="13:30" hour-format="24" aria-label="Choose time"></ds-time-picker>
+<ds-slider id="ticks" label="Level" value="20"></ds-slider>
+<ds-slider id="tick-range" label="Range" min-steps-between-values="1"></ds-slider>
+<ds-slider id="smooth" label="Smooth" step="any" value="20"></ds-slider>
+<script type="module">
+for (const tag of ['input','textarea','radio-tile','input-time','time-picker','slider','field']) await import(/* @vite-ignore */ `/dist/components/ds-${tag}.js`);
+document.querySelector('#suggestions').suggestions=['Vancouver','Victoria','Seattle'];
+document.querySelector('#tiles').options=[{value:'basic',label:'Basic',description:'For one team.'},{value:'pro',label:'Pro',description:'For multiple teams.'},{value:'disabled',label:'Unavailable',isInactive:true}];
+document.querySelector('#picker').addEventListener('dsChange',event=>{event.currentTarget.value=event.detail;});
+const ticks=[{value:0,label:'Off'},{value:20,label:'Low'},{value:75,label:'High'},{value:100,label:'Max'}];
+document.querySelector('#ticks').ticks=ticks;
+document.querySelector('#tick-range').ticks=ticks;
+document.querySelector('#tick-range').value=[20,75];
+for (const form of document.forms) form.addEventListener('submit', event=>event.preventDefault());
+await Promise.all([...document.querySelectorAll('ds-input,ds-textarea,ds-field,ds-radio-tile,ds-input-time,ds-time-picker,ds-slider')].map(el=>el.componentOnReady?.()));
+document.documentElement.dataset.ready='true';
+</script></body></html>
