@@ -1,1 +1,6 @@
-export type { CardSettingAction, CardSettingActionDetail, CardSettingWidth } from './CardSetting';
+export type {
+  CardSettingAction,
+  CardSettingActionDetail,
+  CardSettingVariant,
+  CardSettingWidth,
+} from './CardSetting';

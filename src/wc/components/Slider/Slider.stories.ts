@@ -339,3 +339,39 @@ export const FormIntegration: Story = {
     `;
   },
 };
+
+export const SnapTicks: Story = {
+  render: () =>
+    html`<div style=${STACK}>
+      <ds-slider
+        label="Level"
+        .value=${25}
+        .ticks=${[
+          { value: 0, label: 'Off' },
+          { value: 25, label: 'Low' },
+          { value: 60, label: 'Medium' },
+          { value: 100, label: 'High' },
+        ]}
+      ></ds-slider>
+      <ds-slider
+        label="Long tick labels"
+        .value=${50}
+        .ticks=${[
+          { value: 0, label: 'Minimum intensity' },
+          { value: 50, label: 'Balanced' },
+          { value: 100, label: 'Maximum intensity' },
+        ]}
+      ></ds-slider>
+      <ds-slider
+        label="Range"
+        .value=${[20, 80]}
+        .ticks=${[0, 20, 50, 80, 100].map(value => ({ value }))}
+      ></ds-slider>
+      <ds-slider
+        label="Smooth adjustment"
+        step="any"
+        .value=${42.5}
+        .formatOptions=${{ maximumFractionDigits: 1 }}
+      ></ds-slider>
+    </div>`,
+};

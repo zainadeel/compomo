@@ -50,14 +50,15 @@
     "Assign a two-number array through the JavaScript value property to create a range; values are ordered, clamped, stepped, and prevented from crossing.",
     "minStepsBetweenValues reserves a minimum stepped distance between range thumbs.",
     "The initial normalized value is the native form-reset baseline and range values submit as repeated entries under the same name.",
-    "Focused, filled, dirty, touched, dragging, valid, disabled, read-only, and orientation data hooks expose interaction state without changing the value contract."
+    "Focused, filled, dirty, touched, dragging, valid, disabled, read-only, and orientation data hooks expose interaction state without changing the value contract.",
+    "Explicit ticks define the only selectable snap points and may carry labels. Marks sit below a horizontal track, or beside a vertical track, with labels beyond the marks. Horizontal labels center on their marks and shift inward only when they reach the control edges. Without ticks, step=\"any\" permits smooth adjustment; ordinary stepped behavior remains available. Arrow keys traverse adjacent ticks and Home/End reach the available extremes."
   ],
   "responsiveBehavior": [
     "The visible label uses the same primary emphasized text-body-small recipe as Field at every density; the value uses the same primary metric without emphasis.",
     "Horizontal Slider fills the width supplied by its parent; the parent chooses an appropriate readable track length.",
     "Vertical Slider owns a token-based default length that may be overridden with --ds-slider-vertical-length in layout-specific compositions.",
     "Use md in ordinary forms and sm or xs only when the surrounding control density uses the same recipe.",
-    "Track thickness scales with density: 8px at md, 6px at sm, and 4px at xs. The unfilled track is transparent with a tertiary-foreground inset outline, the filled range is brand, and the square thumb uses a 2px radius with a 1.5px brand inset ring.",
+    "Track thickness scales with density. The unfilled track has a neutral border, the filled range uses brand color, and the thumb uses the primary surface with subtle elevation.",
     "Horizontal value direction is left-to-right; the design system does not author RTL-specific component behavior."
   ],
   "frameworkCaveats": {
@@ -69,7 +70,10 @@
       "Use DsSlider with a number or two-number value array and handle onDsChange and onDsCommit custom events."
     ],
     "angular": [
-      "Use DsSlider with property binding for range arrays; the generated number value accessor is appropriate only for a single numeric value."
+      "Use DsSlider with SelectValueAccessor for Angular Forms; it preserves either a number or a two-number array."
+    ],
+    "vue": [
+      "Use v-model for a number or a two-number array. Assign ticks through property binding."
     ]
   },
   "references": [

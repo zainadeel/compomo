@@ -48,7 +48,8 @@
     "Field exposes data-focused, data-filled, data-dirty, data-touched, data-invalid, data-disabled, and data-required hooks while the slotted control remains the source of value and interaction behavior.",
     "A rendered error replaces the description; preserve essential guidance in the error message so users retain what they need to correct the field.",
     "Field owns validation presentation but not validation timing; the form decides when to set error and errorMessage.",
-    "The label uses primary body-small emphasis, description uses secondary body-small text, and error uses negative body-small text."
+    "The label uses primary body-small emphasis, description uses secondary body-small text, and error uses negative body-small text.",
+    "Input and Textarea contribute constraint messages and character counts to the supporting row. Helper text yields to an error, with the count at the opposite edge; a count alone begins at the text origin."
   ],
   "responsiveBehavior": [
     "Field fills the width supplied by its parent and makes the slotted control fill that field width.",

@@ -66,6 +66,8 @@ export class InputTime {
   @Prop() requiredMessage: string = DEFAULT_REQUIRED_MESSAGE;
   /** Native time step in seconds. Defaults to minutes (`60`). */
   @Prop() step: string | number = 60;
+  /** Display format; submitted values remain HH:MM in either format. */
+  @Prop() hourFormat: '12' | '24' = '12';
   @Prop() min: string | undefined;
   @Prop() max: string | undefined;
   @Prop() size: InputTimeSize = 'md';
@@ -183,6 +185,11 @@ export class InputTime {
     this.teardownListeners();
   }
 
+  @Watch('hourFormat')
+  onHourFormatChange() {
+    this.draftText = this.displayValue;
+  }
+
   @Watch('value')
   @Watch('required')
   @Watch('requiredMessage')
@@ -261,7 +268,7 @@ export class InputTime {
   }
 
   private get displayValue(): string {
-    return formatClockTimeLabel(this.value);
+    return this.hourFormat === '24' ? this.value : formatClockTimeLabel(this.value);
   }
 
   private parseDraft(text: string): string | null {
@@ -280,7 +287,7 @@ export class InputTime {
       this.value = iso;
       if (emit) this.dsChange.emit(iso);
     }
-    this.draftText = formatClockTimeLabel(iso);
+    this.draftText = this.hourFormat === '24' ? iso : formatClockTimeLabel(iso);
   }
 
   private teardownListeners() {
@@ -491,6 +498,7 @@ export class InputTime {
             aria-label="Choose time"
           >
             <ds-time-picker
+              hourFormat={this.hourFormat}
               value={this.value}
               min={this.min}
               max={this.max}

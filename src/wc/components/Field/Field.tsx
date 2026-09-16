@@ -2,6 +2,8 @@ import { Component, Element, Prop, State, Watch, h, Host } from '@stencil/core';
 
 interface FieldControl extends HTMLElement {
   value?: string | string[];
+  tokens?: string[];
+  tokenized?: boolean;
   inputId?: string;
   error?: boolean;
   disabled?: boolean;
@@ -51,6 +53,9 @@ export class Field {
   /** Visible error associated with the slotted control while error is true. */
   @Prop() errorMessage: string | undefined;
 
+  @State() private constraintMessage = '';
+  @State() private characterCount: string | undefined;
+  @State() private characterLimit: string | undefined;
   @State() private focused = false;
   @State() private filled = false;
   @State() private dirty = false;
@@ -127,10 +132,18 @@ export class Field {
   }
 
   private get renderedError(): boolean {
-    return this.error && Boolean(this.errorMessage);
+    return Boolean(this.visibleError);
+  }
+
+  private get visibleError(): string {
+    return this.error && this.errorMessage ? this.errorMessage : this.constraintMessage;
   }
 
   private readValue(control: FieldControl): string {
+    if (control.tokenized)
+      return [...(control.tokens ?? []), String(control.value ?? '')]
+        .filter(Boolean)
+        .join('\u001f');
     const value = control.value;
     return Array.isArray(value) ? value.join('\u001f') : String(value ?? '');
   }
@@ -172,6 +185,10 @@ export class Field {
       this.observeControlAttributes(control);
     }
 
+    this.constraintMessage = control.getAttribute('data-constraint-message') ?? '';
+    this.characterCount = control.getAttribute('data-character-count') ?? undefined;
+    this.characterLimit = control.getAttribute('data-character-limit') ?? undefined;
+
     const isDsControl = control.tagName.startsWith('DS-');
     if (isDsControl && 'inputId' in control) control.inputId = this.controlId;
     else this.updateControlAttribute(control, 'id', this.controlId);
@@ -183,7 +200,8 @@ export class Field {
     const describedby = uniqueTokens(
       authored.describedby,
       this.renderedDescription ? [this.descriptionId] : [],
-      this.renderedError ? [this.errorId] : []
+      this.renderedError ? [this.errorId] : [],
+      this.characterCount !== undefined ? [`${this.controlId}-count`] : []
     ).join(' ');
 
     this.updateControlAttribute(control, 'aria-labelledby', labelledby || undefined);
@@ -209,7 +227,14 @@ export class Field {
     this.controlAttrObserver = new MutationObserver(() => this.syncControl());
     this.controlAttrObserver.observe(control, {
       attributes: true,
-      attributeFilter: ['has-border', 'size', 'class'],
+      attributeFilter: [
+        'has-border',
+        'size',
+        'class',
+        'data-constraint-message',
+        'data-character-count',
+        'data-character-limit',
+      ],
     });
   }
 
@@ -240,7 +265,7 @@ export class Field {
         data-filled={this.filled ? '' : undefined}
         data-dirty={this.dirty ? '' : undefined}
         data-touched={this.touched ? '' : undefined}
-        data-invalid={this.error ? '' : undefined}
+        data-invalid={this.error || this.constraintMessage ? '' : undefined}
         data-disabled={this.controlDisabled ? '' : undefined}
         data-required={this.controlRequired ? '' : undefined}
         onFocusin={this.handleFocusIn}
@@ -248,6 +273,7 @@ export class Field {
         onInput={this.handleValueChange}
         onChange={this.handleValueChange}
         onDsChange={this.handleValueChange}
+        onDsTokensChange={this.handleValueChange}
       >
         <div
           class={{
@@ -274,28 +300,45 @@ export class Field {
           <div class="field__control" ref={el => (this.controlContainer = el)}>
             <slot onSlotchange={this.syncControl} />
           </div>
-          {this.renderedDescription && (
-            <ds-text
-              class="field__description"
-              as="div"
-              variant="text-body-small"
-              color="secondary"
-              textId={this.descriptionId}
-            >
-              {this.description}
-            </ds-text>
-          )}
-          {this.renderedError && (
-            <ds-text
-              class="field__error"
-              as="div"
-              variant="text-body-small"
-              color="negative"
-              textId={this.errorId}
-              role="alert"
-            >
-              {this.errorMessage}
-            </ds-text>
+          {(this.renderedDescription ||
+            this.renderedError ||
+            this.characterCount !== undefined) && (
+            <div class="text-field-support">
+              {this.renderedDescription && (
+                <ds-text
+                  class="field__description"
+                  as="div"
+                  variant="text-body-small"
+                  color="secondary"
+                  textId={this.descriptionId}
+                >
+                  {this.description}
+                </ds-text>
+              )}
+              {this.renderedError && (
+                <ds-text
+                  class="field__error"
+                  as="div"
+                  variant="text-body-small"
+                  color="negative"
+                  textId={this.errorId}
+                  role="alert"
+                >
+                  {this.visibleError}
+                </ds-text>
+              )}
+              {this.characterCount !== undefined && (
+                <ds-text
+                  class="text-field-count"
+                  as="span"
+                  variant="text-body-small"
+                  color={this.error || this.constraintMessage ? 'negative' : 'secondary'}
+                  textId={`${this.controlId}-count`}
+                >
+                  {this.characterCount}/{this.characterLimit}
+                </ds-text>
+              )}
+            </div>
           )}
         </div>
       </Host>

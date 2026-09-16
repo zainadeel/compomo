@@ -348,7 +348,15 @@ well as the framework dev server.
 Import only the standalone adapters used by the Angular component. A managed
 application layout normally imports ShellApp plus the application-owned tool
 views and router outlet. Import a generated value accessor from the Angular
-barrel when connecting a form control to Angular Forms.
+barrel when connecting a form control to Angular Forms. Use `TextValueAccessor`
+for text, `NumericValueAccessor` for a statically declared `type="number"`
+input, `SelectValueAccessor` for Select or Slider (including ranges), and
+`RadioValueAccessor` for Radio or RadioTile. Numeric edits produce a number or
+`null` when cleared.
+
+Tokenized Input keeps its draft separate from committed tokens. Bind `tokens`
+and handle `dsTokensChange` explicitly instead of attaching a scalar value
+accessor; bind `value` only when the application also needs to control the draft.
 
 ```ts
 import { DsShellApp } from '@ds-mo/ui/angular/ds-shell-app';
@@ -378,7 +386,7 @@ Do not add `CUSTOM_ELEMENTS_SCHEMA` when using adapters; Angular should validate
 
 Import generated wrappers from `@ds-mo/ui/vue`. Form controls that participate
 in native value state also support `v-model` (`ds-input`, `ds-input-date`,
-`ds-input-time`, `ds-textarea`, `ds-select`, `ds-radio`, `ds-checkbox`, and
+`ds-input-time`, `ds-textarea`, `ds-select`, `ds-slider`, `ds-radio`, `ds-radio-tile`, `ds-checkbox`, and
 `ds-switch`). Listen for the original custom
 events such as `dsChange` rather than inventing framework-specific names.
 

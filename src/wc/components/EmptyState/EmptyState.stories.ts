@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-empty-state.js';
+import '../../../../dist/components/ds-button-unfilled.js';
 
 const meta: Meta = {
   title: 'Utility/EmptyState',
@@ -61,6 +62,20 @@ export const BodyOnly: Story = {
   render: () => html`
     <div style="height:var(--dimension-size-600);">
       <ds-empty-state body="No results found"></ds-empty-state>
+    </div>
+  `,
+};
+
+export const WithAction: Story = {
+  render: () => html`
+    <div style="height:240px;">
+      <ds-empty-state
+        icon="MapPage"
+        heading="No entities in the visible map area"
+        body="Pan or zoom out to explore entities elsewhere on the map."
+      >
+        <ds-button-unfilled slot="actions" label="Zoom to fit"></ds-button-unfilled>
+      </ds-empty-state>
     </div>
   `,
 };

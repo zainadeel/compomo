@@ -19,7 +19,7 @@
   ],
   "alternatives": [
     {
-      "when": "One map entity needs operating state, heading, and stale treatment.",
+      "when": "One map entity needs operating state, bearing, and an optional dashed outline.",
       "component": "component:ds-map-entity-marker",
       "reason": "MapEntityMarker owns single-entity marker semantics and geometry."
     },

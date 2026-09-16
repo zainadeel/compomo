@@ -7,16 +7,16 @@
   "tag": "ds-empty-state",
   "audience": "general",
   "status": "stable",
-  "summary": "Centered empty-content message composed as icon plus title plus body, title plus body, or compact body-only content.",
+  "summary": "Centered empty-content message with optional consumer-owned recovery actions.",
   "useWhen": [
     "A bounded content area is in a first-use, no-content, filtered no-results, or no-access state and needs a calm explanatory message tailored to that cause.",
     "A prominent empty region benefits from a decorative icon, visual title, and supporting body copy.",
-    "A compact owner such as a Select popup needs only centered body copy."
+    "A compact owner such as a Select popup needs only centered body copy.",
+    "An empty region needs a concise recovery action that helps the user reveal or create content."
   ],
   "avoidWhen": [
     "Content is still loading; use Skeleton for predictable structure or Loader for an indeterminate operation.",
     "The state is an error, warning, or confirmation that needs semantic intent and announcement from the owning workflow.",
-    "The state needs a recovery action, link, or other interactive content; the current EmptyState pattern is intentionally message-only.",
     "A decorative illustration, arbitrary rich content, or custom layout is required."
   ],
   "alternatives": [
@@ -40,20 +40,23 @@
     "component:ds-table",
     "component:ds-select",
     "component:ds-text",
-    "component:ds-icon"
+    "component:ds-icon",
+    "component:ds-button-unfilled"
   ],
   "accessibility": [
     "The optional icon is decorative; the title and body provide all meaning in text.",
     "EmptyState does not create a live region or alert automatically. The owner decides whether a dynamic transition requires announcement.",
     "The visual title does not impose a document heading level because the correct hierarchy belongs to the consuming page or region.",
-    "Keep localized body copy concise and sufficient when using the body-only variant."
+    "Keep localized body copy concise and sufficient when using the body-only variant.",
+    "Give recovery controls explicit accessible names and keep their behavior with the owning workflow."
   ],
   "states": [
     "Supported compositions are icon plus title plus body, title plus body, and body only; body copy is present in every supported composition.",
     "The decorative icon renders at xl in the primary foreground with an 8px gap before the text group and only when a title is also provided.",
     "The visual title uses title-small primary text; body uses body-medium secondary text with a 4px title-to-body gap.",
-    "All content is centered. The owner supplies container size and surrounding padding; repeated panel and master-detail owners should share one empty-region geometry instead of wrapping each EmptyState differently. Do not compose actions into or immediately alongside the current EmptyState pattern.",
-    "First-use, no-content, no-results, and no-access states reuse this primitive with cause-specific localized messages rather than visual variants."
+    "All content is centered. The owner supplies container size and surrounding padding; repeated panel and master-detail owners should share one empty-region geometry instead of wrapping each EmptyState differently.",
+    "First-use, no-content, no-results, and no-access states reuse this primitive with cause-specific localized messages rather than visual variants.",
+    "Recovery actions are optional. The consumer owns the action labels, control choice, and behavior; the component centers them below the message and wraps multiple actions when needed."
   ],
   "responsiveBehavior": [
     "The owner controls available width and height; text wraps naturally while remaining centered.",

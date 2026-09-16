@@ -2445,7 +2445,7 @@ export class Table {
             id={`${this.columnCustomizerElementId}-trigger`}
             variant={this.captionCompact ? 'icon' : 'icon-label'}
             size="md"
-            icon="Table"
+            icon="Preferences"
             label="Customize"
             labelEmphasis={false}
             pressScale={false}

@@ -1,0 +1,98 @@
+@import '../../utils/interaction-fill.css';
+@import '../../utils/control-inactive.css';
+@import '../../utils/forced-colors.css';
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dimension-space-100);
+}
+:host(.radio-tiles--horizontal) {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+:host(.radio-tiles--horizontal) .radio-tile {
+  flex-basis: var(--dimension-menu-width-xs);
+}
+.radio-tile {
+  display: flex;
+  position: relative;
+  align-items: flex-start;
+  flex: 1;
+  box-sizing: border-box;
+  gap: var(--dimension-space-100);
+  padding: var(--dimension-space-200);
+  min-width: 0;
+  border-radius: var(--dimension-radius-050);
+  background: var(--color-background-primary);
+  cursor: pointer;
+  user-select: none;
+}
+.radio-tile__outline {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-secondary);
+  pointer-events: none;
+}
+:host([aria-invalid='true']) .radio-tile__outline {
+  box-shadow: inset 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-negative);
+}
+.radio-tile__input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: inherit;
+  z-index: 3;
+}
+.radio-tile__input:disabled {
+  cursor: not-allowed;
+}
+.radio-tile__input:focus-visible + .radio-tile__outline {
+  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
+  outline-offset: var(--dimension-space-025);
+}
+.radio-tile__indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  box-sizing: border-box;
+  width: var(--dimension-size-200);
+  height: var(--dimension-size-200);
+  margin-top: calc((var(--typography-lineheight-md) - var(--dimension-size-200)) / 2);
+  border-radius: var(--dimension-radius-half);
+  box-shadow: inset 0 0 0 var(--dimension-stroke-width-015) var(--color-foreground-tertiary);
+}
+.radio-tile--selected .radio-tile__indicator {
+  background: var(--color-background-bold-brand);
+  box-shadow: none;
+}
+.radio-tile__indicator > span {
+  width: var(--dimension-size-100);
+  height: var(--dimension-size-100);
+  border-radius: var(--dimension-radius-half);
+  background: var(--color-foreground-on-bold-background-primary);
+}
+.radio-tile__copy {
+  display: grid;
+  gap: var(--dimension-space-050);
+  min-width: 0;
+  padding-inline: var(--dimension-space-025);
+}
+
+@media (forced-colors: active) {
+  .radio-tile__outline,
+  .radio-tile__indicator {
+    border: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
+    box-shadow: none;
+  }
+  .radio-tile--selected .radio-tile__indicator {
+    background: var(--ds-forced-color-selected);
+  }
+  .radio-tile__indicator > span {
+    background: var(--ds-forced-color-on-selected);
+  }
+}

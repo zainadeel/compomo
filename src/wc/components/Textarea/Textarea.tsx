@@ -17,9 +17,10 @@ import {
   DEFAULT_REQUIRED_MESSAGE,
   restoreStringFormState,
   setFormControlValue,
-  setRequiredValidity,
   type ControlWidth,
 } from '../../utils';
+
+import { lengthLimit, textConstraintValidity } from '../../utils/text-constraints';
 
 export type TextareaSize = 'lg' | 'md' | 'sm' | 'xs';
 export type TextareaWidth = ControlWidth;
@@ -48,6 +49,13 @@ export class Textarea {
   @Prop({ reflect: true }) readOnly: boolean = false;
   @Prop({ reflect: true }) required: boolean = false;
   @Prop() requiredMessage: string = DEFAULT_REQUIRED_MESSAGE;
+  /** Minimum non-empty text length, in native UTF-16 code units. */
+  @Prop() minLength: number | undefined;
+  /** Maximum text length. A visible counter accompanies this constraint by default. */
+  @Prop() maxLength: number | undefined;
+  /** Error preserves extra text; restrict uses the browser's hard input limit. */
+  @Prop() lengthBehavior: 'error' | 'restrict' = 'error';
+  @Prop() showCharacterCount: boolean = true;
   @Prop() placeholder: string | undefined;
   /** Visible text rows before the field scrolls. */
   @Prop() rows: number = 4;
@@ -81,6 +89,22 @@ export class Textarea {
 
   @Event() dsChange!: EventEmitter<string>;
 
+  @State() private constraintMessage = '';
+  @State() private submitted = false;
+  private get managedByField(): boolean {
+    return Boolean(this.el.closest('ds-field'));
+  }
+  private get visibleConstraintMessage(): string {
+    return this.touched ||
+      this.submitted ||
+      (this.maxLength !== undefined && this.value.length > this.maxLength)
+      ? this.constraintMessage
+      : '';
+  }
+  private get hasCounter(): boolean {
+    return this.showCharacterCount && lengthLimit(this.maxLength) !== undefined;
+  }
+
   private initialValue = '';
   private textareaEl?: HTMLTextAreaElement;
   @State() private formDisabled = false;
@@ -96,11 +120,17 @@ export class Textarea {
   @Watch('disabled')
   @Watch('isInactive')
   @Watch('required')
+  @Watch('readOnly')
+  @Watch('minLength')
+  @Watch('maxLength')
+  @Watch('requiredMessage')
   syncFormValue() {
     const inactive = this.isInactive || this.disabled || this.formDisabled;
     setFormControlValue(this.internals, this.value, { inactive });
-    const missing = this.required && !inactive && this.value.length === 0;
-    setRequiredValidity(this.internals, missing, this.requiredMessage);
+    const validity =
+      inactive || this.readOnly ? { flags: {}, message: '' } : textConstraintValidity(this);
+    this.constraintMessage = validity.message;
+    this.internals.setValidity(validity.flags, validity.message);
   }
 
   formDisabledCallback(disabled: boolean) {
@@ -110,6 +140,8 @@ export class Textarea {
 
   formResetCallback() {
     this.value = this.initialValue;
+    this.touched = false;
+    this.submitted = false;
   }
 
   formStateRestoreCallback(state: string | File | FormData | null) {
@@ -140,12 +172,21 @@ export class Textarea {
     const inactive = this.isInactive || this.disabled || this.formDisabled;
     const filled = this.value.length > 0;
     const dirty = this.value !== this.initialValue;
-    const showError = this.error && Boolean(this.errorMessage);
+    const message =
+      this.error && this.errorMessage ? this.errorMessage : this.visibleConstraintMessage;
+    const invalid = this.error || Boolean(this.visibleConstraintMessage);
+    const showError = Boolean(message) && !this.managedByField;
+    const showCounter = this.hasCounter && !this.managedByField;
     const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const rows = Number.isFinite(this.rows) ? Math.max(1, Math.floor(this.rows)) : 4;
     const describedBy =
-      [this.ariaDescribedby, showError ? this.errorId : undefined].filter(Boolean).join(' ') ||
-      undefined;
+      [
+        this.ariaDescribedby,
+        showError ? this.errorId : undefined,
+        showCounter ? `${this.generatedId}-count` : undefined,
+      ]
+        .filter(Boolean)
+        .join(' ') || undefined;
 
     return (
       <Host
@@ -160,7 +201,13 @@ export class Textarea {
         data-disabled={inactive ? '' : undefined}
         data-readonly={this.readOnly ? '' : undefined}
         data-required={this.required ? '' : undefined}
-        data-invalid={this.error ? '' : undefined}
+        data-invalid={invalid ? '' : undefined}
+        data-constraint-message={this.visibleConstraintMessage || undefined}
+        data-character-count={this.hasCounter ? String(this.value.length) : undefined}
+        data-character-limit={this.hasCounter ? String(lengthLimit(this.maxLength)) : undefined}
+        onInvalid={() => {
+          this.submitted = true;
+        }}
         data-filled={filled ? '' : undefined}
         data-focused={this.focused ? '' : undefined}
         data-dirty={dirty ? '' : undefined}
@@ -171,7 +218,7 @@ export class Textarea {
             'textarea-control': true,
             'textarea-control--resizable': this.resize === 'vertical',
             'textarea-control--bordered': this.hasBorder,
-            'textarea-control--error': this.hasBorder && this.error,
+            'textarea-control--error': this.hasBorder && invalid,
             'ds-interaction-fill': this.hasInteractionFill,
             [`ds-control--${this.size}`]: true,
           }}
@@ -187,6 +234,8 @@ export class Textarea {
             disabled={inactive}
             readOnly={this.readOnly}
             required={this.required}
+            minLength={lengthLimit(this.minLength)}
+            maxLength={this.lengthBehavior === 'restrict' ? lengthLimit(this.maxLength) : undefined}
             autoFocus={this.autoFocus}
             autoComplete={this.autoComplete}
             inputMode={this.inputMode || undefined}
@@ -196,23 +245,38 @@ export class Textarea {
             aria-label={this.ariaLabel}
             aria-labelledby={this.ariaLabelledby}
             aria-describedby={describedBy}
-            aria-invalid={this.error ? 'true' : undefined}
+            aria-invalid={invalid ? 'true' : undefined}
             onInput={this.handleInput}
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}
           />
         </div>
-        {showError && (
-          <ds-text
-            class="error-text"
-            as="div"
-            variant="text-body-small"
-            color="negative"
-            textId={this.errorId}
-            role="alert"
-          >
-            {this.errorMessage}
-          </ds-text>
+        {(showError || showCounter) && (
+          <div class="text-field-support">
+            {showError && (
+              <ds-text
+                class="error-text"
+                as="div"
+                variant="text-body-small"
+                color="negative"
+                textId={this.errorId}
+                role="alert"
+              >
+                {message}
+              </ds-text>
+            )}
+            {showCounter && (
+              <ds-text
+                as="span"
+                class="text-field-count"
+                variant="text-body-small"
+                color={invalid ? 'negative' : 'secondary'}
+                textId={`${this.generatedId}-count`}
+              >
+                {this.value.length}/{lengthLimit(this.maxLength)}
+              </ds-text>
+            )}
+          </div>
         )}
       </Host>
     );

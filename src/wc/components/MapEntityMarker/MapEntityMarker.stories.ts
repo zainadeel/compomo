@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-map-entity-marker.js';
 
-const STATES = ['in-motion', 'idling', 'stationary', 'immobilized', 'stale'] as const;
+const STATES = ['moving', 'idling', 'stationary', 'immobilized', 'unknown'] as const;
 const ENTITY_KINDS = [
   { icon: 'MapEntityTravelGroup', label: 'Travel group' },
   { icon: 'MapEntityVehicle', label: 'Vehicle' },
@@ -37,17 +37,17 @@ const meta: Meta = {
     caption: { control: 'text' },
     icon: { control: 'select', options: ENTITY_KINDS.map(kind => kind.icon) },
     state: { control: 'select', options: STATES },
-    stale: { control: 'boolean' },
-    heading: { control: { type: 'range', min: -360, max: 720, step: 15 } },
+    dashed: { control: 'boolean' },
+    bearing: { control: { type: 'range', min: -360, max: 720, step: 15 } },
     dimmed: { control: 'boolean' },
   },
   args: {
     label: 'Open vehicle 412',
     caption: 'Vehicle 412',
     icon: 'MapEntityTravelGroup',
-    state: 'in-motion',
-    stale: false,
-    heading: 45,
+    state: 'moving',
+    dashed: false,
+    bearing: 45,
     dimmed: false,
   },
 };
@@ -63,8 +63,8 @@ export const Playground: Story = {
         caption=${args['caption']}
         icon=${args['icon']}
         state=${args['state']}
-        heading=${args['heading']}
-        ?stale=${args['stale']}
+        bearing=${args['bearing']}
+        ?dashed=${args['dashed']}
         ?dimmed=${args['dimmed']}
       ></ds-map-entity-marker>
       <ds-text as="p" variant="text-body-small" color="secondary">
@@ -75,52 +75,46 @@ export const Playground: Story = {
 };
 
 export const Review: Story = {
-  name: 'Review · states and stale data',
+  name: 'Review · states and optional dashes',
   render: () => html`
     <div style=${REVIEW_SURFACE}>
       <div style=${REVIEW_ROW}>
         <ds-text as="span" variant="text-caption" color="secondary" emphasis>State</ds-text>
-        <ds-text as="span" variant="text-caption" color="secondary" emphasis>Current</ds-text>
-        <ds-text as="span" variant="text-caption" color="secondary" emphasis>Stale</ds-text>
+        <ds-text as="span" variant="text-caption" color="secondary" emphasis>Solid</ds-text>
+        <ds-text as="span" variant="text-caption" color="secondary" emphasis>Dashed option</ds-text>
       </div>
-      ${STATES.filter(state => state !== 'stale').map(
+      ${STATES.map(
         (state, index) => html`
           <div style=${REVIEW_ROW}>
-            <ds-text as="span" variant="text-body-small" color="primary">${state}</ds-text>
+            <ds-text as="span" variant="text-body-small" color="primary"
+              >${state.charAt(0).toUpperCase() + state.slice(1)}</ds-text
+            >
             <ds-map-entity-marker
               label=${`Open ${state} vehicle`}
               caption=${`Vehicle ${412 + index}`}
               state=${state}
-              heading=${index * 45}
+              bearing=${index * 45}
             ></ds-map-entity-marker>
             <ds-map-entity-marker
-              label=${`Open stale ${state} vehicle`}
+              label=${`Open ${state} vehicle with dashed outline`}
               caption=${`Vehicle ${512 + index}`}
               state=${state}
-              heading=${index * 45}
-              stale
+              bearing=${index * 45}
+              dashed
             ></ds-map-entity-marker>
           </div>
         `
       )}
-      <div style=${REVIEW_ROW}>
-        <ds-text as="span" variant="text-body-small" color="primary">unknown stale state</ds-text>
-        <ds-map-entity-marker
-          label="Open stale vehicle"
-          caption="Vehicle 612"
-          state="stale"
-          stale
-        ></ds-map-entity-marker>
-        <ds-text as="span" variant="text-caption" color="tertiary">
-          Use only when no last-known operating state is available.
-        </ds-text>
-      </div>
+      <ds-text as="p" variant="text-body-small" color="secondary">
+        Unknown replaces stale motion. Immobilized takes precedence. Dashes are an independent
+        display option.
+      </ds-text>
     </div>
   `,
 };
 
 export const EntityKinds: Story = {
-  name: 'Review · entity kinds and headings',
+  name: 'Review · entity kinds and bearings',
   render: () => html`
     <div style=${REVIEW_SURFACE}>
       <div
@@ -136,7 +130,7 @@ export const EntityKinds: Story = {
                 caption=${kind.label}
                 icon=${kind.icon}
                 state=${STATES[index]}
-                heading=${index * 90 + 45}
+                bearing=${index * 90 + 45}
               ></ds-map-entity-marker>
               <ds-text as="span" variant="text-caption" color="secondary">${kind.label}</ds-text>
             </div>
@@ -144,7 +138,7 @@ export const EntityKinds: Story = {
         )}
       </div>
       <ds-text as="p" variant="text-body-small" color="secondary">
-        Travel-group and vehicle glyphs consume heading. Immobilized uses MapKey; asset and person
+        Travel-group and vehicle glyphs consume bearing. Immobilized uses MapKey; asset and person
         glyphs remain upright.
       </ds-text>
     </div>
@@ -159,21 +153,21 @@ export const SelectionContext: Story = {
         <ds-map-entity-marker
           label="Open selected vehicle 412"
           caption="Vehicle 412"
-          state="in-motion"
-          heading="45"
+          state="moving"
+          bearing="45"
         ></ds-map-entity-marker>
         <ds-map-entity-marker
           label="Open vehicle 205"
           caption="Vehicle 205"
           state="stationary"
-          heading="180"
+          bearing="180"
           dimmed
         ></ds-map-entity-marker>
         <ds-map-entity-marker
           label="Open vehicle 317"
           caption="Vehicle 317"
           state="idling"
-          heading="270"
+          bearing="270"
           dimmed
         ></ds-map-entity-marker>
       </div>

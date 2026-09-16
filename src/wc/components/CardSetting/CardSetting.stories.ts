@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-card-setting.js';
 import '../../../../dist/components/ds-text.js';
+import '../../../../dist/components/ds-setting-row.js';
 import type { CardSettingActionDetail } from './CardSetting';
 
 const WIDTHS = ['sm', 'md', 'lg'] as const;
@@ -123,5 +124,32 @@ export const Interactive: Story = {
         `
       )}
     </div>
+  `,
+};
+
+export const Immediate: Story = {
+  render: () => html`
+    <ds-card-setting heading="Interface preferences" variant="immediate">
+      <div role="list" aria-label="Interface preferences">
+        <ds-setting-row
+          role="listitem"
+          label="Panel navigation"
+          description="Show page sections in the side panel. Turn off to use top bar tabs."
+          checked
+          @dsChange=${(event: CustomEvent<boolean>) => {
+            (event.currentTarget as HTMLDsSettingRowElement).checked = event.detail;
+          }}
+        ></ds-setting-row>
+        <ds-setting-row
+          role="listitem"
+          label="Configuration menus"
+          description="Open view settings in menus. Turn off to use a side panel."
+          checked
+          @dsChange=${(event: CustomEvent<boolean>) => {
+            (event.currentTarget as HTMLDsSettingRowElement).checked = event.detail;
+          }}
+        ></ds-setting-row>
+      </div>
+    </ds-card-setting>
   `,
 };

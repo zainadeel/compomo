@@ -1,5 +1,8 @@
 import { Component, Prop, h, Host } from '@stencil/core';
 
+/**
+ * @slot actions - Optional recovery buttons or links. The consumer owns their labels and behavior.
+ */
 @Component({
   tag: 'ds-empty-state',
   styleUrl: 'EmptyState.css',
@@ -46,6 +49,9 @@ export class EmptyState {
                 {this.body}
               </ds-text>
             )}
+          </div>
+          <div class="empty-state__actions">
+            <slot name="actions" />
           </div>
         </div>
       </Host>

@@ -1,0 +1,398 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "radio-tile",
+  "title": "RadioTile",
+  "description": "A form-associated group of fully clickable radio tiles with labels and optional descriptions.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/radio-tile",
+    "source": "src/wc/components/RadioTile/RadioTile.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "A form-associated group of fully clickable radio tiles with labels and optional descriptions.",
+      "useWhen": [
+        "A small set of mutually exclusive choices benefits from descriptive cards and large click targets."
+      ],
+      "avoidWhen": [
+        "The choices are brief and compact; use Radio.",
+        "More than one value may be chosen."
+      ],
+      "alternatives": [
+        {
+          "when": "A user may select zero or multiple independent choices.",
+          "component": "component:ds-checkbox",
+          "reason": "Checkbox communicates independent selection rather than one-of-many choice."
+        },
+        {
+          "when": "A binary setting applies immediately.",
+          "component": "component:ds-switch",
+          "reason": "Switch communicates an immediately applied on/off setting."
+        },
+        {
+          "when": "The option list is long or the available space is constrained.",
+          "component": "component:ds-select",
+          "reason": "Select keeps a larger one-of-many choice set compact."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-field",
+        "component:ds-text"
+      ],
+      "accessibility": [
+        "Native radio inputs own keyboard selection, focus, and checked semantics; the complete tile activates its input.",
+        "Label the group with Field or an accessible name. Descriptions name each option separately."
+      ],
+      "states": [
+        "Selection is shown by the radio indicator while the tile keeps its neutral border. Error retains the negative border, and keyboard focus keeps the focus-token outline. Inactive options cannot be selected.",
+        "The component owns form values, required validation, reset, and disabled-fieldset behavior."
+      ],
+      "responsiveBehavior": [
+        "Horizontal tiles wrap to available space; use a vertical group when descriptions need more room."
+      ],
+      "frameworkCaveats": {
+        "angular": [
+          "Use the generated radio value accessor with the standalone adapter."
+        ],
+        "vue": [
+          "Bind value with v-model."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook review",
+          "path": "src/wc/components/RadioTile/RadioTile.stories.ts"
+        }
+      ],
+      "styling": {
+        "rationale": "Tile anatomy and radio treatment belong to the component; the owner controls group width.",
+        "protected": [
+          {
+            "properties": [
+              "padding",
+              "gap",
+              "border-radius",
+              "background",
+              "border",
+              "box-shadow",
+              "color"
+            ],
+            "reason": "Use the supported group direction and state instead of replacing tile internals.",
+            "props": [
+              "direction"
+            ]
+          }
+        ],
+        "customProperties": []
+      }
+    },
+    "api": {
+      "props": {
+        "ariaDescribedby": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "aria-describedby",
+          "required": false,
+          "mutable": false
+        },
+        "ariaLabel": {
+          "type": "string | null",
+          "resolvedType": "null | string",
+          "attribute": "aria-label",
+          "default": "null",
+          "required": false,
+          "mutable": false
+        },
+        "ariaLabelledby": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "aria-labelledby",
+          "required": false,
+          "mutable": false
+        },
+        "direction": {
+          "type": "'horizontal' | 'vertical'",
+          "resolvedType": "\"horizontal\" | \"vertical\"",
+          "attribute": "direction",
+          "default": "'vertical'",
+          "required": false,
+          "mutable": false
+        },
+        "disabled": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "disabled",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "error": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "error",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "form": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "form",
+          "required": false,
+          "mutable": false
+        },
+        "inputId": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "input-id",
+          "required": false,
+          "mutable": false
+        },
+        "isInactive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-inactive",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "name": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "name",
+          "required": false,
+          "mutable": false
+        },
+        "options": {
+          "type": "RadioTileOption[]",
+          "resolvedType": "RadioTileOption[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "One-of-many choices displayed as fully clickable tiles."
+        },
+        "required": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "required",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "requiredMessage": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "required-message",
+          "default": "'This field is required.'",
+          "required": false,
+          "mutable": false
+        },
+        "value": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "value",
+          "default": "''",
+          "required": false,
+          "mutable": true
+        }
+      },
+      "events": [
+        {
+          "name": "dsChange",
+          "detail": "string",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [
+        {
+          "name": "setFocus",
+          "signature": "setFocus() => Promise<void>"
+        }
+      ],
+      "slots": []
+    },
+    "props": {
+      "ariaDescribedby": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "aria-describedby",
+        "required": false,
+        "mutable": false
+      },
+      "ariaLabel": {
+        "type": "string | null",
+        "resolvedType": "null | string",
+        "attribute": "aria-label",
+        "default": "null",
+        "required": false,
+        "mutable": false
+      },
+      "ariaLabelledby": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "aria-labelledby",
+        "required": false,
+        "mutable": false
+      },
+      "direction": {
+        "type": "'horizontal' | 'vertical'",
+        "resolvedType": "\"horizontal\" | \"vertical\"",
+        "attribute": "direction",
+        "default": "'vertical'",
+        "required": false,
+        "mutable": false
+      },
+      "disabled": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "disabled",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "error": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "error",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "form": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "form",
+        "required": false,
+        "mutable": false
+      },
+      "inputId": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "input-id",
+        "required": false,
+        "mutable": false
+      },
+      "isInactive": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-inactive",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "name": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "name",
+        "required": false,
+        "mutable": false
+      },
+      "options": {
+        "type": "RadioTileOption[]",
+        "resolvedType": "RadioTileOption[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "One-of-many choices displayed as fully clickable tiles."
+      },
+      "required": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "required",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "requiredMessage": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "required-message",
+        "default": "'This field is required.'",
+        "required": false,
+        "mutable": false
+      },
+      "value": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "value",
+        "default": "''",
+        "required": false,
+        "mutable": true
+      }
+    },
+    "events": [
+      {
+        "name": "dsChange",
+        "detail": "string",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [
+      {
+        "name": "setFocus",
+        "signature": "setFocus() => Promise<void>"
+      }
+    ],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-radio-tile",
+      "react": "DsRadioTile",
+      "vue": "DsRadioTile",
+      "angular": "DsRadioTile"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-radio-tile.js';",
+        "example": "<ds-radio-tile></ds-radio-tile>"
+      },
+      "react": {
+        "import": "import { DsRadioTile } from '@ds-mo/ui/react';",
+        "example": "<DsRadioTile />"
+      },
+      "vue": {
+        "import": "import { DsRadioTile } from '@ds-mo/ui/vue';",
+        "example": "<DsRadioTile />"
+      },
+      "angular": {
+        "import": "import { DsRadioTile } from '@ds-mo/ui/angular/ds-radio-tile';",
+        "example": "<ds-radio-tile></ds-radio-tile>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: options.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.5.2",
+          "@ds-mo/icons ^8.1.1"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/RadioTile/RadioTile.css",
+      "content": "@import '../../utils/interaction-fill.css';\n@import '../../utils/control-inactive.css';\n@import '../../utils/forced-colors.css';\n:host {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-100);\n}\n:host(.radio-tiles--horizontal) {\n  flex-direction: row;\n  flex-wrap: wrap;\n}\n:host(.radio-tiles--horizontal) .radio-tile {\n  flex-basis: var(--dimension-menu-width-xs);\n}\n.radio-tile {\n  display: flex;\n  position: relative;\n  align-items: flex-start;\n  flex: 1;\n  box-sizing: border-box;\n  gap: var(--dimension-space-100);\n  padding: var(--dimension-space-200);\n  min-width: 0;\n  border-radius: var(--dimension-radius-050);\n  background: var(--color-background-primary);\n  cursor: pointer;\n  user-select: none;\n}\n.radio-tile__outline {\n  position: absolute;\n  inset: 0;\n  border-radius: inherit;\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-secondary);\n  pointer-events: none;\n}\n:host([aria-invalid='true']) .radio-tile__outline {\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-025) var(--color-border-bold-negative);\n}\n.radio-tile__input {\n  position: absolute;\n  inset: 0;\n  opacity: 0;\n  width: 100%;\n  height: 100%;\n  margin: 0;\n  cursor: inherit;\n  z-index: 3;\n}\n.radio-tile__input:disabled {\n  cursor: not-allowed;\n}\n.radio-tile__input:focus-visible + .radio-tile__outline {\n  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);\n  outline-offset: var(--dimension-space-025);\n}\n.radio-tile__indicator {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex: none;\n  box-sizing: border-box;\n  width: var(--dimension-size-200);\n  height: var(--dimension-size-200);\n  margin-top: calc((var(--typography-lineheight-md) - var(--dimension-size-200)) / 2);\n  border-radius: var(--dimension-radius-half);\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-015) var(--color-foreground-tertiary);\n}\n.radio-tile--selected .radio-tile__indicator {\n  background: var(--color-background-bold-brand);\n  box-shadow: none;\n}\n.radio-tile__indicator > span {\n  width: var(--dimension-size-100);\n  height: var(--dimension-size-100);\n  border-radius: var(--dimension-radius-half);\n  background: var(--color-foreground-on-bold-background-primary);\n}\n.radio-tile__copy {\n  display: grid;\n  gap: var(--dimension-space-050);\n  min-width: 0;\n  padding-inline: var(--dimension-space-025);\n}\n\n@media (forced-colors: active) {\n  .radio-tile__outline,\n  .radio-tile__indicator {\n    border: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);\n    box-shadow: none;\n  }\n  .radio-tile--selected .radio-tile__indicator {\n    background: var(--ds-forced-color-selected);\n  }\n  .radio-tile__indicator > span {\n    background: var(--ds-forced-color-on-selected);\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/RadioTile/RadioTile.tsx",
+      "content": "import {\n  AttachInternals,\n  Component,\n  Element,\n  Event,\n  EventEmitter,\n  Prop,\n  State,\n  Watch,\n  Method,\n  h,\n  Host,\n} from '@stencil/core';\nimport {\n  DEFAULT_REQUIRED_MESSAGE,\n  restoreStringFormState,\n  setFormControlValue,\n  setRequiredValidity,\n} from '../../utils';\n\nexport interface RadioTileOption {\n  value: string;\n  label: string;\n  description?: string;\n  isInactive?: boolean;\n}\nlet tileId = 0;\n\n@Component({ tag: 'ds-radio-tile', styleUrl: 'RadioTile.css', scoped: true, formAssociated: true })\nexport class RadioTile {\n  @Element() el!: HTMLElement;\n  @AttachInternals() internals!: ElementInternals;\n  /** One-of-many choices displayed as fully clickable tiles. */\n  @Prop() options: RadioTileOption[] = [];\n  @Prop({ mutable: true }) value: string = '';\n  @Prop({ reflect: true }) name: string | undefined;\n  @Prop({ reflect: true }) form: string | undefined;\n  @Prop({ reflect: true }) disabled: boolean = false;\n  @Prop() isInactive: boolean = false;\n  @Prop({ reflect: true }) required: boolean = false;\n  @Prop() requiredMessage: string = DEFAULT_REQUIRED_MESSAGE;\n  @Prop() direction: 'horizontal' | 'vertical' = 'vertical';\n  @Prop() inputId: string | undefined;\n  @Prop() error: boolean = false;\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n  @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;\n  @Prop({ attribute: 'aria-describedby' }) ariaDescribedby: string | undefined;\n  @Event() dsChange!: EventEmitter<string>;\n  @State() private formDisabled = false;\n  private readonly generatedId = `ds-radio-tile-${++tileId}`;\n  private initialValue = '';\n  private get inactive() {\n    return this.disabled || this.isInactive || this.formDisabled;\n  }\n  componentWillLoad() {\n    this.initialValue = this.value;\n    this.syncFormValue();\n  }\n  @Watch('value')\n  @Watch('options')\n  @Watch('disabled')\n  @Watch('isInactive')\n  @Watch('required')\n  @Watch('requiredMessage')\n  syncFormValue() {\n    const selected = this.options.some(option => option.value === this.value && !option.isInactive);\n    setFormControlValue(this.internals, selected ? this.value : '', { inactive: this.inactive });\n    setRequiredValidity(\n      this.internals,\n      this.required && !this.inactive && !selected,\n      this.requiredMessage\n    );\n  }\n  formDisabledCallback(disabled: boolean) {\n    this.formDisabled = disabled;\n    this.syncFormValue();\n  }\n  formResetCallback() {\n    this.value = this.initialValue;\n  }\n  formStateRestoreCallback(state: string | File | FormData | null) {\n    this.value = restoreStringFormState(state);\n  }\n  @Method()\n  async setFocus() {\n    (\n      this.el.querySelector<HTMLInputElement>('input:checked:not(:disabled)') ??\n      this.el.querySelector<HTMLInputElement>('input:not(:disabled)')\n    )?.focus();\n  }\n  private select(value: string) {\n    if (this.inactive || value === this.value) return;\n    this.value = value;\n    this.dsChange.emit(value);\n  }\n  render() {\n    return (\n      <Host\n        role=\"radiogroup\"\n        aria-label={this.ariaLabel}\n        aria-labelledby={this.ariaLabelledby}\n        aria-describedby={this.ariaDescribedby}\n        aria-required={this.required ? 'true' : undefined}\n        aria-invalid={this.error ? 'true' : undefined}\n        class={{ 'radio-tiles': true, 'radio-tiles--horizontal': this.direction === 'horizontal' }}\n      >\n        {this.options.map((option, index) => {\n          const selected = option.value === this.value;\n          const inactive = this.inactive || Boolean(option.isInactive);\n          return (\n            <label\n              class={{\n                'radio-tile': true,\n                'radio-tile--selected': selected,\n                'ds-interaction-fill': !inactive,\n                'ds-control-inactive': inactive,\n              }}\n              key={option.value}\n            >\n              <input\n                type=\"radio\"\n                class=\"radio-tile__input\"\n                id={index === 0 ? this.inputId : undefined}\n                name={this.generatedId}\n                form=\"\"\n                value={option.value}\n                checked={selected}\n                disabled={inactive}\n                aria-labelledby={`${this.generatedId}-label-${index}`}\n                aria-describedby={\n                  option.description ? `${this.generatedId}-description-${index}` : undefined\n                }\n                onChange={() => this.select(option.value)}\n              />\n              <span class=\"radio-tile__outline\" aria-hidden=\"true\" />\n              <span class=\"radio-tile__indicator ds-interaction-fill__content\" aria-hidden=\"true\">\n                {selected && <span />}\n              </span>\n              <span class=\"radio-tile__copy ds-interaction-fill__content\">\n                <ds-text\n                  as=\"span\"\n                  variant=\"text-body-medium\"\n                  emphasis\n                  textId={`${this.generatedId}-label-${index}`}\n                >\n                  {option.label}\n                </ds-text>\n                {option.description && (\n                  <ds-text\n                    as=\"span\"\n                    variant=\"text-body-medium\"\n                    color=\"secondary\"\n                    textId={`${this.generatedId}-description-${index}`}\n                  >\n                    {option.description}\n                  </ds-text>\n                )}\n              </span>\n            </label>\n          );\n        })}\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

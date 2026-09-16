@@ -12,8 +12,8 @@
     "themeSetup": "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     "peerDependencies": {
       "required": [
-        "@ds-mo/tokens ^6.5.1",
-        "@ds-mo/icons ^8.1.0"
+        "@ds-mo/tokens ^6.5.2",
+        "@ds-mo/icons ^8.1.1"
       ],
       "optional": [],
       "frameworks": "None required for Custom Elements; generated React, Vue, and Angular adapters are included."
@@ -3923,7 +3923,7 @@
     {
       "name": "card-setting",
       "title": "CardSetting",
-      "description": "Persistent settings-section surface with a heading, controlled view/edit chrome, fixed edit-save-cancel actions, and application-owned body content.",
+      "description": "Persistent settings-section surface with a heading, optional controlled edit chrome, and application-owned body content.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -3934,17 +3934,17 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Persistent settings-section surface with a heading, controlled view/edit chrome, fixed edit-save-cancel actions, and application-owned body content.",
+          "summary": "Persistent settings-section surface with a heading, optional controlled edit chrome, and application-owned body content.",
           "useWhen": [
             "A settings page needs a persistent section that switches between read-only and editable content.",
             "The parent can control one active editing section and owns validation, persistence, cancellation, and body content.",
-            "The section uses the standard Pencil, Save, and Cancel header workflow."
+            "The section uses the standard Pencil, Save, and Cancel header workflow.",
+            "Settings apply immediately through their own controls and share the standard section surface without edit, save, or cancel actions."
           ],
           "avoidWhen": [
             "The surface contains a chart, legend, metric visualization, or other data-visualization composition.",
             "The content is a general-purpose read-only card with no settings edit workflow.",
             "The task must block the rest of the interface or requires confirmation in a modal.",
-            "Several sections must remain editable at the same time.",
             "The header requires custom actions beyond the fixed edit-save-cancel workflow."
           ],
           "alternatives": [
@@ -3969,7 +3969,8 @@
             "component:ds-input",
             "component:ds-select",
             "component:ds-switch",
-            "component:ds-text"
+            "component:ds-text",
+            "component:ds-setting-row"
           ],
           "accessibility": [
             "Provide a concise heading that identifies the settings section; CardSetting renders it as an h2.",
@@ -3986,10 +3987,11 @@
             "When another section requests edit, the parent keeps one active section and resolves any dirty current section before switching.",
             "The parent owns read-only versus editable body composition, dirty state, validation, persistence, loading, success, and error consequences.",
             "A save request keeps the section editing while validation or persistence is pending; the parent exits only after success.",
-            "A cancel request does not persist changes; the parent restores its chosen value snapshot and exits editing."
+            "A cancel request does not persist changes; the parent restores its chosen value snapshot and exits editing.",
+            "The immediate variant keeps the resting card surface and omits header actions even if editing is supplied. The application applies and persists each control change independently."
           ],
           "responsiveBehavior": [
-            "Choose sm, md, or lg from the parent layout; each width uses its matching token-based minimum height.",
+            "Choose sm, md, or lg from the parent layout. Editable cards use the matching minimum height; immediate cards fit their content.",
             "The surface never exceeds its parent width, while the parent owns wrapping, columns, stacking, and breakpoint changes.",
             "At narrow widths, keep the fixed header actions visible and let application-owned body layouts collapse before allowing horizontal overflow."
           ],
@@ -4042,9 +4044,10 @@
                   "width",
                   "min-height"
                 ],
-                "reason": "Card width selects the component geometry; use cardWidth and let the parent constrain available space.",
+                "reason": "Card width selects the component geometry; immediate cards fit their content. Let the parent constrain available space.",
                 "props": [
-                  "cardWidth"
+                  "cardWidth",
+                  "variant"
                 ]
               }
             ],
@@ -4074,6 +4077,10 @@
           },
           "saveLabel": {
             "type": "string",
+            "required": false
+          },
+          "variant": {
+            "type": "CardSettingVariant",
             "required": false
           }
         },
@@ -6856,7 +6863,7 @@
     {
       "name": "empty-state",
       "title": "EmptyState",
-      "description": "Centered empty-content message composed as icon plus title plus body, title plus body, or compact body-only content.",
+      "description": "Centered empty-content message with optional consumer-owned recovery actions.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -6867,16 +6874,16 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Centered empty-content message composed as icon plus title plus body, title plus body, or compact body-only content.",
+          "summary": "Centered empty-content message with optional consumer-owned recovery actions.",
           "useWhen": [
             "A bounded content area is in a first-use, no-content, filtered no-results, or no-access state and needs a calm explanatory message tailored to that cause.",
             "A prominent empty region benefits from a decorative icon, visual title, and supporting body copy.",
-            "A compact owner such as a Select popup needs only centered body copy."
+            "A compact owner such as a Select popup needs only centered body copy.",
+            "An empty region needs a concise recovery action that helps the user reveal or create content."
           ],
           "avoidWhen": [
             "Content is still loading; use Skeleton for predictable structure or Loader for an indeterminate operation.",
             "The state is an error, warning, or confirmation that needs semantic intent and announcement from the owning workflow.",
-            "The state needs a recovery action, link, or other interactive content; the current EmptyState pattern is intentionally message-only.",
             "A decorative illustration, arbitrary rich content, or custom layout is required."
           ],
           "alternatives": [
@@ -6900,20 +6907,23 @@
             "component:ds-table",
             "component:ds-select",
             "component:ds-text",
-            "component:ds-icon"
+            "component:ds-icon",
+            "component:ds-button-unfilled"
           ],
           "accessibility": [
             "The optional icon is decorative; the title and body provide all meaning in text.",
             "EmptyState does not create a live region or alert automatically. The owner decides whether a dynamic transition requires announcement.",
             "The visual title does not impose a document heading level because the correct hierarchy belongs to the consuming page or region.",
-            "Keep localized body copy concise and sufficient when using the body-only variant."
+            "Keep localized body copy concise and sufficient when using the body-only variant.",
+            "Give recovery controls explicit accessible names and keep their behavior with the owning workflow."
           ],
           "states": [
             "Supported compositions are icon plus title plus body, title plus body, and body only; body copy is present in every supported composition.",
             "The decorative icon renders at xl in the primary foreground with an 8px gap before the text group and only when a title is also provided.",
             "The visual title uses title-small primary text; body uses body-medium secondary text with a 4px title-to-body gap.",
-            "All content is centered. The owner supplies container size and surrounding padding; repeated panel and master-detail owners should share one empty-region geometry instead of wrapping each EmptyState differently. Do not compose actions into or immediately alongside the current EmptyState pattern.",
-            "First-use, no-content, no-results, and no-access states reuse this primitive with cause-specific localized messages rather than visual variants."
+            "All content is centered. The owner supplies container size and surrounding padding; repeated panel and master-detail owners should share one empty-region geometry instead of wrapping each EmptyState differently.",
+            "First-use, no-content, no-results, and no-access states reuse this primitive with cause-specific localized messages rather than visual variants.",
+            "Recovery actions are optional. The consumer owns the action labels, control choice, and behavior; the component centers them below the message and wraps multiple actions when needed."
           ],
           "responsiveBehavior": [
             "The owner controls available width and height; text wraps naturally while remaining centered.",
@@ -6961,7 +6971,9 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          "actions"
+        ],
         "exports": {
           "customElement": "ds-empty-state",
           "react": "DsEmptyState",
@@ -7034,7 +7046,8 @@
             "Field exposes data-focused, data-filled, data-dirty, data-touched, data-invalid, data-disabled, and data-required hooks while the slotted control remains the source of value and interaction behavior.",
             "A rendered error replaces the description; preserve essential guidance in the error message so users retain what they need to correct the field.",
             "Field owns validation presentation but not validation timing; the form decides when to set error and errorMessage.",
-            "The label uses primary body-small emphasis, description uses secondary body-small text, and error uses negative body-small text."
+            "The label uses primary body-small emphasis, description uses secondary body-small text, and error uses negative body-small text.",
+            "Input and Textarea contribute constraint messages and character counts to the supporting row. Helper text yields to an error, with the count at the opposite edge; a count alone begins at the text origin."
           ],
           "responsiveBehavior": [
             "Field fills the width supplied by its parent and makes the slotted control fill that field width.",
@@ -7604,7 +7617,7 @@
     {
       "name": "input",
       "title": "Input",
-      "description": "Form-associated single-line text and number field for primary and secondary application backgrounds, with native input behavior, four control densities, optional leading and trailing content, search clearing, and validation.",
+      "description": "Form-associated text and number input with constraints, optional free-text suggestions, token entry, and character counts.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -7615,7 +7628,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Form-associated single-line text and number field for primary and secondary application backgrounds, with native input behavior, four control densities, optional leading and trailing content, search clearing, and validation.",
+          "summary": "Form-associated text and number input with constraints, optional free-text suggestions, token entry, and character counts.",
           "useWhen": [
             "A user must enter or edit one line of text, an email address, telephone number, URL, search query, password, or exact number.",
             "The value must participate in native, Angular, React, or Vue form state.",
@@ -7666,7 +7679,7 @@
             "Error text is associated with the native input and announced as an alert when the invalid state is rendered.",
             "Read-only fields remain focusable and submittable while preventing edits; inactive or disabled fields leave the tab order and are omitted from form submission.",
             "Password fields keep a named show-or-hide action beside the value. Revealing the value changes only the native input type; the submitted string does not change. The action restores focus to the field after activation.",
-            "Number stepper actions are pointer affordances hidden from the accessibility tree; the native spinbutton remains the single keyboard and assistive-technology control.",
+            "Optional number stepper actions are named buttons available to keyboard and assistive-technology users. The native spinbutton also retains arrow-key stepping; activating either button returns focus to the field.",
             "Prefix and suffix content must not carry information that is otherwise absent from the field's visible label, value, or description.",
             "A nested prefix or suffix Select is a separate control from the editable value and must have its own accessible name."
           ],
@@ -7681,10 +7694,13 @@
             "Search fields used with owned result sets forward aria-controls and aria-activedescendant to the native field so keyboard focus can remain in the query while assistive technology tracks the active result.",
             "The prefix and suffix slots host compact leading or trailing units such as a currency code, or a nested same-size inset Select. Text adornments use the control's balanced text inset. Nested Selects match the field density, set isInset, hasBorder false, width hug, and indicator up-down, keep a selected value, set allowClear false so the menu has no clear footer, set neutralTrigger so the selected unit stays on the secondary adornment foreground, and do not carry the field's error message. Configurable prefix and suffix controls are separated from the editable value by a vertical divider at the density icon height. The nested inset keeps its 2px remainder toward the line; the editable value keeps the same inline padding from the line as a non-prefixed field keeps from its border. The optional leading icon is decorative and does not replace the field label. Password, search-clear, and date or time actions stay type-owned trailing buttons rather than suffix-slot content.",
             "Use autoComplete, inputMode, and enterKeyHint to provide browser and virtual-keyboard hints without changing the value's semantic type.",
-            "Number fields preserve native spinbutton semantics, keyboard stepping, and min/max constraint behavior while dsChange continues to report the native string value. Two borderless inset chevron actions split the available inner height, disable independently at their numeric bound, and restore focus to the spinbutton after pointer activation.",
+            "Number fields preserve native spinbutton semantics, keyboard stepping, and min/max constraint behavior while dsChange continues to report the native string value. Optional borderless inset Plus and Minus buttons share the field density, appear in that order, disable independently at their numeric bound, and restore focus to the spinbutton after activation. Hide them when direct numeric entry is preferable; browser spinner chrome stays hidden.",
             "textAlign positions the editable value while the numeric stepper stays on the opposite inline edge, keeping the actions clear of the number: start-aligned values use an inline-end stepper and end-aligned values use an inline-start stepper.",
             "The host exposes focused, filled, dirty, touched, invalid, disabled, read-only, and required data attributes for Field integration and diagnostics.",
-            "Use Input only on primary or secondary application backgrounds. It intentionally does not expose alternate surface contexts."
+            "Use Input only on primary or secondary application backgrounds. It intentionally does not expose alternate surface contexts.",
+            "Length constraints validate both typed and programmatic values. By default excess text is retained and shown as an error; restrict mode uses a hard input limit. Counters show the draft length and maximum below the field, beside helper or error text when present.",
+            "Suggestions assist free text rather than constrain selection. Arrow keys highlight suggestions, Enter accepts one, and Escape dismisses the popup without changing the value.",
+            "Tokenized text and search fields use removable double-inset chips and commit trimmed, unique values with Enter or comma, accept delimited paste, and remove the last token with Backspace on an empty draft. Committed tokens submit as repeated entries; value remains the draft and must be committed before submission. Length and pattern constraints apply per token."
           ],
           "responsiveBehavior": [
             "Form fields normally fill their parent; use hug width only in a compact toolbar or filter layout with an explicit width constraint.",
@@ -7694,16 +7710,20 @@
           "frameworkCaveats": {
             "customElements": [
               "Listen for dsChange for user edits and dsClear for the search clear action.",
-              "Use the form attribute on the host when associating an input rendered outside its owning form."
+              "Use the form attribute on the host when associating an input rendered outside its owning form.",
+              "Bind committed token arrays through tokens and dsTokensChange, separately from the draft value. Assign suggestions as a JavaScript array."
             ],
             "react": [
-              "Use DsInput, bind value for controlled application state, and handle onDsChange and onDsClear."
+              "Use DsInput, bind value for controlled application state, and handle onDsChange and onDsClear.",
+              "Bind committed token arrays through tokens and dsTokensChange, separately from the draft value. Assign suggestions as a JavaScript array."
             ],
             "vue": [
-              "Use DsInput with v-model for the value, and listen for dsChange and dsClear."
+              "Use DsInput with v-model for the value, and listen for dsChange and dsClear.",
+              "Bind committed token arrays through tokens and dsTokensChange, separately from the draft value. Assign suggestions as a JavaScript array."
             ],
             "angular": [
-              "Import DsInput with TextValueAccessor when integrating with Angular Forms."
+              "Use TextValueAccessor for text inputs and NumericValueAccessor for a statically declared type=\"number\" input. Numeric forms receive numbers or null while the component event remains a string.",
+              "For tokenized input bind tokens and dsTokensChange explicitly; value and dsChange represent only the draft. Do not attach a scalar form value accessor to token mode."
             ]
           },
           "references": [
@@ -7797,6 +7817,10 @@
             "type": "string",
             "required": false
           },
+          "decrementLabel": {
+            "type": "string",
+            "required": false
+          },
           "disabled": {
             "type": "boolean",
             "required": false
@@ -7833,6 +7857,10 @@
             "type": "string | undefined",
             "required": false
           },
+          "incrementLabel": {
+            "type": "string",
+            "required": false
+          },
           "inputId": {
             "type": "string | undefined",
             "required": false
@@ -7845,7 +7873,15 @@
             "type": "boolean",
             "required": false
           },
+          "lengthBehavior": {
+            "type": "'error' | 'restrict'",
+            "required": false
+          },
           "max": {
+            "type": "number | undefined",
+            "required": false
+          },
+          "maxLength": {
             "type": "number | undefined",
             "required": false
           },
@@ -7853,7 +7889,19 @@
             "type": "number | undefined",
             "required": false
           },
+          "minLength": {
+            "type": "number | undefined",
+            "required": false
+          },
           "name": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "pattern": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "patternMessage": {
             "type": "string | undefined",
             "required": false
           },
@@ -7865,6 +7913,10 @@
             "type": "boolean",
             "required": false
           },
+          "removeTokenLabel": {
+            "type": "string",
+            "required": false
+          },
           "required": {
             "type": "boolean",
             "required": false
@@ -7873,8 +7925,16 @@
             "type": "string",
             "required": false
           },
+          "showCharacterCount": {
+            "type": "boolean",
+            "required": false
+          },
           "showPasswordLabel": {
             "type": "string",
+            "required": false
+          },
+          "showStepper": {
+            "type": "boolean",
             "required": false
           },
           "size": {
@@ -7885,8 +7945,20 @@
             "type": "number | undefined",
             "required": false
           },
+          "suggestions": {
+            "type": "string[]",
+            "required": false
+          },
           "textAlign": {
             "type": "InputTextAlign",
+            "required": false
+          },
+          "tokenized": {
+            "type": "boolean",
+            "required": false
+          },
+          "tokens": {
+            "type": "string[]",
             "required": false
           },
           "type": {
@@ -7910,6 +7982,14 @@
           {
             "name": "dsClear",
             "detail": "void"
+          },
+          {
+            "name": "dsSuggestionSelect",
+            "detail": "string"
+          },
+          {
+            "name": "dsTokensChange",
+            "detail": "string[]"
           }
         ],
         "slots": [],
@@ -7927,8 +8007,10 @@
       ],
       "registryDependencies": [
         "button-unfilled",
+        "chip",
         "divider",
         "icon",
+        "input",
         "text"
       ]
     },
@@ -8229,7 +8311,7 @@
             {
               "when": "The hour, minute, and AM/PM lists are needed without a form field.",
               "component": "component:ds-time-picker",
-              "reason": "TimePicker owns the bounded 12-hour lists and selected-tile treatment."
+              "reason": "TimePicker owns the bounded clock lists and selected-tile treatment."
             },
             {
               "when": "The user chooses from a finite set of named times or cadences.",
@@ -8247,9 +8329,9 @@
           ],
           "accessibility": [
             "Provide a persistent visible label through the owning field or an external native label.",
-            "The text field remains the keyboard and assistive-technology value control. Users can type HH:MM, H:MM, or a 12-hour label such as 9:00 AM.",
+            "The text field remains the keyboard and assistive-technology value control. Users can type HH:MM, H:MM, or a 12- or 24-hour label such as 9:00 AM.",
             "The trailing clock button is a named disclosure that opens a non-modal time dialog. It shares the field's density, uses the single inset recipe, and reports expanded state while the picker is open.",
-            "Filled values keep HH:MM as the form value. Visible text uses a 12-hour label such as 9:00 AM so the field does not show 24-hour chrome. That label reuses Input's value typography and text-container inset.",
+            "Filled values keep HH:MM as the form value. Visible text uses a 12- or 24-hour label such as 9:00 AM so the field does not show 24-hour chrome. That label reuses Input's value typography and text-container inset.",
             "Error text is associated with the text field and announced as an alert when the invalid state is rendered.",
             "Read-only fields remain focusable and submittable while preventing edits; inactive or disabled fields leave the tab order and are omitted from form submission."
           ],
@@ -8259,7 +8341,8 @@
             "The normal field boundary uses the shared secondary inset border. Focus promotes it to the thicker bold-brand inset stroke, while error uses the thicker bold-negative inset stroke without changing geometry. When hasBorder is false, supporting error copy insets to the field's text origin rather than the resting border box.",
             "The host exposes focused, filled, dirty, touched, invalid, disabled, read-only, and required data attributes for Field integration and diagnostics.",
             "The trailing clock action is an unfilled icon button of the same density as the field, borderless and square, with the single inset recipe so the 4px height reduction insets it equally from the field's top, end, and bottom edges. It does not replace the field label or the submitted time value. Inactive or disabled fields apply that treatment on the host only, so the nested button is not faded a second time.",
-            "Activating the clock button opens the shared TimePicker in a choice-popup dialog anchored to the field's end edge, beside the trailing clock action. Choosing hour, minute, or AM/PM commits that part of the time and leaves the dialog open so the other columns can be adjusted. Typing in the field commits a parsed time without requiring the picker. Invalid typed text reverts to the last committed value on blur."
+            "Activating the clock button opens the shared TimePicker in a choice-popup dialog anchored to the field's end edge, beside the trailing clock action. Choosing hour, minute, or AM/PM commits that part of the time and leaves the dialog open so the other columns can be adjusted. Typing in the field commits a parsed time without requiring the picker. Invalid typed text reverts to the last committed value on blur.",
+            "The default twelve-hour presentation includes AM/PM. Twenty-four-hour presentation uses hours 00–23 and omits the period column; both keep HH:MM form values and the same time bounds."
           ],
           "responsiveBehavior": [
             "Form fields normally fill their parent; use hug width only in a compact toolbar or filter layout with an explicit width constraint.",
@@ -8378,6 +8461,10 @@
           },
           "hasInteractionFill": {
             "type": "boolean",
+            "required": false
+          },
+          "hourFormat": {
+            "type": "'12' | '24'",
             "required": false
           },
           "inputId": {
@@ -8609,7 +8696,7 @@
           ],
           "alternatives": [
             {
-              "when": "One map entity needs operating state, heading, and stale treatment.",
+              "when": "One map entity needs operating state, bearing, and an optional dashed outline.",
               "component": "component:ds-map-entity-marker",
               "reason": "MapEntityMarker owns single-entity marker semantics and geometry."
             },
@@ -8722,7 +8809,7 @@
     {
       "name": "map-entity-marker",
       "title": "MapEntityMarker",
-      "description": "Engine-independent map marker button for a vehicle, asset, person, or travel group with operating-state color, heading, stale treatment, and a hover or focus caption.",
+      "description": "Engine-independent map marker button for a vehicle, asset, person, or travel group with operating-state color, bearing, an optional dashed outline, and a hover or focus caption.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -8733,7 +8820,7 @@
         "intent": {
           "audience": "general",
           "status": "experimental",
-          "summary": "Engine-independent map marker button for a vehicle, asset, person, or travel group with operating-state color, heading, stale treatment, and a hover or focus caption.",
+          "summary": "Engine-independent map marker button for a vehicle, asset, person, or travel group with operating-state color, bearing, an optional dashed outline, and a hover or focus caption.",
           "useWhen": [
             "An application map needs a consistent interactive marker for one entity.",
             "The map engine can mount a custom element and retain ownership of coordinates, anchoring, and camera behavior."
@@ -8758,14 +8845,14 @@
             "The component renders a native button and label is its accessible action name. Prefer an action-oriented label such as ‘Open vehicle 412’.",
             "Caption is a supplemental visual identifier and is hidden from assistive technology to avoid duplicating label.",
             "Keyboard focus reveals the same caption as hover and uses the shared visible focus ring.",
-            "State and stale meaning must be present in nearby map legend or application detail content; do not rely on marker color alone.",
-            "The stale outline remains differentiated by a dashed border in forced-colors mode."
+            "Operating-state and outline meaning must be present in nearby map legend or application detail content; do not rely on marker color alone.",
+            "The optional dashed outline remains differentiated by a dashed border in forced-colors mode."
           ],
           "states": [
-            "state selects the semantic operating-state color. Use stale as a standalone state only when no last-known operating state is available.",
-            "stale adds a dashed outline while preserving state, matching last-known map data.",
-            "immobilized always renders the upright MapKey glyph instead of the entity icon so the state is identifiable without interpreting heading.",
-            "heading rotates only MapEntityTravelGroup and MapEntityVehicle glyphs and is normalized to a clockwise value from 0 through 359 degrees. Immobilized, asset, person, and other glyphs remain upright.",
+            "Unknown represents unavailable current motion and uses the existing stale-background token. The application resolves stale telemetry to Unknown regardless of previous motion; a known Immobilized state takes precedence.",
+            "The dashed outline is an independent visual option. Unknown is solid unless the owner explicitly requests dashes.",
+            "immobilized always renders the upright MapKey glyph instead of the entity icon so the state is identifiable without interpreting bearing.",
+            "bearing rotates only MapEntityTravelGroup and MapEntityVehicle glyphs and is normalized to a clockwise value from 0 through 359 degrees. Immobilized, asset, person, and other glyphs remain upright.",
             "dimmed is visual de-emphasis only. The map owner decides when selection context should dim peer markers and keeps every marker operable. A dimmed marker returns to full opacity while hovered or keyboard-focused so its revealed caption remains legible.",
             "Activation emits dsClick without changing application selection internally."
           ],
@@ -8779,10 +8866,10 @@
               "Listen for dsClick and keep selected entity, z-index, coordinates, and camera movement in application state."
             ],
             "react": [
-              "Pass numeric heading as a property and handle dsClick through the generated event binding."
+              "Pass numeric bearing as a property and handle dsClick through the generated event binding."
             ],
             "angular": [
-              "Bind heading as a number and keep map-engine marker lifecycle in the owning map adapter."
+              "Bind bearing as a number and keep map-engine marker lifecycle in the owning map adapter."
             ]
           },
           "references": [
@@ -8806,10 +8893,10 @@
                   "color",
                   "opacity"
                 ],
-                "reason": "Marker geometry, operating-state colors, stale distinction, and de-emphasis are one accessible visual recipe.",
+                "reason": "Marker geometry, operating-state colors, outline distinction, and de-emphasis are one accessible visual recipe.",
                 "props": [
                   "state",
-                  "stale",
+                  "dashed",
                   "dimmed"
                 ]
               }
@@ -8818,16 +8905,20 @@
           }
         },
         "props": {
+          "bearing": {
+            "type": "number",
+            "required": false
+          },
           "caption": {
             "type": "string",
             "required": false
           },
-          "dimmed": {
+          "dashed": {
             "type": "boolean",
             "required": false
           },
-          "heading": {
-            "type": "number",
+          "dimmed": {
+            "type": "boolean",
             "required": false
           },
           "icon": {
@@ -8837,10 +8928,6 @@
           "label": {
             "type": "string",
             "required": true
-          },
-          "stale": {
-            "type": "boolean",
-            "required": false
           },
           "state": {
             "type": "MapEntityMarkerState",
@@ -12090,6 +12177,176 @@
       ]
     },
     {
+      "name": "radio-tile",
+      "title": "RadioTile",
+      "description": "A form-associated group of fully clickable radio tiles with labels and optional descriptions.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/radio-tile",
+        "source": "src/wc/components/RadioTile/RadioTile.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "A form-associated group of fully clickable radio tiles with labels and optional descriptions.",
+          "useWhen": [
+            "A small set of mutually exclusive choices benefits from descriptive cards and large click targets."
+          ],
+          "avoidWhen": [
+            "The choices are brief and compact; use Radio.",
+            "More than one value may be chosen."
+          ],
+          "alternatives": [
+            {
+              "when": "A user may select zero or multiple independent choices.",
+              "component": "component:ds-checkbox",
+              "reason": "Checkbox communicates independent selection rather than one-of-many choice."
+            },
+            {
+              "when": "A binary setting applies immediately.",
+              "component": "component:ds-switch",
+              "reason": "Switch communicates an immediately applied on/off setting."
+            },
+            {
+              "when": "The option list is long or the available space is constrained.",
+              "component": "component:ds-select",
+              "reason": "Select keeps a larger one-of-many choice set compact."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-field",
+            "component:ds-text"
+          ],
+          "accessibility": [
+            "Native radio inputs own keyboard selection, focus, and checked semantics; the complete tile activates its input.",
+            "Label the group with Field or an accessible name. Descriptions name each option separately."
+          ],
+          "states": [
+            "Selection is shown by the radio indicator while the tile keeps its neutral border. Error retains the negative border, and keyboard focus keeps the focus-token outline. Inactive options cannot be selected.",
+            "The component owns form values, required validation, reset, and disabled-fieldset behavior."
+          ],
+          "responsiveBehavior": [
+            "Horizontal tiles wrap to available space; use a vertical group when descriptions need more room."
+          ],
+          "frameworkCaveats": {
+            "angular": [
+              "Use the generated radio value accessor with the standalone adapter."
+            ],
+            "vue": [
+              "Bind value with v-model."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook review",
+              "path": "src/wc/components/RadioTile/RadioTile.stories.ts"
+            }
+          ],
+          "styling": {
+            "rationale": "Tile anatomy and radio treatment belong to the component; the owner controls group width.",
+            "protected": [
+              {
+                "properties": [
+                  "padding",
+                  "gap",
+                  "border-radius",
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "Use the supported group direction and state instead of replacing tile internals.",
+                "props": [
+                  "direction"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
+        },
+        "props": {
+          "ariaDescribedby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "ariaLabelledby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "direction": {
+            "type": "'horizontal' | 'vertical'",
+            "required": false
+          },
+          "disabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "error": {
+            "type": "boolean",
+            "required": false
+          },
+          "form": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "inputId": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "name": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "options": {
+            "type": "RadioTileOption[]",
+            "required": false
+          },
+          "required": {
+            "type": "boolean",
+            "required": false
+          },
+          "requiredMessage": {
+            "type": "string",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "string"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-radio-tile",
+          "react": "DsRadioTile",
+          "vue": "DsRadioTile",
+          "angular": "DsRadioTile"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
       "name": "score",
       "title": "Score",
       "description": "Safety-score figure in a semantic fill at three control densities and an optional dense value treatment.",
@@ -12740,6 +12997,106 @@
         "loader",
         "text",
         "tooltip"
+      ]
+    },
+    {
+      "name": "setting-row",
+      "title": "SettingRow",
+      "description": "Two-column immediate binary setting with descriptive copy and an accessible switch.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/setting-row",
+        "source": "src/wc/components/SettingRow/SettingRow.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Two-column immediate binary setting with descriptive copy and an accessible switch.",
+          "useWhen": [
+            "A settings list pairs a setting name and explanation with one immediate on/off control."
+          ],
+          "avoidWhen": [
+            "The value needs a text input, multiple choices, or an explicit Save workflow."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-card-setting",
+            "component:ds-switch",
+            "component:ds-text"
+          ],
+          "accessibility": [
+            "The visible label names the switch and the optional description supplies its accessible description.",
+            "Switch owns focus, keyboard activation, checked state, and disabled semantics. The row adds no second tab stop.",
+            "For a settings list, the owner supplies list semantics and marks each row as a list item."
+          ],
+          "states": [
+            "The application accepts or rejects change requests by updating the controlled checked value and owns persistence and errors.",
+            "Name the enabled setting consistently; the label must not change when the switch is toggled."
+          ],
+          "responsiveBehavior": [
+            "The copy wraps while the switch keeps its natural size in the trailing column, including at narrow widths."
+          ],
+          "references": [
+            {
+              "label": "Usage states",
+              "path": "src/wc/components/SettingRow/SettingRow.stories.ts"
+            }
+          ],
+          "styling": {
+            "rationale": "The row owns copy/control spacing; its parent owns the section surface and width.",
+            "protected": [
+              {
+                "properties": [
+                  "padding",
+                  "gap"
+                ],
+                "reason": "Preserve the shared settings-row spacing recipe.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
+        },
+        "props": {
+          "checked": {
+            "type": "boolean",
+            "required": false
+          },
+          "description": {
+            "type": "string",
+            "required": false
+          },
+          "disabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": true
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "boolean"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-setting-row",
+          "react": "DsSettingRow",
+          "vue": "DsSettingRow",
+          "angular": "DsSettingRow"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "switch",
+        "text"
       ]
     },
     {
@@ -13669,14 +14026,15 @@
             "Assign a two-number array through the JavaScript value property to create a range; values are ordered, clamped, stepped, and prevented from crossing.",
             "minStepsBetweenValues reserves a minimum stepped distance between range thumbs.",
             "The initial normalized value is the native form-reset baseline and range values submit as repeated entries under the same name.",
-            "Focused, filled, dirty, touched, dragging, valid, disabled, read-only, and orientation data hooks expose interaction state without changing the value contract."
+            "Focused, filled, dirty, touched, dragging, valid, disabled, read-only, and orientation data hooks expose interaction state without changing the value contract.",
+            "Explicit ticks define the only selectable snap points and may carry labels. Marks sit below a horizontal track, or beside a vertical track, with labels beyond the marks. Horizontal labels center on their marks and shift inward only when they reach the control edges. Without ticks, step=\"any\" permits smooth adjustment; ordinary stepped behavior remains available. Arrow keys traverse adjacent ticks and Home/End reach the available extremes."
           ],
           "responsiveBehavior": [
             "The visible label uses the same primary emphasized text-body-small recipe as Field at every density; the value uses the same primary metric without emphasis.",
             "Horizontal Slider fills the width supplied by its parent; the parent chooses an appropriate readable track length.",
             "Vertical Slider owns a token-based default length that may be overridden with --ds-slider-vertical-length in layout-specific compositions.",
             "Use md in ordinary forms and sm or xs only when the surrounding control density uses the same recipe.",
-            "Track thickness scales with density: 8px at md, 6px at sm, and 4px at xs. The unfilled track is transparent with a tertiary-foreground inset outline, the filled range is brand, and the square thumb uses a 2px radius with a 1.5px brand inset ring.",
+            "Track thickness scales with density. The unfilled track has a neutral border, the filled range uses brand color, and the thumb uses the primary surface with subtle elevation.",
             "Horizontal value direction is left-to-right; the design system does not author RTL-specific component behavior."
           ],
           "frameworkCaveats": {
@@ -13688,7 +14046,10 @@
               "Use DsSlider with a number or two-number value array and handle onDsChange and onDsCommit custom events."
             ],
             "angular": [
-              "Use DsSlider with property binding for range arrays; the generated number value accessor is appropriate only for a single numeric value."
+              "Use DsSlider with SelectValueAccessor for Angular Forms; it preserves either a number or a two-number array."
+            ],
+            "vue": [
+              "Use v-model for a number or a two-number array. Assign ticks through property binding."
             ]
           },
           "references": [
@@ -13829,11 +14190,15 @@
             "required": false
           },
           "step": {
-            "type": "number",
+            "type": "number | 'any'",
             "required": false
           },
           "thumbAlignment": {
             "type": "SliderThumbAlignment",
+            "required": false
+          },
+          "ticks": {
+            "type": "SliderTick[]",
             "required": false
           },
           "value": {
@@ -14480,7 +14845,7 @@
             "pattern:menu-trigger"
           ],
           "accessibility": [
-            "The rendered structure uses a native table, caption, column headers, row groups, and data cells; keep the caption non-empty. The native caption remains visually hidden as the table's accessible name. When caption visibility is enabled, a 48px header bar renders as component chrome outside the data scrollport. It defaults to a presentational caption title that does not duplicate the accessible name. Application-owned labeled controls supplied through the single named header slot replace that fallback and share one horizontal caption overflow row with table-owned actions inside the component-owned 8px inset. Table caption buttons keep pressed interaction paint without physically scaling. When columnCustomizer is enabled, the table adds a trailing Customize control named Customize table. Its label uses regular weight and its resting foreground remains neutral when hidden or reordered columns differ from the catalog default. The control is icon-label at typical widths and the icon-only Table menu button below 900px, where a tooltip preserves the Customize label. The always-icon-only table-variant control also exposes its label through a tooltip. Otherwise the header slot receives the complete content width.",
+            "The rendered structure uses a native table, caption, column headers, row groups, and data cells; keep the caption non-empty. The native caption remains visually hidden as the table's accessible name. When caption visibility is enabled, a 48px header bar renders as component chrome outside the data scrollport. It defaults to a presentational caption title that does not duplicate the accessible name. Application-owned labeled controls supplied through the single named header slot replace that fallback and share one horizontal caption overflow row with table-owned actions inside the component-owned 8px inset. Table caption buttons keep pressed interaction paint without physically scaling. When columnCustomizer is enabled, the table adds a trailing Customize control named Customize table. Its label uses regular weight and its resting foreground remains neutral when hidden or reordered columns differ from the catalog default. The control is icon-label at typical widths and the icon-only Customize menu button below 900px, where a tooltip preserves the Customize label. The always-icon-only table-variant control also exposes its label through a tooltip. Otherwise the header slot receives the complete content width.",
             "The data-mode switcher is the shared Menu of the table's supported infinite, pagination, and virtual modes. It uses an Ellipses trigger. The switcher is the final caption-bar action; when the column customizer is also present, a decorative vertical divider separates the two controls. dataMode remains controlled, and the application responds to change intent by supplying the matching records, pagination state, loading behavior, and query consequences. Escape, dismissal, and selection return focus to the trigger.",
             "The column customizer is the shared Menu of switch rows, not a table-owned dialog. Data columns can be shown, hidden, and reordered. Action columns and the selection checkbox never appear in the menu. The last remaining visible data column cannot be hidden, but it stays focusable so it can still be reordered. Escape and outside click restore focus to the trigger. Persistence stays in the application.",
             "Sorting controls remain buttons inside column headers and expose the table's one controlled member-row sort through aria-sort. ds-data-sort in the toolbar trailing cluster is the matching menu of Data and Order sections; it emits the same dsSortChange shape so header clicks and menu choices stay in sync. Grouping never adds a second sort indicator or header control; ds-data-group controls the grouping data point and ascending or descending group-section order while the application supplies the resulting groups. Optional column help underlines the header label with the shared dotted decoration and shows ds-tooltip from that label; it does not add a second header control or replace the column name.",
@@ -14512,7 +14877,7 @@
           ],
           "responsiveBehavior": [
             "The table keeps native semantics at narrow widths and scrolls horizontally instead of transforming into cards.",
-            "Inside the named ds-table container, caption Search retains its standard maximum width and flexes smaller only when the complete row needs space. Filter, Group, and Sort controls that opt into collapseLabel become icon-only below 900px by omitting their labels and chevrons. Active filtering or grouping promotes the visible icon to primary. Sort keeps resting secondary chrome because its selection lives in the menu and headers. Customize switches to the icon-only Table menu button below 900px and keeps its neutral resting foreground regardless of the controlled column configuration. The caption, frame, and footer remain within the table host at every width. The complete caption row scrolls together only when those compact controls no longer fit, while data columns scroll inside the viewport; table-owned trailing actions never stay pinned over the scrolling toolbar.",
+            "Inside the named ds-table container, caption Search retains its standard maximum width and flexes smaller only when the complete row needs space. Filter, Group, and Sort controls that opt into collapseLabel become icon-only below 900px by omitting their labels and chevrons. Active filtering or grouping promotes the visible icon to primary. Sort keeps resting secondary chrome because its selection lives in the menu and headers. Customize switches to the icon-only Customize menu button below 900px and keeps its neutral resting foreground regardless of the controlled column configuration. The caption, frame, and footer remain within the table host at every width. The complete caption row scrolls together only when those compact controls no longer fit, while data columns scroll inside the viewport; table-owned trailing actions never stay pinned over the scrolling toolbar.",
             "stickyHeader follows the active vertical scroll owner: a maxHeight, height, or fitViewport table keeps its native header and group sections inside one bounded table scrollport, while a document-flow table retains a semantic native header and renders a sticky control header whose columns follow the body's native inline scroll timeline. Consumers set --ds-table-sticky-header-offset when page chrome occupies an unbounded document scrollport edge. When the 48px table header bar is visible, it sticks at that external offset and the column header stacks immediately below it.",
             "fitViewport uses viewportInsetBlockStart and viewportInsetBlockEnd to describe compact surrounding chrome and page gutters relative to the nearest vertical scroll owner. Before the table reaches that compact position, its host reserves the eventual height while the visible composition grows and vertical input remains owned by the outer page. Once settled, the internal table viewport becomes the vertical scroll owner. Bounded grouped tables use browser-native sticky section rows inside real block row-group boundaries, so scroll and resize do not run component JavaScript or trigger reactive section swaps. Document-flow tables retain the synchronized visual lane required by their separate horizontal scrollport.",
             "Without maxHeight the table grows the document and automatic lazy loading observes the browser viewport. Horizontal scrolling chains vertical wheel and trackpad movement to the page instead of trapping it.",
@@ -15455,7 +15820,8 @@
             "The default four visible rows can be changed with rows; rows is clamped to at least one.",
             "Vertical resizing is enabled by default and can be disabled when the surrounding layout owns the field height.",
             "Size changes typography and inset spacing without changing the authored row count.",
-            "Border, focus, error, placeholder, inactive, hover, and pressed treatments follow the same shared recipes as Input. When hasBorder is false, supporting error copy insets to the text origin rather than the resting border box."
+            "Border, focus, error, placeholder, inactive, hover, and pressed treatments follow the same shared recipes as Input. When hasBorder is false, supporting error copy insets to the text origin rather than the resting border box.",
+            "Length constraints validate typed and programmatic text. Excess content is retained with an error by default; restrict mode enforces the maximum during editing. A character count appears below the field, right of supporting text or left when no supporting text exists."
           ],
           "responsiveBehavior": [
             "Textarea fills its parent by default and follows the width supplied by Field or the form layout.",
@@ -15583,6 +15949,18 @@
             "type": "boolean",
             "required": false
           },
+          "lengthBehavior": {
+            "type": "'error' | 'restrict'",
+            "required": false
+          },
+          "maxLength": {
+            "type": "number | undefined",
+            "required": false
+          },
+          "minLength": {
+            "type": "number | undefined",
+            "required": false
+          },
           "name": {
             "type": "string | undefined",
             "required": false
@@ -15609,6 +15987,10 @@
           },
           "rows": {
             "type": "number",
+            "required": false
+          },
+          "showCharacterCount": {
+            "type": "boolean",
             "required": false
           },
           "size": {
@@ -15653,7 +16035,7 @@
     {
       "name": "time-picker",
       "title": "TimePicker",
-      "description": "Bounded 12-hour clock lists for choosing hour, minute, and AM/PM, reused by form time fields.",
+      "description": "Bounded 12- or 24-hour clock lists for choosing hour, minute, and AM/PM, reused by form time fields.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -15664,7 +16046,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Bounded 12-hour clock lists for choosing hour, minute, and AM/PM, reused by form time fields.",
+          "summary": "Bounded 12- or 24-hour clock lists for choosing hour, minute, and AM/PM, reused by form time fields.",
           "useWhen": [
             "A user picks a clock time from hour, minute, and AM/PM lists.",
             "A time field needs 32px clock tiles that match calendar day geometry and the shared choice-list selected treatment."
@@ -15692,13 +16074,14 @@
           ],
           "accessibility": [
             "Hour, minute, and AM/PM are separate labelled listboxes without visible column headings. Each list keeps one tab stop on the selected option.",
-            "Arrow keys move to the next or previous option and stop at the first and last values; they do not wrap. Home and End jump to those ends. Left and Right move between columns and stop at Hour and AM/PM.",
+            "Arrow keys move to the next or previous option and stop at the first and last values; they do not wrap. Home and End jump to those ends. Left and Right move between columns and stop at the first and last visible columns.",
             "Inactive pickers disable every option. Optional min and max times disable combinations outside that inclusive bound."
           ],
           "states": [
             "Selected hour, minute, and period tiles use the shared interaction-fill selected wash and primary text. Resting tiles use secondary text on a transparent 32px square.",
-            "Lists are finite. Hour runs 1 through 12, minutes follow the step, and AM/PM has two values. Scrolling and keyboard movement stop at those ends instead of looping.",
-            "An empty value highlights 12:00 AM so the lists have a resting selection without inventing a second empty state."
+            "Lists are finite. Hours follow the selected clock format, minutes follow the step, and the twelve-hour period list has two values. Scrolling and keyboard movement stop at those ends instead of looping.",
+            "An empty value highlights 12:00 AM so the lists have a resting selection without inventing a second empty state.",
+            "The default twelve-hour presentation includes AM/PM. Twenty-four-hour presentation uses hours 00–23 and omits the period column; both keep HH:MM form values and the same time bounds."
           ],
           "responsiveBehavior": [
             "The three columns fill the width supplied by the owner. Tile size, 4px gaps, and the seven-tile list viewport are owned here; the owner supplies the popup or pane width."
@@ -15734,6 +16117,10 @@
         "props": {
           "autoFocus": {
             "type": "boolean",
+            "required": false
+          },
+          "hourFormat": {
+            "type": "'12' | '24'",
             "required": false
           },
           "isInactive": {

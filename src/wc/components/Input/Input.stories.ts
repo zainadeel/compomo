@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-input.js';
+import '../../../../dist/components/ds-field.js';
 import '../../../../dist/components/ds-select.js';
 import '../../../../dist/components/ds-divider.js';
 
@@ -9,6 +10,10 @@ const meta: Meta = {
   tags: ['autodocs'],
   argTypes: {
     value: { control: 'text' },
+    minLength: { control: 'number' },
+    maxLength: { control: 'number' },
+    lengthBehavior: { control: 'select', options: ['error', 'restrict'] },
+    showCharacterCount: { control: 'boolean' },
     placeholder: { control: 'text' },
     type: {
       control: 'select',
@@ -17,6 +22,7 @@ const meta: Meta = {
     min: { control: 'number' },
     max: { control: 'number' },
     step: { control: 'number' },
+    showStepper: { control: 'boolean' },
     textAlign: { control: 'select', options: ['start', 'end'] },
     size: { control: 'select', options: ['lg', 'md', 'sm', 'xs'] },
     width: { control: 'select', options: ['fill', 'hug'] },
@@ -32,6 +38,7 @@ const meta: Meta = {
     value: '',
     placeholder: 'Placeholder text',
     type: 'text',
+    showStepper: true,
     size: 'md',
     textAlign: 'start',
     width: 'fill',
@@ -51,12 +58,17 @@ export const Playground: Story = {
   render: args => html`
     <div style="width:320px;">
       <ds-input
+        .minLength=${args['minLength']}
+        .maxLength=${args['maxLength']}
+        length-behavior=${args['lengthBehavior'] ?? 'error'}
+        .showCharacterCount=${args['showCharacterCount'] ?? true}
         value=${args['value'] ?? ''}
         placeholder=${args['placeholder'] ?? ''}
         type=${args['type'] ?? 'text'}
         .min=${args['min']}
         .max=${args['max']}
         .step=${args['step']}
+        .showStepper=${args['showStepper']}
         text-align=${args['textAlign'] ?? 'start'}
         size=${args['size'] ?? 'md'}
         width=${args['width'] ?? 'fill'}
@@ -200,7 +212,9 @@ export const SearchClearAlignment: Story = {
 
 export const NumberSteppers: Story = {
   name: 'Number steppers',
-  render: () => html`
+  parameters: { controls: { include: ['showStepper'] } },
+  args: { showStepper: true },
+  render: args => html`
     <div
       style="display:grid;grid-template-columns:max-content var(--dimension-panel-width-xs);align-items:center;gap:var(--dimension-space-100) var(--dimension-space-200);"
     >
@@ -212,6 +226,7 @@ export const NumberSteppers: Story = {
         max="4000"
         step="100"
         text-align="start"
+        .showStepper=${args['showStepper']}
         aria-label="Start-aligned number"
       ></ds-input>
       <ds-text variant="text-body-small" color="secondary">End aligned</ds-text>
@@ -222,7 +237,18 @@ export const NumberSteppers: Story = {
         max="4000"
         step="100"
         text-align="end"
+        .showStepper=${args['showStepper']}
         aria-label="End-aligned number"
+      ></ds-input>
+      <ds-text variant="text-body-small" color="secondary">Without buttons</ds-text>
+      <ds-input
+        type="number"
+        value="1200"
+        min="0"
+        max="4000"
+        step="100"
+        .showStepper=${false}
+        aria-label="Number without stepper buttons"
       ></ds-input>
       <ds-text variant="text-body-small" color="secondary">Large</ds-text>
       <ds-input
@@ -273,6 +299,8 @@ export const NumberSteppers: Story = {
         read-only
         aria-label="Read-only number"
       ></ds-input>
+      <ds-text variant="text-body-small" color="secondary">Inactive</ds-text>
+      <ds-input type="number" value="12" is-inactive aria-label="Inactive number"></ds-input>
     </div>
   `,
 };
@@ -364,4 +392,79 @@ export const PrefixAndSuffixSelects: Story = {
       </ds-input>
     </div>
   `,
+};
+
+export const LengthConstraints: Story = {
+  render: () => html`
+    <div style="width:360px;display:grid;gap:var(--dimension-space-300)">
+      <ds-field label="With guidance" description="Use between 5 and 25 characters.">
+        <ds-input min-length="5" max-length="25" value="A short note"></ds-input>
+      </ds-field>
+      <ds-field label="Counter without guidance">
+        <ds-input max-length="25" value="Exactly twenty-five chars"></ds-input>
+      </ds-field>
+      <ds-field label="Preserve extra text" description="Extra text is kept so you can edit it.">
+        <ds-input max-length="25" value="This text is longer than the allowed limit."></ds-input>
+      </ds-field>
+      <ds-field label="Hard limit" description="Typing and paste stop at 25 characters.">
+        <ds-input max-length="25" length-behavior="restrict"></ds-input>
+      </ds-field>
+    </div>
+  `,
+};
+
+export const PatternValidation: Story = {
+  render: () =>
+    html`<div style="width:320px">
+      <ds-field label="Reference" description="Three capital letters, a dash, and four digits."
+        ><ds-input
+          pattern="[A-Z]{3}-[0-9]{4}"
+          pattern-message="Use a reference such as ABC-1234."
+          placeholder="ABC-1234"
+          required
+        ></ds-input
+      ></ds-field>
+    </div>`,
+};
+
+export const Suggestions: Story = {
+  render: () =>
+    html`<div style="width:360px">
+      <ds-field label="City" description="Choose a suggestion or enter any city."
+        ><ds-input
+          type="search"
+          .suggestions=${['Vancouver', 'Victoria', 'Seattle', 'Portland', 'San Francisco']}
+          placeholder="Start typing a city"
+        ></ds-input
+      ></ds-field>
+    </div>`,
+};
+export const Tokens: Story = {
+  render: () =>
+    html`<div style="width:360px;display:grid;gap:var(--dimension-space-300)">
+      <ds-field label="Empty token input"
+        ><ds-input tokenized placeholder="Add keyword"></ds-input
+      ></ds-field>
+      <ds-field label="Keywords" description="Press Enter or comma to add a keyword."
+        ><ds-input tokenized .tokens=${['Fleet', 'Safety']} placeholder="Add keyword"></ds-input
+      ></ds-field>
+      <ds-field label="Tags with suggestions"
+        ><ds-input
+          tokenized
+          .suggestions=${['Operations', 'Safety', 'Maintenance']}
+          .tokens=${['Operations']}
+        ></ds-input
+      ></ds-field>
+      <ds-field label="Restricted token lengths" description="Up to 12 characters per token."
+        ><ds-input
+          tokenized
+          max-length="12"
+          .tokens=${['North', 'An overlong token']}
+          placeholder="Add region"
+        ></ds-input
+      ></ds-field>
+      <ds-field label="Read-only"
+        ><ds-input tokenized read-only .tokens=${['Fleet', 'Safety']}></ds-input
+      ></ds-field>
+    </div>`,
 };

@@ -31,13 +31,34 @@ export const config: Config = {
       directivesArrayFile: 'src/.generated/angular/index.ts',
       valueAccessorConfigs: [
         {
-          elementSelectors: ['ds-input', 'ds-input-date', 'ds-input-time', 'ds-textarea'],
+          elementSelectors: [
+            'ds-input:not([type=number]):not([tokenized])',
+            'ds-input-date',
+            'ds-input-time',
+            'ds-textarea',
+          ],
           event: 'dsChange',
           targetAttr: 'value',
           type: 'text',
         },
-        { elementSelectors: 'ds-select', event: 'dsChange', targetAttr: 'value', type: 'select' },
-        { elementSelectors: 'ds-radio', event: 'dsChange', targetAttr: 'value', type: 'radio' },
+        {
+          elementSelectors: 'ds-input[type=number]:not([tokenized])',
+          event: 'dsChange',
+          targetAttr: 'value',
+          type: 'number',
+        },
+        {
+          elementSelectors: ['ds-select', 'ds-slider'],
+          event: 'dsChange',
+          targetAttr: 'value',
+          type: 'select',
+        },
+        {
+          elementSelectors: ['ds-radio', 'ds-radio-tile'],
+          event: 'dsChange',
+          targetAttr: 'value',
+          type: 'radio',
+        },
         {
           elementSelectors: ['ds-checkbox', 'ds-switch'],
           event: 'dsChange',
@@ -65,8 +86,18 @@ export const config: Config = {
           targetAttr: 'value',
           eventAttr: 'detail',
         },
-        { elements: ['ds-select'], event: 'dsChange', targetAttr: 'value', eventAttr: 'detail' },
-        { elements: ['ds-radio'], event: 'dsChange', targetAttr: 'value', eventAttr: 'detail' },
+        {
+          elements: ['ds-select', 'ds-slider'],
+          event: 'dsChange',
+          targetAttr: 'value',
+          eventAttr: 'detail',
+        },
+        {
+          elements: ['ds-radio', 'ds-radio-tile'],
+          event: 'dsChange',
+          targetAttr: 'value',
+          eventAttr: 'detail',
+        },
         {
           elements: ['ds-checkbox', 'ds-switch'],
           event: 'dsChange',

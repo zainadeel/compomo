@@ -1,0 +1,42 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-setting-row",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-setting-row",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Two-column immediate binary setting with descriptive copy and an accessible switch.",
+  "useWhen": [
+    "A settings list pairs a setting name and explanation with one immediate on/off control."
+  ],
+  "avoidWhen": ["The value needs a text input, multiple choices, or an explicit Save workflow."],
+  "commonlyComposedWith": ["component:ds-card-setting", "component:ds-switch", "component:ds-text"],
+  "accessibility": [
+    "The visible label names the switch and the optional description supplies its accessible description.",
+    "Switch owns focus, keyboard activation, checked state, and disabled semantics. The row adds no second tab stop.",
+    "For a settings list, the owner supplies list semantics and marks each row as a list item."
+  ],
+  "states": [
+    "The application accepts or rejects change requests by updating the controlled checked value and owns persistence and errors.",
+    "Name the enabled setting consistently; the label must not change when the switch is toggled."
+  ],
+  "responsiveBehavior": [
+    "The copy wraps while the switch keeps its natural size in the trailing column, including at narrow widths."
+  ],
+  "references": [
+    { "label": "Usage states", "path": "src/wc/components/SettingRow/SettingRow.stories.ts" }
+  ],
+  "styling": {
+    "rationale": "The row owns copy/control spacing; its parent owns the section surface and width.",
+    "protected": [
+      {
+        "properties": ["padding", "gap"],
+        "reason": "Preserve the shared settings-row spacing recipe.",
+        "props": []
+      }
+    ],
+    "customProperties": []
+  }
+}

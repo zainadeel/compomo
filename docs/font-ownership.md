@@ -9,11 +9,11 @@ Status: **split ownership with explicit consumer loading selected**
 The typography contract is split across the design-system trilogy and its
 consumers:
 
-| Layer | Owns | Does not own |
-| --- | --- | --- |
-| TokoMo | Semantic font-family tokens and their fallback stacks | Font files, `@font-face`, preloads, or network requests |
-| CompoMo | Interface-versus-code intent in component and prose recipes | Font files or automatic font loading |
-| Application | Font source, subsets, `@font-face`, preload policy, caching, CSP, and license distribution | Component-local font overrides |
+| Layer       | Owns                                                                                       | Does not own                                            |
+| ----------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------- |
+| TokoMo      | Semantic font-family tokens and their fallback stacks                                      | Font files, `@font-face`, preloads, or network requests |
+| CompoMo     | Interface-versus-code intent in component and prose recipes                                | Font files or automatic font loading                    |
+| Application | Font source, subsets, `@font-face`, preload policy, caching, CSP, and license distribution | Component-local font overrides                          |
 
 The canonical interface family is `--typography-font-family-ui`. Code-oriented
 surfaces consume `--typography-font-family-code`. CompoMo currently supplies
@@ -39,10 +39,13 @@ with a product or accessibility reason to disable them can set:
 }
 ```
 
-The current code recipes use regular weight only, so consumers need Fira Code
-400. Inter continues to require 400, 500, 600, and 700 for the interface text
+The current code recipes use regular weight only, so consumers need Fira Code 400. Inter continues to require 400, 500, 600, and 700 for the interface text
 recipes. Adding syntax emphasis or editable-code behavior must establish a
 concrete need before another Fira Code weight is shipped.
+
+Consumers using Text's `italic` option load a real Inter italic face with the
+same weight range. Italic and emphasis compose independently; font loading
+must support their combination without substituting an upright font file.
 
 ## Application loading contract
 
@@ -62,8 +65,8 @@ Stencil CSS.
 
 :root {
   --typography-font-family-code:
-    'Fira Code', ui-monospace, 'SFMono-Regular', 'Cascadia Code', 'Roboto Mono',
-    Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+    'Fira Code', ui-monospace, 'SFMono-Regular', 'Cascadia Code', 'Roboto Mono', Menlo, Monaco,
+    Consolas, 'Liberation Mono', monospace;
 }
 ```
 
@@ -89,14 +92,14 @@ Stencil CSS.
 
 Storybook acts as a consumer instead of receiving a private component
 exception. Its preview declares the self-hosted `@fontsource-variable/inter`
-Latin variable face and `@fontsource/fira-code` Latin 400 face once, then the
+Latin variable upright and italic faces and `@fontsource/fira-code` Latin 400 face once, then the
 normal semantic tokens select the fonts. This makes the setup visible in
 application-root code and keeps component bundles honest when either consumer
 import is removed.
 
-The selected Inter Latin variable WOFF2 asset is **48,256 bytes**, and the Fira
-Code Latin 400 WOFF2 asset is **23,312 bytes**. The Storybook production build
-emits one copy of each font asset and no WOFF duplicates. Both are
+The selected Inter Latin variable WOFF2 assets are **48,256 bytes** upright and
+**51,832 bytes** italic, and the Fira Code Latin 400 WOFF2 asset is **23,312 bytes**.
+The Storybook production build emits one copy of each font asset and no WOFF duplicates. Both font packages are
 development-only dependencies and `@ds-mo/ui` publishes only `dist/`, so the
 npm package and application initial network payload gain **0 font bytes**. An
 application that adopts the same subsets incurs each response only when its

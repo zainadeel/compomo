@@ -1,0 +1,76 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-radio-tile",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-radio-tile",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "A form-associated group of fully clickable radio tiles with labels and optional descriptions.",
+  "useWhen": [
+    "A small set of mutually exclusive choices benefits from descriptive cards and large click targets."
+  ],
+  "avoidWhen": [
+    "The choices are brief and compact; use Radio.",
+    "More than one value may be chosen."
+  ],
+  "alternatives": [
+    {
+      "when": "A user may select zero or multiple independent choices.",
+      "component": "component:ds-checkbox",
+      "reason": "Checkbox communicates independent selection rather than one-of-many choice."
+    },
+    {
+      "when": "A binary setting applies immediately.",
+      "component": "component:ds-switch",
+      "reason": "Switch communicates an immediately applied on/off setting."
+    },
+    {
+      "when": "The option list is long or the available space is constrained.",
+      "component": "component:ds-select",
+      "reason": "Select keeps a larger one-of-many choice set compact."
+    }
+  ],
+  "commonlyComposedWith": ["component:ds-field", "component:ds-text"],
+  "accessibility": [
+    "Native radio inputs own keyboard selection, focus, and checked semantics; the complete tile activates its input.",
+    "Label the group with Field or an accessible name. Descriptions name each option separately."
+  ],
+  "states": [
+    "Selection is shown by the radio indicator while the tile keeps its neutral border. Error retains the negative border, and keyboard focus keeps the focus-token outline. Inactive options cannot be selected.",
+    "The component owns form values, required validation, reset, and disabled-fieldset behavior."
+  ],
+  "responsiveBehavior": [
+    "Horizontal tiles wrap to available space; use a vertical group when descriptions need more room."
+  ],
+  "frameworkCaveats": {
+    "angular": ["Use the generated radio value accessor with the standalone adapter."],
+    "vue": ["Bind value with v-model."]
+  },
+  "references": [
+    {
+      "label": "Storybook review",
+      "path": "src/wc/components/RadioTile/RadioTile.stories.ts"
+    }
+  ],
+  "styling": {
+    "rationale": "Tile anatomy and radio treatment belong to the component; the owner controls group width.",
+    "protected": [
+      {
+        "properties": [
+          "padding",
+          "gap",
+          "border-radius",
+          "background",
+          "border",
+          "box-shadow",
+          "color"
+        ],
+        "reason": "Use the supported group direction and state instead of replacing tile internals.",
+        "props": ["direction"]
+      }
+    ],
+    "customProperties": []
+  }
+}

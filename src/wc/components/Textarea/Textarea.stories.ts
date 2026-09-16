@@ -8,6 +8,10 @@ const meta: Meta = {
   tags: ['autodocs'],
   argTypes: {
     value: { control: 'text' },
+    minLength: { control: 'number' },
+    maxLength: { control: 'number' },
+    lengthBehavior: { control: 'select', options: ['error', 'restrict'] },
+    showCharacterCount: { control: 'boolean' },
     placeholder: { control: 'text' },
     rows: { control: { type: 'number', min: 1, step: 1 } },
     size: { control: 'select', options: ['lg', 'md', 'sm', 'xs'] },
@@ -47,6 +51,10 @@ export const Playground: Story = {
   render: args => html`
     <div style="width:360px;">
       <ds-textarea
+        .minLength=${args['minLength']}
+        .maxLength=${args['maxLength']}
+        length-behavior=${args['lengthBehavior'] ?? 'error'}
+        .showCharacterCount=${args['showCharacterCount'] ?? true}
         .value=${args['value'] ?? ''}
         placeholder=${args['placeholder'] ?? ''}
         .rows=${args['rows'] ?? 4}
@@ -137,6 +145,28 @@ export const ResizeBehavior: Story = {
       </ds-field>
       <ds-field label="Fixed height" description="Use when the surrounding layout owns the height.">
         <ds-textarea rows="3" resize="none"></ds-textarea>
+      </ds-field>
+    </div>
+  `,
+};
+
+export const LengthConstraints: Story = {
+  render: () => html`
+    <div style="width:360px;display:grid;gap:var(--dimension-space-300)">
+      <ds-field label="With guidance" description="Use between 5 and 25 characters.">
+        <ds-textarea min-length="5" max-length="25" value="A short note"></ds-textarea>
+      </ds-field>
+      <ds-field label="Counter without guidance">
+        <ds-textarea max-length="25" value="Exactly twenty-five chars"></ds-textarea>
+      </ds-field>
+      <ds-field label="Preserve extra text" description="Extra text is kept so you can edit it.">
+        <ds-textarea
+          max-length="25"
+          value="This text is longer than the allowed limit."
+        ></ds-textarea>
+      </ds-field>
+      <ds-field label="Hard limit" description="Typing and paste stop at 25 characters.">
+        <ds-textarea max-length="25" length-behavior="restrict"></ds-textarea>
       </ds-field>
     </div>
   `,

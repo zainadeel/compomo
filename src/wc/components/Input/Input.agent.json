@@ -7,7 +7,7 @@
   "tag": "ds-input",
   "audience": "general",
   "status": "stable",
-  "summary": "Form-associated single-line text and number field for primary and secondary application backgrounds, with native input behavior, four control densities, optional leading and trailing content, search clearing, and validation.",
+  "summary": "Form-associated text and number input with constraints, optional free-text suggestions, token entry, and character counts.",
   "useWhen": [
     "A user must enter or edit one line of text, an email address, telephone number, URL, search query, password, or exact number.",
     "The value must participate in native, Angular, React, or Vue form state.",
@@ -58,7 +58,7 @@
     "Error text is associated with the native input and announced as an alert when the invalid state is rendered.",
     "Read-only fields remain focusable and submittable while preventing edits; inactive or disabled fields leave the tab order and are omitted from form submission.",
     "Password fields keep a named show-or-hide action beside the value. Revealing the value changes only the native input type; the submitted string does not change. The action restores focus to the field after activation.",
-    "Number stepper actions are pointer affordances hidden from the accessibility tree; the native spinbutton remains the single keyboard and assistive-technology control.",
+    "Optional number stepper actions are named buttons available to keyboard and assistive-technology users. The native spinbutton also retains arrow-key stepping; activating either button returns focus to the field.",
     "Prefix and suffix content must not carry information that is otherwise absent from the field's visible label, value, or description.",
     "A nested prefix or suffix Select is a separate control from the editable value and must have its own accessible name."
   ],
@@ -73,10 +73,13 @@
     "Search fields used with owned result sets forward aria-controls and aria-activedescendant to the native field so keyboard focus can remain in the query while assistive technology tracks the active result.",
     "The prefix and suffix slots host compact leading or trailing units such as a currency code, or a nested same-size inset Select. Text adornments use the control's balanced text inset. Nested Selects match the field density, set isInset, hasBorder false, width hug, and indicator up-down, keep a selected value, set allowClear false so the menu has no clear footer, set neutralTrigger so the selected unit stays on the secondary adornment foreground, and do not carry the field's error message. Configurable prefix and suffix controls are separated from the editable value by a vertical divider at the density icon height. The nested inset keeps its 2px remainder toward the line; the editable value keeps the same inline padding from the line as a non-prefixed field keeps from its border. The optional leading icon is decorative and does not replace the field label. Password, search-clear, and date or time actions stay type-owned trailing buttons rather than suffix-slot content.",
     "Use autoComplete, inputMode, and enterKeyHint to provide browser and virtual-keyboard hints without changing the value's semantic type.",
-    "Number fields preserve native spinbutton semantics, keyboard stepping, and min/max constraint behavior while dsChange continues to report the native string value. Two borderless inset chevron actions split the available inner height, disable independently at their numeric bound, and restore focus to the spinbutton after pointer activation.",
+    "Number fields preserve native spinbutton semantics, keyboard stepping, and min/max constraint behavior while dsChange continues to report the native string value. Optional borderless inset Plus and Minus buttons share the field density, appear in that order, disable independently at their numeric bound, and restore focus to the spinbutton after activation. Hide them when direct numeric entry is preferable; browser spinner chrome stays hidden.",
     "textAlign positions the editable value while the numeric stepper stays on the opposite inline edge, keeping the actions clear of the number: start-aligned values use an inline-end stepper and end-aligned values use an inline-start stepper.",
     "The host exposes focused, filled, dirty, touched, invalid, disabled, read-only, and required data attributes for Field integration and diagnostics.",
-    "Use Input only on primary or secondary application backgrounds. It intentionally does not expose alternate surface contexts."
+    "Use Input only on primary or secondary application backgrounds. It intentionally does not expose alternate surface contexts.",
+    "Length constraints validate both typed and programmatic values. By default excess text is retained and shown as an error; restrict mode uses a hard input limit. Counters show the draft length and maximum below the field, beside helper or error text when present.",
+    "Suggestions assist free text rather than constrain selection. Arrow keys highlight suggestions, Enter accepts one, and Escape dismisses the popup without changing the value.",
+    "Tokenized text and search fields use removable double-inset chips and commit trimmed, unique values with Enter or comma, accept delimited paste, and remove the last token with Backspace on an empty draft. Committed tokens submit as repeated entries; value remains the draft and must be committed before submission. Length and pattern constraints apply per token."
   ],
   "responsiveBehavior": [
     "Form fields normally fill their parent; use hug width only in a compact toolbar or filter layout with an explicit width constraint.",
@@ -86,13 +89,21 @@
   "frameworkCaveats": {
     "customElements": [
       "Listen for dsChange for user edits and dsClear for the search clear action.",
-      "Use the form attribute on the host when associating an input rendered outside its owning form."
+      "Use the form attribute on the host when associating an input rendered outside its owning form.",
+      "Bind committed token arrays through tokens and dsTokensChange, separately from the draft value. Assign suggestions as a JavaScript array."
     ],
     "react": [
-      "Use DsInput, bind value for controlled application state, and handle onDsChange and onDsClear."
+      "Use DsInput, bind value for controlled application state, and handle onDsChange and onDsClear.",
+      "Bind committed token arrays through tokens and dsTokensChange, separately from the draft value. Assign suggestions as a JavaScript array."
     ],
-    "vue": ["Use DsInput with v-model for the value, and listen for dsChange and dsClear."],
-    "angular": ["Import DsInput with TextValueAccessor when integrating with Angular Forms."]
+    "vue": [
+      "Use DsInput with v-model for the value, and listen for dsChange and dsClear.",
+      "Bind committed token arrays through tokens and dsTokensChange, separately from the draft value. Assign suggestions as a JavaScript array."
+    ],
+    "angular": [
+      "Use TextValueAccessor for text inputs and NumericValueAccessor for a statically declared type=\"number\" input. Numeric forms receive numbers or null while the component event remains a string.",
+      "For tokenized input bind tokens and dsTokensChange explicitly; value and dsChange represent only the draft. Do not attach a scalar form value accessor to token mode."
+    ]
   },
   "references": [
     {
