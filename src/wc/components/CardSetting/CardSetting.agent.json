@@ -7,17 +7,17 @@
   "tag": "ds-card-setting",
   "audience": "general",
   "status": "stable",
-  "summary": "Persistent settings-section surface with a heading, controlled view/edit chrome, fixed edit-save-cancel actions, and application-owned body content.",
+  "summary": "Persistent settings-section surface with a heading, optional controlled edit chrome, and application-owned body content.",
   "useWhen": [
     "A settings page needs a persistent section that switches between read-only and editable content.",
     "The parent can control one active editing section and owns validation, persistence, cancellation, and body content.",
-    "The section uses the standard Pencil, Save, and Cancel header workflow."
+    "The section uses the standard Pencil, Save, and Cancel header workflow.",
+    "Settings apply immediately through their own controls and share the standard section surface without edit, save, or cancel actions."
   ],
   "avoidWhen": [
     "The surface contains a chart, legend, metric visualization, or other data-visualization composition.",
     "The content is a general-purpose read-only card with no settings edit workflow.",
     "The task must block the rest of the interface or requires confirmation in a modal.",
-    "Several sections must remain editable at the same time.",
     "The header requires custom actions beyond the fixed edit-save-cancel workflow."
   ],
   "alternatives": [
@@ -42,7 +42,8 @@
     "component:ds-input",
     "component:ds-select",
     "component:ds-switch",
-    "component:ds-text"
+    "component:ds-text",
+    "component:ds-setting-row"
   ],
   "accessibility": [
     "Provide a concise heading that identifies the settings section; CardSetting renders it as an h2.",
@@ -59,10 +60,11 @@
     "When another section requests edit, the parent keeps one active section and resolves any dirty current section before switching.",
     "The parent owns read-only versus editable body composition, dirty state, validation, persistence, loading, success, and error consequences.",
     "A save request keeps the section editing while validation or persistence is pending; the parent exits only after success.",
-    "A cancel request does not persist changes; the parent restores its chosen value snapshot and exits editing."
+    "A cancel request does not persist changes; the parent restores its chosen value snapshot and exits editing.",
+    "The immediate variant keeps the resting card surface and omits header actions even if editing is supplied. The application applies and persists each control change independently."
   ],
   "responsiveBehavior": [
-    "Choose sm, md, or lg from the parent layout; each width uses its matching token-based minimum height.",
+    "Choose sm, md, or lg from the parent layout. Editable cards use the matching minimum height; immediate cards fit their content.",
     "The surface never exceeds its parent width, while the parent owns wrapping, columns, stacking, and breakpoint changes.",
     "At narrow widths, keep the fixed header actions visible and let application-owned body layouts collapse before allowing horizontal overflow."
   ],
@@ -105,8 +107,8 @@
       },
       {
         "properties": ["width", "min-height"],
-        "reason": "Card width selects the component geometry; use cardWidth and let the parent constrain available space.",
-        "props": ["cardWidth"]
+        "reason": "Card width selects the component geometry; immediate cards fit their content. Let the parent constrain available space.",
+        "props": ["cardWidth", "variant"]
       }
     ],
     "customProperties": []

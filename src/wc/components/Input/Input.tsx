@@ -80,7 +80,11 @@ export class Input {
   @Prop() max: number | undefined;
   /** Numeric increment used by native stepping and constraint validation. */
   @Prop() step: number | undefined;
-  /** Align the editable value; number steppers follow the same inline edge. */
+  /** Show inset increment/decrement actions for number fields. Native numeric editing remains available when hidden. */
+  @Prop() showStepper: boolean = true;
+  @Prop() incrementLabel: string = 'Increase value';
+  @Prop() decrementLabel: string = 'Decrease value';
+  /** Align the editable value; number steppers sit on the opposite inline edge. */
   @Prop() textAlign: InputTextAlign = 'start';
   /** Native browser autofill hint. */
   @Prop({ attribute: 'autocomplete' }) autoComplete: string | undefined;
@@ -243,36 +247,29 @@ export class Input {
 
     return (
       <span class="input-control__number-stepper">
-        <button
-          type="button"
-          class="input-control__number-step input-control__number-step--increment ds-focus-ring-inset ds-interaction-fill"
-          disabled={incrementDisabled}
-          tabIndex={-1}
-          aria-hidden="true"
-          onClick={() => this.handleNumericStep(1)}
-        >
-          <ds-icon
-            class="input-control__number-step-icon ds-interaction-fill__content"
-            name="ChevronUp"
-            size="xs"
-            color="inherit"
-          />
-        </button>
-        <button
-          type="button"
-          class="input-control__number-step input-control__number-step--decrement ds-focus-ring-inset ds-interaction-fill"
-          disabled={decrementDisabled}
-          tabIndex={-1}
-          aria-hidden="true"
-          onClick={() => this.handleNumericStep(-1)}
-        >
-          <ds-icon
-            class="input-control__number-step-icon ds-interaction-fill__content"
-            name="ChevronDown"
-            size="xs"
-            color="inherit"
-          />
-        </button>
+        <ds-button-unfilled
+          class="input-control__number-step input-control__number-step--increment"
+          variant="icon"
+          size={this.size}
+          icon="Plus"
+          hasBorder={false}
+          isInset
+          isInactive={incrementDisabled}
+          ariaLabel={this.incrementLabel}
+          onDsClick={() => this.handleNumericStep(1)}
+        />
+        <ds-divider orientation="vertical" length="var(--ds-control-icon)" />
+        <ds-button-unfilled
+          class="input-control__number-step input-control__number-step--decrement"
+          variant="icon"
+          size={this.size}
+          icon="Minus"
+          hasBorder={false}
+          isInset
+          isInactive={decrementDisabled}
+          ariaLabel={this.decrementLabel}
+          onDsClick={() => this.handleNumericStep(-1)}
+        />
       </span>
     );
   }
@@ -289,6 +286,7 @@ export class Input {
     const textVariant = CONTROL_TEXT_VARIANT[this.size];
     const iconSize = ICON_SIZE[this.size];
     const numeric = this.type === 'number';
+    const showNumericStepper = numeric && this.showStepper;
     const resolvedAutoComplete = this.autoComplete ?? (this.type === 'search' ? 'off' : undefined);
     const suppressBrowserChrome = this.type === 'search' || this.type === 'password';
 
@@ -319,6 +317,7 @@ export class Input {
           class={{
             'input-control': true,
             'input-control--number': numeric,
+            'input-control--stepper': showNumericStepper,
             'input-control--align-start': this.textAlign === 'start',
             'input-control--align-end': this.textAlign === 'end',
             'ds-control-frame': true,
@@ -330,7 +329,7 @@ export class Input {
             [`ds-control--${this.size}`]: true,
           }}
         >
-          {numeric && this.textAlign === 'end' && this.renderNumericStepper(inactive)}
+          {showNumericStepper && this.textAlign === 'end' && this.renderNumericStepper(inactive)}
           {this.icon && (
             <span
               class="input-control__prefix ds-control-icon-box ds-interaction-fill__content"
@@ -431,7 +430,7 @@ export class Input {
               onDsClick={this.handleTogglePassword}
             />
           )}
-          {numeric && this.textAlign === 'start' && this.renderNumericStepper(inactive)}
+          {showNumericStepper && this.textAlign === 'start' && this.renderNumericStepper(inactive)}
         </div>
         {showError && (
           <ds-text

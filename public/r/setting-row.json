@@ -1,0 +1,213 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "setting-row",
+  "title": "SettingRow",
+  "description": "Two-column immediate binary setting with descriptive copy and an accessible switch.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/setting-row",
+    "source": "src/wc/components/SettingRow/SettingRow.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Two-column immediate binary setting with descriptive copy and an accessible switch.",
+      "useWhen": [
+        "A settings list pairs a setting name and explanation with one immediate on/off control."
+      ],
+      "avoidWhen": [
+        "The value needs a text input, multiple choices, or an explicit Save workflow."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-card-setting",
+        "component:ds-switch",
+        "component:ds-text"
+      ],
+      "accessibility": [
+        "The visible label names the switch and the optional description supplies its accessible description.",
+        "Switch owns focus, keyboard activation, checked state, and disabled semantics. The row adds no second tab stop.",
+        "For a settings list, the owner supplies list semantics and marks each row as a list item."
+      ],
+      "states": [
+        "The application accepts or rejects change requests by updating the controlled checked value and owns persistence and errors.",
+        "Name the enabled setting consistently; the label must not change when the switch is toggled."
+      ],
+      "responsiveBehavior": [
+        "The copy wraps while the switch keeps its natural size in the trailing column, including at narrow widths."
+      ],
+      "references": [
+        {
+          "label": "Usage states",
+          "path": "src/wc/components/SettingRow/SettingRow.stories.ts"
+        }
+      ],
+      "styling": {
+        "rationale": "The row owns copy/control spacing; its parent owns the section surface and width.",
+        "protected": [
+          {
+            "properties": [
+              "padding",
+              "gap"
+            ],
+            "reason": "Preserve the shared settings-row spacing recipe.",
+            "props": []
+          }
+        ],
+        "customProperties": []
+      }
+    },
+    "api": {
+      "props": {
+        "checked": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "checked",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Controlled enabled state."
+        },
+        "description": {
+          "type": "string",
+          "resolvedType": "string | undefined",
+          "attribute": "description",
+          "required": false,
+          "mutable": false,
+          "description": "Supporting copy explaining the setting and its alternative."
+        },
+        "disabled": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "disabled",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Prevent changes while the setting is unavailable."
+        },
+        "label": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "label",
+          "required": true,
+          "mutable": false,
+          "description": "Name of the enabled setting."
+        }
+      },
+      "events": [
+        {
+          "name": "dsChange",
+          "detail": "boolean",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Requests the next value; the application owns acceptance and persistence."
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "checked": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "checked",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Controlled enabled state."
+      },
+      "description": {
+        "type": "string",
+        "resolvedType": "string | undefined",
+        "attribute": "description",
+        "required": false,
+        "mutable": false,
+        "description": "Supporting copy explaining the setting and its alternative."
+      },
+      "disabled": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "disabled",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Prevent changes while the setting is unavailable."
+      },
+      "label": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "label",
+        "required": true,
+        "mutable": false,
+        "description": "Name of the enabled setting."
+      }
+    },
+    "events": [
+      {
+        "name": "dsChange",
+        "detail": "boolean",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Requests the next value; the application owns acceptance and persistence."
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-setting-row",
+      "react": "DsSettingRow",
+      "vue": "DsSettingRow",
+      "angular": "DsSettingRow"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-setting-row.js';",
+        "example": "<ds-setting-row></ds-setting-row>"
+      },
+      "react": {
+        "import": "import { DsSettingRow } from '@ds-mo/ui/react';",
+        "example": "<DsSettingRow />"
+      },
+      "vue": {
+        "import": "import { DsSettingRow } from '@ds-mo/ui/vue';",
+        "example": "<DsSettingRow />"
+      },
+      "angular": {
+        "import": "import { DsSettingRow } from '@ds-mo/ui/angular/ds-setting-row';",
+        "example": "<ds-setting-row></ds-setting-row>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.5.2",
+          "@ds-mo/icons ^8.1.1"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "switch",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/SettingRow/SettingRow.css",
+      "content": ":host {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  align-items: start;\n  box-sizing: border-box;\n  min-width: 0;\n  padding: var(--dimension-space-100) var(--dimension-space-200);\n  gap: var(--dimension-space-200);\n}\n\n.setting-row__copy {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n  gap: var(--dimension-space-050);\n  overflow-wrap: anywhere;\n  -webkit-user-select: none;\n  user-select: none;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/SettingRow/SettingRow.tsx",
+      "content": "import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\n\nlet settingRowSequence = 0;\n\n/** A labeled binary setting that applies immediately through its application owner. */\n@Component({\n  tag: 'ds-setting-row',\n  styleUrl: 'SettingRow.css',\n  scoped: true,\n})\nexport class SettingRow {\n  /** Name of the enabled setting. */\n  @Prop() label!: string;\n  /** Supporting copy explaining the setting and its alternative. */\n  @Prop() description?: string;\n  /** Controlled enabled state. */\n  @Prop() checked = false;\n  /** Prevent changes while the setting is unavailable. */\n  @Prop() disabled = false;\n\n  /** Requests the next value; the application owns acceptance and persistence. */\n  @Event() dsChange!: EventEmitter<boolean>;\n\n  private readonly rowId = `ds-setting-row-${++settingRowSequence}`;\n\n  private handleChange = (event: CustomEvent<boolean>) => {\n    event.stopPropagation();\n    // Keep the composed switch controlled until the owner accepts this request.\n    (event.target as HTMLDsSwitchElement).checked = this.checked;\n    this.dsChange.emit(event.detail);\n  };\n\n  render() {\n    return (\n      <Host>\n        <div class=\"setting-row__copy\">\n          <ds-text\n            textId={`${this.rowId}-label`}\n            variant=\"text-body-medium\"\n            color=\"primary\"\n            emphasis\n          >\n            {this.label}\n          </ds-text>\n          {this.description && (\n            <ds-text\n              textId={`${this.rowId}-description`}\n              variant=\"text-body-medium\"\n              color=\"secondary\"\n            >\n              {this.description}\n            </ds-text>\n          )}\n        </div>\n        <ds-switch\n          checked={this.checked}\n          disabled={this.disabled}\n          aria-labelledby={`${this.rowId}-label`}\n          aria-describedby={this.description ? `${this.rowId}-description` : undefined}\n          onDsChange={this.handleChange}\n        />\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

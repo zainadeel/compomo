@@ -21,6 +21,13 @@
         body="Content will appear here when it becomes available."
       ></ds-empty-state>
       <ds-empty-state id="body-only" body="No results found"></ds-empty-state>
+      <ds-empty-state
+        id="with-action"
+        heading="Nothing here yet"
+        body="Try again when you are ready."
+      >
+        <ds-button-unfilled slot="actions" label="Try again"></ds-button-unfilled>
+      </ds-empty-state>
     </main>
     <script type="module" src="/empty-state-setup.mjs"></script>
   </body>

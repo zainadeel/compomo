@@ -29,6 +29,13 @@
       >
         <p>Driver identification settings.</p>
       </ds-card-setting>
+      <ds-card-setting id="immediate-card" heading="Interface preferences" variant="immediate" editing>
+        <div role="list" aria-label="Interface preferences">
+          <ds-setting-row id="navigation-setting" role="listitem" label="Panel navigation" description="Show page sections in the side panel. Turn off to use top bar tabs." checked></ds-setting-row>
+          <ds-setting-row id="long-setting" role="listitem" label="Configuration menus with a longer setting name" description="Open filters and view settings in menus. Turn off to use a right-side configuration panel beside the page." checked></ds-setting-row>
+          <ds-setting-row id="disabled-setting" role="listitem" label="Unavailable setting" description="This setting is managed by your organization." disabled checked></ds-setting-row>
+        </div>
+      </ds-card-setting>
     </main>
 
     <script type="module" src="/card-setting-setup.mjs"></script>

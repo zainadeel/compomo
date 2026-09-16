@@ -1,5 +1,6 @@
 import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';
 
+export type CardSettingVariant = 'editable' | 'immediate';
 export type CardSettingWidth = 'sm' | 'md' | 'lg';
 export type CardSettingAction = 'edit' | 'save' | 'cancel';
 
@@ -32,11 +33,13 @@ export class CardSetting {
   @Prop() heading!: string;
 
   /**
-   * Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the
-   * matching `--dimension-card-height-*` so the body fills available space
-   * even when the slot is empty.
+   * Card width token (`sm` / `md` / `lg`). Editable cards also use the matching
+   * minimum-height token; immediate cards fit their content.
    */
   @Prop() cardWidth: CardSettingWidth = 'md';
+
+  /** Immediate settings omit edit actions and apply changes through their own controls. */
+  @Prop() variant: CardSettingVariant = 'editable';
 
   /** Controlled edit state — parent owns single-edit orchestration. */
   @Prop() editing = false;
@@ -52,17 +55,19 @@ export class CardSetting {
   }
 
   render() {
-    const editing = this.editing;
+    const editing = this.variant === 'editable' && this.editing;
 
     return (
       <Host
         class={{
           'card-setting': true,
           'card-setting--editing': editing,
+          'card-setting--immediate': this.variant === 'immediate',
         }}
         style={{
           '--_card-setting-width': CARD_WIDTH_VARS[this.cardWidth],
-          '--_card-setting-min-height': CARD_HEIGHT_VARS[this.cardWidth],
+          '--_card-setting-min-height':
+            this.variant === 'immediate' ? '0' : CARD_HEIGHT_VARS[this.cardWidth],
         }}
       >
         <header class="card-setting__header ds-chrome-header">
@@ -78,45 +83,47 @@ export class CardSetting {
               {this.heading}
             </ds-text>
           </div>
-          <div class="card-setting__actions ds-chrome-header__trailing">
-            {!editing ? (
-              <ds-button-unfilled
-                variant="icon"
-                type="button"
-                icon="Pencil"
-                aria-label={this.editLabel}
-                onDsClick={(event: CustomEvent<MouseEvent>) =>
-                  this.emitAction('edit', event.detail)
-                }
-              />
-            ) : (
-              [
+          {this.variant === 'editable' && (
+            <div class="card-setting__actions ds-chrome-header__trailing">
+              {!editing ? (
                 <ds-button-unfilled
-                  key="cancel"
                   variant="icon"
                   type="button"
-                  icon="Cross"
-                  background="bold"
-                  aria-label={this.cancelLabel}
+                  icon="Pencil"
+                  aria-label={this.editLabel}
                   onDsClick={(event: CustomEvent<MouseEvent>) =>
-                    this.emitAction('cancel', event.detail)
+                    this.emitAction('edit', event.detail)
                   }
-                />,
-                <ds-button-filled
-                  key="save"
-                  variant="icon"
-                  type="button"
-                  icon="Check"
-                  intent="brand"
-                  contrast="faint"
-                  aria-label={this.saveLabel}
-                  onDsClick={(event: CustomEvent<MouseEvent>) =>
-                    this.emitAction('save', event.detail)
-                  }
-                />,
-              ]
-            )}
-          </div>
+                />
+              ) : (
+                [
+                  <ds-button-unfilled
+                    key="cancel"
+                    variant="icon"
+                    type="button"
+                    icon="Cross"
+                    background="bold"
+                    aria-label={this.cancelLabel}
+                    onDsClick={(event: CustomEvent<MouseEvent>) =>
+                      this.emitAction('cancel', event.detail)
+                    }
+                  />,
+                  <ds-button-filled
+                    key="save"
+                    variant="icon"
+                    type="button"
+                    icon="Check"
+                    intent="brand"
+                    contrast="faint"
+                    aria-label={this.saveLabel}
+                    onDsClick={(event: CustomEvent<MouseEvent>) =>
+                      this.emitAction('save', event.detail)
+                    }
+                  />,
+                ]
+              )}
+            </div>
+          )}
         </header>
         <div class="card-setting__body">
           <slot />

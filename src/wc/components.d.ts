@@ -25,7 +25,7 @@ import { CardActionCenterActionDetail, CardActionCenterSection } from "./compone
 import { CardChartVariant, CardChartWidth } from "./components/CardChart/CardChart";
 import { CardNavigationDetail, CardNavigationVariant, CardNavigationWidth } from "./components/CardNavigation/CardNavigation";
 import { CardOverviewLayout, CardOverviewVariant, OverviewMetric, OverviewScore } from "./components/CardOverview/card-overview-types";
-import { CardSettingActionDetail, CardSettingWidth } from "./components/CardSetting/CardSetting";
+import { CardSettingActionDetail, CardSettingVariant, CardSettingWidth } from "./components/CardSetting/CardSetting";
 import { SettingsScopeRequest } from "./components/CardSettingsScope/CardSettingsScope";
 import { ChartDefinition } from "./utils/chart-grammar";
 import { ChartFocusChangeDetail } from "./components/Chart/Chart";
@@ -108,7 +108,7 @@ export { CardActionCenterActionDetail, CardActionCenterSection } from "./compone
 export { CardChartVariant, CardChartWidth } from "./components/CardChart/CardChart";
 export { CardNavigationDetail, CardNavigationVariant, CardNavigationWidth } from "./components/CardNavigation/CardNavigation";
 export { CardOverviewLayout, CardOverviewVariant, OverviewMetric, OverviewScore } from "./components/CardOverview/card-overview-types";
-export { CardSettingActionDetail, CardSettingWidth } from "./components/CardSetting/CardSetting";
+export { CardSettingActionDetail, CardSettingVariant, CardSettingWidth } from "./components/CardSetting/CardSetting";
 export { SettingsScopeRequest } from "./components/CardSettingsScope/CardSettingsScope";
 export { ChartDefinition } from "./utils/chart-grammar";
 export { ChartFocusChangeDetail } from "./components/Chart/Chart";
@@ -1167,7 +1167,7 @@ export namespace Components {
          */
         "cancelLabel": string;
         /**
-          * Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the matching `--dimension-card-height-*` so the body fills available space even when the slot is empty.
+          * Card width token (`sm` / `md` / `lg`). Editable cards also use the matching minimum-height token; immediate cards fit their content.
           * @default 'md'
          */
         "cardWidth": CardSettingWidth;
@@ -1188,6 +1188,11 @@ export namespace Components {
           * @default 'Save'
          */
         "saveLabel": string;
+        /**
+          * Immediate settings omit edit actions and apply changes through their own controls.
+          * @default 'editable'
+         */
+        "variant": CardSettingVariant;
     }
     interface DsCardSettingsScope {
         /**
@@ -2149,6 +2154,10 @@ export namespace Components {
          */
         "clearLabel": string;
         /**
+          * @default 'Decrease value'
+         */
+        "decrementLabel": string;
+        /**
           * @default false
          */
         "disabled": boolean;
@@ -2181,6 +2190,10 @@ export namespace Components {
           * Optional leading icon name.
          */
         "icon": string | undefined;
+        /**
+          * @default 'Increase value'
+         */
+        "incrementLabel": string;
         /**
           * Associates the internal input with an external <label>.
          */
@@ -2223,6 +2236,11 @@ export namespace Components {
          */
         "showPasswordLabel": string;
         /**
+          * Show inset increment/decrement actions for number fields. Native numeric editing remains available when hidden.
+          * @default true
+         */
+        "showStepper": boolean;
+        /**
           * Control density.
           * @default 'md'
          */
@@ -2232,7 +2250,7 @@ export namespace Components {
          */
         "step": number | undefined;
         /**
-          * Align the editable value; number steppers follow the same inline edge.
+          * Align the editable value; number steppers sit on the opposite inline edge.
           * @default 'start'
          */
         "textAlign": InputTextAlign;
@@ -2424,20 +2442,25 @@ export namespace Components {
     }
     interface DsMapEntityMarker {
         /**
+          * Clockwise map bearing for travel-group and vehicle icons. Values are normalized to 0–359.
+          * @default 0
+         */
+        "bearing": number;
+        /**
           * Short visible identifier revealed on hover or keyboard focus.
           * @default ''
          */
         "caption": string;
         /**
+          * Adds an optional dashed outline without changing the operating state.
+          * @default false
+         */
+        "dashed": boolean;
+        /**
           * De-emphasizes this marker when an owner-managed selection is active elsewhere.
           * @default false
          */
         "dimmed": boolean;
-        /**
-          * Clockwise map heading for travel-group and vehicle icons. Values are normalized to 0–359.
-          * @default 0
-         */
-        "heading": number;
         /**
           * Canonical IcoMo icon name for the represented map entity. Immobilized state uses MapKey.
           * @default 'MapEntityTravelGroup'
@@ -2452,13 +2475,8 @@ export namespace Components {
          */
         "setFocus": () => Promise<void>;
         /**
-          * Adds the stale-data outline while preserving the last known operating state.
-          * @default false
-         */
-        "stale": boolean;
-        /**
           * Semantic operating state that selects the marker background.
-          * @default 'in-motion'
+          * @default 'moving'
          */
         "state": MapEntityMarkerState;
     }
@@ -3628,6 +3646,29 @@ export namespace Components {
           * @default 'hug'
          */
         "width": SelectWidth;
+    }
+    /**
+     * A labeled binary setting that applies immediately through its application owner.
+     */
+    interface DsSettingRow {
+        /**
+          * Controlled enabled state.
+          * @default false
+         */
+        "checked": boolean;
+        /**
+          * Supporting copy explaining the setting and its alternative.
+         */
+        "description"?: string;
+        /**
+          * Prevent changes while the setting is unavailable.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Name of the enabled setting.
+         */
+        "label": string;
     }
     interface DsShellApp {
         /**
@@ -4983,6 +5024,10 @@ export interface DsSelectCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSelectElement;
 }
+export interface DsSettingRowCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsSettingRowElement;
+}
 export interface DsShellAppCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsShellAppElement;
@@ -6204,6 +6249,26 @@ declare global {
         prototype: HTMLDsSelectElement;
         new (): HTMLDsSelectElement;
     };
+    interface HTMLDsSettingRowElementEventMap {
+        "dsChange": boolean;
+    }
+    /**
+     * A labeled binary setting that applies immediately through its application owner.
+     */
+    interface HTMLDsSettingRowElement extends Components.DsSettingRow, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsSettingRowElementEventMap>(type: K, listener: (this: HTMLDsSettingRowElement, ev: DsSettingRowCustomEvent<HTMLDsSettingRowElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsSettingRowElementEventMap>(type: K, listener: (this: HTMLDsSettingRowElement, ev: DsSettingRowCustomEvent<HTMLDsSettingRowElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsSettingRowElement: {
+        prototype: HTMLDsSettingRowElement;
+        new (): HTMLDsSettingRowElement;
+    };
     interface HTMLDsShellAppElementEventMap {
         "dsResponsiveModeChange": { mode: ShellResponsiveMode };
         "dsNavSelect": string;
@@ -6565,6 +6630,7 @@ declare global {
         "ds-score": HTMLDsScoreElement;
         "ds-scroll-overlay": HTMLDsScrollOverlayElement;
         "ds-select": HTMLDsSelectElement;
+        "ds-setting-row": HTMLDsSettingRowElement;
         "ds-shell-app": HTMLDsShellAppElement;
         "ds-shell-page": HTMLDsShellPageElement;
         "ds-shell-tools": HTMLDsShellToolsElement;
@@ -7665,7 +7731,7 @@ declare namespace LocalJSX {
          */
         "cancelLabel"?: string;
         /**
-          * Card width token (`sm` / `md` / `lg`). Also sets host `min-height` to the matching `--dimension-card-height-*` so the body fills available space even when the slot is empty.
+          * Card width token (`sm` / `md` / `lg`). Editable cards also use the matching minimum-height token; immediate cards fit their content.
           * @default 'md'
          */
         "cardWidth"?: CardSettingWidth;
@@ -7690,6 +7756,11 @@ declare namespace LocalJSX {
           * @default 'Save'
          */
         "saveLabel"?: string;
+        /**
+          * Immediate settings omit edit actions and apply changes through their own controls.
+          * @default 'editable'
+         */
+        "variant"?: CardSettingVariant;
     }
     interface DsCardSettingsScope {
         /**
@@ -8785,6 +8856,10 @@ declare namespace LocalJSX {
          */
         "clearLabel"?: string;
         /**
+          * @default 'Decrease value'
+         */
+        "decrementLabel"?: string;
+        /**
           * @default false
          */
         "disabled"?: boolean;
@@ -8817,6 +8892,10 @@ declare namespace LocalJSX {
           * Optional leading icon name.
          */
         "icon"?: string | undefined;
+        /**
+          * @default 'Increase value'
+         */
+        "incrementLabel"?: string;
         /**
           * Associates the internal input with an external <label>.
          */
@@ -8860,6 +8939,11 @@ declare namespace LocalJSX {
          */
         "showPasswordLabel"?: string;
         /**
+          * Show inset increment/decrement actions for number fields. Native numeric editing remains available when hidden.
+          * @default true
+         */
+        "showStepper"?: boolean;
+        /**
           * Control density.
           * @default 'md'
          */
@@ -8869,7 +8953,7 @@ declare namespace LocalJSX {
          */
         "step"?: number | undefined;
         /**
-          * Align the editable value; number steppers follow the same inline edge.
+          * Align the editable value; number steppers sit on the opposite inline edge.
           * @default 'start'
          */
         "textAlign"?: InputTextAlign;
@@ -9061,20 +9145,25 @@ declare namespace LocalJSX {
     }
     interface DsMapEntityMarker {
         /**
+          * Clockwise map bearing for travel-group and vehicle icons. Values are normalized to 0–359.
+          * @default 0
+         */
+        "bearing"?: number;
+        /**
           * Short visible identifier revealed on hover or keyboard focus.
           * @default ''
          */
         "caption"?: string;
         /**
+          * Adds an optional dashed outline without changing the operating state.
+          * @default false
+         */
+        "dashed"?: boolean;
+        /**
           * De-emphasizes this marker when an owner-managed selection is active elsewhere.
           * @default false
          */
         "dimmed"?: boolean;
-        /**
-          * Clockwise map heading for travel-group and vehicle icons. Values are normalized to 0–359.
-          * @default 0
-         */
-        "heading"?: number;
         /**
           * Canonical IcoMo icon name for the represented map entity. Immobilized state uses MapKey.
           * @default 'MapEntityTravelGroup'
@@ -9089,13 +9178,8 @@ declare namespace LocalJSX {
          */
         "onDsClick"?: (event: DsMapEntityMarkerCustomEvent<MouseEvent>) => void;
         /**
-          * Adds the stale-data outline while preserving the last known operating state.
-          * @default false
-         */
-        "stale"?: boolean;
-        /**
           * Semantic operating state that selects the marker background.
-          * @default 'in-motion'
+          * @default 'moving'
          */
         "state"?: MapEntityMarkerState;
     }
@@ -10377,6 +10461,33 @@ declare namespace LocalJSX {
           * @default 'hug'
          */
         "width"?: SelectWidth;
+    }
+    /**
+     * A labeled binary setting that applies immediately through its application owner.
+     */
+    interface DsSettingRow {
+        /**
+          * Controlled enabled state.
+          * @default false
+         */
+        "checked"?: boolean;
+        /**
+          * Supporting copy explaining the setting and its alternative.
+         */
+        "description"?: string;
+        /**
+          * Prevent changes while the setting is unavailable.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Name of the enabled setting.
+         */
+        "label": string;
+        /**
+          * Requests the next value; the application owns acceptance and persistence.
+         */
+        "onDsChange"?: (event: DsSettingRowCustomEvent<boolean>) => void;
     }
     interface DsShellApp {
         /**
@@ -11811,6 +11922,7 @@ declare namespace LocalJSX {
     interface DsCardSettingAttributes {
         "heading": string;
         "cardWidth": CardSettingWidth;
+        "variant": CardSettingVariant;
         "editing": boolean;
         "editLabel": string;
         "cancelLabel": string;
@@ -12031,6 +12143,9 @@ declare namespace LocalJSX {
         "min": number | undefined;
         "max": number | undefined;
         "step": number | undefined;
+        "showStepper": boolean;
+        "incrementLabel": string;
+        "decrementLabel": string;
         "textAlign": InputTextAlign;
         "autoComplete": string | undefined;
         "inputMode": string;
@@ -12114,8 +12229,8 @@ declare namespace LocalJSX {
         "caption": string;
         "icon": string;
         "state": MapEntityMarkerState;
-        "stale": boolean;
-        "heading": number;
+        "dashed": boolean;
+        "bearing": number;
         "dimmed": boolean;
     }
     interface DsMarkdownAttributes {
@@ -12380,6 +12495,12 @@ declare namespace LocalJSX {
         "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
         "ariaDescribedby": string | undefined;
+    }
+    interface DsSettingRowAttributes {
+        "label": string;
+        "description": string;
+        "checked": boolean;
+        "disabled": boolean;
     }
     interface DsShellAppAttributes {
         "composition": ShellAppComposition;
@@ -12709,6 +12830,7 @@ declare namespace LocalJSX {
         "ds-score": Omit<DsScore, keyof DsScoreAttributes> & { [K in keyof DsScore & keyof DsScoreAttributes]?: DsScore[K] } & { [K in keyof DsScore & keyof DsScoreAttributes as `attr:${K}`]?: DsScoreAttributes[K] } & { [K in keyof DsScore & keyof DsScoreAttributes as `prop:${K}`]?: DsScore[K] };
         "ds-scroll-overlay": Omit<DsScrollOverlay, keyof DsScrollOverlayAttributes> & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes]?: DsScrollOverlay[K] } & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes as `attr:${K}`]?: DsScrollOverlayAttributes[K] } & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes as `prop:${K}`]?: DsScrollOverlay[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
+        "ds-setting-row": Omit<DsSettingRow, keyof DsSettingRowAttributes> & { [K in keyof DsSettingRow & keyof DsSettingRowAttributes]?: DsSettingRow[K] } & { [K in keyof DsSettingRow & keyof DsSettingRowAttributes as `attr:${K}`]?: DsSettingRowAttributes[K] } & { [K in keyof DsSettingRow & keyof DsSettingRowAttributes as `prop:${K}`]?: DsSettingRow[K] } & OneOf<"label", DsSettingRow["label"], DsSettingRowAttributes["label"]>;
         "ds-shell-app": Omit<DsShellApp, keyof DsShellAppAttributes> & { [K in keyof DsShellApp & keyof DsShellAppAttributes]?: DsShellApp[K] } & { [K in keyof DsShellApp & keyof DsShellAppAttributes as `attr:${K}`]?: DsShellAppAttributes[K] } & { [K in keyof DsShellApp & keyof DsShellAppAttributes as `prop:${K}`]?: DsShellApp[K] };
         "ds-shell-page": Omit<DsShellPage, keyof DsShellPageAttributes> & { [K in keyof DsShellPage & keyof DsShellPageAttributes]?: DsShellPage[K] } & { [K in keyof DsShellPage & keyof DsShellPageAttributes as `attr:${K}`]?: DsShellPageAttributes[K] } & { [K in keyof DsShellPage & keyof DsShellPageAttributes as `prop:${K}`]?: DsShellPage[K] };
         "ds-shell-tools": Omit<DsShellTools, keyof DsShellToolsAttributes> & { [K in keyof DsShellTools & keyof DsShellToolsAttributes]?: DsShellTools[K] } & { [K in keyof DsShellTools & keyof DsShellToolsAttributes as `attr:${K}`]?: DsShellToolsAttributes[K] } & { [K in keyof DsShellTools & keyof DsShellToolsAttributes as `prop:${K}`]?: DsShellTools[K] };
@@ -12830,6 +12952,10 @@ declare module "@stencil/core" {
             "ds-score": LocalJSX.IntrinsicElements["ds-score"] & JSXBase.HTMLAttributes<HTMLDsScoreElement>;
             "ds-scroll-overlay": LocalJSX.IntrinsicElements["ds-scroll-overlay"] & JSXBase.HTMLAttributes<HTMLDsScrollOverlayElement>;
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
+            /**
+             * A labeled binary setting that applies immediately through its application owner.
+             */
+            "ds-setting-row": LocalJSX.IntrinsicElements["ds-setting-row"] & JSXBase.HTMLAttributes<HTMLDsSettingRowElement>;
             "ds-shell-app": LocalJSX.IntrinsicElements["ds-shell-app"] & JSXBase.HTMLAttributes<HTMLDsShellAppElement>;
             "ds-shell-page": LocalJSX.IntrinsicElements["ds-shell-page"] & JSXBase.HTMLAttributes<HTMLDsShellPageElement>;
             "ds-shell-tools": LocalJSX.IntrinsicElements["ds-shell-tools"] & JSXBase.HTMLAttributes<HTMLDsShellToolsElement>;

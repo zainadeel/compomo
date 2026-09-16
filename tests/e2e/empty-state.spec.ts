@@ -29,10 +29,40 @@ test('renders the three supported content variants', async ({ page }) => {
 test('owns centered typography and exact composition spacing', async ({ page }) => {
   const complete = page.locator('#complete');
   await expect(complete.locator('.empty-state')).toHaveCSS('text-align', 'center');
-  await expect(complete.locator('.empty-state')).toHaveCSS('gap', '8px');
+  const icon = await complete.locator('.empty-state__icon').boundingBox();
+  const text = await complete.locator('.empty-state__text').boundingBox();
+  expect(text!.y - icon!.y - icon!.height).toBeCloseTo(8, 1);
   await expect(complete.locator('.empty-state__text')).toHaveCSS('gap', '4px');
+  await expect(complete.locator('.empty-state__title')).toHaveCSS('text-wrap', 'balance');
+  await expect(complete.locator('.empty-state__body')).toHaveCSS('text-wrap', 'balance');
   await expect(complete.locator('.empty-state__title')).toHaveClass(/ds-text--title-small/);
   await expect(complete.locator('.empty-state__title')).toHaveClass(/ds-text--color-primary/);
   await expect(complete.locator('.empty-state__body')).toHaveClass(/ds-text--body-medium/);
   await expect(complete.locator('.empty-state__body')).toHaveClass(/ds-text--color-secondary/);
+});
+
+test('supports optional recovery actions without adding space to message-only states @cross-browser', async ({
+  page,
+}) => {
+  await expect(page.locator('#complete .empty-state__actions')).toBeHidden();
+  const empty = page.locator('#with-action');
+  const content = empty.locator('.empty-state');
+  const before = await content.boundingBox();
+  await empty.evaluate(element => {
+    element.addEventListener('dsClick', () => element.setAttribute('data-action', 'clicked'));
+  });
+  const button = empty.getByRole('button', { name: 'Try again' });
+  await expect(button).toBeVisible();
+  const body = await empty.locator('.empty-state__body').boundingBox();
+  const bounds = await button.boundingBox();
+  expect(bounds!.y - body!.y - body!.height).toBeCloseTo(16, 1);
+  expect(Math.abs(bounds!.x + bounds!.width / 2 - (before!.x + before!.width / 2))).toBeLessThan(1);
+  await button.focus();
+  await page.keyboard.press('Enter');
+  await expect(empty).toHaveAttribute('data-action', 'clicked');
+  await empty.locator('[slot="actions"]').evaluate(element => element.remove());
+  await expect(empty.locator('.empty-state__actions')).toBeHidden();
+  const after = await content.boundingBox();
+  const text = await empty.locator('.empty-state__text').boundingBox();
+  expect(after!.height).toBeCloseTo(text!.height, 1);
 });

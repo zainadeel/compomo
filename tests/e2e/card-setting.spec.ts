@@ -96,3 +96,60 @@ test('emits typed actions while the parent enforces one editing section', async 
     { action: 'save', hasOriginalEvent: true },
   ]);
 });
+
+test('immediate settings keep resting chrome and expose one accessible toggle per row @cross-browser', async ({
+  page,
+}) => {
+  const card = page.locator('#immediate-card');
+  await expect(card).not.toHaveClass(/card-setting--editing/);
+  await expect(card.getByRole('button')).toHaveCount(0);
+  await expect(card.getByRole('listitem')).toHaveCount(3);
+  const toggle = card.getByRole('switch', { name: 'Panel navigation', exact: true });
+  await expect(toggle).toHaveAccessibleDescription(
+    'Show page sections in the side panel. Turn off to use top bar tabs.'
+  );
+  await expect(toggle).toBeChecked();
+  await toggle.focus();
+  await page.keyboard.press('Space');
+  await expect(toggle).not.toBeChecked();
+  await expect(toggle).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(toggle).toBeChecked();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => (window as typeof window & { __settingChanges: boolean[] }).__settingChanges
+      )
+    )
+    .toEqual([false, true]);
+  await page.keyboard.press('Tab');
+  const controlled = card.getByRole('switch', {
+    name: 'Configuration menus with a longer setting name',
+  });
+  await expect(controlled).toBeFocused();
+  await page.keyboard.press('Space');
+  await expect(controlled).toBeChecked();
+  await expect(card.getByRole('switch', { name: 'Unavailable setting' })).toBeDisabled();
+});
+
+test('immediate rows retain two columns with wrapped copy on narrow screens @cross-browser', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 360, height: 800 });
+  const card = page.locator('#immediate-card');
+  await card.scrollIntoViewIfNeeded();
+  const row = card.locator('#long-setting');
+  const copy = await row.locator('.setting-row__copy').boundingBox();
+  const toggle = await row.getByRole('switch').boundingBox();
+  const bounds = await card.boundingBox();
+  expect(copy).not.toBeNull();
+  expect(toggle).not.toBeNull();
+  expect(bounds).not.toBeNull();
+  expect(copy!.width).toBeGreaterThan(0);
+  expect(copy!.x + copy!.width).toBeLessThan(toggle!.x);
+  expect(toggle!.x + toggle!.width).toBeLessThanOrEqual(bounds!.x + bounds!.width);
+  expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(360);
+  await expect(row.getByRole('switch')).toHaveAccessibleDescription(
+    /Open filters and view settings/
+  );
+});

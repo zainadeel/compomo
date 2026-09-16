@@ -1,33 +1,33 @@
 import { Component, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';
 
-export type MapEntityMarkerState = 'in-motion' | 'idling' | 'stationary' | 'immobilized' | 'stale';
+export type MapEntityMarkerState = 'moving' | 'idling' | 'stationary' | 'immobilized' | 'unknown';
 
-const normalizeHeading = (heading: number): number => {
-  if (!Number.isFinite(heading)) return 0;
-  return ((heading % 360) + 360) % 360;
+const normalizeBearing = (bearing: number): number => {
+  if (!Number.isFinite(bearing)) return 0;
+  return ((bearing % 360) + 360) % 360;
 };
 
-const HEADING_ICONS = new Set(['MapEntityTravelGroup', 'MapEntityVehicle']);
+const BEARING_ICONS = new Set(['MapEntityTravelGroup', 'MapEntityVehicle']);
 
-const STALE_OUTLINE_CENTER = 8;
-const STALE_OUTLINE_RADIUS = 6.5;
-const STALE_OUTLINE_SEGMENT_ANGLE = 45;
-const STALE_OUTLINE_HALF_GAP_ANGLE = 6;
+const DASHED_OUTLINE_CENTER = 8;
+const DASHED_OUTLINE_RADIUS = 6.5;
+const DASHED_OUTLINE_SEGMENT_ANGLE = 45;
+const DASHED_OUTLINE_HALF_GAP_ANGLE = 6;
 
-const staleOutlinePoint = (angle: number): [number, number] => {
+const dashedOutlinePoint = (angle: number): [number, number] => {
   const radians = (angle * Math.PI) / 180;
   return [
-    STALE_OUTLINE_CENTER + STALE_OUTLINE_RADIUS * Math.cos(radians),
-    STALE_OUTLINE_CENTER + STALE_OUTLINE_RADIUS * Math.sin(radians),
+    DASHED_OUTLINE_CENTER + DASHED_OUTLINE_RADIUS * Math.cos(radians),
+    DASHED_OUTLINE_CENTER + DASHED_OUTLINE_RADIUS * Math.sin(radians),
   ];
 };
 
-const STALE_OUTLINE_PATH = Array.from({ length: 8 }, (_, index) => {
-  const segmentStart = index * STALE_OUTLINE_SEGMENT_ANGLE + STALE_OUTLINE_HALF_GAP_ANGLE;
-  const segmentEnd = (index + 1) * STALE_OUTLINE_SEGMENT_ANGLE - STALE_OUTLINE_HALF_GAP_ANGLE;
-  const [startX, startY] = staleOutlinePoint(segmentStart);
-  const [endX, endY] = staleOutlinePoint(segmentEnd);
-  return `M ${startX.toFixed(3)} ${startY.toFixed(3)} A ${STALE_OUTLINE_RADIUS} ${STALE_OUTLINE_RADIUS} 0 0 1 ${endX.toFixed(3)} ${endY.toFixed(3)}`;
+const DASHED_OUTLINE_PATH = Array.from({ length: 8 }, (_, index) => {
+  const segmentStart = index * DASHED_OUTLINE_SEGMENT_ANGLE + DASHED_OUTLINE_HALF_GAP_ANGLE;
+  const segmentEnd = (index + 1) * DASHED_OUTLINE_SEGMENT_ANGLE - DASHED_OUTLINE_HALF_GAP_ANGLE;
+  const [startX, startY] = dashedOutlinePoint(segmentStart);
+  const [endX, endY] = dashedOutlinePoint(segmentEnd);
+  return `M ${startX.toFixed(3)} ${startY.toFixed(3)} A ${DASHED_OUTLINE_RADIUS} ${DASHED_OUTLINE_RADIUS} 0 0 1 ${endX.toFixed(3)} ${endY.toFixed(3)}`;
 }).join(' ');
 
 @Component({
@@ -46,13 +46,13 @@ export class MapEntityMarker {
   @Prop() icon: string = 'MapEntityTravelGroup';
 
   /** Semantic operating state that selects the marker background. */
-  @Prop({ reflect: true }) state: MapEntityMarkerState = 'in-motion';
+  @Prop({ reflect: true }) state: MapEntityMarkerState = 'moving';
 
-  /** Adds the stale-data outline while preserving the last known operating state. */
-  @Prop({ reflect: true }) stale: boolean = false;
+  /** Adds an optional dashed outline without changing the operating state. */
+  @Prop({ reflect: true }) dashed: boolean = false;
 
-  /** Clockwise map heading for travel-group and vehicle icons. Values are normalized to 0–359. */
-  @Prop() heading: number = 0;
+  /** Clockwise map bearing for travel-group and vehicle icons. Values are normalized to 0–359. */
+  @Prop() bearing: number = 0;
 
   /** De-emphasizes this marker when an owner-managed selection is active elsewhere. */
   @Prop({ reflect: true }) dimmed: boolean = false;
@@ -74,16 +74,15 @@ export class MapEntityMarker {
 
   render() {
     const caption = this.caption.trim();
-    const markerIsStale = this.stale || this.state === 'stale';
     const markerIcon = this.state === 'immobilized' ? 'MapKey' : this.icon;
-    const heading = HEADING_ICONS.has(markerIcon) ? normalizeHeading(this.heading) : 0;
+    const bearing = BEARING_ICONS.has(markerIcon) ? normalizeBearing(this.bearing) : 0;
 
     return (
       <Host
         class={{
           'map-entity-marker': true,
           'map-marker--dimmed': this.dimmed,
-          'map-entity-marker--stale': markerIsStale,
+          'map-entity-marker--dashed': this.dashed,
         }}
       >
         <button
@@ -95,15 +94,15 @@ export class MapEntityMarker {
         >
           <span
             class="map-entity-marker__glyph"
-            style={{ '--ds-map-entity-marker-heading': `${heading}deg` }}
+            style={{ '--ds-map-entity-marker-bearing': `${bearing}deg` }}
             aria-hidden="true"
           >
             <ds-icon name={markerIcon} size="sm" color="inherit"></ds-icon>
           </span>
-          {markerIsStale && (
-            // eslint-disable-next-line compomo/prefer-ds-icon -- The stale ring is a component-owned geometric primitive with eight exact equal arcs.
-            <svg class="map-entity-marker__stale-outline" viewBox="0 0 16 16" aria-hidden="true">
-              <path d={STALE_OUTLINE_PATH}></path>
+          {this.dashed && (
+            // eslint-disable-next-line compomo/prefer-ds-icon -- The dashed ring is a component-owned geometric primitive with eight exact equal arcs.
+            <svg class="map-entity-marker__dashed-outline" viewBox="0 0 16 16" aria-hidden="true">
+              <path d={DASHED_OUTLINE_PATH}></path>
             </svg>
           )}
         </button>

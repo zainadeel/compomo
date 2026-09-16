@@ -257,6 +257,12 @@ export const Decorations: Story = {
         >
       </div>
       <div style="${ROW}">
+        <span style="${LBL}">italic + emphasis</span>
+        <ds-text variant="text-body-large" italic emphasis
+          >The quick brown fox jumps over the lazy dog</ds-text
+        >
+      </div>
+      <div style="${ROW}">
         <span style="${LBL}">italic + underline</span>
         <ds-text variant="text-body-large" decoration="underline" italic
           >The quick brown fox jumps over the lazy dog</ds-text

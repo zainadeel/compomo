@@ -326,12 +326,8 @@ test('number input preserves native semantics, constraints, stepping, and form v
   await expect(nativeInput).toHaveAttribute('max', '10');
   await expect(nativeInput).toHaveAttribute('step', '0.5');
   await expect(nativeInput).toHaveAccessibleName('Exact quantity');
-  const increment = input.locator('.input-control__number-step--increment');
-  const decrement = input.locator('.input-control__number-step--decrement');
-  await expect(increment).toHaveAttribute('aria-hidden', 'true');
-  await expect(increment).toHaveJSProperty('tabIndex', -1);
-  await expect(decrement).toHaveAttribute('aria-hidden', 'true');
-  await expect(decrement).toHaveJSProperty('tabIndex', -1);
+  const increment = input.getByRole('button', { name: 'Increase value' });
+  const decrement = input.getByRole('button', { name: 'Decrease value' });
 
   await increment.click();
   await expect(nativeInput).toHaveValue('5.5');
@@ -363,58 +359,134 @@ test('number input preserves native semantics, constraints, stepping, and form v
   await nativeInput.fill('10');
   await expect(increment).toBeDisabled();
   await expect(decrement).toBeEnabled();
+  await nativeInput.fill('0');
+  await expect(decrement).toBeDisabled();
+  await expect(increment).toBeEnabled();
+  await nativeInput.press('Tab');
+  await expect(increment).toBeFocused();
+  await increment.press('Enter');
+  await expect(nativeInput).toHaveValue('0.5');
+  await expect(nativeInput).toBeFocused();
 });
 
-test('number stepper follows value alignment and splits the inset control height', async ({
+test('number stepper uses plus then minus inset buttons opposite the value @cross-browser', async ({
   page,
 }) => {
-  for (const [id, alignment] of [
-    ['input-number', 'start'],
-    ['input-number-end', 'end'],
-  ] as const) {
-    const geometry = await page.locator(`#${id}`).evaluate(element => {
-      const control = element.querySelector<HTMLElement>('.input-control')!.getBoundingClientRect();
-      const input = element.querySelector<HTMLInputElement>('input')!;
-      const inputRect = input.getBoundingClientRect();
-      const stepper = element
-        .querySelector<HTMLElement>('.input-control__number-stepper')!
-        .getBoundingClientRect();
-      const buttons = [...element.querySelectorAll<HTMLElement>('.input-control__number-step')].map(
-        button => button.getBoundingClientRect()
-      );
-      return {
-        control: {
-          left: control.left,
-          right: control.right,
-          top: control.top,
-          bottom: control.bottom,
-        },
-        input: {
-          left: inputRect.left,
-          right: inputRect.right,
-          textAlign: getComputedStyle(input).textAlign,
-        },
-        stepper: {
-          left: stepper.left,
-          right: stepper.right,
-          top: stepper.top,
-          bottom: stepper.bottom,
-        },
-        buttonHeights: buttons.map(button => button.height),
-      };
-    });
+  for (const size of ['lg', 'md', 'sm', 'xs']) {
+    for (const [id, alignment] of [
+      ['input-number', 'start'],
+      ['input-number-end', 'end'],
+    ] as const) {
+      await page.locator(`#${id}`).evaluate((element: HTMLDsInputElement, value) => {
+        element.size = value as HTMLDsInputElement['size'];
+      }, size);
+      await expect(page.locator(`#${id}`)).toHaveClass(new RegExp(`ds-control--${size}`));
+      const geometry = await page.locator(`#${id}`).evaluate(element => {
+        const control = element
+          .querySelector<HTMLElement>('.input-control')!
+          .getBoundingClientRect();
+        const input = element.querySelector<HTMLInputElement>('input')!;
+        const inputRect = input.getBoundingClientRect();
+        const stepper = element
+          .querySelector<HTMLElement>('.input-control__number-stepper')!
+          .getBoundingClientRect();
+        const buttons = [
+          ...element.querySelectorAll<HTMLElement>('.input-control__number-step'),
+        ].map(button => button.getBoundingClientRect());
+        const divider = element
+          .querySelector<HTMLElement>('.input-control__number-stepper ds-divider')!
+          .getBoundingClientRect();
+        return {
+          control: {
+            left: control.left,
+            right: control.right,
+            top: control.top,
+            bottom: control.bottom,
+          },
+          input: {
+            left: inputRect.left,
+            right: inputRect.right,
+            textAlign: getComputedStyle(input).textAlign,
+          },
+          stepper: {
+            left: stepper.left,
+            right: stepper.right,
+            top: stepper.top,
+            bottom: stepper.bottom,
+          },
+          buttons: buttons.map(button => ({
+            left: button.left,
+            right: button.right,
+            top: button.top,
+            height: button.height,
+            width: button.width,
+          })),
+          divider: { left: divider.left, right: divider.right },
+          icons: [
+            ...element.querySelectorAll<HTMLDsIconElement>('.input-control__number-step ds-icon'),
+          ].map(icon => icon.name),
+        };
+      });
 
-    expect(geometry.input.textAlign).toBe(alignment);
-    expect(geometry.stepper.top - geometry.control.top).toBeCloseTo(2, 5);
-    expect(geometry.control.bottom - geometry.stepper.bottom).toBeCloseTo(2, 5);
-    expect(geometry.buttonHeights[0]).toBeCloseTo(geometry.buttonHeights[1], 5);
-    if (alignment === 'start') {
-      expect(geometry.control.right - geometry.stepper.right).toBeCloseTo(2, 5);
-      expect(geometry.stepper.left).toBeGreaterThanOrEqual(geometry.input.right);
-    } else {
-      expect(geometry.stepper.left - geometry.control.left).toBeCloseTo(2, 5);
-      expect(geometry.stepper.right).toBeLessThanOrEqual(geometry.input.left);
+      expect(geometry.input.textAlign).toBe(alignment);
+      expect(geometry.stepper.top - geometry.control.top).toBeCloseTo(2, 5);
+      expect(geometry.control.bottom - geometry.stepper.bottom).toBeCloseTo(2, 5);
+      expect(geometry.icons).toEqual(['Plus', 'Minus']);
+      expect(geometry.buttons[0].right).toBeLessThan(geometry.buttons[1].left);
+      const edgeInset = geometry.stepper.top - geometry.control.top;
+      expect(geometry.divider.left - geometry.buttons[0].right).toBeCloseTo(edgeInset, 5);
+      expect(geometry.buttons[1].left - geometry.divider.right).toBeCloseTo(edgeInset, 5);
+      for (const button of geometry.buttons) {
+        expect(button.top).toBeCloseTo(geometry.stepper.top, 5);
+        expect(button.height).toBeCloseTo(geometry.control.bottom - geometry.control.top - 4, 5);
+        expect(button.width).toBeCloseTo(button.height, 5);
+      }
+      if (alignment === 'start') {
+        expect(geometry.control.right - geometry.stepper.right).toBeCloseTo(2, 5);
+        expect(geometry.stepper.left).toBeGreaterThanOrEqual(geometry.input.right);
+      } else {
+        expect(geometry.stepper.left - geometry.control.left).toBeCloseTo(2, 5);
+        expect(geometry.stepper.right).toBeLessThanOrEqual(geometry.input.left);
+      }
     }
+  }
+});
+
+test('number fields can omit steppers without changing numeric entry or value', async ({
+  page,
+}) => {
+  const input = page.locator('#input-number');
+  const nativeInput = input.getByRole('spinbutton');
+  await input.evaluate((element: HTMLDsInputElement) => {
+    element.showStepper = false;
+  });
+  await expect(input.getByRole('button')).toHaveCount(0);
+  await expect(nativeInput).toHaveValue('5');
+  await nativeInput.fill('7.5');
+  await expect(input).toHaveJSProperty('value', '7.5');
+  await expect
+    .poll(() =>
+      page
+        .locator('#number-input-form')
+        .evaluate(form => new FormData(form as HTMLFormElement).get('quantity'))
+    )
+    .toBe('7.5');
+  await expect(nativeInput).toHaveAttribute('step', '0.5');
+  await input.evaluate((element: HTMLDsInputElement) => {
+    element.showStepper = true;
+  });
+  await expect(input.getByRole('button')).toHaveCount(2);
+  await expect(nativeInput).toHaveValue('7.5');
+
+  for (const state of ['readOnly', 'disabled'] as const) {
+    await input.evaluate((element: HTMLDsInputElement, state) => {
+      element[state] = true;
+    }, state);
+    await expect(input.getByRole('button', { name: 'Increase value' })).toBeDisabled();
+    await expect(input.getByRole('button', { name: 'Decrease value' })).toBeDisabled();
+    await input.evaluate((element: HTMLDsInputElement, state) => {
+      element[state] = false;
+    }, state);
   }
 });
 
@@ -1486,6 +1558,105 @@ test(
     expect(focus).toEqual({ style: 'solid', offset: '2px' });
   }
 );
+
+test('switch paints its token focus ring from the first frame with token globals loaded @cross-browser', async ({
+  page,
+}) => {
+  type FocusFrame = {
+    usesFocusToken: boolean;
+    style: string;
+    width: string;
+    offset: string;
+    transition: string;
+    outlineTransitions: string[];
+  };
+  type ObservedSwitch = HTMLElement & { focusFrames: Promise<FocusFrame[]> };
+
+  await page.addStyleTag({ url: '/tokens/globals.css' });
+  const control = page.locator('#switch-md');
+
+  for (const reducedMotion of ['no-preference', 'reduce'] as const) {
+    await page.emulateMedia({ reducedMotion });
+    for (const theme of ['light', 'dark']) {
+      await page.locator('html').evaluate((element, value) => {
+        element.setAttribute('data-theme', value);
+      }, theme);
+      await page.locator('#switch-lg').focus();
+      await control.evaluate(element => {
+        const probe = document.createElement('span');
+        probe.style.color = getComputedStyle(element).getPropertyValue('--color-interaction-focus');
+        document.body.append(probe);
+        const expectedColor = getComputedStyle(probe).color;
+        probe.remove();
+
+        (element as ObservedSwitch).focusFrames = new Promise(resolve => {
+          element.addEventListener(
+            'focus',
+            async () => {
+              const frames: FocusFrame[] = [];
+              const sample = () => {
+                const style = getComputedStyle(element);
+                frames.push({
+                  usesFocusToken: style.outlineColor === expectedColor,
+                  style: style.outlineStyle,
+                  width: style.outlineWidth,
+                  offset: style.outlineOffset,
+                  transition: style.transitionProperty,
+                  outlineTransitions: element
+                    .getAnimations()
+                    .filter(
+                      (animation): animation is CSSTransition => animation instanceof CSSTransition
+                    )
+                    .map(animation => animation.transitionProperty)
+                    .filter(property => property.startsWith('outline')),
+                });
+              };
+              // Check synchronously at focus, then every frame through the global
+              // outline transition. Polling only the final color missed the flash.
+              sample();
+              for (let frame = 0; frame < 12; frame++) {
+                await new Promise(requestAnimationFrame);
+                sample();
+              }
+              resolve(frames);
+            },
+            { once: true }
+          );
+        });
+      });
+      await page.keyboard.press('Tab');
+      await expect(control).toBeFocused();
+      const frames = await control.evaluate(element => (element as ObservedSwitch).focusFrames);
+      for (const frame of frames) {
+        expect(frame, `${theme}, ${reducedMotion}`).toEqual({
+          usesFocusToken: true,
+          style: 'solid',
+          width: '2px',
+          offset: '2px',
+          transition: reducedMotion === 'reduce' ? 'none' : 'background-color, box-shadow',
+          outlineTransitions: [],
+        });
+      }
+      await page.keyboard.press('Tab');
+      await expect(control).toHaveCSS('outline-style', 'none');
+    }
+  }
+});
+
+test('switch respects explicit shortcut focus suppression with token globals loaded @cross-browser', async ({
+  page,
+}) => {
+  await page.addStyleTag({ url: '/tokens/globals.css' });
+  const control = page.locator('#switch-md');
+  await control.evaluate(element => element.setAttribute('data-focus-from-shortcut', ''));
+  await page.locator('#switch-lg').focus();
+  await page.keyboard.press('Tab');
+  await expect(control).toBeFocused();
+  await expect(control).toHaveCSS('outline-style', 'none');
+
+  await control.evaluate(element => element.removeAttribute('data-focus-from-shortcut'));
+  await expect(control).toHaveCSS('outline-style', 'solid');
+});
 
 test('switch paints hover and press feedback on the thumb only', async ({ page }) => {
   const switchControl = page.locator('#switch-md');

@@ -17,6 +17,7 @@ const meta: Meta = {
     min: { control: 'number' },
     max: { control: 'number' },
     step: { control: 'number' },
+    showStepper: { control: 'boolean' },
     textAlign: { control: 'select', options: ['start', 'end'] },
     size: { control: 'select', options: ['lg', 'md', 'sm', 'xs'] },
     width: { control: 'select', options: ['fill', 'hug'] },
@@ -32,6 +33,7 @@ const meta: Meta = {
     value: '',
     placeholder: 'Placeholder text',
     type: 'text',
+    showStepper: true,
     size: 'md',
     textAlign: 'start',
     width: 'fill',
@@ -57,6 +59,7 @@ export const Playground: Story = {
         .min=${args['min']}
         .max=${args['max']}
         .step=${args['step']}
+        .showStepper=${args['showStepper']}
         text-align=${args['textAlign'] ?? 'start'}
         size=${args['size'] ?? 'md'}
         width=${args['width'] ?? 'fill'}
@@ -200,7 +203,9 @@ export const SearchClearAlignment: Story = {
 
 export const NumberSteppers: Story = {
   name: 'Number steppers',
-  render: () => html`
+  parameters: { controls: { include: ['showStepper'] } },
+  args: { showStepper: true },
+  render: args => html`
     <div
       style="display:grid;grid-template-columns:max-content var(--dimension-panel-width-xs);align-items:center;gap:var(--dimension-space-100) var(--dimension-space-200);"
     >
@@ -212,6 +217,7 @@ export const NumberSteppers: Story = {
         max="4000"
         step="100"
         text-align="start"
+        .showStepper=${args['showStepper']}
         aria-label="Start-aligned number"
       ></ds-input>
       <ds-text variant="text-body-small" color="secondary">End aligned</ds-text>
@@ -222,7 +228,18 @@ export const NumberSteppers: Story = {
         max="4000"
         step="100"
         text-align="end"
+        .showStepper=${args['showStepper']}
         aria-label="End-aligned number"
+      ></ds-input>
+      <ds-text variant="text-body-small" color="secondary">Without buttons</ds-text>
+      <ds-input
+        type="number"
+        value="1200"
+        min="0"
+        max="4000"
+        step="100"
+        .showStepper=${false}
+        aria-label="Number without stepper buttons"
       ></ds-input>
       <ds-text variant="text-body-small" color="secondary">Large</ds-text>
       <ds-input
@@ -273,6 +290,8 @@ export const NumberSteppers: Story = {
         read-only
         aria-label="Read-only number"
       ></ds-input>
+      <ds-text variant="text-body-small" color="secondary">Inactive</ds-text>
+      <ds-input type="number" value="12" is-inactive aria-label="Inactive number"></ds-input>
     </div>
   `,
 };

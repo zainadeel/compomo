@@ -12,8 +12,8 @@
     "themeSetup": "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     "peerDependencies": {
       "required": [
-        "@ds-mo/tokens ^6.5.1",
-        "@ds-mo/icons ^8.1.0"
+        "@ds-mo/tokens ^6.5.2",
+        "@ds-mo/icons ^8.1.1"
       ],
       "optional": [],
       "frameworks": "None required for Custom Elements; generated React, Vue, and Angular adapters are included."
@@ -3923,7 +3923,7 @@
     {
       "name": "card-setting",
       "title": "CardSetting",
-      "description": "Persistent settings-section surface with a heading, controlled view/edit chrome, fixed edit-save-cancel actions, and application-owned body content.",
+      "description": "Persistent settings-section surface with a heading, optional controlled edit chrome, and application-owned body content.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -3934,17 +3934,17 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Persistent settings-section surface with a heading, controlled view/edit chrome, fixed edit-save-cancel actions, and application-owned body content.",
+          "summary": "Persistent settings-section surface with a heading, optional controlled edit chrome, and application-owned body content.",
           "useWhen": [
             "A settings page needs a persistent section that switches between read-only and editable content.",
             "The parent can control one active editing section and owns validation, persistence, cancellation, and body content.",
-            "The section uses the standard Pencil, Save, and Cancel header workflow."
+            "The section uses the standard Pencil, Save, and Cancel header workflow.",
+            "Settings apply immediately through their own controls and share the standard section surface without edit, save, or cancel actions."
           ],
           "avoidWhen": [
             "The surface contains a chart, legend, metric visualization, or other data-visualization composition.",
             "The content is a general-purpose read-only card with no settings edit workflow.",
             "The task must block the rest of the interface or requires confirmation in a modal.",
-            "Several sections must remain editable at the same time.",
             "The header requires custom actions beyond the fixed edit-save-cancel workflow."
           ],
           "alternatives": [
@@ -3969,7 +3969,8 @@
             "component:ds-input",
             "component:ds-select",
             "component:ds-switch",
-            "component:ds-text"
+            "component:ds-text",
+            "component:ds-setting-row"
           ],
           "accessibility": [
             "Provide a concise heading that identifies the settings section; CardSetting renders it as an h2.",
@@ -3986,10 +3987,11 @@
             "When another section requests edit, the parent keeps one active section and resolves any dirty current section before switching.",
             "The parent owns read-only versus editable body composition, dirty state, validation, persistence, loading, success, and error consequences.",
             "A save request keeps the section editing while validation or persistence is pending; the parent exits only after success.",
-            "A cancel request does not persist changes; the parent restores its chosen value snapshot and exits editing."
+            "A cancel request does not persist changes; the parent restores its chosen value snapshot and exits editing.",
+            "The immediate variant keeps the resting card surface and omits header actions even if editing is supplied. The application applies and persists each control change independently."
           ],
           "responsiveBehavior": [
-            "Choose sm, md, or lg from the parent layout; each width uses its matching token-based minimum height.",
+            "Choose sm, md, or lg from the parent layout. Editable cards use the matching minimum height; immediate cards fit their content.",
             "The surface never exceeds its parent width, while the parent owns wrapping, columns, stacking, and breakpoint changes.",
             "At narrow widths, keep the fixed header actions visible and let application-owned body layouts collapse before allowing horizontal overflow."
           ],
@@ -4042,9 +4044,10 @@
                   "width",
                   "min-height"
                 ],
-                "reason": "Card width selects the component geometry; use cardWidth and let the parent constrain available space.",
+                "reason": "Card width selects the component geometry; immediate cards fit their content. Let the parent constrain available space.",
                 "props": [
-                  "cardWidth"
+                  "cardWidth",
+                  "variant"
                 ]
               }
             ],
@@ -4074,6 +4077,10 @@
           },
           "saveLabel": {
             "type": "string",
+            "required": false
+          },
+          "variant": {
+            "type": "CardSettingVariant",
             "required": false
           }
         },
@@ -6856,7 +6863,7 @@
     {
       "name": "empty-state",
       "title": "EmptyState",
-      "description": "Centered empty-content message composed as icon plus title plus body, title plus body, or compact body-only content.",
+      "description": "Centered empty-content message with optional consumer-owned recovery actions.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -6867,16 +6874,16 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Centered empty-content message composed as icon plus title plus body, title plus body, or compact body-only content.",
+          "summary": "Centered empty-content message with optional consumer-owned recovery actions.",
           "useWhen": [
             "A bounded content area is in a first-use, no-content, filtered no-results, or no-access state and needs a calm explanatory message tailored to that cause.",
             "A prominent empty region benefits from a decorative icon, visual title, and supporting body copy.",
-            "A compact owner such as a Select popup needs only centered body copy."
+            "A compact owner such as a Select popup needs only centered body copy.",
+            "An empty region needs a concise recovery action that helps the user reveal or create content."
           ],
           "avoidWhen": [
             "Content is still loading; use Skeleton for predictable structure or Loader for an indeterminate operation.",
             "The state is an error, warning, or confirmation that needs semantic intent and announcement from the owning workflow.",
-            "The state needs a recovery action, link, or other interactive content; the current EmptyState pattern is intentionally message-only.",
             "A decorative illustration, arbitrary rich content, or custom layout is required."
           ],
           "alternatives": [
@@ -6900,20 +6907,23 @@
             "component:ds-table",
             "component:ds-select",
             "component:ds-text",
-            "component:ds-icon"
+            "component:ds-icon",
+            "component:ds-button-unfilled"
           ],
           "accessibility": [
             "The optional icon is decorative; the title and body provide all meaning in text.",
             "EmptyState does not create a live region or alert automatically. The owner decides whether a dynamic transition requires announcement.",
             "The visual title does not impose a document heading level because the correct hierarchy belongs to the consuming page or region.",
-            "Keep localized body copy concise and sufficient when using the body-only variant."
+            "Keep localized body copy concise and sufficient when using the body-only variant.",
+            "Give recovery controls explicit accessible names and keep their behavior with the owning workflow."
           ],
           "states": [
             "Supported compositions are icon plus title plus body, title plus body, and body only; body copy is present in every supported composition.",
             "The decorative icon renders at xl in the primary foreground with an 8px gap before the text group and only when a title is also provided.",
             "The visual title uses title-small primary text; body uses body-medium secondary text with a 4px title-to-body gap.",
-            "All content is centered. The owner supplies container size and surrounding padding; repeated panel and master-detail owners should share one empty-region geometry instead of wrapping each EmptyState differently. Do not compose actions into or immediately alongside the current EmptyState pattern.",
-            "First-use, no-content, no-results, and no-access states reuse this primitive with cause-specific localized messages rather than visual variants."
+            "All content is centered. The owner supplies container size and surrounding padding; repeated panel and master-detail owners should share one empty-region geometry instead of wrapping each EmptyState differently.",
+            "First-use, no-content, no-results, and no-access states reuse this primitive with cause-specific localized messages rather than visual variants.",
+            "Recovery actions are optional. The consumer owns the action labels, control choice, and behavior; the component centers them below the message and wraps multiple actions when needed."
           ],
           "responsiveBehavior": [
             "The owner controls available width and height; text wraps naturally while remaining centered.",
@@ -6961,7 +6971,9 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          "actions"
+        ],
         "exports": {
           "customElement": "ds-empty-state",
           "react": "DsEmptyState",
@@ -7666,7 +7678,7 @@
             "Error text is associated with the native input and announced as an alert when the invalid state is rendered.",
             "Read-only fields remain focusable and submittable while preventing edits; inactive or disabled fields leave the tab order and are omitted from form submission.",
             "Password fields keep a named show-or-hide action beside the value. Revealing the value changes only the native input type; the submitted string does not change. The action restores focus to the field after activation.",
-            "Number stepper actions are pointer affordances hidden from the accessibility tree; the native spinbutton remains the single keyboard and assistive-technology control.",
+            "Optional number stepper actions are named buttons available to keyboard and assistive-technology users. The native spinbutton also retains arrow-key stepping; activating either button returns focus to the field.",
             "Prefix and suffix content must not carry information that is otherwise absent from the field's visible label, value, or description.",
             "A nested prefix or suffix Select is a separate control from the editable value and must have its own accessible name."
           ],
@@ -7681,7 +7693,7 @@
             "Search fields used with owned result sets forward aria-controls and aria-activedescendant to the native field so keyboard focus can remain in the query while assistive technology tracks the active result.",
             "The prefix and suffix slots host compact leading or trailing units such as a currency code, or a nested same-size inset Select. Text adornments use the control's balanced text inset. Nested Selects match the field density, set isInset, hasBorder false, width hug, and indicator up-down, keep a selected value, set allowClear false so the menu has no clear footer, set neutralTrigger so the selected unit stays on the secondary adornment foreground, and do not carry the field's error message. Configurable prefix and suffix controls are separated from the editable value by a vertical divider at the density icon height. The nested inset keeps its 2px remainder toward the line; the editable value keeps the same inline padding from the line as a non-prefixed field keeps from its border. The optional leading icon is decorative and does not replace the field label. Password, search-clear, and date or time actions stay type-owned trailing buttons rather than suffix-slot content.",
             "Use autoComplete, inputMode, and enterKeyHint to provide browser and virtual-keyboard hints without changing the value's semantic type.",
-            "Number fields preserve native spinbutton semantics, keyboard stepping, and min/max constraint behavior while dsChange continues to report the native string value. Two borderless inset chevron actions split the available inner height, disable independently at their numeric bound, and restore focus to the spinbutton after pointer activation.",
+            "Number fields preserve native spinbutton semantics, keyboard stepping, and min/max constraint behavior while dsChange continues to report the native string value. Optional borderless inset Plus and Minus buttons share the field density, appear in that order, disable independently at their numeric bound, and restore focus to the spinbutton after activation. Hide them when direct numeric entry is preferable; browser spinner chrome stays hidden.",
             "textAlign positions the editable value while the numeric stepper stays on the opposite inline edge, keeping the actions clear of the number: start-aligned values use an inline-end stepper and end-aligned values use an inline-start stepper.",
             "The host exposes focused, filled, dirty, touched, invalid, disabled, read-only, and required data attributes for Field integration and diagnostics.",
             "Use Input only on primary or secondary application backgrounds. It intentionally does not expose alternate surface contexts."
@@ -7797,6 +7809,10 @@
             "type": "string",
             "required": false
           },
+          "decrementLabel": {
+            "type": "string",
+            "required": false
+          },
           "disabled": {
             "type": "boolean",
             "required": false
@@ -7831,6 +7847,10 @@
           },
           "icon": {
             "type": "string | undefined",
+            "required": false
+          },
+          "incrementLabel": {
+            "type": "string",
             "required": false
           },
           "inputId": {
@@ -7875,6 +7895,10 @@
           },
           "showPasswordLabel": {
             "type": "string",
+            "required": false
+          },
+          "showStepper": {
+            "type": "boolean",
             "required": false
           },
           "size": {
@@ -8609,7 +8633,7 @@
           ],
           "alternatives": [
             {
-              "when": "One map entity needs operating state, heading, and stale treatment.",
+              "when": "One map entity needs operating state, bearing, and an optional dashed outline.",
               "component": "component:ds-map-entity-marker",
               "reason": "MapEntityMarker owns single-entity marker semantics and geometry."
             },
@@ -8722,7 +8746,7 @@
     {
       "name": "map-entity-marker",
       "title": "MapEntityMarker",
-      "description": "Engine-independent map marker button for a vehicle, asset, person, or travel group with operating-state color, heading, stale treatment, and a hover or focus caption.",
+      "description": "Engine-independent map marker button for a vehicle, asset, person, or travel group with operating-state color, bearing, an optional dashed outline, and a hover or focus caption.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -8733,7 +8757,7 @@
         "intent": {
           "audience": "general",
           "status": "experimental",
-          "summary": "Engine-independent map marker button for a vehicle, asset, person, or travel group with operating-state color, heading, stale treatment, and a hover or focus caption.",
+          "summary": "Engine-independent map marker button for a vehicle, asset, person, or travel group with operating-state color, bearing, an optional dashed outline, and a hover or focus caption.",
           "useWhen": [
             "An application map needs a consistent interactive marker for one entity.",
             "The map engine can mount a custom element and retain ownership of coordinates, anchoring, and camera behavior."
@@ -8758,14 +8782,14 @@
             "The component renders a native button and label is its accessible action name. Prefer an action-oriented label such as ‘Open vehicle 412’.",
             "Caption is a supplemental visual identifier and is hidden from assistive technology to avoid duplicating label.",
             "Keyboard focus reveals the same caption as hover and uses the shared visible focus ring.",
-            "State and stale meaning must be present in nearby map legend or application detail content; do not rely on marker color alone.",
-            "The stale outline remains differentiated by a dashed border in forced-colors mode."
+            "Operating-state and outline meaning must be present in nearby map legend or application detail content; do not rely on marker color alone.",
+            "The optional dashed outline remains differentiated by a dashed border in forced-colors mode."
           ],
           "states": [
-            "state selects the semantic operating-state color. Use stale as a standalone state only when no last-known operating state is available.",
-            "stale adds a dashed outline while preserving state, matching last-known map data.",
-            "immobilized always renders the upright MapKey glyph instead of the entity icon so the state is identifiable without interpreting heading.",
-            "heading rotates only MapEntityTravelGroup and MapEntityVehicle glyphs and is normalized to a clockwise value from 0 through 359 degrees. Immobilized, asset, person, and other glyphs remain upright.",
+            "Unknown represents unavailable current motion and uses the existing stale-background token. The application resolves stale telemetry to Unknown regardless of previous motion; a known Immobilized state takes precedence.",
+            "The dashed outline is an independent visual option. Unknown is solid unless the owner explicitly requests dashes.",
+            "immobilized always renders the upright MapKey glyph instead of the entity icon so the state is identifiable without interpreting bearing.",
+            "bearing rotates only MapEntityTravelGroup and MapEntityVehicle glyphs and is normalized to a clockwise value from 0 through 359 degrees. Immobilized, asset, person, and other glyphs remain upright.",
             "dimmed is visual de-emphasis only. The map owner decides when selection context should dim peer markers and keeps every marker operable. A dimmed marker returns to full opacity while hovered or keyboard-focused so its revealed caption remains legible.",
             "Activation emits dsClick without changing application selection internally."
           ],
@@ -8779,10 +8803,10 @@
               "Listen for dsClick and keep selected entity, z-index, coordinates, and camera movement in application state."
             ],
             "react": [
-              "Pass numeric heading as a property and handle dsClick through the generated event binding."
+              "Pass numeric bearing as a property and handle dsClick through the generated event binding."
             ],
             "angular": [
-              "Bind heading as a number and keep map-engine marker lifecycle in the owning map adapter."
+              "Bind bearing as a number and keep map-engine marker lifecycle in the owning map adapter."
             ]
           },
           "references": [
@@ -8806,10 +8830,10 @@
                   "color",
                   "opacity"
                 ],
-                "reason": "Marker geometry, operating-state colors, stale distinction, and de-emphasis are one accessible visual recipe.",
+                "reason": "Marker geometry, operating-state colors, outline distinction, and de-emphasis are one accessible visual recipe.",
                 "props": [
                   "state",
-                  "stale",
+                  "dashed",
                   "dimmed"
                 ]
               }
@@ -8818,16 +8842,20 @@
           }
         },
         "props": {
+          "bearing": {
+            "type": "number",
+            "required": false
+          },
           "caption": {
             "type": "string",
             "required": false
           },
-          "dimmed": {
+          "dashed": {
             "type": "boolean",
             "required": false
           },
-          "heading": {
-            "type": "number",
+          "dimmed": {
+            "type": "boolean",
             "required": false
           },
           "icon": {
@@ -8837,10 +8865,6 @@
           "label": {
             "type": "string",
             "required": true
-          },
-          "stale": {
-            "type": "boolean",
-            "required": false
           },
           "state": {
             "type": "MapEntityMarkerState",
@@ -12740,6 +12764,106 @@
         "loader",
         "text",
         "tooltip"
+      ]
+    },
+    {
+      "name": "setting-row",
+      "title": "SettingRow",
+      "description": "Two-column immediate binary setting with descriptive copy and an accessible switch.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/setting-row",
+        "source": "src/wc/components/SettingRow/SettingRow.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Two-column immediate binary setting with descriptive copy and an accessible switch.",
+          "useWhen": [
+            "A settings list pairs a setting name and explanation with one immediate on/off control."
+          ],
+          "avoidWhen": [
+            "The value needs a text input, multiple choices, or an explicit Save workflow."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-card-setting",
+            "component:ds-switch",
+            "component:ds-text"
+          ],
+          "accessibility": [
+            "The visible label names the switch and the optional description supplies its accessible description.",
+            "Switch owns focus, keyboard activation, checked state, and disabled semantics. The row adds no second tab stop.",
+            "For a settings list, the owner supplies list semantics and marks each row as a list item."
+          ],
+          "states": [
+            "The application accepts or rejects change requests by updating the controlled checked value and owns persistence and errors.",
+            "Name the enabled setting consistently; the label must not change when the switch is toggled."
+          ],
+          "responsiveBehavior": [
+            "The copy wraps while the switch keeps its natural size in the trailing column, including at narrow widths."
+          ],
+          "references": [
+            {
+              "label": "Usage states",
+              "path": "src/wc/components/SettingRow/SettingRow.stories.ts"
+            }
+          ],
+          "styling": {
+            "rationale": "The row owns copy/control spacing; its parent owns the section surface and width.",
+            "protected": [
+              {
+                "properties": [
+                  "padding",
+                  "gap"
+                ],
+                "reason": "Preserve the shared settings-row spacing recipe.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
+        },
+        "props": {
+          "checked": {
+            "type": "boolean",
+            "required": false
+          },
+          "description": {
+            "type": "string",
+            "required": false
+          },
+          "disabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": true
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "boolean"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-setting-row",
+          "react": "DsSettingRow",
+          "vue": "DsSettingRow",
+          "angular": "DsSettingRow"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "switch",
+        "text"
       ]
     },
     {

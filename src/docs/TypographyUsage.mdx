@@ -135,6 +135,10 @@ inline prose code, fenced prose code, and structured agent tool details uses
 
 Applications own the actual font assets. Load Fira Code 400 once at the
 application root to opt in; CompoMo does not bundle a font or request a CDN.
+For italic interface text, load Inter's italic face alongside its upright face.
+Text's `italic` option combines with any variant and with `emphasis`; it preserves
+the selected recipe's size, line height, weight, and spacing. An upright font
+file declared as italic is not a substitute for the real italic face.
 Storybook follows the same contract by importing a self-hosted development
 asset in its preview rather than hiding a loader inside the component.
 Its redistributed asset includes the full

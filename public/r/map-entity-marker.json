@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "map-entity-marker",
   "title": "MapEntityMarker",
-  "description": "Engine-independent map marker button for a vehicle, asset, person, or travel group with operating-state color, heading, stale treatment, and a hover or focus caption.",
+  "description": "Engine-independent map marker button for a vehicle, asset, person, or travel group with operating-state color, bearing, an optional dashed outline, and a hover or focus caption.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
@@ -13,7 +13,7 @@
     "intent": {
       "audience": "general",
       "status": "experimental",
-      "summary": "Engine-independent map marker button for a vehicle, asset, person, or travel group with operating-state color, heading, stale treatment, and a hover or focus caption.",
+      "summary": "Engine-independent map marker button for a vehicle, asset, person, or travel group with operating-state color, bearing, an optional dashed outline, and a hover or focus caption.",
       "useWhen": [
         "An application map needs a consistent interactive marker for one entity.",
         "The map engine can mount a custom element and retain ownership of coordinates, anchoring, and camera behavior."
@@ -38,14 +38,14 @@
         "The component renders a native button and label is its accessible action name. Prefer an action-oriented label such as ‘Open vehicle 412’.",
         "Caption is a supplemental visual identifier and is hidden from assistive technology to avoid duplicating label.",
         "Keyboard focus reveals the same caption as hover and uses the shared visible focus ring.",
-        "State and stale meaning must be present in nearby map legend or application detail content; do not rely on marker color alone.",
-        "The stale outline remains differentiated by a dashed border in forced-colors mode."
+        "Operating-state and outline meaning must be present in nearby map legend or application detail content; do not rely on marker color alone.",
+        "The optional dashed outline remains differentiated by a dashed border in forced-colors mode."
       ],
       "states": [
-        "state selects the semantic operating-state color. Use stale as a standalone state only when no last-known operating state is available.",
-        "stale adds a dashed outline while preserving state, matching last-known map data.",
-        "immobilized always renders the upright MapKey glyph instead of the entity icon so the state is identifiable without interpreting heading.",
-        "heading rotates only MapEntityTravelGroup and MapEntityVehicle glyphs and is normalized to a clockwise value from 0 through 359 degrees. Immobilized, asset, person, and other glyphs remain upright.",
+        "Unknown represents unavailable current motion and uses the existing stale-background token. The application resolves stale telemetry to Unknown regardless of previous motion; a known Immobilized state takes precedence.",
+        "The dashed outline is an independent visual option. Unknown is solid unless the owner explicitly requests dashes.",
+        "immobilized always renders the upright MapKey glyph instead of the entity icon so the state is identifiable without interpreting bearing.",
+        "bearing rotates only MapEntityTravelGroup and MapEntityVehicle glyphs and is normalized to a clockwise value from 0 through 359 degrees. Immobilized, asset, person, and other glyphs remain upright.",
         "dimmed is visual de-emphasis only. The map owner decides when selection context should dim peer markers and keeps every marker operable. A dimmed marker returns to full opacity while hovered or keyboard-focused so its revealed caption remains legible.",
         "Activation emits dsClick without changing application selection internally."
       ],
@@ -59,10 +59,10 @@
           "Listen for dsClick and keep selected entity, z-index, coordinates, and camera movement in application state."
         ],
         "react": [
-          "Pass numeric heading as a property and handle dsClick through the generated event binding."
+          "Pass numeric bearing as a property and handle dsClick through the generated event binding."
         ],
         "angular": [
-          "Bind heading as a number and keep map-engine marker lifecycle in the owning map adapter."
+          "Bind bearing as a number and keep map-engine marker lifecycle in the owning map adapter."
         ]
       },
       "references": [
@@ -86,10 +86,10 @@
               "color",
               "opacity"
             ],
-            "reason": "Marker geometry, operating-state colors, stale distinction, and de-emphasis are one accessible visual recipe.",
+            "reason": "Marker geometry, operating-state colors, outline distinction, and de-emphasis are one accessible visual recipe.",
             "props": [
               "state",
-              "stale",
+              "dashed",
               "dimmed"
             ]
           }
@@ -99,6 +99,15 @@
     },
     "api": {
       "props": {
+        "bearing": {
+          "type": "number",
+          "resolvedType": "number",
+          "attribute": "bearing",
+          "default": "0",
+          "required": false,
+          "mutable": false,
+          "description": "Clockwise map bearing for travel-group and vehicle icons. Values are normalized to 0–359."
+        },
         "caption": {
           "type": "string",
           "resolvedType": "string",
@@ -108,6 +117,15 @@
           "mutable": false,
           "description": "Short visible identifier revealed on hover or keyboard focus."
         },
+        "dashed": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "dashed",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Adds an optional dashed outline without changing the operating state."
+        },
         "dimmed": {
           "type": "boolean",
           "resolvedType": "boolean",
@@ -116,15 +134,6 @@
           "required": false,
           "mutable": false,
           "description": "De-emphasizes this marker when an owner-managed selection is active elsewhere."
-        },
-        "heading": {
-          "type": "number",
-          "resolvedType": "number",
-          "attribute": "heading",
-          "default": "0",
-          "required": false,
-          "mutable": false,
-          "description": "Clockwise map heading for travel-group and vehicle icons. Values are normalized to 0–359."
         },
         "icon": {
           "type": "string",
@@ -143,20 +152,11 @@
           "mutable": false,
           "description": "Accessible action label. Describe what activating the marker opens."
         },
-        "stale": {
-          "type": "boolean",
-          "resolvedType": "boolean",
-          "attribute": "stale",
-          "default": "false",
-          "required": false,
-          "mutable": false,
-          "description": "Adds the stale-data outline while preserving the last known operating state."
-        },
         "state": {
           "type": "MapEntityMarkerState",
-          "resolvedType": "\"idling\" | \"immobilized\" | \"in-motion\" | \"stale\" | \"stationary\"",
+          "resolvedType": "\"idling\" | \"immobilized\" | \"moving\" | \"stationary\" | \"unknown\"",
           "attribute": "state",
-          "default": "'in-motion'",
+          "default": "'moving'",
           "required": false,
           "mutable": false,
           "description": "Semantic operating state that selects the marker background."
@@ -182,6 +182,15 @@
       "slots": []
     },
     "props": {
+      "bearing": {
+        "type": "number",
+        "resolvedType": "number",
+        "attribute": "bearing",
+        "default": "0",
+        "required": false,
+        "mutable": false,
+        "description": "Clockwise map bearing for travel-group and vehicle icons. Values are normalized to 0–359."
+      },
       "caption": {
         "type": "string",
         "resolvedType": "string",
@@ -191,6 +200,15 @@
         "mutable": false,
         "description": "Short visible identifier revealed on hover or keyboard focus."
       },
+      "dashed": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "dashed",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Adds an optional dashed outline without changing the operating state."
+      },
       "dimmed": {
         "type": "boolean",
         "resolvedType": "boolean",
@@ -199,15 +217,6 @@
         "required": false,
         "mutable": false,
         "description": "De-emphasizes this marker when an owner-managed selection is active elsewhere."
-      },
-      "heading": {
-        "type": "number",
-        "resolvedType": "number",
-        "attribute": "heading",
-        "default": "0",
-        "required": false,
-        "mutable": false,
-        "description": "Clockwise map heading for travel-group and vehicle icons. Values are normalized to 0–359."
       },
       "icon": {
         "type": "string",
@@ -226,20 +235,11 @@
         "mutable": false,
         "description": "Accessible action label. Describe what activating the marker opens."
       },
-      "stale": {
-        "type": "boolean",
-        "resolvedType": "boolean",
-        "attribute": "stale",
-        "default": "false",
-        "required": false,
-        "mutable": false,
-        "description": "Adds the stale-data outline while preserving the last known operating state."
-      },
       "state": {
         "type": "MapEntityMarkerState",
-        "resolvedType": "\"idling\" | \"immobilized\" | \"in-motion\" | \"stale\" | \"stationary\"",
+        "resolvedType": "\"idling\" | \"immobilized\" | \"moving\" | \"stationary\" | \"unknown\"",
         "attribute": "state",
-        "default": "'in-motion'",
+        "default": "'moving'",
         "required": false,
         "mutable": false,
         "description": "Semantic operating state that selects the marker background."
@@ -290,8 +290,8 @@
       },
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens ^6.5.1",
-          "@ds-mo/icons ^8.1.0"
+          "@ds-mo/tokens ^6.5.2",
+          "@ds-mo/icons ^8.1.1"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
@@ -309,12 +309,12 @@
   "files": [
     {
       "path": "src/wc/components/MapEntityMarker/MapEntityMarker.css",
-      "content": "@import '../../utils/focus-ring.css';\n@import '../../utils/map-marker.css';\n\n:host([state='in-motion']) {\n  --_map-marker-background: var(--color-entity-marker-background-in-motion);\n}\n\n:host([state='idling']) {\n  --_map-marker-background: var(--color-entity-marker-background-idling);\n}\n\n:host([state='stationary']) {\n  --_map-marker-background: var(--color-entity-marker-background-stationary);\n}\n\n:host([state='immobilized']) {\n  --_map-marker-background: var(--color-entity-marker-background-immobilized);\n}\n\n:host([state='stale']) {\n  --_map-marker-background: var(--color-entity-marker-background-stale);\n}\n\n.map-marker__button {\n  width: var(--dimension-size-300);\n  border-radius: var(--dimension-radius-half);\n}\n\n:host(.map-entity-marker--stale) .map-marker__button::after {\n  display: none;\n}\n\n.map-entity-marker__stale-outline {\n  position: absolute;\n  z-index: 3;\n  inset: 0;\n  width: 100%;\n  height: 100%;\n  overflow: visible;\n  pointer-events: none;\n  transform: rotate(-90deg);\n  fill: none;\n  stroke: currentcolor;\n  stroke-width: 1;\n  stroke-linecap: butt;\n}\n\n.map-entity-marker__glyph {\n  position: relative;\n  z-index: 2;\n  display: inline-flex;\n  transform: rotate(var(--ds-map-entity-marker-heading));\n}\n\n@media (forced-colors: active) {\n  :host(.map-entity-marker--stale) .map-marker__button::after {\n    display: block;\n    outline-style: dashed;\n  }\n\n  .map-entity-marker__stale-outline {\n    display: none;\n  }\n}\n",
+      "content": "@import '../../utils/focus-ring.css';\n@import '../../utils/map-marker.css';\n\n:host([state='moving']) {\n  --_map-marker-background: var(--color-entity-marker-background-in-motion);\n}\n\n:host([state='idling']) {\n  --_map-marker-background: var(--color-entity-marker-background-idling);\n}\n\n:host([state='stationary']) {\n  --_map-marker-background: var(--color-entity-marker-background-stationary);\n}\n\n:host([state='immobilized']) {\n  --_map-marker-background: var(--color-entity-marker-background-immobilized);\n}\n\n:host([state='unknown']) {\n  --_map-marker-background: var(--color-entity-marker-background-stale);\n}\n\n.map-marker__button {\n  width: var(--dimension-size-300);\n  border-radius: var(--dimension-radius-half);\n}\n\n:host(.map-entity-marker--dashed) .map-marker__button::after {\n  display: none;\n}\n\n.map-entity-marker__dashed-outline {\n  position: absolute;\n  z-index: 3;\n  inset: 0;\n  width: 100%;\n  height: 100%;\n  overflow: visible;\n  pointer-events: none;\n  transform: rotate(-90deg);\n  fill: none;\n  stroke: currentcolor;\n  stroke-width: 1;\n  stroke-linecap: butt;\n}\n\n.map-entity-marker__glyph {\n  position: relative;\n  z-index: 2;\n  display: inline-flex;\n  transform: rotate(var(--ds-map-entity-marker-bearing));\n}\n\n@media (forced-colors: active) {\n  :host(.map-entity-marker--dashed) .map-marker__button::after {\n    display: block;\n    outline-style: dashed;\n  }\n\n  .map-entity-marker__dashed-outline {\n    display: none;\n  }\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/MapEntityMarker/MapEntityMarker.tsx",
-      "content": "import { Component, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';\n\nexport type MapEntityMarkerState = 'in-motion' | 'idling' | 'stationary' | 'immobilized' | 'stale';\n\nconst normalizeHeading = (heading: number): number => {\n  if (!Number.isFinite(heading)) return 0;\n  return ((heading % 360) + 360) % 360;\n};\n\nconst HEADING_ICONS = new Set(['MapEntityTravelGroup', 'MapEntityVehicle']);\n\nconst STALE_OUTLINE_CENTER = 8;\nconst STALE_OUTLINE_RADIUS = 6.5;\nconst STALE_OUTLINE_SEGMENT_ANGLE = 45;\nconst STALE_OUTLINE_HALF_GAP_ANGLE = 6;\n\nconst staleOutlinePoint = (angle: number): [number, number] => {\n  const radians = (angle * Math.PI) / 180;\n  return [\n    STALE_OUTLINE_CENTER + STALE_OUTLINE_RADIUS * Math.cos(radians),\n    STALE_OUTLINE_CENTER + STALE_OUTLINE_RADIUS * Math.sin(radians),\n  ];\n};\n\nconst STALE_OUTLINE_PATH = Array.from({ length: 8 }, (_, index) => {\n  const segmentStart = index * STALE_OUTLINE_SEGMENT_ANGLE + STALE_OUTLINE_HALF_GAP_ANGLE;\n  const segmentEnd = (index + 1) * STALE_OUTLINE_SEGMENT_ANGLE - STALE_OUTLINE_HALF_GAP_ANGLE;\n  const [startX, startY] = staleOutlinePoint(segmentStart);\n  const [endX, endY] = staleOutlinePoint(segmentEnd);\n  return `M ${startX.toFixed(3)} ${startY.toFixed(3)} A ${STALE_OUTLINE_RADIUS} ${STALE_OUTLINE_RADIUS} 0 0 1 ${endX.toFixed(3)} ${endY.toFixed(3)}`;\n}).join(' ');\n\n@Component({\n  tag: 'ds-map-entity-marker',\n  styleUrl: 'MapEntityMarker.css',\n  scoped: true,\n})\nexport class MapEntityMarker {\n  /** Accessible action label. Describe what activating the marker opens. */\n  @Prop() label!: string;\n\n  /** Short visible identifier revealed on hover or keyboard focus. */\n  @Prop() caption: string = '';\n\n  /** Canonical IcoMo icon name for the represented map entity. Immobilized state uses MapKey. */\n  @Prop() icon: string = 'MapEntityTravelGroup';\n\n  /** Semantic operating state that selects the marker background. */\n  @Prop({ reflect: true }) state: MapEntityMarkerState = 'in-motion';\n\n  /** Adds the stale-data outline while preserving the last known operating state. */\n  @Prop({ reflect: true }) stale: boolean = false;\n\n  /** Clockwise map heading for travel-group and vehicle icons. Values are normalized to 0–359. */\n  @Prop() heading: number = 0;\n\n  /** De-emphasizes this marker when an owner-managed selection is active elsewhere. */\n  @Prop({ reflect: true }) dimmed: boolean = false;\n\n  /** Fired when the marker's native button is activated. */\n  @Event() dsClick!: EventEmitter<MouseEvent>;\n\n  private buttonEl?: HTMLButtonElement;\n\n  /** Moves keyboard focus to the marker button. */\n  @Method()\n  async setFocus(): Promise<void> {\n    this.buttonEl?.focus();\n  }\n\n  private handleClick = (event: MouseEvent) => {\n    this.dsClick.emit(event);\n  };\n\n  render() {\n    const caption = this.caption.trim();\n    const markerIsStale = this.stale || this.state === 'stale';\n    const markerIcon = this.state === 'immobilized' ? 'MapKey' : this.icon;\n    const heading = HEADING_ICONS.has(markerIcon) ? normalizeHeading(this.heading) : 0;\n\n    return (\n      <Host\n        class={{\n          'map-entity-marker': true,\n          'map-marker--dimmed': this.dimmed,\n          'map-entity-marker--stale': markerIsStale,\n        }}\n      >\n        <button\n          ref={element => (this.buttonEl = element)}\n          type=\"button\"\n          class=\"map-marker__button ds-focus-ring\"\n          aria-label={this.label}\n          onClick={this.handleClick}\n        >\n          <span\n            class=\"map-entity-marker__glyph\"\n            style={{ '--ds-map-entity-marker-heading': `${heading}deg` }}\n            aria-hidden=\"true\"\n          >\n            <ds-icon name={markerIcon} size=\"sm\" color=\"inherit\"></ds-icon>\n          </span>\n          {markerIsStale && (\n            // eslint-disable-next-line compomo/prefer-ds-icon -- The stale ring is a component-owned geometric primitive with eight exact equal arcs.\n            <svg class=\"map-entity-marker__stale-outline\" viewBox=\"0 0 16 16\" aria-hidden=\"true\">\n              <path d={STALE_OUTLINE_PATH}></path>\n            </svg>\n          )}\n        </button>\n        {caption && (\n          <ds-text\n            class=\"map-marker__caption\"\n            as=\"span\"\n            variant=\"text-caption\"\n            color=\"inherit\"\n            aria-hidden=\"true\"\n          >\n            {caption}\n          </ds-text>\n        )}\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';\n\nexport type MapEntityMarkerState = 'moving' | 'idling' | 'stationary' | 'immobilized' | 'unknown';\n\nconst normalizeBearing = (bearing: number): number => {\n  if (!Number.isFinite(bearing)) return 0;\n  return ((bearing % 360) + 360) % 360;\n};\n\nconst BEARING_ICONS = new Set(['MapEntityTravelGroup', 'MapEntityVehicle']);\n\nconst DASHED_OUTLINE_CENTER = 8;\nconst DASHED_OUTLINE_RADIUS = 6.5;\nconst DASHED_OUTLINE_SEGMENT_ANGLE = 45;\nconst DASHED_OUTLINE_HALF_GAP_ANGLE = 6;\n\nconst dashedOutlinePoint = (angle: number): [number, number] => {\n  const radians = (angle * Math.PI) / 180;\n  return [\n    DASHED_OUTLINE_CENTER + DASHED_OUTLINE_RADIUS * Math.cos(radians),\n    DASHED_OUTLINE_CENTER + DASHED_OUTLINE_RADIUS * Math.sin(radians),\n  ];\n};\n\nconst DASHED_OUTLINE_PATH = Array.from({ length: 8 }, (_, index) => {\n  const segmentStart = index * DASHED_OUTLINE_SEGMENT_ANGLE + DASHED_OUTLINE_HALF_GAP_ANGLE;\n  const segmentEnd = (index + 1) * DASHED_OUTLINE_SEGMENT_ANGLE - DASHED_OUTLINE_HALF_GAP_ANGLE;\n  const [startX, startY] = dashedOutlinePoint(segmentStart);\n  const [endX, endY] = dashedOutlinePoint(segmentEnd);\n  return `M ${startX.toFixed(3)} ${startY.toFixed(3)} A ${DASHED_OUTLINE_RADIUS} ${DASHED_OUTLINE_RADIUS} 0 0 1 ${endX.toFixed(3)} ${endY.toFixed(3)}`;\n}).join(' ');\n\n@Component({\n  tag: 'ds-map-entity-marker',\n  styleUrl: 'MapEntityMarker.css',\n  scoped: true,\n})\nexport class MapEntityMarker {\n  /** Accessible action label. Describe what activating the marker opens. */\n  @Prop() label!: string;\n\n  /** Short visible identifier revealed on hover or keyboard focus. */\n  @Prop() caption: string = '';\n\n  /** Canonical IcoMo icon name for the represented map entity. Immobilized state uses MapKey. */\n  @Prop() icon: string = 'MapEntityTravelGroup';\n\n  /** Semantic operating state that selects the marker background. */\n  @Prop({ reflect: true }) state: MapEntityMarkerState = 'moving';\n\n  /** Adds an optional dashed outline without changing the operating state. */\n  @Prop({ reflect: true }) dashed: boolean = false;\n\n  /** Clockwise map bearing for travel-group and vehicle icons. Values are normalized to 0–359. */\n  @Prop() bearing: number = 0;\n\n  /** De-emphasizes this marker when an owner-managed selection is active elsewhere. */\n  @Prop({ reflect: true }) dimmed: boolean = false;\n\n  /** Fired when the marker's native button is activated. */\n  @Event() dsClick!: EventEmitter<MouseEvent>;\n\n  private buttonEl?: HTMLButtonElement;\n\n  /** Moves keyboard focus to the marker button. */\n  @Method()\n  async setFocus(): Promise<void> {\n    this.buttonEl?.focus();\n  }\n\n  private handleClick = (event: MouseEvent) => {\n    this.dsClick.emit(event);\n  };\n\n  render() {\n    const caption = this.caption.trim();\n    const markerIcon = this.state === 'immobilized' ? 'MapKey' : this.icon;\n    const bearing = BEARING_ICONS.has(markerIcon) ? normalizeBearing(this.bearing) : 0;\n\n    return (\n      <Host\n        class={{\n          'map-entity-marker': true,\n          'map-marker--dimmed': this.dimmed,\n          'map-entity-marker--dashed': this.dashed,\n        }}\n      >\n        <button\n          ref={element => (this.buttonEl = element)}\n          type=\"button\"\n          class=\"map-marker__button ds-focus-ring\"\n          aria-label={this.label}\n          onClick={this.handleClick}\n        >\n          <span\n            class=\"map-entity-marker__glyph\"\n            style={{ '--ds-map-entity-marker-bearing': `${bearing}deg` }}\n            aria-hidden=\"true\"\n          >\n            <ds-icon name={markerIcon} size=\"sm\" color=\"inherit\"></ds-icon>\n          </span>\n          {this.dashed && (\n            // eslint-disable-next-line compomo/prefer-ds-icon -- The dashed ring is a component-owned geometric primitive with eight exact equal arcs.\n            <svg class=\"map-entity-marker__dashed-outline\" viewBox=\"0 0 16 16\" aria-hidden=\"true\">\n              <path d={DASHED_OUTLINE_PATH}></path>\n            </svg>\n          )}\n        </button>\n        {caption && (\n          <ds-text\n            class=\"map-marker__caption\"\n            as=\"span\"\n            variant=\"text-caption\"\n            color=\"inherit\"\n            aria-hidden=\"true\"\n          >\n            {caption}\n          </ds-text>\n        )}\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

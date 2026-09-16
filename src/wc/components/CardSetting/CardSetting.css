@@ -71,6 +71,10 @@ ds-text.card-setting__title {
   border-radius: 0 0 var(--ds-radius-card) var(--ds-radius-card);
 }
 
+:host(.card-setting--immediate) .card-setting__body {
+  padding-block: var(--dimension-space-100);
+}
+
 :host(.card-setting--editing) .card-setting__body {
   border-radius: var(--ds-radius-card);
 }
