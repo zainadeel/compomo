@@ -280,13 +280,22 @@ test('token paste preserves overflow by default, supports hard limits, and requi
     el.required = true;
     el.maxLength = 3;
   });
-  await input.evaluate(el => {
-    const clipboardData = new DataTransfer();
-    clipboardData.setData('text', 'One, Two, Longer');
-    el.dispatchEvent(
-      new ClipboardEvent('paste', { clipboardData, bubbles: true, cancelable: true })
-    );
-  });
+  // Exercise a real clipboard event: Firefox discards constructor-supplied
+  // clipboardData on synthetic ClipboardEvents.
+  const paste = async (text: string) => {
+    await page.evaluate(value => {
+      const source = document.createElement('textarea');
+      source.id = 'clipboard-source';
+      source.value = value;
+      document.body.append(source);
+      source.select();
+    }, text);
+    await page.keyboard.press('ControlOrMeta+C');
+    await input.focus();
+    await page.keyboard.press('ControlOrMeta+V');
+    await page.locator('#clipboard-source').evaluate(el => el.remove());
+  };
+  await paste('One, Two, Longer');
   await expect(host).toHaveJSProperty('tokens', ['One', 'Two', 'Longer']);
   expect(
     await page.locator('#tokens-form').evaluate((f: HTMLFormElement) => f.checkValidity())
@@ -299,13 +308,7 @@ test('token paste preserves overflow by default, supports hard limits, and requi
   await host.evaluate((el: HTMLDsInputElement) => {
     el.lengthBehavior = 'restrict';
   });
-  await input.evaluate(el => {
-    const clipboardData = new DataTransfer();
-    clipboardData.setData('text', 'Four, Five');
-    el.dispatchEvent(
-      new ClipboardEvent('paste', { clipboardData, bubbles: true, cancelable: true })
-    );
-  });
+  await paste('Four, Five');
   await expect(host).toHaveJSProperty('tokens', ['One', 'Two', 'Fou', 'Fiv']);
 });
 
