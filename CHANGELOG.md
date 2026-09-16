@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.3.0](https://github.com/zainadeel/compomo/compare/v15.2.0...v15.3.0) (2026-09-16)
+
+
+### Added
+
+* expand form controls and refine settings and map components ([#616](https://github.com/zainadeel/compomo/issues/616)) ([b9138f1](https://github.com/zainadeel/compomo/commit/b9138f106265f976cac8785837d319e657aedae0))
+
 ## [15.2.0](https://github.com/zainadeel/compomo/compare/v15.1.1...v15.2.0) (2026-09-15)
 
 
