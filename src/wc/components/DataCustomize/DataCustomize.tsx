@@ -135,7 +135,7 @@ export class DataCustomize {
             id={this.triggerId}
             variant="icon-label"
             size="md"
-            icon="ViewMenu"
+            icon="Preferences"
             label={this.label}
             labelEmphasis={false}
             pressScale={false}
