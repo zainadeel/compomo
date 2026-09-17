@@ -25,3 +25,13 @@
 :host(.message-bubble--user) .message-bubble {
   background: var(--color-chrome-background-primary);
 }
+
+@media (max-width: 767px) {
+  .message-bubble {
+    background: var(--color-background-secondary);
+  }
+
+  :host(.message-bubble--user) .message-bubble {
+    background: var(--color-background-faint-neutral);
+  }
+}
