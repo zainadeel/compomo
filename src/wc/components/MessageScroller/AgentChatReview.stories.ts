@@ -298,7 +298,7 @@ export const ComposerFailure: Story = {
             error-message="The message could not be sent. Your draft is still available."
           >
             ${modelSelector()}
-            <ds-button-unfilled slot="error-actions" label="Retry" size="sm"></ds-button-unfilled>
+            <ds-button-unfilled slot="error-actions" label="Retry" size="sm" rounded></ds-button-unfilled>
           </ds-message-composer>
         </div>
       </ds-message-scroller>

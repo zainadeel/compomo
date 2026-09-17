@@ -20,14 +20,24 @@ test('uses ArrowUp to send and SquareFilled to stop streaming', async ({ page })
   await expect(action).toHaveAttribute('aria-label', 'Stop response');
 });
 
-test('uses a 10px surface radius and a non-rounded send control', async ({ page }) => {
+test('uses a 4px surface radius and rounded composer controls', async ({ page }) => {
   const composer = page.locator('#composer');
   const field = composer.locator('.message-composer__field');
-  const action = composer.locator('ds-button-filled.message-composer__action');
+  const send = composer.locator('ds-button-filled.message-composer__action');
+  const dictation = composer.locator('#dictation');
 
-  await expect(field).toHaveCSS('border-radius', '10px');
-  await expect(action).toHaveJSProperty('rounded', false);
-  await expect(action.locator('button')).toHaveCSS('border-radius', '2px');
+  await expect(field).toHaveCSS('border-radius', '4px');
+  for (const action of [send, dictation]) {
+    await expect(action).toHaveJSProperty('rounded', true);
+    await expect(action.locator('button')).toHaveCSS('border-radius', '9999px');
+  }
+
+  await composer.evaluate((element: HTMLDsMessageComposerElement) => {
+    element.value = '';
+  });
+  const inactiveSend = composer.locator('ds-button-unfilled.message-composer__action');
+  await expect(inactiveSend).toHaveJSProperty('rounded', true);
+  await expect(inactiveSend.locator('button')).toHaveCSS('border-radius', '9999px');
 });
 
 test('keeps 8px between dictation and send controls', async ({ page }) => {

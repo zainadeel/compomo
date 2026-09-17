@@ -275,6 +275,9 @@ test('links visible composer error text to the editable draft and clears it on r
   await expect(textarea).toHaveAttribute('aria-describedby', errorId!);
   await expect(textarea).toHaveValue('Preserved draft');
   await expect(composer.getByRole('button', { name: 'Retry' })).toBeVisible();
+  const retry = composer.locator('ds-button-unfilled[slot="error-actions"]');
+  await expect(retry).toHaveJSProperty('rounded', true);
+  await expect(retry.locator('button')).toHaveCSS('border-radius', '9999px');
   const attachedGeometry = await composer.evaluate(element => {
     const stack = element.querySelector('.message-composer__stack')!.getBoundingClientRect();
     const support = element

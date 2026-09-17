@@ -61,6 +61,7 @@ export const GenericConversation: Story = {
               variant="icon"
               icon="Plus"
               size="md"
+              rounded
               .hasBorder=${false}
               aria-label="Add to message"
             ></ds-button-unfilled>
@@ -116,6 +117,7 @@ export const PersonToPersonReuse: Story = {
               variant="icon"
               icon="Plus"
               size="md"
+              rounded
               .hasBorder=${false}
               aria-label="Add to message"
             ></ds-button-unfilled>

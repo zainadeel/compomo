@@ -28,6 +28,18 @@ test('starts incoming message content without an avatar prefix column', async ({
   }
   expect(contentBox.y - (headerBox.y + headerBox.height)).toBeCloseTo(4, 0);
   expect(footerBox.y - (contentBox.y + contentBox.height)).toBeCloseTo(4, 0);
+
+  const [authorBox, bubbleBox, bubblePaddingInlineStart] = await Promise.all([
+    author.boundingBox(),
+    message.locator('ds-message-bubble .message-bubble').boundingBox(),
+    message
+      .locator('ds-message-bubble .message-bubble')
+      .evaluate(element => Number.parseFloat(getComputedStyle(element).paddingInlineStart)),
+  ]);
+  if (!authorBox || !bubbleBox || Number.isNaN(bubblePaddingInlineStart)) {
+    throw new Error('Message bubble text alignment did not render');
+  }
+  expect(authorBox.x).toBeCloseTo(bubbleBox.x + bubblePaddingInlineStart, 0);
 });
 
 test('reports failed delivery in footer metadata without changing the bubble', async ({ page }) => {

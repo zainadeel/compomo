@@ -41,6 +41,7 @@ export const ToolsAndActions: Story = {
           variant="icon"
           icon="Plus"
           size="md"
+          rounded
           .hasBorder=${false}
           aria-label="Add to message"
         ></ds-button-unfilled>
@@ -49,6 +50,7 @@ export const ToolsAndActions: Story = {
           variant="icon"
           icon="Mic"
           size="md"
+          rounded
           .hasBorder=${false}
           aria-label="Dictate message"
         ></ds-button-unfilled>
@@ -87,7 +89,7 @@ export const Error: Story = {
         status="error"
         error-message="The message could not be sent. Check your connection and try again."
       >
-        <ds-button-unfilled slot="error-actions" label="Retry" size="sm"></ds-button-unfilled>
+        <ds-button-unfilled slot="error-actions" label="Retry" size="sm" rounded></ds-button-unfilled>
       </ds-message-composer>
     `),
 };
@@ -102,7 +104,7 @@ export const NarrowErrorWithRecovery: Story = {
         status="error"
         error-message="The message could not be sent. Your draft is still available."
       >
-        <ds-button-unfilled slot="error-actions" label="Retry" size="sm"></ds-button-unfilled>
+        <ds-button-unfilled slot="error-actions" label="Retry" size="sm" rounded></ds-button-unfilled>
       </ds-message-composer>
     </div>
   `,
