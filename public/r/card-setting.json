@@ -206,7 +206,12 @@
         }
       ],
       "methods": [],
-      "slots": []
+      "slots": [
+        {
+          "name": "",
+          "description": "The default slot"
+        }
+      ]
     },
     "props": {
       "cancelLabel": {
@@ -280,7 +285,12 @@
       }
     ],
     "methods": [],
-    "slots": [],
+    "slots": [
+      {
+        "name": "",
+        "description": "The default slot"
+      }
+    ],
     "exports": {
       "customElement": "ds-card-setting",
       "react": "DsCardSetting",

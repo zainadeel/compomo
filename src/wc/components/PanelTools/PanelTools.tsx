@@ -611,6 +611,7 @@ export class PanelTools {
           isActive={this.isRailSelected(item.id)}
           activeFill={false}
           hasBorder={false}
+          background="chrome"
           pressScale={false}
           dot={item.dot ?? false}
           isInactive={item.isInactive}
@@ -693,7 +694,7 @@ export class PanelTools {
         <ds-tooltip label={label} side="left" size="sm" boundary="viewport">
           <button
             type="button"
-            class="panel-tools__shortcut ds-focus-ring-inset ds-interaction-fill"
+            class="panel-tools__shortcut ds-focus-ring-inset ds-interaction-fill ds-interaction-fill--on-chrome"
             disabled={accessory.action.isInactive}
             tabIndex={focusIndex === this.rovingIndex ? 0 : -1}
             data-rail-focus-key={focusKey}
@@ -726,7 +727,7 @@ export class PanelTools {
                 <ds-badge
                   class="panel-tools__shortcut-dot"
                   variant="dot"
-                  background="var(--color-background-secondary)"
+                  background="var(--_panel-tools-shortcut-dot-ring)"
                   aria-hidden="true"
                 />
               ) : null}

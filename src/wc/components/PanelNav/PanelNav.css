@@ -36,16 +36,16 @@
     var(--effect-animation-easing-ease-in-out, ease);
 
   /* ─ Colours – default chrome (app surfaces) ─ */
-  --_nav-bg: var(--color-background-secondary);
-  --_nav-border: var(--color-border-tertiary);
-  --_nav-divider: var(--color-border-tertiary);
-  --_nav-fg-primary: var(--color-foreground-primary);
-  --_nav-fg-secondary: var(--color-foreground-secondary);
-  --_nav-fg-tertiary: var(--color-foreground-tertiary);
-  --_nav-hover: var(--color-interaction-hover);
-  --_nav-pressed: var(--color-interaction-pressed);
-  --_nav-focus: var(--color-interaction-focus);
-  --_nav-dot: var(--color-foreground-bold-brand);
+  --_nav-bg: var(--color-chrome-background-theme);
+  --_nav-border: var(--color-chrome-border-tertiary);
+  --_nav-divider: var(--color-chrome-divider);
+  --_nav-fg-primary: var(--color-chrome-foreground-primary);
+  --_nav-fg-secondary: var(--color-chrome-foreground-secondary);
+  --_nav-fg-tertiary: var(--color-chrome-foreground-tertiary);
+  --_nav-hover: var(--color-chrome-interaction-hover);
+  --_nav-pressed: var(--color-chrome-interaction-pressed);
+  --_nav-focus: var(--color-chrome-interaction-focus);
+  --_nav-dot: var(--color-chrome-foreground-theme);
   --ds-interaction-hover: var(--_nav-hover);
   --ds-interaction-pressed: var(--_nav-pressed);
   --ds-focus-ring-color: var(--_nav-focus);
@@ -53,25 +53,24 @@
 
 /* ── Default chrome overrides ────────────────────────────────────────────── */
 
-/* Shell-owned chrome (bg + wash) — panel is a transparent frame. */
-:host-context(ds-shell-app:not([gradient-preset='none'])) .panel-nav,
-:host-context(ds-shell-app.shell-app--paper-texture) .panel-nav {
+/* ShellApp owns the shared base + wash — panel is a transparent frame in every preset. */
+:host-context(ds-shell-app) .panel-nav {
   background-color: transparent;
 }
 
 /* Style slots — same app tokens for now; hook texture/glyph layers on these classes later. */
 .panel-nav--dashboard,
 .panel-nav--settings {
-  --_nav-bg: var(--color-background-secondary);
-  --_nav-border: var(--color-border-tertiary);
-  --_nav-divider: var(--color-border-tertiary);
-  --_nav-fg-primary: var(--color-foreground-primary);
-  --_nav-fg-secondary: var(--color-foreground-secondary);
-  --_nav-fg-tertiary: var(--color-foreground-tertiary);
-  --_nav-hover: var(--color-interaction-hover);
-  --_nav-pressed: var(--color-interaction-pressed);
-  --_nav-focus: var(--color-interaction-focus);
-  --_nav-dot: var(--color-foreground-bold-brand);
+  --_nav-bg: var(--color-chrome-background-theme);
+  --_nav-border: var(--color-chrome-border-tertiary);
+  --_nav-divider: var(--color-chrome-divider);
+  --_nav-fg-primary: var(--color-chrome-foreground-primary);
+  --_nav-fg-secondary: var(--color-chrome-foreground-secondary);
+  --_nav-fg-tertiary: var(--color-chrome-foreground-tertiary);
+  --_nav-hover: var(--color-chrome-interaction-hover);
+  --_nav-pressed: var(--color-chrome-interaction-pressed);
+  --_nav-focus: var(--color-chrome-interaction-focus);
+  --_nav-dot: var(--color-chrome-foreground-theme);
   --ds-interaction-hover: var(--_nav-hover);
   --ds-interaction-pressed: var(--_nav-pressed);
   --ds-focus-ring-color: var(--_nav-focus);
@@ -487,11 +486,6 @@ ds-text.panel-nav__group-label {
   position: absolute;
   left: var(--_nav-padding-x);
   top: var(--_nav-padding-y);
-  --ds-button-unfilled-fg: var(--_nav-fg-secondary);
-  --ds-button-unfilled-fg-active: var(--_nav-fg-primary);
-  --ds-interaction-hover: var(--_nav-hover);
-  --ds-interaction-pressed: var(--_nav-pressed);
-  --ds-focus-ring-color: var(--_nav-focus);
 }
 
 /* ── Footer user — absolutely positioned, slides from row to below gear ───── */
@@ -651,7 +645,7 @@ ds-text.panel-nav__user-initial.ds-text--caption {
   left: 50%;
   transform: translateX(-50%);
   width: var(--dimension-stroke-width-025, 2px);
-  background: var(--color-foreground-primary);
+  background: var(--color-chrome-foreground-primary);
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--effect-motion-short-2, 100ms ease-in-out);

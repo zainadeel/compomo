@@ -14,7 +14,27 @@
   overflow: hidden;
   --_panel-tools-rail-width: var(--dimension-size-600);
   --_panel-tools-drawer-width: var(--ds-shell-panel-tools-width, var(--dimension-panel-width-xs));
-  --_panel-tools-border: var(--dimension-stroke-width-012, 1px) solid var(--color-border-tertiary);
+  --_panel-tools-border: var(--dimension-stroke-width-012, 1px) solid
+    var(--_shell-tools-border, var(--color-border-tertiary));
+  --_panel-tools-divider-color: var(--_shell-tools-divider, var(--color-divider-divider));
+  --_panel-tools-divider: var(--dimension-stroke-width-012, 1px) solid
+    var(--_panel-tools-divider-color);
+  --_panel-tools-fg-secondary: var(
+    --_shell-tools-fg-secondary,
+    var(--color-foreground-secondary)
+  );
+  --_panel-tools-shortcut-fg-secondary: var(
+    --_shell-tools-fg-secondary,
+    var(--color-chrome-foreground-secondary)
+  );
+  --_panel-tools-shortcut-border: var(
+    --_shell-tools-border-secondary,
+    var(--color-chrome-border-secondary)
+  );
+  --_panel-tools-shortcut-dot-ring: var(
+    --_shell-tools-background-theme,
+    var(--color-chrome-background-theme)
+  );
   /* Match panel-nav expand timing (medium-1); easing differs by direction. */
   --_panel-tools-expand-dur: var(--effect-animation-duration-medium-1, 300ms);
 }
@@ -149,7 +169,7 @@
   min-height: 0;
   box-sizing: border-box;
   padding: var(--dimension-space-200);
-  color: var(--color-foreground-secondary);
+  color: var(--_panel-tools-fg-secondary);
   font-family: var(--typography-font-family-ui);
   font-size: var(--typography-fontsize-md);
   line-height: var(--typography-lineheight-md);
@@ -159,7 +179,7 @@
 
 .panel-tools__view ::slotted(*) {
   margin: 0;
-  color: var(--color-foreground-secondary);
+  color: var(--_panel-tools-fg-secondary);
   font-family: var(--typography-font-family-ui);
   font-size: var(--typography-fontsize-md);
   line-height: var(--typography-lineheight-md);
@@ -189,7 +209,7 @@
   justify-content: center;
   height: var(--dimension-size-600);
   flex-shrink: 0;
-  border-bottom: var(--_panel-tools-border);
+  border-bottom: var(--_panel-tools-divider);
 }
 
 .panel-tools__rail-header.panel-tools__rail-section--stacked {
@@ -290,7 +310,7 @@
   padding: 0;
   border: 0;
   border-radius: var(--dimension-radius-half);
-  color: var(--color-foreground-secondary);
+  color: var(--_panel-tools-shortcut-fg-secondary);
   background: transparent;
   font: inherit;
 }
@@ -315,7 +335,7 @@
   box-sizing: border-box;
   width: var(--dimension-size-300);
   height: var(--dimension-size-300);
-  border: var(--dimension-stroke-width-012) solid var(--color-border-secondary);
+  border: var(--dimension-stroke-width-012) solid var(--_panel-tools-shortcut-border);
   border-radius: var(--dimension-radius-half);
   background: transparent;
 }
@@ -396,6 +416,7 @@
 
 .panel-tools__accessory-divider ds-divider {
   display: block;
+  --_divider-color: var(--_panel-tools-divider-color);
 }
 
 @media (prefers-reduced-motion: reduce) {

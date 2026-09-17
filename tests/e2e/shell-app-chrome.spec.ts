@@ -165,6 +165,204 @@ test.describe('App shell chrome', () => {
     }
   );
 
+  test('panel nav uses the chrome color and interaction context', async ({ page }) => {
+    const snapshot = await page.locator('.panel-nav').evaluate(element => {
+      const panel = element as HTMLElement;
+      const header = panel.querySelector<HTMLElement>('.panel-nav__header-btn');
+      const item = panel.querySelector<HTMLElement>('.panel-nav__item');
+      const footer = panel.querySelector<HTMLElement>('.panel-nav__footer-btn .button-unfilled');
+      const dot = panel.querySelector<HTMLElement>('.panel-nav__item-dot');
+      const resizeHandle = panel.parentElement?.querySelector<HTMLElement>(
+        '.panel-nav__resize-handle'
+      );
+      const read = (target: Element | null, property: string) =>
+        target ? getComputedStyle(target).getPropertyValue(property).trim() : '';
+      const resizeColor = resizeHandle
+        ? getComputedStyle(resizeHandle, '::after').backgroundColor
+        : '';
+      const sameToken = (target: Element | null, alias: string, token: string) =>
+        Boolean(target) && read(target, alias) === read(target, token);
+
+      return {
+        background: sameToken(panel, '--_nav-bg', '--color-chrome-background-theme'),
+        border: sameToken(panel, '--_nav-border', '--color-chrome-border-tertiary'),
+        divider: sameToken(panel, '--_nav-divider', '--color-chrome-divider'),
+        foregroundPrimary: sameToken(
+          panel,
+          '--_nav-fg-primary',
+          '--color-chrome-foreground-primary'
+        ),
+        foregroundSecondary: sameToken(
+          panel,
+          '--_nav-fg-secondary',
+          '--color-chrome-foreground-secondary'
+        ),
+        foregroundTertiary: sameToken(
+          panel,
+          '--_nav-fg-tertiary',
+          '--color-chrome-foreground-tertiary'
+        ),
+        hover: sameToken(panel, '--_nav-hover', '--color-chrome-interaction-hover'),
+        pressed: sameToken(panel, '--_nav-pressed', '--color-chrome-interaction-pressed'),
+        focus: sameToken(panel, '--_nav-focus', '--color-chrome-interaction-focus'),
+        headerChrome: header?.classList.contains('ds-interaction-fill--on-chrome') ?? false,
+        itemChrome: item?.classList.contains('ds-interaction-fill--on-chrome') ?? false,
+        footerChrome: footer?.classList.contains('ds-interaction-fill--on-chrome') ?? false,
+        footerHover: sameToken(footer, '--ds-interaction-hover', '--color-chrome-interaction-hover'),
+        dotBackground: sameToken(dot, '--_badge-bg', '--color-chrome-foreground-theme'),
+        resizeColor,
+        headerColor: header ? getComputedStyle(header).color : '',
+      };
+    });
+
+    expect(snapshot).toMatchObject({
+      background: true,
+      border: true,
+      divider: true,
+      foregroundPrimary: true,
+      foregroundSecondary: true,
+      foregroundTertiary: true,
+      hover: true,
+      pressed: true,
+      focus: true,
+      headerChrome: true,
+      itemChrome: true,
+      footerChrome: true,
+      footerHover: true,
+      dotBackground: true,
+      resizeColor: snapshot.headerColor,
+    });
+  });
+
+  test('bar nav uses the chrome color and interaction context', async ({ page }) => {
+    const snapshot = await page.locator('.bar-nav').evaluate(element => {
+      const bar = element as HTMLElement;
+      const tab = bar.querySelector<HTMLElement>('.bar-nav__tab');
+      const read = (target: Element | null, property: string) =>
+        target ? getComputedStyle(target).getPropertyValue(property).trim() : '';
+      const sameToken = (target: Element | null, alias: string, token: string) =>
+        Boolean(target) && read(target, alias) === read(target, token);
+
+      return {
+        background: sameToken(bar, '--_bar-nav-bg', '--color-chrome-background-theme'),
+        border: sameToken(bar, '--_bar-nav-border', '--color-chrome-border-tertiary'),
+        foregroundPrimary: sameToken(
+          bar,
+          '--_bar-nav-fg-primary',
+          '--color-chrome-foreground-primary'
+        ),
+        foregroundSecondary: sameToken(
+          bar,
+          '--_bar-nav-fg-secondary',
+          '--color-chrome-foreground-secondary'
+        ),
+        hover: sameToken(bar, '--_bar-nav-hover', '--color-chrome-interaction-hover'),
+        pressed: sameToken(bar, '--_bar-nav-pressed', '--color-chrome-interaction-pressed'),
+        focus: sameToken(bar, '--_bar-nav-focus', '--color-chrome-interaction-focus'),
+        headerChrome: bar.classList.contains('ds-interaction-fill--on-chrome'),
+        tabChrome: tab?.classList.contains('ds-interaction-fill--on-chrome') ?? false,
+      };
+    });
+
+    expect(snapshot).toEqual({
+      background: true,
+      border: true,
+      foregroundPrimary: true,
+      foregroundSecondary: true,
+      hover: true,
+      pressed: true,
+      focus: true,
+      headerChrome: true,
+      tabChrome: true,
+    });
+  });
+
+  test('tool panel uses the shell Chrome borders, dividers, and text context', async ({ page }) => {
+    const tools = page.locator('#tools');
+    await page.evaluate(async () => {
+      await import('/dist/components/ds-panel-tool-search.js');
+      await customElements.whenDefined('ds-panel-tool-search');
+      const panelTools = document.getElementById('tools');
+      if (!panelTools) throw new Error('Tool panel missing');
+      const search = document.createElement('ds-panel-tool-search');
+      search.slot = 'agents';
+      search.setAttribute('aria-label', 'Search agents');
+      search.setAttribute('show-filter', '');
+      panelTools.append(search);
+    });
+
+    await page.getByRole('button', { name: 'Agents', exact: true }).click();
+    await expect(tools).toHaveClass(/panel-tools--open/);
+    await expect(page.locator('ds-panel-tool-search .panel-tool-search')).toHaveCount(1);
+
+    const snapshot = await tools.evaluate(element => {
+      const root = element.shadowRoot;
+      const rail = root?.querySelector<HTMLElement>('.panel-tools__rail');
+      const drawer = root?.querySelector<HTMLElement>('.panel-tools__drawer');
+      const headerHost = root?.querySelector<HTMLElement>('ds-panel-tool-header');
+      const header = headerHost?.querySelector<HTMLElement>('.panel-tool-header');
+      const railAction = root?.querySelector<HTMLElement>(
+        'ds-button-unfilled.panel-tools__rail-action .button-unfilled'
+      );
+      const headerActions = headerHost
+        ? [...headerHost.querySelectorAll<HTMLElement>('ds-button-unfilled .button-unfilled')]
+        : [];
+      const view = root?.querySelector<HTMLElement>('.panel-tools__view--active');
+      const search = document.querySelector<HTMLElement>('ds-panel-tool-search');
+      const searchRow = search?.querySelector<HTMLElement>('.panel-tool-search');
+      const searchDivider = search?.querySelector<HTMLElement>('.panel-tool-search__divider');
+      const colorProbe = document.createElement('span');
+      colorProbe.style.color = 'var(--color-chrome-foreground-primary)';
+      document.body.append(colorProbe);
+      const expectedPrimary = getComputedStyle(colorProbe).color;
+      colorProbe.style.color = 'var(--color-chrome-foreground-secondary)';
+      const expectedSecondary = getComputedStyle(colorProbe).color;
+      colorProbe.style.border = '1px solid var(--color-chrome-border-tertiary)';
+      const expectedBorder = getComputedStyle(colorProbe).borderLeftColor;
+      colorProbe.style.backgroundColor = 'var(--color-chrome-divider)';
+      const expectedDivider = getComputedStyle(colorProbe).backgroundColor;
+      colorProbe.remove();
+
+      return {
+        railBorder: rail ? getComputedStyle(rail).borderLeftColor : '',
+        drawerBorder: drawer ? getComputedStyle(drawer).borderLeftColor : '',
+        headerColor: header ? getComputedStyle(header).color : '',
+        headerDivider: header ? getComputedStyle(header).borderBlockEndColor : '',
+        railActionChrome:
+          railAction?.classList.contains('button-unfilled--background-chrome') ?? false,
+        railActionInteraction:
+          railAction?.classList.contains('ds-interaction-fill--on-chrome') ?? false,
+        headerActionsChrome:
+          headerActions.length > 0 &&
+          headerActions.every(action => action.classList.contains('button-unfilled--background-chrome')),
+        headerActionsInteraction:
+          headerActions.length > 0 &&
+          headerActions.every(action => action.classList.contains('ds-interaction-fill--on-chrome')),
+        toolText: view ? getComputedStyle(view).color : '',
+        searchDivider: searchRow ? getComputedStyle(searchRow, '::after').backgroundColor : '',
+        searchVerticalDivider: searchDivider
+          ? getComputedStyle(searchDivider).backgroundColor
+          : '',
+        expectedPrimary,
+        expectedSecondary,
+        expectedBorder,
+        expectedDivider,
+      };
+    });
+
+    expect(snapshot.railBorder).toBe(snapshot.expectedBorder);
+    expect(snapshot.drawerBorder).toBe(snapshot.expectedBorder);
+    expect(snapshot.headerColor).toBe(snapshot.expectedPrimary);
+    expect(snapshot.headerDivider).toBe(snapshot.expectedDivider);
+    expect(snapshot.railActionChrome).toBe(true);
+    expect(snapshot.railActionInteraction).toBe(true);
+    expect(snapshot.headerActionsChrome).toBe(true);
+    expect(snapshot.headerActionsInteraction).toBe(true);
+    expect(snapshot.toolText).toBe(snapshot.expectedSecondary);
+    expect(snapshot.searchDivider).toBe(snapshot.expectedDivider);
+    expect(snapshot.searchVerticalDivider).toBe(snapshot.expectedDivider);
+  });
+
   test(
     'keeps one default cursor across desktop button hit areas',
     chromiumOnly(
@@ -933,7 +1131,7 @@ test.describe('App shell chrome', () => {
       const style = getComputedStyle(element);
       const probe = document.createElement('span');
       element.append(probe);
-      probe.style.color = 'var(--color-foreground-secondary)';
+      probe.style.color = 'var(--color-chrome-foreground-secondary)';
       const foregroundSecondary = getComputedStyle(probe).color;
       probe.remove();
       return {
@@ -942,6 +1140,7 @@ test.describe('App shell chrome', () => {
         borderRadius: Number.parseFloat(style.borderRadius),
         color: style.color,
         foregroundSecondary,
+        chromeInteraction: element.classList.contains('ds-interaction-fill--on-chrome'),
         pressed: element.getAttribute('aria-pressed'),
         transitionDuration: style.transitionDuration,
       };
@@ -950,6 +1149,7 @@ test.describe('App shell chrome', () => {
       animationName: 'none',
       backgroundColor: 'rgba(0, 0, 0, 0)',
       color: shortcutStyle.foregroundSecondary,
+      chromeInteraction: true,
       pressed: null,
       transitionDuration: '0s',
     });
@@ -958,7 +1158,7 @@ test.describe('App shell chrome', () => {
       const style = getComputedStyle(element);
       const probe = document.createElement('span');
       element.append(probe);
-      probe.style.color = 'var(--color-border-secondary)';
+      probe.style.color = 'var(--color-chrome-border-secondary)';
       const borderSecondary = getComputedStyle(probe).color;
       probe.remove();
       return {
@@ -1399,7 +1599,7 @@ test.describe('App shell chrome', () => {
   });
 
   test(
-    'none preset keeps the solid secondary chrome layer mounted',
+    'none preset keeps the solid Chrome layer mounted and shared by shell chrome',
     chromiumOnly(
       'layout-geometry',
       'The explicit none preset maps to a deterministic chrome surface recipe.'
@@ -1420,16 +1620,20 @@ test.describe('App shell chrome', () => {
       await expect(chrome).toHaveAttribute('data-e2e-persistent', '');
       const colors = await chrome.evaluate(element => {
         const probe = document.createElement('div');
-        probe.style.backgroundColor = 'var(--color-background-secondary)';
+        probe.style.backgroundColor = 'var(--color-chrome-background-theme)';
         document.body.append(probe);
-        const secondary = getComputedStyle(probe).backgroundColor;
+        const theme = getComputedStyle(probe).backgroundColor;
         probe.remove();
         return {
           chrome: getComputedStyle(element).backgroundColor,
-          secondary,
+          theme,
+          panel: getComputedStyle(document.querySelector('.panel-nav')!).backgroundColor,
+          bar: getComputedStyle(document.querySelector('.bar-nav')!).backgroundColor,
         };
       });
-      expect(colors.chrome).toBe(colors.secondary);
+      expect(colors.chrome).toBe(colors.theme);
+      expect(colors.panel).toBe('rgba(0, 0, 0, 0)');
+      expect(colors.bar).toBe('rgba(0, 0, 0, 0)');
     }
   );
 

@@ -24,6 +24,7 @@ test('wide chrome shows every section tab and emits dsSectionChange @cross-brows
   page,
 }) => {
   const header = page.locator('#wide-header');
+  await expect(header).not.toHaveAttribute('data-shell-bar');
   await expect(header.getByRole('heading', { level: 1, name: 'People' })).toHaveCount(1);
   await expect(header.getByRole('tablist', { name: 'Change People view' })).toBeVisible();
   await expect(header.locator('.bar-page-title__section-trigger')).toHaveCount(0);

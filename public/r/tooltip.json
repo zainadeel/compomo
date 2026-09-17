@@ -240,7 +240,12 @@
           "description": "Present against an external anchor the host already measured.\nDoes not bind hover or focus on that anchor — the owner drives show/hide."
         }
       ],
-      "slots": []
+      "slots": [
+        {
+          "name": "",
+          "description": "The default slot"
+        }
+      ]
     },
     "props": {
       "align": {
@@ -358,7 +363,12 @@
         "description": "Present against an external anchor the host already measured.\nDoes not bind hover or focus on that anchor — the owner drives show/hide."
       }
     ],
-    "slots": [],
+    "slots": [
+      {
+        "name": "",
+        "description": "The default slot"
+      }
+    ],
     "exports": {
       "customElement": "ds-tooltip",
       "react": "DsTooltip",

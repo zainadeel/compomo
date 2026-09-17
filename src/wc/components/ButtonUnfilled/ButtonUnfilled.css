@@ -47,6 +47,11 @@
   --ds-button-split-divider: var(--color-always-dark-border-tertiary);
 }
 
+:host(.button-unfilled-host--background-chrome) {
+  --ds-button-split-border: var(--color-chrome-border-secondary);
+  --ds-button-split-divider: var(--color-chrome-divider);
+}
+
 .button-unfilled {
   background: transparent;
   color: var(--ds-button-unfilled-fg);
@@ -118,6 +123,13 @@
   --ds-button-unfilled-fg-active: var(--color-always-dark-foreground-primary);
   --ds-button-unfilled-dot-ring: var(--color-always-dark-background);
   --ds-button-unfilled-border: var(--color-always-dark-border-secondary);
+}
+
+.button-unfilled--background-chrome {
+  --ds-button-unfilled-fg: var(--color-chrome-foreground-secondary);
+  --ds-button-unfilled-fg-active: var(--color-chrome-foreground-primary);
+  --ds-button-unfilled-dot-ring: var(--color-chrome-background-theme);
+  --ds-button-unfilled-border: var(--color-chrome-border-secondary);
 }
 
 /*

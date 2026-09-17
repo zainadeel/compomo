@@ -73,6 +73,52 @@ test.describe('Managed application shell', () => {
     await expect(panel).toHaveJSProperty('presentation', 'nested');
     await expect(shell.locator('.shell-app__bar > ds-bar-nav')).toHaveCount(0);
     await expect(shellBarTitle).toBeVisible();
+    const shellBarTitleChrome = await shellBarTitle.evaluate(element => {
+      const title = element.querySelector<HTMLElement>('.bar-page-title');
+      const heading = element.querySelector<HTMLElement>('.bar-page-title__heading');
+      const tab = element.querySelector<HTMLElement>('.bar-page-title__tab');
+      if (!title || !heading) throw new Error('Managed BarPageTitle chrome is missing');
+      const read = (target: Element, property: string) =>
+        getComputedStyle(target).getPropertyValue(property).trim();
+      const foregroundProbe = document.createElement('span');
+      foregroundProbe.style.color = 'var(--color-chrome-foreground-primary)';
+      document.body.append(foregroundProbe);
+      const expectedHeadingColor = getComputedStyle(foregroundProbe).color;
+      foregroundProbe.remove();
+      return {
+        marker: element.hasAttribute('data-shell-bar'),
+        hostBackground: getComputedStyle(element).backgroundColor,
+        titleBackground: getComputedStyle(title).backgroundColor,
+        foregroundPrimary: read(element, '--_bar-page-title-fg-primary') ===
+          read(element, '--color-chrome-foreground-primary'),
+        foregroundSecondary: read(element, '--_bar-page-title-fg-secondary') ===
+          read(element, '--color-chrome-foreground-secondary'),
+        border: read(element, '--_bar-page-title-border') ===
+          read(element, '--color-chrome-border-tertiary'),
+        hover: read(element, '--_bar-page-title-hover') ===
+          read(element, '--color-chrome-interaction-hover'),
+        pressed: read(element, '--_bar-page-title-pressed') ===
+          read(element, '--color-chrome-interaction-pressed'),
+        focus: read(element, '--_bar-page-title-focus') ===
+          read(element, '--color-chrome-interaction-focus'),
+        headingColor: getComputedStyle(heading).color,
+        expectedHeadingColor,
+        tabChrome: tab?.classList.contains('ds-interaction-fill--on-chrome') ?? false,
+      };
+    });
+    expect(shellBarTitleChrome).toMatchObject({
+      marker: true,
+      hostBackground: 'rgba(0, 0, 0, 0)',
+      titleBackground: 'rgba(0, 0, 0, 0)',
+      foregroundPrimary: true,
+      foregroundSecondary: true,
+      border: true,
+      hover: true,
+      pressed: true,
+      focus: true,
+      tabChrome: true,
+    });
+    expect(shellBarTitleChrome.headingColor).toBe(shellBarTitleChrome.expectedHeadingColor);
     await expect(shell.locator('.shell-app__bar > ds-bar-title')).toHaveCount(0);
     await expect(shell.locator('ds-shell-page ds-bar-title')).toHaveCount(0);
     await expect(shell.getByText('Current fleet status.', { exact: true })).toHaveCount(0);

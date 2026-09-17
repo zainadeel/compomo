@@ -343,6 +343,20 @@ test('measures prose without narrowing tables or code', async ({ page }) => {
   expect(narrow.scrollWidth).toBeLessThanOrEqual(narrow.clientWidth);
 });
 
+test('uses secondary foreground for agent response body text', async ({ page }) => {
+  const response = page.locator('#response');
+  const expectedSecondary = await page.evaluate(() => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--color-foreground-secondary)';
+    document.body.append(probe);
+    const color = getComputedStyle(probe).color;
+    probe.remove();
+    return color;
+  });
+
+  await expect(response.locator('ds-markdown p').first()).toHaveCSS('color', expectedSecondary);
+});
+
 test('keeps parts as the default, lets composed content ignore parts, and renders answered records', async ({
   page,
 }) => {

@@ -10,6 +10,7 @@
   gap: var(--dimension-space-150);
   min-width: 0;
   width: 100%;
+  color: var(--color-foreground-secondary);
   -webkit-user-select: none;
   user-select: none;
 }

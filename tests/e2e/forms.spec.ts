@@ -1476,6 +1476,19 @@ test('switch supports readonly, required, unchecked, and external form behavior'
   await expect(labeled).toHaveAttribute('aria-checked', 'true');
 });
 
+test('switch does not animate a controlled value during initial hydration @cross-browser', async ({
+  page,
+}) => {
+  await expect(page.locator('#switch-initial-sync')).toHaveAttribute('aria-checked', 'true');
+  const animations = await page.evaluate(
+    () =>
+      (window as typeof window & { __initialSyncSwitchAnimations?: string[] })
+        .__initialSyncSwitchAnimations ?? []
+  );
+
+  expect(animations).toEqual([]);
+});
+
 test(
   'switch sizes preserve density-specific thumb insets and an outset focus ring',
   chromiumOnly(

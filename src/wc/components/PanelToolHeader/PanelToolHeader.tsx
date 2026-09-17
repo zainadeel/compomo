@@ -77,6 +77,7 @@ export class PanelToolHeader {
                   variant="icon"
                   icon={this.backIcon}
                   size="md"
+                  background="chrome"
                   aria-label={this.backAriaLabel}
                   activeFill={false}
                   hasBorder={false}
@@ -90,7 +91,7 @@ export class PanelToolHeader {
             as="h2"
             variant="text-body-medium"
             emphasis
-            color="primary"
+            color="inherit"
             lineTruncation={1}
           >
             {this.heading}
@@ -108,6 +109,7 @@ export class PanelToolHeader {
                   variant="icon"
                   icon={action.icon}
                   size="md"
+                  background="chrome"
                   aria-label={action.ariaLabel}
                   haspopup={action.haspopup}
                   controls={action.controls}

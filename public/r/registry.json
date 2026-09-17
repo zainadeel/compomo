@@ -338,7 +338,12 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          "",
+          "actions",
+          "footer",
+          "metadata-actions"
+        ],
         "exports": {
           "customElement": "ds-agent-response",
           "react": "DsAgentResponse",
@@ -550,7 +555,11 @@
             "detail": "{ open: boolean }"
           }
         ],
-        "slots": [],
+        "slots": [
+          "details",
+          "result",
+          "summary"
+        ],
         "exports": {
           "customElement": "ds-agent-tool-call",
           "react": "DsAgentToolCall",
@@ -1071,7 +1080,9 @@
             "detail": "MouseEvent"
           }
         ],
-        "slots": [],
+        "slots": [
+          "actions"
+        ],
         "exports": {
           "customElement": "ds-banner",
           "react": "DsBanner",
@@ -1221,7 +1232,9 @@
             "detail": "MouseEvent"
           }
         ],
-        "slots": [],
+        "slots": [
+          "actions"
+        ],
         "exports": {
           "customElement": "ds-bar-action",
           "react": "DsBarAction",
@@ -1346,7 +1359,7 @@
             }
           ],
           "styling": {
-            "rationale": "The host participates in shell-owned layout; internal tabs and chrome own their recipes.",
+            "rationale": "The host participates in ShellApp-owned layout; ShellApp owns the shared Chrome base and wash while BarNav owns Chrome foreground, border, and interaction recipes.",
             "protected": [],
             "customProperties": []
           }
@@ -2862,7 +2875,7 @@
             "General content UI keeps the selected interaction fill and border for pressed or active emphasis.",
             "Shell, navigation, and tool-rail composites use isActive with primary foreground across the complete control and no selected fill or border.",
             "The omitted default surface treatment is for primary and secondary parent surfaces and uses the brand-active selected fill; pass faint explicitly on faint surfaces to use the neutral active fill.",
-            "Surface context must match the actual parent surface; translucent, inverted, media, and always-dark treatments are reserved for those surfaces.",
+            "Surface context must match the actual parent surface; chrome, translucent, inverted, media, and always-dark treatments are reserved for those surfaces. The chrome variant uses the chrome foreground, border, and interaction families and does not paint the parent surface.",
             "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
             "Rounded changes only the control radius to the half-radius treatment; it does not change hierarchy, size, variant, or interaction semantics.",
             "Physical press scaling is on by default. Disable it only when an owning composite must keep child or background geometry fixed; hover and pressed interaction washes remain available.",
@@ -3536,7 +3549,12 @@
             "detail": "void"
           }
         ],
-        "slots": [],
+        "slots": [
+          "",
+          "actions",
+          "chart",
+          "legend"
+        ],
         "exports": {
           "customElement": "ds-card-chart",
           "react": "DsCardChart",
@@ -3702,7 +3720,9 @@
             "detail": "CardNavigationDetail"
           }
         ],
-        "slots": [],
+        "slots": [
+          ""
+        ],
         "exports": {
           "customElement": "ds-card-navigation",
           "react": "DsCardNavigation",
@@ -3901,7 +3921,11 @@
             "detail": "OverviewMetric"
           }
         ],
-        "slots": [],
+        "slots": [
+          "filter",
+          "footer",
+          "period"
+        ],
         "exports": {
           "customElement": "ds-card-overview",
           "react": "DsCardOverview",
@@ -4090,7 +4114,9 @@
             "detail": "CardSettingActionDetail"
           }
         ],
-        "slots": [],
+        "slots": [
+          ""
+        ],
         "exports": {
           "customElement": "ds-card-setting",
           "react": "DsCardSetting",
@@ -5077,7 +5103,11 @@
         },
         "props": {},
         "events": [],
-        "slots": [],
+        "slots": [
+          "",
+          "actions",
+          "empty"
+        ],
         "exports": {
           "customElement": "ds-conversation-list",
           "react": "DsConversationList",
@@ -5212,7 +5242,11 @@
             "detail": "{ id: string }"
           }
         ],
-        "slots": [],
+        "slots": [
+          "actions",
+          "leading",
+          "trailing"
+        ],
         "exports": {
           "customElement": "ds-conversation-list-item",
           "react": "DsConversationListItem",
@@ -5295,7 +5329,9 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          ""
+        ],
         "exports": {
           "customElement": "ds-conversation-list-section",
           "react": "DsConversationListSection",
@@ -6725,7 +6761,12 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          "leading",
+          "search",
+          "start",
+          "trailing"
+        ],
         "exports": {
           "customElement": "ds-data-toolbar",
           "react": "DsDataToolbar",
@@ -7112,7 +7153,9 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          ""
+        ],
         "exports": {
           "customElement": "ds-field",
           "react": "DsField",
@@ -7992,7 +8035,10 @@
             "detail": "string[]"
           }
         ],
-        "slots": [],
+        "slots": [
+          "prefix",
+          "suffix"
+        ],
         "exports": {
           "customElement": "ds-input",
           "react": "DsInput",
@@ -9409,7 +9455,13 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          "",
+          "actions",
+          "footer",
+          "header",
+          "metadata-actions"
+        ],
         "exports": {
           "customElement": "ds-message",
           "react": "DsMessage",
@@ -9555,8 +9607,8 @@
             "Surface styling does not add semantics; failed delivery belongs in Message metadata below the unchanged bubble rather than in an error bubble treatment."
           ],
           "states": [
-            "The user variant represents user-sent copy in agent and person-to-person channels and uses secondary foreground.",
-            "The received variant represents ordinary incoming person-to-person copy.",
+            "The user variant represents user-sent copy in agent and person-to-person channels, uses secondary foreground, and uses the Chrome primary background.",
+            "The received variant represents ordinary incoming person-to-person copy and uses the Chrome secondary background.",
             "Typing and rich agent output are not MessageBubble variants."
           ],
           "responsiveBehavior": [
@@ -9601,7 +9653,9 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          ""
+        ],
         "exports": {
           "customElement": "ds-message-bubble",
           "react": "DsMessageBubble",
@@ -9740,7 +9794,12 @@
             "detail": "{ text: string }"
           }
         ],
-        "slots": [],
+        "slots": [
+          "actions",
+          "attachments",
+          "error-actions",
+          "tools"
+        ],
         "exports": {
           "customElement": "ds-message-composer",
           "react": "DsMessageComposer",
@@ -9853,7 +9912,11 @@
             "detail": "void"
           }
         ],
-        "slots": [],
+        "slots": [
+          "",
+          "interaction",
+          "overlay"
+        ],
         "exports": {
           "customElement": "ds-message-scroller",
           "react": "DsMessageScroller",
@@ -10187,7 +10250,10 @@
             "detail": "string"
           }
         ],
-        "slots": [],
+        "slots": [
+          "leading",
+          "trailing"
+        ],
         "exports": {
           "customElement": "ds-mobile-header",
           "react": "DsMobileHeader",
@@ -10674,7 +10740,10 @@
             "detail": "ModalCloseDetail"
           }
         ],
-        "slots": [],
+        "slots": [
+          "",
+          "footer"
+        ],
         "exports": {
           "customElement": "ds-modal",
           "react": "DsModal",
@@ -12578,7 +12647,10 @@
             "detail": "ScrollOverlayScrollDetail"
           }
         ],
-        "slots": [],
+        "slots": [
+          "",
+          "overlay"
+        ],
         "exports": {
           "customElement": "ds-scroll-overlay",
           "react": "DsScrollOverlay",
@@ -13384,7 +13456,17 @@
             "detail": "{ id: PanelToolsToolId; selected: boolean }"
           }
         ],
-        "slots": [],
+        "slots": [
+          "",
+          "banner",
+          "bar",
+          "mobile-bar-nav",
+          "mobile-sheet-nav",
+          "page-header-leading",
+          "page-header-trailing",
+          "panel",
+          "tools"
+        ],
         "exports": {
           "customElement": "ds-shell-app",
           "react": "DsShellApp",
@@ -13576,7 +13658,11 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          "",
+          "header",
+          "mobile-header"
+        ],
         "exports": {
           "customElement": "ds-shell-page",
           "react": "DsShellPage",
@@ -15328,7 +15414,13 @@
             "detail": "DataSortChangeDetail"
           }
         ],
-        "slots": [],
+        "slots": [
+          "footer",
+          "footer-leading",
+          "footer-trailing",
+          "header",
+          "header-after"
+        ],
         "exports": {
           "customElement": "ds-table",
           "react": "DsTable",
@@ -15753,7 +15845,9 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          ""
+        ],
         "exports": {
           "customElement": "ds-text",
           "react": "DsText",
@@ -16532,7 +16626,9 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          ""
+        ],
         "exports": {
           "customElement": "ds-tooltip",
           "react": "DsTooltip",

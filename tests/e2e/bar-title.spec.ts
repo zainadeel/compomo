@@ -202,7 +202,7 @@ test(
       actionsTop: 36,
       titleTop: 36,
       breadcrumbToTitle: 8,
-      titleToDescription: 8,
+      titleToDescription: 4,
     });
     expect(withoutBreadcrumb).toEqual({ actionsTop: 16, titleTop: 16 });
   }

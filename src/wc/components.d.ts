@@ -897,7 +897,7 @@ export namespace Components {
          */
         "ariaLabel": string | null;
         /**
-          * Actual parent surface context. Omit on primary and secondary surfaces.
+          * Actual parent surface context. Omit on primary and secondary surfaces; use chrome for shell surfaces.
          */
         "background": ButtonUnfilledBackground | undefined;
         /**
@@ -7585,7 +7585,7 @@ declare namespace LocalJSX {
          */
         "ariaLabel"?: string | null;
         /**
-          * Actual parent surface context. Omit on primary and secondary surfaces.
+          * Actual parent surface context. Omit on primary and secondary surfaces; use chrome for shell surfaces.
          */
         "background"?: ButtonUnfilledBackground | undefined;
         /**

@@ -62,6 +62,10 @@ describe('shell gradient recipes', () => {
       SHELL_GRADIENT_PRESETS
     );
     assert.equal(options[0].preview.backgroundImage, undefined);
+    assert.equal(
+      options[0].preview.backgroundColor,
+      'var(--color-chrome-background-theme)'
+    );
     assert.match(options[1].preview.backgroundImage ?? '', /radial-gradient/);
     assert.equal(options[4].preview.opacity, 0.4);
   });

@@ -4,6 +4,7 @@
 @import '../../utils/chrome-layout.css';
 @import '../../utils/focus-ring.css';
 @import '../../utils/control-inactive.css';
+@import '../../utils/interaction-fill.css';
 
 :host {
   display: block;
@@ -23,34 +24,38 @@
     border-color var(--effect-motion-short-3),
     color var(--effect-motion-short-3);
   isolation: isolate;
-  /* Default chrome — app surfaces */
-  --_bar-nav-bg: var(--color-background-secondary);
-  --_bar-nav-border: var(--color-border-tertiary);
-  --_bar-nav-fg-primary: var(--color-foreground-primary);
-  --_bar-nav-fg-secondary: var(--color-foreground-secondary);
-  --_bar-nav-hover: var(--color-interaction-hover);
-  --_bar-nav-pressed: var(--color-interaction-pressed);
-  --_bar-nav-focus: var(--color-interaction-focus);
-  --_bar-nav-dot: var(--color-foreground-bold-brand);
+  /* Default Chrome — ShellApp owns the shared base surface. */
+  --_bar-nav-bg: var(--color-chrome-background-theme);
+  --_bar-nav-border: var(--color-chrome-border-tertiary);
+  --_bar-nav-fg-primary: var(--color-chrome-foreground-primary);
+  --_bar-nav-fg-secondary: var(--color-chrome-foreground-secondary);
+  --_bar-nav-hover: var(--color-chrome-interaction-hover);
+  --_bar-nav-pressed: var(--color-chrome-interaction-pressed);
+  --_bar-nav-focus: var(--color-chrome-interaction-focus);
+  --_bar-nav-dot: var(--color-chrome-foreground-theme);
+  --ds-interaction-hover: var(--_bar-nav-hover);
+  --ds-interaction-pressed: var(--_bar-nav-pressed);
   --ds-focus-ring-color: var(--_bar-nav-focus);
 }
 
-/* Style slots — same app tokens for now; hook texture/glyph layers later. */
+/* Style slots — both route contexts use the shared Chrome token family. */
 .bar-nav--dashboard,
 .bar-nav--settings {
-  --_bar-nav-bg: var(--color-background-secondary);
-  --_bar-nav-border: var(--color-border-tertiary);
-  --_bar-nav-fg-primary: var(--color-foreground-primary);
-  --_bar-nav-fg-secondary: var(--color-foreground-secondary);
-  --_bar-nav-hover: var(--color-interaction-hover);
-  --_bar-nav-pressed: var(--color-interaction-pressed);
-  --_bar-nav-focus: var(--color-interaction-focus);
-  --_bar-nav-dot: var(--color-foreground-bold-brand);
+  --_bar-nav-bg: var(--color-chrome-background-theme);
+  --_bar-nav-border: var(--color-chrome-border-tertiary);
+  --_bar-nav-fg-primary: var(--color-chrome-foreground-primary);
+  --_bar-nav-fg-secondary: var(--color-chrome-foreground-secondary);
+  --_bar-nav-hover: var(--color-chrome-interaction-hover);
+  --_bar-nav-pressed: var(--color-chrome-interaction-pressed);
+  --_bar-nav-focus: var(--color-chrome-interaction-focus);
+  --_bar-nav-dot: var(--color-chrome-foreground-theme);
+  --ds-interaction-hover: var(--_bar-nav-hover);
+  --ds-interaction-pressed: var(--_bar-nav-pressed);
+  --ds-focus-ring-color: var(--_bar-nav-focus);
 }
 
-/* Shell-owned chrome (bg + wash) — bar is a transparent frame. */
-:host-context(ds-shell-app:not([gradient-preset='none'])) .bar-nav,
-:host-context(ds-shell-app.shell-app--paper-texture) .bar-nav {
+/* ShellApp owns the shared base + wash — bar is a transparent frame in every preset. */
+:host-context(ds-shell-app) .bar-nav {
   background-color: transparent;
 }
 
@@ -188,11 +193,6 @@
 /* Overflow trigger — compact icon button aligned to the right edge. */
 .bar-nav__overflow-trigger {
   margin-left: auto;
-  --ds-button-unfilled-fg: var(--_bar-nav-fg-secondary);
-  --ds-button-unfilled-fg-active: var(--_bar-nav-fg-primary);
-  --ds-interaction-hover: var(--_bar-nav-hover);
-  --ds-interaction-pressed: var(--_bar-nav-pressed);
-  --ds-focus-ring-color: var(--_bar-nav-focus);
 }
 
 /* Fallback heading when no tabs — matches a single (selected) tab so the area

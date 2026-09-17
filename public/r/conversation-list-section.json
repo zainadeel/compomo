@@ -76,7 +76,12 @@
       },
       "events": [],
       "methods": [],
-      "slots": []
+      "slots": [
+        {
+          "name": "",
+          "description": "The default slot"
+        }
+      ]
     },
     "props": {
       "heading": {
@@ -100,7 +105,12 @@
     },
     "events": [],
     "methods": [],
-    "slots": [],
+    "slots": [
+      {
+        "name": "",
+        "description": "The default slot"
+      }
+    ],
     "exports": {
       "customElement": "ds-conversation-list-section",
       "react": "DsConversationListSection",

@@ -588,7 +588,14 @@
           "signature": "setFocus() => Promise<void>"
         }
       ],
-      "slots": []
+      "slots": [
+        {
+          "name": "prefix"
+        },
+        {
+          "name": "suffix"
+        }
+      ]
     },
     "props": {
       "ariaActiveDescendant": {
@@ -1008,7 +1015,14 @@
         "signature": "setFocus() => Promise<void>"
       }
     ],
-    "slots": [],
+    "slots": [
+      {
+        "name": "prefix"
+      },
+      {
+        "name": "suffix"
+      }
+    ],
     "exports": {
       "customElement": "ds-input",
       "react": "DsInput",

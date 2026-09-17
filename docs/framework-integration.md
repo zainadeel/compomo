@@ -177,7 +177,7 @@ MobileSheetNav, MobileBarNav, MobileHeader, and ShellPage remain public.
 PanelTools is the desktop/tablet primitive; ShellTools is the responsive tools
 adapter. They are not interchangeable and are not merged.
 
-Built-in radial wash: `100% 100% at 0% 0%` — transparent → intent stop (`cool` / `neutral` / `warm`), layer opacity **10%**. Preset **`none`** skips the wash and leaves the secondary chrome surface only. Bar wash position is offset by panel width so the L-shape stays continuous when the panel collapses.
+Built-in radial wash: `100% 100% at 0% 0%` — transparent → intent stop (`cool` / `neutral` / `warm`), layer opacity **10%**. Preset **`none`** skips the wash and leaves the shared Chrome theme base. Bar wash position is offset by panel width so the L-shape stays continuous when the panel collapses.
 
 ### Why the wash is synced in JavaScript
 

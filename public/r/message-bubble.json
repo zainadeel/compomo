@@ -33,8 +33,8 @@
         "Surface styling does not add semantics; failed delivery belongs in Message metadata below the unchanged bubble rather than in an error bubble treatment."
       ],
       "states": [
-        "The user variant represents user-sent copy in agent and person-to-person channels and uses secondary foreground.",
-        "The received variant represents ordinary incoming person-to-person copy.",
+        "The user variant represents user-sent copy in agent and person-to-person channels, uses secondary foreground, and uses the Chrome primary background.",
+        "The received variant represents ordinary incoming person-to-person copy and uses the Chrome secondary background.",
         "Typing and rich agent output are not MessageBubble variants."
       ],
       "responsiveBehavior": [
@@ -85,7 +85,12 @@
       },
       "events": [],
       "methods": [],
-      "slots": []
+      "slots": [
+        {
+          "name": "",
+          "description": "The default slot"
+        }
+      ]
     },
     "props": {
       "variant": {
@@ -99,7 +104,12 @@
     },
     "events": [],
     "methods": [],
-    "slots": [],
+    "slots": [
+      {
+        "name": "",
+        "description": "The default slot"
+      }
+    ],
     "exports": {
       "customElement": "ds-message-bubble",
       "react": "DsMessageBubble",
@@ -142,7 +152,7 @@
   "files": [
     {
       "path": "src/wc/components/MessageBubble/MessageBubble.css",
-      "content": ":host {\n  display: inline-flex;\n  max-width: 80%;\n  box-sizing: border-box;\n  -webkit-user-select: text;\n  user-select: text;\n}\n\n.message-bubble {\n  min-width: 0;\n  padding-block: var(--dimension-space-100);\n  padding-inline: calc(var(--dimension-space-100) + var(--dimension-space-025));\n  border-radius: var(--dimension-radius-050);\n  background: transparent;\n  color: var(--color-foreground-primary);\n  font-family: var(--typography-font-family-ui);\n  font-size: var(--typography-fontsize-md);\n  line-height: var(--typography-lineheight-md);\n  font-weight: var(--typography-weight-regular);\n  letter-spacing: var(--typography-letterspacing-negative-half);\n  box-sizing: border-box;\n  overflow-wrap: anywhere;\n}\n\n:host(.message-bubble--user) .message-bubble {\n  background: var(--color-translucent-translucent);\n  color: var(--color-foreground-secondary);\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);\n}\n\n:host(.message-bubble--received) .message-bubble {\n  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);\n}\n",
+      "content": ":host {\n  display: inline-flex;\n  max-width: 80%;\n  box-sizing: border-box;\n  -webkit-user-select: text;\n  user-select: text;\n}\n\n.message-bubble {\n  min-width: 0;\n  padding-block: var(--dimension-space-100);\n  padding-inline: calc(var(--dimension-space-100) + var(--dimension-space-025));\n  border-radius: var(--dimension-radius-100);\n  background: var(--color-chrome-background-secondary);\n  color: var(--color-foreground-secondary);\n  font-family: var(--typography-font-family-ui);\n  font-size: var(--typography-fontsize-md);\n  line-height: var(--typography-lineheight-md);\n  font-weight: var(--typography-weight-regular);\n  letter-spacing: var(--typography-letterspacing-negative-half);\n  box-sizing: border-box;\n  overflow-wrap: anywhere;\n}\n\n:host(.message-bubble--user) .message-bubble {\n  background: var(--color-chrome-background-primary);\n}\n",
       "type": "registry:ui"
     },
     {

@@ -164,7 +164,17 @@
         }
       ],
       "methods": [],
-      "slots": []
+      "slots": [
+        {
+          "name": "actions"
+        },
+        {
+          "name": "leading"
+        },
+        {
+          "name": "trailing"
+        }
+      ]
     },
     "props": {
       "actionsOpen": {
@@ -253,7 +263,17 @@
       }
     ],
     "methods": [],
-    "slots": [],
+    "slots": [
+      {
+        "name": "actions"
+      },
+      {
+        "name": "leading"
+      },
+      {
+        "name": "trailing"
+      }
+    ],
     "exports": {
       "customElement": "ds-conversation-list-item",
       "react": "DsConversationListItem",

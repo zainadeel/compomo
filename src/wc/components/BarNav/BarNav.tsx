@@ -719,6 +719,7 @@ export class BarNav {
                 'bar-nav__tab--selected': isSelected,
                 'ds-control--md': true,
                 'ds-focus-ring-inset': true,
+                'ds-interaction-fill--on-chrome': true,
                 'ds-control-inactive': !!tab.isInactive,
               }}
               aria-selected={isSelected ? 'true' : 'false'}
@@ -751,6 +752,7 @@ export class BarNav {
                     hasRing={false}
                     label=""
                     aria-hidden="true"
+                    style={{ '--_badge-bg': 'var(--_bar-nav-dot)' }}
                   />
                 )}
               </span>
@@ -778,6 +780,7 @@ export class BarNav {
             'ds-control--md': true,
             'ds-chrome-row': true,
             'ds-chrome-space--md': true,
+            'ds-interaction-fill--on-chrome': true,
             'bar-nav--dashboard': this.navStyle === 'dashboard',
             'bar-nav--settings': this.navStyle === 'settings',
             'bar-nav--tabs-collapsed': hasTabs && this.hasOverflowTabs,
@@ -814,7 +817,7 @@ export class BarNav {
               as="span"
               variant="text-body-medium"
               emphasis
-              color="primary"
+              color="inherit"
               wrap="nowrap"
             >
               {this.heading}
@@ -830,6 +833,7 @@ export class BarNav {
               icon="ChevronDown"
               activeFill={false}
               hasBorder={false}
+              background="chrome"
               focusTabIndex={this.overflowRovingFocused ? 0 : -1}
               ref={(el?: HTMLDsButtonUnfilledElement) => {
                 this.triggerEl = (el as HTMLElement & { setFocus?: () => Promise<void> }) ?? null;

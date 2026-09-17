@@ -56,9 +56,14 @@ export class Switch {
   @Event() dsChange!: EventEmitter<boolean>;
 
   private initialChecked = false;
+  private checkedUpdateObserved = false;
+  private hasLoaded = false;
   @State() private formDisabled = false;
   @State() private focused = false;
   @State() private touched = false;
+  @State() private transitionsEnabled = false;
+
+  private transitionsFrame?: number;
 
   componentWillLoad() {
     this.initialChecked = this.checked;
@@ -66,7 +71,36 @@ export class Switch {
   }
 
   componentDidLoad() {
+    this.hasLoaded = true;
     this.syncNativeLabels();
+    this.scheduleTransitionsEnable();
+  }
+
+  disconnectedCallback() {
+    if (this.transitionsFrame !== undefined) {
+      cancelAnimationFrame(this.transitionsFrame);
+      this.transitionsFrame = undefined;
+    }
+  }
+
+  @Watch('checked')
+  handleCheckedChange() {
+    if (!this.hasLoaded || this.checkedUpdateObserved) return;
+
+    this.checkedUpdateObserved = true;
+    this.transitionsEnabled = false;
+    this.scheduleTransitionsEnable();
+  }
+
+  private scheduleTransitionsEnable() {
+    if (this.transitionsFrame !== undefined) {
+      cancelAnimationFrame(this.transitionsFrame);
+    }
+
+    this.transitionsFrame = requestAnimationFrame(() => {
+      this.transitionsEnabled = true;
+      this.transitionsFrame = undefined;
+    });
   }
 
   @Watch('checked')
@@ -115,6 +149,7 @@ export class Switch {
   private handleClick = () => {
     if (this.presentation || this.readOnly || this.isInactive || this.disabled || this.formDisabled)
       return;
+    this.checkedUpdateObserved = true;
     this.checked = !this.checked;
     this.dsChange.emit(this.checked);
   };
@@ -173,6 +208,7 @@ export class Switch {
           'switch--xs': this.size === 'xs',
           'switch--readonly': this.readOnly,
           'switch--presentation': this.presentation,
+          'switch--transitions-enabled': this.transitionsEnabled,
           'ds-focus-ring': true,
           'ds-control-inactive': inactive,
         }}

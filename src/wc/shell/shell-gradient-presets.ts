@@ -145,7 +145,7 @@ export function shellGradientPickerSections(): ShellGradientPickerSection[] {
           value: 'none',
           label: SHELL_GRADIENT_PRESET_LABELS.none,
           preview: {
-            backgroundColor: 'var(--color-background-secondary)',
+            backgroundColor: 'var(--color-chrome-background-theme)',
           },
         },
       ],

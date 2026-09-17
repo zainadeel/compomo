@@ -162,7 +162,21 @@
         }
       ],
       "methods": [],
-      "slots": []
+      "slots": [
+        {
+          "name": "",
+          "description": "The default slot"
+        },
+        {
+          "name": "actions"
+        },
+        {
+          "name": "chart"
+        },
+        {
+          "name": "legend"
+        }
+      ]
     },
     "props": {
       "cardWidth": {
@@ -220,7 +234,21 @@
       }
     ],
     "methods": [],
-    "slots": [],
+    "slots": [
+      {
+        "name": "",
+        "description": "The default slot"
+      },
+      {
+        "name": "actions"
+      },
+      {
+        "name": "chart"
+      },
+      {
+        "name": "legend"
+      }
+    ],
     "exports": {
       "customElement": "ds-card-chart",
       "react": "DsCardChart",

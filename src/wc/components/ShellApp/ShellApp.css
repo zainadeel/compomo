@@ -12,7 +12,8 @@
 }
 
 :host {
-  --_shell-chrome-bg: var(--color-background-secondary);
+  /* Shared solid Chrome base; gradient and paper layers composite above it. */
+  --_shell-chrome-bg: var(--color-chrome-background-theme);
 }
 
 :host(.shell-app--gradient) {
@@ -168,6 +169,13 @@
   position: relative;
   z-index: 0;
   overflow: hidden;
+  /* Chrome surface context inherited by PanelTools and its slotted products. */
+  --_shell-tools-border: var(--color-chrome-border-tertiary);
+  --_shell-tools-border-secondary: var(--color-chrome-border-secondary);
+  --_shell-tools-divider: var(--color-chrome-divider);
+  --_shell-tools-background-theme: var(--color-chrome-background-theme);
+  --_shell-tools-fg-primary: var(--color-chrome-foreground-primary);
+  --_shell-tools-fg-secondary: var(--color-chrome-foreground-secondary);
 }
 
 .shell-app__tools ::slotted(ds-panel-tools) {

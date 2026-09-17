@@ -168,7 +168,20 @@
           "signature": "setFocus() => Promise<void>"
         }
       ],
-      "slots": []
+      "slots": [
+        {
+          "name": "actions"
+        },
+        {
+          "name": "attachments"
+        },
+        {
+          "name": "error-actions"
+        },
+        {
+          "name": "tools"
+        }
+      ]
     },
     "props": {
       "errorMessage": {
@@ -257,7 +270,20 @@
         "signature": "setFocus() => Promise<void>"
       }
     ],
-    "slots": [],
+    "slots": [
+      {
+        "name": "actions"
+      },
+      {
+        "name": "attachments"
+      },
+      {
+        "name": "error-actions"
+      },
+      {
+        "name": "tools"
+      }
+    ],
     "exports": {
       "customElement": "ds-message-composer",
       "react": "DsMessageComposer",

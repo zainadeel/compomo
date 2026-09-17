@@ -6,11 +6,17 @@
   display: block;
   flex: 0 0 auto;
   box-sizing: border-box;
+  --_panel-tool-header-fg-primary: var(
+    --_shell-tools-fg-primary,
+    var(--color-foreground-primary)
+  );
+  --_panel-tool-header-divider: var(--_shell-tools-divider, var(--color-border-tertiary));
 }
 
 .panel-tool-header {
   height: var(--dimension-size-600);
-  color: var(--color-foreground-primary);
+  color: var(--_panel-tool-header-fg-primary);
+  border-block-end-color: var(--_panel-tool-header-divider);
   -webkit-user-select: none;
   user-select: none;
 }

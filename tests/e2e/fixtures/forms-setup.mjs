@@ -34,6 +34,15 @@ await Promise.all(
   ].map(tag => customElements.whenDefined(tag))
 );
 
+const initialSyncSwitch = document.getElementById('switch-initial-sync');
+const initialSyncAnimations = [];
+initialSyncSwitch.addEventListener('transitionrun', event => {
+  initialSyncAnimations.push(event.propertyName);
+});
+initialSyncSwitch.checked = true;
+await new Promise(requestAnimationFrame);
+window.__initialSyncSwitchAnimations = initialSyncAnimations;
+
 document.getElementById('region').name = 'region';
 document.getElementById('region').options = [
   { label: 'Canada', value: 'ca' },

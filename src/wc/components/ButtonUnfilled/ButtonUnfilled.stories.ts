@@ -53,6 +53,7 @@ const meta: Meta = {
         'inverted',
         'media',
         'always-dark',
+        'chrome',
       ],
     },
   },
@@ -421,7 +422,7 @@ export const States: Story = {
     docs: {
       description: {
         story:
-          'Use `isActive` with the default `activeFill` for general UI. Shell chrome (PanelNav, PanelTools, BarNav) should set `activeFill={false}` so the complete control uses primary foreground only, without a selected fill.',
+          'Use `isActive` with the default `activeFill` for general UI. Shell chrome (PanelNav, PanelTools, BarNav) should set `activeFill={false}` and pass `background="chrome"` so the control uses the chrome foreground and interaction family.',
       },
     },
   },
@@ -741,6 +742,24 @@ export const Surfaces: Story = {
           icon="Bell"
           aria-label="Bell active"
           background="always-dark"
+          is-active
+          .activeFill=${false}
+          .hasBorder=${false}
+        ></ds-button-unfilled>
+      </div>
+      <div style="${SURFACE} background:var(--color-chrome-background-theme);">
+        <span style="${LABEL}">chrome</span>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Bell"
+          background="chrome"
+        ></ds-button-unfilled>
+        <ds-button-unfilled
+          variant="icon"
+          icon="Bell"
+          aria-label="Bell active"
+          background="chrome"
           is-active
           .activeFill=${false}
           .hasBorder=${false}

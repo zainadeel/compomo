@@ -210,7 +210,14 @@
         }
       ],
       "methods": [],
-      "slots": []
+      "slots": [
+        {
+          "name": "leading"
+        },
+        {
+          "name": "trailing"
+        }
+      ]
     },
     "props": {
       "heading": {
@@ -339,7 +346,14 @@
       }
     ],
     "methods": [],
-    "slots": [],
+    "slots": [
+      {
+        "name": "leading"
+      },
+      {
+        "name": "trailing"
+      }
+    ],
     "exports": {
       "customElement": "ds-mobile-header",
       "react": "DsMobileHeader",

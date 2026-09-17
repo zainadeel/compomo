@@ -800,6 +800,7 @@ export class PanelNav {
           icon={isDashboardChrome ? 'Gear' : 'Dashboard'}
           activeFill={false}
           hasBorder={false}
+          background="chrome"
           focusTabIndex={this.rovingIndex === this.getFooterRovingIndex() ? 0 : -1}
           aria-label={footerLabel}
           onDsClick={() => this.handleFooterAction()}
@@ -828,6 +829,7 @@ export class PanelNav {
             this.accountMenuSurfaceOpen ?? this.accountMenuExpanded,
           'ds-focus-ring-inset': true,
           'ds-interaction-fill': true,
+          'ds-interaction-fill--on-chrome': true,
         }}
         tabIndex={this.rovingIndex === this.getUserRovingIndex() ? 0 : -1}
         aria-label={this.accountLabel}
@@ -903,7 +905,13 @@ export class PanelNav {
       </ds-text>,
       item.dot && (
         <span class="panel-nav__item-dot-box" aria-hidden="true">
-          <ds-badge class="panel-nav__item-dot" variant="dot" hasRing={collapsed} label="" />
+          <ds-badge
+            class="panel-nav__item-dot"
+            variant="dot"
+            hasRing={collapsed}
+            label=""
+            style={{ '--_badge-bg': 'var(--_nav-dot)' }}
+          />
         </span>
       ),
     ];
@@ -924,6 +932,7 @@ export class PanelNav {
         'panel-nav__item--active': isActive,
         'ds-focus-ring-inset': true,
         'ds-interaction-fill': true,
+        'ds-interaction-fill--on-chrome': true,
       },
       'aria-current': !disclosure && isActive ? ('page' as const) : undefined,
       'aria-expanded': disclosure ? String(expanded) : undefined,
@@ -987,7 +996,11 @@ export class PanelNav {
       </ds-text>,
       child.dot && (
         <span class="panel-nav__child-dot" aria-hidden="true">
-          <ds-badge variant="dot" label="" />
+          <ds-badge
+            variant="dot"
+            label=""
+            style={{ '--_badge-bg': 'var(--_nav-dot)' }}
+          />
         </span>
       ),
     ];
@@ -1001,6 +1014,7 @@ export class PanelNav {
         'panel-nav__item--active': isActive,
         'ds-focus-ring-inset': !inactive,
         'ds-interaction-fill': !inactive,
+        'ds-interaction-fill--on-chrome': !inactive,
       },
       'aria-current': isActive ? ('page' as const) : undefined,
       'aria-disabled': inactive ? 'true' : undefined,
@@ -1097,7 +1111,7 @@ export class PanelNav {
           <div class="panel-nav__header ds-chrome-row ds-chrome-space--md">
             <button
               type="button"
-              class="panel-nav__header-btn ds-focus-ring-inset ds-interaction-fill"
+              class="panel-nav__header-btn ds-focus-ring-inset ds-interaction-fill ds-interaction-fill--on-chrome"
               disabled={this.viewportNarrow}
               tabIndex={!this.viewportNarrow && this.rovingIndex === 0 ? 0 : -1}
               onClick={() => this.handleToggle()}
