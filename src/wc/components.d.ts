@@ -74,6 +74,8 @@ import { RadioTileOption } from "./components/RadioTile/RadioTile";
 import { SafetyScoreLevel, ScoreSize, ScoreVariant } from "./components/Score/score-types";
 import { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
 import { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
+import { SettingRowRadioPresentation } from "./components/SettingRowRadio/SettingRowRadio";
+import { SettingRowToggleVariant } from "./components/SettingRowToggle/SettingRowToggle";
 import { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellSectionNavigation, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
 import { ShellGradientPreset } from "./shell/shell-gradient-presets";
 import { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageDesktopHeaderPlacement, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
@@ -158,6 +160,8 @@ export { RadioTileOption } from "./components/RadioTile/RadioTile";
 export { SafetyScoreLevel, ScoreSize, ScoreVariant } from "./components/Score/score-types";
 export { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
 export { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
+export { SettingRowRadioPresentation } from "./components/SettingRowRadio/SettingRowRadio";
+export { SettingRowToggleVariant } from "./components/SettingRowToggle/SettingRowToggle";
 export { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellSectionNavigation, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
 export { ShellGradientPreset } from "./shell/shell-gradient-presets";
 export { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageDesktopHeaderPlacement, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
@@ -2128,6 +2132,12 @@ export namespace Components {
          */
         "size": IconSize;
     }
+    interface DsInlineBannerSettings {
+        /**
+          * Authored informational copy rendered without transformation.
+         */
+        "description": string;
+    }
     interface DsInput {
         /**
           * Identifies the active descendant while focus remains in the editable field.
@@ -3396,6 +3406,11 @@ export namespace Components {
          */
         "form": string | undefined;
         /**
+          * Optional visible group label rendered above the options.
+          * @default ''
+         */
+        "groupLabel": string;
+        /**
           * Design-system inactive state for the complete set.
           * @default false
          */
@@ -3741,9 +3756,31 @@ export namespace Components {
         "width": SelectWidth;
     }
     /**
+     * Padded settings-row composition for a Radio group.
+     */
+    interface DsSettingRowRadio {
+        /**
+          * Optional consequence or supporting copy for the saved option.
+         */
+        "description"?: string;
+        /**
+          * Label shown above the saved value in view presentation.
+         */
+        "label"?: string;
+        /**
+          * Interactive Radio group or non-interactive saved-value readout.
+          * @default 'edit'
+         */
+        "presentation": SettingRowRadioPresentation;
+        /**
+          * Saved option label shown in view presentation.
+         */
+        "valueLabel"?: string;
+    }
+    /**
      * A labeled binary setting that applies immediately through its application owner.
      */
-    interface DsSettingRow {
+    interface DsSettingRowToggle {
         /**
           * Controlled enabled state.
           * @default false
@@ -3762,6 +3799,11 @@ export namespace Components {
           * Name of the enabled setting.
          */
         "label": string;
+        /**
+          * Typography recipe for the setting copy.
+          * @default 'emphasis'
+         */
+        "variant": SettingRowToggleVariant;
     }
     interface DsShellApp {
         /**
@@ -5148,9 +5190,9 @@ export interface DsSelectCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSelectElement;
 }
-export interface DsSettingRowCustomEvent<T> extends CustomEvent<T> {
+export interface DsSettingRowToggleCustomEvent<T> extends CustomEvent<T> {
     detail: T;
-    target: HTMLDsSettingRowElement;
+    target: HTMLDsSettingRowToggleElement;
 }
 export interface DsShellAppCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -5904,6 +5946,12 @@ declare global {
         prototype: HTMLDsIconElement;
         new (): HTMLDsIconElement;
     };
+    interface HTMLDsInlineBannerSettingsElement extends Components.DsInlineBannerSettings, HTMLStencilElement {
+    }
+    var HTMLDsInlineBannerSettingsElement: {
+        prototype: HTMLDsInlineBannerSettingsElement;
+        new (): HTMLDsInlineBannerSettingsElement;
+    };
     interface HTMLDsInputElementEventMap {
         "dsChange": string;
         "dsTokensChange": string[];
@@ -6392,25 +6440,34 @@ declare global {
         prototype: HTMLDsSelectElement;
         new (): HTMLDsSelectElement;
     };
-    interface HTMLDsSettingRowElementEventMap {
+    /**
+     * Padded settings-row composition for a Radio group.
+     */
+    interface HTMLDsSettingRowRadioElement extends Components.DsSettingRowRadio, HTMLStencilElement {
+    }
+    var HTMLDsSettingRowRadioElement: {
+        prototype: HTMLDsSettingRowRadioElement;
+        new (): HTMLDsSettingRowRadioElement;
+    };
+    interface HTMLDsSettingRowToggleElementEventMap {
         "dsChange": boolean;
     }
     /**
      * A labeled binary setting that applies immediately through its application owner.
      */
-    interface HTMLDsSettingRowElement extends Components.DsSettingRow, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsSettingRowElementEventMap>(type: K, listener: (this: HTMLDsSettingRowElement, ev: DsSettingRowCustomEvent<HTMLDsSettingRowElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+    interface HTMLDsSettingRowToggleElement extends Components.DsSettingRowToggle, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsSettingRowToggleElementEventMap>(type: K, listener: (this: HTMLDsSettingRowToggleElement, ev: DsSettingRowToggleCustomEvent<HTMLDsSettingRowToggleElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsSettingRowElementEventMap>(type: K, listener: (this: HTMLDsSettingRowElement, ev: DsSettingRowCustomEvent<HTMLDsSettingRowElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsSettingRowToggleElementEventMap>(type: K, listener: (this: HTMLDsSettingRowToggleElement, ev: DsSettingRowToggleCustomEvent<HTMLDsSettingRowToggleElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
-    var HTMLDsSettingRowElement: {
-        prototype: HTMLDsSettingRowElement;
-        new (): HTMLDsSettingRowElement;
+    var HTMLDsSettingRowToggleElement: {
+        prototype: HTMLDsSettingRowToggleElement;
+        new (): HTMLDsSettingRowToggleElement;
     };
     interface HTMLDsShellAppElementEventMap {
         "dsResponsiveModeChange": { mode: ShellResponsiveMode };
@@ -6744,6 +6801,7 @@ declare global {
         "ds-field": HTMLDsFieldElement;
         "ds-filter-menu": HTMLDsFilterMenuElement;
         "ds-icon": HTMLDsIconElement;
+        "ds-inline-banner-settings": HTMLDsInlineBannerSettingsElement;
         "ds-input": HTMLDsInputElement;
         "ds-input-date": HTMLDsInputDateElement;
         "ds-input-time": HTMLDsInputTimeElement;
@@ -6774,7 +6832,8 @@ declare global {
         "ds-score": HTMLDsScoreElement;
         "ds-scroll-overlay": HTMLDsScrollOverlayElement;
         "ds-select": HTMLDsSelectElement;
-        "ds-setting-row": HTMLDsSettingRowElement;
+        "ds-setting-row-radio": HTMLDsSettingRowRadioElement;
+        "ds-setting-row-toggle": HTMLDsSettingRowToggleElement;
         "ds-shell-app": HTMLDsShellAppElement;
         "ds-shell-page": HTMLDsShellPageElement;
         "ds-shell-tools": HTMLDsShellToolsElement;
@@ -8972,6 +9031,12 @@ declare namespace LocalJSX {
          */
         "size"?: IconSize;
     }
+    interface DsInlineBannerSettings {
+        /**
+          * Authored informational copy rendered without transformation.
+         */
+        "description": string;
+    }
     interface DsInput {
         /**
           * Identifies the active descendant while focus remains in the editable field.
@@ -10336,6 +10401,11 @@ declare namespace LocalJSX {
          */
         "form"?: string | undefined;
         /**
+          * Optional visible group label rendered above the options.
+          * @default ''
+         */
+        "groupLabel"?: string;
+        /**
           * Design-system inactive state for the complete set.
           * @default false
          */
@@ -10700,9 +10770,31 @@ declare namespace LocalJSX {
         "width"?: SelectWidth;
     }
     /**
+     * Padded settings-row composition for a Radio group.
+     */
+    interface DsSettingRowRadio {
+        /**
+          * Optional consequence or supporting copy for the saved option.
+         */
+        "description"?: string;
+        /**
+          * Label shown above the saved value in view presentation.
+         */
+        "label"?: string;
+        /**
+          * Interactive Radio group or non-interactive saved-value readout.
+          * @default 'edit'
+         */
+        "presentation"?: SettingRowRadioPresentation;
+        /**
+          * Saved option label shown in view presentation.
+         */
+        "valueLabel"?: string;
+    }
+    /**
      * A labeled binary setting that applies immediately through its application owner.
      */
-    interface DsSettingRow {
+    interface DsSettingRowToggle {
         /**
           * Controlled enabled state.
           * @default false
@@ -10724,7 +10816,12 @@ declare namespace LocalJSX {
         /**
           * Requests the next value; the application owns acceptance and persistence.
          */
-        "onDsChange"?: (event: DsSettingRowCustomEvent<boolean>) => void;
+        "onDsChange"?: (event: DsSettingRowToggleCustomEvent<boolean>) => void;
+        /**
+          * Typography recipe for the setting copy.
+          * @default 'emphasis'
+         */
+        "variant"?: SettingRowToggleVariant;
     }
     interface DsShellApp {
         /**
@@ -12391,6 +12488,9 @@ declare namespace LocalJSX {
         "color": IconColor;
         "label": string | undefined;
     }
+    interface DsInlineBannerSettingsAttributes {
+        "description": string;
+    }
     interface DsInputAttributes {
         "value": string;
         "name": string | undefined;
@@ -12703,6 +12803,7 @@ declare namespace LocalJSX {
         "storageKey": string;
     }
     interface DsRadioAttributes {
+        "groupLabel": string;
         "value": string;
         "size": RadioSize;
         "name": string | undefined;
@@ -12784,11 +12885,18 @@ declare namespace LocalJSX {
         "ariaLabelledby": string | undefined;
         "ariaDescribedby": string | undefined;
     }
-    interface DsSettingRowAttributes {
+    interface DsSettingRowRadioAttributes {
+        "presentation": SettingRowRadioPresentation;
+        "label": string;
+        "valueLabel": string;
+        "description": string;
+    }
+    interface DsSettingRowToggleAttributes {
         "label": string;
         "description": string;
         "checked": boolean;
         "disabled": boolean;
+        "variant": SettingRowToggleVariant;
     }
     interface DsShellAppAttributes {
         "composition": ShellAppComposition;
@@ -13094,6 +13202,7 @@ declare namespace LocalJSX {
         "ds-field": Omit<DsField, keyof DsFieldAttributes> & { [K in keyof DsField & keyof DsFieldAttributes]?: DsField[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `attr:${K}`]?: DsFieldAttributes[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `prop:${K}`]?: DsField[K] };
         "ds-filter-menu": Omit<DsFilterMenu, keyof DsFilterMenuAttributes> & { [K in keyof DsFilterMenu & keyof DsFilterMenuAttributes]?: DsFilterMenu[K] } & { [K in keyof DsFilterMenu & keyof DsFilterMenuAttributes as `attr:${K}`]?: DsFilterMenuAttributes[K] } & { [K in keyof DsFilterMenu & keyof DsFilterMenuAttributes as `prop:${K}`]?: DsFilterMenu[K] };
         "ds-icon": Omit<DsIcon, keyof DsIconAttributes> & { [K in keyof DsIcon & keyof DsIconAttributes]?: DsIcon[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `attr:${K}`]?: DsIconAttributes[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `prop:${K}`]?: DsIcon[K] };
+        "ds-inline-banner-settings": Omit<DsInlineBannerSettings, keyof DsInlineBannerSettingsAttributes> & { [K in keyof DsInlineBannerSettings & keyof DsInlineBannerSettingsAttributes]?: DsInlineBannerSettings[K] } & { [K in keyof DsInlineBannerSettings & keyof DsInlineBannerSettingsAttributes as `attr:${K}`]?: DsInlineBannerSettingsAttributes[K] } & { [K in keyof DsInlineBannerSettings & keyof DsInlineBannerSettingsAttributes as `prop:${K}`]?: DsInlineBannerSettings[K] } & OneOf<"description", DsInlineBannerSettings["description"], DsInlineBannerSettingsAttributes["description"]>;
         "ds-input": Omit<DsInput, keyof DsInputAttributes> & { [K in keyof DsInput & keyof DsInputAttributes]?: DsInput[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `attr:${K}`]?: DsInputAttributes[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `prop:${K}`]?: DsInput[K] };
         "ds-input-date": Omit<DsInputDate, keyof DsInputDateAttributes> & { [K in keyof DsInputDate & keyof DsInputDateAttributes]?: DsInputDate[K] } & { [K in keyof DsInputDate & keyof DsInputDateAttributes as `attr:${K}`]?: DsInputDateAttributes[K] } & { [K in keyof DsInputDate & keyof DsInputDateAttributes as `prop:${K}`]?: DsInputDate[K] };
         "ds-input-time": Omit<DsInputTime, keyof DsInputTimeAttributes> & { [K in keyof DsInputTime & keyof DsInputTimeAttributes]?: DsInputTime[K] } & { [K in keyof DsInputTime & keyof DsInputTimeAttributes as `attr:${K}`]?: DsInputTimeAttributes[K] } & { [K in keyof DsInputTime & keyof DsInputTimeAttributes as `prop:${K}`]?: DsInputTime[K] };
@@ -13124,7 +13233,8 @@ declare namespace LocalJSX {
         "ds-score": Omit<DsScore, keyof DsScoreAttributes> & { [K in keyof DsScore & keyof DsScoreAttributes]?: DsScore[K] } & { [K in keyof DsScore & keyof DsScoreAttributes as `attr:${K}`]?: DsScoreAttributes[K] } & { [K in keyof DsScore & keyof DsScoreAttributes as `prop:${K}`]?: DsScore[K] };
         "ds-scroll-overlay": Omit<DsScrollOverlay, keyof DsScrollOverlayAttributes> & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes]?: DsScrollOverlay[K] } & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes as `attr:${K}`]?: DsScrollOverlayAttributes[K] } & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes as `prop:${K}`]?: DsScrollOverlay[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
-        "ds-setting-row": Omit<DsSettingRow, keyof DsSettingRowAttributes> & { [K in keyof DsSettingRow & keyof DsSettingRowAttributes]?: DsSettingRow[K] } & { [K in keyof DsSettingRow & keyof DsSettingRowAttributes as `attr:${K}`]?: DsSettingRowAttributes[K] } & { [K in keyof DsSettingRow & keyof DsSettingRowAttributes as `prop:${K}`]?: DsSettingRow[K] } & OneOf<"label", DsSettingRow["label"], DsSettingRowAttributes["label"]>;
+        "ds-setting-row-radio": Omit<DsSettingRowRadio, keyof DsSettingRowRadioAttributes> & { [K in keyof DsSettingRowRadio & keyof DsSettingRowRadioAttributes]?: DsSettingRowRadio[K] } & { [K in keyof DsSettingRowRadio & keyof DsSettingRowRadioAttributes as `attr:${K}`]?: DsSettingRowRadioAttributes[K] } & { [K in keyof DsSettingRowRadio & keyof DsSettingRowRadioAttributes as `prop:${K}`]?: DsSettingRowRadio[K] };
+        "ds-setting-row-toggle": Omit<DsSettingRowToggle, keyof DsSettingRowToggleAttributes> & { [K in keyof DsSettingRowToggle & keyof DsSettingRowToggleAttributes]?: DsSettingRowToggle[K] } & { [K in keyof DsSettingRowToggle & keyof DsSettingRowToggleAttributes as `attr:${K}`]?: DsSettingRowToggleAttributes[K] } & { [K in keyof DsSettingRowToggle & keyof DsSettingRowToggleAttributes as `prop:${K}`]?: DsSettingRowToggle[K] } & OneOf<"label", DsSettingRowToggle["label"], DsSettingRowToggleAttributes["label"]>;
         "ds-shell-app": Omit<DsShellApp, keyof DsShellAppAttributes> & { [K in keyof DsShellApp & keyof DsShellAppAttributes]?: DsShellApp[K] } & { [K in keyof DsShellApp & keyof DsShellAppAttributes as `attr:${K}`]?: DsShellAppAttributes[K] } & { [K in keyof DsShellApp & keyof DsShellAppAttributes as `prop:${K}`]?: DsShellApp[K] };
         "ds-shell-page": Omit<DsShellPage, keyof DsShellPageAttributes> & { [K in keyof DsShellPage & keyof DsShellPageAttributes]?: DsShellPage[K] } & { [K in keyof DsShellPage & keyof DsShellPageAttributes as `attr:${K}`]?: DsShellPageAttributes[K] } & { [K in keyof DsShellPage & keyof DsShellPageAttributes as `prop:${K}`]?: DsShellPage[K] };
         "ds-shell-tools": Omit<DsShellTools, keyof DsShellToolsAttributes> & { [K in keyof DsShellTools & keyof DsShellToolsAttributes]?: DsShellTools[K] } & { [K in keyof DsShellTools & keyof DsShellToolsAttributes as `attr:${K}`]?: DsShellToolsAttributes[K] } & { [K in keyof DsShellTools & keyof DsShellToolsAttributes as `prop:${K}`]?: DsShellTools[K] };
@@ -13217,6 +13327,7 @@ declare module "@stencil/core" {
             "ds-field": LocalJSX.IntrinsicElements["ds-field"] & JSXBase.HTMLAttributes<HTMLDsFieldElement>;
             "ds-filter-menu": LocalJSX.IntrinsicElements["ds-filter-menu"] & JSXBase.HTMLAttributes<HTMLDsFilterMenuElement>;
             "ds-icon": LocalJSX.IntrinsicElements["ds-icon"] & JSXBase.HTMLAttributes<HTMLDsIconElement>;
+            "ds-inline-banner-settings": LocalJSX.IntrinsicElements["ds-inline-banner-settings"] & JSXBase.HTMLAttributes<HTMLDsInlineBannerSettingsElement>;
             "ds-input": LocalJSX.IntrinsicElements["ds-input"] & JSXBase.HTMLAttributes<HTMLDsInputElement>;
             "ds-input-date": LocalJSX.IntrinsicElements["ds-input-date"] & JSXBase.HTMLAttributes<HTMLDsInputDateElement>;
             "ds-input-time": LocalJSX.IntrinsicElements["ds-input-time"] & JSXBase.HTMLAttributes<HTMLDsInputTimeElement>;
@@ -13248,9 +13359,13 @@ declare module "@stencil/core" {
             "ds-scroll-overlay": LocalJSX.IntrinsicElements["ds-scroll-overlay"] & JSXBase.HTMLAttributes<HTMLDsScrollOverlayElement>;
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
             /**
+             * Padded settings-row composition for a Radio group.
+             */
+            "ds-setting-row-radio": LocalJSX.IntrinsicElements["ds-setting-row-radio"] & JSXBase.HTMLAttributes<HTMLDsSettingRowRadioElement>;
+            /**
              * A labeled binary setting that applies immediately through its application owner.
              */
-            "ds-setting-row": LocalJSX.IntrinsicElements["ds-setting-row"] & JSXBase.HTMLAttributes<HTMLDsSettingRowElement>;
+            "ds-setting-row-toggle": LocalJSX.IntrinsicElements["ds-setting-row-toggle"] & JSXBase.HTMLAttributes<HTMLDsSettingRowToggleElement>;
             "ds-shell-app": LocalJSX.IntrinsicElements["ds-shell-app"] & JSXBase.HTMLAttributes<HTMLDsShellAppElement>;
             "ds-shell-page": LocalJSX.IntrinsicElements["ds-shell-page"] & JSXBase.HTMLAttributes<HTMLDsShellPageElement>;
             "ds-shell-tools": LocalJSX.IntrinsicElements["ds-shell-tools"] & JSXBase.HTMLAttributes<HTMLDsShellToolsElement>;

@@ -1,0 +1,19 @@
+:host {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  box-sizing: border-box;
+  min-width: 0;
+  padding: var(--dimension-space-100) var(--dimension-space-200);
+  gap: var(--dimension-space-200);
+}
+
+.setting-row-toggle__copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: var(--dimension-space-050);
+  overflow-wrap: anywhere;
+  -webkit-user-select: none;
+  user-select: none;
+}

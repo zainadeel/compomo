@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Setting row radio</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+  </head>
+  <body>
+    <main>
+      <ds-setting-row-radio id="setting-row">
+        <ds-radio id="validation-mode"></ds-radio>
+      </ds-setting-row-radio>
+      <ds-setting-row-radio
+        id="setting-row-view"
+        presentation="view"
+        label="Validation mode"
+        value-label="Use automated validation"
+        description="Apply automated checks and human review to validate results."
+      ></ds-setting-row-radio>
+    </main>
+    <script type="module" src="/setting-row-radio-setup.mjs"></script>
+  </body>
+</html>

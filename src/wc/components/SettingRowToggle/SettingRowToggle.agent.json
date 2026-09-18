@@ -1,10 +1,10 @@
 {
   "$schema": "../../../../agent/schemas/component-agent.schema.json",
   "schemaVersion": "1.0.0",
-  "id": "component:ds-setting-row",
+  "id": "component:ds-setting-row-toggle",
   "kind": "component",
   "package": "@ds-mo/ui",
-  "tag": "ds-setting-row",
+  "tag": "ds-setting-row-toggle",
   "audience": "general",
   "status": "experimental",
   "summary": "Two-column immediate binary setting with descriptive copy and an accessible switch.",
@@ -26,7 +26,10 @@
     "The copy wraps while the switch keeps its natural size in the trailing column, including at narrow widths."
   ],
   "references": [
-    { "label": "Usage states", "path": "src/wc/components/SettingRow/SettingRow.stories.ts" }
+    {
+      "label": "Usage states",
+      "path": "src/wc/components/SettingRowToggle/SettingRowToggle.stories.ts"
+    }
   ],
   "styling": {
     "rationale": "The row owns copy/control spacing; its parent owns the section surface and width.",

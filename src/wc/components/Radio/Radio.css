@@ -11,30 +11,60 @@
   gap: var(--dimension-space-025);
 }
 
+:host(.radio--labeled) {
+  gap: var(--dimension-space-050);
+}
+
+.radio__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dimension-space-025);
+  min-width: 0;
+}
+
+.radio__group-label {
+  display: block;
+  padding-inline: var(--_radio-circle-inset);
+}
+
 :host(.radio--horizontal) {
   flex-direction: row;
   gap: var(--dimension-space-100);
 }
 
+:host(.radio--labeled.radio--horizontal) {
+  flex-direction: column;
+  gap: var(--dimension-space-050);
+}
+
+:host(.radio--labeled.radio--horizontal) .radio__options {
+  flex-direction: row;
+  gap: var(--dimension-space-100);
+}
+
 :host(.radio--lg) {
+  --_radio-circle-inset: calc(var(--dimension-space-100) + var(--dimension-space-025));
   --_radio-circle: var(--dimension-iconography-md);
   --_radio-dot: calc(var(--dimension-size-base) * 5 / 4);
   --_radio-stroke: var(--dimension-stroke-width-018);
 }
 
 :host(.radio--md) {
+  --_radio-circle-inset: var(--dimension-space-100);
   --_radio-circle: var(--dimension-iconography-sm);
   --_radio-dot: var(--dimension-size-100);
   --_radio-stroke: var(--dimension-stroke-width-015);
 }
 
 :host(.radio--sm) {
+  --_radio-circle-inset: var(--dimension-space-075);
   --_radio-circle: var(--dimension-iconography-xs);
   --_radio-dot: var(--dimension-size-075);
   --_radio-stroke: var(--dimension-stroke-width-012);
 }
 
 :host(.radio--xs) {
+  --_radio-circle-inset: var(--dimension-space-050);
   --_radio-circle: var(--dimension-size-100);
   --_radio-dot: var(--dimension-size-050);
   --_radio-stroke: calc(var(--dimension-stroke-width-base) * 3 / 32);

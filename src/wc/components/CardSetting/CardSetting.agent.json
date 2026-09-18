@@ -43,7 +43,8 @@
     "component:ds-select",
     "component:ds-switch",
     "component:ds-text",
-    "component:ds-setting-row"
+    "component:ds-setting-row-toggle",
+    "component:ds-setting-row-radio"
   ],
   "accessibility": [
     "Provide a concise heading that identifies the settings section; CardSetting renders it as an h2.",

@@ -1,5 +1,5 @@
 import '/dist/components/ds-card-setting.js';
-import '/dist/components/ds-setting-row.js';
+import '/dist/components/ds-setting-row-toggle.js';
 
 await customElements.whenDefined('ds-card-setting');
 
@@ -21,7 +21,7 @@ for (const card of cards) {
   });
 }
 
-await customElements.whenDefined('ds-setting-row');
+await customElements.whenDefined('ds-setting-row-toggle');
 window.__settingChanges = [];
 document.querySelector('#navigation-setting').addEventListener('dsChange', event => {
   window.__settingChanges.push(event.detail);

@@ -1,0 +1,51 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-setting-row-radio",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-setting-row-radio",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Padded settings-row composition for an editable Radio group and its non-interactive saved-value readout.",
+  "useWhen": [
+    "A settings card needs a mutually exclusive Radio group as one padded row item.",
+    "The same settings card needs to display the saved option without an interactive control in view mode."
+  ],
+  "avoidWhen": [
+    "The Radio group is not part of a settings-row surface; compose ds-radio directly.",
+    "The setting is a single immediate on/off choice; use component:ds-setting-row-toggle."
+  ],
+  "commonlyComposedWith": ["component:ds-card-setting", "component:ds-radio"],
+  "accessibility": [
+    "In edit presentation, slot exactly one ds-radio group and give it a visible label or an explicit aria-label/aria-labelledby.",
+    "Keep the Radio group's options, value, required state, and selection event owned by the application.",
+    "Do not add a second interaction layer to the row; Radio owns option focus, keyboard selection, and hover behavior.",
+    "View presentation exposes readable label, saved value, and optional supporting copy without radio semantics or a focus target."
+  ],
+  "states": [
+    "The row is a neutral padded composition; selected, focus, inactive, and hover states belong to the slotted Radio.",
+    "The owning application handles dsChange and updates the slotted Radio value.",
+    "View presentation replaces the control with the saved option label and retains consequence copy when it helps explain that choice."
+  ],
+  "responsiveBehavior": [
+    "The row never exceeds its parent width; the slotted Radio keeps its option copy in the flexible column and wraps descriptions when needed."
+  ],
+  "references": [
+    {
+      "label": "Settings mock",
+      "path": "src/wc/components/SettingRowRadio/SettingRowRadio.stories.ts"
+    }
+  ],
+  "styling": {
+    "rationale": "The row owns only settings-list padding and width containment; Radio owns control geometry and interaction treatment.",
+    "protected": [
+      {
+        "properties": ["padding"],
+        "reason": "Preserve the settings-row inset when a Radio group is placed in a CardSetting body.",
+        "props": []
+      }
+    ],
+    "customProperties": []
+  }
+}

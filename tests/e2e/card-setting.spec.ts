@@ -132,6 +132,21 @@ test('immediate settings keep resting chrome and expose one accessible toggle pe
   await expect(card.getByRole('switch', { name: 'Unavailable setting' })).toBeDisabled();
 });
 
+test('setting row toggle applies its emphasis typography variants', async ({ page }) => {
+  const card = page.locator('#immediate-card');
+  const emphasisRow = card.locator('#navigation-setting');
+  const nonEmphasisRow = card.locator('#long-setting');
+
+  await expect(emphasisRow.locator('ds-text').nth(0)).toHaveClass(
+    /ds-text--body-medium.*ds-text--emphasis/
+  );
+  await expect(emphasisRow.locator('ds-text').nth(1)).toHaveClass(/ds-text--body-medium/);
+  await expect(nonEmphasisRow.locator('ds-text').nth(0)).toHaveClass(
+    /ds-text--body-medium.*ds-text--regular/
+  );
+  await expect(nonEmphasisRow.locator('ds-text').nth(1)).toHaveClass(/ds-text--body-small/);
+});
+
 test('immediate rows retain two columns with wrapped copy on narrow screens @cross-browser', async ({
   page,
 }) => {
@@ -139,7 +154,7 @@ test('immediate rows retain two columns with wrapped copy on narrow screens @cro
   const card = page.locator('#immediate-card');
   await card.scrollIntoViewIfNeeded();
   const row = card.locator('#long-setting');
-  const copy = await row.locator('.setting-row__copy').boundingBox();
+  const copy = await row.locator('.setting-row-toggle__copy').boundingBox();
   const toggle = await row.getByRole('switch').boundingBox();
   const bounds = await card.boundingBox();
   expect(copy).not.toBeNull();

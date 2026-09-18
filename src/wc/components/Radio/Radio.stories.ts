@@ -12,6 +12,7 @@ const meta: Meta = {
   title: 'Form/Radio',
   tags: ['autodocs'],
   argTypes: {
+    groupLabel: { control: 'text' },
     value: { control: 'text' },
     size: { control: 'radio', options: ['lg', 'md', 'sm', 'xs'] },
     direction: { control: 'radio', options: ['vertical', 'horizontal'] },
@@ -27,6 +28,7 @@ export const Playground: Story = {
   render: args => html`
     <ds-radio
       .options=${defaultOptions}
+      .groupLabel=${args['groupLabel'] ?? ''}
       value=${args['value'] ?? 'a'}
       size=${args['size'] ?? 'md'}
       direction=${args['direction'] ?? 'vertical'}
@@ -73,21 +75,42 @@ export const DescriptiveOptions: Story = {
       <ds-radio
         .options=${[
           {
-            label: 'Repeated battery failures',
-            value: 'battery',
-            description: 'Three vehicles share the same charging-system signature.',
+            label: 'Weekly digest',
+            value: 'weekly',
+            description: 'Receive one summary at the end of each week.',
           },
           {
-            label: 'Overdue tire inspections',
-            value: 'tires',
-            description: 'Two vehicles are past the inspection interval.',
+            label: 'Immediate alerts',
+            value: 'immediate',
+            description: 'Receive a notification as soon as something needs attention.',
           },
         ]}
-        value="battery"
+        value="weekly"
         size="lg"
-        aria-label="Investigation priority"
+        aria-label="Notification frequency"
       ></ds-radio>
     </div>
+  `,
+};
+
+export const Labeled: Story = {
+  render: () => html`
+    <ds-radio
+      .groupLabel=${'Notification frequency'}
+      .options=${[
+        {
+          label: 'Weekly digest',
+          value: 'weekly',
+          description: 'Receive one summary at the end of each week.',
+        },
+        {
+          label: 'Immediate alerts',
+          value: 'immediate',
+          description: 'Receive a notification as soon as something needs attention.',
+        },
+      ]}
+      value="weekly"
+    ></ds-radio>
   `,
 };
 
