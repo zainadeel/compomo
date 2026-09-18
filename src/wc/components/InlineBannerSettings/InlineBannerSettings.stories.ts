@@ -7,7 +7,7 @@ const EVENT_VALIDATION_DESCRIPTION =
   "Motive's Event Validation Engine uses cloud-based AI models and the Safety Team (human review) to validate safety events and remove false positives.";
 
 const meta: Meta = {
-  title: 'Feedback/InlineBannerSettings',
+  title: 'Settings/InlineBannerSettings',
   tags: ['autodocs'],
   argTypes: {
     description: { control: 'text' },
