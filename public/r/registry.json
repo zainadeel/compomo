@@ -12287,6 +12287,7 @@
           "accessibility": [
             "The host exposes radiogroup semantics and requires an accessible group name from the visible label, aria-label, or aria-labelledby.",
             "When groupLabel is provided, Radio renders it above the options and uses the same text as the radiogroup's accessible name.",
+            "Inside ds-setting-row-radio the visible form groupLabel is omitted on first paint; the row heading is the accessible name via aria-labelledby.",
             "Each visible option exposes radio semantics, its checked state, its label text, optional supporting description, and any inactive state.",
             "Arrow keys move and select through active options; Home and End select the first and last active options; Space and Enter select the focused option.",
             "Roving tabindex keeps one active option in the tab order, preferring the selected option; setFocus uses that same public focus target."
