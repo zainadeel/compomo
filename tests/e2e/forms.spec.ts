@@ -1282,6 +1282,27 @@ test(
   }
 );
 
+test('checkbox and radio reserve row interaction fills for choice-list presentation', async ({
+  page,
+}) => {
+  const formCheckbox = page.locator('#terms');
+  const formRadio = page.locator('#tier');
+  const standard = formRadio.getByRole('radio', { name: 'Standard' });
+  const premium = formRadio.getByRole('radio', { name: 'Premium' });
+
+  await expect(formCheckbox).not.toHaveClass(/ds-interaction-fill/);
+  await expect(standard).not.toHaveClass(/ds-interaction-fill/);
+  await formCheckbox.locator('.checkbox__label').click();
+  await expect(formCheckbox).toHaveAttribute('aria-checked', 'true');
+  await premium.locator('.radio__label').click();
+  await expect(premium).toHaveAttribute('aria-checked', 'true');
+
+  await expect(page.locator('#choice-list-checkbox')).toHaveClass(/ds-interaction-fill/);
+  await expect(
+    page.locator('#choice-list-radio').getByRole('radio', { name: 'First choice' })
+  ).toHaveClass(/ds-interaction-fill/);
+});
+
 test(
   'checkbox sizes center owned filled marks without SVG strokes',
   chromiumOnly('layout-geometry', 'Density-specific mark sizing is static token-backed geometry.'),

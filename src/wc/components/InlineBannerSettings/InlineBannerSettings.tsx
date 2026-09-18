@@ -12,6 +12,7 @@ export class InlineBannerSettings {
   render() {
     return (
       <Host>
+        {/* eslint-disable-next-line compomo/prefer-direct-ds-text -- This structural layer owns the banner's inner padding separately from the ds-text balance padding. */}
         <div class="inline-banner-settings__content">
           <ds-text
             class="inline-banner-settings__description"

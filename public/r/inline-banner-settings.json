@@ -146,7 +146,7 @@
       },
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens ^6.5.2",
+          "@ds-mo/tokens ^6.6.1",
           "@ds-mo/icons ^8.1.1"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
@@ -168,7 +168,7 @@
     },
     {
       "path": "src/wc/components/InlineBannerSettings/InlineBannerSettings.tsx",
-      "content": "import { Component, h, Host, Prop } from '@stencil/core';\n\n@Component({\n  tag: 'ds-inline-banner-settings',\n  styleUrl: 'InlineBannerSettings.css',\n  scoped: true,\n})\nexport class InlineBannerSettings {\n  /** Authored informational copy rendered without transformation. */\n  @Prop() description!: string;\n\n  render() {\n    return (\n      <Host>\n        <div class=\"inline-banner-settings__content\">\n          <ds-text\n            class=\"inline-banner-settings__description\"\n            as=\"p\"\n            variant=\"text-body-medium\"\n            color=\"secondary\"\n          >\n            {this.description}\n          </ds-text>\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, h, Host, Prop } from '@stencil/core';\n\n@Component({\n  tag: 'ds-inline-banner-settings',\n  styleUrl: 'InlineBannerSettings.css',\n  scoped: true,\n})\nexport class InlineBannerSettings {\n  /** Authored informational copy rendered without transformation. */\n  @Prop() description!: string;\n\n  render() {\n    return (\n      <Host>\n        {/* eslint-disable-next-line compomo/prefer-direct-ds-text -- This structural layer owns the banner's inner padding separately from the ds-text balance padding. */}\n        <div class=\"inline-banner-settings__content\">\n          <ds-text\n            class=\"inline-banner-settings__description\"\n            as=\"p\"\n            variant=\"text-body-medium\"\n            color=\"secondary\"\n          >\n            {this.description}\n          </ds-text>\n        </div>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

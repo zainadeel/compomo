@@ -66,6 +66,8 @@ export class Radio {
   @Prop() direction: 'vertical' | 'horizontal' = 'vertical';
   /** Design-system inactive state for the complete set. */
   @Prop() isInactive: boolean = false;
+  /** Show full-row hover and pressed feedback for choice-list presentations. */
+  @Prop() hasInteractionFill: boolean = false;
   /** Accessible name when visible group labeling is unavailable. */
   @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;
   /** Id reference for a visible group label. */
@@ -198,7 +200,7 @@ export class Radio {
             [`ds-control--${this.size}`]: true,
             'ds-control-inactive': isItemInactive,
             'ds-focus-ring-inset': !isItemInactive,
-            'ds-interaction-fill': !isItemInactive,
+            'ds-interaction-fill': !isItemInactive && this.hasInteractionFill,
           }}
           onClick={() => !isItemInactive && this.selectItem(option.value)}
           onKeyDown={(e: KeyboardEvent) => {

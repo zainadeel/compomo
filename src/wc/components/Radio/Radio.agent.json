@@ -49,7 +49,8 @@
     "Sizes are lg with a 20px circle in a 24px placement, md with a 16px circle in a 20px placement, sm with a 12px circle in a 16px placement, and xs with an 8px circle in a 12px placement.",
     "The initial value is restored by native form reset; the selected value submits under name and a required set is invalid until one active option is selected.",
     "Description-rich options grow beyond the fixed density height while retaining its minimum target size and primitive-owned selection anatomy.",
-    "A visible group label uses the shared field-label recipe above the option list without adding a second interaction target."
+    "A visible group label uses the shared field-label recipe above the option list without adding a second interaction target.",
+    "Form and settings usage omits a row hover or pressed wash by default; set hasInteractionFill only when each radio option is presented as a choice-list row."
   ],
   "responsiveBehavior": [
     "Choose size from the density of the containing form or settings row.",
@@ -100,7 +101,7 @@
       {
         "properties": ["background", "border", "box-shadow", "color"],
         "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
-        "props": ["size"]
+        "props": ["size", "hasInteractionFill"]
       }
     ],
     "customProperties": []

@@ -14,6 +14,7 @@ const meta: Meta = {
     isInactive: { control: 'boolean' },
     disabled: { control: 'boolean' },
     required: { control: 'boolean' },
+    hasInteractionFill: { control: 'boolean' },
   },
   args: {
     label: 'Checkbox label',
@@ -24,6 +25,7 @@ const meta: Meta = {
     isInactive: false,
     disabled: false,
     required: false,
+    hasInteractionFill: false,
   },
 };
 
@@ -41,6 +43,7 @@ export const Playground: Story = {
       ?is-inactive=${args['isInactive']}
       ?disabled=${args['disabled']}
       ?required=${args['required']}
+      ?has-interaction-fill=${args['hasInteractionFill']}
     ></ds-checkbox>
   `,
 };
@@ -91,6 +94,18 @@ export const States: Story = {
       <ds-checkbox label="Disabled checked" checked disabled></ds-checkbox>
       <ds-checkbox label="Inactive unchecked" is-inactive></ds-checkbox>
       <ds-checkbox label="Inactive checked" checked is-inactive></ds-checkbox>
+    </div>
+  `,
+};
+
+export const ChoiceListInteraction: Story = {
+  render: () => html`
+    <div style="width:min(320px, 90vw);">
+      <ds-checkbox
+        label="Selectable option"
+        description="Choice-list rows opt into hover and pressed feedback."
+        has-interaction-fill
+      ></ds-checkbox>
     </div>
   `,
 };

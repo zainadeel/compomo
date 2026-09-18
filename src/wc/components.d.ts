@@ -1340,6 +1340,11 @@ export namespace Components {
          */
         "disabled": boolean;
         /**
+          * Show full-row hover and pressed feedback for choice-list presentations.
+          * @default false
+         */
+        "hasInteractionFill": boolean;
+        /**
           * Mixed visual state. Activation clears it before toggling checked.
           * @default false
          */
@@ -3410,6 +3415,11 @@ export namespace Components {
           * @default ''
          */
         "groupLabel": string;
+        /**
+          * Show full-row hover and pressed feedback for choice-list presentations.
+          * @default false
+         */
+        "hasInteractionFill": boolean;
         /**
           * Design-system inactive state for the complete set.
           * @default false
@@ -8125,6 +8135,11 @@ declare namespace LocalJSX {
          */
         "form"?: string;
         /**
+          * Show full-row hover and pressed feedback for choice-list presentations.
+          * @default false
+         */
+        "hasInteractionFill"?: boolean;
+        /**
           * Mixed visual state. Activation clears it before toggling checked.
           * @default false
          */
@@ -10406,6 +10421,11 @@ declare namespace LocalJSX {
          */
         "groupLabel"?: string;
         /**
+          * Show full-row hover and pressed feedback for choice-list presentations.
+          * @default false
+         */
+        "hasInteractionFill"?: boolean;
+        /**
           * Design-system inactive state for the complete set.
           * @default false
          */
@@ -12330,6 +12350,7 @@ declare namespace LocalJSX {
         "requiredMessage": string;
         "indeterminate": boolean;
         "isInactive": boolean;
+        "hasInteractionFill": boolean;
         "presentation": boolean;
     }
     interface DsChipAttributes {
@@ -12813,6 +12834,7 @@ declare namespace LocalJSX {
         "requiredMessage": string;
         "direction": 'vertical' | 'horizontal';
         "isInactive": boolean;
+        "hasInteractionFill": boolean;
         "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
     }

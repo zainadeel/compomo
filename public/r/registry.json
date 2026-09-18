@@ -12,7 +12,7 @@
     "themeSetup": "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     "peerDependencies": {
       "required": [
-        "@ds-mo/tokens ^6.5.2",
+        "@ds-mo/tokens ^6.6.1",
         "@ds-mo/icons ^8.1.1"
       ],
       "optional": [],
@@ -4604,7 +4604,8 @@
             "The initial checked and indeterminate values are restored by native form reset; checked values submit under name and unchecked values submit nothing.",
             "Sizes are lg with a 20px box in a 24px placement, md with a 16px box in a 20px placement, sm with a 12px box in a 16px placement, and xs with an 8px box in a 12px placement.",
             "Presentation mode removes checkbox semantics, focus, interaction, label rendering, description rendering, and form submission while preserving the visual state.",
-            "Description-rich checkboxes grow beyond the fixed density height while retaining its minimum target size and primitive-owned selection anatomy."
+            "Description-rich checkboxes grow beyond the fixed density height while retaining its minimum target size and primitive-owned selection anatomy.",
+            "Form and settings usage omits a row hover or pressed wash by default; set hasInteractionFill only when the checkbox itself is presented as a choice-list row."
           ],
           "responsiveBehavior": [
             "Choose size from the density of the containing row; labels and descriptions may wrap while the placement box stays fixed.",
@@ -4665,7 +4666,8 @@
                 "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
                 "props": [
                   "size",
-                  "presentation"
+                  "presentation",
+                  "hasInteractionFill"
                 ]
               }
             ],
@@ -4682,6 +4684,10 @@
             "required": false
           },
           "disabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "hasInteractionFill": {
             "type": "boolean",
             "required": false
           },
@@ -12225,7 +12231,8 @@
             "Sizes are lg with a 20px circle in a 24px placement, md with a 16px circle in a 20px placement, sm with a 12px circle in a 16px placement, and xs with an 8px circle in a 12px placement.",
             "The initial value is restored by native form reset; the selected value submits under name and a required set is invalid until one active option is selected.",
             "Description-rich options grow beyond the fixed density height while retaining its minimum target size and primitive-owned selection anatomy.",
-            "A visible group label uses the shared field-label recipe above the option list without adding a second interaction target."
+            "A visible group label uses the shared field-label recipe above the option list without adding a second interaction target.",
+            "Form and settings usage omits a row hover or pressed wash by default; set hasInteractionFill only when each radio option is presented as a choice-list row."
           ],
           "responsiveBehavior": [
             "Choose size from the density of the containing form or settings row.",
@@ -12284,7 +12291,8 @@
                 ],
                 "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
                 "props": [
-                  "size"
+                  "size",
+                  "hasInteractionFill"
                 ]
               }
             ],
@@ -12314,6 +12322,10 @@
           },
           "groupLabel": {
             "type": "string",
+            "required": false
+          },
+          "hasInteractionFill": {
+            "type": "boolean",
             "required": false
           },
           "isInactive": {
@@ -13223,11 +13235,11 @@
           "accessibility": [
             "In edit presentation, slot exactly one ds-radio group and give it a visible label or an explicit aria-label/aria-labelledby.",
             "Keep the Radio group's options, value, required state, and selection event owned by the application.",
-            "Do not add a second interaction layer to the row; Radio owns option focus, keyboard selection, and hover behavior.",
+            "Do not add a second interaction layer to the row; Radio owns option focus and keyboard selection while settings usage keeps hasInteractionFill false.",
             "View presentation exposes readable label, saved value, and optional supporting copy without radio semantics or a focus target."
           ],
           "states": [
-            "The row is a neutral padded composition; selected, focus, inactive, and hover states belong to the slotted Radio.",
+            "The row is a neutral padded composition; selected, focus, and inactive states belong to the slotted Radio without a choice-list hover or pressed wash.",
             "The owning application handles dsChange and updates the slotted Radio value.",
             "View presentation replaces the control with the saved option label and retains consequence copy when it helps explain that choice."
           ],

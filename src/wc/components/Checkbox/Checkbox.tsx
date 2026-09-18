@@ -54,6 +54,8 @@ export class Checkbox {
   @Prop({ mutable: true }) indeterminate: boolean = false;
   /** Design-system inactive state. */
   @Prop() isInactive: boolean = false;
+  /** Show full-row hover and pressed feedback for choice-list presentations. */
+  @Prop() hasInteractionFill: boolean = false;
   /** Visual-only indicator for a composite control that owns selection semantics. */
   @Prop() presentation: boolean = false;
 
@@ -133,7 +135,7 @@ export class Checkbox {
           [`ds-control--${this.size}`]: true,
           'ds-control-inactive': inactive && !this.presentation,
           'ds-focus-ring-inset': !this.presentation,
-          'ds-interaction-fill': !inactive && !this.presentation,
+          'ds-interaction-fill': !inactive && !this.presentation && this.hasInteractionFill,
         }}
         onClick={this.presentation ? undefined : this.handleActivate}
         onKeyDown={this.presentation ? undefined : this.handleKeyDown}

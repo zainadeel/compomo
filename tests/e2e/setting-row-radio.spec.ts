@@ -23,6 +23,8 @@ test('composes a labeled Radio group without adding a second interaction layer',
   );
   await expect(disabled).toHaveAttribute('aria-checked', 'false');
   await expect(group.locator('.radio__item')).toHaveCount(3);
+  await expect(enabled).not.toHaveClass(/ds-interaction-fill/);
+  await expect(disabled).not.toHaveClass(/ds-interaction-fill/);
 
   const groupLabelBox = await group.locator('.radio__group-label .ds-text__element').boundingBox();
   const firstCircleBox = await group.locator('.radio__circle').first().boundingBox();
@@ -30,7 +32,7 @@ test('composes a labeled Radio group without adding a second interaction layer',
   expect(firstCircleBox).not.toBeNull();
   expect(groupLabelBox!.x).toBeCloseTo(firstCircleBox!.x, 1);
 
-  await disabled.click();
+  await disabled.locator('.radio__label').click();
   await expect(disabled).toHaveAttribute('aria-checked', 'true');
   await expect(enabled).toHaveAttribute('aria-checked', 'false');
   await expect
@@ -42,6 +44,18 @@ test('composes a labeled Radio group without adding a second interaction layer',
       )
     )
     .toEqual(['disabled']);
+
+  await enabled.locator('.radio__circle').click();
+  await expect(enabled).toHaveAttribute('aria-checked', 'true');
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (window as typeof window & { __settingRowRadioChanges: string[] })
+            .__settingRowRadioChanges
+      )
+    )
+    .toEqual(['disabled', 'enabled']);
   await expect(group.getByRole('radio', { name: 'Unavailable option' })).toHaveAttribute(
     'aria-disabled',
     'true'

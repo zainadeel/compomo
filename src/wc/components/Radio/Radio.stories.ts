@@ -17,8 +17,15 @@ const meta: Meta = {
     size: { control: 'radio', options: ['lg', 'md', 'sm', 'xs'] },
     direction: { control: 'radio', options: ['vertical', 'horizontal'] },
     isInactive: { control: 'boolean' },
+    hasInteractionFill: { control: 'boolean' },
   },
-  args: { value: 'a', size: 'md', direction: 'vertical', isInactive: false },
+  args: {
+    value: 'a',
+    size: 'md',
+    direction: 'vertical',
+    isInactive: false,
+    hasInteractionFill: false,
+  },
 };
 
 export default meta;
@@ -33,6 +40,7 @@ export const Playground: Story = {
       size=${args['size'] ?? 'md'}
       direction=${args['direction'] ?? 'vertical'}
       ?is-inactive=${args['isInactive']}
+      ?has-interaction-fill=${args['hasInteractionFill']}
       aria-label="Playground radio"
     ></ds-radio>
   `,
@@ -111,6 +119,22 @@ export const Labeled: Story = {
       ]}
       value="weekly"
     ></ds-radio>
+  `,
+};
+
+export const ChoiceListInteraction: Story = {
+  render: () => html`
+    <div style="width:min(360px, 90vw);">
+      <ds-radio
+        .groupLabel=${'Choose an option'}
+        .options=${[
+          { label: 'First option', value: 'first' },
+          { label: 'Second option', value: 'second' },
+        ]}
+        value="first"
+        has-interaction-fill
+      ></ds-radio>
+    </div>
   `,
 };
 

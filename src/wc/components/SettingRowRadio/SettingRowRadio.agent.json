@@ -20,11 +20,11 @@
   "accessibility": [
     "In edit presentation, slot exactly one ds-radio group and give it a visible label or an explicit aria-label/aria-labelledby.",
     "Keep the Radio group's options, value, required state, and selection event owned by the application.",
-    "Do not add a second interaction layer to the row; Radio owns option focus, keyboard selection, and hover behavior.",
+    "Do not add a second interaction layer to the row; Radio owns option focus and keyboard selection while settings usage keeps hasInteractionFill false.",
     "View presentation exposes readable label, saved value, and optional supporting copy without radio semantics or a focus target."
   ],
   "states": [
-    "The row is a neutral padded composition; selected, focus, inactive, and hover states belong to the slotted Radio.",
+    "The row is a neutral padded composition; selected, focus, and inactive states belong to the slotted Radio without a choice-list hover or pressed wash.",
     "The owning application handles dsChange and updates the slotted Radio value.",
     "View presentation replaces the control with the saved option label and retains consequence copy when it helps explain that choice."
   ],

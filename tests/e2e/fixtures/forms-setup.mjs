@@ -86,6 +86,10 @@ document.getElementById('tier').options = [
   { label: 'Standard', value: 'standard' },
   { label: 'Premium', value: 'premium' },
 ];
+document.getElementById('choice-list-radio').options = [
+  { label: 'First choice', value: 'first' },
+  { label: 'Second choice', value: 'second' },
+];
 document.getElementById('press-policy-swatch').options = [
   {
     value: 'blue',
