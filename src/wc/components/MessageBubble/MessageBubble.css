@@ -24,6 +24,7 @@
 
 :host(.message-bubble--user) .message-bubble {
   background: var(--color-chrome-background-primary);
+  color: var(--color-foreground-primary);
 }
 
 @media (max-width: 767px) {

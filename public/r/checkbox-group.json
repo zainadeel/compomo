@@ -20,7 +20,8 @@
       ],
       "avoidWhen": [
         "Only one standalone checkbox is needed.",
-        "Exactly one option may be selected; use Radio instead."
+        "Exactly one option may be selected; use Radio instead.",
+        "The list is a settings-card row; use component:ds-setting-row-checkbox, which owns the heading and view/edit presentation."
       ],
       "alternatives": [
         {
@@ -31,10 +32,12 @@
       ],
       "commonlyComposedWith": [
         "component:ds-checkbox",
-        "component:ds-text"
+        "component:ds-text",
+        "component:ds-setting-row-checkbox"
       ],
       "accessibility": [
         "The visible label names the role=group container; each slotted Checkbox keeps its own visible label, state, focus, and form value.",
+        "Inside ds-setting-row-checkbox the visible form label is omitted on first paint; the row heading is the accessible name via aria-labelledby.",
         "Use aria-describedby to associate group-level guidance or validation copy.",
         "Use the same size on CheckboxGroup and every slotted Checkbox so their text origins and density remain aligned."
       ],
@@ -101,11 +104,28 @@
           "mutable": false,
           "description": "Id reference for supporting guidance or an error message."
         },
+        "ariaLabel": {
+          "type": "string | null",
+          "resolvedType": "null | string",
+          "attribute": "aria-label",
+          "default": "null",
+          "required": false,
+          "mutable": false,
+          "description": "Accessible name when visible group labeling is unavailable."
+        },
+        "ariaLabelledby": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "aria-labelledby",
+          "required": false,
+          "mutable": false,
+          "description": "Id reference for a visible group label."
+        },
         "label": {
           "type": "string",
-          "resolvedType": "string",
+          "resolvedType": "string | undefined",
           "attribute": "label",
-          "required": true,
+          "required": false,
           "mutable": false,
           "description": "Visible label and accessible name for the checkbox list."
         },
@@ -132,11 +152,28 @@
         "mutable": false,
         "description": "Id reference for supporting guidance or an error message."
       },
+      "ariaLabel": {
+        "type": "string | null",
+        "resolvedType": "null | string",
+        "attribute": "aria-label",
+        "default": "null",
+        "required": false,
+        "mutable": false,
+        "description": "Accessible name when visible group labeling is unavailable."
+      },
+      "ariaLabelledby": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "aria-labelledby",
+        "required": false,
+        "mutable": false,
+        "description": "Id reference for a visible group label."
+      },
       "label": {
         "type": "string",
-        "resolvedType": "string",
+        "resolvedType": "string | undefined",
         "attribute": "label",
-        "required": true,
+        "required": false,
         "mutable": false,
         "description": "Visible label and accessible name for the checkbox list."
       },
@@ -197,12 +234,12 @@
   "files": [
     {
       "path": "src/wc/components/CheckboxGroup/CheckboxGroup.css",
-      "content": "@import '../../utils/control-density.css';\n@import '../../utils/control-parts.css';\n\n:host {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-050);\n  min-width: 0;\n}\n\n.checkbox-group__options {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-050);\n  min-width: 0;\n}\n\n::slotted(ds-checkbox) {\n  align-self: flex-start;\n}\n",
+      "content": "@import '../../utils/control-density.css';\n@import '../../utils/control-parts.css';\n\n:host {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-050);\n  min-width: 0;\n}\n\n.checkbox-group__options {\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-050);\n  min-width: 0;\n}\n\n::slotted(ds-checkbox) {\n  align-self: flex-start;\n  max-width: 100%;\n  min-width: 0;\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/CheckboxGroup/CheckboxGroup.tsx",
-      "content": "import { Component, h, Host, Prop } from '@stencil/core';\n\nexport type CheckboxGroupSize = 'lg' | 'md' | 'sm' | 'xs';\n\nlet checkboxGroupId = 0;\n\n@Component({\n  tag: 'ds-checkbox-group',\n  styleUrl: 'CheckboxGroup.css',\n  scoped: true,\n})\nexport class CheckboxGroup {\n  private readonly labelId = `ds-checkbox-group-label-${++checkboxGroupId}`;\n\n  /** Visible label and accessible name for the checkbox list. */\n  @Prop() label!: string;\n  /** Density of the label row; use the same size on every slotted Checkbox. */\n  @Prop() size: CheckboxGroupSize = 'md';\n  /** Id reference for supporting guidance or an error message. */\n  @Prop({ attribute: 'aria-describedby' }) ariaDescribedby: string | undefined;\n\n  render() {\n    return (\n      <Host\n        role=\"group\"\n        aria-labelledby={this.labelId}\n        aria-describedby={this.ariaDescribedby}\n        class={`checkbox-group checkbox-group--${this.size}`}\n      >\n        <ds-text\n          class={`checkbox-group__label ds-control-section-heading ds-control--${this.size}`}\n          as=\"span\"\n          variant=\"text-body-small\"\n          emphasis\n          textId={this.labelId}\n        >\n          {this.label}\n        </ds-text>\n        <div class=\"checkbox-group__options\">\n          <slot />\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Element, h, Host, Prop } from '@stencil/core';\n\nexport type CheckboxGroupSize = 'lg' | 'md' | 'sm' | 'xs';\n\nlet checkboxGroupId = 0;\n\n@Component({\n  tag: 'ds-checkbox-group',\n  styleUrl: 'CheckboxGroup.css',\n  scoped: true,\n})\nexport class CheckboxGroup {\n  @Element() el!: HTMLElement;\n  private readonly labelId = `ds-checkbox-group-label-${++checkboxGroupId}`;\n\n  /** Visible label and accessible name for the checkbox list. */\n  @Prop() label?: string;\n  /** Density of the label row; use the same size on every slotted Checkbox. */\n  @Prop() size: CheckboxGroupSize = 'md';\n  /** Accessible name when visible group labeling is unavailable. */\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n  /** Id reference for a visible group label. */\n  @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;\n  /** Id reference for supporting guidance or an error message. */\n  @Prop({ attribute: 'aria-describedby' }) ariaDescribedby: string | undefined;\n\n  private get hasGroupLabel(): boolean {\n    return Boolean(this.label?.trim());\n  }\n\n  /** Settings rows own a separate heading; never mount the form group label there. */\n  private get showGroupLabel(): boolean {\n    return this.hasGroupLabel && !this.el.closest('ds-setting-row-checkbox');\n  }\n\n  render() {\n    return (\n      <Host\n        role=\"group\"\n        aria-label={this.showGroupLabel ? undefined : this.ariaLabel}\n        aria-labelledby={this.showGroupLabel ? this.labelId : this.ariaLabelledby}\n        aria-describedby={this.ariaDescribedby}\n        class={{\n          'checkbox-group': true,\n          [`checkbox-group--${this.size}`]: true,\n          'checkbox-group--labeled': this.showGroupLabel,\n        }}\n      >\n        {this.showGroupLabel ? (\n          <ds-text\n            key=\"checkbox-group-label\"\n            class={`checkbox-group__label ds-control-section-heading ds-control--${this.size}`}\n            as=\"span\"\n            variant=\"text-body-small\"\n            emphasis\n            textId={this.labelId}\n          >\n            {this.label}\n          </ds-text>\n        ) : null}\n        <div key=\"checkbox-group-options\" class=\"checkbox-group__options\">\n          <slot />\n        </div>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

@@ -14,7 +14,8 @@
   ],
   "avoidWhen": [
     "Only one standalone checkbox is needed.",
-    "Exactly one option may be selected; use Radio instead."
+    "Exactly one option may be selected; use Radio instead.",
+    "The list is a settings-card row; use component:ds-setting-row-checkbox, which owns the heading and view/edit presentation."
   ],
   "alternatives": [
     {
@@ -23,9 +24,14 @@
       "reason": "Radio owns mutually exclusive selection and keyboard traversal."
     }
   ],
-  "commonlyComposedWith": ["component:ds-checkbox", "component:ds-text"],
+  "commonlyComposedWith": [
+    "component:ds-checkbox",
+    "component:ds-text",
+    "component:ds-setting-row-checkbox"
+  ],
   "accessibility": [
     "The visible label names the role=group container; each slotted Checkbox keeps its own visible label, state, focus, and form value.",
+    "Inside ds-setting-row-checkbox the visible form label is omitted on first paint; the row heading is the accessible name via aria-labelledby.",
     "Use aria-describedby to associate group-level guidance or validation copy.",
     "Use the same size on CheckboxGroup and every slotted Checkbox so their text origins and density remain aligned."
   ],

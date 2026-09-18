@@ -7,9 +7,9 @@
  *
  * Nested controls inherit --ds-settings-row-control-padding-inline: 0 so their
  * control-frame inline padding is not added on top of this row inset. Option
- * copy after a radio icon still uses the control icon box and gap. Setting
- * radio headings are owned by ds-setting-row-radio, not Radio's form
- * groupLabel.
+ * copy after a radio or checkbox icon still uses the control icon box and gap.
+ * Setting radio and checkbox headings are owned by ds-setting-row-radio and
+ * ds-setting-row-checkbox, not the nested form group labels.
  */
 
 :host {

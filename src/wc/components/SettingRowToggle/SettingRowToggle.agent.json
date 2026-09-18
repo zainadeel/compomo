@@ -20,7 +20,9 @@
   ],
   "states": [
     "The application accepts or rejects change requests by updating the controlled checked value and owns persistence and errors.",
-    "Name the enabled setting consistently; the label must not change when the switch is toggled."
+    "Name the enabled setting consistently; the label must not change when the switch is toggled.",
+    "Non-emphasis rows without supporting copy use ds-text color secondary (foreground-secondary) on the title. Non-emphasis rows with description keep a primary title.",
+    "Supporting copy is text-body-small in every variant."
   ],
   "responsiveBehavior": [
     "The copy wraps while the switch keeps its natural size in the trailing column, including at narrow widths."

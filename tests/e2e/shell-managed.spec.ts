@@ -89,17 +89,23 @@ test.describe('Managed application shell', () => {
         marker: element.hasAttribute('data-shell-bar'),
         hostBackground: getComputedStyle(element).backgroundColor,
         titleBackground: getComputedStyle(title).backgroundColor,
-        foregroundPrimary: read(element, '--_bar-page-title-fg-primary') ===
+        foregroundPrimary:
+          read(element, '--_bar-page-title-fg-primary') ===
           read(element, '--color-chrome-foreground-primary'),
-        foregroundSecondary: read(element, '--_bar-page-title-fg-secondary') ===
+        foregroundSecondary:
+          read(element, '--_bar-page-title-fg-secondary') ===
           read(element, '--color-chrome-foreground-secondary'),
-        border: read(element, '--_bar-page-title-border') ===
+        border:
+          read(element, '--_bar-page-title-border') ===
           read(element, '--color-chrome-border-tertiary'),
-        hover: read(element, '--_bar-page-title-hover') ===
+        hover:
+          read(element, '--_bar-page-title-hover') ===
           read(element, '--color-chrome-interaction-hover'),
-        pressed: read(element, '--_bar-page-title-pressed') ===
+        pressed:
+          read(element, '--_bar-page-title-pressed') ===
           read(element, '--color-chrome-interaction-pressed'),
-        focus: read(element, '--_bar-page-title-focus') ===
+        focus:
+          read(element, '--_bar-page-title-focus') ===
           read(element, '--color-chrome-interaction-focus'),
         headingColor: getComputedStyle(heading).color,
         expectedHeadingColor,

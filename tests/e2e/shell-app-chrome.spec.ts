@@ -208,7 +208,11 @@ test.describe('App shell chrome', () => {
         headerChrome: header?.classList.contains('ds-interaction-fill--on-chrome') ?? false,
         itemChrome: item?.classList.contains('ds-interaction-fill--on-chrome') ?? false,
         footerChrome: footer?.classList.contains('ds-interaction-fill--on-chrome') ?? false,
-        footerHover: sameToken(footer, '--ds-interaction-hover', '--color-chrome-interaction-hover'),
+        footerHover: sameToken(
+          footer,
+          '--ds-interaction-hover',
+          '--color-chrome-interaction-hover'
+        ),
         dotBackground: sameToken(dot, '--_badge-bg', '--color-chrome-foreground-theme'),
         resizeColor,
         headerColor: header ? getComputedStyle(header).color : '',
@@ -334,15 +338,17 @@ test.describe('App shell chrome', () => {
           railAction?.classList.contains('ds-interaction-fill--on-chrome') ?? false,
         headerActionsChrome:
           headerActions.length > 0 &&
-          headerActions.every(action => action.classList.contains('button-unfilled--background-chrome')),
+          headerActions.every(action =>
+            action.classList.contains('button-unfilled--background-chrome')
+          ),
         headerActionsInteraction:
           headerActions.length > 0 &&
-          headerActions.every(action => action.classList.contains('ds-interaction-fill--on-chrome')),
+          headerActions.every(action =>
+            action.classList.contains('ds-interaction-fill--on-chrome')
+          ),
         toolText: view ? getComputedStyle(view).color : '',
         searchDivider: searchRow ? getComputedStyle(searchRow, '::after').backgroundColor : '',
-        searchVerticalDivider: searchDivider
-          ? getComputedStyle(searchDivider).backgroundColor
-          : '',
+        searchVerticalDivider: searchDivider ? getComputedStyle(searchDivider).backgroundColor : '',
         expectedPrimary,
         expectedSecondary,
         expectedBorder,

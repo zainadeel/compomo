@@ -21,7 +21,7 @@ export class SettingRowRadio {
   @Element() el!: HTMLElement;
 
   /** Interactive Radio group or non-interactive saved-value readout. */
-  @Prop() presentation: SettingRowRadioPresentation = 'edit';
+  @Prop({ reflect: true }) presentation: SettingRowRadioPresentation = 'edit';
   /** Settings heading shown in both presentations. Not Radio's form groupLabel. */
   @Prop() label?: string;
   /** Saved option label shown in view presentation. */
@@ -49,43 +49,37 @@ export class SettingRowRadio {
     }
   };
 
-  private renderHeading() {
-    if (!this.label) return null;
-    return (
-      <ds-text
-        class="setting-row-radio__heading"
-        as="span"
-        variant={CONTROL_TEXT_VARIANT.md}
-        emphasis
-        textId={this.headingId}
-      >
-        {this.label}
-      </ds-text>
-    );
-  }
-
   render() {
     return (
       <Host>
-        {this.renderHeading()}
-        {this.presentation === 'view' ? (
-          this.valueLabel || this.description ? (
-            <div class="setting-row-radio__choice">
-              {this.valueLabel ? (
-                <ds-text as="span" variant={CONTROL_TEXT_VARIANT.md}>
-                  {this.valueLabel}
-                </ds-text>
-              ) : null}
-              {this.description ? (
-                <ds-text as="span" variant={CONTROL_SUPPORTING_TEXT_VARIANT.md} color="secondary">
-                  {this.description}
-                </ds-text>
-              ) : null}
-            </div>
-          ) : null
-        ) : (
-          <slot onSlotchange={this.syncSlottedRadio} />
-        )}
+        <ds-text
+          key="setting-row-radio-heading"
+          class="setting-row-radio__heading"
+          as="span"
+          variant={CONTROL_TEXT_VARIANT.md}
+          emphasis
+          textId={this.label ? this.headingId : undefined}
+        >
+          {this.label}
+        </ds-text>
+        <div key="setting-row-radio-choice" class="setting-row-radio__choice">
+          {this.valueLabel ? (
+            <ds-text key="setting-row-radio-value" as="span" variant={CONTROL_TEXT_VARIANT.md}>
+              {this.valueLabel}
+            </ds-text>
+          ) : null}
+          {this.description ? (
+            <ds-text
+              key="setting-row-radio-description"
+              as="span"
+              variant={CONTROL_SUPPORTING_TEXT_VARIANT.md}
+              color="secondary"
+            >
+              {this.description}
+            </ds-text>
+          ) : null}
+        </div>
+        <slot onSlotchange={this.syncSlottedRadio} />
       </Host>
     );
   }

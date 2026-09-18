@@ -50,6 +50,43 @@ export const NonEmphasis: Story = {
     ></ds-setting-row-toggle>
   `,
 };
+export const NonEmphasisNoSubtext: Story = {
+  ...Default,
+  args: { variant: 'non-emphasis', description: '' },
+  render: args => html`
+    <ds-setting-row-toggle
+      label=${args['label']}
+      .checked=${args['checked']}
+      .disabled=${args['disabled']}
+      variant="non-emphasis"
+      @dsChange=${(event: CustomEvent<boolean>) => {
+        (event.currentTarget as HTMLDsSettingRowToggleElement).checked = event.detail;
+      }}
+    ></ds-setting-row-toggle>
+  `,
+};
+export const Recipes: Story = {
+  render: () => html`
+    <div
+      role="list"
+      style="display:grid;gap:var(--dimension-space-200);max-width:var(--dimension-card-width-md);"
+    >
+      <ds-setting-row-toggle
+        role="listitem"
+        label="Panel navigation"
+        description="Show page sections in the side panel. Turn off to use top bar tabs."
+        checked
+      ></ds-setting-row-toggle>
+      <ds-setting-row-toggle
+        role="listitem"
+        label="Panel navigation"
+        description="Show page sections in the side panel. Turn off to use top bar tabs."
+        variant="non-emphasis"
+        checked
+      ></ds-setting-row-toggle>
+    </div>
+  `,
+};
 export const Narrow: Story = {
   render: () => html`
     <div style="width:var(--dimension-card-width-xs);max-width:100%;">

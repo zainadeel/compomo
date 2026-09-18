@@ -1,120 +1,131 @@
 import { expect, test } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('/setting-row-radio.html');
+  await page.goto('/setting-row-checkbox.html');
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('composes a labeled Radio group without adding a second interaction layer', async ({
+test('composes a labeled Checkbox group without adding a second interaction layer', async ({
   page,
 }) => {
-  const group = page.locator('#validation-mode');
-  const enabled = group.getByRole('radio', { name: 'Use automated validation', exact: true });
-  const disabled = group.getByRole('radio', {
-    name: 'Skip automated validation',
-    exact: true,
-  });
+  const group = page.locator('#alert-channels');
+  const email = group.getByRole('checkbox', { name: 'Email', exact: true });
+  const push = group.getByRole('checkbox', { name: 'Mobile push', exact: true });
+  const sms = group.getByRole('checkbox', { name: 'SMS', exact: true });
 
-  await expect(group).toHaveRole('radiogroup', { name: 'Validation mode' });
-  await expect(enabled).toHaveAttribute('aria-checked', 'true');
-  await expect(enabled).toHaveAccessibleDescription(
-    'Apply automated checks and human review to validate results.'
-  );
-  await expect(disabled).toHaveAttribute('aria-checked', 'false');
-  await expect(group.locator('.radio__item')).toHaveCount(3);
+  await expect(group).toHaveRole('group', { name: 'Alert channels' });
+  await expect(email).toHaveAttribute('aria-checked', 'true');
+  await expect(email).toHaveAccessibleDescription('Send a summary to the fleet email list.');
+  await expect(push).toHaveAttribute('aria-checked', 'true');
+  await expect(sms).toHaveAttribute('aria-checked', 'false');
+  await expect(group.locator('.checkbox-group__options > ds-checkbox')).toHaveCount(4);
   const row = page.locator('#setting-row');
-  const heading = row.locator('.setting-row-radio__heading');
-  await expect(row.locator('.radio__group-label')).toHaveCount(0);
+  const heading = row.locator('.setting-row-checkbox__heading');
+  await expect(row.locator('.checkbox-group__label')).toHaveCount(0);
   await expect(heading).toHaveJSProperty('variant', 'text-body-medium');
   await expect(heading).toHaveJSProperty('emphasis', true);
-  await expect(enabled).not.toHaveClass(/ds-interaction-fill/);
-  await expect(disabled).not.toHaveClass(/ds-interaction-fill/);
+  await expect(email).not.toHaveClass(/ds-interaction-fill/);
+  await expect(sms).not.toHaveClass(/ds-interaction-fill/);
 
-  const groupLabelBox = await heading.locator('.ds-text__element').boundingBox();
-  const groupLabelRowBox = await heading.boundingBox();
-  const firstCircleBox = await group.locator('.radio__circle').first().boundingBox();
-  const firstItemBox = await group.locator('.radio__item').first().boundingBox();
-  const secondItemBox = await group.locator('.radio__item').nth(1).boundingBox();
-  expect(groupLabelBox).not.toBeNull();
-  expect(groupLabelRowBox).not.toBeNull();
-  expect(firstCircleBox).not.toBeNull();
+  const headingTextBox = await heading.locator('.ds-text__element').boundingBox();
+  const headingRowBox = await heading.boundingBox();
+  const firstBox = await group.locator('.box').first().boundingBox();
+  const firstItemBox = await group
+    .locator('.checkbox-group__options > ds-checkbox')
+    .first()
+    .boundingBox();
+  const secondItemBox = await group
+    .locator('.checkbox-group__options > ds-checkbox')
+    .nth(1)
+    .boundingBox();
+  expect(headingTextBox).not.toBeNull();
+  expect(headingRowBox).not.toBeNull();
+  expect(firstBox).not.toBeNull();
   expect(firstItemBox).not.toBeNull();
   expect(secondItemBox).not.toBeNull();
-  expect(groupLabelRowBox!.height).toBe(32);
+  expect(headingRowBox!.height).toBe(32);
   const rowBox = await page.locator('#setting-row').boundingBox();
   expect(rowBox).not.toBeNull();
-  expect(groupLabelBox!.x).toBeCloseTo(rowBox!.x + 16, 0.5);
+  expect(headingTextBox!.x).toBeCloseTo(rowBox!.x + 16, 0.5);
   expect(secondItemBox!.y - (firstItemBox!.y + firstItemBox!.height)).toBe(4);
 
-  await disabled.locator('.radio__label').click();
-  await expect(disabled).toHaveAttribute('aria-checked', 'true');
-  await expect(enabled).toHaveAttribute('aria-checked', 'false');
+  await sms.locator('.checkbox__label').click();
+  await expect(sms).toHaveAttribute('aria-checked', 'true');
   await expect
     .poll(() =>
       page.evaluate(
         () =>
-          (window as typeof window & { __settingRowRadioChanges: string[] })
-            .__settingRowRadioChanges
+          (
+            window as typeof window & {
+              __settingRowCheckboxChanges: { value: string; checked: boolean }[];
+            }
+          ).__settingRowCheckboxChanges
       )
     )
-    .toEqual(['disabled']);
+    .toEqual([{ value: 'sms', checked: true }]);
 
-  await enabled.locator('.radio__circle').click();
-  await expect(enabled).toHaveAttribute('aria-checked', 'true');
+  await email.locator('.box').click();
+  await expect(email).toHaveAttribute('aria-checked', 'false');
   await expect
     .poll(() =>
       page.evaluate(
         () =>
-          (window as typeof window & { __settingRowRadioChanges: string[] })
-            .__settingRowRadioChanges
+          (
+            window as typeof window & {
+              __settingRowCheckboxChanges: { value: string; checked: boolean }[];
+            }
+          ).__settingRowCheckboxChanges
       )
     )
-    .toEqual(['disabled', 'enabled']);
-  await expect(group.getByRole('radio', { name: 'Unavailable option' })).toHaveAttribute(
+    .toEqual([
+      { value: 'sms', checked: true },
+      { value: 'email', checked: false },
+    ]);
+  await expect(group.getByRole('checkbox', { name: 'Unavailable option' })).toHaveAttribute(
     'aria-disabled',
     'true'
   );
 });
 
-test('keeps the padded row and Radio copy aligned when descriptions wrap', async ({ page }) => {
+test('keeps the padded row and Checkbox copy aligned when descriptions wrap', async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 800 });
   const row = page.locator('#setting-row');
-  const group = page.locator('#validation-mode');
-  const item = group.locator('.radio__item').first();
-  const placement = item.locator('.radio__placement');
-  const circle = item.locator('.radio__circle');
-  const label = item.locator('.radio__label .ds-text__element');
-  const copy = item.locator('.radio__copy');
+  const group = page.locator('#alert-channels');
+  const item = group.locator('.checkbox-group__options > ds-checkbox').first();
+  const placement = item.locator('.checkbox__placement');
+  const box = item.locator('.box');
+  const label = item.locator('.checkbox__label .ds-text__element');
+  const copy = item.locator('.checkbox__copy');
 
   const rowBox = await row.boundingBox();
   const groupBox = await group.boundingBox();
   const placementBox = await placement.boundingBox();
-  const circleBox = await circle.boundingBox();
+  const boxBox = await box.boundingBox();
   const labelBox = await label.boundingBox();
   const copyBox = await copy.boundingBox();
   expect(rowBox).not.toBeNull();
   expect(groupBox).not.toBeNull();
   expect(placementBox).not.toBeNull();
-  expect(circleBox).not.toBeNull();
+  expect(boxBox).not.toBeNull();
   expect(labelBox).not.toBeNull();
   expect(copyBox).not.toBeNull();
   expect(groupBox!.x).toBeGreaterThan(rowBox!.x);
   expect(placementBox!.x + placementBox!.width).toBeLessThanOrEqual(copyBox!.x);
-  expect(circleBox!.y + circleBox!.height / 2).toBeCloseTo(labelBox!.y + labelBox!.height / 2, 1);
+  expect(boxBox!.y + boxBox!.height / 2).toBeCloseTo(labelBox!.y + labelBox!.height / 2, 1);
 });
 
 test('renders a non-interactive saved-value readout in view presentation', async ({ page }) => {
   const row = page.locator('#setting-row-view');
-  const heading = row.locator('.setting-row-radio__heading');
-  const choice = row.locator('.setting-row-radio__choice ds-text');
+  const heading = row.locator('.setting-row-checkbox__heading');
+  const choice = row.locator('.setting-row-checkbox__choice ds-text');
 
-  await expect(row).toContainText('Validation mode');
-  await expect(row).toContainText('Use automated validation');
-  await expect(row).toContainText('Apply automated checks and human review to validate results.');
-  await expect(row.getByRole('radio')).toHaveCount(0);
-  await expect(row.locator('ds-radio')).toHaveCount(1);
-  await expect(row.locator('ds-radio')).toBeHidden();
-  await expect(row.locator('.radio__circle').first()).toBeHidden();
+  await expect(row).toContainText('Alert channels');
+  await expect(row).toContainText('Email, Mobile push');
+  await expect(row).toContainText('Selected channels receive in-cab and fleet alerts.');
+  await expect(row.getByRole('checkbox')).toHaveCount(0);
+  await expect(row.locator('ds-checkbox-group')).toHaveCount(1);
+  await expect(row.locator('ds-checkbox-group')).toBeHidden();
+  await expect(row.locator('.box').first()).toBeHidden();
   await expect(heading).toHaveJSProperty('variant', 'text-body-medium');
   await expect(heading).toHaveJSProperty('emphasis', true);
   await expect(choice.nth(0)).toHaveJSProperty('variant', 'text-body-medium');
@@ -127,7 +138,7 @@ test('keeps the same host padding in view and edit on the shared settings-row in
 }) => {
   const edit = page.locator('#setting-row');
   const view = page.locator('#setting-row-view');
-  const group = page.locator('#validation-mode');
+  const group = page.locator('#alert-channels');
 
   const geometry = await page.evaluate(() => {
     const measure = (id: string) => {
@@ -143,18 +154,20 @@ test('keeps the same host padding in view and edit on the shared settings-row in
     };
     const editRow = document.querySelector<HTMLElement>('#setting-row')!;
     const viewRow = document.querySelector<HTMLElement>('#setting-row-view')!;
-    const heading = editRow.querySelector<HTMLElement>('.setting-row-radio__heading')!;
+    const heading = editRow.querySelector<HTMLElement>('.setting-row-checkbox__heading')!;
     const headingText = heading.querySelector<HTMLElement>('.ds-text__element') ?? heading;
-    const circle = document.querySelector<HTMLElement>('#validation-mode .radio__circle')!;
-    const viewLabel = viewRow.querySelector<HTMLElement>('.setting-row-radio__heading')!;
+    const box = document.querySelector<HTMLElement>('#alert-channels .box')!;
+    const viewLabel = viewRow.querySelector<HTMLElement>('.setting-row-checkbox__heading')!;
     const viewHeadingText = viewLabel.querySelector<HTMLElement>('.ds-text__element') ?? viewLabel;
     const viewOptionText = viewRow.querySelector<HTMLElement>(
-      '.setting-row-radio__choice ds-text .ds-text__element'
+      '.setting-row-checkbox__choice ds-text .ds-text__element'
     )!;
     const editOptionText = document.querySelector<HTMLElement>(
-      '#validation-mode .radio__item .radio__label .ds-text__element'
+      '#alert-channels .checkbox__label .ds-text__element'
     )!;
-    const item = document.querySelector<HTMLElement>('#validation-mode .radio__item')!;
+    const item = document.querySelector<HTMLElement>(
+      '#alert-channels .checkbox-group__options > ds-checkbox'
+    )!;
     const itemStyle = getComputedStyle(item);
     const viewRowLeft = viewRow.getBoundingClientRect().left;
     const editRowLeft = editRow.getBoundingClientRect().left;
@@ -166,7 +179,7 @@ test('keeps the same host padding in view and edit on the shared settings-row in
       viewHeadingTextOffset: viewHeadingText.getBoundingClientRect().left - viewRowLeft,
       editHeadingTextOffset: headingText.getBoundingClientRect().left - editRowLeft,
       viewOptionTextOffset: viewOptionText.getBoundingClientRect().left - viewRowLeft,
-      circleOffset: circle.getBoundingClientRect().left - editRowLeft,
+      boxOffset: box.getBoundingClientRect().left - editRowLeft,
       viewHeadingHeight: viewLabel.getBoundingClientRect().height,
       viewTitleToOption:
         viewOptionText.getBoundingClientRect().top - viewHeadingText.getBoundingClientRect().bottom,
@@ -189,21 +202,21 @@ test('keeps the same host padding in view and edit on the shared settings-row in
   expect(geometry.viewOptionTextOffset).toBe(16);
   expect(geometry.viewHeadingHeight).toBe(32);
   expect(geometry.viewTitleToOption).toBeCloseTo(geometry.editTitleToOption, 1);
-  await expect(view.locator('.setting-row-radio__heading')).toHaveJSProperty(
+  await expect(view.locator('.setting-row-checkbox__heading')).toHaveJSProperty(
     'variant',
     'text-body-medium'
   );
-  await expect(edit.locator('.setting-row-radio__heading')).toHaveJSProperty(
+  await expect(edit.locator('.setting-row-checkbox__heading')).toHaveJSProperty(
     'variant',
     'text-body-medium'
   );
-  await expect(edit.locator('.radio__group-label')).toHaveCount(0);
+  await expect(edit.locator('.checkbox-group__label')).toHaveCount(0);
   await expect(edit).toBeVisible();
   await expect(view).toBeVisible();
   await expect(group).toBeVisible();
 });
 
-test('keeps heading, choice, and radio mounted with no empty frames across view and edit', async ({
+test('keeps heading, choice, and checkbox group mounted with no empty frames across view and edit', async ({
   page,
 }) => {
   const result = await page.evaluate(async () => {
@@ -212,9 +225,9 @@ test('keeps heading, choice, and radio mounted with no empty frames across view 
       valueLabel?: string;
       description?: string;
     };
-    const heading = row.querySelector('.setting-row-radio__heading');
-    const choice = row.querySelector('.setting-row-radio__choice');
-    const radio = row.querySelector('ds-radio');
+    const heading = row.querySelector('.setting-row-checkbox__heading');
+    const choice = row.querySelector('.setting-row-checkbox__choice');
+    const group = row.querySelector('ds-checkbox-group');
     const isVisible = (element: Element | null) => {
       if (!element) return false;
       const style = getComputedStyle(element);
@@ -225,16 +238,16 @@ test('keeps heading, choice, and radio mounted with no empty frames across view 
     const snapshot = () => {
       const headingVisible = isVisible(heading);
       const choiceVisible = isVisible(choice);
-      const radioVisible = isVisible(radio);
+      const groupVisible = isVisible(group);
       return {
         headingVisible,
         choiceVisible,
-        radioVisible,
-        emptyOptions: !choiceVisible && !radioVisible,
+        groupVisible,
+        emptyOptions: !choiceVisible && !groupVisible,
         headingGone: !headingVisible,
-        headingSame: row.querySelector('.setting-row-radio__heading') === heading,
-        choiceSame: row.querySelector('.setting-row-radio__choice') === choice,
-        radioSame: row.querySelector('ds-radio') === radio,
+        headingSame: row.querySelector('.setting-row-checkbox__heading') === heading,
+        choiceSame: row.querySelector('.setting-row-checkbox__choice') === choice,
+        groupSame: row.querySelector('ds-checkbox-group') === group,
       };
     };
     const frames: ReturnType<typeof snapshot>[] = [];
@@ -246,8 +259,8 @@ test('keeps heading, choice, and radio mounted with no empty frames across view 
         await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
       }
     };
-    row.valueLabel = 'Use automated validation';
-    row.description = 'Apply automated checks and human review to validate results.';
+    row.valueLabel = 'Email, Mobile push';
+    row.description = 'Selected channels receive in-cab and fleet alerts.';
     row.presentation = 'view';
     await waitFrames(8);
     const afterExit = snapshot();
@@ -262,15 +275,15 @@ test('keeps heading, choice, and radio mounted with no empty frames across view 
       emptyOptionFrames: frames.filter(frame => frame.emptyOptions),
       headingGoneFrames: frames.filter(frame => frame.headingGone),
       identityBreaks: frames.filter(
-        frame => !frame.headingSame || !frame.choiceSame || !frame.radioSame
+        frame => !frame.headingSame || !frame.choiceSame || !frame.groupSame
       ),
       headingConnected: Boolean(heading?.isConnected),
       choiceConnected: Boolean(choice?.isConnected),
-      radioConnected: Boolean(radio?.isConnected),
+      groupConnected: Boolean(group?.isConnected),
       afterExit,
       afterEnter,
       afterSecondExit,
-      viewRadioDisplay: getComputedStyle(radio!).display,
+      viewGroupDisplay: getComputedStyle(group!).display,
     };
   });
 
@@ -279,54 +292,54 @@ test('keeps heading, choice, and radio mounted with no empty frames across view 
   expect(result.identityBreaks).toEqual([]);
   expect(result.headingConnected).toBe(true);
   expect(result.choiceConnected).toBe(true);
-  expect(result.radioConnected).toBe(true);
+  expect(result.groupConnected).toBe(true);
   expect(result.afterExit).toMatchObject({
     headingVisible: true,
     choiceVisible: true,
-    radioVisible: false,
+    groupVisible: false,
     emptyOptions: false,
   });
   expect(result.afterEnter).toMatchObject({
     headingVisible: true,
     choiceVisible: false,
-    radioVisible: true,
+    groupVisible: true,
     emptyOptions: false,
   });
   expect(result.afterSecondExit).toMatchObject({
     headingVisible: true,
     choiceVisible: true,
-    radioVisible: false,
+    groupVisible: false,
     emptyOptions: false,
   });
-  expect(result.viewRadioDisplay).toBe('none');
+  expect(result.viewGroupDisplay).toBe('none');
 });
 
-test('omits Radio form group labels inside the settings row even if groupLabel is assigned', async ({
+test('omits CheckboxGroup form labels inside the settings row even if label is assigned', async ({
   page,
 }) => {
   const result = await page.evaluate(async () => {
     const row = document.querySelector('#setting-row')!;
-    const radio = document.querySelector('#validation-mode') as HTMLElement & {
-      groupLabel: string;
+    const group = document.querySelector('#alert-channels') as HTMLElement & {
+      label: string;
     };
     const seenVariants: string[] = [];
     const observer = new MutationObserver(() => {
-      for (const label of row.querySelectorAll('.radio__group-label')) {
+      for (const label of row.querySelectorAll('.checkbox-group__label')) {
         seenVariants.push((label as HTMLElement & { variant?: string }).variant ?? '');
       }
     });
     observer.observe(row, { subtree: true, childList: true, attributes: true });
-    radio.groupLabel = 'Validation mode';
+    group.label = 'Alert channels';
     await new Promise<void>(resolve =>
       requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
     );
     observer.disconnect();
-    const heading = row.querySelector('.setting-row-radio__heading') as HTMLElement & {
+    const heading = row.querySelector('.setting-row-checkbox__heading') as HTMLElement & {
       variant?: string;
     };
     return {
       seenVariants,
-      formLabelCount: row.querySelectorAll('.radio__group-label').length,
+      formLabelCount: row.querySelectorAll('.checkbox-group__label').length,
       headingVariant: heading?.variant,
     };
   });
@@ -336,12 +349,40 @@ test('omits Radio form group labels inside the settings row even if groupLabel i
   expect(result.headingVariant).toBe('text-body-medium');
 });
 
-test('keeps standalone Radio form group labels on the body-small section heading', async ({
+test('keeps standalone CheckboxGroup form labels on the body-small section heading', async ({
   page,
 }) => {
-  const formLabel = page.locator('#form-radio .radio__group-label');
+  const formLabel = page.locator('#form-checkbox-group .checkbox-group__label');
   await expect(formLabel).toHaveJSProperty('variant', 'text-body-small');
   await expect(formLabel).toHaveJSProperty('emphasis', true);
   await expect(formLabel).toHaveClass(/ds-control-section-heading/);
-  await expect(page.locator('#form-radio')).toHaveRole('radiogroup', { name: 'Plan type' });
+  await expect(page.locator('#form-checkbox-group')).toHaveRole('group', {
+    name: 'Select preferences',
+  });
+});
+
+test('renders selected values without supporting copy when the row and options have no subtext', async ({
+  page,
+}) => {
+  const view = page.locator('#setting-row-view-no-subtext');
+  const edit = page.locator('#setting-row-no-subtext');
+  const choice = view.locator('.setting-row-checkbox__choice ds-text');
+  const group = page.locator('#alert-channels-no-subtext');
+  const options = group.locator('.checkbox-group__options > ds-checkbox');
+
+  await expect(view).toContainText('Alert channels');
+  await expect(view).toContainText('Email, Mobile push');
+  await expect(choice).toHaveCount(1);
+  await expect(choice).toHaveJSProperty('variant', 'text-body-medium');
+  await expect(view.getByRole('checkbox')).toHaveCount(0);
+  await expect(view.locator('ds-checkbox-group')).toBeHidden();
+
+  await expect(options).toHaveCount(3);
+  await expect(options.nth(0)).not.toHaveClass(/checkbox--described/);
+  await expect(options.nth(0).locator('.checkbox__copy ds-text')).toHaveCount(1);
+  const optionHeight = await options
+    .nth(0)
+    .evaluate(element => element.getBoundingClientRect().height);
+  expect(optionHeight).toBe(32);
+  await expect(edit.locator('.checkbox-group__label')).toHaveCount(0);
 });

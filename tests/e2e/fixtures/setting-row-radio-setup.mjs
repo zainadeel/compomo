@@ -27,6 +27,10 @@ radio.options = [
 ];
 radio.value = 'enabled';
 
+const viewRadio = document.querySelector('#validation-mode-view');
+viewRadio.options = radio.options;
+viewRadio.value = 'enabled';
+
 const formRadio = document.querySelector('#form-radio');
 formRadio.options = [
   { label: 'Use automated validation', value: 'enabled' },

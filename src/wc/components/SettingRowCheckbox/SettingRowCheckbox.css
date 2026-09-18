@@ -6,26 +6,26 @@
   min-width: 0;
   gap: var(--dimension-space-050);
   overflow-wrap: anywhere;
-  /* Heading, choice, and radio options already own block padding. */
+  /* Heading, choice, and checkbox options already own block padding. */
   padding-block: 0;
 }
 
-/* Light-DOM slotted radios do not receive this component's scoped child class.
+/* Light-DOM slotted groups do not receive this component's scoped child class.
    Target them with ::slotted so view/edit visibility actually applies. */
-:host ::slotted(ds-radio) {
+:host ::slotted(ds-checkbox-group) {
   min-width: 0;
   width: 100%;
 }
 
-:host([presentation='view']) ::slotted(ds-radio) {
+:host([presentation='view']) ::slotted(ds-checkbox-group) {
   display: none !important;
 }
 
-:host([presentation='edit']) .setting-row-radio__choice {
+:host([presentation='edit']) .setting-row-checkbox__choice {
   display: none;
 }
 
-ds-text.setting-row-radio__heading {
+ds-text.setting-row-checkbox__heading {
   display: flex;
   align-items: center;
   box-sizing: border-box;
@@ -34,7 +34,7 @@ ds-text.setting-row-radio__heading {
   padding: 0;
 }
 
-.setting-row-radio__choice {
+.setting-row-checkbox__choice {
   display: grid;
   gap: var(--dimension-space-025);
   min-width: 0;

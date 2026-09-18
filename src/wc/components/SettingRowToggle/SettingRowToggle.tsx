@@ -1,4 +1,5 @@
 import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';
+import { CONTROL_SUPPORTING_TEXT_VARIANT } from '../../utils';
 
 let settingRowToggleSequence = 0;
 
@@ -35,21 +36,24 @@ export class SettingRowToggle {
   };
 
   render() {
+    const hasDescription = Boolean(this.description?.trim());
+    const titleColor = this.variant === 'non-emphasis' && !hasDescription ? 'secondary' : 'primary';
+
     return (
       <Host>
         <div class="setting-row-toggle__copy">
           <ds-text
             textId={`${this.rowId}-label`}
             variant="text-body-medium"
-            color="primary"
+            color={titleColor}
             emphasis={this.variant === 'emphasis'}
           >
             {this.label}
           </ds-text>
-          {this.description && (
+          {hasDescription && (
             <ds-text
               textId={`${this.rowId}-description`}
-              variant={this.variant === 'emphasis' ? 'text-body-medium' : 'text-body-small'}
+              variant={CONTROL_SUPPORTING_TEXT_VARIANT.md}
               color="secondary"
             >
               {this.description}
@@ -60,7 +64,7 @@ export class SettingRowToggle {
           checked={this.checked}
           disabled={this.disabled}
           aria-labelledby={`${this.rowId}-label`}
-          aria-describedby={this.description ? `${this.rowId}-description` : undefined}
+          aria-describedby={hasDescription ? `${this.rowId}-description` : undefined}
           onDsChange={this.handleChange}
         />
       </Host>

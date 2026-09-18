@@ -299,7 +299,7 @@ test('PanelTools search uses the shared Select search control at md density', ()
   assert.match(inputCss, /@import ['"]\.\.\/\.\.\/utils\/typography\.css['"];/);
   assert.match(
     css,
-    /\.panel-tool-search::after\s*{[\s\S]*?height: var\(--dimension-stroke-width-012\);[\s\S]*?background-color: var\(--color-border-tertiary\);/
+    /\.panel-tool-search::after\s*{[\s\S]*?height: var\(--dimension-stroke-width-012\);[\s\S]*?background-color: var\(--_shell-tools-divider, var\(--color-border-tertiary\)\);/
   );
   assert.match(source, /<ds-divider[\s\S]*?orientation="vertical"/);
   assert.match(

@@ -49,7 +49,5 @@ test('BarNav overflow controls use the Chrome token context', async ({ page }) =
   await expect(trigger.locator('.button-unfilled')).toHaveClass(
     /button-unfilled--background-chrome/
   );
-  await expect(trigger.locator('.button-unfilled')).toHaveClass(
-    /ds-interaction-fill--on-chrome/
-  );
+  await expect(trigger.locator('.button-unfilled')).toHaveClass(/ds-interaction-fill--on-chrome/);
 });

@@ -89,7 +89,12 @@ export const Error: Story = {
         status="error"
         error-message="The message could not be sent. Check your connection and try again."
       >
-        <ds-button-unfilled slot="error-actions" label="Retry" size="sm" rounded></ds-button-unfilled>
+        <ds-button-unfilled
+          slot="error-actions"
+          label="Retry"
+          size="sm"
+          rounded
+        ></ds-button-unfilled>
       </ds-message-composer>
     `),
 };
@@ -104,7 +109,12 @@ export const NarrowErrorWithRecovery: Story = {
         status="error"
         error-message="The message could not be sent. Your draft is still available."
       >
-        <ds-button-unfilled slot="error-actions" label="Retry" size="sm" rounded></ds-button-unfilled>
+        <ds-button-unfilled
+          slot="error-actions"
+          label="Retry"
+          size="sm"
+          rounded
+        ></ds-button-unfilled>
       </ds-message-composer>
     </div>
   `,

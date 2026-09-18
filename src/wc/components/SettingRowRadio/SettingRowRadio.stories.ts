@@ -76,7 +76,9 @@ export const View: Story = {
       label="Validation mode"
       value-label="Use automated validation"
       description="Apply automated checks and human review to validate results."
-    ></ds-setting-row-radio>
+    >
+      <ds-radio .options=${VALIDATION_OPTIONS} value="enabled"></ds-radio>
+    </ds-setting-row-radio>
   `,
 };
 

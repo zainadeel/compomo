@@ -45,6 +45,7 @@
     "component:ds-text",
     "component:ds-setting-row-toggle",
     "component:ds-setting-row-radio",
+    "component:ds-setting-row-checkbox",
     "component:ds-inline-banner-settings"
   ],
   "accessibility": [

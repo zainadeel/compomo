@@ -17,4 +17,6 @@
 
 ::slotted(ds-checkbox) {
   align-self: flex-start;
+  max-width: 100%;
+  min-width: 0;
 }

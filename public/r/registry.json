@@ -3972,6 +3972,7 @@
             "component:ds-text",
             "component:ds-setting-row-toggle",
             "component:ds-setting-row-radio",
+            "component:ds-setting-row-checkbox",
             "component:ds-inline-banner-settings"
           ],
           "accessibility": [
@@ -4757,7 +4758,8 @@
           ],
           "avoidWhen": [
             "Only one standalone checkbox is needed.",
-            "Exactly one option may be selected; use Radio instead."
+            "Exactly one option may be selected; use Radio instead.",
+            "The list is a settings-card row; use component:ds-setting-row-checkbox, which owns the heading and view/edit presentation."
           ],
           "alternatives": [
             {
@@ -4768,10 +4770,12 @@
           ],
           "commonlyComposedWith": [
             "component:ds-checkbox",
-            "component:ds-text"
+            "component:ds-text",
+            "component:ds-setting-row-checkbox"
           ],
           "accessibility": [
             "The visible label names the role=group container; each slotted Checkbox keeps its own visible label, state, focus, and form value.",
+            "Inside ds-setting-row-checkbox the visible form label is omitted on first paint; the row heading is the accessible name via aria-labelledby.",
             "Use aria-describedby to associate group-level guidance or validation copy.",
             "Use the same size on CheckboxGroup and every slotted Checkbox so their text origins and density remain aligned."
           ],
@@ -4833,9 +4837,17 @@
             "type": "string | undefined",
             "required": false
           },
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "ariaLabelledby": {
+            "type": "string | undefined",
+            "required": false
+          },
           "label": {
             "type": "string",
-            "required": true
+            "required": false
           },
           "size": {
             "type": "CheckboxGroupSize",
@@ -9812,8 +9824,8 @@
             "Surface styling does not add semantics; failed delivery belongs in Message metadata below the unchanged bubble rather than in an error bubble treatment."
           ],
           "states": [
-            "The user variant represents user-sent copy in agent and person-to-person channels, uses secondary foreground, and uses the Chrome primary background.",
-            "The received variant represents ordinary incoming person-to-person copy and uses the Chrome secondary background.",
+            "The user variant represents user-sent copy in agent and person-to-person channels, uses primary foreground, and uses the Chrome primary background so body-medium copy meets contrast on that surface.",
+            "The received variant represents ordinary incoming person-to-person copy, uses secondary foreground, and uses the Chrome secondary background.",
             "Typing and rich agent output are not MessageBubble variants."
           ],
           "responsiveBehavior": [
@@ -12287,7 +12299,7 @@
           "accessibility": [
             "The host exposes radiogroup semantics and requires an accessible group name from the visible label, aria-label, or aria-labelledby.",
             "When groupLabel is provided, Radio renders it above the options and uses the same text as the radiogroup's accessible name.",
-            "Inside ds-setting-row-radio the visible form groupLabel is omitted on first paint; the row heading is the accessible name via aria-labelledby.",
+            "Inside ds-setting-row-radio the visible form groupLabel is omitted on first paint; the row heading is the accessible name via aria-labelledby. Independent multi-select settings use ds-setting-row-checkbox with ds-checkbox-group instead.",
             "Each visible option exposes radio semantics, its checked state, its label text, optional supporting description, and any inactive state.",
             "Arrow keys move and select through active options; Home and End select the first and last active options; Space and Enter select the focused option.",
             "Roving tabindex keeps one active option in the tab order, preferring the selected option; setFocus uses that same public focus target."
@@ -13272,6 +13284,105 @@
       ]
     },
     {
+      "name": "setting-row-checkbox",
+      "title": "SettingRowCheckbox",
+      "description": "Padded settings-row composition for an editable Checkbox group and its non-interactive saved-value readout.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/setting-row-checkbox",
+        "source": "src/wc/components/SettingRowCheckbox/SettingRowCheckbox.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Padded settings-row composition for an editable Checkbox group and its non-interactive saved-value readout.",
+          "useWhen": [
+            "A settings card needs an independent multi-select Checkbox group as one padded row item.",
+            "The same settings card needs to display the saved selected values without interactive checkbox controls in view mode."
+          ],
+          "avoidWhen": [
+            "The Checkbox group is not part of a settings-row surface; compose ds-checkbox-group directly.",
+            "Exactly one option may be selected; use component:ds-setting-row-radio.",
+            "The setting is a single immediate on/off choice; use component:ds-setting-row-toggle."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-card-setting",
+            "component:ds-checkbox-group",
+            "component:ds-checkbox"
+          ],
+          "accessibility": [
+            "Pass the settings heading as the row label. Do not pass CheckboxGroup's form label; the row owns the visible heading and points the slotted group at it with aria-labelledby.",
+            "Keep each Checkbox's label, checked state, name, value, and dsChange owned by the application. Leave the Checkbox group slotted in view and edit; the row hides it in view.",
+            "Do not add a second interaction layer to the row; each Checkbox owns its own focus and activation while settings usage keeps hasInteractionFill false.",
+            "View presentation exposes readable label, saved selected-value copy, and optional supporting copy without checkbox semantics, checkbox controls, or a focus target."
+          ],
+          "states": [
+            "The row is a neutral padded composition; selected, focus, mixed, and inactive states belong to the slotted Checkboxes without a choice-list hover or pressed wash.",
+            "The owning application handles dsChange on each Checkbox and supplies valueLabel by joining the currently selected option labels.",
+            "Heading, saved-value choice, and slotted Checkbox group stay mounted. presentation reflects on the host so view/edit is CSS visibility only; do not swap Host children or ngIf the group.",
+            "View presentation hides the slotted Checkbox group with ::slotted host CSS and shows the saved selected values plus optional consequence copy. Omit description on the row and on each Checkbox when there is no supporting copy; view then shows only the selected-value labels. The group stays in the tree."
+          ],
+          "responsiveBehavior": [
+            "The row never exceeds its parent width; the slotted Checkbox group keeps option copy in the flexible column and wraps descriptions when needed."
+          ],
+          "references": [
+            {
+              "label": "Settings mock",
+              "path": "src/wc/components/SettingRowCheckbox/SettingRowCheckbox.stories.ts"
+            }
+          ],
+          "styling": {
+            "rationale": "The row uses the shared settings-row inline inset so view and edit copy share the same 16px origin, and zeros host padding-block because the heading, choice, and checkbox options already own vertical spacing. The heading is row-owned CSS, not CheckboxGroup's form label or control section-heading recipe. Checkbox owns option geometry.",
+            "protected": [
+              {
+                "properties": [
+                  "padding"
+                ],
+                "reason": "Keep space-200 inline inset in view and edit, with no extra host padding-block.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
+        },
+        "props": {
+          "description": {
+            "type": "string",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": false
+          },
+          "presentation": {
+            "type": "SettingRowCheckboxPresentation",
+            "required": false
+          },
+          "valueLabel": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-setting-row-checkbox",
+          "react": "DsSettingRowCheckbox",
+          "vue": "DsSettingRowCheckbox",
+          "angular": "DsSettingRowCheckbox"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
       "name": "setting-row-radio",
       "title": "SettingRowRadio",
       "description": "Padded settings-row composition for an editable Radio group and its non-interactive saved-value readout.",
@@ -13292,6 +13403,7 @@
           ],
           "avoidWhen": [
             "The Radio group is not part of a settings-row surface; compose ds-radio directly.",
+            "The setting allows more than one option to be selected; use component:ds-setting-row-checkbox.",
             "The setting is a single immediate on/off choice; use component:ds-setting-row-toggle."
           ],
           "commonlyComposedWith": [
@@ -13300,15 +13412,15 @@
           ],
           "accessibility": [
             "Pass the settings heading as the row label. Do not pass Radio groupLabel; the row owns the visible heading and points the slotted radiogroup at it with aria-labelledby.",
-            "Keep the Radio group's options, value, required state, and selection event owned by the application.",
+            "Keep the Radio group's options, value, required state, and selection event owned by the application. Leave the Radio slotted in view and edit; the row hides it in view.",
             "Do not add a second interaction layer to the row; Radio owns option focus and keyboard selection while settings usage keeps hasInteractionFill false.",
             "View presentation exposes readable label, saved value, and optional supporting copy without radio semantics, a radio toggle, or a focus target."
           ],
           "states": [
             "The row is a neutral padded composition; selected, focus, and inactive states belong to the slotted Radio without a choice-list hover or pressed wash.",
             "The owning application handles dsChange and updates the slotted Radio value.",
-            "The settings heading is a row-owned ds-text (text-body-medium emphasis) with row CSS in both presentations. Edit slots an unlabeled Radio for options only so the form group-label never mounts.",
-            "View presentation replaces the control with the saved option label and retains consequence copy when it helps explain that choice."
+            "Heading, saved-value choice, and slotted Radio stay mounted. presentation reflects on the host so view/edit is CSS visibility only; do not swap Host children or ngIf the Radio.",
+            "View presentation hides the slotted Radio with ::slotted host CSS and shows the saved option label plus optional consequence copy. The Radio stays in the tree."
           ],
           "responsiveBehavior": [
             "The row never exceeds its parent width; the slotted Radio keeps its option copy in the flexible column and wraps descriptions when needed."
@@ -13320,13 +13432,13 @@
             }
           ],
           "styling": {
-            "rationale": "The row uses the shared settings-row inset so view and edit copy share the same 16px inline origin. The heading is row-owned CSS, not Radio's form group-label or control section-heading recipe. Radio owns option geometry.",
+            "rationale": "The row uses the shared settings-row inline inset so view and edit copy share the same 16px origin, and zeros host padding-block because the heading, choice, and radio options already own vertical spacing. The heading is row-owned CSS, not Radio's form group-label or control section-heading recipe. Radio owns option geometry.",
             "protected": [
               {
                 "properties": [
                   "padding"
                 ],
-                "reason": "Preserve the shared settings-row inset (space-100 block, space-200 inline) for both view and edit.",
+                "reason": "Keep space-200 inline inset in view and edit, with no extra host padding-block.",
                 "props": []
               }
             ],
@@ -13401,7 +13513,9 @@
           ],
           "states": [
             "The application accepts or rejects change requests by updating the controlled checked value and owns persistence and errors.",
-            "Name the enabled setting consistently; the label must not change when the switch is toggled."
+            "Name the enabled setting consistently; the label must not change when the switch is toggled.",
+            "Non-emphasis rows without supporting copy use ds-text color secondary (foreground-secondary) on the title. Non-emphasis rows with description keep a primary title.",
+            "Supporting copy is text-body-small in every variant."
           ],
           "responsiveBehavior": [
             "The copy wraps while the switch keeps its natural size in the trailing column, including at narrow widths."

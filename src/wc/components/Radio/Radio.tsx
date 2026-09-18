@@ -272,6 +272,7 @@ export class Radio {
       >
         {this.showGroupLabel ? (
           <ds-text
+            key="radio-group-label"
             class={`radio__group-label ds-control-section-heading ds-control--${this.size}`}
             as="span"
             variant="text-body-small"
@@ -280,11 +281,9 @@ export class Radio {
             {this.groupLabel}
           </ds-text>
         ) : null}
-        {this.showGroupLabel ? (
-          <div class="radio__options">{renderedOptions}</div>
-        ) : (
-          renderedOptions
-        )}
+        <div key="radio-options" class="radio__options">
+          {renderedOptions}
+        </div>
       </Host>
     );
   }

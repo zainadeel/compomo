@@ -11,7 +11,7 @@
   box-sizing: border-box;
   gap: var(--ds-control-gap);
   height: var(--ds-control-height);
-  padding: 0 var(--ds-control-padding-inline);
+  padding: 0 var(--ds-settings-row-control-padding-inline, var(--ds-control-padding-inline));
   border-radius: var(--ds-control-radius);
   cursor: default;
   user-select: none;

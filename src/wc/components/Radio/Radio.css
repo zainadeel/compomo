@@ -28,6 +28,11 @@
   gap: var(--dimension-space-100);
 }
 
+:host(.radio--horizontal) .radio__options {
+  flex-direction: row;
+  gap: var(--dimension-space-100);
+}
+
 :host(.radio--labeled.radio--horizontal) {
   flex-direction: column;
   gap: var(--dimension-space-050);

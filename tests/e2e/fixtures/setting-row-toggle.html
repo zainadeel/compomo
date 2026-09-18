@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Setting row toggle</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+  </head>
+  <body>
+    <main>
+      <ds-setting-row-toggle
+        id="emphasis"
+        label="Panel navigation"
+        description="Show page sections in the side panel."
+        checked
+      ></ds-setting-row-toggle>
+      <ds-setting-row-toggle
+        id="non-emphasis"
+        label="Panel navigation"
+        description="Show page sections in the side panel."
+        variant="non-emphasis"
+        checked
+      ></ds-setting-row-toggle>
+      <ds-setting-row-toggle
+        id="non-emphasis-no-subtext"
+        label="Panel navigation"
+        variant="non-emphasis"
+        checked
+      ></ds-setting-row-toggle>
+    </main>
+    <script type="module" src="/setting-row-toggle-setup.mjs"></script>
+  </body>
+</html>

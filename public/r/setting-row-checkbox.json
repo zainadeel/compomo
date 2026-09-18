@@ -1,0 +1,197 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "setting-row-checkbox",
+  "title": "SettingRowCheckbox",
+  "description": "Padded settings-row composition for an editable Checkbox group and its non-interactive saved-value readout.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/setting-row-checkbox",
+    "source": "src/wc/components/SettingRowCheckbox/SettingRowCheckbox.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Padded settings-row composition for an editable Checkbox group and its non-interactive saved-value readout.",
+      "useWhen": [
+        "A settings card needs an independent multi-select Checkbox group as one padded row item.",
+        "The same settings card needs to display the saved selected values without interactive checkbox controls in view mode."
+      ],
+      "avoidWhen": [
+        "The Checkbox group is not part of a settings-row surface; compose ds-checkbox-group directly.",
+        "Exactly one option may be selected; use component:ds-setting-row-radio.",
+        "The setting is a single immediate on/off choice; use component:ds-setting-row-toggle."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-card-setting",
+        "component:ds-checkbox-group",
+        "component:ds-checkbox"
+      ],
+      "accessibility": [
+        "Pass the settings heading as the row label. Do not pass CheckboxGroup's form label; the row owns the visible heading and points the slotted group at it with aria-labelledby.",
+        "Keep each Checkbox's label, checked state, name, value, and dsChange owned by the application. Leave the Checkbox group slotted in view and edit; the row hides it in view.",
+        "Do not add a second interaction layer to the row; each Checkbox owns its own focus and activation while settings usage keeps hasInteractionFill false.",
+        "View presentation exposes readable label, saved selected-value copy, and optional supporting copy without checkbox semantics, checkbox controls, or a focus target."
+      ],
+      "states": [
+        "The row is a neutral padded composition; selected, focus, mixed, and inactive states belong to the slotted Checkboxes without a choice-list hover or pressed wash.",
+        "The owning application handles dsChange on each Checkbox and supplies valueLabel by joining the currently selected option labels.",
+        "Heading, saved-value choice, and slotted Checkbox group stay mounted. presentation reflects on the host so view/edit is CSS visibility only; do not swap Host children or ngIf the group.",
+        "View presentation hides the slotted Checkbox group with ::slotted host CSS and shows the saved selected values plus optional consequence copy. Omit description on the row and on each Checkbox when there is no supporting copy; view then shows only the selected-value labels. The group stays in the tree."
+      ],
+      "responsiveBehavior": [
+        "The row never exceeds its parent width; the slotted Checkbox group keeps option copy in the flexible column and wraps descriptions when needed."
+      ],
+      "references": [
+        {
+          "label": "Settings mock",
+          "path": "src/wc/components/SettingRowCheckbox/SettingRowCheckbox.stories.ts"
+        }
+      ],
+      "styling": {
+        "rationale": "The row uses the shared settings-row inline inset so view and edit copy share the same 16px origin, and zeros host padding-block because the heading, choice, and checkbox options already own vertical spacing. The heading is row-owned CSS, not CheckboxGroup's form label or control section-heading recipe. Checkbox owns option geometry.",
+        "protected": [
+          {
+            "properties": [
+              "padding"
+            ],
+            "reason": "Keep space-200 inline inset in view and edit, with no extra host padding-block.",
+            "props": []
+          }
+        ],
+        "customProperties": []
+      }
+    },
+    "api": {
+      "props": {
+        "description": {
+          "type": "string",
+          "resolvedType": "string | undefined",
+          "attribute": "description",
+          "required": false,
+          "mutable": false,
+          "description": "Optional consequence or supporting copy for the saved selection."
+        },
+        "label": {
+          "type": "string",
+          "resolvedType": "string | undefined",
+          "attribute": "label",
+          "required": false,
+          "mutable": false,
+          "description": "Settings heading shown in both presentations. Not CheckboxGroup's form label."
+        },
+        "presentation": {
+          "type": "SettingRowCheckboxPresentation",
+          "resolvedType": "\"edit\" | \"view\"",
+          "attribute": "presentation",
+          "default": "'edit'",
+          "required": false,
+          "mutable": false,
+          "description": "Interactive Checkbox group or non-interactive saved-value readout."
+        },
+        "valueLabel": {
+          "type": "string",
+          "resolvedType": "string | undefined",
+          "attribute": "value-label",
+          "required": false,
+          "mutable": false,
+          "description": "Saved selected-value labels shown in view presentation."
+        }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "description": {
+        "type": "string",
+        "resolvedType": "string | undefined",
+        "attribute": "description",
+        "required": false,
+        "mutable": false,
+        "description": "Optional consequence or supporting copy for the saved selection."
+      },
+      "label": {
+        "type": "string",
+        "resolvedType": "string | undefined",
+        "attribute": "label",
+        "required": false,
+        "mutable": false,
+        "description": "Settings heading shown in both presentations. Not CheckboxGroup's form label."
+      },
+      "presentation": {
+        "type": "SettingRowCheckboxPresentation",
+        "resolvedType": "\"edit\" | \"view\"",
+        "attribute": "presentation",
+        "default": "'edit'",
+        "required": false,
+        "mutable": false,
+        "description": "Interactive Checkbox group or non-interactive saved-value readout."
+      },
+      "valueLabel": {
+        "type": "string",
+        "resolvedType": "string | undefined",
+        "attribute": "value-label",
+        "required": false,
+        "mutable": false,
+        "description": "Saved selected-value labels shown in view presentation."
+      }
+    },
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-setting-row-checkbox",
+      "react": "DsSettingRowCheckbox",
+      "vue": "DsSettingRowCheckbox",
+      "angular": "DsSettingRowCheckbox"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-setting-row-checkbox.js';",
+        "example": "<ds-setting-row-checkbox></ds-setting-row-checkbox>"
+      },
+      "react": {
+        "import": "import { DsSettingRowCheckbox } from '@ds-mo/ui/react';",
+        "example": "<DsSettingRowCheckbox />"
+      },
+      "vue": {
+        "import": "import { DsSettingRowCheckbox } from '@ds-mo/ui/vue';",
+        "example": "<DsSettingRowCheckbox />"
+      },
+      "angular": {
+        "import": "import { DsSettingRowCheckbox } from '@ds-mo/ui/angular/ds-setting-row-checkbox';",
+        "example": "<ds-setting-row-checkbox></ds-setting-row-checkbox>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.6.1",
+          "@ds-mo/icons ^8.1.1"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/SettingRowCheckbox/SettingRowCheckbox.css",
+      "content": "@import '../../utils/settings-row.css';\n\n:host {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n  gap: var(--dimension-space-050);\n  overflow-wrap: anywhere;\n  /* Heading, choice, and checkbox options already own block padding. */\n  padding-block: 0;\n}\n\n/* Light-DOM slotted groups do not receive this component's scoped child class.\n   Target them with ::slotted so view/edit visibility actually applies. */\n:host ::slotted(ds-checkbox-group) {\n  min-width: 0;\n  width: 100%;\n}\n\n:host([presentation='view']) ::slotted(ds-checkbox-group) {\n  display: none !important;\n}\n\n:host([presentation='edit']) .setting-row-checkbox__choice {\n  display: none;\n}\n\nds-text.setting-row-checkbox__heading {\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n  height: var(--dimension-size-400);\n  min-width: 0;\n  padding: 0;\n}\n\n.setting-row-checkbox__choice {\n  display: grid;\n  gap: var(--dimension-space-025);\n  min-width: 0;\n  padding-block: var(--dimension-space-075);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/SettingRowCheckbox/SettingRowCheckbox.tsx",
+      "content": "import { Component, Element, h, Host, Prop } from '@stencil/core';\nimport { CONTROL_SUPPORTING_TEXT_VARIANT, CONTROL_TEXT_VARIANT } from '../../utils';\n\nexport type SettingRowCheckboxPresentation = 'edit' | 'view';\n\ntype SettingsCheckboxGroup = HTMLElement & {\n  label: string;\n  ariaLabel: string | null;\n  ariaLabelledby?: string;\n};\n\nlet settingRowCheckboxHeadingId = 0;\n\n/** Padded settings-row composition for a Checkbox group. */\n@Component({\n  tag: 'ds-setting-row-checkbox',\n  styleUrl: 'SettingRowCheckbox.css',\n  scoped: true,\n})\nexport class SettingRowCheckbox {\n  @Element() el!: HTMLElement;\n\n  /** Interactive Checkbox group or non-interactive saved-value readout. */\n  @Prop({ reflect: true }) presentation: SettingRowCheckboxPresentation = 'edit';\n  /** Settings heading shown in both presentations. Not CheckboxGroup's form label. */\n  @Prop() label?: string;\n  /** Saved selected-value labels shown in view presentation. */\n  @Prop() valueLabel?: string;\n  /** Optional consequence or supporting copy for the saved selection. */\n  @Prop() description?: string;\n\n  private readonly headingId = `ds-setting-row-checkbox-heading-${++settingRowCheckboxHeadingId}`;\n\n  componentWillLoad() {\n    this.syncSlottedCheckboxGroup();\n  }\n\n  componentDidLoad() {\n    this.syncSlottedCheckboxGroup();\n  }\n\n  private syncSlottedCheckboxGroup = () => {\n    for (const group of this.el.querySelectorAll<SettingsCheckboxGroup>('ds-checkbox-group')) {\n      group.label = '';\n      if (this.label) {\n        group.ariaLabelledby = this.headingId;\n        group.ariaLabel = null;\n      }\n    }\n  };\n\n  render() {\n    return (\n      <Host>\n        <ds-text\n          key=\"setting-row-checkbox-heading\"\n          class=\"setting-row-checkbox__heading\"\n          as=\"span\"\n          variant={CONTROL_TEXT_VARIANT.md}\n          emphasis\n          textId={this.label ? this.headingId : undefined}\n        >\n          {this.label}\n        </ds-text>\n        <div key=\"setting-row-checkbox-choice\" class=\"setting-row-checkbox__choice\">\n          {this.valueLabel ? (\n            <ds-text key=\"setting-row-checkbox-value\" as=\"span\" variant={CONTROL_TEXT_VARIANT.md}>\n              {this.valueLabel}\n            </ds-text>\n          ) : null}\n          {this.description?.trim() ? (\n            <ds-text\n              key=\"setting-row-checkbox-description\"\n              as=\"span\"\n              variant={CONTROL_SUPPORTING_TEXT_VARIANT.md}\n              color=\"secondary\"\n            >\n              {this.description}\n            </ds-text>\n          ) : null}\n        </div>\n        <slot onSlotchange={this.syncSlottedCheckboxGroup} />\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

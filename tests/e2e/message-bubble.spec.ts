@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test('uses Chrome primary and secondary surfaces with secondary bubble text', async ({ page }) => {
+test('uses Chrome primary and secondary surfaces with readable bubble text', async ({ page }) => {
   await page.goto('/message-bubble.html');
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 
@@ -16,20 +16,22 @@ test('uses Chrome primary and secondary surfaces with secondary bubble text', as
   const surfaces = await page.evaluate(() => {
     const probe = document.createElement('span');
     document.body.append(probe);
+    probe.style.color = 'var(--color-foreground-primary)';
+    const userText = getComputedStyle(probe).color;
     probe.style.color = 'var(--color-foreground-secondary)';
-    const text = getComputedStyle(probe).color;
+    const receivedText = getComputedStyle(probe).color;
     probe.style.backgroundColor = 'var(--color-chrome-background-primary)';
     const primary = getComputedStyle(probe).backgroundColor;
     probe.style.backgroundColor = 'var(--color-chrome-background-secondary)';
     const secondary = getComputedStyle(probe).backgroundColor;
     probe.remove();
-    return { text, primary, secondary };
+    return { userText, receivedText, primary, secondary };
   });
 
   await expect(outgoing).toHaveCSS('background-color', surfaces.primary);
   await expect(incoming).toHaveCSS('background-color', surfaces.secondary);
-  await expect(outgoing).toHaveCSS('color', surfaces.text);
-  await expect(incoming).toHaveCSS('color', surfaces.text);
+  await expect(outgoing).toHaveCSS('color', surfaces.userText);
+  await expect(incoming).toHaveCSS('color', surfaces.receivedText);
 });
 
 test('uses neutral faint user and secondary received surfaces on mobile', async ({ page }) => {

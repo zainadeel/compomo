@@ -19,10 +19,7 @@
   --_panel-tools-divider-color: var(--_shell-tools-divider, var(--color-divider-divider));
   --_panel-tools-divider: var(--dimension-stroke-width-012, 1px) solid
     var(--_panel-tools-divider-color);
-  --_panel-tools-fg-secondary: var(
-    --_shell-tools-fg-secondary,
-    var(--color-foreground-secondary)
-  );
+  --_panel-tools-fg-secondary: var(--_shell-tools-fg-secondary, var(--color-foreground-secondary));
   --_panel-tools-shortcut-fg-secondary: var(
     --_shell-tools-fg-secondary,
     var(--color-chrome-foreground-secondary)
