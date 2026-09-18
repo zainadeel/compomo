@@ -83,6 +83,7 @@
 }
 
 .radio__item--described {
+  align-items: flex-start;
   height: auto;
   min-height: var(--ds-control-height);
   padding-block: var(--dimension-space-075);

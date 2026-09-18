@@ -54,18 +54,25 @@ test('keeps the padded row and Radio copy aligned when descriptions wrap', async
   const group = page.locator('#validation-mode');
   const item = group.locator('.radio__item').first();
   const placement = item.locator('.radio__placement');
+  const circle = item.locator('.radio__circle');
+  const label = item.locator('.radio__label .ds-text__element');
   const copy = item.locator('.radio__copy');
 
   const rowBox = await row.boundingBox();
   const groupBox = await group.boundingBox();
   const placementBox = await placement.boundingBox();
+  const circleBox = await circle.boundingBox();
+  const labelBox = await label.boundingBox();
   const copyBox = await copy.boundingBox();
   expect(rowBox).not.toBeNull();
   expect(groupBox).not.toBeNull();
   expect(placementBox).not.toBeNull();
+  expect(circleBox).not.toBeNull();
+  expect(labelBox).not.toBeNull();
   expect(copyBox).not.toBeNull();
   expect(groupBox!.x).toBeGreaterThan(rowBox!.x);
   expect(placementBox!.x + placementBox!.width).toBeLessThanOrEqual(copyBox!.x);
+  expect(circleBox!.y + circleBox!.height / 2).toBeCloseTo(labelBox!.y + labelBox!.height / 2, 1);
 });
 
 test('renders a non-interactive saved-value readout in view presentation', async ({ page }) => {
