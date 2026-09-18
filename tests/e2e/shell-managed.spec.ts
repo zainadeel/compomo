@@ -73,6 +73,58 @@ test.describe('Managed application shell', () => {
     await expect(panel).toHaveJSProperty('presentation', 'nested');
     await expect(shell.locator('.shell-app__bar > ds-bar-nav')).toHaveCount(0);
     await expect(shellBarTitle).toBeVisible();
+    const shellBarTitleChrome = await shellBarTitle.evaluate(element => {
+      const title = element.querySelector<HTMLElement>('.bar-page-title');
+      const heading = element.querySelector<HTMLElement>('.bar-page-title__heading');
+      const tab = element.querySelector<HTMLElement>('.bar-page-title__tab');
+      if (!title || !heading) throw new Error('Managed BarPageTitle chrome is missing');
+      const read = (target: Element, property: string) =>
+        getComputedStyle(target).getPropertyValue(property).trim();
+      const foregroundProbe = document.createElement('span');
+      foregroundProbe.style.color = 'var(--color-chrome-foreground-primary)';
+      document.body.append(foregroundProbe);
+      const expectedHeadingColor = getComputedStyle(foregroundProbe).color;
+      foregroundProbe.remove();
+      return {
+        marker: element.hasAttribute('data-shell-bar'),
+        hostBackground: getComputedStyle(element).backgroundColor,
+        titleBackground: getComputedStyle(title).backgroundColor,
+        foregroundPrimary:
+          read(element, '--_bar-page-title-fg-primary') ===
+          read(element, '--color-chrome-foreground-primary'),
+        foregroundSecondary:
+          read(element, '--_bar-page-title-fg-secondary') ===
+          read(element, '--color-chrome-foreground-secondary'),
+        border:
+          read(element, '--_bar-page-title-border') ===
+          read(element, '--color-chrome-border-tertiary'),
+        hover:
+          read(element, '--_bar-page-title-hover') ===
+          read(element, '--color-chrome-interaction-hover'),
+        pressed:
+          read(element, '--_bar-page-title-pressed') ===
+          read(element, '--color-chrome-interaction-pressed'),
+        focus:
+          read(element, '--_bar-page-title-focus') ===
+          read(element, '--color-chrome-interaction-focus'),
+        headingColor: getComputedStyle(heading).color,
+        expectedHeadingColor,
+        tabChrome: tab?.classList.contains('ds-interaction-fill--on-chrome') ?? false,
+      };
+    });
+    expect(shellBarTitleChrome).toMatchObject({
+      marker: true,
+      hostBackground: 'rgba(0, 0, 0, 0)',
+      titleBackground: 'rgba(0, 0, 0, 0)',
+      foregroundPrimary: true,
+      foregroundSecondary: true,
+      border: true,
+      hover: true,
+      pressed: true,
+      focus: true,
+      tabChrome: true,
+    });
+    expect(shellBarTitleChrome.headingColor).toBe(shellBarTitleChrome.expectedHeadingColor);
     await expect(shell.locator('.shell-app__bar > ds-bar-title')).toHaveCount(0);
     await expect(shell.locator('ds-shell-page ds-bar-title')).toHaveCount(0);
     await expect(shell.getByText('Current fleet status.', { exact: true })).toHaveCount(0);
@@ -213,6 +265,41 @@ test.describe('Managed application shell', () => {
     await expect(shell.locator('ds-shell-tools')).toHaveAttribute('active-tool', 'agents');
     await expect(shell.locator('ds-shell-tools')).toHaveAttribute('open');
   });
+
+  test(
+    'matches nested child notification rings to the PanelNav chrome surface',
+    chromiumOnly(
+      'component-composition',
+      'The nested notification ring is a token-backed PanelNav composition contract.'
+    ),
+    async ({ page }) => {
+      const shell = page.locator('#managed-shell');
+      await shell.evaluate(element => {
+        (element as HTMLDsShellAppElement).sectionNavigation = 'panel';
+      });
+
+      const panel = shell.locator('ds-panel-nav');
+      const history = panel.getByRole('button', { name: 'History', exact: true });
+      await expect(history).toBeVisible();
+      const badge = history.locator('.panel-nav__child-dot ds-badge');
+      await expect(badge).toHaveCount(1);
+
+      const ring = await badge.evaluate(element => {
+        const mark = element.querySelector<HTMLElement>('.badge__mark');
+        if (!mark) throw new Error('Nested child badge surface is missing');
+
+        const probe = document.createElement('span');
+        probe.style.backgroundColor = 'var(--color-chrome-background-theme)';
+        document.body.append(probe);
+        const expected = getComputedStyle(probe).backgroundColor;
+        probe.remove();
+
+        return { actual: getComputedStyle(mark, '::before').backgroundColor, expected };
+      });
+
+      expect(ring.actual).toBe(ring.expected);
+    }
+  );
 
   test(
     'animates positional nested dividers without changing collapsed presentation',

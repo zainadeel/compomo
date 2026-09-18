@@ -117,6 +117,7 @@ export class MessageComposer {
                         variant="icon"
                         icon="ArrowUp"
                         size="md"
+                        rounded
                         aria-label="Send message"
                         hasBorder
                         isInactive
@@ -136,6 +137,7 @@ export class MessageComposer {
                         intent={this.streaming ? 'brand' : this.submitIntent}
                         contrast="bold"
                         size="md"
+                        rounded
                         aria-label={this.streaming ? 'Stop response' : 'Send message'}
                         onDsClick={this.handleAction}
                       />

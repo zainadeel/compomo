@@ -219,6 +219,14 @@ export class BarPageTitle {
     return this.showCompactDivider ?? this.showDivider;
   }
 
+  private get usesChromeTokens(): boolean {
+    return this.el.hasAttribute('data-shell-bar');
+  }
+
+  private get shellBarButtonBackground(): 'chrome' | undefined {
+    return this.usesChromeTokens ? 'chrome' : undefined;
+  }
+
   private get selectableSections() {
     return selectableBarTitleSections(this.sections);
   }
@@ -562,6 +570,7 @@ export class BarPageTitle {
       actionMenuTriggerId: this.actionMenuTriggerId,
       actionMenuId: this.actionMenuId,
       actionTriggers: this.actionTriggerEls,
+      buttonBackground: this.shellBarButtonBackground,
       setOverflowTriggerEl: (el: FocusableBarTitleButton | null) => {
         this.actionTriggerEl = el;
       },
@@ -576,7 +585,7 @@ export class BarPageTitle {
         class="bar-page-title__heading ds-control--md"
         variant="text-title-small"
         emphasis
-        color="primary"
+        color="inherit"
         as={probe ? 'span' : 'h1'}
         wrap={probe ? 'nowrap' : undefined}
         lineTruncation={probe ? 'none' : 1}
@@ -619,6 +628,7 @@ export class BarPageTitle {
                 'ds-control--md': true,
                 'ds-focus-ring-inset': true,
                 'ds-control-inactive': !!tab.isInactive,
+                'ds-interaction-fill--on-chrome': this.usesChromeTokens,
               }}
               aria-selected={isSelected ? 'true' : 'false'}
               aria-disabled={tab.isInactive ? 'true' : undefined}
@@ -652,6 +662,7 @@ export class BarPageTitle {
           classPrefix: 'bar-page-title',
           showBack: this.showBack,
           backAriaLabel: this.backAriaLabel,
+          background: this.shellBarButtonBackground,
           onBack: event => this.dsBack.emit(event),
         })}
         {this.renderHeading(probe)}
@@ -683,6 +694,8 @@ export class BarPageTitle {
         surfaceOpen: this.sectionSurfaceOpen,
         ariaLabel: this.sectionTriggerAriaLabel,
         selectedLabel: this.selectedSectionLabel,
+        background: this.shellBarButtonBackground,
+        labelColor: this.usesChromeTokens ? 'inherit' : undefined,
         setTriggerEl: el => {
           this.sectionTriggerEl = el;
         },

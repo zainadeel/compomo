@@ -1,10 +1,10 @@
 {
   "$schema": "../../../../agent/schemas/component-agent.schema.json",
   "schemaVersion": "1.0.0",
-  "id": "component:ds-setting-row",
+  "id": "component:ds-setting-row-toggle",
   "kind": "component",
   "package": "@ds-mo/ui",
-  "tag": "ds-setting-row",
+  "tag": "ds-setting-row-toggle",
   "audience": "general",
   "status": "experimental",
   "summary": "Two-column immediate binary setting with descriptive copy and an accessible switch.",
@@ -20,20 +20,25 @@
   ],
   "states": [
     "The application accepts or rejects change requests by updating the controlled checked value and owns persistence and errors.",
-    "Name the enabled setting consistently; the label must not change when the switch is toggled."
+    "Name the enabled setting consistently; the label must not change when the switch is toggled.",
+    "Non-emphasis rows without supporting copy use ds-text color secondary (foreground-secondary) on the title. Non-emphasis rows with description keep a primary title.",
+    "Supporting copy is text-body-small in every variant."
   ],
   "responsiveBehavior": [
     "The copy wraps while the switch keeps its natural size in the trailing column, including at narrow widths."
   ],
   "references": [
-    { "label": "Usage states", "path": "src/wc/components/SettingRow/SettingRow.stories.ts" }
+    {
+      "label": "Usage states",
+      "path": "src/wc/components/SettingRowToggle/SettingRowToggle.stories.ts"
+    }
   ],
   "styling": {
-    "rationale": "The row owns copy/control spacing; its parent owns the section surface and width.",
+    "rationale": "The row uses the shared settings-row inset; copy/control columns and the parent section surface stay component-owned.",
     "protected": [
       {
         "properties": ["padding", "gap"],
-        "reason": "Preserve the shared settings-row spacing recipe.",
+        "reason": "Preserve the shared settings-row inset (space-100 block, space-200 inline) and copy-to-control gap.",
         "props": []
       }
     ],

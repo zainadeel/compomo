@@ -20,6 +20,18 @@
   --ds-focus-ring-color: var(--_bar-page-title-focus);
 }
 
+:host([data-shell-bar]) {
+  background: transparent;
+  color: var(--_bar-page-title-fg-primary);
+  --_bar-page-title-fg-primary: var(--color-chrome-foreground-primary);
+  --_bar-page-title-fg-secondary: var(--color-chrome-foreground-secondary);
+  --_bar-page-title-hover: var(--color-chrome-interaction-hover);
+  --_bar-page-title-pressed: var(--color-chrome-interaction-pressed);
+  --_bar-page-title-focus: var(--color-chrome-interaction-focus);
+  --_bar-page-title-border: var(--color-chrome-border-tertiary);
+  --ds-focus-ring-color: var(--_bar-page-title-focus);
+}
+
 :host-context(ds-shell-app:not([gradient-preset='none'])),
 :host-context(ds-shell-app:not([gradient-preset='none'])) .bar-page-title,
 :host-context(ds-shell-app.shell-app--paper-texture),
@@ -33,6 +45,11 @@
   min-width: 0;
   box-sizing: border-box;
   background: var(--color-background-secondary);
+  color: var(--_bar-page-title-fg-primary);
+}
+
+:host([data-shell-bar]) .bar-page-title {
+  background: transparent;
 }
 
 .bar-page-title::after {
@@ -40,7 +57,7 @@
   position: absolute;
   inset: auto 0 0;
   height: var(--dimension-stroke-width-012);
-  background: var(--color-border-tertiary);
+  background: var(--_bar-page-title-border);
   pointer-events: none;
 }
 
@@ -106,7 +123,7 @@
   width: var(--dimension-stroke-width-012);
   height: var(--dimension-size-250);
   flex: 0 0 var(--dimension-stroke-width-012);
-  background: var(--color-border-tertiary);
+  background: var(--_bar-page-title-border);
 }
 
 .bar-page-title__section-selector {
@@ -135,6 +152,10 @@
   cursor: default;
   font-family: inherit;
   user-select: none;
+}
+
+:host([data-shell-bar]) .bar-page-title__section-trigger {
+  color: var(--_bar-page-title-fg-primary);
 }
 
 .bar-page-title__section-label {

@@ -57,11 +57,36 @@
       <ds-checkbox id="checkbox-mixed" label="Mixed checkbox" indeterminate></ds-checkbox>
       <ds-checkbox id="checkbox-presentation" label="" size="sm" checked presentation></ds-checkbox>
     </div>
+    <ds-checkbox-group id="checkbox-group" label="Select preferences">
+      <ds-checkbox label="First option" checked></ds-checkbox>
+      <ds-checkbox label="Second option"></ds-checkbox>
+      <ds-checkbox
+        id="checkbox-described"
+        label="Third option"
+        description="Supporting information for the third option."
+      ></ds-checkbox>
+    </ds-checkbox-group>
+    <div id="choice-list-controls">
+      <ds-checkbox
+        id="choice-list-checkbox"
+        label="Choice-list checkbox"
+        has-interaction-fill
+      ></ds-checkbox>
+      <ds-radio
+        id="choice-list-radio"
+        value="first"
+        aria-label="Choice-list radio"
+        has-interaction-fill
+      ></ds-radio>
+    </div>
     <div id="switch-sizes">
       <ds-switch id="switch-lg" size="lg" aria-label="Large switch"></ds-switch>
       <ds-switch id="switch-md" size="md" aria-label="Medium switch"></ds-switch>
       <ds-switch id="switch-sm" size="sm" aria-label="Small switch"></ds-switch>
       <ds-switch id="switch-xs" size="xs" aria-label="Extra-small switch"></ds-switch>
+    </div>
+    <div style="position: absolute; left: -10000px; top: 0">
+      <ds-switch id="switch-initial-sync" aria-label="Initial sync switch"></ds-switch>
     </div>
     <div id="radio-sizes">
       <ds-radio id="radio-lg" size="lg" value="selected" aria-label="Large radio"></ds-radio>

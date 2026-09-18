@@ -5,6 +5,7 @@ import '/dist/components/ds-input-time.js';
 import '/dist/components/ds-textarea.js';
 import '/dist/components/ds-field.js';
 import '/dist/components/ds-checkbox.js';
+import '/dist/components/ds-checkbox-group.js';
 import '/dist/components/ds-select.js';
 import '/dist/components/ds-menu.js';
 import '/dist/components/ds-tag.js';
@@ -23,6 +24,7 @@ await Promise.all(
     'ds-textarea',
     'ds-field',
     'ds-checkbox',
+    'ds-checkbox-group',
     'ds-select',
     'ds-menu',
     'ds-tag',
@@ -33,6 +35,15 @@ await Promise.all(
     'ds-text',
   ].map(tag => customElements.whenDefined(tag))
 );
+
+const initialSyncSwitch = document.getElementById('switch-initial-sync');
+const initialSyncAnimations = [];
+initialSyncSwitch.addEventListener('transitionrun', event => {
+  initialSyncAnimations.push(event.propertyName);
+});
+initialSyncSwitch.checked = true;
+await new Promise(requestAnimationFrame);
+window.__initialSyncSwitchAnimations = initialSyncAnimations;
 
 document.getElementById('region').name = 'region';
 document.getElementById('region').options = [
@@ -76,6 +87,10 @@ document.getElementById('menu-tag').items = [
 document.getElementById('tier').options = [
   { label: 'Standard', value: 'standard' },
   { label: 'Premium', value: 'premium' },
+];
+document.getElementById('choice-list-radio').options = [
+  { label: 'First choice', value: 'first' },
+  { label: 'Second choice', value: 'second' },
 ];
 document.getElementById('press-policy-swatch').options = [
   {

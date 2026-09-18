@@ -100,7 +100,7 @@
     }
   ],
   "styling": {
-    "rationale": "The host participates in shell-owned layout; internal tabs and chrome own their recipes.",
+    "rationale": "The host participates in ShellApp-owned layout; ShellApp owns the shared Chrome base and wash while BarNav owns Chrome foreground, border, and interaction recipes.",
     "protected": [],
     "customProperties": []
   }

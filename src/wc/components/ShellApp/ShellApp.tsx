@@ -1293,6 +1293,7 @@ export class ShellApp {
     const page = this.pageChrome;
     return (
       <ds-bar-page-title
+        data-shell-bar=""
         ref={el => {
           if (el) {
             (el as HTMLElement & { actionItems?: BarTitleActionConfigItem[] }).actionItems =

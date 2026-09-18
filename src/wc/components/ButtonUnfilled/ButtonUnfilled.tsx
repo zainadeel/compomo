@@ -25,7 +25,8 @@ export type ButtonUnfilledBackground =
   | 'translucent'
   | 'inverted'
   | 'media'
-  | 'always-dark';
+  | 'always-dark'
+  | 'chrome';
 
 export type ButtonUnfilledVariant = ButtonVariant;
 export type ButtonUnfilledSize = ButtonSize;
@@ -104,7 +105,10 @@ export class ButtonUnfilled {
   /** Native button type. */
   @Prop() type: 'button' | 'submit' | 'reset' = 'button';
 
-  /** Actual parent surface context. Omit on primary and secondary surfaces. */
+  /**
+   * Actual parent surface context. Omit on primary and secondary surfaces; use
+   * chrome for shell surfaces.
+   */
   @Prop() background: ButtonUnfilledBackground | undefined;
 
   /** Accessible name override. Required for icon-only buttons. */
@@ -308,6 +312,7 @@ export class ButtonUnfilled {
       'ds-interaction-fill--on-inverted': bg === 'inverted',
       'ds-interaction-fill--on-media': bg === 'media',
       'ds-interaction-fill--on-always-dark': bg === 'always-dark',
+      'ds-interaction-fill--on-chrome': bg === 'chrome',
       'button-unfilled--active': this.visuallyActive,
       'button-unfilled--expanded': expanded,
       'ds-interaction-fill--surface-open': expanded,
@@ -336,6 +341,7 @@ export class ButtonUnfilled {
       'button-unfilled--background-inverted': bg === 'inverted',
       'button-unfilled--background-media': bg === 'media',
       'button-unfilled--on-always-dark': bg === 'always-dark',
+      'button-unfilled--background-chrome': bg === 'chrome',
     };
     return cls;
   }

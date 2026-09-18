@@ -1,0 +1,175 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "inline-banner-settings",
+  "title": "InlineBannerSettings",
+  "description": "Compact non-interactive informational copy row for settings cards.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/inline-banner-settings",
+    "source": "src/wc/components/InlineBannerSettings/InlineBannerSettings.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "stable",
+      "summary": "Compact non-interactive informational copy row for settings cards.",
+      "useWhen": [
+        "A settings card needs persistent informational copy above its content.",
+        "The message should remain visible in both read-only and editing presentations of the settings card.",
+        "The message needs body-small typography, compact spacing, and a single tertiary bottom boundary."
+      ],
+      "avoidWhen": [
+        "The message belongs in general bounded content outside a settings card; reserve the general inline-banner component for that use case.",
+        "The message is application-wide or needs dismissal, actions, or announcement urgency; use Banner.",
+        "The message is transient or follows a completed action; use Toast."
+      ],
+      "alternatives": [
+        {
+          "when": "A persistent application-wide condition needs optional actions or dismissal.",
+          "component": "component:ds-banner",
+          "reason": "Banner owns shell-level messaging, actions, dismissal, and announcement behavior."
+        },
+        {
+          "when": "A field needs supporting or validation copy tied to its control.",
+          "component": "component:ds-field",
+          "reason": "Field owns the control relationship and supporting-message semantics."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-card-setting",
+        "component:ds-text"
+      ],
+      "accessibility": [
+        "Keep the description concise and authored; InlineBannerSettings does not transform, truncate, or announce the copy.",
+        "Use InlineBannerSettings for static context. Applications must choose a live-region component when a dynamic announcement is required.",
+        "The informational copy remains plain text and has no interactive controls or dismissal affordance."
+      ],
+      "states": [
+        "The description renders verbatim in every state in which the owning settings card projects the component.",
+        "The component has no internal visibility, editing, or dismissal state; the owning settings card controls whether it is present.",
+        "The content height is intrinsic: the banner contributes 8px block padding and its inner content container contributes 4px block padding. A single body-small line is 24px inside that container (4px + 16px line-height + 4px), followed by the tertiary bottom boundary."
+      ],
+      "responsiveBehavior": [
+        "The component fills the available inline size and lets body-small copy wrap naturally.",
+        "The effective inline inset remains 16px: 8px banner padding, 6px inner content padding, and 2px text-side padding."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Pass the complete authored message through description, assign slot=\"banner\" on CardSetting, and do not apply a CSS casing transform or mutate the text for presentation."
+        ],
+        "react": [
+          "Pass the complete authored message through the description prop, set slot=\"banner\" on CardSetting, and keep the component mounted for every settings-card state that needs the context."
+        ],
+        "angular": [
+          "Bind [description] from the settings card's stable copy source and project the component into CardSetting's banner slot for every state that needs the context."
+        ]
+      },
+      "references": [
+        {
+          "label": "Settings inline banner examples",
+          "path": "src/wc/components/InlineBannerSettings/InlineBannerSettings.stories.ts"
+        },
+        {
+          "label": "Rendered geometry coverage",
+          "path": "tests/e2e/inline-banner-settings.spec.ts"
+        }
+      ],
+      "styling": {
+        "rationale": "The component owns only the compact settings informational row recipe; its card owns the surrounding surface and layout.",
+        "protected": [
+          {
+            "properties": [
+              "border-bottom",
+              "color",
+              "padding"
+            ],
+            "reason": "The component owns the readable informational row treatment and keeps its spacing consistent across settings cards.",
+            "props": []
+          }
+        ],
+        "customProperties": []
+      }
+    },
+    "api": {
+      "props": {
+        "description": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "description",
+          "required": true,
+          "mutable": false,
+          "description": "Authored informational copy rendered without transformation."
+        }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "description": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "description",
+        "required": true,
+        "mutable": false,
+        "description": "Authored informational copy rendered without transformation."
+      }
+    },
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-inline-banner-settings",
+      "react": "DsInlineBannerSettings",
+      "vue": "DsInlineBannerSettings",
+      "angular": "DsInlineBannerSettings"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-inline-banner-settings.js';",
+        "example": "<ds-inline-banner-settings></ds-inline-banner-settings>"
+      },
+      "react": {
+        "import": "import { DsInlineBannerSettings } from '@ds-mo/ui/react';",
+        "example": "<DsInlineBannerSettings />"
+      },
+      "vue": {
+        "import": "import { DsInlineBannerSettings } from '@ds-mo/ui/vue';",
+        "example": "<DsInlineBannerSettings />"
+      },
+      "angular": {
+        "import": "import { DsInlineBannerSettings } from '@ds-mo/ui/angular/ds-inline-banner-settings';",
+        "example": "<ds-inline-banner-settings></ds-inline-banner-settings>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.6.1",
+          "@ds-mo/icons ^8.1.1"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/InlineBannerSettings/InlineBannerSettings.css",
+      "content": "@import '../../utils/forced-colors.css';\n\n:host {\n  display: block;\n  box-sizing: border-box;\n  min-width: 0;\n  padding: var(--dimension-space-100);\n  border-block-end: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);\n}\n\n.inline-banner-settings__content {\n  padding-block: var(--dimension-space-050);\n  padding-inline: var(--dimension-space-075);\n}\n\nds-text.inline-banner-settings__description {\n  overflow-wrap: anywhere;\n  padding-inline: var(--dimension-space-025);\n}\n\n@media (forced-colors: active) {\n  :host {\n    border-block-end-color: var(--ds-forced-color-content);\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/InlineBannerSettings/InlineBannerSettings.tsx",
+      "content": "import { Component, h, Host, Prop } from '@stencil/core';\n\n@Component({\n  tag: 'ds-inline-banner-settings',\n  styleUrl: 'InlineBannerSettings.css',\n  scoped: true,\n})\nexport class InlineBannerSettings {\n  /** Authored informational copy rendered without transformation. */\n  @Prop() description!: string;\n\n  render() {\n    return (\n      <Host>\n        {/* eslint-disable-next-line compomo/prefer-direct-ds-text -- This structural layer owns the banner's inner padding separately from the ds-text balance padding. */}\n        <div class=\"inline-banner-settings__content\">\n          <ds-text\n            class=\"inline-banner-settings__description\"\n            as=\"p\"\n            variant=\"text-body-small\"\n            color=\"secondary\"\n          >\n            {this.description}\n          </ds-text>\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

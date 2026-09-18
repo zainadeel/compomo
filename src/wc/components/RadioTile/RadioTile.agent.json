@@ -38,7 +38,8 @@
     "Label the group with Field or an accessible name. Descriptions name each option separately."
   ],
   "states": [
-    "Selection is shown by the radio indicator while the tile keeps its neutral border. Error retains the negative border, and keyboard focus keeps the focus-token outline. Inactive options cannot be selected.",
+    "Selection is shown by the 16px radio indicator centered in a 20px placement box while the tile keeps its neutral border. The placement box and copy have a 12px gap inside the tile's 16px padding, and the tile uses the 2px compact radius. Error retains the negative border, and keyboard focus keeps the focus-token outline. Inactive options cannot be selected.",
+    "Options with descriptions use primary body-medium emphasis for the title and secondary body-medium supporting text with a 4px gap. Text-only options use secondary body-medium text without emphasis.",
     "The component owns form values, required validation, reset, and disabled-fieldset behavior."
   ],
   "responsiveBehavior": [

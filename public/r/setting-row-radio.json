@@ -1,0 +1,196 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "setting-row-radio",
+  "title": "SettingRowRadio",
+  "description": "Padded settings-row composition for an editable Radio group and its non-interactive saved-value readout.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/setting-row-radio",
+    "source": "src/wc/components/SettingRowRadio/SettingRowRadio.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Padded settings-row composition for an editable Radio group and its non-interactive saved-value readout.",
+      "useWhen": [
+        "A settings card needs a mutually exclusive Radio group as one padded row item.",
+        "The same settings card needs to display the saved option without an interactive control in view mode."
+      ],
+      "avoidWhen": [
+        "The Radio group is not part of a settings-row surface; compose ds-radio directly.",
+        "The setting allows more than one option to be selected; use component:ds-setting-row-checkbox.",
+        "The setting is a single immediate on/off choice; use component:ds-setting-row-toggle."
+      ],
+      "commonlyComposedWith": [
+        "component:ds-card-setting",
+        "component:ds-radio"
+      ],
+      "accessibility": [
+        "Pass the settings heading as the row label. Do not pass Radio groupLabel; the row owns the visible heading and points the slotted radiogroup at it with aria-labelledby.",
+        "Keep the Radio group's options, value, required state, and selection event owned by the application. Leave the Radio slotted in view and edit; the row hides it in view.",
+        "Do not add a second interaction layer to the row; Radio owns option focus and keyboard selection while settings usage keeps hasInteractionFill false.",
+        "View presentation exposes readable label, saved value, and optional supporting copy without radio semantics, a radio toggle, or a focus target."
+      ],
+      "states": [
+        "The row is a neutral padded composition; selected, focus, and inactive states belong to the slotted Radio without a choice-list hover or pressed wash.",
+        "The owning application handles dsChange and updates the slotted Radio value.",
+        "Heading, saved-value choice, and slotted Radio stay mounted. presentation reflects on the host so view/edit is CSS visibility only; do not swap Host children or ngIf the Radio.",
+        "View presentation hides the slotted Radio with ::slotted host CSS and shows the saved option label plus optional consequence copy. The Radio stays in the tree."
+      ],
+      "responsiveBehavior": [
+        "The row never exceeds its parent width; the slotted Radio keeps its option copy in the flexible column and wraps descriptions when needed."
+      ],
+      "references": [
+        {
+          "label": "Settings mock",
+          "path": "src/wc/components/SettingRowRadio/SettingRowRadio.stories.ts"
+        }
+      ],
+      "styling": {
+        "rationale": "The row uses the shared settings-row inline inset so view and edit copy share the same 16px origin, and zeros host padding-block because the heading, choice, and radio options already own vertical spacing. The heading is row-owned CSS, not Radio's form group-label or control section-heading recipe. Radio owns option geometry.",
+        "protected": [
+          {
+            "properties": [
+              "padding"
+            ],
+            "reason": "Keep space-200 inline inset in view and edit, with no extra host padding-block.",
+            "props": []
+          }
+        ],
+        "customProperties": []
+      }
+    },
+    "api": {
+      "props": {
+        "description": {
+          "type": "string",
+          "resolvedType": "string | undefined",
+          "attribute": "description",
+          "required": false,
+          "mutable": false,
+          "description": "Optional consequence or supporting copy for the saved option."
+        },
+        "label": {
+          "type": "string",
+          "resolvedType": "string | undefined",
+          "attribute": "label",
+          "required": false,
+          "mutable": false,
+          "description": "Settings heading shown in both presentations. Not Radio's form groupLabel."
+        },
+        "presentation": {
+          "type": "SettingRowRadioPresentation",
+          "resolvedType": "\"edit\" | \"view\"",
+          "attribute": "presentation",
+          "default": "'edit'",
+          "required": false,
+          "mutable": false,
+          "description": "Interactive Radio group or non-interactive saved-value readout."
+        },
+        "valueLabel": {
+          "type": "string",
+          "resolvedType": "string | undefined",
+          "attribute": "value-label",
+          "required": false,
+          "mutable": false,
+          "description": "Saved option label shown in view presentation."
+        }
+      },
+      "events": [],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "description": {
+        "type": "string",
+        "resolvedType": "string | undefined",
+        "attribute": "description",
+        "required": false,
+        "mutable": false,
+        "description": "Optional consequence or supporting copy for the saved option."
+      },
+      "label": {
+        "type": "string",
+        "resolvedType": "string | undefined",
+        "attribute": "label",
+        "required": false,
+        "mutable": false,
+        "description": "Settings heading shown in both presentations. Not Radio's form groupLabel."
+      },
+      "presentation": {
+        "type": "SettingRowRadioPresentation",
+        "resolvedType": "\"edit\" | \"view\"",
+        "attribute": "presentation",
+        "default": "'edit'",
+        "required": false,
+        "mutable": false,
+        "description": "Interactive Radio group or non-interactive saved-value readout."
+      },
+      "valueLabel": {
+        "type": "string",
+        "resolvedType": "string | undefined",
+        "attribute": "value-label",
+        "required": false,
+        "mutable": false,
+        "description": "Saved option label shown in view presentation."
+      }
+    },
+    "events": [],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-setting-row-radio",
+      "react": "DsSettingRowRadio",
+      "vue": "DsSettingRowRadio",
+      "angular": "DsSettingRowRadio"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-setting-row-radio.js';",
+        "example": "<ds-setting-row-radio></ds-setting-row-radio>"
+      },
+      "react": {
+        "import": "import { DsSettingRowRadio } from '@ds-mo/ui/react';",
+        "example": "<DsSettingRowRadio />"
+      },
+      "vue": {
+        "import": "import { DsSettingRowRadio } from '@ds-mo/ui/vue';",
+        "example": "<DsSettingRowRadio />"
+      },
+      "angular": {
+        "import": "import { DsSettingRowRadio } from '@ds-mo/ui/angular/ds-setting-row-radio';",
+        "example": "<ds-setting-row-radio></ds-setting-row-radio>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.6.1",
+          "@ds-mo/icons ^8.1.1"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/SettingRowRadio/SettingRowRadio.css",
+      "content": "@import '../../utils/settings-row.css';\n\n:host {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n  gap: var(--dimension-space-050);\n  overflow-wrap: anywhere;\n  /* Heading, choice, and radio options already own block padding. */\n  padding-block: 0;\n}\n\n/* Light-DOM slotted radios do not receive this component's scoped child class.\n   Target them with ::slotted so view/edit visibility actually applies. */\n:host ::slotted(ds-radio) {\n  min-width: 0;\n  width: 100%;\n}\n\n:host([presentation='view']) ::slotted(ds-radio) {\n  display: none !important;\n}\n\n:host([presentation='edit']) .setting-row-radio__choice {\n  display: none;\n}\n\nds-text.setting-row-radio__heading {\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n  height: var(--dimension-size-400);\n  min-width: 0;\n  padding: 0;\n}\n\n.setting-row-radio__choice {\n  display: grid;\n  gap: var(--dimension-space-025);\n  min-width: 0;\n  padding-block: var(--dimension-space-075);\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/SettingRowRadio/SettingRowRadio.tsx",
+      "content": "import { Component, Element, h, Host, Prop } from '@stencil/core';\nimport { CONTROL_SUPPORTING_TEXT_VARIANT, CONTROL_TEXT_VARIANT } from '../../utils';\n\nexport type SettingRowRadioPresentation = 'edit' | 'view';\n\ntype SettingsRadio = HTMLElement & {\n  groupLabel: string;\n  ariaLabel: string | null;\n  ariaLabelledby?: string;\n};\n\nlet settingRowRadioHeadingId = 0;\n\n/** Padded settings-row composition for a Radio group. */\n@Component({\n  tag: 'ds-setting-row-radio',\n  styleUrl: 'SettingRowRadio.css',\n  scoped: true,\n})\nexport class SettingRowRadio {\n  @Element() el!: HTMLElement;\n\n  /** Interactive Radio group or non-interactive saved-value readout. */\n  @Prop({ reflect: true }) presentation: SettingRowRadioPresentation = 'edit';\n  /** Settings heading shown in both presentations. Not Radio's form groupLabel. */\n  @Prop() label?: string;\n  /** Saved option label shown in view presentation. */\n  @Prop() valueLabel?: string;\n  /** Optional consequence or supporting copy for the saved option. */\n  @Prop() description?: string;\n\n  private readonly headingId = `ds-setting-row-radio-heading-${++settingRowRadioHeadingId}`;\n\n  componentWillLoad() {\n    this.syncSlottedRadio();\n  }\n\n  componentDidLoad() {\n    this.syncSlottedRadio();\n  }\n\n  private syncSlottedRadio = () => {\n    for (const radio of this.el.querySelectorAll<SettingsRadio>('ds-radio')) {\n      radio.groupLabel = '';\n      if (this.label) {\n        radio.ariaLabelledby = this.headingId;\n        radio.ariaLabel = null;\n      }\n    }\n  };\n\n  render() {\n    return (\n      <Host>\n        <ds-text\n          key=\"setting-row-radio-heading\"\n          class=\"setting-row-radio__heading\"\n          as=\"span\"\n          variant={CONTROL_TEXT_VARIANT.md}\n          emphasis\n          textId={this.label ? this.headingId : undefined}\n        >\n          {this.label}\n        </ds-text>\n        <div key=\"setting-row-radio-choice\" class=\"setting-row-radio__choice\">\n          {this.valueLabel ? (\n            <ds-text key=\"setting-row-radio-value\" as=\"span\" variant={CONTROL_TEXT_VARIANT.md}>\n              {this.valueLabel}\n            </ds-text>\n          ) : null}\n          {this.description ? (\n            <ds-text\n              key=\"setting-row-radio-description\"\n              as=\"span\"\n              variant={CONTROL_SUPPORTING_TEXT_VARIANT.md}\n              color=\"secondary\"\n            >\n              {this.description}\n            </ds-text>\n          ) : null}\n        </div>\n        <slot onSlotchange={this.syncSlottedRadio} />\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-setting-row-checkbox",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-setting-row-checkbox",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Padded settings-row composition for an editable Checkbox group and its non-interactive saved-value readout.",
+  "useWhen": [
+    "A settings card needs an independent multi-select Checkbox group as one padded row item.",
+    "The same settings card needs to display the saved selected values without interactive checkbox controls in view mode."
+  ],
+  "avoidWhen": [
+    "The Checkbox group is not part of a settings-row surface; compose ds-checkbox-group directly.",
+    "Exactly one option may be selected; use component:ds-setting-row-radio.",
+    "The setting is a single immediate on/off choice; use component:ds-setting-row-toggle."
+  ],
+  "commonlyComposedWith": [
+    "component:ds-card-setting",
+    "component:ds-checkbox-group",
+    "component:ds-checkbox"
+  ],
+  "accessibility": [
+    "Pass the settings heading as the row label. Do not pass CheckboxGroup's form label; the row owns the visible heading and points the slotted group at it with aria-labelledby.",
+    "Keep each Checkbox's label, checked state, name, value, and dsChange owned by the application. Leave the Checkbox group slotted in view and edit; the row hides it in view.",
+    "Do not add a second interaction layer to the row; each Checkbox owns its own focus and activation while settings usage keeps hasInteractionFill false.",
+    "View presentation exposes readable label, saved selected-value copy, and optional supporting copy without checkbox semantics, checkbox controls, or a focus target."
+  ],
+  "states": [
+    "The row is a neutral padded composition; selected, focus, mixed, and inactive states belong to the slotted Checkboxes without a choice-list hover or pressed wash.",
+    "The owning application handles dsChange on each Checkbox and supplies valueLabel by joining the currently selected option labels.",
+    "Heading, saved-value choice, and slotted Checkbox group stay mounted. presentation reflects on the host so view/edit is CSS visibility only; do not swap Host children or ngIf the group.",
+    "View presentation hides the slotted Checkbox group with ::slotted host CSS and shows the saved selected values plus optional consequence copy. Omit description on the row and on each Checkbox when there is no supporting copy; view then shows only the selected-value labels. The group stays in the tree."
+  ],
+  "responsiveBehavior": [
+    "The row never exceeds its parent width; the slotted Checkbox group keeps option copy in the flexible column and wraps descriptions when needed."
+  ],
+  "references": [
+    {
+      "label": "Settings mock",
+      "path": "src/wc/components/SettingRowCheckbox/SettingRowCheckbox.stories.ts"
+    }
+  ],
+  "styling": {
+    "rationale": "The row uses the shared settings-row inline inset so view and edit copy share the same 16px origin, and zeros host padding-block because the heading, choice, and checkbox options already own vertical spacing. The heading is row-owned CSS, not CheckboxGroup's form label or control section-heading recipe. Checkbox owns option geometry.",
+    "protected": [
+      {
+        "properties": ["padding"],
+        "reason": "Keep space-200 inline inset in view and edit, with no extra host padding-block.",
+        "props": []
+      }
+    ],
+    "customProperties": []
+  }
+}

@@ -23,8 +23,8 @@
     "Surface styling does not add semantics; failed delivery belongs in Message metadata below the unchanged bubble rather than in an error bubble treatment."
   ],
   "states": [
-    "The user variant represents user-sent copy in agent and person-to-person channels and uses secondary foreground.",
-    "The received variant represents ordinary incoming person-to-person copy.",
+    "The user variant represents user-sent copy in agent and person-to-person channels, uses primary foreground, and uses the Chrome primary background so body-medium copy meets contrast on that surface.",
+    "The received variant represents ordinary incoming person-to-person copy, uses secondary foreground, and uses the Chrome secondary background.",
     "Typing and rich agent output are not MessageBubble variants."
   ],
   "responsiveBehavior": ["The bubble wraps plain message copy within the transcript width."],

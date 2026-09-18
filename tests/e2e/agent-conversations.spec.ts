@@ -275,6 +275,9 @@ test('links visible composer error text to the editable draft and clears it on r
   await expect(textarea).toHaveAttribute('aria-describedby', errorId!);
   await expect(textarea).toHaveValue('Preserved draft');
   await expect(composer.getByRole('button', { name: 'Retry' })).toBeVisible();
+  const retry = composer.locator('ds-button-unfilled[slot="error-actions"]');
+  await expect(retry).toHaveJSProperty('rounded', true);
+  await expect(retry.locator('button')).toHaveCSS('border-radius', '9999px');
   const attachedGeometry = await composer.evaluate(element => {
     const stack = element.querySelector('.message-composer__stack')!.getBoundingClientRect();
     const support = element
@@ -338,6 +341,20 @@ test('measures prose without narrowing tables or code', async ({ page }) => {
   expect(Math.abs(narrow.responseClientWidth - narrow.frameClientWidth)).toBeLessThanOrEqual(1);
   expect(Math.abs(narrow.table - narrow.paragraph)).toBeLessThanOrEqual(1);
   expect(narrow.scrollWidth).toBeLessThanOrEqual(narrow.clientWidth);
+});
+
+test('uses secondary foreground for agent response body text', async ({ page }) => {
+  const response = page.locator('#response');
+  const expectedSecondary = await page.evaluate(() => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--color-foreground-secondary)';
+    document.body.append(probe);
+    const color = getComputedStyle(probe).color;
+    probe.remove();
+    return color;
+  });
+
+  await expect(response.locator('ds-markdown p').first()).toHaveCSS('color', expectedSecondary);
 });
 
 test('keeps parts as the default, lets composed content ignore parts, and renders answered records', async ({

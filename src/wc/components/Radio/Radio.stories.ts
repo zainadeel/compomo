@@ -12,12 +12,20 @@ const meta: Meta = {
   title: 'Form/Radio',
   tags: ['autodocs'],
   argTypes: {
+    groupLabel: { control: 'text' },
     value: { control: 'text' },
     size: { control: 'radio', options: ['lg', 'md', 'sm', 'xs'] },
     direction: { control: 'radio', options: ['vertical', 'horizontal'] },
     isInactive: { control: 'boolean' },
+    hasInteractionFill: { control: 'boolean' },
   },
-  args: { value: 'a', size: 'md', direction: 'vertical', isInactive: false },
+  args: {
+    value: 'a',
+    size: 'md',
+    direction: 'vertical',
+    isInactive: false,
+    hasInteractionFill: false,
+  },
 };
 
 export default meta;
@@ -27,10 +35,12 @@ export const Playground: Story = {
   render: args => html`
     <ds-radio
       .options=${defaultOptions}
+      .groupLabel=${args['groupLabel'] ?? ''}
       value=${args['value'] ?? 'a'}
       size=${args['size'] ?? 'md'}
       direction=${args['direction'] ?? 'vertical'}
       ?is-inactive=${args['isInactive']}
+      ?has-interaction-fill=${args['hasInteractionFill']}
       aria-label="Playground radio"
     ></ds-radio>
   `,
@@ -73,19 +83,56 @@ export const DescriptiveOptions: Story = {
       <ds-radio
         .options=${[
           {
-            label: 'Repeated battery failures',
-            value: 'battery',
-            description: 'Three vehicles share the same charging-system signature.',
+            label: 'Weekly digest',
+            value: 'weekly',
+            description: 'Receive one summary at the end of each week.',
           },
           {
-            label: 'Overdue tire inspections',
-            value: 'tires',
-            description: 'Two vehicles are past the inspection interval.',
+            label: 'Immediate alerts',
+            value: 'immediate',
+            description: 'Receive a notification as soon as something needs attention.',
           },
         ]}
-        value="battery"
+        value="weekly"
         size="lg"
-        aria-label="Investigation priority"
+        aria-label="Notification frequency"
+      ></ds-radio>
+    </div>
+  `,
+};
+
+export const Labeled: Story = {
+  render: () => html`
+    <ds-radio
+      .groupLabel=${'Notification frequency'}
+      .options=${[
+        {
+          label: 'Weekly digest',
+          value: 'weekly',
+          description: 'Receive one summary at the end of each week.',
+        },
+        {
+          label: 'Immediate alerts',
+          value: 'immediate',
+          description: 'Receive a notification as soon as something needs attention.',
+        },
+      ]}
+      value="weekly"
+    ></ds-radio>
+  `,
+};
+
+export const ChoiceListInteraction: Story = {
+  render: () => html`
+    <div style="width:min(360px, 90vw);">
+      <ds-radio
+        .groupLabel=${'Choose an option'}
+        .options=${[
+          { label: 'First option', value: 'first' },
+          { label: 'Second option', value: 'second' },
+        ]}
+        value="first"
+        has-interaction-fill
       ></ds-radio>
     </div>
   `,

@@ -1,6 +1,7 @@
 @import '../../utils/control-inactive.css';
 @import '../../utils/radius.css';
 @import '../../utils/control-density.css';
+@import '../../utils/control-parts.css';
 @import '../../utils/focus-ring.css';
 @import '../../utils/interaction-fill.css';
 @import '../../utils/forced-colors.css';
@@ -8,7 +9,18 @@
 :host {
   display: flex;
   flex-direction: column;
-  gap: var(--dimension-space-025);
+  gap: var(--dimension-space-050);
+}
+
+:host(.radio--labeled) {
+  gap: var(--dimension-space-050);
+}
+
+.radio__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dimension-space-050);
+  min-width: 0;
 }
 
 :host(.radio--horizontal) {
@@ -16,25 +28,44 @@
   gap: var(--dimension-space-100);
 }
 
+:host(.radio--horizontal) .radio__options {
+  flex-direction: row;
+  gap: var(--dimension-space-100);
+}
+
+:host(.radio--labeled.radio--horizontal) {
+  flex-direction: column;
+  gap: var(--dimension-space-050);
+}
+
+:host(.radio--labeled.radio--horizontal) .radio__options {
+  flex-direction: row;
+  gap: var(--dimension-space-100);
+}
+
 :host(.radio--lg) {
+  --_radio-circle-inset: calc(var(--dimension-space-100) + var(--dimension-space-025));
   --_radio-circle: var(--dimension-iconography-md);
   --_radio-dot: calc(var(--dimension-size-base) * 5 / 4);
   --_radio-stroke: var(--dimension-stroke-width-018);
 }
 
 :host(.radio--md) {
+  --_radio-circle-inset: var(--dimension-space-100);
   --_radio-circle: var(--dimension-iconography-sm);
   --_radio-dot: var(--dimension-size-100);
   --_radio-stroke: var(--dimension-stroke-width-015);
 }
 
 :host(.radio--sm) {
+  --_radio-circle-inset: var(--dimension-space-075);
   --_radio-circle: var(--dimension-iconography-xs);
   --_radio-dot: var(--dimension-size-075);
   --_radio-stroke: var(--dimension-stroke-width-012);
 }
 
 :host(.radio--xs) {
+  --_radio-circle-inset: var(--dimension-space-050);
   --_radio-circle: var(--dimension-size-100);
   --_radio-dot: var(--dimension-size-050);
   --_radio-stroke: calc(var(--dimension-stroke-width-base) * 3 / 32);
@@ -46,13 +77,14 @@
   box-sizing: border-box;
   gap: var(--ds-control-gap);
   height: var(--ds-control-height);
-  padding: 0 var(--ds-control-padding-inline);
+  padding: 0 var(--ds-settings-row-control-padding-inline, var(--ds-control-padding-inline));
   border-radius: var(--ds-control-radius);
   cursor: default;
   user-select: none;
 }
 
 .radio__item--described {
+  align-items: flex-start;
   height: auto;
   min-height: var(--ds-control-height);
   padding-block: var(--dimension-space-075);
@@ -92,6 +124,13 @@
   height: var(--_radio-dot);
   border-radius: var(--dimension-radius-half);
   background-color: var(--color-foreground-on-bold-background-primary);
+}
+
+ds-text.radio__group-label {
+  padding-inline: var(
+    --ds-settings-row-control-padding-inline,
+    calc(var(--ds-control-padding-inline) + var(--ds-control-label-inset))
+  );
 }
 
 .radio__copy {

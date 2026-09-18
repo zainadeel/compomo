@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Setting row checkbox</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+  </head>
+  <body>
+    <main>
+      <ds-setting-row-checkbox id="setting-row" label="Alert channels">
+        <ds-checkbox-group id="alert-channels">
+          <ds-checkbox
+            id="channel-email"
+            label="Email"
+            description="Send a summary to the fleet email list."
+            value="email"
+            checked
+          ></ds-checkbox>
+          <ds-checkbox
+            id="channel-push"
+            label="Mobile push"
+            description="Notify drivers and managers in the Motive app."
+            value="push"
+            checked
+          ></ds-checkbox>
+          <ds-checkbox
+            id="channel-sms"
+            label="SMS"
+            description="Send a text to on-call phone numbers."
+            value="sms"
+          ></ds-checkbox>
+          <ds-checkbox
+            id="channel-unavailable"
+            label="Unavailable option"
+            description="This option is managed by your organization."
+            value="unavailable"
+            is-inactive
+          ></ds-checkbox>
+        </ds-checkbox-group>
+      </ds-setting-row-checkbox>
+      <ds-setting-row-checkbox
+        id="setting-row-view"
+        presentation="view"
+        label="Alert channels"
+        value-label="Email, Mobile push"
+        description="Selected channels receive in-cab and fleet alerts."
+      >
+        <ds-checkbox-group id="alert-channels-view">
+          <ds-checkbox
+            label="Email"
+            description="Send a summary to the fleet email list."
+            value="email"
+            checked
+          ></ds-checkbox>
+          <ds-checkbox
+            label="Mobile push"
+            description="Notify drivers and managers in the Motive app."
+            value="push"
+            checked
+          ></ds-checkbox>
+        </ds-checkbox-group>
+      </ds-setting-row-checkbox>
+      <ds-checkbox-group id="form-checkbox-group" label="Select preferences">
+        <ds-checkbox label="First option" checked></ds-checkbox>
+        <ds-checkbox label="Second option"></ds-checkbox>
+      </ds-checkbox-group>
+      <ds-setting-row-checkbox id="setting-row-no-subtext" label="Alert channels">
+        <ds-checkbox-group id="alert-channels-no-subtext">
+          <ds-checkbox label="Email" value="email" checked></ds-checkbox>
+          <ds-checkbox label="Mobile push" value="push" checked></ds-checkbox>
+          <ds-checkbox label="SMS" value="sms"></ds-checkbox>
+        </ds-checkbox-group>
+      </ds-setting-row-checkbox>
+      <ds-setting-row-checkbox
+        id="setting-row-view-no-subtext"
+        presentation="view"
+        label="Alert channels"
+        value-label="Email, Mobile push"
+      >
+        <ds-checkbox-group id="alert-channels-view-no-subtext">
+          <ds-checkbox label="Email" value="email" checked></ds-checkbox>
+          <ds-checkbox label="Mobile push" value="push" checked></ds-checkbox>
+        </ds-checkbox-group>
+      </ds-setting-row-checkbox>
+    </main>
+    <script type="module" src="/setting-row-checkbox-setup.mjs"></script>
+  </body>
+</html>

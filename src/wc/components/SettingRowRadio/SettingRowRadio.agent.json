@@ -1,0 +1,53 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-setting-row-radio",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-setting-row-radio",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Padded settings-row composition for an editable Radio group and its non-interactive saved-value readout.",
+  "useWhen": [
+    "A settings card needs a mutually exclusive Radio group as one padded row item.",
+    "The same settings card needs to display the saved option without an interactive control in view mode."
+  ],
+  "avoidWhen": [
+    "The Radio group is not part of a settings-row surface; compose ds-radio directly.",
+    "The setting allows more than one option to be selected; use component:ds-setting-row-checkbox.",
+    "The setting is a single immediate on/off choice; use component:ds-setting-row-toggle."
+  ],
+  "commonlyComposedWith": ["component:ds-card-setting", "component:ds-radio"],
+  "accessibility": [
+    "Pass the settings heading as the row label. Do not pass Radio groupLabel; the row owns the visible heading and points the slotted radiogroup at it with aria-labelledby.",
+    "Keep the Radio group's options, value, required state, and selection event owned by the application. Leave the Radio slotted in view and edit; the row hides it in view.",
+    "Do not add a second interaction layer to the row; Radio owns option focus and keyboard selection while settings usage keeps hasInteractionFill false.",
+    "View presentation exposes readable label, saved value, and optional supporting copy without radio semantics, a radio toggle, or a focus target."
+  ],
+  "states": [
+    "The row is a neutral padded composition; selected, focus, and inactive states belong to the slotted Radio without a choice-list hover or pressed wash.",
+    "The owning application handles dsChange and updates the slotted Radio value.",
+    "Heading, saved-value choice, and slotted Radio stay mounted. presentation reflects on the host so view/edit is CSS visibility only; do not swap Host children or ngIf the Radio.",
+    "View presentation hides the slotted Radio with ::slotted host CSS and shows the saved option label plus optional consequence copy. The Radio stays in the tree."
+  ],
+  "responsiveBehavior": [
+    "The row never exceeds its parent width; the slotted Radio keeps its option copy in the flexible column and wraps descriptions when needed."
+  ],
+  "references": [
+    {
+      "label": "Settings mock",
+      "path": "src/wc/components/SettingRowRadio/SettingRowRadio.stories.ts"
+    }
+  ],
+  "styling": {
+    "rationale": "The row uses the shared settings-row inline inset so view and edit copy share the same 16px origin, and zeros host padding-block because the heading, choice, and radio options already own vertical spacing. The heading is row-owned CSS, not Radio's form group-label or control section-heading recipe. Radio owns option geometry.",
+    "protected": [
+      {
+        "properties": ["padding"],
+        "reason": "Keep space-200 inline inset in view and edit, with no extra host padding-block.",
+        "props": []
+      }
+    ],
+    "customProperties": []
+  }
+}

@@ -31,7 +31,7 @@
  * after the unset so this util’s stacking context still applies.
  *
  * Surface helpers remap tokens + `--ds-focus-ring-color`:
- *   `.ds-interaction-fill--on-faint|medium|bold|strong|translucent|inverted|media|always-dark|navigation`
+ *   `.ds-interaction-fill--on-faint|medium|bold|strong|translucent|inverted|media|always-dark|chrome|navigation`
  *
  * Override hooks: `--ds-interaction-hover`, `--ds-interaction-pressed`,
  * `--ds-interaction-active`, `--ds-interaction-border-color`,
@@ -242,6 +242,14 @@
   --ds-interaction-pressed: var(--color-always-dark-interaction-pressed);
   --ds-interaction-active: var(--color-always-dark-interaction-active-brand);
   --ds-focus-ring-color: var(--color-always-dark-interaction-focus);
+}
+
+:host(.ds-interaction-fill--on-chrome),
+.ds-interaction-fill--on-chrome {
+  --ds-interaction-hover: var(--color-chrome-interaction-hover);
+  --ds-interaction-pressed: var(--color-chrome-interaction-pressed);
+  --ds-interaction-active: var(--color-chrome-interaction-active);
+  --ds-focus-ring-color: var(--color-chrome-interaction-focus);
 }
 
 :host(.ds-interaction-fill--on-navigation),

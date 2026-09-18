@@ -598,6 +598,7 @@ test('uses one background prop for standard and special surfaces', async ({ page
     { background: 'inverted', componentClass: 'button-unfilled--background-inverted' },
     { background: 'media', componentClass: 'button-unfilled--background-media' },
     { background: 'always-dark', componentClass: 'button-unfilled--on-always-dark' },
+    { background: 'chrome', componentClass: 'button-unfilled--background-chrome' },
   ] as const;
 
   for (const surface of surfaces) {

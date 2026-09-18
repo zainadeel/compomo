@@ -1282,6 +1282,64 @@ test(
   }
 );
 
+test('checkbox and radio reserve row interaction fills for choice-list presentation', async ({
+  page,
+}) => {
+  const formCheckbox = page.locator('#terms');
+  const formRadio = page.locator('#tier');
+  const standard = formRadio.getByRole('radio', { name: 'Standard' });
+  const premium = formRadio.getByRole('radio', { name: 'Premium' });
+
+  await expect(formCheckbox).not.toHaveClass(/ds-interaction-fill/);
+  await expect(standard).not.toHaveClass(/ds-interaction-fill/);
+  await formCheckbox.locator('.checkbox__label').click();
+  await expect(formCheckbox).toHaveAttribute('aria-checked', 'true');
+  await premium.locator('.radio__label').click();
+  await expect(premium).toHaveAttribute('aria-checked', 'true');
+
+  await expect(page.locator('#choice-list-checkbox')).toHaveClass(/ds-interaction-fill/);
+  await expect(
+    page.locator('#choice-list-radio').getByRole('radio', { name: 'First choice' })
+  ).toHaveClass(/ds-interaction-fill/);
+});
+
+test('checkbox groups use density-aligned labels and option rhythm', async ({ page }) => {
+  const group = page.locator('#checkbox-group');
+  const labelRow = group.locator('.checkbox-group__label');
+  const options = group.locator('.checkbox-group__options > ds-checkbox');
+  const first = options.nth(0);
+  const second = options.nth(1);
+  const described = page.locator('#checkbox-described');
+
+  await expect(group).toHaveRole('group', { name: 'Select preferences' });
+
+  const geometry = await group.evaluate(element => {
+    const label = element.querySelector('.checkbox-group__label')!.getBoundingClientRect();
+    const rows = Array.from(element.querySelectorAll('.checkbox-group__options > ds-checkbox')).map(
+      row => row.getBoundingClientRect()
+    );
+    const box = element.querySelector('#checkbox-described .box')!.getBoundingClientRect();
+    const title = element
+      .querySelector('#checkbox-described .checkbox__label')!
+      .getBoundingClientRect();
+    return {
+      labelHeight: label.height,
+      firstHeight: rows[0]?.height,
+      optionGap: (rows[1]?.top ?? 0) - (rows[0]?.bottom ?? 0),
+      describedAlignment: box.top + box.height / 2 - (title.top + title.height / 2),
+    };
+  });
+
+  expect(geometry.labelHeight).toBe(32);
+  expect(geometry.firstHeight).toBe(32);
+  expect(geometry.optionGap).toBe(4);
+  expect(Math.abs(geometry.describedAlignment)).toBeLessThan(0.5);
+  await first.locator('.checkbox__label').click();
+  await expect(first).toHaveAttribute('aria-checked', 'false');
+  await second.locator('.box').click();
+  await expect(second).toHaveAttribute('aria-checked', 'true');
+});
+
 test(
   'checkbox sizes center owned filled marks without SVG strokes',
   chromiumOnly('layout-geometry', 'Density-specific mark sizing is static token-backed geometry.'),
@@ -1474,6 +1532,19 @@ test('switch supports readonly, required, unchecked, and external form behavior'
   const labeled = page.getByRole('switch', { name: 'Labeled switch' });
   await page.getByText('Labeled switch', { exact: true }).click();
   await expect(labeled).toHaveAttribute('aria-checked', 'true');
+});
+
+test('switch does not animate a controlled value during initial hydration @cross-browser', async ({
+  page,
+}) => {
+  await expect(page.locator('#switch-initial-sync')).toHaveAttribute('aria-checked', 'true');
+  const animations = await page.evaluate(
+    () =>
+      (window as typeof window & { __initialSyncSwitchAnimations?: string[] })
+        .__initialSyncSwitchAnimations ?? []
+  );
+
+  expect(animations).toEqual([]);
 });
 
 test(

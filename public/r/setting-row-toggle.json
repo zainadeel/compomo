@@ -1,14 +1,14 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-  "name": "setting-row",
-  "title": "SettingRow",
+  "name": "setting-row-toggle",
+  "title": "SettingRowToggle",
   "description": "Two-column immediate binary setting with descriptive copy and an accessible switch.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
     "distribution": "npm",
-    "storybook": "https://zainadeel.github.io/compomo/?path=/story/setting-row",
-    "source": "src/wc/components/SettingRow/SettingRow.tsx",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/setting-row-toggle",
+    "source": "src/wc/components/SettingRowToggle/SettingRowToggle.tsx",
     "intentStatus": "complete",
     "intent": {
       "audience": "general",
@@ -32,7 +32,9 @@
       ],
       "states": [
         "The application accepts or rejects change requests by updating the controlled checked value and owns persistence and errors.",
-        "Name the enabled setting consistently; the label must not change when the switch is toggled."
+        "Name the enabled setting consistently; the label must not change when the switch is toggled.",
+        "Non-emphasis rows without supporting copy use ds-text color secondary (foreground-secondary) on the title. Non-emphasis rows with description keep a primary title.",
+        "Supporting copy is text-body-small in every variant."
       ],
       "responsiveBehavior": [
         "The copy wraps while the switch keeps its natural size in the trailing column, including at narrow widths."
@@ -40,18 +42,18 @@
       "references": [
         {
           "label": "Usage states",
-          "path": "src/wc/components/SettingRow/SettingRow.stories.ts"
+          "path": "src/wc/components/SettingRowToggle/SettingRowToggle.stories.ts"
         }
       ],
       "styling": {
-        "rationale": "The row owns copy/control spacing; its parent owns the section surface and width.",
+        "rationale": "The row uses the shared settings-row inset; copy/control columns and the parent section surface stay component-owned.",
         "protected": [
           {
             "properties": [
               "padding",
               "gap"
             ],
-            "reason": "Preserve the shared settings-row spacing recipe.",
+            "reason": "Preserve the shared settings-row inset (space-100 block, space-200 inline) and copy-to-control gap.",
             "props": []
           }
         ],
@@ -93,6 +95,15 @@
           "required": true,
           "mutable": false,
           "description": "Name of the enabled setting."
+        },
+        "variant": {
+          "type": "SettingRowToggleVariant",
+          "resolvedType": "\"emphasis\" | \"non-emphasis\"",
+          "attribute": "variant",
+          "default": "'emphasis'",
+          "required": false,
+          "mutable": false,
+          "description": "Typography recipe for the setting copy."
         }
       },
       "events": [
@@ -142,6 +153,15 @@
         "required": true,
         "mutable": false,
         "description": "Name of the enabled setting."
+      },
+      "variant": {
+        "type": "SettingRowToggleVariant",
+        "resolvedType": "\"emphasis\" | \"non-emphasis\"",
+        "attribute": "variant",
+        "default": "'emphasis'",
+        "required": false,
+        "mutable": false,
+        "description": "Typography recipe for the setting copy."
       }
     },
     "events": [
@@ -157,33 +177,33 @@
     "methods": [],
     "slots": [],
     "exports": {
-      "customElement": "ds-setting-row",
-      "react": "DsSettingRow",
-      "vue": "DsSettingRow",
-      "angular": "DsSettingRow"
+      "customElement": "ds-setting-row-toggle",
+      "react": "DsSettingRowToggle",
+      "vue": "DsSettingRowToggle",
+      "angular": "DsSettingRowToggle"
     },
     "consumption": {
       "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
       "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
       "customElements": {
-        "import": "import '@ds-mo/ui/dist/components/ds-setting-row.js';",
-        "example": "<ds-setting-row></ds-setting-row>"
+        "import": "import '@ds-mo/ui/dist/components/ds-setting-row-toggle.js';",
+        "example": "<ds-setting-row-toggle></ds-setting-row-toggle>"
       },
       "react": {
-        "import": "import { DsSettingRow } from '@ds-mo/ui/react';",
-        "example": "<DsSettingRow />"
+        "import": "import { DsSettingRowToggle } from '@ds-mo/ui/react';",
+        "example": "<DsSettingRowToggle />"
       },
       "vue": {
-        "import": "import { DsSettingRow } from '@ds-mo/ui/vue';",
-        "example": "<DsSettingRow />"
+        "import": "import { DsSettingRowToggle } from '@ds-mo/ui/vue';",
+        "example": "<DsSettingRowToggle />"
       },
       "angular": {
-        "import": "import { DsSettingRow } from '@ds-mo/ui/angular/ds-setting-row';",
-        "example": "<ds-setting-row></ds-setting-row>"
+        "import": "import { DsSettingRowToggle } from '@ds-mo/ui/angular/ds-setting-row-toggle';",
+        "example": "<ds-setting-row-toggle></ds-setting-row-toggle>"
       },
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens ^6.5.2",
+          "@ds-mo/tokens ^6.6.1",
           "@ds-mo/icons ^8.1.1"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
@@ -200,13 +220,13 @@
   ],
   "files": [
     {
-      "path": "src/wc/components/SettingRow/SettingRow.css",
-      "content": ":host {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  align-items: start;\n  box-sizing: border-box;\n  min-width: 0;\n  padding: var(--dimension-space-100) var(--dimension-space-200);\n  gap: var(--dimension-space-200);\n}\n\n.setting-row__copy {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n  gap: var(--dimension-space-050);\n  overflow-wrap: anywhere;\n  -webkit-user-select: none;\n  user-select: none;\n}\n",
+      "path": "src/wc/components/SettingRowToggle/SettingRowToggle.css",
+      "content": "@import '../../utils/settings-row.css';\n\n:host {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  align-items: start;\n  gap: var(--dimension-space-200);\n}\n\n.setting-row-toggle__copy {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n  gap: var(--dimension-space-050);\n  overflow-wrap: anywhere;\n  -webkit-user-select: none;\n  user-select: none;\n}\n",
       "type": "registry:ui"
     },
     {
-      "path": "src/wc/components/SettingRow/SettingRow.tsx",
-      "content": "import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\n\nlet settingRowSequence = 0;\n\n/** A labeled binary setting that applies immediately through its application owner. */\n@Component({\n  tag: 'ds-setting-row',\n  styleUrl: 'SettingRow.css',\n  scoped: true,\n})\nexport class SettingRow {\n  /** Name of the enabled setting. */\n  @Prop() label!: string;\n  /** Supporting copy explaining the setting and its alternative. */\n  @Prop() description?: string;\n  /** Controlled enabled state. */\n  @Prop() checked = false;\n  /** Prevent changes while the setting is unavailable. */\n  @Prop() disabled = false;\n\n  /** Requests the next value; the application owns acceptance and persistence. */\n  @Event() dsChange!: EventEmitter<boolean>;\n\n  private readonly rowId = `ds-setting-row-${++settingRowSequence}`;\n\n  private handleChange = (event: CustomEvent<boolean>) => {\n    event.stopPropagation();\n    // Keep the composed switch controlled until the owner accepts this request.\n    (event.target as HTMLDsSwitchElement).checked = this.checked;\n    this.dsChange.emit(event.detail);\n  };\n\n  render() {\n    return (\n      <Host>\n        <div class=\"setting-row__copy\">\n          <ds-text\n            textId={`${this.rowId}-label`}\n            variant=\"text-body-medium\"\n            color=\"primary\"\n            emphasis\n          >\n            {this.label}\n          </ds-text>\n          {this.description && (\n            <ds-text\n              textId={`${this.rowId}-description`}\n              variant=\"text-body-medium\"\n              color=\"secondary\"\n            >\n              {this.description}\n            </ds-text>\n          )}\n        </div>\n        <ds-switch\n          checked={this.checked}\n          disabled={this.disabled}\n          aria-labelledby={`${this.rowId}-label`}\n          aria-describedby={this.description ? `${this.rowId}-description` : undefined}\n          onDsChange={this.handleChange}\n        />\n      </Host>\n    );\n  }\n}\n",
+      "path": "src/wc/components/SettingRowToggle/SettingRowToggle.tsx",
+      "content": "import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\nimport { CONTROL_SUPPORTING_TEXT_VARIANT } from '../../utils';\n\nlet settingRowToggleSequence = 0;\n\nexport type SettingRowToggleVariant = 'emphasis' | 'non-emphasis';\n\n/** A labeled binary setting that applies immediately through its application owner. */\n@Component({\n  tag: 'ds-setting-row-toggle',\n  styleUrl: 'SettingRowToggle.css',\n  scoped: true,\n})\nexport class SettingRowToggle {\n  /** Name of the enabled setting. */\n  @Prop() label!: string;\n  /** Supporting copy explaining the setting and its alternative. */\n  @Prop() description?: string;\n  /** Controlled enabled state. */\n  @Prop() checked = false;\n  /** Prevent changes while the setting is unavailable. */\n  @Prop() disabled = false;\n  /** Typography recipe for the setting copy. */\n  @Prop() variant: SettingRowToggleVariant = 'emphasis';\n\n  /** Requests the next value; the application owns acceptance and persistence. */\n  @Event() dsChange!: EventEmitter<boolean>;\n\n  private readonly rowId = `ds-setting-row-toggle-${++settingRowToggleSequence}`;\n\n  private handleChange = (event: CustomEvent<boolean>) => {\n    event.stopPropagation();\n    // Keep the composed switch controlled until the owner accepts this request.\n    (event.target as HTMLDsSwitchElement).checked = this.checked;\n    this.dsChange.emit(event.detail);\n  };\n\n  render() {\n    const hasDescription = Boolean(this.description?.trim());\n    const titleColor = this.variant === 'non-emphasis' && !hasDescription ? 'secondary' : 'primary';\n\n    return (\n      <Host>\n        <div class=\"setting-row-toggle__copy\">\n          <ds-text\n            textId={`${this.rowId}-label`}\n            variant=\"text-body-medium\"\n            color={titleColor}\n            emphasis={this.variant === 'emphasis'}\n          >\n            {this.label}\n          </ds-text>\n          {hasDescription && (\n            <ds-text\n              textId={`${this.rowId}-description`}\n              variant={CONTROL_SUPPORTING_TEXT_VARIANT.md}\n              color=\"secondary\"\n            >\n              {this.description}\n            </ds-text>\n          )}\n        </div>\n        <ds-switch\n          checked={this.checked}\n          disabled={this.disabled}\n          aria-labelledby={`${this.rowId}-label`}\n          aria-describedby={hasDescription ? `${this.rowId}-description` : undefined}\n          onDsChange={this.handleChange}\n        />\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

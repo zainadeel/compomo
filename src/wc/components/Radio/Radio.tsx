@@ -46,6 +46,8 @@ export class Radio {
 
   /** Visible choices in this one-of-many set. */
   @Prop() options: RadioOption[] = [];
+  /** Optional visible group label rendered above the options. */
+  @Prop() groupLabel: string = '';
   /** Selected option value. */
   @Prop({ mutable: true }) value: string = '';
   /** Visual and placement density for every option. */
@@ -64,6 +66,8 @@ export class Radio {
   @Prop() direction: 'vertical' | 'horizontal' = 'vertical';
   /** Design-system inactive state for the complete set. */
   @Prop() isInactive: boolean = false;
+  /** Show full-row hover and pressed feedback for choice-list presentations. */
+  @Prop() hasInteractionFill: boolean = false;
   /** Accessible name when visible group labeling is unavailable. */
   @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;
   /** Id reference for a visible group label. */
@@ -74,6 +78,15 @@ export class Radio {
 
   private initialValue = '';
   @State() private formDisabled = false;
+
+  private get hasGroupLabel(): boolean {
+    return Boolean(this.groupLabel.trim());
+  }
+
+  /** Settings rows own a separate heading; never mount the form group label there. */
+  private get showGroupLabel(): boolean {
+    return this.hasGroupLabel && !this.el.closest('ds-setting-row-radio');
+  }
 
   componentWillLoad() {
     this.initialValue = this.value;
@@ -166,6 +179,72 @@ export class Radio {
     }
   }
 
+  private renderOptions(inactive: boolean, focusableIdx: number) {
+    return this.options.map((option, index) => {
+      const isItemInactive = inactive || !!option.isInactive;
+      const isChecked = option.value === this.value;
+      const tabIdx = isItemInactive ? -1 : index === focusableIdx ? 0 : -1;
+      const labelId = `ds-radio-${this.instanceId}-label-${index}`;
+      const descriptionId = `ds-radio-${this.instanceId}-description-${index}`;
+
+      return (
+        <div
+          key={option.value}
+          role="radio"
+          aria-checked={String(isChecked)}
+          aria-disabled={isItemInactive ? 'true' : undefined}
+          aria-labelledby={labelId}
+          aria-describedby={option.description ? descriptionId : undefined}
+          tabIndex={tabIdx}
+          data-radio-item
+          data-value={option.value}
+          data-inactive={isItemInactive || undefined}
+          class={{
+            radio__item: true,
+            'radio__item--described': Boolean(option.description),
+            [`ds-control--${this.size}`]: true,
+            'ds-control-inactive': isItemInactive,
+            'ds-focus-ring-inset': !isItemInactive,
+            'ds-interaction-fill': !isItemInactive && this.hasInteractionFill,
+          }}
+          onClick={() => !isItemInactive && this.selectItem(option.value)}
+          onKeyDown={(e: KeyboardEvent) => {
+            if ((e.key === ' ' || e.key === 'Enter') && !isItemInactive) {
+              e.preventDefault();
+              this.selectItem(option.value);
+            }
+          }}
+        >
+          <span class="radio__placement ds-interaction-fill__content" aria-hidden="true">
+            <span class={{ radio__circle: true, 'radio__circle--checked': isChecked }}>
+              {isChecked && <span class="radio__dot" />}
+            </span>
+          </span>
+          <span class="radio__copy ds-interaction-fill__content">
+            <ds-text
+              class="radio__label"
+              as="span"
+              variant={CONTROL_TEXT_VARIANT[this.size]}
+              textId={labelId}
+            >
+              {option.label}
+            </ds-text>
+            {option.description ? (
+              <ds-text
+                as="span"
+                variant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
+                color="secondary"
+                textId={descriptionId}
+              >
+                {option.description}
+              </ds-text>
+            ) : null}
+          </span>
+        </div>
+      );
+    });
+  }
+
   render() {
     const inactive = this.isInactive || this.disabled || this.formDisabled;
     const invalid = this.required && !inactive && this.value.length === 0;
@@ -175,11 +254,12 @@ export class Radio {
       selectedIdx >= 0 && !inactive && !this.options[selectedIdx]?.isInactive
         ? selectedIdx
         : firstActiveIdx;
+    const renderedOptions = this.renderOptions(inactive, focusableIdx);
 
     return (
       <Host
         role="radiogroup"
-        aria-label={this.ariaLabel}
+        aria-label={this.showGroupLabel ? this.groupLabel : this.ariaLabel}
         aria-labelledby={this.ariaLabelledby}
         aria-required={this.required ? 'true' : undefined}
         aria-invalid={invalid ? 'true' : undefined}
@@ -187,71 +267,23 @@ export class Radio {
           radio: true,
           'radio--horizontal': this.direction === 'horizontal',
           [`radio--${this.size}`]: true,
+          'radio--labeled': this.showGroupLabel,
         }}
       >
-        {this.options.map((option, index) => {
-          const isItemInactive = inactive || !!option.isInactive;
-          const isChecked = option.value === this.value;
-          const tabIdx = isItemInactive ? -1 : index === focusableIdx ? 0 : -1;
-          const labelId = `ds-radio-${this.instanceId}-label-${index}`;
-          const descriptionId = `ds-radio-${this.instanceId}-description-${index}`;
-
-          return (
-            <div
-              key={option.value}
-              role="radio"
-              aria-checked={String(isChecked)}
-              aria-disabled={isItemInactive ? 'true' : undefined}
-              aria-labelledby={labelId}
-              aria-describedby={option.description ? descriptionId : undefined}
-              tabIndex={tabIdx}
-              data-radio-item
-              data-value={option.value}
-              data-inactive={isItemInactive || undefined}
-              class={{
-                radio__item: true,
-                'radio__item--described': Boolean(option.description),
-                [`ds-control--${this.size}`]: true,
-                'ds-control-inactive': isItemInactive,
-                'ds-focus-ring-inset': !isItemInactive,
-                'ds-interaction-fill': !isItemInactive,
-              }}
-              onClick={() => !isItemInactive && this.selectItem(option.value)}
-              onKeyDown={(e: KeyboardEvent) => {
-                if ((e.key === ' ' || e.key === 'Enter') && !isItemInactive) {
-                  e.preventDefault();
-                  this.selectItem(option.value);
-                }
-              }}
-            >
-              <span class="radio__placement ds-interaction-fill__content" aria-hidden="true">
-                <span class={{ radio__circle: true, 'radio__circle--checked': isChecked }}>
-                  {isChecked && <span class="radio__dot" />}
-                </span>
-              </span>
-              <span class="radio__copy ds-interaction-fill__content">
-                <ds-text
-                  class="radio__label"
-                  as="span"
-                  variant={CONTROL_TEXT_VARIANT[this.size]}
-                  textId={labelId}
-                >
-                  {option.label}
-                </ds-text>
-                {option.description ? (
-                  <ds-text
-                    as="span"
-                    variant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
-                    color="secondary"
-                    textId={descriptionId}
-                  >
-                    {option.description}
-                  </ds-text>
-                ) : null}
-              </span>
-            </div>
-          );
-        })}
+        {this.showGroupLabel ? (
+          <ds-text
+            key="radio-group-label"
+            class={`radio__group-label ds-control-section-heading ds-control--${this.size}`}
+            as="span"
+            variant="text-body-small"
+            emphasis
+          >
+            {this.groupLabel}
+          </ds-text>
+        ) : null}
+        <div key="radio-options" class="radio__options">
+          {renderedOptions}
+        </div>
       </Host>
     );
   }

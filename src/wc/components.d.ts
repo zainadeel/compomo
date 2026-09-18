@@ -32,6 +32,7 @@ import { ChartFocusChangeDetail } from "./components/Chart/Chart";
 import { ChartLegendItem } from "./utils/chart-types";
 import { ChartLegendDirection, ChartLegendPercentageDecimals } from "./components/ChartLegend/ChartLegend";
 import { CheckboxSize } from "./components/Checkbox/Checkbox";
+import { CheckboxGroupSize } from "./components/CheckboxGroup/CheckboxGroup";
 import { ChipSize, ChipState } from "./components/Chip/Chip";
 import { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
 import { DataField } from "./utils/data-field";
@@ -74,6 +75,9 @@ import { RadioTileOption } from "./components/RadioTile/RadioTile";
 import { SafetyScoreLevel, ScoreSize, ScoreVariant } from "./components/Score/score-types";
 import { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
 import { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
+import { SettingRowCheckboxPresentation } from "./components/SettingRowCheckbox/SettingRowCheckbox";
+import { SettingRowRadioPresentation } from "./components/SettingRowRadio/SettingRowRadio";
+import { SettingRowToggleVariant } from "./components/SettingRowToggle/SettingRowToggle";
 import { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellSectionNavigation, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
 import { ShellGradientPreset } from "./shell/shell-gradient-presets";
 import { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageDesktopHeaderPlacement, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
@@ -116,6 +120,7 @@ export { ChartFocusChangeDetail } from "./components/Chart/Chart";
 export { ChartLegendItem } from "./utils/chart-types";
 export { ChartLegendDirection, ChartLegendPercentageDecimals } from "./components/ChartLegend/ChartLegend";
 export { CheckboxSize } from "./components/Checkbox/Checkbox";
+export { CheckboxGroupSize } from "./components/CheckboxGroup/CheckboxGroup";
 export { ChipSize, ChipState } from "./components/Chip/Chip";
 export { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
 export { DataField } from "./utils/data-field";
@@ -158,6 +163,9 @@ export { RadioTileOption } from "./components/RadioTile/RadioTile";
 export { SafetyScoreLevel, ScoreSize, ScoreVariant } from "./components/Score/score-types";
 export { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
 export { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
+export { SettingRowCheckboxPresentation } from "./components/SettingRowCheckbox/SettingRowCheckbox";
+export { SettingRowRadioPresentation } from "./components/SettingRowRadio/SettingRowRadio";
+export { SettingRowToggleVariant } from "./components/SettingRowToggle/SettingRowToggle";
 export { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellSectionNavigation, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
 export { ShellGradientPreset } from "./shell/shell-gradient-presets";
 export { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageDesktopHeaderPlacement, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
@@ -897,7 +905,7 @@ export namespace Components {
          */
         "ariaLabel": string | null;
         /**
-          * Actual parent surface context. Omit on primary and secondary surfaces.
+          * Actual parent surface context. Omit on primary and secondary surfaces; use chrome for shell surfaces.
          */
         "background": ButtonUnfilledBackground | undefined;
         /**
@@ -1169,7 +1177,7 @@ export namespace Components {
          */
         "cancelLabel": string;
         /**
-          * Card width token (`sm` / `md` / `lg`). Editable cards also use the matching minimum-height token; immediate cards fit their content.
+          * Card width token (`sm` / `md` / `lg`). Empty editable cards use the matching minimum-height token. Cards with body content, and immediate cards, fit that content.
           * @default 'md'
          */
         "cardWidth": CardSettingWidth;
@@ -1336,6 +1344,11 @@ export namespace Components {
          */
         "disabled": boolean;
         /**
+          * Show full-row hover and pressed feedback for choice-list presentations.
+          * @default false
+         */
+        "hasInteractionFill": boolean;
+        /**
           * Mixed visual state. Activation clears it before toggling checked.
           * @default false
          */
@@ -1378,6 +1391,30 @@ export namespace Components {
           * @default 'on'
          */
         "value": string;
+    }
+    interface DsCheckboxGroup {
+        /**
+          * Id reference for supporting guidance or an error message.
+         */
+        "ariaDescribedby": string | undefined;
+        /**
+          * Accessible name when visible group labeling is unavailable.
+          * @default null
+         */
+        "ariaLabel": string | null;
+        /**
+          * Id reference for a visible group label.
+         */
+        "ariaLabelledby": string | undefined;
+        /**
+          * Visible label and accessible name for the checkbox list.
+         */
+        "label"?: string;
+        /**
+          * Density of the label row; use the same size on every slotted Checkbox.
+          * @default 'md'
+         */
+        "size": CheckboxGroupSize;
     }
     /**
      * Removable chip — same density recipe as Tag, but colored by semantic `state`
@@ -2127,6 +2164,12 @@ export namespace Components {
           * @default 'md'
          */
         "size": IconSize;
+    }
+    interface DsInlineBannerSettings {
+        /**
+          * Authored informational copy rendered without transformation.
+         */
+        "description": string;
     }
     interface DsInput {
         /**
@@ -3396,6 +3439,16 @@ export namespace Components {
          */
         "form": string | undefined;
         /**
+          * Optional visible group label rendered above the options.
+          * @default ''
+         */
+        "groupLabel": string;
+        /**
+          * Show full-row hover and pressed feedback for choice-list presentations.
+          * @default false
+         */
+        "hasInteractionFill": boolean;
+        /**
           * Design-system inactive state for the complete set.
           * @default false
          */
@@ -3741,9 +3794,53 @@ export namespace Components {
         "width": SelectWidth;
     }
     /**
+     * Padded settings-row composition for a Checkbox group.
+     */
+    interface DsSettingRowCheckbox {
+        /**
+          * Optional consequence or supporting copy for the saved selection.
+         */
+        "description"?: string;
+        /**
+          * Settings heading shown in both presentations. Not CheckboxGroup's form label.
+         */
+        "label"?: string;
+        /**
+          * Interactive Checkbox group or non-interactive saved-value readout.
+          * @default 'edit'
+         */
+        "presentation": SettingRowCheckboxPresentation;
+        /**
+          * Saved selected-value labels shown in view presentation.
+         */
+        "valueLabel"?: string;
+    }
+    /**
+     * Padded settings-row composition for a Radio group.
+     */
+    interface DsSettingRowRadio {
+        /**
+          * Optional consequence or supporting copy for the saved option.
+         */
+        "description"?: string;
+        /**
+          * Settings heading shown in both presentations. Not Radio's form groupLabel.
+         */
+        "label"?: string;
+        /**
+          * Interactive Radio group or non-interactive saved-value readout.
+          * @default 'edit'
+         */
+        "presentation": SettingRowRadioPresentation;
+        /**
+          * Saved option label shown in view presentation.
+         */
+        "valueLabel"?: string;
+    }
+    /**
      * A labeled binary setting that applies immediately through its application owner.
      */
-    interface DsSettingRow {
+    interface DsSettingRowToggle {
         /**
           * Controlled enabled state.
           * @default false
@@ -3762,6 +3859,11 @@ export namespace Components {
           * Name of the enabled setting.
          */
         "label": string;
+        /**
+          * Typography recipe for the setting copy.
+          * @default 'emphasis'
+         */
+        "variant": SettingRowToggleVariant;
     }
     interface DsShellApp {
         /**
@@ -5148,9 +5250,9 @@ export interface DsSelectCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSelectElement;
 }
-export interface DsSettingRowCustomEvent<T> extends CustomEvent<T> {
+export interface DsSettingRowToggleCustomEvent<T> extends CustomEvent<T> {
     detail: T;
-    target: HTMLDsSettingRowElement;
+    target: HTMLDsSettingRowToggleElement;
 }
 export interface DsShellAppCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -5643,6 +5745,12 @@ declare global {
         prototype: HTMLDsCheckboxElement;
         new (): HTMLDsCheckboxElement;
     };
+    interface HTMLDsCheckboxGroupElement extends Components.DsCheckboxGroup, HTMLStencilElement {
+    }
+    var HTMLDsCheckboxGroupElement: {
+        prototype: HTMLDsCheckboxGroupElement;
+        new (): HTMLDsCheckboxGroupElement;
+    };
     interface HTMLDsChipElementEventMap {
         "dsRemove": void;
     }
@@ -5903,6 +6011,12 @@ declare global {
     var HTMLDsIconElement: {
         prototype: HTMLDsIconElement;
         new (): HTMLDsIconElement;
+    };
+    interface HTMLDsInlineBannerSettingsElement extends Components.DsInlineBannerSettings, HTMLStencilElement {
+    }
+    var HTMLDsInlineBannerSettingsElement: {
+        prototype: HTMLDsInlineBannerSettingsElement;
+        new (): HTMLDsInlineBannerSettingsElement;
     };
     interface HTMLDsInputElementEventMap {
         "dsChange": string;
@@ -6392,25 +6506,43 @@ declare global {
         prototype: HTMLDsSelectElement;
         new (): HTMLDsSelectElement;
     };
-    interface HTMLDsSettingRowElementEventMap {
+    /**
+     * Padded settings-row composition for a Checkbox group.
+     */
+    interface HTMLDsSettingRowCheckboxElement extends Components.DsSettingRowCheckbox, HTMLStencilElement {
+    }
+    var HTMLDsSettingRowCheckboxElement: {
+        prototype: HTMLDsSettingRowCheckboxElement;
+        new (): HTMLDsSettingRowCheckboxElement;
+    };
+    /**
+     * Padded settings-row composition for a Radio group.
+     */
+    interface HTMLDsSettingRowRadioElement extends Components.DsSettingRowRadio, HTMLStencilElement {
+    }
+    var HTMLDsSettingRowRadioElement: {
+        prototype: HTMLDsSettingRowRadioElement;
+        new (): HTMLDsSettingRowRadioElement;
+    };
+    interface HTMLDsSettingRowToggleElementEventMap {
         "dsChange": boolean;
     }
     /**
      * A labeled binary setting that applies immediately through its application owner.
      */
-    interface HTMLDsSettingRowElement extends Components.DsSettingRow, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsSettingRowElementEventMap>(type: K, listener: (this: HTMLDsSettingRowElement, ev: DsSettingRowCustomEvent<HTMLDsSettingRowElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+    interface HTMLDsSettingRowToggleElement extends Components.DsSettingRowToggle, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsSettingRowToggleElementEventMap>(type: K, listener: (this: HTMLDsSettingRowToggleElement, ev: DsSettingRowToggleCustomEvent<HTMLDsSettingRowToggleElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsSettingRowElementEventMap>(type: K, listener: (this: HTMLDsSettingRowElement, ev: DsSettingRowCustomEvent<HTMLDsSettingRowElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsSettingRowToggleElementEventMap>(type: K, listener: (this: HTMLDsSettingRowToggleElement, ev: DsSettingRowToggleCustomEvent<HTMLDsSettingRowToggleElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
         removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
-    var HTMLDsSettingRowElement: {
-        prototype: HTMLDsSettingRowElement;
-        new (): HTMLDsSettingRowElement;
+    var HTMLDsSettingRowToggleElement: {
+        prototype: HTMLDsSettingRowToggleElement;
+        new (): HTMLDsSettingRowToggleElement;
     };
     interface HTMLDsShellAppElementEventMap {
         "dsResponsiveModeChange": { mode: ShellResponsiveMode };
@@ -6726,6 +6858,7 @@ declare global {
         "ds-chart": HTMLDsChartElement;
         "ds-chart-legend": HTMLDsChartLegendElement;
         "ds-checkbox": HTMLDsCheckboxElement;
+        "ds-checkbox-group": HTMLDsCheckboxGroupElement;
         "ds-chip": HTMLDsChipElement;
         "ds-code-block": HTMLDsCodeBlockElement;
         "ds-conversation-list": HTMLDsConversationListElement;
@@ -6744,6 +6877,7 @@ declare global {
         "ds-field": HTMLDsFieldElement;
         "ds-filter-menu": HTMLDsFilterMenuElement;
         "ds-icon": HTMLDsIconElement;
+        "ds-inline-banner-settings": HTMLDsInlineBannerSettingsElement;
         "ds-input": HTMLDsInputElement;
         "ds-input-date": HTMLDsInputDateElement;
         "ds-input-time": HTMLDsInputTimeElement;
@@ -6774,7 +6908,9 @@ declare global {
         "ds-score": HTMLDsScoreElement;
         "ds-scroll-overlay": HTMLDsScrollOverlayElement;
         "ds-select": HTMLDsSelectElement;
-        "ds-setting-row": HTMLDsSettingRowElement;
+        "ds-setting-row-checkbox": HTMLDsSettingRowCheckboxElement;
+        "ds-setting-row-radio": HTMLDsSettingRowRadioElement;
+        "ds-setting-row-toggle": HTMLDsSettingRowToggleElement;
         "ds-shell-app": HTMLDsShellAppElement;
         "ds-shell-page": HTMLDsShellPageElement;
         "ds-shell-tools": HTMLDsShellToolsElement;
@@ -7585,7 +7721,7 @@ declare namespace LocalJSX {
          */
         "ariaLabel"?: string | null;
         /**
-          * Actual parent surface context. Omit on primary and secondary surfaces.
+          * Actual parent surface context. Omit on primary and secondary surfaces; use chrome for shell surfaces.
          */
         "background"?: ButtonUnfilledBackground | undefined;
         /**
@@ -7875,7 +8011,7 @@ declare namespace LocalJSX {
          */
         "cancelLabel"?: string;
         /**
-          * Card width token (`sm` / `md` / `lg`). Editable cards also use the matching minimum-height token; immediate cards fit their content.
+          * Card width token (`sm` / `md` / `lg`). Empty editable cards use the matching minimum-height token. Cards with body content, and immediate cards, fit that content.
           * @default 'md'
          */
         "cardWidth"?: CardSettingWidth;
@@ -8066,6 +8202,11 @@ declare namespace LocalJSX {
          */
         "form"?: string;
         /**
+          * Show full-row hover and pressed feedback for choice-list presentations.
+          * @default false
+         */
+        "hasInteractionFill"?: boolean;
+        /**
           * Mixed visual state. Activation clears it before toggling checked.
           * @default false
          */
@@ -8112,6 +8253,30 @@ declare namespace LocalJSX {
           * @default 'on'
          */
         "value"?: string;
+    }
+    interface DsCheckboxGroup {
+        /**
+          * Id reference for supporting guidance or an error message.
+         */
+        "ariaDescribedby"?: string | undefined;
+        /**
+          * Accessible name when visible group labeling is unavailable.
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        /**
+          * Id reference for a visible group label.
+         */
+        "ariaLabelledby"?: string | undefined;
+        /**
+          * Visible label and accessible name for the checkbox list.
+         */
+        "label"?: string;
+        /**
+          * Density of the label row; use the same size on every slotted Checkbox.
+          * @default 'md'
+         */
+        "size"?: CheckboxGroupSize;
     }
     /**
      * Removable chip — same density recipe as Tag, but colored by semantic `state`
@@ -8971,6 +9136,12 @@ declare namespace LocalJSX {
           * @default 'md'
          */
         "size"?: IconSize;
+    }
+    interface DsInlineBannerSettings {
+        /**
+          * Authored informational copy rendered without transformation.
+         */
+        "description": string;
     }
     interface DsInput {
         /**
@@ -10336,6 +10507,16 @@ declare namespace LocalJSX {
          */
         "form"?: string | undefined;
         /**
+          * Optional visible group label rendered above the options.
+          * @default ''
+         */
+        "groupLabel"?: string;
+        /**
+          * Show full-row hover and pressed feedback for choice-list presentations.
+          * @default false
+         */
+        "hasInteractionFill"?: boolean;
+        /**
           * Design-system inactive state for the complete set.
           * @default false
          */
@@ -10700,9 +10881,53 @@ declare namespace LocalJSX {
         "width"?: SelectWidth;
     }
     /**
+     * Padded settings-row composition for a Checkbox group.
+     */
+    interface DsSettingRowCheckbox {
+        /**
+          * Optional consequence or supporting copy for the saved selection.
+         */
+        "description"?: string;
+        /**
+          * Settings heading shown in both presentations. Not CheckboxGroup's form label.
+         */
+        "label"?: string;
+        /**
+          * Interactive Checkbox group or non-interactive saved-value readout.
+          * @default 'edit'
+         */
+        "presentation"?: SettingRowCheckboxPresentation;
+        /**
+          * Saved selected-value labels shown in view presentation.
+         */
+        "valueLabel"?: string;
+    }
+    /**
+     * Padded settings-row composition for a Radio group.
+     */
+    interface DsSettingRowRadio {
+        /**
+          * Optional consequence or supporting copy for the saved option.
+         */
+        "description"?: string;
+        /**
+          * Settings heading shown in both presentations. Not Radio's form groupLabel.
+         */
+        "label"?: string;
+        /**
+          * Interactive Radio group or non-interactive saved-value readout.
+          * @default 'edit'
+         */
+        "presentation"?: SettingRowRadioPresentation;
+        /**
+          * Saved option label shown in view presentation.
+         */
+        "valueLabel"?: string;
+    }
+    /**
      * A labeled binary setting that applies immediately through its application owner.
      */
-    interface DsSettingRow {
+    interface DsSettingRowToggle {
         /**
           * Controlled enabled state.
           * @default false
@@ -10724,7 +10949,12 @@ declare namespace LocalJSX {
         /**
           * Requests the next value; the application owns acceptance and persistence.
          */
-        "onDsChange"?: (event: DsSettingRowCustomEvent<boolean>) => void;
+        "onDsChange"?: (event: DsSettingRowToggleCustomEvent<boolean>) => void;
+        /**
+          * Typography recipe for the setting copy.
+          * @default 'emphasis'
+         */
+        "variant"?: SettingRowToggleVariant;
     }
     interface DsShellApp {
         /**
@@ -12233,7 +12463,15 @@ declare namespace LocalJSX {
         "requiredMessage": string;
         "indeterminate": boolean;
         "isInactive": boolean;
+        "hasInteractionFill": boolean;
         "presentation": boolean;
+    }
+    interface DsCheckboxGroupAttributes {
+        "label": string;
+        "size": CheckboxGroupSize;
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+        "ariaDescribedby": string | undefined;
     }
     interface DsChipAttributes {
         "label": string;
@@ -12390,6 +12628,9 @@ declare namespace LocalJSX {
         "size": IconSize;
         "color": IconColor;
         "label": string | undefined;
+    }
+    interface DsInlineBannerSettingsAttributes {
+        "description": string;
     }
     interface DsInputAttributes {
         "value": string;
@@ -12703,6 +12944,7 @@ declare namespace LocalJSX {
         "storageKey": string;
     }
     interface DsRadioAttributes {
+        "groupLabel": string;
         "value": string;
         "size": RadioSize;
         "name": string | undefined;
@@ -12712,6 +12954,7 @@ declare namespace LocalJSX {
         "requiredMessage": string;
         "direction": 'vertical' | 'horizontal';
         "isInactive": boolean;
+        "hasInteractionFill": boolean;
         "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
     }
@@ -12784,11 +13027,24 @@ declare namespace LocalJSX {
         "ariaLabelledby": string | undefined;
         "ariaDescribedby": string | undefined;
     }
-    interface DsSettingRowAttributes {
+    interface DsSettingRowCheckboxAttributes {
+        "presentation": SettingRowCheckboxPresentation;
+        "label": string;
+        "valueLabel": string;
+        "description": string;
+    }
+    interface DsSettingRowRadioAttributes {
+        "presentation": SettingRowRadioPresentation;
+        "label": string;
+        "valueLabel": string;
+        "description": string;
+    }
+    interface DsSettingRowToggleAttributes {
         "label": string;
         "description": string;
         "checked": boolean;
         "disabled": boolean;
+        "variant": SettingRowToggleVariant;
     }
     interface DsShellAppAttributes {
         "composition": ShellAppComposition;
@@ -13076,6 +13332,7 @@ declare namespace LocalJSX {
         "ds-chart": Omit<DsChart, keyof DsChartAttributes> & { [K in keyof DsChart & keyof DsChartAttributes]?: DsChart[K] } & { [K in keyof DsChart & keyof DsChartAttributes as `attr:${K}`]?: DsChartAttributes[K] } & { [K in keyof DsChart & keyof DsChartAttributes as `prop:${K}`]?: DsChart[K] } & OneOf<"label", DsChart["label"], DsChartAttributes["label"]>;
         "ds-chart-legend": Omit<DsChartLegend, keyof DsChartLegendAttributes> & { [K in keyof DsChartLegend & keyof DsChartLegendAttributes]?: DsChartLegend[K] } & { [K in keyof DsChartLegend & keyof DsChartLegendAttributes as `attr:${K}`]?: DsChartLegendAttributes[K] } & { [K in keyof DsChartLegend & keyof DsChartLegendAttributes as `prop:${K}`]?: DsChartLegend[K] };
         "ds-checkbox": Omit<DsCheckbox, keyof DsCheckboxAttributes> & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes]?: DsCheckbox[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `attr:${K}`]?: DsCheckboxAttributes[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `prop:${K}`]?: DsCheckbox[K] } & OneOf<"label", DsCheckbox["label"], DsCheckboxAttributes["label"]>;
+        "ds-checkbox-group": Omit<DsCheckboxGroup, keyof DsCheckboxGroupAttributes> & { [K in keyof DsCheckboxGroup & keyof DsCheckboxGroupAttributes]?: DsCheckboxGroup[K] } & { [K in keyof DsCheckboxGroup & keyof DsCheckboxGroupAttributes as `attr:${K}`]?: DsCheckboxGroupAttributes[K] } & { [K in keyof DsCheckboxGroup & keyof DsCheckboxGroupAttributes as `prop:${K}`]?: DsCheckboxGroup[K] };
         "ds-chip": Omit<DsChip, keyof DsChipAttributes> & { [K in keyof DsChip & keyof DsChipAttributes]?: DsChip[K] } & { [K in keyof DsChip & keyof DsChipAttributes as `attr:${K}`]?: DsChipAttributes[K] } & { [K in keyof DsChip & keyof DsChipAttributes as `prop:${K}`]?: DsChip[K] } & OneOf<"label", DsChip["label"], DsChipAttributes["label"]>;
         "ds-code-block": Omit<DsCodeBlock, keyof DsCodeBlockAttributes> & { [K in keyof DsCodeBlock & keyof DsCodeBlockAttributes]?: DsCodeBlock[K] } & { [K in keyof DsCodeBlock & keyof DsCodeBlockAttributes as `attr:${K}`]?: DsCodeBlockAttributes[K] } & { [K in keyof DsCodeBlock & keyof DsCodeBlockAttributes as `prop:${K}`]?: DsCodeBlock[K] };
         "ds-conversation-list": DsConversationList;
@@ -13094,6 +13351,7 @@ declare namespace LocalJSX {
         "ds-field": Omit<DsField, keyof DsFieldAttributes> & { [K in keyof DsField & keyof DsFieldAttributes]?: DsField[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `attr:${K}`]?: DsFieldAttributes[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `prop:${K}`]?: DsField[K] };
         "ds-filter-menu": Omit<DsFilterMenu, keyof DsFilterMenuAttributes> & { [K in keyof DsFilterMenu & keyof DsFilterMenuAttributes]?: DsFilterMenu[K] } & { [K in keyof DsFilterMenu & keyof DsFilterMenuAttributes as `attr:${K}`]?: DsFilterMenuAttributes[K] } & { [K in keyof DsFilterMenu & keyof DsFilterMenuAttributes as `prop:${K}`]?: DsFilterMenu[K] };
         "ds-icon": Omit<DsIcon, keyof DsIconAttributes> & { [K in keyof DsIcon & keyof DsIconAttributes]?: DsIcon[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `attr:${K}`]?: DsIconAttributes[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `prop:${K}`]?: DsIcon[K] };
+        "ds-inline-banner-settings": Omit<DsInlineBannerSettings, keyof DsInlineBannerSettingsAttributes> & { [K in keyof DsInlineBannerSettings & keyof DsInlineBannerSettingsAttributes]?: DsInlineBannerSettings[K] } & { [K in keyof DsInlineBannerSettings & keyof DsInlineBannerSettingsAttributes as `attr:${K}`]?: DsInlineBannerSettingsAttributes[K] } & { [K in keyof DsInlineBannerSettings & keyof DsInlineBannerSettingsAttributes as `prop:${K}`]?: DsInlineBannerSettings[K] } & OneOf<"description", DsInlineBannerSettings["description"], DsInlineBannerSettingsAttributes["description"]>;
         "ds-input": Omit<DsInput, keyof DsInputAttributes> & { [K in keyof DsInput & keyof DsInputAttributes]?: DsInput[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `attr:${K}`]?: DsInputAttributes[K] } & { [K in keyof DsInput & keyof DsInputAttributes as `prop:${K}`]?: DsInput[K] };
         "ds-input-date": Omit<DsInputDate, keyof DsInputDateAttributes> & { [K in keyof DsInputDate & keyof DsInputDateAttributes]?: DsInputDate[K] } & { [K in keyof DsInputDate & keyof DsInputDateAttributes as `attr:${K}`]?: DsInputDateAttributes[K] } & { [K in keyof DsInputDate & keyof DsInputDateAttributes as `prop:${K}`]?: DsInputDate[K] };
         "ds-input-time": Omit<DsInputTime, keyof DsInputTimeAttributes> & { [K in keyof DsInputTime & keyof DsInputTimeAttributes]?: DsInputTime[K] } & { [K in keyof DsInputTime & keyof DsInputTimeAttributes as `attr:${K}`]?: DsInputTimeAttributes[K] } & { [K in keyof DsInputTime & keyof DsInputTimeAttributes as `prop:${K}`]?: DsInputTime[K] };
@@ -13124,7 +13382,9 @@ declare namespace LocalJSX {
         "ds-score": Omit<DsScore, keyof DsScoreAttributes> & { [K in keyof DsScore & keyof DsScoreAttributes]?: DsScore[K] } & { [K in keyof DsScore & keyof DsScoreAttributes as `attr:${K}`]?: DsScoreAttributes[K] } & { [K in keyof DsScore & keyof DsScoreAttributes as `prop:${K}`]?: DsScore[K] };
         "ds-scroll-overlay": Omit<DsScrollOverlay, keyof DsScrollOverlayAttributes> & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes]?: DsScrollOverlay[K] } & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes as `attr:${K}`]?: DsScrollOverlayAttributes[K] } & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes as `prop:${K}`]?: DsScrollOverlay[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
-        "ds-setting-row": Omit<DsSettingRow, keyof DsSettingRowAttributes> & { [K in keyof DsSettingRow & keyof DsSettingRowAttributes]?: DsSettingRow[K] } & { [K in keyof DsSettingRow & keyof DsSettingRowAttributes as `attr:${K}`]?: DsSettingRowAttributes[K] } & { [K in keyof DsSettingRow & keyof DsSettingRowAttributes as `prop:${K}`]?: DsSettingRow[K] } & OneOf<"label", DsSettingRow["label"], DsSettingRowAttributes["label"]>;
+        "ds-setting-row-checkbox": Omit<DsSettingRowCheckbox, keyof DsSettingRowCheckboxAttributes> & { [K in keyof DsSettingRowCheckbox & keyof DsSettingRowCheckboxAttributes]?: DsSettingRowCheckbox[K] } & { [K in keyof DsSettingRowCheckbox & keyof DsSettingRowCheckboxAttributes as `attr:${K}`]?: DsSettingRowCheckboxAttributes[K] } & { [K in keyof DsSettingRowCheckbox & keyof DsSettingRowCheckboxAttributes as `prop:${K}`]?: DsSettingRowCheckbox[K] };
+        "ds-setting-row-radio": Omit<DsSettingRowRadio, keyof DsSettingRowRadioAttributes> & { [K in keyof DsSettingRowRadio & keyof DsSettingRowRadioAttributes]?: DsSettingRowRadio[K] } & { [K in keyof DsSettingRowRadio & keyof DsSettingRowRadioAttributes as `attr:${K}`]?: DsSettingRowRadioAttributes[K] } & { [K in keyof DsSettingRowRadio & keyof DsSettingRowRadioAttributes as `prop:${K}`]?: DsSettingRowRadio[K] };
+        "ds-setting-row-toggle": Omit<DsSettingRowToggle, keyof DsSettingRowToggleAttributes> & { [K in keyof DsSettingRowToggle & keyof DsSettingRowToggleAttributes]?: DsSettingRowToggle[K] } & { [K in keyof DsSettingRowToggle & keyof DsSettingRowToggleAttributes as `attr:${K}`]?: DsSettingRowToggleAttributes[K] } & { [K in keyof DsSettingRowToggle & keyof DsSettingRowToggleAttributes as `prop:${K}`]?: DsSettingRowToggle[K] } & OneOf<"label", DsSettingRowToggle["label"], DsSettingRowToggleAttributes["label"]>;
         "ds-shell-app": Omit<DsShellApp, keyof DsShellAppAttributes> & { [K in keyof DsShellApp & keyof DsShellAppAttributes]?: DsShellApp[K] } & { [K in keyof DsShellApp & keyof DsShellAppAttributes as `attr:${K}`]?: DsShellAppAttributes[K] } & { [K in keyof DsShellApp & keyof DsShellAppAttributes as `prop:${K}`]?: DsShellApp[K] };
         "ds-shell-page": Omit<DsShellPage, keyof DsShellPageAttributes> & { [K in keyof DsShellPage & keyof DsShellPageAttributes]?: DsShellPage[K] } & { [K in keyof DsShellPage & keyof DsShellPageAttributes as `attr:${K}`]?: DsShellPageAttributes[K] } & { [K in keyof DsShellPage & keyof DsShellPageAttributes as `prop:${K}`]?: DsShellPage[K] };
         "ds-shell-tools": Omit<DsShellTools, keyof DsShellToolsAttributes> & { [K in keyof DsShellTools & keyof DsShellToolsAttributes]?: DsShellTools[K] } & { [K in keyof DsShellTools & keyof DsShellToolsAttributes as `attr:${K}`]?: DsShellToolsAttributes[K] } & { [K in keyof DsShellTools & keyof DsShellToolsAttributes as `prop:${K}`]?: DsShellTools[K] };
@@ -13187,6 +13447,7 @@ declare module "@stencil/core" {
              */
             "ds-chart-legend": LocalJSX.IntrinsicElements["ds-chart-legend"] & JSXBase.HTMLAttributes<HTMLDsChartLegendElement>;
             "ds-checkbox": LocalJSX.IntrinsicElements["ds-checkbox"] & JSXBase.HTMLAttributes<HTMLDsCheckboxElement>;
+            "ds-checkbox-group": LocalJSX.IntrinsicElements["ds-checkbox-group"] & JSXBase.HTMLAttributes<HTMLDsCheckboxGroupElement>;
             /**
              * Removable chip — same density recipe as Tag, but colored by semantic `state`
              * (not intent × contrast). Not a toggle/select control; the only intentional
@@ -13217,6 +13478,7 @@ declare module "@stencil/core" {
             "ds-field": LocalJSX.IntrinsicElements["ds-field"] & JSXBase.HTMLAttributes<HTMLDsFieldElement>;
             "ds-filter-menu": LocalJSX.IntrinsicElements["ds-filter-menu"] & JSXBase.HTMLAttributes<HTMLDsFilterMenuElement>;
             "ds-icon": LocalJSX.IntrinsicElements["ds-icon"] & JSXBase.HTMLAttributes<HTMLDsIconElement>;
+            "ds-inline-banner-settings": LocalJSX.IntrinsicElements["ds-inline-banner-settings"] & JSXBase.HTMLAttributes<HTMLDsInlineBannerSettingsElement>;
             "ds-input": LocalJSX.IntrinsicElements["ds-input"] & JSXBase.HTMLAttributes<HTMLDsInputElement>;
             "ds-input-date": LocalJSX.IntrinsicElements["ds-input-date"] & JSXBase.HTMLAttributes<HTMLDsInputDateElement>;
             "ds-input-time": LocalJSX.IntrinsicElements["ds-input-time"] & JSXBase.HTMLAttributes<HTMLDsInputTimeElement>;
@@ -13248,9 +13510,17 @@ declare module "@stencil/core" {
             "ds-scroll-overlay": LocalJSX.IntrinsicElements["ds-scroll-overlay"] & JSXBase.HTMLAttributes<HTMLDsScrollOverlayElement>;
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
             /**
+             * Padded settings-row composition for a Checkbox group.
+             */
+            "ds-setting-row-checkbox": LocalJSX.IntrinsicElements["ds-setting-row-checkbox"] & JSXBase.HTMLAttributes<HTMLDsSettingRowCheckboxElement>;
+            /**
+             * Padded settings-row composition for a Radio group.
+             */
+            "ds-setting-row-radio": LocalJSX.IntrinsicElements["ds-setting-row-radio"] & JSXBase.HTMLAttributes<HTMLDsSettingRowRadioElement>;
+            /**
              * A labeled binary setting that applies immediately through its application owner.
              */
-            "ds-setting-row": LocalJSX.IntrinsicElements["ds-setting-row"] & JSXBase.HTMLAttributes<HTMLDsSettingRowElement>;
+            "ds-setting-row-toggle": LocalJSX.IntrinsicElements["ds-setting-row-toggle"] & JSXBase.HTMLAttributes<HTMLDsSettingRowToggleElement>;
             "ds-shell-app": LocalJSX.IntrinsicElements["ds-shell-app"] & JSXBase.HTMLAttributes<HTMLDsShellAppElement>;
             "ds-shell-page": LocalJSX.IntrinsicElements["ds-shell-page"] & JSXBase.HTMLAttributes<HTMLDsShellPageElement>;
             "ds-shell-tools": LocalJSX.IntrinsicElements["ds-shell-tools"] & JSXBase.HTMLAttributes<HTMLDsShellToolsElement>;

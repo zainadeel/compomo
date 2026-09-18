@@ -1,0 +1,21 @@
+/**
+ * Shared settings-list row inset.
+ *
+ * CardSetting's content body owns only padding-block (space-100). Rows own the
+ * matching block padding plus the inline inset (space-200) so copy, controls,
+ * and per-setting dividers share one content origin.
+ *
+ * Nested controls inherit --ds-settings-row-control-padding-inline: 0 so their
+ * control-frame inline padding is not added on top of this row inset. Option
+ * copy after a radio or checkbox icon still uses the control icon box and gap.
+ * Setting radio and checkbox headings are owned by ds-setting-row-radio and
+ * ds-setting-row-checkbox, not the nested form group labels.
+ */
+
+:host {
+  box-sizing: border-box;
+  min-width: 0;
+  padding-block: var(--dimension-space-100);
+  padding-inline: var(--dimension-space-200);
+  --ds-settings-row-control-padding-inline: 0px;
+}

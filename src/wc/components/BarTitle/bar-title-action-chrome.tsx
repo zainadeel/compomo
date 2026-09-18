@@ -61,6 +61,7 @@ export function renderBarTitleBack(options: {
   classPrefix: string;
   showBack: boolean;
   backAriaLabel: string;
+  background?: 'chrome';
   onBack: (event: MouseEvent) => void;
 }) {
   if (!options.showBack) return null;
@@ -74,6 +75,7 @@ export function renderBarTitleBack(options: {
         size="md"
         activeFill={false}
         hasBorder={false}
+        background={options.background}
         onDsClick={(event: CustomEvent<MouseEvent>) => options.onBack(event.detail)}
       />
     </ds-tooltip>
@@ -88,6 +90,8 @@ export function renderBarTitleSectionTrigger(options: {
   surfaceOpen: boolean;
   ariaLabel: string;
   selectedLabel: string;
+  background?: 'chrome';
+  labelColor?: 'primary' | 'inherit';
   setTriggerEl: (el: HTMLButtonElement | null) => void;
   onToggle: (event: MouseEvent) => void;
 }) {
@@ -103,6 +107,7 @@ export function renderBarTitleSectionTrigger(options: {
           [className(prefix, 'section-trigger')]: true,
           [`${className(prefix, 'section-trigger')}--expanded`]: options.open,
           'ds-interaction-fill--surface-open': options.surfaceOpen,
+          'ds-interaction-fill--on-chrome': options.background === 'chrome',
           'ds-control--md': true,
           'ds-focus-ring-inset': true,
           'ds-interaction-fill': true,
@@ -119,7 +124,7 @@ export function renderBarTitleSectionTrigger(options: {
           as="span"
           variant="text-body-medium"
           emphasis
-          color="primary"
+          color={options.labelColor ?? 'primary'}
           lineTruncation={1}
         >
           {options.selectedLabel}
@@ -148,6 +153,7 @@ function renderVisibleAction(
     openActionMenuId: string;
     surfaceActionMenuId: string;
     actionTriggers: Map<string, FocusableBarTitleButton>;
+    buttonBackground?: 'chrome';
     toggleActionMenu: (id: string, event: MouseEvent) => void;
     emitAction: (id: string) => void;
   }
@@ -204,7 +210,7 @@ function renderVisibleAction(
         contrast={action.contrast ?? 'bold'}
       />
     ) : (
-      <ds-button-unfilled {...splitProps} />
+      <ds-button-unfilled {...splitProps} background={options.buttonBackground} />
     );
   }
 
@@ -245,7 +251,7 @@ function renderVisibleAction(
         contrast={action.contrast ?? 'bold'}
       />
     ) : (
-      <ds-button-unfilled {...buttonProps} />
+      <ds-button-unfilled {...buttonProps} background={options.buttonBackground} />
     );
 
   return action.type === 'icon' ? (
@@ -272,6 +278,7 @@ export function renderBarTitleActions(options: {
   actionMenuTriggerId: string;
   actionMenuId: string;
   actionTriggers: Map<string, FocusableBarTitleButton>;
+  buttonBackground?: 'chrome';
   setOverflowTriggerEl: (el: FocusableBarTitleButton | null) => void;
   toggleActionMenu: (id: string, event: MouseEvent) => void;
   emitAction: (id: string) => void;
@@ -300,6 +307,7 @@ export function renderBarTitleActions(options: {
             controls={options.actionMenuId}
             expanded={options.openActionMenuId === '__overflow'}
             surfaceOpen={options.surfaceActionMenuId === '__overflow'}
+            background={options.buttonBackground}
             onDsClick={(event: CustomEvent<MouseEvent>) =>
               options.toggleActionMenu('__overflow', event.detail)
             }

@@ -12,7 +12,7 @@
     "themeSetup": "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     "peerDependencies": {
       "required": [
-        "@ds-mo/tokens ^6.5.2",
+        "@ds-mo/tokens ^6.6.1",
         "@ds-mo/icons ^8.1.1"
       ],
       "optional": [],
@@ -1346,7 +1346,7 @@
             }
           ],
           "styling": {
-            "rationale": "The host participates in shell-owned layout; internal tabs and chrome own their recipes.",
+            "rationale": "The host participates in ShellApp-owned layout; ShellApp owns the shared Chrome base and wash while BarNav owns Chrome foreground, border, and interaction recipes.",
             "protected": [],
             "customProperties": []
           }
@@ -2862,7 +2862,7 @@
             "General content UI keeps the selected interaction fill and border for pressed or active emphasis.",
             "Shell, navigation, and tool-rail composites use isActive with primary foreground across the complete control and no selected fill or border.",
             "The omitted default surface treatment is for primary and secondary parent surfaces and uses the brand-active selected fill; pass faint explicitly on faint surfaces to use the neutral active fill.",
-            "Surface context must match the actual parent surface; translucent, inverted, media, and always-dark treatments are reserved for those surfaces.",
+            "Surface context must match the actual parent surface; chrome, translucent, inverted, media, and always-dark treatments are reserved for those surfaces. The chrome variant uses the chrome foreground, border, and interaction families and does not paint the parent surface.",
             "Loading prevents duplicate activation without applying inactive opacity or removing the current keyboard focus.",
             "Rounded changes only the control radius to the half-radius treatment; it does not change hierarchy, size, variant, or interaction semantics.",
             "Physical press scaling is on by default. Disable it only when an owning composite must keep child or background geometry fixed; hover and pressed interaction washes remain available.",
@@ -3970,7 +3970,10 @@
             "component:ds-select",
             "component:ds-switch",
             "component:ds-text",
-            "component:ds-setting-row"
+            "component:ds-setting-row-toggle",
+            "component:ds-setting-row-radio",
+            "component:ds-setting-row-checkbox",
+            "component:ds-inline-banner-settings"
           ],
           "accessibility": [
             "Provide a concise heading that identifies the settings section; CardSetting renders it as an h2.",
@@ -3985,26 +3988,30 @@
             "The editing property is controlled; CardSetting never changes it internally.",
             "dsAction emits edit, save, or cancel with the original pointer event. The parent decides whether and when editing changes.",
             "When another section requests edit, the parent keeps one active section and resolves any dirty current section before switching.",
+            "Project persistent informational copy into the banner slot so it sits above the padded content body and does not receive content-area padding.",
             "The parent owns read-only versus editable body composition, dirty state, validation, persistence, loading, success, and error consequences.",
             "A save request keeps the section editing while validation or persistence is pending; the parent exits only after success.",
             "A cancel request does not persist changes; the parent restores its chosen value snapshot and exits editing.",
             "The immediate variant keeps the resting card surface and omits header actions even if editing is supplied. The application applies and persists each control change independently."
           ],
           "responsiveBehavior": [
-            "Choose sm, md, or lg from the parent layout. Editable cards use the matching minimum height; immediate cards fit their content.",
+            "Choose sm, md, or lg from the parent layout. Empty editable cards use the matching minimum height. Cards with body content, and immediate cards, fit that content.",
             "The surface never exceeds its parent width, while the parent owns wrapping, columns, stacking, and breakpoint changes.",
             "At narrow widths, keep the fixed header actions visible and let application-owned body layouts collapse before allowing horizontal overflow."
           ],
           "frameworkCaveats": {
             "customElements": [
+              "Project ds-inline-banner-settings with slot=\"banner\". Leave setting rows and other controls in the default slot.",
               "Set editing as a JavaScript property and inspect dsAction.detail.action before updating the controlled state.",
               "When one section emits edit, update every sibling CardSetting so only the requested section remains editing."
             ],
             "react": [
+              "Pass slot=\"banner\" on ds-inline-banner-settings. Leave setting rows and other controls in the default slot.",
               "Pass editing from parent state and inspect onDsAction event detail; do not treat Save as successful until validation and persistence complete.",
               "Store one active section id and derive each CardSetting editing prop from that id."
             ],
             "angular": [
+              "Set slot=\"banner\" on ds-inline-banner-settings. Leave setting rows and other controls in the default slot.",
               "Bind [editing] and inspect $event.detail.action from (dsAction); do not treat Save as successful until validation and persistence complete.",
               "Store one active section id and derive each CardSetting editing binding from that id."
             ]
@@ -4041,10 +4048,17 @@
               },
               {
                 "properties": [
+                  "padding"
+                ],
+                "reason": "Content-area padding-block belongs on the body. The banner slot sits above that padding and does not receive it.",
+                "props": []
+              },
+              {
+                "properties": [
                   "width",
                   "min-height"
                 ],
-                "reason": "Card width selects the component geometry; immediate cards fit their content. Let the parent constrain available space.",
+                "reason": "Card width selects the component geometry. Empty editable cards keep the matching minimum height; cards with body content and immediate cards fit that content. Let the parent constrain available space.",
                 "props": [
                   "cardWidth",
                   "variant"
@@ -4577,7 +4591,8 @@
             "The initial checked and indeterminate values are restored by native form reset; checked values submit under name and unchecked values submit nothing.",
             "Sizes are lg with a 20px box in a 24px placement, md with a 16px box in a 20px placement, sm with a 12px box in a 16px placement, and xs with an 8px box in a 12px placement.",
             "Presentation mode removes checkbox semantics, focus, interaction, label rendering, description rendering, and form submission while preserving the visual state.",
-            "Description-rich checkboxes grow beyond the fixed density height while retaining its minimum target size and primitive-owned selection anatomy."
+            "Description-rich checkboxes grow beyond the fixed density height while retaining its minimum target size and align the checkbox placement with the primary label line.",
+            "Form and settings usage omits a row hover or pressed wash by default; set hasInteractionFill only when the checkbox itself is presented as a choice-list row."
           ],
           "responsiveBehavior": [
             "Choose size from the density of the containing row; labels and descriptions may wrap while the placement box stays fixed.",
@@ -4638,7 +4653,8 @@
                 "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
                 "props": [
                   "size",
-                  "presentation"
+                  "presentation",
+                  "hasInteractionFill"
                 ]
               }
             ],
@@ -4655,6 +4671,10 @@
             "required": false
           },
           "disabled": {
+            "type": "boolean",
+            "required": false
+          },
+          "hasInteractionFill": {
             "type": "boolean",
             "required": false
           },
@@ -4707,6 +4727,140 @@
           "react": "DsCheckbox",
           "vue": "DsCheckbox",
           "angular": "DsCheckbox"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
+      "name": "checkbox-group",
+      "title": "CheckboxGroup",
+      "description": "A visible, accessible label and shared vertical rhythm for a list of independent Checkbox controls.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/checkbox-group",
+        "source": "src/wc/components/CheckboxGroup/CheckboxGroup.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "A visible, accessible label and shared vertical rhythm for a list of independent Checkbox controls.",
+          "useWhen": [
+            "Two or more related checkboxes need one visible group label in a form.",
+            "A checkbox list should use the same density-aligned heading geometry as other compact option lists."
+          ],
+          "avoidWhen": [
+            "Only one standalone checkbox is needed.",
+            "Exactly one option may be selected; use Radio instead.",
+            "The list is a settings-card row; use component:ds-setting-row-checkbox, which owns the heading and view/edit presentation."
+          ],
+          "alternatives": [
+            {
+              "when": "Exactly one option may be selected.",
+              "component": "component:ds-radio",
+              "reason": "Radio owns mutually exclusive selection and keyboard traversal."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-checkbox",
+            "component:ds-text",
+            "component:ds-setting-row-checkbox"
+          ],
+          "accessibility": [
+            "The visible label names the role=group container; each slotted Checkbox keeps its own visible label, state, focus, and form value.",
+            "Inside ds-setting-row-checkbox the visible form label is omitted on first paint; the row heading is the accessible name via aria-labelledby.",
+            "Use aria-describedby to associate group-level guidance or validation copy.",
+            "Use the same size on CheckboxGroup and every slotted Checkbox so their text origins and density remain aligned."
+          ],
+          "states": [
+            "The label uses the shared density section-heading row and body-small emphasis.",
+            "Vertical checkbox options use a 4px gap; at medium density the group label and each single-line checkbox row are 32px high.",
+            "Selection, mixed, inactive, validation, and form behavior remain owned by each slotted Checkbox."
+          ],
+          "responsiveBehavior": [
+            "The group fills the width supplied by its parent while each Checkbox keeps its intrinsic row width and allows copy to wrap."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Slot two or more ds-checkbox children and keep their name, value, and checked state application-owned."
+            ],
+            "react": [
+              "Compose DsCheckbox children inside DsCheckboxGroup."
+            ],
+            "vue": [
+              "Compose DsCheckbox children inside DsCheckboxGroup."
+            ],
+            "angular": [
+              "Compose generated DsCheckbox adapters inside DsCheckboxGroup."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/CheckboxGroup/CheckboxGroup.stories.ts"
+            },
+            {
+              "label": "Rendered form geometry coverage",
+              "path": "tests/e2e/forms.spec.ts"
+            }
+          ],
+          "styling": {
+            "rationale": "The group owns only its label and option-list rhythm; each Checkbox owns its own selection anatomy.",
+            "protected": [
+              {
+                "properties": [
+                  "gap",
+                  "padding",
+                  "font",
+                  "font-size",
+                  "font-weight",
+                  "line-height"
+                ],
+                "reason": "Use size to keep the heading and slotted controls on the shared density recipe.",
+                "props": [
+                  "size"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
+        },
+        "props": {
+          "ariaDescribedby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "ariaLabelledby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": false
+          },
+          "size": {
+            "type": "CheckboxGroupSize",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-checkbox-group",
+          "react": "DsCheckboxGroup",
+          "vue": "DsCheckboxGroup",
+          "angular": "DsCheckboxGroup"
         }
       },
       "dependencies": [
@@ -7615,6 +7769,121 @@
       "registryDependencies": []
     },
     {
+      "name": "inline-banner-settings",
+      "title": "InlineBannerSettings",
+      "description": "Compact non-interactive informational copy row for settings cards.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/inline-banner-settings",
+        "source": "src/wc/components/InlineBannerSettings/InlineBannerSettings.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "stable",
+          "summary": "Compact non-interactive informational copy row for settings cards.",
+          "useWhen": [
+            "A settings card needs persistent informational copy above its content.",
+            "The message should remain visible in both read-only and editing presentations of the settings card.",
+            "The message needs body-small typography, compact spacing, and a single tertiary bottom boundary."
+          ],
+          "avoidWhen": [
+            "The message belongs in general bounded content outside a settings card; reserve the general inline-banner component for that use case.",
+            "The message is application-wide or needs dismissal, actions, or announcement urgency; use Banner.",
+            "The message is transient or follows a completed action; use Toast."
+          ],
+          "alternatives": [
+            {
+              "when": "A persistent application-wide condition needs optional actions or dismissal.",
+              "component": "component:ds-banner",
+              "reason": "Banner owns shell-level messaging, actions, dismissal, and announcement behavior."
+            },
+            {
+              "when": "A field needs supporting or validation copy tied to its control.",
+              "component": "component:ds-field",
+              "reason": "Field owns the control relationship and supporting-message semantics."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-card-setting",
+            "component:ds-text"
+          ],
+          "accessibility": [
+            "Keep the description concise and authored; InlineBannerSettings does not transform, truncate, or announce the copy.",
+            "Use InlineBannerSettings for static context. Applications must choose a live-region component when a dynamic announcement is required.",
+            "The informational copy remains plain text and has no interactive controls or dismissal affordance."
+          ],
+          "states": [
+            "The description renders verbatim in every state in which the owning settings card projects the component.",
+            "The component has no internal visibility, editing, or dismissal state; the owning settings card controls whether it is present.",
+            "The content height is intrinsic: the banner contributes 8px block padding and its inner content container contributes 4px block padding. A single body-small line is 24px inside that container (4px + 16px line-height + 4px), followed by the tertiary bottom boundary."
+          ],
+          "responsiveBehavior": [
+            "The component fills the available inline size and lets body-small copy wrap naturally.",
+            "The effective inline inset remains 16px: 8px banner padding, 6px inner content padding, and 2px text-side padding."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Pass the complete authored message through description, assign slot=\"banner\" on CardSetting, and do not apply a CSS casing transform or mutate the text for presentation."
+            ],
+            "react": [
+              "Pass the complete authored message through the description prop, set slot=\"banner\" on CardSetting, and keep the component mounted for every settings-card state that needs the context."
+            ],
+            "angular": [
+              "Bind [description] from the settings card's stable copy source and project the component into CardSetting's banner slot for every state that needs the context."
+            ]
+          },
+          "references": [
+            {
+              "label": "Settings inline banner examples",
+              "path": "src/wc/components/InlineBannerSettings/InlineBannerSettings.stories.ts"
+            },
+            {
+              "label": "Rendered geometry coverage",
+              "path": "tests/e2e/inline-banner-settings.spec.ts"
+            }
+          ],
+          "styling": {
+            "rationale": "The component owns only the compact settings informational row recipe; its card owns the surrounding surface and layout.",
+            "protected": [
+              {
+                "properties": [
+                  "border-bottom",
+                  "color",
+                  "padding"
+                ],
+                "reason": "The component owns the readable informational row treatment and keeps its spacing consistent across settings cards.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
+        },
+        "props": {
+          "description": {
+            "type": "string",
+            "required": true
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-inline-banner-settings",
+          "react": "DsInlineBannerSettings",
+          "vue": "DsInlineBannerSettings",
+          "angular": "DsInlineBannerSettings"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
       "name": "input",
       "title": "Input",
       "description": "Form-associated text and number input with constraints, optional free-text suggestions, token entry, and character counts.",
@@ -9555,8 +9824,8 @@
             "Surface styling does not add semantics; failed delivery belongs in Message metadata below the unchanged bubble rather than in an error bubble treatment."
           ],
           "states": [
-            "The user variant represents user-sent copy in agent and person-to-person channels and uses secondary foreground.",
-            "The received variant represents ordinary incoming person-to-person copy.",
+            "The user variant represents user-sent copy in agent and person-to-person channels, uses primary foreground, and uses the Chrome primary background so body-medium copy meets contrast on that surface.",
+            "The received variant represents ordinary incoming person-to-person copy, uses secondary foreground, and uses the Chrome secondary background.",
             "Typing and rich agent output are not MessageBubble variants."
           ],
           "responsiveBehavior": [
@@ -9653,10 +9922,10 @@
           "states": [
             "The owner controls draft value and transport state; the composer emits intent without performing transport.",
             "Error status never clears or disables the draft; the application supplies recovery actions through error-actions and owns retry semantics. The negative support surface appears above and attached to the composer box, within the component's measured ownership.",
-            "Use the tools slot for leading actions such as add and the actions slot for trailing actions such as dictation; the built-in submit or stop action remains last with an 8px gap from the preceding action. These icon buttons use the standard non-rounded control radius, and the application supplies tooltips for slotted icon actions.",
-            "The composer surface uses the 10px --dimension-radius-125 token.",
+            "Use the tools slot for leading actions such as add and the actions slot for trailing actions such as dictation; the built-in submit or stop action remains last with an 8px gap from the preceding action. The built-in and application-provided composer buttons use the standard rounded control treatment, and the application supplies tooltips for slotted icon actions.",
+            "The composer surface uses the 4px --dimension-radius-050 token.",
             "Mouse or keyboard focus on the textarea gives the complete composer surface the same bold-brand inset stroke width and color as an active Input; the native textarea never draws a separate outline.",
-            "The empty or otherwise inactive submit action is a disabled bordered ButtonUnfilled. Ready submit actions use submitIntent, while the streaming stop action remains a bold-brand ButtonFilled.",
+            "The empty or otherwise inactive submit action is a disabled bordered, rounded ButtonUnfilled. Ready submit actions use submitIntent and the rounded control treatment, while the streaming stop action remains a rounded bold-brand ButtonFilled.",
             "The attached error unit keeps a real boundary in forced colors and lets message text and application-owned recovery actions wrap at narrow widths."
           ],
           "responsiveBehavior": [
@@ -11984,7 +12253,7 @@
     {
       "name": "radio",
       "title": "Radio",
-      "description": "Form-associated one-of-many radio selection set with vertical or horizontal layout, optional per-option descriptions, four densities, per-option inactive state, and roving keyboard focus.",
+      "description": "Form-associated one-of-many radio selection set with an optional visible group label, vertical or horizontal layout, per-option descriptions, four densities, per-option inactive state, and roving keyboard focus.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -11995,7 +12264,7 @@
         "intent": {
           "audience": "general",
           "status": "stable",
-          "summary": "Form-associated one-of-many radio selection set with vertical or horizontal layout, optional per-option descriptions, four densities, per-option inactive state, and roving keyboard focus.",
+          "summary": "Form-associated one-of-many radio selection set with an optional visible group label, vertical or horizontal layout, per-option descriptions, four densities, per-option inactive state, and roving keyboard focus.",
           "useWhen": [
             "A user must select exactly one visible option from a small set.",
             "All available choices should remain visible for comparison.",
@@ -12028,7 +12297,9 @@
             "component:ds-text"
           ],
           "accessibility": [
-            "The host exposes radiogroup semantics and requires an accessible group name from aria-label or aria-labelledby.",
+            "The host exposes radiogroup semantics and requires an accessible group name from the visible label, aria-label, or aria-labelledby.",
+            "When groupLabel is provided, Radio renders it above the options and uses the same text as the radiogroup's accessible name.",
+            "Inside ds-setting-row-radio the visible form groupLabel is omitted on first paint; the row heading is the accessible name via aria-labelledby. Independent multi-select settings use ds-setting-row-checkbox with ds-checkbox-group instead.",
             "Each visible option exposes radio semantics, its checked state, its label text, optional supporting description, and any inactive state.",
             "Arrow keys move and select through active options; Home and End select the first and last active options; Space and Enter select the focused option.",
             "Roving tabindex keeps one active option in the tab order, preferring the selected option; setFocus uses that same public focus target."
@@ -12038,7 +12309,10 @@
             "Selected circles remove the border, use a brand fill, and draw a centered on-bold foreground dot sized 10px at lg, 8px at md, 6px at sm, and 4px at xs.",
             "Sizes are lg with a 20px circle in a 24px placement, md with a 16px circle in a 20px placement, sm with a 12px circle in a 16px placement, and xs with an 8px circle in a 12px placement.",
             "The initial value is restored by native form reset; the selected value submits under name and a required set is invalid until one active option is selected.",
-            "Description-rich options grow beyond the fixed density height while retaining its minimum target size and primitive-owned selection anatomy."
+            "Description-rich options grow beyond the fixed density height while retaining its minimum target size and primitive-owned selection anatomy.",
+            "A visible group label uses the same density height and horizontal text origin as a menu section heading above the option list without adding a second interaction target. Copy uses text-body-small emphasis.",
+            "Vertical form options use a 4px gap; a medium single-line option and its group label each use the shared 32px control height.",
+            "Form and settings usage omits a row hover or pressed wash by default; set hasInteractionFill only when each radio option is presented as a choice-list row."
           ],
           "responsiveBehavior": [
             "Choose size from the density of the containing form or settings row.",
@@ -12097,7 +12371,8 @@
                 ],
                 "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
                 "props": [
-                  "size"
+                  "size",
+                  "hasInteractionFill"
                 ]
               }
             ],
@@ -12123,6 +12398,14 @@
           },
           "form": {
             "type": "string | undefined",
+            "required": false
+          },
+          "groupLabel": {
+            "type": "string",
+            "required": false
+          },
+          "hasInteractionFill": {
+            "type": "boolean",
             "required": false
           },
           "isInactive": {
@@ -12224,7 +12507,8 @@
             "Label the group with Field or an accessible name. Descriptions name each option separately."
           ],
           "states": [
-            "Selection is shown by the radio indicator while the tile keeps its neutral border. Error retains the negative border, and keyboard focus keeps the focus-token outline. Inactive options cannot be selected.",
+            "Selection is shown by the 16px radio indicator centered in a 20px placement box while the tile keeps its neutral border. The placement box and copy have a 12px gap inside the tile's 16px padding, and the tile uses the 2px compact radius. Error retains the negative border, and keyboard focus keeps the focus-token outline. Inactive options cannot be selected.",
+            "Options with descriptions use primary body-medium emphasis for the title and secondary body-medium supporting text with a 4px gap. Text-only options use secondary body-medium text without emphasis.",
             "The component owns form values, required validation, reset, and disabled-fieldset behavior."
           ],
           "responsiveBehavior": [
@@ -13000,15 +13284,212 @@
       ]
     },
     {
-      "name": "setting-row",
-      "title": "SettingRow",
+      "name": "setting-row-checkbox",
+      "title": "SettingRowCheckbox",
+      "description": "Padded settings-row composition for an editable Checkbox group and its non-interactive saved-value readout.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/setting-row-checkbox",
+        "source": "src/wc/components/SettingRowCheckbox/SettingRowCheckbox.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Padded settings-row composition for an editable Checkbox group and its non-interactive saved-value readout.",
+          "useWhen": [
+            "A settings card needs an independent multi-select Checkbox group as one padded row item.",
+            "The same settings card needs to display the saved selected values without interactive checkbox controls in view mode."
+          ],
+          "avoidWhen": [
+            "The Checkbox group is not part of a settings-row surface; compose ds-checkbox-group directly.",
+            "Exactly one option may be selected; use component:ds-setting-row-radio.",
+            "The setting is a single immediate on/off choice; use component:ds-setting-row-toggle."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-card-setting",
+            "component:ds-checkbox-group",
+            "component:ds-checkbox"
+          ],
+          "accessibility": [
+            "Pass the settings heading as the row label. Do not pass CheckboxGroup's form label; the row owns the visible heading and points the slotted group at it with aria-labelledby.",
+            "Keep each Checkbox's label, checked state, name, value, and dsChange owned by the application. Leave the Checkbox group slotted in view and edit; the row hides it in view.",
+            "Do not add a second interaction layer to the row; each Checkbox owns its own focus and activation while settings usage keeps hasInteractionFill false.",
+            "View presentation exposes readable label, saved selected-value copy, and optional supporting copy without checkbox semantics, checkbox controls, or a focus target."
+          ],
+          "states": [
+            "The row is a neutral padded composition; selected, focus, mixed, and inactive states belong to the slotted Checkboxes without a choice-list hover or pressed wash.",
+            "The owning application handles dsChange on each Checkbox and supplies valueLabel by joining the currently selected option labels.",
+            "Heading, saved-value choice, and slotted Checkbox group stay mounted. presentation reflects on the host so view/edit is CSS visibility only; do not swap Host children or ngIf the group.",
+            "View presentation hides the slotted Checkbox group with ::slotted host CSS and shows the saved selected values plus optional consequence copy. Omit description on the row and on each Checkbox when there is no supporting copy; view then shows only the selected-value labels. The group stays in the tree."
+          ],
+          "responsiveBehavior": [
+            "The row never exceeds its parent width; the slotted Checkbox group keeps option copy in the flexible column and wraps descriptions when needed."
+          ],
+          "references": [
+            {
+              "label": "Settings mock",
+              "path": "src/wc/components/SettingRowCheckbox/SettingRowCheckbox.stories.ts"
+            }
+          ],
+          "styling": {
+            "rationale": "The row uses the shared settings-row inline inset so view and edit copy share the same 16px origin, and zeros host padding-block because the heading, choice, and checkbox options already own vertical spacing. The heading is row-owned CSS, not CheckboxGroup's form label or control section-heading recipe. Checkbox owns option geometry.",
+            "protected": [
+              {
+                "properties": [
+                  "padding"
+                ],
+                "reason": "Keep space-200 inline inset in view and edit, with no extra host padding-block.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
+        },
+        "props": {
+          "description": {
+            "type": "string",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": false
+          },
+          "presentation": {
+            "type": "SettingRowCheckboxPresentation",
+            "required": false
+          },
+          "valueLabel": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-setting-row-checkbox",
+          "react": "DsSettingRowCheckbox",
+          "vue": "DsSettingRowCheckbox",
+          "angular": "DsSettingRowCheckbox"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
+      "name": "setting-row-radio",
+      "title": "SettingRowRadio",
+      "description": "Padded settings-row composition for an editable Radio group and its non-interactive saved-value readout.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/setting-row-radio",
+        "source": "src/wc/components/SettingRowRadio/SettingRowRadio.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Padded settings-row composition for an editable Radio group and its non-interactive saved-value readout.",
+          "useWhen": [
+            "A settings card needs a mutually exclusive Radio group as one padded row item.",
+            "The same settings card needs to display the saved option without an interactive control in view mode."
+          ],
+          "avoidWhen": [
+            "The Radio group is not part of a settings-row surface; compose ds-radio directly.",
+            "The setting allows more than one option to be selected; use component:ds-setting-row-checkbox.",
+            "The setting is a single immediate on/off choice; use component:ds-setting-row-toggle."
+          ],
+          "commonlyComposedWith": [
+            "component:ds-card-setting",
+            "component:ds-radio"
+          ],
+          "accessibility": [
+            "Pass the settings heading as the row label. Do not pass Radio groupLabel; the row owns the visible heading and points the slotted radiogroup at it with aria-labelledby.",
+            "Keep the Radio group's options, value, required state, and selection event owned by the application. Leave the Radio slotted in view and edit; the row hides it in view.",
+            "Do not add a second interaction layer to the row; Radio owns option focus and keyboard selection while settings usage keeps hasInteractionFill false.",
+            "View presentation exposes readable label, saved value, and optional supporting copy without radio semantics, a radio toggle, or a focus target."
+          ],
+          "states": [
+            "The row is a neutral padded composition; selected, focus, and inactive states belong to the slotted Radio without a choice-list hover or pressed wash.",
+            "The owning application handles dsChange and updates the slotted Radio value.",
+            "Heading, saved-value choice, and slotted Radio stay mounted. presentation reflects on the host so view/edit is CSS visibility only; do not swap Host children or ngIf the Radio.",
+            "View presentation hides the slotted Radio with ::slotted host CSS and shows the saved option label plus optional consequence copy. The Radio stays in the tree."
+          ],
+          "responsiveBehavior": [
+            "The row never exceeds its parent width; the slotted Radio keeps its option copy in the flexible column and wraps descriptions when needed."
+          ],
+          "references": [
+            {
+              "label": "Settings mock",
+              "path": "src/wc/components/SettingRowRadio/SettingRowRadio.stories.ts"
+            }
+          ],
+          "styling": {
+            "rationale": "The row uses the shared settings-row inline inset so view and edit copy share the same 16px origin, and zeros host padding-block because the heading, choice, and radio options already own vertical spacing. The heading is row-owned CSS, not Radio's form group-label or control section-heading recipe. Radio owns option geometry.",
+            "protected": [
+              {
+                "properties": [
+                  "padding"
+                ],
+                "reason": "Keep space-200 inline inset in view and edit, with no extra host padding-block.",
+                "props": []
+              }
+            ],
+            "customProperties": []
+          }
+        },
+        "props": {
+          "description": {
+            "type": "string",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": false
+          },
+          "presentation": {
+            "type": "SettingRowRadioPresentation",
+            "required": false
+          },
+          "valueLabel": {
+            "type": "string",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-setting-row-radio",
+          "react": "DsSettingRowRadio",
+          "vue": "DsSettingRowRadio",
+          "angular": "DsSettingRowRadio"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
+      "name": "setting-row-toggle",
+      "title": "SettingRowToggle",
       "description": "Two-column immediate binary setting with descriptive copy and an accessible switch.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
         "distribution": "npm",
-        "storybook": "https://zainadeel.github.io/compomo/?path=/story/setting-row",
-        "source": "src/wc/components/SettingRow/SettingRow.tsx",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/setting-row-toggle",
+        "source": "src/wc/components/SettingRowToggle/SettingRowToggle.tsx",
         "intentStatus": "complete",
         "intent": {
           "audience": "general",
@@ -13032,7 +13513,9 @@
           ],
           "states": [
             "The application accepts or rejects change requests by updating the controlled checked value and owns persistence and errors.",
-            "Name the enabled setting consistently; the label must not change when the switch is toggled."
+            "Name the enabled setting consistently; the label must not change when the switch is toggled.",
+            "Non-emphasis rows without supporting copy use ds-text color secondary (foreground-secondary) on the title. Non-emphasis rows with description keep a primary title.",
+            "Supporting copy is text-body-small in every variant."
           ],
           "responsiveBehavior": [
             "The copy wraps while the switch keeps its natural size in the trailing column, including at narrow widths."
@@ -13040,18 +13523,18 @@
           "references": [
             {
               "label": "Usage states",
-              "path": "src/wc/components/SettingRow/SettingRow.stories.ts"
+              "path": "src/wc/components/SettingRowToggle/SettingRowToggle.stories.ts"
             }
           ],
           "styling": {
-            "rationale": "The row owns copy/control spacing; its parent owns the section surface and width.",
+            "rationale": "The row uses the shared settings-row inset; copy/control columns and the parent section surface stay component-owned.",
             "protected": [
               {
                 "properties": [
                   "padding",
                   "gap"
                 ],
-                "reason": "Preserve the shared settings-row spacing recipe.",
+                "reason": "Preserve the shared settings-row inset (space-100 block, space-200 inline) and copy-to-control gap.",
                 "props": []
               }
             ],
@@ -13074,6 +13557,10 @@
           "label": {
             "type": "string",
             "required": true
+          },
+          "variant": {
+            "type": "SettingRowToggleVariant",
+            "required": false
           }
         },
         "events": [
@@ -13084,10 +13571,10 @@
         ],
         "slots": [],
         "exports": {
-          "customElement": "ds-setting-row",
-          "react": "DsSettingRow",
-          "vue": "DsSettingRow",
-          "angular": "DsSettingRow"
+          "customElement": "ds-setting-row-toggle",
+          "react": "DsSettingRowToggle",
+          "vue": "DsSettingRowToggle",
+          "angular": "DsSettingRowToggle"
         }
       },
       "dependencies": [

@@ -47,6 +47,10 @@
   width: 100%;
 }
 
+.message__body:has(.message__content > ds-message-bubble) .message__header {
+  padding-inline-start: calc(var(--dimension-space-100) + var(--dimension-space-025));
+}
+
 .message--outgoing .message__body {
   align-items: flex-end;
 }

@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-card-setting.js';
+import '../../../../dist/components/ds-inline-banner-settings.js';
 import '../../../../dist/components/ds-text.js';
-import '../../../../dist/components/ds-setting-row.js';
+import '../../../../dist/components/ds-setting-row-toggle.js';
 import type { CardSettingActionDetail } from './CardSetting';
 
 const WIDTHS = ['sm', 'md', 'lg'] as const;
@@ -127,28 +128,56 @@ export const Interactive: Story = {
   `,
 };
 
+/** Empty editable cards keep the width-matched minimum height. */
+export const Empty: Story = {
+  render: args => html`
+    <ds-card-setting
+      heading=${args['heading']}
+      card-width=${args['cardWidth']}
+      @dsAction=${handleControlledAction}
+    ></ds-card-setting>
+  `,
+};
+
+/** Informational copy sits above the padded content body and does not inherit that padding. */
+export const WithBanner: Story = {
+  render: args => html`
+    <ds-card-setting
+      heading=${args['heading']}
+      card-width=${args['cardWidth']}
+      @dsAction=${handleControlledAction}
+    >
+      <ds-inline-banner-settings
+        slot="banner"
+        description="Cloud review removes false positives before the setting is changed."
+      ></ds-inline-banner-settings>
+      ${settingsBody('Choose how events are validated.')}
+    </ds-card-setting>
+  `,
+};
+
 export const Immediate: Story = {
   render: () => html`
     <ds-card-setting heading="Interface preferences" variant="immediate">
       <div role="list" aria-label="Interface preferences">
-        <ds-setting-row
+        <ds-setting-row-toggle
           role="listitem"
           label="Panel navigation"
           description="Show page sections in the side panel. Turn off to use top bar tabs."
           checked
           @dsChange=${(event: CustomEvent<boolean>) => {
-            (event.currentTarget as HTMLDsSettingRowElement).checked = event.detail;
+            (event.currentTarget as HTMLDsSettingRowToggleElement).checked = event.detail;
           }}
-        ></ds-setting-row>
-        <ds-setting-row
+        ></ds-setting-row-toggle>
+        <ds-setting-row-toggle
           role="listitem"
           label="Configuration menus"
           description="Open view settings in menus. Turn off to use a side panel."
           checked
           @dsChange=${(event: CustomEvent<boolean>) => {
-            (event.currentTarget as HTMLDsSettingRowElement).checked = event.detail;
+            (event.currentTarget as HTMLDsSettingRowToggleElement).checked = event.detail;
           }}
-        ></ds-setting-row>
+        ></ds-setting-row-toggle>
       </div>
     </ds-card-setting>
   `,

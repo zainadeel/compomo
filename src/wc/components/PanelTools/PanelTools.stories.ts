@@ -451,6 +451,7 @@ function agentsFullView(presentation: 'drawer' | 'fullscreen') {
                             variant="icon"
                             icon="Plus"
                             size="md"
+                            rounded
                             .hasBorder=${false}
                             aria-label="Add to message"
                           ></ds-button-unfilled>
@@ -459,6 +460,7 @@ function agentsFullView(presentation: 'drawer' | 'fullscreen') {
                             variant="icon"
                             icon="Mic"
                             size="md"
+                            rounded
                             .hasBorder=${false}
                             aria-label="Dictate message"
                           ></ds-button-unfilled>
@@ -482,6 +484,7 @@ function agentsFullView(presentation: 'drawer' | 'fullscreen') {
                           variant="icon"
                           icon="Plus"
                           size="md"
+                          rounded
                           .hasBorder=${false}
                           aria-label="Add to message"
                         ></ds-button-unfilled>
@@ -490,6 +493,7 @@ function agentsFullView(presentation: 'drawer' | 'fullscreen') {
                           variant="icon"
                           icon="Mic"
                           size="md"
+                          rounded
                           .hasBorder=${false}
                           aria-label="Dictate message"
                         ></ds-button-unfilled>

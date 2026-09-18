@@ -78,6 +78,30 @@ When the control is borderless, supporting description and error copy inset
 to the control's text origin (frame padding plus label inset) so they align
 with content rather than the resting border box.
 
+## Settings row inset
+
+`src/wc/utils/settings-row.css` owns the list-row inset shared by
+SettingRowToggle, SettingRowRadio, SettingRowCheckbox, and future settings rows:
+
+- CardSetting's content body contributes only `padding-block: space-100`.
+- Each row contributes `padding-inline: space-200`. Toggle rows also keep the
+  shared `padding-block: space-100`. SettingRowRadio and SettingRowCheckbox
+  zero host padding-block because their heading, choice, and option rows
+  already own vertical spacing.
+- Per-setting dividers use that same padding so the line shares the row
+  content origin.
+- The row sets `--ds-settings-row-control-padding-inline` to `0` so a nested
+  Radio or Checkbox does not add control-frame inline padding on top of the
+  row inset. SettingRowRadio and SettingRowCheckbox own the visible heading in
+  view and edit; nested Radio and CheckboxGroup are options-only and omit
+  their form group labels. Heading, saved-value choice, and the slotted
+  control stay mounted; view/edit is host-attribute CSS, including
+  ::slotted(ds-radio) and ::slotted(ds-checkbox-group), so scoped mode does
+  not remount Host children. View and edit headings share that 16px text
+  origin. Option labels in edit still follow the radio or checkbox icon box.
+
+The recipe does not choose row internals, typography, or list semantics.
+
 ## Compact header anatomy
 
 `src/wc/utils/chrome-header.css` owns the geometry repeated by Banner, Modal,

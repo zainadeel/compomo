@@ -51,6 +51,8 @@ at the line where they occur.
 - `control-parts.css`: frame, icon box, and label box anatomy.
 - `field-stack.css`: label/control/supporting-message flow; borderless
   supporting copy uses the control text origin.
+- `settings-row.css`: CardSetting row inset (`space-100` block, `space-200`
+  inline) and nested-control padding origin.
 - `empty-region.css`: bounded empty-region centering.
 - `chrome-layout.css`: spacing-only row/column/grid chrome.
 - `chrome-header.css`: compact header anatomy and copy/control alignment.

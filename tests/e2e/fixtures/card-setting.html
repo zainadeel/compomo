@@ -1,13 +1,22 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Settings cards</title>
-    <link rel="stylesheet" href="/tokens/index.css">
+    <link rel="stylesheet" href="/tokens/index.css" />
   </head>
   <body>
     <main>
       <h1>Settings</h1>
+      <ds-card-setting
+        id="empty-card"
+        heading="Collisions"
+        card-width="sm"
+        edit-label="Edit Collisions"
+        cancel-label="Cancel Collisions"
+        save-label="Save Collisions"
+      ></ds-card-setting>
+
       <ds-card-setting
         id="general-card"
         heading="General"
@@ -29,11 +38,51 @@
       >
         <p>Driver identification settings.</p>
       </ds-card-setting>
-      <ds-card-setting id="immediate-card" heading="Interface preferences" variant="immediate" editing>
+      <ds-card-setting
+        id="banner-card"
+        heading="Event validation"
+        card-width="md"
+        edit-label="Edit Event validation"
+        cancel-label="Cancel Event validation"
+        save-label="Save Event validation"
+      >
+        <ds-inline-banner-settings
+          slot="banner"
+          description="Cloud review removes false positives before the setting is changed."
+        ></ds-inline-banner-settings>
+        <p>Validation method</p>
+      </ds-card-setting>
+
+      <ds-card-setting
+        id="immediate-card"
+        heading="Interface preferences"
+        variant="immediate"
+        editing
+      >
         <div role="list" aria-label="Interface preferences">
-          <ds-setting-row id="navigation-setting" role="listitem" label="Panel navigation" description="Show page sections in the side panel. Turn off to use top bar tabs." checked></ds-setting-row>
-          <ds-setting-row id="long-setting" role="listitem" label="Configuration menus with a longer setting name" description="Open filters and view settings in menus. Turn off to use a right-side configuration panel beside the page." checked></ds-setting-row>
-          <ds-setting-row id="disabled-setting" role="listitem" label="Unavailable setting" description="This setting is managed by your organization." disabled checked></ds-setting-row>
+          <ds-setting-row-toggle
+            id="navigation-setting"
+            role="listitem"
+            label="Panel navigation"
+            description="Show page sections in the side panel. Turn off to use top bar tabs."
+            checked
+          ></ds-setting-row-toggle>
+          <ds-setting-row-toggle
+            id="long-setting"
+            role="listitem"
+            label="Configuration menus with a longer setting name"
+            description="Open filters and view settings in menus. Turn off to use a right-side configuration panel beside the page."
+            variant="non-emphasis"
+            checked
+          ></ds-setting-row-toggle>
+          <ds-setting-row-toggle
+            id="disabled-setting"
+            role="listitem"
+            label="Unavailable setting"
+            description="This setting is managed by your organization."
+            disabled
+            checked
+          ></ds-setting-row-toggle>
         </div>
       </ds-card-setting>
     </main>

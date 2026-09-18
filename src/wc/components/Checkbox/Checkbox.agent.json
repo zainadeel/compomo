@@ -48,7 +48,8 @@
     "The initial checked and indeterminate values are restored by native form reset; checked values submit under name and unchecked values submit nothing.",
     "Sizes are lg with a 20px box in a 24px placement, md with a 16px box in a 20px placement, sm with a 12px box in a 16px placement, and xs with an 8px box in a 12px placement.",
     "Presentation mode removes checkbox semantics, focus, interaction, label rendering, description rendering, and form submission while preserving the visual state.",
-    "Description-rich checkboxes grow beyond the fixed density height while retaining its minimum target size and primitive-owned selection anatomy."
+    "Description-rich checkboxes grow beyond the fixed density height while retaining its minimum target size and align the checkbox placement with the primary label line.",
+    "Form and settings usage omits a row hover or pressed wash by default; set hasInteractionFill only when the checkbox itself is presented as a choice-list row."
   ],
   "responsiveBehavior": [
     "Choose size from the density of the containing row; labels and descriptions may wrap while the placement box stays fixed.",
@@ -99,7 +100,7 @@
       {
         "properties": ["background", "border", "box-shadow", "color"],
         "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
-        "props": ["size", "presentation"]
+        "props": ["size", "presentation", "hasInteractionFill"]
       }
     ],
     "customProperties": []
