@@ -266,7 +266,12 @@ export class Radio {
         }}
       >
         {this.hasGroupLabel ? (
-          <ds-text class="radio__group-label" as="span" variant="text-body-small" emphasis>
+          <ds-text
+            class={`radio__group-label ds-control-section-heading ds-control--${this.size}`}
+            as="span"
+            variant="text-body-small"
+            emphasis
+          >
             {this.groupLabel}
           </ds-text>
         ) : null}

@@ -148,22 +148,35 @@ test('radio tiles activate anywhere, navigate by arrows and obey form reset and 
     .locator('label')
     .first()
     .evaluate(el => {
+      const placement = el.querySelector('.radio-tile__placement')!.getBoundingClientRect();
       const radio = el.querySelector('.radio-tile__indicator')!.getBoundingClientRect();
       const copy = el.querySelector('.radio-tile__copy')!.getBoundingClientRect();
       const title = el.querySelector('ds-text')!;
       const titleRect = title.getBoundingClientRect();
+      const descriptionRect = el.querySelectorAll('ds-text')[1]!.getBoundingClientRect();
       return {
-        gap: copy.left - radio.right,
+        placementSize: placement.width,
+        radioSize: radio.width,
+        gap: copy.left - placement.right,
         textInset: titleRect.left - copy.left,
+        copyGap: descriptionRect.top - titleRect.bottom,
+        radius: getComputedStyle(el).borderRadius,
         centerOffset:
-          radio.top +
-          radio.height / 2 -
+          placement.top +
+          placement.height / 2 -
           (titleRect.top + parseFloat(getComputedStyle(title).lineHeight) / 2),
       };
     });
-  expect(geometry.gap).toBe(8);
-  expect(geometry.textInset).toBe(2);
+  expect(geometry.placementSize).toBe(20);
+  expect(geometry.radioSize).toBe(16);
+  expect(geometry.gap).toBe(12);
+  expect(geometry.textInset).toBe(0);
+  expect(geometry.copyGap).toBe(4);
+  expect(geometry.radius).toBe('2px');
   expect(Math.abs(geometry.centerOffset)).toBeLessThan(0.5);
+  const textOnlyTitle = host.locator('label').nth(2).locator('ds-text');
+  await expect(textOnlyTitle).toHaveJSProperty('emphasis', false);
+  await expect(textOnlyTitle).toHaveJSProperty('color', 'secondary');
   const normalBorder = await host
     .locator('.radio-tile__outline')
     .nth(1)

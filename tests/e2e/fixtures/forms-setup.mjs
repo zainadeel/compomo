@@ -5,6 +5,7 @@ import '/dist/components/ds-input-time.js';
 import '/dist/components/ds-textarea.js';
 import '/dist/components/ds-field.js';
 import '/dist/components/ds-checkbox.js';
+import '/dist/components/ds-checkbox-group.js';
 import '/dist/components/ds-select.js';
 import '/dist/components/ds-menu.js';
 import '/dist/components/ds-tag.js';
@@ -23,6 +24,7 @@ await Promise.all(
     'ds-textarea',
     'ds-field',
     'ds-checkbox',
+    'ds-checkbox-group',
     'ds-select',
     'ds-menu',
     'ds-tag',

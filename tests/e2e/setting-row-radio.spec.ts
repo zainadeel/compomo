@@ -27,10 +27,18 @@ test('composes a labeled Radio group without adding a second interaction layer',
   await expect(disabled).not.toHaveClass(/ds-interaction-fill/);
 
   const groupLabelBox = await group.locator('.radio__group-label .ds-text__element').boundingBox();
+  const groupLabelRowBox = await group.locator('.radio__group-label').boundingBox();
   const firstCircleBox = await group.locator('.radio__circle').first().boundingBox();
+  const firstItemBox = await group.locator('.radio__item').first().boundingBox();
+  const secondItemBox = await group.locator('.radio__item').nth(1).boundingBox();
   expect(groupLabelBox).not.toBeNull();
+  expect(groupLabelRowBox).not.toBeNull();
   expect(firstCircleBox).not.toBeNull();
+  expect(firstItemBox).not.toBeNull();
+  expect(secondItemBox).not.toBeNull();
+  expect(groupLabelRowBox!.height).toBe(32);
   expect(groupLabelBox!.x).toBeCloseTo(firstCircleBox!.x, 1);
+  expect(secondItemBox!.y - (firstItemBox!.y + firstItemBox!.height)).toBe(4);
 
   await disabled.locator('.radio__label').click();
   await expect(disabled).toHaveAttribute('aria-checked', 'true');

@@ -1303,6 +1303,43 @@ test('checkbox and radio reserve row interaction fills for choice-list presentat
   ).toHaveClass(/ds-interaction-fill/);
 });
 
+test('checkbox groups use density-aligned labels and option rhythm', async ({ page }) => {
+  const group = page.locator('#checkbox-group');
+  const labelRow = group.locator('.checkbox-group__label');
+  const options = group.locator('.checkbox-group__options > ds-checkbox');
+  const first = options.nth(0);
+  const second = options.nth(1);
+  const described = page.locator('#checkbox-described');
+
+  await expect(group).toHaveRole('group', { name: 'Select preferences' });
+
+  const geometry = await group.evaluate(element => {
+    const label = element.querySelector('.checkbox-group__label')!.getBoundingClientRect();
+    const rows = Array.from(element.querySelectorAll('.checkbox-group__options > ds-checkbox')).map(
+      row => row.getBoundingClientRect()
+    );
+    const box = element.querySelector('#checkbox-described .box')!.getBoundingClientRect();
+    const title = element
+      .querySelector('#checkbox-described .checkbox__label')!
+      .getBoundingClientRect();
+    return {
+      labelHeight: label.height,
+      firstHeight: rows[0]?.height,
+      optionGap: (rows[1]?.top ?? 0) - (rows[0]?.bottom ?? 0),
+      describedAlignment: box.top + box.height / 2 - (title.top + title.height / 2),
+    };
+  });
+
+  expect(geometry.labelHeight).toBe(32);
+  expect(geometry.firstHeight).toBe(32);
+  expect(geometry.optionGap).toBe(4);
+  expect(Math.abs(geometry.describedAlignment)).toBeLessThan(0.5);
+  await first.locator('.checkbox__label').click();
+  await expect(first).toHaveAttribute('aria-checked', 'false');
+  await second.locator('.box').click();
+  await expect(second).toHaveAttribute('aria-checked', 'true');
+});
+
 test(
   'checkbox sizes center owned filled marks without SVG strokes',
   chromiumOnly('layout-geometry', 'Density-specific mark sizing is static token-backed geometry.'),

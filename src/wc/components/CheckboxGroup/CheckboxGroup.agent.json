@@ -1,0 +1,69 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-checkbox-group",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-checkbox-group",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "A visible, accessible label and shared vertical rhythm for a list of independent Checkbox controls.",
+  "useWhen": [
+    "Two or more related checkboxes need one visible group label in a form.",
+    "A checkbox list should use the same density-aligned heading geometry as other compact option lists."
+  ],
+  "avoidWhen": [
+    "Only one standalone checkbox is needed.",
+    "Exactly one option may be selected; use Radio instead."
+  ],
+  "alternatives": [
+    {
+      "when": "Exactly one option may be selected.",
+      "component": "component:ds-radio",
+      "reason": "Radio owns mutually exclusive selection and keyboard traversal."
+    }
+  ],
+  "commonlyComposedWith": ["component:ds-checkbox", "component:ds-text"],
+  "accessibility": [
+    "The visible label names the role=group container; each slotted Checkbox keeps its own visible label, state, focus, and form value.",
+    "Use aria-describedby to associate group-level guidance or validation copy.",
+    "Use the same size on CheckboxGroup and every slotted Checkbox so their text origins and density remain aligned."
+  ],
+  "states": [
+    "The label uses the shared density section-heading row and body-small emphasis.",
+    "Vertical checkbox options use a 4px gap; at medium density the group label and each single-line checkbox row are 32px high.",
+    "Selection, mixed, inactive, validation, and form behavior remain owned by each slotted Checkbox."
+  ],
+  "responsiveBehavior": [
+    "The group fills the width supplied by its parent while each Checkbox keeps its intrinsic row width and allows copy to wrap."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Slot two or more ds-checkbox children and keep their name, value, and checked state application-owned."
+    ],
+    "react": ["Compose DsCheckbox children inside DsCheckboxGroup."],
+    "vue": ["Compose DsCheckbox children inside DsCheckboxGroup."],
+    "angular": ["Compose generated DsCheckbox adapters inside DsCheckboxGroup."]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/CheckboxGroup/CheckboxGroup.stories.ts"
+    },
+    {
+      "label": "Rendered form geometry coverage",
+      "path": "tests/e2e/forms.spec.ts"
+    }
+  ],
+  "styling": {
+    "rationale": "The group owns only its label and option-list rhythm; each Checkbox owns its own selection anatomy.",
+    "protected": [
+      {
+        "properties": ["gap", "padding", "font", "font-size", "font-weight", "line-height"],
+        "reason": "Use size to keep the heading and slotted controls on the shared density recipe.",
+        "props": ["size"]
+      }
+    ],
+    "customProperties": []
+  }
+}

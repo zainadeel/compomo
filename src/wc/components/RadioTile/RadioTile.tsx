@@ -133,14 +133,15 @@ export class RadioTile {
                 onChange={() => this.select(option.value)}
               />
               <span class="radio-tile__outline" aria-hidden="true" />
-              <span class="radio-tile__indicator ds-interaction-fill__content" aria-hidden="true">
-                {selected && <span />}
+              <span class="radio-tile__placement ds-interaction-fill__content" aria-hidden="true">
+                <span class="radio-tile__indicator">{selected && <span />}</span>
               </span>
               <span class="radio-tile__copy ds-interaction-fill__content">
                 <ds-text
                   as="span"
                   variant="text-body-medium"
-                  emphasis
+                  color={option.description ? 'primary' : 'secondary'}
+                  emphasis={Boolean(option.description)}
                   textId={`${this.generatedId}-label-${index}`}
                 >
                   {option.label}

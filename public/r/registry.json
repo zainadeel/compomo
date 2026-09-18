@@ -4604,7 +4604,7 @@
             "The initial checked and indeterminate values are restored by native form reset; checked values submit under name and unchecked values submit nothing.",
             "Sizes are lg with a 20px box in a 24px placement, md with a 16px box in a 20px placement, sm with a 12px box in a 16px placement, and xs with an 8px box in a 12px placement.",
             "Presentation mode removes checkbox semantics, focus, interaction, label rendering, description rendering, and form submission while preserving the visual state.",
-            "Description-rich checkboxes grow beyond the fixed density height while retaining its minimum target size and primitive-owned selection anatomy.",
+            "Description-rich checkboxes grow beyond the fixed density height while retaining its minimum target size and align the checkbox placement with the primary label line.",
             "Form and settings usage omits a row hover or pressed wash by default; set hasInteractionFill only when the checkbox itself is presented as a choice-list row."
           ],
           "responsiveBehavior": [
@@ -4740,6 +4740,129 @@
           "react": "DsCheckbox",
           "vue": "DsCheckbox",
           "angular": "DsCheckbox"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "text"
+      ]
+    },
+    {
+      "name": "checkbox-group",
+      "title": "CheckboxGroup",
+      "description": "A visible, accessible label and shared vertical rhythm for a list of independent Checkbox controls.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/checkbox-group",
+        "source": "src/wc/components/CheckboxGroup/CheckboxGroup.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "A visible, accessible label and shared vertical rhythm for a list of independent Checkbox controls.",
+          "useWhen": [
+            "Two or more related checkboxes need one visible group label in a form.",
+            "A checkbox list should use the same density-aligned heading geometry as other compact option lists."
+          ],
+          "avoidWhen": [
+            "Only one standalone checkbox is needed.",
+            "Exactly one option may be selected; use Radio instead."
+          ],
+          "alternatives": [
+            {
+              "when": "Exactly one option may be selected.",
+              "component": "component:ds-radio",
+              "reason": "Radio owns mutually exclusive selection and keyboard traversal."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-checkbox",
+            "component:ds-text"
+          ],
+          "accessibility": [
+            "The visible label names the role=group container; each slotted Checkbox keeps its own visible label, state, focus, and form value.",
+            "Use aria-describedby to associate group-level guidance or validation copy.",
+            "Use the same size on CheckboxGroup and every slotted Checkbox so their text origins and density remain aligned."
+          ],
+          "states": [
+            "The label uses the shared density section-heading row and body-small emphasis.",
+            "Vertical checkbox options use a 4px gap; at medium density the group label and each single-line checkbox row are 32px high.",
+            "Selection, mixed, inactive, validation, and form behavior remain owned by each slotted Checkbox."
+          ],
+          "responsiveBehavior": [
+            "The group fills the width supplied by its parent while each Checkbox keeps its intrinsic row width and allows copy to wrap."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Slot two or more ds-checkbox children and keep their name, value, and checked state application-owned."
+            ],
+            "react": [
+              "Compose DsCheckbox children inside DsCheckboxGroup."
+            ],
+            "vue": [
+              "Compose DsCheckbox children inside DsCheckboxGroup."
+            ],
+            "angular": [
+              "Compose generated DsCheckbox adapters inside DsCheckboxGroup."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/CheckboxGroup/CheckboxGroup.stories.ts"
+            },
+            {
+              "label": "Rendered form geometry coverage",
+              "path": "tests/e2e/forms.spec.ts"
+            }
+          ],
+          "styling": {
+            "rationale": "The group owns only its label and option-list rhythm; each Checkbox owns its own selection anatomy.",
+            "protected": [
+              {
+                "properties": [
+                  "gap",
+                  "padding",
+                  "font",
+                  "font-size",
+                  "font-weight",
+                  "line-height"
+                ],
+                "reason": "Use size to keep the heading and slotted controls on the shared density recipe.",
+                "props": [
+                  "size"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
+        },
+        "props": {
+          "ariaDescribedby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": true
+          },
+          "size": {
+            "type": "CheckboxGroupSize",
+            "required": false
+          }
+        },
+        "events": [],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-checkbox-group",
+          "react": "DsCheckboxGroup",
+          "vue": "DsCheckboxGroup",
+          "angular": "DsCheckboxGroup"
         }
       },
       "dependencies": [
@@ -12231,7 +12354,8 @@
             "Sizes are lg with a 20px circle in a 24px placement, md with a 16px circle in a 20px placement, sm with a 12px circle in a 16px placement, and xs with an 8px circle in a 12px placement.",
             "The initial value is restored by native form reset; the selected value submits under name and a required set is invalid until one active option is selected.",
             "Description-rich options grow beyond the fixed density height while retaining its minimum target size and primitive-owned selection anatomy.",
-            "A visible group label uses the shared field-label recipe above the option list without adding a second interaction target.",
+            "A visible group label uses the same density height and horizontal text origin as a menu section heading above the option list without adding a second interaction target.",
+            "Vertical form options use a 4px gap; a medium single-line option and its group label each use the shared 32px control height.",
             "Form and settings usage omits a row hover or pressed wash by default; set hasInteractionFill only when each radio option is presented as a choice-list row."
           ],
           "responsiveBehavior": [
@@ -12427,7 +12551,8 @@
             "Label the group with Field or an accessible name. Descriptions name each option separately."
           ],
           "states": [
-            "Selection is shown by the radio indicator while the tile keeps its neutral border. Error retains the negative border, and keyboard focus keeps the focus-token outline. Inactive options cannot be selected.",
+            "Selection is shown by the 16px radio indicator centered in a 20px placement box while the tile keeps its neutral border. The placement box and copy have a 12px gap inside the tile's 16px padding, and the tile uses the 2px compact radius. Error retains the negative border, and keyboard focus keeps the focus-token outline. Inactive options cannot be selected.",
+            "Options with descriptions use primary body-medium emphasis for the title and secondary body-medium supporting text with a 4px gap. Text-only options use secondary body-medium text without emphasis.",
             "The component owns form values, required validation, reset, and disabled-fieldset behavior."
           ],
           "responsiveBehavior": [

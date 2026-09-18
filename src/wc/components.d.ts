@@ -32,6 +32,7 @@ import { ChartFocusChangeDetail } from "./components/Chart/Chart";
 import { ChartLegendItem } from "./utils/chart-types";
 import { ChartLegendDirection, ChartLegendPercentageDecimals } from "./components/ChartLegend/ChartLegend";
 import { CheckboxSize } from "./components/Checkbox/Checkbox";
+import { CheckboxGroupSize } from "./components/CheckboxGroup/CheckboxGroup";
 import { ChipSize, ChipState } from "./components/Chip/Chip";
 import { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
 import { DataField } from "./utils/data-field";
@@ -118,6 +119,7 @@ export { ChartFocusChangeDetail } from "./components/Chart/Chart";
 export { ChartLegendItem } from "./utils/chart-types";
 export { ChartLegendDirection, ChartLegendPercentageDecimals } from "./components/ChartLegend/ChartLegend";
 export { CheckboxSize } from "./components/Checkbox/Checkbox";
+export { CheckboxGroupSize } from "./components/CheckboxGroup/CheckboxGroup";
 export { ChipSize, ChipState } from "./components/Chip/Chip";
 export { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
 export { DataField } from "./utils/data-field";
@@ -1387,6 +1389,21 @@ export namespace Components {
           * @default 'on'
          */
         "value": string;
+    }
+    interface DsCheckboxGroup {
+        /**
+          * Id reference for supporting guidance or an error message.
+         */
+        "ariaDescribedby": string | undefined;
+        /**
+          * Visible label and accessible name for the checkbox list.
+         */
+        "label": string;
+        /**
+          * Density of the label row; use the same size on every slotted Checkbox.
+          * @default 'md'
+         */
+        "size": CheckboxGroupSize;
     }
     /**
      * Removable chip — same density recipe as Tag, but colored by semantic `state`
@@ -5695,6 +5712,12 @@ declare global {
         prototype: HTMLDsCheckboxElement;
         new (): HTMLDsCheckboxElement;
     };
+    interface HTMLDsCheckboxGroupElement extends Components.DsCheckboxGroup, HTMLStencilElement {
+    }
+    var HTMLDsCheckboxGroupElement: {
+        prototype: HTMLDsCheckboxGroupElement;
+        new (): HTMLDsCheckboxGroupElement;
+    };
     interface HTMLDsChipElementEventMap {
         "dsRemove": void;
     }
@@ -6793,6 +6816,7 @@ declare global {
         "ds-chart": HTMLDsChartElement;
         "ds-chart-legend": HTMLDsChartLegendElement;
         "ds-checkbox": HTMLDsCheckboxElement;
+        "ds-checkbox-group": HTMLDsCheckboxGroupElement;
         "ds-chip": HTMLDsChipElement;
         "ds-code-block": HTMLDsCodeBlockElement;
         "ds-conversation-list": HTMLDsConversationListElement;
@@ -8186,6 +8210,21 @@ declare namespace LocalJSX {
           * @default 'on'
          */
         "value"?: string;
+    }
+    interface DsCheckboxGroup {
+        /**
+          * Id reference for supporting guidance or an error message.
+         */
+        "ariaDescribedby"?: string | undefined;
+        /**
+          * Visible label and accessible name for the checkbox list.
+         */
+        "label": string;
+        /**
+          * Density of the label row; use the same size on every slotted Checkbox.
+          * @default 'md'
+         */
+        "size"?: CheckboxGroupSize;
     }
     /**
      * Removable chip — same density recipe as Tag, but colored by semantic `state`
@@ -12353,6 +12392,11 @@ declare namespace LocalJSX {
         "hasInteractionFill": boolean;
         "presentation": boolean;
     }
+    interface DsCheckboxGroupAttributes {
+        "label": string;
+        "size": CheckboxGroupSize;
+        "ariaDescribedby": string | undefined;
+    }
     interface DsChipAttributes {
         "label": string;
         "state": ChipState;
@@ -13206,6 +13250,7 @@ declare namespace LocalJSX {
         "ds-chart": Omit<DsChart, keyof DsChartAttributes> & { [K in keyof DsChart & keyof DsChartAttributes]?: DsChart[K] } & { [K in keyof DsChart & keyof DsChartAttributes as `attr:${K}`]?: DsChartAttributes[K] } & { [K in keyof DsChart & keyof DsChartAttributes as `prop:${K}`]?: DsChart[K] } & OneOf<"label", DsChart["label"], DsChartAttributes["label"]>;
         "ds-chart-legend": Omit<DsChartLegend, keyof DsChartLegendAttributes> & { [K in keyof DsChartLegend & keyof DsChartLegendAttributes]?: DsChartLegend[K] } & { [K in keyof DsChartLegend & keyof DsChartLegendAttributes as `attr:${K}`]?: DsChartLegendAttributes[K] } & { [K in keyof DsChartLegend & keyof DsChartLegendAttributes as `prop:${K}`]?: DsChartLegend[K] };
         "ds-checkbox": Omit<DsCheckbox, keyof DsCheckboxAttributes> & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes]?: DsCheckbox[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `attr:${K}`]?: DsCheckboxAttributes[K] } & { [K in keyof DsCheckbox & keyof DsCheckboxAttributes as `prop:${K}`]?: DsCheckbox[K] } & OneOf<"label", DsCheckbox["label"], DsCheckboxAttributes["label"]>;
+        "ds-checkbox-group": Omit<DsCheckboxGroup, keyof DsCheckboxGroupAttributes> & { [K in keyof DsCheckboxGroup & keyof DsCheckboxGroupAttributes]?: DsCheckboxGroup[K] } & { [K in keyof DsCheckboxGroup & keyof DsCheckboxGroupAttributes as `attr:${K}`]?: DsCheckboxGroupAttributes[K] } & { [K in keyof DsCheckboxGroup & keyof DsCheckboxGroupAttributes as `prop:${K}`]?: DsCheckboxGroup[K] } & OneOf<"label", DsCheckboxGroup["label"], DsCheckboxGroupAttributes["label"]>;
         "ds-chip": Omit<DsChip, keyof DsChipAttributes> & { [K in keyof DsChip & keyof DsChipAttributes]?: DsChip[K] } & { [K in keyof DsChip & keyof DsChipAttributes as `attr:${K}`]?: DsChipAttributes[K] } & { [K in keyof DsChip & keyof DsChipAttributes as `prop:${K}`]?: DsChip[K] } & OneOf<"label", DsChip["label"], DsChipAttributes["label"]>;
         "ds-code-block": Omit<DsCodeBlock, keyof DsCodeBlockAttributes> & { [K in keyof DsCodeBlock & keyof DsCodeBlockAttributes]?: DsCodeBlock[K] } & { [K in keyof DsCodeBlock & keyof DsCodeBlockAttributes as `attr:${K}`]?: DsCodeBlockAttributes[K] } & { [K in keyof DsCodeBlock & keyof DsCodeBlockAttributes as `prop:${K}`]?: DsCodeBlock[K] };
         "ds-conversation-list": DsConversationList;
@@ -13319,6 +13364,7 @@ declare module "@stencil/core" {
              */
             "ds-chart-legend": LocalJSX.IntrinsicElements["ds-chart-legend"] & JSXBase.HTMLAttributes<HTMLDsChartLegendElement>;
             "ds-checkbox": LocalJSX.IntrinsicElements["ds-checkbox"] & JSXBase.HTMLAttributes<HTMLDsCheckboxElement>;
+            "ds-checkbox-group": LocalJSX.IntrinsicElements["ds-checkbox-group"] & JSXBase.HTMLAttributes<HTMLDsCheckboxGroupElement>;
             /**
              * Removable chip — same density recipe as Tag, but colored by semantic `state`
              * (not intent × contrast). Not a toggle/select control; the only intentional
