@@ -261,6 +261,41 @@ test.describe('Managed application shell', () => {
   });
 
   test(
+    'matches nested child notification rings to the PanelNav chrome surface',
+    chromiumOnly(
+      'component-composition',
+      'The nested notification ring is a token-backed PanelNav composition contract.'
+    ),
+    async ({ page }) => {
+      const shell = page.locator('#managed-shell');
+      await shell.evaluate(element => {
+        (element as HTMLDsShellAppElement).sectionNavigation = 'panel';
+      });
+
+      const panel = shell.locator('ds-panel-nav');
+      const history = panel.getByRole('button', { name: 'History', exact: true });
+      await expect(history).toBeVisible();
+      const badge = history.locator('.panel-nav__child-dot ds-badge');
+      await expect(badge).toHaveCount(1);
+
+      const ring = await badge.evaluate(element => {
+        const mark = element.querySelector<HTMLElement>('.badge__mark');
+        if (!mark) throw new Error('Nested child badge surface is missing');
+
+        const probe = document.createElement('span');
+        probe.style.backgroundColor = 'var(--color-chrome-background-theme)';
+        document.body.append(probe);
+        const expected = getComputedStyle(probe).backgroundColor;
+        probe.remove();
+
+        return { actual: getComputedStyle(mark, '::before').backgroundColor, expected };
+      });
+
+      expect(ring.actual).toBe(ring.expected);
+    }
+  );
+
+  test(
     'animates positional nested dividers without changing collapsed presentation',
     chromiumOnly(
       'component-composition',

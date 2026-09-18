@@ -1,0 +1,80 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-inline-banner-settings",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-inline-banner-settings",
+  "audience": "general",
+  "status": "stable",
+  "summary": "Compact non-interactive informational copy row for settings cards.",
+  "useWhen": [
+    "A settings card needs persistent informational copy above its content.",
+    "The message should remain visible in both read-only and editing presentations of the settings card.",
+    "The message needs body-medium typography, compact spacing, and a single tertiary bottom boundary."
+  ],
+  "avoidWhen": [
+    "The message belongs in general bounded content outside a settings card; reserve the general inline-banner component for that use case.",
+    "The message is application-wide or needs dismissal, actions, or announcement urgency; use Banner.",
+    "The message is transient or follows a completed action; use Toast."
+  ],
+  "alternatives": [
+    {
+      "when": "A persistent application-wide condition needs optional actions or dismissal.",
+      "component": "component:ds-banner",
+      "reason": "Banner owns shell-level messaging, actions, dismissal, and announcement behavior."
+    },
+    {
+      "when": "A field needs supporting or validation copy tied to its control.",
+      "component": "component:ds-field",
+      "reason": "Field owns the control relationship and supporting-message semantics."
+    }
+  ],
+  "commonlyComposedWith": ["component:ds-card-setting", "component:ds-text"],
+  "accessibility": [
+    "Keep the description concise and authored; InlineBannerSettings does not transform, truncate, or announce the copy.",
+    "Use InlineBannerSettings for static context. Applications must choose a live-region component when a dynamic announcement is required.",
+    "The informational copy remains plain text and has no interactive controls or dismissal affordance."
+  ],
+  "states": [
+    "The description renders verbatim in every state in which the owning settings card projects the component.",
+    "The component has no internal visibility, editing, or dismissal state; the owning settings card controls whether it is present.",
+    "The content height is intrinsic: the banner contributes 8px block padding and its inner content container contributes 6px block padding, followed by the tertiary bottom boundary."
+  ],
+  "responsiveBehavior": [
+    "The component fills the available inline size and lets body-medium copy wrap naturally.",
+    "The effective inline inset remains 16px: 8px banner padding, 6px inner content padding, and 2px text-side padding."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Pass the complete authored message through description; do not apply a CSS casing transform or mutate the text for presentation."
+    ],
+    "react": [
+      "Pass the complete authored message through the description prop and keep the component mounted for every settings-card state that needs the context."
+    ],
+    "angular": [
+      "Bind [description] from the settings card's stable copy source and project the component outside any edit-only conditional."
+    ]
+  },
+  "references": [
+    {
+      "label": "Settings inline banner examples",
+      "path": "src/wc/components/InlineBannerSettings/InlineBannerSettings.stories.ts"
+    },
+    {
+      "label": "Rendered geometry coverage",
+      "path": "tests/e2e/inline-banner-settings.spec.ts"
+    }
+  ],
+  "styling": {
+    "rationale": "The component owns only the compact settings informational row recipe; its card owns the surrounding surface and layout.",
+    "protected": [
+      {
+        "properties": ["border-bottom", "color", "padding"],
+        "reason": "The component owns the readable informational row treatment and keeps its spacing consistent across settings cards.",
+        "props": []
+      }
+    ],
+    "customProperties": []
+  }
+}

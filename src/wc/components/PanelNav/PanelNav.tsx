@@ -998,6 +998,7 @@ export class PanelNav {
         <span class="panel-nav__child-dot" aria-hidden="true">
           <ds-badge
             variant="dot"
+            background="var(--_nav-bg)"
             label=""
             style={{ '--_badge-bg': 'var(--_nav-dot)' }}
           />
