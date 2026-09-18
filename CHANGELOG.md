@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.4.0](https://github.com/zainadeel/compomo/compare/v15.3.0...v15.4.0) (2026-09-18)
+
+
+### Added
+
+* add settings checkbox row and stabilize settings rows ([#619](https://github.com/zainadeel/compomo/issues/619)) ([c550050](https://github.com/zainadeel/compomo/commit/c55005018bc8edebfad60e60efd6f7f6ca59c3ca))
+
 ## [15.3.0](https://github.com/zainadeel/compomo/compare/v15.2.0...v15.3.0) (2026-09-16)
 
 
