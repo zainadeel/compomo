@@ -211,18 +211,7 @@
       },
       "events": [],
       "methods": [],
-      "slots": [
-        {
-          "name": "",
-          "description": "The default slot"
-        },
-        {
-          "name": "header"
-        },
-        {
-          "name": "mobile-header"
-        }
-      ]
+      "slots": []
     },
     "props": {
       "compactContentInsetBlockStartSize": {
@@ -315,18 +304,7 @@
     },
     "events": [],
     "methods": [],
-    "slots": [
-      {
-        "name": "",
-        "description": "The default slot"
-      },
-      {
-        "name": "header"
-      },
-      {
-        "name": "mobile-header"
-      }
-    ],
+    "slots": [],
     "exports": {
       "customElement": "ds-shell-page",
       "react": "DsShellPage",

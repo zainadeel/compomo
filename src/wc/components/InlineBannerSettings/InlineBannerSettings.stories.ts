@@ -33,6 +33,7 @@ export const InSettingsCard: Story = {
     <div style="width:min(100%,640px);">
       <ds-card-setting heading="Event validation" card-width="md">
         <ds-inline-banner-settings
+          slot="banner"
           description=${EVENT_VALIDATION_DESCRIPTION}
         ></ds-inline-banner-settings>
         <div style="padding:var(--dimension-space-200);">
@@ -47,7 +48,7 @@ export const Wrapping: Story = {
   render: () => html`
     <div style="width:min(100%,320px);">
       <ds-inline-banner-settings
-        description="This informational copy wraps naturally while keeping the same body-medium text and spacing recipe."
+        description="This informational copy wraps naturally while keeping the same body-small text and spacing recipe."
       ></ds-inline-banner-settings>
     </div>
   `,

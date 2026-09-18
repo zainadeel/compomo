@@ -83,6 +83,11 @@ export class Radio {
     return Boolean(this.groupLabel.trim());
   }
 
+  /** Settings rows own a separate heading; never mount the form group label there. */
+  private get showGroupLabel(): boolean {
+    return this.hasGroupLabel && !this.el.closest('ds-setting-row-radio');
+  }
+
   componentWillLoad() {
     this.initialValue = this.value;
     this.syncFormValue();
@@ -254,7 +259,7 @@ export class Radio {
     return (
       <Host
         role="radiogroup"
-        aria-label={this.hasGroupLabel ? this.groupLabel : this.ariaLabel}
+        aria-label={this.showGroupLabel ? this.groupLabel : this.ariaLabel}
         aria-labelledby={this.ariaLabelledby}
         aria-required={this.required ? 'true' : undefined}
         aria-invalid={invalid ? 'true' : undefined}
@@ -262,10 +267,10 @@ export class Radio {
           radio: true,
           'radio--horizontal': this.direction === 'horizontal',
           [`radio--${this.size}`]: true,
-          'radio--labeled': this.hasGroupLabel,
+          'radio--labeled': this.showGroupLabel,
         }}
       >
-        {this.hasGroupLabel ? (
+        {this.showGroupLabel ? (
           <ds-text
             class={`radio__group-label ds-control-section-heading ds-control--${this.size}`}
             as="span"
@@ -275,7 +280,11 @@ export class Radio {
             {this.groupLabel}
           </ds-text>
         ) : null}
-        {this.hasGroupLabel ? <div class="radio__options">{renderedOptions}</div> : renderedOptions}
+        {this.showGroupLabel ? (
+          <div class="radio__options">{renderedOptions}</div>
+        ) : (
+          renderedOptions
+        )}
       </Host>
     );
   }

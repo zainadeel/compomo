@@ -44,14 +44,14 @@
         }
       ],
       "styling": {
-        "rationale": "The row owns copy/control spacing; its parent owns the section surface and width.",
+        "rationale": "The row uses the shared settings-row inset; copy/control columns and the parent section surface stay component-owned.",
         "protected": [
           {
             "properties": [
               "padding",
               "gap"
             ],
-            "reason": "Preserve the shared settings-row spacing recipe.",
+            "reason": "Preserve the shared settings-row inset (space-100 block, space-200 inline) and copy-to-control gap.",
             "props": []
           }
         ],
@@ -219,7 +219,7 @@
   "files": [
     {
       "path": "src/wc/components/SettingRowToggle/SettingRowToggle.css",
-      "content": ":host {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  align-items: start;\n  box-sizing: border-box;\n  min-width: 0;\n  padding: var(--dimension-space-100) var(--dimension-space-200);\n  gap: var(--dimension-space-200);\n}\n\n.setting-row-toggle__copy {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n  gap: var(--dimension-space-050);\n  overflow-wrap: anywhere;\n  -webkit-user-select: none;\n  user-select: none;\n}\n",
+      "content": "@import '../../utils/settings-row.css';\n\n:host {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  align-items: start;\n  gap: var(--dimension-space-200);\n}\n\n.setting-row-toggle__copy {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n  gap: var(--dimension-space-050);\n  overflow-wrap: anywhere;\n  -webkit-user-select: none;\n  user-select: none;\n}\n",
       "type": "registry:ui"
     },
     {

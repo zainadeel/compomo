@@ -416,36 +416,7 @@
           "description": "Request drawer or fullscreen presentation for the active managed tool."
         }
       ],
-      "slots": [
-        {
-          "name": "",
-          "description": "The default slot"
-        },
-        {
-          "name": "banner"
-        },
-        {
-          "name": "bar"
-        },
-        {
-          "name": "mobile-bar-nav"
-        },
-        {
-          "name": "mobile-sheet-nav"
-        },
-        {
-          "name": "page-header-leading"
-        },
-        {
-          "name": "page-header-trailing"
-        },
-        {
-          "name": "panel"
-        },
-        {
-          "name": "tools"
-        }
-      ]
+      "slots": []
     },
     "props": {
       "composition": {
@@ -690,36 +661,7 @@
         "description": "Request drawer or fullscreen presentation for the active managed tool."
       }
     ],
-    "slots": [
-      {
-        "name": "",
-        "description": "The default slot"
-      },
-      {
-        "name": "banner"
-      },
-      {
-        "name": "bar"
-      },
-      {
-        "name": "mobile-bar-nav"
-      },
-      {
-        "name": "mobile-sheet-nav"
-      },
-      {
-        "name": "page-header-leading"
-      },
-      {
-        "name": "page-header-trailing"
-      },
-      {
-        "name": "panel"
-      },
-      {
-        "name": "tools"
-      }
-    ],
+    "slots": [],
     "exports": {
       "customElement": "ds-shell-app",
       "react": "DsShellApp",

@@ -212,11 +212,7 @@
         }
       ],
       "methods": [],
-      "slots": [
-        {
-          "name": "actions"
-        }
-      ]
+      "slots": []
     },
     "props": {
       "announcement": {
@@ -310,11 +306,7 @@
       }
     ],
     "methods": [],
-    "slots": [
-      {
-        "name": "actions"
-      }
-    ],
+    "slots": [],
     "exports": {
       "customElement": "ds-banner",
       "react": "DsBanner",

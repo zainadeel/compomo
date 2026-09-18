@@ -338,12 +338,7 @@
           }
         },
         "events": [],
-        "slots": [
-          "",
-          "actions",
-          "footer",
-          "metadata-actions"
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-agent-response",
           "react": "DsAgentResponse",
@@ -555,11 +550,7 @@
             "detail": "{ open: boolean }"
           }
         ],
-        "slots": [
-          "details",
-          "result",
-          "summary"
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-agent-tool-call",
           "react": "DsAgentToolCall",
@@ -1080,9 +1071,7 @@
             "detail": "MouseEvent"
           }
         ],
-        "slots": [
-          "actions"
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-banner",
           "react": "DsBanner",
@@ -1232,9 +1221,7 @@
             "detail": "MouseEvent"
           }
         ],
-        "slots": [
-          "actions"
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-bar-action",
           "react": "DsBarAction",
@@ -3549,12 +3536,7 @@
             "detail": "void"
           }
         ],
-        "slots": [
-          "",
-          "actions",
-          "chart",
-          "legend"
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-card-chart",
           "react": "DsCardChart",
@@ -3720,9 +3702,7 @@
             "detail": "CardNavigationDetail"
           }
         ],
-        "slots": [
-          ""
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-card-navigation",
           "react": "DsCardNavigation",
@@ -3921,11 +3901,7 @@
             "detail": "OverviewMetric"
           }
         ],
-        "slots": [
-          "filter",
-          "footer",
-          "period"
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-card-overview",
           "react": "DsCardOverview",
@@ -3995,7 +3971,8 @@
             "component:ds-switch",
             "component:ds-text",
             "component:ds-setting-row-toggle",
-            "component:ds-setting-row-radio"
+            "component:ds-setting-row-radio",
+            "component:ds-inline-banner-settings"
           ],
           "accessibility": [
             "Provide a concise heading that identifies the settings section; CardSetting renders it as an h2.",
@@ -4010,26 +3987,30 @@
             "The editing property is controlled; CardSetting never changes it internally.",
             "dsAction emits edit, save, or cancel with the original pointer event. The parent decides whether and when editing changes.",
             "When another section requests edit, the parent keeps one active section and resolves any dirty current section before switching.",
+            "Project persistent informational copy into the banner slot so it sits above the padded content body and does not receive content-area padding.",
             "The parent owns read-only versus editable body composition, dirty state, validation, persistence, loading, success, and error consequences.",
             "A save request keeps the section editing while validation or persistence is pending; the parent exits only after success.",
             "A cancel request does not persist changes; the parent restores its chosen value snapshot and exits editing.",
             "The immediate variant keeps the resting card surface and omits header actions even if editing is supplied. The application applies and persists each control change independently."
           ],
           "responsiveBehavior": [
-            "Choose sm, md, or lg from the parent layout. Editable cards use the matching minimum height; immediate cards fit their content.",
+            "Choose sm, md, or lg from the parent layout. Empty editable cards use the matching minimum height. Cards with body content, and immediate cards, fit that content.",
             "The surface never exceeds its parent width, while the parent owns wrapping, columns, stacking, and breakpoint changes.",
             "At narrow widths, keep the fixed header actions visible and let application-owned body layouts collapse before allowing horizontal overflow."
           ],
           "frameworkCaveats": {
             "customElements": [
+              "Project ds-inline-banner-settings with slot=\"banner\". Leave setting rows and other controls in the default slot.",
               "Set editing as a JavaScript property and inspect dsAction.detail.action before updating the controlled state.",
               "When one section emits edit, update every sibling CardSetting so only the requested section remains editing."
             ],
             "react": [
+              "Pass slot=\"banner\" on ds-inline-banner-settings. Leave setting rows and other controls in the default slot.",
               "Pass editing from parent state and inspect onDsAction event detail; do not treat Save as successful until validation and persistence complete.",
               "Store one active section id and derive each CardSetting editing prop from that id."
             ],
             "angular": [
+              "Set slot=\"banner\" on ds-inline-banner-settings. Leave setting rows and other controls in the default slot.",
               "Bind [editing] and inspect $event.detail.action from (dsAction); do not treat Save as successful until validation and persistence complete.",
               "Store one active section id and derive each CardSetting editing binding from that id."
             ]
@@ -4066,10 +4047,17 @@
               },
               {
                 "properties": [
+                  "padding"
+                ],
+                "reason": "Content-area padding-block belongs on the body. The banner slot sits above that padding and does not receive it.",
+                "props": []
+              },
+              {
+                "properties": [
                   "width",
                   "min-height"
                 ],
-                "reason": "Card width selects the component geometry; immediate cards fit their content. Let the parent constrain available space.",
+                "reason": "Card width selects the component geometry. Empty editable cards keep the matching minimum height; cards with body content and immediate cards fit that content. Let the parent constrain available space.",
                 "props": [
                   "cardWidth",
                   "variant"
@@ -4115,9 +4103,7 @@
             "detail": "CardSettingActionDetail"
           }
         ],
-        "slots": [
-          ""
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-card-setting",
           "react": "DsCardSetting",
@@ -5233,11 +5219,7 @@
         },
         "props": {},
         "events": [],
-        "slots": [
-          "",
-          "actions",
-          "empty"
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-conversation-list",
           "react": "DsConversationList",
@@ -5372,11 +5354,7 @@
             "detail": "{ id: string }"
           }
         ],
-        "slots": [
-          "actions",
-          "leading",
-          "trailing"
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-conversation-list-item",
           "react": "DsConversationListItem",
@@ -5459,9 +5437,7 @@
           }
         },
         "events": [],
-        "slots": [
-          ""
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-conversation-list-section",
           "react": "DsConversationListSection",
@@ -6891,12 +6867,7 @@
           }
         },
         "events": [],
-        "slots": [
-          "leading",
-          "search",
-          "start",
-          "trailing"
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-data-toolbar",
           "react": "DsDataToolbar",
@@ -7283,9 +7254,7 @@
           }
         },
         "events": [],
-        "slots": [
-          ""
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-field",
           "react": "DsField",
@@ -7805,7 +7774,7 @@
           "useWhen": [
             "A settings card needs persistent informational copy above its content.",
             "The message should remain visible in both read-only and editing presentations of the settings card.",
-            "The message needs body-medium typography, compact spacing, and a single tertiary bottom boundary."
+            "The message needs body-small typography, compact spacing, and a single tertiary bottom boundary."
           ],
           "avoidWhen": [
             "The message belongs in general bounded content outside a settings card; reserve the general inline-banner component for that use case.",
@@ -7836,21 +7805,21 @@
           "states": [
             "The description renders verbatim in every state in which the owning settings card projects the component.",
             "The component has no internal visibility, editing, or dismissal state; the owning settings card controls whether it is present.",
-            "The content height is intrinsic: the banner contributes 8px block padding and its inner content container contributes 6px block padding, followed by the tertiary bottom boundary."
+            "The content height is intrinsic: the banner contributes 8px block padding and its inner content container contributes 4px block padding. A single body-small line is 24px inside that container (4px + 16px line-height + 4px), followed by the tertiary bottom boundary."
           ],
           "responsiveBehavior": [
-            "The component fills the available inline size and lets body-medium copy wrap naturally.",
+            "The component fills the available inline size and lets body-small copy wrap naturally.",
             "The effective inline inset remains 16px: 8px banner padding, 6px inner content padding, and 2px text-side padding."
           ],
           "frameworkCaveats": {
             "customElements": [
-              "Pass the complete authored message through description; do not apply a CSS casing transform or mutate the text for presentation."
+              "Pass the complete authored message through description, assign slot=\"banner\" on CardSetting, and do not apply a CSS casing transform or mutate the text for presentation."
             ],
             "react": [
-              "Pass the complete authored message through the description prop and keep the component mounted for every settings-card state that needs the context."
+              "Pass the complete authored message through the description prop, set slot=\"banner\" on CardSetting, and keep the component mounted for every settings-card state that needs the context."
             ],
             "angular": [
-              "Bind [description] from the settings card's stable copy source and project the component outside any edit-only conditional."
+              "Bind [description] from the settings card's stable copy source and project the component into CardSetting's banner slot for every state that needs the context."
             ]
           },
           "references": [
@@ -8280,10 +8249,7 @@
             "detail": "string[]"
           }
         ],
-        "slots": [
-          "prefix",
-          "suffix"
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-input",
           "react": "DsInput",
@@ -9700,13 +9666,7 @@
           }
         },
         "events": [],
-        "slots": [
-          "",
-          "actions",
-          "footer",
-          "header",
-          "metadata-actions"
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-message",
           "react": "DsMessage",
@@ -9898,9 +9858,7 @@
           }
         },
         "events": [],
-        "slots": [
-          ""
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-message-bubble",
           "react": "DsMessageBubble",
@@ -10039,12 +9997,7 @@
             "detail": "{ text: string }"
           }
         ],
-        "slots": [
-          "actions",
-          "attachments",
-          "error-actions",
-          "tools"
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-message-composer",
           "react": "DsMessageComposer",
@@ -10157,11 +10110,7 @@
             "detail": "void"
           }
         ],
-        "slots": [
-          "",
-          "interaction",
-          "overlay"
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-message-scroller",
           "react": "DsMessageScroller",
@@ -10495,10 +10444,7 @@
             "detail": "string"
           }
         ],
-        "slots": [
-          "leading",
-          "trailing"
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-mobile-header",
           "react": "DsMobileHeader",
@@ -10985,10 +10931,7 @@
             "detail": "ModalCloseDetail"
           }
         ],
-        "slots": [
-          "",
-          "footer"
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-modal",
           "react": "DsModal",
@@ -12354,7 +12297,7 @@
             "Sizes are lg with a 20px circle in a 24px placement, md with a 16px circle in a 20px placement, sm with a 12px circle in a 16px placement, and xs with an 8px circle in a 12px placement.",
             "The initial value is restored by native form reset; the selected value submits under name and a required set is invalid until one active option is selected.",
             "Description-rich options grow beyond the fixed density height while retaining its minimum target size and primitive-owned selection anatomy.",
-            "A visible group label uses the same density height and horizontal text origin as a menu section heading above the option list without adding a second interaction target.",
+            "A visible group label uses the same density height and horizontal text origin as a menu section heading above the option list without adding a second interaction target. Copy uses text-body-small emphasis.",
             "Vertical form options use a 4px gap; a medium single-line option and its group label each use the shared 32px control height.",
             "Form and settings usage omits a row hover or pressed wash by default; set hasInteractionFill only when each radio option is presented as a choice-list row."
           ],
@@ -12906,10 +12849,7 @@
             "detail": "ScrollOverlayScrollDetail"
           }
         ],
-        "slots": [
-          "",
-          "overlay"
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-scroll-overlay",
           "react": "DsScrollOverlay",
@@ -13358,14 +13298,15 @@
             "component:ds-radio"
           ],
           "accessibility": [
-            "In edit presentation, slot exactly one ds-radio group and give it a visible label or an explicit aria-label/aria-labelledby.",
+            "Pass the settings heading as the row label. Do not pass Radio groupLabel; the row owns the visible heading and points the slotted radiogroup at it with aria-labelledby.",
             "Keep the Radio group's options, value, required state, and selection event owned by the application.",
             "Do not add a second interaction layer to the row; Radio owns option focus and keyboard selection while settings usage keeps hasInteractionFill false.",
-            "View presentation exposes readable label, saved value, and optional supporting copy without radio semantics or a focus target."
+            "View presentation exposes readable label, saved value, and optional supporting copy without radio semantics, a radio toggle, or a focus target."
           ],
           "states": [
             "The row is a neutral padded composition; selected, focus, and inactive states belong to the slotted Radio without a choice-list hover or pressed wash.",
             "The owning application handles dsChange and updates the slotted Radio value.",
+            "The settings heading is a row-owned ds-text (text-body-medium emphasis) with row CSS in both presentations. Edit slots an unlabeled Radio for options only so the form group-label never mounts.",
             "View presentation replaces the control with the saved option label and retains consequence copy when it helps explain that choice."
           ],
           "responsiveBehavior": [
@@ -13378,13 +13319,13 @@
             }
           ],
           "styling": {
-            "rationale": "The row owns only settings-list padding and width containment; Radio owns control geometry and interaction treatment.",
+            "rationale": "The row uses the shared settings-row inset so view and edit copy share the same 16px inline origin. The heading is row-owned CSS, not Radio's form group-label or control section-heading recipe. Radio owns option geometry.",
             "protected": [
               {
                 "properties": [
                   "padding"
                 ],
-                "reason": "Preserve the settings-row inset when a Radio group is placed in a CardSetting body.",
+                "reason": "Preserve the shared settings-row inset (space-100 block, space-200 inline) for both view and edit.",
                 "props": []
               }
             ],
@@ -13471,14 +13412,14 @@
             }
           ],
           "styling": {
-            "rationale": "The row owns copy/control spacing; its parent owns the section surface and width.",
+            "rationale": "The row uses the shared settings-row inset; copy/control columns and the parent section surface stay component-owned.",
             "protected": [
               {
                 "properties": [
                   "padding",
                   "gap"
                 ],
-                "reason": "Preserve the shared settings-row spacing recipe.",
+                "reason": "Preserve the shared settings-row inset (space-100 block, space-200 inline) and copy-to-control gap.",
                 "props": []
               }
             ],
@@ -13815,17 +13756,7 @@
             "detail": "{ id: PanelToolsToolId; selected: boolean }"
           }
         ],
-        "slots": [
-          "",
-          "banner",
-          "bar",
-          "mobile-bar-nav",
-          "mobile-sheet-nav",
-          "page-header-leading",
-          "page-header-trailing",
-          "panel",
-          "tools"
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-shell-app",
           "react": "DsShellApp",
@@ -14017,11 +13948,7 @@
           }
         },
         "events": [],
-        "slots": [
-          "",
-          "header",
-          "mobile-header"
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-shell-page",
           "react": "DsShellPage",
@@ -15773,13 +15700,7 @@
             "detail": "DataSortChangeDetail"
           }
         ],
-        "slots": [
-          "footer",
-          "footer-leading",
-          "footer-trailing",
-          "header",
-          "header-after"
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-table",
           "react": "DsTable",
@@ -16204,9 +16125,7 @@
           }
         },
         "events": [],
-        "slots": [
-          ""
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-text",
           "react": "DsText",
@@ -16985,9 +16904,7 @@
           }
         },
         "events": [],
-        "slots": [
-          ""
-        ],
+        "slots": [],
         "exports": {
           "customElement": "ds-tooltip",
           "react": "DsTooltip",

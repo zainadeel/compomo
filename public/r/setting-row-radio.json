@@ -27,14 +27,15 @@
         "component:ds-radio"
       ],
       "accessibility": [
-        "In edit presentation, slot exactly one ds-radio group and give it a visible label or an explicit aria-label/aria-labelledby.",
+        "Pass the settings heading as the row label. Do not pass Radio groupLabel; the row owns the visible heading and points the slotted radiogroup at it with aria-labelledby.",
         "Keep the Radio group's options, value, required state, and selection event owned by the application.",
         "Do not add a second interaction layer to the row; Radio owns option focus and keyboard selection while settings usage keeps hasInteractionFill false.",
-        "View presentation exposes readable label, saved value, and optional supporting copy without radio semantics or a focus target."
+        "View presentation exposes readable label, saved value, and optional supporting copy without radio semantics, a radio toggle, or a focus target."
       ],
       "states": [
         "The row is a neutral padded composition; selected, focus, and inactive states belong to the slotted Radio without a choice-list hover or pressed wash.",
         "The owning application handles dsChange and updates the slotted Radio value.",
+        "The settings heading is a row-owned ds-text (text-body-medium emphasis) with row CSS in both presentations. Edit slots an unlabeled Radio for options only so the form group-label never mounts.",
         "View presentation replaces the control with the saved option label and retains consequence copy when it helps explain that choice."
       ],
       "responsiveBehavior": [
@@ -47,13 +48,13 @@
         }
       ],
       "styling": {
-        "rationale": "The row owns only settings-list padding and width containment; Radio owns control geometry and interaction treatment.",
+        "rationale": "The row uses the shared settings-row inset so view and edit copy share the same 16px inline origin. The heading is row-owned CSS, not Radio's form group-label or control section-heading recipe. Radio owns option geometry.",
         "protected": [
           {
             "properties": [
               "padding"
             ],
-            "reason": "Preserve the settings-row inset when a Radio group is placed in a CardSetting body.",
+            "reason": "Preserve the shared settings-row inset (space-100 block, space-200 inline) for both view and edit.",
             "props": []
           }
         ],
@@ -76,7 +77,7 @@
           "attribute": "label",
           "required": false,
           "mutable": false,
-          "description": "Label shown above the saved value in view presentation."
+          "description": "Settings heading shown in both presentations. Not Radio's form groupLabel."
         },
         "presentation": {
           "type": "SettingRowRadioPresentation",
@@ -115,7 +116,7 @@
         "attribute": "label",
         "required": false,
         "mutable": false,
-        "description": "Label shown above the saved value in view presentation."
+        "description": "Settings heading shown in both presentations. Not Radio's form groupLabel."
       },
       "presentation": {
         "type": "SettingRowRadioPresentation",
@@ -182,12 +183,12 @@
   "files": [
     {
       "path": "src/wc/components/SettingRowRadio/SettingRowRadio.css",
-      "content": ":host {\n  display: block;\n  box-sizing: border-box;\n  min-width: 0;\n  padding: var(--dimension-space-100) var(--dimension-space-200);\n}\n\n:host > ds-radio {\n  display: flex;\n  min-width: 0;\n  width: 100%;\n}\n\n.setting-row-radio__view {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n  gap: var(--dimension-space-050);\n  overflow-wrap: anywhere;\n}\n",
+      "content": "@import '../../utils/settings-row.css';\n\n:host {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n  gap: var(--dimension-space-050);\n  overflow-wrap: anywhere;\n}\n\n:host > ds-radio {\n  display: flex;\n  min-width: 0;\n  width: 100%;\n}\n\nds-text.setting-row-radio__heading {\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n  height: var(--dimension-size-400);\n  min-width: 0;\n  padding: 0;\n}\n\n.setting-row-radio__choice {\n  display: grid;\n  gap: var(--dimension-space-025);\n  min-width: 0;\n  padding-block: var(--dimension-space-075);\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/SettingRowRadio/SettingRowRadio.tsx",
-      "content": "import { Component, h, Host, Prop } from '@stencil/core';\n\nexport type SettingRowRadioPresentation = 'edit' | 'view';\n\n/** Padded settings-row composition for a Radio group. */\n@Component({\n  tag: 'ds-setting-row-radio',\n  styleUrl: 'SettingRowRadio.css',\n  scoped: true,\n})\nexport class SettingRowRadio {\n  /** Interactive Radio group or non-interactive saved-value readout. */\n  @Prop() presentation: SettingRowRadioPresentation = 'edit';\n  /** Label shown above the saved value in view presentation. */\n  @Prop() label?: string;\n  /** Saved option label shown in view presentation. */\n  @Prop() valueLabel?: string;\n  /** Optional consequence or supporting copy for the saved option. */\n  @Prop() description?: string;\n\n  render() {\n    return (\n      <Host>\n        {this.presentation === 'view' ? (\n          <div class=\"setting-row-radio__view\">\n            {this.label ? (\n              <ds-text as=\"span\" variant=\"text-body-small\" emphasis>\n                {this.label}\n              </ds-text>\n            ) : null}\n            {this.valueLabel ? (\n              <ds-text as=\"span\" variant=\"text-body-medium\">\n                {this.valueLabel}\n              </ds-text>\n            ) : null}\n            {this.description ? (\n              <ds-text as=\"span\" variant=\"text-body-small\" color=\"secondary\">\n                {this.description}\n              </ds-text>\n            ) : null}\n          </div>\n        ) : (\n          <slot />\n        )}\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Element, h, Host, Prop } from '@stencil/core';\nimport { CONTROL_SUPPORTING_TEXT_VARIANT, CONTROL_TEXT_VARIANT } from '../../utils';\n\nexport type SettingRowRadioPresentation = 'edit' | 'view';\n\ntype SettingsRadio = HTMLElement & {\n  groupLabel: string;\n  ariaLabel: string | null;\n  ariaLabelledby?: string;\n};\n\nlet settingRowRadioHeadingId = 0;\n\n/** Padded settings-row composition for a Radio group. */\n@Component({\n  tag: 'ds-setting-row-radio',\n  styleUrl: 'SettingRowRadio.css',\n  scoped: true,\n})\nexport class SettingRowRadio {\n  @Element() el!: HTMLElement;\n\n  /** Interactive Radio group or non-interactive saved-value readout. */\n  @Prop() presentation: SettingRowRadioPresentation = 'edit';\n  /** Settings heading shown in both presentations. Not Radio's form groupLabel. */\n  @Prop() label?: string;\n  /** Saved option label shown in view presentation. */\n  @Prop() valueLabel?: string;\n  /** Optional consequence or supporting copy for the saved option. */\n  @Prop() description?: string;\n\n  private readonly headingId = `ds-setting-row-radio-heading-${++settingRowRadioHeadingId}`;\n\n  componentDidLoad() {\n    this.syncSlottedRadio();\n  }\n\n  private syncSlottedRadio = () => {\n    for (const radio of this.el.querySelectorAll<SettingsRadio>('ds-radio')) {\n      radio.groupLabel = '';\n      if (this.label) {\n        radio.ariaLabelledby = this.headingId;\n        radio.ariaLabel = null;\n      }\n    }\n  };\n\n  private renderHeading() {\n    if (!this.label) return null;\n    return (\n      <ds-text\n        class=\"setting-row-radio__heading\"\n        as=\"span\"\n        variant={CONTROL_TEXT_VARIANT.md}\n        emphasis\n        textId={this.headingId}\n      >\n        {this.label}\n      </ds-text>\n    );\n  }\n\n  render() {\n    return (\n      <Host>\n        {this.renderHeading()}\n        {this.presentation === 'view' ? (\n          this.valueLabel || this.description ? (\n            <div class=\"setting-row-radio__choice\">\n              {this.valueLabel ? (\n                <ds-text as=\"span\" variant={CONTROL_TEXT_VARIANT.md}>\n                  {this.valueLabel}\n                </ds-text>\n              ) : null}\n              {this.description ? (\n                <ds-text as=\"span\" variant={CONTROL_SUPPORTING_TEXT_VARIANT.md} color=\"secondary\">\n                  {this.description}\n                </ds-text>\n              ) : null}\n            </div>\n          ) : null\n        ) : (\n          <slot onSlotchange={this.syncSlottedRadio} />\n        )}\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

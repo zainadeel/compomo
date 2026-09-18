@@ -99,15 +99,7 @@
           "description": "Move the owned scrollport to its beginning."
         }
       ],
-      "slots": [
-        {
-          "name": "",
-          "description": "The default slot"
-        },
-        {
-          "name": "overlay"
-        }
-      ]
+      "slots": []
     },
     "props": {
       "scrollLabel": {
@@ -146,15 +138,7 @@
         "description": "Move the owned scrollport to its beginning."
       }
     ],
-    "slots": [
-      {
-        "name": "",
-        "description": "The default slot"
-      },
-      {
-        "name": "overlay"
-      }
-    ],
+    "slots": [],
     "exports": {
       "customElement": "ds-scroll-overlay",
       "react": "DsScrollOverlay",

@@ -7,7 +7,6 @@ await Promise.all([
 ]);
 
 const radio = document.querySelector('#validation-mode');
-radio.groupLabel = 'Validation mode';
 radio.options = [
   {
     label: 'Use automated validation',
@@ -27,6 +26,13 @@ radio.options = [
   },
 ];
 radio.value = 'enabled';
+
+const formRadio = document.querySelector('#form-radio');
+formRadio.options = [
+  { label: 'Use automated validation', value: 'enabled' },
+  { label: 'Skip automated validation', value: 'disabled' },
+];
+formRadio.value = 'enabled';
 
 window.__settingRowRadioChanges = [];
 radio.addEventListener('dsChange', event => {

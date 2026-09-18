@@ -157,11 +157,7 @@
         }
       ],
       "methods": [],
-      "slots": [
-        {
-          "name": "actions"
-        }
-      ]
+      "slots": []
     },
     "props": {
       "clearLabel": {
@@ -212,11 +208,7 @@
       }
     ],
     "methods": [],
-    "slots": [
-      {
-        "name": "actions"
-      }
-    ],
+    "slots": [],
     "exports": {
       "customElement": "ds-bar-action",
       "react": "DsBarAction",

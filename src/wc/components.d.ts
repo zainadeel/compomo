@@ -1175,7 +1175,7 @@ export namespace Components {
          */
         "cancelLabel": string;
         /**
-          * Card width token (`sm` / `md` / `lg`). Editable cards also use the matching minimum-height token; immediate cards fit their content.
+          * Card width token (`sm` / `md` / `lg`). Empty editable cards use the matching minimum-height token. Cards with body content, and immediate cards, fit that content.
           * @default 'md'
          */
         "cardWidth": CardSettingWidth;
@@ -3791,7 +3791,7 @@ export namespace Components {
          */
         "description"?: string;
         /**
-          * Label shown above the saved value in view presentation.
+          * Settings heading shown in both presentations. Not Radio's form groupLabel.
          */
         "label"?: string;
         /**
@@ -7968,7 +7968,7 @@ declare namespace LocalJSX {
          */
         "cancelLabel"?: string;
         /**
-          * Card width token (`sm` / `md` / `lg`). Editable cards also use the matching minimum-height token; immediate cards fit their content.
+          * Card width token (`sm` / `md` / `lg`). Empty editable cards use the matching minimum-height token. Cards with body content, and immediate cards, fit that content.
           * @default 'md'
          */
         "cardWidth"?: CardSettingWidth;
@@ -10837,7 +10837,7 @@ declare namespace LocalJSX {
          */
         "description"?: string;
         /**
-          * Label shown above the saved value in view presentation.
+          * Settings heading shown in both presentations. Not Radio's form groupLabel.
          */
         "label"?: string;
         /**

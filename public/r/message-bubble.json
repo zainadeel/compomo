@@ -85,12 +85,7 @@
       },
       "events": [],
       "methods": [],
-      "slots": [
-        {
-          "name": "",
-          "description": "The default slot"
-        }
-      ]
+      "slots": []
     },
     "props": {
       "variant": {
@@ -104,12 +99,7 @@
     },
     "events": [],
     "methods": [],
-    "slots": [
-      {
-        "name": "",
-        "description": "The default slot"
-      }
-    ],
+    "slots": [],
     "exports": {
       "customElement": "ds-message-bubble",
       "react": "DsMessageBubble",

@@ -57,34 +57,12 @@
       "props": {},
       "events": [],
       "methods": [],
-      "slots": [
-        {
-          "name": "",
-          "description": "The default slot"
-        },
-        {
-          "name": "actions"
-        },
-        {
-          "name": "empty"
-        }
-      ]
+      "slots": []
     },
     "props": {},
     "events": [],
     "methods": [],
-    "slots": [
-      {
-        "name": "",
-        "description": "The default slot"
-      },
-      {
-        "name": "actions"
-      },
-      {
-        "name": "empty"
-      }
-    ],
+    "slots": [],
     "exports": {
       "customElement": "ds-conversation-list",
       "react": "DsConversationList",

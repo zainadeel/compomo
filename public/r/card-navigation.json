@@ -176,12 +176,7 @@
         }
       ],
       "methods": [],
-      "slots": [
-        {
-          "name": "",
-          "description": "The default slot"
-        }
-      ]
+      "slots": []
     },
     "props": {
       "cardWidth": {
@@ -238,12 +233,7 @@
       }
     ],
     "methods": [],
-    "slots": [
-      {
-        "name": "",
-        "description": "The default slot"
-      }
-    ],
+    "slots": [],
     "exports": {
       "customElement": "ds-card-navigation",
       "react": "DsCardNavigation",

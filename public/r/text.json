@@ -221,12 +221,7 @@
       },
       "events": [],
       "methods": [],
-      "slots": [
-        {
-          "name": "",
-          "description": "The default slot"
-        }
-      ]
+      "slots": []
     },
     "props": {
       "align": {
@@ -337,12 +332,7 @@
     },
     "events": [],
     "methods": [],
-    "slots": [
-      {
-        "name": "",
-        "description": "The default slot"
-      }
-    ],
+    "slots": [],
     "exports": {
       "customElement": "ds-text",
       "react": "DsText",

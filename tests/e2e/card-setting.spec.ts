@@ -15,7 +15,9 @@ test('owns settings shell chrome without composing ds-card', async ({ page }) =>
   const geometry = await card.evaluate(element => {
     const style = getComputedStyle(element);
     const header = element.querySelector<HTMLElement>('.card-setting__header')!;
+    const body = element.querySelector<HTMLElement>('.card-setting__body')!;
     const headerStyle = getComputedStyle(header);
+    const bodyStyle = getComputedStyle(body);
     const radiusProbe = document.createElement('div');
     radiusProbe.style.borderRadius = 'var(--ds-radius-card)';
     element.append(radiusProbe);
@@ -25,7 +27,10 @@ test('owns settings shell chrome without composing ds-card', async ({ page }) =>
       width: element.getBoundingClientRect().width,
       expectedWidth: Number.parseFloat(style.getPropertyValue('--dimension-card-width-sm')),
       minHeight: Number.parseFloat(style.minHeight),
-      expectedMinHeight: Number.parseFloat(style.getPropertyValue('--dimension-card-height-sm')),
+      height: element.getBoundingClientRect().height,
+      bodyPaddingTop: Number.parseFloat(bodyStyle.paddingTop),
+      bodyPaddingBottom: Number.parseFloat(bodyStyle.paddingBottom),
+      expectedBodyPadding: Number.parseFloat(style.getPropertyValue('--dimension-space-100')),
       borderRadius: style.borderRadius,
       expectedBorderRadius,
       boxShadow: style.boxShadow,
@@ -39,7 +44,10 @@ test('owns settings shell chrome without composing ds-card', async ({ page }) =>
   });
 
   expect(geometry.width).toBe(geometry.expectedWidth);
-  expect(geometry.minHeight).toBe(geometry.expectedMinHeight);
+  expect(geometry.minHeight).toBe(0);
+  expect(geometry.height).toBeGreaterThan(geometry.headerHeight);
+  expect(geometry.bodyPaddingTop).toBe(geometry.expectedBodyPadding);
+  expect(geometry.bodyPaddingBottom).toBe(geometry.expectedBodyPadding);
   expect(geometry.borderRadius).toBe(geometry.expectedBorderRadius);
   expect(geometry.boxShadow).not.toBe('none');
   expect(geometry.headerHeight).toBeGreaterThanOrEqual(geometry.headerMinHeight);
@@ -47,6 +55,94 @@ test('owns settings shell chrome without composing ds-card', async ({ page }) =>
   expect(geometry.headerPadding).toBe('8px');
   expect(geometry.headerGap).toBe('8px');
   expect(geometry.headerBoxSizing).toBe('border-box');
+});
+
+test('empty editable cards keep the height token while populated cards hug content', async ({
+  page,
+}) => {
+  const empty = page.locator('#empty-card');
+  const populated = page.locator('#general-card');
+  const immediate = page.locator('#immediate-card');
+
+  await expect(empty).toHaveClass(/card-setting--empty/);
+  await expect(populated).not.toHaveClass(/card-setting--empty/);
+  await expect(immediate).not.toHaveClass(/card-setting--empty/);
+
+  const geometry = await page.evaluate(() => {
+    const measure = (id: string) => {
+      const element = document.querySelector<HTMLElement>(id)!;
+      const style = getComputedStyle(element);
+      const body = element.querySelector<HTMLElement>('.card-setting__body')!;
+      const bodyStyle = getComputedStyle(body);
+      return {
+        minHeight: Number.parseFloat(style.minHeight),
+        height: element.getBoundingClientRect().height,
+        expectedMinHeight: Number.parseFloat(style.getPropertyValue('--dimension-card-height-sm')),
+        bodyPaddingTop: Number.parseFloat(bodyStyle.paddingTop),
+        bodyPaddingBottom: Number.parseFloat(bodyStyle.paddingBottom),
+        expectedBodyPadding: Number.parseFloat(style.getPropertyValue('--dimension-space-100')),
+      };
+    };
+    return {
+      empty: measure('#empty-card'),
+      populated: measure('#general-card'),
+      immediate: measure('#immediate-card'),
+    };
+  });
+
+  expect(geometry.empty.minHeight).toBe(geometry.empty.expectedMinHeight);
+  expect(geometry.empty.height).toBe(geometry.empty.expectedMinHeight);
+  expect(geometry.populated.minHeight).toBe(0);
+  expect(geometry.populated.height).toBeLessThan(geometry.empty.height);
+  expect(geometry.immediate.minHeight).toBe(0);
+  expect(geometry.empty.bodyPaddingTop).toBe(geometry.empty.expectedBodyPadding);
+  expect(geometry.empty.bodyPaddingBottom).toBe(geometry.empty.expectedBodyPadding);
+  expect(geometry.populated.bodyPaddingTop).toBe(geometry.populated.expectedBodyPadding);
+  expect(geometry.populated.bodyPaddingBottom).toBe(geometry.populated.expectedBodyPadding);
+  expect(geometry.immediate.bodyPaddingTop).toBe(geometry.immediate.expectedBodyPadding);
+  expect(geometry.immediate.bodyPaddingBottom).toBe(geometry.immediate.expectedBodyPadding);
+});
+
+test('keeps the banner above the padded content body without content-area top padding', async ({
+  page,
+}) => {
+  const card = page.locator('#banner-card');
+  const banner = card.locator('ds-inline-banner-settings');
+  const bannerRegion = card.locator('.card-setting__banner');
+  const body = card.locator('.card-setting__body');
+
+  await expect(banner).toHaveCount(1);
+  await expect(body.locator('ds-inline-banner-settings')).toHaveCount(0);
+  await expect(bannerRegion.locator('ds-inline-banner-settings')).toHaveCount(1);
+  await expect(bannerRegion).not.toHaveClass(/card-setting__banner--empty/);
+
+  const geometry = await card.evaluate(element => {
+    const style = getComputedStyle(element);
+    const header = element.querySelector<HTMLElement>('.card-setting__header')!;
+    const bannerWrap = element.querySelector<HTMLElement>('.card-setting__banner')!;
+    const bannerEl = element.querySelector<HTMLElement>('ds-inline-banner-settings')!;
+    const bodyEl = element.querySelector<HTMLElement>('.card-setting__body')!;
+    const bannerWrapStyle = getComputedStyle(bannerWrap);
+    const bodyStyle = getComputedStyle(bodyEl);
+    return {
+      bannerWrapPaddingTop: Number.parseFloat(bannerWrapStyle.paddingTop),
+      bannerWrapPaddingBottom: Number.parseFloat(bannerWrapStyle.paddingBottom),
+      bodyPaddingTop: Number.parseFloat(bodyStyle.paddingTop),
+      bodyPaddingBottom: Number.parseFloat(bodyStyle.paddingBottom),
+      expectedBodyPadding: Number.parseFloat(style.getPropertyValue('--dimension-space-100')),
+      headerBottom: header.getBoundingClientRect().bottom,
+      bannerTop: bannerEl.getBoundingClientRect().top,
+      bannerBottom: bannerEl.getBoundingClientRect().bottom,
+      bodyTop: bodyEl.getBoundingClientRect().top,
+    };
+  });
+
+  expect(geometry.bannerWrapPaddingTop).toBe(0);
+  expect(geometry.bannerWrapPaddingBottom).toBe(0);
+  expect(geometry.bodyPaddingTop).toBe(geometry.expectedBodyPadding);
+  expect(geometry.bodyPaddingBottom).toBe(geometry.expectedBodyPadding);
+  expect(geometry.bannerTop).toBeCloseTo(geometry.headerBottom, 1);
+  expect(geometry.bodyTop).toBeCloseTo(geometry.bannerBottom, 1);
 });
 
 test('emits typed actions while the parent enforces one editing section', async ({ page }) => {
@@ -59,14 +155,14 @@ test('emits typed actions while the parent enforces one editing section', async 
 
   const editGeometry = await general.evaluate(element => {
     const style = getComputedStyle(element);
-    const body = element.querySelector<HTMLElement>('.card-setting__body');
+    const panel = element.querySelector<HTMLElement>('.card-setting__panel');
     return {
-      bodyTopRadius: body ? getComputedStyle(body).borderTopRightRadius : undefined,
-      expectedBodyTopRadius: style.borderTopRightRadius,
+      panelTopRadius: panel ? getComputedStyle(panel).borderTopRightRadius : undefined,
+      expectedPanelTopRadius: style.borderTopRightRadius,
       boxShadow: style.boxShadow,
     };
   });
-  expect(editGeometry.bodyTopRadius).toBe(editGeometry.expectedBodyTopRadius);
+  expect(editGeometry.panelTopRadius).toBe(editGeometry.expectedPanelTopRadius);
   expect(editGeometry.boxShadow).not.toBe('none');
 
   await page.getByRole('button', { name: 'Edit Driver identification' }).click();

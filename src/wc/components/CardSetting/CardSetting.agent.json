@@ -44,7 +44,8 @@
     "component:ds-switch",
     "component:ds-text",
     "component:ds-setting-row-toggle",
-    "component:ds-setting-row-radio"
+    "component:ds-setting-row-radio",
+    "component:ds-inline-banner-settings"
   ],
   "accessibility": [
     "Provide a concise heading that identifies the settings section; CardSetting renders it as an h2.",
@@ -59,26 +60,30 @@
     "The editing property is controlled; CardSetting never changes it internally.",
     "dsAction emits edit, save, or cancel with the original pointer event. The parent decides whether and when editing changes.",
     "When another section requests edit, the parent keeps one active section and resolves any dirty current section before switching.",
+    "Project persistent informational copy into the banner slot so it sits above the padded content body and does not receive content-area padding.",
     "The parent owns read-only versus editable body composition, dirty state, validation, persistence, loading, success, and error consequences.",
     "A save request keeps the section editing while validation or persistence is pending; the parent exits only after success.",
     "A cancel request does not persist changes; the parent restores its chosen value snapshot and exits editing.",
     "The immediate variant keeps the resting card surface and omits header actions even if editing is supplied. The application applies and persists each control change independently."
   ],
   "responsiveBehavior": [
-    "Choose sm, md, or lg from the parent layout. Editable cards use the matching minimum height; immediate cards fit their content.",
+    "Choose sm, md, or lg from the parent layout. Empty editable cards use the matching minimum height. Cards with body content, and immediate cards, fit that content.",
     "The surface never exceeds its parent width, while the parent owns wrapping, columns, stacking, and breakpoint changes.",
     "At narrow widths, keep the fixed header actions visible and let application-owned body layouts collapse before allowing horizontal overflow."
   ],
   "frameworkCaveats": {
     "customElements": [
+      "Project ds-inline-banner-settings with slot=\"banner\". Leave setting rows and other controls in the default slot.",
       "Set editing as a JavaScript property and inspect dsAction.detail.action before updating the controlled state.",
       "When one section emits edit, update every sibling CardSetting so only the requested section remains editing."
     ],
     "react": [
+      "Pass slot=\"banner\" on ds-inline-banner-settings. Leave setting rows and other controls in the default slot.",
       "Pass editing from parent state and inspect onDsAction event detail; do not treat Save as successful until validation and persistence complete.",
       "Store one active section id and derive each CardSetting editing prop from that id."
     ],
     "angular": [
+      "Set slot=\"banner\" on ds-inline-banner-settings. Leave setting rows and other controls in the default slot.",
       "Bind [editing] and inspect $event.detail.action from (dsAction); do not treat Save as successful until validation and persistence complete.",
       "Store one active section id and derive each CardSetting editing binding from that id."
     ]
@@ -107,8 +112,13 @@
         "props": []
       },
       {
+        "properties": ["padding"],
+        "reason": "Content-area padding-block belongs on the body. The banner slot sits above that padding and does not receive it.",
+        "props": []
+      },
+      {
         "properties": ["width", "min-height"],
-        "reason": "Card width selects the component geometry; immediate cards fit their content. Let the parent constrain available space.",
+        "reason": "Card width selects the component geometry. Empty editable cards keep the matching minimum height; cards with body content and immediate cards fit that content. Let the parent constrain available space.",
         "props": ["cardWidth", "variant"]
       }
     ],

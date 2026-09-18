@@ -40,9 +40,8 @@ export const Default: Story = {
       aria-label="Validation settings"
       style="max-width:var(--dimension-card-width-md);"
     >
-      <ds-setting-row-radio role="listitem">
+      <ds-setting-row-radio role="listitem" label="Validation mode">
         <ds-radio
-          .groupLabel=${'Validation mode'}
           .options=${VALIDATION_OPTIONS}
           value="enabled"
           @dsChange=${selectValidationMode}
@@ -55,10 +54,12 @@ export const Default: Story = {
 export const SettingsCardMock: Story = {
   render: () => html`
     <ds-card-setting heading="Validation settings" card-width="md" editing>
-      <ds-inline-banner-settings description=${SETTINGS_INFO}></ds-inline-banner-settings>
-      <ds-setting-row-radio>
+      <ds-inline-banner-settings
+        slot="banner"
+        description=${SETTINGS_INFO}
+      ></ds-inline-banner-settings>
+      <ds-setting-row-radio label="Validation mode">
         <ds-radio
-          .groupLabel=${'Validation mode'}
           .options=${VALIDATION_OPTIONS}
           value="enabled"
           @dsChange=${selectValidationMode}
@@ -81,13 +82,8 @@ export const View: Story = {
 
 export const Inactive: Story = {
   render: () => html`
-    <ds-setting-row-radio>
-      <ds-radio
-        .groupLabel=${'Validation mode'}
-        .options=${VALIDATION_OPTIONS}
-        value="enabled"
-        is-inactive
-      ></ds-radio>
+    <ds-setting-row-radio label="Validation mode">
+      <ds-radio .options=${VALIDATION_OPTIONS} value="enabled" is-inactive></ds-radio>
     </ds-setting-row-radio>
   `,
 };

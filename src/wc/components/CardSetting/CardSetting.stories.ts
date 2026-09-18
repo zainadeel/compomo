@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-card-setting.js';
+import '../../../../dist/components/ds-inline-banner-settings.js';
 import '../../../../dist/components/ds-text.js';
 import '../../../../dist/components/ds-setting-row-toggle.js';
 import type { CardSettingActionDetail } from './CardSetting';
@@ -124,6 +125,34 @@ export const Interactive: Story = {
         `
       )}
     </div>
+  `,
+};
+
+/** Empty editable cards keep the width-matched minimum height. */
+export const Empty: Story = {
+  render: args => html`
+    <ds-card-setting
+      heading=${args['heading']}
+      card-width=${args['cardWidth']}
+      @dsAction=${handleControlledAction}
+    ></ds-card-setting>
+  `,
+};
+
+/** Informational copy sits above the padded content body and does not inherit that padding. */
+export const WithBanner: Story = {
+  render: args => html`
+    <ds-card-setting
+      heading=${args['heading']}
+      card-width=${args['cardWidth']}
+      @dsAction=${handleControlledAction}
+    >
+      <ds-inline-banner-settings
+        slot="banner"
+        description="Cloud review removes false positives before the setting is changed."
+      ></ds-inline-banner-settings>
+      ${settingsBody('Choose how events are validated.')}
+    </ds-card-setting>
   `,
 };
 

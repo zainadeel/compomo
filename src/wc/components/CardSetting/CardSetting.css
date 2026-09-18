@@ -61,7 +61,7 @@ ds-text.card-setting__title {
   flex-shrink: 0;
 }
 
-.card-setting__body {
+.card-setting__panel {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
@@ -71,12 +71,26 @@ ds-text.card-setting__title {
   border-radius: 0 0 var(--ds-radius-card) var(--ds-radius-card);
 }
 
-:host(.card-setting--immediate) .card-setting__body {
-  padding-block: var(--dimension-space-100);
+:host(.card-setting--editing) .card-setting__panel {
+  border-radius: var(--ds-radius-card);
 }
 
-:host(.card-setting--editing) .card-setting__body {
-  border-radius: var(--ds-radius-card);
+.card-setting__banner {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.card-setting__banner--empty {
+  display: none;
+}
+
+.card-setting__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  box-sizing: border-box;
+  padding-block: var(--dimension-space-100);
 }
 
 @media (forced-colors: active) {

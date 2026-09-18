@@ -143,12 +143,7 @@
       },
       "events": [],
       "methods": [],
-      "slots": [
-        {
-          "name": "",
-          "description": "The default slot"
-        }
-      ]
+      "slots": []
     },
     "props": {
       "description": {
@@ -195,12 +190,7 @@
     },
     "events": [],
     "methods": [],
-    "slots": [
-      {
-        "name": "",
-        "description": "The default slot"
-      }
-    ],
+    "slots": [],
     "exports": {
       "customElement": "ds-field",
       "react": "DsField",

@@ -18,14 +18,15 @@
   ],
   "commonlyComposedWith": ["component:ds-card-setting", "component:ds-radio"],
   "accessibility": [
-    "In edit presentation, slot exactly one ds-radio group and give it a visible label or an explicit aria-label/aria-labelledby.",
+    "Pass the settings heading as the row label. Do not pass Radio groupLabel; the row owns the visible heading and points the slotted radiogroup at it with aria-labelledby.",
     "Keep the Radio group's options, value, required state, and selection event owned by the application.",
     "Do not add a second interaction layer to the row; Radio owns option focus and keyboard selection while settings usage keeps hasInteractionFill false.",
-    "View presentation exposes readable label, saved value, and optional supporting copy without radio semantics or a focus target."
+    "View presentation exposes readable label, saved value, and optional supporting copy without radio semantics, a radio toggle, or a focus target."
   ],
   "states": [
     "The row is a neutral padded composition; selected, focus, and inactive states belong to the slotted Radio without a choice-list hover or pressed wash.",
     "The owning application handles dsChange and updates the slotted Radio value.",
+    "The settings heading is a row-owned ds-text (text-body-medium emphasis) with row CSS in both presentations. Edit slots an unlabeled Radio for options only so the form group-label never mounts.",
     "View presentation replaces the control with the saved option label and retains consequence copy when it helps explain that choice."
   ],
   "responsiveBehavior": [
@@ -38,11 +39,11 @@
     }
   ],
   "styling": {
-    "rationale": "The row owns only settings-list padding and width containment; Radio owns control geometry and interaction treatment.",
+    "rationale": "The row uses the shared settings-row inset so view and edit copy share the same 16px inline origin. The heading is row-owned CSS, not Radio's form group-label or control section-heading recipe. Radio owns option geometry.",
     "protected": [
       {
         "properties": ["padding"],
-        "reason": "Preserve the settings-row inset when a Radio group is placed in a CardSetting body.",
+        "reason": "Preserve the shared settings-row inset (space-100 block, space-200 inline) for both view and edit.",
         "props": []
       }
     ],

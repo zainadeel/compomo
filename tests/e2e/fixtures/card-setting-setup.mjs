@@ -1,7 +1,9 @@
 import '/dist/components/ds-card-setting.js';
+import '/dist/components/ds-inline-banner-settings.js';
 import '/dist/components/ds-setting-row-toggle.js';
 
 await customElements.whenDefined('ds-card-setting');
+await customElements.whenDefined('ds-inline-banner-settings');
 
 window.__cardSettingActions = [];
 

@@ -1,8 +1,11 @@
+@import '../../utils/settings-row.css';
+
 :host {
-  display: block;
-  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   min-width: 0;
-  padding: var(--dimension-space-100) var(--dimension-space-200);
+  gap: var(--dimension-space-050);
+  overflow-wrap: anywhere;
 }
 
 :host > ds-radio {
@@ -11,10 +14,18 @@
   width: 100%;
 }
 
-.setting-row-radio__view {
+ds-text.setting-row-radio__heading {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  height: var(--dimension-size-400);
   min-width: 0;
-  gap: var(--dimension-space-050);
-  overflow-wrap: anywhere;
+  padding: 0;
+}
+
+.setting-row-radio__choice {
+  display: grid;
+  gap: var(--dimension-space-025);
+  min-width: 0;
+  padding-block: var(--dimension-space-075);
 }

@@ -17,7 +17,7 @@
       "useWhen": [
         "A settings card needs persistent informational copy above its content.",
         "The message should remain visible in both read-only and editing presentations of the settings card.",
-        "The message needs body-medium typography, compact spacing, and a single tertiary bottom boundary."
+        "The message needs body-small typography, compact spacing, and a single tertiary bottom boundary."
       ],
       "avoidWhen": [
         "The message belongs in general bounded content outside a settings card; reserve the general inline-banner component for that use case.",
@@ -48,21 +48,21 @@
       "states": [
         "The description renders verbatim in every state in which the owning settings card projects the component.",
         "The component has no internal visibility, editing, or dismissal state; the owning settings card controls whether it is present.",
-        "The content height is intrinsic: the banner contributes 8px block padding and its inner content container contributes 6px block padding, followed by the tertiary bottom boundary."
+        "The content height is intrinsic: the banner contributes 8px block padding and its inner content container contributes 4px block padding. A single body-small line is 24px inside that container (4px + 16px line-height + 4px), followed by the tertiary bottom boundary."
       ],
       "responsiveBehavior": [
-        "The component fills the available inline size and lets body-medium copy wrap naturally.",
+        "The component fills the available inline size and lets body-small copy wrap naturally.",
         "The effective inline inset remains 16px: 8px banner padding, 6px inner content padding, and 2px text-side padding."
       ],
       "frameworkCaveats": {
         "customElements": [
-          "Pass the complete authored message through description; do not apply a CSS casing transform or mutate the text for presentation."
+          "Pass the complete authored message through description, assign slot=\"banner\" on CardSetting, and do not apply a CSS casing transform or mutate the text for presentation."
         ],
         "react": [
-          "Pass the complete authored message through the description prop and keep the component mounted for every settings-card state that needs the context."
+          "Pass the complete authored message through the description prop, set slot=\"banner\" on CardSetting, and keep the component mounted for every settings-card state that needs the context."
         ],
         "angular": [
-          "Bind [description] from the settings card's stable copy source and project the component outside any edit-only conditional."
+          "Bind [description] from the settings card's stable copy source and project the component into CardSetting's banner slot for every state that needs the context."
         ]
       },
       "references": [
@@ -163,12 +163,12 @@
   "files": [
     {
       "path": "src/wc/components/InlineBannerSettings/InlineBannerSettings.css",
-      "content": "@import '../../utils/forced-colors.css';\n\n:host {\n  display: block;\n  box-sizing: border-box;\n  min-width: 0;\n  padding: var(--dimension-space-100);\n  border-block-end: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);\n}\n\n.inline-banner-settings__content {\n  padding: var(--dimension-space-075);\n}\n\nds-text.inline-banner-settings__description {\n  overflow-wrap: anywhere;\n  padding-inline: var(--dimension-space-025);\n}\n\n@media (forced-colors: active) {\n  :host {\n    border-block-end-color: var(--ds-forced-color-content);\n  }\n}\n",
+      "content": "@import '../../utils/forced-colors.css';\n\n:host {\n  display: block;\n  box-sizing: border-box;\n  min-width: 0;\n  padding: var(--dimension-space-100);\n  border-block-end: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);\n}\n\n.inline-banner-settings__content {\n  padding-block: var(--dimension-space-050);\n  padding-inline: var(--dimension-space-075);\n}\n\nds-text.inline-banner-settings__description {\n  overflow-wrap: anywhere;\n  padding-inline: var(--dimension-space-025);\n}\n\n@media (forced-colors: active) {\n  :host {\n    border-block-end-color: var(--ds-forced-color-content);\n  }\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/InlineBannerSettings/InlineBannerSettings.tsx",
-      "content": "import { Component, h, Host, Prop } from '@stencil/core';\n\n@Component({\n  tag: 'ds-inline-banner-settings',\n  styleUrl: 'InlineBannerSettings.css',\n  scoped: true,\n})\nexport class InlineBannerSettings {\n  /** Authored informational copy rendered without transformation. */\n  @Prop() description!: string;\n\n  render() {\n    return (\n      <Host>\n        {/* eslint-disable-next-line compomo/prefer-direct-ds-text -- This structural layer owns the banner's inner padding separately from the ds-text balance padding. */}\n        <div class=\"inline-banner-settings__content\">\n          <ds-text\n            class=\"inline-banner-settings__description\"\n            as=\"p\"\n            variant=\"text-body-medium\"\n            color=\"secondary\"\n          >\n            {this.description}\n          </ds-text>\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, h, Host, Prop } from '@stencil/core';\n\n@Component({\n  tag: 'ds-inline-banner-settings',\n  styleUrl: 'InlineBannerSettings.css',\n  scoped: true,\n})\nexport class InlineBannerSettings {\n  /** Authored informational copy rendered without transformation. */\n  @Prop() description!: string;\n\n  render() {\n    return (\n      <Host>\n        {/* eslint-disable-next-line compomo/prefer-direct-ds-text -- This structural layer owns the banner's inner padding separately from the ds-text balance padding. */}\n        <div class=\"inline-banner-settings__content\">\n          <ds-text\n            class=\"inline-banner-settings__description\"\n            as=\"p\"\n            variant=\"text-body-small\"\n            color=\"secondary\"\n          >\n            {this.description}\n          </ds-text>\n        </div>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

@@ -9,6 +9,15 @@
     <main>
       <h1>Settings</h1>
       <ds-card-setting
+        id="empty-card"
+        heading="Collisions"
+        card-width="sm"
+        edit-label="Edit Collisions"
+        cancel-label="Cancel Collisions"
+        save-label="Save Collisions"
+      ></ds-card-setting>
+
+      <ds-card-setting
         id="general-card"
         heading="General"
         card-width="sm"
@@ -29,6 +38,21 @@
       >
         <p>Driver identification settings.</p>
       </ds-card-setting>
+      <ds-card-setting
+        id="banner-card"
+        heading="Event validation"
+        card-width="md"
+        edit-label="Edit Event validation"
+        cancel-label="Cancel Event validation"
+        save-label="Save Event validation"
+      >
+        <ds-inline-banner-settings
+          slot="banner"
+          description="Cloud review removes false positives before the setting is changed."
+        ></ds-inline-banner-settings>
+        <p>Validation method</p>
+      </ds-card-setting>
+
       <ds-card-setting
         id="immediate-card"
         heading="Interface preferences"

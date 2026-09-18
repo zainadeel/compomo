@@ -109,6 +109,50 @@ test('borderless field stacks inset supporting copy to the control text origin',
   assert.match(field, /controlBorderless/);
 });
 
+test('settings rows share one CardSetting inset and nested-control origin', () => {
+  const css = read('src/wc/utils/settings-row.css');
+  assert.match(css, /padding-block: var\(--dimension-space-100\)/);
+  assert.match(css, /padding-inline: var\(--dimension-space-200\)/);
+  assert.match(css, /--ds-settings-row-control-padding-inline: 0px/);
+
+  for (const name of ['SettingRowToggle', 'SettingRowRadio']) {
+    const rowCss = read(`src/wc/components/${name}/${name}.css`);
+    assert.match(rowCss, /settings-row\.css/);
+    assert.doesNotMatch(
+      rowCss,
+      /padding: var\(--dimension-space-100\) var\(--dimension-space-200\)/
+    );
+  }
+
+  const radio = read('src/wc/components/Radio/Radio.css');
+  assert.match(radio, /--ds-settings-row-control-padding-inline/);
+  assert.match(
+    radio,
+    /ds-text\.radio__group-label[\s\S]*padding-inline:\s*var\(\s*--ds-settings-row-control-padding-inline/
+  );
+  assert.doesNotMatch(
+    radio,
+    /--ds-settings-row-control-padding-inline, var\(--ds-control-padding-inline\)\) \+\s*var\(--ds-control-label-inset\)/
+  );
+
+  const radioRow = read('src/wc/components/SettingRowRadio/SettingRowRadio.tsx');
+  const radioRowCss = read('src/wc/components/SettingRowRadio/SettingRowRadio.css');
+  const radioSource = read('src/wc/components/Radio/Radio.tsx');
+  assert.match(radioRow, /variant=\{CONTROL_TEXT_VARIANT\.md\}/);
+  assert.match(radioRow, /variant=\{CONTROL_SUPPORTING_TEXT_VARIANT\.md\}/);
+  assert.match(radioRow, /setting-row-radio__heading/);
+  assert.match(radioRow, /setting-row-radio__choice/);
+  assert.match(radioRow, /radio\.groupLabel = ''/);
+  assert.doesNotMatch(radioRow, /ds-control-section-heading/);
+  assert.doesNotMatch(radioRow, /groupLabelVariant/);
+  assert.doesNotMatch(radioRowCss, /control-parts\.css/);
+  assert.match(radioRowCss, /height: var\(--dimension-size-400\)/);
+  assert.match(radioRowCss, /padding-block: var\(--dimension-space-075\)/);
+  assert.match(radioSource, /variant="text-body-small"/);
+  assert.match(radioSource, /closest\('ds-setting-row-radio'\)/);
+  assert.doesNotMatch(radioSource, /groupLabelVariant/);
+});
+
 test('both Select cardinality modes delegate interaction behavior to SelectController', () => {
   const source = read('src/wc/components/Select/Select.tsx');
   assert.match(source, /new SelectController/);

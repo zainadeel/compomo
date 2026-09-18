@@ -199,15 +199,7 @@
         }
       ],
       "methods": [],
-      "slots": [
-        {
-          "name": "",
-          "description": "The default slot"
-        },
-        {
-          "name": "footer"
-        }
-      ]
+      "slots": []
     },
     "props": {
       "ariaDescribedby": {
@@ -278,15 +270,7 @@
       }
     ],
     "methods": [],
-    "slots": [
-      {
-        "name": "",
-        "description": "The default slot"
-      },
-      {
-        "name": "footer"
-      }
-    ],
+    "slots": [],
     "exports": {
       "customElement": "ds-modal",
       "react": "DsModal",

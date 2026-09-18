@@ -131,17 +131,7 @@
         }
       ],
       "methods": [],
-      "slots": [
-        {
-          "name": "details"
-        },
-        {
-          "name": "result"
-        },
-        {
-          "name": "summary"
-        }
-      ]
+      "slots": []
     },
     "props": {
       "error": {
@@ -213,17 +203,7 @@
       }
     ],
     "methods": [],
-    "slots": [
-      {
-        "name": "details"
-      },
-      {
-        "name": "result"
-      },
-      {
-        "name": "summary"
-      }
-    ],
+    "slots": [],
     "exports": {
       "customElement": "ds-agent-tool-call",
       "react": "DsAgentToolCall",

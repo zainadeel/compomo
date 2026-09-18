@@ -1,10 +1,9 @@
+@import '../../utils/settings-row.css';
+
 :host {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: start;
-  box-sizing: border-box;
-  min-width: 0;
-  padding: var(--dimension-space-100) var(--dimension-space-200);
   gap: var(--dimension-space-200);
 }
 

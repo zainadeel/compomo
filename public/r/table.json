@@ -846,23 +846,7 @@
           "description": "Scroll the nearest vertical owner only enough to reveal a supplied row.\nResolves false when the row is absent from the supplied, expanded table model.\nThis method never moves focus."
         }
       ],
-      "slots": [
-        {
-          "name": "footer"
-        },
-        {
-          "name": "footer-leading"
-        },
-        {
-          "name": "footer-trailing"
-        },
-        {
-          "name": "header"
-        },
-        {
-          "name": "header-after"
-        }
-      ]
+      "slots": []
     },
     "props": {
       "caption": {
@@ -1484,23 +1468,7 @@
         "description": "Scroll the nearest vertical owner only enough to reveal a supplied row.\nResolves false when the row is absent from the supplied, expanded table model.\nThis method never moves focus."
       }
     ],
-    "slots": [
-      {
-        "name": "footer"
-      },
-      {
-        "name": "footer-leading"
-      },
-      {
-        "name": "footer-trailing"
-      },
-      {
-        "name": "header"
-      },
-      {
-        "name": "header-after"
-      }
-    ],
+    "slots": [],
     "exports": {
       "customElement": "ds-table",
       "react": "DsTable",

@@ -237,17 +237,7 @@
         }
       ],
       "methods": [],
-      "slots": [
-        {
-          "name": "filter"
-        },
-        {
-          "name": "footer"
-        },
-        {
-          "name": "period"
-        }
-      ]
+      "slots": []
     },
     "props": {
       "comparisonLabel": {
@@ -357,17 +347,7 @@
       }
     ],
     "methods": [],
-    "slots": [
-      {
-        "name": "filter"
-      },
-      {
-        "name": "footer"
-      },
-      {
-        "name": "period"
-      }
-    ],
+    "slots": [],
     "exports": {
       "customElement": "ds-card-overview",
       "react": "DsCardOverview",

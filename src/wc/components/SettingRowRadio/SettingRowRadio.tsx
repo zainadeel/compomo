@@ -1,6 +1,15 @@
-import { Component, h, Host, Prop } from '@stencil/core';
+import { Component, Element, h, Host, Prop } from '@stencil/core';
+import { CONTROL_SUPPORTING_TEXT_VARIANT, CONTROL_TEXT_VARIANT } from '../../utils';
 
 export type SettingRowRadioPresentation = 'edit' | 'view';
+
+type SettingsRadio = HTMLElement & {
+  groupLabel: string;
+  ariaLabel: string | null;
+  ariaLabelledby?: string;
+};
+
+let settingRowRadioHeadingId = 0;
 
 /** Padded settings-row composition for a Radio group. */
 @Component({
@@ -9,38 +18,73 @@ export type SettingRowRadioPresentation = 'edit' | 'view';
   scoped: true,
 })
 export class SettingRowRadio {
+  @Element() el!: HTMLElement;
+
   /** Interactive Radio group or non-interactive saved-value readout. */
   @Prop() presentation: SettingRowRadioPresentation = 'edit';
-  /** Label shown above the saved value in view presentation. */
+  /** Settings heading shown in both presentations. Not Radio's form groupLabel. */
   @Prop() label?: string;
   /** Saved option label shown in view presentation. */
   @Prop() valueLabel?: string;
   /** Optional consequence or supporting copy for the saved option. */
   @Prop() description?: string;
 
+  private readonly headingId = `ds-setting-row-radio-heading-${++settingRowRadioHeadingId}`;
+
+  componentWillLoad() {
+    this.syncSlottedRadio();
+  }
+
+  componentDidLoad() {
+    this.syncSlottedRadio();
+  }
+
+  private syncSlottedRadio = () => {
+    for (const radio of this.el.querySelectorAll<SettingsRadio>('ds-radio')) {
+      radio.groupLabel = '';
+      if (this.label) {
+        radio.ariaLabelledby = this.headingId;
+        radio.ariaLabel = null;
+      }
+    }
+  };
+
+  private renderHeading() {
+    if (!this.label) return null;
+    return (
+      <ds-text
+        class="setting-row-radio__heading"
+        as="span"
+        variant={CONTROL_TEXT_VARIANT.md}
+        emphasis
+        textId={this.headingId}
+      >
+        {this.label}
+      </ds-text>
+    );
+  }
+
   render() {
     return (
       <Host>
+        {this.renderHeading()}
         {this.presentation === 'view' ? (
-          <div class="setting-row-radio__view">
-            {this.label ? (
-              <ds-text as="span" variant="text-body-small" emphasis>
-                {this.label}
-              </ds-text>
-            ) : null}
-            {this.valueLabel ? (
-              <ds-text as="span" variant="text-body-medium">
-                {this.valueLabel}
-              </ds-text>
-            ) : null}
-            {this.description ? (
-              <ds-text as="span" variant="text-body-small" color="secondary">
-                {this.description}
-              </ds-text>
-            ) : null}
-          </div>
+          this.valueLabel || this.description ? (
+            <div class="setting-row-radio__choice">
+              {this.valueLabel ? (
+                <ds-text as="span" variant={CONTROL_TEXT_VARIANT.md}>
+                  {this.valueLabel}
+                </ds-text>
+              ) : null}
+              {this.description ? (
+                <ds-text as="span" variant={CONTROL_SUPPORTING_TEXT_VARIANT.md} color="secondary">
+                  {this.description}
+                </ds-text>
+              ) : null}
+            </div>
+          ) : null
         ) : (
-          <slot />
+          <slot onSlotchange={this.syncSlottedRadio} />
         )}
       </Host>
     );

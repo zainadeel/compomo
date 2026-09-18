@@ -32,11 +32,11 @@
     }
   ],
   "styling": {
-    "rationale": "The row owns copy/control spacing; its parent owns the section surface and width.",
+    "rationale": "The row uses the shared settings-row inset; copy/control columns and the parent section surface stay component-owned.",
     "protected": [
       {
         "properties": ["padding", "gap"],
-        "reason": "Preserve the shared settings-row spacing recipe.",
+        "reason": "Preserve the shared settings-row inset (space-100 block, space-200 inline) and copy-to-control gap.",
         "props": []
       }
     ],

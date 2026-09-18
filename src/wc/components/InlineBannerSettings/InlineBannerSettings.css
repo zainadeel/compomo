@@ -9,7 +9,8 @@
 }
 
 .inline-banner-settings__content {
-  padding: var(--dimension-space-075);
+  padding-block: var(--dimension-space-050);
+  padding-inline: var(--dimension-space-075);
 }
 
 ds-text.inline-banner-settings__description {

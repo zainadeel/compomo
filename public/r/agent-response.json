@@ -139,21 +139,7 @@
       },
       "events": [],
       "methods": [],
-      "slots": [
-        {
-          "name": "",
-          "description": "The default slot"
-        },
-        {
-          "name": "actions"
-        },
-        {
-          "name": "footer"
-        },
-        {
-          "name": "metadata-actions"
-        }
-      ]
+      "slots": []
     },
     "props": {
       "author": {
@@ -224,21 +210,7 @@
     },
     "events": [],
     "methods": [],
-    "slots": [
-      {
-        "name": "",
-        "description": "The default slot"
-      },
-      {
-        "name": "actions"
-      },
-      {
-        "name": "footer"
-      },
-      {
-        "name": "metadata-actions"
-      }
-    ],
+    "slots": [],
     "exports": {
       "customElement": "ds-agent-response",
       "react": "DsAgentResponse",

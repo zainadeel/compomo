@@ -17,7 +17,7 @@ export class InlineBannerSettings {
           <ds-text
             class="inline-banner-settings__description"
             as="p"
-            variant="text-body-medium"
+            variant="text-body-small"
             color="secondary"
           >
             {this.description}
