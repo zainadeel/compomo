@@ -80,6 +80,8 @@ export class Chart {
   private resizeObserver?: ResizeObserver;
   private resizeFrame?: number;
   private compileFrame?: number;
+  private hasLoaded = false;
+  private connectionGeneration = 0;
   private warnedConflictingHeight = false;
   private measuredLabels = new Map<string, { width: number; height: number }>();
   private descriptionId = `ds-chart-description-${Math.random().toString(36).slice(2)}`;
@@ -91,8 +93,12 @@ export class Chart {
   }
 
   componentDidLoad() {
-    this.connectResizeObserver();
-    this.waitForFonts();
+    this.hasLoaded = true;
+    this.connect();
+  }
+
+  connectedCallback() {
+    if (this.hasLoaded) this.connect();
   }
 
   componentDidRender() {
@@ -100,9 +106,13 @@ export class Chart {
   }
 
   disconnectedCallback() {
+    this.connectionGeneration += 1;
     this.resizeObserver?.disconnect();
-    if (this.resizeFrame) cancelAnimationFrame(this.resizeFrame);
-    if (this.compileFrame) cancelAnimationFrame(this.compileFrame);
+    this.resizeObserver = undefined;
+    if (this.resizeFrame !== undefined) cancelAnimationFrame(this.resizeFrame);
+    if (this.compileFrame !== undefined) cancelAnimationFrame(this.compileFrame);
+    this.resizeFrame = undefined;
+    this.compileFrame = undefined;
   }
 
   @Watch('definition')
@@ -134,23 +144,34 @@ export class Chart {
     return this.containerHeight ?? DEFAULT_HEIGHT;
   }
 
+  private connect() {
+    if (!this.el.isConnected) return;
+    // A detached chart may return with new props, dimensions, or inherited fonts.
+    this.measuredLabels.clear();
+    this.connectResizeObserver();
+    this.scheduleCompile();
+    this.waitForFonts();
+  }
+
   private connectResizeObserver() {
     this.resizeObserver?.disconnect();
-    if (typeof ResizeObserver === 'undefined') return;
-    this.resizeObserver = new ResizeObserver(entries => {
-      const entry = entries[0];
-      if (!entry) return;
-      if (this.resizeFrame) cancelAnimationFrame(this.resizeFrame);
-      this.resizeFrame = requestAnimationFrame(() => {
-        this.resizeFrame = undefined;
-        this.applyMeasuredSize(entry.contentRect.width, entry.contentRect.height);
+    if (typeof ResizeObserver !== 'undefined') {
+      this.resizeObserver = new ResizeObserver(entries => {
+        const entry = entries[0];
+        if (!entry || !this.el.isConnected) return;
+        if (this.resizeFrame !== undefined) cancelAnimationFrame(this.resizeFrame);
+        this.resizeFrame = requestAnimationFrame(() => {
+          this.resizeFrame = undefined;
+          this.applyMeasuredSize(entry.contentRect.width, entry.contentRect.height);
+        });
       });
-    });
-    this.resizeObserver.observe(this.el);
+      this.resizeObserver.observe(this.el);
+    }
     this.measureHost();
   }
 
   private measureHost() {
+    if (!this.el.isConnected) return;
     const bounds = this.el.getBoundingClientRect();
     this.applyMeasuredSize(bounds.width, bounds.height);
   }
@@ -177,7 +198,8 @@ export class Chart {
   }
 
   private scheduleCompile() {
-    if (this.compileFrame) cancelAnimationFrame(this.compileFrame);
+    if (!this.el.isConnected) return;
+    if (this.compileFrame !== undefined) cancelAnimationFrame(this.compileFrame);
     this.compileFrame = requestAnimationFrame(() => {
       this.compileFrame = undefined;
       this.compile();
@@ -216,13 +238,16 @@ export class Chart {
 
   private waitForFonts() {
     if (!document.fonts) return;
+    const generation = this.connectionGeneration;
     void document.fonts.ready.then(() => {
+      if (!this.el.isConnected || generation !== this.connectionGeneration) return;
       this.measuredLabels.clear();
       this.scheduleCompile();
     });
   }
 
   private measureRenderedLabels() {
+    if (!this.el.isConnected) return;
     const labels = this.el.querySelectorAll<SVGTextElement>('[data-chart-measure]');
     let changed = false;
     labels.forEach(label => {

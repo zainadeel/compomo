@@ -55,6 +55,24 @@ Do not use component inheritance to share UI behavior. Extract a controller,
 pure function, or shared CSS recipe when several components have the same
 contract.
 
+## Connection lifecycle
+
+Custom elements can be removed and reinserted without being recreated.
+`componentDidLoad()` runs once; use `connectedCallback()` to restore observers
+and listeners on subsequent connections. When setup needs rendered DOM, share
+it between those hooks and guard the first connection until rendering finishes.
+
+Release observers, listeners, timers, and animation frames on disconnect, and
+clear their handles. Prevent pending asynchronous work from updating a detached
+component; use a connection generation when an old promise could finish after
+reconnection. On reconnect, measure the current DOM and reconcile the latest
+props even when the dimensions have not changed.
+
+For components that own these resources, add rendered coverage for repeated
+disconnect/reconnect cycles and input changes while detached. See
+the [chart lifecycle tests](../../tests/e2e/chart-lifecycle.spec.ts) for an example
+that also controls font loading.
+
 ## Documentation
 
 Add consumer explanation only when a prop table or story cannot communicate the
