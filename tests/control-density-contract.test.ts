@@ -368,11 +368,11 @@ test('date and time inputs share Input density, typography, and picker chrome', 
   );
   assert.match(
     read('src/wc/components/Calendar/Calendar.tsx'),
-    /'ds-interaction-fill--surface-open':[\s\S]*pendingStartDay && !this\.isDisabled\(day\.value\)/
+    /'ds-interaction-fill--surface-open':[\s\S]*pendingStartDay && !disabled/
   );
   assert.match(
     read('src/wc/components/Calendar/Calendar.tsx'),
-    /'ds-interaction-fill--selected': selected && !this\.isDisabled\(day\.value\)/
+    /'ds-interaction-fill--selected': selected && !disabled/
   );
   assert.match(timeSource, /formatClockTimeLabel/);
   assert.match(datetimeCss, /input-control__datetime-action/);

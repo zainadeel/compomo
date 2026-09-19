@@ -981,6 +981,8 @@ test('date and time inputs follow Input density, body text, and form association
   await dateField.getByRole('button', { name: 'Choose date' }).click();
   const picker = page.getByRole('dialog', { name: 'Choose date' });
   await expect(picker).toBeVisible();
+  await expect(picker.locator('[data-date-option="2026-08-31"]')).toBeDisabled();
+  await expect(picker.locator('[data-date-option="2026-10-01"]')).toBeDisabled();
   const pickerAlignment = await dateField.evaluate(element => {
     const control = element.querySelector<HTMLElement>('.input-control')!.getBoundingClientRect();
     const popup = element.querySelector<HTMLElement>('.input-date-popup')!.getBoundingClientRect();

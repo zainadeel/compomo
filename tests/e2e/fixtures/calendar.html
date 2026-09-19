@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Calendar selection</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+  </head>
+  <body>
+    <div style="display:flex;flex-wrap:wrap;gap:32px;align-items:start">
+      <ds-calendar id="single" value="2026-09-30" style="width:320px"></ds-calendar>
+      <ds-calendar id="range" selection-mode="range" value="range:2026-09-28/2026-09-29" style="width:320px"></ds-calendar>
+      <ds-calendar id="bounded" value="2026-09-05" min="2026-09-10" max="2026-09-20" style="width:320px"></ds-calendar>
+      <ds-calendar id="inactive" value="2026-09-30" is-inactive style="width:320px"></ds-calendar>
+    </div>
+    <script type="module">
+      import '/dist/components/ds-calendar.js';
+      await customElements.whenDefined('ds-calendar');
+      for (const calendar of document.querySelectorAll('ds-calendar')) {
+        calendar.dataset.changeCount = '0';
+        calendar.addEventListener('dsChange', event => {
+          calendar.value = event.detail;
+          calendar.dataset.changeCount = String(Number(calendar.dataset.changeCount) + 1);
+        });
+      }
+    </script>
+  </body>
+</html>
