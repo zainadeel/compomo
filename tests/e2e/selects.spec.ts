@@ -707,19 +707,26 @@ test(
   }
 );
 
-test('keeps the active descendant visible in long single and multi lists', async ({ page }) => {
-  for (const selector of ['#single', '#multi']) {
+for (const selector of ['#single', '#multi']) {
+  test(`keeps the active descendant visible in a long ${selector.slice(1)} list`, async ({
+    page,
+  }) => {
     const select = page.locator(selector);
     await select.evaluate((element: HTMLDsSelectElement) => {
+      element.sections = [];
       element.options = Array.from({ length: 40 }, (_, index) => ({
         label: `Option ${String(index + 1).padStart(2, '0')}`,
         value: `option-${index + 1}`,
       }));
+      element.value = element.multiple ? ['option-1', 'option-2'] : 'option-1';
     });
 
     const trigger = select.getByRole('combobox');
     await trigger.press('ArrowDown');
+    await expect(select.getByRole('listbox')).toBeVisible();
+    await expect(select.getByRole('option')).toHaveCount(40);
     await trigger.press('End');
+    await expect(trigger).toHaveAttribute('aria-activedescendant', /-option-39$/);
 
     await expect
       .poll(async () => {
@@ -737,8 +744,9 @@ test('keeps the active descendant visible in long single and multi lists', async
       .toBe(true);
 
     await trigger.press('Escape');
-  }
-});
+    await expect(select.getByRole('listbox')).toBeHidden();
+  });
+}
 
 test('supports buffered local typeahead and clear while preserving the open popup', async ({
   page,

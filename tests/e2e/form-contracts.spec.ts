@@ -194,6 +194,11 @@ test('disabled fieldsets omit every control and restore submission when enabled 
     fieldset.disabled = true;
   });
   await expect.poll(() => formData(page)).toEqual([]);
+  // Native form omission is synchronous; custom tab stops update on Stencil's
+  // next render. Wait for that public state before testing keyboard traversal.
+  for (const target of await page.locator('#check, #toggle, #radio [role=radio]').all()) {
+    await expect(target).toHaveAttribute('tabindex', '-1');
+  }
   await page.locator('#check').evaluate((el: HTMLElement) => el.click());
   await page.locator('#toggle').evaluate((el: HTMLElement) => el.click());
   await page
@@ -201,10 +206,9 @@ test('disabled fieldsets omit every control and restore submission when enabled 
     .first()
     .evaluate((el: HTMLElement) => el.click());
   await page.locator('#after').focus();
+  await expect(page.locator('#after')).toBeFocused();
   await page.keyboard.press('Shift+Tab');
-  expect(
-    await page.evaluate(() => document.getElementById('controls')!.contains(document.activeElement))
-  ).toBe(false);
+  await expect(page.locator('#before')).toBeFocused();
   await page.locator('#controls').evaluate((fieldset: HTMLFieldSetElement) => {
     fieldset.disabled = false;
   });
