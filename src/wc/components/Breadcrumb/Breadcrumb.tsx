@@ -1,5 +1,16 @@
-import { Component, Event, EventEmitter, h, Host, Prop, State, Watch } from '@stencil/core';
+import {
+  Component,
+  Element,
+  Event,
+  EventEmitter,
+  h,
+  Host,
+  Prop,
+  State,
+  Watch,
+} from '@stencil/core';
 import { resolveSafeUrl } from '../../utils';
+import { ConnectionTasks } from '../../utils/connection-tasks';
 import type { BreadcrumbItem, BreadcrumbSelectDetail } from './breadcrumb-types';
 
 @Component({
@@ -8,6 +19,8 @@ import type { BreadcrumbItem, BreadcrumbSelectDetail } from './breadcrumb-types'
   scoped: true,
 })
 export class Breadcrumb {
+  @Element() el!: HTMLElement;
+
   /** Ordered path from the broadest ancestor to the nearest page. */
   @Prop() items: BreadcrumbItem[] = [];
 
@@ -28,11 +41,23 @@ export class Breadcrumb {
   private resizeObserver?: ResizeObserver;
   private observedElement?: HTMLElement;
   private measurementFrame?: number;
+  private hasLoaded = false;
+  private readonly connectionTasks = new ConnectionTasks(() => this.el.isConnected);
+
+  connectedCallback() {
+    if (this.hasLoaded) this.connectResources();
+  }
 
   componentDidLoad() {
+    this.hasLoaded = true;
+    this.connectResources();
+  }
+
+  private connectResources() {
+    if (!this.el.isConnected) return;
     this.observeContainer();
     this.scheduleMeasurement();
-    void document.fonts?.ready.then(() => this.scheduleMeasurement());
+    void document.fonts?.ready.then(this.connectionTasks.guard(() => this.scheduleMeasurement()));
   }
 
   componentDidRender() {
@@ -41,9 +66,11 @@ export class Breadcrumb {
   }
 
   disconnectedCallback() {
+    this.connectionTasks.cancel();
     this.resizeObserver?.disconnect();
+    this.resizeObserver = undefined;
     this.observedElement = undefined;
-    if (this.measurementFrame !== undefined) cancelAnimationFrame(this.measurementFrame);
+    this.measurementFrame = undefined;
   }
 
   @Watch('items')
@@ -54,7 +81,8 @@ export class Breadcrumb {
   }
 
   private observeContainer() {
-    if (!this.navElement || this.observedElement === this.navElement) return;
+    if (!this.el.isConnected || !this.navElement || this.observedElement === this.navElement)
+      return;
     this.resizeObserver ??= new ResizeObserver(() => this.scheduleMeasurement());
     this.resizeObserver.disconnect();
     this.resizeObserver.observe(this.navElement);
@@ -62,8 +90,8 @@ export class Breadcrumb {
   }
 
   private scheduleMeasurement() {
-    if (this.measurementFrame !== undefined) return;
-    this.measurementFrame = requestAnimationFrame(() => {
+    if (!this.el.isConnected || this.measurementFrame !== undefined) return;
+    this.measurementFrame = this.connectionTasks.frame(() => {
       this.measurementFrame = undefined;
       this.measureLabels();
     });

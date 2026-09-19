@@ -12,6 +12,7 @@ import {
   Host,
 } from '@stencil/core';
 import type { NavChromeStyle } from '../../shell/nav-chrome';
+import { ConnectionTasks } from '../../utils/connection-tasks';
 import { isEditableShortcutTarget, resolveShellShortcut } from '../../shell/shell-shortcuts';
 import type {
   PanelToolsHeaderAction,
@@ -207,6 +208,7 @@ export class ShellApp {
   private mobileActionTriggerEl: FocusableButton | null = null;
   private resizeObserver: ResizeObserver | null = null;
   private hasLoaded = false;
+  private readonly connectionTasks = new ConnectionTasks(() => this.el.isConnected);
   private foregroundRefreshTimer: number | null = null;
   private readonly panelNavTransition = new ChromeTransitionDepth();
   private readonly chromeSyncCoalescer = createRafCoalescer(() => this.syncChrome());
@@ -273,8 +275,18 @@ export class ShellApp {
     this.managedInboxTool = resolveAvailableInboxTool('', this.availableInboxTools);
   }
 
+  connectedCallback() {
+    if (this.hasLoaded) this.connectResources();
+  }
+
   componentDidLoad() {
     this.hasLoaded = true;
+    this.connectResources();
+  }
+
+  private connectResources() {
+    if (!this.el.isConnected) return;
+    this.updateResponsiveMode();
     this.syncSlottedNavStyle();
     this.syncSlottedMobileState();
     this.connectMetricsObserver();
@@ -282,7 +294,7 @@ export class ShellApp {
     this.connectPageLifecycleListeners();
     this.el.addEventListener(CHROME_TRANSITION_START, this.onChromeTransitionStart);
     this.el.addEventListener(CHROME_TRANSITION_END, this.onChromeTransitionEnd);
-    requestAnimationFrame(() => {
+    this.connectionTasks.frame(() => {
       this.cachePanelWidthTokens();
       this.scheduleChromeSync();
     });
@@ -296,12 +308,14 @@ export class ShellApp {
   }
 
   disconnectedCallback() {
+    this.connectionTasks.cancel();
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
     this.disconnectViewportListeners();
     this.disconnectPageLifecycleListeners();
     this.cancelForegroundRefresh();
     this.chromeSyncCoalescer.cancel();
+    this.panelNavTransition.reset();
     this.el.removeEventListener(CHROME_TRANSITION_START, this.onChromeTransitionStart);
     this.el.removeEventListener(CHROME_TRANSITION_END, this.onChromeTransitionEnd);
   }
@@ -359,7 +373,7 @@ export class ShellApp {
     }
     this.syncSlottedMobileState();
     if (previous === true && !this.effectiveMobileSheetNavOpen && this.resolvedMode === 'mobile') {
-      requestAnimationFrame(() => {
+      this.connectionTasks.frame(() => {
         const bar = this.el.querySelector('ds-mobile-bar-nav') as
           | (HTMLElement & {
               focusDestination?: (destination: MobileDestination | 'sheet-nav') => Promise<void>;
@@ -373,7 +387,7 @@ export class ShellApp {
   }
 
   private updateResponsiveMode() {
-    if (typeof window === 'undefined') return;
+    if (!this.el.isConnected || typeof window === 'undefined') return;
     const next = resolveShellResponsiveMode(window.innerWidth);
     if (next === this.resolvedMode) return;
     this.resolvedMode = next;
@@ -405,6 +419,7 @@ export class ShellApp {
 
   /** Coalesce ResizeObserver bursts to one layout read per frame. */
   private scheduleChromeSync() {
+    if (!this.el.isConnected) return;
     this.chromeSyncCoalescer.schedule();
   }
 
@@ -453,6 +468,7 @@ export class ShellApp {
   }
 
   private connectMetricsObserver() {
+    this.resizeObserver?.disconnect();
     this.resizeObserver = new ResizeObserver(() => {
       if (this.panelNavTransition.isActive) return;
       this.scheduleChromeSync();
@@ -515,6 +531,7 @@ export class ShellApp {
   }
 
   private refreshAfterForegroundRestore() {
+    if (!this.el.isConnected) return;
     this.updateResponsiveMode();
     this.syncSlottedMobileState();
     this.scheduleChromeSync();
@@ -878,6 +895,7 @@ export class ShellApp {
   }
 
   private syncChrome() {
+    if (!this.el.isConnected) return;
     const panelNav = this.el.querySelector('ds-panel-nav') as HTMLElement | null;
     const bar = this.el.querySelector(
       'ds-bar-nav, ds-bar-page-title, ds-bar-title[placement="shell-bar"]'
@@ -1254,7 +1272,7 @@ export class ShellApp {
     if (!action || action.isInactive || ('isLoading' in action && action.isLoading)) return;
     this.mobileActionMenuOpen = false;
     this.dsPageAction.emit(id);
-    requestAnimationFrame(() => void this.mobileActionTriggerEl?.setFocus?.());
+    this.connectionTasks.frame(() => void this.mobileActionTriggerEl?.setFocus?.());
   };
 
   private renderManagedMobileActionMenu() {

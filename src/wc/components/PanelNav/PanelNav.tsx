@@ -10,7 +10,8 @@ import {
   h,
   Host,
 } from '@stencil/core';
-import type { ChromeTransitionDetail } from '../../shell/chrome-transition';
+import { CHROME_TRANSITION_END, type ChromeTransitionDetail } from '../../shell/chrome-transition';
+import { ConnectionTasks } from '../../utils/connection-tasks';
 import type { NavChromeStyle } from '../../shell/nav-chrome';
 import {
   derivePanelNavSelectionFromUrl,
@@ -159,6 +160,9 @@ export class PanelNav {
   private scrollRegionObserver?: ResizeObserver;
   private bodyEl?: HTMLElement;
   private initialRenderComplete = false;
+  private hasLoaded = false;
+  private readonly connectionTasks = new ConnectionTasks(() => this.el.isConnected);
+  private transitionShell: HTMLElement | null = null;
   private inlineChildrenExpansionFrame: number | null = null;
 
   // Drag-to-resize state (not @State — no re-render needed)
@@ -169,6 +173,7 @@ export class PanelNav {
   private edgeOverlayTimer: number | null = null;
   private globalMouseMoveHandler?: (e: MouseEvent) => void;
   private globalMouseUpHandler?: () => void;
+  private dragBodyStyle?: { cursor: string; userSelect: string };
 
   @State() private showEdgeOverlay = false;
 
@@ -225,7 +230,10 @@ export class PanelNav {
   @Watch('breakpoint')
   onBreakpointChange() {
     this.disconnectResizeObserver();
-    if (this.effectiveBreakpoint() > 0) this.connectResizeObserver();
+    if (this.el.isConnected) {
+      this.viewportNarrow = this.isViewportNarrow();
+      if (this.effectiveBreakpoint() > 0) this.connectResizeObserver();
+    }
   }
 
   @Watch('groups')
@@ -278,8 +286,21 @@ export class PanelNav {
     this.syncActiveFromUrl();
   }
 
+  connectedCallback() {
+    if (this.hasLoaded) this.connectResources();
+  }
+
   componentDidLoad() {
+    this.hasLoaded = true;
+    this.connectResources();
+  }
+
+  private connectResources() {
+    if (!this.el.isConnected) return;
     this.syncHostPropsIfNeeded();
+    this.viewportNarrow = this.isViewportNarrow();
+    this.syncExpandedParent();
+    this.rovingIndex = this.getFirstRovingIndex();
     this.scheduleDeferredHostPropSync();
     if (this.effectiveBreakpoint() > 0) this.connectResizeObserver();
     this.connectScrollRegionObserver();
@@ -288,29 +309,29 @@ export class PanelNav {
   }
 
   componentDidRender() {
+    if (!this.el.isConnected) return;
     this.updateBodyScrollable();
     this.scheduleInlineChildrenExpansion();
   }
 
   disconnectedCallback() {
+    this.connectionTasks.cancel();
+    this.initialRenderComplete = false;
     this.disconnectResizeObserver();
     this.disconnectScrollRegionObserver();
     this.clearInlineChildrenExpansionFrame();
-    this.clearCollapseAnimationCompletion(
-      this.el.querySelector('.panel-nav') as HTMLElement | null
-    );
+    this.finishCollapseAnimation(this.el.querySelector('.panel-nav') as HTMLElement | null);
     this.clearEdgeOverlayTimer();
-    if (this.globalMouseMoveHandler) {
-      window.removeEventListener('mousemove', this.globalMouseMoveHandler);
-    }
-    if (this.globalMouseUpHandler) {
-      window.removeEventListener('mouseup', this.globalMouseUpHandler);
-    }
+    this.clearResizeDrag();
+    this.stageInlineChildrenExpansion(false);
+    this.flyoutParentId = '';
+    this.flyoutOpen = false;
   }
 
   private startCollapseAnimation() {
-    if (this.isAnimating) return;
+    if (!this.el.isConnected || this.isAnimating) return;
     this.isAnimating = true;
+    this.transitionShell = this.el.closest('ds-shell-app');
     this.dsChromeTransitionStart.emit({ source: 'panel-nav' });
     const panel = this.el.querySelector('.panel-nav') as HTMLElement | null;
     this.clearCollapseAnimationCompletion(panel);
@@ -321,8 +342,8 @@ export class PanelNav {
     };
     panel?.addEventListener('transitionend', this.transitionCompletionHandler);
     panel?.addEventListener('transitioncancel', this.transitionCompletionHandler);
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
+    this.connectionTasks.frame(() => {
+      this.connectionTasks.frame(() => {
         if (!this.isAnimating) return;
         if (!panel) {
           this.finishCollapseAnimation(panel);
@@ -347,31 +368,48 @@ export class PanelNav {
   }
 
   private scheduleInlineChildrenExpansion() {
-    if (this.inlineChildrenExpansionReady || this.collapsedPresentation) return;
+    if (!this.el.isConnected || this.inlineChildrenExpansionReady || this.collapsedPresentation)
+      return;
     this.clearInlineChildrenExpansionFrame();
-    this.inlineChildrenExpansionFrame = requestAnimationFrame(() => {
-      this.inlineChildrenExpansionFrame = null;
-      if (this.collapsedPresentation) return;
+    this.inlineChildrenExpansionFrame =
+      this.connectionTasks.frame(() => {
+        this.inlineChildrenExpansionFrame = null;
+        if (this.collapsedPresentation) return;
 
-      // Commit the newly mounted accordion's closed geometry before opening it.
-      // Without this read, the browser can insert it directly at 1fr and skip motion.
-      this.el.querySelector<HTMLElement>('.panel-nav__children-accordion')?.getBoundingClientRect();
-      this.inlineChildrenExpansionReady = true;
-    });
+        // Commit the newly mounted accordion's closed geometry before opening it.
+        // Without this read, the browser can insert it directly at 1fr and skip motion.
+        this.el
+          .querySelector<HTMLElement>('.panel-nav__children-accordion')
+          ?.getBoundingClientRect();
+        this.inlineChildrenExpansionReady = true;
+      }) ?? null;
   }
 
   private clearInlineChildrenExpansionFrame() {
     if (this.inlineChildrenExpansionFrame === null) return;
-    cancelAnimationFrame(this.inlineChildrenExpansionFrame);
+    this.connectionTasks.cancelFrame(this.inlineChildrenExpansionFrame);
     this.inlineChildrenExpansionFrame = null;
   }
 
   private finishCollapseAnimation(panel: HTMLElement | null) {
     const wasAnimating = this.isAnimating;
+    const shell = this.transitionShell;
+    this.transitionShell = null;
     this.clearCollapseAnimationCompletion(panel);
     if (!wasAnimating) return;
     this.isAnimating = false;
-    this.dsChromeTransitionEnd.emit({ source: 'panel-nav' });
+    if (shell && this.el.closest('ds-shell-app') !== shell) {
+      // Removal must release the shell that received the matching start event.
+      shell.dispatchEvent(
+        new CustomEvent<ChromeTransitionDetail>(CHROME_TRANSITION_END, {
+          detail: { source: 'panel-nav' },
+          bubbles: true,
+          composed: true,
+        })
+      );
+    } else {
+      this.dsChromeTransitionEnd.emit({ source: 'panel-nav' });
+    }
   }
 
   private clearCollapseAnimationCompletion(panel: HTMLElement | null) {
@@ -398,6 +436,7 @@ export class PanelNav {
   }
 
   private connectResizeObserver() {
+    this.disconnectResizeObserver();
     this.viewportNarrow = this.isViewportNarrow();
     this.resizeObserver = new ResizeObserver(() => {
       this.viewportNarrow = this.isViewportNarrow();
@@ -423,6 +462,7 @@ export class PanelNav {
   }
 
   private updateBodyScrollable() {
+    if (!this.el.isConnected) return;
     const next = Boolean(this.bodyEl && this.bodyEl.scrollHeight > this.bodyEl.clientHeight + 1);
     if (next !== this.bodyScrollable) this.bodyScrollable = next;
   }
@@ -465,10 +505,10 @@ export class PanelNav {
     const tick = () => {
       this.syncHostPropsIfNeeded();
       if (--remaining > 0) {
-        requestAnimationFrame(tick);
+        this.connectionTasks.frame(tick);
       }
     };
-    queueMicrotask(tick);
+    this.connectionTasks.microtask(tick);
   }
 
   /** Centralised toggle: updates the desktop preference unless breakpoint-locked. */
@@ -753,6 +793,10 @@ export class PanelNav {
     this.clearEdgeOverlayTimer();
     this.showEdgeOverlay = false;
 
+    this.dragBodyStyle = {
+      cursor: document.body.style.cursor,
+      userSelect: document.body.style.userSelect,
+    };
     document.body.style.cursor = 'ew-resize';
     document.body.style.userSelect = 'none';
 
@@ -773,20 +817,28 @@ export class PanelNav {
       if (!this.didSnap && this.lastDeltaX < 3) {
         this.applyToggle(!wasCollapsed);
       }
-      this.isDragging = false;
-      this.showEdgeOverlay = false;
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
-      this.globalMouseMoveHandler = undefined;
-      this.globalMouseUpHandler = undefined;
+      this.clearResizeDrag();
     };
 
     this.globalMouseMoveHandler = onMove;
     this.globalMouseUpHandler = onUp;
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
+  }
+
+  private clearResizeDrag() {
+    if (this.globalMouseMoveHandler)
+      window.removeEventListener('mousemove', this.globalMouseMoveHandler);
+    if (this.globalMouseUpHandler) window.removeEventListener('mouseup', this.globalMouseUpHandler);
+    this.globalMouseMoveHandler = undefined;
+    this.globalMouseUpHandler = undefined;
+    this.isDragging = false;
+    this.showEdgeOverlay = false;
+    if (this.dragBodyStyle) {
+      document.body.style.cursor = this.dragBodyStyle.cursor;
+      document.body.style.userSelect = this.dragBodyStyle.userSelect;
+      this.dragBodyStyle = undefined;
+    }
   }
 
   private renderFooterAction(isDashboardChrome: boolean) {

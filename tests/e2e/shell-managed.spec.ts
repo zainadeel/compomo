@@ -225,32 +225,49 @@ test.describe('Managed application shell', () => {
     expect(closingChildColor).toBe(mutedParentColor);
 
     const followingParent = panel.getByRole('button', { name: 'Reports' });
-    const [expandedAccordionHeight, followingTopBeforeCollapse] = await Promise.all([
-      maintenanceAccordion.evaluate(element => element.getBoundingClientRect().height),
-      followingParent.evaluate(element => element.getBoundingClientRect().top),
-    ]);
-    await panel.evaluate(element => (element as HTMLDsPanelNavElement).toggleCollapsed());
+    const collapse = await panel.evaluate(
+      async (element, { accordion, following }) => {
+        const frame = element.querySelector('.panel-nav');
+        if (!accordion || !following || !frame) throw new Error('Panel animation targets missing');
+        await Promise.all(
+          accordion.getAnimations({ subtree: true }).map(animation => animation.finished)
+        );
+        const expandedHeight = accordion.getBoundingClientRect().height;
+        const followingTopBefore = following.getBoundingClientRect().top;
+        await (element as HTMLDsPanelNavElement).toggleCollapsed();
+
+        // Observe the actual animation frames in the page so browser round trips
+        // cannot consume the brief interval in which the accordion is shrinking.
+        const deadline = performance.now() + 2000;
+        let height = expandedHeight;
+        do {
+          await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+          height = accordion.getBoundingClientRect().height;
+        } while (height >= expandedHeight && accordion.isConnected && performance.now() < deadline);
+
+        return {
+          expandedHeight,
+          height,
+          followingTopBefore,
+          followingTop: following.getBoundingClientRect().top,
+          collapsed: frame.classList.contains('panel-nav--collapsed'),
+          animating: frame.classList.contains('panel-nav--animating'),
+          accordionConnected: accordion.isConnected,
+          accordionDuration: Number.parseFloat(getComputedStyle(accordion).transitionDuration),
+          panelDuration: Number.parseFloat(getComputedStyle(frame).transitionDuration),
+        };
+      },
+      {
+        accordion: await maintenanceAccordion.elementHandle(),
+        following: await followingParent.elementHandle(),
+      }
+    );
     const panelFrame = panel.locator('.panel-nav');
-    await expect(panelFrame).toHaveClass(/panel-nav--collapsed/);
-    await expect(panelFrame).toHaveClass(/panel-nav--animating/);
-    await expect(maintenanceAccordion).toHaveCount(1);
-    const [accordionCollapseDuration, panelCollapseDuration] = await Promise.all([
-      maintenanceAccordion.evaluate(element =>
-        Number.parseFloat(getComputedStyle(element).transitionDuration)
-      ),
-      panelFrame.evaluate(element =>
-        Number.parseFloat(getComputedStyle(element).transitionDuration)
-      ),
-    ]);
-    expect(accordionCollapseDuration).toBeCloseTo(panelCollapseDuration);
-    await page.waitForTimeout(100);
-    const [midCollapseHeight, followingTopMidCollapse] = await Promise.all([
-      maintenanceAccordion.evaluate(element => element.getBoundingClientRect().height),
-      followingParent.evaluate(element => element.getBoundingClientRect().top),
-    ]);
-    expect(midCollapseHeight).toBeGreaterThan(0);
-    expect(midCollapseHeight).toBeLessThan(expandedAccordionHeight);
-    expect(followingTopMidCollapse).toBeLessThan(followingTopBeforeCollapse);
+    expect(collapse).toMatchObject({ collapsed: true, animating: true, accordionConnected: true });
+    expect(collapse.accordionDuration).toBeCloseTo(collapse.panelDuration);
+    expect(collapse.height).toBeGreaterThan(0);
+    expect(collapse.height).toBeLessThan(collapse.expandedHeight);
+    expect(collapse.followingTop).toBeLessThan(collapse.followingTopBefore);
     await expect(panelFrame).not.toHaveClass(/panel-nav--animating/, { timeout: 5000 });
     await expect(maintenanceAccordion).toHaveCount(0);
 

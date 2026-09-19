@@ -23,6 +23,10 @@ export class ChromeTransitionDepth {
     this.depth = Math.max(0, this.depth - 1);
   }
 
+  reset(): void {
+    this.depth = 0;
+  }
+
   get isActive(): boolean {
     return this.depth > 0;
   }

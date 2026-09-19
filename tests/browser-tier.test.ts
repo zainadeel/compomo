@@ -10,6 +10,7 @@ test('PR browser contracts cover every engine-sensitive behavior family', () => 
     'calendar.spec.ts',
     'chart-lifecycle.spec.ts',
     'forms.spec.ts',
+    'navigation-lifecycle.spec.ts',
     'reduced-motion.spec.ts',
     'scroll-overlay.spec.ts',
     'selects.spec.ts',

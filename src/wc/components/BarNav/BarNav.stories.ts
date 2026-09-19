@@ -96,3 +96,39 @@ export const TabOverflow: Story = {
     </div>
   `,
 };
+
+export const Reconnection: Story = {
+  render: () => {
+    let frame: HTMLElement | undefined;
+    const setWidth = (width: number) => {
+      if (frame) frame.style.width = `min(100%, ${width}px)`;
+    };
+    const reinsert = () => {
+      const nav = frame?.querySelector('ds-bar-nav');
+      if (!nav || !frame) return;
+      nav.remove();
+      frame.append(nav);
+    };
+    return html`
+      <div style="display:grid;gap:var(--dimension-space-200);">
+        <ds-text as="p" variant="text-body-small" color="secondary">
+          Reinsert the navigation, then switch widths. Tabs should continue moving into and out of
+          the overflow menu while retaining the selected section.
+        </ds-text>
+        <div style="display:flex;flex-wrap:wrap;gap:var(--dimension-space-100);">
+          <ds-button-unfilled label="Reinsert navigation" @dsClick=${reinsert}></ds-button-unfilled>
+          <ds-button-unfilled label="Narrow" @dsClick=${() => setWidth(280)}></ds-button-unfilled>
+          <ds-button-unfilled label="Wide" @dsClick=${() => setWidth(720)}></ds-button-unfilled>
+        </div>
+        <div
+          style="width:min(100%, 720px);"
+          ${ref(element => {
+            frame = element as HTMLElement | undefined;
+          })}
+        >
+          <ds-bar-nav .tabs=${overflowTabs} value="tab-5"></ds-bar-nav>
+        </div>
+      </div>
+    `;
+  },
+};

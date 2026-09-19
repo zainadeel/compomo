@@ -9,6 +9,17 @@ import {
 } from '../src/wc/shell/chrome-transition';
 
 describe('ChromeTransitionDepth', () => {
+  it('clears interrupted nested transitions before the next connection', () => {
+    const gate = new ChromeTransitionDepth();
+    gate.enter();
+    gate.enter();
+    gate.reset();
+    assert.equal(gate.isActive, false);
+    gate.enter();
+    gate.exit();
+    assert.equal(gate.isActive, false);
+  });
+
   it('tracks nested enter/exit', () => {
     const gate = new ChromeTransitionDepth();
     assert.equal(gate.isActive, false);
