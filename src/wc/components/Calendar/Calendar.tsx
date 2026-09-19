@@ -49,6 +49,7 @@ export class Calendar {
   @Event() dsChange!: EventEmitter<string>;
 
   @State() private month = calendarMonth(calendarToday());
+  @State() private focusedDay = '';
   @State() private pendingStart = '';
   @State() private previewEnd = '';
   @State() private heldRange: CalendarDateRange | null = null;
@@ -64,6 +65,7 @@ export class Calendar {
   @Watch('value')
   onValueChange() {
     this.month = calendarMonth(this.anchorDate());
+    this.focusedDay = '';
   }
 
   @Method()
@@ -80,11 +82,15 @@ export class Calendar {
     return isIsoCalendarDate(this.value) ? this.value : calendarToday();
   }
 
-  private isDisabled(day: string): boolean {
+  private isUnavailable(day: string): boolean {
     if (this.isInactive) return true;
     if (this.min && isIsoCalendarDate(this.min) && day < this.min) return true;
     if (this.max && isIsoCalendarDate(this.max) && day > this.max) return true;
     return false;
+  }
+
+  private isDisabled(day: string): boolean {
+    return !day.startsWith(`${this.month}-`) || this.isUnavailable(day);
   }
 
   private moveMonth = (offset: number) => {
@@ -115,6 +121,10 @@ export class Calendar {
   };
 
   private previewRange = (day: string) => {
+    if (this.isDisabled(day)) {
+      this.clearPreview();
+      return;
+    }
     if (!this.pendingStart || this.previewEnd === day) return;
     this.previewEnd = day;
   };
@@ -125,9 +135,11 @@ export class Calendar {
   };
 
   private focusDate(day: string) {
-    this.previewRange(day);
+    if (this.isUnavailable(day)) return;
     const targetMonth = calendarMonth(day);
     if (this.month !== targetMonth) this.month = targetMonth;
+    this.focusedDay = day;
+    this.previewRange(day);
     requestAnimationFrame(() => {
       this.el.querySelector<HTMLElement>(`[data-date-option="${day}"]`)?.focus();
     });
@@ -168,14 +180,11 @@ export class Calendar {
       this.pendingStart && this.previewEnd ? [this.pendingStart, this.previewEnd].sort()[1] : null;
     const selectedSingle =
       this.selectionMode === 'single' && isIsoCalendarDate(this.value) ? this.value : '';
-    const preferredFocus =
-      this.pendingStart ||
-      selectedSingle ||
-      rangeValue?.end ||
-      (this.month === today.slice(0, 7) ? today : '');
-    const focusDate = days.some(day => day.value === preferredFocus)
-      ? preferredFocus
-      : (days.find(day => day.inMonth)?.value ?? days[0]?.value);
+    const enabledDays = days.filter(day => !this.isDisabled(day.value));
+    const focusDate =
+      [this.focusedDay, this.pendingStart, selectedSingle, rangeValue?.end, today].find(value =>
+        enabledDays.some(day => day.value === value)
+      ) ?? enabledDays[0]?.value;
 
     return (
       <Host>
@@ -221,6 +230,7 @@ export class Calendar {
             {weeks.map((week, weekIndex) => (
               <div class="calendar-grid__row" role="row" key={`week-${weekIndex}`}>
                 {week.map(day => {
+                  const disabled = this.isDisabled(day.value);
                   const selectedInRange = Boolean(
                     liveRangeValue &&
                     day.value >= liveRangeValue.start &&
@@ -275,16 +285,18 @@ export class Calendar {
                         'ds-focus-ring-inset': true,
                         'ds-interaction-fill': true,
                         'ds-interaction-fill--on-bold': rangeEdge,
-                        'ds-interaction-fill--surface-open':
-                          pendingStartDay && !this.isDisabled(day.value),
-                        'ds-interaction-fill--selected': selected && !this.isDisabled(day.value),
+                        'ds-interaction-fill--surface-open': pendingStartDay && !disabled,
+                        'ds-interaction-fill--selected': selected && !disabled,
                       }}
-                      disabled={this.isDisabled(day.value)}
+                      disabled={disabled}
                       aria-label={day.label}
                       aria-selected={selectedInRange || selected ? 'true' : 'false'}
                       tabIndex={day.value === focusDate ? 0 : -1}
                       onMouseEnter={() => this.previewRange(day.value)}
-                      onFocus={() => this.previewRange(day.value)}
+                      onFocus={() => {
+                        this.focusedDay = day.value;
+                        this.previewRange(day.value);
+                      }}
                       onClick={() => this.selectDate(day.value)}
                       onKeyDown={event => this.handleDayKeyDown(event, day.value)}
                     >

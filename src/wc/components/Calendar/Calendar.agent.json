@@ -43,14 +43,14 @@
   ],
   "accessibility": [
     "The month grid is labelled with the visible month and year. Days are grid cells with an accessible date name.",
-    "The grid keeps one tab stop. Arrow keys move by day or week, Home and End move within the week, and Page Up or Page Down change month.",
+    "The grid keeps one enabled day in the tab order when the visible month has available dates. Arrow keys move by day or week, Home and End move within the week, and Page Up or Page Down change month. Keyboard traversal reveals the target month before focusing its date and respects the available date bounds.",
     "In range mode, the first chosen day applies immediately as a one-day range. Hovering or focusing another day previews the inclusive span without changing the value until the second activation.",
     "Month navigation buttons are named Previous month and Next month. Inactive calendars disable day and month controls."
   ],
   "states": [
     "Single selection paints the current value with the shared interaction-fill selected wash and primary text. A committed range paints inclusive days with the faint brand fill and both edges boldly.",
     "Today uses emphasized primary text without becoming selected on its own.",
-    "Days outside the visible month remain in the six-week grid and use tertiary text. Optional min and max dates disable days outside that inclusive bound.",
+    "Days outside the visible month remain as inactive context in the grid. They cannot be selected or preview a range; navigate to their month to choose them. Optional min and max dates disable days outside that inclusive bound.",
     "After the first range day is chosen, that day keeps the shared pressed overlay. Hovering or focusing toward another day paints the inclusive span with the shared hover overlay on top of the previous committed range, which stays visible until the replacement is completed. Completing the end day orders the two dates inclusively and replaces those overlays with brand fill."
   ],
   "responsiveBehavior": [

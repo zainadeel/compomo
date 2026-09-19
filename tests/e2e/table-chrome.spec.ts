@@ -734,6 +734,8 @@ test('supports semantic relative dates and fixed calendar ranges @pr-critical', 
     'color',
     'tertiary'
   );
+  await expect(popup.locator('.calendar-day--outside').first()).toBeDisabled();
+  await expect(popup.locator('.calendar-day--outside').last()).toBeDisabled();
   await expect(popup.locator('.calendar-day--today ds-text')).toHaveJSProperty('color', 'primary');
   await expect(calendarDays.first().locator('ds-text')).toHaveJSProperty(
     'variant',

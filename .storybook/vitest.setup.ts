@@ -5,7 +5,6 @@ const componentRootAttribute = 'data-a11y-component-root';
 const explicitFixtureAttribute = 'data-a11y-fixture';
 const blockingImpacts = new Set(['critical', 'serious']);
 const safetyScoreValueSelector = 'ds-score .score__value';
-const calendarTertiaryTextSelector = 'ds-calendar .calendar-day--outside ds-text';
 
 async function waitForStencil(): Promise<HTMLElement[]> {
   await document.fonts.ready;
@@ -88,10 +87,9 @@ afterEach(async ({ task }) => {
   const results = await axe.run(
     {
       include: [[`[${componentRootAttribute}]`]],
-      // Safety score colors and Calendar's tertiary outside-month labels are
-      // approved low-emphasis pairings owned by their component contracts.
+      // Safety score colors are an approved pairing owned by the component contract.
       // Axe continues to inspect the host semantics and every other component.
-      exclude: [[safetyScoreValueSelector], [calendarTertiaryTextSelector]],
+      exclude: [[safetyScoreValueSelector]],
     },
     {
       resultTypes: ['violations'],
