@@ -10,6 +10,7 @@ import {
   Host,
 } from '@stencil/core';
 import type { NavChromeStyle } from '../../shell/nav-chrome';
+import { ConnectionTasks } from '../../utils/connection-tasks';
 import type { MenuItemData } from '../Menu/menu-types';
 import { getSelectableTabs, isTabDivider, type TabItemTab } from '../TabGroup/tab-item-utils';
 import type { BarNavTab } from './bar-nav-types';
@@ -90,6 +91,8 @@ export class BarNav {
   private visibleTabListEl: HTMLElement | null = null;
   private probeTabListEl: HTMLElement | null = null;
   private resizeObserver: ResizeObserver | null = null;
+  private hasLoaded = false;
+  private readonly connectionTasks = new ConnectionTasks(() => this.el.isConnected);
   private intrinsicWidthRetryCount = 0;
   private tabLayoutPendingFrames = 0;
   private readonly panelNavTransition = new ChromeTransitionGate();
@@ -176,13 +179,13 @@ export class BarNav {
     }
     this.scheduleOverflowCheck();
     if (collapsed) {
-      requestAnimationFrame(() => {
+      this.connectionTasks.frame(() => {
         this.scheduleOverflowCheck();
       });
     }
     if (collapsed || prevCollapsed === undefined || prevCollapsed === collapsed) return;
-    requestAnimationFrame(() => this.scheduleOverflowCheck());
-    queueMicrotask(() => this.focusVisibleSelectedTab());
+    this.connectionTasks.frame(() => this.scheduleOverflowCheck());
+    this.connectionTasks.microtask(() => this.focusVisibleSelectedTab());
   }
 
   componentWillLoad() {
@@ -190,7 +193,19 @@ export class BarNav {
     this.syncFocusedTabId(this.effectiveValue, getSelectableTabs(this.resolvedTabs));
   }
 
+  connectedCallback() {
+    if (this.hasLoaded) this.connectResources();
+  }
+
   componentDidLoad() {
+    this.hasLoaded = true;
+    this.connectResources();
+  }
+
+  private connectResources() {
+    if (!this.el.isConnected) return;
+    this.intrinsicWidthRetryCount = 0;
+    this.tabLayoutPendingFrames = 0;
     this.syncHostPropsIfNeeded();
     this.scheduleDeferredHostPropSync();
     this.setupOverflowObserver();
@@ -208,13 +223,17 @@ export class BarNav {
   }
 
   disconnectedCallback() {
+    this.connectionTasks.cancel();
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
     this.overflowCoalescer.cancel();
     this.unbindChromeTransitionListeners();
+    this.panelNavTransition.exit();
+    this.panelToolsTransition.exit();
   }
 
   private bindChromeTransitionListeners() {
+    this.unbindChromeTransitionListeners();
     const shell = this.el.closest<HTMLElement>('ds-shell-app');
     if (!shell) return;
     this.chromeTransitionShell = shell;
@@ -283,10 +302,10 @@ export class BarNav {
     const tick = () => {
       this.syncHostPropsIfNeeded();
       if (--remaining > 0) {
-        requestAnimationFrame(tick);
+        this.connectionTasks.frame(tick);
       }
     };
-    queueMicrotask(tick);
+    this.connectionTasks.microtask(tick);
   }
 
   private setupOverflowObserver() {
@@ -300,7 +319,7 @@ export class BarNav {
   }
 
   private scheduleOverflowCheck() {
-    if (this.chromeOverflowPaused()) return;
+    if (!this.el.isConnected || this.chromeOverflowPaused()) return;
     this.overflowCoalescer.schedule();
   }
 
@@ -382,7 +401,7 @@ export class BarNav {
   private scheduleIntrinsicWidthRetry() {
     if (this.intrinsicWidthRetryCount >= BarNav.INTRINSIC_WIDTH_RETRY_MAX) return;
     this.intrinsicWidthRetryCount++;
-    requestAnimationFrame(() => this.scheduleOverflowCheck());
+    this.connectionTasks.frame(() => this.scheduleOverflowCheck());
   }
 
   private forceTabLayoutCommit(fallbackCollapsed: boolean) {
@@ -396,6 +415,7 @@ export class BarNav {
   }
 
   private updateTabsCollapsed() {
+    if (!this.el.isConnected || this.chromeOverflowPaused()) return;
     if (!this.headerEl || this.resolvedTabs.length === 0 || this.hideTabsForDetailRoute) {
       if (this.tabsCollapsed) {
         this.setOverflowTabLayout([], []);

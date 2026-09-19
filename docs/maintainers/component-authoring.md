@@ -68,10 +68,19 @@ component; use a connection generation when an old promise could finish after
 reconnection. On reconnect, measure the current DOM and reconcile the latest
 props even when the dimensions have not changed.
 
+`ConnectionTasks` in `src/wc/utils/connection-tasks.ts` tracks cancellable frames
+and guards microtasks or promise callbacks against an earlier connection. Call
+its `cancel()` during disconnect and clear any component-owned frame handles.
+Observers, listeners, and timers still need explicit teardown by their owner.
+When removal interrupts a shared transition or drag, release the original
+owner's transition gate and restore any document styles changed by the drag.
+
 For components that own these resources, add rendered coverage for repeated
 disconnect/reconnect cycles and input changes while detached. See
 the [chart lifecycle tests](../../tests/e2e/chart-lifecycle.spec.ts) for an example
-that also controls font loading.
+that also controls font loading, and the
+[navigation lifecycle tests](../../tests/e2e/navigation-lifecycle.spec.ts) for
+transition ownership and interrupted drag cleanup.
 
 ## Documentation
 

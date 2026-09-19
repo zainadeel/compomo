@@ -18,6 +18,7 @@ import {
   readChromeTransitionSource,
 } from '../../shell/chrome-transition';
 import type { MenuItemData } from '../Menu/menu-types';
+import { ConnectionTasks } from '../../utils/connection-tasks';
 import { tabsOverflowContainer } from '../BarNav/bar-nav-tabs-menu-utils';
 import { getSelectableTabs, isTabDivider, type TabItemTab } from '../TabGroup/tab-item-utils';
 import {
@@ -139,6 +140,8 @@ export class BarPageTitle {
   private probeRowEl: HTMLElement | null = null;
   private visibleTabListEl: HTMLElement | null = null;
   private resizeObserver: ResizeObserver | null = null;
+  private hasLoaded = false;
+  private readonly connectionTasks = new ConnectionTasks(() => this.el.isConnected);
   private intrinsicWidthRetryCount = 0;
   private tabLayoutPendingFrames = 0;
   private readonly panelNavTransition = new ChromeTransitionGate();
@@ -153,7 +156,19 @@ export class BarPageTitle {
     this.syncFocusedTabId(this.effectiveValue, this.selectableTabs);
   }
 
+  connectedCallback() {
+    if (this.hasLoaded) this.connectResources();
+  }
+
   componentDidLoad() {
+    this.hasLoaded = true;
+    this.connectResources();
+  }
+
+  private connectResources() {
+    if (!this.el.isConnected) return;
+    this.intrinsicWidthRetryCount = 0;
+    this.tabLayoutPendingFrames = 0;
     this.setupOverflowObserver();
     this.bindChromeTransitionListeners();
     this.scheduleOverflowCheck();
@@ -165,10 +180,13 @@ export class BarPageTitle {
   }
 
   disconnectedCallback() {
+    this.connectionTasks.cancel();
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
     this.overflowCoalescer.cancel();
     this.unbindChromeTransitionListeners();
+    this.panelNavTransition.exit();
+    this.panelToolsTransition.exit();
   }
 
   @Watch('sections')
@@ -297,6 +315,7 @@ export class BarPageTitle {
   }
 
   private bindChromeTransitionListeners() {
+    this.unbindChromeTransitionListeners();
     const shell = this.el.closest<HTMLElement>('ds-shell-app');
     if (!shell) return;
     this.chromeTransitionShell = shell;
@@ -361,14 +380,14 @@ export class BarPageTitle {
   }
 
   private scheduleOverflowCheck() {
-    if (this.chromeOverflowPaused()) return;
+    if (!this.el.isConnected || this.chromeOverflowPaused()) return;
     this.overflowCoalescer.schedule();
   }
 
   private scheduleIntrinsicWidthRetry() {
     if (this.intrinsicWidthRetryCount >= BarPageTitle.INTRINSIC_WIDTH_RETRY_MAX) return;
     this.intrinsicWidthRetryCount++;
-    requestAnimationFrame(() => this.scheduleOverflowCheck());
+    this.connectionTasks.frame(() => this.scheduleOverflowCheck());
   }
 
   private forceTabLayoutCommit(collapsed: boolean) {
@@ -394,6 +413,7 @@ export class BarPageTitle {
   }
 
   private updateSectionsCollapsed() {
+    if (!this.el.isConnected || this.chromeOverflowPaused()) return;
     if (!this.hasSectionSelector) {
       if (this.sectionsCollapsed) this.sectionsCollapsed = false;
       this.intrinsicWidthRetryCount = 0;
@@ -462,7 +482,7 @@ export class BarPageTitle {
     const id = String(event.detail?.value ?? '');
     this.closeSectionMenu();
     this.selectSection(id);
-    requestAnimationFrame(() => this.sectionTriggerEl?.focus());
+    this.connectionTasks.frame(() => this.sectionTriggerEl?.focus());
   };
 
   private toggleActionMenu = (id: string, event: MouseEvent) => {
@@ -494,7 +514,7 @@ export class BarPageTitle {
     const menuId = this.openActionMenuId;
     this.closeActionMenu();
     this.dsAction.emit(id);
-    requestAnimationFrame(() => {
+    this.connectionTasks.frame(() => {
       void restoreBarTitleActionFocus({
         menuId,
         overflowTrigger: this.actionTriggerEl,
