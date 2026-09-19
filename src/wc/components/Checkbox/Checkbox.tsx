@@ -42,6 +42,8 @@ export class Checkbox {
   @Prop() size: CheckboxSize = 'md';
   /** Native form field name. */
   @Prop({ reflect: true }) name: string | undefined;
+  /** Associates the checkbox with a form by id when rendered outside that form. */
+  @Prop({ reflect: true }) form: string | undefined;
   /** Submitted value when checked. */
   @Prop() value: string = 'on';
   /** Native disabled state. */
@@ -73,14 +75,19 @@ export class Checkbox {
   }
 
   @Watch('checked')
+  @Watch('indeterminate')
   @Watch('value')
   @Watch('disabled')
   @Watch('isInactive')
   @Watch('required')
+  @Watch('requiredMessage')
   @Watch('presentation')
   syncFormValue() {
     const inactive = this.isInactive || this.disabled || this.formDisabled || this.presentation;
-    setFormControlValue(this.internals, this.checked ? this.value : null, { inactive });
+    // Checkedness cannot be recovered from the submitted value: it may be empty,
+    // and mixed state is independent of whether the checkbox submits a value.
+    const state = JSON.stringify([this.checked, this.indeterminate]);
+    setFormControlValue(this.internals, this.checked ? this.value : null, { inactive, state });
     const missing = this.required && !inactive && !this.checked;
     setRequiredValidity(this.internals, missing, this.requiredMessage);
   }
@@ -93,6 +100,22 @@ export class Checkbox {
   formResetCallback() {
     this.checked = this.initialChecked;
     this.indeterminate = this.initialIndeterminate;
+  }
+
+  formStateRestoreCallback(state: string | File | FormData | null) {
+    if (typeof state !== 'string') return;
+    try {
+      const restored: unknown = JSON.parse(state);
+      if (
+        Array.isArray(restored) &&
+        restored.length === 2 &&
+        restored.every(value => typeof value === 'boolean')
+      ) {
+        [this.checked, this.indeterminate] = restored;
+      }
+    } catch {
+      // Ignore state that was not serialized by this control.
+    }
   }
 
   private handleActivate = () => {

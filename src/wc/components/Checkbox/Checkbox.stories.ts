@@ -1,6 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-checkbox.js';
+import '../../../../dist/components/ds-radio.js';
+import '../../../../dist/components/ds-switch.js';
+import '../../../../dist/components/ds-select.js';
+import '../../../../dist/components/ds-button-unfilled.js';
+import '../../../../dist/components/ds-text.js';
+
+let formExampleId = 0;
 
 const meta: Meta = {
   title: 'Form/Checkbox',
@@ -131,4 +139,122 @@ export const PresentationIndicators: Story = {
       )}
     </div>
   `,
+};
+
+export const FormLifecycle: Story = {
+  name: 'Form lifecycle',
+  parameters: { controls: { disable: true } },
+  render: () => {
+    const formId = `checkbox-form-example-${++formExampleId}`;
+    let form: HTMLFormElement | undefined;
+    let fieldset: HTMLFieldSetElement | undefined;
+    let status: HTMLElement | undefined;
+    const refresh = () => {
+      if (!form || !status) return;
+      const values = [...new FormData(form)].map(([name, value]) => `${name}: ${value}`);
+      status.textContent = `${form.checkValidity() ? 'Ready to submit.' : 'Consent is required.'} Submitted values: ${values.join('; ') || 'none'}.`;
+    };
+    const setDisabled = (disabled: boolean) => {
+      if (fieldset) fieldset.disabled = disabled;
+      requestAnimationFrame(refresh);
+    };
+    return html`
+      <div
+        style="display:grid;gap:var(--dimension-space-200);max-width:var(--dimension-panel-width-lg);"
+        @dsChange=${() => requestAnimationFrame(refresh)}
+      >
+        <ds-text as="p" variant="text-body-small" color="secondary">
+          Change the preferences, disable and enable the fieldset, then reset. Delivery channel is
+          outside the form and uses the same form owner. Reset restores every initial value,
+          including the checkbox's mixed state.
+        </ds-text>
+        <form
+          id=${formId}
+          ${ref(element => {
+            form = element as HTMLFormElement | undefined;
+          })}
+        >
+          <fieldset
+            style="display:grid;gap:var(--dimension-space-150);border:0;margin:0;padding:0;"
+            ${ref(element => {
+              fieldset = element as HTMLFieldSetElement | undefined;
+            })}
+          >
+            <legend>
+              <ds-text as="span" variant="text-body-medium" emphasis>Preferences</ds-text>
+            </legend>
+            <ds-checkbox
+              label="I agree to receive updates"
+              name="consent"
+              value="accepted"
+              indeterminate
+              required
+            ></ds-checkbox>
+            <div style="display:flex;align-items:center;gap:var(--dimension-space-200);">
+              <label for="${formId}-alerts"
+                ><ds-text as="span" variant="text-body-medium">Instant alerts</ds-text></label
+              >
+              <ds-switch
+                id="${formId}-alerts"
+                name="alerts"
+                value="on"
+                unchecked-value="off"
+              ></ds-switch>
+            </div>
+            <ds-radio
+              group-label="Frequency"
+              name="frequency"
+              value="weekly"
+              .options=${[
+                { value: 'weekly', label: 'Weekly' },
+                { value: 'monthly', label: 'Monthly' },
+              ]}
+            ></ds-radio>
+          </fieldset>
+        </form>
+        <div style="display:grid;gap:var(--dimension-space-050);">
+          <ds-text as="span" variant="text-body-small" color="secondary"
+            >Delivery channel · outside the form</ds-text
+          >
+          <ds-select
+            .form=${formId}
+            name="channel"
+            aria-label="Delivery channel"
+            value="email"
+            .options=${[
+              { value: 'email', label: 'Email' },
+              { value: 'app', label: 'In app' },
+            ]}
+          ></ds-select>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:var(--dimension-space-100);">
+          <ds-button-unfilled label="Inspect form" @dsClick=${refresh}></ds-button-unfilled>
+          <ds-button-unfilled
+            label="Disable fieldset"
+            @dsClick=${() => setDisabled(true)}
+          ></ds-button-unfilled>
+          <ds-button-unfilled
+            label="Enable fieldset"
+            @dsClick=${() => setDisabled(false)}
+          ></ds-button-unfilled>
+          <ds-button-unfilled
+            label="Reset form"
+            @dsClick=${() => {
+              form?.reset();
+              requestAnimationFrame(refresh);
+            }}
+          ></ds-button-unfilled>
+        </div>
+        <ds-text
+          as="p"
+          variant="text-body-small"
+          role="status"
+          ${ref(element => {
+            status = element as HTMLElement | undefined;
+          })}
+          >Inspect the form to see its current submission values.</ds-text
+        >
+      </div>
+    `;
+  },
 };

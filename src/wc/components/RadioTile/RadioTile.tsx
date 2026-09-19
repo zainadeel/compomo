@@ -64,7 +64,10 @@ export class RadioTile {
   @Watch('requiredMessage')
   syncFormValue() {
     const selected = this.options.some(option => option.value === this.value && !option.isInactive);
-    setFormControlValue(this.internals, selected ? this.value : '', { inactive: this.inactive });
+    setFormControlValue(this.internals, selected ? this.value : '', {
+      inactive: this.inactive,
+      state: this.value,
+    });
     setRequiredValidity(
       this.internals,
       this.required && !this.inactive && !selected,

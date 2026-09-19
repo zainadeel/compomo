@@ -105,6 +105,8 @@ export class Select {
   @Prop({ mutable: true, reflect: true }) open: boolean = false;
   /** Native form field name. */
   @Prop({ reflect: true }) name: string | undefined;
+  /** Associates the select with a form by id when rendered outside that form. */
+  @Prop({ reflect: true }) form: string | undefined;
   /** Native disabled state. */
   @Prop({ reflect: true }) disabled: boolean = false;
   /** Require one valid selected value. */
@@ -339,6 +341,7 @@ export class Select {
   @Watch('disabled')
   @Watch('isInactive')
   @Watch('required')
+  @Watch('requiredMessage')
   @Watch('name')
   @Watch('options')
   @Watch('sections')
@@ -352,10 +355,13 @@ export class Select {
     const inactive = this.isDisabled;
     if (this.multiple) {
       const values = this.resolvedValues;
-      setRepeatedFormControlValue(this.internals, this.name, values, { inactive });
+      setRepeatedFormControlValue(this.internals, this.name, values, {
+        inactive,
+        state: JSON.stringify(this.value),
+      });
     } else {
       const value = this.hasSelection ? this.scalarValue : '';
-      setFormControlValue(this.internals, value, { inactive });
+      setFormControlValue(this.internals, value, { inactive, state: this.scalarValue });
     }
     const missing = this.required && !inactive && !this.hasSelection;
     setRequiredValidity(this.internals, missing, this.requiredMessage);

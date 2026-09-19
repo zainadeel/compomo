@@ -83,6 +83,10 @@ export class Radio {
     return Boolean(this.groupLabel.trim());
   }
 
+  private get hasSelection(): boolean {
+    return this.options.some(option => option.value === this.value && !option.isInactive);
+  }
+
   /** Settings rows own a separate heading; never mount the form group label there. */
   private get showGroupLabel(): boolean {
     return this.hasGroupLabel && !this.el.closest('ds-setting-row-radio');
@@ -94,13 +98,18 @@ export class Radio {
   }
 
   @Watch('value')
+  @Watch('options')
   @Watch('disabled')
   @Watch('isInactive')
   @Watch('required')
+  @Watch('requiredMessage')
   syncFormValue() {
     const inactive = this.isInactive || this.disabled || this.formDisabled;
-    setFormControlValue(this.internals, this.value, { inactive });
-    const missing = this.required && !inactive && this.value.length === 0;
+    setFormControlValue(this.internals, this.hasSelection ? this.value : '', {
+      inactive,
+      state: this.value,
+    });
+    const missing = this.required && !inactive && !this.hasSelection;
     setRequiredValidity(this.internals, missing, this.requiredMessage);
   }
 
@@ -164,7 +173,7 @@ export class Radio {
     if (next >= 0) {
       items[next].focus();
       const nextValue = items[next].dataset['value'];
-      if (nextValue && nextValue !== this.value) {
+      if (nextValue !== undefined && nextValue !== this.value) {
         this.value = nextValue;
         this.dsChange.emit(nextValue);
       }
@@ -247,7 +256,7 @@ export class Radio {
 
   render() {
     const inactive = this.isInactive || this.disabled || this.formDisabled;
-    const invalid = this.required && !inactive && this.value.length === 0;
+    const invalid = this.required && !inactive && !this.hasSelection;
     const selectedIdx = this.options.findIndex(option => option.value === this.value);
     const firstActiveIdx = this.options.findIndex(option => !inactive && !option.isInactive);
     const focusableIdx =

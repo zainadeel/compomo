@@ -29,6 +29,35 @@ describe('form association utilities', () => {
     assert.deepEqual(calls, [[null, 'checked']]);
   });
 
+  it('retains scalar state when inactive without requiring a separate state argument', () => {
+    const { internals, calls } = fakeInternals();
+    setFormControlValue(internals, 'saved value', { inactive: true });
+    assert.deepEqual(calls, [[null, 'saved value']]);
+  });
+
+  it('retains repeated state for inactive, unnamed and empty controls', () => {
+    const { internals, calls } = fakeInternals();
+    setRepeatedFormControlValue(internals, 'filters', ['safety'], { inactive: true });
+    setRepeatedFormControlValue(internals, undefined, ['speed']);
+    setRepeatedFormControlValue(internals, 'filters', []);
+    assert.deepEqual(calls, [
+      [null, '["safety"]'],
+      [null, '["speed"]'],
+      [null, '[]'],
+    ]);
+  });
+
+  it('honors an explicit null restoration state for both scalar and repeated values', () => {
+    const { internals, calls } = fakeInternals();
+    setFormControlValue(internals, 'value', { state: null });
+    setRepeatedFormControlValue(internals, 'filters', ['safety'], { state: null });
+    setRepeatedFormControlValue(internals, 'filters', [], { state: null });
+    assert.deepEqual(
+      calls.map(([, state]) => state),
+      [null, null, null]
+    );
+  });
+
   it('submits repeated values under one field name', () => {
     const { internals, calls } = fakeInternals();
     setRepeatedFormControlValue(internals, 'filters', ['safety', 'speed']);
@@ -42,5 +71,14 @@ describe('form association utilities', () => {
   it('restores only valid scalar arrays', () => {
     assert.deepEqual(restoreStringArrayFormState('["safety",4,"speed"]'), ['safety', 'speed']);
     assert.deepEqual(restoreNumberArrayFormState('["10",20,"nope",30]', 2), [10, 20]);
+  });
+
+  it('does not turn malformed number state into zero or one', () => {
+    assert.deepEqual(
+      restoreNumberArrayFormState('[null,true,false,""," ",[],{},"10",20]'),
+      [10, 20]
+    );
+    assert.deepEqual(restoreNumberArrayFormState('["Infinity","NaN",0]'), [0]);
+    assert.deepEqual(restoreNumberArrayFormState('not json'), []);
   });
 });
