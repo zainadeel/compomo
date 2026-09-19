@@ -110,6 +110,7 @@ export class Switch {
   @Watch('isInactive')
   @Watch('presentation')
   @Watch('required')
+  @Watch('requiredMessage')
   syncFormValue() {
     const inactive = this.presentation || this.isInactive || this.disabled || this.formDisabled;
     const submissionValue = this.checked ? this.value : (this.uncheckedValue ?? null);

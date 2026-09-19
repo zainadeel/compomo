@@ -12,7 +12,8 @@ export interface SetRepeatedFormControlValueOptions {
 
 /**
  * Set one form-associated value while consistently omitting inactive controls.
- * Pass `state` only when restoration differs from the submitted value.
+ * Inactive controls retain their restoration state even when submission is
+ * omitted. Pass `state` when restoration differs from the control's value.
  */
 export function setFormControlValue(
   internals: ElementInternals,
@@ -20,11 +21,7 @@ export function setFormControlValue(
   options: SetFormControlValueOptions = {}
 ): void {
   const submission = options.inactive ? null : value;
-  if (options.state === undefined) {
-    internals.setFormValue(submission);
-    return;
-  }
-  internals.setFormValue(submission, options.state);
+  internals.setFormValue(submission, options.state === undefined ? value : options.state);
 }
 
 /**
@@ -37,14 +34,15 @@ export function setRepeatedFormControlValue(
   values: readonly (number | string)[],
   options: SetRepeatedFormControlValueOptions = {}
 ): void {
+  const state = options.state === undefined ? JSON.stringify(values) : options.state;
   if (options.inactive || !name || values.length === 0) {
-    internals.setFormValue(null);
+    internals.setFormValue(null, state);
     return;
   }
 
   const data = new FormData();
   values.forEach(value => data.append(name, String(value)));
-  internals.setFormValue(data, options.state ?? JSON.stringify(values));
+  internals.setFormValue(data, state);
 }
 
 export function restoreStringFormState(state: FormControlState, fallback: string = ''): string {
@@ -72,7 +70,11 @@ export function restoreNumberArrayFormState(
     const restored: unknown = JSON.parse(state);
     if (!Array.isArray(restored)) return [];
     const values = restored
-      .map(value => (typeof value === 'number' ? value : Number(value)))
+      .filter(
+        (value): value is number | string =>
+          typeof value === 'number' || (typeof value === 'string' && value.trim().length > 0)
+      )
+      .map(Number)
       .filter(value => Number.isFinite(value));
     return maximumValues === undefined ? values : values.slice(0, maximumValues);
   } catch {

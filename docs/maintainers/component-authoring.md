@@ -89,6 +89,31 @@ Keep the reconciliation idempotent so rendering does not cause an observer loop.
 The [content lifecycle tests](../../tests/e2e/content-lifecycle.spec.ts) cover
 responsive card measurement and dynamic slotted content after reconnection.
 
+## Form controls
+
+Form-associated components own submission, validity, reset, disabled-fieldset
+behavior, and browser state restoration. Reuse the helpers in
+`src/wc/utils/form-association.ts` while keeping each control's meaning of an
+empty or valid value in its own implementation.
+
+Keep restoration state separate from submission when the two differ. An
+unchecked checkbox, an inactive control, or a selection whose options have not
+arrived can submit nothing while still having state worth restoring. Serialize
+enough state to reconstruct the control, validate it when restoring, and do not
+emit user-change events during reset or restoration.
+
+Watch every prop that affects native form state, including validation messages,
+options, and names used to construct repeated entries. Run the same sync during
+initialization. Expose a reflected `form` prop so property bindings and generated
+framework adapters can associate a control with an external owner.
+
+Extend the [form contract tests](../../tests/e2e/form-contracts.spec.ts) when
+adding a control. They exercise native submission, reset, disabled fieldsets,
+external owners, and restoration state across supported browsers. The fixture
+records real `ElementInternals` calls and invokes the restoration callback
+deterministically; it does not assume that browser history or autofill will
+choose to restore a page on every run.
+
 ## Documentation
 
 Add consumer explanation only when a prop table or story cannot communicate the

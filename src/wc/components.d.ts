@@ -1344,6 +1344,10 @@ export namespace Components {
          */
         "disabled": boolean;
         /**
+          * Associates the checkbox with a form by id when rendered outside that form.
+         */
+        "form": string | undefined;
+        /**
           * Show full-row hover and pressed feedback for choice-list presentations.
           * @default false
          */
@@ -3645,6 +3649,10 @@ export namespace Components {
           * Optional text action shown in the popup footer instead of the clear action.
          */
         "footerActionLabel": string | undefined;
+        /**
+          * Associates the select with a form by id when rendered outside that form.
+         */
+        "form": string | undefined;
         /**
           * Show the surface-aware inset border, including focused and invalid strokes.
           * @default true
@@ -8198,9 +8206,9 @@ declare namespace LocalJSX {
          */
         "disabled"?: boolean;
         /**
-          * The `id` of a `<form>` element to associate this element with.
+          * Associates the checkbox with a form by id when rendered outside that form.
          */
-        "form"?: string;
+        "form"?: string | undefined;
         /**
           * Show full-row hover and pressed feedback for choice-list presentations.
           * @default false
@@ -10706,9 +10714,9 @@ declare namespace LocalJSX {
          */
         "footerActionLabel"?: string | undefined;
         /**
-          * The `id` of a `<form>` element to associate this element with.
+          * Associates the select with a form by id when rendered outside that form.
          */
-        "form"?: string;
+        "form"?: string | undefined;
         /**
           * Show the surface-aware inset border, including focused and invalid strokes.
           * @default true
@@ -12457,6 +12465,7 @@ declare namespace LocalJSX {
         "checked": boolean;
         "size": CheckboxSize;
         "name": string | undefined;
+        "form": string | undefined;
         "value": string;
         "disabled": boolean;
         "required": boolean;
@@ -12989,6 +12998,7 @@ declare namespace LocalJSX {
         "value": SelectValue;
         "open": boolean;
         "name": string | undefined;
+        "form": string | undefined;
         "disabled": boolean;
         "required": boolean;
         "requiredMessage": string;

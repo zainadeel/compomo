@@ -4674,6 +4674,10 @@
             "type": "boolean",
             "required": false
           },
+          "form": {
+            "type": "string | undefined",
+            "required": false
+          },
           "hasInteractionFill": {
             "type": "boolean",
             "required": false
@@ -13108,6 +13112,10 @@
             "required": false
           },
           "footerActionLabel": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "form": {
             "type": "string | undefined",
             "required": false
           },
