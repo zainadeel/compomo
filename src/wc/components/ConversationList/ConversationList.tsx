@@ -10,8 +10,20 @@ export class ConversationList {
 
   private empty?: HTMLElement;
   private emptySlotObserver?: MutationObserver;
+  private hasLoaded = false;
+
+  connectedCallback(): void {
+    if (this.hasLoaded) this.observeEmptySlot();
+  }
 
   componentDidLoad(): void {
+    this.hasLoaded = true;
+    this.observeEmptySlot();
+  }
+
+  private observeEmptySlot(): void {
+    if (!this.el.isConnected) return;
+    this.emptySlotObserver?.disconnect();
     this.syncEmptyStateLayout();
     this.emptySlotObserver = new MutationObserver(this.syncEmptyStateLayout);
     this.emptySlotObserver.observe(this.el, { childList: true, subtree: true });
@@ -19,9 +31,11 @@ export class ConversationList {
 
   disconnectedCallback(): void {
     this.emptySlotObserver?.disconnect();
+    this.emptySlotObserver = undefined;
   }
 
   private syncEmptyStateLayout = (): void => {
+    if (!this.el.isConnected) return;
     const emptyState = this.el.querySelector<HTMLElement>('[slot="empty"]');
     if (emptyState && !this.empty?.contains(emptyState)) {
       // Stencil's scoped-slot runtime does not relocate nodes appended after

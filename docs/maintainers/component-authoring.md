@@ -82,6 +82,13 @@ that also controls font loading, and the
 [navigation lifecycle tests](../../tests/e2e/navigation-lifecycle.spec.ts) for
 transition ownership and interrupted drag cleanup.
 
+Scoped slots can relocate authored nodes beneath rendered wrappers. When slot
+presence or content changes drive component state, observe the relevant subtree
+and slot attributes, and include character-data changes when plain text matters.
+Keep the reconciliation idempotent so rendering does not cause an observer loop.
+The [content lifecycle tests](../../tests/e2e/content-lifecycle.spec.ts) cover
+responsive card measurement and dynamic slotted content after reconnection.
+
 ## Documentation
 
 Add consumer explanation only when a prop table or story cannot communicate the

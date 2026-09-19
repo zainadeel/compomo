@@ -10,6 +10,7 @@ import {
   State,
 } from '@stencil/core';
 import { resolveCssLengthPx, TOKEN_DEFAULTS } from '../../utils';
+import { ConnectionTasks } from '../../utils/connection-tasks';
 import type { TextColor, TextVariant } from '../Text/text-types';
 import type { MetricTrend } from '../../utils/metric-change';
 import type {
@@ -111,14 +112,22 @@ export class CardOverview {
   private layoutEl?: HTMLElement;
   private layoutResizeObserver: ResizeObserver | null = null;
   private layoutResizeFrame: number | undefined;
+  private hasLoaded = false;
+  private readonly connectionTasks = new ConnectionTasks(() => this.el.isConnected);
   /** The node the observer is bound to, which a later render can replace. */
   private observedLayoutEl?: HTMLElement;
 
+  connectedCallback() {
+    if (this.hasLoaded) this.observeLayout();
+  }
+
   componentDidLoad() {
+    this.hasLoaded = true;
     this.observeLayout();
   }
 
   componentDidRender() {
+    if (!this.el.isConnected) return;
     // Re-bind after HMR when DidLoad's observer was dropped, and whenever a
     // render swapped the layout node out from under the observer: the ref points
     // at the new node while the observer still watches the detached one, which
@@ -132,9 +141,9 @@ export class CardOverview {
   }
 
   disconnectedCallback() {
+    this.connectionTasks.cancel();
     this.layoutResizeObserver?.disconnect();
     this.layoutResizeObserver = null;
-    if (this.layoutResizeFrame !== undefined) cancelAnimationFrame(this.layoutResizeFrame);
     this.layoutResizeFrame = undefined;
     this.observedLayoutEl = undefined;
   }
@@ -170,7 +179,10 @@ export class CardOverview {
 
   private observeLayout() {
     const layout = this.layoutEl;
-    if (!layout) return;
+    if (!this.el.isConnected || !layout) return;
+
+    this.connectionTasks.cancelFrame(this.layoutResizeFrame);
+    this.layoutResizeFrame = undefined;
 
     const bounds = layout.getBoundingClientRect();
     this.updateLayoutGeometry(bounds.width, bounds.height);
@@ -180,9 +192,10 @@ export class CardOverview {
     this.layoutResizeObserver = new ResizeObserver(entries => {
       const rect = entries[0]?.contentRect;
       if (!rect) return;
-      if (this.layoutResizeFrame !== undefined) cancelAnimationFrame(this.layoutResizeFrame);
-      this.layoutResizeFrame = requestAnimationFrame(() => {
+      this.connectionTasks.cancelFrame(this.layoutResizeFrame);
+      this.layoutResizeFrame = this.connectionTasks.frame(() => {
         this.layoutResizeFrame = undefined;
+        if (this.layoutEl !== layout) return;
         this.updateLayoutGeometry(rect.width, rect.height);
       });
     });
@@ -192,7 +205,7 @@ export class CardOverview {
 
   private updateLayoutGeometry(width?: number, height?: number) {
     const layout = this.layoutEl;
-    if (!layout) return;
+    if (!this.el.isConnected || !layout) return;
 
     const bounds =
       width === undefined || height === undefined ? layout.getBoundingClientRect() : null;
