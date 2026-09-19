@@ -236,7 +236,7 @@ test('setting row toggle applies its emphasis typography variants', async ({ pag
   await expect(emphasisRow.locator('ds-text').nth(0)).toHaveClass(
     /ds-text--body-medium.*ds-text--emphasis/
   );
-  await expect(emphasisRow.locator('ds-text').nth(1)).toHaveClass(/ds-text--body-medium/);
+  await expect(emphasisRow.locator('ds-text').nth(1)).toHaveClass(/ds-text--body-small/);
   await expect(nonEmphasisRow.locator('ds-text').nth(0)).toHaveClass(
     /ds-text--body-medium.*ds-text--regular/
   );
