@@ -7,10 +7,16 @@ Powered by Paper Shaders:
 https://shaders.paper.design
 
 The bundled shader code is available under the Apache License, Version 2.0.
-The complete license text is distributed with the @paper-design/shaders runtime dependency.
+The complete license text and notices for bundled component dependencies are
+included in dist/components/THIRD-PARTY-NOTICES.
 
 The optional @ds-mo/ui/lint entry includes rule algorithms adapted from
 Stylelint 17.14.1 under the MIT License. Copyright (c) 2015 - present
 Maxime Thirouin, David Clark & Richard Hallows. The complete license is
 in dist/lint/STYLELINT-LICENSE. Bundled lint utility licenses are in
 dist/lint/THIRD-PARTY-NOTICES.
+
+Bundled MCP dependency licenses and notices are in dist/mcp/THIRD-PARTY-NOTICES.
+The bundled Vue adapter runtime licenses and notices are in dist/vue/THIRD-PARTY-NOTICES.
+Each of these bundles includes a bundled-dependencies.json inventory generated
+from the bundler's actual inputs.

@@ -1,5 +1,9 @@
 import { spawn } from 'node:child_process';
-import { cleanFileProviderCollisions } from './clean-framework-proxies.mjs';
+import {
+  cleanFileProviderCollisions,
+  findAuthoredFileProviderCollisions,
+  reportAuthoredFileProviderCollisions,
+} from './clean-framework-proxies.mjs';
 import { writePackageVersion, writeStorybookStamp } from './write-build-stamp.mjs';
 
 writePackageVersion();
@@ -25,12 +29,19 @@ const stopChild = (child, signal = 'SIGTERM') => {
   }
 };
 
+let reportedAuthoredCollisions = '';
 const cleanCollisions = () => {
   const collisions = cleanFileProviderCollisions();
   if (collisions.length) {
     process.stdout.write(
       `[storybook-dev] Cleaned ${collisions.length} File Provider collision artifact${collisions.length === 1 ? '' : 's'}\n`
     );
+  }
+  const authoredCollisions = findAuthoredFileProviderCollisions();
+  const signature = authoredCollisions.join('\n');
+  if (signature !== reportedAuthoredCollisions) {
+    reportAuthoredFileProviderCollisions(authoredCollisions);
+    reportedAuthoredCollisions = signature;
   }
 };
 

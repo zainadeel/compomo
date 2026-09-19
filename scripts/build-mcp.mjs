@@ -4,6 +4,7 @@ import { build } from 'esbuild';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { writeBundleNotices } from './bundle-notices.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const distDir = path.join(root, 'dist');
@@ -37,7 +38,8 @@ for (const entry of fs.readdirSync(registrySourceDir, { withFileTypes: true })) 
   );
 }
 
-await build({
+const result = await build({
+  absWorkingDir: root,
   entryPoints: [entryPoint],
   outfile: outputFile,
   bundle: true,
@@ -46,7 +48,9 @@ await build({
   target: 'node20',
   legalComments: 'none',
   sourcemap: false,
+  metafile: true,
 });
+writeBundleNotices({ inputs: Object.keys(result.metafile.inputs), root, output: mcpDir });
 
 fs.chmodSync(outputFile, 0o755);
 console.log(

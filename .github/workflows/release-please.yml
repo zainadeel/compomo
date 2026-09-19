@@ -14,11 +14,13 @@ on:
         type: string
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   release-please:
+    permissions:
+      contents: write
+      pull-requests: write
     name: Open / update release PR
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
@@ -28,7 +30,7 @@ jobs:
     steps:
       - name: Run release-please
         id: release
-        uses: googleapis/release-please-action@v5
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           config-file: release-please-config.json
@@ -50,28 +52,39 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write  # required for npm OIDC trusted publisher
+      id-token: write # required for npm OIDC trusted publisher
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          persist-credentials: false
           ref: ${{ inputs.tag || needs.release-please.outputs.tag_name }}
 
+      # Keep setup inline so recovery works for tags predating the local setup action.
       - name: Setup Node
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: '24.15.0'
+          node-version-file: .nvmrc
           cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Upgrade npm to support OIDC trusted publishing
-        # npm Trusted Publisher (OIDC to registry) requires npm >= 11.5.1.
-        # Node 20 ships with npm 10.x, which signs provenance but cannot
-        # complete the OIDC-authenticated registry PUT — it fails with a
-        # misleading 404. Pinned to the npm 11 line (not `latest`) because
-        # npm 12 raised its own engine requirement to Node >=22, which this
-        # Node 20 runner can't satisfy.
-        run: npm install -g npm@11
+      - name: Select pinned npm
+        shell: bash
+        run: |
+          npm_version="$(node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const { packageManager } = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          const match = /^npm@(\d+\.\d+\.\d+)$/.exec(packageManager ?? '');
+          if (!match) throw new Error('packageManager must pin an exact npm version');
+          process.stdout.write(match[1]);
+          NODE
+          )"
+          if [ "$(npm --version)" != "$npm_version" ]; then
+            npm install --global "npm@$npm_version" --ignore-scripts --no-audit --no-fund
+          fi
+          test "$(npm --version)" = "$npm_version"
+          node --version
+          npm --version
 
       - name: Install dependencies
         run: npm ci
@@ -84,8 +97,8 @@ jobs:
 
   deploy-pages:
     name: Deploy Storybook to GitHub Pages
-    needs: publish
-    if: success()
+    needs: [release-please, publish]
+    if: ${{ always() && needs.publish.result == 'success' }}
     uses: ./.github/workflows/deploy-storybook.yml
     with:
       ref: ${{ inputs.tag || needs.release-please.outputs.tag_name }}

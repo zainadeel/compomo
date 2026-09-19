@@ -5,6 +5,7 @@ import { execFileSync } from 'node:child_process';
 import { build } from 'esbuild';
 import { ROOT } from './component-inventory.mjs';
 import { createLintContracts } from './lint-contracts.mjs';
+import { writeBundleNotices } from './bundle-notices.mjs';
 
 const contracts = createLintContracts({ requireCompiler: true });
 const output = path.join(ROOT, 'dist/lint');
@@ -59,21 +60,12 @@ for (const [source, target] of [
   fs.copyFileSync(path.join(ROOT, 'dist/lint-types', source), path.join(output, target));
 fs.rmSync(path.join(ROOT, 'dist/lint-types'), { recursive: true, force: true });
 fs.copyFileSync(path.join(ROOT, 'lint/css/LICENSE'), path.join(output, 'STYLELINT-LICENSE'));
-// Include the complete license for every bundled third-party package.
-const dependencies = new Set(
-  Object.keys(result.metafile.inputs).flatMap(input => {
-    const match = input.match(/node_modules\/((?:@[^/]+\/)?[^/]+)/);
-    return match ? [match[1]] : [];
-  })
-);
-let notices = fs.readFileSync(path.join(ROOT, 'lint/css/LICENSE'), 'utf8');
-for (const dependency of [...dependencies].sort()) {
-  const dir = path.join(ROOT, 'node_modules', dependency);
-  const license = fs.readdirSync(dir).find(f => /^licen[sc]e(?:[-.].*)?$/i.test(f));
-  if (!license) throw new Error('Missing bundled dependency license: ' + dependency);
-  notices += '\n\n' + dependency + '\n' + fs.readFileSync(path.join(dir, license), 'utf8');
-}
-fs.writeFileSync(path.join(output, 'THIRD-PARTY-NOTICES'), notices);
+writeBundleNotices({
+  inputs: Object.keys(result.metafile.inputs),
+  root: ROOT,
+  output,
+  preamble: fs.readFileSync(path.join(ROOT, 'lint/css/LICENSE'), 'utf8'),
+});
 console.log(
   `  Built optional lint entry with ${Object.keys(contracts).length} validated component contracts`
 );

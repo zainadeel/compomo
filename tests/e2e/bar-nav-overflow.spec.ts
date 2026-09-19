@@ -127,6 +127,9 @@ test.describe('BarNav responsive overflow', () => {
 
     const visible = page.locator('.bar-nav__tabs-visible');
     await expect(visible).toBeVisible({ timeout: 5000 });
+    // The previous row also contains Overview and a divider. Wait for this
+    // replacement row before sending keys to a tab that is about to unmount.
+    await expect(visible.getByRole('tab')).toHaveText(['Overview', 'Inactive', 'Settings']);
     await expect(visible.locator('.bar-nav__tab-divider')).toHaveCount(1);
     const overview = visible.getByRole('tab', { name: 'Overview' });
     const settings = visible.getByRole('tab', { name: 'Settings' });

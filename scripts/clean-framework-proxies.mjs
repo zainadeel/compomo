@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** Remove only Stencil-generated React, Vue, and Angular source adapters. */
+/** Remove artifacts only inside build-owned output directories. */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -7,155 +7,91 @@ import { fileURLToPath } from 'node:url';
 const SCRIPT_PATH = fileURLToPath(import.meta.url);
 export const ROOT = path.resolve(path.dirname(SCRIPT_PATH), '..');
 
-const FRAMEWORK_OUTPUTS = [
-  { directory: 'src/.generated/react', barrels: ['components.ts'] },
-  { directory: 'src/.generated/vue', barrels: ['components.ts'] },
-  { directory: 'src/.generated/angular', barrels: ['proxies.ts', 'index.ts'] },
-];
-
-const LEGACY_FRAMEWORK_OUTPUTS = [
-  { directory: 'src/react', barrels: ['components.ts'] },
-  { directory: 'src/vue', barrels: ['components.ts'] },
-  { directory: 'src/angular', barrels: ['proxies.ts', 'index.ts'] },
-];
-
-const FILE_PROVIDER_COLLISION_OUTPUTS = [
-  { directory: 'src/.generated/react', pattern: / \d+\.ts$/ },
-  { directory: 'src/.generated/vue', pattern: / \d+\.ts$/ },
-  { directory: 'src/.generated/angular', pattern: / \d+\.ts$/ },
-  { directory: 'src/react', pattern: / \d+\.ts$/ },
-  { directory: 'src/vue', pattern: / \d+\.ts$/ },
-  { directory: 'src/angular', pattern: / \d+\.ts$/ },
+const FRAMEWORK_OUTPUTS = ['src/.generated/react', 'src/.generated/vue', 'src/.generated/angular'];
+const COLLISION_OUTPUTS = [
+  ...FRAMEWORK_OUTPUTS.map(directory => ({ directory, pattern: / \d+\.ts$/ })),
   { directory: 'public/r', pattern: / \d+\.json$/ },
-  { directory: 'src/wc/components', pattern: / \d+\.(?:css|json|mdx|ts|tsx)$/ },
-  { directory: 'tests', pattern: / \d+\.(?:html|mjs|ts)$/ },
   { directory: 'dist', pattern: / \d+\.[a-z0-9.]+$/i },
   { directory: 'storybook-static', pattern: / \d+\.[a-z0-9.]+$/i },
 ];
-
-// Include Apple File Provider collision copies such as `ds-toggle 2.ts`: they
-// are still generated proxy artifacts and TypeScript includes them in builds.
+const AUTHORED_DIRECTORIES = ['src/wc/components', 'tests', 'src/react', 'src/vue', 'src/angular'];
 const COMPONENT_PROXY_FILENAME = /^ds-[a-z0-9]+(?:-[a-z0-9]+)*(?: \d+)?\.ts$/;
 
-function isGeneratedBarrel(filename, barrels) {
-  return barrels.some(barrel => {
-    const stem = barrel.slice(0, -3);
-    return filename === barrel || new RegExp(`^${stem} \\d+\\.ts$`).test(filename);
+// Neither an output directory nor any of its parents may redirect cleanup
+// through a symlink. Nested symlinks are also excluded from traversal.
+function isRealDirectory(root, relativePath) {
+  let current = root;
+  for (const segment of relativePath.split('/')) {
+    current = path.join(current, segment);
+    const stat = fs.lstatSync(current, { throwIfNoEntry: false });
+    if (!stat?.isDirectory() || stat.isSymbolicLink()) return false;
+  }
+  return true;
+}
+
+function filesIn(root, directory, matches, recursive = true) {
+  if (!isRealDirectory(root, directory)) return [];
+  return fs.readdirSync(path.join(root, directory), { withFileTypes: true }).flatMap(entry => {
+    const relativePath = `${directory}/${entry.name}`;
+    if (recursive && entry.isDirectory()) return filesIn(root, relativePath, matches);
+    return entry.isFile() && matches(entry.name) ? [relativePath] : [];
   });
 }
 
-function posix(relativePath) {
-  return relativePath.split(path.sep).join('/');
+export function findAuthoredFileProviderCollisions(root = ROOT) {
+  return AUTHORED_DIRECTORIES.flatMap(directory =>
+    filesIn(root, directory, name => / \d+\.(?:css|html|js|json|mdx|mjs|ts|tsx)$/.test(name))
+  ).sort();
 }
 
-function listFileProviderCollisions(directory, root, pattern, collisions) {
-  if (!fs.existsSync(directory)) return;
-  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
-    const absolutePath = path.join(directory, entry.name);
-    if (entry.isDirectory()) {
-      listFileProviderCollisions(absolutePath, root, pattern, collisions);
-    } else if (entry.isFile() && pattern.test(entry.name)) {
-      collisions.push(posix(path.relative(root, absolutePath)));
-    }
-  }
+export function reportAuthoredFileProviderCollisions(collisions) {
+  if (!collisions.length) return;
+  console.warn(
+    'Possible File Provider copies in authored directories were preserved. Review and resolve them manually:\n' +
+      collisions.map(file => `  - ${file}`).join('\n')
+  );
 }
 
 export function cleanFileProviderCollisions(root = ROOT) {
-  const collisions = [];
-  for (const { directory, pattern } of FILE_PROVIDER_COLLISION_OUTPUTS) {
-    listFileProviderCollisions(path.join(root, directory), root, pattern, collisions);
-  }
-  for (const relativePath of collisions) {
-    fs.rmSync(path.join(root, relativePath), { force: true });
-  }
-  return collisions.sort();
+  const collisions = COLLISION_OUTPUTS.flatMap(({ directory, pattern }) =>
+    filesIn(root, directory, name => pattern.test(name))
+  ).sort();
+  for (const relativePath of collisions) fs.rmSync(path.join(root, relativePath), { force: true });
+  return collisions;
 }
 
 export function listFrameworkComponentProxies(
   root = ROOT,
   { includeCollisionCopies = false } = {}
 ) {
-  return listFrameworkComponentProxiesForOutputs(root, FRAMEWORK_OUTPUTS, includeCollisionCopies);
-}
-
-function listFrameworkComponentProxiesForOutputs(root, outputs, includeCollisionCopies) {
-  const proxies = [];
-  for (const { directory } of outputs) {
-    const absoluteDirectory = path.join(root, directory);
-    if (!fs.existsSync(absoluteDirectory)) continue;
-    for (const entry of fs.readdirSync(absoluteDirectory, { withFileTypes: true })) {
-      if (
-        entry.isFile() &&
-        COMPONENT_PROXY_FILENAME.test(entry.name) &&
-        (includeCollisionCopies || !/ \d+\.ts$/.test(entry.name))
-      ) {
-        proxies.push(posix(path.join(directory, entry.name)));
-      }
-    }
-  }
-  return proxies.sort();
+  return FRAMEWORK_OUTPUTS.flatMap(directory =>
+    filesIn(
+      root,
+      directory,
+      name =>
+        COMPONENT_PROXY_FILENAME.test(name) && (includeCollisionCopies || !/ \d+\.ts$/.test(name)),
+      false
+    )
+  ).sort();
 }
 
 export function cleanFrameworkProxies(root = ROOT) {
-  const generatedRoot = path.join(root, 'src/.generated');
-  const generatedSourceArtifacts = [];
-  const collectArtifacts = directory => {
-    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
-      const absolutePath = path.join(directory, entry.name);
-      if (entry.isDirectory()) collectArtifacts(absolutePath);
-      else if (entry.isFile()) {
-        generatedSourceArtifacts.push(posix(path.relative(root, absolutePath)));
-      }
-    }
-  };
-  if (fs.existsSync(generatedRoot)) {
-    collectArtifacts(generatedRoot);
-    fs.rmSync(generatedRoot, { recursive: true, force: true });
+  const generated = 'src/.generated';
+  const removed = filesIn(root, generated, () => true);
+  if (isRealDirectory(root, generated)) {
+    fs.rmSync(path.join(root, generated), { recursive: true, force: true });
   }
+  removed.push(...cleanFileProviderCollisions(root));
 
-  const legacyArtifacts = listFrameworkComponentProxiesForOutputs(
-    root,
-    LEGACY_FRAMEWORK_OUTPUTS,
-    true
-  );
-  const generatedArtifacts = [
-    ...generatedSourceArtifacts,
-    ...legacyArtifacts,
-    ...cleanFileProviderCollisions(root),
-  ];
-  for (const { directory, barrels } of LEGACY_FRAMEWORK_OUTPUTS) {
-    const absoluteDirectory = path.join(root, directory);
-    if (!fs.existsSync(absoluteDirectory)) continue;
-    for (const entry of fs.readdirSync(absoluteDirectory, { withFileTypes: true })) {
-      if (entry.isFile() && isGeneratedBarrel(entry.name, barrels)) {
-        generatedArtifacts.push(posix(path.join(directory, entry.name)));
-      }
-    }
+  // Stencil's output hashes must be invalidated when adapter files are removed.
+  if (isRealDirectory(root, '.stencil')) {
+    fs.rmSync(path.join(root, '.stencil'), { recursive: true, force: true });
   }
-
-  const legacyAngularRuntime = path.join(root, 'src/angular/angular-component-lib');
-  if (fs.existsSync(legacyAngularRuntime)) {
-    collectArtifacts(legacyAngularRuntime);
-    generatedArtifacts.push(...generatedSourceArtifacts);
-    fs.rmSync(legacyAngularRuntime, { recursive: true, force: true });
-  }
-
-  const removed = [...new Set(generatedArtifacts)].sort();
-  for (const relativePath of removed) fs.rmSync(path.join(root, relativePath), { force: true });
-
-  // Stencil caches output hashes independently from the generated source files.
-  // Clear that derived cache with the proxies so a clean build/watch cannot skip
-  // recreating an unchanged adapter that was just removed above.
-  fs.rmSync(path.join(root, '.stencil'), { recursive: true, force: true });
-
-  return removed;
+  return removed.sort();
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === SCRIPT_PATH) {
   const removed = cleanFrameworkProxies();
-  console.log(
-    `Cleaned ${removed.length} generated framework proxy artifact${
-      removed.length === 1 ? '' : 's'
-    }.`
-  );
+  reportAuthoredFileProviderCollisions(findAuthoredFileProviderCollisions());
+  console.log(`Cleaned ${removed.length} generated framework proxy artifacts.`);
 }

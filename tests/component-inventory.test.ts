@@ -10,7 +10,11 @@ import {
   validateFrameworkAdapters,
   validateRegistryCoverage,
 } from '../scripts/component-inventory.mjs';
-import { cleanFrameworkProxies } from '../scripts/clean-framework-proxies.mjs';
+import {
+  cleanFileProviderCollisions,
+  cleanFrameworkProxies,
+  findAuthoredFileProviderCollisions,
+} from '../scripts/clean-framework-proxies.mjs';
 
 const temporaryRoots: string[] = [];
 
@@ -198,12 +202,59 @@ describe('source-derived component inventory', () => {
       'src/.generated/vue/components 2.ts',
       'src/.generated/vue/components.ts',
       'src/.generated/vue/ds-new-widget.ts',
+    ]);
+    assert.equal(fs.readFileSync(path.join(root, 'src/framework/angular.ts'), 'utf8'), 'preserved');
+    assert.deepEqual(findAuthoredFileProviderCollisions(root), [
       'src/angular/angular-component-lib/utils 3.ts',
       'src/wc/components/Widget/Widget.stories 2.ts',
       'tests/e2e/widget.spec 2.ts',
     ]);
-    assert.equal(fs.readFileSync(path.join(root, 'src/framework/angular.ts'), 'utf8'), 'preserved');
+    for (const file of findAuthoredFileProviderCollisions(root)) {
+      assert.equal(fs.readFileSync(path.join(root, file), 'utf8'), 'collision');
+    }
     assert.equal(fs.existsSync(path.join(root, '.stencil')), false);
+  });
+
+  it('only removes numbered copies inside owned outputs during repeated sweeps', () => {
+    const root = fixtureRoot();
+    const authored = ['src/react/ds-widget 2.ts', 'src/vue/components 2.ts', 'tests/example 2.ts'];
+    const generated = [
+      'dist/nested/chunk 2.js',
+      'storybook-static/asset 3.css',
+      'public/r/widget 2.json',
+    ];
+    for (const file of [...authored, ...generated]) writeFile(root, file, 'keep or regenerate');
+    assert.deepEqual(cleanFileProviderCollisions(root), generated.slice().sort());
+    assert.deepEqual(cleanFileProviderCollisions(root), []);
+    for (const file of authored) assert.equal(fs.existsSync(path.join(root, file)), true);
+  });
+
+  it('does not traverse symlinks at output roots, their parents, or nested directories', () => {
+    const root = fixtureRoot();
+    const outside = fixtureRoot();
+    writeFile(outside, 'sentinel 2.ts', 'preserve');
+    writeFile(outside, 'r/sentinel 2.json', 'preserve');
+    fs.mkdirSync(path.join(root, 'src'), { recursive: true });
+    fs.mkdirSync(path.join(root, 'dist'), { recursive: true });
+    fs.symlinkSync(outside, path.join(root, 'src/.generated'), 'dir');
+    fs.symlinkSync(outside, path.join(root, 'public'), 'dir');
+    fs.symlinkSync(outside, path.join(root, 'dist/linked'), 'dir');
+    fs.symlinkSync(outside, path.join(root, '.stencil'), 'dir');
+    assert.deepEqual(cleanFrameworkProxies(root), []);
+    assert.equal(fs.readFileSync(path.join(outside, 'sentinel 2.ts'), 'utf8'), 'preserve');
+    assert.equal(fs.readFileSync(path.join(outside, 'r/sentinel 2.json'), 'utf8'), 'preserve');
+    assert.equal(fs.lstatSync(path.join(root, 'src/.generated')).isSymbolicLink(), true);
+  });
+
+  it('removes generated trees without following symlinks inside them', () => {
+    const root = fixtureRoot();
+    const outside = fixtureRoot();
+    writeFile(outside, 'authored.ts', 'preserve');
+    writeFile(root, 'src/.generated/react/components.ts', 'generated');
+    fs.symlinkSync(outside, path.join(root, 'src/.generated/linked'), 'dir');
+    assert.deepEqual(cleanFrameworkProxies(root), ['src/.generated/react/components.ts']);
+    assert.equal(fs.readFileSync(path.join(outside, 'authored.ts'), 'utf8'), 'preserve');
+    assert.equal(fs.existsSync(path.join(root, 'src/.generated')), false);
   });
 
   it('detects renamed registry items and detail files', () => {

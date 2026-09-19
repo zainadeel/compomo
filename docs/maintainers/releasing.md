@@ -10,6 +10,11 @@ Normal releases are automated:
 
 Do not hand-bump versions or run routine `npm publish`.
 
+CI reads the Node and npm pins from `.nvmrc` and `packageManager`. Browser
+checks may skip version-only release diffs after comparing the package and
+lockfile contents. Source, dependency, or build changes retain their normal
+checks regardless of the branch name.
+
 ## Commit semantics
 
 - `feat:` → minor

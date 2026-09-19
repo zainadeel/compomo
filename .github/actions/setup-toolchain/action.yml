@@ -1,0 +1,27 @@
+name: Setup pinned toolchain
+description: Select Node from .nvmrc and the exact npm version in packageManager.
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+      with:
+        node-version-file: .nvmrc
+        cache: npm
+
+    - name: Select pinned npm
+      shell: bash
+      run: |
+        npm_version="$(node --input-type=module <<'NODE'
+        import fs from 'node:fs';
+        const { packageManager } = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+        const match = /^npm@(\d+\.\d+\.\d+)$/.exec(packageManager ?? '');
+        if (!match) throw new Error('packageManager must pin an exact npm version');
+        process.stdout.write(match[1]);
+        NODE
+        )"
+        if [ "$(npm --version)" != "$npm_version" ]; then
+          npm install --global "npm@$npm_version" --ignore-scripts --no-audit --no-fund
+        fi
+        test "$(npm --version)" = "$npm_version"
+        node --version
+        npm --version
