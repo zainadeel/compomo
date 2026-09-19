@@ -1,8 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { ref } from 'lit/directives/ref.js';
 import type { AgentToolState } from '../conversation-types';
 import '../../../../dist/components/ds-agent-tool-call.js';
 import '../../../../dist/components/ds-text.js';
+import '../../../../dist/components/ds-button-unfilled.js';
 
 export default { title: 'Agent/Tool call', tags: ['autodocs'] } satisfies Meta;
 type Story = StoryObj;
@@ -146,4 +148,54 @@ export const NarrowLongName: Story = {
       ></ds-agent-tool-call>
     </div>
   `,
+};
+
+export const Reconnection: Story = {
+  render: () => {
+    let tool: HTMLElement | undefined;
+    const reinsert = () => {
+      const parent = tool?.parentElement;
+      if (!tool || !parent) return;
+      tool.remove();
+      parent.append(tool);
+    };
+    const toggleDetails = () => {
+      if (!tool) return;
+      const existing = tool.querySelector('[slot="details"]');
+      if (existing) {
+        existing.remove();
+      } else {
+        const details = document.createElement('ds-text');
+        details.slot = 'details';
+        details.variant = 'text-body-small';
+        details.textContent = 'Application-supplied diagnostics added after the tool was rendered.';
+        tool.append(details);
+      }
+    };
+    return frame(html`
+      <div style="display:grid;gap:var(--dimension-space-200);">
+        <ds-text as="p" variant="text-body-small" color="secondary">
+          Reinsert the tool, then add or remove its details. The disclosure should follow the
+          supplied content.
+        </ds-text>
+        <div style="display:flex;flex-wrap:wrap;gap:var(--dimension-space-100);">
+          <ds-button-unfilled label="Reinsert tool" @dsClick=${reinsert}></ds-button-unfilled>
+          <ds-button-unfilled label="Toggle details" @dsClick=${toggleDetails}></ds-button-unfilled>
+        </div>
+        <div>
+          <ds-agent-tool-call
+            name="records.search"
+            label="Searched service records"
+            state="success"
+            open
+            ${ref(element => {
+              tool = element as HTMLElement | undefined;
+            })}
+          >
+            <span slot="result">Found 12 matching records.</span>
+          </ds-agent-tool-call>
+        </div>
+      </div>
+    `);
+  },
 };

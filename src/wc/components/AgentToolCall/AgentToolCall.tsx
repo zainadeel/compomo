@@ -33,17 +33,33 @@ export class AgentToolCall {
   @State() private hasDetails = false;
 
   private slotObserver?: MutationObserver;
+  private hasLoaded = false;
 
   componentWillLoad() {
     this.syncSlots();
   }
 
+  connectedCallback() {
+    if (this.hasLoaded) this.observeSlots();
+  }
+
   componentDidLoad() {
+    this.hasLoaded = true;
+    this.observeSlots();
+  }
+
+  private observeSlots() {
+    if (!this.el.isConnected) return;
+    this.slotObserver?.disconnect();
     this.syncSlots();
-    this.slotObserver = new MutationObserver(() => this.syncSlots());
+    this.slotObserver = new MutationObserver(() => {
+      if (this.el.isConnected) this.syncSlots();
+    });
     this.slotObserver.observe(this.el, {
       childList: true,
-      subtree: false,
+      // Scoped slots relocate authored children beneath the rendered wrappers.
+      subtree: true,
+      characterData: true,
       attributes: true,
       attributeFilter: ['slot'],
     });
@@ -51,6 +67,7 @@ export class AgentToolCall {
 
   disconnectedCallback() {
     this.slotObserver?.disconnect();
+    this.slotObserver = undefined;
   }
 
   private syncSlots() {

@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-card-overview.js';
 import '../../../../dist/components/ds-select.js';
+import '../../../../dist/components/ds-button-unfilled.js';
 import { resolveMetricTrend } from '../../utils/metric-change';
 import type { OverviewMetric, OverviewScore } from './card-overview-types';
 
@@ -298,4 +300,45 @@ export const ScoreError: Story = {
       </ds-card-overview>
     </div>
   `,
+};
+
+export const Reconnection: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => {
+    let frame: HTMLElement | undefined;
+    const resize = (width: number) => {
+      if (frame) frame.style.width = `min(100%, ${width}px)`;
+    };
+    const reinsert = () => {
+      const card = frame?.querySelector('ds-card-overview');
+      if (!card || !frame) return;
+      card.remove();
+      frame.append(card);
+    };
+    return html`
+      <div style="display:grid;gap:var(--dimension-space-200);${FRAME}">
+        <ds-text as="p" variant="text-body-small" color="secondary">
+          Reinsert the overview, then switch widths. The metric grid should continue adapting to its
+          available space.
+        </ds-text>
+        <div style="display:flex;flex-wrap:wrap;gap:var(--dimension-space-100);">
+          <ds-button-unfilled label="Reinsert overview" @dsClick=${reinsert}></ds-button-unfilled>
+          <ds-button-unfilled label="Narrow" @dsClick=${() => resize(280)}></ds-button-unfilled>
+          <ds-button-unfilled label="Wide" @dsClick=${() => resize(960)}></ds-button-unfilled>
+        </div>
+        <div
+          style="width:min(100%, 960px);"
+          ${ref(element => {
+            frame = element as HTMLElement | undefined;
+          })}
+        >
+          <ds-card-overview
+            period-label="Jul 27"
+            .score=${SCORE}
+            .metrics=${METRICS}
+          ></ds-card-overview>
+        </div>
+      </div>
+    `;
+  },
 };
