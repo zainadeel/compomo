@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.5.0](https://github.com/zainadeel/compomo/compare/v15.4.1...v15.5.0) (2026-09-20)
+
+
+### Added
+
+* **table:** add grouped headers, pinned columns, cards and shared editors ([#641](https://github.com/zainadeel/compomo/issues/641)) ([db7daa3](https://github.com/zainadeel/compomo/commit/db7daa3d840583184e0669cc898ab0255bc65baf))
+
 ## [15.4.1](https://github.com/zainadeel/compomo/compare/v15.4.0...v15.4.1) (2026-09-20)
 
 
