@@ -1,5 +1,24 @@
 # Changelog
 
+## [15.4.1](https://github.com/zainadeel/compomo/compare/v15.4.0...v15.4.1) (2026-09-20)
+
+
+### Fixed
+
+* harden build cleanup and package compliance ([#628](https://github.com/zainadeel/compomo/issues/628)) ([31aea2e](https://github.com/zainadeel/compomo/commit/31aea2eb8512794bac9ca19bc35bee3376f2cd99))
+* harden form state restoration and validation ([#627](https://github.com/zainadeel/compomo/issues/627)) ([1a789ef](https://github.com/zainadeel/compomo/commit/1a789effe6bd5469dd432ceb82abd4ce546895f8))
+* harden rendering and enforce component authoring contracts ([#638](https://github.com/zainadeel/compomo/issues/638)) ([95185b7](https://github.com/zainadeel/compomo/commit/95185b7c8306cdb8662579299e615abfec806e1b))
+* make outside-month calendar dates inactive ([#624](https://github.com/zainadeel/compomo/issues/624)) ([5c00579](https://github.com/zainadeel/compomo/commit/5c00579379bb0d63d4d596a5e415fbc5aafd7962))
+* restore card and conversation observers after reconnection ([#626](https://github.com/zainadeel/compomo/issues/626)) ([3a51db1](https://github.com/zainadeel/compomo/commit/3a51db1cc2a2905c5d68791b44d23313d0d10c2c))
+* restore chart behavior after reconnection ([#622](https://github.com/zainadeel/compomo/issues/622)) ([62fab97](https://github.com/zainadeel/compomo/commit/62fab9793a5f62d97e8d840b00d5eb37e0250f0c))
+* restore component resources and live layout measurements ([#635](https://github.com/zainadeel/compomo/issues/635)) ([ce3ed73](https://github.com/zainadeel/compomo/commit/ce3ed737a2e31faf5b6e51b8b56fc6cc55bc5859))
+* restore shell and navigation after reconnection ([#625](https://github.com/zainadeel/compomo/issues/625)) ([3fe80fc](https://github.com/zainadeel/compomo/commit/3fe80fce6256969cc858bd03f4def9173dd8df22))
+
+
+### Performance
+
+* reuse derived state and standardize value formatting ([#639](https://github.com/zainadeel/compomo/issues/639)) ([02f8201](https://github.com/zainadeel/compomo/commit/02f82017f38dae77d046ed5d9ab8db1f42453b62))
+
 ## [15.4.0](https://github.com/zainadeel/compomo/compare/v15.3.0...v15.4.0) (2026-09-18)
 
 
