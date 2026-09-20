@@ -181,8 +181,12 @@ export class InputTime {
   }
 
   disconnectedCallback() {
-    this.position.unobserve();
     this.teardownListeners();
+    this.open = false;
+    this.shouldRender = false;
+    this.closing = false;
+    this.positionReady = false;
+    this.focused = false;
   }
 
   @Watch('hourFormat')
@@ -301,7 +305,7 @@ export class InputTime {
 
   private openPicker() {
     const inactive = this.isInactive || this.disabled || this.formDisabled || this.readOnly;
-    if (inactive || this.open) return;
+    if (inactive || this.open || !this.el.isConnected) return;
     this.shouldRender = true;
     this.closing = false;
     this.positionReady = false;

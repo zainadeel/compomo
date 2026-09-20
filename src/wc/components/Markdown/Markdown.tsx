@@ -1,6 +1,7 @@
-import { Component, h, Host, Prop, State, VNode, Watch } from '@stencil/core';
+import { Component, Element, h, Host, Prop, State, VNode, Watch } from '@stencil/core';
 import type { Nodes, Root } from 'mdast';
 import { resolveSafeUrl } from '../../utils';
+import { ConnectionTasks } from '../../utils/connection-tasks';
 
 type MarkdownRender = VNode | string | null | MarkdownRender[];
 type MarkdownParser = {
@@ -30,14 +31,23 @@ function loadParser(): Promise<MarkdownParser> {
   scoped: true,
 })
 export class Markdown {
+  @Element() el!: HTMLElement;
+
   @Prop() content: string = '';
   @Prop() streaming: boolean = false;
 
   @State() private tree: Root | null = null;
   private parseFrame?: number;
   private parseRevision = 0;
+  private initialized = false;
+  private readonly tasks = new ConnectionTasks(() => this.el.isConnected);
+
+  connectedCallback() {
+    if (this.initialized) this.scheduleParse();
+  }
 
   componentWillLoad() {
+    this.initialized = true;
     // The browser-targeted named-character decoder used by the Markdown parser
     // creates a DOM element when its module is evaluated. Keep public package
     // imports server-safe by loading that parser only in a browser context.
@@ -46,16 +56,16 @@ export class Markdown {
 
   disconnectedCallback() {
     this.parseRevision += 1;
-    if (this.parseFrame && typeof cancelAnimationFrame === 'function') {
-      cancelAnimationFrame(this.parseFrame);
-    }
+    this.tasks.cancel();
+    this.parseFrame = undefined;
   }
 
   @Watch('content')
   scheduleParse() {
+    this.parseRevision += 1;
     if (typeof requestAnimationFrame !== 'function') return;
-    if (this.parseFrame) cancelAnimationFrame(this.parseFrame);
-    this.parseFrame = requestAnimationFrame(() => {
+    this.tasks.cancelFrame(this.parseFrame);
+    this.parseFrame = this.tasks.frame(() => {
       this.parseFrame = undefined;
       void this.parse();
     });
@@ -65,13 +75,14 @@ export class Markdown {
     const revision = ++this.parseRevision;
     try {
       const { fromMarkdown, gfmFromMarkdown, gfm } = await loadParser();
+      if (revision !== this.parseRevision || !this.el.isConnected) return;
       const tree = fromMarkdown(this.content, {
         extensions: [gfm()],
         mdastExtensions: [gfmFromMarkdown()],
       });
       if (revision === this.parseRevision) this.tree = tree;
     } catch {
-      if (revision === this.parseRevision) this.tree = null;
+      if (revision === this.parseRevision && this.el.isConnected) this.tree = null;
     }
   }
 

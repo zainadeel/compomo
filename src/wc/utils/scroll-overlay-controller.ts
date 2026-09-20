@@ -29,10 +29,14 @@ export class ScrollOverlayController {
   constructor(private readonly options: ScrollOverlayControllerOptions) {}
 
   connect(): void {
-    this.resizeObserver = new ResizeObserver(() => {
+    this.disconnect();
+    if (!this.options.host.isConnected) return;
+    const observer = new ResizeObserver(() => {
+      if (this.resizeObserver !== observer || !this.options.host.isConnected) return;
       this.sync();
       this.options.onGeometryChange?.();
     });
+    this.resizeObserver = observer;
     this.resizeObserver.observe(this.options.viewport);
     this.resizeObserver.observe(this.options.content);
     this.resizeObserver.observe(this.options.overlay);
@@ -41,9 +45,11 @@ export class ScrollOverlayController {
 
   disconnect(): void {
     this.resizeObserver?.disconnect();
+    this.resizeObserver = undefined;
   }
 
   sync(): void {
+    if (!this.options.host.isConnected) return;
     this.syncOverlayGeometry();
     this.syncFadeWindow();
   }
@@ -81,7 +87,7 @@ export class ScrollOverlayController {
       0
     );
     this.overlayContentBlockSize = Math.max(this.overlayBlockSize - topInset, 0);
-    const fadeLead = resolveCssLengthPx('var(--dimension-space-100)', 8);
+    const fadeLead = resolveCssLengthPx('var(--dimension-space-100)', 8, host);
     this.fadeBlockSize = this.overlayContentBlockSize + fadeLead;
 
     host.style.setProperty(SCROLL_OVERLAY_BLOCK_SIZE, `${this.overlayBlockSize}px`);

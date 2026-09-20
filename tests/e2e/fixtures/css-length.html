@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Live CSS length resolution</title>
+    <style>
+      :root {
+        font-size: 16px;
+        --test-length: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="scope"
+      style="
+        font-size: 20px;
+        line-height: 30px;
+        --test-length: 24px;
+        --test-nested: calc(var(--test-length) + 2px);
+      "
+    ></div>
+    <div id="other" style="font-size: 30px; --test-length: 40px"></div>
+    <script type="module">
+      import { resolveCssLengthPx } from '/dist/lib/utils/index.js';
+      window.resolveLength = (value, id) =>
+        resolveCssLengthPx(value, 9, id ? document.getElementById(id) : undefined);
+      document.documentElement.dataset.ready = 'true';
+    </script>
+  </body>
+</html>

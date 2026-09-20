@@ -27,6 +27,7 @@ import {
 import { observeTableCaptionCompact } from '../../utils/table-caption-compact';
 import type { AnchoredAlign, AnchoredSide } from '../../utils/anchored-position';
 import { AnchoredPositionController } from '../../utils/anchored-position-controller';
+import { ConnectionTasks } from '../../utils/connection-tasks';
 import { AnchoredOverlayInteractionController } from '../../utils/anchored-overlay-interaction-controller';
 import { resolveAnchoredOverlayBoundaryRect } from '../../utils/anchored-overlay-boundary';
 import { ChoiceOptionRow, ChoiceSearch } from '../../utils/choice-list-parts';
@@ -258,6 +259,7 @@ export class FilterMenu {
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
   private captionCompactDisconnect: (() => void) | undefined;
   private hasLoaded = false;
+  private readonly tasks = new ConnectionTasks(() => this.el.isConnected);
   private closingSnapshot: {
     filters: FilterMenuFilter[];
     values: FilterMenuValues;
@@ -324,6 +326,15 @@ export class FilterMenu {
     this.disconnectCaptionCompactObserver();
     this.position.unobserve();
     this.teardownListeners();
+    this.shouldRender = false;
+    this.closing = false;
+    this.positionReady = false;
+    this.closingSnapshot = null;
+    this.pendingInitialFocusVisible = false;
+    if (!this.open) {
+      this.dateModeByFilter = {};
+      this.optionQueryByFilter = {};
+    }
   }
 
   @Watch('collapseLabel')
@@ -337,7 +348,7 @@ export class FilterMenu {
       this.draftValues = undefined;
       this.draftModes = undefined;
     }
-    if (this.embedded) return;
+    if (this.embedded || !this.hasLoaded || !this.el.isConnected) return;
     if (isOpen) {
       this.teardownListeners();
       this.closingSnapshot = null;
@@ -350,7 +361,7 @@ export class FilterMenu {
       return;
     }
 
-    if (!this.shouldRender) return;
+    if (!this.shouldRender || this.closing) return;
     this.position.cancel();
     this.captureClosingSnapshot();
     this.closing = true;
@@ -375,7 +386,7 @@ export class FilterMenu {
   @Watch('alignOffset')
   @Watch('menuWidth')
   onPositionInputChange() {
-    if (this.open) this.position.schedule();
+    if (this.open && this.el.isConnected) this.position.schedule();
   }
 
   @Listen('keydown')
@@ -421,6 +432,7 @@ export class FilterMenu {
   }
 
   private teardownListeners() {
+    this.tasks.cancel();
     this.position.unobserve();
     this.interaction.disconnect();
     if (this.closeTimer) {
@@ -459,6 +471,7 @@ export class FilterMenu {
   }
 
   private finishClose() {
+    if (this.open || !this.closing || !this.el.isConnected) return;
     const popup = this.el.querySelector<HTMLElement>('.filter-menu-popup');
     if (popup?.matches(':popover-open')) popup.hidePopover();
     this.shouldRender = false;
@@ -489,7 +502,7 @@ export class FilterMenu {
   }
 
   private focusInitialCategory() {
-    requestAnimationFrame(() => {
+    this.tasks.frame(() => {
       this.el.querySelector<HTMLElement>('.filter-menu__category[tabindex="0"]')?.focus();
       this.pendingInitialFocusVisible = false;
     });
@@ -522,7 +535,7 @@ export class FilterMenu {
     this.activeOptionIndex = 0;
     this.dsActiveFilterChange.emit(filterId);
     if (!focus) return;
-    requestAnimationFrame(() => {
+    this.tasks.frame(() => {
       this.el.querySelector<HTMLElement>(`[data-filter-category="${filterId}"]`)?.focus();
     });
   }
@@ -541,7 +554,7 @@ export class FilterMenu {
     else if (event.key === 'End') nextIndex = filters.length - 1;
     else if (event.key === 'ArrowRight') {
       event.preventDefault();
-      requestAnimationFrame(() => {
+      this.tasks.frame(() => {
         this.el
           .querySelector<HTMLElement>(
             '.filter-menu__options [role="option"], .filter-menu__options [data-date-option], .filter-menu__options input'
@@ -597,7 +610,7 @@ export class FilterMenu {
     }
     this.activeOptionIndex = next;
     this.focusRingVisible = true;
-    requestAnimationFrame(() => {
+    this.tasks.frame(() => {
       this.el
         .querySelector<HTMLElement>(`#${this.generatedId}-${filter.id}-option-${next}`)
         ?.focus();
@@ -635,7 +648,7 @@ export class FilterMenu {
     this.activeOptionIndex = firstEnabled;
     this.focusRingVisible = false;
     this.optionQueryByFilter = { ...this.optionQueryByFilter, [filter.id]: value };
-    requestAnimationFrame(() => {
+    this.tasks.frame(() => {
       const content = this.el.querySelector<HTMLElement>('.filter-menu__options-content');
       if (content) content.scrollTop = 0;
       this.position.schedule();
@@ -654,7 +667,7 @@ export class FilterMenu {
     const next = event.key === 'ArrowDown' ? enabled[0] : enabled[enabled.length - 1];
     this.activeOptionIndex = next;
     this.focusRingVisible = true;
-    requestAnimationFrame(() => {
+    this.tasks.frame(() => {
       this.el
         .querySelector<HTMLElement>(`#${this.generatedId}-${filter.id}-option-${next}`)
         ?.focus();
@@ -929,6 +942,7 @@ export class FilterMenu {
 
   private syncCaptionCompactObserver(): void {
     this.disconnectCaptionCompactObserver();
+    if (!this.el.isConnected) return;
     if (!this.collapseLabel) {
       if (this.captionCompact) this.captionCompact = false;
       return;

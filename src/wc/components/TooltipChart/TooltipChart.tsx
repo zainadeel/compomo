@@ -5,6 +5,7 @@ import {
   resolveCssTimeMs,
   TOKEN_DEFAULTS,
 } from '../../utils';
+import { ConnectionTasks } from '../../utils/connection-tasks';
 
 const CURSOR_OFFSET_PX = 12;
 const VIEWPORT_PAD_PX = 8;
@@ -66,20 +67,37 @@ export class TooltipChart {
   @State() private visible: boolean = false;
 
   private delayTimer: ReturnType<typeof setTimeout> | null = null;
+  private loaded = false;
+  private placementFrame?: number;
+  private readonly tasks = new ConnectionTasks(() => this.el.isConnected);
+
+  connectedCallback() {
+    if (!this.loaded) return;
+    this.scheduleShow();
+    this.onAnchorChange();
+  }
 
   componentDidLoad() {
+    this.loaded = true;
     this.scheduleShow();
     this.calculatePlacement();
   }
 
   disconnectedCallback() {
     this.clearDelayTimer();
+    this.tasks.cancel();
+    this.placementFrame = undefined;
+    this.visible = false;
   }
 
   @Watch('x')
   @Watch('y')
   onAnchorChange() {
-    requestAnimationFrame(() => this.calculatePlacement());
+    this.tasks.cancelFrame(this.placementFrame);
+    this.placementFrame = this.tasks.frame(() => {
+      this.placementFrame = undefined;
+      this.calculatePlacement();
+    });
   }
 
   @Watch('delay')
@@ -101,19 +119,24 @@ export class TooltipChart {
   private scheduleShow() {
     this.clearDelayTimer();
     this.visible = false;
+    if (!this.el.isConnected) return;
     const ms = this.showDelayMs;
     if (ms <= 0) {
       this.visible = true;
       return;
     }
-    this.delayTimer = setTimeout(() => {
-      this.delayTimer = null;
-      this.visible = true;
-      requestAnimationFrame(() => this.calculatePlacement());
-    }, ms);
+    this.delayTimer = setTimeout(
+      this.tasks.guard(() => {
+        this.delayTimer = null;
+        this.visible = true;
+        this.onAnchorChange();
+      }),
+      ms
+    );
   }
 
   private calculatePlacement() {
+    if (!this.el.isConnected) return;
     const rect = this.el.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
 

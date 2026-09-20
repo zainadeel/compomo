@@ -18,6 +18,7 @@ import {
   TOKEN_DEFAULTS,
 } from '../../utils';
 import { AnchoredPositionController } from '../../utils/anchored-position-controller';
+import { ConnectionTasks } from '../../utils/connection-tasks';
 import { AnchoredOverlayInteractionController } from '../../utils/anchored-overlay-interaction-controller';
 import { resolveAnchoredOverlayBoundaryRect } from '../../utils/anchored-overlay-boundary';
 import { ChoiceListSection, ChoiceOptionRow } from '../../utils/choice-list-parts';
@@ -91,6 +92,8 @@ export class DataGroup {
   private triggerElement: HTMLElement | null = null;
   private pendingInitialFocusVisible = false;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
+  private loaded = false;
+  private readonly tasks = new ConnectionTasks(() => this.el.isConnected);
 
   private readonly position = new AnchoredPositionController({
     getAnchor: () => this.triggerElement,
@@ -136,18 +139,25 @@ export class DataGroup {
   });
 
   componentDidLoad() {
+    this.loaded = true;
     if (this.open) this.onOpenChange(true);
   }
 
+  connectedCallback() {
+    if (this.loaded && this.open) this.onOpenChange(true);
+  }
+
   disconnectedCallback() {
-    this.position.unobserve();
-    this.interaction.disconnect();
-    if (this.closeTimer) clearTimeout(this.closeTimer);
+    this.teardown();
+    this.shouldRender = false;
+    this.closing = false;
+    this.positionReady = false;
+    this.pendingInitialFocusVisible = false;
   }
 
   @Watch('open')
   onOpenChange(isOpen: boolean) {
-    if (this.embedded) return;
+    if (this.embedded || !this.loaded || !this.el.isConnected) return;
     if (isOpen) {
       this.teardown();
       this.shouldRender = true;
@@ -159,7 +169,8 @@ export class DataGroup {
       this.position.schedule(() => this.focusInitialDataPoint());
       return;
     }
-    if (!this.shouldRender) return;
+    if (!this.shouldRender || this.closing) return;
+    this.tasks.cancel();
     this.position.cancel();
     this.closing = true;
     this.interaction.disconnect();
@@ -196,6 +207,7 @@ export class DataGroup {
   }
 
   private teardown() {
+    this.tasks.cancel();
     this.position.unobserve();
     this.interaction.disconnect();
     if (this.closeTimer) {
@@ -223,6 +235,7 @@ export class DataGroup {
   }
 
   private finishClose() {
+    if (this.open || !this.closing || !this.el.isConnected) return;
     const popup = this.el.querySelector<HTMLElement>('.data-group-popup');
     if (popup?.matches(':popover-open')) popup.hidePopover();
     this.shouldRender = false;
@@ -231,7 +244,8 @@ export class DataGroup {
   }
 
   private focusInitialDataPoint() {
-    requestAnimationFrame(() => {
+    this.tasks.frame(() => {
+      if (!this.open || this.closing) return;
       const selected = this.grouping
         ? this.el.querySelector<HTMLElement>(
             `[data-group-value="${CSS.escape(this.grouping.fieldId)}"] [role="option"]`
