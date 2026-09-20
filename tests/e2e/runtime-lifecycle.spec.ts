@@ -249,8 +249,8 @@ for (const id of ['banner', 'modal', 'menu', 'filter']) {
     await host.evaluate(async element => {
       const parent = element.parentElement!;
       (element as HTMLDsModalElement).open = false;
-      // Let the closing state paint, then interrupt before its completion timer.
-      await new Promise(resolve => requestAnimationFrame(resolve));
+      // The prop watcher schedules exit synchronously. Interrupt in the same task:
+      // a delayed frame on a busy runner can arrive after the exit timer has fired.
       element.remove();
       await new Promise(resolve => setTimeout(resolve, 300));
       parent.append(element);
