@@ -156,7 +156,7 @@ test('cards have inset field dividers, one interaction surface, and edge-to-edge
   const view = (await viewport.boundingBox())!;
   expect(first.x - view.x).toBe(16);
   expect(first.y - view.y).toBe(16);
-  expect(view.width - first.width).toBe(32);
+  expect((await viewport.evaluate(el => el.clientWidth)) - first.width).toBe(32);
   expect(next.y - first.y - first.height).toBe(16);
   await expect(row).toHaveCSS('border-width', '1px');
   await expect(row).toHaveCSS('border-radius', '4px');
@@ -587,10 +587,18 @@ test('virtual grid focus survives recycling and never mounts the full worksheet 
   await expect(next).toBeFocused();
   await next.press('F2');
   await expect(table.locator('.ds-table__cell-editor input')).toBeFocused();
-  await table.locator('.ds-table__viewport').evaluate(el => {
+  await table.locator('.ds-table__cell-editor input').fill('Unsaved worksheet draft');
+  await table.locator('.ds-table__viewport').evaluate(async el => {
+    // Let native input selection/caret scrolling settle before the user scroll.
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     el.scrollTop = el.scrollHeight;
   });
+  await expect(table.locator('[data-row-id="worksheet-9999"]')).toBeAttached();
   await expect(table.locator('.ds-table__cell-editor input')).toBeFocused();
+  await expect(table.locator('.ds-table__cell-editor input')).toHaveValue(
+    'Unsaved worksheet draft'
+  );
+  await expect(table.locator('[data-row-id="worksheet-9999"]')).toBeVisible();
   await expect.poll(() => table.locator('[data-row-id]').count()).toBeLessThan(50);
 });
 
@@ -658,9 +666,15 @@ test('grid navigation, editing, cancellation, range and atomic paste @cross-brow
   await expect(table.locator('[role="gridcell"][aria-selected="true"]')).toHaveCount(2);
   await limit.focus();
   await limit.evaluate(el => {
-    const clipboardData = new DataTransfer();
-    clipboardData.setData('text/plain', '60\tNew note\n61\tOther note');
-    el.dispatchEvent(new ClipboardEvent('paste', { bubbles: true, clipboardData }));
+    const event = new ClipboardEvent('paste', { bubbles: true, cancelable: true });
+    // Firefox does not populate synthetic clipboard payloads from DataTransfer.
+    // Supply the browser-owned boundary explicitly, then exercise the real handler.
+    Object.defineProperty(event, 'clipboardData', {
+      value: {
+        getData: (type: string) => (type === 'text/plain' ? '60\tNew note\n61\tOther note' : ''),
+      },
+    });
+    el.dispatchEvent(event);
   });
   await expect(limit).toContainText('60');
   await expect(table.locator('[data-row-id="edit-1"] [data-column-id="note"]')).toContainText(

@@ -692,6 +692,7 @@ export class Table {
   private truncateAnchor: HTMLElement | null = null;
   private truncateTooltipBound = false;
   private focusedRowId: string | null = null;
+  private virtualRenderFocus: HTMLElement | null = null;
   private virtualItems: TableVirtualItem[] = [];
   private visibleColumnsCache: {
     columns: TableColumn[];
@@ -868,7 +869,28 @@ export class Table {
     this.scheduleInitialModelIssueWarning();
   }
 
+  componentWillRender(): void {
+    const root = this.el.getRootNode() as Document | ShadowRoot;
+    const active = root.activeElement;
+    this.virtualRenderFocus =
+      this.rowWindowingEnabled &&
+      active instanceof HTMLElement &&
+      this.tableEl?.contains(active) &&
+      active.closest('[data-row-id]')
+        ? active
+        : null;
+  }
+
   componentDidRender(): void {
+    // Moving a retained pooled row can clear native focus in Firefox. Restore
+    // only the same connected node, without scrolling or stealing external focus.
+    const retainedFocus = this.virtualRenderFocus;
+    this.virtualRenderFocus = null;
+    if (retainedFocus?.isConnected) {
+      const root = retainedFocus.getRootNode() as Document | ShadowRoot;
+      if (!root.activeElement || root.activeElement === this.el.ownerDocument.body)
+        retainedFocus.focus({ preventScroll: true });
+    }
     this.layoutController.refresh(false);
     this.loadController.refresh();
     this.groupLoadController.refresh();

@@ -235,7 +235,9 @@ export class TableLayoutController {
       elements.frame?.setAttribute('data-pins-crowded', String(crowded));
     // Reuse viewport observation rather than size-contain the recycled body:
     // WebKit resets native scrolling when contained virtual rows are replaced.
-    const narrow = metrics.visibleInlineSize < 768;
+    // Responsive mode belongs to the frame, not the scrollable content width:
+    // classic scrollbar gutters must not move the card breakpoint.
+    const narrow = (elements.frame?.clientWidth ?? metrics.visibleInlineSize) < 768;
     this.options.narrowChanged?.(narrow);
     if (elements.frame?.getAttribute('data-narrow') !== String(narrow))
       elements.frame?.setAttribute('data-narrow', String(narrow));
