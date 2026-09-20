@@ -52,3 +52,17 @@ export const Gfm: Story = {
     ></ds-markdown>
   `,
 };
+
+export const SafeContent: Story = {
+  render: () => html`
+    <div style="display:grid;gap:var(--dimension-space-200);">
+      <ds-text as="p" variant="text-body-small" color="secondary">
+        Formatting and character entities render normally. Raw HTML is ignored, unsupported link
+        schemes become plain text, and inline code remains literal.
+      </ds-text>
+      <ds-markdown
+        content=${'## Safe &amp; sound\n\n**Formatted** text with &copy; and &#x2713;.\n\n[Documentation](https://example.com/docs) and [unsupported link](data:text/plain,example).\n\n<aside>Ignored raw HTML</aside>\n\n`<strong>Literal code</strong>`'}
+      ></ds-markdown>
+    </div>
+  `,
+};

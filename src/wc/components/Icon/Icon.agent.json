@@ -57,7 +57,8 @@
     "Built-in glyph lookup accepts exact canonical IcoMo export names only. The system, flag, and map catalogs are selected by which one owns the name, never by its prefix, so system glyphs such as Flag, FlagFilled, MapPage, and MapPin resolve correctly.",
     "A cache miss lazy-loads into a fixed-size box without layout shift. Unknown names, failed loads, and rejected markup leave that box empty.",
     "Critical first-paint glyphs may be pre-registered before rendering; all resolved glyphs share a global cache.",
-    "Every SVG is validated at the render boundary and injected as parsed DOM nodes so app-registered markup cannot bypass executable-content or external-reference checks."
+    "Every SVG is validated at the render boundary and constructed with namespaced DOM APIs so app-registered markup cannot bypass executable-content or external-reference checks.",
+    "Custom registered glyphs must be static and self-contained. Local gradients and clipping are supported, and narrow inline paint styles preserve IcoMo flag colors. Embedded stylesheets, animation and external resources are not supported."
   ],
   "responsiveBehavior": [
     "The owning component or layout chooses icon size and any responsive changes.",

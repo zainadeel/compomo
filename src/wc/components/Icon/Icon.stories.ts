@@ -1,6 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../../../../dist/components/ds-icon.js';
+import '../../../../dist/components/ds-text.js';
+import { registerIcons } from '../../../../dist/lib/utils/index.js';
+
+registerIcons({
+  StoryStaticGlyph:
+    '<svg viewBox="0 0 24 24"><defs><linearGradient id="paint"><stop offset="0" stop-color="currentColor" stop-opacity="0.3"/><stop offset="1" stop-color="currentColor"/></linearGradient><clipPath id="clip"><rect width="24" height="24" rx="6"/></clipPath></defs><rect width="24" height="24" fill="url(#paint)" clip-path="url(#clip)"/></svg>',
+  StoryUnsupportedGlyph: '<svg viewBox="0 0 24 24"><foreignObject width="24" height="24"/></svg>',
+});
 
 const SIZES = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'] as const;
 const COLORS = [
@@ -166,6 +174,31 @@ export const CustomVarColor: Story = {
       <ds-icon name="Bell" size="lg" color="var(--color-foreground-bold-positive)"></ds-icon>
       <ds-icon name="Bell" size="lg" color="var(--color-foreground-bold-warning)"></ds-icon>
       <ds-icon name="Bell" size="lg" color="var(--color-foreground-bold-negative)"></ds-icon>
+    </div>
+  `,
+};
+
+export const StaticRegisteredGlyphs: Story = {
+  render: () => html`
+    <div style="${PAGE}">
+      <ds-text as="p" variant="text-body-small" color="secondary">
+        Static custom glyphs support local gradients and clipping. Repeated instances keep their own
+        references. Unsupported artwork leaves the same empty icon box.
+      </ds-text>
+      <div style="${ROW}">
+        <ds-icon name="StoryStaticGlyph" size="xl" color="brand"></ds-icon>
+        <ds-icon name="StoryStaticGlyph" size="xl" color="positive"></ds-icon>
+        <ds-text>Two independent custom glyphs</ds-text>
+      </div>
+      <div style="${ROW}">
+        <ds-icon name="FlagUnitedStates" size="xl"></ds-icon>
+        <ds-icon name="FlagCanada" size="xl"></ds-icon>
+        <ds-text>Canonical flag colors are preserved</ds-text>
+      </div>
+      <div style="${ROW}">
+        <ds-icon name="StoryUnsupportedGlyph" size="xl"></ds-icon>
+        <ds-text>Unsupported embedded content: empty icon box</ds-text>
+      </div>
     </div>
   `,
 };

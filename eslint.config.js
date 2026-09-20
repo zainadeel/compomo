@@ -3,6 +3,7 @@ import tseslint from 'typescript-eslint';
 import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 import { createConfig } from './lint/index.js';
+import authoring from './scripts/authoring-rules.mjs';
 
 // eslint-plugin-react (v7) does not support ESLint 10 and is unnecessary here —
 // CompoMo is a Stencil web-components library. We keep react-hooks (v7, ESLint
@@ -67,6 +68,15 @@ const sourceConfig = tseslint.config(
 );
 
 export default [
+  {
+    files: ['src/wc/**/*.{ts,tsx}'],
+    ignores: ['**/*.stories.ts', '**/*.stories.tsx'],
+    plugins: { 'compomo-authoring': authoring },
+    rules: {
+      'compomo-authoring/no-markup-sinks': 'error',
+      'compomo-authoring/component-conventions': 'error',
+    },
+  },
   ...sourceConfig.map(config =>
     config.files || (Object.keys(config).length === 1 && config.ignores)
       ? config
