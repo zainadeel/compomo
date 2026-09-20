@@ -9,6 +9,7 @@ export interface TableVirtualRowPoolState {
 }
 
 export interface TableBodyRenderOptions {
+  headerRowCount?: number;
   model: TableRenderModel;
   plan: TableVirtualPlan | null;
   rows: TableRow[];
@@ -190,7 +191,7 @@ export class TableBodyRenderer {
         <tr
           role="row"
           data-virtual-id={`group:${group.id}`}
-          aria-rowindex={node.headerIndex + 2}
+          aria-rowindex={node.headerIndex + 1 + (options.headerRowCount ?? 1)}
           class={{
             'ds-table__group-row': true,
             'ds-table__group-row--native-sticky':

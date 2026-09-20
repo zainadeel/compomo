@@ -15,8 +15,17 @@ import type { TableRenderModel } from './table-render-model';
 import { TABLE_NO_HIGHLIGHT_MATCHER, type TableHighlightMatcher } from './table-highlight';
 import type { TableCellActionDetail, TableCellTextRun, TableColumn, TableRow } from './table-types';
 import { resolveSafeUrl } from '../../utils/safe-url';
+import type { TableColumnLayout, TableSpanCell } from './table-structure';
 
 export interface TableRowViewOptions {
+  pins?: Map<string, TableColumnLayout>;
+  spans?: Map<string, TableSpanCell>;
+  headerId?: (id: string) => string;
+  responsiveCards?: boolean;
+  cellAttributes?: (row: TableRow, column: TableColumn) => Record<string, unknown>;
+  renderEditor?: (row: TableRow, column: TableColumn) => unknown;
+  renderEditTrigger?: (row: TableRow, column: TableColumn) => unknown;
+  grid?: boolean;
   row: TableRow;
   model: TableRenderModel;
   visibleColumns: TableColumn[];
@@ -38,7 +47,7 @@ export interface TableRowViewOptions {
     disabled: boolean,
     onActivate: () => void
   ) => unknown;
-  renderStickyEdge: (sticky: TableColumn['sticky']) => unknown;
+  renderStickyEdge: (sticky: TableColumn['sticky'], shadow?: boolean) => unknown;
   onRowActivate: (row: TableRow, event: Event) => void;
   onRowKeyDown: (row: TableRow, event: KeyboardEvent) => void;
   onRowSelection: (row: TableRow) => void;
@@ -48,6 +57,14 @@ export interface TableRowViewOptions {
 
 /** Render one semantic body row and the complete declarative table-cell vocabulary. */
 export function renderTableRow({
+  pins,
+  spans,
+  headerId,
+  responsiveCards,
+  cellAttributes,
+  renderEditor,
+  renderEditTrigger,
+  grid,
   row,
   model,
   visibleColumns,
@@ -74,6 +91,7 @@ export function renderTableRow({
   const surfaceOpen = row.id === surfaceOpenRowId && !!row.interactive && !row.disabled;
   const rowSelectable = row.selectable !== false && !row.disabled;
   const rowInteractive =
+    !grid &&
     !row.disabled &&
     (model.selectable && model.selectedRowIds.size > 0 ? rowSelectable : !!row.interactive);
   const beforeSpacer =
@@ -82,8 +100,34 @@ export function renderTableRow({
       : visibleColumns.slice(0, model.elasticSpacerIndex);
   const afterSpacer =
     model.elasticSpacerIndex == null ? [] : visibleColumns.slice(model.elasticSpacerIndex);
-  const renderColumn = (column: TableColumn) =>
-    renderTableCell({
+  const cardActions = responsiveCards
+    ? visibleColumns.filter(column => column.kind === 'action')
+    : [];
+  const firstDataColumn = visibleColumns.find(column => column.kind !== 'action');
+  const renderColumn = (column: TableColumn) => {
+    const span = spans?.get(column.id);
+    if (span === 'covered') return null;
+    const lastPin = pins?.get(span?.columnIds[span.columnIds.length - 1] ?? column.id);
+    const firstPin = pins?.get(column.id);
+    const layout = firstPin
+      ? {
+          style: column.sticky === 'end' ? (lastPin?.style ?? firstPin.style) : firstPin.style,
+          edge: column.sticky === 'end' ? firstPin.edge : lastPin?.edge,
+        }
+      : undefined;
+    return renderTableCell({
+      layout,
+      afterCoveredColumn:
+        !!spans && spans.get(visibleColumns[visibleColumns.indexOf(column) - 1]?.id) === 'covered',
+      span: spans?.get(column.id),
+      headerId,
+      responsiveCards,
+      cardActionIndex: cardActions.indexOf(column),
+      cardActionDivider: model.selectable && column === cardActions[0],
+      firstDataColumn: column === firstDataColumn,
+      attributes: cellAttributes?.(row, column),
+      editor: renderEditor?.(row, column),
+      editTrigger: renderEditTrigger?.(row, column),
       row,
       column,
       selected,
@@ -98,6 +142,7 @@ export function renderTableRow({
       onCellAction,
       onActionMenuToggle,
     });
+  };
 
   return (
     <tr
@@ -110,16 +155,23 @@ export function renderTableRow({
         'ds-focus-ring': rowInteractive,
       }}
       data-row-id={row.id}
+      data-responsive-card={responsiveCards ? 'true' : undefined}
       data-virtual-id={ariaRowIndex != null ? `row:${row.id}` : undefined}
       data-virtual-pool-key={ariaRowIndex != null ? rowKey : undefined}
       data-virtual-measure={ariaRowIndex != null && variableVirtualSize ? 'true' : undefined}
       data-selected={selected ? 'true' : undefined}
       data-surface-open={surfaceOpen ? 'true' : undefined}
-      style={
-        intrinsicBlockSize != null
+      style={{
+        ...(intrinsicBlockSize != null
           ? { '--_table-row-intrinsic-block-size': `${intrinsicBlockSize}px` }
-          : undefined
-      }
+          : {}),
+        ...(responsiveCards
+          ? {
+              '--_table-card-action-count': String(cardActions.length),
+              '--_table-card-control-count': String(cardActions.length + Number(model.selectable)),
+            }
+          : {}),
+      }}
       aria-rowindex={ariaRowIndex}
       aria-disabled={row.disabled ? 'true' : undefined}
       tabIndex={rowInteractive ? 0 : undefined}
@@ -145,7 +197,10 @@ export function renderTableRow({
             !rowSelectable,
             () => onRowSelection(row)
           )}
-          {renderStickyEdge('start')}
+          {renderStickyEdge(
+            'start',
+            !pins || ![...pins.values()].some(pin => pin.edge === 'start')
+          )}
         </td>
       )}
       {beforeSpacer.map(renderColumn)}
@@ -170,6 +225,17 @@ export function renderTableRow({
 }
 
 interface TableCellViewOptions {
+  cardActionIndex?: number;
+  cardActionDivider?: boolean;
+  firstDataColumn?: boolean;
+  afterCoveredColumn?: boolean;
+  layout?: TableColumnLayout;
+  span?: TableSpanCell;
+  headerId?: (id: string) => string;
+  responsiveCards?: boolean;
+  attributes?: Record<string, unknown>;
+  editor?: unknown;
+  editTrigger?: unknown;
   row: TableRow;
   column: TableColumn;
   selected: boolean;
@@ -180,7 +246,7 @@ interface TableCellViewOptions {
   actionMenuSurface?: { rowId: string; columnId: string } | null;
   highlightMatcher: TableHighlightMatcher;
   highlightFieldIds: string[];
-  renderStickyEdge: (sticky: TableColumn['sticky']) => unknown;
+  renderStickyEdge: (sticky: TableColumn['sticky'], shadow?: boolean) => unknown;
   onCellAction: (detail: TableCellActionDetail) => void;
   onActionMenuToggle: (row: TableRow, column: TableColumn, event: MouseEvent) => void;
 }
@@ -188,6 +254,8 @@ interface TableCellViewOptions {
 function renderTableCell(options: TableCellViewOptions) {
   const { row, column, selected, surfaceOpen, renderStickyEdge } = options;
   const align = column.align ?? 'start';
+  const decoration = row.cellPresentation?.[column.id];
+  const span = options.span === 'covered' ? undefined : options.span;
   const cell = resolveTableCellPresentation(row.cells[column.id], column);
   const tagCell = cell.kind === 'tag';
   const tagsCell = cell.kind === 'tags';
@@ -212,9 +280,30 @@ function renderTableCell(options: TableCellViewOptions) {
 
   return (
     <td
+      {...options.attributes}
+      colSpan={span?.colSpan}
+      rowSpan={span?.rowSpan}
+      headers={
+        options.headerId
+          ? (span?.columnIds ?? [column.id]).map(options.headerId).join(' ')
+          : undefined
+      }
+      style={{
+        ...options.layout?.style,
+        ...(options.cardActionIndex != null && options.cardActionIndex >= 0
+          ? { '--_table-card-action-index': String(options.cardActionIndex) }
+          : {}),
+        ...(span ? { gridColumn: `${span.columnStart} / span ${span.colSpan}` } : {}),
+      }}
+      data-vertical-align={decoration?.verticalAlign}
+      data-cell-highlight={decoration?.highlight?.intent}
+      data-cell-borders={decoration?.borders?.join(' ')}
       key={`${row.id}:${column.id}`}
       class={{
         'ds-table__cell': true,
+        'ds-table__cell--card-action': column.kind === 'action',
+        'ds-table__cell--card-first': !!options.firstDataColumn,
+        'ds-table__cell--after-covered': !!options.afterCoveredColumn,
         [`ds-table__cell--align-${align}`]: true,
         'ds-table__cell--tag': tagCell,
         [`ds-table__cell--tag-${tagVariant}`]: tagCell,
@@ -238,8 +327,8 @@ function renderTableCell(options: TableCellViewOptions) {
         'ds-table__cell--text-wrap': textCell && wraps,
         'ds-table__cell--empty': emptyCell,
         'ds-table__cell--blank': blankCell,
-        'ds-table__cell--sticky-start': column.sticky === 'start',
-        'ds-table__cell--sticky-end': column.sticky === 'end',
+        'ds-table__cell--sticky-start': !!options.layout && column.sticky === 'start',
+        'ds-table__cell--sticky-end': !!options.layout && column.sticky === 'end',
         'ds-interaction-fill': true,
         'ds-interaction-fill--grouped': true,
         'ds-interaction-fill--selected': selected,
@@ -257,10 +346,52 @@ function renderTableCell(options: TableCellViewOptions) {
       }
       data-cell-tracks={tagsCell ? cell.tracks : undefined}
     >
+      {decoration?.highlight && <span class="ds-table__cell-highlight" aria-hidden="true" />}
+      {options.responsiveCards && column.kind !== 'action' && !options.firstDataColumn && (
+        <span class="ds-table__card-field-divider" aria-hidden="true" />
+      )}
+      {options.responsiveCards && options.cardActionDivider && (
+        <span class="ds-table__card-action-divider" aria-hidden="true" />
+      )}
+      {options.responsiveCards && column.kind !== 'action' && (
+        <ds-text
+          class="ds-table__card-label ds-interaction-fill__content"
+          as="span"
+          variant="text-caption"
+          color="secondary"
+          aria-hidden="true"
+        >
+          {column.label || column.accessibleLabel}
+        </ds-text>
+      )}
       <span class="ds-table__cell-content ds-interaction-fill__content">
-        {renderTableCellValue(cell, options)}
+        {options.editor ?? renderTableCellValue(cell, options)}
+        {!options.editor &&
+          options.attributes?.role === 'gridcell' &&
+          column.editor?.type === 'select' && (
+            <ds-icon
+              class="ds-table__select-indicator"
+              name="ChevronDown"
+              size="md"
+              color="secondary"
+            />
+          )}
+        {decoration?.flag && (
+          <span class="ds-table__cell-flag">
+            <ds-icon
+              name={decoration.flag.icon ?? 'Flag'}
+              size="md"
+              color="secondary"
+              label={decoration.flag.label}
+            />
+          </span>
+        )}
+        {decoration?.highlight && (
+          <span class="ds-visually-hidden">{decoration.highlight.label}</span>
+        )}
       </span>
-      {renderStickyEdge(column.sticky)}
+      {options.editTrigger}
+      {renderStickyEdge(options.layout ? column.sticky : undefined, !!options.layout?.edge)}
     </td>
   );
 }

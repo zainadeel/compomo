@@ -12972,6 +12972,7 @@
             "Select owns its associated popup and automatically retains the shared surface-open pressed wash. Consumers do not synchronize a second flag for the built-in picker. Contextual option actions are externally owned: their surfaceOpen state keeps the action visible through the associated menu exit, independently of the selected option."
           ],
           "responsiveBehavior": [
+            "An embedded editor may delegate hover, press and focus indication to its containing cell; that owner must supply a visible focus indicator. An explicit anchor positions the popup against the containing surface without transferring trigger focus or accessibility ownership. Popup options keep their own interaction feedback.",
             "Use width fill for form fields and width hug for compact filter bars. Override those defaults only when the owning layout has a clear constraint.",
             "When collapseLabel is set inside a named ds-table container narrower than 900px, the trigger omits its label and chevron, becomes icon-only, and exposes its label through a hover and keyboard-focus tooltip. A selected value promotes the prefix icon to primary.",
             "The popup matches the trigger minimum width, may grow for content, and clamps to the nearest data-ds-overlay-boundary rectangle or the viewport fallback. Assign boundary as an HTMLElement only for an explicit override.",
@@ -13068,6 +13069,10 @@
             "type": "boolean",
             "required": false
           },
+          "anchor": {
+            "type": "HTMLElement | undefined",
+            "required": false
+          },
           "ariaDescribedby": {
             "type": "string | undefined",
             "required": false
@@ -13121,6 +13126,14 @@
             "required": false
           },
           "hasBorder": {
+            "type": "boolean",
+            "required": false
+          },
+          "hasFocusRing": {
+            "type": "boolean",
+            "required": false
+          },
+          "hasInteractionFill": {
             "type": "boolean",
             "required": false
           },
@@ -15317,7 +15330,7 @@
           "avoidWhen": [
             "Content is primarily editorial prose; use semantic product-owned markup with the prose recipe instead.",
             "A small label/value set reads more clearly as a list, description list, or card.",
-            "The interface requires tree-grid behavior, nested grouping, inline cell editing, row reordering, multiple pinned columns per edge, or column virtualization; those remain outside the contract.",
+            "The interface requires tree-grid behavior, nested grouping, row reordering, formula evaluation, rich cell editors, or column virtualization; those remain outside the contract.",
             "The application expects the component to fetch, slice pages, sort, group, or mutate records internally."
           ],
           "commonlyComposedWith": [
@@ -15353,6 +15366,10 @@
             "Static and infinite tables may show an optional result summary footer when displayedCount and totalCount are finite. Virtual mode shows a total-only summary and ignores displayedCount. Pagination mode instead renders a named Pagination control with a page-size picker, vertical divider, and page position; range changes are announced independently with complete phrasing. Unmodified Left and Right Arrow request the adjacent page while focus is inside a paginated table or on a containing page scroller that owns it; editable fields, choice controls, sliders, open menus, and modified key combinations retain their own keyboard behavior. A table-owned footer slot can replace summary copy, while footer-leading and footer-trailing remain available in the same compact-bar anatomy. Nested dialog footers are ignored."
           ],
           "states": [
+            "Column super-groups describe adjacent visible fields. Hidden and reordered fields recompute the bands; unrelated fields, selection, elastic space, and pin boundaries split them. Compound sort controls remain in the leaf headers.",
+            "Cell presentation moves the complete content stack for deliberate middle or bottom alignment; the default remains first-track alignment. Semantic highlight borders require an accessible explanation, and flags require labels. Presentation metadata never changes the cell value or the shared text, icon, tag and action track anatomy.",
+            "Report merges name ordered row and column identities. Only a complete contiguous non-overlapping rectangle is accepted, and invalid definitions leave original values visible. Selection checkboxes are never merged. Merges cannot cross pin or elastic-spacer boundaries, and grouped or editable grids do not merge. Cross-row merges require non-windowed reports; column-only merges can use virtual rows. Applications recompute spans with their final data order and retain covered values.",
+            "Editing has two opt-in ungrouped modes for scalar values. Edit mode keeps normal table semantics and reveals a floating pencil on cell hover or keyboard focus; touch keeps the pencil visible. Grid mode adds per-cell hover/press feedback, keyboard focus and controlled rectangular ranges. Arrows and Home/End skip read-only cells; Shift+click or Shift+arrows extends the range without selecting read-only cells or opening an editor. A single click, Enter, F2 or typing opens the grid editor, while edit mode requires the pencil. Both modes share validation and controlled change events: Enter or Tab proposes a change; Escape or leaving the editor cancels. Tab advances to the next editable cell or pencil. Read-only content is muted without fading dividers, and those cells cannot receive cell selection or hover feedback. Native controls retain their own keyboard behavior. Plain TSV grid paste is bounded and rejected atomically for invalid, disabled, out-of-range or read-only destinations. Applications accept or reject proposed edits, own persistence and domain validation, and replace controlled data. Row checkbox selection remains independent of cell selection.",
             "Columns, rows, groups, grouping, sorting, selected row IDs, collapsed group IDs, highlightTerms, highlightFieldIds, hiddenFieldIds, fieldOrder, dataMode, pagination, displayedCount, totalCount, and incremental-loading state are controlled inputs. Events communicate intent and never mutate those inputs. The optional header is one composable table-local surface: the component owns its 48px chrome, 8px inset on every side, and sticky placement while the application owns the leading slot's internal layout, controls, labels, filtering behavior, and action handling. highlightTerms only marks matching table-owned text and never filters rows, changes query semantics, or highlights Tag labels. highlightFieldIds optionally narrows that marking to matching column IDs or compound header-segment sort keys. Opting into dataModeSwitcher and columnCustomizer adds their trailing Menu triggers and requires caption visibility. When both are present, Customize precedes a decorative divider and the data-mode trigger remains the final action. The Customize trigger keeps one stable label and neutral resting foreground whether or not hiddenFieldIds or fieldOrder differ from the catalog default; the configured state remains visible inside the Menu. The table closes one trailing Menu before opening the other. The footer retains its compact-bar composition: application-owned leading status sits left while a controlled result summary or Pagination aligns right, before any trailing action. Content-sized tables remain natural for sparse or fixed-count results. height bounds the complete header, frame, and footer composition. fitViewport reserves the compact-state composition height in the nearest vertical scrollport while growing the visible table into that reservation as surrounding page chrome collapses.",
             "Grouping supports one level. The application supplies groups in a fixed product-defined order and supplies ordered member rows independently. Group section headers show an emphasized text-body-medium label at the start and plain secondary loaded progress at the trailing edge beside the disclosure. A 20px tertiary divider centered on the label track marks the action-column boundary between the count and disclosure. The loaded value comes from the supplied member rows and the total comes from totalCount. A localized countLabel total phrase remains available for the complete assistive progress announcement. Virtual mode shows totals only, for example 166, because there is no loaded window. A collapsed section with no supplied member rows uses that same total-only copy so collapse does not advertise a zero loaded window, including 0 when no total is known. An expanded empty section still shows loaded progress, for example 0 of 166. Optional accessories occupy a second 24px track under the label, middle-dot separated, at most four items. An accessory with help uses the shared dotted underline and a bottom-start ds-tooltip from that copy; explicit line breaks create an unbulleted list. Without accessories the section stays the single-track row height; with accessories it matches a two-track body row, with the checkbox, trailing count, divider, and disclosure kept on the label track. An optional hero accessory sits before the label. The first supported hero is a safety-score fill. Its one-track presentation uses the default ds-score at sm and aligns to the label track on either row height. Setting hero tracks to 2 creates or spans the two-track header, renders the default ds-score at lg, and centers it across the label and accessory tracks. In selectable tables the two-track score starts at the selection-column boundary; selectionMode none omits that lane and uses the regular group-content start inset. A score hero does not use group intent coloring. Hero presentation does not change the 40 or 64 row-height contract beyond the explicitly requested second track. Groups without intent use the secondary background surface. Groups may declare an optional intent (brand, neutral, negative, warning, caution, positive) that paints an LTR gradient from the faint intent surface at the label edge into faint neutral at the trailing edge, plus a bold intent title color. Neutral groups remain solid faint neutral. Section separators are painted inside that viewport-width surface so translucent border tokens composite with each intent background. Internal sections keep their separators; a collapsed or empty section header yields its separator only when it is the table's final rendered item. The complete section header is the expand/collapse target and paints hover and press on that viewport-width surface. The section separator stays on the dedicated trailing-edge rule so the interaction wash cannot replace it. Trailing loaded progress sits on the label track beside a visually neutral icon-only ButtonUnfilled. The centered 20px tertiary divider at the action-column boundary separates the count from the 24px md double-inset disclosure. The disclosure keeps its accessible name and does not paint its own hover or press wash, showing ChevronUp while expanded and ChevronDown while collapsed. While any group is expanded, a ChevronDownUp action uses the xs sort-control recipe widened to a table-owned 24px lane and collapses every group. It appears at the inline-end edge of the trailing column declared with kind action when one exists; otherwise a button-hugging 24px by 16px medium-elevation surface floats at the visible scrollport's header edge so the action remains reachable while member columns scroll beneath it. With stickyHeader enabled, each contained section uses its one real section row as a native sticky header inside its real row-group boundary. The browser therefore owns pinning, push-off, scrolling, and resize layout in one pass without a duplicated lane, active-section state, transforms, or scroll-time geometry. Shared grid tracks retain exact header and member-cell alignment. The section surface also stays pinned to the visible horizontal scrollport and spans the smaller of the visible viewport or table width. Virtual grouped tables flatten headers and members into that same scrollport; expanding a section never introduces an inner scroller.",
             "When columnCustomizer is false, columns render in catalog order. When it is true, columns remains the catalog: hiddenFieldIds and fieldOrder control visibility and data-column sequence, action columns stay last, cannot be hidden, and remain absent from the customizer Menu, and dsFieldsConfigChange reports the next hidden ids and data-column order without mutating those inputs. The customizer Menu live-applies show/hide and data-column reorder. The table does not persist preferences.",
@@ -15362,7 +15379,7 @@
             "dataMode selects the top-level window: infinite appends ungrouped rows through dsLoadMore when hasMore is true, pagination renders the controlled page supplied by the application and emits dsPaginationChange, and virtual recycles row DOM over the full in-memory rows or groups the application already supplied. A bounded ungrouped infinite or pagination window with more than 50 supplied rows also recycles visible row DOM internally while preserving its selected data mode, complete supplied-window row count, selection scope, footer, and load behavior. Smaller and grouped non-virtual windows retain their supplied row DOM while deferring off-screen row content with token-aligned intrinsic heights. Infinite mode also covers fixed result sets by leaving hasMore false. In a grouped paginated table, pagination counts and windows only parent groups; each expanded parent can still append its own members through dsGroupLoadMore. Virtual mode does not fetch, ignores hasMore and load bands, and requires a bounded viewport (height, maxHeight, or fitViewport with a definite block size). Without that height it fails visibly instead of mounting every row. The application owns requests, cancellation, cursors, deduplication, slicing, and query identity.",
             "When pagination enables Fit to page on a bounded table, the table proposes the number of complete top-level rows that fit below its column header. Grouped tables count group headers only; member rows never affect capacity. Selecting Fit captures that numeric snapshot. A changed fitIdentity requests one fresh snapshot for a new query shape, while viewport resizing alone does not change the active controlled page size.",
             "Rows opt into complete-row activation with interactive and emit dsRowActivate without owning navigation. Selection paints through the shared selected ::before layer; interactive hover and press paint through the shared ::after layer.",
-            "Row selection owns the single sticky start lane. One explicitly sized application column can own the sticky end lane, or the start lane when selection is absent. Each sticky boundary owns one fixed divider and a row-clipped directional shadow that paints into the adjacent scrolling columns only while more inline content remains beyond that edge.",
+            "Explicitly sized application columns can accumulate at both inline edges in visible order, after the independent selection lane. Only the inner boundary of each pinned stack owns the directional shadow. If the pinned lanes consume the complete viewport, they return to scrolling so every field remains reachable. Keep related pinned fields together in display order.",
             "Cells accept scalar content, standard primary-and-secondary or dual-primary text primitives, declarative Tag, wrapping multiple-Tag content, icon-only, icon-and-text, 16:9 Image, or ButtonUnfilled Action content, or explicit Empty and Blank absence values. Text objects may declare an optional href (and target) on the primary track only; the table renders a native anchor with the shared brand text-action treatment when the URL is safe, and leaves scalars unlinked. Standard secondary copy defaults to the secondary foreground and may declare a semantic Text color when the application data carries intent; an optional tertiary track uses the same subdued body-small recipe as secondary. Secondary and tertiary may also be a short list of colorable runs, rendered on one line with the table's middle-dot separator. A run may supply help to add the shared dotted underline and a bottom-start Tooltip when compact visible copy summarizes supplementary details; explicit line breaks create a compact unbulleted list without obscuring the current cell's earlier tracks. Dual-primary copy keeps both tracks primary unless explicitly colored and does not gain a tertiary track. Body data cells share 8px outer padding; header and group rows keep their own geometry. Text tracks, including Empty, keep 4px inline padding so copy lines up with column-header labels; Tag and icon-only tracks stay on the 8px cell chrome alone. Icon-and-text cells (`kind: 'icon-text'`) place one md prefix icon beside the same copy stack as a text cell. The icon slot takes 2px padding on every side, then a 2px flex gap before the copy; text-track padding stays on the copy. Omit iconLabel when the glyph is decorative. 20px content (body-medium text, md icon, and the row checkbox) sits in a 24px track so it stays optically aligned with 24px Tag and Action content. Single-track text, selection, tag-only, icon-only, icon-and-text, Action, Empty, Blank, and 1-track Image cells resolve a 40px base contract while two-track cells grow to 64px and three-track cells grow to 88px. Every later track adds 24px, so four tracks resolve to 112px, five to 136px, and the sequence may continue. Tracks stack with no gap. Wrapping primary on a 1-track cell uses that same rhythm: two wrapped lines share the 64px row and three wrapped lines share the 88px row. Wrapping secondary keeps primary on the first track and consumes later tracks: two secondary lines share the 88px row and three secondary lines share a 112px fourth track. Keep the same track count in every row of a table or group when those rows should share one height. Tag cells use the inset Tag recipe: md double-inset is a 24px control for tag-only and tag-with-text, while text-with-tag uses sm single-inset at 20px so the second-track pill sits in the same 24px lane. For a compact ordered set of tags that must remain together on the primary track, choose the inline multiple-tag variation, optionally with supporting text below. Slash separators distinguish adjacent tags; labels truncate as the column narrows. Use wrapping tags when all labels must remain visible. Multiple-Tag cells use `kind: 'tags'`, a positive `tracks` count, and small single-inset Tags that wrap naturally at the column edge. Each wrap line is a 24px track with no stack gap, matching text. The tallest cell establishes the native row height, so all sibling cells match even at four, five, or more tracks; virtual tables use the declared count as the initial estimate and measure responsive wrapping after paint. Action cells primarily use an icon-only Ellipses treatment, render a 24px small ButtonUnfilled, default to unbordered, and emit row, column, and action identities through dsCellAction. When an action cell declares items, that Ellipses trigger opens the shared ds-menu for commands, dividers, inactive rows, and destructive rows instead of emitting on click; choosing a command emits dsCellAction with that item's actionId. Omit items to keep a single-shot control. Image cells declare tracks 1, 2, or 3 so the 16:9 preview fills that body-row content box (cell height minus 8px padding) and the column hugs the resulting width; omit tracks for the 1-track recipe, and keep image tracks aligned with the other cells in the table or group. The image is clipped to the 2px preview radius and the tertiary border paints as an inset overlay so it remains visible over image pixels. Image cells fall back to an accessible placeholder when no source is supplied. Empty means the data applies but has no value and renders an em dash with localized assistive text; Blank means the data is not applicable and renders no content. Nullish values remain backward-compatible Empty values. Stable type, variant, and track-count hooks keep every cell family independently styleable.",
             "Score-and-text cells (`kind: score-text`) place the small 24px safety score at the top-right of the cell while the same one-, two-, or three-track copy stack as a standard text cell fills from the start edge. The score is top-aligned with the first text track, adds no inner padding, and defaults its accessible name prefix to Safety score. Score-and-text loading geometry uses the matching small score skeleton and declared copy tracks.",
             "The public @ds-mo/ui/table.css export is the authoritative zero-specificity visual recipe. Override its --ds-table-* properties or target its stable element classes for product-specific styling.",
@@ -15372,7 +15389,8 @@
             "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback."
           ],
           "responsiveBehavior": [
-            "The table keeps native semantics at narrow widths and scrolls horizontally instead of transforming into cards.",
+            "Editable cells compose the shared borderless controls with cell-owned interaction and focus chrome. Only the active cell mounts a field. Single-select choices complete the edit immediately; multiline fields reserve Enter for a newline and use Ctrl/Command+Enter to commit. Date and time fields keep their picker keyboard behavior and emit canonical scalar values. Drafts stay local until a controlled change is proposed.",
+            "Horizontal scrolling is the default. Opted-in cards reuse the same native table in a narrow-container layout: a record is one card with vertically stacked labeled fields, inset separators aligned to the content origin, and space between labels and values. One row-owned interaction surface covers the card. Actions and selection sit together at the top-right, separated by a short divider. The content region owns card gutters and gaps; the toolbar and footer remain separate edge-to-edge surfaces. Page owners remove their outer table inset at the responsive breakpoint. Column headers remain available to assistive technology but are visually hidden and contain no interactive controls in card mode. Row selection and action controls preserve focus across resizing instead of mounting a duplicate mobile tree. Merged reports and grid interaction retain table layout. Card compositions do not use the duplicated document-flow sticky header.",
             "Inside the named ds-table container, caption Search retains its standard maximum width and flexes smaller only when the complete row needs space. Filter, Group, and Sort controls that opt into collapseLabel become icon-only below 900px by omitting their labels and chevrons. Active filtering or grouping promotes the visible icon to primary. Sort keeps resting secondary chrome because its selection lives in the menu and headers. Customize switches to the icon-only Customize menu button below 900px and keeps its neutral resting foreground regardless of the controlled column configuration. The caption, frame, and footer remain within the table host at every width. The complete caption row scrolls together only when those compact controls no longer fit, while data columns scroll inside the viewport; table-owned trailing actions never stay pinned over the scrolling toolbar.",
             "stickyHeader follows the active vertical scroll owner: a maxHeight, height, or fitViewport table keeps its native header and group sections inside one bounded table scrollport, while a document-flow table retains a semantic native header and renders a sticky control header whose columns follow the body's native inline scroll timeline. Consumers set --ds-table-sticky-header-offset when page chrome occupies an unbounded document scrollport edge. When the 48px table header bar is visible, it sticks at that external offset and the column header stacks immediately below it.",
             "fitViewport uses viewportInsetBlockStart and viewportInsetBlockEnd to describe compact surrounding chrome and page gutters relative to the nearest vertical scroll owner. Before the table reaches that compact position, its host reserves the eventual height while the visible composition grows and vertical input remains owned by the outer page. Once settled, the internal table viewport becomes the vertical scroll owner. Bounded grouped tables use browser-native sticky section rows inside real block row-group boundaries, so scroll and resize do not run component JavaScript or trigger reactive section swaps. Document-flow tables retain the synchronized visual lane required by their separate horizontal scrollport.",
@@ -15533,6 +15551,14 @@
             "type": "TableCaptionVisibility",
             "required": false
           },
+          "cellRange": {
+            "type": "TableCellRange | null",
+            "required": false
+          },
+          "cellSpans": {
+            "type": "TableCellSpan[]",
+            "required": false
+          },
           "chromeLoading": {
             "type": "boolean",
             "required": false
@@ -15669,6 +15695,10 @@
             "type": "string",
             "required": false
           },
+          "interactionMode": {
+            "type": "'table' | 'edit' | 'grid'",
+            "required": false
+          },
           "loadIdentity": {
             "type": "string | number",
             "required": false
@@ -15711,6 +15741,10 @@
           },
           "paginationModeLabel": {
             "type": "string",
+            "required": false
+          },
+          "responsiveLayout": {
+            "type": "'scroll' | 'cards'",
             "required": false
           },
           "resultSummaryLabel": {
@@ -15784,6 +15818,14 @@
             "detail": "TableCellActionDetail"
           },
           {
+            "name": "dsCellRangeChange",
+            "detail": "TableCellRange"
+          },
+          {
+            "name": "dsCellsChange",
+            "detail": "TableCellsChangeDetail"
+          },
+          {
             "name": "dsCustomizeOptionChange",
             "detail": "string"
           },
@@ -15843,13 +15885,18 @@
         "divider",
         "empty-state",
         "icon",
+        "input",
+        "input-date",
+        "input-time",
         "loader",
         "menu",
         "pagination",
         "score",
+        "select",
         "skeleton",
         "tag",
         "text",
+        "textarea",
         "tooltip"
       ]
     },

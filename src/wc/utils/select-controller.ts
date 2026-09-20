@@ -24,6 +24,7 @@ export interface SelectControllerState<T extends ChoiceOption> {
   readonly preferredIndex: number;
   readonly popupAlign: 'start' | 'end';
   readonly boundary: HTMLElement | undefined;
+  readonly anchor?: HTMLElement;
   open: boolean;
   activeIndex: number;
   searchTerm: string;
@@ -52,13 +53,13 @@ export class SelectController<T extends ChoiceOption> {
 
   constructor(private readonly state: SelectControllerState<T>) {
     this.position = new AnchoredPositionController({
-      getAnchor: () => this.triggerEl,
+      getAnchor: () => this.state.anchor ?? this.triggerEl,
       getPopup: () => this.popupEl,
       measure: (trigger, popup) => {
         if (!this.state.open || !popup.isConnected || !this.state.host.contains(popup)) return null;
 
         const sectionPadding = resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050);
-        popup.style.minWidth = `max(var(--ds-choice-popup-min-inline-size, ${TOKEN_DEFAULTS.menuWidthXs}), ${choicePopupMinWidth(trigger.offsetWidth, sectionPadding)}px)`;
+        popup.style.minWidth = `max(var(--ds-choice-popup-min-inline-size, ${TOKEN_DEFAULTS.menuWidthXs}), ${this.state.anchor ? trigger.offsetWidth : choicePopupMinWidth(trigger.offsetWidth, sectionPadding)}px)`;
 
         const align = this.state.popupAlign;
         return {
@@ -72,6 +73,7 @@ export class SelectController<T extends ChoiceOption> {
             align,
             alignOffsetPx: 0,
             sectionInsetPx: sectionPadding,
+            anchorAlignment: this.state.anchor ? 'popup-frame' : 'choice-cell',
           }),
           viewportPadPx: sectionPadding,
           viewportWidth: window.innerWidth,
@@ -293,6 +295,7 @@ export class SelectController<T extends ChoiceOption> {
     this.unbindPopupListeners();
     this.outsideHandler = event => {
       if (eventIntersectsComposedBoundary(event, this.state.host)) return;
+      if (this.state.anchor && eventIntersectsComposedBoundary(event, this.state.anchor)) return;
       this.closePopup();
     };
     document.addEventListener('mousedown', this.outsideHandler, true);

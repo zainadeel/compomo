@@ -67,6 +67,8 @@ const meta: Meta = {
     icon: { control: 'text' },
     indicator: { control: 'select', options: ['down', 'up-down'] },
     hasBorder: { control: 'boolean' },
+    hasInteractionFill: { control: 'boolean' },
+    hasFocusRing: { control: 'boolean' },
     rounded: { control: 'boolean' },
     activeFill: { control: 'boolean' },
     searchable: { control: 'boolean' },
@@ -101,6 +103,8 @@ const meta: Meta = {
     icon: 'Chart',
     indicator: 'down',
     hasBorder: true,
+    hasInteractionFill: true,
+    hasFocusRing: true,
     rounded: false,
     activeFill: false,
     searchable: false,
@@ -134,6 +138,8 @@ export const Playground: Story = {
           icon=${args['icon']}
           indicator=${args['indicator']}
           .hasBorder=${args['hasBorder']}
+          .hasInteractionFill=${args['hasInteractionFill']}
+          .hasFocusRing=${args['hasFocusRing']}
           ?rounded=${args['rounded']}
           .activeFill=${args['activeFill']}
           background=${args['background']}

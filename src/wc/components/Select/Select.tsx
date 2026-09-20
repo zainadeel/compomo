@@ -133,6 +133,8 @@ export class Select {
   @Prop() popupAlign: SelectPopupAlign = 'start';
   /** Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used. */
   @Prop() boundary: HTMLElement | undefined;
+  /** Optional popup positioning anchor; the trigger still owns focus and accessibility. */
+  @Prop() anchor: HTMLElement | undefined;
   /** Shared inactive treatment; removes interaction and form submission. */
   @Prop() isInactive: boolean = false;
   /** Replace the prefix with a loader and disable option interaction. */
@@ -150,6 +152,10 @@ export class Select {
   @Prop() iconOnly: boolean = false;
   /** Show the surface-aware inset border, including focused and invalid strokes. */
   @Prop() hasBorder: boolean = true;
+  /** Disable only when a containing surface owns hover and press feedback. */
+  @Prop() hasInteractionFill: boolean = true;
+  /** Disable only when a containing surface supplies a visible focus indicator. */
+  @Prop() hasFocusRing: boolean = true;
   /** Use a pill radius on the trigger. Popup chrome stays on the menu radius. */
   @Prop() rounded: boolean = false;
   /** Optional trigger prefix icon name. */
@@ -254,6 +260,9 @@ export class Select {
       },
       get boundary() {
         return owner.boundary;
+      },
+      get anchor() {
+        return owner.anchor;
       },
       get open() {
         return owner.open;
@@ -375,6 +384,7 @@ export class Select {
 
   @Watch('popupAlign')
   @Watch('boundary')
+  @Watch('anchor')
   onPopupAlignChange() {
     this.controller.positionChanged();
   }
@@ -800,11 +810,16 @@ export class Select {
             class={{
               trigger: true,
               'ds-control-frame': true,
-              'ds-focus-ring-inset': true,
-              'ds-interaction-fill': true,
-              'ds-interaction-fill--selected': !inactive && this.activeFill && this.hasSelection,
+              'ds-focus-ring-inset': this.hasFocusRing,
+              'trigger--external-focus': !this.hasFocusRing,
+              // The shared overlay also carries borders/focus; suppress only its wash.
+              'ds-interaction-fill': this.hasInteractionFill || this.hasBorder || this.hasFocusRing,
+              'trigger--external-fill': !this.hasInteractionFill,
+              'ds-interaction-fill--selected':
+                this.hasInteractionFill && !inactive && this.activeFill && this.hasSelection,
               'trigger--expanded': !inactive && this.open,
-              'ds-interaction-fill--surface-open': !inactive && this.open,
+              'ds-interaction-fill--surface-open':
+                this.hasInteractionFill && !inactive && this.open,
               'trigger--bordered': this.hasBorder,
               'trigger--rounded': this.rounded,
               'trigger--placeholder': showPlaceholder && !this.multiple,

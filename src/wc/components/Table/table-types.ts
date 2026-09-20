@@ -4,6 +4,7 @@ import type { IconColor } from '../Icon/Icon';
 import type { SafetyScoreLevel } from '../Score/score-types';
 import type { TextColor } from '../Text/text-types';
 import type { PaginationState } from '../Pagination/pagination-types';
+import type { SelectOption } from '../Select/Select';
 
 export type DataSortDirection = 'asc' | 'desc';
 export type TableSelectionMode = 'none' | 'multiple';
@@ -361,7 +362,20 @@ export type TableCellSkeleton =
       kind: 'blank';
     };
 
+/** Scalar editors compose the shared borderless controls; the cell owns interaction chrome. */
+export type TableCellEditor = { required?: boolean } & (
+  | { type: 'text' | 'textarea'; minLength?: number; maxLength?: number }
+  | { type: 'number'; min?: number; max?: number; step?: number; showStepper?: boolean }
+  | { type: 'select'; options: SelectOption[]; searchable?: boolean }
+  | { type: 'date'; min?: string; max?: string }
+  | { type: 'time'; min?: string; max?: string; step?: number; hourFormat?: '12' | '24' }
+);
+
 export interface TableColumn extends DataField {
+  /** Optional super-header identity and label. Adjacent matching identities form one band. */
+  group?: { id: string; label: string };
+  /** Opt-in scalar editor used in edit (pencil) or grid (worksheet) interaction modes. */
+  editor?: TableCellEditor;
   segments?: TableHeaderSegment[];
   /** Supplementary header help. Does not replace the visible or accessible column name. */
   help?: string;
@@ -378,7 +392,7 @@ export interface TableColumn extends DataField {
   wrap?: boolean;
   /** Clamp wrapping text after 1, 2, or 3 lines. Omit with wrap for unlimited wrap. */
   maxLines?: TableCellMaxLines;
-  /** Pin one application column to either inline edge during horizontal scrolling. */
+  /** Pin an explicitly sized column. Visible pinned columns accumulate in display order. */
   sticky?: TableColumnSticky;
   /**
    * Declare a trailing application-action lane. Action columns keep fixed
@@ -393,6 +407,8 @@ export interface TableRow {
   /** Stable identity, unique across all groups. */
   id: string;
   cells: Record<string, TableCellValue>;
+  /** Presentation is separate from cell values; omitted alignment preserves first-track alignment. */
+  cellPresentation?: Record<string, TableCellDecoration>;
   /** Accessible row name used by its selection control. Falls back to the first cell. */
   selectionLabel?: string;
   /** Exclude this row from selection without muting its content. */
@@ -401,6 +417,35 @@ export interface TableRow {
   disabled?: boolean;
   /** Make the complete row a keyboard- and pointer-activatable application target. */
   interactive?: boolean;
+}
+
+export interface TableCellDecoration {
+  verticalAlign?: 'top' | 'middle' | 'bottom';
+  /** Left-edge intent outline with an accessible, non-color-only explanation. */
+  highlight?: { intent: TableGroupIntent; label: string };
+  borders?: Array<'start' | 'end' | 'top' | 'bottom'>;
+  flag?: { label: string; icon?: string };
+}
+
+/** A rectangular merge anchored at the first row/column. Covered values remain in application data. */
+export interface TableCellSpan {
+  rowIds: string[];
+  columnIds: string[];
+}
+
+export interface TableCellAddress {
+  rowId: string;
+  columnId: string;
+}
+
+export interface TableCellRange {
+  anchor: TableCellAddress;
+  focus: TableCellAddress;
+}
+
+export interface TableCellsChangeDetail {
+  changes: Array<TableCellAddress & { value: string | number | null }>;
+  reason: 'edit' | 'paste';
 }
 
 /** Supporting copy on a group section header's second track. */

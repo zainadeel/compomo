@@ -16,6 +16,7 @@ function createViewport(height = 200) {
     clientWidth: 800,
     clientHeight: height,
     scrollTop: 0,
+    scrollHeight: 1600,
     addEventListener: (type: string, listener: EventListener) => {
       listeners.set(type, listener);
     },
@@ -162,6 +163,88 @@ test('corrects scrollTop when a measured row is taller than its estimate', () =>
   controller.collectMeasurements(root);
   assert.equal(controller.sizeFor(items[plan.start]!), measuredHeight);
   assert.equal(viewport.scrollTop, 440);
+});
+
+test('measuring taller end rows retains the bottom edge rather than the first visible anchor', () => {
+  const viewport = createViewport();
+  let items = flattenTableVirtualItems({
+    grouped: false,
+    rows,
+    groups: [],
+    collapsedGroupIds: [],
+    columns,
+  }).map(item => ({ ...item, variableSize: true }));
+  const frames: FrameRequestCallback[] = [];
+  const controller = new TableVirtualController({
+    state: () => ({ enabled: true, items, pinnedRowIds: new Set(), viewport, viewportSize: 200 }),
+    windowChanged: () => undefined,
+    requestAnimationFrame: callback => frames.push(callback),
+    cancelAnimationFrame: () => undefined,
+  });
+  controller.connect();
+  viewport.scrollTop = 1400;
+  viewport.dispatch('scroll');
+  frames.splice(0).forEach(callback => callback(0));
+  viewport.scrollHeight = 2000;
+  controller.collectMeasurements({
+    querySelectorAll: () => [
+      {
+        getAttribute: () => items[39].id,
+        getBoundingClientRect: () => ({ height: 440 }),
+      },
+    ],
+  } as unknown as ParentNode);
+  assert.equal(viewport.scrollTop, 1800);
+  items = [...items, { ...items[39], id: 'row:appended', rowId: 'appended' }];
+  controller.refresh();
+  viewport.scrollHeight = 2400;
+  controller.collectMeasurements({
+    querySelectorAll: () => [
+      {
+        getAttribute: () => 'row:appended',
+        getBoundingClientRect: () => ({ height: 400 }),
+      },
+    ],
+  } as unknown as ParentNode);
+  assert.equal(viewport.scrollTop, 1800, 'new application data must not force following the end');
+  controller.resetToTop();
+  assert.equal(viewport.scrollTop, 0);
+  controller.disconnect();
+});
+
+test('card measurements include the token-resolved row gap in the virtual advance', () => {
+  const originalGetComputedStyle = globalThis.getComputedStyle;
+  globalThis.getComputedStyle = (() => ({ marginBlockEnd: '16px' })) as typeof getComputedStyle;
+  try {
+    const viewport = createViewport();
+    const items = flattenTableVirtualItems({
+      grouped: false,
+      rows,
+      groups: [],
+      collapsedGroupIds: [],
+      columns,
+    }).map(item => ({ ...item, variableSize: true }));
+    const controller = new TableVirtualController({
+      state: () => ({
+        enabled: true,
+        items,
+        pinnedRowIds: new Set(),
+        viewport,
+        viewportSize: viewport.clientHeight,
+      }),
+      windowChanged: () => undefined,
+    });
+    controller.connect();
+    const element = {
+      getAttribute: (name: string) => (name === 'data-responsive-card' ? 'true' : items[0].id),
+      getBoundingClientRect: () => ({ height: 480 }),
+    };
+    controller.collectMeasurements({ querySelectorAll: () => [element] } as unknown as ParentNode);
+    assert.equal(controller.sizeFor(items[0]), 496);
+    controller.disconnect();
+  } finally {
+    globalThis.getComputedStyle = originalGetComputedStyle;
+  }
 });
 
 test('resetToTop clears measures and returns the window to the start', () => {

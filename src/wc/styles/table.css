@@ -45,6 +45,7 @@
   --_table-border-strong: var(--ds-table-border-strong, var(--color-border-secondary));
   --_table-radius: var(--ds-table-radius, var(--ds-radius-table, var(--dimension-radius-050)));
   --_table-header-min-block-size: var(--ds-table-header-min-block-size, var(--dimension-size-400));
+  --_table-head-block-size: var(--_table-header-min-block-size);
   --_table-row-min-block-size: var(--ds-table-row-min-block-size, var(--dimension-size-500));
   --_table-cell-padding-block: var(--ds-table-cell-padding-block, var(--dimension-space-100));
   --_table-cell-padding-inline: var(--ds-table-cell-padding-inline, var(--dimension-space-100));
@@ -459,8 +460,8 @@
   position: sticky;
   inset-block-start: var(--ds-table-sticky-header-offset, 0);
   z-index: 6;
-  block-size: var(--_table-header-min-block-size);
-  margin-block-end: calc(-1 * var(--_table-header-min-block-size));
+  block-size: var(--_table-head-block-size);
+  margin-block-end: calc(-1 * var(--_table-head-block-size));
   max-inline-size: 100%;
   overflow: hidden;
   border-radius: var(--_table-radius) var(--_table-radius) 0 0;
@@ -497,7 +498,7 @@
 }
 
 :where(.ds-table--contained-sticky-header .ds-table__sticky-group) {
-  inset-block-start: var(--_table-header-min-block-size);
+  inset-block-start: var(--_table-head-block-size);
   transform: translateY(var(--_table-sticky-group-push, 0));
   will-change: transform;
 }
@@ -511,7 +512,7 @@
 }
 
 :where(.ds-table__sticky-header-table) {
-  block-size: var(--_table-header-min-block-size);
+  block-size: var(--_table-head-block-size);
   transform: translate3d(calc(-1 * var(--ds-table-inline-scroll-offset, 0px)), 0, 0);
   will-change: transform;
 }
@@ -661,7 +662,9 @@
   border-inline-start: 0;
 }
 
-:where(.ds-table__header-cell + .ds-table__header-cell)::before {
+/* Row-spanned lanes break DOM adjacency; pinned edges below still own their divider. */
+:where(.ds-table__header-cell + .ds-table__header-cell)::before,
+:where(.ds-table__header-cell--after-rowspan)::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -1244,6 +1247,10 @@
 
 :where(.ds-table__row--disabled) {
   color: var(--color-foreground-tertiary);
+}
+
+:where(.ds-table__row--disabled .ds-table__cell-content),
+:where(.ds-table__cell[data-cell-editable='false'] .ds-table__cell-content) {
   opacity: var(--effect-opacity-medium);
 }
 
@@ -1266,11 +1273,11 @@
 }
 
 :where(.ds-table__cell--sticky-start) {
-  inset-inline-start: 0;
+  inset-inline-start: var(--_table-pin-offset, 0);
 }
 
 :where(.ds-table__cell--sticky-end) {
-  inset-inline-end: 0;
+  inset-inline-end: var(--_table-pin-offset, 0);
 }
 
 :where(.ds-table__header-cell.ds-table__cell--sticky-start),
@@ -1391,7 +1398,7 @@
 /* Each real section owns one sticky row and its own push-off boundary. */
 :where(.ds-table--contained-sticky-header .ds-table__group-row--native-sticky) {
   position: sticky;
-  inset-block-start: var(--_table-header-min-block-size);
+  inset-block-start: var(--_table-head-block-size);
   z-index: 5;
 }
 
@@ -1836,4 +1843,388 @@
 
 :where(.ds-table__cell-tag-separator) {
   flex: none;
+}
+
+:where(.ds-table--super-headers) {
+  --_table-head-block-size: calc(2 * var(--_table-header-min-block-size));
+}
+
+:where(.ds-table__super-header-cell)::after {
+  background: var(--_table-column-border);
+}
+
+:where(.ds-table__header-cell--rowspan) {
+  vertical-align: bottom;
+}
+
+/* Share the body tracks across both header rows, including real row spans. */
+:where(.ds-table__table--native-group-sticky > .ds-table__head--multirow) {
+  display: grid;
+  grid-template-columns: var(--_table-grid-template-columns);
+  grid-template-rows: repeat(2, var(--_table-header-min-block-size));
+}
+:where(.ds-table__table--native-group-sticky .ds-table__head--multirow > .ds-table__header-row) {
+  display: contents;
+}
+:where(.ds-table__table--native-group-sticky .ds-table__header-cell--rowspan) {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+:where(.ds-table__sticky-edge--internal)::after {
+  display: none;
+}
+
+/* A covered body lane breaks DOM adjacency with the preceding pinned checkbox. */
+:where(.ds-table__cell--after-covered) {
+  --ds-interaction-group-divider-inline-start-width: var(--dimension-stroke-width-012);
+  --ds-interaction-group-divider-inline-start-color: var(--_table-column-border);
+}
+
+/* Move the complete content stack, never individual text, icon, tag or action tracks. */
+:where(.ds-table__cell[data-vertical-align='middle']) {
+  vertical-align: middle;
+}
+:where(.ds-table__cell[data-vertical-align='bottom']) {
+  vertical-align: bottom;
+}
+:where(.ds-table__table--native-group-sticky .ds-table__cell[data-vertical-align]) {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+:where(.ds-table__table--native-group-sticky .ds-table__cell[data-vertical-align='middle']) {
+  justify-content: center;
+}
+:where(.ds-table__table--native-group-sticky .ds-table__cell[data-vertical-align='bottom']) {
+  justify-content: flex-end;
+}
+:where(.ds-table__cell-highlight) {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  outline: var(--dimension-stroke-width-050) solid
+    var(--_table-cell-intent, var(--color-border-secondary));
+  outline-offset: calc(-1 * var(--dimension-stroke-width-050));
+  /* Clip only this decorative layer: a left-only outline without affecting
+   * the cell's content, layout, keyboard focus ring, or pinned borders. */
+  clip-path: inset(0 calc(100% - var(--dimension-stroke-width-050)) 0 0);
+}
+:where(.ds-table__cell[data-cell-highlight='brand']) {
+  --_table-cell-intent: var(--color-border-bold-brand);
+}
+:where(.ds-table__cell[data-cell-highlight='negative']) {
+  --_table-cell-intent: var(--color-border-bold-negative);
+}
+:where(.ds-table__cell[data-cell-highlight='positive']) {
+  --_table-cell-intent: var(--color-border-bold-positive);
+}
+:where(.ds-table__cell[data-cell-highlight='warning']) {
+  --_table-cell-intent: var(--color-border-bold-warning);
+}
+:where(.ds-table__cell[data-cell-highlight='caution']) {
+  --_table-cell-intent: var(--color-border-bold-caution);
+}
+:where(.ds-table__cell[data-cell-borders~='start']) {
+  border-inline-start: var(--dimension-stroke-width-012) solid var(--_table-border-strong);
+}
+:where(.ds-table__cell[data-cell-borders~='end']) {
+  border-inline-end: var(--dimension-stroke-width-012) solid var(--_table-border-strong);
+}
+:where(.ds-table__cell[data-cell-borders~='top']) {
+  border-block-start: var(--dimension-stroke-width-012) solid var(--_table-border-strong);
+}
+:where(.ds-table__cell[data-cell-borders~='bottom']) {
+  border-block-end: var(--dimension-stroke-width-012) solid var(--_table-border-strong);
+}
+:where(.ds-table__cell-flag) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  min-block-size: var(--_table-cell-track-min-block-size);
+  inline-size: var(--_table-cell-track-min-block-size);
+  margin-inline-start: var(--dimension-space-050);
+}
+:where(.ds-table__card-label) {
+  display: none;
+}
+:where(.ds-table__card-field-divider),
+:where(.ds-table__card-action-divider) {
+  display: none;
+}
+
+/* Keep every field reachable when pinned lanes consume the complete viewport. */
+:where(.ds-table__frame[data-pins-crowded='true'] .ds-table__cell--sticky-start),
+:where(.ds-table__frame[data-pins-crowded='true'] .ds-table__cell--sticky-end) {
+  --ds-interaction-position: relative;
+  position: relative;
+  inset-inline: auto;
+  transform: none;
+  animation: none;
+}
+:where(.ds-table__frame[data-pins-crowded='true'] .ds-table__sticky-edge)::after {
+  display: none;
+}
+
+/* A single semantic table and the same controls survive the layout switch. */
+:where(.ds-table--cards-active > .ds-table__caption-bar),
+:where(.ds-table--cards-active > .ds-table__footer),
+:where(.ds-table--cards-active .ds-table__frame),
+:where(.ds-table--cards-active .ds-table__viewport) {
+  border-radius: 0;
+}
+:where(.ds-table--responsive-cards .ds-table__frame[data-narrow='true'] .ds-table__table) {
+  display: block;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  padding: var(--dimension-space-200) var(--dimension-space-200) 0;
+}
+:where(.ds-table--responsive-cards .ds-table__frame[data-narrow='true'] .ds-table__head),
+:where(.ds-table--responsive-cards .ds-table__frame[data-narrow='true'] .ds-table__body) {
+  display: block;
+}
+:where(.ds-table--responsive-cards .ds-table__frame[data-narrow='true'] .ds-table__head) {
+  /* Keep static semantic column labels, but no visible or focusable header UI. */
+  position: absolute;
+  inline-size: var(--dimension-stroke-width-012);
+  block-size: var(--dimension-stroke-width-012);
+  overflow: hidden;
+  clip-path: inset(50%);
+  pointer-events: none;
+}
+:where(.ds-table--responsive-cards .ds-table__frame[data-narrow='true'] .ds-table__row) {
+  display: grid;
+  position: relative;
+  /* WebKit can retain the table-row intrinsic size after changing to a card,
+   * clipping visible fields and skipping the absolutely positioned checkbox.
+   * Bounded datasets still use the existing recycled row window. */
+  content-visibility: visible;
+  contain-intrinsic-block-size: none;
+  box-sizing: border-box;
+  grid-template-columns: minmax(0, 1fr);
+  margin-block-end: var(--dimension-space-200);
+  padding: var(--dimension-space-100) var(--dimension-space-050);
+  border: var(--dimension-stroke-width-012) solid var(--_table-column-border);
+  border-radius: var(--ds-radius-card);
+  isolation: isolate;
+}
+:where(.ds-table--cards-active .ds-table__row)::before,
+:where(.ds-table--cards-active .ds-table__row)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+:where(.ds-table--cards-active .ds-table__row)::before {
+  z-index: 0;
+}
+:where(.ds-table--cards-active .ds-table__row)::after {
+  z-index: 3;
+}
+:where(.ds-table--cards-active .ds-table__row--selected)::before {
+  background: var(--_table-row-selected);
+}
+:where(.ds-table--cards-active .ds-table__row[data-surface-open='true'])::before {
+  background: var(--_table-row-pressed);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :where(.ds-table--cards-active .ds-table__row--interactive:hover)::after {
+    background: var(--_table-row-hover);
+  }
+}
+:where(.ds-table--cards-active .ds-table__row--interactive:active)::after {
+  background: var(--_table-row-pressed);
+}
+:where(.ds-table--cards-active .ds-table__cell)::before,
+:where(.ds-table--cards-active .ds-table__cell)::after {
+  display: none;
+}
+:where(.ds-table--responsive-cards .ds-table__frame[data-narrow='true'] .ds-table__cell),
+:where(.ds-table--responsive-cards .ds-table__frame[data-narrow='true'] .ds-table__header-cell) {
+  --ds-interaction-position: relative;
+  display: block;
+  position: relative;
+  inset-inline: auto;
+  inline-size: auto;
+  max-inline-size: none;
+  width: auto;
+  max-width: none;
+  block-size: auto;
+}
+:where(.ds-table--responsive-cards .ds-table__frame[data-narrow='true'] .ds-table__card-label) {
+  display: block;
+  padding-inline: var(--_table-cell-track-padding-inline);
+  margin-block-end: var(--dimension-space-100);
+}
+:where(.ds-table--cards-active .ds-table__selection-cell),
+:where(.ds-table--cards-active .ds-table__cell--card-action) {
+  --ds-interaction-position: absolute;
+  --ds-interaction-z-index: 3;
+  --ds-interaction-group-divider-width: 0;
+  position: absolute;
+  z-index: 3;
+  inset-block-start: var(--dimension-space-100);
+  inline-size: var(--_table-selection-column-inline-size);
+  border: 0;
+  background: transparent;
+}
+:where(.ds-table--cards-active .ds-table__selection-cell) {
+  inset-inline-end: calc(
+    var(--dimension-space-100) + var(--_table-card-action-count, 0) *
+      var(--_table-selection-column-inline-size)
+  );
+}
+:where(.ds-table--cards-active .ds-table__cell--card-action) {
+  inset-inline-end: calc(
+    var(--dimension-space-100) +
+      (var(--_table-card-action-count, 1) - var(--_table-card-action-index, 0) - 1) *
+      var(--_table-selection-column-inline-size)
+  );
+}
+:where(.ds-table--cards-active .ds-table__cell--card-first) {
+  padding-inline-end: calc(
+    var(--dimension-space-100) + var(--_table-card-control-count, 0) *
+      var(--_table-selection-column-inline-size)
+  );
+}
+:where(.ds-table--cards-active .ds-table__card-field-divider) {
+  display: block;
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: calc(var(--_table-cell-padding-inline) + var(--_table-cell-track-padding-inline));
+  block-size: var(--dimension-stroke-width-012);
+  background: var(--_table-column-border);
+  pointer-events: none;
+}
+:where(.ds-table--cards-active .ds-table__card-action-divider) {
+  display: block;
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: calc(var(--dimension-space-100) + var(--dimension-space-025));
+  block-size: var(--dimension-size-250);
+  inline-size: var(--dimension-stroke-width-012);
+  background: var(--_table-column-border);
+  pointer-events: none;
+}
+:where(.ds-table--cards-active .ds-table__cell--tag > .ds-table__cell-content),
+:where(.ds-table--cards-active .ds-table__cell--tags > .ds-table__cell-content),
+:where(.ds-table--cards-active .ds-table__cell--icon > .ds-table__cell-content),
+:where(.ds-table--cards-active .ds-table__cell--image > .ds-table__cell-content) {
+  padding-inline: var(--_table-cell-track-padding-inline);
+}
+:where(.ds-table--responsive-cards .ds-table__frame[data-narrow='true'] .ds-table__cell) {
+  --ds-interaction-group-divider-inline-start-width: 0;
+  --ds-interaction-group-divider-width: 0;
+  border: 0;
+  background: transparent;
+}
+:where(.ds-table--responsive-cards .ds-table__frame[data-narrow='true'] colgroup),
+:where(
+  .ds-table--responsive-cards .ds-table__frame[data-narrow='true'] .ds-table__elastic-spacer-cell
+),
+:where(.ds-table--responsive-cards .ds-table__frame[data-narrow='true'] .ds-table__sticky-edge) {
+  display: none;
+}
+:where(.ds-table__cell[role='gridcell']:not([aria-selected='true']):focus) {
+  outline: var(--dimension-stroke-width-025) solid var(--color-interaction-focus);
+  outline-offset: calc(-1 * var(--dimension-stroke-width-025));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :where(
+    .ds-table__cell[role='gridcell'][data-cell-editable='true']:not([aria-selected='true']):not(
+        [data-cell-editing='true']
+      ):hover
+  ) {
+    --ds-interaction-group-fill: var(--_table-row-hover);
+  }
+}
+:where(
+  .ds-table__cell[role='gridcell'][data-cell-editable='true']:not([aria-selected='true']):not(
+      [data-cell-editing='true']
+    ):active
+) {
+  --ds-interaction-group-fill: var(--_table-row-pressed);
+}
+:where(.ds-table__cell[data-cell-editable='false']) {
+  --ds-interaction-group-fill: transparent;
+}
+:where(.ds-table__edit-trigger) {
+  position: absolute;
+  inset-block-start: var(--dimension-space-100);
+  inset-inline-end: var(--dimension-space-100);
+  z-index: 4;
+  background: var(--_table-surface);
+  border-radius: var(--ds-radius-control);
+  opacity: 0;
+  pointer-events: none;
+}
+:where(.ds-table__cell:focus-within .ds-table__edit-trigger) {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :where(.ds-table__cell:hover .ds-table__edit-trigger) {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+@media (hover: none) {
+  :where(.ds-table__edit-trigger) {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+:where(.ds-table__cell-editor) {
+  box-sizing: border-box;
+  flex: 1 0 auto;
+  inline-size: calc(100% + var(--dimension-space-100));
+  min-inline-size: 0;
+  /* md control text starts 8px in; cancel 4px to preserve the table's 4px track inset.
+     Its 32px frame similarly occupies the existing 24px track without growing the row. */
+  margin: calc(-1 * var(--dimension-space-050));
+}
+:where(.ds-table__select-indicator) {
+  flex: 0 0 auto;
+  align-self: center;
+  margin-inline-start: var(--dimension-space-050);
+  margin-inline-end: var(--dimension-space-025);
+}
+/* Paint above the cell's interaction layers so the outline cannot be covered by dividers. */
+:where(.ds-table__cell[aria-selected='true'])::after,
+:where(.ds-table__cell[data-cell-editing='true'])::after {
+  outline: var(--dimension-stroke-width-018) solid var(--color-border-bold-brand);
+  outline-offset: calc(-1 * var(--dimension-stroke-width-018));
+}
+
+@media (forced-colors: active) {
+  :where(.ds-table__row--disabled .ds-table__cell-content),
+  :where(.ds-table__cell[data-cell-editable='false'] .ds-table__cell-content) {
+    opacity: 1;
+    color: var(--ds-forced-color-disabled);
+  }
+  :where(.ds-table__card-field-divider) {
+    border-block-start: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
+  }
+  :where(.ds-table__card-action-divider) {
+    border-inline-start: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
+  }
+  :where(.ds-table__cell-highlight) {
+    outline-color: var(--ds-forced-color-content);
+  }
+  :where(.ds-table__cell[role='gridcell']:focus) {
+    outline-color: var(--ds-forced-color-selected);
+  }
+  :where(.ds-table__cell[aria-selected='true'])::after,
+  :where(.ds-table__cell[data-cell-editing='true'])::after {
+    outline: var(--dimension-stroke-width-018) solid var(--ds-forced-color-selected);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-018));
+  }
 }

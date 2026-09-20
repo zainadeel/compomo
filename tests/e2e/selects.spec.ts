@@ -7,6 +7,23 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
+test('Select can delegate interaction fill without losing its border or focus indicator @cross-browser', async ({
+  page,
+}) => {
+  const select = page.locator('#single');
+  await select.evaluate((el: HTMLDsSelectElement) => {
+    el.hasInteractionFill = false;
+  });
+  const trigger = select.getByRole('combobox');
+  await trigger.hover();
+  expect(await trigger.evaluate(el => getComputedStyle(el, '::after').backgroundColor)).toBe(
+    'rgba(0, 0, 0, 0)'
+  );
+  await expect(trigger).toHaveClass(/trigger--bordered/);
+  await expect(trigger).toHaveClass(/ds-focus-ring-inset/);
+  expect(await trigger.evaluate(el => getComputedStyle(el, '::after').boxShadow)).not.toBe('none');
+});
+
 test('select-family controls only own tooltips for the collapsible table-caption contract', async ({
   page,
 }) => {

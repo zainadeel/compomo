@@ -26,6 +26,17 @@ export interface TableVirtualControllerOptions {
 
 const MEASURE_EPSILON_PX = 0.5;
 
+/** Include the card gap in the recycled item's advance, not just its border box.
+ * Reads are limited to mounted variable-size cards, never the complete dataset. */
+function measuredItemSize(element: HTMLElement, blockSize: number): number {
+  return (
+    blockSize +
+    (element.getAttribute('data-responsive-card') === 'true'
+      ? parseFloat(getComputedStyle(element).marginBlockEnd) || 0
+      : 0)
+  );
+}
+
 /** Binds viewport scroll/resize to a recycled row window. Scroll offset stays off render state. */
 export class TableVirtualController {
   private connected = false;
@@ -43,6 +54,7 @@ export class TableVirtualController {
   private indexedItems: readonly TableVirtualItem[] | null = null;
   private indexDirty = true;
   private scrollOffset = 0;
+  private scrollAtEnd = false;
   private scrollDirection: 'backward' | 'forward' | 'none' = 'none';
   private pendingReset = false;
   private readonly raf: (callback: FrameRequestCallback) => number;
@@ -113,6 +125,7 @@ export class TableVirtualController {
 
   /** Rebuild from a new index and pin the viewport to the start. */
   resetToTop(): void {
+    this.scrollAtEnd = false;
     this.pendingReset = true;
     this.measures.clear();
     this.measuredIds.clear();
@@ -185,7 +198,10 @@ export class TableVirtualController {
     painted.forEach(element => {
       const id = element.getAttribute('data-virtual-id');
       if (!id || this.measuredIds.has(id)) return;
-      measurements.push({ id, height: element.getBoundingClientRect().height });
+      measurements.push({
+        id,
+        height: measuredItemSize(element, element.getBoundingClientRect().height),
+      });
     });
     this.applyMeasurements(state.items, measurements);
   }
@@ -225,7 +241,12 @@ export class TableVirtualController {
     const prefixAfter = this.ensureIndex(items).prefix;
     const nextAnchor = prefixAfter[anchorIndex] ?? 0;
     const delta = nextAnchor - anchorOffset;
-    if (viewport && Math.abs(delta) >= MEASURE_EPSILON_PX) {
+    if (viewport && this.scrollAtEnd) {
+      // Newly measured cards can grow below the current anchor. A user who
+      // reached the end should stay there, not stop before the final records.
+      viewport.scrollTop = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
+      this.scrollOffset = viewport.scrollTop;
+    } else if (viewport && Math.abs(delta) >= MEASURE_EPSILON_PX) {
       viewport.scrollTop = Math.max(0, viewport.scrollTop + delta);
       this.scrollOffset = viewport.scrollTop;
     }
@@ -239,7 +260,10 @@ export class TableVirtualController {
         const state = this.options.state();
         const measurements = entries.map(entry => ({
           id: (entry.target as HTMLElement).getAttribute('data-virtual-id') ?? '',
-          height: entry.borderBoxSize[0]?.blockSize ?? entry.contentRect.height,
+          height: measuredItemSize(
+            entry.target as HTMLElement,
+            entry.borderBoxSize[0]?.blockSize ?? entry.contentRect.height
+          ),
         }));
         this.applyMeasurements(state.items, measurements);
       });
@@ -278,6 +302,10 @@ export class TableVirtualController {
     const viewport = this.connectedViewport;
     if (viewport) {
       const nextOffset = viewport.scrollTop;
+      this.scrollAtEnd =
+        !!this.index?.hasVariableSize &&
+        nextOffset > 0 &&
+        nextOffset + viewport.clientHeight >= viewport.scrollHeight - 1;
       this.scrollDirection =
         nextOffset > this.scrollOffset
           ? 'forward'
@@ -320,6 +348,8 @@ export class TableVirtualController {
 
   private ensureIndex(items: readonly TableVirtualItem[]): TableVirtualIndex {
     if (!this.indexDirty && this.index && this.indexedItems === items) return this.index;
+    // Appending/replacing application data must not opt into following new rows.
+    if (this.indexedItems !== items) this.scrollAtEnd = false;
     if (this.indexedItems !== items && (this.measures.size > 0 || this.measuredIds.size > 0)) {
       const itemIds = new Set(items.map(item => item.id));
       for (const id of this.measures.keys()) {
@@ -336,6 +366,7 @@ export class TableVirtualController {
   }
 
   private unbindViewport(): void {
+    this.scrollAtEnd = false;
     this.connectedViewport?.removeEventListener('scroll', this.handleScroll);
     this.connectedViewport = null;
     this.resizeObserver?.disconnect();

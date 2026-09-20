@@ -2,12 +2,14 @@ import { h } from '@stencil/core';
 import { resolveTableCellImageTracks, tableCellImageVariant } from './table-cell-model';
 import type { TableRenderModel } from './table-render-model';
 import type { TableCellSkeleton, TableColumn } from './table-types';
+import type { TableColumnLayout } from './table-structure';
 
 interface TableSkeletonViewOptions {
+  pins?: Map<string, TableColumnLayout>;
   model: TableRenderModel;
   visibleColumns: TableColumn[];
   skeletonRows: number;
-  renderStickyEdge: (sticky: TableColumn['sticky']) => unknown;
+  renderStickyEdge: (sticky: TableColumn['sticky'], shadow?: boolean) => unknown;
 }
 
 /** Render the loading body from the same cell recipes used by loaded rows. */
@@ -37,10 +39,15 @@ export function renderTableSkeletonBody(options: TableSkeletonViewOptions) {
                   width="var(--dimension-iconography-sm)"
                 />
               </span>
-              {renderStickyEdge('start')}
+              {renderStickyEdge(
+                'start',
+                !options.pins || ![...options.pins.values()].some(pin => pin.edge === 'start')
+              )}
             </td>
           )}
-          {beforeSpacer.map(column => renderSkeletonCell(column, index, renderStickyEdge))}
+          {beforeSpacer.map(column =>
+            renderSkeletonCell(column, index, renderStickyEdge, options.pins?.get(column.id))
+          )}
           {model.elasticSpacerIndex != null && (
             <td
               class="ds-table__cell ds-table__elastic-spacer-cell ds-table__skeleton-cell ds-interaction-fill ds-interaction-fill--grouped"
@@ -49,7 +56,9 @@ export function renderTableSkeletonBody(options: TableSkeletonViewOptions) {
               data-elastic-spacer="true"
             />
           )}
-          {afterSpacer.map(column => renderSkeletonCell(column, index, renderStickyEdge))}
+          {afterSpacer.map(column =>
+            renderSkeletonCell(column, index, renderStickyEdge, options.pins?.get(column.id))
+          )}
         </tr>
       ))}
     </tbody>
@@ -59,7 +68,8 @@ export function renderTableSkeletonBody(options: TableSkeletonViewOptions) {
 function renderSkeletonCell(
   column: TableColumn,
   rowIndex: number,
-  renderStickyEdge: TableSkeletonViewOptions['renderStickyEdge']
+  renderStickyEdge: TableSkeletonViewOptions['renderStickyEdge'],
+  layout?: TableColumnLayout
 ) {
   const skeleton =
     column.skeleton ??
@@ -96,6 +106,7 @@ function renderSkeletonCell(
 
   return (
     <td
+      style={layout?.style}
       class={{
         'ds-table__cell': true,
         [`ds-table__cell--align-${align}`]: true,
@@ -127,7 +138,7 @@ function renderSkeletonCell(
       <span class="ds-table__cell-content ds-interaction-fill__content">
         {renderSkeletonCellContent(skeleton)}
       </span>
-      {renderStickyEdge(column.sticky)}
+      {renderStickyEdge(layout ? column.sticky : undefined, !!layout?.edge)}
     </td>
   );
 }

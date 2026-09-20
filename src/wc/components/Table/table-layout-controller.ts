@@ -23,6 +23,7 @@ export interface TableLayoutControllerOptions {
   elements: () => TableLayoutElements;
   mode: () => TableLayoutMode;
   overflowChanged: (state: TableOverflowState) => void;
+  narrowChanged?: (narrow: boolean) => void;
   verticalEdgeWheel?: (deltaY: number) => boolean;
 }
 
@@ -221,6 +222,23 @@ export class TableLayoutController {
     this.inlineOffset = metrics.inlineOffset;
     this.maxInlineOffset = metrics.maxInlineOffset;
     this.maxBlockOffset = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
+    // Header-only geometry; independent of the loaded/recycled row count.
+    const pinnedCells = elements.interactiveHead?.querySelectorAll?.<HTMLElement>(
+      '.ds-table__header-cell:not(.ds-table__super-header-cell).ds-table__cell--sticky-start, .ds-table__header-cell:not(.ds-table__super-header-cell).ds-table__cell--sticky-end'
+    );
+    const pinnedSize = [...(pinnedCells ?? [])].reduce(
+      (size, cell) => size + cell.getBoundingClientRect().width,
+      0
+    );
+    const crowded = pinnedSize > 0 && pinnedSize >= metrics.visibleInlineSize;
+    if (elements.frame?.getAttribute('data-pins-crowded') !== String(crowded))
+      elements.frame?.setAttribute('data-pins-crowded', String(crowded));
+    // Reuse viewport observation rather than size-contain the recycled body:
+    // WebKit resets native scrolling when contained virtual rows are replaced.
+    const narrow = metrics.visibleInlineSize < 768;
+    this.options.narrowChanged?.(narrow);
+    if (elements.frame?.getAttribute('data-narrow') !== String(narrow))
+      elements.frame?.setAttribute('data-narrow', String(narrow));
 
     this.setProperty(viewport, '--ds-table-visible-inline-size', `${metrics.visibleInlineSize}px`);
     if (elements.stickyHeaderTable) {

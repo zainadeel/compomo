@@ -1,4 +1,10 @@
 export type {
+  TableCellEditor,
+  TableCellDecoration,
+  TableCellSpan,
+  TableCellAddress,
+  TableCellRange,
+  TableCellsChangeDetail,
   TableCaptionVisibility,
   TableCellAlign,
   TableCellAction,
