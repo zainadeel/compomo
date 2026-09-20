@@ -48,9 +48,8 @@ export class Markdown {
 
   componentWillLoad() {
     this.initialized = true;
-    // The browser-targeted named-character decoder used by the Markdown parser
-    // creates a DOM element when its module is evaluated. Keep public package
-    // imports server-safe by loading that parser only in a browser context.
+    // Keep the parser lazy so importing public package entries does not load
+    // the Markdown grammar before a browser actually renders Markdown.
     if (typeof document !== 'undefined') return this.parse();
   }
 

@@ -2,11 +2,26 @@ import { Config } from '@stencil/core';
 import { angularOutputTarget } from '@stencil/angular-output-target';
 import { reactOutputTarget } from '@stencil/react-output-target';
 import { vueOutputTarget } from '@stencil/vue-output-target';
+import { createRequire } from 'node:module';
 
 export const config: Config = {
   namespace: 'ds-mo',
   srcDir: 'src/wc',
   sourceMap: true,
+  rollupPlugins: {
+    before: [
+      {
+        name: 'markdown-entity-decoder-without-dom',
+        resolveId(source, importer) {
+          // The browser export writes innerHTML; the default export uses data.
+          if (source === 'decode-named-character-reference' && importer) {
+            return createRequire(importer).resolve(source);
+          }
+          return null;
+        },
+      },
+    ],
+  },
   rollupConfig: {
     inputOptions: {
       // Runtime peer — resolved from the consumer's @ds-mo/icons install at app bundle time.

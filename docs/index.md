@@ -28,6 +28,7 @@ from Storybook and `public/r/`.
 | Author a component                             | [Component authoring](maintainers/component-authoring.md), [web component guidance](../src/wc/AGENTS.md) |
 | Build, exports, registry, adapters, or MCP     | [Build and registry](maintainers/build-and-registry.md), [agent guidance](../agent/AGENTS.md)            |
 | Select tests                                   | [Testing strategy](maintainers/testing.md)                                                               |
+| Change SVG, Markdown or URL rendering          | [Rendering security](maintainers/rendering-security.md)                                                  |
 | Preserve Windows High Contrast / forced colors | [Forced-colors accessibility](maintainers/forced-colors.md)                                              |
 | Release or publish                             | [Releasing](maintainers/releasing.md), [CI guidance](../.github/AGENTS.md)                               |
 | Agent metadata ownership                       | [Component metadata ownership](component-metadata-ownership.md)                                          |

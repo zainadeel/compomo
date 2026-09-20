@@ -78,6 +78,12 @@ export function iconCache(): IconCacheMap {
  * name IcoMo does not ship — an app's own marker artwork, say — register as
  * system and resolve the same way.
  *
+ * Custom glyphs must be static and self-contained. Shapes, local gradients,
+ * clipping and narrow inline paint styles are supported; scripts, embedded
+ * stylesheets, animation, images and external resources are rejected. Validation
+ * happens when rendering, including for pre-registered strings. Unsupported
+ * markup preserves the icon's empty fixed-size box.
+ *
  * There is deliberately no category override. ds-icon has no such override when
  * it reads, so forcing a different category on write could only produce an
  * entry nothing ever reads.

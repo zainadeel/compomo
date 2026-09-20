@@ -16,7 +16,7 @@ export function resolveSafeUrl(
   value: string | null | undefined,
   options: ResolveSafeUrlOptions = {}
 ): string | undefined {
-  const candidate = value?.trim();
+  const candidate = typeof value === 'string' ? value.trim() : '';
   if (!candidate) return undefined;
 
   const baseUrl =

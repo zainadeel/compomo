@@ -152,10 +152,10 @@ export class Icon {
     if (this.svg === this.renderedSvg) return;
     this.renderedSvg = this.svg;
 
-    // Validate + inject as parsed DOM nodes — never innerHTML. Keeps ds-icon
+    // Validate + construct namespaced DOM nodes without a markup sink. Keeps ds-icon
     // Trusted-Types compatible and rejects executable/foreign content in
     // glyph strings (registerIcons accepts app-provided markup).
-    const svg = this.svg ? parseIconSvg(this.svg) : null;
+    const svg = this.svg ? parseIconSvg(this.svg, this.el.ownerDocument) : null;
     if (!svg) {
       container.replaceChildren();
       return;

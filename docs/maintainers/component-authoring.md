@@ -5,7 +5,15 @@ the intended behavior.
 
 ## Add a component
 
-Create `src/wc/components/<PascalName>/` with:
+Start from the authored-file scaffold:
+
+```bash
+npm run component:new -- StatusNote --summary "A persistent contextual message." --story-title "Feedback/StatusNote"
+```
+
+Use `--dry-run` to preview paths. The command refuses existing names and tags,
+creates only the following files in `src/wc/components/<PascalName>/`, and never
+writes generated adapters or registry files:
 
 ```text
 <Name>.tsx
@@ -16,6 +24,18 @@ Create `src/wc/components/<PascalName>/` with:
 
 Use `@Component({ tag: 'ds-*', styleUrl: '<Name>.css', scoped: true })` unless
 the implementation has a concrete shadow-DOM requirement.
+
+The scaffold is an experimental slot container. Choose its actual semantics,
+state ownership and composition before adding behavior. Replace every
+`[AUTHOR: ...]` entry in its agent JSON with component-specific intent; remove a
+truly inapplicable optional section instead of inventing a contract. Stories
+must demonstrate the supported public states. Add tests for the behavior being
+introduced, rather than a test that only proves the scaffold exists.
+
+Run `npm run verify:authoring` for source-only feedback on missing artifacts,
+duplicate tags, metadata/schema mismatches and unfinished scaffold guidance.
+It also runs before typechecking, so it needs no generated build output. The
+post-build agent validation still checks compiler API and composition facts.
 
 After implementation:
 
@@ -54,6 +74,14 @@ browser APIs, or responsive state.
 Do not use component inheritance to share UI behavior. Extract a controller,
 pure function, or shared CSS recipe when several components have the same
 contract.
+
+Prefer an existing component or executable pattern when it already owns the
+interaction. Share a utility only when its consumers have the same contract;
+leave semantics, controlled state and events with the component. Review the
+form and connection-lifecycle guidance below for components that own those
+resources. The [authoring lint rules](linting.md#repository-authoring-checks)
+enforce a small set of structural conventions, while
+[rendering security](rendering-security.md) describes content boundaries.
 
 ## Connection lifecycle
 

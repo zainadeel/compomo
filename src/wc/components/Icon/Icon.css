@@ -18,7 +18,7 @@
 }
 
 /* SVG width/height are set via inline style in updateSvg() because Stencil's
-   scoped CSS cannot reach innerHTML-injected elements (they lack the sc-* class). */
+   scoped CSS cannot reach constructed SVG nodes (they lack the sc-* class). */
 
 /* ── Sizes ───────────────────────────────────────────────────────────────── */
 

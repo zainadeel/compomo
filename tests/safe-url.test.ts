@@ -18,6 +18,24 @@ describe('resolveSafeUrl', () => {
     assert.equal(resolveSafeUrl('http://['), undefined);
   });
 
+  it('uses parsed protocols to reject case and whitespace obfuscation', () => {
+    for (const value of [
+      '  JaVaScRiPt:alert(1)',
+      'java\tscript:alert(1)',
+      '\u0000javascript:alert(1)',
+      'data:text/html,test',
+      'vbscript:msgbox(1)',
+    ]) {
+      assert.equal(resolveSafeUrl(value, { baseUrl }), undefined);
+    }
+  });
+
+  it('fails closed for non-string runtime inputs', () => {
+    for (const value of [null, undefined, 42, {}, ['https://example.test']]) {
+      assert.equal(resolveSafeUrl(value as unknown as string, { baseUrl }), undefined);
+    }
+  });
+
   it('requires consumers to explicitly allow non-web protocols', () => {
     assert.equal(resolveSafeUrl('mailto:team@example.test'), undefined);
     assert.equal(

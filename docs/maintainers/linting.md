@@ -20,6 +20,24 @@ findings to errors. Invalid source syntax can still be a parser error.
 Do not use authoring mode in consuming apps. It exists for the library's
 primitive implementations and their narrow source-path exceptions.
 
+## Repository authoring checks
+
+`scripts/authoring-rules.mjs` adds local error-level checks for component source:
+explicit style isolation, composition instead of component inheritance, no
+Stencil `title` prop, and no direct browser markup sinks. Render text or Stencil
+nodes; the SVG boundary constructs validated DOM nodes. These rules apply to
+library implementation files, not stories or the published consumer preset.
+
+The sink rule checks direct property writes, JSX attributes, literal Stencil
+`h` properties and common DOM parsing/insertion calls. It does not trace aliases,
+spreads, dynamic property names or transitive dependencies. Keep the rendered
+security tests when changing a parser or bundler: source lint cannot prove a
+dependency's browser export is safe under Trusted Types enforcement.
+
+`npm run verify:authoring` checks the four authored artifacts and agent schema
+before typechecking. The scaffold and these checks share the existing source
+inventory and metadata schema; neither maintains a second component catalog.
+
 ## Optional application setup
 
 Install the lint tools as development dependencies in the consuming app:

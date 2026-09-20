@@ -126,6 +126,12 @@
   outline: none;
 }
 
+/* The virtual controller owns anchoring while row identities recycle in place.
+ * Native anchoring can otherwise move the viewport back to a recycled row's old position. */
+:where(.ds-table__viewport:has(> .ds-table__table--windowed)) {
+  overflow-anchor: none;
+}
+
 :where(.ds-table--document-sticky-header .ds-table__viewport) {
   scrollbar-gutter: auto;
 }
