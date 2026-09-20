@@ -888,8 +888,19 @@ export class Table {
     this.virtualRenderFocus = null;
     if (retainedFocus?.isConnected) {
       const root = retainedFocus.getRootNode() as Document | ShadowRoot;
-      if (!root.activeElement || root.activeElement === this.el.ownerDocument.body)
+      if (!root.activeElement || root.activeElement === this.el.ownerDocument.body) {
+        // Resolve the moved rows' scroll geometry before restoring native focus.
+        // WebKit otherwise may reveal the caret using the pre-patch layout even
+        // with preventScroll. Preserve both axes within the resulting bounds.
+        const viewport = this.viewportEl;
+        const top = viewport?.scrollTop ?? 0;
+        const left = viewport?.scrollLeft ?? 0;
         retainedFocus.focus({ preventScroll: true });
+        if (viewport) {
+          if (viewport.scrollTop !== top) viewport.scrollTop = top;
+          if (viewport.scrollLeft !== left) viewport.scrollLeft = left;
+        }
+      }
     }
     this.layoutController.refresh(false);
     this.loadController.refresh();

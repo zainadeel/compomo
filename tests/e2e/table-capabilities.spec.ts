@@ -594,6 +594,10 @@ test('virtual grid focus survives recycling and never mounts the full worksheet 
     el.scrollTop = el.scrollHeight;
   });
   await expect(table.locator('[data-row-id="worksheet-9999"]')).toBeAttached();
+  // Check after the recycled layout and native focus/caret work have painted.
+  await table.evaluate(
+    () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+  );
   await expect(table.locator('.ds-table__cell-editor input')).toBeFocused();
   await expect(table.locator('.ds-table__cell-editor input')).toHaveValue(
     'Unsaved worksheet draft'
