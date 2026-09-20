@@ -11,6 +11,10 @@
   box-sizing: border-box;
   min-width: 0;
   max-width: 100%;
+}
+
+/* Keep size containment away from the recycled scrollport (WebKit). */
+.ds-table__caption-bar {
   container-type: inline-size;
   container-name: ds-table;
 }
@@ -42,6 +46,15 @@
  */
 ds-text.ds-table__header-label-box {
   padding-inline: var(--dimension-space-025);
+}
+
+ds-text.ds-table__card-label {
+  display: none;
+  padding-inline: var(--_table-cell-track-padding-inline);
+}
+
+.ds-table--responsive-cards .ds-table__frame[data-narrow='true'] ds-text.ds-table__card-label {
+  display: block;
 }
 
 ds-text.ds-table__cell-track {

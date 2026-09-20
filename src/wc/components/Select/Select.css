@@ -19,6 +19,17 @@
   color: var(--color-foreground-secondary);
 }
 
+/* An embedding surface supplies the focus indicator instead of a second trigger ring. */
+.trigger--external-focus {
+  outline: none;
+}
+
+.trigger--external-fill {
+  --ds-interaction-hover: transparent;
+  --ds-interaction-pressed: transparent;
+  --ds-interaction-active: transparent;
+}
+
 .select-option[aria-selected='true'] .ds-choice-item__icon {
   color: var(--color-foreground-primary);
 }

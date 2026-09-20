@@ -40,7 +40,7 @@ import { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/
 import { DataCustomizeChangeDetail } from "./components/DataCustomize/DataCustomize";
 import { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuMatchModeChangeDetail, FilterMenuMatchModes, FilterMenuValues } from "./components/FilterMenu/FilterMenu";
 import { DataGroupOption } from "./components/DataGroup/DataGroup";
-import { DataFieldsConfigChangeDetail, DataGroup, DataGroupingState, DataSortChangeDetail, DataSortState, TableCaptionVisibility, TableCellActionDetail, TableColumn, TableDataMode, TableDataModeChangeDetail, TableGroupCollapseChangeDetail, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode } from "./components/Table/table-types";
+import { DataFieldsConfigChangeDetail, DataGroup, DataGroupingState, DataSortChangeDetail, DataSortState, TableCaptionVisibility, TableCellActionDetail, TableCellRange, TableCellsChangeDetail, TableCellSpan, TableColumn, TableDataMode, TableDataModeChangeDetail, TableGroupCollapseChangeDetail, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode } from "./components/Table/table-types";
 import { DataGroupOption as DataGroupOption1 } from "./components/DataGroup/DataGroup";
 import { PreferencesTab } from "./components/DataPreferences/DataPreferences";
 import { DataSavedView, DataSavedViewChangeDetail, DataSavedViewCreateDetail, DataSavedViewDiscardDetail, DataSavedViewRemoveDetail, DataSavedViewRenameDetail, DataSavedViewSaveDetail } from "./components/DataSavedViews/data-saved-views-types";
@@ -128,7 +128,7 @@ export { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/
 export { DataCustomizeChangeDetail } from "./components/DataCustomize/DataCustomize";
 export { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuMatchModeChangeDetail, FilterMenuMatchModes, FilterMenuValues } from "./components/FilterMenu/FilterMenu";
 export { DataGroupOption } from "./components/DataGroup/DataGroup";
-export { DataFieldsConfigChangeDetail, DataGroup, DataGroupingState, DataSortChangeDetail, DataSortState, TableCaptionVisibility, TableCellActionDetail, TableColumn, TableDataMode, TableDataModeChangeDetail, TableGroupCollapseChangeDetail, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode } from "./components/Table/table-types";
+export { DataFieldsConfigChangeDetail, DataGroup, DataGroupingState, DataSortChangeDetail, DataSortState, TableCaptionVisibility, TableCellActionDetail, TableCellRange, TableCellsChangeDetail, TableCellSpan, TableColumn, TableDataMode, TableDataModeChangeDetail, TableGroupCollapseChangeDetail, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode } from "./components/Table/table-types";
 export { DataGroupOption as DataGroupOption1 } from "./components/DataGroup/DataGroup";
 export { PreferencesTab } from "./components/DataPreferences/DataPreferences";
 export { DataSavedView, DataSavedViewChangeDetail, DataSavedViewCreateDetail, DataSavedViewDiscardDetail, DataSavedViewRemoveDetail, DataSavedViewRenameDetail, DataSavedViewSaveDetail } from "./components/DataSavedViews/data-saved-views-types";
@@ -3596,6 +3596,10 @@ export namespace Components {
          */
         "allowClear": boolean;
         /**
+          * Optional popup positioning anchor; the trigger still owns focus and accessibility.
+         */
+        "anchor": HTMLElement | undefined;
+        /**
           * Additional IDs that describe the combobox.
          */
         "ariaDescribedby": string | undefined;
@@ -3658,6 +3662,16 @@ export namespace Components {
           * @default true
          */
         "hasBorder": boolean;
+        /**
+          * Disable only when a containing surface supplies a visible focus indicator.
+          * @default true
+         */
+        "hasFocusRing": boolean;
+        /**
+          * Disable only when a containing surface owns hover and press feedback.
+          * @default true
+         */
+        "hasInteractionFill": boolean;
         /**
           * Optional trigger prefix icon name.
          */
@@ -4343,6 +4357,16 @@ export namespace Components {
          */
         "captionVisibility": TableCaptionVisibility;
         /**
+          * Controlled rectangular cell selection, independent of row checkbox selection.
+          * @default null
+         */
+        "cellRange": TableCellRange | null;
+        /**
+          * Explicit report merges; invalid combinations leave the original cells visible.
+          * @default []
+         */
+        "cellSpans": TableCellSpan[];
+        /**
           * Replace opted-in table-owned caption controls with same-size visual skeletons.
           * @default false
          */
@@ -4499,6 +4523,11 @@ export namespace Components {
          */
         "infiniteModeLabel": string;
         /**
+          * Table is read-only; edit uses per-cell pencil buttons; grid adds cell selection and keyboard navigation. Grouped tables remain read-only.
+          * @default 'table'
+         */
+        "interactionMode": 'table' | 'edit' | 'grid';
+        /**
           * Reset key for a new query/group/sort dataset.
           * @default 'default'
          */
@@ -4543,6 +4572,11 @@ export namespace Components {
           * @default 'Pagination + Infinite groups'
          */
         "paginationModeLabel": string;
+        /**
+          * Opt-in native card presentation below the 768px table container breakpoint.
+          * @default 'scroll'
+         */
+        "responsiveLayout": 'scroll' | 'cards';
         /**
           * Supports {displayed} and {total} placeholders.
           * @default 'Displaying {displayed} of {total}'
@@ -6697,6 +6731,8 @@ declare global {
         new (): HTMLDsTabGroupElement;
     };
     interface HTMLDsTableElementEventMap {
+        "dsCellRangeChange": TableCellRange;
+        "dsCellsChange": TableCellsChangeDetail;
         "dsCustomizeOptionChange": string;
         "dsSortChange": DataSortChangeDetail;
         "dsGroupCollapseChange": TableGroupCollapseChangeDetail;
@@ -10660,6 +10696,10 @@ declare namespace LocalJSX {
          */
         "allowClear"?: boolean;
         /**
+          * Optional popup positioning anchor; the trigger still owns focus and accessibility.
+         */
+        "anchor"?: HTMLElement | undefined;
+        /**
           * Additional IDs that describe the combobox.
          */
         "ariaDescribedby"?: string | undefined;
@@ -10722,6 +10762,16 @@ declare namespace LocalJSX {
           * @default true
          */
         "hasBorder"?: boolean;
+        /**
+          * Disable only when a containing surface supplies a visible focus indicator.
+          * @default true
+         */
+        "hasFocusRing"?: boolean;
+        /**
+          * Disable only when a containing surface owns hover and press feedback.
+          * @default true
+         */
+        "hasInteractionFill"?: boolean;
         /**
           * Optional trigger prefix icon name.
          */
@@ -11499,6 +11549,16 @@ declare namespace LocalJSX {
          */
         "captionVisibility"?: TableCaptionVisibility;
         /**
+          * Controlled rectangular cell selection, independent of row checkbox selection.
+          * @default null
+         */
+        "cellRange"?: TableCellRange | null;
+        /**
+          * Explicit report merges; invalid combinations leave the original cells visible.
+          * @default []
+         */
+        "cellSpans"?: TableCellSpan[];
+        /**
           * Replace opted-in table-owned caption controls with same-size visual skeletons.
           * @default false
          */
@@ -11655,6 +11715,11 @@ declare namespace LocalJSX {
          */
         "infiniteModeLabel"?: string;
         /**
+          * Table is read-only; edit uses per-cell pencil buttons; grid adds cell selection and keyboard navigation. Grouped tables remain read-only.
+          * @default 'table'
+         */
+        "interactionMode"?: 'table' | 'edit' | 'grid';
+        /**
           * Reset key for a new query/group/sort dataset.
           * @default 'default'
          */
@@ -11691,6 +11756,8 @@ declare namespace LocalJSX {
          */
         "maxHeight"?: string | number | undefined;
         "onDsCellAction"?: (event: DsTableCustomEvent<TableCellActionDetail>) => void;
+        "onDsCellRangeChange"?: (event: DsTableCustomEvent<TableCellRange>) => void;
+        "onDsCellsChange"?: (event: DsTableCustomEvent<TableCellsChangeDetail>) => void;
         "onDsCustomizeOptionChange"?: (event: DsTableCustomEvent<string>) => void;
         "onDsDataModeChange"?: (event: DsTableCustomEvent<TableDataModeChangeDetail>) => void;
         "onDsFieldsConfigChange"?: (event: DsTableCustomEvent<DataFieldsConfigChangeDetail>) => void;
@@ -11710,6 +11777,11 @@ declare namespace LocalJSX {
           * @default 'Pagination + Infinite groups'
          */
         "paginationModeLabel"?: string;
+        /**
+          * Opt-in native card presentation below the 768px table container breakpoint.
+          * @default 'scroll'
+         */
+        "responsiveLayout"?: 'scroll' | 'cards';
         /**
           * Supports {displayed} and {total} placeholders.
           * @default 'Displaying {displayed} of {total}'
@@ -13018,6 +13090,8 @@ declare namespace LocalJSX {
         "collapseLabel": boolean;
         "iconOnly": boolean;
         "hasBorder": boolean;
+        "hasInteractionFill": boolean;
+        "hasFocusRing": boolean;
         "rounded": boolean;
         "icon": string | undefined;
         "indicator": SelectIndicator;
@@ -13156,6 +13230,8 @@ declare namespace LocalJSX {
         "ariaLabelledby": string | undefined;
     }
     interface DsTableAttributes {
+        "responsiveLayout": 'scroll' | 'cards';
+        "interactionMode": 'table' | 'edit' | 'grid';
         "caption": string;
         "captionVisibility": TableCaptionVisibility;
         "columnCustomizer": boolean;

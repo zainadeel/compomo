@@ -84,6 +84,7 @@
     "Select owns its associated popup and automatically retains the shared surface-open pressed wash. Consumers do not synchronize a second flag for the built-in picker. Contextual option actions are externally owned: their surfaceOpen state keeps the action visible through the associated menu exit, independently of the selected option."
   ],
   "responsiveBehavior": [
+    "An embedded editor may delegate hover, press and focus indication to its containing cell; that owner must supply a visible focus indicator. An explicit anchor positions the popup against the containing surface without transferring trigger focus or accessibility ownership. Popup options keep their own interaction feedback.",
     "Use width fill for form fields and width hug for compact filter bars. Override those defaults only when the owning layout has a clear constraint.",
     "When collapseLabel is set inside a named ds-table container narrower than 900px, the trigger omits its label and chevron, becomes icon-only, and exposes its label through a hover and keyboard-focus tooltip. A selected value promotes the prefix icon to primary.",
     "The popup matches the trigger minimum width, may grow for content, and clamps to the nearest data-ds-overlay-boundary rectangle or the viewport fallback. Assign boundary as an HTMLElement only for an explicit override.",

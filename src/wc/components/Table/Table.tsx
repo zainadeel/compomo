@@ -51,6 +51,22 @@ import {
 import { resolveTableTruncateTrack, tableTruncateLabel } from './table-truncate';
 import { renderTableRow as renderTableRowView } from './table-row-view';
 import { TableBodyRenderer } from './table-body-renderer';
+import { tableHeaderBands, tablePinnedColumns, tableSpanModel } from './table-structure';
+import {
+  tableGridModel,
+  tableRangeBounds,
+  tableEditable,
+  tableEditValue,
+  tablePasteChanges,
+  tableNextEditable,
+} from './table-grid-model';
+import { renderTableCellEditor } from './table-cell-editor';
+import type {
+  TableCellSpan,
+  TableCellRange,
+  TableCellAddress,
+  TableCellsChangeDetail,
+} from './table-types';
 import { renderTableSkeletonBody } from './table-skeleton-view';
 import { renderTableLoadContent } from './table-load-view';
 import { TableLayoutController } from './table-layout-controller';
@@ -119,6 +135,16 @@ export class Table {
   @Element() el!: HTMLElement;
   /** Stable column definitions. Assign through JavaScript. */
   @Prop() columns: TableColumn[] = [];
+  /** Opt-in native card presentation below the 768px table container breakpoint. */
+  @Prop() responsiveLayout: 'scroll' | 'cards' = 'scroll';
+  /** Explicit report merges; invalid combinations leave the original cells visible. */
+  @Prop() cellSpans: TableCellSpan[] = [];
+  /** Table is read-only; edit uses per-cell pencil buttons; grid adds cell selection and keyboard navigation. Grouped tables remain read-only. */
+  @Prop() interactionMode: 'table' | 'edit' | 'grid' = 'table';
+  /** Controlled rectangular cell selection, independent of row checkbox selection. */
+  @Prop() cellRange: TableCellRange | null = null;
+  @Event() dsCellRangeChange!: EventEmitter<TableCellRange>;
+  @Event() dsCellsChange!: EventEmitter<TableCellsChangeDetail>;
   /** Additional toggle options in the column customizer. */
   @Prop() customizeOptions: MenuItemData[] = [];
   @Event() dsCustomizeOptionChange!: EventEmitter<string>;
@@ -271,6 +297,7 @@ export class Table {
   @State() private actionMenuSurface: { rowId: string; columnId: string } | null = null;
   @State() private truncateTooltipLabel = '';
   @State() private captionCompact = false;
+  @State() private narrowViewport = false;
   @State() private columnCustomizerOpen = false;
   @State() private columnCustomizerSurfaceOpen = false;
   @State() private columnCustomizerInitialFocusVisible = false;
@@ -278,14 +305,394 @@ export class Table {
   @State() private dataModeSwitcherSurfaceOpen = false;
   @State() private dataModeSwitcherInitialFocusVisible = false;
   @State() private virtualWindow: TableVirtualPlan | null = null;
+  @State() private activeCell: TableCellAddress | null = null;
+  @State() private editingCell: TableCellAddress | null = null;
+  private editDraft = '';
+  private gridModelCache?: ReturnType<typeof tableGridModel>;
+  private get gridEnabled(): boolean {
+    return this.interactionMode === 'grid' && !this.grouped;
+  }
+  private get editingEnabled(): boolean {
+    return this.interactionMode !== 'table' && !this.grouped;
+  }
+  private get gridModel() {
+    if (
+      !this.gridModelCache ||
+      this.gridModelCache.rows !== this.rows ||
+      this.gridModelCache.columns !== this.visibleColumns
+    ) {
+      this.gridModelCache = tableGridModel(this.rows, this.visibleColumns);
+    }
+    return this.gridModelCache;
+  }
+  private gridAddress(event: Event): TableCellAddress | null {
+    if (
+      !this.gridEnabled ||
+      !(event.target instanceof HTMLElement) ||
+      !event.target.matches('td[role="gridcell"][data-cell-editable="true"]')
+    )
+      return null;
+    const rowId = event.target.closest<HTMLElement>('[data-row-id]')?.dataset.rowId;
+    const columnId = event.target.dataset.columnId;
+    return rowId && columnId ? { rowId, columnId } : null;
+  }
+  private selectCell(address: TableCellAddress, extend = false): void {
+    if (!this.isEditableAddress(address)) return;
+    this.activeCell = address;
+    this.dsCellRangeChange.emit({
+      anchor: extend ? (this.cellRange?.anchor ?? address) : address,
+      focus: address,
+    });
+  }
+  private async focusCell(address: TableCellAddress): Promise<void> {
+    if (!this.isEditableAddress(address)) return;
+    this.activeCell = address;
+    this.focusedRowId = address.rowId;
+    await this.scrollRowIntoView(address.rowId);
+    await this.nextAnimationFrame();
+    const cell = this.findRenderedRow(address.rowId)?.querySelector<HTMLElement>(
+      `[data-column-id="${CSS.escape(address.columnId)}"]`
+    );
+    if (this.gridEnabled) cell?.focus();
+    else
+      await cell
+        ?.querySelector<HTMLDsButtonUnfilledElement>('.ds-table__edit-trigger ds-button-unfilled')
+        ?.setFocus();
+  }
+  private isEditableAddress(address: TableCellAddress): boolean {
+    const model = this.gridModel;
+    const row = model.rows[model.rowIndices.get(address.rowId) ?? -1];
+    const column = model.columns[model.columnIndices.get(address.columnId) ?? -1];
+    return this.editingEnabled && !this.loading && !!row && !!column && tableEditable(row, column);
+  }
+  private beginCellEdit(address: TableCellAddress, initial?: string): void {
+    const model = this.gridModel;
+    const row = model.rows[model.rowIndices.get(address.rowId) ?? -1];
+    const column = model.columns[model.columnIndices.get(address.columnId) ?? -1];
+    if (!this.editingEnabled || this.loading || !row || !column || !tableEditable(row, column))
+      return;
+    this.activeCell = address;
+    this.focusedRowId = address.rowId;
+    this.editDraft = initial ?? String(row.cells[column.id] ?? '');
+    this.editingCell = address;
+    requestAnimationFrame(async () => {
+      const control = this.el.querySelector<HTMLDsInputElement>('.ds-table__cell-editor > *');
+      await control?.componentOnReady?.();
+      if (this.editingCell !== address || !control?.isConnected) return;
+      await control.setFocus();
+      const input = control.querySelector<HTMLInputElement | HTMLTextAreaElement>('input,textarea');
+      if (initial == null && input?.type !== 'number') input?.select();
+    });
+  }
+  private handleGridKeyDown(event: KeyboardEvent): void {
+    const address = this.gridAddress(event);
+    if (!address || event.altKey || event.metaKey || event.ctrlKey || event.isComposing) return;
+    if (event.key === 'Enter' || event.key === 'F2' || event.key.length === 1) {
+      event.preventDefault();
+      this.beginCellEdit(address, event.key.length === 1 ? event.key : undefined);
+      return;
+    }
+    if (!['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(event.key))
+      return;
+    event.preventDefault();
+    const next = tableNextEditable(this.gridModel, address, event.key);
+    if (!next) return;
+    this.selectCell(next, event.shiftKey);
+    void this.focusCell(next);
+  }
+  private handleGridClipboard(event: ClipboardEvent): void {
+    const address = this.gridAddress(event);
+    if (!address || !event.clipboardData) return;
+    if (event.type === 'paste') {
+      event.preventDefault();
+      if (this.loading) return;
+      const changes = tablePasteChanges(
+        this.gridModel,
+        address,
+        event.clipboardData.getData('text/plain')
+      );
+      if (!changes) {
+        this.announcement =
+          'Paste rejected. Use a rectangular set of valid values in editable cells.';
+        return;
+      }
+      this.dsCellsChange.emit({ changes, reason: 'paste' });
+      this.announcement = `${changes.length} cell changes proposed.`;
+    } else {
+      const model = this.gridModel;
+      const bounds = tableRangeBounds(model, this.cellRange ?? { anchor: address, focus: address });
+      if (
+        !bounds ||
+        (bounds.lastRow - bounds.firstRow + 1) * (bounds.lastColumn - bounds.firstColumn + 1) >
+          10000
+      )
+        return;
+      const text = model.rows
+        .slice(bounds.firstRow, bounds.lastRow + 1)
+        .map(row =>
+          model.columns
+            .slice(bounds.firstColumn, bounds.lastColumn + 1)
+            .map(column => {
+              if (!tableEditable(row, column)) return '';
+              const value = row.cells[column.id];
+              return typeof value === 'object' ? '' : String(value ?? '').replace(/[\t\r\n]/g, ' ');
+            })
+            .join('\t')
+        )
+        .join('\n');
+      event.preventDefault();
+      event.clipboardData.setData('text/plain', text);
+    }
+  }
+  private renderCellEditor(row: TableRow, column: TableColumn) {
+    if (
+      this.editingCell?.rowId !== row.id ||
+      this.editingCell.columnId !== column.id ||
+      !tableEditable(row, column) ||
+      this.loading
+    )
+      return null;
+    const address = this.editingCell;
+    const editor = column.editor!;
+    const cell = this.findRenderedRow(row.id)?.querySelector<HTMLElement>(
+      `[data-column-id="${CSS.escape(column.id)}"]`
+    );
+    const commit = (text: string, next = address) => {
+      if (this.editingCell !== address || !this.isEditableAddress(address)) return false;
+      const value = tableEditValue(text, column);
+      if (value === undefined) {
+        this.announcement = `Enter a valid value for ${column.label}.`;
+        return false;
+      }
+      this.editingCell = null;
+      this.dsCellsChange.emit({ changes: [{ ...address, value }], reason: 'edit' });
+      void this.focusCell(next);
+      return true;
+    };
+    return (
+      <div
+        class="ds-table__cell-editor"
+        key={`${row.id}:${column.id}`}
+        onClick={event => event.stopPropagation()}
+        onFocusout={event => {
+          const wrapper = event.currentTarget as HTMLElement;
+          requestAnimationFrame(() => {
+            const root = wrapper.getRootNode() as Document | ShadowRoot;
+            if (this.editingCell === address && !wrapper.contains(root.activeElement))
+              this.editingCell = null;
+          });
+        }}
+        onKeyDown={event => {
+          event.stopPropagation();
+          if (event.isComposing || event.defaultPrevented) return;
+          const wrapper = event.currentTarget as HTMLElement;
+          if (event.key === 'Escape') {
+            event.preventDefault();
+            this.editingCell = null;
+            void this.focusCell(address);
+            return;
+          }
+          if (event.key !== 'Enter' && event.key !== 'Tab') return;
+          // Picker keyboard interactions belong to the picker, including its internal Tab stops.
+          if ((event.target as HTMLElement).closest('[popover]')) return;
+          if (
+            event.key === 'Enter' &&
+            editor.type === 'textarea' &&
+            !event.ctrlKey &&
+            !event.metaKey
+          )
+            return;
+          event.preventDefault();
+          const input =
+            editor.type === 'select'
+              ? null
+              : wrapper.querySelector<HTMLInputElement | HTMLTextAreaElement>('input,textarea');
+          // Unconstrained numeric columns retain decimal support; explicit steps use the
+          // shared control's native step validity as well as the paste validator.
+          if (
+            input &&
+            !input.checkValidity() &&
+            !(editor.type === 'number' && editor.step == null && input.validity.stepMismatch)
+          ) {
+            input.reportValidity();
+            return;
+          }
+          const next =
+            event.key === 'Tab'
+              ? (tableNextEditable(this.gridModel, address, 'Tab', event.shiftKey) ?? address)
+              : address;
+          commit(input?.value ?? this.editDraft, next);
+        }}
+      >
+        {renderTableCellEditor(
+          editor,
+          this.editDraft,
+          `Edit ${column.label} for ${row.selectionLabel ?? row.id}`,
+          cell ?? undefined,
+          value => {
+            this.editDraft = value;
+            // A single-select choice is a complete edit; let its selection handler finish first.
+            if (editor.type === 'select') queueMicrotask(() => commit(value));
+          }
+        )}
+      </div>
+    );
+  }
+
+  private renderCellEditTrigger(row: TableRow, column: TableColumn) {
+    if (
+      this.interactionMode !== 'edit' ||
+      !tableEditable(row, column) ||
+      this.loading ||
+      (this.editingCell?.rowId === row.id && this.editingCell.columnId === column.id)
+    )
+      return null;
+    return (
+      <span class="ds-table__edit-trigger">
+        <ds-button-unfilled
+          variant="icon"
+          icon="Pencil"
+          size="sm"
+          aria-label={`Edit ${column.label} for ${row.selectionLabel ?? row.id}`}
+          pressScale={false}
+          onDsClick={event => {
+            event.stopPropagation();
+            this.beginCellEdit({ rowId: row.id, columnId: column.id });
+          }}
+        />
+      </span>
+    );
+  }
+
+  private gridCellAttributes(row: TableRow, column: TableColumn): Record<string, unknown> {
+    const model = this.gridModel;
+    const bounds = tableRangeBounds(model, this.cellRange);
+    const ri = model.rowIndices.get(row.id)!,
+      ci = model.columnIndices.get(column.id)!;
+    const editable = tableEditable(row, column) && !this.loading;
+    const editing =
+      editable && this.editingCell?.rowId === row.id && this.editingCell.columnId === column.id;
+    const active =
+      this.activeCell && this.isEditableAddress(this.activeCell)
+        ? this.activeCell
+        : model.firstEditable;
+    if (!this.gridEnabled)
+      return {
+        'data-cell-editable': String(editable),
+        'data-cell-editing': String(editing),
+        'aria-disabled': editable ? undefined : 'true',
+      };
+    return {
+      role: 'gridcell',
+      tabIndex: editable
+        ? active?.rowId === row.id && active.columnId === column.id
+          ? 0
+          : -1
+        : undefined,
+      'data-cell-editable': String(editable),
+      'data-cell-editing': String(editing),
+      'aria-readonly': String(!editable),
+      'aria-disabled': editable ? undefined : 'true',
+      'aria-selected': String(
+        editable &&
+          !!bounds &&
+          ri >= bounds.firstRow &&
+          ri <= bounds.lastRow &&
+          ci >= bounds.firstColumn &&
+          ci <= bounds.lastColumn
+      ),
+      onClick: (event: MouseEvent) => {
+        if (
+          event.target !== event.currentTarget &&
+          (event.target as HTMLElement).closest(
+            'button,a,input,textarea,ds-button-unfilled,.ds-table__cell-editor'
+          )
+        )
+          return;
+        event.stopPropagation();
+        if (!editable) return;
+        this.selectCell({ rowId: row.id, columnId: column.id }, event.shiftKey);
+        (event.currentTarget as HTMLElement).focus();
+        if (!event.shiftKey) this.beginCellEdit({ rowId: row.id, columnId: column.id });
+      },
+    };
+  }
 
   private readonly actionMenuElementId = nextTableActionMenuElementId();
+  private structureCache?: {
+    columns: TableColumn[];
+    rows: TableRow[];
+    spans: TableCellSpan[];
+    selectable: boolean;
+    grouped: boolean;
+    windowed: boolean;
+    grid: boolean;
+    pins: ReturnType<typeof tablePinnedColumns>;
+    bands: ReturnType<typeof tableHeaderBands>;
+    merges: ReturnType<typeof tableSpanModel>;
+  };
+
+  private get structure() {
+    const columns = this.visibleColumns;
+    const model = this.createRenderModel();
+    const cached = this.structureCache;
+    const windowed = this.rowWindowingEnabled;
+    const grid = this.interactionMode !== 'table';
+    if (
+      cached &&
+      cached.columns === columns &&
+      cached.rows === this.rows &&
+      cached.spans === this.cellSpans &&
+      cached.selectable === model.selectable &&
+      cached.grouped === model.grouped &&
+      cached.windowed === windowed &&
+      cached.grid === grid
+    )
+      return cached;
+    return (this.structureCache = {
+      columns,
+      rows: this.rows,
+      spans: this.cellSpans,
+      selectable: model.selectable,
+      grouped: model.grouped,
+      windowed,
+      grid,
+      pins: tablePinnedColumns(columns, model.selectable),
+      bands: tableHeaderBands(columns, model.selectable, model.elasticSpacerIndex),
+      merges: tableSpanModel(this.cellSpans, this.rows, columns, {
+        windowed,
+        grouped: model.grouped,
+        grid,
+        selectable: model.selectable,
+        spacer: model.elasticSpacerIndex,
+      }),
+    });
+  }
+
+  private headerId(columnId: string): string {
+    return `${this.actionMenuElementId}-header-${encodeURIComponent(columnId)}`;
+  }
+
+  private columnBandId(columnId: string): string | undefined {
+    const model = this.createRenderModel();
+    const index = this.visibleColumns.findIndex(column => column.id === columnId);
+    const lane =
+      index +
+      1 +
+      Number(model.selectable) +
+      Number(model.elasticSpacerIndex != null && index >= model.elasticSpacerIndex);
+    const band = this.structure.bands.find(
+      band => band.label && lane >= band.start && lane < band.start + band.span
+    );
+    return band ? `${this.actionMenuElementId}-${band.key}` : undefined;
+  }
   private readonly columnCustomizerElementId = nextTableColumnCustomizerElementId();
   private readonly dataModeSwitcherElementId = nextTableDataModeSwitcherElementId();
   private truncateTooltipEl?: HTMLDsTooltipElement;
   private truncateAnchor: HTMLElement | null = null;
   private truncateTooltipBound = false;
   private focusedRowId: string | null = null;
+  private virtualRenderFocus: HTMLElement | null = null;
   private virtualItems: TableVirtualItem[] = [];
   private visibleColumnsCache: {
     columns: TableColumn[];
@@ -355,6 +762,9 @@ export class Table {
       clampVerticalOverscroll: this.fitViewport && this.viewportFitSettled,
     }),
     verticalEdgeWheel: deltaY => this.viewportFitController.scrollOuterBy(deltaY),
+    narrowChanged: narrow => {
+      if (this.narrowViewport !== narrow) this.narrowViewport = narrow;
+    },
     overflowChanged: state => {
       if (state.start !== this.overflowStart) this.overflowStart = state.start;
       if (state.end !== this.overflowEnd) this.overflowEnd = state.end;
@@ -459,7 +869,39 @@ export class Table {
     this.scheduleInitialModelIssueWarning();
   }
 
+  componentWillRender(): void {
+    const root = this.el.getRootNode() as Document | ShadowRoot;
+    const active = root.activeElement;
+    this.virtualRenderFocus =
+      this.rowWindowingEnabled &&
+      active instanceof HTMLElement &&
+      this.tableEl?.contains(active) &&
+      active.closest('[data-row-id]')
+        ? active
+        : null;
+  }
+
   componentDidRender(): void {
+    // Moving a retained pooled row can clear native focus in Firefox. Restore
+    // only the same connected node, without scrolling or stealing external focus.
+    const retainedFocus = this.virtualRenderFocus;
+    this.virtualRenderFocus = null;
+    if (retainedFocus?.isConnected) {
+      const root = retainedFocus.getRootNode() as Document | ShadowRoot;
+      if (!root.activeElement || root.activeElement === this.el.ownerDocument.body) {
+        // Resolve the moved rows' scroll geometry before restoring native focus.
+        // WebKit otherwise may reveal the caret using the pre-patch layout even
+        // with preventScroll. Preserve both axes within the resulting bounds.
+        const viewport = this.viewportEl;
+        const top = viewport?.scrollTop ?? 0;
+        const left = viewport?.scrollLeft ?? 0;
+        retainedFocus.focus({ preventScroll: true });
+        if (viewport) {
+          if (viewport.scrollTop !== top) viewport.scrollTop = top;
+          if (viewport.scrollLeft !== left) viewport.scrollLeft = left;
+        }
+      }
+    }
     this.layoutController.refresh(false);
     this.loadController.refresh();
     this.groupLoadController.refresh();
@@ -523,6 +965,7 @@ export class Table {
   }
 
   disconnectedCallback(): void {
+    this.editingCell = null;
     this.layoutController.disconnect();
     this.loadController.disconnect();
     this.groupLoadController.disconnect();
@@ -651,7 +1094,11 @@ export class Table {
   @Watch('hiddenFieldIds')
   @Watch('fieldOrder')
   @Watch('columnCustomizer')
+  @Watch('cellSpans')
+  @Watch('interactionMode')
+  @Watch('responsiveLayout')
   handleStructureChange(): void {
+    this.virtualItemsCache = null;
     this.scheduleModelIssueWarning();
     this.loadController.structureChanged();
     this.groupLoadController.structureChanged();
@@ -818,7 +1265,7 @@ export class Table {
   }
 
   private get documentStickyHeader(): boolean {
-    return this.stickyHeader && !this.containedScroll;
+    return this.stickyHeader && !this.containedScroll && this.responsiveLayout !== 'cards';
   }
 
   private get fixedHeight(): boolean {
@@ -878,7 +1325,7 @@ export class Table {
       this.fitMeasurementPending = false;
       return;
     }
-    const header = this.tableEl.querySelector<HTMLElement>('.ds-table__head .ds-table__header-row');
+    const header = this.tableEl.querySelector<HTMLElement>('.ds-table__head');
     const item = this.tableEl.querySelector<HTMLElement>(
       this.grouped ? '.ds-table__group-row' : '.ds-table__body .ds-table__row'
     );
@@ -1152,6 +1599,9 @@ export class Table {
       collapsedGroupIds: this.collapsedGroupIds,
       columns,
     });
+    if (this.responsiveLayout === 'cards') {
+      this.virtualItems = this.virtualItems.map(item => ({ ...item, variableSize: true }));
+    }
     this.virtualItemsCache = {
       columns,
       rows: this.rows,
@@ -1210,12 +1660,9 @@ export class Table {
     }
     const stickyStart = visibleColumns.filter(column => column.sticky === 'start');
     const stickyEnd = visibleColumns.filter(column => column.sticky === 'end');
-    if (stickyStart.length > 1 || (this.selectable && stickyStart.length > 0)) {
-      issues.push(
-        'Only one sticky start column is supported, and row selection already owns that lane.'
-      );
-    }
-    if (stickyEnd.length > 1) issues.push('Only one sticky end column is supported.');
+    issues.push(...this.structure.merges.issues);
+    if (this.interactionMode === 'grid' && this.grouped)
+      issues.push('Grid interaction requires ungrouped rows.');
     for (const column of [...stickyStart, ...stickyEnd]) {
       if (!tableColumnSize(column))
         issues.push(`Sticky column ${column.id} requires an explicit size.`);
@@ -1317,7 +1764,7 @@ export class Table {
   }
 
   private emitRowActivation(row: TableRow, event: Event): void {
-    if (row.disabled || !this.rowEventOwnsActivation(event)) return;
+    if (this.gridEnabled || row.disabled || !this.rowEventOwnsActivation(event)) return;
     if (this.selectionMode === 'multiple' && this.selectedRowIds.length > 0) {
       if (row.selectable !== false) this.emitRowSelection(row);
       return;
@@ -1532,10 +1979,17 @@ export class Table {
     );
   }
 
-  private renderStickyEdge(sticky: TableColumn['sticky']) {
+  private renderStickyEdge(sticky: TableColumn['sticky'], shadow = true) {
     if (!sticky) return null;
     return (
-      <span class={`ds-table__sticky-edge ds-table__sticky-edge--${sticky}`} aria-hidden="true" />
+      <span
+        class={{
+          'ds-table__sticky-edge': true,
+          [`ds-table__sticky-edge--${sticky}`]: true,
+          'ds-table__sticky-edge--internal': !shadow,
+        }}
+        aria-hidden="true"
+      />
     );
   }
 
@@ -1579,9 +2033,13 @@ export class Table {
     column: TableColumn,
     model: TableRenderModel,
     interactive = true,
-    presentational = false
+    presentational = false,
+    headerLane?: { start: number; spanning: boolean }
   ) {
     const groupedColumn = this.grouping?.fieldId === column.id;
+    const previousColumn = headerLane
+      ? this.visibleColumns[this.visibleColumns.indexOf(column) - 1]
+      : undefined;
     const segments = column.segments?.length
       ? column.segments
       : [{ label: column.label, sortKey: column.id }];
@@ -1702,11 +2160,32 @@ export class Table {
     return (
       <th
         key={column.id}
+        id={presentational ? undefined : this.headerId(column.id)}
+        headers={presentational ? undefined : this.columnBandId(column.id)}
+        rowSpan={headerLane?.spanning ? 2 : undefined}
+        style={{
+          ...this.structure.pins.get(column.id)?.style,
+          ...(headerLane
+            ? {
+                gridColumn: String(headerLane.start),
+                gridRow: headerLane.spanning ? '1 / span 2' : '2',
+              }
+            : {}),
+        }}
         class={{
           'ds-table__header-cell': true,
+          'ds-table__header-cell--rowspan': !!headerLane?.spanning,
+          'ds-table__header-cell--after-rowspan':
+            !!headerLane &&
+            !headerLane.spanning &&
+            !!previousColumn &&
+            !previousColumn.group &&
+            !this.structure.pins.has(previousColumn.id),
           [`ds-table__cell--align-${align}`]: true,
-          'ds-table__cell--sticky-start': column.sticky === 'start',
-          'ds-table__cell--sticky-end': column.sticky === 'end',
+          'ds-table__cell--sticky-start':
+            column.sticky === 'start' && this.structure.pins.has(column.id),
+          'ds-table__cell--sticky-end':
+            column.sticky === 'end' && this.structure.pins.has(column.id),
           'ds-table__header-cell--collapse-all': actionCollapseHost,
         }}
         scope={presentational ? undefined : 'col'}
@@ -1737,7 +2216,10 @@ export class Table {
             {collapseControl}
           </span>
         )}
-        {this.renderStickyEdge(column.sticky)}
+        {this.renderStickyEdge(
+          this.structure.pins.has(column.id) ? column.sticky : undefined,
+          !!this.structure.pins.get(column.id)?.edge
+        )}
       </th>
     );
   }
@@ -1776,56 +2258,150 @@ export class Table {
     ariaRowIndex?: number
   ) {
     const selection = model.selection;
-    const beforeSpacer =
-      model.elasticSpacerIndex == null
-        ? this.visibleColumns
-        : this.visibleColumns.slice(0, model.elasticSpacerIndex);
-    const afterSpacer =
-      model.elasticSpacerIndex == null ? [] : this.visibleColumns.slice(model.elasticSpacerIndex);
+    const bands = this.structure.bands;
+    const multirow = bands.length > 0;
+    const controls =
+      interactive &&
+      !(
+        this.responsiveLayout === 'cards' &&
+        this.narrowViewport &&
+        this.interactionMode !== 'grid' &&
+        !this.cellSpans.length
+      );
+    const selectionHeader = model.selectable && (
+      <th
+        class={{
+          'ds-table__header-cell': true,
+          'ds-table__selection-cell': true,
+          'ds-table__cell--sticky-start': true,
+          'ds-table__header-cell--rowspan': multirow,
+        }}
+        rowSpan={multirow ? 2 : undefined}
+        style={multirow ? { gridColumn: '1', gridRow: '1 / span 2' } : undefined}
+        scope={presentational ? undefined : 'col'}
+      >
+        {controls ? (
+          this.renderSelectionControl(
+            selection.allSelected ? 'Deselect all loaded rows' : 'Select all loaded rows',
+            selection.allSelected,
+            selection.indeterminate,
+            selection.selectableRowIds.length === 0,
+            () => this.emitAllSelection()
+          )
+        ) : (
+          <span class="ds-visually-hidden">Select rows</span>
+        )}
+        {this.renderStickyEdge(
+          'start',
+          ![...this.structure.pins.values()].some(pin => pin.edge === 'start')
+        )}
+      </th>
+    );
+    const lanes: (TableColumn | undefined)[] = [...this.visibleColumns];
+    if (model.elasticSpacerIndex != null) lanes.splice(model.elasticSpacerIndex, 0, undefined);
+    const renderLane = (column: TableColumn | undefined, index: number) => {
+      const start = index + 1 + Number(model.selectable);
+      if (column)
+        return this.renderColumnHeader(
+          column,
+          model,
+          controls,
+          presentational,
+          multirow ? { start, spanning: !column.group } : undefined
+        );
+      return (
+        <th
+          class="ds-table__header-cell ds-table__elastic-spacer-cell"
+          rowSpan={multirow ? 2 : undefined}
+          style={multirow ? { gridColumn: String(start), gridRow: '1 / span 2' } : undefined}
+          aria-hidden="true"
+          role="presentation"
+          data-elastic-spacer="true"
+        />
+      );
+    };
     return (
       <thead
         class={{
           'ds-table__head': true,
+          'ds-table__head--multirow': multirow,
           'ds-table__head--semantic-copy': !interactive,
         }}
         ref={element => {
           if (interactive) this.interactiveHeadEl = element ?? null;
         }}
       >
-        <tr class="ds-table__header-row" aria-rowindex={ariaRowIndex}>
-          {model.selectable && (
-            <th
-              class="ds-table__header-cell ds-table__selection-cell ds-table__cell--sticky-start"
-              scope={presentational ? undefined : 'col'}
-            >
-              {interactive ? (
-                this.renderSelectionControl(
-                  selection.allSelected ? 'Deselect all loaded rows' : 'Select all loaded rows',
-                  selection.allSelected,
-                  selection.indeterminate,
-                  selection.selectableRowIds.length === 0,
-                  () => this.emitAllSelection()
-                )
+        {multirow && (
+          <tr class="ds-table__header-row ds-table__super-header-row" aria-rowindex={ariaRowIndex}>
+            {selectionHeader}
+            {bands.map(band =>
+              !band.label ? (
+                lanes.map((column, index) => {
+                  const start = index + 1 + Number(model.selectable);
+                  return start >= band.start && start < band.start + band.span
+                    ? renderLane(column, index)
+                    : null;
+                })
               ) : (
-                <span class="ds-visually-hidden">Select rows</span>
-              )}
-              {this.renderStickyEdge('start')}
-            </th>
-          )}
-          {beforeSpacer.map(column =>
-            this.renderColumnHeader(column, model, interactive, presentational)
-          )}
-          {model.elasticSpacerIndex != null && (
-            <th
-              class="ds-table__header-cell ds-table__elastic-spacer-cell"
-              aria-hidden="true"
-              role="presentation"
-              data-elastic-spacer="true"
-            />
-          )}
-          {afterSpacer.map(column =>
-            this.renderColumnHeader(column, model, interactive, presentational)
-          )}
+                <th
+                  key={band.key}
+                  id={presentational ? undefined : `${this.actionMenuElementId}-${band.key}`}
+                  class={{
+                    'ds-table__header-cell': true,
+                    'ds-table__super-header-cell': true,
+                    'ds-table__cell--sticky-start': band.sticky === 'start',
+                    'ds-table__cell--sticky-end': band.sticky === 'end',
+                  }}
+                  scope={presentational || !band.label ? undefined : 'colgroup'}
+                  colSpan={band.span}
+                  style={{
+                    gridColumn: `${band.start} / span ${band.span}`,
+                    gridRow: '1',
+                    ...this.structure.pins.get(
+                      (band.sticky === 'end' ? band.lastColumnId : band.firstColumnId) ?? ''
+                    )?.style,
+                  }}
+                  aria-hidden={!band.label ? 'true' : undefined}
+                >
+                  <span class="ds-table__header-content">
+                    <span class="ds-table__header-labels">
+                      <span class="ds-table__header-segment">
+                        {/* eslint-disable-next-line compomo/prefer-direct-ds-text -- Match the normal header's structural label canvas and inner text inset. */}
+                        <span class="ds-table__header-label ds-table__header-static">
+                          <ds-text
+                            class="ds-table__header-label-box ds-control-label-box"
+                            as="span"
+                            variant="text-caption"
+                            color="inherit"
+                            lineTruncation={1}
+                          >
+                            {band.label}
+                          </ds-text>
+                        </span>
+                      </span>
+                    </span>
+                  </span>
+                  {this.renderStickyEdge(
+                    band.sticky,
+                    !!this.structure.pins.get(
+                      (band.sticky === 'end' ? band.firstColumnId : band.lastColumnId) ?? ''
+                    )?.edge
+                  )}
+                </th>
+              )
+            )}
+          </tr>
+        )}
+        <tr
+          class="ds-table__header-row"
+          aria-rowindex={
+            ariaRowIndex == null
+              ? undefined
+              : ariaRowIndex + Number(this.structure.bands.length > 0)
+          }
+        >
+          {!multirow && selectionHeader}
+          {lanes.map((column, index) => (!multirow || column?.group) && renderLane(column, index))}
         </tr>
       </thead>
     );
@@ -1839,6 +2415,20 @@ export class Table {
     rowKey = row.id
   ) {
     return renderTableRowView({
+      grid: this.gridEnabled,
+      cellAttributes: this.editingEnabled
+        ? (targetRow, column) => this.gridCellAttributes(targetRow, column)
+        : undefined,
+      renderEditor: this.editingEnabled
+        ? (targetRow, column) => this.renderCellEditor(targetRow, column)
+        : undefined,
+      renderEditTrigger: this.editingEnabled
+        ? (targetRow, column) => this.renderCellEditTrigger(targetRow, column)
+        : undefined,
+      pins: this.structure.pins,
+      spans: this.structure.merges.cells.get(row.id),
+      headerId: id => this.headerId(id),
+      responsiveCards: this.responsiveLayout === 'cards',
       row,
       model,
       visibleColumns: this.visibleColumns,
@@ -1849,7 +2439,8 @@ export class Table {
       surfaceOpenRowId: this.surfaceOpenRowId,
       highlightMatcher: this.highlightMatcher,
       highlightFieldIds: this.highlightFieldIds,
-      ariaRowIndex,
+      ariaRowIndex:
+        ariaRowIndex == null ? undefined : ariaRowIndex + Number(this.structure.bands.length > 0),
       variableVirtualSize,
       intrinsicBlockSize:
         this.dataMode !== 'virtual'
@@ -1858,7 +2449,7 @@ export class Table {
       rowKey,
       renderSelectionControl: (label, checked, indeterminate, disabled, onActivate) =>
         this.renderSelectionControl(label, checked, indeterminate, disabled, onActivate),
-      renderStickyEdge: sticky => this.renderStickyEdge(sticky),
+      renderStickyEdge: (sticky, shadow) => this.renderStickyEdge(sticky, shadow),
       onRowActivate: (targetRow, event) => this.emitRowActivation(targetRow, event),
       onRowKeyDown: (targetRow, event) => this.handleRowKeydown(targetRow, event),
       onRowSelection: targetRow => this.emitRowSelection(targetRow),
@@ -2095,6 +2686,7 @@ export class Table {
 
   private renderDataBodies(model: TableRenderModel, plan: TableVirtualPlan | null) {
     return this.bodyRenderer.render({
+      headerRowCount: 1 + Number(this.structure.bands.length > 0),
       model,
       plan,
       rows: this.rows,
@@ -2110,10 +2702,11 @@ export class Table {
 
   private renderSkeletonBody(model: TableRenderModel) {
     return renderTableSkeletonBody({
+      pins: this.structure.pins,
       model,
       visibleColumns: this.visibleColumns,
       skeletonRows: this.skeletonRows,
-      renderStickyEdge: sticky => this.renderStickyEdge(sticky),
+      renderStickyEdge: (sticky, shadow) => this.renderStickyEdge(sticky, shadow),
     });
   }
 
@@ -2586,7 +3179,12 @@ export class Table {
           'table-host--viewport-fit': this.fitViewport,
         }}
         style={hostStyle}
-        onKeyDown={(event: KeyboardEvent) => this.handlePaginationKeyDown(event)}
+        onKeyDown={(event: KeyboardEvent) => {
+          this.handleGridKeyDown(event);
+          this.handlePaginationKeyDown(event);
+        }}
+        onCopy={(event: ClipboardEvent) => this.handleGridClipboard(event)}
+        onPaste={(event: ClipboardEvent) => this.handleGridClipboard(event)}
         onFocusin={this.onVirtualFocusIn}
       >
         <div
@@ -2602,6 +3200,16 @@ export class Table {
             'ds-table--document-sticky-header': this.documentStickyHeader,
             'ds-table--contained-sticky-header': this.stickyHeader && !this.documentStickyHeader,
             'ds-table--caption-visible': this.captionVisibility === 'visible',
+            'ds-table--super-headers': this.structure.bands.length > 0,
+            'ds-table--responsive-cards':
+              this.responsiveLayout === 'cards' &&
+              this.interactionMode !== 'grid' &&
+              this.cellSpans.length === 0,
+            'ds-table--cards-active':
+              this.narrowViewport &&
+              this.responsiveLayout === 'cards' &&
+              this.interactionMode !== 'grid' &&
+              this.cellSpans.length === 0,
             'ds-table--footer-visible': this.hasResultFooter,
             'ds-table--state-fill':
               !initialLoading &&
@@ -2643,7 +3251,8 @@ export class Table {
                   'ds-table__table': true,
                   'ds-table__table--selectable': model.selectable,
                   'ds-table__table--grouped': model.grouped,
-                  'ds-table__table--deferred-rows': this.dataMode !== 'virtual',
+                  'ds-table__table--deferred-rows':
+                    this.dataMode !== 'virtual' && !this.structure.merges.hasRowSpans,
                   'ds-table__table--windowed': windowRows,
                   'ds-table__table--virtual': this.dataMode === 'virtual' && windowRows,
                   'ds-table__table--native-group-sticky':
@@ -2651,7 +3260,13 @@ export class Table {
                     windowRows,
                 }}
                 style={model.tableStyle}
-                aria-rowcount={windowRows ? 1 + this.virtualItems.length : undefined}
+                role={this.gridEnabled ? 'grid' : 'table'}
+                aria-multiselectable={this.gridEnabled ? 'true' : undefined}
+                aria-rowcount={
+                  windowRows
+                    ? 1 + Number(this.structure.bands.length > 0) + this.virtualItems.length
+                    : undefined
+                }
                 aria-busy={
                   initialLoading ||
                   (this.dataMode === 'infinite' && (this.loadingMore || groupLoadingMore))
