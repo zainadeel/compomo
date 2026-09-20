@@ -2719,6 +2719,43 @@ export const VirtualRows: Story = {
   `,
 };
 
+export const SelectionStress: Story = {
+  name: 'Ten thousand selected rows',
+  tags: ['!test'],
+  render: () => {
+    const groups = Array.from({ length: 100 }, (_, groupIndex) => ({
+      id: `stress-group-${groupIndex}`,
+      label: `Group ${groupIndex + 1}`,
+      rows: Array.from({ length: 100 }, (_, rowIndex) => {
+        const id = `stress-row-${groupIndex * 100 + rowIndex}`;
+        return {
+          id,
+          selectionLabel: id,
+          cells: { name: `Record ${groupIndex * 100 + rowIndex + 1}` },
+        };
+      }),
+    }));
+    return html`
+      <ds-table
+        .columns=${[{ id: 'name', label: 'Name' }]}
+        .groups=${groups}
+        .grouping=${{ fieldId: 'name', direction: 'asc' }}
+        .selectedRowIds=${groups.flatMap(group => group.rows.map(row => row.id))}
+        .totalCount=${10000}
+        data-mode="virtual"
+        selection-mode="multiple"
+        sticky-header
+        height="var(--dimension-card-height-lg)"
+        caption="10,000 records in 100 groups"
+        caption-visibility="visible"
+        @dsSelectionChange=${(event: CustomEvent<{ selectedRowIds: string[] }>) => {
+          (event.currentTarget as HTMLDsTableElement).selectedRowIds = event.detail.selectedRowIds;
+        }}
+      ></ds-table>
+    `;
+  },
+};
+
 export const VirtualGroupedRows: Story = {
   name: 'Virtual grouped rows',
   parameters: {

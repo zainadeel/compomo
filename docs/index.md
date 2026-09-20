@@ -10,6 +10,7 @@ live in source, package manifests, compiler output, and generated registries.
 | Install and first component                         | [README](../README.md), [Storybook introduction](../src/docs/Introduction.mdx) |
 | Angular, React, Vue, routing, forms, or first paint | [Framework integration](framework-integration.md)                              |
 | Color                                               | [Color usage](../src/docs/ColorUsage.mdx)                                      |
+| Stored values and formatting                        | [Values and formatting](../src/docs/ValuesAndFormatting.mdx)                   |
 | Typography                                          | [Typography usage](../src/docs/TypographyUsage.mdx)                            |
 | Font ownership and loading                          | [Font ownership](font-ownership.md)                                            |
 | Elevation                                           | [Elevation usage](../src/docs/ElevationUsage.mdx)                              |
@@ -27,6 +28,7 @@ from Storybook and `public/r/`.
 | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | Author a component                             | [Component authoring](maintainers/component-authoring.md), [web component guidance](../src/wc/AGENTS.md) |
 | Build, exports, registry, adapters, or MCP     | [Build and registry](maintainers/build-and-registry.md), [agent guidance](../agent/AGENTS.md)            |
+| Measure performance                            | [Performance workflow](maintainers/performance.md)                                                       |
 | Select tests                                   | [Testing strategy](maintainers/testing.md)                                                               |
 | Change SVG, Markdown or URL rendering          | [Rendering security](maintainers/rendering-security.md)                                                  |
 | Preserve Windows High Contrast / forced colors | [Forced-colors accessibility](maintainers/forced-colors.md)                                              |

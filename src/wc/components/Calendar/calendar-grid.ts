@@ -1,4 +1,4 @@
-import { isIsoCalendarDate, shiftIsoCalendarDate } from '../../utils';
+import { isIsoCalendarDate } from '../../utils';
 
 export interface CalendarDateRange {
   start: string;
@@ -29,7 +29,7 @@ const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
 
 export function calendarToday(): string {
   const today = new Date();
-  const year = today.getFullYear();
+  const year = String(today.getFullYear()).padStart(4, '0');
   const month = String(today.getMonth() + 1).padStart(2, '0');
   const day = String(today.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
@@ -40,29 +40,32 @@ export function calendarMonth(value: string): string {
 }
 
 export function shiftCalendarMonth(value: string, offset: number): string {
-  const [year, month] = value.split('-').map(Number);
-  const date = new Date(Date.UTC(year, month - 1 + offset, 1));
-  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}`;
+  if (!isIsoCalendarDate(`${value}-01`) || !Number.isSafeInteger(offset)) return '';
+  const date = new Date(`${value}-01T00:00:00Z`);
+  date.setUTCMonth(date.getUTCMonth() + offset);
+  const year = date.getUTCFullYear();
+  return year >= 1 && year <= 9999 ? date.toISOString().slice(0, 7) : '';
 }
 
 export function calendarMonthLabel(value: string): string {
-  const [year, month] = value.split('-').map(Number);
-  return MONTH_FORMATTER.format(new Date(Date.UTC(year, month - 1, 1)));
+  if (!isIsoCalendarDate(`${value}-01`)) return '';
+  return MONTH_FORMATTER.format(new Date(`${value}-01T00:00:00Z`));
 }
 
 export function calendarDays(value: string): CalendarDay[] {
-  const [year, month] = value.split('-').map(Number);
-  const firstOfMonth = `${year}-${String(month).padStart(2, '0')}-01`;
-  const firstWeekday = new Date(`${firstOfMonth}T00:00:00Z`).getUTCDay();
-  const gridStart = shiftIsoCalendarDate(firstOfMonth, -firstWeekday);
+  if (!isIsoCalendarDate(`${value}-01`)) return [];
+  const first = new Date(`${value}-01T00:00:00Z`);
+  const firstWeekday = first.getUTCDay();
   return Array.from({ length: 42 }, (_, index) => {
-    const dateValue = shiftIsoCalendarDate(gridStart, index);
-    const date = new Date(`${dateValue}T00:00:00Z`);
+    const date = new Date(first);
+    date.setUTCDate(1 - firstWeekday + index);
+    const year = date.getUTCFullYear();
+    const dateValue = year >= 1 && year <= 9999 ? date.toISOString().slice(0, 10) : '';
     return {
       value: dateValue,
       day: date.getUTCDate(),
       inMonth: dateValue.startsWith(`${value}-`),
-      label: DATE_FORMATTER.format(date),
+      label: dateValue ? DATE_FORMATTER.format(date) : 'Unavailable date',
     };
   });
 }

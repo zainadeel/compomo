@@ -8,6 +8,20 @@ import '../../../../dist/components/ds-text.js';
 export default { title: 'Conversation/Markdown', tags: ['autodocs'] } satisfies Meta;
 type Story = StoryObj;
 
+export const LargeDocument: Story = {
+  tags: ['!test'],
+  args: { characters: 10000 },
+  argTypes: { characters: { control: 'select', options: [10000, 100000] } },
+  render: args => {
+    const block = 'A **formatted** paragraph with [details](https://example.com).\n\n';
+    const length = Number(args['characters']) === 100000 ? 100000 : 10000;
+    return html`<ds-markdown
+      .content=${'# Large document\n\n' +
+      block.repeat(Math.ceil(length / block.length)).slice(0, length)}
+    ></ds-markdown>`;
+  },
+};
+
 export const Reconnection: Story = {
   render: () => {
     let markdown: HTMLDsMarkdownElement | undefined;

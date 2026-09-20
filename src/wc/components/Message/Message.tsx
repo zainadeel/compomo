@@ -1,3 +1,4 @@
+import { dateFormatter } from '../../utils/intl-formatters';
 import { Component, h, Host, Prop } from '@stencil/core';
 import type {
   MessageDeliveryState,
@@ -26,7 +27,7 @@ export class Message {
   @Prop() author: string = '';
   /** Keep author semantics while allowing products with self-evident roles to hide the visible label. */
   @Prop() showAuthor: boolean = true;
-  /** ISO timestamp. */
+  /** ISO timestamp. Displayed in English using the viewer’s local time zone. */
   @Prop() timestamp: string = '';
   @Prop() deliveryState: MessageDeliveryState | undefined;
   @Prop() streaming: boolean = false;
@@ -38,7 +39,7 @@ export class Message {
     if (!this.timestamp) return '';
     const parsed = Date.parse(this.timestamp);
     if (Number.isNaN(parsed)) return this.timestamp;
-    return new Intl.DateTimeFormat(undefined, {
+    return dateFormatter(undefined, {
       hour: 'numeric',
       minute: '2-digit',
     }).format(new Date(parsed));

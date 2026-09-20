@@ -83,7 +83,7 @@ export class Calendar {
   }
 
   private isUnavailable(day: string): boolean {
-    if (this.isInactive) return true;
+    if (this.isInactive || !isIsoCalendarDate(day)) return true;
     if (this.min && isIsoCalendarDate(this.min) && day < this.min) return true;
     if (this.max && isIsoCalendarDate(this.max) && day > this.max) return true;
     return false;
@@ -94,8 +94,10 @@ export class Calendar {
   }
 
   private moveMonth = (offset: number) => {
+    const nextMonth = shiftCalendarMonth(this.month, offset);
+    if (this.isInactive || !nextMonth) return;
     this.previewEnd = '';
-    this.month = shiftCalendarMonth(this.month, offset);
+    this.month = nextMonth;
   };
 
   private selectDate = (day: string) => {
@@ -196,7 +198,7 @@ export class Calendar {
               icon="ChevronLeft"
               size="md"
               hasBorder={false}
-              isInactive={this.isInactive}
+              isInactive={this.isInactive || !shiftCalendarMonth(this.month, -1)}
               ariaLabel="Previous month"
               onDsClick={() => this.moveMonth(-1)}
             />
@@ -209,7 +211,7 @@ export class Calendar {
               icon="ChevronRight"
               size="md"
               hasBorder={false}
-              isInactive={this.isInactive}
+              isInactive={this.isInactive || !shiftCalendarMonth(this.month, 1)}
               ariaLabel="Next month"
               onDsClick={() => this.moveMonth(1)}
             />
@@ -257,7 +259,10 @@ export class Calendar {
                     rangeValue &&
                     (day.value === rangeValue.start || day.value === rangeValue.end)
                   );
-                  const selected = this.selectionMode === 'single' && day.value === selectedSingle;
+                  const selected =
+                    this.selectionMode === 'single' &&
+                    Boolean(day.value) &&
+                    day.value === selectedSingle;
                   const textColor = rangeEdge
                     ? 'on-bold'
                     : selected ||

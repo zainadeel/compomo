@@ -101,7 +101,7 @@ export function createTableRenderModel(input: TableRenderModelInput): TableRende
     loadedRows,
     hasData: loadedRows.length > 0,
     selectedRowIds,
-    selection: deriveTableSelectionState(loadedRows, input.selectedRowIds),
+    selection: deriveTableSelectionState(loadedRows, selectedRowIds),
     collapsedGroupIds,
     groups: input.groups.map(group => {
       const loadedCount = group.rows.length;
@@ -125,7 +125,7 @@ export function createTableRenderModel(input: TableRenderModelInput): TableRende
         collapsed,
         accessories,
         hero,
-        selection: selectable ? deriveTableSelectionState(group.rows, input.selectedRowIds) : null,
+        selection: selectable ? deriveTableSelectionState(group.rows, selectedRowIds) : null,
       };
     }),
     totalColumns:

@@ -31,10 +31,12 @@ const ISO_CALENDAR_DATE_LABEL = new Intl.DateTimeFormat('en-US', {
   timeZone: 'UTC',
 });
 
+/** Validate a timezone-free Gregorian day with a four-digit year from 0001 through 9999. */
 export function isIsoCalendarDate(value: string): boolean {
-  if (!ISO_DATE_PATTERN.test(value)) return false;
+  if (typeof value !== 'string' || !ISO_DATE_PATTERN.test(value)) return false;
   const [year, month, day] = value.split('-').map(Number);
-  const date = new Date(Date.UTC(year, month - 1, day));
+  if (year < 1) return false;
+  const date = new Date(`${value}T00:00:00Z`);
   return (
     date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day
   );
@@ -43,7 +45,9 @@ export function isIsoCalendarDate(value: string): boolean {
 /** Readable calendar date for filled ISO values such as `2026-09-10` → `Sep 10, 2026`. */
 export function formatIsoCalendarDateLabel(value: string): string {
   if (!isIsoCalendarDate(value)) return '';
-  return ISO_CALENDAR_DATE_LABEL.format(new Date(`${value}T00:00:00Z`));
+  return ISO_CALENDAR_DATE_LABEL.formatToParts(new Date(`${value}T00:00:00Z`))
+    .map(part => (part.type === 'year' ? part.value.padStart(4, '0') : part.value))
+    .join('');
 }
 
 const MONTH_LABELS = [
@@ -63,6 +67,7 @@ const MONTH_LABELS = [
 
 /** Parse a typed calendar date: ISO, `M/D/YYYY`, or a short-month label such as `Sep 10, 2026`. */
 export function parseLooseCalendarDate(value: string): string {
+  if (typeof value !== 'string') return '';
   const trimmed = value.trim();
   if (!trimmed) return '';
   if (isIsoCalendarDate(trimmed)) return trimmed;
@@ -81,11 +86,13 @@ export function parseLooseCalendarDate(value: string): string {
   return isIsoCalendarDate(iso) ? iso : '';
 }
 
+/** Shift whole calendar days in UTC; return an empty value for invalid input or year overflow. */
 export function shiftIsoCalendarDate(value: string, days: number): string {
-  if (!isIsoCalendarDate(value)) return '';
-  const [year, month, day] = value.split('-').map(Number);
-  const date = new Date(Date.UTC(year, month - 1, day + days));
-  return date.toISOString().slice(0, 10);
+  if (!isIsoCalendarDate(value) || !Number.isSafeInteger(days)) return '';
+  const date = new Date(`${value}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + days);
+  const year = date.getUTCFullYear();
+  return year >= 1 && year <= 9999 ? date.toISOString().slice(0, 10) : '';
 }
 
 export function dateFilterRelativeValue(preset: DateFilterRelativePreset): DateFilterRelativeValue {
@@ -137,5 +144,6 @@ export function resolveDateFilterRange(
   const preset = DATE_FILTER_RELATIVE_PRESETS.find(candidate => candidate.value === parsed.preset);
   if (!preset) return null;
   const end = shiftIsoCalendarDate(referenceDate, preset.offset);
-  return { start: shiftIsoCalendarDate(end, -(preset.days - 1)), end };
+  const start = shiftIsoCalendarDate(end, -(preset.days - 1));
+  return start && end ? { start, end } : null;
 }

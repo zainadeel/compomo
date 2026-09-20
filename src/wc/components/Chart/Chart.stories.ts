@@ -560,6 +560,64 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
+export const StressSeries: Story = {
+  tags: ['!test'],
+  render: () =>
+    renderChart(
+      defineChart({
+        marks: [
+          lineY(
+            Array.from({ length: 1000 }, (_, index) => ({
+              id: index,
+              x: index,
+              value: 50 + Math.sin(index / 10) * 20,
+            })),
+            { id: 'samples', key: 'id', x: 'x', y: 'value' }
+          ),
+        ],
+        x: { scale: scaleLinear },
+        y: { scale: scaleLinear, grid: true },
+        focus: 'nearest-x',
+        tooltip: true,
+      }),
+      {
+        title: 'One thousand samples',
+        description:
+          'Move the pointer or use arrow keys to review focus responsiveness across a dense line.',
+        summary: 'Samples oscillate between 30 and 70.',
+      }
+    ),
+};
+
+export const UtcDateLabels: Story = {
+  render: () =>
+    renderChart(
+      defineChart({
+        marks: [
+          lineY(
+            [
+              { id: 'a1', date: new Date('2026-09-10T00:00:00Z'), value: 20, series: 'Current' },
+              { id: 'a2', date: new Date('2026-09-11T00:00:00Z'), value: 30, series: 'Current' },
+              { id: 'b1', date: new Date('2026-09-10T00:00:00Z'), value: 15, series: 'Previous' },
+              { id: 'b2', date: new Date('2026-09-11T00:00:00Z'), value: 25, series: 'Previous' },
+            ],
+            { id: 'daily', key: 'id', x: 'date', y: 'value', z: 'series' }
+          ),
+        ],
+        x: { scale: scaleUtc, axis: { ticks: { count: 2 } } },
+        y: { scale: scaleLinear, grid: true },
+        focus: 'group-x',
+        tooltip: true,
+      }),
+      {
+        title: 'UTC daily readings',
+        description:
+          'September 10 and 11 stay on the same date in every viewer timezone. Focus either day to review its tooltip.',
+        summary: 'September 11: current 30; previous 25.',
+      }
+    ),
+};
+
 export const MultiSeriesLine: Story = {
   render: () =>
     renderChart(comparisonDefinition, {

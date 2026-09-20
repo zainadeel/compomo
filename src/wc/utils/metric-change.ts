@@ -1,3 +1,4 @@
+import { numberFormatter } from './intl-formatters';
 import { formatCompactNumber } from './format-compact-number';
 
 export type MetricTrendDirection = 'up' | 'down';
@@ -92,9 +93,7 @@ export function resolveMetricTrend(
 
   const value =
     display === 'percentage'
-      ? new Intl.NumberFormat(locale, { style: 'percent', maximumFractionDigits: 0 }).format(
-          change.ratio
-        )
+      ? numberFormatter(locale, { style: 'percent', maximumFractionDigits: 0 }).format(change.ratio)
       : formatCompactNumber(change.absolute, locale);
 
   return { direction: change.direction, value, tone };

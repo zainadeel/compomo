@@ -1,3 +1,4 @@
+import { numberFormatter } from './intl-formatters';
 const COMPACT_UNITS: { threshold: number; suffix: string }[] = [
   { threshold: 1_000_000_000, suffix: 'b' },
   { threshold: 1_000_000, suffix: 'm' },
@@ -7,7 +8,7 @@ const COMPACT_UNITS: { threshold: number; suffix: string }[] = [
 /** Compact large numbers for display: 1000 -> "1k", 1500 -> "1.5k", 110100 -> "110.1k", 1000000 -> "1m". */
 export function formatCompactNumber(value: number, locale?: string): string {
   if (locale) {
-    return new Intl.NumberFormat(locale, {
+    return numberFormatter(locale, {
       notation: 'compact',
       compactDisplay: 'short',
       maximumFractionDigits: 1,

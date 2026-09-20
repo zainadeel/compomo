@@ -1,0 +1,38 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Guides/Values and formatting" />
+
+# Values and formatting
+
+Keep application data separate from its visible label. Submit and store the
+component's typed value; use formatted text for presentation. A label change
+must not change the record identity, selected value or form payload.
+
+Number formatting defaults to English. Existing explicit locale options remain
+available, and missing, blank or invalid locale identifiers fall back to English.
+The compact-number helper retains its existing lowercase `k`, `m` and `b`
+notation when no locale is supplied. Formatting does not translate UI copy.
+
+Calendar fields represent a calendar day without a timezone. Keep their ISO
+date value as a string instead of converting it through a local `Date` and
+back. Date arithmetic uses UTC internally to avoid daylight-saving shifts;
+“today” still means the viewer's local calendar day. Typed labels and form
+values follow the same date validation, including leap years and year bounds.
+
+Time fields represent a minute-precision clock value without a date or timezone.
+Changing the twelve-hour or twenty-four-hour presentation does not change the
+stored clock value. Time bounds describe a same-day interval; applications
+should model an overnight interval explicitly rather than reversing min/max.
+
+Chart `Date` values represent instants. Default date ticks and tooltip dates use
+UTC, and number/date labels default to English independently of document language.
+Use an appropriate UTC scale for UTC calendar tick placement; an application-supplied
+scale or formatting callback remains authoritative. Message timestamps keep
+their full authored value in the `time` element and display English clock text
+in the viewer's local timezone.
+
+Pass new arrays and objects when controlled data changes. Components report user
+intent through their documented events; the application owns data transforms,
+queries and persistence. Form controls with mutable values retain their existing
+edit/reset behavior. Removing and reinserting a component preserves
+application-controlled state and reconciles the current inputs.
