@@ -1,3 +1,4 @@
+import { dateFormatter, numberFormatter, resolveFormatLocale } from '../../utils/intl-formatters';
 import {
   Component,
   Element,
@@ -59,7 +60,7 @@ export class Chart {
   @Prop() label!: string;
   /** Optional longer accessible description. */
   @Prop() description?: string;
-  /** Locale used by axes and default tooltip formatters. */
+  /** Locale used by axes and default tooltip formatters. Defaults to English (en-US). */
   @Prop() locale?: string;
   /** Fixed surface width. Otherwise the chart observes its container. */
   @Prop() width?: number;
@@ -83,6 +84,8 @@ export class Chart {
   private hasLoaded = false;
   private connectionGeneration = 0;
   private warnedConflictingHeight = false;
+  private measuredScene?: ChartScene;
+  private measuredFont = '';
   private measuredLabels = new Map<string, { width: number; height: number }>();
   private descriptionId = `ds-chart-description-${Math.random().toString(36).slice(2)}`;
   private clipId = `ds-chart-clip-${Math.random().toString(36).slice(2)}`;
@@ -113,6 +116,8 @@ export class Chart {
     if (this.compileFrame !== undefined) cancelAnimationFrame(this.compileFrame);
     this.resizeFrame = undefined;
     this.compileFrame = undefined;
+    this.measuredScene = undefined;
+    this.measuredLabels.clear();
   }
 
   @Watch('definition')
@@ -209,14 +214,22 @@ export class Chart {
   private compile() {
     if (!this.definition || !(this.surfaceWidth > 0) || !(this.surfaceHeight > 0)) return;
     const previousKey = this.focusState?.primary.sceneKey;
+    const usedLabels = new Set<string>();
     const scene = compileChartScene(
       this.definition,
       this.surfaceWidth,
       this.surfaceHeight,
-      this.locale ?? document.documentElement.lang ?? 'en',
-      text => this.measuredLabels.get(text) ?? { width: text.length * 7, height: 14 },
+      resolveFormatLocale(this.locale),
+      text => {
+        usedLabels.add(text);
+        return this.measuredLabels.get(text) ?? { width: text.length * 7, height: 14 };
+      },
       resolveChartTheme(this.el)
     );
+    // Retain only measurements consulted by this definition, including thinned ticks.
+    for (const text of this.measuredLabels.keys()) {
+      if (!usedLabels.has(text)) this.measuredLabels.delete(text);
+    }
     this.scene = scene;
     if (previousKey) {
       const restored = scene.points.find(point => point.sceneKey === previousKey);
@@ -249,6 +262,22 @@ export class Chart {
   private measureRenderedLabels() {
     if (!this.el.isConnected) return;
     const labels = this.el.querySelectorAll<SVGTextElement>('[data-chart-measure]');
+    // Guide labels share the tick font recipe. A theme change must invalidate
+    // its metrics even when this render only changes focus, rather than the scene.
+    const style = labels[0] ? getComputedStyle(labels[0]) : undefined;
+    const font = style
+      ? [
+          style.font,
+          style.letterSpacing,
+          style.fontFeatureSettings,
+          style.fontVariationSettings,
+          style.textTransform,
+        ].join('|')
+      : '';
+    if (this.measuredScene === this.scene && this.measuredFont === font) return;
+    if (this.measuredFont !== font) this.measuredLabels.clear();
+    this.measuredFont = font;
+    this.measuredScene = this.scene;
     let changed = false;
     labels.forEach(label => {
       const text = label.textContent ?? '';
@@ -453,21 +482,33 @@ export class Chart {
     if (!this.scene || !this.focusState || this.scene.tooltip === false) return undefined;
     const options: ChartTooltipOptions =
       typeof this.scene.tooltip === 'object' ? this.scene.tooltip : {};
-    const locale = this.locale ?? document.documentElement.lang ?? 'en';
+    const locale = resolveFormatLocale(this.locale);
     const points = this.focusState.points;
+    const formatDate = (value: Date) =>
+      dateFormatter(locale, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        timeZone: 'UTC',
+      }).format(value);
     const formatValue = (point: ChartPoint) => {
       const value = point.value ?? point.yValue;
       return (
         options.format?.(point, locale) ??
         (typeof value === 'number'
-          ? new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(value)
-          : String(value))
+          ? numberFormatter(locale, { maximumFractionDigits: 2 }).format(value)
+          : value instanceof Date
+            ? formatDate(value)
+            : String(value))
       );
     };
     return {
       heading:
         points.length > 1
-          ? (options.formatGroupHeading?.(points, locale) ?? String(this.focusState.primary.xValue))
+          ? (options.formatGroupHeading?.(points, locale) ??
+            (this.focusState.primary.xValue instanceof Date
+              ? formatDate(this.focusState.primary.xValue)
+              : String(this.focusState.primary.xValue)))
           : undefined,
       items: points.map(
         point =>
@@ -480,8 +521,7 @@ export class Chart {
     };
   }
 
-  private statusText(): string {
-    const content = this.tooltipContent();
+  private statusText(content: ReturnType<Chart['tooltipContent']>): string {
     if (!content) return '';
     return [content.heading, ...content.items.map(item => `${item.label}: ${item.value}`)]
       .filter(Boolean)
@@ -504,7 +544,7 @@ export class Chart {
       scene?.coordinate === 'cartesian' && scene.focus === 'group-x' && focusedDotPoints.length > 1;
     const center =
       focus && scene?.center?.focused
-        ? scene.center.focused(focus, this.locale ?? document.documentElement.lang ?? 'en')
+        ? scene.center.focused(focus, resolveFormatLocale(this.locale))
         : scene?.center;
     return (
       <Host
@@ -747,7 +787,7 @@ export class Chart {
           />
         )}
         <span class="chart__status" aria-live="polite" aria-atomic="true">
-          {this.statusText()}
+          {this.statusText(tooltip)}
         </span>
       </Host>
     );

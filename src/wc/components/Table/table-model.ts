@@ -1,3 +1,4 @@
+import { numberFormatter } from '../../utils/intl-formatters';
 import type {
   TableCellBlank,
   TableCellAction,
@@ -214,9 +215,11 @@ function canSelectRow(row: TableRow): boolean {
 
 export function deriveTableSelectionState(
   rows: TableRow[],
-  selectedRowIds: readonly string[]
+  selectedRowIds: readonly string[] | ReadonlySet<string>
 ): TableSelectionState {
-  const selected = new Set(selectedRowIds);
+  const selected = Array.isArray(selectedRowIds)
+    ? new Set(selectedRowIds)
+    : (selectedRowIds as ReadonlySet<string>);
   const selectableRowIds = rows.filter(canSelectRow).map(row => row.id);
   const selectedLoadedCount = selectableRowIds.reduce(
     (count, id) => count + (selected.has(id) ? 1 : 0),
@@ -247,7 +250,7 @@ export function toggleAllLoadedTableRows(
   loadedRows: TableRow[]
 ): string[] {
   const selected = new Set(selectedRowIds);
-  const state = deriveTableSelectionState(loadedRows, selectedRowIds);
+  const state = deriveTableSelectionState(loadedRows, selected);
 
   for (const id of state.selectableRowIds) {
     if (state.allSelected) selected.delete(id);
@@ -348,7 +351,7 @@ export function formatTableResultSummary(
     normalizedTotal,
     Math.max(0, Math.trunc(displayed as number))
   );
-  const formatter = new Intl.NumberFormat(locale);
+  const formatter = numberFormatter(locale);
   return label
     .replace('{displayed}', formatter.format(normalizedDisplayed))
     .replace('{total}', formatter.format(normalizedTotal));
@@ -362,7 +365,7 @@ export function formatTableTotalSummary(
 ): string | null {
   if (!Number.isFinite(total)) return null;
   const normalizedTotal = Math.max(0, Math.trunc(total as number));
-  return label.replace('{total}', new Intl.NumberFormat(locale).format(normalizedTotal));
+  return label.replace('{total}', numberFormatter(locale).format(normalizedTotal));
 }
 
 /**

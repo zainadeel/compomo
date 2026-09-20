@@ -62,6 +62,24 @@ browser APIs, or responsive state.
 
 ## Source patterns
 
+Before adding an API, choose the existing family convention for the same
+meaning: value representation, event detail, inactive/read-only behavior and
+state ownership. Reuse an existing public type when the semantics match; do
+not force unrelated concepts into a generic options object. Describe which
+inputs are controlled and which user edits mutate a form value in source and
+agent intent. See [values and formatting](../../src/docs/ValuesAndFormatting.mdx)
+for presentation versus stored data and timezone ownership.
+
+Preserve existing names and defaults during internal refactoring. For a
+necessary incompatible change, first identify consumers and write the migration
+example; add a forwarding alias only if it preserves one implementation and one
+event stream. Mark an actual alias with source `@deprecated` guidance, test old
+and new entry points, and remove it only in an explicitly planned major release.
+Do not introduce speculative aliases or mass-renaming into a patch refactor.
+
+For performance-sensitive components, use the
+[measurement workflow](performance.md) before adding caches or scheduling work.
+
 - Reactive input: `@Prop()`.
 - Internal render state: `@State()`.
 - Prop side effect: `@Watch()`; call the same logic during initial lifecycle

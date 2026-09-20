@@ -111,6 +111,11 @@ An inner radius of `0` produces a pie. The standard donut uses `0.75` and a toke
 
 ## Theme, formatting, and legends
 
+Default labels use English number formatting and UTC date formatting. Existing
+locale and formatting callbacks remain available for application-owned display.
+See [values and formatting](?path=/docs/guides-values-and-formatting--docs) for
+the distinction between calendar dates and timestamp values.
+
 The private chart-theme resolver centralizes TokoMo defaults. Data series use the twelve stable category colors. Heatmaps use data-intent colors. Chart chrome uses foreground roles: primary for axis titles and annotations, secondary for labels and zero lines, tertiary for axis/rule lines, and quaternary for grids.
 
 Tick and annotation labels use the TokoMo caption recipe; axis titles use caption emphasis. Tooltips use body small. Typed mark paint, opacity, stroke, radius, inset, curve, and font overrides remain available without exposing arbitrary SVG attributes or scene classes.

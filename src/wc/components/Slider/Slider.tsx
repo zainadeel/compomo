@@ -1,3 +1,4 @@
+import { numberFormatter } from '../../utils/intl-formatters';
 import {
   AttachInternals,
   Component,
@@ -78,7 +79,7 @@ export class Slider {
   @Prop() valueText: string | undefined;
   /** Per-thumb human-readable value text for a range slider. Assign through the JavaScript property. */
   @Prop() valueTexts: string[] = [];
-  /** Locale used by Intl.NumberFormat for the visible value. */
+  /** Locale used for the visible value. Defaults to English (en-US). */
   @Prop() locale: string | undefined;
   /** Intl.NumberFormat options. Assign objects through the JavaScript property. */
   @Prop() formatOptions: Intl.NumberFormatOptions | undefined;
@@ -341,7 +342,7 @@ export class Slider {
     if (authored) return authored;
     let number: string;
     try {
-      number = new Intl.NumberFormat(this.locale, this.formatOptions).format(value);
+      number = numberFormatter(this.locale, this.formatOptions).format(value);
     } catch {
       number = String(value);
     }

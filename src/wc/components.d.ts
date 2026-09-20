@@ -1281,7 +1281,7 @@ export namespace Components {
          */
         "label": string;
         /**
-          * Locale used by axes and default tooltip formatters.
+          * Locale used by axes and default tooltip formatters. Defaults to English (en-US).
          */
         "locale"?: string;
         /**
@@ -2704,7 +2704,7 @@ export namespace Components {
          */
         "streaming": boolean;
         /**
-          * ISO timestamp.
+          * ISO timestamp. Displayed in English using the viewer’s local time zone.
           * @default ''
          */
         "timestamp": string;
@@ -4138,7 +4138,7 @@ export namespace Components {
          */
         "label": string | undefined;
         /**
-          * Locale used by Intl.NumberFormat for the visible value.
+          * Locale used for the visible value. Defaults to English (en-US).
          */
         "locale": string | undefined;
         /**
@@ -8131,7 +8131,7 @@ declare namespace LocalJSX {
          */
         "label": string;
         /**
-          * Locale used by axes and default tooltip formatters.
+          * Locale used by axes and default tooltip formatters. Defaults to English (en-US).
          */
         "locale"?: string;
         /**
@@ -9697,7 +9697,7 @@ declare namespace LocalJSX {
          */
         "streaming"?: boolean;
         /**
-          * ISO timestamp.
+          * ISO timestamp. Displayed in English using the viewer’s local time zone.
           * @default ''
          */
         "timestamp"?: string;
@@ -11284,7 +11284,7 @@ declare namespace LocalJSX {
          */
         "label"?: string | undefined;
         /**
-          * Locale used by Intl.NumberFormat for the visible value.
+          * Locale used for the visible value. Defaults to English (en-US).
          */
         "locale"?: string | undefined;
         /**

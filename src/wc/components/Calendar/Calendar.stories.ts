@@ -90,3 +90,18 @@ export const MonthBoundaries: Story = {
     </div>
   `,
 };
+
+export const YearBoundaries: Story = {
+  render: () => html`
+    <div style="display:flex;flex-wrap:wrap;gap:var(--dimension-space-300);">
+      ${['0001-01-01', '0099-12-31', '9999-12-31'].map(
+        value => html`
+          <div style="width:320px;">
+            <ds-text as="h3" variant="text-body-medium" emphasis>${value}</ds-text>
+            <ds-calendar value=${value} @dsChange=${acceptDateChange}></ds-calendar>
+          </div>
+        `
+      )}
+    </div>
+  `,
+};

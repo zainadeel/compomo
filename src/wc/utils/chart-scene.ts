@@ -1,3 +1,4 @@
+import { dateFormatter, numberFormatter, resolveFormatLocale } from './intl-formatters';
 import { scaleBand, scaleLinear } from 'd3-scale';
 import {
   arc as arcShape,
@@ -445,9 +446,9 @@ function scalePosition(resolution: ScaleResolution, value: ChartValue): number |
 
 function formatTick(value: ChartValue, locale: string): string {
   if (value instanceof Date)
-    return new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric' }).format(value);
+    return dateFormatter(locale, { month: 'short', day: 'numeric', timeZone: 'UTC' }).format(value);
   if (typeof value === 'number')
-    return new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(value);
+    return numberFormatter(locale, { maximumFractionDigits: 2 }).format(value);
   return value;
 }
 
@@ -1856,10 +1857,11 @@ export function compileChartScene(
   definition: ChartDefinition,
   width: number,
   height: number,
-  locale = 'en',
+  locale = 'en-US',
   measurer: ChartTextMeasurer = text => ({ width: text.length * 7, height: 14 }),
   theme: ChartTheme = defaultChartTheme
 ): ChartScene {
+  locale = resolveFormatLocale(locale);
   const spec = normalizeCoordinateContainers(resolveSpec(definition, width, height));
   const marks = spec.marks as readonly ChartMark[];
   const observations = marks.map(observationsForMark);

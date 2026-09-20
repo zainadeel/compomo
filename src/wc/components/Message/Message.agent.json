@@ -24,7 +24,7 @@
     "Hover-only metadata rows remain keyboard reachable, reveal on focus, and stay visible for touch and coarse-pointer input."
   ],
   "states": [
-    "Pass an ISO timestamp. Message keeps the full value in dateTime and formats the visible value as a localized time; applications must not render a raw ISO string as visible transcript metadata.",
+    "Pass an ISO timestamp. Message keeps the full value in dateTime and formats the visible value in English using the viewer’s local time zone; applications must not render a raw ISO string as visible transcript metadata.",
     "A visible incoming author uses body-small emphasis with primary foreground; timestamp and delivery metadata remain caption text.",
     "Visible author, bubble content, and timestamp or delivery footer use consistent 4px vertical gaps.",
     "Grouping joins adjacent bubble corners, shows the incoming author only at the start, and shows delivery/time metadata only at the end. Outgoing author remains in the accessible message label without repeating a visible You label.",

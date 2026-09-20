@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <title>Formatting contracts</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+  </head>
+  <body>
+    <ds-chart id="dates" label="UTC readings" width="720" height="260"></ds-chart>
+    <ds-chart id="dense" label="One thousand points" width="720" height="260"></ds-chart>
+    <ds-slider
+      id="number"
+      label="Formatted value"
+      min="0"
+      max="20000"
+      step="any"
+      value="12345.5"
+    ></ds-slider>
+    <ds-message id="message" author="Avery" timestamp="2026-09-10T00:00:00Z">Hello</ds-message>
+    <script type="module">
+      import '/dist/components/ds-chart.js';
+      import '/dist/components/ds-slider.js';
+      import '/dist/components/ds-message.js';
+      import { defineChart, lineY } from '/dist/lib/utils/index.js';
+      import { scaleUtc, scaleLinear } from 'd3-scale';
+      await Promise.all(
+        ['ds-chart', 'ds-slider', 'ds-message'].map(tag => customElements.whenDefined(tag))
+      );
+      const dates = [new Date('2026-09-10T00:00:00Z'), new Date('2026-09-11T00:00:00Z')];
+      document.querySelector('#dates').definition = defineChart({
+        marks: [
+          lineY(
+            ['Current', 'Previous'].flatMap((series, j) =>
+              dates.map((date, i) => ({
+                id: `${series}-${i}`,
+                date,
+                series,
+                value: 12345.5 + i + j,
+              }))
+            ),
+            { id: 'reading', key: 'id', x: 'date', y: 'value', z: 'series' }
+          ),
+        ],
+        x: { scale: scaleUtc, axis: { ticks: { values: dates } } },
+        y: { scale: scaleLinear, axis: { ticks: { values: [12345.5, 12348.5] } } },
+        focus: 'group-x',
+        tooltip: true,
+      });
+      document.querySelector('#dense').definition = defineChart({
+        marks: [
+          lineY(
+            ['Current', 'Previous'].flatMap((series, j) =>
+              Array.from({ length: 500 }, (_, i) => ({
+                id: `${series}-${i}`,
+                x: i,
+                series,
+                value: 50 + Math.sin(i / 10) * 20 + j,
+              }))
+            ),
+            { id: 'dense', key: 'id', x: 'x', y: 'value', z: 'series' }
+          ),
+        ],
+        x: { scale: scaleLinear },
+        y: { scale: scaleLinear },
+        focus: 'group-x',
+        tooltip: true,
+      });
+      document.documentElement.dataset.ready = 'true';
+    </script>
+  </body>
+</html>

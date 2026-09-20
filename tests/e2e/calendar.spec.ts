@@ -6,6 +6,33 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('#single').getByRole('grid', { name: 'September 2026' })).toBeVisible();
 });
 
+test('supported year boundaries keep inactive dates and navigation out of selection @cross-browser', async ({
+  page,
+}) => {
+  const calendar = page.locator('#single');
+  for (const [date, direction, key] of [
+    ['0001-01-01', 'Previous month', 'ArrowLeft'],
+    ['9999-12-31', 'Next month', 'ArrowRight'],
+  ]) {
+    await calendar.evaluate((element: HTMLDsCalendarElement, value) => {
+      element.value = value;
+    }, date);
+    const selected = calendar.locator(`[data-date-option="${date}"]`);
+    await expect(selected).toHaveAttribute('aria-selected', 'true');
+    await expect(calendar.getByRole('button', { name: direction })).toBeDisabled();
+    await selected.focus();
+    await selected.press(key);
+    await expect(selected).toBeFocused();
+    await expect(calendar.locator('[role="gridcell"]')).toHaveCount(42);
+    for (const unavailable of await calendar.locator('[data-date-option=""]').all()) {
+      await expect(unavailable).toBeDisabled();
+      await expect(unavailable).toHaveAttribute('aria-selected', 'false');
+      await expect(unavailable).toHaveAttribute('tabindex', '-1');
+    }
+    await expect(calendar).toHaveJSProperty('value', date);
+  }
+});
+
 test('outside-month dates are inactive until their month is displayed @cross-browser', async ({
   page,
 }) => {

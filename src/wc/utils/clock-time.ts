@@ -12,7 +12,7 @@ export const CLOCK_PERIODS: readonly ClockPeriod[] = ['AM', 'PM'];
 const CLOCK_TIME_PATTERN = /^\d{2}:\d{2}$/;
 
 export function isClockTime(value: string): boolean {
-  if (!CLOCK_TIME_PATTERN.test(value)) return false;
+  if (typeof value !== 'string' || !CLOCK_TIME_PATTERN.test(value)) return false;
   const [hour, minute] = value.split(':').map(Number);
   return hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59;
 }
@@ -24,9 +24,12 @@ export function clockMinuteStep(step: string | number = 60): number {
   return Math.max(1, Math.round(seconds / 60));
 }
 
+/** Minute choices for a positive whole-minute stride; sub-minute strides fall back to one. */
 export function clockMinutes(step: number = 1, baseMinute: number = 0): number[] {
-  const stride = Number.isFinite(step) && step > 0 ? Math.floor(step) : 1;
-  const normalizedBase = ((Math.floor(baseMinute) % 60) + 60) % 60;
+  const stride = Number.isFinite(step) ? Math.max(1, Math.floor(step)) : 1;
+  const normalizedBase = Number.isFinite(baseMinute)
+    ? ((Math.floor(baseMinute) % 60) + 60) % 60
+    : 0;
   const values = new Set<number>();
   for (let offset = 0; offset < 1440; offset += stride) {
     values.add((normalizedBase + offset) % 60);
@@ -43,6 +46,17 @@ export function splitClockTime(value: string): ClockTimeParts | null {
 }
 
 export function joinClockTime(parts: ClockTimeParts): string {
+  if (
+    !parts ||
+    !Number.isInteger(parts.hour12) ||
+    parts.hour12 < 1 ||
+    parts.hour12 > 12 ||
+    !Number.isInteger(parts.minute) ||
+    parts.minute < 0 ||
+    parts.minute > 59 ||
+    (parts.period !== 'AM' && parts.period !== 'PM')
+  )
+    return '';
   const hour24 =
     parts.period === 'AM'
       ? parts.hour12 === 12
@@ -63,6 +77,7 @@ export function formatClockTimeLabel(value: string): string {
 
 /** Parse a typed clock time: `HH:MM`, `H:MM`, or a 12-hour label such as `9:00 AM`. */
 export function parseLooseClockTime(value: string): string {
+  if (typeof value !== 'string') return '';
   const trimmed = value.trim();
   if (!trimmed) return '';
   if (isClockTime(trimmed)) return trimmed;

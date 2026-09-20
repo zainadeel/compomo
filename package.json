@@ -96,6 +96,7 @@
     "verify:pack": "node scripts/verify-framework-proxies.mjs && node scripts/verify-npm-pack.mjs && node scripts/verify-package-imports.mjs",
     "verify:local": "npm run format:check && npm run typecheck && npm run typecheck:storybook && npm run lint && npm test && npm run build && npm run agent:validate && npm run verify:pack",
     "verify:local:full": "npm run verify:local && npm run test:e2e:chromium",
+    "perf:measure": "node --import tsx/esm scripts/measure-performance.mjs && node scripts/measure-bundles.mjs",
     "test": "node --import tsx/esm --test tests/*.test.ts",
     "test:e2e": "npm run build && playwright test",
     "test:e2e:chromium": "playwright test --project=chromium",
