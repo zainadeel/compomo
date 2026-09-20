@@ -11,6 +11,7 @@ import {
   Host,
 } from '@stencil/core';
 import { DEFAULT_REQUIRED_MESSAGE, setFormControlValue, setRequiredValidity } from '../../utils';
+import { ConnectionTasks } from '../../utils/connection-tasks';
 
 export type SwitchSize = 'lg' | 'md' | 'sm' | 'xs';
 
@@ -64,6 +65,13 @@ export class Switch {
   @State() private transitionsEnabled = false;
 
   private transitionsFrame?: number;
+  private readonly tasks = new ConnectionTasks(() => this.el.isConnected);
+
+  connectedCallback() {
+    if (!this.hasLoaded) return;
+    this.syncNativeLabels();
+    if (!this.transitionsEnabled) this.scheduleTransitionsEnable();
+  }
 
   componentWillLoad() {
     this.initialChecked = this.checked;
@@ -77,10 +85,9 @@ export class Switch {
   }
 
   disconnectedCallback() {
-    if (this.transitionsFrame !== undefined) {
-      cancelAnimationFrame(this.transitionsFrame);
-      this.transitionsFrame = undefined;
-    }
+    this.tasks.cancel();
+    this.transitionsFrame = undefined;
+    this.focused = false;
   }
 
   @Watch('checked')
@@ -93,11 +100,8 @@ export class Switch {
   }
 
   private scheduleTransitionsEnable() {
-    if (this.transitionsFrame !== undefined) {
-      cancelAnimationFrame(this.transitionsFrame);
-    }
-
-    this.transitionsFrame = requestAnimationFrame(() => {
+    this.tasks.cancelFrame(this.transitionsFrame);
+    this.transitionsFrame = this.tasks.frame(() => {
       this.transitionsEnabled = true;
       this.transitionsFrame = undefined;
     });

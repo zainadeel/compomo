@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Component resource lifecycle</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+    <style>
+      body {
+        margin: 24px;
+        background: var(--color-background-primary);
+        color: var(--color-foreground-primary);
+      }
+      .row {
+        margin-bottom: 16px;
+        max-width: 360px;
+      }
+      #scroll-frame {
+        width: 320px;
+        height: 240px;
+      }
+      #scroll-body {
+        height: 700px;
+      }
+      #overlay-content {
+        height: 40px;
+        background: var(--color-background-secondary);
+      }
+      #chart-frame {
+        position: relative;
+        width: 360px;
+        height: 120px;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="outside" type="button">Outside focus target</button>
+    <div id="owners">
+      <div class="row"><ds-markdown id="markdown" content="# Initial content"></ds-markdown></div>
+      <div class="row"><ds-switch id="switch" aria-label="Enable feature"></ds-switch></div>
+      <div class="row">
+        <ds-mobile-section-switcher
+          id="sections"
+          presentation="sheet"
+          page-label="Workspace"
+          value="overview"
+        ></ds-mobile-section-switcher>
+      </div>
+      <div class="row">
+        <button id="menu-anchor" type="button">Actions</button
+        ><ds-menu id="menu" anchor-id="menu-anchor" menu-label="Record actions"></ds-menu>
+      </div>
+      <div class="row"><ds-data-group id="group" aria-label="Group records"></ds-data-group></div>
+      <div class="row">
+        <ds-filter-menu id="filter" aria-label="Filter records"></ds-filter-menu>
+      </div>
+      <div class="row">
+        <ds-data-preferences id="preferences" label="Configure records"></ds-data-preferences>
+      </div>
+      <div class="row">
+        <ds-input-date id="date" value="2026-09-10" aria-label="Record date"></ds-input-date>
+      </div>
+      <div class="row">
+        <ds-input-time id="time" value="09:30" aria-label="Record time"></ds-input-time>
+      </div>
+      <ds-modal id="modal" heading="Retained dialog"
+        ><ds-text as="p">Controlled content stays available.</ds-text></ds-modal
+      >
+      <ds-banner id="banner" description="A persistent message"></ds-banner>
+      <div id="scroll-frame">
+        <ds-scroll-overlay id="scroll" scroll-label="Retained scrollport"
+          ><div id="scroll-body">Scrollable content</div>
+          <div slot="overlay" id="overlay-content">Persistent footer</div></ds-scroll-overlay
+        >
+      </div>
+      <div id="chart-frame">
+        <ds-tooltip-chart id="callout" label="Driving" value="12" x="20" y="20"></ds-tooltip-chart>
+      </div>
+    </div>
+    <script type="module">
+      import '/dist/components/ds-markdown.js';
+      import '/dist/components/ds-switch.js';
+      import '/dist/components/ds-mobile-section-switcher.js';
+      import '/dist/components/ds-menu.js';
+      import '/dist/components/ds-data-group.js';
+      import '/dist/components/ds-filter-menu.js';
+      import '/dist/components/ds-data-preferences.js';
+      import '/dist/components/ds-input-date.js';
+      import '/dist/components/ds-input-time.js';
+      import '/dist/components/ds-modal.js';
+      import '/dist/components/ds-banner.js';
+      import '/dist/components/ds-scroll-overlay.js';
+      import '/dist/components/ds-tooltip-chart.js';
+      const filters = [
+        {
+          id: 'status',
+          label: 'Status',
+          kind: 'multiple',
+          options: [
+            { label: 'Moving', value: 'moving' },
+            { label: 'Stopped', value: 'stopped' },
+          ],
+        },
+      ];
+      document.getElementById('sections').sections = [
+        { id: 'overview', label: 'Overview' },
+        { id: 'details', label: 'Details' },
+      ];
+      document.getElementById('menu').items = [
+        { label: 'Edit record', value: 'edit' },
+        { label: 'Duplicate record', value: 'duplicate' },
+      ];
+      document.getElementById('group').options = [{ label: 'Status', value: 'status' }];
+      document.getElementById('filter').filters = filters;
+      document.getElementById('preferences').filters = filters;
+      await Promise.all(
+        [...document.querySelectorAll('*')]
+          .filter(element => element.tagName.startsWith('DS-'))
+          .map(element => element.componentOnReady?.())
+      );
+      document.documentElement.dataset.ready = 'true';
+    </script>
+  </body>
+</html>

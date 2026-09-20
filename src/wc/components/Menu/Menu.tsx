@@ -23,6 +23,7 @@ import {
   type ControlSize,
 } from '../../utils';
 import { AnchoredPositionController } from '../../utils/anchored-position-controller';
+import { ConnectionTasks } from '../../utils/connection-tasks';
 import { AnchoredOverlayInteractionController } from '../../utils/anchored-overlay-interaction-controller';
 import { resolveAnchoredOverlayBoundaryRect } from '../../utils/anchored-overlay-boundary';
 import { computeAnchoredPosition, type AnchoredPositionInput } from '../../utils/anchored-position';
@@ -115,6 +116,8 @@ export class Menu {
   @Event() dsReorder!: EventEmitter<MenuReorderDetail>;
 
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
+  private loaded = false;
+  private readonly tasks = new ConnectionTasks(() => this.el.isConnected);
   private positionReadyCallback: (() => void) | undefined;
   private suppressItemClick = false;
   private reorderPointer: {
@@ -205,7 +208,12 @@ export class Menu {
   private lastRenderedEmptyMessage = '';
 
   componentDidLoad() {
+    this.loaded = true;
     if (this.open) this.onOpenChange(true);
+  }
+
+  connectedCallback() {
+    if (this.loaded && this.open) this.onOpenChange(true);
   }
 
   disconnectedCallback() {
@@ -213,11 +221,19 @@ export class Menu {
     this.cancelLivePositionUpdate();
     this.clearReorderPointer();
     this.teardownListeners();
+    this.positionReadyCallback = undefined;
+    this.shouldRender = false;
+    this.closing = false;
+    this.positionReady = false;
+    this.closingSections = null;
+    this.lastRenderedSections = [];
+    this.suppressItemClick = false;
+    this.reorderAnnouncement = '';
   }
 
   @Watch('open')
   onOpenChange(isOpen: boolean) {
-    if (this.embedded) return;
+    if (this.embedded || !this.loaded || !this.el.isConnected) return;
     if (isOpen) {
       this.teardownListeners();
       this.closingSections = null;
@@ -230,7 +246,7 @@ export class Menu {
       this.schedulePositionUpdate(() => {
         this.focusInitialItem();
       });
-    } else if (this.shouldRender) {
+    } else if (this.shouldRender && !this.closing) {
       this.positionReadyCallback = undefined;
       this.cancelPositionRetry();
       this.captureClosingSections();
@@ -289,6 +305,7 @@ export class Menu {
   }
 
   private finishClose() {
+    if (this.open || !this.closing || !this.el.isConnected) return;
     const popup = this.el.querySelector<HTMLElement>('.menu-popup');
     if (popup?.matches(':popover-open')) popup.hidePopover();
     this.shouldRender = false;
@@ -350,7 +367,7 @@ export class Menu {
 
   /** Retry until anchor + popup exist — do not reveal at 0,0 on a failed first pass. */
   private schedulePositionUpdate(onReady?: () => void) {
-    if (!this.open) return;
+    if (!this.open || !this.el.isConnected) return;
     this.positionReady = false;
     // Opening often sets `open` and `anchorId` together. Each Watch reschedules
     // placement; keep the open-path ready callback so initial focus is not dropped.
@@ -372,13 +389,13 @@ export class Menu {
   /** Focus the selected item when present, otherwise the first enabled item. */
   private focusInitialItem() {
     if (!this.hasCompositeSections && !this.flatItems.length && this.emptyMessage.trim()) {
-      requestAnimationFrame(() => {
+      this.tasks.frame(() => {
         if (this.open) this.el.querySelector<HTMLElement>('.menu-popup')?.focus();
       });
       return;
     }
     if (this.hasCompositeSections) {
-      requestAnimationFrame(() => {
+      this.tasks.frame(() => {
         this.el.querySelector<HTMLElement>('.menu-popup [tabindex="0"]')?.focus();
       });
       return;
@@ -389,7 +406,7 @@ export class Menu {
     const firstEnabledIdx = flat.findIndex(it => !it.isInactive || !!it.reorderable);
     this.focusedIndex = selectedIdx >= 0 ? selectedIdx : firstEnabledIdx >= 0 ? firstEnabledIdx : 0;
 
-    requestAnimationFrame(() => {
+    this.tasks.frame(() => {
       const btns = this.el.querySelectorAll<HTMLElement>('.menu-item');
       btns[this.focusedIndex]?.focus();
     });
@@ -401,6 +418,7 @@ export class Menu {
   }
 
   private teardownListeners() {
+    this.tasks.cancel();
     this.position.unobserve();
     this.interaction.disconnect();
     if (this.closeTimer) {
@@ -604,7 +622,7 @@ export class Menu {
     const section = this.activeSections[drag.sectionIndex];
     const insertBefore = this.reorderInsertBefore;
     this.clearReorderPointer();
-    queueMicrotask(() => {
+    this.tasks.microtask(() => {
       this.suppressItemClick = false;
     });
     if (!section || isMenuPickerSection(section) || insertBefore === null) return;
@@ -617,7 +635,7 @@ export class Menu {
   private onReorderPointerCancel = (event: PointerEvent) => {
     if (!this.reorderPointer || event.pointerId !== this.reorderPointer.pointerId) return;
     this.clearReorderPointer();
-    queueMicrotask(() => {
+    this.tasks.microtask(() => {
       this.suppressItemClick = false;
     });
   };

@@ -89,6 +89,8 @@ export class AnchoredPositionController {
   private ownerDocument: Document | null = null;
   private last: AnchoredPosition | null = null;
   private isReady = false;
+  private generation = 0;
+  private retryGeneration = 0;
   private readonly anchorMotionStartHandler = (event: Event) => {
     if (!this.eventCanMoveAnchor(event)) return;
     this.activeAnchorMotions += 1;
@@ -135,15 +137,22 @@ export class AnchoredPositionController {
   schedule(onReady?: () => void): void {
     this.cancelRetry();
     this.isReady = false;
+    const generation = this.generation;
+    const retryGeneration = this.retryGeneration;
+    const current = () =>
+      generation === this.generation && retryGeneration === this.retryGeneration;
 
     let remaining = this.options.retryBudget ?? POSITION_RETRY_BUDGET;
 
     const attempt = () => {
+      if (!current()) return;
       this.retryRaf = null;
-      if (this.update()) {
+      const measured = this.update();
+      if (!current()) return;
+      if (measured) {
         this.isReady = true;
         this.options.onReady?.();
-        onReady?.();
+        if (current()) onReady?.();
         return;
       }
       if (remaining > 0) {
@@ -158,9 +167,9 @@ export class AnchoredPositionController {
   /** Measure and commit once. @returns `false` when the popup is not measurable. */
   update(): boolean {
     const anchor = this.options.getAnchor();
-    if (!anchor) return false;
+    if (!anchor?.isConnected) return false;
     const popup = this.options.getPopup();
-    if (!popup) return false;
+    if (!popup?.isConnected) return false;
     this.observeResizeTargets();
 
     if (
@@ -196,6 +205,7 @@ export class AnchoredPositionController {
 
   /** Reposition an already-open popup without hiding it. */
   scheduleLiveUpdate(): void {
+    const generation = this.generation;
     const mode = this.options.liveUpdate ?? 'sync';
     if (mode === 'sync') {
       this.update();
@@ -206,6 +216,7 @@ export class AnchoredPositionController {
 
     if (mode === 'frame') {
       this.liveRaf = requestAnimationFrame(() => {
+        if (generation !== this.generation) return;
         this.liveRaf = null;
         this.update();
       });
@@ -214,8 +225,11 @@ export class AnchoredPositionController {
 
     // double-frame stays coalesced until the second frame resolves.
     this.liveRaf = requestAnimationFrame(() => {
+      if (generation !== this.generation) return;
       this.update();
+      if (generation !== this.generation) return;
       this.liveRaf = requestAnimationFrame(() => {
+        if (generation !== this.generation) return;
         this.liveRaf = null;
         this.update();
       });
@@ -224,6 +238,7 @@ export class AnchoredPositionController {
 
   /** Cancel pending retry and live frames without unbinding listeners. */
   cancel(): void {
+    this.generation += 1;
     this.cancelRetry();
     if (this.liveRaf !== null) {
       cancelAnimationFrame(this.liveRaf);
@@ -236,6 +251,7 @@ export class AnchoredPositionController {
   }
 
   private cancelRetry(): void {
+    this.retryGeneration += 1;
     if (this.retryRaf === null) return;
     cancelAnimationFrame(this.retryRaf);
     this.retryRaf = null;
@@ -249,7 +265,10 @@ export class AnchoredPositionController {
     window.addEventListener('resize', this.scrollResizeHandler);
 
     if (this.options.observeResize && typeof ResizeObserver !== 'undefined') {
-      this.resizeObserver = new ResizeObserver(() => this.scheduleLiveUpdate());
+      const observer = new ResizeObserver(() => {
+        if (this.resizeObserver === observer) this.scheduleLiveUpdate();
+      });
+      this.resizeObserver = observer;
       this.observeResizeTargets();
     }
 
@@ -295,9 +314,12 @@ export class AnchoredPositionController {
 
   private scheduleAnchorMotionUpdate(): void {
     if (this.anchorMotionRaf !== null) return;
+    const generation = this.generation;
     const tick = () => {
+      if (generation !== this.generation) return;
       this.anchorMotionRaf = null;
       this.update();
+      if (generation !== this.generation) return;
       if (this.activeAnchorMotions <= 0 || !this.options.getAnchor()?.isConnected) {
         this.activeAnchorMotions = 0;
         return;

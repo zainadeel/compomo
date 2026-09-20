@@ -42,6 +42,7 @@ import {
   type ListCustomizerOptions,
 } from '../../utils/list-customizer';
 import { AnchoredPositionController } from '../../utils/anchored-position-controller';
+import { ConnectionTasks } from '../../utils/connection-tasks';
 import { AnchoredOverlayInteractionController } from '../../utils/anchored-overlay-interaction-controller';
 import { resolveCssLengthPx } from '../../utils/resolve-css-length-px';
 import { TOKEN_DEFAULTS } from '../../utils/token-defaults';
@@ -114,6 +115,7 @@ export class DataPreferences {
   private readonly popupId = `ds-data-preferences-${++preferencesSequence}`;
   private trigger?: HTMLDsButtonUnfilledElement;
   private popup?: HTMLElement;
+  private readonly tasks = new ConnectionTasks(() => this.el.isConnected);
   private readonly position = new AnchoredPositionController({
     getAnchor: () => this.trigger ?? null,
     getPopup: () => this.popup ?? null,
@@ -155,17 +157,19 @@ export class DataPreferences {
     onOutsideActivation: () => this.close(),
   });
   disconnectedCallback() {
-    this.position.unobserve();
-    this.interaction.disconnect();
+    this.close(false);
   }
-  private close() {
+  private close(restoreFocus = true) {
+    this.tasks.cancel();
     this.position.unobserve();
     this.interaction.disconnect();
     if (this.popup?.matches(':popover-open')) this.popup.hidePopover();
     this.open = false;
-    void this.trigger?.setFocus();
+    this.ready = false;
+    if (restoreFocus) void this.trigger?.setFocus();
   }
   private toggle() {
+    if (!this.el.isConnected) return;
     if (this.open) {
       this.close();
       return;
@@ -175,11 +179,14 @@ export class DataPreferences {
     this.position.observe();
     this.interaction.connect();
     this.position.schedule(async () => {
-      await this.popup?.querySelector('ds-tab-group')?.componentOnReady?.();
-      requestAnimationFrame(() => {
-        if (this.open)
-          this.popup?.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]')?.focus();
+      const focus = this.tasks.guard(() => {
+        this.tasks.frame(() => {
+          if (this.open)
+            this.popup?.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]')?.focus();
+        });
       });
+      await this.popup?.querySelector('ds-tab-group')?.componentOnReady?.();
+      focus();
     });
   }
   @Listen('keydown')

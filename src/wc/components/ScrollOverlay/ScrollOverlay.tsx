@@ -27,6 +27,10 @@ export class ScrollOverlay {
   private overlay?: HTMLElement;
   private controller?: ScrollOverlayController;
 
+  connectedCallback(): void {
+    this.controller?.connect();
+  }
+
   componentDidLoad(): void {
     if (!this.viewport || !this.content || !this.overlay) return;
     this.controller = new ScrollOverlayController({

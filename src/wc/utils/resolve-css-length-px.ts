@@ -1,67 +1,41 @@
+// Only literals are independent of theme, viewport, font, and component scope.
 const lengthPxCache = new Map<string, number>();
+const probes = new WeakMap<Document, HTMLElement>();
+const CACHE_LIMIT = 256;
 
-let probeEl: HTMLElement | null = null;
-
-function getProbeElement(): HTMLElement | null {
-  if (typeof document === 'undefined') return null;
-
-  if (!probeEl) {
-    probeEl = document.createElement('div');
-    probeEl.setAttribute('aria-hidden', 'true');
-    probeEl.style.cssText =
-      'position:absolute;visibility:hidden;pointer-events:none;top:0;left:0;width:0;height:0;overflow:hidden;';
-    document.documentElement.appendChild(probeEl);
-  }
-
-  return probeEl;
+function literalPixels(value: string): number | undefined {
+  const cached = lengthPxCache.get(value);
+  if (cached !== undefined) return cached;
+  if (!/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?(?:px)?$/i.test(value)) return undefined;
+  const pixels = Number(value.replace(/px$/i, ''));
+  if (!Number.isFinite(pixels)) return undefined;
+  if (lengthPxCache.size >= CACHE_LIMIT) lengthPxCache.clear();
+  lengthPxCache.set(value, pixels);
+  return pixels;
 }
 
-function applyContextVariables(
-  probe: HTMLElement,
-  cssLength: string,
-  context: Element
-): Array<{ name: string; value: string; priority: string }> {
-  const contextStyle = getComputedStyle(context);
-  const pending = [...cssLength.matchAll(/var\(\s*(--[\w-]+)/g)].map(match => match[1]);
-  const visited = new Set<string>();
-  const previous: Array<{ name: string; value: string; priority: string }> = [];
-
-  while (pending.length > 0) {
-    const name = pending.shift();
-    if (!name || visited.has(name)) continue;
-    visited.add(name);
-    const value = contextStyle.getPropertyValue(name).trim();
-    if (!value) continue;
-    previous.push({
-      name,
-      value: probe.style.getPropertyValue(name),
-      priority: probe.style.getPropertyPriority(name),
-    });
-    probe.style.setProperty(name, value);
-    for (const match of value.matchAll(/var\(\s*(--[\w-]+)/g)) pending.push(match[1]);
+function getProbeElement(ownerDocument: Document): HTMLElement {
+  let probe = probes.get(ownerDocument);
+  if (!probe) {
+    probe = ownerDocument.createElement('div');
+    probe.setAttribute('aria-hidden', 'true');
+    probe.style.cssText =
+      'all:initial;position:fixed;visibility:hidden;pointer-events:none;top:0;left:0;width:0;height:0;margin:0;padding:0;border:0;overflow:hidden;';
+    probes.set(ownerDocument, probe);
   }
-
-  return previous;
+  if (!probe.isConnected) ownerDocument.documentElement.appendChild(probe);
+  return probe;
 }
 
-function restoreProbeVariables(
-  probe: HTMLElement,
-  previous: Array<{ name: string; value: string; priority: string }>
-): void {
-  for (const { name, value, priority } of previous) {
-    if (value) probe.style.setProperty(name, value, priority);
-    else probe.style.removeProperty(name);
-  }
-}
-
-/** Clear session cache (tests only). */
+/** Clear the bounded cache of context-independent numeric and pixel literals. */
 export function clearCssLengthPxCache(): void {
   lengthPxCache.clear();
 }
 
 /**
- * Resolve a CSS length to pixels for layout math.
- * Numbers pass through; `var(--dimension-*)`, `calc(...)`, and `16px` resolve via a hidden probe.
+ * Resolve a CSS length to pixels for layout math. Dynamic expressions are read
+ * from the current document and optional component scope on every call. Relative
+ * font units use that scope; percentage lengths use the viewport's inline size.
  */
 export function resolveCssLengthPx(
   value: number | string | undefined,
@@ -69,58 +43,52 @@ export function resolveCssLengthPx(
   context?: Element
 ): number {
   const resolved = value === undefined || value === null || value === '' ? fallback : value;
-  if (typeof resolved === 'number') return resolved;
+  if (typeof resolved === 'number') return Number.isFinite(resolved) ? resolved : 0;
 
   const trimmed = resolved.trim();
   if (!trimmed) return resolveCssLengthPx(fallback, 0, context);
+  const literal = literalPixels(trimmed);
+  if (literal !== undefined) return literal;
 
-  // Component-scoped custom properties inherit from their actual composition
-  // boundary, not documentElement where the shared measurement probe lives.
-  // Resolve a direct var() from that scope first, then measure the resulting
-  // token/calc/px value with the normal cached path.
-  const scopedProperty = context ? trimmed.match(/^var\(\s*(--[\w-]+)/)?.[1] : undefined;
-  if (context && scopedProperty) {
-    const scopedValue = getComputedStyle(context).getPropertyValue(scopedProperty).trim();
-    if (scopedValue && scopedValue !== trimmed) {
-      return resolveCssLengthPx(scopedValue, fallback, context);
-    }
-  }
-
-  const contextDependent = !!context && trimmed.includes('var(');
-  const cached = contextDependent ? undefined : lengthPxCache.get(trimmed);
-  if (cached !== undefined) return cached;
-
-  if (/^-?\d+(\.\d+)?$/.test(trimmed)) {
-    const n = Number(trimmed);
-    lengthPxCache.set(trimmed, n);
-    return n;
-  }
-
-  const pxMatch = trimmed.match(/^(-?\d+(\.\d+)?)px$/);
-  if (pxMatch) {
-    const px = parseFloat(pxMatch[1]);
-    lengthPxCache.set(trimmed, px);
-    return px;
-  }
+  const fallbackPixels = typeof fallback === 'number' ? fallback : literalPixels(fallback.trim());
+  const safeFallback = Number.isFinite(fallbackPixels) ? (fallbackPixels as number) : 0;
+  const ownerDocument =
+    context?.ownerDocument ?? (typeof document === 'undefined' ? null : document);
+  const view = ownerDocument?.defaultView;
+  if (!ownerDocument?.documentElement || !view) return safeFallback;
 
   const cssLength = /^--[\w-]+$/.test(trimmed) ? `var(${trimmed})` : trimmed;
-
-  const probe = getProbeElement();
-  if (!probe) {
-    return typeof fallback === 'number' ? fallback : 0;
+  if (!view.CSS.supports('left', cssLength)) return safeFallback;
+  const scopeStyle = view.getComputedStyle(context ?? ownerDocument.documentElement);
+  const directProperty = cssLength.match(/^var\(\s*(--[\w-]+)\s*\)$/)?.[1];
+  if (directProperty) {
+    const scopedValue = scopeStyle.getPropertyValue(directProperty).trim();
+    if (!scopedValue) return safeFallback;
+    // Most design tokens are pixel literals; avoid a layout probe on that path.
+    const scopedPixels = literalPixels(scopedValue);
+    if (scopedPixels !== undefined) return scopedPixels;
   }
 
-  const previousVariables = context ? applyContextVariables(probe, cssLength, context) : [];
-  probe.style.width = cssLength;
-  const px = probe.getBoundingClientRect().width;
-  probe.style.width = '';
-  restoreProbeVariables(probe, previousVariables);
-  // A stylesheet can finish loading after a custom element's first layout
-  // pass (notably in WebKit). Do not permanently cache the probe's temporary
-  // zero when the length depends on a custom property; a later call must be
-  // able to resolve the now-available token.
-  if (!contextDependent && (px !== 0 || !cssLength.includes('var('))) {
-    lengthPxCache.set(trimmed, px);
+  const probe = getProbeElement(ownerDocument);
+  const variables = new Set([...cssLength.matchAll(/var\(\s*(--[\w-]+)/g)].map(match => match[1]));
+  // Computed custom properties already have their nested var() references
+  // substituted. Explicitly unset missing values so root tokens cannot leak
+  // into a scope that invalidates them and supplies its own var() fallback.
+  for (const name of variables) {
+    probe.style.setProperty(name, scopeStyle.getPropertyValue(name).trim() || 'initial');
   }
-  return px;
+  probe.style.font = scopeStyle.font;
+  probe.style.fontSize = scopeStyle.fontSize;
+  probe.style.lineHeight = scopeStyle.lineHeight;
+  // An offset accepts negative lengths too, unlike width which clamps them.
+  probe.style.left = '';
+  probe.style.left = cssLength;
+  try {
+    if (!probe.style.left) return safeFallback;
+    const pixels = parseFloat(view.getComputedStyle(probe).left);
+    return Number.isFinite(pixels) ? pixels : safeFallback;
+  } finally {
+    probe.style.left = '0px';
+    for (const name of variables) probe.style.removeProperty(name);
+  }
 }

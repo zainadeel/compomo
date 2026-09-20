@@ -18,6 +18,7 @@ import {
 } from '../TabGroup/tab-item-utils';
 import { resolveMobileSectionPosition } from './mobile-section-switcher-utils';
 import { resolveMotionTimeMs, TOKEN_DEFAULTS } from '../../utils';
+import { ConnectionTasks } from '../../utils/connection-tasks';
 
 let nextMobileSectionSwitcherId = 0;
 
@@ -60,6 +61,9 @@ export class MobileSectionSwitcher {
   private themeObserver?: MutationObserver;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
   private visibilityObserver?: ResizeObserver;
+  private loaded = false;
+  private boundDocument?: Document;
+  private readonly tasks = new ConnectionTasks(() => this.el.isConnected);
 
   private readonly handleDocumentKeyDown = (event: KeyboardEvent) => {
     if (['Shift', 'Control', 'Alt', 'Meta'].includes(event.key)) return;
@@ -67,17 +71,30 @@ export class MobileSectionSwitcher {
   };
 
   componentDidLoad() {
-    this.el.ownerDocument.addEventListener('keydown', this.handleDocumentKeyDown, true);
-    this.visibilityObserver = new ResizeObserver(() => {
-      if (this.dialogEl?.open && !this.triggerEl?.getClientRects().length) {
-        this.finishSheetClose(false);
-      }
-    });
+    this.loaded = true;
+    this.connectResources();
+  }
+
+  connectedCallback() {
+    if (this.loaded) this.connectResources();
+  }
+
+  private connectResources() {
+    if (!this.el.isConnected || this.boundDocument) return;
+    this.boundDocument = this.el.ownerDocument;
+    this.boundDocument.addEventListener('keydown', this.handleDocumentKeyDown, true);
+    this.visibilityObserver = new ResizeObserver(
+      this.tasks.guard(() => {
+        if (this.dialogEl?.open && !this.triggerEl?.getClientRects().length) {
+          this.finishSheetClose(false);
+        }
+      })
+    );
     this.visibilityObserver.observe(this.el);
   }
 
   componentDidRender() {
-    if (!this.dialogEl) return;
+    if (!this.el.isConnected || !this.dialogEl) return;
     if (this.presentation === 'sheet' && this.menuOpen && !this.dialogEl.open) {
       const initialSection = this.focusedSection;
       this.updateBrowserEdgeColor();
@@ -96,8 +113,12 @@ export class MobileSectionSwitcher {
   }
 
   disconnectedCallback() {
-    this.el.ownerDocument.removeEventListener('keydown', this.handleDocumentKeyDown, true);
+    this.tasks.cancel();
+    this.boundDocument?.removeEventListener('keydown', this.handleDocumentKeyDown, true);
+    this.boundDocument = undefined;
     this.visibilityObserver?.disconnect();
+    this.visibilityObserver = undefined;
+    this.pointerFocus = false;
     this.menuSurfaceOpen = false;
     this.finishSheetClose(false);
   }
@@ -126,7 +147,7 @@ export class MobileSectionSwitcher {
   }
 
   private updateBrowserEdgeColor = () => {
-    if (!this.browserEdgeEl || !this.dialogEl) return;
+    if (!this.el.isConnected || !this.browserEdgeEl || !this.dialogEl) return;
     const base = getComputedStyle(this.browserEdgeEl).color;
     const shade = getComputedStyle(this.dialogEl, '::backdrop').backgroundColor;
     const colors = `${base}|${shade}`;
@@ -268,7 +289,11 @@ export class MobileSectionSwitcher {
     if (this.selectableSections.length <= 1) {
       this.closeMenu();
       this.menuSurfaceOpen = false;
-    } else if (this.dialogEl?.open && !this.sheetClosing) this.focusSheetItem(this.focusedSection);
+    } else if (this.dialogEl?.open && !this.sheetClosing) {
+      this.tasks.frame(() => {
+        if (this.dialogEl?.open && !this.sheetClosing) this.focusSheetItem(this.focusedSection);
+      });
+    }
   }
 
   private toggleMenu = (event: MouseEvent) => {
@@ -379,7 +404,7 @@ export class MobileSectionSwitcher {
     if (!section || section.isInactive) return;
     this.closeMenu();
     if (id !== this.selectedSection?.id) this.dsChange.emit(id);
-    requestAnimationFrame(() => this.triggerEl?.focus());
+    this.tasks.frame(() => this.triggerEl?.focus());
   };
 
   render() {

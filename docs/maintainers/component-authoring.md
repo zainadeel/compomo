@@ -72,6 +72,10 @@ props even when the dimensions have not changed.
 and guards microtasks or promise callbacks against an earlier connection. Call
 its `cancel()` during disconnect and clear any component-owned frame handles.
 Observers, listeners, and timers still need explicit teardown by their owner.
+Controlled overlays reconcile their current `open` prop when reconnected. Reset
+internally opened menus and pickers to closed on removal. Disconnecting cancels
+exit work without emitting a stale completion event or returning focus from an
+old connection; a normal connected close still owns its completion and focus.
 When removal interrupts a shared transition or drag, release the original
 owner's transition gate and restore any document styles changed by the drag.
 
@@ -88,6 +92,13 @@ and slot attributes, and include character-data changes when plain text matters.
 Keep the reconciliation idempotent so rendering does not cause an observer loop.
 The [content lifecycle tests](../../tests/e2e/content-lifecycle.spec.ts) cover
 responsive card measurement and dynamic slotted content after reconnection.
+The [runtime lifecycle tests](../../tests/e2e/runtime-lifecycle.spec.ts) cover
+controlled overlays, internal pickers, parsing, motion, and scroll observation.
+
+Use `resolveCssLengthPx` for CSS-driven layout math and pass the component's
+element when a length belongs to its inherited theme or font scope. Only fixed
+numeric and pixel literals may be cached across measurements. Theme tokens,
+relative font units, and viewport expressions must follow their current context.
 
 ## Form controls
 

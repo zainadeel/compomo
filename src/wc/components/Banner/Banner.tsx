@@ -57,6 +57,13 @@ export class Banner {
   private transitionTimer: ReturnType<typeof setTimeout> | null = null;
   private closePending = false;
 
+  connectedCallback() {
+    if (!this.loaded) return;
+    this.rendered = this.open;
+    this.phase = this.open ? 'open' : 'closed';
+    this.updateActionsPresence();
+  }
+
   componentWillLoad() {
     this.rendered = this.open;
     this.phase = this.open ? 'open' : 'closed';
@@ -69,11 +76,12 @@ export class Banner {
 
   disconnectedCallback() {
     this.clearTransitionWork();
+    this.closePending = false;
   }
 
   @Watch('open')
   onOpenChange(isOpen: boolean) {
-    if (!this.loaded) return;
+    if (!this.loaded || !this.el.isConnected) return;
     if (isOpen) this.startOpen();
     else this.startClose();
   }
@@ -115,7 +123,7 @@ export class Banner {
   }
 
   private finishClose() {
-    if (this.open || !this.closePending) return;
+    if (this.open || !this.closePending || !this.el.isConnected) return;
     this.closePending = false;
     this.rendered = false;
     this.phase = 'closed';

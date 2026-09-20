@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { ref } from 'lit/directives/ref.js';
 import '../../../../dist/components/ds-modal.js';
 import '../../../../dist/components/ds-button-filled.js';
 import '../../../../dist/components/ds-button-unfilled.js';
@@ -21,6 +22,48 @@ const meta: Meta = {
 
 export default meta;
 type Story = StoryObj;
+
+export const Reconnection: Story = {
+  render: () => {
+    let modal: HTMLDsModalElement | undefined;
+    const reinsert = () => {
+      const parent = modal?.parentElement;
+      if (!modal || !parent) return;
+      modal.remove();
+      parent.append(modal);
+    };
+    return html`
+      <div style="display:grid;gap:var(--dimension-space-200);">
+        <ds-text as="p" variant="text-body-small" color="secondary">
+          Open the dialog, then reinsert it. It should reopen with the same content. Escape and
+          Close should still dismiss it.
+        </ds-text>
+        <ds-button-unfilled
+          label="Open dialog"
+          @dsClick=${() => {
+            if (modal) modal.open = true;
+          }}
+        ></ds-button-unfilled>
+        <ds-modal
+          heading="Retained dialog"
+          ${ref(element => {
+            modal = element as HTMLDsModalElement | undefined;
+          })}
+        >
+          <ds-text as="p" variant="text-body-medium" color="secondary">
+            The application still has open set to true when this dialog is reinserted.
+          </ds-text>
+          <ds-button-unfilled
+            slot="footer"
+            label="Reinsert dialog"
+            has-border
+            @dsClick=${reinsert}
+          ></ds-button-unfilled>
+        </ds-modal>
+      </div>
+    `;
+  },
+};
 
 const closeOwningModal = (event: CustomEvent<MouseEvent>) => {
   const trigger = event.currentTarget as HTMLElement | null;

@@ -10,6 +10,7 @@ import {
   Host,
 } from '@stencil/core';
 import { resolveMotionTimeMs, TOKEN_DEFAULTS } from '../../utils';
+import { ConnectionTasks } from '../../utils/connection-tasks';
 
 export type ModalWidth = 'sm' | 'md' | 'lg';
 export type ModalCloseReason = 'close-button' | 'escape' | 'backdrop';
@@ -69,13 +70,23 @@ export class Modal {
   private dialogEl: HTMLDialogElement | null = null;
   private previousFocus: HTMLElement | null = null;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
+  private loaded = false;
+  private readonly tasks = new ConnectionTasks(() => this.el.isConnected);
+
+  connectedCallback() {
+    if (!this.loaded) return;
+    this.updateFooterPresence();
+    this.onOpenChange(this.open);
+  }
 
   componentDidLoad() {
+    this.loaded = true;
     this.updateFooterPresence();
     if (this.open) this.onOpenChange(true);
   }
 
   componentDidRender() {
+    if (!this.el.isConnected) return;
     if (!this.closing || !this.dialogEl?.open || this.closeTimer) return;
     const closeAnimationMs = this.closeAnimationMs;
     if (closeAnimationMs <= 0) {
@@ -89,20 +100,25 @@ export class Modal {
   }
 
   disconnectedCallback() {
+    this.tasks.cancel();
     this.clearCloseTimer();
     if (this.dialogEl?.open) this.dialogEl.close();
+    this.closing = false;
+    this.previousFocus = null;
   }
 
   @Watch('open')
   onOpenChange(isOpen: boolean) {
+    if (!this.loaded || !this.el.isConnected) return;
+    this.tasks.cancel();
     if (isOpen) {
       this.clearCloseTimer();
       const alreadyOpen = !!this.dialogEl?.open;
       this.closing = false;
       if (!this.dialogEl || alreadyOpen) return;
-      this.previousFocus = document.activeElement as HTMLElement | null;
+      this.previousFocus = this.el.ownerDocument.activeElement as HTMLElement | null;
       this.dialogEl.showModal();
-      requestAnimationFrame(() => {
+      this.tasks.frame(() => {
         if (this.open && this.dialogEl?.open) this.focusClose();
       });
     } else if (this.dialogEl?.open) {
@@ -194,7 +210,7 @@ export class Modal {
   }
 
   private finishClose() {
-    if (!this.dialogEl?.open) return;
+    if (this.open || !this.el.isConnected || !this.dialogEl?.open) return;
     this.dialogEl.close();
     this.closing = false;
     this.clearCloseTimer();
