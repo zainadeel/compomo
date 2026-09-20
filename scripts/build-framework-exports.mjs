@@ -3,6 +3,8 @@
 import { execFileSync } from 'node:child_process';
 import { cpSync, existsSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { cleanFileProviderCollisions } from './clean-framework-proxies.mjs';
+import { build } from 'esbuild';
+import { writeBundleNotices } from './bundle-notices.mjs';
 
 const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
 const stencilReactRuntime = '@stencil/react-output-target/runtime';
@@ -72,20 +74,20 @@ execFileSync(npx, ['ngc', '-p', 'tsconfig.angular.json'], { stdio: 'inherit' });
 
 rewriteRuntimeImports('dist/react', stencilReactRuntime, './react-runtime.js', 'React');
 
-execFileSync(
-  npx,
-  [
-    'esbuild',
-    'src/framework/vue-runtime.ts',
-    '--bundle',
-    '--format=esm',
-    '--platform=neutral',
-    '--outfile=dist/vue/vue-runtime.js',
-    '--external:vue',
-    '--external:vue/server-renderer',
-  ],
-  { stdio: 'inherit' }
-);
+const vueRuntime = await build({
+  entryPoints: ['src/framework/vue-runtime.ts'],
+  bundle: true,
+  format: 'esm',
+  platform: 'neutral',
+  outfile: 'dist/vue/vue-runtime.js',
+  external: ['vue', 'vue/server-renderer'],
+  metafile: true,
+});
+writeBundleNotices({
+  inputs: Object.keys(vueRuntime.metafile.inputs),
+  root: process.cwd(),
+  output: 'dist/vue',
+});
 writeFileSync('dist/vue/vue-runtime.d.ts', VUE_RUNTIME_DTS);
 rewriteRuntimeImports('dist/vue', stencilVueRuntime, './vue-runtime.js', 'Vue', [
   'vue-runtime.js',

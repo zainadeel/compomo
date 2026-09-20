@@ -28,9 +28,27 @@ Never hand-edit:
 
 Edit source, then regenerate.
 
+Cleanup removes files only from build-owned output and cache directories. The
+File Provider collision sweep reports numbered copies in authored component,
+test, and legacy framework directories for manual review; it never deletes
+them. Cleanup does not follow directory symlinks.
+
 `npm run dev` finalizes the same coherent package output after each Stencil
 watch build. Storybook uses `npm run dev:components`, a component-only output
 profile with its own `dist/.storybook-ready` reload boundary.
+
+## Bundled dependency licenses
+
+Component, Vue runtime, lint, and MCP bundles emit `THIRD-PARTY-NOTICES` and a
+`bundled-dependencies.json` inventory beside their JavaScript. The build derives
+these from Stencil source maps or esbuild inputs, including nested dependency
+versions, and preserves complete license and notice files. Missing license
+files fail the build. Update the shared notice generator when adding a new
+bundling path; do not maintain a separate package list by hand.
+
+`npm run verify:pack` requires these artifacts in the published tarball. Root
+`NOTICE` also identifies the locally adapted Stylelint code, whose license is
+preserved separately from third-party bundle discovery.
 
 ## Registry ownership
 

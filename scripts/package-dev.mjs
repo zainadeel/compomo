@@ -4,6 +4,7 @@ import { execFileSync, spawn } from 'node:child_process';
 const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
 const node = process.execPath;
 const postBuildScripts = [
+  'build-component-notices.mjs',
   'verify-framework-proxies.mjs',
   'patch-index-types.mjs',
   'verify-icons-externalized.mjs',

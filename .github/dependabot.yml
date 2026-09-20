@@ -12,7 +12,7 @@ updates:
     groups:
       github-actions:
         patterns:
-          - "*"
+          - '*'
 
   - package-ecosystem: npm
     directory: /
@@ -24,24 +24,31 @@ updates:
       prefix: chore
       include: scope
     groups:
+      angular:
+        patterns:
+          - '@angular/*'
+      vitest:
+        patterns:
+          - 'vitest'
+          - '@vitest/*'
       react:
         patterns:
-          - "react"
-          - "react-dom"
-          - "@types/react"
-          - "@types/react-dom"
+          - 'react'
+          - 'react-dom'
+          - '@types/react'
+          - '@types/react-dom'
       vite:
         patterns:
-          - "vite"
-          - "@vitejs/*"
-          - "vite-plugin-*"
+          - 'vite'
+          - '@vitejs/*'
+          - 'vite-plugin-*'
       storybook:
         patterns:
-          - "storybook"
-          - "@storybook/*"
+          - 'storybook'
+          - '@storybook/*'
       types:
         patterns:
-          - "@types/*"
+          - '@types/*'
         exclude-patterns:
-          - "@types/react"
-          - "@types/react-dom"
+          - '@types/react'
+          - '@types/react-dom'
