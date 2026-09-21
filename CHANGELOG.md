@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.5.1](https://github.com/zainadeel/compomo/compare/v15.5.0...v15.5.1) (2026-09-21)
+
+
+### Fixed
+
+* align component visual state contracts ([#643](https://github.com/zainadeel/compomo/issues/643)) ([986498d](https://github.com/zainadeel/compomo/commit/986498d404dd878b378b9b6f4b4d74b3388b3555))
+
 ## [15.5.0](https://github.com/zainadeel/compomo/compare/v15.4.1...v15.5.0) (2026-09-20)
 
 
